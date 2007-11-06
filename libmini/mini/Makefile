@@ -4,7 +4,7 @@ MODS	= mini miniOGL\
 	  minitime miniio minihsv miniutm\
 	  ministub minitile miniload minicache\
 	  minitree minibrick minilod\
-	  miniray ministrip\
+	  miniwarp miniray ministrip\
 	  minipoint minitext minisky miniglobe\
 	  pnmbase pnmsample\
 	  database datacloud datacache\

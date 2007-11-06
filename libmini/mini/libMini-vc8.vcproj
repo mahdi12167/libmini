@@ -494,6 +494,31 @@
                                 </FileConfiguration>
                         </File>
                         <File
+                                RelativePath="miniwarp.cpp"
+                                >
+                                <FileConfiguration
+                                        Name="Release|Win32"
+                                        >
+                                        <Tool
+                                                Name="VCCLCompilerTool"
+                                                Optimization="3"
+                                                AdditionalIncludeDirectories=""
+                                                PreprocessorDefinitions=""
+                                        />
+                                </FileConfiguration>
+                                <FileConfiguration
+                                        Name="Debug|Win32"
+                                        >
+                                        <Tool
+                                                Name="VCCLCompilerTool"
+                                                Optimization="0"
+                                                AdditionalIncludeDirectories=""
+                                                PreprocessorDefinitions=""
+                                                BasicRuntimeChecks="3"
+                                        />
+                                </FileConfiguration>
+                        </File>
+                        <File
                                 RelativePath="miniray.cpp"
                                 >
                                 <FileConfiguration
@@ -968,6 +993,10 @@
                         </File>
                         <File
                                 RelativePath="minilod.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="miniwarp.h"
                                 >
                         </File>
                         <File
