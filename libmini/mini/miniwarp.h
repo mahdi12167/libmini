@@ -44,10 +44,10 @@ class minicoord
    void convert2(const miniv3d src[2], // bounding box in original domain
                  const miniv3d dst[8]); // 8 points in mapped domain
 
-   miniv3d vec;
-   int type;
+   miniv3d vec; // geo-referenced coordinates
+   int type; // actual coordinate system type
 
-   int utm_zone,utm_datum;
+   int utm_zone,utm_datum; // actual UTM zone and datum
 
    protected:
 
@@ -62,13 +62,12 @@ class miniwarp
    //! global coordinate systems
    enum
       {
-      MINIWARP_NONE=0,  // undefined
-      MINIWARP_ECEF=1,  // Earth Centered Earth Fixed
-      MINIWARP_LLH=2,   // Lat/Lon/H WGS84
-      MINIWARP_DATA=3,  // data coordinates
-      MINIWARP_LOCAL=4, // local coordinates
-      MINIWARP_TILE=5,  // tile coordinates
-      MINIWARP_WARP=6   // warp coordinates
+      MINIWARP_PLAIN=0,  // plain coordinates
+      MINIWARP_DATA=1,   // data coordinates
+      MINIWARP_LOCAL=2,  // local coordinates
+      MINIWARP_AFFINE=3, // affine coordinates
+      MINIWARP_TILE=4,   // tile coordinates
+      MINIWARP_WARP=5    // warp coordinates
       };
 
    //! default constructor
@@ -76,6 +75,19 @@ class miniwarp
 
    //! destructor
    ~miniwarp();
+
+   //! define data coordinates
+   void def_data(const miniv3d bbox[2], // bounding box in data domain
+                 const minicoord bboxGEO[2]); // bounding box in geo-referenced domain
+
+   //! define conversion to local coordinates
+   void def_2local(const miniv3d bbox[2]); // bounding box in orthonormal domain
+
+   //! define conversion to afine coordinates
+   void def_2affine(const miniv3d mtx[3]); // affine transformation
+
+   //! define warp coordinates
+   void def_warp(const minicoord &origin); // destination coordinate system
 
    protected:
 
