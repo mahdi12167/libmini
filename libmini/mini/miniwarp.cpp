@@ -132,7 +132,7 @@ void minicoord::convert2(const miniv3d mtx[3],const miniv3d offset)
 
    v.x=mtx[0]*vec;
    v.y=mtx[1]*vec;
-   v.z=mtx[1]*vec;
+   v.z=mtx[2]*vec;
 
    vec=v+offset;
 
