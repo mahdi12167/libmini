@@ -4,27 +4,25 @@
 
 #include "squishbase.h"
 
-#include <squish.h> // do not put the header file into /usr/include on MacOS X
+#include <squish.h> // do not install the header file in /usr/include on MacOS X
 
 namespace squishbase {
 
-MODE_ENUM MODE=MODE_FAST; // we strive to compress as fast as possible
-
 void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                   unsigned char **s3tcdata,unsigned int *s3tcbytes,
-                  int width,int height)
+                  int width,int height,int squishmode)
    {
    int i;
 
-   unsigned char *rgbadata;
-
    int mode;
+
+   unsigned char *rgbadata;
 
    static const int modefast=squish::kDxt1 | squish::kColourRangeFit; // fast but produces artifacts
    static const int modegood=squish::kDxt1 | squish::kColourClusterFit; // almost no artifacts though much slower
    static const int modeslow=squish::kDxt1 | squish::kColourIterativeClusterFit; // no artifacts but really sluggish
 
-   switch (MODE)
+   switch (squishmode)
       {
       default:
       case MODE_FAST: mode=modefast; break;
@@ -56,9 +54,5 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
 
    if (isrgbadata==0) free(rawdata);
    }
-
-// mode selector
-void setmode(MODE_ENUM mode)
-   {MODE=mode;}
 
 }
