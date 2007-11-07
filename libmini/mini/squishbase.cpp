@@ -25,9 +25,9 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
    switch (squishmode)
       {
       default:
-      case MODE_FAST: mode=modefast; break;
-      case MODE_GOOD: mode=modegood; break;
-      case MODE_SLOW: mode=modeslow; break;
+      case SQUISHMODE_FAST: mode=modefast; break;
+      case SQUISHMODE_GOOD: mode=modegood; break;
+      case SQUISHMODE_SLOW: mode=modeslow; break;
       }
 
    if (isrgbadata==0)
