@@ -14,25 +14,40 @@ extern double WGS84_e2;      // WGS84 eccentricity squared
 extern double WGS84_ed2;     // WGS84 eccentricity derived
 
 //! transform Lat/Lon to UTM
-void LL2UTM(float lat,float lon, // geographic input coordinates in arc-seconds (WGS84 datum)
+void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
             int zone,int datum, // UTM zone and datum of output coordinates
-            float *x,float *y); // output UTM coordinates (Easting and Northing)
+            double *x,double *y); // output UTM coordinates (Easting and Northing)
+
+void LL2UTM(double lat,double lon,
+            int zone,int datum,
+            float *x,float *y);
 
 //! transform UTM to Lat/Lon
-void UTM2LL(float x,float y, // input UTM coordinates (Easting and Northing)
+void UTM2LL(double x,double y, // input UTM coordinates (Easting and Northing)
             int zone,int datum, // UTM zone and datum of input coordinates
-            float *lat,float *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+            double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+
+void UTM2LL(double x,double y,
+            int zone,int datum,
+            float *lat,float *lon);
 
 //! transform Lat/Lon/H to ECEF
-void LLH2ECEF(float lat,float lon,float h,
+void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
+              double *xyz); // output ECEF coordinates
+
+void LLH2ECEF(double lat,double lon,double h,
               float *xyz);
 
 //! transform ECEF to Lat/Lon/H
+void ECEF2LLH(double *xyz, // input ECEF coordinates
+              double *lat,double *lon,double *h); // geographic output coordinates in arc-seconds (WGS84 datum)
+
 void ECEF2LLH(float *xyz,
               float *lat,float *lon,float *h);
 
 // 1 arc-second equals about 30 meters
-void arcsec2meter(float lat,float *as2m);
+void arcsec2meter(double lat,double *as2m);
+void arcsec2meter(double lat,float *as2m);
 
 // longitude arithmetic:
 

@@ -163,25 +163,28 @@ void choose_datum(int datum)
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void LL2UTM(float lat,float lon,
+void LL2UTM(double lat,double lon,
             int zone,int datum,
-            float *x,float *y)
+            double *x,double *y)
    {
-   double tlat,tlon;
-   double tx,ty;
-
-   tlat=lat;
-   tlon=lon;
-
-   molodensky(3,datum,&tlat,&tlon);
+   molodensky(3,datum,&lat,&lon);
 
    choose_datum(datum);
 
    initUTM(zone);
-   calcLL2UTM(tlat,tlon,&tx,&ty);
+   calcLL2UTM(lat,lon,x,y);
+   }
 
-   *x=tx;
-   *y=ty;
+void LL2UTM(double lat,double lon,
+            int zone,int datum,
+            float *x,float *y)
+   {
+   double tx,ty;
+
+   LL2UTM(lat,lon,zone,datum,&tx,&ty);
+
+   *x=(float)tx;
+   *y=(float)ty;
    }
 
 // transform UTM to Lat/Lon
@@ -189,21 +192,28 @@ void LL2UTM(float lat,float lon,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void UTM2LL(float x,float y,
+void UTM2LL(double x,double y,
+            int zone,int datum,
+            double *lat,double *lon)
+   {
+   choose_datum(datum);
+
+   initUTM(zone);
+   calcUTM2LL(x,y,lat,lon);
+
+   molodensky(datum,3,lat,lon);
+   }
+
+void UTM2LL(double x,double y,
             int zone,int datum,
             float *lat,float *lon)
    {
    double tlat,tlon;
 
-   choose_datum(datum);
+   UTM2LL(x,y,zone,datum,&tlat,&tlon);
 
-   initUTM(zone);
-   calcUTM2LL(x,y,&tlat,&tlon);
-
-   molodensky(datum,3,&tlat,&tlon);
-
-   *lat=tlat;
-   *lon=tlon;
+   *lat=(float)tlat;
+   *lon=(float)tlon;
    }
 
 // transform Lat/Lon/H to ECEF
@@ -211,15 +221,20 @@ void UTM2LL(float x,float y,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void LLH2ECEF(float lat,float lon,float h,float *xyz)
+void LLH2ECEF(double lat,double lon,double h,
+              double *xyz)
+   {calcLLH2ECEF(lat,lon,h,xyz);}
+
+void LLH2ECEF(double lat,double lon,double h,
+              float *xyz)
    {
    double txyz[3];
 
-   calcLLH2ECEF(lat,lon,h,txyz);
+   LLH2ECEF(lat,lon,h,txyz);
 
-   xyz[0]=txyz[0];
-   xyz[1]=txyz[1];
-   xyz[2]=txyz[2];
+   xyz[0]=(float)txyz[0];
+   xyz[1]=(float)txyz[1];
+   xyz[2]=(float)txyz[2];
    }
 
 // transform ECEF to Lat/Lon/H
@@ -227,7 +242,12 @@ void LLH2ECEF(float lat,float lon,float h,float *xyz)
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void ECEF2LLH(float *xyz,float *lat,float *lon,float *h)
+void ECEF2LLH(double *xyz,
+              double *lat,double *lon,double *h)
+   {calcECEF2LLH(xyz,lat,lon,h);}
+
+void ECEF2LLH(float *xyz,
+              float *lat,float *lon,float *h)
    {
    double txyz[3];
    double tlat,tlon,th;
@@ -236,7 +256,7 @@ void ECEF2LLH(float *xyz,float *lat,float *lon,float *h)
    txyz[1]=xyz[1];
    txyz[2]=xyz[2];
 
-   calcECEF2LLH(txyz,&tlat,&tlon,&th);
+   ECEF2LLH(txyz,&tlat,&tlon,&th);
 
    *lat=tlat;
    *lon=tlon;
@@ -363,12 +383,20 @@ void molodensky(int src,int dst,double *lat,double *lon)
    }
 
 // 1 arc-second equals about 30 meters
-void arcsec2meter(float lat,float *as2m)
+void arcsec2meter(double lat,double *as2m)
    {
-   if (fabs(lat)>90*60*60) ERRORMSG();
+   if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
 
    as2m[1]=2*PI*EARTH_radius/(360*60*60);
    as2m[0]=as2m[1]*cos(lat*2*PI/(360*60*60));
+   }
+
+void arcsec2meter(double lat,float *as2m)
+   {
+   if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
+
+   as2m[1]=(float)(2*PI*EARTH_radius/(360*60*60));
+   as2m[0]=(float)(as2m[1]*cos(lat*2*PI/(360*60*60)));
    }
 
 // adapted from GCTP (the General Cartographic Transformation Package):
