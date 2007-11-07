@@ -126,14 +126,42 @@ void minicoord::convert2(const int t,const int zone,const int datum)
 
 void minicoord::convert2(const miniv3d mtx[3],const miniv3d offset)
    {
+   miniv3d v;
+
    if (type==MINICOORD_NONE) ERRORMSG();
+
+   v.x=mtx[0]*vec;
+   v.y=mtx[1]*vec;
+   v.z=mtx[1]*vec;
+
+   vec=v+offset;
 
    type=MINICOORD_LINEAR;
    }
 
-void minicoord::convert2(const miniv3d src[8],const miniv3d dst[8])
+void minicoord::convert2(const miniv3d src[2],const miniv3d dst[8])
    {
+   miniv3d v,d;
+
    if (type==MINICOORD_NONE) ERRORMSG();
+
+   if (src[0]==src[1]) ERRORMSG();
+
+   v=vec-src[0];
+   d=src[1]-src[0];
+
+   v.x/=d.x;
+   v.y/=d.y;
+   v.z/=d.z;
+
+   vec=(1.0-v.z)*((1.0-v.y)*((1.0-v.x)*dst[0]+
+                             v.x*dst[1])+
+                  v.y*((1.0-v.x)*dst[2]+
+                       v.x*dst[3]))+
+       v.z*((1.0-v.y)*((1.0-v.x)*dst[4]+
+                             v.x*dst[5])+
+                  v.y*((1.0-v.x)*dst[6]+
+                       v.x*dst[7]));
 
    type=MINICOORD_NONLIN;
    }

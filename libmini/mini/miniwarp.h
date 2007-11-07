@@ -35,8 +35,13 @@ class minicoord
 
    //! convert from one coordinate system 2 another
    void convert2(const int t,const int zone=0,const int datum=0);
+
+   //! linear conversion defined by 3x3 matrix and offset
    void convert2(const miniv3d mtx[3],const miniv3d offset);
-   void convert2(const miniv3d src[8],const miniv3d dst[8]);
+
+   //! non-linear conversion defined by point 2 point correspondences
+   void convert2(const miniv3d src[2], // bounding box in original domain
+                 const miniv3d dst[8]); // 8 points in mapped domain
 
    miniv3d vec;
    int type;
