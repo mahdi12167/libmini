@@ -1266,10 +1266,10 @@ int miniload::load(int cols,int rows,
 
                if (utm_zone!=0)
                   {
-                  UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-                  UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-                  UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-                  UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+                  miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+                  miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+                  miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+                  miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                   }
 
                SCALE=scaling*exaggeration;
@@ -1336,35 +1336,35 @@ int miniload::load(int cols,int rows,
       {
       if (offsetx!=0.0f || offsety!=0.0f)
          {
-         coord[0]=LONSUBLL(coord[0],-offsetx);
+         coord[0]=LONSUB(coord[0],-offsetx);
          coord[1]+=offsety;
 
          if (coord[1]<-90*60*60 || coord[1]>90*60*60) ERRORMSG();
 
-         coord[2]=LONSUBLL(coord[2],-offsetx);
+         coord[2]=LONSUB(coord[2],-offsetx);
          coord[3]+=offsety;
 
          if (coord[3]<-90*60*60 || coord[3]>90*60*60) ERRORMSG();
 
-         coord[4]=LONSUBLL(coord[4],-offsetx);
+         coord[4]=LONSUB(coord[4],-offsetx);
          coord[5]+=offsety;
 
          if (coord[5]<-90*60*60 || coord[5]>90*60*60) ERRORMSG();
 
-         coord[6]=LONSUBLL(coord[6],-offsetx);
+         coord[6]=LONSUB(coord[6],-offsetx);
          coord[7]+=offsety;
 
          if (coord[7]<-90*60*60 || coord[7]>90*60*60) ERRORMSG();
          }
 
-      COLDIM=fsqrt(fsqr(LONADDLL(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-      ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUBLL(coord[2],coord[0])));
+      COLDIM=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
+      ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
-      CENTERX=LONSUBLL(coord[2],-cols/2.0f*LONADDLL(coord[6],-coord[0])+rows/2.0f*LONSUBLL(coord[2],coord[0]));
+      CENTERX=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
       CENTERY=0.0f;
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
-      arcsec2meter(CENTERZ,as2m);
+      miniutm::arcsec2meter(CENTERZ,as2m);
 
       COLDIM*=as2m[0];
       ROWDIM*=as2m[1];

@@ -815,10 +815,10 @@ minitile *minitile::load(int cols,int rows,
 
             if (utm_zone!=0)
                {
-               UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-               UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-               UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-               UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+               miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+               miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+               miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+               miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
             offsetlat-=j*(coord[3]-coord[1]);
@@ -832,22 +832,22 @@ minitile *minitile::load(int cols,int rows,
 
    if (offsetlat!=0.0f || offsetlon!=0.0f)
       {
-      coord[0]=LONSUBLL(coord[0],-offsetlon);
+      coord[0]=LONSUB(coord[0],-offsetlon);
       coord[1]+=offsetlat;
 
       if (coord[1]<-90*60*60 || coord[1]>90*60*60) ERRORMSG();
 
-      coord[2]=LONSUBLL(coord[2],-offsetlon);
+      coord[2]=LONSUB(coord[2],-offsetlon);
       coord[3]+=offsetlat;
 
       if (coord[3]<-90*60*60 || coord[3]>90*60*60) ERRORMSG();
 
-      coord[4]=LONSUBLL(coord[4],-offsetlon);
+      coord[4]=LONSUB(coord[4],-offsetlon);
       coord[5]+=offsetlat;
 
       if (coord[5]<-90*60*60 || coord[5]>90*60*60) ERRORMSG();
 
-      coord[6]=LONSUBLL(coord[6],-offsetlon);
+      coord[6]=LONSUB(coord[6],-offsetlon);
       coord[7]+=offsetlat;
 
       if (coord[7]<-90*60*60 || coord[7]>90*60*60) ERRORMSG();
@@ -856,13 +856,13 @@ minitile *minitile::load(int cols,int rows,
    scaling*=exaggeration;
    lambda*=exaggeration;
 
-   xdim=fsqrt(fsqr(LONADDLL(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-   zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUBLL(coord[2],coord[0])));
+   xdim=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
+   zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
-   centerx=LONSUBLL(coord[2],-cols/2.0f*LONADDLL(coord[6],-coord[0])+rows/2.0f*LONSUBLL(coord[2],coord[0]));
+   centerx=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
    centerz=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
-   arcsec2meter(centerz,as2m);
+   miniutm::arcsec2meter(centerz,as2m);
 
    xdim*=as2m[0];
    zdim*=as2m[1];

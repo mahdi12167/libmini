@@ -250,7 +250,7 @@ void minipoint::load(char *filename,
          point.x*=60*60;
          point.y*=60*60;
 
-         point.x=LONSUBLL(point.x);
+         point.x=LONSUB(point.x);
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
 
          if (CONFIGURE_AUTOMAP!=0 && TAKEN==0)
@@ -289,7 +289,7 @@ void minipoint::load(char *filename,
          if (sscanf(point.longitude,"%g",&point.x)!=1) ERRORMSG();
          if (sscanf(point.latitude,"%g",&point.y)!=1) ERRORMSG();
 
-         UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
+         miniutm::UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
 
          if (CONFIGURE_AUTOMAP!=0 && TAKEN==0)
             {
@@ -315,14 +315,14 @@ void minipoint::load(char *filename,
 
       if (CONFIGURE_DSTZONE==0)
          {
-         point.x=LONSUBLL(point.x,-offsetlon);
+         point.x=LONSUB(point.x,-offsetlon);
          point.y+=offsetlat;
 
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
          }
       else
          {
-         LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
+         miniutm::LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
 
          point.x+=offsetlon;
          point.y+=offsetlat;

@@ -53,14 +53,14 @@ void minicoord::convert2(const int t,const int zone,const int datum)
          switch (t)
             {
             case MINICOORD_UTM:
-               LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
+               miniutm::LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
                vec=miniv3d(xyz[0],xyz[1],vec.z);
                type=t;
                utm_zone=zone;
                utm_datum=datum;
                break;
             case MINICOORD_ECEF:
-               LLH2ECEF(vec.y,vec.x,vec.z,xyz);
+               miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv3d(xyz);
                type=t;
                utm_zone=0;
@@ -74,15 +74,15 @@ void minicoord::convert2(const int t,const int zone,const int datum)
          switch (t)
             {
             case MINICOORD_LLH:
-               UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
+               miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
                vec=miniv3d(xyz[0],xyz[1],vec.z);
                type=t;
                utm_zone=0;
                utm_datum=0;
                break;
             case MINICOORD_ECEF:
-               UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
-               LLH2ECEF(xyz[1],xyz[0],vec.z,xyz);
+               miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
+               miniutm::LLH2ECEF(xyz[1],xyz[0],vec.z,xyz);
                vec=miniv3d(xyz);
                type=t;
                utm_zone=0;
@@ -99,7 +99,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
+               miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                type=t;
                utm_zone=0;
                utm_datum=0;
@@ -108,8 +108,8 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
-               LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
+               miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
+               miniutm::LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
                vec=miniv3d(xyz[0],xyz[1],vec.z);
                type=t;
                utm_zone=zone;

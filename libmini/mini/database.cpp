@@ -751,10 +751,10 @@ int databuf::loadPNMdata(const char *filename)
 
    if (utm_zone!=0)
       {
-      UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-      UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-      UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-      UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+      miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+      miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+      miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+      miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
       }
 
    swx=coord[0];

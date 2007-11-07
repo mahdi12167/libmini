@@ -320,7 +320,7 @@ float transformpoint(unsigned char *image,
    float dx,dy;
    float s1,s2,t1,t2;
 
-   dx=LONSUBLL(x,centerx);
+   dx=LONSUB(x,centerx);
    dy=y-centery;
 
    if (fabs(dx)>extentx/2.0f || fabs(dy)>extenty/2.0f) return(missing);
@@ -329,15 +329,15 @@ float transformpoint(unsigned char *image,
 
    if (utm_zone==0)
       {
-      s1=getdistance(x,y,coord[0],coord[1],LONSUBLL(coord[2],coord[0]),coord[3]-coord[1]);
-      s2=getdistance(x,y,coord[4],coord[5],LONSUBLL(coord[6],coord[4]),coord[7]-coord[5]);
+      s1=getdistance(x,y,coord[0],coord[1],LONSUB(coord[2],coord[0]),coord[3]-coord[1]);
+      s2=getdistance(x,y,coord[4],coord[5],LONSUB(coord[6],coord[4]),coord[7]-coord[5]);
 
-      t1=getdistance(x,y,coord[6],coord[7],-LONADDLL(coord[6],-coord[0]),coord[1]-coord[7]);
-      t2=getdistance(x,y,coord[2],coord[3],LONADDLL(coord[4],-coord[2]),coord[5]-coord[3]);
+      t1=getdistance(x,y,coord[6],coord[7],-LONADD(coord[6],-coord[0]),coord[1]-coord[7]);
+      t2=getdistance(x,y,coord[2],coord[3],LONADD(coord[4],-coord[2]),coord[5]-coord[3]);
       }
    else
       {
-      LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
+      miniutm::LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
 
       s1=getdistance(x,y,utm_coord[0],utm_coord[1],utm_coord[2]-utm_coord[0],utm_coord[3]-utm_coord[1]);
       s2=getdistance(x,y,utm_coord[4],utm_coord[5],utm_coord[6]-utm_coord[4],utm_coord[7]-utm_coord[5]);
@@ -486,28 +486,28 @@ void resample(int num,char **grid,
                            (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1]));
 
             // transform corners
-            UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
-            UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
-            UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
-            UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
+            miniutm::UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
+            miniutm::UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
+            miniutm::UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
+            miniutm::UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
 
             // cell size changes approximately by the same factor as the extent changes:
 
-            cellsizes[2*n]*=(fsqrt(fsqr(LONADDLL(coord_SE[0],-coord_SW[0]))+
+            cellsizes[2*n]*=(fsqrt(fsqr(LONADD(coord_SE[0],-coord_SW[0]))+
                                    (coord_SE[1]-coord_SW[1])*(coord_SE[1]-coord_SW[1]))+
-                             fsqrt(fsqr(LONADDLL(coord_NE[0],-coord_NW[0]))+
+                             fsqrt(fsqr(LONADD(coord_NE[0],-coord_NW[0]))+
                                    (coord_NE[1]-coord_NW[1])*(coord_NE[1]-coord_NW[1])))/extent_x;
 
-            cellsizes[2*n+1]*=(fsqrt(fsqr(LONSUBLL(coord_NW[0],coord_SW[0]))+
+            cellsizes[2*n+1]*=(fsqrt(fsqr(LONSUB(coord_NW[0],coord_SW[0]))+
                                      (coord_NW[1]-coord_SW[1])*(coord_NW[1]-coord_SW[1]))+
-                               fsqrt(fsqr(LONSUBLL(coord_NE[0],coord_SE[0]))+
+                               fsqrt(fsqr(LONSUB(coord_NE[0],coord_SE[0]))+
                                      (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1])))/extent_y;
             }
 
-         centersx[n]=LONLERPLL(LONMEANLL(coords[8*n],coords[8*n+2]),LONMEANLL(coords[8*n+4],coords[8*n+6]));
+         centersx[n]=LONLERP(LONMEAN(coords[8*n],coords[8*n+2]),LONMEAN(coords[8*n+4],coords[8*n+6]));
          centersy[n]=(coords[8*n+1]+coords[8*n+3]+coords[8*n+5]+coords[8*n+7])/4.0f;
 
-         extentsx[n]=LONADDLL(LONRIGHTLL(coords[8*n+4],coords[8*n+6]),-LONLEFTLL(coords[8*n],coords[8*n+2]));
+         extentsx[n]=LONADD(LONRIGHT(coords[8*n+4],coords[8*n+6]),-LONLEFT(coords[8*n],coords[8*n+2]));
          extentsy[n]=fmax(coords[8*n+3],coords[8*n+5])-fmin(coords[8*n+1],coords[8*n+7]);
 
          if (widths[n]>1 && heights[n]>1)
@@ -527,7 +527,7 @@ void resample(int num,char **grid,
          {
          if (widths[n]<2 || heights[n]<2) ERRORMSG();
 
-         centersx[n]=LONSUBLL(centerx[n]);
+         centersx[n]=LONSUB(centerx[n]);
          centersy[n]=centery[n];
 
          if (extentx[n]>360*60*60 || extenty[n]>180*60*60) ERRORMSG();
@@ -535,16 +535,16 @@ void resample(int num,char **grid,
          extentsx[n]=extentx[n];
          extentsy[n]=extenty[n];
 
-         coords[8*n]=LONSUBLL(centersx[n],extentsx[n]/2.0f);
+         coords[8*n]=LONSUB(centersx[n],extentsx[n]/2.0f);
          coords[8*n+1]=centersy[n]-extentsy[n]/2.0f;
 
-         coords[8*n+2]=LONSUBLL(centersx[n],extentsx[n]/2.0f);
+         coords[8*n+2]=LONSUB(centersx[n],extentsx[n]/2.0f);
          coords[8*n+3]=centersy[n]+extentsy[n]/2.0f;
 
-         coords[8*n+4]=LONSUBLL(centersx[n],-extentsx[n]/2.0f);
+         coords[8*n+4]=LONSUB(centersx[n],-extentsx[n]/2.0f);
          coords[8*n+5]=centersy[n]+extentsy[n]/2.0f;
 
-         coords[8*n+6]=LONSUBLL(centersx[n],-extentsx[n]/2.0f);
+         coords[8*n+6]=LONSUB(centersx[n],-extentsx[n]/2.0f);
          coords[8*n+7]=centersy[n]-extentsy[n]/2.0f;
 
          cellsizes[2*n]=extentsx[n]/(widths[n]-1);
@@ -621,12 +621,12 @@ void resample(int num,char **grid,
       // adjust bounding box
       if (n>0)
          {
-         centersx[n]=LONSUBLL(centersx[n],-offx);
+         centersx[n]=LONSUB(centersx[n],-offx);
          centersy[n]+=offy;
 
          for (i=0; i<4; i++)
             {
-            coords[8*n+2*i]=LONSUBLL(coords[8*n+2*i],-offx);
+            coords[8*n+2*i]=LONSUB(coords[8*n+2*i],-offx);
             coords[8*n+2*i+1]+=offy;
             }
 
@@ -642,7 +642,7 @@ void resample(int num,char **grid,
    maxelev+=addelev;
    if (maxelev==0.0f) maxelev=1.0f;
 
-   arcsec2meter(centersy[0],as2m);
+   miniutm::arcsec2meter(centersy[0],as2m);
 
    float sizex=extentsx[0];
    float sizey=extentsy[0];
@@ -707,7 +707,7 @@ void resample(int num,char **grid,
          for (i=0; i<tilesx; i++)
             {
             // calculate tile position
-            tileposx=LONSUBLL(centersx[0],sizex/2.0f-i*tilesizex);
+            tileposx=LONSUB(centersx[0],sizex/2.0f-i*tilesizex);
             tileposy=centersy[0]-sizey/2.0f+j*tilesizey;
 
             width=2;
@@ -724,8 +724,8 @@ void resample(int num,char **grid,
                smaller=FALSE;
 
                for (n=0; n<num; n++)
-                  if (LONSUBLL(tileposx,centersx[n])<extentsx[n]/2.0f &&
-                      LONSUBLL(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
+                  if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0f &&
+                      LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
                       tileposy<centersy[n]+extentsy[n]/2.0f &&
                       tileposy+tilesizey>centersy[n]-extentsy[n]/2.0f)
                      if (tilesizex/(width-1)>1.5f*(1<<down)*cellsizes[2*n] ||
@@ -749,7 +749,7 @@ void resample(int num,char **grid,
 
             printf("resampling tile[%d,%d]=%dx%d in [%g,%g]x[%g,%g] with cellsize=%g/%g arc-seconds\n",
                    i+1,tilesy-j,width,height,
-                   tileposx,LONSUBLL(tileposx,-tilesizex),tileposy,tileposy+tilesizey,
+                   tileposx,LONSUB(tileposx,-tilesizex),tileposy,tileposy+tilesizey,
                    tilesizex/(width-1),tilesizey/(height-1));
 
             float rangemin=32767.0f;
@@ -760,8 +760,8 @@ void resample(int num,char **grid,
 
             // gather relevant grids
             for (n=0; n<num; n++)
-               if (LONSUBLL(tileposx,centersx[n])<extentsx[n]/2.0f &&
-                   LONSUBLL(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
+               if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0f &&
+                   LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
                    tileposy<centersy[n]+extentsy[n]/2.0f &&
                    tileposy+tilesizey>centersy[n]-extentsy[n]/2.0f)
                   if (widths[n]>1 && heights[n]>1) valid[vnum++]=n;
@@ -855,7 +855,7 @@ void resample(int num,char **grid,
                      for (l=0; l<height; l++)
                         {
                         // calculate actual sample position
-                        posx0=LONSUBLL(tileposx,-(float)k/(width-1)*tilesizex);
+                        posx0=LONSUB(tileposx,-(float)k/(width-1)*tilesizex);
                         posy0=tileposy+(float)l/(height-1)*tilesizey;
 
                         sample0=0.0f;
@@ -870,7 +870,7 @@ void resample(int num,char **grid,
                         for (si=-0.5f+0.5f/sn; si<0.5f; si+=1.0f/sn)
                            for (sj=-0.5f+0.5f/sn; sj<0.5f; sj+=1.0f/sn)
                               {
-                              posx=LONSUBLL(posx0,-si*tilesizex/(width-1));
+                              posx=LONSUB(posx0,-si*tilesizex/(width-1));
                               posy=posy0+sj*tilesizey/(height-1);
 
                               if (fabs(posy)>90*60*60) continue;
@@ -1006,8 +1006,8 @@ void resample(int num,char **grid,
                                0,0,0,4,
                                tileposx,tileposy,
                                tileposx,tileposy+tilesizey,
-                               LONSUBLL(tileposx,-tilesizex),tileposy+tilesizey,
-                               LONSUBLL(tileposx,-tilesizex),tileposy,
+                               LONSUB(tileposx,-tilesizex),tileposy+tilesizey,
+                               LONSUB(tileposx,-tilesizex),tileposy,
                                tilesizex/(width-1),tilesizey/(height-1),
                                2,maxelev/maxval,missings[0]);
 
@@ -1232,23 +1232,23 @@ void normalize(int num,
                {
                for (i=0; i<8; i++) utm_coord[i]=coord[i];
 
-               UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-               UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-               UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-               UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+               miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+               miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+               miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+               miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
-            centerx0=LONLERPLL(LONMEANLL(coord[0],coord[2]),LONMEANLL(coord[4],coord[6]));
+            centerx0=LONLERP(LONMEAN(coord[0],coord[2]),LONMEAN(coord[4],coord[6]));
             centery0=(coord[1]+coord[3]+coord[5]+coord[7])/4.0f;
 
-            extentx0=(fsqrt(fsqr(LONADDLL(coord[6],-coord[0]))+
+            extentx0=(fsqrt(fsqr(LONADD(coord[6],-coord[0]))+
                             (coord[7]-coord[1])*(coord[7]-coord[1]))+
-                      fsqrt(fsqr(LONADDLL(coord[4],-coord[2]))+
+                      fsqrt(fsqr(LONADD(coord[4],-coord[2]))+
                             (coord[5]-coord[3])*(coord[5]-coord[3])))/2.0f;
 
-            extenty0=(fsqrt(fsqr(LONSUBLL(coord[2],coord[0]))+
+            extenty0=(fsqrt(fsqr(LONSUB(coord[2],coord[0]))+
                             (coord[3]-coord[1])*(coord[3]-coord[1]))+
-                      fsqrt(fsqr(LONSUBLL(coord[4],coord[6]))+
+                      fsqrt(fsqr(LONSUB(coord[4],coord[6]))+
                             (coord[5]-coord[7])*(coord[5]-coord[7])))/2.0f;
             }
          else
@@ -1265,7 +1265,7 @@ void normalize(int num,
             missing0=missing;
             }
 
-         arcsec2meter(centery0,as2m);
+         miniutm::arcsec2meter(centery0,as2m);
 
          nmap=normalizemap(hmap,
                            width,height,components,
@@ -1516,11 +1516,11 @@ void texturemap(char *heightfile,
 
    if (utm_zone==0)
       {
-      xdim=fsqrt(fsqr(LONADDLL(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-      zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUBLL(coord[2],coord[0])));
+      xdim=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
+      zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
       centerz=(coord[1]+coord[3]+coord[5]+coord[7])/4.0f;
-      arcsec2meter(centerz,as2m);
+      miniutm::arcsec2meter(centerz,as2m);
 
       xdim*=as2m[0];
       zdim*=as2m[1];

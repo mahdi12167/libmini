@@ -310,16 +310,16 @@ void putPNMparams(PNMcomment *comment,
 
    if (coord_sys==0 && coord_units==3)
       {
-      coord_SW_x=LONSUBLL(coord_SW_x);
+      coord_SW_x=LONSUB(coord_SW_x);
       if (fabs(coord_SW_y)>90*60*60) ERRORMSG();
 
-      coord_NW_x=LONSUBLL(coord_NW_x);
+      coord_NW_x=LONSUB(coord_NW_x);
       if (fabs(coord_NW_y)>90*60*60) ERRORMSG();
 
-      coord_NE_x=LONSUBLL(coord_NE_x);
+      coord_NE_x=LONSUB(coord_NE_x);
       if (fabs(coord_NE_y)>90*60*60) ERRORMSG();
 
-      coord_SE_x=LONSUBLL(coord_SE_x);
+      coord_SE_x=LONSUB(coord_SE_x);
       if (fabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
@@ -702,16 +702,16 @@ int getPNMparamsLL(PNMcomment *comment,
    // y coordinates extend from -90*60*60 arc-seconds (-90 degrees) to 90*60*60 arc-seconds (90 degrees)
    if (coord_sys==0)
       {
-      coord_SW_x=LONSUBLL(coord_SW_x);
+      coord_SW_x=LONSUB(coord_SW_x);
       if (fabs(coord_SW_y)>90*60*60) ERRORMSG();
 
-      coord_NW_x=LONSUBLL(coord_NW_x);
+      coord_NW_x=LONSUB(coord_NW_x);
       if (fabs(coord_NW_y)>90*60*60) ERRORMSG();
 
-      coord_NE_x=LONSUBLL(coord_NE_x);
+      coord_NE_x=LONSUB(coord_NE_x);
       if (fabs(coord_NE_y)>90*60*60) ERRORMSG();
 
-      coord_SE_x=LONSUBLL(coord_SE_x);
+      coord_SE_x=LONSUB(coord_SE_x);
       if (fabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
@@ -747,21 +747,21 @@ int getPNMparamsLL(PNMcomment *comment,
                         (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y));
 
          // transform corners
-         UTM2LL(coord_SW_x,coord_SW_y,coord_zone,coord_datum,&coord_SW_y,&coord_SW_x);
-         UTM2LL(coord_NW_x,coord_NW_y,coord_zone,coord_datum,&coord_NW_y,&coord_NW_x);
-         UTM2LL(coord_NE_x,coord_NE_y,coord_zone,coord_datum,&coord_NE_y,&coord_NE_x);
-         UTM2LL(coord_SE_x,coord_SE_y,coord_zone,coord_datum,&coord_SE_y,&coord_SE_x);
+         miniutm::UTM2LL(coord_SW_x,coord_SW_y,coord_zone,coord_datum,&coord_SW_y,&coord_SW_x);
+         miniutm::UTM2LL(coord_NW_x,coord_NW_y,coord_zone,coord_datum,&coord_NW_y,&coord_NW_x);
+         miniutm::UTM2LL(coord_NE_x,coord_NE_y,coord_zone,coord_datum,&coord_NE_y,&coord_NE_x);
+         miniutm::UTM2LL(coord_SE_x,coord_SE_y,coord_zone,coord_datum,&coord_SE_y,&coord_SE_x);
 
          // cell size changes approximately by the same factor as the extent changes:
 
-         cell_size_x*=(fsqrt(fsqr(LONADDLL(coord_SE_x,-coord_SW_x))+
+         cell_size_x*=(fsqrt(fsqr(LONADD(coord_SE_x,-coord_SW_x))+
                              (coord_SE_y-coord_SW_y)*(coord_SE_y-coord_SW_y))+
-                       fsqrt(fsqr(LONADDLL(coord_NE_x,-coord_NW_x))+
+                       fsqrt(fsqr(LONADD(coord_NE_x,-coord_NW_x))+
                              (coord_NE_y-coord_NW_y)*(coord_NE_y-coord_NW_y)))/extent_x;
 
-         cell_size_y*=(fsqrt(fsqr(LONSUBLL(coord_NW_x,coord_SW_x))+
+         cell_size_y*=(fsqrt(fsqr(LONSUB(coord_NW_x,coord_SW_x))+
                              (coord_NW_y-coord_SW_y)*(coord_NW_y-coord_SW_y))+
-                       fsqrt(fsqr(LONSUBLL(coord_NE_x,coord_SE_x))+
+                       fsqrt(fsqr(LONSUB(coord_NE_x,coord_SE_x))+
                              (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y)))/extent_y;
 
          coord_zone=coord_datum=0;
@@ -858,14 +858,14 @@ int getPNMparamsLL(PNMcomment *comment,
          {
          // SW corner:
 
-         dxxSW=LONADDLL(coord_SE_x,-coord_SW_x);
+         dxxSW=LONADD(coord_SE_x,-coord_SW_x);
          dxySW=coord_SE_y-coord_SW_y;
 
          if ((length=fsqrt(dxxSW*dxxSW+dxySW*dxySW))==0.0f) ERRORMSG();
          dxxSW/=length;
          dxySW/=length;
 
-         dyxSW=LONSUBLL(coord_NW_x,coord_SW_x);
+         dyxSW=LONSUB(coord_NW_x,coord_SW_x);
          dyySW=coord_NW_y-coord_SW_y;
 
          if ((length=fsqrt(dyxSW*dyxSW+dyySW*dyySW))==0.0f) ERRORMSG();
@@ -874,14 +874,14 @@ int getPNMparamsLL(PNMcomment *comment,
 
          // NW corner:
 
-         dxxNW=LONADDLL(coord_NE_x,-coord_NW_x);
+         dxxNW=LONADD(coord_NE_x,-coord_NW_x);
          dxyNW=coord_NE_y-coord_NW_y;
 
          if ((length=fsqrt(dxxNW*dxxNW+dxyNW*dxyNW))==0.0f) ERRORMSG();
          dxxNW/=length;
          dxyNW/=length;
 
-         dyxNW=LONSUBLL(coord_SW_x,coord_NW_x);
+         dyxNW=LONSUB(coord_SW_x,coord_NW_x);
          dyyNW=coord_SW_y-coord_NW_y;
 
          if ((length=fsqrt(dyxNW*dyxNW+dyyNW*dyyNW))==0.0f) ERRORMSG();
@@ -890,14 +890,14 @@ int getPNMparamsLL(PNMcomment *comment,
 
          // NE corner:
 
-         dxxNE=-LONADDLL(coord_NE_x,-coord_NW_x);
+         dxxNE=-LONADD(coord_NE_x,-coord_NW_x);
          dxyNE=coord_NW_y-coord_NE_y;
 
          if ((length=fsqrt(dxxNE*dxxNE+dxyNE*dxyNE))==0.0f) ERRORMSG();
          dxxNE/=length;
          dxyNE/=length;
 
-         dyxNE=LONSUBLL(coord_SE_x,coord_NE_x);
+         dyxNE=LONSUB(coord_SE_x,coord_NE_x);
          dyyNE=coord_SE_y-coord_NE_y;
 
          if ((length=fsqrt(dyxNE*dyxNE+dyyNE*dyyNE))==0.0f) ERRORMSG();
@@ -906,14 +906,14 @@ int getPNMparamsLL(PNMcomment *comment,
 
          // SE corner:
 
-         dxxSE=-LONADDLL(coord_SE_x,-coord_SW_x);
+         dxxSE=-LONADD(coord_SE_x,-coord_SW_x);
          dxySE=coord_SW_y-coord_SE_y;
 
          if ((length=fsqrt(dxxSE*dxxSE+dxySE*dxySE))==0.0f) ERRORMSG();
          dxxSE/=length;
          dxySE/=length;
 
-         dyxSE=LONSUBLL(coord_NE_x,coord_SE_x);
+         dyxSE=LONSUB(coord_NE_x,coord_SE_x);
          dyySE=coord_NE_y-coord_SE_y;
 
          if ((length=fsqrt(dyxSE*dyxSE+dyySE*dyySE))==0.0f) ERRORMSG();
@@ -922,16 +922,16 @@ int getPNMparamsLL(PNMcomment *comment,
 
          // shrink by 0.5 texel:
 
-         coord_SW_x=LONSUBLL(coord_SW_x,-0.5f*(cell_size_x*dxxSW+cell_size_y*dyxSW));
+         coord_SW_x=LONSUB(coord_SW_x,-0.5f*(cell_size_x*dxxSW+cell_size_y*dyxSW));
          coord_SW_y+=0.5f*(cell_size_x*dxySW+cell_size_y*dyySW);
 
-         coord_NW_x=LONSUBLL(coord_NW_x,-0.5f*(cell_size_x*dxxNW+cell_size_y*dyxNW));
+         coord_NW_x=LONSUB(coord_NW_x,-0.5f*(cell_size_x*dxxNW+cell_size_y*dyxNW));
          coord_NW_y+=0.5f*(cell_size_x*dxyNW+cell_size_y*dyyNW);
 
-         coord_NE_x=LONSUBLL(coord_NE_x,-0.5f*(cell_size_x*dxxNE+cell_size_y*dyxNE));
+         coord_NE_x=LONSUB(coord_NE_x,-0.5f*(cell_size_x*dxxNE+cell_size_y*dyxNE));
          coord_NE_y+=0.5f*(cell_size_x*dxyNE+cell_size_y*dyyNE);
 
-         coord_SE_x=LONSUBLL(coord_SE_x,-0.5f*(cell_size_x*dxxSE+cell_size_y*dyxSE));
+         coord_SE_x=LONSUB(coord_SE_x,-0.5f*(cell_size_x*dxxSE+cell_size_y*dyxSE));
          coord_SE_y+=0.5f*(cell_size_x*dxySE+cell_size_y*dyySE);
          }
 
