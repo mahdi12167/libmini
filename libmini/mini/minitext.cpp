@@ -7,114 +7,11 @@
 
 #include "minitext.h"
 
-float minitext::CONFIGURE_ZSCALE=0.95f; // must be 1.0f for orthographic projections
+namespace minitext {
 
-// configuring
-void minitext::configure_zfight(float zscale) {CONFIGURE_ZSCALE=zscale;}
+float CONFIGURE_ZSCALE=0.95f; // must be 1.0f for orthographic projections
 
-void minitext::drawline(float x1,float y1,float x2,float y2,
-                        float hue,float sat,float val,float alpha)
-   {
-#ifndef NOOGL
-   float rgb[3];
-
-   hsv2rgb(hue,sat,val,rgb);
-
-   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x1,y1);
-   glVertex2f(x2,y2);
-   glEnd();
-#endif
-   }
-
-void minitext::drawlineRGBA(float x1,float y1,float x2,float y2,
-                            float r,float g,float b,float alpha)
-   {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x1,y1);
-   glVertex2f(x2,y2);
-   glEnd();
-#endif
-   }
-
-void minitext::drawquad(float x,float y,float width,float height,
-                        float hue,float sat,float val,float alpha)
-   {
-#ifndef NOOGL
-   float rgb[3];
-
-   hsv2rgb(hue,sat,val,rgb);
-
-   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
-   glBegin(GL_TRIANGLE_FAN);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glEnd();
-#endif
-   }
-
-void minitext::drawquadRGBA(float x,float y,float width,float height,
-                            float r,float g,float b,float alpha)
-   {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_TRIANGLE_FAN);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glEnd();
-#endif
-   }
-
-void minitext::drawframe(float x,float y,float width,float height,
-                         float hue,float sat,float val,float alpha)
-   {
-#ifndef NOOGL
-   float rgb1[3],rgb2[3];
-
-   hsv2rgb(hue,sat,fmax(val-0.25f,0.0f),rgb1);
-   hsv2rgb(hue,sat,fmin(val+0.25f,1.0f),rgb2);
-
-   glBegin(GL_LINES);
-   glColor4f(rgb1[0],rgb1[1],rgb1[2],alpha);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glColor4f(rgb2[0],rgb2[1],rgb2[2],alpha);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y);
-   glEnd();
-#endif
-   }
-
-void minitext::drawframeRGBA(float x,float y,float width,float height,
-                             float r,float g,float b,float alpha)
-   {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y);
-   glEnd();
-#endif
-   }
-
-void minitext::drawsymbol(float hue,float sat,float val,float alpha,char *symbol)
+void drawsymbol(float hue,float sat,float val,float alpha,char *symbol)
    {
 #ifndef NOOGL
    float rgb[3];
@@ -161,7 +58,7 @@ void minitext::drawsymbol(float hue,float sat,float val,float alpha,char *symbol
 #endif
    }
 
-void minitext::drawletter(float hue,float sat,float val,float alpha,char letter)
+void drawletter(float hue,float sat,float val,float alpha,char letter)
    {
 #ifndef NOOGL
    glPushMatrix();
@@ -242,9 +139,111 @@ void minitext::drawletter(float hue,float sat,float val,float alpha,char letter)
 #endif
    }
 
-void minitext::drawstring(float width,
-                          float hue,float sat,float val,float alpha,char *str,
-                          float backval,float backalpha)
+void drawline(float x1,float y1,float x2,float y2,
+              float hue,float sat,float val,float alpha)
+   {
+#ifndef NOOGL
+   float rgb[3];
+
+   hsv2rgb(hue,sat,val,rgb);
+
+   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
+   glBegin(GL_LINES);
+   glVertex2f(x1,y1);
+   glVertex2f(x2,y2);
+   glEnd();
+#endif
+   }
+
+void drawlineRGBA(float x1,float y1,float x2,float y2,
+                  float r,float g,float b,float alpha)
+   {
+#ifndef NOOGL
+   glColor4f(r,g,b,alpha);
+   glBegin(GL_LINES);
+   glVertex2f(x1,y1);
+   glVertex2f(x2,y2);
+   glEnd();
+#endif
+   }
+
+void drawquad(float x,float y,float width,float height,
+              float hue,float sat,float val,float alpha)
+   {
+#ifndef NOOGL
+   float rgb[3];
+
+   hsv2rgb(hue,sat,val,rgb);
+
+   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
+   glBegin(GL_TRIANGLE_FAN);
+   glVertex2f(x,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y+height);
+   glVertex2f(x,y+height);
+   glEnd();
+#endif
+   }
+
+void drawquadRGBA(float x,float y,float width,float height,
+                  float r,float g,float b,float alpha)
+   {
+#ifndef NOOGL
+   glColor4f(r,g,b,alpha);
+   glBegin(GL_TRIANGLE_FAN);
+   glVertex2f(x,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y+height);
+   glVertex2f(x,y+height);
+   glEnd();
+#endif
+   }
+
+void drawframe(float x,float y,float width,float height,
+               float hue,float sat,float val,float alpha)
+   {
+#ifndef NOOGL
+   float rgb1[3],rgb2[3];
+
+   hsv2rgb(hue,sat,fmax(val-0.25f,0.0f),rgb1);
+   hsv2rgb(hue,sat,fmin(val+0.25f,1.0f),rgb2);
+
+   glBegin(GL_LINES);
+   glColor4f(rgb1[0],rgb1[1],rgb1[2],alpha);
+   glVertex2f(x,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y+height);
+   glColor4f(rgb2[0],rgb2[1],rgb2[2],alpha);
+   glVertex2f(x+width,y+height);
+   glVertex2f(x,y+height);
+   glVertex2f(x,y+height);
+   glVertex2f(x,y);
+   glEnd();
+#endif
+   }
+
+void drawframeRGBA(float x,float y,float width,float height,
+                   float r,float g,float b,float alpha)
+   {
+#ifndef NOOGL
+   glColor4f(r,g,b,alpha);
+   glBegin(GL_LINES);
+   glVertex2f(x,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y);
+   glVertex2f(x+width,y+height);
+   glVertex2f(x+width,y+height);
+   glVertex2f(x,y+height);
+   glVertex2f(x,y+height);
+   glVertex2f(x,y);
+   glEnd();
+#endif
+   }
+
+void drawstring(float width,
+                float hue,float sat,float val,float alpha,char *str,
+                float backval,float backalpha)
    {
 #ifndef NOOGL
    const float linefeed=0.2f;
@@ -317,3 +316,8 @@ void minitext::drawstring(float width,
       }
 #endif
    }
+
+// configuring
+void configure_zfight(float zscale) {CONFIGURE_ZSCALE=zscale;}
+
+}

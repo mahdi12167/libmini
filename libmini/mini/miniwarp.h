@@ -10,6 +10,7 @@ class minicoord
    {
    public:
 
+   //! generic coordinate systems
    enum
       {
       MINICOORD_NONE=0,   // undefined
@@ -57,6 +58,18 @@ class minicoord
 class miniwarp
    {
    public:
+
+   //! global coordinate systems
+   enum
+      {
+      MINIWARP_NONE=0,  // undefined
+      MINIWARP_ECEF=1,  // Earth Centered Earth Fixed
+      MINIWARP_LLH=2,   // Lat/Lon/H WGS84
+      MINIWARP_DATA=3,  // data coordinates
+      MINIWARP_LOCAL=4, // local coordinates
+      MINIWARP_TILE=5,  // tile coordinates
+      MINIWARP_WARP=6   // warp coordinates
+      };
 
    //! default constructor
    miniwarp();
