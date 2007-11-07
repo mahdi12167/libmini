@@ -4,29 +4,27 @@
 
 #include "shaderbase.h"
 
-namespace shaderbase {
+unsigned char *shaderbase::VISBATHYMAP=NULL;
+int shaderbase::VISBATHYWIDTH=0,shaderbase::VISBATHYHEIGHT=0,shaderbase::VISBATHYCOMPS=0;
+int shaderbase::VISBATHYMOD=0;
 
-static unsigned char *VISBATHYMAP=NULL;
-static int VISBATHYWIDTH=0,VISBATHYHEIGHT=0,VISBATHYCOMPS=0;
-static int VISBATHYMOD=0;
-
-static unsigned char *NPRBATHYMAP=NULL;
-static int NPRBATHYWIDTH=0,NPRBATHYHEIGHT=0,NPRBATHYCOMPS=0;
-static int NPRBATHYMOD=0;
+unsigned char *shaderbase::NPRBATHYMAP=NULL;
+int shaderbase::NPRBATHYWIDTH=0,shaderbase::NPRBATHYHEIGHT=0,shaderbase::NPRBATHYCOMPS=0;
+int shaderbase::NPRBATHYMOD=0;
 
 // enable vertex and pixel shader for VIS purposes
-void setVISshader(minicache *cache,
-                  float scale,float exaggeration,
-                  float fogstart,float fogend,
-                  float fogdensity,
-                  float fogcolor[3],
-                  float bathystart,float bathyend,
-                  float contours,
-                  float sealevel,float seabottom,
-                  float seacolor[3],
-                  float seatrans,float bottomtrans,
-                  float bottomcolor[3],
-                  float seamodulate)
+void shaderbase::setVISshader(minicache *cache,
+                              float scale,float exaggeration,
+                              float fogstart,float fogend,
+                              float fogdensity,
+                              float fogcolor[3],
+                              float bathystart,float bathyend,
+                              float contours,
+                              float sealevel,float seabottom,
+                              float seacolor[3],
+                              float seatrans,float bottomtrans,
+                              float bottomcolor[3],
+                              float seamodulate)
    {
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
@@ -271,8 +269,8 @@ void setVISshader(minicache *cache,
    }
 
 // set bathymetry color map for VIS shader
-void setVISbathymap(unsigned char *bathymap,
-                    int bathywidth,int bathyheight,int bathycomps)
+void shaderbase::setVISbathymap(unsigned char *bathymap,
+                                int bathywidth,int bathyheight,int bathycomps)
    {
    VISBATHYMAP=bathymap;
 
@@ -284,17 +282,17 @@ void setVISbathymap(unsigned char *bathymap,
    }
 
 // enable vertex and pixel shader for NPR purposes
-void setNPRshader(minicache *cache,
-                  float scale,float exaggeration,
-                  float fogstart,float fogend,
-                  float fogdensity,
-                  float fogcolor[3],
-                  float bathystart,float bathyend,
-                  float contours,
-                  float fadefactor,
-                  float sealevel,
-                  float seacolor[3],float seatrans,
-                  float seagrey)
+void shaderbase::setNPRshader(minicache *cache,
+                              float scale,float exaggeration,
+                              float fogstart,float fogend,
+                              float fogdensity,
+                              float fogcolor[3],
+                              float bathystart,float bathyend,
+                              float contours,
+                              float fadefactor,
+                              float sealevel,
+                              float seacolor[3],float seatrans,
+                              float seagrey)
    {
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
@@ -494,8 +492,8 @@ void setNPRshader(minicache *cache,
    }
 
 // set bathymetry color map for NPR shader
-void setNPRbathymap(unsigned char *bathymap,
-                    int bathywidth,int bathyheight,int bathycomps)
+void shaderbase::setNPRbathymap(unsigned char *bathymap,
+                                int bathywidth,int bathyheight,int bathycomps)
    {
    NPRBATHYMAP=bathymap;
 
@@ -507,11 +505,9 @@ void setNPRbathymap(unsigned char *bathymap,
    }
 
 // disable vertex and pixel shaders
-void unsetshaders(minicache *cache)
+void shaderbase::unsetshaders(minicache *cache)
    {
    cache->usevtxshader(0);
    cache->usepixshader(0);
    cache->useseashader(0);
    }
-
-}
