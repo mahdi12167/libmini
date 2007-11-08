@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#define NOGREYCSTORATION
-
 #include <pthread.h>
 
 #include "minitime.h"
@@ -10,7 +8,7 @@
 
 namespace greycbase {
 
-#ifndef NOGREYCSTORATION
+#ifdef GREYCSTORATION
 
 #define cimg_display_type 0
 #define cimg_plugin "plugins/greycstoration.h"
@@ -22,7 +20,7 @@ using namespace cimg_library;
 void denoiseGREYCimage(unsigned char *image,int width,int height,
                        float p,float a)
    {
-#ifndef NOGREYCSTORATION
+#ifdef GREYCSTORATION
 
    const float amplitude      = 40.0f;
    const float sharpness      = p; // -p option of greycstoration
