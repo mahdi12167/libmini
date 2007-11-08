@@ -1,6 +1,5 @@
-#include "minibase.h"
-
-#include "ministub.hpp"
+#include "mini/minibase.h"
+#include "mini/ministub.hpp"
 
 int size=3;
 

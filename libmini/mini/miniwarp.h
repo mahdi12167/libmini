@@ -14,12 +14,12 @@ class minicoord
    //! generic coordinate systems
    enum MINICOORD
       {
-      MINICOORD_NONE=0,   // undefined
-      MINICOORD_ECEF=1,   // Earth Centered Earth Fixed
-      MINICOORD_LLH=2,    // Lat/Lon/H WGS84
-      MINICOORD_UTM=3,    // Universal Transverse Mercator
-      MINICOORD_LINEAR=4, // linear space
-      MINICOORD_NONLIN=5  // non-linear space
+      MINICOORD_NONE,   // undefined
+      MINICOORD_ECEF,   // Earth Centered Earth Fixed
+      MINICOORD_LLH,    // Lat/Lon/H WGS84
+      MINICOORD_UTM,    // Universal Transverse Mercator
+      MINICOORD_LINEAR, // linear space
+      MINICOORD_NONLIN  // non-linear space
       };
 
    //! default constructor
@@ -70,12 +70,12 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_PLAIN=0,  // plain coordinates
-      MINIWARP_DATA=1,   // data coordinates
-      MINIWARP_LOCAL=2,  // local coordinates
-      MINIWARP_AFFINE=3, // affine coordinates
-      MINIWARP_TILE=4,   // tile coordinates
-      MINIWARP_WARP=5    // warp coordinates
+      MINIWARP_PLAIN,  // plain coordinates
+      MINIWARP_DATA,   // data coordinates
+      MINIWARP_LOCAL,  // local coordinates
+      MINIWARP_AFFINE, // affine coordinates
+      MINIWARP_TILE,   // tile coordinates
+      MINIWARP_WARP    // warp coordinates
       };
 
    //! default constructor

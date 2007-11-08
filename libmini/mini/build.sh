@@ -15,6 +15,9 @@
 # clean    -> remove object files
 # tidy     -> clean up all temporary files
 
+# installation directory
+set INSTALL="/usr/local"
+
 set rule=$1
 if ($rule == "") set rule="lib"
 
@@ -39,7 +42,10 @@ if ($rule == "vdeps") then
    set depend="vdepend"
 endif
 
-if ($rule == "install") exec make install
+if ($rule == "install") then
+   if ($option != "") set INSTALL=$option
+   exec make INSTALL="$INSTALL" install
+endif
 
 if ($rule == "deps") then
    if ($HOSTTYPE == "iris4d") make MAKEDEPEND="CC -M$stub" TARGET=IRIX $depend

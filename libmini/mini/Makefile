@@ -16,8 +16,6 @@ VMODS	= viewerbase\
 	  jpegbase squishbase greycbase\
 	  shaderbase
 
-INSTALL	= /usr/local
-
 SRCS	= $(MODS:=.cpp)
 OBJS	= $(MODS:=.o)
 
@@ -49,7 +47,7 @@ example: lib
 	$(COMPILER) $(OPTS) -o example -I.. example.cpp -L. -lMini $(LINK) -lGL -lGLU -lm
 
 stubtest: lib
-	$(COMPILER) $(OPTS) -o stubtest stubtest.cpp -L. -lMini -lm
+	$(COMPILER) $(OPTS) -o stubtest -I.. stubtest.cpp -L. -lMini -lm
 
 viewer:	lib libsfx
 	$(COMPILER) $(OPTS) -o viewer -I.. viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lsquish -lm
@@ -69,7 +67,7 @@ clean:
 	@-$(RM) $(OBJS) $(VOBJS) ii_files
 
 tidy:	clean
-	@-$(RM) *~ Makefile.d Debug Release *.ncb *.opt *.plg
+	@-$(RM) *~ Makefile.d Debug* Release* *.ncb *.opt *.plg
 	@-$(RM) libMini*.a example stubtest viewer
 
 zip:	tidy
