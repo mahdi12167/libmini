@@ -1,5 +1,5 @@
-#include "minibase.h"
-#include "mini.h"
+#include <mini/minibase.h>
+#include <mini/mini.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>

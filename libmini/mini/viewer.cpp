@@ -71,14 +71,14 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 // main section:
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "miniOGL.h"
+#include <mini/miniOGL.h>
 
-#include "minitile.h"
-#include "minitext.h"
+#include <mini/minitile.h>
+#include <mini/minitext.h>
 
-#include "viewerbase.h"
+#include <mini/viewerbase.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
