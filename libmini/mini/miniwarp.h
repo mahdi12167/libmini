@@ -4,6 +4,7 @@
 #define MINIWARP_H
 
 #include "miniv3d.h"
+#include "miniv4d.h"
 
 //! geo-referenced coordinates
 class minicoord
@@ -11,7 +12,7 @@ class minicoord
    public:
 
    //! generic coordinate systems
-   enum
+   enum MINICOORD
       {
       MINICOORD_NONE=0,   // undefined
       MINICOORD_ECEF=1,   // Earth Centered Earth Fixed
@@ -28,23 +29,30 @@ class minicoord
    minicoord(const minicoord &c);
 
    //! constructors
-   minicoord(const miniv3d &v,const int t,const int zone=0,const int datum=0);
-   minicoord(const double cx,const double cy,const double cz,const int t,const int zone=0,const int datum=0);
+   minicoord(const miniv3d &v,const int t);
+   minicoord(const miniv3d &v,const int t,const int zone,const int datum);
+   minicoord(const miniv4d &v,const int t);
+   minicoord(const miniv4d &v,const int t,const int zone,const int datum);
+   minicoord(const double cx,const double cy,const double cz,const int t);
+   minicoord(const double cx,const double cy,const double cz,const int t,const int zone,const int datum);
 
    //! destructor
    ~minicoord();
 
-   //! convert from one coordinate system 2 another
+   //! convert from 1 coordinate system 2 another
    void convert2(const int t,const int zone=0,const int datum=0);
 
    //! linear conversion defined by 3x3 matrix and offset
-   void convert2(const miniv3d mtx[3],const miniv3d offset);
+   void convert(const miniv3d mtx[3],const miniv3d offset);
+
+   //! linear conversion defined by 4x3 matrix
+   void convert(const miniv4d mtx[3]);
 
    //! non-linear conversion defined by point 2 point correspondences
-   void convert2(const miniv3d src[2], // bounding box in original domain
-                 const miniv3d dst[8]); // 8 points in mapped domain
+   void convert(const miniv3d src[2], // bounding box in original domain
+                const miniv3d dst[8]); // 8 points in mapped domain
 
-   miniv3d vec; // geo-referenced coordinates
+   miniv4d vec; // geo-referenced coordinates (plus time)
    int type; // actual coordinate system type
 
    int utm_zone,utm_datum; // actual UTM zone and datum
@@ -60,7 +68,7 @@ class miniwarp
    public:
 
    //! global coordinate systems
-   enum
+   enum MINIWARP
       {
       MINIWARP_PLAIN=0,  // plain coordinates
       MINIWARP_DATA=1,   // data coordinates
@@ -77,17 +85,23 @@ class miniwarp
    ~miniwarp();
 
    //! define data coordinates
-   void def_data(const miniv3d bbox[2], // bounding box in data domain
+   void def_data(const miniv3d bboxDAT[2], // bounding box in data domain
                  const minicoord bboxGEO[2]); // bounding box in geo-referenced domain
 
    //! define conversion to local coordinates
-   void def_2local(const miniv3d bbox[2]); // bounding box in orthonormal domain
+   void def_2local(const miniv3d bboxLOC[2]); // bounding box in ortho-normal domain
 
-   //! define conversion to afine coordinates
-   void def_2affine(const miniv3d mtx[3]); // affine transformation
+   //! define conversion to affine coordinates
+   void def_2affine(const miniv4d mtx[3]); // affine transformation
 
    //! define warp coordinates
-   void def_warp(const minicoord &origin); // destination coordinate system
+   void def_warp(const minicoord::MINICOORD sys); // warp coordinate system
+
+   //! set actual warp
+   void setwarp(MINIWARP from,MINIWARP to);
+
+   //! get actual warp matrix
+   void getwarp(miniv4d mtx[3]);
 
    protected:
 

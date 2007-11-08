@@ -9,8 +9,9 @@
 // default constructor
 minicoord::minicoord()
    {
+   vec=miniv4d(0.0);
    type=MINICOORD_NONE;
-   vec=miniv3d(0.0,0.0,0.0);
+
    utm_zone=utm_datum=0;
    }
 
@@ -26,7 +27,34 @@ minicoord::minicoord(const minicoord &c)
 
 // constructors:
 
+minicoord::minicoord(const miniv3d &v,const int t)
+   {
+   vec=miniv4d(v.x,v.y,v.z);
+   type=t;
+
+   utm_zone=0;
+   utm_datum=0;
+   }
+
 minicoord::minicoord(const miniv3d &v,const int t,const int zone,const int datum)
+   {
+   vec=miniv4d(v.x,v.y,v.z);
+   type=t;
+
+   utm_zone=zone;
+   utm_datum=datum;
+   }
+
+minicoord::minicoord(const miniv4d &v,const int t)
+   {
+   vec=v;
+   type=t;
+
+   utm_zone=0;
+   utm_datum=0;
+   }
+
+minicoord::minicoord(const miniv4d &v,const int t,const int zone,const int datum)
    {
    vec=v;
    type=t;
@@ -35,14 +63,16 @@ minicoord::minicoord(const miniv3d &v,const int t,const int zone,const int datum
    utm_datum=datum;
    }
 
+minicoord::minicoord(const double cx,const double cy,const double cz,const int t)
+   {minicoord(miniv3d(cx,cy,cz),t);}
+
 minicoord::minicoord(const double cx,const double cy,const double cz,const int t,const int zone,const int datum)
    {minicoord(miniv3d(cx,cy,cz),t,zone,datum);}
 
 // destructor
 minicoord::~minicoord() {}
 
-// convert from one coordinate system 2 another:
-
+// convert from 1 coordinate system 2 another
 void minicoord::convert2(const int t,const int zone,const int datum)
    {
    double xyz[3];
@@ -54,14 +84,14 @@ void minicoord::convert2(const int t,const int zone,const int datum)
             {
             case MINICOORD_UTM:
                miniutm::LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
-               vec=miniv3d(xyz[0],xyz[1],vec.z);
+               vec=miniv4d(xyz[0],xyz[1],vec.z,vec.w);
                type=t;
                utm_zone=zone;
                utm_datum=datum;
                break;
             case MINICOORD_ECEF:
                miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               vec=miniv3d(xyz);
+               vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                utm_zone=0;
                utm_datum=0;
@@ -75,7 +105,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
             {
             case MINICOORD_LLH:
                miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
-               vec=miniv3d(xyz[0],xyz[1],vec.z);
+               vec=miniv4d(xyz[0],xyz[1],vec.z,vec.w);
                type=t;
                utm_zone=0;
                utm_datum=0;
@@ -83,7 +113,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
             case MINICOORD_ECEF:
                miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
                miniutm::LLH2ECEF(xyz[1],xyz[0],vec.z,xyz);
-               vec=miniv3d(xyz);
+               vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                utm_zone=0;
                utm_datum=0;
@@ -110,7 +140,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                xyz[2]=vec.z;
                miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                miniutm::LL2UTM(vec.y,vec.x,zone,datum,&xyz[0],&xyz[1]);
-               vec=miniv3d(xyz[0],xyz[1],vec.z);
+               vec=miniv4d(xyz[0],xyz[1],vec.z,vec.w);
                type=t;
                utm_zone=zone;
                utm_datum=datum;
@@ -124,44 +154,61 @@ void minicoord::convert2(const int t,const int zone,const int datum)
       }
    }
 
-void minicoord::convert2(const miniv3d mtx[3],const miniv3d offset)
+// linear conversion defined by 3x3 matrix and offset
+void minicoord::convert(const miniv3d mtx[3],const miniv3d offset)
    {
    miniv3d v;
 
    if (type==MINICOORD_NONE) ERRORMSG();
 
-   v.x=mtx[0]*vec;
-   v.y=mtx[1]*vec;
-   v.z=mtx[2]*vec;
+   v=miniv3d(vec.x,vec.y,vec.z);
 
-   vec=v+offset;
+   vec.x=mtx[0]*v+offset.x;
+   vec.y=mtx[1]*v+offset.y;
+   vec.z=mtx[2]*v+offset.z;
 
    type=MINICOORD_LINEAR;
    }
 
-void minicoord::convert2(const miniv3d src[2],const miniv3d dst[8])
+// linear conversion defined by 4x3 matrix
+void minicoord::convert(const miniv4d mtx[3])
    {
-   miniv3d v,d;
+   miniv4d v;
+
+   if (type==MINICOORD_NONE) ERRORMSG();
+
+   v=miniv4d(vec.x,vec.y,vec.z,1.0);
+
+   vec.x=mtx[0]*v;
+   vec.y=mtx[1]*v;
+   vec.z=mtx[2]*v;
+
+   type=MINICOORD_LINEAR;
+   }
+
+// non-linear conversion defined by point 2 point correspondences
+void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
+   {
+   miniv3d u,v;
 
    if (type==MINICOORD_NONE) ERRORMSG();
 
    if (src[0]==src[1]) ERRORMSG();
 
-   v=vec-src[0];
-   d=src[1]-src[0];
+   u.x=(vec.x-src[0].x)/(src[1].x-src[0].x);
+   u.y=(vec.y-src[0].y)/(src[1].y-src[0].y);
+   u.z=(vec.z-src[0].z)/(src[1].z-src[0].z);
 
-   v.x/=d.x;
-   v.y/=d.y;
-   v.z/=d.z;
+   v=(1.0-u.z)*((1.0-u.y)*((1.0-u.x)*dst[0]+
+                           u.x*dst[1])+
+                u.y*((1.0-u.x)*dst[2]+
+                     u.x*dst[3]))+
+     u.z*((1.0-u.y)*((1.0-u.x)*dst[4]+
+                     u.x*dst[5])+
+          u.y*((1.0-u.x)*dst[6]+
+               u.x*dst[7]));
 
-   vec=(1.0-v.z)*((1.0-v.y)*((1.0-v.x)*dst[0]+
-                             v.x*dst[1])+
-                  v.y*((1.0-v.x)*dst[2]+
-                       v.x*dst[3]))+
-       v.z*((1.0-v.y)*((1.0-v.x)*dst[4]+
-                             v.x*dst[5])+
-                  v.y*((1.0-v.x)*dst[6]+
-                       v.x*dst[7]));
+   vec=miniv4d(v.x,v.y,v.z,vec.w);
 
    type=MINICOORD_NONLIN;
    }
@@ -169,9 +216,11 @@ void minicoord::convert2(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
+   //!! not yet implemented
    }
 
 // destructor
 miniwarp::~miniwarp()
    {
+   //!! not yet implemented
    }
