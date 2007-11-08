@@ -235,43 +235,55 @@ miniwarp::miniwarp()
    FROM=TO=MINIWARP_PLAIN;
 
    MTX[0]=MTX[1]=MTX[2]=miniv4d(0.0);
+   MTX[0].x=MTX[1].y=MTX[2].z=1.0;
    }
 
 // destructor
-miniwarp::~miniwarp()
-   {
-   //!! not yet implemented
-   }
+miniwarp::~miniwarp() {}
 
 // define data coordinates
 void miniwarp::def_data(const miniv3d bboxDAT[2],
                         const minicoord bboxGEO[2])
    {
-   //!! not yet implemented
+   minicoord bbox[2];
+
+   BBOXDAT[0]=bboxDAT[0];
+   BBOXDAT[1]=bboxDAT[1];
+
+   bbox[0]=bboxGEO[0];
+   bbox[1]=bboxGEO[1];
+
+   bbox[0].convert2(minicoord::MINICOORD_LLH);
+   bbox[1].convert2(minicoord::MINICOORD_LLH);
+
+   BBOXGEO[0]=miniv3d(bbox[0].vec.x,bbox[0].vec.y,bbox[0].vec.z);
+   BBOXGEO[1]=miniv3d(bbox[1].vec.x,bbox[1].vec.y,bbox[1].vec.z);
    }
 
 // define conversion to local coordinates
 void miniwarp::def_2local(const miniv3d bboxLOC[2])
    {
-   //!! not yet implemented
+   BBOXLOC[0]=bboxLOC[0];
+   BBOXLOC[1]=bboxLOC[1];
    }
 
 // define conversion to affine coordinates
-void miniwarp::def_2affine(const miniv4d mtx[3])
+void miniwarp::def_2affine(const miniv4d mtxAFF[3])
    {
-   //!! not yet implemented
+   MTXAFF[0]=mtxAFF[0];
+   MTXAFF[1]=mtxAFF[1];
+   MTXAFF[2]=mtxAFF[2];
    }
 
 // define warp coordinates
-void miniwarp::def_warp(const minicoord::MINICOORD sys)
-   {
-   //!! not yet implemented
-   }
+void miniwarp::def_warp(const minicoord::MINICOORD sysWRP)
+   {SYSWRP=sysWRP;}
 
 // set actual warp
 void miniwarp::setwarp(MINIWARP from,MINIWARP to)
    {
-   //!! not yet implemented
+   FROM=from;
+   TO=to;
    }
 
 // get actual warp matrix

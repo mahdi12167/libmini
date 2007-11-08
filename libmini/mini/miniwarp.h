@@ -92,10 +92,10 @@ class miniwarp
    void def_2local(const miniv3d bboxLOC[2]); // bounding box in ortho-normal domain
 
    //! define conversion to affine coordinates
-   void def_2affine(const miniv4d mtx[3]); // affine transformation
+   void def_2affine(const miniv4d mtxAFF[3]); // affine transformation
 
    //! define warp coordinates
-   void def_warp(const minicoord::MINICOORD sys);
+   void def_warp(const minicoord::MINICOORD sysWRP);
 
    //! set actual warp
    void setwarp(MINIWARP from,MINIWARP to);
