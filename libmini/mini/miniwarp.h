@@ -104,10 +104,25 @@ class miniwarp
    void getwarp(miniv4d mtx[3]);
 
    //! perform warp
-   miniv3d &warp(miniv3d v);
-   miniv4d &warp(miniv4d v);
+   miniv3d warp(miniv3d v);
+   miniv4d warp(miniv4d v);
 
    protected:
+
+   miniv3d BBOXDAT[2],BBOXGEO[2];
+   miniv3d BBOXLOC[2];
+   miniv4d MTXAFF[3];
+   minicoord::MINICOORD SYSWRP;
+
+   miniv4d MTX_2DAT[3];
+   miniv4d MTX_2LOC[3];
+   miniv4d MTX_2AFF[3];
+   miniv4d MTX_2TIL[3];
+   miniv4d MTX_2WRP[3];
+
+   MINIWARP FROM,TO;
+
+   miniv4d MTX[3];
 
    private:
    };

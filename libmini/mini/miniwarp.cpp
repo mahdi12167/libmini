@@ -216,7 +216,25 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
-   //!! not yet implemented
+   BBOXDAT[0]=BBOXDAT[1]=miniv3d(0.0);
+   BBOXGEO[0]=BBOXGEO[1]=miniv3d(0.0);
+
+   BBOXLOC[0]=BBOXLOC[1]=miniv3d(0.0);
+
+   MTXAFF[0]=MTXAFF[1]=MTXAFF[2]=miniv4d(0.0);
+   MTXAFF[0].x=MTXAFF[1].y=MTXAFF[2].z=1.0;
+
+   SYSWRP=minicoord::MINICOORD_ECEF;
+
+   MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
+   MTX_2LOC[0]=MTX_2LOC[1]=MTX_2LOC[2]=miniv4d(0.0);
+   MTX_2AFF[0]=MTX_2AFF[1]=MTX_2AFF[2]=miniv4d(0.0);
+   MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
+   MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
+
+   FROM=TO=MINIWARP_PLAIN;
+
+   MTX[0]=MTX[1]=MTX[2]=miniv4d(0.0);
    }
 
 // destructor
@@ -263,13 +281,15 @@ void miniwarp::getwarp(miniv4d mtx[3])
    }
 
 // perform warp
-miniv3d &miniwarp::warp(miniv3d v)
+miniv3d miniwarp::warp(miniv3d v)
    {
    //!! not yet implemented
+   return(miniv3d(0.0));
    }
 
 // perform warp
-miniv4d &miniwarp::warp(miniv4d v)
+miniv4d miniwarp::warp(miniv4d v)
    {
    //!! not yet implemented
+   return(miniv4d(0.0));
    }
