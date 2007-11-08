@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#undef GREYCSTORATION // enable this for greycstoration support
+
 #include "minitime.h"
 
 #include "database.h"
