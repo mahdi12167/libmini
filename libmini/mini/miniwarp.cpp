@@ -376,10 +376,8 @@ void miniwarp::update_mtx()
 
       // conversion 2 tile coordinates:
 
-      //!! not yet implemented
-      MTX_2TIL[0]=miniv4d(0.0,0.0,0.0,0.0);
-      MTX_2TIL[1]=miniv4d(0.0,0.0,0.0,0.0);
-      MTX_2TIL[2]=miniv4d(0.0,0.0,0.0,0.0);
+      mlt_mtx(MTX_2TIL,INV_2AFF,INV_2LOC);
+      mlt_mtx(MTX_2TIL,MTX_2TIL,INV_2DAT);
 
       inv_mtx(INV_2TIL,MTX_2TIL);
 
