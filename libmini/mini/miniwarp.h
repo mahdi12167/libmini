@@ -3,6 +3,8 @@
 #ifndef MINIWARP_H
 #define MINIWARP_H
 
+#include "minibase.h"
+
 #include "miniv3d.h"
 #include "miniv4d.h"
 
@@ -92,7 +94,7 @@ class miniwarp
    void def_2local(const miniv3d bboxLOC[2]); // bounding box in ortho-normal domain
 
    //! define conversion to affine coordinates
-   void def_2affine(const miniv4d mtxAFF[3]); // affine transformation
+   void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
 
    //! define warp coordinates
    void def_warp(const minicoord::MINICOORD sysWRP);
@@ -114,17 +116,34 @@ class miniwarp
    miniv4d MTXAFF[3];
    minicoord::MINICOORD SYSWRP;
 
+   BOOLINT HAS_DATA;
+   BOOLINT HAS_LOCAL;
+
    miniv4d MTX_2DAT[3];
    miniv4d MTX_2LOC[3];
    miniv4d MTX_2AFF[3];
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
+   miniv4d INV_2DAT[3];
+   miniv4d INV_2LOC[3];
+   miniv4d INV_2AFF[3];
+   miniv4d INV_2TIL[3];
+   miniv4d INV_2WRP[3];
+
    MINIWARP FROM,TO;
 
    miniv4d MTX[3];
 
    private:
+
+   void update_mtx();
+   void update_wrp();
+
+   void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);
+
+   void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
+   void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);
    };
 
 #endif

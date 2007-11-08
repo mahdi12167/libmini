@@ -163,9 +163,9 @@ void minicoord::convert(const miniv3d mtx[3],const miniv3d offset)
 
    v=miniv3d(vec.x,vec.y,vec.z);
 
-   vec.x=mtx[0]*v+offset.x;
-   vec.y=mtx[1]*v+offset.y;
-   vec.z=mtx[2]*v+offset.z;
+   vec.x=v*mtx[0]+offset.x;
+   vec.y=v*mtx[1]+offset.y;
+   vec.z=v*mtx[2]+offset.z;
 
    type=MINICOORD_LINEAR;
    }
@@ -179,9 +179,9 @@ void minicoord::convert(const miniv4d mtx[3])
 
    v=miniv4d(vec.x,vec.y,vec.z,1.0);
 
-   vec.x=mtx[0]*v;
-   vec.y=mtx[1]*v;
-   vec.z=mtx[2]*v;
+   vec.x=v*mtx[0];
+   vec.y=v*mtx[1];
+   vec.z=v*mtx[2];
 
    type=MINICOORD_LINEAR;
    }
@@ -226,11 +226,19 @@ miniwarp::miniwarp()
 
    SYSWRP=minicoord::MINICOORD_ECEF;
 
+   HAS_DATA=HAS_LOCAL=FALSE;
+
    MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
    MTX_2LOC[0]=MTX_2LOC[1]=MTX_2LOC[2]=miniv4d(0.0);
    MTX_2AFF[0]=MTX_2AFF[1]=MTX_2AFF[2]=miniv4d(0.0);
    MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
    MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
+
+   INV_2DAT[0]=INV_2DAT[1]=INV_2DAT[2]=miniv4d(0.0);
+   INV_2LOC[0]=INV_2LOC[1]=INV_2LOC[2]=miniv4d(0.0);
+   INV_2AFF[0]=INV_2AFF[1]=INV_2AFF[2]=miniv4d(0.0);
+   INV_2TIL[0]=INV_2TIL[1]=INV_2TIL[2]=miniv4d(0.0);
+   INV_2WRP[0]=INV_2WRP[1]=INV_2WRP[2]=miniv4d(0.0);
 
    FROM=TO=MINIWARP_PLAIN;
 
@@ -258,6 +266,10 @@ void miniwarp::def_data(const miniv3d bboxDAT[2],
 
    BBOXGEO[0]=miniv3d(bbox[0].vec.x,bbox[0].vec.y,bbox[0].vec.z);
    BBOXGEO[1]=miniv3d(bbox[1].vec.x,bbox[1].vec.y,bbox[1].vec.z);
+
+   HAS_DATA=TRUE;
+
+   update_mtx();
    }
 
 // define conversion to local coordinates
@@ -265,6 +277,10 @@ void miniwarp::def_2local(const miniv3d bboxLOC[2])
    {
    BBOXLOC[0]=bboxLOC[0];
    BBOXLOC[1]=bboxLOC[1];
+
+   HAS_LOCAL=TRUE;
+
+   update_mtx();
    }
 
 // define conversion to affine coordinates
@@ -273,35 +289,187 @@ void miniwarp::def_2affine(const miniv4d mtxAFF[3])
    MTXAFF[0]=mtxAFF[0];
    MTXAFF[1]=mtxAFF[1];
    MTXAFF[2]=mtxAFF[2];
+
+   update_mtx();
    }
 
 // define warp coordinates
 void miniwarp::def_warp(const minicoord::MINICOORD sysWRP)
-   {SYSWRP=sysWRP;}
+   {
+   SYSWRP=sysWRP;
+
+   update_mtx();
+   }
 
 // set actual warp
 void miniwarp::setwarp(MINIWARP from,MINIWARP to)
    {
    FROM=from;
    TO=to;
+
+   update_wrp();
    }
 
 // get actual warp matrix
 void miniwarp::getwarp(miniv4d mtx[3])
    {
-   //!! not yet implemented
+   mtx[0]=MTX[0];
+   mtx[1]=MTX[1];
+   mtx[2]=MTX[2];
    }
 
 // perform warp
 miniv3d miniwarp::warp(miniv3d v)
    {
-   //!! not yet implemented
-   return(miniv3d(0.0));
+   minicoord c;
+
+   c=minicoord(v,minicoord::MINICOORD_LINEAR);
+   c.convert(MTX);
+
+   return(miniv3d(c.vec.x,c.vec.y,c.vec.z));
    }
 
 // perform warp
 miniv4d miniwarp::warp(miniv4d v)
    {
+   minicoord c;
+
+   c=minicoord(v,minicoord::MINICOORD_LINEAR);
+   c.convert(MTX);
+
+   return(miniv4d(c.vec.x,c.vec.y,c.vec.z,v.w));
+   }
+
+// update conversion matrices
+void miniwarp::update_mtx()
+   {
+   if (HAS_DATA)
+      {
+      // conversion 2 data coordinates:
+
+      MTX_2DAT[0]=miniv4d(BBOXDAT[1].x-BBOXDAT[0].x,0.0,0.0,BBOXDAT[0].x);
+      MTX_2DAT[1]=miniv4d(0.0,BBOXDAT[1].y-BBOXDAT[0].y,0.0,BBOXDAT[0].y);
+      MTX_2DAT[2]=miniv4d(0.0,0.0,BBOXDAT[1].z-BBOXDAT[0].z,BBOXDAT[0].z);
+
+      inv_mtx(INV_2DAT,MTX_2DAT);
+      }
+
+   if (HAS_DATA && HAS_LOCAL)
+      {
+      // conversion 2 local coordinates:
+
+      MTX_2LOC[0]=miniv4d(BBOXLOC[1].x-BBOXLOC[0].x,0.0,0.0,BBOXLOC[0].x);
+      MTX_2LOC[1]=miniv4d(0.0,BBOXLOC[1].y-BBOXLOC[0].y,0.0,BBOXLOC[0].y);
+      MTX_2LOC[2]=miniv4d(0.0,0.0,BBOXLOC[1].z-BBOXLOC[0].z,BBOXLOC[0].z);
+
+      mlt_mtx(MTX_2LOC,INV_2DAT,MTX_2LOC);
+
+      inv_mtx(INV_2LOC,MTX_2LOC);
+
+      // conversion 2 affine coordinates:
+
+      MTX_2AFF[0]=MTXAFF[0];
+      MTX_2AFF[1]=MTXAFF[1];
+      MTX_2AFF[2]=MTXAFF[2];
+
+      inv_mtx(INV_2AFF,MTX_2AFF);
+
+      // conversion 2 tile coordinates:
+
+      //!! not yet implemented
+      MTX_2TIL[0]=miniv4d(0.0,0.0,0.0,0.0);
+      MTX_2TIL[1]=miniv4d(0.0,0.0,0.0,0.0);
+      MTX_2TIL[2]=miniv4d(0.0,0.0,0.0,0.0);
+
+      inv_mtx(INV_2TIL,MTX_2TIL);
+
+      // conversion 2 warp coordinates:
+
+      //!! not yet implemented
+      MTX_2WRP[0]=miniv4d(0.0,0.0,0.0,0.0);
+      MTX_2WRP[1]=miniv4d(0.0,0.0,0.0,0.0);
+      MTX_2WRP[2]=miniv4d(0.0,0.0,0.0,0.0);
+
+      inv_mtx(INV_2WRP,MTX_2WRP);
+      }
+   }
+
+// update warp matrix
+void miniwarp::update_wrp()
+   {
    //!! not yet implemented
-   return(miniv4d(0.0));
+   }
+
+// multiply two 4x3 matrices
+void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3])
+   {
+   int i;
+
+   miniv4d m[3];
+
+   for (i=0; i<3; i++)
+      {
+      m[i].x=mtx1[i].x*mtx2[0].x+mtx1[i].y*mtx2[1].x+mtx1[i].z*mtx2[2].x;
+      m[i].y=mtx1[i].x*mtx2[0].y+mtx1[i].y*mtx2[1].y+mtx1[i].z*mtx2[2].y;
+      m[i].z=mtx1[i].x*mtx2[0].z+mtx1[i].y*mtx2[1].z+mtx1[i].z*mtx2[2].z;
+      m[i].w=mtx1[i].x*mtx2[0].w+mtx1[i].y*mtx2[1].w+mtx1[i].z*mtx2[2].w+mtx1[i].w;
+      }
+
+   mtx[0]=m[0];
+   mtx[1]=m[1];
+   mtx[2]=m[2];
+   }
+
+// invert a 3x3 matrix
+void miniwarp::inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
+   {
+   double det;
+   miniv3d m[3];
+
+   det=mtx[1].x*(mtx[3].z*mtx[2].y-mtx[2].z*mtx[3].y)+
+       mtx[1].y*(mtx[2].z*mtx[3].x-mtx[3].z*mtx[2].x)+
+       mtx[1].z*(mtx[3].y*mtx[2].x-mtx[2].y*mtx[3].x);
+
+   if (det==0.0) inv[0]=inv[1]=inv[2]=miniv3d(0.0);
+   else
+      {
+      det=1.0/det;
+
+      m[0]=mtx[0];
+      m[1]=mtx[1];
+      m[2]=mtx[2];
+
+      inv[1].x=det*(m[3].z*m[2].y-m[2].z*m[3].y);
+      inv[2].x=det*(m[2].z*m[3].x-m[3].z*m[2].x);
+      inv[3].x=det*(m[3].y*m[2].x-m[2].y*m[3].x);
+      inv[1].y=det*(m[1].z*m[3].y-m[3].z*m[1].y);
+      inv[2].y=det*(m[3].z*m[1].x-m[1].z*m[3].x);
+      inv[3].y=det*(m[1].y*m[3].x-m[3].y*m[1].x);
+      inv[1].z=det*(m[2].z*m[1].y-m[1].z*m[2].y);
+      inv[2].z=det*(m[1].z*m[2].x-m[2].z*m[1].x);
+      inv[3].z=det*(m[2].y*m[1].x-m[1].y*m[2].x);
+      }
+   }
+
+// invert a 4x3 matrix
+void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
+   {
+   miniv3d m[3];
+   miniv4d m1[3],m2[3];
+
+   m[0]=miniv3d(mtx[0].x,mtx[0].y,mtx[0].z);
+   m[1]=miniv3d(mtx[1].x,mtx[1].y,mtx[1].z);
+   m[2]=miniv3d(mtx[2].x,mtx[2].y,mtx[2].z);
+
+   inv_mtx(m,m);
+
+   m1[0]=miniv4d(1.0,0.0,0.0,-mtx[0].z);
+   m1[1]=miniv4d(0.0,1.0,0.0,-mtx[1].z);
+   m1[2]=miniv4d(0.0,0.0,1.0,-mtx[2].z);
+
+   m2[0]=miniv4d(m[0].x,m[0].y,m[0].z);
+   m2[1]=miniv4d(m[1].x,m[1].y,m[1].z);
+   m2[2]=miniv4d(m[2].x,m[2].y,m[2].z);
+
+   mlt_mtx(inv,m1,m2);
    }
