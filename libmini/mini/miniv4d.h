@@ -12,13 +12,12 @@ class miniv4d
 
    //! copy constructor
    miniv4d(const miniv4d &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
-   miniv4d(const miniv4f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=(double)v.w;}
-   miniv4d(const miniv3d &v) {x=v.x; y=v.y; z=v.z; w=0.0;}
-   miniv4d(const miniv3f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=0.0;}
 
    //! constructors
-   miniv4d(const double v,const double vw=0.0) {x=y=z=v; w=vw;}
-   miniv4d(const double vx,const double vy,const double vz,const double vw=0.0) {x=vx; y=vy; z=vz; w=vw;}
+   miniv4d(const double v) {x=y=z=v; w=0.0;}
+   miniv4d(const double v,const double vw) {x=y=z=v; w=vw;}
+   miniv4d(const double vx,const double vy,const double vz) {x=vx; y=vy; z=vz; w=0.0;}
+   miniv4d(const double vx,const double vy,const double vz,const double vw) {x=vx; y=vy; z=vz; w=vw;}
 
    //! array constructors
    miniv4d(const double ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}

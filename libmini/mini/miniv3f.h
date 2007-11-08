@@ -12,9 +12,6 @@ class miniv3f
 
    //! copy constructor
    miniv3f(const miniv3f &v) {x=v.x; y=v.y; z=v.z;}
-   miniv3f(const miniv3d &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z;}
-   miniv3f(const miniv4f &v) {x=v.x; y=v.y; z=v.z;}
-   miniv3f(const miniv4d &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z;}
 
    //! constructors
    miniv3f(const float v) {x=y=z=v;}
