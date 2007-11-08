@@ -426,21 +426,22 @@ void viewerbase::conversionhook(int israwdata,unsigned char *srcdata,unsigned in
 
       case 2: // PNG
 
-         if (israwdata==0) ERRORMSG();
+         if (israwdata==0)
+            ERRORMSG(); //!! not yet implemented
          else
             switch (obj->type)
                {
                case 1:
-                  ERRORMSG();
+                  ERRORMSG(); //!! not yet implemented
                   break;
                case 2:
-                  ERRORMSG();
+                  ERRORMSG(); //!! not yet implemented
                   break;
                case 3:
-                  ERRORMSG();
+                  ERRORMSG(); //!! not yet implemented
                   break;
                case 4:
-                  ERRORMSG();
+                  ERRORMSG(); //!! not yet implemented
                   break;
                default: ERRORMSG();
                }
