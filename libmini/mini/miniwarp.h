@@ -103,6 +103,10 @@ class miniwarp
    //! get actual warp matrix
    void getwarp(miniv4d mtx[3]);
 
+   //! warp coordinates
+   miniv3d &warp(miniv3d v);
+   miniv4d &warp(miniv4d v);
+
    protected:
 
    private:
