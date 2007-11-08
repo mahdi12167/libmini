@@ -224,3 +224,52 @@ miniwarp::~miniwarp()
    {
    //!! not yet implemented
    }
+
+// define data coordinates
+void miniwarp::def_data(const miniv3d bboxDAT[2],
+                        const minicoord bboxGEO[2])
+   {
+   //!! not yet implemented
+   }
+
+// define conversion to local coordinates
+void miniwarp::def_2local(const miniv3d bboxLOC[2])
+   {
+   //!! not yet implemented
+   }
+
+// define conversion to affine coordinates
+void miniwarp::def_2affine(const miniv4d mtx[3])
+   {
+   //!! not yet implemented
+   }
+
+// define warp coordinates
+void miniwarp::def_warp(const minicoord::MINICOORD sys)
+   {
+   //!! not yet implemented
+   }
+
+// set actual warp
+void miniwarp::setwarp(MINIWARP from,MINIWARP to)
+   {
+   //!! not yet implemented
+   }
+
+// get actual warp matrix
+void miniwarp::getwarp(miniv4d mtx[3])
+   {
+   //!! not yet implemented
+   }
+
+// perform warp
+miniv3d &miniwarp::warp(miniv3d v)
+   {
+   //!! not yet implemented
+   }
+
+// perform warp
+miniv4d &miniwarp::warp(miniv4d v)
+   {
+   //!! not yet implemented
+   }

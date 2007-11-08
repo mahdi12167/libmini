@@ -95,7 +95,7 @@ class miniwarp
    void def_2affine(const miniv4d mtx[3]); // affine transformation
 
    //! define warp coordinates
-   void def_warp(const minicoord::MINICOORD sys); // warp coordinate system
+   void def_warp(const minicoord::MINICOORD sys);
 
    //! set actual warp
    void setwarp(MINIWARP from,MINIWARP to);
@@ -103,7 +103,7 @@ class miniwarp
    //! get actual warp matrix
    void getwarp(miniv4d mtx[3]);
 
-   //! warp coordinates
+   //! perform warp
    miniv3d &warp(miniv3d v);
    miniv4d &warp(miniv4d v);
 

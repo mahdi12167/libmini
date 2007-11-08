@@ -810,9 +810,9 @@ int databuf::loadPPMcompressed(const char *filename)
          type=5;
          data=cdata;
          bytes=cbytes;
-         }
 
-      savedata(str);
+         savedata(str);
+         }
       }
 
    return(1);
