@@ -747,6 +747,12 @@
                                 RelativePath="miniv3d.h">
                         </File>
                         <File
+                                RelativePath="miniv4f.h">
+                        </File>
+                        <File
+                                RelativePath="miniv4d.h">
+                        </File>
+                        <File
                                 RelativePath="minitime.h">
                         </File>
                         <File

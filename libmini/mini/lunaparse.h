@@ -2,7 +2,7 @@
 
 /*
 
-This module parses the UPN-style language LUNA according to the following EBNF grammar:
+This module parses the RPN-style language LUNA according to the following EBNF grammar:
 
 LUNA        ::= { include | declaration }
 include     ::= "include" <string>
