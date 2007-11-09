@@ -1913,32 +1913,52 @@ See the examples below how to use the viewer from the command line:<p>
    local usage:
       viewer &lt;local.base.path&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; [&lt;columns&gt; &lt;rows&gt; [&lt;max.texture.size&gt;]] [-p]
 
-   local example:
+   local example (for loading the data of the Hawaii Demo):
       viewer ~user/tilesets/ Hawaii/ tiles landsat
-</pre>
 
-If the data has been resampled with vtb, the two ini files for the
-elevation and the imagery should also be made available in the tile
-set path. The libMini Viewer tries to guess their name by adding the
-.ini suffix to the respective subpath. If the ini files are available
-under these names, the viewer automatically retrieves the number of
-columns and rows and all other required settings from the ini files so
-that these values do not need to be specified on the command line.<p>
-
-The optional -p switch tells the viewer that the specified tile set is
-in the PNM format. The expected coordinate system when using this
-format is lat/lon (geographic coordinates). Otherwise the viewer
-expects a metric coordinate system, e.g. UTM.<p>
-
-The command line for remote tile set access:<p>
-
-<pre>
    remote usage:
       viewer &lt;http-address&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; [&lt;columns&gt; &lt;rows&gt; [&lt;max.texture.size&gt;]] [-p]
 
    remote example:
       viewer "http://server.inter.net/tilesets/" tileset/ elevation imagery
 </pre>
+
+If the data has been resampled with vtb, the two ini files for the
+elevation and the imagery should also be made available in the tile
+set path. The libMini Viewer tries to guess their names by adding the
+.ini suffix to the respective subpath. The default setting for the vtp
+subpaths is "elev" and "imag". If you used this naming convention when
+generating the elevation and imagery tile sets with vtp, you can start
+the libMini Viewer with just one argument:
+
+<pre>
+   short usage:
+      viewer &lt;url/path&gt;
+</pre>
+
+The corresponding directory layout for the short use case is as follows:
+
+<pre>
+   url/
+       path/
+            elev/
+                 tile.0-0.db
+                 ...
+            elev.ini
+            imag/
+                 tile.0-0.db
+                 ...
+            imag.ini
+</pre>
+
+If the ini files are available under these names, the viewer
+automatically retrieves the number of columns and rows and all other
+required settings from the ini files. Otherwise, the number of columns
+and rows need to be specified on the command line. The optional -p
+switch tells the viewer that the specified tile set is in the PNM
+format. The expected coordinate system when using this format is
+lat/lon (geographic coordinates). Otherwise the viewer expects a
+metric coordinate system, e.g. UTM.<p>
 
 The initial viewing settings are very conservative, so that the first
 view probably will not look adequate. To get a better visualization,
@@ -1948,10 +1968,10 @@ texture detail level (range). To check these parameters press the h
 key. This turns on the head up display (HUD). The HUD also displays
 information about the available keyboard controls.<p>
 
-Optionally, you can view waypoints that were recorded with a GPS
-unit, for example. The waypoints must be contained in a definition
-file named "Waypoints.txt" in the base directory of the tile set. Each
-5 consecutive lines separated by a single empty line define one
+Optionally, you can view waypoints that were gathered with a GPS unit,
+for example. The waypoints must be contained in a definition file
+named "Waypoints.txt" in the base directory of the tile set. Each 5
+consecutive lines separated by a single empty line define one
 waypoint. Here is an example:<p>
 
 <pre>
@@ -1972,7 +1992,7 @@ The coordinate system of the first waypoint in the definition file
 must match the coordinate system of the tile set. Then the waypoints
 will be displayed as signposts at the corresponding position in the
 tile set. The first waypoint also determines the initial point of view
-when the libMini Viewer is started.<p>
+when starting the libMini Viewer.<p>
 
 You can also run the libMini Viewer in anaglyph stereo mode by
 appending "-s -a" to the command line. You need to put on red/cyan
