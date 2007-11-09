@@ -105,9 +105,16 @@ class miniwarp
    //! get actual warp matrix
    void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
-   //! perform warp
-   miniv3d warp(miniv3d v); // fourth component is assumed to be 1
-   miniv4d warp(miniv4d v); // fourth component is conserved
+   //! get actual inverse transpose warp matrix
+   void getinvtra(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
+
+   //! perform warp of a point
+   miniv3d warp(const miniv3d &v); // fourth component is assumed to be 1
+   miniv4d warp(const miniv4d &v); // fourth component is conserved
+
+   //! perform warp of a vector using the inverse transpose
+   miniv3d invtra(const miniv3d &v); // fourth component is assumed to be 1
+   miniv4d invtra(const miniv4d &v); // fourth component is conserved
 
    protected:
 
@@ -135,11 +142,13 @@ class miniwarp
    MINIWARP FROM,TO;
 
    miniv4d MTX[3];
+   miniv4d INVTRA[3];
 
    private:
 
    void update_mtx();
    void update_wrp();
+   void update_inv();
 
    void calc_wrp();
 

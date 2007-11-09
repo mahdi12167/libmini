@@ -305,6 +305,7 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
    TO=to;
 
    update_wrp();
+   update_inv();
    }
 
 // get actual warp matrix
@@ -315,26 +316,40 @@ void miniwarp::getwarp(miniv4d mtx[3])
    mtx[2]=MTX[2];
    }
 
-// perform warp
-miniv3d miniwarp::warp(miniv3d v)
+// get actual inverse transpose warp matrix
+void miniwarp::getinvtra(miniv4d mtx[3])
    {
-   minicoord c;
-
-   c=minicoord(v,minicoord::MINICOORD_LINEAR);
-   c.convert(MTX);
-
-   return(miniv3d(c.vec.x,c.vec.y,c.vec.z));
+   mtx[0]=INVTRA[0];
+   mtx[1]=INVTRA[1];
+   mtx[2]=INVTRA[2];
    }
 
-// perform warp
-miniv4d miniwarp::warp(miniv4d v)
+// perform warp of a point
+miniv3d miniwarp::warp(const miniv3d &vec)
    {
-   minicoord c;
+   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   return(miniv3d(v*MTX[0],v*MTX[1],v*MTX[2]));
+   }
 
-   c=minicoord(v,minicoord::MINICOORD_LINEAR);
-   c.convert(MTX);
+// perform warp of a point
+miniv4d miniwarp::warp(const miniv4d &vec)
+   {
+   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   return(miniv4d(v*MTX[0],v*MTX[1],v*MTX[2],vec.w));
+   }
 
-   return(miniv4d(c.vec.x,c.vec.y,c.vec.z,v.w));
+// perform warp of a vector
+miniv3d miniwarp::invtra(const miniv3d &vec)
+   {
+   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   return(miniv3d(v*INVTRA[0],v*INVTRA[1],v*INVTRA[2]));
+   }
+
+// perform warp of a vector
+miniv4d miniwarp::invtra(const miniv4d &vec)
+   {
+   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   return(miniv4d(v*INVTRA[0],v*INVTRA[1],v*INVTRA[2],vec.w));
    }
 
 // update conversion matrices
@@ -416,6 +431,25 @@ void miniwarp::update_wrp()
             case MINIWARP_DATA: mlt_mtx(MTX,MTX,INV_2LOC); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,MTX,INV_2DAT); break;
             }
+   }
+
+// calculate the inverse transpose of the 4x3 warp matrix
+void miniwarp::update_inv()
+   {
+   miniv3d inv[3];
+
+   // get 3x3 sub-matrix
+   inv[0]=miniv3d(MTX[0].x,MTX[0].y,MTX[0].z);
+   inv[1]=miniv3d(MTX[1].x,MTX[1].y,MTX[1].z);
+   inv[2]=miniv3d(MTX[2].x,MTX[2].y,MTX[2].z);
+
+   // it is sufficient to invert the 3x3 sub-matrix
+   inv_mtx(inv,inv);
+
+   // construct the transpose matrix
+   INVTRA[0]=miniv4d(MTX[0].x,MTX[1].x,MTX[2].x);
+   INVTRA[1]=miniv4d(MTX[0].y,MTX[1].y,MTX[2].y);
+   INVTRA[2]=miniv4d(MTX[0].z,MTX[1].z,MTX[2].z);
    }
 
 // calculate warp coordinate conversion
