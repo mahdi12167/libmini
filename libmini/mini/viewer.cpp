@@ -89,7 +89,10 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 // maximum string length
 #define MAXSTR 1000
 
-// base url and id-path to the tiles and textures
+// short usage: url to the tiles and textures
+static char shorturl[MAXSTR]="";
+
+// long usage: base url and id-path to the tiles and textures
 static char baseurl[MAXSTR]="";
 static char baseid[MAXSTR]="";
 
@@ -1028,18 +1031,32 @@ int main(int argc,char *argv[])
    {
    int i;
 
+   int argc_regular;
+
+   // count regular arguments
+   for (argc_regular=0,i=1; i<argc; i++)
+      if (*argv[i]!='-') argc_regular++;
+      else break;
+
    // check arguments
-   if (argc<5)
+   if (argc_regular==0)
       {
-      printf("usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> [<columns> <rows> [<max.texture.size>]] {-s | -a | -p}\n",argv[0]);
+      printf("short usage: %s <url> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
+      printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> [<columns> <rows> [<max.texture.size>]] {-s | -a | -f | -p | -r | -c}\n",argv[0]);
+      printf("options: s=stereo a=anaglyph f=full-screen p=force-pnm r=reset-cache c=auto-s3tc\n");
       exit(1);
       }
 
    // path setup for elevation and imagery
-   if (sscanf(argv[1],"%s",baseurl)!=1) exit(1);
-   if (sscanf(argv[2],"%s",baseid)!=1) exit(1);
-   if (sscanf(argv[3],"%s",basepath1)!=1) exit(1);
-   if (sscanf(argv[4],"%s",basepath2)!=1) exit(1);
+   if (argc_regular>1)
+      {
+      if (sscanf(argv[1],"%s",baseurl)!=1) exit(1);
+      if (sscanf(argv[2],"%s",baseid)!=1) exit(1);
+      if (sscanf(argv[3],"%s",basepath1)!=1) exit(1);
+      if (sscanf(argv[4],"%s",basepath2)!=1) exit(1);
+      }
+   else
+      if (sscanf(argv[1],"%s",shorturl)!=1) exit(1);
 
    // create the viewer object
    viewer=new viewerbase;
@@ -1048,17 +1065,20 @@ int main(int argc,char *argv[])
    params=viewer->get();
 
    // read columns and rows of the tileset
-   if (argc>6)
-      {
-      if (sscanf(argv[5],"%d",&params->cols)!=1) params->cols=0;
-      if (sscanf(argv[6],"%d",&params->rows)!=1) params->rows=0;
-      }
+   if (argc_regular>1)
+      if (argc>6)
+         {
+         if (sscanf(argv[5],"%d",&params->cols)!=1) params->cols=0;
+         if (sscanf(argv[6],"%d",&params->rows)!=1) params->rows=0;
+         }
 
    // optionally read maximum texture size
-   if (argc>7) if (sscanf(argv[7],"%d",&params->basesize)!=1) params->basesize=0;
+   if (argc_regular>1)
+      if (argc>7)
+         if (sscanf(argv[7],"%d",&params->basesize)!=1) params->basesize=0;
 
    // process command line options
-   for (i=5; i<argc; i++)
+   for (i=argc_regular+1; i<argc; i++)
       if (strcmp(argv[i],"-s")==0) sw_stereo=1;
       else if (strcmp(argv[i],"-a")==0) sw_anaglyph=1;
       else if (strcmp(argv[i],"-f")==0) sw_full=1;
@@ -1092,11 +1112,20 @@ int main(int argc,char *argv[])
    initparams();
 
    // load tileset
-   if (!viewer->load(baseurl,baseid,basepath1,basepath2,sw_reset))
-      {
-      printf("unable to load tileset!\n");
-      exit(1);
-      }
+   if (argc_regular==1)
+      if (!viewer->load(shorturl,sw_reset))
+         {
+         printf("unable to load tileset at url=%s\n",shorturl);
+         exit(1);
+         }
+
+   // load tileset
+   if (argc_regular>1)
+      if (!viewer->load(baseurl,baseid,basepath1,basepath2,sw_reset))
+         {
+         printf("unable to load tileset at specified url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
+         exit(1);
+         }
 
    // load optional features
    viewer->loadopts();
