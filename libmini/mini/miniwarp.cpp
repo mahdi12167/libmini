@@ -217,12 +217,13 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 miniwarp::miniwarp()
    {
    BBOXDAT[0]=BBOXDAT[1]=miniv3d(0.0);
-   BBOXGEO[0]=BBOXGEO[1]=miniv3d(0.0);
+   BBOXGEO[0]=BBOXGEO[1]=minicoord(miniv3d(0.0),minicoord::MINICOORD_NONE);
 
    BBOXLOC[0]=BBOXLOC[1]=miniv3d(0.0);
 
-   MTXAFF[0]=MTXAFF[1]=MTXAFF[2]=miniv4d(0.0);
-   MTXAFF[0].x=MTXAFF[1].y=MTXAFF[2].z=1.0;
+   MTXAFF[0]=miniv4d(1.0,0.0,0.0);
+   MTXAFF[1]=miniv4d(0.0,1.0,0.0);
+   MTXAFF[2]=miniv4d(0.0,0.0,1.0);
 
    SYSWRP=minicoord::MINICOORD_ECEF;
 
@@ -242,8 +243,9 @@ miniwarp::miniwarp()
 
    FROM=TO=MINIWARP_PLAIN;
 
-   MTX[0]=MTX[1]=MTX[2]=miniv4d(0.0);
-   MTX[0].x=MTX[1].y=MTX[2].z=1.0;
+   MTX[0]=miniv4d(1.0,0.0,0.0);
+   MTX[1]=miniv4d(0.0,1.0,0.0);
+   MTX[2]=miniv4d(0.0,0.0,1.0);
    }
 
 // destructor
@@ -253,19 +255,14 @@ miniwarp::~miniwarp() {}
 void miniwarp::def_data(const miniv3d bboxDAT[2],
                         const minicoord bboxGEO[2])
    {
-   minicoord bbox[2];
-
    BBOXDAT[0]=bboxDAT[0];
    BBOXDAT[1]=bboxDAT[1];
 
-   bbox[0]=bboxGEO[0];
-   bbox[1]=bboxGEO[1];
+   BBOXGEO[0]=bboxGEO[0];
+   BBOXGEO[1]=bboxGEO[1];
 
-   bbox[0].convert2(minicoord::MINICOORD_LLH);
-   bbox[1].convert2(minicoord::MINICOORD_LLH);
-
-   BBOXGEO[0]=miniv3d(bbox[0].vec.x,bbox[0].vec.y,bbox[0].vec.z);
-   BBOXGEO[1]=miniv3d(bbox[1].vec.x,bbox[1].vec.y,bbox[1].vec.z);
+   BBOXGEO[0].convert2(minicoord::MINICOORD_LLH);
+   BBOXGEO[1].convert2(minicoord::MINICOORD_LLH);
 
    HAS_DATA=TRUE;
 
@@ -383,19 +380,95 @@ void miniwarp::update_mtx()
 
       // conversion 2 warp coordinates:
 
-      //!! not yet implemented
-      MTX_2WRP[0]=miniv4d(0.0,0.0,0.0,0.0);
-      MTX_2WRP[1]=miniv4d(0.0,0.0,0.0,0.0);
-      MTX_2WRP[2]=miniv4d(0.0,0.0,0.0,0.0);
-
+      calc_wrp();
       inv_mtx(INV_2WRP,MTX_2WRP);
       }
    }
 
-// update warp matrix
+// calculate actual warp matrix
 void miniwarp::update_wrp()
    {
-   //!! not yet implemented
+   int i;
+
+   MTX[0]=miniv4d(1.0,0.0,0.0);
+   MTX[1]=miniv4d(0.0,1.0,0.0);
+   MTX[2]=miniv4d(0.0,0.0,1.0);
+
+   if (FROM<TO)
+      for (i=FROM+1; i<=TO; i++)
+         switch (i)
+            {
+            case MINIWARP_DATA: mlt_mtx(MTX,MTX,MTX_2DAT); break;
+            case MINIWARP_LOCAL: mlt_mtx(MTX,MTX,MTX_2LOC); break;
+            case MINIWARP_AFFINE: mlt_mtx(MTX,MTX,MTX_2AFF); break;
+            case MINIWARP_TILE: mlt_mtx(MTX,MTX,MTX_2TIL); break;
+            case MINIWARP_WARP: mlt_mtx(MTX,MTX,MTX_2WRP); break;
+            }
+   else if (FROM>TO)
+      for (i=FROM-1; i>=TO; i--)
+         switch (i)
+            {
+            case MINIWARP_TILE: mlt_mtx(MTX,MTX,INV_2WRP); break;
+            case MINIWARP_AFFINE: mlt_mtx(MTX,MTX,INV_2TIL); break;
+            case MINIWARP_LOCAL: mlt_mtx(MTX,MTX,INV_2AFF); break;
+            case MINIWARP_DATA: mlt_mtx(MTX,MTX,INV_2LOC); break;
+            case MINIWARP_PLAIN: mlt_mtx(MTX,MTX,INV_2DAT); break;
+            }
+   }
+
+// calculate warp coordinate conversion
+void miniwarp::calc_wrp()
+   {
+   int i;
+
+   double x1,x2,y1,y2,z1,z2;
+
+   minicoord p[8];
+   miniv4d b,e[3];
+
+   miniv4d mtx1[3],mtx2[3];
+
+   // get extents of geo-referenced bbox
+   x1=BBOXGEO[0].vec.x;
+   x2=BBOXGEO[1].vec.x;
+   y1=BBOXGEO[0].vec.y;
+   y2=BBOXGEO[1].vec.y;
+   z1=BBOXGEO[0].vec.z;
+   z2=BBOXGEO[1].vec.z;
+
+   // construct corners of geo-referenced bbox
+   p[0]=minicoord(miniv3d(x1,y1,z1),minicoord::MINICOORD_LLH);
+   p[1]=minicoord(miniv3d(x2,y1,z1),minicoord::MINICOORD_LLH);
+   p[2]=minicoord(miniv3d(x1,y2,z1),minicoord::MINICOORD_LLH);
+   p[3]=minicoord(miniv3d(x2,y2,z1),minicoord::MINICOORD_LLH);
+   p[4]=minicoord(miniv3d(x1,y1,z2),minicoord::MINICOORD_LLH);
+   p[5]=minicoord(miniv3d(x2,y1,z2),minicoord::MINICOORD_LLH);
+   p[6]=minicoord(miniv3d(x1,y2,z2),minicoord::MINICOORD_LLH);
+   p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
+
+   // warp geo-referenced corners
+   for (i=0; i<8; i++) p[i].convert2(SYSWRP);
+
+   // calculate warped barycenter
+   b=(p[0].vec+p[1].vec+p[2].vec+p[3].vec+p[4].vec+p[5].vec+p[6].vec+p[7].vec)/8.0;
+
+   // average warped edges along each axis
+   e[0]=(p[1].vec-p[0].vec+p[3].vec-p[2].vec+p[5].vec-p[4].vec+p[7].vec-p[6].vec)/4.0;
+   e[1]=(p[2].vec-p[0].vec+p[3].vec-p[1].vec+p[6].vec-p[4].vec+p[7].vec-p[5].vec)/4.0;
+   e[2]=(p[4].vec-p[0].vec+p[5].vec-p[1].vec+p[6].vec-p[2].vec+p[7].vec-p[3].vec)/4.0;
+
+   // construct matrix #1 that centers the tile coordinates
+   mtx1[0]=miniv4d(1.0,0.0,0.0,-0.5);
+   mtx1[1]=miniv4d(0.0,1.0,0.0,-0.5);
+   mtx1[2]=miniv4d(0.0,0.0,1.0,-0.5);
+
+   // construct matrix #2 that approximates the warp
+   mtx2[0]=miniv4d(e[0].x,e[1].x,e[2].x,b.x);
+   mtx2[1]=miniv4d(e[0].y,e[1].y,e[2].y,b.y);
+   mtx2[2]=miniv4d(e[0].z,e[1].z,e[2].z,b.z);
+
+   // multiply matrix #1 and #2 to get the actual warp matrix
+   mlt_mtx(MTX_2WRP,mtx1,mtx2);
    }
 
 // multiply two 4x3 matrices
@@ -407,6 +480,7 @@ void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3
 
    for (i=0; i<3; i++)
       {
+      // fourth row is assumed to be (0,0,0,1)
       m[i].x=mtx1[i].x*mtx2[0].x+mtx1[i].y*mtx2[1].x+mtx1[i].z*mtx2[2].x;
       m[i].y=mtx1[i].x*mtx2[0].y+mtx1[i].y*mtx2[1].y+mtx1[i].z*mtx2[2].y;
       m[i].z=mtx1[i].x*mtx2[0].z+mtx1[i].y*mtx2[1].z+mtx1[i].z*mtx2[2].z;
@@ -455,19 +529,24 @@ void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    miniv3d m[3];
    miniv4d m1[3],m2[3];
 
+   // extract 3x3 sub-matrix
    m[0]=miniv3d(mtx[0].x,mtx[0].y,mtx[0].z);
    m[1]=miniv3d(mtx[1].x,mtx[1].y,mtx[1].z);
    m[2]=miniv3d(mtx[2].x,mtx[2].y,mtx[2].z);
 
+   // invert 3x3 sub-matrix
    inv_mtx(m,m);
 
+   // decompose 4x3 inversion into matrix #1 = inverted 1x3 sub-matrix = negated offset
    m1[0]=miniv4d(1.0,0.0,0.0,-mtx[0].z);
    m1[1]=miniv4d(0.0,1.0,0.0,-mtx[1].z);
    m1[2]=miniv4d(0.0,0.0,1.0,-mtx[2].z);
 
+   // decompose 4x3 inversion into matrix #2 = inverted 3x3 sub-matrix
    m2[0]=miniv4d(m[0].x,m[0].y,m[0].z);
    m2[1]=miniv4d(m[1].x,m[1].y,m[1].z);
    m2[2]=miniv4d(m[2].x,m[2].y,m[2].z);
 
+   // multiply matrix #1 and #2 to get the actual inverted matrix
    mlt_mtx(inv,m1,m2);
    }

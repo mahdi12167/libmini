@@ -48,11 +48,11 @@ class minicoord
    void convert(const miniv3d mtx[3],const miniv3d offset);
 
    //! linear conversion defined by 4x3 matrix
-   void convert(const miniv4d mtx[3]);
+   void convert(const miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
    //! non-linear conversion defined by point 2 point correspondences
    void convert(const miniv3d src[2], // bounding box in original domain
-                const miniv3d dst[8]); // 8 points in mapped domain
+                const miniv3d dst[8]); // 8 points in warp domain
 
    miniv4d vec; // geo-referenced coordinates (plus time)
    int type; // actual coordinate system type
@@ -72,12 +72,12 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_PLAIN,  // plain coordinates
-      MINIWARP_DATA,   // data coordinates
-      MINIWARP_LOCAL,  // local coordinates
-      MINIWARP_AFFINE, // affine coordinates
-      MINIWARP_TILE,   // tile coordinates
-      MINIWARP_WARP    // warp coordinates
+      MINIWARP_PLAIN=0,  // plain coordinates
+      MINIWARP_DATA=1,   // data coordinates
+      MINIWARP_LOCAL=2,  // local coordinates
+      MINIWARP_AFFINE=3, // affine coordinates
+      MINIWARP_TILE=4,   // tile coordinates
+      MINIWARP_WARP=5    // warp coordinates
       };
 
    //! default constructor
@@ -103,15 +103,16 @@ class miniwarp
    void setwarp(MINIWARP from,MINIWARP to);
 
    //! get actual warp matrix
-   void getwarp(miniv4d mtx[3]);
+   void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
    //! perform warp
-   miniv3d warp(miniv3d v);
-   miniv4d warp(miniv4d v);
+   miniv3d warp(miniv3d v); // fourth component is assumed to be 1
+   miniv4d warp(miniv4d v); // fourth component is conserved
 
    protected:
 
-   miniv3d BBOXDAT[2],BBOXGEO[2];
+   miniv3d BBOXDAT[2];
+   minicoord BBOXGEO[2];
    miniv3d BBOXLOC[2];
    miniv4d MTXAFF[3];
    minicoord::MINICOORD SYSWRP;
@@ -139,6 +140,8 @@ class miniwarp
 
    void update_mtx();
    void update_wrp();
+
+   void calc_wrp();
 
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);
 
