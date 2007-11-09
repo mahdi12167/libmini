@@ -227,7 +227,11 @@ class viewerbase
    //! get the encapsulated cache object
    datacache *getcache() {return(TILECACHE);}
 
-   //! load tileset
+   //! load tileset (short version)
+   BOOLINT load(const char *url,
+                BOOLINT reset=FALSE);
+
+   //! load tileset (long version)
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                 BOOLINT reset=FALSE);
 
@@ -361,6 +365,8 @@ class viewerbase
    minipoint points;
 
    miniglobe earth;
+
+   static char *concat(const char *str1,const char *str2);
 
    static void request_callback(char *file,int istexture,databuf *buf,void *data);
 

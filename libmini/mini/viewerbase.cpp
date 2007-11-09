@@ -460,7 +460,60 @@ void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int
                               databuf *obj,void *data)
    {squishbase::compressS3TC(isrgbadata,rawdata,bytes,s3tcdata,s3tcbytes,obj->xsize,obj->ysize);}
 
-// load tileset
+// load tileset (short version)
+BOOLINT viewerbase::load(const char *url,
+                         BOOLINT reset)
+   {
+   char *baseurl;
+   char *lastslash,*lastbslash;
+   char *baseid;
+
+   BOOLINT success;
+
+   baseurl=strdup(url);
+
+   // remove trailing slash
+   if (strlen(baseurl)>1)
+      if (baseurl[strlen(baseurl)-1]=='/') baseurl[strlen(baseurl)-1]='\0';
+
+   // remove trailing backslash
+   if (strlen(baseurl)>1)
+      if (baseurl[strlen(baseurl)-1]=='\\') baseurl[strlen(baseurl)-1]='\0';
+
+   // search for last slash
+   lastslash=strrchr(baseurl,'/');
+
+   // search for last backslash
+   lastbslash=strrchr(baseurl,'\\');
+
+   // give up if no slash or backslash was found
+   if (lastslash==NULL && lastbslash==NULL) success=FALSE;
+   else
+      {
+      // decompose url into baseurl and baseid
+      if (lastslash!=NULL)
+         {
+         baseid=concat(++lastslash,"/");
+         *lastslash='\0';
+         }
+      else
+         {
+         baseid=concat(++lastbslash,"\\");
+         *lastbslash='\0';
+         }
+
+      // load tileset
+      success=load(baseurl,baseid,"elev","imag",reset);
+
+      free(baseid);
+      }
+
+   free(baseurl);
+
+   return(success);
+   }
+
+// load tileset (long version)
 BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                          BOOLINT reset)
    {
@@ -468,6 +521,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
    float outparams[5];
    float outscale[2];
+
+   char *vtbelevinifile,*vtbimaginifile;
 
    if (LOADED) return(FALSE);
 
@@ -490,9 +545,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    CACHE=new minicache;
 
    // concatenate vtb ini file names
-   char vtbelevinifile[MAXSTR],vtbimaginifile[MAXSTR];
-   snprintf(vtbelevinifile,MAXSTR,"%s%s",basepath1,PARAMS.vtbinisuffix);
-   snprintf(vtbimaginifile,MAXSTR,"%s%s",basepath2,PARAMS.vtbinisuffix);
+   vtbelevinifile=concat(basepath1,PARAMS.vtbinisuffix);
+   vtbimaginifile=concat(basepath2,PARAMS.vtbinisuffix);
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);
@@ -518,6 +572,10 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    TILECACHE->setremoteurl(baseurl);
    TILECACHE->setlocalpath(PARAMS.localpath);
    TILECACHE->setreceiver(receive_callback,NULL,check_callback);
+
+   // free vtb ini file names
+   free(vtbelevinifile);
+   free(vtbimaginifile);
 
    // initialize pthreads and libcurl
    threadbase::threadinit(PARAMS.numthreads);
@@ -1125,3 +1183,21 @@ float viewerbase::len_e2i(float l)
 // map length from internal to external coordinates
 float viewerbase::len_i2e(float l)
    {return(l*PARAMS.scale);}
+
+// concatenate two strings
+char *viewerbase::concat(const char *str1,const char *str2)
+   {
+   char *str;
+
+   if (str1==NULL && str2==NULL) ERRORMSG();
+
+   if (str1==NULL) return(strdup(str2));
+   if (str2==NULL) return(strdup(str1));
+
+   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
+
+   memcpy(str,str1,strlen(str1));
+   memcpy(str+strlen(str1),str2,strlen(str2)+1);
+
+   return(str);
+   }
