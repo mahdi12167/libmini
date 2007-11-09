@@ -74,6 +74,12 @@ class databuf
    //! release buffer
    void release();
 
+   //! set native extents
+   void set_extents(float left,float right,float bottom,float top);
+
+   //! set LLWGS84 extents
+   void set_LLWGS84extents(float left,float right,float bottom,float top);
+
    //! native input/output
    void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB format
    int loaddata(const char *filename); // data is converted from MSB into native format

@@ -169,6 +169,38 @@ void databuf::release()
    bytes=0;
    }
 
+// set native extents
+void databuf::set_extents(float left,float right,float bottom,float top)
+   {
+   swx=left;
+   swy=bottom;
+
+   sex=right;
+   sey=bottom;
+
+   nwx=left;
+   nwy=top;
+
+   nex=right;
+   ney=top;
+   }
+
+// set LLWGS84 extents
+void databuf::set_LLWGS84extents(float left,float right,float bottom,float top)
+   {
+   LLWGS84_swx=left;
+   LLWGS84_swy=bottom;
+
+   LLWGS84_sex=right;
+   LLWGS84_sey=bottom;
+
+   LLWGS84_nwx=left;
+   LLWGS84_nwy=top;
+
+   LLWGS84_nex=right;
+   LLWGS84_ney=top;
+   }
+
 // write one float parameter
 void databuf::writeparam(char *tag,float v,FILE *file,int digits)
    {
