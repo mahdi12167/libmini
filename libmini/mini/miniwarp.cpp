@@ -395,6 +395,7 @@ void miniwarp::update_wrp()
    MTX[2]=miniv4d(0.0,0.0,1.0);
 
    if (FROM<TO)
+      // warp forward by concatenating the respective conversion matrices
       for (i=FROM+1; i<=TO; i++)
          switch (i)
             {
@@ -405,6 +406,7 @@ void miniwarp::update_wrp()
             case MINIWARP_WARP: mlt_mtx(MTX,MTX,MTX_2WRP); break;
             }
    else if (FROM>TO)
+      // warp backward by concatenating the respective inverse matrices
       for (i=FROM-1; i>=TO; i--)
          switch (i)
             {
