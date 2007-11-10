@@ -182,7 +182,7 @@ viewerbase::viewerbase()
    PARAMS.nprseacolor[2]=1.0f;  // NPR color of sea surface
 
    PARAMS.nprseatrans=0.25f;    // NPR transparency of sea surface
-   PARAMS.nprseagrey=0.25f;     // NPR greyness of bathymetry
+   PARAMS.nprseagrey=0.5f;      // NPR greyness of bathymetry
 
    // optional sky-dome:
 

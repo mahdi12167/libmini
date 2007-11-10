@@ -78,6 +78,8 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 #include <mini/minitile.h>
 #include <mini/minitext.h>
 
+#include <mini/minihsv.h>
+
 #include <mini/viewerbase.h>
 
 #ifndef __APPLE__
@@ -398,7 +400,14 @@ void initNPRbathymap()
    float t;
    float alpha;
 
-   float r,g,b,a;
+   float rgba[4];
+
+   static const float hue1=120.0f;
+   static const float hue2=60.0f;
+
+   static const float hue_ctr=60.0f;
+   static const float sat_ctr=0.75f;
+   static const float val_ctr=0.25f;
 
    for (i=0; i<VIEWER_NPRBATHYWIDTH; i++)
       {
@@ -407,16 +416,17 @@ void initNPRbathymap()
       alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS/2;
       alpha=alpha-ftrc(alpha);
 
-      g=1.0f;
-      r=b=1.0f-t;
-      a=0.5f;
+      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,t,1.0f,rgba);
+      else hsv2rgb(hue1+(hue2-hue1)*t,1.0f-t,1.0f,rgba);
 
-      if (alpha>0.9f) r=g=b=0.0f;
+      rgba[3]=0.5f;
 
-      VIEWER_NPRBATHYMAP[4*i]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)]=ftrc(255.0f*r+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+1]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+1]=ftrc(255.0f*g+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+2]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+2]=ftrc(255.0f*b+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+3]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+3]=ftrc(255.0f*a+0.5f);
+      if (alpha>0.9f) hsv2rgb(hue_ctr,sat_ctr,val_ctr,rgba);
+
+      VIEWER_NPRBATHYMAP[4*i]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
+      VIEWER_NPRBATHYMAP[4*i+1]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
+      VIEWER_NPRBATHYMAP[4*i+2]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
+      VIEWER_NPRBATHYMAP[4*i+3]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
       }
    }
 
