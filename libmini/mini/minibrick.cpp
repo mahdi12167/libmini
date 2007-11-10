@@ -630,7 +630,7 @@ void minisurf::enabletorch(int phase,
          {
          fog_a=fsqr(1.0f/fogend);
          fog_b=0.0f;
-         fog_c=log(0.5f*fogdensity)/(2.0f*log(fogstart/fogend/2.0f+0.5f));
+         fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
          }
       else
          {
@@ -858,7 +858,7 @@ void minisurf::enablepattern(float ambient,
          {
          fog_a=fsqr(1.0f/fogend);
          fog_b=0.0f;
-         fog_c=log(0.5f*fogdensity)/(2.0f*log(fogstart/fogend/2.0f+0.5f));
+         fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
          }
       else
          {

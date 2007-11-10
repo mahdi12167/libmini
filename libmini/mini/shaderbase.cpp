@@ -192,7 +192,7 @@ void shaderbase::setVISshader(minicache *cache,
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
-      fog_c=log(0.5f*fogdensity)/(2.0f*log(fogstart/fogend/2.0f+0.5f));
+      fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
       }
    else
       {
@@ -411,7 +411,7 @@ void shaderbase::setNPRshader(minicache *cache,
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
-      fog_c=log(0.5f*fogdensity)/(2.0f*log(fogstart/fogend/2.0f+0.5f));
+      fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
       }
    else
       {
