@@ -11,6 +11,7 @@
 #include "threadbase.h"
 #include "curlbase.h"
 #include "jpegbase.h"
+#include "pngbase.h"
 #include "squishbase.h"
 #include "shaderbase.h"
 
@@ -429,24 +430,48 @@ void viewerbase::conversionhook(int israwdata,unsigned char *srcdata,unsigned in
       case 2: // PNG
 
          if (israwdata==0)
-            ERRORMSG(); //!! not yet implemented
-         else
-            switch (obj->type)
+            {
+            int width,height,components;
+
+            *newdata=pngbase::decompressPNGimage(srcdata,bytes,&width,&height,&components);
+            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
+
+            switch (components)
                {
-               case 1:
-                  ERRORMSG(); //!! not yet implemented
-                  break;
-               case 2:
-                  ERRORMSG(); //!! not yet implemented
-                  break;
                case 3:
-                  ERRORMSG(); //!! not yet implemented
+                  if (obj->type!=3) ERRORMSG();
                   break;
                case 4:
-                  ERRORMSG(); //!! not yet implemented
+                  if (obj->type!=4) ERRORMSG();
                   break;
                default: ERRORMSG();
                }
+
+            *newbytes=width*height*components;
+            }
+         else
+            {
+            int components;
+
+            switch (obj->type)
+               {
+               case 1:
+                  components=1;
+                  break;
+               case 3:
+                  components=3;
+                  break;
+               case 4:
+                  components=4;
+                  break;
+               default: ERRORMSG();
+               }
+
+            if (viewer->PARAMS.usegreycstoration)
+               greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,viewer->PARAMS.greyc_p,viewer->PARAMS.greyc_a);
+
+            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes);
+            }
 
          break;
 
