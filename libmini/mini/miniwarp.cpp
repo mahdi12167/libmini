@@ -326,7 +326,21 @@ void miniwarp::getinvtra(miniv4d mtx[3])
 
 // get actual scaling factor
 double miniwarp::getscale()
-   {return((MTX[0].x+MTX[1].y+MTX[2].z)/3.0);}
+   {
+   int i;
+
+   double avg=0.0;
+
+   for (i=0; i<3; i++)
+      {
+      // assume that the matrix is orthogonal
+      avg+=MTX[i].x*MTX[i].x;
+      avg+=MTX[i].y*MTX[i].y;
+      avg+=MTX[i].z*MTX[i].z;
+      }
+
+   return(sqrt(avg/3.0f));
+   }
 
 // perform warp of a point
 miniv3d miniwarp::warp(const miniv3d &vec)
