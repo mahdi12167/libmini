@@ -108,6 +108,9 @@ class miniwarp
    //! get actual inverse transpose warp matrix
    void getinvtra(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
+   //! get actual scaling factor
+   double getscale();
+
    //! perform warp of a point
    miniv3d warp(const miniv3d &v); // fourth component is assumed to be 1
    miniv4d warp(const miniv4d &v); // fourth component is conserved

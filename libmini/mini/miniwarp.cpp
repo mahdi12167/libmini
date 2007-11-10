@@ -324,6 +324,10 @@ void miniwarp::getinvtra(miniv4d mtx[3])
    mtx[2]=INVTRA[2];
    }
 
+// get actual scaling factor
+double miniwarp::getscale()
+   {return((MTX[0].x+MTX[1].y+MTX[2].z)/3.0);}
+
 // perform warp of a point
 miniv3d miniwarp::warp(const miniv3d &vec)
    {
