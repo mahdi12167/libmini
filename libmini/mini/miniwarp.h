@@ -41,6 +41,12 @@ class minicoord
    //! destructor
    ~minicoord();
 
+   //! associated operators
+   inline minicoord& operator += (const minicoord &v);
+   inline minicoord& operator -= (const minicoord &v);
+   inline minicoord& operator *= (const double c);
+   inline minicoord& operator /= (const double c);
+
    //! convert from 1 coordinate system 2 another
    void convert2(const int t,const int zone=0,const int datum=0);
 
@@ -63,6 +69,76 @@ class minicoord
 
    private:
    };
+
+// associated arithmetic operator +=
+inline minicoord& minicoord::operator += (const minicoord &v)
+   {
+   vec+=v.vec;
+   return(*this);
+   }
+
+// associated arithmetic operator -=
+inline minicoord& minicoord::operator -= (const minicoord &v)
+   {
+   vec-=v.vec;
+   return(*this);
+   }
+
+// associated arithmetic operator *=
+inline minicoord& minicoord::operator *= (const double c)
+   {
+   vec*=c;
+   return(*this);
+   }
+
+// associated arithmetic operator /=
+inline minicoord& minicoord::operator /= (const double c)
+   {
+   vec/=c;
+   return(*this);
+   }
+
+// arithmetic inline operators
+inline minicoord operator + (const minicoord &a,const minicoord &b);
+inline minicoord operator - (const minicoord &a,const minicoord &b);
+inline minicoord operator - (const minicoord &c);
+inline minicoord operator * (const double a,const minicoord &b);
+inline minicoord operator * (const minicoord &a,const double b);
+inline minicoord operator / (const minicoord &a,const double b);
+inline int operator == (const minicoord &a,const minicoord &b);
+inline int operator != (const minicoord &a,const minicoord &b);
+
+// output stream operator
+inline std::ostream& operator << (std::ostream &out,const minicoord &c);
+
+// implementation of inline operators:
+
+inline minicoord operator + (const minicoord &a,const minicoord &b)
+   {return(minicoord(a.vec+b.vec,a.type,a.utm_zone,a.utm_datum));}
+
+inline minicoord operator - (const minicoord &a,const minicoord &b)
+   {return(minicoord(a.vec-b.vec,a.type,a.utm_zone,a.utm_datum));}
+
+inline minicoord operator - (const minicoord &c)
+   {return(minicoord(-c.vec,v.type,v.utm_zone,v.utm_datum));}
+
+inline minicoord operator * (const double a,const minicoord &b)
+   {return(minicoord(a*b.vec,b.type,b.utm_zone,b.utm_datum));}
+
+inline minicoord operator * (const minicoord &a,const double b)
+   {return(minicoord(a.vec*b,a.type,a.utm_zone,a.utm_datum));}
+
+inline minicoord operator / (const minicoord &a,const double b)
+   {return(minicoord(a.vec/b,a.type,a.utm_zone,a.utm_datum));}
+
+inline int operator == (const minicoord &a,const minicoord &b)
+   {return(a.vec==b.vec && a.type==b.type && a.utm_zone==b.utm_zone && a.utm_datum==b.utm_datum);}
+
+inline int operator != (const minicoord &a,const minicoord &b)
+   {return(a.vec!=b.vec || a.type!=b.type || a.utm_zone!=b.utm_zone || a.utm_datum!=b.utm_datum);}
+
+inline std::ostream& operator << (std::ostream &out,const minicoord &c)
+   {return(out << '(' << c.vec << ',' << c.type << ',' << c.utm_zone << ',' << c.utm_datum << ')');}
 
 //! warp kernel for global coordinate systems
 class miniwarp
