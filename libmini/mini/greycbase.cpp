@@ -17,7 +17,7 @@ using namespace cimg_library;
 
 #endif
 
-void denoiseGREYCimage(unsigned char *image,int width,int height,
+void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
                        float p,float a)
    {
 #ifdef GREYCSTORATION
@@ -37,13 +37,15 @@ void denoiseGREYCimage(unsigned char *image,int width,int height,
    const unsigned int btile   = 4;
    const unsigned int threads = 4;
 
-   CImg<unsigned char> img(image,width,height,1,3,false);
+   if (components!=1 && components!=3) ERRORMSG();
+
+   CImg<unsigned char> img(image,width,height,1,components,false);
 
    img.greycstoration_run(amplitude,sharpness,anisotropy,alpha,sigma,gfact,dl,da,gauss_prec,interp,fast_approx,tile,btile,threads);
 
    while (img.greycstoration_is_running()) miniwaitfor(0.001f);
 
-   memcpy(image,img.ptr(),3*width*height);
+   memcpy(image,img.ptr(),width*height*components);
 
 #endif
    }

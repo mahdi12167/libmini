@@ -21,7 +21,7 @@ unsigned int databuf::MAGIC4=13269; // actual magic identifier of DB version 4
 unsigned short int databuf::INTEL_CHECK=1;
 
 // static hook for conversion from and to an external format
-void (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data)=NULL;
+int (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data)=NULL;
 void *databuf::CONVERSION_DATA=NULL;
 
 // static hook for automatic s3tc compression
@@ -589,15 +589,23 @@ int databuf::loaddata(const char *filename)
    return(1);
    }
 
-// convert from/into external format (e.g. JPEG)
+// convert from/into external format (e.g. JPEG/PNG)
 void databuf::convertchunk(int israw,unsigned int extfmt)
    {
+   int success;
+
    unsigned char *newdata;
    unsigned int newbytes;
 
-   if (CONVERSION_HOOK==NULL) ERRORMSG();
+   if (CONVERSION_HOOK==NULL)
+      if (israw!=0) return;
+      else ERRORMSG();
 
-   CONVERSION_HOOK(israw,(unsigned char *)data,bytes,extfmt,&newdata,&newbytes,this,CONVERSION_DATA);
+   success=CONVERSION_HOOK(israw,(unsigned char *)data,bytes,extfmt,&newdata,&newbytes,this,CONVERSION_DATA);
+
+   if (!success)
+      if (israw!=0) return;
+      else ERRORMSG();
 
    release();
 
@@ -609,7 +617,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    }
 
 // set conversion hook for external format
-void databuf::setconversion(void (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
+void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
    {
    CONVERSION_HOOK=conversion;
    CONVERSION_DATA=data;
