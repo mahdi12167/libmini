@@ -13,7 +13,7 @@ MODS	= mini miniOGL\
 
 VMODS	= viewerbase\
 	  threadbase curlbase\
-	  jpegbase pngbase squishbase greycbase\
+	  jpegbase pngbase squishbase greycbase convbase\
 	  shaderbase
 
 SRCS	= $(MODS:=.cpp)

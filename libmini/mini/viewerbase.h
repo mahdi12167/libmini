@@ -9,6 +9,9 @@
 #include "minicache.h"
 #include "datacache.h"
 
+#undef GREYCSTORATION // enable this for greycstoration support
+#include "convbase.h"
+
 #include "minisky.h"
 #include "minipoint.h"
 
@@ -185,14 +188,9 @@ class viewerbase
       char *frontname;
       char *backname;
 
-      // image processing parameters:
+      // image conversion parameters:
 
-      float jpeg_quality;
-
-      BOOLINT usegreycstoration;
-
-      float greyc_p;
-      float greyc_a;
+      MINI_CONVERSION_PARAMS conversion_params;
       };
 
    typedef VIEWER_PARAMS_STRUCT VIEWER_PARAMS;
@@ -372,8 +370,6 @@ class viewerbase
 
    static void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    static int check_callback(char *src_url,char *src_id,char *src_file,void *data);
-
-   static int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data);
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data);
 

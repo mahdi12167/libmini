@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#undef GREYCSTORATION // enable this for greycstoration support
-
 #include "minitime.h"
 
 #include "database.h"
@@ -10,12 +8,8 @@
 
 #include "threadbase.h"
 #include "curlbase.h"
-#include "jpegbase.h"
-#include "pngbase.h"
 #include "squishbase.h"
 #include "shaderbase.h"
-
-#include "greycbase.h"
 
 #include "miniOGL.h"
 
@@ -219,14 +213,14 @@ viewerbase::viewerbase()
    PARAMS.frontname=strdup("EarthDay.ppm");  // file name of front earth texture
    PARAMS.backname=strdup("EarthNight.ppm"); // file name of back earth texture
 
-   // image processing parameters:
+   // image conversion parameters:
 
-   PARAMS.jpeg_quality=75.0f; // jpeg quality in percent
+   PARAMS.conversion_params.jpeg_quality=75.0f; // jpeg quality in percent
 
-   PARAMS.usegreycstoration=FALSE; // use greycstoration for image denoising
+   PARAMS.conversion_params.usegreycstoration=FALSE; // use greycstoration for image denoising
 
-   PARAMS.greyc_p=0.8f; // greycstoration sharpness, useful range=[0.7-0.9]
-   PARAMS.greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
+   PARAMS.conversion_params.greyc_p=0.8f; // greycstoration sharpness, useful range=[0.7-0.9]
+   PARAMS.conversion_params.greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
 
    // initialize state:
 
@@ -370,103 +364,6 @@ void viewerbase::receive_callback(char *src_url,char *src_id,char *src_file,char
 int viewerbase::check_callback(char *src_url,char *src_id,char *src_file,void *data)
    {return(curlbase::checkURL(src_url,src_id,src_file));}
 
-// conversion hook for external formats (e.g. JPEG/PNG)
-int viewerbase::conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,
-                               unsigned char **newdata,unsigned int *newbytes,
-                               databuf *obj,void *data)
-   {
-   viewerbase *viewer=(viewerbase *)data;
-
-   switch (extformat)
-      {
-      case 1: // JPEG
-
-         if (israwdata==0)
-            {
-            int width,height,components;
-
-            *newdata=jpegbase::decompressJPEGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
-
-            switch (components)
-               {
-               case 1: if (obj->type!=0) ERRORMSG(); break;
-               case 3: if (obj->type!=3) ERRORMSG(); break;
-               case 4: if (obj->type!=4) ERRORMSG(); break;
-               default: ERRORMSG();
-               }
-
-            *newbytes=width*height*components;
-            }
-         else
-            {
-            int components;
-
-            switch (obj->type)
-               {
-               case 0: components=1; break;
-               case 3: components=3; break;
-               case 4: components=4; break;
-               default: return(0); // return failure
-               }
-
-            if (components==1 || components==3)
-               if (viewer->PARAMS.usegreycstoration)
-                  greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,viewer->PARAMS.greyc_p,viewer->PARAMS.greyc_a);
-
-            jpegbase::compressJPEGimage(srcdata,obj->xsize,obj->ysize,components,viewer->PARAMS.jpeg_quality/100.0f,newdata,newbytes);
-            }
-
-         break;
-
-      case 2: // PNG
-
-         if (israwdata==0)
-            {
-            int width,height,components;
-
-            *newdata=pngbase::decompressPNGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
-
-            switch (components)
-               {
-               case 1: if (obj->type!=0) ERRORMSG(); break;
-               case 2: if (obj->type!=1) ERRORMSG(); break;
-               case 3: if (obj->type!=3) ERRORMSG(); break;
-               case 4: if (obj->type!=4) ERRORMSG(); break;
-               default: ERRORMSG();
-               }
-
-            *newbytes=width*height*components;
-            }
-         else
-            {
-            int components;
-
-            switch (obj->type)
-               {
-               case 0: components=1; break;
-               case 1: components=2; break;
-               case 3: components=3; break;
-               case 4: components=4; break;
-               default: return(0); // return failure
-               }
-
-            if (components==1 || components==3)
-               if (viewer->PARAMS.usegreycstoration)
-                  greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,viewer->PARAMS.greyc_p,viewer->PARAMS.greyc_a);
-
-            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes);
-            }
-
-         break;
-
-      default: ERRORMSG();
-      }
-
-   return(1); // return success
-   }
-
 // S3TC auto-compression hook
 void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                               unsigned char **s3tcdata,unsigned int *s3tcbytes,
@@ -541,8 +438,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
    LOADED=TRUE;
 
-   // register conversion hook (JPEG/PNG decompression)
-   databuf::setconversion(conversionhook,this);
+   // register conversion hook (JPEG/PNG)
+   convbase::setconversion(&PARAMS.conversion_params);
 
    // register auto-compression hook
    databuf::setautocompress(autocompress,NULL);

@@ -84,7 +84,7 @@ class databuf
    void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB format
    int loaddata(const char *filename); // data is converted from MSB into native format
 
-   //! set conversion hook for external format
+   //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data);
 
    //! set hook for automatic s3tc compression

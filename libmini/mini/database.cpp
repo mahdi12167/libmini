@@ -616,7 +616,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    else extformat=extfmt;
    }
 
-// set conversion hook for external format
+// set conversion hook for external formats
 void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
    {
    CONVERSION_HOOK=conversion;
