@@ -494,8 +494,6 @@ int minicache::rendertrigger(int phase,float scale)
       initstate();
       mtxpush();
 
-      if (USEVTXSHADER!=0) enablevtxshader();
-
       if (OPACITY<1.0f)
          {
          if (OPACITY<=0.0f) disableRGBAwriting();
@@ -509,12 +507,13 @@ int minicache::rendertrigger(int phase,float scale)
 
       normal(0.0f,1.0f,0.0f);
 
+      if (USEVTXSHADER!=0) enablevtxshader();
+      if (USEPIXSHADER!=0) enablepixshader();
+
       if (CACHE_NUM==1) glVertexPointer(3,GL_FLOAT,0,CACHE2_ARG);
       else glVertexPointer(3,GL_FLOAT,0,CACHE1_ARG);
 
       glEnableClientState(GL_VERTEX_ARRAY);
-
-      if (USEPIXSHADER!=0) enablepixshader();
       }
    else if (phase==3)
       {
@@ -530,11 +529,11 @@ int minicache::rendertrigger(int phase,float scale)
 
       if (PRESEA_CB!=NULL)
          {
-         glDisableClientState(GL_VERTEX_ARRAY);
-
          bindtexmap(0,0,0,0);
 
-         disablevtxshader();
+         glDisableClientState(GL_VERTEX_ARRAY);
+
+         if (USEVTXSHADER!=0) disablevtxshader();
 
          mtxpop();
          exitstate();
@@ -543,6 +542,8 @@ int minicache::rendertrigger(int phase,float scale)
 
          initstate();
          mtxpush();
+
+         if (USEVTXSHADER!=0) enablevtxshader();
 
          if (CACHE_NUM==1) glVertexPointer(3,GL_FLOAT,0,CACHE2_ARG);
          else glVertexPointer(3,GL_FLOAT,0,CACHE1_ARG);
@@ -557,6 +558,8 @@ int minicache::rendertrigger(int phase,float scale)
       color(SEA_R,SEA_G,SEA_B,SEA_A);
       normal(0.0f,1.0f,0.0f);
 
+      if (USESEASHADER!=0) enableseashader();
+
       if (CONFIGURE_ZSCALE_SEA!=1.0f)
          {
          mtxproj();
@@ -564,8 +567,6 @@ int minicache::rendertrigger(int phase,float scale)
          mtxscale(CONFIGURE_ZSCALE_SEA,CONFIGURE_ZSCALE_SEA,CONFIGURE_ZSCALE_SEA); // prevent Z-fighting
          mtxmodel();
          }
-
-      if (USESEASHADER!=0) enableseashader();
       }
    else if (phase==4)
       {
@@ -575,20 +576,19 @@ int minicache::rendertrigger(int phase,float scale)
 
       if (SEA_A!=1.0f) disableblending();
 
+      if (USESEASHADER!=0) disableseashader();
+      if (USEVTXSHADER!=0) disablevtxshader();
+
+      bindtexmap(0,0,0,0);
+
+      glDisableClientState(GL_VERTEX_ARRAY);
+
       if (CONFIGURE_ZSCALE_SEA!=1.0f)
          {
          mtxproj();
          mtxpop();
          mtxmodel();
          }
-
-      if (USESEASHADER!=0) disableseashader();
-
-      glDisableClientState(GL_VERTEX_ARRAY);
-
-      bindtexmap(0,0,0,0);
-
-      if (USEVTXSHADER!=0) disablevtxshader();
 
       mtxpop();
       exitstate();
