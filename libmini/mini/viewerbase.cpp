@@ -131,7 +131,7 @@ viewerbase::viewerbase()
    PARAMS.fogcolor[2]=0.7f;
 
    PARAMS.fogstart=0.5f;   // start of fog relative to far plane
-   PARAMS.fogdensity=1.0f; // relative fog density
+   PARAMS.fogdensity=0.5f; // relative fog density
 
    // optional color mapping:
 

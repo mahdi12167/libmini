@@ -34,6 +34,8 @@
 #define VIEWER_BOUNCE 5.0f
 
 #define VIEWER_FOGSTART 0.5f
+#define VIEWER_FOGDENSITY 0.5f;
+
 #define VIEWER_CONTOURS 10.0f
 
 #define VIEWER_SEABOTTOM -10.0f
@@ -186,6 +188,8 @@ void initparams()
    prms.useearth=FALSE;
 
    prms.fogstart=VIEWER_FOGSTART;
+   prms.fogdensity=VIEWER_FOGDENSITY;
+
    prms.contours=VIEWER_CONTOURS;
    prms.seabottom=VIEWER_SEABOTTOM;
 
