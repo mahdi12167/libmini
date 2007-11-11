@@ -51,6 +51,7 @@ if ($rule == "deps") then
    if ($HOSTTYPE == "iris4d") make MAKEDEPEND="CC -M$stub" TARGET=IRIX $depend
    if ($HOSTTYPE == "i386") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
    if ($HOSTTYPE == "i386-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i386-cygwin") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
    if ($HOSTTYPE == "i486") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
    if ($HOSTTYPE == "i486-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
    if ($HOSTTYPE == "i586") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$stub" TARGET=LINUX $depend
@@ -65,6 +66,7 @@ else
    if ($HOSTTYPE == "iris4d") make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84$stub$wall" LINK="-lglut -lX11 -lXm -lXt -lXmu" $rule
    if ($HOSTTYPE == "i386") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
    if ($HOSTTYPE == "i386-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
+   if ($HOSTTYPE == "i386-cygwin") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
    if ($HOSTTYPE == "i486") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
    if ($HOSTTYPE == "i486-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
    if ($HOSTTYPE == "i586") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$stub$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule

@@ -246,14 +246,14 @@ void lunascan::pushcode(char *code)
       return;
       }
 
-   ungetchar();
+   ungetmychar();
 
    CODE[CODESTACKSIZE]=strdup(code);
    POINTER[CODESTACKSIZE]=0;
 
    CODESTACKSIZE++;
 
-   getchar();
+   getmychar();
    next();
    }
 
@@ -420,7 +420,7 @@ int lunascan::getline()
    }
 
 void lunascan::scanspace()
-   {while (CH==' ' || CH=='\n' || CH=='\r' || CH=='\t') getchar();}
+   {while (CH==' ' || CH=='\n' || CH=='\r' || CH=='\t') getmychar();}
 
 void lunascan::scanvalue()
    {
@@ -429,12 +429,12 @@ void lunascan::scanvalue()
    while (CH>='0' && CH<='9')
       {
       VALUE=10.0f*VALUE+CH-'0';
-      getchar();
+      getmychar();
       }
 
    if (CH=='.')
        {
-       getchar();
+       getmychar();
 
        point=1.0f;
 
@@ -442,23 +442,23 @@ void lunascan::scanvalue()
           {
           VALUE=10.0f*VALUE+CH-'0';
           point*=0.1f;
-          getchar();
+          getmychar();
           }
 
        if (CH=='e' || CH=='E')
           {
-          getchar();
+          getmychar();
 
           xpnt=0.0f;
 
           if (CH=='-')
              {
-             getchar();
+             getmychar();
 
              while (CH>='0' && CH<='9')
                 {
                 xpnt=10.0f*xpnt+CH-'0';
-                getchar();
+                getmychar();
                 }
 
              xpnt*=-1.0f;
@@ -467,7 +467,7 @@ void lunascan::scanvalue()
              while (CH>='0' && CH<='9')
                 {
                 xpnt=10.0f*xpnt+CH-'0';
-                getchar();
+                getmychar();
                 }
 
           point*=fpow(10.0f,xpnt);
@@ -481,7 +481,7 @@ void lunascan::scanvalue()
 
 void lunascan::scanminus()
    {
-   getchar();
+   getmychar();
 
    if (CH>='0' && CH<='9')
       {
@@ -494,7 +494,7 @@ void lunascan::scanminus()
          {
          pushback('-');
          pushback(CH);
-         getchar();
+         getmychar();
          }
       else pushback('-');
 
@@ -509,11 +509,11 @@ void lunascan::scanminus()
 
 void lunascan::scanchar()
    {
-   getchar();
+   getmychar();
 
    if (CH=='\\')
       {
-      getchar();
+      getmychar();
 
       switch (CH)
          {
@@ -530,17 +530,17 @@ void lunascan::scanchar()
             break;
          }
 
-      getchar();
+      getmychar();
       }
    else
       {
       pushback(CH);
-      getchar();
+      getmychar();
       }
 
    if (CH!='\'') SCANNERMSG("unterminated char constant");
 
-   getchar();
+   getmychar();
 
    TOKEN=LUNA_VALUE;
    VALUE=STRING[0];
@@ -548,12 +548,12 @@ void lunascan::scanchar()
 
 void lunascan::scanstring()
    {
-   getchar();
+   getmychar();
 
    while (CH!='"' && CH!='\n' && CH!='\r' && CH!='\0')
       if (CH=='\\')
          {
-         getchar();
+         getmychar();
 
          switch (CH)
             {
@@ -570,17 +570,17 @@ void lunascan::scanstring()
                break;
             }
 
-         getchar();
+         getmychar();
          }
       else
          {
          pushback(CH);
-         getchar();
+         getmychar();
          }
 
    if (CH!='"') SCANNERMSG("unterminated string constant");
 
-   getchar();
+   getmychar();
 
    TOKEN=LUNA_STRING;
    }
@@ -590,7 +590,7 @@ void lunascan::scanidentifier()
    while ((CH>='a' && CH<='z') || (CH>='A' && CH<='Z') || CH=='_' || (CH>='0' && CH<='9'))
       {
       pushback(CH);
-      getchar();
+      getmychar();
       }
 
    SERIAL=getstring(STRING);
@@ -606,30 +606,30 @@ void lunascan::scanspecial()
    if (CH=='-' || CH=='+' || CH=='*' || CH=='/')
       {
       pushback(CH);
-      getchar();
+      getmychar();
 
       if (CH=='-' || CH=='+' || CH=='*' || CH=='/')
          {
          pushback(CH);
-         getchar();
+         getmychar();
          }
       }
    else
       if  (CH==':' || CH=='=' || CH=='<' || CH=='>')
          {
          pushback(CH);
-         getchar();
+         getmychar();
 
          if  (CH==':' || CH=='=' || CH=='<' || CH=='>')
             {
             pushback(CH);
-            getchar();
+            getmychar();
             }
          }
       else
          {
          pushback(CH);
-         getchar();
+         getmychar();
          }
 
    SERIAL=getstring(STRING);
@@ -664,7 +664,7 @@ void lunascan::pushback(char ch)
    STRING[STRINGSIZE]='\0';
    }
 
-void lunascan::getchar()
+void lunascan::getmychar()
    {
    PPCOL=PCOL;
    PPLINE=PLINE;
@@ -714,7 +714,7 @@ void lunascan::getrawchar()
       }
    }
 
-void lunascan::ungetchar()
+void lunascan::ungetmychar()
    {
    if (CODESTACKSIZE>0)
       if (POINTER[CODESTACKSIZE-1]>0)

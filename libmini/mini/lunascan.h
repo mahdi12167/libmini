@@ -127,9 +127,9 @@ class lunascan
    void clear();
    void pushback(char ch);
 
-   inline void getchar();
+   inline void getmychar();
    inline void getrawchar();
-   inline void ungetchar();
+   inline void ungetmychar();
 
    inline unsigned int gethash(char *string);
 
