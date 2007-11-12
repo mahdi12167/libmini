@@ -51,6 +51,10 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
    // declare PNG image chunk
    unsigned char *image_data;
 
+   // declare PNG row pointers
+   unsigned char **row_pointers;
+   unsigned int row,rowbytes;
+
    // declare PNG user read parameters
    PNG_USER_READ_PARAMS png_user_read_params;
 
@@ -116,10 +120,6 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
    // update PNG info struct
    png_read_update_info(png_ptr, info_ptr);
 
-   // declare PNG row pointers
-   png_bytep row_pointers[image_height];
-   png_uint_32 row,rowbytes;
-
    // get PNG bytes per row
    rowbytes=png_get_rowbytes(png_ptr, info_ptr);
 
@@ -128,6 +128,13 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
 
    // allocate the memory to hold the image
    if ((image_data=(unsigned char *)malloc(rowbytes*image_height))==NULL)
+      {
+      png_destroy_read_struct(&png_ptr,&info_ptr,NULL);
+      return(NULL);
+      }
+
+   // allocate PNG row pointers
+   if ((row_pointers=(unsigned char **)malloc(image_height*sizeof(unsigned char *)))==NULL)
       {
       png_destroy_read_struct(&png_ptr,&info_ptr,NULL);
       return(NULL);
@@ -155,7 +162,7 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
 void compressPNGimage(unsigned char *image,int width,int height,int components,unsigned char **data,unsigned int *bytes)
    {
    //!! not yet implemented
-   *newdata=NULL;
+   *data=NULL;
    }
 
 }
