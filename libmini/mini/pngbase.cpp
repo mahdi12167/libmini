@@ -155,6 +155,7 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
 void compressPNGimage(unsigned char *image,int width,int height,int components,unsigned char **data,unsigned int *bytes)
    {
    //!! not yet implemented
+   *newdata=NULL;
    }
 
 }

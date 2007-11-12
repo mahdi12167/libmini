@@ -68,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Release-vc8\libMini-vc8.lib Release-vc8\libMiniSFX-vc8.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib squish.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Release-vc8\libMini-vc8.lib Release-vc8\libMiniSFX-vc8.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Debug-vc8\libMinid-vc8.lib Debug-vc8\libMiniSFXd-vc8.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib squish.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Debug-vc8\libMinid-vc8.lib Debug-vc8\libMiniSFXd-vc8.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
