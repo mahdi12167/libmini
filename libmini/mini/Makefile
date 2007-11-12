@@ -50,7 +50,7 @@ stubtest: lib
 	$(COMPILER) $(OPTS) -o stubtest -I.. stubtest.cpp -L. -lMini -lm
 
 viewer:	lib libsfx
-	$(COMPILER) $(OPTS) -o viewer -I.. viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lsquish -lm
+	$(COMPILER) $(OPTS) -o viewer -I.. viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lsquish -lm
 
 depend:
 	@-$(MAKEDEPEND) $(SRCS) >Makefile.d 2>/dev/null

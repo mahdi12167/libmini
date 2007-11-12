@@ -31,6 +31,8 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
             *newdata=jpegbase::decompressJPEGimage(srcdata,bytes,&width,&height,&components);
             if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
 
+            if (*newdata==NULL) return(0); // return failure
+
             switch (components)
                {
                case 1: if (obj->type!=0) ERRORMSG(); break;
@@ -58,6 +60,8 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
                   greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->greyc_p,conversion_params->greyc_a);
 
             jpegbase::compressJPEGimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->jpeg_quality/100.0f,newdata,newbytes);
+
+            if (*newdata==NULL) return(0); // return failure
             }
 
          break;
@@ -70,6 +74,8 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
             *newdata=pngbase::decompressPNGimage(srcdata,bytes,&width,&height,&components);
             if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
+
+            if (*newdata==NULL) return(0); // return failure
 
             switch (components)
                {
@@ -100,6 +106,8 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
                   greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->greyc_p,conversion_params->greyc_a);
 
             pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes);
+
+            if (*newdata==NULL) return(0); // return failure
             }
 
          break;
