@@ -37,7 +37,9 @@ class miniv4d
    //! conversion constructors
    miniv4d(const miniv4f &v);
    miniv4d(const miniv3d &v);
+   miniv4d(const miniv3d &v,const double vw);
    miniv4d(const miniv3f &v);
+   miniv4d(const miniv3f &v,const float vw);
 
    //! destructor
    ~miniv4d() {}

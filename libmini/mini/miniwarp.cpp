@@ -27,22 +27,37 @@ minicoord::minicoord(const minicoord &c)
 
 // constructors:
 
+minicoord::minicoord(const miniv3d &v)
+   {
+   vec=v;
+   type=MINICOORD_LINEAR;
+
+   utm_zone=utm_datum=0;
+   }
+
 minicoord::minicoord(const miniv3d &v,const int t)
    {
-   vec=miniv4d(v.x,v.y,v.z);
+   vec=v;
    type=t;
 
-   utm_zone=0;
-   utm_datum=0;
+   utm_zone=utm_datum=0;
    }
 
 minicoord::minicoord(const miniv3d &v,const int t,const int zone,const int datum)
    {
-   vec=miniv4d(v.x,v.y,v.z);
+   vec=v;
    type=t;
 
    utm_zone=zone;
    utm_datum=datum;
+   }
+
+minicoord::minicoord(const miniv4d &v)
+   {
+   vec=v;
+   type=MINICOORD_LINEAR;
+
+   utm_zone=utm_datum=0;
    }
 
 minicoord::minicoord(const miniv4d &v,const int t)
@@ -50,8 +65,7 @@ minicoord::minicoord(const miniv4d &v,const int t)
    vec=v;
    type=t;
 
-   utm_zone=0;
-   utm_datum=0;
+   utm_zone=utm_datum=0;
    }
 
 minicoord::minicoord(const miniv4d &v,const int t,const int zone,const int datum)
@@ -93,8 +107,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=0;
+               utm_zone=utm_datum=0;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();
@@ -107,16 +120,14 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
                vec=miniv4d(xyz[0],xyz[1],vec.z,vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=0;
+               utm_zone=utm_datum=0;
                break;
             case MINICOORD_ECEF:
                miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&xyz[1],&xyz[0]);
                miniutm::LLH2ECEF(xyz[1],xyz[0],vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=0;
+               utm_zone=utm_datum=0;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();
@@ -131,8 +142,7 @@ void minicoord::convert2(const int t,const int zone,const int datum)
                xyz[2]=vec.z;
                miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                type=t;
-               utm_zone=0;
-               utm_datum=0;
+               utm_zone=utm_datum=0;
                break;
             case MINICOORD_UTM:
                xyz[0]=vec.x;
@@ -161,7 +171,7 @@ void minicoord::convert(const miniv3d mtx[3],const miniv3d offset)
 
    if (type==MINICOORD_NONE) ERRORMSG();
 
-   v=miniv3d(vec.x,vec.y,vec.z);
+   v=vec;
 
    vec.x=v*mtx[0]+offset.x;
    vec.y=v*mtx[1]+offset.y;
@@ -177,7 +187,7 @@ void minicoord::convert(const miniv4d mtx[3])
 
    if (type==MINICOORD_NONE) ERRORMSG();
 
-   v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   v=miniv4d(vec,1.0);
 
    vec.x=v*mtx[0];
    vec.y=v*mtx[1];
@@ -208,7 +218,7 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
           u.y*((1.0-u.x)*dst[6]+
                u.x*dst[7]));
 
-   vec=miniv4d(v.x,v.y,v.z,vec.w);
+   vec=miniv4d(v,vec.w);
 
    type=MINICOORD_NONLIN;
    }
@@ -345,28 +355,28 @@ double miniwarp::getscale()
 // perform warp of a point
 miniv3d miniwarp::warp(const miniv3d &vec)
    {
-   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   miniv4d v=miniv4d(vec,1.0);
    return(miniv3d(v*MTX[0],v*MTX[1],v*MTX[2]));
    }
 
 // perform warp of a point
 miniv4d miniwarp::warp(const miniv4d &vec)
    {
-   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   miniv4d v=miniv4d(vec,1.0);
    return(miniv4d(v*MTX[0],v*MTX[1],v*MTX[2],vec.w));
    }
 
 // perform warp of a vector
 miniv3d miniwarp::invtra(const miniv3d &vec)
    {
-   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   miniv4d v=miniv4d(vec,1.0);
    return(miniv3d(v*INVTRA[0],v*INVTRA[1],v*INVTRA[2]));
    }
 
 // perform warp of a vector
 miniv4d miniwarp::invtra(const miniv4d &vec)
    {
-   miniv4d v=miniv4d(vec.x,vec.y,vec.z,1.0);
+   miniv4d v=miniv4d(vec,1.0);
    return(miniv4d(v*INVTRA[0],v*INVTRA[1],v*INVTRA[2],vec.w));
    }
 
@@ -456,10 +466,10 @@ void miniwarp::update_inv()
    {
    miniv3d inv[3];
 
-   // get 3x3 sub-matrix
-   inv[0]=miniv3d(MTX[0].x,MTX[0].y,MTX[0].z);
-   inv[1]=miniv3d(MTX[1].x,MTX[1].y,MTX[1].z);
-   inv[2]=miniv3d(MTX[2].x,MTX[2].y,MTX[2].z);
+   // extract 3x3 sub-matrix
+   inv[0]=MTX[0];
+   inv[1]=MTX[1];
+   inv[2]=MTX[2];
 
    // it is sufficient to invert the 3x3 sub-matrix
    inv_mtx(inv,inv);
@@ -584,9 +594,9 @@ void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    miniv4d m1[3],m2[3];
 
    // extract 3x3 sub-matrix
-   m[0]=miniv3d(mtx[0].x,mtx[0].y,mtx[0].z);
-   m[1]=miniv3d(mtx[1].x,mtx[1].y,mtx[1].z);
-   m[2]=miniv3d(mtx[2].x,mtx[2].y,mtx[2].z);
+   m[0]=mtx[0];
+   m[1]=mtx[1];
+   m[2]=mtx[2];
 
    // invert 3x3 sub-matrix
    inv_mtx(m,m);
@@ -597,9 +607,9 @@ void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    m1[2]=miniv4d(0.0,0.0,1.0,-mtx[2].z);
 
    // decompose 4x3 inversion into matrix #2 = inverted 3x3 sub-matrix
-   m2[0]=miniv4d(m[0].x,m[0].y,m[0].z);
-   m2[1]=miniv4d(m[1].x,m[1].y,m[1].z);
-   m2[2]=miniv4d(m[2].x,m[2].y,m[2].z);
+   m2[0]=m[0];
+   m2[1]=m[1];
+   m2[2]=m[2];
 
    // multiply matrix #1 and #2 to get the actual inverted matrix
    mlt_mtx(inv,m1,m2);

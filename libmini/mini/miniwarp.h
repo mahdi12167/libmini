@@ -31,8 +31,10 @@ class minicoord
    minicoord(const minicoord &c);
 
    //! constructors
+   minicoord(const miniv3d &v);
    minicoord(const miniv3d &v,const int t);
    minicoord(const miniv3d &v,const int t,const int zone,const int datum);
+   minicoord(const miniv4d &v);
    minicoord(const miniv4d &v,const int t);
    minicoord(const miniv4d &v,const int t,const int zone,const int datum);
    minicoord(const double cx,const double cy,const double cz,const int t);
