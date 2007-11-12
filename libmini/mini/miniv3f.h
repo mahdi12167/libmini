@@ -1,7 +1,15 @@
+// (c) by Stefan Roettger
+
 #ifndef MINIV3F_H
 #define MINIV3F_H
 
 #include <iostream>
+
+#include "minibase.h"
+
+class miniv3d;
+class miniv4f;
+class miniv4d;
 
 class miniv3f
    {
@@ -23,6 +31,11 @@ class miniv3f
    miniv3f(const short int ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
    miniv3f(const unsigned short int ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
    miniv3f(const unsigned char ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
+
+   //! conversion constructors
+   miniv3f(const miniv3d &v);
+   miniv3f(const miniv4f &v);
+   miniv3f(const miniv4d &v);
 
    //! destructor
    ~miniv3f() {}
