@@ -1,10 +1,10 @@
 // (c) by Stefan Roettger
 
-#include <miniv4f.h>
+#include "miniv4f.h"
 
-#include <miniv4d.h>
-#include <miniv3f.h>
-#include <miniv3d.h>
+#include "miniv4d.h"
+#include "miniv3f.h"
+#include "miniv3d.h"
 
 // conversion constructors
 miniv4f::miniv4f(const miniv4d &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z; w=(float)v.w;}

@@ -1,10 +1,10 @@
 // (c) by Stefan Roettger
 
-#include <miniv3d.h>
+#include "miniv3d.h"
 
-#include <miniv3f.h>
-#include <miniv4d.h>
-#include <miniv4f.h>
+#include "miniv3f.h"
+#include "miniv4d.h"
+#include "miniv4f.h"
 
 // conversion constructors
 miniv3d::miniv3d(const miniv3f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z;}
