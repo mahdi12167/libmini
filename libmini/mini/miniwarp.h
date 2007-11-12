@@ -120,7 +120,7 @@ inline minicoord operator - (const minicoord &a,const minicoord &b)
    {return(minicoord(a.vec-b.vec,a.type,a.utm_zone,a.utm_datum));}
 
 inline minicoord operator - (const minicoord &c)
-   {return(minicoord(-c.vec,v.type,v.utm_zone,v.utm_datum));}
+   {return(minicoord(-c.vec,c.type,c.utm_zone,c.utm_datum));}
 
 inline minicoord operator * (const double a,const minicoord &b)
    {return(minicoord(a*b.vec,b.type,b.utm_zone,b.utm_datum));}
