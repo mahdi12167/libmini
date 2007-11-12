@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Release-vc7\libMini-vc7.lib Release-vc7\libMiniSFX-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Release-vc7\libMini-vc7.lib Release-vc7\libMiniSFX-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -96,7 +96,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Debug-vc7\libMinid-vc7.lib Debug-vc7\libMiniSFXd-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib Debug-vc7\libMinid-vc7.lib Debug-vc7\libMiniSFXd-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
