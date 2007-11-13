@@ -53,12 +53,11 @@
 #define VIEWER_BATHYSTART 0.0f
 #define VIEWER_BATHYEND -10.0f
 
-#define VIEWER_BATHYWIDTH 4
+#define VIEWER_BATHYWIDTH 256
 #define VIEWER_BATHYHEIGHT 2
 #define VIEWER_BATHYCOMPS 4
 
-static unsigned char VIEWER_BATHYMAP[]={0,0,255,0, 0,0,255,255, 0,255,0,255, 255,0,0,255,
-                                        0,0,255,0, 0,0,255,255, 0,255,0,255, 255,0,0,255};
+static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 
 #define VIEWER_NPRBATHYSTART 0.0f
 #define VIEWER_NPRBATHYEND 1000.0f
@@ -394,6 +393,33 @@ void savesettings()
    fprintf(file,"fogdensity=%f\n",params->fogdensity);
 
    fclose(file);
+   }
+
+// initialize VIS bathy map
+void initVISbathymap()
+   {
+   int i;
+
+   float t;
+
+   float rgba[4];
+
+   static const float hue1=0.0f;
+   static const float hue2=240.0f;
+
+   for (i=0; i<VIEWER_BATHYWIDTH; i++)
+      {
+      t=(float)i/(VIEWER_BATHYWIDTH-1);
+
+      hsv2rgb(hue1+(hue2-hue1)*t,1.0f,1.0f,rgba);
+
+      rgba[3]=fsqrt(1.0f-fabs(2.0f*(t-0.5f)));
+
+      VIEWER_BATHYMAP[4*i]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
+      VIEWER_BATHYMAP[4*i+1]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
+      VIEWER_BATHYMAP[4*i+2]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
+      VIEWER_BATHYMAP[4*i+3]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
+      }
    }
 
 // initialize NPR bathy map
@@ -1053,7 +1079,7 @@ int main(int argc,char *argv[])
       else break;
 
    // check arguments
-   if (argc_regular==0)
+   if (argc_regular!=1 && argc_regular<4)
       {
       printf("short usage: %s <url> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
       printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> [<columns> <rows> [<max.texture.size>]] {-s | -a | -f | -p | -r | -c}\n",argv[0]);
@@ -1062,7 +1088,7 @@ int main(int argc,char *argv[])
       }
 
    // path setup for elevation and imagery
-   if (argc_regular>1)
+   if (argc_regular!=1)
       {
       if (sscanf(argv[1],"%s",baseurl)!=1) exit(1);
       if (sscanf(argv[2],"%s",baseid)!=1) exit(1);
@@ -1079,7 +1105,7 @@ int main(int argc,char *argv[])
    params=viewer->get();
 
    // read columns and rows of the tileset
-   if (argc_regular>1)
+   if (argc_regular!=1)
       if (argc>6)
          {
          if (sscanf(argv[5],"%d",&params->cols)!=1) params->cols=0;
@@ -1087,7 +1113,7 @@ int main(int argc,char *argv[])
          }
 
    // optionally read maximum texture size
-   if (argc_regular>1)
+   if (argc_regular!=1)
       if (argc>7)
          if (sscanf(argv[7],"%d",&params->basesize)!=1) params->basesize=0;
 
@@ -1125,7 +1151,7 @@ int main(int argc,char *argv[])
    // initialize the viewing parameters
    initparams();
 
-   // load tileset
+   // load tileset (short version)
    if (argc_regular==1)
       if (!viewer->load(shorturl,sw_reset))
          {
@@ -1133,8 +1159,8 @@ int main(int argc,char *argv[])
          exit(1);
          }
 
-   // load tileset
-   if (argc_regular>1)
+   // load tileset (long version)
+   if (argc_regular!=1)
       if (!viewer->load(baseurl,baseid,basepath1,basepath2,sw_reset))
          {
          printf("unable to load tileset at specified url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
@@ -1147,6 +1173,9 @@ int main(int argc,char *argv[])
    // set initial view point
    viewer->getinitial(ex,ey);
    initview(ex,ey,0.0f,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
+
+   // initialize VIS bathy map
+   initVISbathymap();
 
    // initialize NPR bathy map
    initNPRbathymap();
