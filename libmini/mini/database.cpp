@@ -781,11 +781,13 @@ int databuf::loadPNMdata(const char *filename)
    if (components==1) type=0;
    else if (components==2) type=1;
    else if (components==3) type=3;
+   else if (components==4) type=4;
    else ERRORMSG();
 
    bytes=xsize*ysize;
    if (type==1) bytes*=2;
    else if (type==3) bytes*=3;
+   else if (type==4) bytes*=4;
 
    if (type==1)
       if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
@@ -891,6 +893,7 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
       while (isdigit(nstr[strlen(nstr)-1])) nstr[strlen(nstr)-1]='\0';
 
       if ((nmap=readPNMimage((unsigned char *)nstr,&width,&height,&components))==NULL) ERRORMSG();
+      if (components!=3) ERRORMSG();
 
       mergeRGBimages((unsigned char *)data,xsize,ysize,
                      nmap,width,height);

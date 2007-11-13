@@ -79,6 +79,7 @@ void writePNMimage(const char *pnmfilename,
 
    if (components==1 || components==2) fprintf(file,"P5");
    else if (components==3) fprintf(file,"P6");
+   else if (components==4) fprintf(file,"P8");
    else ERRORMSG();
 
    if (comment!=NULL)
@@ -92,7 +93,7 @@ void writePNMimage(const char *pnmfilename,
 
    fprintf(file,"\n%d %d\n",width,height);
 
-   if (components==1 || components==3) fprintf(file,"255\n");
+   if (components==1 || components==3 || components==4) fprintf(file,"255\n");
    else fprintf(file,"32767\n");
 
    if (fwrite(image,width*height*components,1,file)!=1) ERRORMSG();
@@ -138,6 +139,7 @@ unsigned char *readPNMimage(unsigned char *pnmimage,
       if (pnmtype==5 && maxval==255) *components=1;
       else if (pnmtype==5 && (maxval==32767 || maxval==65535)) *components=2;
       else if (pnmtype==6 && maxval==255) *components=3;
+      else if (pnmtype==8 && maxval==255) *components=4;
       else ERRORMSG();
 
       if ((image=(unsigned char *)malloc((*width)*(*height)*(*components)))==NULL) ERRORMSG();
@@ -211,6 +213,7 @@ unsigned char *readPNMimage(unsigned char *pnmimage,
       if (pnmtype==5 && maxval==255) *components=1;
       else if (pnmtype==5 && (maxval==32767 || maxval==65535)) *components=2;
       else if (pnmtype==6 && maxval==255) *components=3;
+      else if (pnmtype==8 && maxval==255) *components=4;
       else ERRORMSG();
 
       if (ptr!=NULL) *ptr=image+(*width)*(*height)*(*components);
