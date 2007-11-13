@@ -451,9 +451,10 @@ void minicache::rendertexmap(int m,int n,int S)
    mtxpush();
    mtxtranslate(ox-XDIM/2.0f,CENTERY,oz+ZDIM/2.0f);
 
-   // avoid gaps between tiles
-   if (CONFIGURE_OVERLAP!=0.0f)
-      if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
+   // avoid gaps between tiles (excluding the sea surface)
+   if (PHASE==2)
+      if (CONFIGURE_OVERLAP!=0.0f)
+         if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
 
    mtxscale(XDIM/(S-1),SCALE,-ZDIM/(S-1));
 
