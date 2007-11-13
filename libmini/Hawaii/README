@@ -1,0 +1,46 @@
+The Hawaii Demo is provided under the terms of the GPL
+Copyright (c) 2002-2007 by Stefan Roettger
+
+To compile under Linux, MacOS X, Irix or Windows follow these steps:
+
+ 1) make sure that OpenGL and the GLUT library are installed
+ 2) download latest "MINI-x.x.zip" and "Hawaii.zip" from this location:
+    http://stereofx.org/download
+ 3) unpack both zip archives to the same directory
+ 4) compile the demo using the "build.sh" script in the "Hawaii" directory
+    (for Windows use cygwin or the supplied VC++ project files)
+ 5) type "Hawaii" on the console or double click at "Hawaii.exe"
+ 6) try the following keys: w a d s < > j b m 0 l p o c (q quits the demo)
+
+The demo includes freely available terrain data from the following sources:
+
+DEM:
+ USGS Geographic Data Download
+ http://edc.usgs.gov/geodata/
+
+SDTS DEM:
+ MapMart Global Mapping Solutions
+ http://www.mapmart.com/DEM/DEM.htm
+
+LandSat ETM orthophotos and bathymetric data of Hawaii:
+ The Hawaii Project of the NOAA Coastal Services Center
+ http://www.csc.noaa.gov/crs/lca/hawaii.html
+
+LandSat TM and ETM+ orthophotos world-wide:
+ Global Land Cover Facility
+ http://glcf.umiacs.umd.edu
+
+Sky Dome:
+ Philo's Sky Collection
+ http://www.philohome.com/skycollec/skycollec.htm
+
+Thanks for making the data available to the public!
+
+The USGS 1:250,000 DEM quads have been converted via the dem2pgm tool.
+The USGS 1:24,000 SDTS DEM quads have been converted via the sdts2dem tool.
+
+These tools are part of the demo and can be compiled with the command:
+ "build.sh tools"
+
+Have fun,
+Stefan

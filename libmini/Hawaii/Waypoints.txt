@@ -1,0 +1,1613 @@
+Residence, Green Flamingo Nursery, 41-585 Flamingo St., Waimanalo, Hawai'i
+UTM 04
+0631433
+2361214
+22m
+
+Shearpower, Keolu Hills
+UTM 04
+0631709
+2364367
+3m
+
+7/11, Waimanalo
+UTM 04
+0632502
+2361177
+16m
+
+76 Gas Nr. 1, Waimanalo
+UTM 04
+0632608
+2361218
+21m
+
+Chiang Mai, Honolulu
+UTM 04
+0621654
+2355106
+16m
+
+Makai Research Pier Gate
+UTM 04
+0637956
+2357987
+9m
+
+Office, Makai
+UTM 04
+0638067
+2358141
+38m
+
+Parking, Makai
+UTM 04
+0638074
+2358139
+22m
+
+Ross, Hawai'i Kai
+UTM 04
+0633644
+2354060
+16m
+
+Subway, Waimanalo
+UTM 04
+0632585
+2361233
+19m
+
+T.C.'s Helicopter Platform, Makai
+UTM 04
+0638128
+2358101
+21m
+
+Pali Lookout, Oahu
+UTM 04
+0625143
+2363262
+379m
+
+Shima's, Waimanalo
+UTM 04
+0632463
+2361191
+17m
+
+Waimanalo Beach
+UTM 04
+0634697
+2360708
+22m
+
+Makapu'u Lookout
+UTM 04
+0639941
+2356994
+193m
+
+Bunker, Makapu'u
+UTM 04
+0639728
+2356895
+211m
+
+Rich People, Kamehame Ridge
+UTM 04
+0637042
+2356453
+225m
+
+Public Beach, Waimanalo
+UTM 04
+0636738
+2358779
+14m
+
+Kaena Point Beach
+UTM 04
+0578470
+2383101
+17m
+
+Kea'au Beach
+UTM 04
+0580551
+2375321
+16m
+
+Marine Corps Base Hawaii (MCBH) Gate
+UTM 04
+0630178
+2370050
+20m
+
+Back of Pearl Harbour Ship Wreckage
+UTM 04
+0604526
+2364621
+28m
+
+H3 Tunnel, North Side
+UTM 04
+0620761
+2367292
+267m
+
+H3 Tunnel, South Side
+UTM 04
+0618950
+2367471
+329m
+
+Soccer Grounds, Pearl Harbor
+UTM 04
+0603892
+2363473
+18m
+
+Stadium Lookout Platform
+UTM 04
+0603645
+2363908
+31m
+
+Wiliwilinui Trailhead
+UTM 04
+0628334
+2355752
+369m
+
+Utility Poles, Wiliwilinui Trail
+UTM 04
+0628906
+2358322
+577m
+
+Scenic Point "Blowhole", Highway 72, Oahu
+UTM 04
+0637277
+2353972
+35m
+
+Jose Andres, 41-945 Kalaniana'ole St., Waimanalo, Oahu
+UTM 04
+0634669
+2360026
+12m
+
+Aloha Gas, Waimanalo
+UTM 04
+0635074
+2359568
+19m
+
+Jack in the Box Parking, Waimanalo
+UTM 04
+0632522
+2361225
+20m
+
+Jose's Beach, Waimanalo
+UTM 04
+0634964
+2360342
+12m
+
+Mr. Masters' Boat Gate
+UTM 04
+0636901
+2358719
+12m
+
+Post Office, Waimanalo
+UTM 04
+0635034
+2359603
+17m
+
+Waimanalo Beach Park Camping No 1
+UTM 04
+0635657
+2359265
+21m
+
+Pali Hwy Tunnel1 North
+UTM 04
+0625442
+2363417
+277m
+
+Pali Hwy Tunnel1 South
+UTM 04
+0625282
+2363354
+286m
+
+Pali Hwy Tunnel2 North
+UTM 04
+0625196
+2363311
+293m
+
+Pali Hwy Tunnel2 South
+UTM 04
+0624934
+2363123
+314m
+
+Glenn's Flowers
+UTM 04
+0631930
+2361405
+1m
+
+Maunawili Bridge
+UTM 04
+0628447
+2364341
+36m
+
+Olomana Trailhead
+UTM 04
+0628472
+2363427
+33m
+
+Almost at the Top of Olomana
+UTM 04
+0629441
+2362663
+472m
+
+Olomana
+UTM 04
+0629545
+2362639
+517m
+
+Hanauma Bay Lookout, Oahu
+UTM 04
+0635528
+2352924
+67m
+
+Audubon Center, Oahu
+UTM 04
+0597835
+2392922
+23m
+
+Kaaawa Beachfront
+UTM 04
+0619445
+2383335
+13m
+
+Kualoa Beach
+UTM 04
+0620539
+2379452
+14m
+
+Hazardous Surf, Pupuke
+UTM 04
+0597063
+2394489
+18m
+
+Waimea Falls
+UTM 04
+0598917
+2392227
+27m
+
+Waikiki Aquarium
+UTM 04
+0622269
+2352026
+26m
+
+Diamond Head Recreational Area
+UTM 04
+0623638
+2350919
+39m
+
+Maple Garden, Honolulu
+UTM 04
+0621817
+2354934
+20m
+
+Lanikai Top
+UTM 04
+0633360
+2365003
+39m
+
+Lanikai Boat Landing
+UTM 04
+0633638
+2365428
+18m
+
+Buzz's Parking
+UTM 04
+0631993
+2366537
+18m
+
+Kailua "Castle" Beach
+UTM 04
+0630260
+2368596
+18m
+
+Kailua "Sewage" Beach
+UTM 04
+0632258
+2366552
+19m
+
+Olomana "Sharp" Vista
+UTM 04
+0630090
+2360367
+82m
+
+Maunawili Ditch Trailhead
+UTM 04
+0630371
+2360584
+66m
+
+Car Rental, Hilo Airport
+UTM 05
+0286241
+2181148
+49m
+
+Onekahakaha "Basin" Beach
+UTM 05
+0287236
+2183370
+27m
+
+Junk, Hilo
+UTM 05
+0283652
+2180127
+23m
+
+Scenic Point, Hilo
+UTM 05
+0280976
+2184345
+47m
+
+Akaka Falls Lookout, Hilo
+UTM 05
+0274423
+2196764
+370m
+
+Hakuna Falls Lookout, Hilo
+UTM 05
+0274655
+2196974
+361m
+
+Ben's Door
+UTM 05
+0237624
+2219343
+769m
+
+Ben's Driveway, 46-4091 Old Mamalahoa Hwy; Taxmap 46009045
+UTM 05
+0237573
+2219440
+744m
+
+Chicken Coop
+UTM 05
+0237678
+2219335
+768m
+
+Tex Inn, Honokaa
+UTM 05
+0242235
+2221356
+411m
+
+VTP
+UTM 05
+0237631
+2219351
+772
+
+Waipi'o Lookout
+UTM 05
+0229811
+2226649
+281m
+
+Park Bench, Waimea
+UTM 05
+0220316
+2215875
+804m
+
+Saddle, Hilo
+UTM 05
+0239149
+2179310
+2046m
+
+Silversword, Mauna Kea
+UTM 05
+0242703
+2186734
+2828m
+
+Kaumana Cave, Lava Tube
+UTM 05
+0276642
+2178225
+301m
+
+Postoffice, Honokaa
+UTM 05
+0241729
+2222225
+346m
+
+Pololu Lookout
+UTM 05
+0214314
+2236392
+152m
+
+Keokea Beach Park
+UTM 05
+0213155
+2239084
+23m
+
+"Green Turtle" Beach, Puako
+UTM 05
+0200832
+2209344
+28m
+
+Italian Pizza Bar, Honokaa
+UTM 05
+0241724
+2222405
+343m
+
+Hilo Beachpark
+UTM 05
+0283215
+2182576
+0m
+
+White Street, Illegal Trailhead
+UTM 05
+0225537
+2218717
+923m
+
+Waipi'o Backend Water Fall Ditch
+UTM 05
+0225253
+2220193
+946m
+
+Waipi'o Backend Lookout
+UTM 05
+0224194
+2219785
+1028m
+
+Blanes, Honoka'a
+UTM 05
+0242041
+2222096
+358m
+
+Onomea Botanical Garden
+UTM 05
+0280416
+2191906
+53m
+
+Onomea Falls
+UTM 05
+0280554
+2191836
+44m
+
+Cafe Pesto
+UTM 05
+0281496
+2182256
+28m
+
+Tide Pool
+UTM 05
+0290004
+2183510
+22m
+
+Aina Haina Elementary School, Oahu
+UTM 04
+629091
+2353603
+13m
+
+Alamo Car Rental, Honolulu
+UTM 04
+613242
+2359685
+14m
+
+Aloha Tower Market Place, Honolulu
+UTM 04
+617734
+2356549
+43m
+
+Parking for Assaggio Restaurant, Kailua
+UTM 04
+630443
+2366621
+23m
+
+Badebunker, Magnum Villa, Waimanalo
+UTM 04
+636857
+2358747
+15m
+
+Bank of Hawaii, Hawaii Kai
+UTM 04
+634430
+2353515
+25m
+
+Kawaikui Beach Park, Oahu
+UTM 04
+628656
+2353208
+20m
+
+Valley of the Temples, Prayer Bell, Oahu
+UTM 04
+621071
+2370268
+70m
+
+Valley of the Temples, Entrance Bridge, Oahu
+UTM 04
+621085
+2370304
+70m
+
+Buzz's Restaurant, Kailua
+UTM 04
+632002
+2366521
+32m
+
+Waimanalo Beach Cottages Nr. 5, Waimanalo
+UTM 04
+635265
+2359647
+29m
+
+Enchanted Lake Elementary School, Keolu Hills
+UTM 04
+631443
+2365114
+34m
+
+Foodland, Hawaii Kai
+UTM 04
+634342
+2353311
+20m
+
+Hahaione Elementary School, Oahu
+UTM 04
+633758
+2355483
+23m
+
+Hahaione Valley End, Oahu
+UTM 04
+633520
+2357000
+120m
+
+Sushikoh Restaurant, Honolulu
+UTM 04
+621226
+2353616
+34m
+
+Kaelepulu Elementary School, Keolu Hills
+UTM 04
+630524
+2364891
+16m
+
+Kai Aloha Hotel, Honolulu
+UTM 04
+621162
+2353583
+28m
+
+Kaiwi Trail Head, Makapuu Point
+UTM 04
+639513
+2356502
+24m
+
+Kamiloiki Elementary School, Hawaii Kai
+UTM 04
+636290
+2355287
+37m
+
+Kuliouou Valley End, Oahu
+UTM 04
+632253
+2356067
+36m
+
+Lanikai Beach End, Oahu
+UTM 04
+633807
+2365154
+14m
+
+Lanikai Elementary School, Oahu
+UTM 04
+632141
+2366271
+29m
+
+Longs Drugs, Hawaii Kai
+UTM 04
+634037
+2354198
+15m
+
+Kaiwi Lookout, Makapuu Point
+UTM 04
+639950
+2356987
+198m
+
+Mariner's Village, Hawaii Kai
+UTM 04
+636368
+2356669
+40m
+
+Maunawili Falls Trail Head, Oahu
+UTM 04
+628195
+2362397
+60m
+
+Maunawili Elementary School, Oahu
+UTM 04
+629351
+2364443
+61m
+
+Niu Valley End, Oahu
+UTM 04
+630691
+2355027
+66m
+
+Niu Valley Middle School, Oahu
+UTM 04
+630746
+2354245
+20m
+
+Pizza ASAP, Kailua
+UTM 04
+630432
+2366256
+27m
+
+Queens Hospital, Honolulu
+UTM 04
+618781
+2356480
+22m
+
+Reb Bellinger, 51-381 Hauhele Road, Kaaawa
+UTM 04
+619027
+2383787
+34m
+
+Starbucks, Hawaii Kai
+UTM 04
+633737
+2354048
+13m
+
+Surfspot, Makapuu Beach, Oahu
+UTM 04
+638927
+2357287
+9m
+
+Wiliwilinui Trail Parking, Oahu
+UTM 04
+628346
+2355684
+375m
+
+Wiliwilinui Trail, Waikiki Lookout, Oahu
+UTM 04
+628442
+2356969
+490m
+
+Wailupe Valley End, Oahu
+UTM 04
+629163
+2355865
+114m
+
+Wailupe Elementary School, Oahu
+UTM 04
+629155
+2355066
+54m
+
+Honolulu Waldorf School, Niu Valley, Oahu
+UTM 04
+631323
+2354261
+19m
+
+Whale Watch, Scenic Point, Oahu
+UTM 04
+636348
+2353304
+47m
+
+Wedding Office, Honolulu
+UTM 04
+618642
+2356581
+25m
+
+Wilhelmina Rise Lookout, Oahu
+UTM 04
+625888
+2355604
+330m
+
+Tie Fang, 1306 Wilhelmina Rise, 96816 Honolulu
+LL
+21.284108
+-157.797341
+59m
+
+SFO, Gate 82
+UTM 10
+0554091
+4163582
+9m
+
+Apple Store, Ala Moana Shopping Center
+UTM 04
+620076
+2354752
+12m
+
+Audi of Hawaii, Honolulu
+UTM 04
+619705
+2356072
+34m
+
+Big City Diner, Kailua
+UTM 04
+630144
+2366122
+24m
+
+Big Tree, Playground, Lanikai Elementary, Kailua
+UTM 04
+632059
+2366306
+18m
+
+Timber Bench, Lanikai Beach
+UTM 04
+633298
+2365936
+15m
+
+Diamond Head Community Garden, Honolulu
+UTM 04
+622836
+2352143
+16m
+
+Vista at Russian Hill, SF
+UTM 10
+551633
+4183609
+29m
+
+Fior D'Italia, SF
+UTM 10
+551643
+4184270
+31m
+
+Fort Mason Community Garden
+UTM 10
+550329
+4184433
+12m
+
+Fishermen's Wharf Beach, SF
+UTM 10
+550878
+4184620
+0m
+
+Haiku Garden, Kaneohe
+UTM 04
+622756
+2368418
+64m
+
+Haleiwa Joe's, Kaneohe
+UTM 04
+622772
+2368484
+83m
+
+Heeia State Park
+UTM 04
+623543
+2371601
+32m
+
+Kahana Valley Beach
+UTM 04
+616369
+2384232
+26m
+
+Kalapawai Market, Kailua
+UTM 04
+631647
+2366673
+19m
+
+Kapiolani Park, Banyan Tree, Honolulu
+UTM 04
+622494
+2351716
+39m
+
+Lanikai Juice, Kailua
+UTM 04
+630446
+2366271
+11m
+
+Lanikai Hills Trail Head
+UTM 04
+632782
+2365852
+109m
+
+Lanikai Hills Lookout (before Bunker #1)
+UTM 04
+632904
+2365667
+124m
+
+Lanikai Hills Bunker #2
+UTM 04
+633045
+2365367
+195m
+
+Muddy Waters, Kailua
+UTM 04
+629739
+2369448
+21m
+
+Natatorium, Waikiki
+UTM 04
+622249
+2351899
+17m
+
+Kalama Beach Park, Kailua
+UTM 04
+630551
+2367388
+22m
+
+Safeway, Kaneohe
+UTM 04
+624001
+2369294
+26m
+
+Saigon Noodle House, Enchanted Lake
+UTM 04
+631713
+2364497
+21m
+
+Slumberworld, Honolulu
+UTM 04
+619724
+2355207
+33m
+
+Starbucks, Keolu Hills
+UTM 04
+631809
+2364558
+49m
+
+Toyota, Windward
+UTM 04
+624480
+2367287
+51m
+
+Tree Trunk, Lanikai Beach
+UTM 04
+633505
+2365736
+12m
+
+Union Square, SF
+UTM 10
+552209
+4182472
+20m
+
+Wilhelmina Lookout, Honolulu
+UTM 04
+625888
+2355604
+330m
+
+Windward Mall, Kaneohe
+UTM 04
+624029
+2369127
+37m
+
+Waikiki Shell, Honolulu
+UTM 04
+622536
+2352370
+19m
+
+129 Alala Rd. Apt. #3
+UTM 04
+632307
+2366230
+25m
+
+Atop of Maunawili Falls
+UTM 04
+627218
+2361428
+151m
+
+Bench, Hohomaluhia
+UTM 04
+623731
+2365580
+81m
+
+Gate, Hohomaluhia
+UTM 04
+623567
+2366468
+75m
+
+Parking, Hohomaluhia
+UTM 04
+623408
+2365374
+99m
+
+Kahala Mall, Oahu
+UTM 04
+626043
+2353195
+19m
+
+Koolau Clinic, Kaneohe
+UTM 04
+624396
+2367000
+44m
+
+Lanai@Office, Makai
+UTM 04
+638099
+2358127
+5m
+
+Lanikai Backend Trail Head
+UTM 04
+633624
+2364903
+46m
+
+Lanikai Backend Trail Summit
+UTM 04
+633657
+2364704
+149m
+
+Jamba Juice, Hawaii Kai
+UTM 04
+634266
+2353441
+7m
+
+Gate, Koko Crater Botanical Garden
+UTM 04
+637190
+2355215
+57m
+
+Bench, Koko Crater
+UTM 04
+636991
+2354580
+89m
+
+Picnic Table, Koko Crater
+UTM 04
+636812
+2354664
+103m
+
+Mama's Pizza, Kailua
+UTM 04
+630214
+2366125
+10m
+
+Punchbowl Platform, Honolulu
+UTM 04
+619460
+2356982
+153m
+
+Avocado Parking, Tantalus Dr.
+UTM 04
+622963
+2359227
+461m
+
+Puu Ohia Trail Head, Tantalus Dr.
+UTM 04
+622937
+2359220
+445m
+
+Picnic Area, Puu Ualakaa State Park
+UTM 04
+622338
+2357494
+213m
+
+View Point, Puu Ualakaa State Park
+UTM 04
+622098
+2357295
+341m
+
+Bench View, Waahila
+UTM 04
+624575
+2356682
+331m
+
+Geocache Bench, Waahila Ridge
+UTM 04
+624775
+2356658
+351m
+
+Waahila Ridge Trailhead
+UTM 04
+624878
+2356596
+342m
+
+Honolulu Zoo
+UTM 04
+622268
+2352567
+20m
+
+End of Manoa Valley
+UTM 04
+624247
+2358837
+113m
+
+City Mill, Hawaii Kai
+UTM 04
+633581
+2354080
+21m
+
+Starbucks, Hawaii Kai
+UTM 04
+634291
+2353381
+21m
+
+Zia's Cafe, Kailua
+UTM 04
+630519
+2365895
+36m
+
+Down2Earth, Kailua
+UTM 04
+630596
+2365831
+35m
+
+Foodland, Kailua
+UTM 04
+630207
+2366119
+30m
+
+Longs Drugs, Kailua
+UTM 04
+630379
+2366187
+38m
+
+Playground, Kailua
+UTM 04
+631439
+2366269
+29m
+
+Crossing with Maunawili Trail
+UTM 04
+625282
+2363913
+156m
+
+Gate of Old Pali Road
+UTM 04
+625462
+2364331
+16m
+
+Fork-Off, Old Pali Road
+UTM 04
+625638
+2363617
+229m
+
+Mouth Current, Kailua Beach Park
+UTM 04
+632081
+2366662
+18m
+
+76, Enchanted Lake
+UTM 04
+631800
+2364603
+23m
+
+Aloha Tower, Honolulu
+UTM 04
+617637
+2356559
+100m
+
+Food Lanai, Honolulu
+UTM 04
+617600
+2356516
+30m
+
+Hooters, Honolulu
+UTM 04
+617707
+2356425
+10m
+
+Atlantis Pier, Honolulu
+UTM 04
+617743
+2356294
+23m
+
+Bellows Entrance, Waimanalo
+UTM 04
+633729
+2360932
+17m
+
+Bellows Beach, Waimanalo
+UTM 04
+633796
+2362528
+38m
+
+Toilet, Bellows Beach
+UTM 04
+633947
+2362159
+25m
+
+Bob's Pizza, Kailua Beach
+UTM 04
+631550
+2366612
+13m
+
+Bridge, Hilo
+UTM 05
+281244
+2182742
+16m
+
+Bank of Hawaii, Honokaa
+UTM 05
+241942
+2222130
+358m
+
+StarBeads, Honokaa
+UTM 05
+241958
+2222123
+359m
+
+Takehiro, Ahualoa
+UTM 05
+238734
+2220236
+381m
+
+Ehukai Beach Park (Banzai Pipeline)
+UTM 04
+598173
+2396076
+14m
+
+Haleiwa Joe's, Haleiwa
+UTM 04
+592735
+2387996
+20m
+
+Jump Outlook, Waimea Beach
+UTM 04
+596797
+2393065
+34m
+
+Parking, Malaekahana Beach Park
+UTM 04
+610804
+2395494
+18m
+
+Beach trees across Goat Island, Malaekahana
+UTM 04
+610863
+2395730
+17m
+
+Old Pier, Malaekahana
+UTM 04
+610922
+2395751
+13m
+
+Arboretum, Manoa Valley
+UTM 04
+624393
+2359408
+158m
+
+Manoa Falls Trailhead
+UTM 04
+624340
+2359385
+33m
+
+Manoa Falls View
+UTM 04
+624486
+2360362
+55m
+
+UH Academy of Arts
+UTM 04
+622595
+2355791
+46m
+
+Bike Factory, Ala Moana Blvd
+UTM 04
+618211
+2355445
+17m
+
+Panda Express, Hawaii Kai
+UTM 04
+633717
+2354048
+19m
+
+Waimanalo Bay
+UTM 04
+634426
+2360976
+33m
+
+Hawaii Kai Lookout
+UTM 04
+635308
+2353186
+68m
+
+Volcano Terraces
+UTM 04
+633698
+2351642
+18m
+
+Spitting Cove
+UTM 04
+633726
+2351586
+18m
+
+Public Right of Way to Beach
+UTM 04
+633745
+2351795
+21m
+
+Stairs to Beach
+UTM 04
+633699
+2351778
+19m
+
+Kamahame Gate
+UTM 04
+637018
+2356704
+220m
+
+View onto Magnum Mansion, Wow!
+UTM 04
+636789
+2358193
+406m
+
+Hangglider Platform
+UTM 04
+637023
+2358182
+389m
+
+Best Avo Tree, Old Pali Hwy
+UTM 04
+625597
+2363740
+207m
+
+Above Pali Hwy
+UTM 04
+625959
+2363492
+0m
+
+Maui Tacos, Kailua
+UTM 04
+630527
+2366198
+8m
+
+Ala Moana Magic Island
+UTM 04
+619532
+2354161
+17m
+
+Diamond Head Park Entrance
+UTM 04
+624500
+2352222
+77m
+
+Diamond Head Trail Crater Ascend
+UTM 04
+623410
+2351583
+115m
+
+Diamond Head Winch
+UTM 04
+623407
+2351505
+167m
+
+Diamond Head Crater Rim Tunnel
+UTM 04
+623350
+2351455
+191m
+
+Diamond Head Lookout
+UTM 04
+623288
+2351364
+252m
+
+Eternity Seat
+UTM 04
+637226
+2353909
+20m
+
+Senator Fongs Garden
+UTM 04
+618673
+2374616
+51m
+
+Cafe des Artes, Tantalus
+UTM 04
+621029
+2357117
+143m
+
+Autograph Tree, Museum of Modern Arts
+UTM 04
+621057
+2357032
+150m
+
+Koko Crater Park
+UTM 04
+635400
+2353477
+50m
+
+Hanauma Bay Chair Lookout
+UTM 04
+634884
+2352491
+82m
+
+Keeko Bench Beach
+UTM 04
+633853
+2352163
+20m
+
+Keneke's, Waimanalo
+UTM 04
+635058
+2359588
+26m
+
+Reynold's Recycling, Keolu Shopping Center
+UTM 04
+631731
+2364351
+31m
+
+Spirits Section, Safeway Kailua
+UTM 04
+630626
+2365912
+20m
+
+Tamuras, Kaimuki
+UTM 04
+624365
+2354079
+55m
+
+Sushi Man Terrace, Hawaii Kai
+UTM 04
+633721
+2353990
+23m
+
+Sissy's Bench, Sandy Beach
+UTM 04
+637795
+2354371
+23m
+
+Shaking Tree Bench, Honolulu Zoo
+UTM 04
+622771
+2352549
+25m
+
+Bird Voliere, Honolulu Zoo
+UTM 04
+622670
+2352720
+37m
+
+Tenney Theather, Queen Emma Pl
+UTM 04
+618535
+2356800
+25m
+
+Waioli Tea House
+UTM 04
+623164
+2357592
+79m
+
+Kamahele Trailhead, Keolu Hills
+UTM 04
+632134
+2364919
+20m
+
+Vista Point, Keolu Hills
+UTM 04
+632622
+2364905
+186m
+
+Bunker, Keolu Hills
+UTM 04
+632740
+2364856
+197m
+
+Wiliwilinui Summit
+UTM 04
+629325
+2358948
+759m
