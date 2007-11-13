@@ -51,6 +51,11 @@ viewerbase::viewerbase()
 
    PARAMS.maxelev=15000.0f; // absolute maximum of expected elevations
 
+   // auto-determined warp upon load:
+
+   PARAMS.warp.setwarp(miniwarp::MINIWARP_PLAIN,miniwarp::MINIWARP_PLAIN);
+   PARAMS.warpmode=0;
+
    // configurable parameters:
 
    PARAMS.scale=100.0f;           // scaling of scene

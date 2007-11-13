@@ -224,12 +224,14 @@ class miniwarp
 
    miniv4d MTX[3];
    miniv4d INVTRA[3];
+   float SCALE;
 
    private:
 
    void update_mtx();
    void update_wrp();
    void update_inv();
+   void update_scl();
 
    void calc_wrp();
 

@@ -15,6 +15,7 @@
 #include "minisky.h"
 #include "minipoint.h"
 
+#include "miniwarp.h"
 #include "miniglobe.h"
 
 //! aggregate class for viewing a tileset
@@ -42,6 +43,11 @@ class viewerbase
       float scaling2[3]; // local2internal scaling factor of tileset
 
       float maxelev;     // absolute maximum of expected elevations
+
+      // auto-determined warp upon load:
+
+      miniwarp warp; // warp object
+      int warpmode;  // warp mode: linear=0 affine=1 non-linear=2
 
       // configurable parameters:
       // [parameters marked with * must be changed via set()]

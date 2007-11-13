@@ -256,6 +256,12 @@ miniwarp::miniwarp()
    MTX[0]=miniv4d(1.0,0.0,0.0);
    MTX[1]=miniv4d(0.0,1.0,0.0);
    MTX[2]=miniv4d(0.0,0.0,1.0);
+
+   INVTRA[0]=miniv4d(1.0,0.0,0.0);
+   INVTRA[1]=miniv4d(0.0,1.0,0.0);
+   INVTRA[2]=miniv4d(0.0,0.0,1.0);
+
+   SCALE=1.0;
    }
 
 // destructor
@@ -316,6 +322,7 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
 
    update_wrp();
    update_inv();
+   update_scl();
    }
 
 // get actual warp matrix
@@ -336,21 +343,7 @@ void miniwarp::getinvtra(miniv4d mtx[3])
 
 // get actual scaling factor
 double miniwarp::getscale()
-   {
-   int i;
-
-   double avg=0.0;
-
-   for (i=0; i<3; i++)
-      {
-      // assume that the matrix is orthogonal
-      avg+=MTX[i].x*MTX[i].x;
-      avg+=MTX[i].y*MTX[i].y;
-      avg+=MTX[i].z*MTX[i].z;
-      }
-
-   return(sqrt(avg/3.0f));
-   }
+   {return(SCALE);}
 
 // perform warp of a point
 miniv3d miniwarp::warp(const miniv3d &vec)
@@ -428,7 +421,7 @@ void miniwarp::update_mtx()
       }
    }
 
-// calculate actual warp matrix
+// calculate the actual 4x3 warp matrix
 void miniwarp::update_wrp()
    {
    int i;
@@ -478,6 +471,24 @@ void miniwarp::update_inv()
    INVTRA[0]=miniv4d(MTX[0].x,MTX[1].x,MTX[2].x);
    INVTRA[1]=miniv4d(MTX[0].y,MTX[1].y,MTX[2].y);
    INVTRA[2]=miniv4d(MTX[0].z,MTX[1].z,MTX[2].z);
+   }
+
+// calculate the scaling factor of the 4x3 warp matrix
+void miniwarp::update_scl()
+   {
+   int i;
+
+   double avg=0.0;
+
+   for (i=0; i<3; i++)
+      {
+      // assume that the matrix is orthogonal
+      avg+=MTX[i].x*MTX[i].x;
+      avg+=MTX[i].y*MTX[i].y;
+      avg+=MTX[i].z*MTX[i].z;
+      }
+
+   SCALE=sqrt(avg/3.0f);
    }
 
 // calculate warp coordinate conversion

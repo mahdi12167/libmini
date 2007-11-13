@@ -601,6 +601,9 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
       if (israw!=0) return;
       else ERRORMSG();
 
+   if (israw!=0)
+      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
+
    success=CONVERSION_HOOK(israw,(unsigned char *)data,bytes,extfmt,&newdata,&newbytes,this,CONVERSION_DATA);
 
    if (!success)
@@ -611,6 +614,9 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
 
    data=newdata;
    bytes=newbytes;
+
+   if (israw==0)
+      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
 
    if (israw==0) extformat=0;
    else extformat=extfmt;

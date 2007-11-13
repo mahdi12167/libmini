@@ -1,6 +1,7 @@
 SHELL	= sh
 
 MODS	= mini miniOGL\
+	  miniv3f miniv3d miniv4f miniv4d\
 	  minitime miniio minihsv miniutm\
 	  ministub minitile miniload minicache\
 	  minitree minibrick minilod\
