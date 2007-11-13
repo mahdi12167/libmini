@@ -1198,6 +1198,7 @@ void databuf::savePNMimage(const char *filename)
          swapbytes();
          }
    else if (type==3) writePNMimage(filename,(unsigned char *)data,xsize,ysize,3);
+   else if (type==4) writePNMimage(filename,(unsigned char *)data,xsize,ysize,4);
    else ERRORMSG();
    }
 
