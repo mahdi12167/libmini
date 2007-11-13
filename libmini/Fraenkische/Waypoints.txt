@@ -1,0 +1,1391 @@
+Parkplatz LGDV, Erlangen
+UTM 32
+0646628
+5489794
+301m
+
+Ausgang Westparkplatz, Erlangen
+UTM 32
+0644476
+5495850
+267m
+
+Garage, Sandstr. 3, Weiher
+UTM 32
+0651628
+5495551
+308m
+
+Hauseingang, Sandstr. 3, Weiher
+UTM 32
+0651648
+5495556
+300m
+
+Wilfried Ahner, Im Grund 6, Weiher
+UTM 32
+0651526
+5495535
+292m
+
+Einfahrt Joyce, Weiher
+UTM 32
+0651447
+5495393
+289m
+
+Kletterbaum am Weiher, Weiher
+UTM 32
+0651722
+5495008
+293m
+
+Lieblingsbank im Reichswald, Weiher
+UTM 32
+0651781
+5495248
+294m
+
+Bauwagen, alter Standort, Baumleite 172, Walkersbrunn
+UTM 32
+0660173
+5502001
+503m
+
+Grenzstein SO, Baumleite 172, Walkersbrunn
+UTM 32
+0660194
+5501986
+499m
+
+Letzter Obstbaum, Baumleite 172, Walkersbrunn
+UTM 32
+0660176
+5502007
+512m
+
+Einmuendung, Baumleite 172, Walkersbrunn
+UTM 32
+0660171
+5502008
+509m
+
+Grenzstein SO, Baumleite 173, Walkersbrunn
+UTM 32
+0660192
+5501943
+500m
+
+Jaegerstand, Baumleite 173, Walkersbrunn
+UTM 32
+0660206
+5501935
+504m
+
+Strommast mit Ausblick, Baumleite, Walkersbrunn
+UTM 32
+0660300
+5501808
+508m
+
+Einfahrt, Baumleite 120, Walkersbrunn
+UTM 32
+0659828
+5502167
+414m
+
+Gasthaus Altstaetter Schiesshaus, Berg, Erlangen
+UTM 32
+0644885
+5496870
+279m
+
+Opel Ritter, Neunkirchen a. Br.
+UTM 32
+0653706
+5497465
+325m
+
+Aumueller, Uttenreuth
+UTM 32
+0649839
+5496070
+297m
+
+Grab Mama, Uttenreuth
+UTM 32
+0650219
+5496030
+303m
+
+Einfahrt Vogelhof, Hetzles
+UTM 32
+0656784
+5499351
+525m
+
+Hinterhofgarten, Volprechtstr. 16, Nuernberg
+UTM 32
+0648808
+5479427
+319m
+
+Parkplatz Rothsee, Roth
+UTM 32
+0659511
+5455337
+366m
+
+Strand Rothsee, Roth
+UTM 32
+0659807
+5455343
+357m
+
+Weetwood Hall, Room 139, Leeds, UK
+UTM 30
+0592662
+5966427
+125m
+
+Leeds Bradford Airport, Leeds, UK
+UTM 30
+0588200
+5969754
+223m
+
+Takeoff Point, Leeds Bradford Airport, Leeds, UK
+UTM 30
+0588847
+5968614
+223m
+
+Schiphol Airport, Amsterdam, Netherlands
+UTM 31
+0619700
+5795891
+-14m
+
+Gartenbank, Schulhaus, Sommersdorf
+UTM 32
+0615486
+5451042
+408m
+
+Abzweigung/Haltestelle Igensdorf
+UTM 32
+0661381
+5498651
+365m
+
+LKW-Garage Arzberger, Walkersbrunn 18
+UTM 32
+0659499
+5502490
+388m
+
+MoMo, Gostenhof Ost, Nuernberg
+UTM 32
+0649470
+5479064
+315m
+
+Schaukel, Hinterer Garten, Volprechtstr. 16, 90429 Nuernberg
+UTM 32
+0648811
+5479488
+314m
+
+Meine Bettseite, Volprechtstr. 16, 90429 Nuernberg
+UTM 32
+0648811
+5479449
+306m
+
+Hoersaalparkplatz Suedgelaende, Universitaet Erlangen
+UTM 32
+0646819
+5493296
+266m
+
+Naturgartenbad, Erlenstegen
+UTM 32
+0654775
+5482389
+308m
+
+Landbierparadies, Schlossaeckerstrasse, Nuernberg
+UTM 32
+0650220
+5478698
+462m
+
+Hof Klaus, Kleingeschaidt
+UTM 32
+0657732
+5491845
+353m
+
+Bauwagen, neuer Standort, Baumleite 120, Walkersbrunn
+UTM 32
+0659841
+5502141
+398m
+
+Balkon Papa, Burgfarrnbach
+UTM 32
+0639578
+5483401
+331m
+
+Gasthaus Goldener Schwan, Tennenlohe
+UTM 32
+0646830
+5490534
+303m
+
+Goos, Haidt
+UTM 32
+0590210
+5515195
+221m
+
+Hessenreuther Berg
+UTM 32
+0715109
+5523029
+678m
+
+Allee, Erbendorf
+UTM 33
+0286768
+5524488
+525m
+
+Tulpenstr. 25, Krummennaab
+UTM 33
+0291855
+5524288
+476m
+
+Gasthaus Drei Linden, Kalchreuth
+UTM 32
+0653864
+5491452
+416m
+
+Gasthaus zum Griechen, Burgfarrnbach
+UTM 32
+0639475
+5483550
+312m
+
+Eisdiele, Gostenhof
+UTM 32
+0649390
+5479233
+285m
+
+Gabelung Bergweg, Baumleite, Walkersbrunn
+UTM 32
+0660573
+5502631
+496m
+
+Garten Willy, Rosenbach
+UTM 32
+0651891
+5496932
+316m
+
+Gasthaus Schwarzer Adler (Mendelwirt), Hetzles
+UTM 32
+0653708
+5500145
+336m
+
+Landtechnik Meier, Eschenau
+UTM 32
+0659786
+5493810
+341m
+
+Parkplatz Baumleite, Walkersbrunn
+UTM 32
+0659815
+5502081
+417m
+
+Picknick Parkplatz, Walkersbrunn
+UTM 32
+0659588
+5503102
+410m
+
+Gasthaus Gruenes Tal, Pommer (Wummer)
+UTM 32
+0656955
+5502345
+425m
+
+Gastwirtschaft Reichelsdorfer Keller
+UTM 32
+0648358
+5470405
+332m
+
+Gasthaus Strehl, Walkersbrunn
+UTM 32
+0659691
+5502681
+340m
+
+Windrad, Kasberg
+UTM 32
+0659941
+5503977
+519m
+
+Bruecke Ententeich, Stadtpark, Nuernberg
+UTM 32
+0651618
+5481239
+311m
+
+Quelle, Lillach
+UTM 32
+0665224
+5499659
+452m
+
+Spielplatz Marienberg, Nuernberg
+UTM 32
+0651950
+5482781
+323m
+
+Marienberg, Nuernberg
+UTM 32
+0651899
+5482560
+335m
+
+Gasthaus La Locanda, Austrasse, Nuernberg
+UTM 32
+0648913
+5479210
+312m
+
+Tausendjaehrige Linde, Effeltrich
+UTM 32
+0651026
+5502896
+334m
+
+Junior 108H
+UTM 32
+0556960
+5421289
+473m
+
+Informatikgebaeude, Stuttgart
+UTM 32
+0507849
+5399083
+457m
+
+Grillplatz beim Schloss Solitude, Stuttgart
+UTM 32
+0506677
+5402110
+442m
+
+Gasthaus Dorfhaus, Lillachtal
+UTM 32
+0663438
+5499436
+385m
+
+Brunnen Stadtpark, Nuernberg
+UTM 32
+0651562
+5481191
+327m
+
+Tisch 29, Gastwirtschaft Palais Schaumburg, Kernstrasse, Nuernberg
+UTM 32
+0648861
+5479305
+308m
+
+Gastwirtschaft Palmengarten, Untere Kanalstrasse, Nuernberg
+UTM 32
+0648951
+5479441
+312m
+
+Gasthaus Zur Linde, Leitlshof
+UTM 32
+0641015
+5469027
+351m
+
+Bulldog Treffen am 6.8.2005, Ermreus
+UTM 32
+0654596
+5503845
+362m
+
+Sperrsitz Zirkus Knie, 7.8.2005, Festplatz Hartmannstrasse, Erlangen
+UTM 32
+0646134
+5494351
+279m
+
+Gasthaus zum Schloss, Tennenlohe
+UTM 32
+0646696
+5490431
+301m
+
+Parkplatz Urwildpferde, Erlangen
+UTM 32
+0647163
+5491591
+307m
+
+Zwinger, Nuernberg
+UTM 32
+0650989
+5479565
+255m
+
+Wiesn Biergarten, Woehrder Wiese, Nuernberg
+UTM 32
+0651554
+5479685
+294m
+
+Aussichtsturm Umweltstation, Unterstuermig
+UTM 32
+0647789
+5516797
+275m
+
+Fernsehturm, Nuernberg (Hoehe 292m)
+UTM 32
+0647893
+5476789
+608m
+
+Tongrube Tiefenstuermig, Buttenheim
+UTM 32
+0646978
+5517751
+292m
+
+Teufelstisch, Guttenburg
+UTM 32
+0661004
+5500317
+492m
+
+Spezial Keller, Stephansberg, Bamberg
+UTM 32
+0635592
+5527540
+292m
+
+Gasthaus Hoetzelein, Regensberg
+UTM 32
+0657552
+5504397
+450m
+
+Lederer Biergarten, Nuernberg
+UTM 32
+0648678
+5479980
+309m
+
+Holzklause, Holzmarkt, Bamberg
+UTM 32
+0635451
+5528689
+216m
+
+Gruener Hund Brunnen, Bamberg
+UTM 32
+0635202
+5528356
+255m
+
+Gasthaus Fuersattel, Guenthersbuehl
+UTM 32
+0660666
+5489002
+396m
+
+Erfahrungsfeld der Sinne, Woehrder Wiese, Nuernberg
+UTM 32
+0651564
+5479705
+303m
+
+Hauptbruecke, Bamberg
+UTM 32
+0635506
+5528318
+233m
+
+Aussichtsbank Burgruine, Haidthof
+UTM 32
+0660046
+5506832
+559m
+
+Kartoffelacker Willy, Brand
+UTM 32
+0658721
+5494902
+309m
+
+Gasthaus zum Schloss, Kalchreuth
+UTM 32
+0654193
+5491591
+413m
+
+Gasthaus Sussner, Kalchreuth
+UTM 32
+0654156
+5491524
+406m
+
+1. Eichertreff am 4.9.2005, Affalterthal
+UTM 32
+0664151
+5508452
+459m
+
+Hauptbahnhof, Gleis 19, Nuernberg
+UTM 32
+0650910
+5478951
+323m
+
+L.A.
+UTM 32
+0649563
+5500769
+293m
+
+Hexenhaeusla, Landbierparadies, Friedrich Ebert Strasse 100, Fuerth
+UTM 32
+0642942
+5483393
+316m
+
+Cafe Kiosk, Rosenau, Nuernberg
+UTM 32
+0649633
+5479709
+325m
+
+Balazzo Brozzi, Hochstrasse, Rosenau, Nuernberg
+UTM 32
+0649610
+5479801
+307m
+
+Obstgaertla, Burgfarrnbach
+UTM 32
+0638792
+5483919
+318m
+
+Pavillon, Schloss Burgfarrnbach
+UTM 32
+0639643
+5483327
+267m
+
+Spielplatz Rosenau, Nuernberg
+UTM 32
+0649580
+5479624
+282m
+
+Spielplatz, Schloss, Burgfarrnbach
+UTM 32
+0639518
+5483292
+299m
+
+Dammwildgehege, Pyrbaum
+UTM 32
+0660995
+5462418
+351m
+
+Gasthaus Strassmuehle, Pyrbaum
+UTM 32
+0661099
+5462390
+379m
+
+Wildschweingehege, Pyrbaum
+UTM 32
+0660835
+5462391
+371m
+
+Rosenkeller, Linden
+UTM 32
+0625248
+5499171
+306m
+
+Gasthaus Ludwigshoehe, Adlitz
+UTM 32
+0648931
+5499479
+344m
+
+Gasthaus zum Schloss, Atzelsberg
+UTM 32
+0647396
+5499059
+363m
+
+Gasthaus zur Linde, Keidenzell
+UTM 32
+0628749
+5480945
+294m
+
+Spielplatz Bohlenplatz, Erlangen
+UTM 32
+0645410
+5495730
+280m
+
+Wasserturm, Marloffstein
+UTM 32
+0649186
+5498603
+387m
+
+Pizzeria Alter Bahnhof
+UTM 32
+0630248
+5514770
+290m
+
+Schloss Weissenstein, Pommersfelden
+UTM 32
+0631080
+5513708
+281m
+
+Schloss Weingartsgreuth
+UTM 32
+0624958
+5510875
+306m
+
+Teufelshoehle, Prackenfels
+UTM 32
+0670400
+5471852
+413m
+
+Gasthaus zum Postmeister, Gruensberg
+UTM 32
+0668867
+5471363
+398m
+
+Spielplatz Knauerschule, Nuernberg
+UTM 32
+0649232
+5479129
+294m
+
+Landbierparadies, Rothenburgerstrasse, Nuernberg
+UTM 32
+0649230
+5479175
+308m
+
+Garnisonsfriedhof/Rochusfriedhof, Nuernberg
+UTM 32
+0649277
+5479173
+320m
+
+Gasthaus IU/ON, Nuernberg
+UTM 32
+0650021
+5480701
+303m
+
+Cafe Fatal, Nuernberg
+UTM 32
+0650025
+5480747
+314m
+
+Gasthaus Alter Peter, Langensendelbach
+UTM 32
+0649654
+5500630
+331m
+
+Abholung Schmotzer Kartoffelroder, 5.10.2005, Linden
+UTM 32
+0615090
+5484178
+410m
+
+Eixendorfer Staumauer, Oberpfalz
+UTM 33
+0314750
+5470350
+481m
+
+Abholung Schmalspurhaenger, 5.10.2005, Thanstein, Oberpfalz
+UTM 33
+0316675
+5472731
+525m
+
+Standesamt, Igensdorf
+UTM 32
+0660988
+5499895
+413m
+
+Baum der Deutschen Einheit, Igensdorf
+UTM 32
+0661363
+5499864
+406m
+
+Schlittenhang, Igensdorf
+UTM 32
+0660883
+5500139
+460m
+
+Oberer Ausblick, Igensdorf
+UTM 32
+0660829
+5500266
+479m
+
+Orient Express, Kernstrasse, Nuernberg
+UTM 32
+0648958
+5479624
+305m
+
+Cafe Regina, Fuerther Strasse, Nuernberg
+UTM 32
+0648869
+5479686
+306m
+
+Gelbes Haus, Fuerther Strasse, Nuernberg
+UTM 32
+0648689
+5479758
+330m
+
+Pegnitz Bruecke, Nuernberg
+UTM 32
+0648749
+5480176
+329m
+
+Poetenwaeldchen, Pegnitzgrund, Nuernberg
+UTM 32
+0648850
+5480199
+291m
+
+Gasthaus R-I-Z, Pegnitzgrund, Nuernberg
+UTM 32
+0649465
+5480302
+294m
+
+Rand, Tongrube Kalchreuth
+UTM 32
+0654406
+5490144
+404m
+
+Ausblick Nuernberg, Kalchreuth
+UTM 32
+0653920
+5490484
+414m
+
+Parkplatz Drachenwiese, Kalchreuth
+UTM 32
+0653934
+5491012
+411m
+
+Gasthaus Lauberberg, Antoniuskapelle 1, Sterpersdorf
+UTM 32
+0626814
+5504028
+304m
+
+Oberer Parkplatz, Kreuzberg, Hallerndorf
+UTM 32
+0641195
+5513579
+307m
+
+Friedels Keller, Kreuzberg, Hallerndorf
+UTM 32
+0640843
+5513696
+331m
+
+Jesus, Kreuzberg
+UTM 32
+0640769
+5513732
+328m
+
+Brauerei Friedel, Schnaid
+UTM 32
+0640313
+5514833
+361m
+
+Unterer Parkplatz, Kreuzberg, Hallerndorf
+UTM 32
+0640767
+5513782
+337m
+
+Bank, Deberndorf
+UTM 32
+0630470
+5478698
+385m
+
+Brennerei Siebenhaar, Dietzhof 13
+UTM 32
+0655942
+5507753
+350m
+
+Bootsanlandung, Pegnitz, Nuernberg
+UTM 32
+0649671
+5480209
+307m
+
+Brauerei Wiethaler, Neunhof
+UTM 32
+0661286
+5491467
+346m
+
+Bruecke, Pegnitzgrund, Nuernberg
+UTM 32
+0648749
+5480176
+329m
+
+Pegnitzbruecke, Kleinweidenmuehle, Nuernberg
+UTM 32
+0649630
+5480241
+306m
+
+Cafe Kunzmann, Neusles
+UTM 32
+0661559
+5504444
+524m
+
+Cafe Kleinweidenmuehle, Nuernberg
+UTM 32
+0649574
+5480193
+302m
+
+Hippel, Nuernberg
+UTM 32
+0649585
+5480174
+301m
+
+Hoehle, Augustusfelsen, Egloffstein
+UTM 32
+0663248
+5507285
+438m
+
+Insel, Valznerweiher, Nuernberg
+UTM 32
+0654724
+5478344
+324m
+
+Linde, Kasberg
+UTM 32
+0660248
+5503721
+517m
+
+Poporutsche, Pegnitzgrund, Nuernberg
+UTM 32
+0648678
+5480259
+298m
+
+Spielplatz Valznerweiher, Nuernberg
+UTM 32
+0654764
+5478425
+295m
+
+Landbierparadies, Sterzinger Strasse, Nuernberg
+UTM 32
+0651683
+5477237
+340m
+
+Tisch, Egloffstein
+UTM 32
+0663277
+5506852
+374m
+
+Cafe Wanner, Reichsparteitagsgelaende, Nuernberg
+UTM 32
+0653477
+5478058
+321m
+
+Waschsalon, Kugelspiel, Egloffstein
+UTM 32
+0663072
+5506907
+458m
+
+Westbad, Nuernberg
+UTM 32
+0648794
+5480267
+284m
+
+Gaststaette Wiethaler, Neunhof
+UTM 32
+0661270
+5491497
+361m
+
+Rundbau, Rosenau, Nuernberg
+UTM 32
+0649619
+5479783
+297m
+
+Minnesaengerbrunnen, Rosenau, Nuernberg
+UTM 32
+0649671
+5479682
+298m
+
+Gasthaus Kanone, Volprechtstr. 14, Nuernberg
+UTM 32
+0648817
+5479439
+307m
+
+Cafe Kirschgarten, Kalchreuth
+UTM 32
+0653800
+5491583
+414m
+
+Schlittenhang, Kalchreuth
+UTM 32
+0653600
+5491613
+408m
+
+Lugaus, Gailenberg
+UTM 32
+0601413
+5262989
+1013m
+
+Gailenberg
+UTM 32
+0602051
+5263029
+964m
+
+Breitachklamm, Oberstdorf/Tiefenbach
+UTM 32
+0592901
+5250501
+832m
+
+Naturfreundehaus Bergsee, Soellereck
+UTM 32
+0594653
+5249262
+1000m
+
+Gasthaus Bergkristall, Soellereck
+UTM 32
+0594382
+5249794
+1043m
+
+Soellereck
+UTM 32
+0593662
+5250341
+987m
+
+Sesselalpe
+UTM 32
+0592035
+5250607
+998m
+
+Sofa
+UTM 32
+0648810
+5479499
+259m
+
+Schaukel, Pegnitz
+UTM 32
+0648459
+5480543
+211m
+
+NMN, Nuernberg
+UTM 32
+0650767
+5479385
+301m
+
+Mr Bleck, Nuernberg
+UTM 32
+0650947
+5479570
+312m
+
+Marina Weber, Marienbergpark, Nuernberg
+UTM 32
+0650621
+5483015
+314m
+
+Spielplatz Faberpark, Stein, Nuernberg
+UTM 32
+0646748
+5475573
+281m
+
+Florysche Restauration
+UTM 32
+0639384
+5483202
+307m
+
+Schlueter
+UTM 32
+0644992
+5487088
+297m
+
+Schlossstr. 51, Erbendorf
+UTM 33
+0286965
+5524831
+535m
+
+Ausblick, Festung Rothenberg
+UTM 32
+0670576
+5491735
+560m
+
+Freibad Lauf
+UTM 32
+0664007
+5486965
+331m
+
+Berggasthof Rothenberg
+UTM 32
+0670452
+5491891
+490m
+
+Bruecke, Festung Rothenberg
+UTM 32
+0670716
+5491827
+560m
+
+Brunnen, Festung Rothenberg
+UTM 32
+0670643
+5491731
+559m
+
+Parkplatz, Festung Rothenberg
+UTM 32
+0671091
+5492333
+484m
+
+Bullach
+UTM 32
+0663142
+5493382
+353m
+
+Moritzberg, Parkplatz
+UTM 32
+0668145
+5481887
+549m
+
+Moritzberg, Tisch/Spielplatz
+UTM 32
+0667496
+5482009
+601m
+
+Strand, Fuerth
+UTM 32
+0645455
+5481802
+280m
+
+Fahne Felsenkeller, Kalchreuth
+UTM 32
+653050
+5490969
+395m
+
+MREW, Siemens
+UTM 32
+646361
+5495198
+297m
+
+Hallenbad Pegnitzaue, Schwaig bei Nuernberg
+UTM 32
+659786
+5482674
+321m
+
+Garten hinter dem Marktkauf, Nuernberg
+UTM 32
+648690
+5481600
+312m
+
+Rittmayer Keller, Kreuzberg
+UTM 32
+640757
+5513693
+344m
+
+Schwarzer Keller, Parkplatz, Weigelshofen
+UTM 32
+651619
+5516213
+346m
+
+Schwarzer Keller, Weigelshofen
+UTM 32
+651402
+5516024
+410m
+
+Gasthaus Saffer, F-Dorf
+UTM 32
+649244
+5522021
+371m
+
+Bank, Lillachtal
+UTM 32
+664445
+5499732
+405m
+
+Hochstrasse, Nuernberg
+UTM 32
+649391
+5479897
+314m
+
+Kettensteg, Nuernberg
+UTM 32
+650099
+5480055
+350m
+
+Cinecitta, Nuernberg
+UTM 32
+650990
+5479757
+370m
+
+Cilento, Hohenschwaerz
+UTM 32
+662521
+5505037
+491m
+
+Cafe Eckla, Graefenberg
+UTM 32
+662391
+5501660
+460m
+
+Friedmanns, Graefenberg
+UTM 32
+662392
+5501606
+438m
+
+Hochstrassenfest, Nuernberg
+UTM 32
+649391
+5479897
+314m
+
+Tierpark, Hundshaupten
+UTM 32
+660659
+5509981
+392m
+
+LaGrotta, Graefenberg
+UTM 32
+662392
+5501606
+436m
+
+Festplatz, Lilling
+UTM 32
+665411
+5500060
+499m
+
+Brauerei Meister, Unterzaunsbach
+UTM 32
+660183
+5511860
+330m
+
+Treckern, Morschreuth
+UTM 32
+663038
+5513846
+487m
+
+Ritter Wirnt Brunnen, Graefenberg
+UTM 32
+662390
+5501584
+447m
+
+Treckern, Waldershof
+UTM 33
+290286
+5541740
+544m
+
+Terrasse Kulturforum, Fuerth
+UTM 32
+643614
+5482738
+289m
+
+Spielplatz, Stadtpark, Fuerth
+UTM 32
+644698
+5482016
+306m
+
+Jo Stangl, Bernstein
+UTM 33
+295172
+5524311
+489m
+
+49er Eicher
+UTM 33
+295953
+5524297
+489m
+
+Bergpicnic, Tiergarten
+UTM 32
+656174
+5479740
+351m
+
+Schmausenbuck-Turm, Tiergarten
+UTM 32
+655732
+5479635
+395m
+
+Schwarzach Kanalbruecke, Feucht
+UTM 32
+660188
+5469216
+349m
+
+Trulli, Neumarkt
+UTM 32
+678700
+5461252
+430m
+
+Kirche Beerbach
+UTM 32
+659604
+5491784
+358m
+
+Hubertusklause, Deckersberg
+LL
+49.470846
+11.440757
+542m
+
+Schleppertreffen, Dehnberg
+UTM 32
+665176
+5489835
+385m
+
+Mueller, Simonshofen
+UTM 32
+664086
+5490879
+382m
