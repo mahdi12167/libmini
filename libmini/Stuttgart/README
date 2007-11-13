@@ -1,0 +1,13 @@
+The Stuttgart Demo is provided under the terms of the GPL
+Copyright (c) 2002-2007 by Stefan Roettger
+
+To compile under Linux, MacOS X, Irix or Windows follow these steps:
+
+ 1) download the latest "MINI-x.x.zip" and "Stuttgart.zip" from this URL:
+    http://stereofx.org/download
+ 2) unpack both zip archives to the same directory
+ 3) compile the library using the "build.sh" script in the "mini" directory
+ 4) compile the demo using the "build.sh" script in the "Stuttgart" directory
+    (for Windows use the project files in the corresponding directories)
+ 5) type "Stuttgart" on the console
+ 6) try the following keys: w f (q quits the demo)
