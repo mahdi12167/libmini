@@ -19,10 +19,13 @@ extern void (*minierrorhandler)(char *file,int line,int fatal);
 
 inline void minierrormsg(char *file,int line,int fatal=0)
    {
-   if (fatal==0) fprintf(stderr,"warning");
-   else fprintf(stderr,"fatal error");
-   fprintf(stderr," in <%s> at line %d!\n",file,line);
-   if (minierrorhandler!=0) minierrorhandler(file,line,fatal);
+   if (minierrorhandler==0)
+      {
+      if (fatal==0) fprintf(stderr,"warning");
+      else fprintf(stderr,"fatal error");
+      fprintf(stderr," in <%s> at line %d!\n",file,line);
+      }
+   else minierrorhandler(file,line,fatal);
    if (fatal!=0) exit(EXIT_FAILURE);
    }
 
