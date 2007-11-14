@@ -36,11 +36,8 @@ class viewerbase
 
       float extent[3];   // extent of tileset
 
-      float offset1[3];  // external2local offset of tileset center
-      float scaling1[3]; // external2local scaling factor of tileset
-
-      float offset2[3];  // local2internal offset of tileset center
-      float scaling2[3]; // local2internal scaling factor of tileset
+      float offset[3];   // offset of tileset center
+      float scaling[3];  // scaling factor of tileset
 
       float maxelev;     // absolute maximum of expected elevations
 

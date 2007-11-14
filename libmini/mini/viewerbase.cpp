@@ -33,21 +33,13 @@ viewerbase::viewerbase()
    PARAMS.extent[1]=0.0f;   // y-extent of tileset
    PARAMS.extent[2]=0.0f;   // z-extent of tileset
 
-   PARAMS.offset1[0]=0.0f;  // external2local x-offset of tileset center
-   PARAMS.offset1[1]=0.0f;  // external2local y-offset of tileset center
-   PARAMS.offset1[2]=0.0f;  // external2local z-offset of tileset center
+   PARAMS.offset[0]=0.0f;   // x-offset of tileset center
+   PARAMS.offset[1]=0.0f;   // y-offset of tileset center
+   PARAMS.offset[2]=0.0f;   // z-offset of tileset center
 
-   PARAMS.scaling1[0]=0.0f; // external2local x-scaling factor of tileset
-   PARAMS.scaling1[1]=0.0f; // external2local y-scaling factor of tileset
-   PARAMS.scaling1[2]=0.0f; // external2local z-scaling factor of tileset
-
-   PARAMS.offset2[0]=0.0f;  // local2internal x-offset of tileset center
-   PARAMS.offset2[1]=0.0f;  // local2internal y-offset of tileset center
-   PARAMS.offset2[2]=0.0f;  // local2internal z-offset of tileset center
-
-   PARAMS.scaling2[0]=0.0f; // local2internal x-scaling factor of tileset
-   PARAMS.scaling2[1]=0.0f; // local2internal y-scaling factor of tileset
-   PARAMS.scaling2[2]=0.0f; // local2internal z-scaling factor of tileset
+   PARAMS.scaling[0]=0.0f;  // x-scaling factor of tileset
+   PARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
+   PARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
 
    PARAMS.maxelev=15000.0f; // absolute maximum of expected elevations
 
@@ -514,8 +506,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       PARAMS.rows=TILECACHE->getinfo_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset1[0]=TILECACHE->getinfo_centerx();
-      PARAMS.offset1[1]=TILECACHE->getinfo_centery();
+      PARAMS.offset[0]=TILECACHE->getinfo_centerx();
+      PARAMS.offset[1]=TILECACHE->getinfo_centery();
 
       // set base size of textures
       PARAMS.basesize=TILECACHE->getinfo_maxsize();
@@ -532,8 +524,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       PARAMS.rows=TILECACHE->getimagini_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset1[0]=TILECACHE->getimagini_centerx();
-      PARAMS.offset1[1]=TILECACHE->getimagini_centery();
+      PARAMS.offset[0]=TILECACHE->getimagini_centerx();
+      PARAMS.offset[1]=TILECACHE->getimagini_centery();
 
       // set base size of textures
       PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
@@ -550,8 +542,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       PARAMS.rows=TILECACHE->getelevini_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset1[0]=TILECACHE->getelevini_centerx();
-      PARAMS.offset1[1]=TILECACHE->getelevini_centery();
+      PARAMS.offset[0]=TILECACHE->getelevini_centerx();
+      PARAMS.offset[1]=TILECACHE->getelevini_centery();
 
       // set base size of textures
       TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
@@ -575,7 +567,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // load tiles
    success=TERRAIN->load(PARAMS.cols,PARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
-                         -PARAMS.offset1[0],-PARAMS.offset1[1], // horizontal offset
+                         -PARAMS.offset[0],-PARAMS.offset[1], // horizontal offset
                          PARAMS.exaggeration,PARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
@@ -591,19 +583,14 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    PARAMS.extent[1]=PARAMS.rows*outparams[1];
    PARAMS.extent[2]=outparams[4];
 
-   // set local offset of tileset center
-   PARAMS.offset1[0]+=outparams[2];
-   PARAMS.offset1[1]+=-outparams[3];
+   // set offset of tileset center
+   PARAMS.offset[0]+=outparams[2];
+   PARAMS.offset[1]+=-outparams[3];
 
-   // set local scaling factor of tileset
-   PARAMS.scaling1[0]=outscale[0];
-   PARAMS.scaling1[1]=outscale[1];
-   PARAMS.scaling1[2]=1.0f/PARAMS.scale;
-
-   // set internal scaling factor of tileset
-   PARAMS.scaling2[0]=1.0f;
-   PARAMS.scaling2[1]=-1.0f;
-   PARAMS.scaling2[2]=1.0f;
+   // set scaling factor of tileset
+   PARAMS.scaling[0]=outscale[0];
+   PARAMS.scaling[1]=outscale[1];
+   PARAMS.scaling[2]=1.0f/PARAMS.scale;
 
    // set minimum resolution
    TERRAIN->configure_minres(PARAMS.minres);
@@ -650,7 +637,7 @@ void viewerbase::loadopts()
       {
       if (!PARAMS.usepnm) points.configure_automap(1);
 
-      points.load(wpname,-PARAMS.offset1[1],-PARAMS.offset1[0],PARAMS.scaling1[0],PARAMS.scaling1[1],PARAMS.exaggeration/PARAMS.scale,TERRAIN->getminitile());
+      points.load(wpname,-PARAMS.offset[1],-PARAMS.offset[0],PARAMS.scaling[0],PARAMS.scaling[1],PARAMS.exaggeration/PARAMS.scale,TERRAIN->getminitile());
       free(wpname);
 
       points.configure_brickceiling(PARAMS.brickceiling*points.getfirst()->elev*PARAMS.scale/PARAMS.exaggeration);
@@ -938,8 +925,8 @@ void viewerbase::getextent(float &sx,float &sy,float &sz)
 // get center of tileset in external coords
 void viewerbase::getcenter(double &cx,double &cy)
    {
-   cx=PARAMS.offset1[0];
-   cy=PARAMS.offset1[1];
+   cx=PARAMS.offset[0];
+   cy=PARAMS.offset[1];
    }
 
 // get initial view point in external coords
@@ -947,13 +934,13 @@ void viewerbase::getinitial(double &vx,double &vy)
    {
    if (points.getfirst()==NULL)
       {
-      vx=PARAMS.offset1[0];
-      vy=PARAMS.offset1[1];
+      vx=PARAMS.offset[0];
+      vy=PARAMS.offset[1];
       }
    else
       {
-      vx=(double)points.getfirst()->x/PARAMS.scaling1[0]+PARAMS.offset1[0];
-      vy=(double)points.getfirst()->y/PARAMS.scaling1[1]+PARAMS.offset1[1];
+      vx=(double)points.getfirst()->x/PARAMS.scaling[0]+PARAMS.offset[0];
+      vy=(double)points.getfirst()->y/PARAMS.scaling[1]+PARAMS.offset[1];
       }
    }
 
@@ -1014,33 +1001,33 @@ void viewerbase::move(float dist,
 // map point from external to local coordinates
 void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,float &loc_x,float &loc_y,float &loc_z)
    {
-   loc_x=(ext_x-PARAMS.offset1[0])*PARAMS.scaling1[0];
-   loc_y=(ext_y-PARAMS.offset1[1])*PARAMS.scaling1[1];
-   loc_z=(ext_z-PARAMS.offset1[2])*PARAMS.scaling1[2];
+   loc_x=(ext_x-PARAMS.offset[0])*PARAMS.scaling[0];
+   loc_y=(ext_y-PARAMS.offset[1])*PARAMS.scaling[1];
+   loc_z=(ext_z-PARAMS.offset[2])*PARAMS.scaling[2];
    }
 
 // map point from local to external coordinates
 void viewerbase::map_l2e(float loc_x,float loc_y,float loc_z,double &ext_x,double &ext_y,double &ext_z)
    {
-   ext_x=(double)loc_x/PARAMS.scaling1[0]+PARAMS.offset1[0];
-   ext_y=(double)loc_y/PARAMS.scaling1[1]+PARAMS.offset1[1];
-   ext_z=(double)loc_z/PARAMS.scaling1[2]+PARAMS.offset1[2];
+   ext_x=(double)loc_x/PARAMS.scaling[0]+PARAMS.offset[0];
+   ext_y=(double)loc_y/PARAMS.scaling[1]+PARAMS.offset[1];
+   ext_z=(double)loc_z/PARAMS.scaling[2]+PARAMS.offset[2];
    }
 
 // map point from local to internal coordinates
 void viewerbase::map_l2i(float loc_x,float loc_y,float loc_z,float &int_x,float &int_y,float &int_z)
    {
-   int_x=(loc_x-PARAMS.offset2[0])*PARAMS.scaling2[0];
-   int_y=(loc_z-PARAMS.offset2[2])*PARAMS.scaling2[2];
-   int_z=(loc_y-PARAMS.offset2[1])*PARAMS.scaling2[1];
+   int_x=loc_x;
+   int_y=loc_z;
+   int_z=-loc_y;
    }
 
 // map point from internal to local coordinates
 void viewerbase::map_i2l(float int_x,float int_y,float int_z,float &loc_x,float &loc_y,float &loc_z)
    {
-   loc_x=int_x/PARAMS.scaling2[0]+PARAMS.offset2[0];
-   loc_y=int_z/PARAMS.scaling2[1]+PARAMS.offset2[1];
-   loc_z=int_y/PARAMS.scaling2[2]+PARAMS.offset2[2];
+   loc_x=int_x;
+   loc_y=-int_z;
+   loc_z=int_y;
    }
 
 // rotate vector from external to local coordinates
