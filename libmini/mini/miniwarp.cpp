@@ -508,55 +508,55 @@ void miniwarp::calc_wrp()
       MTX_2WRP[0]=miniv4d(1.0,0.0,0.0);
       MTX_2WRP[1]=miniv4d(0.0,1.0,0.0);
       MTX_2WRP[2]=miniv4d(0.0,0.0,1.0);
-
-      return;
       }
+   else
+      {
+      // convert bbox to geographic coordinates
+      BBOXGEO[0].convert2(minicoord::MINICOORD_LLH);
+      BBOXGEO[1].convert2(minicoord::MINICOORD_LLH);
 
-   // convert bbox to geographic coordinates
-   BBOXGEO[0].convert2(minicoord::MINICOORD_LLH);
-   BBOXGEO[1].convert2(minicoord::MINICOORD_LLH);
+      // get extents of geo-referenced bbox
+      x1=BBOXGEO[0].vec.x;
+      x2=BBOXGEO[1].vec.x;
+      y1=BBOXGEO[0].vec.y;
+      y2=BBOXGEO[1].vec.y;
+      z1=BBOXGEO[0].vec.z;
+      z2=BBOXGEO[1].vec.z;
 
-   // get extents of geo-referenced bbox
-   x1=BBOXGEO[0].vec.x;
-   x2=BBOXGEO[1].vec.x;
-   y1=BBOXGEO[0].vec.y;
-   y2=BBOXGEO[1].vec.y;
-   z1=BBOXGEO[0].vec.z;
-   z2=BBOXGEO[1].vec.z;
+      // construct corners of geo-referenced bbox
+      p[0]=minicoord(miniv3d(x1,y1,z1),minicoord::MINICOORD_LLH);
+      p[1]=minicoord(miniv3d(x2,y1,z1),minicoord::MINICOORD_LLH);
+      p[2]=minicoord(miniv3d(x1,y2,z1),minicoord::MINICOORD_LLH);
+      p[3]=minicoord(miniv3d(x2,y2,z1),minicoord::MINICOORD_LLH);
+      p[4]=minicoord(miniv3d(x1,y1,z2),minicoord::MINICOORD_LLH);
+      p[5]=minicoord(miniv3d(x2,y1,z2),minicoord::MINICOORD_LLH);
+      p[6]=minicoord(miniv3d(x1,y2,z2),minicoord::MINICOORD_LLH);
+      p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
 
-   // construct corners of geo-referenced bbox
-   p[0]=minicoord(miniv3d(x1,y1,z1),minicoord::MINICOORD_LLH);
-   p[1]=minicoord(miniv3d(x2,y1,z1),minicoord::MINICOORD_LLH);
-   p[2]=minicoord(miniv3d(x1,y2,z1),minicoord::MINICOORD_LLH);
-   p[3]=minicoord(miniv3d(x2,y2,z1),minicoord::MINICOORD_LLH);
-   p[4]=minicoord(miniv3d(x1,y1,z2),minicoord::MINICOORD_LLH);
-   p[5]=minicoord(miniv3d(x2,y1,z2),minicoord::MINICOORD_LLH);
-   p[6]=minicoord(miniv3d(x1,y2,z2),minicoord::MINICOORD_LLH);
-   p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
+      // warp geo-referenced corners
+      for (i=0; i<8; i++) p[i].convert2(SYSWRP);
 
-   // warp geo-referenced corners
-   for (i=0; i<8; i++) p[i].convert2(SYSWRP);
+      // calculate warped barycenter
+      b=(p[0].vec+p[1].vec+p[2].vec+p[3].vec+p[4].vec+p[5].vec+p[6].vec+p[7].vec)/8.0;
 
-   // calculate warped barycenter
-   b=(p[0].vec+p[1].vec+p[2].vec+p[3].vec+p[4].vec+p[5].vec+p[6].vec+p[7].vec)/8.0;
+      // average warped edges along each axis
+      e[0]=(p[1].vec-p[0].vec+p[3].vec-p[2].vec+p[5].vec-p[4].vec+p[7].vec-p[6].vec)/4.0;
+      e[1]=(p[2].vec-p[0].vec+p[3].vec-p[1].vec+p[6].vec-p[4].vec+p[7].vec-p[5].vec)/4.0;
+      e[2]=(p[4].vec-p[0].vec+p[5].vec-p[1].vec+p[6].vec-p[2].vec+p[7].vec-p[3].vec)/4.0;
 
-   // average warped edges along each axis
-   e[0]=(p[1].vec-p[0].vec+p[3].vec-p[2].vec+p[5].vec-p[4].vec+p[7].vec-p[6].vec)/4.0;
-   e[1]=(p[2].vec-p[0].vec+p[3].vec-p[1].vec+p[6].vec-p[4].vec+p[7].vec-p[5].vec)/4.0;
-   e[2]=(p[4].vec-p[0].vec+p[5].vec-p[1].vec+p[6].vec-p[2].vec+p[7].vec-p[3].vec)/4.0;
+      // construct matrix #1 that centers the tile coordinates
+      mtx1[0]=miniv4d(1.0,0.0,0.0,-0.5);
+      mtx1[1]=miniv4d(0.0,1.0,0.0,-0.5);
+      mtx1[2]=miniv4d(0.0,0.0,1.0,-0.5);
 
-   // construct matrix #1 that centers the tile coordinates
-   mtx1[0]=miniv4d(1.0,0.0,0.0,-0.5);
-   mtx1[1]=miniv4d(0.0,1.0,0.0,-0.5);
-   mtx1[2]=miniv4d(0.0,0.0,1.0,-0.5);
+      // construct matrix #2 that approximates the warp
+      mtx2[0]=miniv4d(e[0].x,e[1].x,e[2].x,b.x);
+      mtx2[1]=miniv4d(e[0].y,e[1].y,e[2].y,b.y);
+      mtx2[2]=miniv4d(e[0].z,e[1].z,e[2].z,b.z);
 
-   // construct matrix #2 that approximates the warp
-   mtx2[0]=miniv4d(e[0].x,e[1].x,e[2].x,b.x);
-   mtx2[1]=miniv4d(e[0].y,e[1].y,e[2].y,b.y);
-   mtx2[2]=miniv4d(e[0].z,e[1].z,e[2].z,b.z);
-
-   // multiply matrix #1 and #2 to get the actual warp matrix
-   mlt_mtx(MTX_2WRP,mtx1,mtx2);
+      // multiply matrix #1 and #2 to get the actual warp matrix
+      mlt_mtx(MTX_2WRP,mtx1,mtx2);
+      }
    }
 
 // multiply two 4x3 matrices
