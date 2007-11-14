@@ -39,19 +39,18 @@ class viewerbase
       float offset[3];   // offset of tileset center
       float scaling[3];  // scaling factor of tileset
 
-      float maxelev;     // absolute maximum of expected elevations
-
       // auto-determined warp upon load:
 
       miniwarp warp; // warp object
-      int warpmode;  // warp mode: linear=0 affine=1 non-linear=2
+      int warpmode;  // warp mode: plain=0 affine=1 non-linear=2
 
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
       float scale;              //+ scaling of scene
-      float exaggeration;       //+ exaggeration of elevation
+      float exaggeration;       //+ exaggeration of elevations
+      float maxelev;            //+ absolute maximum of expected elevations
 
       float load;               //+ initially loaded area relative to far plane
       float preload;            //+ continuously preloaded area relative to far plane

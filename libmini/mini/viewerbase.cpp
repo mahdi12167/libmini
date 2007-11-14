@@ -41,8 +41,6 @@ viewerbase::viewerbase()
    PARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
    PARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
 
-   PARAMS.maxelev=15000.0f; // absolute maximum of expected elevations
-
    // auto-determined warp upon load:
 
    PARAMS.warp.setwarp(miniwarp::MINIWARP_PLAIN,miniwarp::MINIWARP_PLAIN);
@@ -51,7 +49,8 @@ viewerbase::viewerbase()
    // configurable parameters:
 
    PARAMS.scale=100.0f;           // scaling of scene
-   PARAMS.exaggeration=1.0f;      // exaggeration of elevation
+   PARAMS.exaggeration=1.0f;      // exaggeration of elevations
+   PARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
    PARAMS.load=0.1f;              // initially loaded area relative to far plane
    PARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
@@ -581,16 +580,63 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // set extent of tileset
    PARAMS.extent[0]=PARAMS.cols*outparams[0];
    PARAMS.extent[1]=PARAMS.rows*outparams[1];
-   PARAMS.extent[2]=outparams[4];
+   PARAMS.extent[2]=2.0f*fmin(outparams[4],PARAMS.maxelev*PARAMS.exaggeration/PARAMS.scale);
 
    // set offset of tileset center
    PARAMS.offset[0]+=outparams[2];
-   PARAMS.offset[1]+=-outparams[3];
+   PARAMS.offset[1]-=outparams[3];
 
    // set scaling factor of tileset
    PARAMS.scaling[0]=outscale[0];
    PARAMS.scaling[1]=outscale[1];
    PARAMS.scaling[2]=1.0f/PARAMS.scale;
+
+   // initialize plain warp
+   if (PARAMS.warpmode==0)
+      {
+      miniv3d offset,extent;
+
+      miniv3d bboxDAT[2];
+      minicoord bboxGEO[2];
+
+      miniv3d bboxLOC[2];
+
+      miniv4d mtxAFF[3];
+
+      // define data coordinates:
+
+      offset=(double)PARAMS.scale*miniv3d(PARAMS.offset[0]-outparams[2],PARAMS.offset[1]+outparams[3],0.0);
+      extent=(double)PARAMS.scale*miniv3d(PARAMS.extent[0],PARAMS.extent[1],PARAMS.extent[2]);
+
+      bboxDAT[0]=offset-extent/2.0;
+      bboxDAT[1]=offset+extent/2.0;
+
+      if (PARAMS.usepnm!=0)
+         {
+         bboxGEO[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LLH);
+         bboxGEO[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LLH);
+         }
+
+      PARAMS.warp.def_data(bboxDAT,bboxGEO);
+
+      // define local coordinates:
+
+      offset=miniv3d(PARAMS.offset[0],PARAMS.offset[1],0.0);
+      extent=miniv3d(PARAMS.extent[0],PARAMS.extent[1],PARAMS.extent[2]);
+
+      bboxLOC[0]=offset-extent/2.0;
+      bboxLOC[1]=offset+extent/2.0;
+
+      PARAMS.warp.def_2local(bboxLOC);
+
+      // define affine coordinates:
+
+      mtxAFF[0]=miniv3d(1.0,0.0,0.0);
+      mtxAFF[1]=miniv3d(0.0,0.0,-1.0);
+      mtxAFF[2]=miniv3d(0.0,1.0,0.0);
+
+      PARAMS.warp.def_2affine(mtxAFF);
+      }
 
    // set minimum resolution
    TERRAIN->configure_minres(PARAMS.minres);
@@ -919,7 +965,7 @@ void viewerbase::getextent(float &sx,float &sy,float &sz)
    {
    sx=PARAMS.extent[0];
    sy=PARAMS.extent[1];
-   sz=2.0f*fmin(PARAMS.extent[2],PARAMS.maxelev*PARAMS.exaggeration/PARAMS.scale);
+   sz=PARAMS.extent[2];
    }
 
 // get center of tileset in external coords

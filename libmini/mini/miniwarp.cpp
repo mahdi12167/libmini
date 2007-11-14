@@ -91,6 +91,8 @@ void minicoord::convert2(const int t,const int zone,const int datum)
    {
    double xyz[3];
 
+   if (t==type) return;
+
    switch (type)
       {
       case MINICOORD_LLH:
@@ -235,7 +237,7 @@ miniwarp::miniwarp()
    MTXAFF[1]=miniv4d(0.0,1.0,0.0);
    MTXAFF[2]=miniv4d(0.0,0.0,1.0);
 
-   SYSWRP=minicoord::MINICOORD_ECEF;
+   SYSWRP=minicoord::MINICOORD_NONE;
 
    HAS_DATA=HAS_LOCAL=FALSE;
 
@@ -276,9 +278,6 @@ void miniwarp::def_data(const miniv3d bboxDAT[2],
 
    BBOXGEO[0]=bboxGEO[0];
    BBOXGEO[1]=bboxGEO[1];
-
-   BBOXGEO[0].convert2(minicoord::MINICOORD_LLH);
-   BBOXGEO[1].convert2(minicoord::MINICOORD_LLH);
 
    HAS_DATA=TRUE;
 
@@ -502,6 +501,20 @@ void miniwarp::calc_wrp()
    miniv4d b,e[3];
 
    miniv4d mtx1[3],mtx2[3];
+
+   // check if warp coordinate conversion is disabled
+   if (SYSWRP==minicoord::MINICOORD_NONE)
+      {
+      MTX_2WRP[0]=miniv4d(1.0,0.0,0.0);
+      MTX_2WRP[1]=miniv4d(0.0,1.0,0.0);
+      MTX_2WRP[2]=miniv4d(0.0,0.0,1.0);
+
+      return;
+      }
+
+   // convert bbox to geographic coordinates
+   BBOXGEO[0].convert2(minicoord::MINICOORD_LLH);
+   BBOXGEO[1].convert2(minicoord::MINICOORD_LLH);
 
    // get extents of geo-referenced bbox
    x1=BBOXGEO[0].vec.x;
