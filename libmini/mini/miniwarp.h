@@ -21,7 +21,6 @@ class minicoord
       MINICOORD_LLH,    // Lat/Lon/H WGS84
       MINICOORD_UTM,    // Universal Transverse Mercator
       MINICOORD_LINEAR, // linear space
-      MINICOORD_NONLIN  // non-linear space
       };
 
    //! default constructor
@@ -32,13 +31,13 @@ class minicoord
 
    //! constructors
    minicoord(const miniv3d &v);
-   minicoord(const miniv3d &v,const int t);
-   minicoord(const miniv3d &v,const int t,const int zone,const int datum);
+   minicoord(const miniv3d &v,const MINICOORD t);
+   minicoord(const miniv3d &v,const MINICOORD t,const int zone,const int datum);
    minicoord(const miniv4d &v);
-   minicoord(const miniv4d &v,const int t);
-   minicoord(const miniv4d &v,const int t,const int zone,const int datum);
-   minicoord(const double cx,const double cy,const double cz,const int t);
-   minicoord(const double cx,const double cy,const double cz,const int t,const int zone,const int datum);
+   minicoord(const miniv4d &v,const MINICOORD t);
+   minicoord(const miniv4d &v,const MINICOORD t,const int zone,const int datum);
+   minicoord(const double cx,const double cy,const double cz,const MINICOORD t);
+   minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const int datum);
 
    //! destructor
    ~minicoord();
@@ -50,7 +49,7 @@ class minicoord
    inline minicoord& operator /= (const double c);
 
    //! convert from 1 coordinate system 2 another
-   void convert2(const int t,const int zone=0,const int datum=0);
+   void convert2(const MINICOORD t,const int zone=0,const int datum=0);
 
    //! linear conversion defined by 3x3 matrix and offset
    void convert(const miniv3d mtx[3],const miniv3d offset);
@@ -63,7 +62,7 @@ class minicoord
                 const miniv3d dst[8]); // 8 points in warp domain
 
    miniv4d vec; // geo-referenced coordinates (plus time)
-   int type; // actual coordinate system type
+   MINICOORD type; // actual coordinate system type
 
    int utm_zone,utm_datum; // actual UTM zone and datum
 
@@ -190,8 +189,11 @@ class miniwarp
    double getscale();
 
    //! perform warp of a point
-   miniv3d warp(const miniv3d &v); // fourth component is assumed to be 1
-   miniv4d warp(const miniv4d &v); // fourth component is conserved
+   minicoord warp(const miniv3d &v); // fourth component is assumed to be 1
+   minicoord warp(const miniv4d &v); // fourth component is conserved
+
+   //! perform warp of a coordinate
+   minicoord warp(const minicoord &c); // fourth component is conserved
 
    //! perform warp of a vector using the inverse transpose
    miniv3d invtra(const miniv3d &v); // fourth component is assumed to be 1
@@ -200,6 +202,9 @@ class miniwarp
    protected:
 
    minicoord BBOXDAT[2];
+
+   minicoord::MINICOORD SYSDAT;
+   int UTMZONE,UTMDATUM;
 
    miniv3d OFFSETLOC,SCALINGLOC;
 
