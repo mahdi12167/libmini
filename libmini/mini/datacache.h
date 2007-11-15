@@ -105,6 +105,7 @@ class datacache
    float getinfo_sizex() {return(INFO_SIZEX);}
    float getinfo_sizey() {return(INFO_SIZEY);}
    int getinfo_maxsize() {return(INFO_MAXSIZE);}
+   float getinfo_maxelev() {return(INFO_MAXELEV);}
 
    //! getters for vtb elev ini file
    BOOLINT haselevini() {return(HAS_ELEVINI);}
@@ -197,6 +198,7 @@ class datacache
    float INFO_SIZEX;
    float INFO_SIZEY;
    int INFO_MAXSIZE;
+   float INFO_MAXELEV;
 
    BOOLINT HAS_ELEVINI;
    int ELEVINI_TILESX;

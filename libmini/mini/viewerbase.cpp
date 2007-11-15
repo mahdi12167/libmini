@@ -48,6 +48,10 @@ viewerbase::viewerbase()
 
    // configurable parameters:
 
+   PARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
+   PARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
+   PARAMS.shift[2]=0.0f;          // manual scene z-shift (alt)
+
    PARAMS.scale=100.0f;           // scaling of scene
    PARAMS.exaggeration=1.0f;      // exaggeration of elevations
    PARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
@@ -430,6 +434,10 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
    char *vtbelevinifile,*vtbimaginifile;
 
+   minicoord bboxDAT[2];
+   miniv3d bboxLOC[2];
+   miniv4d mtxAFF[3];
+
    if (LOADED) return(FALSE);
 
    LOADED=TRUE;
@@ -514,41 +522,76 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
       // use PNM loader
       PARAMS.usepnm=TRUE;
+
+      // define data coordinates:
+
+      miniv3d extent=miniv3d(TILECACHE->getinfo_sizex(),TILECACHE->getinfo_sizey(),2.0*TILECACHE->getinfo_maxelev());
+      miniv3d offset=miniv3d(TILECACHE->getinfo_centerx(),TILECACHE->getinfo_centery(),0.0);
+
+      bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LLH);
+      bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LLH);
       }
-   // check imag tileset ini
-   else if (TILECACHE->hasimagini())
+   else
       {
-      // set size of tileset
-      PARAMS.cols=TILECACHE->getimagini_tilesx();
-      PARAMS.rows=TILECACHE->getimagini_tilesy();
+      // check elev tileset ini
+      if (TILECACHE->haselevini())
+         {
+         // set size of tileset
+         PARAMS.cols=TILECACHE->getelevini_tilesx();
+         PARAMS.rows=TILECACHE->getelevini_tilesy();
 
-      // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getimagini_centerx();
-      PARAMS.offset[1]=TILECACHE->getimagini_centery();
+         // set local offset of tileset center
+         PARAMS.offset[0]=TILECACHE->getelevini_centerx();
+         PARAMS.offset[1]=TILECACHE->getelevini_centery();
 
-      // set base size of textures
-      PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+         // set base size of textures
+         if (!TILECACHE->hasimagini())
+            TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
 
-      // use DB loader
-      PARAMS.usepnm=FALSE;
-      }
-   // check elev tileset ini
-   else if (TILECACHE->haselevini())
-      {
-      // set size of tileset
-      PARAMS.cols=TILECACHE->getelevini_tilesx();
-      PARAMS.rows=TILECACHE->getelevini_tilesy();
+         // use DB loader
+         PARAMS.usepnm=FALSE;
 
-      // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getelevini_centerx();
-      PARAMS.offset[1]=TILECACHE->getelevini_centery();
+         // define data coordinates:
 
-      // set base size of textures
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+         miniv3d extent=miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()));
+         miniv3d offset=miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0);
 
-      // use DB loader
-      PARAMS.usepnm=FALSE;
+         bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LINEAR);
+         bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LINEAR);
+         }
+
+      // check imag tileset ini
+      if (TILECACHE->hasimagini())
+         {
+         if (!TILECACHE->haselevini())
+            {
+            // set size of tileset
+            PARAMS.cols=TILECACHE->getimagini_tilesx();
+            PARAMS.rows=TILECACHE->getimagini_tilesy();
+
+            // set local offset of tileset center
+            PARAMS.offset[0]=TILECACHE->getimagini_centerx();
+            PARAMS.offset[1]=TILECACHE->getimagini_centery();
+            }
+
+         // set base size of textures
+         PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
+         TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+
+         // use DB loader
+         PARAMS.usepnm=FALSE;
+
+         if (!TILECACHE->haselevini())
+            {
+            // define data coordinates:
+
+            miniv3d extent=miniv3d(TILECACHE->getimagini_sizex(),TILECACHE->getimagini_sizey(),2.0*PARAMS.maxelev);
+            miniv3d offset=miniv3d(TILECACHE->getimagini_centerx(),TILECACHE->getimagini_centery(),0.0);
+
+            bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LINEAR);
+            bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LINEAR);
+            }
+         }
       }
 
    // check the size of the tileset to detect load errors
@@ -566,7 +609,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // load tiles
    success=TERRAIN->load(PARAMS.cols,PARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
-                         -PARAMS.offset[0],-PARAMS.offset[1], // horizontal offset
+                         PARAMS.shift[0]-PARAMS.offset[0],PARAMS.shift[1]-PARAMS.offset[1], // horizontal offset
                          PARAMS.exaggeration,PARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
@@ -585,6 +628,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // set offset of tileset center
    PARAMS.offset[0]+=outparams[2];
    PARAMS.offset[1]-=outparams[3];
+   PARAMS.offset[2]+=PARAMS.shift[2]/PARAMS.scale;
 
    // set scaling factor of tileset
    PARAMS.scaling[0]=outscale[0];
@@ -594,35 +638,17 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // initialize plain warp
    if (PARAMS.warpmode==0)
       {
-      miniv3d offset,extent;
-
-      miniv3d bboxDAT[2];
-      minicoord bboxGEO[2];
-
-      miniv3d bboxLOC[2];
-
-      miniv4d mtxAFF[3];
-
       // define data coordinates:
 
-      offset=(double)PARAMS.scale*miniv3d(PARAMS.offset[0]-outparams[2],PARAMS.offset[1]+outparams[3],0.0);
-      extent=(double)PARAMS.scale*miniv3d(PARAMS.extent[0],PARAMS.extent[1],PARAMS.extent[2]);
-
-      bboxDAT[0]=offset-extent/2.0;
-      bboxDAT[1]=offset+extent/2.0;
-
-      if (PARAMS.usepnm!=0)
-         {
-         bboxGEO[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LLH);
-         bboxGEO[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LLH);
-         }
-
-      PARAMS.warp.def_data(bboxDAT,bboxGEO);
+      PARAMS.warp.def_data(bboxDAT);
 
       // define local coordinates:
 
-      offset=miniv3d(PARAMS.offset[0],PARAMS.offset[1],0.0);
-      extent=miniv3d(PARAMS.extent[0],PARAMS.extent[1],PARAMS.extent[2]);
+      miniv3d extent=miniv3d((bboxDAT[1].vec.x-bboxDAT[0].vec.x)*PARAMS.scaling[0],
+                             (bboxDAT[1].vec.y-bboxDAT[0].vec.y)*PARAMS.scaling[1],
+                             (bboxDAT[1].vec.z-bboxDAT[0].vec.z)*PARAMS.scaling[2]);
+
+      miniv3d offset=miniv3d(outparams[2],-outparams[3],PARAMS.shift[2]/PARAMS.scale);
 
       bboxLOC[0]=offset-extent/2.0;
       bboxLOC[1]=offset+extent/2.0;
@@ -632,8 +658,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       // define affine coordinates:
 
       mtxAFF[0]=miniv3d(1.0,0.0,0.0);
-      mtxAFF[1]=miniv3d(0.0,0.0,-1.0);
-      mtxAFF[2]=miniv3d(0.0,1.0,0.0);
+      mtxAFF[1]=miniv3d(0.0,0.0,1.0);
+      mtxAFF[2]=miniv3d(0.0,-1.0,0.0);
 
       PARAMS.warp.def_2affine(mtxAFF);
       }
@@ -651,7 +677,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    CACHE->setcallbacks(TERRAIN->getminitile(), // the minitile object to be cached
                        PARAMS.cols,PARAMS.rows, // number of tile columns and rows
                        outparams[0],outparams[1], // tile extents
-                       outparams[2],0.0f,-outparams[3]); // origin with negative Z
+                       outparams[2],PARAMS.shift[2]/PARAMS.scale,-outparams[3]); // origin with negative Z
 
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);

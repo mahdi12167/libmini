@@ -151,11 +151,12 @@ class miniwarp
    enum MINIWARP
       {
       MINIWARP_PLAIN=0,  // plain coordinates
-      MINIWARP_DATA=1,   // data coordinates
-      MINIWARP_LOCAL=2,  // local coordinates
-      MINIWARP_AFFINE=3, // affine coordinates
-      MINIWARP_TILE=4,   // tile coordinates
-      MINIWARP_WARP=5    // warp coordinates
+      MINIWARP_CENTER=1, // center coordinates
+      MINIWARP_DATA=2,   // data coordinates
+      MINIWARP_LOCAL=3,  // local coordinates
+      MINIWARP_AFFINE=4, // affine coordinates
+      MINIWARP_TILE=5,   // tile coordinates
+      MINIWARP_WARP=6    // warp coordinates
       };
 
    //! default constructor
@@ -165,11 +166,10 @@ class miniwarp
    ~miniwarp();
 
    //! define data coordinates
-   void def_data(const miniv3d bboxDAT[2], // bounding box in data domain
-                 const minicoord bboxGEO[2]); // bounding box in geo-referenced domain
+   void def_data(const minicoord bboxDAT[2]); // bounding box in data domain
 
    //! define conversion to local coordinates
-   void def_2local(const miniv3d bboxLOC[2]); // bounding box in ortho-normal domain
+   void def_2local(const miniv3d bboxLOC[2]); // bounding box in orthonormal domain
 
    //! define conversion to affine coordinates
    void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
@@ -184,7 +184,7 @@ class miniwarp
    void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
    //! get actual inverse transpose warp matrix
-   void getinvtra(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
+   void getinvtra(miniv4d invtra[3]); // fourth row is assumed to be (0,0,0,1)
 
    //! get actual scaling factor
    double getscale();
@@ -199,8 +199,7 @@ class miniwarp
 
    protected:
 
-   miniv3d BBOXDAT[2];
-   minicoord BBOXGEO[2];
+   minicoord BBOXDAT[2];
    miniv3d BBOXLOC[2];
    miniv4d MTXAFF[3];
    minicoord::MINICOORD SYSWRP;
@@ -208,12 +207,14 @@ class miniwarp
    BOOLINT HAS_DATA;
    BOOLINT HAS_LOCAL;
 
+   miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];
    miniv4d MTX_2LOC[3];
    miniv4d MTX_2AFF[3];
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
+   miniv4d INV_2CNT[3];
    miniv4d INV_2DAT[3];
    miniv4d INV_2LOC[3];
    miniv4d INV_2AFF[3];
@@ -236,6 +237,7 @@ class miniwarp
    void calc_wrp();
 
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);
+   void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3]);
 
    void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
    void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);

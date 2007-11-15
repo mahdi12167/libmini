@@ -48,6 +48,8 @@ class viewerbase
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
+      float shift[3];           //+ manual scene shift
+
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
       float maxelev;            //+ absolute maximum of expected elevations

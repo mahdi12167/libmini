@@ -327,6 +327,7 @@ void datacache::loadtilesetinfo()
       if (fscanf(file,"sizex=%g arc-seconds\n",&INFO_SIZEX)!=1) HAS_INFO=FALSE;
       if (fscanf(file,"sizey=%g arc-seconds\n",&INFO_SIZEY)!=1) HAS_INFO=FALSE;
       if (fscanf(file,"maxsize=%d\n",&INFO_MAXSIZE)!=1) HAS_INFO=FALSE;
+      if (fscanf(file,"maxelev=%g\n",&INFO_MAXELEV)!=1) HAS_INFO=FALSE;
 
       fclose(file);
 

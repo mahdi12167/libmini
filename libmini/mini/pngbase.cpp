@@ -38,6 +38,8 @@ void user_read_fn(png_structp png_ptr,png_bytep ptr,png_size_t size)
 // decompress PNG image
 unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *height,int *components)
    {
+   unsigned int i;
+
    // declare PNG pointers
    png_structp png_ptr;
    png_infop info_ptr;
@@ -52,7 +54,7 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
 
    // declare PNG row pointers
    unsigned char **row_pointers;
-   unsigned int row,row_bytes;
+   unsigned int row_bytes;
 
    // declare PNG user read parameters
    PNG_USER_READ_PARAMS png_user_read_params;
@@ -142,7 +144,7 @@ unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *
       }
 
    // prepare PNG row pointers
-   for (row=0; row<image_height; row++) row_pointers[row]=image_data+row*row_bytes;
+   for (i=0; i<image_height; i++) row_pointers[i]=image_data+i*row_bytes;
 
    // finally read the PNG image
    png_read_image(png_ptr,row_pointers);
@@ -212,6 +214,8 @@ void user_flush_fn(png_structp png_ptr)
 // compress PNG image
 void compressPNGimage(unsigned char *image,int width,int height,int components,unsigned char **data,unsigned int *bytes,float gamma)
    {
+   int i;
+
    // declare PNG pointers
    png_structp png_ptr;
    png_infop info_ptr;
@@ -222,7 +226,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
 
    // declare PNG row pointers
    unsigned char **row_pointers;
-   unsigned int row,row_bytes;
+   unsigned int row_bytes;
 
    // declare PNG user write parameters
    PNG_USER_WRITE_PARAMS png_user_write_params;
@@ -311,7 +315,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
       }
 
    // prepare PNG row pointers
-   for (row=0; row<height; row++) row_pointers[row]=image+row*row_bytes;
+   for (i=0; i<height; i++) row_pointers[i]=image+i*row_bytes;
 
    // finally write the PNG image
    png_write_image(png_ptr,row_pointers);

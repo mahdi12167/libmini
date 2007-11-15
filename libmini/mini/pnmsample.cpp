@@ -1104,6 +1104,7 @@ void resample(int num,char **grid,
       fprintf(tileset,"sizex=%g arc-seconds\n",sizex);
       fprintf(tileset,"sizey=%g arc-seconds\n",sizey);
       fprintf(tileset,"maxsize=%d\n",realmaxsize);
+      fprintf(tileset,"maxelev=%g\n",maxelev);
 
       // close tileset file
       fclose(tileset);
