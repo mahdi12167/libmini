@@ -166,10 +166,10 @@ class miniwarp
    ~miniwarp();
 
    //! define data coordinates
-   void def_data(const minicoord bboxDAT[2]); // bounding box in data domain
+   void def_data(const minicoord bboxDAT[2]);
 
    //! define conversion to local coordinates
-   void def_2local(const miniv3d bboxLOC[2]); // bounding box in orthonormal domain
+   void def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC);
 
    //! define conversion to affine coordinates
    void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
@@ -200,12 +200,14 @@ class miniwarp
    protected:
 
    minicoord BBOXDAT[2];
-   miniv3d BBOXLOC[2];
+
+   miniv3d OFFSETLOC,SCALINGLOC;
+
    miniv4d MTXAFF[3];
+
    minicoord::MINICOORD SYSWRP;
 
    BOOLINT HAS_DATA;
-   BOOLINT HAS_LOCAL;
 
    miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];

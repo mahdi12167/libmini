@@ -434,8 +434,11 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
    char *vtbelevinifile,*vtbimaginifile;
 
+   minicoord offsetDAT,extentDAT;
    minicoord bboxDAT[2];
-   miniv3d bboxLOC[2];
+
+   miniv3d offsetLOC,scalingLOC;
+
    miniv4d mtxAFF[3];
 
    if (LOADED) return(FALSE);
@@ -523,13 +526,9 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       // use PNM loader
       PARAMS.usepnm=TRUE;
 
-      // define data coordinates:
-
-      miniv3d extent=miniv3d(TILECACHE->getinfo_sizex(),TILECACHE->getinfo_sizey(),2.0*TILECACHE->getinfo_maxelev());
-      miniv3d offset=miniv3d(TILECACHE->getinfo_centerx(),TILECACHE->getinfo_centery(),0.0);
-
-      bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LLH);
-      bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LLH);
+      // get data coordinates
+      offsetDAT=minicoord(miniv3d(TILECACHE->getinfo_centerx(),TILECACHE->getinfo_centery(),0.0),minicoord::MINICOORD_LLH);
+      extentDAT=minicoord(miniv3d(TILECACHE->getinfo_sizex(),TILECACHE->getinfo_sizey(),2.0*TILECACHE->getinfo_maxelev()),minicoord::MINICOORD_LLH);
       }
    else
       {
@@ -551,13 +550,9 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
          // use DB loader
          PARAMS.usepnm=FALSE;
 
-         // define data coordinates:
-
-         miniv3d extent=miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()));
-         miniv3d offset=miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0);
-
-         bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LINEAR);
-         bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LINEAR);
+         // get data coordinates
+         offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
+         extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())),minicoord::MINICOORD_LINEAR);
          }
 
       // check imag tileset ini
@@ -583,13 +578,9 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
          if (!TILECACHE->haselevini())
             {
-            // define data coordinates:
-
-            miniv3d extent=miniv3d(TILECACHE->getimagini_sizex(),TILECACHE->getimagini_sizey(),2.0*PARAMS.maxelev);
-            miniv3d offset=miniv3d(TILECACHE->getimagini_centerx(),TILECACHE->getimagini_centery(),0.0);
-
-            bboxDAT[0]=minicoord(offset-extent/2.0,minicoord::MINICOORD_LINEAR);
-            bboxDAT[1]=minicoord(offset+extent/2.0,minicoord::MINICOORD_LINEAR);
+            // get data coordinates
+            offsetDAT=minicoord(miniv3d(TILECACHE->getimagini_centerx(),TILECACHE->getimagini_centery(),0.0),minicoord::MINICOORD_LINEAR);
+            extentDAT=minicoord(miniv3d(TILECACHE->getimagini_sizex(),TILECACHE->getimagini_sizey(),2.0*PARAMS.maxelev),minicoord::MINICOORD_LINEAR);
             }
          }
       }
@@ -628,7 +619,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // set offset of tileset center
    PARAMS.offset[0]+=outparams[2];
    PARAMS.offset[1]-=outparams[3];
-   PARAMS.offset[2]+=PARAMS.shift[2]/PARAMS.scale;
+   PARAMS.offset[2]-=PARAMS.shift[2];
 
    // set scaling factor of tileset
    PARAMS.scaling[0]=outscale[0];
@@ -640,20 +631,17 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       {
       // define data coordinates:
 
+      bboxDAT[0]=offsetDAT-extentDAT/2.0;
+      bboxDAT[1]=offsetDAT+extentDAT/2.0;
+
       PARAMS.warp.def_data(bboxDAT);
 
       // define local coordinates:
 
-      miniv3d extent=miniv3d((bboxDAT[1].vec.x-bboxDAT[0].vec.x)*PARAMS.scaling[0],
-                             (bboxDAT[1].vec.y-bboxDAT[0].vec.y)*PARAMS.scaling[1],
-                             (bboxDAT[1].vec.z-bboxDAT[0].vec.z)*PARAMS.scaling[2]);
+      offsetLOC=miniv3d(PARAMS.offset);
+      scalingLOC=miniv3d(PARAMS.scaling);
 
-      miniv3d offset=miniv3d(outparams[2],-outparams[3],PARAMS.shift[2]/PARAMS.scale);
-
-      bboxLOC[0]=offset-extent/2.0;
-      bboxLOC[1]=offset+extent/2.0;
-
-      PARAMS.warp.def_2local(bboxLOC);
+      PARAMS.warp.def_2local(-offsetLOC,scalingLOC);
 
       // define affine coordinates:
 
@@ -662,6 +650,24 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       mtxAFF[2]=miniv3d(0.0,-1.0,0.0);
 
       PARAMS.warp.def_2affine(mtxAFF);
+
+      // define warp coordinates:
+
+      PARAMS.warp.def_warp(minicoord::MINICOORD_ECEF);
+
+      // create warp object for each exposed coordinate transformation:
+
+      WARP_E2L=PARAMS.warp;
+      WARP_E2L.setwarp(miniwarp::MINIWARP_DATA,miniwarp::MINIWARP_LOCAL);
+
+      WARP_L2E=PARAMS.warp;
+      WARP_E2L.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_DATA);
+
+      WARP_L2I=PARAMS.warp;
+      WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_AFFINE);
+
+      WARP_I2L=PARAMS.warp;
+      WARP_I2L.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_LOCAL);
       }
 
    // set minimum resolution

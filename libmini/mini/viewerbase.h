@@ -341,6 +341,11 @@ class viewerbase
 
    BOOLINT LOADED;
 
+   miniwarp WARP_E2L;
+   miniwarp WARP_L2E;
+   miniwarp WARP_L2I;
+   miniwarp WARP_I2L;
+
    void render_presea();
    void render_postsea();
 

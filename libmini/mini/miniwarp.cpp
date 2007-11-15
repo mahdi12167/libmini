@@ -230,7 +230,8 @@ miniwarp::miniwarp()
    {
    BBOXDAT[0]=BBOXDAT[1]=minicoord(miniv3d(0.0),minicoord::MINICOORD_NONE);
 
-   BBOXLOC[0]=BBOXLOC[1]=miniv3d(0.0);
+   OFFSETLOC=miniv3d(0.0);
+   SCALINGLOC=miniv3d(1.0);
 
    MTXAFF[0]=miniv4d(1.0,0.0,0.0);
    MTXAFF[1]=miniv4d(0.0,1.0,0.0);
@@ -238,7 +239,7 @@ miniwarp::miniwarp()
 
    SYSWRP=minicoord::MINICOORD_NONE;
 
-   HAS_DATA=HAS_LOCAL=FALSE;
+   HAS_DATA=FALSE;
 
    MTX_2CNT[0]=MTX_2CNT[1]=MTX_2CNT[2]=miniv4d(0.0);
    MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
@@ -282,12 +283,10 @@ void miniwarp::def_data(const minicoord bboxDAT[2])
    }
 
 // define conversion to local coordinates
-void miniwarp::def_2local(const miniv3d bboxLOC[2])
+void miniwarp::def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC)
    {
-   BBOXLOC[0]=bboxLOC[0];
-   BBOXLOC[1]=bboxLOC[1];
-
-   HAS_LOCAL=TRUE;
+   OFFSETLOC=offsetLOC;
+   SCALINGLOC=scalingLOC;
 
    update_mtx();
    }
@@ -372,16 +371,16 @@ miniv4d miniwarp::invtra(const miniv4d &vec)
 // update conversion matrices
 void miniwarp::update_mtx()
    {
-   // conversion 2 center coordinates:
-
-   MTX_2CNT[0]=miniv4d(1.0,0.0,0.0,-0.5);
-   MTX_2CNT[1]=miniv4d(0.0,1.0,0.0,-0.5);
-   MTX_2CNT[2]=miniv4d(0.0,0.0,1.0,-0.5);
-
-   inv_mtx(INV_2CNT,MTX_2CNT);
-
    if (HAS_DATA)
       {
+      // conversion 2 center coordinates:
+
+      MTX_2CNT[0]=miniv4d(1.0,0.0,0.0,-0.5);
+      MTX_2CNT[1]=miniv4d(0.0,1.0,0.0,-0.5);
+      MTX_2CNT[2]=miniv4d(0.0,0.0,1.0,-0.5);
+
+      inv_mtx(INV_2CNT,MTX_2CNT);
+
       // conversion 2 data coordinates:
 
       MTX_2DAT[0]=miniv4d(BBOXDAT[1].vec.x-BBOXDAT[0].vec.x,0.0,0.0,BBOXDAT[0].vec.x);
@@ -391,17 +390,12 @@ void miniwarp::update_mtx()
       mlt_mtx(MTX_2DAT,MTX_2DAT,INV_2CNT);
 
       inv_mtx(INV_2DAT,MTX_2DAT);
-      }
 
-   if (HAS_DATA && HAS_LOCAL)
-      {
       // conversion 2 local coordinates:
 
-      MTX_2LOC[0]=miniv4d(BBOXLOC[1].x-BBOXLOC[0].x,0.0,0.0,BBOXLOC[0].x);
-      MTX_2LOC[1]=miniv4d(0.0,BBOXLOC[1].y-BBOXLOC[0].y,0.0,BBOXLOC[0].y);
-      MTX_2LOC[2]=miniv4d(0.0,0.0,BBOXLOC[1].z-BBOXLOC[0].z,BBOXLOC[0].z);
-
-      mlt_mtx(MTX_2LOC,MTX_2LOC,INV_2CNT,INV_2DAT);
+      MTX_2LOC[0]=miniv4d(SCALINGLOC.x,0.0,0.0,OFFSETLOC.x*SCALINGLOC.x);
+      MTX_2LOC[1]=miniv4d(0.0,SCALINGLOC.y,0.0,OFFSETLOC.y*SCALINGLOC.y);
+      MTX_2LOC[2]=miniv4d(0.0,0.0,SCALINGLOC.z,OFFSETLOC.z*SCALINGLOC.z);
 
       inv_mtx(INV_2LOC,MTX_2LOC);
 
