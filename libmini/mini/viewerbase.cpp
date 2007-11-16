@@ -646,8 +646,8 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       // define affine coordinates:
 
       mtxAFF[0]=miniv3d(1.0,0.0,0.0);
-      mtxAFF[1]=miniv3d(0.0,0.0,1.0);
-      mtxAFF[2]=miniv3d(0.0,-1.0,0.0);
+      mtxAFF[1]=miniv3d(0.0,1.0,1.0);
+      mtxAFF[2]=miniv3d(0.0,0.0,1.0);
 
       PARAMS.warp.def_2affine(mtxAFF);
 
@@ -661,13 +661,13 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       WARP_E2L.setwarp(miniwarp::MINIWARP_DATA,miniwarp::MINIWARP_LOCAL);
 
       WARP_L2E=PARAMS.warp;
-      WARP_E2L.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_DATA);
+      WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_DATA);
 
       WARP_L2I=PARAMS.warp;
-      WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_AFFINE);
+      WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
 
       WARP_I2L=PARAMS.warp;
-      WARP_I2L.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_LOCAL);
+      WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
       }
 
    // set minimum resolution
@@ -1079,65 +1079,89 @@ void viewerbase::move(float dist,
 // map point from external to local coordinates
 void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,float &loc_x,float &loc_y,float &loc_z)
    {
-   loc_x=(ext_x-PARAMS.offset[0])*PARAMS.scaling[0];
-   loc_y=(ext_y-PARAMS.offset[1])*PARAMS.scaling[1];
-   loc_z=(ext_z-PARAMS.offset[2])*PARAMS.scaling[2];
+   minicoord p_ext=minicoord(ext_x,ext_y,ext_z,PARAMS.warp.getsys(),PARAMS.warp.getutmzone(),PARAMS.warp.getutmdatum());
+   minicoord p_loc=WARP_E2L.warp(p_ext);
+
+   loc_x=p_loc.vec.x;
+   loc_y=p_loc.vec.y;
+   loc_z=p_loc.vec.z;
    }
 
 // map point from local to external coordinates
 void viewerbase::map_l2e(float loc_x,float loc_y,float loc_z,double &ext_x,double &ext_y,double &ext_z)
    {
-   ext_x=(double)loc_x/PARAMS.scaling[0]+PARAMS.offset[0];
-   ext_y=(double)loc_y/PARAMS.scaling[1]+PARAMS.offset[1];
-   ext_z=(double)loc_z/PARAMS.scaling[2]+PARAMS.offset[2];
+   minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
+   minicoord p_ext=WARP_L2E.warp(p_loc);
+
+   ext_x=p_ext.vec.x;
+   ext_y=p_ext.vec.y;
+   ext_z=p_ext.vec.z;
    }
 
 // map point from local to internal coordinates
 void viewerbase::map_l2i(float loc_x,float loc_y,float loc_z,float &int_x,float &int_y,float &int_z)
    {
-   int_x=loc_x;
-   int_y=loc_z;
-   int_z=-loc_y;
+   minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
+   minicoord p_int=WARP_L2I.warp(p_loc);
+
+   int_x=p_int.vec.x;
+   int_y=p_int.vec.y;
+   int_z=p_int.vec.z;
    }
 
 // map point from internal to local coordinates
 void viewerbase::map_i2l(float int_x,float int_y,float int_z,float &loc_x,float &loc_y,float &loc_z)
    {
-   loc_x=int_x;
-   loc_y=-int_z;
-   loc_z=int_y;
+   minicoord p_int=minicoord(int_x,int_y,int_z,minicoord::MINICOORD_LINEAR);
+   minicoord p_loc=WARP_I2L.warp(p_int);
+
+   loc_x=p_loc.vec.x;
+   loc_y=p_loc.vec.y;
+   loc_z=p_loc.vec.z;
    }
 
 // rotate vector from external to local coordinates
 void viewerbase::rot_e2l(float ext_dx,float ext_dy,float ext_dz,float &loc_dx,float &loc_dy,float &loc_dz)
    {
-   loc_dx=ext_dx;
-   loc_dy=ext_dy;
-   loc_dz=ext_dz;
+   miniv3d v_ext=miniv3d(ext_dx,ext_dy,ext_dz);
+   miniv3d v_loc=WARP_E2L.invtra(v_ext);
+
+   loc_dx=v_loc.x;
+   loc_dy=v_loc.y;
+   loc_dz=v_loc.z;
    }
 
 // rotate vector from local to external coordinates
 void viewerbase::rot_l2e(float loc_dx,float loc_dy,float loc_dz,float &ext_dx,float &ext_dy,float &ext_dz)
    {
-   ext_dx=loc_dx;
-   ext_dy=loc_dy;
-   ext_dz=loc_dz;
+   miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
+   miniv3d v_ext=WARP_L2E.invtra(v_loc);
+
+   ext_dx=v_ext.x;
+   ext_dy=v_ext.y;
+   ext_dz=v_ext.z;
    }
 
 // rotate vector from local to internal coordinates
 void viewerbase::rot_l2i(float loc_dx,float loc_dy,float loc_dz,float &int_dx,float &int_dy,float &int_dz)
    {
-   int_dx=loc_dx;
-   int_dy=loc_dz;
-   int_dz=-loc_dy;
+   miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
+   miniv3d v_int=WARP_L2I.invtra(v_loc);
+
+   int_dx=v_int.x;
+   int_dy=v_int.y;
+   int_dz=v_int.z;
    }
 
 // rotate vector from internal to local coordinates
 void viewerbase::rot_i2l(float int_dx,float int_dy,float int_dz,float &loc_dx,float &loc_dy,float &loc_dz)
    {
-   loc_dx=int_dx;
-   loc_dy=-int_dz;
-   loc_dz=int_dy;
+   miniv3d v_int=miniv3d(int_dx,int_dy,int_dz);
+   miniv3d v_loc=WARP_I2L.invtra(v_int);
+
+   loc_dx=v_loc.x;
+   loc_dy=v_loc.y;
+   loc_dz=v_loc.z;
    }
 
 // map length from external to local coordinates
