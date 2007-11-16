@@ -246,8 +246,8 @@ viewerbase::viewerbase()
    START=minigettime();
    TIMER=0.0;
 
-   IEX=IEY=IEZ=0.0f;
-   IDX=IDY=IDZ=0.0f;
+   IEX=IEY=IEZ=0.0;
+   IDX=IDY=IDZ=0.0;
    }
 
 // destructor
@@ -343,11 +343,11 @@ void viewerbase::set(VIEWER_PARAMS &params)
    }
 
 // get the elevation at position (x,y) in external coords
-float viewerbase::getheight(double x,double y)
+double viewerbase::getheight(double x,double y)
    {
    double h;
-   float lx,ly,lz;
-   float ix,iy,iz;
+   double lx,ly,lz;
+   double ix,iy,iz;
 
    map_e2l(x,y,0.0f,lx,ly,lz);
    map_l2i(lx,ly,lz,ix,iy,iz);
@@ -755,8 +755,8 @@ void viewerbase::setwinsize(int width,int height)
 // set initial eye point in external coords
 void viewerbase::initeyepoint(double ex,double ey,double ez)
    {
-   float lex,ley,lez;
-   float iex,iey,iez;
+   double lex,ley,lez;
+   double iex,iey,iez;
 
    map_e2l(ex,ey,ez,lex,ley,lez);
    map_l2i(lex,ley,lez,iex,iey,iez);
@@ -776,16 +776,16 @@ void viewerbase::update()
 
 // generate and cache scene for a particular eye point in external coords
 void viewerbase::cache(double ex,double ey,double ez,
-                       float dx,float dy,float dz,
-                       float ux,float uy,float uz)
+                       double dx,double dy,double dz,
+                       double ux,double uy,double uz)
    {
-   float lex,ley,lez;
-   float ldx,ldy,ldz;
-   float lux,luy,luz;
+   double lex,ley,lez;
+   double ldx,ldy,ldz;
+   double lux,luy,luz;
 
-   float iex,iey,iez;
-   float idx,idy,idz;
-   float iux,iuy,iuz;
+   double iex,iey,iez;
+   double idx,idy,idz;
+   double iux,iuy,iuz;
 
    if (!LOADED) return;
 
@@ -978,41 +978,23 @@ float viewerbase::gettimer()
 void viewerbase::idle(float dt)
    {miniwaitfor(1.0f/PARAMS.fps-dt);}
 
-// get extent of tileset in local coords
-void viewerbase::getextent(float &sx,float &sy)
+// get extent of tileset in external coords
+void viewerbase::getextent(double &sx,double &sy,double &sz)
    {
-   sx=PARAMS.extent[0];
-   sy=PARAMS.extent[1];
-   }
-
-// get extent of tileset in local coords
-void viewerbase::getextent(float &sx,float &sy,float &sz)
-   {
-   sx=PARAMS.extent[0];
-   sy=PARAMS.extent[1];
-   sz=PARAMS.extent[2];
+   sx=len_l2e(PARAMS.extent[0]);
+   sy=len_l2e(PARAMS.extent[1]);
+   sz=len_l2e(PARAMS.extent[2]);
    }
 
 // get center of tileset in external coords
-void viewerbase::getcenter(double &cx,double &cy)
-   {
-   cx=PARAMS.offset[0];
-   cy=PARAMS.offset[1];
-   }
+void viewerbase::getcenter(double &cx,double &cy,double &cz)
+   {map_l2e(0.0,0.0,0.0,cx,cy,cz);}
 
 // get initial view point in external coords
-void viewerbase::getinitial(double &vx,double &vy)
+void viewerbase::getinitial(double &vx,double &vy,double &vz)
    {
-   if (points.getfirst()==NULL)
-      {
-      vx=PARAMS.offset[0];
-      vy=PARAMS.offset[1];
-      }
-   else
-      {
-      vx=(double)points.getfirst()->x/PARAMS.scaling[0]+PARAMS.offset[0];
-      vy=(double)points.getfirst()->y/PARAMS.scaling[1]+PARAMS.offset[1];
-      }
+   if (points.getfirst()==NULL) getcenter(vx,vy,vz);
+   else map_l2e(points.getfirst()->x,points.getfirst()->y,points.getfirst()->elev,vx,vy,vz);
    }
 
 // flatten the scene by a relative scaling factor (in the range [0-1])
@@ -1020,16 +1002,16 @@ void viewerbase::flatten(float relscale)
    {TERRAIN->setrelscale(relscale);}
 
 // shoot a ray at the scene
-float viewerbase::shoot(double ox,double oy,double oz,
-                        float dx,float dy,float dz)
+double viewerbase::shoot(double ox,double oy,double oz,
+                         double dx,double dy,double dz)
    {
-   float dist;
+   double dist;
 
-   float lox,loy,loz;
-   float ldx,ldy,ldz;
+   double lox,loy,loz;
+   double ldx,ldy,ldz;
 
-   float iox,ioy,ioz;
-   float idx,idy,idz;
+   double iox,ioy,ioz;
+   double idx,idy,idz;
 
    // transform coordinates
    map_e2l(ox,oy,oz,lox,loy,loz);
@@ -1044,33 +1026,8 @@ float viewerbase::shoot(double ox,double oy,double oz,
    return(dist);
    }
 
-// move a point on a ray
-void viewerbase::move(float dist,
-                      double ox,double oy,double oz,
-                      float dx,float dy,float dz,
-                      double &mx,double &my,double &mz)
-   {
-   float lox,loy,loz;
-   float ldx,ldy,ldz;
-
-   // transform coordinates
-   map_e2l(ox,oy,oz,lox,loy,loz);
-   rot_e2l(dx,dy,dz,ldx,ldy,ldz);
-
-   // transform length
-   dist=len_e2l(dist);
-
-   // move point
-   lox+=dist*ldx;
-   loy+=dist*ldy;
-   loz+=dist*ldz;
-
-   // transform back
-   map_l2e(lox,loy,loz,mx,my,mz);
-   }
-
 // map point from external to local coordinates
-void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,float &loc_x,float &loc_y,float &loc_z)
+void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,double &loc_x,double &loc_y,double &loc_z)
    {
    minicoord p_ext=minicoord(ext_x,ext_y,ext_z,PARAMS.warp.getsys(),PARAMS.warp.getutmzone(),PARAMS.warp.getutmdatum());
    minicoord p_loc=WARP_E2L.warp(p_ext);
@@ -1081,7 +1038,7 @@ void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,float &loc_x,flo
    }
 
 // map point from local to external coordinates
-void viewerbase::map_l2e(float loc_x,float loc_y,float loc_z,double &ext_x,double &ext_y,double &ext_z)
+void viewerbase::map_l2e(double loc_x,double loc_y,double loc_z,double &ext_x,double &ext_y,double &ext_z)
    {
    minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
    minicoord p_ext=WARP_L2E.warp(p_loc);
@@ -1092,7 +1049,7 @@ void viewerbase::map_l2e(float loc_x,float loc_y,float loc_z,double &ext_x,doubl
    }
 
 // map point from local to internal coordinates
-void viewerbase::map_l2i(float loc_x,float loc_y,float loc_z,float &int_x,float &int_y,float &int_z)
+void viewerbase::map_l2i(double loc_x,double loc_y,double loc_z,double &int_x,double &int_y,double &int_z)
    {
    minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
    minicoord p_int=WARP_L2I.warp(p_loc);
@@ -1103,7 +1060,7 @@ void viewerbase::map_l2i(float loc_x,float loc_y,float loc_z,float &int_x,float 
    }
 
 // map point from internal to local coordinates
-void viewerbase::map_i2l(float int_x,float int_y,float int_z,float &loc_x,float &loc_y,float &loc_z)
+void viewerbase::map_i2l(double int_x,double int_y,double int_z,double &loc_x,double &loc_y,double &loc_z)
    {
    minicoord p_int=minicoord(int_x,int_y,int_z,minicoord::MINICOORD_LINEAR);
    minicoord p_loc=WARP_I2L.warp(p_int);
@@ -1114,7 +1071,7 @@ void viewerbase::map_i2l(float int_x,float int_y,float int_z,float &loc_x,float 
    }
 
 // rotate vector from external to local coordinates
-void viewerbase::rot_e2l(float ext_dx,float ext_dy,float ext_dz,float &loc_dx,float &loc_dy,float &loc_dz)
+void viewerbase::rot_e2l(double ext_dx,double ext_dy,double ext_dz,double &loc_dx,double &loc_dy,double &loc_dz)
    {
    miniv3d v_ext=miniv3d(ext_dx,ext_dy,ext_dz);
    miniv3d v_loc=WARP_E2L.invtra(v_ext);
@@ -1125,7 +1082,7 @@ void viewerbase::rot_e2l(float ext_dx,float ext_dy,float ext_dz,float &loc_dx,fl
    }
 
 // rotate vector from local to external coordinates
-void viewerbase::rot_l2e(float loc_dx,float loc_dy,float loc_dz,float &ext_dx,float &ext_dy,float &ext_dz)
+void viewerbase::rot_l2e(double loc_dx,double loc_dy,double loc_dz,double &ext_dx,double &ext_dy,double &ext_dz)
    {
    miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
    miniv3d v_ext=WARP_L2E.invtra(v_loc);
@@ -1136,7 +1093,7 @@ void viewerbase::rot_l2e(float loc_dx,float loc_dy,float loc_dz,float &ext_dx,fl
    }
 
 // rotate vector from local to internal coordinates
-void viewerbase::rot_l2i(float loc_dx,float loc_dy,float loc_dz,float &int_dx,float &int_dy,float &int_dz)
+void viewerbase::rot_l2i(double loc_dx,double loc_dy,double loc_dz,double &int_dx,double &int_dy,double &int_dz)
    {
    miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
    miniv3d v_int=WARP_L2I.invtra(v_loc);
@@ -1147,7 +1104,7 @@ void viewerbase::rot_l2i(float loc_dx,float loc_dy,float loc_dz,float &int_dx,fl
    }
 
 // rotate vector from internal to local coordinates
-void viewerbase::rot_i2l(float int_dx,float int_dy,float int_dz,float &loc_dx,float &loc_dy,float &loc_dz)
+void viewerbase::rot_i2l(double int_dx,double int_dy,double int_dz,double &loc_dx,double &loc_dy,double &loc_dz)
    {
    miniv3d v_int=miniv3d(int_dx,int_dy,int_dz);
    miniv3d v_loc=WARP_I2L.invtra(v_int);
@@ -1158,28 +1115,28 @@ void viewerbase::rot_i2l(float int_dx,float int_dy,float int_dz,float &loc_dx,fl
    }
 
 // map length from external to local coordinates
-float viewerbase::len_e2l(float l)
-   {return(l/PARAMS.scale);}
+double viewerbase::len_e2l(double l)
+   {return(l*WARP_E2L.getscale());}
 
 // map length from local to external coordinates
-float viewerbase::len_l2e(float l)
-   {return(l*PARAMS.scale);}
+double viewerbase::len_l2e(double l)
+   {return(l*WARP_L2E.getscale());}
 
 // map length from local to internal coordinates
-float viewerbase::len_l2i(float l)
-   {return(l);}
+double viewerbase::len_l2i(double l)
+   {return(l*WARP_L2I.getscale());}
 
 // map length from internal to local coordinates
-float viewerbase::len_i2l(float l)
-   {return(l);}
+double viewerbase::len_i2l(double l)
+   {return(l*WARP_I2L.getscale());}
 
 // map length from external to internal coordinates
-float viewerbase::len_e2i(float l)
-   {return(l/PARAMS.scale);}
+double viewerbase::len_e2i(double l)
+   {return(len_l2i(len_e2l(l)));}
 
 // map length from internal to external coordinates
-float viewerbase::len_i2e(float l)
-   {return(l*PARAMS.scale);}
+double viewerbase::len_i2e(double l)
+   {return(len_l2e(len_i2l(l)));}
 
 // concatenate two strings
 char *viewerbase::concat(const char *str1,const char *str2)

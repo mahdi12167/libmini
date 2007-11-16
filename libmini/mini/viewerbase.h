@@ -223,7 +223,7 @@ class viewerbase
    void set(VIEWER_PARAMS *params) {set(*params);}
 
    //! get the elevation at position (x,y) in external coords
-   float getheight(double x,double y);
+   double getheight(double x,double y);
 
    //! get the encapsulated terrain object
    miniload *getterrain() {return(TERRAIN);}
@@ -256,8 +256,8 @@ class viewerbase
 
    //! generate and cache scene for a particular eye point in external coords
    void cache(double ex,double ey,double ez,
-              float dx,float dy,float dz,
-              float ux,float uy,float uz);
+              double dx,double dy,double dz,
+              double ux,double uy,double uz);
 
    //! render cached scene
    void render();
@@ -275,70 +275,63 @@ class viewerbase
    //! dt is the time spent for rendering the last frame
    void idle(float dt);
 
-   //! get extent of tileset in local coords
-   void getextent(float &sx,float &sy);
-   void getextent(float &sx,float &sy,float &sz);
+   //! get extent of tileset in external coords
+   void getextent(double &sx,double &sy,double &sz);
 
    //! get center of tileset in external coords
-   void getcenter(double &cx,double &cy);
+   void getcenter(double &cx,double &cy,double &cz);
 
    //! get initial view point in external coords
-   void getinitial(double &vx,double &vy);
+   void getinitial(double &vx,double &vy,double &vz);
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
    //! shoot a ray at the scene
-   float shoot(double ox,double oy,double oz,
-               float dx,float dy,float dz);
-
-   //! move a point on a ray
-   void move(float dist,
-             double ox,double oy,double oz,
-             float dx,float dy,float dz,
-             double &mx,double &my,double &mz);
+   double shoot(double ox,double oy,double oz,
+                double dx,double dy,double dz);
 
    //! map point from external to local coordinates
-   void map_e2l(double ext_x,double ext_y,double ext_z,float &loc_x,float &loc_y,float &loc_z);
+   void map_e2l(double ext_x,double ext_y,double ext_z,double &loc_x,double &loc_y,double &loc_z);
 
    //! map point from local to external coordinates
-   void map_l2e(float loc_x,float loc_y,float loc_z,double &ext_x,double &ext_y,double &ext_z);
+   void map_l2e(double loc_x,double loc_y,double loc_z,double &ext_x,double &ext_y,double &ext_z);
 
    //! map point from local to internal coordinates
-   void map_l2i(float loc_x,float loc_y,float loc_z,float &int_x,float &int_y,float &int_z);
+   void map_l2i(double loc_x,double loc_y,double loc_z,double &int_x,double &int_y,double &int_z);
 
    //! map point from internal to local coordinates
-   void map_i2l(float int_x,float int_y,float int_z,float &loc_x,float &loc_y,float &loc_z);
+   void map_i2l(double int_x,double int_y,double int_z,double &loc_x,double &loc_y,double &loc_z);
 
    //! rotate vector from external to local coordinates
-   void rot_e2l(float ext_dx,float ext_dy,float ext_dz,float &loc_dx,float &loc_dy,float &loc_dz);
+   void rot_e2l(double ext_dx,double ext_dy,double ext_dz,double &loc_dx,double &loc_dy,double &loc_dz);
 
    //! rotate vector from local to external coordinates
-   void rot_l2e(float loc_dx,float loc_dy,float loc_dz,float &ext_dx,float &ext_dy,float &ext_dz);
+   void rot_l2e(double loc_dx,double loc_dy,double loc_dz,double &ext_dx,double &ext_dy,double &ext_dz);
 
    //! rotate vector from local to internal coordinates
-   void rot_l2i(float loc_dx,float loc_dy,float loc_dz,float &int_dx,float &int_dy,float &int_dz);
+   void rot_l2i(double loc_dx,double loc_dy,double loc_dz,double &int_dx,double &int_dy,double &int_dz);
 
    //! rotate vector from internal to local coordinates
-   void rot_i2l(float int_dx,float int_dy,float int_dz,float &loc_dx,float &loc_dy,float &loc_dz);
+   void rot_i2l(double int_dx,double int_dy,double int_dz,double &loc_dx,double &loc_dy,double &loc_dz);
 
    //! map length from external to local coordinates
-   float len_e2l(float l);
+   double len_e2l(double l);
 
    //! map length from local to external coordinates
-   float len_l2e(float l);
+   double len_l2e(double l);
 
    //! map length from local to internal coordinates
-   float len_l2i(float l);
+   double len_l2i(double l);
 
    //! map length from internal to local coordinates
-   float len_i2l(float l);
+   double len_i2l(double l);
 
    //! map length from external to internal coordinates
-   float len_e2i(float l);
+   double len_e2i(double l);
 
    //! map length from internal to external coordinates
-   float len_i2e(float l);
+   double len_i2e(double l);
 
    protected:
 
@@ -368,8 +361,8 @@ class viewerbase
 
    int UPD;
 
-   float IEX,IEY,IEZ;
-   float IDX,IDY,IDZ;
+   double IEX,IEY,IEZ;
+   double IDX,IDY,IDZ;
 
    double START,TIMER;
 

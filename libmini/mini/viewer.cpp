@@ -112,13 +112,13 @@ static viewerbase::VIEWER_PARAMS *params=NULL;
 
 // eye point
 static double ex,ey,ez;
-static float dez,aez;
+static double dez,aez;
 
 // viewing angles
 static float angle,turn,pitch,incline;
 
 // viewing direction
-static float dx,dy,dz,ux,uy,uz,rx,ry,rz;
+static double dx,dy,dz,ux,uy,uz,rx,ry,rz;
 
 // stereo base
 static const float sbase=VIEWER_SBASE;
@@ -265,7 +265,7 @@ void initwindow(int width,int height)
    }
 
 // initialize the view point
-void initview(double x,double y,float e,float a,float p,float h)
+void initview(double x,double y,double e,float a,float p,double h)
    {
    initwindow(winwidth,winheight);
 
@@ -608,7 +608,6 @@ void renderhud()
    float te,sl;
 
    float dist;
-   double px,py,pz;
 
    char str[MAXSTR];
 
@@ -690,8 +689,7 @@ void renderhud()
 
             if (dist!=MAXFLOAT)
                {
-               viewer->move(dist,ex,ey,ez,dx,dy,dz,px,py,pz);
-               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(px,py));
+               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(ex+dist*dx,ey+dist*dy));
 
                glTranslatef(0.05f,0.0f,0.0f);
                minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -723,16 +721,16 @@ void displayfunc()
    float sina,cosa;
    float sinp,cosp;
 
-   float elev,coef;
+   double elev,coef;
 
-   float lex,ley,lez;
-   float iex,iey,iez;
-   float ldx,ldy,ldz;
-   float idx,idy,idz;
-   float lux,luy,luz;
-   float iux,iuy,iuz;
-   float lrx,lry,lrz;
-   float irx,iry,irz;
+   double lex,ley,lez;
+   double iex,iey,iez;
+   double ldx,ldy,ldz;
+   double idx,idy,idz;
+   double lux,luy,luz;
+   double iux,iuy,iuz;
+   double lrx,lry,lrz;
+   double irx,iry,irz;
 
    // start timer
    viewer->starttimer();
@@ -1171,7 +1169,7 @@ int main(int argc,char *argv[])
    viewer->loadopts();
 
    // set initial view point
-   viewer->getinitial(ex,ey);
+   viewer->getinitial(ex,ey,ez);
    initview(ex,ey,0.0f,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
 
    // initialize VIS bathy map

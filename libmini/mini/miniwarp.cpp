@@ -482,7 +482,16 @@ void miniwarp::update_mtx()
 
       // conversion 2 external coordinates:
 
-      if (SYSDAT==minicoord::MINICOORD_LLH) mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,INV_2LOC);
+      if (SYSDAT==minicoord::MINICOORD_LLH)
+         {
+         miniv4d mtx[3];
+
+         mtx[0]=miniv4d(SCALINGLOC.z,0.0,0.0);
+         mtx[1]=miniv4d(0.0,SCALINGLOC.z,0.0);
+         mtx[2]=miniv4d(0.0,0.0,SCALINGLOC.z);
+
+         mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,INV_2LOC,mtx);
+         }
       else mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2PLN,MTX_2PLN);
