@@ -1213,9 +1213,10 @@ int main(int argc,char *argv[])
       TEX col,fragment.texcoord[0],texture[0],2D;\
       MUL vtx.x,fragment.texcoord[0].z,c0.x;\
       FRC vtx.y,vtx.x;\
-      MUL_SAT vtx.y,vtx.y,c0.y;\
       MAD vtx.y,vtx.y,c0.z,-c0.w;\
       ABS vtx.y,vtx.y;\
+      SUB vtx.y,c0.w,vtx.y;\
+      MUL_SAT vtx.y,vtx.y,c0.y;\
       CMP vtx.y,vtx.x,vtx.y,c0.w;\
       MUL col,col,vtx.y;\
       MUL result.color,col,fragment.color;\
