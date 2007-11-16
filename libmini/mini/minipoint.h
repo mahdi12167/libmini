@@ -9,7 +9,8 @@
 typedef struct
    {
    float x,y;
-   float elev,height;
+   float elev; // waypoint elevation
+   float height; // terrain height
 
    char *desc;
    char *meta;
