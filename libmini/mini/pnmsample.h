@@ -38,8 +38,8 @@ void normalize(int num, // number of heterogeneous grids
 void configure_supersampling(int supersampling=2); // enable texture supersampling
 void configure_startupfile(int startupfile=0); // enable ouput of startup file
 void configure_tilesetpath(char *tilesetpath); // define tile set path
-void configure_elevprefix(char *elevprefix); // prefix of elev tileset file
-void configure_imagprefix(char *imagprefix); // prefix of imag tileset file
+void configure_stdprefix(char *stdprefix); // standard prefix of tileset file
+void configure_rgbprefix(char *rgbprefix); // rgb prefix of tileset file
 void configure_tilesetname(char *tilesetname); // name of tileset file
 void configure_startupname(char *startupname); // name of startup file
 

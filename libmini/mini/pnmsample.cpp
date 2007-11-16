@@ -17,8 +17,8 @@ int CONFIGURE_SUPERSAMPLING=2;
 int CONFIGURE_STARTUPFILE=0;
 
 char CONFIGURE_TILESETPATH[MAX_STR]="";
-char CONFIGURE_ELEVPREFIX[MAX_STR]="elev.";
-char CONFIGURE_IMAGPREFIX[MAX_STR]="imag.";
+char CONFIGURE_STDPREFIX[MAX_STR]="elev.";
+char CONFIGURE_RGBPREFIX[MAX_STR]="imag.";
 char CONFIGURE_TILESETNAME[MAX_STR]="tileset.sav";
 char CONFIGURE_STARTUPNAME[MAX_STR]="startup.sav";
 
@@ -1099,8 +1099,8 @@ void resample(int num,char **grid,
       if (CONFIGURE_STARTUPFILE!=0) fclose(startup);
 
       // open tileset file
-      if (comps[0]!=3) snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_ELEVPREFIX,CONFIGURE_TILESETNAME);
-      else snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_IMAGPREFIX,CONFIGURE_TILESETNAME);
+      if (comps[0]!=3) snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_STDPREFIX,CONFIGURE_TILESETNAME);
+      else snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_RGBPREFIX,CONFIGURE_TILESETNAME);
       if ((tileset=fopen(filename,"wb"))==NULL) ERRORMSG();
 
       // output number of tiles, bounding box, and maximum texture size
@@ -1311,8 +1311,8 @@ void normalize(int num,
 void configure_supersampling(int supersampling) {CONFIGURE_SUPERSAMPLING=supersampling;}
 void configure_startupfile(int startupfile) {CONFIGURE_STARTUPFILE=startupfile;}
 void configure_tilesetpath(char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
-void configure_elevprefix(char *elevprefix) {strncpy(CONFIGURE_ELEVPREFIX,elevprefix,MAX_STR);}
-void configure_imagprefix(char *imagprefix) {strncpy(CONFIGURE_IMAGPREFIX,imagprefix,MAX_STR);}
+void configure_stdprefix(char *stdprefix) {strncpy(CONFIGURE_STDPREFIX,stdprefix,MAX_STR);}
+void configure_rgbprefix(char *rgbprefix) {strncpy(CONFIGURE_RGBPREFIX,rgbprefix,MAX_STR);}
 void configure_tilesetname(char *tilesetname) {strncpy(CONFIGURE_TILESETNAME,tilesetname,MAX_STR);}
 void configure_startupname(char *startupname) {strncpy(CONFIGURE_STARTUPNAME,startupname,MAX_STR);}
 
