@@ -1,18 +1,6 @@
 // (c) by Stefan Roettger
 
 #undef PTHREADS // enable this if pthreads are installed
-#undef LIBCURL // enable this for server support
-
-#define DEMO_REMOTEURL "http://www.foo.bar/data"
-
-#define DEMO_REMOTEID "FraenkischeTileset/"
-#ifndef _WIN32
-#define DEMO_LOCALPATH "/var/tmp/"
-#else
-#define DEMO_LOCALPATH "C:\\Windows\\Temp\\"
-#endif
-#define DEMO_TILESETFILE "tileset.sav"
-#define DEMO_STARTUPFILE "startup.sav"
 
 #include "mini/minibase.h"
 
@@ -77,171 +65,6 @@ void lock_cs(void *data)
 
 void unlock_cs(void *data)
    {pthread_mutex_unlock(&mutex);}
-
-#endif
-
-#ifdef LIBCURL
-
-#include <curl/curl.h>
-#include <curl/types.h>
-#include <curl/easy.h>
-
-CURL *curl_handle[numthreads+2];
-
-struct MemoryStruct
-   {
-   char *memory;
-   size_t size;
-   };
-
-void *myrealloc(void *ptr,size_t size)
-   {
-   if (ptr) return realloc(ptr,size);
-   else return malloc(size);
-   }
-
-size_t WriteMemoryCallback(void *ptr,size_t size,size_t nmemb,void *data)
-   {
-   size_t realsize=size*nmemb;
-   struct MemoryStruct *mem=(struct MemoryStruct *)data;
-
-   mem->memory=(char *)myrealloc(mem->memory,mem->size+realsize+1);
-
-   if (mem->memory)
-      {
-      memcpy(&(mem->memory[mem->size]),ptr,realsize);
-      mem->size+=realsize;
-      mem->memory[mem->size]=0;
-      }
-
-   return(realsize);
-   }
-
-void curlinit(char *proxyname=NULL,char *proxyport=NULL)
-   {
-   int i;
-
-   /* init curl */
-   curl_global_init(CURL_GLOBAL_ALL);
-
-   for (i=0; i<numthreads+2; i++)
-      {
-      /* init the curl session */
-      curl_handle[i]=curl_easy_init();
-
-      /* send all data to this function */
-      curl_easy_setopt(curl_handle[i],CURLOPT_WRITEFUNCTION,WriteMemoryCallback);
-
-      /* optionally set the proxy server address */
-      if (proxyname!=NULL)
-         {
-         curl_easy_setopt(curl_handle[i],CURLOPT_PROXY,proxyname);
-         if (proxyport!=NULL) curl_easy_setopt(curl_handle[i],CURLOPT_PROXYPORT,proxyport);
-         }
-
-      /* some servers don't like requests that are made without a user-agent */
-      curl_easy_setopt(curl_handle[i],CURLOPT_USERAGENT,"libMini-agent/1.0");
-
-      if (i<numthreads+1)
-         {
-         /* request zlib decompression */
-         curl_easy_setopt(curl_handle[i],CURLOPT_ENCODING,"deflate");
-         }
-      else
-         {
-         /* request header only */
-         curl_easy_setopt(curl_handle[i],CURLOPT_NOBODY,1);
-         }
-      }
-   }
-
-void curlexit()
-   {
-   int i;
-
-   /* cleanup curl stuff */
-   for (i=0; i<numthreads+2; i++) curl_easy_cleanup(curl_handle[i]);
-   }
-
-char *concat(char *str1,char *str2,char *str3)
-   {
-   char *str;
-
-   str=(char *)malloc(strlen(str1)+strlen(str2)+strlen(str3)+1);
-
-   memcpy(str,str1,strlen(str1));
-   memcpy(str+strlen(str1),str2,strlen(str2));
-   memcpy(str+strlen(str1)+strlen(str2),str3,strlen(str3)+1);
-
-   return(str);
-   }
-
-void geturl(char *src_url,char *src_id,char *src_file,char *dst_file,int background)
-   {
-   char *url;
-
-   struct MemoryStruct chunk;
-
-   chunk.memory=NULL;
-   chunk.size=0;
-
-   url=concat(src_url,src_id,src_file);
-
-   /* we pass our chunk struct to the callback function */
-   curl_easy_setopt(curl_handle[background],CURLOPT_WRITEDATA,(void *)&chunk);
-
-   /* specify URL to get */
-   curl_easy_setopt(curl_handle[background],CURLOPT_URL,url);
-
-   /* get it! */
-   curl_easy_perform(curl_handle[background]);
-
-   /* write to file */
-   if (chunk.memory)
-      {
-      FILE *file;
-
-      if ((file=fopen(dst_file,"wb"))==NULL) exit(1);
-      fwrite(chunk.memory,1,chunk.size,file);
-      fclose(file);
-
-      free(chunk.memory);
-      }
-
-   free(url);
-   }
-
-int checkurl(char *src_url,char *src_id,char *src_file)
-   {
-   char *url;
-   long response;
-
-   struct MemoryStruct chunk;
-
-   chunk.memory=NULL;
-   chunk.size=0;
-
-   url=concat(src_url,src_id,src_file);
-
-   /* we pass our chunk struct to the callback function */
-   curl_easy_setopt(curl_handle[numthreads+1],CURLOPT_WRITEDATA,(void *)&chunk);
-
-   /* specify URL to get */
-   curl_easy_setopt(curl_handle[numthreads+1],CURLOPT_URL,url);
-
-   /* get it! */
-   curl_easy_perform(curl_handle[numthreads+1]);
-
-   /* query response code */
-   curl_easy_getinfo(curl_handle[numthreads+1],CURLINFO_RESPONSE_CODE,&response);
-
-   /* free memory chunk */
-   if (chunk.memory) free(chunk.memory);
-
-   free(url);
-
-   return(response==200);
-   }
 
 #endif
 
@@ -454,16 +277,6 @@ void initview(float x,float y,float a,float p)
 void request_callback(char *file,int istexture,databuf *buf,void *data)
    {buf->loadPNMdata(file);}
 
-#ifdef LIBCURL
-
-void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
-   {geturl(src_url,src_id,src_file,dst_file,background);}
-
-int check_callback(char *src_url,char *src_id,char *src_file,void *data)
-   {return(checkurl(src_url,src_id,src_file));}
-
-#endif
-
 void reshapefunc(int width,int height)
    {
    if (sw_full==0)
@@ -603,10 +416,6 @@ void keypressed(unsigned char key)
 
 #ifdef PTHREADS
       threadexit();
-#endif
-
-#ifdef LIBCURL
-      curlexit();
 #endif
 
       if (trees!=NULL) delete trees;
@@ -939,8 +748,6 @@ int main(int argc,char *argv[])
       else record=fopen(recordfile,"rb");
       }
 
-#ifndef LIBCURL
-
    // turn off supersampling
    configure_supersampling(0);
 
@@ -950,22 +757,20 @@ int main(int argc,char *argv[])
    // define tile set path
    configure_tilesetpath(DEMO_REMOTEID);
 
-   // resample SRTM
-   resample(18,srtmmaps,
-            tiles,down,maxsize,basepath1,
-            NULL,NULL,NULL,NULL,NULL,-9999,
-            &cols,&rows,outparams);
+   // resample LandSat orthophotos
+   resample(9,landmaps,
+            tiles,down,maxsize,basepath2);
 
    // resample tree maps
    if (sw_trees!=0)
       resample(2,treemaps,
                tiles,down,treesize,basepath3);
 
-   // resample LandSat orthophotos
-   resample(9,landmaps,
-            tiles,down,maxsize,basepath2);
-
-#endif
+   // resample SRTM
+   resample(18,srtmmaps,
+            tiles,down,maxsize,basepath1,
+            NULL,NULL,NULL,NULL,NULL,-9999,
+            &cols,&rows,outparams);
 
    // check for exit option
    if (sw_quit!=0) return(0);
@@ -1006,12 +811,6 @@ int main(int argc,char *argv[])
    threadinit();
 #endif
    tilecache->setremoteid(DEMO_REMOTEID); // world id
-#ifdef LIBCURL
-   tilecache->setremoteurl(DEMO_REMOTEURL); // server url
-   tilecache->setlocalpath(DEMO_LOCALPATH); // local cache
-   tilecache->setreceiver(receive_callback,NULL,check_callback);
-   curlinit();
-#endif
 
    // load persistent startup file
    tilecache->load();

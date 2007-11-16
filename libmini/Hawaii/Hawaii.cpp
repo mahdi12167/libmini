@@ -1095,11 +1095,16 @@ int main(int argc,char *argv[])
    // resample tiles
    if (sw_hires==0)
       {
-      // resample USGS DEM
-      resample(113,usgsmaps,
-               tilesL,hdownL,maxsize,basepath1,
-               NULL,NULL,NULL,NULL,NULL,-9999,
-               &cols,&rows,outparams);
+      if (sw_normals!=0)
+         {
+         // generate normal maps
+         normalize(113,usgsmaps,
+                   basepath4);
+
+         // resample normal maps
+         resample(114,normaps,
+                  tilesL,hdownL,maxsize,basepath4);
+         }
 
       // downscale bathymetric DEM
       resample(2,bathymaps,
@@ -1113,22 +1118,22 @@ int main(int argc,char *argv[])
       resample(10,landmaps,
                tilesL,tdownL,maxsize,basepath2);
 
-      if (sw_normals!=0)
-         {
-         // generate normal maps
-         normalize(113,usgsmaps,
-                   basepath4);
-
-         // resample normal maps
-         resample(114,normaps,
-                  tilesL,hdownL,maxsize,basepath4);
-         }
+      // resample USGS DEM
+      resample(113,usgsmaps,
+               tilesL,hdownL,maxsize,basepath1,
+               NULL,NULL,NULL,NULL,NULL,-9999,
+               &cols,&rows,outparams);
       }
    else
       {
-      resample(113,usgsmaps,
-               tilesH,hdownH,maxsize,basepath1,
-               NULL,NULL,NULL,NULL,NULL,-9999,&cols,&rows);
+      if (sw_normals!=0)
+         {
+         normalize(113,usgsmaps,
+                   basepath4);
+
+         resample(114,normaps,
+                  tilesH,hdownH,maxsize,basepath4);
+         }
 
       resample(2,bathymaps,
                1,0,2048,basepath3);
@@ -1139,14 +1144,9 @@ int main(int argc,char *argv[])
       resample(10,landmaps,
                tilesH,tdownH,maxsize,basepath2);
 
-      if (sw_normals!=0)
-         {
-         normalize(113,usgsmaps,
-                   basepath4);
-
-         resample(114,normaps,
-                  tilesH,hdownH,maxsize,basepath4);
-         }
+      resample(113,usgsmaps,
+               tilesH,hdownH,maxsize,basepath1,
+               NULL,NULL,NULL,NULL,NULL,-9999,&cols,&rows);
       }
 
    // check for exit option

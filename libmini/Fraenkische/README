@@ -17,15 +17,6 @@ To compile under Linux, MacOS X, Irix or Windows follow these steps:
  8) in order to enter manual mode start the demo with -D [-t]
  9) then try the following keys: w a d s < > j 0 l p o e (q quits the demo)
 
-Optionally, the demo can be run with server support (i.e. streaming
-over the internet). For this to work, the libcurl library must be
-installed. Get it from http://curl.haxx.se. Then define LIBCURL in the
-Fraenkische.cpp and recompile. Now the demo tries to stream all the
-terrain data from the stereofx.org server. The parameter REMOTEURL
-defines the location of the data, so it is possible to unpack the demo
-on any http server on a private LAN or WLAN, for example, and tell the
-demo to stream from this place.
-
 The demo includes data from the Global Land Cover Facility (GLCF,
 http://glcf.umiacs.umd.edu). It also includes tree billboard textures
 from vterrain.org (Thanks Ben!).
