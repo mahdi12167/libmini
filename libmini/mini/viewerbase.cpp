@@ -651,10 +651,10 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       // create warp object for each exposed coordinate transformation:
 
       WARP_E2L=PARAMS.warp;
-      WARP_E2L.setwarp(miniwarp::MINIWARP_DATA,miniwarp::MINIWARP_LOCAL);
+      WARP_E2L.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_LOCAL);
 
       WARP_L2E=PARAMS.warp;
-      WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_DATA);
+      WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_EXTERNAL);
 
       WARP_L2I=PARAMS.warp;
       WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);

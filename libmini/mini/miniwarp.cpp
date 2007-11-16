@@ -255,6 +255,7 @@ miniwarp::miniwarp()
 
    HAS_DATA=FALSE;
 
+   MTX_2PLN[0]=MTX_2PLN[1]=MTX_2PLN[2]=miniv4d(0.0);
    MTX_2CNT[0]=MTX_2CNT[1]=MTX_2CNT[2]=miniv4d(0.0);
    MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
    MTX_2LOC[0]=MTX_2LOC[1]=MTX_2LOC[2]=miniv4d(0.0);
@@ -263,6 +264,7 @@ miniwarp::miniwarp()
    MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
    MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
 
+   INV_2PLN[0]=INV_2PLN[1]=INV_2PLN[2]=miniv4d(0.0);
    INV_2CNT[0]=INV_2CNT[1]=INV_2CNT[2]=miniv4d(0.0);
    INV_2DAT[0]=INV_2DAT[1]=INV_2DAT[2]=miniv4d(0.0);
    INV_2LOC[0]=INV_2LOC[1]=INV_2LOC[2]=miniv4d(0.0);
@@ -477,6 +479,13 @@ void miniwarp::update_mtx()
       calc_wrp();
 
       inv_mtx(INV_2WRP,MTX_2WRP);
+
+      // conversion 2 external coordinates:
+
+      if (SYSDAT==minicoord::MINICOORD_LLH) mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,INV_2LOC);
+      else mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT);
+
+      inv_mtx(INV_2PLN,MTX_2PLN);
       }
    }
 
@@ -495,6 +504,7 @@ void miniwarp::update_wrp()
       for (i=FROM+1; i<=TO; i++)
          switch (i)
             {
+            case MINIWARP_PLAIN: mlt_mtx(MTX,MTX_2PLN,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,MTX_2CNT,MTX); break;
             case MINIWARP_DATA: mlt_mtx(MTX,MTX_2DAT,MTX); break;
             case MINIWARP_LOCAL: mlt_mtx(MTX,MTX_2LOC,MTX); break;
@@ -515,6 +525,7 @@ void miniwarp::update_wrp()
             case MINIWARP_DATA: mlt_mtx(MTX,INV_2LOC,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,INV_2DAT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,INV_2CNT,MTX); break;
+            case MINIWARP_EXTERNAL: mlt_mtx(MTX,INV_2PLN,MTX); break;
             }
    }
 
