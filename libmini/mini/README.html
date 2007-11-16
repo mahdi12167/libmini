@@ -1133,7 +1133,8 @@ In order to load a real height field or texture use the PNM reader via<p>
 
 If components==1 the function returns an unsigned char height field<br>
 else if components==2 16 bit signed values are returned in MSB format<br>
-else if components==3 an RGB color image is returned.<p>
+else if components==3 an RGB color image is returned.
+else if components==4 an RGBA color image is returned.<p>
 
 If the PNM image contains an 8- or 16-bit height field we first copy
 it to a short array. Then we can pass this array to the libMini core
@@ -2238,10 +2239,10 @@ as follows:<p>
 with<p>
 
 <pre>
-   &lt;TYPE&gt;   = P5 | P6 ::: P5 = PGM, P6 = PPM
-   &lt;WIDTH&gt;  = %d      ::: width of texture/heightmap
-   &lt;HEIGHT&gt; = %d      ::: height of texture/heightmap
-   &lt;MAXVAL&gt; = %d      ::: maximum value
+   &lt;TYPE&gt;   = P5 | P6 | P8 ::: P5 = PGM, P6 = PPM, P8 = RGBA
+   &lt;WIDTH&gt;  = %d           ::: width of texture/heightmap
+   &lt;HEIGHT&gt; = %d           ::: height of texture/heightmap
+   &lt;MAXVAL&gt; = %d           ::: maximum value
 </pre>
 
 For 8 bit images MAXVAL is 255, for 16 bit images MAXVAL is either
@@ -2349,7 +2350,7 @@ with<p>
    &lt;MAGIC&gt;      = PVM ::: magic identifier
    &lt;WIDTH&gt;      = %d  ::: width of volume
    &lt;HEIGHT&gt;     = %d  ::: height of volume
-   &lt;COMPONENTS&gt; = %d  ::: number components
+   &lt;COMPONENTS&gt; = %d  ::: number of components
 </pre>
 
 For 8 bit data the number of components is 1, for 16 bit data 2 and

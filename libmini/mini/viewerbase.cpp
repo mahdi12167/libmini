@@ -98,6 +98,11 @@ viewerbase::viewerbase()
    PARAMS.locthreads=1;           // number of local threads
    PARAMS.numthreads=10;          // number of net threads
 
+   PARAMS.elevdir=strdup("elev"); // default elev directory
+   PARAMS.imagdir=strdup("imag"); // default imag directory
+
+   PARAMS.elevprefix=strdup("elev.");        // elev tileset prefix
+   PARAMS.imagprefix=strdup("imag.");        // imag tileset prefix
    PARAMS.tilesetfile=strdup("tileset.sav"); // tileset sav file
    PARAMS.vtbinisuffix=strdup(".ini");       // suffix of vtb ini file
    PARAMS.startupfile=strdup("startup.sav"); // startup sav file
@@ -264,6 +269,11 @@ viewerbase::~viewerbase()
 
    // delete strings:
 
+   if (PARAMS.elevdir!=NULL) free(PARAMS.elevdir);
+   if (PARAMS.imagdir!=NULL) free(PARAMS.imagdir);
+
+   if (PARAMS.elevprefix!=NULL) free(PARAMS.elevprefix);
+   if (PARAMS.imagprefix!=NULL) free(PARAMS.imagprefix);
    if (PARAMS.tilesetfile!=NULL) free(PARAMS.tilesetfile);
    if (PARAMS.vtbinisuffix!=NULL) free(PARAMS.vtbinisuffix);
    if (PARAMS.startupfile!=NULL) free(PARAMS.startupfile);
@@ -289,6 +299,11 @@ void viewerbase::set(VIEWER_PARAMS &params)
 
    // delete unused strings:
 
+   if (PARAMS.elevdir!=PARAMS0.elevdir) if (PARAMS0.elevdir!=NULL) free(PARAMS0.elevdir);
+   if (PARAMS.imagdir!=PARAMS0.imagdir) if (PARAMS0.imagdir!=NULL) free(PARAMS0.imagdir);
+
+   if (PARAMS.elevprefix!=PARAMS0.elevprefix) if (PARAMS0.elevprefix!=NULL) free(PARAMS0.elevprefix);
+   if (PARAMS.imagprefix!=PARAMS0.imagprefix) if (PARAMS0.imagprefix!=NULL) free(PARAMS0.imagprefix);
    if (PARAMS.tilesetfile!=PARAMS0.tilesetfile) if (PARAMS0.tilesetfile!=NULL) free(PARAMS0.tilesetfile);
    if (PARAMS.vtbinisuffix!=PARAMS0.vtbinisuffix) if (PARAMS0.vtbinisuffix!=NULL) free(PARAMS0.vtbinisuffix);
    if (PARAMS.startupfile!=PARAMS0.startupfile) if (PARAMS0.startupfile!=NULL) free(PARAMS0.startupfile);
@@ -413,7 +428,7 @@ BOOLINT viewerbase::load(const char *url,
          }
 
       // load tileset
-      success=load(baseurl,baseid,"elev","imag",reset);
+      success=load(baseurl,baseid,PARAMS.elevdir,PARAMS.imagdir,reset);
 
       free(baseid);
       }
@@ -432,6 +447,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    float outparams[5];
    float outscale[2];
 
+   char *elevtilesetfile,*imagtilesetfile;
    char *vtbelevinifile,*vtbimaginifile;
 
    minicoord offsetDAT,extentDAT;
@@ -461,13 +477,18 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    TERRAIN=new miniload;
    CACHE=new minicache;
 
+   // concatenate tileset info file names
+   elevtilesetfile=concat(PARAMS.elevprefix,PARAMS.tilesetfile);
+   imagtilesetfile=concat(PARAMS.imagprefix,PARAMS.tilesetfile);
+
    // concatenate vtb ini file names
    vtbelevinifile=concat(basepath1,PARAMS.vtbinisuffix);
    vtbimaginifile=concat(basepath2,PARAMS.vtbinisuffix);
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);
-   TILECACHE->settilesetfile(PARAMS.tilesetfile);
+   TILECACHE->setelevtilesetfile(elevtilesetfile);
+   TILECACHE->setimagtilesetfile(imagtilesetfile);
    TILECACHE->setvtbelevinifile(vtbelevinifile);
    TILECACHE->setvtbimaginifile(vtbimaginifile);
    TILECACHE->setvtbelevpath(basepath1);
@@ -490,6 +511,10 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    TILECACHE->setlocalpath(PARAMS.localpath);
    TILECACHE->setreceiver(receive_callback,NULL,check_callback);
 
+   // free tileset info file names
+   free(elevtilesetfile);
+   free(imagtilesetfile);
+
    // free vtb ini file names
    free(vtbelevinifile);
    free(vtbimaginifile);
@@ -509,83 +534,51 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
       }
 
    // check tileset info
-   if (TILECACHE->hasinfo())
+   if (TILECACHE->haselevinfo())
       {
       // set size of tileset
-      PARAMS.cols=TILECACHE->getinfo_tilesx();
-      PARAMS.rows=TILECACHE->getinfo_tilesy();
+      PARAMS.cols=TILECACHE->getelevinfo_tilesx();
+      PARAMS.rows=TILECACHE->getelevinfo_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getinfo_centerx();
-      PARAMS.offset[1]=TILECACHE->getinfo_centery();
+      PARAMS.offset[0]=TILECACHE->getelevinfo_centerx();
+      PARAMS.offset[1]=TILECACHE->getelevinfo_centery();
 
       // set base size of textures
-      PARAMS.basesize=TILECACHE->getinfo_maxsize();
+      if (TILECACHE->hasimaginfo()) PARAMS.basesize=TILECACHE->getimaginfo_maxtexsize();
       TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
 
       // use PNM loader
       PARAMS.usepnm=TRUE;
 
       // get data coordinates
-      offsetDAT=minicoord(miniv3d(TILECACHE->getinfo_centerx(),TILECACHE->getinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      extentDAT=minicoord(miniv3d(TILECACHE->getinfo_sizex(),TILECACHE->getinfo_sizey(),2.0*TILECACHE->getinfo_maxelev()),minicoord::MINICOORD_LLH);
+      offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
+      extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*TILECACHE->getelevinfo_maxelev()),minicoord::MINICOORD_LLH);
       }
-   else
+   // check tileset ini
+   else if (TILECACHE->haselevini())
       {
-      // check elev tileset ini
-      if (TILECACHE->haselevini())
-         {
-         // set size of tileset
-         PARAMS.cols=TILECACHE->getelevini_tilesx();
-         PARAMS.rows=TILECACHE->getelevini_tilesy();
+      // set size of tileset
+      PARAMS.cols=TILECACHE->getelevini_tilesx();
+      PARAMS.rows=TILECACHE->getelevini_tilesy();
 
-         // set local offset of tileset center
-         PARAMS.offset[0]=TILECACHE->getelevini_centerx();
-         PARAMS.offset[1]=TILECACHE->getelevini_centery();
+      // set local offset of tileset center
+      PARAMS.offset[0]=TILECACHE->getelevini_centerx();
+      PARAMS.offset[1]=TILECACHE->getelevini_centery();
 
-         // set base size of textures
-         if (!TILECACHE->hasimagini())
-            TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+      // set base size of textures
+      if (TILECACHE->hasimagini()) PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
+      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
 
-         // use DB loader
-         PARAMS.usepnm=FALSE;
+      // use DB loader
+      PARAMS.usepnm=FALSE;
 
-         // get data coordinates
-         offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-         extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())),minicoord::MINICOORD_LINEAR);
-         }
-
-      // check imag tileset ini
-      if (TILECACHE->hasimagini())
-         {
-         if (!TILECACHE->haselevini())
-            {
-            // set size of tileset
-            PARAMS.cols=TILECACHE->getimagini_tilesx();
-            PARAMS.rows=TILECACHE->getimagini_tilesy();
-
-            // set local offset of tileset center
-            PARAMS.offset[0]=TILECACHE->getimagini_centerx();
-            PARAMS.offset[1]=TILECACHE->getimagini_centery();
-            }
-
-         // set base size of textures
-         PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
-         TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
-
-         // use DB loader
-         PARAMS.usepnm=FALSE;
-
-         if (!TILECACHE->haselevini())
-            {
-            // get data coordinates
-            offsetDAT=minicoord(miniv3d(TILECACHE->getimagini_centerx(),TILECACHE->getimagini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-            extentDAT=minicoord(miniv3d(TILECACHE->getimagini_sizex(),TILECACHE->getimagini_sizey(),2.0*PARAMS.maxelev),minicoord::MINICOORD_LINEAR);
-            }
-         }
+      // get data coordinates
+      offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
+      extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())),minicoord::MINICOORD_LINEAR);
       }
 
-   // check the size of the tileset to detect load errors
+   // check the size of the tileset to detect load failures
    if (PARAMS.cols==0 || PARAMS.rows==0) return(FALSE);
 
    // use .db file numbering starting with zero for compatibility with vtp

@@ -26,22 +26,34 @@ datacache::datacache(miniload *terrain)
    HASHSIZE=100000;
    HASHTABLE=NULL;
 
-   TILESETFILE=NULL;
+   ELEVTILESETFILE=NULL;
+   IMAGTILESETFILE=NULL;
    VTBELEVINIFILE=NULL;
    VTBIMAGINIFILE=NULL;
    VTBELEVPATH=NULL;
    VTBIMAGPATH=NULL;
    STARTUPFILE=NULL;
 
-   HAS_INFO=FALSE;
+   HAS_ELEVINFO=FALSE;
 
-   INFO_TILESX=0;
-   INFO_TILESY=0;
-   INFO_CENTERX=0.0f;
-   INFO_CENTERY=0.0f;
-   INFO_SIZEX=0.0f;
-   INFO_SIZEY=0.0f;
-   INFO_MAXSIZE=0;
+   ELEVINFO_TILESX=0;
+   ELEVINFO_TILESY=0;
+   ELEVINFO_CENTERX=0.0f;
+   ELEVINFO_CENTERY=0.0f;
+   ELEVINFO_SIZEX=0.0f;
+   ELEVINFO_SIZEY=0.0f;
+   ELEVINFO_MAXDEMSIZE=0;
+   ELEVINFO_MAXELEV=0.0f;
+
+   HAS_IMAGINFO=FALSE;
+
+   IMAGINFO_TILESX=0;
+   IMAGINFO_TILESY=0;
+   IMAGINFO_CENTERX=0.0f;
+   IMAGINFO_CENTERY=0.0f;
+   IMAGINFO_SIZEX=0.0f;
+   IMAGINFO_SIZEY=0.0f;
+   IMAGINFO_MAXTEXSIZE=0;
 
    HAS_ELEVINI=FALSE;
 
@@ -86,7 +98,8 @@ datacache::~datacache()
 
    reset();
 
-   if (TILESETFILE!=NULL) free(TILESETFILE);
+   if (ELEVTILESETFILE!=NULL) free(ELEVTILESETFILE);
+   if (IMAGTILESETFILE!=NULL) free(IMAGTILESETFILE);
    if (VTBELEVINIFILE!=NULL) free(VTBELEVINIFILE);
    if (VTBIMAGINIFILE!=NULL) free(VTBIMAGINIFILE);
    if (VTBELEVPATH!=NULL) free(VTBELEVPATH);
@@ -249,13 +262,22 @@ char *datacache::getfile(const char *src_file,const char *altpath)
    return(NULL);
    }
 
-// set name of tileset file
-void datacache::settilesetfile(const char *filename)
+// set name of elev tileset file
+void datacache::setelevtilesetfile(const char *filename)
    {
-   if (TILESETFILE!=NULL) free(TILESETFILE);
+   if (ELEVTILESETFILE!=NULL) free(ELEVTILESETFILE);
 
-   if (filename==NULL) TILESETFILE=NULL;
-   else TILESETFILE=strdup(filename);
+   if (filename==NULL) ELEVTILESETFILE=NULL;
+   else ELEVTILESETFILE=strdup(filename);
+   }
+
+// set name of imag tileset file
+void datacache::setimagtilesetfile(const char *filename)
+   {
+   if (IMAGTILESETFILE!=NULL) free(IMAGTILESETFILE);
+
+   if (filename==NULL) IMAGTILESETFILE=NULL;
+   else IMAGTILESETFILE=strdup(filename);
    }
 
 // set name of vtb ini file for elevation tileset
@@ -303,31 +325,63 @@ void datacache::setstartupfile(const char *filename)
    else STARTUPFILE=strdup(filename);
    }
 
-// load tileset info file
-void datacache::loadtilesetinfo()
+// load elev tileset info file
+void datacache::loadelevtilesetinfo()
    {
    FILE *file;
 
-   HAS_INFO=FALSE;
+   HAS_ELEVINFO=FALSE;
 
-   if (TILESETFILE==NULL) return;
+   if (ELEVTILESETFILE==NULL) return;
 
-   char *tilesetname=getfile(TILESETFILE);
+   char *tilesetname=getfile(ELEVTILESETFILE);
 
    if (tilesetname!=NULL)
       {
-      HAS_INFO=TRUE;
+      HAS_ELEVINFO=TRUE;
 
       if ((file=fopen(tilesetname,"rb"))==NULL) ERRORMSG();
 
-      if (fscanf(file,"tilesx=%d\n",&INFO_TILESX)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"tilesy=%d\n",&INFO_TILESY)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"centerx=%g arc-seconds\n",&INFO_CENTERX)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"centery=%g arc-seconds\n",&INFO_CENTERY)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"sizex=%g arc-seconds\n",&INFO_SIZEX)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"sizey=%g arc-seconds\n",&INFO_SIZEY)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"maxsize=%d\n",&INFO_MAXSIZE)!=1) HAS_INFO=FALSE;
-      if (fscanf(file,"maxelev=%g\n",&INFO_MAXELEV)!=1) HAS_INFO=FALSE;
+      if (fscanf(file,"tilesx=%d\n",&ELEVINFO_TILESX)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"tilesy=%d\n",&ELEVINFO_TILESY)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"centerx=%g arc-seconds\n",&ELEVINFO_CENTERX)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"centery=%g arc-seconds\n",&ELEVINFO_CENTERY)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"sizex=%g arc-seconds\n",&ELEVINFO_SIZEX)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"sizey=%g arc-seconds\n",&ELEVINFO_SIZEY)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"maxsize=%d\n",&ELEVINFO_MAXDEMSIZE)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"maxelev=%g\n",&ELEVINFO_MAXELEV)!=1) HAS_ELEVINFO=FALSE;
+
+      fclose(file);
+
+      free(tilesetname);
+      }
+   }
+
+// load imag tileset info file
+void datacache::loadimagtilesetinfo()
+   {
+   FILE *file;
+
+   HAS_IMAGINFO=FALSE;
+
+   if (IMAGTILESETFILE==NULL) return;
+
+   char *tilesetname=getfile(IMAGTILESETFILE);
+
+   if (tilesetname!=NULL)
+      {
+      HAS_IMAGINFO=TRUE;
+
+      if ((file=fopen(tilesetname,"rb"))==NULL) ERRORMSG();
+
+      if (fscanf(file,"tilesx=%d\n",&IMAGINFO_TILESX)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"tilesy=%d\n",&IMAGINFO_TILESY)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"centerx=%g arc-seconds\n",&IMAGINFO_CENTERX)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"centery=%g arc-seconds\n",&IMAGINFO_CENTERY)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"sizex=%g arc-seconds\n",&IMAGINFO_SIZEX)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"sizey=%g arc-seconds\n",&IMAGINFO_SIZEY)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"maxsize=%d\n",&IMAGINFO_MAXTEXSIZE)!=1) HAS_IMAGINFO=FALSE;
+      if (fscanf(file,"maxelev=%g\n",&IMAGINFO_MAXELEV)!=1) HAS_IMAGINFO=FALSE;
 
       fclose(file);
 
@@ -575,7 +629,9 @@ void datacache::load()
 
    BOOLINT remote=FALSE;
 
-   loadtilesetinfo();
+   loadelevtilesetinfo();
+   loadimagtilesetinfo();
+
    loadvtbelevini();
    loadvtbimagini();
 

@@ -96,6 +96,11 @@ class viewerbase
       int locthreads;           //+ number of local threads
       int numthreads;           //+ number of net threads
 
+      char *elevdir;            //+ default elev directory
+      char *imagdir;            //+ default imag directory
+
+      char *elevprefix;         //+ elev tileset prefix
+      char *imagprefix;         //+ imag tileset prefix
       char *tilesetfile;        //+ tileset sav file
       char *vtbinisuffix;       //+ suffix of vtb ini file
       char *startupfile;        //+ startup sav file

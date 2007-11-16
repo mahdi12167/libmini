@@ -69,8 +69,11 @@ class datacache
    //! get file
    char *getfile(const char *src_file,const char *altpath=NULL);
 
-   //! set name of tileset file
-   void settilesetfile(const char *filename);
+   //! set name of elev tileset file
+   void setelevtilesetfile(const char *filename);
+
+   //! set name of imag tileset file
+   void setimagtilesetfile(const char *filename);
 
    //! set name of vtb ini file for elevation tileset
    void setvtbelevinifile(const char *filename);
@@ -96,16 +99,26 @@ class datacache
    //! reset startup state
    void reset();
 
-   //! getters for tileset info
-   BOOLINT hasinfo() {return(HAS_INFO);}
-   int getinfo_tilesx() {return(INFO_TILESX);}
-   int getinfo_tilesy() {return(INFO_TILESY);}
-   float getinfo_centerx() {return(INFO_CENTERX);}
-   float getinfo_centery() {return(INFO_CENTERY);}
-   float getinfo_sizex() {return(INFO_SIZEX);}
-   float getinfo_sizey() {return(INFO_SIZEY);}
-   int getinfo_maxsize() {return(INFO_MAXSIZE);}
-   float getinfo_maxelev() {return(INFO_MAXELEV);}
+   //! getters for elev tileset info
+   BOOLINT haselevinfo() {return(HAS_ELEVINFO);}
+   int getelevinfo_tilesx() {return(ELEVINFO_TILESX);}
+   int getelevinfo_tilesy() {return(ELEVINFO_TILESY);}
+   float getelevinfo_centerx() {return(ELEVINFO_CENTERX);}
+   float getelevinfo_centery() {return(ELEVINFO_CENTERY);}
+   float getelevinfo_sizex() {return(ELEVINFO_SIZEX);}
+   float getelevinfo_sizey() {return(ELEVINFO_SIZEY);}
+   int getelevinfo_maxdemsize() {return(ELEVINFO_MAXDEMSIZE);}
+   float getelevinfo_maxelev() {return(ELEVINFO_MAXELEV);}
+
+   //! getters for imag tileset info
+   BOOLINT hasimaginfo() {return(HAS_IMAGINFO);}
+   int getimaginfo_tilesx() {return(IMAGINFO_TILESX);}
+   int getimaginfo_tilesy() {return(IMAGINFO_TILESY);}
+   float getimaginfo_centerx() {return(IMAGINFO_CENTERX);}
+   float getimaginfo_centery() {return(IMAGINFO_CENTERY);}
+   float getimaginfo_sizex() {return(IMAGINFO_SIZEX);}
+   float getimaginfo_sizey() {return(IMAGINFO_SIZEY);}
+   int getimaginfo_maxtexsize() {return(IMAGINFO_MAXTEXSIZE);}
 
    //! getters for vtb elev ini file
    BOOLINT haselevini() {return(HAS_ELEVINI);}
@@ -145,7 +158,9 @@ class datacache
 
    protected:
 
-   void loadtilesetinfo();
+   void loadelevtilesetinfo();
+   void loadimagtilesetinfo();
+
    void loadvtbelevini();
    void loadvtbimagini();
 
@@ -183,22 +198,33 @@ class datacache
    fileinfoelem **HASHTABLE;
    int HASHSIZE;
 
-   char *TILESETFILE;
+   char *ELEVTILESETFILE;
+   char *IMAGTILESETFILE;
    char *VTBELEVINIFILE;
    char *VTBIMAGINIFILE;
    char *VTBELEVPATH;
    char *VTBIMAGPATH;
    char *STARTUPFILE;
 
-   BOOLINT HAS_INFO;
-   int INFO_TILESX;
-   int INFO_TILESY;
-   float INFO_CENTERX;
-   float INFO_CENTERY;
-   float INFO_SIZEX;
-   float INFO_SIZEY;
-   int INFO_MAXSIZE;
-   float INFO_MAXELEV;
+   BOOLINT HAS_ELEVINFO;
+   int ELEVINFO_TILESX;
+   int ELEVINFO_TILESY;
+   float ELEVINFO_CENTERX;
+   float ELEVINFO_CENTERY;
+   float ELEVINFO_SIZEX;
+   float ELEVINFO_SIZEY;
+   int ELEVINFO_MAXDEMSIZE;
+   float ELEVINFO_MAXELEV;
+
+   BOOLINT HAS_IMAGINFO;
+   int IMAGINFO_TILESX;
+   int IMAGINFO_TILESY;
+   float IMAGINFO_CENTERX;
+   float IMAGINFO_CENTERY;
+   float IMAGINFO_SIZEX;
+   float IMAGINFO_SIZEY;
+   int IMAGINFO_MAXTEXSIZE;
+   float IMAGINFO_MAXELEV;
 
    BOOLINT HAS_ELEVINI;
    int ELEVINI_TILESX;

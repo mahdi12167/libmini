@@ -17,6 +17,8 @@ int CONFIGURE_SUPERSAMPLING=2;
 int CONFIGURE_STARTUPFILE=0;
 
 char CONFIGURE_TILESETPATH[MAX_STR]="";
+char CONFIGURE_ELEVPREFIX[MAX_STR]="elev.";
+char CONFIGURE_IMAGPREFIX[MAX_STR]="imag.";
 char CONFIGURE_TILESETNAME[MAX_STR]="tileset.sav";
 char CONFIGURE_STARTUPNAME[MAX_STR]="startup.sav";
 
@@ -440,11 +442,15 @@ void resample(int num,char **grid,
                                   &comms[n]))==NULL) ERRORMSG();
 
          if (widths[n]<2 || heights[n]<2) ERRORMSG();
+         if (comps[n]!=1 && comps[n]!=2 && comps[n]!=3) ERRORMSG();
 
          done=FALSE;
          }
       else
+         {
          if (widths[n]!=1 || heights[n]!=1) ERRORMSG();
+         if (comps[n]!=1 && comps[n]!=2 && comps[n]!=3) ERRORMSG();
+         }
 
       if (n>0)
          {
@@ -1093,10 +1099,11 @@ void resample(int num,char **grid,
       if (CONFIGURE_STARTUPFILE!=0) fclose(startup);
 
       // open tileset file
-      snprintf(filename,MAX_STR,"%s%s",CONFIGURE_TILESETPATH,CONFIGURE_TILESETNAME);
+      if (comps[0]!=3) snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_ELEVPREFIX,CONFIGURE_TILESETNAME);
+      else snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_IMAGPREFIX,CONFIGURE_TILESETNAME);
       if ((tileset=fopen(filename,"wb"))==NULL) ERRORMSG();
 
-      // output number of tiles, bounding box and maximum texture size
+      // output number of tiles, bounding box, and maximum texture size
       fprintf(tileset,"tilesx=%d\n",tilesx);
       fprintf(tileset,"tilesy=%d\n",tilesy);
       fprintf(tileset,"centerx=%g arc-seconds\n",centersx[0]);
@@ -1104,7 +1111,9 @@ void resample(int num,char **grid,
       fprintf(tileset,"sizex=%g arc-seconds\n",sizex);
       fprintf(tileset,"sizey=%g arc-seconds\n",sizey);
       fprintf(tileset,"maxsize=%d\n",realmaxsize);
-      fprintf(tileset,"maxelev=%g\n",maxelev);
+
+      // output maximum elevation
+      if (comps[0]!=3) fprintf(tileset,"maxelev=%g\n",maxelev);
 
       // close tileset file
       fclose(tileset);
@@ -1214,7 +1223,7 @@ void normalize(int num,
                                &width,&height,&components,
                                &comment))==NULL) break;
 
-         if (width<2 || height<2 || components==3) ERRORMSG();
+         if (width<2 || height<2 || (components!=1 && components!=2)) ERRORMSG();
 
          printf("normalizing grid[%d]=\"%s\"\n",n+1,grid[n]);
 
@@ -1302,6 +1311,8 @@ void normalize(int num,
 void configure_supersampling(int supersampling) {CONFIGURE_SUPERSAMPLING=supersampling;}
 void configure_startupfile(int startupfile) {CONFIGURE_STARTUPFILE=startupfile;}
 void configure_tilesetpath(char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
+void configure_elevprefix(char *elevprefix) {strncpy(CONFIGURE_ELEVPREFIX,elevprefix,MAX_STR);}
+void configure_imagprefix(char *imagprefix) {strncpy(CONFIGURE_IMAGPREFIX,imagprefix,MAX_STR);}
 void configure_tilesetname(char *tilesetname) {strncpy(CONFIGURE_TILESETNAME,tilesetname,MAX_STR);}
 void configure_startupname(char *startupname) {strncpy(CONFIGURE_STARTUPNAME,startupname,MAX_STR);}
 
@@ -1508,7 +1519,7 @@ void texturemap(char *heightfile,
       }
 
    if ((image=readPNMfile(heightfile,&width,&height,&components,&comment))==NULL) ERRORMSG();
-   if (width!=height || components==3) ERRORMSG();
+   if (width!=height || (components!=1 && components!=2)) ERRORMSG();
 
    if (getPNMparamsLL(&comment,
                       coord,cellsize,
