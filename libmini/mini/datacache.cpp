@@ -349,7 +349,7 @@ void datacache::loadelevtilesetinfo()
       if (fscanf(file,"sizex=%g arc-seconds\n",&ELEVINFO_SIZEX)!=1) HAS_ELEVINFO=FALSE;
       if (fscanf(file,"sizey=%g arc-seconds\n",&ELEVINFO_SIZEY)!=1) HAS_ELEVINFO=FALSE;
       if (fscanf(file,"maxsize=%d\n",&ELEVINFO_MAXDEMSIZE)!=1) HAS_ELEVINFO=FALSE;
-      if (fscanf(file,"maxelev=%g\n",&ELEVINFO_MAXELEV)!=1) HAS_ELEVINFO=FALSE;
+      if (fscanf(file,"maxelev=%g meters\n",&ELEVINFO_MAXELEV)!=1) HAS_ELEVINFO=FALSE;
 
       fclose(file);
 

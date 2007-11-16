@@ -1113,7 +1113,7 @@ void resample(int num,char **grid,
       fprintf(tileset,"maxsize=%d\n",realmaxsize);
 
       // output maximum elevation
-      if (comps[0]!=3) fprintf(tileset,"maxelev=%g\n",maxelev);
+      if (comps[0]!=3) fprintf(tileset,"maxelev=%g meters\n",maxelev);
 
       // close tileset file
       fclose(tileset);
