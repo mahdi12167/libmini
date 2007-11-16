@@ -2,6 +2,11 @@
 
 #undef PTHREADS // enable this if pthreads are installed
 
+#define DEMO_REMOTEID "FraenkischeTileset/"
+#define DEMO_ELEVTILESETFILE "elev.tileset.sav"
+#define DEMO_IMAGTILESETFILE "imag.tileset.sav"
+#define DEMO_STARTUPFILE "startup.sav"
+
 #include "mini/minibase.h"
 
 #include "mini/miniOGL.h"
@@ -800,24 +805,25 @@ int main(int argc,char *argv[])
 
    // create tile cache
    tilecache=new datacache(&terrain);
-   tilecache->settilesetfile(DEMO_TILESETFILE);
+   tilecache->setelevtilesetfile(DEMO_ELEVTILESETFILE);
+   tilecache->setimagtilesetfile(DEMO_IMAGTILESETFILE);
    tilecache->setstartupfile(DEMO_STARTUPFILE);
    tilecache->setloader(request_callback,NULL);
    tilecache->getcloud()->setschedule(0.02,5.0); // upload for 20ms and keep for 5min
    tilecache->getcloud()->setmaxsize(256.0); // allow 256 MB tile cache size
+   tilecache->setremoteid(DEMO_REMOTEID);
 #ifdef PTHREADS
    tilecache->getcloud()->setthread(startthread,NULL,jointhread,lock_cs,unlock_cs);
    tilecache->configure_netthreads(numthreads);
    threadinit();
 #endif
-   tilecache->setremoteid(DEMO_REMOTEID); // world id
 
    // load persistent startup file
    tilecache->load();
 
    // get tile set info
-   cols=tilecache->getinfo_tilesx();
-   rows=tilecache->getinfo_tilesy();
+   cols=tilecache->getelevinfo_tilesx();
+   rows=tilecache->getelevinfo_tilesy();
 
    // load resampled tiles
    terrain.load(cols,rows, // number of columns and rows
