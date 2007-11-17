@@ -1,13 +1,14 @@
-The Yukon Ground Fog Demo is provided under the terms of the GPL
+The Yukon Demo is provided under the terms of the GPL
 Copyright (c) 2002-2007 by Stefan Roettger
 
 To compile under Linux, MacOS X, Irix or Windows follow these steps:
 
- 1) download the latest "MINI-x.x.zip" and "Yukon.zip" from this location:
-    http://stereofx.org/download
- 2) unpack both zip archives to the same directory
- 3) compile the library using the "build.sh" script in the "mini" directory
- 4) compile the demo using the "build.sh" script in the "Yukon" directory
-    (for Windows use the project files in the corresponding directories)
- 5) type "Yukon" on the console
- 6) try the following keys: f s t p w (q quits the demo)
+ 1) make sure that OpenGL and the GLUT library are installed
+ 2) download the latest "MINI-x.x.zip" and "Yukon.zip" from this
+    location: http://stereofx.org/download
+ 3) unpack both zip archives to the same directory
+ 4) compile the library using the "build.sh" script in the "mini" directory
+ 5) compile the demo using the "build.sh" script in the "Yukon" directory
+    (for Windows use cygwin or the supplied VC++ project files)
+ 6) type "Yukon" on the console or double click at "Yukon.exe"
+ 7) then try the following keys: f s t p w (q quits the demo)
