@@ -443,7 +443,7 @@ void initNPRbathymap()
       {
       t=(float)i/(VIEWER_NPRBATHYWIDTH-1);
 
-      alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS/2;
+      alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS;
       alpha=alpha-ftrc(alpha);
 
       if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,t,1.0f,rgba);
