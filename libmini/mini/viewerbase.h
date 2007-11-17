@@ -222,6 +222,9 @@ class viewerbase
    //! set parameters
    void set(VIEWER_PARAMS *params) {set(*params);}
 
+   //! get the elevation at position (x,y)
+   double getheight(const double px,const double py);
+
    //! get the elevation at position (x,y,z)
    double getheight(const miniv3d &p);
 

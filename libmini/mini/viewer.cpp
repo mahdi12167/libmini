@@ -277,7 +277,7 @@ void initview(double x,double y,double e,float a,float p,double h)
    if (e==0.0f && ez!=-MAXFLOAT) ez+=hover+h;
    else ez=e;
 
-   viewer->initeyepoint(ex,ey,ez);
+   viewer->initeyepoint(miniv3d(ex,ey,ez));
 
    dez=aez=0.0f;
 
@@ -685,7 +685,7 @@ void renderhud()
 
          if (sw_cross!=0)
             {
-            dist=viewer->shoot(ex,ey,ez,dx,dy,dz);
+            dist=viewer->shoot(miniv3d(ex,ey,ez),miniv3d(dx,dy,dz));
 
             if (dist!=MAXFLOAT)
                {
@@ -723,21 +723,14 @@ void displayfunc()
 
    double elev,coef;
 
-   double lex,ley,lez;
-   double iex,iey,iez;
-   double ldx,ldy,ldz;
-   double idx,idy,idz;
-   double lux,luy,luz;
-   double iux,iuy,iuz;
-   double lrx,lry,lrz;
-   double irx,iry,irz;
+   miniv3d ee,el,ei,di,ui,ri;
 
    // start timer
    viewer->starttimer();
 
    // update eye point:
 
-   viewer->map_e2l(ex,ey,ez,lex,ley,lez);
+   el=viewer->map_e2l(miniv3d(ex,ey,ez));
 
    sina=sin(2.0f*PI/360.0f*turn);
    cosa=cos(2.0f*PI/360.0f*turn);
@@ -745,14 +738,14 @@ void displayfunc()
    sinp=sin(2.0f*PI/360.0f*incline);
    cosp=cos(2.0f*PI/360.0f*incline);
 
-   lex+=sina*speed/params->fps;
-   ley+=cosa*speed/params->fps;
+   el.x+=sina*speed/params->fps;
+   el.y+=cosa*speed/params->fps;
 
-   viewer->map_l2e(lex,ley,lez,ex,ey,ez);
+   ee=viewer->map_l2e(el);
 
-   elev=viewer->getheight(ex,ey);
-
-   viewer->map_e2l(ex,ey,elev,lex,ley,elev);
+   ee.z=viewer->getheight(ee);
+   ee=viewer->map_e2l(ee);
+   elev=ee.z;
 
    dx=sina*cosp;
    dy=cosa*cosp;
@@ -773,7 +766,7 @@ void displayfunc()
    turn+=accel*(angle-turn);
    incline+=accel*(pitch-incline);
 
-   coef=(lez-elev)/hover-1.0f;
+   coef=(el.z-elev)/hover-1.0f;
    if (coef>1.0f) coef=1.0f;
    else if (coef<-1.0f) coef=-1.0f;
 
@@ -783,23 +776,25 @@ void displayfunc()
    dez+=aez/params->fps;
    dez*=fpow(1.0f/(1.0f+damp),1.0f/params->fps);
 
-   lez+=dez/params->fps;
+   el.z+=dez/params->fps;
 
-   if (lez<elev+hover)
+   if (el.z<elev+hover)
       {
       dez=-dez;
       dez*=1.0f/(1.0f+bounce);
-      lez=elev+hover;
+      el.z=elev+hover;
       }
 
-   viewer->map_l2e(lex,ley,lez,ex,ey,ez);
-   viewer->map_l2i(lex,ley,lez,iex,iey,iez);
-   viewer->rot_e2l(dx,dy,dz,ldx,ldy,ldz);
-   viewer->rot_l2i(ldx,ldy,ldz,idx,idy,idz);
-   viewer->rot_e2l(ux,uy,uz,lux,luy,luz);
-   viewer->rot_l2i(lux,luy,luz,iux,iuy,iuz);
-   viewer->rot_e2l(rx,ry,rz,lrx,lry,lrz);
-   viewer->rot_l2i(lrx,lry,lrz,irx,iry,irz);
+   ee=viewer->map_l2e(el);
+
+   ex=ee.x;
+   ey=ee.y;
+   ez=ee.z;
+
+   ei=viewer->map_e2i(miniv3d(ex,ey,ez));
+   di=viewer->rot_e2i(miniv3d(dx,dy,dz));
+   ui=viewer->rot_e2i(miniv3d(ux,uy,uz));
+   ri=viewer->rot_e2i(miniv3d(rx,ry,rz));
 
    params->signpostturn=turn;
    params->signpostincline=-incline;
@@ -815,12 +810,12 @@ void displayfunc()
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-   gluLookAt(iex,iey,iez,iex+idx,iey+idy,iez+idz,iux,iuy,iuz);
+   gluLookAt(ei.x,ei.y,ei.z,ei.x+di.x,ei.y+di.y,ei.z+di.z,ui.x,ui.y,ui.z);
 
    // update vertex arrays
-   viewer->cache(ex,ey,ez,
-                 dx,dy,dz,
-                 ux,uy,uz);
+   viewer->cache(miniv3d(ex,ey,ez),
+                 miniv3d(dx,dy,dz),
+                 miniv3d(ux,uy,uz));
 
    // render scene
    if (sw_stereo==0) viewer->render(); // render vertex arrays
@@ -830,7 +825,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(iex-irx,iey-iry,iez-irz,iex+idx-irx,iey+idy-iry,iez+idz-irz,iux,iuy,iuz);
+      gluLookAt(ei.x-ri.x,ei.y-ri.y,ei.z-ri.z,ei.x+di.x-ri.x,ei.y+di.y-ri.y,ei.z+di.z-ri.z,ui.x,ui.y,ui.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -843,7 +838,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(iex+irx,iey+iry,iez+irz,iex+idx+irx,iey+idy+iry,iez+idz+irz,iux,iuy,iuz);
+      gluLookAt(ei.x+ri.x,ei.y+ri.y,ei.z+ri.z,ei.x+di.x+ri.x,ei.y+di.y+ri.y,ei.z+di.z+ri.z,ui.x,ui.y,ui.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
@@ -1169,8 +1164,8 @@ int main(int argc,char *argv[])
    viewer->loadopts();
 
    // set initial view point
-   viewer->getinitial(ex,ey,ez);
-   initview(ex,ey,0.0f,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
+   miniv3d ee=viewer->getinitial();
+   initview(ee.x,ee.y,0.0f,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
 
    // initialize VIS bathy map
    initVISbathymap();
