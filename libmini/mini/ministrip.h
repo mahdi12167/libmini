@@ -164,8 +164,6 @@ class ministrip
 
    static void initshader();
 
-   static char *concat(const char *str1,const char *str2);
-
    private:
 
    struct SHADER_STRUCT

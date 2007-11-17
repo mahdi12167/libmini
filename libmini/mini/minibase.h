@@ -105,6 +105,23 @@ inline double fsqr(const double x) {return(x*x);}
 #define snprintf _snprintf
 #endif
 
+inline char *concat(const char *str1,const char *str2)
+   {
+   char *str;
+
+   if (str1==NULL && str2==NULL) return(NULL);
+
+   if (str1==NULL) return(strdup(str2));
+   if (str2==NULL) return(strdup(str1));
+
+   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
+
+   memcpy(str,str1,strlen(str1));
+   memcpy(str+strlen(str1),str2,strlen(str2)+1);
+
+   return(str);
+   }
+
 }
 
 using namespace minibase;

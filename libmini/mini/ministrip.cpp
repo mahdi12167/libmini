@@ -1005,24 +1005,6 @@ char *ministrip::getpixshader(int num)
    return(SHADER[num].frgprog);
    }
 
-// concatenate two strings
-char *ministrip::concat(const char *str1,const char *str2)
-   {
-   char *str;
-
-   if (str1==NULL && str2==NULL) ERRORMSG();
-
-   if (str1==NULL) return(strdup(str2));
-   if (str2==NULL) return(strdup(str1));
-
-   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
-
-   memcpy(str,str1,strlen(str1));
-   memcpy(str+strlen(str1),str2,strlen(str2)+1);
-
-   return(str);
-   }
-
 // Windows OpenGL extension setup
 void ministrip::initwglprocs()
    {

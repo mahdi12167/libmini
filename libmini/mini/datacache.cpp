@@ -1123,21 +1123,6 @@ fileinfoelem *datacache::checkfilename(const char *filename)
    return(NULL);
    }
 
-// concatenate two strings
-char *datacache::concat(const char *str1,const char *str2)
-   {
-   char *str;
-
-   if (str1==NULL || str2==NULL) ERRORMSG();
-
-   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
-
-   memcpy(str,str1,strlen(str1));
-   memcpy(str+strlen(str1),str2,strlen(str2)+1);
-
-   return(str);
-   }
-
 // compute hash sum of a string
 unsigned int datacache::hashsum(const char *str)
    {
