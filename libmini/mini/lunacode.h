@@ -136,7 +136,7 @@ class lunacode
    void print();
    void printcode(int code);
 
-   void setdebug(BOOLINT on) {DEBUG=on;}
+   void setdebug(BOOLINT on) {LUNADEBUG=on;}
 
    protected:
 
@@ -181,7 +181,7 @@ class lunacode
 
    private:
 
-   BOOLINT DEBUG;
+   BOOLINT LUNADEBUG;
 
    inline double mod(double a,double b);
 

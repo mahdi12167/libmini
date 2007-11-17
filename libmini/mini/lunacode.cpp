@@ -23,7 +23,7 @@ lunacode::lunacode()
    GLBVARMAX=1000;
    LOCVARMAX=10000;
 
-   DEBUG=FALSE;
+   LUNADEBUG=FALSE;
    }
 
 // destructor
@@ -375,7 +375,7 @@ void lunacode::execmd(int code,int ival,float fval)
    int ref,refloc;
    unsigned int idx;
 
-   if (DEBUG)
+   if (LUNADEBUG)
       {
       printf("cmd=");
       printcode(code);
@@ -1523,7 +1523,7 @@ void lunacode::execmd(int code,int ival,float fval)
          break;
       }
 
-   if (DEBUG)
+   if (LUNADEBUG)
       {
       if (VALSTACKSIZE>0) printf(" post=%f\n",VALSTACK[VALSTACKSIZE-1].val);
       else printf(" post=none\n");
@@ -1541,7 +1541,7 @@ float lunacode::popvalue()
    else if (VALSTACK[VALSTACKSIZE].item!=ITEM_FLOAT) CODEMSG("invalid operation");
    else val=VALSTACK[VALSTACKSIZE].val;
 
-   if (DEBUG) printf("cmd=POP val=%g\n",val);
+   if (LUNADEBUG) printf("cmd=POP val=%g\n",val);
 
    return(val);
    }
