@@ -246,8 +246,8 @@ viewerbase::viewerbase()
    START=minigettime();
    TIMER=0.0;
 
-   IEX=IEY=IEZ=0.0;
-   IDX=IDY=IDZ=0.0;
+   EYE_INT=miniv3d(0.0);
+   DIR_INT=miniv3d(0.0);
    }
 
 // destructor
@@ -342,24 +342,19 @@ void viewerbase::set(VIEWER_PARAMS &params)
    PARAMS0=PARAMS;
    }
 
-// get the elevation at position (x,y) in external coords
-double viewerbase::getheight(double x,double y)
+// get the elevation at position (x,y,z)
+double viewerbase::getheight(const miniv3d &p)
    {
-   double h;
-   double lx,ly,lz;
-   double ix,iy,iz;
+   miniv3d pe,pi;
 
-   map_e2l(x,y,0.0f,lx,ly,lz);
-   map_l2i(lx,ly,lz,ix,iy,iz);
+   pi=map_e2i(p);
 
-   iy=TERRAIN->getheight(ix,iz);
+   pi.y=TERRAIN->getheight(pi.x,pi.z);
+   if (pi.y==-MAXFLOAT) return(pi.y);
 
-   if (iy==-MAXFLOAT) return(iy);
+   pe=map_i2e(pi);
 
-   map_i2l(ix,iy,iz,lx,ly,lz);
-   map_l2e(lx,ly,lz,x,y,h);
-
-   return(h);
+   return(pe.z);
    }
 
 // load requested data
@@ -661,6 +656,12 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
       WARP_I2L=PARAMS.warp;
       WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
+
+      WARP_E2I=PARAMS.warp;
+      WARP_E2I.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_INTERNAL);
+
+      WARP_I2E=PARAMS.warp;
+      WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_EXTERNAL);
       }
 
    // set minimum resolution
@@ -752,20 +753,18 @@ void viewerbase::setwinsize(int width,int height)
    WINHEIGHT=height;
    }
 
-// set initial eye point in external coords
-void viewerbase::initeyepoint(double ex,double ey,double ez)
+// set initial eye point
+void viewerbase::initeyepoint(const miniv3d &e)
    {
-   double lex,ley,lez;
-   double iex,iey,iez;
+   miniv3d ei;
 
-   map_e2l(ex,ey,ez,lex,ley,lez);
-   map_l2i(lex,ley,lez,iex,iey,iez);
+   ei=map_e2i(e);
 
-   TERRAIN->restrictroi(iex,iez,PARAMS.load*PARAMS.farp/PARAMS.scale);
+   TERRAIN->restrictroi(ei.x,ei.z,len_e2i(PARAMS.load*PARAMS.farp));
 
    TERRAIN->updateroi(PARAMS.res,
-                      iex,iey+1000*PARAMS.farp/PARAMS.scale,iez,
-                      iex,iez,PARAMS.farp/PARAMS.scale);
+                      ei.x,ei.y+1000*len_e2i(PARAMS.farp),ei.z,
+                      ei.x,ei.z,len_e2i(PARAMS.farp));
 
    update();
    }
@@ -774,52 +773,35 @@ void viewerbase::initeyepoint(double ex,double ey,double ez)
 void viewerbase::update()
    {UPD=1;}
 
-// generate and cache scene for a particular eye point in external coords
-void viewerbase::cache(double ex,double ey,double ez,
-                       double dx,double dy,double dz,
-                       double ux,double uy,double uz)
+// generate and cache scene for a particular eye point
+void viewerbase::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u)
    {
-   double lex,ley,lez;
-   double ldx,ldy,ldz;
-   double lux,luy,luz;
-
-   double iex,iey,iez;
-   double idx,idy,idz;
-   double iux,iuy,iuz;
+   miniv3d ei,di,ui;
 
    if (!LOADED) return;
 
    if (WINWIDTH<=0 || WINHEIGHT<=0) return;
 
    // transform coordinates
-   map_e2l(ex,ey,ez,lex,ley,lez);
-   map_l2i(lex,ley,lez,iex,iey,iez);
-   rot_e2l(dx,dy,dz,ldx,ldy,ldz);
-   rot_l2i(ldx,ldy,ldz,idx,idy,idz);
-   rot_e2l(ux,uy,uz,lux,luy,luz);
-   rot_l2i(lux,luy,luz,iux,iuy,iuz);
+   ei=map_e2i(e);
+   di=rot_e2i(d);
+   ui=rot_e2i(u);
 
    // update vertex arrays
    TERRAIN->draw(PARAMS.res,
-                 iex,iey,iez,
-                 idx,idy,idz,
-                 iux,iuy,iuz,
+                 ei.x,ei.y,ei.z,
+                 di.x,di.y,di.z,
+                 ui.x,ui.y,ui.z,
                  PARAMS.fovy,(float)WINWIDTH/WINHEIGHT,
-                 PARAMS.nearp/PARAMS.scale,PARAMS.farp/PARAMS.scale,
+                 len_e2i(PARAMS.nearp),len_e2i(PARAMS.farp),
                  UPD);
 
    // revert to normal render buffer update
    UPD=ftrc(ffloor(PARAMS.spu*PARAMS.fps))+1;
 
-   // save actual internal eye point
-   IEX=iex;
-   IEY=iey;
-   IEZ=iez;
-
-   // save actual internal viewing direction
-   IDX=idx;
-   IDY=idy;
-   IDZ=idz;
+   // save actual internal eye point and viewing direction
+   EYE_INT=ei;
+   DIR_INT=di;
    }
 
 // render cached scene
@@ -832,7 +814,7 @@ void viewerbase::render()
    double mtx[16]={1,0,0,0,
                    0,1,0,0,
                    0,0,1,0,
-                   0,-miniutm::WGS84_r_minor/PARAMS.scale,0,1};
+                   0,-len_e2i(miniutm::WGS84_r_minor),0,1};
 
    float light0[3]={0.0f,0.0f,0.0f};
 
@@ -854,8 +836,8 @@ void viewerbase::render()
       glFogfv(GL_FOG_COLOR,color);
 
       glFogi(GL_FOG_MODE,GL_LINEAR);
-      glFogf(GL_FOG_START,PARAMS.fogstart*PARAMS.farp/PARAMS.scale);
-      glFogf(GL_FOG_END,PARAMS.farp/PARAMS.scale);
+      glFogf(GL_FOG_START,PARAMS.fogstart*len_e2i(PARAMS.farp));
+      glFogf(GL_FOG_END,len_e2i(PARAMS.farp));
 
       glEnable(GL_FOG);
       }
@@ -863,8 +845,8 @@ void viewerbase::render()
    // draw skydome
    if (PARAMS.useskydome)
       {
-      skydome.setpos(IEX,IEY,IEZ,
-                     1.9f*PARAMS.farp/PARAMS.scale);
+      skydome.setpos(EYE_INT.x,EYE_INT.y,EYE_INT.z,
+                     1.9f*len_e2i(PARAMS.farp));
 
       skydome.drawskydome();
       }
@@ -872,13 +854,13 @@ void viewerbase::render()
    // render earth globe (without Z writing)
    if (PARAMS.useearth)
       {
-      earth.setscale(PARAMS.scale);
+      earth.setscale(len_i2e(1.0));
       earth.setmatrix(mtx);
 
       if (PARAMS.usediffuse) earth.settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
       else earth.settexturedirectparams(light0,PARAMS.transition);
 
-      earth.setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*PARAMS.farp/PARAMS.scale:0.0f,(PARAMS.usefog)?PARAMS.farp/PARAMS.scale:0.0f,
+      earth.setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*len_e2i(PARAMS.farp):0.0f,(PARAMS.usefog)?len_e2i(PARAMS.farp):0.0f,
                          PARAMS.fogdensity,
                          PARAMS.fogcolor);
 
@@ -889,7 +871,7 @@ void viewerbase::render()
    if (PARAMS.useshaders)
       if (!PARAMS.usenprshader)
          shaderbase::setVISshader(CACHE,
-                                  PARAMS.scale,PARAMS.exaggeration,
+                                  len_i2e(1.0),PARAMS.exaggeration,
                                   (PARAMS.usefog)?PARAMS.fogstart/2.0f*PARAMS.farp:0.0f,(PARAMS.usefog)?PARAMS.farp:0.0f,
                                   PARAMS.fogdensity,
                                   PARAMS.fogcolor,
@@ -902,7 +884,7 @@ void viewerbase::render()
                                   PARAMS.seamodulate);
       else
          shaderbase::setNPRshader(CACHE,
-                                  PARAMS.scale,PARAMS.exaggeration,
+                                  len_i2e(1.0),PARAMS.exaggeration,
                                   (PARAMS.usefog)?PARAMS.fogstart/2.0f*PARAMS.farp:0.0f,(PARAMS.usefog)?PARAMS.farp:0.0f,
                                   PARAMS.fogdensity,
                                   PARAMS.fogcolor,
@@ -930,12 +912,12 @@ void viewerbase::render()
    // draw waypoints
    if (PARAMS.usewaypoints)
       if (!PARAMS.usebricks)
-         points.drawsignposts(IEX,IEY,-IEZ,PARAMS.signpostheight/PARAMS.scale,PARAMS.signpostrange*PARAMS.farp/PARAMS.scale,PARAMS.signpostturn,PARAMS.signpostincline);
+         points.drawsignposts(EYE_INT.x,EYE_INT.y,-EYE_INT.z,len_e2i(PARAMS.signpostheight),PARAMS.signpostrange*len_e2i(PARAMS.farp),PARAMS.signpostturn,PARAMS.signpostincline);
       else
          {
          time=PARAMS.brickscroll*gettime();
          points.configure_brickstripes(time-floor(time));
-         points.drawbricks(IEX,IEY,-IEZ,PARAMS.brickrad/PARAMS.scale,PARAMS.farp/PARAMS.scale,PARAMS.fovy,(float)WINWIDTH/WINHEIGHT,PARAMS.bricksize/PARAMS.scale);
+         points.drawbricks(EYE_INT.x,EYE_INT.y,-EYE_INT.z,len_e2i(PARAMS.brickrad),len_e2i(PARAMS.farp),PARAMS.fovy,(float)WINWIDTH/WINHEIGHT,len_e2i(PARAMS.bricksize));
          }
 
    // disable wireframe mode
@@ -978,23 +960,19 @@ float viewerbase::gettimer()
 void viewerbase::idle(float dt)
    {miniwaitfor(1.0f/PARAMS.fps-dt);}
 
-// get extent of tileset in external coords
-void viewerbase::getextent(double &sx,double &sy,double &sz)
-   {
-   sx=len_l2e(PARAMS.extent[0]);
-   sy=len_l2e(PARAMS.extent[1]);
-   sz=len_l2e(PARAMS.extent[2]);
-   }
+// get extent of tileset
+miniv3d viewerbase::getextent()
+   {return(miniv3d(PARAMS.extent));}
 
-// get center of tileset in external coords
-void viewerbase::getcenter(double &cx,double &cy,double &cz)
-   {map_l2e(0.0,0.0,0.0,cx,cy,cz);}
+// get center of tileset
+miniv3d viewerbase::getcenter()
+   {return(map_l2e(miniv3d(0.0,0.0,0.0)));}
 
-// get initial view point in external coords
-void viewerbase::getinitial(double &vx,double &vy,double &vz)
+// get initial view point
+miniv3d viewerbase::getinitial()
    {
-   if (points.getfirst()==NULL) getcenter(vx,vy,vz);
-   else map_l2e(points.getfirst()->x,points.getfirst()->y,points.getfirst()->elev,vx,vy,vz);
+   if (points.getfirst()==NULL) return(getcenter());
+   else return(map_l2e(miniv3d(points.getfirst()->x,points.getfirst()->y,points.getfirst()->elev)));
    }
 
 // flatten the scene by a relative scaling factor (in the range [0-1])
@@ -1002,24 +980,17 @@ void viewerbase::flatten(float relscale)
    {TERRAIN->setrelscale(relscale);}
 
 // shoot a ray at the scene
-double viewerbase::shoot(double ox,double oy,double oz,
-                         double dx,double dy,double dz)
+double viewerbase::shoot(const miniv3d &o,const miniv3d &d)
    {
    double dist;
-
-   double lox,loy,loz;
-   double ldx,ldy,ldz;
-
-   double iox,ioy,ioz;
-   double idx,idy,idz;
+   miniv3d oi,di;
 
    // transform coordinates
-   map_e2l(ox,oy,oz,lox,loy,loz);
-   map_l2i(lox,loy,loz,iox,ioy,ioz);
-   rot_e2l(dx,dy,dz,ldx,ldy,ldz);
-   rot_l2i(ldx,ldy,ldz,idx,idy,idz);
+   oi=map_e2i(o);
+   di=rot_e2i(d);
 
-   dist=CACHE->getray()->shoot(miniv3f(iox,ioy,ioz),miniv3f(idx,idy,idz));
+   // shoot a ray and get the traveled distance
+   dist=CACHE->getray()->shoot(oi,di);
 
    if (dist!=MAXFLOAT) dist=len_i2e(dist);
 
@@ -1027,92 +998,76 @@ double viewerbase::shoot(double ox,double oy,double oz,
    }
 
 // map point from external to local coordinates
-void viewerbase::map_e2l(double ext_x,double ext_y,double ext_z,double &loc_x,double &loc_y,double &loc_z)
+miniv3d viewerbase::map_e2l(const miniv3d &p)
    {
-   minicoord p_ext=minicoord(ext_x,ext_y,ext_z,PARAMS.warp.getsys(),PARAMS.warp.getutmzone(),PARAMS.warp.getutmdatum());
-   minicoord p_loc=WARP_E2L.warp(p_ext);
-
-   loc_x=p_loc.vec.x;
-   loc_y=p_loc.vec.y;
-   loc_z=p_loc.vec.z;
+   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_loc=WARP_E2L.warp(c_ext);
+   return(c_loc.vec);
    }
 
 // map point from local to external coordinates
-void viewerbase::map_l2e(double loc_x,double loc_y,double loc_z,double &ext_x,double &ext_y,double &ext_z)
+miniv3d viewerbase::map_l2e(const miniv3d &p)
    {
-   minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
-   minicoord p_ext=WARP_L2E.warp(p_loc);
-
-   ext_x=p_ext.vec.x;
-   ext_y=p_ext.vec.y;
-   ext_z=p_ext.vec.z;
+   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_ext=WARP_L2E.warp(c_loc);
+   return(c_ext.vec);
    }
 
 // map point from local to internal coordinates
-void viewerbase::map_l2i(double loc_x,double loc_y,double loc_z,double &int_x,double &int_y,double &int_z)
+miniv3d viewerbase::map_l2i(const miniv3d &p)
    {
-   minicoord p_loc=minicoord(loc_x,loc_y,loc_z,minicoord::MINICOORD_LINEAR);
-   minicoord p_int=WARP_L2I.warp(p_loc);
-
-   int_x=p_int.vec.x;
-   int_y=p_int.vec.y;
-   int_z=p_int.vec.z;
+   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_int=WARP_L2I.warp(c_loc);
+   return(c_int.vec);
    }
 
 // map point from internal to local coordinates
-void viewerbase::map_i2l(double int_x,double int_y,double int_z,double &loc_x,double &loc_y,double &loc_z)
+miniv3d viewerbase::map_i2l(const miniv3d &p)
    {
-   minicoord p_int=minicoord(int_x,int_y,int_z,minicoord::MINICOORD_LINEAR);
-   minicoord p_loc=WARP_I2L.warp(p_int);
+   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_loc=WARP_I2L.warp(c_int);
+   return(c_loc.vec);
+   }
 
-   loc_x=p_loc.vec.x;
-   loc_y=p_loc.vec.y;
-   loc_z=p_loc.vec.z;
+// map point from external to internal coordinates
+miniv3d viewerbase::map_e2i(const miniv3d &p)
+   {
+   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_int=WARP_E2I.warp(c_ext);
+   return(c_int.vec);
+   }
+
+// map point from internal to external coordinates
+miniv3d viewerbase::map_i2e(const miniv3d &p)
+   {
+   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
+   minicoord c_ext=WARP_I2E.warp(c_int);
+   return(c_ext.vec);
    }
 
 // rotate vector from external to local coordinates
-void viewerbase::rot_e2l(double ext_dx,double ext_dy,double ext_dz,double &loc_dx,double &loc_dy,double &loc_dz)
-   {
-   miniv3d v_ext=miniv3d(ext_dx,ext_dy,ext_dz);
-   miniv3d v_loc=WARP_E2L.invtra(v_ext);
-
-   loc_dx=v_loc.x;
-   loc_dy=v_loc.y;
-   loc_dz=v_loc.z;
-   }
+miniv3d viewerbase::rot_e2l(const miniv3d &v)
+   {return(WARP_E2L.invtra(v));}
 
 // rotate vector from local to external coordinates
-void viewerbase::rot_l2e(double loc_dx,double loc_dy,double loc_dz,double &ext_dx,double &ext_dy,double &ext_dz)
-   {
-   miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
-   miniv3d v_ext=WARP_L2E.invtra(v_loc);
-
-   ext_dx=v_ext.x;
-   ext_dy=v_ext.y;
-   ext_dz=v_ext.z;
-   }
+miniv3d viewerbase::rot_l2e(const miniv3d &v)
+   {return(WARP_L2E.invtra(v));}
 
 // rotate vector from local to internal coordinates
-void viewerbase::rot_l2i(double loc_dx,double loc_dy,double loc_dz,double &int_dx,double &int_dy,double &int_dz)
-   {
-   miniv3d v_loc=miniv3d(loc_dx,loc_dy,loc_dz);
-   miniv3d v_int=WARP_L2I.invtra(v_loc);
-
-   int_dx=v_int.x;
-   int_dy=v_int.y;
-   int_dz=v_int.z;
-   }
+miniv3d viewerbase::rot_l2i(const miniv3d &v)
+   {return(WARP_L2I.invtra(v));}
 
 // rotate vector from internal to local coordinates
-void viewerbase::rot_i2l(double int_dx,double int_dy,double int_dz,double &loc_dx,double &loc_dy,double &loc_dz)
-   {
-   miniv3d v_int=miniv3d(int_dx,int_dy,int_dz);
-   miniv3d v_loc=WARP_I2L.invtra(v_int);
+miniv3d viewerbase::rot_i2l(const miniv3d &v)
+   {return(WARP_I2L.invtra(v));}
 
-   loc_dx=v_loc.x;
-   loc_dy=v_loc.y;
-   loc_dz=v_loc.z;
-   }
+// rotate vector from external to internal coordinates
+miniv3d viewerbase::rot_e2i(const miniv3d &v)
+   {return(WARP_E2I.invtra(v));}
+
+// rotate vector from internal to external coordinates
+miniv3d viewerbase::rot_i2e(const miniv3d &v)
+   {return(WARP_I2E.invtra(v));}
 
 // map length from external to local coordinates
 double viewerbase::len_e2l(double l)
@@ -1132,26 +1087,8 @@ double viewerbase::len_i2l(double l)
 
 // map length from external to internal coordinates
 double viewerbase::len_e2i(double l)
-   {return(len_l2i(len_e2l(l)));}
+   {return(l*WARP_E2I.getscale());}
 
 // map length from internal to external coordinates
 double viewerbase::len_i2e(double l)
-   {return(len_l2e(len_i2l(l)));}
-
-// concatenate two strings
-char *viewerbase::concat(const char *str1,const char *str2)
-   {
-   char *str;
-
-   if (str1==NULL && str2==NULL) ERRORMSG();
-
-   if (str1==NULL) return(strdup(str2));
-   if (str2==NULL) return(strdup(str1));
-
-   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
-
-   memcpy(str,str1,strlen(str1));
-   memcpy(str+strlen(str1),str2,strlen(str2)+1);
-
-   return(str);
-   }
+   {return(l*WARP_I2E.getscale());}

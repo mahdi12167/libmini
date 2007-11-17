@@ -222,8 +222,8 @@ class viewerbase
    //! set parameters
    void set(VIEWER_PARAMS *params) {set(*params);}
 
-   //! get the elevation at position (x,y) in external coords
-   double getheight(double x,double y);
+   //! get the elevation at position (x,y,z)
+   double getheight(const miniv3d &p);
 
    //! get the encapsulated terrain object
    miniload *getterrain() {return(TERRAIN);}
@@ -248,16 +248,14 @@ class viewerbase
    //! set render window
    void setwinsize(int width,int height);
 
-   //! set initial eye point in external coords
-   void initeyepoint(double ex,double ey,double ez);
+   //! set initial eye point
+   void initeyepoint(const miniv3d &e);
 
    //! trigger complete render buffer update at next frame
    void update();
 
-   //! generate and cache scene for a particular eye point in external coords
-   void cache(double ex,double ey,double ez,
-              double dx,double dy,double dz,
-              double ux,double uy,double uz);
+   //! generate and cache scene for a particular eye point
+   void cache(const miniv3d &e,const miniv3d &d,const miniv3d &u);
 
    //! render cached scene
    void render();
@@ -275,45 +273,56 @@ class viewerbase
    //! dt is the time spent for rendering the last frame
    void idle(float dt);
 
-   //! get extent of tileset in external coords
-   void getextent(double &sx,double &sy,double &sz);
+   //! get extent of tileset
+   miniv3d getextent();
 
-   //! get center of tileset in external coords
-   void getcenter(double &cx,double &cy,double &cz);
+   //! get center of tileset
+   miniv3d getcenter();
 
-   //! get initial view point in external coords
-   void getinitial(double &vx,double &vy,double &vz);
+   //! get initial view point
+   miniv3d getinitial();
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
    //! shoot a ray at the scene
-   double shoot(double ox,double oy,double oz,
-                double dx,double dy,double dz);
+   double shoot(const miniv3d &o,const miniv3d &d);
 
    //! map point from external to local coordinates
-   void map_e2l(double ext_x,double ext_y,double ext_z,double &loc_x,double &loc_y,double &loc_z);
+   miniv3d map_e2l(const miniv3d &p);
 
    //! map point from local to external coordinates
-   void map_l2e(double loc_x,double loc_y,double loc_z,double &ext_x,double &ext_y,double &ext_z);
+   miniv3d map_l2e(const miniv3d &p);
 
    //! map point from local to internal coordinates
-   void map_l2i(double loc_x,double loc_y,double loc_z,double &int_x,double &int_y,double &int_z);
+   miniv3d map_l2i(const miniv3d &p);
 
    //! map point from internal to local coordinates
-   void map_i2l(double int_x,double int_y,double int_z,double &loc_x,double &loc_y,double &loc_z);
+   miniv3d map_i2l(const miniv3d &p);
+
+   //! map point from external to internal coordinates
+   miniv3d map_e2i(const miniv3d &p);
+
+   //! map point from internal to external coordinates
+   miniv3d map_i2e(const miniv3d &p);
 
    //! rotate vector from external to local coordinates
-   void rot_e2l(double ext_dx,double ext_dy,double ext_dz,double &loc_dx,double &loc_dy,double &loc_dz);
+   miniv3d rot_e2l(const miniv3d &v);
 
    //! rotate vector from local to external coordinates
-   void rot_l2e(double loc_dx,double loc_dy,double loc_dz,double &ext_dx,double &ext_dy,double &ext_dz);
+   miniv3d rot_l2e(const miniv3d &v);
 
    //! rotate vector from local to internal coordinates
-   void rot_l2i(double loc_dx,double loc_dy,double loc_dz,double &int_dx,double &int_dy,double &int_dz);
+   miniv3d rot_l2i(const miniv3d &v);
 
    //! rotate vector from internal to local coordinates
-   void rot_i2l(double int_dx,double int_dy,double int_dz,double &loc_dx,double &loc_dy,double &loc_dz);
+   miniv3d rot_i2l(const miniv3d &v);
+
+   //! rotate vector from external to internal coordinates
+   miniv3d rot_e2i(const miniv3d &v);
+
+   //! rotate vector from internal to external coordinates
+   miniv3d rot_i2e(const miniv3d &v);
 
    //! map length from external to local coordinates
    double len_e2l(double l);
@@ -343,6 +352,8 @@ class viewerbase
    miniwarp WARP_L2E;
    miniwarp WARP_L2I;
    miniwarp WARP_I2L;
+   miniwarp WARP_E2I;
+   miniwarp WARP_I2E;
 
    void render_presea();
    void render_postsea();
@@ -361,8 +372,8 @@ class viewerbase
 
    int UPD;
 
-   double IEX,IEY,IEZ;
-   double IDX,IDY,IDZ;
+   miniv3d EYE_INT;
+   miniv3d DIR_INT;
 
    double START,TIMER;
 
@@ -370,8 +381,6 @@ class viewerbase
    minipoint points;
 
    miniglobe earth;
-
-   static char *concat(const char *str1,const char *str2);
 
    static void request_callback(char *file,int istexture,databuf *buf,void *data);
 
