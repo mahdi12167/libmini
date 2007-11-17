@@ -29,6 +29,7 @@ class miniv4d
 
    //! array constructors
    miniv4d(const double ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
+   miniv4d(const float ptr[4]) {x=(double)ptr[0]; y=(double)ptr[1]; z=(double)ptr[2]; w=(double)ptr[3];}
    miniv4d(const int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
    miniv4d(const short int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
    miniv4d(const unsigned short int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}

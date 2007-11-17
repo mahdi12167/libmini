@@ -27,6 +27,7 @@ class miniv3f
 
    //! array constructors
    miniv3f(const float ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
+   miniv3f(const double ptr[3]) {x=(float)ptr[0]; y=(float)ptr[1]; z=(float)ptr[2];}
    miniv3f(const int ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
    miniv3f(const short int ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}
    miniv3f(const unsigned short int ptr[3]) {x=ptr[0]; y=ptr[1]; z=ptr[2];}

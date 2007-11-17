@@ -29,6 +29,7 @@ class miniv4f
 
    //! array constructors
    miniv4f(const float ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
+   miniv4f(const double ptr[4]) {x=(float)ptr[0]; y=(float)ptr[1]; z=(float)ptr[2]; w=(float)ptr[3];}
    miniv4f(const int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
    miniv4f(const short int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
    miniv4f(const unsigned short int ptr[4]) {x=ptr[0]; y=ptr[1]; z=ptr[2]; w=ptr[3];}
