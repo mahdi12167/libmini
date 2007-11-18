@@ -511,7 +511,7 @@ void setsea(float level)
    }
 
 // undo the previous triangulation
-void undomap(const int i,const int j,const int s2)
+inline void undomap(const int i,const int j,const int s2)
    {
    int s4;
 
@@ -570,7 +570,7 @@ inline float blendE(const int bc,const float v0,const float v1,const float v2)
 inline float blendM(const int bc,const float v0,const float v1,const float v2)
    {return((bc==0)?-MAXFLOAT:blendE(bc,v0,v1,v2));}
 
-int maxbc(const int w,int i,int j,const int s2)
+inline int maxbc(const int w,int i,int j,const int s2)
    {
    int s;
 
@@ -1755,9 +1755,9 @@ inline void extractshore(const float i1,const float y1,const float j1,
       }
    }
 
-void rendershore(const float i1,const float y1,const float j1,
-                 const float i2,const float y2,const float j2,
-                 const float i3,const float y3,const float j3)
+inline void rendershore(const float i1,const float y1,const float j1,
+                        const float i2,const float y2,const float j2,
+                        const float i3,const float y3,const float j3)
    {
    int flag=0;
 
@@ -3767,7 +3767,7 @@ void setsea(float level)
    }
 
 // undo the previous triangulation
-void undomap(const int i,const int j,const int s2)
+inline void undomap(const int i,const int j,const int s2)
    {
    int s4;
 
@@ -3826,7 +3826,7 @@ inline float blendE(const int bc,const float v0,const float v1,const float v2)
 inline float blendM(const int bc,const float v0,const float v1,const float v2)
    {return((bc==0)?-MAXFLOAT:blendE(bc,v0,v1,v2));}
 
-int maxbc(const int w,int i,int j,const int s2)
+inline int maxbc(const int w,int i,int j,const int s2)
    {
    int s;
 
@@ -5011,9 +5011,9 @@ inline void extractshore(const float i1,const float y1,const float j1,
       }
    }
 
-void rendershore(const float i1,const float y1,const float j1,
-                 const float i2,const float y2,const float j2,
-                 const float i3,const float y3,const float j3)
+inline void rendershore(const float i1,const float y1,const float j1,
+                        const float i2,const float y2,const float j2,
+                        const float i3,const float y3,const float j3)
    {
    int flag=0;
 
