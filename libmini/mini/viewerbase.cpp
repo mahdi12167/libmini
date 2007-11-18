@@ -59,7 +59,7 @@ viewerbase::viewerbase()
    PARAMS.load=0.1f;              // initially loaded area relative to far plane
    PARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
 
-   PARAMS.minres=16.0f;           // minimum resolution of triangulation
+   PARAMS.minres=9.0f;            // minimum resolution of triangulation
    PARAMS.fastinit=2;             // fast initialization level
 
    PARAMS.lazyness=1;             // lazyness of tileset paging

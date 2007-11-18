@@ -937,7 +937,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case 'T':
          params->res*=1.1f;
-         if (params->res>1.0E10f) params->res=1.0E10f;
+         if (params->res>1.0E12f) params->res=1.0E12f;
          break;
       case 'r':
          params->range/=1.1f;
