@@ -79,6 +79,7 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 #include <mini/minitile.h>
 #include <mini/minitext.h>
 
+#include <mini/miniv3d.h>
 #include <mini/minihsv.h>
 
 #include <mini/viewerbase.h>
@@ -111,14 +112,14 @@ static viewerbase *viewer=NULL;
 static viewerbase::VIEWER_PARAMS *params=NULL;
 
 // eye point
-static double ex,ey,ez;
+static miniv3d eye;
 static double dez,aez;
 
 // viewing angles
 static float angle,turn,pitch,incline;
 
 // viewing direction
-static double dx,dy,dz,ux,uy,uz,rx,ry,rz;
+static miniv3d dir,up,right;
 
 // stereo base
 static const float sbase=VIEWER_SBASE;
@@ -265,21 +266,21 @@ void initwindow(int width,int height)
    }
 
 // initialize the view point
-void initview(double x,double y,double e,float a,float p,double h)
+void initview(miniv3d e,float a,float p,double dh=0.0f)
    {
+   double elev;
+
    initwindow(winwidth,winheight);
 
-   ex=x;
-   ey=y;
+   eye=e;
 
-   ez=viewer->getheight(x,y);
+   elev=viewer->getheight(eye);
 
-   if (e==0.0f && ez!=-MAXFLOAT) ez+=hover+h;
-   else ez=e;
+   if (elev!=-MAXFLOAT) eye.z=fmax(eye.z,elev+hover+dh);
 
-   viewer->initeyepoint(miniv3d(ex,ey,ez));
+   viewer->initeyepoint(eye);
 
-   dez=aez=0.0f;
+   dez=aez=0.0;
 
    angle=turn=a;
    pitch=incline=p;
@@ -292,7 +293,7 @@ void loadsettings()
    {
    FILE *file;
 
-   float fex,fey,fez;
+   miniv3f e;
    float a,p;
 
    viewerbase::VIEWER_PARAMS prms;
@@ -310,9 +311,9 @@ void loadsettings()
 
       // load essential parameters:
 
-      if (fscanf(file,"ex=%f\n",&fex)!=1) ERRORMSG();
-      if (fscanf(file,"ey=%f\n",&fey)!=1) ERRORMSG();
-      if (fscanf(file,"ez=%f\n",&fez)!=1) ERRORMSG();
+      if (fscanf(file,"ex=%f\n",&e.x)!=1) ERRORMSG();
+      if (fscanf(file,"ey=%f\n",&e.y)!=1) ERRORMSG();
+      if (fscanf(file,"ez=%f\n",&e.z)!=1) ERRORMSG();
 
       if (fscanf(file,"angle=%f\n",&a)!=1) ERRORMSG();
       if (fscanf(file,"pitch=%f\n",&p)!=1) ERRORMSG();
@@ -349,7 +350,7 @@ void loadsettings()
 
       viewer->set(prms);
 
-      initview(fex,fey,fez,a,p,VIEWER_UPLIFT*params->farp);
+      initview(e,a,p);
       }
    }
 
@@ -367,9 +368,9 @@ void savesettings()
 
    // save essential parameters:
 
-   fprintf(file,"ex=%f\n",ex);
-   fprintf(file,"ey=%f\n",ey);
-   fprintf(file,"ez=%f\n",ez);
+   fprintf(file,"ex=%f\n",eye.x);
+   fprintf(file,"ey=%f\n",eye.y);
+   fprintf(file,"ez=%f\n",eye.z);
 
    fprintf(file,"angle=%f\n",angle);
    fprintf(file,"pitch=%f\n",pitch);
@@ -605,9 +606,9 @@ void renderinfo()
 // render head-up display
 void renderhud()
    {
-   float te,sl;
+   double elev,sea;
 
-   float dist;
+   double dist;
 
    char str[MAXSTR];
 
@@ -639,15 +640,15 @@ void renderhud()
 
       glTranslatef(0.033f,0.0f,0.0f);
 
-      te=viewer->getheight(ex,ey);
-      if (te==-MAXFLOAT) te=0.0f;
+      elev=viewer->getheight(eye);
+      if (elev==-MAXFLOAT) elev=0.0f;
 
-      sl=params->sealevel;
-      if (sl==-MAXFLOAT) sl=0.0f;
+      sea=params->sealevel;
+      if (sea==-MAXFLOAT) sea=0.0f;
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
-               ex,ey,ez,te/params->exaggeration,turn,incline, // position/elevation and direction
-               params->farp,params->res,params->range*params->farp,sl,gravity); // adjustable parameters
+               eye.x,eye.y,eye.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
+               params->farp,params->res,params->range*params->farp,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
@@ -685,11 +686,11 @@ void renderhud()
 
          if (sw_cross!=0)
             {
-            dist=viewer->shoot(miniv3d(ex,ey,ez),miniv3d(dx,dy,dz));
+            dist=viewer->shoot(eye,dir);
 
             if (dist!=MAXFLOAT)
                {
-               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(ex+dist*dx,ey+dist*dy));
+               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(eye+dir*dist));
 
                glTranslatef(0.05f,0.0f,0.0f);
                minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -723,14 +724,14 @@ void displayfunc()
 
    double elev,coef;
 
-   miniv3d ee,el,ei,di,ui,ri;
+   miniv3d ep,el,ei,di,ui,ri;
 
    // start timer
    viewer->starttimer();
 
    // update eye point:
 
-   el=viewer->map_e2l(miniv3d(ex,ey,ez));
+   el=viewer->map_e2l(miniv3d(eye));
 
    sina=sin(2.0f*PI/360.0f*turn);
    cosa=cos(2.0f*PI/360.0f*turn);
@@ -741,23 +742,23 @@ void displayfunc()
    el.x+=sina*speed/params->fps;
    el.y+=cosa*speed/params->fps;
 
-   ee=viewer->map_l2e(el);
+   ep=viewer->map_l2e(el);
 
-   ee.z=viewer->getheight(ee);
-   ee=viewer->map_e2l(ee);
-   elev=ee.z;
+   ep.z=viewer->getheight(ep);
+   ep=viewer->map_e2l(ep);
+   elev=ep.z;
 
-   dx=sina*cosp;
-   dy=cosa*cosp;
-   dz=-sinp;
+   dir.x=sina*cosp;
+   dir.y=cosa*cosp;
+   dir.z=-sinp;
 
-   ux=sina*sinp;
-   uy=cosa*sinp;
-   uz=cosp;
+   up.x=sina*sinp;
+   up.y=cosa*sinp;
+   up.z=cosp;
 
-   rx=cosa*sbase;
-   ry=sina*sbase;
-   rz=0.0f;
+   right.x=cosa*sbase;
+   right.y=sina*sbase;
+   right.z=0.0f;
 
    // update eye movement:
 
@@ -785,16 +786,12 @@ void displayfunc()
       el.z=elev+hover;
       }
 
-   ee=viewer->map_l2e(el);
+   eye=viewer->map_l2e(el);
 
-   ex=ee.x;
-   ey=ee.y;
-   ez=ee.z;
-
-   ei=viewer->map_e2i(miniv3d(ex,ey,ez));
-   di=viewer->rot_e2i(miniv3d(dx,dy,dz));
-   ui=viewer->rot_e2i(miniv3d(ux,uy,uz));
-   ri=viewer->rot_e2i(miniv3d(rx,ry,rz));
+   ei=viewer->map_e2i(eye);
+   di=viewer->rot_e2i(dir);
+   ui=viewer->rot_e2i(up);
+   ri=viewer->rot_e2i(right);
 
    params->signpostturn=turn;
    params->signpostincline=-incline;
@@ -813,9 +810,7 @@ void displayfunc()
    gluLookAt(ei.x,ei.y,ei.z,ei.x+di.x,ei.y+di.y,ei.z+di.z,ui.x,ui.y,ui.z);
 
    // update vertex arrays
-   viewer->cache(miniv3d(ex,ey,ez),
-                 miniv3d(dx,dy,dz),
-                 miniv3d(ux,uy,uz));
+   viewer->cache(eye,dir,up);
 
    // render scene
    if (sw_stereo==0) viewer->render(); // render vertex arrays
@@ -1164,8 +1159,8 @@ int main(int argc,char *argv[])
    viewer->loadopts();
 
    // set initial view point
-   miniv3d ee=viewer->getinitial();
-   initview(ee.x,ee.y,0.0f,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
+   eye=viewer->getinitial();
+   initview(eye,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
 
    // initialize VIS bathy map
    initVISbathymap();

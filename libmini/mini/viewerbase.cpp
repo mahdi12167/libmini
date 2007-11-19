@@ -342,10 +342,6 @@ void viewerbase::set(VIEWER_PARAMS &params)
    PARAMS0=PARAMS;
    }
 
-// get the elevation at position (x,y)
-double viewerbase::getheight(const double px,const double py)
-   {return(getheight(miniv3d(px,py,0.0)));}
-
 // get the elevation at position (x,y,z)
 double viewerbase::getheight(const miniv3d &p)
    {
