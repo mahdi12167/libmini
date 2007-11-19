@@ -109,15 +109,17 @@ inline void store(const float fc,const int i,const int j,const int s2)
    }
 
 // increase a d2-value
-inline void increase(float fc,const int i,const int j,const int s2)
+inline void increase(const float fc,const int i,const int j,const int s2)
    {
-   if (fc>1.0f) fc=1.0f;
+   float fc1;
 
-   if (fc>dcpr(i,j,s2))
+   fc1=fmin(fc,1.0f);
+
+   if (fc1>dcpr(i,j,s2))
       {
-      store(fc,i,j,s2);
+      store(fc1,i,j,s2);
 
-      while (dcpr(i,j,s2)<fc)
+      while (dcpr(i,j,s2)<fc1)
          if (++bc[i-s2][j]==0)
             if (++bc[i][j-s2]==0)
                {
@@ -188,7 +190,7 @@ void calcD2(int mins=2)
                }
 
             // store the local d2-value
-            increase(fmin(fc/s/D/maxd2,1.0f),i,j,s2);
+            increase(fc/s/D/maxd2,i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -405,7 +407,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fmin(fc*fogatt/s/D/maxd2,1.0f),i,j,s2);
+            increase(fc*fogatt/s/D/maxd2,i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -564,8 +566,8 @@ void calcmap(const int i,const int j,const int s)
    s4=s/4;
 
    // evaluate the subdivision variable
-   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*minres*fmax(c*dcpr(i,j,s2),1.0f));
-   else f=fsqr(S-1)/fsqr(s*minres*fmax(c*dcpr(i,j,s2),1.0f));
+   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
+   else f=fsqr(S-1)/fsqr(s*fmax(c*dcpr(i,j,s2),minres));
 
    // check subdivision condition
    if (f<1.0f)
@@ -2414,7 +2416,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2/minres;
+   c=fsqrt(fmax(res,0.0f))*maxd2;
 
    EX=ex-OX;
    EY=ey-OY;
@@ -3109,7 +3111,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2/minres;
+   c=fsqrt(fmax(res,0.0f))*maxd2;
 
    ORTHO=fovy<0.0f;
 
@@ -3133,9 +3135,9 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
       DF2=fsqr(baseoff);
 
-      f=(dx*dx+DF2+dz*dz)/fsqr((S-1)*D*minres*fmax(c*dcpr(S/2,S/2,S/2),1.0f));
+      f=(dx*dx+DF2+dz*dz)/fsqr((S-1)*D*fmax(c*dcpr(S/2,S/2,S/2),minres));
       }
-   else f=1.0f/fsqr(minres*fmax(c*dcpr(S/2,S/2,S/2),1.0f));
+   else f=1.0f/fsqr(fmax(c*dcpr(S/2,S/2,S/2),minres));
 
    if (f==0.0f) size=S;
    else
@@ -3389,15 +3391,17 @@ inline void store(const float fc,const int i,const int j,const int s2)
    }
 
 // increase a d2-value
-inline void increase(float fc,const int i,const int j,const int s2)
+inline void increase(const float fc,const int i,const int j,const int s2)
    {
-   if (fc>1.0f) fc=1.0f;
+   float fc1;
 
-   if (fc>dcpr(i,j,s2))
+   fc1=fmin(fc,1.0f);
+
+   if (fc1>dcpr(i,j,s2))
       {
-      store(fc,i,j,s2);
+      store(fc1,i,j,s2);
 
-      while (dcpr(i,j,s2)<fc)
+      while (dcpr(i,j,s2)<fc1)
          if (++bc[i-s2][j]==0)
             if (++bc[i][j-s2]==0)
                {
@@ -3468,7 +3472,7 @@ void calcD2(int mins=2)
                }
 
             // store the local d2-value
-            increase(fmin(fc/s/D/maxd2,1.0f),i,j,s2);
+            increase(fc/s/D/maxd2,i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -3685,7 +3689,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fmin(fc*fogatt/s/D/maxd2,1.0f),i,j,s2);
+            increase(fc*fogatt/s/D/maxd2,i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -3844,8 +3848,8 @@ void calcmap(const int i,const int j,const int s)
    s4=s/4;
 
    // evaluate the subdivision variable
-   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*minres*fmax(c*dcpr(i,j,s2),1.0f));
-   else f=fsqr(S-1)/fsqr(s*minres*fmax(c*dcpr(i,j,s2),1.0f));
+   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
+   else f=fsqr(S-1)/fsqr(s*fmax(c*dcpr(i,j,s2),minres));
 
    // check subdivision condition
    if (f<1.0f)
@@ -5729,7 +5733,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2/minres;
+   c=fsqrt(fmax(res,0.0f))*maxd2;
 
    EX=ex-OX;
    EY=ey-OY;
@@ -6425,7 +6429,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2/minres;
+   c=fsqrt(fmax(res,0.0f))*maxd2;
 
    ORTHO=fovy<0.0f;
 
@@ -6449,9 +6453,9 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
       DF2=fsqr(baseoff);
 
-      f=(dx*dx+DF2+dz*dz)/fsqr((S-1)*D*minres*fmax(c*dcpr(S/2,S/2,S/2),1.0f));
+      f=(dx*dx+DF2+dz*dz)/fsqr((S-1)*D*fmax(c*dcpr(S/2,S/2,S/2),minres));
       }
-   else f=1.0f/fsqr(minres*fmax(c*dcpr(S/2,S/2,S/2),1.0f));
+   else f=1.0f/fsqr(fmax(c*dcpr(S/2,S/2,S/2),minres));
 
    if (f==0.0f) size=S;
    else
