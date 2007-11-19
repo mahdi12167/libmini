@@ -90,7 +90,7 @@ void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,i
    chunk.memory=NULL;
    chunk.size=0;
 
-   url=concat(src_url,concat(src_id,src_file));
+   url=strcct(src_url,strcct(src_id,src_file));
 
    /* we pass our chunk struct to the callback function */
    curl_easy_setopt(curl_handle[background],CURLOPT_WRITEDATA,(void *)&chunk);
@@ -126,7 +126,7 @@ int curlbase::checkURL(char *src_url,char *src_id,char *src_file)
    chunk.memory=NULL;
    chunk.size=0;
 
-   url=concat(src_url,concat(src_id,src_file));
+   url=strcct(src_url,strcct(src_id,src_file));
 
    /* we pass our chunk struct to the callback function */
    curl_easy_setopt(curl_handle[numthreads+1],CURLOPT_WRITEDATA,(void *)&chunk);

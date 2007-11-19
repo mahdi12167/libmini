@@ -105,7 +105,7 @@ inline double fsqr(const double x) {return(x*x);}
 #define snprintf _snprintf
 #endif
 
-inline char *concat(const char *str1,const char *str2)
+inline char *strcct(const char *str1,const char *str2)
    {
    char *str;
 

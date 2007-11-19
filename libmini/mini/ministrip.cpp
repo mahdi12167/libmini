@@ -561,7 +561,7 @@ void ministrip::concatvtxshader(int num,const char *snippetname)
    for (n=0; n<SNIPPETS; n++)
       if (strcmp(snippetname,SNIPPET[n].snippetname)==0)
          {
-         vtxprog=concat(SHADER[num].vtxprog,SNIPPET[n].snippet);
+         vtxprog=strcct(SHADER[num].vtxprog,SNIPPET[n].snippet);
          if (SHADER[num].vtxprog!=NULL) free(SHADER[num].vtxprog);
          SHADER[num].vtxprog=vtxprog;
          SHADER[num].vtxdirty=1;
@@ -679,7 +679,7 @@ void ministrip::concatpixshader(int num,const char *snippetname)
    for (n=0; n<SNIPPETS; n++)
       if (strcmp(snippetname,SNIPPET[n].snippetname)==0)
          {
-         frgprog=concat(SHADER[num].frgprog,SNIPPET[n].snippet);
+         frgprog=strcct(SHADER[num].frgprog,SNIPPET[n].snippet);
          if (SHADER[num].frgprog!=NULL) free(SHADER[num].frgprog);
          SHADER[num].frgprog=frgprog;
          SHADER[num].frgdirty=1;

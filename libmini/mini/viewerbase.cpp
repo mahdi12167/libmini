@@ -417,12 +417,12 @@ BOOLINT viewerbase::load(const char *url,
       // decompose url into baseurl and baseid
       if (lastslash!=NULL)
          {
-         baseid=concat(++lastslash,"/");
+         baseid=strcct(++lastslash,"/");
          *lastslash='\0';
          }
       else
          {
-         baseid=concat(++lastbslash,"\\");
+         baseid=strcct(++lastbslash,"\\");
          *lastbslash='\0';
          }
 
@@ -477,12 +477,12 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    CACHE=new minicache;
 
    // concatenate tileset info file names
-   elevtilesetfile=concat(PARAMS.elevprefix,PARAMS.tilesetfile);
-   imagtilesetfile=concat(PARAMS.imagprefix,PARAMS.tilesetfile);
+   elevtilesetfile=strcct(PARAMS.elevprefix,PARAMS.tilesetfile);
+   imagtilesetfile=strcct(PARAMS.imagprefix,PARAMS.tilesetfile);
 
    // concatenate vtb ini file names
-   vtbelevinifile=concat(basepath1,PARAMS.vtbinisuffix);
-   vtbimaginifile=concat(basepath2,PARAMS.vtbinisuffix);
+   vtbelevinifile=strcct(basepath1,PARAMS.vtbinisuffix);
+   vtbimaginifile=strcct(basepath2,PARAMS.vtbinisuffix);
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);

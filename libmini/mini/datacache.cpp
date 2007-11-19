@@ -249,7 +249,7 @@ char *datacache::getfile(const char *src_file,const char *altpath)
       srcfile=strdup(src_file);
       localname=strdup(altpath);
 
-      altname=concat(localname,srcfile);
+      altname=strcct(localname,srcfile);
 
       free(srcfile);
       free(localname);
@@ -467,7 +467,7 @@ void datacache::loadvtbelevini()
                   {if (fscanf(file," %d/%d\n",&maxlod,&minlod)!=2) HAS_ELEVINI=FALSE;}
 
                // concatenate path to elev tileset
-               pathname=concat(RID,VTBELEVPATH);
+               pathname=strcct(RID,VTBELEVPATH);
 
                // register each existent lod with data cache
                for (lod=minlod; lod<=maxlod; lod++)
@@ -475,7 +475,7 @@ void datacache::loadvtbelevini()
                   if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
                   else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
-                  fullname=concat(pathname,filename);
+                  fullname=strcct(pathname,filename);
                   insertfilename(fullname,TRUE,LOCAL,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
                   free(fullname);
                   }
@@ -486,7 +486,7 @@ void datacache::loadvtbelevini()
                   lod=minlod-1;
                   snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
 
-                  fullname=concat(pathname,filename);
+                  fullname=strcct(pathname,filename);
                   insertfilename(fullname,FALSE,FALSE,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
                   free(fullname);
                   }
@@ -573,7 +573,7 @@ void datacache::loadvtbimagini()
                   {if (fscanf(file," %d/%d\n",&maxlod,&minlod)!=2) HAS_IMAGINI=FALSE;}
 
                // concatenate path to imag tileset
-               pathname=concat(RID,VTBIMAGPATH);
+               pathname=strcct(RID,VTBIMAGPATH);
 
                // register each existent lod with data cache
                for (lod=minlod; lod<=maxlod; lod++)
@@ -581,7 +581,7 @@ void datacache::loadvtbimagini()
                   if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
                   else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
-                  fullname=concat(pathname,filename);
+                  fullname=strcct(pathname,filename);
                   insertfilename(fullname,TRUE,LOCAL,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
                   free(fullname);
                   }
@@ -592,7 +592,7 @@ void datacache::loadvtbimagini()
                   lod=minlod-1;
                   snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
 
-                  fullname=concat(pathname,filename);
+                  fullname=strcct(pathname,filename);
                   insertfilename(fullname,FALSE,FALSE,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
                   free(fullname);
                   }
@@ -946,7 +946,7 @@ char *datacache::sourcefilename(const char *id,const char *filename)
 
    // concat id and filename
    if (id==NULL) name=strdup(filename);
-   else name=concat(id,filename);
+   else name=strcct(id,filename);
 
    return(name);
    }
@@ -969,7 +969,7 @@ char *datacache::localfilename(const char *filename)
       // concat local destination path
       if (LPATH!=NULL)
          {
-         path=concat(LPATH,name);
+         path=strcct(LPATH,name);
          free(name);
          name=path;
          }
@@ -978,7 +978,7 @@ char *datacache::localfilename(const char *filename)
       // concat local source path
       if (RURL!=NULL)
          {
-         path=concat(RURL,name);
+         path=strcct(RURL,name);
          free(name);
          name=path;
          }
