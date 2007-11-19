@@ -16,7 +16,7 @@
 #define VIEWER_NEARP 10.0f
 #define VIEWER_FARP 10000.0f
 
-#define VIEWER_RES 1.0E6f
+#define VIEWER_RES 1.0E3f
 #define VIEWER_RANGE 0.001f
 
 #define VIEWER_SEALEVEL -MAXFLOAT
@@ -937,7 +937,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case 'T':
          params->res*=1.1f;
-         if (params->res>1.0E12f) params->res=1.0E12f;
+         if (params->res>1.0E10f) params->res=1.0E10f;
          break;
       case 'r':
          params->range/=1.1f;

@@ -102,21 +102,20 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
    }
 
 // store a d2-value
-inline void store(float fc,int i,int j,int s2)
+inline void store(const float fc,const int i,const int j,const int s2)
    {
    bc[i-s2][j]=cpr(fc)%256;
    bc[i][j-s2]=cpr(fc)/256;
    }
 
 // increase a d2-value
-inline void increase(float fc,int i,int j,int s2)
+inline void increase(float fc,const int i,const int j,const int s2)
    {
-   if (fc>1.0f) ERRORMSG();
+   if (fc>1.0f) fc=1.0f;
 
    if (fc>dcpr(i,j,s2))
       {
-      bc[i-s2][j]=cpr(fc)%256;
-      bc[i][j-s2]=cpr(fc)/256;
+      store(fc,i,j,s2);
 
       while (dcpr(i,j,s2)<fc)
          if (++bc[i-s2][j]==0)
@@ -129,7 +128,7 @@ inline void increase(float fc,int i,int j,int s2)
    }
 
 // propagate a local d2-value to the next higher level
-inline void propagate(int i,int j,int s,int i0,int j0)
+inline void propagate(const int i,const int j,const int s,const int i0,const int j0)
    {
    float l1,l2;
 
@@ -156,53 +155,54 @@ void calcD2(int mins=2)
    // initialize the d2-values
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
-   // compute approximate d2-value
-   fc=fmin(DH[S-1]*SCALE/(S-1)/D/maxd2,1.0f);
-
-   // approximate the least-significant d2-values
-   for (s=2; s<mins; s*=2)
-      {
-      s2=s/2;
-      for (i=s2; i<S; i+=s)
-         for (j=s2; j<S; j+=s) store(fc,i,j,s2);
-      }
-
    // propagate the d2-values up the tree
-   for (s=mins; s<S; s*=2)
+   for (s=2; s<S; s*=2)
       {
       s2=s/2;
       for (i=s2; i<S; i+=s)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            fc=d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2));
-            fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
-            fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
-            fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
-            if ((i/s+j/s)%2==0) fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j)));
-            else fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j)));
-            increase(fmin(fc/s/D/maxd2,1.0f),i,j,s2);
+            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j));
+            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
+
+            // calculate the local d2-value more accurately
+            if (s>=mins)
+               {
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
+               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
+               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
+               }
+
+            // store the local d2-value
+            increase(fmin(fc/s/D/maxd2,0.5f),i,j,s2);
 
             // propagate the local d2-value
-            if (s<S-1) switch ((i/s)%2+2*((j/s)%2))
-               {
-               case 0: propagate(i,j,s,i+s2,j+s2);
-                       propagate(i,j,s,i-s-s2,j+s2);
-                       propagate(i,j,s,i+s2,j-s-s2);
-                       break;
-               case 1: propagate(i,j,s,i-s2,j+s2);
-                       propagate(i,j,s,i-s2,j-s-s2);
-                       propagate(i,j,s,i+s+s2,j+s2);
-                       break;
-               case 2: propagate(i,j,s,i+s2,j-s2);
-                       propagate(i,j,s,i+s2,j+s+s2);
-                       propagate(i,j,s,i-s-s2,j-s2);
-                       break;
-               case 3: propagate(i,j,s,i-s2,j-s2);
-                       propagate(i,j,s,i+s+s2,j-s2);
-                       propagate(i,j,s,i-s2,j+s+s2);
-                       break;
-               }
+            if (s<S-1)
+               switch ((i/s)%2+2*((j/s)%2))
+                  {
+                  case 0:
+                     propagate(i,j,s,i+s2,j+s2);
+                     propagate(i,j,s,i-s-s2,j+s2);
+                     propagate(i,j,s,i+s2,j-s-s2);
+                     break;
+                  case 1:
+                     propagate(i,j,s,i-s2,j+s2);
+                     propagate(i,j,s,i-s2,j-s-s2);
+                     propagate(i,j,s,i+s+s2,j+s2);
+                     break;
+                  case 2:
+                     propagate(i,j,s,i+s2,j-s2);
+                     propagate(i,j,s,i+s2,j+s+s2);
+                     propagate(i,j,s,i-s-s2,j-s2);
+                     break;
+                  case 3:
+                     propagate(i,j,s,i-s2,j-s2);
+                     propagate(i,j,s,i+s+s2,j-s2);
+                     propagate(i,j,s,i-s2,j+s+s2);
+                     break;
+                  }
             }
       }
    }
@@ -373,41 +373,53 @@ void recalcD2(float fogatt,int mins=2)
    float fc;
 
    // propagate the d2-values up the tree
-   for (s=mins; s<S; s*=2)
+   for (s=2; s<S; s*=2)
       {
       s2=s/2;
       for (i=s2; i<S; i+=s)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            fc=d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2));
-            fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
-            fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
-            fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
-            if ((i/s+j/s)%2==0) fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j)));
-            else fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j)));
-            increase(fmin(fc*fogatt/s/D/maxd2,1.0f),i,j,s2);
+            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j));
+            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
+
+            // calculate the local d2-value more accurately
+            if (s>=mins)
+               {
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
+               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
+               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
+               }
+
+            // store the local d2-value
+            increase(fmin(fc*fogatt/s/D/maxd2,0.5f),i,j,s2);
 
             // propagate the local d2-value
-            if (s<S-1) switch ((i/s)%2+2*((j/s)%2))
-               {
-               case 0: propagate(i,j,s,i+s2,j+s2);
-                       propagate(i,j,s,i-s-s2,j+s2);
-                       propagate(i,j,s,i+s2,j-s-s2);
-                       break;
-               case 1: propagate(i,j,s,i-s2,j+s2);
-                       propagate(i,j,s,i-s2,j-s-s2);
-                       propagate(i,j,s,i+s+s2,j+s2);
-                       break;
-               case 2: propagate(i,j,s,i+s2,j-s2);
-                       propagate(i,j,s,i+s2,j+s+s2);
-                       propagate(i,j,s,i-s-s2,j-s2);
-                       break;
-               case 3: propagate(i,j,s,i-s2,j-s2);
-                       propagate(i,j,s,i+s+s2,j-s2);
-                       propagate(i,j,s,i-s2,j+s+s2);
-                       break;
-               }
+            if (s<S-1)
+               switch ((i/s)%2+2*((j/s)%2))
+                  {
+                  case 0:
+                     propagate(i,j,s,i+s2,j+s2);
+                     propagate(i,j,s,i-s-s2,j+s2);
+                     propagate(i,j,s,i+s2,j-s-s2);
+                     break;
+                  case 1:
+                     propagate(i,j,s,i-s2,j+s2);
+                     propagate(i,j,s,i-s2,j-s-s2);
+                     propagate(i,j,s,i+s+s2,j+s2);
+                     break;
+                  case 2:
+                     propagate(i,j,s,i+s2,j-s2);
+                     propagate(i,j,s,i+s2,j+s+s2);
+                     propagate(i,j,s,i-s-s2,j-s2);
+                     break;
+                  case 3:
+                     propagate(i,j,s,i-s2,j-s2);
+                     propagate(i,j,s,i+s+s2,j-s2);
+                     propagate(i,j,s,i-s2,j+s+s2);
+                     break;
+                  }
             }
       }
    }
@@ -511,7 +523,7 @@ void setsea(float level)
    }
 
 // undo the previous triangulation
-inline void undomap(const int i,const int j,const int s2)
+void undomap(const int i,const int j,const int s2)
    {
    int s4;
 
@@ -2390,7 +2402,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,1.0f));
+   c=fsqrt(fmax(res,1.0f))*maxd2;
 
    EX=ex-OX;
    EY=ey-OY;
@@ -3085,7 +3097,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,1.0f));
+   c=fsqrt(fmax(res,1.0f))*maxd2;
 
    ORTHO=fovy<0.0f;
 
@@ -3358,21 +3370,20 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
    }
 
 // store a d2-value
-inline void store(float fc,int i,int j,int s2)
+inline void store(const float fc,const int i,const int j,const int s2)
    {
    bc[i-s2][j]=cpr(fc)%256;
    bc[i][j-s2]=cpr(fc)/256;
    }
 
 // increase a d2-value
-inline void increase(float fc,int i,int j,int s2)
+inline void increase(float fc,const int i,const int j,const int s2)
    {
-   if (fc>1.0f) ERRORMSG();
+   if (fc>1.0f) fc=1.0f;
 
    if (fc>dcpr(i,j,s2))
       {
-      bc[i-s2][j]=cpr(fc)%256;
-      bc[i][j-s2]=cpr(fc)/256;
+      store(fc,i,j,s2);
 
       while (dcpr(i,j,s2)<fc)
          if (++bc[i-s2][j]==0)
@@ -3385,7 +3396,7 @@ inline void increase(float fc,int i,int j,int s2)
    }
 
 // propagate a local d2-value to the next higher level
-inline void propagate(int i,int j,int s,int i0,int j0)
+inline void propagate(const int i,const int j,const int s,const int i0,const int j0)
    {
    float l1,l2;
 
@@ -3412,52 +3423,53 @@ void calcD2(int mins=2)
    // initialize the d2-values
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
-   // compute approximate d2-value
-   fc=fmin(DH[S-1]*SCALE/(S-1)/D/maxd2,1.0f);
-
-   // approximate the least-significant d2-values
-   for (s=2; s<mins; s*=2)
-      {
-      s2=s/2;
-      for (i=s2; i<S; i+=s)
-         for (j=s2; j<S; j+=s) store(fc,i,j,s2);
-      }
-
    // propagate the d2-values up the tree
-   for (s=mins; s<S; s*=2)
+   for (s=2; s<S; s*=2)
       {
       s2=s/2;
       for (i=s2; i<S; i+=s)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            fc=d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2));
-            fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
-            fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
-            fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
-            if ((i/s+j/s)%2==0) fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j)));
-            else fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j)));
-            increase(fmin(fc/s/D/maxd2,1.0f),i,j,s2);
+            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j));
+            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
+
+            // calculate the local d2-value more accurately
+            if (s>=mins)
+               {
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
+               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
+               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
+               }
+
+            // store the local d2-value
+            increase(fmin(fc/s/D/maxd2,0.5f),i,j,s2);
 
             // propagate the local d2-value
-            if (s<S-1) switch ((i/s)%2+2*((j/s)%2))
-               {
-               case 0: propagate(i,j,s,i+s2,j+s2);
-                       propagate(i,j,s,i-s-s2,j+s2);
-                       propagate(i,j,s,i+s2,j-s-s2);
-                       break;
-               case 1: propagate(i,j,s,i-s2,j+s2);
-                       propagate(i,j,s,i-s2,j-s-s2);
-                       propagate(i,j,s,i+s+s2,j+s2);
-                       break;
-               case 2: propagate(i,j,s,i+s2,j-s2);
-                       propagate(i,j,s,i+s2,j+s+s2);
-                       propagate(i,j,s,i-s-s2,j-s2);
-                       break;
-               case 3: propagate(i,j,s,i-s2,j-s2);
-                       propagate(i,j,s,i+s+s2,j-s2);
-                       propagate(i,j,s,i-s2,j+s+s2);
-                       break;
+            if (s<S-1)
+               switch ((i/s)%2+2*((j/s)%2))
+                  {
+                  case 0:
+                     propagate(i,j,s,i+s2,j+s2);
+                     propagate(i,j,s,i-s-s2,j+s2);
+                     propagate(i,j,s,i+s2,j-s-s2);
+                     break;
+                  case 1:
+                     propagate(i,j,s,i-s2,j+s2);
+                     propagate(i,j,s,i-s2,j-s-s2);
+                     propagate(i,j,s,i+s+s2,j+s2);
+                     break;
+                  case 2:
+                     propagate(i,j,s,i+s2,j-s2);
+                     propagate(i,j,s,i+s2,j+s+s2);
+                     propagate(i,j,s,i-s-s2,j-s2);
+                     break;
+                  case 3:
+                     propagate(i,j,s,i-s2,j-s2);
+                     propagate(i,j,s,i+s+s2,j-s2);
+                     propagate(i,j,s,i-s2,j+s+s2);
+                     break;
                }
             }
       }
@@ -3629,41 +3641,53 @@ void recalcD2(float fogatt,int mins=2)
    float fc;
 
    // propagate the d2-values up the tree
-   for (s=mins; s<S; s*=2)
+   for (s=2; s<S; s*=2)
       {
       s2=s/2;
       for (i=s2; i<S; i+=s)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            fc=d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2));
-            fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
-            fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
-            fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
-            if ((i/s+j/s)%2==0) fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j)));
-            else fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j)));
-            increase(fmin(fc*fogatt/s/D/maxd2,1.0f),i,j,s2);
+            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j));
+            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
+
+            // calculate the local d2-value more accurately
+            if (s>=mins)
+               {
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
+               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
+               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
+               }
+
+            // store the local d2-value
+            increase(fmin(fc*fogatt/s/D/maxd2,0.5f),i,j,s2);
 
             // propagate the local d2-value
-            if (s<S-1) switch ((i/s)%2+2*((j/s)%2))
-               {
-               case 0: propagate(i,j,s,i+s2,j+s2);
-                       propagate(i,j,s,i-s-s2,j+s2);
-                       propagate(i,j,s,i+s2,j-s-s2);
-                       break;
-               case 1: propagate(i,j,s,i-s2,j+s2);
-                       propagate(i,j,s,i-s2,j-s-s2);
-                       propagate(i,j,s,i+s+s2,j+s2);
-                       break;
-               case 2: propagate(i,j,s,i+s2,j-s2);
-                       propagate(i,j,s,i+s2,j+s+s2);
-                       propagate(i,j,s,i-s-s2,j-s2);
-                       break;
-               case 3: propagate(i,j,s,i-s2,j-s2);
-                       propagate(i,j,s,i+s+s2,j-s2);
-                       propagate(i,j,s,i-s2,j+s+s2);
-                       break;
-               }
+            if (s<S-1)
+               switch ((i/s)%2+2*((j/s)%2))
+                  {
+                  case 0:
+                     propagate(i,j,s,i+s2,j+s2);
+                     propagate(i,j,s,i-s-s2,j+s2);
+                     propagate(i,j,s,i+s2,j-s-s2);
+                     break;
+                  case 1:
+                     propagate(i,j,s,i-s2,j+s2);
+                     propagate(i,j,s,i-s2,j-s-s2);
+                     propagate(i,j,s,i+s+s2,j+s2);
+                     break;
+                  case 2:
+                     propagate(i,j,s,i+s2,j-s2);
+                     propagate(i,j,s,i+s2,j+s+s2);
+                     propagate(i,j,s,i-s-s2,j-s2);
+                     break;
+                  case 3:
+                     propagate(i,j,s,i-s2,j-s2);
+                     propagate(i,j,s,i+s+s2,j-s2);
+                     propagate(i,j,s,i-s2,j+s+s2);
+                     break;
+                  }
             }
       }
    }
@@ -3767,7 +3791,7 @@ void setsea(float level)
    }
 
 // undo the previous triangulation
-inline void undomap(const int i,const int j,const int s2)
+void undomap(const int i,const int j,const int s2)
    {
    int s4;
 
@@ -5681,7 +5705,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,1.0f));
+   c=fsqrt(fmax(res,1.0f))*maxd2;
 
    EX=ex-OX;
    EY=ey-OY;
@@ -6377,7 +6401,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,1.0f));
+   c=fsqrt(fmax(res,1.0f))*maxd2;
 
    ORTHO=fovy<0.0f;
 

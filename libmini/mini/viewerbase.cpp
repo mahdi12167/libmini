@@ -77,7 +77,7 @@ viewerbase::viewerbase()
    PARAMS.fps=25.0f;              // frames per second (target frame rate)
    PARAMS.spu=0.5f;               // update period for render buffer in seconds
 
-   PARAMS.res=1.0E6f;             // global resolution of triangulation
+   PARAMS.res=1.0E3f;             // global resolution of triangulation
 
    PARAMS.fovy=60.0f;             // field of view (degrees)
    PARAMS.nearp=10.0f;            // near plane (meters)
