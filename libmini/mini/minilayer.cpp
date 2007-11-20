@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minitime.h"
+
 #include "database.h"
 #include "datacloud.h"
 #include "datacache.h"
@@ -13,123 +15,130 @@ minilayer::minilayer(int id,minicache *cache)
    {
    // auto-determined parameters upon load:
 
-   PARAMS.cols=0;           // number of columns per tileset
-   PARAMS.rows=0;           // number of rows per tileset
+   LPARAMS.cols=0;           // number of columns per tileset
+   LPARAMS.rows=0;           // number of rows per tileset
 
-   PARAMS.basesize=0;       // base size of texture maps
+   LPARAMS.basesize=0;       // base size of texture maps
 
-   PARAMS.usepnm=FALSE;     // use either PNM or DB loader
+   LPARAMS.usepnm=FALSE;     // use either PNM or DB loader
 
-   PARAMS.extent[0]=0.0f;   // x-extent of tileset
-   PARAMS.extent[1]=0.0f;   // y-extent of tileset
-   PARAMS.extent[2]=0.0f;   // z-extent of tileset
+   LPARAMS.extent[0]=0.0f;   // x-extent of tileset
+   LPARAMS.extent[1]=0.0f;   // y-extent of tileset
+   LPARAMS.extent[2]=0.0f;   // z-extent of tileset
 
-   PARAMS.offset[0]=0.0f;   // x-offset of tileset center
-   PARAMS.offset[1]=0.0f;   // y-offset of tileset center
-   PARAMS.offset[2]=0.0f;   // z-offset of tileset center
+   LPARAMS.offset[0]=0.0f;   // x-offset of tileset center
+   LPARAMS.offset[1]=0.0f;   // y-offset of tileset center
+   LPARAMS.offset[2]=0.0f;   // z-offset of tileset center
 
-   PARAMS.scaling[0]=0.0f;  // x-scaling factor of tileset
-   PARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
-   PARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
+   LPARAMS.scaling[0]=0.0f;  // x-scaling factor of tileset
+   LPARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
+   LPARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
+
+   // auto-set parameters during rendering:
+
+   LPARAMS.eye=miniv3d(0.0,0.0,0.0);  // eye point
+   LPARAMS.dir=miniv3d(0.0,0.0,-1.0); // viewing direction
+   LPARAMS.up=miniv3d(0.0,1.0,0.0f);  // up vector
+
+   LPARAMS.aspect=1.0f;               // aspect ratio
+
+   LPARAMS.time=0.0;                  // local time
 
    // configurable parameters:
 
-   PARAMS.warpmode=0;             // warp mode: plain=0 affine=1 non-linear=2
+   LPARAMS.warpmode=0;             // warp mode: plain=0 affine=1 non-linear=2
 
-   PARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
-   PARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
-   PARAMS.shift[2]=0.0f;          // manual scene z-shift (alt)
+   LPARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
+   LPARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
+   LPARAMS.shift[2]=0.0f;          // manual scene z-shift (alt)
 
-   PARAMS.scale=100.0f;           // scaling of scene
-   PARAMS.exaggeration=1.0f;      // exaggeration of elevations
-   PARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
+   LPARAMS.scale=100.0f;           // scaling of scene
+   LPARAMS.exaggeration=1.0f;      // exaggeration of elevations
+   LPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
-   PARAMS.load=0.1f;              // initially loaded area relative to far plane
-   PARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
+   LPARAMS.load=0.1f;              // initially loaded area relative to far plane
+   LPARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
 
-   PARAMS.minres=9.0f;            // minimum resolution of triangulation
-   PARAMS.fastinit=2;             // fast initialization level
+   LPARAMS.minres=9.0f;            // minimum resolution of triangulation
+   LPARAMS.fastinit=2;             // fast initialization level
 
-   PARAMS.lazyness=1;             // lazyness of tileset paging
-   PARAMS.update=1.0f;            // update period for tileset paging in seconds
-   PARAMS.expire=60.0f;           // tile expiration time in seconds
+   LPARAMS.lazyness=1;             // lazyness of tileset paging
+   LPARAMS.update=1.0f;            // update period for tileset paging in seconds
+   LPARAMS.expire=60.0f;           // tile expiration time in seconds
 
-   PARAMS.upload=0.25f;           // tile upload time per frame relative to 1/fps
-   PARAMS.keep=0.25f;             // time to keep tiles in the cache in minutes
-   PARAMS.maxdelay=1.0f;          // time after which tiles are regarded as delayed relative to update time
-   PARAMS.cache=128.0f;           // memory footprint of the cache in mega bytes
+   LPARAMS.upload=0.25f;           // tile upload time per frame relative to 1/fps
+   LPARAMS.keep=0.25f;             // time to keep tiles in the cache in minutes
+   LPARAMS.maxdelay=1.0f;          // time after which tiles are regarded as delayed relative to update time
+   LPARAMS.cache=128.0f;           // memory footprint of the cache in mega bytes
 
-   PARAMS.keepalive=10.0f;        // time for which idling threads are kept alive in seconds
-   PARAMS.timeslice=0.001f;       // time for which idling threads sleep in seconds
+   LPARAMS.keepalive=10.0f;        // time for which idling threads are kept alive in seconds
+   LPARAMS.timeslice=0.001f;       // time for which idling threads sleep in seconds
 
-   PARAMS.fps=25.0f;              // frames per second (target frame rate)
-   PARAMS.spu=0.5f;               // update period for render buffer in seconds
+   LPARAMS.fps=25.0f;              // frames per second (target frame rate)
+   LPARAMS.spu=0.5f;               // update period for render buffer in seconds
 
-   PARAMS.res=1.0E3f;             // global resolution of triangulation
+   LPARAMS.res=1.0E3f;             // global resolution of triangulation
 
-   PARAMS.fovy=60.0f;             // field of view (degrees)
-   PARAMS.nearp=10.0f;            // near plane (meters)
-   PARAMS.farp=10000.0f;          // far plane (meters)
+   LPARAMS.fovy=60.0f;             // field of view (degrees)
+   LPARAMS.nearp=10.0f;            // near plane (meters)
+   LPARAMS.farp=10000.0f;          // far plane (meters)
 
-   PARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
-   PARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
+   LPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
+   LPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
 
-   PARAMS.range=0.001f;           // texture paging range relative to far plane
-   PARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
-   PARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
+   LPARAMS.range=0.001f;           // texture paging range relative to far plane
+   LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
+   LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
-   PARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
+   LPARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
 
-   PARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
-   PARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
+   LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
+   LPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
 
-   PARAMS.locthreads=1;           // number of local threads
-   PARAMS.numthreads=10;          // number of net threads
+   LPARAMS.locthreads=1;           // number of local threads
+   LPARAMS.numthreads=10;          // number of net threads
 
-   PARAMS.elevdir=strdup("elev"); // default elev directory
-   PARAMS.imagdir=strdup("imag"); // default imag directory
-
-   PARAMS.elevprefix=strdup("elev.");        // elev tileset prefix
-   PARAMS.imagprefix=strdup("imag.");        // imag tileset prefix
-   PARAMS.tilesetfile=strdup("tileset.sav"); // tileset sav file
-   PARAMS.vtbinisuffix=strdup(".ini");       // suffix of vtb ini file
-   PARAMS.startupfile=strdup("startup.sav"); // startup sav file
+   LPARAMS.elevprefix=strdup("elev.");        // elev tileset prefix
+   LPARAMS.imagprefix=strdup("imag.");        // imag tileset prefix
+   LPARAMS.tilesetfile=strdup("tileset.sav"); // tileset sav file
+   LPARAMS.vtbinisuffix=strdup(".ini");       // suffix of vtb ini file
+   LPARAMS.startupfile=strdup("startup.sav"); // startup sav file
 
 #ifndef _WIN32
-   PARAMS.localpath=strdup("/var/tmp/");           // local directory
+   LPARAMS.localpath=strdup("/var/tmp/");           // local directory
 #else
-   PARAMS.localpath=strdup("C:\\Windows\\Temp\\"); // local directory for Windows
+   LPARAMS.localpath=strdup("C:\\Windows\\Temp\\"); // local directory for Windows
 #endif
 
-   PARAMS.altpath=strdup("data/"); // alternative data path
+   LPARAMS.altpath=strdup("data/"); // alternative data path
 
    // optional features:
 
-   PARAMS.usewaypoints=FALSE;
-   PARAMS.usebricks=FALSE;
+   LPARAMS.usewaypoints=FALSE;
+   LPARAMS.usebricks=FALSE;
 
    // optional way-points:
 
-   PARAMS.waypoints=strdup("Waypoints.txt"); // waypoint file
+   LPARAMS.waypoints=strdup("Waypoints.txt"); // waypoint file
 
-   PARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
-   PARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
+   LPARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
+   LPARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
 
-   PARAMS.signpostheight=100.0f; // height of signposts in meters
-   PARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
+   LPARAMS.signpostheight=100.0f; // height of signposts in meters
+   LPARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
 
-   PARAMS.brick=strdup("Cone.db"); // brick file
+   LPARAMS.brick=strdup("Cone.db"); // brick file
 
-   PARAMS.bricksize=100.0f;  // brick size in meters
-   PARAMS.brickrad=1000.0f;  // brick viewing radius in meters
+   LPARAMS.bricksize=100.0f;  // brick size in meters
+   LPARAMS.brickrad=1000.0f;  // brick viewing radius in meters
 
-   PARAMS.brickpasses=4;     // brick render passes
-   PARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to first waypoint elevation
-   PARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
+   LPARAMS.brickpasses=4;     // brick render passes
+   LPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to first waypoint elevation
+   LPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
 
    // initialize state:
 
-   PARAMS0=PARAMS;
+   LPARAMS0=LPARAMS;
 
    LOADED=FALSE;
 
@@ -158,9 +167,6 @@ minilayer::minilayer(int id,minicache *cache)
    CHECKURL=NULL;
 
    UPD=1;
-
-   EYE_INT=miniv3d(0.0);
-   DIR_INT=miniv3d(0.0);
    }
 
 // destructor
@@ -184,64 +190,58 @@ minilayer::~minilayer()
 
    // delete strings:
 
-   if (PARAMS.elevdir!=NULL) free(PARAMS.elevdir);
-   if (PARAMS.imagdir!=NULL) free(PARAMS.imagdir);
+   if (LPARAMS.elevprefix!=NULL) free(LPARAMS.elevprefix);
+   if (LPARAMS.imagprefix!=NULL) free(LPARAMS.imagprefix);
+   if (LPARAMS.tilesetfile!=NULL) free(LPARAMS.tilesetfile);
+   if (LPARAMS.vtbinisuffix!=NULL) free(LPARAMS.vtbinisuffix);
+   if (LPARAMS.startupfile!=NULL) free(LPARAMS.startupfile);
 
-   if (PARAMS.elevprefix!=NULL) free(PARAMS.elevprefix);
-   if (PARAMS.imagprefix!=NULL) free(PARAMS.imagprefix);
-   if (PARAMS.tilesetfile!=NULL) free(PARAMS.tilesetfile);
-   if (PARAMS.vtbinisuffix!=NULL) free(PARAMS.vtbinisuffix);
-   if (PARAMS.startupfile!=NULL) free(PARAMS.startupfile);
-
-   if (PARAMS.localpath!=NULL) free(PARAMS.localpath);
-   if (PARAMS.altpath!=NULL) free(PARAMS.altpath);
+   if (LPARAMS.localpath!=NULL) free(LPARAMS.localpath);
+   if (LPARAMS.altpath!=NULL) free(LPARAMS.altpath);
    }
 
 // get parameters
-void minilayer::get(MINILAYER_PARAMS &params)
-   {params=PARAMS;}
+void minilayer::get(MINILAYER_PARAMS &lparams)
+   {lparams=LPARAMS;}
 
 // set parameters
-void minilayer::set(MINILAYER_PARAMS &params)
+void minilayer::set(MINILAYER_PARAMS &lparams)
    {
    // set new state
-   PARAMS=params;
+   LPARAMS=lparams;
 
    // delete unused strings:
 
-   if (PARAMS.elevdir!=PARAMS0.elevdir) if (PARAMS0.elevdir!=NULL) free(PARAMS0.elevdir);
-   if (PARAMS.imagdir!=PARAMS0.imagdir) if (PARAMS0.imagdir!=NULL) free(PARAMS0.imagdir);
+   if (LPARAMS.elevprefix!=LPARAMS0.elevprefix) if (LPARAMS0.elevprefix!=NULL) free(LPARAMS0.elevprefix);
+   if (LPARAMS.imagprefix!=LPARAMS0.imagprefix) if (LPARAMS0.imagprefix!=NULL) free(LPARAMS0.imagprefix);
+   if (LPARAMS.tilesetfile!=LPARAMS0.tilesetfile) if (LPARAMS0.tilesetfile!=NULL) free(LPARAMS0.tilesetfile);
+   if (LPARAMS.vtbinisuffix!=LPARAMS0.vtbinisuffix) if (LPARAMS0.vtbinisuffix!=NULL) free(LPARAMS0.vtbinisuffix);
+   if (LPARAMS.startupfile!=LPARAMS0.startupfile) if (LPARAMS0.startupfile!=NULL) free(LPARAMS0.startupfile);
 
-   if (PARAMS.elevprefix!=PARAMS0.elevprefix) if (PARAMS0.elevprefix!=NULL) free(PARAMS0.elevprefix);
-   if (PARAMS.imagprefix!=PARAMS0.imagprefix) if (PARAMS0.imagprefix!=NULL) free(PARAMS0.imagprefix);
-   if (PARAMS.tilesetfile!=PARAMS0.tilesetfile) if (PARAMS0.tilesetfile!=NULL) free(PARAMS0.tilesetfile);
-   if (PARAMS.vtbinisuffix!=PARAMS0.vtbinisuffix) if (PARAMS0.vtbinisuffix!=NULL) free(PARAMS0.vtbinisuffix);
-   if (PARAMS.startupfile!=PARAMS0.startupfile) if (PARAMS0.startupfile!=NULL) free(PARAMS0.startupfile);
-
-   if (PARAMS.localpath!=PARAMS0.localpath) if (PARAMS0.localpath!=NULL) free(PARAMS0.localpath);
-   if (PARAMS.altpath!=PARAMS0.altpath) if (PARAMS0.altpath!=NULL) free(PARAMS0.altpath);
+   if (LPARAMS.localpath!=LPARAMS0.localpath) if (LPARAMS0.localpath!=NULL) free(LPARAMS0.localpath);
+   if (LPARAMS.altpath!=LPARAMS0.altpath) if (LPARAMS0.altpath!=NULL) free(LPARAMS0.altpath);
 
    // pass parameters that need to be treated explicitly:
 
    if (LOADED)
       {
-      TILECACHE->getcloud()->getterrain()->setpreload(PARAMS.preload*PARAMS.farp/PARAMS.scale,ftrc(fceil(PARAMS.update*PARAMS.fps)));
-      TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(PARAMS.expire*PARAMS.fps)));
+      TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
+      TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
 
-      TILECACHE->getcloud()->getterrain()->setrange(PARAMS.range*PARAMS.farp/PARAMS.scale);
-      TILECACHE->getcloud()->getterrain()->setradius(PARAMS.radius*PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.dropoff);
+      TILECACHE->getcloud()->getterrain()->setrange(LPARAMS.range*LPARAMS.farp/LPARAMS.scale);
+      TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
-      TILECACHE->getcloud()->getterrain()->setsealevel((PARAMS.sealevel==-MAXFLOAT)?PARAMS.sealevel:PARAMS.sealevel*PARAMS.exaggeration/PARAMS.scale);
+      TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 
-      TILECACHE->getcloud()->setschedule(PARAMS.upload/PARAMS.fps,PARAMS.keep,PARAMS.maxdelay*PARAMS.update);
-      TILECACHE->getcloud()->setmaxsize(PARAMS.cache);
+      TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
+      TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
 
-      TILECACHE->getcloud()->configure_keepalive(PARAMS.keepalive);
-      TILECACHE->getcloud()->configure_timeslice(PARAMS.timeslice);
+      TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
+      TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
       }
 
    // overwrite old state
-   PARAMS0=PARAMS;
+   LPARAMS0=LPARAMS;
    }
 
 // load requested data
@@ -249,7 +249,7 @@ void minilayer::request_callback(char *file,int istexture,databuf *buf,void *dat
    {
    minilayer *obj=(minilayer *)data;
 
-   if (!obj->PARAMS.usepnm) buf->loaddata(file);
+   if (!obj->LPARAMS.usepnm) buf->loaddata(file);
    else buf->loadPNMdata(file);
    }
 
@@ -341,60 +341,7 @@ void minilayer::setcallbacks(void *threaddata,
    CHECKURL=checkurl;
    }
 
-// load tileset (short version)
-BOOLINT minilayer::load(const char *url,
-                        BOOLINT reset)
-   {
-   char *baseurl;
-   char *lastslash,*lastbslash;
-   char *baseid;
-
-   BOOLINT success;
-
-   baseurl=strdup(url);
-
-   // remove trailing slash
-   if (strlen(baseurl)>1)
-      if (baseurl[strlen(baseurl)-1]=='/') baseurl[strlen(baseurl)-1]='\0';
-
-   // remove trailing backslash
-   if (strlen(baseurl)>1)
-      if (baseurl[strlen(baseurl)-1]=='\\') baseurl[strlen(baseurl)-1]='\0';
-
-   // search for last slash
-   lastslash=strrchr(baseurl,'/');
-
-   // search for last backslash
-   lastbslash=strrchr(baseurl,'\\');
-
-   // give up if no slash or backslash was found
-   if (lastslash==NULL && lastbslash==NULL) success=FALSE;
-   else
-      {
-      // decompose url into baseurl and baseid
-      if (lastslash!=NULL)
-         {
-         baseid=strcct(++lastslash,"/");
-         *lastslash='\0';
-         }
-      else
-         {
-         baseid=strcct(++lastbslash,"\\");
-         *lastbslash='\0';
-         }
-
-      // load tileset
-      success=load(baseurl,baseid,PARAMS.elevdir,PARAMS.imagdir,reset);
-
-      free(baseid);
-      }
-
-   free(baseurl);
-
-   return(success);
-   }
-
-// load tileset (long version)
+// load tileset
 BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                         BOOLINT reset)
    {
@@ -416,12 +363,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN=new miniload;
 
    // concatenate tileset info file names
-   elevtilesetfile=strcct(PARAMS.elevprefix,PARAMS.tilesetfile);
-   imagtilesetfile=strcct(PARAMS.imagprefix,PARAMS.tilesetfile);
+   elevtilesetfile=strcct(LPARAMS.elevprefix,LPARAMS.tilesetfile);
+   imagtilesetfile=strcct(LPARAMS.imagprefix,LPARAMS.tilesetfile);
 
    // concatenate vtb ini file names
-   vtbelevinifile=strcct(basepath1,PARAMS.vtbinisuffix);
-   vtbimaginifile=strcct(basepath2,PARAMS.vtbinisuffix);
+   vtbelevinifile=strcct(basepath1,LPARAMS.vtbinisuffix);
+   vtbimaginifile=strcct(basepath2,LPARAMS.vtbinisuffix);
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);
@@ -431,22 +378,22 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setvtbimaginifile(vtbimaginifile);
    TILECACHE->setvtbelevpath(basepath1);
    TILECACHE->setvtbimagpath(basepath2);
-   TILECACHE->setstartupfile(PARAMS.startupfile);
-   TILECACHE->setloader(request_callback,this,1,PARAMS.preload*PARAMS.farp/PARAMS.scale,PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.basesize,PARAMS.lazyness,ftrc(fceil(PARAMS.update*PARAMS.fps)),ftrc(fceil(PARAMS.expire*PARAMS.fps)));
-   TILECACHE->getcloud()->getterrain()->setradius(PARAMS.radius*PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.dropoff);
-   TILECACHE->getcloud()->getterrain()->setsealevel((PARAMS.sealevel==-MAXFLOAT)?PARAMS.sealevel:PARAMS.sealevel*PARAMS.exaggeration/PARAMS.scale);
-   TILECACHE->getcloud()->setschedule(PARAMS.upload/PARAMS.fps,PARAMS.keep,PARAMS.maxdelay*PARAMS.update);
-   TILECACHE->getcloud()->setmaxsize(PARAMS.cache);
+   TILECACHE->setstartupfile(LPARAMS.startupfile);
+   TILECACHE->setloader(request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+   TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
+   TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
+   TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
    TILECACHE->getcloud()->setthread(startthread,this,jointhread,lock_cs,unlock_cs,lock_io,unlock_io);
-   TILECACHE->getcloud()->configure_autocompress(PARAMS.autocompress);
-   TILECACHE->getcloud()->configure_lod0uncompressed(PARAMS.lod0uncompressed);
-   TILECACHE->getcloud()->configure_keepalive(PARAMS.keepalive);
-   TILECACHE->getcloud()->configure_timeslice(PARAMS.timeslice);
-   TILECACHE->configure_locthreads(PARAMS.locthreads);
-   TILECACHE->configure_netthreads(PARAMS.numthreads);
+   TILECACHE->getcloud()->configure_autocompress(LPARAMS.autocompress);
+   TILECACHE->getcloud()->configure_lod0uncompressed(LPARAMS.lod0uncompressed);
+   TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
+   TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
+   TILECACHE->configure_locthreads(LPARAMS.locthreads);
+   TILECACHE->configure_netthreads(LPARAMS.numthreads);
    TILECACHE->setremoteid(baseid);
    TILECACHE->setremoteurl(baseurl);
-   TILECACHE->setlocalpath(PARAMS.localpath);
+   TILECACHE->setlocalpath(LPARAMS.localpath);
    TILECACHE->setreceiver(getURL,this,checkURL);
 
    // free tileset info file names
@@ -458,8 +405,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    free(vtbimaginifile);
 
    // initialize pthreads and libcurl
-   threadinit(PARAMS.numthreads);
-   curlinit(PARAMS.numthreads);
+   threadinit(LPARAMS.numthreads);
+   curlinit(LPARAMS.numthreads);
 
    // load persistent startup file
    TILECACHE->load();
@@ -475,19 +422,19 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    if (TILECACHE->haselevinfo())
       {
       // set size of tileset
-      PARAMS.cols=TILECACHE->getelevinfo_tilesx();
-      PARAMS.rows=TILECACHE->getelevinfo_tilesy();
+      LPARAMS.cols=TILECACHE->getelevinfo_tilesx();
+      LPARAMS.rows=TILECACHE->getelevinfo_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getelevinfo_centerx();
-      PARAMS.offset[1]=TILECACHE->getelevinfo_centery();
+      LPARAMS.offset[0]=TILECACHE->getelevinfo_centerx();
+      LPARAMS.offset[1]=TILECACHE->getelevinfo_centery();
 
       // set base size of textures
-      if (TILECACHE->hasimaginfo()) PARAMS.basesize=TILECACHE->getimaginfo_maxtexsize();
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+      if (TILECACHE->hasimaginfo()) LPARAMS.basesize=TILECACHE->getimaginfo_maxtexsize();
+      TILECACHE->getcloud()->getterrain()->setbasesize(LPARAMS.basesize);
 
       // use PNM loader
-      PARAMS.usepnm=TRUE;
+      LPARAMS.usepnm=TRUE;
 
       // get data coordinates
       offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
@@ -497,19 +444,19 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    else if (TILECACHE->haselevini())
       {
       // set size of tileset
-      PARAMS.cols=TILECACHE->getelevini_tilesx();
-      PARAMS.rows=TILECACHE->getelevini_tilesy();
+      LPARAMS.cols=TILECACHE->getelevini_tilesx();
+      LPARAMS.rows=TILECACHE->getelevini_tilesy();
 
       // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getelevini_centerx();
-      PARAMS.offset[1]=TILECACHE->getelevini_centery();
+      LPARAMS.offset[0]=TILECACHE->getelevini_centerx();
+      LPARAMS.offset[1]=TILECACHE->getelevini_centery();
 
       // set base size of textures
-      if (TILECACHE->hasimagini()) PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
+      if (TILECACHE->hasimagini()) LPARAMS.basesize=TILECACHE->getimagini_maxtexsize();
+      TILECACHE->getcloud()->getterrain()->setbasesize(LPARAMS.basesize);
 
       // use DB loader
-      PARAMS.usepnm=FALSE;
+      LPARAMS.usepnm=FALSE;
 
       // get data coordinates
       offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
@@ -517,22 +464,22 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       }
 
    // check the size of the tileset to detect load failures
-   if (PARAMS.cols==0 || PARAMS.rows==0) return(FALSE);
+   if (LPARAMS.cols==0 || LPARAMS.rows==0) return(FALSE);
 
    // use .db file numbering starting with zero for compatibility with vtp
-   if (!PARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
+   if (!LPARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
 
    // turn on mip-mapping
    TERRAIN->configure_mipmaps(1);
 
    // select either PNM or DB loader
-   TERRAIN->configure_usepnm(PARAMS.usepnm);
+   TERRAIN->configure_usepnm(LPARAMS.usepnm);
 
    // load tiles
-   success=TERRAIN->load(PARAMS.cols,PARAMS.rows, // number of columns and rows
+   success=TERRAIN->load(LPARAMS.cols,LPARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
-                         PARAMS.shift[0]-PARAMS.offset[0],PARAMS.shift[1]-PARAMS.offset[1], // horizontal offset
-                         PARAMS.exaggeration,PARAMS.scale, // vertical exaggeration and global scale
+                         LPARAMS.shift[0]-LPARAMS.offset[0],LPARAMS.shift[1]-LPARAMS.offset[1], // horizontal offset
+                         LPARAMS.exaggeration,LPARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
                          0.0f, // disable base offset safety
@@ -543,37 +490,37 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    if (success==0) return(FALSE);
 
    // set extent of tileset
-   PARAMS.extent[0]=PARAMS.cols*outparams[0];
-   PARAMS.extent[1]=PARAMS.rows*outparams[1];
-   PARAMS.extent[2]=2.0f*fmin(outparams[4],PARAMS.maxelev*PARAMS.exaggeration/PARAMS.scale);
+   LPARAMS.extent[0]=LPARAMS.cols*outparams[0];
+   LPARAMS.extent[1]=LPARAMS.rows*outparams[1];
+   LPARAMS.extent[2]=2.0f*fmin(outparams[4],LPARAMS.maxelev*LPARAMS.exaggeration/LPARAMS.scale);
 
    // set offset of tileset center
-   PARAMS.offset[0]+=outparams[2];
-   PARAMS.offset[1]-=outparams[3];
-   PARAMS.offset[2]-=PARAMS.shift[2];
+   LPARAMS.offset[0]+=outparams[2];
+   LPARAMS.offset[1]-=outparams[3];
+   LPARAMS.offset[2]-=LPARAMS.shift[2];
 
    // set scaling factor of tileset
-   PARAMS.scaling[0]=outscale[0];
-   PARAMS.scaling[1]=outscale[1];
-   PARAMS.scaling[2]=1.0f/PARAMS.scale;
+   LPARAMS.scaling[0]=outscale[0];
+   LPARAMS.scaling[1]=outscale[1];
+   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
 
    // define warp
    defwarp(offsetDAT,extentDAT);
 
    // set minimum resolution
-   TERRAIN->configure_minres(PARAMS.minres);
+   TERRAIN->configure_minres(LPARAMS.minres);
 
    // enable fast initialization
-   TERRAIN->setfastinit(PARAMS.fastinit);
+   TERRAIN->setfastinit(LPARAMS.fastinit);
 
    // define resolution reduction of invisible tiles
-   TERRAIN->setreduction(PARAMS.reduction1,PARAMS.reduction2);
+   TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
 
    // use tile caching with vertex arrays
    CACHE->setcallbacks(TERRAIN->getminitile(), // the minitile object to be cached
-                       PARAMS.cols,PARAMS.rows, // number of tile columns and rows
+                       LPARAMS.cols,LPARAMS.rows, // number of tile columns and rows
                        outparams[0],outparams[1], // tile extents
-                       outparams[2],PARAMS.shift[2]/PARAMS.scale,-outparams[3]); // origin with negative Z
+                       outparams[2],LPARAMS.shift[2]/LPARAMS.scale,-outparams[3]); // origin with negative Z
 
    // success
    return(TRUE);
@@ -586,26 +533,26 @@ void minilayer::loadopts()
 
    // load waypoints:
 
-   char *wpname=TILECACHE->getfile(PARAMS.waypoints,PARAMS.altpath);
+   char *wpname=TILECACHE->getfile(LPARAMS.waypoints,LPARAMS.altpath);
 
    if (wpname!=NULL)
       {
       POINTS=new minipoint;
 
-      if (!PARAMS.usepnm) POINTS->configure_automap(1);
+      if (!LPARAMS.usepnm) POINTS->configure_automap(1);
 
-      POINTS->load(wpname,-PARAMS.offset[1],-PARAMS.offset[0],PARAMS.scaling[0],PARAMS.scaling[1],PARAMS.exaggeration/PARAMS.scale,TERRAIN->getminitile());
+      POINTS->load(wpname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
       free(wpname);
 
-      POINTS->configure_brickceiling(PARAMS.brickceiling*POINTS->getfirst()->elev*PARAMS.scale/PARAMS.exaggeration);
-      POINTS->configure_brickpasses(PARAMS.brickpasses);
+      POINTS->configure_brickceiling(LPARAMS.brickceiling*POINTS->getfirst()->elev*LPARAMS.scale/LPARAMS.exaggeration);
+      POINTS->configure_brickpasses(LPARAMS.brickpasses);
       }
 
    // load brick data:
 
-   char *bname=TILECACHE->getfile(PARAMS.brick,PARAMS.altpath);
+   char *bname=TILECACHE->getfile(LPARAMS.brick,LPARAMS.altpath);
 
-   if (bname==NULL) PARAMS.usebricks=FALSE;
+   if (bname==NULL) LPARAMS.usebricks=FALSE;
    else
       {
       POINTS->setbrick(bname);
@@ -631,14 +578,14 @@ void minilayer::defwarp(minicoord offsetDAT,minicoord extentDAT)
 
    // define local coordinates:
 
-   offsetLOC=miniv3d(PARAMS.offset);
-   scalingLOC=miniv3d(PARAMS.scaling);
+   offsetLOC=miniv3d(LPARAMS.offset);
+   scalingLOC=miniv3d(LPARAMS.scaling);
 
    WARP.def_2local(-offsetLOC,scalingLOC);
 
    // define affine coordinates:
 
-   if (PARAMS.warpmode==0)
+   if (LPARAMS.warpmode==0)
       {
       mtxAFF[0]=miniv3d(1.0,0.0,0.0);
       mtxAFF[1]=miniv3d(0.0,1.0,1.0);
@@ -674,7 +621,7 @@ void minilayer::defwarp(minicoord offsetDAT,minicoord extentDAT)
 
 // get extent of tileset
 miniv3d minilayer::getextent()
-   {return(miniv3d(PARAMS.extent));}
+   {return(miniv3d(LPARAMS.extent)*len_l2e(1.0));}
 
 // get center of tileset
 miniv3d minilayer::getcenter()
@@ -715,13 +662,19 @@ void minilayer::initeyepoint(const miniv3d &e)
 
    ei=map_e2i(e);
 
-   TERRAIN->restrictroi(ei.x,ei.z,len_e2i(PARAMS.load*PARAMS.farp));
+   // restrict loaded area
+   TERRAIN->restrictroi(ei.x,ei.z,len_e2i(LPARAMS.load*LPARAMS.farp));
 
-   TERRAIN->updateroi(PARAMS.res,
-                      ei.x,ei.y+1000*len_e2i(PARAMS.farp),ei.z,
-                      ei.x,ei.z,len_e2i(PARAMS.farp));
+   // load smallest LODs
+   TERRAIN->updateroi(LPARAMS.res,
+                      ei.x,ei.y+1000*len_e2i(LPARAMS.farp),ei.z,
+                      ei.x,ei.z,len_e2i(LPARAMS.farp));
 
+   // mark scene for complete update
    update();
+
+   // save eye point
+   LPARAMS.eye=e;
    }
 
 // trigger complete render buffer update at next frame
@@ -729,7 +682,8 @@ void minilayer::update()
    {UPD=1;}
 
 // generate and cache scene for a particular eye point
-void minilayer::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect)
+void minilayer::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect,
+                      double time)
    {
    miniv3d ei,di,ui;
 
@@ -741,25 +695,52 @@ void minilayer::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float a
    ui=rot_e2i(u);
 
    // update vertex arrays
-   TERRAIN->draw(PARAMS.res,
+   TERRAIN->draw(LPARAMS.res,
                  ei.x,ei.y,ei.z,
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,
-                 PARAMS.fovy,aspect,
-                 len_e2i(PARAMS.nearp),len_e2i(PARAMS.farp),
+                 LPARAMS.fovy,aspect,
+                 len_e2i(LPARAMS.nearp),len_e2i(LPARAMS.farp),
                  UPD);
 
    // revert to normal render buffer update
-   UPD=ftrc(ffloor(PARAMS.spu*PARAMS.fps))+1;
+   UPD=ftrc(ffloor(LPARAMS.spu*LPARAMS.fps))+1;
 
-   // save actual internal eye point and viewing direction
-   EYE_INT=ei;
-   DIR_INT=di;
+   // save actual eye point, viewing direction, and up vector
+   LPARAMS.eye=e;
+   LPARAMS.dir=d;
+   LPARAMS.up=u;
+
+   // save actual aspect ratio
+   LPARAMS.aspect=aspect;
+
+   // also save actual local time
+   LPARAMS.time=time;
    }
 
 // flatten the scene by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)
    {TERRAIN->setrelscale(relscale);}
+
+// render waypoints
+void minilayer::renderpoints()
+   {
+   miniv3d ei;
+
+   if (POINTS!=NULL)
+      if (LPARAMS.usewaypoints)
+         {
+         ei=map_e2i(LPARAMS.eye);
+
+         if (!LPARAMS.usebricks)
+            POINTS->drawsignposts(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_e2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
+         else
+            {
+            POINTS->configure_brickstripes(fTRC(LPARAMS.brickscroll*LPARAMS.time));
+            POINTS->drawbricks(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.brickrad),len_e2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_e2i(LPARAMS.bricksize));
+            }
+         }
+   }
 
 // map point from external to local coordinates
 miniv3d minilayer::map_e2l(const miniv3d &p)

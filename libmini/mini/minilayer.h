@@ -35,6 +35,16 @@ class minilayer
       float offset[3];  // offset of tileset center
       float scaling[3]; // scaling factor of tileset
 
+      // auto-set parameters during rendering:
+
+      miniv3d eye;  // eye point
+      miniv3d dir;  // viewing direction
+      miniv3d up;   // up vector
+
+      float aspect; //  aspect ratio
+
+      double time;  // local time
+
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
@@ -89,9 +99,6 @@ class minilayer
       int locthreads;           //+ number of local threads
       int numthreads;           //+ number of net threads
 
-      char *elevdir;            //+ default elev directory
-      char *imagdir;            //+ default imag directory
-
       char *elevprefix;         //+ elev tileset prefix
       char *imagprefix;         //+ imag tileset prefix
 
@@ -137,16 +144,16 @@ class minilayer
    ~minilayer();
 
    //! get parameters
-   void get(MINILAYER_PARAMS &params);
+   void get(MINILAYER_PARAMS &lparams);
 
    //! set parameters
-   void set(MINILAYER_PARAMS &params);
+   void set(MINILAYER_PARAMS &lparams);
 
    //! get parameters
-   MINILAYER_PARAMS *get() {return(&PARAMS);}
+   MINILAYER_PARAMS *get() {return(&LPARAMS);}
 
    //! set parameters
-   void set(MINILAYER_PARAMS *params) {set(*params);}
+   void set(MINILAYER_PARAMS *lparams) {set(*lparams);}
 
    //! get the encapsulated terrain object
    miniload *getterrain() {return(TERRAIN);}
@@ -171,11 +178,7 @@ class minilayer
                      void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
                      int (*checkurl)(char *src_url,char *src_id,char *src_file,void *data));
 
-   //! load tileset (short version)
-   BOOLINT load(const char *url,
-                BOOLINT reset=FALSE);
-
-   //! load tileset (long version)
+   //! load tileset
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                 BOOLINT reset=FALSE);
 
@@ -201,10 +204,14 @@ class minilayer
    void update();
 
    //! generate and cache scene for a particular eye point
-   void cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect);
+   void cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect,
+              double time);
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
+
+   //! render waypoints
+   void renderpoints();
 
    //! map point from external to local coordinates
    miniv3d map_e2l(const miniv3d &p);
@@ -262,7 +269,7 @@ class minilayer
 
    protected:
 
-   MINILAYER_PARAMS PARAMS,PARAMS0;
+   MINILAYER_PARAMS LPARAMS,LPARAMS0;
 
    BOOLINT LOADED;
 
@@ -286,9 +293,6 @@ class minilayer
    miniwarp WARP;
 
    int UPD;
-
-   miniv3d EYE_INT;
-   miniv3d DIR_INT;
 
    void defwarp(minicoord offsetDAT,minicoord extentDAT);
 
