@@ -265,7 +265,7 @@ class minisurf
                    const int x4,const int y4,const int z4,const float c4,const mininorm &n4,
                    minivtxarray *vtx);
 
-   inline void extractiso1A(const int x1,const int y1,const int z1,const mininorm &n1,
+   inline void extractiso1A(const int x1,const int y1,const int z1,
                             const int x2,const int y2,const int z2,const mininorm &n2,
                             const int x3,const int y3,const int z3,const mininorm &n3,
                             const int x4,const int y4,const int z4,const mininorm &n4,
@@ -605,7 +605,7 @@ class minibrick
 
    int CONFIGURE_CORRECTZ;
 
-   int isvisible(databuf *brick,float ex,float ey,float ez,float rad,float off,float dist,float farp,float fovy,float aspect);
+   int isvisible(databuf *brick,float ex,float ey,float ez,float rad,float dist,float farp,float fovy,float aspect);
 
    int getlod0(int col,int row);
    int getlod(databuf *brick,int lod,int maxlod,float ex,float ey,float ez,float rad,float off,float dist);

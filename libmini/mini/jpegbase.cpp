@@ -21,10 +21,13 @@ my_source_mgr;
 
 typedef my_source_mgr *my_src_ptr;
 
-void my_init_source(j_decompress_ptr cinfo) {}
+void my_init_source(j_decompress_ptr cinfo)
+   {if (cinfo==NULL) ERRORMSG();}
 
 boolean my_fill_input_buffer(j_decompress_ptr cinfo)
    {
+   if (cinfo==NULL) ERRORMSG();
+
    ERRORMSG();
    return(TRUE);
    }

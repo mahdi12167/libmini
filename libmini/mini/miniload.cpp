@@ -1489,31 +1489,6 @@ void miniload::setloader(int (*request)(int col,int row,unsigned char *mapfile,i
    EXPIRE=expire;
    }
 
-// reference request callback implementation for PNM data
-int miniload::request_callback(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap)
-   {
-   int present;
-
-   if (hfield!=NULL && texture!=NULL && fogmap!=NULL)
-      {
-      if (mapfile!=NULL) hfield->loadPNMdata((char *)mapfile);
-      if (texfile!=NULL) texture->loadPNMdata((char *)texfile);
-      if (fogfile!=NULL) fogmap->loadPNMdata((char *)fogfile);
-      }
-   else
-      {
-      present=1;
-
-      if (mapfile!=NULL) present&=checkfile((char *)mapfile);
-      if (texfile!=NULL) present&=checkfile((char *)texfile);
-      if (fogfile!=NULL) present&=checkfile((char *)fogfile);
-
-      return(present);
-      }
-
-   return(1);
-   }
-
 // set callback for inquiry of height map elevation range
 void miniload::setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data)
    {

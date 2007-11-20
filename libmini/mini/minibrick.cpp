@@ -1364,42 +1364,42 @@ void minisurf::extractiso(const float isoval,
       {
       // isoval=c for three vertices
       case 1:
-         extractiso1A(x1,y1,z1,n1,
+         extractiso1A(x1,y1,z1,
                       x2,y2,z2,n2,
                       x3,y3,z3,n3,
                       x4,y4,z4,n4,buf); break;
       case 2:
-         extractiso1A(x1,y1,z1,n1,
+         extractiso1A(x1,y1,z1,
                       x2,y2,z2,n2,
                       x4,y4,z4,n4,
                       x3,y3,z3,n3,buf); break;
       case 4:
-         extractiso1A(x2,y2,z2,n2,
+         extractiso1A(x2,y2,z2,
                       x1,y1,z1,n1,
                       x4,y4,z4,n4,
                       x3,y3,z3,n3,buf); break;
       case 8:
-         extractiso1A(x2,y2,z2,n2,
+         extractiso1A(x2,y2,z2,
                       x1,y1,z1,n1,
                       x3,y3,z3,n3,
                       x4,y4,z4,n4,buf); break;
       case 16:
-         extractiso1A(x3,y3,z3,n3,
+         extractiso1A(x3,y3,z3,
                       x1,y1,z1,n1,
                       x2,y2,z2,n2,
                       x4,y4,z4,n4,buf); break;
       case 32:
-         extractiso1A(x3,y3,z3,n3,
+         extractiso1A(x3,y3,z3,
                       x1,y1,z1,n1,
                       x4,y4,z4,n4,
                       x2,y2,z2,n2,buf); break;
       case 64:
-         extractiso1A(x4,y4,z4,n4,
+         extractiso1A(x4,y4,z4,
                       x1,y1,z1,n1,
                       x3,y3,z3,n3,
                       x2,y2,z2,n2,buf); break;
       case 128:
-         extractiso1A(x4,y4,z4,n4,
+         extractiso1A(x4,y4,z4,
                       x1,y1,z1,n1,
                       x2,y2,z2,n2,
                       x3,y3,z3,n3,buf); break;
@@ -1667,7 +1667,7 @@ void minisurf::extractiso(const float isoval,
    }
 
 // marching tetrahedra subcase #1
-void minisurf::extractiso1A(const int x1,const int y1,const int z1,const mininorm &n1,
+void minisurf::extractiso1A(const int x1,const int y1,const int z1,
                             const int x2,const int y2,const int z2,const mininorm &n2,
                             const int x3,const int y3,const int z3,const mininorm &n3,
                             const int x4,const int y4,const int z4,const mininorm &n4,
@@ -2187,7 +2187,7 @@ void minibrick::resetclip()
    }
 
 // check for visibility
-int minibrick::isvisible(databuf *brick,float ex,float ey,float ez,float rad,float off,float dist,float farp,float fovy,float aspect)
+int minibrick::isvisible(databuf *brick,float ex,float ey,float ez,float rad,float dist,float farp,float fovy,float aspect)
    {
    float px,pz,py;
    float mindist;
@@ -2289,7 +2289,7 @@ void minibrick::pagedata(float ex,float ey,float ez,
             {
             if (PAGING!=0)
                if (LOD[i+j*COLS]>=0)
-                  if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,off,dist,farp*SAFETY,fovy,aspect)==0) continue;
+                  if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,dist,farp*SAFETY,fovy,aspect)==0) continue;
 
             if (ISRUNNING==0)
                {
@@ -2879,8 +2879,8 @@ void minibrick::render(float ex,float ey,float ez,
          if (MAXLOD[i+j*COLS]>=0)
             {
             if (LOD[i+j*COLS]>=0)
-               if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,OFF,DIST,farp,fovy,aspect)==0)
-                  if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,OFF,DIST,farp*SAFETY,fovy,aspect)==0) continue;
+               if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,DIST,farp,fovy,aspect)==0)
+                  if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,DIST,farp*SAFETY,fovy,aspect)==0) continue;
                   else
                      {
                      LRU[i+j*COLS]=FRAME;
@@ -3023,7 +3023,7 @@ void minibrick::update(float ex,float ey,float ez,
    for (i=0; i<COLS; i++)
       for (j=0; j<ROWS; j++)
          if (LOD[i+j*COLS]>=0)
-            if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,off,dist,farp*SAFETY,fovy,aspect)!=0)
+            if (isvisible(&BRICKS[i+j*COLS],ex,ey,ez,rad,dist,farp*SAFETY,fovy,aspect)!=0)
                updatedata(LOD[i+j*COLS],ex,ey,ez,rad,off,dist,t,
                           &BRICKS[i+j*COLS],&MINMAX[i+j*COLS],&NORMAL[i+j*COLS],
                           &MINVAL[i+j*COLS],&MAXVAL[i+j*COLS],

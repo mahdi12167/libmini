@@ -875,6 +875,8 @@ int datacache::myinquiry(int col,int row,unsigned char *mapfile,int hlod,float *
 
    databuf map;
 
+   if (col<0 || row<0 || hlod<0) ERRORMSG();
+
    mycheck(mapfile,TRUE);
 
    filename=sourcefilename(RID,(char *)mapfile);
@@ -909,6 +911,8 @@ void datacache::myquery(int col,int row,unsigned char *texfile,int tlod,int *tsi
    fileinfoelem *info;
 
    databuf map;
+
+   if (col<0 || row<0 || tlod<0) ERRORMSG();
 
    mycheck(texfile,TRUE);
 

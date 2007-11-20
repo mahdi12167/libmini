@@ -90,9 +90,6 @@ class miniload
                   int plazyness=0,int pupdate=0,
                   int expire=0);
 
-   //! reference request callback implementation for PNM data
-   static int request_callback(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap);
-
    //! set callback for inquiry of height map elevation range
    void setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
 

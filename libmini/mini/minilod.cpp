@@ -214,7 +214,10 @@ void minilod::render(float ex,float ey,float ez,
 
 // minibrick callback for availability
 int minilod::DBavailable_callback(int col,int row,int lod,void *data)
-   {return((unsigned int)lod<=((minibrickdata *)data)->lods);}
+   {
+   if (col!=0 || row!=0) ERRORMSG();
+   return((unsigned int)lod<=((minibrickdata *)data)->lods);
+   }
 
 // minibrick callback for loading
 void minilod::DBload_callback(int col,int row,int lod,databuf *volume,void *data)
@@ -224,6 +227,8 @@ void minilod::DBload_callback(int col,int row,int lod,databuf *volume,void *data
    minibrickdata *brickdata=(minibrickdata *)data;
 
    unsigned int xs,ys,zs;
+
+   if (col!=0 || row!=0) ERRORMSG();
 
    // register implicit calculator
    CALC.doregister();

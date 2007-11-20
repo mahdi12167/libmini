@@ -40,22 +40,39 @@ void threadbase::threadexit()
    }
 
 void threadbase::startthread(void *(*thread)(void *background),backarrayelem *background,void *data)
-   {pthread_create(&pthread[background->background-1],&attr,thread,background);}
+   {
+   if (data!=NULL) ERRORMSG();
+   pthread_create(&pthread[background->background-1],&attr,thread,background);
+   }
 
 void threadbase::jointhread(backarrayelem *background,void *data)
    {
    void *status;
+
+   if (data!=NULL) ERRORMSG();
    pthread_join(pthread[background->background-1],&status);
    }
 
 void threadbase::lock_cs(void *data)
-   {pthread_mutex_lock(&mutex);}
+   {
+   if (data!=NULL) ERRORMSG();
+   pthread_mutex_lock(&mutex);
+   }
 
 void threadbase::unlock_cs(void *data)
-   {pthread_mutex_unlock(&mutex);}
+   {
+   if (data!=NULL) ERRORMSG();
+   pthread_mutex_unlock(&mutex);
+   }
 
 void threadbase::lock_io(void *data)
-   {pthread_mutex_lock(&iomutex);}
+   {
+   if (data!=NULL) ERRORMSG();
+   pthread_mutex_lock(&iomutex);
+   }
 
 void threadbase::unlock_io(void *data)
-   {pthread_mutex_unlock(&iomutex);}
+   {
+   if (data!=NULL) ERRORMSG();
+   pthread_mutex_unlock(&iomutex);
+   }

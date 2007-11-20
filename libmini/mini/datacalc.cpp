@@ -26,6 +26,8 @@ void datacalc::deregister()
 // parser hook
 void datacalc::myparser(unsigned int implformat,char *code,int bytes,databuf *obj)
    {
+   if (obj==NULL) ERRORMSG();
+
    if (implformat>0)
       {
       MODE=implformat;
@@ -36,6 +38,8 @@ void datacalc::myparser(unsigned int implformat,char *code,int bytes,databuf *ob
 // interpreter hook
 void datacalc::myinterpreter(float *value,int comps,float x,float y,float z,float t,databuf *obj)
    {
+   if (obj==NULL) ERRORMSG();
+
    if (comps==1)
       switch (MODE)
          {
