@@ -61,6 +61,7 @@ minilayer::minilayer(int id,minicache *cache)
 
    LPARAMS.minres=9.0f;            // minimum resolution of triangulation
    LPARAMS.fastinit=2;             // fast initialization level
+   LPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
    LPARAMS.lazyness=1;             // lazyness of tileset paging
    LPARAMS.update=1.0f;            // update period for tileset paging in seconds
@@ -511,7 +512,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN->configure_minres(LPARAMS.minres);
 
    // enable fast initialization
-   TERRAIN->setfastinit(LPARAMS.fastinit);
+   TERRAIN->setfastinit(LPARAMS.fastinit,LPARAMS.avgd2value);
 
    // define resolution reduction of invisible tiles
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
@@ -736,7 +737,7 @@ void minilayer::renderpoints()
             POINTS->drawsignposts(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_e2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
          else
             {
-            POINTS->configure_brickstripes(fTRC(LPARAMS.brickscroll*LPARAMS.time));
+            POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
             POINTS->drawbricks(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.brickrad),len_e2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_e2i(LPARAMS.bricksize));
             }
          }

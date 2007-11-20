@@ -38,6 +38,7 @@ class viewerbase
 
       float minres;             //+ minimum resolution of triangulation
       int fastinit;             //+ fast initialization level
+      float avgd2value;         //+ average d2value for fast initialization
 
       int lazyness;             //+ lazyness of tileset paging
       float update;             //* update period for tileset paging in seconds

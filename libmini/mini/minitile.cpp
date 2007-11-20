@@ -43,6 +43,7 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
    if (coldim<=0.0f || rowdim<=0.0f) ERRORMSG();
 
    FAST=0;
+   AVGD2=0.0f;
 
    if (minres>=1.0f)
       {
@@ -133,7 +134,7 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
 
             MAP[i+j*cols]=mini::initmap(hfield,&D2MAP[i+j*cols],
                                         &SIZE[i+j*cols],&DIM[i+j*cols],scale,
-                                        CELLASPECT,NULL,NULL,FAST);
+                                        CELLASPECT,NULL,NULL,FAST,AVGD2);
 
             free(hfield);
 
@@ -492,7 +493,7 @@ void minitile::drawtile(float res,
 
       if (MODIFIED[col+row*COLS])
          {
-         mini::updatemaps(FAST);
+         mini::updatemaps(FAST,AVGD2);
          MODIFIED[col+row*COLS]=0;
          }
 
@@ -537,7 +538,7 @@ void minitile::drawtile(float res,
 
       if (MODIFIED[col+row*COLS])
          {
-         Mini::updatemaps(FAST);
+         Mini::updatemaps(FAST,AVGD2);
          MODIFIED[col+row*COLS]=0;
          }
 
@@ -1240,7 +1241,7 @@ void minitile::reload(int col,int row,
 
    MAP2[col+row*COLS]=mini::initmap(hfield,&D2MAP2[col+row*COLS],
                                     &SIZE2[col+row*COLS],&DIM2[col+row*COLS],SCALE,
-                                    CELLASPECT,NULL,NULL,FAST);
+                                    CELLASPECT,NULL,NULL,FAST,AVGD2);
 
    free(hfield);
 
@@ -1338,7 +1339,7 @@ void minitile::reload(int col,int row,
 
       MAP2[col+row*COLS]=mini::initmap(hfield,&D2MAP2[col+row*COLS],
                                        &SIZE2[col+row*COLS],&DIM2[col+row*COLS],SCALE,
-                                       CELLASPECT,NULL,NULL,FAST);
+                                       CELLASPECT,NULL,NULL,FAST,AVGD2);
 
       if (hmap.type==0) free(hfield);
 
@@ -1408,7 +1409,7 @@ void minitile::reload(int col,int row,
 
       MAP2[col+row*COLS]=Mini::initmap((float *)(hmap.data),&D2MAP2[col+row*COLS],
                                        &SIZE2[col+row*COLS],&DIM2[col+row*COLS],SCALE,
-                                       CELLASPECT,NULL,NULL,FAST);
+                                       CELLASPECT,NULL,NULL,FAST,AVGD2);
 
       USEFLOAT2[col+row*COLS]=1;
 
@@ -1500,6 +1501,13 @@ void minitile::setpreload(float pfarp,int pupdate)
       PFARP=pfarp;
       PUPDATE=pupdate;
       }
+   }
+
+// set fast initialization
+void minitile::setfastinit(int fast,float avgd2)
+   {
+   FAST=fast;
+   AVGD2=avgd2;
    }
 
 // modify a heixel of the tile set at run time

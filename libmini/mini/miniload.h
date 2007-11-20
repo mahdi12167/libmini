@@ -111,8 +111,8 @@ class miniload
    //! set expiration
    void setexpire(int expire);
 
-   //! fast initialization
-   void setfastinit(int fast) {TILE->setfastinit(fast);}
+   //! set fast initialization
+   void setfastinit(int fast=1,float avgd2=0.1f) {TILE->setfastinit(fast,avgd2);}
 
    //! define resolution reduction of invisible tiles
    void setreduction(float reduction=2.0f,float ratio=3.0f) {TILE->setreduction(reduction,ratio);}

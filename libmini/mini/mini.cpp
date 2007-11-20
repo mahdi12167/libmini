@@ -148,7 +148,7 @@ inline float d2value(const float a,const float b,const float m)
    {return(fmax(fabs(a+b-2.0f*m)-gradinf*fabs(a-b),0.0f));}
 
 // calculate the d2-values
-void calcD2(int mins=2)
+void calcD2(int mins=2,float avgd2=0.1f)
    {
    int i,j,s,s2;
 
@@ -158,7 +158,7 @@ void calcD2(int mins=2)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=DH[S-1]*SCALE/(S-1)/D/minres/maxd2;
+   fc=avgd2*DH[S-1]*SCALE/(S-1)/D/maxd2;
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -181,7 +181,7 @@ void calcD2(int mins=2)
             else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
 
             // calculate the local d2-value more accurately
-            if (s>mins && mins>2)
+            if (s>mins || mins==2)
                {
                fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
                fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
@@ -227,7 +227,7 @@ void *initmap(short int *image,void **d2map,
               float cellaspect,
               short int (*getelevation)(int i,int j,int S,void *data),
               void *objref,
-              int fast)
+              int fast,float avgd2)
    {
    int i,j;
 
@@ -274,7 +274,7 @@ void *initmap(short int *image,void **d2map,
    tid=0;
    yf=NULL;
 
-   updatemaps(fast);
+   updatemaps(fast,avgd2);
 
    OX=OY=OZ=0.0f;
    for (i=0; i<4; i++) bc2[i]=NULL;
@@ -398,7 +398,7 @@ void recalcD2(float fogatt,int mins=2)
             else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
 
             // calculate the local d2-value more accurately
-            if (s>mins && mins>2)
+            if (s>mins || mins==2)
                {
                fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
                fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
@@ -470,7 +470,7 @@ void *initfogmap(unsigned char *image,int size,
    FG=fogG;
    FB=fogB;
 
-   updatemaps(fast,1);
+   updatemaps(fast,0.0f,1);
 
    return((void *)yf);
    }
@@ -3223,7 +3223,7 @@ int setrealheight(float x,float z,float h)
    }
 
 // update d2- and dh-values after modification of height map
-void updatemaps(int fast,int recalc)
+void updatemaps(int fast,float avgd2,int recalc)
    {
    int i,s;
 
@@ -3246,7 +3246,7 @@ void updatemaps(int fast,int recalc)
             DH[0]=0;
             }
 
-         calcD2(s);
+         calcD2(s,avgd2);
          }
 
    if (yf!=NULL)
@@ -3430,7 +3430,7 @@ inline float d2value(const float a,const float b,const float m)
    {return(fmax(fabs(a+b-2.0f*m)-gradinf*fabs(a-b),0.0f));}
 
 // calculate the d2-values
-void calcD2(int mins=2)
+void calcD2(int mins=2,float avgd2=0.1f)
    {
    int i,j,s,s2;
 
@@ -3440,7 +3440,7 @@ void calcD2(int mins=2)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=DH[S-1]*SCALE/(S-1)/D/minres/maxd2;
+   fc=avgd2*DH[S-1]*SCALE/(S-1)/D/maxd2;
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -3463,7 +3463,7 @@ void calcD2(int mins=2)
             else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
 
             // calculate the local d2-value more accurately
-            if (s>mins && mins>2)
+            if (s>mins || mins==2)
                {
                fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
                fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
@@ -3509,7 +3509,7 @@ void *initmap(float *image,void **d2map,
               float cellaspect,
               float (*getelevation)(int i,int j,int S,void *data),
               void *objref,
-              int fast)
+              int fast,float avgd2)
    {
    int i,j;
 
@@ -3556,7 +3556,7 @@ void *initmap(float *image,void **d2map,
    tid=0;
    yf=NULL;
 
-   updatemaps(fast);
+   updatemaps(fast,avgd2);
 
    OX=OY=OZ=0.0f;
    for (i=0; i<4; i++) bc2[i]=NULL;
@@ -3680,7 +3680,7 @@ void recalcD2(float fogatt,int mins=2)
             else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
 
             // calculate the local d2-value more accurately
-            if (s>mins && mins>2)
+            if (s>mins || mins==2)
                {
                fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
                fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
@@ -3752,7 +3752,7 @@ void *initfogmap(unsigned char *image,int size,
    FG=fogG;
    FB=fogB;
 
-   updatemaps(fast,1);
+   updatemaps(fast,0.0f,1);
 
    return((void *)yf);
    }
@@ -6538,7 +6538,7 @@ int setrealheight(float x,float z,float h)
    }
 
 // update d2- and dh-values after modification of height map
-void updatemaps(int fast,int recalc)
+void updatemaps(int fast,float avgd2,int recalc)
    {
    int i,s;
 
@@ -6561,7 +6561,7 @@ void updatemaps(int fast,int recalc)
             DH[0]=0.0f;
             }
 
-         calcD2(s);
+         calcD2(s,avgd2);
          }
 
    if (yf!=NULL)

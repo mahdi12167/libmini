@@ -18,7 +18,7 @@ void *initmap(short int *image,void **d2map,
               float cellaspect=1.0f,
               short int (*getelevation)(int i,int j,int size,void *data)=0,
               void *objref=0,
-              int fast=0);
+              int fast=0,float avgd2=0.0f);
 
 int inittexmap(unsigned char *image=0,int *width=0,int *height=0,
                int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0);
@@ -76,7 +76,8 @@ void setheight(int i,int j,float h);
 int setheight(float x,float z,float h);
 void setrealheight(int i,int j,float h);
 int setrealheight(float x,float z,float h);
-void updatemaps(int fast=0,int recalc=0);
+
+void updatemaps(int fast=0,float avgd2=0.0f,int recalc=0);
 
 void deletemaps();
 
@@ -108,7 +109,7 @@ void *initmap(float *image,void **d2map,
               float cellaspect=1.0f,
               float (*getelevation)(int i,int j,int size,void *data)=0,
               void *objref=0,
-              int fast=0);
+              int fast=0,float avgd2=0.0f);
 
 int inittexmap(unsigned char *image=0,int *width=0,int *height=0,
                int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0);
@@ -166,7 +167,8 @@ void setheight(int i,int j,float h);
 int setheight(float x,float z,float h);
 void setrealheight(int i,int j,float h);
 int setrealheight(float x,float z,float h);
-void updatemaps(int fast=0,int recalc=0);
+
+void updatemaps(int fast=0,float avgd2=0.0f,int recalc=0);
 
 void deletemaps();
 
