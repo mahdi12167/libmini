@@ -2,10 +2,6 @@
 
 #include "minitime.h"
 
-#include "database.h"
-#include "datacloud.h"
-#include "datacache.h"
-
 #include "threadbase.h"
 #include "curlbase.h"
 #include "squishbase.h"
@@ -20,37 +16,9 @@
 // default constructor
 viewerbase::viewerbase()
    {
-   // auto-determined parameters upon load:
-
-   PARAMS.cols=0;           // number of columns per tileset
-   PARAMS.rows=0;           // number of rows per tileset
-
-   PARAMS.basesize=0;       // base size of texture maps
-
-   PARAMS.usepnm=FALSE;     // use either PNM or DB loader
-
-   PARAMS.extent[0]=0.0f;   // x-extent of tileset
-   PARAMS.extent[1]=0.0f;   // y-extent of tileset
-   PARAMS.extent[2]=0.0f;   // z-extent of tileset
-
-   PARAMS.offset[0]=0.0f;   // x-offset of tileset center
-   PARAMS.offset[1]=0.0f;   // y-offset of tileset center
-   PARAMS.offset[2]=0.0f;   // z-offset of tileset center
-
-   PARAMS.scaling[0]=0.0f;  // x-scaling factor of tileset
-   PARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
-   PARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
-
-   // auto-determined warp upon load:
-
-   PARAMS.warp.setwarp(miniwarp::MINIWARP_PLAIN,miniwarp::MINIWARP_PLAIN);
-   PARAMS.warpmode=0;
-
    // configurable parameters:
 
-   PARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
-   PARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
-   PARAMS.shift[2]=0.0f;          // manual scene z-shift (alt)
+   PARAMS.warpmode=0;             // warp mode: plain=0 affine=1 non-linear=2
 
    PARAMS.scale=100.0f;           // scaling of scene
    PARAMS.exaggeration=1.0f;      // exaggeration of elevations
@@ -95,25 +63,8 @@ viewerbase::viewerbase()
    PARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    PARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
 
-   PARAMS.locthreads=1;           // number of local threads
-   PARAMS.numthreads=10;          // number of net threads
-
    PARAMS.elevdir=strdup("elev"); // default elev directory
    PARAMS.imagdir=strdup("imag"); // default imag directory
-
-   PARAMS.elevprefix=strdup("elev.");        // elev tileset prefix
-   PARAMS.imagprefix=strdup("imag.");        // imag tileset prefix
-   PARAMS.tilesetfile=strdup("tileset.sav"); // tileset sav file
-   PARAMS.vtbinisuffix=strdup(".ini");       // suffix of vtb ini file
-   PARAMS.startupfile=strdup("startup.sav"); // startup sav file
-
-#ifndef _WIN32
-   PARAMS.localpath=strdup("/var/tmp/");           // local directory
-#else
-   PARAMS.localpath=strdup("C:\\Windows\\Temp\\"); // local directory for Windows
-#endif
-
-   PARAMS.altpath=strdup("data/"); // alternative data path
 
    // optional features:
 
@@ -231,55 +182,30 @@ viewerbase::viewerbase()
 
    PARAMS0=PARAMS;
 
-   LOADED=FALSE;
+   LAYER=NULL;
 
-   TERRAIN=NULL;
    CACHE=NULL;
-
-   TILECACHE=NULL;
 
    WINWIDTH=0;
    WINHEIGHT=0;
 
-   UPD=1;
-
    START=minigettime();
    TIMER=0.0;
-
-   EYE_INT=miniv3d(0.0);
-   DIR_INT=miniv3d(0.0);
    }
 
 // destructor
 viewerbase::~viewerbase()
    {
-   if (LOADED)
-      {
-      // delete the tile cache
-      delete TILECACHE;
+   // delete the tileset layer
+   if (LAYER!=NULL) delete LAYER;
 
-      // delete the terrain and its render cache
-      delete TERRAIN;
-      delete CACHE;
+   // delete the render cache
+   if (CACHE!=NULL) delete CACHE;
 
-      // clean-up pthreads and libcurl
-      threadbase::threadexit();
-      curlbase::curlexit();
-      }
-
-   // delete strings:
+    // delete strings:
 
    if (PARAMS.elevdir!=NULL) free(PARAMS.elevdir);
    if (PARAMS.imagdir!=NULL) free(PARAMS.imagdir);
-
-   if (PARAMS.elevprefix!=NULL) free(PARAMS.elevprefix);
-   if (PARAMS.imagprefix!=NULL) free(PARAMS.imagprefix);
-   if (PARAMS.tilesetfile!=NULL) free(PARAMS.tilesetfile);
-   if (PARAMS.vtbinisuffix!=NULL) free(PARAMS.vtbinisuffix);
-   if (PARAMS.startupfile!=NULL) free(PARAMS.startupfile);
-
-   if (PARAMS.localpath!=NULL) free(PARAMS.localpath);
-   if (PARAMS.altpath!=NULL) free(PARAMS.altpath);
 
    if (PARAMS.skydome!=NULL) free(PARAMS.skydome);
 
@@ -294,6 +220,8 @@ void viewerbase::get(VIEWER_PARAMS &params)
 // set parameters
 void viewerbase::set(VIEWER_PARAMS &params)
    {
+   minilayer::MINILAYER_PARAMS lparams;
+
    // set new state
    PARAMS=params;
 
@@ -302,68 +230,97 @@ void viewerbase::set(VIEWER_PARAMS &params)
    if (PARAMS.elevdir!=PARAMS0.elevdir) if (PARAMS0.elevdir!=NULL) free(PARAMS0.elevdir);
    if (PARAMS.imagdir!=PARAMS0.imagdir) if (PARAMS0.imagdir!=NULL) free(PARAMS0.imagdir);
 
-   if (PARAMS.elevprefix!=PARAMS0.elevprefix) if (PARAMS0.elevprefix!=NULL) free(PARAMS0.elevprefix);
-   if (PARAMS.imagprefix!=PARAMS0.imagprefix) if (PARAMS0.imagprefix!=NULL) free(PARAMS0.imagprefix);
-   if (PARAMS.tilesetfile!=PARAMS0.tilesetfile) if (PARAMS0.tilesetfile!=NULL) free(PARAMS0.tilesetfile);
-   if (PARAMS.vtbinisuffix!=PARAMS0.vtbinisuffix) if (PARAMS0.vtbinisuffix!=NULL) free(PARAMS0.vtbinisuffix);
-   if (PARAMS.startupfile!=PARAMS0.startupfile) if (PARAMS0.startupfile!=NULL) free(PARAMS0.startupfile);
-
-   if (PARAMS.localpath!=PARAMS0.localpath) if (PARAMS0.localpath!=NULL) free(PARAMS0.localpath);
-   if (PARAMS.altpath!=PARAMS0.altpath) if (PARAMS0.altpath!=NULL) free(PARAMS0.altpath);
-
    if (PARAMS.skydome!=PARAMS0.skydome) if (PARAMS0.skydome!=NULL) free(PARAMS0.skydome);
 
    if (PARAMS.frontname!=PARAMS0.frontname) if (PARAMS0.frontname!=NULL) free(PARAMS0.frontname);
    if (PARAMS.backname!=PARAMS0.backname) if (PARAMS0.backname!=NULL) free(PARAMS0.backname);
 
-   // pass parameters that need to be treated explicitly:
-
-   if (LOADED)
+   if (LAYER!=NULL)
       {
-      TILECACHE->getcloud()->getterrain()->setpreload(PARAMS.preload*PARAMS.farp/PARAMS.scale,ftrc(fceil(PARAMS.update*PARAMS.fps)));
-      TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(PARAMS.expire*PARAMS.fps)));
+      // get the actual state
+      LAYER->get(lparams);
 
-      TILECACHE->getcloud()->getterrain()->setrange(PARAMS.range*PARAMS.farp/PARAMS.scale);
-      TILECACHE->getcloud()->getterrain()->setradius(PARAMS.radius*PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.dropoff);
+      // update the state:
 
-      TILECACHE->getcloud()->getterrain()->setsealevel((PARAMS.sealevel==-MAXFLOAT)?PARAMS.sealevel:PARAMS.sealevel*PARAMS.exaggeration/PARAMS.scale);
+      lparams.warpmode=PARAMS.warpmode;
 
-      TILECACHE->getcloud()->setschedule(PARAMS.upload/PARAMS.fps,PARAMS.keep,PARAMS.maxdelay*PARAMS.update);
-      TILECACHE->getcloud()->setmaxsize(PARAMS.cache);
+      lparams.scale=PARAMS.scale;
+      lparams.exaggeration=PARAMS.exaggeration;
+      lparams.maxelev=PARAMS.maxelev;
 
-      TILECACHE->getcloud()->configure_keepalive(PARAMS.keepalive);
-      TILECACHE->getcloud()->configure_timeslice(PARAMS.timeslice);
+      lparams.load=PARAMS.load;
+      lparams.preload=PARAMS.preload;
+
+      lparams.minres=PARAMS.minres;
+      lparams.fastinit=PARAMS.fastinit;
+
+      lparams.lazyness=PARAMS.lazyness;
+      lparams.update=PARAMS.update;
+      lparams.expire=PARAMS.expire;
+
+      lparams.upload=PARAMS.upload;
+      lparams.keep=PARAMS.keep;
+      lparams.maxdelay=PARAMS.maxdelay;
+      lparams.cache=PARAMS.cache;
+
+      lparams.keepalive=PARAMS.keepalive;
+      lparams.timeslice=PARAMS.timeslice;
+
+      lparams.fps=PARAMS.fps;
+      lparams.spu=PARAMS.spu;
+
+      lparams.res=PARAMS.res;
+
+      lparams.fovy=PARAMS.fovy;
+      lparams.nearp=PARAMS.nearp;
+      lparams.farp=PARAMS.farp;
+
+      lparams.reduction1=PARAMS.reduction1;
+      lparams.reduction2=PARAMS.reduction2;
+
+      lparams.range=PARAMS.range;
+      lparams.radius=PARAMS.radius;
+      lparams.dropoff=PARAMS.dropoff;
+
+      lparams.sealevel=PARAMS.sealevel;
+
+      lparams.autocompress=PARAMS.autocompress;
+      lparams.lod0uncompressed=PARAMS.lod0uncompressed;
+
+      // optional features:
+
+      lparams.usewaypoints=PARAMS.usewaypoints;
+      lparams.usebricks=PARAMS.usebricks;
+
+      // optional way-points:
+
+      lparams.waypoints=PARAMS.waypoints;
+
+      lparams.signpostheight=PARAMS.signpostheight;
+      lparams.signpostrange=PARAMS.signpostrange;
+
+      lparams.signpostturn=PARAMS.signpostturn;
+      lparams.signpostincline=PARAMS.signpostincline;
+
+      lparams.brick=PARAMS.brick;
+
+      lparams.bricksize=PARAMS.bricksize;
+      lparams.brickrad=PARAMS.brickrad;
+
+      lparams.brickpasses=PARAMS.brickpasses;
+      lparams.brickceiling=PARAMS.brickceiling;
+      lparams.brickscroll=PARAMS.brickscroll;
+
+      // finally pass the updated state
+      LAYER->set(lparams);
       }
 
+   // update color maps
    shaderbase::setVISbathymap(PARAMS.bathymap,PARAMS.bathywidth,PARAMS.bathyheight,PARAMS.bathycomps);
    shaderbase::setNPRbathymap(PARAMS.nprbathymap,PARAMS.nprbathywidth,PARAMS.nprbathyheight,PARAMS.nprbathycomps);
 
    // overwrite old state
    PARAMS0=PARAMS;
-   }
-
-// get the elevation at position (x,y,z)
-double viewerbase::getheight(const miniv3d &p)
-   {
-   miniv3d pe,pi;
-
-   pi=map_e2i(p);
-
-   pi.y=TERRAIN->getheight(pi.x,pi.z);
-   if (pi.y==-MAXFLOAT) return(pi.y);
-
-   pe=map_i2e(pi);
-
-   return(pe.z);
-   }
-
-// load requested data
-void viewerbase::request_callback(char *file,int istexture,databuf *buf,void *data)
-   {
-   viewerbase *obj=(viewerbase *)data;
-
-   if (!obj->PARAMS.usepnm) buf->loaddata(file);
-   else buf->loadPNMdata(file);
    }
 
 // http receiver
@@ -378,7 +335,10 @@ int viewerbase::check_callback(char *src_url,char *src_id,char *src_file,void *d
 void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                               unsigned char **s3tcdata,unsigned int *s3tcbytes,
                               databuf *obj,void *data)
-   {squishbase::compressS3TC(isrgbadata,rawdata,bytes,s3tcdata,s3tcbytes,obj->xsize,obj->ysize);}
+   {
+   squishbase::compressS3TC(isrgbadata,rawdata,bytes,
+                            s3tcdata,s3tcbytes,obj->xsize,obj->ysize);
+   }
 
 // load tileset (short version)
 BOOLINT viewerbase::load(const char *url,
@@ -437,24 +397,7 @@ BOOLINT viewerbase::load(const char *url,
 BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                          BOOLINT reset)
    {
-   int success;
-
-   float outparams[5];
-   float outscale[2];
-
-   char *elevtilesetfile,*imagtilesetfile;
-   char *vtbelevinifile,*vtbimaginifile;
-
-   minicoord offsetDAT,extentDAT;
-   minicoord bboxDAT[2];
-
-   miniv3d offsetLOC,scalingLOC;
-
-   miniv4d mtxAFF[3];
-
-   if (LOADED) return(FALSE);
-
-   LOADED=TRUE;
+   if (LAYER!=NULL) ERRORMSG();
 
    // register conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);
@@ -468,216 +411,14 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // turn off on-the-fly OpenGL texture compression
    miniOGL::configure_compression(0);
 
-   // create the terrain and its render cache
-   TERRAIN=new miniload;
+   // create the render cache
    CACHE=new minicache;
 
-   // concatenate tileset info file names
-   elevtilesetfile=strcct(PARAMS.elevprefix,PARAMS.tilesetfile);
-   imagtilesetfile=strcct(PARAMS.imagprefix,PARAMS.tilesetfile);
+   // create the tileset layer
+   LAYER=new minilayer(1,CACHE);
 
-   // concatenate vtb ini file names
-   vtbelevinifile=strcct(basepath1,PARAMS.vtbinisuffix);
-   vtbimaginifile=strcct(basepath2,PARAMS.vtbinisuffix);
-
-   // attach the tile cache
-   TILECACHE=new datacache(TERRAIN);
-   TILECACHE->setelevtilesetfile(elevtilesetfile);
-   TILECACHE->setimagtilesetfile(imagtilesetfile);
-   TILECACHE->setvtbelevinifile(vtbelevinifile);
-   TILECACHE->setvtbimaginifile(vtbimaginifile);
-   TILECACHE->setvtbelevpath(basepath1);
-   TILECACHE->setvtbimagpath(basepath2);
-   TILECACHE->setstartupfile(PARAMS.startupfile);
-   TILECACHE->setloader(request_callback,this,1,PARAMS.preload*PARAMS.farp/PARAMS.scale,PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.basesize,PARAMS.lazyness,ftrc(fceil(PARAMS.update*PARAMS.fps)),ftrc(fceil(PARAMS.expire*PARAMS.fps)));
-   TILECACHE->getcloud()->getterrain()->setradius(PARAMS.radius*PARAMS.range*PARAMS.farp/PARAMS.scale,PARAMS.dropoff);
-   TILECACHE->getcloud()->getterrain()->setsealevel((PARAMS.sealevel==-MAXFLOAT)?PARAMS.sealevel:PARAMS.sealevel*PARAMS.exaggeration/PARAMS.scale);
-   TILECACHE->getcloud()->setschedule(PARAMS.upload/PARAMS.fps,PARAMS.keep,PARAMS.maxdelay*PARAMS.update);
-   TILECACHE->getcloud()->setmaxsize(PARAMS.cache);
-   TILECACHE->getcloud()->setthread(threadbase::startthread,NULL,threadbase::jointhread,threadbase::lock_cs,threadbase::unlock_cs,threadbase::lock_io,threadbase::unlock_io);
-   TILECACHE->getcloud()->configure_autocompress(PARAMS.autocompress);
-   TILECACHE->getcloud()->configure_lod0uncompressed(PARAMS.lod0uncompressed);
-   TILECACHE->getcloud()->configure_keepalive(PARAMS.keepalive);
-   TILECACHE->getcloud()->configure_timeslice(PARAMS.timeslice);
-   TILECACHE->configure_locthreads(PARAMS.locthreads);
-   TILECACHE->configure_netthreads(PARAMS.numthreads);
-   TILECACHE->setremoteid(baseid);
-   TILECACHE->setremoteurl(baseurl);
-   TILECACHE->setlocalpath(PARAMS.localpath);
-   TILECACHE->setreceiver(receive_callback,NULL,check_callback);
-
-   // free tileset info file names
-   free(elevtilesetfile);
-   free(imagtilesetfile);
-
-   // free vtb ini file names
-   free(vtbelevinifile);
-   free(vtbimaginifile);
-
-   // initialize pthreads and libcurl
-   threadbase::threadinit(PARAMS.numthreads);
-   curlbase::curlinit(PARAMS.numthreads);
-
-   // load persistent startup file
-   TILECACHE->load();
-
-   // reset startup state
-   if (reset)
-      {
-      TILECACHE->reset();
-      TILECACHE->load();
-      }
-
-   // check tileset info
-   if (TILECACHE->haselevinfo())
-      {
-      // set size of tileset
-      PARAMS.cols=TILECACHE->getelevinfo_tilesx();
-      PARAMS.rows=TILECACHE->getelevinfo_tilesy();
-
-      // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getelevinfo_centerx();
-      PARAMS.offset[1]=TILECACHE->getelevinfo_centery();
-
-      // set base size of textures
-      if (TILECACHE->hasimaginfo()) PARAMS.basesize=TILECACHE->getimaginfo_maxtexsize();
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
-
-      // use PNM loader
-      PARAMS.usepnm=TRUE;
-
-      // get data coordinates
-      offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*TILECACHE->getelevinfo_maxelev()),minicoord::MINICOORD_LLH);
-      }
-   // check tileset ini
-   else if (TILECACHE->haselevini())
-      {
-      // set size of tileset
-      PARAMS.cols=TILECACHE->getelevini_tilesx();
-      PARAMS.rows=TILECACHE->getelevini_tilesy();
-
-      // set local offset of tileset center
-      PARAMS.offset[0]=TILECACHE->getelevini_centerx();
-      PARAMS.offset[1]=TILECACHE->getelevini_centery();
-
-      // set base size of textures
-      if (TILECACHE->hasimagini()) PARAMS.basesize=TILECACHE->getimagini_maxtexsize();
-      TILECACHE->getcloud()->getterrain()->setbasesize(PARAMS.basesize);
-
-      // use DB loader
-      PARAMS.usepnm=FALSE;
-
-      // get data coordinates
-      offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())),minicoord::MINICOORD_LINEAR);
-      }
-
-   // check the size of the tileset to detect load failures
-   if (PARAMS.cols==0 || PARAMS.rows==0) return(FALSE);
-
-   // use .db file numbering starting with zero for compatibility with vtp
-   if (!PARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
-
-   // turn on mip-mapping
-   TERRAIN->configure_mipmaps(1);
-
-   // select either PNM or DB loader
-   TERRAIN->configure_usepnm(PARAMS.usepnm);
-
-   // load tiles
-   success=TERRAIN->load(PARAMS.cols,PARAMS.rows, // number of columns and rows
-                         basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
-                         PARAMS.shift[0]-PARAMS.offset[0],PARAMS.shift[1]-PARAMS.offset[1], // horizontal offset
-                         PARAMS.exaggeration,PARAMS.scale, // vertical exaggeration and global scale
-                         0.0f,0.0f, // no fog parameters required
-                         0.0f, // choose default minimum resolution
-                         0.0f, // disable base offset safety
-                         outparams, // geometric parameters
-                         outscale); // scaling parameters
-
-   // check for load errors
-   if (success==0) return(FALSE);
-
-   // set extent of tileset
-   PARAMS.extent[0]=PARAMS.cols*outparams[0];
-   PARAMS.extent[1]=PARAMS.rows*outparams[1];
-   PARAMS.extent[2]=2.0f*fmin(outparams[4],PARAMS.maxelev*PARAMS.exaggeration/PARAMS.scale);
-
-   // set offset of tileset center
-   PARAMS.offset[0]+=outparams[2];
-   PARAMS.offset[1]-=outparams[3];
-   PARAMS.offset[2]-=PARAMS.shift[2];
-
-   // set scaling factor of tileset
-   PARAMS.scaling[0]=outscale[0];
-   PARAMS.scaling[1]=outscale[1];
-   PARAMS.scaling[2]=1.0f/PARAMS.scale;
-
-   // initialize plain warp
-   if (PARAMS.warpmode==0)
-      {
-      // define data coordinates:
-
-      bboxDAT[0]=offsetDAT-extentDAT/2.0;
-      bboxDAT[1]=offsetDAT+extentDAT/2.0;
-
-      PARAMS.warp.def_data(bboxDAT);
-
-      // define local coordinates:
-
-      offsetLOC=miniv3d(PARAMS.offset);
-      scalingLOC=miniv3d(PARAMS.scaling);
-
-      PARAMS.warp.def_2local(-offsetLOC,scalingLOC);
-
-      // define affine coordinates:
-
-      mtxAFF[0]=miniv3d(1.0,0.0,0.0);
-      mtxAFF[1]=miniv3d(0.0,1.0,1.0);
-      mtxAFF[2]=miniv3d(0.0,0.0,1.0);
-
-      PARAMS.warp.def_2affine(mtxAFF);
-
-      // define warp coordinates:
-
-      PARAMS.warp.def_warp(minicoord::MINICOORD_ECEF);
-
-      // create warp object for each exposed coordinate transformation:
-
-      WARP_E2L=PARAMS.warp;
-      WARP_E2L.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_LOCAL);
-
-      WARP_L2E=PARAMS.warp;
-      WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_EXTERNAL);
-
-      WARP_L2I=PARAMS.warp;
-      WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
-
-      WARP_I2L=PARAMS.warp;
-      WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
-
-      WARP_E2I=PARAMS.warp;
-      WARP_E2I.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_INTERNAL);
-
-      WARP_I2E=PARAMS.warp;
-      WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_EXTERNAL);
-      }
-
-   // set minimum resolution
-   TERRAIN->configure_minres(PARAMS.minres);
-
-   // enable fast initialization
-   TERRAIN->setfastinit(PARAMS.fastinit);
-
-   // define resolution reduction of invisible tiles
-   TERRAIN->setreduction(PARAMS.reduction1,PARAMS.reduction2);
-
-   // use tile caching with vertex arrays
-   CACHE->setcallbacks(TERRAIN->getminitile(), // the minitile object to be cached
-                       PARAMS.cols,PARAMS.rows, // number of tile columns and rows
-                       outparams[0],outparams[1], // tile extents
-                       outparams[2],PARAMS.shift[2]/PARAMS.scale,-outparams[3]); // origin with negative Z
+   // load the tileset layer
+   if (!LAYER->load(baseurl,baseid,basepath1,basepath2,reset)) return(FALSE);
 
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);
@@ -685,15 +426,24 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // turn on ray object
    CACHE->configure_enableray(1);
 
+   // success
    return(TRUE);
    }
 
 // load optional features
 void viewerbase::loadopts()
    {
+   minilayer::MINILAYER_PARAMS lparams;
+
+   if (LAYER==NULL) ERRORMSG();
+
+   LAYER->loadopts();
+
+   LAYER->get(lparams);
+
    // load skydome:
 
-   char *skyname=TILECACHE->getfile(PARAMS.skydome,PARAMS.altpath);
+   char *skyname=LAYER->getcache()->getfile(PARAMS.skydome,lparams.altpath);
 
    if (skyname!=NULL)
       {
@@ -701,35 +451,9 @@ void viewerbase::loadopts()
       free(skyname);
       }
 
-   // load waypoints:
-
-   char *wpname=TILECACHE->getfile(PARAMS.waypoints,PARAMS.altpath);
-
-   if (wpname!=NULL)
-      {
-      if (!PARAMS.usepnm) points.configure_automap(1);
-
-      points.load(wpname,-PARAMS.offset[1],-PARAMS.offset[0],PARAMS.scaling[0],PARAMS.scaling[1],PARAMS.exaggeration/PARAMS.scale,TERRAIN->getminitile());
-      free(wpname);
-
-      points.configure_brickceiling(PARAMS.brickceiling*points.getfirst()->elev*PARAMS.scale/PARAMS.exaggeration);
-      points.configure_brickpasses(PARAMS.brickpasses);
-      }
-
-   // load brick data:
-
-   char *bname=TILECACHE->getfile(PARAMS.brick,PARAMS.altpath);
-
-   if (bname==NULL) PARAMS.usebricks=FALSE;
-   else
-      {
-      points.setbrick(bname);
-      free(bname);
-      }
-
    // load earth textures:
 
-   char *ename1=TILECACHE->getfile(PARAMS.frontname,PARAMS.altpath);
+   char *ename1=LAYER->getcache()->getfile(PARAMS.frontname,lparams.altpath);
 
    if (ename1!=NULL)
       {
@@ -737,13 +461,48 @@ void viewerbase::loadopts()
       free(ename1);
       }
 
-   char *ename2=TILECACHE->getfile(PARAMS.backname,PARAMS.altpath);
+   char *ename2=LAYER->getcache()->getfile(PARAMS.backname,lparams.altpath);
 
    if (ename2!=NULL)
       {
       earth.configure_backname(ename2);
       free(ename2);
       }
+   }
+
+// get extent of tileset
+miniv3d viewerbase::getextent()
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->getextent());
+   }
+
+// get center of tileset
+miniv3d viewerbase::getcenter()
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->getcenter());
+   }
+
+// get the elevation at position (x,y,z)
+double viewerbase::getheight(const miniv3d &p)
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->getheight(p));
+   }
+
+// get initial view point
+miniv3d viewerbase::getinitial()
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->getinitial());
+   }
+
+// set initial eye point
+void viewerbase::initeyepoint(const miniv3d &e)
+   {
+   if (LAYER==NULL) ERRORMSG();
+   LAYER->initeyepoint(e);
    }
 
 // set render window
@@ -753,74 +512,46 @@ void viewerbase::setwinsize(int width,int height)
    WINHEIGHT=height;
    }
 
-// set initial eye point
-void viewerbase::initeyepoint(const miniv3d &e)
-   {
-   miniv3d ei;
-
-   ei=map_e2i(e);
-
-   TERRAIN->restrictroi(ei.x,ei.z,len_e2i(PARAMS.load*PARAMS.farp));
-
-   TERRAIN->updateroi(PARAMS.res,
-                      ei.x,ei.y+1000*len_e2i(PARAMS.farp),ei.z,
-                      ei.x,ei.z,len_e2i(PARAMS.farp));
-
-   update();
-   }
-
 // trigger complete render buffer update at next frame
 void viewerbase::update()
-   {UPD=1;}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   LAYER->update();
+   }
 
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u)
    {
-   miniv3d ei,di,ui;
+   if (LAYER==NULL) ERRORMSG();
 
-   if (!LOADED) return;
-
-   if (WINWIDTH<=0 || WINHEIGHT<=0) return;
-
-   // transform coordinates
-   ei=map_e2i(e);
-   di=rot_e2i(d);
-   ui=rot_e2i(u);
-
-   // update vertex arrays
-   TERRAIN->draw(PARAMS.res,
-                 ei.x,ei.y,ei.z,
-                 di.x,di.y,di.z,
-                 ui.x,ui.y,ui.z,
-                 PARAMS.fovy,(float)WINWIDTH/WINHEIGHT,
-                 len_e2i(PARAMS.nearp),len_e2i(PARAMS.farp),
-                 UPD);
-
-   // revert to normal render buffer update
-   UPD=ftrc(ffloor(PARAMS.spu*PARAMS.fps))+1;
-
-   // save actual internal eye point and viewing direction
-   EYE_INT=ei;
-   DIR_INT=di;
+   if (WINWIDTH>0 && WINHEIGHT>0)
+      LAYER->cache(e,d,u,(float)WINWIDTH/WINHEIGHT,
+                   gettime());
    }
 
 // render cached scene
 void viewerbase::render()
    {
-   float time;
+   miniv3d ei;
+
+   minilayer::MINILAYER_PARAMS lparams;
 
    GLfloat color[4];
 
-   double mtx[16]={1,0,0,0,
-                   0,1,0,0,
-                   0,0,1,0,
-                   0,-len_e2i(miniutm::WGS84_r_minor),0,1};
+   double mtx[16]={1.0,0.0,0.0,0.0,
+                   0.0,1.0,0.0,0.0,
+                   0.0,0.0,1.0,0.0,
+                   0.0,-len_e2i(miniutm::WGS84_r_minor),0.0,1.0};
 
    float light0[3]={0.0f,0.0f,0.0f};
 
-   if (!LOADED) return;
+   if (LAYER==NULL) ERRORMSG();
 
    if (WINWIDTH<=0 || WINHEIGHT<=0) return;
+
+   LAYER->get(lparams);
+
+   ei=map_e2i(lparams.eye);
 
    // enable wireframe mode
    if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -845,8 +576,8 @@ void viewerbase::render()
    // draw skydome
    if (PARAMS.useskydome)
       {
-      skydome.setpos(EYE_INT.x,EYE_INT.y,EYE_INT.z,
-                     1.9f*len_e2i(PARAMS.farp));
+      skydome.setpos(ei.x,ei.y,ei.z,
+                     1.9*len_e2i(PARAMS.farp));
 
       skydome.drawskydome();
       }
@@ -909,17 +640,6 @@ void viewerbase::render()
    // disable fog
    if (PARAMS.usefog) glDisable(GL_FOG);
 
-   // draw waypoints
-   if (PARAMS.usewaypoints)
-      if (!PARAMS.usebricks)
-         points.drawsignposts(EYE_INT.x,EYE_INT.y,-EYE_INT.z,len_e2i(PARAMS.signpostheight),PARAMS.signpostrange*len_e2i(PARAMS.farp),PARAMS.signpostturn,PARAMS.signpostincline);
-      else
-         {
-         time=PARAMS.brickscroll*gettime();
-         points.configure_brickstripes(time-floor(time));
-         points.drawbricks(EYE_INT.x,EYE_INT.y,-EYE_INT.z,len_e2i(PARAMS.brickrad),len_e2i(PARAMS.farp),PARAMS.fovy,(float)WINWIDTH/WINHEIGHT,len_e2i(PARAMS.bricksize));
-         }
-
    // disable wireframe mode
    if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
    }
@@ -939,13 +659,29 @@ void viewerbase::postseacb(void *data)
    }
 
 // pre sea render function
-void viewerbase::render_presea() {}
+void viewerbase::render_presea()
+   {
+   minilayer::MINILAYER_PARAMS lparams;
+
+   LAYER->get(lparams);
+
+   if (lparams.eye.z<lparams.sealevel)
+      LAYER->renderpoints(); // render waypoints before sea surface
+   }
 
 // post sea render function
-void viewerbase::render_postsea() {}
+void viewerbase::render_postsea()
+   {
+   minilayer::MINILAYER_PARAMS lparams;
+
+   LAYER->get(lparams);
+
+   if (lparams.eye.z>=lparams.sealevel)
+      LAYER->renderpoints(); // render waypoints after sea surface
+   }
 
 // get time
-float viewerbase::gettime()
+double viewerbase::gettime()
    {return(minigettime()-START);}
 
 // start timer
@@ -953,31 +689,19 @@ void viewerbase::starttimer()
    {TIMER=minigettime()-START;}
 
 // measure timer
-float viewerbase::gettimer()
+double viewerbase::gettimer()
    {return(minigettime()-START-TIMER);}
 
 // idle for the remainder of the frame
-void viewerbase::idle(float dt)
-   {miniwaitfor(1.0f/PARAMS.fps-dt);}
-
-// get extent of tileset
-miniv3d viewerbase::getextent()
-   {return(miniv3d(PARAMS.extent));}
-
-// get center of tileset
-miniv3d viewerbase::getcenter()
-   {return(map_l2e(miniv3d(0.0,0.0,0.0)));}
-
-// get initial view point
-miniv3d viewerbase::getinitial()
-   {
-   if (points.getfirst()==NULL) return(getcenter());
-   else return(map_l2e(miniv3d(points.getfirst()->x,points.getfirst()->y,points.getfirst()->elev)));
-   }
+void viewerbase::idle(double dt)
+   {miniwaitfor(1.0/PARAMS.fps-dt);}
 
 // flatten the scene by a relative scaling factor (in the range [0-1])
 void viewerbase::flatten(float relscale)
-   {TERRAIN->setrelscale(relscale);}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   LAYER->flatten(relscale);
+   }
 
 // shoot a ray at the scene
 double viewerbase::shoot(const miniv3d &o,const miniv3d &d)
@@ -1000,95 +724,125 @@ double viewerbase::shoot(const miniv3d &o,const miniv3d &d)
 // map point from external to local coordinates
 miniv3d viewerbase::map_e2l(const miniv3d &p)
    {
-   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_loc=WARP_E2L.warp(c_ext);
-   return(c_loc.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_e2l(p));
    }
 
 // map point from local to external coordinates
 miniv3d viewerbase::map_l2e(const miniv3d &p)
    {
-   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_ext=WARP_L2E.warp(c_loc);
-   return(c_ext.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_l2e(p));
    }
 
 // map point from local to internal coordinates
 miniv3d viewerbase::map_l2i(const miniv3d &p)
    {
-   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_int=WARP_L2I.warp(c_loc);
-   return(c_int.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_l2i(p));
    }
 
 // map point from internal to local coordinates
 miniv3d viewerbase::map_i2l(const miniv3d &p)
    {
-   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_loc=WARP_I2L.warp(c_int);
-   return(c_loc.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_i2l(p));
    }
 
 // map point from external to internal coordinates
 miniv3d viewerbase::map_e2i(const miniv3d &p)
    {
-   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_int=WARP_E2I.warp(c_ext);
-   return(c_int.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_e2i(p));
    }
 
 // map point from internal to external coordinates
 miniv3d viewerbase::map_i2e(const miniv3d &p)
    {
-   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_ext=WARP_I2E.warp(c_int);
-   return(c_ext.vec);
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->map_i2e(p));
    }
 
 // rotate vector from external to local coordinates
 miniv3d viewerbase::rot_e2l(const miniv3d &v)
-   {return(WARP_E2L.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_e2l(v));
+   }
 
 // rotate vector from local to external coordinates
 miniv3d viewerbase::rot_l2e(const miniv3d &v)
-   {return(WARP_L2E.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_l2e(v));
+   }
 
 // rotate vector from local to internal coordinates
 miniv3d viewerbase::rot_l2i(const miniv3d &v)
-   {return(WARP_L2I.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_l2i(v));
+   }
 
 // rotate vector from internal to local coordinates
 miniv3d viewerbase::rot_i2l(const miniv3d &v)
-   {return(WARP_I2L.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_i2l(v));
+   }
 
 // rotate vector from external to internal coordinates
 miniv3d viewerbase::rot_e2i(const miniv3d &v)
-   {return(WARP_E2I.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_e2i(v));
+   }
 
 // rotate vector from internal to external coordinates
 miniv3d viewerbase::rot_i2e(const miniv3d &v)
-   {return(WARP_I2E.invtra(v));}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->rot_i2e(v));
+   }
 
 // map length from external to local coordinates
 double viewerbase::len_e2l(double l)
-   {return(l*WARP_E2L.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_e2l(l));
+   }
 
 // map length from local to external coordinates
 double viewerbase::len_l2e(double l)
-   {return(l*WARP_L2E.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_l2e(l));
+   }
 
 // map length from local to internal coordinates
 double viewerbase::len_l2i(double l)
-   {return(l*WARP_L2I.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_l2i(l));
+   }
 
 // map length from internal to local coordinates
 double viewerbase::len_i2l(double l)
-   {return(l*WARP_I2L.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_i2l(l));
+   }
 
 // map length from external to internal coordinates
 double viewerbase::len_e2i(double l)
-   {return(l*WARP_E2I.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_e2i(l));
+   }
 
 // map length from internal to external coordinates
 double viewerbase::len_i2e(double l)
-   {return(l*WARP_I2E.getscale());}
+   {
+   if (LAYER==NULL) ERRORMSG();
+   return(LAYER->len_i2e(l));
+   }

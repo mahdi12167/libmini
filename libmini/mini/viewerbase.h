@@ -5,17 +5,15 @@
 
 #include "minibase.h"
 
-#include "miniload.h"
-#include "minicache.h"
-#include "datacache.h"
-
 #undef GREYCSTORATION // enable this for greycstoration support
 #include "convbase.h"
 
-#include "minisky.h"
-#include "minipoint.h"
+#include "minicache.h"
 
-#include "miniwarp.h"
+#include "miniv3d.h"
+#include "minilayer.h"
+
+#include "minisky.h"
 #include "miniglobe.h"
 
 //! aggregate class for viewing a tileset
@@ -25,30 +23,11 @@ class viewerbase
 
    struct VIEWER_PARAMS_STRUCT
       {
-      // auto-determined parameters upon load:
-
-      int cols;          // number of columns per tileset
-      int rows;          // number of rows per tileset
-
-      int basesize;      // base size of texture maps
-
-      BOOLINT usepnm;    // use either PNM or DB loader
-
-      float extent[3];   // extent of tileset
-
-      float offset[3];   // offset of tileset center
-      float scaling[3];  // scaling factor of tileset
-
-      // auto-determined warp upon load:
-
-      miniwarp warp; // warp object
-      int warpmode;  // warp mode: plain=0 affine=1 non-linear=2
-
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
-      float shift[3];           //+ manual scene shift
+      int warpmode;             //+ warp mode: plain=0 affine=1 non-linear=2
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
@@ -93,21 +72,8 @@ class viewerbase
       BOOLINT autocompress;     //+ auto-compress raw textures with S3TC
       BOOLINT lod0uncompressed; //+ keep LOD0 textures uncompressed
 
-      int locthreads;           //+ number of local threads
-      int numthreads;           //+ number of net threads
-
       char *elevdir;            //+ default elev directory
       char *imagdir;            //+ default imag directory
-
-      char *elevprefix;         //+ elev tileset prefix
-      char *imagprefix;         //+ imag tileset prefix
-      char *tilesetfile;        //+ tileset sav file
-      char *vtbinisuffix;       //+ suffix of vtb ini file
-      char *startupfile;        //+ startup sav file
-
-      char *localpath;          //+ local directory
-
-      char *altpath;            //+ alternative data path
 
       // optional features:
 
@@ -222,17 +188,14 @@ class viewerbase
    //! set parameters
    void set(VIEWER_PARAMS *params) {set(*params);}
 
-   //! get the elevation at position (x,y,z)
-   double getheight(const miniv3d &p);
-
    //! get the encapsulated terrain object
-   miniload *getterrain() {return(TERRAIN);}
+   miniload *getterrain() {return(LAYER->getterrain());}
 
    //! get the encapsulated render buffer
    minicache *getbuffer() {return(CACHE);}
 
    //! get the encapsulated cache object
-   datacache *getcache() {return(TILECACHE);}
+   datacache *getcache() {return(LAYER->getcache());}
 
    //! load tileset (short version)
    BOOLINT load(const char *url,
@@ -245,11 +208,23 @@ class viewerbase
    //! load optional features
    void loadopts();
 
-   //! set render window
-   void setwinsize(int width,int height);
+   //! get extent of tileset
+   miniv3d getextent();
+
+   //! get center of tileset
+   miniv3d getcenter();
+
+   //! get the elevation at position (x,y,z)
+   double getheight(const miniv3d &p);
+
+   //! get initial view point
+   miniv3d getinitial();
 
    //! set initial eye point
    void initeyepoint(const miniv3d &e);
+
+   //! set render window
+   void setwinsize(int width,int height);
 
    //! trigger complete render buffer update at next frame
    void update();
@@ -261,26 +236,17 @@ class viewerbase
    void render();
 
    //! get time
-   float gettime();
+   double gettime();
 
    //! start timer
    void starttimer();
 
    //! measure timer
-   float gettimer();
+   double gettimer();
 
    //! idle for the remainder of the frame
    //! dt is the time spent for rendering the last frame
-   void idle(float dt);
-
-   //! get extent of tileset
-   miniv3d getextent();
-
-   //! get center of tileset
-   miniv3d getcenter();
-
-   //! get initial view point
-   miniv3d getinitial();
+   void idle(double dt);
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
@@ -346,43 +312,22 @@ class viewerbase
 
    VIEWER_PARAMS PARAMS,PARAMS0;
 
-   BOOLINT LOADED;
-
-   miniwarp WARP_E2L;
-   miniwarp WARP_L2E;
-   miniwarp WARP_L2I;
-   miniwarp WARP_I2L;
-   miniwarp WARP_E2I;
-   miniwarp WARP_I2E;
-
    void render_presea();
    void render_postsea();
 
    private:
 
-   static const int MAXSTR=1000;
+   minilayer *LAYER;
 
-   miniload *TERRAIN;
    minicache *CACHE;
-
-   datacache *TILECACHE;
 
    int WINWIDTH;
    int WINHEIGHT;
 
-   int UPD;
-
-   miniv3d EYE_INT;
-   miniv3d DIR_INT;
-
    double START,TIMER;
 
    minisky skydome;
-   minipoint points;
-
    miniglobe earth;
-
-   static void request_callback(char *file,int istexture,databuf *buf,void *data);
 
    static void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    static int check_callback(char *src_url,char *src_id,char *src_file,void *data);
