@@ -419,6 +419,15 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    // create the tileset layer
    LAYER=new minilayer(1,CACHE);
 
+   // register callbacks
+   LAYER->setcallbacks(NULL,
+                       threadbase::threadinit,threadbase::threadexit,
+                       threadbase::startthread,threadbase::jointhread,
+                       threadbase::lock_cs,threadbase::unlock_cs,
+                       NULL,
+                       curlbase::curlinit,curlbase::curlexit,
+                       receive_callback,check_callback);
+
    // load the tileset layer
    if (!LAYER->load(baseurl,baseid,basepath1,basepath2,reset)) return(FALSE);
 

@@ -166,7 +166,7 @@ class minilayer
    minipoint *getpoints() {return(POINTS);}
 
    //! get the encapsulated warp object
-   miniwarp *getwarp() {return(&WARP);}
+   miniwarp *getwarp() {return(WARP);}
 
    //! set internal callbacks
    void setcallbacks(void *threaddata,
@@ -291,11 +291,11 @@ class minilayer
 
    minipoint *POINTS;
 
-   miniwarp WARP;
+   miniwarp *WARP;
 
    int UPD;
 
-   void defwarp(minicoord offsetDAT,minicoord extentDAT);
+   void createwarp(minicoord offsetDAT,minicoord extentDAT);
 
    void *THREADDATA;
    void (*THREADINIT)(int threads);

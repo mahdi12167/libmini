@@ -181,6 +181,9 @@ minilayer::~minilayer()
       // delete the terrain
       delete TERRAIN;
 
+      // delete the warp
+      delete WARP;
+
       // delete the waypoints
       if (POINTS!=NULL) delete POINTS;
 
@@ -505,8 +508,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    LPARAMS.scaling[1]=outscale[1];
    LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
 
-   // define warp
-   defwarp(offsetDAT,extentDAT);
+   // create the warp
+   createwarp(offsetDAT,extentDAT);
 
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
@@ -561,8 +564,8 @@ void minilayer::loadopts()
       }
    }
 
-// define warp
-void minilayer::defwarp(minicoord offsetDAT,minicoord extentDAT)
+// create the warp
+void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    {
    minicoord bboxDAT[2];
 
@@ -570,19 +573,22 @@ void minilayer::defwarp(minicoord offsetDAT,minicoord extentDAT)
 
    miniv4d mtxAFF[3];
 
+   // create warp object
+   WARP=new miniwarp();
+
    // define data coordinates:
 
    bboxDAT[0]=offsetDAT-extentDAT/2.0;
    bboxDAT[1]=offsetDAT+extentDAT/2.0;
 
-   WARP.def_data(bboxDAT);
+   WARP->def_data(bboxDAT);
 
    // define local coordinates:
 
    offsetLOC=miniv3d(LPARAMS.offset);
    scalingLOC=miniv3d(LPARAMS.scaling);
 
-   WARP.def_2local(-offsetLOC,scalingLOC);
+   WARP->def_2local(-offsetLOC,scalingLOC);
 
    // define affine coordinates:
 
@@ -593,30 +599,30 @@ void minilayer::defwarp(minicoord offsetDAT,minicoord extentDAT)
       mtxAFF[2]=miniv3d(0.0,0.0,1.0);
       }
 
-   WARP.def_2affine(mtxAFF);
+   WARP->def_2affine(mtxAFF);
 
    // define warp coordinates:
 
-   WARP.def_warp(minicoord::MINICOORD_ECEF);
+   WARP->def_warp(minicoord::MINICOORD_ECEF);
 
    // create warp object for each exposed coordinate transformation:
 
-   WARP_E2L=WARP;
+   WARP_E2L=*WARP;
    WARP_E2L.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_LOCAL);
 
-   WARP_L2E=WARP;
+   WARP_L2E=*WARP;
    WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_EXTERNAL);
 
-   WARP_L2I=WARP;
+   WARP_L2I=*WARP;
    WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
 
-   WARP_I2L=WARP;
+   WARP_I2L=*WARP;
    WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
 
-   WARP_E2I=WARP;
+   WARP_E2I=*WARP;
    WARP_E2I.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_INTERNAL);
 
-   WARP_I2E=WARP;
+   WARP_I2E=*WARP;
    WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_EXTERNAL);
    }
 
