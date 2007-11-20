@@ -1914,25 +1914,26 @@ See the examples below how to use the viewer from the command line:<p>
 
 <pre>
    local usage:
-      viewer &lt;local.base.path&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; [&lt;columns&gt; &lt;rows&gt; [&lt;max.texture.size&gt;]] [-p]
+      viewer &lt;local.base.path&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; imagery.subpath { &lt;options&gt; }
 
    local example (for loading the data of the Hawaii Demo):
       viewer ~user/tilesets/ Hawaii/ tiles landsat
 
    remote usage:
-      viewer &lt;http-address&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; [&lt;columns&gt; &lt;rows&gt; [&lt;max.texture.size&gt;]] [-p]
+      viewer &lt;http-address&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; { &lt;options&gt; }
 
    remote example:
       viewer "http://server.inter.net/tilesets/" tileset/ elevation imagery
 </pre>
 
 If the data has been resampled with vtb, the two ini files for the
-elevation and the imagery should also be made available in the tile
-set path. The libMini Viewer tries to guess their names by adding the
-.ini suffix to the respective subpath. The default setting for the vtp
-subpaths is "elev" and "imag". If you used this naming convention when
-generating the elevation and imagery tile sets with vtp, you can start
-the libMini Viewer with just one argument:
+elevation and the imagery should be made available in the tile set
+path, because the viewer automatically retrieves necessary information
+from the ini files. The libMini Viewer tries to guess their names by
+adding the .ini suffix to the respective subpath. The default setting
+for the vtp subpaths is "elev" and "imag". If you used this naming
+convention when generating the elevation and imagery tile sets with
+vtp, you can start the libMini Viewer with just one argument:
 
 <pre>
    short usage:
@@ -1955,15 +1956,6 @@ use case must be as follows:
                  ...
             imag.ini
 </pre>
-
-If the ini files are available under these names, the viewer
-automatically retrieves the number of columns and rows and all other
-required settings from the ini files. Otherwise, the number of columns
-and rows need to be specified on the command line. The optional -p
-switch tells the viewer that the specified tile set is in the PNM
-format. The expected coordinate system when using this format is
-lat/lon (geographic coordinates). Otherwise the viewer expects a
-metric coordinate system, e.g. UTM.<p>
 
 The initial viewing settings are very conservative, so that the first
 view probably will not look adequate. To get a better visualization,
@@ -2002,8 +1994,8 @@ when starting the libMini Viewer.<p>
 You can also run the libMini Viewer in anaglyph stereo mode by
 appending "-s -a" to the command line. You need to put on red/cyan
 glasses to get the stereo effect. To start the viewer in full-screen
-mode use the -f option. To get full information about the usage start
-the viewer without arguments. <p>
+mode use the -f option. For full usage information on all available
+command line options start the viewer without arguments. <p>
 
 <a href="#" class="top">Back to top</a>
 
