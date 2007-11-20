@@ -29,7 +29,7 @@ viewerbase::viewerbase()
 
    PARAMS.minres=9.0f;            // minimum resolution of triangulation
    PARAMS.fastinit=2;             // fast initialization level
-   LPARAMS.avgd2value=0.1f;       // average d2value for fast initialization
+   PARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
    PARAMS.lazyness=1;             // lazyness of tileset paging
    PARAMS.update=1.0f;            // update period for tileset paging in seconds
