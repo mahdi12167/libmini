@@ -186,6 +186,9 @@ class viewerbase
    //! get parameters
    VIEWER_PARAMS *get() {return(&PARAMS);}
 
+   //! propagate parameters
+   void propagate() {set(PARAMS);}
+
    //! set parameters
    void set(VIEWER_PARAMS *params) {set(*params);}
 

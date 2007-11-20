@@ -934,38 +934,42 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 't':
          params->res/=1.1f;
          if (params->res<1.0f) params->res=1.0f;
+         viewer->propagate();
          break;
       case 'T':
          params->res*=1.1f;
          if (params->res>1.0E10f) params->res=1.0E10f;
+         viewer->propagate();
          break;
       case 'r':
          params->range/=1.1f;
          if (params->range<1.0E-5f) params->range=1.0E-5f;
-         viewer->set(params);
+         viewer->propagate();
          break;
       case 'R':
          params->range*=1.1f;
          if (params->range>1.0f) params->range=1.0f;
-         viewer->set(params);
+         viewer->propagate();
          break;
       case 'f':
          params->farp/=1.1f;
          if (params->farp<2*params->nearp) params->farp=2*params->nearp;
-         viewer->set(params);
+         viewer->propagate();
          break;
       case 'F':
          params->farp*=1.1f;
          if (params->farp>1.0E10f*params->nearp) params->farp=1.0E10f*params->nearp;
-         viewer->set(params);
+         viewer->propagate();
          break;
       case 'v':
          params->fovy-=5.0f;
          if (params->fovy<10.0f) params->fovy=10.0f;
+         viewer->propagate();
          break;
       case 'V':
          params->fovy+=5.0f;
          if (params->fovy>170.0f) params->fovy=170.0f;
+         viewer->propagate();
          break;
       case 'u':
          if (params->sealevel==-MAXFLOAT) params->sealevel=0.0f;
@@ -974,7 +978,7 @@ void keyboardfunc(unsigned char key,int x,int y)
             params->sealevel+=0.5f;
             if (params->sealevel==0.0f) params->sealevel=-MAXFLOAT;
             }
-         viewer->set(params);
+         viewer->propagate();
          viewer->update();
          break;
       case 'U':
@@ -984,7 +988,7 @@ void keyboardfunc(unsigned char key,int x,int y)
             params->sealevel-=0.5f;
             if (params->sealevel==0.0f) params->sealevel=-MAXFLOAT;
             }
-         viewer->set(params);
+         viewer->propagate();
          viewer->update();
          break;
       case 'm':
@@ -1011,6 +1015,18 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (!params->useskydome) params->useskydome=TRUE;
          else params->useskydome=FALSE;
          break;
+      case 'p':
+         if (!params->usewaypoints) params->usewaypoints=TRUE;
+         else params->usewaypoints=FALSE;
+         break;
+      case 'E':
+         if (!params->useearth) params->useearth=TRUE;
+         else params->useearth=FALSE;
+         break;
+      case 'N':
+         if (!params->usenprshader) params->usenprshader=TRUE;
+         else params->usenprshader=FALSE;
+         break;
       case 'l':
          if (!params->usewireframe) params->usewireframe=TRUE;
          else params->usewireframe=FALSE;
@@ -1026,18 +1042,6 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'c':
          if (sw_cross==0) sw_cross=1;
          else sw_cross=0;
-         break;
-      case 'p':
-         if (!params->usewaypoints) params->usewaypoints=TRUE;
-         else params->usewaypoints=FALSE;
-         break;
-      case 'E':
-         if (!params->useearth) params->useearth=TRUE;
-         else params->useearth=FALSE;
-         break;
-      case 'N':
-         if (!params->usenprshader) params->usenprshader=TRUE;
-         else params->usenprshader=FALSE;
          break;
       case 'o':
          loadsettings();
