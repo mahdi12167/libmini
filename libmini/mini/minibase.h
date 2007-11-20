@@ -59,20 +59,25 @@ inline void minierrormsg(char *file,int line,int fatal=0)
 #undef fceil
 #define fceil(x) ceil((double)(x))
 #define ftrc(x) (int)ffloor(x)
+#define FTRC(x) (int)floor(x)
 
+inline double fABS(const float x) {return((x<0.0)?-x:x);}
 inline double FABS(const double x) {return((x<0.0)?-x:x);}
-#define fabs(x) FABS(x)
+#define fabs(x) fABS(x)
 
 inline int min(const int a,const int b) {return((a<b)?a:b);}
+inline double fMIN(const float a,const float b) {return((a<b)?a:b);}
 inline double FMIN(const double a,const double b) {return((a<b)?a:b);}
-#define fmin(a,b) FMIN(a,b)
+#define fmin(a,b) fMIN(a,b)
 
 inline int max(const int a,const int b) {return((a>b)?a:b);}
+inline double fMAX(const float a,const float b) {return((a>b)?a:b);}
 inline double FMAX(const double a,const double b) {return((a>b)?a:b);}
-#define fmax(a,b) FMAX(a,b)
+#define fmax(a,b) fMAX(a,b)
 
 inline int sqr(const int x) {return(x*x);}
-inline double fsqr(const double x) {return(x*x);}
+inline double fsqr(const float x) {return(x*x);}
+inline double FSQR(const double x) {return(x*x);}
 
 #undef fsqrt
 #define fsqrt(x) sqrt((double)(x))

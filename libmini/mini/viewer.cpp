@@ -21,8 +21,6 @@
 
 #define VIEWER_SEALEVEL -MAXFLOAT
 
-#define VIEWER_SBASE 0.5f
-
 #define VIEWER_UPLIFT 0.1f
 
 #define VIEWER_MAXSPEED 50.0f
@@ -70,6 +68,8 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #define VIEWER_NPRCONTOURS 100.0f
 
+#define VIEWER_SBASE 0.5f
+
 // main section:
 
 #include <mini/minibase.h>
@@ -116,30 +116,30 @@ static miniv3d eye;
 static double dez,aez;
 
 // viewing angles
-static float angle,turn,pitch,incline;
+static double angle,turn,pitch,incline;
 
 // viewing direction
 static miniv3d dir,up,right;
 
+// gliding parameters
+static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
+
+// jumping parameters
+static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE;
+
+// steering parameters
+static double oneturn=5.0,oneincline=10.0;
+
+// gliding speed
+static double speed,topspeed;
+
 // stereo base
 static const float sbase=VIEWER_SBASE;
 
-// gliding parameters
-static float maxspeed=VIEWER_MAXSPEED,speedinc=0.1f,accel=0.1f,gravity=0.0f,hover=VIEWER_HOVER;
-
-// jumping parameters
-static float jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE;
-
-// steering parameters
-static const float oneturn=5.0f,oneincline=10.0f;
-
-// gliding speed
-static float speed,topspeed;
-
 // consumed time per frame
 static double accu_delta=0.0;
-static double accu_idle=0.0f;
-static double avg_delta=0.0f;
+static double accu_idle=0.0;
+static double avg_delta=0.0;
 static double avg_idle=1.0/VIEWER_FPS;
 static int avg_count=0;
 
@@ -266,7 +266,7 @@ void initwindow(int width,int height)
    }
 
 // initialize the view point
-void initview(miniv3d e,float a,float p,double dh=0.0f)
+void initview(miniv3d e,double a,double p,double dh=0.0)
    {
    double elev;
 
@@ -276,7 +276,7 @@ void initview(miniv3d e,float a,float p,double dh=0.0f)
 
    elev=viewer->getheight(eye);
 
-   if (elev!=-MAXFLOAT) eye.z=fmax(eye.z,elev+hover+dh);
+   if (elev!=-MAXFLOAT) eye.z=FMAX(eye.z,elev+hover+dh);
 
    viewer->initeyepoint(eye);
 
@@ -285,7 +285,7 @@ void initview(miniv3d e,float a,float p,double dh=0.0f)
    angle=turn=a;
    pitch=incline=p;
 
-   speed=topspeed=0.0f;
+   speed=topspeed=0.0;
    }
 
 // load settings
@@ -717,10 +717,10 @@ void renderhud()
 // GLUT display function
 void displayfunc()
    {
-   float delta,idle;
+   double delta,idle;
 
-   float sina,cosa;
-   float sinp,cosp;
+   double sina,cosa;
+   double sinp,cosp;
 
    double elev,coef;
 
@@ -733,11 +733,11 @@ void displayfunc()
 
    el=viewer->map_e2l(miniv3d(eye));
 
-   sina=sin(2.0f*PI/360.0f*turn);
-   cosa=cos(2.0f*PI/360.0f*turn);
+   sina=sin(2.0*PI/360.0*turn);
+   cosa=cos(2.0*PI/360.0*turn);
 
-   sinp=sin(2.0f*PI/360.0f*incline);
-   cosp=cos(2.0f*PI/360.0f*incline);
+   sinp=sin(2.0*PI/360.0*incline);
+   cosp=cos(2.0*PI/360.0*incline);
 
    el.x+=sina*speed/params->fps;
    el.y+=cosa*speed/params->fps;
@@ -758,7 +758,7 @@ void displayfunc()
 
    right.x=cosa*sbase;
    right.y=sina*sbase;
-   right.z=0.0f;
+   right.z=0.0;
 
    // update eye movement:
 
@@ -767,22 +767,22 @@ void displayfunc()
    turn+=accel*(angle-turn);
    incline+=accel*(pitch-incline);
 
-   coef=(el.z-elev)/hover-1.0f;
-   if (coef>1.0f) coef=1.0f;
-   else if (coef<-1.0f) coef=-1.0f;
+   coef=(el.z-elev)/hover-1.0;
+   if (coef>1.0) coef=1.0;
+   else if (coef<-1.0) coef=-1.0;
 
    aez=-coef*gravity;
-   aez*=1.0f-fabs(dez/maxspeed);
+   aez*=1.0-FABS(dez/maxspeed);
 
    dez+=aez/params->fps;
-   dez*=fpow(1.0f/(1.0f+damp),1.0f/params->fps);
+   dez*=pow(1.0/(1.0+damp),1.0/params->fps);
 
    el.z+=dez/params->fps;
 
    if (el.z<elev+hover)
       {
       dez=-dez;
-      dez*=1.0f/(1.0f+bounce);
+      dez*=1.0/(1.0+bounce);
       el.z=elev+hover;
       }
 
@@ -853,7 +853,7 @@ void displayfunc()
 
    // get time spent
    delta=viewer->gettimer();
-   idle=1.0f/params->fps-delta;
+   idle=1.0/params->fps-delta;
 
    // idle for the remainder of the frame
    viewer->idle(delta);
@@ -883,8 +883,8 @@ void keyboardfunc(unsigned char key,int x,int y)
    switch (key)
       {
       case ' ':
-         if (topspeed==0.0f) topspeed=speedinc*maxspeed;
-         else topspeed=0.0f;
+         if (topspeed==0.0) topspeed=speedinc*maxspeed;
+         else topspeed=0.0;
          break;
       case 'w':
       case 'W':
@@ -894,19 +894,19 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'a':
       case 'A':
          angle-=oneturn;
-         if (angle<0.0f)
+         if (angle<0.0)
             {
-            angle+=360.0f;
-            turn+=360.0f;
+            angle+=360.0;
+            turn+=360.0;
             }
          break;
       case 'd':
       case 'D':
          angle+=oneturn;
-         if (angle>360.0f)
+         if (angle>360.0)
             {
-            angle-=360.0f;
-            turn-=360.0f;
+            angle-=360.0;
+            turn-=360.0;
             }
          break;
       case 's':
@@ -916,15 +916,20 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case '<':
          pitch+=oneincline;
-         if (pitch>90.0f) pitch=90.0f;
+         if (pitch>90.0) pitch=90.0;
          break;
       case '>':
          pitch-=oneincline;
-         if (pitch<-90.0f) pitch=-90.0f;
+         if (pitch<-90.0) pitch=-90.0;
          break;
       case 'j':
       case 'J':
          dez=jump;
+         break;
+      case 'g':
+      case 'G':
+         if (gravity==0.0) gravity=VIEWER_GRAVITY;
+         else gravity=0.0;
          break;
       case 't':
          params->res/=1.1f;
@@ -961,11 +966,6 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'V':
          params->fovy+=5.0f;
          if (params->fovy>170.0f) params->fovy=170.0f;
-         break;
-      case 'g':
-      case 'G':
-         if (gravity==0.0f) gravity=VIEWER_GRAVITY;
-         else gravity=0.0f;
          break;
       case 'u':
          if (params->sealevel==-MAXFLOAT) params->sealevel=0.0f;
@@ -1070,7 +1070,7 @@ int main(int argc,char *argv[])
    if (argc_regular!=1 && argc_regular<4)
       {
       printf("short usage: %s <url> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
-      printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> [<columns> <rows> [<max.texture.size>]] {-s | -a | -f | -p | -r | -c}\n",argv[0]);
+      printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
       printf("options: s=stereo a=anaglyph f=full-screen p=force-pnm r=reset-cache c=auto-s3tc\n");
       exit(1);
       }
@@ -1091,19 +1091,6 @@ int main(int argc,char *argv[])
 
    // get the viewing parameters
    params=viewer->get();
-
-   // read columns and rows of the tileset
-   if (argc_regular!=1)
-      if (argc>6)
-         {
-         if (sscanf(argv[5],"%d",&params->cols)!=1) params->cols=0;
-         if (sscanf(argv[6],"%d",&params->rows)!=1) params->rows=0;
-         }
-
-   // optionally read maximum texture size
-   if (argc_regular!=1)
-      if (argc>7)
-         if (sscanf(argv[7],"%d",&params->basesize)!=1) params->basesize=0;
 
    // process command line options
    for (i=argc_regular+1; i<argc; i++)
@@ -1151,7 +1138,7 @@ int main(int argc,char *argv[])
    if (argc_regular!=1)
       if (!viewer->load(baseurl,baseid,basepath1,basepath2,sw_reset))
          {
-         printf("unable to load tileset at specified url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
+         printf("unable to load tileset at url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
          exit(1);
          }
 
@@ -1160,7 +1147,7 @@ int main(int argc,char *argv[])
 
    // set initial view point
    eye=viewer->getinitial();
-   initview(eye,0.0f,params->fovy/2,VIEWER_UPLIFT*params->farp);
+   initview(eye,0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
 
    // initialize VIS bathy map
    initVISbathymap();
