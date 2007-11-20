@@ -64,8 +64,8 @@ viewerbase::viewerbase()
    PARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    PARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
 
-   PARAMS.elevdir=strdup("elev"); // default elev directory
-   PARAMS.imagdir=strdup("imag"); // default imag directory
+   PARAMS.elevdir="elev";         // default elev directory
+   PARAMS.imagdir="imag";         // default imag directory
 
    // optional features:
 
@@ -138,11 +138,11 @@ viewerbase::viewerbase()
 
    // optional sky-dome:
 
-   PARAMS.skydome=strdup("SkyDome.ppm"); // skydome file
+   PARAMS.skydome="SkyDome.ppm"; // skydome file
 
    // optional way-points:
 
-   PARAMS.waypoints=strdup("Waypoints.txt"); // waypoint file
+   PARAMS.waypoints="Waypoints.txt"; // waypoint file
 
    PARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
    PARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
@@ -150,7 +150,7 @@ viewerbase::viewerbase()
    PARAMS.signpostheight=100.0f; // height of signposts in meters
    PARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
 
-   PARAMS.brick=strdup("Cone.db"); // brick file
+   PARAMS.brick="Cone.db"; // brick file
 
    PARAMS.bricksize=100.0f;  // brick size in meters
    PARAMS.brickrad=1000.0f;  // brick viewing radius in meters
@@ -167,8 +167,8 @@ viewerbase::viewerbase()
 
    PARAMS.transition=4.0f;  // transition gradient between night and day
 
-   PARAMS.frontname=strdup("EarthDay.ppm");  // file name of front earth texture
-   PARAMS.backname=strdup("EarthNight.ppm"); // file name of back earth texture
+   PARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
+   PARAMS.backname="EarthNight.ppm"; // file name of back earth texture
 
    // image conversion parameters:
 
@@ -180,8 +180,6 @@ viewerbase::viewerbase()
    PARAMS.conversion_params.greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
 
    // initialize state:
-
-   PARAMS0=PARAMS;
 
    LAYER=NULL;
 
@@ -202,16 +200,6 @@ viewerbase::~viewerbase()
 
    // delete the render cache
    if (CACHE!=NULL) delete CACHE;
-
-    // delete strings:
-
-   if (PARAMS.elevdir!=NULL) free(PARAMS.elevdir);
-   if (PARAMS.imagdir!=NULL) free(PARAMS.imagdir);
-
-   if (PARAMS.skydome!=NULL) free(PARAMS.skydome);
-
-   if (PARAMS.frontname!=NULL) free(PARAMS.frontname);
-   if (PARAMS.backname!=NULL) free(PARAMS.backname);
    }
 
 // get parameters
@@ -226,16 +214,7 @@ void viewerbase::set(VIEWER_PARAMS &params)
    // set new state
    PARAMS=params;
 
-   // delete unused strings:
-
-   if (PARAMS.elevdir!=PARAMS0.elevdir) if (PARAMS0.elevdir!=NULL) free(PARAMS0.elevdir);
-   if (PARAMS.imagdir!=PARAMS0.imagdir) if (PARAMS0.imagdir!=NULL) free(PARAMS0.imagdir);
-
-   if (PARAMS.skydome!=PARAMS0.skydome) if (PARAMS0.skydome!=NULL) free(PARAMS0.skydome);
-
-   if (PARAMS.frontname!=PARAMS0.frontname) if (PARAMS0.frontname!=NULL) free(PARAMS0.frontname);
-   if (PARAMS.backname!=PARAMS0.backname) if (PARAMS0.backname!=NULL) free(PARAMS0.backname);
-
+   // propagate parameters
    if (LAYER!=NULL)
       {
       // get the actual state
@@ -320,9 +299,6 @@ void viewerbase::set(VIEWER_PARAMS &params)
    // update color maps
    shaderbase::setVISbathymap(PARAMS.bathymap,PARAMS.bathywidth,PARAMS.bathyheight,PARAMS.bathycomps);
    shaderbase::setNPRbathymap(PARAMS.nprbathymap,PARAMS.nprbathywidth,PARAMS.nprbathyheight,PARAMS.nprbathycomps);
-
-   // overwrite old state
-   PARAMS0=PARAMS;
    }
 
 // http receiver
@@ -424,6 +400,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
                        threadbase::threadinit,threadbase::threadexit,
                        threadbase::startthread,threadbase::jointhread,
                        threadbase::lock_cs,threadbase::unlock_cs,
+                       threadbase::lock_io,threadbase::unlock_io,
                        NULL,
                        curlbase::curlinit,curlbase::curlexit,
                        receive_callback,check_callback);

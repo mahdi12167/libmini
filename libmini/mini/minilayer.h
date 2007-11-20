@@ -174,6 +174,7 @@ class minilayer
                      void (*startthread)(void *(*thread)(void *background),backarrayelem *background,void *data),
                      void (*jointhread)(backarrayelem *background,void *data),
                      void (*lock_cs)(void *data),void (*unlock_cs)(void *data),
+                     void (*lock_io)(void *data),void (*unlock_io)(void *data),
                      void *curldata,
                      void (*curlinit)(int threads,char *proxyname,char *proxyport),void (*curlexit)(),
                      void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
@@ -270,7 +271,7 @@ class minilayer
 
    protected:
 
-   MINILAYER_PARAMS LPARAMS,LPARAMS0;
+   MINILAYER_PARAMS LPARAMS;
 
    BOOLINT LOADED;
 

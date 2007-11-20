@@ -99,19 +99,19 @@ minilayer::minilayer(int id,minicache *cache)
    LPARAMS.locthreads=1;           // number of local threads
    LPARAMS.numthreads=10;          // number of net threads
 
-   LPARAMS.elevprefix=strdup("elev.");        // elev tileset prefix
-   LPARAMS.imagprefix=strdup("imag.");        // imag tileset prefix
-   LPARAMS.tilesetfile=strdup("tileset.sav"); // tileset sav file
-   LPARAMS.vtbinisuffix=strdup(".ini");       // suffix of vtb ini file
-   LPARAMS.startupfile=strdup("startup.sav"); // startup sav file
+   LPARAMS.elevprefix="elev.";        // elev tileset prefix
+   LPARAMS.imagprefix="imag.";        // imag tileset prefix
+   LPARAMS.tilesetfile="tileset.sav"; // tileset sav file
+   LPARAMS.vtbinisuffix=".ini";       // suffix of vtb ini file
+   LPARAMS.startupfile="startup.sav"; // startup sav file
 
 #ifndef _WIN32
-   LPARAMS.localpath=strdup("/var/tmp/");           // local directory
+   LPARAMS.localpath="/var/tmp/";           // local directory
 #else
-   LPARAMS.localpath=strdup("C:\\Windows\\Temp\\"); // local directory for Windows
+   LPARAMS.localpath="C:\\Windows\\Temp\\"; // local directory for Windows
 #endif
 
-   LPARAMS.altpath=strdup("data/"); // alternative data path
+   LPARAMS.altpath="data/"; // alternative data path
 
    // optional features:
 
@@ -120,7 +120,7 @@ minilayer::minilayer(int id,minicache *cache)
 
    // optional way-points:
 
-   LPARAMS.waypoints=strdup("Waypoints.txt"); // waypoint file
+   LPARAMS.waypoints="Waypoints.txt"; // waypoint file
 
    LPARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
    LPARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
@@ -128,7 +128,7 @@ minilayer::minilayer(int id,minicache *cache)
    LPARAMS.signpostheight=100.0f; // height of signposts in meters
    LPARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
 
-   LPARAMS.brick=strdup("Cone.db"); // brick file
+   LPARAMS.brick="Cone.db"; // brick file
 
    LPARAMS.bricksize=100.0f;  // brick size in meters
    LPARAMS.brickrad=1000.0f;  // brick viewing radius in meters
@@ -138,8 +138,6 @@ minilayer::minilayer(int id,minicache *cache)
    LPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
 
    // initialize state:
-
-   LPARAMS0=LPARAMS;
 
    LOADED=FALSE;
 
@@ -191,17 +189,6 @@ minilayer::~minilayer()
       threadexit();
       curlexit();
       }
-
-   // delete strings:
-
-   if (LPARAMS.elevprefix!=NULL) free(LPARAMS.elevprefix);
-   if (LPARAMS.imagprefix!=NULL) free(LPARAMS.imagprefix);
-   if (LPARAMS.tilesetfile!=NULL) free(LPARAMS.tilesetfile);
-   if (LPARAMS.vtbinisuffix!=NULL) free(LPARAMS.vtbinisuffix);
-   if (LPARAMS.startupfile!=NULL) free(LPARAMS.startupfile);
-
-   if (LPARAMS.localpath!=NULL) free(LPARAMS.localpath);
-   if (LPARAMS.altpath!=NULL) free(LPARAMS.altpath);
    }
 
 // get parameters
@@ -214,19 +201,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
    // set new state
    LPARAMS=lparams;
 
-   // delete unused strings:
-
-   if (LPARAMS.elevprefix!=LPARAMS0.elevprefix) if (LPARAMS0.elevprefix!=NULL) free(LPARAMS0.elevprefix);
-   if (LPARAMS.imagprefix!=LPARAMS0.imagprefix) if (LPARAMS0.imagprefix!=NULL) free(LPARAMS0.imagprefix);
-   if (LPARAMS.tilesetfile!=LPARAMS0.tilesetfile) if (LPARAMS0.tilesetfile!=NULL) free(LPARAMS0.tilesetfile);
-   if (LPARAMS.vtbinisuffix!=LPARAMS0.vtbinisuffix) if (LPARAMS0.vtbinisuffix!=NULL) free(LPARAMS0.vtbinisuffix);
-   if (LPARAMS.startupfile!=LPARAMS0.startupfile) if (LPARAMS0.startupfile!=NULL) free(LPARAMS0.startupfile);
-
-   if (LPARAMS.localpath!=LPARAMS0.localpath) if (LPARAMS0.localpath!=NULL) free(LPARAMS0.localpath);
-   if (LPARAMS.altpath!=LPARAMS0.altpath) if (LPARAMS0.altpath!=NULL) free(LPARAMS0.altpath);
-
-   // pass parameters that need to be treated explicitly:
-
+   // pass parameters that need to be treated explicitly
    if (LOADED)
       {
       TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
@@ -243,9 +218,6 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
       TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
       TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
       }
-
-   // overwrite old state
-   LPARAMS0=LPARAMS;
    }
 
 // load requested data
@@ -322,6 +294,7 @@ void minilayer::setcallbacks(void *threaddata,
                              void (*startthread)(void *(*thread)(void *background),backarrayelem *background,void *data),
                              void (*jointhread)(backarrayelem *background,void *data),
                              void (*lock_cs)(void *data),void (*unlock_cs)(void *data),
+                             void (*lock_io)(void *data),void (*unlock_io)(void *data),
                              void *curldata,
                              void (*curlinit)(int threads,char *proxyname,char *proxyport),void (*curlexit)(),
                              void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
@@ -386,12 +359,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setvtbelevpath(basepath1);
    TILECACHE->setvtbimagpath(basepath2);
    TILECACHE->setstartupfile(LPARAMS.startupfile);
-   TILECACHE->setloader(request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
    TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
    TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
-   TILECACHE->getcloud()->setthread(startthread,this,jointhread,lock_cs,unlock_cs,lock_io,unlock_io);
+   TILECACHE->getcloud()->setthread(minilayer::startthread,this,minilayer::jointhread,minilayer::lock_cs,minilayer::unlock_cs,minilayer::lock_io,minilayer::unlock_io);
    TILECACHE->getcloud()->configure_autocompress(LPARAMS.autocompress);
    TILECACHE->getcloud()->configure_lod0uncompressed(LPARAMS.lod0uncompressed);
    TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
@@ -401,7 +374,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setremoteid(baseid);
    TILECACHE->setremoteurl(baseurl);
    TILECACHE->setlocalpath(LPARAMS.localpath);
-   TILECACHE->setreceiver(getURL,this,checkURL);
+   TILECACHE->setreceiver(minilayer::getURL,this,minilayer::checkURL);
 
    // free tileset info file names
    free(elevtilesetfile);
@@ -562,7 +535,7 @@ void minilayer::loadopts()
    if (bname==NULL) LPARAMS.usebricks=FALSE;
    else
       {
-      POINTS->setbrick(bname);
+      if (POINTS!=NULL) POINTS->setbrick(bname);
       free(bname);
       }
    }

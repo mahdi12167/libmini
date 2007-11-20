@@ -314,7 +314,7 @@ class viewerbase
 
    protected:
 
-   VIEWER_PARAMS PARAMS,PARAMS0;
+   VIEWER_PARAMS PARAMS;
 
    void render_presea();
    void render_postsea();
