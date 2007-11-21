@@ -239,7 +239,7 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
-   SYSGLB=minicoord::MINICOORD_ECEF;
+   SYSGLB=minicoord::MINICOORD_LINEAR;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
@@ -413,7 +413,7 @@ minicoord miniwarp::warp(const minicoord &c)
    minicoord c1,c2;
 
    if (FROM==MINIWARP_DATA)
-      if (TO==MINIWARP_GLOBAL)
+      if (TO==MINIWARP_GLOBAL && SYSGLB!=minicoord::MINICOORD_LINEAR)
          {
          c2=c;
          c2.convert2(SYSGLB);
@@ -436,7 +436,7 @@ minicoord miniwarp::warp(const minicoord &c)
          c2=c;
          c2.convert2(SYSGLB);
          }
-      else if (TO==MINIWARP_DATA)
+      else if (TO==MINIWARP_DATA && SYSGLB!=minicoord::MINICOORD_LINEAR)
          {
          c2=c;
          c2.convert2(SYSDAT,UTMZONE,UTMDATUM);
@@ -444,13 +444,13 @@ minicoord miniwarp::warp(const minicoord &c)
       else
          {
          c1=c;
-         c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         if (SYSGLB!=minicoord::MINICOORD_LINEAR) c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
          v1=miniv4d(c1.vec,1.0);
-         v1=miniv4d(MTX_DAT2MET[0]*v1,MTX_DAT2MET[1]*v1,MTX_DAT2MET[2]*v1,1.0);
+         if (SYSGLB!=minicoord::MINICOORD_LINEAR) v1=miniv4d(MTX_DAT2MET[0]*v1,MTX_DAT2MET[1]*v1,MTX_DAT2MET[2]*v1,1.0);
          c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else
-      if (TO==MINIWARP_GLOBAL)
+      if (TO==MINIWARP_GLOBAL && SYSGLB!=minicoord::MINICOORD_LINEAR)
          {
          v1=miniv4d(c.vec,1.0);
          v1=miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,1.0);
