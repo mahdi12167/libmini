@@ -112,7 +112,7 @@ static viewerbase *viewer=NULL;
 static viewerbase::VIEWER_PARAMS *params=NULL;
 
 // eye point
-static miniv3d eye;
+static minicoord eye;
 static double dez,aez;
 
 // viewing angles
@@ -266,8 +266,9 @@ void initwindow(int width,int height)
    }
 
 // initialize the view point
-void initview(miniv3d e,double a,double p,double dh=0.0)
+void initview(minicoord e,double a,double p,double dh=0.0)
    {
+   minicoord el;
    double elev;
 
    initwindow(winwidth,winheight);
@@ -276,7 +277,11 @@ void initview(miniv3d e,double a,double p,double dh=0.0)
 
    elev=viewer->getheight(eye);
 
-   if (elev!=-MAXFLOAT) eye.z=FMAX(eye.z,elev+hover+dh);
+   el=viewer->map_e2l(eye);
+
+   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,viewer->len_e2l(elev+hover+dh));
+
+   eye=viewer->map_l2e(el);
 
    viewer->initeyepoint(eye);
 
@@ -294,6 +299,8 @@ void loadsettings()
    FILE *file;
 
    miniv3f e;
+   minicoord::MINICOORD type;
+
    float a,p;
 
    viewerbase::VIEWER_PARAMS prms;
@@ -314,6 +321,8 @@ void loadsettings()
       if (fscanf(file,"ex=%f\n",&e.x)!=1) ERRORMSG();
       if (fscanf(file,"ey=%f\n",&e.y)!=1) ERRORMSG();
       if (fscanf(file,"ez=%f\n",&e.z)!=1) ERRORMSG();
+
+      if (fscanf(file,"type=%d\n",&type)!=1) ERRORMSG();
 
       if (fscanf(file,"angle=%f\n",&a)!=1) ERRORMSG();
       if (fscanf(file,"pitch=%f\n",&p)!=1) ERRORMSG();
@@ -350,7 +359,7 @@ void loadsettings()
 
       viewer->set(prms);
 
-      initview(e,a,p);
+      initview(minicoord(miniv4d(e),type),a,p);
       }
    }
 
@@ -368,9 +377,11 @@ void savesettings()
 
    // save essential parameters:
 
-   fprintf(file,"ex=%f\n",eye.x);
-   fprintf(file,"ey=%f\n",eye.y);
-   fprintf(file,"ez=%f\n",eye.z);
+   fprintf(file,"ex=%f\n",eye.vec.x);
+   fprintf(file,"ey=%f\n",eye.vec.y);
+   fprintf(file,"ez=%f\n",eye.vec.z);
+
+   fprintf(file,"type=%d\n",eye.type);
 
    fprintf(file,"angle=%f\n",angle);
    fprintf(file,"pitch=%f\n",pitch);
@@ -647,7 +658,7 @@ void renderhud()
       if (sea==-MAXFLOAT) sea=0.0f;
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
-               eye.x,eye.y,eye.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
+               eye.vec.x,eye.vec.y,eye.vec.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
                params->farp,params->res,params->range*params->farp,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -724,14 +735,15 @@ void displayfunc()
 
    double elev,coef;
 
-   miniv3d ep,el,ei,di,ui,ri;
+   minicoord ep,el,ei;
+   miniv3d di,ui,ri;
 
    // start timer
    viewer->starttimer();
 
    // update eye point:
 
-   el=viewer->map_e2l(miniv3d(eye));
+   el=viewer->map_e2l(eye);
 
    sina=sin(2.0*PI/360.0*turn);
    cosa=cos(2.0*PI/360.0*turn);
@@ -739,14 +751,12 @@ void displayfunc()
    sinp=sin(2.0*PI/360.0*incline);
    cosp=cos(2.0*PI/360.0*incline);
 
-   el.x+=sina*speed/params->fps;
-   el.y+=cosa*speed/params->fps;
+   el.vec.x+=sina*speed/params->fps;
+   el.vec.y+=cosa*speed/params->fps;
 
    ep=viewer->map_l2e(el);
 
-   ep.z=viewer->getheight(ep);
-   ep=viewer->map_e2l(ep);
-   elev=ep.z;
+   elev=viewer->len_e2l(viewer->getheight(ep));
 
    dir.x=sina*cosp;
    dir.y=cosa*cosp;
@@ -767,7 +777,7 @@ void displayfunc()
    turn+=accel*(angle-turn);
    incline+=accel*(pitch-incline);
 
-   coef=(el.z-elev)/hover-1.0;
+   coef=(el.vec.z-elev)/hover-1.0;
    if (coef>1.0) coef=1.0;
    else if (coef<-1.0) coef=-1.0;
 
@@ -777,21 +787,21 @@ void displayfunc()
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);
 
-   el.z+=dez/params->fps;
+   el.vec.z+=dez/params->fps;
 
-   if (el.z<elev+hover)
+   if (el.vec.z<elev+hover)
       {
       dez=-dez;
       dez*=1.0/(1.0+bounce);
-      el.z=elev+hover;
+      el.vec.z=elev+hover;
       }
 
    eye=viewer->map_l2e(el);
 
    ei=viewer->map_e2i(eye);
-   di=viewer->rot_e2i(dir);
-   ui=viewer->rot_e2i(up);
-   ri=viewer->rot_e2i(right);
+   di=viewer->rot_l2i(dir,eye);
+   ui=viewer->rot_l2i(up,eye);
+   ri=viewer->rot_l2i(right,eye);
 
    params->signpostturn=turn;
    params->signpostincline=-incline;
@@ -807,7 +817,7 @@ void displayfunc()
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-   gluLookAt(ei.x,ei.y,ei.z,ei.x+di.x,ei.y+di.y,ei.z+di.z,ui.x,ui.y,ui.z);
+   gluLookAt(ei.vec.x,ei.vec.y,ei.vec.z,ei.vec.x+di.x,ei.vec.y+di.y,ei.vec.z+di.z,ui.x,ui.y,ui.z);
 
    // update vertex arrays
    viewer->cache(eye,dir,up);
@@ -820,7 +830,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(ei.x-ri.x,ei.y-ri.y,ei.z-ri.z,ei.x+di.x-ri.x,ei.y+di.y-ri.y,ei.z+di.z-ri.z,ui.x,ui.y,ui.z);
+      gluLookAt(ei.vec.x-ri.x,ei.vec.y-ri.y,ei.vec.z-ri.z,ei.vec.x+di.x-ri.x,ei.vec.y+di.y-ri.y,ei.vec.z+di.z-ri.z,ui.x,ui.y,ui.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -833,7 +843,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(ei.x+ri.x,ei.y+ri.y,ei.z+ri.z,ei.x+di.x+ri.x,ei.y+di.y+ri.y,ei.z+di.z+ri.z,ui.x,ui.y,ui.z);
+      gluLookAt(ei.vec.x+ri.x,ei.vec.y+ri.y,ei.vec.z+ri.z,ei.vec.x+di.x+ri.x,ei.vec.y+di.y+ri.y,ei.vec.z+di.z+ri.z,ui.x,ui.y,ui.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);

@@ -193,13 +193,13 @@ class viewerbase
    void set(VIEWER_PARAMS *params) {set(*params);}
 
    //! get the encapsulated terrain object
-   miniload *getterrain() {return(LAYER->getterrain());}
+   miniload *getterrain() {return((LAYER==NULL)?NULL:LAYER->getterrain());}
 
    //! get the encapsulated render buffer
    minicache *getbuffer() {return(CACHE);}
 
    //! get the encapsulated cache object
-   datacache *getcache() {return(LAYER->getcache());}
+   datacache *getcache() {return((LAYER==NULL)?NULL:LAYER->getcache());}
 
    //! load tileset (short version)
    BOOLINT load(const char *url,
@@ -216,16 +216,16 @@ class viewerbase
    miniv3d getextent();
 
    //! get center of tileset
-   miniv3d getcenter();
+   minicoord getcenter();
 
    //! get the elevation at position (x,y,z)
-   double getheight(const miniv3d &p);
+   double getheight(const minicoord &p);
 
    //! get initial view point
-   miniv3d getinitial();
+   minicoord getinitial();
 
    //! set initial eye point
-   void initeyepoint(const miniv3d &e);
+   void initeyepoint(const minicoord &e);
 
    //! set render window
    void setwinsize(int width,int height);
@@ -234,7 +234,7 @@ class viewerbase
    void update();
 
    //! generate and cache scene for a particular eye point
-   void cache(const miniv3d &e,const miniv3d &d,const miniv3d &u);
+   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u);
 
    //! render cached scene
    void render();
@@ -256,61 +256,33 @@ class viewerbase
    void flatten(float relscale);
 
    //! shoot a ray at the scene
-   double shoot(const miniv3d &o,const miniv3d &d);
+   double shoot(const minicoord &o,const miniv3d &d);
 
-   //! map point from external to local coordinates
-   miniv3d map_e2l(const miniv3d &p);
+   // coordinate conversions (e=external, l=local, i=internal):
 
-   //! map point from local to external coordinates
-   miniv3d map_l2e(const miniv3d &p);
+   //! map coordinates
+   minicoord map_e2l(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_e2l(p));}
+   minicoord map_l2e(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_l2e(p));}
+   minicoord map_l2i(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_l2i(p));}
+   minicoord map_i2l(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_i2l(p));}
+   minicoord map_e2i(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_e2i(p));}
+   minicoord map_i2e(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_i2e(p));}
 
-   //! map point from local to internal coordinates
-   miniv3d map_l2i(const miniv3d &p);
-
-   //! map point from internal to local coordinates
-   miniv3d map_i2l(const miniv3d &p);
-
-   //! map point from external to internal coordinates
-   miniv3d map_e2i(const miniv3d &p);
-
-   //! map point from internal to external coordinates
-   miniv3d map_i2e(const miniv3d &p);
-
-   //! rotate vector from external to local coordinates
-   miniv3d rot_e2l(const miniv3d &v);
-
-   //! rotate vector from local to external coordinates
-   miniv3d rot_l2e(const miniv3d &v);
-
-   //! rotate vector from local to internal coordinates
-   miniv3d rot_l2i(const miniv3d &v);
-
-   //! rotate vector from internal to local coordinates
-   miniv3d rot_i2l(const miniv3d &v);
-
-   //! rotate vector from external to internal coordinates
-   miniv3d rot_e2i(const miniv3d &v);
-
-   //! rotate vector from internal to external coordinates
-   miniv3d rot_i2e(const miniv3d &v);
+   //! rotate vector
+   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_e2l(v,p));}
+   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_l2e(v,p));}
+   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_l2i(v,p));}
+   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_i2l(v,p));}
+   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_e2i(v,p));}
+   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_i2e(v,p));}
 
    //! map length from external to local coordinates
-   double len_e2l(double l);
-
-   //! map length from local to external coordinates
-   double len_l2e(double l);
-
-   //! map length from local to internal coordinates
-   double len_l2i(double l);
-
-   //! map length from internal to local coordinates
-   double len_i2l(double l);
-
-   //! map length from external to internal coordinates
-   double len_e2i(double l);
-
-   //! map length from internal to external coordinates
-   double len_i2e(double l);
+   double len_e2l(double l) {return((LAYER==NULL)?0.0:LAYER->len_e2l(l));}
+   double len_l2e(double l) {return((LAYER==NULL)?0.0:LAYER->len_l2e(l));}
+   double len_l2i(double l) {return((LAYER==NULL)?0.0:LAYER->len_l2i(l));}
+   double len_i2l(double l) {return((LAYER==NULL)?0.0:LAYER->len_i2l(l));}
+   double len_e2i(double l) {return((LAYER==NULL)?0.0:LAYER->len_e2i(l));}
+   double len_i2e(double l) {return((LAYER==NULL)?0.0:LAYER->len_i2e(l));}
 
    protected:
 

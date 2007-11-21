@@ -36,13 +36,13 @@ minilayer::minilayer(int id,minicache *cache)
 
    // auto-set parameters during rendering:
 
-   LPARAMS.eye=miniv3d(0.0,0.0,0.0);  // eye point
+   LPARAMS.eye=minicoord(miniv3d(0.0),minicoord::MINICOORD_LINEAR); // eye point
    LPARAMS.dir=miniv3d(0.0,0.0,-1.0); // viewing direction
-   LPARAMS.up=miniv3d(0.0,1.0,0.0f);  // up vector
+   LPARAMS.up=miniv3d(0.0,1.0,0.0f); // up vector
 
-   LPARAMS.aspect=1.0f;               // aspect ratio
+   LPARAMS.aspect=1.0f; // aspect ratio
 
-   LPARAMS.time=0.0;                  // local time
+   LPARAMS.time=0.0; // local time
 
    // configurable parameters:
 
@@ -584,10 +584,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    // create warp object for each exposed coordinate transformation:
 
    WARP_E2L=*WARP;
-   WARP_E2L.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_LOCAL);
+   WARP_E2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_LOCAL);
 
    WARP_L2E=*WARP;
-   WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_METRIC);
+   WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_GLOBAL);
 
    WARP_L2I=*WARP;
    WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
@@ -596,10 +596,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
 
    WARP_E2I=*WARP;
-   WARP_E2I.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_INTERNAL);
+   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
 
    WARP_I2E=*WARP;
-   WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_METRIC);
+   WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
    }
 
 // get extent of tileset
@@ -607,28 +607,28 @@ miniv3d minilayer::getextent()
    {return(miniv3d(LPARAMS.extent)*len_l2e(1.0));}
 
 // get center of tileset
-miniv3d minilayer::getcenter()
+minicoord minilayer::getcenter()
    {return(map_l2e(miniv3d(0.0,0.0,0.0)));}
 
 // get the elevation at position (x,y,z)
-double minilayer::getheight(const miniv3d &p)
+double minilayer::getheight(const minicoord &p)
    {
-   miniv3d pe,pi;
+   minicoord pe,pi;
 
    if (!LOADED) return(-MAXFLOAT);
 
    pi=map_e2i(p);
 
-   pi.y=TERRAIN->getheight(pi.x,pi.z);
-   if (pi.y==-MAXFLOAT) return(pi.y);
+   pi.vec.y=TERRAIN->getheight(pi.vec.x,pi.vec.z);
+   if (pi.vec.y==-MAXFLOAT) return(pi.vec.y);
 
    pe=map_i2e(pi);
 
-   return(pe.z);
+   return(pe.vec.z);
    }
 
 // get initial view point
-miniv3d minilayer::getinitial()
+minicoord minilayer::getinitial()
    {
    if (POINTS==NULL) return(getcenter());
 
@@ -637,21 +637,21 @@ miniv3d minilayer::getinitial()
    }
 
 // set initial eye point
-void minilayer::initeyepoint(const miniv3d &e)
+void minilayer::initeyepoint(const minicoord &e)
    {
-   miniv3d ei;
+   minicoord ei;
 
    if (!LOADED) return;
 
    ei=map_e2i(e);
 
    // restrict loaded area
-   TERRAIN->restrictroi(ei.x,ei.z,len_e2i(LPARAMS.load*LPARAMS.farp));
+   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,len_e2i(LPARAMS.load*LPARAMS.farp));
 
    // load smallest LODs
    TERRAIN->updateroi(LPARAMS.res,
-                      ei.x,ei.y+1000*len_e2i(LPARAMS.farp),ei.z,
-                      ei.x,ei.z,len_e2i(LPARAMS.farp));
+                      ei.vec.x,ei.vec.y+1000*len_e2i(LPARAMS.farp),ei.vec.z,
+                      ei.vec.x,ei.vec.z,len_e2i(LPARAMS.farp));
 
    // mark scene for complete update
    update();
@@ -665,21 +665,22 @@ void minilayer::update()
    {UPD=1;}
 
 // generate and cache scene for a particular eye point
-void minilayer::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect,
+void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,
                       double time)
    {
-   miniv3d ei,di,ui;
+   minicoord ei;
+   miniv3d di,ui;
 
    if (!LOADED) return;
 
    // transform coordinates
    ei=map_e2i(e);
-   di=rot_e2i(d);
-   ui=rot_e2i(u);
+   di=rot_e2i(d,e);
+   ui=rot_e2i(u,e);
 
    // update vertex arrays
    TERRAIN->draw(LPARAMS.res,
-                 ei.x,ei.y,ei.z,
+                 ei.vec.x,ei.vec.y,ei.vec.z,
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,
                  LPARAMS.fovy,aspect,
@@ -708,7 +709,7 @@ void minilayer::flatten(float relscale)
 // render waypoints
 void minilayer::renderpoints()
    {
-   miniv3d ei;
+   minicoord ei;
 
    if (POINTS!=NULL)
       if (LPARAMS.usewaypoints)
@@ -716,107 +717,11 @@ void minilayer::renderpoints()
          ei=map_e2i(LPARAMS.eye);
 
          if (!LPARAMS.usebricks)
-            POINTS->drawsignposts(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_e2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
+            POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_e2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_e2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
          else
             {
             POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
-            POINTS->drawbricks(ei.x,ei.y,-ei.z,len_e2i(LPARAMS.brickrad),len_e2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_e2i(LPARAMS.bricksize));
+            POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_e2i(LPARAMS.brickrad),len_e2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_e2i(LPARAMS.bricksize));
             }
          }
    }
-
-// map point from external to local coordinates
-miniv3d minilayer::map_e2l(const miniv3d &p)
-   {
-   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_loc=WARP_E2L.warp(c_ext);
-   return(c_loc.vec);
-   }
-
-// map point from local to external coordinates
-miniv3d minilayer::map_l2e(const miniv3d &p)
-   {
-   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_ext=WARP_L2E.warp(c_loc);
-   return(c_ext.vec);
-   }
-
-// map point from local to internal coordinates
-miniv3d minilayer::map_l2i(const miniv3d &p)
-   {
-   minicoord c_loc=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_int=WARP_L2I.warp(c_loc);
-   return(c_int.vec);
-   }
-
-// map point from internal to local coordinates
-miniv3d minilayer::map_i2l(const miniv3d &p)
-   {
-   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_loc=WARP_I2L.warp(c_int);
-   return(c_loc.vec);
-   }
-
-// map point from external to internal coordinates
-miniv3d minilayer::map_e2i(const miniv3d &p)
-   {
-   minicoord c_ext=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_int=WARP_E2I.warp(c_ext);
-   return(c_int.vec);
-   }
-
-// map point from internal to external coordinates
-miniv3d minilayer::map_i2e(const miniv3d &p)
-   {
-   minicoord c_int=minicoord(p,minicoord::MINICOORD_LINEAR);
-   minicoord c_ext=WARP_I2E.warp(c_int);
-   return(c_ext.vec);
-   }
-
-// rotate vector from external to local coordinates
-miniv3d minilayer::rot_e2l(const miniv3d &v)
-   {return(WARP_E2L.invtra(v));}
-
-// rotate vector from local to external coordinates
-miniv3d minilayer::rot_l2e(const miniv3d &v)
-   {return(WARP_L2E.invtra(v));}
-
-// rotate vector from local to internal coordinates
-miniv3d minilayer::rot_l2i(const miniv3d &v)
-   {return(WARP_L2I.invtra(v));}
-
-// rotate vector from internal to local coordinates
-miniv3d minilayer::rot_i2l(const miniv3d &v)
-   {return(WARP_I2L.invtra(v));}
-
-// rotate vector from external to internal coordinates
-miniv3d minilayer::rot_e2i(const miniv3d &v)
-   {return(WARP_E2I.invtra(v));}
-
-// rotate vector from internal to external coordinates
-miniv3d minilayer::rot_i2e(const miniv3d &v)
-   {return(WARP_I2E.invtra(v));}
-
-// map length from external to local coordinates
-double minilayer::len_e2l(double l)
-   {return(l*WARP_E2L.getscale());}
-
-// map length from local to external coordinates
-double minilayer::len_l2e(double l)
-   {return(l*WARP_L2E.getscale());}
-
-// map length from local to internal coordinates
-double minilayer::len_l2i(double l)
-   {return(l*WARP_L2I.getscale());}
-
-// map length from internal to local coordinates
-double minilayer::len_i2l(double l)
-   {return(l*WARP_I2L.getscale());}
-
-// map length from external to internal coordinates
-double minilayer::len_e2i(double l)
-   {return(l*WARP_E2I.getscale());}
-
-// map length from internal to external coordinates
-double minilayer::len_i2e(double l)
-   {return(l*WARP_I2E.getscale());}

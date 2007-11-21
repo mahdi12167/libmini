@@ -37,13 +37,13 @@ class minilayer
 
       // auto-set parameters during rendering:
 
-      miniv3d eye;  // eye point
-      miniv3d dir;  // viewing direction
-      miniv3d up;   // up vector
+      minicoord eye; // eye point
+      miniv3d dir;   // viewing direction
+      miniv3d up;    // up vector
 
-      float aspect; //  aspect ratio
+      float aspect;  //  aspect ratio
 
-      double time;  // local time
+      double time;   // local time
 
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
@@ -191,22 +191,22 @@ class minilayer
    miniv3d getextent();
 
    //! get center of tileset
-   miniv3d getcenter();
+   minicoord getcenter();
 
    //! get the elevation at position (x,y,z)
-   double getheight(const miniv3d &p);
+   double getheight(const minicoord &p);
 
    //! get initial view point
-   miniv3d getinitial();
+   minicoord getinitial();
 
    //! set initial eye point
-   void initeyepoint(const miniv3d &e);
+   void initeyepoint(const minicoord &e);
 
    //! trigger complete render buffer update at next frame
    void update();
 
    //! generate and cache scene for a particular eye point
-   void cache(const miniv3d &e,const miniv3d &d,const miniv3d &u,float aspect,
+   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,
               double time);
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
@@ -215,59 +215,31 @@ class minilayer
    //! render waypoints
    void renderpoints();
 
-   //! map point from external to local coordinates
-   miniv3d map_e2l(const miniv3d &p);
+   // coordinate conversions (e=external, l=local, i=internal):
 
-   //! map point from local to external coordinates
-   miniv3d map_l2e(const miniv3d &p);
+   //! map coordinates
+   minicoord map_e2l(const minicoord &p) {return(WARP_E2L.warp(p));}
+   minicoord map_l2e(const minicoord &p) {return(WARP_L2E.warp(p));}
+   minicoord map_l2i(const minicoord &p) {return(WARP_L2I.warp(p));}
+   minicoord map_i2l(const minicoord &p) {return(WARP_I2L.warp(p));}
+   minicoord map_e2i(const minicoord &p) {return(WARP_E2I.warp(p));}
+   minicoord map_i2e(const minicoord &p) {return(WARP_I2E.warp(p));}
 
-   //! map point from local to internal coordinates
-   miniv3d map_l2i(const miniv3d &p);
-
-   //! map point from internal to local coordinates
-   miniv3d map_i2l(const miniv3d &p);
-
-   //! map point from external to internal coordinates
-   miniv3d map_e2i(const miniv3d &p);
-
-   //! map point from internal to external coordinates
-   miniv3d map_i2e(const miniv3d &p);
-
-   //! rotate vector from external to local coordinates
-   miniv3d rot_e2l(const miniv3d &v);
-
-   //! rotate vector from local to external coordinates
-   miniv3d rot_l2e(const miniv3d &v);
-
-   //! rotate vector from local to internal coordinates
-   miniv3d rot_l2i(const miniv3d &v);
-
-   //! rotate vector from internal to local coordinates
-   miniv3d rot_i2l(const miniv3d &v);
-
-   //! rotate vector from external to internal coordinates
-   miniv3d rot_e2i(const miniv3d &v);
-
-   //! rotate vector from internal to external coordinates
-   miniv3d rot_i2e(const miniv3d &v);
+   //! rotate vector
+   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return(WARP_E2L.invtra(v,p));}
+   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return(WARP_L2E.invtra(v,p));}
+   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return(WARP_L2I.invtra(v,p));}
+   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return(WARP_I2L.invtra(v,p));}
+   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return(WARP_E2I.invtra(v,p));}
+   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return(WARP_I2E.invtra(v,p));}
 
    //! map length from external to local coordinates
-   double len_e2l(double l);
-
-   //! map length from local to external coordinates
-   double len_l2e(double l);
-
-   //! map length from local to internal coordinates
-   double len_l2i(double l);
-
-   //! map length from internal to local coordinates
-   double len_i2l(double l);
-
-   //! map length from external to internal coordinates
-   double len_e2i(double l);
-
-   //! map length from internal to external coordinates
-   double len_i2e(double l);
+   double len_e2l(double l) {return(l*WARP_E2L.getscale());}
+   double len_l2e(double l) {return(l*WARP_L2E.getscale());}
+   double len_l2i(double l) {return(l*WARP_L2I.getscale());}
+   double len_i2l(double l) {return(l*WARP_I2L.getscale());}
+   double len_e2i(double l) {return(l*WARP_E2I.getscale());}
+   double len_i2e(double l) {return(l*WARP_I2E.getscale());}
 
    protected:
 

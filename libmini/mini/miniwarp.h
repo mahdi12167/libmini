@@ -194,25 +194,26 @@ class miniwarp
    //! get actual scaling factor
    double getscale();
 
-   //! get data coordinate system
-   minicoord::MINICOORD getsys();
+   //! get global coordinate system
+   minicoord::MINICOORD getglb();
 
-   //! get utm zone
+   //! get data coordinate system
+   minicoord::MINICOORD getdat();
+
+   //! get utm zone of data
    int getutmzone();
 
-   //! get utm datum
+   //! get utm datum of data
    int getutmdatum();
 
    //! perform warp of a point
-   minicoord warp(const miniv3d &p); // fourth component is assumed to be 1
-   minicoord warp(const miniv4d &p); // fourth component is conserved
+   minicoord warp(const miniv4d &p); // fourth component is time
 
    //! perform warp of a coordinate
-   minicoord warp(const minicoord &c); // fourth component is conserved
+   minicoord warp(const minicoord &c);
 
-   //! perform warp of a vector using the inverse transpose
-   miniv3d invtra(const miniv3d &v); // fourth component is assumed to be 1
-   miniv4d invtra(const miniv4d &v); // fourth component is conserved
+   //! perform warp of a vector v at position p using the inverse transpose
+   miniv3d invtra(const miniv3d &v,const minicoord &p);
 
    protected:
 

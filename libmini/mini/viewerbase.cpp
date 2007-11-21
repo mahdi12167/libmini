@@ -477,28 +477,28 @@ miniv3d viewerbase::getextent()
    }
 
 // get center of tileset
-miniv3d viewerbase::getcenter()
+minicoord viewerbase::getcenter()
    {
    if (LAYER==NULL) ERRORMSG();
    return(LAYER->getcenter());
    }
 
 // get the elevation at position (x,y,z)
-double viewerbase::getheight(const miniv3d &p)
+double viewerbase::getheight(const minicoord &p)
    {
    if (LAYER==NULL) ERRORMSG();
    return(LAYER->getheight(p));
    }
 
 // get initial view point
-miniv3d viewerbase::getinitial()
+minicoord viewerbase::getinitial()
    {
    if (LAYER==NULL) ERRORMSG();
    return(LAYER->getinitial());
    }
 
 // set initial eye point
-void viewerbase::initeyepoint(const miniv3d &e)
+void viewerbase::initeyepoint(const minicoord &e)
    {
    if (LAYER==NULL) ERRORMSG();
    LAYER->initeyepoint(e);
@@ -519,7 +519,7 @@ void viewerbase::update()
    }
 
 // generate and cache scene for a particular eye point
-void viewerbase::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u)
+void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u)
    {
    if (LAYER==NULL) ERRORMSG();
 
@@ -531,7 +531,7 @@ void viewerbase::cache(const miniv3d &e,const miniv3d &d,const miniv3d &u)
 // render cached scene
 void viewerbase::render()
    {
-   miniv3d ei;
+   minicoord ei;
 
    minilayer::MINILAYER_PARAMS lparams;
 
@@ -575,7 +575,7 @@ void viewerbase::render()
    // draw skydome
    if (PARAMS.useskydome)
       {
-      skydome.setpos(ei.x,ei.y,ei.z,
+      skydome.setpos(ei.vec.x,ei.vec.y,ei.vec.z,
                      1.9*len_e2i(PARAMS.farp));
 
       skydome.drawskydome();
@@ -660,22 +660,30 @@ void viewerbase::postseacb(void *data)
 // pre sea render function
 void viewerbase::render_presea()
    {
+   minicoord ei;
+
    minilayer::MINILAYER_PARAMS lparams;
 
    LAYER->get(lparams);
 
-   if (lparams.eye.z<lparams.sealevel)
+   ei=map_e2l(lparams.eye);
+
+   if (ei.vec.z<lparams.sealevel)
       LAYER->renderpoints(); // render waypoints before sea surface
    }
 
 // post sea render function
 void viewerbase::render_postsea()
    {
+   minicoord ei;
+
    minilayer::MINILAYER_PARAMS lparams;
 
    LAYER->get(lparams);
 
-   if (lparams.eye.z>=lparams.sealevel)
+   ei=map_e2l(lparams.eye);
+
+   if (ei.vec.z>=lparams.sealevel)
       LAYER->renderpoints(); // render waypoints after sea surface
    }
 
@@ -703,145 +711,20 @@ void viewerbase::flatten(float relscale)
    }
 
 // shoot a ray at the scene
-double viewerbase::shoot(const miniv3d &o,const miniv3d &d)
+double viewerbase::shoot(const minicoord &o,const miniv3d &d)
    {
    double dist;
-   miniv3d oi,di;
+   minicoord oi;
+   miniv3d di;
 
    // transform coordinates
    oi=map_e2i(o);
-   di=rot_e2i(d);
+   di=rot_e2i(d,o);
 
    // shoot a ray and get the traveled distance
-   dist=CACHE->getray()->shoot(oi,di);
+   dist=CACHE->getray()->shoot(oi.vec,di);
 
    if (dist!=MAXFLOAT) dist=len_i2e(dist);
 
    return(dist);
-   }
-
-// map point from external to local coordinates
-miniv3d viewerbase::map_e2l(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_e2l(p));
-   }
-
-// map point from local to external coordinates
-miniv3d viewerbase::map_l2e(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_l2e(p));
-   }
-
-// map point from local to internal coordinates
-miniv3d viewerbase::map_l2i(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_l2i(p));
-   }
-
-// map point from internal to local coordinates
-miniv3d viewerbase::map_i2l(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_i2l(p));
-   }
-
-// map point from external to internal coordinates
-miniv3d viewerbase::map_e2i(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_e2i(p));
-   }
-
-// map point from internal to external coordinates
-miniv3d viewerbase::map_i2e(const miniv3d &p)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->map_i2e(p));
-   }
-
-// rotate vector from external to local coordinates
-miniv3d viewerbase::rot_e2l(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_e2l(v));
-   }
-
-// rotate vector from local to external coordinates
-miniv3d viewerbase::rot_l2e(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_l2e(v));
-   }
-
-// rotate vector from local to internal coordinates
-miniv3d viewerbase::rot_l2i(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_l2i(v));
-   }
-
-// rotate vector from internal to local coordinates
-miniv3d viewerbase::rot_i2l(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_i2l(v));
-   }
-
-// rotate vector from external to internal coordinates
-miniv3d viewerbase::rot_e2i(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_e2i(v));
-   }
-
-// rotate vector from internal to external coordinates
-miniv3d viewerbase::rot_i2e(const miniv3d &v)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->rot_i2e(v));
-   }
-
-// map length from external to local coordinates
-double viewerbase::len_e2l(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_e2l(l));
-   }
-
-// map length from local to external coordinates
-double viewerbase::len_l2e(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_l2e(l));
-   }
-
-// map length from local to internal coordinates
-double viewerbase::len_l2i(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_l2i(l));
-   }
-
-// map length from internal to local coordinates
-double viewerbase::len_i2l(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_i2l(l));
-   }
-
-// map length from external to internal coordinates
-double viewerbase::len_e2i(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_e2i(l));
-   }
-
-// map length from internal to external coordinates
-double viewerbase::len_i2e(double l)
-   {
-   if (LAYER==NULL) ERRORMSG();
-   return(LAYER->len_i2e(l));
    }

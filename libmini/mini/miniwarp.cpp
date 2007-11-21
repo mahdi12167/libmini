@@ -241,7 +241,7 @@ miniwarp::miniwarp()
    {
    SYSGLB=minicoord::MINICOORD_ECEF;
 
-   BBOXDAT[0]=BBOXDAT[1]=minicoord(miniv3d(0.0),minicoord::MINICOORD_NONE);
+   BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
    SYSDAT=minicoord::MINICOORD_NONE;
    UTMZONE=UTMDATUM=0;
@@ -383,24 +383,20 @@ double miniwarp::getscale()
    {return(SCALE);}
 
 // get data coordinate system
-minicoord::MINICOORD miniwarp::getsys()
+minicoord::MINICOORD miniwarp::getdat()
    {return(SYSDAT);}
 
-// get utm zone
+// get global coordinate system
+minicoord::MINICOORD miniwarp::getglb()
+   {return(SYSGLB);}
+
+// get utm zone of data
 int miniwarp::getutmzone()
    {return(UTMZONE);}
 
-// get utm datum
+// get utm datum of data
 int miniwarp::getutmdatum()
    {return(UTMDATUM);}
-
-// perform warp of a point
-minicoord miniwarp::warp(const miniv3d &p)
-   {
-   if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,UTMZONE,UTMDATUM)));
-   if (FROM==MINIWARP_GLOBAL) return(warp(minicoord(p,SYSGLB)));
-   else return(warp(minicoord(p,minicoord::MINICOORD_LINEAR)));
-   }
 
 // perform warp of a point
 minicoord miniwarp::warp(const miniv4d &p)
@@ -475,18 +471,27 @@ minicoord miniwarp::warp(const minicoord &c)
    return(c2);
    }
 
-// perform warp of a vector
-miniv3d miniwarp::invtra(const miniv3d &v)
+// perform warp of a vector v at position p using the inverse transpose
+miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    {
-   miniv4d v1=miniv4d(v,1.0);
-   return(miniv3d(INVTRA[0]*v1,INVTRA[1]*v1,INVTRA[2]*v1)*SCALE);
-   }
+   minicoord p1,p2;
+   miniv3d v2;
 
-// perform warp of a vector
-miniv4d miniwarp::invtra(const miniv4d &v)
-   {
-   miniv4d v1=miniv4d(v,1.0);
-   return(miniv4d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE,v.w));
+   if (FROM!=MINIWARP_GLOBAL && TO!=MINIWARP_GLOBAL)
+      {
+      miniv4d v1=miniv4d(v,1.0);
+      return(miniv4d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
+      }
+   else
+      {
+      p1=warp(p);
+      p2=warp(minicoord(miniv3d(p.vec)+v,p.type,p.utm_zone,p.utm_datum));
+
+      v2=p2.vec-p1.vec;
+      v2.normalize();
+
+      return(v2);
+      }
    }
 
 // update conversion matrices
