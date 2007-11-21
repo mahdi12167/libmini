@@ -35,16 +35,16 @@ class miniutm
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
-                        double *xyz); // output ECEF coordinates
+                        double xyz[3]); // output ECEF coordinates
 
    static void LLH2ECEF(double lat,double lon,double h,
-                        float *xyz);
+                        float xyz[3]);
 
    //! transform ECEF to Lat/Lon/H
-   static void ECEF2LLH(double *xyz, // input ECEF coordinates
+   static void ECEF2LLH(double xyz[3], // input ECEF coordinates
                         double *lat,double *lon,double *h); // geographic output coordinates in arc-seconds (WGS84 datum)
 
-   static void ECEF2LLH(float *xyz,
+   static void ECEF2LLH(float xyz[3],
                         float *lat,float *lon,float *h);
 
    //! 1 arc-second equals about 30 meters
@@ -59,8 +59,8 @@ class miniutm
    static void calcUTM2LL(double x,double y,double *lat,double *lon);
 
    // ECEF conversion functions
-   static void calcLLH2ECEF(double lat,double lon,double h,double *xyz);
-   static void calcECEF2LLH(double *xyz,double *lat,double *lon,double *h);
+   static void calcLLH2ECEF(double lat,double lon,double h,double xyz[3]);
+   static void calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h);
 
    // Molodensky transformation between two datums
    static void molodensky(int src,int dst,double *lat,double *lon);

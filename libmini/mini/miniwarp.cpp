@@ -239,7 +239,7 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
-   SYSGLB=minicoord::MINICOORD_LINEAR;
+   SYSGLB=minicoord::MINICOORD_ECEF;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 

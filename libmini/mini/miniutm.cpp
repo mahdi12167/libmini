@@ -8,7 +8,7 @@ double miniutm::EARTH_radius=6370997.0; // radius of the earth
 
 double miniutm::WGS84_r_major=6378137.0; // WGS84 semi-major axis
 double miniutm::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
-double miniutm::WGS84_f=(WGS84_r_major-WGS84_r_minor)/WGS84_r_major; // WGS84 flattening
+double miniutm::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
 double miniutm::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
 double miniutm::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
 
@@ -208,11 +208,11 @@ void miniutm::UTM2LL(double x,double y,
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
 void miniutm::LLH2ECEF(double lat,double lon,double h,
-                       double *xyz)
+                       double xyz[3])
    {calcLLH2ECEF(lat,lon,h,xyz);}
 
 void miniutm::LLH2ECEF(double lat,double lon,double h,
-                       float *xyz)
+                       float xyz[3])
    {
    double txyz[3];
 
@@ -228,11 +228,11 @@ void miniutm::LLH2ECEF(double lat,double lon,double h,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void miniutm::ECEF2LLH(double *xyz,
+void miniutm::ECEF2LLH(double xyz[3],
                        double *lat,double *lon,double *h)
    {calcECEF2LLH(xyz,lat,lon,h);}
 
-void miniutm::ECEF2LLH(float *xyz,
+void miniutm::ECEF2LLH(float xyz[3],
                        float *lat,float *lon,float *h)
    {
    double txyz[3];
@@ -250,7 +250,7 @@ void miniutm::ECEF2LLH(float *xyz,
    }
 
 // calculate the ECEF equations
-void miniutm::calcLLH2ECEF(double lat,double lon,double h,double *xyz)
+void miniutm::calcLLH2ECEF(double lat,double lon,double h,double xyz[3])
    {
    double slat,clat,slon,clon; // sine and cosine values
    double r;                   // radius in prime vertical
@@ -271,7 +271,7 @@ void miniutm::calcLLH2ECEF(double lat,double lon,double h,double *xyz)
    }
 
 // calculate the inverse ECEF equations
-void miniutm::calcECEF2LLH(double *xyz,double *lat,double *lon,double *h)
+void miniutm::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    {
    double sth,cth,slat,clat; // sine and cosine values
    double p,th;              // temporary variables
@@ -284,7 +284,7 @@ void miniutm::calcECEF2LLH(double *xyz,double *lat,double *lon,double *h)
    cth=cos(th);
 
    // transformed latitude
-   *lat=atan(xyz[2]+WGS84_ed2*WGS84_r_minor*sth*sth*sth)/(p-WGS84_e2*WGS84_r_major*cth*cth*cth);
+   *lat=atan((xyz[2]+WGS84_ed2*WGS84_r_minor*sth*sth*sth)/(p-WGS84_e2*WGS84_r_major*cth*cth*cth));
 
    // transformed longitude
    *lon=atan2(xyz[1],xyz[0]);
