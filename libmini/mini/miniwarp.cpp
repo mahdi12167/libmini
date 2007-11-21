@@ -257,7 +257,6 @@ miniwarp::miniwarp()
 
    HAS_DATA=FALSE;
 
-   MTX_2MET[0]=MTX_2MET[1]=MTX_2MET[2]=miniv4d(0.0);
    MTX_2PLN[0]=MTX_2PLN[1]=MTX_2PLN[2]=miniv4d(0.0);
    MTX_2CNT[0]=MTX_2CNT[1]=MTX_2CNT[2]=miniv4d(0.0);
    MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
@@ -267,7 +266,6 @@ miniwarp::miniwarp()
    MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
    MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
 
-   INV_2MET[0]=INV_2MET[1]=INV_2MET[2]=miniv4d(0.0);
    INV_2PLN[0]=INV_2PLN[1]=INV_2PLN[2]=miniv4d(0.0);
    INV_2CNT[0]=INV_2CNT[1]=INV_2CNT[2]=miniv4d(0.0);
    INV_2DAT[0]=INV_2DAT[1]=INV_2DAT[2]=miniv4d(0.0);
@@ -276,6 +274,9 @@ miniwarp::miniwarp()
    INV_2AFF[0]=INV_2AFF[1]=INV_2AFF[2]=miniv4d(0.0);
    INV_2TIL[0]=INV_2TIL[1]=INV_2TIL[2]=miniv4d(0.0);
    INV_2WRP[0]=INV_2WRP[1]=INV_2WRP[2]=miniv4d(0.0);
+
+   MTX_MET2DAT[0]=MTX_MET2DAT[1]=MTX_MET2DAT[2]=miniv4d(0.0);
+   MTX_DAT2MET[0]=MTX_DAT2MET[1]=MTX_DAT2MET[2]=miniv4d(0.0);
 
    FROM=TO=MINIWARP_PLAIN;
 
@@ -296,6 +297,7 @@ miniwarp::~miniwarp() {}
 // define global coordinates
 void miniwarp::def_global(const minicoord::MINICOORD sysGLB)
    {
+   if (sysGLB==minicoord::MINICOORD_LLH) ERRORMSG();
    if (sysGLB==minicoord::MINICOORD_UTM) ERRORMSG();
 
    SYSGLB=sysGLB;
@@ -429,9 +431,8 @@ minicoord miniwarp::warp(const minicoord &c)
          {
          c1=c;
          c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
-
          v1=miniv4d(c1.vec,1.0);
-         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c1.vec.w),minicoord::MINICOORD_LINEAR);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else if (FROM==MINIWARP_GLOBAL)
       if (TO==MINIWARP_GLOBAL)
@@ -448,16 +449,16 @@ minicoord miniwarp::warp(const minicoord &c)
          {
          c1=c;
          c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
-
          v1=miniv4d(c1.vec,1.0);
-         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c1.vec.w),minicoord::MINICOORD_LINEAR);
+         v1=miniv4d(MTX_DAT2MET[0]*v1,MTX_DAT2MET[1]*v1,MTX_DAT2MET[2]*v1,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else
       if (TO==MINIWARP_GLOBAL)
          {
          v1=miniv4d(c.vec,1.0);
-         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),SYSDAT,UTMZONE,UTMDATUM);
-
+         v1=miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,1.0);
+         c2=minicoord(miniv4d(MTX_MET2DAT[0]*v1,MTX_MET2DAT[1]*v1,MTX_MET2DAT[2]*v1,c.vec.w),SYSDAT,UTMZONE,UTMDATUM);
          c2.convert2(SYSGLB);
          }
       else if (TO==MINIWARP_DATA)
@@ -547,7 +548,7 @@ void miniwarp::update_mtx()
 
       inv_mtx(INV_2WRP,MTX_2WRP);
 
-      // conversion 2 external coordinates:
+      // conversion 2 metric coordinates:
 
       if (SYSDAT==minicoord::MINICOORD_LLH)
          {
@@ -569,18 +570,8 @@ void miniwarp::update_mtx()
           SYSDAT==minicoord::MINICOORD_LINEAR)
          SYSGLB=minicoord::MINICOORD_LINEAR;
 
-      if (SYSGLB==minicoord::MINICOORD_ECEF ||
-          SYSGLB==minicoord::MINICOORD_LLH)
-         mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
-      else if (SYSGLB==minicoord::MINICOORD_LINEAR)
-         {
-         MTX_2MET[0]=miniv4d(1.0,0.0,0.0);
-         MTX_2MET[1]=miniv4d(0.0,1.0,0.0);
-         MTX_2MET[2]=miniv4d(0.0,0.0,1.0);
-         }
-      else ERRORMSG();
-
-      inv_mtx(INV_2MET,MTX_2MET);
+      mlt_mtx(MTX_MET2DAT,MTX_2DAT,MTX_2CNT,MTX_2PLN);
+      mlt_mtx(MTX_DAT2MET,INV_2PLN,INV_2CNT,INV_2DAT);
       }
    }
 
@@ -599,7 +590,6 @@ void miniwarp::update_wrp()
       for (i=FROM+1; i<=TO; i++)
          switch (i)
             {
-            case MINIWARP_METRIC: mlt_mtx(MTX,MTX_2MET,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,MTX_2PLN,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,MTX_2CNT,MTX); break;
             case MINIWARP_DATA: mlt_mtx(MTX,MTX_2DAT,MTX); break;
@@ -622,7 +612,6 @@ void miniwarp::update_wrp()
             case MINIWARP_CENTER: mlt_mtx(MTX,INV_2DAT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,INV_2CNT,MTX); break;
             case MINIWARP_METRIC: mlt_mtx(MTX,INV_2PLN,MTX); break;
-            case MINIWARP_GLOBAL: mlt_mtx(MTX,INV_2MET,MTX); break;
             }
    }
 

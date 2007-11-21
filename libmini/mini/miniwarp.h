@@ -231,7 +231,6 @@ class miniwarp
 
    BOOLINT HAS_DATA;
 
-   miniv4d MTX_2MET[3];
    miniv4d MTX_2PLN[3];
    miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];
@@ -241,7 +240,6 @@ class miniwarp
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
-   miniv4d INV_2MET[3];
    miniv4d INV_2PLN[3];
    miniv4d INV_2CNT[3];
    miniv4d INV_2DAT[3];
@@ -250,6 +248,9 @@ class miniwarp
    miniv4d INV_2AFF[3];
    miniv4d INV_2TIL[3];
    miniv4d INV_2WRP[3];
+
+   miniv4d MTX_MET2DAT[3];
+   miniv4d MTX_DAT2MET[3];
 
    MINIWARP FROM,TO;
 
