@@ -150,7 +150,7 @@ class miniwarp
    enum MINIWARP
       {
       MINIWARP_GLOBAL=0,   // global coordinates
-      MINIWARP_EXTERNAL=1, // external coordinates
+      MINIWARP_METRIC=1,   // metric coordinates
       MINIWARP_PLAIN=2,    // plain coordinates
       MINIWARP_CENTER=3,   // center coordinates
       MINIWARP_DATA=4,     // data coordinates
@@ -231,7 +231,7 @@ class miniwarp
 
    BOOLINT HAS_DATA;
 
-   miniv4d MTX_2EXT[3];
+   miniv4d MTX_2MET[3];
    miniv4d MTX_2PLN[3];
    miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];
@@ -241,7 +241,7 @@ class miniwarp
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
-   miniv4d INV_2EXT[3];
+   miniv4d INV_2MET[3];
    miniv4d INV_2PLN[3];
    miniv4d INV_2CNT[3];
    miniv4d INV_2DAT[3];

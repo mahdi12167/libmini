@@ -584,10 +584,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    // create warp object for each exposed coordinate transformation:
 
    WARP_E2L=*WARP;
-   WARP_E2L.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_LOCAL);
+   WARP_E2L.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_LOCAL);
 
    WARP_L2E=*WARP;
-   WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_EXTERNAL);
+   WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_METRIC);
 
    WARP_L2I=*WARP;
    WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
@@ -596,10 +596,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
 
    WARP_E2I=*WARP;
-   WARP_E2I.setwarp(miniwarp::MINIWARP_EXTERNAL,miniwarp::MINIWARP_INTERNAL);
+   WARP_E2I.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_INTERNAL);
 
    WARP_I2E=*WARP;
-   WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_EXTERNAL);
+   WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_METRIC);
    }
 
 // get extent of tileset
