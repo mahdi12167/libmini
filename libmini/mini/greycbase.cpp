@@ -20,6 +20,9 @@ using namespace cimg_library;
 void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
                        float p,float a)
    {
+   if (image==NULL || width<1 || height<1 || components<1) return;
+   if (p<0.0f || a<0.0f) return;
+
 #ifdef GREYCSTORATION
 
    const float amplitude      = 40.0f;

@@ -32,7 +32,8 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
 
    if (isrgbadata==0)
       {
-      if (bytes!=3*width*height) ERRORMSG();
+      if (width<1 || height<1) ERRORMSG();
+      if (bytes!=(unsigned int)3*width*height) ERRORMSG();
 
       rgbadata=(unsigned char *)malloc(4*width*height);
       if (rgbadata==NULL) ERRORMSG();
@@ -48,7 +49,10 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
       rawdata=rgbadata;
       }
    else
-      if (bytes!=4*width*height) ERRORMSG();
+      {
+      if (width<1 || height<1) ERRORMSG();
+      if (bytes!=(unsigned int)4*width*height) ERRORMSG();
+      }
 
    *s3tcbytes=squish::GetStorageRequirements(width,height,mode);
    *s3tcdata=(unsigned char *)malloc(*s3tcbytes);

@@ -303,17 +303,25 @@ void viewerbase::set(VIEWER_PARAMS &params)
 
 // http receiver
 void viewerbase::receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
-   {curlbase::getURL(src_url,src_id,src_file,dst_file,background);}
+   {
+   if (data!=NULL) ERRORMSG();
+   curlbase::getURL(src_url,src_id,src_file,dst_file,background);
+   }
 
 // http checker
 int viewerbase::check_callback(char *src_url,char *src_id,char *src_file,void *data)
-   {return(curlbase::checkURL(src_url,src_id,src_file));}
+   {
+   if (data!=NULL) ERRORMSG();
+   return(curlbase::checkURL(src_url,src_id,src_file));
+   }
 
 // S3TC auto-compression hook
 void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                               unsigned char **s3tcdata,unsigned int *s3tcbytes,
                               databuf *obj,void *data)
    {
+   if (data!=NULL) ERRORMSG();
+
    squishbase::compressS3TC(isrgbadata,rawdata,bytes,
                             s3tcdata,s3tcbytes,obj->xsize,obj->ysize);
    }
@@ -394,6 +402,9 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 
    // create the tileset layer
    LAYER=new minilayer(1,CACHE);
+
+   // propagate parameters
+   propagate();
 
    // register callbacks
    LAYER->setcallbacks(NULL,

@@ -40,7 +40,8 @@ void my_skip_input_data(j_decompress_ptr cinfo,long num_bytes)
    src->pub.bytes_in_buffer-=(size_t)num_bytes;
    }
 
-void my_term_source(j_decompress_ptr cinfo) {}
+void my_term_source(j_decompress_ptr cinfo)
+   {if (cinfo==NULL) ERRORMSG();}
 
 void jpeg_mem_src(j_decompress_ptr cinfo,unsigned char *data,unsigned int bytes)
    {
