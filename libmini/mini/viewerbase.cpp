@@ -514,7 +514,7 @@ void viewerbase::setwinsize(int width,int height)
 // trigger complete render buffer update at next frame
 void viewerbase::update()
    {
-   if (LAYER==NULL) ERRORMSG();
+   if (LAYER==NULL) return;
    LAYER->update();
    }
 

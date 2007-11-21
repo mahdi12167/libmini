@@ -613,16 +613,17 @@ minicoord minilayer::getcenter()
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p)
    {
+   float elev;
    minicoord pi;
 
    if (!LOADED) return(-MAXFLOAT);
 
    pi=map_e2i(p);
 
-   pi.vec.y=TERRAIN->getheight(pi.vec.x,pi.vec.z);
-   if (pi.vec.y==-MAXFLOAT) return(pi.vec.y);
+   elev=TERRAIN->getheight(pi.vec.x,pi.vec.z);
+   if (elev==-MAXFLOAT) return(elev);
 
-   return(len_i2e(pi.vec.z));
+   return(len_i2e(elev));
    }
 
 // get initial view point

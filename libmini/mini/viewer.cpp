@@ -617,6 +617,9 @@ void renderinfo()
 // render head-up display
 void renderhud()
    {
+   minicoord eye_llh;
+   miniv3d de;
+
    double elev,sea;
 
    double dist;
@@ -651,6 +654,9 @@ void renderhud()
 
       glTranslatef(0.033f,0.0f,0.0f);
 
+      eye_llh=eye;
+      if (eye_llh.type==minicoord::MINICOORD_ECEF) eye_llh.convert2(minicoord::MINICOORD_LLH);
+
       elev=viewer->getheight(eye);
       if (elev==-MAXFLOAT) elev=0.0f;
 
@@ -658,7 +664,7 @@ void renderhud()
       if (sea==-MAXFLOAT) sea=0.0f;
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
-               eye.vec.x,eye.vec.y,eye.vec.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
+               eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
                params->farp,params->res,params->range*params->farp,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -697,11 +703,12 @@ void renderhud()
 
          if (sw_cross!=0)
             {
-            dist=viewer->shoot(eye,dir);
+            de=viewer->rot_l2e(dir,viewer->map_e2l(eye));
+            dist=viewer->shoot(eye,de);
 
             if (dist!=MAXFLOAT)
                {
-               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(eye+dir*dist));
+               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(eye+de*dist));
 
                glTranslatef(0.05f,0.0f,0.0f);
                minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -820,7 +827,7 @@ void displayfunc()
    gluLookAt(ei.vec.x,ei.vec.y,ei.vec.z,ei.vec.x+di.x,ei.vec.y+di.y,ei.vec.z+di.z,ui.x,ui.y,ui.z);
 
    // update vertex arrays
-   viewer->cache(eye,dir,up);
+   viewer->cache(eye,viewer->rot_l2e(dir,el),viewer->rot_l2e(up,el));
 
    // render scene
    if (sw_stereo==0) viewer->render(); // render vertex arrays
