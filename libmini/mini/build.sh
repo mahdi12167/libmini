@@ -30,11 +30,11 @@ endif
 set wall=""
 if ($rule == "wall") then
    set rule="lib"
-   set wall=" -Wall"
+   set wall=" -W -Wall"
 endif
 
 set option=$2
-if ($option == "wall") set wall=" -Wall"
+if ($option == "wall") set wall=" -W -Wall"
 
 set depend="depend"
 if ($rule == "vdeps") then
