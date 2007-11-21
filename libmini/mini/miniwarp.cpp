@@ -239,6 +239,8 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
+   SYSGLB=minicoord::MINICOORD_ECEF;
+
    BBOXDAT[0]=BBOXDAT[1]=minicoord(miniv3d(0.0),minicoord::MINICOORD_NONE);
 
    SYSDAT=minicoord::MINICOORD_NONE;
@@ -255,6 +257,7 @@ miniwarp::miniwarp()
 
    HAS_DATA=FALSE;
 
+   MTX_2EXT[0]=MTX_2EXT[1]=MTX_2EXT[2]=miniv4d(0.0);
    MTX_2PLN[0]=MTX_2PLN[1]=MTX_2PLN[2]=miniv4d(0.0);
    MTX_2CNT[0]=MTX_2CNT[1]=MTX_2CNT[2]=miniv4d(0.0);
    MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
@@ -264,6 +267,7 @@ miniwarp::miniwarp()
    MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
    MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
 
+   INV_2EXT[0]=INV_2EXT[1]=INV_2EXT[2]=miniv4d(0.0);
    INV_2PLN[0]=INV_2PLN[1]=INV_2PLN[2]=miniv4d(0.0);
    INV_2CNT[0]=INV_2CNT[1]=INV_2CNT[2]=miniv4d(0.0);
    INV_2DAT[0]=INV_2DAT[1]=INV_2DAT[2]=miniv4d(0.0);
@@ -288,6 +292,16 @@ miniwarp::miniwarp()
 
 // destructor
 miniwarp::~miniwarp() {}
+
+// define global coordinates
+void miniwarp::def_global(const minicoord::MINICOORD sysGLB)
+   {
+   if (sysGLB==minicoord::MINICOORD_UTM) ERRORMSG();
+
+   SYSGLB=sysGLB;
+
+   update_mtx();
+   }
 
 // define data coordinates
 void miniwarp::def_data(const minicoord bboxDAT[2])
@@ -381,30 +395,83 @@ int miniwarp::getutmdatum()
 // perform warp of a point
 minicoord miniwarp::warp(const miniv3d &p)
    {
-   miniv4d v1=miniv4d(p,1.0);
-   if (TO==MINIWARP_DATA) return(minicoord(miniv3d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1),SYSDAT,UTMZONE,UTMDATUM));
-   else return(minicoord(miniv3d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1),minicoord::MINICOORD_LINEAR));
+   if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,UTMZONE,UTMDATUM)));
+   if (FROM==MINIWARP_GLOBAL) return(warp(minicoord(p,SYSGLB)));
+   else return(warp(minicoord(p,minicoord::MINICOORD_LINEAR)));
    }
 
 // perform warp of a point
 minicoord miniwarp::warp(const miniv4d &p)
    {
-   miniv4d v1=miniv4d(p,1.0);
-   if (TO==MINIWARP_DATA) return(minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.w),SYSDAT,UTMZONE,UTMDATUM));
-   else return(minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.w),minicoord::MINICOORD_LINEAR));
+   if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,UTMZONE,UTMDATUM)));
+   if (FROM==MINIWARP_GLOBAL) return(warp(minicoord(p,SYSGLB)));
+   else return(warp(minicoord(p,minicoord::MINICOORD_LINEAR)));
    }
 
 // perform warp of a coordinate
 minicoord miniwarp::warp(const minicoord &c)
    {
    miniv4d v1;
-   minicoord cc=c;
+   minicoord c1,c2;
 
-   if (FROM==MINIWARP_DATA) cc.convert2(SYSDAT,UTMZONE,UTMDATUM);
-   v1=miniv4d(cc.vec,1.0);
+   if (FROM==MINIWARP_DATA)
+      if (TO==MINIWARP_GLOBAL)
+         {
+         c2=c;
+         c2.convert2(SYSGLB);
+         }
+      else if (TO==MINIWARP_DATA)
+         {
+         c2=c;
+         c2.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         }
+      else
+         {
+         c1=c;
+         c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
 
-   if (TO==MINIWARP_DATA) return(minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,cc.vec.w),SYSDAT,UTMZONE,UTMDATUM));
-   else return(minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,cc.vec.w),minicoord::MINICOORD_LINEAR));
+         v1=miniv4d(c1.vec,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c1.vec.w),minicoord::MINICOORD_LINEAR);
+         }
+   else if (FROM==MINIWARP_GLOBAL)
+      if (TO==MINIWARP_GLOBAL)
+         {
+         c2=c;
+         c2.convert2(SYSGLB);
+         }
+      else if (TO==MINIWARP_DATA)
+         {
+         c2=c;
+         c2.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         }
+      else
+         {
+         c1=c;
+         c1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+
+         v1=miniv4d(c1.vec,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c1.vec.w),minicoord::MINICOORD_LINEAR);
+         }
+   else
+      if (TO==MINIWARP_GLOBAL)
+         {
+         v1=miniv4d(c.vec,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),SYSDAT,UTMZONE,UTMDATUM);
+
+         c2.convert2(SYSGLB);
+         }
+      else if (TO==MINIWARP_DATA)
+         {
+         v1=miniv4d(c.vec,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),SYSDAT,UTMZONE,UTMDATUM);
+         }
+      else
+         {
+         v1=miniv4d(c.vec,1.0);
+         c2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,c.vec.w),minicoord::MINICOORD_LINEAR);
+         }
+
+   return(c2);
    }
 
 // perform warp of a vector
@@ -495,6 +562,25 @@ void miniwarp::update_mtx()
       else mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2PLN,MTX_2PLN);
+
+      // conversion 2 global coordinates:
+
+      if (SYSGLB!=minicoord::MINICOORD_LINEAR &&
+          SYSDAT==minicoord::MINICOORD_LINEAR)
+         SYSGLB=minicoord::MINICOORD_LINEAR;
+
+      if (SYSGLB==minicoord::MINICOORD_ECEF ||
+          SYSGLB==minicoord::MINICOORD_LLH)
+         mlt_mtx(MTX_2EXT,INV_2PLN,INV_2CNT,INV_2DAT);
+      else if (SYSGLB==minicoord::MINICOORD_LINEAR)
+         {
+         MTX_2EXT[0]=miniv4d(1.0,0.0,0.0);
+         MTX_2EXT[1]=miniv4d(0.0,1.0,0.0);
+         MTX_2EXT[2]=miniv4d(0.0,0.0,1.0);
+         }
+      else ERRORMSG();
+
+      inv_mtx(INV_2EXT,MTX_2EXT);
       }
    }
 
@@ -513,6 +599,7 @@ void miniwarp::update_wrp()
       for (i=FROM+1; i<=TO; i++)
          switch (i)
             {
+            case MINIWARP_EXTERNAL: mlt_mtx(MTX,MTX_2EXT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,MTX_2PLN,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,MTX_2CNT,MTX); break;
             case MINIWARP_DATA: mlt_mtx(MTX,MTX_2DAT,MTX); break;
@@ -535,6 +622,7 @@ void miniwarp::update_wrp()
             case MINIWARP_CENTER: mlt_mtx(MTX,INV_2DAT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,INV_2CNT,MTX); break;
             case MINIWARP_EXTERNAL: mlt_mtx(MTX,INV_2PLN,MTX); break;
+            case MINIWARP_GLOBAL: mlt_mtx(MTX,INV_2EXT,MTX); break;
             }
    }
 

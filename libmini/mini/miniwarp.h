@@ -149,15 +149,16 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_EXTERNAL=0, // external coordinates
-      MINIWARP_PLAIN=1,    // plain coordinates
-      MINIWARP_CENTER=2,   // center coordinates
-      MINIWARP_DATA=3,     // data coordinates
-      MINIWARP_LOCAL=4,    // local coordinates
-      MINIWARP_INTERNAL=5, // internal coordinates
-      MINIWARP_AFFINE=6,   // affine coordinates
-      MINIWARP_TILE=7,     // tile coordinates
-      MINIWARP_WARP=8      // warp coordinates
+      MINIWARP_GLOBAL=0,   // global coordinates
+      MINIWARP_EXTERNAL=1, // external coordinates
+      MINIWARP_PLAIN=2,    // plain coordinates
+      MINIWARP_CENTER=3,   // center coordinates
+      MINIWARP_DATA=4,     // data coordinates
+      MINIWARP_LOCAL=5,    // local coordinates
+      MINIWARP_INTERNAL=6, // internal coordinates
+      MINIWARP_AFFINE=7,   // affine coordinates
+      MINIWARP_TILE=8,     // tile coordinates
+      MINIWARP_WARP=9      // warp coordinates
       };
 
    //! default constructor
@@ -165,6 +166,9 @@ class miniwarp
 
    //! destructor
    ~miniwarp();
+
+   //! define global coordinates
+   void def_global(const minicoord::MINICOORD sysGLB);
 
    //! define data coordinates
    void def_data(const minicoord bboxDAT[2]);
@@ -212,6 +216,8 @@ class miniwarp
 
    protected:
 
+   minicoord::MINICOORD SYSGLB;
+
    minicoord BBOXDAT[2];
 
    minicoord::MINICOORD SYSDAT;
@@ -225,6 +231,7 @@ class miniwarp
 
    BOOLINT HAS_DATA;
 
+   miniv4d MTX_2EXT[3];
    miniv4d MTX_2PLN[3];
    miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];
@@ -234,6 +241,7 @@ class miniwarp
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
+   miniv4d INV_2EXT[3];
    miniv4d INV_2PLN[3];
    miniv4d INV_2CNT[3];
    miniv4d INV_2DAT[3];
