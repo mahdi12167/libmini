@@ -269,12 +269,12 @@ class viewerbase
    minicoord map_i2e(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_i2e(p));}
 
    //! rotate vector
-   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_e2l(v,p));}
-   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_l2e(v,p));}
-   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_l2i(v,p));}
-   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_i2l(v,p));}
-   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_e2i(v,p));}
-   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv4d(0.0):LAYER->rot_i2e(v,p));}
+   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_e2l(v,p));}
+   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_l2e(v,p));}
+   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_l2i(v,p));}
+   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_i2l(v,p));}
+   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_e2i(v,p));}
+   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_i2e(v,p));}
 
    //! map length from external to local coordinates
    double len_e2l(double l) {return((LAYER==NULL)?0.0:LAYER->len_e2l(l));}
