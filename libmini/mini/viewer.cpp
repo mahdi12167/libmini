@@ -813,6 +813,8 @@ void displayfunc()
    params->signpostturn=turn;
    params->signpostincline=-incline;
 
+   viewer->propagate_wp();
+
    // setup OpenGL state:
 
    glClearColor(params->fogcolor[0],params->fogcolor[1],params->fogcolor[2],1.0f);
@@ -1115,7 +1117,7 @@ int main(int argc,char *argv[])
    // create the viewer object
    viewer=new viewerbase;
 
-   // get the viewing parameters
+   // get a reference to the viewing parameters
    params=viewer->get();
 
    // process command line options

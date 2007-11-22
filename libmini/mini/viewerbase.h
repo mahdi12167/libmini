@@ -186,11 +186,14 @@ class viewerbase
    //! get parameters
    VIEWER_PARAMS *get() {return(&PARAMS);}
 
+   //! set parameters
+   void set(VIEWER_PARAMS *params) {set(*params);}
+
    //! propagate parameters
    void propagate() {set(PARAMS);}
 
-   //! set parameters
-   void set(VIEWER_PARAMS *params) {set(*params);}
+   //! propagate waypoint parameters
+   void propagate_wp();
 
    //! get the encapsulated terrain object
    miniload *getterrain() {return((LAYER==NULL)?NULL:LAYER->getterrain());}

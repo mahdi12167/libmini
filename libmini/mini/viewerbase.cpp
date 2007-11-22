@@ -268,37 +268,49 @@ void viewerbase::set(VIEWER_PARAMS &params)
       lparams.autocompress=PARAMS.autocompress;
       lparams.lod0uncompressed=PARAMS.lod0uncompressed;
 
-      // optional features:
-
-      lparams.usewaypoints=PARAMS.usewaypoints;
-      lparams.usebricks=PARAMS.usebricks;
-
-      // optional way-points:
-
-      lparams.waypoints=PARAMS.waypoints;
-
-      lparams.signpostheight=PARAMS.signpostheight;
-      lparams.signpostrange=PARAMS.signpostrange;
-
-      lparams.signpostturn=PARAMS.signpostturn;
-      lparams.signpostincline=PARAMS.signpostincline;
-
-      lparams.brick=PARAMS.brick;
-
-      lparams.bricksize=PARAMS.bricksize;
-      lparams.brickrad=PARAMS.brickrad;
-
-      lparams.brickpasses=PARAMS.brickpasses;
-      lparams.brickceiling=PARAMS.brickceiling;
-      lparams.brickscroll=PARAMS.brickscroll;
-
       // finally pass the updated state
       LAYER->set(lparams);
       }
 
+   // propagate waypoint parameters
+   propagate_wp();
+
    // update color maps
    shaderbase::setVISbathymap(PARAMS.bathymap,PARAMS.bathywidth,PARAMS.bathyheight,PARAMS.bathycomps);
    shaderbase::setNPRbathymap(PARAMS.nprbathymap,PARAMS.nprbathywidth,PARAMS.nprbathyheight,PARAMS.nprbathycomps);
+   }
+
+// propagate waypoint parameters
+void viewerbase::propagate_wp()
+   {
+   minilayer::MINILAYER_PARAMS *lparams;
+
+   // get a reference to the actual state
+   lparams=LAYER->get();
+
+   // update the waypoint state:
+   if (LAYER!=NULL)
+      {
+      lparams->usewaypoints=PARAMS.usewaypoints;
+      lparams->usebricks=PARAMS.usebricks;
+
+      lparams->waypoints=PARAMS.waypoints;
+
+      lparams->signpostheight=PARAMS.signpostheight;
+      lparams->signpostrange=PARAMS.signpostrange;
+
+      lparams->signpostturn=PARAMS.signpostturn;
+      lparams->signpostincline=PARAMS.signpostincline;
+
+      lparams->brick=PARAMS.brick;
+
+      lparams->bricksize=PARAMS.bricksize;
+      lparams->brickrad=PARAMS.brickrad;
+
+      lparams->brickpasses=PARAMS.brickpasses;
+      lparams->brickceiling=PARAMS.brickceiling;
+      lparams->brickscroll=PARAMS.brickscroll;
+      }
    }
 
 // http receiver
