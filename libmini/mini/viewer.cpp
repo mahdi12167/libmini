@@ -299,7 +299,7 @@ void loadsettings()
    FILE *file;
 
    miniv3f e;
-   minicoord::MINICOORD type;
+   int type;
 
    float a,p;
 
@@ -359,7 +359,7 @@ void loadsettings()
 
       viewer->set(prms);
 
-      initview(minicoord(miniv4d(e),type),a,p);
+      initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
    }
 

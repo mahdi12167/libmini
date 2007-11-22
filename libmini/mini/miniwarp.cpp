@@ -477,7 +477,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    minicoord p1,p2;
    miniv3d v2;
 
-   if (FROM!=MINIWARP_GLOBAL && TO!=MINIWARP_GLOBAL)
+   if ((FROM!=MINIWARP_GLOBAL && TO!=MINIWARP_GLOBAL) || SYSGLB==minicoord::MINICOORD_LINEAR)
       {
       miniv4d v1=miniv4d(v,1.0);
       return(miniv4d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
