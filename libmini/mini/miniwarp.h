@@ -210,7 +210,7 @@ class miniwarp
    minicoord warp(const miniv4d &p); // fourth component is time
 
    //! perform warp of a coordinate
-   minicoord warp(const minicoord &c);
+   minicoord warp(const minicoord &p);
 
    //! perform warp of a vector v at position p using the inverse transpose
    miniv3d invtra(const miniv3d &v,const minicoord &p);
