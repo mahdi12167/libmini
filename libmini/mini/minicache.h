@@ -28,7 +28,7 @@ class minicache
                      void (*prismedge)(float x,float y,float yf,float z,void *data)=0,
                      void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data)=0,
                      int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
-                     int (*trigger)(int phase,void *data)=0,
+                     int (*trigger)(int id,int phase,void *data)=0,
                      void *data=0);
 
    //! render back buffer of the cache
@@ -101,14 +101,14 @@ class minicache
    static void cache_fanvertex(float i,float y,float j);
    static void cache_texmap(int m,int n,int S);
    static void cache_prismedge(float x,float y,float yf,float z);
-   static void cache_trigger(int phase,float scale,float ex,float ey,float ez);
+   static void cache_trigger(int id,int phase,float scale,float ex,float ey,float ez);
 
    void cache(int op,float a=0.0f,float b=0.0f,float c=0.0f);
    void cacheprismedge(float x,float y,float yf,float z);
-   void cachetrigger(int phase,float scale,float ex,float ey,float ez);
+   void cachetrigger(int id,int phase,float scale,float ex,float ey,float ez);
 
    void rendertexmap(int m,int n,int S);
-   int rendertrigger(int phase,float scale);
+   int rendertrigger(int id,int phase,float scale);
 
    int COLS,ROWS;
    float XDIM,ZDIM;
@@ -126,6 +126,7 @@ class minicache
    int FANCNT1,FANCNT2;
    int VTXCNT1,VTXCNT2;
 
+   int ID;
    int PHASE;
 
    int LAST_BEGINFAN;
@@ -196,7 +197,7 @@ class minicache
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
    int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,void *data);
-   int (*TRIGGER_CALLBACK)(int phase,void *data);
+   int (*TRIGGER_CALLBACK)(int id,int phase,void *data);
    void *CALLBACK_DATA;
 
    void (*PRESEA_CB)(void *data);

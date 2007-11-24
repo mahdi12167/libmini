@@ -4,6 +4,7 @@
 #define MINITILE_H
 
 #include "database.h"
+#include "miniwarp.h"
 
 class minitile
    {
@@ -60,20 +61,24 @@ class minitile
    //! set sea level
    void setsealevel(float level);
 
-   //! set rendering callbacks
-   void setcallbacks(void (*beginfan)(), // mandatory for incremental update
-                     void (*fanvertex)(float i,float y,float j), // mandatory for incremental update
-                     void (*notify)(int i,int j,int s)=0, // optional
-                     void (*texmap)(int m,int n,int S)=0, // optional
-                     void (*prismedge)(float x,float y,float yf,float z)=0, // optional
-                     void (*trigger)(int phase,float scale,float ex,float ey,float ez)=0); // mandatory for incremental update
-
    //! define resolution reduction of invisible tiles
    void setreduction(float reduction=2.0f,float ratio=3.0f);
 
    //! set rendering modes
    void settexmode(int texmode=0) {TEXMODE=texmode;} // 0=on 1=off
    void setfogmode(int fogmode=1) {FOGMODE=fogmode;} // 0=off 1=on 2=mip
+
+   //! set rendering callbacks
+   void setcallbacks(void (*beginfan)(), // mandatory for incremental update
+                     void (*fanvertex)(float i,float y,float j), // mandatory for incremental update
+                     void (*notify)(int i,int j,int s)=0, // optional
+                     void (*texmap)(int m,int n,int S)=0, // optional
+                     void (*prismedge)(float x,float y,float yf,float z)=0, // optional
+                     void (*trigger)(int id,int phase,float scale,float ex,float ey,float ez)=0, // mandatory for incremental update
+                     int id=0); // id for multiple layers
+
+   //! set local warp
+   void setwarp(miniwarp *warp);
 
    //! loader for tile sets
    static minitile *load(int cols,int rows,
@@ -187,6 +192,8 @@ class minitile
 
    protected:
 
+   int ID;
+
    int COLS,ROWS;
    float COLDIM,ROWDIM;
 
@@ -246,12 +253,14 @@ class minitile
    float REDUCTION;
    float RATIO;
 
+   miniwarp *WARP;
+
    void (*BEGINFAN_CALLBACK)();
    void (*FANVERTEX_CALLBACK)(float i,float y,float j);
    void (*NOTIFY_CALLBACK)(int i,int j,int s);
    void (*TEXMAP_CALLBACK)(int m,int n,int S);
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z);
-   void (*TRIGGER_CALLBACK)(int phase,float scale,float ex,float ey,float ez);
+   void (*TRIGGER_CALLBACK)(int id,int phase,float scale,float ex,float ey,float ez);
 
    void (*REQUEST_CALLBACK)(int col,int row,int needtex,void *data);
    void (*PRELOAD_CALLBACK)(int col,int row,void *data);

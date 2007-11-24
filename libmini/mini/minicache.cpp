@@ -188,14 +188,14 @@ void minicache::cache_texmap(int m,int n,int S)
 void minicache::cache_prismedge(float x,float y,float yf,float z)
    {CACHE->cacheprismedge(x,y,yf,z);}
 
-void minicache::cache_trigger(int phase,float scale,float ex,float ey,float ez)
-   {CACHE->cachetrigger(phase,scale,ex,ey,ez);}
+void minicache::cache_trigger(int id,int phase,float scale,float ex,float ey,float ez)
+   {CACHE->cachetrigger(id,phase,scale,ex,ey,ez);}
 
 // caching:
 
 void minicache::cache(int op,float a,float b,float c)
    {
-   int phase;
+   int id,phase;
 
    miniv3f s,o;
 
@@ -241,11 +241,13 @@ void minicache::cache(int op,float a,float b,float c)
 
             if (op==TRIGGER_OP)
                {
-               phase=ftrc(a+0.5f);
+               id=ftrc(a+0.5f);
+               phase=ftrc(b+0.5f);
 
-               if (phase==0) RAY->clearbuffer();
-               else if (phase==1) FIRST_SCALE=b;
-               else if (phase==4) RAY->swapbuffer();
+               if (id==0)
+                  if (phase==0) RAY->clearbuffer();
+                  else if (phase==1) FIRST_SCALE=b;
+                  else if (phase==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -297,11 +299,13 @@ void minicache::cache(int op,float a,float b,float c)
 
             if (op==TRIGGER_OP)
                {
-               phase=ftrc(a+0.5f);
+               id=ftrc(a+0.5f);
+               phase=ftrc(b+0.5f);
 
-               if (phase==0) RAY->clearbuffer();
-               else if (phase==1) FIRST_SCALE=b;
-               else if (phase==4) RAY->swapbuffer();
+               if (id==0)
+                  if (phase==0) RAY->clearbuffer();
+                  else if (phase==1) FIRST_SCALE=b;
+                  else if (phase==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -358,26 +362,29 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
       }
    }
 
-void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
+void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,float ez)
    {
-   cache(TRIGGER_OP,phase,scale);
+   cache(TRIGGER_OP,id,phase,scale);
 
-   if (phase==0)
-      if (CACHE_NUM==1)
-         {
-         CACHE_SIZE2=PRISM_SIZE2=0;
-         FANCNT2=VTXCNT2=0;
-         CACHE_NUM=2;
-         }
-      else
-         {
-         CACHE_SIZE1=PRISM_SIZE1=0;
-         FANCNT1=VTXCNT1=0;
-         CACHE_NUM=1;
-         }
+   if (id==0)
+      {
+      if (phase==0)
+         if (CACHE_NUM==1)
+            {
+            CACHE_SIZE2=PRISM_SIZE2=0;
+            FANCNT2=VTXCNT2=0;
+            CACHE_NUM=2;
+            }
+         else
+            {
+            CACHE_SIZE1=PRISM_SIZE1=0;
+            FANCNT1=VTXCNT1=0;
+            CACHE_NUM=1;
+            }
 
-   if (PRISMCACHE_CALLBACK!=NULL)
-      PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
+      if (PRISMCACHE_CALLBACK!=NULL)
+         PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
+      }
    }
 
 // render back buffer of the cache
@@ -406,7 +413,7 @@ int minicache::rendercache()
                rendertexmap(ftrc(CACHE2_ARG[3*i]+0.5f),ftrc(CACHE2_ARG[3*i+1]+0.5f),ftrc(CACHE2_ARG[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE2_ARG[3*i]+0.5f),CACHE2_ARG[3*i+1]);
+               vtx+=rendertrigger(ftrc(CACHE2_ARG[3*i]+0.5f),ftrc(CACHE2_ARG[3*i+1]+0.5f),CACHE2_ARG[3*i+2]);
                break;
             }
    else
@@ -424,7 +431,7 @@ int minicache::rendercache()
                rendertexmap(ftrc(CACHE1_ARG[3*i]+0.5f),ftrc(CACHE1_ARG[3*i+1]+0.5f),ftrc(CACHE1_ARG[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE1_ARG[3*i]+0.5f),CACHE1_ARG[3*i+1]);
+               vtx+=rendertrigger(ftrc(CACHE1_ARG[3*i]+0.5f),ftrc(CACHE1_ARG[3*i+1]+0.5f),CACHE1_ARG[3*i+2]);
                break;
             }
 
@@ -481,12 +488,13 @@ void minicache::rendertexmap(int m,int n,int S)
 #endif
    }
 
-int minicache::rendertrigger(int phase,float scale)
+int minicache::rendertrigger(int id,int phase,float scale)
    {
    int vtx=0;
 
 #ifndef NOOGL
 
+   ID=id;
    PHASE=phase;
 
    if (phase==1) SCALE=scale;
@@ -598,7 +606,7 @@ int minicache::rendertrigger(int phase,float scale)
       }
 
    if (TRIGGER_CALLBACK!=NULL)
-      vtx+=TRIGGER_CALLBACK(phase,CALLBACK_DATA);
+      vtx+=TRIGGER_CALLBACK(id,phase,CALLBACK_DATA);
 
    if (phase==4)
       if (PRISMEDGE_CALLBACK==NULL)
@@ -699,9 +707,11 @@ void minicache::setcallbacks(minitile *terrain,
                              void (*prismedge)(float x,float y,float yf,float z,void *data),
                              void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data),
                              int (*prismrender)(float *cache,int cnt,float lambda,void *data),
-                             int (*trigger)(int phase,void *data),
+                             int (*trigger)(int id,int phase,void *data),
                              void *data)
    {
+   int id=0;
+
    CACHE=this;
 
    TERRAIN=terrain;
@@ -710,7 +720,8 @@ void minicache::setcallbacks(minitile *terrain,
                          cache_fanvertex,
                          NULL,cache_texmap,
                          cache_prismedge,
-                         cache_trigger);
+                         cache_trigger,
+                         id);
 
    if (cols>0 && rows>0)
       {

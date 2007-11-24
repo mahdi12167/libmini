@@ -53,6 +53,8 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
 
    mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
+   ID=0;
+
    COLS=cols;
    ROWS=rows;
 
@@ -228,6 +230,8 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
 
    REDUCTION=1.0f;
    RATIO=1.0f;
+
+   WARP=NULL;
    }
 
 // destructor
@@ -267,6 +271,8 @@ minitile::~minitile()
    free(RELOADED);
    free(UPDATED);
    free(MODIFIED);
+
+   if (WARP!=NULL) delete WARP;
    }
 
 // set focus of interest
@@ -291,14 +297,26 @@ void minitile::setrelscale(float scale)
 void minitile::setsealevel(float level)
    {SEALEVEL0=level;}
 
+// define resolution reduction of invisible tiles
+void minitile::setreduction(float reduction,float ratio)
+   {
+   if (reduction<1.0f || ratio<1.0f) ERRORMSG();
+
+   REDUCTION=reduction;
+   RATIO=ratio;
+   }
+
 // set callbacks
 void minitile::setcallbacks(void (*beginfan)(),
                             void (*fanvertex)(float i,float y,float j),
                             void (*notify)(int i,int j,int s),
                             void (*texmap)(int m,int n,int S),
                             void (*prismedge)(float x,float y,float yf,float z),
-                            void (*trigger)(int phase,float scale,float ex,float ey,float ez))
+                            void (*trigger)(int id,int phase,float scale,float ex,float ey,float ez),
+                            int id)
    {
+   ID=id;
+
    BEGINFAN_CALLBACK=beginfan;
    FANVERTEX_CALLBACK=fanvertex;
    NOTIFY_CALLBACK=notify;
@@ -309,14 +327,9 @@ void minitile::setcallbacks(void (*beginfan)(),
    PHASE=-1;
    }
 
-// define resolution reduction of invisible tiles
-void minitile::setreduction(float reduction,float ratio)
-   {
-   if (reduction<1.0f || ratio<1.0f) ERRORMSG();
-
-   REDUCTION=reduction;
-   RATIO=ratio;
-   }
+// set local warp
+void minitile::setwarp(miniwarp *warp)
+   {WARP=new miniwarp(*warp);}
 
 // check the visibility of the tiles
 void minitile::checktiles(float ex,float ez,
@@ -656,7 +669,7 @@ void minitile::draw(float res,
    if (PHASE<0 || update<=1)
       {
       PHASE=0;
-      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
+      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,0.0f,ex,ey,ez);
 
       if (SEALEVEL==-MAXFLOAT) steps=2*width*height;
       else steps=3*width*height;
@@ -668,7 +681,7 @@ void minitile::draw(float res,
    if (PHASE==0)
       {
       PHASE=1;
-      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,SCALE*RELSCALE,ex,ey,ez);
+      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,SCALE*RELSCALE,ex,ey,ez);
       }
 
    for (i=0; i<steps; i++)
@@ -701,12 +714,12 @@ void minitile::draw(float res,
             ROW=BOTTOM;
 
             PHASE++;
-            if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
+            if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
 
             if (PHASE==3 && SEALEVEL==-MAXFLOAT)
                {
                PHASE++;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,LAMBDA,ex,ey,ez);
+               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,LAMBDA,ex,ey,ez);
                }
 
             if (PHASE==4)
@@ -725,7 +738,7 @@ void minitile::draw(float res,
                   }
 
                PHASE=0;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
+               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,0.0f,ex,ey,ez);
 
                break;
                }

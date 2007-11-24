@@ -484,10 +484,10 @@ int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
    return(tree->rendercache(cache,cnt,lambda,tree->TREEMODE_MX_TR,tree->TREEMODE_MX_TG,tree->TREEMODE_MX_TB,tree->TREEMODE_MX_TA));
    }
 
-int minitree::trigger(int phase,void *data)
+int minitree::trigger(int id,int phase,void *data)
    {
    minitree *tree=(minitree *)data;
-   return(tree->treetrigger(phase));
+   return(tree->treetrigger(id,phase));
    }
 
 // process prism edges
@@ -540,19 +540,20 @@ void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
    }
 
 // render tree cache
-int minitree::treetrigger(int phase)
+int minitree::treetrigger(int id,int phase)
    {
    int vtx=0;
 
-   if (phase==4)
-      {
-      if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
-      else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+   if (id==0)
+      if (phase==4)
+         {
+         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
-      if (TREEMODE>=9)
-         if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
-         else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
-      }
+         if (TREEMODE>=9)
+            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
+            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
+         }
 
    return(vtx);
    }
