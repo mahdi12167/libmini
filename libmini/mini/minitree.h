@@ -48,11 +48,15 @@ class minitree
    protected:
 
    minicache *CACHE;
+
    minitile *TERRAIN;
+   int ID;
 
    int TREEMODE;
 
    private:
+
+   int CACHEID;
 
    int TREECACHE_NUM;
 
@@ -88,12 +92,12 @@ class minitree
    int GRASSCACHE_CLASSES;
 
    static void prismedge(float x,float y,float yf,float z,void *data);
-   static void prismcache(int phase,float scale,float ex,float ey,float ez,void *data);
+   static void prismcache(int id,int phase,float scale,float ex,float ey,float ez,void *data);
    static int prismrender(float *cache,int cnt,float lambda,void *data);
    static int trigger(int id,int phase,void *data);
 
    void treeedge(float x,float y,float yf,float z);
-   void treecache(int phase,float scale,float ex,float ey,float ez);
+   void treecache(int id,int phase,float scale,float ex,float ey,float ez);
    int treetrigger(int id,int phase);
 
    void treedata(float x1,float y1,float z1,float h1,

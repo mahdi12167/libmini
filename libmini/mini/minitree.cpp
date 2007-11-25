@@ -10,7 +10,9 @@
 minitree::minitree(minicache *cache,minitile *terrain)
    {
    CACHE=cache;
+
    TERRAIN=terrain;
+   ID=terrain->getid();
 
    TREEMODE=0;
 
@@ -276,15 +278,9 @@ void minitree::setmode(int treemode)
    deletetexmap(RENDERCACHE_TEXID);
    RENDERCACHE_TEXID=0;
 
-   if (TREEMODE<0)
-      CACHE->setcallbacks(TERRAIN,0,0,0.0f,0.0f,0.0f,0.0f,0.0f,
-                          NULL,NULL,NULL,prismrender,NULL,this);
-   else if (TREEMODE>0)
-      CACHE->setcallbacks(TERRAIN,0,0,0.0f,0.0f,0.0f,0.0f,0.0f,
-                          NULL,prismedge,prismcache,NULL,trigger,this);
-   else
-      CACHE->setcallbacks(TERRAIN,0,0,0.0f,0.0f,0.0f,0.0f,0.0f,
-                          NULL,NULL,NULL,NULL,NULL);
+   if (TREEMODE<0) CACHE->attach(TERRAIN,NULL,NULL,NULL,prismrender,NULL,this);
+   else if (TREEMODE>0) CACHE->attach(TERRAIN,NULL,prismedge,prismcache,NULL,trigger,this);
+   else CACHE->attach(TERRAIN,NULL,NULL,NULL,NULL,NULL);
    }
 
 // set parameters for negative modes
@@ -472,10 +468,10 @@ void minitree::prismedge(float x,float y,float yf,float z,void *data)
    tree->treeedge(x,y,yf,z);
    }
 
-void minitree::prismcache(int phase,float scale,float ex,float ey,float ez,void *data)
+void minitree::prismcache(int id,int phase,float scale,float ex,float ey,float ez,void *data)
    {
    minitree *tree=(minitree *)data;
-   tree->treecache(phase,scale,ex,ey,ez);
+   tree->treecache(id,phase,scale,ex,ey,ez);
    }
 
 int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
@@ -493,6 +489,8 @@ int minitree::trigger(int id,int phase,void *data)
 // process prism edges
 void minitree::treeedge(float x,float y,float yf,float z)
    {
+   if (CACHEID!=ID) return;
+
    switch (TREECACHE_COUNT++%3)
       {
       case 0:
@@ -510,33 +508,38 @@ void minitree::treeedge(float x,float y,float yf,float z)
    }
 
 // switch tree cache
-void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
+void minitree::treecache(int id,int phase,float scale,float ex,float ey,float ez)
    {
-   if (phase==0)
+   CACHEID=id;
+
+   if (id==ID)
       {
-      if (TREECACHE_NUM==1)
+      if (phase==0)
          {
-         TREECACHE_SIZE2=0;
-         GRASSCACHE_SIZE2=0;
-         TREECACHE_TREES2=0;
-         TREECACHE_NUM=2;
-         }
-      else
-         {
-         TREECACHE_SIZE1=0;
-         GRASSCACHE_SIZE1=0;
-         TREECACHE_TREES1=0;
-         TREECACHE_NUM=1;
+         if (TREECACHE_NUM==1)
+            {
+            TREECACHE_SIZE2=0;
+            GRASSCACHE_SIZE2=0;
+            TREECACHE_TREES2=0;
+            TREECACHE_NUM=2;
+            }
+         else
+            {
+            TREECACHE_SIZE1=0;
+            GRASSCACHE_SIZE1=0;
+            TREECACHE_TREES1=0;
+            TREECACHE_NUM=1;
+            }
+
+         TREECACHE_COUNT=0;
+
+         TREECACHE_EX=ex;
+         TREECACHE_EY=ey;
+         TREECACHE_EZ=ez;
          }
 
-      TREECACHE_COUNT=0;
-
-      TREECACHE_EX=ex;
-      TREECACHE_EY=ey;
-      TREECACHE_EZ=ez;
+      if (phase==4) TREECACHE_LAMBDA=scale;
       }
-
-   if (phase==4) TREECACHE_LAMBDA=scale;
    }
 
 // render tree cache
@@ -544,7 +547,7 @@ int minitree::treetrigger(int id,int phase)
    {
    int vtx=0;
 
-   if (id==0)
+   if (id==ID)
       if (phase==4)
          {
          if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
