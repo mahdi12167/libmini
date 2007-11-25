@@ -268,7 +268,8 @@ class minilayer
 
    int UPD;
 
-   void createwarp(minicoord offsetDAT,minicoord extentDAT);
+   void createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
+                   minicoord offsetDAT,minicoord extentDAT);
 
    void *THREADDATA;
    void (*THREADINIT)(int threads);

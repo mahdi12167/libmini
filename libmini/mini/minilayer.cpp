@@ -173,6 +173,9 @@ minilayer::~minilayer()
    {
    if (LOADED)
       {
+      // detach tileset from render cache
+      CACHE->detach(TERRAIN->getminitile());
+
       // delete the tile cache
       delete TILECACHE;
 
@@ -327,7 +330,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    {
    int success;
 
-   float outparams[5];
+   float outparams[6];
    float outscale[2];
 
    char *elevtilesetfile,*imagtilesetfile;
@@ -459,6 +462,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    success=TERRAIN->load(LPARAMS.cols,LPARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
                          LPARAMS.shift[0]-LPARAMS.offset[0],LPARAMS.shift[1]-LPARAMS.offset[1], // horizontal offset
+                         LPARAMS.shift[2], // vertical offset
                          LPARAMS.exaggeration,LPARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
@@ -476,8 +480,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // set offset of tileset center
    LPARAMS.offset[0]+=outparams[2];
-   LPARAMS.offset[1]-=outparams[3];
-   LPARAMS.offset[2]-=LPARAMS.shift[2];
+   LPARAMS.offset[1]+=-outparams[3];
+   LPARAMS.offset[2]+=outparams[5];
 
    // set scaling factor of tileset
    LPARAMS.scaling[0]=outscale[0];
@@ -485,7 +489,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
 
    // create the warp
-   createwarp(offsetDAT,extentDAT);
+   createwarp(miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+              offsetDAT,extentDAT);
 
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
@@ -496,11 +501,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // define resolution reduction of invisible tiles
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
 
-   // use tile caching with vertex arrays
-   CACHE->setcallbacks(TERRAIN->getminitile(), // the minitile object to be cached
-                       LPARAMS.cols,LPARAMS.rows, // number of tile columns and rows
-                       outparams[0],outparams[1], // tile extents
-                       outparams[2],LPARAMS.shift[2]/LPARAMS.scale,-outparams[3]); // origin with negative Z
+   // attach tileset to render cache
+   CACHE->attach(TERRAIN->getminitile());
 
    // success
    return(TRUE);
@@ -541,11 +543,10 @@ void minilayer::loadopts()
    }
 
 // create the warp
-void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
+void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
+                           minicoord offsetDAT,minicoord extentDAT)
    {
    minicoord bboxDAT[2];
-
-   miniv3d offsetLOC,scalingLOC;
 
    miniv4d mtxAFF[3];
 
@@ -560,9 +561,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT)
    WARP->def_data(bboxDAT);
 
    // define local coordinates:
-
-   offsetLOC=miniv3d(LPARAMS.offset);
-   scalingLOC=miniv3d(LPARAMS.scaling);
 
    WARP->def_2local(-offsetLOC,scalingLOC);
 
