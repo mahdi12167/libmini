@@ -83,13 +83,13 @@ class minitile
    //! loader for tile sets
    static minitile *load(int cols,int rows,
                          const char *basepath1=0,const char *basepath2=0,const char *basepath3=0,
-                         float offsetlat=0.0f,float offsetlon=0.0f,
+                         float offsetlat=0.0f,float offsetlon=0.0f,float offsetalt=0.0f,
                          float exaggeration=1.0f,float scale=1.0f,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb)=0,
                          float sealevel=0.0f,float snowline=3000.0f,
                          float lambda=1.0f,float attenuation=1.0f,
                          float minres=0.0f,float bsafety=0.0f,
-                         float outparams[5]=0,
+                         float outparams[6]=0,
                          float arcsec[2]=0);
 
    //! get-functions for geometric properties
@@ -99,6 +99,8 @@ class minitile
    int getdim(float x,float z,float *dimx,float *dimz,float *radius2=0);
 
    // grid query functions:
+
+   int getid() {return(ID);}
 
    int getcols() {return(COLS);}
    int getrows() {return(ROWS);}
@@ -144,6 +146,8 @@ class minitile
    int getpreloadedright() {return(PRIGHT);}
    int getpreloadedbottom() {return(PBOTTOM);}
    int getpreloadedtop() {return(PTOP);}
+
+   miniwarp *getwarp() {return(WARP);}
 
    // functions for grid reloading:
 

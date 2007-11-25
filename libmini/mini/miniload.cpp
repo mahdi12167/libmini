@@ -1067,11 +1067,11 @@ void miniload::reload(int col,int row,
 // positive latitudes are transformed into negative Z-values
 int miniload::load(int cols,int rows,
                    const char *basepath1,const char *basepath2,const char *basepath3,
-                   float offsetx,float offsety,
+                   float offsetx,float offsety,float offsetz,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
                    float minres,float bsafety,
-                   float outparams[5],
+                   float outparams[6],
                    float outscale[2])
    {
    int i,j;
@@ -1361,7 +1361,7 @@ int miniload::load(int cols,int rows,
       ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
       CENTERX=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
-      CENTERY=0.0f;
+      CENTERY=offsetz;
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
       miniutm::arcsec2meter(CENTERZ,as2m);
@@ -1403,6 +1403,7 @@ int miniload::load(int cols,int rows,
    SCALE/=scale;
 
    CENTERX/=scale;
+   CENTERY/=scale;
    CENTERZ/=-scale;
 
    TILE=new minitile(NULL,NULL,
@@ -1423,6 +1424,8 @@ int miniload::load(int cols,int rows,
       outparams[3]=-CENTERZ; // z-center of the grid
 
       outparams[4]=(maxelev==MAXFLOAT)?MAXFLOAT:maxelev*SCALE; // maximum elevation
+
+      outparams[5]=CENTERY; // y-center of the grid
       }
 
    // 2 output parameters

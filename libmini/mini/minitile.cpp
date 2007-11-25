@@ -751,13 +751,13 @@ void minitile::draw(float res,
 // positive latitudes are transformed into negative Z-values
 minitile *minitile::load(int cols,int rows,
                          const char *basepath1,const char *basepath2,const char *basepath3,
-                         float offsetlat,float offsetlon,
+                         float offsetlat,float offsetlon,float offsetalt,
                          float exaggeration,float scale,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                          float sealevel,float snowline,
                          float lambda,float attenuation,
                          float minres,float bsafety,
-                         float outparams[5],
+                         float outparams[6],
                          float arcsec[2])
    {
    int i,j;
@@ -914,14 +914,14 @@ minitile *minitile::load(int cols,int rows,
       terrain=new minitile((unsigned char **)hmaps,
                            (unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
-                           centerx/scale,0.0f,-centerz/scale,
+                           centerx/scale,offsetalt/scale,-centerz/scale,
                            NULL,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,
                            minres,bsafety);
    else
       terrain=new minitile((unsigned char **)hmaps,
                            (unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
-                           centerx/scale,0.0f,-centerz/scale,
+                           centerx/scale,offsetalt/scale,-centerz/scale,
                            (unsigned char **)fmaps,
                            lambda/scale,0.0f,0.0f,attenuation,0.0f,0.0f,0.0f,
                            minres,bsafety);
@@ -940,7 +940,7 @@ minitile *minitile::load(int cols,int rows,
 
    if (basepath3!=NULL) delete[] fmaps;
 
-   // 5 output parameters
+   // 6 output parameters
    if (outparams!=NULL)
       {
       outparams[0]=xdim/scale;
@@ -950,6 +950,8 @@ minitile *minitile::load(int cols,int rows,
       outparams[3]=centerz/scale;
 
       outparams[4]=maxelev*scaling/scale;
+
+      outparams[5]=offsetalt/scale;
       }
 
    // 2 output parameters
