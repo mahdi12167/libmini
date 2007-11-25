@@ -19,17 +19,17 @@ class minicache
    //! destructor
    ~minicache();
 
-   //! set callbacks for scene double buffering
-   void setcallbacks(minitile *terrain,
-                     int cols,int rows,
-                     float xdim,float zdim,
-                     float centerx,float centery,float centerz,
-                     void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data)=0,
-                     void (*prismedge)(float x,float y,float yf,float z,void *data)=0,
-                     void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data)=0,
-                     int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
-                     int (*trigger)(int id,int phase,void *data)=0,
-                     void *data=0);
+   //! attach a tileset for scene double buffering
+   void attach(minitile *terrain,
+               void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data)=0,
+               void (*prismedge)(float x,float y,float yf,float z,void *data)=0,
+               void (*prismcache)(int id,int phase,float scale,float ex,float ey,float ez,void *data)=0,
+               int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
+               int (*trigger)(int id,int phase,void *data)=0,
+               void *data=0);
+
+   //! detach a tileset
+   void detach(minitile *terrain);
 
    //! render back buffer of the cache
    int rendercache();
@@ -94,7 +94,6 @@ class minicache
          TRIGGER_OP=4};
 
    static minicache *CACHE;
-
    static minitile *TERRAIN;
 
    static void cache_beginfan();
@@ -110,11 +109,6 @@ class minicache
    void rendertexmap(int m,int n,int S);
    int rendertrigger(int id,int phase,float scale);
 
-   int COLS,ROWS;
-   float XDIM,ZDIM;
-   float CENTERX,CENTERY,CENTERZ;
-   float SCALE;
-
    int CACHE_NUM;
 
    unsigned char *CACHE1_OP,*CACHE2_OP;
@@ -123,13 +117,13 @@ class minicache
    int CACHE_SIZE1,CACHE_SIZE2;
    int CACHE_MAXSIZE;
 
-   int FANCNT1,FANCNT2;
-   int VTXCNT1,VTXCNT2;
-
-   int ID;
-   int PHASE;
+   int CACHE_ID;
+   int CACHE_PHASE;
+   int LAST_PHASE;
 
    int LAST_BEGINFAN;
+
+   miniray *RAY;
 
    int FIRST_BEGINFAN;
    int FIRST_FANCNT;
@@ -138,19 +132,27 @@ class minicache
    int FIRST_ROW;
    int FIRST_SIZE;
 
+   int RENDER_ID;
+   int RENDER_PHASE;
+
+   float RENDER_SCALE;
+
    float OPACITY;
    float SEA_R,SEA_G,SEA_B,SEA_A;
+
+   float RENDER_LAMBDA;
 
    int PRISM_MODE;
    float PRISM_BASE;
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;
 
-   float LAMBDA;
-
    float *PRISM_CACHE1,*PRISM_CACHE2;
 
    int PRISM_SIZE1,PRISM_SIZE2;
    int PRISM_MAXSIZE;
+
+   int FANCNT1,FANCNT2;
+   int VTXCNT1,VTXCNT2;
 
    char *VTXPROG;
    int VTXDIRTY;
@@ -195,7 +197,7 @@ class minicache
 
    void (*TEXMAP_CALLBACK)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data);
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
-   void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
+   void (*PRISMCACHE_CALLBACK)(int id,int phase,float scale,float ex,float ey,float ez,void *data);
    int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,void *data);
    int (*TRIGGER_CALLBACK)(int id,int phase,void *data);
    void *CALLBACK_DATA;
@@ -203,8 +205,6 @@ class minicache
    void (*PRESEA_CB)(void *data);
    void (*POSTSEA_CB)(void *data);
    void *CB_DATA;
-
-   miniray *RAY;
 
    private:
 

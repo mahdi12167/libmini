@@ -17,7 +17,6 @@ minicache::minicache()
    int i;
 
    CACHE=NULL;
-
    TERRAIN=NULL;
 
    CACHE_NUM=1;
@@ -37,8 +36,15 @@ minicache::minicache()
    if ((PRISM_CACHE1=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
    if ((PRISM_CACHE2=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
 
-   FANCNT1=FANCNT2=0;
-   VTXCNT1=VTXCNT2=0;
+   CACHE_ID=0;
+   CACHE_PHASE=LAST_PHASE=-1;
+
+   FIRST_FANCNT=0;
+
+   RAY=new miniray;
+
+   RENDER_ID=0;
+   RENDER_PHASE=-1;
 
    OPACITY=1.0f;
 
@@ -51,6 +57,9 @@ minicache::minicache()
    PRISM_BASE=0.5f;
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
+
+   FANCNT1=FANCNT2=0;
+   VTXCNT1=VTXCNT2=0;
 
    VTXPROG=NULL;
    VTXDIRTY=0;
@@ -100,10 +109,6 @@ minicache::minicache()
 
    PRESEA_CB=NULL;
    POSTSEA_CB=NULL;
-
-   RAY=new miniray;
-
-   FIRST_FANCNT=0;
 
    GLSETUP=0;
    WGLSETUP=0;
@@ -191,11 +196,13 @@ void minicache::cache_prismedge(float x,float y,float yf,float z)
 void minicache::cache_trigger(int id,int phase,float scale,float ex,float ey,float ez)
    {CACHE->cachetrigger(id,phase,scale,ex,ey,ez);}
 
-// caching:
+// caching functions:
 
-void minicache::cache(int op,float a,float b,float c)
+inline void minicache::cache(int op,float a,float b,float c)
    {
-   int id,phase;
+   int cols,rows;
+   float xdim,zdim;
+   float centerx,centery,centerz;
 
    miniv3f s,o;
 
@@ -228,26 +235,32 @@ void minicache::cache(int op,float a,float b,float c)
             {
             if (FIRST_FANCNT>0)
                {
-               s.x=XDIM/(FIRST_SIZE-1);
-               s.y=FIRST_SCALE;
-               s.z=-ZDIM/(FIRST_SIZE-1);
+               cols=TERRAIN->getcols();
+               rows=TERRAIN->getrows();
 
-               o.x=XDIM*(FIRST_COL-(COLS-1)/2.0f)+CENTERX-XDIM/2.0f;
-               o.y=CENTERY;
-               o.z=ZDIM*(FIRST_ROW-(ROWS-1)/2.0f)+CENTERZ+ZDIM/2.0f;
+               xdim=TERRAIN->getcoldim();
+               zdim=TERRAIN->getrowdim();
+
+               centerx=TERRAIN->getcenterx();
+               centery=TERRAIN->getcentery();
+               centerz=TERRAIN->getcenterz();
+
+               s.x=xdim/(FIRST_SIZE-1);
+               s.y=FIRST_SCALE;
+               s.z=-zdim/(FIRST_SIZE-1);
+
+               o.x=xdim*(FIRST_COL-(cols-1)/2.0f)+centerx-xdim/2.0f;
+               o.y=centery;
+               o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
                RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o);
                }
 
             if (op==TRIGGER_OP)
                {
-               id=ftrc(a+0.5f);
-               phase=ftrc(b+0.5f);
-
-               if (id==0)
-                  if (phase==0) RAY->clearbuffer();
-                  else if (phase==1) FIRST_SCALE=b;
-                  else if (phase==4) RAY->swapbuffer();
+               if (CACHE_PHASE==0 && CACHE_PHASE!=LAST_PHASE) RAY->clearbuffer();
+               else if (CACHE_PHASE==1) FIRST_SCALE=c;
+               else if (CACHE_PHASE==4 && CACHE_PHASE!=LAST_PHASE) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -286,26 +299,32 @@ void minicache::cache(int op,float a,float b,float c)
             {
             if (FIRST_FANCNT>0)
                {
-               s.x=XDIM/(FIRST_SIZE-1);
-               s.y=FIRST_SCALE;
-               s.z=-ZDIM/(FIRST_SIZE-1);
+               cols=TERRAIN->getcols();
+               rows=TERRAIN->getrows();
 
-               o.x=XDIM*(FIRST_COL-(COLS-1)/2.0f)+CENTERX-XDIM/2.0f;
-               o.y=CENTERY;
-               o.z=ZDIM*(FIRST_ROW-(ROWS-1)/2.0f)+CENTERZ+ZDIM/2.0f;
+               xdim=TERRAIN->getcoldim();
+               zdim=TERRAIN->getrowdim();
+
+               centerx=TERRAIN->getcenterx();
+               centery=TERRAIN->getcentery();
+               centerz=TERRAIN->getcenterz();
+
+               s.x=xdim/(FIRST_SIZE-1);
+               s.y=FIRST_SCALE;
+               s.z=-zdim/(FIRST_SIZE-1);
+
+               o.x=xdim*(FIRST_COL-(cols-1)/2.0f)+centerx-xdim/2.0f;
+               o.y=centery;
+               o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
                RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o);
                }
 
             if (op==TRIGGER_OP)
                {
-               id=ftrc(a+0.5f);
-               phase=ftrc(b+0.5f);
-
-               if (id==0)
-                  if (phase==0) RAY->clearbuffer();
-                  else if (phase==1) FIRST_SCALE=b;
-                  else if (phase==4) RAY->swapbuffer();
+               if (CACHE_PHASE==0 && CACHE_PHASE!=LAST_PHASE) RAY->clearbuffer();
+               else if (CACHE_PHASE==1) FIRST_SCALE=c;
+               else if (CACHE_PHASE==4 && CACHE_PHASE!=LAST_PHASE) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -328,7 +347,7 @@ void minicache::cache(int op,float a,float b,float c)
       }
    }
 
-void minicache::cacheprismedge(float x,float y,float yf,float z)
+inline void minicache::cacheprismedge(float x,float y,float yf,float z)
    {
    if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
    else
@@ -362,13 +381,16 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
       }
    }
 
-void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,float ez)
+inline void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,float ez)
    {
+   CACHE_ID=id;
+   LAST_PHASE=CACHE_PHASE;
+   CACHE_PHASE=phase;
+
    cache(TRIGGER_OP,id,phase,scale);
 
-   if (id==0)
-      {
-      if (phase==0)
+   if (CACHE_PHASE!=LAST_PHASE)
+      if (CACHE_PHASE==0)
          if (CACHE_NUM==1)
             {
             CACHE_SIZE2=PRISM_SIZE2=0;
@@ -382,9 +404,8 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
             CACHE_NUM=1;
             }
 
-      if (PRISMCACHE_CALLBACK!=NULL)
-         PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
-      }
+   if (PRISMCACHE_CALLBACK!=NULL)
+      PRISMCACHE_CALLBACK(id,phase,scale,ex,ey,ez,CALLBACK_DATA);
    }
 
 // render back buffer of the cache
@@ -440,11 +461,15 @@ int minicache::rendercache()
    return(vtx);
    }
 
-// rendering:
+// rendering functions:
 
-void minicache::rendertexmap(int m,int n,int S)
+inline void minicache::rendertexmap(int m,int n,int S)
    {
 #ifndef NOOGL
+
+   int cols,rows;
+   float xdim,zdim;
+   float centerx,centery,centerz;
 
    float ox,oz;
 
@@ -452,20 +477,30 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpop();
 
-   ox=XDIM*(m-(COLS-1)/2.0f)+CENTERX;
-   oz=ZDIM*(n-(ROWS-1)/2.0f)+CENTERZ;
+   cols=TERRAIN->getcols();
+   rows=TERRAIN->getrows();
+
+   xdim=TERRAIN->getcoldim();
+   zdim=TERRAIN->getrowdim();
+
+   centerx=TERRAIN->getcenterx();
+   centery=TERRAIN->getcentery();
+   centerz=TERRAIN->getcenterz();
+
+   ox=xdim*(m-(cols-1)/2.0f)+centerx;
+   oz=zdim*(n-(rows-1)/2.0f)+centerz;
 
    mtxpush();
-   mtxtranslate(ox-XDIM/2.0f,CENTERY,oz+ZDIM/2.0f);
+   mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
 
    // avoid gaps between tiles (excluding the sea surface)
-   if (PHASE==2)
+   if (RENDER_PHASE==2)
       if (CONFIGURE_OVERLAP!=0.0f)
          if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
 
-   mtxscale(XDIM/(S-1),SCALE,-ZDIM/(S-1));
+   mtxscale(xdim/(S-1),RENDER_SCALE,-zdim/(S-1));
 
-   if (PHASE==2 || CONFIGURE_SEAENABLETEX!=0)
+   if (RENDER_PHASE==2 || CONFIGURE_SEAENABLETEX!=0)
       {
       texid=TERRAIN->gettexid(m,n);
       texw=TERRAIN->gettexw(m,n);
@@ -479,7 +514,7 @@ void minicache::rendertexmap(int m,int n,int S)
                             -1.0f/(S-1)*(texh-1)/texh,
                             0.5f/texh,
                             1.0f-0.5f/texh,
-                            SCALE);
+                            RENDER_SCALE);
 
       if (TEXMAP_CALLBACK!=NULL)
          TEXMAP_CALLBACK(m,n,S,texid,texw,texh,texmm,CALLBACK_DATA);
@@ -488,17 +523,21 @@ void minicache::rendertexmap(int m,int n,int S)
 #endif
    }
 
-int minicache::rendertrigger(int id,int phase,float scale)
+inline int minicache::rendertrigger(int id,int phase,float scale)
    {
    int vtx=0;
 
 #ifndef NOOGL
 
-   ID=id;
-   PHASE=phase;
+   int lastphase;
 
-   if (phase==1) SCALE=scale;
-   else if (phase==2)
+   RENDER_ID=id;
+   lastphase=RENDER_PHASE;
+   RENDER_PHASE=phase;
+
+   if (phase==1) RENDER_SCALE=scale;
+
+   if (phase==2 && phase!=lastphase)
       {
       initstate();
       mtxpush();
@@ -524,7 +563,8 @@ int minicache::rendertrigger(int id,int phase,float scale)
 
       glEnableClientState(GL_VERTEX_ARRAY);
       }
-   else if (phase==3)
+
+   if (phase==3 && phase!=lastphase)
       {
       if (OPACITY<1.0f)
          {
@@ -577,10 +617,11 @@ int minicache::rendertrigger(int id,int phase,float scale)
          mtxmodel();
          }
       }
-   else if (phase==4)
-      {
-      LAMBDA=scale;
 
+   if (phase==4) RENDER_LAMBDA=scale;
+
+   if (phase==4 && phase!=lastphase)
+      {
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
 
       if (SEA_A!=1.0f) disableblending();
@@ -603,32 +644,31 @@ int minicache::rendertrigger(int id,int phase,float scale)
       exitstate();
 
       if (POSTSEA_CB!=NULL) POSTSEA_CB(CB_DATA);
+
+      if (PRISMEDGE_CALLBACK==NULL)
+         if (PRISMRENDER_CALLBACK!=NULL)
+            if (CACHE_NUM==1)
+               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE2,PRISM_SIZE2/3,RENDER_LAMBDA,CALLBACK_DATA);
+            else
+               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE1,PRISM_SIZE1/3,RENDER_LAMBDA,CALLBACK_DATA);
+         else
+            if (CACHE_NUM==1)
+               vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,RENDER_LAMBDA,
+                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+            else
+               vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,RENDER_LAMBDA,
+                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
       }
 
    if (TRIGGER_CALLBACK!=NULL)
       vtx+=TRIGGER_CALLBACK(id,phase,CALLBACK_DATA);
-
-   if (phase==4)
-      if (PRISMEDGE_CALLBACK==NULL)
-         if (PRISMRENDER_CALLBACK!=NULL)
-            if (CACHE_NUM==1)
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE2,PRISM_SIZE2/3,LAMBDA,CALLBACK_DATA);
-            else
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE1,PRISM_SIZE1/3,LAMBDA,CALLBACK_DATA);
-         else
-            if (CACHE_NUM==1)
-               vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,LAMBDA,
-                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
-            else
-               vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,LAMBDA,
-                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
 
 #endif
 
    return(vtx);
    }
 
-int minicache::renderprisms(float *cache,int cnt,float lambda,
+inline int minicache::renderprisms(float *cache,int cnt,float lambda,
                             int mode,float base,float pr,float pg,float pb,float pa)
    {
    int vtx=0;
@@ -698,17 +738,14 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
    return(vtx);
    }
 
-// set callbacks for scene double buffering
-void minicache::setcallbacks(minitile *terrain,
-                             int cols,int rows,
-                             float xdim,float zdim,
-                             float centerx,float centery,float centerz,
-                             void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data),
-                             void (*prismedge)(float x,float y,float yf,float z,void *data),
-                             void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data),
-                             int (*prismrender)(float *cache,int cnt,float lambda,void *data),
-                             int (*trigger)(int id,int phase,void *data),
-                             void *data)
+// attach a tileset for scene double buffering
+void minicache::attach(minitile *terrain,
+                       void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data),
+                       void (*prismedge)(float x,float y,float yf,float z,void *data),
+                       void (*prismcache)(int id,int phase,float scale,float ex,float ey,float ez,void *data),
+                       int (*prismrender)(float *cache,int cnt,float lambda,void *data),
+                       int (*trigger)(int id,int phase,void *data),
+                       void *data)
    {
    int id=0;
 
@@ -723,19 +760,6 @@ void minicache::setcallbacks(minitile *terrain,
                          cache_trigger,
                          id);
 
-   if (cols>0 && rows>0)
-      {
-      COLS=cols;
-      ROWS=rows;
-
-      XDIM=xdim;
-      ZDIM=zdim;
-
-      CENTERX=centerx;
-      CENTERY=centery;
-      CENTERZ=centerz;
-      }
-
    TEXMAP_CALLBACK=texmap;
    PRISMEDGE_CALLBACK=prismedge;
    PRISMCACHE_CALLBACK=prismcache;
@@ -743,6 +767,10 @@ void minicache::setcallbacks(minitile *terrain,
    TRIGGER_CALLBACK=trigger;
    CALLBACK_DATA=data;
    }
+
+// detach a tileset
+void minicache::detach(minitile *terrain)
+   {if (terrain==NULL) ERRORMSG();}
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
