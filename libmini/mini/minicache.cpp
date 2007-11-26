@@ -7,9 +7,8 @@
 
 #include "minicache.h"
 
+// there is only one cache
 minicache *minicache::CACHE;
-
-minitile *minicache::TERRAIN;
 
 // default constructor
 minicache::minicache()
@@ -17,7 +16,9 @@ minicache::minicache()
    int i;
 
    CACHE=NULL;
+
    TERRAIN=NULL;
+   NUMTERRAIN=MAXTERRAIN=0;
 
    CACHE_NUM=1;
 
@@ -39,9 +40,9 @@ minicache::minicache()
    CACHE_ID=0;
    CACHE_PHASE=LAST_PHASE=-1;
 
-   FIRST_FANCNT=0;
-
    RAY=new miniray;
+
+   FIRST_FANCNT=0;
 
    RENDER_ID=0;
    RENDER_PHASE=-1;
@@ -129,6 +130,8 @@ minicache::minicache()
 // destructor
 minicache::~minicache()
    {
+   if (TERRAIN!=NULL) free(TERRAIN);
+
    free(CACHE1_OP);
    free(CACHE2_OP);
 
@@ -137,6 +140,8 @@ minicache::~minicache()
 
    free(PRISM_CACHE1);
    free(PRISM_CACHE2);
+
+   delete RAY;
 
 #ifndef NOOGL
 
@@ -175,8 +180,6 @@ minicache::~minicache()
    if (SEASHADERTEXID!=0) deletetexmap(SEASHADERTEXID);
 
 #endif
-
-   delete RAY;
    }
 
 // static callback functions:
@@ -222,8 +225,8 @@ inline void minicache::cache(int op,float a,float b,float c)
       if (op==BEGINFAN_OP)
          {
          FANCNT1++;
-         LAST_BEGINFAN=CACHE_SIZE1;
          FIRST_FANCNT++;
+         LAST_BEGINFAN=CACHE_SIZE1;
          }
       else if (op==FANVERTEX_OP)
          {
@@ -235,15 +238,15 @@ inline void minicache::cache(int op,float a,float b,float c)
             {
             if (FIRST_FANCNT>0)
                {
-               cols=TERRAIN->getcols();
-               rows=TERRAIN->getrows();
+               cols=TERRAIN[CACHE_ID].tile->getcols();
+               rows=TERRAIN[CACHE_ID].tile->getrows();
 
-               xdim=TERRAIN->getcoldim();
-               zdim=TERRAIN->getrowdim();
+               xdim=TERRAIN[CACHE_ID].tile->getcoldim();
+               zdim=TERRAIN[CACHE_ID].tile->getrowdim();
 
-               centerx=TERRAIN->getcenterx();
-               centery=TERRAIN->getcentery();
-               centerz=TERRAIN->getcenterz();
+               centerx=TERRAIN[CACHE_ID].tile->getcenterx();
+               centery=TERRAIN[CACHE_ID].tile->getcentery();
+               centerz=TERRAIN[CACHE_ID].tile->getcenterz();
 
                s.x=xdim/(FIRST_SIZE-1);
                s.y=FIRST_SCALE;
@@ -286,8 +289,8 @@ inline void minicache::cache(int op,float a,float b,float c)
       if (op==BEGINFAN_OP)
          {
          FANCNT2++;
-         LAST_BEGINFAN=CACHE_SIZE2;
          FIRST_FANCNT++;
+         LAST_BEGINFAN=CACHE_SIZE2;
          }
       else if (op==FANVERTEX_OP)
          {
@@ -299,15 +302,15 @@ inline void minicache::cache(int op,float a,float b,float c)
             {
             if (FIRST_FANCNT>0)
                {
-               cols=TERRAIN->getcols();
-               rows=TERRAIN->getrows();
+               cols=TERRAIN[CACHE_ID].tile->getcols();
+               rows=TERRAIN[CACHE_ID].tile->getrows();
 
-               xdim=TERRAIN->getcoldim();
-               zdim=TERRAIN->getrowdim();
+               xdim=TERRAIN[CACHE_ID].tile->getcoldim();
+               zdim=TERRAIN[CACHE_ID].tile->getrowdim();
 
-               centerx=TERRAIN->getcenterx();
-               centery=TERRAIN->getcentery();
-               centerz=TERRAIN->getcenterz();
+               centerx=TERRAIN[CACHE_ID].tile->getcenterx();
+               centery=TERRAIN[CACHE_ID].tile->getcentery();
+               centerz=TERRAIN[CACHE_ID].tile->getcenterz();
 
                s.x=xdim/(FIRST_SIZE-1);
                s.y=FIRST_SCALE;
@@ -477,15 +480,15 @@ inline void minicache::rendertexmap(int m,int n,int S)
 
    mtxpop();
 
-   cols=TERRAIN->getcols();
-   rows=TERRAIN->getrows();
+   cols=TERRAIN[RENDER_ID].tile->getcols();
+   rows=TERRAIN[RENDER_ID].tile->getrows();
 
-   xdim=TERRAIN->getcoldim();
-   zdim=TERRAIN->getrowdim();
+   xdim=TERRAIN[RENDER_ID].tile->getcoldim();
+   zdim=TERRAIN[RENDER_ID].tile->getrowdim();
 
-   centerx=TERRAIN->getcenterx();
-   centery=TERRAIN->getcentery();
-   centerz=TERRAIN->getcenterz();
+   centerx=TERRAIN[RENDER_ID].tile->getcenterx();
+   centery=TERRAIN[RENDER_ID].tile->getcentery();
+   centerz=TERRAIN[RENDER_ID].tile->getcenterz();
 
    ox=xdim*(m-(cols-1)/2.0f)+centerx;
    oz=zdim*(n-(rows-1)/2.0f)+centerz;
@@ -498,14 +501,14 @@ inline void minicache::rendertexmap(int m,int n,int S)
       if (CONFIGURE_OVERLAP!=0.0f)
          if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
 
-   mtxscale(xdim/(S-1),RENDER_SCALE,-zdim/(S-1));
+   mtxscale(xdim/(S-1),TERRAIN[RENDER_ID].scale,-zdim/(S-1));
 
    if (RENDER_PHASE==2 || CONFIGURE_SEAENABLETEX!=0)
       {
-      texid=TERRAIN->gettexid(m,n);
-      texw=TERRAIN->gettexw(m,n);
-      texh=TERRAIN->gettexh(m,n);
-      texmm=TERRAIN->gettexmm(m,n);
+      texid=TERRAIN[RENDER_ID].tile->gettexid(m,n);
+      texw=TERRAIN[RENDER_ID].tile->gettexw(m,n);
+      texh=TERRAIN[RENDER_ID].tile->gettexh(m,n);
+      texmm=TERRAIN[RENDER_ID].tile->gettexmm(m,n);
 
       bindtexmap(texid,texw,texh,S,texmm);
 
@@ -514,7 +517,7 @@ inline void minicache::rendertexmap(int m,int n,int S)
                             -1.0f/(S-1)*(texh-1)/texh,
                             0.5f/texh,
                             1.0f-0.5f/texh,
-                            RENDER_SCALE);
+                            TERRAIN[RENDER_ID].scale);
 
       if (TEXMAP_CALLBACK!=NULL)
          TEXMAP_CALLBACK(m,n,S,texid,texw,texh,texmm,CALLBACK_DATA);
@@ -535,7 +538,7 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
    lastphase=RENDER_PHASE;
    RENDER_PHASE=phase;
 
-   if (phase==1) RENDER_SCALE=scale;
+   if (phase==1) TERRAIN[RENDER_ID].scale=scale;
 
    if (phase==2 && phase!=lastphase)
       {
@@ -618,7 +621,7 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
          }
       }
 
-   if (phase==4) RENDER_LAMBDA=scale;
+   if (phase==4) TERRAIN[RENDER_ID].lambda=scale;
 
    if (phase==4 && phase!=lastphase)
       {
@@ -648,15 +651,15 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
       if (PRISMEDGE_CALLBACK==NULL)
          if (PRISMRENDER_CALLBACK!=NULL)
             if (CACHE_NUM==1)
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE2,PRISM_SIZE2/3,RENDER_LAMBDA,CALLBACK_DATA);
+               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE2,PRISM_SIZE2/3,TERRAIN[RENDER_ID].lambda,CALLBACK_DATA);
             else
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE1,PRISM_SIZE1/3,RENDER_LAMBDA,CALLBACK_DATA);
+               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,CALLBACK_DATA);
          else
             if (CACHE_NUM==1)
-               vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,RENDER_LAMBDA,
+               vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,TERRAIN[RENDER_ID].lambda,
                                  PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
             else
-               vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,RENDER_LAMBDA,
+               vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,
                                  PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
       }
 
@@ -747,18 +750,38 @@ void minicache::attach(minitile *terrain,
                        int (*trigger)(int id,int phase,void *data),
                        void *data)
    {
-   int id=0;
+   int id;
 
    CACHE=this;
 
-   TERRAIN=terrain;
+   if (TERRAIN==NULL)
+      {
+      MAXTERRAIN=1;
+      if ((TERRAIN=(TERRAIN_TYPE *)malloc(MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
+      TERRAIN[0].tile=NULL;
+      }
 
-   terrain->setcallbacks(cache_beginfan,
-                         cache_fanvertex,
-                         NULL,cache_texmap,
-                         cache_prismedge,
-                         cache_trigger,
-                         id);
+   if (NUMTERRAIN>=MAXTERRAIN)
+      {
+      if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
+      for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
+      MAXTERRAIN*=2;
+      }
+
+   for (id=0; id<MAXTERRAIN; id++)
+      if (TERRAIN[id].tile==NULL)
+         {
+         TERRAIN[id].tile=terrain;
+
+         terrain->setcallbacks(cache_beginfan,
+                               cache_fanvertex,
+                               NULL,cache_texmap,
+                               cache_prismedge,
+                               cache_trigger,
+                               id);
+
+         break;
+         }
 
    TEXMAP_CALLBACK=texmap;
    PRISMEDGE_CALLBACK=prismedge;
@@ -770,7 +793,11 @@ void minicache::attach(minitile *terrain,
 
 // detach a tileset
 void minicache::detach(minitile *terrain)
-   {if (terrain==NULL) ERRORMSG();}
+   {
+   if (terrain==NULL) ERRORMSG();
+
+   TERRAIN[terrain->getid()].tile=NULL;
+   }
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)

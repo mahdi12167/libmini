@@ -88,13 +88,27 @@ class minicache
 
    protected:
 
-   enum {BEGINFAN_OP=1,
-         FANVERTEX_OP=2,
-         TEXMAP_OP=3,
-         TRIGGER_OP=4};
+   enum
+      {
+      BEGINFAN_OP=1,
+      FANVERTEX_OP=2,
+      TEXMAP_OP=3,
+      TRIGGER_OP=4
+      };
+
+   struct TERRAIN_STRUCT
+      {
+      minitile *tile;
+      float scale;
+      float lambda;
+      };
+
+   typedef TERRAIN_STRUCT TERRAIN_TYPE;
 
    static minicache *CACHE;
-   static minitile *TERRAIN;
+
+   TERRAIN_TYPE *TERRAIN;
+   int NUMTERRAIN,MAXTERRAIN;
 
    static void cache_beginfan();
    static void cache_fanvertex(float i,float y,float j);
@@ -125,8 +139,8 @@ class minicache
 
    miniray *RAY;
 
-   int FIRST_BEGINFAN;
    int FIRST_FANCNT;
+   int FIRST_BEGINFAN;
    float FIRST_SCALE;
    int FIRST_COL;
    int FIRST_ROW;
@@ -135,12 +149,8 @@ class minicache
    int RENDER_ID;
    int RENDER_PHASE;
 
-   float RENDER_SCALE;
-
    float OPACITY;
    float SEA_R,SEA_G,SEA_B,SEA_A;
-
-   float RENDER_LAMBDA;
 
    int PRISM_MODE;
    float PRISM_BASE;
