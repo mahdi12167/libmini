@@ -14,6 +14,7 @@ namespace pnmsample {
 const int MAX_STR=1024;
 
 int CONFIGURE_SUPERSAMPLING=2;
+int CONFIGURE_DOWNSAMPLING=1;
 int CONFIGURE_STARTUPFILE=0;
 
 char CONFIGURE_TILESETPATH[MAX_STR]="";
@@ -869,8 +870,12 @@ void resample(int num,char **grid,
 
                         scount=0;
 
+                        // calculate number of samples
                         if (comps[0]!=3) sn=1;
                         else sn=max(CONFIGURE_SUPERSAMPLING,1);
+
+                        // increase number of samples when sampling down
+                        sn*=(1<<min(m,CONFIGURE_DOWNSAMPLING));
 
                         // foreach supersample
                         for (si=-0.5f+0.5f/sn; si<0.5f; si+=1.0f/sn)
@@ -1309,6 +1314,7 @@ void normalize(int num,
 
 // configuring
 void configure_supersampling(int supersampling) {CONFIGURE_SUPERSAMPLING=supersampling;}
+void configure_downsampling(int downsampling) {CONFIGURE_DOWNSAMPLING=downsampling;}
 void configure_startupfile(int startupfile) {CONFIGURE_STARTUPFILE=startupfile;}
 void configure_tilesetpath(char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
 void configure_stdprefix(char *stdprefix) {strncpy(CONFIGURE_STDPREFIX,stdprefix,MAX_STR);}
