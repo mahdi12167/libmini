@@ -176,7 +176,7 @@ class miniwarp
    void def_data(const minicoord bboxDAT[2]);
 
    //! define conversion to local coordinates
-   void def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC);
+   void def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,double scaleLOC);
 
    //! define conversion to affine coordinates
    void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
@@ -227,6 +227,7 @@ class miniwarp
    int UTMZONE,UTMDATUM;
 
    miniv3d OFFSETLOC,SCALINGLOC;
+   double SCALELOC;
 
    miniv4d MTXAFF[3];
 

@@ -751,14 +751,14 @@ void minitile::draw(float res,
 // positive latitudes are transformed into negative Z-values
 minitile *minitile::load(int cols,int rows,
                          const char *basepath1,const char *basepath2,const char *basepath3,
-                         float offsetlat,float offsetlon,float offsetalt,
+                         float offsetx,float offsety,float offseth,
                          float exaggeration,float scale,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                          float sealevel,float snowline,
                          float lambda,float attenuation,
                          float minres,float bsafety,
                          float outparams[6],
-                         float arcsec[2])
+                         float outscale[3])
    {
    int i,j;
 
@@ -835,8 +835,8 @@ minitile *minitile::load(int cols,int rows,
                miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
-            offsetlat-=j*(coord[3]-coord[1]);
-            offsetlon-=i*(coord[6]-coord[0]);
+            offsetx-=i*(coord[6]-coord[0]);
+            offsety-=j*(coord[3]-coord[1]);
             }
          }
 
@@ -844,25 +844,25 @@ minitile *minitile::load(int cols,int rows,
 
    free(image);
 
-   if (offsetlat!=0.0f || offsetlon!=0.0f)
+   if (offsetx!=0.0f || offsety!=0.0f)
       {
-      coord[0]=LONSUB(coord[0],-offsetlon);
-      coord[1]+=offsetlat;
+      coord[0]=LONSUB(coord[0],-offsetx);
+      coord[1]+=offsety;
 
       if (coord[1]<-90*60*60 || coord[1]>90*60*60) ERRORMSG();
 
-      coord[2]=LONSUB(coord[2],-offsetlon);
-      coord[3]+=offsetlat;
+      coord[2]=LONSUB(coord[2],-offsetx);
+      coord[3]+=offsety;
 
       if (coord[3]<-90*60*60 || coord[3]>90*60*60) ERRORMSG();
 
-      coord[4]=LONSUB(coord[4],-offsetlon);
-      coord[5]+=offsetlat;
+      coord[4]=LONSUB(coord[4],-offsetx);
+      coord[5]+=offsety;
 
       if (coord[5]<-90*60*60 || coord[5]>90*60*60) ERRORMSG();
 
-      coord[6]=LONSUB(coord[6],-offsetlon);
-      coord[7]+=offsetlat;
+      coord[6]=LONSUB(coord[6],-offsetx);
+      coord[7]+=offsety;
 
       if (coord[7]<-90*60*60 || coord[7]>90*60*60) ERRORMSG();
       }
@@ -914,14 +914,14 @@ minitile *minitile::load(int cols,int rows,
       terrain=new minitile((unsigned char **)hmaps,
                            (unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
-                           centerx/scale,offsetalt/scale,-centerz/scale,
+                           centerx/scale,offseth/scale,-centerz/scale,
                            NULL,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,
                            minres,bsafety);
    else
       terrain=new minitile((unsigned char **)hmaps,
                            (unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
-                           centerx/scale,offsetalt/scale,-centerz/scale,
+                           centerx/scale,offseth/scale,-centerz/scale,
                            (unsigned char **)fmaps,
                            lambda/scale,0.0f,0.0f,attenuation,0.0f,0.0f,0.0f,
                            minres,bsafety);
@@ -951,14 +951,15 @@ minitile *minitile::load(int cols,int rows,
 
       outparams[4]=maxelev*scaling/scale;
 
-      outparams[5]=offsetalt/scale;
+      outparams[5]=offseth/scale;
       }
 
-   // 2 output parameters
-   if (arcsec!=NULL)
+   // 3 output parameters
+   if (outscale!=NULL)
       {
-      arcsec[0]=as2m[0]/scale;
-      arcsec[1]=as2m[1]/scale;
+      outscale[0]=as2m[0]/scale;
+      outscale[1]=as2m[1]/scale;
+      outscale[2]=scaling/scale/exaggeration;
       }
 
    return(terrain);

@@ -1042,12 +1042,12 @@ void miniload::reload(int col,int row,
 // positive latitudes are transformed into negative Z-values
 int miniload::load(int cols,int rows,
                    const char *basepath1,const char *basepath2,const char *basepath3,
-                   float offsetx,float offsety,float offsetz,
+                   float offsetx,float offsety,float offseth,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
                    float minres,float bsafety,
                    float outparams[6],
-                   float outscale[2])
+                   float outscale[3])
    {
    int i,j;
 
@@ -1336,7 +1336,7 @@ int miniload::load(int cols,int rows,
       ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
       CENTERX=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
-      CENTERY=offsetz;
+      CENTERY=offseth;
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
       miniutm::arcsec2meter(CENTERZ,as2m);
@@ -1368,7 +1368,7 @@ int miniload::load(int cols,int rows,
       ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(coord[2]-coord[0]));
 
       CENTERX=coord[2]+cols/2.0f*(coord[6]-coord[0])+rows/2.0f*(coord[2]-coord[0]);
-      CENTERY=0.0f;
+      CENTERY=offseth;
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
       }
 
@@ -1389,7 +1389,7 @@ int miniload::load(int cols,int rows,
 
    TILE->setrequest(request,this,preload,PFARP,PUPDATE);
 
-   // 5 output parameters
+   // 6 output parameters
    if (outparams!=NULL)
       {
       outparams[0]=COLDIM; // dimension of one column
@@ -1403,17 +1403,19 @@ int miniload::load(int cols,int rows,
       outparams[5]=CENTERY; // y-center of the grid
       }
 
-   // 2 output parameters
+   // 3 output parameters
    if (outscale!=NULL)
       if (CONFIGURE_USEPNM!=0)
          {
          outscale[0]=as2m[0]/scale; // x-size of one arcsec in meters
          outscale[1]=as2m[1]/scale; // z-size of one arcsec in meters
+         outscale[2]=SCALE/exaggeration; // one scaled meter
          }
       else
          {
          outscale[0]=1.0f/scale; // x-scaling
          outscale[1]=1.0f/scale; // z-scaling
+         outscale[2]=SCALE/exaggeration; // one scaled meter
          }
 
    return(1);

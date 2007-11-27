@@ -332,7 +332,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    int success;
 
    float outparams[6];
-   float outscale[2];
+   float outscale[3];
 
    char *elevtilesetfile,*imagtilesetfile;
    char *vtbelevinifile,*vtbimaginifile;
@@ -487,11 +487,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // set scaling factor of tileset
    LPARAMS.scaling[0]=outscale[0];
    LPARAMS.scaling[1]=outscale[1];
-   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[2]=outscale[2];
 
    // create the warp
-   createwarp(miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
-              offsetDAT,extentDAT);
+   createwarp(offsetDAT,extentDAT,
+              miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+              LPARAMS.scale);
 
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
@@ -544,8 +545,9 @@ void minilayer::loadopts()
    }
 
 // create the warp
-void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
-                           minicoord offsetDAT,minicoord extentDAT)
+void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
+                           miniv3d offsetLOC,miniv3d scalingLOC,
+                           double scaleLOC)
    {
    minicoord bboxDAT[2];
 
@@ -553,6 +555,10 @@ void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
 
    // create warp object
    WARP=new miniwarp();
+
+   // define global coordinates:
+
+   WARP->def_global(minicoord::MINICOORD_ECEF);
 
    // define data coordinates:
 
@@ -563,7 +569,7 @@ void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
 
    // define local coordinates:
 
-   WARP->def_2local(-offsetLOC,scalingLOC);
+   WARP->def_2local(-offsetLOC,scalingLOC,scaleLOC);
 
    // define affine coordinates:
 
@@ -573,6 +579,7 @@ void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
       mtxAFF[1]=miniv3d(0.0,1.0,1.0);
       mtxAFF[2]=miniv3d(0.0,0.0,1.0);
       }
+   else ERRORMSG(); //!! not yet implemented
 
    WARP->def_2affine(mtxAFF);
 

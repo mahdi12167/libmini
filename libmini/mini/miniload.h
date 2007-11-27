@@ -73,12 +73,12 @@ class miniload
    //! loader for paged tile sets
    int load(int cols,int rows,
             const char *basepath1=0,const char *basepath2=0,const char *basepath3=0,
-            float offsetx=0.0f,float offsety=0.0f,float offsetz=0.0f,
+            float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
             float exaggeration=1.0f,float scale=1.0f,
             float lambda=1.0f,float attenuation=1.0f,
             float minres=0.0f,float bsafety=0.0f,
             float outparams[6]=0,
-            float outscale[2]=0);
+            float outscale[3]=0);
 
    //! set callbacks for requesting and preloading tiles
    void setloader(int (*request)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap),void *data,

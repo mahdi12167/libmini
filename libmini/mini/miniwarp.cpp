@@ -239,7 +239,7 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
-   SYSGLB=minicoord::MINICOORD_ECEF;
+   SYSGLB=minicoord::MINICOORD_LINEAR;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
@@ -328,10 +328,12 @@ void miniwarp::def_data(const minicoord bboxDAT[2])
    }
 
 // define conversion to local coordinates
-void miniwarp::def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC)
+void miniwarp::def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,double scaleLOC)
    {
    OFFSETLOC=offsetLOC;
    SCALINGLOC=scalingLOC;
+
+   SCALELOC=scaleLOC;
 
    update_mtx();
    }
@@ -571,15 +573,11 @@ void miniwarp::update_mtx()
 
       // conversion 2 metric coordinates:
 
-      if (SYSDAT==minicoord::MINICOORD_LLH)
-         {
-         MTX_2PLN[0]=miniv4d(SCALINGLOC.x/SCALINGLOC.z,0.0,0.0);
-         MTX_2PLN[1]=miniv4d(0.0,SCALINGLOC.y/SCALINGLOC.z,0.0);
-         MTX_2PLN[2]=miniv4d(0.0,0.0,1.0);
+      MTX_2PLN[0]=miniv4d(SCALELOC*SCALINGLOC.x,0.0,0.0);
+      MTX_2PLN[1]=miniv4d(0.0,SCALELOC*SCALINGLOC.y,0.0);
+      MTX_2PLN[2]=miniv4d(0.0,0.0,SCALELOC*SCALINGLOC.z);
 
-         mlt_mtx(MTX_2PLN,INV_2CNT,MTX_2PLN,INV_2DAT);
-         }
-      else mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT);
+      mlt_mtx(MTX_2PLN,INV_2CNT,MTX_2PLN,INV_2DAT);
 
       inv_mtx(INV_2PLN,MTX_2PLN);
 
