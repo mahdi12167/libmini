@@ -331,7 +331,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    {
    int success;
 
-   float outparams[6];
+   float outparams[5];
    float outscale[3];
 
    char *elevtilesetfile,*imagtilesetfile;
@@ -412,6 +412,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // set local offset of tileset center
       LPARAMS.offset[0]=TILECACHE->getelevinfo_centerx();
       LPARAMS.offset[1]=TILECACHE->getelevinfo_centery();
+      LPARAMS.offset[2]=0.0f;
 
       // set base size of textures
       if (TILECACHE->hasimaginfo()) LPARAMS.basesize=TILECACHE->getimaginfo_maxtexsize();
@@ -434,6 +435,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // set local offset of tileset center
       LPARAMS.offset[0]=TILECACHE->getelevini_centerx();
       LPARAMS.offset[1]=TILECACHE->getelevini_centery();
+      LPARAMS.offset[2]=0.0f;
 
       // set base size of textures
       if (TILECACHE->hasimagini()) LPARAMS.basesize=TILECACHE->getimagini_maxtexsize();
@@ -463,7 +465,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    success=TERRAIN->load(LPARAMS.cols,LPARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
                          LPARAMS.shift[0]-LPARAMS.offset[0],LPARAMS.shift[1]-LPARAMS.offset[1], // horizontal offset
-                         LPARAMS.shift[2], // vertical offset
+                         LPARAMS.shift[2]+LPARAMS.offset[2], // vertical offset
                          LPARAMS.exaggeration,LPARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
@@ -482,7 +484,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // set offset of tileset center
    LPARAMS.offset[0]+=outparams[2];
    LPARAMS.offset[1]+=-outparams[3];
-   LPARAMS.offset[2]+=outparams[5];
+   LPARAMS.offset[2]=0.0f;
 
    // set scaling factor of tileset
    LPARAMS.scaling[0]=outscale[0];

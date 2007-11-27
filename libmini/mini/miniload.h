@@ -77,7 +77,7 @@ class miniload
             float exaggeration=1.0f,float scale=1.0f,
             float lambda=1.0f,float attenuation=1.0f,
             float minres=0.0f,float bsafety=0.0f,
-            float outparams[6]=0,
+            float outparams[5]=0,
             float outscale[3]=0);
 
    //! set callbacks for requesting and preloading tiles

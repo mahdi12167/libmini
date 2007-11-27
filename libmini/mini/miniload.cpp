@@ -1046,7 +1046,7 @@ int miniload::load(int cols,int rows,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
                    float minres,float bsafety,
-                   float outparams[6],
+                   float outparams[5],
                    float outscale[3])
    {
    int i,j;
@@ -1389,7 +1389,7 @@ int miniload::load(int cols,int rows,
 
    TILE->setrequest(request,this,preload,PFARP,PUPDATE);
 
-   // 6 output parameters
+   // 5 output parameters
    if (outparams!=NULL)
       {
       outparams[0]=COLDIM; // dimension of one column
@@ -1399,8 +1399,6 @@ int miniload::load(int cols,int rows,
       outparams[3]=-CENTERZ; // z-center of the grid
 
       outparams[4]=(maxelev==MAXFLOAT)?MAXFLOAT:maxelev*SCALE; // maximum elevation
-
-      outparams[5]=CENTERY; // y-center of the grid
       }
 
    // 3 output parameters

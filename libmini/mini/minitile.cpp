@@ -757,7 +757,7 @@ minitile *minitile::load(int cols,int rows,
                          float sealevel,float snowline,
                          float lambda,float attenuation,
                          float minres,float bsafety,
-                         float outparams[6],
+                         float outparams[5],
                          float outscale[3])
    {
    int i,j;
@@ -940,7 +940,7 @@ minitile *minitile::load(int cols,int rows,
 
    if (basepath3!=NULL) delete[] fmaps;
 
-   // 6 output parameters
+   // 5 output parameters
    if (outparams!=NULL)
       {
       outparams[0]=xdim/scale;
@@ -950,8 +950,6 @@ minitile *minitile::load(int cols,int rows,
       outparams[3]=centerz/scale;
 
       outparams[4]=maxelev*scaling/scale;
-
-      outparams[5]=offseth/scale;
       }
 
    // 3 output parameters
