@@ -5,13 +5,9 @@
 #include "threadbase.h"
 #include "curlbase.h"
 #include "squishbase.h"
-#include "shaderbase.h"
 
 #include "miniOGL.h"
-#include "minilayer.h"
-#include "miniterrain.h"
-
-#include "miniutm.h"
+#include "minishader.h"
 
 #include "viewerbase.h"
 
