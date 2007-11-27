@@ -993,31 +993,6 @@ float miniload::gettexmem()
    return(tmem/fsqr(1024));
    }
 
-// compute actual ratio of loaded and original textures in the visible range
-float miniload::gettexratio()
-   {
-   int i,j;
-
-   float tmem,omem;
-
-   if (TILE==NULL) ERRORMSG();
-
-   tmem=omem=0.0f;
-
-   for (i=TILE->getvisibleleft(); i<=TILE->getvisibleright(); i++)
-      for (j=TILE->getvisiblebottom(); j<=TILE->getvisibletop(); j++)
-         if (TILE->gettexid(i,j)!=0)
-            if (MINTEX[i+j*COLS]>0)
-               {
-               tmem+=TILE->gettexw(i,j)*TILE->gettexh(i,j);
-               omem+=fsqr(fpow(2,MINTEX[i+j*COLS]+1));
-               }
-
-   if (omem==0.0f) return(1.0f);
-
-   return(tmem/omem);
-   }
-
 // reload a specific tile
 void miniload::reload(int col,int row,
                       unsigned char *hmap,

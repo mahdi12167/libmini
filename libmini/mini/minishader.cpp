@@ -2,18 +2,18 @@
 
 #include "minibase.h"
 
-#include "shaderbase.h"
+#include "minishader.h"
 
-unsigned char *shaderbase::VISBATHYMAP=NULL;
-int shaderbase::VISBATHYWIDTH=0,shaderbase::VISBATHYHEIGHT=0,shaderbase::VISBATHYCOMPS=0;
-int shaderbase::VISBATHYMOD=0;
+unsigned char *minishader::VISBATHYMAP=NULL;
+int minishader::VISBATHYWIDTH=0,minishader::VISBATHYHEIGHT=0,minishader::VISBATHYCOMPS=0;
+int minishader::VISBATHYMOD=0;
 
-unsigned char *shaderbase::NPRBATHYMAP=NULL;
-int shaderbase::NPRBATHYWIDTH=0,shaderbase::NPRBATHYHEIGHT=0,shaderbase::NPRBATHYCOMPS=0;
-int shaderbase::NPRBATHYMOD=0;
+unsigned char *minishader::NPRBATHYMAP=NULL;
+int minishader::NPRBATHYWIDTH=0,minishader::NPRBATHYHEIGHT=0,minishader::NPRBATHYCOMPS=0;
+int minishader::NPRBATHYMOD=0;
 
 // enable vertex and pixel shader for VIS purposes
-void shaderbase::setVISshader(minicache *cache,
+void minishader::setVISshader(minicache *cache,
                               float scale,float exaggeration,
                               float fogstart,float fogend,
                               float fogdensity,
@@ -269,7 +269,7 @@ void shaderbase::setVISshader(minicache *cache,
    }
 
 // set bathymetry color map for VIS shader
-void shaderbase::setVISbathymap(unsigned char *bathymap,
+void minishader::setVISbathymap(unsigned char *bathymap,
                                 int bathywidth,int bathyheight,int bathycomps)
    {
    VISBATHYMAP=bathymap;
@@ -282,7 +282,7 @@ void shaderbase::setVISbathymap(unsigned char *bathymap,
    }
 
 // enable vertex and pixel shader for NPR purposes
-void shaderbase::setNPRshader(minicache *cache,
+void minishader::setNPRshader(minicache *cache,
                               float scale,float exaggeration,
                               float fogstart,float fogend,
                               float fogdensity,
@@ -492,7 +492,7 @@ void shaderbase::setNPRshader(minicache *cache,
    }
 
 // set bathymetry color map for NPR shader
-void shaderbase::setNPRbathymap(unsigned char *bathymap,
+void minishader::setNPRbathymap(unsigned char *bathymap,
                                 int bathywidth,int bathyheight,int bathycomps)
    {
    NPRBATHYMAP=bathymap;
@@ -505,7 +505,7 @@ void shaderbase::setNPRbathymap(unsigned char *bathymap,
    }
 
 // disable vertex and pixel shaders
-void shaderbase::unsetshaders(minicache *cache)
+void minishader::unsetshaders(minicache *cache)
    {
    cache->usevtxshader(0);
    cache->usepixshader(0);

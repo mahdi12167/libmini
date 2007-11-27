@@ -368,31 +368,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath="shaderbase.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header-Dateien"
@@ -428,10 +403,6 @@
 			</File>
 			<File
 				RelativePath="convbase.h"
-				>
-			</File>
-			<File
-				RelativePath="shaderbase.h"
 				>
 			</File>
 		</Filter>

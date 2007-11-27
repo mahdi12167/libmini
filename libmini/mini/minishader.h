@@ -1,11 +1,11 @@
 // (c) by Stefan Roettger
 
-#ifndef SHADERBASE_H
-#define SHADERBASE_H
+#ifndef MINISHADER_H
+#define MINISHADER_H
 
 #include "minicache.h"
 
-class shaderbase
+class minishader
    {
    public:
 

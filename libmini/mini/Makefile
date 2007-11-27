@@ -3,10 +3,10 @@ SHELL	= sh
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
 	  minitime miniio minihsv miniutm\
-	  ministub minitile miniload minicache\
+	  ministub minitile miniload\
+	  minilayer miniterrain minicache minishader miniwarp miniray\
+	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
-	  minilayer miniwarp miniray ministrip\
-	  minipoint minitext minisky miniglobe\
 	  pnmbase pnmsample\
 	  database datacloud datacache\
 	  datacalc dataparse\
@@ -14,8 +14,7 @@ MODS	= mini miniOGL\
 
 VMODS	= viewerbase\
 	  threadbase curlbase\
-	  jpegbase pngbase squishbase greycbase convbase\
-	  shaderbase
+	  jpegbase pngbase squishbase greycbase convbase
 
 SRCS	= $(MODS:=.cpp)
 OBJS	= $(MODS:=.o)

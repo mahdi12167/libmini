@@ -13,7 +13,7 @@ renderer which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.5.9 as of 25.November.2007<br>
+Version 8.5.9 as of 26.November.2007<br>
 Copyright (c) 1995-2007 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -134,10 +134,10 @@ Within the libMini package the following files are contained:<p>
    <tr><td>ministub.cpp/.h:    </td><td>simplified stub class of the mini library</td></tr>
    <tr><td>minitile.cpp/.h:    </td><td>wrapper class for tiled terrain rendering</td></tr>
    <tr><td>miniload.cpp/.h:    </td><td>wrapper class for paged terrain rendering</td></tr>
+   <tr><td>minilayer.cpp/.h:   </td><td>wrapper class rendering a single layer</td></tr>
+   <tr><td>miniterrain.cpp/.h: </td><td>wrapper class rendering multiple layers</td></tr>
    <tr><td>minicache.cpp/.h:   </td><td>cache for speeding up tiled terrain rendering</td></tr>
-   <tr><td>minitree.cpp/.h:    </td><td>contains algorithms for vegetation rendering</td></tr>
-   <tr><td>minibrick.cpp/.h:   </td><td>contains algorithms for C-LOD volume rendering</td></tr>
-   <tr><td>minilod.cpp/.h:     </td><td>contains algorithms for S-LOD volume rendering</td></tr>
+   <tr><td>minishader.cpp/.h:  </td><td>shader support for the render cache</td></tr>
    <tr><td>miniwarp.cpp/.h:    </td><td>warp kernel for global coordinate systems</td></tr>
    <tr><td>miniray.cpp/.h:     </td><td>ray/triangle intersection code</td></tr>
    <tr><td>ministrip.cpp/.h:   </td><td>vertex array container for triangle strips</td></tr>
@@ -145,6 +145,9 @@ Within the libMini package the following files are contained:<p>
    <tr><td>minitext.cpp/.h:    </td><td>simple text renderer</td></tr>
    <tr><td>minisky.cpp/.h:     </td><td>simple sky dome renderer</td></tr>
    <tr><td>miniglobe.cpp/.h:   </td><td>night/day renderer of the earth or other textured globes</td></tr>
+   <tr><td>minitree.cpp/.h:    </td><td>contains algorithms for vegetation rendering</td></tr>
+   <tr><td>minibrick.cpp/.h:   </td><td>contains algorithms for C-LOD volume rendering</td></tr>
+   <tr><td>minilod.cpp/.h:     </td><td>contains algorithms for S-LOD volume rendering</td></tr>
    <tr><td>pnmbase.cpp/.h:     </td><td>methods for handling PNM images</td></tr>
    <tr><td>pnmsample.cpp/.h:   </td><td>methods for multi-resolution terrain resampling</td></tr>
    <tr><td>database.cpp/.h:    </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
@@ -164,7 +167,6 @@ Within the libMini package the following files are contained:<p>
    <tr><td>squishbase.cpp/.h:  </td><td>squish support for the libMini Viewer</td></tr>
    <tr><td>greycbase.cpp/.h:   </td><td>greycstoration support for the libMini Viewer (optional)</td></tr>
    <tr><td>convbase.cpp/.h:    </td><td>image conversion support for the libMini Viewer</td></tr>
-   <tr><td>shaderbase.cpp/.h:  </td><td>shader support for the libMini Viewer</td></tr>
    <tr><td>luna*.cpp/.h:       </td><td>interpreter for LUNA, an RPN-style language for LUNAtics and nerds alike</td></tr>
    <tr><td>SkyDome.ppm:        </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
    <tr><td>Cone.db:            </td><td>a sample DB volume (implicitly defined cone)</td></tr>

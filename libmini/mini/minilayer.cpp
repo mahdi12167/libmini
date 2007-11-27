@@ -11,7 +11,7 @@
 #include "minilayer.h"
 
 // default constructor
-minilayer::minilayer(int id,minicache *cache)
+minilayer::minilayer(minicache *cache)
    {
    // auto-determined parameters upon load:
 
@@ -113,7 +113,7 @@ minilayer::minilayer(int id,minicache *cache)
 
    LPARAMS.altpath="data/"; // alternative data path
 
-   // optional features:
+   // optional feature switches:
 
    LPARAMS.usewaypoints=FALSE;
    LPARAMS.usebricks=FALSE;
@@ -139,15 +139,16 @@ minilayer::minilayer(int id,minicache *cache)
 
    // initialize state:
 
-   LOADED=FALSE;
-
-   ID=id;
    CACHE=cache;
 
    TERRAIN=NULL;
    TILECACHE=NULL;
 
    POINTS=NULL;
+
+   LOADED=FALSE;
+
+   VISIBLE=TRUE;
 
    THREADDATA=NULL;
    THREADINIT=NULL;
@@ -588,16 +589,16 @@ void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
    WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_GLOBAL);
 
    WARP_L2I=*WARP;
-   WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_INTERNAL);
+   WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_WARP);
 
    WARP_I2L=*WARP;
-   WARP_I2L.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_LOCAL);
+   WARP_I2L.setwarp(miniwarp::MINIWARP_WARP,miniwarp::MINIWARP_LOCAL);
 
    WARP_E2I=*WARP;
-   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
+   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_WARP);
 
    WARP_I2E=*WARP;
-   WARP_I2E.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_I2E.setwarp(miniwarp::MINIWARP_WARP,miniwarp::MINIWARP_GLOBAL);
    }
 
 // get extent of tileset
@@ -662,13 +663,12 @@ void minilayer::update()
    {UPD=1;}
 
 // generate and cache scene for a particular eye point
-void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,
-                      double time)
+void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time)
    {
    minicoord ei;
    miniv3d di,ui;
 
-   if (!LOADED) return;
+   if (!LOADED || !VISIBLE) return;
 
    // transform coordinates
    ei=map_e2i(e);
@@ -698,6 +698,10 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    // also save actual local time
    LPARAMS.time=time;
    }
+
+// determine whether or not the layer is displayed
+void minilayer::display(BOOLINT yes)
+   {VISIBLE=yes;}
 
 // flatten the scene by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)

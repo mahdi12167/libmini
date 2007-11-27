@@ -8,15 +8,13 @@
 #undef GREYCSTORATION // enable this for greycstoration support
 #include "convbase.h"
 
-#include "minicache.h"
-
 #include "miniv3d.h"
-#include "minilayer.h"
+#include "miniterrain.h"
 
 #include "minisky.h"
 #include "miniglobe.h"
 
-//! aggregate class for viewing a tileset
+//! base class for viewing tilesets
 class viewerbase
    {
    public:
@@ -24,59 +22,14 @@ class viewerbase
    struct VIEWER_PARAMS_STRUCT
       {
       // configurable parameters:
-      // [parameters marked with * must be changed via set()]
-      // [parameters marked with + must not be changed after calling load()]
 
-      int warpmode;             //+ warp mode: plain=0 affine=1 non-linear=2
+      float fps;   // frames per second (target frame rate)
 
-      float scale;              //+ scaling of scene
-      float exaggeration;       //+ exaggeration of elevations
-      float maxelev;            //+ absolute maximum of expected elevations
+      float fovy;  //  field of view (degrees)
+      float nearp; //  near plane (meters)
+      float farp;  //  far plane (meters)
 
-      float load;               //+ initially loaded area relative to far plane
-      float preload;            //+ continuously preloaded area relative to far plane
-
-      float minres;             //+ minimum resolution of triangulation
-      int fastinit;             //+ fast initialization level
-      float avgd2value;         //+ average d2value for fast initialization
-
-      int lazyness;             //+ lazyness of tileset paging
-      float update;             //* update period for tileset paging in seconds
-      float expire;             //* tile expiration time in seconds
-
-      float upload;             //* tile upload time per frame relative to 1/fps
-      float keep;               //* time to keep tiles in the cache in minutes
-      float maxdelay;           //* time after which tiles are regarded as delayed relative to update time
-      float cache;              //* memory footprint of the cache in mega bytes
-
-      float keepalive;          //* time for which idling threads are kept alive in seconds
-      float timeslice;          //* time for which idling threads sleep in seconds
-
-      float fps;                //* frames per second (target frame rate)
-      float spu;                //* update period for render buffer in seconds
-
-      float res;                //  global resolution of triangulation
-
-      float fovy;               //  field of view (degrees)
-      float nearp;              //  near plane (meters)
-      float farp;               //  far plane (meters)
-
-      float reduction1;         //+ reduction parameter #1 for invisible tiles
-      float reduction2;         //+ reduction parameter #2 for invisible tiles
-
-      float range;              //* texture paging range relative to far plane
-      float radius;             //* non-linear kick-in distance relative to texture range
-      float dropoff;            //* non-linear lod dropoff at kick-in distance
-
-      float sealevel;           //* sea-level height (meters, off=-MAXFLOAT)
-
-      BOOLINT autocompress;     //+ auto-compress raw textures with S3TC
-      BOOLINT lod0uncompressed; //+ keep LOD0 textures uncompressed
-
-      char *elevdir;            //+ default elev directory
-      char *imagdir;            //+ default imag directory
-
-      // optional features:
+      // feature switches:
 
       BOOLINT usefog;
       BOOLINT useshaders;
@@ -97,64 +50,9 @@ class viewerbase
       float fogstart;
       float fogdensity;
 
-      // optional color mapping:
-
-      float bathystart;
-      float bathyend;
-
-      unsigned char *bathymap;
-      int bathywidth,bathyheight,bathycomps;
-
-      float contours;
-
-      float seacolor[3];
-
-      float seatrans;
-      float seamodulate;
-      float seabottom;
-      float bottomtrans;
-
-      float bottomcolor[3];
-
-      // optional NPR rendering:
-
-      float nprfadefactor;
-
-      float nprbathystart;
-      float nprbathyend;
-
-      unsigned char *nprbathymap;
-      int nprbathywidth,nprbathyheight,nprbathycomps;
-
-      float nprcontours;
-
-      float nprseacolor[3];
-
-      float nprseatrans;
-      float nprseagrey;
-
       // optional sky-dome:
 
       char *skydome;
-
-      // optional way-points:
-
-      char *waypoints;
-
-      float signpostheight;
-      float signpostrange;
-
-      float signpostturn;
-      float signpostincline;
-
-      char *brick;
-
-      float bricksize;
-      float brickrad;
-
-      int brickpasses;
-      float brickceiling;
-      float brickscroll;
 
       // optional earth globe:
 
@@ -189,40 +87,22 @@ class viewerbase
    //! set parameters
    void set(VIEWER_PARAMS *params) {set(*params);}
 
-   //! propagate parameters
-   void propagate() {set(PARAMS);}
-
-   //! propagate waypoint parameters
-   void propagate_wp();
+   // propagate parameters
+   void propagate();
 
    //! get the encapsulated terrain object
-   miniload *getterrain() {return((LAYER==NULL)?NULL:LAYER->getterrain());}
-
-   //! get the encapsulated render buffer
-   minicache *getbuffer() {return(CACHE);}
-
-   //! get the encapsulated cache object
-   datacache *getcache() {return((LAYER==NULL)?NULL:LAYER->getcache());}
+   miniterrain *getterrain() {return(&TERRAIN);}
 
    //! load tileset (short version)
    BOOLINT load(const char *url,
-                BOOLINT reset=FALSE);
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
 
    //! load tileset (long version)
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                BOOLINT reset=FALSE);
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
 
    //! load optional features
    void loadopts();
-
-   //! get extent of tileset
-   miniv3d getextent();
-
-   //! get center of tileset
-   minicoord getcenter();
-
-   //! get the elevation at position (x,y,z)
-   double getheight(const minicoord &p);
 
    //! get initial view point
    minicoord getinitial();
@@ -230,16 +110,10 @@ class viewerbase
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
-   //! set render window
-   void setwinsize(int width,int height);
-
-   //! trigger complete render buffer update at next frame
-   void update();
-
    //! generate and cache scene for a particular eye point
-   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u);
+   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect);
 
-   //! render cached scene
+   //! render scene
    void render();
 
    //! get time
@@ -255,66 +129,54 @@ class viewerbase
    //! dt is the time spent for rendering the last frame
    void idle(double dt);
 
-   //! flatten the scene by a relative scaling factor (in the range [0-1])
-   void flatten(float relscale);
-
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);
 
    // coordinate conversions (e=external, l=local, i=internal):
 
    //! map coordinates
-   minicoord map_e2l(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_e2l(p));}
-   minicoord map_l2e(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_l2e(p));}
-   minicoord map_l2i(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_l2i(p));}
-   minicoord map_i2l(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_i2l(p));}
-   minicoord map_e2i(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_e2i(p));}
-   minicoord map_i2e(const minicoord &p) {return((LAYER==NULL)?minicoord():LAYER->map_i2e(p));}
+   minicoord map_e2l(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_e2l(p));}
+   minicoord map_l2e(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_l2e(p));}
+   minicoord map_l2i(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_l2i(p));}
+   minicoord map_i2l(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_i2l(p));}
+   minicoord map_e2i(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_e2i(p));}
+   minicoord map_i2e(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->map_i2e(p));}
 
    //! rotate vector
-   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_e2l(v,p));}
-   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_l2e(v,p));}
-   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_l2i(v,p));}
-   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_i2l(v,p));}
-   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_e2i(v,p));}
-   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return((LAYER==NULL)?miniv3d(0.0):LAYER->rot_i2e(v,p));}
+   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_e2l(v,p));}
+   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_l2e(v,p));}
+   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_l2i(v,p));}
+   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_i2l(v,p));}
+   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_e2i(v,p));}
+   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p))->rot_i2e(v,p));}
 
-   //! map length from external to local coordinates
-   double len_e2l(double l) {return((LAYER==NULL)?0.0:LAYER->len_e2l(l));}
-   double len_l2e(double l) {return((LAYER==NULL)?0.0:LAYER->len_l2e(l));}
-   double len_l2i(double l) {return((LAYER==NULL)?0.0:LAYER->len_l2i(l));}
-   double len_i2l(double l) {return((LAYER==NULL)?0.0:LAYER->len_i2l(l));}
-   double len_e2i(double l) {return((LAYER==NULL)?0.0:LAYER->len_e2i(l));}
-   double len_i2e(double l) {return((LAYER==NULL)?0.0:LAYER->len_i2e(l));}
+   //! map length
+   double len_e2l(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_e2l(l));}
+   double len_l2e(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_l2e(l));}
+   double len_l2i(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_l2i(l));}
+   double len_i2l(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_i2l(l));}
+   double len_e2i(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_e2i(l));}
+   double len_i2e(double l) {return(TERRAIN.getlayer(TERRAIN.getreference())->len_i2e(l));}
 
    protected:
 
    VIEWER_PARAMS PARAMS;
 
-   void render_presea();
-   void render_postsea();
-
    private:
 
-   minilayer *LAYER;
+   miniterrain TERRAIN;
 
-   minicache *CACHE;
-
-   int WINWIDTH;
-   int WINHEIGHT;
+   minisky SKYDOME;
+   miniglobe EARTH;
 
    double START,TIMER;
 
-   minisky skydome;
-   miniglobe earth;
+   void inithooks();
 
    static void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    static int check_callback(char *src_url,char *src_id,char *src_file,void *data);
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data);
-
-   static void preseacb(void *data);
-   static void postseacb(void *data);
    };
 
 #endif

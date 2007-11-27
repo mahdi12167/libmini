@@ -74,13 +74,14 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #include <mini/minibase.h>
 
+#include <mini/miniv3d.h>
+#include <mini/minihsv.h>
+
 #include <mini/miniOGL.h>
+#include <mini/miniterrain.h>
 
 #include <mini/minitile.h>
 #include <mini/minitext.h>
-
-#include <mini/miniv3d.h>
-#include <mini/minihsv.h>
 
 #include <mini/viewerbase.h>
 
@@ -107,9 +108,14 @@ static char basepath2[MAXSTR]=""; // imagery
 // window size
 static int winwidth,winheight,winid;
 
-// the viewer base class and its parameters
+// the viewer object
 static viewerbase *viewer=NULL;
+
+// the viewing parameters
 static viewerbase::VIEWER_PARAMS *params=NULL;
+
+// the terrain parameters
+static miniterrain::MINITERRAIN_PARAMS *tparams=NULL;
 
 // eye point
 static minicoord eye;
@@ -162,20 +168,15 @@ static int sw_cross=0;
 void initparams()
    {
    viewerbase::VIEWER_PARAMS prms;
+   miniterrain::MINITERRAIN_PARAMS tprms;
 
    viewer->get(prms);
 
    prms.fps=VIEWER_FPS;
-   prms.scale=VIEWER_SCALE;
-   prms.exaggeration=VIEWER_EXAGGER;
+
    prms.fovy=VIEWER_FOVY;
    prms.nearp=VIEWER_NEARP;
    prms.farp=VIEWER_FARP;
-   prms.res=VIEWER_RES;
-   prms.range=VIEWER_RANGE;
-   prms.sealevel=VIEWER_SEALEVEL;
-
-   if (sw_autos3tc!=0) prms.autocompress=TRUE;
 
    prms.usefog=TRUE;
    prms.useshaders=TRUE;
@@ -190,41 +191,53 @@ void initparams()
    prms.fogstart=VIEWER_FOGSTART;
    prms.fogdensity=VIEWER_FOGDENSITY;
 
-   prms.contours=VIEWER_CONTOURS;
-   prms.seabottom=VIEWER_SEABOTTOM;
-
-   prms.bathystart=VIEWER_BATHYSTART;
-   prms.bathyend=VIEWER_BATHYEND;
-
-   prms.bathymap=VIEWER_BATHYMAP;
-   prms.bathywidth=VIEWER_BATHYWIDTH;
-   prms.bathyheight=VIEWER_BATHYHEIGHT;
-   prms.bathycomps=VIEWER_BATHYCOMPS;
-
-   prms.nprbathystart=VIEWER_NPRBATHYSTART;
-   prms.nprbathyend=VIEWER_NPRBATHYEND;
-
-   prms.nprbathymap=VIEWER_NPRBATHYMAP;
-   prms.nprbathywidth=VIEWER_NPRBATHYWIDTH;
-   prms.nprbathyheight=VIEWER_NPRBATHYHEIGHT;
-   prms.nprbathycomps=VIEWER_NPRBATHYCOMPS;
-
-   prms.nprcontours=VIEWER_NPRCONTOURS;
-
-   prms.signpostheight=VIEWER_SIGNPOSTHEIGHT;
-   prms.signpostrange=VIEWER_SIGNPOSTRANGE;
-
-   if (sw_bricks!=0) prms.usebricks=TRUE;
-
-   prms.bricksize=VIEWER_BRICKSIZE;
-   prms.brickrad=VIEWER_BRICKRAD;
-
-   if (sw_mpass!=0) prms.brickpasses=2;
-   else prms.brickpasses=1;
-
-   prms.brickscroll=VIEWER_BRICKSCROLL;
-
    viewer->set(prms);
+
+   viewer->getterrain()->get(tprms);
+
+   tprms.scale=VIEWER_SCALE;
+   tprms.exaggeration=VIEWER_EXAGGER;
+   tprms.res=VIEWER_RES;
+   tprms.range=VIEWER_RANGE;
+   tprms.sealevel=VIEWER_SEALEVEL;
+
+   if (sw_autos3tc!=0) tprms.autocompress=TRUE;
+
+   tprms.contours=VIEWER_CONTOURS;
+   tprms.seabottom=VIEWER_SEABOTTOM;
+
+   tprms.bathystart=VIEWER_BATHYSTART;
+   tprms.bathyend=VIEWER_BATHYEND;
+
+   tprms.bathymap=VIEWER_BATHYMAP;
+   tprms.bathywidth=VIEWER_BATHYWIDTH;
+   tprms.bathyheight=VIEWER_BATHYHEIGHT;
+   tprms.bathycomps=VIEWER_BATHYCOMPS;
+
+   tprms.nprbathystart=VIEWER_NPRBATHYSTART;
+   tprms.nprbathyend=VIEWER_NPRBATHYEND;
+
+   tprms.nprbathymap=VIEWER_NPRBATHYMAP;
+   tprms.nprbathywidth=VIEWER_NPRBATHYWIDTH;
+   tprms.nprbathyheight=VIEWER_NPRBATHYHEIGHT;
+   tprms.nprbathycomps=VIEWER_NPRBATHYCOMPS;
+
+   tprms.nprcontours=VIEWER_NPRCONTOURS;
+
+   tprms.signpostheight=VIEWER_SIGNPOSTHEIGHT;
+   tprms.signpostrange=VIEWER_SIGNPOSTRANGE;
+
+   if (sw_bricks!=0) tprms.usebricks=TRUE;
+
+   tprms.bricksize=VIEWER_BRICKSIZE;
+   tprms.brickrad=VIEWER_BRICKRAD;
+
+   if (sw_mpass!=0) tprms.brickpasses=2;
+   else tprms.brickpasses=1;
+
+   tprms.brickscroll=VIEWER_BRICKSCROLL;
+
+   viewer->getterrain()->set(tprms);
    }
 
 // initialize the render window
@@ -260,8 +273,6 @@ void initwindow(int width,int height)
    if (winwidth<1) winwidth=1;
    if (winheight<1) winheight=1;
 
-   viewer->setwinsize(winwidth,winheight);
-
    glViewport(0,0,winwidth,winheight);
    }
 
@@ -275,7 +286,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    eye=e;
 
-   elev=viewer->getheight(eye);
+   elev=viewer->getterrain()->getheight(eye);
 
    el=viewer->map_e2l(eye);
 
@@ -304,14 +315,16 @@ void loadsettings()
    float a,p;
 
    viewerbase::VIEWER_PARAMS prms;
+   miniterrain::MINITERRAIN_PARAMS tprms;
 
    int flag;
 
-   char *savname=viewer->getcache()->getfile(VIEWER_SAVFILE);
+   char *savname=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname!=NULL)
       {
       viewer->get(prms);
+      viewer->getterrain()->get(tprms);
 
       if ((file=fopen(savname,"rb"))==NULL) ERRORMSG();
       free(savname);
@@ -328,13 +341,13 @@ void loadsettings()
       if (fscanf(file,"pitch=%f\n",&p)!=1) ERRORMSG();
 
       if (fscanf(file,"farp=%f\n",&prms.farp)!=1) ERRORMSG();
-      if (fscanf(file,"res=%f\n",&prms.res)!=1) ERRORMSG();
-      if (fscanf(file,"range=%f\n",&prms.range)!=1) ERRORMSG();
+      if (fscanf(file,"res=%f\n",&tprms.res)!=1) ERRORMSG();
+      if (fscanf(file,"range=%f\n",&tprms.range)!=1) ERRORMSG();
 
       if (fscanf(file,"fovy=%f\n",&prms.fovy)!=1) ERRORMSG();
 
-      if (fscanf(file,"sealevel=%g\n",&prms.sealevel)!=1) ERRORMSG();
-      if (prms.sealevel<-MAXFLOAT/2) prms.sealevel=-MAXFLOAT;
+      if (fscanf(file,"sealevel=%g\n",&tprms.sealevel)!=1) ERRORMSG();
+      if (tprms.sealevel<-MAXFLOAT/2) tprms.sealevel=-MAXFLOAT;
 
       // load optional parameters:
 
@@ -358,6 +371,7 @@ void loadsettings()
       fclose(file);
 
       viewer->set(prms);
+      viewer->getterrain()->set(tprms);
 
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
@@ -368,7 +382,7 @@ void savesettings()
    {
    FILE *file;
 
-   char *savname=viewer->getcache()->getfile(VIEWER_SAVFILE);
+   char *savname=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname==NULL) savname=strdup(VIEWER_SAVFILE);
 
@@ -387,12 +401,12 @@ void savesettings()
    fprintf(file,"pitch=%f\n",pitch);
 
    fprintf(file,"farp=%f\n",params->farp);
-   fprintf(file,"res=%f\n",params->res);
-   fprintf(file,"range=%f\n",params->range);
+   fprintf(file,"res=%f\n",tparams->res);
+   fprintf(file,"range=%f\n",tparams->range);
 
    fprintf(file,"fovy=%f\n",params->fovy);
 
-   fprintf(file,"sealevel=%g\n",params->sealevel);
+   fprintf(file,"sealevel=%g\n",tparams->sealevel);
 
    // save optional parameters:
 
@@ -544,7 +558,7 @@ void renderinfo()
    const float size=0.3f;
    const float alpha=0.5f;
 
-   minitile *mt=viewer->getterrain()->getminitile();
+   minitile *mt=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getterrain()->getminitile();
 
    int vcol=mt->getvisibleleft();
    int vrow=mt->getvisiblebottom();
@@ -626,7 +640,7 @@ void renderhud()
 
    char str[MAXSTR];
 
-   minitile *mt=viewer->getterrain()->getminitile();
+   minitile *mt=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
 
@@ -657,28 +671,28 @@ void renderhud()
       eye_llh=eye;
       if (eye_llh.type==minicoord::MINICOORD_ECEF) eye_llh.convert2(minicoord::MINICOORD_LLH);
 
-      elev=viewer->getheight(eye);
+      elev=viewer->getterrain()->getheight(eye);
       if (elev==-MAXFLOAT) elev=0.0f;
 
-      sea=params->sealevel;
+      sea=tparams->sealevel;
       if (sea==-MAXFLOAT) sea=0.0f;
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
-               eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/params->exaggeration,turn,incline, // position/elevation and direction
-               params->farp,params->res,params->range*params->farp,sea,gravity); // adjustable parameters
+               eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,turn,incline, // position/elevation and direction
+               params->farp,tparams->res,tparams->range*params->farp,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
       glTranslatef(0.3f,0.0f,0.0f);
 
-      snprintf(str,MAXSTR,"Tile Set:                \n\n vis area= [%d-%d]x[%d-%d]\n\n fps= %.1fHz (%.1f%%)\n\n mem= %.1fMB\n tex= %.1fMB (%.1fMB)\n\nStreaming:\n\n pending= %d\n\n cache= %.1fMB\n\nGeometry:\n\n fans=     %d\n vertices= %d\n",
-               mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop(), // visible area of tileset
+      snprintf(str,MAXSTR,"Tile Set:                \n\n vis area= [%d-%d]x[%d-%d]\n\n fps= %.1fHz (%.1f%%)\n\n mem= %.1fMB\n tex= %.1fMB\n\nStreaming:\n\n pending= %d\n\n cache= %.1fMB\n\nGeometry:\n\n fans=     %d\n vertices= %d\n",
+               mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop(), // visible area of reference tileset
                1.0/(avg_delta+avg_idle),100*(1.0-avg_idle*params->fps), // actual frame rate and load
-               viewer->getterrain()->getmem(),viewer->getterrain()->gettexmem()/6,viewer->getterrain()->gettexmem(), // memory consumed by tileset
-               viewer->getcache()->getpending(), // number of pending tiles
-               viewer->getcache()->getmem(), // memory foot print of cache
-               viewer->getbuffer()->getfancnt(), // rendered triangles fans
-               viewer->getbuffer()->getvtxcnt()); // rendered vertices
+               viewer->getterrain()->getmem(),viewer->getterrain()->gettexmem(), // memory consumed by tilesets
+               viewer->getterrain()->getpending(), // number of pending tiles
+               viewer->getterrain()->getcachemem(), // memory foot print of data cache
+               viewer->getterrain()->getbuffer()->getfancnt(), // rendered triangles fans
+               viewer->getterrain()->getbuffer()->getvtxcnt()); // rendered vertices
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
@@ -708,7 +722,7 @@ void renderhud()
 
             if (dist!=MAXFLOAT)
                {
-               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getheight(eye+de*dist));
+               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getterrain()->getheight(eye+de*dist));
 
                glTranslatef(0.05f,0.0f,0.0f);
                minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
@@ -745,6 +759,8 @@ void displayfunc()
    minicoord ep,el,ei;
    miniv3d di,ui,ri;
 
+   if (winwidth<=0 || winheight<=0) return;
+
    // start timer
    viewer->starttimer();
 
@@ -763,7 +779,7 @@ void displayfunc()
 
    ep=viewer->map_l2e(el);
 
-   elev=viewer->len_e2l(viewer->getheight(ep));
+   elev=viewer->len_e2l(viewer->getterrain()->getheight(ep));
 
    dir.x=sina*cosp;
    dir.y=cosa*cosp;
@@ -810,10 +826,10 @@ void displayfunc()
    ui=viewer->rot_l2i(up,eye);
    ri=viewer->rot_l2i(right,eye);
 
-   params->signpostturn=turn;
-   params->signpostincline=-incline;
+   tparams->signpostturn=turn;
+   tparams->signpostincline=-incline;
 
-   viewer->propagate_wp();
+   viewer->getterrain()->propagate_wp();
 
    // setup OpenGL state:
 
@@ -829,7 +845,7 @@ void displayfunc()
    gluLookAt(ei.vec.x,ei.vec.y,ei.vec.z,ei.vec.x+di.x,ei.vec.y+di.y,ei.vec.z+di.z,ui.x,ui.y,ui.z);
 
    // update vertex arrays
-   viewer->cache(eye,viewer->rot_l2e(dir,el),viewer->rot_l2e(up,el));
+   viewer->cache(eye,viewer->rot_l2e(dir,el),viewer->rot_l2e(up,el),(float)winwidth/winheight);
 
    // render scene
    if (sw_stereo==0) viewer->render(); // render vertex arrays
@@ -956,24 +972,24 @@ void keyboardfunc(unsigned char key,int x,int y)
          else gravity=0.0;
          break;
       case 't':
-         params->res/=1.1f;
-         if (params->res<1.0f) params->res=1.0f;
-         viewer->propagate();
+         tparams->res/=1.1f;
+         if (tparams->res<1.0f) tparams->res=1.0f;
+         viewer->getterrain()->propagate();
          break;
       case 'T':
-         params->res*=1.1f;
-         if (params->res>1.0E10f) params->res=1.0E10f;
-         viewer->propagate();
+         tparams->res*=1.1f;
+         if (tparams->res>1.0E10f) tparams->res=1.0E10f;
+         viewer->getterrain()->propagate();
          break;
       case 'r':
-         params->range/=1.1f;
-         if (params->range<1.0E-5f) params->range=1.0E-5f;
-         viewer->propagate();
+         tparams->range/=1.1f;
+         if (tparams->range<1.0E-5f) tparams->range=1.0E-5f;
+         viewer->getterrain()->propagate();
          break;
       case 'R':
-         params->range*=1.1f;
-         if (params->range>1.0f) params->range=1.0f;
-         viewer->propagate();
+         tparams->range*=1.1f;
+         if (tparams->range>1.0f) tparams->range=1.0f;
+         viewer->getterrain()->propagate();
          break;
       case 'f':
          params->farp/=1.1f;
@@ -996,44 +1012,49 @@ void keyboardfunc(unsigned char key,int x,int y)
          viewer->propagate();
          break;
       case 'u':
-         if (params->sealevel==-MAXFLOAT) params->sealevel=0.0f;
+         if (tparams->sealevel==-MAXFLOAT) tparams->sealevel=0.0f;
          else
             {
-            params->sealevel+=0.5f;
-            if (params->sealevel==0.0f) params->sealevel=-MAXFLOAT;
+            tparams->sealevel+=0.5f;
+            if (tparams->sealevel==0.0f) tparams->sealevel=-MAXFLOAT;
             }
-         viewer->propagate();
-         viewer->update();
+         viewer->getterrain()->propagate();
+         viewer->getterrain()->update();
          break;
       case 'U':
-         if (params->sealevel==-MAXFLOAT) params->sealevel=0.0f;
+         if (tparams->sealevel==-MAXFLOAT) tparams->sealevel=0.0f;
          else
             {
-            params->sealevel-=0.5f;
-            if (params->sealevel==0.0f) params->sealevel=-MAXFLOAT;
+            tparams->sealevel-=0.5f;
+            if (tparams->sealevel==0.0f) tparams->sealevel=-MAXFLOAT;
             }
-         viewer->propagate();
-         viewer->update();
+         viewer->getterrain()->propagate();
+         viewer->getterrain()->update();
          break;
       case 'm':
          params->fogdensity*=0.9f;
          if (params->fogdensity<1.0E-3f) params->fogdensity=1.0E-3f;
+         viewer->propagate();
          break;
       case 'M':
          params->fogdensity*=1.1f;
          if (params->fogdensity>10.0f) params->fogdensity=10.0f;
+         viewer->propagate();
          break;
       case '1':
          if (!params->usefog) params->usefog=TRUE;
          else params->usefog=FALSE;
+         viewer->propagate();
          break;
       case '2':
          if (!params->usebathymap) params->usebathymap=TRUE;
          else params->usebathymap=FALSE;
+         viewer->propagate();
          break;
       case '3':
          if (!params->usecontours) params->usecontours=TRUE;
          else params->usecontours=FALSE;
+         viewer->propagate();
          break;
       case '4':
          if (!params->useskydome) params->useskydome=TRUE;
@@ -1042,6 +1063,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'p':
          if (!params->usewaypoints) params->usewaypoints=TRUE;
          else params->usewaypoints=FALSE;
+         viewer->propagate();
          break;
       case 'E':
          if (!params->useearth) params->useearth=TRUE;
@@ -1050,6 +1072,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'N':
          if (!params->usenprshader) params->usenprshader=TRUE;
          else params->usenprshader=FALSE;
+         viewer->propagate();
          break;
       case 'l':
          if (!params->usewireframe) params->usewireframe=TRUE;
@@ -1117,9 +1140,6 @@ int main(int argc,char *argv[])
    // create the viewer object
    viewer=new viewerbase;
 
-   // get a reference to the viewing parameters
-   params=viewer->get();
-
    // process command line options
    for (i=argc_regular+1; i<argc; i++)
       if (strcmp(argv[i],"-s")==0) sw_stereo=1;
@@ -1153,6 +1173,12 @@ int main(int argc,char *argv[])
 
    // initialize the viewing parameters
    initparams();
+
+   // get a reference to the viewing parameters
+   params=viewer->get();
+
+   // get a reference to the terrain parameters
+   tparams=viewer->getterrain()->get();
 
    // load tileset (short version)
    if (argc_regular==1)

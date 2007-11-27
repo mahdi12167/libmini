@@ -1,57 +1,27 @@
 // (c) by Stefan Roettger
 
-#ifndef MINILAYER_H
-#define MINILAYER_H
+#ifndef MINITERRAIN_H
+#define MINITERRAIN_H
 
 #include "minibase.h"
 
-#include "miniload.h"
 #include "minicache.h"
-#include "datacache.h"
-
-#include "minipoint.h"
 
 #include "miniv3d.h"
-#include "miniwarp.h"
+#include "minilayer.h"
 
-//! aggregate class for rendering a layer
-class minilayer
+//! aggregate class for rendering multiple layers
+class miniterrain
    {
    public:
 
-   struct MINILAYER_PARAMS_STRUCT
+   struct MINITERRAIN_PARAMS_STRUCT
       {
-      // auto-determined parameters upon load:
-
-      int cols;         // number of columns per tileset
-      int rows;         // number of rows per tileset
-
-      int basesize;     // base size of texture maps
-
-      BOOLINT usepnm;   // use either PNM or DB loader
-
-      float extent[3];  // extent of tileset
-
-      float offset[3];  // offset of tileset center
-      float scaling[3]; // scaling factor of tileset
-
-      // auto-set parameters during rendering:
-
-      minicoord eye; // eye point
-      miniv3d dir;   // viewing direction
-      miniv3d up;    // up vector
-
-      float aspect;  //  aspect ratio
-
-      double time;   // local time
-
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
       int warpmode;             //+ warp mode: plain=0 affine=1 non-linear=2
-
-      float shift[3];           //+ manual scene shift
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
@@ -97,24 +67,61 @@ class minilayer
       BOOLINT autocompress;     //+ auto-compress raw textures with S3TC
       BOOLINT lod0uncompressed; //+ keep LOD0 textures uncompressed
 
-      int locthreads;           //+ number of local threads
-      int numthreads;           //+ number of net threads
-
-      char *elevprefix;         //+ elev tileset prefix
-      char *imagprefix;         //+ imag tileset prefix
-
-      char *tilesetfile;        //+ tileset sav file
-      char *vtbinisuffix;       //+ suffix of vtb ini file
-      char *startupfile;        //+ startup sav file
-
-      char *localpath;          //+ local directory
-
-      char *altpath;            //+ alternative data path
+      char *elevdir;            //+ default elev directory
+      char *imagdir;            //+ default imag directory
 
       // optional feature switches:
 
+      BOOLINT usefog;
+      BOOLINT useshaders;
+      BOOLINT usebathymap;
+      BOOLINT usecontours;
+      BOOLINT usenprshader;
       BOOLINT usewaypoints;
       BOOLINT usebricks;
+
+      // optional spherical fog:
+
+      float fogcolor[3];
+
+      float fogstart;
+      float fogdensity;
+
+      // optional color mapping:
+
+      float bathystart;
+      float bathyend;
+
+      unsigned char *bathymap;
+      int bathywidth,bathyheight,bathycomps;
+
+      float contours;
+
+      float seacolor[3];
+
+      float seatrans;
+      float seamodulate;
+      float seabottom;
+      float bottomtrans;
+
+      float bottomcolor[3];
+
+      // optional NPR rendering:
+
+      float nprfadefactor;
+
+      float nprbathystart;
+      float nprbathyend;
+
+      unsigned char *nprbathymap;
+      int nprbathywidth,nprbathyheight,nprbathycomps;
+
+      float nprcontours;
+
+      float nprseacolor[3];
+
+      float nprseatrans;
+      float nprseagrey;
 
       // optional way-points:
 
@@ -136,37 +143,34 @@ class minilayer
       float brickscroll;
       };
 
-   typedef MINILAYER_PARAMS_STRUCT MINILAYER_PARAMS;
+   typedef MINITERRAIN_PARAMS_STRUCT MINITERRAIN_PARAMS;
 
    //! default constructor
-   minilayer(minicache *cache);
+   miniterrain();
 
    //! destructor
-   ~minilayer();
+   ~miniterrain();
 
    //! get parameters
-   void get(MINILAYER_PARAMS &lparams);
+   void get(MINITERRAIN_PARAMS &tparams);
 
    //! set parameters
-   void set(MINILAYER_PARAMS &lparams);
+   void set(MINITERRAIN_PARAMS &tparams);
 
    //! get parameters
-   MINILAYER_PARAMS *get() {return(&LPARAMS);}
+   MINITERRAIN_PARAMS *get() {return(&TPARAMS);}
 
    //! set parameters
-   void set(MINILAYER_PARAMS *lparams) {set(*lparams);}
+   void set(MINITERRAIN_PARAMS *tparams) {set(*tparams);}
 
-   //! get the encapsulated terrain object
-   miniload *getterrain() {return(TERRAIN);}
+   //! propagate parameters
+   void propagate();
 
-   //! get the encapsulated cache object
-   datacache *getcache() {return(TILECACHE);}
+   //! propagate waypoint parameters
+   void propagate_wp();
 
-   //! get the encapsulated waypoint object
-   minipoint *getpoints() {return(POINTS);}
-
-   //! get the encapsulated warp object
-   miniwarp *getwarp() {return(WARP);}
+   //! get the encapsulated render buffer
+   minicache *getbuffer() {return(CACHE);}
 
    //! set internal callbacks
    void setcallbacks(void *threaddata,
@@ -180,21 +184,34 @@ class minilayer
                      void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
                      int (*checkurl)(char *src_url,char *src_id,char *src_file,void *data));
 
-   //! load tileset
+   //! load tileset (short version)
+   BOOLINT load(const char *url,
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
+
+   //! load tileset (long version)
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                BOOLINT reset=FALSE);
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
 
-   //! load optional features
-   void loadopts();
+   //! get the number of terrain layers
+   int getlnum() {return(LNUM);}
 
-   //! get extent of tileset
-   miniv3d getextent();
+   //! get the nth terrain layer
+   minilayer *getlayer(int n=0);
 
-   //! get center of tileset
-   minicoord getcenter();
+   //! get extent of a tileset
+   miniv3d getextent(int n=0);
+
+   //! get center of a tileset
+   minicoord getcenter(int n=0);
 
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p);
+
+   //! set reference layer
+   void setreference(int ref=0);
+
+   //! get reference layer
+   int getreference();
 
    //! get initial view point
    minicoord getinitial();
@@ -202,78 +219,52 @@ class minilayer
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! get nearest layer
+   int getnearest(const minicoord &e);
+
    //! trigger complete render buffer update at next frame
    void update();
 
    //! generate and cache scene for a particular eye point
    void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time);
 
-   //! determine whether or not the layer is displayed
-   void display(BOOLINT yes=TRUE);
+   //! render cached scene
+   void render();
+
+   //! determine whether or not a layer is displayed
+   void display(int n,BOOLINT yes=TRUE);
 
    //! flatten the scene by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
-   //! render waypoints
-   void renderpoints();
+   //! shoot a ray at the scene
+   double shoot(const minicoord &o,const miniv3d &d);
 
-   // coordinate conversions (e=external, l=local, i=internal):
+   //! return memory consumption
+   double getmem();
 
-   //! map coordinates
-   minicoord map_e2l(const minicoord &p) {return(WARP_E2L.warp(p));}
-   minicoord map_l2e(const minicoord &p) {return(WARP_L2E.warp(p));}
-   minicoord map_l2i(const minicoord &p) {return(WARP_L2I.warp(p));}
-   minicoord map_i2l(const minicoord &p) {return(WARP_I2L.warp(p));}
-   minicoord map_e2i(const minicoord &p) {return(WARP_E2I.warp(p));}
-   minicoord map_i2e(const minicoord &p) {return(WARP_I2E.warp(p));}
+   //! return raw texture memory consumption
+   double gettexmem();
 
-   //! rotate vector
-   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return(WARP_E2L.invtra(v,p));}
-   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return(WARP_L2E.invtra(v,p));}
-   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return(WARP_L2I.invtra(v,p));}
-   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return(WARP_I2L.invtra(v,p));}
-   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return(WARP_E2I.invtra(v,p));}
-   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return(WARP_I2E.invtra(v,p));}
+   //! get total number of pending tiles
+   int getpending();
 
-   //! map length
-   double len_e2l(double l) {return(l*WARP_E2L.getscale());}
-   double len_l2e(double l) {return(l*WARP_L2E.getscale());}
-   double len_l2i(double l) {return(l*WARP_L2I.getscale());}
-   double len_i2l(double l) {return(l*WARP_I2L.getscale());}
-   double len_e2i(double l) {return(l*WARP_E2I.getscale());}
-   double len_i2e(double l) {return(l*WARP_I2E.getscale());}
+   //! get total amount of cache memory
+   double getcachemem();
 
    protected:
 
-   MINILAYER_PARAMS LPARAMS;
-
-   miniwarp WARP_E2L;
-   miniwarp WARP_L2E;
-   miniwarp WARP_L2I;
-   miniwarp WARP_I2L;
-   miniwarp WARP_E2I;
-   miniwarp WARP_I2E;
+   MINITERRAIN_PARAMS TPARAMS;
 
    private:
 
+   minilayer **LAYER;
+   int LNUM,LMAX;
+   int LREF;
+
    minicache *CACHE;
 
-   miniload *TERRAIN;
-   datacache *TILECACHE;
-
-   minipoint *POINTS;
-
-   miniwarp *WARP;
-
-   BOOLINT LOADED;
-
-   BOOLINT VISIBLE;
-
-   int UPD;
-
-   void createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
-                   minicoord offsetDAT,minicoord extentDAT);
-
+   //!! does not work for multiple layers yet
    void *THREADDATA;
    void (*THREADINIT)(int threads);
    void (*THREADEXIT)();
@@ -290,25 +281,11 @@ class minilayer
    void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,void *data);
 
-   static void request_callback(char *file,int istexture,databuf *buf,void *data);
+   void render_presea();
+   void render_postsea();
 
-   void threadinit(int threads=1);
-   void threadexit();
-
-   static void startthread(void *(*thread)(void *background),backarrayelem *background,void *data);
-   static void jointhread(backarrayelem *background,void *data);
-
-   static void lock_cs(void *data);
-   static void unlock_cs(void *data);
-
-   static void lock_io(void *data);
-   static void unlock_io(void *data);
-
-   void curlinit(int threads=1,char *proxyname=NULL,char *proxyport=NULL);
-   void curlexit();
-
-   static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
-   static int checkURL(char *src_url,char *src_id,char *src_file,void *data);
+   static void preseacb(void *data);
+   static void postseacb(void *data);
    };
 
 #endif

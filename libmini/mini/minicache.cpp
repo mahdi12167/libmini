@@ -780,6 +780,8 @@ void minicache::attach(minitile *terrain,
                                cache_trigger,
                                id);
 
+         NUMTERRAIN++;
+
          break;
          }
 

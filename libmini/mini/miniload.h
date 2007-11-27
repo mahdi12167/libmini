@@ -154,9 +154,6 @@ class miniload
    //! return raw texture memory consumption
    float gettexmem();
 
-   //! compute texture memory consumption ratio
-   float gettexratio();
-
    //! configure core parameters
    void configure_minres(float minres=9.0f); // default minimum resolution
    void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
