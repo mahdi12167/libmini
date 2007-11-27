@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+// #define GREYCSTORATION for greycstoration support
+
 #ifndef GREYCBASE_H
 #define GREYCBASE_H
 

@@ -156,9 +156,11 @@ class miniwarp
       MINIWARP_DATA=4,     // data coordinates
       MINIWARP_LOCAL=5,    // local coordinates
       MINIWARP_INTERNAL=6, // internal coordinates
-      MINIWARP_AFFINE=7,   // affine coordinates
-      MINIWARP_TILE=8,     // tile coordinates
-      MINIWARP_WARP=9      // warp coordinates
+      MINIWARP_REVERTED=7, // reverted coordinates
+      MINIWARP_AFFINE=8,   // affine coordinates
+      MINIWARP_FINAL=9,    // final coordinates
+      MINIWARP_TILE=10,    // tile coordinates
+      MINIWARP_WARP=11     // warp coordinates
       };
 
    //! default constructor
@@ -238,7 +240,9 @@ class miniwarp
    miniv4d MTX_2DAT[3];
    miniv4d MTX_2LOC[3];
    miniv4d MTX_2INT[3];
+   miniv4d MTX_2REV[3];
    miniv4d MTX_2AFF[3];
+   miniv4d MTX_2FIN[3];
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
@@ -248,7 +252,9 @@ class miniwarp
    miniv4d INV_2DAT[3];
    miniv4d INV_2LOC[3];
    miniv4d INV_2INT[3];
+   miniv4d INV_2REV[3];
    miniv4d INV_2AFF[3];
+   miniv4d INV_2FIN[3];
    miniv4d INV_2TIL[3];
    miniv4d INV_2WRP[3];
 
@@ -265,11 +271,14 @@ class miniwarp
    void update_inv();
    void update_scl();
 
+   void calc_til();
    void calc_wrp();
 
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3]);
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3]);
+   void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3]);
+   void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3]);
 
    void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
    void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);

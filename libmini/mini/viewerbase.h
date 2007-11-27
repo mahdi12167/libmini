@@ -5,7 +5,6 @@
 
 #include "minibase.h"
 
-#undef GREYCSTORATION // enable this for greycstoration support
 #include "convbase.h"
 
 #include "miniv3d.h"

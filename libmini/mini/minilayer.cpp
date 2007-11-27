@@ -583,22 +583,22 @@ void minilayer::createwarp(miniv3d offsetLOC,miniv3d scalingLOC,
    // create warp object for each exposed coordinate transformation:
 
    WARP_E2L=*WARP;
-   WARP_E2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_LOCAL);
+   WARP_E2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_AFFINE);
 
    WARP_L2E=*WARP;
-   WARP_L2E.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_L2E.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_GLOBAL);
 
    WARP_L2I=*WARP;
-   WARP_L2I.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_WARP);
+   WARP_L2I.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
 
    WARP_I2L=*WARP;
-   WARP_I2L.setwarp(miniwarp::MINIWARP_WARP,miniwarp::MINIWARP_LOCAL);
+   WARP_I2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_AFFINE);
 
    WARP_E2I=*WARP;
-   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_WARP);
+   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_FINAL);
 
    WARP_I2E=*WARP;
-   WARP_I2E.setwarp(miniwarp::MINIWARP_WARP,miniwarp::MINIWARP_GLOBAL);
+   WARP_I2E.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_GLOBAL);
    }
 
 // get extent of tileset
