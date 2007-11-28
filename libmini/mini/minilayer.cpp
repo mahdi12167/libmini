@@ -546,6 +546,10 @@ void minilayer::loadopts()
       }
    }
 
+// set reference layer
+void minilayer::setreference(minilayer *reference)
+   {REFERENCE=reference;}
+
 // create the warp
 void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                            miniv3d offsetLOC,miniv3d scalingLOC,
@@ -554,6 +558,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    minicoord bboxDAT[2];
 
    miniv4d mtxAFF[3];
+   miniv4d mtxREF[3];
 
    // create warp object
    WARP=new miniwarp();
@@ -584,6 +589,15 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    else ERRORMSG(); //!! not yet implemented
 
    WARP->def_2affine(mtxAFF);
+
+   // define reference coordinates:
+
+   if (LPARAMS.warpmode==0)
+      if (REFERENCE!=NULL)
+         {
+         REFERENCE->getwarp()->get_invaff(mtxREF);
+         WARP->def_2reference(mtxREF);
+         }
 
    // define warp coordinates:
 

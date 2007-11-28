@@ -442,6 +442,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // load optional features
    if (loadopts) LAYER[LNUM-1]->loadopts();
 
+   // set reference coordinate system
+   LAYER[LNUM-1]->setreference(LAYER[getreference()]);
+
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);
 
@@ -461,21 +464,21 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
 // get the nth terrain layer
 minilayer *miniterrain::getlayer(int n)
    {
-   if (LAYER==NULL || n<0 || n>=LNUM) return(NULL);
+   if (n<0 || n>=LNUM) return(NULL);
    else return(LAYER[n]);
    }
 
 // get extent of a tileset
 miniv3d miniterrain::getextent(int n)
    {
-   if (LAYER==NULL || n<0 || n>=LNUM) return(miniv3d(0.0));
+   if (n<0 || n>=LNUM) return(miniv3d(0.0));
    else return(LAYER[n]->getextent());
    }
 
 // get center of a tileset
 minicoord miniterrain::getcenter(int n)
    {
-   if (LAYER==NULL || n<0 || n>=LNUM) return(minicoord());
+   if (n<0 || n>=LNUM) return(minicoord());
    else return(LAYER[n]->getcenter());
    }
 
@@ -488,7 +491,7 @@ double miniterrain::getheight(const minicoord &p)
 
    double elev;
 
-   if (LAYER!=NULL)
+   if (LNUM>0)
       {
       nearest=getnearest(p);
 
@@ -508,19 +511,24 @@ double miniterrain::getheight(const minicoord &p)
 
 // set reference layer
 void miniterrain::setreference(int ref)
-   {LREF=ref;}
+   {
+   int n;
+
+   LREF=ref;
+
+   // update reference coordinate system
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->setreference(LAYER[getreference()]);
+   }
 
 // get reference layer
 int miniterrain::getreference()
-   {
-   if (LAYER==NULL || LNUM<1) return(-1);
-   else return(min(LREF,LNUM-1));
-   }
+   {return(min(LREF,LNUM-1));}
 
 // get initial view point
 minicoord miniterrain::getinitial()
    {
-   if (LAYER==NULL || LNUM<1) return(minicoord());
+   if (LNUM<1) return(minicoord());
    else return(LAYER[getreference()]->getinitial());
    }
 
@@ -529,8 +537,8 @@ void miniterrain::initeyepoint(const minicoord &e)
    {
    int n;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) LAYER[n]->initeyepoint(e);
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->initeyepoint(e);
    }
 
 // get nearest layer
@@ -545,18 +553,17 @@ int miniterrain::getnearest(const minicoord &e)
    nearest=-1;
    mindist=MAXFLOAT;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++)
-         {
-         offset=LAYER[n]->getcenter()-e;
-         dist=offset.vec.getLength();
+   for (n=0; n<LNUM; n++)
+      {
+      offset=LAYER[n]->getcenter()-e;
+      dist=offset.vec.getLength();
 
-         if (dist<mindist)
-            {
-            mindist=dist;
-            nearest=n;
-            }
+      if (dist<mindist)
+         {
+         mindist=dist;
+         nearest=n;
          }
+      }
 
    return(nearest);
    }
@@ -566,8 +573,8 @@ void miniterrain::update()
    {
    int n;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) LAYER[n]->update();
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->update();
    }
 
 // generate and cache scene for a particular eye point
@@ -575,14 +582,14 @@ void miniterrain::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,flo
    {
    int n;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) LAYER[n]->cache(e,d,u,aspect,time);
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->cache(e,d,u,aspect,time);
    }
 
 // render cached scene
 void miniterrain::render()
    {
-   if (LAYER!=NULL && LNUM>0)
+   if (LNUM>0)
       {
       // enable shaders
       if (TPARAMS.useshaders)
@@ -678,7 +685,7 @@ void miniterrain::render_postsea()
 // determine whether or not a layer is displayed
 void miniterrain::display(int n,BOOLINT yes)
    {
-   if (LAYER!=NULL && n>=0 && n<LNUM)
+   if (n>=0 && n<LNUM)
       LAYER[n]->display(yes);
    }
 
@@ -687,8 +694,8 @@ void miniterrain::flatten(float relscale)
    {
    int n;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) LAYER[n]->flatten(relscale);
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->flatten(relscale);
    }
 
 // shoot a ray at the scene
@@ -700,7 +707,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    minicoord oi;
    miniv3d di;
 
-   if (LAYER==NULL) return(MAXFLOAT);
+   if (LNUM<1) return(MAXFLOAT);
 
    // get nearest layer for highest precision
    nearest=getnearest(o);
@@ -726,8 +733,8 @@ double miniterrain::getmem()
 
    mem=0.0;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) mem+=LAYER[n]->getterrain()->getmem();
+   for (n=0; n<LNUM; n++)
+      mem+=LAYER[n]->getterrain()->getmem();
 
    return(mem);
    }
@@ -741,8 +748,8 @@ double miniterrain::gettexmem()
 
    texmem=0.0;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) texmem+=LAYER[n]->getterrain()->gettexmem();
+   for (n=0; n<LNUM; n++)
+      texmem+=LAYER[n]->getterrain()->gettexmem();
 
    return(texmem);
    }
@@ -756,8 +763,8 @@ int miniterrain::getpending()
 
    pending=0;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) pending+=LAYER[n]->getcache()->getpending();
+   for (n=0; n<LNUM; n++)
+      pending+=LAYER[n]->getcache()->getpending();
 
    return(pending);
    }
@@ -771,8 +778,8 @@ double miniterrain::getcachemem()
 
    cachemem=0.0;
 
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++) cachemem+=LAYER[n]->getcache()->getmem();
+   for (n=0; n<LNUM; n++)
+      cachemem+=LAYER[n]->getcache()->getmem();
 
    return(cachemem);
    }

@@ -249,9 +249,15 @@ miniwarp::miniwarp()
    OFFSETLOC=miniv3d(0.0);
    SCALINGLOC=miniv3d(1.0);
 
+   SCALELOC=1.0;
+
    MTXAFF[0]=miniv4d(1.0,0.0,0.0);
    MTXAFF[1]=miniv4d(0.0,1.0,0.0);
    MTXAFF[2]=miniv4d(0.0,0.0,1.0);
+
+   MTXREF[0]=miniv4d(1.0,0.0,0.0);
+   MTXREF[1]=miniv4d(0.0,1.0,0.0);
+   MTXREF[2]=miniv4d(0.0,0.0,1.0);
 
    SYSWRP=minicoord::MINICOORD_NONE;
 
@@ -265,6 +271,7 @@ miniwarp::miniwarp()
    MTX_2INT[0]=MTX_2INT[1]=MTX_2INT[2]=miniv4d(0.0);
    MTX_2REV[0]=MTX_2REV[1]=MTX_2REV[2]=miniv4d(0.0);
    MTX_2AFF[0]=MTX_2AFF[1]=MTX_2AFF[2]=miniv4d(0.0);
+   MTX_2REF[0]=MTX_2REF[1]=MTX_2REF[2]=miniv4d(0.0);
    MTX_2FIN[0]=MTX_2FIN[1]=MTX_2FIN[2]=miniv4d(0.0);
    MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
    MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
@@ -277,6 +284,7 @@ miniwarp::miniwarp()
    INV_2INT[0]=INV_2INT[1]=INV_2INT[2]=miniv4d(0.0);
    INV_2REV[0]=INV_2REV[1]=INV_2REV[2]=miniv4d(0.0);
    INV_2AFF[0]=INV_2AFF[1]=INV_2AFF[2]=miniv4d(0.0);
+   INV_2REF[0]=INV_2REF[1]=INV_2REF[2]=miniv4d(0.0);
    INV_2FIN[0]=INV_2FIN[1]=INV_2FIN[2]=miniv4d(0.0);
    INV_2TIL[0]=INV_2TIL[1]=INV_2TIL[2]=miniv4d(0.0);
    INV_2WRP[0]=INV_2WRP[1]=INV_2WRP[2]=miniv4d(0.0);
@@ -348,12 +356,30 @@ void miniwarp::def_2affine(const miniv4d mtxAFF[3])
    update_mtx();
    }
 
+// define conversion to reference coordinates
+void miniwarp::def_2reference(const miniv4d mtxREF[3])
+   {
+   MTXREF[0]=mtxREF[0];
+   MTXREF[1]=mtxREF[1];
+   MTXREF[2]=mtxREF[2];
+
+   update_mtx();
+   }
+
 // define warp coordinates
 void miniwarp::def_warp(const minicoord::MINICOORD sysWRP)
    {
    SYSWRP=sysWRP;
 
    update_mtx();
+   }
+
+// get inverse affine coordinate conversion
+void miniwarp::get_invaff(miniv4d invAFF[3])
+   {
+   invAFF[0]=INV_2AFF[0];
+   invAFF[1]=INV_2AFF[1];
+   invAFF[2]=INV_2AFF[2];
    }
 
 // set actual warp
@@ -551,6 +577,14 @@ void miniwarp::update_mtx()
 
       inv_mtx(INV_2AFF,MTX_2AFF);
 
+      // conversion 2 reference coordinates:
+
+      MTX_2REF[0]=MTXREF[0];
+      MTX_2REF[1]=MTXREF[1];
+      MTX_2REF[2]=MTXREF[2];
+
+      inv_mtx(INV_2REF,MTX_2REF);
+
       // conversion 2 final coordinates:
 
       MTX_2FIN[0]=MTX_2INT[0];
@@ -622,6 +656,7 @@ void miniwarp::update_wrp()
             case MINIWARP_INTERNAL: mlt_mtx(MTX,MTX_2INT,MTX); break;
             case MINIWARP_REVERTED: mlt_mtx(MTX,MTX_2REV,MTX); break;
             case MINIWARP_AFFINE: mlt_mtx(MTX,MTX_2AFF,MTX); break;
+            case MINIWARP_REFERENCE: mlt_mtx(MTX,MTX_2REF,MTX); break;
             case MINIWARP_FINAL: mlt_mtx(MTX,MTX_2FIN,MTX); break;
             case MINIWARP_TILE: mlt_mtx(MTX,MTX_2TIL,MTX); break;
             case MINIWARP_WARP: mlt_mtx(MTX,MTX_2WRP,MTX); break;
@@ -633,7 +668,8 @@ void miniwarp::update_wrp()
             {
             case MINIWARP_TILE: mlt_mtx(MTX,INV_2WRP,MTX); break;
             case MINIWARP_FINAL: mlt_mtx(MTX,INV_2TIL,MTX); break;
-            case MINIWARP_AFFINE: mlt_mtx(MTX,INV_2FIN,MTX); break;
+            case MINIWARP_REFERENCE: mlt_mtx(MTX,INV_2FIN,MTX); break;
+            case MINIWARP_AFFINE: mlt_mtx(MTX,INV_2REF,MTX); break;
             case MINIWARP_REVERTED: mlt_mtx(MTX,INV_2AFF,MTX); break;
             case MINIWARP_INTERNAL: mlt_mtx(MTX,INV_2REV,MTX); break;
             case MINIWARP_LOCAL: mlt_mtx(MTX,INV_2INT,MTX); break;

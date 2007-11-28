@@ -187,6 +187,9 @@ class minilayer
    //! load optional features
    void loadopts();
 
+   //! set reference layer
+   void setreference(minilayer *reference);
+
    //! get extent of tileset
    miniv3d getextent();
 
@@ -264,6 +267,8 @@ class minilayer
    minipoint *POINTS;
 
    miniwarp *WARP;
+
+   minilayer *REFERENCE;
 
    BOOLINT LOADED;
 

@@ -149,18 +149,19 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_GLOBAL=0,   // global coordinates
-      MINIWARP_METRIC=1,   // metric coordinates
-      MINIWARP_PLAIN=2,    // plain coordinates
-      MINIWARP_CENTER=3,   // center coordinates
-      MINIWARP_DATA=4,     // data coordinates
-      MINIWARP_LOCAL=5,    // local coordinates
-      MINIWARP_INTERNAL=6, // internal coordinates
-      MINIWARP_REVERTED=7, // reverted coordinates
-      MINIWARP_AFFINE=8,   // affine coordinates
-      MINIWARP_FINAL=9,    // final coordinates
-      MINIWARP_TILE=10,    // tile coordinates
-      MINIWARP_WARP=11     // warp coordinates
+      MINIWARP_GLOBAL=0,    // global coordinates
+      MINIWARP_METRIC=1,    // metric coordinates
+      MINIWARP_PLAIN=2,     // plain coordinates
+      MINIWARP_CENTER=3,    // center coordinates
+      MINIWARP_DATA=4,      // data coordinates
+      MINIWARP_LOCAL=5,     // local coordinates
+      MINIWARP_INTERNAL=6,  // internal coordinates
+      MINIWARP_REVERTED=7,  // reverted coordinates
+      MINIWARP_AFFINE=8,    // affine coordinates
+      MINIWARP_REFERENCE=9, // reference coordinates
+      MINIWARP_FINAL=10,    // final coordinates
+      MINIWARP_TILE=11,     // tile coordinates
+      MINIWARP_WARP=12      // warp coordinates
       };
 
    //! default constructor
@@ -181,8 +182,14 @@ class miniwarp
    //! define conversion to affine coordinates
    void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
 
+   //! define conversion to reference coordinates
+   void def_2reference(const miniv4d mtxREF[3]); // fourth row is assumed to be (0,0,0,1)
+
    //! define warp coordinates
    void def_warp(const minicoord::MINICOORD sysWRP);
+
+   //! get inverse affine coordinate conversion
+   void get_invaff(miniv4d invAFF[3]);
 
    //! set actual warp
    void setwarp(MINIWARP from,MINIWARP to);
@@ -230,6 +237,7 @@ class miniwarp
    double SCALELOC;
 
    miniv4d MTXAFF[3];
+   miniv4d MTXREF[3];
 
    minicoord::MINICOORD SYSWRP;
 
@@ -243,6 +251,7 @@ class miniwarp
    miniv4d MTX_2INT[3];
    miniv4d MTX_2REV[3];
    miniv4d MTX_2AFF[3];
+   miniv4d MTX_2REF[3];
    miniv4d MTX_2FIN[3];
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
@@ -255,6 +264,7 @@ class miniwarp
    miniv4d INV_2INT[3];
    miniv4d INV_2REV[3];
    miniv4d INV_2AFF[3];
+   miniv4d INV_2REF[3];
    miniv4d INV_2FIN[3];
    miniv4d INV_2TIL[3];
    miniv4d INV_2WRP[3];
