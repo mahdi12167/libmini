@@ -44,7 +44,7 @@ class miniload
    //! set focus of interest (equal to eye point by default)
    void setfocus(int on=0,float fx=0.0f,float fy=0.0f,float fz=0.0f);
 
-   //! define relative scaling
+   //! set relative scaling (0<=scale<=1)
    void setrelscale(float scale=1.0f);
 
    //! set sea level
@@ -111,7 +111,7 @@ class miniload
    //! set fast initialization
    void setfastinit(int fast=1,float avgd2=0.1f) {TILE->setfastinit(fast,avgd2);}
 
-   //! define resolution reduction of invisible tiles
+   //! set resolution reduction of invisible tiles
    void setreduction(float reduction=2.0f,float ratio=3.0f) {TILE->setreduction(reduction,ratio);}
 
    //! set texture range

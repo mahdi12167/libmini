@@ -682,7 +682,7 @@ void miniterrain::display(int n,BOOLINT yes)
       LAYER[n]->display(yes);
    }
 
-// flatten the scene by a relative scaling factor (in the range [0-1])
+// flatten the terrain by a relative scaling factor (in the range [0-1])
 void miniterrain::flatten(float relscale)
    {
    int n;

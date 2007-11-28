@@ -55,13 +55,13 @@ class minitile
    //! set focus of interest (equal to eye point by default)
    void setfocus(int on=0,float fx=0.0f,float fy=0.0f,float fz=0.0f);
 
-   //! define relative scaling (0<=scale<=1)
+   //! set relative scaling (0<=scale<=1)
    void setrelscale(float scale=1.0f);
 
    //! set sea level
    void setsealevel(float level);
 
-   //! define resolution reduction of invisible tiles
+   //! set resolution reduction of invisible tiles
    void setreduction(float reduction=2.0f,float ratio=3.0f);
 
    //! set rendering modes

@@ -286,7 +286,7 @@ void minitile::setfocus(int on,
    FZ=fz;
    }
 
-// define relative scaling (0<=scale<=1)
+// set relative scaling (0<=scale<=1)
 void minitile::setrelscale(float scale)
    {
    if (scale<0.0f || scale>1.0f) ERRORMSG();
@@ -297,7 +297,7 @@ void minitile::setrelscale(float scale)
 void minitile::setsealevel(float level)
    {SEALEVEL0=level;}
 
-// define resolution reduction of invisible tiles
+// set resolution reduction of invisible tiles
 void minitile::setreduction(float reduction,float ratio)
    {
    if (reduction<1.0f || ratio<1.0f) ERRORMSG();

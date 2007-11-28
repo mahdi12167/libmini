@@ -319,7 +319,8 @@ void loadsettings()
 
    int flag;
 
-   char *savname=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getcache()->getfile(VIEWER_SAVFILE);
+   int reference=viewer->getterrain()->getreference();
+   char *savname=viewer->getterrain()->getlayer(reference)->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname!=NULL)
       {
@@ -370,8 +371,8 @@ void loadsettings()
 
       fclose(file);
 
-      viewer->set(prms);
       viewer->getterrain()->set(tprms);
+      viewer->set(prms);
 
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
@@ -382,7 +383,8 @@ void savesettings()
    {
    FILE *file;
 
-   char *savname=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getcache()->getfile(VIEWER_SAVFILE);
+   int reference=viewer->getterrain()->getreference();
+   char *savname=viewer->getterrain()->getlayer(reference)->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname==NULL) savname=strdup(VIEWER_SAVFILE);
 
@@ -558,7 +560,8 @@ void renderinfo()
    const float size=0.3f;
    const float alpha=0.5f;
 
-   minitile *mt=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getterrain()->getminitile();
+   int reference=viewer->getterrain()->getreference();
+   minitile *mt=viewer->getterrain()->getlayer(reference)->getterrain()->getminitile();
 
    int vcol=mt->getvisibleleft();
    int vrow=mt->getvisiblebottom();
@@ -640,7 +643,8 @@ void renderhud()
 
    char str[MAXSTR];
 
-   minitile *mt=viewer->getterrain()->getlayer(viewer->getterrain()->getreference())->getterrain()->getminitile();
+   int reference=viewer->getterrain()->getreference();
+   minitile *mt=viewer->getterrain()->getlayer(reference)->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
 

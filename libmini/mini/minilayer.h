@@ -211,7 +211,7 @@ class minilayer
    //! determine whether or not the layer is displayed
    void display(BOOLINT yes=TRUE);
 
-   //! flatten the scene by a relative scaling factor (in the range [0-1])
+   //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
    //! render waypoints

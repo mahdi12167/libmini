@@ -561,7 +561,7 @@ void miniwarp::update_mtx()
 
       // conversion 2 tile coordinates:
 
-      calc_til();
+      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2FIN);
 
       inv_mtx(INV_2TIL,MTX_2TIL);
 
@@ -686,25 +686,6 @@ void miniwarp::update_scl()
 
    SCALE=sqrt(avg/3.0f);
    if (SCALE!=0.0) SCALE=1.0/SCALE;
-   }
-
-// calculate tile coordinate conversion
-void miniwarp::calc_til()
-   {
-   // initialize tile conversion matrix with identity
-   MTX_2TIL[0]=miniv4d(1.0,0.0,0.0);
-   MTX_2TIL[1]=miniv4d(0.0,1.0,0.0);
-   MTX_2TIL[2]=miniv4d(0.0,0.0,1.0);
-
-   // check if warp coordinate conversion is disabled
-   if (SYSWRP==minicoord::MINICOORD_NONE) return;
-
-   // check if warp coordinate conversion is possible
-   if (SYSDAT!=minicoord::MINICOORD_LLH &&
-       SYSDAT!=minicoord::MINICOORD_UTM &&
-       SYSDAT!=minicoord::MINICOORD_ECEF) return;
-
-   mlt_mtx(MTX_2TIL,INV_2DAT,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2FIN);
    }
 
 // calculate warp coordinate conversion

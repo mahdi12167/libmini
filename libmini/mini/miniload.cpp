@@ -895,7 +895,7 @@ void miniload::setfocus(int on,
    FZ=fz;
    }
 
-// define relative scaling
+// set relative scaling (0<=scale<=1)
 void miniload::setrelscale(float scale)
    {
    if (TILE==NULL) ERRORMSG();

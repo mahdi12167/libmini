@@ -234,7 +234,7 @@ class miniterrain
    //! determine whether or not a layer is displayed
    void display(int n,BOOLINT yes=TRUE);
 
-   //! flatten the scene by a relative scaling factor (in the range [0-1])
+   //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
    //! shoot a ray at the scene

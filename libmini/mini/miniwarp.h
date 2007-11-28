@@ -272,7 +272,6 @@ class miniwarp
    void update_inv();
    void update_scl();
 
-   void calc_til();
    void calc_wrp();
 
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);

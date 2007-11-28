@@ -1290,31 +1290,46 @@ minicache::setshader("!!ARBvp...").<p>
 
 <pre>
    // default vertex shader
-   static char *vtxprog="!!ARBvp1.0\
-      PARAM t=program.env[0];\
-      PARAM e=program.env[1];\
-      PARAM c0=program.env[2];\
-      PARAM c1=program.env[3];\
-      PARAM c2=program.env[4];\
-      PARAM c3=program.env[5];\
-      PARAM c4=program.env[6];\
-      PARAM c5=program.env[7];\
-      PARAM c6=program.env[8];\
-      PARAM c7=program.env[9];\
-      PARAM mat[4]={state.matrix.mvp};\
-      TEMP vtx,col,pos;\
-      MOV vtx,vertex.position;\
-      MOV col,vertex.color;\
-      DP4 pos.x,mat[0],vtx;\
-      DP4 pos.y,mat[1],vtx;\
-      DP4 pos.z,mat[2],vtx;\
-      DP4 pos.w,mat[3],vtx;\
-      MOV result.position,pos;\
-      MOV result.color,col;\
-      MAD result.texcoord[0].x,vtx.x,t.x,t.z;\
-      MAD result.texcoord[0].y,vtx.z,t.y,t.w;\
-      MUL result.texcoord[0].z,vtx.y,e.y;\
-      END";
+   static char *vtxprog="!!ARBvp1.0 \n\
+      PARAM t=program.env[0]; \n\
+      PARAM e=program.env[1]; \n\
+      PARAM c0=program.env[2]; \n\
+      PARAM c1=program.env[3]; \n\
+      PARAM c2=program.env[4]; \n\
+      PARAM c3=program.env[5]; \n\
+      PARAM c4=program.env[6]; \n\
+      PARAM c5=program.env[7]; \n\
+      PARAM c6=program.env[8]; \n\
+      PARAM c7=program.env[9]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      TEMP vtx,col,nrm,pos,vec; \n\
+      ### fetch actual vertex \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV nrm,vertex.normal; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n\
+      ### write resulting vertex \n\
+      MOV result.position,pos; \n\
+      MOV result.color,col; \n\
+      ### calculate tex coords \n\
+      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
+      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
+      MUL result.texcoord[0].z,vtx.y,e.y; \n\
+      ### pass normal as tex coords \n\
+      MOV result.texcoord[1],vec; \n\
+      ### calculate spherical fog coord \n\
+      DP3 result.fogcoord.x,pos,pos; \n\
+      END \n";
 </pre>
 
 The parameter t holds bias and scaling constants to compute the 2D
@@ -1336,11 +1351,22 @@ environment.<p>
 
 <pre>
    // default pixel shader
-   static char *fragprog="!!ARBfp1.0\
-      TEMP col;\
-      TEX col,fragment.texcoord[0],texture[0],2D;\
-      MUL result.color,col,fragment.color;\
-      END";
+   static char *fragprog="!!ARBfp1.0 \n\
+      PARAM c0=program.env[0]; \n\
+      PARAM c1=program.env[1]; \n\
+      PARAM c2=program.env[2]; \n\
+      PARAM c3=program.env[3]; \n\
+      PARAM c4=program.env[4]; \n\
+      PARAM c5=program.env[5]; \n\
+      PARAM c6=program.env[6]; \n\
+      PARAM c7=program.env[7]; \n\
+      PARAM t=program.env[8]; \n\
+      TEMP col; \n\
+      ### fetch texture color \n\
+      TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      ### modulate with fragment color \n\
+      MUL result.color,col,fragment.color; \n\
+      END \n";
 </pre>
 
 As with vertex shaders, the parameter vectors c0-c7 may hold four
@@ -1359,16 +1385,17 @@ will show contours:<p>
    cache.setvtxshader();
    cache.usevtxshader();
 
-   // application-specific fragment program
+   // fragment program for adding contour lines to the bathymetry
    static char *fragprog="!!ARBfp1.0\
       PARAM c0=program.env[0];\
       TEMP col,vtx;\
       TEX col,fragment.texcoord[0],texture[0],2D;\
       MUL vtx.x,fragment.texcoord[0].z,c0.x;\
       FRC vtx.y,vtx.x;\
-      MUL_SAT vtx.y,vtx.y,c0.y;\
       MAD vtx.y,vtx.y,c0.z,-c0.w;\
       ABS vtx.y,vtx.y;\
+      SUB vtx.y,c0.w,vtx.y;\
+      MUL_SAT vtx.y,vtx.y,c0.y;\
       CMP vtx.y,vtx.x,vtx.y,c0.w;\
       MUL col,col,vtx.y;\
       MUL result.color,col,fragment.color;\

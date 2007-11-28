@@ -577,9 +577,9 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    if (LPARAMS.warpmode==0)
       {
-      mtxAFF[0]=miniv3d(1.0,0.0,0.0);
-      mtxAFF[1]=miniv3d(0.0,1.0,1.0);
-      mtxAFF[2]=miniv3d(0.0,0.0,1.0);
+      mtxAFF[0]=miniv3d(1.0,0.0,0.0,offsetLOC[0]*scaleLOC[0]);
+      mtxAFF[1]=miniv3d(0.0,1.0,1.0,offsetLOC[1]*scaleLOC[1]);
+      mtxAFF[2]=miniv3d(0.0,0.0,1.0,offsetLOC[2]*scaleLOC[2]);
       }
    else ERRORMSG(); //!! not yet implemented
 
@@ -712,7 +712,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 void minilayer::display(BOOLINT yes)
    {VISIBLE=yes;}
 
-// flatten the scene by a relative scaling factor (in the range [0-1])
+// flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)
    {TERRAIN->setrelscale(relscale);}
 
