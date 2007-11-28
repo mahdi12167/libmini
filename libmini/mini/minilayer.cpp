@@ -577,9 +577,9 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    if (LPARAMS.warpmode==0)
       {
-      mtxAFF[0]=miniv3d(1.0,0.0,0.0,offsetLOC[0]*scaleLOC[0]);
-      mtxAFF[1]=miniv3d(0.0,1.0,1.0,offsetLOC[1]*scaleLOC[1]);
-      mtxAFF[2]=miniv3d(0.0,0.0,1.0,offsetLOC[2]*scaleLOC[2]);
+      mtxAFF[0]=miniv4d(1.0,0.0,0.0,offsetLOC.x*scalingLOC.x);
+      mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y);
+      mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z);
       }
    else ERRORMSG(); //!! not yet implemented
 
