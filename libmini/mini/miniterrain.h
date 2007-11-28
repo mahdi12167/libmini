@@ -198,6 +198,9 @@ class miniterrain
    //! get the nth terrain layer
    minilayer *getlayer(int n=0);
 
+   //! remove the nth terrain layer
+   void remove(int n=0);
+
    //! get extent of a tileset
    miniv3d getextent(int n=0);
 

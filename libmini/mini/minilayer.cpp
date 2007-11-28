@@ -560,10 +560,9 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    miniv4d mtxAFF[3];
    miniv4d mtxREF[3];
 
-   // create warp object
-   WARP=new miniwarp();
-
    // define global coordinates:
+
+   WARP=new miniwarp();
 
    WARP->def_global(minicoord::MINICOORD_ECEF);
 
@@ -602,6 +601,11 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    // define warp coordinates:
 
    WARP->def_warp(minicoord::MINICOORD_ECEF);
+
+   // copy warp object to encapsulated tileset:
+
+   TERRAIN->getminitile()->copywarp(WARP);
+   TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
    // create warp object for each exposed coordinate transformation:
 

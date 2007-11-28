@@ -468,6 +468,17 @@ minilayer *miniterrain::getlayer(int n)
    else return(LAYER[n]);
    }
 
+// remove the nth terrain layer
+void miniterrain::remove(int n)
+   {
+   if (n<0 || n>=LNUM) return;
+
+   delete LAYER[n];
+
+   if (n<LNUM-1) LAYER[n]=LAYER[--LNUM];
+   else LNUM--;
+   }
+
 // get extent of a tileset
 miniv3d miniterrain::getextent(int n)
    {

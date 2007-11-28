@@ -3,6 +3,9 @@
 #include "minibase.h"
 
 #include "miniv3f.h"
+#include "miniv4d.h"
+#include "miniwarp.h"
+
 #include "miniOGL.h"
 
 #include "minicache.h"
@@ -473,6 +476,10 @@ inline void minicache::rendertexmap(int m,int n,int S)
    int cols,rows;
    float xdim,zdim;
    float centerx,centery,centerz;
+   miniwarp *warp;
+
+   miniv4d mtx[3];
+   double oglmtx[16];
 
    float ox,oz;
 
@@ -490,10 +497,40 @@ inline void minicache::rendertexmap(int m,int n,int S)
    centery=TERRAIN[RENDER_ID].tile->getcentery();
    centerz=TERRAIN[RENDER_ID].tile->getcenterz();
 
+   warp=TERRAIN[RENDER_ID].tile->getwarp();
+
+   mtxpush();
+
+   if (warp!=NULL)
+      {
+      warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      glMultMatrixd(oglmtx);
+      }
+
    ox=xdim*(m-(cols-1)/2.0f)+centerx;
    oz=zdim*(n-(rows-1)/2.0f)+centerz;
 
-   mtxpush();
    mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
 
    // avoid gaps between tiles (excluding the sea surface)

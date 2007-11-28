@@ -77,8 +77,8 @@ class minitile
                      void (*trigger)(int id,int phase,float scale,float ex,float ey,float ez)=0, // mandatory for incremental update
                      int id=0); // id for multiple layers
 
-   //! set local warp
-   void setwarp(miniwarp *warp);
+   //! copy warp object
+   void copywarp(miniwarp *warp);
 
    //! loader for tile sets
    static minitile *load(int cols,int rows,

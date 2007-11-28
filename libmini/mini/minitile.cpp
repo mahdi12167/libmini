@@ -327,8 +327,8 @@ void minitile::setcallbacks(void (*beginfan)(),
    PHASE=-1;
    }
 
-// set local warp
-void minitile::setwarp(miniwarp *warp)
+// copy warp object
+void minitile::copywarp(miniwarp *warp)
    {WARP=new miniwarp(*warp);}
 
 // check the visibility of the tiles
