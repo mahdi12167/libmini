@@ -92,6 +92,8 @@ class minilayer
       float radius;             //* non-linear kick-in distance relative to texture range
       float dropoff;            //* non-linear lod dropoff at kick-in distance
 
+      BOOLINT genmipmaps;       //* enable on-the-fly generation of mipmaps
+
       float sealevel;           //* sea-level height (meters, off=-MAXFLOAT)
 
       BOOLINT autocompress;     //+ auto-compress raw textures with S3TC

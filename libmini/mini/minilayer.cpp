@@ -91,6 +91,8 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
+   LPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
+
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
 
    LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
@@ -455,8 +457,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // use .db file numbering starting with zero for compatibility with vtp
    if (!LPARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
 
-   // turn on mip-mapping
-   TERRAIN->configure_mipmaps(1);
+   // configure on-the-fly generation of mipmaps
+   TERRAIN->configure_mipmaps(LPARAMS.genmipmaps);
 
    // select either PNM or DB loader
    TERRAIN->configure_usepnm(LPARAMS.usepnm);

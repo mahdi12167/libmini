@@ -53,6 +53,8 @@ miniterrain::miniterrain()
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
+   TPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
+
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
 
    TPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
@@ -249,6 +251,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.range=TPARAMS.range;
          lparams.radius=TPARAMS.radius;
          lparams.dropoff=TPARAMS.dropoff;
+
+         lparams.genmipmaps=TPARAMS.genmipmaps;
 
          lparams.sealevel=TPARAMS.sealevel;
 
@@ -451,7 +455,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // turn on ray object
    CACHE->configure_enableray(1);
 
-   // turn on on-the-fly OpenGL mipmap generation
+   // turn on hw-accelerated OpenGL mipmap generation
    miniOGL::configure_generatemm(1);
 
    // turn off on-the-fly OpenGL texture compression
