@@ -818,6 +818,20 @@ void mtxrotate(float angle,float ax,float ay,float az)
 #endif
    }
 
+void mtxmult(float mtx[16])
+   {
+#ifndef NOOGL
+   glMultMatrixf(mtx);
+#endif
+   }
+
+void mtxmult(double mtx[16])
+   {
+#ifndef NOOGL
+   glMultMatrixd(mtx);
+#endif
+   }
+
 void beginfans()
    {
 #ifndef NOOGL

@@ -526,7 +526,7 @@ inline void minicache::rendertexmap(int m,int n,int S)
       oglmtx[11]=0.0;
       oglmtx[15]=1.0;
 
-      glMultMatrixd(oglmtx);
+      mtxmult(oglmtx);
       }
 
    ox=xdim*(m-(cols-1)/2.0f)+centerx;

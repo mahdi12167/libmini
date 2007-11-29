@@ -545,7 +545,7 @@ void miniray::renderwire(TRIANGLEREF *ref)
       oglmtx[11]=0.0;
       oglmtx[15]=1.0;
 
-      glMultMatrixd(oglmtx);
+      mtxmult(oglmtx);
       }
 
    color(0.0f,0.0f,0.0f);

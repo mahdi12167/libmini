@@ -68,6 +68,9 @@ void mtxscale(float sx,float sy,float sz);
 void mtxtranslate(float tx,float ty,float tz);
 void mtxrotate(float angle,float ax,float ay,float az);
 
+void mtxmult(float mtx[16]);
+void mtxmult(double mtx[16]);
+
 void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
