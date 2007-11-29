@@ -2,7 +2,7 @@
 
 #include "minibase.h"
 
-#include "miniv3f.h"
+#include "miniv3d.h"
 #include "miniv4d.h"
 #include "miniwarp.h"
 
@@ -210,7 +210,7 @@ inline void minicache::cache(int op,float a,float b,float c)
    float xdim,zdim;
    float centerx,centery,centerz;
 
-   miniv3f s,o;
+   miniv3d s,o;
 
    if (CACHE_SIZE1>=CACHE_MAXSIZE || CACHE_SIZE2>=CACHE_MAXSIZE)
       {
@@ -259,7 +259,7 @@ inline void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o);
+               RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,TERRAIN[CACHE_ID].tile->getwarp());
                }
 
             if (op==TRIGGER_OP)
@@ -323,7 +323,7 @@ inline void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o);
+               RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,TERRAIN[CACHE_ID].tile->getwarp());
                }
 
             if (op==TRIGGER_OP)

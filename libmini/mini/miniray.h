@@ -3,7 +3,9 @@
 #ifndef MINIRAY_H
 #define MINIRAY_H
 
-#include "miniv3f.h"
+#include "miniv3d.h"
+
+#include "miniwarp.h"
 
 //! class for intersecting a ray with a set of triangles
 //! the triangles are stored as a set of references to vertex arrays
@@ -22,13 +24,13 @@ class miniray
 
    //! add reference to triangles to the back buffer
    void addtriangles(float **array,int index,int num,int stride=0,
-                     miniv3f *scaling=0,miniv3f *offset=0,
-                     int swapyz=0);
+                     miniv3d *scaling=0,miniv3d *offset=0,
+                     int swapyz=0,miniwarp *warp=0);
 
    //! add reference to triangle fans to the back buffer
    void addtrianglefans(float **array,int index,int num,int stride=0,
-                        miniv3f *scaling=0,miniv3f *offset=0,
-                        int swapyz=0);
+                        miniv3d *scaling=0,miniv3d *offset=0,
+                        int swapyz=0,miniwarp *warp=0);
 
    //! swap front and back triangle reference buffer
    void swapbuffer();
@@ -37,7 +39,7 @@ class miniray
    //! only the triangles referenced in the front buffer are considered
    //! o is the origin of the ray, d is the ray direction
    //! a return value of MAXFLOAT indicates that there was no hit
-   float shoot(const miniv3f &o,const miniv3f &d);
+   double shoot(const miniv3d &o,const miniv3d &d);
 
    //! render triangles as wireframe for debugging purposes
    void renderwire();
@@ -56,13 +58,15 @@ class miniray
 
       int isfan;
 
-      miniv3f scaling;
-      miniv3f offset;
+      miniv3d scaling;
+      miniv3d offset;
 
       int swapyz;
 
-      miniv3f b;
-      float r2;
+      miniwarp *warp;
+
+      miniv3d b;
+      double r2;
 
       TRIANGLEREF *next;
       };
@@ -71,22 +75,22 @@ class miniray
 
    void calcbound(TRIANGLEREF *ref);
 
-   float calcdist(TRIANGLEREF *ref,
-                  const miniv3f &o,const miniv3f &d,
-                  float dist);
+   double calcdist(TRIANGLEREF *ref,
+                   const miniv3d &o,const miniv3d &d,
+                   double dist);
 
    void renderwire(TRIANGLEREF *ref);
 
-   inline int checkbound(const miniv3f &o,const miniv3f &d,
-                         const miniv3f &b,const float r2);
+   inline int checkbound(const miniv3d &o,const miniv3d &d,
+                         const miniv3d &b,const double r2);
 
-   inline float checkdist(const miniv3f &o,const miniv3f &d,
-                          const miniv3f &v1,const miniv3f &v2,const miniv3f &v3);
+   inline float checkdist(const miniv3d &o,const miniv3d &d,
+                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 
    // Moeller-Trumbore ray/triangle intersection
-   inline int intersect(const miniv3f &o,const miniv3f &d,
-                        const miniv3f &v0,const miniv3f &v1,const miniv3f &v2,
-                        miniv3f *tuv);
+   inline int intersect(const miniv3d &o,const miniv3d &d,
+                        const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
+                        miniv3d *tuv);
    };
 
 #endif

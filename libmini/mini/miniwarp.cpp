@@ -295,6 +295,14 @@ miniwarp::miniwarp()
    MTX[1]=miniv4d(0.0,1.0,0.0);
    MTX[2]=miniv4d(0.0,0.0,1.0);
 
+   INV[0]=miniv4d(1.0,0.0,0.0);
+   INV[1]=miniv4d(0.0,1.0,0.0);
+   INV[2]=miniv4d(0.0,0.0,1.0);
+
+   TRA[0]=miniv4d(1.0,0.0,0.0);
+   TRA[1]=miniv4d(0.0,1.0,0.0);
+   TRA[2]=miniv4d(0.0,0.0,1.0);
+
    INVTRA[0]=miniv4d(1.0,0.0,0.0);
    INVTRA[1]=miniv4d(0.0,1.0,0.0);
    INVTRA[2]=miniv4d(0.0,0.0,1.0);
@@ -390,6 +398,8 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
 
    update_wrp();
    update_inv();
+   update_tra();
+   update_invtra();
    update_scl();
    }
 
@@ -401,7 +411,23 @@ void miniwarp::getwarp(miniv4d mtx[3])
    mtx[2]=MTX[2];
    }
 
-// get actual inverse transpose warp matrix
+// get inverse of actual warp matrix
+void miniwarp::getinv(miniv4d inv[3])
+   {
+   inv[0]=INV[0];
+   inv[1]=INV[1];
+   inv[2]=INV[2];
+   }
+
+// get transpose of actual warp matrix
+void miniwarp::gettra(miniv4d tra[3])
+   {
+   tra[0]=TRA[0];
+   tra[1]=TRA[1];
+   tra[2]=TRA[2];
+   }
+
+// get inverse transpose of actual warp matrix
 void miniwarp::getinvtra(miniv4d invtra[3])
    {
    invtra[0]=INVTRA[0];
@@ -685,8 +711,20 @@ void miniwarp::update_wrp()
             }
    }
 
-// calculate the inverse transpose of the 4x3 warp matrix
+// calculate the inverse of the 4x3 warp matrix
 void miniwarp::update_inv()
+   {inv_mtx(INV,MTX);}
+
+// construct the transpose of the 4x3 warp matrix
+void miniwarp::update_tra()
+   {
+   TRA[0]=miniv4d(MTX[0].x,MTX[1].x,MTX[2].x);
+   TRA[1]=miniv4d(MTX[0].y,MTX[1].y,MTX[2].y);
+   TRA[2]=miniv4d(MTX[0].z,MTX[1].z,MTX[2].z);
+   }
+
+// calculate the inverse transpose of the 4x3 warp matrix
+void miniwarp::update_invtra()
    {
    miniv3d inv[3];
 

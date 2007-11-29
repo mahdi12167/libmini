@@ -4,6 +4,9 @@
 
 #include "miniOGL.h"
 
+#include "miniv3f.h"
+#include "miniv4d.h"
+
 #include "miniray.h"
 
 // default constructor
@@ -38,8 +41,8 @@ void miniray::clearbuffer()
 
 // add reference to triangles to the back buffer
 void miniray::addtriangles(float **array,int index,int num,int stride,
-                           miniv3f *scaling,miniv3f *offset,
-                           int swapyz)
+                           miniv3d *scaling,miniv3d *offset,
+                           int swapyz,miniwarp *warp)
    {
    TRIANGLEREF *ref;
 
@@ -56,12 +59,14 @@ void miniray::addtriangles(float **array,int index,int num,int stride,
    ref->isfan=0;
 
    if (scaling!=NULL) ref->scaling=*scaling;
-   else ref->scaling=miniv3f(1.0f,1.0f,1.0f);
+   else ref->scaling=miniv3d(1.0,1.0,1.0);
 
    if (offset!=NULL) ref->offset=*offset;
-   else ref->offset=miniv3f(0.0f,0.0f,0.0f);
+   else ref->offset=miniv3d(0.0,0.0,0.0);
 
    ref->swapyz=swapyz;
+
+   ref->warp=warp;
 
    calcbound(ref);
 
@@ -71,8 +76,8 @@ void miniray::addtriangles(float **array,int index,int num,int stride,
 
 // add reference to triangle fans to the back buffer
 void miniray::addtrianglefans(float **array,int index,int num,int stride,
-                              miniv3f *scaling,miniv3f *offset,
-                              int swapyz)
+                              miniv3d *scaling,miniv3d *offset,
+                              int swapyz,miniwarp *warp)
    {
    TRIANGLEREF *ref;
 
@@ -89,12 +94,14 @@ void miniray::addtrianglefans(float **array,int index,int num,int stride,
    ref->isfan=1;
 
    if (scaling!=NULL) ref->scaling=*scaling;
-   else ref->scaling=miniv3f(1.0f,1.0f,1.0f);
+   else ref->scaling=miniv3d(1.0,1.0,1.0);
 
    if (offset!=NULL) ref->offset=*offset;
-   else ref->offset=miniv3f(0.0f,0.0f,0.0f);
+   else ref->offset=miniv3d(0.0,0.0,0.0);
 
    ref->swapyz=swapyz;
+
+   ref->warp=warp;
 
    calcbound(ref);
 
@@ -113,11 +120,11 @@ void miniray::swapbuffer()
    }
 
 // shoot a ray and return the distance to the closest triangle
-float miniray::shoot(const miniv3f &o,const miniv3f &d)
+double miniray::shoot(const miniv3d &o,const miniv3d &d)
    {
    float result;
 
-   miniv3f dn;
+   miniv3d dn;
 
    TRIANGLEREF *ref;
 
@@ -144,8 +151,10 @@ void miniray::calcbound(TRIANGLEREF *ref)
    float *array;
    int num,stride;
 
-   miniv3f v;
-   miniv3f vmin,vmax;
+   miniv3d v;
+   miniv3d vmin,vmax;
+
+   miniv4d mtx[3],v1;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
@@ -247,29 +256,59 @@ void miniray::calcbound(TRIANGLEREF *ref)
    vmax.y=vmax.y*ref->scaling.y+ref->offset.y;
    vmax.z=vmax.z*ref->scaling.z+ref->offset.z;
 
-   ref->b=(vmin+vmax)/2.0f;
+   ref->b=(vmin+vmax)/2.0;
 
-   ref->r2=0.75f*(fsqr(vmax.x-vmin.x)+
-                  fsqr(vmax.y-vmin.y)+
-                  fsqr(vmax.z-vmin.z));
+   // warp matrix is assumed to be ortho-normal
+   if (ref->warp!=NULL)
+      {
+      ref->warp->getwarp(mtx);
+      v1=miniv4d(ref->b.x,ref->b.y,ref->b.z,1.0);
+      ref->b=miniv3d(mtx[0]*v1,mtx[1]*v1,mtx[2]*v1);
+      }
+
+   ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
+                 FSQR(vmax.y-vmin.y)+
+                 FSQR(vmax.z-vmin.z));
    }
 
-float miniray::calcdist(TRIANGLEREF *ref,
-                        const miniv3f &o,const miniv3f &d,
-                        float dist)
+double miniray::calcdist(TRIANGLEREF *ref,
+                         const miniv3d &o,const miniv3d &d,
+                         double dist)
    {
    int i,j,k;
 
-   float result;
+   double result;
 
    float *array;
    int num,stride;
 
-   miniv3f v1,v2,v3;
+   miniv3d oi,di;
+   miniv4d o1,d0;
+
+   miniv4d inv[3],tra[3];
+
+   miniv3d v1,v2,v3;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
    stride=ref->stride;
+
+   // warp matrix is assumed to be ortho-normal
+   if (ref->warp!=NULL)
+      {
+      ref->warp->getinv(inv);
+      o1=miniv4d(o.x,o.y,o.z,1.0);
+      oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
+
+      ref->warp->gettra(tra);
+      d0=miniv4d(d.x,d.y,d.z,0.0);
+      di=miniv3d(tra[0]*d0,tra[1]*d0,tra[2]*d0);
+      }
+   else
+      {
+      oi=o;
+      di=d;
+      }
 
    result=dist;
 
@@ -307,7 +346,7 @@ float miniray::calcdist(TRIANGLEREF *ref,
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            dist=checkdist(o,d,v1,v2,v3);
+            dist=checkdist(oi,di,v1,v2,v3);
 
             if (dist>0.0f) result=fmin(result,dist);
             }
@@ -344,7 +383,7 @@ float miniray::calcdist(TRIANGLEREF *ref,
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            dist=checkdist(o,d,v1,v2,v3);
+            dist=checkdist(oi,di,v1,v2,v3);
 
             if (dist>0.0f) result=fmin(result,dist);
             }
@@ -388,7 +427,7 @@ float miniray::calcdist(TRIANGLEREF *ref,
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               dist=checkdist(o,d,v1,v2,v3);
+               dist=checkdist(oi,di,v1,v2,v3);
 
                if (dist>0.0f) result=fmin(result,dist);
 
@@ -434,7 +473,7 @@ float miniray::calcdist(TRIANGLEREF *ref,
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               dist=checkdist(o,d,v1,v2,v3);
+               dist=checkdist(oi,di,v1,v2,v3);
 
                if (dist>0.0f) result=fmin(result,dist);
 
@@ -469,6 +508,9 @@ void miniray::renderwire(TRIANGLEREF *ref)
    float *array;
    int num,stride;
 
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    miniv3f v1,v2,v3;
 
    array=*(ref->array)+ref->index;
@@ -478,6 +520,33 @@ void miniray::renderwire(TRIANGLEREF *ref)
    mtxpush();
    mtxtranslate(ref->offset.x,ref->offset.y,ref->offset.z);
    mtxscale(ref->scaling.x,ref->scaling.y,ref->scaling.z);
+
+   if (ref->warp!=NULL)
+      {
+      ref->warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      glMultMatrixd(oglmtx);
+      }
 
    color(0.0f,0.0f,0.0f);
 
@@ -606,74 +675,74 @@ void miniray::renderwire(TRIANGLEREF *ref)
    }
 
 // geometric ray/sphere intersection test
-int miniray::checkbound(const miniv3f &o,const miniv3f &d,
-                        const miniv3f &b,const float r2)
+int miniray::checkbound(const miniv3d &o,const miniv3d &d,
+                        const miniv3d &b,const double r2)
    {
-   miniv3f bmo;
-   float bmo2,bmod;
+   miniv3d bmo;
+   double bmo2,bmod;
 
    bmo=b-o;
    bmo2=bmo*bmo;
    if (bmo2<r2) return(1);
 
    bmod=bmo*d;
-   if (bmod<0.0f) return(0);
+   if (bmod<0.0) return(0);
    if (r2+bmod*bmod>bmo2) return(1);
 
    return(0);
    }
 
-float miniray::checkdist(const miniv3f &o,const miniv3f &d,
-                         const miniv3f &v1,const miniv3f &v2,const miniv3f &v3)
+float miniray::checkdist(const miniv3d &o,const miniv3d &d,
+                         const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
-   miniv3f tuv;
+   miniv3d tuv;
 
    if (intersect(o,d,v1,v2,v3,&tuv)==0) return(MAXFLOAT);
    else return(tuv.x);
    }
 
 // Moeller-Trumbore ray/triangle intersection
-int miniray::intersect(const miniv3f &o,const miniv3f &d,
-                       const miniv3f &v0,const miniv3f &v1,const miniv3f &v2,
-                       miniv3f *tuv)
+int miniray::intersect(const miniv3d &o,const miniv3d &d,
+                       const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
+                       miniv3d *tuv)
    {
-   static const float EPSILON=0.000001f;
+   static const double EPSILON=0.000001;
 
-   float t,u,v;
-   miniv3f edge1,edge2,tvec,pvec,qvec;
-   float det,inv_det;
+   double t,u,v;
+   miniv3d edge1,edge2,tvec,pvec,qvec;
+   double det,inv_det;
 
-   /* find vectors for two edges sharing v0 */
+   // find vectors for two edges sharing v0
    edge1=v1-v0;
    edge2=v2-v0;
 
-   /* begin calculating determinant - also used to calculate U parameter */
+   // begin calculating determinant - also used to calculate U parameter
    pvec=d/edge2;
 
-   /* if determinant is near zero, ray lies in plane of triangle */
+   // if determinant is near zero, ray lies in plane of triangle
    det=edge1*pvec;
 
-   /* cull triangles with determinant near zero */
-   if (fabs(det)<EPSILON) return(0);
+   // cull triangles with determinant near zero
+   if (FABS(det)<EPSILON) return(0);
 
-   /* calculate inverse determinant */
-   inv_det=1.0f/det;
+   // calculate inverse determinant
+   inv_det=1.0/det;
 
-   /* calculate distance from v0 to ray origin */
+   // calculate distance from v0 to ray origin
    tvec=o-v0;
 
-   /* calculate U parameter and test bounds */
+   // calculate U parameter and test bounds
    u=(tvec*pvec)*inv_det;
-   if (u<0.0f || u>1.0f) return(0);
+   if (u<0.0 || u>1.0) return(0);
 
-   /* prepare to test V parameter */
+   // prepare to test V parameter
    qvec=tvec/edge1;
 
-   /* calculate V parameter and test bounds */
+   // calculate V parameter and test bounds
    v=(d*qvec)*inv_det;
-   if (v<0.0f || u+v>1.0f) return(0);
+   if (v<0.0 || u+v>1.0) return(0);
 
-   /* calculate t, ray intersects triangle */
+   // calculate t, ray intersects triangle
    t=(edge2*qvec)*inv_det;
 
    *tuv=miniv3f(t,u,v);

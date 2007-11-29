@@ -180,10 +180,10 @@ class miniwarp
    void def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,double scaleLOC);
 
    //! define conversion to affine coordinates
-   void def_2affine(const miniv4d mtxAFF[3]); // fourth row is assumed to be (0,0,0,1)
+   void def_2affine(const miniv4d mtxAFF[3]);
 
    //! define conversion to reference coordinates
-   void def_2reference(const miniv4d mtxREF[3]); // fourth row is assumed to be (0,0,0,1)
+   void def_2reference(const miniv4d mtxREF[3]);
 
    //! define warp coordinates
    void def_warp(const minicoord::MINICOORD sysWRP);
@@ -197,8 +197,14 @@ class miniwarp
    //! get actual warp matrix
    void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
-   //! get actual inverse transpose warp matrix
-   void getinvtra(miniv4d invtra[3]); // fourth row is assumed to be (0,0,0,1)
+   //! get inverse of actual warp matrix
+   void getinv(miniv4d inv[3]);
+
+   //! get transpose of actual warp matrix
+   void gettra(miniv4d tra[3]);
+
+   //! get inverse transpose of actual warp matrix
+   void getinvtra(miniv4d invtra[3]);
 
    //! get actual scaling factor
    double getscale();
@@ -275,6 +281,7 @@ class miniwarp
    MINIWARP FROM,TO;
 
    miniv4d MTX[3];
+   miniv4d INV[3],TRA[3];
    miniv4d INVTRA[3];
    float SCALE;
 
@@ -283,6 +290,8 @@ class miniwarp
    void update_mtx();
    void update_wrp();
    void update_inv();
+   void update_tra();
+   void update_invtra();
    void update_scl();
 
    void calc_wrp();

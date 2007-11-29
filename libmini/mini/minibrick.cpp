@@ -2,7 +2,7 @@
 
 #include "minibase.h"
 
-#include "miniv3f.h"
+#include "miniv3d.h"
 
 #include "minibrick.h"
 
@@ -3851,7 +3851,7 @@ void minibrick::processarrays(databuf *brick,minisurf *surface)
    float **array;
    int num;
 
-   miniv3f s,o;
+   miniv3d s,o;
 
    BOOLINT valid;
 

@@ -74,7 +74,9 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #include <mini/minibase.h>
 
+#include <mini/miniv3f.h>
 #include <mini/miniv3d.h>
+
 #include <mini/minihsv.h>
 
 #include <mini/miniOGL.h>
