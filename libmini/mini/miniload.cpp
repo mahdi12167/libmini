@@ -902,6 +902,10 @@ void miniload::setrelscale(float scale)
    TILE->setrelscale(RELSCALE=scale);
    }
 
+// get relative scaling
+float miniload::getrelscale()
+   {return(TILE->getrelscale());}
+
 // set sea level
 void miniload::setsealevel(float level)
    {SEALEVEL=level;}

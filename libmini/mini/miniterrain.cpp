@@ -735,6 +735,13 @@ void miniterrain::flatten(float relscale)
       LAYER[n]->flatten(relscale);
    }
 
+// get the flattening factor
+float miniterrain::getflattening()
+   {
+   if (LNUM>0) return(LAYER[getreference()]->getflattening());
+   else return(1.0f);
+   }
+
 // shoot a ray at the scene
 double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    {

@@ -224,6 +224,9 @@ class minilayer
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
+   //! get the flattening factor
+   float getflattening();
+
    //! render waypoints
    void renderpoints();
 

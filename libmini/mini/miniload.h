@@ -47,6 +47,9 @@ class miniload
    //! set relative scaling (0<=scale<=1)
    void setrelscale(float scale=1.0f);
 
+   //! get relative scaling
+   float getrelscale();
+
    //! set sea level
    void setsealevel(float level);
 

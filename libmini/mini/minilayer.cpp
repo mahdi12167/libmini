@@ -804,6 +804,10 @@ void minilayer::display(BOOLINT yes)
 void minilayer::flatten(float relscale)
    {TERRAIN->setrelscale(relscale);}
 
+// get the flattening factor
+float minilayer::getflattening()
+   {return(TERRAIN->getrelscale());}
+
 // render waypoints
 void minilayer::renderpoints()
    {

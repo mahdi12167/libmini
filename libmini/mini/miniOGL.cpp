@@ -638,6 +638,10 @@ int build3Dtexmap(unsigned char *volume,
                   int *width,int *height,int *depth,
                   int components)
    {
+   if (volume==NULL) ERRORMSG();
+   if (width==NULL || height==NULL || depth==NULL) ERRORMSG();
+   if (components<1) ERRORMSG();
+
 #ifndef NOOGL
 #ifdef GL_EXT_texture3D
    GLuint texid;
@@ -648,7 +652,6 @@ int build3Dtexmap(unsigned char *volume,
 
    if (!glext_t3D) return(0);
 
-   if (width==NULL || height==NULL || depth==NULL) ERRORMSG();
    if (*width<2 || *height<2 || *depth<2) ERRORMSG();
 
    glGenTextures(1,&texid);
@@ -685,6 +688,8 @@ int build3Dtexmap(unsigned char *volume,
 
 void bind3Dtexmap(int texid)
    {
+   if (texid<0) ERRORMSG();
+
 #ifndef NOOGL
 #ifdef GL_EXT_texture3D
    if (texid>0)

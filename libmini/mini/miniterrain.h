@@ -251,6 +251,9 @@ class miniterrain
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
+   //! get the flattening factor
+   float getflattening();
+
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);
 
