@@ -2,47 +2,46 @@
 
 #include "threadbase.h"
 
-int threadbase::numthreads;
+threadbase::MULTITHREAD_TYPE **threadbase::MULTITHREAD=NULL;
 
-threadbase::PTHREADPTR threadbase::pthread;
-pthread_mutex_t threadbase::mutex,threadbase::iomutex;
-pthread_attr_t threadbase::attr;
+int threadbase::MAXMULTITHREAD=0;
+int threadbase::NUMMULTITHREAD=0;
 
 void threadbase::threadinit(int threads,int id,void *data)
    {
-#ifdef PTW32_STATIC_LIB
-   pthread_win32_process_attach_np();
-#endif
+   if (data!=NULL) ERRORMSG();
 
-   numthreads=threads;
+   initmultithread(id);
 
-   pthread=new pthread_t[numthreads];
+   MULTITHREAD[id]->numthreads=threads;
 
-   pthread_mutex_init(&mutex,NULL);
-   pthread_mutex_init(&iomutex,NULL);
+   MULTITHREAD[id]->pthread=new pthread_t[threads];
 
-   pthread_attr_init(&attr);
-   pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_JOINABLE);
+   pthread_mutex_init(&MULTITHREAD[id]->mutex,NULL);
+   pthread_mutex_init(&MULTITHREAD[id]->iomutex,NULL);
+
+   pthread_attr_init(&MULTITHREAD[id]->attr);
+   pthread_attr_setdetachstate(&MULTITHREAD[id]->attr,PTHREAD_CREATE_JOINABLE);
    }
 
 void threadbase::threadexit(int id,void *data)
    {
-   pthread_mutex_destroy(&mutex);
-   pthread_mutex_destroy(&iomutex);
+   if (data!=NULL) ERRORMSG();
 
-   pthread_attr_destroy(&attr);
+   pthread_mutex_destroy(&MULTITHREAD[id]->mutex);
+   pthread_mutex_destroy(&MULTITHREAD[id]->iomutex);
 
-   delete[] pthread;
+   pthread_attr_destroy(&MULTITHREAD[id]->attr);
 
-#ifdef PTW32_STATIC_LIB
-   pthread_win32_process_detach_np();
-#endif
+   delete[] MULTITHREAD[id]->pthread;
+
+   exitmultithread(id);
    }
 
 void threadbase::startthread(void *(*thread)(void *background),backarrayelem *background,int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
-   pthread_create(&pthread[background->background-1],&attr,thread,background);
+   pthread_create(&MULTITHREAD[id]->pthread[background->background-1],&MULTITHREAD[id]->attr,thread,background);
    }
 
 void threadbase::jointhread(backarrayelem *background,int id,void *data)
@@ -50,29 +49,68 @@ void threadbase::jointhread(backarrayelem *background,int id,void *data)
    void *status;
 
    if (data!=NULL) ERRORMSG();
-   pthread_join(pthread[background->background-1],&status);
+   pthread_join(MULTITHREAD[id]->pthread[background->background-1],&status);
    }
 
 void threadbase::lock_cs(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
-   pthread_mutex_lock(&mutex);
+   pthread_mutex_lock(&MULTITHREAD[id]->mutex);
    }
 
 void threadbase::unlock_cs(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
-   pthread_mutex_unlock(&mutex);
+   pthread_mutex_unlock(&MULTITHREAD[id]->mutex);
    }
 
 void threadbase::lock_io(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
-   pthread_mutex_lock(&iomutex);
+   pthread_mutex_lock(&MULTITHREAD[id]->iomutex);
    }
 
 void threadbase::unlock_io(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
-   pthread_mutex_unlock(&iomutex);
+   pthread_mutex_unlock(&MULTITHREAD[id]->iomutex);
+   }
+
+void threadbase::initmultithread(int id)
+   {
+   if (MAXMULTITHREAD==0)
+      {
+#ifdef PTW32_STATIC_LIB
+      pthread_win32_process_attach_np();
+#endif
+
+      MAXMULTITHREAD=id+1;
+      if ((MULTITHREAD=(MULTITHREAD_TYPE **)malloc(MAXMULTITHREAD*sizeof(MULTITHREAD_TYPE *)))==NULL) ERRORMSG();
+      }
+
+   if (id>=MAXMULTITHREAD)
+      {
+      MAXMULTITHREAD=id+1;
+      if ((MULTITHREAD=(MULTITHREAD_TYPE **)realloc(MULTITHREAD,MAXMULTITHREAD*sizeof(MULTITHREAD_TYPE *)))==NULL) ERRORMSG();
+      }
+
+   MULTITHREAD[id]=new MULTITHREAD_TYPE;
+
+   NUMMULTITHREAD++;
+   }
+
+void threadbase::exitmultithread(int id)
+   {
+   delete MULTITHREAD[id];
+
+   NUMMULTITHREAD--;
+
+   if (NUMMULTITHREAD==0)
+      {
+      free(MULTITHREAD);
+
+#ifdef PTW32_STATIC_LIB
+      pthread_win32_process_detach_np();
+#endif
+      }
    }

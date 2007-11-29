@@ -2,9 +2,10 @@
 
 #include "curlbase.h"
 
-int curlbase::numthreads;
+curlbase::MULTICURL_TYPE **curlbase::MULTICURL=NULL;
 
-curlbase::CURLPTR *curlbase::curl_handle;
+int curlbase::MAXMULTICURL=0;
+int curlbase::NUMMULTICURL=0;
 
 void *curlbase::myrealloc(void *ptr,size_t size)
    {
@@ -33,40 +34,42 @@ void curlbase::curlinit(int threads,int id,char *proxyname,char *proxyport,void 
    {
    int i;
 
-   numthreads=threads;
+   if (data!=NULL) ERRORMSG();
 
-   curl_handle=new CURLPTR[numthreads+2];
+   initmulticurl(id);
 
-   /* init curl */
-   curl_global_init(CURL_GLOBAL_ALL);
+   MULTICURL[id]->numthreads=threads;
 
-   for (i=0; i<numthreads+2; i++)
+   // allocate curl handles
+   MULTICURL[id]->curl_handle=new CURLPTR[threads+2];
+
+   for (i=0; i<threads+2; i++)
       {
-      /* init the curl session */
-      curl_handle[i]=curl_easy_init();
+      // init the curl session
+      MULTICURL[id]->curl_handle[i]=curl_easy_init();
 
-      /* send all data to this function */
-      curl_easy_setopt(curl_handle[i],CURLOPT_WRITEFUNCTION,WriteMemoryCallback);
+      // send all data to this function
+      curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_WRITEFUNCTION,WriteMemoryCallback);
 
-      /* optionally set the proxy server address */
+      // optionally set the proxy server address
       if (proxyname!=NULL)
          {
-         curl_easy_setopt(curl_handle[i],CURLOPT_PROXY,proxyname);
-         if (proxyport!=NULL) curl_easy_setopt(curl_handle[i],CURLOPT_PROXYPORT,proxyport);
+         curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_PROXY,proxyname);
+         if (proxyport!=NULL) curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_PROXYPORT,proxyport);
          }
 
-      /* some servers don't like requests that are made without a user-agent */
-      curl_easy_setopt(curl_handle[i],CURLOPT_USERAGENT,"libMini-agent/1.0");
+      // some servers don't like requests that are made without a user-agent
+      curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_USERAGENT,"libMini-agent/1.0");
 
-      if (i<numthreads+1)
+      if (i<threads+1)
          {
-         /* request zlib decompression */
-         curl_easy_setopt(curl_handle[i],CURLOPT_ENCODING,"deflate");
+         // request zlib decompression
+         curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_ENCODING,"deflate");
          }
       else
          {
-         /* request header only */
-         curl_easy_setopt(curl_handle[i],CURLOPT_NOBODY,1);
+         // request header only
+         curl_easy_setopt(MULTICURL[id]->curl_handle[i],CURLOPT_NOBODY,1);
          }
       }
    }
@@ -75,10 +78,15 @@ void curlbase::curlexit(int id,void *data)
    {
    int i;
 
-   /* cleanup curl stuff */
-   for (i=0; i<numthreads+2; i++) curl_easy_cleanup(curl_handle[i]);
+   if (data!=NULL) ERRORMSG();
 
-   delete[] curl_handle;
+   // clean-up curl sessions
+   for (i=0; i<MULTICURL[id]->numthreads+2; i++) curl_easy_cleanup(MULTICURL[id]->curl_handle[i]);
+
+   // free curl handles
+   delete[] MULTICURL[id]->curl_handle;
+
+   exitmulticurl(id);
    }
 
 void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data)
@@ -87,21 +95,23 @@ void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,i
 
    struct MemoryStruct chunk;
 
+   if (data!=NULL) ERRORMSG();
+
    chunk.memory=NULL;
    chunk.size=0;
 
    url=strcct(src_url,strcct(src_id,src_file));
 
-   /* we pass our chunk struct to the callback function */
-   curl_easy_setopt(curl_handle[background],CURLOPT_WRITEDATA,(void *)&chunk);
+   // pass the chunk struct to the callback function
+   curl_easy_setopt(MULTICURL[id]->curl_handle[background],CURLOPT_WRITEDATA,(void *)&chunk);
 
-   /* specify URL to get */
-   curl_easy_setopt(curl_handle[background],CURLOPT_URL,url);
+   // specify URL to get
+   curl_easy_setopt(MULTICURL[id]->curl_handle[background],CURLOPT_URL,url);
 
-   /* get it! */
-   curl_easy_perform(curl_handle[background]);
+   // get it!
+   curl_easy_perform(MULTICURL[id]->curl_handle[background]);
 
-   /* write to file */
+   // write memory chunk to file
    if (chunk.memory)
       {
       FILE *file;
@@ -119,31 +129,73 @@ void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,i
 int curlbase::checkURL(char *src_url,char *src_id,char *src_file,int id,void *data)
    {
    char *url;
+   int threads;
    long response;
 
    struct MemoryStruct chunk;
 
+   if (data!=NULL) ERRORMSG();
+
    chunk.memory=NULL;
    chunk.size=0;
 
+   threads=MULTICURL[id]->numthreads;
+
    url=strcct(src_url,strcct(src_id,src_file));
 
-   /* we pass our chunk struct to the callback function */
-   curl_easy_setopt(curl_handle[numthreads+1],CURLOPT_WRITEDATA,(void *)&chunk);
+   // pass the chunk struct to the callback function
+   curl_easy_setopt(MULTICURL[id]->curl_handle[threads+1],CURLOPT_WRITEDATA,(void *)&chunk);
 
-   /* specify URL to get */
-   curl_easy_setopt(curl_handle[numthreads+1],CURLOPT_URL,url);
+   // specify URL to get
+   curl_easy_setopt(MULTICURL[id]->curl_handle[threads+1],CURLOPT_URL,url);
 
-   /* get it! */
-   curl_easy_perform(curl_handle[numthreads+1]);
+   // get it!
+   curl_easy_perform(MULTICURL[id]->curl_handle[threads+1]);
 
-   /* query response code */
-   curl_easy_getinfo(curl_handle[numthreads+1],CURLINFO_RESPONSE_CODE,&response);
+   // query response code
+   curl_easy_getinfo(MULTICURL[id]->curl_handle[threads+1],CURLINFO_RESPONSE_CODE,&response);
 
-   /* free memory chunk */
+   // free memory chunk
    if (chunk.memory) free(chunk.memory);
 
    free(url);
 
    return(response==200);
+   }
+
+void curlbase::initmulticurl(int id)
+   {
+   if (MAXMULTICURL==0)
+      {
+      // init curl
+      curl_global_init(CURL_GLOBAL_ALL);
+
+      MAXMULTICURL=id+1;
+      if ((MULTICURL=(MULTICURL_TYPE **)malloc(MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) ERRORMSG();
+      }
+
+   if (id>=MAXMULTICURL)
+      {
+      MAXMULTICURL=id+1;
+      if ((MULTICURL=(MULTICURL_TYPE **)realloc(MULTICURL,MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) ERRORMSG();
+      }
+
+   MULTICURL[id]=new MULTICURL_TYPE;
+
+   NUMMULTICURL++;
+   }
+
+void curlbase::exitmulticurl(int id)
+   {
+   delete MULTICURL[id];
+
+   NUMMULTICURL--;
+
+   if (NUMMULTICURL==0)
+      {
+      free(MULTICURL);
+
+      // clean-up curl
+      curl_global_cleanup();
+      }
    }

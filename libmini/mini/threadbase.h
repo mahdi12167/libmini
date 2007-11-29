@@ -27,11 +27,22 @@ class threadbase
 
    typedef pthread_t *PTHREADPTR;
 
-   static int numthreads;
+   struct MULTITHREAD_STRUCT
+      {
+      int numthreads;
 
-   static PTHREADPTR pthread;
-   static pthread_mutex_t mutex,iomutex;
-   static pthread_attr_t attr;
+      PTHREADPTR pthread;
+      pthread_mutex_t mutex,iomutex;
+      pthread_attr_t attr;
+      };
+
+   typedef MULTITHREAD_STRUCT MULTITHREAD_TYPE;
+
+   static MULTITHREAD_TYPE **MULTITHREAD;
+   static int MAXMULTITHREAD,NUMMULTITHREAD;
+
+   static void initmultithread(int id);
+   static void exitmultithread(int id);
    };
 
 #endif

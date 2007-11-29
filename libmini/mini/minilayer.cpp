@@ -242,8 +242,8 @@ void minilayer::request_callback(char *file,int istexture,databuf *buf,void *dat
 
 int minilayer::getid()
    {
-   if (TERRAIN->getminitile()==NULL) return(-1);
-   else return(TERRAIN->getminitile()->getid());
+   if (TERRAIN->getminitile()==NULL) return(0);
+   else return(TERRAIN->getminitile()->getid()+1);
    }
 
 void minilayer::threadinit(int threads)
@@ -404,9 +404,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    free(vtbelevinifile);
    free(vtbimaginifile);
 
-   // initialize pthreads and libcurl
-   threadinit(LPARAMS.numthreads);
-   curlinit(LPARAMS.numthreads);
+   // initialize libcurl
+   curlinit(1);
 
    // load persistent startup file
    TILECACHE->load();
@@ -417,6 +416,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       TILECACHE->reset();
       TILECACHE->load();
       }
+
+   // clean-up libcurl
+   curlexit();
 
    // check tileset info
    if (TILECACHE->haselevinfo())
@@ -477,6 +479,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // select either PNM or DB loader
    TERRAIN->configure_usepnm(LPARAMS.usepnm);
 
+   // initialize libcurl
+   curlinit(1);
+
    // load tiles
    success=TERRAIN->load(LPARAMS.cols,LPARAMS.rows, // number of columns and rows
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
@@ -488,6 +493,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                          0.0f, // disable base offset safety
                          outparams, // geometric parameters
                          outscale); // scaling parameters
+
+   // clean-up libcurl
+   curlexit();
 
    // check for load errors
    if (success==0) return(FALSE);
@@ -512,9 +520,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
               LPARAMS.scale);
 
-   // attach tileset to render cache
-   CACHE->attach(TERRAIN->getminitile());
-
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
 
@@ -523,6 +528,13 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // define resolution reduction of invisible tiles
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
+
+   // attach tileset to render cache
+   CACHE->attach(TERRAIN->getminitile());
+
+   // initialize pthreads and libcurl
+   threadinit(LPARAMS.numthreads);
+   curlinit(LPARAMS.numthreads);
 
    // success
    return(TRUE);

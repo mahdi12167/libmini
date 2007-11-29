@@ -29,9 +29,19 @@ class curlbase
 
    typedef CURL *CURLPTR;
 
-   static int numthreads;
+   struct MULTICURL_STRUCT
+      {
+      int numthreads;
+      CURLPTR *curl_handle;
+      };
 
-   static CURLPTR *curl_handle;
+   typedef MULTICURL_STRUCT MULTICURL_TYPE;
+
+   static MULTICURL_TYPE **MULTICURL;
+   static int MAXMULTICURL,NUMMULTICURL;
+
+   static void initmulticurl(int id);
+   static void exitmulticurl(int id);
 
    static void *myrealloc(void *ptr,size_t size);
    static size_t WriteMemoryCallback(void *ptr,size_t size,size_t nmemb,void *data);
