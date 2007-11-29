@@ -591,6 +591,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    miniv4d mtxAFF[3];
    miniv4d mtxREF[3];
 
+   double scale;
+   minicoord center;
+   miniv3d dir,up,right;
+
    // define global coordinates:
 
    WARP=new miniwarp();
@@ -610,19 +614,54 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    // define affine coordinates:
 
-   if (LPARAMS.warpmode==0)
+   if (LPARAMS.warpmode==0 ||
+       WARP->getdat()==minicoord::MINICOORD_LINEAR ||
+       WARP->getglb()==minicoord::MINICOORD_LINEAR)
       {
-      mtxAFF[0]=miniv4d(1.0,0.0,0.0,offsetLOC.x*scalingLOC.x);
-      mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y);
-      mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z);
+      if (REFERENCE==NULL) scale=1.0;
+      else scale=scaleLOC/REFERENCE->getwarp()->getscaleloc();
+
+      mtxAFF[0]=miniv4d(1.0,0.0,0.0,offsetLOC.x*scalingLOC.x*scale);
+      mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y*scale);
+      mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z*scale);
       }
-   else ERRORMSG(); //!! not yet implemented
+   else if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+      {
+      center=offsetDAT;
+      center.convert2(minicoord::MINICOORD_ECEF);
+
+      dir=miniv3d(center.vec);
+      dir.normalize();
+
+      up=miniv3d(0.0,0.0,1.0);
+      right=miniv3d(1.0,0.0,0.0);
+
+      if (FABS(dir*up)<FABS(dir*right))
+         {
+         right=up/dir;
+         right.normalize();
+         up=dir/right;
+         }
+      else
+         {
+         up=right/dir;
+         up.normalize();
+         right=dir/up;
+         }
+
+      if (REFERENCE==NULL) scale=1.0/scaleLOC;
+      else scale=1.0/REFERENCE->getwarp()->getscaleloc();
+
+      mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
+      mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
+      mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+      }
 
    WARP->def_2affine(mtxAFF);
 
    // define reference coordinates:
 
-   if (LPARAMS.warpmode==0)
+   if (LPARAMS.warpmode==0 || LPARAMS.warpmode==1)
       if (REFERENCE!=NULL)
          {
          REFERENCE->getwarp()->get_invaff(mtxREF);

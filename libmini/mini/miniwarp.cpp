@@ -429,6 +429,10 @@ int miniwarp::getutmzone()
 int miniwarp::getutmdatum()
    {return(UTMDATUM);}
 
+// get local down-scaling factor
+double miniwarp::getscaleloc()
+   {return(SCALELOC);}
+
 // perform warp of a point
 minicoord miniwarp::warp(const miniv4d &p)
    {

@@ -21,7 +21,7 @@ class miniterrain
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
-      int warpmode;             //+ warp mode: plain=0 affine=1 non-linear=2
+      int warpmode;             //+ warp mode: linear=0 reference=1 affine=2
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations

@@ -215,6 +215,9 @@ class miniwarp
    //! get utm datum of data
    int getutmdatum();
 
+   //! get local down-scaling factor
+   double getscaleloc();
+
    //! perform warp of a point
    minicoord warp(const miniv4d &p); // fourth component is time
 
