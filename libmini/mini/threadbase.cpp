@@ -8,7 +8,7 @@ threadbase::PTHREADPTR threadbase::pthread;
 pthread_mutex_t threadbase::mutex,threadbase::iomutex;
 pthread_attr_t threadbase::attr;
 
-void threadbase::threadinit(int threads)
+void threadbase::threadinit(int threads,int id,void *data)
    {
 #ifdef PTW32_STATIC_LIB
    pthread_win32_process_attach_np();
@@ -25,7 +25,7 @@ void threadbase::threadinit(int threads)
    pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_JOINABLE);
    }
 
-void threadbase::threadexit()
+void threadbase::threadexit(int id,void *data)
    {
    pthread_mutex_destroy(&mutex);
    pthread_mutex_destroy(&iomutex);
@@ -39,13 +39,13 @@ void threadbase::threadexit()
 #endif
    }
 
-void threadbase::startthread(void *(*thread)(void *background),backarrayelem *background,void *data)
+void threadbase::startthread(void *(*thread)(void *background),backarrayelem *background,int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
    pthread_create(&pthread[background->background-1],&attr,thread,background);
    }
 
-void threadbase::jointhread(backarrayelem *background,void *data)
+void threadbase::jointhread(backarrayelem *background,int id,void *data)
    {
    void *status;
 
@@ -53,25 +53,25 @@ void threadbase::jointhread(backarrayelem *background,void *data)
    pthread_join(pthread[background->background-1],&status);
    }
 
-void threadbase::lock_cs(void *data)
+void threadbase::lock_cs(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
    pthread_mutex_lock(&mutex);
    }
 
-void threadbase::unlock_cs(void *data)
+void threadbase::unlock_cs(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
    pthread_mutex_unlock(&mutex);
    }
 
-void threadbase::lock_io(void *data)
+void threadbase::lock_io(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
    pthread_mutex_lock(&iomutex);
    }
 
-void threadbase::unlock_io(void *data)
+void threadbase::unlock_io(int id,void *data)
    {
    if (data!=NULL) ERRORMSG();
    pthread_mutex_unlock(&iomutex);

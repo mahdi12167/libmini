@@ -124,20 +124,6 @@ void viewerbase::set(VIEWER_PARAMS &params)
 void viewerbase::propagate()
    {set(PARAMS);}
 
-// http receiver
-void viewerbase::receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
-   {
-   if (data!=NULL) ERRORMSG();
-   curlbase::getURL(src_url,src_id,src_file,dst_file,background);
-   }
-
-// http checker
-int viewerbase::check_callback(char *src_url,char *src_id,char *src_file,void *data)
-   {
-   if (data!=NULL) ERRORMSG();
-   return(curlbase::checkURL(src_url,src_id,src_file));
-   }
-
 // S3TC auto-compression hook
 void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                               unsigned char **s3tcdata,unsigned int *s3tcbytes,
@@ -160,7 +146,7 @@ void viewerbase::inithooks()
                         threadbase::lock_io,threadbase::unlock_io,
                         NULL,
                         curlbase::curlinit,curlbase::curlexit,
-                        receive_callback,check_callback);
+                        curlbase::getURL,curlbase::checkURL);
 
    // register conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);

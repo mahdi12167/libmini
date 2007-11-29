@@ -29,7 +29,7 @@ size_t curlbase::WriteMemoryCallback(void *ptr,size_t size,size_t nmemb,void *da
    return(realsize);
    }
 
-void curlbase::curlinit(int threads,char *proxyname,char *proxyport)
+void curlbase::curlinit(int threads,int id,char *proxyname,char *proxyport,void *data)
    {
    int i;
 
@@ -71,7 +71,7 @@ void curlbase::curlinit(int threads,char *proxyname,char *proxyport)
       }
    }
 
-void curlbase::curlexit()
+void curlbase::curlexit(int id,void *data)
    {
    int i;
 
@@ -81,7 +81,7 @@ void curlbase::curlexit()
    delete[] curl_handle;
    }
 
-void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background)
+void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data)
    {
    char *url;
 
@@ -116,7 +116,7 @@ void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,i
    free(url);
    }
 
-int curlbase::checkURL(char *src_url,char *src_id,char *src_file)
+int curlbase::checkURL(char *src_url,char *src_id,char *src_file,int id,void *data)
    {
    char *url;
    long response;

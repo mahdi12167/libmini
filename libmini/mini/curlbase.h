@@ -13,11 +13,11 @@ class curlbase
    {
    public:
 
-   static void curlinit(int threads=1,char *proxyname=NULL,char *proxyport=NULL);
-   static void curlexit();
+   static void curlinit(int threads,int id,char *proxyname,char *proxyport,void *data);
+   static void curlexit(int id,void *data);
 
-   static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background);
-   static int checkURL(char *src_url,char *src_id,char *src_file);
+   static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
+   static int checkURL(char *src_url,char *src_id,char *src_file,int id,void *data);
 
    private:
 

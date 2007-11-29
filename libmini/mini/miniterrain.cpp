@@ -315,15 +315,17 @@ void miniterrain::propagate_wp()
 
 // set internal callbacks
 void miniterrain::setcallbacks(void *threaddata,
-                               void (*threadinit)(int threads),void (*threadexit)(),
-                               void (*startthread)(void *(*thread)(void *background),backarrayelem *background,void *data),
-                               void (*jointhread)(backarrayelem *background,void *data),
-                               void (*lock_cs)(void *data),void (*unlock_cs)(void *data),
-                               void (*lock_io)(void *data),void (*unlock_io)(void *data),
+                               void (*threadinit)(int threads,int id,void *data),
+                               void (*threadexit)(int id,void *data),
+                               void (*startthread)(void *(*thread)(void *background),backarrayelem *background,int id,void *data),
+                               void (*jointhread)(backarrayelem *background,int id,void *data),
+                               void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
+                               void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
                                void *curldata,
-                               void (*curlinit)(int threads,char *proxyname,char *proxyport),void (*curlexit)(),
-                               void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
-                               int (*checkurl)(char *src_url,char *src_id,char *src_file,void *data))
+                               void (*curlinit)(int threads,int id,char *proxyname,char *proxyport,void *data),
+                               void (*curlexit)(int id,void *data),
+                               void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data),
+                               int (*checkurl)(char *src_url,char *src_id,char *src_file,int id,void *data))
    {
    THREADDATA=threaddata;
 

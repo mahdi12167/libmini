@@ -11,17 +11,17 @@ class threadbase
    {
    public:
 
-   static void threadinit(int threads=1);
-   static void threadexit();
+   static void threadinit(int threads,int id,void *data);
+   static void threadexit(int id,void *data);
 
-   static void startthread(void *(*thread)(void *background),backarrayelem *background,void *data);
-   static void jointhread(backarrayelem *background,void *data);
+   static void startthread(void *(*thread)(void *background),backarrayelem *background,int id,void *data);
+   static void jointhread(backarrayelem *background,int id,void *data);
 
-   static void lock_cs(void *data);
-   static void unlock_cs(void *data);
+   static void lock_cs(int id,void *data);
+   static void unlock_cs(int id,void *data);
 
-   static void lock_io(void *data);
-   static void unlock_io(void *data);
+   static void lock_io(int id,void *data);
+   static void unlock_io(int id,void *data);
 
    private:
 

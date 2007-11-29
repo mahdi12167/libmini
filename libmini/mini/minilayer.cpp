@@ -240,71 +240,85 @@ void minilayer::request_callback(char *file,int istexture,databuf *buf,void *dat
 
 // wrappers for internal callbacks:
 
-void minilayer::threadinit(int threads) {THREADINIT(threads);}
-void minilayer::threadexit() {THREADEXIT();}
+int minilayer::getid()
+   {
+   if (TERRAIN->getminitile()==NULL) return(-1);
+   else return(TERRAIN->getminitile()->getid());
+   }
+
+void minilayer::threadinit(int threads)
+   {THREADINIT(threads,getid(),THREADDATA);}
+
+void minilayer::threadexit()
+   {THREADEXIT(getid(),THREADDATA);}
 
 void minilayer::startthread(void *(*thread)(void *background),backarrayelem *background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->STARTTHREAD(thread,background,obj->THREADDATA);
+   obj->STARTTHREAD(thread,background,obj->getid(),obj->THREADDATA);
    }
 
 void minilayer::jointhread(backarrayelem *background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->JOINTHREAD(background,obj->THREADDATA);
+   obj->JOINTHREAD(background,obj->getid(),obj->THREADDATA);
    }
 
 void minilayer::lock_cs(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->LOCK_CS(obj->THREADDATA);
+   obj->LOCK_CS(obj->getid(),obj->THREADDATA);
    }
 
 void minilayer::unlock_cs(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->UNLOCK_CS(obj->THREADDATA);
+   obj->UNLOCK_CS(obj->getid(),obj->THREADDATA);
    }
 
 void minilayer::lock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->LOCK_IO(obj->THREADDATA);
+   obj->LOCK_IO(obj->getid(),obj->THREADDATA);
    }
 
 void minilayer::unlock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->UNLOCK_IO(obj->THREADDATA);
+   obj->UNLOCK_IO(obj->getid(),obj->THREADDATA);
    }
 
-void minilayer::curlinit(int threads,char *proxyname,char *proxyport) {CURLINIT(threads,proxyname,proxyport);}
-void minilayer::curlexit() {CURLEXIT();}
+void minilayer::curlinit(int threads,char *proxyname,char *proxyport)
+   {CURLINIT(threads,getid(),proxyname,proxyport,CURLDATA);}
+
+void minilayer::curlexit()
+   {CURLEXIT(getid(),CURLDATA);}
 
 void minilayer::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->GETURL(src_url,src_id,src_file,dst_file,background,obj->CURLDATA);
+   obj->GETURL(src_url,src_id,src_file,dst_file,background,obj->getid(),obj->CURLDATA);
    }
 
 int minilayer::checkURL(char *src_url,char *src_id,char *src_file,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   return(obj->CHECKURL(src_url,src_id,src_file,obj->CURLDATA));
+   return(obj->CHECKURL(src_url,src_id,src_file,obj->getid(),obj->CURLDATA));
    }
 
 // set internal callbacks
 void minilayer::setcallbacks(void *threaddata,
-                             void (*threadinit)(int threads),void (*threadexit)(),
-                             void (*startthread)(void *(*thread)(void *background),backarrayelem *background,void *data),
-                             void (*jointhread)(backarrayelem *background,void *data),
-                             void (*lock_cs)(void *data),void (*unlock_cs)(void *data),
-                             void (*lock_io)(void *data),void (*unlock_io)(void *data),
+                             void (*threadinit)(int threads,int id,void *data),
+                             void (*threadexit)(int id,void *data),
+                             void (*startthread)(void *(*thread)(void *background),backarrayelem *background,int id,void *data),
+                             void (*jointhread)(backarrayelem *background,int id,void *data),
+                             void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
+                             void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
                              void *curldata,
-                             void (*curlinit)(int threads,char *proxyname,char *proxyport),void (*curlexit)(),
-                             void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),
-                             int (*checkurl)(char *src_url,char *src_id,char *src_file,void *data))
+                             void (*curlinit)(int threads,int id,char *proxyname,char *proxyport,void *data),
+                             void (*curlexit)(int id,void *data),
+                             void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data),
+                             int (*checkurl)(char *src_url,char *src_id,char *src_file,int id,void *data))
    {
    THREADDATA=threaddata;
 
@@ -498,6 +512,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
               LPARAMS.scale);
 
+   // attach tileset to render cache
+   CACHE->attach(TERRAIN->getminitile());
+
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
 
@@ -506,9 +523,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // define resolution reduction of invisible tiles
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
-
-   // attach tileset to render cache
-   CACHE->attach(TERRAIN->getminitile());
 
    // success
    return(TRUE);
