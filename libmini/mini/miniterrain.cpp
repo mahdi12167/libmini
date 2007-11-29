@@ -162,7 +162,8 @@ miniterrain::miniterrain()
 
    LAYER=NULL;
    LNUM=LMAX=0;
-   LREF=0;
+
+   setreference(0);
 
    CACHE=NULL;
 
@@ -551,9 +552,14 @@ void miniterrain::setreference(int ref)
    {
    int n;
 
+   // set new reference
    LREF=ref;
 
-   // update reference coordinate system
+   // set new reference layer for default coordinate conversions
+   if (LNUM>0) REFERENCE=LAYER[getreference()];
+   else REFERENCE=NULL;
+
+   // propagate new reference coordinate system
    for (n=0; n<LNUM; n++)
       LAYER[n]->setreference(LAYER[getreference()]);
    }
