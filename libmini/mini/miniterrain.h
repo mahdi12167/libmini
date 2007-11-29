@@ -72,6 +72,13 @@ class miniterrain
       char *elevdir;            //+ default elev directory
       char *imagdir;            //+ default imag directory
 
+      char *proxyname;          //+ proxy server name
+      char *proxyport;          //+ proxy server port
+
+      char *localpath;          //+ local directory
+
+      char *altpath;            //+ alternative data path
+
       // optional feature switches:
 
       BOOLINT usefog;

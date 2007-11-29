@@ -102,6 +102,9 @@ class minilayer
       int locthreads;           //+ number of local threads
       int numthreads;           //+ number of net threads
 
+      char *proxyname;          //+ proxy server name
+      char *proxyport;          //+ proxy server port
+
       char *elevprefix;         //+ elev tileset prefix
       char *imagprefix;         //+ imag tileset prefix
 
@@ -304,8 +307,8 @@ class minilayer
 
    static void request_callback(char *file,int istexture,databuf *buf,void *data);
 
-   void threadinit(int threads=1);
-   void threadexit();
+   void threadinit(int threads,int id);
+   void threadexit(int id);
 
    static void startthread(void *(*thread)(void *background),backarrayelem *background,void *data);
    static void jointhread(backarrayelem *background,void *data);
@@ -316,8 +319,8 @@ class minilayer
    static void lock_io(void *data);
    static void unlock_io(void *data);
 
-   void curlinit(int threads=1,char *proxyname=NULL,char *proxyport=NULL);
-   void curlexit();
+   void curlinit(int threads,int id,char *proxyname,char *proxyport);
+   void curlexit(int id);
 
    static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    static int checkURL(char *src_url,char *src_id,char *src_file,void *data);

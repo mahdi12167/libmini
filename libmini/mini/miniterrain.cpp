@@ -63,6 +63,17 @@ miniterrain::miniterrain()
    TPARAMS.elevdir="elev";         // default elev directory
    TPARAMS.imagdir="imag";         // default imag directory
 
+   TPARAMS.proxyname=NULL;         // proxy server name
+   TPARAMS.proxyport=NULL;         // proxy server port
+
+#ifndef _WIN32
+   TPARAMS.localpath="/var/tmp/";           // local directory
+#else
+   TPARAMS.localpath="C:\\Windows\\Temp\\"; // local directory for Windows
+#endif
+
+   TPARAMS.altpath="data/"; // alternative data path
+
    // optional feature switches:
 
    TPARAMS.usefog=FALSE;
@@ -258,6 +269,15 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.autocompress=TPARAMS.autocompress;
          lparams.lod0uncompressed=TPARAMS.lod0uncompressed;
+
+         lparams.lod0uncompressed=TPARAMS.lod0uncompressed;
+
+         lparams.proxyname=TPARAMS.proxyname;
+         lparams.proxyport=TPARAMS.proxyport;
+
+         lparams.localpath=TPARAMS.localpath;
+
+         lparams.altpath=TPARAMS.altpath;
 
          // finally pass the updated layer state
          LAYER[n]->set(lparams);

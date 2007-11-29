@@ -101,6 +101,9 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.locthreads=1;           // number of local threads
    LPARAMS.numthreads=10;          // number of net threads
 
+   LPARAMS.proxyname=NULL;         // proxy server name
+   LPARAMS.proxyport=NULL;         // proxy server port
+
    LPARAMS.elevprefix="elev.";        // elev tileset prefix
    LPARAMS.imagprefix="imag.";        // imag tileset prefix
    LPARAMS.tilesetfile="tileset.sav"; // tileset sav file
@@ -192,8 +195,8 @@ minilayer::~minilayer()
       if (POINTS!=NULL) delete POINTS;
 
       // clean-up pthreads and libcurl
-      threadexit();
-      curlexit();
+      threadexit(getid());
+      curlexit(getid());
       }
    }
 
@@ -246,11 +249,11 @@ int minilayer::getid()
    else return(TERRAIN->getminitile()->getid()+1);
    }
 
-void minilayer::threadinit(int threads)
-   {THREADINIT(threads,getid(),THREADDATA);}
+void minilayer::threadinit(int threads,int id)
+   {THREADINIT(threads,id,THREADDATA);}
 
-void minilayer::threadexit()
-   {THREADEXIT(getid(),THREADDATA);}
+void minilayer::threadexit(int id)
+   {THREADEXIT(id,THREADDATA);}
 
 void minilayer::startthread(void *(*thread)(void *background),backarrayelem *background,void *data)
    {
@@ -288,11 +291,11 @@ void minilayer::unlock_io(void *data)
    obj->UNLOCK_IO(obj->getid(),obj->THREADDATA);
    }
 
-void minilayer::curlinit(int threads,char *proxyname,char *proxyport)
-   {CURLINIT(threads,getid(),proxyname,proxyport,CURLDATA);}
+void minilayer::curlinit(int threads,int id,char *proxyname,char *proxyport)
+   {CURLINIT(threads,id,proxyname,proxyport,CURLDATA);}
 
-void minilayer::curlexit()
-   {CURLEXIT(getid(),CURLDATA);}
+void minilayer::curlexit(int id)
+   {CURLEXIT(id,CURLDATA);}
 
 void minilayer::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
    {
@@ -405,7 +408,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    free(vtbimaginifile);
 
    // initialize libcurl
-   curlinit(1);
+   curlinit(1,0,LPARAMS.proxyname,LPARAMS.proxyport);
 
    // load persistent startup file
    TILECACHE->load();
@@ -418,7 +421,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       }
 
    // clean-up libcurl
-   curlexit();
+   curlexit(0);
 
    // check tileset info
    if (TILECACHE->haselevinfo())
@@ -480,7 +483,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN->configure_usepnm(LPARAMS.usepnm);
 
    // initialize libcurl
-   curlinit(1);
+   curlinit(1,0,LPARAMS.proxyname,LPARAMS.proxyport);
 
    // load tiles
    success=TERRAIN->load(LPARAMS.cols,LPARAMS.rows, // number of columns and rows
@@ -495,7 +498,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                          outscale); // scaling parameters
 
    // clean-up libcurl
-   curlexit();
+   curlexit(0);
 
    // check for load errors
    if (success==0) return(FALSE);
@@ -533,8 +536,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    CACHE->attach(TERRAIN->getminitile());
 
    // initialize pthreads and libcurl
-   threadinit(LPARAMS.numthreads);
-   curlinit(LPARAMS.numthreads);
+   threadinit(LPARAMS.numthreads,getid());
+   curlinit(LPARAMS.numthreads,getid(),LPARAMS.proxyname,LPARAMS.proxyport);
 
    // success
    return(TRUE);
