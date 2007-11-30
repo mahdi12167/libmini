@@ -353,14 +353,24 @@ inline void minicache::cache(int op,float a,float b,float c)
 
 inline void minicache::cacheprismedge(float x,float y,float yf,float z)
    {
-   if (CACHE_WARP!=NULL)
-      {
-      if (CACHE_WARP->getglb()!=minicoord::MINICOORD_LINEAR) return;
+   miniv4d v1;
 
-      x+=CACHE_WARP_MTX[0].w;
-      y+=CACHE_WARP_MTX[1].w;
-      z+=CACHE_WARP_MTX[2].w;
-      }
+   if (CACHE_WARP!=NULL)
+      if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
+         {
+         x+=CACHE_WARP_MTX[0].w;
+         y+=CACHE_WARP_MTX[1].w;
+         z+=CACHE_WARP_MTX[2].w;
+         }
+      else
+         {
+         v1=miniv4d(x,yf,z,1.0);
+         y=yf-y;
+
+         x=CACHE_WARP_MTX[0]*v1;
+         yf=CACHE_WARP_MTX[1]*v1;
+         z=CACHE_WARP_MTX[2]*v1;
+         }
 
    if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
    else
