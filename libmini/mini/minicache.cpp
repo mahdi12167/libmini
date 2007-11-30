@@ -2,11 +2,6 @@
 
 #include "minibase.h"
 
-#include "miniv3d.h"
-#include "miniv4d.h"
-
-#include "miniwarp.h"
-
 #include "miniOGL.h"
 
 #include "minicache.h"
@@ -43,6 +38,8 @@ minicache::minicache()
 
    CACHE_ID=0;
    CACHE_PHASE=LAST_PHASE=-1;
+
+   CACHE_WARP=NULL;
 
    RAY=new miniray;
 
@@ -260,7 +257,7 @@ inline void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,TERRAIN[CACHE_ID].tile->getwarp());
+               RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,CACHE_WARP);
                }
 
             if (op==TRIGGER_OP)
@@ -324,7 +321,7 @@ inline void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,TERRAIN[CACHE_ID].tile->getwarp());
+               RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,CACHE_WARP);
                }
 
             if (op==TRIGGER_OP)
@@ -356,6 +353,15 @@ inline void minicache::cache(int op,float a,float b,float c)
 
 inline void minicache::cacheprismedge(float x,float y,float yf,float z)
    {
+   if (CACHE_WARP!=NULL)
+      {
+      if (CACHE_WARP->getglb()!=minicoord::MINICOORD_LINEAR) return;
+
+      x+=CACHE_WARP_MTX[0].w;
+      y+=CACHE_WARP_MTX[1].w;
+      z+=CACHE_WARP_MTX[2].w;
+      }
+
    if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
    else
       {
@@ -394,6 +400,12 @@ inline void minicache::cachetrigger(int id,int phase,float scale,float ex,float 
    LAST_PHASE=CACHE_PHASE;
    CACHE_PHASE=phase;
 
+   if (CACHE_PHASE==1)
+      {
+      CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
+      CACHE_WARP->getwarp(CACHE_WARP_MTX);
+      }
+
    cache(TRIGGER_OP,id,phase,scale);
 
    if (CACHE_PHASE!=LAST_PHASE)
@@ -412,7 +424,7 @@ inline void minicache::cachetrigger(int id,int phase,float scale,float ex,float 
             }
 
    if (PRISMCACHE_CALLBACK!=NULL)
-      PRISMCACHE_CALLBACK(id,phase,scale,ex,ey,ez,CALLBACK_DATA);
+      PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
    }
 
 // render back buffer of the cache
@@ -702,7 +714,7 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
       }
 
    if (TRIGGER_CALLBACK!=NULL)
-      vtx+=TRIGGER_CALLBACK(id,phase,CALLBACK_DATA);
+      vtx+=TRIGGER_CALLBACK(phase,CALLBACK_DATA);
 
 #endif
 
@@ -710,7 +722,7 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
    }
 
 inline int minicache::renderprisms(float *cache,int cnt,float lambda,
-                            int mode,float base,float pr,float pg,float pb,float pa)
+                                   int mode,float base,float pr,float pg,float pb,float pa)
    {
    int vtx=0;
 
@@ -783,9 +795,9 @@ inline int minicache::renderprisms(float *cache,int cnt,float lambda,
 void minicache::attach(minitile *terrain,
                        void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data),
                        void (*prismedge)(float x,float y,float yf,float z,void *data),
-                       void (*prismcache)(int id,int phase,float scale,float ex,float ey,float ez,void *data),
+                       void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data),
                        int (*prismrender)(float *cache,int cnt,float lambda,void *data),
-                       int (*trigger)(int id,int phase,void *data),
+                       int (*trigger)(int phase,void *data),
                        void *data)
    {
    int id;
@@ -806,22 +818,23 @@ void minicache::attach(minitile *terrain,
       MAXTERRAIN*=2;
       }
 
-   for (id=0; id<MAXTERRAIN; id++)
-      if (TERRAIN[id].tile==NULL)
-         {
-         TERRAIN[id].tile=terrain;
+   if (terrain!=NULL)
+      for (id=0; id<MAXTERRAIN; id++)
+         if (TERRAIN[id].tile==NULL)
+            {
+            TERRAIN[id].tile=terrain;
 
-         terrain->setcallbacks(cache_beginfan,
-                               cache_fanvertex,
-                               NULL,cache_texmap,
-                               cache_prismedge,
-                               cache_trigger,
-                               id);
+            terrain->setcallbacks(cache_beginfan,
+                                  cache_fanvertex,
+                                  NULL,cache_texmap,
+                                  cache_prismedge,
+                                  cache_trigger,
+                                  id);
 
-         NUMTERRAIN++;
+            NUMTERRAIN++;
 
-         break;
-         }
+            break;
+            }
 
    TEXMAP_CALLBACK=texmap;
    PRISMEDGE_CALLBACK=prismedge;

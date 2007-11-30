@@ -297,11 +297,11 @@ void initview(minicoord e,double a,double p,double dh=0.0)
    reference=viewer->getreference();
    nearest=viewer->getnearest(eye);
 
-   el=nearest->map_e2l(eye);
+   el=nearest->map_g2l(eye);
 
-   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,reference->len_e2l(elev+hover+dh));
+   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,reference->len_g2l(elev+hover+dh));
 
-   eye=nearest->map_l2e(el);
+   eye=nearest->map_l2g(el);
 
    viewer->initeyepoint(eye);
 
@@ -766,8 +766,8 @@ void displayfunc()
 
    double elev,coef;
 
-   minicoord ep,el,ei;
-   miniv3d di,ui,ri;
+   minicoord ep,el,egl;
+   miniv3d dgl,ugl,rgl;
 
    minilayer *reference,*nearest;
 
@@ -781,7 +781,7 @@ void displayfunc()
    reference=viewer->getreference();
    nearest=viewer->getnearest(eye);
 
-   el=nearest->map_e2l(eye);
+   el=nearest->map_g2l(eye);
 
    sina=sin(2.0*PI/360.0*turn);
    cosa=cos(2.0*PI/360.0*turn);
@@ -792,9 +792,9 @@ void displayfunc()
    el.vec.x+=sina*speed/params->fps;
    el.vec.y+=cosa*speed/params->fps;
 
-   ep=nearest->map_l2e(el);
+   ep=nearest->map_l2g(el);
 
-   elev=reference->len_e2l(viewer->getterrain()->getheight(ep));
+   elev=reference->len_g2l(viewer->getterrain()->getheight(ep));
 
    // update eye coordinate system:
 
@@ -810,9 +810,9 @@ void displayfunc()
    right.y=sina*sbase;
    right.z=0.0;
 
-   dir=nearest->rot_l2e(dir,el);
-   up=nearest->rot_l2e(up,el);
-   right=nearest->rot_l2e(right,el);
+   dir=nearest->rot_l2g(dir,el);
+   up=nearest->rot_l2g(up,el);
+   right=nearest->rot_l2g(right,el);
 
    // update eye movement:
 
@@ -840,12 +840,12 @@ void displayfunc()
       el.vec.z=elev+hover;
       }
 
-   eye=nearest->map_l2e(el);
+   eye=nearest->map_l2g(el);
 
-   ei=nearest->map_e2i(eye);
-   di=nearest->rot_e2i(dir,eye);
-   ui=nearest->rot_e2i(up,eye);
-   ri=nearest->rot_e2i(right,eye);
+   egl=nearest->map_g2o(eye);
+   dgl=nearest->rot_g2o(dir,eye);
+   ugl=nearest->rot_g2o(up,eye);
+   rgl=nearest->rot_g2o(right,eye);
 
    tparams->signpostturn=turn;
    tparams->signpostincline=-incline;
@@ -859,11 +859,11 @@ void displayfunc()
 
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   gluPerspective(params->fovy,(float)winwidth/winheight,reference->len_e2i(params->nearp),reference->len_e2i(params->farp));
+   gluPerspective(params->fovy,(float)winwidth/winheight,reference->len_g2o(params->nearp),reference->len_g2o(params->farp));
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-   gluLookAt(ei.vec.x,ei.vec.y,ei.vec.z,ei.vec.x+di.x,ei.vec.y+di.y,ei.vec.z+di.z,ui.x,ui.y,ui.z);
+   gluLookAt(egl.vec.x,egl.vec.y,egl.vec.z,egl.vec.x+dgl.x,egl.vec.y+dgl.y,egl.vec.z+dgl.z,ugl.x,ugl.y,ugl.z);
 
    // update scene
    viewer->cache(eye,dir,up,(float)winwidth/winheight);
@@ -876,7 +876,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(ei.vec.x-ri.x,ei.vec.y-ri.y,ei.vec.z-ri.z,ei.vec.x+di.x-ri.x,ei.vec.y+di.y-ri.y,ei.vec.z+di.z-ri.z,ui.x,ui.y,ui.z);
+      gluLookAt(egl.vec.x-rgl.x,egl.vec.y-rgl.y,egl.vec.z-rgl.z,egl.vec.x+dgl.x-rgl.x,egl.vec.y+dgl.y-rgl.y,egl.vec.z+dgl.z-rgl.z,ugl.x,ugl.y,ugl.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -889,7 +889,7 @@ void displayfunc()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(ei.vec.x+ri.x,ei.vec.y+ri.y,ei.vec.z+ri.z,ei.vec.x+di.x+ri.x,ei.vec.y+di.y+ri.y,ei.vec.z+di.z+ri.z,ui.x,ui.y,ui.z);
+      gluLookAt(egl.vec.x+rgl.x,egl.vec.y+rgl.y,egl.vec.z+rgl.z,egl.vec.x+dgl.x+rgl.x,egl.vec.y+dgl.y+rgl.y,egl.vec.z+dgl.z+rgl.z,ugl.x,ugl.y,ugl.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);

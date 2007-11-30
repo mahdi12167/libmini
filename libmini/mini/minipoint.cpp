@@ -488,9 +488,11 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    minipointdata **vpoint;
    minipointdata *nearest;
 
+   // calculate visible points
    calcvdata();
    vpoint=getvdata();
 
+   // check if any points were found
    if (vpoint==NULL) return;
 
    nearest=getnearest(ex,ez,ey);
@@ -505,6 +507,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    dz=cosy*cost;
    dy=siny;
 
+   // sort visible points
    sortvdata(ex,ez,ey,dx,dz,dy);
 
    initstate();
@@ -599,7 +602,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    calcvdata();
    vpoint=getvdata();
 
-   // check if any points are available
+   // check if any points were found
    if (vpoint==NULL) return;
 
    // initialize renderer

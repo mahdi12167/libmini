@@ -239,7 +239,7 @@ void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,floa
 // render cached scene
 void viewerbase::render()
    {
-   minicoord ei;
+   minicoord egl;
 
    minilayer *layer;
    minilayer::MINILAYER_PARAMS lparams;
@@ -254,7 +254,7 @@ void viewerbase::render()
       {
       layer->get(lparams);
 
-      ei=layer->map_e2i(lparams.eye);
+      egl=layer->map_g2o(lparams.eye);
 
       // enable wireframe mode
       if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -270,8 +270,8 @@ void viewerbase::render()
          glFogfv(GL_FOG_COLOR,color);
 
          glFogi(GL_FOG_MODE,GL_LINEAR);
-         glFogf(GL_FOG_START,PARAMS.fogstart*layer->len_e2i(PARAMS.farp));
-         glFogf(GL_FOG_END,layer->len_e2i(PARAMS.farp));
+         glFogf(GL_FOG_START,PARAMS.fogstart*layer->len_g2o(PARAMS.farp));
+         glFogf(GL_FOG_END,layer->len_g2o(PARAMS.farp));
 
          glEnable(GL_FOG);
          }
@@ -279,8 +279,8 @@ void viewerbase::render()
       // draw skydome
       if (PARAMS.useskydome)
          {
-         SKYDOME.setpos(ei.vec.x,ei.vec.y,ei.vec.z,
-                        1.9*layer->len_e2i(PARAMS.farp));
+         SKYDOME.setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                        1.9*layer->len_g2o(PARAMS.farp));
 
          SKYDOME.drawskydome();
          }
@@ -288,12 +288,12 @@ void viewerbase::render()
       // render earth globe (without Z writing)
       if (PARAMS.useearth)
          {
-         EARTH.setscale(layer->len_i2e(1.0));
+         EARTH.setscale(layer->len_o2g(1.0));
 
          if (PARAMS.usediffuse) EARTH.settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
          else EARTH.settexturedirectparams(light0,PARAMS.transition);
 
-         EARTH.setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*layer->len_e2i(PARAMS.farp):0.0f,(PARAMS.usefog)?layer->len_e2i(PARAMS.farp):0.0f,
+         EARTH.setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*layer->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?layer->len_g2o(PARAMS.farp):0.0f,
                             PARAMS.fogdensity,
                             PARAMS.fogcolor);
 

@@ -534,13 +534,13 @@ double miniterrain::getheight(const minicoord &p)
       nearest=getnearest(p);
 
       elev=LAYER[nearest]->getheight(p);
-      if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2e(LAYER[nearest]->len_e2l(elev)));
+      if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nearest]->len_g2l(elev)));
 
       for (n=0; n<LNUM; n++)
          if (n!=nearest)
             {
             elev=LAYER[n]->getheight(p);
-            if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2e(LAYER[n]->len_e2l(elev)));
+            if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
             }
       }
 
@@ -638,7 +638,7 @@ void miniterrain::render()
       if (TPARAMS.useshaders)
          if (!TPARAMS.usenprshader)
             minishader::setVISshader(CACHE,
-                                     LAYER[getreference()]->len_i2e(1.0),TPARAMS.exaggeration,
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -651,7 +651,7 @@ void miniterrain::render()
                                      TPARAMS.seamodulate);
          else
             minishader::setNPRshader(CACHE,
-                                     LAYER[getreference()]->len_i2e(1.0),TPARAMS.exaggeration,
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -690,7 +690,7 @@ void miniterrain::render_presea()
    {
    int n;
 
-   minicoord ei;
+   minicoord el;
 
    minilayer::MINILAYER_PARAMS lparams;
 
@@ -698,9 +698,9 @@ void miniterrain::render_presea()
       {
       LAYER[n]->get(lparams);
 
-      ei=LAYER[n]->map_e2l(lparams.eye);
+      el=LAYER[n]->map_g2l(lparams.eye);
 
-      if (ei.vec.z<lparams.sealevel)
+      if (el.vec.z<lparams.sealevel)
          LAYER[n]->renderpoints(); // render waypoints before sea surface
       }
    }
@@ -710,7 +710,7 @@ void miniterrain::render_postsea()
    {
    int n;
 
-   minicoord ei;
+   minicoord el;
 
    minilayer::MINILAYER_PARAMS lparams;
 
@@ -718,9 +718,9 @@ void miniterrain::render_postsea()
       {
       LAYER[n]->get(lparams);
 
-      ei=LAYER[n]->map_e2l(lparams.eye);
+      el=LAYER[n]->map_g2l(lparams.eye);
 
-      if (ei.vec.z>=lparams.sealevel)
+      if (el.vec.z>=lparams.sealevel)
          LAYER[n]->renderpoints(); // render waypoints after sea surface
       }
    }
@@ -754,8 +754,8 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    int nearest;
 
    double dist;
-   minicoord oi;
-   miniv3d di;
+   minicoord ogl;
+   miniv3d dgl;
 
    if (LNUM<1) return(MAXFLOAT);
 
@@ -763,13 +763,13 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    nearest=getnearest(o);
 
    // transform coordinates
-   oi=LAYER[nearest]->map_e2i(o);
-   di=LAYER[nearest]->rot_e2i(d,o);
+   ogl=LAYER[nearest]->map_g2o(o);
+   dgl=LAYER[nearest]->rot_g2o(d,o);
 
    // shoot a ray and get the traveled distance
-   dist=CACHE->getray()->shoot(oi.vec,di);
+   dist=CACHE->getray()->shoot(ogl.vec,dgl);
 
-   if (dist!=MAXFLOAT) dist=LAYER[nearest]->len_i2e(dist);
+   if (dist!=MAXFLOAT) dist=LAYER[nearest]->len_o2g(dist);
 
    return(dist);
    }

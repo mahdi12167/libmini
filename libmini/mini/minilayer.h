@@ -230,42 +230,50 @@ class minilayer
    //! render waypoints
    void renderpoints();
 
-   // coordinate conversions (e=external, l=local, i=internal):
+   // coordinate conversions (g=global, l=local, o=opengl):
 
    //! map coordinates
-   minicoord map_e2l(const minicoord &p) {return(WARP_E2L.warp(p));}
-   minicoord map_l2e(const minicoord &p) {return(WARP_L2E.warp(p));}
-   minicoord map_l2i(const minicoord &p) {return(WARP_L2I.warp(p));}
-   minicoord map_i2l(const minicoord &p) {return(WARP_I2L.warp(p));}
-   minicoord map_e2i(const minicoord &p) {return(WARP_E2I.warp(p));}
-   minicoord map_i2e(const minicoord &p) {return(WARP_I2E.warp(p));}
+   minicoord map_g2l(const minicoord &p) {return(WARP_G2L.warp(p));}
+   minicoord map_l2g(const minicoord &p) {return(WARP_L2G.warp(p));}
+   minicoord map_g2i(const minicoord &p) {return(WARP_G2I.warp(p));}
+   minicoord map_i2g(const minicoord &p) {return(WARP_I2G.warp(p));}
+   minicoord map_l2o(const minicoord &p) {return(WARP_L2O.warp(p));}
+   minicoord map_o2l(const minicoord &p) {return(WARP_O2L.warp(p));}
+   minicoord map_g2o(const minicoord &p) {return(WARP_G2O.warp(p));}
+   minicoord map_o2g(const minicoord &p) {return(WARP_O2G.warp(p));}
 
    //! rotate vector
-   miniv3d rot_e2l(const miniv3d &v,const minicoord &p) {return(WARP_E2L.invtra(v,p));}
-   miniv3d rot_l2e(const miniv3d &v,const minicoord &p) {return(WARP_L2E.invtra(v,p));}
-   miniv3d rot_l2i(const miniv3d &v,const minicoord &p) {return(WARP_L2I.invtra(v,p));}
-   miniv3d rot_i2l(const miniv3d &v,const minicoord &p) {return(WARP_I2L.invtra(v,p));}
-   miniv3d rot_e2i(const miniv3d &v,const minicoord &p) {return(WARP_E2I.invtra(v,p));}
-   miniv3d rot_i2e(const miniv3d &v,const minicoord &p) {return(WARP_I2E.invtra(v,p));}
+   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(WARP_G2L.invtra(v,p));}
+   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(WARP_L2G.invtra(v,p));}
+   miniv3d rot_g2i(const miniv3d &v,const minicoord &p) {return(WARP_G2I.invtra(v,p));}
+   miniv3d rot_i2g(const miniv3d &v,const minicoord &p) {return(WARP_I2G.invtra(v,p));}
+   miniv3d rot_l2o(const miniv3d &v,const minicoord &p) {return(WARP_L2O.invtra(v,p));}
+   miniv3d rot_o2l(const miniv3d &v,const minicoord &p) {return(WARP_O2L.invtra(v,p));}
+   miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(WARP_G2O.invtra(v,p));}
+   miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(WARP_O2G.invtra(v,p));}
 
    //! map length
-   double len_e2l(double l) {return(l*WARP_E2L.getscale());}
-   double len_l2e(double l) {return(l*WARP_L2E.getscale());}
-   double len_l2i(double l) {return(l*WARP_L2I.getscale());}
-   double len_i2l(double l) {return(l*WARP_I2L.getscale());}
-   double len_e2i(double l) {return(l*WARP_E2I.getscale());}
-   double len_i2e(double l) {return(l*WARP_I2E.getscale());}
+   double len_g2l(double l) {return(l*WARP_G2L.getscale());}
+   double len_l2g(double l) {return(l*WARP_L2G.getscale());}
+   double len_g2i(double l) {return(l*WARP_G2I.getscale());}
+   double len_i2g(double l) {return(l*WARP_I2G.getscale());}
+   double len_l2o(double l) {return(l*WARP_L2O.getscale());}
+   double len_o2l(double l) {return(l*WARP_O2L.getscale());}
+   double len_g2o(double l) {return(l*WARP_G2O.getscale());}
+   double len_o2g(double l) {return(l*WARP_O2G.getscale());}
 
    protected:
 
    MINILAYER_PARAMS LPARAMS;
 
-   miniwarp WARP_E2L;
-   miniwarp WARP_L2E;
-   miniwarp WARP_L2I;
-   miniwarp WARP_I2L;
-   miniwarp WARP_E2I;
-   miniwarp WARP_I2E;
+   miniwarp WARP_G2L;
+   miniwarp WARP_L2G;
+   miniwarp WARP_G2I;
+   miniwarp WARP_I2G;
+   miniwarp WARP_L2O;
+   miniwarp WARP_O2L;
+   miniwarp WARP_G2O;
+   miniwarp WARP_O2G;
 
    private:
 

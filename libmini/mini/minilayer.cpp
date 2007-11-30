@@ -679,32 +679,38 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    // create warp object for each exposed coordinate transformation:
 
-   WARP_E2L=*WARP;
-   WARP_E2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_AFFINE);
+   WARP_G2L=*WARP;
+   WARP_G2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_AFFINE);
 
-   WARP_L2E=*WARP;
-   WARP_L2E.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_GLOBAL);
+   WARP_L2G=*WARP;
+   WARP_L2G.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_GLOBAL);
 
-   WARP_L2I=*WARP;
-   WARP_L2I.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
+   WARP_G2I=*WARP;
+   WARP_G2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
 
-   WARP_I2L=*WARP;
-   WARP_I2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_AFFINE);
+   WARP_I2G=*WARP;
+   WARP_I2G.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
 
-   WARP_E2I=*WARP;
-   WARP_E2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_FINAL);
+   WARP_L2O=*WARP;
+   WARP_L2O.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
 
-   WARP_I2E=*WARP;
-   WARP_I2E.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_O2L=*WARP;
+   WARP_O2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_AFFINE);
+
+   WARP_G2O=*WARP;
+   WARP_G2O.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_FINAL);
+
+   WARP_O2G=*WARP;
+   WARP_O2G.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_GLOBAL);
    }
 
 // get extent of tileset
 miniv3d minilayer::getextent()
-   {return(miniv3d(LPARAMS.extent)*len_l2e(1.0));}
+   {return(miniv3d(LPARAMS.extent)*len_l2g(1.0));}
 
 // get center of tileset
 minicoord minilayer::getcenter()
-   {return(map_l2e(miniv3d(0.0,0.0,0.0)));}
+   {return(map_l2g(miniv3d(0.0,0.0,0.0)));}
 
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p)
@@ -714,12 +720,12 @@ double minilayer::getheight(const minicoord &p)
 
    if (!LOADED) return(-MAXFLOAT);
 
-   pi=map_e2i(p);
+   pi=map_g2i(p);
 
    elev=TERRAIN->getheight(pi.vec.x,pi.vec.z);
    if (elev==-MAXFLOAT) return(elev);
 
-   return(len_i2e(elev));
+   return(len_i2g(elev));
    }
 
 // get initial view point
@@ -728,7 +734,7 @@ minicoord minilayer::getinitial()
    if (POINTS==NULL) return(getcenter());
 
    if (POINTS->getfirst()==NULL) return(getcenter());
-   else return(map_l2e(miniv3d(POINTS->getfirst()->x,POINTS->getfirst()->y,POINTS->getfirst()->elev)));
+   else return(map_l2g(miniv3d(POINTS->getfirst()->x,POINTS->getfirst()->y,POINTS->getfirst()->elev)));
    }
 
 // set initial eye point
@@ -738,15 +744,15 @@ void minilayer::initeyepoint(const minicoord &e)
 
    if (!LOADED) return;
 
-   ei=map_e2i(e);
+   ei=map_g2i(e);
 
    // restrict loaded area
-   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,len_e2i(LPARAMS.load*LPARAMS.farp));
+   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,LPARAMS.load*len_g2i(LPARAMS.farp));
 
    // load smallest LODs
    TERRAIN->updateroi(LPARAMS.res,
-                      ei.vec.x,ei.vec.y+1000*len_e2i(LPARAMS.farp),ei.vec.z,
-                      ei.vec.x,ei.vec.z,len_e2i(LPARAMS.farp));
+                      ei.vec.x,ei.vec.y+1000*len_g2i(LPARAMS.farp),ei.vec.z,
+                      ei.vec.x,ei.vec.z,len_g2i(LPARAMS.farp));
 
    // mark scene for complete update
    update();
@@ -768,9 +774,9 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    if (!LOADED || !VISIBLE) return;
 
    // transform coordinates
-   ei=map_e2i(e);
-   di=rot_e2i(d,e);
-   ui=rot_e2i(u,e);
+   ei=map_g2i(e);
+   di=rot_g2i(d,e);
+   ui=rot_g2i(u,e);
 
    // update vertex arrays
    TERRAIN->draw(LPARAMS.res,
@@ -778,7 +784,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,
                  LPARAMS.fovy,aspect,
-                 len_e2i(LPARAMS.nearp),len_e2i(LPARAMS.farp),
+                 len_g2i(LPARAMS.nearp),len_g2i(LPARAMS.farp),
                  UPD);
 
    // revert to normal render buffer update
@@ -813,17 +819,48 @@ void minilayer::renderpoints()
    {
    minicoord ei;
 
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    if (POINTS!=NULL)
       if (LPARAMS.usewaypoints)
          {
-         ei=map_e2i(LPARAMS.eye);
+         ei=map_g2i(LPARAMS.eye);
+
+         mtxpush();
+
+         TERRAIN->getminitile()->getwarp()->getwarp(mtx);
+
+         oglmtx[0]=mtx[0].x;
+         oglmtx[4]=mtx[0].y;
+         oglmtx[8]=mtx[0].z;
+         oglmtx[12]=mtx[0].w;
+
+         oglmtx[1]=mtx[1].x;
+         oglmtx[5]=mtx[1].y;
+         oglmtx[9]=mtx[1].z;
+         oglmtx[13]=mtx[1].w;
+
+         oglmtx[2]=mtx[2].x;
+         oglmtx[6]=mtx[2].y;
+         oglmtx[10]=mtx[2].z;
+         oglmtx[14]=mtx[2].w;
+
+         oglmtx[3]=0.0;
+         oglmtx[7]=0.0;
+         oglmtx[11]=0.0;
+         oglmtx[15]=1.0;
+
+         mtxmult(oglmtx);
 
          if (!LPARAMS.usebricks)
-            POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_e2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_e2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
+            POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
          else
             {
             POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
-            POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_e2i(LPARAMS.brickrad),len_e2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_e2i(LPARAMS.bricksize));
+            POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_g2i(LPARAMS.bricksize));
             }
+
+         mtxpop();
          }
    }

@@ -7,12 +7,9 @@
 #include "minitree.h"
 
 // default constructor
-minitree::minitree(minicache *cache,minitile *terrain)
+minitree::minitree(minicache *cache)
    {
    CACHE=cache;
-
-   TERRAIN=terrain;
-   ID=terrain->getid();
 
    TREEMODE=0;
 
@@ -278,9 +275,9 @@ void minitree::setmode(int treemode)
    deletetexmap(RENDERCACHE_TEXID);
    RENDERCACHE_TEXID=0;
 
-   if (TREEMODE<0) CACHE->attach(TERRAIN,NULL,NULL,NULL,prismrender,NULL,this);
-   else if (TREEMODE>0) CACHE->attach(TERRAIN,NULL,prismedge,prismcache,NULL,trigger,this);
-   else CACHE->attach(TERRAIN,NULL,NULL,NULL,NULL,NULL);
+   if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,NULL,prismrender,NULL,this);
+   else if (TREEMODE>0) CACHE->attach(NULL,NULL,prismedge,prismcache,NULL,trigger,this);
+   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL);
    }
 
 // set parameters for negative modes
@@ -468,10 +465,10 @@ void minitree::prismedge(float x,float y,float yf,float z,void *data)
    tree->treeedge(x,y,yf,z);
    }
 
-void minitree::prismcache(int id,int phase,float scale,float ex,float ey,float ez,void *data)
+void minitree::prismcache(int phase,float scale,float ex,float ey,float ez,void *data)
    {
    minitree *tree=(minitree *)data;
-   tree->treecache(id,phase,scale,ex,ey,ez);
+   tree->treecache(phase,scale,ex,ey,ez);
    }
 
 int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
@@ -480,17 +477,15 @@ int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
    return(tree->rendercache(cache,cnt,lambda,tree->TREEMODE_MX_TR,tree->TREEMODE_MX_TG,tree->TREEMODE_MX_TB,tree->TREEMODE_MX_TA));
    }
 
-int minitree::trigger(int id,int phase,void *data)
+int minitree::trigger(int phase,void *data)
    {
    minitree *tree=(minitree *)data;
-   return(tree->treetrigger(id,phase));
+   return(tree->treetrigger(phase));
    }
 
 // process prism edges
 void minitree::treeedge(float x,float y,float yf,float z)
    {
-   if (CACHEID!=ID) return;
-
    switch (TREECACHE_COUNT++%3)
       {
       case 0:
@@ -508,55 +503,49 @@ void minitree::treeedge(float x,float y,float yf,float z)
    }
 
 // switch tree cache
-void minitree::treecache(int id,int phase,float scale,float ex,float ey,float ez)
+void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
    {
-   CACHEID=id;
-
-   if (id==ID)
+   if (phase==0)
       {
-      if (phase==0)
+      if (TREECACHE_NUM==1)
          {
-         if (TREECACHE_NUM==1)
-            {
-            TREECACHE_SIZE2=0;
-            GRASSCACHE_SIZE2=0;
-            TREECACHE_TREES2=0;
-            TREECACHE_NUM=2;
-            }
-         else
-            {
-            TREECACHE_SIZE1=0;
-            GRASSCACHE_SIZE1=0;
-            TREECACHE_TREES1=0;
-            TREECACHE_NUM=1;
-            }
-
-         TREECACHE_COUNT=0;
-
-         TREECACHE_EX=ex;
-         TREECACHE_EY=ey;
-         TREECACHE_EZ=ez;
+         TREECACHE_SIZE2=0;
+         GRASSCACHE_SIZE2=0;
+         TREECACHE_TREES2=0;
+         TREECACHE_NUM=2;
+         }
+      else
+         {
+         TREECACHE_SIZE1=0;
+         GRASSCACHE_SIZE1=0;
+         TREECACHE_TREES1=0;
+         TREECACHE_NUM=1;
          }
 
-      if (phase==4) TREECACHE_LAMBDA=scale;
+      TREECACHE_COUNT=0;
+
+      TREECACHE_EX=ex;
+      TREECACHE_EY=ey;
+      TREECACHE_EZ=ez;
       }
+
+   if (phase==4) TREECACHE_LAMBDA=scale;
    }
 
 // render tree cache
-int minitree::treetrigger(int id,int phase)
+int minitree::treetrigger(int phase)
    {
    int vtx=0;
 
-   if (id==ID)
-      if (phase==4)
-         {
-         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
-         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+   if (phase==4)
+      {
+      if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+      else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
-         if (TREEMODE>=9)
-            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
-            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
-         }
+      if (TREEMODE>=9)
+         if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
+         else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
+      }
 
    return(vtx);
    }
