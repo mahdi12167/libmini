@@ -1862,31 +1862,34 @@ void databuf::computeabsolute()
 // swap byte ordering between MSB and LSB
 void databuf::swapbytes()
    {
-   unsigned int i;
-
-   unsigned int b=0;
-
-   unsigned char *ptr,tmp;
+   unsigned short int *ptr1,tmp1;
+   unsigned int *ptr2,tmp2;
 
    if (type==0 || type>2) return;
 
-   if (type==1) b=2;
-   else if (type==2) b=4;
-   else ERRORMSG();
-
-   if (bytes==0 || bytes%b!=0) ERRORMSG();
-
-   ptr=(unsigned char *)data+bytes;
-
-   while (ptr!=data)
+   if (type==1)
       {
-      ptr-=b;
+      if (bytes==0 || bytes%2!=0) ERRORMSG();
 
-      for (i=0; i<(b>>1); i++)
+      ptr1=(unsigned short int *)data+bytes;
+
+      while (ptr1--!=(unsigned short int *)data)
          {
-         tmp=ptr[i];
-         ptr[i]=ptr[b-1-i];
-         ptr[b-1-i]=tmp;
+         tmp1=*ptr1;
+         *ptr1=(tmp1>>8)|((tmp1&255)<<8);
          }
       }
+   else if (type==2)
+      {
+      if (bytes==0 || bytes%4!=0) ERRORMSG();
+
+      ptr2=(unsigned int *)data+bytes;
+
+      while (ptr2--!=(unsigned int *)data)
+         {
+         tmp2=*ptr2;
+         *ptr2=(tmp2>>24)|((tmp2&(255<<16))>>8)|((tmp2&(255<<8))<<8)|((tmp2&255)<<24);
+         }
+      }
+   else ERRORMSG();
    }

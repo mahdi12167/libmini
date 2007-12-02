@@ -53,9 +53,11 @@ miniterrain::miniterrain()
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
+   TPARAMS.overlap=0.001f;         // tile overlap in texels
+
    TPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
 
-   TPARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
+   TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
    TPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    TPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
@@ -471,6 +473,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
 
    // set reference coordinate system
    LAYER[LNUM-1]->setreference(LAYER[getreference()]);
+
+   // set tile overlap
+   CACHE->configure_overlap(TPARAMS.overlap);
 
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);

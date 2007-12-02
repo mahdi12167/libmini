@@ -25,11 +25,11 @@ class minicache
 
    //! attach a tileset for scene double buffering
    void attach(minitile *terrain,
-               void (*texmap)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data)=0,
                void (*prismedge)(float x,float y,float yf,float z,void *data)=0,
+               void (*prismwarp)(miniwarp *warp,void *data)=0,
                void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data)=0,
                int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
-               int (*trigger)(int phase,void *data)=0,
+               int (*prismtrigger)(int phase,void *data)=0,
                void *data=0);
 
    //! detach a tileset
@@ -212,11 +212,11 @@ class minicache
    int SEASHADERTEXWIDTH;
    int SEASHADERTEXHEIGHT;
 
-   void (*TEXMAP_CALLBACK)(int m,int n,int S,int texid,int texw,int texh,int texmm,void *data);
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
+   void (*PRISMWARP_CALLBACK)(miniwarp *warp,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
    int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,void *data);
-   int (*TRIGGER_CALLBACK)(int phase,void *data);
+   int (*PRISMTRIGGER_CALLBACK)(int phase,void *data);
    void *CALLBACK_DATA;
 
    void (*PRESEA_CB)(void *data);

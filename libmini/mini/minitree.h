@@ -7,6 +7,7 @@
 
 #include "minitile.h"
 #include "minicache.h"
+#include "miniwarp.h"
 
 class minitree
    {
@@ -53,7 +54,11 @@ class minitree
 
    private:
 
-   int CACHEID;
+   minicoord::MINICOORD SYSGLB;
+
+   float COORD_DX,COORD_DY,COORD_DZ;
+   float COORD_UX,COORD_UY,COORD_UZ;
+   float COORD_RX,COORD_RY,COORD_RZ;
 
    int TREECACHE_NUM;
 
@@ -90,11 +95,13 @@ class minitree
 
    static void prismedge(float x,float y,float yf,float z,void *data);
    static void prismcache(int phase,float scale,float ex,float ey,float ez,void *data);
+   static void prismwarp(miniwarp *warp,void *data);
    static int prismrender(float *cache,int cnt,float lambda,void *data);
-   static int trigger(int phase,void *data);
+   static int prismtrigger(int phase,void *data);
 
    void treeedge(float x,float y,float yf,float z);
    void treecache(int phase,float scale,float ex,float ey,float ez);
+   void treewarp(miniwarp *warp);
    int treetrigger(int phase);
 
    void treedata(float x1,float y1,float z1,float h1,
@@ -129,7 +136,7 @@ class minitree
                           float s,float t);
 
    float pn_getrandom(float seed=-1.0f);
-   inline float pn_interpolateC(float v0,float v1,float v2,float v3,float x);
+   float pn_interpolateC(float v0,float v1,float v2,float v3,float x);
    float pn_interpolate2DC(float *octave,int size,float c1,float c2);
    unsigned char *pn_perlin2D(int size,int start,float persist=0.5f,float seed=-1.0f);
 

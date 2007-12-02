@@ -13,6 +13,8 @@ minitree::minitree(minicache *cache)
 
    TREEMODE=0;
 
+   SYSGLB=minicoord::MINICOORD_LINEAR;
+
    TREECACHE_NUM=1;
 
    TREECACHE_SIZE1=TREECACHE_SIZE2=0;
@@ -276,8 +278,8 @@ void minitree::setmode(int treemode)
    RENDERCACHE_TEXID=0;
 
    if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,NULL,prismrender,NULL,this);
-   else if (TREEMODE>0) CACHE->attach(NULL,NULL,prismedge,prismcache,NULL,trigger,this);
-   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL);
+   else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismwarp,prismcache,NULL,prismtrigger,this);
+   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL,NULL);
    }
 
 // set parameters for negative modes
@@ -471,13 +473,19 @@ void minitree::prismcache(int phase,float scale,float ex,float ey,float ez,void 
    tree->treecache(phase,scale,ex,ey,ez);
    }
 
+void minitree::prismwarp(miniwarp *warp,void *data)
+   {
+   minitree *tree=(minitree *)data;
+   tree->treewarp(warp);
+   }
+
 int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
    {
    minitree *tree=(minitree *)data;
    return(tree->rendercache(cache,cnt,lambda,tree->TREEMODE_MX_TR,tree->TREEMODE_MX_TG,tree->TREEMODE_MX_TB,tree->TREEMODE_MX_TA));
    }
 
-int minitree::trigger(int phase,void *data)
+int minitree::prismtrigger(int phase,void *data)
    {
    minitree *tree=(minitree *)data;
    return(tree->treetrigger(phase));
@@ -489,15 +497,15 @@ void minitree::treeedge(float x,float y,float yf,float z)
    switch (TREECACHE_COUNT++%3)
       {
       case 0:
-         TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf-y;
+         TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
          break;
       case 1:
-         TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf-y;
+         TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
          break;
       case 2:
          treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
                   TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
-                  x,y,z,yf-y);
+                  x,y,z,yf);
          break;
       }
    }
@@ -530,6 +538,34 @@ void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
       }
 
    if (phase==4) TREECACHE_LAMBDA=scale;
+   }
+
+// define tree warp
+void minitree::treewarp(miniwarp *warp)
+   {
+   miniv3d invtra[3];
+
+   if (warp!=NULL)
+      {
+      SYSGLB=warp->getglb();
+
+      warp->getinvtra(invtra);
+
+      COORD_DX=invtra[2].x;
+      COORD_DY=invtra[2].y;
+      COORD_DZ=invtra[2].z;
+
+      COORD_UX=invtra[1].x;
+      COORD_UY=invtra[1].y;
+      COORD_UZ=invtra[1].z;
+
+      COORD_RX=invtra[0].x;
+      COORD_RY=invtra[0].y;
+      COORD_RZ=invtra[0].z;
+      }
+
+   // billboards are incompatible with non-linear warp modes
+   if (SYSGLB!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) TREEMODE=3;
    }
 
 // render tree cache
@@ -692,7 +728,7 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
       case 1: // lines
 
          cachedata(x,y,z);
-         cachedata(x,y+h,z);
+         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
 
          break;
 
@@ -702,13 +738,13 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          w=0.5f*TREEMODE_X_TREEWIDTH;
 
-         cachedata(x-w,y,z);
-         cachedata(x+w,y,z);
-         cachedata(x,y+h,z);
+         cachedata(x-w*COORD_RX,y-w*COORD_RY,z-w*COORD_RZ);
+         cachedata(x+w*COORD_RX,y+w*COORD_RY,z+w*COORD_RZ);
+         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
 
-         cachedata(x,y,z-w);
-         cachedata(x,y,z+w);
-         cachedata(x,y+h,z);
+         cachedata(x-w*COORD_DX,y-w*COORD_DY,z-w*COORD_DZ);
+         cachedata(x+w*COORD_DX,y+w*COORD_DY,z+w*COORD_DZ);
+         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
 
          break;
 
@@ -719,15 +755,15 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
          if (TREEMODE_4_TREEASPECT==0.0f) t=0.0f;
          else t=1.0f-h/(TREEMODE_X_TREEWIDTH*TREEMODE_4_TREEASPECT);
 
-         cachedata(x-w,y,z,0.0f,1.0f);
-         cachedata(x+w,y,z,1.0f,1.0f);
-         cachedata(x+w,y+h,z,1.0f,t);
-         cachedata(x-w,y+h,z,0.0f,t);
+         cachedata(x-w*COORD_RX,y-w*COORD_RY,z-w*COORD_RZ,0.0f,1.0f);
+         cachedata(x+w*COORD_RX,y+w*COORD_RY,z+w*COORD_RZ,1.0f,1.0f);
+         cachedata(x+w*COORD_RX+h*COORD_UX,y+w*COORD_RY+h*COORD_UY,z+w*COORD_RZ+h*COORD_UZ,1.0f,t);
+         cachedata(x-w*COORD_RX+h*COORD_UX,y-w*COORD_RY+h*COORD_UY,z-w*COORD_RZ+h*COORD_UZ,0.0f,t);
 
-         cachedata(x,y,z-w,0.0f,1.0f);
-         cachedata(x,y,z+w,1.0f,1.0f);
-         cachedata(x,y+h,z+w,1.0f,t);
-         cachedata(x,y+h,z-w,0.0f,t);
+         cachedata(x-w*COORD_DX,y-w*COORD_DY,z-w*COORD_DZ,0.0f,1.0f);
+         cachedata(x+w*COORD_DX,y+w*COORD_DY,z+w*COORD_DZ,1.0f,1.0f);
+         cachedata(x+w*COORD_DX+h*COORD_UX,y+w*COORD_DY+h*COORD_UY,z+w*COORD_DZ+h*COORD_UZ,1.0f,t);
+         cachedata(x-w*COORD_DX+h*COORD_UX,y-w*COORD_DY+h*COORD_UY,z-w*COORD_DZ+h*COORD_UZ,0.0f,t);
 
          break;
 
@@ -923,43 +959,44 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog1="!!ARBvp1.0\
-      PARAM c=program.env[0];\
-      PARAM mat[4]={state.matrix.mvp};\
-      TEMP vtx,col,pos;\
-      MOV vtx,vertex.position;\
-      MOV col,vertex.color;\
-      DP4 pos.x,mat[0],vtx;\
-      DP4 pos.y,mat[1],vtx;\
-      DP4 pos.z,mat[2],vtx;\
-      DP4 pos.w,mat[3],vtx;\
-      MOV result.position,pos;\
-      MUL vtx.xz,vtx,c;\
-      ADD vtx.x,vtx.x,vtx.z;\
-      FRC vtx.x,vtx.x;\
-      MUL vtx.x,vtx.x,c.y;\
-      ADD col.xyz,col,vtx.x;\
-      MOV result.color,col;\
-      MOV result.fogcoord.x,pos.z;\
+   static char *vtxprog1="!!ARBvp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      TEMP vtx,col,pos; \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      MOV result.position,pos; \n\
+      MUL vtx,vtx,c; \n\
+      ADD vtx.x,vtx.x,vtx.y; \n\
+      ADD vtx.x,vtx.x,vtx.z; \n\
+      FRC vtx.x,vtx.x; \n\
+      MUL vtx.x,vtx.x,c.y; \n\
+      ADD col.xyz,col,vtx.x; \n\
+      MOV result.color,col; \n\
+      MOV result.fogcoord.x,pos.z; \n\
       END";
 
-   static char *vtxprog2="!!ARBvp1.0\
-      PARAM c=program.env[0];\
-      PARAM mat[4]={state.matrix.mvp};\
-      TEMP vtx,col,tex,pos;\
-      MOV vtx,vertex.position;\
-      MOV col,vertex.color;\
-      MOV tex,vertex.texcoord;\
-      MAD vtx.x,tex.z,c.x,vtx.x;\
-      MAD vtx.z,tex.z,c.y,vtx.z;\
-      DP4 pos.x,mat[0],vtx;\
-      DP4 pos.y,mat[1],vtx;\
-      DP4 pos.z,mat[2],vtx;\
-      DP4 pos.w,mat[3],vtx;\
-      MOV result.position,pos;\
-      MOV result.color,col;\
-      MOV result.texcoord,tex;\
-      MOV result.fogcoord.x,pos.z;\
+   static char *vtxprog2="!!ARBvp1.0 \n\
+      PARAM c1=program.env[0]; \n\
+      PARAM c2=program.env[1]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      TEMP vtx,col,tex,pos; \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV tex,vertex.texcoord; \n\
+      MAD vtx,tex.z,c,vtx; \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      MOV result.position,pos; \n\
+      MOV result.color,col; \n\
+      MOV result.texcoord,tex; \n\
+      MOV result.fogcoord.x,pos.z; \n\
       END";
 
    GLuint vtxprogid;
@@ -1132,7 +1169,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],mtx[8],0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],0.0f,mtx[8],0.0f);
 
          if (TREECACHE_TEXID==0)
             {
@@ -1313,135 +1350,135 @@ int minitree::rendergrass(float *cache,float *coords,int cnt)
 
 #if defined(GL_ARB_multitexture) && defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog="!!ARBvp1.0\
-      PARAM c=program.env[0];\
-      PARAM mat[4]={state.matrix.mvp};\
-      TEMP vtx,col,tex,pos;\
-      MOV vtx,vertex.position;\
-      MOV col,vertex.color;\
-      MOV tex,vertex.texcoord;\
-      DP4 pos.x,mat[0],vtx;\
-      DP4 pos.y,mat[1],vtx;\
-      DP4 pos.z,mat[2],vtx;\
-      DP4 pos.w,mat[3],vtx;\
-      MOV result.position,pos;\
-      MOV result.color,col;\
-      MOV result.texcoord,tex;\
-      MUL result.texcoord[1].xyz,vtx,c.x;\
-      MOV result.fogcoord.x,pos.z;\
+   static char *vtxprog="!!ARBvp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      TEMP vtx,col,tex,pos; \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV tex,vertex.texcoord; \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      MOV result.position,pos; \n\
+      MOV result.color,col; \n\
+      MOV result.texcoord,tex; \n\
+      MUL result.texcoord[1].xyz,vtx,c.x; \n\
+      MOV result.fogcoord.x,pos.z; \n\
       END";
 
-   static char *fragprog1="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      PARAM d=program.env[1];\
-      PARAM e=program.env[2];\
-      TEMP col,tex,pos;\
-      MOV tex.x,fragment.texcoord[1].x;\
-      MOV tex.y,fragment.texcoord[1].z;\
-      MOV_SAT tex.z,fragment.texcoord.y;\
-      MAD tex.z,tex.z,d.x,d.y;\
-      FLR tex.z,tex.z;\
-      MAD tex.z,tex.z,d.z,d.w;\
-      MAD pos.z,fragment.fogcoord.x,e.x,e.y;\
-      LG2 pos.z,pos.z;\
-      MIN pos.w,pos.z,e.w;\
-      SUB pos.z,pos.z,pos.w;\
-      SUB pos.z,e.y,pos.z;\
-      FLR pos.w,pos.w;\
-      MAD tex.z,pos.w,e.z,tex.z;\
-      TEX result.color.xyz,tex,texture[0],3D;\
-      MUL col.w,fragment.color.w,fragment.texcoord.x;\
-      MUL col.w,col.w,pos.z;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL result.color.w,col.w,pos.z;\
+   static char *fragprog1="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      TEMP col,tex,pos; \n\
+      MOV tex.x,fragment.texcoord[1].x; \n\
+      MOV tex.y,fragment.texcoord[1].z; \n\
+      MOV_SAT tex.z,fragment.texcoord.y; \n\
+      MAD tex.z,tex.z,d.x,d.y; \n\
+      FLR tex.z,tex.z; \n\
+      MAD tex.z,tex.z,d.z,d.w; \n\
+      MAD pos.z,fragment.fogcoord.x,e.x,e.y; \n\
+      LG2 pos.z,pos.z; \n\
+      MIN pos.w,pos.z,e.w; \n\
+      SUB pos.z,pos.z,pos.w; \n\
+      SUB pos.z,e.y,pos.z; \n\
+      FLR pos.w,pos.w; \n\
+      MAD tex.z,pos.w,e.z,tex.z; \n\
+      TEX result.color.xyz,tex,texture[0],3D; \n\
+      MUL col.w,fragment.color.w,fragment.texcoord.x; \n\
+      MUL col.w,col.w,pos.z; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL result.color.w,col.w,pos.z; \n\
       END";
 
-   static char *fragprog2="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      PARAM d=program.env[1];\
-      PARAM e=program.env[2];\
-      PARAM f=program.env[3];\
-      TEMP col,tex,ptb,pos;\
-      MOV tex.x,fragment.texcoord[1].x;\
-      MOV tex.y,fragment.texcoord[1].z;\
-      MUL ptb.xy,tex,f.x;\
-      TEX ptb,ptb,texture[1],2D;\
-      MAD ptb.xyz,ptb,f.z,f.w;\
-      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y;\
-      MAD tex.z,tex.z,d.x,d.y;\
-      FLR tex.z,tex.z;\
-      MAD tex.z,tex.z,d.z,d.w;\
-      MAD pos.z,fragment.fogcoord.x,e.x,e.y;\
-      LG2 pos.z,pos.z;\
-      MIN pos.w,pos.z,e.w;\
-      SUB pos.z,pos.z,pos.w;\
-      SUB pos.z,e.y,pos.z;\
-      FLR pos.w,pos.w;\
-      MAD tex.z,pos.w,e.z,tex.z;\
-      TEX result.color.xyz,tex,texture[0],3D;\
-      MUL col.w,fragment.color.w,fragment.texcoord.x;\
-      MUL col.w,col.w,pos.z;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL result.color.w,col.w,pos.z;\
+   static char *fragprog2="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      PARAM f=program.env[3]; \n\
+      TEMP col,tex,ptb,pos; \n\
+      MOV tex.x,fragment.texcoord[1].x; \n\
+      MOV tex.y,fragment.texcoord[1].z; \n\
+      MUL ptb.xy,tex,f.x; \n\
+      TEX ptb,ptb,texture[1],2D; \n\
+      MAD ptb.xyz,ptb,f.z,f.w; \n\
+      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y; \n\
+      MAD tex.z,tex.z,d.x,d.y; \n\
+      FLR tex.z,tex.z; \n\
+      MAD tex.z,tex.z,d.z,d.w; \n\
+      MAD pos.z,fragment.fogcoord.x,e.x,e.y; \n\
+      LG2 pos.z,pos.z; \n\
+      MIN pos.w,pos.z,e.w; \n\
+      SUB pos.z,pos.z,pos.w; \n\
+      SUB pos.z,e.y,pos.z; \n\
+      FLR pos.w,pos.w; \n\
+      MAD tex.z,pos.w,e.z,tex.z; \n\
+      TEX result.color.xyz,tex,texture[0],3D; \n\
+      MUL col.w,fragment.color.w,fragment.texcoord.x; \n\
+      MUL col.w,col.w,pos.z; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL result.color.w,col.w,pos.z; \n\
       END";
 
-   static char *fragprog3="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      PARAM d=program.env[1];\
-      PARAM e=program.env[2];\
-      PARAM f=program.env[3];\
-      TEMP col,tex,ptb,pos;\
-      MOV tex.x,fragment.texcoord[1].x;\
-      MOV tex.y,fragment.texcoord[1].z;\
-      MUL ptb.xy,tex,f.x;\
-      TEX ptb,ptb,texture[1],2D;\
-      MAD ptb.xyz,ptb,f.z,f.w;\
-      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y;\
-      MAD tex.z,tex.z,d.x,d.y;\
-      MAD pos.z,fragment.fogcoord.x,e.x,e.y;\
-      LG2 pos.z,pos.z;\
-      MIN pos.w,pos.z,e.w;\
-      SUB pos.z,pos.z,pos.w;\
-      SUB pos.z,e.y,pos.z;\
-      FLR pos.w,pos.w;\
-      MAD tex.z,pos.w,e.z,tex.z;\
-      TEX result.color.xyz,tex,texture[0],3D;\
-      MUL col.w,fragment.color.w,fragment.texcoord.x;\
-      MUL col.w,col.w,pos.z;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL result.color.w,col.w,pos.z;\
+   static char *fragprog3="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      PARAM f=program.env[3]; \n\
+      TEMP col,tex,ptb,pos; \n\
+      MOV tex.x,fragment.texcoord[1].x; \n\
+      MOV tex.y,fragment.texcoord[1].z; \n\
+      MUL ptb.xy,tex,f.x; \n\
+      TEX ptb,ptb,texture[1],2D; \n\
+      MAD ptb.xyz,ptb,f.z,f.w; \n\
+      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y; \n\
+      MAD tex.z,tex.z,d.x,d.y; \n\
+      MAD pos.z,fragment.fogcoord.x,e.x,e.y; \n\
+      LG2 pos.z,pos.z; \n\
+      MIN pos.w,pos.z,e.w; \n\
+      SUB pos.z,pos.z,pos.w; \n\
+      SUB pos.z,e.y,pos.z; \n\
+      FLR pos.w,pos.w; \n\
+      MAD tex.z,pos.w,e.z,tex.z; \n\
+      TEX result.color.xyz,tex,texture[0],3D; \n\
+      MUL col.w,fragment.color.w,fragment.texcoord.x; \n\
+      MUL col.w,col.w,pos.z; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL result.color.w,col.w,pos.z; \n\
       END";
 
-   static char *fragprog4="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      PARAM d=program.env[1];\
-      PARAM e=program.env[2];\
-      PARAM f=program.env[3];\
-      PARAM g=program.env[4];\
-      TEMP col,tex,ptb,pos;\
-      MOV tex.x,fragment.texcoord[1].x;\
-      MOV tex.y,fragment.texcoord[1].z;\
-      MUL ptb.xy,tex,f.x;\
-      TEX ptb,ptb,texture[1],2D;\
-      MAD ptb.xyz,ptb,f.z,f.w;\
-      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y;\
-      MAD tex.z,tex.z,d.x,d.y;\
-      MAD pos.z,fragment.fogcoord.x,e.x,e.y;\
-      LG2 pos.z,pos.z;\
-      MIN pos.w,pos.z,e.w;\
-      SUB pos.z,pos.z,pos.w;\
-      SUB pos.z,e.y,pos.z;\
-      FLR pos.w,pos.w;\
-      MAD tex.z,pos.w,e.z,tex.z;\
-      TEX col.xyz,tex,texture[0],3D;\
-      DP3 col.w,col,g;\
-      ADD_SAT col.w,col.w,g.w;\
-      MUL col.w,col.w,fragment.color.w;\
-      MUL col.w,col.w,fragment.texcoord.x;\
-      MUL col.w,col.w,pos.z;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL col.w,col.w,pos.z;\
-      MOV result.color,col;\
+   static char *fragprog4="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      PARAM f=program.env[3]; \n\
+      PARAM g=program.env[4]; \n\
+      TEMP col,tex,ptb,pos; \n\
+      MOV tex.x,fragment.texcoord[1].x; \n\
+      MOV tex.y,fragment.texcoord[1].z; \n\
+      MUL ptb.xy,tex,f.x; \n\
+      TEX ptb,ptb,texture[1],2D; \n\
+      MAD ptb.xyz,ptb,f.z,f.w; \n\
+      MAD_SAT tex.z,ptb.z,f.y,fragment.texcoord.y; \n\
+      MAD tex.z,tex.z,d.x,d.y; \n\
+      MAD pos.z,fragment.fogcoord.x,e.x,e.y; \n\
+      LG2 pos.z,pos.z; \n\
+      MIN pos.w,pos.z,e.w; \n\
+      SUB pos.z,pos.z,pos.w; \n\
+      SUB pos.z,e.y,pos.z; \n\
+      FLR pos.w,pos.w; \n\
+      MAD tex.z,pos.w,e.z,tex.z; \n\
+      TEX col.xyz,tex,texture[0],3D; \n\
+      DP3 col.w,col,g; \n\
+      ADD_SAT col.w,col.w,g.w; \n\
+      MUL col.w,col.w,fragment.color.w; \n\
+      MUL col.w,col.w,fragment.texcoord.x; \n\
+      MUL col.w,col.w,pos.z; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL col.w,col.w,pos.z; \n\
+      MOV result.color,col; \n\
       END";
 
    GLuint vtxprogid,fragprogid;
@@ -1657,41 +1694,41 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog="!!ARBvp1.0\
-      PARAM c=program.env[0];\
-      PARAM mat[4]={state.matrix.mvp};\
-      TEMP vtx,col,pos;\
-      MOV vtx,vertex.position.xzwy;\
-      SUB col.w,vtx.y,vtx.w;\
-      MUL result.color.w,col.w,c.z;\
-      MOV vtx.w,c.w;\
-      DP4 pos.x,mat[0],vtx;\
-      DP4 pos.y,mat[1],vtx;\
-      DP4 pos.z,mat[2],vtx;\
-      DP4 pos.w,mat[3],vtx;\
-      MOV result.position,pos;\
-      MUL result.texcoord[0].x,vtx.x,c.x;\
-      MUL result.texcoord[0].y,vtx.z,c.x;\
-      MOV result.color.xyz,vertex.color;\
-      MOV result.fogcoord.x,pos.z;\
+   static char *vtxprog="!!ARBvp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      TEMP vtx,col,pos; \n\
+      MOV vtx,vertex.position.xzwy; \n\
+      SUB col.w,vtx.y,vtx.w; \n\
+      MUL result.color.w,col.w,c.z; \n\
+      MOV vtx.w,c.w; \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      MOV result.position,pos; \n\
+      MUL result.texcoord[0].x,vtx.x,c.x; \n\
+      MUL result.texcoord[0].y,vtx.z,c.x; \n\
+      MOV result.color.xyz,vertex.color; \n\
+      MOV result.fogcoord.x,pos.z; \n\
       END";
 
-   static char *fragprog1="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      TEMP col,pos;\
-      MOV result.color.xyz,fragment.color;\
-      MIN col.w,fragment.color.w,c.y;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL result.color.w,col.w,pos.z;\
+   static char *fragprog1="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      TEMP col,pos; \n\
+      MOV result.color.xyz,fragment.color; \n\
+      MIN col.w,fragment.color.w,c.y; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL result.color.w,col.w,pos.z; \n\
       END";
 
-   static char *fragprog2="!!ARBfp1.0\
-      PARAM c=program.env[0];\
-      TEMP col,pos;\
-      TEX result.color.xyz,fragment.texcoord[0],texture[0],2D;\
-      MIN col.w,fragment.color.w,c.y;\
-      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w;\
-      MUL result.color.w,col.w,pos.z;\
+   static char *fragprog2="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      TEMP col,pos; \n\
+      TEX result.color.xyz,fragment.texcoord[0],texture[0],2D; \n\
+      MIN col.w,fragment.color.w,c.y; \n\
+      MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
+      MUL result.color.w,col.w,pos.z; \n\
       END";
 
    GLuint vtxprogid,fragprogid;

@@ -93,12 +93,12 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
 
-   LPARAMS.sealevel=-MAXFLOAT;     // sea-level height (meters, off=-MAXFLOAT)
+   LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
    LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    LPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
 
-   LPARAMS.locthreads=1;           // number of local threads
+   LPARAMS.locthreads=2;           // number of local threads
    LPARAMS.numthreads=10;          // number of net threads
 
    LPARAMS.proxyname=NULL;         // proxy server name

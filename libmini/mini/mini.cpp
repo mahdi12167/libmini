@@ -809,22 +809,22 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
 
    p1x=i0*Dx+offx;
    p1y=y0*SCALE+offy;
-   p1yf=y0*SCALE+yf0*LAMBDA+offy;
+   p1yf=yf0*LAMBDA;
    p1z=offz-j0*Dz;
    p2x=i1*Dx+offx;
    p2y=y1*SCALE+offy;
-   p2yf=y1*SCALE+yf1*LAMBDA+offy;
+   p2yf=yf1*LAMBDA;
    p2z=offz-j1*Dz;
    p3x=i2*Dx+offx;
    p3y=y2*SCALE+offy;
-   p3yf=y2*SCALE+yf2*LAMBDA+offy;
+   p3yf=yf2*LAMBDA;
    p3z=offz-j2*Dz;
 
    if (prismedge_callback!=NULL)
       {
-      prismedge_callback(p1x,p1y,p1yf,p1z);
-      prismedge_callback(p2x,p2y,p2yf,p2z);
-      prismedge_callback(p3x,p3y,p3yf,p3z);
+      prismedge_callback(p1x,p1y+p1yf,p1yf,p1z);
+      prismedge_callback(p2x,p2y+p2yf,p2yf,p2z);
+      prismedge_callback(p3x,p3y+p3yf,p3yf,p3z);
       }
    else
       {
@@ -844,15 +844,15 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
 
       *prismptr++=p1x;
       *prismptr++=p1y;
-      *prismptr++=p1yf;
+      *prismptr++=p1y+p1yf;
       *prismptr++=p1z;
       *prismptr++=p2x;
       *prismptr++=p2y;
-      *prismptr++=p2yf;
+      *prismptr++=p2y+p2yf;
       *prismptr++=p2z;
       *prismptr++=p3x;
       *prismptr++=p3y;
-      *prismptr++=p3yf;
+      *prismptr++=p3y+p3yf;
       *prismptr=p3z;
 
       PRISMCNT++;
@@ -4091,22 +4091,22 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
 
    p1x=i0*Dx+offx;
    p1y=y0*SCALE+offy;
-   p1yf=y0*SCALE+yf0*LAMBDA+offy;
+   p1yf=yf0*LAMBDA;
    p1z=offz-j0*Dz;
    p2x=i1*Dx+offx;
    p2y=y1*SCALE+offy;
-   p2yf=y1*SCALE+yf1*LAMBDA+offy;
+   p2yf=yf1*LAMBDA;
    p2z=offz-j1*Dz;
    p3x=i2*Dx+offx;
    p3y=y2*SCALE+offy;
-   p3yf=y2*SCALE+yf2*LAMBDA+offy;
+   p3yf=yf2*LAMBDA;
    p3z=offz-j2*Dz;
 
    if (prismedge_callback!=NULL)
       {
-      prismedge_callback(p1x,p1y,p1yf,p1z);
-      prismedge_callback(p2x,p2y,p2yf,p2z);
-      prismedge_callback(p3x,p3y,p3yf,p3z);
+      prismedge_callback(p1x,p1y+p1yf,p1yf,p1z);
+      prismedge_callback(p2x,p2y+p2yf,p2yf,p2z);
+      prismedge_callback(p3x,p3y+p3yf,p3yf,p3z);
       }
    else
       {
@@ -4126,15 +4126,15 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
 
       *prismptr++=p1x;
       *prismptr++=p1y;
-      *prismptr++=p1yf;
+      *prismptr++=p1y+p1yf;
       *prismptr++=p1z;
       *prismptr++=p2x;
       *prismptr++=p2y;
-      *prismptr++=p2yf;
+      *prismptr++=p2y+p2yf;
       *prismptr++=p2z;
       *prismptr++=p3x;
       *prismptr++=p3y;
-      *prismptr++=p3yf;
+      *prismptr++=p3y+p3yf;
       *prismptr=p3z;
 
       PRISMCNT++;
@@ -5479,41 +5479,6 @@ inline void FANVERTEX_PRISMS(const int i,const float y,const float yf,const int 
          if (yf0>0.0f || yf1>0.0f || yf>0.0f) cacheprism(i0,y0,yf0,j0,i1,y1,yf1,j1,i,y,yf,j);
          i1=i; y1=y; yf1=yf; j1=j;
          break;
-      }
-   }
-
-// pipe the cached prisms
-void pipefog()
-   {
-   int i;
-
-   float *prismptr;
-
-   float p1x,p1y,p1yf,p1z;
-   float p2x,p2y,p2yf,p2z;
-   float p3x,p3y,p3yf,p3z;
-
-   for (i=0; i<PRISMCNT; i++)
-      {
-      prismptr=&PRISMCACHE[12*i];
-
-      p1x=*prismptr++;
-      p1y=*prismptr++;
-      p1yf=*prismptr++;
-      p1z=*prismptr++;
-      p2x=*prismptr++;
-      p2y=*prismptr++;
-      p2yf=*prismptr++;
-      p2z=*prismptr++;
-      p3x=*prismptr++;
-      p3y=*prismptr++;
-      p3yf=*prismptr++;
-      p3z=*prismptr;
-
-      // pipe prism edges
-      prismedge_callback(p1x,p1y,p1yf,p1z);
-      prismedge_callback(p2x,p2y,p2yf,p2z);
-      prismedge_callback(p3x,p3y,p3yf,p3z);
       }
    }
 

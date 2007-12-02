@@ -82,7 +82,7 @@ datacache::datacache(miniload *terrain)
    CONFIGURE_NETTHREADS=10;
 
    CLOUD->configure_dontfree(0);
-   CLOUD->configure_autolockio(0);
+   CLOUD->configure_autolockio(1);
    }
 
 // destructor

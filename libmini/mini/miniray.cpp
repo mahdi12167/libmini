@@ -262,7 +262,7 @@ void miniray::calcbound(TRIANGLEREF *ref)
    if (ref->warp!=NULL)
       {
       ref->warp->getwarp(mtx);
-      v1=miniv4d(ref->b.x,ref->b.y,ref->b.z,1.0);
+      v1=miniv4d(ref->b,1.0);
       ref->b=miniv3d(mtx[0]*v1,mtx[1]*v1,mtx[2]*v1);
       }
 
@@ -282,10 +282,11 @@ double miniray::calcdist(TRIANGLEREF *ref,
    float *array;
    int num,stride;
 
+   miniv4d o1;
    miniv3d oi,di;
-   miniv4d o1,d0;
 
-   miniv4d inv[3],tra[3];
+   miniv4d inv[3];
+   miniv3d tra[3];
 
    miniv3d v1,v2,v3;
 
@@ -301,8 +302,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
       oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
 
       ref->warp->gettra(tra);
-      d0=miniv4d(d.x,d.y,d.z,0.0);
-      di=miniv3d(tra[0]*d0,tra[1]*d0,tra[2]*d0);
+      di=miniv3d(tra[0]*d,tra[1]*d,tra[2]*d);
       }
    else
       {

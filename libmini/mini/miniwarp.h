@@ -201,10 +201,10 @@ class miniwarp
    void getinv(miniv4d inv[3]);
 
    //! get transpose of actual warp matrix
-   void gettra(miniv4d tra[3]);
+   void gettra(miniv3d tra[3]);
 
    //! get inverse transpose of actual warp matrix
-   void getinvtra(miniv4d invtra[3]);
+   void getinvtra(miniv3d invtra[3]);
 
    //! get actual scaling factor
    double getscale();
