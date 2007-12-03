@@ -194,6 +194,7 @@ void curlbase::exitmulticurl(int id)
    if (NUMMULTICURL==0)
       {
       free(MULTICURL);
+      MAXMULTICURL=0;
 
       // clean-up curl
       curl_global_cleanup();

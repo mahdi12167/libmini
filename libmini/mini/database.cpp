@@ -1871,7 +1871,7 @@ void databuf::swapbytes()
       {
       if (bytes==0 || bytes%2!=0) ERRORMSG();
 
-      ptr1=(unsigned short int *)data+bytes;
+      ptr1=(unsigned short int *)((unsigned char *)data+bytes);
 
       while (ptr1--!=(unsigned short int *)data)
          {
@@ -1883,7 +1883,7 @@ void databuf::swapbytes()
       {
       if (bytes==0 || bytes%4!=0) ERRORMSG();
 
-      ptr2=(unsigned int *)data+bytes;
+      ptr2=(unsigned int *)((unsigned char *)data+bytes);
 
       while (ptr2--!=(unsigned int *)data)
          {

@@ -149,6 +149,9 @@ minilayer::minilayer(minicache *cache)
    TERRAIN=NULL;
    TILECACHE=NULL;
 
+   WARP=NULL;
+   REFERENCE=NULL;
+
    POINTS=NULL;
 
    LOADED=FALSE;

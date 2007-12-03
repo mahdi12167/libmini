@@ -443,7 +443,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
       }
 
    // create the render cache
-   if (CACHE!=NULL) CACHE=new minicache;
+   if (CACHE==NULL) CACHE=new minicache;
 
    // create the tileset layer
    LAYER[LNUM++]=new minilayer(CACHE);

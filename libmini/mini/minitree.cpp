@@ -1729,7 +1729,7 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,pos; \n\
-      MOV vtx,vertex.position.xzwy; \n\
+      MOV vtx,vertex.position; \n\
       SUB col.w,vtx.y,vtx.w; \n\
       MUL result.color.w,col.w,c.z; \n\
       MOV vtx.w,c.w; \n\
@@ -1768,6 +1768,8 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
 
    unsigned char *image;
    int width,height,components;
+
+   if (lambda<=0.0f) return(vtx);
 
    initwglprocs();
 

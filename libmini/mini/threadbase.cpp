@@ -108,6 +108,7 @@ void threadbase::exitmultithread(int id)
    if (NUMMULTITHREAD==0)
       {
       free(MULTITHREAD);
+      MAXMULTITHREAD=0;
 
 #ifdef PTW32_STATIC_LIB
       pthread_win32_process_detach_np();
