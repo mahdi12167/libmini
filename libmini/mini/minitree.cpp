@@ -14,6 +14,7 @@ minitree::minitree(minicache *cache)
    TREEMODE=0;
 
    SYSGLB=minicoord::MINICOORD_LINEAR;
+   SKIPPRISMS=0;
 
    TREECACHE_NUM=1;
 
@@ -494,20 +495,21 @@ int minitree::prismtrigger(int phase,void *data)
 // process prism edges
 void minitree::treeedge(float x,float y,float yf,float z)
    {
-   switch (TREECACHE_COUNT++%3)
-      {
-      case 0:
-         TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
-         break;
-      case 1:
-         TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
-         break;
-      case 2:
-         treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
-                  TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
-                  x,y,z,yf);
-         break;
-      }
+   if (SKIPPRISMS==0)
+      switch (TREECACHE_COUNT++%3)
+         {
+         case 0:
+            TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
+            break;
+         case 1:
+            TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
+            break;
+         case 2:
+            treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
+                     TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
+                     x,y,z,yf);
+            break;
+         }
    }
 
 // switch tree cache
@@ -565,7 +567,8 @@ void minitree::treewarp(miniwarp *warp)
       }
 
    // billboards are incompatible with non-linear warp modes
-   if (SYSGLB!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) TREEMODE=3;
+   if (SYSGLB!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
+   else SKIPPRISMS=0;
    }
 
 // render tree cache
@@ -604,6 +607,10 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
    float rand;
    int choice;
+
+   float wdx,wdy,wdz;
+   float hux,huy,huz;
+   float wrx,wry,wrz;
 
    h=fmax(fmax(h1,h2),h3);
 
@@ -697,9 +704,6 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
    rand=(x/0.271f+z/0.331f)/TREEMODE_X_MINSPACE;
 
-   rand+=271.331f*(rand+1.0f/3);
-   rand=rand-ftrc(rand);
-
    if (TREEMODE>=6)
       if (h<TREEMODE_X_MINHEIGHT*(1.0f+TREEMODE_6_SHRUBFRAC))
          {
@@ -707,6 +711,9 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          if (r>0.0f) r=(h-TREEMODE_X_MINHEIGHT)/r;
          else r=1.0f;
+
+         rand+=271.331f*(rand+1.0f/3);
+         rand=rand-ftrc(rand);
 
          if (rand>r*TREEMODE_6_SHRUBPROB) return;
          }
@@ -738,13 +745,25 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          w=0.5f*TREEMODE_X_TREEWIDTH;
 
-         cachedata(x-w*COORD_RX,y-w*COORD_RY,z-w*COORD_RZ);
-         cachedata(x+w*COORD_RX,y+w*COORD_RY,z+w*COORD_RZ);
-         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
+         wdx=w*COORD_DX;
+         wdy=w*COORD_DY;
+         wdz=w*COORD_DZ;
 
-         cachedata(x-w*COORD_DX,y-w*COORD_DY,z-w*COORD_DZ);
-         cachedata(x+w*COORD_DX,y+w*COORD_DY,z+w*COORD_DZ);
-         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
+         hux=w*COORD_UX;
+         huy=w*COORD_UY;
+         huz=w*COORD_UZ;
+
+         wrx=w*COORD_RX;
+         wry=w*COORD_RY;
+         wrz=w*COORD_RZ;
+
+         cachedata(x-wrx,y-wry,z-wrz);
+         cachedata(x+wrz,y+wry,z+wrz);
+         cachedata(x+hux,y+huy,z+huz);
+
+         cachedata(x-wdx,y-wdy,z-wdz);
+         cachedata(x+wdx,y+wdy,z+wdz);
+         cachedata(x+hux,y+huy,z+huz);
 
          break;
 
@@ -752,18 +771,30 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          w=0.5f*TREEMODE_X_TREEWIDTH;
 
+         wdx=w*COORD_DX;
+         wdy=w*COORD_DY;
+         wdz=w*COORD_DZ;
+
+         hux=w*COORD_UX;
+         huy=w*COORD_UY;
+         huz=w*COORD_UZ;
+
+         wrx=w*COORD_RX;
+         wry=w*COORD_RY;
+         wrz=w*COORD_RZ;
+
          if (TREEMODE_4_TREEASPECT==0.0f) t=0.0f;
          else t=1.0f-h/(TREEMODE_X_TREEWIDTH*TREEMODE_4_TREEASPECT);
 
-         cachedata(x-w*COORD_RX,y-w*COORD_RY,z-w*COORD_RZ,0.0f,1.0f);
-         cachedata(x+w*COORD_RX,y+w*COORD_RY,z+w*COORD_RZ,1.0f,1.0f);
-         cachedata(x+w*COORD_RX+h*COORD_UX,y+w*COORD_RY+h*COORD_UY,z+w*COORD_RZ+h*COORD_UZ,1.0f,t);
-         cachedata(x-w*COORD_RX+h*COORD_UX,y-w*COORD_RY+h*COORD_UY,z-w*COORD_RZ+h*COORD_UZ,0.0f,t);
+         cachedata(x-wrx,y-wry,z-wrz,0.0f,1.0f);
+         cachedata(x+wrx,y+wry,z+wrz,1.0f,1.0f);
+         cachedata(x+wrx+hux,y+wry+huy,z+wrz+huz,1.0f,t);
+         cachedata(x-wrx+hux,y-wry+huy,z-wrz+huz,0.0f,t);
 
-         cachedata(x-w*COORD_DX,y-w*COORD_DY,z-w*COORD_DZ,0.0f,1.0f);
-         cachedata(x+w*COORD_DX,y+w*COORD_DY,z+w*COORD_DZ,1.0f,1.0f);
-         cachedata(x+w*COORD_DX+h*COORD_UX,y+w*COORD_DY+h*COORD_UY,z+w*COORD_DZ+h*COORD_UZ,1.0f,t);
-         cachedata(x-w*COORD_DX+h*COORD_UX,y-w*COORD_DY+h*COORD_UY,z-w*COORD_DZ+h*COORD_UZ,0.0f,t);
+         cachedata(x-wdx,y-wdy,z-wdz,0.0f,1.0f);
+         cachedata(x+wdx,y+wdy,z+wdz,1.0f,1.0f);
+         cachedata(x+wdx+hux,y+wdy+huy,z+wdz+huz,1.0f,t);
+         cachedata(x-wdx+hux,y-wdy+huy,z-wdz+huz,0.0f,t);
 
          break;
 
