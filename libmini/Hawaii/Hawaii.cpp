@@ -505,7 +505,7 @@ static const float markerheight=200.0f;
 static const float markerrange=0.05f;
 
 // approximate value of one arc-second in meters
-static float arcsec[2];
+static float arcsec[3];
 
 // command line switches
 static int sw_quit=0;
@@ -1186,6 +1186,7 @@ int main(int argc,char *argv[])
    terrain.load(cols,rows, // number of columns and rows
                 basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
                 -viewx,-viewy, // horizontal offset in arc-seconds
+                0.0f, // no vertical offset
                 exaggeration,scale, // vertical exaggeration and global scale
                 0.0f,0.0f, // no fog parameters required
                 0.0f, // choose default minimum resolution
@@ -1196,11 +1197,8 @@ int main(int argc,char *argv[])
    // initialize view point
    initview(viewx,viewy,viewa,viewp);
 
-   // use tile caching with vertex arrays
-   cache.setcallbacks(terrain.getminitile(), // the minitile object to be cached
-                      cols,rows, // number of tile columns and rows
-                      outparams[0],outparams[1], // tile extents
-                      outparams[2],0.0f,-outparams[3]); // origin with negative Z
+   // attach vertex array cache
+   cache.attach(terrain.getminitile());
 
    // use default vertex shader plugin
    cache.setvtxshader();
@@ -1330,7 +1328,7 @@ int main(int argc,char *argv[])
    points.load("Waypoints.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
    points.load("Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
 
-   // generate sky dome
+   // create sky dome
    skydome.loadskydome("SkyDome.ppm",
                        outparams[2],0.0f,-outparams[3],
                        cols*outparams[0],rows*outparams[1]/(cols*outparams[0]));

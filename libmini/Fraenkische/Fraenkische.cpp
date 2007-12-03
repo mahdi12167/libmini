@@ -223,7 +223,7 @@ static const float markerheight=100.0f;
 static const float markerrange=0.05f;
 
 // approximate value of one arc-second in meters
-static float arcsec[2];
+static float arcsec[3];
 
 // command line switches
 static int sw_quit=0;
@@ -684,11 +684,11 @@ void displayfunc()
 
    if (output)
       {
-      printf("position: lat=%.5f lon=%.5f direction=%g elevation=%gm visible=[%d,%d]x[%d,%d] mem=%gMB texmem=%gMB texratio=%g%% fancnt=%d vtxcnt=%d\n",
+      printf("position: lat=%.5f lon=%.5f direction=%g elevation=%gm visible=[%d,%d]x[%d,%d] mem=%gMB texmem=%gMB fancnt=%d vtxcnt=%d\n",
              ez/arcsec[1]/3600+viewy,ex/arcsec[0]/3600+viewx,angle,elev*scale/exaggeration,
              terrain.getminitile()->getvisibleleft(),terrain.getminitile()->getvisibleright(),
              terrain.getminitile()->getvisiblebottom(),terrain.getminitile()->getvisibletop(),
-             terrain.getmem(),terrain.gettexmem(),100.0f*terrain.gettexratio(),
+             terrain.getmem(),terrain.gettexmem(),
              cache.getfancnt(),cache.getvtxcnt());
 
       datacloud *cloud=tilecache->getcloud();
@@ -829,6 +829,7 @@ int main(int argc,char *argv[])
    terrain.load(cols,rows, // number of columns and rows
                 basepath1,basepath2,(sw_trees!=0)?basepath3:NULL, // directory for tiles, textures and fogmaps
                 -viewx*3600,-viewy*3600, // horizontal offset in arc-seconds
+                0.0f, // no vertical offset
                 exaggeration,scale, // vertical exaggeration and global scale
                 treescale*exaggertrees,treevalue, // fog parameters
                 minres, // absolute minimum of global resolution
@@ -846,13 +847,10 @@ int main(int argc,char *argv[])
    // define resolution reduction of invisible tiles
    terrain.getminitile()->setreduction(2.0f,3.0f);
 
-   // use tile caching with vertex arrays
-   cache.setcallbacks(terrain.getminitile(), // the minitile object to be cached
-                      cols,rows, // number of tile columns and rows
-                      outparams[0],outparams[1], // tile extents
-                      outparams[2],0.0f,-outparams[3]); // origin with negative Z
+   // attach vertex array cache
+   cache.attach(terrain.getminitile());
 
-   // generate sky dome
+   // create sky dome
    skydome.loadskydome("SkyDome.ppm",
                        outparams[2],0.0f,-outparams[3],
                        cols*outparams[0],rows*outparams[1]/(cols*outparams[0]));
@@ -868,7 +866,7 @@ int main(int argc,char *argv[])
    // initialize trees
    if (sw_trees!=0)
       {
-      trees=new minitree(&cache,terrain.getminitile());
+      trees=new minitree(&cache);
 
       trees->setmode_mx(treebase,0.0f,0.25f,0.05f,0.9f);
       trees->setmode_m2("Forest.ppm",250.0f/scale);
