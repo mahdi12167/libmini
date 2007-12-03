@@ -55,8 +55,6 @@ minicache::minicache()
    SEA_B=1.0f;
    SEA_A=1.0f;
 
-   PRISM_MODE=1;
-   PRISM_BASE=0.5f;
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
@@ -386,8 +384,8 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
          {
          PRISM_CACHE1[4*PRISM_SIZE1]=x;
          PRISM_CACHE1[4*PRISM_SIZE1+1]=y;
-         PRISM_CACHE1[4*PRISM_SIZE1+2]=yf;
-         PRISM_CACHE1[4*PRISM_SIZE1+3]=z;
+         PRISM_CACHE1[4*PRISM_SIZE1+2]=z;
+         PRISM_CACHE1[4*PRISM_SIZE1+3]=yf;
 
          PRISM_SIZE1++;
          }
@@ -395,8 +393,8 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
          {
          PRISM_CACHE2[4*PRISM_SIZE2]=x;
          PRISM_CACHE2[4*PRISM_SIZE2+1]=y;
-         PRISM_CACHE2[4*PRISM_SIZE2+2]=yf;
-         PRISM_CACHE2[4*PRISM_SIZE2+3]=z;
+         PRISM_CACHE2[4*PRISM_SIZE2+2]=z;
+         PRISM_CACHE2[4*PRISM_SIZE2+3]=yf;
 
          PRISM_SIZE2++;
          }
@@ -506,7 +504,7 @@ int minicache::rendercache()
 
 // rendering functions:
 
-inline void minicache::rendertexmap(int m,int n,int S)
+void minicache::rendertexmap(int m,int n,int S)
    {
 #ifndef NOOGL
 
@@ -597,7 +595,7 @@ inline void minicache::rendertexmap(int m,int n,int S)
 #endif
    }
 
-inline int minicache::rendertrigger(int id,int phase,float scale)
+int minicache::rendertrigger(int id,int phase,float scale)
    {
    int vtx=0;
 
@@ -728,10 +726,10 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
          else
             if (CACHE_NUM==1)
                vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,TERRAIN[RENDER_ID].lambda,
-                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+                                 PRISM_R,PRISM_G,PRISM_B,PRISM_A);
             else
                vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,
-                                 PRISM_MODE,PRISM_BASE,PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+                                 PRISM_R,PRISM_G,PRISM_B,PRISM_A);
       }
 
 #endif
@@ -739,16 +737,14 @@ inline int minicache::rendertrigger(int id,int phase,float scale)
    return(vtx);
    }
 
-inline int minicache::renderprisms(float *cache,int cnt,float lambda,
-                                   int mode,float base,float pr,float pg,float pb,float pa)
+int minicache::renderprisms(float *cache,int cnt,float lambda,
+                            float pr,float pg,float pb,float pa)
    {
    int vtx=0;
 
 #ifndef NOOGL
 
-   int i;
-
-   float x,y,yf,z;
+   if (lambda<=0.0f) return(vtx);
 
    initstate();
 
@@ -762,46 +758,12 @@ inline int minicache::renderprisms(float *cache,int cnt,float lambda,
 
    color(pr,pg,pb,pa);
 
-   switch (mode)
-      {
-      case 0:
+   glVertexPointer(3,GL_FLOAT,1,cache);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glDrawArrays(GL_TRIANGLES,0,cnt);
+   glDisableClientState(GL_VERTEX_ARRAY);
 
-         glBegin(GL_POINTS);
-         for (i=0; i<cnt; i++)
-            {
-            x=(cache[12*i]+cache[12*i+4]+cache[12*i+8])/3.0f;
-            y=(cache[12*i+1]+cache[12*i+5]+cache[12*i+9])/3.0f;
-            yf=(cache[12*i+2]+cache[12*i+6]+cache[12*i+10])/3.0f;
-            z=(cache[12*i+3]+cache[12*i+7]+cache[12*i+11])/3.0f;
-
-            glColor4f(pr,pg,pb,fmin(yf/(255.0f*lambda*base),pa));
-            glVertex3f(x,y,z);
-            }
-         glEnd();
-
-         vtx+=cnt;
-
-         break;
-
-      case 1:
-
-         glBegin(GL_TRIANGLES);
-         for (i=0; i<3*cnt; i++)
-            {
-            x=cache[4*i];
-            y=cache[4*i+1];
-            yf=cache[4*i+2];
-            z=cache[4*i+3];
-
-            glColor4f(pr,pg,pb,fmin(yf/(255.0f*lambda*base),pa));
-            glVertex3f(x,y,z);
-            }
-         glEnd();
-
-         vtx+=3*cnt;
-
-         break;
-      }
+   vtx+=3*cnt;
 
    mtxpop();
    mtxproj();
@@ -889,13 +851,9 @@ void minicache::setseacolor(float r,float g,float b,float a)
    SEA_A=a;
    }
 
-// set prism display parameters
-void minicache::setprismmode(int prismmode,float prismbase,
-                             float prismR,float prismG,float prismB,float prismA)
+// define rendering color of prism boundary
+void minicache::setprismcolor(float prismR,float prismG,float prismB,float prismA)
    {
-   PRISM_MODE=prismmode;
-   PRISM_BASE=prismbase;
-
    PRISM_R=prismR;
    PRISM_G=prismG;
    PRISM_B=prismB;

@@ -44,9 +44,8 @@ class minicache
    //! define color of semi-transparent sea
    void setseacolor(float r=0.0f,float g=0.5f,float b=1.0f,float a=1.0f);
 
-   //! define optional fog rendering mode
-   void setprismmode(int prismmode=1,float prismbase=0.5f,
-                     float prismR=1.0f,float prismG=1.0f,float prismB=1.0f,float prismA=0.9f);
+   //! define rendering color of prism boundary
+   void setprismcolor(float prismR=1.0f,float prismG=1.0f,float prismB=1.0f,float prismA=0.9f);
 
    //! define optional vertex shader
    void setvtxshader(char *vtxprog=0);
@@ -124,8 +123,8 @@ class minicache
    void cacheprismedge(float x,float y,float yf,float z);
    void cachetrigger(int id,int phase,float scale,float ex,float ey,float ez);
 
-   void rendertexmap(int m,int n,int S);
-   int rendertrigger(int id,int phase,float scale);
+   inline void rendertexmap(int m,int n,int S);
+   inline int rendertrigger(int id,int phase,float scale);
 
    int CACHE_NUM;
 
@@ -159,8 +158,6 @@ class minicache
    float OPACITY;
    float SEA_R,SEA_G,SEA_B,SEA_A;
 
-   int PRISM_MODE;
-   float PRISM_BASE;
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;
 
    float *PRISM_CACHE1,*PRISM_CACHE2;
@@ -234,7 +231,7 @@ class minicache
    float CONFIGURE_ENABLERAY;
 
    int renderprisms(float *cache,int cnt,float lambda,
-                    int mode=1,float base=0.5f,float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f);
+                    float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f);
 
    void enablevtxshader();
    void setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale);
