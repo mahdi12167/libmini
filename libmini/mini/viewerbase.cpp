@@ -152,7 +152,9 @@ void viewerbase::inithooks()
    convbase::setconversion(&PARAMS.conversion_params);
 
    // register auto-compression hook
+#ifndef NOSQUISH
    databuf::setautocompress(autocompress,NULL);
+#endif
    }
 
 // load tileset (short version)
