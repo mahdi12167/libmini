@@ -4,7 +4,10 @@
 
 #include "threadbase.h"
 #include "curlbase.h"
+
+#ifndef NOSQUISH
 #include "squishbase.h"
+#endif
 
 #include "miniOGL.h"
 #include "minishader.h"
@@ -124,6 +127,8 @@ void viewerbase::set(VIEWER_PARAMS &params)
 void viewerbase::propagate()
    {set(PARAMS);}
 
+#ifndef NOSQUISH
+
 // S3TC auto-compression hook
 void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                               unsigned char **s3tcdata,unsigned int *s3tcbytes,
@@ -134,6 +139,8 @@ void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int
    squishbase::compressS3TC(isrgbadata,rawdata,bytes,
                             s3tcdata,s3tcbytes,obj->xsize,obj->ysize);
    }
+
+#endif
 
 // initialize the terrain hooks
 void viewerbase::inithooks()
@@ -151,9 +158,11 @@ void viewerbase::inithooks()
    // register conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);
 
-   // register auto-compression hook
 #ifndef NOSQUISH
+
+   // register auto-compression hook
    databuf::setautocompress(autocompress,NULL);
+
 #endif
    }
 

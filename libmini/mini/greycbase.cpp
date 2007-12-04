@@ -8,7 +8,7 @@
 
 namespace greycbase {
 
-#ifdef GREYCSTORATION
+#ifdef USEGREYC
 
 #define cimg_display_type 0
 #define cimg_plugin "plugins/greycstoration.h"
@@ -23,7 +23,7 @@ void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
    if (image==NULL || width<1 || height<1 || components<1) return;
    if (p<0.0f || a<0.0f) return;
 
-#ifdef GREYCSTORATION
+#ifdef USEGREYC
 
    const float amplitude      = 40.0f;
    const float sharpness      = p; // -p option of greycstoration

@@ -12,6 +12,8 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                   unsigned char **s3tcdata,unsigned int *s3tcbytes,
                   int width,int height,int squishmode)
    {
+#ifndef NOSQUISH
+
    int i;
 
    int mode;
@@ -61,6 +63,13 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
    squish::CompressImage(rawdata,width,height,*s3tcdata,mode);
 
    if (isrgbadata==0) free(rawdata);
+
+#else
+
+   *s3tcdata=NULL;
+   *s3tcbytes=0;
+
+#endif
    }
 
 }

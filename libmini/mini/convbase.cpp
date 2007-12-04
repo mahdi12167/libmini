@@ -3,13 +3,15 @@
 #include "jpegbase.h"
 #include "pngbase.h"
 
+#ifdef USEGREYC
 #include "greycbase.h"
+#endif
 
 #include "convbase.h"
 
 namespace convbase {
 
-//! set conversion hook for external formats
+// set conversion hook for external formats
 void setconversion(MINI_CONVERSION_PARAMS *params)
    {databuf::setconversion(conversionhook,params);}
 
@@ -55,9 +57,13 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
                default: return(0); // return failure
                }
 
+#ifdef USEGREYC
+
             if (components==1 || components==3)
                if (conversion_params->usegreycstoration)
                   greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->greyc_p,conversion_params->greyc_a);
+
+#endif
 
             jpegbase::compressJPEGimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->jpeg_quality/100.0f,newdata,newbytes);
 
@@ -101,9 +107,13 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
                default: return(0); // return failure
                }
 
+#ifdef USEGREYC
+
             if (components==1 || components==3)
                if (conversion_params->usegreycstoration)
                   greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->greyc_p,conversion_params->greyc_a);
+
+#endif
 
             pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes);
 
