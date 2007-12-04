@@ -239,6 +239,14 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // default constructor
 miniwarp::miniwarp()
    {
+   // set up zero matrix
+   MTX_ZERO[0]=MTX_ZERO[1]=MTX_ZERO[2]=miniv3d(0.0);
+
+   // set up identity matrix
+   MTX_ONE[0]=miniv3d(1.0,0.0,0.0);
+   MTX_ONE[1]=miniv3d(0.0,1.0,0.0);
+   MTX_ONE[2]=miniv3d(0.0,0.0,1.0);
+
    SYSGLB=minicoord::MINICOORD_LINEAR;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
@@ -251,61 +259,45 @@ miniwarp::miniwarp()
 
    SCALELOC=1.0;
 
-   MTXAFF[0]=miniv4d(1.0,0.0,0.0);
-   MTXAFF[1]=miniv4d(0.0,1.0,0.0);
-   MTXAFF[2]=miniv4d(0.0,0.0,1.0);
-
-   MTXREF[0]=miniv4d(1.0,0.0,0.0);
-   MTXREF[1]=miniv4d(0.0,1.0,0.0);
-   MTXREF[2]=miniv4d(0.0,0.0,1.0);
+   cpy_mtx(MTXAFF,MTX_ONE);
+   cpy_mtx(MTXREF,MTX_ONE);
 
    SYSWRP=minicoord::MINICOORD_NONE;
 
    HAS_DATA=FALSE;
 
-   MTX_2MET[0]=MTX_2MET[1]=MTX_2MET[2]=miniv4d(0.0);
-   MTX_2PLN[0]=MTX_2PLN[1]=MTX_2PLN[2]=miniv4d(0.0);
-   MTX_2CNT[0]=MTX_2CNT[1]=MTX_2CNT[2]=miniv4d(0.0);
-   MTX_2DAT[0]=MTX_2DAT[1]=MTX_2DAT[2]=miniv4d(0.0);
-   MTX_2LOC[0]=MTX_2LOC[1]=MTX_2LOC[2]=miniv4d(0.0);
-   MTX_2INT[0]=MTX_2INT[1]=MTX_2INT[2]=miniv4d(0.0);
-   MTX_2REV[0]=MTX_2REV[1]=MTX_2REV[2]=miniv4d(0.0);
-   MTX_2AFF[0]=MTX_2AFF[1]=MTX_2AFF[2]=miniv4d(0.0);
-   MTX_2REF[0]=MTX_2REF[1]=MTX_2REF[2]=miniv4d(0.0);
-   MTX_2FIN[0]=MTX_2FIN[1]=MTX_2FIN[2]=miniv4d(0.0);
-   MTX_2TIL[0]=MTX_2TIL[1]=MTX_2TIL[2]=miniv4d(0.0);
-   MTX_2WRP[0]=MTX_2WRP[1]=MTX_2WRP[2]=miniv4d(0.0);
+   cpy_mtx(MTX_2MET,MTX_ZERO);
+   cpy_mtx(MTX_2PLN,MTX_ZERO);
+   cpy_mtx(MTX_2CNT,MTX_ZERO);
+   cpy_mtx(MTX_2DAT,MTX_ZERO);
+   cpy_mtx(MTX_2LOC,MTX_ZERO);
+   cpy_mtx(MTX_2INT,MTX_ZERO);
+   cpy_mtx(MTX_2REV,MTX_ZERO);
+   cpy_mtx(MTX_2AFF,MTX_ZERO);
+   cpy_mtx(MTX_2REF,MTX_ZERO);
+   cpy_mtx(MTX_2FIN,MTX_ZERO);
+   cpy_mtx(MTX_2TIL,MTX_ZERO);
+   cpy_mtx(MTX_2WRP,MTX_ZERO);
 
-   INV_2MET[0]=INV_2MET[1]=INV_2MET[2]=miniv4d(0.0);
-   INV_2PLN[0]=INV_2PLN[1]=INV_2PLN[2]=miniv4d(0.0);
-   INV_2CNT[0]=INV_2CNT[1]=INV_2CNT[2]=miniv4d(0.0);
-   INV_2DAT[0]=INV_2DAT[1]=INV_2DAT[2]=miniv4d(0.0);
-   INV_2LOC[0]=INV_2LOC[1]=INV_2LOC[2]=miniv4d(0.0);
-   INV_2INT[0]=INV_2INT[1]=INV_2INT[2]=miniv4d(0.0);
-   INV_2REV[0]=INV_2REV[1]=INV_2REV[2]=miniv4d(0.0);
-   INV_2AFF[0]=INV_2AFF[1]=INV_2AFF[2]=miniv4d(0.0);
-   INV_2REF[0]=INV_2REF[1]=INV_2REF[2]=miniv4d(0.0);
-   INV_2FIN[0]=INV_2FIN[1]=INV_2FIN[2]=miniv4d(0.0);
-   INV_2TIL[0]=INV_2TIL[1]=INV_2TIL[2]=miniv4d(0.0);
-   INV_2WRP[0]=INV_2WRP[1]=INV_2WRP[2]=miniv4d(0.0);
+   cpy_mtx(INV_2MET,MTX_ZERO);
+   cpy_mtx(INV_2PLN,MTX_ZERO);
+   cpy_mtx(INV_2CNT,MTX_ZERO);
+   cpy_mtx(INV_2DAT,MTX_ZERO);
+   cpy_mtx(INV_2LOC,MTX_ZERO);
+   cpy_mtx(INV_2INT,MTX_ZERO);
+   cpy_mtx(INV_2REV,MTX_ZERO);
+   cpy_mtx(INV_2AFF,MTX_ZERO);
+   cpy_mtx(INV_2REF,MTX_ZERO);
+   cpy_mtx(INV_2FIN,MTX_ZERO);
+   cpy_mtx(INV_2TIL,MTX_ZERO);
+   cpy_mtx(INV_2WRP,MTX_ZERO);
 
    FROM=TO=MINIWARP_PLAIN;
 
-   MTX[0]=miniv4d(1.0,0.0,0.0);
-   MTX[1]=miniv4d(0.0,1.0,0.0);
-   MTX[2]=miniv4d(0.0,0.0,1.0);
-
-   INV[0]=miniv4d(1.0,0.0,0.0);
-   INV[1]=miniv4d(0.0,1.0,0.0);
-   INV[2]=miniv4d(0.0,0.0,1.0);
-
-   TRA[0]=miniv4d(1.0,0.0,0.0);
-   TRA[1]=miniv4d(0.0,1.0,0.0);
-   TRA[2]=miniv4d(0.0,0.0,1.0);
-
-   INVTRA[0]=miniv4d(1.0,0.0,0.0);
-   INVTRA[1]=miniv4d(0.0,1.0,0.0);
-   INVTRA[2]=miniv4d(0.0,0.0,1.0);
+   cpy_mtx(MTX,MTX_ONE);
+   cpy_mtx(INV,MTX_ONE);
+   cpy_mtx(TRA,MTX_ONE);
+   cpy_mtx(INVTRA,MTX_ONE);
 
    SCALE=1.0;
    }
@@ -357,9 +349,7 @@ void miniwarp::def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,dou
 // define conversion to affine coordinates
 void miniwarp::def_2affine(const miniv4d mtxAFF[3])
    {
-   MTXAFF[0]=mtxAFF[0];
-   MTXAFF[1]=mtxAFF[1];
-   MTXAFF[2]=mtxAFF[2];
+   cpy_mtx(MTXAFF,mtxAFF);
 
    update_mtx();
    }
@@ -367,9 +357,7 @@ void miniwarp::def_2affine(const miniv4d mtxAFF[3])
 // define conversion to reference coordinates
 void miniwarp::def_2reference(const miniv4d mtxREF[3])
    {
-   MTXREF[0]=mtxREF[0];
-   MTXREF[1]=mtxREF[1];
-   MTXREF[2]=mtxREF[2];
+   cpy_mtx(MTXREF,mtxREF);
 
    update_mtx();
    }
@@ -384,11 +372,7 @@ void miniwarp::def_warp(const minicoord::MINICOORD sysWRP)
 
 // get inverse affine coordinate conversion
 void miniwarp::get_invaff(miniv4d invAFF[3])
-   {
-   invAFF[0]=INV_2AFF[0];
-   invAFF[1]=INV_2AFF[1];
-   invAFF[2]=INV_2AFF[2];
-   }
+   {cpy_mtx(invAFF,INV_2AFF);}
 
 // set actual warp
 void miniwarp::setwarp(MINIWARP from,MINIWARP to)
@@ -405,35 +389,19 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
 
 // get actual warp matrix
 void miniwarp::getwarp(miniv4d mtx[3])
-   {
-   mtx[0]=MTX[0];
-   mtx[1]=MTX[1];
-   mtx[2]=MTX[2];
-   }
+   {cpy_mtx(mtx,MTX);}
 
 // get inverse of actual warp matrix
 void miniwarp::getinv(miniv4d inv[3])
-   {
-   inv[0]=INV[0];
-   inv[1]=INV[1];
-   inv[2]=INV[2];
-   }
+   {cpy_mtx(inv,INV);}
 
 // get transpose of actual warp matrix
 void miniwarp::gettra(miniv3d tra[3])
-   {
-   tra[0]=TRA[0];
-   tra[1]=TRA[1];
-   tra[2]=TRA[2];
-   }
+   {cpy_mtx(tra,TRA);}
 
 // get inverse transpose of actual warp matrix
 void miniwarp::getinvtra(miniv3d invtra[3])
-   {
-   invtra[0]=INVTRA[0];
-   invtra[1]=INVTRA[1];
-   invtra[2]=INVTRA[2];
-   }
+   {cpy_mtx(invtra,INVTRA);}
 
 // get actual scaling factor
 double miniwarp::getscale()
@@ -650,12 +618,7 @@ void miniwarp::update_mtx()
           SYSDAT==minicoord::MINICOORD_LINEAR)
          SYSGLB=minicoord::MINICOORD_LINEAR;
 
-      if (SYSGLB==minicoord::MINICOORD_LINEAR)
-         {
-         MTX_2MET[0]=miniv4d(1.0,0.0,0.0);
-         MTX_2MET[1]=miniv4d(0.0,1.0,0.0);
-         MTX_2MET[2]=miniv4d(0.0,0.0,1.0);
-         }
+      if (SYSGLB==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);
@@ -667,10 +630,7 @@ void miniwarp::update_wrp()
    {
    int i;
 
-   // initialize warp matrix with identity
-   MTX[0]=miniv4d(1.0,0.0,0.0);
-   MTX[1]=miniv4d(0.0,1.0,0.0);
-   MTX[2]=miniv4d(0.0,0.0,1.0);
+   cpy_mtx(MTX,MTX_ONE);
 
    if (FROM<TO)
       // warp forward by concatenating the respective conversion matrices
@@ -716,34 +676,21 @@ void miniwarp::update_inv()
 
 // construct the 3x3 transpose of the 4x3 warp matrix
 void miniwarp::update_tra()
-   {
-   TRA[0]=miniv4d(MTX[0].x,MTX[1].x,MTX[2].x);
-   TRA[1]=miniv4d(MTX[0].y,MTX[1].y,MTX[2].y);
-   TRA[2]=miniv4d(MTX[0].z,MTX[1].z,MTX[2].z);
-   }
+   {tra_mtx(TRA,MTX);}
 
 // calculate the 3x3 inverse transpose of the 4x3 warp matrix
 void miniwarp::update_invtra()
    {
-   miniv3d inv[3];
-
-   // extract 3x3 sub-matrix
-   inv[0]=MTX[0];
-   inv[1]=MTX[1];
-   inv[2]=MTX[2];
-
-   // it is sufficient to invert the 3x3 sub-matrix
-   inv_mtx(inv,inv);
-
-   // construct the inverse transpose matrix
-   INVTRA[0]=miniv4d(inv[0].x,inv[1].x,inv[2].x);
-   INVTRA[1]=miniv4d(inv[0].y,inv[1].y,inv[2].y);
-   INVTRA[2]=miniv4d(inv[0].z,inv[1].z,inv[2].z);
+   cpy_mtx(INVTRA,MTX);
 
    // take care of global coordinates
    if (SYSGLB!=minicoord::MINICOORD_LINEAR)
-      if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INVTRA,INV_2MET);
-      else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INVTRA,MTX_2MET);
+      if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
+      else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INV_2MET,INVTRA);
+
+   // construct the inverse transpose matrix
+   inv_mtx(INVTRA,INVTRA);
+   tra_mtx(INVTRA,INVTRA);
    }
 
 // calculate the scaling factor of the 4x3 warp matrix
@@ -777,10 +724,7 @@ void miniwarp::calc_wrp()
    minicoord p[8];
    miniv4d b,e[3];
 
-   // initialize warp conversion matrix with identity
-   MTX_2WRP[0]=miniv4d(1.0,0.0,0.0);
-   MTX_2WRP[1]=miniv4d(0.0,1.0,0.0);
-   MTX_2WRP[2]=miniv4d(0.0,0.0,1.0);
+   cpy_mtx(MTX_2WRP,MTX_ONE);
 
    // check if warp coordinate conversion is disabled
    if (SYSWRP==minicoord::MINICOORD_NONE) return;
@@ -833,6 +777,18 @@ void miniwarp::calc_wrp()
    MTX_2WRP[2]=miniv4d(e[0].z,e[1].z,e[2].z,b.z);
    }
 
+// matrix copying:
+
+void miniwarp::cpy_mtx(miniv3d cpy[3],miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv4d cpy[3],miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv4d cpy[3],miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv3d cpy[3],miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+
+void miniwarp::cpy_mtx(miniv3d cpy[3],const miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv4d cpy[3],const miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv4d cpy[3],const miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+void miniwarp::cpy_mtx(miniv3d cpy[3],const miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
+
 // multiply two 4x3 matrices
 void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3])
    {
@@ -849,9 +805,7 @@ void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3
       m[i].w=mtx1[i].x*mtx2[0].w+mtx1[i].y*mtx2[1].w+mtx1[i].z*mtx2[2].w+mtx1[i].w;
       }
 
-   mtx[0]=m[0];
-   mtx[1]=m[1];
-   mtx[2]=m[2];
+   cpy_mtx(mtx,m);
    }
 
 // multiply three 4x3 matrices
@@ -907,9 +861,7 @@ void miniwarp::inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
       {
       det=1.0/det;
 
-      m[0]=mtx[0];
-      m[1]=mtx[1];
-      m[2]=mtx[2];
+      cpy_mtx(m,mtx);
 
       inv[0].x=det*(m[2].z*m[1].y-m[1].z*m[2].y);
       inv[1].x=det*(m[1].z*m[2].x-m[2].z*m[1].x);
@@ -930,17 +882,13 @@ void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    miniv4d m1[3],m2[3];
 
    // extract 3x3 sub-matrix
-   m[0]=mtx[0];
-   m[1]=mtx[1];
-   m[2]=mtx[2];
+   cpy_mtx(m,mtx);
 
    // it is sufficient to invert the 3x3 sub-matrix
    inv_mtx(m,m);
 
    // decompose 4x3 inversion into matrix #1 = inverted 3x3 sub-matrix
-   m1[0]=m[0];
-   m1[1]=m[1];
-   m1[2]=m[2];
+   cpy_mtx(m1,m);
 
    // decompose 4x3 inversion into matrix #2 = inverted 1x3 sub-matrix = negated offset
    m2[0]=miniv4d(1.0,0.0,0.0,-mtx[0].w);
@@ -949,4 +897,30 @@ void miniwarp::inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
 
    // compose the inverted matrix
    mlt_mtx(inv,m1,m2);
+   }
+
+// transpose a 3x3 matrix
+void miniwarp::tra_mtx(miniv3d tra[3],const miniv3d mtx[3])
+   {
+   miniv3d m[3];
+
+   // compute transposition
+   m[0]=miniv3d(mtx[0].x,mtx[1].x,mtx[2].x);
+   m[1]=miniv3d(mtx[0].y,mtx[1].y,mtx[2].y);
+   m[2]=miniv3d(mtx[0].z,mtx[1].z,mtx[2].z);
+
+   cpy_mtx(tra,m);
+   }
+
+// transpose a 4x3 matrix
+void miniwarp::tra_mtx(miniv4d tra[3],const miniv4d mtx[3])
+   {
+   miniv3d m[3];
+
+   // compute transposition
+   m[0]=miniv3d(mtx[0].x,mtx[1].x,mtx[2].x);
+   m[1]=miniv3d(mtx[0].y,mtx[1].y,mtx[2].y);
+   m[2]=miniv3d(mtx[0].z,mtx[1].z,mtx[2].z);
+
+   cpy_mtx(tra,m);
    }

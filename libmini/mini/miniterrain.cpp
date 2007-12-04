@@ -525,6 +525,7 @@ minicoord miniterrain::getcenter(int n)
    else return(LAYER[n]->getcenter());
    }
 
+//!!
 // get the elevation at position (x,y,z)
 double miniterrain::getheight(const minicoord &p)
    {
@@ -643,7 +644,7 @@ void miniterrain::render()
       if (TPARAMS.useshaders)
          if (!TPARAMS.usenprshader)
             minishader::setVISshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration, //!!
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -656,7 +657,7 @@ void miniterrain::render()
                                      TPARAMS.seamodulate);
          else
             minishader::setNPRshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration, //!!
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
