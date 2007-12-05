@@ -1210,7 +1210,7 @@ int main(int argc,char *argv[])
 
    // load tileset (short version)
    if (argc_regular==1)
-      if (!viewer->load(shorturl,sw_reset))
+      if (!viewer->load(shorturl,TRUE,sw_reset))
          {
          printf("unable to load tileset at url=%s\n",shorturl);
          exit(1);
@@ -1218,7 +1218,7 @@ int main(int argc,char *argv[])
 
    // load tileset (long version)
    if (argc_regular!=1)
-      if (!viewer->load(baseurl,baseid,basepath1,basepath2,sw_reset))
+      if (!viewer->load(baseurl,baseid,basepath1,basepath2,TRUE,sw_reset))
          {
          printf("unable to load tileset at url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
          exit(1);
