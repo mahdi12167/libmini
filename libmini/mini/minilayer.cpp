@@ -348,8 +348,7 @@ void minilayer::setcallbacks(void *threaddata,
    }
 
 // load tileset
-BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                        BOOLINT reset)
+BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,BOOLINT reset)
    {
    int success;
 
@@ -362,8 +361,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    minicoord offsetDAT,extentDAT;
 
    if (LOADED) return(FALSE);
-
-   LOADED=TRUE;
 
    // create the terrain
    TERRAIN=new miniload;
@@ -474,7 +471,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       }
 
    // check the size of the tileset to detect load failures
-   if (LPARAMS.cols==0 || LPARAMS.rows==0) return(FALSE);
+   if (LPARAMS.cols==0 || LPARAMS.rows==0)
+      {
+      delete TERRAIN;
+      delete TILECACHE;
+      return(FALSE);
+      }
 
    // use .db file numbering starting with zero for compatibility with vtp
    if (!LPARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
@@ -504,7 +506,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    curlexit(0);
 
    // check for load errors
-   if (success==0) return(FALSE);
+   if (success==0)
+      {
+      delete TERRAIN;
+      delete TILECACHE;
+      return(FALSE);
+      }
 
    // set extent of tileset
    LPARAMS.extent[0]=LPARAMS.cols*outparams[0];
@@ -546,7 +553,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    curlinit(LPARAMS.numthreads,getid(),LPARAMS.proxyname,LPARAMS.proxyport);
 
    // success
-   return(TRUE);
+   return(LOADED=TRUE);
    }
 
 // load optional features
