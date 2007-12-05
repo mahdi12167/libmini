@@ -610,7 +610,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    minicoord bboxDAT[2];
 
    miniv4d mtxAFF[3];
-   miniv4d mtxREF[3];
 
    double scale;
    minicoord center;
