@@ -652,9 +652,9 @@ void renderhud()
    char str[MAXSTR];
 
    minilayer *ref=viewer->getreference();
-   minilayer *nst=viewer->getnearest();
+   minilayer *nst=viewer->getnearest(eye);
 
-   minitile *mt=layer->getterrain()->getminitile();
+   minitile *mt=ref->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
 
