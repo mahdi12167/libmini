@@ -526,6 +526,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
               LPARAMS.scale);
 
+   // update warp objects for each exposed coordinate transformation
+   updatecoords();
+
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
 
@@ -581,8 +584,23 @@ void minilayer::loadopts()
    }
 
 // set reference layer
-void minilayer::setreference(minilayer *reference)
-   {REFERENCE=reference;}
+void minilayer::setreference(minilayer *ref)
+   {
+   miniv4d mtxREF[3];
+
+   REFERENCE=ref;
+
+   if (LPARAMS.warpmode==0 || LPARAMS.warpmode==1)
+      if (REFERENCE!=NULL)
+         if (REFERENCE->getwarp()!=NULL)
+            if (WARP!=NULL)
+               {
+               REFERENCE->getwarp()->get_invaff(mtxREF);
+               WARP->def_2reference(mtxREF);
+
+               updatecoords();
+               }
+   }
 
 // create the warp
 void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
@@ -662,19 +680,18 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    WARP->def_2affine(mtxAFF);
 
-   // define reference coordinates:
-
-   if (LPARAMS.warpmode==0 || LPARAMS.warpmode==1)
-      if (REFERENCE!=NULL)
-         {
-         REFERENCE->getwarp()->get_invaff(mtxREF);
-         WARP->def_2reference(mtxREF);
-         }
-
    // define warp coordinates:
 
    WARP->def_warp(minicoord::MINICOORD_ECEF);
 
+   // define reference coordinates:
+
+   setreference(REFERENCE);
+   }
+
+// update the coordinate transformations
+void minilayer::updatecoords()
+   {
    // copy warp object to encapsulated tileset:
 
    TERRAIN->getminitile()->copywarp(WARP);
@@ -683,10 +700,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    // create warp object for each exposed coordinate transformation:
 
    WARP_G2L=*WARP;
-   WARP_G2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_AFFINE);
+   WARP_G2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_REFERENCE);
 
    WARP_L2G=*WARP;
-   WARP_L2G.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_GLOBAL);
+   WARP_L2G.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_GLOBAL);
 
    WARP_G2I=*WARP;
    WARP_G2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
@@ -695,10 +712,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    WARP_I2G.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
 
    WARP_L2O=*WARP;
-   WARP_L2O.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
+   WARP_L2O.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_FINAL);
 
    WARP_O2L=*WARP;
-   WARP_O2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_AFFINE);
+   WARP_O2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_REFERENCE);
 
    WARP_G2O=*WARP;
    WARP_G2O.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_FINAL);

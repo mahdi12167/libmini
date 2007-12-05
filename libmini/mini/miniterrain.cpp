@@ -451,6 +451,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // propagate parameters
    propagate();
 
+   // set reference coordinate system
+   LAYER[LNUM-1]->setreference(LAYER[getreference()]);
+
    // register callbacks
    LAYER[LNUM-1]->setcallbacks(THREADDATA,
                                THREADINIT,THREADEXIT,
@@ -471,8 +474,8 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // load optional features
    if (loadopts) LAYER[LNUM-1]->loadopts();
 
-   // set reference coordinate system
-   LAYER[LNUM-1]->setreference(LAYER[getreference()]);
+   // reset reference layer
+   setreference(LREF);
 
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
@@ -525,7 +528,6 @@ minicoord miniterrain::getcenter(int n)
    else return(LAYER[n]->getcenter());
    }
 
-//!!
 // get the elevation at position (x,y,z)
 double miniterrain::getheight(const minicoord &p)
    {
@@ -640,11 +642,12 @@ void miniterrain::render()
    {
    if (LNUM>0)
       {
+      //!!
       // enable shaders
       if (TPARAMS.useshaders)
          if (!TPARAMS.usenprshader)
             minishader::setVISshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration, //!!
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -657,7 +660,7 @@ void miniterrain::render()
                                      TPARAMS.seamodulate);
          else
             minishader::setNPRshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration, //!!
+                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,

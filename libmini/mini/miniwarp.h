@@ -149,19 +149,20 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_GLOBAL=0,    // global coordinates
-      MINIWARP_METRIC=1,    // metric coordinates
-      MINIWARP_PLAIN=2,     // plain coordinates
-      MINIWARP_CENTER=3,    // center coordinates
-      MINIWARP_DATA=4,      // data coordinates
-      MINIWARP_LOCAL=5,     // local coordinates
-      MINIWARP_INTERNAL=6,  // internal coordinates
-      MINIWARP_REVERTED=7,  // reverted coordinates
-      MINIWARP_AFFINE=8,    // affine coordinates
-      MINIWARP_REFERENCE=9, // reference coordinates
-      MINIWARP_FINAL=10,    // final coordinates
-      MINIWARP_TILE=11,     // tile coordinates
-      MINIWARP_WARP=12      // warp coordinates
+      MINIWARP_GLOBAL=0,     // global coordinates
+      MINIWARP_METRIC=1,     // metric coordinates
+      MINIWARP_PLAIN=2,      // plain coordinates
+      MINIWARP_CENTER=3,     // center coordinates
+      MINIWARP_DATA=4,       // data coordinates
+      MINIWARP_ORIGINAL=5,   // original coordinates
+      MINIWARP_LOCAL=6,      // local coordinates
+      MINIWARP_INTERNAL=7,   // internal coordinates
+      MINIWARP_REVERTED=8,   // reverted coordinates
+      MINIWARP_AFFINE=9,     // affine coordinates
+      MINIWARP_REFERENCE=10, // reference coordinates
+      MINIWARP_FINAL=11,     // final coordinates
+      MINIWARP_TILE=12,      // tile coordinates
+      MINIWARP_WARP=13       // warp coordinates
       };
 
    //! default constructor
@@ -259,6 +260,7 @@ class miniwarp
    miniv4d MTX_2PLN[3];
    miniv4d MTX_2CNT[3];
    miniv4d MTX_2DAT[3];
+   miniv4d MTX_2ORG[3];
    miniv4d MTX_2LOC[3];
    miniv4d MTX_2INT[3];
    miniv4d MTX_2REV[3];
@@ -272,6 +274,7 @@ class miniwarp
    miniv4d INV_2PLN[3];
    miniv4d INV_2CNT[3];
    miniv4d INV_2DAT[3];
+   miniv4d INV_2ORG[3];
    miniv4d INV_2LOC[3];
    miniv4d INV_2INT[3];
    miniv4d INV_2REV[3];
@@ -314,6 +317,7 @@ class miniwarp
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3]);
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3]);
    void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3]);
+   void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3],const miniv4d mtx7[3]);
 
    void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
    void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);

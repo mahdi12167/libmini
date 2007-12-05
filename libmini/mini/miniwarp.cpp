@@ -270,6 +270,7 @@ miniwarp::miniwarp()
    cpy_mtx(MTX_2PLN,MTX_ZERO);
    cpy_mtx(MTX_2CNT,MTX_ZERO);
    cpy_mtx(MTX_2DAT,MTX_ZERO);
+   cpy_mtx(MTX_2ORG,MTX_ZERO);
    cpy_mtx(MTX_2LOC,MTX_ZERO);
    cpy_mtx(MTX_2INT,MTX_ZERO);
    cpy_mtx(MTX_2REV,MTX_ZERO);
@@ -283,6 +284,7 @@ miniwarp::miniwarp()
    cpy_mtx(INV_2PLN,MTX_ZERO);
    cpy_mtx(INV_2CNT,MTX_ZERO);
    cpy_mtx(INV_2DAT,MTX_ZERO);
+   cpy_mtx(INV_2ORG,MTX_ZERO);
    cpy_mtx(INV_2LOC,MTX_ZERO);
    cpy_mtx(INV_2INT,MTX_ZERO);
    cpy_mtx(INV_2REV,MTX_ZERO);
@@ -542,6 +544,14 @@ void miniwarp::update_mtx()
 
       inv_mtx(INV_2DAT,MTX_2DAT);
 
+      // conversion 2 original coordinates:
+
+      MTX_2ORG[0]=miniv4d(1.0,0.0,0.0);
+      MTX_2ORG[1]=miniv4d(0.0,1.0,0.0);
+      MTX_2ORG[2]=miniv4d(0.0,0.0,1.0/(SCALELOC*SCALINGLOC.z));
+
+      inv_mtx(INV_2ORG,MTX_2ORG);
+
       // conversion 2 local coordinates:
 
       MTX_2LOC[0]=miniv4d(SCALINGLOC.x,0.0,0.0,OFFSETLOC.x*SCALINGLOC.x);
@@ -592,7 +602,7 @@ void miniwarp::update_mtx()
 
       // conversion 2 tile coordinates:
 
-      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2FIN);
+      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2FIN);
 
       inv_mtx(INV_2TIL,MTX_2TIL);
 
@@ -604,11 +614,11 @@ void miniwarp::update_mtx()
 
       // conversion 2 metric coordinates:
 
-      MTX_2PLN[0]=miniv4d(SCALELOC*SCALINGLOC.x,0.0,0.0);
-      MTX_2PLN[1]=miniv4d(0.0,SCALELOC*SCALINGLOC.y,0.0);
-      MTX_2PLN[2]=miniv4d(0.0,0.0,SCALELOC*SCALINGLOC.z);
+      MTX_2PLN[0]=miniv4d(1.0/(SCALELOC*SCALINGLOC.x),0.0,0.0);
+      MTX_2PLN[1]=miniv4d(0.0,1.0/(SCALELOC*SCALINGLOC.y),0.0);
+      MTX_2PLN[2]=miniv4d(0.0,0.0,1.0);
 
-      mlt_mtx(MTX_2PLN,INV_2CNT,MTX_2PLN,INV_2DAT);
+      mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,MTX_2PLN);
 
       inv_mtx(INV_2PLN,MTX_2PLN);
 
@@ -641,6 +651,7 @@ void miniwarp::update_wrp()
             case MINIWARP_PLAIN: mlt_mtx(MTX,MTX_2PLN,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,MTX_2CNT,MTX); break;
             case MINIWARP_DATA: mlt_mtx(MTX,MTX_2DAT,MTX); break;
+            case MINIWARP_ORIGINAL: mlt_mtx(MTX,MTX_2ORG,MTX); break;
             case MINIWARP_LOCAL: mlt_mtx(MTX,MTX_2LOC,MTX); break;
             case MINIWARP_INTERNAL: mlt_mtx(MTX,MTX_2INT,MTX); break;
             case MINIWARP_REVERTED: mlt_mtx(MTX,MTX_2REV,MTX); break;
@@ -662,7 +673,8 @@ void miniwarp::update_wrp()
             case MINIWARP_REVERTED: mlt_mtx(MTX,INV_2AFF,MTX); break;
             case MINIWARP_INTERNAL: mlt_mtx(MTX,INV_2REV,MTX); break;
             case MINIWARP_LOCAL: mlt_mtx(MTX,INV_2INT,MTX); break;
-            case MINIWARP_DATA: mlt_mtx(MTX,INV_2LOC,MTX); break;
+            case MINIWARP_ORIGINAL: mlt_mtx(MTX,INV_2LOC,MTX); break;
+            case MINIWARP_DATA: mlt_mtx(MTX,INV_2ORG,MTX); break;
             case MINIWARP_CENTER: mlt_mtx(MTX,INV_2DAT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,INV_2CNT,MTX); break;
             case MINIWARP_METRIC: mlt_mtx(MTX,INV_2PLN,MTX); break;
@@ -684,9 +696,8 @@ void miniwarp::update_invtra()
    cpy_mtx(INVTRA,MTX);
 
    // take care of global coordinates
-   if (SYSGLB!=minicoord::MINICOORD_LINEAR)
-      if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
-      else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INV_2MET,INVTRA);
+   if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
+   else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INV_2MET,INVTRA);
 
    // construct the inverse transpose matrix
    inv_mtx(INVTRA,INVTRA);
@@ -841,6 +852,15 @@ void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3
    miniv4d m[3];
 
    mlt_mtx(m,mtx4,mtx5,mtx6);
+   mlt_mtx(mtx,mtx1,mtx2,mtx3,m);
+   }
+
+// multiply seven 4x3 matrices
+void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3],const miniv4d mtx7[3])
+   {
+   miniv4d m[3];
+
+   mlt_mtx(m,mtx4,mtx5,mtx6,mtx7);
    mlt_mtx(mtx,mtx1,mtx2,mtx3,m);
    }
 

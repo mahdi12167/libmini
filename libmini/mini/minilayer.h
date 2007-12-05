@@ -195,7 +195,7 @@ class minilayer
    void loadopts();
 
    //! set reference layer
-   void setreference(minilayer *reference);
+   void setreference(minilayer *ref);
 
    //! get extent of tileset
    miniv3d getextent();
@@ -297,6 +297,8 @@ class minilayer
    void createwarp(minicoord offsetDAT,minicoord extentDAT,
                    miniv3d offsetLOC,miniv3d scalingLOC,
                    double scaleLOC);
+
+   void updatecoords();
 
    int getid();
 
