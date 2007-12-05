@@ -874,8 +874,8 @@ void resample(int num,char **grid,
                         if (comps[0]!=3) sn=1;
                         else sn=max(CONFIGURE_SUPERSAMPLING,1);
 
-                        // increase number of samples when sampling down
-                        sn*=(1<<min(m,CONFIGURE_DOWNSAMPLING));
+                        // increase number of samples when sampling down textures
+                        if (comps[0]==3) sn*=(1<<min(m,CONFIGURE_DOWNSAMPLING));
 
                         // foreach supersample
                         for (si=-0.5f+0.5f/sn; si<0.5f; si+=1.0f/sn)
