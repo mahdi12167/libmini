@@ -642,7 +642,6 @@ void miniterrain::render()
    {
    if (LNUM>0)
       {
-      //!!
       // enable shaders
       if (TPARAMS.useshaders)
          if (!TPARAMS.usenprshader)

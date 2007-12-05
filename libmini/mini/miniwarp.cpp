@@ -697,7 +697,7 @@ void miniwarp::update_invtra()
 
    // take care of global coordinates
    if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
-   else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INV_2MET,INVTRA);
+   else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INVTRA,INV_2MET);
 
    // construct the inverse transpose matrix
    inv_mtx(INVTRA,INVTRA);
