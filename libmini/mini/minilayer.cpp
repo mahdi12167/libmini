@@ -387,7 +387,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
-   //!!TILECACHE->getcloud()->setthread(minilayer::startthread,this,minilayer::jointhread,minilayer::lock_cs,minilayer::unlock_cs,minilayer::lock_io,minilayer::unlock_io);
+   TILECACHE->getcloud()->setthread(minilayer::startthread,this,minilayer::jointhread,minilayer::lock_cs,minilayer::unlock_cs,minilayer::lock_io,minilayer::unlock_io);
    TILECACHE->getcloud()->configure_autocompress(LPARAMS.autocompress);
    TILECACHE->getcloud()->configure_lod0uncompressed(LPARAMS.lod0uncompressed);
    TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
