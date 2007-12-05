@@ -286,7 +286,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
    minicoord el;
    double elev;
 
-   minilayer *reference,*nearest;
+   minilayer *ref,*nst;
 
    initwindow(winwidth,winheight);
 
@@ -294,14 +294,14 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    elev=viewer->getterrain()->getheight(eye);
 
-   reference=viewer->getreference();
-   nearest=viewer->getnearest(eye);
+   ref=viewer->getreference();
+   nst=viewer->getnearest(eye);
 
-   el=nearest->map_g2l(eye);
+   el=nst->map_g2l(eye);
 
-   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,reference->len_g2l(elev+hover+dh));
+   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,ref->len_g2l(elev+hover+dh));
 
-   eye=nearest->map_l2g(el);
+   eye=nst->map_l2g(el);
 
    viewer->initeyepoint(eye);
 
@@ -328,8 +328,8 @@ void loadsettings()
 
    int flag;
 
-   minilayer *reference=viewer->getreference();
-   char *savname=reference->getcache()->getfile(VIEWER_SAVFILE);
+   minilayer *ref=viewer->getreference();
+   char *savname=ref->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname!=NULL)
       {
@@ -392,8 +392,8 @@ void savesettings()
    {
    FILE *file;
 
-   minilayer *reference=viewer->getreference();
-   char *savname=reference->getcache()->getfile(VIEWER_SAVFILE);
+   minilayer *ref=viewer->getreference();
+   char *savname=ref->getcache()->getfile(VIEWER_SAVFILE);
 
    if (savname==NULL) savname=strdup(VIEWER_SAVFILE);
 
@@ -569,8 +569,8 @@ void renderinfo()
    const float size=0.3f;
    const float alpha=0.5f;
 
-   minilayer *reference=viewer->getreference();
-   minitile *mt=reference->getterrain()->getminitile();
+   minilayer *ref=viewer->getreference();
+   minitile *mt=ref->getterrain()->getminitile();
 
    int vcol=mt->getvisibleleft();
    int vrow=mt->getvisiblebottom();
@@ -651,7 +651,9 @@ void renderhud()
 
    char str[MAXSTR];
 
-   minilayer *layer=viewer->getreference();
+   minilayer *ref=viewer->getreference();
+   minilayer *nst=viewer->getnearest();
+
    minitile *mt=layer->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
@@ -733,7 +735,10 @@ void renderhud()
 
             if (dist!=MAXFLOAT)
                {
-               eye_hit=viewer->getterrain()->map_l2g(viewer->getterrain()->map_g2l(eye)+viewer->getterrain()->rot_g2l(dir,eye)*viewer->getterrain()->len_g2l(dist)); //!!
+               eye_hit=nst->map_g2l(eye);
+               eye_hit+=nst->rot_g2l(dir,eye)*nst->len_g2l(dist);
+               eye_hit=nst->map_l2g(eye_hit);
+
                snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f",dist,viewer->getterrain()->getheight(eye_hit));
 
                glTranslatef(0.05f,0.0f,0.0f);
@@ -771,7 +776,7 @@ void displayfunc()
    minicoord ep,el,egl;
    miniv3d dgl,ugl,rgl;
 
-   minilayer *reference,*nearest;
+   minilayer *ref,*nst;
 
    if (winwidth<=0 || winheight<=0) return;
 
@@ -780,10 +785,10 @@ void displayfunc()
 
    // update eye point:
 
-   reference=viewer->getreference();
-   nearest=viewer->getnearest(eye);
+   ref=viewer->getreference();
+   nst=viewer->getnearest(eye);
 
-   el=nearest->map_g2l(eye);
+   el=nst->map_g2l(eye);
 
    sina=sin(2.0*PI/360.0*turn);
    cosa=cos(2.0*PI/360.0*turn);
@@ -794,9 +799,9 @@ void displayfunc()
    el.vec.x+=sina*speed/params->fps;
    el.vec.y+=cosa*speed/params->fps;
 
-   ep=nearest->map_l2g(el);
+   ep=nst->map_l2g(el);
 
-   elev=reference->len_g2l(viewer->getterrain()->getheight(ep));
+   elev=ref->len_g2l(viewer->getterrain()->getheight(ep));
 
    // update eye coordinate system:
 
@@ -812,9 +817,9 @@ void displayfunc()
    right.y=sina*sbase;
    right.z=0.0;
 
-   dir=nearest->rot_l2g(dir,el);
-   up=nearest->rot_l2g(up,el);
-   right=nearest->rot_l2g(right,el);
+   dir=nst->rot_l2g(dir,el);
+   up=nst->rot_l2g(up,el);
+   right=nst->rot_l2g(right,el);
 
    // update eye movement:
 
@@ -842,12 +847,12 @@ void displayfunc()
       el.vec.z=elev+hover;
       }
 
-   eye=nearest->map_l2g(el);
+   eye=nst->map_l2g(el);
 
-   egl=nearest->map_g2o(eye);
-   dgl=nearest->rot_g2o(dir,eye);
-   ugl=nearest->rot_g2o(up,eye);
-   rgl=nearest->rot_g2o(right,eye);
+   egl=nst->map_g2o(eye);
+   dgl=nst->rot_g2o(dir,eye);
+   ugl=nst->rot_g2o(up,eye);
+   rgl=nst->rot_g2o(right,eye);
 
    tparams->signpostturn=turn;
    tparams->signpostincline=-incline;
@@ -861,7 +866,7 @@ void displayfunc()
 
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   gluPerspective(params->fovy,(float)winwidth/winheight,reference->len_g2o(params->nearp),reference->len_g2o(params->farp));
+   gluPerspective(params->fovy,(float)winwidth/winheight,ref->len_g2o(params->nearp),ref->len_g2o(params->farp));
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
