@@ -601,13 +601,13 @@ tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLIN
    // scan cache for equal tile
    for (tile=TILECACHE; tile!=NULL; tile=tile->next)
       {
+      // mismatch of tile spec
+      if (col!=tile->col || row!=tile->row) continue;
+      if (istexture!=tile->istexture) continue;
+      if (lod!=tile->lod) continue;
+
       // mismatch of tile identifier
       if (strcmp((char *)tileid,(char *)(tile->tileid))!=0) continue;
-
-      // consistency checks
-      if (istexture!=tile->istexture) ERRORMSG();
-      if (col!=tile->col || row!=tile->row) ERRORMSG();
-      if (lod!=tile->lod) ERRORMSG();
 
       // upgrade lo prio to hi prio tile if necessary
       if (immediate || (!loprio && tile->loprio)) tile->loprio=FALSE;
