@@ -54,7 +54,6 @@ class minitree
 
    private:
 
-   minicoord::MINICOORD SYSGLB;
    int SKIPPRISMS;
 
    float COORD_DX,COORD_DY,COORD_DZ;

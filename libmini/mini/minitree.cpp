@@ -13,7 +13,6 @@ minitree::minitree(minicache *cache)
 
    TREEMODE=0;
 
-   SYSGLB=minicoord::MINICOORD_LINEAR;
    SKIPPRISMS=0;
 
    TREECACHE_NUM=1;
@@ -549,7 +548,7 @@ void minitree::treewarp(miniwarp *warp)
 
    if (warp==NULL)
       {
-      SYSGLB=minicoord::MINICOORD_LINEAR;
+      SKIPPRISMS=0;
 
       COORD_DX=0.0;
       COORD_DY=0.0;
@@ -565,8 +564,11 @@ void minitree::treewarp(miniwarp *warp)
       }
    else
       {
-      SYSGLB=warp->getglb();
+      // billboards are incompatible with non-linear warp modes
+      if (warp->getglb()!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
+      else SKIPPRISMS=0;
 
+      // warp matrix is assumed to be ortho-normal
       warp->getinvtra(invtra);
 
       COORD_DX=invtra[2].x;
@@ -581,10 +583,6 @@ void minitree::treewarp(miniwarp *warp)
       COORD_RY=invtra[0].y;
       COORD_RZ=invtra[0].z;
       }
-
-   // billboards are incompatible with non-linear warp modes
-   if (SYSGLB!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
-   else SKIPPRISMS=0;
    }
 
 // render tree cache
