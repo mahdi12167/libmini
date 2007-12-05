@@ -414,7 +414,7 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
       if (CACHE_PHASE==0)
          {
          CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
-         CACHE_WARP->getwarp(CACHE_WARP_MTX);
+         if (CACHE_WARP!=NULL) CACHE_WARP->getwarp(CACHE_WARP_MTX);
          }
 
       if (CACHE_PHASE==3)
@@ -440,12 +440,16 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
             }
 
       if (PRISMCACHE_CALLBACK!=NULL)
-         {
-         v1=miniv4d(ex,ey,ez,1.0);
-         PRISMCACHE_CALLBACK(phase,scale,
-                             CACHE_WARP_MTX[0]*v1,CACHE_WARP_MTX[1]*v1,CACHE_WARP_MTX[2]*v1,
-                             CALLBACK_DATA);
-         }
+         if (CACHE_WARP==NULL)
+            PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
+         else
+            {
+            v1=miniv4d(ex,ey,ez,1.0);
+
+            PRISMCACHE_CALLBACK(phase,scale,
+                                CACHE_WARP_MTX[0]*v1,CACHE_WARP_MTX[1]*v1,CACHE_WARP_MTX[2]*v1,
+                                CALLBACK_DATA);
+            }
       }
    }
 

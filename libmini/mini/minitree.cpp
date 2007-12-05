@@ -547,7 +547,23 @@ void minitree::treewarp(miniwarp *warp)
    {
    miniv3d invtra[3];
 
-   if (warp!=NULL)
+   if (warp==NULL)
+      {
+      SYSGLB=minicoord::MINICOORD_LINEAR;
+
+      COORD_DX=0.0;
+      COORD_DY=0.0;
+      COORD_DZ=-1.0;
+
+      COORD_UX=0.0;
+      COORD_UY=1.0;
+      COORD_UZ=0.0;
+
+      COORD_RX=1.0;
+      COORD_RY=0.0;
+      COORD_RZ=0.0;
+      }
+   else
       {
       SYSGLB=warp->getglb();
 
