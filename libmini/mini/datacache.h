@@ -155,6 +155,7 @@ class datacache
    void configure_dontfree(int dontfree=0); // free memory chunks returned by callbacks
    void configure_locthreads(int locthreads=1); // number of background threads for local access
    void configure_netthreads(int netthreads=10); // number of background threads for network access
+   void configure_autolockio(int autolockio=0); // automatically lock io operations
 
    protected:
 
@@ -248,6 +249,7 @@ class datacache
    int CONFIGURE_DONTFREE;
    int CONFIGURE_LOCTHREADS;
    int CONFIGURE_NETTHREADS;
+   int CONFIGURE_AUTOLOCKIO;
 
    static void mystaticrequest(unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
    static int mystaticcheck(unsigned char *mapfile,int istexture,void *data);

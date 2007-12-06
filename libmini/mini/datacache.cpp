@@ -80,9 +80,10 @@ datacache::datacache(miniload *terrain)
    CONFIGURE_DONTFREE=0;
    CONFIGURE_LOCTHREADS=1;
    CONFIGURE_NETTHREADS=10;
+   CONFIGURE_AUTOLOCKIO=0;
 
-   CLOUD->configure_dontfree(0);
-   CLOUD->configure_autolockio(0); //!!
+   CLOUD->configure_dontfree(CONFIGURE_DONTFREE);
+   CLOUD->configure_autolockio(0);
    }
 
 // destructor
@@ -820,9 +821,9 @@ void datacache::myrequest(unsigned char *mapfile,databuf *map,int istexture,int 
       }
 
    localname=localfilename(filename);
-   CLOUD->lockio();
+   if (CONFIGURE_AUTOLOCKIO!=0) CLOUD->lockio();
    REQUEST_CALLBACK(localname,istexture,map,REQUEST_DATA);
-   CLOUD->unlockio();
+   if (CONFIGURE_AUTOLOCKIO!=0) CLOUD->unlockio();
    free(localname);
 
    insertfilename(filename,TRUE,TRUE,TRUE,istexture!=0);
@@ -1189,3 +1190,6 @@ void datacache::configure_netthreads(int netthreads)
    CONFIGURE_NETTHREADS=netthreads;
    if (CONFIGURE_LOCTHREADS>CONFIGURE_NETTHREADS) CONFIGURE_LOCTHREADS=CONFIGURE_NETTHREADS;
    }
+
+void datacache::configure_autolockio(int autolockio)
+   {CONFIGURE_AUTOLOCKIO=autolockio;}

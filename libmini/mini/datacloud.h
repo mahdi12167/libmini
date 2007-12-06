@@ -139,7 +139,7 @@ class datacloud
 
    //! configuring
    void configure_dontfree(int dontfree=0); // free memory chunks returned by callbacks
-   void configure_autolockio(int autolockio=1); // automatically lock io operations
+   void configure_autolockio(int autolockio=0); // automatically lock io operations
    void configure_autocompress(int autocompress=0); // automatically compress texture data with s3tc
    void configure_lod0uncompressed(int lod0uncompressed=0); // automatically keep LOD0 uncompressed
    void configure_keepalive(float keepalive=10.0f); // time for which idling threads are kept alive
