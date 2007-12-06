@@ -154,7 +154,7 @@ class datacloud
    BOOLINT checkfile(unsigned char *mapfile,BOOLINT istexture);
 
    void insertjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
-   BOOLINT checkjob(unsigned char *mapfile,unsigned char *texfile,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
+   BOOLINT checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
    void insertjob(jobqueueelem *job,jobqueueelem *newjob);
    void deletejob(jobqueueelem *job);
 

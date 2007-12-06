@@ -360,7 +360,7 @@ BOOLINT datacloud::checkfile(unsigned char *mapfile,BOOLINT istexture)
 void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
    // check for already existing job
-   if (checkjob(mapfile,texfile,fogfile,immediate,loprio)) return;
+   if (checkjob(col,row,mapfile,hlod,texfile,tlod,fogfile,immediate,loprio)) return;
 
    jobqueueelem *newjob=new jobqueueelem;
 
@@ -389,20 +389,26 @@ void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsign
    }
 
 // check job for existance
-BOOLINT datacloud::checkjob(unsigned char *mapfile,unsigned char *texfile,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
+BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
    jobqueueelem *job;
 
-   // scan queue for equal job
+   // scan queue for already existing job
    for (job=JOBQUEUE; job!=NULL; job=job->next)
       {
+      // check column/row
+      if (col!=job->col || row!=job->row) continue;
+
       // check mapfile:
 
       if (mapfile!=NULL && job->hfield==NULL) continue;
       if (mapfile==NULL && job->hfield!=NULL) continue;
 
       if (mapfile!=NULL)
+         {
+         if (hlod!=job->hlod);
          if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) continue;
+         }
 
       // check texfile:
 
@@ -410,7 +416,10 @@ BOOLINT datacloud::checkjob(unsigned char *mapfile,unsigned char *texfile,unsign
       if (texfile==NULL && job->texture!=NULL) continue;
 
       if (texfile!=NULL)
+         {
+         if (tlod!=job->tlod);
          if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) continue;
+         }
 
       // check fogfile:
 
@@ -598,7 +607,7 @@ tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLIN
    {
    tilecacheelem *tile;
 
-   // scan cache for equal tile
+   // scan cache for already existing tile
    for (tile=TILECACHE; tile!=NULL; tile=tile->next)
       {
       // mismatch of tile spec
