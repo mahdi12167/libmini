@@ -392,7 +392,7 @@ void keypressed(unsigned char key)
       {
       treemode--;
       if (treemode<-2) treemode=-2;
-      else
+      else if (trees!=NULL)
          {
          trees->setmode(treemode);
          upd=1;
@@ -402,7 +402,7 @@ void keypressed(unsigned char key)
       {
       treemode++;
       if (treemode>12) treemode=12;
-      else
+      else if (trees!=NULL)
          {
          trees->setmode(treemode);
          upd=1;
