@@ -406,7 +406,7 @@ BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsi
 
       if (mapfile!=NULL)
          {
-         if (hlod!=job->hlod);
+         if (hlod!=job->hlod) continue;
          if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) continue;
          }
 
@@ -417,7 +417,7 @@ BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsi
 
       if (texfile!=NULL)
          {
-         if (tlod!=job->tlod);
+         if (tlod!=job->tlod) continue;
          if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) continue;
          }
 
