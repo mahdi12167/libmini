@@ -33,11 +33,11 @@ minicache::minicache()
    PRISM_SIZE1=PRISM_SIZE2=0;
    PRISM_MAXSIZE=1;
 
-   if ((PRISM_CACHE1=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-   if ((PRISM_CACHE2=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((PRISM_CACHE1=(float *)malloc(3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((PRISM_CACHE2=(float *)malloc(3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
 
    CACHE_ID=0;
-   CACHE_PHASE=LAST_PHASE=-1;
+   CACHE_PHASE=-1;
 
    CACHE_WARP=NULL;
 
@@ -260,9 +260,9 @@ void minicache::cache(int op,float a,float b,float c)
 
             if (op==TRIGGER_OP)
                {
-               if (CACHE_PHASE==0 && CACHE_PHASE!=LAST_PHASE) RAY->clearbuffer();
+               if (CACHE_PHASE==0) RAY->clearbuffer();
                else if (CACHE_PHASE==1) FIRST_SCALE=c;
-               else if (CACHE_PHASE==4 && CACHE_PHASE!=LAST_PHASE) RAY->swapbuffer();
+               else if (CACHE_PHASE==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -324,9 +324,9 @@ void minicache::cache(int op,float a,float b,float c)
 
             if (op==TRIGGER_OP)
                {
-               if (CACHE_PHASE==0 && CACHE_PHASE!=LAST_PHASE) RAY->clearbuffer();
+               if (CACHE_PHASE==0) RAY->clearbuffer();
                else if (CACHE_PHASE==1) FIRST_SCALE=c;
-               else if (CACHE_PHASE==4 && CACHE_PHASE!=LAST_PHASE) RAY->swapbuffer();
+               else if (CACHE_PHASE==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
@@ -369,32 +369,30 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
          z=CACHE_WARP_MTX[2]*v1;
          }
 
-   if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y-yf,yf,z,CALLBACK_DATA);
+   if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
    else
       {
       if (PRISM_SIZE1>=PRISM_MAXSIZE || PRISM_SIZE2>=PRISM_MAXSIZE)
          {
          PRISM_MAXSIZE*=2;
 
-         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
          }
 
       if (CACHE_NUM==1)
          {
-         PRISM_CACHE1[4*PRISM_SIZE1]=x;
-         PRISM_CACHE1[4*PRISM_SIZE1+1]=y;
-         PRISM_CACHE1[4*PRISM_SIZE1+2]=z;
-         PRISM_CACHE1[4*PRISM_SIZE1+3]=yf;
+         PRISM_CACHE1[3*PRISM_SIZE1]=x;
+         PRISM_CACHE1[3*PRISM_SIZE1+1]=y;
+         PRISM_CACHE1[3*PRISM_SIZE1+2]=z;
 
          PRISM_SIZE1++;
          }
       else
          {
-         PRISM_CACHE2[4*PRISM_SIZE2]=x;
-         PRISM_CACHE2[4*PRISM_SIZE2+1]=y;
-         PRISM_CACHE2[4*PRISM_SIZE2+2]=z;
-         PRISM_CACHE2[4*PRISM_SIZE2+3]=yf;
+         PRISM_CACHE2[3*PRISM_SIZE2]=x;
+         PRISM_CACHE2[3*PRISM_SIZE2+1]=y;
+         PRISM_CACHE2[3*PRISM_SIZE2+2]=z;
 
          PRISM_SIZE2++;
          }
@@ -406,51 +404,44 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
    miniv4d v1;
 
    CACHE_ID=id;
-   LAST_PHASE=CACHE_PHASE;
    CACHE_PHASE=phase;
 
-   if (CACHE_PHASE!=LAST_PHASE)
+   if (CACHE_PHASE==0)
       {
-      if (CACHE_PHASE==0)
-         {
-         CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
-         if (CACHE_WARP!=NULL) CACHE_WARP->getwarp(CACHE_WARP_MTX);
-         }
-
-      if (CACHE_PHASE==3)
-         if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(CACHE_WARP,CALLBACK_DATA);
+      CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
+      if (CACHE_WARP!=NULL) CACHE_WARP->getwarp(CACHE_WARP_MTX);
       }
+
+   if (CACHE_PHASE==3)
+      if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(CACHE_WARP,CALLBACK_DATA);
 
    cache(TRIGGER_OP,id,phase,scale);
 
-   if (CACHE_PHASE!=LAST_PHASE)
-      {
-      if (CACHE_PHASE==0)
-         if (CACHE_NUM==1)
-            {
-            CACHE_SIZE2=PRISM_SIZE2=0;
-            FANCNT2=VTXCNT2=0;
-            CACHE_NUM=2;
-            }
-         else
-            {
-            CACHE_SIZE1=PRISM_SIZE1=0;
-            FANCNT1=VTXCNT1=0;
-            CACHE_NUM=1;
-            }
+   if (CACHE_PHASE==0)
+      if (CACHE_NUM==1)
+         {
+         CACHE_SIZE2=PRISM_SIZE2=0;
+         FANCNT2=VTXCNT2=0;
+         CACHE_NUM=2;
+         }
+      else
+         {
+         CACHE_SIZE1=PRISM_SIZE1=0;
+         FANCNT1=VTXCNT1=0;
+         CACHE_NUM=1;
+         }
 
-      if (PRISMCACHE_CALLBACK!=NULL)
-         if (CACHE_WARP==NULL)
-            PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
-         else
-            {
-            v1=miniv4d(ex,ey,ez,1.0);
+   if (PRISMCACHE_CALLBACK!=NULL)
+      if (CACHE_WARP==NULL)
+         PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
+      else
+         {
+         v1=miniv4d(ex,ey,ez,1.0);
 
-            PRISMCACHE_CALLBACK(phase,scale,
-                                CACHE_WARP_MTX[0]*v1,CACHE_WARP_MTX[1]*v1,CACHE_WARP_MTX[2]*v1,
-                                CALLBACK_DATA);
-            }
-      }
+         PRISMCACHE_CALLBACK(phase,scale,
+                             CACHE_WARP_MTX[0]*v1,CACHE_WARP_MTX[1]*v1,CACHE_WARP_MTX[2]*v1,
+                             CALLBACK_DATA);
+         }
    }
 
 // render back buffer of the cache
@@ -605,15 +596,11 @@ int minicache::rendertrigger(int id,int phase,float scale)
 
 #ifndef NOOGL
 
-   int lastphase;
-
    RENDER_ID=id;
-   lastphase=RENDER_PHASE;
    RENDER_PHASE=phase;
 
-   if (phase==1) TERRAIN[RENDER_ID].scale=scale;
-
-   if (phase==2 && phase!=lastphase)
+   if (RENDER_PHASE==1) TERRAIN[RENDER_ID].scale=scale;
+   else if (RENDER_PHASE==2)
       {
       initstate();
       mtxpush();
@@ -639,8 +626,7 @@ int minicache::rendertrigger(int id,int phase,float scale)
 
       glEnableClientState(GL_VERTEX_ARRAY);
       }
-
-   if (phase==3 && phase!=lastphase)
+   else if (RENDER_PHASE==3)
       {
       if (OPACITY<1.0f)
          {
@@ -693,11 +679,10 @@ int minicache::rendertrigger(int id,int phase,float scale)
          mtxmodel();
          }
       }
-
-   if (phase==4) TERRAIN[RENDER_ID].lambda=scale;
-
-   if (phase==4 && phase!=lastphase)
+   else if (RENDER_PHASE==4)
       {
+      TERRAIN[RENDER_ID].lambda=scale;
+
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
 
       if (SEA_A!=1.0f) disableblending();
@@ -720,7 +705,12 @@ int minicache::rendertrigger(int id,int phase,float scale)
       exitstate();
 
       if (POSTSEA_CB!=NULL) POSTSEA_CB(CB_DATA);
+      }
 
+   if (PRISMTRIGGER_CALLBACK!=NULL)
+      vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
+
+   if (RENDER_PHASE==4)
       if (PRISMEDGE_CALLBACK==NULL)
          if (PRISMRENDER_CALLBACK!=NULL)
             if (CACHE_NUM==1)
@@ -734,7 +724,6 @@ int minicache::rendertrigger(int id,int phase,float scale)
             else
                vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,
                                  PRISM_R,PRISM_G,PRISM_B,PRISM_A);
-      }
 
 #endif
 
@@ -762,9 +751,9 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
 
    color(pr,pg,pb,pa);
 
-   glVertexPointer(3,GL_FLOAT,1,cache);
+   glVertexPointer(3,GL_FLOAT,0,cache);
    glEnableClientState(GL_VERTEX_ARRAY);
-   glDrawArrays(GL_TRIANGLES,0,cnt);
+   glDrawArrays(GL_TRIANGLES,0,3*cnt);
    glDisableClientState(GL_VERTEX_ARRAY);
 
    vtx+=3*cnt;

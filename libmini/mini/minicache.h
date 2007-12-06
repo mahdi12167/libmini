@@ -102,8 +102,7 @@ class minicache
    struct TERRAIN_STRUCT
       {
       minitile *tile;
-      float scale;
-      float lambda;
+      float scale,lambda;
       };
 
    typedef TERRAIN_STRUCT TERRAIN_TYPE;
@@ -136,7 +135,6 @@ class minicache
 
    int CACHE_ID;
    int CACHE_PHASE;
-   int LAST_PHASE;
 
    int LAST_BEGINFAN;
 
