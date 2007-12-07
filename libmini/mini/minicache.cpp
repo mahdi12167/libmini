@@ -364,25 +364,46 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
    {
    miniv4d v1;
 
-   if (CACHE_WARP!=NULL)
-      if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
-         {
-         x+=CACHE_WARP_MTX[0].w;
-         y+=CACHE_WARP_MTX[1].w;
-         z+=CACHE_WARP_MTX[2].w;
-         }
-      else
-         {
-         v1=miniv4d(x,y,z,1.0);
+   if (PRISMEDGE_CALLBACK!=NULL)
+      {
+      y-=yf;
 
-         x=CACHE_WARP_MTX[0]*v1;
-         y=CACHE_WARP_MTX[1]*v1;
-         z=CACHE_WARP_MTX[2]*v1;
-         }
+      if (CACHE_WARP!=NULL)
+         if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
+            {
+            x+=CACHE_WARP_MTX[0].w;
+            y+=CACHE_WARP_MTX[1].w;
+            z+=CACHE_WARP_MTX[2].w;
+            }
+         else
+            {
+            v1=miniv4d(x,y,z,1.0);
 
-   if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
+            x=CACHE_WARP_MTX[0]*v1;
+            y=CACHE_WARP_MTX[1]*v1;
+            z=CACHE_WARP_MTX[2]*v1;
+            }
+
+      PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
+      }
    else
       {
+      if (CACHE_WARP!=NULL)
+         if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
+            {
+            x+=CACHE_WARP_MTX[0].w;
+            y+=CACHE_WARP_MTX[1].w;
+            z+=CACHE_WARP_MTX[2].w;
+            }
+         else
+            {
+            v1=miniv4d(x,y,z,1.0);
+
+            x=CACHE_WARP_MTX[0]*v1;
+            y=CACHE_WARP_MTX[1]*v1;
+            z=CACHE_WARP_MTX[2]*v1;
+            }
+
       if (PRISM_SIZE1>=PRISM_MAXSIZE || PRISM_SIZE2>=PRISM_MAXSIZE)
          {
          PRISM_MAXSIZE*=2;
@@ -422,10 +443,9 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
       {
       CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
       if (CACHE_WARP!=NULL) CACHE_WARP->getwarp(CACHE_WARP_MTX);
-      }
 
-   if (CACHE_PHASE==3)
       if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(CACHE_WARP,CALLBACK_DATA);
+      }
 
    cache(TRIGGER_OP,phase,scale);
 
@@ -788,6 +808,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\
       DP4 pos.w,mat[3],vtx; \n\
+      MOV result.fogcoord.x,pos.z; \n\
       MOV result.position,pos; \n\
       END";
 

@@ -772,7 +772,7 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
          wrz=w*COORD_RZ;
 
          cachedata(x-wrx,y-wry,z-wrz);
-         cachedata(x+wrz,y+wry,z+wrz);
+         cachedata(x+wrx,y+wry,z+wrz);
          cachedata(x+hux,y+huy,z+huz);
 
          cachedata(x-wdx,y-wdy,z-wdz);
@@ -1743,8 +1743,8 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,pos; \n\
-      MOV vtx,vertex.position; \n\
-      SUB col.w,vtx.y,vtx.w; \n\
+      MOV vtx,vertex.position.xywz; \n\
+      MOV col.w,vtx.w; \n\
       MUL result.color.w,col.w,c.z; \n\
       MOV vtx.w,c.w; \n\
       DP4 pos.x,mat[0],vtx; \n\
