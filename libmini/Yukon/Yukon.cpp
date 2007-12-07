@@ -23,7 +23,7 @@ void displayfunc()
    double time;
 
    const float fps=25.0f;
-   const float res=1.0E6f;
+   const float res=1.0E4f;
 
    const float ex1=0.0f,ey1=250.0f,ez1=750.0f;
    const float ex2=0.0f,ey2=75.0f,ez2=500.0f;
