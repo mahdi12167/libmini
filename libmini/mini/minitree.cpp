@@ -1026,8 +1026,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
       END";
 
    static char *vtxprog2="!!ARBvp1.0 \n\
-      PARAM c1=program.env[0]; \n\
-      PARAM c2=program.env[1]; \n\
+      PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,tex,pos; \n\
       MOV vtx,vertex.position; \n\
@@ -1303,7 +1302,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],mtx[8],0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],0.0f,mtx[8],0.0f);
 
          if (TREECACHE_TEXID==0)
             {
