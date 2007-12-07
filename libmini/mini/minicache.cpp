@@ -195,8 +195,11 @@ void minicache::cache_texmap(int m,int n,int S)
 void minicache::cache_prismedge(float x,float y,float yf,float z)
    {CACHE->cacheprismedge(x,y,yf,z);}
 
-void minicache::cache_trigger(int id,int phase,float scale,float ex,float ey,float ez)
-   {CACHE->cachetrigger(id,phase,scale,ex,ey,ez);}
+void minicache::cache_trigger(int phase,float scale,float ex,float ey,float ez)
+   {CACHE->cachetrigger(phase,scale,ex,ey,ez);}
+
+void minicache::cache_sync(int id)
+   {CACHE->cachesync(id);}
 
 // caching functions:
 
@@ -261,7 +264,7 @@ void minicache::cache(int op,float a,float b,float c)
             if (op==TRIGGER_OP)
                {
                if (CACHE_PHASE==0) RAY->clearbuffer();
-               else if (CACHE_PHASE==1) FIRST_SCALE=c;
+               else if (CACHE_PHASE==1) FIRST_SCALE=b;
                else if (CACHE_PHASE==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
@@ -325,7 +328,7 @@ void minicache::cache(int op,float a,float b,float c)
             if (op==TRIGGER_OP)
                {
                if (CACHE_PHASE==0) RAY->clearbuffer();
-               else if (CACHE_PHASE==1) FIRST_SCALE=c;
+               else if (CACHE_PHASE==1) FIRST_SCALE=b;
                else if (CACHE_PHASE==4) RAY->swapbuffer();
                }
             else if (op==TEXMAP_OP)
@@ -399,11 +402,10 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
       }
    }
 
-void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,float ez)
+void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
    {
    miniv4d v1;
 
-   CACHE_ID=id;
    CACHE_PHASE=phase;
 
    if (CACHE_PHASE==0)
@@ -415,9 +417,11 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
    if (CACHE_PHASE==3)
       if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(CACHE_WARP,CALLBACK_DATA);
 
-   cache(TRIGGER_OP,id,phase,scale);
+   cache(TRIGGER_OP,phase,scale);
 
    if (CACHE_PHASE==0)
+      {
+      // swap vertex buffers
       if (CACHE_NUM==1)
          {
          CACHE_SIZE2=PRISM_SIZE2=0;
@@ -431,6 +435,28 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
          CACHE_NUM=1;
          }
 
+      // shrink vertex buffer
+      if (CACHE_SIZE1<CACHE_MAXSIZE/4 && CACHE_SIZE2<CACHE_MAXSIZE/4)
+         {
+         CACHE_MAXSIZE/=2;
+
+         if ((CACHE1_OP=(unsigned char *)realloc(CACHE1_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
+         if ((CACHE2_OP=(unsigned char *)realloc(CACHE2_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
+
+         if ((CACHE1_ARG=(float *)realloc(CACHE1_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((CACHE2_ARG=(float *)realloc(CACHE2_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         }
+
+      // shrink prism buffer
+      if (PRISM_SIZE1<PRISM_MAXSIZE/4 && PRISM_SIZE2<PRISM_MAXSIZE/4)
+         {
+         PRISM_MAXSIZE/=2;
+
+         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         }
+      }
+
    if (PRISMCACHE_CALLBACK!=NULL)
       if (CACHE_WARP==NULL)
          PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
@@ -443,6 +469,9 @@ void minicache::cachetrigger(int id,int phase,float scale,float ex,float ey,floa
                              CALLBACK_DATA);
          }
    }
+
+void minicache::cachesync(int id)
+   {CACHE_ID=id;}
 
 // render back buffer of the cache
 int minicache::rendercache()
@@ -470,7 +499,7 @@ int minicache::rendercache()
                rendertexmap(ftrc(CACHE2_ARG[3*i]+0.5f),ftrc(CACHE2_ARG[3*i+1]+0.5f),ftrc(CACHE2_ARG[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE2_ARG[3*i]+0.5f),ftrc(CACHE2_ARG[3*i+1]+0.5f),CACHE2_ARG[3*i+2]);
+               vtx+=rendertrigger(ftrc(CACHE2_ARG[3*i]+0.5f),CACHE2_ARG[3*i+1]);
                break;
             }
    else
@@ -488,7 +517,7 @@ int minicache::rendercache()
                rendertexmap(ftrc(CACHE1_ARG[3*i]+0.5f),ftrc(CACHE1_ARG[3*i+1]+0.5f),ftrc(CACHE1_ARG[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE1_ARG[3*i]+0.5f),ftrc(CACHE1_ARG[3*i+1]+0.5f),CACHE1_ARG[3*i+2]);
+               vtx+=rendertrigger(ftrc(CACHE1_ARG[3*i]+0.5f),CACHE1_ARG[3*i+1]);
                break;
             }
 
@@ -590,13 +619,12 @@ void minicache::rendertexmap(int m,int n,int S)
 #endif
    }
 
-int minicache::rendertrigger(int id,int phase,float scale)
+int minicache::rendertrigger(int phase,float scale)
    {
    int vtx=0;
 
 #ifndef NOOGL
 
-   RENDER_ID=id;
    RENDER_PHASE=phase;
 
    if (RENDER_PHASE==1) TERRAIN[RENDER_ID].scale=scale;
@@ -808,6 +836,7 @@ void minicache::attach(minitile *terrain,
                                   NULL,cache_texmap,
                                   cache_prismedge,
                                   cache_trigger,
+                                  cache_sync,
                                   id);
 
             NUMTERRAIN++;

@@ -116,14 +116,16 @@ class minicache
    static void cache_fanvertex(float i,float y,float j);
    static void cache_texmap(int m,int n,int S);
    static void cache_prismedge(float x,float y,float yf,float z);
-   static void cache_trigger(int id,int phase,float scale,float ex,float ey,float ez);
+   static void cache_trigger(int phase,float scale,float ex,float ey,float ez);
+   static void cache_sync(int id);
 
    void cache(int op,float a=0.0f,float b=0.0f,float c=0.0f);
    void cacheprismedge(float x,float y,float yf,float z);
-   void cachetrigger(int id,int phase,float scale,float ex,float ey,float ez);
+   void cachetrigger(int phase,float scale,float ex,float ey,float ez);
+   void cachesync(int id);
 
    inline void rendertexmap(int m,int n,int S);
-   inline int rendertrigger(int id,int phase,float scale);
+   inline int rendertrigger(int phase,float scale);
 
    int CACHE_NUM;
 
