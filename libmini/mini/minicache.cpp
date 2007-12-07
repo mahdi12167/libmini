@@ -33,8 +33,8 @@ minicache::minicache()
    PRISM_SIZE1=PRISM_SIZE2=0;
    PRISM_MAXSIZE=1;
 
-   if ((PRISM_CACHE1=(float *)malloc(3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-   if ((PRISM_CACHE2=(float *)malloc(3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((PRISM_CACHE1=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((PRISM_CACHE2=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
 
    CACHE_ID=0;
    CACHE_PHASE=-1;
@@ -107,6 +107,8 @@ minicache::minicache()
 
    SEASHADERTEXID=0;
 
+   PRISMCACHE_VTXPROGID=0;
+
    PRESEA_CB=NULL;
    POSTSEA_CB=NULL;
 
@@ -169,6 +171,12 @@ minicache::~minicache()
       if (SEAPROGID!=0)
          {
          progid=SEAPROGID;
+         glDeleteProgramsARB(1,&progid);
+         }
+
+      if (PRISMCACHE_VTXPROGID!=0)
+         {
+         progid=PRISMCACHE_VTXPROGID;
          glDeleteProgramsARB(1,&progid);
          }
       }
@@ -379,23 +387,25 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
          {
          PRISM_MAXSIZE*=2;
 
-         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
          }
 
       if (CACHE_NUM==1)
          {
-         PRISM_CACHE1[3*PRISM_SIZE1]=x;
-         PRISM_CACHE1[3*PRISM_SIZE1+1]=y;
-         PRISM_CACHE1[3*PRISM_SIZE1+2]=z;
+         PRISM_CACHE1[4*PRISM_SIZE1]=x;
+         PRISM_CACHE1[4*PRISM_SIZE1+1]=y;
+         PRISM_CACHE1[4*PRISM_SIZE1+2]=yf;
+         PRISM_CACHE1[4*PRISM_SIZE1+3]=z;
 
          PRISM_SIZE1++;
          }
       else
          {
-         PRISM_CACHE2[3*PRISM_SIZE2]=x;
-         PRISM_CACHE2[3*PRISM_SIZE2+1]=y;
-         PRISM_CACHE2[3*PRISM_SIZE2+2]=z;
+         PRISM_CACHE2[4*PRISM_SIZE2]=x;
+         PRISM_CACHE2[4*PRISM_SIZE2+1]=y;
+         PRISM_CACHE2[4*PRISM_SIZE2+2]=yf;
+         PRISM_CACHE2[4*PRISM_SIZE2+3]=z;
 
          PRISM_SIZE2++;
          }
@@ -452,8 +462,8 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
          {
          PRISM_MAXSIZE/=2;
 
-         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,3*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
          }
       }
 
@@ -765,7 +775,36 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
 
 #ifndef NOOGL
 
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   static char *vtxprog="!!ARBvp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      TEMP vtx,pos; \n\
+      MOV vtx,vertex.position.xywz; \n\
+      MOV result.color,vertex.color; \n\
+      MOV vtx.w,c.w; \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      MOV result.position,pos; \n\
+      END";
+
+   GLuint vtxprogid;
+
    if (lambda<=0.0f) return(vtx);
+
+   initglexts();
+   initwglprocs();
+
+   if (PRISMCACHE_VTXPROGID==0)
+      {
+      glGenProgramsARB(1,&vtxprogid);
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
+      glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
+      PRISMCACHE_VTXPROGID=vtxprogid;
+      }
 
    initstate();
 
@@ -777,14 +816,22 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
    mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
    mtxmodel();
 
+   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISMCACHE_VTXPROGID);
+   glEnable(GL_VERTEX_PROGRAM_ARB);
+
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
+
    color(pr,pg,pb,pa);
 
-   glVertexPointer(3,GL_FLOAT,0,cache);
+   glVertexPointer(4,GL_FLOAT,0,cache);
    glEnableClientState(GL_VERTEX_ARRAY);
    glDrawArrays(GL_TRIANGLES,0,3*cnt);
    glDisableClientState(GL_VERTEX_ARRAY);
 
    vtx+=3*cnt;
+
+   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
+   glDisable(GL_VERTEX_PROGRAM_ARB);
 
    mtxpop();
    mtxproj();
@@ -792,6 +839,8 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
    mtxmodel();
 
    exitstate();
+
+#endif
 
 #endif
 

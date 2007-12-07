@@ -209,6 +209,8 @@ class minicache
    int SEASHADERTEXWIDTH;
    int SEASHADERTEXHEIGHT;
 
+   int PRISMCACHE_VTXPROGID;
+
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
    void (*PRISMWARP_CALLBACK)(miniwarp *warp,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
