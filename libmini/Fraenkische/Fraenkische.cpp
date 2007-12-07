@@ -177,7 +177,7 @@ static const int fpu=100;
 static int upd=fpu;
 
 // global parameters
-static const float res=2.0E6f;
+static const float res=1.0E4f;
 static const float minres=25.0f;
 static const float bsafety=0.05f;
 
