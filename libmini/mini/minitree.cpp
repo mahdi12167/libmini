@@ -763,9 +763,9 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
          wdy=w*COORD_DY;
          wdz=w*COORD_DZ;
 
-         hux=w*COORD_UX;
-         huy=w*COORD_UY;
-         huz=w*COORD_UZ;
+         hux=h*COORD_UX;
+         huy=h*COORD_UY;
+         huz=h*COORD_UZ;
 
          wrx=w*COORD_RX;
          wry=w*COORD_RY;
@@ -789,9 +789,9 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
          wdy=w*COORD_DY;
          wdz=w*COORD_DZ;
 
-         hux=w*COORD_UX;
-         huy=w*COORD_UY;
-         huz=w*COORD_UZ;
+         hux=h*COORD_UX;
+         huy=h*COORD_UY;
+         huz=h*COORD_UZ;
 
          wrx=w*COORD_RX;
          wry=w*COORD_RY;
