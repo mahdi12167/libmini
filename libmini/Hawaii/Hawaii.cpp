@@ -436,7 +436,7 @@ static const int fpu=5;
 static int upd=fpu;
 
 // global resolution
-static const float res=1.0E6f;
+static const float res=1.0E4f;
 
 // sea level brick configuration
 static const float sea_ext=10000.0f;
