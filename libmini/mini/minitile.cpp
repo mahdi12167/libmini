@@ -188,6 +188,7 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
    TEXMAP_CALLBACK=NULL;
    PRISMEDGE_CALLBACK=NULL;
    TRIGGER_CALLBACK=NULL;
+   SYNC_CALLBACK=NULL;
 
    REQUEST_CALLBACK=NULL;
    PRELOAD_CALLBACK=NULL;
