@@ -240,8 +240,11 @@ void minilayer::request_callback(char *file,int istexture,databuf *buf,void *dat
    if (!obj->LPARAMS.usepnm) buf->loaddata(file);
    else buf->loadPNMdata(file);
 
-   if (istexture==0 && (buf->type==3 || buf->type==4 || buf->type==5 || buf->type==6)) ERRORMSG();
-   if (istexture!=0 && (buf->type==0 || buf->type==1 || buf->type==2)) ERRORMSG();
+   if (!buf->missing())
+      {
+      if (istexture==0 && (buf->type==3 || buf->type==4 || buf->type==5 || buf->type==6)) ERRORMSG();
+      if (istexture!=0 && (buf->type==0 || buf->type==1 || buf->type==2)) ERRORMSG();
+      }
    }
 
 // wrappers for internal callbacks:
