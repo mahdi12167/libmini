@@ -147,6 +147,7 @@ void datacache::setremoteurl(const char *url)
    if (RURL!=NULL) free(RURL);
 
    if (url==NULL) RURL=NULL;
+   else if (strstr(RURL,"file://")!=NULL) RURL=strdup(url+7);
    else RURL=strdup(url);
 
    LOCAL=TRUE;
