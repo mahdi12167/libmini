@@ -312,7 +312,8 @@ void minitile::setcallbacks(void (*beginfan)(),
                             void (*notify)(int i,int j,int s),
                             void (*texmap)(int m,int n,int S),
                             void (*prismedge)(float x,float y,float yf,float z),
-                            void (*trigger)(int id,int phase,float scale,float ex,float ey,float ez),
+                            void (*trigger)(int phase,float scale,float ex,float ey,float ez),
+                            void (*sync)(int id),
                             int id)
    {
    ID=id;
@@ -323,6 +324,7 @@ void minitile::setcallbacks(void (*beginfan)(),
    TEXMAP_CALLBACK=texmap;
    PRISMEDGE_CALLBACK=prismedge;
    TRIGGER_CALLBACK=trigger;
+   SYNC_CALLBACK=sync;
 
    PHASE=-1;
    }
@@ -663,13 +665,15 @@ void minitile::draw(float res,
          }
       }
 
+   if (SYNC_CALLBACK!=NULL) SYNC_CALLBACK(ID);
+
    width=RIGHT-LEFT+1;
    height=TOP-BOTTOM+1;
 
    if (PHASE<0 || update<=1)
       {
       PHASE=0;
-      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,0.0f,ex,ey,ez);
+      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
 
       if (SEALEVEL==-MAXFLOAT) steps=2*width*height;
       else steps=3*width*height;
@@ -681,7 +685,7 @@ void minitile::draw(float res,
    if (PHASE==0)
       {
       PHASE=1;
-      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,SCALE*RELSCALE,ex,ey,ez);
+      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,SCALE*RELSCALE,ex,ey,ez);
       }
 
    for (i=0; i<steps; i++)
@@ -714,12 +718,12 @@ void minitile::draw(float res,
             ROW=BOTTOM;
 
             PHASE++;
-            if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
+            if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
 
             if (PHASE==3 && SEALEVEL==-MAXFLOAT)
                {
                PHASE++;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,LAMBDA,ex,ey,ez);
+               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,LAMBDA,ex,ey,ez);
                }
 
             if (PHASE==4)
@@ -738,7 +742,7 @@ void minitile::draw(float res,
                   }
 
                PHASE=0;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(ID,PHASE,0.0f,ex,ey,ez);
+               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
 
                break;
                }

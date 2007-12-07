@@ -74,8 +74,9 @@ class minitile
                      void (*notify)(int i,int j,int s)=0, // optional
                      void (*texmap)(int m,int n,int S)=0, // optional
                      void (*prismedge)(float x,float y,float yf,float z)=0, // optional
-                     void (*trigger)(int id,int phase,float scale,float ex,float ey,float ez)=0, // mandatory for incremental update
-                     int id=0); // id for multiple layers
+                     void (*trigger)(int phase,float scale,float ex,float ey,float ez)=0, // mandatory for incremental update
+                     void (*sync)(int id)=0, // mandatory for multiple tilesets
+                     int id=0); // id for multiple tilesets
 
    //! copy warp object
    void copywarp(miniwarp *warp);
@@ -264,7 +265,8 @@ class minitile
    void (*NOTIFY_CALLBACK)(int i,int j,int s);
    void (*TEXMAP_CALLBACK)(int m,int n,int S);
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z);
-   void (*TRIGGER_CALLBACK)(int id,int phase,float scale,float ex,float ey,float ez);
+   void (*TRIGGER_CALLBACK)(int phase,float scale,float ex,float ey,float ez);
+   void (*SYNC_CALLBACK)(int id);
 
    void (*REQUEST_CALLBACK)(int col,int row,int needtex,void *data);
    void (*PRELOAD_CALLBACK)(int col,int row,void *data);
