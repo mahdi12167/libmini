@@ -226,6 +226,9 @@ class minilayer
    //! get the flattening factor
    float getflattening();
 
+   //! get the internal cache id
+   int minilayer::getcacheid(); // -1 = none
+
    //! render waypoints
    void renderpoints();
 
@@ -299,7 +302,7 @@ class minilayer
 
    void updatecoords();
 
-   int getid();
+   int getthreadid();
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);

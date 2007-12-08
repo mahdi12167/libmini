@@ -189,8 +189,8 @@ minilayer::~minilayer()
       delete TILECACHE;
 
       // clean-up pthreads and libcurl
-      threadexit(getid());
-      curlexit(getid());
+      threadexit(getthreadid());
+      curlexit(getthreadid());
 
       // delete the terrain
       delete TERRAIN;
@@ -249,7 +249,7 @@ void minilayer::request_callback(char *file,int istexture,databuf *buf,void *dat
 
 // wrappers for internal callbacks:
 
-int minilayer::getid()
+int minilayer::getthreadid()
    {
    if (TERRAIN->getminitile()==NULL) return(0);
    else return(TERRAIN->getminitile()->getid()+1);
@@ -264,37 +264,37 @@ void minilayer::threadexit(int id)
 void minilayer::startthread(void *(*thread)(void *background),backarrayelem *background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->STARTTHREAD(thread,background,obj->getid(),obj->THREADDATA);
+   obj->STARTTHREAD(thread,background,obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::jointhread(backarrayelem *background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->JOINTHREAD(background,obj->getid(),obj->THREADDATA);
+   obj->JOINTHREAD(background,obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::lock_cs(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->LOCK_CS(obj->getid(),obj->THREADDATA);
+   obj->LOCK_CS(obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::unlock_cs(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->UNLOCK_CS(obj->getid(),obj->THREADDATA);
+   obj->UNLOCK_CS(obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::lock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->LOCK_IO(obj->getid(),obj->THREADDATA);
+   obj->LOCK_IO(obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::unlock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->UNLOCK_IO(obj->getid(),obj->THREADDATA);
+   obj->UNLOCK_IO(obj->getthreadid(),obj->THREADDATA);
    }
 
 void minilayer::curlinit(int threads,int id,char *proxyname,char *proxyport)
@@ -306,13 +306,13 @@ void minilayer::curlexit(int id)
 void minilayer::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->GETURL(src_url,src_id,src_file,dst_file,background,obj->getid(),obj->CURLDATA);
+   obj->GETURL(src_url,src_id,src_file,dst_file,background,obj->getthreadid(),obj->CURLDATA);
    }
 
 int minilayer::checkURL(char *src_url,char *src_id,char *src_file,void *data)
    {
    minilayer *obj=(minilayer *)data;
-   return(obj->CHECKURL(src_url,src_id,src_file,obj->getid(),obj->CURLDATA));
+   return(obj->CHECKURL(src_url,src_id,src_file,obj->getthreadid(),obj->CURLDATA));
    }
 
 // set internal callbacks
@@ -552,8 +552,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    CACHE->attach(TERRAIN->getminitile());
 
    // initialize pthreads and libcurl
-   threadinit(LPARAMS.numthreads,getid());
-   curlinit(LPARAMS.numthreads,getid(),LPARAMS.proxyname,LPARAMS.proxyport);
+   threadinit(LPARAMS.numthreads,getthreadid());
+   curlinit(LPARAMS.numthreads,getthreadid(),LPARAMS.proxyname,LPARAMS.proxyport);
 
    // success
    return(LOADED=TRUE);
@@ -842,6 +842,13 @@ void minilayer::flatten(float relscale)
 // get the flattening factor
 float minilayer::getflattening()
    {return(TERRAIN->getrelscale());}
+
+// get the internal cache id
+int minilayer::getcacheid()
+   {
+   if (TERRAIN->getminitile()==NULL) return(-1);
+   return(TERRAIN->getminitile()->getid());
+   }
 
 // render waypoints
 void minilayer::renderpoints()

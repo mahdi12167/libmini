@@ -45,7 +45,7 @@ class minicache
    //! define color of semi-transparent sea
    void setseacolor(float r=0.0f,float g=0.5f,float b=1.0f,float a=1.0f);
 
-   //! define rendering color of prism boundary
+   //! define color of prism boundary
    void setprismcolor(float prismR=1.0f,float prismG=1.0f,float prismB=1.0f,float prismA=0.9f);
 
    //! define optional vertex shader
