@@ -760,7 +760,7 @@ float miniterrain::getflattening()
 double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    {
    int n;
-   
+
    int nearest;
 
    double dist;
