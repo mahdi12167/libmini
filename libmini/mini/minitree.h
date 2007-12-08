@@ -54,6 +54,8 @@ class minitree
 
    private:
 
+   int PRISM_ID;
+
    int SKIPPRISMS;
 
    float COORD_DX,COORD_DY,COORD_DZ;
@@ -98,11 +100,13 @@ class minitree
    static void prismwarp(miniwarp *warp,void *data);
    static int prismrender(float *cache,int cnt,float lambda,void *data);
    static int prismtrigger(int phase,void *data);
+   static void prismsync(int id,void *data);
 
    void treeedge(float x,float y,float yf,float z);
    void treecache(int phase,float scale,float ex,float ey,float ez);
    void treewarp(miniwarp *warp);
    int treetrigger(int phase);
+   void treesync(int id);
 
    void treedata(float x1,float y1,float z1,float h1,
                  float x2,float y2,float z2,float h2,

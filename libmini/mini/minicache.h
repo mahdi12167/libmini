@@ -30,6 +30,7 @@ class minicache
                void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data)=0,
                int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
                int (*prismtrigger)(int phase,void *data)=0,
+               void (*prismsync)(int id,void *data)=0,
                void *data=0);
 
    //! detach a tileset
@@ -74,11 +75,11 @@ class minicache
                  void *data=0);
 
    //! get number of rendered primitives
-   int getfancnt();
-   int getvtxcnt();
+   int getfancnt(); // rendered triangle fans
+   int getvtxcnt(); // rendered vertices
 
-   //! get the ray intersection test object
-   miniray *getray() {return(RAY);}
+   //! get ray intersection test object
+   miniray *getray(int id) {return(TERRAIN[id].ray);}
 
    //! configuring
    void configure_overlap(float overlap=0.02f); // overlap of tile borders (prevents pixel flickering)
@@ -103,7 +104,45 @@ class minicache
       {
       minitile *tile;
       float scale,lambda;
+
+      int cache_num;
+
+      unsigned char *cache1_op,*cache2_op;
+      float *cache1_arg,*cache2_arg;
+
+      int cache_size1,cache_size2;
+      int cache_maxsize;
+
+      int cache_phase;
+
+      int last_beginfan;
+
+      int fancnt1,fancnt2;
+      int vtxcnt1,vtxcnt2;
+
+      float *prism_cache1,*prism_cache2;
+
+      int prism_size1,prism_size2;
+      int prism_maxsize;
+
+      miniwarp *cache_warp;
+      miniv4d cache_warp_mtx[3];
+
+      miniray *ray;
+
+      int first_fancnt;
+      int first_beginfan;
+      float first_scale;
+      int first_col;
+      int first_row;
+      int first_size;
+
+      int render_phase;
+      int render_count;
       };
+
+   int CACHE_ID;
+   int RENDER_ID;
 
    typedef TERRAIN_STRUCT TERRAIN_TYPE;
 
@@ -124,49 +163,18 @@ class minicache
    void cachetrigger(int phase,float scale,float ex,float ey,float ez);
    void cachesync(int id);
 
+   inline int rendercache(int id,int phase);
+
    inline void rendertexmap(int m,int n,int S);
+
+   inline int rendertrigger(int phase);
    inline int rendertrigger(int phase,float scale);
-
-   int CACHE_NUM;
-
-   unsigned char *CACHE1_OP,*CACHE2_OP;
-   float *CACHE1_ARG,*CACHE2_ARG;
-
-   int CACHE_SIZE1,CACHE_SIZE2;
-   int CACHE_MAXSIZE;
-
-   int CACHE_ID;
-   int CACHE_PHASE;
-
-   int LAST_BEGINFAN;
-
-   miniwarp *CACHE_WARP;
-   miniv4d CACHE_WARP_MTX[3];
-
-   miniray *RAY;
-
-   int FIRST_FANCNT;
-   int FIRST_BEGINFAN;
-   float FIRST_SCALE;
-   int FIRST_COL;
-   int FIRST_ROW;
-   int FIRST_SIZE;
-
-   int RENDER_ID;
-   int RENDER_PHASE;
+   inline int rendertrigger();
 
    float OPACITY;
    float SEA_R,SEA_G,SEA_B,SEA_A;
 
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;
-
-   float *PRISM_CACHE1,*PRISM_CACHE2;
-
-   int PRISM_SIZE1,PRISM_SIZE2;
-   int PRISM_MAXSIZE;
-
-   int FANCNT1,FANCNT2;
-   int VTXCNT1,VTXCNT2;
 
    char *VTXPROG;
    int VTXDIRTY;
@@ -216,6 +224,7 @@ class minicache
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
    int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,void *data);
    int (*PRISMTRIGGER_CALLBACK)(int phase,void *data);
+   void (*PRISMSYNC_CALLBACK)(int id,void *data);
    void *CALLBACK_DATA;
 
    void (*PRESEA_CB)(void *data);
@@ -232,6 +241,9 @@ class minicache
    float CONFIGURE_ZSCALE_PRISMS;
    float CONFIGURE_ENABLERAY;
 
+   void initterrain(TERRAIN_TYPE *terrain);
+   void freeterrain(TERRAIN_TYPE *terrain);
+
    int renderprisms(float *cache,int cnt,float lambda,
                     float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f);
 
@@ -244,6 +256,9 @@ class minicache
 
    void enableseashader();
    void disableseashader();
+
+   int getfancnt(int id);
+   int getvtxcnt(int id);
 
    // OpenGL extensions:
 

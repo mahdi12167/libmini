@@ -19,34 +19,8 @@ minicache::minicache()
    TERRAIN=NULL;
    NUMTERRAIN=MAXTERRAIN=0;
 
-   CACHE_NUM=1;
-
-   CACHE_SIZE1=CACHE_SIZE2=0;
-   CACHE_MAXSIZE=1;
-
-   if ((CACHE1_OP=(unsigned char *)malloc(CACHE_MAXSIZE))==NULL) ERRORMSG();
-   if ((CACHE2_OP=(unsigned char *)malloc(CACHE_MAXSIZE))==NULL) ERRORMSG();
-
-   if ((CACHE1_ARG=(float *)malloc(3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-   if ((CACHE2_ARG=(float *)malloc(3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-
-   PRISM_SIZE1=PRISM_SIZE2=0;
-   PRISM_MAXSIZE=1;
-
-   if ((PRISM_CACHE1=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-   if ((PRISM_CACHE2=(float *)malloc(4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-
    CACHE_ID=0;
-   CACHE_PHASE=-1;
-
-   CACHE_WARP=NULL;
-
-   RAY=new miniray;
-
-   FIRST_FANCNT=0;
-
    RENDER_ID=0;
-   RENDER_PHASE=-1;
 
    OPACITY=1.0f;
 
@@ -57,9 +31,6 @@ minicache::minicache()
 
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
-
-   FANCNT1=FANCNT2=0;
-   VTXCNT1=VTXCNT2=0;
 
    VTXPROG=NULL;
    VTXDIRTY=0;
@@ -131,18 +102,15 @@ minicache::minicache()
 // destructor
 minicache::~minicache()
    {
-   if (TERRAIN!=NULL) free(TERRAIN);
+   int id;
 
-   free(CACHE1_OP);
-   free(CACHE2_OP);
+   if (TERRAIN!=NULL)
+      {
+      for (id=0; id<MAXTERRAIN; id++)
+         if (TERRAIN[id].tile!=NULL) freeterrain(&TERRAIN[id]);
 
-   free(CACHE1_ARG);
-   free(CACHE2_ARG);
-
-   free(PRISM_CACHE1);
-   free(PRISM_CACHE2);
-
-   delete RAY;
+      free(TERRAIN);
+      }
 
 #ifndef NOOGL
 
@@ -189,6 +157,61 @@ minicache::~minicache()
 #endif
    }
 
+// initialize terrain
+void minicache::initterrain(TERRAIN_TYPE *t)
+   {
+   t->cache_num=1;
+
+   t->cache_size1=0;
+   t->cache_size2=0;
+
+   t->cache_maxsize=1;
+
+   if ((t->cache1_op=(unsigned char *)malloc(t->cache_maxsize))==NULL) ERRORMSG();
+   if ((t->cache2_op=(unsigned char *)malloc(t->cache_maxsize))==NULL) ERRORMSG();
+
+   if ((t->cache1_arg=(float *)malloc(3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->cache2_arg=(float *)malloc(3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
+
+   t->cache_phase=-1;
+
+   t->prism_size1=0;
+   t->prism_size2=0;
+
+   t->prism_maxsize=1;
+
+   if ((t->prism_cache1=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->prism_cache2=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+
+   t->cache_warp=NULL;
+
+   t->ray=new miniray;
+   t->first_fancnt=0;
+
+   t->fancnt1=0;
+   t->fancnt2=0;
+
+   t->vtxcnt1=0;
+   t->vtxcnt2=0;
+
+   t->render_phase=-1;
+   }
+
+// free terrain
+void minicache::freeterrain(TERRAIN_TYPE *t)
+   {
+   free(t->cache1_op);
+   free(t->cache2_op);
+
+   free(t->cache1_arg);
+   free(t->cache2_arg);
+
+   free(t->prism_cache1);
+   free(t->prism_cache2);
+
+   delete t->ray;
+   }
+
 // static callback functions:
 
 void minicache::cache_beginfan()
@@ -219,144 +242,153 @@ void minicache::cache(int op,float a,float b,float c)
 
    miniv3d s,o;
 
-   if (CACHE_SIZE1>=CACHE_MAXSIZE || CACHE_SIZE2>=CACHE_MAXSIZE)
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[CACHE_ID];
+
+   // enlarge vertex cache
+   if (t->cache_size1>=t->cache_maxsize || t->cache_size2>=t->cache_maxsize)
       {
-      CACHE_MAXSIZE*=2;
+      t->cache_maxsize*=2;
 
-      if ((CACHE1_OP=(unsigned char *)realloc(CACHE1_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
-      if ((CACHE2_OP=(unsigned char *)realloc(CACHE2_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
+      if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize))==NULL) ERRORMSG();
+      if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize))==NULL) ERRORMSG();
 
-      if ((CACHE1_ARG=(float *)realloc(CACHE1_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-      if ((CACHE2_ARG=(float *)realloc(CACHE2_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
+      if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
       }
 
-   if (CACHE_NUM==1)
+   if (t->cache_num==1)
+      // update vertex buffer #1
       {
       if (op==BEGINFAN_OP)
          {
-         FANCNT1++;
-         FIRST_FANCNT++;
-         LAST_BEGINFAN=CACHE_SIZE1;
+         t->fancnt1++;
+         t->first_fancnt++;
+         t->last_beginfan=t->cache_size1;
          }
       else if (op==FANVERTEX_OP)
          {
-         VTXCNT1++;
-         CACHE1_ARG[3*LAST_BEGINFAN]++;
+         t->vtxcnt1++;
+         t->cache1_arg[3*t->last_beginfan]++;
          }
       else
+         // update ray object
          if (CONFIGURE_ENABLERAY!=0)
             {
-            if (FIRST_FANCNT>0)
+            if (t->first_fancnt>0)
                {
-               cols=TERRAIN[CACHE_ID].tile->getcols();
-               rows=TERRAIN[CACHE_ID].tile->getrows();
+               cols=t->tile->getcols();
+               rows=t->tile->getrows();
 
-               xdim=TERRAIN[CACHE_ID].tile->getcoldim();
-               zdim=TERRAIN[CACHE_ID].tile->getrowdim();
+               xdim=t->tile->getcoldim();
+               zdim=t->tile->getrowdim();
 
-               centerx=TERRAIN[CACHE_ID].tile->getcenterx();
-               centery=TERRAIN[CACHE_ID].tile->getcentery();
-               centerz=TERRAIN[CACHE_ID].tile->getcenterz();
+               centerx=t->tile->getcenterx();
+               centery=t->tile->getcentery();
+               centerz=t->tile->getcenterz();
 
-               s.x=xdim/(FIRST_SIZE-1);
-               s.y=FIRST_SCALE;
-               s.z=-zdim/(FIRST_SIZE-1);
+               s.x=xdim/(t->first_size-1);
+               s.y=t->first_scale;
+               s.z=-zdim/(t->first_size-1);
 
-               o.x=xdim*(FIRST_COL-(cols-1)/2.0f)+centerx-xdim/2.0f;
+               o.x=xdim*(t->first_col-(cols-1)/2.0f)+centerx-xdim/2.0f;
                o.y=centery;
-               o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
+               o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE1_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,CACHE_WARP);
+               t->ray->addtrianglefans(&t->cache1_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->cache_warp);
                }
 
             if (op==TRIGGER_OP)
                {
-               if (CACHE_PHASE==0) RAY->clearbuffer();
-               else if (CACHE_PHASE==1) FIRST_SCALE=b;
-               else if (CACHE_PHASE==4) RAY->swapbuffer();
+               if (t->cache_phase==0) t->ray->clearbuffer();
+               else if (t->cache_phase==1) t->first_scale=b;
+               else if (t->cache_phase==4) t->ray->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
-               FIRST_COL=ftrc(a+0.5f);
-               FIRST_ROW=ftrc(b+0.5f);
-               FIRST_SIZE=ftrc(c+0.5f);
+               t->first_col=ftrc(a+0.5f);
+               t->first_row=ftrc(b+0.5f);
+               t->first_size=ftrc(c+0.5f);
                }
 
-            FIRST_BEGINFAN=CACHE_SIZE1+1;
-            FIRST_FANCNT=0;
+            t->first_beginfan=t->cache_size1+1;
+            t->first_fancnt=0;
             }
 
-      CACHE1_OP[CACHE_SIZE1]=op;
+      t->cache1_op[t->cache_size1]=op;
 
-      CACHE1_ARG[3*CACHE_SIZE1]=a;
-      CACHE1_ARG[3*CACHE_SIZE1+1]=b;
-      CACHE1_ARG[3*CACHE_SIZE1+2]=c;
+      t->cache1_arg[3*t->cache_size1]=a;
+      t->cache1_arg[3*t->cache_size1+1]=b;
+      t->cache1_arg[3*t->cache_size1+2]=c;
 
-      CACHE_SIZE1++;
+      t->cache_size1++;
       }
    else
+      // update vertex buffer #2
       {
       if (op==BEGINFAN_OP)
          {
-         FANCNT2++;
-         FIRST_FANCNT++;
-         LAST_BEGINFAN=CACHE_SIZE2;
+         t->fancnt2++;
+         t->first_fancnt++;
+         t->last_beginfan=t->cache_size2;
          }
       else if (op==FANVERTEX_OP)
          {
-         VTXCNT2++;
-         CACHE2_ARG[3*LAST_BEGINFAN]++;
+         t->vtxcnt2++;
+         t->cache2_arg[3*t->last_beginfan]++;
          }
       else
+         // update ray object
          if (CONFIGURE_ENABLERAY!=0)
             {
-            if (FIRST_FANCNT>0)
+            if (t->first_fancnt>0)
                {
-               cols=TERRAIN[CACHE_ID].tile->getcols();
-               rows=TERRAIN[CACHE_ID].tile->getrows();
+               cols=t->tile->getcols();
+               rows=t->tile->getrows();
 
-               xdim=TERRAIN[CACHE_ID].tile->getcoldim();
-               zdim=TERRAIN[CACHE_ID].tile->getrowdim();
+               xdim=t->tile->getcoldim();
+               zdim=t->tile->getrowdim();
 
-               centerx=TERRAIN[CACHE_ID].tile->getcenterx();
-               centery=TERRAIN[CACHE_ID].tile->getcentery();
-               centerz=TERRAIN[CACHE_ID].tile->getcenterz();
+               centerx=t->tile->getcenterx();
+               centery=t->tile->getcentery();
+               centerz=t->tile->getcenterz();
 
-               s.x=xdim/(FIRST_SIZE-1);
-               s.y=FIRST_SCALE;
-               s.z=-zdim/(FIRST_SIZE-1);
+               s.x=xdim/(t->first_size-1);
+               s.y=t->first_scale;
+               s.z=-zdim/(t->first_size-1);
 
-               o.x=xdim*(FIRST_COL-(cols-1)/2.0f)+centerx-xdim/2.0f;
+               o.x=xdim*(t->first_col-(cols-1)/2.0f)+centerx-xdim/2.0f;
                o.y=centery;
-               o.z=zdim*(FIRST_ROW-(rows-1)/2.0f)+centerz+zdim/2.0f;
+               o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               RAY->addtrianglefans(&CACHE2_ARG,3*FIRST_BEGINFAN,FIRST_FANCNT,0,&s,&o,0,CACHE_WARP);
+               t->ray->addtrianglefans(&t->cache2_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->cache_warp);
                }
 
             if (op==TRIGGER_OP)
                {
-               if (CACHE_PHASE==0) RAY->clearbuffer();
-               else if (CACHE_PHASE==1) FIRST_SCALE=b;
-               else if (CACHE_PHASE==4) RAY->swapbuffer();
+               if (t->cache_phase==0) t->ray->clearbuffer();
+               else if (t->cache_phase==1) t->first_scale=b;
+               else if (t->cache_phase==4) t->ray->swapbuffer();
                }
             else if (op==TEXMAP_OP)
                {
-               FIRST_COL=ftrc(a+0.5f);
-               FIRST_ROW=ftrc(b+0.5f);
-               FIRST_SIZE=ftrc(c+0.5f);
+               t->first_col=ftrc(a+0.5f);
+               t->first_row=ftrc(b+0.5f);
+               t->first_size=ftrc(c+0.5f);
                }
 
-            FIRST_BEGINFAN=CACHE_SIZE2+1;
-            FIRST_FANCNT=0;
+            t->first_beginfan=t->cache_size2+1;
+            t->first_fancnt=0;
             }
 
-      CACHE2_OP[CACHE_SIZE2]=op;
+      t->cache2_op[t->cache_size2]=op;
 
-      CACHE2_ARG[3*CACHE_SIZE2]=a;
-      CACHE2_ARG[3*CACHE_SIZE2+1]=b;
-      CACHE2_ARG[3*CACHE_SIZE2+2]=c;
+      t->cache2_arg[3*t->cache_size2]=a;
+      t->cache2_arg[3*t->cache_size2+1]=b;
+      t->cache2_arg[3*t->cache_size2+2]=c;
 
-      CACHE_SIZE2++;
+      t->cache_size2++;
       }
    }
 
@@ -364,71 +396,80 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
    {
    miniv4d v1;
 
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[CACHE_ID];
+
    if (PRISMEDGE_CALLBACK!=NULL)
       {
       y-=yf;
 
-      if (CACHE_WARP!=NULL)
-         if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
+      // warp vertex
+      if (t->cache_warp!=NULL)
+         if (t->cache_warp->getglb()==minicoord::MINICOORD_LINEAR)
             {
-            x+=CACHE_WARP_MTX[0].w;
-            y+=CACHE_WARP_MTX[1].w;
-            z+=CACHE_WARP_MTX[2].w;
+            x+=t->cache_warp_mtx[0].w;
+            y+=t->cache_warp_mtx[1].w;
+            z+=t->cache_warp_mtx[2].w;
             }
          else
             {
             v1=miniv4d(x,y,z,1.0);
 
-            x=CACHE_WARP_MTX[0]*v1;
-            y=CACHE_WARP_MTX[1]*v1;
-            z=CACHE_WARP_MTX[2]*v1;
+            x=t->cache_warp_mtx[0]*v1;
+            y=t->cache_warp_mtx[1]*v1;
+            z=t->cache_warp_mtx[2]*v1;
             }
 
+      // pass on
       PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
       }
    else
       {
-      if (CACHE_WARP!=NULL)
-         if (CACHE_WARP->getglb()==minicoord::MINICOORD_LINEAR)
+      // warp vertex
+      if (t->cache_warp!=NULL)
+         if (t->cache_warp->getglb()==minicoord::MINICOORD_LINEAR)
             {
-            x+=CACHE_WARP_MTX[0].w;
-            y+=CACHE_WARP_MTX[1].w;
-            z+=CACHE_WARP_MTX[2].w;
+            x+=t->cache_warp_mtx[0].w;
+            y+=t->cache_warp_mtx[1].w;
+            z+=t->cache_warp_mtx[2].w;
             }
          else
             {
             v1=miniv4d(x,y,z,1.0);
 
-            x=CACHE_WARP_MTX[0]*v1;
-            y=CACHE_WARP_MTX[1]*v1;
-            z=CACHE_WARP_MTX[2]*v1;
+            x=t->cache_warp_mtx[0]*v1;
+            y=t->cache_warp_mtx[1]*v1;
+            z=t->cache_warp_mtx[2]*v1;
             }
 
-      if (PRISM_SIZE1>=PRISM_MAXSIZE || PRISM_SIZE2>=PRISM_MAXSIZE)
+      // enlarge prism cache
+      if (t->prism_size1>=t->prism_maxsize || t->prism_size2>=t->prism_maxsize)
          {
-         PRISM_MAXSIZE*=2;
+         t->prism_maxsize*=2;
 
-         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
 
-      if (CACHE_NUM==1)
+      // update prism cache
+      if (t->cache_num==1)
          {
-         PRISM_CACHE1[4*PRISM_SIZE1]=x;
-         PRISM_CACHE1[4*PRISM_SIZE1+1]=y;
-         PRISM_CACHE1[4*PRISM_SIZE1+2]=yf;
-         PRISM_CACHE1[4*PRISM_SIZE1+3]=z;
+         t->prism_cache1[4*t->prism_size1]=x;
+         t->prism_cache1[4*t->prism_size1+1]=y;
+         t->prism_cache1[4*t->prism_size1+2]=yf;
+         t->prism_cache1[4*t->prism_size1+3]=z;
 
-         PRISM_SIZE1++;
+         t->prism_size1++;
          }
       else
          {
-         PRISM_CACHE2[4*PRISM_SIZE2]=x;
-         PRISM_CACHE2[4*PRISM_SIZE2+1]=y;
-         PRISM_CACHE2[4*PRISM_SIZE2+2]=yf;
-         PRISM_CACHE2[4*PRISM_SIZE2+3]=z;
+         t->prism_cache2[4*t->prism_size2]=x;
+         t->prism_cache2[4*t->prism_size2+1]=y;
+         t->prism_cache2[4*t->prism_size2+2]=yf;
+         t->prism_cache2[4*t->prism_size2+3]=z;
 
-         PRISM_SIZE2++;
+         t->prism_size2++;
          }
       }
    }
@@ -437,74 +478,109 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
    {
    miniv4d v1;
 
-   CACHE_PHASE=phase;
+   TERRAIN_TYPE *t;
 
-   if (CACHE_PHASE==0)
+   t=&TERRAIN[CACHE_ID];
+
+   t->cache_phase=phase;
+
+   if (t->cache_phase==0)
       {
-      CACHE_WARP=TERRAIN[CACHE_ID].tile->getwarp();
-      if (CACHE_WARP!=NULL) CACHE_WARP->getwarp(CACHE_WARP_MTX);
+      t->cache_warp=t->tile->getwarp();
+      if (t->cache_warp!=NULL) t->cache_warp->getwarp(t->cache_warp_mtx);
 
-      if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(CACHE_WARP,CALLBACK_DATA);
+      if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(t->cache_warp,CALLBACK_DATA);
       }
 
    cache(TRIGGER_OP,phase,scale);
 
-   if (CACHE_PHASE==0)
+   if (t->cache_phase==0)
       {
       // swap vertex buffers
-      if (CACHE_NUM==1)
+      if (t->cache_num==1)
          {
-         CACHE_SIZE2=PRISM_SIZE2=0;
-         FANCNT2=VTXCNT2=0;
-         CACHE_NUM=2;
+         t->cache_size2=0;
+         t->prism_size2=0;
+
+         t->fancnt2;
+         t->vtxcnt2=0;
+
+         t->cache_num=2;
          }
       else
          {
-         CACHE_SIZE1=PRISM_SIZE1=0;
-         FANCNT1=VTXCNT1=0;
-         CACHE_NUM=1;
+         t->cache_size1=0;
+         t->prism_size1=0;
+
+         t->fancnt1=0;
+         t->vtxcnt1=0;
+
+         t->cache_num=1;
          }
 
       // shrink vertex buffer
-      if (CACHE_SIZE1<CACHE_MAXSIZE/4 && CACHE_SIZE2<CACHE_MAXSIZE/4)
+      if (t->cache_size1<t->cache_maxsize/4 && t->cache_size2<t->cache_maxsize/4)
          {
-         CACHE_MAXSIZE/=2;
+         t->cache_maxsize/=2;
 
-         if ((CACHE1_OP=(unsigned char *)realloc(CACHE1_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
-         if ((CACHE2_OP=(unsigned char *)realloc(CACHE2_OP,CACHE_MAXSIZE))==NULL) ERRORMSG();
+         if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize))==NULL) ERRORMSG();
+         if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize))==NULL) ERRORMSG();
 
-         if ((CACHE1_ARG=(float *)realloc(CACHE1_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((CACHE2_ARG=(float *)realloc(CACHE2_ARG,3*CACHE_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
 
       // shrink prism buffer
-      if (PRISM_SIZE1<PRISM_MAXSIZE/4 && PRISM_SIZE2<PRISM_MAXSIZE/4)
+      if (t->prism_size1<t->prism_maxsize/4 && t->prism_size2<t->prism_maxsize/4)
          {
-         PRISM_MAXSIZE/=2;
+         t->prism_maxsize/=2;
 
-         if ((PRISM_CACHE1=(float *)realloc(PRISM_CACHE1,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
-         if ((PRISM_CACHE2=(float *)realloc(PRISM_CACHE2,4*PRISM_MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
       }
 
    if (PRISMCACHE_CALLBACK!=NULL)
-      if (CACHE_WARP==NULL)
+      if (t->cache_warp==NULL)
          PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
       else
          {
          v1=miniv4d(ex,ey,ez,1.0);
 
          PRISMCACHE_CALLBACK(phase,scale,
-                             CACHE_WARP_MTX[0]*v1,CACHE_WARP_MTX[1]*v1,CACHE_WARP_MTX[2]*v1,
+                             t->cache_warp_mtx[0]*v1,t->cache_warp_mtx[1]*v1,t->cache_warp_mtx[2]*v1,
                              CALLBACK_DATA);
          }
    }
 
 void minicache::cachesync(int id)
-   {CACHE_ID=id;}
+   {
+   CACHE_ID=id;
+
+   if (PRISMSYNC_CALLBACK!=NULL) PRISMSYNC_CALLBACK(id,CALLBACK_DATA);
+   }
+
+// render all back buffers of the cache
+int minicache::rendercache()
+   {
+   int vtx=0;
+
+   int id,phase;
+
+   for (id=0; id<MAXTERRAIN; id++)
+      if (TERRAIN[id].tile!=NULL)
+         {
+         TERRAIN[id].render_phase=0;
+         TERRAIN[id].render_count=0;
+         }
+
+   for (phase=0; phase<=4; phase++)
+      for (id=0; id<MAXTERRAIN; id++)
+         if (TERRAIN[id].tile!=NULL) vtx+=rendercache(id,phase);
+   }
 
 // render back buffer of the cache
-int minicache::rendercache()
+int minicache::rendercache(int id,int phase)
    {
    int vtx=0;
 
@@ -512,44 +588,66 @@ int minicache::rendercache()
 
    int i,p;
 
-   vtx+=getvtxcnt();
+   TERRAIN_TYPE *t;
 
-   if (CACHE_NUM==1)
-      for (i=0; i<CACHE_SIZE2; i++)
-         switch (CACHE2_OP[i])
+   RENDER_ID=id;
+
+   t=&TERRAIN[RENDER_ID];
+
+   if (PRISMSYNC_CALLBACK!=NULL) PRISMSYNC_CALLBACK(RENDER_ID,CALLBACK_DATA);
+
+   vtx+=getvtxcnt(RENDER_ID);
+
+   i=t->render_count;
+
+   if (t->cache_num==1)
+      while (i<t->cache_size2)
+         {
+         switch (t->cache2_op[i])
             {
             case BEGINFAN_OP:
-               p=ftrc(CACHE2_ARG[3*i]+0.5f);
+               p=ftrc(t->cache2_arg[3*i]+0.5f);
                glDrawArrays(GL_TRIANGLE_FAN,i+1,p);
                i+=p;
                break;
             case FANVERTEX_OP:
                break;
             case TEXMAP_OP:
-               rendertexmap(ftrc(CACHE2_ARG[3*i]+0.5f),ftrc(CACHE2_ARG[3*i+1]+0.5f),ftrc(CACHE2_ARG[3*i+2]+0.5f));
+               rendertexmap(ftrc(t->cache2_arg[3*i]+0.5f),ftrc(t->cache2_arg[3*i+1]+0.5f),ftrc(t->cache2_arg[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE2_ARG[3*i]+0.5f),CACHE2_ARG[3*i+1]);
+               t->render_count=i;
+               vtx+=rendertrigger(ftrc(t->cache2_arg[3*i]+0.5f),t->cache2_arg[3*i+1]);
+               if (t->render_phase!=phase) return(vtx);
                break;
             }
+         i++;
+         }
    else
-      for (i=0; i<CACHE_SIZE1; i++)
-         switch (CACHE1_OP[i])
+      while (i<t->cache_size1)
+         {
+         switch (t->cache1_op[i])
             {
             case BEGINFAN_OP:
-               p=ftrc(CACHE1_ARG[3*i]+0.5f);
+               p=ftrc(t->cache1_arg[3*i]+0.5f);
                glDrawArrays(GL_TRIANGLE_FAN,i+1,p);
                i+=p;
                break;
             case FANVERTEX_OP:
                break;
             case TEXMAP_OP:
-               rendertexmap(ftrc(CACHE1_ARG[3*i]+0.5f),ftrc(CACHE1_ARG[3*i+1]+0.5f),ftrc(CACHE1_ARG[3*i+2]+0.5f));
+               rendertexmap(ftrc(t->cache1_arg[3*i]+0.5f),ftrc(t->cache1_arg[3*i+1]+0.5f),ftrc(t->cache1_arg[3*i+2]+0.5f));
                break;
             case TRIGGER_OP:
-               vtx+=rendertrigger(ftrc(CACHE1_ARG[3*i]+0.5f),CACHE1_ARG[3*i+1]);
+               t->render_count=i;
+               vtx+=rendertrigger(ftrc(t->cache1_arg[3*i]+0.5f),t->cache1_arg[3*i+1]);
+               if (t->render_phase!=phase) return(vtx);
                break;
             }
+         i++;
+         }
+
+   t->render_count=i;
 
 #endif
 
@@ -574,21 +672,25 @@ void minicache::rendertexmap(int m,int n,int S)
 
    int texid,texw,texh,texmm;
 
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[RENDER_ID];
+
    mtxpop();
 
-   cols=TERRAIN[RENDER_ID].tile->getcols();
-   rows=TERRAIN[RENDER_ID].tile->getrows();
+   cols=t->tile->getcols();
+   rows=t->tile->getrows();
 
-   xdim=TERRAIN[RENDER_ID].tile->getcoldim();
-   zdim=TERRAIN[RENDER_ID].tile->getrowdim();
+   xdim=t->tile->getcoldim();
+   zdim=t->tile->getrowdim();
 
-   centerx=TERRAIN[RENDER_ID].tile->getcenterx();
-   centery=TERRAIN[RENDER_ID].tile->getcentery();
-   centerz=TERRAIN[RENDER_ID].tile->getcenterz();
+   centerx=t->tile->getcenterx();
+   centery=t->tile->getcentery();
+   centerz=t->tile->getcenterz();
 
    mtxpush();
 
-   warp=TERRAIN[RENDER_ID].tile->getwarp();
+   warp=t->tile->getwarp();
 
    if (warp!=NULL)
       {
@@ -623,18 +725,18 @@ void minicache::rendertexmap(int m,int n,int S)
    mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
 
    // avoid gaps between tiles (excluding the sea surface)
-   if (RENDER_PHASE==2)
+   if (t->render_phase==2)
       if (CONFIGURE_OVERLAP!=0.0f)
          if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
 
-   mtxscale(xdim/(S-1),TERRAIN[RENDER_ID].scale,-zdim/(S-1));
+   mtxscale(xdim/(S-1),t->scale,-zdim/(S-1));
 
-   if (RENDER_PHASE==2 || CONFIGURE_SEAENABLETEX!=0)
+   if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0)
       {
-      texid=TERRAIN[RENDER_ID].tile->gettexid(m,n);
-      texw=TERRAIN[RENDER_ID].tile->gettexw(m,n);
-      texh=TERRAIN[RENDER_ID].tile->gettexh(m,n);
-      texmm=TERRAIN[RENDER_ID].tile->gettexmm(m,n);
+      texid=t->tile->gettexid(m,n);
+      texw=t->tile->gettexw(m,n);
+      texh=t->tile->gettexh(m,n);
+      texmm=t->tile->gettexmm(m,n);
 
       bindtexmap(texid,texw,texh,S,texmm);
 
@@ -643,22 +745,19 @@ void minicache::rendertexmap(int m,int n,int S)
                             -1.0f/(S-1)*(texh-1)/texh,
                             0.5f/texh,
                             1.0f-0.5f/texh,
-                            TERRAIN[RENDER_ID].scale);
+                            t->scale);
       }
 
 #endif
    }
 
-int minicache::rendertrigger(int phase,float scale)
+int minicache::rendertrigger(int phase)
    {
    int vtx=0;
 
 #ifndef NOOGL
 
-   RENDER_PHASE=phase;
-
-   if (RENDER_PHASE==1) TERRAIN[RENDER_ID].scale=scale;
-   else if (RENDER_PHASE==2)
+   if (phase==2)
       {
       initstate();
       mtxpush();
@@ -679,12 +778,9 @@ int minicache::rendertrigger(int phase,float scale)
       if (USEVTXSHADER!=0) enablevtxshader();
       if (USEPIXSHADER!=0) enablepixshader();
 
-      if (CACHE_NUM==1) glVertexPointer(3,GL_FLOAT,0,CACHE2_ARG);
-      else glVertexPointer(3,GL_FLOAT,0,CACHE1_ARG);
-
       glEnableClientState(GL_VERTEX_ARRAY);
       }
-   else if (RENDER_PHASE==3)
+   else if (phase==3)
       {
       if (OPACITY<1.0f)
          {
@@ -714,9 +810,6 @@ int minicache::rendertrigger(int phase,float scale)
 
          if (USEVTXSHADER!=0) enablevtxshader();
 
-         if (CACHE_NUM==1) glVertexPointer(3,GL_FLOAT,0,CACHE2_ARG);
-         else glVertexPointer(3,GL_FLOAT,0,CACHE1_ARG);
-
          glEnableClientState(GL_VERTEX_ARRAY);
          }
 
@@ -737,10 +830,8 @@ int minicache::rendertrigger(int phase,float scale)
          mtxmodel();
          }
       }
-   else if (RENDER_PHASE==4)
+   else if (phase==4)
       {
-      TERRAIN[RENDER_ID].lambda=scale;
-
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
 
       if (SEA_A!=1.0f) disableblending();
@@ -765,23 +856,62 @@ int minicache::rendertrigger(int phase,float scale)
       if (POSTSEA_CB!=NULL) POSTSEA_CB(CB_DATA);
       }
 
+   if (phase==4) vtx+=rendertrigger();
+
+#endif
+
+   return(vtx);
+   }
+
+int minicache::rendertrigger(int phase,float scale)
+   {
+   int vtx=0;
+
+#ifndef NOOGL
+
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[RENDER_ID];
+
+   t->render_phase=phase;
+
+   if (t->render_phase==1) t->scale=scale;
+   else if (t->render_phase==2 || t->render_phase==3)
+      if (t->cache_num==1) glVertexPointer(3,GL_FLOAT,0,t->cache2_arg);
+      else glVertexPointer(3,GL_FLOAT,0,t->cache1_arg);
+   else if (t->render_phase==4) t->lambda=scale;
+
    if (PRISMTRIGGER_CALLBACK!=NULL)
       vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
 
-   if (RENDER_PHASE==4)
-      if (PRISMEDGE_CALLBACK==NULL)
-         if (PRISMRENDER_CALLBACK!=NULL)
-            if (CACHE_NUM==1)
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE2,PRISM_SIZE2/3,TERRAIN[RENDER_ID].lambda,CALLBACK_DATA);
+#endif
+
+   return(vtx);
+   }
+
+int minicache::rendertrigger()
+   {
+   int vtx=0;
+
+#ifndef NOOGL
+
+   int id;
+
+   if (PRISMEDGE_CALLBACK==NULL)
+      for (id=0; id<MAXTERRAIN; id++)
+         if (TERRAIN[id].tile!=NULL)
+            if (PRISMRENDER_CALLBACK!=NULL)
+               if (TERRAIN[id].cache_num==1)
+                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,CALLBACK_DATA);
+               else
+                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,CALLBACK_DATA);
             else
-               vtx+=PRISMRENDER_CALLBACK(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,CALLBACK_DATA);
-         else
-            if (CACHE_NUM==1)
-               vtx+=renderprisms(PRISM_CACHE2,PRISM_SIZE2/3,TERRAIN[RENDER_ID].lambda,
-                                 PRISM_R,PRISM_G,PRISM_B,PRISM_A);
-            else
-               vtx+=renderprisms(PRISM_CACHE1,PRISM_SIZE1/3,TERRAIN[RENDER_ID].lambda,
-                                 PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+               if (TERRAIN[id].cache_num==1)
+                  vtx+=renderprisms(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,
+                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+               else
+                  vtx+=renderprisms(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,
+                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A);
 
 #endif
 
@@ -875,6 +1005,7 @@ void minicache::attach(minitile *terrain,
                        void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data),
                        int (*prismrender)(float *cache,int cnt,float lambda,void *data),
                        int (*prismtrigger)(int phase,void *data),
+                       void (*prismsync)(int id,void *data),
                        void *data)
    {
    int id;
@@ -909,6 +1040,8 @@ void minicache::attach(minitile *terrain,
                                   cache_sync,
                                   id);
 
+            initterrain(&TERRAIN[id]);
+
             NUMTERRAIN++;
 
             break;
@@ -919,6 +1052,7 @@ void minicache::attach(minitile *terrain,
    PRISMCACHE_CALLBACK=prismcache;
    PRISMRENDER_CALLBACK=prismrender;
    PRISMTRIGGER_CALLBACK=prismtrigger;
+   PRISMSYNC_CALLBACK=prismsync;
    CALLBACK_DATA=data;
    }
 
@@ -928,6 +1062,8 @@ void minicache::detach(minitile *terrain)
    if (terrain==NULL) ERRORMSG();
 
    TERRAIN[terrain->getid()].tile=NULL;
+
+   freeterrain(&TERRAIN[terrain->getid()]);
    }
 
 // define triangle mesh opacity
@@ -1512,15 +1648,41 @@ void minicache::initwglprocs()
 // get triangle fan count of active cache
 int minicache::getfancnt()
    {
-   if (CACHE_NUM==1) return(FANCNT2);
-   else return(FANCNT1);
+   int id,fancnt;
+
+   fancnt=0;
+
+   for (id=0; id<MAXTERRAIN; id++)
+      if (TERRAIN[id].tile!=NULL) fancnt+=getfancnt(id);
+
+   return(fancnt);
    }
 
 // get vertex count of active cache
 int minicache::getvtxcnt()
    {
-   if (CACHE_NUM==1) return(VTXCNT2);
-   else return(VTXCNT1);
+   int id,vtxcnt;
+
+   vtxcnt=0;
+
+   for (id=0; id<MAXTERRAIN; id++)
+      if (TERRAIN[id].tile!=NULL) vtxcnt+=getvtxcnt(id);
+
+   return(vtxcnt);
+   }
+
+// get triangle fan count of active buffer
+int minicache::getfancnt(int id)
+   {
+   if (TERRAIN[id].cache_num==1) return(TERRAIN[id].fancnt2);
+   else return(TERRAIN[id].fancnt1);
+   }
+
+// get vertex count of active buffer
+int minicache::getvtxcnt(int id)
+   {
+   if (TERRAIN[id].cache_num==1) return(TERRAIN[id].vtxcnt2);
+   else return(TERRAIN[id].vtxcnt1);
    }
 
 // configuring

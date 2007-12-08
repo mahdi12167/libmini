@@ -13,6 +13,8 @@ minitree::minitree(minicache *cache)
 
    TREEMODE=0;
 
+   PRISM_ID=0;
+
    SKIPPRISMS=0;
 
    TREECACHE_NUM=1;
@@ -277,9 +279,9 @@ void minitree::setmode(int treemode)
    deletetexmap(RENDERCACHE_TEXID);
    RENDERCACHE_TEXID=0;
 
-   if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,NULL,prismrender,NULL,this);
-   else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismwarp,prismcache,NULL,prismtrigger,this);
-   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+   if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,NULL,prismrender,NULL,NULL,this);
+   else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismwarp,prismcache,NULL,prismtrigger,prismsync,this);
+   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
    }
 
 // set parameters for negative modes
@@ -491,54 +493,64 @@ int minitree::prismtrigger(int phase,void *data)
    return(tree->treetrigger(phase));
    }
 
+void minitree::prismsync(int id,void *data)
+   {
+   minitree *tree=(minitree *)data;
+   tree->treesync(id);
+   }
+
 // process prism edges
 void minitree::treeedge(float x,float y,float yf,float z)
    {
-   if (SKIPPRISMS==0)
-      switch (TREECACHE_COUNT++%3)
-         {
-         case 0:
-            TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
-            break;
-         case 1:
-            TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
-            break;
-         case 2:
-            treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
-                     TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
-                     x,y,z,yf);
-            break;
-         }
+   if (PRISM_ID==0)
+      if (SKIPPRISMS==0)
+         switch (TREECACHE_COUNT++%3)
+            {
+            case 0:
+               TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
+               break;
+            case 1:
+               TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
+               break;
+            case 2:
+               treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
+                        TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
+                        x,y,z,yf);
+               break;
+            }
    }
 
 // switch tree cache
 void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
    {
-   if (phase==0)
+   if (PRISM_ID==0)
       {
-      if (TREECACHE_NUM==1)
+      if (phase==0)
          {
-         TREECACHE_SIZE2=0;
-         GRASSCACHE_SIZE2=0;
-         TREECACHE_TREES2=0;
-         TREECACHE_NUM=2;
-         }
-      else
-         {
-         TREECACHE_SIZE1=0;
-         GRASSCACHE_SIZE1=0;
-         TREECACHE_TREES1=0;
-         TREECACHE_NUM=1;
+         if (TREECACHE_NUM==1)
+            {
+            TREECACHE_SIZE2=0;
+            GRASSCACHE_SIZE2=0;
+            TREECACHE_TREES2=0;
+            TREECACHE_NUM=2;
+            }
+         else
+            {
+            TREECACHE_SIZE1=0;
+            GRASSCACHE_SIZE1=0;
+            TREECACHE_TREES1=0;
+            TREECACHE_NUM=1;
+            }
+
+         TREECACHE_COUNT=0;
+
+         TREECACHE_EX=ex;
+         TREECACHE_EY=ey;
+         TREECACHE_EZ=ez;
          }
 
-      TREECACHE_COUNT=0;
-
-      TREECACHE_EX=ex;
-      TREECACHE_EY=ey;
-      TREECACHE_EZ=ez;
+      if (phase==4) TREECACHE_LAMBDA=scale;
       }
-
-   if (phase==4) TREECACHE_LAMBDA=scale;
    }
 
 // define tree warp
@@ -546,42 +558,45 @@ void minitree::treewarp(miniwarp *warp)
    {
    miniv3d invtra[3];
 
-   if (warp==NULL)
+   if (PRISM_ID==0)
       {
-      SKIPPRISMS=0;
+      if (warp==NULL)
+         {
+         SKIPPRISMS=0;
 
-      COORD_DX=0.0;
-      COORD_DY=0.0;
-      COORD_DZ=-1.0;
+         COORD_DX=0.0;
+         COORD_DY=0.0;
+         COORD_DZ=-1.0;
 
-      COORD_UX=0.0;
-      COORD_UY=1.0;
-      COORD_UZ=0.0;
+         COORD_UX=0.0;
+         COORD_UY=1.0;
+         COORD_UZ=0.0;
 
-      COORD_RX=1.0;
-      COORD_RY=0.0;
-      COORD_RZ=0.0;
-      }
-   else
-      {
-      // billboards are incompatible with non-linear warp modes
-      if (warp->getglb()!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
-      else SKIPPRISMS=0;
+         COORD_RX=1.0;
+         COORD_RY=0.0;
+         COORD_RZ=0.0;
+         }
+      else
+         {
+         // billboards are incompatible with non-linear warp modes
+         if (warp->getglb()!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
+         else SKIPPRISMS=0;
 
-      // warp matrix is assumed to be ortho-normal
-      warp->getinvtra(invtra);
+         // warp matrix is assumed to be ortho-normal
+         warp->getinvtra(invtra);
 
-      COORD_DX=invtra[2].x;
-      COORD_DY=invtra[2].y;
-      COORD_DZ=invtra[2].z;
+         COORD_DX=invtra[2].x;
+         COORD_DY=invtra[2].y;
+         COORD_DZ=invtra[2].z;
 
-      COORD_UX=invtra[1].x;
-      COORD_UY=invtra[1].y;
-      COORD_UZ=invtra[1].z;
+         COORD_UX=invtra[1].x;
+         COORD_UY=invtra[1].y;
+         COORD_UZ=invtra[1].z;
 
-      COORD_RX=invtra[0].x;
-      COORD_RY=invtra[0].y;
-      COORD_RZ=invtra[0].z;
+         COORD_RX=invtra[0].x;
+         COORD_RY=invtra[0].y;
+         COORD_RZ=invtra[0].z;
+         }
       }
    }
 
@@ -590,18 +605,23 @@ int minitree::treetrigger(int phase)
    {
    int vtx=0;
 
-   if (phase==4)
-      {
-      if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
-      else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+   if (PRISM_ID==0) //!!
+      if (phase==4)
+         {
+         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
-      if (TREEMODE>=9)
-         if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
-         else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
-      }
+         if (TREEMODE>=9)
+            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
+            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
+         }
 
    return(vtx);
    }
+
+// receive actual terrain id
+void minitree::treesync(int id)
+   {PRISM_ID=id;}
 
 // process tree data
 void minitree::treedata(float x1,float y1,float z1,float h1,
