@@ -866,7 +866,7 @@ int main(int argc,char *argv[])
    // initialize trees
    if (sw_trees!=0)
       {
-      trees=new minitree(&cache);
+      trees=new minitree(&cache,terrain.getminitile());
 
       trees->setmode_mx(treebase,0.0f,0.25f,0.05f,0.9f);
       trees->setmode_m2("Forest.ppm",250.0f/scale);
