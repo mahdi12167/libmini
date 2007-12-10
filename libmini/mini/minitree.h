@@ -14,7 +14,7 @@ class minitree
    public:
 
    //! default constructor
-   minitree(minicache *cache);
+   minitree(minicache *cache,minitile *tile);
 
    //! destructor
    ~minitree();
@@ -49,18 +49,13 @@ class minitree
    protected:
 
    minicache *CACHE;
+   int ATTACHED_ID;
 
    int TREEMODE;
 
    private:
 
    int PRISM_ID;
-
-   int SKIPPRISMS;
-
-   float COORD_DX,COORD_DY,COORD_DZ;
-   float COORD_UX,COORD_UY,COORD_UZ;
-   float COORD_RX,COORD_RY,COORD_RZ;
 
    int TREECACHE_NUM;
 
@@ -97,14 +92,12 @@ class minitree
 
    static void prismedge(float x,float y,float yf,float z,void *data);
    static void prismcache(int phase,float scale,float ex,float ey,float ez,void *data);
-   static void prismwarp(miniwarp *warp,void *data);
-   static int prismrender(float *cache,int cnt,float lambda,void *data);
+   static int prismrender(float *cache,int cnt,float lambda,miniwarp *warp,void *data);
    static int prismtrigger(int phase,void *data);
    static void prismsync(int id,void *data);
 
    void treeedge(float x,float y,float yf,float z);
    void treecache(int phase,float scale,float ex,float ey,float ez);
-   void treewarp(miniwarp *warp);
    int treetrigger(int phase);
    void treesync(int id);
 
@@ -117,13 +110,13 @@ class minitree
    inline void cachedata(float x,float y,float z,float s,float t,float r=0.0f);
    inline void cachegrass(float x,float y,float z,float s,float t,float r=0.0f);
 
-   int rendertrees(float *cache,float *coords,int cnt,
+   int rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
                    float tr=0.0f,float tg=0.25f,float tb=0.05f);
 
-   int rendergrass(float *cache,float *coords,int cnt);
+   int rendergrass(float *cache,float *coords,int cnt,miniwarp *warp);
 
-   int rendercache(float *cache,int cnt,float lambda,
-                   float tr=0.0f,float tg=0.25f,float tb=0.05f,float ta=0.9f);
+   int renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+                    float tr=0.0f,float tg=0.25f,float tb=0.05f,float ta=0.9f);
 
    unsigned char *build3Dmipmap(unsigned char *volume,
                                 int width,int height,int depth,int components,

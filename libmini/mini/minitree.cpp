@@ -7,15 +7,14 @@
 #include "minitree.h"
 
 // default constructor
-minitree::minitree(minicache *cache)
+minitree::minitree(minicache *cache,minitile *tile)
    {
    CACHE=cache;
+   ATTACHED_ID=tile->getid();
 
    TREEMODE=0;
 
    PRISM_ID=0;
-
-   SKIPPRISMS=0;
 
    TREECACHE_NUM=1;
 
@@ -279,9 +278,9 @@ void minitree::setmode(int treemode)
    deletetexmap(RENDERCACHE_TEXID);
    RENDERCACHE_TEXID=0;
 
-   if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,NULL,prismrender,NULL,NULL,this);
-   else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismwarp,prismcache,NULL,prismtrigger,prismsync,this);
-   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+   if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,prismrender,NULL,NULL,this);
+   else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismcache,NULL,prismtrigger,prismsync,this);
+   else CACHE->attach(NULL,NULL,NULL,NULL,NULL,NULL,NULL);
    }
 
 // set parameters for negative modes
@@ -475,16 +474,10 @@ void minitree::prismcache(int phase,float scale,float ex,float ey,float ez,void 
    tree->treecache(phase,scale,ex,ey,ez);
    }
 
-void minitree::prismwarp(miniwarp *warp,void *data)
+int minitree::prismrender(float *cache,int cnt,float lambda,miniwarp *warp,void *data)
    {
    minitree *tree=(minitree *)data;
-   tree->treewarp(warp);
-   }
-
-int minitree::prismrender(float *cache,int cnt,float lambda,void *data)
-   {
-   minitree *tree=(minitree *)data;
-   return(tree->rendercache(cache,cnt,lambda,tree->TREEMODE_MX_TR,tree->TREEMODE_MX_TG,tree->TREEMODE_MX_TB,tree->TREEMODE_MX_TA));
+   return(tree->renderprisms(cache,cnt,lambda,warp,tree->TREEMODE_MX_TR,tree->TREEMODE_MX_TG,tree->TREEMODE_MX_TB,tree->TREEMODE_MX_TA));
    }
 
 int minitree::prismtrigger(int phase,void *data)
@@ -499,31 +492,30 @@ void minitree::prismsync(int id,void *data)
    tree->treesync(id);
    }
 
-// process prism edges
+// process tree prism edges
 void minitree::treeedge(float x,float y,float yf,float z)
    {
-   if (PRISM_ID==0)
-      if (SKIPPRISMS==0)
-         switch (TREECACHE_COUNT++%3)
-            {
-            case 0:
-               TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
-               break;
-            case 1:
-               TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
-               break;
-            case 2:
-               treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
-                        TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
-                        x,y,z,yf);
-               break;
-            }
+   if (PRISM_ID==ATTACHED_ID)
+      switch (TREECACHE_COUNT++%3)
+         {
+         case 0:
+            TREECACHE_X1=x,TREECACHE_Y1=y,TREECACHE_Z1=z,TREECACHE_H1=yf;
+            break;
+         case 1:
+            TREECACHE_X2=x,TREECACHE_Y2=y,TREECACHE_Z2=z,TREECACHE_H2=yf;
+            break;
+         case 2:
+            treedata(TREECACHE_X1,TREECACHE_Y1,TREECACHE_Z1,TREECACHE_H1,
+                     TREECACHE_X2,TREECACHE_Y2,TREECACHE_Z2,TREECACHE_H2,
+                     x,y,z,yf);
+            break;
+         }
    }
 
-// switch tree cache
+// switch tree cache buffers
 void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
    {
-   if (PRISM_ID==0)
+   if (PRISM_ID==ATTACHED_ID)
       {
       if (phase==0)
          {
@@ -553,67 +545,20 @@ void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
       }
    }
 
-// define tree warp
-void minitree::treewarp(miniwarp *warp)
-   {
-   miniv3d invtra[3];
-
-   if (PRISM_ID==0)
-      {
-      if (warp==NULL)
-         {
-         SKIPPRISMS=0;
-
-         COORD_DX=0.0;
-         COORD_DY=0.0;
-         COORD_DZ=-1.0;
-
-         COORD_UX=0.0;
-         COORD_UY=1.0;
-         COORD_UZ=0.0;
-
-         COORD_RX=1.0;
-         COORD_RY=0.0;
-         COORD_RZ=0.0;
-         }
-      else
-         {
-         // billboards are incompatible with non-linear warp modes
-         if (warp->getglb()!=minicoord::MINICOORD_LINEAR && TREEMODE>=5) SKIPPRISMS=1;
-         else SKIPPRISMS=0;
-
-         // warp matrix is assumed to be ortho-normal
-         warp->getinvtra(invtra);
-
-         COORD_DX=invtra[2].x;
-         COORD_DY=invtra[2].y;
-         COORD_DZ=invtra[2].z;
-
-         COORD_UX=invtra[1].x;
-         COORD_UY=invtra[1].y;
-         COORD_UZ=invtra[1].z;
-
-         COORD_RX=invtra[0].x;
-         COORD_RY=invtra[0].y;
-         COORD_RZ=invtra[0].z;
-         }
-      }
-   }
-
 // render tree cache
 int minitree::treetrigger(int phase)
    {
    int vtx=0;
 
-   if (PRISM_ID==0) //!!
+   if (PRISM_ID==ATTACHED_ID)
       if (phase==4)
          {
-         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
-         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
          if (TREEMODE>=9)
-            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2);
-            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1);
+            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2,CACHE->gettile(PRISM_ID)->getwarp());
+            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1,CACHE->gettile(PRISM_ID)->getwarp());
          }
 
    return(vtx);
@@ -641,10 +586,6 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
    float rand;
    int choice;
-
-   float wdx,wdy,wdz;
-   float hux,huy,huz;
-   float wrx,wry,wrz;
 
    h=fmax(fmax(h1,h2),h3);
 
@@ -769,7 +710,7 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
       case 1: // lines
 
          cachedata(x,y,z);
-         cachedata(x+h*COORD_UX,y+h*COORD_UY,z+h*COORD_UZ);
+         cachedata(x,y+h,z);
 
          break;
 
@@ -779,25 +720,13 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          w=0.5f*TREEMODE_X_TREEWIDTH;
 
-         wdx=w*COORD_DX;
-         wdy=w*COORD_DY;
-         wdz=w*COORD_DZ;
+         cachedata(x-w,y,z);
+         cachedata(x+w,y,z);
+         cachedata(x,y+h,z);
 
-         hux=h*COORD_UX;
-         huy=h*COORD_UY;
-         huz=h*COORD_UZ;
-
-         wrx=w*COORD_RX;
-         wry=w*COORD_RY;
-         wrz=w*COORD_RZ;
-
-         cachedata(x-wrx,y-wry,z-wrz);
-         cachedata(x+wrx,y+wry,z+wrz);
-         cachedata(x+hux,y+huy,z+huz);
-
-         cachedata(x-wdx,y-wdy,z-wdz);
-         cachedata(x+wdx,y+wdy,z+wdz);
-         cachedata(x+hux,y+huy,z+huz);
+         cachedata(x,y,z-w);
+         cachedata(x,y,z+w);
+         cachedata(x,y+h,z);
 
          break;
 
@@ -805,30 +734,18 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 
          w=0.5f*TREEMODE_X_TREEWIDTH;
 
-         wdx=w*COORD_DX;
-         wdy=w*COORD_DY;
-         wdz=w*COORD_DZ;
-
-         hux=h*COORD_UX;
-         huy=h*COORD_UY;
-         huz=h*COORD_UZ;
-
-         wrx=w*COORD_RX;
-         wry=w*COORD_RY;
-         wrz=w*COORD_RZ;
-
          if (TREEMODE_4_TREEASPECT==0.0f) t=0.0f;
          else t=1.0f-h/(TREEMODE_X_TREEWIDTH*TREEMODE_4_TREEASPECT);
 
-         cachedata(x-wrx,y-wry,z-wrz,0.0f,1.0f);
-         cachedata(x+wrx,y+wry,z+wrz,1.0f,1.0f);
-         cachedata(x+wrx+hux,y+wry+huy,z+wrz+huz,1.0f,t);
-         cachedata(x-wrx+hux,y-wry+huy,z-wrz+huz,0.0f,t);
+         cachedata(x-w,y,z,0.0f,1.0f);
+         cachedata(x+w,y,z,1.0f,1.0f);
+         cachedata(x+w,y+h,z,1.0f,t);
+         cachedata(x-w,y+h,z,0.0f,t);
 
-         cachedata(x-wdx,y-wdy,z-wdz,0.0f,1.0f);
-         cachedata(x+wdx,y+wdy,z+wdz,1.0f,1.0f);
-         cachedata(x+wdx+hux,y+wdy+huy,z+wdz+huz,1.0f,t);
-         cachedata(x-wdx+hux,y-wdy+huy,z-wdz+huz,0.0f,t);
+         cachedata(x,y,z-w,0.0f,1.0f);
+         cachedata(x,y,z+w,1.0f,1.0f);
+         cachedata(x,y+h,z+w,1.0f,t);
+         cachedata(x,y+h,z-w,0.0f,t);
 
          break;
 
@@ -905,6 +822,8 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
 // cache tree data (one vertex)
 void minitree::cachedata(float x,float y,float z)
    {
+   float *ptr;
+
    if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE || TREECACHE_SIZE2>=TREECACHE_MAXSIZE)
       {
       TREECACHE_MAXSIZE*=2;
@@ -916,27 +835,19 @@ void minitree::cachedata(float x,float y,float z)
       if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
       }
 
-   if (TREECACHE_NUM==1)
-      {
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1]=x;
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1+1]=y;
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1+2]=z;
+   if (TREECACHE_NUM==1) ptr=&TREECACHE_CACHE1[3*TREECACHE_SIZE1++];
+   else ptr=&TREECACHE_CACHE2[3*TREECACHE_SIZE2++];
 
-      TREECACHE_SIZE1++;
-      }
-   else
-      {
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2]=x;
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2+1]=y;
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2+2]=z;
-
-      TREECACHE_SIZE2++;
-      }
+   *ptr++=x;
+   *ptr++=y;
+   *ptr=z;
    }
 
 // cache tree data (one vertex plus texture coords)
 void minitree::cachedata(float x,float y,float z,float s,float t,float r)
    {
+   float *ptr1,*ptr2;
+
    if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE || TREECACHE_SIZE2>=TREECACHE_MAXSIZE)
       {
       TREECACHE_MAXSIZE*=2;
@@ -950,33 +861,29 @@ void minitree::cachedata(float x,float y,float z,float s,float t,float r)
 
    if (TREECACHE_NUM==1)
       {
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1]=x;
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1+1]=y;
-      TREECACHE_CACHE1[3*TREECACHE_SIZE1+2]=z;
-
-      TREECACHE_COORD1[3*TREECACHE_SIZE1]=s;
-      TREECACHE_COORD1[3*TREECACHE_SIZE1+1]=t;
-      TREECACHE_COORD1[3*TREECACHE_SIZE1+2]=r;
-
-      TREECACHE_SIZE1++;
+      ptr1=&TREECACHE_CACHE1[3*TREECACHE_SIZE1];
+      ptr2=&TREECACHE_COORD1[3*TREECACHE_SIZE1++];
       }
    else
       {
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2]=x;
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2+1]=y;
-      TREECACHE_CACHE2[3*TREECACHE_SIZE2+2]=z;
-
-      TREECACHE_COORD2[3*TREECACHE_SIZE2]=s;
-      TREECACHE_COORD2[3*TREECACHE_SIZE2+1]=t;
-      TREECACHE_COORD2[3*TREECACHE_SIZE2+2]=r;
-
-      TREECACHE_SIZE2++;
+      ptr1=&TREECACHE_CACHE2[3*TREECACHE_SIZE2];
+      ptr2=&TREECACHE_COORD2[3*TREECACHE_SIZE2++];
       }
+
+   *ptr1++=x;
+   *ptr1++=y;
+   *ptr1=z;
+
+   *ptr2++=s;
+   *ptr2++=t;
+   *ptr2=r;
    }
 
 // cache grass data (one vertex plus texture coords)
 void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
    {
+   float *ptr1,*ptr2;
+
    if (GRASSCACHE_SIZE1>=GRASSCACHE_MAXSIZE || GRASSCACHE_SIZE2>=GRASSCACHE_MAXSIZE)
       {
       GRASSCACHE_MAXSIZE*=2;
@@ -990,32 +897,26 @@ void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
 
    if (TREECACHE_NUM==1)
       {
-      GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1]=x;
-      GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1+1]=y;
-      GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1+2]=z;
-
-      GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1]=s;
-      GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1+1]=t;
-      GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1+2]=r;
-
-      GRASSCACHE_SIZE1++;
+      ptr1=&GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1];
+      ptr2=&GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1++];
       }
    else
       {
-      GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2]=x;
-      GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2+1]=y;
-      GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2+2]=z;
-
-      GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2]=s;
-      GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2+1]=t;
-      GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2+2]=r;
-
-      GRASSCACHE_SIZE2++;
+      ptr1=&GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2];
+      ptr2=&GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2++];
       }
+
+   *ptr1++=x;
+   *ptr1++=y;
+   *ptr1=z;
+
+   *ptr2++=s;
+   *ptr2++=t;
+   *ptr2=r;
    }
 
 // render cached trees
-int minitree::rendertrees(float *cache,float *coords,int cnt,
+int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
                           float tr,float tg,float tb)
    {
    int vtx=0;
@@ -1065,9 +966,12 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
 
    GLuint vtxprogid;
 
-   GLfloat mtx[16];
+   GLfloat mvmtx[16];
 
 #endif
+
+   miniv4d mtx[3];
+   double oglmtx[16];
 
    unsigned char *image;
    int width,height,components;
@@ -1091,6 +995,33 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
    glPushMatrix();
    glLoadIdentity();
    glMatrixMode(GL_MODELVIEW);
+
+   if (warp!=NULL)
+      {
+      warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      mtxmult(oglmtx);
+      }
 
    switch (TREEMODE)
       {
@@ -1232,8 +1163,8 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREECACHE_VTXPROGID2);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
-         glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],0.0f,mtx[8],0.0f);
+         glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f); //!!
 
          if (TREECACHE_TEXID==0)
             {
@@ -1321,8 +1252,8 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREECACHE_VTXPROGID2);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
-         glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,mtx[0],0.0f,mtx[8],0.0f);
+         glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f); //!!
 
          if (TREECACHE_TEXID==0)
             {
@@ -1406,7 +1337,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,
    }
 
 // render cached grass
-int minitree::rendergrass(float *cache,float *coords,int cnt)
+int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
    {
    int vtx=0;
 
@@ -1549,6 +1480,9 @@ int minitree::rendergrass(float *cache,float *coords,int cnt)
 
    GLfloat fogstart,fogend;
 
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    unsigned char *volume;
    int width,height,depth,components;
 
@@ -1569,6 +1503,33 @@ int minitree::rendergrass(float *cache,float *coords,int cnt)
    glPushMatrix();
    glLoadIdentity();
    glMatrixMode(GL_MODELVIEW);
+
+   if (warp!=NULL)
+      {
+      warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      mtxmult(oglmtx);
+      }
 
    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
    glEnable(GL_BLEND);
@@ -1748,9 +1709,9 @@ int minitree::rendergrass(float *cache,float *coords,int cnt)
    return(vtx);
    }
 
-// render boundary of cached trees
-int minitree::rendercache(float *cache,int cnt,float lambda,
-                          float tr,float tg,float tb,float ta)
+// render boundary of cached prisms
+int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+                           float tr,float tg,float tb,float ta)
    {
    int vtx=0;
 
@@ -1799,6 +1760,9 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
 
    GLfloat fogstart,fogend;
 
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    unsigned char *image;
    int width,height,components;
 
@@ -1822,6 +1786,33 @@ int minitree::rendercache(float *cache,int cnt,float lambda,
    glPushMatrix();
    glLoadIdentity();
    glMatrixMode(GL_MODELVIEW);
+
+   if (warp!=NULL)
+      {
+      warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      mtxmult(oglmtx);
+      }
 
    if (TREEMODE==-2) glColor4f(1.0f,1.0f,1.0f,ta);
    else glColor4f(tr,tg,tb,ta);
