@@ -32,6 +32,13 @@ minicache::minicache()
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
+   PRISMEDGE_CALLBACK=NULL;
+   PRISMCACHE_CALLBACK=NULL;
+   PRISMRENDER_CALLBACK=NULL;
+   PRISMTRIGGER_CALLBACK=NULL;
+   PRISMSYNC_CALLBACK=NULL;
+   CALLBACK_DATA=NULL;
+
    VTXPROG=NULL;
    VTXDIRTY=0;
 
@@ -183,8 +190,6 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    if ((t->prism_cache1=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
    if ((t->prism_cache2=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
 
-   t->cache_warp=NULL;
-
    t->ray=new miniray;
    t->first_fancnt=0;
 
@@ -244,6 +249,8 @@ void minicache::cache(int op,float a,float b,float c)
 
    TERRAIN_TYPE *t;
 
+   float *ptr;
+
    t=&TERRAIN[CACHE_ID];
 
    // enlarge vertex cache
@@ -296,7 +303,7 @@ void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               t->ray->addtrianglefans(&t->cache1_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->cache_warp);
+               t->ray->addtrianglefans(&t->cache1_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
                }
 
             if (op==TRIGGER_OP)
@@ -318,11 +325,7 @@ void minicache::cache(int op,float a,float b,float c)
 
       t->cache1_op[t->cache_size1]=op;
 
-      t->cache1_arg[3*t->cache_size1]=a;
-      t->cache1_arg[3*t->cache_size1+1]=b;
-      t->cache1_arg[3*t->cache_size1+2]=c;
-
-      t->cache_size1++;
+      ptr=&t->cache1_arg[3*t->cache_size1++];
       }
    else
       // update vertex buffer #2
@@ -362,7 +365,7 @@ void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               t->ray->addtrianglefans(&t->cache2_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->cache_warp);
+               t->ray->addtrianglefans(&t->cache2_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
                }
 
             if (op==TRIGGER_OP)
@@ -384,12 +387,13 @@ void minicache::cache(int op,float a,float b,float c)
 
       t->cache2_op[t->cache_size2]=op;
 
-      t->cache2_arg[3*t->cache_size2]=a;
-      t->cache2_arg[3*t->cache_size2+1]=b;
-      t->cache2_arg[3*t->cache_size2+2]=c;
-
-      t->cache_size2++;
+      ptr=&t->cache2_arg[3*t->cache_size2++];
       }
+
+   // update vertex cache
+   *ptr++=a;
+   *ptr++=b;
+   *ptr=c;
    }
 
 void minicache::cacheprismedge(float x,float y,float yf,float z)
@@ -398,50 +402,12 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
 
    TERRAIN_TYPE *t;
 
-   t=&TERRAIN[CACHE_ID];
+   float *ptr;
 
-   if (PRISMEDGE_CALLBACK!=NULL)
-      {
-      y-=yf;
-
-      // warp vertex
-      if (t->cache_warp!=NULL)
-         if (t->cache_warp->getglb()==minicoord::MINICOORD_LINEAR)
-            {
-            x+=t->cache_warp_mtx[0].w;
-            y+=t->cache_warp_mtx[1].w;
-            z+=t->cache_warp_mtx[2].w;
-            }
-         else
-            {
-            v1=miniv4d(x,y,z,1.0);
-
-            x=t->cache_warp_mtx[0]*v1;
-            y=t->cache_warp_mtx[1]*v1;
-            z=t->cache_warp_mtx[2]*v1;
-            }
-
-      // pass on
-      PRISMEDGE_CALLBACK(x,y,yf,z,CALLBACK_DATA);
-      }
+   if (PRISMEDGE_CALLBACK!=NULL) PRISMEDGE_CALLBACK(x,y-yf,yf,z,CALLBACK_DATA);
    else
       {
-      // warp vertex
-      if (t->cache_warp!=NULL)
-         if (t->cache_warp->getglb()==minicoord::MINICOORD_LINEAR)
-            {
-            x+=t->cache_warp_mtx[0].w;
-            y+=t->cache_warp_mtx[1].w;
-            z+=t->cache_warp_mtx[2].w;
-            }
-         else
-            {
-            v1=miniv4d(x,y,z,1.0);
-
-            x=t->cache_warp_mtx[0]*v1;
-            y=t->cache_warp_mtx[1]*v1;
-            z=t->cache_warp_mtx[2]*v1;
-            }
+      t=&TERRAIN[CACHE_ID];
 
       // enlarge prism cache
       if (t->prism_size1>=t->prism_maxsize || t->prism_size2>=t->prism_maxsize)
@@ -452,25 +418,14 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
          if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
 
+      if (t->cache_num==1) ptr=&t->prism_cache1[4*t->prism_size1++];
+      else ptr=&t->prism_cache2[4*t->prism_size2++];
+
       // update prism cache
-      if (t->cache_num==1)
-         {
-         t->prism_cache1[4*t->prism_size1]=x;
-         t->prism_cache1[4*t->prism_size1+1]=y;
-         t->prism_cache1[4*t->prism_size1+2]=yf;
-         t->prism_cache1[4*t->prism_size1+3]=z;
-
-         t->prism_size1++;
-         }
-      else
-         {
-         t->prism_cache2[4*t->prism_size2]=x;
-         t->prism_cache2[4*t->prism_size2+1]=y;
-         t->prism_cache2[4*t->prism_size2+2]=yf;
-         t->prism_cache2[4*t->prism_size2+3]=z;
-
-         t->prism_size2++;
-         }
+      *ptr++=x;
+      *ptr++=y;
+      *ptr++=yf;
+      *ptr=z;
       }
    }
 
@@ -483,14 +438,6 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
    t=&TERRAIN[CACHE_ID];
 
    t->cache_phase=phase;
-
-   if (t->cache_phase==0)
-      {
-      t->cache_warp=t->tile->getwarp();
-      if (t->cache_warp!=NULL) t->cache_warp->getwarp(t->cache_warp_mtx);
-
-      if (PRISMWARP_CALLBACK!=NULL) PRISMWARP_CALLBACK(t->cache_warp,CALLBACK_DATA);
-      }
 
    cache(TRIGGER_OP,phase,scale);
 
@@ -540,17 +487,7 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
          }
       }
 
-   if (PRISMCACHE_CALLBACK!=NULL)
-      if (t->cache_warp==NULL)
-         PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
-      else
-         {
-         v1=miniv4d(ex,ey,ez,1.0);
-
-         PRISMCACHE_CALLBACK(phase,scale,
-                             t->cache_warp_mtx[0]*v1,t->cache_warp_mtx[1]*v1,t->cache_warp_mtx[2]*v1,
-                             CALLBACK_DATA);
-         }
+   if (PRISMCACHE_CALLBACK!=NULL) PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
    }
 
 void minicache::cachesync(int id)
@@ -576,7 +513,13 @@ int minicache::rendercache()
 
    for (phase=0; phase<=4; phase++)
       for (id=0; id<MAXTERRAIN; id++)
-         if (TERRAIN[id].tile!=NULL) vtx+=rendercache(id,phase);
+         if (TERRAIN[id].tile!=NULL)
+            {
+            rendertrigger(phase);
+            vtx+=rendercache(id,phase);
+            }
+
+   return(vtx);
    }
 
 // render back buffer of the cache
@@ -881,8 +824,7 @@ int minicache::rendertrigger(int phase,float scale)
       else glVertexPointer(3,GL_FLOAT,0,t->cache1_arg);
    else if (t->render_phase==4) t->lambda=scale;
 
-   if (PRISMTRIGGER_CALLBACK!=NULL)
-      vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
+   if (PRISMTRIGGER_CALLBACK!=NULL) vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
 
 #endif
 
@@ -902,15 +844,15 @@ int minicache::rendertrigger()
          if (TERRAIN[id].tile!=NULL)
             if (PRISMRENDER_CALLBACK!=NULL)
                if (TERRAIN[id].cache_num==1)
-                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,CALLBACK_DATA);
+                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),CALLBACK_DATA);
                else
-                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,CALLBACK_DATA);
+                  vtx+=PRISMRENDER_CALLBACK(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),CALLBACK_DATA);
             else
                if (TERRAIN[id].cache_num==1)
-                  vtx+=renderprisms(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,
+                  vtx+=renderprisms(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),
                                     PRISM_R,PRISM_G,PRISM_B,PRISM_A);
                else
-                  vtx+=renderprisms(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,
+                  vtx+=renderprisms(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),
                                     PRISM_R,PRISM_G,PRISM_B,PRISM_A);
 
 #endif
@@ -918,7 +860,7 @@ int minicache::rendertrigger()
    return(vtx);
    }
 
-int minicache::renderprisms(float *cache,int cnt,float lambda,
+int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
                             float pr,float pg,float pb,float pa)
    {
    int vtx=0;
@@ -944,6 +886,9 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
 
    GLuint vtxprogid;
 
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    if (lambda<=0.0f) return(vtx);
 
    initglexts();
@@ -966,6 +911,33 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
    mtxpush();
    mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
    mtxmodel();
+
+   if (warp!=NULL)
+      {
+      warp->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      mtxmult(oglmtx);
+      }
 
    glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISMCACHE_VTXPROGID);
    glEnable(GL_VERTEX_PROGRAM_ARB);
@@ -1001,9 +973,8 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,
 // attach a tileset for scene double buffering
 void minicache::attach(minitile *terrain,
                        void (*prismedge)(float x,float y,float yf,float z,void *data),
-                       void (*prismwarp)(miniwarp *warp,void *data),
                        void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data),
-                       int (*prismrender)(float *cache,int cnt,float lambda,void *data),
+                       int (*prismrender)(float *cache,int cnt,float lambda,miniwarp *warp,void *data),
                        int (*prismtrigger)(int phase,void *data),
                        void (*prismsync)(int id,void *data),
                        void *data)
@@ -1048,7 +1019,6 @@ void minicache::attach(minitile *terrain,
             }
 
    PRISMEDGE_CALLBACK=prismedge;
-   PRISMWARP_CALLBACK=prismwarp;
    PRISMCACHE_CALLBACK=prismcache;
    PRISMRENDER_CALLBACK=prismrender;
    PRISMTRIGGER_CALLBACK=prismtrigger;
@@ -1684,6 +1654,14 @@ int minicache::getvtxcnt(int id)
    if (TERRAIN[id].cache_num==1) return(TERRAIN[id].vtxcnt2);
    else return(TERRAIN[id].vtxcnt1);
    }
+
+// get cached terrain object
+minitile *minicache::gettile(int id)
+   {return(TERRAIN[id].tile);}
+
+// get ray intersection test object
+miniray *minicache::getray(int id)
+   {return(TERRAIN[id].ray);}
 
 // configuring
 void minicache::configure_overlap(float overlap) {CONFIGURE_OVERLAP=overlap;}

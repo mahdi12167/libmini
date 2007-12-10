@@ -26,9 +26,8 @@ class minicache
    //! attach a tileset for scene double buffering
    void attach(minitile *terrain,
                void (*prismedge)(float x,float y,float yf,float z,void *data)=0,
-               void (*prismwarp)(miniwarp *warp,void *data)=0,
                void (*prismcache)(int phase,float scale,float ex,float ey,float ez,void *data)=0,
-               int (*prismrender)(float *cache,int cnt,float lambda,void *data)=0,
+               int (*prismrender)(float *cache,int cnt,float lambda,miniwarp *warp,void *data)=0,
                int (*prismtrigger)(int phase,void *data)=0,
                void (*prismsync)(int id,void *data)=0,
                void *data=0);
@@ -78,8 +77,11 @@ class minicache
    int getfancnt(); // rendered triangle fans
    int getvtxcnt(); // rendered vertices
 
+   //! get cached terrain object
+   minitile *gettile(int id);
+
    //! get ray intersection test object
-   miniray *getray(int id) {return(TERRAIN[id].ray);}
+   miniray *getray(int id);
 
    //! configuring
    void configure_overlap(float overlap=0.02f); // overlap of tile borders (prevents pixel flickering)
@@ -124,9 +126,6 @@ class minicache
 
       int prism_size1,prism_size2;
       int prism_maxsize;
-
-      miniwarp *cache_warp;
-      miniv4d cache_warp_mtx[3];
 
       miniray *ray;
 
@@ -220,9 +219,8 @@ class minicache
    int PRISMCACHE_VTXPROGID;
 
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
-   void (*PRISMWARP_CALLBACK)(miniwarp *warp,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
-   int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,void *data);
+   int (*PRISMRENDER_CALLBACK)(float *cache,int cnt,float lambda,miniwarp *warp,void *data);
    int (*PRISMTRIGGER_CALLBACK)(int phase,void *data);
    void (*PRISMSYNC_CALLBACK)(int id,void *data);
    void *CALLBACK_DATA;
@@ -244,7 +242,7 @@ class minicache
    void initterrain(TERRAIN_TYPE *terrain);
    void freeterrain(TERRAIN_TYPE *terrain);
 
-   int renderprisms(float *cache,int cnt,float lambda,
+   int renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
                     float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f);
 
    void enablevtxshader();
