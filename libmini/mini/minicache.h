@@ -35,6 +35,11 @@ class minicache
    //! detach a tileset
    void detach(minitile *terrain);
 
+   //! make cache current
+   //! required for multiple rendering windows/contexts
+   //! this should be called before updating the vertex buffers of the corresponding window
+   void makecurrent();
+
    //! render back buffer of the cache
    int rendercache();
 

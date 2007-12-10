@@ -981,7 +981,7 @@ void minicache::attach(minitile *terrain,
    {
    int id;
 
-   CACHE=this;
+   makecurrent();
 
    if (TERRAIN==NULL)
       {
@@ -1035,6 +1035,10 @@ void minicache::detach(minitile *terrain)
 
    freeterrain(&TERRAIN[terrain->getid()]);
    }
+
+// make cache current
+void minicache::makecurrent()
+   {CACHE=this;}
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
