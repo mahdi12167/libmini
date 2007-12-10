@@ -1164,7 +1164,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f); //!!
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
          if (TREECACHE_TEXID==0)
             {
@@ -1253,7 +1253,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f); //!!
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
          if (TREECACHE_TEXID==0)
             {
