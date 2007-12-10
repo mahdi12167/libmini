@@ -227,7 +227,7 @@ class minilayer
    float getflattening();
 
    //! get the internal cache id
-   int minilayer::getcacheid(); // -1 = none
+   int getcacheid(); // -1 = none
 
    //! render waypoints
    void renderpoints();

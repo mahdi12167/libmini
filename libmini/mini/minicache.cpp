@@ -449,7 +449,7 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
          t->cache_size2=0;
          t->prism_size2=0;
 
-         t->fancnt2;
+         t->fancnt2=0;
          t->vtxcnt2=0;
 
          t->cache_num=2;
