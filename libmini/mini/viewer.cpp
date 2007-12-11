@@ -157,7 +157,7 @@ static int avg_count=0;
 static int sw_stereo=0;
 static int sw_anaglyph=0;
 static int sw_full=0;
-static int sw_pnm=0;
+static int sw_multi=0;
 static int sw_reset=0;
 static int sw_autos3tc=0;
 static int sw_bricks=0;
@@ -1143,41 +1143,43 @@ int main(int argc,char *argv[])
    // count regular arguments
    for (argc_regular=0,i=1; i<argc; i++)
       if (*argv[i]!='-') argc_regular++;
-      else break;
-
-   // check arguments
-   if (argc_regular!=1 && argc_regular<4)
-      {
-      printf("short usage: %s <url> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
-      printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {-s | -a | -f | -p | -r | -c}\n",argv[0]);
-      printf("options: s=stereo a=anaglyph f=full-screen p=force-pnm r=reset-cache c=auto-s3tc\n");
-      exit(1);
-      }
-
-   // path setup for elevation and imagery
-   if (argc_regular!=1)
-      {
-      if (sscanf(argv[1],"%s",baseurl)!=1) exit(1);
-      if (sscanf(argv[2],"%s",baseid)!=1) exit(1);
-      if (sscanf(argv[3],"%s",basepath1)!=1) exit(1);
-      if (sscanf(argv[4],"%s",basepath2)!=1) exit(1);
-      }
-   else
-      if (sscanf(argv[1],"%s",shorturl)!=1) exit(1);
-
-   // create the viewer object
-   viewer=new viewerbase;
 
    // process command line options
-   for (i=argc_regular+1; i<argc; i++)
+   for (i=1; i<argc; i++)
       if (strcmp(argv[i],"-s")==0) sw_stereo=1;
       else if (strcmp(argv[i],"-a")==0) sw_anaglyph=1;
       else if (strcmp(argv[i],"-f")==0) sw_full=1;
-      else if (strcmp(argv[i],"-p")==0) sw_pnm=1;
+      else if (strcmp(argv[i],"-m")==0) sw_multi=1;
       else if (strcmp(argv[i],"-r")==0) sw_reset=1;
       else if (strcmp(argv[i],"-c")==0) sw_autos3tc=1;
       else if (strcmp(argv[i],"-b")==0) sw_bricks=1;
       else if (strcmp(argv[i],"-B")==0) sw_bricks=sw_mpass=1;
+
+   // check arguments
+   if ((sw_multi==0 && argc_regular!=1 && argc_regular!=4) ||
+       (sw_multi!=0 && argc_regular<1))
+      {
+      printf("short usage: %s <url> {<options>}\n",argv[0]);
+      printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {<options>}\n",argv[0]);
+      printf("multi usage: %s -m {<url>} {options>}\n",argv[0]);
+      printf("options: -s=stereo -a=anaglyph -f=full-screen -r=reset-cache -c=auto-s3tc\n");
+      exit(1);
+      }
+
+   // path setup for elevation and imagery
+   if (sw_multi==0)
+      if (argc_regular!=1)
+         {
+         if (*argv[1]=='-' || sscanf(argv[1],"%s",baseurl)!=1) exit(1);
+         if (*argv[2]=='-' || sscanf(argv[2],"%s",baseid)!=1) exit(1);
+         if (*argv[3]=='-' || sscanf(argv[3],"%s",basepath1)!=1) exit(1);
+         if (*argv[4]=='-' || sscanf(argv[4],"%s",basepath2)!=1) exit(1);
+         }
+      else
+         if (*argv[1]=='-' || sscanf(argv[1],"%s",shorturl)!=1) exit(1);
+
+   // create the viewer object
+   viewer=new viewerbase;
 
    // open window with GLUT:
 
@@ -1209,7 +1211,7 @@ int main(int argc,char *argv[])
    tparams=viewer->getterrain()->get();
 
    // load tileset (short version)
-   if (argc_regular==1)
+   if (sw_multi==0 && argc_regular==1)
       if (!viewer->load(shorturl,TRUE,sw_reset))
          {
          printf("unable to load tileset at url=%s\n",shorturl);
@@ -1217,12 +1219,22 @@ int main(int argc,char *argv[])
          }
 
    // load tileset (long version)
-   if (argc_regular!=1)
+   if (sw_multi==0 && argc_regular!=1)
       if (!viewer->load(baseurl,baseid,basepath1,basepath2,TRUE,sw_reset))
          {
          printf("unable to load tileset at url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);
          exit(1);
          }
+
+   // load tileset (multi version)
+   if (sw_multi!=0)
+      for (i=1; i<argc; i++)
+         if (*argv[i]!='-')
+            if (!viewer->load(argv[i],TRUE,sw_reset))
+               {
+               printf("unable to load tileset at url=%s\n",argv[i]);
+               exit(1);
+               }
 
    // load optional features
    viewer->loadopts();

@@ -512,12 +512,12 @@ int minicache::rendercache()
          }
 
    for (phase=0; phase<=4; phase++)
+      {
+      rendertrigger(phase);
+
       for (id=0; id<MAXTERRAIN; id++)
-         if (TERRAIN[id].tile!=NULL)
-            {
-            rendertrigger(phase);
-            vtx+=rendercache(id,phase);
-            }
+         if (TERRAIN[id].tile!=NULL) vtx+=rendercache(id,phase);
+      }
 
    return(vtx);
    }
@@ -539,7 +539,7 @@ int minicache::rendercache(int id,int phase)
 
    if (PRISMSYNC_CALLBACK!=NULL) PRISMSYNC_CALLBACK(RENDER_ID,CALLBACK_DATA);
 
-   vtx+=getvtxcnt(RENDER_ID);
+   if (phase==0) vtx+=getvtxcnt(RENDER_ID);
 
    i=t->render_count;
 
