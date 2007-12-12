@@ -633,7 +633,7 @@ void SEAload_callback(int col,int row,int lod,databuf *volume,void *data)
    volume->generateplane(8,px,py,0.0f,0.0f,0.0f,1.0f,sea_ext,sea_ext,sea_ext);
    }
 
-char PVMfilename[]="data/HawaiiTileset/Storm/Storm.pvm";
+char PVMfilename[]="data/Storm/Storm.pvm";
 
 int PVMavailable_callback(int col,int row,int lod,void *data)
    {return(lod<=1);}
@@ -1326,7 +1326,7 @@ int main(int argc,char *argv[])
 
    // load way points
    points.load("data/HawaiiTileset/Waypoints.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
-   points.load("data/HawaiiTileset/Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   points.load("data/Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
 
    // create sky dome
    skydome.loadskydome("data/HawaiiTileset/SkyDome.ppm",
