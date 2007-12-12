@@ -569,8 +569,8 @@ void renderinfo()
    const float size=0.3f;
    const float alpha=0.5f;
 
-   minilayer *ref=viewer->getreference();
-   minitile *mt=ref->getterrain()->getminitile();
+   minilayer *nst=viewer->getnearest(eye);
+   minitile *mt=nst->getterrain()->getminitile();
 
    int vcol=mt->getvisibleleft();
    int vrow=mt->getvisiblebottom();
@@ -651,10 +651,8 @@ void renderhud()
 
    char str[MAXSTR];
 
-   minilayer *ref=viewer->getreference();
    minilayer *nst=viewer->getnearest(eye);
-
-   minitile *mt=ref->getterrain()->getminitile();
+   minitile *mt=nst->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
 
@@ -700,7 +698,7 @@ void renderhud()
       glTranslatef(0.3f,0.0f,0.0f);
 
       snprintf(str,MAXSTR,"Tile Set:                \n\n vis area= [%d-%d]x[%d-%d]\n\n fps= %.1fHz (%.1f%%)\n\n mem= %.1fMB\n tex= %.1fMB\n\nStreaming:\n\n pending= %d\n\n cache= %.1fMB\n\nGeometry:\n\n fans=     %d\n vertices= %d\n",
-               mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop(), // visible area of reference tileset
+               mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop(), // visible area of nearest tileset
                1.0/(avg_delta+avg_idle),100*(1.0-avg_idle*params->fps), // actual frame rate and load
                viewer->getterrain()->getmem(),viewer->getterrain()->gettexmem(), // memory consumed by tilesets
                viewer->getterrain()->getpending(), // number of pending tiles
