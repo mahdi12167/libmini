@@ -37,7 +37,7 @@ void displayfunc()
    if (freeze==0 || getonce++==0)
       if (fscanf(flyfile,"%gs: res=%g ex=%g ey=%g ez=%g dx=%g dy=%g dz=%g ux=%g uy=%g uz=%g\n",
                  &t,&res,&ex,&ey,&ez,&dx,&dy,&dz,&ux,&uy,&uz)!=11)
-         if ((flyfile=fopen("Stuttgart.fly","rb"))==NULL) exit(1);
+         if ((flyfile=fopen("data/Stuttgart.fly","rb"))==NULL) exit(1);
 
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -131,7 +131,7 @@ int main(int argc,char *argv[])
    if ((hfields=(unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
    if ((textures=(unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
 
-   if ((file=fopen("data.raw","rb"))==NULL) exit(1);
+   if ((file=fopen("data/Stuttgart.raw","rb"))==NULL) exit(1);
    if ((data=(unsigned char *)malloc(incoming))==NULL) exit(1);
    if (fread(data,incoming,1,file)!=1) exit(1);
    fclose(file);
@@ -155,7 +155,7 @@ int main(int argc,char *argv[])
    free(textures);
    free(data);
 
-   if ((flyfile=fopen("Stuttgart.fly","rb"))==NULL) exit(1);
+   if ((flyfile=fopen("data/Stuttgart.fly","rb"))==NULL) exit(1);
 
    glutMainLoop();
 
