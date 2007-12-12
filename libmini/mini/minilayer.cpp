@@ -735,11 +735,11 @@ void minilayer::updatecoords()
 
 // get extent of tileset
 miniv3d minilayer::getextent()
-   {return(miniv3d(LPARAMS.extent)*len_l2g(1.0));}
+   {return(miniv3d(LPARAMS.extent)*len_i2g(1.0));}
 
 // get center of tileset
 minicoord minilayer::getcenter()
-   {return(map_l2g(miniv3d(0.0,0.0,0.0)));}
+   {return(map_i2g(miniv3d(0.0,0.0,0.0)));}
 
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p)
