@@ -365,11 +365,17 @@ static char *normaps[]={"data/HawaiiTileset/normalized/Normalization-BBox.ppm",
                         "data/HawaiiTileset/normalized/normalized.WAIMEA.pgm",
                         "data/HawaiiTileset/normalized/normalized.WAIPAHU.pgm"};
 
-// base path to the generated tiles and textures
-static char basepath1[]="data/HawaiiTileset/tiles";
-static char basepath2[]="data/HawaiiTileset/landsat";
-static char basepath3[]="data/HawaiiTileset/bathymetry";
-static char basepath4[]="data/HawaiiTileset/normalized";
+// relative base path to the generated tiles and textures
+static char rbasepath1[]="tiles";
+static char rbasepath2[]="landsat";
+static char rbasepath3[]="bathymetry";
+static char rbasepath4[]="normalized";
+
+// absolute base path to the generated tiles and textures
+static char abasepath1[]="data/HawaiiTileset/tiles";
+static char abasepath2[]="data/HawaiiTileset/landsat";
+static char abasepath3[]="data/HawaiiTileset/bathymetry";
+static char abasepath4[]="data/HawaiiTileset/normalized";
 
 // number of tiles
 static const int tilesL=16;
@@ -601,7 +607,7 @@ int request_callback(int col,int row,unsigned char *mapfile,int hlod,unsigned ch
       if (mapfile!=NULL) hfield->loadPNMdata((char *)mapfile);
       if (texfile!=NULL)
          if (sw_normals==0) texture->loadPPMcompressed((char *)texfile);
-         else texture->loadPPMnormalized((char *)texfile,basepath4);
+         else texture->loadPPMnormalized((char *)texfile,abasepath4);
       if (fogfile!=NULL) fogmap->loadPNMdata((char *)fogfile);
       }
    else
@@ -1092,6 +1098,18 @@ int main(int argc,char *argv[])
       else if (strcmp(argv[i],"-2")==0) sw_test2=1;
       else if (strcmp(argv[i],"-t")==0) sw_test1=sw_test2=1;
 
+   // turn off supersampling
+   configure_supersampling(0);
+
+   // turn on downsampling
+   configure_downsampling(1);
+
+   // enable startup file
+   configure_startupfile(1);
+
+   // define tile set path
+   configure_tilesetpath("data/HawaiiTileset");
+
    // resample tiles
    if (sw_hires==0)
       {
@@ -1099,16 +1117,16 @@ int main(int argc,char *argv[])
          {
          // generate normal maps
          normalize(113,usgsmaps,
-                   basepath4);
+                   rbasepath4);
 
          // resample normal maps
          resample(114,normaps,
-                  tilesL,hdownL,maxsize,basepath4);
+                  tilesL,hdownL,maxsize,rbasepath4);
          }
 
       // downscale bathymetric DEM
       resample(2,bathymaps,
-               1,0,2048,basepath3);
+               1,0,2048,rbasepath3);
 
       // shade bathymetric DEM
       texturemap("data/HawaiiTileset/bathymetry/tile.1-1.pgm","data/HawaiiTileset/bathymetry/tile.1-1.ppm",
@@ -1116,11 +1134,11 @@ int main(int argc,char *argv[])
 
       // resample orthophotos
       resample(10,landmaps,
-               tilesL,tdownL,maxsize,basepath2);
+               tilesL,tdownL,maxsize,rbasepath2);
 
       // resample USGS DEM
       resample(113,usgsmaps,
-               tilesL,hdownL,maxsize,basepath1,
+               tilesL,hdownL,maxsize,rbasepath1,
                NULL,NULL,NULL,NULL,NULL,-9999,
                &cols,&rows,outparams);
       }
@@ -1129,23 +1147,23 @@ int main(int argc,char *argv[])
       if (sw_normals!=0)
          {
          normalize(113,usgsmaps,
-                   basepath4);
+                   rbasepath4);
 
          resample(114,normaps,
-                  tilesH,hdownH,maxsize,basepath4);
+                  tilesH,hdownH,maxsize,rbasepath4);
          }
 
       resample(2,bathymaps,
-               1,0,2048,basepath3);
+               1,0,2048,rbasepath3);
 
       texturemap("data/HawaiiTileset/bathymetry/tile.1-1.pgm","data/HawaiiTileset/bathymetry/tile.1-1.ppm",
                  2048,2048,shader,1000.0f,snowline);
 
       resample(10,landmaps,
-               tilesH,tdownH,maxsize,basepath2);
+               tilesH,tdownH,maxsize,rbasepath2);
 
       resample(113,usgsmaps,
-               tilesH,hdownH,maxsize,basepath1,
+               tilesH,hdownH,maxsize,rbasepath1,
                NULL,NULL,NULL,NULL,NULL,-9999,&cols,&rows);
       }
 
@@ -1184,7 +1202,7 @@ int main(int argc,char *argv[])
 
    // load resampled tiles
    terrain.load(cols,rows, // number of columns and rows
-                basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
+                abasepath1,abasepath2,NULL, // directories for tiles and textures (and no fogmaps)
                 -viewx,-viewy, // horizontal offset in arc-seconds
                 0.0f, // no vertical offset
                 exaggeration,scale, // vertical exaggeration and global scale
