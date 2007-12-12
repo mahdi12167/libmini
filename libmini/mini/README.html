@@ -13,7 +13,7 @@ renderer which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.6 as of 11.December.2007<br>
+Version 8.6 as of 12.December.2007<br>
 Copyright (c) 1995-2007 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1946,13 +1946,13 @@ See the examples below how to use the viewer from the command line:<p>
       viewer &lt;local.base.path&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; imagery.subpath { &lt;options&gt; }
 
    local example (for loading the data of the Hawaii Demo):
-      viewer ~user/tilesets/ Hawaii/ tiles landsat
+      viewer ~user/.../Hawaii/data/ HawaiiTileset/ tiles landsat
 
    remote usage:
-      viewer &lt;http-address&gt; &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; { &lt;options&gt; }
+      viewer "&lt;http-address&gt;" &lt;tileset.path&gt; &lt;elevation.subpath&gt; &lt;imagery.subpath&gt; { &lt;options&gt; }
 
    remote example:
-      viewer "http://server.inter.net/tilesets/" tileset/ elevation imagery
+      viewer "http://server.inter.net/.../" tileset/ elevation imagery
 </pre>
 
 If the data has been resampled with vtb, the two ini files for the
