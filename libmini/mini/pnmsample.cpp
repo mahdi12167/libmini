@@ -1212,11 +1212,11 @@ void normalize(int num,
    for (n=0; n<num; n++)
       {
       if (strrchr(grid[n],'/')==NULL)
-         if (basepath==NULL) snprintf(filename,MAX_STR,"normalized.%s",grid[n]);
-         else snprintf(filename,MAX_STR,"%s/normalized.%s",basepath,grid[n]);
+         if (basepath==NULL) snprintf(filename,MAX_STR,"%snormalized.%s",CONFIGURE_TILESETPATH,grid[n]);
+         else snprintf(filename,MAX_STR,"%s%s/normalized.%s",CONFIGURE_TILESETPATH,basepath,grid[n]);
       else
-         if (basepath==NULL) snprintf(filename,MAX_STR,"normalized.%s",strrchr(grid[n],'/')+1);
-         else snprintf(filename,MAX_STR,"%s/normalized.%s",basepath,strrchr(grid[n],'/')+1);
+         if (basepath==NULL) snprintf(filename,MAX_STR,"%snormalized.%s",CONFIGURE_TILESETPATH,strrchr(grid[n],'/')+1);
+         else snprintf(filename,MAX_STR,"%s%s/normalized.%s",CONFIGURE_TILESETPATH,basepath,strrchr(grid[n],'/')+1);
 
       // check for normalized file
       if ((nmap=readPNMfile(filename,
