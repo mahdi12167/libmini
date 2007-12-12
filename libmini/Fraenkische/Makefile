@@ -22,15 +22,15 @@ clean:
 	@-(cd tools; make clean)
 
 tidy:	clean
-	@-$(RM) FraenkischeTileset/tileset.sav
-	@-$(RM) FraenkischeTileset/startup.sav
+	@-find . -name \*.tileset.sav -exec $(RM) {} \;
+	@-find . \( -name startup.sav -o -name settings.sav \) -exec $(RM) {} \;
 	@-find . \( -name stub.\* -o -name tile.\*.p\?m\* \) -exec $(RM) {} \;
 	@-find . \( -name \*~ -o -name core \) -exec $(RM) {} \;
 	@-(cd tools; make tidy)
 
 grid:	app
-	@-$(RM) FraenkischeTileset/tileset.sav
-	@-$(RM) FraenkischeTileset/startup.sav
+	@-find . -name \*.tileset.sav -exec $(RM) {} \;
+	@-find . \( -name startup.sav -o -name settings.sav \) -exec $(RM) {} \;
 	@-find . \( -name stub.\* -o -name tile.\*.p\?m\* \) -exec $(RM) {} \;
 	@-${MAIN} -q
 
@@ -39,4 +39,4 @@ zip:	tidy
 
 demo:	tidy grid
 	@-make clean
-	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/SRTM\* -x \*/GTOPO30\* -x \*/LandSat-\* -x \*/Vegetation\* -x \*/bin\* -x \*/Waypoints.txt -x \*/startup.sav)
+	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/SRTM\* -x \*/GTOPO30\* -x \*/LandSat-\* -x \*/Vegetation\* -x \*/bin\* -x \*/Waypoints.txt -x \*/startup.sav -x \*/settings.sav -x \*/Screens\*)

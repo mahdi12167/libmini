@@ -2,7 +2,7 @@
 
 #undef PTHREADS // enable this if pthreads are installed
 
-#define DEMO_REMOTEID "FraenkischeTileset/"
+#define DEMO_TILESETPATH "data/FraenkischeTileset/"
 #define DEMO_ELEVTILESETFILE "elev.tileset.sav"
 #define DEMO_IMAGTILESETFILE "imag.tileset.sav"
 #define DEMO_STARTUPFILE "startup.sav"
@@ -76,7 +76,7 @@ void unlock_cs(void *data)
 static int winwidth,winheight,winid;
 
 // SRTM
-static char *srtmmaps[]={"FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
+static char *srtmmaps[]={"data/FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
                          "GTOPO30/World.W020N90.map.pgm", // fill SRTM holes
                          "SRTM/N47E010.pgm",
                          "SRTM/N47E011.pgm",
@@ -96,7 +96,7 @@ static char *srtmmaps[]={"FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
                          "SRTM/N50E013.pgm"};
 
 // LandSat ETM and MSS orthophotos
-static char *landmaps[]={"FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
+static char *landmaps[]={"data/FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
                          "LandSat-ETM/p193r025.ppm",
                          "LandSat-ETM/p193r026.ppm",
                          "LandSat-ETM/p194r025.ppm", // cloudy -> poor quality
@@ -108,7 +108,7 @@ static char *landmaps[]={"FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
                          "LandSat-MSS/p209r27_1m19750606.ppm"}; // snowy -> very poor quality
 
 // Tree maps
-static char *treemaps[]={"FraenkischeTileset/trees/LandSat-NDVI-BBox.demo.pgm",
+static char *treemaps[]={"data/FraenkischeTileset/trees/LandSat-NDVI-BBox.demo.pgm",
                          "LandSat-NDVI/p193r026-trees.pgm"};
 
 // base path to the generated tiles and textures
@@ -242,7 +242,7 @@ static int output=0;
 
 // record file
 static FILE *record=NULL;
-static char recordfile[]="Record.txt";
+static char recordfile[]="data/Record.txt";
 static int actframe=0,newframe=0;
 static char key='\0';
 
@@ -760,7 +760,7 @@ int main(int argc,char *argv[])
    configure_startupfile(1);
 
    // define tile set path
-   configure_tilesetpath(DEMO_REMOTEID);
+   configure_tilesetpath(DEMO_TILESETPATH);
 
    // resample LandSat orthophotos
    resample(9,landmaps,
@@ -811,7 +811,7 @@ int main(int argc,char *argv[])
    tilecache->setloader(request_callback,NULL);
    tilecache->getcloud()->setschedule(0.02,5.0); // upload for 20ms and keep for 5min
    tilecache->getcloud()->setmaxsize(256.0); // allow 256 MB tile cache size
-   tilecache->setremoteid(DEMO_REMOTEID);
+   tilecache->setremoteid(DEMO_TILESETPATH);
 #ifdef PTHREADS
    tilecache->getcloud()->setthread(startthread,NULL,jointhread,lock_cs,unlock_cs);
    tilecache->configure_netthreads(numthreads);
@@ -851,16 +851,16 @@ int main(int argc,char *argv[])
    cache.attach(terrain.getminitile());
 
    // create sky dome
-   skydome.loadskydome("SkyDome.ppm",
+   skydome.loadskydome("data/FraenkischeTileset/SkyDome.ppm",
                        outparams[2],0.0f,-outparams[3],
                        cols*outparams[0],rows*outparams[1]/(cols*outparams[0]));
 
    // load way points
-   if (sw_demo!=0) points.load("Splash.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   if (sw_demo!=0) points.load("data/Splash.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
    else
       {
-      points.load("Waypoints.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
-      points.load("ETC/Cities.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+      points.load("data/FraenkischeTileset/Waypoints.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+      points.load("data/Cities.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
       }
 
    // initialize trees
@@ -869,14 +869,14 @@ int main(int argc,char *argv[])
       trees=new minitree(&cache,terrain.getminitile());
 
       trees->setmode_mx(treebase,0.0f,0.25f,0.05f,0.9f);
-      trees->setmode_m2("Forest.ppm",250.0f/scale);
+      trees->setmode_m2("data/Forest.ppm",250.0f/scale);
       trees->setmode_x(50.0f,5.0f,4,50.0f/scale,treeheight*exaggertrees*exaggeration/scale,70.0f/scale,60.0f/scale,0.0f,0.25f,0.05f);
       trees->setmode_3(0.1f);
-      trees->setmode_4("TreeRGB.ppm","TreeA.pgm",0.0f,0.5f);
+      trees->setmode_4("data/TreeRGB.ppm","data/TreeA.pgm",0.0f,0.5f);
       trees->setmode_6(0.4f,0.7f);
-      trees->setmode_7("TreesRGB.ppm","TreesA.pgm",4);
+      trees->setmode_7("data/TreesRGB.ppm","data/TreesA.pgm",4);
       trees->setmode_8(treestep*exaggertrees*exaggeration/scale,0.5f);
-      trees->setmode_9("Soil.pvm",30.0f/scale,0.5f*exaggertrees*exaggeration/scale,0.005f,0.01f,1.25f,0.75f,5.0f/scale,8,1.0f);
+      trees->setmode_9("data/Soil.pvm",30.0f/scale,0.5f*exaggertrees*exaggeration/scale,0.005f,0.01f,1.25f,0.75f,5.0f/scale,8,1.0f);
       trees->setmode_10(250.0f/scale,1024,16,0.5f,0.0f,0.5f);
       trees->setmode_12(0.3f,0.6f,0.1f,0.25f,1.0f);
       trees->setmode(treemode);

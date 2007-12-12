@@ -123,7 +123,7 @@ foreach file (*.png)
    rm -f $file:r.matte
 end
 
-if (! -e ../TreesRGB.ppm) then
+if (! -e ../data/TreesRGB.ppm) then
    set tree1=ohia4_v7_256
    set tree2=ohia5_v3_256
    set tree3=mamane1_v2_256
@@ -133,15 +133,15 @@ if (! -e ../TreesRGB.ppm) then
       convert $file -geometry 256x256! _$file
    end
 
-   montage +frame +shadow +label -tile 4x1 -geometry 256x256 _$tree1"RGB".ppm _$tree2"RGB".ppm _$tree3"RGB".ppm _$tree4"RGB".ppm -depth 8 ../TreesRGB.ppm
-   montage +frame +shadow +label -tile 4x1 -geometry 256x256 _$tree1"A".pgm _$tree2"A".pgm _$tree3"A".pgm _$tree4"A".pgm -depth 8 ../TreesA.pgm
+   montage +frame +shadow +label -tile 4x1 -geometry 256x256 _$tree1"RGB".ppm _$tree2"RGB".ppm _$tree3"RGB".ppm _$tree4"RGB".ppm -depth 8 ../data/TreesRGB.ppm
+   montage +frame +shadow +label -tile 4x1 -geometry 256x256 _$tree1"A".pgm _$tree2"A".pgm _$tree3"A".pgm _$tree4"A".pgm -depth 8 ../data/TreesA.pgm
 endif
 
 cd ..
 
 cd Soil
 
-if (! -e ../Soil.pvm) then
+if (! -e ../data/Soil.pvm) then
    set tex1=stone.png
    set tex2=mud.png
    set tex3=grass1.png
@@ -152,7 +152,7 @@ if (! -e ../Soil.pvm) then
    set tex8=forest2.png
    foreach file ($tex1 $tex2 $tex3 $tex4 $tex5 $tex6 $tex7 $tex8)
       convert $file -geometry 512x512! $file:r.ppm
-      ../tools/pnm2pvm $file:r.ppm ../Soil.pvm
+      ../tools/pnm2pvm $file:r.ppm ../data/Soil.pvm
    end
 endif
 
@@ -160,8 +160,9 @@ cd ..
 
 cd ETC
 
-if (! -e Cities.txt) then
+if (! -e ../data/Cities.txt) then
    geo2txt.sh
+   \cp -f Cities.txt ../data
 endif
 
 cd ..
