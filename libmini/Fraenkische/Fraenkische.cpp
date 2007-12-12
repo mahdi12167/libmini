@@ -756,6 +756,9 @@ int main(int argc,char *argv[])
    // turn off supersampling
    configure_supersampling(0);
 
+   // turn on downsampling
+   configure_downsampling(1);
+
    // enable startup file
    configure_startupfile(1);
 
@@ -805,13 +808,13 @@ int main(int argc,char *argv[])
 
    // create tile cache
    tilecache=new datacache(&terrain);
+   tilecache->setremoteid(DEMO_TILESETPATH);
    tilecache->setelevtilesetfile(DEMO_ELEVTILESETFILE);
    tilecache->setimagtilesetfile(DEMO_IMAGTILESETFILE);
    tilecache->setstartupfile(DEMO_STARTUPFILE);
    tilecache->setloader(request_callback,NULL);
    tilecache->getcloud()->setschedule(0.02,5.0); // upload for 20ms and keep for 5min
    tilecache->getcloud()->setmaxsize(256.0); // allow 256 MB tile cache size
-   tilecache->setremoteid(DEMO_TILESETPATH);
 #ifdef PTHREADS
    tilecache->getcloud()->setthread(startthread,NULL,jointhread,lock_cs,unlock_cs);
    tilecache->configure_netthreads(numthreads);
