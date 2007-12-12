@@ -1108,7 +1108,7 @@ int main(int argc,char *argv[])
    configure_startupfile(1);
 
    // define tile set path
-   configure_tilesetpath("data/HawaiiTileset");
+   configure_tilesetpath("data/HawaiiTileset/");
 
    // resample tiles
    if (sw_hires==0)
