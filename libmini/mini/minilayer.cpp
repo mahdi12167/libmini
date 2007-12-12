@@ -378,6 +378,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);
+   TILECACHE->setremoteid(baseid);
+   TILECACHE->setremoteurl(baseurl);
+   TILECACHE->setlocalpath(LPARAMS.localpath);
    TILECACHE->setelevtilesetfile(elevtilesetfile);
    TILECACHE->setimagtilesetfile(imagtilesetfile);
    TILECACHE->setvtbelevinifile(vtbelevinifile);
@@ -397,9 +400,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
    TILECACHE->configure_locthreads(LPARAMS.locthreads);
    TILECACHE->configure_netthreads(LPARAMS.numthreads);
-   TILECACHE->setremoteid(baseid);
-   TILECACHE->setremoteurl(baseurl);
-   TILECACHE->setlocalpath(LPARAMS.localpath);
    TILECACHE->setreceiver(minilayer::getURL,this,minilayer::checkURL);
 
    // free tileset info file names
