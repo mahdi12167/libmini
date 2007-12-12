@@ -757,7 +757,7 @@ float miniterrain::getflattening()
    }
 
 // shoot a ray at the scene
-double miniterrain::shoot(const minicoord &o,const miniv3d &d)
+double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
    {
    int n;
 
@@ -781,7 +781,12 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d)
    // shoot a ray and get the traveled distance
    dist=CACHE->getray(LAYER[nearest]->getcacheid())->shoot(ogl.vec,dgl);
 
-   if (dist!=MAXFLOAT) dist=LAYER[nearest]->len_o2g(dist);
+   // check for valid hit
+   if (dist!=MAXFLOAT)
+      {
+      dist=LAYER[nearest]->len_o2g(dist);
+      if (id!=NULL) *id=nearest;
+      }
    else
       for (n=0; n<LNUM; n++)
          if (n!=nearest)
@@ -791,11 +796,17 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d)
             dgl=LAYER[n]->rot_g2o(d,o);
 
             // shoot a ray and get the traveled distance
-            dn=CACHE->getray(LAYER[nearest]->getcacheid())->shoot(ogl.vec,dgl);
+            dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
 
             // search nearest hit point
             if (dn!=MAXFLOAT) dn=LAYER[n]->len_o2g(dn);
-            if (dn<dist) dist=dn;
+
+            // check for valid hit
+            if (dn<dist)
+               {
+               dist=dn;
+               if (id!=NULL) *id=n;
+               }
             }
 
    return(dist);

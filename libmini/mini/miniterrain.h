@@ -242,7 +242,7 @@ class miniterrain
    void update();
 
    //! generate and cache scene for a particular eye point
-   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time);
+   void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time=0.0);
 
    //! render cached scene
    void render();
@@ -257,7 +257,7 @@ class miniterrain
    float getflattening();
 
    //! shoot a ray at the scene
-   double shoot(const minicoord &o,const miniv3d &d);
+   double shoot(const minicoord &o,const miniv3d &d,int *id=NULL);
 
    //! return memory consumption
    double getmem();
