@@ -40,4 +40,4 @@ zip:	tidy
 
 demo:	tidy gridlo
 	@-make clean
-	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/USGS-DEM\* -x \*/LandSat-ETM\* -x \*/Bathymetry-DEM\* -x \*/normalized/normalized.\* -x \*/Waypoints.txt -x \*/startup.sav -x \*/settings.sav)
+	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/USGS-DEM\* -x \*/LandSat-ETM\* -x \*/Bathymetry-DEM\* -x \*/normalized/normalized.\* -x \*/Waypoints.txt -x \*/startup.sav -x \*/settings.sav -x \*/Screens\*)
