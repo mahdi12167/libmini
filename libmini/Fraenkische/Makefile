@@ -39,4 +39,4 @@ zip:	tidy
 
 demo:	tidy grid
 	@-make clean
-	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/SRTM\* -x \*/GTOPO30\* -x \*/LandSat-\* -x \*/Vegetation\* -x \*/bin\* -x \*/Waypoints.txt -x \*/startup.sav -x \*/settings.sav -x \*/Screens\*)
+	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/SRTM\* -x \*/GTOPO30\* -x \*/LandSat-\* -x \*/Vegetation\* -x \*/ETC\* -x \*/bin\* -x \*/Waypoints.txt -x \*/startup.sav -x \*/settings.sav -x \*/Screens\*)
