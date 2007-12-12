@@ -1389,3 +1389,51 @@ UTM 32
 664086
 5490879
 382m
+
+Val D'Orcia 628
+UTM 32
+708930
+4766733
+361m
+
+Ripa D'Orcia
+UTM 32
+710676
+4766096
+361m
+
+Cafe Piazza Matteotti, Torrita di Siena
+UTM 32
+725308
+4783058
+310m
+
+Plaza Caduti, Torrita di Siena
+UTM 32
+725220
+4782957
+298m
+
+Kongress Innsbruck
+UTM 32
+681187
+5238030
+569m
+
+Da Paolo, Stuttgart
+UTM 32
+511181
+5400788
+293m
+
+HBF, Stuttgart
+UTM 32
+513230
+5403471
+325m
+
+PP Kochertalbruecke
+UTM 32
+557978
+5447450
+430m
