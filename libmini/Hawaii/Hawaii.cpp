@@ -108,7 +108,7 @@ void unlock_cs2(void *data)
 static int winwidth,winheight,winid;
 
 // USGS 1:250,000 and 1:24,000 DEM quads
-static char *usgsmaps[]={"tiles/USGS-DEM-BBox.pgm",
+static char *usgsmaps[]={"data/HawaiiTileset/tiles/USGS-DEM-BBox.pgm",
                          // lores bathymetry
                          "Bathymetry-DEM/bathymetry.pgm",
                          // lores coverage
@@ -226,10 +226,10 @@ static char *usgsmaps[]={"tiles/USGS-DEM-BBox.pgm",
                          "USGS-DEM-24000/WAIMEA.pgm",
                          "USGS-DEM-24000/WAIPAHU.pgm",
                          // optional
-                         "tiles/BensHouse.pgm"};
+                         "data/HawaiiTileset/tiles/BensHouse.pgm"};
 
 // LandSat ETM orthophotos
-static char *landmaps[]={"landsat/LandSat-ETM-BBox.ppm",
+static char *landmaps[]={"data/HawaiiTileset/landsat/LandSat-ETM-BBox.ppm",
                          "LandSat-ETM/hawaii.ppm",
                          "LandSat-ETM/kahoolawe.ppm",
                          "LandSat-ETM/kauai.ppm",
@@ -238,138 +238,138 @@ static char *landmaps[]={"landsat/LandSat-ETM-BBox.ppm",
                          "LandSat-ETM/molokai.ppm",
                          "LandSat-ETM/nihau.ppm",
                          "LandSat-ETM/oahu.ppm",
-                         "bathymetry/tile.1-1.ppm"};
+                         "data/HawaiiTileset/bathymetry/tile.1-1.ppm"};
 
 // NOAA bathymetric DEM
-static char *bathymaps[]={"bathymetry/Bathymetry-DEM-BBox.pgm",
+static char *bathymaps[]={"data/HawaiiTileset/bathymetry/Bathymetry-DEM-BBox.pgm",
                           "Bathymetry-DEM/bathymetry.pgm"};
 
 // derived normal maps
-static char *normaps[]={"normalized/Normalization-BBox.ppm",
+static char *normaps[]={"data/HawaiiTileset/normalized/Normalization-BBox.ppm",
                         // lores background
-                        "normalized/normalized.USGS-DEM-BBox.pgm",
+                        "data/HawaiiTileset/normalized/normalized.USGS-DEM-BBox.pgm",
                         // lores bathymetry
-                        "normalized/normalized.bathymetry.pgm",
+                        "data/HawaiiTileset/normalized/normalized.bathymetry.pgm",
                         // lores coverage
-                        "normalized/normalized.HAWAII-C.pgm",
-                        "normalized/normalized.HAWAII-E.pgm",
-                        "normalized/normalized.HAWAII-N.pgm",
-                        "normalized/normalized.HAWAII-S.pgm",
-                        "normalized/normalized.HAWAII-W.pgm",
-                        "normalized/normalized.KAUAI-NE.pgm",
-                        "normalized/normalized.KAUAI-NW.pgm",
-                        "normalized/normalized.KAUAI-SE.pgm",
-                        "normalized/normalized.KAUAI-SW.pgm",
-                        "normalized/normalized.MAUI-NE.pgm",
-                        "normalized/normalized.MAUI-NW.pgm",
-                        "normalized/normalized.MAUI-SE.pgm",
-                        "normalized/normalized.MAUI-SW.pgm",
-                        "normalized/normalized.OAHU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWAII-C.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWAII-E.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWAII-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWAII-S.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWAII-W.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAUAI-NE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAUAI-NW.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAUAI-SE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAUAI-SW.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUI-NE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUI-NW.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUI-SE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUI-SW.pgm",
+                        "data/HawaiiTileset/normalized/normalized.OAHU.pgm",
                         // Big Island
-                        "normalized/normalized.AHUMOA.pgm",
-                        "normalized/normalized.AKAKA-FALLS.pgm",
-                        "normalized/normalized.ALIKA-CONE.pgm",
-                        "normalized/normalized.ANAEHOOMALU.pgm",
-                        "normalized/normalized.HAWI-OE-N.pgm",
-                        "normalized/normalized.HAWI.pgm",
-                        "normalized/normalized.HILO.pgm",
-                        "normalized/normalized.HONAUNAU.pgm",
-                        "normalized/normalized.HONOKAA.pgm",
-                        "normalized/normalized.HONOKANE.pgm",
-                        "normalized/normalized.HUALALAI.pgm",
-                        "normalized/normalized.KA-LAE-OE-E.pgm",
-                        "normalized/normalized.KA-LAE.pgm",
-                        "normalized/normalized.KAHUKU-RANCH.pgm",
-                        "normalized/normalized.KAILUA.pgm",
-                        "normalized/normalized.KALALUA.pgm",
-                        "normalized/normalized.KALAPANA-OE-E.pgm",
-                        "normalized/normalized.KALAPANA.pgm",
-                        "normalized/normalized.KAMUELA.pgm",
-                        "normalized/normalized.KAPOHO-OE-N.pgm",
-                        "normalized/normalized.KAPOHO.pgm",
-                        "normalized/normalized.KAU-DESERT.pgm",
-                        "normalized/normalized.KAULUOA-POINT.pgm",
-                        "normalized/normalized.KAUNENE.pgm",
-                        "normalized/normalized.KAWAIHAE.pgm",
-                        "normalized/normalized.KEAAU-RANCH.pgm",
-                        "normalized/normalized.KEAHOLE-POINT.pgm",
-                        "normalized/normalized.KEAIWA-RESERVOIR.pgm",
-                        "normalized/normalized.KEALAKEKUA.pgm",
-                        "normalized/normalized.KEAMUKU.pgm",
-                        "normalized/normalized.KEANAKOLU.pgm",
-                        "normalized/normalized.KEAWANUI-BAY.pgm",
-                        "normalized/normalized.KIHOLO.pgm",
-                        "normalized/normalized.KILAUEA-CRATER.pgm",
-                        "normalized/normalized.KIPUKA-PAKEKAKE.pgm",
-                        "normalized/normalized.KOKOOLAU.pgm",
-                        "normalized/normalized.KUKAIAU.pgm",
-                        "normalized/normalized.KUKUIHAELE-OE-N.pgm",
-                        "normalized/normalized.KUKUIHAELE.pgm",
-                        "normalized/normalized.KULANI.pgm",
-                        "normalized/normalized.MAHUKONA-OE-N.pgm",
-                        "normalized/normalized.MAHUKONA.pgm",
-                        "normalized/normalized.MAKAHALAU.pgm",
-                        "normalized/normalized.MAKALAWENA.pgm",
-                        "normalized/normalized.MAKAOPUHI-CRATER.pgm",
-                        "normalized/normalized.MANUKA-BAY.pgm",
-                        "normalized/normalized.MAUNA-KEA.pgm",
-                        "normalized/normalized.MAUNA-LOA.pgm",
-                        "normalized/normalized.MILOLII.pgm",
-                        "normalized/normalized.MOUNTAIN-VIEW.pgm",
-                        "normalized/normalized.NAALEHU.pgm",
-                        "normalized/normalized.NALIIKAKANI-POINT.pgm",
-                        "normalized/normalized.NAOHUELEELUA.pgm",
-                        "normalized/normalized.NOHONAOHAE.pgm",
-                        "normalized/normalized.PAHALA.pgm",
-                        "normalized/normalized.PAHOA-NORTH.pgm",
-                        "normalized/normalized.PAHOA-SOUTH.pgm",
-                        "normalized/normalized.PAPA.pgm",
-                        "normalized/normalized.PAPAALOA.pgm",
-                        "normalized/normalized.PAPAIKOU-OE-N.pgm",
-                        "normalized/normalized.PAPAIKOU.pgm",
-                        "normalized/normalized.PIIHONUA.pgm",
-                        "normalized/normalized.POHUE-BAY.pgm",
-                        "normalized/normalized.PUA-AKALA.pgm",
-                        "normalized/normalized.PUNALUU.pgm",
-                        "normalized/normalized.PUU-ANAHULU.pgm",
-                        "normalized/normalized.PUU-HINAI.pgm",
-                        "normalized/normalized.PUU-HOU.pgm",
-                        "normalized/normalized.PUU-KOLI.pgm",
-                        "normalized/normalized.PUU-LEHUA.pgm",
-                        "normalized/normalized.PUU-MAKAALA.pgm",
-                        "normalized/normalized.PUU-O-KEOKEO.pgm",
-                        "normalized/normalized.PUU-O-UO.pgm",
-                        "normalized/normalized.PUU-OO.pgm",
-                        "normalized/normalized.PUU-POHAKULOA.pgm",
-                        "normalized/normalized.PUU-ULAULA.pgm",
-                        "normalized/normalized.SULPHUR-CONE.pgm",
-                        "normalized/normalized.UMIKOA.pgm",
-                        "normalized/normalized.UPPER-PIIHONUA.pgm",
-                        "normalized/normalized.VOLCANO.pgm",
-                        "normalized/normalized.WOOD-VALLEY.pgm",
+                        "data/HawaiiTileset/normalized/normalized.AHUMOA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.AKAKA-FALLS.pgm",
+                        "data/HawaiiTileset/normalized/normalized.ALIKA-CONE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.ANAEHOOMALU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWI-OE-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAWI.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HILO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HONAUNAU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HONOKAA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HONOKANE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HUALALAI.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KA-LAE-OE-E.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KA-LAE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAHUKU-RANCH.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAILUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KALALUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KALAPANA-OE-E.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KALAPANA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAMUELA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAPOHO-OE-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAPOHO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAU-DESERT.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAULUOA-POINT.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAUNENE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAWAIHAE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEAAU-RANCH.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEAHOLE-POINT.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEAIWA-RESERVOIR.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEALAKEKUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEAMUKU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEANAKOLU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KEAWANUI-BAY.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KIHOLO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KILAUEA-CRATER.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KIPUKA-PAKEKAKE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KOKOOLAU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KUKAIAU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KUKUIHAELE-OE-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KUKUIHAELE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KULANI.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAHUKONA-OE-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAHUKONA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAKAHALAU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAKALAWENA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAKAOPUHI-CRATER.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MANUKA-BAY.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUNA-KEA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MAUNA-LOA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MILOLII.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MOUNTAIN-VIEW.pgm",
+                        "data/HawaiiTileset/normalized/normalized.NAALEHU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.NALIIKAKANI-POINT.pgm",
+                        "data/HawaiiTileset/normalized/normalized.NAOHUELEELUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.NOHONAOHAE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAHALA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAHOA-NORTH.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAHOA-SOUTH.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAPA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAPAALOA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAPAIKOU-OE-N.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PAPAIKOU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PIIHONUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.POHUE-BAY.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUA-AKALA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUNALUU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-ANAHULU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-HINAI.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-HOU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-KOLI.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-LEHUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-MAKAALA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-O-KEOKEO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-O-UO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-OO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-POHAKULOA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PUU-ULAULA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.SULPHUR-CONE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.UMIKOA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.UPPER-PIIHONUA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.VOLCANO.pgm",
+                        "data/HawaiiTileset/normalized/normalized.WOOD-VALLEY.pgm",
                         // Oahu
-                        "normalized/normalized.EWA.pgm",
-                        "normalized/normalized.HALEIWA.pgm",
-                        "normalized/normalized.HAUULA.pgm",
-                        "normalized/normalized.HONOLULU.pgm",
-                        "normalized/normalized.KAENA-OE-W.pgm",
-                        "normalized/normalized.KAENA.pgm",
-                        "normalized/normalized.KAHANA.pgm",
-                        "normalized/normalized.KAHUKU.pgm",
-                        "normalized/normalized.KANEOHE.pgm",
-                        "normalized/normalized.KOKO-HEAD.pgm",
-                        "normalized/normalized.MOKAPU.pgm",
-                        "normalized/normalized.PEARL-HARBOR.pgm",
-                        "normalized/normalized.SCHOFIELD-BARRACKS.pgm",
-                        "normalized/normalized.WAIANAE.pgm",
-                        "normalized/normalized.WAIMEA.pgm",
-                        "normalized/normalized.WAIPAHU.pgm"};
+                        "data/HawaiiTileset/normalized/normalized.EWA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HALEIWA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HAUULA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.HONOLULU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAENA-OE-W.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAENA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAHANA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KAHUKU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KANEOHE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.KOKO-HEAD.pgm",
+                        "data/HawaiiTileset/normalized/normalized.MOKAPU.pgm",
+                        "data/HawaiiTileset/normalized/normalized.PEARL-HARBOR.pgm",
+                        "data/HawaiiTileset/normalized/normalized.SCHOFIELD-BARRACKS.pgm",
+                        "data/HawaiiTileset/normalized/normalized.WAIANAE.pgm",
+                        "data/HawaiiTileset/normalized/normalized.WAIMEA.pgm",
+                        "data/HawaiiTileset/normalized/normalized.WAIPAHU.pgm"};
 
 // base path to the generated tiles and textures
-static char basepath1[]="tiles";
-static char basepath2[]="landsat";
-static char basepath3[]="bathymetry";
-static char basepath4[]="normalized";
+static char basepath1[]="data/HawaiiTileset/tiles";
+static char basepath2[]="data/HawaiiTileset/landsat";
+static char basepath3[]="data/HawaiiTileset/bathymetry";
+static char basepath4[]="data/HawaiiTileset/normalized";
 
 // number of tiles
 static const int tilesL=16;
@@ -633,7 +633,7 @@ void SEAload_callback(int col,int row,int lod,databuf *volume,void *data)
    volume->generateplane(8,px,py,0.0f,0.0f,0.0f,1.0f,sea_ext,sea_ext,sea_ext);
    }
 
-char PVMfilename[]="Storm/Storm.pvm";
+char PVMfilename[]="data/HawaiiTileset/Storm/Storm.pvm";
 
 int PVMavailable_callback(int col,int row,int lod,void *data)
    {return(lod<=1);}
@@ -669,8 +669,8 @@ void PVMload_callback(int col,int row,int lod,databuf *volume,void *data)
    volume->resampledata(xs,ys,zs);
    }
 
-char MOE1filename[]="PRECIPf_01-02.MOEVar";
-char MOE2filename[]="UH_TempDeriv_3600.MoeVar";
+char MOE1filename[]="data/PRECIPf_01-02.MOEVar";
+char MOE2filename[]="data/UH_TempDeriv_3600.MoeVar";
 
 int MOE1available_callback(int col,int row,int lod,void *data)
    {return(lod==0 && checkfile(MOE1filename));}
@@ -1111,7 +1111,7 @@ int main(int argc,char *argv[])
                1,0,2048,basepath3);
 
       // shade bathymetric DEM
-      texturemap("bathymetry/tile.1-1.pgm","bathymetry/tile.1-1.ppm",
+      texturemap("data/HawaiiTileset/bathymetry/tile.1-1.pgm","data/HawaiiTileset/bathymetry/tile.1-1.ppm",
                  2048,2048,shader,1000.0f,snowline);
 
       // resample orthophotos
@@ -1138,7 +1138,7 @@ int main(int argc,char *argv[])
       resample(2,bathymaps,
                1,0,2048,basepath3);
 
-      texturemap("bathymetry/tile.1-1.pgm","bathymetry/tile.1-1.ppm",
+      texturemap("data/HawaiiTileset/bathymetry/tile.1-1.pgm","data/HawaiiTileset/bathymetry/tile.1-1.ppm",
                  2048,2048,shader,1000.0f,snowline);
 
       resample(10,landmaps,
@@ -1325,11 +1325,11 @@ int main(int argc,char *argv[])
    test2.addiso(0.2f,1.0f,1.0f,1.0f,0.1f);
 
    // load way points
-   points.load("Waypoints.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
-   points.load("Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   points.load("data/HawaiiTileset/Waypoints.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   points.load("data/HawaiiTileset/Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
 
    // create sky dome
-   skydome.loadskydome("SkyDome.ppm",
+   skydome.loadskydome("data/HawaiiTileset/SkyDome.ppm",
                        outparams[2],0.0f,-outparams[3],
                        cols*outparams[0],rows*outparams[1]/(cols*outparams[0]));
 
