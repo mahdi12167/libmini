@@ -769,45 +769,53 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
    minicoord ogl;
    miniv3d dgl;
 
-   if (LNUM<1) return(MAXFLOAT);
+   int id_hit;
 
-   // get nearest layer for highest precision
-   nearest=getnearest(o);
+   dist=MAXFLOAT;
+   id_hit=-1;
 
-   // transform coordinates
-   ogl=LAYER[nearest]->map_g2o(o);
-   dgl=LAYER[nearest]->rot_g2o(d,o);
-
-   // shoot a ray and get the traveled distance
-   dist=CACHE->getray(LAYER[nearest]->getcacheid())->shoot(ogl.vec,dgl);
-
-   // check for valid hit
-   if (dist!=MAXFLOAT)
+   if (LNUM>0)
       {
-      dist=LAYER[nearest]->len_o2g(dist);
-      if (id!=NULL) *id=nearest;
-      }
-   else
-      for (n=0; n<LNUM; n++)
-         if (n!=nearest)
-            {
-            // transform coordinates
-            ogl=LAYER[n]->map_g2o(o);
-            dgl=LAYER[n]->rot_g2o(d,o);
+      // get nearest layer for highest precision
+      nearest=getnearest(o);
 
-            // shoot a ray and get the traveled distance
-            dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
+      // transform coordinates
+      ogl=LAYER[nearest]->map_g2o(o);
+      dgl=LAYER[nearest]->rot_g2o(d,o);
 
-            // search nearest hit point
-            if (dn!=MAXFLOAT) dn=LAYER[n]->len_o2g(dn);
+      // shoot a ray and get the traveled distance
+      dist=CACHE->getray(LAYER[nearest]->getcacheid())->shoot(ogl.vec,dgl);
 
-            // check for valid hit
-            if (dn<dist)
+      // check for valid hit
+      if (dist!=MAXFLOAT)
+         {
+         dist=LAYER[nearest]->len_o2g(dist);
+         id_hit=nearest;
+         }
+      else
+         for (n=0; n<LNUM; n++)
+            if (n!=nearest)
                {
-               dist=dn;
-               if (id!=NULL) *id=n;
+               // transform coordinates
+               ogl=LAYER[n]->map_g2o(o);
+               dgl=LAYER[n]->rot_g2o(d,o);
+
+               // shoot a ray and get the traveled distance
+               dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
+
+               // search nearest hit point
+               if (dn!=MAXFLOAT) dn=LAYER[n]->len_o2g(dn);
+
+               // check for valid hit
+               if (dn<dist)
+                  {
+                  dist=dn;
+                  id_hit=n;
+                  }
                }
-            }
+      }
+
+   if (id!=NULL) *id=id_hit;
 
    return(dist);
    }
