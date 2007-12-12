@@ -131,9 +131,9 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 int main(int argc,char *argv[])
    {
-   unsigned char hfield[]="Yukon.map.pgm";
-   unsigned char texture[]="Yukon.texmap.ppm";
-   unsigned char fogmap[]="Yukon.fogmap.pgm";
+   unsigned char hfield[]="data/Yukon.map.pgm";
+   unsigned char texture[]="data/Yukon.texmap.ppm";
+   unsigned char fogmap[]="data/Yukon.fogmap.pgm";
 
    unsigned char *hfields=hfield;
    unsigned char *textures=texture;
@@ -157,8 +157,8 @@ int main(int argc,char *argv[])
    const float fogG=0.75f;
    const float fogB=1.0f;
 
-   unsigned char layer1[]="Yukon.fogmap1.pgm";
-   unsigned char layer2[]="Yukon.fogmap2.pgm";
+   unsigned char layer1[]="data/Yukon.fogmap1.pgm";
+   unsigned char layer2[]="data/Yukon.fogmap2.pgm";
 
    unsigned char *layers1=layer1;
    unsigned char *layers2=layer2;
