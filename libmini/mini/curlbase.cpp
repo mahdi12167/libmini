@@ -2,10 +2,28 @@
 
 #include "curlbase.h"
 
-curlbase::MULTICURL_TYPE **curlbase::MULTICURL=NULL;
+int curlbase::INSTANCES=0;
 
-int curlbase::MAXMULTICURL=0;
-int curlbase::NUMMULTICURL=0;
+curlbase::curlbase()
+   {
+   MULTICURL=NULL;
+
+   MAXMULTICURL=0;
+   NUMMULTICURL=0;
+
+   INSTANCES++;
+
+   // init curl
+   if (INSTANCES==1) curl_global_init(CURL_GLOBAL_ALL);
+   }
+
+curlbase::~curlbase()
+   {
+   INSTANCES--;
+
+   // clean-up curl
+   if (INSTANCES==0) curl_global_cleanup();
+   }
 
 void *curlbase::myrealloc(void *ptr,size_t size)
    {
@@ -32,9 +50,31 @@ size_t curlbase::WriteMemoryCallback(void *ptr,size_t size,size_t nmemb,void *da
 
 void curlbase::curlinit(int threads,int id,char *proxyname,char *proxyport,void *data)
    {
-   int i;
+   curlbase *obj=(curlbase *)data;
+   obj->curlinit_safe(threads,id,proxyname,proxyport);
+   }
 
-   if (data!=NULL) ERRORMSG();
+void curlbase::curlexit(int id,void *data)
+   {
+   curlbase *obj=(curlbase *)data;
+   obj->curlexit_safe(id);
+   }
+
+void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data)
+   {
+   curlbase *obj=(curlbase *)data;
+   obj->getURL_safe(src_url,src_id,src_file,dst_file,background,id);
+   }
+
+int curlbase::checkURL(char *src_url,char *src_id,char *src_file,int id,void *data)
+   {
+   curlbase *obj=(curlbase *)data;
+   return(obj->checkURL_safe(src_url,src_id,src_file,id));
+   }
+
+void curlbase::curlinit_safe(int threads,int id,char *proxyname,char *proxyport)
+   {
+   int i;
 
    initmulticurl(id);
 
@@ -74,11 +114,9 @@ void curlbase::curlinit(int threads,int id,char *proxyname,char *proxyport,void 
       }
    }
 
-void curlbase::curlexit(int id,void *data)
+void curlbase::curlexit_safe(int id)
    {
    int i;
-
-   if (data!=NULL) ERRORMSG();
 
    // clean-up curl sessions
    for (i=0; i<MULTICURL[id]->numthreads+2; i++) curl_easy_cleanup(MULTICURL[id]->curl_handle[i]);
@@ -89,13 +127,11 @@ void curlbase::curlexit(int id,void *data)
    exitmulticurl(id);
    }
 
-void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data)
+void curlbase::getURL_safe(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id)
    {
    char *url;
 
    struct MemoryStruct chunk;
-
-   if (data!=NULL) ERRORMSG();
 
    chunk.memory=NULL;
    chunk.size=0;
@@ -126,15 +162,13 @@ void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,i
    free(url);
    }
 
-int curlbase::checkURL(char *src_url,char *src_id,char *src_file,int id,void *data)
+int curlbase::checkURL_safe(char *src_url,char *src_id,char *src_file,int id)
    {
    char *url;
    int threads;
    long response;
 
    struct MemoryStruct chunk;
-
-   if (data!=NULL) ERRORMSG();
 
    chunk.memory=NULL;
    chunk.size=0;
@@ -167,9 +201,6 @@ void curlbase::initmulticurl(int id)
    {
    if (MAXMULTICURL==0)
       {
-      // init curl
-      curl_global_init(CURL_GLOBAL_ALL);
-
       MAXMULTICURL=id+1;
       if ((MULTICURL=(MULTICURL_TYPE **)malloc(MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) ERRORMSG();
       }
@@ -194,9 +225,8 @@ void curlbase::exitmulticurl(int id)
    if (NUMMULTICURL==0)
       {
       free(MULTICURL);
-      MAXMULTICURL=0;
 
-      // clean-up curl
-      curl_global_cleanup();
+      MULTICURL=NULL;
+      MAXMULTICURL=0;
       }
    }

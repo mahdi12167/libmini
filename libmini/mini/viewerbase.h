@@ -13,6 +13,9 @@
 #include "minisky.h"
 #include "miniglobe.h"
 
+#include "threadbase.h"
+#include "curlbase.h"
+
 //! base class for viewing tilesets
 class viewerbase
    {
@@ -90,7 +93,7 @@ class viewerbase
    void propagate();
 
    //! get the encapsulated terrain object
-   miniterrain *getterrain() {return(&TERRAIN);}
+   miniterrain *getterrain() {return(TERRAIN);}
 
    //! load tileset (short version)
    BOOLINT load(const char *url,
@@ -132,10 +135,10 @@ class viewerbase
    double shoot(const minicoord &o,const miniv3d &d);
 
    //! get reference layer
-   minilayer *getreference() {return(TERRAIN.getlayer(TERRAIN.getreference()));}
+   minilayer *getreference() {return(TERRAIN->getlayer(TERRAIN->getreference()));}
 
    //! get nearest layer
-   minilayer *getnearest(const minicoord &p) {return(TERRAIN.getlayer(TERRAIN.getnearest(p)));}
+   minilayer *getnearest(const minicoord &p) {return(TERRAIN->getlayer(TERRAIN->getnearest(p)));}
 
    protected:
 
@@ -143,12 +146,15 @@ class viewerbase
 
    private:
 
-   miniterrain TERRAIN;
+   miniterrain *TERRAIN;
 
-   minisky SKYDOME;
-   miniglobe EARTH;
+   minisky *SKYDOME;
+   miniglobe *EARTH;
 
    double START,TIMER;
+
+   threadbase *THREADBASE;
+   curlbase *CURLBASE;
 
    void inithooks();
 

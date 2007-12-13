@@ -2,9 +2,6 @@
 
 #include "minitime.h"
 
-#include "threadbase.h"
-#include "curlbase.h"
-
 #ifndef NOSQUISH
 #include "squishbase.h"
 #endif
@@ -74,12 +71,29 @@ viewerbase::viewerbase()
 
    // initialize state:
 
+   TERRAIN=new miniterrain();
+
+   SKYDOME=new minisky();
+   EARTH=new miniglobe();
+
    START=minigettime();
    TIMER=0.0;
+
+   THREADBASE=new threadbase();
+   CURLBASE=new curlbase();
    }
 
 // destructor
-viewerbase::~viewerbase() {}
+viewerbase::~viewerbase()
+   {
+   delete TERRAIN;
+
+   delete SKYDOME;
+   delete EARTH;
+
+   delete THREADBASE;
+   delete CURLBASE;
+   }
 
 // get parameters
 void viewerbase::get(VIEWER_PARAMS &params)
@@ -94,7 +108,7 @@ void viewerbase::set(VIEWER_PARAMS &params)
    PARAMS=params;
 
    // get the actual terrain state
-   TERRAIN.get(tparams);
+   TERRAIN->get(tparams);
 
    // update the terrain state:
 
@@ -120,7 +134,7 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.fogdensity=PARAMS.fogdensity;
 
    // finally pass the updated terrain state
-   TERRAIN.set(tparams);
+   TERRAIN->set(tparams);
    }
 
 // propagate parameters
@@ -146,14 +160,14 @@ void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int
 void viewerbase::inithooks()
    {
    // register callbacks
-   TERRAIN.setcallbacks(NULL,
-                        threadbase::threadinit,threadbase::threadexit,
-                        threadbase::startthread,threadbase::jointhread,
-                        threadbase::lock_cs,threadbase::unlock_cs,
-                        threadbase::lock_io,threadbase::unlock_io,
-                        NULL,
-                        curlbase::curlinit,curlbase::curlexit,
-                        curlbase::getURL,curlbase::checkURL);
+   TERRAIN->setcallbacks(THREADBASE,
+                         threadbase::threadinit,threadbase::threadexit,
+                         threadbase::startthread,threadbase::jointhread,
+                         threadbase::lock_cs,threadbase::unlock_cs,
+                         threadbase::lock_io,threadbase::unlock_io,
+                         CURLBASE,
+                         curlbase::curlinit,curlbase::curlexit,
+                         curlbase::getURL,curlbase::checkURL);
 
    // register conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);
@@ -177,7 +191,7 @@ BOOLINT viewerbase::load(const char *url,
    propagate();
 
    // load the tileset layer
-   return(TERRAIN.load(url,loadopts,reset));
+   return(TERRAIN->load(url,loadopts,reset));
    }
 
 // load tileset (long version)
@@ -191,7 +205,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    propagate();
 
    // load the tileset layer
-   return(TERRAIN.load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
+   return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
    }
 
 // load optional features
@@ -200,7 +214,7 @@ void viewerbase::loadopts()
    minilayer *layer;
    minilayer::MINILAYER_PARAMS lparams;
 
-   layer=TERRAIN.getlayer(TERRAIN.getreference());
+   layer=TERRAIN->getlayer(TERRAIN->getreference());
 
    if (layer==NULL) return;
 
@@ -212,7 +226,7 @@ void viewerbase::loadopts()
 
    if (skyname!=NULL)
       {
-      SKYDOME.loadskydome(skyname);
+      SKYDOME->loadskydome(skyname);
       free(skyname);
       }
 
@@ -222,7 +236,7 @@ void viewerbase::loadopts()
 
    if (ename1!=NULL)
       {
-      EARTH.configure_frontname(ename1);
+      EARTH->configure_frontname(ename1);
       free(ename1);
       }
 
@@ -230,22 +244,22 @@ void viewerbase::loadopts()
 
    if (ename2!=NULL)
       {
-      EARTH.configure_backname(ename2);
+      EARTH->configure_backname(ename2);
       free(ename2);
       }
    }
 
 // get initial view point
 minicoord viewerbase::getinitial()
-   {return(TERRAIN.getinitial());}
+   {return(TERRAIN->getinitial());}
 
 // set initial eye point
 void viewerbase::initeyepoint(const minicoord &e)
-   {TERRAIN.initeyepoint(e);}
+   {TERRAIN->initeyepoint(e);}
 
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
-   {TERRAIN.cache(e,d,u,aspect,gettime());}
+   {TERRAIN->cache(e,d,u,aspect,gettime());}
 
 // render cached scene
 void viewerbase::render()
@@ -259,7 +273,7 @@ void viewerbase::render()
 
    float light0[3]={0.0f,0.0f,0.0f};
 
-   layer=TERRAIN.getlayer(TERRAIN.getreference());
+   layer=TERRAIN->getlayer(TERRAIN->getreference());
 
    if (layer!=NULL)
       {
@@ -290,32 +304,32 @@ void viewerbase::render()
       // draw skydome
       if (PARAMS.useskydome)
          {
-         SKYDOME.setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                        1.9*layer->len_g2o(PARAMS.farp));
+         SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                         1.9*layer->len_g2o(PARAMS.farp));
 
-         SKYDOME.drawskydome();
+         SKYDOME->drawskydome();
          }
 
       // render earth globe (without Z writing)
       if (PARAMS.useearth)
          {
-         EARTH.setscale(layer->len_o2g(1.0));
+         EARTH->setscale(layer->len_o2g(1.0));
 
-         if (PARAMS.usediffuse) EARTH.settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
-         else EARTH.settexturedirectparams(light0,PARAMS.transition);
+         if (PARAMS.usediffuse) EARTH->settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
+         else EARTH->settexturedirectparams(light0,PARAMS.transition);
 
-         EARTH.setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*layer->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?layer->len_g2o(PARAMS.farp):0.0f,
-                            PARAMS.fogdensity,
-                            PARAMS.fogcolor);
+         EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*layer->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?layer->len_g2o(PARAMS.farp):0.0f,
+                             PARAMS.fogdensity,
+                             PARAMS.fogcolor);
 
-         EARTH.render(MINIGLOBE_FIRST_RENDER_PHASE);
+         EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
          }
 
       // render terrain
-      TERRAIN.render();
+      TERRAIN->render();
 
       // render earth globe (without RGB writing)
-      if (PARAMS.useearth) EARTH.render(MINIGLOBE_LAST_RENDER_PHASE);
+      if (PARAMS.useearth) EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
 
       // disable fog
       if (PARAMS.usefog) glDisable(GL_FOG);
@@ -343,4 +357,4 @@ void viewerbase::idle(double dt)
 
 // shoot a ray at the scene
 double viewerbase::shoot(const minicoord &o,const miniv3d &d)
-   {return(TERRAIN.shoot(o,d));}
+   {return(TERRAIN->shoot(o,d));}

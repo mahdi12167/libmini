@@ -11,6 +11,9 @@ class threadbase
    {
    public:
 
+   threadbase();
+   ~threadbase();
+
    static void threadinit(int threads,int id,void *data);
    static void threadexit(int id,void *data);
 
@@ -38,11 +41,25 @@ class threadbase
 
    typedef MULTITHREAD_STRUCT MULTITHREAD_TYPE;
 
-   static MULTITHREAD_TYPE **MULTITHREAD;
-   static int MAXMULTITHREAD,NUMMULTITHREAD;
+   MULTITHREAD_TYPE **MULTITHREAD;
+   int MAXMULTITHREAD,NUMMULTITHREAD;
 
-   static void initmultithread(int id);
-   static void exitmultithread(int id);
+   static int INSTANCES;
+
+   void threadinit_safe(int threads,int id);
+   void threadexit_safe(int id);
+
+   void startthread_safe(void *(*thread)(void *background),backarrayelem *background,int id);
+   void jointhread_safe(backarrayelem *background,int id);
+
+   void lock_cs_safe(int id);
+   void unlock_cs_safe(int id);
+
+   void lock_io_safe(int id);
+   void unlock_io_safe(int id);
+
+   void initmultithread(int id);
+   void exitmultithread(int id);
    };
 
 #endif

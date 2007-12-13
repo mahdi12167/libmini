@@ -96,6 +96,7 @@ inline void drawline(const float x1,const float y1,const float z1,const float x2
 
 #ifdef _WIN32
 #   ifndef APIENTRY
+#      define NOMINMAX
 #      include <windows.h>
 #   endif
 #endif
