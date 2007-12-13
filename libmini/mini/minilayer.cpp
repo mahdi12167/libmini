@@ -420,6 +420,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    if (reset)
       {
       TILECACHE->reset();
+      TILECACHE->save();
       TILECACHE->load();
       }
 

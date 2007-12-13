@@ -634,6 +634,12 @@ void datacache::load()
    loadelevtilesetinfo();
    loadimagtilesetinfo();
 
+   if (HAS_ELEVINFO && HAS_IMAGINFO)
+      {
+      if (IMAGINFO_TILESX!=ELEVINFO_TILESX) HAS_ELEVINFO=HAS_IMAGINFO=FALSE;
+      if (IMAGINFO_TILESY!=ELEVINFO_TILESY) HAS_ELEVINFO=HAS_IMAGINFO=FALSE;
+      }
+
    loadvtbelevini();
    loadvtbimagini();
 
