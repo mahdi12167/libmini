@@ -447,7 +447,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
       // get data coordinates
       offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*TILECACHE->getelevinfo_maxelev()),minicoord::MINICOORD_LLH);
+      extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
       }
    // check tileset ini
    else if (TILECACHE->haselevini())
@@ -470,7 +470,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
       // get data coordinates
       offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())),minicoord::MINICOORD_LINEAR);
+      extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
       }
 
    // check the size of the tileset to detect load failures
