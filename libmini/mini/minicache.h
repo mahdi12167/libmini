@@ -255,6 +255,7 @@ class minicache
    void disablevtxshader();
 
    void enablepixshader();
+   void setpixshadertexprm(float s,float o);
    void disablepixshader();
 
    void enableseashader();

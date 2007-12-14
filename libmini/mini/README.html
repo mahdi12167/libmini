@@ -1360,10 +1360,12 @@ environment.<p>
       PARAM c5=program.env[5]; \n\
       PARAM c6=program.env[6]; \n\
       PARAM c7=program.env[7]; \n\
-      PARAM t=program.env[8]; \n\
+      PARAM a=program.env[8]; \n\
+      PARAM t=program.env[9]; \n\
       TEMP col; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### modulate with fragment color \n\
       MUL result.color,col,fragment.color; \n\
       END \n";

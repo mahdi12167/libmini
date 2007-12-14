@@ -689,6 +689,10 @@ void minicache::rendertexmap(int m,int n,int S)
                             0.5f/texh,
                             1.0f-0.5f/texh,
                             t->scale);
+
+      if (USEPIXSHADER!=0 || USESEASHADER!=0)
+         if (texid==0) setpixshadertexprm(0.0f,1.0f);
+         else setpixshadertexprm(1.0f,0.0f);
       }
 
 #endif
@@ -1234,10 +1238,12 @@ void minicache::setpixshader(char *fp)
       PARAM c5=program.env[5]; \n\
       PARAM c6=program.env[6]; \n\
       PARAM c7=program.env[7]; \n\
-      PARAM t=program.env[8]; \n\
+      PARAM a=program.env[8]; \n\
+      PARAM t=program.env[9]; \n\
       TEMP col; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### modulate with fragment color \n\
       MUL result.color,col,fragment.color; \n\
       END \n";
@@ -1425,6 +1431,8 @@ void minicache::enablepixshader()
          for (i=0; i<8; i++)
             glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]);
 
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,1.0f,0.0f,0.0f,0.0f);
+
          if (GLEXT_MT!=0)
             if (PIXSHADERTEXID!=0)
                {
@@ -1433,13 +1441,29 @@ void minicache::enablepixshader()
                bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
                glActiveTextureARB(GL_TEXTURE0_ARB);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,
+               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,9,
                                           (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH,
                                           (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT);
 #endif
                }
          }
       }
+
+#endif
+
+#endif
+   }
+
+// set pixel shader texture mapping parameters
+void minicache::setpixshadertexprm(float s,float o)
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (FRAGPROGID!=0 || SEAPROGID!=0)
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
 
 #endif
 
@@ -1515,6 +1539,8 @@ void minicache::enableseashader()
          for (i=0; i<8; i++)
             glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]);
 
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,1.0f,0.0f,0.0f,0.0f);
+
          if (GLEXT_MT!=0)
             if (SEASHADERTEXID!=0)
                {
@@ -1523,7 +1549,7 @@ void minicache::enableseashader()
                bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
                glActiveTextureARB(GL_TEXTURE0_ARB);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,
+               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,9,
                                           (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH,
                                           (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT);
 #endif

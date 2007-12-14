@@ -38,9 +38,11 @@ void minishader::setVISshader(minicache *cache,
       PARAM c2=program.env[2]; \n\
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,colb,vtx,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### fade-out at sea bottom \n\
       SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
       MUL_SAT vtx.w,-vtx.y,c0.y; \n\
@@ -76,9 +78,11 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,colt,colb,vtx,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL_SAT vtx.x,-vtx.z,c5.y; \n\
@@ -121,9 +125,11 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,colt,colb,vtx,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### fade-out at sea bottom \n\
       SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
       MUL_SAT vtx.w,-vtx.y,c0.y; \n\
@@ -165,11 +171,13 @@ void minishader::setVISshader(minicache *cache,
       PARAM c2=program.env[2]; \n\
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,tex,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      MAD tex,tex,a.x,a.b; \n\
       LRP col.xyz,c0.x,tex,col; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
@@ -306,9 +314,11 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c2=program.env[2]; \n\
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,vtx,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### fade texture \n\
       DP3 col.xyz,col,c0; \n\
       ADD col.xyz,col,c0.w; \n\
@@ -342,9 +352,11 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,colt,vtx,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
       ### fade texture \n\
       DP3 col.xyz,col,c0; \n\
       ADD col.xyz,col,c0.w; \n\
@@ -384,11 +396,13 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c2=program.env[2]; \n\
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
+      PARAM a=program.env[8]; \n\
       TEMP col,tex,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      MAD tex,tex,a.x,a.b; \n\
       LRP col.xyz,c0.x,tex,col; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
