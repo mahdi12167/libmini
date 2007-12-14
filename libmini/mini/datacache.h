@@ -91,13 +91,10 @@ class datacache
    void setstartupfile(const char *filename);
 
    //! load persistent startup file
-   void load();
+   void load(BOOLINT reset=FALSE);
 
    //! save persistent startup file
    void save();
-
-   //! reset startup state
-   void reset();
 
    //! getters for elev tileset info
    BOOLINT haselevinfo() {return(HAS_ELEVINFO);}
@@ -158,6 +155,8 @@ class datacache
    void configure_autolockio(int autolockio=0); // automatically lock io operations
 
    protected:
+
+   void reset();
 
    void loadelevtilesetinfo();
    void loadimagtilesetinfo();

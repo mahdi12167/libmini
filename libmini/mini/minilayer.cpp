@@ -414,15 +414,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    curlinit(1,0,LPARAMS.proxyname,LPARAMS.proxyport);
 
    // load persistent startup file
-   TILECACHE->load();
-
-   // reset startup state
-   if (reset)
-      {
-      TILECACHE->reset();
-      TILECACHE->save();
-      TILECACHE->load();
-      }
+   TILECACHE->load(reset);
 
    // clean-up libcurl
    curlexit(0);

@@ -612,7 +612,7 @@ void datacache::loadvtbimagini()
    }
 
 // load persistent startup file
-void datacache::load()
+void datacache::load(BOOLINT reset)
    {
    int c;
 
@@ -649,7 +649,7 @@ void datacache::load()
       if (IMAGINI_TILESY!=ELEVINI_TILESY) HAS_ELEVINI=HAS_IMAGINI=FALSE;
       }
 
-   if (STARTUPFILE==NULL) return;
+   if (STARTUPFILE==NULL || reset) return;
 
    filename=sourcefilename(RID,STARTUPFILE);
    localname=localfilename(filename);
@@ -801,10 +801,12 @@ void datacache::reset()
          }
       }
 
+   delete[] HASHTABLE;
+
    HASHTABLE=NULL;
    }
 
-// own callbacks:
+// private callbacks:
 
 void datacache::myrequest(unsigned char *mapfile,databuf *map,int istexture,int background)
    {
