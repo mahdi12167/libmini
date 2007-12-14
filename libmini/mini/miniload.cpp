@@ -1144,7 +1144,7 @@ int miniload::load(int cols,int rows,
 
                if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
 
-               if (basepath2==NULL) ERRORMSG();
+               if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.db",i+1,j+1);
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath2,i+1,j+1);
                else snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath2,i+1,j+1);
 
@@ -1166,7 +1166,7 @@ int miniload::load(int cols,int rows,
 
                if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
 
-               if (basepath2==NULL) ERRORMSG();
+               if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.db",i,j);
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath2,i,j);
                else snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath2,i,j);
 
