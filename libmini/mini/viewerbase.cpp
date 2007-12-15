@@ -133,6 +133,9 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.fogstart=PARAMS.fogstart;
    tparams.fogdensity=PARAMS.fogdensity;
 
+   if (PARAMS.useearth) tparams.warpmode=1; // switch to reference mode
+   else tparams.warpmode=0; // switch to linear mode
+
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
    }
@@ -271,6 +274,10 @@ void viewerbase::render()
 
    GLfloat color[4];
 
+   miniwarp warp;
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    float light0[3]={0.0f,0.0f,0.0f};
 
    layer=TERRAIN->getlayer(TERRAIN->getreference());
@@ -314,6 +321,32 @@ void viewerbase::render()
       if (PARAMS.useearth)
          {
          EARTH->setscale(layer->len_o2g(1.0));
+
+         warp=*getreference()->getwarp();
+         warp.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
+         warp.getwarp(mtx);
+
+         oglmtx[0]=mtx[0].x;
+         oglmtx[1]=mtx[1].x;
+         oglmtx[2]=mtx[2].x;
+         oglmtx[3]=0.0;
+
+         oglmtx[4]=mtx[0].y;
+         oglmtx[5]=mtx[1].y;
+         oglmtx[6]=mtx[2].y;
+         oglmtx[7]=0.0;
+
+         oglmtx[8]=mtx[0].z;
+         oglmtx[9]=mtx[1].z;
+         oglmtx[10]=mtx[2].z;
+         oglmtx[11]=0.0;
+
+         oglmtx[12]=mtx[0].w;
+         oglmtx[13]=mtx[1].w;
+         oglmtx[14]=mtx[2].w;
+         oglmtx[15]=1.0;
+
+         EARTH->setmatrix(oglmtx);
 
          if (PARAMS.usediffuse) EARTH->settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
          else EARTH->settexturedirectparams(light0,PARAMS.transition);

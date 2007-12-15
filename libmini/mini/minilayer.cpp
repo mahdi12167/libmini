@@ -15,24 +15,27 @@ minilayer::minilayer(minicache *cache)
    {
    // auto-determined parameters upon load:
 
-   LPARAMS.cols=0;           // number of columns per tileset
-   LPARAMS.rows=0;           // number of rows per tileset
+   LPARAMS.cols=0;                // number of columns per tileset
+   LPARAMS.rows=0;                // number of rows per tileset
 
-   LPARAMS.basesize=0;       // base size of texture maps
+   LPARAMS.basesize=0;            // base size of texture maps
 
-   LPARAMS.usepnm=FALSE;     // use either PNM or DB loader
+   LPARAMS.usepnm=FALSE;          // use either PNM or DB loader
 
-   LPARAMS.extent[0]=0.0f;   // x-extent of tileset
-   LPARAMS.extent[1]=0.0f;   // y-extent of tileset
-   LPARAMS.extent[2]=0.0f;   // z-extent of tileset
+   LPARAMS.extent[0]=0.0f;        // x-extent of tileset
+   LPARAMS.extent[1]=0.0f;        // y-extent of tileset
+   LPARAMS.extent[2]=0.0f;        // z-extent of tileset
 
-   LPARAMS.offset[0]=0.0f;   // x-offset of tileset center
-   LPARAMS.offset[1]=0.0f;   // y-offset of tileset center
-   LPARAMS.offset[2]=0.0f;   // z-offset of tileset center
+   LPARAMS.offset[0]=0.0f;        // x-offset of tileset center
+   LPARAMS.offset[1]=0.0f;        // y-offset of tileset center
+   LPARAMS.offset[2]=0.0f;        // z-offset of tileset center
 
-   LPARAMS.scaling[0]=0.0f;  // x-scaling factor of tileset
-   LPARAMS.scaling[1]=0.0f;  // y-scaling factor of tileset
-   LPARAMS.scaling[2]=0.0f;  // z-scaling factor of tileset
+   LPARAMS.scaling[0]=0.0f;       // x-scaling factor of tileset
+   LPARAMS.scaling[1]=0.0f;       // y-scaling factor of tileset
+   LPARAMS.scaling[2]=0.0f;       // z-scaling factor of tileset
+
+   LPARAMS.offsetGEO=minicoord(); // geo-referenced tileset center
+   LPARAMS.extentGEO=minicoord(); // geo-referenced tileset extent
 
    // auto-set parameters during rendering:
 
@@ -150,6 +153,8 @@ minilayer::minilayer(minicache *cache)
    TILECACHE=NULL;
 
    WARP=NULL;
+   WARPMODE=LPARAMS.warpmode;
+
    REFERENCE=NULL;
 
    POINTS=NULL;
@@ -229,6 +234,17 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
 
       TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
       TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
+
+      if (LPARAMS.warpmode!=WARPMODE)
+         {
+         createwarp(LPARAMS.offsetGEO,LPARAMS.extentGEO,
+                    miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+                    LPARAMS.scale);
+
+         updatecoords();
+
+         WARPMODE=LPARAMS.warpmode;
+         }
       }
    }
 
@@ -361,8 +377,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    char *elevtilesetfile,*imagtilesetfile;
    char *vtbelevinifile,*vtbimaginifile;
 
-   minicoord offsetDAT,extentDAT;
-
    if (LOADED) return(FALSE);
 
    // create the terrain
@@ -438,9 +452,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use PNM loader
       LPARAMS.usepnm=TRUE;
 
-      // get data coordinates
-      offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
+      // get geo-referenced data coordinates
+      LPARAMS.offsetGEO=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
+      LPARAMS.extentGEO=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
       }
    // check tileset ini
    else if (TILECACHE->haselevini())
@@ -461,9 +475,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use DB loader
       LPARAMS.usepnm=FALSE;
 
-      // get data coordinates
-      offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-      extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
+      // get geo-referenced data coordinates
+      LPARAMS.offsetGEO=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
+      LPARAMS.extentGEO=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
       }
 
    // check the size of the tileset to detect load failures
@@ -525,7 +539,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    LPARAMS.scaling[2]=outscale[2];
 
    // create the warp
-   createwarp(offsetDAT,extentDAT,
+   createwarp(LPARAMS.offsetGEO,LPARAMS.extentGEO,
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
               LPARAMS.scale);
 
@@ -593,7 +607,10 @@ void minilayer::setreference(minilayer *ref)
 
    REFERENCE=ref;
 
-   if (LPARAMS.warpmode==0 || LPARAMS.warpmode==1)
+   if (LPARAMS.warpmode==0 ||
+       WARP->getdat()==minicoord::MINICOORD_LINEAR ||
+       WARP->getglb()==minicoord::MINICOORD_LINEAR ||
+       LPARAMS.warpmode==1)
       if (REFERENCE!=NULL)
          if (REFERENCE->getwarp()!=NULL)
             if (WARP!=NULL)
@@ -620,7 +637,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    // define global coordinates:
 
-   WARP=new miniwarp();
+   if (WARP==NULL) WARP=new miniwarp();
 
    WARP->def_global(minicoord::MINICOORD_ECEF);
 
@@ -827,6 +844,10 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 // determine whether or not the layer is displayed
 void minilayer::display(BOOLINT yes)
    {VISIBLE=yes;}
+
+// check whether or not the layer is displayed
+BOOLINT minilayer::isdisplayed()
+   {return(VISIBLE);}
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)

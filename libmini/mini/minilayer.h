@@ -12,6 +12,8 @@
 #include "minipoint.h"
 
 #include "miniv3d.h"
+#include "miniv4d.h"
+
 #include "miniwarp.h"
 
 //! aggregate class for rendering a layer
@@ -23,17 +25,20 @@ class minilayer
       {
       // auto-determined parameters upon load:
 
-      int cols;         // number of columns per tileset
-      int rows;         // number of rows per tileset
+      int cols;            // number of columns per tileset
+      int rows;            // number of rows per tileset
 
-      int basesize;     // base size of texture maps
+      int basesize;        // base size of texture maps
 
-      BOOLINT usepnm;   // use either PNM or DB loader
+      BOOLINT usepnm;      // use either PNM or DB loader
 
-      float extent[3];  // extent of tileset
+      float extent[3];     // extent of tileset
 
-      float offset[3];  // offset of tileset center
-      float scaling[3]; // scaling factor of tileset
+      float offset[3];     // offset of tileset center
+      float scaling[3];    // scaling factor of tileset
+
+      minicoord offsetGEO; // geo-referenced tileset center
+      minicoord extentGEO; // geo-referenced tileset extent
 
       // auto-set parameters during rendering:
 
@@ -220,6 +225,9 @@ class minilayer
    //! determine whether or not the layer is displayed
    void display(BOOLINT yes=TRUE);
 
+   //! check whether or not the layer is displayed
+   BOOLINT isdisplayed();
+
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
@@ -287,6 +295,7 @@ class minilayer
    minipoint *POINTS;
 
    miniwarp *WARP;
+   int WARPMODE;
 
    minilayer *REFERENCE;
 

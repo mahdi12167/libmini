@@ -1094,6 +1094,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'E':
          if (!params->useearth) params->useearth=TRUE;
          else params->useearth=FALSE;
+         viewer->propagate();
          break;
       case 'N':
          if (!params->usenprshader) params->usenprshader=TRUE;

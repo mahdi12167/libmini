@@ -8,6 +8,8 @@
 #include "convbase.h"
 
 #include "miniv3d.h"
+#include "miniv4d.h"
+
 #include "miniterrain.h"
 
 #include "minisky.h"

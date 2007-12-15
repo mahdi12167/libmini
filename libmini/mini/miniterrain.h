@@ -8,6 +8,8 @@
 #include "minicache.h"
 
 #include "miniv3d.h"
+#include "miniv4d.h"
+
 #include "minilayer.h"
 
 //! aggregate class for rendering multiple layers
