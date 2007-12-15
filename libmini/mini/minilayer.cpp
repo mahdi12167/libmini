@@ -686,7 +686,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
          {
          up=right/dir;
          up.normalize();
-         right=dir/up;
+         right=up/dir;
          }
 
       if (REFERENCE==NULL) scale=1.0/scaleLOC;
