@@ -607,13 +607,13 @@ void minilayer::setreference(minilayer *ref)
 
    REFERENCE=ref;
 
-   if (LPARAMS.warpmode==0 ||
-       WARP->getdat()==minicoord::MINICOORD_LINEAR ||
-       WARP->getglb()==minicoord::MINICOORD_LINEAR ||
-       LPARAMS.warpmode==1)
-      if (REFERENCE!=NULL)
-         if (REFERENCE->getwarp()!=NULL)
-            if (WARP!=NULL)
+   if (WARP!=NULL)
+      if (LPARAMS.warpmode==0 ||
+          WARP->getdat()==minicoord::MINICOORD_LINEAR ||
+          WARP->getglb()==minicoord::MINICOORD_LINEAR ||
+          LPARAMS.warpmode==1)
+         if (REFERENCE!=NULL)
+            if (REFERENCE->getwarp()!=NULL)
                {
                REFERENCE->getwarp()->get_invaff(mtxREF);
                WARP->def_2reference(mtxREF);

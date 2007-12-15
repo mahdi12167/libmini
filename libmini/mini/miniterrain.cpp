@@ -292,6 +292,12 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
    // update color maps
    minishader::setVISbathymap(TPARAMS.bathymap,TPARAMS.bathywidth,TPARAMS.bathyheight,TPARAMS.bathycomps);
    minishader::setNPRbathymap(TPARAMS.nprbathymap,TPARAMS.nprbathywidth,TPARAMS.nprbathyheight,TPARAMS.nprbathycomps);
+
+   // reset reference layer
+   setreference(LREF);
+
+   // check layer consistency
+   checkconsistency();
    }
 
 // propagate parameters
@@ -477,6 +483,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // reset reference layer
    setreference(LREF);
 
+   // check layer consistency
+   checkconsistency();
+
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
 
@@ -512,6 +521,8 @@ void miniterrain::remove(int n)
 
    if (n<LNUM-1) LAYER[n]=LAYER[--LNUM];
    else LNUM--;
+
+   if (n==LREF) setreference(0);
    }
 
 // get extent of a tileset
@@ -560,8 +571,35 @@ void miniterrain::setreference(int ref)
    {
    int n;
 
+   minicoord::MINICOORD dat;
+
    // set new reference
    LREF=ref;
+
+   if (LNUM>0)
+      if (LAYER[getreference()]->getwarp()!=NULL)
+         {
+         // get data coordinate system of reference layer
+         dat=LAYER[getreference()]->getwarp()->getdat();
+
+         // check for consistency of reference layer
+         if ((TPARAMS.warpmode==0 && dat!=minicoord::MINICOORD_LINEAR) ||
+             (TPARAMS.warpmode>0 && dat==minicoord::MINICOORD_LINEAR))
+            for (n=0; n<LNUM; n++)
+               if (LAYER[n]->getwarp()!=NULL)
+                  {
+                  // get data coordinate system of actual layer
+                  dat=LAYER[n]->getwarp()->getdat();
+
+                  // check for consistency of actual layer
+                  if ((TPARAMS.warpmode==0 && dat==minicoord::MINICOORD_LINEAR) ||
+                      (TPARAMS.warpmode>0 && dat!=minicoord::MINICOORD_LINEAR))
+                     {
+                     LREF=n;
+                     break;
+                     }
+                  }
+         }
 
    // set new reference layer for default coordinate conversions
    if (LNUM>0) REFERENCE=LAYER[getreference()];
@@ -575,6 +613,25 @@ void miniterrain::setreference(int ref)
 // get reference layer
 int miniterrain::getreference()
    {return(min(LREF,LNUM-1));}
+
+// check layer consistency
+void miniterrain::checkconsistency()
+   {
+   int n;
+
+   minicoord::MINICOORD dat;
+
+   // switch off non-conforming layers
+   for (n=0; n<LNUM; n++)
+      if (LAYER[n]->getwarp()!=NULL)
+         {
+         // get data coordinate system of actual layer
+         dat=LAYER[n]->getwarp()->getdat();
+
+         // switch off actual layer if its data coordinate system is not conforming
+         if (TPARAMS.warpmode>0 && dat==minicoord::MINICOORD_LINEAR) LAYER[n]->display(FALSE);
+         }
+   }
 
 // get initial view point
 minicoord miniterrain::getinitial()
@@ -737,7 +794,17 @@ void miniterrain::render_postsea()
 void miniterrain::display(int n,BOOLINT yes)
    {
    if (n>=0 && n<LNUM)
+      {
       LAYER[n]->display(yes);
+      checkconsistency();
+      }
+   }
+
+// check whether or not a layer is displayed
+BOOLINT miniterrain::isdisplayed(int n)
+   {
+   if (n>=0 && n<LNUM) return(LAYER[n]->isdisplayed());
+   else return(FALSE);
    }
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
@@ -776,7 +843,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
 
    if (LNUM>0)
       {
-      // get nearest layer for highest precision
+      // check nearest layer first
       nearest=getnearest(o);
 
       // transform coordinates
@@ -793,6 +860,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
          id_hit=nearest;
          }
       else
+         // check other layers next
          for (n=0; n<LNUM; n++)
             if (n!=nearest)
                {

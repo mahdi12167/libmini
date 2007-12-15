@@ -275,7 +275,7 @@ void viewerbase::render()
    GLfloat color[4];
 
    miniwarp warp;
-   miniv4d mtx[3];
+   miniv4d one[3],mtx[3];
    double oglmtx[16];
 
    float light0[3]={0.0f,0.0f,0.0f};
@@ -322,8 +322,13 @@ void viewerbase::render()
          {
          EARTH->setscale(layer->len_o2g(1.0));
 
+         one[0]=miniv4d(1.0,0.0,0.0);
+         one[1]=miniv4d(0.0,1.0,0.0);
+         one[2]=miniv4d(0.0,0.0,1.0);
+
          warp=*getreference()->getwarp();
-         warp.setwarp(miniwarp::MINIWARP_AFFINE,miniwarp::MINIWARP_FINAL);
+         warp.def_2affine(one);
+         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
          warp.getwarp(mtx);
 
          oglmtx[0]=mtx[0].x;

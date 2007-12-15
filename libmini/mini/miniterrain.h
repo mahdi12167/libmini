@@ -252,6 +252,9 @@ class miniterrain
    //! determine whether or not a layer is displayed
    void display(int n,BOOLINT yes=TRUE);
 
+   //! check whether or not a layer is displayed
+   BOOLINT isdisplayed(int n);
+
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 
@@ -328,6 +331,8 @@ class miniterrain
    void (*CURLEXIT)(int id,void *data);
    void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
+
+   void checkconsistency();
 
    void render_presea();
    void render_postsea();
