@@ -31,6 +31,8 @@
 #define VIEWER_DAMP 10.0f
 #define VIEWER_BOUNCE 5.0f
 
+#define VIEWER_BOOST 20.0f
+
 #define VIEWER_FOGSTART 0.5f
 #define VIEWER_FOGDENSITY 0.5f;
 
@@ -135,7 +137,7 @@ static miniv3d dir,up,right;
 static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
 
 // jumping parameters
-static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE;
+static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST;
 
 // steering parameters
 static double oneturn=5.0,oneincline=10.0;
@@ -953,9 +955,12 @@ void keyboardfunc(unsigned char key,int x,int y)
          else topspeed=0.0;
          break;
       case 'w':
-      case 'W':
          topspeed+=speedinc*maxspeed;
          if (topspeed>maxspeed) topspeed=maxspeed;
+         break;
+      case 'W':
+         topspeed+=speedinc*maxspeed*boost;
+         if (topspeed>maxspeed*boost) topspeed=maxspeed*boost;
          break;
       case 'a':
       case 'A':
@@ -976,9 +981,12 @@ void keyboardfunc(unsigned char key,int x,int y)
             }
          break;
       case 's':
-      case 'S':
          topspeed-=speedinc*maxspeed;
          if (topspeed<-maxspeed) topspeed=-maxspeed;
+         break;
+      case 'S':
+         topspeed-=speedinc*maxspeed*boost;
+         if (topspeed<-maxspeed*boost) topspeed=-maxspeed*boost;
          break;
       case '<':
          pitch+=oneincline;
@@ -989,12 +997,17 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (pitch<-90.0) pitch=-90.0;
          break;
       case 'j':
-      case 'J':
          dez=jump;
          break;
+      case 'J':
+         dez=jump*boost;
+         break;
       case 'g':
+         if (gravity==0.0) gravity=earthg;
+         else gravity=0.0;
+         break;
       case 'G':
-         if (gravity==0.0) gravity=VIEWER_GRAVITY;
+         if (gravity==0.0) gravity=earthg*boost;
          else gravity=0.0;
          break;
       case 't':
