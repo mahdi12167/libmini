@@ -172,7 +172,7 @@ void viewerbase::inithooks()
                          curlbase::curlinit,curlbase::curlexit,
                          curlbase::getURL,curlbase::checkURL);
 
-   // register conversion hook (JPEG/PNG)
+   // register libMini conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);
 
 #ifndef NOSQUISH

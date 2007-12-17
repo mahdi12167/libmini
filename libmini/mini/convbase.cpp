@@ -15,12 +15,14 @@ namespace convbase {
 void setconversion(MINI_CONVERSION_PARAMS *params)
    {databuf::setconversion(conversionhook,params);}
 
-// conversion hook for external formats (JPEG/PNG)
+// libMini conversion hook for external formats (JPEG/PNG)
 int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,
                    unsigned char **newdata,unsigned int *newbytes,
                    databuf *obj,void *data)
    {
    MINI_CONVERSION_PARAMS *conversion_params=(MINI_CONVERSION_PARAMS *)data;
+
+   if (conversion_params==NULL) return(0);
 
    switch (extformat)
       {
@@ -31,16 +33,16 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
             int width,height,components;
 
             *newdata=jpegbase::decompressJPEGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
+            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) return(0);
 
             if (*newdata==NULL) return(0); // return failure
 
             switch (components)
                {
-               case 1: if (obj->type!=0) ERRORMSG(); break;
-               case 3: if (obj->type!=3) ERRORMSG(); break;
-               case 4: if (obj->type!=4) ERRORMSG(); break;
-               default: ERRORMSG();
+               case 1: if (obj->type!=0) return(0);
+               case 3: if (obj->type!=3) return(0);
+               case 4: if (obj->type!=4) return(0);
+               default: return(0);
                }
 
             *newbytes=width*height*components;
@@ -79,17 +81,17 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
             int width,height,components;
 
             *newdata=pngbase::decompressPNGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) ERRORMSG();
+            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) return(0);
 
             if (*newdata==NULL) return(0); // return failure
 
             switch (components)
                {
-               case 1: if (obj->type!=0) ERRORMSG(); break;
-               case 2: if (obj->type!=1) ERRORMSG(); break;
-               case 3: if (obj->type!=3) ERRORMSG(); break;
-               case 4: if (obj->type!=4) ERRORMSG(); break;
-               default: ERRORMSG();
+               case 1: if (obj->type!=0) return(0);
+               case 2: if (obj->type!=1) return(0);
+               case 3: if (obj->type!=3) return(0);
+               case 4: if (obj->type!=4) return(0);
+               default: return(0);
                }
 
             *newbytes=width*height*components;
@@ -109,7 +111,7 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
 #ifdef USEGREYC
 
-            if (components==1 || components==3)
+            if (components==3) // do not denoise elevation
                if (conversion_params->usegreycstoration)
                   greycbase::denoiseGREYCimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->greyc_p,conversion_params->greyc_a);
 
@@ -122,7 +124,7 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
          break;
 
-      default: ERRORMSG();
+      default: return(0);
       }
 
    return(1); // return success
