@@ -1600,7 +1600,7 @@ UTM 04
 2364905
 186m
 
-Bunker, Keolu Hills
+Bunker #3, Keolu Hills
 UTM 04
 632740
 2364856
@@ -1611,3 +1611,147 @@ UTM 04
 629325
 2358948
 759m
+
+Barbecue Tree, Bellows Beach
+UTM 04
+633845
+2362416
+29m
+
+Bikeshop, Kailua
+UTM 04
+630578
+2366550
+31m
+
+Water Reservoir, Waimanalo
+UTM 04
+631042
+2359410
+108m
+
+Zia's, Kaneohe
+UTM 04
+624362
+2367070
+61m
+
+Toyota/Chevy Windward, Kaneohe
+UTM 04
+624529
+2367239
+50m
+
+Honda Windward, Kaneohe
+UTM 04
+624482
+2367407
+46m
+
+Barbecue Place, Hoomaluhia
+UTM 04
+624010
+2365243
+104m
+
+Bistro, Koolina
+UTM 04
+591182
+2358530
+18m
+
+Lagoon #3, Koolina
+UTM 04
+591018
+2359094
+17m
+
+Lagoon #4, Koolina
+UTM 04
+591070
+2358758
+22m
+
+Swimming Pool, Koolina
+UTM 04
+591075
+2359186
+22m
+
+Jacuzzi, Koolina
+UTM 04
+591049
+2359195
+20m
+
+Restaurant, Koolina
+UTM 04
+591068
+2359160
+21m
+
+Far End, Kualoa Beach
+UTM 04
+620176
+2378873
+22m
+
+Makaha Beach, Oahu
+UTM 04
+580633
+2375273
+16m
+
+Eastend Vista
+UTM 04
+639597
+2355721
+28m
+
+Eastend Pool
+UTM 04
+639558
+2355700
+14m
+
+Vista Bench, Kailua Beach
+UTM 04
+632327
+2366491
+19m
+
+Puu O Mahuka Heiau, Northshore
+UTM 04
+597383
+2393398
+115m
+
+Pole Lookout, Northshore
+UTM 04
+597100
+2393532
+84m
+
+Haleiwa Joe's Patio, Haleiwa
+UTM 04
+592757
+2388048
+20m
+
+Moanalua Neighbourhood Park, Honolulu
+UTM 04
+616096
+2363948
+88m
+
+Broken Bridge, Moanalua Trail
+UTM 04
+616702
+2364120
+113m
+
+Windy Summit, St. Louis Hgts.
+UTM 04
+625029
+2356913
+412m
