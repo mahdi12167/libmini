@@ -828,7 +828,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
    {
    int n;
 
-   int nearest;
+   int ref,nst;
 
    double dist;
    double dn;
@@ -843,38 +843,36 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
 
    if (LNUM>0)
       {
-      // check nearest layer first
-      nearest=getnearest(o);
+      // get reference layer
+      ref=getreference();
 
       // transform coordinates
-      ogl=LAYER[nearest]->map_g2o(o);
-      dgl=LAYER[nearest]->rot_g2o(d,o);
+      ogl=LAYER[ref]->map_g2o(o);
+      dgl=LAYER[ref]->rot_g2o(d,o);
 
-      // shoot a ray and get the traveled distance
-      dist=CACHE->getray(LAYER[nearest]->getcacheid())->shoot(ogl.vec,dgl);
+      // get nearest layer
+      nst=getnearest(o);
+
+      // shoot a ray at the nearest layer
+      dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl);
 
       // check for valid hit
       if (dist!=MAXFLOAT)
          {
-         dist=LAYER[nearest]->len_o2g(dist);
-         id_hit=nearest;
+         dist=LAYER[ref]->len_o2g(dist);
+         id_hit=nst;
          }
       else
-         // check other layers next
          for (n=0; n<LNUM; n++)
-            if (n!=nearest)
+            if (n!=nst)
                {
-               // transform coordinates
-               ogl=LAYER[n]->map_g2o(o);
-               dgl=LAYER[n]->rot_g2o(d,o);
-
                // shoot a ray and get the traveled distance
                dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
 
-               // search nearest hit point
-               if (dn!=MAXFLOAT) dn=LAYER[n]->len_o2g(dn);
-
                // check for valid hit
+               if (dn!=MAXFLOAT) dn=LAYER[ref]->len_o2g(dn);
+
+               // remember nearest hit
                if (dn<dist)
                   {
                   dist=dn;
