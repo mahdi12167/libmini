@@ -138,8 +138,8 @@ void miniglobe::create_earth(const float color[3])
    {
    int i,j;
 
-   static const int alpha_steps=128;
-   static const int beta_steps=32;
+   static const int alpha_steps=256;
+   static const int beta_steps=64;
 
    float u,v;
    float alpha,beta;
