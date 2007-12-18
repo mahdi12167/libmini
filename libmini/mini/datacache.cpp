@@ -55,7 +55,7 @@ datacache::datacache(miniload *terrain)
    IMAGINFO_SIZEY=0.0f;
    IMAGINFO_MAXTEXSIZE=0;
 
-   HAS_ELEVINI=FALSE;
+   HAS_ELEVINI=HAS_ELEVINI_GEO=FALSE;
 
    ELEVINI_TILESX=0;
    ELEVINI_TILESY=0;
@@ -71,7 +71,7 @@ datacache::datacache(miniload *terrain)
    ELEVINI_MINELEV=0.0f;
    ELEVINI_MAXELEV=0.0f;
 
-   HAS_IMAGINI=FALSE;
+   HAS_IMAGINI=HAS_IMAGINI_GEO=FALSE;
 
    IMAGINI_TILESX=0;
    IMAGINI_TILESY=0;
@@ -418,7 +418,7 @@ void datacache::loadvtbelevini()
    static const int maxstr=1024;
    char *pathname,filename[maxstr],*fullname;
 
-   HAS_ELEVINI=FALSE;
+   HAS_ELEVINI=HAS_ELEVINI_GEO=FALSE;
 
    if (VTBELEVINIFILE==NULL) return;
 
@@ -505,12 +505,17 @@ void datacache::loadvtbelevini()
                free(pathname);
                }
             }
+         }
+
+      if (HAS_ELEVINI)
+         {
+         HAS_ELEVINI_GEO=TRUE;
 
          // read center point of the tileset in Lat/Lon WGS84
-         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&ELEVINI_CENTERX_LLWGS84,&ELEVINI_CENTERY_LLWGS84)!=2) HAS_ELEVINI=FALSE;
+         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&ELEVINI_CENTERX_LLWGS84,&ELEVINI_CENTERY_LLWGS84)!=2) HAS_ELEVINI_GEO=FALSE;
 
          // read north point of the tileset in Lat/Lon WGS84
-         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&ELEVINI_NORTHX_LLWGS84,&ELEVINI_NORTHY_LLWGS84)!=2) HAS_ELEVINI=FALSE;
+         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&ELEVINI_NORTHX_LLWGS84,&ELEVINI_NORTHY_LLWGS84)!=2) HAS_ELEVINI_GEO=FALSE;
          }
 
       fclose(file);
@@ -538,7 +543,7 @@ void datacache::loadvtbimagini()
    static const int maxstr=1024;
    char *pathname,filename[maxstr],*fullname;
 
-   HAS_IMAGINI=FALSE;
+   HAS_IMAGINI=HAS_IMAGINI_GEO=FALSE;
 
    if (VTBIMAGINIFILE==NULL) return;
 
@@ -617,12 +622,17 @@ void datacache::loadvtbimagini()
                free(pathname);
                }
             }
+         }
+
+      if (HAS_IMAGINI)
+         {
+         HAS_IMAGINI_GEO=TRUE;
 
          // read center point of the tileset in Lat/Lon WGS84
-         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&IMAGINI_CENTERX_LLWGS84,&IMAGINI_CENTERY_LLWGS84)!=2) HAS_IMAGINI=FALSE;
+         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&IMAGINI_CENTERX_LLWGS84,&IMAGINI_CENTERY_LLWGS84)!=2) HAS_IMAGINI_GEO=FALSE;
 
          // read north point of the tileset in Lat/Lon WGS84
-         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&IMAGINI_NORTHX_LLWGS84,&IMAGINI_NORTHY_LLWGS84)!=2) HAS_IMAGINI=FALSE;
+         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&IMAGINI_NORTHX_LLWGS84,&IMAGINI_NORTHY_LLWGS84)!=2) HAS_IMAGINI_GEO=FALSE;
          }
 
       fclose(file);

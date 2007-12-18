@@ -119,6 +119,7 @@ class datacache
 
    //! getters for vtb elev ini file
    BOOLINT haselevini() {return(HAS_ELEVINI);}
+   BOOLINT haselevini_geo() {return(HAS_ELEVINI_GEO);}
    int getelevini_tilesx() {return(ELEVINI_TILESX);}
    int getelevini_tilesy() {return(ELEVINI_TILESY);}
    float getelevini_centerx() {return(ELEVINI_CENTERX);}
@@ -135,6 +136,7 @@ class datacache
 
    //! getters for vtb imag ini file
    BOOLINT hasimagini() {return(HAS_IMAGINI);}
+   BOOLINT hasimagini_geo() {return(HAS_IMAGINI_GEO);}
    int getimagini_tilesx() {return(IMAGINI_TILESX);}
    int getimagini_tilesy() {return(IMAGINI_TILESY);}
    float getimagini_centerx() {return(IMAGINI_CENTERX);}
@@ -234,6 +236,7 @@ class datacache
    float IMAGINFO_MAXELEV;
 
    BOOLINT HAS_ELEVINI;
+   BOOLINT HAS_ELEVINI_GEO;
    int ELEVINI_TILESX;
    int ELEVINI_TILESY;
    float ELEVINI_CENTERX;
@@ -249,6 +252,7 @@ class datacache
    float ELEVINI_MAXELEV;
 
    BOOLINT HAS_IMAGINI;
+   BOOLINT HAS_IMAGINI_GEO;
    int IMAGINI_TILESX;
    int IMAGINI_TILESY;
    float IMAGINI_CENTERX;

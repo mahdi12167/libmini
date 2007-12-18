@@ -37,8 +37,11 @@ class minilayer
       float offset[3];     // offset of tileset center
       float scaling[3];    // scaling factor of tileset
 
-      minicoord offsetGEO; // geo-referenced tileset center
-      minicoord extentGEO; // geo-referenced tileset extent
+      minicoord offsetDAT; // original tileset offset
+      minicoord extentDAT; // original tileset extent
+
+      minicoord centerGEO; // geo-referenced center point
+      minicoord northGEO;  // geo-referenced north point
 
       // auto-set parameters during rendering:
 
@@ -306,6 +309,7 @@ class minilayer
    int UPD;
 
    void createwarp(minicoord offsetDAT,minicoord extentDAT,
+                   minicoord centerGEO,minicoord northGEO,
                    miniv3d offsetLOC,miniv3d scalingLOC,
                    double scaleLOC);
 

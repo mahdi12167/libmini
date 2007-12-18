@@ -254,6 +254,11 @@ miniwarp::miniwarp()
    SYSDAT=minicoord::MINICOORD_NONE;
    UTMZONE=UTMDATUM=0;
 
+   CENTERGEO=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
+   NORTHGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
+
+   SYSGEO=minicoord::MINICOORD_LINEAR;
+
    OFFSETLOC=miniv3d(0.0);
    SCALINGLOC=miniv3d(1.0);
 
@@ -337,6 +342,17 @@ void miniwarp::def_data(const minicoord bboxDAT[2])
    update_mtx();
    }
 
+// define geo-graphic coordinates
+void miniwarp::def_geo(const minicoord centerGEO,const minicoord northGEO)
+   {
+   if (centerGEO.type!=northGEO.type) ERRORMSG();
+
+   CENTERGEO=centerGEO;
+   NORTHGEO=northGEO;
+
+   SYSGEO=centerGEO.type;
+   }
+
 // define conversion to local coordinates
 void miniwarp::def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,double scaleLOC)
    {
@@ -416,6 +432,18 @@ minicoord::MINICOORD miniwarp::getdat()
 // get global coordinate system
 minicoord::MINICOORD miniwarp::getglb()
    {return(SYSGLB);}
+
+// get geo-graphic center point
+minicoord miniwarp::getcenter()
+   {return(CENTERGEO);}
+
+// get geo-graphic north point
+minicoord miniwarp::getnorth()
+   {return(NORTHGEO);}
+
+// get geo-graphic coordinate system
+minicoord::MINICOORD miniwarp::getgeo()
+   {return(SYSGEO);}
 
 // get utm zone of data
 int miniwarp::getutmzone()

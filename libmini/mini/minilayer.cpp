@@ -34,8 +34,11 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.scaling[1]=0.0f;       // y-scaling factor of tileset
    LPARAMS.scaling[2]=0.0f;       // z-scaling factor of tileset
 
-   LPARAMS.offsetGEO=minicoord(); // geo-referenced tileset center
-   LPARAMS.extentGEO=minicoord(); // geo-referenced tileset extent
+   LPARAMS.offsetDAT=minicoord(); // original tileset offset
+   LPARAMS.extentDAT=minicoord(); // original tileset extent
+
+   LPARAMS.centerGEO=minicoord(); // geo-referenced center point
+   LPARAMS.northGEO=minicoord();  // geo-referenced north point
 
    // auto-set parameters during rendering:
 
@@ -237,7 +240,8 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
 
       if (LPARAMS.warpmode!=WARPMODE)
          {
-         createwarp(LPARAMS.offsetGEO,LPARAMS.extentGEO,
+         createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
+                    LPARAMS.centerGEO,LPARAMS.northGEO,
                     miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
                     LPARAMS.scale);
 
@@ -452,9 +456,13 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use PNM loader
       LPARAMS.usepnm=TRUE;
 
-      // get geo-referenced data coordinates
-      LPARAMS.offsetGEO=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      LPARAMS.extentGEO=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
+      // get original data coordinates
+      LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
+      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
+
+      // get geo-referenced coordinates
+      LPARAMS.centerGEO=LPARAMS.offsetDAT;
+      LPARAMS.northGEO=LPARAMS.offsetDAT+minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LLH);
       }
    // check tileset ini
    else if (TILECACHE->haselevini())
@@ -475,9 +483,21 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use DB loader
       LPARAMS.usepnm=FALSE;
 
-      // get geo-referenced data coordinates
-      LPARAMS.offsetGEO=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-      LPARAMS.extentGEO=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
+      // get original data coordinates
+      LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
+      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
+
+      // get geo-referenced coordinates
+      if (TILECACHE->haselevini_geo())
+         {
+         LPARAMS.centerGEO=minicoord(miniv3d(3600.0*TILECACHE->getelevini_centerx_llwgs84(),3600.0*TILECACHE->getelevini_centery_llwgs84(),0.0),minicoord::MINICOORD_LLH);
+         LPARAMS.northGEO=minicoord(miniv3d(3600.0*TILECACHE->getelevini_northx_llwgs84(),3600.0*TILECACHE->getelevini_northy_llwgs84(),0.0),minicoord::MINICOORD_LLH);
+         }
+      else
+         {
+         LPARAMS.centerGEO=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
+         LPARAMS.northGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
+         }
       }
 
    // check the size of the tileset to detect load failures
@@ -539,7 +559,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    LPARAMS.scaling[2]=outscale[2];
 
    // create the warp
-   createwarp(LPARAMS.offsetGEO,LPARAMS.extentGEO,
+   createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
+              LPARAMS.centerGEO,LPARAMS.northGEO,
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
               LPARAMS.scale);
 
@@ -609,8 +630,7 @@ void minilayer::setreference(minilayer *ref)
 
    if (WARP!=NULL)
       if (LPARAMS.warpmode==0 ||
-          WARP->getdat()==minicoord::MINICOORD_LINEAR ||
-          WARP->getglb()==minicoord::MINICOORD_LINEAR ||
+          WARP->getgeo()==minicoord::MINICOORD_LINEAR ||
           LPARAMS.warpmode==1)
          if (REFERENCE!=NULL)
             if (REFERENCE->getwarp()!=NULL)
@@ -624,6 +644,7 @@ void minilayer::setreference(minilayer *ref)
 
 // create the warp
 void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
+                           minicoord centerGEO,minicoord northGEO,
                            miniv3d offsetLOC,miniv3d scalingLOC,
                            double scaleLOC)
    {
@@ -632,7 +653,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    miniv4d mtxAFF[3];
 
    double scale;
-   minicoord center;
+   minicoord center,north;
    miniv3d dir,up,right;
 
    // define global coordinates:
@@ -648,6 +669,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    WARP->def_data(bboxDAT);
 
+   // define geo-graphic coordinates:
+
+   WARP->def_geo(centerGEO,northGEO);
+
    // define local coordinates:
 
    WARP->def_2local(-offsetLOC,scalingLOC,scaleLOC);
@@ -655,8 +680,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    // define affine coordinates:
 
    if (LPARAMS.warpmode==0 ||
-       WARP->getdat()==minicoord::MINICOORD_LINEAR ||
-       WARP->getglb()==minicoord::MINICOORD_LINEAR)
+       WARP->getgeo()==minicoord::MINICOORD_LINEAR)
       {
       if (REFERENCE==NULL) scale=1.0;
       else scale=scaleLOC/REFERENCE->getwarp()->getscaleloc();
@@ -667,27 +691,21 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       }
    else if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
       {
-      center=offsetDAT;
+      center=WARP->getcenter();
       center.convert2(minicoord::MINICOORD_ECEF);
 
-      dir=miniv3d(center.vec);
+      north=WARP->getnorth();
+      north.convert2(minicoord::MINICOORD_ECEF);
+
+      dir=center.vec;
       dir.normalize();
 
-      up=miniv3d(0.0,0.0,1.0);
-      right=miniv3d(1.0,0.0,0.0);
+      up=north.vec-center.vec;
+      up.normalize();
 
-      if (FABS(dir*up)<FABS(dir*right))
-         {
-         right=up/dir;
-         right.normalize();
-         up=dir/right;
-         }
-      else
-         {
-         up=right/dir;
-         up.normalize();
-         right=up/dir;
-         }
+      right=up/dir;
+      right.normalize();
+      up=dir/right;
 
       if (REFERENCE==NULL) scale=1.0/scaleLOC;
       else scale=1.0/REFERENCE->getwarp()->getscaleloc();

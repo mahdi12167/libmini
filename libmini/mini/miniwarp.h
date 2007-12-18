@@ -177,6 +177,9 @@ class miniwarp
    //! define data coordinates
    void def_data(const minicoord bboxDAT[2]);
 
+   //! define geo-graphic coordinates
+   void def_geo(const minicoord centerGEO,const minicoord northGEO);
+
    //! define conversion to local coordinates
    void def_2local(const miniv3d &offsetLOC,const miniv3d &scalingLOC,double scaleLOC);
 
@@ -216,6 +219,15 @@ class miniwarp
    //! get data coordinate system
    minicoord::MINICOORD getdat();
 
+   //! get geo-graphic center point
+   minicoord getcenter();
+
+   //! get geo-graphic north point
+   minicoord getnorth();
+
+   //! get geo-graphic coordinate system
+   minicoord::MINICOORD getgeo();
+
    //! get utm zone of data
    int getutmzone();
 
@@ -245,6 +257,11 @@ class miniwarp
 
    minicoord::MINICOORD SYSDAT;
    int UTMZONE,UTMDATUM;
+
+   minicoord CENTERGEO;
+   minicoord NORTHGEO;
+
+   minicoord::MINICOORD SYSGEO;
 
    miniv3d OFFSETLOC,SCALINGLOC;
    double SCALELOC;

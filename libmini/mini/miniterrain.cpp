@@ -571,7 +571,7 @@ void miniterrain::setreference(int ref)
    {
    int n;
 
-   minicoord::MINICOORD dat;
+   minicoord::MINICOORD geo;
 
    // set new reference
    LREF=ref;
@@ -579,21 +579,21 @@ void miniterrain::setreference(int ref)
    if (LNUM>0)
       if (LAYER[getreference()]->getwarp()!=NULL)
          {
-         // get data coordinate system of reference layer
-         dat=LAYER[getreference()]->getwarp()->getdat();
+         // get geo-graphic coordinate system of reference layer
+         geo=LAYER[getreference()]->getwarp()->getgeo();
 
          // check for consistency of reference layer
-         if ((TPARAMS.warpmode==0 && dat!=minicoord::MINICOORD_LINEAR) ||
-             (TPARAMS.warpmode>0 && dat==minicoord::MINICOORD_LINEAR))
+         if ((TPARAMS.warpmode==0 && geo!=minicoord::MINICOORD_LINEAR) ||
+             (TPARAMS.warpmode>0 && geo==minicoord::MINICOORD_LINEAR))
             for (n=0; n<LNUM; n++)
                if (LAYER[n]->getwarp()!=NULL)
                   {
-                  // get data coordinate system of actual layer
-                  dat=LAYER[n]->getwarp()->getdat();
+                  // get geo-graphic coordinate system of actual layer
+                  geo=LAYER[n]->getwarp()->getgeo();
 
                   // check for consistency of actual layer
-                  if ((TPARAMS.warpmode==0 && dat==minicoord::MINICOORD_LINEAR) ||
-                      (TPARAMS.warpmode>0 && dat!=minicoord::MINICOORD_LINEAR))
+                  if ((TPARAMS.warpmode==0 && geo==minicoord::MINICOORD_LINEAR) ||
+                      (TPARAMS.warpmode>0 && geo!=minicoord::MINICOORD_LINEAR))
                      {
                      LREF=n;
                      break;
@@ -619,17 +619,17 @@ void miniterrain::checkconsistency()
    {
    int n;
 
-   minicoord::MINICOORD dat;
+   minicoord::MINICOORD geo;
 
    // switch off non-conforming layers
    for (n=0; n<LNUM; n++)
       if (LAYER[n]->getwarp()!=NULL)
          {
-         // get data coordinate system of actual layer
-         dat=LAYER[n]->getwarp()->getdat();
+         // get geo-graphic coordinate system of actual layer
+         geo=LAYER[n]->getwarp()->getgeo();
 
-         // switch off actual layer if its data coordinate system is not conforming
-         if (TPARAMS.warpmode>0 && dat==minicoord::MINICOORD_LINEAR) LAYER[n]->display(FALSE);
+         // switch off actual layer if its geo-graphic coordinate system is not conforming
+         if (TPARAMS.warpmode>0 && geo==minicoord::MINICOORD_LINEAR) LAYER[n]->display(FALSE);
          }
    }
 
