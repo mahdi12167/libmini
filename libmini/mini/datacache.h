@@ -123,6 +123,10 @@ class datacache
    int getelevini_tilesy() {return(ELEVINI_TILESY);}
    float getelevini_centerx() {return(ELEVINI_CENTERX);}
    float getelevini_centery() {return(ELEVINI_CENTERY);}
+   float getelevini_centerx_llwgs84() {return(ELEVINI_CENTERX_LLWGS84);}
+   float getelevini_centery_llwgs84() {return(ELEVINI_CENTERY_LLWGS84);}
+   float getelevini_northx_llwgs84() {return(ELEVINI_NORTHX_LLWGS84);}
+   float getelevini_northy_llwgs84() {return(ELEVINI_NORTHY_LLWGS84);}
    float getelevini_sizex() {return(ELEVINI_SIZEX);}
    float getelevini_sizey() {return(ELEVINI_SIZEY);}
    int getelevini_maxdemsize() {return(ELEVINI_MAXDEMSIZE);}
@@ -135,6 +139,10 @@ class datacache
    int getimagini_tilesy() {return(IMAGINI_TILESY);}
    float getimagini_centerx() {return(IMAGINI_CENTERX);}
    float getimagini_centery() {return(IMAGINI_CENTERY);}
+   float getimagini_centerx_llwgs84() {return(IMAGINI_CENTERX_LLWGS84);}
+   float getimagini_centery_llwgs84() {return(IMAGINI_CENTERY_LLWGS84);}
+   float getimagini_northx_llwgs84() {return(IMAGINI_NORTHX_LLWGS84);}
+   float getimagini_northy_llwgs84() {return(IMAGINI_NORTHY_LLWGS84);}
    float getimagini_sizex() {return(IMAGINI_SIZEX);}
    float getimagini_sizey() {return(IMAGINI_SIZEY);}
    int getimagini_maxtexsize() {return(IMAGINI_MAXTEXSIZE);}
@@ -230,6 +238,10 @@ class datacache
    int ELEVINI_TILESY;
    float ELEVINI_CENTERX;
    float ELEVINI_CENTERY;
+   float ELEVINI_CENTERX_LLWGS84;
+   float ELEVINI_CENTERY_LLWGS84;
+   float ELEVINI_NORTHX_LLWGS84;
+   float ELEVINI_NORTHY_LLWGS84;
    float ELEVINI_SIZEX;
    float ELEVINI_SIZEY;
    int ELEVINI_MAXDEMSIZE;
@@ -241,6 +253,10 @@ class datacache
    int IMAGINI_TILESY;
    float IMAGINI_CENTERX;
    float IMAGINI_CENTERY;
+   float IMAGINI_CENTERX_LLWGS84;
+   float IMAGINI_CENTERY_LLWGS84;
+   float IMAGINI_NORTHX_LLWGS84;
+   float IMAGINI_NORTHY_LLWGS84;
    float IMAGINI_SIZEX;
    float IMAGINI_SIZEY;
    int IMAGINI_MAXTEXSIZE;

@@ -61,6 +61,10 @@ datacache::datacache(miniload *terrain)
    ELEVINI_TILESY=0;
    ELEVINI_CENTERX=0.0f;
    ELEVINI_CENTERY=0.0f;
+   ELEVINI_CENTERX_LLWGS84=0.0f;
+   ELEVINI_CENTERY_LLWGS84=0.0f;
+   ELEVINI_NORTHX_LLWGS84=0.0f;
+   ELEVINI_NORTHY_LLWGS84=0.0f;
    ELEVINI_SIZEX=0.0f;
    ELEVINI_SIZEY=0.0f;
    ELEVINI_MAXDEMSIZE=0;
@@ -73,6 +77,10 @@ datacache::datacache(miniload *terrain)
    IMAGINI_TILESY=0;
    IMAGINI_CENTERX=0.0f;
    IMAGINI_CENTERY=0.0f;
+   IMAGINI_CENTERX_LLWGS84=0.0f;
+   IMAGINI_CENTERY_LLWGS84=0.0f;
+   IMAGINI_NORTHX_LLWGS84=0.0f;
+   IMAGINI_NORTHY_LLWGS84=0.0f;
    IMAGINI_SIZEX=0.0f;
    IMAGINI_SIZEY=0.0f;
    IMAGINI_MAXTEXSIZE=0;
@@ -497,6 +505,12 @@ void datacache::loadvtbelevini()
                free(pathname);
                }
             }
+
+         // read center point of the tileset in Lat/Lon WGS84
+         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&ELEVINI_CENTERX_LLWGS84,&ELEVINI_CENTERY_LLWGS84)!=2) HAS_ELEVINI=FALSE;
+
+         // read north point of the tileset in Lat/Lon WGS84
+         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&ELEVINI_NORTHX_LLWGS84,&ELEVINI_NORTHY_LLWGS84)!=2) HAS_ELEVINI=FALSE;
          }
 
       fclose(file);
@@ -603,6 +617,12 @@ void datacache::loadvtbimagini()
                free(pathname);
                }
             }
+
+         // read center point of the tileset in Lat/Lon WGS84
+         if (fscanf(file,"CenterPoint_LLWGS84=(%g,%g)\n",&IMAGINI_CENTERX_LLWGS84,&IMAGINI_CENTERY_LLWGS84)!=2) HAS_IMAGINI=FALSE;
+
+         // read north point of the tileset in Lat/Lon WGS84
+         if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&IMAGINI_NORTHX_LLWGS84,&IMAGINI_NORTHY_LLWGS84)!=2) HAS_IMAGINI=FALSE;
          }
 
       fclose(file);
