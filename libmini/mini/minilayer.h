@@ -14,6 +14,7 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "miniutm.h"
 #include "miniwarp.h"
 
 //! aggregate class for rendering a layer
@@ -200,6 +201,9 @@ class minilayer
 
    //! load optional features
    void loadopts();
+
+   //! create earth reference layer
+   void setearth();
 
    //! set reference layer
    void setreference(minilayer *ref);

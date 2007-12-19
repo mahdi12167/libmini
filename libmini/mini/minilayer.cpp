@@ -190,24 +190,27 @@ minilayer::~minilayer()
    {
    if (LOADED)
       {
-      // detach tileset from render cache
-      CACHE->detach(TERRAIN->getminitile());
+      if (TERRAIN!=NULL)
+         {
+         // detach tileset from render cache
+         CACHE->detach(TERRAIN->getminitile());
 
-      // delete the tile cache
-      delete TILECACHE;
+         // delete the tile cache
+         delete TILECACHE;
 
-      // clean-up pthreads and libcurl
-      threadexit(getthreadid());
-      curlexit(getthreadid());
+         // clean-up pthreads and libcurl
+         threadexit(getthreadid());
+         curlexit(getthreadid());
 
-      // delete the terrain
-      delete TERRAIN;
+         // delete the terrain
+         delete TERRAIN;
+
+         // delete the waypoints
+         if (POINTS!=NULL) delete POINTS;
+         }
 
       // delete the warp
       delete WARP;
-
-      // delete the waypoints
-      if (POINTS!=NULL) delete POINTS;
       }
    }
 
@@ -590,7 +593,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 // load optional features
 void minilayer::loadopts()
    {
-   if (!LOADED) return;
+   if (!LOADED || TERRAIN==NULL) return;
 
    // load waypoints:
 
@@ -619,6 +622,46 @@ void minilayer::loadopts()
       if (POINTS!=NULL) POINTS->setbrick(bname);
       free(bname);
       }
+   }
+
+// create earth reference layer
+void minilayer::setearth()
+   {
+   if (LOADED) return;
+
+   // set original data coordinates
+   LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_ECEF);
+   LPARAMS.extentDAT=minicoord(miniv3d(2*miniutm::EARTH_radius,2*miniutm::EARTH_radius,2*miniutm::EARTH_radius),minicoord::MINICOORD_ECEF);
+
+   // set geo-referenced coordinates
+   LPARAMS.centerGEO=LPARAMS.offsetDAT;
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,miniutm::EARTH_radius),minicoord::MINICOORD_ECEF);
+
+   // set extent
+   LPARAMS.extent[0]=2*miniutm::EARTH_radius;
+   LPARAMS.extent[1]=2*miniutm::EARTH_radius;
+   LPARAMS.extent[2]=2*miniutm::EARTH_radius;
+
+   // set offset
+   LPARAMS.offset[0]=0.0;
+   LPARAMS.offset[1]=0.0;
+   LPARAMS.offset[2]=0.0;
+
+   // set scaling factor
+   LPARAMS.scaling[0]=1.0/LPARAMS.scale;
+   LPARAMS.scaling[1]=1.0/LPARAMS.scale;
+   LPARAMS.scaling[2]=1.0/LPARAMS.scale;
+
+   // create the warp
+   createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
+              LPARAMS.centerGEO,LPARAMS.northGEO,
+              miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+              LPARAMS.scale);
+
+   // update warp objects for each exposed coordinate transformation
+   updatecoords();
+
+   LOADED=TRUE;
    }
 
 // set reference layer
@@ -731,8 +774,11 @@ void minilayer::updatecoords()
    {
    // copy warp object to encapsulated tileset:
 
-   TERRAIN->getminitile()->copywarp(WARP);
-   TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+   if (TERRAIN!=NULL)
+      {
+      TERRAIN->getminitile()->copywarp(WARP);
+      TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+      }
 
    // create warp object for each exposed coordinate transformation:
 
@@ -775,7 +821,7 @@ double minilayer::getheight(const minicoord &p)
    float elev;
    minicoord pi;
 
-   if (!LOADED) return(-MAXFLOAT);
+   if (!LOADED || TERRAIN==NULL) return(-MAXFLOAT);
 
    pi=map_g2i(p);
 
@@ -799,7 +845,7 @@ void minilayer::initeyepoint(const minicoord &e)
    {
    minicoord ei;
 
-   if (!LOADED) return;
+   if (!LOADED || TERRAIN==NULL) return;
 
    ei=map_g2i(e);
 
@@ -828,7 +874,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    minicoord ei;
    miniv3d di,ui;
 
-   if (!LOADED || !VISIBLE) return;
+   if (!LOADED || !VISIBLE || TERRAIN==NULL) return;
 
    // transform coordinates
    ei=map_g2i(e);
@@ -869,16 +915,23 @@ BOOLINT minilayer::isdisplayed()
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)
-   {TERRAIN->setrelscale(relscale);}
+   {
+   if (TERRAIN==NULL) return;
+   TERRAIN->setrelscale(relscale);
+   }
 
 // get the flattening factor
 float minilayer::getflattening()
-   {return(TERRAIN->getrelscale());}
+   {
+   if (TERRAIN==NULL) return(1.0f);
+   else return(TERRAIN->getrelscale());
+   }
 
 // get the internal cache id
 int minilayer::getcacheid()
    {
-   if (TERRAIN->getminitile()==NULL) return(-1);
+   if (TERRAIN==NULL) return(-1);
+   else if (TERRAIN->getminitile()==NULL) return(-1);
    return(TERRAIN->getminitile()->getid());
    }
 
