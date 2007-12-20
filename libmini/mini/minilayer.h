@@ -322,7 +322,8 @@ class minilayer
                    miniv3d offsetLOC,miniv3d scalingLOC,
                    double scaleLOC);
 
-   void pointwarp();
+   void pointwarp(minicoord &center,minicoord &north,
+                  double scale,miniv4d mtx[3]);
 
    void updatecoords();
 
