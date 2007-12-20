@@ -200,6 +200,8 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    t->vtxcnt2=0;
 
    t->render_phase=-1;
+
+   t->isvisible=1;
    }
 
 // free terrain
@@ -516,7 +518,8 @@ int minicache::rendercache()
       rendertrigger(phase);
 
       for (id=0; id<MAXTERRAIN; id++)
-         if (TERRAIN[id].tile!=NULL) vtx+=rendercache(id,phase);
+         if (TERRAIN[id].tile!=NULL)
+            if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
       }
 
    return(vtx);
@@ -1038,6 +1041,14 @@ void minicache::detach(minitile *terrain)
    TERRAIN[terrain->getid()].tile=NULL;
 
    freeterrain(&TERRAIN[terrain->getid()]);
+   }
+
+// determine whether or not a tileset is displayed
+void minicache::display(minitile *terrain,int yes)
+   {
+   if (terrain==NULL) ERRORMSG();
+
+   TERRAIN[terrain->getid()].isvisible=yes;
    }
 
 // make cache current

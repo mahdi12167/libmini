@@ -35,6 +35,9 @@ class minicache
    //! detach a tileset
    void detach(minitile *terrain);
 
+   //! determine whether or not a tileset is displayed
+   void display(minitile *terrain,int yes=1);
+
    //! make cache current
    //! required for multiple rendering windows/contexts
    //! this should be called before updating the vertex buffers of the corresponding window
@@ -143,6 +146,8 @@ class minicache
 
       int render_phase;
       int render_count;
+
+      int isvisible;
       };
 
    int CACHE_ID;

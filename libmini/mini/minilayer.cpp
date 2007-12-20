@@ -1048,7 +1048,12 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 
 // determine whether or not the layer is displayed
 void minilayer::display(BOOLINT yes)
-   {VISIBLE=yes;}
+   {
+   VISIBLE=yes;
+
+   if (TERRAIN!=NULL)
+      CACHE->display(TERRAIN->getminitile(),yes);
+   }
 
 // check whether or not the layer is displayed
 BOOLINT minilayer::isdisplayed()
