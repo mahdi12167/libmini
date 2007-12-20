@@ -227,19 +227,22 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
    // pass parameters that need to be treated explicitly
    if (LOADED)
       {
-      TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
-      TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+      if (TILECACHE!=NULL)
+         {
+         TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
+         TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
 
-      TILECACHE->getcloud()->getterrain()->setrange(LPARAMS.range*LPARAMS.farp/LPARAMS.scale);
-      TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+         TILECACHE->getcloud()->getterrain()->setrange(LPARAMS.range*LPARAMS.farp/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
-      TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 
-      TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
-      TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
+         TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
+         TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
 
-      TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
-      TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
+         TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
+         TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
+         }
 
       if (LPARAMS.warpmode!=WARPMODE)
          {
@@ -593,7 +596,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 // load optional features
 void minilayer::loadopts()
    {
-   if (!LOADED || TERRAIN==NULL) return;
+   if (!LOADED || TILECACHE==NULL) return;
 
    // load waypoints:
 
@@ -624,6 +627,49 @@ void minilayer::loadopts()
       }
    }
 
+// create null reference layer
+void minilayer::setnull()
+   {
+   if (LOADED) return;
+
+   // set original data coordinates
+   LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
+   LPARAMS.extentDAT=minicoord(miniv3d(1.0,1.0,1.0),minicoord::MINICOORD_LINEAR);
+
+   // set geo-referenced coordinates
+   LPARAMS.centerGEO=LPARAMS.offsetDAT;
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
+
+   // set extent
+   LPARAMS.extent[0]=1.0f;
+   LPARAMS.extent[1]=1.0f;
+   LPARAMS.extent[2]=1.0f;
+
+   // set offset
+   LPARAMS.offset[0]=0.0f;
+   LPARAMS.offset[1]=0.0f;
+   LPARAMS.offset[2]=0.0f;
+
+   // set scaling factor
+   LPARAMS.scaling[0]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[1]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
+
+   // create the warp
+   createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
+              LPARAMS.centerGEO,LPARAMS.northGEO,
+              miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+              LPARAMS.scale);
+
+   // update warp objects for each exposed coordinate transformation
+   updatecoords();
+
+   // make invisible
+   VISIBLE=FALSE;
+
+   LOADED=TRUE;
+   }
+
 // create earth reference layer
 void minilayer::setearth()
    {
@@ -643,14 +689,14 @@ void minilayer::setearth()
    LPARAMS.extent[2]=2*miniutm::EARTH_radius;
 
    // set offset
-   LPARAMS.offset[0]=0.0;
-   LPARAMS.offset[1]=0.0;
-   LPARAMS.offset[2]=0.0;
+   LPARAMS.offset[0]=0.0f;
+   LPARAMS.offset[1]=0.0f;
+   LPARAMS.offset[2]=0.0f;
 
    // set scaling factor
-   LPARAMS.scaling[0]=1.0/LPARAMS.scale;
-   LPARAMS.scaling[1]=1.0/LPARAMS.scale;
-   LPARAMS.scaling[2]=1.0/LPARAMS.scale;
+   LPARAMS.scaling[0]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[1]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
 
    // create the warp
    createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
@@ -661,6 +707,9 @@ void minilayer::setearth()
    // update warp objects for each exposed coordinate transformation
    updatecoords();
 
+   // make invisible
+   VISIBLE=FALSE;
+
    LOADED=TRUE;
    }
 
@@ -669,20 +718,27 @@ void minilayer::setreference(minilayer *ref)
    {
    miniv4d mtxREF[3];
 
+   if (!LOADED) return;
+
    REFERENCE=ref;
 
    if (WARP!=NULL)
+      {
+      mtxREF[0]=miniv4d(1.0,0.0,0.0);
+      mtxREF[1]=miniv4d(0.0,1.0,0.0);
+      mtxREF[2]=miniv4d(0.0,0.0,1.0);
+
       if (LPARAMS.warpmode==0 ||
           WARP->getgeo()==minicoord::MINICOORD_LINEAR ||
           LPARAMS.warpmode==1)
          if (REFERENCE!=NULL)
             if (REFERENCE->getwarp()!=NULL)
-               {
                REFERENCE->getwarp()->get_invaff(mtxREF);
-               WARP->def_2reference(mtxREF);
 
-               updatecoords();
-               }
+      WARP->def_2reference(mtxREF);
+
+      updatecoords();
+      }
    }
 
 // create the warp
@@ -740,22 +796,31 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       north=WARP->getnorth();
       north.convert2(minicoord::MINICOORD_ECEF);
 
-      dir=center.vec;
-      dir.normalize();
+      if (center.vec.getLength()>0.0)
+         {
+         dir=center.vec;
+         dir.normalize();
 
-      up=north.vec-center.vec;
-      up.normalize();
+         up=north.vec-center.vec;
+         up.normalize();
 
-      right=up/dir;
-      right.normalize();
-      up=dir/right;
+         right=up/dir;
+         right.normalize();
+         up=dir/right;
 
-      if (REFERENCE==NULL) scale=1.0/scaleLOC;
-      else scale=1.0/REFERENCE->getwarp()->getscaleloc();
+         if (REFERENCE==NULL) scale=1.0/scaleLOC;
+         else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-      mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
-      mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
-      mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+         mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
+         mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
+         mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+         }
+      else
+         {
+         mtxAFF[0]=miniv4d(1.0,0.0,0.0);
+         mtxAFF[1]=miniv4d(0.0,1.0,0.0);
+         mtxAFF[2]=miniv4d(0.0,0.0,1.0);
+         }
       }
 
    WARP->def_2affine(mtxAFF);
@@ -834,7 +899,7 @@ double minilayer::getheight(const minicoord &p)
 // get initial view point
 minicoord minilayer::getinitial()
    {
-   if (POINTS==NULL) return(getcenter());
+   if (!LOADED || POINTS==NULL) return(getcenter());
 
    if (POINTS->getfirst()==NULL) return(getcenter());
    else return(map_l2g(miniv3d(POINTS->getfirst()->x,POINTS->getfirst()->y,POINTS->getfirst()->elev)));
@@ -874,7 +939,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    minicoord ei;
    miniv3d di,ui;
 
-   if (!LOADED || !VISIBLE || TERRAIN==NULL) return;
+   if (!LOADED || TERRAIN==NULL || !VISIBLE) return;
 
    // transform coordinates
    ei=map_g2i(e);
@@ -916,21 +981,21 @@ BOOLINT minilayer::isdisplayed()
 // flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)
    {
-   if (TERRAIN==NULL) return;
+   if (!LOADED || TERRAIN==NULL) return;
    TERRAIN->setrelscale(relscale);
    }
 
 // get the flattening factor
 float minilayer::getflattening()
    {
-   if (TERRAIN==NULL) return(1.0f);
+   if (!LOADED || TERRAIN==NULL) return(1.0f);
    else return(TERRAIN->getrelscale());
    }
 
 // get the internal cache id
 int minilayer::getcacheid()
    {
-   if (TERRAIN==NULL) return(-1);
+   if (!LOADED || TERRAIN==NULL) return(-1);
    else if (TERRAIN->getminitile()==NULL) return(-1);
    return(TERRAIN->getminitile()->getid());
    }
@@ -943,45 +1008,46 @@ void minilayer::renderpoints()
    miniv4d mtx[3];
    double oglmtx[16];
 
-   if (POINTS!=NULL)
-      if (LPARAMS.usewaypoints)
+   if (!LOADED || POINTS==NULL || !VISIBLE) return;
+
+   if (LPARAMS.usewaypoints)
+      {
+      ei=map_g2i(LPARAMS.eye);
+
+      mtxpush();
+
+      TERRAIN->getminitile()->getwarp()->getwarp(mtx);
+
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
+
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
+
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
+
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
+
+      mtxmult(oglmtx);
+
+      if (!LPARAMS.usebricks)
+         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
+      else
          {
-         ei=map_g2i(LPARAMS.eye);
-
-         mtxpush();
-
-         TERRAIN->getminitile()->getwarp()->getwarp(mtx);
-
-         oglmtx[0]=mtx[0].x;
-         oglmtx[4]=mtx[0].y;
-         oglmtx[8]=mtx[0].z;
-         oglmtx[12]=mtx[0].w;
-
-         oglmtx[1]=mtx[1].x;
-         oglmtx[5]=mtx[1].y;
-         oglmtx[9]=mtx[1].z;
-         oglmtx[13]=mtx[1].w;
-
-         oglmtx[2]=mtx[2].x;
-         oglmtx[6]=mtx[2].y;
-         oglmtx[10]=mtx[2].z;
-         oglmtx[14]=mtx[2].w;
-
-         oglmtx[3]=0.0;
-         oglmtx[7]=0.0;
-         oglmtx[11]=0.0;
-         oglmtx[15]=1.0;
-
-         mtxmult(oglmtx);
-
-         if (!LPARAMS.usebricks)
-            POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
-         else
-            {
-            POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
-            POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_g2i(LPARAMS.bricksize));
-            }
-
-         mtxpop();
+         POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
+         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_g2i(LPARAMS.bricksize));
          }
+
+      mtxpop();
+      }
    }

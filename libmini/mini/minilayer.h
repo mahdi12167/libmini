@@ -202,6 +202,9 @@ class minilayer
    //! load optional features
    void loadopts();
 
+   //! create null reference layer
+   void setnull();
+
    //! create earth reference layer
    void setearth();
 

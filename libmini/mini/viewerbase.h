@@ -136,6 +136,9 @@ class viewerbase
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);
 
+   //! get earth layer
+   minilayer *getearth() {return(TERRAIN->getlayer(TERRAIN->getearth()));}
+
    //! get reference layer
    minilayer *getreference() {return(TERRAIN->getlayer(TERRAIN->getreference()));}
 

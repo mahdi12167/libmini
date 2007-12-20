@@ -225,6 +225,15 @@ class miniterrain
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p);
 
+   //! get null layer
+   int getnull();
+
+   //! get earth layer
+   int getearth();
+
+   //! get default layer
+   int getdefault();
+
    //! set reference layer
    void setreference(int ref=0);
 
@@ -332,7 +341,10 @@ class miniterrain
    void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
 
-   void checkconsistency();
+   void reservelayer(int n);
+
+   void setnull(int n);
+   void setearth(int n);
 
    void render_presea();
    void render_postsea();

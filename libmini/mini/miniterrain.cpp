@@ -107,9 +107,9 @@ miniterrain::miniterrain()
 
    TPARAMS.contours=10.0f;       // contour distance in meters
 
-   TPARAMS.seacolor[0]=0.0f;     // color of sea surface
-   TPARAMS.seacolor[1]=0.5f;     // color of sea surface
-   TPARAMS.seacolor[2]=0.75f;    // color of sea surface
+   TPARAMS.seacolor[0]=0.0f;     // color of sea surface (matches with Blue Marble default sea color)
+   TPARAMS.seacolor[1]=0.0f;     // color of sea surface (matches with Blue Marble default sea color)
+   TPARAMS.seacolor[2]=0.2f;     // color of sea surface (matches with Blue Marble default sea color)
 
    TPARAMS.seatrans=0.25f;       // transparency of sea surface
    TPARAMS.seamodulate=0.0f;     // modulation factor of sea surface texture
@@ -165,7 +165,10 @@ miniterrain::miniterrain()
    LAYER=NULL;
    LNUM=LMAX=0;
 
-   setreference(0);
+   setnull(getnull());
+   setearth(getearth());
+
+   setreference(getdefault());
 
    CACHE=NULL;
 
@@ -200,6 +203,24 @@ miniterrain::~miniterrain()
 
    // delete the render cache
    if (CACHE!=NULL) delete CACHE;
+   }
+
+// reserve space for layer
+void miniterrain::reservelayer(int n)
+   {
+   // create layer array
+   if (LAYER==NULL)
+      {
+      LMAX=1;
+      if ((LAYER=(minilayer **)malloc(LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
+      }
+
+   // enlarge layer array
+   if (n>=LMAX)
+      {
+      LMAX*=2;
+      if ((LAYER=(minilayer **)realloc(LAYER,LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
+      }
    }
 
 // get parameters
@@ -295,9 +316,6 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
    // reset reference layer
    setreference(LREF);
-
-   // check layer consistency
-   checkconsistency();
    }
 
 // propagate parameters
@@ -434,22 +452,11 @@ BOOLINT miniterrain::load(const char *url,
 BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                           BOOLINT loadopts,BOOLINT reset)
    {
-   // create layer array
-   if (LAYER==NULL)
-      {
-      LMAX=1;
-      if ((LAYER=(minilayer **)malloc(LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
-      }
-
-   // enlarge layer array
-   if (LNUM>=LMAX)
-      {
-      LMAX*=2;
-      if ((LAYER=(minilayer **)realloc(LAYER,LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
-      }
-
    // create the render cache
    if (CACHE==NULL) CACHE=new minicache;
+
+   // reserve space for layer
+   reservelayer(LNUM);
 
    // create the tileset layer
    LAYER[LNUM++]=new minilayer(CACHE);
@@ -482,9 +489,6 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
 
    // reset reference layer
    setreference(LREF);
-
-   // check layer consistency
-   checkconsistency();
 
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
@@ -522,7 +526,7 @@ void miniterrain::remove(int n)
    if (n<LNUM-1) LAYER[n]=LAYER[--LNUM];
    else LNUM--;
 
-   if (n==LREF) setreference(0);
+   if (n==LREF) setreference(getdefault());
    }
 
 // get extent of a tileset
@@ -544,62 +548,77 @@ double miniterrain::getheight(const minicoord &p)
    {
    int n;
 
-   int nearest;
+   int nst;
 
    double elev;
 
    if (LNUM>0)
       {
-      nearest=getnearest(p);
+      nst=getnearest(p);
 
-      elev=LAYER[nearest]->getheight(p);
-      if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nearest]->len_g2l(elev)));
+      if (isdisplayed(nst))
+         {
+         elev=LAYER[nst]->getheight(p);
+         if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nst]->len_g2l(elev)));
+         }
 
       for (n=0; n<LNUM; n++)
-         if (n!=nearest)
-            {
-            elev=LAYER[n]->getheight(p);
-            if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
-            }
+         if (n!=nst)
+            if (isdisplayed(n))
+               {
+               elev=LAYER[n]->getheight(p);
+               if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
+               }
       }
 
    return(-MAXFLOAT);
    }
+
+// set null layer
+void miniterrain::setnull(int n)
+   {
+   // reserve space
+   reservelayer(n);
+
+   // create the layer
+   LAYER[LNUM++]=new minilayer(NULL);
+
+   // setup the earth layer
+   LAYER[LNUM-1]->setnull();
+   }
+
+// set earth layer
+void miniterrain::setearth(int n)
+   {
+   // reserve space
+   reservelayer(n);
+
+   // create the layer
+   LAYER[LNUM++]=new minilayer(NULL);
+
+   // setup the earth layer
+   LAYER[LNUM-1]->setearth();
+   }
+
+// get null layer
+int miniterrain::getnull()
+   {return(0);}
+
+// get earth layer
+int miniterrain::getearth()
+   {return(1);}
+
+// get default layer
+int miniterrain::getdefault()
+   {return(2);}
 
 // set reference layer
 void miniterrain::setreference(int ref)
    {
    int n;
 
-   minicoord::MINICOORD geo;
-
    // set new reference
    LREF=ref;
-
-   if (LNUM>0)
-      if (LAYER[getreference()]->getwarp()!=NULL)
-         {
-         // get geo-graphic coordinate system of reference layer
-         geo=LAYER[getreference()]->getwarp()->getgeo();
-
-         // check for consistency of reference layer
-         if ((TPARAMS.warpmode==0 && geo!=minicoord::MINICOORD_LINEAR) ||
-             (TPARAMS.warpmode>0 && geo==minicoord::MINICOORD_LINEAR))
-            for (n=0; n<LNUM; n++)
-               if (LAYER[n]->getwarp()!=NULL)
-                  {
-                  // get geo-graphic coordinate system of actual layer
-                  geo=LAYER[n]->getwarp()->getgeo();
-
-                  // check for consistency of actual layer
-                  if ((TPARAMS.warpmode==0 && geo==minicoord::MINICOORD_LINEAR) ||
-                      (TPARAMS.warpmode>0 && geo!=minicoord::MINICOORD_LINEAR))
-                     {
-                     LREF=n;
-                     break;
-                     }
-                  }
-         }
 
    // set new reference layer for default coordinate conversions
    if (LNUM>0) REFERENCE=LAYER[getreference()];
@@ -613,25 +632,6 @@ void miniterrain::setreference(int ref)
 // get reference layer
 int miniterrain::getreference()
    {return(min(LREF,LNUM-1));}
-
-// check layer consistency
-void miniterrain::checkconsistency()
-   {
-   int n;
-
-   minicoord::MINICOORD geo;
-
-   // switch off non-conforming layers
-   for (n=0; n<LNUM; n++)
-      if (LAYER[n]->getwarp()!=NULL)
-         {
-         // get geo-graphic coordinate system of actual layer
-         geo=LAYER[n]->getwarp()->getgeo();
-
-         // switch off actual layer if its geo-graphic coordinate system is not conforming
-         if (TPARAMS.warpmode>0 && geo==minicoord::MINICOORD_LINEAR) LAYER[n]->display(FALSE);
-         }
-   }
 
 // get initial view point
 minicoord miniterrain::getinitial()
@@ -654,26 +654,27 @@ int miniterrain::getnearest(const minicoord &e)
    {
    int n;
 
-   int nearest;
+   int nst;
    double dist,mindist;
    minicoord offset;
 
-   nearest=-1;
+   nst=-1;
    mindist=MAXFLOAT;
 
    for (n=0; n<LNUM; n++)
-      {
-      offset=LAYER[n]->getcenter()-e;
-      dist=offset.vec.getLength();
-
-      if (dist<mindist)
+      if (isdisplayed(n))
          {
-         mindist=dist;
-         nearest=n;
-         }
-      }
+         offset=LAYER[n]->getcenter()-e;
+         dist=offset.vec.getLength();
 
-   return(nearest);
+         if (dist<mindist)
+            {
+            mindist=dist;
+            nst=n;
+            }
+         }
+
+   return(nst);
    }
 
 // trigger complete render buffer update at next frame
@@ -760,14 +761,15 @@ void miniterrain::render_presea()
    minilayer::MINILAYER_PARAMS lparams;
 
    for (n=0; n<LNUM; n++)
-      {
-      LAYER[n]->get(lparams);
+      if (isdisplayed(n))
+         {
+         LAYER[n]->get(lparams);
 
-      el=LAYER[n]->map_g2l(lparams.eye);
+         el=LAYER[n]->map_g2l(lparams.eye);
 
-      if (el.vec.z<lparams.sealevel)
-         LAYER[n]->renderpoints(); // render waypoints before sea surface
-      }
+         // render waypoints before sea surface
+         if (el.vec.z<lparams.sealevel) LAYER[n]->renderpoints();
+         }
    }
 
 // post sea render function
@@ -780,24 +782,22 @@ void miniterrain::render_postsea()
    minilayer::MINILAYER_PARAMS lparams;
 
    for (n=0; n<LNUM; n++)
-      {
-      LAYER[n]->get(lparams);
+      if (isdisplayed(n))
+         {
+         LAYER[n]->get(lparams);
 
-      el=LAYER[n]->map_g2l(lparams.eye);
+         el=LAYER[n]->map_g2l(lparams.eye);
 
-      if (el.vec.z>=lparams.sealevel)
-         LAYER[n]->renderpoints(); // render waypoints after sea surface
-      }
+         // render waypoints after sea surface
+         if (el.vec.z>=lparams.sealevel) LAYER[n]->renderpoints();
+         }
    }
 
 // determine whether or not a layer is displayed
 void miniterrain::display(int n,BOOLINT yes)
    {
    if (n>=0 && n<LNUM)
-      {
-      LAYER[n]->display(yes);
-      checkconsistency();
-      }
+      if (n!=getnull() && n!=getearth()) LAYER[n]->display(yes);
    }
 
 // check whether or not a layer is displayed
@@ -854,7 +854,8 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
       nst=getnearest(o);
 
       // shoot a ray at the nearest layer
-      dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl);
+      if (isdisplayed(nst)) dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl);
+      else dist=MAXFLOAT;
 
       // check for valid hit
       if (dist!=MAXFLOAT)
@@ -865,20 +866,21 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
       else
          for (n=0; n<LNUM; n++)
             if (n!=nst)
-               {
-               // shoot a ray and get the traveled distance
-               dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
-
-               // check for valid hit
-               if (dn!=MAXFLOAT) dn=LAYER[ref]->len_o2g(dn);
-
-               // remember nearest hit
-               if (dn<dist)
+               if (isdisplayed(n))
                   {
-                  dist=dn;
-                  id_hit=n;
+                  // shoot a ray and get the traveled distance
+                  dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);
+
+                  // check for valid hit
+                  if (dn!=MAXFLOAT) dn=LAYER[ref]->len_o2g(dn);
+
+                  // remember nearest hit
+                  if (dn<dist)
+                     {
+                     dist=dn;
+                     id_hit=n;
+                     }
                   }
-               }
       }
 
    if (id!=NULL) *id=id_hit;
@@ -896,7 +898,7 @@ double miniterrain::getmem()
    mem=0.0;
 
    for (n=0; n<LNUM; n++)
-      mem+=LAYER[n]->getterrain()->getmem();
+      if (LAYER[n]->getterrain()!=NULL) mem+=LAYER[n]->getterrain()->getmem();
 
    return(mem);
    }
@@ -911,7 +913,7 @@ double miniterrain::gettexmem()
    texmem=0.0;
 
    for (n=0; n<LNUM; n++)
-      texmem+=LAYER[n]->getterrain()->gettexmem();
+      if (LAYER[n]->getterrain()!=NULL) texmem+=LAYER[n]->getterrain()->gettexmem();
 
    return(texmem);
    }
@@ -926,7 +928,7 @@ int miniterrain::getpending()
    pending=0;
 
    for (n=0; n<LNUM; n++)
-      pending+=LAYER[n]->getcache()->getpending();
+      if (LAYER[n]->getcache()!=NULL) pending+=LAYER[n]->getcache()->getpending();
 
    return(pending);
    }
@@ -941,7 +943,7 @@ double miniterrain::getcachemem()
    cachemem=0.0;
 
    for (n=0; n<LNUM; n++)
-      cachemem+=LAYER[n]->getcache()->getmem();
+      if (LAYER[n]->getcache()!=NULL) cachemem+=LAYER[n]->getcache()->getmem();
 
    return(cachemem);
    }

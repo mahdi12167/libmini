@@ -214,18 +214,18 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
 // load optional features
 void viewerbase::loadopts()
    {
-   minilayer *layer;
+   minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
-   layer=TERRAIN->getlayer(TERRAIN->getreference());
+   ref=TERRAIN->getlayer(TERRAIN->getreference());
 
-   if (layer==NULL) return;
+   if (ref==NULL) return;
 
-   layer->get(lparams);
+   ref->get(lparams);
 
    // load skydome:
 
-   char *skyname=layer->getcache()->getfile(PARAMS.skydome,lparams.altpath);
+   char *skyname=ref->getcache()->getfile(PARAMS.skydome,lparams.altpath);
 
    if (skyname!=NULL)
       {
@@ -235,7 +235,7 @@ void viewerbase::loadopts()
 
    // load earth textures:
 
-   char *ename1=layer->getcache()->getfile(PARAMS.frontname,lparams.altpath);
+   char *ename1=ref->getcache()->getfile(PARAMS.frontname,lparams.altpath);
 
    if (ename1!=NULL)
       {
@@ -243,7 +243,7 @@ void viewerbase::loadopts()
       free(ename1);
       }
 
-   char *ename2=layer->getcache()->getfile(PARAMS.backname,lparams.altpath);
+   char *ename2=ref->getcache()->getfile(PARAMS.backname,lparams.altpath);
 
    if (ename2!=NULL)
       {
@@ -269,7 +269,7 @@ void viewerbase::render()
    {
    minicoord egl;
 
-   minilayer *layer;
+   minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
    GLfloat color[4];
@@ -280,13 +280,13 @@ void viewerbase::render()
 
    float light0[3]={0.0f,0.0f,0.0f};
 
-   layer=TERRAIN->getlayer(TERRAIN->getreference());
+   ref=TERRAIN->getlayer(TERRAIN->getreference());
 
-   if (layer!=NULL)
+   if (ref!=NULL)
       {
-      layer->get(lparams);
+      ref->get(lparams);
 
-      egl=layer->map_g2o(lparams.eye);
+      egl=ref->map_g2o(lparams.eye);
 
       // enable wireframe mode
       if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -302,32 +302,32 @@ void viewerbase::render()
          glFogfv(GL_FOG_COLOR,color);
 
          glFogi(GL_FOG_MODE,GL_LINEAR);
-         glFogf(GL_FOG_START,PARAMS.fogstart*layer->len_g2o(PARAMS.farp));
-         glFogf(GL_FOG_END,layer->len_g2o(PARAMS.farp));
+         glFogf(GL_FOG_START,PARAMS.fogstart*ref->len_g2o(PARAMS.farp));
+         glFogf(GL_FOG_END,ref->len_g2o(PARAMS.farp));
 
          glEnable(GL_FOG);
          }
 
       // draw skydome
       if (PARAMS.useskydome)
-         {
-         SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                         1.9*layer->len_g2o(PARAMS.farp));
+         if (ref->get()->warpmode==0)
+            {
+            SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                            1.9*ref->len_g2o(PARAMS.farp));
 
-         SKYDOME->drawskydome();
-         }
+            SKYDOME->drawskydome();
+            }
 
       // render earth globe (without Z writing)
       if (PARAMS.useearth)
          {
-         EARTH->setscale(layer->len_o2g(1.0));
+         EARTH->setscale(ref->len_o2g(1.0));
 
          one[0]=miniv4d(1.0,0.0,0.0);
          one[1]=miniv4d(0.0,1.0,0.0);
          one[2]=miniv4d(0.0,0.0,1.0);
 
-         warp=*getreference()->getwarp();
-         warp.def_2affine(one);
+         warp=*getearth()->getwarp();
          warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
          warp.getwarp(mtx);
 
@@ -353,10 +353,10 @@ void viewerbase::render()
 
          EARTH->setmatrix(oglmtx);
 
-         if (PARAMS.usediffuse) EARTH->settexturedirectparams(PARAMS.lightdir,PARAMS.transition);
-         else EARTH->settexturedirectparams(light0,PARAMS.transition);
+         if (PARAMS.usediffuse) EARTH->settexturedirectparams(PARAMS.lightdir,PARAMS.transition); //!! rot_g2o(lightdir)
+         else EARTH->settexturedirectparams(light0,PARAMS.transition); //!! disable night texture completely
 
-         EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*layer->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?layer->len_g2o(PARAMS.farp):0.0f,
+         EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
                              PARAMS.fogdensity,
                              PARAMS.fogcolor);
 
