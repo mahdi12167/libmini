@@ -855,9 +855,28 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
                   else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
+                  //!! pointwarp();
                   mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
                   mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
                   mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+                  }
+               else
+                  {
+                  miniwarp::inv_mtx(mtxAFF,mtxAFF);
+
+                  center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
+                  center.vec.z=0.0;
+
+                  miniwarp::inv_mtx(mtxAFF,mtxAFF);
+
+                  center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
+
+                  if (REFERENCE==NULL) scale=1.0/scaleLOC;
+                  else scale=1.0/REFERENCE->getwarp()->getscaleloc();
+
+                  mtxAFF[0]=miniv4d(1.0,0.0,0.0,center.vec.x*scale);
+                  mtxAFF[1]=miniv4d(0.0,1.0,0.0,center.vec.y*scale);
+                  mtxAFF[2]=miniv4d(0.0,0.0,1.0,center.vec.z*scale);
                   }
                }
             }
