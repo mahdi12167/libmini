@@ -160,6 +160,9 @@ miniterrain::miniterrain()
    TPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to first waypoint elevation
    TPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
 
+   // create the render cache
+   CACHE=new minicache;
+
    // initialize state:
 
    LAYER=NULL;
@@ -169,8 +172,6 @@ miniterrain::miniterrain()
    setearth(getearth());
 
    setreference(getdefault());
-
-   CACHE=NULL;
 
    THREADDATA=NULL;
    THREADINIT=NULL;
@@ -202,7 +203,7 @@ miniterrain::~miniterrain()
       }
 
    // delete the render cache
-   if (CACHE!=NULL) delete CACHE;
+   delete CACHE;
    }
 
 // reserve space for layer
@@ -452,9 +453,6 @@ BOOLINT miniterrain::load(const char *url,
 BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                           BOOLINT loadopts,BOOLINT reset)
    {
-   // create the render cache
-   if (CACHE==NULL) CACHE=new minicache;
-
    // reserve space for layer
    reservelayer(LNUM);
 
@@ -797,7 +795,7 @@ void miniterrain::render_postsea()
 void miniterrain::display(int n,BOOLINT yes)
    {
    if (n>=0 && n<LNUM)
-      if (n!=getnull() && n!=getearth()) LAYER[n]->display(yes);
+      if (LAYER[n]->getterrain()!=NULL) LAYER[n]->display(yes);
    }
 
 // check whether or not a layer is displayed

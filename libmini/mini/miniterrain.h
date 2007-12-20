@@ -317,13 +317,13 @@ class miniterrain
 
    private:
 
+   minicache *CACHE;
+
    minilayer **LAYER;
    int LNUM,LMAX;
 
    int LREF;
    minilayer *REFERENCE;
-
-   minicache *CACHE;
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);
