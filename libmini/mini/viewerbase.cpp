@@ -213,6 +213,7 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
    }
 
+//!!
 // load optional features
 void viewerbase::loadopts()
    {

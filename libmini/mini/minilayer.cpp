@@ -755,7 +755,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    double scale;
    minicoord center,north;
-   miniv3d dir,up,right;
 
    // define global coordinates:
 
@@ -807,19 +806,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
             if (center.vec.getLength()>0.0)
                {
-               dir=center.vec;
-               dir.normalize();
-
-               up=north.vec-center.vec;
-               up.normalize();
-
-               right=up/dir;
-               right.normalize();
-               up=dir/right;
-
-               mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x);
-               mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y);
-               mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z);
+               pointwarp(center,north,1.0,mtxAFF);
 
                center=WARP->getcenter();
                center.convert2(minicoord::MINICOORD_ECEF);
@@ -842,23 +829,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
                   north=minicoord(miniv3d(mtxAFF[0]*north.vec,mtxAFF[1]*north.vec,mtxAFF[2]*north.vec),minicoord::MINICOORD_ECEF);
 
-                  dir=center.vec;
-                  dir.normalize();
-
-                  up=north.vec-center.vec;
-                  up.normalize();
-
-                  right=up/dir;
-                  right.normalize();
-                  up=dir/right;
-
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
                   else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-                  //!! pointwarp();
-                  mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
-                  mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
-                  mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+                  pointwarp(center,north,scale,mtxAFF);
                   }
                else
                   {
@@ -891,22 +865,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
       if (center.vec.getLength()>0.0)
          {
-         dir=center.vec;
-         dir.normalize();
-
-         up=north.vec-center.vec;
-         up.normalize();
-
-         right=up/dir;
-         right.normalize();
-         up=dir/right;
-
          if (REFERENCE==NULL) scale=1.0/scaleLOC;
          else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-         mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
-         mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
-         mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+         pointwarp(center,north,scale,mtxAFF);
          }
       else
          {
@@ -925,6 +887,27 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    // define reference coordinates:
 
    setreference(REFERENCE);
+   }
+
+// construct a point warp
+void minilayer::pointwarp(minicoord &center,minicood &north,
+                          double scale,miniv4d mtx[3])
+   {
+   miniv3d dir,up,right;
+
+   dir=center.vec;
+   dir.normalize();
+
+   up=north.vec-center.vec;
+   up.normalize();
+
+   right=up/dir;
+   right.normalize();
+   up=dir/right;
+
+   mtx[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
+   mtx[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
+   mtx[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
    }
 
 // update the coordinate transformations
@@ -1003,7 +986,10 @@ void minilayer::initeyepoint(const minicoord &e)
    {
    minicoord ei;
 
-   if (!LOADED || TERRAIN==NULL) return;
+   // save eye point
+   LPARAMS.eye=e;
+
+   if (!LOADED || TERRAIN==NULL || !VISIBLE) return;
 
    ei=map_g2i(e);
 
@@ -1017,9 +1003,6 @@ void minilayer::initeyepoint(const minicoord &e)
 
    // mark scene for complete update
    update();
-
-   // save eye point
-   LPARAMS.eye=e;
    }
 
 // trigger complete render buffer update at next frame
@@ -1031,6 +1014,17 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    {
    minicoord ei;
    miniv3d di,ui;
+
+   // save actual eye point, viewing direction, and up vector
+   LPARAMS.eye=e;
+   LPARAMS.dir=d;
+   LPARAMS.up=u;
+
+   // save actual aspect ratio
+   LPARAMS.aspect=aspect;
+
+   // also save actual local time
+   LPARAMS.time=time;
 
    if (!LOADED || TERRAIN==NULL || !VISIBLE) return;
 
@@ -1050,17 +1044,6 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 
    // revert to normal render buffer update
    UPD=ftrc(ffloor(LPARAMS.spu*LPARAMS.fps))+1;
-
-   // save actual eye point, viewing direction, and up vector
-   LPARAMS.eye=e;
-   LPARAMS.dir=d;
-   LPARAMS.up=u;
-
-   // save actual aspect ratio
-   LPARAMS.aspect=aspect;
-
-   // also save actual local time
-   LPARAMS.time=time;
    }
 
 // determine whether or not the layer is displayed

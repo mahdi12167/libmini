@@ -1954,21 +1954,22 @@ See the examples below how to use the viewer from the command line:<p>
       viewer "http://server.inter.net/.../" tileset/ elevation imagery
 </pre>
 
-If the data has been resampled with vtb, the two ini files for the
-elevation and the imagery should be made available in the tile set
-path, because the viewer automatically retrieves necessary information
-from the ini files. The libMini Viewer tries to guess their names by
-adding the .ini suffix to the respective subpath. The default setting
-for the vtp subpaths is "elev" and "imag". If you used this naming
-convention when generating the elevation and imagery tile sets with
-vtp, you can start the libMini Viewer with just one argument:
+If the data is resampled with vtb make sure that a metric coordinate
+system like UTM is chosen. Also make sure that the two ini files for
+the elevation and the imagery are made available in the tile set path,
+because the viewer automatically retrieves necessary information from
+the ini files. The libMini Viewer tries to guess their names by adding
+the .ini suffix to the respective subpath. The default setting for the
+vtp subpaths is "elev" and "imag". If you used this naming convention
+when generating the elevation and imagery tile sets with vtp, you can
+start the libMini Viewer with just one argument:
 
 <pre>
    short usage:
       viewer &lt;url/path&gt;
 </pre>
 
-This is euqivalent to the multi-argument usage of "viewer url/ path/
+This is equivalent to the multi-argument usage of "viewer url/ path/
 elev imag", so that the corresponding directory layout for the short
 use case must be as follows:
 

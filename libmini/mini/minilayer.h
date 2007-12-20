@@ -322,6 +322,8 @@ class minilayer
                    miniv3d offsetLOC,miniv3d scalingLOC,
                    double scaleLOC);
 
+   void pointwarp();
+
    void updatecoords();
 
    int getthreadid();
