@@ -56,7 +56,7 @@ class miniglobe
 
    //! set direct texturing parameters
    void settexturedirectparams(float lightdir[3],
-                               float transition=4.0f);
+                               float transbias=4.0f,float transoffset=0.0f);
 
    //! set fog parameters
    void setfogparams(float fogstart,float fogend,

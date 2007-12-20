@@ -52,7 +52,9 @@ minilayer::minilayer(minicache *cache)
 
    // configurable parameters:
 
-   LPARAMS.warpmode=0;             // warp mode: plain=0 affine=1 non-linear=2
+   LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 reference=2 affine=3
+
+   LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
 
    LPARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
    LPARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
@@ -730,7 +732,7 @@ void minilayer::setreference(minilayer *ref)
 
       if (LPARAMS.warpmode==0 ||
           WARP->getgeo()==minicoord::MINICOORD_LINEAR ||
-          LPARAMS.warpmode==1)
+          LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
          if (REFERENCE!=NULL)
             if (REFERENCE->getwarp()!=NULL)
                REFERENCE->getwarp()->get_invaff(mtxREF);
@@ -778,7 +780,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    // define affine coordinates:
 
-   if (LPARAMS.warpmode==0 ||
+   if (LPARAMS.warpmode==0 || // linear warp mode
        WARP->getgeo()==minicoord::MINICOORD_LINEAR)
       {
       if (REFERENCE==NULL) scale=1.0;
@@ -788,7 +790,79 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y*scale);
       mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z*scale);
       }
-   else if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+   else if (LPARAMS.warpmode==1) // flat warp mode
+      {
+      mtxAFF[0]=miniv4d(1.0,0.0,0.0);
+      mtxAFF[1]=miniv4d(0.0,1.0,0.0);
+      mtxAFF[2]=miniv4d(0.0,0.0,1.0);
+
+      if (REFERENCE!=NULL)
+         if (REFERENCE->getwarp()->getgeo()!=minicoord::MINICOORD_LINEAR)
+            {
+            center=REFERENCE->getwarp()->getcenter();
+            center.convert2(minicoord::MINICOORD_ECEF);
+
+            north=REFERENCE->getwarp()->getnorth();
+            north.convert2(minicoord::MINICOORD_ECEF);
+
+            if (center.vec.getLength()>0.0)
+               {
+               dir=center.vec;
+               dir.normalize();
+
+               up=north.vec-center.vec;
+               up.normalize();
+
+               right=up/dir;
+               right.normalize();
+               up=dir/right;
+
+               mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x);
+               mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y);
+               mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z);
+
+               center=WARP->getcenter();
+               center.convert2(minicoord::MINICOORD_ECEF);
+
+               north=WARP->getnorth();
+               north.convert2(minicoord::MINICOORD_ECEF);
+
+               if (center.vec.getLength()>0.0)
+                  {
+                  miniwarp::inv_mtx(mtxAFF,mtxAFF);
+
+                  center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
+                  if (center.vec.z>-miniutm::EARTH_radius*LPARAMS.vicinity) center.vec.z=0.0;
+
+                  north=minicoord(miniv3d(mtxAFF[0]*north.vec,mtxAFF[1]*north.vec,mtxAFF[2]*north.vec),minicoord::MINICOORD_ECEF);
+                  if (north.vec.z>-miniutm::EARTH_radius*LPARAMS.vicinity) north.vec.z=0.0;
+
+                  miniwarp::inv_mtx(mtxAFF,mtxAFF);
+
+                  center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
+                  north=minicoord(miniv3d(mtxAFF[0]*north.vec,mtxAFF[1]*north.vec,mtxAFF[2]*north.vec),minicoord::MINICOORD_ECEF);
+
+                  dir=center.vec;
+                  dir.normalize();
+
+                  up=north.vec-center.vec;
+                  up.normalize();
+
+                  right=up/dir;
+                  right.normalize();
+                  up=dir/right;
+
+                  if (REFERENCE==NULL) scale=1.0/scaleLOC;
+                  else scale=1.0/REFERENCE->getwarp()->getscaleloc();
+
+                  mtxAFF[0]=miniv4d(right.x,up.x,dir.x,center.vec.x*scale);
+                  mtxAFF[1]=miniv4d(right.y,up.y,dir.y,center.vec.y*scale);
+                  mtxAFF[2]=miniv4d(right.z,up.z,dir.z,center.vec.z*scale);
+                  }
+               }
+            }
+      }
+   else if (LPARAMS.warpmode==2 || LPARAMS.warpmode==3) // non-flat warp modes
       {
       center=WARP->getcenter();
       center.convert2(minicoord::MINICOORD_ECEF);

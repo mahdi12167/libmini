@@ -12,7 +12,7 @@ miniterrain::miniterrain()
    {
    // configurable parameters:
 
-   TPARAMS.warpmode=0;             // warp mode: plain=0 affine=1 non-linear=2
+   TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 reference=2 affine=3
 
    TPARAMS.scale=100.0f;           // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
@@ -804,7 +804,7 @@ void miniterrain::display(int n,BOOLINT yes)
 BOOLINT miniterrain::isdisplayed(int n)
    {
    if (n>=0 && n<LNUM) return(LAYER[n]->isdisplayed());
-   else return(FALSE);
+   return(FALSE);
    }
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])

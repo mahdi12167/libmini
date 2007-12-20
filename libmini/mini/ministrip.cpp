@@ -122,7 +122,7 @@ void ministrip::initsnippets()
       MUL nrm,nrm,len.x; \n\
       DP3 nrm.z,nrm,c5; \n\
       ### blend between texels \n\
-      MUL nrm.z,nrm.z,c4.x; \n\
+      MAD nrm.z,nrm.z,c4.x,c4.y; \n\
       MAD_SAT nrm.z,nrm.z,c4.w,c4.w; \n\
       LRP tex1,nrm.z,tex1,tex2; \n\
       ### modulate with texture color \n\
@@ -837,10 +837,10 @@ void ministrip::setshadedirectparams(int num,
 // set direct texturing parameters
 void ministrip::settexturedirectparams(int num,
                                        float lightdir[3],
-                                       float transition)
+                                       float transbias,float transoffset)
    {
    setpixshaderparams(num,lightdir[0],lightdir[1],lightdir[2],0.0f,5);
-   setpixshaderparams(num,transition,0.0f,0.0f,0.5f,4);
+   setpixshaderparams(num,transbias,transoffset,0.0f,0.5f,4);
    }
 
 // set fog parameters

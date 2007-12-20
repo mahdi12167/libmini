@@ -27,11 +27,13 @@ class viewerbase
       {
       // configurable parameters:
 
-      float fps;   // frames per second (target frame rate)
+      int warpmode; // warp mode: flat=1 reference=2 affine=3
 
-      float fovy;  //  field of view (degrees)
-      float nearp; //  near plane (meters)
-      float farp;  //  far plane (meters)
+      float fps;    // frames per second (target frame rate)
+
+      float fovy;   //  field of view (degrees)
+      float nearp;  //  near plane (meters)
+      float farp;   //  far plane (meters)
 
       // feature switches:
 
@@ -60,8 +62,10 @@ class viewerbase
 
       // optional earth globe:
 
-      float lightdir[3];
-      float transition;
+      miniv3d lightdir;
+
+      float transbias;
+      float transoffset;
 
       char *frontname;
       char *backname;

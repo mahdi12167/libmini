@@ -48,8 +48,8 @@ void miniglobe::setshadedirectparams(float lightdir[3])
    {STRIP->setshadedirectparams(SLOT,lightdir);}
 
 // set direct texturing parameters
-void miniglobe::settexturedirectparams(float lightdir[3],float transition)
-   {STRIP->settexturedirectparams(SLOT,lightdir,transition);}
+void miniglobe::settexturedirectparams(float lightdir[3],float transbias,float transoffset)
+   {STRIP->settexturedirectparams(SLOT,lightdir,transbias,transoffset);}
 
 // set fog parameters
 void miniglobe::setfogparams(float fogstart,float fogend,

@@ -16,6 +16,9 @@ viewerbase::viewerbase()
    {
    // configurable parameters:
 
+   //!! check flat mode
+   PARAMS.warpmode=2;    // warp mode: flat=1 reference=2 affine=3
+
    PARAMS.fps=25.0f;     // frames per second (target frame rate)
 
    PARAMS.fovy=60.0f;    // field of view (degrees)
@@ -51,11 +54,10 @@ viewerbase::viewerbase()
 
    // optional earth globe:
 
-   PARAMS.lightdir[0]=0.0f; // directional light
-   PARAMS.lightdir[1]=1.0f; // directional light
-   PARAMS.lightdir[2]=0.0f; // directional light
+   PARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
-   PARAMS.transition=4.0f;  // transition gradient between night and day
+   PARAMS.transbias=4.0f;   // transition bias between night and day
+   PARAMS.transoffset=0.1f; // transition offset between night and day
 
    PARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
    PARAMS.backname="EarthNight.ppm"; // file name of back earth texture
@@ -133,8 +135,8 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.fogstart=PARAMS.fogstart;
    tparams.fogdensity=PARAMS.fogdensity;
 
-   if (PARAMS.useearth) tparams.warpmode=1; // switch to reference mode
-   else tparams.warpmode=0; // switch to linear mode
+   if (PARAMS.useearth) tparams.warpmode=PARAMS.warpmode;
+   else tparams.warpmode=0;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
@@ -275,10 +277,12 @@ void viewerbase::render()
    GLfloat color[4];
 
    miniwarp warp;
-   miniv4d one[3],mtx[3];
+
+   miniv4d mtx[3];
    double oglmtx[16];
 
-   float light0[3]={0.0f,0.0f,0.0f};
+   miniv3d lgl;
+   float light[3];
 
    ref=TERRAIN->getlayer(TERRAIN->getreference());
 
@@ -310,7 +314,7 @@ void viewerbase::render()
 
       // draw skydome
       if (PARAMS.useskydome)
-         if (ref->get()->warpmode==0)
+         if (ref->get()->warpmode==0 || ref->get()->warpmode==1)
             {
             SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
                             1.9*ref->len_g2o(PARAMS.farp));
@@ -322,10 +326,6 @@ void viewerbase::render()
       if (PARAMS.useearth)
          {
          EARTH->setscale(ref->len_o2g(1.0));
-
-         one[0]=miniv4d(1.0,0.0,0.0);
-         one[1]=miniv4d(0.0,1.0,0.0);
-         one[2]=miniv4d(0.0,0.0,1.0);
 
          warp=*getearth()->getwarp();
          warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
@@ -351,10 +351,18 @@ void viewerbase::render()
          oglmtx[14]=mtx[2].w;
          oglmtx[15]=1.0;
 
+         if (ref->get()->warpmode==1) oglmtx[5]=0.0; //!! check
+
          EARTH->setmatrix(oglmtx);
 
-         if (PARAMS.usediffuse) EARTH->settexturedirectparams(PARAMS.lightdir,PARAMS.transition); //!! rot_g2o(lightdir)
-         else EARTH->settexturedirectparams(light0,PARAMS.transition); //!! disable night texture completely
+         lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter()); //!! nan
+
+         light[0]=lgl.x;
+         light[1]=lgl.y;
+         light[2]=lgl.z;
+
+         if (PARAMS.usediffuse) EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
+         else EARTH->settexturedirectparams(light,0.0f,1.0f);
 
          EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
                              PARAMS.fogdensity,

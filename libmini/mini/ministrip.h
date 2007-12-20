@@ -94,7 +94,7 @@ class ministrip
    //! set direct texturing parameters
    void settexturedirectparams(int num,
                                float lightdir[3],
-                               float transition=4.0f);
+                               float transbias=4.0f,float transoffset=0.0f);
 
    //! set fog parameters
    void setfogparams(int num,

@@ -31,7 +31,7 @@
 #define VIEWER_DAMP 10.0f
 #define VIEWER_BOUNCE 5.0f
 
-#define VIEWER_BOOST 20.0f
+#define VIEWER_BOOST 50.0f
 
 #define VIEWER_FOGSTART 0.5f
 #define VIEWER_FOGDENSITY 0.5f;
@@ -1190,9 +1190,6 @@ int main(int argc,char *argv[])
       else
          if (*argv[1]=='-' || sscanf(argv[1],"%s",shorturl)!=1) exit(1);
 
-   // create the viewer object
-   viewer=new viewerbase;
-
    // open window with GLUT:
 
    winwidth=VIEWER_WINWIDTH;
@@ -1212,6 +1209,9 @@ int main(int argc,char *argv[])
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
    glutIdleFunc(displayfunc);
+
+   // create the viewer object
+   viewer=new viewerbase;
 
    // initialize the viewing parameters
    initparams();
