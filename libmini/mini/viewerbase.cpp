@@ -78,6 +78,8 @@ viewerbase::viewerbase()
    SKYDOME=new minisky();
    EARTH=new miniglobe();
 
+   LOADED=FALSE;
+
    START=minigettime();
    TIMER=0.0;
 
@@ -213,16 +215,18 @@ BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *base
    return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
    }
 
-//!!
 // load optional features
 void viewerbase::loadopts()
    {
    minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
+   if (LOADED) return;
+
    ref=TERRAIN->getlayer(TERRAIN->getreference());
 
    if (ref==NULL) return;
+   if (ref->getcache()==NULL) return;
 
    ref->get(lparams);
 
@@ -253,6 +257,8 @@ void viewerbase::loadopts()
       EARTH->configure_backname(ename2);
       free(ename2);
       }
+
+   LOADED=TRUE;
    }
 
 // get initial view point

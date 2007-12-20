@@ -160,6 +160,8 @@ class viewerbase
    minisky *SKYDOME;
    miniglobe *EARTH;
 
+   BOOLINT LOADED;
+
    double START,TIMER;
 
    threadbase *THREADBASE;
