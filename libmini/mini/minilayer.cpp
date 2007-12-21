@@ -158,7 +158,9 @@ minilayer::minilayer(minicache *cache)
    TILECACHE=NULL;
 
    WARP=NULL;
+
    WARPMODE=LPARAMS.warpmode;
+   SCALE=LPARAMS.scale;
 
    REFERENCE=NULL;
 
@@ -249,7 +251,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
          }
 
-      if (LPARAMS.warpmode!=WARPMODE)
+      if (LPARAMS.warpmode!=WARPMODE || LPARAMS.scale!=SCALE)
          {
          createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
                     LPARAMS.centerGEO,LPARAMS.northGEO,
@@ -259,6 +261,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          updatecoords();
 
          WARPMODE=LPARAMS.warpmode;
+         SCALE=LPARAMS.scale;
          }
       }
    }
@@ -692,6 +695,51 @@ void minilayer::setearth()
    LPARAMS.extent[0]=2*miniutm::EARTH_radius;
    LPARAMS.extent[1]=2*miniutm::EARTH_radius;
    LPARAMS.extent[2]=2*miniutm::EARTH_radius;
+
+   // set offset
+   LPARAMS.offset[0]=0.0f;
+   LPARAMS.offset[1]=0.0f;
+   LPARAMS.offset[2]=0.0f;
+
+   // set scaling factor
+   LPARAMS.scaling[0]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[1]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
+
+   // create the warp
+   createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
+              LPARAMS.centerGEO,LPARAMS.northGEO,
+              miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
+              LPARAMS.scale);
+
+   // update warp objects for each exposed coordinate transformation
+   updatecoords();
+
+   // make invisible
+   VISIBLE=FALSE;
+
+   LOADED=TRUE;
+   }
+
+// create empty reference layer
+void minilayer::setempty(minicoord &center,minicoord &north)
+   {
+   if (center.type!=north.type) ERRORMSG();
+
+   if (LOADED) return;
+
+   // set original data coordinates
+   LPARAMS.offsetDAT=center;
+   LPARAMS.extentDAT=minicoord(miniv3d(1.0,1.0,1.0),center.type);
+
+   // set geo-referenced coordinates
+   LPARAMS.centerGEO=center;
+   LPARAMS.northGEO=north;
+
+   // set extent
+   LPARAMS.extent[0]=1.0f;
+   LPARAMS.extent[1]=1.0f;
+   LPARAMS.extent[2]=1.0f;
 
    // set offset
    LPARAMS.offset[0]=0.0f;

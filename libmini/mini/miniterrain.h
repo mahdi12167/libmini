@@ -207,23 +207,11 @@ class miniterrain
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                 BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
 
+   //! create empty layer
+   minilayer *create(minicoord &center,minicoord &north);
+
    //! get the number of terrain layers
    int getlnum() {return(LNUM);}
-
-   //! get the nth terrain layer
-   minilayer *getlayer(int n=0);
-
-   //! remove the nth terrain layer
-   void remove(int n=0);
-
-   //! get extent of a tileset
-   miniv3d getextent(int n=0);
-
-   //! get center of a tileset
-   minicoord getcenter(int n=0);
-
-   //! get the elevation at position (x,y,z)
-   double getheight(const minicoord &p);
 
    //! get null layer
    int getnull();
@@ -235,10 +223,25 @@ class miniterrain
    int getdefault();
 
    //! set reference layer
-   void setreference(int ref=0);
+   void setreference(int ref);
 
    //! get reference layer
    int getreference();
+
+   //! get the nth terrain layer
+   minilayer *getlayer(int n);
+
+   //! remove the nth terrain layer
+   void remove(int n);
+
+   //! get extent of a tileset
+   miniv3d getextent(int n);
+
+   //! get center of a tileset
+   minicoord getcenter(int n);
+
+   //! get the elevation at position (x,y,z)
+   double getheight(const minicoord &p);
 
    //! get initial view point
    minicoord getinitial();
@@ -322,6 +325,10 @@ class miniterrain
    minilayer **LAYER;
    int LNUM,LMAX;
 
+   int NULL_LAYER;
+   int EARTH_LAYER;
+   int DEFAULT_LAYER;
+
    int LREF;
    minilayer *REFERENCE;
 
@@ -341,10 +348,10 @@ class miniterrain
    void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
 
-   void reservelayer(int n);
+   int reserve();
 
-   void setnull(int n);
-   void setearth(int n);
+   int setnull();
+   int setearth();
 
    void render_presea();
    void render_postsea();

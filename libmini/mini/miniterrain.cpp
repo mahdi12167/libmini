@@ -14,7 +14,7 @@ miniterrain::miniterrain()
 
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
-   TPARAMS.scale=100.0f;           // scaling of scene
+   TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
    TPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
@@ -168,10 +168,11 @@ miniterrain::miniterrain()
    LAYER=NULL;
    LNUM=LMAX=0;
 
-   setnull(getnull());
-   setearth(getearth());
+   NULL_LAYER=setnull();
+   EARTH_LAYER=setearth();
 
-   setreference(getdefault());
+   DEFAULT_LAYER=LNUM;
+   setreference(DEFAULT_LAYER);
 
    THREADDATA=NULL;
    THREADINIT=NULL;
@@ -206,8 +207,8 @@ miniterrain::~miniterrain()
    delete CACHE;
    }
 
-// reserve space for layer
-void miniterrain::reservelayer(int n)
+// reserve space in layer array
+int miniterrain::reserve()
    {
    // create layer array
    if (LAYER==NULL)
@@ -217,11 +218,15 @@ void miniterrain::reservelayer(int n)
       }
 
    // enlarge layer array
-   if (n>=LMAX)
+   if (LNUM>=LMAX)
       {
       LMAX*=2;
       if ((LAYER=(minilayer **)realloc(LAYER,LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
       }
+
+   LAYER[LNUM]=NULL;
+
+   return(LNUM++);
    }
 
 // get parameters
@@ -453,37 +458,39 @@ BOOLINT miniterrain::load(const char *url,
 BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                           BOOLINT loadopts,BOOLINT reset)
    {
-   // reserve space for layer
-   reservelayer(LNUM);
+   int n;
+
+   // reserve space in layer array
+   n=reserve();
 
    // create the tileset layer
-   LAYER[LNUM++]=new minilayer(CACHE);
+   LAYER[n]=new minilayer(CACHE);
 
    // propagate parameters
    propagate();
 
    // set reference coordinate system
-   LAYER[LNUM-1]->setreference(LAYER[getreference()]);
+   LAYER[n]->setreference(LAYER[getreference()]);
 
    // register callbacks
-   LAYER[LNUM-1]->setcallbacks(THREADDATA,
-                               THREADINIT,THREADEXIT,
-                               STARTTHREAD,JOINTHREAD,
-                               LOCK_CS,UNLOCK_CS,
-                               LOCK_IO,UNLOCK_IO,
-                               CURLDATA,
-                               CURLINIT,CURLEXIT,
-                               GETURL,CHECKURL);
+   LAYER[n]->setcallbacks(THREADDATA,
+                          THREADINIT,THREADEXIT,
+                          STARTTHREAD,JOINTHREAD,
+                          LOCK_CS,UNLOCK_CS,
+                          LOCK_IO,UNLOCK_IO,
+                          CURLDATA,
+                          CURLINIT,CURLEXIT,
+                          GETURL,CHECKURL);
 
    // load the tileset layer
-   if (!LAYER[LNUM-1]->load(baseurl,baseid,basepath1,basepath2,reset))
+   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset))
       {
-      delete LAYER[--LNUM];
+      remove(n);
       return(FALSE);
       }
 
    // load optional features
-   if (loadopts) LAYER[LNUM-1]->loadopts();
+   if (loadopts) LAYER[n]->loadopts();
 
    // reset reference layer
    setreference(LREF);
@@ -506,6 +513,90 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // success
    return(TRUE);
    }
+
+// set null layer
+int miniterrain::setnull()
+   {
+   int n;
+
+   // reserve space in layer array
+   n=reserve();
+
+   // create the layer
+   LAYER[n]=new minilayer(NULL);
+
+   // setup the earth layer
+   LAYER[n]->setnull();
+
+   return(n);
+   }
+
+// set earth layer
+int miniterrain::setearth()
+   {
+   int n;
+
+   // reserve space in layer array
+   n=reserve();
+
+   // create the layer
+   LAYER[n]=new minilayer(NULL);
+
+   // setup the earth layer
+   LAYER[n]->setearth(); //!! check with LL data
+
+   return(n);
+   }
+
+// create empty layer
+minilayer *miniterrain::create(minicoord &center,minicoord &north)
+   {
+   int n;
+
+   // reserve space
+   n=reserve();
+
+   // create the layer
+   LAYER[n]=new minilayer(NULL);
+
+   // setup the earth layer
+   LAYER[n]->setempty(center,north);
+
+   return(LAYER[n]);
+   }
+
+// get null layer
+int miniterrain::getnull()
+   {return(NULL_LAYER);}
+
+// get earth layer
+int miniterrain::getearth()
+   {return(EARTH_LAYER);}
+
+// get default layer
+int miniterrain::getdefault()
+   {return(DEFAULT_LAYER);}
+
+// set reference layer
+void miniterrain::setreference(int ref)
+   {
+   int n;
+
+   // set new reference
+   LREF=ref;
+
+   // set new reference layer for default coordinate conversions
+   if (LNUM>0) REFERENCE=LAYER[getreference()];
+   else REFERENCE=NULL;
+
+   // propagate new reference coordinate system
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->setreference(LAYER[getreference()]);
+   }
+
+// get reference layer
+int miniterrain::getreference()
+   {return(min(LREF,LNUM-1));}
 
 // get the nth terrain layer
 minilayer *miniterrain::getlayer(int n)
@@ -571,65 +662,6 @@ double miniterrain::getheight(const minicoord &p)
 
    return(-MAXFLOAT);
    }
-
-// set null layer
-void miniterrain::setnull(int n)
-   {
-   // reserve space
-   reservelayer(n);
-
-   // create the layer
-   LAYER[LNUM++]=new minilayer(NULL);
-
-   // setup the earth layer
-   LAYER[LNUM-1]->setnull();
-   }
-
-// set earth layer
-void miniterrain::setearth(int n)
-   {
-   // reserve space
-   reservelayer(n);
-
-   // create the layer
-   LAYER[LNUM++]=new minilayer(NULL);
-
-   // setup the earth layer
-   LAYER[LNUM-1]->setearth();
-   }
-
-// get null layer
-int miniterrain::getnull()
-   {return(0);}
-
-// get earth layer
-int miniterrain::getearth()
-   {return(1);}
-
-// get default layer
-int miniterrain::getdefault()
-   {return(2);}
-
-// set reference layer
-void miniterrain::setreference(int ref)
-   {
-   int n;
-
-   // set new reference
-   LREF=ref;
-
-   // set new reference layer for default coordinate conversions
-   if (LNUM>0) REFERENCE=LAYER[getreference()];
-   else REFERENCE=NULL;
-
-   // propagate new reference coordinate system
-   for (n=0; n<LNUM; n++)
-      LAYER[n]->setreference(LAYER[getreference()]);
-   }
-
-// get reference layer
-int miniterrain::getreference()
-   {return(min(LREF,LNUM-1));}
 
 // get initial view point
 minicoord miniterrain::getinitial()

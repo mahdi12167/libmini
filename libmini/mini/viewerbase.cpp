@@ -364,7 +364,7 @@ void viewerbase::render()
 
             EARTH->setmatrix(oglmtx);
 
-            lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter()); //!! check nan for LL
+            lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter());
 
             light[0]=lgl.x;
             light[1]=lgl.y;

@@ -210,6 +210,9 @@ class minilayer
    //! create earth reference layer
    void setearth();
 
+   //! create empty reference layer
+   void setempty(minicoord &center,minicoord &north);
+
    //! set reference layer
    void setreference(minilayer *ref);
 
@@ -307,7 +310,9 @@ class minilayer
    minipoint *POINTS;
 
    miniwarp *WARP;
+
    int WARPMODE;
+   double SCALE;
 
    minilayer *REFERENCE;
 
