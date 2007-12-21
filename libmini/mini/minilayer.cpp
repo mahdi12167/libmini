@@ -761,6 +761,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    double scale;
    minicoord center,north;
+   minicoord center0,north0;
 
    // define global coordinates:
 
@@ -804,15 +805,15 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       if (REFERENCE!=NULL)
          if (REFERENCE->getwarp()->getgeo()!=minicoord::MINICOORD_LINEAR)
             {
-            center=REFERENCE->getwarp()->getcenter();
-            center.convert2(minicoord::MINICOORD_ECEF);
+            center0=REFERENCE->getwarp()->getcenter();
+            center0.convert2(minicoord::MINICOORD_ECEF);
 
-            north=REFERENCE->getwarp()->getnorth();
-            north.convert2(minicoord::MINICOORD_ECEF);
+            north0=REFERENCE->getwarp()->getnorth();
+            north0.convert2(minicoord::MINICOORD_ECEF);
 
-            if (center.vec.getLength()>0.0)
+            if (center0.vec.getLength()>0.0)
                {
-               pointwarp(center,north,1.0,mtxFLT);
+               pointwarp(center0,north0,center0,1.0,mtxFLT);
                miniwarp::inv_mtx(invFLT,mtxFLT);
 
                center=WARP->getcenter();
@@ -834,7 +835,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
                   else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-                  pointwarp(center,north,scale,mtxAFF);
+                  pointwarp(center,north,center0,scale,mtxAFF);
                   }
                else
                   {
@@ -869,7 +870,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
          if (REFERENCE==NULL) scale=1.0/scaleLOC;
          else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-         pointwarp(center,north,scale,mtxAFF);
+         pointwarp(center,north,center,scale,mtxAFF);
          }
       else
          {
@@ -891,12 +892,12 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    }
 
 // construct a point warp
-void minilayer::pointwarp(minicoord &center,minicoord &north,
+void minilayer::pointwarp(minicoord &center,minicoord &north,minicoord &normal,
                           double scale,miniv4d mtx[3])
    {
    miniv3d dir,up,right;
 
-   dir=center.vec;
+   dir=normal.vec;
    dir.normalize();
 
    up=north.vec-center.vec;
