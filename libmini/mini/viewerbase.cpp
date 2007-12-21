@@ -362,8 +362,6 @@ void viewerbase::render()
             oglmtx[14]=mtx[2].w;
             oglmtx[15]=1.0;
 
-            if (ref->get()->warpmode==2) oglmtx[1]=oglmtx[5]=oglmtx[9]=0.0; //!! put into miniwarp
-
             EARTH->setmatrix(oglmtx);
 
             lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter()); //!! check nan for LL
