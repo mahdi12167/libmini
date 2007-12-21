@@ -188,6 +188,8 @@ void initparams()
    prms.useshaders=TRUE;
    prms.usebathymap=FALSE;
    prms.usecontours=FALSE;
+   prms.usenprshader=FALSE;
+   prms.usediffuse=TRUE;
    prms.usewireframe=FALSE;
    prms.useskydome=TRUE;
    prms.usewaypoints=TRUE;
@@ -1118,6 +1120,10 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'l':
          if (!params->usewireframe) params->usewireframe=TRUE;
          else params->usewireframe=FALSE;
+         break;
+      case 'L':
+         if (!params->usediffuse) params->usediffuse=TRUE;
+         else params->usediffuse=FALSE;
          break;
       case 'h':
          if (sw_hud==0) sw_hud=1;
