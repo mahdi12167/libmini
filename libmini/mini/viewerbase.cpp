@@ -6,6 +6,8 @@
 #include "squishbase.h"
 #endif
 
+#include "miniio.h"
+
 #include "miniOGL.h"
 #include "minishader.h"
 
@@ -229,13 +231,15 @@ void viewerbase::loadopts()
    ref=TERRAIN->getlayer(TERRAIN->getreference());
 
    if (ref==NULL) return;
-   if (ref->getcache()==NULL) return;
 
    ref->get(lparams);
 
    // load skydome:
 
-   char *skyname=ref->getcache()->getfile(PARAMS.skydome,lparams.altpath);
+   char *skyname=NULL;
+
+   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(PARAMS.skydome,lparams.altpath);
+   else skyname=getfile(PARAMS.skydome,lparams.altpath);
 
    if (skyname!=NULL)
       {
@@ -245,7 +249,10 @@ void viewerbase::loadopts()
 
    // load earth textures:
 
-   char *ename1=ref->getcache()->getfile(PARAMS.frontname,lparams.altpath);
+   char *ename1=NULL;
+
+   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(PARAMS.frontname,lparams.altpath);
+   else ename1=getfile(PARAMS.frontname,lparams.altpath);
 
    if (ename1!=NULL)
       {
@@ -253,7 +260,10 @@ void viewerbase::loadopts()
       free(ename1);
       }
 
-   char *ename2=ref->getcache()->getfile(PARAMS.backname,lparams.altpath);
+   char *ename2=NULL;
+
+   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(PARAMS.backname,lparams.altpath);
+   else ename2=getfile(PARAMS.backname,lparams.altpath);
 
    if (ename2!=NULL)
       {
@@ -262,6 +272,22 @@ void viewerbase::loadopts()
       }
 
    LOADED=TRUE;
+   }
+
+// get file
+char *viewerbase::getfile(const char *src_file,const char *altpath)
+   {
+   char *file;
+
+   if (checkfile(src_file)) return(strdup(src_file));
+
+   file=strcct(altpath,src_file);
+
+   if (file!=NULL)
+      if (checkfile(file)) return(file);
+      else free(file);
+
+   return(NULL);
    }
 
 // get initial view point

@@ -170,6 +170,8 @@ class viewerbase
 
    void inithooks();
 
+   char *getfile(const char *src_file,const char *altpath=NULL);
+
    static void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
    static int check_callback(char *src_url,char *src_id,char *src_file,void *data);
 
