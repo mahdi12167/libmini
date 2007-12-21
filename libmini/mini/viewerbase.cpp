@@ -16,8 +16,7 @@ viewerbase::viewerbase()
    {
    // configurable parameters:
 
-   //!! check flat mode
-   PARAMS.warpmode=2;    // warp mode: flat=1 reference=2 affine=3
+   PARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
    PARAMS.fps=25.0f;     // frames per second (target frame rate)
 
@@ -37,7 +36,8 @@ viewerbase::viewerbase()
    PARAMS.useskydome=FALSE;
    PARAMS.usewaypoints=FALSE;
    PARAMS.usebricks=FALSE;
-   PARAMS.useearth=FALSE;
+   PARAMS.useearth=TRUE;
+   PARAMS.useflat=FALSE;
 
    // optional spherical fog:
 
@@ -56,8 +56,8 @@ viewerbase::viewerbase()
 
    PARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
-   PARAMS.transbias=4.0f;   // transition bias between night and day
-   PARAMS.transoffset=0.1f; // transition offset between night and day
+   PARAMS.transbias=4.0f;     // transition bias between night and day
+   PARAMS.transoffset=0.025f; // transition offset between night and day
 
    PARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
    PARAMS.backname="EarthNight.ppm"; // file name of back earth texture
@@ -137,8 +137,11 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.fogstart=PARAMS.fogstart;
    tparams.fogdensity=PARAMS.fogdensity;
 
-   if (PARAMS.useearth) tparams.warpmode=PARAMS.warpmode;
-   else tparams.warpmode=0;
+   if (PARAMS.useflat)
+      if (PARAMS.warpmode==4) tparams.warpmode=2;
+      else if (PARAMS.warpmode==3) tparams.warpmode=1;
+      else tparams.warpmode=0;
+   else tparams.warpmode=PARAMS.warpmode;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
@@ -321,7 +324,7 @@ void viewerbase::render()
 
       // draw skydome
       if (PARAMS.useskydome)
-         if (ref->get()->warpmode==0 || ref->get()->warpmode==1)
+         if (ref->get()->warpmode==0 || ref->get()->warpmode==2)
             {
             SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
                             1.9*ref->len_g2o(PARAMS.farp));
@@ -331,58 +334,61 @@ void viewerbase::render()
 
       // render earth globe (without Z writing)
       if (PARAMS.useearth)
-         {
-         EARTH->setscale(ref->len_o2g(1.0));
+         if (ref->get()->warpmode!=0)
+            {
+            EARTH->setscale(ref->len_o2g(1.0));
 
-         warp=*getearth()->getwarp();
-         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
-         warp.getwarp(mtx);
+            warp=*getearth()->getwarp();
+            warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+            warp.getwarp(mtx);
 
-         oglmtx[0]=mtx[0].x;
-         oglmtx[1]=mtx[1].x;
-         oglmtx[2]=mtx[2].x;
-         oglmtx[3]=0.0;
+            oglmtx[0]=mtx[0].x;
+            oglmtx[1]=mtx[1].x;
+            oglmtx[2]=mtx[2].x;
+            oglmtx[3]=0.0;
 
-         oglmtx[4]=mtx[0].y;
-         oglmtx[5]=mtx[1].y;
-         oglmtx[6]=mtx[2].y;
-         oglmtx[7]=0.0;
+            oglmtx[4]=mtx[0].y;
+            oglmtx[5]=mtx[1].y;
+            oglmtx[6]=mtx[2].y;
+            oglmtx[7]=0.0;
 
-         oglmtx[8]=mtx[0].z;
-         oglmtx[9]=mtx[1].z;
-         oglmtx[10]=mtx[2].z;
-         oglmtx[11]=0.0;
+            oglmtx[8]=mtx[0].z;
+            oglmtx[9]=mtx[1].z;
+            oglmtx[10]=mtx[2].z;
+            oglmtx[11]=0.0;
 
-         oglmtx[12]=mtx[0].w;
-         oglmtx[13]=mtx[1].w;
-         oglmtx[14]=mtx[2].w;
-         oglmtx[15]=1.0;
+            oglmtx[12]=mtx[0].w;
+            oglmtx[13]=mtx[1].w;
+            oglmtx[14]=mtx[2].w;
+            oglmtx[15]=1.0;
 
-         if (ref->get()->warpmode==1) oglmtx[5]=0.0; //!! check
+            if (ref->get()->warpmode==2) oglmtx[1]=oglmtx[5]=oglmtx[9]=0.0; //!! put into miniwarp
 
-         EARTH->setmatrix(oglmtx);
+            EARTH->setmatrix(oglmtx);
 
-         lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter()); //!! nan
+            lgl=ref->rot_g2o(PARAMS.lightdir,getearth()->getcenter()); //!! check nan for LL
 
-         light[0]=lgl.x;
-         light[1]=lgl.y;
-         light[2]=lgl.z;
+            light[0]=lgl.x;
+            light[1]=lgl.y;
+            light[2]=lgl.z;
 
-         if (PARAMS.usediffuse) EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
-         else EARTH->settexturedirectparams(light,0.0f,1.0f);
+            if (PARAMS.usediffuse) EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
+            else EARTH->settexturedirectparams(light,0.0f,1.0f);
 
-         EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
-                             PARAMS.fogdensity,
-                             PARAMS.fogcolor);
+            EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
+                                PARAMS.fogdensity,
+                                PARAMS.fogcolor);
 
-         EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
-         }
+            EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
+            }
 
       // render terrain
       TERRAIN->render();
 
       // render earth globe (without RGB writing)
-      if (PARAMS.useearth) EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
+      if (PARAMS.useearth)
+         if (ref->get()->warpmode!=0)
+            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
 
       // disable fog
       if (PARAMS.usefog) glDisable(GL_FOG);

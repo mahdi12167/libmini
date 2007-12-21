@@ -12,7 +12,7 @@ miniterrain::miniterrain()
    {
    // configurable parameters:
 
-   TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 reference=2 affine=3
+   TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
    TPARAMS.scale=100.0f;           // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations

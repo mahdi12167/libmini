@@ -192,7 +192,8 @@ void initparams()
    prms.useskydome=TRUE;
    prms.usewaypoints=TRUE;
    prms.usebricks=FALSE;
-   prms.useearth=FALSE;
+   prms.useearth=TRUE;
+   prms.useflat=FALSE;
 
    prms.fogstart=VIEWER_FOGSTART;
    prms.fogdensity=VIEWER_FOGDENSITY;
@@ -1105,8 +1106,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          viewer->propagate();
          break;
       case 'E':
-         if (!params->useearth) params->useearth=TRUE;
-         else params->useearth=FALSE;
+         if (!params->useflat) params->useflat=TRUE;
+         else params->useflat=FALSE;
          viewer->propagate();
          break;
       case 'N':

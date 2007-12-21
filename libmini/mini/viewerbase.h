@@ -27,7 +27,7 @@ class viewerbase
       {
       // configurable parameters:
 
-      int warpmode; // warp mode: flat=1 reference=2 affine=3
+      int warpmode; // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
       float fps;    // frames per second (target frame rate)
 
@@ -48,6 +48,7 @@ class viewerbase
       BOOLINT usewaypoints;
       BOOLINT usebricks;
       BOOLINT useearth;
+      BOOLINT useflat;
 
       // optional spherical fog:
 

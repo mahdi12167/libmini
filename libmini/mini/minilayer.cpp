@@ -52,7 +52,7 @@ minilayer::minilayer(minicache *cache)
 
    // configurable parameters:
 
-   LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 reference=2 affine=3
+   LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
    LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
 
@@ -196,6 +196,9 @@ minilayer::~minilayer()
          {
          // detach tileset from render cache
          CACHE->detach(TERRAIN->getminitile());
+
+         // save the state of the tile cache
+         TILECACHE->save();
 
          // delete the tile cache
          delete TILECACHE;
@@ -732,7 +735,7 @@ void minilayer::setreference(minilayer *ref)
 
       if (LPARAMS.warpmode==0 ||
           WARP->getgeo()==minicoord::MINICOORD_LINEAR ||
-          LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+          LPARAMS.warpmode==2 || LPARAMS.warpmode==4)
          if (REFERENCE!=NULL)
             if (REFERENCE->getwarp()!=NULL)
                REFERENCE->getwarp()->get_invaff(mtxREF);
@@ -789,7 +792,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y*scale);
       mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z*scale);
       }
-   else if (LPARAMS.warpmode==1) // flat warp mode
+   else if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2) // flat warp mode
       {
       mtxAFF[0]=miniv4d(1.0,0.0,0.0);
       mtxAFF[1]=miniv4d(0.0,1.0,0.0);
@@ -819,10 +822,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   miniwarp::inv_mtx(mtxAFF,mtxAFF);
 
                   center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
-                  if (center.vec.z>-miniutm::EARTH_radius*LPARAMS.vicinity) center.vec.z=0.0;
+                  if (center.vec.z>miniutm::EARTH_radius*LPARAMS.vicinity) center.vec.z=miniutm::EARTH_radius;
 
                   north=minicoord(miniv3d(mtxAFF[0]*north.vec,mtxAFF[1]*north.vec,mtxAFF[2]*north.vec),minicoord::MINICOORD_ECEF);
-                  if (north.vec.z>-miniutm::EARTH_radius*LPARAMS.vicinity) north.vec.z=0.0;
+                  if (north.vec.z>miniutm::EARTH_radius*LPARAMS.vicinity) north.vec.z=miniutm::EARTH_radius;
 
                   miniwarp::inv_mtx(mtxAFF,mtxAFF);
 
@@ -839,7 +842,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   miniwarp::inv_mtx(mtxAFF,mtxAFF);
 
                   center=minicoord(miniv3d(mtxAFF[0]*center.vec,mtxAFF[1]*center.vec,mtxAFF[2]*center.vec),minicoord::MINICOORD_ECEF);
-                  center.vec.z=0.0;
+                  center.vec.z=miniutm::EARTH_radius;
 
                   miniwarp::inv_mtx(mtxAFF,mtxAFF);
 
@@ -855,7 +858,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                }
             }
       }
-   else if (LPARAMS.warpmode==2 || LPARAMS.warpmode==3) // non-flat warp modes
+   else if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4) // non-flat warp modes
       {
       center=WARP->getcenter();
       center.convert2(minicoord::MINICOORD_ECEF);

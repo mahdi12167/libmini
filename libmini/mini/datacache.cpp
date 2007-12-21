@@ -99,8 +99,6 @@ datacache::~datacache()
    {
    delete CLOUD;
 
-   save();
-
    if (RURL!=NULL) free(RURL);
    if (RID!=NULL) free(RID);
    if (LPATH!=NULL) free(LPATH);
