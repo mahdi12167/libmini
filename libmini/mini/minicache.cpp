@@ -1239,6 +1239,7 @@ void minicache::setpixshader(char *fp)
    {
 #ifndef NOOGL
 
+   //!!
    // default pixel shader
    static char *fragprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
@@ -1251,10 +1252,20 @@ void minicache::setpixshader(char *fp)
       PARAM c7=program.env[7]; \n\
       PARAM a=program.env[8]; \n\
       PARAM t=program.env[9]; \n\
-      TEMP col; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\
       MUL result.color,col,fragment.color; \n\
       END \n";
@@ -1319,6 +1330,7 @@ void minicache::setseashader(char *sp)
    {
 #ifndef NOOGL
 
+   //!!
    // default sea shader
    static char *seaprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
@@ -1329,12 +1341,24 @@ void minicache::setseashader(char *sp)
       PARAM c5=program.env[5]; \n\
       PARAM c6=program.env[6]; \n\
       PARAM c7=program.env[7]; \n\
-      PARAM t=program.env[8]; \n\
-      TEMP col; \n\
+      PARAM a=program.env[8]; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
+      MAD col,col,a.x,a.b; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\
-      MUL result.color,col,fragment.color; \n\
+      MUL result.color,col,fragment.color; \n\ ###!!
       END \n";
 
    if (sp==NULL) sp=seaprog;
@@ -1474,7 +1498,13 @@ void minicache::setpixshadertexprm(float s,float o)
 
    if (GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRAGPROGID!=0 || SEAPROGID!=0)
+         {
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
+
+         //!!
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,0.0f,0.0f,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,0.5f,0.5f,0.0f,0.0f);
+         }
 
 #endif
 

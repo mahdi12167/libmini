@@ -87,6 +87,7 @@ class miniterrain
 
       BOOLINT usefog;
       BOOLINT useshaders;
+      BOOLINT usevisshader;
       BOOLINT usebathymap;
       BOOLINT usecontours;
       BOOLINT usenprshader;

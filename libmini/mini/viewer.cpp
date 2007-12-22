@@ -186,6 +186,7 @@ void initparams()
 
    prms.usefog=TRUE;
    prms.useshaders=TRUE;
+   prms.usevisshader=FALSE; //!! TRUE
    prms.usebathymap=FALSE;
    prms.usecontours=FALSE;
    prms.usenprshader=FALSE;
@@ -1115,6 +1116,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'N':
          if (!params->usenprshader) params->usenprshader=TRUE;
          else params->usenprshader=FALSE;
+         params->usevisshader=!params->usenprshader;
          viewer->propagate();
          break;
       case 'l':

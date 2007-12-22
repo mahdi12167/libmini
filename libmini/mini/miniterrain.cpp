@@ -80,6 +80,7 @@ miniterrain::miniterrain()
 
    TPARAMS.usefog=FALSE;
    TPARAMS.useshaders=FALSE;
+   TPARAMS.usevisshader=FALSE;
    TPARAMS.usebathymap=FALSE;
    TPARAMS.usecontours=FALSE;
    TPARAMS.usenprshader=FALSE;
@@ -543,7 +544,7 @@ int miniterrain::setearth()
    LAYER[n]=new minilayer(NULL);
 
    // setup the earth layer
-   LAYER[n]->setearth(); //!! check with LL data
+   LAYER[n]->setearth();
 
    return(n);
    }
@@ -732,7 +733,7 @@ void miniterrain::render()
       {
       // enable shaders
       if (TPARAMS.useshaders)
-         if (!TPARAMS.usenprshader)
+         if (TPARAMS.usevisshader)
             minishader::setVISshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -745,7 +746,7 @@ void miniterrain::render()
                                      TPARAMS.seatrans,TPARAMS.bottomtrans,
                                      TPARAMS.bottomcolor,
                                      TPARAMS.seamodulate);
-         else
+         else if (TPARAMS.usenprshader)
             minishader::setNPRshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -757,13 +758,30 @@ void miniterrain::render()
                                      fmax(TPARAMS.sealevel,0.0f),
                                      TPARAMS.nprseacolor,TPARAMS.nprseatrans,
                                      TPARAMS.nprseagrey);
+         else
+            {
+            //!!
+            CACHE->setvtxshader();
+            CACHE->usevtxshader(1);
+            CACHE->setpixshader();
+            CACHE->usepixshader(1);
+            CACHE->setseashader();
+            CACHE->useseashader(1);
+            }
 
       // render vertex arrays
       CACHE->rendercache();
 
       // disable shaders
       if (TPARAMS.useshaders)
-         minishader::unsetshaders(CACHE);
+         if (TPARAMS.usevisshader || TPARAMS.usenprshader)
+            minishader::unsetshaders(CACHE);
+         else
+            {
+            CACHE->usevtxshader(0);
+            CACHE->usepixshader(0);
+            CACHE->useseashader(0);
+            }
       }
    }
 

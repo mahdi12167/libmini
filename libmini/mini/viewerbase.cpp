@@ -30,6 +30,7 @@ viewerbase::viewerbase()
 
    PARAMS.usefog=FALSE;
    PARAMS.useshaders=FALSE;
+   PARAMS.usevisshader=FALSE;
    PARAMS.usebathymap=FALSE;
    PARAMS.usecontours=FALSE;
    PARAMS.usenprshader=FALSE;
@@ -126,6 +127,7 @@ void viewerbase::set(VIEWER_PARAMS &params)
 
    tparams.usefog=PARAMS.usefog;
    tparams.useshaders=PARAMS.useshaders;
+   tparams.usevisshader=PARAMS.usevisshader;
    tparams.usebathymap=PARAMS.usebathymap;
    tparams.usecontours=PARAMS.usecontours;
    tparams.usenprshader=PARAMS.usenprshader;
