@@ -677,14 +677,18 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxscale(xdim/(S-1),t->scale,-zdim/(S-1));
 
-   if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0)
+   if (t->render_phase==2 || t->render_phase==3)
       {
-      texid=t->tile->gettexid(m,n);
-      texw=t->tile->gettexw(m,n);
-      texh=t->tile->gettexh(m,n);
-      texmm=t->tile->gettexmm(m,n);
+      if (CONFIGURE_SEAENABLETEX!=0)
+         {
+         texid=t->tile->gettexid(m,n);
+         texw=t->tile->gettexw(m,n);
+         texh=t->tile->gettexh(m,n);
+         texmm=t->tile->gettexmm(m,n);
 
-      bindtexmap(texid,texw,texh,S,texmm);
+         bindtexmap(texid,texw,texh,S,texmm);
+         }
+      else texid=0;
 
       if (USEVTXSHADER!=0)
          setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
@@ -1358,7 +1362,7 @@ void minicache::setseashader(char *sp)
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\
-      MUL result.color,col,fragment.color; \n\ ###!!
+      MUL result.color,col,fragment.color; \n\
       END \n";
 
    if (sp==NULL) sp=seaprog;
