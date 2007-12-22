@@ -684,7 +684,8 @@ void minicache::rendertexmap(int m,int n,int S)
       texh=t->tile->gettexh(m,n);
       texmm=t->tile->gettexmm(m,n);
 
-      if (CONFIGURE_SEAENABLETEX!=0) bindtexmap(texid,texw,texh,S,texmm);
+      if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0) bindtexmap(texid,texw,texh,S,texmm);
+      else texid=0;
 
       if (USEVTXSHADER!=0)
          setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
@@ -1257,7 +1258,7 @@ void minicache::setpixshader(char *fp)
       TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
+      MAD col,col,a.x,a.y; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -1347,7 +1348,7 @@ void minicache::setseashader(char *sp)
       TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
+      MAD col,col,a.x,a.y; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
