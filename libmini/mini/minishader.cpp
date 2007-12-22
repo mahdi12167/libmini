@@ -31,6 +31,7 @@ void minishader::setVISshader(minicache *cache,
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float sea_a,sea_b;
 
+   //!! add lighting
    // fragment program for the terrain
    static char *fragprog1A="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\

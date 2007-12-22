@@ -679,16 +679,12 @@ void minicache::rendertexmap(int m,int n,int S)
 
    if (t->render_phase==2 || t->render_phase==3)
       {
-      if (CONFIGURE_SEAENABLETEX!=0)
-         {
-         texid=t->tile->gettexid(m,n);
-         texw=t->tile->gettexw(m,n);
-         texh=t->tile->gettexh(m,n);
-         texmm=t->tile->gettexmm(m,n);
+      texid=t->tile->gettexid(m,n);
+      texw=t->tile->gettexw(m,n);
+      texh=t->tile->gettexh(m,n);
+      texmm=t->tile->gettexmm(m,n);
 
-         bindtexmap(texid,texw,texh,S,texmm);
-         }
-      else texid=0;
+      if (CONFIGURE_SEAENABLETEX!=0) bindtexmap(texid,texw,texh,S,texmm);
 
       if (USEVTXSHADER!=0)
          setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
@@ -880,6 +876,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
+   //!! add fragment program
    static char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
@@ -1243,7 +1240,6 @@ void minicache::setpixshader(char *fp)
    {
 #ifndef NOOGL
 
-   //!!
    // default pixel shader
    static char *fragprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
@@ -1334,7 +1330,6 @@ void minicache::setseashader(char *sp)
    {
 #ifndef NOOGL
 
-   //!!
    // default sea shader
    static char *seaprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
@@ -1505,9 +1500,9 @@ void minicache::setpixshadertexprm(float s,float o)
          {
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
 
-         //!!
+         //!! add setter for parameters
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,0.0f,0.0f,0.0f,0.0f);
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,0.5f,0.5f,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,0.0f,1.0f,0.0f,0.0f);
          }
 
 #endif
