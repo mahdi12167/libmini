@@ -48,6 +48,9 @@ class miniglobe
    //! set scaling of globe
    void setscale(float scale);
 
+   //! set tesselation of globe
+   void settess(int stripes);
+
    //! set matrix
    void setmatrix(double mtx[16]);
 
@@ -74,6 +77,7 @@ class miniglobe
 
    int SHAPE;
    float SCALE;
+   int STRIPES;
 
    ministrip *STRIP;
    int SLOT;

@@ -309,7 +309,7 @@ void viewerbase::render()
    {
    minicoord egl;
 
-   minilayer *ref;
+   minilayer *ref,*nst;
    minilayer::MINILAYER_PARAMS lparams;
 
    GLfloat color[4];
@@ -322,7 +322,10 @@ void viewerbase::render()
    miniv3d lgl;
    float light[3];
 
-   ref=TERRAIN->getlayer(TERRAIN->getreference());
+   miniv3d ugl;
+
+   ref=getreference();
+   nst=getnearest(lparams.eye);
 
    if (ref!=NULL)
       {
@@ -360,7 +363,7 @@ void viewerbase::render()
             SKYDOME->drawskydome();
             }
 
-      // render earth globe (without Z writing)
+      // render earth globe
       if (PARAMS.useearth)
          if (ref->get()->warpmode!=0)
             {
@@ -405,16 +408,28 @@ void viewerbase::render()
                                 PARAMS.fogdensity,
                                 PARAMS.fogcolor);
 
+            // render earth without Z writing
             EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
+
+            // drag earth down below nearest tile set
+            if (nst!=NULL)
+               {
+               ugl=nst->rot_g2o(miniv3d(0.0,0.0,1.0),nst->getcenter());
+               ugl*=TERRAIN->get()->maxelev/TERRAIN->get()->scale;
+
+               oglmtx[12]-=ugl.x;
+               oglmtx[13]-=ugl.y;
+               oglmtx[14]-=ugl.z;
+
+               EARTH->setmatrix(oglmtx);
+               }
+
+            // render earth without RGB writing
+            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
             }
 
       // render terrain
       TERRAIN->render();
-
-      // render earth globe (without RGB writing)
-      if (PARAMS.useearth)
-         if (ref->get()->warpmode!=0)
-            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
 
       // disable fog
       if (PARAMS.usefog) glDisable(GL_FOG);

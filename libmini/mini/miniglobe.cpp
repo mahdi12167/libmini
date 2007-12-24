@@ -13,6 +13,10 @@
 miniglobe::miniglobe()
    {
    SHAPE=SHAPE_EARTH;
+
+   SCALE=1.0f;
+   STRIPES=64;
+
    STRIP=new ministrip(0,3,2);
    SLOT=STRIP->getfreeslot();
 
@@ -38,6 +42,10 @@ void miniglobe::setshape(int shape)
 // set scaling of globe
 void miniglobe::setscale(float scale)
    {SCALE=scale;}
+
+// set tesselation of globe
+void miniglobe::settess(int stripes)
+   {STRIPES=stripes;}
 
 // set matrix
 void miniglobe::setmatrix(double mtx[16])
@@ -90,8 +98,8 @@ void miniglobe::create_globe(float radius,const float color[3])
    {
    int i,j;
 
-   static const int alpha_steps=128;
-   static const int beta_steps=32;
+   int const alpha_steps=4*STRIPES;
+   int const beta_steps=STRIPES;
 
    float u,v;
    float alpha,beta;
@@ -138,8 +146,8 @@ void miniglobe::create_earth(const float color[3])
    {
    int i,j;
 
-   static const int alpha_steps=256;
-   static const int beta_steps=64;
+   const int alpha_steps=4*STRIPES;
+   const int beta_steps=STRIPES;
 
    float u,v;
    float alpha,beta;
