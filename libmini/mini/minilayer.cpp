@@ -873,11 +873,14 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                if (center.vec.getLength()>0.0)
                   {
                   center=minicoord(miniv3d(invFLT[0]*center.vec,invFLT[1]*center.vec,invFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
-                  if (center.vec.z>miniutm::EARTH_radius*LPARAMS.vicinity) center.vec.z=miniutm::EARTH_radius;
+
+                  if (center.vec.z>miniutm::EARTH_radius*(1.0f-LPARAMS.vicinity)) center.vec.z=miniutm::EARTH_radius;
+                  else center0=center;
+
                   center=minicoord(miniv3d(mtxFLT[0]*center.vec,mtxFLT[1]*center.vec,mtxFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
                   north=minicoord(miniv3d(invFLT[0]*north.vec,invFLT[1]*north.vec,invFLT[2]*north.vec),minicoord::MINICOORD_ECEF);
-                  if (north.vec.z>miniutm::EARTH_radius*LPARAMS.vicinity) north.vec.z=miniutm::EARTH_radius;
+                  if (north.vec.z>miniutm::EARTH_radius*(1.0f-LPARAMS.vicinity)) north.vec.z=miniutm::EARTH_radius;
                   north=minicoord(miniv3d(mtxFLT[0]*north.vec,mtxFLT[1]*north.vec,mtxFLT[2]*north.vec),minicoord::MINICOORD_ECEF);
 
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
@@ -1005,6 +1008,10 @@ miniv3d minilayer::getextent()
 // get center of tileset
 minicoord minilayer::getcenter()
    {return(map_i2g(miniv3d(0.0,0.0,0.0)));}
+
+// get normal of tileset
+miniv3d minilayer::getnormal()
+   {return(rot_i2g(miniv3d(0.0,1.0,0.0),map_g2i(getcenter())));}
 
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p)

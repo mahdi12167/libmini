@@ -222,6 +222,9 @@ class minilayer
    //! get center of tileset
    minicoord getcenter();
 
+   //! get normal of tileset
+   miniv3d getnormal();
+
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p);
 

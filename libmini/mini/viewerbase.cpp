@@ -11,6 +11,9 @@
 #include "miniOGL.h"
 #include "minishader.h"
 
+#include "miniutm.h"
+#include "miniwarp.h"
+
 #include "viewerbase.h"
 
 // default constructor
@@ -309,7 +312,7 @@ void viewerbase::render()
    {
    minicoord egl;
 
-   minilayer *ref,*nst;
+   minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
    GLfloat color[4];
@@ -325,7 +328,6 @@ void viewerbase::render()
    miniv3d ugl;
 
    ref=getreference();
-   nst=getnearest(lparams.eye);
 
    if (ref!=NULL)
       {
@@ -411,11 +413,22 @@ void viewerbase::render()
             // render earth without Z writing
             EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
 
-            // drag earth down below nearest tile set
-            if (nst!=NULL)
+            // drag earth down below visible tilesets
+            if (PARAMS.useflat)
                {
-               ugl=nst->rot_g2o(miniv3d(0.0,0.0,1.0),nst->getcenter());
-               ugl*=TERRAIN->get()->maxelev/TERRAIN->get()->scale;
+               ugl=ref->rot_g2o(ref->getnormal(),ref->getcenter());
+               ugl*=miniutm::EARTH_radius*(1.0f-ref->get()->vicinity)/TERRAIN->get()->scale;
+
+               oglmtx[12]-=ugl.x;
+               oglmtx[13]-=ugl.y;
+               oglmtx[14]-=ugl.z;
+
+               EARTH->setmatrix(oglmtx);
+               }
+            else
+               {
+               ugl=getearth()->rot_g2o((getearth()->get()->eye-getearth()->getcenter()).vec,getearth()->getcenter());
+               ugl*=miniutm::EARTH_radius/2/TERRAIN->get()->scale;
 
                oglmtx[12]-=ugl.x;
                oglmtx[13]-=ugl.y;
