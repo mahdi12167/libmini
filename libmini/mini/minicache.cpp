@@ -86,6 +86,7 @@ minicache::minicache()
    SEASHADERTEXID=0;
 
    PRISMCACHE_VTXPROGID=0;
+   PRISMCACHE_FRAGPROGID=0;
 
    PRESEA_CB=NULL;
    POSTSEA_CB=NULL;
@@ -154,6 +155,12 @@ minicache::~minicache()
          progid=PRISMCACHE_VTXPROGID;
          glDeleteProgramsARB(1,&progid);
          }
+
+      if (PRISMCACHE_FRAGPROGID!=0)
+         {
+         progid=PRISMCACHE_FRAGPROGID;
+         glDeleteProgramsARB(1,&progid);
+         }
       }
 
 #endif
@@ -202,6 +209,13 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    t->render_phase=-1;
 
    t->isvisible=1;
+
+   t->lx=0.0f;
+   t->ly=0.0f;
+   t->lz=0.0f;
+
+   t->ls=0.0f;
+   t->lo=1.0f;
    }
 
 // free terrain
@@ -695,8 +709,8 @@ void minicache::rendertexmap(int m,int n,int S)
                             t->scale);
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
-         if (texid==0) setpixshadertexprm(0.0f,1.0f);
-         else setpixshadertexprm(1.0f,0.0f);
+         if (texid==0) setpixshadertexprm(0.0f,1.0f,t->lx,t->ly,t->lz,t->ls,t->lo);
+         else setpixshadertexprm(1.0f,0.0f,t->lx,t->ly,t->lz,t->ls,t->lo);
       }
 
 #endif
@@ -858,10 +872,14 @@ int minicache::rendertrigger()
             else
                if (TERRAIN[id].cache_num==1)
                   vtx+=renderprisms(TERRAIN[id].prism_cache2,TERRAIN[id].prism_size2/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),
-                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A,
+                                    TERRAIN[id].lx,TERRAIN[id].ly,TERRAIN[id].lz,
+                                    TERRAIN[id].ls,TERRAIN[id].lo);
                else
                   vtx+=renderprisms(TERRAIN[id].prism_cache1,TERRAIN[id].prism_size1/3,TERRAIN[id].lambda,TERRAIN[id].tile->getwarp(),
-                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A);
+                                    PRISM_R,PRISM_G,PRISM_B,PRISM_A,
+                                    TERRAIN[id].lx,TERRAIN[id].ly,TERRAIN[id].lz,
+                                    TERRAIN[id].ls,TERRAIN[id].lo);
 
 #endif
 
@@ -869,7 +887,9 @@ int minicache::rendertrigger()
    }
 
 int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
-                            float pr,float pg,float pb,float pa)
+                            float pr,float pg,float pb,float pa,
+                            float lx,float ly,float lz,
+                            float ls,float lo)
    {
    int vtx=0;
 
@@ -877,23 +897,54 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   //!! add fragment program
    static char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
-      TEMP vtx,pos; \n\
+      PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      TEMP vtx,col,nrm,pos,vec; \n\
+      ### fetch actual vertex \n\
       MOV vtx,vertex.position.xywz; \n\
-      MOV result.color,vertex.color; \n\
       MOV vtx.w,c.w; \n\
+      MOV col,vertex.color; \n\
+      MOV nrm,vertex.normal; \n\
+      ### transform vertex with modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\
       DP4 pos.w,mat[3],vtx; \n\
-      MOV result.fogcoord.x,pos.z; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n\
+      ### write resulting vertex \n\
       MOV result.position,pos; \n\
-      END";
+      MOV result.color,col; \n\
+      ### pass normal as tex coords \n\
+      MOV result.texcoord[1],vec; \n\
+      ### calculate spherical fog coord \n\
+      DP3 result.fogcoord.x,pos,pos; \n\
+      END \n";
 
-   GLuint vtxprogid;
+   static char *fragprog="!!ARBfp1.0 \n\
+      PARAM l=program.env[0]; \n\
+      PARAM p=program.env[1]; \n\
+      TEMP col,nrm,len; \n\
+      ### fetch fragment color \n\
+      MOV col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
+   GLuint vtxprogid,fragprogid;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -909,6 +960,14 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
       glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
       PRISMCACHE_VTXPROGID=vtxprogid;
+      }
+
+   if (PRISMCACHE_FRAGPROGID==0)
+      {
+      glGenProgramsARB(1,&fragprogid);
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,fragprogid);
+      glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog),fragprog);
+      PRISMCACHE_FRAGPROGID=fragprogid;
       }
 
    initstate();
@@ -952,6 +1011,12 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    glEnable(GL_VERTEX_PROGRAM_ARB);
 
    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
+
+   glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISMCACHE_FRAGPROGID);
+   glEnable(GL_FRAGMENT_PROGRAM_ARB);
+
+   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,lx,ly,lz,0.0f); //!! transform with invtra of modelview
+   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f);
 
    color(pr,pg,pb,pa);
 
@@ -1051,6 +1116,23 @@ void minicache::display(minitile *terrain,int yes)
    if (terrain==NULL) ERRORMSG();
 
    TERRAIN[terrain->getid()].isvisible=yes;
+   }
+
+// specify per-tileset lighting
+void minicache::setlighting(minitile *terrain,float lx,float ly,float lz,float ls,float lo)
+   {
+   int id;
+
+   if (terrain==NULL) ERRORMSG();
+
+   id=terrain->getid();
+
+   TERRAIN[id].lx=lx;
+   TERRAIN[id].ly=ly;
+   TERRAIN[id].lz=lz;
+
+   TERRAIN[id].ls=ls;
+   TERRAIN[id].lo=lo;
    }
 
 // make cache current
@@ -1490,7 +1572,9 @@ void minicache::enablepixshader()
    }
 
 // set pixel shader texture mapping parameters
-void minicache::setpixshadertexprm(float s,float o)
+void minicache::setpixshadertexprm(float s,float o,
+                                   float lx,float ly,float lz,
+                                   float ls,float lo)
    {
 #ifndef NOOGL
 
@@ -1501,9 +1585,8 @@ void minicache::setpixshadertexprm(float s,float o)
          {
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
 
-         //!! add setter for parameters
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,0.0f,0.0f,0.0f,0.0f);
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,0.0f,1.0f,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,lx,ly,lz,0.0f); //!! transform with invtra of modelview
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,ls,lo,0.0f,0.0f);
          }
 
 #endif

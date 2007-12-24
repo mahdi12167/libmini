@@ -38,6 +38,9 @@ class minicache
    //! determine whether or not a tileset is displayed
    void display(minitile *terrain,int yes=1);
 
+   //! specify per-tileset lighting
+   void setlighting(minitile *terrain,float lx,float ly,float lz,float ls,float lo);
+
    //! make cache current
    //! required for multiple rendering windows/contexts
    //! this should be called before updating the vertex buffers of the corresponding window
@@ -148,6 +151,9 @@ class minicache
       int render_count;
 
       int isvisible;
+
+      float lx,ly,lz;
+      float ls,lo;
       };
 
    int CACHE_ID;
@@ -227,6 +233,7 @@ class minicache
    int SEASHADERTEXHEIGHT;
 
    int PRISMCACHE_VTXPROGID;
+   int PRISMCACHE_FRAGPROGID;
 
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
@@ -253,14 +260,16 @@ class minicache
    void freeterrain(TERRAIN_TYPE *terrain);
 
    int renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
-                    float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f);
+                    float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f,
+                    float lx=0.0f,float ly=0.0f,float lz=0.0f,
+                    float ls=0.0f,float lo=1.0f);
 
    void enablevtxshader();
    void setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale);
    void disablevtxshader();
 
    void enablepixshader();
-   void setpixshadertexprm(float s,float o);
+   void setpixshadertexprm(float s,float o,float lx=0.0f,float ly=0.0f,float lz=0.0f,float ls=0.0f,float lo=1.0f);
    void disablepixshader();
 
    void enableseashader();

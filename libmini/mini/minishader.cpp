@@ -31,7 +31,6 @@ void minishader::setVISshader(minicache *cache,
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float sea_a,sea_b;
 
-   //!! add lighting
    // fragment program for the terrain
    static char *fragprog1A="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
@@ -40,7 +39,10 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,colb,vtx,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,colb,nrm,vtx,len,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
@@ -62,6 +64,14 @@ void minishader::setVISshader(minicache *cache,
       MUL col,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -80,7 +90,10 @@ void minishader::setVISshader(minicache *cache,
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,colt,colb,vtx,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,colt,colb,nrm,vtx,len,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
@@ -88,6 +101,7 @@ void minishader::setVISshader(minicache *cache,
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL_SAT vtx.x,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
+      MAD vtx.xy,vtx,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,col; \n\
       CMP col.xyz,-vtx.x,colt,col; \n\
@@ -109,6 +123,14 @@ void minishader::setVISshader(minicache *cache,
       MUL col,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -127,7 +149,10 @@ void minishader::setVISshader(minicache *cache,
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,colt,colb,vtx,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,colt,colb,nrm,vtx,len,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
@@ -143,6 +168,7 @@ void minishader::setVISshader(minicache *cache,
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL_SAT vtx.x,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
+      MAD vtx.xy,vtx,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,col; \n\
       CMP col.xyz,-vtx.x,colt,col; \n\
@@ -156,6 +182,14 @@ void minishader::setVISshader(minicache *cache,
       MUL col,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -173,13 +207,24 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,tex,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
       MAD tex,tex,a.x,a.b; \n\
       LRP col.xyz,c0.x,tex,col; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -316,7 +361,10 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,vtx,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,nrm,vtx,len,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
@@ -336,6 +384,14 @@ void minishader::setNPRshader(minicache *cache,
       MUL col,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -354,7 +410,10 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c4=program.env[4]; \n\
       PARAM c5=program.env[5]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,colt,vtx,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,colt,nrm,vtx,len,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n\
@@ -368,6 +427,7 @@ void minishader::setNPRshader(minicache *cache,
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL_SAT vtx.x,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
+      MAD vtx.xy,vtx,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,col; \n\
       CMP col.xyz,-vtx.x,colt,col; \n\
@@ -381,6 +441,14 @@ void minishader::setNPRshader(minicache *cache,
       MUL col,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -398,13 +466,24 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c3=program.env[3]; \n\
       PARAM c4=program.env[4]; \n\
       PARAM a=program.env[8]; \n\
-      TEMP col,tex,fog; \n\
+      PARAM t=program.env[9]; \n\
+      PARAM l=program.env[10]; \n\
+      PARAM p=program.env[11]; \n\
+      TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
       MAD tex,tex,a.x,a.b; \n\
       LRP col.xyz,c0.x,tex,col; \n\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\

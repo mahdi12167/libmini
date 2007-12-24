@@ -944,7 +944,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       ADD col.xyz,col,vtx.x; \n\
       MOV result.color,col; \n\
       MOV result.fogcoord.x,pos.z; \n\
-      END";
+      END \n";
 
    static char *vtxprog2="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -962,7 +962,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       MOV result.color,col; \n\
       MOV result.texcoord,tex; \n\
       MOV result.fogcoord.x,pos.z; \n\
-      END";
+      END \n";
 
    GLuint vtxprogid;
 
@@ -1361,7 +1361,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MOV result.texcoord,tex; \n\
       MUL result.texcoord[1].xyz,vtx,c.x; \n\
       MOV result.fogcoord.x,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1386,7 +1386,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL col.w,col.w,pos.z; \n\
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1415,7 +1415,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL col.w,col.w,pos.z; \n\
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog3="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1442,7 +1442,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL col.w,col.w,pos.z; \n\
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog4="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1474,7 +1474,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL col.w,col.w,pos.z; \n\
       MOV result.color,col; \n\
-      END";
+      END \n";
 
    GLuint vtxprogid,fragprogid;
 
@@ -1736,7 +1736,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MUL result.texcoord[0].y,vtx.z,c.x; \n\
       MOV result.color.xyz,vertex.color; \n\
       MOV result.fogcoord.x,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1745,7 +1745,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MIN col.w,fragment.color.w,c.y; \n\
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
-      END";
+      END \n";
 
    static char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1754,7 +1754,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MIN col.w,fragment.color.w,c.y; \n\
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
-      END";
+      END \n";
 
    GLuint vtxprogid,fragprogid;
 

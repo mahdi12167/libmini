@@ -760,7 +760,6 @@ void miniterrain::render()
                                      TPARAMS.nprseagrey);
          else
             {
-            //!!
             CACHE->setvtxshader();
             CACHE->usevtxshader(1);
             CACHE->setpixshader();
