@@ -468,9 +468,11 @@ void viewerbase::render()
                   }
                else
                   {
-                  oglmtx[0]*=-flt;
-                  oglmtx[5]*=-flt;
-                  oglmtx[10]*=-flt;
+                  flt=-(1.0f+flt)/2.0f;
+
+                  oglmtx[0]*=flt;
+                  oglmtx[5]*=flt;
+                  oglmtx[10]*=flt;
 
                   EARTH->setmatrix(oglmtx);
                   }
