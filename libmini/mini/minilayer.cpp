@@ -942,7 +942,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    setreference(REFERENCE);
    }
 
-// construct a point warp
+// construct a point warp matrix
 void minilayer::pointwarp(minicoord &center,minicoord &north,minicoord &normal,
                           double scale,miniv4d mtx[3])
    {

@@ -327,6 +327,9 @@ void viewerbase::render()
 
    miniv3d ugl;
 
+   float flt;
+   miniv4d mtxFLT[3];
+
    ref=getreference();
 
    if (ref!=NULL)
@@ -417,7 +420,7 @@ void viewerbase::render()
             if (PARAMS.useflat)
                {
                ugl=ref->rot_g2o(ref->getnormal(),ref->getcenter());
-               ugl*=miniutm::EARTH_radius*(1.0f-ref->get()->vicinity)/TERRAIN->get()->scale;
+               ugl*=miniutm::EARTH_radius*(1.0f-ref->get()->vicinity)/ref->get()->scale;
 
                oglmtx[12]-=ugl.x;
                oglmtx[13]-=ugl.y;
@@ -427,14 +430,42 @@ void viewerbase::render()
                }
             else
                {
-               ugl=getearth()->rot_g2o((getearth()->get()->eye-getearth()->getcenter()).vec,getearth()->getcenter());
-               ugl*=miniutm::EARTH_radius/2/TERRAIN->get()->scale;
+               flt=1.0f-getearth()->get()->vicinity;
+               ugl=getearth()->get()->eye.vec;
 
-               oglmtx[12]-=ugl.x;
-               oglmtx[13]-=ugl.y;
-               oglmtx[14]-=ugl.z;
+               if (ugl.getLength()>miniutm::EARTH_radius*flt/getearth()->get()->scale)
+                  {
+                  flt=1.0f-flt;
+                  ugl.normalize();
 
-               EARTH->setmatrix(oglmtx);
+                  mtxFLT[0]=miniv4d(1.0-flt*ugl.x*ugl.x,flt*ugl.x*ugl.y,flt*ugl.x*ugl.z);
+                  mtxFLT[1]=miniv4d(flt*ugl.x*ugl.y,1.0-flt*ugl.y*ugl.y,flt*ugl.y*ugl.z);
+                  mtxFLT[2]=miniv4d(flt*ugl.x*ugl.z,flt*ugl.y*ugl.z,1.0-flt*ugl.z*ugl.z);
+
+                  miniwarp::mlt_mtx(mtx,mtx,mtxFLT);
+
+                  oglmtx[0]=mtx[0].x;
+                  oglmtx[1]=mtx[1].x;
+                  oglmtx[2]=mtx[2].x;
+                  oglmtx[3]=0.0;
+
+                  oglmtx[4]=mtx[0].y;
+                  oglmtx[5]=mtx[1].y;
+                  oglmtx[6]=mtx[2].y;
+                  oglmtx[7]=0.0;
+
+                  oglmtx[8]=mtx[0].z;
+                  oglmtx[9]=mtx[1].z;
+                  oglmtx[10]=mtx[2].z;
+                  oglmtx[11]=0.0;
+
+                  oglmtx[12]=mtx[0].w;
+                  oglmtx[13]=mtx[1].w;
+                  oglmtx[14]=mtx[2].w;
+                  oglmtx[15]=1.0;
+
+                  EARTH->setmatrix(oglmtx);
+                  }
                }
 
             // render earth without RGB writing
