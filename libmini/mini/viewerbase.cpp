@@ -466,6 +466,14 @@ void viewerbase::render()
 
                   EARTH->setmatrix(oglmtx);
                   }
+               else
+                  {
+                  oglmtx[0]*=-flt;
+                  oglmtx[5]*=-flt;
+                  oglmtx[10]*=-flt;
+
+                  EARTH->setmatrix(oglmtx);
+                  }
                }
 
             // render earth without RGB writing

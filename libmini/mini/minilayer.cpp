@@ -875,7 +875,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   center=minicoord(miniv3d(invFLT[0]*center.vec,invFLT[1]*center.vec,invFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
                   if (center.vec.z>miniutm::EARTH_radius*(1.0f-LPARAMS.vicinity)) center.vec.z=miniutm::EARTH_radius;
-                  else center0=center;
+                  else center0.vec*=-1.0;
 
                   center=minicoord(miniv3d(mtxFLT[0]*center.vec,mtxFLT[1]*center.vec,mtxFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
