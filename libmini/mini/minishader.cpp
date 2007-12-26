@@ -69,7 +69,7 @@ void minishader::setVISshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -128,7 +128,7 @@ void minishader::setVISshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -187,7 +187,7 @@ void minishader::setVISshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -222,7 +222,7 @@ void minishader::setVISshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -389,7 +389,7 @@ void minishader::setNPRshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -446,7 +446,7 @@ void minishader::setNPRshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\
@@ -481,7 +481,7 @@ void minishader::setNPRshader(minicache *cache,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with spherical fog \n\

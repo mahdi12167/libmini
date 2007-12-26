@@ -963,7 +963,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### write resulting color \n\
@@ -1395,7 +1395,7 @@ void minicache::setpixshader(char *fp)
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\
@@ -1485,7 +1485,7 @@ void minicache::setseashader(char *sp)
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\

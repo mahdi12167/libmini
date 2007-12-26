@@ -186,7 +186,7 @@ void initparams()
 
    prms.usefog=TRUE;
    prms.useshaders=TRUE;
-   prms.usevisshader=FALSE; //!! TRUE
+   prms.usevisshader=TRUE;
    prms.usebathymap=FALSE;
    prms.usecontours=FALSE;
    prms.usenprshader=FALSE;
@@ -878,6 +878,15 @@ void displayfunc()
 
    // update scene
    viewer->cache(eye,dir,up,(float)winwidth/winheight);
+
+   //!!
+   static double time=0.0;
+   time+=1.0/params->fps;
+   double earthrot=1.0/30;
+   double angle=2*PI*earthrot*time;
+   miniv3d light=miniv3d(sin(angle),cos(angle),0.0);
+   params->lightdir=light;
+   viewer->propagate();
 
    // render scene
    if (sw_stereo==0) viewer->render();

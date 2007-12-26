@@ -93,8 +93,8 @@ miniterrain::miniterrain()
 
    TPARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
-   TPARAMS.lightbias=0.75f;   // lighting bias
-   TPARAMS.lightoffset=0.25f; // lighting offset
+   TPARAMS.lightbias=0.5f;   // lighting bias
+   TPARAMS.lightoffset=0.5f; // lighting offset
 
    // optional spherical fog:
 
