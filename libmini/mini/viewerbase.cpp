@@ -138,6 +138,8 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.usewaypoints=PARAMS.usewaypoints;
    tparams.usebricks=PARAMS.usebricks;
 
+   tparams.lightdir=PARAMS.lightdir;
+
    tparams.fogcolor[0]=PARAMS.fogcolor[0];
    tparams.fogcolor[1]=PARAMS.fogcolor[1];
    tparams.fogcolor[2]=PARAMS.fogcolor[2];
@@ -339,9 +341,6 @@ void viewerbase::render()
 
       egl=ref->map_g2o(lparams.eye);
 
-      lgl=getearth()->rot_g2i(PARAMS.lightdir,getearth()->getcenter());
-      TERRAIN->get()->lightdir=lgl;
-
       // enable wireframe mode
       if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
@@ -403,6 +402,8 @@ void viewerbase::render()
             oglmtx[15]=1.0;
 
             EARTH->setmatrix(oglmtx);
+
+            lgl=getearth()->rot_g2i(PARAMS.lightdir,getearth()->getcenter());
 
             light[0]=lgl.x;
             light[1]=lgl.y;

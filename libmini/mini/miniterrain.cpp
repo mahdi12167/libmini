@@ -91,7 +91,7 @@ miniterrain::miniterrain()
 
    // optional lighting:
 
-   TPARAMS.lightdir=miniv3d(0.0,1.0,0.0); // directional light
+   TPARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
    TPARAMS.lightbias=0.5f;   // lighting bias
    TPARAMS.lightoffset=0.5f; // lighting offset
@@ -740,6 +740,8 @@ void miniterrain::render()
    {
    int n;
 
+   miniv3d lgl;
+
    if (LNUM>0)
       {
       // enable shaders
@@ -783,23 +785,23 @@ void miniterrain::render()
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->getterrain()!=NULL)
                if (TPARAMS.usediffuse)
+                  {
+                  lgl=LAYER[getearth()]->rot_g2o(TPARAMS.lightdir,LAYER[getearth()]->getcenter());
+
                   if (TPARAMS.usedimming)
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
-                                     0.5f*TPARAMS.lightbias,0.5f*TPARAMS.lightoffset);
+                                     lgl.x,lgl.y,lgl.z,0.5f*TPARAMS.lightbias,0.5f*TPARAMS.lightoffset);
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
-                                     TPARAMS.lightbias,TPARAMS.lightoffset);
+                                     lgl.x,lgl.y,lgl.z,TPARAMS.lightbias,TPARAMS.lightoffset);
+                  }
                else
                   if (TPARAMS.usedimming)
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     0.0f,0.0f,0.0f,
-                                     0.0f,0.5f);
+                                     0.0f,0.0f,0.0f,0.0f,0.5f);
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     0.0f,0.0f,0.0f,
-                                     0.0f,1.0f);
+                                     0.0f,0.0f,0.0f,0.0f,1.0f);
          }
 
       // render vertex arrays

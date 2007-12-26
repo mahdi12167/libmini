@@ -650,6 +650,25 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
+   //!!
+   GLfloat mvmtx[16];
+   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+   miniv3d invtra[3];
+   invtra[0].x=mvmtx[0];
+   invtra[1].x=mvmtx[1];
+   invtra[2].x=mvmtx[2];
+   invtra[0].y=mvmtx[4];
+   invtra[1].y=mvmtx[5];
+   invtra[2].y=mvmtx[6];
+   invtra[0].z=mvmtx[8];
+   invtra[1].z=mvmtx[9];
+   invtra[2].z=mvmtx[10];
+   miniwarp::inv_mtx(invtra,invtra);
+   miniwarp::tra_mtx(invtra,invtra);
+   miniv3d l=miniv3d(t->lx,t->ly,t->lz);
+   l=miniv3d(invtra[0]*l,invtra[1]*l,invtra[2]*l);
+   l.normalize();
+
    warp=t->tile->getwarp();
 
    if (warp!=NULL)
@@ -709,8 +728,8 @@ void minicache::rendertexmap(int m,int n,int S)
                             t->scale);
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
-         if (texid==0) setpixshadertexprm(0.0f,1.0f,t->lx,t->ly,t->lz,t->ls,t->lo);
-         else setpixshadertexprm(1.0f,0.0f,t->lx,t->ly,t->lz,t->ls,t->lo);
+         if (texid==0) setpixshadertexprm(0.0f,1.0f,l.x,l.y,l.z,t->ls,t->lo);
+         else setpixshadertexprm(1.0f,0.0f,l.x,l.y,l.z,t->ls,t->lo);
       }
 
 #endif
@@ -1585,7 +1604,7 @@ void minicache::setpixshadertexprm(float s,float o,
          {
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
 
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,lx,ly,lz,0.0f); //!! transform with invtra of modelview
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,lx,ly,lz,0.0f);
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,ls,lo,0.0f,0.0f);
          }
 
