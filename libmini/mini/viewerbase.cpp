@@ -329,9 +329,7 @@ void viewerbase::render()
    float light[3];
 
    miniv3d ugl;
-
    float flt;
-   miniv4d mtxFLT[3];
 
    ref=getreference();
 
@@ -433,52 +431,19 @@ void viewerbase::render()
                }
             else
                {
-               flt=1.0f-getearth()->get()->vicinity;
-               ugl=getearth()->get()->eye.vec;
+               flt=1.0f-10*ref->get()->maxelev/miniutm::EARTH_radius;
 
-               if (ugl.getLength()>miniutm::EARTH_radius*flt/getearth()->get()->scale)
-                  {
-                  flt=1.0f-flt;
-                  ugl.normalize();
+               oglmtx[0]*=flt;
+               oglmtx[1]*=flt;
+               oglmtx[2]*=flt;
+               oglmtx[4]*=flt;
+               oglmtx[5]*=flt;
+               oglmtx[6]*=flt;
+               oglmtx[8]*=flt;
+               oglmtx[9]*=flt;
+               oglmtx[10]*=flt;
 
-                  mtxFLT[0]=miniv4d(1.0-flt*ugl.x*ugl.x,flt*ugl.x*ugl.y,flt*ugl.x*ugl.z);
-                  mtxFLT[1]=miniv4d(flt*ugl.x*ugl.y,1.0-flt*ugl.y*ugl.y,flt*ugl.y*ugl.z);
-                  mtxFLT[2]=miniv4d(flt*ugl.x*ugl.z,flt*ugl.y*ugl.z,1.0-flt*ugl.z*ugl.z);
-
-                  miniwarp::mlt_mtx(mtx,mtx,mtxFLT);
-
-                  oglmtx[0]=mtx[0].x;
-                  oglmtx[1]=mtx[1].x;
-                  oglmtx[2]=mtx[2].x;
-                  oglmtx[3]=0.0;
-
-                  oglmtx[4]=mtx[0].y;
-                  oglmtx[5]=mtx[1].y;
-                  oglmtx[6]=mtx[2].y;
-                  oglmtx[7]=0.0;
-
-                  oglmtx[8]=mtx[0].z;
-                  oglmtx[9]=mtx[1].z;
-                  oglmtx[10]=mtx[2].z;
-                  oglmtx[11]=0.0;
-
-                  oglmtx[12]=mtx[0].w;
-                  oglmtx[13]=mtx[1].w;
-                  oglmtx[14]=mtx[2].w;
-                  oglmtx[15]=1.0;
-
-                  EARTH->setmatrix(oglmtx);
-                  }
-               else
-                  {
-                  flt=-(1.0f+flt)/2.0f;
-
-                  oglmtx[0]*=flt;
-                  oglmtx[5]*=flt;
-                  oglmtx[10]*=flt;
-
-                  EARTH->setmatrix(oglmtx);
-                  }
+               EARTH->setmatrix(oglmtx);
                }
 
             // render earth without RGB writing
