@@ -33,11 +33,11 @@ viewerbase::viewerbase()
 
    PARAMS.usefog=FALSE;
    PARAMS.useshaders=FALSE;
+   PARAMS.usediffuse=TRUE;
    PARAMS.usevisshader=FALSE;
    PARAMS.usebathymap=FALSE;
    PARAMS.usecontours=FALSE;
    PARAMS.usenprshader=FALSE;
-   PARAMS.usediffuse=TRUE;
    PARAMS.usewireframe=FALSE;
    PARAMS.useskydome=FALSE;
    PARAMS.usewaypoints=FALSE;
@@ -130,6 +130,7 @@ void viewerbase::set(VIEWER_PARAMS &params)
 
    tparams.usefog=PARAMS.usefog;
    tparams.useshaders=PARAMS.useshaders;
+   tparams.usediffuse=PARAMS.usediffuse;
    tparams.usevisshader=PARAMS.usevisshader;
    tparams.usebathymap=PARAMS.usebathymap;
    tparams.usecontours=PARAMS.usecontours;
@@ -338,6 +339,9 @@ void viewerbase::render()
 
       egl=ref->map_g2o(lparams.eye);
 
+      lgl=getearth()->rot_g2i(PARAMS.lightdir,getearth()->getcenter());
+      TERRAIN->get()->lightdir=lgl;
+
       // enable wireframe mode
       if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
@@ -399,8 +403,6 @@ void viewerbase::render()
             oglmtx[15]=1.0;
 
             EARTH->setmatrix(oglmtx);
-
-            lgl=getearth()->rot_g2i(PARAMS.lightdir,getearth()->getcenter());
 
             light[0]=lgl.x;
             light[1]=lgl.y;

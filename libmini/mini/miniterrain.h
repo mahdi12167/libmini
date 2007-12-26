@@ -87,12 +87,20 @@ class miniterrain
 
       BOOLINT usefog;
       BOOLINT useshaders;
+      BOOLINT usediffuse;
       BOOLINT usevisshader;
       BOOLINT usebathymap;
       BOOLINT usecontours;
       BOOLINT usenprshader;
       BOOLINT usewaypoints;
       BOOLINT usebricks;
+
+      // optional lighting:
+
+      miniv3d lightdir;
+
+      float lightbias;
+      float lightoffset;
 
       // optional spherical fog:
 

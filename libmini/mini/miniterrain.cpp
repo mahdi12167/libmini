@@ -80,12 +80,20 @@ miniterrain::miniterrain()
 
    TPARAMS.usefog=FALSE;
    TPARAMS.useshaders=FALSE;
+   TPARAMS.usediffuse=FALSE;
    TPARAMS.usevisshader=FALSE;
    TPARAMS.usebathymap=FALSE;
    TPARAMS.usecontours=FALSE;
    TPARAMS.usenprshader=FALSE;
    TPARAMS.usewaypoints=FALSE;
    TPARAMS.usebricks=FALSE;
+
+   // optional lighting:
+
+   TPARAMS.lightdir=miniv3d(0.0,1.0,0.0); // directional light
+
+   TPARAMS.lightbias=0.5f;   // lighting bias
+   TPARAMS.lightoffset=0.5f; // lighting offset
 
    // optional spherical fog:
 
@@ -729,10 +737,13 @@ void miniterrain::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,flo
 // render cached scene
 void miniterrain::render()
    {
+   int n;
+
    if (LNUM>0)
       {
       // enable shaders
       if (TPARAMS.useshaders)
+         {
          if (TPARAMS.usevisshader)
             minishader::setVISshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
@@ -767,6 +778,17 @@ void miniterrain::render()
             CACHE->setseashader();
             CACHE->useseashader(1);
             }
+
+         for (n=0; n<LNUM; n++)
+            if (TPARAMS.usediffuse)
+               CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                               TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
+                               TPARAMS.lightbias,TPARAMS.lightoffset);
+            else
+               CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                               0.0f,0.0f,0.0f,
+                               0.0f,1.0f);
+         }
 
       // render vertex arrays
       CACHE->rendercache();

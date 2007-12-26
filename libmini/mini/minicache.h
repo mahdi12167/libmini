@@ -39,7 +39,7 @@ class minicache
    void display(minitile *terrain,int yes=1);
 
    //! specify per-tileset lighting
-   void setlighting(minitile *terrain,float lx,float ly,float lz,float ls,float lo);
+   void setlight(minitile *terrain,float lx,float ly,float lz,float ls,float lo);
 
    //! make cache current
    //! required for multiple rendering windows/contexts

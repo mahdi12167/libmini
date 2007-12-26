@@ -39,11 +39,11 @@ class viewerbase
 
       BOOLINT usefog;
       BOOLINT useshaders;
+      BOOLINT usediffuse;
       BOOLINT usevisshader;
       BOOLINT usebathymap;
       BOOLINT usecontours;
       BOOLINT usenprshader;
-      BOOLINT usediffuse;
       BOOLINT usewireframe;
       BOOLINT useskydome;
       BOOLINT usewaypoints;

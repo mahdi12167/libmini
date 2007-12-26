@@ -1119,7 +1119,7 @@ void minicache::display(minitile *terrain,int yes)
    }
 
 // specify per-tileset lighting
-void minicache::setlighting(minitile *terrain,float lx,float ly,float lz,float ls,float lo)
+void minicache::setlight(minitile *terrain,float lx,float ly,float lz,float ls,float lo)
    {
    int id;
 
