@@ -780,14 +780,15 @@ void miniterrain::render()
             }
 
          for (n=0; n<LNUM; n++)
-            if (TPARAMS.usediffuse)
-               CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                               TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
-                               TPARAMS.lightbias,TPARAMS.lightoffset);
-            else
-               CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                               0.0f,0.0f,0.0f,
-                               0.0f,1.0f);
+            if (LAYER[n]->getterrain()!=NULL)
+               if (TPARAMS.usediffuse)
+                  CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                  TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
+                                  TPARAMS.lightbias,TPARAMS.lightoffset);
+               else
+                  CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                  0.0f,0.0f,0.0f,
+                                  0.0f,1.0f);
          }
 
       // render vertex arrays

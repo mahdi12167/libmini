@@ -1126,6 +1126,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       case 'L':
          if (!params->usediffuse) params->usediffuse=TRUE;
          else params->usediffuse=FALSE;
+         viewer->propagate();
          break;
       case 'h':
          if (sw_hud==0) sw_hud=1;
