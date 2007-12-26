@@ -81,6 +81,7 @@ miniterrain::miniterrain()
    TPARAMS.usefog=FALSE;
    TPARAMS.useshaders=FALSE;
    TPARAMS.usediffuse=FALSE;
+   TPARAMS.usedimming=FALSE;
    TPARAMS.usevisshader=FALSE;
    TPARAMS.usebathymap=FALSE;
    TPARAMS.usecontours=FALSE;
@@ -782,13 +783,23 @@ void miniterrain::render()
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->getterrain()!=NULL)
                if (TPARAMS.usediffuse)
-                  CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                  TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
-                                  TPARAMS.lightbias,TPARAMS.lightoffset);
+                  if (TPARAMS.usedimming)
+                     CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                     TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
+                                     0.5f*TPARAMS.lightbias,0.5f*TPARAMS.lightoffset);
+                  else
+                     CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                     TPARAMS.lightdir.x,TPARAMS.lightdir.y,TPARAMS.lightdir.z,
+                                     TPARAMS.lightbias,TPARAMS.lightoffset);
                else
-                  CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                  0.0f,0.0f,0.0f,
-                                  0.0f,1.0f);
+                  if (TPARAMS.usedimming)
+                     CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                     0.0f,0.0f,0.0f,
+                                     0.0f,0.5f);
+                  else
+                     CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
+                                     0.0f,0.0f,0.0f,
+                                     0.0f,1.0f);
          }
 
       // render vertex arrays
