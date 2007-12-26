@@ -623,6 +623,11 @@ void minicache::rendertexmap(int m,int n,int S)
    int cols,rows;
    float xdim,zdim;
    float centerx,centery,centerz;
+
+   GLfloat mvmtx[16];
+   miniv3d invtra[3];
+   miniv3d light;
+
    miniwarp *warp;
 
    miniv4d mtx[3];
@@ -650,24 +655,7 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
-   //!!
-   GLfloat mvmtx[16];
    glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-   miniv3d invtra[3];
-   invtra[0].x=mvmtx[0];
-   invtra[1].x=mvmtx[1];
-   invtra[2].x=mvmtx[2];
-   invtra[0].y=mvmtx[4];
-   invtra[1].y=mvmtx[5];
-   invtra[2].y=mvmtx[6];
-   invtra[0].z=mvmtx[8];
-   invtra[1].z=mvmtx[9];
-   invtra[2].z=mvmtx[10];
-   miniwarp::inv_mtx(invtra,invtra);
-   miniwarp::tra_mtx(invtra,invtra);
-   miniv3d l=miniv3d(t->lx,t->ly,t->lz);
-   l=miniv3d(invtra[0]*l,invtra[1]*l,invtra[2]*l);
-   l.normalize();
 
    warp=t->tile->getwarp();
 
@@ -728,8 +716,27 @@ void minicache::rendertexmap(int m,int n,int S)
                             t->scale);
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
-         if (texid==0) setpixshadertexprm(0.0f,1.0f,l.x,l.y,l.z,t->ls,t->lo);
-         else setpixshadertexprm(1.0f,0.0f,l.x,l.y,l.z,t->ls,t->lo);
+         {
+         invtra[0].x=mvmtx[0];
+         invtra[1].x=mvmtx[1];
+         invtra[2].x=mvmtx[2];
+         invtra[0].y=mvmtx[4];
+         invtra[1].y=mvmtx[5];
+         invtra[2].y=mvmtx[6];
+         invtra[0].z=mvmtx[8];
+         invtra[1].z=mvmtx[9];
+         invtra[2].z=mvmtx[10];
+
+         miniwarp::inv_mtx(invtra,invtra);
+         miniwarp::tra_mtx(invtra,invtra);
+
+         light=miniv3d(t->lx,t->ly,t->lz);
+         light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
+         light.normalize();
+
+         if (texid==0) setpixshadertexprm(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo);
+         else setpixshadertexprm(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo);
+         }
       }
 
 #endif
@@ -965,6 +972,10 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    GLuint vtxprogid,fragprogid;
 
+   GLfloat mvmtx[16];
+   miniv3d invtra[3];
+   miniv3d light;
+
    miniv4d mtx[3];
    double oglmtx[16];
 
@@ -998,6 +1009,25 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    mtxpush();
    mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
    mtxmodel();
+
+   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+
+   invtra[0].x=mvmtx[0];
+   invtra[1].x=mvmtx[1];
+   invtra[2].x=mvmtx[2];
+   invtra[0].y=mvmtx[4];
+   invtra[1].y=mvmtx[5];
+   invtra[2].y=mvmtx[6];
+   invtra[0].z=mvmtx[8];
+   invtra[1].z=mvmtx[9];
+   invtra[2].z=mvmtx[10];
+
+   miniwarp::inv_mtx(invtra,invtra);
+   miniwarp::tra_mtx(invtra,invtra);
+
+   light=miniv3d(lx,ly,lz);
+   light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
+   light.normalize();
 
    if (warp!=NULL)
       {
@@ -1034,7 +1064,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISMCACHE_FRAGPROGID);
    glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,lx,ly,lz,0.0f); //!! transform with invtra of modelview
+   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f);
    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f);
 
    color(pr,pg,pb,pa);
