@@ -313,10 +313,10 @@ void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,floa
 // render cached scene
 void viewerbase::render()
    {
-   minicoord egl;
-
    minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
+
+   minicoord egl;
 
    GLfloat color[4];
 
@@ -327,9 +327,6 @@ void viewerbase::render()
 
    miniv3d lgl;
    float light[3];
-
-   miniv3d ugl;
-   float flt;
 
    ref=getreference();
 
@@ -369,7 +366,7 @@ void viewerbase::render()
             SKYDOME->drawskydome();
             }
 
-      // render earth globe
+      // render earth globe (without Z writing)
       if (PARAMS.useearth)
          if (ref->get()->warpmode!=0)
             {
@@ -414,44 +411,16 @@ void viewerbase::render()
                                 PARAMS.fogdensity,
                                 PARAMS.fogcolor);
 
-            // render earth without Z writing
             EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
-
-            // drag earth down below visible tilesets
-            if (PARAMS.useflat)
-               {
-               ugl=ref->rot_g2o(ref->getnormal(),ref->getcenter());
-               ugl*=miniutm::EARTH_radius*(1.0f-ref->get()->vicinity)/ref->get()->scale;
-
-               oglmtx[12]-=ugl.x;
-               oglmtx[13]-=ugl.y;
-               oglmtx[14]-=ugl.z;
-
-               EARTH->setmatrix(oglmtx);
-               }
-            else
-               {
-               flt=1.0f-10*ref->get()->maxelev/miniutm::EARTH_radius;
-
-               oglmtx[0]*=flt;
-               oglmtx[1]*=flt;
-               oglmtx[2]*=flt;
-               oglmtx[4]*=flt;
-               oglmtx[5]*=flt;
-               oglmtx[6]*=flt;
-               oglmtx[8]*=flt;
-               oglmtx[9]*=flt;
-               oglmtx[10]*=flt;
-
-               EARTH->setmatrix(oglmtx);
-               }
-
-            // render earth without RGB writing
-            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
             }
 
       // render terrain
       TERRAIN->render();
+
+      // render earth globe (without RGB writing)
+      if (PARAMS.useearth)
+         if (ref->get()->warpmode!=0)
+            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
 
       // disable fog
       if (PARAMS.usefog) glDisable(GL_FOG);
