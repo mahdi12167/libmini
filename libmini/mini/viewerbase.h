@@ -66,6 +66,9 @@ class viewerbase
 
       miniv3d lightdir;
 
+      float lightbias;
+      float lightoffset;
+
       float transbias;
       float transoffset;
 

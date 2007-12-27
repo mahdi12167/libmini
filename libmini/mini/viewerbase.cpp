@@ -62,6 +62,9 @@ viewerbase::viewerbase()
 
    PARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
+   PARAMS.lightbias=0.5f;   // lighting bias
+   PARAMS.lightoffset=0.5f; // lighting offset
+
    PARAMS.transbias=4.0f;     // transition bias between night and day
    PARAMS.transoffset=0.025f; // transition offset between night and day
 
@@ -139,6 +142,9 @@ void viewerbase::set(VIEWER_PARAMS &params)
    tparams.usebricks=PARAMS.usebricks;
 
    tparams.lightdir=PARAMS.lightdir;
+
+   tparams.lightbias=PARAMS.lightbias;
+   tparams.lightoffset=PARAMS.lightoffset;
 
    tparams.fogcolor[0]=PARAMS.fogcolor[0];
    tparams.fogcolor[1]=PARAMS.fogcolor[1];
@@ -404,8 +410,16 @@ void viewerbase::render()
             light[1]=lgl.y;
             light[2]=lgl.z;
 
-            if (PARAMS.usediffuse) EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
-            else EARTH->settexturedirectparams(light,0.0f,1.0f);
+            if (PARAMS.usediffuse)
+               {
+               EARTH->setshadedirectparams(light,PARAMS.lightbias,PARAMS.lightoffset);
+               EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
+               }
+            else
+               {
+               EARTH->setshadedirectparams(light,0.0f,1.0f);
+               EARTH->settexturedirectparams(light,0.0f,1.0f);
+               }
 
             EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
                                 PARAMS.fogdensity,

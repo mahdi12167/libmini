@@ -55,7 +55,8 @@ class miniglobe
    void setmatrix(double mtx[16]);
 
    //! set direct shading parameters
-   void setshadedirectparams(float lightdir[3]);
+   void setshadedirectparams(float lightdir[3],
+                             float lightbias=0.5f,float lightoffset=0.5f);
 
    //! set direct texturing parameters
    void settexturedirectparams(float lightdir[3],
@@ -81,6 +82,8 @@ class miniglobe
 
    ministrip *STRIP;
    int SLOT;
+
+   int SHADE;
 
    int DONE;
 

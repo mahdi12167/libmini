@@ -159,9 +159,10 @@ void ministrip::initsnippets()
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,c5; \n\
+      DP3_SAT nrm.z,nrm,c5; \n\
       ### modulate fragment color \n\
-      MUL_SAT col.xyz,col,nrm.z; \n");
+      MAD nrm.z,nrm.z,c4.x,c4.y; \n\
+      MUL col.xyz,col,nrm.z; \n");
 
    addsnippet(MINI_SNIPPET_FRG_FOG,"\
       ### fetch fog coord \n\
@@ -833,8 +834,12 @@ void ministrip::disablepixshader(int num)
 
 // set direct shading parameters
 void ministrip::setshadedirectparams(int num,
-                                     float lightdir[3])
-   {setpixshaderparams(num,lightdir[0],lightdir[1],lightdir[2],0.0f,5);}
+                                     float lightdir[3],
+                                     float lightbias,float lightoffset)
+   {
+   setpixshaderparams(num,lightdir[0],lightdir[1],lightdir[2],0.0f,5);
+   setpixshaderparams(num,lightbias,lightoffset,0.0f,0.0f,4);
+   }
 
 // set direct texturing parameters
 void ministrip::settexturedirectparams(int num,

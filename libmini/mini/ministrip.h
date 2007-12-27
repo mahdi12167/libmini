@@ -89,7 +89,8 @@ class ministrip
 
    //! set direct shading parameters
    void setshadedirectparams(int num,
-                             float lightdir[3]);
+                             float lightdir[3],
+                             float lightbias=0.5f,float lightoffset=0.5f);
 
    //! set direct texturing parameters
    void settexturedirectparams(int num,

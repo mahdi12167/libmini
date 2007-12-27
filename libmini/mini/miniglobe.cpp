@@ -20,6 +20,8 @@ miniglobe::miniglobe()
    STRIP=new ministrip(0,3,2);
    SLOT=STRIP->getfreeslot();
 
+   SHADE=1;
+
    DONE=0;
 
    CONFIGURE_FRONTNAME=strdup("Front.ppm");
@@ -52,12 +54,19 @@ void miniglobe::setmatrix(double mtx[16])
    {STRIP->setmatrix(mtx);}
 
 // set direct shading parameters
-void miniglobe::setshadedirectparams(float lightdir[3])
-   {STRIP->setshadedirectparams(SLOT,lightdir);}
+void miniglobe::setshadedirectparams(float lightdir[3],
+                                     float lightbias,float lightoffset)
+   {
+   if (SHADE!=0)
+      STRIP->setshadedirectparams(SLOT,lightdir,lightbias,lightoffset);
+   }
 
 // set direct texturing parameters
 void miniglobe::settexturedirectparams(float lightdir[3],float transbias,float transoffset)
-   {STRIP->settexturedirectparams(SLOT,lightdir,transbias,transoffset);}
+   {
+   if (SHADE==0)
+      STRIP->settexturedirectparams(SLOT,lightdir,transbias,transoffset);
+   }
 
 // set fog parameters
 void miniglobe::setfogparams(float fogstart,float fogend,
@@ -255,6 +264,8 @@ void miniglobe::create_shader(const char *frontname,const char *backname)
 
    if (image1!=NULL && image2!=NULL)
       {
+      SHADE=0;
+
       STRIP->setcol(1.0f,1.0f,1.0f);
 
       STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,0);
@@ -278,7 +289,7 @@ void miniglobe::create_shader(const char *frontname,const char *backname)
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_HEADER);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BASIC);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_NORMAL_DIRECT);
-   if (image1!=NULL && image2!=NULL) STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_TEX);
+   if (SHADE==0) STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_TEX);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_FOG);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_FOOTER);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_END);
@@ -286,7 +297,7 @@ void miniglobe::create_shader(const char *frontname,const char *backname)
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BEGIN);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_HEADER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BASIC);
-   if (image1!=NULL && image2!=NULL) STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX2_DIRECT);
+   if (SHADE==0) STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX2_DIRECT);
    else STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_SHADE_DIRECT);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOG);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOOTER);
