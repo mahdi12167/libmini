@@ -493,17 +493,17 @@ minicoord miniwarp::warp(const minicoord &p)
       if (TO==MINIWARP_GLOBAL)
          {
          p2=p;
-         if (p2.type!=minicoord::MINICOORD_LINEAR) p2.convert2(SYSGLB);
+         p2.convert2(SYSGLB);
          }
       else if (TO==MINIWARP_DATA && SYSGLB!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         if (p2.type!=minicoord::MINICOORD_LINEAR) p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
          }
       else
          {
          p1=p;
-         if (p1.type!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         if (SYSGLB!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
