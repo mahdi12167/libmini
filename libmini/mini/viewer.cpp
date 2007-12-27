@@ -837,7 +837,7 @@ void displayfunc()
    else if (coef<-1.0) coef=-1.0;
 
    aez=-coef*gravity;
-   aez*=1.0-FABS(dez/maxspeed);
+   aez*=FMAX(1.0-FABS(dez/maxspeed),0.0);
 
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);
