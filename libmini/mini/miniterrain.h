@@ -241,6 +241,9 @@ class miniterrain
    //! get the nth terrain layer
    minilayer *getlayer(int n);
 
+   //! get the serial number of a terrain layer
+   int getnum(minilayer *layer);
+
    //! remove the nth terrain layer
    void remove(int n);
 
@@ -276,6 +279,9 @@ class miniterrain
 
    //! check whether or not a layer is displayed
    BOOLINT isdisplayed(int n);
+
+   //! check whether or not a layer is culled
+   BOOLINT isculled(int n);
 
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);

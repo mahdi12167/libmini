@@ -186,11 +186,11 @@ void initparams()
 
    prms.usefog=TRUE;
    prms.useshaders=TRUE;
+   prms.usediffuse=FALSE;
    prms.usevisshader=TRUE;
    prms.usebathymap=FALSE;
    prms.usecontours=FALSE;
    prms.usenprshader=FALSE;
-   prms.usediffuse=TRUE;
    prms.usewireframe=FALSE;
    prms.useskydome=TRUE;
    prms.usewaypoints=TRUE;

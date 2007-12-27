@@ -246,6 +246,9 @@ class minilayer
    //! check whether or not the layer is displayed
    BOOLINT isdisplayed();
 
+   //! check whether or not the layer is culled
+   BOOLINT isculled();
+
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);
 

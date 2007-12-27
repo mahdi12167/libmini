@@ -1101,6 +1101,9 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 
    // revert to normal render buffer update
    UPD=ftrc(ffloor(LPARAMS.spu*LPARAMS.fps))+1;
+
+   // update visibility of back-facing tilesets
+   CACHE->display(TERRAIN->getminitile(),VISIBLE && !isculled());
    }
 
 // determine whether or not the layer is displayed
@@ -1109,12 +1112,29 @@ void minilayer::display(BOOLINT yes)
    VISIBLE=yes;
 
    if (TERRAIN!=NULL)
-      CACHE->display(TERRAIN->getminitile(),yes);
+      CACHE->display(TERRAIN->getminitile(),VISIBLE);
    }
 
 // check whether or not the layer is displayed
 BOOLINT minilayer::isdisplayed()
    {return(VISIBLE);}
+
+// check whether or not the layer is culled
+BOOLINT minilayer::isculled()
+   {
+   minicoord eye,ctr;
+   miniv3d nrm,dir;
+
+   eye=map_g2o(LPARAMS.eye);
+   ctr=map_g2o(getcenter());
+
+   nrm=rot_g2o(getnormal(),getcenter());
+   dir=eye.vec-ctr.vec;
+
+   if (dir*nrm<-LPARAMS.maxelev/LPARAMS.scale) return(TRUE);
+
+   return(FALSE);
+   }
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)

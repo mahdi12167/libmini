@@ -615,6 +615,17 @@ minilayer *miniterrain::getlayer(int n)
    else return(LAYER[n]);
    }
 
+// get the serial number of a terrain layer
+int miniterrain::getnum(minilayer *layer)
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      if (LAYER[n]==layer) return(n);
+
+   return(-1);
+   }
+
 // remove the nth terrain layer
 void miniterrain::remove(int n)
    {
@@ -655,7 +666,7 @@ double miniterrain::getheight(const minicoord &p)
       {
       nst=getnearest(p);
 
-      if (isdisplayed(nst))
+      if (isdisplayed(nst) && !isculled(nst))
          {
          elev=LAYER[nst]->getheight(p);
          if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nst]->len_g2l(elev)));
@@ -663,7 +674,7 @@ double miniterrain::getheight(const minicoord &p)
 
       for (n=0; n<LNUM; n++)
          if (n!=nst)
-            if (isdisplayed(n))
+            if (isdisplayed(n) && !isculled(n))
                {
                elev=LAYER[n]->getheight(p);
                if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
@@ -793,7 +804,7 @@ void miniterrain::render()
                                      lgl.x,lgl.y,lgl.z,0.5f*TPARAMS.lightbias,0.5f*TPARAMS.lightoffset);
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     lgl.x,lgl.y,lgl.z,TPARAMS.lightbias,TPARAMS.lightoffset);
+                                     lgl.x,lgl.y,lgl.z,TPARAMS.lightbias,TPARAMS.lightoffset); //!! check flat warp mode
                   }
                else
                   if (TPARAMS.usedimming)
@@ -844,7 +855,7 @@ void miniterrain::render_presea()
    minilayer::MINILAYER_PARAMS lparams;
 
    for (n=0; n<LNUM; n++)
-      if (isdisplayed(n))
+      if (isdisplayed(n) && !isculled(n))
          {
          LAYER[n]->get(lparams);
 
@@ -865,7 +876,7 @@ void miniterrain::render_postsea()
    minilayer::MINILAYER_PARAMS lparams;
 
    for (n=0; n<LNUM; n++)
-      if (isdisplayed(n))
+      if (isdisplayed(n) && !isculled(n))
          {
          LAYER[n]->get(lparams);
 
@@ -888,6 +899,13 @@ BOOLINT miniterrain::isdisplayed(int n)
    {
    if (n>=0 && n<LNUM) return(LAYER[n]->isdisplayed());
    return(FALSE);
+   }
+
+// check whether or not a layer is culled
+BOOLINT miniterrain::isculled(int n)
+   {
+   if (n>=0 && n<LNUM) return(LAYER[n]->isculled());
+   return(TRUE);
    }
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
@@ -937,7 +955,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
       nst=getnearest(o);
 
       // shoot a ray at the nearest layer
-      if (isdisplayed(nst)) dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl);
+      if (isdisplayed(nst) && !isculled(nst)) dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl);
       else dist=MAXFLOAT;
 
       // check for valid hit
@@ -949,7 +967,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
       else
          for (n=0; n<LNUM; n++)
             if (n!=nst)
-               if (isdisplayed(n))
+               if (isdisplayed(n) && !isculled(n))
                   {
                   // shoot a ray and get the traveled distance
                   dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl);

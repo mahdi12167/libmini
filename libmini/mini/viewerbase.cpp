@@ -33,7 +33,7 @@ viewerbase::viewerbase()
 
    PARAMS.usefog=FALSE;
    PARAMS.useshaders=FALSE;
-   PARAMS.usediffuse=TRUE;
+   PARAMS.usediffuse=FALSE;
    PARAMS.usevisshader=FALSE;
    PARAMS.usebathymap=FALSE;
    PARAMS.usecontours=FALSE;
