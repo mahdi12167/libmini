@@ -398,7 +398,7 @@ void viewerbase::render()
 
             EARTH->setmatrix(oglmtx);
 
-            lgl=getearth()->rot_g2i(PARAMS.lightdir,getearth()->getcenter());
+            lgl=getnull()->rot_g2i(PARAMS.lightdir,getnull()->getcenter());
 
             light[0]=lgl.x;
             light[1]=lgl.y;

@@ -797,14 +797,14 @@ void miniterrain::render()
             if (LAYER[n]->getterrain()!=NULL)
                if (TPARAMS.usediffuse)
                   {
-                  lgl=LAYER[getearth()]->rot_g2o(TPARAMS.lightdir,LAYER[getearth()]->getcenter());
+                  lgl=LAYER[getnull()]->rot_g2o(TPARAMS.lightdir,LAYER[getnull()]->getcenter());
 
                   if (TPARAMS.usedimming)
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
                                      lgl.x,lgl.y,lgl.z,0.5f*TPARAMS.lightbias,0.5f*TPARAMS.lightoffset);
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
-                                     lgl.x,lgl.y,lgl.z,TPARAMS.lightbias,TPARAMS.lightoffset); //!! check flat warp mode
+                                     lgl.x,lgl.y,lgl.z,TPARAMS.lightbias,TPARAMS.lightoffset);
                   }
                else
                   if (TPARAMS.usedimming)
