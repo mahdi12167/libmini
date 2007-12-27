@@ -33,6 +33,8 @@
 
 #define VIEWER_BOOST 50.0f
 
+#define VIEWER_ROTATION 0.1f
+
 #define VIEWER_FOGSTART 0.5f
 #define VIEWER_FOGDENSITY 0.5f;
 
@@ -693,7 +695,8 @@ void renderhud()
       if (sea==-MAXFLOAT) sea=0.0f;
 
       eye_llh=eye;
-      if (eye_llh.type==minicoord::MINICOORD_ECEF) eye_llh.convert2(minicoord::MINICOORD_LLH);
+      if (eye_llh.type==minicoord::MINICOORD_LINEAR) eye_llh.type=minicoord::MINICOORD_ECEF;
+      if (nst->getwarp()->getgeo()!=minicoord::MINICOORD_LINEAR) eye_llh.convert2(minicoord::MINICOORD_LLH);
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
                eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,turn,incline, // position/elevation and direction
@@ -781,6 +784,9 @@ void displayfunc()
    miniv3d dgl,ugl,rgl;
 
    minilayer *ref,*nst;
+
+   double lightdir;
+   miniv3d light;
 
    if (winwidth<=0 || winheight<=0) return;
 
@@ -879,12 +885,9 @@ void displayfunc()
    // update scene
    viewer->cache(eye,dir,up,(float)winwidth/winheight);
 
-   //!!
-   static double time=0.0;
-   time+=1.0/params->fps;
-   double earthrot=1.0/30;
-   double angle=2*PI*earthrot*time;
-   miniv3d light=miniv3d(sin(angle),cos(angle),0.0);
+   // update earth lighting
+   lightdir=2*PI*VIEWER_ROTATION*viewer->gettime();
+   light=miniv3d(sin(lightdir),cos(lightdir),0.0);
    params->lightdir=light;
    viewer->propagate();
 

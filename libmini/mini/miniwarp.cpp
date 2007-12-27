@@ -493,16 +493,19 @@ minicoord miniwarp::warp(const minicoord &p)
       if (TO==MINIWARP_GLOBAL)
          {
          p2=p;
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          p2.convert2(SYSGLB);
          }
       else if (TO==MINIWARP_DATA && SYSGLB!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
          }
       else
          {
          p1=p;
+         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=minicoord::MINICOORD_ECEF;
          if (SYSGLB!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
@@ -642,11 +645,11 @@ void miniwarp::update_mtx()
 
       // conversion 2 metric coordinates:
 
-      MTX_2PLN[0]=miniv4d(1.0/(SCALELOC*SCALINGLOC.x),0.0,0.0);
-      MTX_2PLN[1]=miniv4d(0.0,1.0/(SCALELOC*SCALINGLOC.y),0.0);
-      MTX_2PLN[2]=miniv4d(0.0,0.0,1.0);
+      MTX_2PLN[0]=miniv4d(1.0/SCALELOC,0.0,0.0);
+      MTX_2PLN[1]=miniv4d(0.0,1.0/SCALELOC,0.0);
+      MTX_2PLN[2]=miniv4d(0.0,0.0,1.0/SCALELOC);
 
-      mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,MTX_2PLN);
+      mlt_mtx(MTX_2PLN,INV_2CNT,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,MTX_2PLN);
 
       inv_mtx(INV_2PLN,MTX_2PLN);
 
@@ -890,6 +893,15 @@ void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3
 
    mlt_mtx(m,mtx4,mtx5,mtx6,mtx7);
    mlt_mtx(mtx,mtx1,mtx2,mtx3,m);
+   }
+
+// multiply eight 4x3 matrices
+void miniwarp::mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3],const miniv4d mtx7[3],const miniv4d mtx8[3])
+   {
+   miniv4d m[3];
+
+   mlt_mtx(m,mtx5,mtx6,mtx7,mtx8);
+   mlt_mtx(mtx,mtx1,mtx2,mtx3,mtx4,m);
    }
 
 // invert a 3x3 matrix
