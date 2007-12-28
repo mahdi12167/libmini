@@ -7,6 +7,121 @@
 #include "datacloud.h"
 
 // default constructor
+datahash::datahash(int size)
+   {
+   int i;
+
+   HASHSIZE=size;
+   HASHNUM=0;
+
+   HASHMAP=new datahash_type[HASHSIZE];
+
+   for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+   }
+
+// destructor
+datahash::~datahash()
+   {delete HASHMAP;}
+
+// insert item
+void datahash::insert(const char *str,void *elem)
+   {
+   int i;
+
+   datahash_type *hashmap;
+   int hashsize;
+
+   unsigned int id,id0;
+
+   if (HASHNUM>=HASHSIZE/2)
+      {
+      hashmap=HASHMAP;
+      hashsize=HASHSIZE;
+
+      HASHSIZE*=2;
+      HASHNUM=0;
+
+      HASHMAP=new datahash_type[HASHSIZE];
+
+      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+
+      for (i=0; i<hashsize; i++)
+         if (hashmap[i].str!=NULL) insert(hashmap[i].str,hashmap[i].elem);
+
+      delete hashmap;
+      }
+
+   id=id0=calcid(str);
+
+   while (HASHMAP[id].str!=NULL) id=(id+1)%HASHSIZE;
+
+   HASHMAP[id].str=str;
+   HASHMAP[id].id=id0;
+
+   HASHMAP[id].elem=elem;
+
+   HASHNUM++;
+   }
+
+// remove item
+void datahash::remove(const char *str)
+   {
+   unsigned int id,id0;
+
+   id=id0=calcid(str);
+
+   while (HASHMAP[id].str!=NULL)
+      {
+      if (HASHMAP[id].id==id0)
+         if (strcmp(HASHMAP[id].str,str)==0)
+            {
+            HASHMAP[id].str=NULL;
+            HASHNUM--;
+
+            break;
+            }
+
+      id=(id+1)%HASHSIZE;
+      }
+   }
+
+// check for item
+void *datahash::check(const char *str) const
+   {
+   unsigned int id,id0;
+
+   id=id0=calcid(str);
+
+   while (HASHMAP[id].str!=NULL)
+      {
+      if (HASHMAP[id].id==id0)
+         if (strcmp(str,HASHMAP[id].str)==0) return(HASHMAP[id].elem);
+
+      id=(id+1)%HASHSIZE;
+      }
+
+   return(NULL);
+   }
+
+// calculate injective item identifier
+unsigned int datahash::calcid(const char *str) const
+   {
+   static const unsigned int hashconst=271;
+
+   const char *ptr;
+
+   unsigned int hash;
+
+   ptr=str;
+
+   hash=0;
+
+   for (ptr=str; *ptr!='\0'; ptr++) hash=hashconst*(hash+*ptr)+hash/HASHSIZE;
+
+   return(hash);
+   }
+
+// default constructor
 datacloud::datacloud(miniload *terrain,int maxthreads)
    {
    int i;

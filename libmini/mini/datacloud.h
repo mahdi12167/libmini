@@ -12,6 +12,46 @@
 #include "database.h"
 #include "miniload.h"
 
+// a hash map for easy identification of existing items
+class datahash
+   {
+   public:
+
+   //! default constructor
+   datahash(int size);
+
+   //! destructor
+   ~datahash();
+
+   //! insert item
+   void datahash::insert(const char *str,void *elem);
+
+   //! remove item
+   void datahash::remove(const char *str);
+
+   //! check for item
+   void *datahash::check(const char *str) const;
+
+   protected:
+
+   struct datahash_struct
+      {
+      const char *str;
+      unsigned int id;
+
+      void *elem;
+      };
+
+   typedef datahash_struct datahash_type;
+
+   datahash_type *HASHMAP;
+   int HASHSIZE,HASHNUM;
+
+   private:
+
+   inline unsigned int calcid(const char *str) const;
+   };
+
 // one element of the tile cache
 struct tilecacheelem
   {

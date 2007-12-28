@@ -1166,18 +1166,17 @@ fileinfoelem *datacache::checkfilename(const char *filename)
    }
 
 // compute hash sum of a string
-unsigned int datacache::hashsum(const char *str)
+unsigned int datacache::hashsum(const char *str) const
    {
    static const unsigned int hashconst=271;
 
-   int i,j;
+   const char *ptr;
 
    unsigned int hash;
 
    hash=0;
-   j=strlen(str);
 
-   for (i=0; i<j; i++) hash=hashconst*(hash+str[i])+hash/HASHSIZE;
+   for (ptr=str; *ptr!='\0'; ptr++) hash=hashconst*(hash+*ptr)+hash/HASHSIZE;
 
    return(hash);
    }

@@ -186,7 +186,7 @@ class datacache
    void insertfilename(const char *filename,BOOLINT isavailable,BOOLINT islocal,BOOLINT istile,BOOLINT istexture,float minvalue=1.0f,float maxvalue=0.0f,int width=0,int height=0,BOOLINT tailinsert=FALSE,BOOLINT dontupdate=FALSE);
    fileinfoelem *checkfilename(const char *filename);
 
-   unsigned int hashsum(const char *str);
+   inline unsigned int hashsum(const char *str) const;
 
    private:
 
