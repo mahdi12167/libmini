@@ -62,8 +62,8 @@ viewerbase::viewerbase()
 
    PARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
-   PARAMS.lightbias=0.5f;   // lighting bias
-   PARAMS.lightoffset=0.5f; // lighting offset
+   PARAMS.lightbias=0.75f;   // lighting bias
+   PARAMS.lightoffset=0.25f; // lighting offset
 
    PARAMS.transbias=4.0f;     // transition bias between night and day
    PARAMS.transoffset=0.025f; // transition offset between night and day
