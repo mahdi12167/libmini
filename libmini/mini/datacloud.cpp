@@ -9,22 +9,20 @@
 // default constructor
 datahash::datahash(int size)
    {
-   int i;
+   HASHMAP=NULL;
 
    HASHSIZE=size;
    HASHNUM=0;
 
-   HASHMAP=new datahash_type[HASHSIZE];
-
-   for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+   HASHTRIES=10;
    }
 
 // destructor
 datahash::~datahash()
-   {delete HASHMAP;}
+   {if (HASHMAP!=NULL) delete HASHMAP;}
 
 // insert item
-void datahash::insert(const char *str,void *elem)
+void datahash::insert(const unsigned char *str,void *elem)
    {
    int i;
 
@@ -33,17 +31,22 @@ void datahash::insert(const char *str,void *elem)
 
    unsigned int id,id0;
 
-   if (HASHNUM>=HASHSIZE/2)
+   if (HASHMAP==NULL)
+      {
+      HASHMAP=new datahash_type[HASHSIZE];
+
+      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+      }
+
+   if (HASHNUM>HASHSIZE/2)
       {
       hashmap=HASHMAP;
       hashsize=HASHSIZE;
 
+      HASHMAP=NULL;
+
       HASHSIZE*=2;
       HASHNUM=0;
-
-      HASHMAP=new datahash_type[HASHSIZE];
-
-      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
 
       for (i=0; i<hashsize; i++)
          if (hashmap[i].str!=NULL) insert(hashmap[i].str,hashmap[i].elem);
@@ -53,7 +56,15 @@ void datahash::insert(const char *str,void *elem)
 
    id=id0=calcid(str);
 
-   while (HASHMAP[id].str!=NULL) id=(id+1)%HASHSIZE;
+   for (i=0; i<HASHTRIES; i++)
+      {
+      if (HASHMAP[id].str==NULL) break;
+
+      if (HASHMAP[id].id==id0)
+         if (strcmp((char *)HASHMAP[id].str,(char *)str)==0) return;
+
+      id=(id+1)%HASHSIZE;
+      }
 
    HASHMAP[id].str=str;
    HASHMAP[id].id=id0;
@@ -64,38 +75,44 @@ void datahash::insert(const char *str,void *elem)
    }
 
 // remove item
-void datahash::remove(const char *str)
+void datahash::remove(const unsigned char *str)
    {
+   int i;
+
    unsigned int id,id0;
 
    id=id0=calcid(str);
 
-   while (HASHMAP[id].str!=NULL)
+   for (i=0; i<HASHTRIES; i++)
       {
-      if (HASHMAP[id].id==id0)
-         if (strcmp(HASHMAP[id].str,str)==0)
-            {
-            HASHMAP[id].str=NULL;
-            HASHNUM--;
+      if (HASHMAP[id].str!=NULL)
+         if (HASHMAP[id].id==id0)
+            if (strcmp((char *)HASHMAP[id].str,(char *)str)==0)
+               {
+               HASHMAP[id].str=NULL;
+               HASHNUM--;
 
-            break;
-            }
+               break;
+               }
 
       id=(id+1)%HASHSIZE;
       }
    }
 
 // check for item
-void *datahash::check(const char *str) const
+void *datahash::check(const unsigned char *str) const
    {
+   int i;
+
    unsigned int id,id0;
 
    id=id0=calcid(str);
 
-   while (HASHMAP[id].str!=NULL)
+   for (i=0; i<HASHTRIES; i++)
       {
-      if (HASHMAP[id].id==id0)
-         if (strcmp(str,HASHMAP[id].str)==0) return(HASHMAP[id].elem);
+      if  (HASHMAP[id].str!=NULL)
+         if (HASHMAP[id].id==id0)
+            if (strcmp((char *)HASHMAP[id].str,(char *)str)==0) return(HASHMAP[id].elem);
 
       id=(id+1)%HASHSIZE;
       }
@@ -104,11 +121,11 @@ void *datahash::check(const char *str) const
    }
 
 // calculate injective item identifier
-unsigned int datahash::calcid(const char *str) const
+unsigned int datahash::calcid(const unsigned char *str) const
    {
    static const unsigned int hashconst=271;
 
-   const char *ptr;
+   const unsigned char *ptr;
 
    unsigned int hash;
 
@@ -118,7 +135,7 @@ unsigned int datahash::calcid(const char *str) const
 
    for (ptr=str; *ptr!='\0'; ptr++) hash=hashconst*(hash+*ptr)+hash/HASHSIZE;
 
-   return(hash);
+   return(hash%HASHSIZE);
    }
 
 // default constructor
@@ -136,8 +153,12 @@ datacloud::datacloud(miniload *terrain,int maxthreads)
    TILECACHE=TILECACHETAIL=NULL;
    TILECOUNT=PENDINGTILES=0;
 
+   TILECACHEMAP=new datahash(10000);
+
    JOBQUEUE=JOBQUEUETAIL=NULL;
    JOBCOUNT=0;
+
+   JOBQUEUEMAP=new datahash(1000);
 
    REQUEST_CALLBACK=NULL;
    CHECK_CALLBACK=NULL;
@@ -214,6 +235,9 @@ datacloud::~datacloud()
       tile=next;
       }
 
+   // delete tile cache hash map
+   delete TILECACHEMAP;
+
    jobqueueelem *job=JOBQUEUE;
 
    // delete job queue
@@ -224,6 +248,9 @@ datacloud::~datacloud()
       delete job;
       job=next;
       }
+
+   // delete job queue hash map
+   delete JOBQUEUEMAP;
    }
 
 // set callbacks for requesting tiles
@@ -748,6 +775,9 @@ void datacloud::inserttile(tilecacheelem *tile,tilecacheelem *newtile)
    // lock critical section
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
+   // insert tile into hash map
+   TILECACHEMAP->insert(newtile->tileid,(void *)newtile);
+
    // increase pending tile count
    if (!newtile->isavailable) PENDINGTILES++;
 
@@ -794,6 +824,9 @@ void datacloud::deletetile(tilecacheelem *tile)
    {
    // lock critical section
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
+
+   // delete tile from hash map
+   TILECACHEMAP->remove(tile->tileid);
 
    // decrease pending tile count
    if (!tile->isavailable) PENDINGTILES--;

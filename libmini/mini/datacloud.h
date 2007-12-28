@@ -24,19 +24,19 @@ class datahash
    ~datahash();
 
    //! insert item
-   void datahash::insert(const char *str,void *elem);
+   void datahash::insert(const unsigned char *str,void *elem);
 
    //! remove item
-   void datahash::remove(const char *str);
+   void datahash::remove(const unsigned char *str);
 
    //! check for item
-   void *datahash::check(const char *str) const;
+   void *datahash::check(const unsigned char *str) const;
 
    protected:
 
    struct datahash_struct
       {
-      const char *str;
+      const unsigned char *str;
       unsigned int id;
 
       void *elem;
@@ -47,9 +47,11 @@ class datahash
    datahash_type *HASHMAP;
    int HASHSIZE,HASHNUM;
 
+   int HASHTRIES;
+
    private:
 
-   inline unsigned int calcid(const char *str) const;
+   inline unsigned int calcid(const unsigned char *str) const;
    };
 
 // one element of the tile cache
@@ -227,10 +229,14 @@ class datacloud
    tilecacheelem *TILECACHE,*TILECACHETAIL;
    int TILECOUNT;
 
+   datahash *TILECACHEMAP;
+
    int PENDINGTILES;
 
    jobqueueelem *JOBQUEUE,*JOBQUEUETAIL;
    int JOBCOUNT;
+
+   datahash *JOBQUEUEMAP;
 
    void (*REQUEST_CALLBACK)(unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
    int (*CHECK_CALLBACK)(unsigned char *mapfile,int istexture,void *data);
