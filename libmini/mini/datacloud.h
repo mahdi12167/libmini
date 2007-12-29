@@ -24,19 +24,20 @@ class datahash
    ~datahash();
 
    //! insert item
-   void datahash::insert(const unsigned char *str,void *elem);
+   void datahash::insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem);
 
    //! remove item
-   void datahash::remove(const unsigned char *str);
+   void datahash::remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3);
 
    //! check for item
-   void *datahash::check(const unsigned char *str) const;
+   void *datahash::check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
 
    protected:
 
    struct datahash_struct
       {
       const unsigned char *str;
+      const unsigned char *str2,*str3;
       unsigned int id;
 
       void *elem;
@@ -52,6 +53,7 @@ class datahash
    private:
 
    inline unsigned int calcid(const unsigned char *str) const;
+   inline BOOLINT calceq(const int id,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
    };
 
 // one element of the tile cache

@@ -14,7 +14,7 @@ datahash::datahash(int size)
    HASHSIZE=size;
    HASHNUM=0;
 
-   HASHTRIES=10;
+   HASHTRIES=20;
    }
 
 // destructor
@@ -22,7 +22,7 @@ datahash::~datahash()
    {if (HASHMAP!=NULL) delete HASHMAP;}
 
 // insert item
-void datahash::insert(const unsigned char *str,void *elem)
+void datahash::insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem)
    {
    int i;
 
@@ -31,11 +31,13 @@ void datahash::insert(const unsigned char *str,void *elem)
 
    unsigned int id,id0;
 
+   if (str==NULL) ERRORMSG();
+
    if (HASHMAP==NULL)
       {
       HASHMAP=new datahash_type[HASHSIZE];
 
-      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=HASHMAP[i].str2=HASHMAP[i].str3=NULL;
       }
 
    if (HASHNUM>HASHSIZE/2)
@@ -49,33 +51,38 @@ void datahash::insert(const unsigned char *str,void *elem)
       HASHNUM=0;
 
       for (i=0; i<hashsize; i++)
-         if (hashmap[i].str!=NULL) insert(hashmap[i].str,hashmap[i].elem);
+         if (hashmap[i].str!=NULL) insert(hashmap[i].str,hashmap[i].str2,hashmap[i].str3,hashmap[i].elem);
 
       delete hashmap;
       }
 
-   id=id0=calcid(str);
+   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
+
+   hashmap=NULL;
 
    for (i=0; i<HASHTRIES; i++)
       {
-      if (HASHMAP[id].str==NULL) break;
-
-      if (HASHMAP[id].id==id0)
-         if (strcmp((char *)HASHMAP[id].str,(char *)str)==0) return;
+      if (HASHMAP[id].str==NULL) hashmap=&HASHMAP[id];
+      else
+         if (HASHMAP[id].id==id0)
+            if (calceq(id,str,str2,str3)) return;
 
       id=(id+1)%HASHSIZE;
       }
 
-   HASHMAP[id].str=str;
-   HASHMAP[id].id=id0;
+   if (hashmap!=NULL)
+      {
+      hashmap->str=str;
+      hashmap->id=id0;
 
-   HASHMAP[id].elem=elem;
+      hashmap->elem=elem;
 
-   HASHNUM++;
+      HASHNUM++;
+      }
    }
 
 // remove item
-void datahash::remove(const unsigned char *str)
+void datahash::remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3)
    {
    int i;
 
@@ -83,13 +90,13 @@ void datahash::remove(const unsigned char *str)
 
    if (HASHMAP==NULL) return;
 
-   id=id0=calcid(str);
+   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
 
    for (i=0; i<HASHTRIES; i++)
       {
       if (HASHMAP[id].str!=NULL)
          if (HASHMAP[id].id==id0)
-            if (strcmp((char *)HASHMAP[id].str,(char *)str)==0)
+            if (calceq(id,str,str2,str3))
                {
                HASHMAP[id].str=NULL;
                HASHNUM--;
@@ -102,7 +109,7 @@ void datahash::remove(const unsigned char *str)
    }
 
 // check for item
-void *datahash::check(const unsigned char *str) const
+void *datahash::check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
    {
    int i;
 
@@ -110,13 +117,13 @@ void *datahash::check(const unsigned char *str) const
 
    if (HASHMAP==NULL) return(NULL);
 
-   id=id0=calcid(str);
+   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
 
    for (i=0; i<HASHTRIES; i++)
       {
       if (HASHMAP[id].str!=NULL)
          if (HASHMAP[id].id==id0)
-            if (strcmp((char *)HASHMAP[id].str,(char *)str)==0) return(HASHMAP[id].elem);
+            if (calceq(id,str,str2,str3)) return(HASHMAP[id].elem);
 
       id=(id+1)%HASHSIZE;
       }
@@ -133,13 +140,33 @@ unsigned int datahash::calcid(const unsigned char *str) const
 
    unsigned int hash;
 
+   if (str==NULL) return(0);
+
    ptr=str;
 
    hash=0;
 
    for (ptr=str; *ptr!='\0'; ptr++) hash=hashconst*(hash+*ptr)+hash/HASHSIZE;
 
-   return(hash%HASHSIZE);
+   return(hash);
+   }
+
+// check for item equality
+BOOLINT datahash::calceq(const int id,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
+   {
+   if (strcmp((char *)HASHMAP[id].str,(char *)str)!=0) return(FALSE);
+
+   if (HASHMAP[id].str2==NULL && str2==NULL) return(TRUE);
+   if (HASHMAP[id].str2==NULL || str2==NULL) return(FALSE);
+
+   if (strcmp((char *)HASHMAP[id].str2,(char *)str2)!=0) return(FALSE);
+
+   if (HASHMAP[id].str3==NULL && str3==NULL) return(TRUE);
+   if (HASHMAP[id].str3==NULL || str3==NULL) return(FALSE);
+
+   if (strcmp((char *)HASHMAP[id].str3,(char *)str3)!=0) return(FALSE);
+
+   return(TRUE);
    }
 
 // default constructor
@@ -537,10 +564,16 @@ void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsign
 // check job for existance
 BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
-   jobqueueelem *job;
+   jobqueueelem *start,*job;
+
+   // check hash map for already existing job
+   //!!start=(jobqueueelem *)JOBQUEUEMAP->check(mapfile,texfile,fogfile);
+   start=NULL;
+
+   if (start==NULL) start=JOBQUEUE;
 
    // scan queue for already existing job
-   for (job=JOBQUEUE; job!=NULL; job=job->next)
+   for (job=start; job!=NULL; job=job->next)
       {
       // check column/row
       if (col!=job->col || row!=job->row) continue;
@@ -590,6 +623,15 @@ BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsi
 // insert a job into the queue after a given element
 void datacloud::insertjob(jobqueueelem *job,jobqueueelem *newjob)
    {
+   // insert job into hash map
+   //!!
+   /*
+   JOBQUEUEMAP->insert(newjob->hfield->tileid,
+                       (newjob->texture==NULL)?NULL:newjob->texture->tileid,
+                       (newjob->fogmap==NULL)?NULL:newjob->fogmap->tileid,
+                       (void *)newjob);
+   */
+
    // insert in empty queue
    if (JOBQUEUE==NULL)
       {
@@ -628,6 +670,14 @@ void datacloud::insertjob(jobqueueelem *job,jobqueueelem *newjob)
 // delete a job from the queue
 void datacloud::deletejob(jobqueueelem *job)
    {
+   // remove job from hash map
+   //!!
+   /*
+   JOBQUEUEMAP->remove(job->hfield->tileid,
+                       (job->texture==NULL)?NULL:job->texture->tileid,
+                       (job->fogmap==NULL)?NULL:job->fogmap->tileid);
+   */
+
    // decrease refcounts
    if (job->hfield!=NULL) job->hfield->refcount--;
    if (job->texture!=NULL) job->texture->refcount--;
@@ -754,7 +804,7 @@ tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLIN
    tilecacheelem *start,*tile;
 
    // check hash map for already existing tile
-   start=(tilecacheelem *)TILECACHEMAP->check(tileid);
+   start=(tilecacheelem *)TILECACHEMAP->check(tileid,NULL,NULL);
 
    if (start==NULL) start=TILECACHE;
 
@@ -785,7 +835,7 @@ void datacloud::inserttile(tilecacheelem *tile,tilecacheelem *newtile)
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
    // insert tile into hash map
-   TILECACHEMAP->insert(newtile->tileid,(void *)newtile);
+   TILECACHEMAP->insert(newtile->tileid,NULL,NULL,(void *)newtile);
 
    // increase pending tile count
    if (!newtile->isavailable) PENDINGTILES++;
@@ -835,7 +885,7 @@ void datacloud::deletetile(tilecacheelem *tile)
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
    // delete tile from hash map
-   TILECACHEMAP->remove(tile->tileid);
+   TILECACHEMAP->remove(tile->tileid,NULL,NULL);
 
    // decrease pending tile count
    if (!tile->isavailable) PENDINGTILES--;
