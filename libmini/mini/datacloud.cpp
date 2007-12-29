@@ -81,6 +81,8 @@ void datahash::remove(const unsigned char *str)
 
    unsigned int id,id0;
 
+   if (HASHMAP==NULL) return;
+
    id=id0=calcid(str);
 
    for (i=0; i<HASHTRIES; i++)
@@ -106,11 +108,13 @@ void *datahash::check(const unsigned char *str) const
 
    unsigned int id,id0;
 
+   if (HASHMAP==NULL) return(NULL);
+
    id=id0=calcid(str);
 
    for (i=0; i<HASHTRIES; i++)
       {
-      if  (HASHMAP[id].str!=NULL)
+      if (HASHMAP[id].str!=NULL)
          if (HASHMAP[id].id==id0)
             if (strcmp((char *)HASHMAP[id].str,(char *)str)==0) return(HASHMAP[id].elem);
 
@@ -747,10 +751,15 @@ tilecacheelem *datacloud::inserttile(unsigned char *tileid,int col,int row,BOOLI
 // check tile for existance
 tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
    {
-   tilecacheelem *tile;
+   tilecacheelem *start,*tile;
+
+   // check hash map for already existing tile
+   start=(tilecacheelem *)TILECACHEMAP->check(tileid);
+
+   if (start==NULL) start=TILECACHE;
 
    // scan cache for already existing tile
-   for (tile=TILECACHE; tile!=NULL; tile=tile->next)
+   for (tile=start; tile!=NULL; tile=tile->next)
       {
       // mismatch of tile spec
       if (col!=tile->col || row!=tile->row) continue;
