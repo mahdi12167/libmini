@@ -39,7 +39,7 @@ class databuf
    float maxvalue;
 
    //! indicator for external format
-   unsigned int extformat;
+   unsigned int extformat; // 0=plain, 1=JPEG, 2=PNG
 
    //! indicator for implicit format
    unsigned int implformat;

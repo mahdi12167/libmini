@@ -478,21 +478,26 @@ void datacache::loadvtbelevini()
                pathname=strcct(RID,VTBELEVPATH);
 
                // register each existent lod with data cache
-               for (lod=minlod; lod<=maxlod; lod++)
-                  {
-                  if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
-                  else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
+               if (minlod>0) // tile exists
+                  for (lod=minlod; lod<=maxlod; lod++)
+                     {
+                     if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
+                     else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
-                  fullname=strcct(pathname,filename);
-                  insertfilename(fullname,TRUE,LOCAL,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
-                  free(fullname);
-                  }
+                     fullname=strcct(pathname,filename);
+                     insertfilename(fullname,TRUE,LOCAL,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
+                     free(fullname);
+                     }
 
                // register first non-existent lod with data cache
-               if (minlod>1)
+               if (minlod==0 || minlod>1)
                   {
                   lod=minlod-1;
-                  snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
+
+                  if (lod>=0) snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
+                  else snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
+
+                  lod=max(lod,0);
 
                   fullname=strcct(pathname,filename);
                   insertfilename(fullname,FALSE,FALSE,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
@@ -595,21 +600,26 @@ void datacache::loadvtbimagini()
                pathname=strcct(RID,VTBIMAGPATH);
 
                // register each existent lod with data cache
-               for (lod=minlod; lod<=maxlod; lod++)
-                  {
-                  if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
-                  else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
+               if (minlod>0) // tile exists
+                  for (lod=minlod; lod<=maxlod; lod++)
+                     {
+                     if (lod==maxlod) snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
+                     else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
-                  fullname=strcct(pathname,filename);
-                  insertfilename(fullname,TRUE,LOCAL,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
-                  free(fullname);
-                  }
+                     fullname=strcct(pathname,filename);
+                     insertfilename(fullname,TRUE,LOCAL,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
+                     free(fullname);
+                     }
 
                // register first non-existent lod with data cache
-               if (minlod>1)
+               if (minlod==0 || minlod>1)
                   {
                   lod=minlod-1;
-                  snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
+
+                  if (lod>=0) snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
+                  else snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
+
+                  lod=max(lod,0);
 
                   fullname=strcct(pathname,filename);
                   insertfilename(fullname,FALSE,FALSE,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
