@@ -80,6 +80,18 @@ class databuf
    //! set LLWGS84 extents
    void set_LLWGS84extents(float left,float right,float bottom,float top);
 
+   //! set native extents
+   void set_corners(float sw_corner_x,float sw_corner_y,
+                    float se_corner_x,float se_corner_y,
+                    float nw_corner_x,float nw_corner_y,
+                    float ne_corner_x,float ne_corner_y);
+
+   //! set native extents
+   void set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
+                           float se_corner_x,float se_corner_y,
+                           float nw_corner_x,float nw_corner_y,
+                           float ne_corner_x,float ne_corner_y);
+
    //! native input/output
    void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB format
    int loaddata(const char *filename); // data is converted from MSB into native format

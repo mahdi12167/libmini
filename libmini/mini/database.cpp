@@ -201,6 +201,44 @@ void databuf::set_LLWGS84extents(float left,float right,float bottom,float top)
    LLWGS84_ney=top;
    }
 
+// set native corners
+void databuf::set_corners(float sw_corner_x,float sw_corner_y,
+                          float se_corner_x,float se_corner_y,
+                          float nw_corner_x,float nw_corner_y,
+                          float ne_corner_x,float ne_corner_y)
+   {
+   swx=sw_corner_x;
+   swy=sw_corner_y;
+
+   sex=se_corner_x;
+   sey=se_corner_y;
+
+   nwx=nw_corner_x;
+   nwy=nw_corner_y;
+
+   nex=ne_corner_x;
+   ney=ne_corner_y;
+   }
+
+// set LLWGS84 corners
+void databuf::set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
+                                 float se_corner_x,float se_corner_y,
+                                 float nw_corner_x,float nw_corner_y,
+                                 float ne_corner_x,float ne_corner_y)
+   {
+   LLWGS84_swx=sw_corner_x;
+   LLWGS84_swy=sw_corner_y;
+
+   LLWGS84_sex=se_corner_x;
+   LLWGS84_sey=se_corner_y;
+
+   LLWGS84_nwx=nw_corner_x;
+   LLWGS84_nwy=nw_corner_y;
+
+   LLWGS84_nex=ne_corner_x;
+   LLWGS84_ney=ne_corner_y;
+   }
+
 // write one float parameter
 void databuf::writeparam(char *tag,float v,FILE *file,int digits)
    {
