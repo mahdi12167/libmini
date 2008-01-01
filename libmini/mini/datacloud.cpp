@@ -13,122 +13,128 @@ datahash::datahash(int size)
 
    HASHSIZE=size;
    HASHNUM=0;
-
-   HASHTRIES=20;
    }
 
 // destructor
 datahash::~datahash()
-   {if (HASHMAP!=NULL) delete HASHMAP;}
+   {
+   int i;
+
+   datahash_ptr ptr,next;
+
+   if (HASHMAP!=NULL)
+      {
+      for (i=0; i<HASHSIZE; i++)
+         {
+         ptr=HASHMAP[i];
+
+         while (ptr!=NULL)
+            {
+            next=ptr->next;
+
+            delete ptr;
+            ptr=next;
+            }
+         }
+
+      delete HASHMAP;
+      }
+   }
 
 // insert item
 void datahash::insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem)
    {
    int i;
 
-   datahash_type *hashmap;
-   int hashsize;
+   unsigned int id;
 
-   unsigned int id,id0;
+   datahash_ptr ptr,item;
 
    if (str==NULL) ERRORMSG();
 
    if (HASHMAP==NULL)
       {
-      HASHMAP=new datahash_type[HASHSIZE];
+      HASHMAP=new datahash_ptr[HASHSIZE];
 
-      for (i=0; i<HASHSIZE; i++) HASHMAP[i].str=NULL;
+      for (i=0; i<HASHSIZE; i++) HASHMAP[i]=NULL;
       }
 
-   if (HASHNUM>HASHSIZE/2)
+   id=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
+
+   ptr=HASHMAP[id];
+
+   while (ptr!=NULL)
       {
-      hashmap=HASHMAP;
-      hashsize=HASHSIZE;
+      if (calceq(ptr,str,str2,str3)) return;
 
-      HASHMAP=NULL;
-
-      HASHSIZE*=2;
-      HASHNUM=0;
-
-      for (i=0; i<hashsize; i++)
-         if (hashmap[i].str!=NULL) insert(hashmap[i].str,hashmap[i].str2,hashmap[i].str3,hashmap[i].elem);
-
-      delete hashmap;
+      ptr=ptr->next;
       }
 
-   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
+   item=new datahash_type;
 
-   hashmap=NULL;
+   item->str=str;
+   item->str2=str2;
+   item->str3=str3;
 
-   for (i=0; i<HASHTRIES; i++)
-      {
-      if (HASHMAP[id].str==NULL) hashmap=&HASHMAP[id];
-      else
-         if (HASHMAP[id].id==id0)
-            if (calceq(id,str,str2,str3)) return;
+   item->elem=elem;
 
-      id=(id+1)%HASHSIZE;
-      }
+   HASHNUM++;
 
-   if (hashmap!=NULL)
-      {
-      hashmap->str=str;
-      hashmap->str2=str2;
-      hashmap->str3=str3;
-
-      hashmap->id=id0;
-
-      hashmap->elem=elem;
-
-      HASHNUM++;
-      }
+   item->next=HASHMAP[id];
+   HASHMAP[id]=item;
    }
 
 // remove item
 void datahash::remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3)
    {
-   int i;
+   unsigned int id;
 
-   unsigned int id,id0;
+   datahash_ptr ptr,last;
 
    if (HASHMAP==NULL) return;
 
-   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
+   id=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
 
-   for (i=0; i<HASHTRIES; i++)
+   ptr=HASHMAP[id];
+   last=NULL;
+
+   while (ptr!=NULL)
       {
-      if (HASHMAP[id].str!=NULL)
-         if (HASHMAP[id].id==id0)
-            if (calceq(id,str,str2,str3))
-               {
-               HASHMAP[id].str=NULL;
-               HASHNUM--;
+      if (calceq(ptr,str,str2,str3))
+         {
+         if (last==NULL) HASHMAP[id]=ptr->next;
+         else last->next=ptr->next;
 
-               break;
-               }
+         delete ptr;
 
-      id=(id+1)%HASHSIZE;
+         HASHNUM--;
+
+         break;
+         }
+
+      last=ptr;
+      ptr=ptr->next;
       }
    }
 
 // check for item
 void *datahash::check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
    {
-   int i;
+   unsigned int id;
 
-   unsigned int id,id0;
+   datahash_ptr ptr;
 
    if (HASHMAP==NULL) return(NULL);
 
-   id=id0=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
+   id=(calcid(str)+calcid(str2)+calcid(str3))%HASHSIZE;
 
-   for (i=0; i<HASHTRIES; i++)
+   ptr=HASHMAP[id];
+
+   while (ptr!=NULL)
       {
-      if (HASHMAP[id].str!=NULL)
-         if (HASHMAP[id].id==id0)
-            if (calceq(id,str,str2,str3)) return(HASHMAP[id].elem);
+      if (calceq(ptr,str,str2,str3)) return(ptr->elem);
 
-      id=(id+1)%HASHSIZE;
+      ptr=ptr->next;
       }
 
    return(NULL);
@@ -155,19 +161,19 @@ unsigned int datahash::calcid(const unsigned char *str) const
    }
 
 // check for item equality
-BOOLINT datahash::calceq(const int id,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
+BOOLINT datahash::calceq(const datahash_ptr ptr,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
    {
-   if (strcmp((char *)HASHMAP[id].str,(char *)str)!=0) return(FALSE);
+   if (strcmp((char *)ptr->str,(char *)str)!=0) return(FALSE);
 
-   if (HASHMAP[id].str2==NULL && str2==NULL) return(TRUE);
-   if (HASHMAP[id].str2==NULL || str2==NULL) return(FALSE);
+   if (ptr->str2==NULL && str2==NULL) return(TRUE);
+   if (ptr->str2==NULL || str2==NULL) return(FALSE);
 
-   if (strcmp((char *)HASHMAP[id].str2,(char *)str2)!=0) return(FALSE);
+   if (strcmp((char *)ptr->str2,(char *)str2)!=0) return(FALSE);
 
-   if (HASHMAP[id].str3==NULL && str3==NULL) return(TRUE);
-   if (HASHMAP[id].str3==NULL || str3==NULL) return(FALSE);
+   if (ptr->str3==NULL && str3==NULL) return(TRUE);
+   if (ptr->str3==NULL || str3==NULL) return(FALSE);
 
-   if (strcmp((char *)HASHMAP[id].str3,(char *)str3)!=0) return(FALSE);
+   if (strcmp((char *)ptr->str3,(char *)str3)!=0) return(FALSE);
 
    return(TRUE);
    }

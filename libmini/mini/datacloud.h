@@ -38,22 +38,22 @@ class datahash
       {
       const unsigned char *str;
       const unsigned char *str2,*str3;
-      unsigned int id;
 
       void *elem;
+
+      datahash_struct *next;
       };
 
    typedef datahash_struct datahash_type;
+   typedef datahash_type *datahash_ptr;
 
-   datahash_type *HASHMAP;
+   datahash_ptr *HASHMAP;
    int HASHSIZE,HASHNUM;
-
-   int HASHTRIES;
 
    private:
 
    inline unsigned int calcid(const unsigned char *str) const;
-   inline BOOLINT calceq(const int id,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
+   inline BOOLINT calceq(const datahash_ptr ptr,const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
    };
 
 // one element of the tile cache
