@@ -24,13 +24,13 @@ class datahash
    ~datahash();
 
    //! insert item
-   void datahash::insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem);
+   void insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem);
 
    //! remove item
-   void datahash::remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3);
+   void remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3);
 
    //! check for item
-   void *datahash::check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
+   void *check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
 
    protected:
 

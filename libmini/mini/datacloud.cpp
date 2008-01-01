@@ -573,59 +573,54 @@ void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsign
 // check job for existence
 BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
-   jobqueueelem *start,*job;
+   jobqueueelem *job;
 
    // check hash map for already existing job
-   start=(jobqueueelem *)JOBQUEUEMAP->check(mapfile,texfile,fogfile);
+   job=(jobqueueelem *)JOBQUEUEMAP->check(mapfile,texfile,fogfile);
 
-   if (start==NULL) start=JOBQUEUE;
+   if (job==NULL) return(FALSE);
 
-   // scan queue for already existing job
-   for (job=start; job!=NULL; job=job->next)
+   // check column/row
+   if (col!=job->col || row!=job->row) return(FALSE);
+
+   // check mapfile:
+
+   if (mapfile!=NULL && job->hfield==NULL) return(FALSE);
+   if (mapfile==NULL && job->hfield!=NULL) return(FALSE);
+
+   if (mapfile!=NULL)
       {
-      // check column/row
-      if (col!=job->col || row!=job->row) continue;
-
-      // check mapfile:
-
-      if (mapfile!=NULL && job->hfield==NULL) continue;
-      if (mapfile==NULL && job->hfield!=NULL) continue;
-
-      if (mapfile!=NULL)
-         {
-         if (hlod!=job->hlod) continue;
-         if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) continue;
-         }
-
-      // check texfile:
-
-      if (texfile!=NULL && job->texture==NULL) continue;
-      if (texfile==NULL && job->texture!=NULL) continue;
-
-      if (texfile!=NULL)
-         {
-         if (tlod!=job->tlod) continue;
-         if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) continue;
-         }
-
-      // check fogfile:
-
-      if (fogfile!=NULL && job->fogmap==NULL) continue;
-      if (fogfile==NULL && job->fogmap!=NULL) continue;
-
-      if (fogfile!=NULL)
-         if (strcmp((char *)fogfile,(char *)(job->fogmap->tileid))!=0) continue;
-
-      // job already exists
-      if (immediate || (!loprio && job->loprio))
-         {
-         deletejob(job);
-         return(FALSE);
-         }
-      else return(TRUE);
+      if (hlod!=job->hlod) return(FALSE);
+      if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) return(FALSE);
       }
 
-   return(FALSE);
+   // check texfile:
+
+   if (texfile!=NULL && job->texture==NULL) return(FALSE);
+   if (texfile==NULL && job->texture!=NULL) return(FALSE);
+
+   if (texfile!=NULL)
+      {
+      if (tlod!=job->tlod) return(FALSE);
+      if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) return(FALSE);
+      }
+
+   // check fogfile:
+
+   if (fogfile!=NULL && job->fogmap==NULL) return(FALSE);
+   if (fogfile==NULL && job->fogmap!=NULL) return(FALSE);
+
+   if (fogfile!=NULL)
+      if (strcmp((char *)fogfile,(char *)(job->fogmap->tileid))!=0) return(FALSE);
+
+   // job already exists
+   if (immediate || (!loprio && job->loprio))
+      {
+      deletejob(job);
+      return(FALSE);
+      }
+
+   return(TRUE);
    }
 
 // insert a job into the queue after a given element
@@ -803,31 +798,25 @@ tilecacheelem *datacloud::inserttile(unsigned char *tileid,int col,int row,BOOLI
 // check tile for existence
 tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
    {
-   tilecacheelem *start,*tile;
+   tilecacheelem *tile;
 
    // check hash map for already existing tile
-   start=(tilecacheelem *)TILECACHEMAP->check(tileid,NULL,NULL);
+   tile=(tilecacheelem *)TILECACHEMAP->check(tileid,NULL,NULL);
 
-   if (start==NULL) start=TILECACHE;
+   if (tile==NULL) return(NULL);
 
-   // scan cache for already existing tile
-   for (tile=start; tile!=NULL; tile=tile->next)
-      {
-      // mismatch of tile spec
-      if (col!=tile->col || row!=tile->row) continue;
-      if (istexture!=tile->istexture) continue;
-      if (lod!=tile->lod) continue;
+   // mismatch of tile spec
+   if (col!=tile->col || row!=tile->row) return(NULL);
+   if (istexture!=tile->istexture) return(NULL);
+   if (lod!=tile->lod) return(NULL);
 
-      // mismatch of tile identifier
-      if (strcmp((char *)tileid,(char *)(tile->tileid))!=0) continue;
+   // mismatch of tile identifier
+   if (strcmp((char *)tileid,(char *)(tile->tileid))!=0) return(NULL);
 
-      // upgrade lo prio to hi prio tile if necessary
-      if (immediate || (!loprio && tile->loprio)) tile->loprio=FALSE;
+   // upgrade lo prio to hi prio tile if necessary
+   if (immediate || (!loprio && tile->loprio)) tile->loprio=FALSE;
 
-      return(tile);
-      }
-
-   return(NULL);
+   return(tile);
    }
 
 // insert a tile into the cache after a given element
