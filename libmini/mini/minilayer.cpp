@@ -1131,7 +1131,7 @@ BOOLINT minilayer::isculled()
    nrm=rot_g2o(getnormal(),getcenter());
    dir=eye.vec-ctr.vec;
 
-   if (dir*nrm<-LPARAMS.maxelev/LPARAMS.scale) return(TRUE);
+   if (dir*nrm<-LPARAMS.extent[2]/2.0f) return(TRUE);
 
    return(FALSE);
    }
