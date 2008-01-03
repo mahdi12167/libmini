@@ -59,8 +59,10 @@ vdepend: depend
 	@-$(MAKEDEPEND) $(VSRCS) >>Makefile.d 2>/dev/null
 
 install:
+	@-echo "copying libraries to $(INSTALL)/lib"
 	@-$(CP) libMini*.a $(INSTALL)/lib
 	@-if [ ! -e $(INSTALL)/include/mini ]; then mkdir $(INSTALL)/include/mini; fi
+	@-echo "copying headers to $(INSTALL)/include/mini"
 	@-$(CP) *.h $(INSTALL)/include/mini
 
 clean:
