@@ -55,7 +55,7 @@ datacache::datacache(miniload *terrain)
    IMAGINFO_SIZEY=0.0f;
    IMAGINFO_MAXTEXSIZE=0;
 
-   HAS_ELEVINI=HAS_ELEVINI_GEO=FALSE;
+   HAS_ELEVINI=HAS_ELEVINI_GEO=HAS_ELEVINI_COORDSYS=FALSE;
 
    ELEVINI_TILESX=0;
    ELEVINI_TILESY=0;
@@ -71,7 +71,7 @@ datacache::datacache(miniload *terrain)
    ELEVINI_MINELEV=0.0f;
    ELEVINI_MAXELEV=0.0f;
 
-   HAS_IMAGINI=HAS_IMAGINI_GEO=FALSE;
+   HAS_IMAGINI=HAS_IMAGINI_GEO=HAS_IMAGINI_COORDSYS=FALSE;
 
    IMAGINI_TILESX=0;
    IMAGINI_TILESY=0;
@@ -520,11 +520,16 @@ void datacache::loadvtbelevini()
          // read north point of the tileset in Lat/Lon WGS84
          if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&ELEVINI_NORTHX_LLWGS84,&ELEVINI_NORTHY_LLWGS84)!=2) HAS_ELEVINI_GEO=FALSE;
 
-         // read LL coord sys info
-         if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&ELEVINI_COORDSYS_LL,&ELEVINI_COORDSYS_LLDATUM)!=2) HAS_ELEVINI_GEO=FALSE;
+         if (HAS_ELEVINI_GEO)
+            {
+            HAS_ELEVINI_COORDSYS=TRUE;
 
-         // read UTM coord sys info
-         if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&ELEVINI_COORDSYS_UTMZONE,&ELEVINI_COORDSYS_UTMDATUM)!=2) HAS_ELEVINI_GEO=FALSE;
+            // read LL coord sys info
+            if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&ELEVINI_COORDSYS_LL,&ELEVINI_COORDSYS_LLDATUM)!=2) HAS_ELEVINI_COORDSYS=FALSE;
+
+            // read UTM coord sys info
+            if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&ELEVINI_COORDSYS_UTMZONE,&ELEVINI_COORDSYS_UTMDATUM)!=2) HAS_ELEVINI_COORDSYS=FALSE;
+            }
          }
 
       fclose(file);
@@ -648,11 +653,16 @@ void datacache::loadvtbimagini()
          // read north point of the tileset in Lat/Lon WGS84
          if (fscanf(file,"NorthPoint_LLWGS84=(%g,%g)\n",&IMAGINI_NORTHX_LLWGS84,&IMAGINI_NORTHY_LLWGS84)!=2) HAS_IMAGINI_GEO=FALSE;
 
-         // read LL coord sys info
-         if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&IMAGINI_COORDSYS_LL,&IMAGINI_COORDSYS_LLDATUM)!=2) HAS_IMAGINI_GEO=FALSE;
+         if (HAS_IMAGINI_GEO)
+            {
+            HAS_IMAGINI_COORDSYS=TRUE;
 
-         // read UTM coord sys info
-         if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&IMAGINI_COORDSYS_UTMZONE,&IMAGINI_COORDSYS_UTMDATUM)!=2) HAS_IMAGINI_GEO=FALSE;
+            // read LL coord sys info
+            if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&IMAGINI_COORDSYS_LL,&IMAGINI_COORDSYS_LLDATUM)!=2) HAS_IMAGINI_COORDSYS=FALSE;
+
+            // read UTM coord sys info
+            if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&IMAGINI_COORDSYS_UTMZONE,&IMAGINI_COORDSYS_UTMDATUM)!=2) HAS_IMAGINI_COORDSYS=FALSE;
+            }
          }
 
       fclose(file);
