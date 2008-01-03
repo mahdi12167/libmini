@@ -62,7 +62,7 @@ if ($rule == "vdeps") then
 endif
 
 if ($rule == "install") then
-   if ($option1 != "") set INSTALL=$option
+   if ($option1 != "") set INSTALL=$option1
    exec make INSTALL="$INSTALL" install
 endif
 
