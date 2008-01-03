@@ -1,4 +1,4 @@
-#!/bin/csh -f
+#!/bin/tcsh -f
 
 set INSTALL_INC=".."
 set INSTALL_LIB="../mini"
