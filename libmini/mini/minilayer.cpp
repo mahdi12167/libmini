@@ -392,6 +392,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    float outparams[5];
    float outscale[3];
 
+   float as2m[2];
+
    char *elevtilesetfile,*imagtilesetfile;
    char *vtbelevinifile,*vtbimaginifile;
 
@@ -506,6 +508,24 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
          {
          LPARAMS.centerGEO=minicoord(miniv3d(3600.0*TILECACHE->getelevini_centerx_llwgs84(),3600.0*TILECACHE->getelevini_centery_llwgs84(),0.0),minicoord::MINICOORD_LLH);
          LPARAMS.northGEO=minicoord(miniv3d(3600.0*TILECACHE->getelevini_northx_llwgs84(),3600.0*TILECACHE->getelevini_northy_llwgs84(),0.0),minicoord::MINICOORD_LLH);
+
+         if (TILECACHE->haselevini_coordsys())
+            {
+            if (TILECACHE->getelevini_coordsys_ll()!=0)
+               {
+               if (TILECACHE->getelevini_coordsys_lldatum()!=3) ERRORMSG(); // WGS84 support only
+
+               // get original data coordinates as LL
+               LPARAMS.offsetDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_centerx(),3600*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
+               LPARAMS.extentDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_sizex(),3600*TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LLH);
+               }
+            else if (TILECACHE->getelevini_coordsys_utmzone()!=0)
+               {
+               // get original data coordinates as UTM
+               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
+               }
+            }
          }
       else
          {
@@ -555,6 +575,18 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       delete TERRAIN;
       delete TILECACHE;
       return(FALSE);
+      }
+
+   // adjust scaling of vtb exported LL data
+   if (!TILECACHE->haselevinfo() && LPARAMS.offsetDAT.type==minicoord::MINICOORD_LLH)
+      {
+      miniutm::arcsec2meter(LPARAMS.offsetDAT.vec.y,as2m);
+
+      outparams[0]*=as2m[0];
+      outparams[1]*=as2m[1];
+
+      outscale[0]*=as2m[0];
+      outscale[1]*=as2m[1];
       }
 
    // set extent of tileset
