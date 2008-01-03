@@ -536,6 +536,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    {
    miniv4d v1;
    minicoord p1,p2;
+   double scale;
 
    if ((FROM!=MINIWARP_GLOBAL && TO!=MINIWARP_GLOBAL) || SYSGLB==minicoord::MINICOORD_LINEAR)
       {
@@ -544,8 +545,11 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
       }
    else
       {
+      if (SYSGLB==minicoord::MINICOORD_ECEF) scale=1000.0;
+      else scale=1.0;
+
       p1=warp(p);
-      p2=warp(minicoord(miniv3d(p.vec)+v,p.type,p.utm_zone,p.utm_datum));
+      p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
       v1=p2.vec-p1.vec;
       v1.normalize();
       return(v1);
