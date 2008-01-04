@@ -472,9 +472,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use PNM loader
       LPARAMS.usepnm=TRUE;
 
+      // update maximum elevation
+      LPARAMS.maxelev=fmax(fmin(TILECACHE->getelevinfo_maxelev(),LPARAMS.maxelev),1.0f);
+
       // get original data coordinates
       LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
-      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*fmax(TILECACHE->getelevinfo_maxelev(),1.0f)),minicoord::MINICOORD_LLH);
+      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevinfo_sizex(),TILECACHE->getelevinfo_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LLH);
 
       // get geo-referenced coordinates
       LPARAMS.centerGEO=LPARAMS.offsetDAT;
@@ -499,9 +502,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       // use DB loader
       LPARAMS.usepnm=FALSE;
 
+      // update maximum elevation
+      LPARAMS.maxelev=fmax(fmin(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),LPARAMS.maxelev),1.0f);
+
       // get original data coordinates
       LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
-      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LINEAR);
+      LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LINEAR);
 
       // get geo-referenced coordinates
       if (TILECACHE->haselevini_geo())
@@ -517,13 +523,13 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
                // get original data coordinates as LL
                LPARAMS.offsetDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_centerx(),3600*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
-               LPARAMS.extentDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_sizex(),3600*TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_LLH);
+               LPARAMS.extentDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_sizex(),3600*TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LLH);
                }
             else if (TILECACHE->getelevini_coordsys_utmzone()!=0)
                {
                // get original data coordinates as UTM
                LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
-               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*fmax(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),1.0f)),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
                }
             }
          }
