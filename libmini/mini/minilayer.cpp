@@ -811,6 +811,8 @@ void minilayer::setreference(minilayer *ref)
 
    if (!LOADED) return;
 
+   if (ref==REFERENCE) return;
+
    REFERENCE=ref;
 
    if (WARP!=NULL)
