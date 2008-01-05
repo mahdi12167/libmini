@@ -171,8 +171,8 @@ class miniwarp
    //! destructor
    ~miniwarp();
 
-   //! define metric coordinates
-   void def_metric(const minicoord::MINICOORD sysMTC);
+   //! define tileset coordinates
+   void def_tileset(const minicoord::MINICOORD sysTLS);
 
    //! define data coordinates
    void def_data(const minicoord bboxDAT[2]);
@@ -213,8 +213,8 @@ class miniwarp
    //! get actual scaling factor
    double getscale();
 
-   //! get metric coordinate system
-   minicoord::MINICOORD getmtc();
+   //! get tileset coordinate system
+   minicoord::MINICOORD gettls();
 
    //! get data coordinate system
    minicoord::MINICOORD getdat();
@@ -251,7 +251,7 @@ class miniwarp
    miniv3d MTX_ZERO[3];
    miniv3d MTX_ONE[3];
 
-   minicoord::MINICOORD SYSMTC;
+   minicoord::MINICOORD SYSTLS;
 
    minicoord BBOXDAT[2];
 

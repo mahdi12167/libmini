@@ -1040,12 +1040,11 @@ void minilayer::updatecoords()
    WARP_O2G=*WARP;
    WARP_O2G.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_METRIC);
 
-   //!!
-   WARP_R2I=*WARP;
-   WARP_R2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
+   WARP_G2T=*WARP;
+   WARP_G2T.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_TILESET);
 
-   WARP_I2R=*WARP;
-   WARP_I2R.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_T2G=*WARP;
+   WARP_T2G.setwarp(miniwarp::MINIWARP_TILESET,miniwarp::MINIWARP_METRIC);
    }
 
 // get extent of tileset

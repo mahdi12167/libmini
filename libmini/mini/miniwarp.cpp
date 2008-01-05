@@ -247,8 +247,7 @@ miniwarp::miniwarp()
    MTX_ONE[1]=miniv3d(0.0,1.0,0.0);
    MTX_ONE[2]=miniv3d(0.0,0.0,1.0);
 
-   //!! MTC -> TLS, metric -> tileset
-   SYSMTC=minicoord::MINICOORD_LINEAR;
+   SYSTLS=minicoord::MINICOORD_LINEAR;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
@@ -313,13 +312,13 @@ miniwarp::miniwarp()
 // destructor
 miniwarp::~miniwarp() {}
 
-// define metric coordinates
-void miniwarp::def_metric(const minicoord::MINICOORD sysMTC)
+// define tileset coordinates
+void miniwarp::def_tileset(const minicoord::MINICOORD sysTLS)
    {
-   if (sysMTC==minicoord::MINICOORD_LLH) ERRORMSG();
-   if (sysMTC==minicoord::MINICOORD_UTM) ERRORMSG();
+   if (sysTLS==minicoord::MINICOORD_LLH) ERRORMSG();
+   if (sysTLS==minicoord::MINICOORD_UTM) ERRORMSG();
 
-   SYSMTC=sysMTC;
+   SYSTLS=sysTLS;
 
    update_mtx();
    }
@@ -430,9 +429,9 @@ double miniwarp::getscale()
 minicoord::MINICOORD miniwarp::getdat()
    {return(SYSDAT);}
 
-// get metric coordinate system
-minicoord::MINICOORD miniwarp::getmtc()
-   {return(SYSMTC);}
+// get tileset coordinate system
+minicoord::MINICOORD miniwarp::gettls()
+   {return(SYSTLS);}
 
 // get geo-graphic center point
 minicoord miniwarp::getcenter()
@@ -472,10 +471,10 @@ minicoord miniwarp::warp(const minicoord &p)
    minicoord p1,p2;
 
    if (FROM==MINIWARP_DATA)
-      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
+      if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         p2.convert2(SYSMTC);
+         p2.convert2(SYSTLS);
          }
       else if (TO==MINIWARP_DATA)
          {
@@ -490,32 +489,32 @@ minicoord miniwarp::warp(const minicoord &p)
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else if (FROM==MINIWARP_TILESET)
-      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
+      if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSMTC;
-         p2.convert2(SYSMTC);
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSTLS;
+         p2.convert2(SYSTLS);
          }
-      else if (TO==MINIWARP_DATA && SYSMTC!=minicoord::MINICOORD_LINEAR)
+      else if (TO==MINIWARP_DATA && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSMTC;
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSTLS;
          p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
          }
       else
          {
          p1=p;
-         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSMTC;
-         if (SYSMTC!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
+         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else
-      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
+      if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
          v1=miniv4d(p.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,UTMZONE,UTMDATUM);
-         p2.convert2(SYSMTC);
+         p2.convert2(SYSTLS);
          }
       else if (TO==MINIWARP_DATA)
          {
@@ -539,7 +538,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
 
    static const double scale=1000.0;
 
-   if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSMTC==minicoord::MINICOORD_LINEAR)
+   if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSTLS==minicoord::MINICOORD_LINEAR)
       {
       v1=miniv4d(v,1.0);
       return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
@@ -657,9 +656,9 @@ void miniwarp::update_mtx()
 
       // conversion 2 tileset coordinates:
 
-      if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSMTC=minicoord::MINICOORD_LINEAR;
+      if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSTLS=minicoord::MINICOORD_LINEAR;
 
-      if (SYSMTC==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
+      if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);

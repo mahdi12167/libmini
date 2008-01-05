@@ -272,8 +272,8 @@ class minilayer
    minicoord map_o2l(const minicoord &p) {return(WARP_O2L.warp(p));}
    minicoord map_g2o(const minicoord &p) {return(WARP_G2O.warp(p));}
    minicoord map_o2g(const minicoord &p) {return(WARP_O2G.warp(p));}
-   minicoord map_g2r(const minicoord &p) {return(WARP_G2R.warp(p));}
-   minicoord map_r2g(const minicoord &p) {return(WARP_R2G.warp(p));}
+   minicoord map_g2t(const minicoord &p) {return(WARP_G2T.warp(p));}
+   minicoord map_t2g(const minicoord &p) {return(WARP_T2G.warp(p));}
 
    //! rotate vector
    miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(WARP_G2L.invtra(v,p));}
@@ -284,8 +284,8 @@ class minilayer
    miniv3d rot_o2l(const miniv3d &v,const minicoord &p) {return(WARP_O2L.invtra(v,p));}
    miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(WARP_G2O.invtra(v,p));}
    miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(WARP_O2G.invtra(v,p));}
-   miniv3d rot_g2r(const miniv3d &v,const minicoord &p) {return(WARP_G2R.invtra(v,p));}
-   miniv3d rot_r2g(const miniv3d &v,const minicoord &p) {return(WARP_R2G.invtra(v,p));}
+   miniv3d rot_g2t(const miniv3d &v,const minicoord &p) {return(WARP_G2T.invtra(v,p));}
+   miniv3d rot_t2g(const miniv3d &v,const minicoord &p) {return(WARP_T2G.invtra(v,p));}
 
    //! map length
    double len_g2l(double l) {return(l*WARP_G2L.getscale());}
@@ -296,8 +296,8 @@ class minilayer
    double len_o2l(double l) {return(l*WARP_O2L.getscale());}
    double len_g2o(double l) {return(l*WARP_G2O.getscale());}
    double len_o2g(double l) {return(l*WARP_O2G.getscale());}
-   double len_g2r(double l) {return(l*WARP_G2R.getscale());}
-   double len_r2g(double l) {return(l*WARP_R2G.getscale());}
+   double len_g2t(double l) {return(l*WARP_G2T.getscale());}
+   double len_t2g(double l) {return(l*WARP_T2G.getscale());}
 
    protected:
 
@@ -311,8 +311,8 @@ class minilayer
    miniwarp WARP_O2L;
    miniwarp WARP_G2O;
    miniwarp WARP_O2G;
-   miniwarp WARP_G2R;
-   miniwarp WARP_R2G;
+   miniwarp WARP_G2T;
+   miniwarp WARP_T2G;
 
    private:
 
