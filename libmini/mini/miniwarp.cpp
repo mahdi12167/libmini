@@ -247,7 +247,8 @@ miniwarp::miniwarp()
    MTX_ONE[1]=miniv3d(0.0,1.0,0.0);
    MTX_ONE[2]=miniv3d(0.0,0.0,1.0);
 
-   SYSGLB=minicoord::MINICOORD_LINEAR;
+   //!! MTC -> TLS, metric -> tileset
+   SYSMTC=minicoord::MINICOORD_LINEAR;
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
@@ -312,13 +313,13 @@ miniwarp::miniwarp()
 // destructor
 miniwarp::~miniwarp() {}
 
-// define global coordinates
-void miniwarp::def_global(const minicoord::MINICOORD sysGLB)
+// define metric coordinates
+void miniwarp::def_metric(const minicoord::MINICOORD sysMTC)
    {
-   if (sysGLB==minicoord::MINICOORD_LLH) ERRORMSG();
-   if (sysGLB==minicoord::MINICOORD_UTM) ERRORMSG();
+   if (sysMTC==minicoord::MINICOORD_LLH) ERRORMSG();
+   if (sysMTC==minicoord::MINICOORD_UTM) ERRORMSG();
 
-   SYSGLB=sysGLB;
+   SYSMTC=sysMTC;
 
    update_mtx();
    }
@@ -429,9 +430,9 @@ double miniwarp::getscale()
 minicoord::MINICOORD miniwarp::getdat()
    {return(SYSDAT);}
 
-// get global coordinate system
-minicoord::MINICOORD miniwarp::getglb()
-   {return(SYSGLB);}
+// get metric coordinate system
+minicoord::MINICOORD miniwarp::getmtc()
+   {return(SYSMTC);}
 
 // get geo-graphic center point
 minicoord miniwarp::getcenter()
@@ -461,7 +462,6 @@ double miniwarp::getscaleloc()
 minicoord miniwarp::warp(const miniv4d &p)
    {
    if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,UTMZONE,UTMDATUM)));
-   if (FROM==MINIWARP_GLOBAL) return(warp(minicoord(p,SYSGLB)));
    else return(warp(minicoord(p,minicoord::MINICOORD_LINEAR)));
    }
 
@@ -472,10 +472,10 @@ minicoord miniwarp::warp(const minicoord &p)
    minicoord p1,p2;
 
    if (FROM==MINIWARP_DATA)
-      if (TO==MINIWARP_GLOBAL && SYSGLB!=minicoord::MINICOORD_LINEAR)
+      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         p2.convert2(SYSGLB);
+         p2.convert2(SYSMTC);
          }
       else if (TO==MINIWARP_DATA)
          {
@@ -489,33 +489,33 @@ minicoord miniwarp::warp(const minicoord &p)
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
-   else if (FROM==MINIWARP_GLOBAL)
-      if (TO==MINIWARP_GLOBAL)
+   else if (FROM==MINIWARP_TILESET)
+      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         p2.convert2(SYSGLB);
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSMTC;
+         p2.convert2(SYSMTC);
          }
-      else if (TO==MINIWARP_DATA && SYSGLB!=minicoord::MINICOORD_LINEAR)
+      else if (TO==MINIWARP_DATA && SYSMTC!=minicoord::MINICOORD_LINEAR)
          {
          p2=p;
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSMTC;
          p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
          }
       else
          {
          p1=p;
-         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=minicoord::MINICOORD_ECEF;
-         if (SYSGLB!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSMTC;
+         if (SYSMTC!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else
-      if (TO==MINIWARP_GLOBAL && SYSGLB!=minicoord::MINICOORD_LINEAR)
+      if (TO==MINIWARP_TILESET && SYSMTC!=minicoord::MINICOORD_LINEAR)
          {
          v1=miniv4d(p.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,UTMZONE,UTMDATUM);
-         p2.convert2(SYSGLB);
+         p2.convert2(SYSMTC);
          }
       else if (TO==MINIWARP_DATA)
          {
@@ -536,18 +536,16 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    {
    miniv4d v1;
    minicoord p1,p2;
-   double scale;
 
-   if ((FROM!=MINIWARP_GLOBAL && TO!=MINIWARP_GLOBAL) || SYSGLB==minicoord::MINICOORD_LINEAR)
+   static const double scale=1000.0;
+
+   if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSMTC==minicoord::MINICOORD_LINEAR)
       {
       v1=miniv4d(v,1.0);
       return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
       }
    else
       {
-      if (SYSGLB==minicoord::MINICOORD_ECEF) scale=1000.0;
-      else scale=1.0;
-
       p1=warp(p);
       p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
       v1=p2.vec-p1.vec;
@@ -657,13 +655,11 @@ void miniwarp::update_mtx()
 
       inv_mtx(INV_2PLN,MTX_2PLN);
 
-      // conversion 2 global coordinates:
+      // conversion 2 tileset coordinates:
 
-      if (SYSGLB!=minicoord::MINICOORD_LINEAR &&
-          SYSDAT==minicoord::MINICOORD_LINEAR)
-         SYSGLB=minicoord::MINICOORD_LINEAR;
+      if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSMTC=minicoord::MINICOORD_LINEAR;
 
-      if (SYSGLB==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
+      if (SYSMTC==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);
@@ -713,7 +709,7 @@ void miniwarp::update_wrp()
             case MINIWARP_CENTER: mlt_mtx(MTX,INV_2DAT,MTX); break;
             case MINIWARP_PLAIN: mlt_mtx(MTX,INV_2CNT,MTX); break;
             case MINIWARP_METRIC: mlt_mtx(MTX,INV_2PLN,MTX); break;
-            case MINIWARP_GLOBAL: mlt_mtx(MTX,INV_2MET,MTX); break;
+            case MINIWARP_TILESET: mlt_mtx(MTX,INV_2MET,MTX); break;
             }
    }
 
@@ -730,9 +726,9 @@ void miniwarp::update_invtra()
    {
    cpy_mtx(INVTRA,MTX);
 
-   // take care of global coordinates
-   if (TO==MINIWARP_GLOBAL) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
-   else if (FROM==MINIWARP_GLOBAL) mlt_mtx(INVTRA,INVTRA,INV_2MET);
+   // take care of tileset coordinates
+   if (TO==MINIWARP_TILESET) mlt_mtx(INVTRA,MTX_2MET,INVTRA);
+   else if (FROM==MINIWARP_TILESET) mlt_mtx(INVTRA,INVTRA,INV_2MET);
 
    // construct the inverse transpose matrix
    inv_mtx(INVTRA,INVTRA);

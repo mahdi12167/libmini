@@ -149,7 +149,7 @@ class miniwarp
    //! global coordinate systems
    enum MINIWARP
       {
-      MINIWARP_GLOBAL=0,     // global coordinates
+      MINIWARP_TILESET=0,    // tileset coordinates
       MINIWARP_METRIC=1,     // metric coordinates
       MINIWARP_PLAIN=2,      // plain coordinates
       MINIWARP_CENTER=3,     // center coordinates
@@ -171,8 +171,8 @@ class miniwarp
    //! destructor
    ~miniwarp();
 
-   //! define global coordinates
-   void def_global(const minicoord::MINICOORD sysGLB);
+   //! define metric coordinates
+   void def_metric(const minicoord::MINICOORD sysMTC);
 
    //! define data coordinates
    void def_data(const minicoord bboxDAT[2]);
@@ -213,8 +213,8 @@ class miniwarp
    //! get actual scaling factor
    double getscale();
 
-   //! get global coordinate system
-   minicoord::MINICOORD getglb();
+   //! get metric coordinate system
+   minicoord::MINICOORD getmtc();
 
    //! get data coordinate system
    minicoord::MINICOORD getdat();
@@ -251,7 +251,7 @@ class miniwarp
    miniv3d MTX_ZERO[3];
    miniv3d MTX_ONE[3];
 
-   minicoord::MINICOORD SYSGLB;
+   minicoord::MINICOORD SYSMTC;
 
    minicoord BBOXDAT[2];
 

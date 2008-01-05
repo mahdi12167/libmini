@@ -849,11 +849,11 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    minicoord center,north;
    minicoord center0,north0;
 
-   // define global coordinates:
+   // define tileset coordinates:
 
    if (WARP==NULL) WARP=new miniwarp();
 
-   WARP->def_global(minicoord::MINICOORD_ECEF);
+   WARP->def_tileset(minicoord::MINICOORD_ECEF);
 
    // define data coordinates:
 
@@ -1015,16 +1015,16 @@ void minilayer::updatecoords()
    // create warp object for each exposed coordinate transformation:
 
    WARP_G2L=*WARP;
-   WARP_G2L.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_REFERENCE);
+   WARP_G2L.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_REFERENCE);
 
    WARP_L2G=*WARP;
-   WARP_L2G.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_GLOBAL);
+   WARP_L2G.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_METRIC);
 
    WARP_G2I=*WARP;
-   WARP_G2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
+   WARP_G2I.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_INTERNAL);
 
    WARP_I2G=*WARP;
-   WARP_I2G.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_I2G.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_METRIC);
 
    WARP_L2O=*WARP;
    WARP_L2O.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_FINAL);
@@ -1033,10 +1033,17 @@ void minilayer::updatecoords()
    WARP_O2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_REFERENCE);
 
    WARP_G2O=*WARP;
-   WARP_G2O.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_FINAL);
+   WARP_G2O.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
 
    WARP_O2G=*WARP;
-   WARP_O2G.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_GLOBAL);
+   WARP_O2G.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_METRIC);
+
+   //!!
+   WARP_R2I=*WARP;
+   WARP_R2I.setwarp(miniwarp::MINIWARP_GLOBAL,miniwarp::MINIWARP_INTERNAL);
+
+   WARP_I2R=*WARP;
+   WARP_I2R.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_GLOBAL);
    }
 
 // get extent of tileset
