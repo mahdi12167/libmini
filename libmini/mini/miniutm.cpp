@@ -466,7 +466,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    double a,as,t,ts,n,r,b,bs;      // temporary variables
 
    static const int iterations=10;
-   static const double maxerror=1E-20;
+   static const float maxerror=1E-20f;
 
    x-=false_easting;
    y-=false_northing;
@@ -479,7 +479,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
       delta_phi=(con+e1*sin(2.0*phi)-e2*sin(4.0*phi)+e3*sin(6.0*phi))/e0-phi;
       phi+=delta_phi;
 
-      if (FABS(delta_phi)<maxerror) break;
+      if (fabs(delta_phi)<maxerror) break;
       }
 
    sin_phi=sin(phi);

@@ -292,7 +292,7 @@ void initwindow(int width,int height)
 void initview(minicoord e,double a,double p,double dh=0.0)
    {
    minicoord el;
-   double elev;
+   float elev;
 
    minilayer *ref,*nst;
 
@@ -307,7 +307,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    el=nst->map_g2l(eye);
 
-   if (elev!=-MAXFLOAT) el.vec.z=FMAX(el.vec.z,ref->len_g2l(elev+hover+dh));
+   if (elev!=-MAXFLOAT) el.vec.z=fmax(el.vec.z,ref->len_g2l(elev+hover+dh));
 
    eye=nst->map_l2g(el);
 
@@ -842,7 +842,7 @@ void displayfunc()
    else if (coef<-1.0) coef=-1.0;
 
    aez=-coef*gravity;
-   aez*=FMAX(1.0-FABS(dez/maxspeed),0.0);
+   aez*=fmax(1.0-fabs(dez/maxspeed),0.0);
 
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);

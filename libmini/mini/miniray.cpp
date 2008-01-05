@@ -706,7 +706,7 @@ int miniray::intersect(const miniv3d &o,const miniv3d &d,
                        const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
                        miniv3d *tuv)
    {
-   static const double EPSILON=0.000001;
+   static const float epsilon=0.000001f;
 
    double t,u,v;
    miniv3d edge1,edge2,tvec,pvec,qvec;
@@ -723,7 +723,7 @@ int miniray::intersect(const miniv3d &o,const miniv3d &d,
    det=edge1*pvec;
 
    // cull triangles with determinant near zero
-   if (FABS(det)<EPSILON) return(0);
+   if (fabs(det)<epsilon) return(0);
 
    // calculate inverse determinant
    inv_det=1.0/det;
