@@ -797,6 +797,8 @@ void displayfunc()
    ref=viewer->getreference();
    nst=viewer->getnearest(eye);
 
+   viewer->getterrain()->setreference(viewer->getterrain()->getnum(nst));
+
    el=nst->map_g2l(eye);
 
    sina=sin(2.0*PI/360.0*turn);
