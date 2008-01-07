@@ -329,6 +329,7 @@ class minilayer
    double SCALE;
 
    minilayer *REFERENCE;
+   miniv4d MTXREF[3];
 
    BOOLINT LOADED;
 

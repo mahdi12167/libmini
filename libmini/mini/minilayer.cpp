@@ -163,6 +163,7 @@ minilayer::minilayer(minicache *cache)
    SCALE=LPARAMS.scale;
 
    REFERENCE=NULL;
+   MTXREF[0]=MTXREF[1]=MTXREF[2]=miniv4d(0.0);
 
    POINTS=NULL;
 
@@ -811,8 +812,6 @@ void minilayer::setreference(minilayer *ref)
 
    if (!LOADED) return;
 
-   if (ref==REFERENCE) return;
-
    REFERENCE=ref;
 
    if (WARP!=NULL)
@@ -828,9 +827,18 @@ void minilayer::setreference(minilayer *ref)
             if (REFERENCE->getwarp()!=NULL)
                REFERENCE->getwarp()->get_invaff(mtxREF);
 
-      WARP->def_2reference(mtxREF);
+      if (mtxREF[0]!=MTXREF[0] ||
+          mtxREF[1]!=MTXREF[1] ||
+          mtxREF[2]!=MTXREF[2])
+         {
+         WARP->def_2reference(mtxREF);
 
-      updatecoords();
+         updatecoords();
+
+         MTXREF[0]=mtxREF[0];
+         MTXREF[1]=mtxREF[1];
+         MTXREF[2]=mtxREF[2];
+         }
       }
    }
 
