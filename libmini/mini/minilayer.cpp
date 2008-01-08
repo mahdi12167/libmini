@@ -855,9 +855,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    miniv4d mtxFLT[3];
    miniv4d invFLT[3];
 
-   double scale;
    minicoord center,north;
    minicoord center0,north0;
+
+   double radius,scale;
 
    // define tileset coordinates:
 
@@ -907,7 +908,9 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
             north0=REFERENCE->getwarp()->getnorth();
             north0.convert2(minicoord::MINICOORD_ECEF);
 
-            if (center0.vec.getLength()>0.0)
+            radius=center0.vec.getLength();
+
+            if (radius>0.0)
                {
                pointwarp(center0,north0,center0,1.0,mtxFLT);
                miniwarp::inv_mtx(invFLT,mtxFLT);
@@ -922,13 +925,13 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   {
                   center=minicoord(miniv3d(invFLT[0]*center.vec,invFLT[1]*center.vec,invFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
-                  if (center.vec.z>miniutm::EARTH_radius*(1.0f-LPARAMS.vicinity)) center.vec.z=miniutm::EARTH_radius;
+                  if (center.vec.z>radius*(1.0f-LPARAMS.vicinity)) center.vec.z=radius;
                   else center0.vec*=-1.0;
 
                   center=minicoord(miniv3d(mtxFLT[0]*center.vec,mtxFLT[1]*center.vec,mtxFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
                   north=minicoord(miniv3d(invFLT[0]*north.vec,invFLT[1]*north.vec,invFLT[2]*north.vec),minicoord::MINICOORD_ECEF);
-                  if (north.vec.z>miniutm::EARTH_radius*(1.0f-LPARAMS.vicinity)) north.vec.z=miniutm::EARTH_radius;
+                  if (north.vec.z>radius*(1.0f-LPARAMS.vicinity)) north.vec.z=radius;
                   north=minicoord(miniv3d(mtxFLT[0]*north.vec,mtxFLT[1]*north.vec,mtxFLT[2]*north.vec),minicoord::MINICOORD_ECEF);
 
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
@@ -939,7 +942,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                else
                   {
                   center=minicoord(miniv3d(invFLT[0]*center.vec,invFLT[1]*center.vec,invFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
-                  center.vec.z=miniutm::EARTH_radius;
+                  center.vec.z=radius;
                   center=minicoord(miniv3d(mtxFLT[0]*center.vec,mtxFLT[1]*center.vec,mtxFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
