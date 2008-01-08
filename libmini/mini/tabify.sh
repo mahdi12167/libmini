@@ -21,11 +21,11 @@ if ("$option" == "-T") set tabify=4
 
 if ($tabify == 0) exit 1
 
-set rmctrlm='s/\\0x0d\\0x0a$/\\0x0a/'
+set rmctrlm='s/\0x0d\0x0a$/\0x0a/'
 if ($HOSTTYPE == "i386-cygwin") set rmctrlm=''
 
-set rmspc='s/[ \\0x09]*$//'
-set rmspctab='s/ *\\0x09/\\0x09/g'
+set rmspc='s/[ 	]*$//'
+set rmspctab='s/ *	/	/g'
 
 if ($file == "") then
    if ($tabify == 1) then
@@ -44,25 +44,25 @@ else
    if ($tabify == 1) then
       echo untabifying $file
       sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ':l\
-                                                       s/^\( *\)\0x09/\1    /\
+                                                       s/^\( *\)	/\1    /\
                                                        t l' <$file >$file.tmp
    endif
    if ($tabify == 2) then
       echo tabifying $file
       sed -e "$rmctrlm" -e "$rmspc" -e ':l\
-                                        s/^\(\0x09*\)    /\1\t/\
+                                        s/^\(	*\)    /\1	/\
                                         t l' <$file >$file.tmp
    endif
    if ($tabify == 3) then
       echo untabifying $file
       sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ':l\
-                                                       s/^\( *\)\0x09/\1        /\
+                                                       s/^\( *\)	/\1        /\
                                                        t l' <$file >$file.tmp
    endif
    if ($tabify == 4) then
       echo tabifying $file
       sed -e "$rmctrlm" -e "$rmspc" -e ':l\
-                                        s/^\(\t*\)        /\1\0x09/\
+                                        s/^\(	*\)        /\1	/\
                                         t l' <$file >$file.tmp
    endif
    mv -f $file.tmp $file
