@@ -49,15 +49,17 @@ miniterrain::miniterrain()
    TPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
    TPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
 
+   TPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
+
    TPARAMS.range=0.001f;           // texture paging range relative to far plane
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
    TPARAMS.overlap=0.001f;         // tile overlap in texels
 
-   TPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
-
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+
+   TPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
 
    TPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    TPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
@@ -299,13 +301,15 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.reduction1=TPARAMS.reduction1;
          lparams.reduction2=TPARAMS.reduction2;
 
+         lparams.cullslope=TPARAMS.cullslope;
+
          lparams.range=TPARAMS.range;
          lparams.radius=TPARAMS.radius;
          lparams.dropoff=TPARAMS.dropoff;
 
-         lparams.genmipmaps=TPARAMS.genmipmaps;
-
          lparams.sealevel=TPARAMS.sealevel;
+
+         lparams.genmipmaps=TPARAMS.genmipmaps;
 
          lparams.autocompress=TPARAMS.autocompress;
          lparams.lod0uncompressed=TPARAMS.lod0uncompressed;

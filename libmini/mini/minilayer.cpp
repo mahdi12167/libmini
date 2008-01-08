@@ -95,13 +95,15 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
    LPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
 
+   LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
+
    LPARAMS.range=0.001f;           // texture paging range relative to far plane
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
-   LPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
-
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+
+   LPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
 
    LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    LPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
@@ -552,11 +554,11 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // use .db file numbering starting with zero for compatibility with vtp
    if (!LPARAMS.usepnm) TERRAIN->configure_usezeronumbering(1);
 
-   // configure on-the-fly generation of mipmaps
-   TERRAIN->configure_mipmaps(LPARAMS.genmipmaps);
-
    // select either PNM or DB loader
    TERRAIN->configure_usepnm(LPARAMS.usepnm);
+
+   // configure on-the-fly generation of mipmaps
+   TERRAIN->configure_mipmaps(LPARAMS.genmipmaps);
 
    // initialize libcurl
    curlinit(1,0,LPARAMS.proxyname,LPARAMS.proxyport);
@@ -625,9 +627,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // enable fast initialization
    TERRAIN->setfastinit(LPARAMS.fastinit,LPARAMS.avgd2value);
-
-   // define resolution reduction of invisible tiles
-   TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
 
    // attach tileset to render cache
    CACHE->attach(TERRAIN->getminitile());
@@ -1147,6 +1146,9 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    di=rot_g2i(d,e);
    ui=rot_g2i(u,e);
 
+   // define resolution reduction of invisible tiles
+   TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
+
    // update vertex arrays
    TERRAIN->draw(LPARAMS.res,
                  ei.vec.x,ei.vec.y,ei.vec.z,
@@ -1179,6 +1181,8 @@ BOOLINT minilayer::isdisplayed()
 // check whether or not the layer is culled
 BOOLINT minilayer::isculled()
    {
+   double height;
+
    minicoord eye,ctr;
    miniv3d nrm,dir;
 
@@ -1188,7 +1192,10 @@ BOOLINT minilayer::isculled()
    nrm=rot_g2o(getnormal(),getcenter());
    dir=eye.vec-ctr.vec;
 
-   if (dir*nrm<-LPARAMS.extent[2]/2.0f) return(TRUE);
+   height=-LPARAMS.extent[2]/2.0f;
+   height-=LPARAMS.cullslope*dir.getLength();
+
+   if (dir*nrm<height) return(TRUE);
 
    return(FALSE);
    }

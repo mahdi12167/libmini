@@ -96,16 +96,18 @@ class minilayer
       float nearp;              //  near plane (meters)
       float farp;               //  far plane (meters)
 
-      float reduction1;         //+ reduction parameter #1 for invisible tiles
-      float reduction2;         //+ reduction parameter #2 for invisible tiles
+      float reduction1;         //  reduction parameter #1 for invisible tiles
+      float reduction2;         //  reduction parameter #2 for invisible tiles
+
+      float cullslope;          // slope under which the terrain is culled
 
       float range;              //* texture paging range relative to far plane
       float radius;             //* non-linear kick-in distance relative to texture range
       float dropoff;            //* non-linear lod dropoff at kick-in distance
 
-      BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps
-
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
+
+      BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps
 
       BOOLINT autocompress;     //+ auto-compress raw textures with S3TC
       BOOLINT lod0uncompressed; //+ keep LOD0 textures uncompressed
