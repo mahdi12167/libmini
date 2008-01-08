@@ -21,11 +21,16 @@ if ("$option" == "-T") set tabify=4
 
 if ($tabify == 0) exit 1
 
-set rmctrlm='s/\0x0d\0x0a$/\0x0a/'
-if ($HOSTTYPE == "i386-cygwin") set rmctrlm=''
+set cr='\0x0a'
+set lf='\0x0d'
 
-set rmspc='s/[ 	]*$//'
-set rmspctab='s/ *	/	/g'
+set tab='	'
+
+set rmctrlm="s/$cr$lf"'$'"/$lf/"
+if ($HOSTTYPE == "i386-cygwin") set rmctrlm=""
+
+set rmspc="s/[ $tab]*"'$'"//"
+set rmspctab="s/ *$tab/$tab/g"
 
 if ($file == "") then
    if ($tabify == 1) then
@@ -43,27 +48,27 @@ if ($file == "") then
 else
    if ($tabify == 1) then
       echo untabifying $file
-      sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ':l\
-                                                       s/^\( *\)	/\1    /\
-                                                       t l' <$file >$file.tmp
+      sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ":l\
+                                                       s/^\( *\)$tab/\1    /\
+                                                       t l" <$file >$file.tmp
    endif
    if ($tabify == 2) then
       echo tabifying $file
-      sed -e "$rmctrlm" -e "$rmspc" -e ':l\
-                                        s/^\(	*\)    /\1	/\
-                                        t l' <$file >$file.tmp
+      sed -e "$rmctrlm" -e "$rmspc" -e ":l\
+                                        s/^\($tab*\)    /\1$tab/\
+                                        t l" <$file >$file.tmp
    endif
    if ($tabify == 3) then
       echo untabifying $file
-      sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ':l\
-                                                       s/^\( *\)	/\1        /\
-                                                       t l' <$file >$file.tmp
+      sed -e "$rmctrlm" -e "$rmspc" -e "$rmspctab" -e ":l\
+                                                       s/^\( *\)$tab/\1        /\
+                                                       t l" <$file >$file.tmp
    endif
    if ($tabify == 4) then
       echo tabifying $file
-      sed -e "$rmctrlm" -e "$rmspc" -e ':l\
-                                        s/^\(	*\)        /\1	/\
-                                        t l' <$file >$file.tmp
+      sed -e "$rmctrlm" -e "$rmspc" -e ":l\
+                                        s/^\($tab*\)        /\1$tab/\
+                                        t l" <$file >$file.tmp
    endif
    mv -f $file.tmp $file
 endif
