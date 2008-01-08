@@ -175,6 +175,7 @@ class viewerbase
    threadbase *THREADBASE;
    curlbase *CURLBASE;
 
+   void initOGL();
    void inithooks();
 
    char *getfile(const char *src_file,const char *altpath=NULL);

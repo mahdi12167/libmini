@@ -167,6 +167,16 @@ void viewerbase::set(VIEWER_PARAMS &params)
 void viewerbase::propagate()
    {set(PARAMS);}
 
+// initialize the OpenGL wrapper
+void viewerbase::initOGL()
+   {
+   // turn on hw-accelerated OpenGL mipmap generation
+   miniOGL::configure_generatemm(1);
+
+   // turn off on-the-fly OpenGL texture compression
+   miniOGL::configure_compression(0);
+   }
+
 #ifndef NOSQUISH
 
 // S3TC auto-compression hook
@@ -210,6 +220,9 @@ void viewerbase::inithooks()
 BOOLINT viewerbase::load(const char *url,
                          BOOLINT loadopts,BOOLINT reset)
    {
+   // initialize the OpenGL wrapper
+   initOGL();
+
    // initialize the terrain hooks
    inithooks();
 
@@ -224,6 +237,9 @@ BOOLINT viewerbase::load(const char *url,
 BOOLINT viewerbase::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                          BOOLINT loadopts,BOOLINT reset)
    {
+   // initialize the OpenGL wrapper
+   initOGL();
+
    // initialize the terrain hooks
    inithooks();
 

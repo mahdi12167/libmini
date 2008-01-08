@@ -514,12 +514,6 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // turn on ray object
    CACHE->configure_enableray(1);
 
-   // turn on hw-accelerated OpenGL mipmap generation
-   miniOGL::configure_generatemm(1);
-
-   // turn off on-the-fly OpenGL texture compression
-   miniOGL::configure_compression(0);
-
    // success
    return(TRUE);
    }
