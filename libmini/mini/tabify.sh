@@ -29,7 +29,6 @@ if ($file == "") then
       find . \( -name \*.cpp -o -name \*.h \) -exec tabify.sh -t {} \; -exec tabify.sh -u {} \;
    endif
 else
-
    if ($tabify != 0) then
       echo tabifying $file
 
