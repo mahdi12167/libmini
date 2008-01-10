@@ -65,13 +65,16 @@ viewerbase::viewerbase()
    PARAMS.lightbias=0.75f;   // lighting bias
    PARAMS.lightoffset=0.25f; // lighting offset
 
-   PARAMS.transbias=4.0f;     // transition bias between night and day
-   PARAMS.transoffset=0.025f; // transition offset between night and day
+   PARAMS.transbias=4.0f;    // transition bias between night and day
+   PARAMS.transoffset=0.01f; // transition offset between night and day
 
    PARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
    PARAMS.backname="EarthNight.ppm"; // file name of back earth texture
 
    // image conversion parameters:
+
+   // parameter set for "better-quality" compressed images: quality=75 denoising=OFF -> ratio 1:20
+   // parameter set for "less-size" compressed images: quality=50 denoising=ON -> ratio 1:40
 
    PARAMS.conversion_params.jpeg_quality=75.0f; // jpeg quality in percent
 
