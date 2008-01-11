@@ -288,16 +288,17 @@ void drawstring(float width,
          }
       else
          {
-         if (islower(*str))
+         if (*str>='a' && *str<='z')
             {
             glPushMatrix();
             glTranslatef(0.2f,0.0f,0.0f);
             glScalef(0.6f,0.75f,1.0f);
+
+            drawletter(hue,sat,val,alpha,*str);
+
+            glPopMatrix();
             }
-
-         drawletter(hue,sat,val,alpha,*str);
-
-         if (islower(*str)) glPopMatrix();
+         else drawletter(hue,sat,val,alpha,*str);
 
          glTranslatef(1.0f,0.0f,0.0f);
          }

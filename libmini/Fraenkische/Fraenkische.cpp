@@ -385,8 +385,11 @@ void keypressed(unsigned char key)
       {
       if (treemode==treemode1) treemode=treemode2;
       else treemode=treemode1;
-      trees->setmode(treemode);
-      upd=1;
+      if (trees!=NULL)
+         {
+         trees->setmode(treemode);
+         upd=1;
+         }
       }
    else if (key=='g')
       {
