@@ -981,6 +981,8 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
    int prevdepth;
 
+   if (cnt==0) return(vtx);
+
    initwglprocs();
 
    initstate();
@@ -1489,6 +1491,8 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
    unsigned char *perturbation;
    int psize,pwidth,pheight;
 
+   if (cnt==0) return(vtx);
+
    initwglprocs();
 
    initstate();
@@ -1766,7 +1770,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    unsigned char *image;
    int width,height,components;
 
-   if (lambda<=0.0f) return(vtx);
+   if (lambda<=0.0f || cnt==0) return(vtx);
 
    initwglprocs();
 

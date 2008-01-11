@@ -979,7 +979,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    miniv4d mtx[3];
    double oglmtx[16];
 
-   if (lambda<=0.0f) return(vtx);
+   if (lambda<=0.0f || cnt==0) return(vtx);
 
    initglexts();
    initwglprocs();
@@ -1080,6 +1080,9 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
       glDisable(GL_VERTEX_PROGRAM_ARB);
+
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
+      glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
       mtxpop();
       mtxproj();
