@@ -984,107 +984,110 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    initglexts();
    initwglprocs();
 
-   if (PRISMCACHE_VTXPROGID==0)
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
       {
-      glGenProgramsARB(1,&vtxprogid);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-      glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-      PRISMCACHE_VTXPROGID=vtxprogid;
+      if (PRISMCACHE_VTXPROGID==0)
+         {
+         glGenProgramsARB(1,&vtxprogid);
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
+         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
+         PRISMCACHE_VTXPROGID=vtxprogid;
+         }
+
+      if (PRISMCACHE_FRAGPROGID==0)
+         {
+         glGenProgramsARB(1,&fragprogid);
+         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
+         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog),fragprog);
+         PRISMCACHE_FRAGPROGID=fragprogid;
+         }
+
+      initstate();
+
+      enableblending();
+
+      mtxpush();
+      mtxproj();
+      mtxpush();
+      mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
+      mtxmodel();
+
+      glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+
+      invtra[0].x=mvmtx[0];
+      invtra[1].x=mvmtx[1];
+      invtra[2].x=mvmtx[2];
+      invtra[0].y=mvmtx[4];
+      invtra[1].y=mvmtx[5];
+      invtra[2].y=mvmtx[6];
+      invtra[0].z=mvmtx[8];
+      invtra[1].z=mvmtx[9];
+      invtra[2].z=mvmtx[10];
+
+      miniwarp::inv_mtx(invtra,invtra);
+      miniwarp::tra_mtx(invtra,invtra);
+
+      light=miniv3d(lx,ly,lz);
+      light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
+      light.normalize();
+
+      if (warp!=NULL)
+         {
+         warp->getwarp(mtx);
+
+         oglmtx[0]=mtx[0].x;
+         oglmtx[4]=mtx[0].y;
+         oglmtx[8]=mtx[0].z;
+         oglmtx[12]=mtx[0].w;
+
+         oglmtx[1]=mtx[1].x;
+         oglmtx[5]=mtx[1].y;
+         oglmtx[9]=mtx[1].z;
+         oglmtx[13]=mtx[1].w;
+
+         oglmtx[2]=mtx[2].x;
+         oglmtx[6]=mtx[2].y;
+         oglmtx[10]=mtx[2].z;
+         oglmtx[14]=mtx[2].w;
+
+         oglmtx[3]=0.0;
+         oglmtx[7]=0.0;
+         oglmtx[11]=0.0;
+         oglmtx[15]=1.0;
+
+         mtxmult(oglmtx);
+         }
+
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISMCACHE_VTXPROGID);
+      glEnable(GL_VERTEX_PROGRAM_ARB);
+
+      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
+
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISMCACHE_FRAGPROGID);
+      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f);
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f);
+
+      color(pr,pg,pb,pa);
+
+      glVertexPointer(4,GL_FLOAT,0,cache);
+      glEnableClientState(GL_VERTEX_ARRAY);
+      glDrawArrays(GL_TRIANGLES,0,3*cnt);
+      glDisableClientState(GL_VERTEX_ARRAY);
+
+      vtx+=3*cnt;
+
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
+      glDisable(GL_VERTEX_PROGRAM_ARB);
+
+      mtxpop();
+      mtxproj();
+      mtxpop();
+      mtxmodel();
+
+      exitstate();
       }
-
-   if (PRISMCACHE_FRAGPROGID==0)
-      {
-      glGenProgramsARB(1,&fragprogid);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,fragprogid);
-      glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog),fragprog);
-      PRISMCACHE_FRAGPROGID=fragprogid;
-      }
-
-   initstate();
-
-   enableblending();
-
-   mtxpush();
-   mtxproj();
-   mtxpush();
-   mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
-   mtxmodel();
-
-   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-
-   invtra[0].x=mvmtx[0];
-   invtra[1].x=mvmtx[1];
-   invtra[2].x=mvmtx[2];
-   invtra[0].y=mvmtx[4];
-   invtra[1].y=mvmtx[5];
-   invtra[2].y=mvmtx[6];
-   invtra[0].z=mvmtx[8];
-   invtra[1].z=mvmtx[9];
-   invtra[2].z=mvmtx[10];
-
-   miniwarp::inv_mtx(invtra,invtra);
-   miniwarp::tra_mtx(invtra,invtra);
-
-   light=miniv3d(lx,ly,lz);
-   light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
-   light.normalize();
-
-   if (warp!=NULL)
-      {
-      warp->getwarp(mtx);
-
-      oglmtx[0]=mtx[0].x;
-      oglmtx[4]=mtx[0].y;
-      oglmtx[8]=mtx[0].z;
-      oglmtx[12]=mtx[0].w;
-
-      oglmtx[1]=mtx[1].x;
-      oglmtx[5]=mtx[1].y;
-      oglmtx[9]=mtx[1].z;
-      oglmtx[13]=mtx[1].w;
-
-      oglmtx[2]=mtx[2].x;
-      oglmtx[6]=mtx[2].y;
-      oglmtx[10]=mtx[2].z;
-      oglmtx[14]=mtx[2].w;
-
-      oglmtx[3]=0.0;
-      oglmtx[7]=0.0;
-      oglmtx[11]=0.0;
-      oglmtx[15]=1.0;
-
-      mtxmult(oglmtx);
-      }
-
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISMCACHE_VTXPROGID);
-   glEnable(GL_VERTEX_PROGRAM_ARB);
-
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
-
-   glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISMCACHE_FRAGPROGID);
-   glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f);
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f);
-
-   color(pr,pg,pb,pa);
-
-   glVertexPointer(4,GL_FLOAT,0,cache);
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glDrawArrays(GL_TRIANGLES,0,3*cnt);
-   glDisableClientState(GL_VERTEX_ARRAY);
-
-   vtx+=3*cnt;
-
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-   glDisable(GL_VERTEX_PROGRAM_ARB);
-
-   mtxpop();
-   mtxproj();
-   mtxpop();
-   mtxmodel();
-
-   exitstate();
 
 #endif
 
