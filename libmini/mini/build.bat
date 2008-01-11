@@ -4,7 +4,7 @@
 @IF '%PROJECT%' == '' (set PROJECT="libMini")
 @IF '%PROJECT%' == 'viewer' (set PROJECT="libMini Viewer")
 
-@IF EXIST "%ProgramFiles(x86)%" ( set "PFDIR=%ProgramFiles(x86)%" ) ELSE ( set "PFDIR=%ProgramFiles%")
+@IF EXIST "%ProgramFiles(x86)%" (set "PFDIR=%ProgramFiles(x86)%") ELSE ( set "PFDIR=%ProgramFiles%")
 @call "%PFDIR%\Microsoft Visual Studio 8\Common7\Tools\vsvars32.bat"
 
 @echo building %PROJECT% with DEBUG configuration
