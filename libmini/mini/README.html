@@ -171,8 +171,9 @@ Within the libMini package the following files are contained:<p>
    <tr><td>SkyDome.ppm:        </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
    <tr><td>Cone.db:            </td><td>a sample DB volume (implicitly defined cone)</td></tr>
    <tr><td>freeglut.dll/.lib:  </td><td>Windows GLUT libraries for building the example and the libMini Viewer</td></tr>
-   <tr><td>*.sln/.vcproj:      </td><td>Windows Visual C++ project files</td></tr>
+   <tr><td>*.sln/.vcproj:      </td><td>Windows Visual C++ solution and project files</td></tr>
    <tr><td>Makefile:           </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
+   <tr><td>build.bat:          </td><td>the Windows build batch file</td></tr>
    <tr><td>build.sh:           </td><td>the Unix build script</td></tr>
 </table><p>
 
@@ -227,10 +228,11 @@ a rather positive sense.<p>
 The build.sh shell script compiles the library on Irix, Linux and
 MacOS X. Simply type "./build.sh" in your Unix shell. To install the
 library and the necessary include files in /usr/local on your Unix
-machine type "./build.sh install" as superuser.<p>
+machine type "./build.sh install" as a super-user.<p>
 
-The library also compiles on Windows using the supplied VC++ 7.1
-project files or by using cygwin in the following way:<p>
+The library also compiles on Windows using the supplied VC++ 7.1 or
+8.0 project files. From the Windows command line use the "build.bat"
+batch file (requires VC++ 8.0) or use cygwin in the following way:<p>
 
 <ul>
    <li>Run the <a href="http://cygwin.com">cygwin</a> installer program</li>
