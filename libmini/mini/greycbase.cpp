@@ -40,7 +40,7 @@ void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
    const unsigned int btile   = 4;
    const unsigned int threads = 4;
 
-   if (components!=1 && components!=3) ERRORMSG();
+   if (components!=1 && components!=3) return;
 
    CImg<unsigned char> img(image,width,height,1,components,false);
 
