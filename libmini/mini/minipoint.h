@@ -6,6 +6,29 @@
 #include "minitile.h"
 #include "minilod.h"
 
+class minipointopts
+   {
+   public:
+
+   // default constructor
+   minipointopts::minipointopts();
+
+   // destructor
+   minipointopts::~minipointopts();
+
+   int type; // type of the waypoint: none=0 signpost=1 brick=2
+
+   float signpostheight;
+   float signpostturn;
+   float signpostincline;
+
+   char *brickfile;
+   float bricksize;
+   float brickturn;
+   float brickincline;
+   int brickpasses;
+   };
+
 typedef struct
    {
    float x,y;
@@ -19,6 +42,8 @@ typedef struct
    char *longitude;
    char *elevation;
    int zone,datum;
+
+   minipointopts *opts;
 
    int number;
    }

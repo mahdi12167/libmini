@@ -10,6 +10,28 @@
 #include "minipoint.h"
 
 // default constructor
+minipointopts::minipointopts()
+   {
+   type=0;
+
+   signpostheight=100.0f;
+   signpostturn=0.0f;
+   signpostincline=0.0f;
+
+   brickfile=NULL;
+   bricksize=100.0;
+   brickturn=0.0f;
+   brickincline=0.0f;
+   brickpasses=4;
+   }
+
+// destructor
+minipointopts::~minipointopts()
+   {
+   if (brickfile!=NULL) free(brickfile);
+   }
+
+// default constructor
 minipoint::minipoint(minitile *tile)
    {
    TILE=tile;
@@ -60,6 +82,8 @@ minipoint::~minipoint()
             if (POINTS[i][j].latitude!=NULL) free(POINTS[i][j].latitude);
             if (POINTS[i][j].longitude!=NULL) free(POINTS[i][j].longitude);
             if (POINTS[i][j].elevation!=NULL) free(POINTS[i][j].elevation);
+
+            if (POINTS[i][j].opts!=NULL) delete POINTS[i][j].opts;
             }
 
          free(POINTS[i]);
@@ -131,6 +155,8 @@ void minipoint::add(minipointdata *point)
    POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
 
    point->desc=point->meta=point->system=point->latitude=point->longitude=point->elevation=NULL;
+
+   point->opts=NULL;
    }
 
 // add character to string
@@ -209,6 +235,8 @@ void minipoint::load(char *filename,
 
       point.desc=point.meta=point.system=point.latitude=point.longitude=point.elevation=NULL;
       point.zone=point.datum=0;
+
+      point.opts=NULL;
 
       while (ch!='\n' && ch!='\r')
          {
@@ -358,6 +386,8 @@ void minipoint::load(char *filename,
       if (point.latitude!=NULL) free(point.latitude);
       if (point.longitude!=NULL) free(point.longitude);
       if (point.elevation!=NULL) free(point.elevation);
+
+      if (point.opts!=NULL) delete point.opts;
       }
 
    fclose(file);

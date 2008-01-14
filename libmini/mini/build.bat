@@ -2,6 +2,8 @@
 @set PROJECT=%1%
 
 @IF '%PROJECT%' == '' (set PROJECT="libMini")
+@IF '%PROJECT%' == 'mini' (set PROJECT="libMini")
+@IF '%PROJECT%' == 'libmini' (set PROJECT="libMini")
 @IF '%PROJECT%' == 'viewer' (set PROJECT="libMini Viewer")
 
 @IF EXIST "%ProgramFiles(x86)%" (set "PFDIR=%ProgramFiles(x86)%") ELSE ( set "PFDIR=%ProgramFiles%")
