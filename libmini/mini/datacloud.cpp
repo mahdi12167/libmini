@@ -541,10 +541,27 @@ BOOLINT datacloud::checkfile(unsigned char *mapfile,BOOLINT istexture)
 // insert one job into the queue
 void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
-   // check for already existing job
-   if (checkjob(col,row,mapfile,hlod,texfile,tlod,fogfile,immediate,loprio)) return;
+   double time;
 
-   jobqueueelem *newjob=new jobqueueelem;
+   jobqueueelem *oldjob,*newjob;
+
+   // check for already existing job
+   oldjob=checkjob(col,row,mapfile,hlod,texfile,tlod,fogfile,immediate,loprio);
+
+   // reset access time
+   if (oldjob!=NULL)
+      {
+      time=minigettime();
+
+      if (mapfile!=NULL) oldjob->hfield->access=time;
+      if (texfile!=NULL) oldjob->texture->access=time;
+      if (fogfile!=NULL) oldjob->fogmap->access=time;
+
+      return;
+      }
+
+   // create new job
+   newjob=new jobqueueelem;
 
    newjob->col=col;
    newjob->row=row;
@@ -571,56 +588,56 @@ void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsign
    }
 
 // check job for existence
-BOOLINT datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
+jobqueueelem *datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
    jobqueueelem *job;
 
    // check hash map for already existing job
    job=(jobqueueelem *)JOBQUEUEMAP->check(mapfile,texfile,fogfile);
 
-   if (job==NULL) return(FALSE);
+   if (job==NULL) return(NULL);
 
    // check column/row
-   if (col!=job->col || row!=job->row) return(FALSE);
+   if (col!=job->col || row!=job->row) return(NULL);
 
    // check mapfile:
 
-   if (mapfile!=NULL && job->hfield==NULL) return(FALSE);
-   if (mapfile==NULL && job->hfield!=NULL) return(FALSE);
+   if (mapfile!=NULL && job->hfield==NULL) return(NULL);
+   if (mapfile==NULL && job->hfield!=NULL) return(NULL);
 
    if (mapfile!=NULL)
       {
-      if (hlod!=job->hlod) return(FALSE);
-      if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) return(FALSE);
+      if (hlod!=job->hlod) return(NULL);
+      if (strcmp((char *)mapfile,(char *)(job->hfield->tileid))!=0) return(NULL);
       }
 
    // check texfile:
 
-   if (texfile!=NULL && job->texture==NULL) return(FALSE);
-   if (texfile==NULL && job->texture!=NULL) return(FALSE);
+   if (texfile!=NULL && job->texture==NULL) return(NULL);
+   if (texfile==NULL && job->texture!=NULL) return(NULL);
 
    if (texfile!=NULL)
       {
-      if (tlod!=job->tlod) return(FALSE);
-      if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) return(FALSE);
+      if (tlod!=job->tlod) return(NULL);
+      if (strcmp((char *)texfile,(char *)(job->texture->tileid))!=0) return(NULL);
       }
 
    // check fogfile:
 
-   if (fogfile!=NULL && job->fogmap==NULL) return(FALSE);
-   if (fogfile==NULL && job->fogmap!=NULL) return(FALSE);
+   if (fogfile!=NULL && job->fogmap==NULL) return(NULL);
+   if (fogfile==NULL && job->fogmap!=NULL) return(NULL);
 
    if (fogfile!=NULL)
-      if (strcmp((char *)fogfile,(char *)(job->fogmap->tileid))!=0) return(FALSE);
+      if (strcmp((char *)fogfile,(char *)(job->fogmap->tileid))!=0) return(NULL);
 
-   // job already exists
+   // delete existing job if necessary
    if (immediate || (!loprio && job->loprio))
       {
       deletejob(job);
-      return(FALSE);
+      return(NULL);
       }
 
-   return(TRUE);
+   return(job);
    }
 
 // insert a job into the queue after a given element
