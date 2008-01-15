@@ -78,6 +78,7 @@ minipoint::~minipoint()
             {
             if (POINTS[i][j].desc!=NULL) free(POINTS[i][j].desc);
             if (POINTS[i][j].meta!=NULL) free(POINTS[i][j].meta);
+            if (POINTS[i][j].comment!=NULL) free(POINTS[i][j].comment);
             if (POINTS[i][j].system!=NULL) free(POINTS[i][j].system);
             if (POINTS[i][j].latitude!=NULL) free(POINTS[i][j].latitude);
             if (POINTS[i][j].longitude!=NULL) free(POINTS[i][j].longitude);
@@ -152,9 +153,12 @@ void minipoint::add(minipointdata *point)
 
    point->number=PNUM++;
 
+   parsecomment(point);
+
    POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
 
-   point->desc=point->meta=point->system=point->latitude=point->longitude=point->elevation=NULL;
+   point->desc=point->meta=point->comment=NULL;
+   point->system=point->latitude=point->longitude=point->elevation=NULL;
 
    point->opts=NULL;
    }
@@ -183,6 +187,9 @@ char *minipoint::addch(char *str,char ch)
 
    return(str);
    }
+
+// parse comment
+void minipoint::parsecomment(minipointdata *point) {}
 
 // load waypoints
 void minipoint::load(char *filename,
@@ -233,21 +240,26 @@ void minipoint::load(char *filename,
       point.x=point.y=0.0f;
       point.elev=point.height=0.0f;
 
-      point.desc=point.meta=point.system=point.latitude=point.longitude=point.elevation=NULL;
+      point.desc=point.meta=point.comment=NULL;
+      point.system=point.latitude=point.longitude=point.elevation=NULL;
+
       point.zone=point.datum=0;
 
       point.opts=NULL;
 
-      while (ch!='\n' && ch!='\r')
+      // read full description
+      while (ch!='\n' && ch!='\r' && ch!=EOF)
          {
          point.meta=addch(point.meta,ch);
          ch=fgetc(file);
          }
 
-      while (ch=='\n' || ch=='\r') ch=fgetc(file);
-
       if (point.meta==NULL) ERRORMSG();
 
+      // skip end of line
+      while (ch=='\n' || ch=='\r') ch=fgetc(file);
+
+      // copy description without comment
       for (i=0; i<strlen(point.meta); i++)
          {
          if (point.meta[i]==delimiter) break;
@@ -256,19 +268,38 @@ void minipoint::load(char *filename,
 
       if (point.desc==NULL) point.desc=addch(point.desc,'\0');
 
-      while (ch!='\n' && ch!='\r')
+      // read lines starting with comment delimiter
+      while (ch==delimiter)
+         {
+         ch=fgetc(file);
+
+         while (ch!='\n' && ch!='\r' && ch!=EOF)
+            {
+            point.comment=addch(point.comment,ch);
+            ch=fgetc(file);
+            }
+
+         while (ch=='\n' || ch=='\r') ch=fgetc(file);
+         }
+
+      if (point.comment==NULL) point.comment=addch(point.comment,'\0');
+
+      // read coordinate system
+      while (ch!='\n' && ch!='\r' && ch!=EOF)
          {
          point.system=addch(point.system,ch);
          ch=fgetc(file);
          }
 
+      // skip end of line
       while (ch=='\n' || ch=='\r') ch=fgetc(file);
 
       if (point.system==NULL) ERRORMSG();
 
+      // read Lat/Lon coordinates
       if (strcmp(point.system,"LL")==0)
          {
-         while (ch!='\n' && ch!='\r')
+         while (ch!='\n' && ch!='\r' && ch!=EOF)
             {
             point.latitude=addch(point.latitude,ch);
             ch=fgetc(file);
@@ -278,7 +309,7 @@ void minipoint::load(char *filename,
 
          if (point.latitude==NULL) ERRORMSG();
 
-         while (ch!='\n' && ch!='\r')
+         while (ch!='\n' && ch!='\r' && ch!=EOF)
             {
             point.longitude=addch(point.longitude,ch);
             ch=fgetc(file);
@@ -303,6 +334,7 @@ void minipoint::load(char *filename,
             TAKEN=1;
             }
          }
+      // read UTM coordinates
       else if (sscanf(point.system,"UTM %d",&zone)==1)
          {
          if (zone==0 || zone<-60 || zone>60) ERRORMSG();
@@ -310,7 +342,7 @@ void minipoint::load(char *filename,
          point.zone=zone;
          point.datum=CONFIGURE_SRCDATUM;
 
-         while (ch!='\n' && ch!='\r')
+         while (ch!='\n' && ch!='\r' && ch!=EOF)
             {
             point.longitude=addch(point.longitude,ch);
             ch=fgetc(file);
@@ -320,7 +352,7 @@ void minipoint::load(char *filename,
 
          if (point.longitude==NULL) ERRORMSG();
 
-         while (ch!='\n' && ch!='\r')
+         while (ch!='\n' && ch!='\r' && ch!=EOF)
             {
             point.latitude=addch(point.latitude,ch);
             ch=fgetc(file);
@@ -345,12 +377,14 @@ void minipoint::load(char *filename,
          }
       else ERRORMSG();
 
-      while (ch!='\n' && ch!='\r')
+      // read elevation
+      while (ch!='\n' && ch!='\r' && ch!=EOF)
          {
          point.elevation=addch(point.elevation,ch);
          ch=fgetc(file);
          }
 
+      // skip end of line
       while (ch=='\n' || ch=='\r') ch=fgetc(file);
 
       if (point.elevation==NULL) ERRORMSG();
@@ -382,6 +416,7 @@ void minipoint::load(char *filename,
 
       if (point.desc!=NULL) free(point.desc);
       if (point.meta!=NULL) free(point.meta);
+      if (point.comment!=NULL) free(point.comment);
       if (point.system!=NULL) free(point.system);
       if (point.latitude!=NULL) free(point.latitude);
       if (point.longitude!=NULL) free(point.longitude);

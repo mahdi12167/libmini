@@ -37,6 +37,7 @@ typedef struct
 
    char *desc;
    char *meta;
+   char *comment;
    char *system;
    char *latitude;
    char *longitude;
@@ -147,6 +148,8 @@ class minipoint
    int VNUM,MAXVNUM;
 
    char *addch(char *str,char ch);
+
+   void parsecomment(minipointdata *point);
 
    private:
 
