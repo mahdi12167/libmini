@@ -25,14 +25,16 @@ minipointopts::minipointopts()
    brickturn=0.0f;
    brickincline=0.0f;
    brickpasses=4;
-   brick=NULL;
+
+   lods=NULL;
    }
 
 // destructor
 minipointopts::~minipointopts()
    {
    if (brickfile!=NULL) free(brickfile);
-   if (brick!=NULL) delete brick;
+
+   if (lods!=NULL) delete lods;
    }
 
 // default constructor
@@ -208,6 +210,12 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("signpostturn",minipointopts::OPTION_SIGNPOSTTURN);
    scanner.addtoken("signpostincline",minipointopts::OPTION_SIGNPOSTINCLINE);
 
+   scanner.addtoken("brickfile",minipointopts::OPTION_BRICKFILE);
+   scanner.addtoken("bricksize",minipointopts::OPTION_BRICKSIZE);
+   scanner.addtoken("brickturn",minipointopts::OPTION_BRICKTURN);
+   scanner.addtoken("brickincline",minipointopts::OPTION_BRICKINCLINE);
+   scanner.addtoken("brickpasses",minipointopts::OPTION_BRICKPASSES);
+
    scanner.setcode(point->comment);
 
    while (scanner.gettoken()!=lunascan::LUNA_END)
@@ -224,6 +232,7 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
    {
    int option;
    float value;
+   char *name;
 
    option=scanner->gettoken();
    scanner->next();
@@ -232,24 +241,26 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
       {
       scanner->next();
 
-      if (scanner->gettoken()==lunascan::LUNA_VALUE)
+      if (scanner->gettoken()==lunascan::LUNA_VALUE ||
+          scanner->gettoken()==lunascan::LUNA_STRING)
          {
          value=scanner->getvalue();
-         scanner->next();
+         name=scanner->getstring();
 
          if (point->opts==NULL) point->opts=new minipointopts;
 
          switch (option)
             {
-            case minipointopts::OPTION_TYPE: point->opts->type=ftrc(scanner->getvalue()+0.5f); return;
-            case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; return;
-            case minipointopts::OPTION_SIGNPOSTTURN: point->opts->signpostturn=value; return;
-            case minipointopts::OPTION_SIGNPOSTINCLINE: point->opts->signpostincline=value; return;
+            case minipointopts::OPTION_TYPE: point->opts->type=ftrc(scanner->getvalue()+0.5f); break;
+            case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; break;
+            case minipointopts::OPTION_SIGNPOSTTURN: point->opts->signpostturn=value; break;
+            case minipointopts::OPTION_SIGNPOSTINCLINE: point->opts->signpostincline=value; break;
+            case minipointopts::OPTION_BRICKFILE: if (name!=NULL) point->opts->brickfile=strdup(name); break;
             }
          }
-      }
 
-   fprintf(stderr,"unrecognized option\n");
+      scanner->next();
+      }
    }
 
 // load waypoints

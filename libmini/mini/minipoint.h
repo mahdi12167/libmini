@@ -17,7 +17,12 @@ class minipointopts
       OPTION_TYPE=3,
       OPTION_SIGNPOSTHEIGHT=4,
       OPTION_SIGNPOSTTURN=5,
-      OPTION_SIGNPOSTINCLINE=6
+      OPTION_SIGNPOSTINCLINE=6,
+      OPTION_BRICKFILE=7,
+      OPTION_BRICKSIZE=8,
+      OPTION_BRICKTURN=9,
+      OPTION_BRICKINCLINE=10,
+      OPTION_BRICKPASSES=11
       };
 
    // default constructor
@@ -28,16 +33,19 @@ class minipointopts
 
    int type; // type of the waypoint: none=0 signpost=1 brick=2
 
+   // signpost parameters
    float signpostheight;
    float signpostturn;
    float signpostincline;
 
+   // brick parameters
    char *brickfile;
    float bricksize;
    float brickturn;
    float brickincline;
    int brickpasses;
-   minilod *brick;
+
+   minilod *lods;
    };
 
 typedef struct
