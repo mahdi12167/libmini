@@ -99,7 +99,7 @@ class minipoint
    minipointdata *getpoint(int p);
 
    //! calculate visible waypoints
-   void calcvdata();
+   void calcvdata(int type=0);
 
    //! sort visible waypoints
    void sortvdata(float x,float y,float elev,
@@ -112,7 +112,7 @@ class minipoint
    int getvnum() {return(VNUM);}
 
    //! get nearest waypoint
-   minipointdata *getnearest(float x,float y,float elev);
+   minipointdata *getnearest(float x,float y,float elev,int type=0);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);

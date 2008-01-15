@@ -528,9 +528,11 @@ minipointdata *minipoint::getpoint(int p)
    }
 
 // calculate visible waypoints
-void minipoint::calcvdata()
+void minipoint::calcvdata(int type)
    {
    int i,j,k;
+
+   minipointdata *point;
 
    if (TILE==NULL) return;
 
@@ -540,6 +542,14 @@ void minipoint::calcvdata()
       for (j=TILE->getvisiblebottom(); j<=TILE->getvisibletop(); j++)
          for (k=0; k<NUM[i+j*COLS]; k++)
             {
+            point=&POINTS[i+j*COLS][k];
+
+            if (point->opts!=NULL)
+               if (point->opts->type!=0)
+                  if (point->opts->type!=type) continue;
+
+            point->height=TILE->getheight(VPOINTS[VNUM]->x,-VPOINTS[VNUM]->y);
+
             if (VNUM>=MAXVNUM)
                {
                MAXVNUM=2*MAXVNUM+1;
@@ -550,9 +560,7 @@ void minipoint::calcvdata()
                   {if ((VPOINTS=(minipointdata **)realloc(VPOINTS,MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
                }
 
-            VPOINTS[VNUM]=&POINTS[i+j*COLS][k];
-
-            VPOINTS[VNUM]->height=TILE->getheight(VPOINTS[VNUM]->x,-VPOINTS[VNUM]->y);
+            VPOINTS[VNUM]=point;
 
             VNUM++;
             }
@@ -604,7 +612,7 @@ inline int minipoint::compare(minipointdata *a,minipointdata *b,
    }
 
 // get nearest waypoint
-minipointdata *minipoint::getnearest(float x,float y,float elev)
+minipointdata *minipoint::getnearest(float x,float y,float elev,int type)
    {
    int i;
 
@@ -613,8 +621,14 @@ minipointdata *minipoint::getnearest(float x,float y,float elev)
    if (vpoint==NULL) return(NULL);
 
    for (i=0; i<VNUM; i++,vpoint++)
+      {
+      if ((*vpoint)->opts!=NULL)
+         if ((*vpoint)->opts->type!=0)
+            if ((*vpoint)->opts->type!=type) continue;
+
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
+      }
 
    return(nearest);
    }
@@ -642,7 +656,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    minipointdata *nearest;
 
    // calculate visible points
-   calcvdata();
+   calcvdata(1);
    vpoint=getvdata();
 
    // check if any points were found
@@ -752,7 +766,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    float color,r,g,b;
 
    // calculate visible points
-   calcvdata();
+   calcvdata(2);
    vpoint=getvdata();
 
    // check if any points were found
