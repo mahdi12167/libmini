@@ -11,10 +11,10 @@ class minipointopts
    public:
 
    // default constructor
-   minipointopts::minipointopts();
+   minipointopts();
 
    // destructor
-   minipointopts::~minipointopts();
+   ~minipointopts();
 
    int type; // type of the waypoint: none=0 signpost=1 brick=2
 

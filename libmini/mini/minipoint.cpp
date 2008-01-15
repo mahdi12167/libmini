@@ -189,7 +189,8 @@ char *minipoint::addch(char *str,char ch)
    }
 
 // parse comment
-void minipoint::parsecomment(minipointdata *point) {}
+void minipoint::parsecomment(minipointdata *point)
+   {if (point==NULL) ERRORMSG();}
 
 // load waypoints
 void minipoint::load(char *filename,
