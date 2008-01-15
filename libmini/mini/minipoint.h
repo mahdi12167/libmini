@@ -10,6 +10,16 @@ class minipointopts
    {
    public:
 
+   enum
+      {
+      OPTION_DELIMITER=1,
+      OPTION_EQ=2,
+      OPTION_TYPE=3,
+      OPTION_SIGNPOSTHEIGHT=4,
+      OPTION_SIGNPOSTTURN=5,
+      OPTION_SIGNPOSTINCLINE=6
+      };
+
    // default constructor
    minipointopts();
 
@@ -27,6 +37,7 @@ class minipointopts
    float brickturn;
    float brickincline;
    int brickpasses;
+   minilod *brick;
    };
 
 typedef struct
@@ -150,6 +161,7 @@ class minipoint
    char *addch(char *str,char ch);
 
    void parsecomment(minipointdata *point);
+   void parseoption(minipointdata *point,lunascan *scanner);
 
    private:
 
