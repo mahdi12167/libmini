@@ -528,11 +528,13 @@ minipointdata *minipoint::getpoint(int p)
    }
 
 // calculate visible waypoints
-void minipoint::calcvdata(int type)
+void minipoint::calcvdata(int type1,int type2)
    {
    int i,j,k;
 
    minipointdata *point;
+
+   int type;
 
    if (TILE==NULL) return;
 
@@ -544,9 +546,10 @@ void minipoint::calcvdata(int type)
             {
             point=&POINTS[i+j*COLS][k];
 
-            if (point->opts!=NULL)
-               if (point->opts->type!=0)
-                  if (point->opts->type!=type) continue;
+            if (point->opts==NULL) type=0;
+            else type=point->opts->type;
+
+            if (type!=type1 && type!=type2) continue;
 
             point->height=TILE->getheight(VPOINTS[VNUM]->x,-VPOINTS[VNUM]->y);
 
@@ -612,19 +615,22 @@ inline int minipoint::compare(minipointdata *a,minipointdata *b,
    }
 
 // get nearest waypoint
-minipointdata *minipoint::getnearest(float x,float y,float elev,int type)
+minipointdata *minipoint::getnearest(float x,float y,float elev,int type1,int type2)
    {
    int i;
 
    minipointdata **vpoint=VPOINTS,*nearest=NULL;
 
+   int type;
+
    if (vpoint==NULL) return(NULL);
 
    for (i=0; i<VNUM; i++,vpoint++)
       {
-      if ((*vpoint)->opts!=NULL)
-         if ((*vpoint)->opts->type!=0)
-            if ((*vpoint)->opts->type!=type) continue;
+      if ((*vpoint)->opts==NULL) type=0;
+      else type=(*vpoint)->opts->type;
+
+      if (type!=type1 && type!=type2) continue;
 
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
@@ -637,10 +643,27 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,int type)
 float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
    {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(point->height-elev));}
 
+// render waypoints
+void minipoint::render(float ex,float ey,float ez,
+                       float farp,float fovy,float aspect,
+                       float height,float range,
+                       float turn,float incline,
+                       int type)
+   {
+   if (type==0)
+      {
+      drawsignposts(ex,ey,ez,height,range,turn,incline,0,1);
+      drawbricks(ex,ey,ez,range,farp,fovy,aspect,height,2,2);
+      }
+   else if (type==1) drawsignposts(ex,ey,ez,height,range,turn,incline,0,1);
+   else if (type==2) drawbricks(ex,ey,ez,range,farp,fovy,aspect,height,0,2);
+   }
+
 // render waypoints with signposts
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
-                              float turn,float yon)
+                              float turn,float yon,
+                              int type1,int type2)
    {
    int i;
 
@@ -656,13 +679,13 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    minipointdata *nearest;
 
    // calculate visible points
-   calcvdata(1);
+   calcvdata(type1,type2);
    vpoint=getvdata();
 
    // check if any points were found
    if (vpoint==NULL) return;
 
-   nearest=getnearest(ex,ez,ey);
+   nearest=getnearest(ex,ez,ey,type1,type2);
 
    sint=sin(2.0f*PI/360.0f*turn);
    cost=cos(2.0f*PI/360.0f*turn);
@@ -756,7 +779,8 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
 void minipoint::drawbricks(float ex,float ey,float ez,
                            float brad,float farp,
                            float fovy,float aspect,
-                           float size)
+                           float size,
+                           int type1,int type2)
    {
    int i;
 
@@ -766,7 +790,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    float color,r,g,b;
 
    // calculate visible points
-   calcvdata(2);
+   calcvdata(type1,type2);
    vpoint=getvdata();
 
    // check if any points were found
