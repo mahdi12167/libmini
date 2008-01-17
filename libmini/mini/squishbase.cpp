@@ -14,6 +14,10 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                   unsigned char **s3tcdata,unsigned int *s3tcbytes,
                   int width,int height,int squishmode)
    {
+   if (isrgbadata<0 || rawdata==NULL || bytes==0 ||
+       s3tcdata==NULL || s3tcbytes==NULL ||
+       width<1 || height<1 || squishmode<0) ERRORMSG();
+
 #ifndef NOSQUISH
 
    int i;
