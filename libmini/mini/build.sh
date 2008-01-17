@@ -18,10 +18,10 @@
 # tidy     -> clean up all temporary files
 
 # additional include directories
-set INCLUDE="-I/usr/local/include -I../deps/freeglut -I../deps/squish -I../deps/greycstoration"
+set INCLUDE="-I/usr/local/include -I../deps/squish -I../deps/greycstoration"
 
 # additional link directories
-set LINK="-L/usr/local/lib -L../deps/freeglut -L../deps/squish"
+set LINK="-L/usr/local/lib -L../deps/squish"
 
 # default installation directory
 set INSTALL="/usr/local"
