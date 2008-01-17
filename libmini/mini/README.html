@@ -120,61 +120,62 @@ Additional conceptual papers about libMini are available here:<p>
 Within the libMini package the following files are contained:<p>
 
 <table>
-   <tr><td>README.html:        </td><td>this file</td></tr>
-   <tr><td>README2.html:       </td><td>the libMini usage guide</td></tr>
-   <tr><td>LICENSE.txt:        </td><td>the LGPL 2.1 license</td></tr>
-   <tr><td>minibase.h:         </td><td>contains basic declarations</td></tr>
-   <tr><td>mini.cpp/P.h/.h:    </td><td>contains the core of the terrain renderer</td></tr>
-   <tr><td>miniOGL.cpp/P.h/.h: </td><td>contains all OpenGL dependent stuff</td></tr>
-   <tr><td>miniv??.h:          </td><td>contains vector class definitions</td></tr>
-   <tr><td>minitime.cpp/.h:    </td><td>contains system time abstraction</td></tr>
-   <tr><td>miniio.cpp/.h:      </td><td>contains additional file io stuff</td></tr>
-   <tr><td>minihsv.cpp/.h:     </td><td>contains additional hsv conversion stuff</td></tr>
-   <tr><td>miniutm.cpp/.h:     </td><td>contains additional utm conversion stuff</td></tr>
-   <tr><td>ministub.cpp/.h:    </td><td>simplified stub class of the mini library</td></tr>
-   <tr><td>minitile.cpp/.h:    </td><td>wrapper class for tiled terrain rendering</td></tr>
-   <tr><td>miniload.cpp/.h:    </td><td>wrapper class for paged terrain rendering</td></tr>
-   <tr><td>minilayer.cpp/.h:   </td><td>wrapper class rendering a single layer</td></tr>
-   <tr><td>miniterrain.cpp/.h: </td><td>wrapper class rendering multiple layers</td></tr>
-   <tr><td>minicache.cpp/.h:   </td><td>cache for speeding up tiled terrain rendering</td></tr>
-   <tr><td>minishader.cpp/.h:  </td><td>shader support for the render cache</td></tr>
-   <tr><td>miniwarp.cpp/.h:    </td><td>warp kernel for global coordinate systems</td></tr>
-   <tr><td>miniray.cpp/.h:     </td><td>ray/triangle intersection code</td></tr>
-   <tr><td>ministrip.cpp/.h:   </td><td>vertex array container for triangle strips</td></tr>
-   <tr><td>minipoint.cpp/.h:   </td><td>geographical point of interest management</td></tr>
-   <tr><td>minitext.cpp/.h:    </td><td>simple text renderer</td></tr>
-   <tr><td>minisky.cpp/.h:     </td><td>simple sky dome renderer</td></tr>
-   <tr><td>miniglobe.cpp/.h:   </td><td>night/day renderer of the earth or other textured globes</td></tr>
-   <tr><td>minitree.cpp/.h:    </td><td>contains algorithms for vegetation rendering</td></tr>
-   <tr><td>minibrick.cpp/.h:   </td><td>contains algorithms for C-LOD volume rendering</td></tr>
-   <tr><td>minilod.cpp/.h:     </td><td>contains algorithms for S-LOD volume rendering</td></tr>
-   <tr><td>pnmbase.cpp/.h:     </td><td>methods for handling PNM images</td></tr>
-   <tr><td>pnmsample.cpp/.h:   </td><td>methods for multi-resolution terrain resampling</td></tr>
-   <tr><td>database.cpp/.h:    </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
-   <tr><td>datacalc.cpp/.h:    </td><td>calculator for procedural images and implicit volumes</td></tr>
-   <tr><td>dataparse.cpp/.h:   </td><td>parser and interpreter of implicit functions</td></tr>
-   <tr><td>datacloud.cpp/.h:   </td><td>decouples terrain rendering from paging</td></tr>
-   <tr><td>datacache.cpp/.h:   </td><td>stores remote files in a local file cache</td></tr>
-   <tr><td>example.png:        </td><td>a screen shot of the example described below</td></tr>
-   <tr><td>example.cpp:        </td><td>the glut example (use "build.sh example" to compile)</td></tr>
-   <tr><td>stubtest.cpp:       </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
-   <tr><td>viewer.cpp:         </td><td>the libMini Viewer (use "build.sh viewer" to compile)</td></tr>
-   <tr><td>viewerbase.cpp/.h:  </td><td>the libMini Viewer base class</td></tr>
-   <tr><td>threadbase.cpp/.h:  </td><td>multi-threading support for the libMini Viewer</td></tr>
-   <tr><td>curlbase.cpp/.h:    </td><td>http protocol support for the libMini Viewer</td></tr>
-   <tr><td>jpegbase.cpp/.h:    </td><td>JPEG support for the libMini Viewer</td></tr>
-   <tr><td>pngbase.cpp/.h:     </td><td>PNG support for the libMini Viewer</td></tr>
-   <tr><td>squishbase.cpp/.h:  </td><td>squish support for the libMini Viewer</td></tr>
-   <tr><td>greycbase.cpp/.h:   </td><td>greycstoration support for the libMini Viewer (optional)</td></tr>
-   <tr><td>convbase.cpp/.h:    </td><td>image conversion support for the libMini Viewer</td></tr>
-   <tr><td>luna*.cpp/.h:       </td><td>interpreter for LUNA, an RPN-style language for LUNAtics and nerds alike</td></tr>
-   <tr><td>SkyDome.ppm:        </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
-   <tr><td>Cone.db:            </td><td>a sample DB volume (implicitly defined cone)</td></tr>
-   <tr><td>freeglut.dll/.lib:  </td><td>Windows GLUT libraries for building the example and the libMini Viewer</td></tr>
-   <tr><td>*.sln/.vcproj:      </td><td>Windows Visual C++ solution and project files</td></tr>
-   <tr><td>Makefile:           </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
-   <tr><td>build.bat:          </td><td>the Windows build batch file</td></tr>
-   <tr><td>build.sh:           </td><td>the Unix build script</td></tr>
+   <tr><td>README.html:         </td><td>this file</td></tr>
+   <tr><td>README2.html:        </td><td>the libMini usage guide</td></tr>
+   <tr><td>LICENSE.txt:         </td><td>the LGPL 2.1 license</td></tr>
+   <tr><td>minibase.h:          </td><td>contains basic declarations</td></tr>
+   <tr><td>mini.cpp/P.h/.h:     </td><td>contains the core of the terrain renderer</td></tr>
+   <tr><td>miniOGL.cpp/P.h/.h:  </td><td>contains all OpenGL dependent stuff</td></tr>
+   <tr><td>miniv??.h:           </td><td>contains vector class definitions</td></tr>
+   <tr><td>minitime.cpp/.h:     </td><td>contains system time abstraction</td></tr>
+   <tr><td>miniio.cpp/.h:       </td><td>contains additional file io stuff</td></tr>
+   <tr><td>minihsv.cpp/.h:      </td><td>contains additional hsv conversion stuff</td></tr>
+   <tr><td>miniutm.cpp/.h:      </td><td>contains additional utm conversion stuff</td></tr>
+   <tr><td>ministub.cpp/.h:     </td><td>simplified stub class of the mini library</td></tr>
+   <tr><td>minitile.cpp/.h:     </td><td>wrapper class for tiled terrain rendering</td></tr>
+   <tr><td>miniload.cpp/.h:     </td><td>wrapper class for paged terrain rendering</td></tr>
+   <tr><td>minilayer.cpp/.h:    </td><td>wrapper class rendering a single layer</td></tr>
+   <tr><td>miniterrain.cpp/.h:  </td><td>wrapper class rendering multiple layers</td></tr>
+   <tr><td>minicache.cpp/.h:    </td><td>cache for speeding up tiled terrain rendering</td></tr>
+   <tr><td>minishader.cpp/.h:   </td><td>shader support for the render cache</td></tr>
+   <tr><td>miniwarp.cpp/.h:     </td><td>warp kernel for global coordinate systems</td></tr>
+   <tr><td>miniray.cpp/.h:      </td><td>ray/triangle intersection code</td></tr>
+   <tr><td>ministrip.cpp/.h:    </td><td>vertex array container for triangle strips</td></tr>
+   <tr><td>minipoint.cpp/.h:    </td><td>geographical point of interest management</td></tr>
+   <tr><td>minitext.cpp/.h:     </td><td>simple text renderer</td></tr>
+   <tr><td>minisky.cpp/.h:      </td><td>simple sky dome renderer</td></tr>
+   <tr><td>miniglobe.cpp/.h:    </td><td>night/day renderer of the earth or other textured globes</td></tr>
+   <tr><td>minitree.cpp/.h:     </td><td>contains algorithms for vegetation rendering</td></tr>
+   <tr><td>minibrick.cpp/.h:    </td><td>contains algorithms for C-LOD volume rendering</td></tr>
+   <tr><td>minilod.cpp/.h:      </td><td>contains algorithms for S-LOD volume rendering</td></tr>
+   <tr><td>pnmbase.cpp/.h:      </td><td>methods for handling PNM images</td></tr>
+   <tr><td>pnmsample.cpp/.h:    </td><td>methods for multi-resolution terrain resampling</td></tr>
+   <tr><td>database.cpp/.h:     </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
+   <tr><td>datacalc.cpp/.h:     </td><td>calculator for procedural images and implicit volumes</td></tr>
+   <tr><td>dataparse.cpp/.h:    </td><td>parser and interpreter of implicit functions</td></tr>
+   <tr><td>datacloud.cpp/.h:    </td><td>decouples terrain rendering from paging</td></tr>
+   <tr><td>datacache.cpp/.h:    </td><td>stores remote files in a local file cache</td></tr>
+   <tr><td>example.png:         </td><td>a screen shot of the example described below</td></tr>
+   <tr><td>example.cpp:         </td><td>the glut example (use "build.sh example" to compile)</td></tr>
+   <tr><td>stubtest.cpp:        </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
+   <tr><td>viewer.cpp:          </td><td>the libMini Viewer (use "build.sh viewer" to compile)</td></tr>
+   <tr><td>viewerbase.cpp/.h:   </td><td>the libMini Viewer base class</td></tr>
+   <tr><td>threadbase.cpp/.h:   </td><td>multi-threading support for the libMini Viewer</td></tr>
+   <tr><td>curlbase.cpp/.h:     </td><td>http protocol support for the libMini Viewer</td></tr>
+   <tr><td>jpegbase.cpp/.h:     </td><td>JPEG support for the libMini Viewer</td></tr>
+   <tr><td>pngbase.cpp/.h:      </td><td>PNG support for the libMini Viewer</td></tr>
+   <tr><td>squishbase.cpp/.h:   </td><td>squish support for the libMini Viewer</td></tr>
+   <tr><td>greycbase.cpp/.h:    </td><td>GREYCstoration support for the libMini Viewer (optional)</td></tr>
+   <tr><td>convbase.cpp/.h:     </td><td>image conversion support for the libMini Viewer</td></tr>
+   <tr><td>luna*.cpp/.h:        </td><td>interpreter for LUNA, an RPN-style language for LUNAtics and nerds alike</td></tr>
+   <tr><td>SkyDome.ppm:         </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
+   <tr><td>Cone.db:             </td><td>a sample DB volume (implicitly defined cone)</td></tr>
+   <tr><td>GL/*:                </td><td>Windows freeGLUT headers</td></tr>
+   <tr><td>freeglut_static.lib: </td><td>Windows freeGLUT library for building the example and the libMini Viewer</td></tr>
+   <tr><td>*.sln/.vcproj:       </td><td>Windows Visual C++ solution and project files</td></tr>
+   <tr><td>Makefile:            </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
+   <tr><td>build.bat:           </td><td>the Windows build batch file</td></tr>
+   <tr><td>build.sh:            </td><td>the Unix build script</td></tr>
 </table><p>
 
 Additionally, the Yukon Ground Fog Demo, the Stuttgart Demo, the
@@ -191,12 +192,6 @@ Section <a href="#MiniViewer">(O)</a>). It is a generic viewing
 utility for terrain data. For example, it can be used to display the
 data of the demos that are mentioned above or to stream terrain data
 over the internet.<p>
-
-On Windows a pthreads compatible library is required for the libMini
-viewer (also recommended for the Hawaii Demo and the Fraenkische Demo)
-since a POSIX threads compatible implementation like
-<a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>
-considerably improves paging performance.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -242,6 +237,18 @@ batch file (requires VC++ 8.0) or use cygwin in the following way:<p>
 </ul>
 
 Other than the specified operating systems are not supported.<p>
+
+On Windows it is recommended to use
+the <a href="http://freeglut.sourceforge.net">freeGLUT library</a> as
+a replacement for the standard GLUT library. For convenience, the
+libMini distribution already contains the freeglut headers and the
+prebuilt static freeGLUT library.
+
+On Windows it is also recommended to use POSIX threads since a
+pthreads compatible implementation like
+<a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>
+considerably improves paging performance for the Hawaii and
+Fraenkische demos and the libMini Viewer.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -1948,7 +1955,12 @@ requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
 <a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng</a>
 and <a href="http://www.sjbrown.co.uk/?code=squish">squish</a> to be
 installed. On Windows it is recommended to use a pthreads compatible
-implementation like <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>.<p>
+implementation like <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>
+and the <a href="http://freeglut.sourceforge.net">freeGLUT library</a>.
+Optionally, the libMini Viewer can be built without squish support
+("./build.sh viewer nosquish") or with
+<a href="http://www.greyc.ensicaen.fr/~dtschump/greycstoration">GREYCstoration</a>
+support ("./build.sh viewer usegreyc").<p>
 
 See the examples below how to use the viewer from the command line:<p>
 
