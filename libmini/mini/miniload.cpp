@@ -388,7 +388,8 @@ void miniload::checklods(int col,int row,int prelod)
       if (PAGING==0 || RES==MAXFLOAT) unused=-MAXLOD[col+row*COLS];
       else unused=TILE->getunusedlods(col,row,RES,FX,FY,FZ);
 
-      if (unused<=1+prelod) lodinc=unused-1-prelod;
+      if (TILE->isloaded(col,row)==0) lodinc=0;
+      else if (unused<=1+prelod) lodinc=unused-1-prelod;
       else if (prelod==0) lodinc=max(unused-1-PRELOD-LAZYNESS,0);
       else lodinc=max(unused-PRELOD-LAZYNESS,0);
 

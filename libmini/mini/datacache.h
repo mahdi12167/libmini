@@ -162,7 +162,7 @@ class datacache
    //! query total number of tiles in the cache
    int gettotal() {return(CLOUD->gettotal());}
 
-   //! query total number of pending tiles in the cache
+   //! query total number of pending tiles and jobs
    int getpending() {return(CLOUD->getpending());}
 
    //! query total amount of memory allocated in the cache (in MB)

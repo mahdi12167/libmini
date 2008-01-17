@@ -175,7 +175,7 @@ class datacloud
    //! query total number of tiles in the cache
    int gettotal() {return(TILECOUNT);}
 
-   //! query total number of pending tiles in the cache
+   //! query total number of pending tiles and jobs
    int getpending() {return(PENDINGTILES+JOBCOUNT);}
 
    //! query total amount of memory allocated in the cache (in MB)
