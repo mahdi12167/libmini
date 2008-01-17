@@ -1,13 +1,13 @@
 #!/bin/tcsh -f
 
+#usage: build.sh [rule {option}]
+
 # available rules:
-# no rule  -> same as lib
+# no rule  -> same as mini
+# mini     -> same as lib
 # lib      -> build main library
 # vlib     -> build viewer library
 # stub     -> build without OpenGL
-# nosquish -> build without squish
-# usegreyc -> build with greyc
-# wall     -> build with all warnings
 # example  -> build example
 # stubtest -> build stubtest
 # viewer   -> build viewer
@@ -17,17 +17,27 @@
 # clean    -> remove object files
 # tidy     -> clean up all temporary files
 
+# available options:
+# nosquish -> build without squish
+# usegreyc -> build with greyc
+# wall     -> build with all warnings
+
 # additional include directories
-set INCLUDE="-I/usr/local/include -I../deps/squish -I../deps/greycstoration"
+set INCLUDE="-I/usr/local/include"
 
 # additional link directories
-set LINK="-L/usr/local/lib -L../deps/squish"
+set LINK="-L/usr/local/lib"
 
 # default installation directory
 set INSTALL="/usr/local"
 
 set rule=$1
-if ($rule == "") set rule="lib"
+if ($rule == "") set rule="mini"
+if ($rule == "mini") set rule="lib"
+
+set option1=$2
+set option2=$3
+set option3=$4
 
 set incl=""
 if ("$INCLUDE" != "") set incl=" $INCLUDE"
@@ -41,32 +51,6 @@ if ($rule == "stub") then
    set stub=" -DNOOGL"
 endif
 
-set defs=""
-if ($rule == "nosquish") then
-   set rule="lib"
-   set defs=" -DNOSQUISH"
-endif
-if ($rule == "usegreyc") then
-   set rule="lib"
-   set defs=" -DUSEGREYC"
-endif
-
-set wall=""
-if ($rule == "wall") then
-   set rule="lib"
-   set wall=" -W -Wall"
-endif
-
-set option1=$2
-if ($option1 == "nosquish") set defs=$defs" -DNOSQUISH"
-if ($option1 == "usegreyc") set defs=$defs" -DUSEGREYC"
-if ($option1 == "wall") set wall=" -W -Wall"
-
-set option2=$3
-if ($option2 == "nosquish") set defs=$defs" -DNOSQUISH"
-if ($option2 == "usegreyc") set defs=$defs" -DUSEGREYC"
-if ($option2 == "wall") set wall=" -W -Wall"
-
 set depend="depend"
 if ($rule == "vdeps") then
    set rule="deps"
@@ -74,8 +58,34 @@ if ($rule == "vdeps") then
 endif
 
 if ($rule == "install") then
-   if ($option1 != "") set INSTALL=$option1
+   if ("$option1" != "") set INSTALL="$option1"
    exec make INSTALL="$INSTALL" install
+endif
+
+set defs=""
+set usesquish
+unset usegreyc
+foreach option ("$option1" "$option2" "$option3")
+   if ("$option" == "nosquish") then
+      set defs="$defs -DNOSQUISH"
+      unset usesquish
+   endif
+   if ("$option" == "usegreyc") then
+      set defs="$defs -DUSEGREYC"
+      set usegreyc
+   endif
+   if ("$option" == "wall") then
+      set defs="$defs -W -Wall"
+   endif
+end
+
+if ($?usesquish) then
+   set incl="$incl -I../deps/squish"
+   set link="$link -L../deps/squish -lsquish"
+endif
+
+if ($?usegreyc) then
+   set incl="$incl -I../deps/greycstoration"
 endif
 
 if ($rule == "deps") then
@@ -94,18 +104,18 @@ if ($rule == "deps") then
    if ($HOSTTYPE == "powermac") make MAKEDEPEND="c++ -M$incl$stub$defs" TARGET=MACOSX $depend
    if ($HOSTTYPE == "intel-pc") make MAKEDEPEND="c++ -M$incl$stub$defs" TARGET=MACOSX $depend
 else
-   if ($HOSTTYPE == "iris4d") make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84$incl$stub$defs$wall" LINK="-lglut -lX11 -lXm -lXt -lXmu$link" $rule
-   if ($HOSTTYPE == "i386") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i386-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i386-cygwin") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i486") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i486-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i586") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i586-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i686") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i686-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "x86_64-linux") make COMPILER="c++" OPTS="-m64 -O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib64 -lX11$link" $rule
-   if ($HOSTTYPE == "powerpc") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs$wall" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "powermac") make COMPILER="c++" OPTS="-O3$incl$stub$defs$wall" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc$link" $rule
-   if ($HOSTTYPE == "intel-pc") make COMPILER="c++" OPTS="-O3$incl$stub$defs$wall" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc$link" $rule
+   if ($HOSTTYPE == "iris4d") make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84$incl$stub$defs" LINK="-lglut -lX11 -lXm -lXt -lXmu$link" $rule
+   if ($HOSTTYPE == "i386") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i386-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i386-cygwin") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i486") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i486-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i586") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i586-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i686") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i686-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "x86_64-linux") make COMPILER="c++" OPTS="-m64 -O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib64 -lX11$link" $rule
+   if ($HOSTTYPE == "powerpc") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "powermac") make COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc$link" $rule
+   if ($HOSTTYPE == "intel-pc") make COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc$link" $rule
 endif
