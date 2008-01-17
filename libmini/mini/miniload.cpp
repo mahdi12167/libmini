@@ -714,6 +714,9 @@ void miniload::preload(int col,int row,void *data)
    obj->checklods(col,row,obj->PRELOD);
    obj->checktexs(col,row,obj->PRETEX);
 
+   if (tile->isloaded(col,row)==0)
+      if (obj->MANDATORY[col+row*cols]!=0) return;
+
    updatelod=updatetex=0;
 
    if (tile->isloaded(col,row)==0 || obj->ACTLOD[col+row*cols]!=obj->NEWLOD[col+row*cols]) updatelod=1;

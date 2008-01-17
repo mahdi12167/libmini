@@ -9,6 +9,6 @@ WIN32.exe: prebuilt Windows executables
 
 For building libMini only OpenGL is required to be installed. See the libMini README for instructions.
 For building the libMini viewer on *nix it is assumed that pthreads libjpeg libpng and libcurl are already installed.
-Then the libMini viewer requires the additional dependencies freeglut squish and optionally GREYCstoration.
-The latter dependencies can be built from the source code in the deps folder.
+Then the libMini viewer also requires the dependencies glut/freeglut squish and optionally GREYCstoration.
+These dependencies can be built from the respective source code packages in the deps folder.
 For Windows prebuilt static libaries are available in the WIN32 folder.
