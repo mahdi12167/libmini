@@ -599,6 +599,8 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    if (obj->HFIELDS[col+row*cols]==NULL) return;
 
+   obj->LRU[col+row*cols]=obj->TIME;
+
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
    minitile::configure_gradinf(obj->CONFIGURE_GRADINF);
@@ -610,7 +612,10 @@ void miniload::request(int col,int row,int needtex,void *data)
    if (needtex>0) obj->checktexs(col,row,0);
 
    if (obj->PRELOAD_CALLBACK!=NULL)
+      {
+      if (tile->isloaded(col,row)!=0) return;
       if (obj->MANDATORY[col+row*cols]==0) return;
+      }
 
    oldlodinc=newlodinc=obj->NEWLOD[col+row*cols]-obj->ACTLOD[col+row*cols];
 
@@ -683,8 +688,6 @@ void miniload::request(int col,int row,int needtex,void *data)
 
       updatetex=0;
       }
-
-   obj->LRU[col+row*cols]=obj->TIME;
    }
 
 // preload callback
