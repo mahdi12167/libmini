@@ -6,7 +6,7 @@
 # no rule  -> same as mini
 # mini     -> same as lib
 # lib      -> build main library
-# vlib     -> build viewer library
+# libsfx   -> build viewer library
 # stub     -> build without OpenGL
 # example  -> build example
 # stubtest -> build stubtest
