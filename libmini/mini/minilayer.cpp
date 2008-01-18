@@ -665,8 +665,7 @@ void minilayer::loadopts()
 
    char *bname=TILECACHE->getfile(LPARAMS.brick,LPARAMS.altpath);
 
-   if (bname==NULL) LPARAMS.usebricks=FALSE;
-   else
+   if (bname!=NULL)
       {
       if (POINTS!=NULL) POINTS->setbrick(bname);
       free(bname);

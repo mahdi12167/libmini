@@ -58,7 +58,7 @@ void minilod::addbrick(char *brickname,
 
    float dist;
 
-   if (brickname==NULL) ERRORMSG();
+   if (brickname==NULL) brickname="Data.db";
 
    if (brad<0.0f || stagger<=1.0f) ERRORMSG();
 

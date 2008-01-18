@@ -796,6 +796,9 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    float midx,midy,basez;
    float color,r,g,b;
 
+   // check if a brick file name was set
+   if (BRICKNAME==NULL) return;
+
    // calculate visible points
    calcvdata(type1,type2);
    vpoint=getvdata();
@@ -806,8 +809,6 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    // initialize renderer
    if (LODS==NULL)
       {
-      if (BRICKNAME==NULL) BRICKNAME=strdup("Data.db");
-
       LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
       LODS->configure_brickpasses(CONFIGURE_BRICKPASSES);
       LODS->addbrick(BRICKNAME,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
