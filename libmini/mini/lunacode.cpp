@@ -389,67 +389,67 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_ADD:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val+=VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val+=VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_SUB:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val-=VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val-=VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_MUL:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val*=VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val*=VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_DIV:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val/=VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val/=VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_MOD:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=mod(VALSTACK[VALSTACKSIZE-1].val,VALSTACK[VALSTACKSIZE].val);
+         else {VALSTACK[VALSTACKSIZE-2].val=mod(VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE--;}
          break;
       case CODE_EQ:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val==VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val==VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_NEQ:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val!=VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val!=VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_LT:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val<VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val<VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_GT:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val>VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val>VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_LE:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val<=VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val<=VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_GE:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val>=VALSTACK[VALSTACKSIZE].val)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val>=VALSTACK[VALSTACKSIZE-1].val)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_AND:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val!=0.0 && VALSTACK[VALSTACKSIZE].val!=0.0)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val!=0.0 && VALSTACK[VALSTACKSIZE-1].val!=0.0)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_OR:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val!=0.0 || VALSTACK[VALSTACKSIZE].val!=0.0)?1.0:0.0;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val!=0.0 || VALSTACK[VALSTACKSIZE-1].val!=0.0)?1.0:0.0; VALSTACKSIZE--;}
          break;
       case CODE_NOT:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
@@ -459,12 +459,12 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_MIN:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val<VALSTACK[VALSTACKSIZE].val)?VALSTACK[VALSTACKSIZE-1].val:VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val<VALSTACK[VALSTACKSIZE-1].val)?VALSTACK[VALSTACKSIZE-2].val:VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_MAX:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val>VALSTACK[VALSTACKSIZE].val)?VALSTACK[VALSTACKSIZE-1].val:VALSTACK[VALSTACKSIZE].val;
+         else {VALSTACK[VALSTACKSIZE-2].val=(VALSTACK[VALSTACKSIZE-2].val>VALSTACK[VALSTACKSIZE-1].val)?VALSTACK[VALSTACKSIZE-2].val:VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
       case CODE_ABS:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
@@ -494,7 +494,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_POW:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=pow(VALSTACK[VALSTACKSIZE-1].val,VALSTACK[VALSTACKSIZE].val);
+         else {VALSTACK[VALSTACKSIZE-2].val=pow(VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE--;}
          break;
       case CODE_SIN:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
@@ -519,7 +519,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_ATAN2:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else VALSTACK[--VALSTACKSIZE-1].val=atan2(VALSTACK[VALSTACKSIZE-1].val,VALSTACK[VALSTACKSIZE].val);
+         else {VALSTACK[VALSTACKSIZE-2].val=atan2(VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE--;}
          break;
       case CODE_PUSH:
          VALSTACKSIZE++;
