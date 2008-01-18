@@ -424,11 +424,14 @@ void lunascan::scanspace()
 
 void lunascan::scanvalue()
    {
-   float point,xpnt;
+   double value;
+   double point,xpnt;
+
+   value=0.0;
 
    while (CH>='0' && CH<='9')
       {
-      VALUE=10.0f*VALUE+CH-'0';
+      value=10.0*value+CH-'0';
       getmychar();
       }
 
@@ -436,12 +439,12 @@ void lunascan::scanvalue()
        {
        getmychar();
 
-       point=1.0f;
+       point=1.0;
 
        while (CH>='0' && CH<='9')
           {
-          VALUE=10.0f*VALUE+CH-'0';
-          point*=0.1f;
+          value=10.0*value+CH-'0';
+          point*=0.1;
           getmychar();
           }
 
@@ -449,7 +452,7 @@ void lunascan::scanvalue()
           {
           getmychar();
 
-          xpnt=0.0f;
+          xpnt=0.0;
 
           if (CH=='-')
              {
@@ -457,26 +460,27 @@ void lunascan::scanvalue()
 
              while (CH>='0' && CH<='9')
                 {
-                xpnt=10.0f*xpnt+CH-'0';
+                xpnt=10.0*xpnt+CH-'0';
                 getmychar();
                 }
 
-             xpnt*=-1.0f;
+             xpnt*=-1.0;
              }
           else
              while (CH>='0' && CH<='9')
                 {
-                xpnt=10.0f*xpnt+CH-'0';
+                xpnt=10.0*xpnt+CH-'0';
                 getmychar();
                 }
 
-          point*=fpow(10.0f,xpnt);
+          point*=pow(10.0,xpnt);
           }
 
-       VALUE*=point;
+       value*=point;
        }
 
    TOKEN=LUNA_VALUE;
+   VALUE=value;
    }
 
 void lunascan::scanminus()
