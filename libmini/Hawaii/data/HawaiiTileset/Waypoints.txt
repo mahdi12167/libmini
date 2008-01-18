@@ -1055,6 +1055,7 @@ UTM 04
 44m
 
 Lanai@Office, Makai
+; $type=2
 UTM 04
 638099
 2358127
