@@ -314,8 +314,6 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.autocompress=TPARAMS.autocompress;
          lparams.lod0uncompressed=TPARAMS.lod0uncompressed;
 
-         lparams.lod0uncompressed=TPARAMS.lod0uncompressed;
-
          lparams.proxyname=TPARAMS.proxyname;
          lparams.proxyport=TPARAMS.proxyport;
 

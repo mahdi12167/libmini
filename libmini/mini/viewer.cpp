@@ -196,7 +196,7 @@ void initparams()
    prms.usewireframe=FALSE;
    prms.useskydome=TRUE;
    prms.usewaypoints=TRUE;
-   prms.usebricks=FALSE;
+   prms.usebricks=(sw_bricks==0)?FALSE:TRUE;
    prms.useearth=TRUE;
    prms.useflat=FALSE;
 
@@ -213,7 +213,9 @@ void initparams()
    tprms.range=VIEWER_RANGE;
    tprms.sealevel=VIEWER_SEALEVEL;
 
-   if (sw_autos3tc!=0) tprms.autocompress=TRUE;
+   tprms.genmipmaps=TRUE;
+   tprms.autocompress=(sw_autos3tc==0)?FALSE:TRUE;
+   tprms.lod0uncompressed=FALSE;
 
    tprms.contours=VIEWER_CONTOURS;
    tprms.seabottom=VIEWER_SEABOTTOM;
@@ -239,14 +241,10 @@ void initparams()
    tprms.signpostheight=VIEWER_SIGNPOSTHEIGHT;
    tprms.signpostrange=VIEWER_SIGNPOSTRANGE;
 
-   if (sw_bricks!=0) tprms.usebricks=TRUE;
-
    tprms.bricksize=VIEWER_BRICKSIZE;
    tprms.brickrad=VIEWER_BRICKRAD;
 
-   if (sw_mpass!=0) tprms.brickpasses=2;
-   else tprms.brickpasses=1;
-
+   tprms.brickpasses=(sw_mpass==0)?1:2;
    tprms.brickscroll=VIEWER_BRICKSCROLL;
 
    viewer->getterrain()->set(tprms);

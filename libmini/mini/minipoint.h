@@ -31,7 +31,7 @@ class minipointopts
    // destructor
    ~minipointopts();
 
-   int type; // type of the waypoint: none=0 signpost=1 brick=2
+   int type; // type of the waypoint: none=-1 any=0 signpost=1 brick=2
 
    // signpost parameters
    float signpostheight;
