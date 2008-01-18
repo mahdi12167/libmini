@@ -112,7 +112,7 @@ class minipoint
    int getvnum() {return(VNUM);}
 
    //! get nearest waypoint
-   minipointdata *getnearest(float x,float y,float elev,int type1=0,int type2=0);
+   minipointdata *getnearest(float x,float y,float elev,int type1=0,int type2=1);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
@@ -128,14 +128,14 @@ class minipoint
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,
                       float turn,float yon,
-                      int type1=0,int type2=0);
+                      int type1=0,int type2=1);
 
    //! render waypoints with bricks
    void drawbricks(float ex,float ey,float ez,
                    float brad,float farp,
                    float fovy,float aspect,
                    float size,
-                   int type1=0,int type2=0);
+                   int type1=0,int type2=2);
 
    //! set brick file name
    void setbrick(char *filename);

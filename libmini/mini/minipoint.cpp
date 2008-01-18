@@ -218,6 +218,7 @@ void minipoint::parsecomment(minipointdata *point)
 
    scanner.setcode(point->comment);
 
+   // options are of the form $option=value
    while (scanner.gettoken()!=lunascan::LUNA_END)
       if (scanner.gettoken()==minipointopts::OPTION_DELIMITER)
          {
@@ -245,7 +246,9 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
           scanner->gettoken()==lunascan::LUNA_STRING)
          {
          value=scanner->getvalue();
+
          name=scanner->getstring();
+         if (strcmp(name,"")==0) name=NULL;
 
          if (point->opts==NULL) point->opts=new minipointopts;
 
@@ -351,7 +354,11 @@ void minipoint::load(char *filename,
             ch=fgetc(file);
             }
 
-         while (ch=='\n' || ch=='\r') ch=fgetc(file);
+         while (ch=='\n' || ch=='\r')
+            {
+            if (ch=='\n') point.comment=addch(point.comment,ch);
+            ch=fgetc(file);
+            }
          }
 
       if (point.comment==NULL) point.comment=addch(point.comment,'\0');
