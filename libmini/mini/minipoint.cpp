@@ -551,7 +551,7 @@ void minipoint::calcvdata(int type1,int type2)
 
             if (type!=type1 && type!=type2) continue;
 
-            point->height=TILE->getheight(VPOINTS[VNUM]->x,-VPOINTS[VNUM]->y);
+            point->height=TILE->getheight(point->x,-point->y);
 
             if (VNUM>=MAXVNUM)
                {
