@@ -1265,7 +1265,7 @@ void minilayer::renderpoints()
          POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
       else
          {
-         POINTS->configure_brickstripes(FTRC(LPARAMS.brickscroll*LPARAMS.time));
+         POINTS->configure_brickstripes(LPARAMS.brickscroll*LPARAMS.time);
          POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_g2i(LPARAMS.bricksize));
          }
 
