@@ -117,13 +117,6 @@ class minipoint
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
 
-   //! render waypoints
-   void render(float ex,float ey,float ez,
-               float farp,float fovy,float aspect,
-               float height,float range,
-               float turn,float incline,
-               int type=0);
-
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,

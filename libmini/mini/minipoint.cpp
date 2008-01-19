@@ -650,22 +650,6 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,int type1,int ty
 float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
    {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(point->height-elev));}
 
-// render waypoints
-void minipoint::render(float ex,float ey,float ez,
-                       float farp,float fovy,float aspect,
-                       float height,float range,
-                       float turn,float incline,
-                       int type)
-   {
-   if (type==0)
-      {
-      drawsignposts(ex,ey,ez,height,range,turn,incline,0,1);
-      drawbricks(ex,ey,ez,range,farp,fovy,aspect,height,2,2);
-      }
-   else if (type==1) drawsignposts(ex,ey,ez,height,range,turn,incline,0,1);
-   else if (type==2) drawbricks(ex,ey,ez,range,farp,fovy,aspect,height,0,2);
-   }
-
 // render waypoints with signposts
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,

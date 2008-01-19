@@ -1261,13 +1261,25 @@ void minilayer::renderpoints()
 
       mtxmult(oglmtx);
 
+      POINTS->configure_brickstripes(LPARAMS.brickscroll*LPARAMS.time);
+
       if (!LPARAMS.usebricks)
-         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),LPARAMS.signpostturn,LPARAMS.signpostincline);
-      else
          {
-         POINTS->configure_brickstripes(LPARAMS.brickscroll*LPARAMS.time);
-         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,len_g2i(LPARAMS.bricksize));
+         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
+                               len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
+                               LPARAMS.signpostturn,LPARAMS.signpostincline);
+
+         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
+                            len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
+                            LPARAMS.fovy,LPARAMS.aspect,
+                            len_g2i(LPARAMS.bricksize),
+                            2,2);
          }
+      else
+         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
+                            len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
+                            LPARAMS.fovy,LPARAMS.aspect,
+                            len_g2i(LPARAMS.bricksize));
 
       mtxpop();
       }
