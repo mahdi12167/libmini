@@ -24,6 +24,10 @@ typedef struct
    float x,y,e;
    float dx,dy,de;
    float r,g,b,a;
+
+   float dx1,dy1,dz1;
+   float dx2,dy2,dz2;
+   float dx3,dy3,dz3;
    }
 miniloddata;
 
@@ -44,11 +48,19 @@ class minilod
                  unsigned int lods=0,
                  float stagger=1.5f);
 
+   //! add brick passes to volume
+   void addpasses(unsigned int index,int passes);
+
    //! add volume at specific location
    void addvolume(unsigned int index,
                   float midx,float midy,float basez,
                   float dx,float dy,float de,
                   float r,float g,float b,float a);
+
+   //! add orientation to the actual volume
+   void addorientation(float dx1,float dy1,float dz1,
+                       float dx2,float dy2,float dz2,
+                       float dx3,float dy3,float dz3);
 
    //! clear volumes
    void clearvolumes() {VNUM=0;}

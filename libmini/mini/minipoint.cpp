@@ -24,7 +24,7 @@ minipointopts::minipointopts()
    bricksize=100.0;
    brickturn=0.0f;
    brickincline=0.0f;
-   brickpasses=4;
+   brickpasses=1;
 
    lods=NULL;
    }
@@ -773,12 +773,9 @@ void minipoint::drawbricks(float ex,float ey,float ez,
                            float size,
                            int type1,int type2)
    {
-   int i;
+   int passes;
 
    minipointdata **vpoint;
-
-   float midx,midy,basez;
-   float color,r,g,b;
 
    // check if a brick file name was set
    if (BRICKNAME==NULL) return;
@@ -801,12 +798,44 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    // set stripe pattern
    LODS->configure_brickoffset(CONFIGURE_BRICKSTRIPES);
 
+   // draw multiple pass sequences
+   for (passes=1; passes<=4; passes++)
+      {
+      if (CONFIGURE_BRICKPASSES=passes) drawsequence(ex,ey,ez,farp,fovy,aspect,size,0,passes);
+      drawsequence(ex,ey,ez,farp,fovy,aspect,size,passes,passes);
+      }
+   }
+
+// render waypoints with multiple pass sequence
+void minipoint::drawsequence(float ex,float ey,float ez,
+                             float farp,float fovy,float aspect,
+                             float size,int mpasses,int passes)
+   {
+   int i;
+
+   minipointdata **vpoint;
+
+   int bpasses;
+
+   float midx,midy,basez;
+   float color,r,g,b;
+
+   // get visible points
+   vpoint=getvdata();
+
    // clear all volumes
    LODS->clearvolumes();
 
    // update visible points
    for (i=0; i<getvnum(); i++,vpoint++)
       {
+      // get brick passes
+      if ((*vpoint)->opts==NULL) bpasses=0;
+      else bpasses=(*vpoint)->opts->brickpasses;
+
+      // check brick passes
+      if (bpasses!=mpasses) continue;
+
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
       midy=(*vpoint)->y/SCALEY-OFFSETLAT;
@@ -831,11 +860,20 @@ void minipoint::drawbricks(float ex,float ey,float ez,
          }
 
       // set position and color
-      LODS->addvolume(0,
+      LODS->addvolume(0, //!! create new one for brickfile!=NULL
                       midx,midy,basez,
                       size/SCALEX,size/SCALEY,size/SCALEELEV,
                       r,g,b,CONFIGURE_BRICKALPHA);
+
+      //!! calculate rotation
+      // set orientation
+      LODS->addorientation(0.0f,0.0f,0.0f,
+                           0.0f,0.0f,0.0f,
+                           0.0f,0.0f,0.0f);
       }
+
+   // set rendering passes
+   LODS->addpasses(0,passes);
 
    // render visible points
    LODS->render(ex,ey,ez,farp,fovy,aspect);

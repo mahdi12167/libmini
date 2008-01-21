@@ -110,6 +110,17 @@ void minilod::addbrick(char *brickname,
    BNUM++;
    }
 
+// add brick passes to volume
+void minilod::addpasses(unsigned int index,int passes)
+   {
+   unsigned int i;
+
+   if (index>=BNUM) ERRORMSG();
+
+   for (i=0; i<BRICKS[index].lods; i++)
+      BRICKS[index].brick[i].configure_renderpasses(passes);
+   }
+
 // add volume at specific location
 void minilod::addvolume(unsigned int index,
                         float midx,float midy,float basez,
@@ -152,7 +163,39 @@ void minilod::addvolume(unsigned int index,
    VOLS[VNUM].b=b;
    VOLS[VNUM].a=a;
 
+   VOLS[VNUM].dx1=0.0f;
+   VOLS[VNUM].dy1=0.0f;
+   VOLS[VNUM].dz1=0.0f;
+
+   VOLS[VNUM].dx2=0.0f;
+   VOLS[VNUM].dy2=0.0f;
+   VOLS[VNUM].dz2=0.0f;
+
+   VOLS[VNUM].dx3=0.0f;
+   VOLS[VNUM].dy3=0.0f;
+   VOLS[VNUM].dz3=0.0f;
+
    VNUM++;
+   }
+
+// add orientation to the actual volume
+void minilod::addorientation(float dx1,float dy1,float dz1,
+                             float dx2,float dy2,float dz2,
+                             float dx3,float dy3,float dz3)
+   {
+   if (VNUM==0) ERRORMSG();
+
+   VOLS[VNUM-1].dx1=dx1;
+   VOLS[VNUM-1].dy1=dy1;
+   VOLS[VNUM-1].dz1=dz1;
+
+   VOLS[VNUM-1].dx2=dx2;
+   VOLS[VNUM-1].dy2=dy2;
+   VOLS[VNUM-1].dz2=dz2;
+
+   VOLS[VNUM-1].dx3=dx3;
+   VOLS[VNUM-1].dy3=dy3;
+   VOLS[VNUM-1].dz3=dz3;
    }
 
 // render the volumes
@@ -203,6 +246,11 @@ void minilod::render(float ex,float ey,float ez,
 
             // set position
             brick->resetpos(vol->x,vol->y,vol->e,vol->dx,vol->dy,vol->de);
+
+            // set orientation
+            brick->setorientation(vol->dx1,vol->dy1,vol->dz1,
+                                  vol->dx2,vol->dy2,vol->dz2,
+                                  vol->dx3,vol->dy3,vol->dz3);
 
             // set color
             brick->addiso(0.5f,vol->r,vol->g,vol->b,vol->a);

@@ -203,6 +203,10 @@ class minipoint
    int compare(minipointdata *a,minipointdata *b,
                float x,float y,float elev,
                float dx,float dy,float de);
+
+   void drawsequence(float ex,float ey,float ez,
+                     float farp,float fovy,float aspect,
+                     float size,int mpasses,int passes);
    };
 
 #endif
