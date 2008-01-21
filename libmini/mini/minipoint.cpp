@@ -25,17 +25,12 @@ minipointopts::minipointopts()
    brickturn=0.0f;
    brickincline=0.0f;
    brickpasses=1;
-
-   lods=NULL;
+   brickindex=0;
    }
 
 // destructor
 minipointopts::~minipointopts()
-   {
-   if (brickfile!=NULL) free(brickfile);
-
-   if (lods!=NULL) delete lods;
-   }
+   {if (brickfile!=NULL) free(brickfile);}
 
 // default constructor
 minipoint::minipoint(minitile *tile)
@@ -819,10 +814,13 @@ void minipoint::drawsequence(float ex,float ey,float ez,
 
    minipointdata **vpoint;
 
+   int bindex;
    int bpasses;
 
    float midx,midy,basez;
    float color,r,g,b;
+
+   float alpha,beta;
 
    // get visible points
    vpoint=getvdata();
@@ -833,6 +831,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    // update visible points
    for (i=0; i<getvnum(); i++,vpoint++)
       {
+      // get brick index
+      if ((*vpoint)->opts==NULL) bindex=0;
+      else bindex=(*vpoint)->opts->brickindex;
+
       // get brick passes
       if ((*vpoint)->opts==NULL) bpasses=0;
       else bpasses=(*vpoint)->opts->brickpasses;
@@ -864,16 +866,21 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          }
 
       // set position and color
-      LODS->addvolume(0, //!! create new one for brickfile!=NULL
+      LODS->addvolume(bindex,
                       midx,midy,basez,
                       size/SCALEX,size/SCALEY,size/SCALEELEV,
                       r,g,b,CONFIGURE_BRICKALPHA);
 
-      //!! calculate rotation
       // set orientation
-      LODS->addorientation(0.0f,0.0f,0.0f,
-                           0.0f,0.0f,0.0f,
-                           0.0f,0.0f,0.0f);
+      if ((*vpoint)->opts!=NULL)
+         {
+         alpha=-(*vpoint)->opts->brickturn*RAD;
+         beta=(*vpoint)->opts->brickincline*RAD;
+
+         LODS->addorientation(fcos(alpha),0.0f,fsin(alpha),
+                              -fsin(beta)*fsin(alpha),fcos(beta),fsin(beta)*fcos(alpha),
+                              -fcos(beta)*fsin(alpha),-fsin(beta),fcos(beta)*fcos(alpha));
+         }
       }
 
    // set rendering passes

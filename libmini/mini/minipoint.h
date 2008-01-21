@@ -44,8 +44,7 @@ class minipointopts
    float brickturn;
    float brickincline;
    int brickpasses;
-
-   minilod *lods;
+   int brickindex;
    };
 
 typedef struct
