@@ -254,11 +254,15 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
 
          switch (option)
             {
-            case minipointopts::OPTION_TYPE: point->opts->type=ftrc(scanner->getvalue()+0.5f); break;
+            case minipointopts::OPTION_TYPE: point->opts->type=ftrc(value+0.5f); break;
             case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; break;
             case minipointopts::OPTION_SIGNPOSTTURN: point->opts->signpostturn=value; break;
             case minipointopts::OPTION_SIGNPOSTINCLINE: point->opts->signpostincline=value; break;
             case minipointopts::OPTION_BRICKFILE: if (name!=NULL) point->opts->brickfile=strdup(name); break;
+            case minipointopts::OPTION_BRICKSIZE: point->opts->bricksize=value; break;
+            case minipointopts::OPTION_BRICKTURN: point->opts->brickturn=value; break;
+            case minipointopts::OPTION_BRICKINCLINE: point->opts->brickincline=value; break;
+            case minipointopts::OPTION_BRICKPASSES: point->opts->brickpasses=ftrc(value+0.5f); break;
             }
          }
 

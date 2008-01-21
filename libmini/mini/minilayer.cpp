@@ -1276,10 +1276,17 @@ void minilayer::renderpoints()
                             2,2);
          }
       else
+         {
+         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
+                               len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
+                               LPARAMS.signpostturn,LPARAMS.signpostincline,
+                               1,1);
+
          POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
                             LPARAMS.fovy,LPARAMS.aspect,
                             len_g2i(LPARAMS.bricksize));
+         }
 
       mtxpop();
       }
