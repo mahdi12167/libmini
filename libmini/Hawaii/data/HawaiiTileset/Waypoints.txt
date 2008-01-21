@@ -34,17 +34,35 @@ UTM 04
 2357987
 9m
 
+Parking, Makai
+; $type=2
+; $brickpasses=4
+UTM 04
+0638074
+2358139
+22m
+
 Office, Makai
+; $type=2
+; $brickpasses=4
 UTM 04
 0638067
 2358141
 38m
 
-Parking, Makai
+T.C.'s Helicopter Platform, Makai
 UTM 04
-0638074
-2358139
-22m
+0638128
+2358101
+21m
+
+Lanai@Office, Makai
+; $type=2
+; $brickpasses=1
+UTM 04
+638099
+2358127
+5m
 
 Ross, Hawai'i Kai
 UTM 04
@@ -57,12 +75,6 @@ UTM 04
 0632585
 2361233
 19m
-
-T.C.'s Helicopter Platform, Makai
-UTM 04
-0638128
-2358101
-21m
 
 Pali Lookout, Oahu
 UTM 04
@@ -1053,13 +1065,6 @@ UTM 04
 624396
 2367000
 44m
-
-Lanai@Office, Makai
-; $type=2
-UTM 04
-638099
-2358127
-5m
 
 Lanikai Backend Trail Head
 UTM 04
