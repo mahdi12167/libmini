@@ -15,14 +15,13 @@ class minipointopts
       OPTION_DELIMITER=1,
       OPTION_EQ=2,
       OPTION_TYPE=3,
-      OPTION_SIGNPOSTHEIGHT=4,
-      OPTION_SIGNPOSTTURN=5,
-      OPTION_SIGNPOSTINCLINE=6,
-      OPTION_BRICKFILE=7,
-      OPTION_BRICKSIZE=8,
-      OPTION_BRICKTURN=9,
-      OPTION_BRICKINCLINE=10,
-      OPTION_BRICKPASSES=11
+      OPTION_SIGNPOSTSIZE=4,
+      OPTION_SIGNPOSTHEIGHT=5,
+      OPTION_BRICKFILE=6,
+      OPTION_BRICKSIZE=7,
+      OPTION_BRICKTURN=8,
+      OPTION_BRICKINCLINE=9,
+      OPTION_BRICKPASSES=10
       };
 
    // default constructor
@@ -34,16 +33,15 @@ class minipointopts
    int type; // type of the waypoint: none=-1 any=0 signpost=1 brick=2
 
    // signpost parameters
+   float signpostsize;
    float signpostheight;
-   float signpostturn;
-   float signpostincline;
 
    // brick parameters
    char *brickfile;
-   float bricksize;
-   float brickturn;
-   float brickincline;
-   int brickpasses;
+   float bricksize; // 0=default
+   float brickturn; // clockwise turning angle
+   float brickincline; // downward inclination angle
+   int brickpasses; // 0=default 1=striped 2-4=semi-transparent
    int brickindex;
    };
 

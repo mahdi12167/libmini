@@ -16,9 +16,8 @@ minipointopts::minipointopts()
    {
    type=0;
 
-   signpostheight=100.0f;
-   signpostturn=0.0f;
-   signpostincline=0.0f;
+   signpostsize=0.0f;
+   signpostheight=0.0f;
 
    brickfile=NULL;
    bricksize=0.0f;
@@ -201,9 +200,8 @@ void minipoint::parsecomment(minipointdata *point)
 
    scanner.addtoken("type",minipointopts::OPTION_TYPE);
 
+   scanner.addtoken("signpostsize",minipointopts::OPTION_SIGNPOSTSIZE);
    scanner.addtoken("signpostheight",minipointopts::OPTION_SIGNPOSTHEIGHT);
-   scanner.addtoken("signpostturn",minipointopts::OPTION_SIGNPOSTTURN);
-   scanner.addtoken("signpostincline",minipointopts::OPTION_SIGNPOSTINCLINE);
 
    scanner.addtoken("brickfile",minipointopts::OPTION_BRICKFILE);
    scanner.addtoken("bricksize",minipointopts::OPTION_BRICKSIZE);
@@ -250,9 +248,8 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
          switch (option)
             {
             case minipointopts::OPTION_TYPE: point->opts->type=ftrc(value+0.5f); break;
+            case minipointopts::OPTION_SIGNPOSTSIZE: point->opts->signpostsize=value; break;
             case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; break;
-            case minipointopts::OPTION_SIGNPOSTTURN: point->opts->signpostturn=value; break;
-            case minipointopts::OPTION_SIGNPOSTINCLINE: point->opts->signpostincline=value; break;
             case minipointopts::OPTION_BRICKFILE: if (name!=NULL) point->opts->brickfile=strdup(name); break;
             case minipointopts::OPTION_BRICKSIZE: point->opts->bricksize=value; break;
             case minipointopts::OPTION_BRICKTURN: point->opts->brickturn=value; break;
@@ -668,6 +665,8 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    minipointdata **vpoint;
    minipointdata *nearest;
 
+   float sheight,ssize;
+
    // calculate visible points
    calcvdata(type1,type2);
    vpoint=getvdata();
@@ -700,19 +699,32 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    // mark all waypoints with a post
    for (i=0; i<getvnum(); i++,vpoint++)
       {
+      sheight=height;
+
+      if ((*vpoint)->opts!=NULL)
+         if ((*vpoint)->opts->signpostheight>0.0f) sheight=(*vpoint)->opts->signpostheight*SCALEELEV;
+
       if (*vpoint==nearest) color(1.0f,0.0f,0.0f);
       else color(0.0f,0.0f,1.0f);
 
-      drawline((*vpoint)->x,(*vpoint)->height,-(*vpoint)->y,(*vpoint)->x,(*vpoint)->height+height,-(*vpoint)->y);
+      drawline((*vpoint)->x,(*vpoint)->height,-(*vpoint)->y,(*vpoint)->x,(*vpoint)->height+sheight,-(*vpoint)->y);
       }
 
    linewidth(1);
 
-   minitext::configure_zfight(0.95f);
+   minitext::configure_zfight(0.975f);
 
    // display nearest waypoint
    if (nearest!=NULL)
       {
+      ssize=sheight=height;
+
+      if (nearest->opts!=NULL)
+         {
+         if (nearest->opts->signpostsize>0.0f) ssize=nearest->opts->signpostsize*SCALEELEV;
+         if (nearest->opts->signpostheight>0.0f) sheight=nearest->opts->signpostheight*SCALEELEV;
+         }
+
       // compile label information of nearest waypoint
       if (nearest->zone==0)
          snprintf(info,maxinfo,"\n %s \n\n Lat=%s Lon=%s \n Elev=%s \n",
@@ -727,10 +739,10 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
 
       // label nearest waypoint
       mtxpush();
-      mtxtranslate(0.0f,height,0.0f);
+      mtxtranslate(0.0f,sheight,0.0f);
       mtxtranslate(nearest->x,nearest->height,-nearest->y);
       mtxrotate(-turn,0.0f,1.0f,0.0f);
-      mtxscale(2.0f*height,2.0f*height,2.0f*height);
+      mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
       mtxrotate(yon,1.0f,0.0f,0.0f);
       mtxtranslate(-0.5f,0.0f,0.0f);
       minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,1.0f);
@@ -743,16 +755,24 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
       if (*vpoint!=nearest)
          if (getdistance2(ex,ez,ey,*vpoint)<fsqr(range))
             {
+            ssize=sheight=height;
+
+            if ((*vpoint)->opts!=NULL)
+               {
+               if ((*vpoint)->opts->signpostsize>0.0f) ssize=(*vpoint)->opts->signpostsize*SCALEELEV;
+               if ((*vpoint)->opts->signpostheight>0.0f) sheight=(*vpoint)->opts->signpostheight*SCALEELEV;
+               }
+
             // compile label information of waypoint within range
             snprintf(info,maxinfo,"\n %s \n",(*vpoint)->desc);
 
             // label waypoint within range
             mtxpush();
-            mtxtranslate(0.0f,height,0.0f);
+            mtxtranslate(0.0f,sheight,0.0f);
             mtxtranslate((*vpoint)->x,(*vpoint)->height,-(*vpoint)->y);
             mtxrotate(-turn,0.0f,1.0f,0.0f);
             mtxrotate(yon,1.0f,0.0f,0.0f);
-            mtxscale(2.0f*height,2.0f*height,2.0f*height);
+            mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
             mtxtranslate(-0.5f,0.0f,0.0f);
             minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,0.75f);
             mtxpop();
@@ -856,7 +876,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
 
       // get brick size
       if ((*vpoint)->opts!=NULL)
-         if ((*vpoint)->opts->bricksize>0.0f) size=(*vpoint)->opts->bricksize;
+         if ((*vpoint)->opts->bricksize>0.0f) size=(*vpoint)->opts->bricksize*SCALEELEV;
 
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
