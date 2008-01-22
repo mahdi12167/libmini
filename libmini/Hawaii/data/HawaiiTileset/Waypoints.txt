@@ -1761,3 +1761,87 @@ UTM 04
 625029
 2356913
 412m
+
+BBQ Palm, Kapiolani Park
+UTM 04
+622513
+2351752
+16m
+
+Eastern Tip, Oahu
+UTM 04
+639759
+2355905
+108m
+
+Hahaione NBH Park
+UTM 04
+633763
+2356188
+51
+
+Hardware Store, Kailua
+UTM 04
+630007
+2366444
+17m
+
+Pahua Heiau
+UTM 04
+635859
+2355735
+18m
+
+Kamilonui Ridge, Trail Head
+UTM 04
+634705
+2356449
+238m
+
+Kamilonui Ridge, Picnic Spot
+UTM 04
+634346
+2357160
+343m
+
+Waterfall, Liliuokalani Park, Honolulu
+UTM 04
+618646
+2357946
+26m
+
+Mamiya Theater
+UTM 04
+623626
+2354804
+65m
+
+Nature Center, Tantalus
+UTM 04
+621391
+2357286
+85m
+
+Don Quichote, Kailua
+UTM 04
+630624
+2365966
+14m
+
+Starbucks, Waikiki
+UTM 04
+622141
+2352681
+15m
+
+Willows, Honolulu
+UTM 04
+621950
+2354838
+22m
+
+YMCA, Kailua
+UTM 04
+629306
+2365265
+51m
