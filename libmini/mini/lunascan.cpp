@@ -681,8 +681,7 @@ void lunascan::getmychar()
       while (CH!='\n' && CH!='\r' && CH!='\0') getrawchar();
       }
 
-   if (CH=='\r') SCANNERMSG("redundant carriage return");
-   else if (CH=='\t') SCANNERMSG("tabs are evil");
+   if (CH=='\t') SCANNERMSG("tab should be replaced with spaces");
    }
 
 void lunascan::getrawchar()
