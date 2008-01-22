@@ -25,12 +25,12 @@ bytes=0
 # implicit cone function
 
 func sphere(par x, par y, par z, par t)
-   {return(* 2 sqrt(+ sqr(x) sqr(y) sqr(z)));}
+   {return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));}
 
 func half_sphere(par x, par y, par z, par t)
    {
    if (< z 0) return(1);
-   else return(* 2 sqrt(+ sqr(x) sqr(y) sqr(z)));
+   else return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
    }
 
 func cone(par x, par y, par z, par t)
