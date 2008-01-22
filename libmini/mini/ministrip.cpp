@@ -956,6 +956,13 @@ void ministrip::render()
       glMultMatrixd(TEXMTX);
       glMatrixMode(GL_MODELVIEW);
 
+      if (GLEXT_MT!=0)
+         {
+#ifdef GL_ARB_multitexture
+         glClientActiveTextureARB(GL_TEXTURE0_ARB);
+#endif
+         }
+
       glTexCoordPointer(TEXCOMPS,GL_FLOAT,0,TEXARRAY);
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
       }
@@ -1023,6 +1030,7 @@ void ministrip::initwglprocs()
       {
 #ifdef GL_ARB_multitexture
       glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)

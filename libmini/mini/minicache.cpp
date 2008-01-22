@@ -1806,6 +1806,7 @@ void minicache::initwglprocs()
       {
 #ifdef GL_ARB_multitexture
       glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)

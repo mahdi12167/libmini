@@ -231,6 +231,7 @@ class ministrip
 
 #ifdef GL_ARB_multitexture
    PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+   PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
