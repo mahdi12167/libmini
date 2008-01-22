@@ -21,10 +21,10 @@ minipointopts::minipointopts()
    signpostincline=0.0f;
 
    brickfile=NULL;
-   bricksize=100.0;
+   bricksize=0.0f;
    brickturn=0.0f;
    brickincline=0.0f;
-   brickpasses=1;
+   brickpasses=0;
    brickindex=0;
    }
 
@@ -822,6 +822,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    float color,r,g,b;
 
    float alpha,beta;
+   float sa,ca,sb,cb;
 
    // get visible points
    vpoint=getvdata();
@@ -852,6 +853,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
             free((*vpoint)->opts->brickfile);
             (*vpoint)->opts->brickfile=NULL;
             }
+
+      // get brick size
+      if ((*vpoint)->opts!=NULL)
+         if ((*vpoint)->opts->bricksize>0.0f) size=(*vpoint)->opts->bricksize;
 
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
@@ -889,10 +894,18 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          beta=(*vpoint)->opts->brickincline*RAD;
 
          if (alpha!=0.0f || beta!=0.0f)
+            {
+            sa=fsin(alpha);
+            ca=fcos(alpha);
+
+            sb=fsin(beta);
+            cb=fcos(beta);
+
             LODS->addorientation(vindex,
-                                 fcos(alpha),0.0f,fsin(alpha),
-                                 -fsin(beta)*fsin(alpha),fcos(beta),fsin(beta)*fcos(alpha),
-                                 -fcos(beta)*fsin(alpha),-fsin(beta),fcos(beta)*fcos(alpha));
+                                 ca,0.0f,sa,
+                                 -sa*sb,cb,ca*sb,
+                                 -sa*cb,-sb,ca*cb);
+            }
          }
 
       // set rendering passes
