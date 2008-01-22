@@ -19,7 +19,7 @@ minibrickdata;
 
 typedef struct
    {
-   unsigned int index;
+   unsigned int bindex;
 
    float x,y,e;
    float dx,dy,de;
@@ -43,22 +43,23 @@ class minilod
    ~minilod();
 
    //! add minibrick volume
-   void addbrick(char *brickname,
-                 float brad=0.0f,
-                 unsigned int lods=0,
-                 float stagger=1.5f);
+   unsigned int addbrick(char *brickname,
+                         float brad=0.0f,
+                         unsigned int lods=0,
+                         float stagger=1.5f);
 
-   //! add brick passes to volume
-   void addpasses(unsigned int index,int passes);
+   //! add brick passes to minibrick volume
+   void addpasses(unsigned int bindex,int passes);
 
    //! add volume at specific location
-   void addvolume(unsigned int index,
-                  float midx,float midy,float basez,
-                  float dx,float dy,float de,
-                  float r,float g,float b,float a);
+   unsigned int addvolume(unsigned int bindex,
+                          float midx,float midy,float basez,
+                          float dx,float dy,float de,
+                          float r,float g,float b,float a);
 
-   //! add orientation to the actual volume
-   void addorientation(float dx1,float dy1,float dz1,
+   //! add orientation to volume
+   void addorientation(unsigned int vindex,
+                       float dx1,float dy1,float dz1,
                        float dx2,float dy2,float dz2,
                        float dx3,float dy3,float dz3);
 

@@ -204,7 +204,8 @@ class minipoint
                float dx,float dy,float de);
 
    void drawsequence(float ex,float ey,float ez,
-                     float farp,float fovy,float aspect,
+                     float brad,float farp,
+                     float fovy,float aspect,
                      float size,int mpasses,int passes);
    };
 

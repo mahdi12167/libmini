@@ -47,10 +47,10 @@ minilod::~minilod()
    }
 
 // add minibrick volume
-void minilod::addbrick(char *brickname,
-                       float brad,
-                       unsigned int lods,
-                       float stagger)
+unsigned int minilod::addbrick(char *brickname,
+                               float brad,
+                               unsigned int lods,
+                               float stagger)
    {
    unsigned int i;
 
@@ -108,30 +108,32 @@ void minilod::addbrick(char *brickname,
       }
 
    BNUM++;
+
+   return(BNUM-1);
    }
 
-// add brick passes to volume
-void minilod::addpasses(unsigned int index,int passes)
+// add brick passes to minibrick volume
+void minilod::addpasses(unsigned int bindex,int passes)
    {
    unsigned int i;
 
-   if (index>=BNUM) ERRORMSG();
+   if (bindex>=BNUM) ERRORMSG();
 
-   for (i=0; i<BRICKS[index].lods; i++)
-      BRICKS[index].brick[i].configure_renderpasses(passes);
+   for (i=0; i<BRICKS[bindex].lods; i++)
+      BRICKS[bindex].brick[i].configure_renderpasses(passes);
    }
 
 // add volume at specific location
-void minilod::addvolume(unsigned int index,
-                        float midx,float midy,float basez,
-                        float dx,float dy,float de,
-                        float r,float g,float b,float a)
+unsigned int minilod::addvolume(unsigned int bindex,
+                                float midx,float midy,float basez,
+                                float dx,float dy,float de,
+                                float r,float g,float b,float a)
    {
    unsigned int i;
 
    miniloddata *newvols;
 
-   if (index>=BNUM) ERRORMSG();
+   if (bindex>=BNUM) ERRORMSG();
 
    if (VOLS==NULL)
       {
@@ -148,7 +150,7 @@ void minilod::addvolume(unsigned int index,
       VMAX*=2;
       }
 
-   VOLS[VNUM].index=index;
+   VOLS[VNUM].bindex=bindex;
 
    VOLS[VNUM].x=midx;
    VOLS[VNUM].y=midy;
@@ -176,26 +178,29 @@ void minilod::addvolume(unsigned int index,
    VOLS[VNUM].dz3=0.0f;
 
    VNUM++;
+
+   return(VNUM-1);
    }
 
-// add orientation to the actual volume
-void minilod::addorientation(float dx1,float dy1,float dz1,
+// add orientation to volume
+void minilod::addorientation(unsigned int vindex,
+                             float dx1,float dy1,float dz1,
                              float dx2,float dy2,float dz2,
                              float dx3,float dy3,float dz3)
    {
-   if (VNUM==0) ERRORMSG();
+   if (vindex>=VNUM) ERRORMSG();
 
-   VOLS[VNUM-1].dx1=dx1;
-   VOLS[VNUM-1].dy1=dy1;
-   VOLS[VNUM-1].dz1=dz1;
+   VOLS[vindex].dx1=dx1;
+   VOLS[vindex].dy1=dy1;
+   VOLS[vindex].dz1=dz1;
 
-   VOLS[VNUM-1].dx2=dx2;
-   VOLS[VNUM-1].dy2=dy2;
-   VOLS[VNUM-1].dz2=dz2;
+   VOLS[vindex].dx2=dx2;
+   VOLS[vindex].dy2=dy2;
+   VOLS[vindex].dz2=dz2;
 
-   VOLS[VNUM-1].dx3=dx3;
-   VOLS[VNUM-1].dy3=dy3;
-   VOLS[VNUM-1].dz3=dz3;
+   VOLS[vindex].dx3=dx3;
+   VOLS[vindex].dy3=dy3;
+   VOLS[vindex].dz3=dz3;
    }
 
 // render the volumes
@@ -230,7 +235,7 @@ void minilod::render(float ex,float ey,float ez,
             vol=&VOLS[i];
 
             // get indexed brick
-            brk=&BRICKS[vol->index];
+            brk=&BRICKS[vol->bindex];
 
             // calculate distance
             dist=fsqr((vol->x+OFFSETLON)*SCALEX-ex)+fsqr((vol->y+OFFSETLAT)*SCALEY-ez)+fsqr(vol->e*SCALEELEV-ey);

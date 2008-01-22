@@ -800,21 +800,22 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    // draw multiple pass sequences
    for (passes=1; passes<=4; passes++)
       {
-      if (CONFIGURE_BRICKPASSES=passes) drawsequence(ex,ey,ez,farp,fovy,aspect,size,0,passes);
-      drawsequence(ex,ey,ez,farp,fovy,aspect,size,passes,passes);
+      if (CONFIGURE_BRICKPASSES=passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
+      drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,passes,passes);
       }
    }
 
 // render waypoints with multiple pass sequence
 void minipoint::drawsequence(float ex,float ey,float ez,
-                             float farp,float fovy,float aspect,
+                             float brad,float farp,
+                             float fovy,float aspect,
                              float size,int mpasses,int passes)
    {
    int i;
 
    minipointdata **vpoint;
 
-   int bindex;
+   int bindex,vindex;
    int bpasses;
 
    float midx,midy,basez;
@@ -842,6 +843,16 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       // check brick passes
       if (bpasses!=mpasses) continue;
 
+      // check for indivual brick file
+      if ((*vpoint)->opts!=NULL)
+         if ((*vpoint)->opts->brickfile!=NULL)
+            {
+            bindex=(*vpoint)->opts->brickindex=LODS->addbrick((*vpoint)->opts->brickfile,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+
+            free((*vpoint)->opts->brickfile);
+            (*vpoint)->opts->brickfile=NULL;
+            }
+
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
       midy=(*vpoint)->y/SCALEY-OFFSETLAT;
@@ -866,10 +877,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          }
 
       // set position and color
-      LODS->addvolume(bindex,
-                      midx,midy,basez,
-                      size/SCALEX,size/SCALEY,size/SCALEELEV,
-                      r,g,b,CONFIGURE_BRICKALPHA);
+      vindex=LODS->addvolume(bindex,
+                             midx,midy,basez,
+                             size/SCALEX,size/SCALEY,size/SCALEELEV,
+                             r,g,b,CONFIGURE_BRICKALPHA);
 
       // set orientation
       if ((*vpoint)->opts!=NULL)
@@ -877,14 +888,16 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          alpha=-(*vpoint)->opts->brickturn*RAD;
          beta=(*vpoint)->opts->brickincline*RAD;
 
-         LODS->addorientation(fcos(alpha),0.0f,fsin(alpha),
-                              -fsin(beta)*fsin(alpha),fcos(beta),fsin(beta)*fcos(alpha),
-                              -fcos(beta)*fsin(alpha),-fsin(beta),fcos(beta)*fcos(alpha));
+         if (alpha!=0.0f || beta!=0.0f)
+            LODS->addorientation(vindex,
+                                 fcos(alpha),0.0f,fsin(alpha),
+                                 -fsin(beta)*fsin(alpha),fcos(beta),fsin(beta)*fcos(alpha),
+                                 -fcos(beta)*fsin(alpha),-fsin(beta),fcos(beta)*fcos(alpha));
          }
-      }
 
-   // set rendering passes
-   LODS->addpasses(0,passes);
+      // set rendering passes
+      LODS->addpasses(bindex,passes);
+      }
 
    // render visible points
    LODS->render(ex,ey,ez,farp,fovy,aspect);
