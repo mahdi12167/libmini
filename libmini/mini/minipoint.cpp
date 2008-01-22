@@ -800,7 +800,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    // draw multiple pass sequences
    for (passes=1; passes<=4; passes++)
       {
-      if (CONFIGURE_BRICKPASSES=passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
+      if (CONFIGURE_BRICKPASSES==passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
       drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,passes,passes);
       }
    }
