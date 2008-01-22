@@ -518,7 +518,7 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
       MOV result.texcoord,vec; \n\
-      ### write eye position to tex coords \n\
+      ### write view position to tex coords \n\
       MOV result.texcoord[1],pos; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
@@ -532,7 +532,7 @@ void minisurf::enabletorch(int phase,
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
       MOV nrm,fragment.texcoord; \n\
-      ### fetch eye position \n\
+      ### fetch view position \n\
       MOV pos,fragment.texcoord[1]; \n\
       ### apply head light to color and opacity \n\
       MUL nrm.z,nrm.z,c.z; \n\
@@ -735,7 +735,7 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
       MOV result.texcoord,vec; \n\
-      ### write eye position to tex coords \n\
+      ### write view position to tex coords \n\
       MOV result.texcoord[1],pos; \n\
       ### write world position to tex coords \n\
       MOV result.texcoord[2],vtx; \n\
@@ -752,7 +752,7 @@ void minisurf::enablepattern(float ambient,
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
       MOV nrm,fragment.texcoord; \n\
-      ### fetch eye position \n\
+      ### fetch view position \n\
       MOV pos,fragment.texcoord[1]; \n\
       ### fetch world position \n\
       MOV crd,fragment.texcoord[2]; \n\
@@ -788,7 +788,7 @@ void minisurf::enablepattern(float ambient,
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
       MOV nrm,fragment.texcoord; \n\
-      ### fetch eye position \n\
+      ### fetch view position \n\
       MOV pos,fragment.texcoord[1]; \n\
       ### fetch world position \n\
       MOV crd,fragment.texcoord[2]; \n\

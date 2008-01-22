@@ -78,7 +78,7 @@ void ministrip::initsnippets()
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
-      ### write eye position to tex coords \n\
+      ### write view position to tex coords \n\
       MOV result.texcoord[1],pos; \n");
 
    addsnippet(MINI_SNIPPET_VTX_END,"END\n");
@@ -131,7 +131,7 @@ void ministrip::initsnippets()
       MUL col,col,tex1; \n");
 
    addsnippet(MINI_SNIPPET_FRG_SHADE,"\
-      ### fetch eye position \n\
+      ### fetch view position \n\
       TEMP pos; \n\
       MOV pos,fragment.texcoord[1]; \n\
       ### fetch fragment normal \n\
