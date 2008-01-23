@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "miniio.h"
+
 #include "miniutm.h"
 
 #include "miniOGL.h"
@@ -42,6 +44,9 @@ minipoint::minipoint(minitile *tile)
    VPOINTS=NULL;
    MAXVNUM=0;
    VNUM=0;
+
+   CACHE=NULL;
+   ALTPATH=NULL;
 
    TAKEN=TRANS=0;
 
@@ -98,9 +103,21 @@ minipoint::~minipoint()
 
    if (VPOINTS!=NULL) free(VPOINTS);
 
+   if (ALTPATH!=NULL) free(ALTPATH);
+
    if (LODS!=NULL) delete LODS;
 
    if (BRICKNAME!=NULL) free(BRICKNAME);
+   }
+
+// get file
+char *minipoint::getfile(char *filename,char *altpath)
+   {
+   if (checkfile(filename)!=0) return(strdup(filename));
+
+   if (CACHE!=NULL) return(CACHE->getfile(filename,altpath));
+
+   return(NULL);
    }
 
 // add waypoint
@@ -262,6 +279,17 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
       }
    }
 
+// set file cache
+void minipoint::setcache(datacache *cache,char *altpath)
+   {
+   CACHE=cache;
+
+   if (ALTPATH!=NULL) free(ALTPATH);
+   ALTPATH=NULL;
+
+   if (altpath!=NULL) ALTPATH=strdup(altpath);
+   }
+
 // load waypoints
 void minipoint::load(char *filename,
                      float offsetlat,float offsetlon,
@@ -270,6 +298,8 @@ void minipoint::load(char *filename,
                      char delimiter)
    {
    unsigned int i;
+
+   char *wpname;
 
    FILE *file;
 
@@ -301,7 +331,18 @@ void minipoint::load(char *filename,
          }
       }
 
-   if ((file=fopen(filename,"rb"))==NULL) return;
+   wpname=getfile(filename,ALTPATH);
+
+   if (wpname==NULL) return;
+
+   if ((file=fopen(wpname,"rb"))==NULL)
+      {
+      free(wpname);
+      return;
+      }
+
+   free(wpname);
+
    ch=fgetc(file);
 
    while (ch=='\n' || ch=='\r') ch=fgetc(file);
@@ -838,6 +879,8 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    int bindex,vindex;
    int bpasses;
 
+   char *bname;
+
    float midx,midy,basez;
    float color,r,g,b;
 
@@ -868,10 +911,16 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       if ((*vpoint)->opts!=NULL)
          if ((*vpoint)->opts->brickfile!=NULL)
             {
-            bindex=(*vpoint)->opts->brickindex=LODS->addbrick((*vpoint)->opts->brickfile,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+            bname=getfile((*vpoint)->opts->brickfile,ALTPATH);
 
-            free((*vpoint)->opts->brickfile);
-            (*vpoint)->opts->brickfile=NULL;
+            if (bname!=NULL)
+               {
+               bindex=(*vpoint)->opts->brickindex=LODS->addbrick(bname,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+               free(bname);
+
+               free((*vpoint)->opts->brickfile);
+               (*vpoint)->opts->brickfile=NULL;
+               }
             }
 
       // get brick size

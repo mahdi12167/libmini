@@ -652,6 +652,8 @@ void minilayer::loadopts()
       {
       POINTS=new minipoint;
 
+      POINTS->setcache(TILECACHE,LPARAMS.altpath);
+
       if (!LPARAMS.usepnm) POINTS->configure_automap(1);
 
       POINTS->load(wpname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());

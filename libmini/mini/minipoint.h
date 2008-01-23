@@ -3,6 +3,8 @@
 #ifndef MINIPOINT_H
 #define MINIPOINT_H
 
+#include "datacache.h"
+
 #include "minitile.h"
 #include "minilod.h"
 
@@ -78,6 +80,9 @@ class minipoint
 
    //! add waypoint
    void add(minipointdata *point);
+
+   //! set file cache
+   void setcache(datacache *cache,char *altpath);
 
    //! load waypoints
    void load(char *filename,
@@ -164,6 +169,11 @@ class minipoint
 
    minipointdata **VPOINTS;
    int VNUM,MAXVNUM;
+
+   datacache *CACHE;
+   char *ALTPATH;
+
+   char *getfile(char *filename,char *altpath);
 
    char *addch(char *str,char ch);
 
