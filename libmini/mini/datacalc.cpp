@@ -55,8 +55,12 @@ void datacalc::myinterpreter(float *value,int comps,float x,float y,float z,floa
             break;
          // hard-coded sphere
          case 2: *value=2.0f*fsqrt(x*x+y*y+z*z); break;
+         // hard-coded half sphere
+         case 3: *value=(z<0.0f)?1.0f:2.0f*fsqrt(x*x+y*y+z*z); break;
+         // hard-coded cylinder
+         case 4: *value=(z<-0.4f || z>0.4f)?1.0f:fsqrt(x*x+y*y)+0.4f; break;
          // hard-coded cone
-         case 3: *value=(z>0.25f)?1.0f:fsqrt(x*x+y*y)-z/2.0f+0.25f; break;
+         case 5: *value=(z>0.25f)?1.0f:fsqrt(x*x+y*y)-z/2.0f+0.25f; break;
          // undefined
          default: ERRORMSG();
          }
