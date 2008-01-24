@@ -422,6 +422,26 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="miniearth.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="minicache.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -918,6 +938,9 @@
 			</File>
 			<File
 				RelativePath="miniterrain.h">
+			</File>
+			<File
+				RelativePath="miniearth.h">
 			</File>
 			<File
 				RelativePath="minicache.h">

@@ -4,7 +4,8 @@ MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
 	  minitime miniio minihsv miniutm\
 	  ministub minitile miniload\
-	  minilayer miniterrain minicache minishader miniwarp miniray\
+	  minilayer miniterrain miniearth\
+	  minicache minishader miniwarp miniray\
 	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  pnmbase pnmsample\
