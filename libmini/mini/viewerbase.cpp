@@ -68,7 +68,7 @@ void viewerbase::get(VIEWER_PARAMS &params)
 // set parameters
 void viewerbase::set(VIEWER_PARAMS &params)
    {
-   miniearth::EARTH_PARAMS eparams;
+   miniearth::MINIEARTH_PARAMS eparams;
 
    // set new state
    PARAMS=params;

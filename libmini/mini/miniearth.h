@@ -18,7 +18,7 @@ class miniearth
    {
    public:
 
-   struct EARTH_PARAMS_STRUCT
+   struct MINIEARTH_PARAMS_STRUCT
       {
       // configurable parameters:
 
@@ -71,7 +71,7 @@ class miniearth
       char *backname;
       };
 
-   typedef EARTH_PARAMS_STRUCT EARTH_PARAMS;
+   typedef MINIEARTH_PARAMS_STRUCT MINIEARTH_PARAMS;
 
    //! default constructor
    miniearth();
@@ -80,16 +80,16 @@ class miniearth
    ~miniearth();
 
    //! get parameters
-   void get(EARTH_PARAMS &eparams);
+   void get(MINIEARTH_PARAMS &eparams);
 
    //! set parameters
-   void set(EARTH_PARAMS &eparams);
+   void set(MINIEARTH_PARAMS &eparams);
 
    //! get parameters
-   EARTH_PARAMS *get() {return(&EPARAMS);}
+   MINIEARTH_PARAMS *get() {return(&EPARAMS);}
 
    //! set parameters
-   void set(EARTH_PARAMS *eparams) {set(*eparams);}
+   void set(MINIEARTH_PARAMS *eparams) {set(*eparams);}
 
    // propagate parameters
    void propagate();
@@ -137,7 +137,7 @@ class miniearth
 
    protected:
 
-   EARTH_PARAMS EPARAMS;
+   MINIEARTH_PARAMS EPARAMS;
 
    private:
 

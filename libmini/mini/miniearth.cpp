@@ -86,11 +86,11 @@ miniearth::~miniearth()
    }
 
 // get parameters
-void miniearth::get(EARTH_PARAMS &eparams)
+void miniearth::get(MINIEARTH_PARAMS &eparams)
    {eparams=EPARAMS;}
 
 // set parameters
-void miniearth::set(EARTH_PARAMS &eparams)
+void miniearth::set(MINIEARTH_PARAMS &eparams)
    {
    miniterrain::MINITERRAIN_PARAMS tparams;
 
