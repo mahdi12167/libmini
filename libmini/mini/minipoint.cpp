@@ -876,6 +876,8 @@ void minipoint::drawsequence(float ex,float ey,float ez,
 
    minipointdata **vpoint;
 
+   float bsize;
+
    int bindex,vindex;
    int bpasses;
 
@@ -896,6 +898,11 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    // update visible points
    for (i=0; i<getvnum(); i++,vpoint++)
       {
+      // get brick size
+      if ((*vpoint)->opts==NULL) bsize=size;
+      else if ((*vpoint)->opts->bricksize>0.0f) bsize=(*vpoint)->opts->bricksize*SCALEELEV;
+      else bsize=size;
+
       // get brick index
       if ((*vpoint)->opts==NULL) bindex=0;
       else bindex=(*vpoint)->opts->brickindex;
@@ -923,14 +930,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
                }
             }
 
-      // get brick size
-      if ((*vpoint)->opts!=NULL)
-         if ((*vpoint)->opts->bricksize>0.0f) size=(*vpoint)->opts->bricksize*SCALEELEV;
-
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
       midy=(*vpoint)->y/SCALEY-OFFSETLAT;
-      basez=((*vpoint)->elev-0.25f*size)/SCALEELEV;
+      basez=((*vpoint)->elev-0.25f*bsize)/SCALEELEV;
 
       // check elevation
       if (CONFIGURE_BRICKCEILING==0.0f) color=0.0f;
@@ -953,7 +956,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       // set position and color
       vindex=LODS->addvolume(bindex,
                              midx,midy,basez,
-                             size/SCALEX,size/SCALEY,size/SCALEELEV,
+                             bsize/SCALEX,bsize/SCALEY,bsize/SCALEELEV,
                              r,g,b,CONFIGURE_BRICKALPHA);
 
       // set orientation

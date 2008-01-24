@@ -858,7 +858,7 @@ void miniterrain::render_presea()
          el=LAYER[n]->map_g2l(lparams.eye);
 
          // render waypoints before sea surface
-         if (el.vec.z<lparams.sealevel) LAYER[n]->renderpoints();
+         if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
    }
 
@@ -879,7 +879,7 @@ void miniterrain::render_postsea()
          el=LAYER[n]->map_g2l(lparams.eye);
 
          // render waypoints after sea surface
-         if (el.vec.z>=lparams.sealevel) LAYER[n]->renderpoints();
+         if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
    }
 

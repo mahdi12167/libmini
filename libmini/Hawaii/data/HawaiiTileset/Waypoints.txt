@@ -34,9 +34,14 @@ UTM 04
 2357987
 9m
 
+T.C.'s Helicopter Platform, Makai
+UTM 04
+0638128
+2358101
+21m
+
 Parking, Makai
-; $type=2
-; $brickpasses=4
+; $type=-1
 UTM 04
 0638074
 2358139
@@ -44,25 +49,49 @@ UTM 04
 
 Office, Makai
 ; $type=2
-; $brickpasses=4
+; $brickpasses=1
 UTM 04
 0638067
 2358141
 38m
 
-T.C.'s Helicopter Platform, Makai
-UTM 04
-0638128
-2358101
-21m
-
 Lanai@Office, Makai
 ; $type=2
-; $brickpasses=1
+; $brickpasses=4
 UTM 04
 638099
 2358127
 5m
+
+Animated Radar Cone
+; $type=1
+; $signpostsize=30
+; $signpostheight=30
+LL
+21.394
+-157.677
+-80m
+
+Radar Cone
+; $type=2
+; $bricksize=300
+; $brickturn=90
+; $brickincline=150
+; $brickpasses=1
+LL
+21.394
+-157.678
+-200m
+
+Buoy
+; $type=2
+; $bricksize=25
+; $brickincline=180
+; $brickpasses=4
+LL
+21.394
+-157.6765
+-80m
 
 Ross, Hawai'i Kai
 UTM 04
