@@ -9,7 +9,8 @@
 // default constructor
 datacache::datacache(miniload *terrain)
    {
-   CLOUD=new datacloud(terrain);
+   if (terrain==NULL) CLOUD=NULL;
+   else CLOUD=new datacloud(terrain);
 
    REQUEST_CALLBACK=NULL;
    REQUEST_DATA=NULL;
@@ -98,14 +99,17 @@ datacache::datacache(miniload *terrain)
    CONFIGURE_NETTHREADS=10;
    CONFIGURE_AUTOLOCKIO=0;
 
-   CLOUD->configure_dontfree(CONFIGURE_DONTFREE);
-   CLOUD->configure_autolockio(0);
+   if (CLOUD!=NULL)
+      {
+      CLOUD->configure_dontfree(CONFIGURE_DONTFREE);
+      CLOUD->configure_autolockio(0);
+      }
    }
 
 // destructor
 datacache::~datacache()
    {
-   delete CLOUD;
+   if (CLOUD!=NULL) delete CLOUD;
 
    if (RURL!=NULL) free(RURL);
    if (RID!=NULL) free(RID);
@@ -130,6 +134,7 @@ void datacache::setloader(void (*request)(char *file,int istexture,databuf *buf,
                           int plazyness,int pupdate,
                           int expire)
    {
+   if (CLOUD==NULL) ERRORMSG();
    if (request==NULL) ERRORMSG();
 
    // propagate request and check callbacks to the wrapped datacloud object
@@ -172,8 +177,9 @@ void datacache::setremoteurl(const char *url)
       if (strstr(RURL,"ftp://")!=NULL) LOCAL=FALSE;
       }
 
-   if (LOCAL) CLOUD->setmulti(CONFIGURE_LOCTHREADS);
-   else CLOUD->setmulti(CONFIGURE_NETTHREADS);
+   if (CLOUD!=NULL)
+      if (LOCAL) CLOUD->setmulti(CONFIGURE_LOCTHREADS);
+      else CLOUD->setmulti(CONFIGURE_NETTHREADS);
    }
 
 // set remote world id
@@ -1105,7 +1111,7 @@ void datacache::insertfilename(const char *filename,
 
    fileinfoelem *info,*last;
 
-   CLOUD->lockthread();
+   if (CLOUD!=NULL) CLOUD->lockthread();
 
    if (HASHTABLE==NULL)
       {
@@ -1129,7 +1135,7 @@ void datacache::insertfilename(const char *filename,
                info->islocal=islocal;
                }
 
-            CLOUD->unlockthread();
+            if (CLOUD!=NULL) CLOUD->unlockthread();
 
             return;
             }
@@ -1168,7 +1174,7 @@ void datacache::insertfilename(const char *filename,
       info->next=NULL;
       }
 
-   CLOUD->unlockthread();
+   if (CLOUD!=NULL) CLOUD->unlockthread();
    }
 
 // check for a filename in the hash table
@@ -1180,7 +1186,7 @@ fileinfoelem *datacache::checkfilename(const char *filename)
 
    if (HASHTABLE==NULL) return(NULL);
 
-   CLOUD->lockthread();
+   if (CLOUD!=NULL) CLOUD->lockthread();
 
    hash=hashsum(filename);
    index=hash%HASHSIZE;
@@ -1192,7 +1198,7 @@ fileinfoelem *datacache::checkfilename(const char *filename)
       if (hash==info->hash)
          if (strcmp(filename,info->filename)==0)
             {
-            CLOUD->unlockthread();
+            if (CLOUD!=NULL) CLOUD->unlockthread();
 
             return(info);
             }
@@ -1200,7 +1206,7 @@ fileinfoelem *datacache::checkfilename(const char *filename)
       info=info->next;
       }
 
-   CLOUD->unlockthread();
+   if (CLOUD!=NULL) CLOUD->unlockthread();
 
    return(NULL);
    }
@@ -1252,7 +1258,7 @@ void datacache::mystaticquery(int col,int row,unsigned char *texfile,int tlod,vo
 void datacache::configure_dontfree(int dontfree)
    {
    CONFIGURE_DONTFREE=dontfree;
-   CLOUD->configure_dontfree(dontfree);
+   if (CLOUD!=NULL) CLOUD->configure_dontfree(dontfree);
    }
 
 void datacache::configure_locthreads(int locthreads)
