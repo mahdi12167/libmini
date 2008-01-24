@@ -15,55 +15,54 @@ miniearth::miniearth()
    {
    // configurable parameters:
 
-   PARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   EPARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
 
-   PARAMS.fps=25.0f;     // frames per second (target frame rate)
+   EPARAMS.fps=25.0f;     // frames per second (target frame rate)
 
-   PARAMS.fovy=60.0f;    // field of view (degrees)
-   PARAMS.nearp=10.0f;   // near plane (meters)
-   PARAMS.farp=10000.0f; // far plane (meters)
+   EPARAMS.fovy=60.0f;    // field of view (degrees)
+   EPARAMS.nearp=10.0f;   // near plane (meters)
+   EPARAMS.farp=10000.0f; // far plane (meters)
 
    // feature switches:
 
-   PARAMS.usefog=FALSE;
-   PARAMS.useshaders=FALSE;
-   PARAMS.usediffuse=FALSE;
-   PARAMS.usevisshader=FALSE;
-   PARAMS.usebathymap=FALSE;
-   PARAMS.usecontours=FALSE;
-   PARAMS.usenprshader=FALSE;
-   PARAMS.usewireframe=FALSE;
-   PARAMS.useskydome=FALSE;
-   PARAMS.usewaypoints=FALSE;
-   PARAMS.usebricks=FALSE;
-   PARAMS.useearth=TRUE;
-   PARAMS.useflat=FALSE;
+   EPARAMS.usefog=FALSE;
+   EPARAMS.useshaders=FALSE;
+   EPARAMS.usediffuse=FALSE;
+   EPARAMS.usevisshader=FALSE;
+   EPARAMS.usebathymap=FALSE;
+   EPARAMS.usecontours=FALSE;
+   EPARAMS.usenprshader=FALSE;
+   EPARAMS.useskydome=FALSE;
+   EPARAMS.usewaypoints=FALSE;
+   EPARAMS.usebricks=FALSE;
+   EPARAMS.useearth=TRUE;
+   EPARAMS.useflat=FALSE;
 
    // optional spherical fog:
 
-   PARAMS.fogcolor[0]=0.65f;
-   PARAMS.fogcolor[1]=0.7f;
-   PARAMS.fogcolor[2]=0.7f;
+   EPARAMS.fogcolor[0]=0.65f;
+   EPARAMS.fogcolor[1]=0.7f;
+   EPARAMS.fogcolor[2]=0.7f;
 
-   PARAMS.fogstart=0.5f;   // start of fog relative to far plane
-   PARAMS.fogdensity=0.5f; // relative fog density
+   EPARAMS.fogstart=0.5f;   // start of fog relative to far plane
+   EPARAMS.fogdensity=0.5f; // relative fog density
 
    // optional sky-dome:
 
-   PARAMS.skydome="SkyDome.ppm"; // skydome file
+   EPARAMS.skydome="SkyDome.ppm"; // skydome file
 
    // optional earth globe:
 
-   PARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
+   EPARAMS.lightdir=miniv3d(0.0,0.0,1.0); // directional light
 
-   PARAMS.lightbias=0.75f;   // lighting bias
-   PARAMS.lightoffset=0.25f; // lighting offset
+   EPARAMS.lightbias=0.75f;   // lighting bias
+   EPARAMS.lightoffset=0.25f; // lighting offset
 
-   PARAMS.transbias=4.0f;    // transition bias between night and day
-   PARAMS.transoffset=0.01f; // transition offset between night and day
+   EPARAMS.transbias=4.0f;    // transition bias between night and day
+   EPARAMS.transoffset=0.01f; // transition offset between night and day
 
-   PARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
-   PARAMS.backname="EarthNight.ppm"; // file name of back earth texture
+   EPARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
+   EPARAMS.backname="EarthNight.ppm"; // file name of back earth texture
 
    // initialize state:
 
@@ -73,6 +72,8 @@ miniearth::miniearth()
    EARTH=new miniglobe();
 
    LOADED=FALSE;
+
+   initOGL();
    }
 
 // destructor
@@ -85,55 +86,55 @@ miniearth::~miniearth()
    }
 
 // get parameters
-void miniearth::get(EARTH_PARAMS &params)
-   {params=PARAMS;}
+void miniearth::get(EARTH_PARAMS &eparams)
+   {eparams=EPARAMS;}
 
 // set parameters
-void miniearth::set(EARTH_PARAMS &params)
+void miniearth::set(EARTH_PARAMS &eparams)
    {
    miniterrain::MINITERRAIN_PARAMS tparams;
 
    // set new state
-   PARAMS=params;
+   EPARAMS=eparams;
 
    // get the actual terrain state
    TERRAIN->get(tparams);
 
    // update the terrain state:
 
-   tparams.fps=PARAMS.fps;
+   tparams.fps=EPARAMS.fps;
 
-   tparams.fovy=PARAMS.fovy;
-   tparams.nearp=PARAMS.nearp;
-   tparams.farp=PARAMS.farp;
+   tparams.fovy=EPARAMS.fovy;
+   tparams.nearp=EPARAMS.nearp;
+   tparams.farp=EPARAMS.farp;
 
-   tparams.usefog=PARAMS.usefog;
-   tparams.useshaders=PARAMS.useshaders;
-   tparams.usediffuse=PARAMS.usediffuse;
-   tparams.usevisshader=PARAMS.usevisshader;
-   tparams.usebathymap=PARAMS.usebathymap;
-   tparams.usecontours=PARAMS.usecontours;
-   tparams.usenprshader=PARAMS.usenprshader;
-   tparams.usewaypoints=PARAMS.usewaypoints;
-   tparams.usebricks=PARAMS.usebricks;
+   tparams.usefog=EPARAMS.usefog;
+   tparams.useshaders=EPARAMS.useshaders;
+   tparams.usediffuse=EPARAMS.usediffuse;
+   tparams.usevisshader=EPARAMS.usevisshader;
+   tparams.usebathymap=EPARAMS.usebathymap;
+   tparams.usecontours=EPARAMS.usecontours;
+   tparams.usenprshader=EPARAMS.usenprshader;
+   tparams.usewaypoints=EPARAMS.usewaypoints;
+   tparams.usebricks=EPARAMS.usebricks;
 
-   tparams.lightdir=PARAMS.lightdir;
+   tparams.lightdir=EPARAMS.lightdir;
 
-   tparams.lightbias=PARAMS.lightbias;
-   tparams.lightoffset=PARAMS.lightoffset;
+   tparams.lightbias=EPARAMS.lightbias;
+   tparams.lightoffset=EPARAMS.lightoffset;
 
-   tparams.fogcolor[0]=PARAMS.fogcolor[0];
-   tparams.fogcolor[1]=PARAMS.fogcolor[1];
-   tparams.fogcolor[2]=PARAMS.fogcolor[2];
+   tparams.fogcolor[0]=EPARAMS.fogcolor[0];
+   tparams.fogcolor[1]=EPARAMS.fogcolor[1];
+   tparams.fogcolor[2]=EPARAMS.fogcolor[2];
 
-   tparams.fogstart=PARAMS.fogstart;
-   tparams.fogdensity=PARAMS.fogdensity;
+   tparams.fogstart=EPARAMS.fogstart;
+   tparams.fogdensity=EPARAMS.fogdensity;
 
-   if (PARAMS.useflat)
-      if (PARAMS.warpmode==4) tparams.warpmode=2;
-      else if (PARAMS.warpmode==3) tparams.warpmode=1;
+   if (EPARAMS.useflat)
+      if (EPARAMS.warpmode==4) tparams.warpmode=2;
+      else if (EPARAMS.warpmode==3) tparams.warpmode=1;
       else tparams.warpmode=0;
-   else tparams.warpmode=PARAMS.warpmode;
+   else tparams.warpmode=EPARAMS.warpmode;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
@@ -141,7 +142,7 @@ void miniearth::set(EARTH_PARAMS &params)
 
 // propagate parameters
 void miniearth::propagate()
-   {set(PARAMS);}
+   {set(EPARAMS);}
 
 // initialize the OpenGL wrapper
 void miniearth::initOGL()
@@ -157,9 +158,6 @@ void miniearth::initOGL()
 BOOLINT miniearth::load(const char *url,
                          BOOLINT loadopts,BOOLINT reset)
    {
-   // initialize the OpenGL wrapper
-   initOGL();
-
    // propagate the parameters
    propagate();
 
@@ -171,9 +169,6 @@ BOOLINT miniearth::load(const char *url,
 BOOLINT miniearth::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                          BOOLINT loadopts,BOOLINT reset)
    {
-   // initialize the OpenGL wrapper
-   initOGL();
-
    // propagate the parameters
    propagate();
 
@@ -199,8 +194,8 @@ void miniearth::loadopts()
 
    char *skyname=NULL;
 
-   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(PARAMS.skydome,lparams.altpath);
-   else skyname=getfile(PARAMS.skydome,lparams.altpath);
+   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,lparams.altpath);
+   else skyname=getfile(EPARAMS.skydome,lparams.altpath);
 
    if (skyname!=NULL)
       {
@@ -212,8 +207,8 @@ void miniearth::loadopts()
 
    char *ename1=NULL;
 
-   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(PARAMS.frontname,lparams.altpath);
-   else ename1=getfile(PARAMS.frontname,lparams.altpath);
+   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,lparams.altpath);
+   else ename1=getfile(EPARAMS.frontname,lparams.altpath);
 
    if (ename1!=NULL)
       {
@@ -223,8 +218,8 @@ void miniearth::loadopts()
 
    char *ename2=NULL;
 
-   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(PARAMS.backname,lparams.altpath);
-   else ename2=getfile(PARAMS.backname,lparams.altpath);
+   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,lparams.altpath);
+   else ename2=getfile(EPARAMS.backname,lparams.altpath);
 
    if (ename2!=NULL)
       {
@@ -289,38 +284,35 @@ void miniearth::render()
 
       egl=ref->map_g2o(lparams.eye);
 
-      // enable wireframe mode
-      if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-
       // enable fog
-      if (PARAMS.usefog)
+      if (EPARAMS.usefog)
          {
-         color[0]=PARAMS.fogcolor[0];
-         color[1]=PARAMS.fogcolor[1];
-         color[2]=PARAMS.fogcolor[2];
+         color[0]=EPARAMS.fogcolor[0];
+         color[1]=EPARAMS.fogcolor[1];
+         color[2]=EPARAMS.fogcolor[2];
          color[3]=1.0f;
 
          glFogfv(GL_FOG_COLOR,color);
 
          glFogi(GL_FOG_MODE,GL_LINEAR);
-         glFogf(GL_FOG_START,PARAMS.fogstart*ref->len_g2o(PARAMS.farp));
-         glFogf(GL_FOG_END,ref->len_g2o(PARAMS.farp));
+         glFogf(GL_FOG_START,EPARAMS.fogstart*ref->len_g2o(EPARAMS.farp));
+         glFogf(GL_FOG_END,ref->len_g2o(EPARAMS.farp));
 
          glEnable(GL_FOG);
          }
 
       // draw skydome
-      if (PARAMS.useskydome)
+      if (EPARAMS.useskydome)
          if (ref->get()->warpmode==0 || ref->get()->warpmode==2)
             {
             SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                            1.9*ref->len_g2o(PARAMS.farp));
+                            1.9*ref->len_g2o(EPARAMS.farp));
 
             SKYDOME->drawskydome();
             }
 
       // render earth globe (without Z writing)
-      if (PARAMS.useearth)
+      if (EPARAMS.useearth)
          if (ref->get()->warpmode!=0)
             {
             EARTH->setscale(ref->len_o2g(1.0));
@@ -351,16 +343,16 @@ void miniearth::render()
 
             EARTH->setmatrix(oglmtx);
 
-            lgl=getnull()->rot_g2i(PARAMS.lightdir,getnull()->getcenter());
+            lgl=getnull()->rot_g2i(EPARAMS.lightdir,getnull()->getcenter());
 
             light[0]=lgl.x;
             light[1]=lgl.y;
             light[2]=lgl.z;
 
-            if (PARAMS.usediffuse)
+            if (EPARAMS.usediffuse)
                {
-               EARTH->setshadedirectparams(light,PARAMS.lightbias,PARAMS.lightoffset);
-               EARTH->settexturedirectparams(light,PARAMS.transbias,PARAMS.transbias*PARAMS.transoffset);
+               EARTH->setshadedirectparams(light,EPARAMS.lightbias,EPARAMS.lightoffset);
+               EARTH->settexturedirectparams(light,EPARAMS.transbias,EPARAMS.transbias*EPARAMS.transoffset);
                }
             else
                {
@@ -368,9 +360,9 @@ void miniearth::render()
                EARTH->settexturedirectparams(light,0.0f,1.0f);
                }
 
-            EARTH->setfogparams((PARAMS.usefog)?PARAMS.fogstart/2.0f*ref->len_g2o(PARAMS.farp):0.0f,(PARAMS.usefog)?ref->len_g2o(PARAMS.farp):0.0f,
-                                PARAMS.fogdensity,
-                                PARAMS.fogcolor);
+            EARTH->setfogparams((EPARAMS.usefog)?EPARAMS.fogstart/2.0f*ref->len_g2o(EPARAMS.farp):0.0f,(EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
+                                EPARAMS.fogdensity,
+                                EPARAMS.fogcolor);
 
             EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
             }
@@ -379,15 +371,12 @@ void miniearth::render()
       TERRAIN->render();
 
       // render earth globe (without RGB writing)
-      if (PARAMS.useearth)
+      if (EPARAMS.useearth)
          if (ref->get()->warpmode!=0)
             EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
 
       // disable fog
-      if (PARAMS.usefog) glDisable(GL_FOG);
-
-      // disable wireframe mode
-      if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+      if (EPARAMS.usefog) glDisable(GL_FOG);
       }
    }
 

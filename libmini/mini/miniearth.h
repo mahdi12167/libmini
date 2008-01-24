@@ -80,16 +80,16 @@ class miniearth
    ~miniearth();
 
    //! get parameters
-   void get(EARTH_PARAMS &params);
+   void get(EARTH_PARAMS &eparams);
 
    //! set parameters
-   void set(EARTH_PARAMS &params);
+   void set(EARTH_PARAMS &eparams);
 
    //! get parameters
-   EARTH_PARAMS *get() {return(&PARAMS);}
+   EARTH_PARAMS *get() {return(&EPARAMS);}
 
    //! set parameters
-   void set(EARTH_PARAMS *params) {set(*params);}
+   void set(EARTH_PARAMS *eparams) {set(*eparams);}
 
    // propagate parameters
    void propagate();
@@ -137,7 +137,7 @@ class miniearth
 
    protected:
 
-   EARTH_PARAMS PARAMS;
+   EARTH_PARAMS EPARAMS;
 
    private:
 
