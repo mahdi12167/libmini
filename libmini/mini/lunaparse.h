@@ -56,16 +56,16 @@ class lunaparse
    //! destructor
    ~lunaparse();
 
-   void setLUNAcode(char *code) {scanner.setcode(code);}
-   void setLUNAcode(char *code,int bytes) {scanner.setcode(code,bytes);}
+   void setLUNAcode(char *code) {SCANNER.setcode(code);}
+   void setLUNAcode(char *code,int bytes) {SCANNER.setcode(code,bytes);}
    void parseLUNA();
 
    void print();
    void printtokens();
    void printtoken();
 
-   lunascan *getscanner() {return(&scanner);}
-   lunacode *getcode() {return(&code);}
+   lunascan *getscanner() {return(&SCANNER);}
+   lunacode *getcode() {return(&CODE);}
 
    protected:
 
@@ -137,8 +137,8 @@ class lunaparse
       LUNA_FUNCTION=63
       };
 
-   lunascan scanner;
-   lunacode code;
+   lunascan SCANNER;
+   lunacode CODE;
 
    void addLUNAtokens();
 
