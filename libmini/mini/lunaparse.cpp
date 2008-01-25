@@ -89,11 +89,11 @@ void lunaparse::parseLUNA()
       if (SCANNER.gettoken()==LUNA_INCLUDE) parse_include();
       else
          {
-         if (scanner.gettoken()==LUNA_VAR) parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
-         else if (scanner.gettoken()==LUNA_ARRAY) parse_var_decl(FALSE,FALSE,TRUE,FALSE,FALSE);
-         else if (scanner.gettoken()==LUNA_REF) parse_var_decl(FALSE,FALSE,FALSE,TRUE,FALSE);
-         else if (scanner.gettoken()==LUNA_MAIN) parse_func_decl(TRUE);
-         else if (scanner.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
+         if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+         else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(FALSE,FALSE,TRUE,FALSE,FALSE);
+         else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(FALSE,FALSE,FALSE,TRUE,FALSE);
+         else if (SCANNER.gettoken()==LUNA_MAIN) parse_func_decl(TRUE);
+         else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
          else
             {
             PARSERMSG("expected declaration");
@@ -210,9 +210,9 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
 
             if (!loc)
                if (!stat)
-                  code.addcode(lunacode::CODE_POP_VAR,lunacode::MODE_ANY,var_num);
+                  CODE.addcode(lunacode::CODE_POP_VAR,lunacode::MODE_ANY,var_num);
                else
-                  code.addcode(lunacode::CODE_POP_VAR_STAT,lunacode::MODE_ANY,var_num);
+                  CODE.addcode(lunacode::CODE_POP_VAR_STAT,lunacode::MODE_ANY,var_num);
             else
                CODE.addcode(lunacode::CODE_POP_VAR_LOC,lunacode::MODE_ANY,var_loc_num);
             }
@@ -286,8 +286,8 @@ void lunaparse::parse_par_decl(int *PAR_LOC_NUM)
 
    pop_var_loc_num=pop_ref_loc_num=-1;
 
-   if (scanner.gettoken()==LUNA_PAR) pop_var_loc_num=parse_var_decl(TRUE,TRUE,FALSE,FALSE,FALSE,PAR_LOC_NUM);
-   else if (scanner.gettoken()==LUNA_REF) pop_ref_loc_num=parse_var_decl(TRUE,TRUE,FALSE,TRUE,FALSE,PAR_LOC_NUM);
+   if (SCANNER.gettoken()==LUNA_PAR) pop_var_loc_num=parse_var_decl(TRUE,TRUE,FALSE,FALSE,FALSE,PAR_LOC_NUM);
+   else if (SCANNER.gettoken()==LUNA_REF) pop_ref_loc_num=parse_var_decl(TRUE,TRUE,FALSE,TRUE,FALSE,PAR_LOC_NUM);
    else
       {
       PARSERMSG("expected parameter declaration");
@@ -436,10 +436,10 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
             return;
             }
 
-         if (scanner.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
-         else if (scanner.gettoken()==LUNA_ARRAY) parse_var_decl(TRUE,FALSE,TRUE,FALSE,FALSE,VAR_LOC_NUM);
-         else if (scanner.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
-         else if (scanner.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
+         if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+         else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(TRUE,FALSE,TRUE,FALSE,FALSE,VAR_LOC_NUM);
+         else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
+         else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
          else parse_statement(VAR_LOC_NUM,RET_ADDR);
          }
 
