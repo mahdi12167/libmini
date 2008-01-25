@@ -203,9 +203,10 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
    if (!array && !ref)
       {
       if (!par)
-         if (SCANNER.gettoken()==LUNA_ASSIGN)
+         if (SCANNER.gettoken()==LUNA_EQ || SCANNER.gettoken()==LUNA_ASSIGN)
             {
             SCANNER.next();
+
             parse_expression();
 
             if (!loc)
@@ -297,6 +298,7 @@ void lunaparse::parse_par_decl(int *PAR_LOC_NUM)
    if (SCANNER.gettoken()==LUNA_COMMA)
       {
       SCANNER.next();
+
       parse_par_decl(PAR_LOC_NUM);
       }
 
@@ -471,6 +473,7 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
          CODE.addcodeat(addr1,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
 
          SCANNER.next();
+
          parse_statement(VAR_LOC_NUM,RET_ADDR);
 
          CODE.addcodeat(addr2,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
@@ -601,9 +604,10 @@ void lunaparse::parse_statement(BOOLINT index,
       SCANNER.next();
       }
 
-   if (SCANNER.gettoken()==LUNA_ASSIGN)
+   if (SCANNER.gettoken()==LUNA_EQ || SCANNER.gettoken()==LUNA_ASSIGN)
       {
       SCANNER.next();
+
       parse_expression();
 
       if (!index) CODE.addcode(code_assign,lunacode::MODE_ANY,info);
@@ -708,10 +712,7 @@ void lunaparse::parse_expression(BOOLINT comma)
       while (SCANNER.gettoken()!=LUNA_PARENRIGHT)
          {
          if (comma && op==lunacode::CODE_NOP && args>0)
-            {
-            if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
-            SCANNER.next();
-            }
+            if (SCANNER.gettoken()==LUNA_COMMA) SCANNER.next();
 
          if (SCANNER.gettoken()==lunascan::LUNA_END)
             {

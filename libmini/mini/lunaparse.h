@@ -7,14 +7,14 @@ This module parses the RPN-style language LUNA according to the following EBNF g
 LUNA        ::= { include | declaration }
 include     ::= "include" <string>
 declaration ::= var_decl | array_decl | ref_decl | func_decl [ ";" ]
-var_decl    ::= "var" <var-id> [ ":=" expression ]
+var_decl    ::= "var" <var-id> [ "=" | ":=" expression ]
 par_decl    ::= "par" <var-id>
 array_decl  ::= "array" [ "byte" ] <array-id> [ "[" expression "]" ]
 ref_decl    ::= "ref" [ "byte" ] <ref-id>
 func_decl   ::= "main" | ( "func" <func-id> ) "(" [ par_decl | ref_decl { "," par_decl | ref_decl } ] ")" statement
-statement   ::= ( <var-id> ( ":=" expression ) | "++" | "--" ) |
-                ( <array-id> | <ref-id> "[" expression "]" ( ":=" expression) | "++" | "--" ) |
-                ( <func-id> "(" [ expression { "," expression } ] ")" ) |
+statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
+                ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression) | "++" | "--" ) |
+                ( <func-id> "(" [ expression { [ "," ] expression } ] ")" ) |
                 ( "{" { declaration | statement } "}" ) |
                 ( "if" "(" expression ")" statement [ "else" statement ] ) |
                 ( "while" "(" expression ")" statement ) |
@@ -24,15 +24,15 @@ statement   ::= ( <var-id> ( ":=" expression ) | "++" | "--" ) |
                 "warn" [ ";" ]
 expression  ::= (["-"]<float-val>) |
                 ( <var-id> ) |
-                ( <array-id> | <ref-id> [ "[" { expression } "]" ] ) |
-                ( <func-id> "(" [ expression { "," expression } ] ")" ) |
+                ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
+                ( <func-id> | alpha-op "(" [ expression { [ "," ] expression } ] ")" ) |
                 ( "(" [ operator ] { expression } ")" ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 "true" | "false"
 operator    ::= "+" | "-" | "*" | "/" | "%" |
                 "=" | "<>" | "<" | ">" | "<=" | ">=" |
-                "&" | "|" | "!" |
-                "min" | "max" | "abs" |
+                "&" | "|" | "!"
+alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
                 "sin" | "cos" | "tan" | "atan" | "atan2"
 
