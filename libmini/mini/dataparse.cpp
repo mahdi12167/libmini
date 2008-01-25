@@ -20,6 +20,8 @@ void dataparse::setcode(char *code,int bytes)
 
    parser->setLUNAcode(code,bytes);
    parser->parseLUNA();
+
+   parser->getcode()->init();
    }
 
 // push one value onto the computation stack
@@ -30,9 +32,9 @@ void dataparse::pushvalue(float v)
 float dataparse::popvalue()
    {return(parser->getcode()->popvalue());}
 
-// completely reset the interpreter
+// reset the interpreter
 void dataparse::init()
-   {parser->getcode()->init();}
+   {parser->getcode()->init(FALSE);}
 
 // execute the previously parsed code
 void dataparse::execute()

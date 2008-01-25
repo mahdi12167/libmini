@@ -24,7 +24,7 @@ class dataparse
    //! pop one value from the computation stack
    float popvalue();
 
-   //! completely reset the interpreter
+   //! reset the interpreter
    void init();
 
    //! execute the previously parsed program

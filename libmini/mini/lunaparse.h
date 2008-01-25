@@ -149,7 +149,7 @@ class lunaparse
    int VAR_NUM;
 
    void parse_include();
-   int parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,int *VAR_LOC_NUM=NULL);
+   int parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,BOOLINT stat,int *VAR_LOC_NUM=NULL);
    void parse_par_decl(int *PAR_LOC_NUM);
    void parse_func_decl(BOOLINT main);
    void parse_statement(int *VAR_LOC_NUM,int RET_ADDR);

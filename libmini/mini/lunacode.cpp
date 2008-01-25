@@ -151,12 +151,12 @@ int lunacode::getcode(int addr,int *code,int *mode,int *ival,float *fval)
 int lunacode::getaddr()
    {return(CODESIZE);}
 
-void lunacode::init()
+void lunacode::init(BOOLINT init_static)
    {
    RETSTACKSIZE=1;
    VALSTACKSIZE=0;
 
-   GLBVARSIZE=0;
+   if (GLBVAR==NULL || init_static) GLBVARSIZE=0;
    LOCVARSIZE=0;
 
    allocate_stacks();
@@ -555,13 +555,32 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else if (GLBVAR[ival].item!=ITEM_NONE && GLBVAR[ival].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else GLBVAR[ival].val=VALSTACK[--VALSTACKSIZE].val;
+         else
+            {
+            GLBVAR[ival].item=ITEM_FLOAT;
+            GLBVAR[ival].val=VALSTACK[--VALSTACKSIZE].val;
+            }
+         break;
+      case CODE_POP_VAR_STAT:
+         if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else if (GLBVAR[ival].item!=ITEM_NONE && GLBVAR[ival].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else if (GLBVAR[ival].item==ITEM_NONE)
+            {
+            GLBVAR[ival].item=ITEM_FLOAT;
+            GLBVAR[ival].val=VALSTACK[--VALSTACKSIZE].val;
+            }
+         else VALSTACKSIZE--;
          break;
       case CODE_POP_VAR_LOC:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else if (LOCVAR[LOCVARSIZE-1-ival].item!=ITEM_NONE && LOCVAR[LOCVARSIZE-1-ival].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else LOCVAR[LOCVARSIZE-1-ival].val=VALSTACK[--VALSTACKSIZE].val;
+         else
+            {
+            LOCVAR[LOCVARSIZE-1-ival].item=ITEM_FLOAT;
+            LOCVAR[LOCVARSIZE-1-ival].val=VALSTACK[--VALSTACKSIZE].val;
+            }
          break;
       case CODE_INC_VAR:
          if (GLBVAR[ival].item!=ITEM_FLOAT) CODEMSG("invalid operation");
@@ -1597,8 +1616,9 @@ void lunacode::execmd(int code,int ival,float fval)
          RETSTACK[RETSTACKSIZE-1]=ival;
          break;
       case CODE_JIF:
-         if (VALSTACKSIZE--<1) CODEMSG("value stack underrun");
-         else if (VALSTACK[VALSTACKSIZE].val==0.0f) RETSTACK[RETSTACKSIZE-1]=ival;
+         if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else if (VALSTACK[--VALSTACKSIZE].val==0.0f) RETSTACK[RETSTACKSIZE-1]=ival;
          break;
       case CODE_JSR:
          RETSTACKSIZE++;
