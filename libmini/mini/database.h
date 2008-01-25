@@ -199,6 +199,8 @@ class databuf
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    static void *INTERPRETER_DATA;
 
+   void loadblock(FILE *file);
+
    void writeparam(char *tag,float v,FILE *file,int digits=8);
    int readparam(char *tag,float *v,FILE *file);
 

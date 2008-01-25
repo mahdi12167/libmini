@@ -413,6 +413,7 @@ int databuf::readparamu(char *tag,unsigned int *v,FILE *file)
    return(1);
    }
 
+// save data as DB
 // data is saved in MSB format
 void databuf::savedata(const char *filename,
                        unsigned int extfmt)
@@ -495,16 +496,37 @@ void databuf::savedata(const char *filename,
       }
    }
 
-// data is converted from MSB into native format
-int databuf::loaddata(const char *filename)
+// load DB block
+void databuf::loadblock(FILE *file)
    {
    const unsigned int block=1<<17;
 
+   unsigned int cnt;
+
+   if ((data=(unsigned char *)malloc(block))==NULL) ERRORMSG();
+
+   do
+      {
+      cnt=fread(&((unsigned char *)data)[bytes],1,block,file);
+      bytes+=cnt;
+
+      if (cnt==block)
+         if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) ERRORMSG();
+      }
+   while (cnt==block);
+
+   if (bytes==0) ERRORMSG();
+
+   if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
+   }
+
+// load data from DB
+// data is converted from MSB into native format
+int databuf::loaddata(const char *filename)
+   {
    FILE *file;
 
    unsigned int m;
-
-   unsigned int cnt;
 
    // open file for reading
    if ((file=fopen(filename,"rb"))==NULL)
@@ -589,22 +611,7 @@ int databuf::loaddata(const char *filename)
    // read data chunk
    if (bytes==0)
       {
-      if ((data=(unsigned char *)malloc(block))==NULL) ERRORMSG();
-
-      do
-         {
-         cnt=fread(&((unsigned char *)data)[bytes],1,block,file);
-         bytes+=cnt;
-
-         if (cnt==block)
-            if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) ERRORMSG();
-         }
-      while (cnt==block);
-
-      if (bytes==0) ERRORMSG();
-
-      if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
-
+      loadblock(file);
       fclose(file);
       }
    else
