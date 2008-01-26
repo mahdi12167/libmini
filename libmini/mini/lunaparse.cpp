@@ -443,6 +443,8 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
          else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
          else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
          else parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+         if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
          }
 
       SCANNER.pop();
