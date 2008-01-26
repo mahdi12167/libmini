@@ -483,7 +483,7 @@ static float peak=0.0f,avg=0.0f,load=0.0f;
 static int frames=0,tsteps=0;
 
 // initial uplift of the viewpoint
-static const float uplift=25.0f;
+static const float uplift=1000.0f;
 
 // initial viewpoint at Waipi'o Valley in geographic coordinates
 static const float viewx=-560309.0f;
