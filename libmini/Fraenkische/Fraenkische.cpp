@@ -212,6 +212,9 @@ static int wireframe=0;
 static float peak=0.0f,avg=0.0f,load=0.0f;
 static int frames=0;
 
+// initial uplift of the viewpoint
+static const float uplift=25.0f;
+
 // initial viewpoint on the Baumleite at Walkersbrunn
 static const float viewx=11.22097f; // easting
 static const float viewy=49.64927f; // northing
@@ -257,6 +260,8 @@ void initview(float x,float y,float a,float p)
    ez=(y-viewy)*3600*arcsec[1];
 
    elev=terrain.getheight(ex,-ez)+(addfog?terrain.getfogheight(ex,-ez):0.0f);
+   if (frames==0) elev+=uplift/scale;
+
    ey=elev+exaggeration*height;
 
 #ifdef PTHREADS
@@ -308,7 +313,10 @@ void reshapefunc(int width,int height)
 
    glViewport(0,0,winwidth,winheight);
 
-   tilecache->setloader(request_callback,NULL,1,1.25f*farp/scale,terrain.calcrange(30.0f/scale,winheight,fovy),128,3,100,1000);
+   if (frames>0)
+      tilecache->setloader(request_callback,NULL,
+                           1,1.25f*farp/scale,terrain.calcrange(30.0f/scale,winheight,fovy),
+                           128,3,100,1000);
    }
 
 void keypressed(unsigned char key)

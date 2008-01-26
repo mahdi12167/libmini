@@ -482,6 +482,9 @@ static int wireframe=0;
 static float peak=0.0f,avg=0.0f,load=0.0f;
 static int frames=0,tsteps=0;
 
+// initial uplift of the viewpoint
+static const float uplift=25.0f;
+
 // initial viewpoint at Waipi'o Valley in geographic coordinates
 static const float viewx=-560309.0f;
 static const float viewy=72234.0f;
@@ -587,6 +590,7 @@ void initview(float x,float y,float a,float p)
    ez=(y-viewy)*arcsec[1];
 
    ey=terrain.getheight(ex,-ez)+exaggeration*height;
+   if (frames==0) ey+=uplift/scale;
 
    ay=0.0f;
 
