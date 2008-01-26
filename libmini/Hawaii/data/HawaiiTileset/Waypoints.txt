@@ -63,16 +63,18 @@ UTM 04
 2358127
 5m
 
-Animated Radar Cone
-; $type=1
-; $signpostsize=30
-; $signpostheight=30
+Ship
+; $type=2
+; $bricksize=150
+; $brickturn=90
+; $brickpasses=4
+; $brickfile="Ship.db"
 LL
 21.394
--157.677
--80m
+-157.679
+-25m
 
-Radar Cone
+Animated Radar Cone
 ; $type=2
 ; $bricksize=300
 ; $brickturn=90
@@ -82,16 +84,6 @@ LL
 21.394
 -157.678
 -200m
-
-Buoy
-; $type=2
-; $bricksize=25
-; $brickincline=180
-; $brickpasses=4
-LL
-21.394
--157.6765
--80m
 
 Ross, Hawai'i Kai
 UTM 04
