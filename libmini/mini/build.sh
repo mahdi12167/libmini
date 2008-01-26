@@ -80,12 +80,16 @@ foreach option ("$option1" "$option2" "$option3")
 end
 
 if ($?usesquish) then
-   set incl="$incl -I../deps/squish"
-   set link="$link -L../deps/squish -lsquish"
+   if (-e ../deps/squish) then
+      set incl="$incl -I../deps/squish"
+      set link="$link -L../deps/squish -lsquish"
+   endif
 endif
 
 if ($?usegreyc) then
-   set incl="$incl -I../deps/greycstoration"
+   if (-e ../deps/greycstoration) then
+      set incl="$incl -I../deps/greycstoration"
+   endif
 endif
 
 if ($rule == "deps") then
