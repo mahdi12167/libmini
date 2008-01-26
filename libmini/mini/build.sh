@@ -82,8 +82,9 @@ end
 if ($?usesquish) then
    if (-e ../deps/squish) then
       set incl="$incl -I../deps/squish"
-      set link="$link -L../deps/squish -lsquish"
+      set link="$link -L../deps/squish"
    endif
+   set link="$link -lsquish"
 endif
 
 if ($?usegreyc) then
