@@ -613,7 +613,7 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    if (obj->PRELOAD_CALLBACK!=NULL)
       {
-      if (tile->isloaded(col,row)!=0) return;
+      if (tile->isloaded(col,row)!=0 && tile->gettexid(col,row)!=0) return;
       if (obj->MANDATORY[col+row*cols]==0) return;
       }
 
@@ -717,7 +717,7 @@ void miniload::preload(int col,int row,void *data)
    obj->checklods(col,row,obj->PRELOD);
    obj->checktexs(col,row,obj->PRETEX);
 
-   if (tile->isloaded(col,row)==0)
+   if (tile->isloaded(col,row)==0 || tile->isloaded(col,row)==0)
       if (obj->MANDATORY[col+row*cols]!=0) return;
 
    updatelod=updatetex=0;
