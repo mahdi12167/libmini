@@ -56,6 +56,11 @@ void reshapefunc(int width,int height)
 
 void keyboardfunc(unsigned char key,int x,int y)
    {
+   float mousex,mousey;
+
+   mousex=(float)x/(winwidth-1);
+   mousey=(float)y/(winwidth-1);
+
    if (key=='q' || key==27)
       {
       mini::deletemaps();

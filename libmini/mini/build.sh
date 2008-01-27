@@ -11,6 +11,8 @@
 # example  -> build example
 # stubtest -> build stubtest
 # viewer   -> build viewer
+# tools    -> build tools
+# all      -> build everything
 # deps     -> make main dependencies
 # vdeps    -> make viewer dependencies
 # install  -> make install
@@ -81,15 +83,15 @@ end
 
 if ($?usesquish) then
    if (-e ../deps/squish) then
-      set incl="$incl -I../deps/squish"
-      set link="$link -L../deps/squish"
+      set incl="$incl -I$cwd/../deps/squish"
+      set link="$link -L$cwd/../deps/squish"
    endif
    set link="$link -lsquish"
 endif
 
 if ($?usegreyc) then
    if (-e ../deps/greycstoration) then
-      set incl="$incl -I../deps/greycstoration"
+      set incl="$incl -I$cwd/../deps/greycstoration"
    endif
 endif
 

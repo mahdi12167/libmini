@@ -38,6 +38,8 @@ ZIP	= zip -qr9
 
 trap:
 
+all:	lib libsfx example viewer tools
+
 lib:	$(OBJS)
 	@-$(AR) libMini.a $(OBJS)
 
@@ -66,12 +68,17 @@ install:
 	@-echo "copying headers to $(INSTALL)/include/mini"
 	@-$(CP) *.h $(INSTALL)/include/mini
 
+tools:	lib libsfx
+	@-(cd tools; make all)
+
 clean:
 	@-$(RM) $(OBJS) $(VOBJS) ii_files
+	@-(cd tools; make clean)
 
 tidy:	clean
 	@-$(RM) *~ Makefile.d Debug* Release* *.ncb *.opt *.plg
 	@-$(RM) libMini*.a example stubtest viewer
+	@-(cd tools; make tidy)
 
 zip:	tidy
 	@-(cd ..; $(ZIP) mini/MINI.zip mini -x \*/.\?\?\* -x \*CVS/\*)
