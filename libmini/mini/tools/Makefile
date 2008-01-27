@@ -1,4 +1,4 @@
-SHELL	= tcsh
+SHELL	= sh
 
 PRGS	= db2db
 
