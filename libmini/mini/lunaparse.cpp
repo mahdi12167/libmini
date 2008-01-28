@@ -380,7 +380,7 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    {
    int info;
 
-   int addr1,addr2,addr3;
+   int addr1,addr2,addr3,addr4;
 
    if (SCANNER.gettoken()==LUNA_VAR_GLB)
       parse_statement(FALSE,
@@ -544,10 +544,13 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
       addr2=CODE.getaddr();
       CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
 
+      addr3=CODE.getaddr();
+      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+
       if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
       SCANNER.next();
 
-      addr3=CODE.getaddr();
+      addr4=CODE.getaddr();
 
       parse_statement(VAR_LOC_NUM,RET_ADDR);
 
@@ -556,9 +559,11 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
       if (SCANNER.gettoken()!=LUNA_PARENRIGHT) PARSERMSG("expected matching paren");
       SCANNER.next();
 
+      CODE.addcodeat(addr3,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+
       parse_statement(VAR_LOC_NUM,RET_ADDR);
 
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr3);
+      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr4);
 
       CODE.addcodeat(addr2,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
       }

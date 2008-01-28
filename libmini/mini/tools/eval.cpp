@@ -25,14 +25,14 @@ int main(int argc,char *argv[])
    parser.setLUNAcode((char *)code,bytes);
    parser.parseLUNA();
 
-   printf("executing code:\n");
+   printf("executing code...\n");
 
    parser.getcode()->init();
    parser.getcode()->execute();
 
    value=parser.getcode()->popvalue();
 
-   printf("yields value: %g\n",value);
+   printf("...yields value: %g\n",value);
 
    free(code);
 
