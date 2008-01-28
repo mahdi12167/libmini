@@ -133,7 +133,7 @@ class databuf
                    float dx=1.0f,float dy=1.0f,float dz=1.0f);
 
    //! data is loaded from PVM time series
-   //! the actual time step n is appended to the file name
+   //! the actual time step n is appended to the file name, e.g. filename.pvm-t01
    int loadPVMdata(const char *filename,
                    unsigned int t, unsigned int n,
                    float timestart,float timestep,
