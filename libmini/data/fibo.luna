@@ -1,0 +1,24 @@
+# calculates the nth fibonacci number
+
+var fibo=20;
+
+main()
+   {
+   var i;
+
+   var a;
+   var b;
+   var c;
+
+   a=0;
+   b=1;
+
+   for (i=1, (< i fibo), i++)
+      {
+      c=(+ a b);
+      a=b;
+      b=c;
+      }
+
+   return(b);
+   }
