@@ -6,7 +6,7 @@
 #include "squishbase.h"
 #endif
 
-#include <squish.h> // do not install the header file in /usr/include on MacOS X
+#include <squish.h> // HINT: do not install the header file in /usr/include on MacOS X
 
 namespace squishbase {
 
@@ -88,7 +88,35 @@ void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
 
 #ifndef NOSQUISH
 
-   //!!
+   int i;
+
+   unsigned char *rgbdata;
+
+   static const int mode=squish::kDxt1;
+
+   if (width<1 || height<1) ERRORMSG();
+
+   *rawbytes=4*width*height;
+   *rawdata=(unsigned char *)malloc(*rawbytes);
+   if (*rawdata==NULL) ERRORMSG();
+
+   squish::DecompressImage(s3tcdata,width,height,*rawdata,mode);
+
+   if (isrgbadata==0)
+      {
+      rgbdata=(unsigned char *)malloc(3*width*height);
+      if (rgbdata==NULL) ERRORMSG();
+
+      for (i=0; i<width*height; i++)
+         {
+         rgbdata[3*i]=(*rawdata)[4*i];
+         rgbdata[3*i+1]=(*rawdata)[4*i+1];
+         rgbdata[3*i+2]=(*rawdata)[4*i+2];
+         }
+
+      free(*rawdata);
+      *rawdata=rgbdata;
+      }
 
 #else
 

@@ -36,7 +36,7 @@ void user_read_fn(png_structp png_ptr,png_bytep ptr,png_size_t size)
    }
 
 // decompress PNG image
-unsigned char *decompressPNGimage(unsigned char *data,int bytes,int *width,int *height,int *components)
+unsigned char *decompressPNGimage(unsigned char *data,unsigned int bytes,int *width,int *height,int *components)
    {
    unsigned int i;
 

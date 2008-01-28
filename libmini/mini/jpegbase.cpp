@@ -62,7 +62,7 @@ void jpeg_mem_src(j_decompress_ptr cinfo,unsigned char *data,unsigned int bytes)
    src->pub.next_input_byte=data;
    }
 
-unsigned char *decompressJPEGimage(unsigned char *data,int bytes,int *width,int *height,int *components)
+unsigned char *decompressJPEGimage(unsigned char *data,unsigned int bytes,int *width,int *height,int *components)
    {
    int i;
 

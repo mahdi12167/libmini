@@ -1,8 +1,14 @@
 #include "minibase.h"
 
+#include "miniio.h"
+
 #include "database.h"
 #include "datacalc.h"
+
 #include "squishbase.h"
+
+#include "jpegbase.h"
+#include "pngbase.h"
 
 // S3TC auto-compression hook
 void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
@@ -36,11 +42,25 @@ int main(int argc,char *argv[])
       FILE_TYPE_DB,
       FILE_TYPE_PNM,
       FILE_TYPE_PVM,
+      FILE_TYPE_JPG,
+      FILE_TYPE_PNG,
       FILE_TYPE_ETC
       };
 
    FILE_TYPE src,dst;
    char *src_ext,*dst_ext;
+
+   unsigned char *jpgdata;
+   unsigned int jpgbytes;
+
+   int jpgwidth,jpgheight,jpgcomponents;
+
+   unsigned char *pngdata;
+   unsigned int pngbytes;
+
+   int pngwidth,pngheight,pngcomponents;
+
+   unsigned char *rawdata;
 
    if (argc!=3)
       {
@@ -58,6 +78,8 @@ int main(int argc,char *argv[])
       else if (strcmp(src_ext,".pgm")==0) src=FILE_TYPE_PNM;
       else if (strcmp(src_ext,".ppm")==0) src=FILE_TYPE_PNM;
       else if (strcmp(src_ext,".pvm")==0) src=FILE_TYPE_PVM;
+      else if (strcmp(src_ext,".jpg")==0) src=FILE_TYPE_JPG;
+      else if (strcmp(src_ext,".png")==0) src=FILE_TYPE_PNG;
 
    dst=FILE_TYPE_ETC;
 
@@ -80,6 +102,20 @@ int main(int argc,char *argv[])
    if (src==FILE_TYPE_DB) buf.loaddata(argv[1]);
    else if (src==FILE_TYPE_PNM) buf.loadPNMdata(argv[1]);
    else if (src==FILE_TYPE_PVM) buf.loadPVMdata(argv[1]);
+   else if (src==FILE_TYPE_JPG)
+      {
+      jpgdata=readfile(argv[1],&jpgbytes);
+      rawdata=decompressJPEGimage(jpgdata,jpgbytes,&jpgwidth,&jpgheight,&jpgcomponents);
+
+      //!!
+      }
+   else if (src==FILE_TYPE_PNG)
+      {
+      pngdata=readfile(argv[1],&pngbytes);
+      rawdata=decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
+
+      //!!
+      }
 
    // compress to or decompress from s3tc
    if (dst==FILE_TYPE_DB) buf.autocompress();
