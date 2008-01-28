@@ -28,6 +28,10 @@ void *databuf::CONVERSION_DATA=NULL;
 void (*databuf::AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data)=NULL;
 void *databuf::AUTOCOMPRESS_DATA=NULL;
 
+// static hook for automatic s3tc decompression
+void (*databuf::AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data)=NULL;
+void *databuf::AUTODECOMPRESS_DATA=NULL;
+
 // static hooks for conversion from an implicit format
 void (*databuf::INTERPRETER_INIT)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data)=NULL;
 void (*databuf::INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data)=NULL;
@@ -413,8 +417,8 @@ int databuf::readparamu(char *tag,unsigned int *v,FILE *file)
    return(1);
    }
 
-// save data as DB
-// data is saved in MSB format
+// data is saved in DB format
+// data is converted from native to MSB byte order
 void databuf::savedata(const char *filename,
                        unsigned int extfmt)
    {
@@ -496,7 +500,7 @@ void databuf::savedata(const char *filename,
       }
    }
 
-// load DB block
+// load DB data block
 void databuf::loadblock(FILE *file)
    {
    const unsigned int block=1<<17;
@@ -520,8 +524,8 @@ void databuf::loadblock(FILE *file)
    if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
    }
 
-// load data from DB
-// data is converted from MSB into native format
+// data is loaded from DB file
+// data is converted from MSB to native byte order
 int databuf::loaddata(const char *filename)
    {
    FILE *file;
@@ -622,7 +626,7 @@ int databuf::loaddata(const char *filename)
       fclose(file);
       }
 
-   // check for lsb->msb conversion
+   // check for LSB->MSB conversion
    if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==0 && implformat==0) swapbytes();
 
    // convert from external format
@@ -703,6 +707,35 @@ void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char 
    AUTOCOMPRESS_DATA=data;
    }
 
+// automatic s3tc decompression
+void databuf::autodecompress()
+   {
+   unsigned char *rawdata;
+   unsigned int rawbytes;
+
+   if (AUTODECOMPRESS_HOOK==NULL) return;
+
+   if (type!=5 && type!=6) return;
+
+   if (type==5) AUTODECOMPRESS_HOOK(0,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
+   else AUTODECOMPRESS_HOOK(1,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
+
+   release();
+
+   data=rawdata;
+   bytes=rawbytes;
+
+   if (type==5) type=3;
+   else type=4;
+   }
+
+// set hook for automatic s3tc decompression
+void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data),void *data)
+   {
+   AUTODECOMPRESS_HOOK=autodecompress;
+   AUTODECOMPRESS_DATA=data;
+   }
+
 // convert from implicit format
 void databuf::interpretechunk(unsigned int implfmt)
    {
@@ -766,7 +799,7 @@ void databuf::setinterpreter(void (*parser)(unsigned int implformat,char *code,i
    INTERPRETER_DATA=data;
    }
 
-// read one line in either UNIX or WINDOWS format
+// read one line in either Unix or Windows style
 char *databuf::readoneline(FILE *file)
    {
    static const int maxstr=1000;
@@ -799,7 +832,8 @@ char *databuf::readoneline(FILE *file)
    return(str);
    }
 
-// data is converted from PNM into native format
+// load data from PNM file
+// data is converted from MSB into native byte order
 int databuf::loadPNMdata(const char *filename)
    {
    int width,height,components;
@@ -877,7 +911,8 @@ int databuf::loadPNMdata(const char *filename)
    return(1);
    }
 
-// data is converted from PPM into compressed native format
+// data is loaded from PPM file
+// data is converted into compressed native format
 // CAUTION: this method is using OpenGL -> do not call it from a background thread
 int databuf::loadPPMcompressed(const char *filename)
    {
@@ -911,7 +946,8 @@ int databuf::loadPPMcompressed(const char *filename)
    return(1);
    }
 
-// data is converted from normalized PPM into compressed native format
+// data is loaded from PPM file
+// data is converted into normalized and compressed native format
 // CAUTION: this method is using OpenGL -> do not call it from a background thread
 int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
    {
@@ -960,7 +996,7 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
    return(1);
    }
 
-// data is converted from PVM into native format
+// data is loaded from PVM file
 int databuf::loadPVMdata(const char *filename,
                          float midx,float midy,float basez,
                          float dx,float dy,float dz)
@@ -1007,7 +1043,7 @@ int databuf::loadPVMdata(const char *filename,
    return(1);
    }
 
-// data is converted from multiple time-dependent PVM files into native format
+// data is loaded from PVM time series
 int databuf::loadPVMdata(const char *filename,
                          unsigned int t,unsigned int n,
                          float timestart,float timestep,
@@ -1102,7 +1138,7 @@ int databuf::loadPVMdata(const char *filename,
    return(1);
    }
 
-// data is converted from MOE into native format
+// data is loaded from MOE file
 int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *useful_greatest)
    {
    FILE *file;
@@ -1229,9 +1265,9 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
    }
 
 // data is saved as plain PNM image
-void databuf::savePNMimage(const char *filename)
+void databuf::savePNMdata(const char *filename)
    {
-   if (extformat!=0 || implformat!=0) ERRORMSG();
+   if (extformat!=0 || implformat!=0) return;
 
    if (type==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,1);
    else if (type==1)
@@ -1244,7 +1280,16 @@ void databuf::savePNMimage(const char *filename)
          }
    else if (type==3) writePNMimage(filename,(unsigned char *)data,xsize,ysize,3);
    else if (type==4) writePNMimage(filename,(unsigned char *)data,xsize,ysize,4);
-   else ERRORMSG();
+   }
+
+// data is saved as PVM volume
+void databuf::savePVMdata(const char *filename)
+   {
+   if (extformat!=0 || implformat!=0) return;
+
+   if (type==0) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
+   else if (type==3) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
+   else if (type==4) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
    }
 
 // data is generated from plane equation

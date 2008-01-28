@@ -78,4 +78,24 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
 #endif
    }
 
+void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
+                    unsigned char **rawdata,unsigned int *rawbytes,
+                    int width,int height)
+   {
+   if (isrgbadata<0 || s3tcdata==NULL || bytes==0 ||
+       rawdata==NULL || rawbytes==NULL ||
+       width<1 || height<1) ERRORMSG();
+
+#ifndef NOSQUISH
+
+   //!!
+
+#else
+
+   *rawdata=NULL;
+   *rawbytes=0;
+
+#endif
+   }
+
 }

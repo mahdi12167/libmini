@@ -86,15 +86,15 @@ class databuf
                     float nw_corner_x,float nw_corner_y,
                     float ne_corner_x,float ne_corner_y);
 
-   //! set native extents
+   //! set LLWGS84 corners
    void set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
                            float se_corner_x,float se_corner_y,
                            float nw_corner_x,float nw_corner_y,
                            float ne_corner_x,float ne_corner_y);
 
    //! native input/output
-   void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB format
-   int loaddata(const char *filename); // data is converted from MSB into native format
+   void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB byte order
+   int loaddata(const char *filename); // data is converted from MSB to native byte order
 
    //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data);
@@ -105,14 +105,20 @@ class databuf
    //! automatic s3tc compression
    void autocompress();
 
+   //! set hook for automatic s3tc decompression
+   static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data),void *data);
+
+   //! automatic s3tc decompression
+   void autodecompress();
+
    //! set interpreter hook for implicit format
    static void setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
                               void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data));
 
-   //! read one line in either UNIX or WINDOWS format
+   //! read one line in either Unix or Windows style
    char *readoneline(FILE *file);
 
-   //! data is converted from PNM into native format
+   //! data is loaded from PNM file
    int loadPNMdata(const char *filename);
 
    //! data is converted from PPM into compressed native format
@@ -121,23 +127,27 @@ class databuf
    //! data is converted from normalized PPM into compressed native format
    int loadPPMnormalized(const char *filename,const char *normalizedpath);
 
-   //! data is converted from PVM into native format
+   //! data is loaded from PVM file
    int loadPVMdata(const char *filename,
-                   float midx,float midy,float basez,
-                   float dx,float dy,float dz);
+                   float midx=0.0f,float midy=0.0f,float basez=0.0f,
+                   float dx=1.0f,float dy=1.0f,float dz=1.0f);
 
-   //! data is converted from multiple time-dependent PVM files into native format
-   int loadPVMdata(const char *filename, // the actual time step n is appended to the file name
+   //! data is loaded from PVM time series
+   //! the actual time step n is appended to the file name
+   int loadPVMdata(const char *filename,
                    unsigned int t, unsigned int n,
                    float timestart,float timestep,
                    float midx,float midy,float basez,
                    float dx,float dy,float dz);
 
-   //! data is converted from MOE into native format
+   //! data is loaded from MOE file
    int loadMOEdata(const char *filename,float *useful_smallest=0,float *useful_greatest=0);
 
    //! data is saved as plain PNM image
-   void savePNMimage(const char *filename);
+   void savePNMdata(const char *filename);
+
+   //! data is saved as PVM volume
+   void savePVMdata(const char *filename);
 
    //! data is generated from plane equation
    void generateplane(int size, // grid size
@@ -194,6 +204,9 @@ class databuf
 
    static void (*AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data);
    static void *AUTOCOMPRESS_DATA;
+
+   static void (*AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data);
+   static void *AUTODECOMPRESS_DATA;
 
    static void (*INTERPRETER_INIT)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data);
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
