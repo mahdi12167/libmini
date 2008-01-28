@@ -26,6 +26,9 @@ minipointopts::minipointopts()
    brickturn=0.0f;
    brickincline=0.0f;
    brickpasses=0;
+   brickcolor_red=0.0f;
+   brickcolor_green=0.0f;
+   brickcolor_blue=0.0f;
    brickindex=0;
    }
 
@@ -224,6 +227,9 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("bricksize",minipointopts::OPTION_BRICKSIZE);
    scanner.addtoken("brickturn",minipointopts::OPTION_BRICKTURN);
    scanner.addtoken("brickincline",minipointopts::OPTION_BRICKINCLINE);
+   scanner.addtoken("brickcolor_red",minipointopts::OPTION_BRICKCOLOR_RED);
+   scanner.addtoken("brickcolor_green",minipointopts::OPTION_BRICKCOLOR_GREEN);
+   scanner.addtoken("brickcolor_blue",minipointopts::OPTION_BRICKCOLOR_BLUE);
    scanner.addtoken("brickpasses",minipointopts::OPTION_BRICKPASSES);
 
    scanner.setcode(point->comment);
@@ -271,6 +277,9 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_BRICKSIZE: point->opts->bricksize=value; break;
             case minipointopts::OPTION_BRICKTURN: point->opts->brickturn=value; break;
             case minipointopts::OPTION_BRICKINCLINE: point->opts->brickincline=value; break;
+            case minipointopts::OPTION_BRICKCOLOR_RED: point->opts->brickcolor_red=value; break;
+            case minipointopts::OPTION_BRICKCOLOR_GREEN: point->opts->brickcolor_green=value; break;
+            case minipointopts::OPTION_BRICKCOLOR_BLUE: point->opts->brickcolor_blue=value; break;
             case minipointopts::OPTION_BRICKPASSES: point->opts->brickpasses=ftrc(value+0.5f); break;
             }
          }
@@ -883,6 +892,8 @@ void minipoint::drawsequence(float ex,float ey,float ez,
 
    char *bname;
 
+   float bred,bgreen,bblue;
+
    float midx,midy,basez;
    float color,r,g,b;
 
@@ -914,7 +925,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       // check brick passes
       if (bpasses!=mpasses) continue;
 
-      // check for indivual brick file
+      // check for individual brick file
       if ((*vpoint)->opts!=NULL)
          if ((*vpoint)->opts->brickfile!=NULL)
             {
@@ -935,22 +946,41 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       midy=(*vpoint)->y/SCALEY-OFFSETLAT;
       basez=((*vpoint)->elev-0.25f*bsize)/SCALEELEV;
 
-      // check elevation
-      if (CONFIGURE_BRICKCEILING==0.0f) color=0.0f;
-      else color=basez/CONFIGURE_BRICKCEILING;
-
-      // calculate color
-      if (color<0.5f)
+      // get individual brick color
+      if ((*vpoint)->opts==NULL) bred=bgreen=bblue=0.0f;
+      else
          {
-         r=0.0f;
-         g=2.0f*color;
-         b=1.0f-2.0f*color;
+         bred=(*vpoint)->opts->brickcolor_red;
+         bgreen=(*vpoint)->opts->brickcolor_green;
+         bblue=(*vpoint)->opts->brickcolor_blue;
+         }
+
+      // check for individual brick color
+      if (bred>0.0f && bgreen>0.0f && bblue>0.0f)
+         {
+         r=bred;
+         g=bgreen;
+         b=bblue;
          }
       else
          {
-         r=2.0f*color-1.0f;
-         g=2.0f-2.0f*color;
-         b=0.0f;
+         // check elevation
+         if (CONFIGURE_BRICKCEILING==0.0f) color=0.0f;
+         else color=basez/CONFIGURE_BRICKCEILING;
+
+         // calculate color
+         if (color<0.5f)
+            {
+            r=0.0f;
+            g=2.0f*color;
+            b=1.0f-2.0f*color;
+            }
+         else
+            {
+            r=2.0f*color-1.0f;
+            g=2.0f-2.0f*color;
+            b=0.0f;
+            }
          }
 
       // set position and color

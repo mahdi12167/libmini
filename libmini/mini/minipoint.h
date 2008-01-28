@@ -23,7 +23,10 @@ class minipointopts
       OPTION_BRICKSIZE=7,
       OPTION_BRICKTURN=8,
       OPTION_BRICKINCLINE=9,
-      OPTION_BRICKPASSES=10
+      OPTION_BRICKCOLOR_RED=10,
+      OPTION_BRICKCOLOR_GREEN=11,
+      OPTION_BRICKCOLOR_BLUE=12,
+      OPTION_BRICKPASSES=13
       };
 
    // default constructor
@@ -43,6 +46,9 @@ class minipointopts
    float bricksize; // 0=default
    float brickturn; // clockwise turning angle
    float brickincline; // downward inclination angle
+   float brickcolor_red; // red color component
+   float brickcolor_green; // green color component
+   float brickcolor_blue; // blue color component
    int brickpasses; // 0=default 1=striped 2-4=semi-transparent
    int brickindex;
    };

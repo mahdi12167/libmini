@@ -687,6 +687,7 @@ void databuf::autocompress()
    if (AUTOCOMPRESS_HOOK==NULL) return;
 
    if (type!=3 && type!=4) return;
+   if (zsize>1 || tsteps>1) return;
 
    if (type==3) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
    else AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
@@ -716,6 +717,7 @@ void databuf::autodecompress()
    if (AUTODECOMPRESS_HOOK==NULL) return;
 
    if (type!=5 && type!=6) return;
+   if (zsize>1 || tsteps>1) return;
 
    if (type==5) AUTODECOMPRESS_HOOK(0,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
    else AUTODECOMPRESS_HOOK(1,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
@@ -1268,6 +1270,7 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 void databuf::savePNMdata(const char *filename)
    {
    if (extformat!=0 || implformat!=0) return;
+   if (zsize>1 || tsteps>1) return;
 
    if (type==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,1);
    else if (type==1)
@@ -1286,6 +1289,7 @@ void databuf::savePNMdata(const char *filename)
 void databuf::savePVMdata(const char *filename)
    {
    if (extformat!=0 || implformat!=0) return;
+   if (tsteps>1) return;
 
    if (type==0) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
    else if (type==3) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
