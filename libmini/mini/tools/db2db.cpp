@@ -107,14 +107,18 @@ int main(int argc,char *argv[])
       jpgdata=readfile(argv[1],&jpgbytes);
       rawdata=decompressJPEGimage(jpgdata,jpgbytes,&jpgwidth,&jpgheight,&jpgcomponents);
 
-      //!!
+      if (jpgcomponents==1) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,0);
+      else if (jpgcomponents==3) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,3);
+      else if (jpgcomponents==4) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,4);
       }
    else if (src==FILE_TYPE_PNG)
       {
       pngdata=readfile(argv[1],&pngbytes);
       rawdata=decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
 
-      //!!
+      if (pngcomponents==1) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,0);
+      else if (pngcomponents==3) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,3);
+      else if (pngcomponents==4) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,4);
       }
 
    // compress to or decompress from s3tc
