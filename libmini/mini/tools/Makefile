@@ -12,7 +12,6 @@ RM	= rm -rf
 .cpp.o:
 	$(COMPILER) $(OPTS) -c -I.. $*.cpp
 	$(COMPILER) $(OPTS) -o $* $*.o -L.. -lMini -lMiniSFX $(LINK) -lGL -lGLU -lm
-	@-strip $*
 
 trap:
 
