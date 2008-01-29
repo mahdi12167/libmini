@@ -876,39 +876,40 @@ int databuf::loadPNMdata(const char *filename)
    if (getPNMparamsLL(&comment,
                       coord,cellsize,
                       &vscale,&missing,
-                      &utm_zone,&utm_datum)==0) ERRORMSG();
-
-   if (utm_zone!=0)
+                      &utm_zone,&utm_datum)!=0)
       {
-      miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-      miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-      miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-      miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+      if (utm_zone!=0)
+         {
+         miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+         miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+         miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+         miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
       }
 
-   swx=coord[0];
-   swy=coord[1];
-   nwx=coord[2];
-   nwy=coord[3];
-   nex=coord[4];
-   ney=coord[5];
-   sex=coord[6];
-   sey=coord[7];
+      swx=coord[0];
+      swy=coord[1];
+      nwx=coord[2];
+      nwy=coord[3];
+      nex=coord[4];
+      ney=coord[5];
+      sex=coord[6];
+      sey=coord[7];
+
+      LLWGS84_swx=coord[0]/(60*60);
+      LLWGS84_swy=coord[1]/(60*60);
+      LLWGS84_nwx=coord[2]/(60*60);
+      LLWGS84_nwy=coord[3]/(60*60);
+      LLWGS84_nex=coord[4]/(60*60);
+      LLWGS84_ney=coord[5]/(60*60);
+      LLWGS84_sex=coord[6]/(60*60);
+      LLWGS84_sey=coord[7]/(60*60);
+      }
 
    h0=dh=0.0f;
    t0=dt=0.0f;
 
    scaling=vscale;
    bias=0.0f;
-
-   LLWGS84_swx=coord[0]/(60*60);
-   LLWGS84_swy=coord[1]/(60*60);
-   LLWGS84_nwx=coord[2]/(60*60);
-   LLWGS84_nwy=coord[3]/(60*60);
-   LLWGS84_nex=coord[4]/(60*60);
-   LLWGS84_ney=coord[5]/(60*60);
-   LLWGS84_sex=coord[6]/(60*60);
-   LLWGS84_sey=coord[7]/(60*60);
 
    return(1);
    }
