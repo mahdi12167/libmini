@@ -12,9 +12,9 @@ int main(int argc,char *argv[])
    lunaparse parser;
    float value;
 
-   if (argc!=2)
+   if (argc!=2 && argc!=3)
       {
-      printf("usage: %s <input>\n",argv[0]);
+      printf("usage: %s <input.luna> [<input.value>]\n",argv[0]);
       exit(1);
       }
 
@@ -27,7 +27,13 @@ int main(int argc,char *argv[])
 
    printf("executing code...\n");
 
+   value=0.0f;
+
+   if (argc==3)
+      if (sscanf(argv[2],"%f",&value)!=1) value=0.0f;
+
    parser.getcode()->init();
+   parser.getcode()->pushvalue(value);
    parser.getcode()->execute();
 
    value=parser.getcode()->popvalue();

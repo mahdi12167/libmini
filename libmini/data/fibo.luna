@@ -1,8 +1,6 @@
 # calculates the nth fibonacci number
 
-var fibo=20;
-
-main()
+main(par fibo)
    {
    var i;
 
