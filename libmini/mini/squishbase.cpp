@@ -100,7 +100,7 @@ void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
    *rawdata=(unsigned char *)malloc(*rawbytes);
    if (*rawdata==NULL) ERRORMSG();
 
-   squish::DecompressImage(s3tcdata,width,height,*rawdata,mode);
+   squish::DecompressImage(*rawdata,width,height,s3tcdata,mode);
 
    if (isrgbadata==0)
       {
