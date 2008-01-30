@@ -1723,6 +1723,7 @@ void lunacode::printcode(int code)
       case CODE_PUSH_VAR: printf("PUSH_VAR"); break;
       case CODE_PUSH_VAR_LOC: printf("PUSH_VAR_LOC"); break;
       case CODE_POP_VAR: printf("POP_VAR"); break;
+      case CODE_POP_VAR_STAT: printf("POP_VAR_STAT"); break;
       case CODE_POP_VAR_LOC: printf("POP_VAR_LOC"); break;
       case CODE_INC_VAR: printf("INC_VAR"); break;
       case CODE_INC_VAR_LOC: printf("INC_VAR_LOC"); break;

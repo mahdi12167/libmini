@@ -229,14 +229,14 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
 
          if (!loc)
             if (!byte)
-               CODE.addcode(lunacode::CODE_ALLOC_ARRAY,var_num);
+               CODE.addcode(lunacode::CODE_ALLOC_ARRAY,lunacode::MODE_ANY,var_num);
             else
-               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_BYT,var_num);
+               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_BYT,lunacode::MODE_ANY,var_num);
          else
             if (!byte)
-               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_LOC,lunacode::MODE_ANY,var_loc_num);
             else
-               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_BYT_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_ALLOC_ARRAY_BYT_LOC,lunacode::MODE_ANY,var_loc_num);
 
          if (SCANNER.gettoken()!=LUNA_BRACKETRIGHT) PARSERMSG("expected matching bracket");
          SCANNER.next();
@@ -244,27 +244,27 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
       else
          if (!loc)
             if (!byte)
-               CODE.addcode(lunacode::CODE_INIT_ARRAY,var_num);
+               CODE.addcode(lunacode::CODE_INIT_ARRAY,lunacode::MODE_ANY,var_num);
             else
-               CODE.addcode(lunacode::CODE_INIT_ARRAY_BYT,var_num);
+               CODE.addcode(lunacode::CODE_INIT_ARRAY_BYT,lunacode::MODE_ANY,var_num);
          else
             if (!byte)
-               CODE.addcode(lunacode::CODE_INIT_ARRAY_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_INIT_ARRAY_LOC,lunacode::MODE_ANY,var_loc_num);
             else
-               CODE.addcode(lunacode::CODE_INIT_ARRAY_BYT_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_INIT_ARRAY_BYT_LOC,lunacode::MODE_ANY,var_loc_num);
    else
       {
       if (!par)
          if (!loc)
             if (!byte)
-               CODE.addcode(lunacode::CODE_INIT_REF,var_num);
+               CODE.addcode(lunacode::CODE_INIT_REF,lunacode::MODE_ANY,var_num);
             else
-               CODE.addcode(lunacode::CODE_INIT_REF_BYT,var_num);
+               CODE.addcode(lunacode::CODE_INIT_REF_BYT,lunacode::MODE_ANY,var_num);
          else
             if (!byte)
-               CODE.addcode(lunacode::CODE_INIT_REF_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_INIT_REF_LOC,lunacode::MODE_ANY,var_loc_num);
             else
-               CODE.addcode(lunacode::CODE_INIT_REF_BYT_LOC,var_loc_num);
+               CODE.addcode(lunacode::CODE_INIT_REF_BYT_LOC,lunacode::MODE_ANY,var_loc_num);
 
       if (par)
          {

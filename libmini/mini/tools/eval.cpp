@@ -20,7 +20,16 @@ int main(int argc,char *argv[])
 
    code=readfile(argv[1],&bytes);
 
-   printf("parsing code:\n----\n%s----\n",code);
+   if (bytes>0)
+      {
+      code[bytes-1]='\0';
+
+      while (--bytes>0)
+         if (code[bytes-1]=='\n' || code[bytes-1]=='\r') code[bytes-1]='\0';
+         else break;
+      }
+
+   printf("parsing code:\n----\n%s\n----\n",code);
 
    parser.setLUNAcode((char *)code,bytes);
    parser.parseLUNA();
