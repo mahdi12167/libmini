@@ -131,7 +131,7 @@ class lunacode
 
    void init(BOOLINT init_static=TRUE);
    void execute();
-   void pushvalue(float v);
+   void pushvalue(float val);
    float popvalue();
 
    void print();

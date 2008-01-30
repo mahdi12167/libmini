@@ -1682,18 +1682,24 @@ void lunacode::execmd(int code,int ival,float fval)
       }
    }
 
-void lunacode::pushvalue(float v)
-   {execmd(CODE_PUSH,0,v);}
+void lunacode::pushvalue(float val)
+   {execmd(CODE_PUSH,0,val);}
 
 float lunacode::popvalue()
    {
    float val=0.0f;
 
-   if (VALSTACKSIZE--<1) CODEMSG("value stack underrun");
-   else if (VALSTACK[VALSTACKSIZE].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-   else val=VALSTACK[VALSTACKSIZE].val;
+   if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+   else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+   else val=VALSTACK[--VALSTACKSIZE].val;
 
-   if (LUNADEBUG) printf("cmd=POP val=%g\n",val);
+   if (LUNADEBUG)
+      {
+      printf("cmd=POP fval=%f",val);
+
+      if (VALSTACKSIZE>0) printf(" post=%f\n",VALSTACK[VALSTACKSIZE-1].val);
+      else printf(" post=none\n");
+      }
 
    return(val);
    }

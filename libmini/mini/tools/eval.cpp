@@ -49,8 +49,8 @@ int main(int argc,char *argv[])
       if (strcmp(argv[3],"-d")==0) sw_debug=TRUE;
 
    parser.getcode()->init();
-   parser.getcode()->pushvalue(value);
    parser.getcode()->setdebug(sw_debug);
+   parser.getcode()->pushvalue(value);
    parser.getcode()->execute();
 
    value=parser.getcode()->popvalue();
