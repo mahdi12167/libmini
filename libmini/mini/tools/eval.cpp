@@ -43,6 +43,7 @@ int main(int argc,char *argv[])
 
    parser.getcode()->init();
    parser.getcode()->pushvalue(value);
+   parser.getcode()->setdebug(1);
    parser.getcode()->execute();
 
    value=parser.getcode()->popvalue();

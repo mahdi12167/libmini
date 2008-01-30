@@ -378,6 +378,8 @@ void lunacode::execmd(int code,int ival,float fval)
       printf("cmd=");
       printcode(code);
 
+      printf(" ival=%d fval=%f",ival,fval);
+
       if (VALSTACKSIZE>0) printf(" pre=%f",VALSTACK[VALSTACKSIZE-1].val);
       else printf(" pre=none");
       }
@@ -923,7 +925,7 @@ void lunacode::execmd(int code,int ival,float fval)
             else
                {
                idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
-               checkarrayloc(ival,idx);
+               checkarrayloc(LOCVARSIZE-1-ival,idx);
                if (idx>=LOCVAR[LOCVARSIZE-1-ival].size) CODEMSG("invalid index");
                else ((float *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
                }
@@ -932,7 +934,7 @@ void lunacode::execmd(int code,int ival,float fval)
             else
                {
                idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
-               checkarrayloc(ival,idx);
+               checkarrayloc(LOCVARSIZE-1-ival,idx);
                if (idx>=LOCVAR[LOCVARSIZE-1-ival].size) CODEMSG("invalid index");
                else ((unsigned char *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
                }
