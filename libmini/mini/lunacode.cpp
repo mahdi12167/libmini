@@ -823,6 +823,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].ref=ival;
             VALSTACK[VALSTACKSIZE-1].refloc=-1;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
             {
@@ -831,6 +832,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].ref=ival;
             VALSTACK[VALSTACKSIZE-1].refloc=-1;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else CODEMSG("invalid operation");
          break;
@@ -842,6 +844,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVARSIZE-1-ival;
             VALSTACK[VALSTACKSIZE-1].ref=-1;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
             {
@@ -850,6 +853,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVARSIZE-1-ival;
             VALSTACK[VALSTACKSIZE-1].ref=-1;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else CODEMSG("invalid operation");
          break;
@@ -1057,6 +1061,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].ref=GLBVAR[ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=GLBVAR[ival].refloc;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else if (GLBVAR[ival].item==ITEM_REF_BYTE)
             {
@@ -1065,6 +1070,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].ref=GLBVAR[ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=GLBVAR[ival].refloc;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else CODEMSG("invalid operation");
          break;
@@ -1076,6 +1082,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].ref=LOCVAR[LOCVARSIZE-1-ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_BYTE)
             {
@@ -1084,6 +1091,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].ref=LOCVAR[LOCVARSIZE-1-ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
+            VALSTACK[VALSTACKSIZE-1].val=0.0f;
             }
          break;
       case CODE_PUSH_REF_IDX:
@@ -1244,7 +1252,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_POP_REF_IDX:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_FLOAT)
+         else if (GLBVAR[ival].item==ITEM_REF_FLOAT)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1280,7 +1288,7 @@ void lunacode::execmd(int code,int ival,float fval)
                   }
                }
             else CODEMSG("invalid reference");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
+         else if (GLBVAR[ival].item==ITEM_REF_BYTE)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1321,7 +1329,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_POP_REF_LOC_IDX:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_FLOAT)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_FLOAT)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
@@ -1357,7 +1365,7 @@ void lunacode::execmd(int code,int ival,float fval)
                   }
                }
             else CODEMSG("invalid reference");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_BYTE)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
@@ -1398,7 +1406,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_INC_REF_IDX:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_FLOAT)
+         else if (GLBVAR[ival].item==ITEM_REF_FLOAT)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1428,7 +1436,7 @@ void lunacode::execmd(int code,int ival,float fval)
                      }
                }
             else CODEMSG("invalid reference");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
+         else if (GLBVAR[ival].item==ITEM_REF_BYTE)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1463,7 +1471,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_INC_REF_LOC_IDX:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_FLOAT)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_FLOAT)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
@@ -1493,7 +1501,7 @@ void lunacode::execmd(int code,int ival,float fval)
                      }
                }
             else CODEMSG("invalid reference");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_BYTE)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
@@ -1528,7 +1536,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_DEC_REF_IDX:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_FLOAT)
+         else if (GLBVAR[ival].item==ITEM_REF_FLOAT)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1558,7 +1566,7 @@ void lunacode::execmd(int code,int ival,float fval)
                      }
                }
             else CODEMSG("invalid reference");
-         else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
+         else if (GLBVAR[ival].item==ITEM_REF_BYTE)
             if (GLBVAR[ival].ref>=0)
                {
                ref=GLBVAR[ival].ref;
@@ -1593,7 +1601,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_DEC_REF_LOC_IDX:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_FLOAT)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_FLOAT)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
@@ -1623,7 +1631,7 @@ void lunacode::execmd(int code,int ival,float fval)
                      }
                }
             else CODEMSG("invalid reference");
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_BYTE)
             if (LOCVAR[LOCVARSIZE-1-ival].ref>=0)
                {
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
