@@ -738,7 +738,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_REF_FLOAT;
-            GLBVAR[ival].ref=GLBVAR[ival].refloc=-1;
+            LOCVAR[LOCVARSIZE-1-ival].ref=LOCVAR[LOCVARSIZE-1-ival].refloc=-1;
             }
          break;
       case CODE_INIT_REF_BYT:
@@ -754,7 +754,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_REF_BYTE;
-            GLBVAR[ival].ref=GLBVAR[ival].refloc=-1;
+            LOCVAR[LOCVARSIZE-1-ival].ref=LOCVAR[LOCVARSIZE-1-ival].refloc=-1;
             }
          break;
       case CODE_SIZE_REF:
@@ -1058,7 +1058,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].ref=GLBVAR[ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=GLBVAR[ival].refloc;
             }
-         else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
+         else if (GLBVAR[ival].item==ITEM_REF_BYTE)
             {
             VALSTACKSIZE++;
             allocate_stacks();
@@ -1077,7 +1077,7 @@ void lunacode::execmd(int code,int ival,float fval)
             VALSTACK[VALSTACKSIZE-1].ref=LOCVAR[LOCVARSIZE-1-ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
             }
-         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
+         else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_REF_BYTE)
             {
             VALSTACKSIZE++;
             allocate_stacks();
