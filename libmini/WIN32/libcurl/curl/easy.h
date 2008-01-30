@@ -19,8 +19,6 @@
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
- *
- * $Id: easy.h,v 1.2 2007/10/18 19:00:48 roettger Exp $
  ***************************************************************************/
 #ifdef  __cplusplus
 extern "C" {
