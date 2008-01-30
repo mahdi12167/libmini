@@ -231,15 +231,20 @@ void lunacode::execute()
    {
    int addr;
 
-   int code=CODE_NOP;
-   int mode=MODE_NONE;
-   int ival=0;
-   float fval=0.0f;
+   int code;
+   int mode;
+   int ival;
+   float fval;
 
    addr=0;
 
    while (addr>=0 && addr<CODESIZE)
       {
+      code=CODE_NOP;
+      mode=MODE_NONE;
+      ival=0;
+      fval=0.0f;
+
       addr=getcode(RETSTACK[RETSTACKSIZE-1],&code,&mode,&ival,&fval);
       RETSTACK[RETSTACKSIZE-1]=addr;
 
@@ -1708,16 +1713,21 @@ void lunacode::print()
    {
    int addr;
 
-   int code=CODE_NOP;
-   int mode=MODE_NONE;
-   int ival=0;
-   float fval=0.0f;
+   int code;
+   int mode;
+   int ival;
+   float fval;
 
    addr=0;
 
    while (addr<CODESIZE)
       {
       printf("%d: ",addr);
+
+      code=CODE_NOP;
+      mode=MODE_NONE;
+      ival=0;
+      fval=0.0f;
 
       addr=getcode(addr,&code,&mode,&ival,&fval);
       printcode(code);

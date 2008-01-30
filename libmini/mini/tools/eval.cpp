@@ -6,15 +6,13 @@
 
 int main(int argc,char *argv[])
    {
-   BOOLINT sw_debug;
-
    unsigned char *code;
    unsigned int bytes;
 
    lunaparse parser;
    float value;
 
-   sw_debug=FALSE;
+   BOOLINT sw_debug;
 
    if (argc<2 || argc>4)
       {
@@ -33,20 +31,29 @@ int main(int argc,char *argv[])
          else break;
       }
 
-   printf("parsing code:\n----\n%s\n----\n",code);
-
-   parser.setLUNAcode((char *)code,bytes);
-   parser.parseLUNA();
-
-   printf("executing code...\n");
-
    value=0.0f;
 
    if (argc>=3)
       if (sscanf(argv[2],"%f",&value)!=1) value=0.0f;
 
+   sw_debug=FALSE;
+
    if (argc==4)
       if (strcmp(argv[3],"-d")==0) sw_debug=TRUE;
+
+   printf("parsing code:\n----\n%s\n----\n",code);
+
+   parser.setLUNAcode((char *)code,bytes);
+   parser.parseLUNA();
+
+   if (sw_debug)
+      {
+      printf("compiled code:\n----\n");
+      parser.getcode()->print();
+      printf("----\n");
+      }
+
+   printf("executing code...\n");
 
    parser.getcode()->init();
    parser.getcode()->setdebug(sw_debug);
