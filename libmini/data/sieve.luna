@@ -1,0 +1,23 @@
+# computes the sieve of the eratosthenes
+
+main(par sieve)
+   {
+   var i;
+   var j;
+
+   var maxprime;
+
+   array byte prime[(+ sieve 1)];
+
+   for (i=0, (<= i sieve), i++) prime[i]=true;
+
+   for (i=2, (< i (+ sqrt(sieve) 0.5)), i++)
+      for (j=i, (<= j sieve), j=(+ j i)) prime[j]=false;
+
+   maxprime=2;
+
+   for (i=2, (<= i sieve), i++)
+     if (prime[i]) maxprime=i;
+
+   return(maxprime);
+   }
