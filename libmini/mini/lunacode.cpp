@@ -898,46 +898,58 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else if (GLBVAR[ival].item==ITEM_ARRAY_FLOAT)
-            if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+            {
+            if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
             else
                {
-               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                checkarray(ival,idx);
                if (idx>=GLBVAR[ival].size) CODEMSG("invalid index");
-               else ((float *)GLBVAR[ival].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+               else ((float *)GLBVAR[ival].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                }
+            VALSTACKSIZE-=2;
+            }
          else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
-            if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+            {
+            if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
             else
                {
-               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                checkarray(ival,idx);
                if (idx>=GLBVAR[ival].size) CODEMSG("invalid index");
-               else ((unsigned char *)GLBVAR[ival].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+               else ((unsigned char *)GLBVAR[ival].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                }
+            VALSTACKSIZE-=2;
+            }
          else CODEMSG("invalid operation");
          break;
       case CODE_POP_ARRAY_LOC_IDX:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_FLOAT)
-            if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+            {
+            if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
             else
                {
-               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                checkarrayloc(LOCVARSIZE-1-ival,idx);
                if (idx>=LOCVAR[LOCVARSIZE-1-ival].size) CODEMSG("invalid index");
-               else ((float *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+               else ((float *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                }
+            VALSTACKSIZE-=2;
+            }
          else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
-            if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+            {
+            if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
             else
                {
-               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+               idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                checkarrayloc(LOCVARSIZE-1-ival,idx);
                if (idx>=LOCVAR[LOCVARSIZE-1-ival].size) CODEMSG("invalid index");
-               else ((unsigned char *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+               else ((unsigned char *)LOCVAR[LOCVARSIZE-1-ival].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                }
+            VALSTACKSIZE-=2;
+            }
          else CODEMSG("invalid operation");
          break;
       case CODE_INC_ARRAY_IDX:
@@ -1233,28 +1245,34 @@ void lunacode::execmd(int code,int ival,float fval)
                ref=GLBVAR[ival].ref;
                if (GLBVAR[ref].item!=ITEM_ARRAY_FLOAT) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarray(ref,idx);
                      if (idx>=GLBVAR[ref].size) CODEMSG("invalid index");
-                     else ((float *)GLBVAR[ref].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+                     else ((float *)GLBVAR[ref].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else if (GLBVAR[ival].refloc>=0)
                {
                refloc=GLBVAR[ival].refloc;
                if (LOCVAR[refloc].item!=ITEM_ARRAY_FLOAT) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarrayloc(refloc,idx);
                      if (idx>=LOCVAR[refloc].size) CODEMSG("invalid index");
-                     else ((float *)LOCVAR[refloc].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+                     else ((float *)LOCVAR[refloc].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else CODEMSG("invalid reference");
          else if (GLBVAR[ival].item==ITEM_ARRAY_BYTE)
@@ -1263,28 +1281,34 @@ void lunacode::execmd(int code,int ival,float fval)
                ref=GLBVAR[ival].ref;
                if (GLBVAR[ref].item!=ITEM_ARRAY_BYTE) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarray(ref,idx);
                      if (idx>=GLBVAR[ref].size) CODEMSG("invalid index");
-                     else ((unsigned char *)GLBVAR[ref].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+                     else ((unsigned char *)GLBVAR[ref].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else if (GLBVAR[ival].refloc>=0)
                {
                refloc=GLBVAR[ival].refloc;
                if (LOCVAR[refloc].item!=ITEM_ARRAY_BYTE) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarrayloc(refloc,idx);
                      if (idx>=LOCVAR[refloc].size) CODEMSG("invalid index");
-                     else ((unsigned char *)LOCVAR[refloc].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+                     else ((unsigned char *)LOCVAR[refloc].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else CODEMSG("invalid reference");
          else CODEMSG("invalid operation");
@@ -1298,28 +1322,34 @@ void lunacode::execmd(int code,int ival,float fval)
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
                if (GLBVAR[ref].item!=ITEM_ARRAY_FLOAT) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarray(ref,idx);
                      if (idx>=GLBVAR[ref].size) CODEMSG("invalid index");
-                     else ((float *)GLBVAR[ref].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+                     else ((float *)GLBVAR[ref].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else if (LOCVAR[LOCVARSIZE-1-ival].refloc>=0)
                {
                refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
                if (LOCVAR[refloc].item!=ITEM_ARRAY_FLOAT) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarrayloc(refloc,idx);
                      if (idx>=LOCVAR[refloc].size) CODEMSG("invalid index");
-                     else ((float *)LOCVAR[refloc].array)[idx]=VALSTACK[--VALSTACKSIZE].val;
+                     else ((float *)LOCVAR[refloc].array)[idx]=VALSTACK[VALSTACKSIZE-1].val;
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else CODEMSG("invalid reference");
          else if (LOCVAR[LOCVARSIZE-1-ival].item==ITEM_ARRAY_BYTE)
@@ -1328,28 +1358,34 @@ void lunacode::execmd(int code,int ival,float fval)
                ref=LOCVAR[LOCVARSIZE-1-ival].ref;
                if (GLBVAR[ref].item!=ITEM_ARRAY_BYTE) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarray(ref,idx);
                      if (idx>=GLBVAR[ref].size) CODEMSG("invalid index");
-                     else ((unsigned char *)GLBVAR[ref].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+                     else ((unsigned char *)GLBVAR[ref].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else if (LOCVAR[LOCVARSIZE-1-ival].refloc>=0)
                {
                refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
                if (LOCVAR[refloc].item!=ITEM_ARRAY_BYTE) CODEMSG("invalid operation");
                else
-                  if (VALSTACK[--VALSTACKSIZE].val<0.0) CODEMSG("invalid index");
+                  {
+                  if (VALSTACK[VALSTACKSIZE-2].val<0.0) CODEMSG("invalid index");
                   else
                      {
-                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE].val+0.5);
+                     idx=(unsigned int)floor(VALSTACK[VALSTACKSIZE-2].val+0.5);
                      checkarrayloc(refloc,idx);
                      if (idx>=LOCVAR[refloc].size) CODEMSG("invalid index");
-                     else ((unsigned char *)LOCVAR[refloc].array)[idx]=(int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
+                     else ((unsigned char *)LOCVAR[refloc].array)[idx]=(int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5);
                      }
+                  VALSTACKSIZE-=2;
+                  }
                }
             else CODEMSG("invalid reference");
          else CODEMSG("invalid operation");
