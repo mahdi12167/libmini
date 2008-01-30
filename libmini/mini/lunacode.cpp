@@ -1241,6 +1241,7 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_REF_FLOAT && VALSTACK[VALSTACKSIZE-1].item!=ITEM_REF_BYTE) CODEMSG("invalid operation");
          else if (LOCVAR[LOCVARSIZE-1-ival].item!=ITEM_NONE && LOCVAR[LOCVARSIZE-1-ival].item!=ITEM_REF_FLOAT && LOCVAR[LOCVARSIZE-1-ival].item!=ITEM_REF_BYTE) CODEMSG("invalid operation");
+         else if (VALSTACK[VALSTACKSIZE-1].refloc>LOCVARSIZE-1) CODEMSG("invalid assignment");
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=VALSTACK[VALSTACKSIZE-1].item;

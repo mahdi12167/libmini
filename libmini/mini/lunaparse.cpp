@@ -759,7 +759,8 @@ void lunaparse::parse_expression(BOOLINT comma)
             return;
             }
 
-         parse_expression();
+         if (op!=lunacode::CODE_NOP) parse_expression();
+         else parse_expression(comma);
 
          args++;
          }
