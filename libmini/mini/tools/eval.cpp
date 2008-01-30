@@ -6,15 +6,19 @@
 
 int main(int argc,char *argv[])
    {
+   BOOLINT sw_debug;
+
    unsigned char *code;
    unsigned int bytes;
 
    lunaparse parser;
    float value;
 
-   if (argc!=2 && argc!=3)
+   sw_debug=FALSE;
+
+   if (argc<2 || argc>4)
       {
-      printf("usage: %s <input.luna> [<input.value>]\n",argv[0]);
+      printf("usage: %s <input.luna> [<input.value> [-d]]\n",argv[0]);
       exit(1);
       }
 
@@ -38,12 +42,15 @@ int main(int argc,char *argv[])
 
    value=0.0f;
 
-   if (argc==3)
+   if (argc>=3)
       if (sscanf(argv[2],"%f",&value)!=1) value=0.0f;
+
+   if (argc==4)
+      if (strcmp(argv[3],"-d")==0) sw_debug=TRUE;
 
    parser.getcode()->init();
    parser.getcode()->pushvalue(value);
-   parser.getcode()->setdebug(1);
+   parser.getcode()->setdebug(sw_debug);
    parser.getcode()->execute();
 
    value=parser.getcode()->popvalue();
@@ -52,5 +59,5 @@ int main(int argc,char *argv[])
 
    free(code);
 
-   return(0);
+   return(ftrc(value+0.5f));
    }
