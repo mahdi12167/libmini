@@ -152,7 +152,7 @@ class lunacode
       void *array;
       unsigned int maxsize,size;
 
-      unsigned int loctime;
+      unsigned int timeloc;
 
       int ref,refloc;
       };

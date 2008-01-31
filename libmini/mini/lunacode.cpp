@@ -210,7 +210,7 @@ void lunacode::allocate_vars()
       {
       if ((LOCVAR=(LUNA_ITEM *)malloc(LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
       for (i=0; i<LOCVARMAX; i++) LOCVAR[i].item=ITEM_NONE;
-      for (i=0; i<LOCVARMAX; i++) LOCVAR[i].loctime=0;
+      for (i=0; i<LOCVARMAX; i++) LOCVAR[i].timeloc=0;
       }
 
    if (GLBVARSIZE>=GLBVARMAX)
@@ -224,7 +224,7 @@ void lunacode::allocate_vars()
       {
       if ((LOCVAR=(LUNA_ITEM *)realloc(LOCVAR,2*LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
       for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].item=ITEM_NONE;
-      for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].loctime=0;
+      for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].timeloc=0;
       LOCVARMAX*=2;
       }
    }
@@ -627,7 +627,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_ARRAY_FLOAT;
-            LOCVAR[LOCVARSIZE-1-ival].loctime++;
+            LOCVAR[LOCVARSIZE-1-ival].timeloc++;
             LOCVAR[LOCVARSIZE-1-ival].array=NULL;
             if (VALSTACK[VALSTACKSIZE-1].val<1.0) VALSTACK[VALSTACKSIZE-1].val=1.0;
             LOCVAR[LOCVARSIZE-1-ival].maxsize=(unsigned int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
@@ -654,7 +654,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_ARRAY_BYTE;
-            LOCVAR[LOCVARSIZE-1-ival].loctime++;
+            LOCVAR[LOCVARSIZE-1-ival].timeloc++;
             LOCVAR[LOCVARSIZE-1-ival].array=NULL;
             if (VALSTACK[VALSTACKSIZE-1].val<1.0) VALSTACK[VALSTACKSIZE-1].val=1.0;
             LOCVAR[LOCVARSIZE-1-ival].maxsize=(unsigned int)floor(VALSTACK[--VALSTACKSIZE].val+0.5);
@@ -676,7 +676,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_ARRAY_FLOAT;
-            LOCVAR[LOCVARSIZE-1-ival].loctime++;
+            LOCVAR[LOCVARSIZE-1-ival].timeloc++;
             LOCVAR[LOCVARSIZE-1-ival].array=NULL;
             LOCVAR[LOCVARSIZE-1-ival].maxsize=0;
             LOCVAR[LOCVARSIZE-1-ival].size=0;
@@ -697,7 +697,7 @@ void lunacode::execmd(int code,int ival,float fval)
          else
             {
             LOCVAR[LOCVARSIZE-1-ival].item=ITEM_ARRAY_BYTE;
-            LOCVAR[LOCVARSIZE-1-ival].loctime++;
+            LOCVAR[LOCVARSIZE-1-ival].timeloc++;
             LOCVAR[LOCVARSIZE-1-ival].array=NULL;
             LOCVAR[LOCVARSIZE-1-ival].maxsize=0;
             LOCVAR[LOCVARSIZE-1-ival].size=0;
@@ -849,7 +849,7 @@ void lunacode::execmd(int code,int ival,float fval)
             allocate_stacks();
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].val=0.0f;
-            VALSTACK[VALSTACKSIZE-1].loctime=LOCVAR[LOCVARSIZE-1-ival].loctime;
+            VALSTACK[VALSTACKSIZE-1].timeloc=LOCVAR[LOCVARSIZE-1-ival].timeloc;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVARSIZE-1-ival;
             VALSTACK[VALSTACKSIZE-1].ref=-1;
             }
@@ -859,7 +859,7 @@ void lunacode::execmd(int code,int ival,float fval)
             allocate_stacks();
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].val=0.0f;
-            VALSTACK[VALSTACKSIZE-1].loctime=LOCVAR[LOCVARSIZE-1-ival].loctime;
+            VALSTACK[VALSTACKSIZE-1].timeloc=LOCVAR[LOCVARSIZE-1-ival].timeloc;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVARSIZE-1-ival;
             VALSTACK[VALSTACKSIZE-1].ref=-1;
             }
@@ -1089,7 +1089,7 @@ void lunacode::execmd(int code,int ival,float fval)
             allocate_stacks();
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_FLOAT;
             VALSTACK[VALSTACKSIZE-1].val=0.0f;
-            VALSTACK[VALSTACKSIZE-1].loctime=LOCVAR[LOCVARSIZE-1-ival].loctime;
+            VALSTACK[VALSTACKSIZE-1].timeloc=LOCVAR[LOCVARSIZE-1-ival].timeloc;
             VALSTACK[VALSTACKSIZE-1].ref=LOCVAR[LOCVARSIZE-1-ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
             }
@@ -1099,7 +1099,7 @@ void lunacode::execmd(int code,int ival,float fval)
             allocate_stacks();
             VALSTACK[VALSTACKSIZE-1].item=ITEM_REF_BYTE;
             VALSTACK[VALSTACKSIZE-1].val=0.0f;
-            VALSTACK[VALSTACKSIZE-1].loctime=LOCVAR[LOCVARSIZE-1-ival].loctime;
+            VALSTACK[VALSTACKSIZE-1].timeloc=LOCVAR[LOCVARSIZE-1-ival].timeloc;
             VALSTACK[VALSTACKSIZE-1].ref=LOCVAR[LOCVARSIZE-1-ival].ref;
             VALSTACK[VALSTACKSIZE-1].refloc=LOCVAR[LOCVARSIZE-1-ival].refloc;
             }
@@ -1261,10 +1261,10 @@ void lunacode::execmd(int code,int ival,float fval)
             if (VALSTACK[VALSTACKSIZE-1].refloc>LOCVARSIZE-1) CODEMSG("invalid assignment");
             else if (VALSTACK[VALSTACKSIZE-1].item==ITEM_REF_FLOAT && LOCVAR[VALSTACK[VALSTACKSIZE-1].refloc].item!=ITEM_ARRAY_FLOAT) CODEMSG("invalid assignment");
             else if (VALSTACK[VALSTACKSIZE-1].item==ITEM_REF_BYTE && LOCVAR[VALSTACK[VALSTACKSIZE-1].refloc].item!=ITEM_ARRAY_BYTE) CODEMSG("invalid assignment");
-            else if (VALSTACK[VALSTACKSIZE-1].loctime!=LOCVAR[VALSTACK[VALSTACKSIZE-1].refloc].loctime) CODEMSG("invalid assignment");
+            else if (VALSTACK[VALSTACKSIZE-1].timeloc!=LOCVAR[VALSTACK[VALSTACKSIZE-1].refloc].timeloc) CODEMSG("invalid assignment");
             else
                {
-               LOCVAR[LOCVARSIZE-1-ival].loctime=VALSTACK[VALSTACKSIZE-1].loctime;
+               LOCVAR[LOCVARSIZE-1-ival].timeloc=VALSTACK[VALSTACKSIZE-1].timeloc;
                LOCVAR[LOCVARSIZE-1-ival].refloc=VALSTACK[VALSTACKSIZE-1].refloc;
                LOCVAR[LOCVARSIZE-1-ival].ref=-1;
                VALSTACKSIZE--;
