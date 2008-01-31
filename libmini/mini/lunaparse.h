@@ -11,9 +11,10 @@ var_decl    ::= "var" <var-id> [ "=" | ":=" expression ]
 par_decl    ::= "par" <var-id>
 array_decl  ::= "array" [ "byte" ] <array-id> [ "[" expression "]" ]
 ref_decl    ::= "ref" [ "byte" ] <ref-id>
-func_decl   ::= "main" | ( "func" <func-id> ) "(" [ par_decl | ref_decl { "," par_decl | ref_decl } ] ")" statement
+list_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
+func_decl   ::= "main" | ( "func" <func-id> ) "(" [ list_decl ] ")" "{" { statement } "}"
 statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
-                ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression) | "++" | "--" ) |
+                ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <func-id> "(" [ expression { [ "," ] expression } ] ")" ) |
                 ( "{" { declaration | statement } "}" ) |
                 ( "if" "(" expression ")" statement [ "else" statement ] ) |
@@ -21,14 +22,14 @@ statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( "repeat" statement "until" "(" expression ")" ) |
                 ( "for" "(" statement "," expression "," statement ")" statement ) |
                 ( "return" [ "(" expression ")" ] ) |
-                "warn" [ ";" ]
-expression  ::= (["-"]<float-val>) |
+                ( "warn" ) [ ";" ]
+expression  ::= ( ["-"]<float-val> ) |
                 ( <var-id> ) |
                 ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
                 ( <func-id> | alpha-op "(" [ expression { [ "," ] expression } ] ")" ) |
                 ( "(" [ operator ] { expression } ")" ) |
                 ( "size" "(" array-id | ref-id ")" ) |
-                "true" | "false"
+                ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
                 "=" | "<>" | "<" | ">" | "<=" | ">=" |
                 "&" | "|" | "!"
