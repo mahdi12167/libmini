@@ -61,7 +61,7 @@ unsigned char *decompressPNGimage(unsigned char *data,unsigned int bytes,int *wi
 
    // check PNG signature
    if (bytes<8) return(NULL);
-   if (!png_sig_cmp(data,0,8)) return(NULL);
+   if (png_sig_cmp(data,0,8)) return(NULL);
 
    // create PNG read struct
    png_ptr=png_create_read_struct(PNG_LIBPNG_VER_STRING,png_voidp_NULL,png_error_ptr_NULL,png_error_ptr_NULL);
@@ -269,7 +269,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
    png_set_compression_level(png_ptr,Z_BEST_COMPRESSION);
 
    // set PNG image type
-   if (components==1) color_type=PNG_COLOR_TYPE_GRAY;
+   if (components==1 || components==2) color_type=PNG_COLOR_TYPE_GRAY;
    else if (components==3) color_type=PNG_COLOR_TYPE_RGB;
    else if (components==4) color_type=PNG_COLOR_TYPE_RGB_ALPHA;
    else
@@ -280,7 +280,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
 
    // set PNG sample depth
    if (components==2) sample_depth=16;
-   else sample_depth=16;
+   else sample_depth=8;
 
    // set PNG interlace type
    interlace_type=PNG_INTERLACE_NONE;

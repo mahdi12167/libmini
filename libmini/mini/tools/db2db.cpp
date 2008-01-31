@@ -55,6 +55,8 @@ int main(int argc,char *argv[])
 
    int jpgwidth,jpgheight,jpgcomponents;
 
+   float jpgquality=0.9f;
+
    unsigned char *pngdata;
    unsigned int pngbytes;
 
@@ -88,6 +90,8 @@ int main(int argc,char *argv[])
       else if (strcmp(dst_ext,".pgm")==0) dst=FILE_TYPE_PNM;
       else if (strcmp(dst_ext,".ppm")==0) dst=FILE_TYPE_PNM;
       else if (strcmp(dst_ext,".pvm")==0) dst=FILE_TYPE_PVM;
+      else if (strcmp(dst_ext,".jpg")==0) dst=FILE_TYPE_JPG;
+      else if (strcmp(dst_ext,".png")==0) dst=FILE_TYPE_PNG;
 
    // register implicit calculator
    calc.doregister();
@@ -117,6 +121,7 @@ int main(int argc,char *argv[])
       rawdata=decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
 
       if (pngcomponents==1) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,0);
+      else if (pngcomponents==2) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,1); //!! MSB?
       else if (pngcomponents==3) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,3);
       else if (pngcomponents==4) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,4);
       }
@@ -129,6 +134,23 @@ int main(int argc,char *argv[])
    if (dst==FILE_TYPE_DB) buf.savedata(argv[2]);
    else if (dst==FILE_TYPE_PNM) buf.savePNMdata(argv[2]);
    else if (dst==FILE_TYPE_PVM) buf.savePVMdata(argv[2]);
+   else if (dst==FILE_TYPE_JPG && buf.zsize==1 && buf.tsteps==1)
+      {
+      if (buf.type==0) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==3) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==4) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
+
+      writefile(argv[2],jpgdata,jpgbytes);
+      }
+   else if (dst==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
+      {
+      if (buf.type==0) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes);
+      else if (buf.type==1) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes); //!! MSB?
+      else if (buf.type==3) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes);
+      else if (buf.type==4) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes);
+
+      writefile(argv[2],pngdata,pngbytes);
+      }
 
    // release buffer
    buf.release();
