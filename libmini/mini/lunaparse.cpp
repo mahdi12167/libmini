@@ -355,7 +355,27 @@ void lunaparse::parse_func_decl(BOOLINT main)
       SCANNER.next();
       }
 
-   parse_statement(&VAR_LOC_NUM,addr2);
+   if (SCANNER.gettoken()!=LUNA_BRACELEFT) PARSERMSG("expected function body");
+   SCANNER.next();
+
+   while (SCANNER.gettoken()!=LUNA_BRACERIGHT)
+      {
+      if (SCANNER.gettoken()==lunascan::LUNA_END)
+         {
+         PARSERMSG("brace mismatch",TRUE);
+         break;
+         }
+
+      if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,&VAR_LOC_NUM);
+      else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(TRUE,FALSE,TRUE,FALSE,FALSE,&VAR_LOC_NUM);
+      else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,&VAR_LOC_NUM);
+      else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
+      else parse_statement(&VAR_LOC_NUM,addr2);
+
+      if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
+      }
+
+   SCANNER.next();
 
    CODE.addcodeat(addr3,lunacode::CODE_RESERVE_VAR_LOC,lunacode::MODE_INT,VAR_LOC_NUM);
 
@@ -378,13 +398,9 @@ void lunaparse::parse_func_decl(BOOLINT main)
 
 void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    {
-   int i;
-
    int info;
 
    int addr1,addr2,addr3,addr4;
-
-   int serials;
 
    if (SCANNER.gettoken()==LUNA_VAR_GLB)
       parse_statement(FALSE,
@@ -432,14 +448,6 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
       {
       SCANNER.next();
 
-      addr1=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-      addr2=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-      CODE.addcodeat(addr1,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
       SCANNER.push();
 
       while (SCANNER.gettoken()!=LUNA_BRACERIGHT)
@@ -447,25 +455,16 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
          if (SCANNER.gettoken()==lunascan::LUNA_END)
             {
             PARSERMSG("brace mismatch",TRUE);
-            return;
+            break;
             }
 
          if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
-         else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(TRUE,FALSE,TRUE,FALSE,FALSE,VAR_LOC_NUM);
          else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
          else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
-         else parse_statement(VAR_LOC_NUM,addr2);
+         else parse_statement(VAR_LOC_NUM,RET_ADDR);
 
          if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
          }
-
-      CODE.addcodeat(addr2,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-      serials=SCANNER.getserials();
-
-      for (i=SCANNER.popserials(); i<serials; i++)
-         if (SCANNER.gettoken(i)==LUNA_ARRAY_LOC)
-            CODE.addcode(lunacode::CODE_FREE_ARRAY_LOC,lunacode::MODE_ANY,SCANNER.getinfo(i));
 
       SCANNER.pop();
 
@@ -756,7 +755,7 @@ void lunaparse::parse_expression(BOOLINT comma)
          if (SCANNER.gettoken()==lunascan::LUNA_END)
             {
             PARSERMSG("paren mismatch",TRUE);
-            return;
+            break;
             }
 
          if (op!=lunacode::CODE_NOP) parse_expression();
