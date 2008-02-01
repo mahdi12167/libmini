@@ -121,7 +121,11 @@ int main(int argc,char *argv[])
       rawdata=decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
 
       if (pngcomponents==1) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,0);
-      else if (pngcomponents==2) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,1); //!! MSB?
+      else if (pngcomponents==2)
+         {
+         buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,1);
+         buf.swap2();
+         }
       else if (pngcomponents==3) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,3);
       else if (pngcomponents==4) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,4);
       }
@@ -145,7 +149,11 @@ int main(int argc,char *argv[])
    else if (dst==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
       {
       if (buf.type==0) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes);
-      else if (buf.type==1) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes); //!! MSB?
+      else if (buf.type==1)
+         {
+         buf.swap2();
+         compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes);
+         }
       else if (buf.type==3) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes);
       else if (buf.type==4) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes);
 

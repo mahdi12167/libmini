@@ -96,6 +96,9 @@ class databuf
    void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB byte order
    int loaddata(const char *filename); // data is converted from MSB to native byte order
 
+   //! convert byte order
+   void swap2(int msb=1);
+
    //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data);
 

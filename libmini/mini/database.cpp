@@ -638,6 +638,19 @@ int databuf::loaddata(const char *filename)
    return(1);
    }
 
+// convert byte order
+void databuf::swap2(int msb)
+   {
+   if (extformat!=0 || implformat!=0) return;
+
+   if (*((unsigned char *)(&INTEL_CHECK))==0)
+      if (msb!=0) return;
+      else swapbytes();
+   else
+      if (msb!=0) swapbytes();
+      else return;
+   }
+
 // convert from/into external format (e.g. JPEG/PNG)
 void databuf::convertchunk(int israw,unsigned int extfmt)
    {
