@@ -102,8 +102,14 @@ class databuf
    //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data);
 
+   //! check conversion hook
+   static int check_conversion() {return((CONVERSION_HOOK==NULL)?0:1);}
+
    //! set hook for automatic s3tc compression
    static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data),void *data);
+
+   //! check autocompress hook
+   static int check_autocompress() {return((AUTOCOMPRESS_HOOK==NULL)?0:1);}
 
    //! automatic s3tc compression
    void autocompress();
@@ -111,12 +117,18 @@ class databuf
    //! set hook for automatic s3tc decompression
    static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data),void *data);
 
+   //! check autodecompress hook
+   static int check_autodecompress() {return((AUTODECOMPRESS_HOOK==NULL)?0:1);}
+
    //! automatic s3tc decompression
    void autodecompress();
 
    //! set interpreter hook for implicit format
    static void setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
                               void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data));
+
+   //! check interpreter hook
+   static int check_interpreter() {return((INTERPRETER_HOOK==NULL)?0:1);}
 
    //! read one line in either Unix or Windows style
    char *readoneline(FILE *file);
