@@ -14,8 +14,7 @@
 
 #include "imgbase.h"
 
-imgbase::imgbase() {}
-imgbase::~imgbase() {}
+datacalc imgbase::CALC;
 
 // S3TC auto-compression hook
 void imgbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
@@ -40,7 +39,7 @@ void imgbase::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int
    }
 
 // load image based on extension
-int imgbase::loadimg(databuf &buf,char *filename,int doautodecompress)
+int imgbase::loadimg(databuf &buf,char *filename)
    {
    FILE_TYPE type;
    char *ext;
@@ -56,6 +55,8 @@ int imgbase::loadimg(databuf &buf,char *filename,int doautodecompress)
    int pngwidth,pngheight,pngcomponents;
 
    unsigned char *rawdata;
+
+   if (checkfile(filename)==0) return(0);
 
    ext=strrchr(filename,'.');
 
@@ -105,7 +106,7 @@ int imgbase::loadimg(databuf &buf,char *filename,int doautodecompress)
    else return(0);
 
    // decompress from s3tc
-   if (doautodecompress!=0) buf.autodecompress();
+   if (type==FILE_TYPE_DB) buf.autodecompress();
 
    return(1);
    }

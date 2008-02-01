@@ -10,14 +10,11 @@ class imgbase
    {
    public:
 
-   imgbase();
-   ~imgbase();
-
    //! load image based on extension
-   int loadimg(databuf &buf,char *filename,int doautodecompress=0);
+   static int loadimg(databuf &buf,char *filename);
 
    //! save image based on extension
-   int saveimg(databuf &buf,char *filename,float jpgquality=0.0f);
+   static int saveimg(databuf &buf,char *filename,float jpgquality=0.0f);
 
    private:
 
