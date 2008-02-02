@@ -20,7 +20,7 @@ int main(int argc,char *argv[])
    if (imgbase::loadimg(buf,argv[1])!=0)
       {
       // save buffer
-      imgbase::saveimg(buf,argv[1],jpgquality);
+      imgbase::saveimg(buf,argv[2],jpgquality);
 
       // release buffer
       buf.release();
