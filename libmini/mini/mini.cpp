@@ -560,13 +560,20 @@ void calcmap(const int i,const int j,const int s)
    {
    int s2,s4;
 
+   float dx,dy,dz;
+
    float f;
+
+   float l,d;
 
    s2=s/2;
    s4=s/4;
 
+   dx=X(i)-FX;
+   dz=Z(j)-FZ;
+
    // evaluate the subdivision variable
-   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
+   if (!ORTHO) f=(dx*dx+DF2+dz*dz)/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
    else f=fsqr(S-1)/fsqr(s*fmax(c*dcpr(i,j,s2),minres));
 
    // check subdivision condition
@@ -578,6 +585,34 @@ void calcmap(const int i,const int j,const int s)
 
       if (s4>0)
          {
+         // view frustum culling
+         if (CULLING && s>(S>>maxcull) && f<0.25f)
+            {
+            dy=Y(i,j)-FY;
+
+            dx+=FX-EX;
+            dy+=FY-EY;
+            dz+=FZ-EZ;
+
+            l=DX*dx+DY*dy+DZ*dz;
+            d=3.0f*(k1*s2+k2*(unsigned short int)DH[s]);
+
+            if (l<NEARP-d || l>FARP+d) return;
+
+            if (!ORTHO)
+               {
+               if (nx1*dx+ny1*dy+nz1*dz>3.0f*(k11*s2+k12*(unsigned short int)DH[s])) return;
+               if (nx2*dx+ny2*dy+nz2*dz>3.0f*(k21*s2+k22*(unsigned short int)DH[s])) return;
+               if (nx3*dx+ny3*dy+nz3*dz>3.0f*(k31*s2+k32*(unsigned short int)DH[s])) return;
+               if (nx4*dx+ny4*dy+nz4*dz>3.0f*(k41*s2+k42*(unsigned short int)DH[s])) return;
+               }
+            else
+               {
+               if (fabs(RX*dx+RY*dy+RZ*dz)>3.0f*(k11*s2+k12*(unsigned short int)DH[s])+k31) return;
+               if (fabs(UX*dx+UY*dy+UZ*dz)>3.0f*(k21*s2+k22*(unsigned short int)DH[s])+k32) return;
+               }
+            }
+
          // subdivision
          calcmap(i+s4,j+s4,s2);
          calcmap(i-s4,j+s4,s2);
@@ -3842,13 +3877,20 @@ void calcmap(const int i,const int j,const int s)
    {
    int s2,s4;
 
+   float dx,dy,dz;
+
    float f;
+
+   float l,d;
 
    s2=s/2;
    s4=s/4;
 
+   dx=X(i)-FX;
+   dz=Z(j)-FZ;
+
    // evaluate the subdivision variable
-   if (!ORTHO) f=(fsqr(X(i)-FX)+DF2+fsqr(Z(j)-FZ))/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
+   if (!ORTHO) f=(dx*dx+DF2+dz*dz)/fsqr(s*D*fmax(c*dcpr(i,j,s2),minres));
    else f=fsqr(S-1)/fsqr(s*fmax(c*dcpr(i,j,s2),minres));
 
    // check subdivision condition
@@ -3860,6 +3902,34 @@ void calcmap(const int i,const int j,const int s)
 
       if (s4>0)
          {
+         // view frustum culling
+         if (CULLING && s>(S>>maxcull) && f<0.25f)
+            {
+            dy=Y(i,j)-FY;
+
+            dx+=FX-EX;
+            dy+=FY-EY;
+            dz+=FZ-EZ;
+
+            l=DX*dx+DY*dy+DZ*dz;
+            d=3.0f*(k1*s2+k2*DH[s]);
+
+            if (l<NEARP-d || l>FARP+d) return;
+
+            if (!ORTHO)
+               {
+               if (nx1*dx+ny1*dy+nz1*dz>3.0f*(k11*s2+k12*(unsigned short int)DH[s])) return;
+               if (nx2*dx+ny2*dy+nz2*dz>3.0f*(k21*s2+k22*(unsigned short int)DH[s])) return;
+               if (nx3*dx+ny3*dy+nz3*dz>3.0f*(k31*s2+k32*(unsigned short int)DH[s])) return;
+               if (nx4*dx+ny4*dy+nz4*dz>3.0f*(k41*s2+k42*(unsigned short int)DH[s])) return;
+               }
+            else
+               {
+               if (fabs(RX*dx+RY*dy+RZ*dz)>3.0f*(k11*s2+k12*(unsigned short int)DH[s])+k31) return;
+               if (fabs(UX*dx+UY*dy+UZ*dz)>3.0f*(k21*s2+k22*(unsigned short int)DH[s])+k32) return;
+               }
+            }
+
          // subdivision
          calcmap(i+s4,j+s4,s2);
          calcmap(i-s4,j+s4,s2);
