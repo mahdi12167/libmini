@@ -733,9 +733,33 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
       }
    }
 
+// set pixel shader RGB[A] texture map from image buffer
 void ministrip::setpixshadertexbuf(int num,databuf *buf,int n)
    {
-   //!!
+   int width,height;
+
+   if (num<0 || num>=SHADERMAX) ERRORMSG();
+   if (n<0 || n>=SHADERFRGTEXMAX) ERRORMSG();
+
+   if (buf->missing()) ERRORMSG();
+
+   if (buf->xsize<2 || buf->ysize<2 ||
+       buf->zsize>1 || buf->tsteps>1) ERRORMSG();
+
+   width=buf->xsize;
+   height=buf->ysize;
+
+   if (SHADER[num].pixshadertexid[n]!=0)
+      {
+      deletetexmap(SHADER[num].pixshadertexid[n]);
+      SHADER[num].pixshadertexid[n]=0;
+      }
+
+   if (buf->type==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0); //!! mipmaps
+   else if (buf->type==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0); //!! mipmaps
+   else if (buf->type==5) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
+   else if (buf->type==6) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
+   else ERRORMSG();
    }
 
 // enable pixel shader
