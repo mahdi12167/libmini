@@ -43,8 +43,8 @@ void enablePRJblending();
 void enableMIPblending();
 void disableblending();
 
-int buildLtexmap(unsigned char *image,int *width,int *height);
-int buildLAtexmap(unsigned char *image,int *width,int *height);
+int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1);
+int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1);
 int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0);
 int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0);
 int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int *height);

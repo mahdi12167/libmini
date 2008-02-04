@@ -300,11 +300,11 @@ void disableblending()
 #endif
    }
 
-int buildLtexmap(unsigned char *image,int *width,int *height)
-   {return(buildtexmap(image,width,height,1,0));}
+int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps)
+   {return(buildtexmap(image,width,height,1,0,mipmaps));}
 
-int buildLAtexmap(unsigned char *image,int *width,int *height)
-   {return(buildtexmap(image,width,height,2,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH));}
+int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps)
+   {return(buildtexmap(image,width,height,2,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH,mipmaps));}
 
 int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps,int s3tc,int bytes)
    {return(buildtexmap(image,width,height,3,CONFIGURE_DEPTH,mipmaps,s3tc,bytes));}

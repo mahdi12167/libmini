@@ -269,6 +269,7 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
       image2=readPNMfile(backname,&width2,&height2,&comps2);
       if (image2!=NULL && (width1!=width2 || height2!=height1 || comps2!=3)) ERRORMSG();
       }
+   else image1=image2=NULL;
 
    if (frontbuf!=NULL && backbuf!=NULL)
       {
@@ -290,13 +291,13 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
 
       if (image1!=NULL && image2!=NULL)
          {
-         STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,0);
-         STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1);
+         STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,1,0);
+         STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1,1);
          }
       else
          {
-         STRIP->setpixshadertexbuf(SLOT,frontbuf,0);
-         STRIP->setpixshadertexbuf(SLOT,backbuf,1);
+         STRIP->setpixshadertexbuf(SLOT,frontbuf,1,0);
+         STRIP->setpixshadertexbuf(SLOT,backbuf,1,1);
          }
 
       for (i=0; i<16; i++) texmtx[i]=0.0;

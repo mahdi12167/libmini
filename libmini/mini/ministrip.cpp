@@ -704,15 +704,15 @@ void ministrip::setpixshaderparams(int num,float p1,float p2,float p3,float p4,i
    }
 
 // set pixel shader RGB texture map
-void ministrip::setpixshadertexRGB(int num,unsigned char *image,int width,int height,int n)
-   {setpixshadertex(num,image,width,height,3,n);}
+void ministrip::setpixshadertexRGB(int num,unsigned char *image,int width,int height,int mipmaps,int n)
+   {setpixshadertex(num,image,width,height,3,mipmaps,n);}
 
 // set pixel shader RGBA texture map
-void ministrip::setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int n)
-   {setpixshadertex(num,image,width,height,4,n);}
+void ministrip::setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int mipmaps,int n)
+   {setpixshadertex(num,image,width,height,4,mipmaps,n);}
 
 // set pixel shader RGB[A] texture map
-void ministrip::setpixshadertex(int num,unsigned char *image,int width,int height,int components,int n)
+void ministrip::setpixshadertex(int num,unsigned char *image,int width,int height,int components,int mipmaps,int n)
    {
    if (num<0 || num>=SHADERMAX) ERRORMSG();
    if (n<0 || n>=SHADERFRGTEXMAX) ERRORMSG();
@@ -727,14 +727,15 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
 
    if (image!=NULL)
       {
-      if (components==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap(image,&width,&height,0);
-      else if (components==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap(image,&width,&height,0);
+      if (components==1) SHADER[num].pixshadertexid[n]=buildLtexmap(image,&width,&height,mipmaps);
+      else if (components==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap(image,&width,&height,mipmaps);
+      else if (components==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap(image,&width,&height,mipmaps);
       else ERRORMSG();
       }
    }
 
 // set pixel shader RGB[A] texture map from image buffer
-void ministrip::setpixshadertexbuf(int num,databuf *buf,int n)
+void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
    {
    int width,height;
 
@@ -755,8 +756,9 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int n)
       SHADER[num].pixshadertexid[n]=0;
       }
 
-   if (buf->type==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0); //!! mipmaps
-   else if (buf->type==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0); //!! mipmaps
+   if (buf->type==0) SHADER[num].pixshadertexid[n]=buildLtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
+   else if (buf->type==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
+   else if (buf->type==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
    else if (buf->type==5) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
    else if (buf->type==6) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
    else ERRORMSG();
