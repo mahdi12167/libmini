@@ -73,9 +73,6 @@ int imgbase::loadimg(databuf &buf,char *filename)
    // register implicit calculator
    if (databuf::check_interpreter()==0) CALC.doregister();
 
-   // register auto-decompression hook
-   if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
-
    // load buffer
    if (type==FILE_TYPE_DB) buf.loaddata(filename);
    else if (type==FILE_TYPE_PNM) buf.loadPNMdata(filename);
@@ -104,9 +101,6 @@ int imgbase::loadimg(databuf &buf,char *filename)
       else if (pngcomponents==4) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,4);
       }
    else return(0);
-
-   // decompress from s3tc
-   if (type==FILE_TYPE_DB) buf.autodecompress();
 
    return(1);
    }
@@ -138,8 +132,12 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality)
    // register auto-compression hook
    if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
 
-   // compress to s3tc
+   // register auto-decompression hook
+   if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
+
+   // compress to or decompress from s3tc
    if (type==FILE_TYPE_DB) buf.autocompress();
+   else buf.autodecompress();
 
    // save buffer
    if (type==FILE_TYPE_DB) buf.savedata(filename);
