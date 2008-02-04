@@ -733,6 +733,11 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
       }
    }
 
+void ministrip::setpixshadertexbuf(int num,databuf *buf,int n)
+   {
+   //!!
+   }
+
 // enable pixel shader
 void ministrip::enablepixshader(int num)
    {

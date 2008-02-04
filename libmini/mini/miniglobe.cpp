@@ -261,34 +261,43 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
 
    double texmtx[16];
 
-   if (frontbuf==NULL)
+   if (frontname!=NULL && backname!=NULL)
       {
       image1=readPNMfile(frontname,&width1,&height1,&comps1);
       if (image1!=NULL && comps1!=3) ERRORMSG();
-      }
-   else
-      {
-      //!!
-      }
 
-   if (backbuf==NULL)
-      {
       image2=readPNMfile(backname,&width2,&height2,&comps2);
       if (image2!=NULL && (width1!=width2 || height2!=height1 || comps2!=3)) ERRORMSG();
       }
-   else
+
+   if (frontbuf!=NULL && backbuf!=NULL)
       {
-      //!!
+      width1=frontbuf->xsize;
+      height1=frontbuf->ysize;
+
+      width2=backbuf->xsize;
+      height2=backbuf->ysize;
+
+      if (width1!=width2 || height2!=height1) ERRORMSG();
       }
 
-   if (image1!=NULL && image2!=NULL)
+   if ((image1!=NULL && image2!=NULL) ||
+       (frontbuf!=NULL && backbuf!=NULL))
       {
       SHADE=0;
 
       STRIP->setcol(1.0f,1.0f,1.0f);
 
-      STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,0);
-      STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1);
+      if (image1!=NULL && image2!=NULL)
+         {
+         STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,0);
+         STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1);
+         }
+      else
+         {
+         STRIP->setpixshadertexbuf(SLOT,frontbuf,0);
+         STRIP->setpixshadertexbuf(SLOT,backbuf,1);
+         }
 
       for (i=0; i<16; i++) texmtx[i]=0.0;
       for (i=0; i<4; i++) texmtx[i+4*i]=1.0;
@@ -300,8 +309,11 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
 
       STRIP->settexmatrix(texmtx);
 
-      free(image1);
-      free(image2);
+      if (image1!=NULL && image2!=NULL)
+         {
+         free(image1);
+         free(image2);
+         }
       }
 
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BEGIN);

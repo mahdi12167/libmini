@@ -24,6 +24,8 @@
 #define MINI_SNIPPET_FRG_FOOTER "snippet_frg_footer"
 #define MINI_SNIPPET_FRG_END "snippet_frg_end"
 
+#include "database.h"
+
 #include "miniOGL.h"
 
 //! container class for triangle strips
@@ -86,6 +88,7 @@ class ministrip
    static void setpixshadertex(int num,unsigned char *image,int width,int height,int components=3,int n=0);
    static void setpixshadertexRGB(int num,unsigned char *image,int width,int height,int n=0);
    static void setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int n=0);
+   static void setpixshadertexbuf(int num,databuf *buf,int n=0);
 
    //! set direct shading parameters
    void setshadedirectparams(int num,
