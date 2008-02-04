@@ -3,6 +3,8 @@
 #ifndef MINIGLOBE_H
 #define MINIGLOBE_H
 
+#include "database.h"
+
 #include "ministrip.h"
 
 #define MINIGLOBE_ONE_RENDER_PHASE miniglobe::ONE_RENDER_PHASE
@@ -73,6 +75,8 @@ class miniglobe
    //! configuring
    void configure_frontname(const char *frontname);
    void configure_backname(const char *backname);
+   void configure_frontbuf(databuf *frontbuf);
+   void configure_backbuf(databuf *backbuf);
 
    protected:
 
@@ -90,6 +94,9 @@ class miniglobe
    char *CONFIGURE_FRONTNAME;
    char *CONFIGURE_BACKNAME;
 
+   databuf *CONFIGURE_FRONTBUF;
+   databuf *CONFIGURE_BACKBUF;
+
    private:
 
    void create_globe(float radius,const float color[3]);
@@ -99,7 +106,8 @@ class miniglobe
    void create_earth();
    void create_moon();
 
-   void create_shader(const char *frontame,const char *backname);
+   void create_shader(const char *frontame,const char *backname,
+                      databuf *frontbuf,databuf *backbuf);
    };
 
 #endif

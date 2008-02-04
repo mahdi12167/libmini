@@ -64,6 +64,9 @@ miniearth::miniearth()
    EPARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
    EPARAMS.backname="EarthNight.ppm"; // file name of back earth texture
 
+   EPARAMS.frontbuf=NULL; // front earth texture databuffer
+   EPARAMS.backbuf=NULL;  // back earth texture databuffer
+
    // initialize state:
 
    TERRAIN=new miniterrain();
@@ -83,6 +86,9 @@ miniearth::~miniearth()
 
    delete SKYDOME;
    delete EARTH;
+
+   if (EPARAMS.frontbuf!=NULL) EPARAMS.frontbuf->release();
+   if (EPARAMS.backbuf!=NULL) EPARAMS.backbuf->release();
    }
 
 // get parameters
@@ -226,6 +232,9 @@ void miniearth::loadopts()
       EARTH->configure_backname(ename2);
       free(ename2);
       }
+
+   EARTH->configure_frontbuf(EPARAMS.frontbuf);
+   EARTH->configure_backbuf(EPARAMS.backbuf);
 
    LOADED=TRUE;
    }

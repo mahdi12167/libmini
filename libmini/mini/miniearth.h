@@ -5,6 +5,8 @@
 
 #include "minibase.h"
 
+#include "database.h"
+
 #include "miniv3d.h"
 #include "miniv4d.h"
 
@@ -69,6 +71,9 @@ class miniearth
 
       char *frontname;
       char *backname;
+
+      databuf *frontbuf;
+      databuf *backbuf;
       };
 
    typedef MINIEARTH_PARAMS_STRUCT MINIEARTH_PARAMS;

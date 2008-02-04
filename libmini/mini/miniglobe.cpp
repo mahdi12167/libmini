@@ -26,6 +26,9 @@ miniglobe::miniglobe()
 
    CONFIGURE_FRONTNAME=strdup("Front.ppm");
    CONFIGURE_BACKNAME=strdup("Back.ppm");
+
+   CONFIGURE_FRONTBUF=NULL;
+   CONFIGURE_BACKBUF=NULL;
    }
 
 // destructor
@@ -84,7 +87,8 @@ void miniglobe::render(int phase)
       else if (SHAPE==SHAPE_MOON) create_moon();
       else ERRORMSG();
 
-      create_shader(CONFIGURE_FRONTNAME,CONFIGURE_BACKNAME);
+      create_shader(CONFIGURE_FRONTNAME,CONFIGURE_BACKNAME,
+                    CONFIGURE_FRONTBUF,CONFIGURE_BACKBUF);
 
       DONE=1;
       }
@@ -244,7 +248,8 @@ void miniglobe::create_moon()
    }
 
 // create shader
-void miniglobe::create_shader(const char *frontname,const char *backname)
+void miniglobe::create_shader(const char *frontname,const char *backname,
+                              databuf *frontbuf,databuf *backbuf)
    {
    int i;
 
@@ -256,11 +261,25 @@ void miniglobe::create_shader(const char *frontname,const char *backname)
 
    double texmtx[16];
 
-   image1=readPNMfile(frontname,&width1,&height1,&comps1);
-   if (image1!=NULL && comps1!=3) ERRORMSG();
+   if (frontbuf==NULL)
+      {
+      image1=readPNMfile(frontname,&width1,&height1,&comps1);
+      if (image1!=NULL && comps1!=3) ERRORMSG();
+      }
+   else
+      {
+      //!!
+      }
 
-   image2=readPNMfile(backname,&width2,&height2,&comps2);
-   if (image2!=NULL && (width1!=width2 || height2!=height1 || comps2!=3)) ERRORMSG();
+   if (backbuf==NULL)
+      {
+      image2=readPNMfile(backname,&width2,&height2,&comps2);
+      if (image2!=NULL && (width1!=width2 || height2!=height1 || comps2!=3)) ERRORMSG();
+      }
+   else
+      {
+      //!!
+      }
 
    if (image1!=NULL && image2!=NULL)
       {
@@ -313,3 +332,9 @@ void miniglobe::configure_frontname(const char *frontname)
 
 void miniglobe::configure_backname(const char *backname)
    {CONFIGURE_BACKNAME=strdup(backname);}
+
+void miniglobe::configure_frontbuf(databuf *frontbuf)
+   {CONFIGURE_FRONTBUF=frontbuf;}
+
+void miniglobe::configure_backbuf(databuf *backbuf)
+   {CONFIGURE_BACKBUF=backbuf;}
