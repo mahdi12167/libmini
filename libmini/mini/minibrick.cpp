@@ -1994,17 +1994,20 @@ void minibrick::setorientation(float dx1,float dy1,float dz1,
                                float dx2,float dy2,float dz2,
                                float dx3,float dy3,float dz3)
    {
-   DX1=dx1;
-   DY1=dy1;
-   DZ1=dz1;
+   if (COLS==1 && ROWS==1)
+      {
+      DX1=dx1;
+      DY1=dy1;
+      DZ1=dz1;
 
-   DX2=dx2;
-   DY2=dy2;
-   DZ2=dz2;
+      DX2=dx2;
+      DY2=dy2;
+      DZ2=dz2;
 
-   DX3=dx3;
-   DY3=dy3;
-   DZ3=dz3;
+      DX3=dx3;
+      DY3=dy3;
+      DZ3=dz3;
+      }
    }
 
 // reset the coordinate system
@@ -2832,31 +2835,31 @@ void minibrick::render(float ex,float ey,float ez,
 
    glPushMatrix();
 
-   // transform from object to world space
-   glScalef(SCALEX,SCALEELEV,-SCALEY);
-   glTranslatef(OFFSETLON,0.0f,OFFSETLAT);
-
    // rotate in world space
-   if (COLS==1 && ROWS==1)
+   if (FREEZE!=0)
       if (DX1!=0.0f || DY1!=0.0f || DZ1!=0.0f ||
           DX2!=0.0f || DY2!=0.0f || DZ2!=0.0f ||
           DX3!=0.0f || DY3!=0.0f || DZ3!=0.0f)
          {
          GLfloat mtx[16]={DX1,DY1,DZ1,0.0f,
                           DX2,DY2,DZ2,0.0f,
-                          DX3,DY3,DZ3,0.0f,
+                          -DX3,-DY3,-DZ3,0.0f,
                           0.0f,0.0f,0.0f,1.0f};
 
-         glTranslatef((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f,
-                      BRICKS->h0+BRICKS->dh/2.0f,
-                      (BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f);
+         glTranslatef(((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
+                      (BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
+                      -((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
 
          glMultMatrixf(mtx);
 
-         glTranslatef(-(BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f,
-                      -(BRICKS->h0+BRICKS->dh/2.0f),
-                      -(BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f);
+         glTranslatef(-((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
+                      -(BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
+                      ((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
          }
+
+   // transform from object to world space
+   glScalef(SCALEX,SCALEELEV,-SCALEY);
+   glTranslatef(OFFSETLON,0.0f,OFFSETLAT);
 
    // enable clipping planes
    for (i=0; i<6; i++)
@@ -3862,9 +3865,10 @@ void minibrick::processarrays(databuf *brick,minisurf *surface)
    if (brick->nwx!=brick->swx ||
        brick->sey!=brick->swy) valid=false;
 
-   if (DX1!=0.0f || DY1!=0.0f || DZ1!=0.0f ||
-       DX2!=0.0f || DY2!=0.0f || DZ2!=0.0f ||
-       DX3!=0.0f || DY3!=0.0f || DZ3!=0.0f) valid=false;
+   if (FREEZE!=0)
+      if (DX1!=0.0f || DY1!=0.0f || DZ1!=0.0f ||
+          DX2!=0.0f || DY2!=0.0f || DZ2!=0.0f ||
+          DX3!=0.0f || DY3!=0.0f || DZ3!=0.0f) valid=false;
 
    if (valid)
       for (n=0; n<surface->getspectrum()->getnum(); n++)
