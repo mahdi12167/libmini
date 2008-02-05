@@ -64,8 +64,11 @@ miniearth::miniearth()
    EPARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
    EPARAMS.backname="EarthNight.ppm"; // file name of back earth texture
 
-   EPARAMS.frontbuf=NULL; // front earth texture databuffer
-   EPARAMS.backbuf=NULL;  // back earth texture databuffer
+   EPARAMS.frontbuf=NULL; // front earth texture image buffer
+   EPARAMS.backbuf=NULL;  // back earth texture image buffer
+
+   EPARAMS.frontbufname="EarthDay.db";  // image buffer name of front earth texture
+   EPARAMS.backbufname="EarthNight.db"; // image buffer name of back earth texture
 
    // initialize state:
 
@@ -87,8 +90,17 @@ miniearth::~miniearth()
    delete SKYDOME;
    delete EARTH;
 
-   if (EPARAMS.frontbuf!=NULL) EPARAMS.frontbuf->release();
-   if (EPARAMS.backbuf!=NULL) EPARAMS.backbuf->release();
+   if (EPARAMS.frontbuf!=NULL)
+      {
+      EPARAMS.frontbuf->release();
+      delete EPARAMS.frontbuf;
+      }
+
+   if (EPARAMS.backbuf!=NULL)
+      {
+      EPARAMS.backbuf->release();
+      delete EPARAMS.backbuf;
+      }
    }
 
 // get parameters
@@ -233,8 +245,53 @@ void miniearth::loadopts()
       free(ename2);
       }
 
-   EARTH->configure_frontbuf(EPARAMS.frontbuf);
-   EARTH->configure_backbuf(EPARAMS.backbuf);
+   // load earth image buffers:
+
+   char *ebname1=NULL;
+
+   if (EPARAMS.frontbuf==NULL)
+      {
+      if (ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,lparams.altpath);
+      else ebname1=getfile(EPARAMS.frontbufname,lparams.altpath);
+
+      if (ebname1!=NULL)
+         {
+         EPARAMS.frontbuf=new databuf;
+
+         if (EPARAMS.frontbuf->loaddata(ebname1)!=0) EARTH->configure_frontbuf(EPARAMS.frontbuf);
+         else
+            {
+            delete EPARAMS.frontbuf;
+            EPARAMS.frontbuf=NULL;
+            }
+
+         free(ebname1);
+         }
+      }
+   else EARTH->configure_frontbuf(EPARAMS.frontbuf);
+
+   char *ebname2=NULL;
+
+   if (EPARAMS.backbuf==NULL)
+      {
+      if (ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,lparams.altpath);
+      else ebname2=getfile(EPARAMS.backbufname,lparams.altpath);
+
+      if (ebname2!=NULL)
+         {
+         EPARAMS.backbuf=new databuf;
+
+         if (EPARAMS.backbuf->loaddata(ebname2)!=0) EARTH->configure_backbuf(EPARAMS.backbuf);
+         else
+            {
+            delete EPARAMS.backbuf;
+            EPARAMS.backbuf=NULL;
+            }
+
+         free(ebname2);
+         }
+      }
+   else EARTH->configure_backbuf(EPARAMS.backbuf);
 
    LOADED=TRUE;
    }

@@ -289,7 +289,7 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
 
       STRIP->setcol(1.0f,1.0f,1.0f);
 
-      if (image1!=NULL && image2!=NULL)
+      if (frontbuf==NULL || backbuf==NULL)
          {
          STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,1,0);
          STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1,1);

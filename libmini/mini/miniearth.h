@@ -74,6 +74,9 @@ class miniearth
 
       databuf *frontbuf;
       databuf *backbuf;
+
+      char *frontbufname;
+      char *backbufname;
       };
 
    typedef MINIEARTH_PARAMS_STRUCT MINIEARTH_PARAMS;
