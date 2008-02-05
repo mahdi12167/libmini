@@ -139,12 +139,12 @@ ministub::ministub(float *image,
    CENTERY=centery;
    CENTERZ=centerz;
 
+   RELSCALE=1.0f;
+   SEALEVEL=-MAXFLOAT;
+
    LAMBDA=lambda;
    DISPLACE=displace;
    ATTENUATION=attenuation;
-
-   RELSCALE=1.0f;
-   SEALEVEL=-MAXFLOAT;
 
    BEGINFAN_CALLBACK=beginfan;
    FANVERTEX_CALLBACK=fanvertex;
