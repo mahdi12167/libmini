@@ -193,6 +193,7 @@ class ministrip
       float pixshaderpar4[SHADERFRGPRMMAX];
 
       int pixshadertexid[SHADERFRGTEXMAX];
+      int pixshadertexmm[SHADERFRGTEXMAX];
       };
 
    typedef SHADER_STRUCT SHADER_TYPE;

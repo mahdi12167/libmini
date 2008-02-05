@@ -320,7 +320,10 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
             }
 
          for (j=0; j<SHADERFRGTEXMAX; j++)
+            {
             SHADER[i].pixshadertexid[j]=0;
+            SHADER[i].pixshadertexmm[j]=0;
+            }
          }
 
       initsnippets();
@@ -371,7 +374,9 @@ ministrip::~ministrip()
             if (SHADER[i].pixshadertexid[j]!=0)
                {
                deletetexmap(SHADER[i].pixshadertexid[j]);
+
                SHADER[i].pixshadertexid[j]=0;
+               SHADER[i].pixshadertexmm[j]=0;
                }
          }
 
@@ -722,7 +727,9 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
    if (SHADER[num].pixshadertexid[n]!=0)
       {
       deletetexmap(SHADER[num].pixshadertexid[n]);
+
       SHADER[num].pixshadertexid[n]=0;
+      SHADER[num].pixshadertexmm[n]=0;
       }
 
    if (image!=NULL)
@@ -731,6 +738,8 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
       else if (components==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap(image,&width,&height,mipmaps);
       else if (components==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap(image,&width,&height,mipmaps);
       else ERRORMSG();
+
+      SHADER[num].pixshadertexmm[n]=mipmaps;
       }
    }
 
@@ -762,6 +771,8 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
    else if (buf->type==5) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
    else if (buf->type==6) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0,1,buf->bytes);
    else ERRORMSG();
+
+   SHADER[num].pixshadertexmm[n]=mipmaps;
    }
 
 // enable pixel shader
@@ -814,7 +825,7 @@ void ministrip::enablepixshader(int num)
                   if (SHADER[num].pixshadertexid[i]!=0)
                      {
                      glActiveTextureARB(GL_TEXTURE0_ARB+i);
-                     bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,0);
+                     bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
                      }
 
                glActiveTextureARB(GL_TEXTURE0_ARB);
