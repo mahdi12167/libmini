@@ -24,7 +24,7 @@ void imgbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int by
    if (data!=NULL) ERRORMSG();
 
    squishbase::compressS3TC(isrgbadata,rawdata,bytes,
-                            s3tcdata,s3tcbytes,obj->xsize,obj->ysize);
+                            s3tcdata,s3tcbytes,obj->xsize,obj->ysize,squishbase::SQUISHMODE_GOOD);
    }
 
 // S3TC auto-decompression hook
