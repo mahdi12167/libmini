@@ -144,6 +144,7 @@ ministub::ministub(float *image,
    ATTENUATION=attenuation;
 
    RELSCALE=1.0f;
+   SEALEVEL=-MAXFLOAT;
 
    BEGINFAN_CALLBACK=beginfan;
    FANVERTEX_CALLBACK=fanvertex;
