@@ -124,6 +124,8 @@ class minitile
    float getlambda() {return(LAMBDA);}
    float getdisplace() {return(DISPLACE);}
 
+   float getsealevel() {return(SEALEVEL0);}
+
    int getsize(int col,int row) {return(SIZE[col+row*COLS]);}
 
    int gettexid(int col,int row) {return(TEXID[col+row*COLS]);}

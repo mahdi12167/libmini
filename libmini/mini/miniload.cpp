@@ -917,6 +917,10 @@ float miniload::getrelscale()
 void miniload::setsealevel(float level)
    {SEALEVEL=level;}
 
+// get sea level
+float miniload::getsealevel()
+   {return(SEALEVEL);}
+
 // calculate the elevation at position (x,z)
 float miniload::getheight(float x,float z,int approx)
    {

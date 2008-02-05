@@ -53,6 +53,9 @@ class miniload
    //! set sea level
    void setsealevel(float level);
 
+   //! get sea level
+   float getsealevel();
+
    //! set rendering modes
    void settexmode(int texmode=0);
    void setfogmode(int fogmode=1);

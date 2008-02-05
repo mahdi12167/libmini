@@ -76,6 +76,7 @@ class ministub
    float getlambda() {return(LAMBDA);}
    float getdisplace() {return(DISPLACE);}
    float getrelscale() {return(RELSCALE);}
+   float getsealevel() {return(SEALEVEL);}
 
    //! modify the terrain at run time
    void setheight(int i,int j,float h);
