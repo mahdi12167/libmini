@@ -104,6 +104,9 @@ class minispect
    //! delete iso value
    void deliso(float iso);
 
+   //! check iso value
+   int chkiso(float iso);
+
    //! reset iso spectrum
    void reset();
 
@@ -410,6 +413,9 @@ class minibrick
 
    //! delete iso value
    void deliso(float iso);
+
+   //! check iso value
+   int chkiso(float iso);
 
    //! reset iso spectrum
    void resetiso();

@@ -213,6 +213,17 @@ void minispect::deliso(float iso)
          }
    }
 
+// check iso value
+int minispect::chkiso(float iso)
+   {
+   int i;
+
+   for (i=0; i<N; i++)
+      if (iso==ISO[i]) return(1);
+
+   return(0);
+   }
+
 // reset iso spectrum
 void minispect::reset()
    {
@@ -2120,6 +2131,18 @@ void minibrick::deliso(float iso)
 
    // unlock critical section
    if (ISRUNNING!=0) UNLOCK2_CALLBACK(START_DATA);
+   }
+
+// check iso value
+int minibrick::chkiso(float iso)
+   {
+   int i,j;
+
+   // check iso spectrum
+   for (i=0; i<COLS; i++)
+      for (j=0; j<ROWS; j++) if (SURFACE[i+j*COLS]->getspectrum()->chkiso(iso)!=0) return(1);
+
+   return(0);
    }
 
 // reset iso spectrum
