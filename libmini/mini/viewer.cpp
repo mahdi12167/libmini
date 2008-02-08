@@ -464,7 +464,7 @@ void initVISbathymap()
 
       hsv2rgb(hue1+(hue2-hue1)*t,1.0f,1.0f,rgba);
 
-      rgba[3]=fsqrt(1.0f-fabs(2.0f*(t-0.5f)));
+      rgba[3]=fpow(1.0f-fabs(2.0f*(t-0.5f)),1.0f/3);
 
       VIEWER_BATHYMAP[4*i]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
       VIEWER_BATHYMAP[4*i+1]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
