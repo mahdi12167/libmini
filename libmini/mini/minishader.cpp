@@ -103,7 +103,7 @@ void minishader::setVISshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      LRP colt.xyz,colt.w,colt,1.0; \n\
+      LRP colt.xyz,colt.w,colt,c5.z; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### fade-out at sea bottom \n\
@@ -171,7 +171,7 @@ void minishader::setVISshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      LRP colt.xyz,colt.w,colt,1.0; \n\
+      LRP colt.xyz,colt.w,colt,c5.z; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### modulate with contours \n\
@@ -306,7 +306,7 @@ void minishader::setVISshader(minicache *cache,
    cache->setpixshaderparams(cnt_a,cnt_b,cnt_c,cnt_d,2);
    cache->setpixshaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
-   cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,0.0f,5);
+   cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
    cache->usepixshader(1);
    cache->setseashader(fragprog2);
    cache->setseashaderparams(seamodulate,0.0f,0.0f,0.0f);
@@ -431,7 +431,7 @@ void minishader::setNPRshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      LRP colt.xyz,colt.w,colt,1.0; \n\
+      LRP colt.xyz,colt.w,colt,c5.z; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### modulate with contours \n\
@@ -570,7 +570,7 @@ void minishader::setNPRshader(minicache *cache,
    cache->setpixshaderparams(cnt_a,cnt_b,cnt_c,cnt_d,2);
    cache->setpixshaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
-   cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,0.0f,5);
+   cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
    cache->usepixshader(1);
    cache->setseashader(fragprog2);
    cache->setseashaderparams(0.0f,0.0f,0.0f,0.0f);
