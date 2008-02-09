@@ -85,6 +85,7 @@ class minitile
    static minitile *load(int cols,int rows,
                          const char *basepath1=0,const char *basepath2=0,const char *basepath3=0,
                          float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
+                         float stretchx=1.0f,float stretchy=1.0f,
                          float exaggeration=1.0f,float scale=1.0f,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb)=0,
                          float sealevel=0.0f,float snowline=3000.0f,

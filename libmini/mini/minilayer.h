@@ -29,6 +29,9 @@ class minilayer
       int cols;            // number of columns per tileset
       int rows;            // number of rows per tileset
 
+      float stretchx;      // horizontal stretching in x-direction
+      float stretchy;      // horizontal stretching in y-direction
+
       int basesize;        // base size of texture maps
 
       BOOLINT usepnm;      // use either PNM or DB loader

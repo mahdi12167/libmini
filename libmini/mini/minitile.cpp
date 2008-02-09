@@ -757,6 +757,7 @@ void minitile::draw(float res,
 minitile *minitile::load(int cols,int rows,
                          const char *basepath1,const char *basepath2,const char *basepath3,
                          float offsetx,float offsety,float offseth,
+                         float stretchx,float stretchy,
                          float exaggeration,float scale,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                          float sealevel,float snowline,
@@ -882,6 +883,9 @@ minitile *minitile::load(int cols,int rows,
    centerz=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
    miniutm::arcsec2meter(centerz,as2m);
+
+   as2m[0]*=stretchx;
+   as2m[1]*=stretchy;
 
    xdim*=as2m[0];
    zdim*=as2m[1];

@@ -844,6 +844,7 @@ int main(int argc,char *argv[])
                 basepath1,basepath2,(sw_trees!=0)?basepath3:NULL, // directory for tiles, textures and fogmaps
                 -viewx*3600,-viewy*3600, // horizontal offset in arc-seconds
                 0.0f, // no vertical offset
+                1.0f,1.0f, // no horizontal stretching
                 exaggeration,scale, // vertical exaggeration and global scale
                 treescale*exaggertrees,treevalue, // fog parameters
                 minres, // absolute minimum of global resolution

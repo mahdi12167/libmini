@@ -1058,6 +1058,7 @@ void miniload::reload(int col,int row,
 int miniload::load(int cols,int rows,
                    const char *basepath1,const char *basepath2,const char *basepath3,
                    float offsetx,float offsety,float offseth,
+                   float stretchx,float stretchy,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
                    float minres,float bsafety,
@@ -1387,14 +1388,14 @@ int miniload::load(int cols,int rows,
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
       }
 
-   COLDIM/=scale;
-   ROWDIM/=scale;
+   COLDIM*=stretchx/scale;
+   ROWDIM*=stretchy/scale;
 
    SCALE/=scale;
 
-   CENTERX/=scale;
+   CENTERX*=stretchx/scale;
    CENTERY/=scale;
-   CENTERZ/=-scale;
+   CENTERZ*=-stretchy/scale;
 
    TILE=new minitile(NULL,NULL,
                      COLS,ROWS,COLDIM,ROWDIM,SCALE,
@@ -1420,14 +1421,14 @@ int miniload::load(int cols,int rows,
    if (outscale!=NULL)
       if (CONFIGURE_USEPNM!=0)
          {
-         outscale[0]=as2m[0]/scale; // x-size of one arcsec in meters
-         outscale[1]=as2m[1]/scale; // z-size of one arcsec in meters
+         outscale[0]=as2m[0]*stretch/scale; // x-size of one arcsec in meters
+         outscale[1]=as2m[1]*stretch/scale; // z-size of one arcsec in meters
          outscale[2]=SCALE/exaggeration; // one scaled meter
          }
       else
          {
-         outscale[0]=1.0f/scale; // x-scaling
-         outscale[1]=1.0f/scale; // z-scaling
+         outscale[0]=stretchx/scale; // x-scaling
+         outscale[1]=stretchy/scale; // z-scaling
          outscale[2]=SCALE/exaggeration; // one scaled meter
          }
 
