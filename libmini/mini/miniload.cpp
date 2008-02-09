@@ -1421,8 +1421,8 @@ int miniload::load(int cols,int rows,
    if (outscale!=NULL)
       if (CONFIGURE_USEPNM!=0)
          {
-         outscale[0]=as2m[0]*stretch/scale; // x-size of one arcsec in meters
-         outscale[1]=as2m[1]*stretch/scale; // z-size of one arcsec in meters
+         outscale[0]=as2m[0]*stretchx/scale; // x-size of one arcsec in meters
+         outscale[1]=as2m[1]*stretchy/scale; // z-size of one arcsec in meters
          outscale[2]=SCALE/exaggeration; // one scaled meter
          }
       else
