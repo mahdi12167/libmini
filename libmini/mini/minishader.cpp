@@ -103,8 +103,7 @@ void minishader::setVISshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      MAD colt.xyz,colt.w,colt,c5.z; \n\
-      ADD colt.xyz,colt,-colt.w; \n\
+      LRP colt.xyz,colt.w,colt,c5.w; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### fade-out at sea bottom \n\
@@ -172,8 +171,7 @@ void minishader::setVISshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      MAD colt.xyz,colt.w,colt,c5.z; \n\
-      ADD colt.xyz,colt,-colt.w; \n\
+      LRP colt.xyz,colt.w,colt,c5.w; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### modulate with contours \n\
@@ -433,8 +431,7 @@ void minishader::setNPRshader(minicache *cache,
       MOV vtx.y,c5.z; \n\
       MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
-      MAD colt.xyz,colt.w,colt,c5.z; \n\
-      ADD colt.xyz,colt,-colt.w; \n\
+      LRP colt.xyz,colt.w,colt,c5.w; \n\
       MUL colt.xyz,colt,col; \n\
       CMP col.xyz,-vtx.z,colt,col; \n\
       ### modulate with contours \n\
