@@ -956,7 +956,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          }
 
       // check for individual brick color
-      if (bred>0.0f && bgreen>0.0f && bblue>0.0f)
+      if (bred>0.0f || bgreen>0.0f || bblue>0.0f)
          {
          r=bred;
          g=bgreen;

@@ -50,6 +50,9 @@ UTM 04
 Office, Makai
 ; $type=2
 ; $brickpasses=1
+; $brickcolor_red=0.5
+; $brickcolor_green=1
+; $brickcolor_blue=0.5
 UTM 04
 0638067
 2358141
