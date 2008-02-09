@@ -99,13 +99,13 @@ void minishader::setVISshader(minicache *cache,
       MAD col,col,a.x,a.b; \n\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
-      MUL_SAT vtx.x,-vtx.z,c5.y; \n\
+      MUL vtx.z,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
-      MAD vtx.x,vtx,t.x,t.y; \n\
+      MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,1.0; \n\
       MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.x,colt,col; \n\
+      CMP col.xyz,vtx.z,colt,col; \n\
       ### fade-out at sea bottom \n\
       SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
       MUL_SAT vtx.w,-vtx.y,c0.y; \n\
@@ -167,13 +167,13 @@ void minishader::setVISshader(minicache *cache,
       CMP col.xyz,vtx.y,colb,col; \n\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
-      MUL_SAT vtx.x,-vtx.z,c5.y; \n\
+      MUL vtx.z,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
-      MAD vtx.x,vtx,t.x,t.y; \n\
+      MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,1.0; \n\
       MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.x,colt,col; \n\
+      CMP col.xyz,vtx.z,colt,col; \n\
       ### modulate with contours \n\
       MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
       FRC vtx.y,vtx.y; \n\
@@ -427,13 +427,13 @@ void minishader::setNPRshader(minicache *cache,
       CMP col.xyz,vtx.y,c1,col; \n\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
-      MUL_SAT vtx.x,-vtx.z,c5.y; \n\
+      MUL vtx.z,-vtx.z,c5.y; \n\
       MOV vtx.y,c5.z; \n\
-      MAD vtx.x,vtx,t.x,t.y; \n\
+      MAD vtx.x,vtx.z,t.x,t.y; \n\
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,1.0; \n\
       MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.x,colt,col; \n\
+      CMP col.xyz,vtx.z,colt,col; \n\
       ### modulate with contours \n\
       MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
       FRC vtx.y,vtx.y; \n\
