@@ -1869,3 +1869,75 @@ UTM 04
 629306
 2365265
 51m
+
+Paiko Lagoon Beach Access
+UTM 04
+631937
+2353805
+18m
+
+Mark's Garage, China Town, Honolulu
+UTM 04
+618133
+2357059
+50m
+
+Market Place, China Town, Honolulu
+UTM 04
+618121
+2357345
+70m
+
+Kekaulike / Maunakea Mall, China Town, Honolulu
+UTM 04
+617883
+2357208
+16m
+
+Indigo, China Town, Honolulu
+UTM 04
+618064
+2357016
+32m
+
+Science Center, Bishop Museum, Honolulu
+UTM 04
+617049
+2359331
+33m
+
+Hahaione Trail Head
+UTM 04
+633499
+2357028
+129m
+
+Pahua Trail Head, Kamiloiki Ridge
+UTM 04
+635864
+2355763
+25m
+
+Pahua Platform, Kamiloiki Ridge
+UTM 04
+635903
+2355865
+80m
+
+Solitude Peak, Kamiloiki Ridge
+UTM 04
+635935
+2356361
+182m
+
+Vista Peak, Kamiloiki Ridge
+UTM 04
+635972
+2356506
+209m
+
+Sports Authority, Ward Avenue, Honolulu
+UTM 04
+618675
+2355347
+23m
