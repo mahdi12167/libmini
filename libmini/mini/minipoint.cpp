@@ -29,7 +29,7 @@ minipointopts::minipointopts()
    brickcolor_red=0.0f;
    brickcolor_green=0.0f;
    brickcolor_blue=0.0f;
-   brickindex=0;
+   brickindex=-1;
    }
 
 // destructor
@@ -846,9 +846,6 @@ void minipoint::drawbricks(float ex,float ey,float ez,
 
    minipointdata **vpoint;
 
-   // check if a brick file name was set
-   if (BRICKNAME==NULL) return;
-
    // calculate visible points
    calcvdata(type1,type2);
    vpoint=getvdata();
@@ -861,7 +858,10 @@ void minipoint::drawbricks(float ex,float ey,float ez,
       {
       LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
       LODS->configure_brickpasses(CONFIGURE_BRICKPASSES);
-      LODS->addbrick(BRICKNAME,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+
+      // check if a brick file name was set
+      if (BRICKNAME!=NULL)
+         LODS->addbrick(BRICKNAME,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
       }
 
    // set stripe pattern
@@ -915,8 +915,9 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       else bsize=size;
 
       // get brick index
-      if ((*vpoint)->opts==NULL) bindex=0;
-      else bindex=(*vpoint)->opts->brickindex;
+      if ((*vpoint)->opts!=NULL) bindex=(*vpoint)->opts->brickindex;
+      else if (BRICKNAME!=NULL) bindex=0;
+      else bindex=-1;
 
       // get brick passes
       if ((*vpoint)->opts==NULL) bpasses=0;
@@ -939,7 +940,12 @@ void minipoint::drawsequence(float ex,float ey,float ez,
                free((*vpoint)->opts->brickfile);
                (*vpoint)->opts->brickfile=NULL;
                }
+            else if (BRICKNAME!=NULL) bindex=(*vpoint)->opts->brickindex=0;
+            else bindex=(*vpoint)->opts->brickindex=-1;
             }
+
+      // check for valid brick index
+      if (bindex<0) continue;
 
       // calculate position
       midx=(*vpoint)->x/SCALEX-OFFSETLON;
