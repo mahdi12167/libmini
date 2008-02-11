@@ -29,6 +29,8 @@ minipointopts::minipointopts()
    brickcolor_red=0.0f;
    brickcolor_green=0.0f;
    brickcolor_blue=0.0f;
+
+   brickloaded=0;
    brickindex=-1;
    }
 
@@ -928,21 +930,24 @@ void minipoint::drawsequence(float ex,float ey,float ez,
 
       // check for individual brick file
       if ((*vpoint)->opts!=NULL)
+         {
          if ((*vpoint)->opts->brickfile!=NULL)
-            {
-            bname=getfile((*vpoint)->opts->brickfile,ALTPATH);
-
-            if (bname!=NULL)
+            if ((*vpoint)->opts->brickloaded==0)
                {
-               bindex=(*vpoint)->opts->brickindex=LODS->addbrick(bname,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
-               free(bname);
+               bname=getfile((*vpoint)->opts->brickfile,ALTPATH);
 
-               free((*vpoint)->opts->brickfile);
-               (*vpoint)->opts->brickfile=NULL;
+               if (bname!=NULL)
+                  {
+                  bindex=(*vpoint)->opts->brickindex=LODS->addbrick(bname,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+                  free(bname);
+                  }
+
+               (*vpoint)->opts->brickloaded=1;
                }
-            else if (BRICKNAME!=NULL) bindex=(*vpoint)->opts->brickindex=0;
-            else bindex=(*vpoint)->opts->brickindex=-1;
-            }
+
+         if ((*vpoint)->opts->brickloaded==0)
+            if (BRICKNAME!=NULL) bindex=(*vpoint)->opts->brickindex=0;
+         }
 
       // check for valid brick index
       if (bindex<0) continue;

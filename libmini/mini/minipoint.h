@@ -50,6 +50,9 @@ class minipointopts
    float brickcolor_green; // green color component
    float brickcolor_blue; // blue color component
    int brickpasses; // 0=default 1=striped 2-4=semi-transparent
+
+   // brick state variables
+   int brickloaded;
    int brickindex;
    };
 
