@@ -380,6 +380,9 @@ void loadsettings()
       if (fscanf(file,"usecontours=%d\n",&flag)!=1) ERRORMSG();
       eprms.usecontours=flag;
 
+      if (fscanf(file,"usebathymap=%d\n",&flag)!=1) ERRORMSG();
+      eprms.usebathymap=flag;
+
       if (fscanf(file,"useskydome=%d\n",&flag)!=1) ERRORMSG();
       eprms.useskydome=flag;
 
@@ -437,6 +440,7 @@ void savesettings()
 
    fprintf(file,"usefog=%d\n",eparams->usefog);
    fprintf(file,"usecontours=%d\n",eparams->usecontours);
+   fprintf(file,"usebathymap=%d\n",eparams->usebathymap);
    fprintf(file,"useskydome=%d\n",eparams->useskydome);
    fprintf(file,"usewaypoints=%d\n",eparams->usewaypoints);
    fprintf(file,"usebricks=%d\n",eparams->usebricks);
