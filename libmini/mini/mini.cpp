@@ -11,15 +11,15 @@ namespace mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float einf,
+               float sinf,
                float bsaf,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || einf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || sinf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   elevinf=einf;
+   seainf=sinf;
    bsafety=bsaf;
    maxcull=maxc;
    }
@@ -151,7 +151,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=elevinf;
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=seainf;
 
    return(d2);
    }
@@ -543,6 +543,16 @@ void setsea(float level)
    {
    if (level==-MAXFLOAT) SEALEVEL=level;
    else SEALEVEL=level/SCALE;
+   }
+
+// set the sea level range
+void setsearange(float seamin,float seamax)
+   {
+   if (seamin==-MAXFLOAT) SEALEVELMIN=seamin;
+   else SEALEVELMIN=seamin/SCALE;
+
+   if (seamax==-MAXFLOAT) SEALEVELMAX=seamax;
+   else SEALEVELMAX=seamax/SCALE;
    }
 
 // undo the previous triangulation
@@ -3341,15 +3351,15 @@ namespace Mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float einf,
+               float sinf,
                float bsaf,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || einf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || sinf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   elevinf=einf;
+   seainf=sinf;
    bsafety=bsaf;
    maxcull=maxc;
    }
@@ -3481,7 +3491,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=elevinf;
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=seainf;
 
    return(d2);
    }
@@ -3873,6 +3883,16 @@ void setsea(float level)
    {
    if (level==-MAXFLOAT) SEALEVEL=level;
    else SEALEVEL=level/SCALE;
+   }
+
+// set the sea level range
+void setsearange(float seamin,float seamax)
+   {
+   if (seamin==-MAXFLOAT) SEALEVELMIN=seamin;
+   else SEALEVELMIN=seamin/SCALE;
+
+   if (seamax==-MAXFLOAT) SEALEVELMAX=seamax;
+   else SEALEVELMAX=seamax/SCALE;
    }
 
 // undo the previous triangulation

@@ -9,7 +9,7 @@ namespace mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float einf=4.0f,
+               float sinf=4.0f,
                float bsaf=0.1f,
                int maxc=8);
 
@@ -38,6 +38,7 @@ void setmaps(void *map,void *d2map,
              float emission=0.0f,float fogatt=1.0f,float fogR=1.0f,float fogG=1.0f,float fogB=1.0f);
 
 void setsea(float level);
+void setsearange(float seamin,float seamax);
 
 void drawlandscape(float res,
                    float ex,float ey,float ez,
@@ -100,7 +101,7 @@ namespace Mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float einf=4.0f,
+               float sinf=4.0f,
                float bsaf=0.1f,
                int maxc=8);
 
@@ -129,6 +130,7 @@ void setmaps(void *map,void *d2map,
              float emission=0.0f,float fogatt=1.0f,float fogR=1.0f,float fogG=1.0f,float fogB=1.0f);
 
 void setsea(float level);
+void setsearange(float seamin,float seamax);
 
 void drawlandscape(float res,
                    float ex,float ey,float ez,

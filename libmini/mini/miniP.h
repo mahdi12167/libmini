@@ -28,7 +28,7 @@ namespace mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float elevinf=4.0f; // elevation influence
+float seainf=4.0f; // sea level influence
 float bsafety=0.1f; // base offset safety
 int maxcull=8; // maximum culling depth
 
@@ -119,7 +119,7 @@ namespace Mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float elevinf=4.0f; // elevation influence
+float seainf=4.0f; // sea level influence
 float bsafety=0.1f; // base offset safety
 int maxcull=8; // maximum culling depth
 

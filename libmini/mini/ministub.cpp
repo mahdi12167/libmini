@@ -20,7 +20,8 @@ ministub::ministub(short int *image,
                    void (*prismedge)(float x,float y,float yf,float z),
                    void **d2map2,int *size2,
                    float minres,float bsafety,
-                   float maxd2,float gradinf,
+                   float maxd2,float seainf,
+                   float seamin,float seamax,
                    int maxcull)
    {
    int i;
@@ -32,11 +33,16 @@ ministub::ministub(short int *image,
       minres=9.0f;
       bsafety=0.1f;
       maxd2=100.0f;
-      gradinf=0.25f;
+      seainf=4.0f;
       maxcull=8;
+
+      seamin=-MAXFLOAT;
+      seamax=-MAXFLOAT;
       }
 
-   mini::setparams(minres,maxd2,gradinf,bsafety,maxcull);
+   mini::setparams(minres,maxd2,seainf,bsafety,maxcull);
+
+   mini::setsearange(seamin,seamax);
 
    MAP=mini::initmap(image,&D2MAP,
                      size,dim,scale,
@@ -80,7 +86,9 @@ ministub::ministub(short int *image,
    MINRES=minres;
    BSAFETY=bsafety;
    MAXD2=maxd2;
-   GRADINF=gradinf;
+   SEAINF=seainf;
+   SEAMIN=seamin;
+   SEAMAX=seamax;
    MAXCULL=maxcull;
 
    FOCUS=FALSE;
@@ -102,7 +110,8 @@ ministub::ministub(float *image,
                    void (*prismedge)(float x,float y,float yf,float z),
                    void **d2map2,int *size2,
                    float minres,float bsafety,
-                   float maxd2,float gradinf,
+                   float maxd2,float seainf,
+                   float seamin,float seamax,
                    int maxcull)
    {
    int i;
@@ -114,11 +123,16 @@ ministub::ministub(float *image,
       minres=9.0f;
       bsafety=0.1f;
       maxd2=100.0f;
-      gradinf=0.25f;
+      seainf=4.0f;
       maxcull=8;
+
+      seamin=-MAXFLOAT;
+      seamax=-MAXFLOAT;
       }
 
-   Mini::setparams(minres,maxd2,gradinf,bsafety,maxcull);
+   Mini::setparams(minres,maxd2,seainf,bsafety,maxcull);
+
+   Mini::setsearange(seamin,seamax);
 
    MAP=Mini::initmap(image,&D2MAP,
                      size,dim,scale,
@@ -162,7 +176,9 @@ ministub::ministub(float *image,
    MINRES=minres;
    BSAFETY=bsafety;
    MAXD2=maxd2;
-   GRADINF=gradinf;
+   SEAINF=seainf;
+   SEAMIN=seamin;
+   SEAMAX=seamax;
    MAXCULL=maxcull;
 
    FOCUS=FALSE;
@@ -220,7 +236,7 @@ void ministub::draw(float res,
 
    if (!FLOAT)
       {
-      mini::setparams(MINRES,MAXD2,GRADINF,BSAFETY,MAXCULL);
+      mini::setparams(MINRES,MAXD2,SEAINF,BSAFETY,MAXCULL);
 
       mini::setmaps(MAP,D2MAP,
                     SIZE,DIM,SCALE*RELSCALE,
@@ -231,6 +247,7 @@ void ministub::draw(float res,
 
       if (MODIFIED)
          {
+         mini::setsearange(SEAMIN,SEAMAX);
          mini::updatemaps(FAST);
          MODIFIED=FALSE;
          }
@@ -249,7 +266,7 @@ void ministub::draw(float res,
       }
    else
       {
-      Mini::setparams(MINRES,MAXD2,GRADINF,BSAFETY,MAXCULL);
+      Mini::setparams(MINRES,MAXD2,SEAINF,BSAFETY,MAXCULL);
 
       Mini::setmaps(MAP,D2MAP,
                     SIZE,DIM,SCALE*RELSCALE,
@@ -260,6 +277,7 @@ void ministub::draw(float res,
 
       if (MODIFIED)
          {
+         Mini::setsearange(SEAMIN,SEAMAX);
          Mini::updatemaps(FAST);
          MODIFIED=FALSE;
          }

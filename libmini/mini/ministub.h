@@ -21,7 +21,8 @@ class ministub
             void (*prismedge)(float x,float y,float yf,float z)=0,
             void **d2map2=0,int *size2=0,
             float minres=0.0f,float bsafety=0.0f,
-            float maxd2=0.0f,float gradinf=0.0f,
+            float maxd2=0.0f,float seainf=0.0f,
+            float seamin=0.0f,float seamax=0.0f,
             int maxcull=0);
 
    ministub(float *image, // height field is a float array
@@ -36,7 +37,8 @@ class ministub
             void (*prismedge)(float x,float y,float yf,float z)=0,
             void **d2map2=0,int *size2=0,
             float minres=0.0f,float bsafety=0.0f,
-            float maxd2=0.0f,float gradinf=0.0f,
+            float maxd2=0.0f,float seainf=0.0f,
+            float seamin=0.0f,float seamax=0.0f,
             int maxcull=0);
 
    //! destructor
@@ -109,7 +111,8 @@ class ministub
    int SIZE2[4];
 
    float MINRES,BSAFETY;
-   float MAXD2,GRADINF;
+   float MAXD2,SEAINF;
+   float SEAMIN,SEAMAX;
    int MAXCULL;
 
    int FOCUS;
