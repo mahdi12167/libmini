@@ -51,7 +51,10 @@ void miniload::init()
    CONFIGURE_BSAFETY=0.1f;
    CONFIGURE_MAXCULL=8;
 
+   CONFIGURE_SEAMIN=-MAXFLOAT;
+   CONFIGURE_SEAMAX=-MAXFLOAT;
    CONFIGURE_MIPMAPS=1;
+
    CONFIGURE_SZONE=0.01f;
    CONFIGURE_TSAFETY=0.5f;
    CONFIGURE_MINLAZY=0.25f;
@@ -606,6 +609,9 @@ void miniload::request(int col,int row,int needtex,void *data)
    minitile::configure_seainf(obj->CONFIGURE_SEAINF);
    minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
+
+   minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
+   minitile::configure_seamax(obj->CONFIGURE_SEAMAX);
    minitile::configure_mipmaps(obj->CONFIGURE_MIPMAPS);
 
    obj->checklods(col,row,0);
@@ -712,6 +718,9 @@ void miniload::preload(int col,int row,void *data)
    minitile::configure_seainf(obj->CONFIGURE_SEAINF);
    minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
+
+   minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
+   minitile::configure_seamax(obj->CONFIGURE_SEAMAX);
    minitile::configure_mipmaps(obj->CONFIGURE_MIPMAPS);
 
    obj->checklods(col,row,obj->PRELOD);
@@ -762,6 +771,9 @@ void miniload::deliver()
    minitile::configure_seainf(CONFIGURE_SEAINF);
    minitile::configure_bsafety(CONFIGURE_BSAFETY);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
+
+   minitile::configure_seamin(CONFIGURE_SEAMIN);
+   minitile::configure_seamax(CONFIGURE_SEAMAX);
    minitile::configure_mipmaps(CONFIGURE_MIPMAPS);
 
    if (DELIVER_CALLBACK!=NULL)
@@ -858,6 +870,9 @@ void miniload::draw(float res,
    minitile::configure_seainf(CONFIGURE_SEAINF);
    minitile::configure_bsafety(CONFIGURE_BSAFETY);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
+
+   minitile::configure_seamin(CONFIGURE_SEAMIN);
+   minitile::configure_seamax(CONFIGURE_SEAMAX);
    minitile::configure_mipmaps(CONFIGURE_MIPMAPS);
 
    RES=res;
@@ -1708,8 +1723,16 @@ void miniload::configure_maxcull(int maxcull)
 
 // configuring:
 
+void miniload::configure_seamin(float seamin)
+   {CONFIGURE_SEAMIN=seamin;}
+
+void miniload::configure_seamax(float seamax)
+   {CONFIGURE_SEAMAX=seamax;}
+
 void miniload::configure_mipmaps(int mipmaps)
    {CONFIGURE_MIPMAPS=mipmaps;}
+
+// configuring the pager:
 
 void miniload::configure_szone(float szone)
    {

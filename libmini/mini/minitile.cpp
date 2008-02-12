@@ -20,7 +20,6 @@ int minitile::CONFIGURE_MAXCULL=8;
 
 float minitile::CONFIGURE_SEAMIN=-MAXFLOAT;
 float minitile::CONFIGURE_SEAMAX=-MAXFLOAT;
-
 int minitile::CONFIGURE_MIPMAPS=1;
 
 char minitile::CONFIGURE_TILESETPATH[MAX_STR]="";
@@ -1813,6 +1812,8 @@ void minitile::configure_seamax(float seamax)
 
 void minitile::configure_mipmaps(int mipmaps)
    {CONFIGURE_MIPMAPS=mipmaps;}
+
+// configuring the loader:
 
 void minitile::configure_tilesetpath(char *tilesetpath)
    {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}

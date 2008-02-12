@@ -43,6 +43,8 @@ class minitile
    static void configure_seamin(float seamin); // set minimum sea level
    static void configure_seamax(float seamax); // set maximum sea level
    static void configure_mipmaps(int mipmaps=1); // turn mipmaps on or off
+
+   //! configuring the loader
    static void configure_tilesetpath(char *tilesetpath); // define tile set path
 
    //! draw scene

@@ -169,7 +169,11 @@ class miniload
    void configure_maxcull(int maxcull=8); // default maximum culling depth
 
    //! configuring
+   void configure_seamin(float seamin); // set minimum sea level
+   void configure_seamax(float seamax); // set maximum sea level
    void configure_mipmaps(int mipmaps=1); // turn mipmaps on or off
+
+   //! configuring the pager
    void configure_szone(float szone=0.01f); // safety zone for texture paging
    void configure_tsafety(float tsafety=0.5f); // safety offset for texture paging
    void configure_minlazy(float minlazy=0.25f); // minimum lazyness for texture paging
@@ -263,7 +267,10 @@ class miniload
    float CONFIGURE_BSAFETY;
    int CONFIGURE_MAXCULL;
 
+   float CONFIGURE_SEAMIN;
+   float CONFIGURE_SEAMAX;
    int CONFIGURE_MIPMAPS;
+
    float CONFIGURE_SZONE;
    float CONFIGURE_TSAFETY;
    float CONFIGURE_MINLAZY;
