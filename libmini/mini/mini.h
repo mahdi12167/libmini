@@ -9,7 +9,7 @@ namespace mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float ginf=0.25f,
+               float einf=4.0f,
                float bsaf=0.1f,
                int maxc=8);
 
@@ -100,7 +100,7 @@ namespace Mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float ginf=0.25f,
+               float einf=4.0f,
                float bsaf=0.1f,
                int maxc=8);
 

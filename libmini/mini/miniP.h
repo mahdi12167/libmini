@@ -28,7 +28,7 @@ namespace mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float gradinf=0.25f; // gradient influence
+float elevinf=4.0f; // elevation influence
 float bsafety=0.1f; // base offset safety
 int maxcull=8; // maximum culling depth
 
@@ -88,6 +88,8 @@ int FANSTATE;
 
 // sea level
 float SEALEVEL=-MAXFLOAT;
+float SEALEVELMIN=-MAXFLOAT;
+float SEALEVELMAX=-MAXFLOAT;
 int SEASTATE;
 
 // triangle fan callbacks
@@ -117,7 +119,7 @@ namespace Mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float gradinf=0.25f; // gradient influence
+float elevinf=4.0f; // elevation influence
 float bsafety=0.1f; // base offset safety
 int maxcull=8; // maximum culling depth
 
@@ -177,6 +179,8 @@ int FANSTATE;
 
 // sea level
 float SEALEVEL=-MAXFLOAT;
+float SEALEVELMIN=-MAXFLOAT;
+float SEALEVELMAX=-MAXFLOAT;
 int SEASTATE;
 
 // triangle fan callbacks

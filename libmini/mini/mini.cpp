@@ -11,15 +11,15 @@ namespace mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float ginf,
+               float einf,
                float bsaf,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || ginf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || einf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   gradinf=ginf;
+   elevinf=einf;
    bsafety=bsaf;
    maxcull=maxc;
    }
@@ -145,7 +145,16 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
 
 // calculate d2-value
 inline float d2value(const float a,const float b,const float m)
-   {return(fmax(fabs(a+b-2.0f*m)-gradinf*fabs(a-b),0.0f));}
+   {
+   float d2,dh;
+
+   d2=fabs(a+b-2.0f*m);
+   dh=0.5f*fabs(a-b);
+
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=elevinf;
+
+   return(d2);
+   }
 
 // calculate the d2-values
 void calcD2(int mins=2,float avgd2=0.1f)
@@ -3332,15 +3341,15 @@ namespace Mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float ginf,
+               float einf,
                float bsaf,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || ginf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || einf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   gradinf=ginf;
+   elevinf=einf;
    bsafety=bsaf;
    maxcull=maxc;
    }
@@ -3466,7 +3475,16 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
 
 // calculate d2-value
 inline float d2value(const float a,const float b,const float m)
-   {return(fmax(fabs(a+b-2.0f*m)-gradinf*fabs(a-b),0.0f));}
+   {
+   float d2,dh;
+
+   d2=fabs(a+b-2.0f*m);
+   dh=0.5f*fabs(a-b);
+
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=elevinf;
+
+   return(d2);
+   }
 
 // calculate the d2-values
 void calcD2(int mins=2,float avgd2=0.1f)
