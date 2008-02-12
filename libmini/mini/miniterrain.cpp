@@ -22,7 +22,7 @@ miniterrain::miniterrain()
    TPARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
 
    TPARAMS.minres=9.0f;            // minimum resolution of triangulation
-   TPARAMS.fastinit=2;             // fast initialization level
+   TPARAMS.fastinit=1;             // fast initialization level
    TPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
    TPARAMS.lazyness=1;             // lazyness of tileset paging
