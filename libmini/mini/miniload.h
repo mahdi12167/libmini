@@ -164,7 +164,7 @@ class miniload
    //! configure core parameters
    void configure_minres(float minres=9.0f); // default minimum resolution
    void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
-   void configure_gradinf(float gradinf=0.25f); // default influence of gradient
+   void configure_seainf(float seainf=4.0f); // default influence of sea level
    void configure_bsafety(float bsafety=0.1f); // default base offset safety
    void configure_maxcull(int maxcull=8); // default maximum culling depth
 
@@ -259,7 +259,7 @@ class miniload
 
    float CONFIGURE_MINRES;
    float CONFIGURE_MAXD2;
-   float CONFIGURE_GRADINF;
+   float CONFIGURE_SEAINF;
    float CONFIGURE_BSAFETY;
    int CONFIGURE_MAXCULL;
 

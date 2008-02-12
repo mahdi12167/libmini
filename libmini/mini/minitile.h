@@ -35,11 +35,13 @@ class minitile
    //! configure core parameters
    static void configure_minres(float minres=9.0f); // default minimum resolution
    static void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
-   static void configure_gradinf(float gradinf=0.25f); // default influence of gradient
+   static void configure_seainf(float seainf=4.0f); // default influence of sea level
    static void configure_bsafety(float bsafety=0.1f); // default base offset safety
    static void configure_maxcull(int maxcull=8); // default maximum culling depth
 
    //! configuring
+   static void configure_seamin(float seamin); // set minimum sea level
+   static void configure_seamax(float seamax); // set maximum sea level
    static void configure_mipmaps(int mipmaps=1); // turn mipmaps on or off
    static void configure_tilesetpath(char *tilesetpath); // define tile set path
 
@@ -281,10 +283,12 @@ class minitile
 
    static float CONFIGURE_MINRES;
    static float CONFIGURE_MAXD2;
-   static float CONFIGURE_GRADINF;
+   static float CONFIGURE_SEAINF;
    static float CONFIGURE_BSAFETY;
    static int CONFIGURE_MAXCULL;
 
+   static float CONFIGURE_SEAMIN;
+   static float CONFIGURE_SEAMAX;
    static int CONFIGURE_MIPMAPS;
 
    static char CONFIGURE_TILESETPATH[];

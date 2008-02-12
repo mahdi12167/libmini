@@ -47,7 +47,7 @@ void miniload::init()
 
    CONFIGURE_MINRES=9.0f;
    CONFIGURE_MAXD2=100.0f;
-   CONFIGURE_GRADINF=0.25f;
+   CONFIGURE_SEAINF=4.0f;
    CONFIGURE_BSAFETY=0.1f;
    CONFIGURE_MAXCULL=8;
 
@@ -603,7 +603,7 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
-   minitile::configure_gradinf(obj->CONFIGURE_GRADINF);
+   minitile::configure_seainf(obj->CONFIGURE_SEAINF);
    minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
    minitile::configure_mipmaps(obj->CONFIGURE_MIPMAPS);
@@ -709,7 +709,7 @@ void miniload::preload(int col,int row,void *data)
 
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
-   minitile::configure_gradinf(obj->CONFIGURE_GRADINF);
+   minitile::configure_seainf(obj->CONFIGURE_SEAINF);
    minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
    minitile::configure_mipmaps(obj->CONFIGURE_MIPMAPS);
@@ -759,7 +759,7 @@ void miniload::deliver()
 
    minitile::configure_minres(CONFIGURE_MINRES);
    minitile::configure_maxd2(CONFIGURE_MAXD2);
-   minitile::configure_gradinf(CONFIGURE_GRADINF);
+   minitile::configure_seainf(CONFIGURE_SEAINF);
    minitile::configure_bsafety(CONFIGURE_BSAFETY);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
    minitile::configure_mipmaps(CONFIGURE_MIPMAPS);
@@ -855,7 +855,7 @@ void miniload::draw(float res,
 
    minitile::configure_minres(CONFIGURE_MINRES);
    minitile::configure_maxd2(CONFIGURE_MAXD2);
-   minitile::configure_gradinf(CONFIGURE_GRADINF);
+   minitile::configure_seainf(CONFIGURE_SEAINF);
    minitile::configure_bsafety(CONFIGURE_BSAFETY);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
    minitile::configure_mipmaps(CONFIGURE_MIPMAPS);
@@ -1688,10 +1688,10 @@ void miniload::configure_maxd2(float maxd2)
    CONFIGURE_MAXD2=maxd2;
    }
 
-void miniload::configure_gradinf(float gradinf)
+void miniload::configure_seainf(float seainf)
    {
-   if (gradinf<0.0f) gradinf=0.25f;
-   CONFIGURE_GRADINF=gradinf;
+   if (seainf<0.0f) seainf=4.0f;
+   CONFIGURE_SEAINF=seainf;
    }
 
 void miniload::configure_bsafety(float bsafety)

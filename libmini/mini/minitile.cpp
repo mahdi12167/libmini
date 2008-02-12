@@ -14,9 +14,12 @@ const int minitile::MAX_STR=1024;
 
 float minitile::CONFIGURE_MINRES=9.0f;
 float minitile::CONFIGURE_MAXD2=100.0f;
-float minitile::CONFIGURE_GRADINF=0.25f;
+float minitile::CONFIGURE_SEAINF=4.0f;
 float minitile::CONFIGURE_BSAFETY=0.1f;
 int minitile::CONFIGURE_MAXCULL=8;
+
+float minitile::CONFIGURE_SEAMIN=-MAXFLOAT;
+float minitile::CONFIGURE_SEAMAX=-MAXFLOAT;
 
 int minitile::CONFIGURE_MIPMAPS=1;
 
@@ -51,7 +54,9 @@ minitile::minitile(unsigned char **hfields,unsigned char **textures,
       CONFIGURE_BSAFETY=bsafety;
       }
 
-   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+
+   mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
    ID=0;
 
@@ -496,7 +501,7 @@ void minitile::drawtile(float res,
 
    if (USEFLOAT[col+row*COLS]==0)
       {
-      mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+      mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
       mini::setmaps(MAP[col+row*COLS],D2MAP[col+row*COLS],
                     SIZE[col+row*COLS],DIM[col+row*COLS],SCALE*RELSCALE,
@@ -541,7 +546,7 @@ void minitile::drawtile(float res,
       }
    else
       {
-      Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+      Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
       Mini::setmaps(MAP[col+row*COLS],D2MAP[col+row*COLS],
                     SIZE[col+row*COLS],DIM[col+row*COLS],SCALE*RELSCALE,
@@ -1156,7 +1161,7 @@ int minitile::getunusedlods(int col,int row,
 
       if (USEFLOAT2[col+row*COLS]==0)
          {
-         mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+         mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
          mini::setmaps(MAP2[col+row*COLS],D2MAP2[col+row*COLS],
                        SIZE2[col+row*COLS],DIM2[col+row*COLS],SCALE*RELSCALE0,
@@ -1166,7 +1171,7 @@ int minitile::getunusedlods(int col,int row,
          }
       else
          {
-         Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+         Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
          Mini::setmaps(MAP2[col+row*COLS],D2MAP2[col+row*COLS],
                        SIZE2[col+row*COLS],DIM2[col+row*COLS],SCALE*RELSCALE0,
@@ -1184,7 +1189,7 @@ int minitile::getunusedlods(int col,int row,
 
       if (USEFLOAT[col+row*COLS]==0)
          {
-         mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+         mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
          mini::setmaps(MAP[col+row*COLS],D2MAP[col+row*COLS],
                        SIZE[col+row*COLS],DIM[col+row*COLS],SCALE*RELSCALE0,
@@ -1194,7 +1199,7 @@ int minitile::getunusedlods(int col,int row,
          }
       else
          {
-         Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+         Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
          Mini::setmaps(MAP[col+row*COLS],D2MAP[col+row*COLS],
                        SIZE[col+row*COLS],DIM[col+row*COLS],SCALE*RELSCALE0,
@@ -1240,7 +1245,9 @@ void minitile::reload(int col,int row,
 
    RELOADED[col+row*COLS]=1;
 
-   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+
+   mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
    if ((image=readPNMimage(hmap,&width,&height,&components,loaded))==NULL) ERRORMSG();
    if (width<2 || width!=height || (components!=1 && components!=2)) ERRORMSG();
@@ -1350,7 +1357,9 @@ void minitile::reload(int col,int row,
 
    if (hmap.type!=2)
       {
-      mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+      mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+
+      mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
       if (hmap.type==0)
          {
@@ -1428,7 +1437,9 @@ void minitile::reload(int col,int row,
       }
    else
       {
-      Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_GRADINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+      Mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
+
+      Mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
       MAP2[col+row*COLS]=Mini::initmap((float *)(hmap.data),&D2MAP2[col+row*COLS],
                                        &SIZE2[col+row*COLS],&DIM2[col+row*COLS],SCALE,
@@ -1774,10 +1785,10 @@ void minitile::configure_maxd2(float maxd2)
    CONFIGURE_MAXD2=maxd2;
    }
 
-void minitile::configure_gradinf(float gradinf)
+void minitile::configure_seainf(float seainf)
    {
-   if (gradinf<0.0f) gradinf=0.25f;
-   CONFIGURE_GRADINF=gradinf;
+   if (seainf<0.0f) seainf=4.0f;
+   CONFIGURE_SEAINF=seainf;
    }
 
 void minitile::configure_bsafety(float bsafety)
@@ -1793,6 +1804,12 @@ void minitile::configure_maxcull(int maxcull)
    }
 
 // configuring:
+
+void minitile::configure_seamin(float seamin)
+   {CONFIGURE_SEAMIN=seamin;}
+
+void minitile::configure_seamax(float seamax)
+   {CONFIGURE_SEAMAX=seamax;}
 
 void minitile::configure_mipmaps(int mipmaps)
    {CONFIGURE_MIPMAPS=mipmaps;}
