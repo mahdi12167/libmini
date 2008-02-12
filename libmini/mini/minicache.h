@@ -52,6 +52,9 @@ class minicache
    //! define triangle mesh opacity
    void setopacity(float alpha=1.0f);
 
+   //! define alpha test threshold
+   void setalphatest(float alpha=0.0f);
+
    //! define color of semi-transparent sea
    void setseacolor(float r=0.0f,float g=0.5f,float b=1.0f,float a=1.0f);
 
@@ -186,7 +189,7 @@ class minicache
    inline int rendertrigger(int phase,float scale);
    inline int rendertrigger();
 
-   float OPACITY;
+   float OPACITY,ALPHATEST;
    float SEA_R,SEA_G,SEA_B,SEA_A;
 
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;

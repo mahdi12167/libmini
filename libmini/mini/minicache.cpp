@@ -23,6 +23,7 @@ minicache::minicache()
    RENDER_ID=0;
 
    OPACITY=1.0f;
+   ALPHATEST=1.0f;
 
    SEA_R=0.0f;
    SEA_G=0.5f;
@@ -753,6 +754,8 @@ int minicache::rendertrigger(int phase)
       initstate();
       mtxpush();
 
+      if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
+
       if (OPACITY<1.0f)
          {
          if (OPACITY<=0.0f) disableRGBAwriting();
@@ -791,6 +794,8 @@ int minicache::rendertrigger(int phase)
 
          if (USEVTXSHADER!=0) disablevtxshader();
 
+         if (ALPHATEST<1.0f) disableAtest();
+
          mtxpop();
          exitstate();
 
@@ -798,6 +803,8 @@ int minicache::rendertrigger(int phase)
 
          initstate();
          mtxpush();
+
+         if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
          if (USEVTXSHADER!=0) enablevtxshader();
 
@@ -840,6 +847,8 @@ int minicache::rendertrigger(int phase)
          mtxpop();
          mtxmodel();
          }
+
+      if (ALPHATEST<1.0f) disableAtest();
 
       mtxpop();
       exitstate();
@@ -1197,6 +1206,10 @@ void minicache::makecurrent()
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
    {OPACITY=alpha;}
+
+// define alpha test threshold
+void minicache::setalphatest(float alpha)
+   {ALPHATEST=alpha;}
 
 // define color of semi-transparent sea
 void minicache::setseacolor(float r,float g,float b,float a)

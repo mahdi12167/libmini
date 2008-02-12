@@ -22,7 +22,7 @@ void enableBFculling();
 void enableFFculling();
 
 void disableAtest();
-void enableAtest();
+void enableAtest(float alpha=0.0f);
 
 void disableZtest();
 void enableZtest();

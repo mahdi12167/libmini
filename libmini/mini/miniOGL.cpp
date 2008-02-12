@@ -169,10 +169,10 @@ void disableAtest()
 #endif
    }
 
-void enableAtest()
+void enableAtest(float alpha)
    {
 #ifndef NOOGL
-   glAlphaFunc(GL_GREATER,0.0f);
+   glAlphaFunc(GL_GREATER,alpha);
    glEnable(GL_ALPHA_TEST);
 #endif
    }
