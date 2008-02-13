@@ -101,11 +101,20 @@ class minispect
    //! add iso value
    void addiso(float iso,float R,float G,float B,float A);
 
+   //! change iso value
+   void changeiso(float iso,float iso2);
+
+   //! change iso color
+   void changeiso(float iso,float R,float G,float B,float A);
+
    //! delete iso value
    void deliso(float iso);
 
    //! check iso value
    int chkiso(float iso);
+
+   //! synchronize iso spectrum
+   void sync();
 
    //! reset iso spectrum
    void reset();
@@ -160,7 +169,7 @@ class minispect
    float MINVAL,MAXVAL;
 
    int N,NMAX;
-   float *ISO;
+   float *ISO,*ISO2;
    float *RGBA;
 
    private:
@@ -411,6 +420,12 @@ class minibrick
    //! add iso value
    void addiso(float iso,float R,float G,float B,float A);
 
+   //! change iso value
+   void changeiso(float iso,float iso2);
+
+   //! change iso color
+   void changeiso(float iso,float R,float G,float B,float A);
+
    //! delete iso value
    void deliso(float iso);
 
@@ -640,6 +655,8 @@ class minibrick
                     float rad,float off,float dist,float farp,
                     float fovy,float aspect,
                     float t);
+
+   void sync();
 
    void update(float ex,float ey,float ez,
                float rad,float off,float dist,float farp,

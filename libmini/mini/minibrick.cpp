@@ -71,6 +71,8 @@ minispect::minispect()
    NMAX=10;
 
    ISO=new float[NMAX];
+   ISO2=new float[NMAX];
+
    RGBA=new float[4*NMAX];
 
    VTX1=new minivtxarray[NMAX];
@@ -89,6 +91,8 @@ minispect::minispect()
 minispect::~minispect()
    {
    delete[] ISO;
+   delete[] ISO2;
+
    delete[] RGBA;
 
    delete[] VTX1;
@@ -117,7 +121,7 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
    {
    int i;
 
-   float *newiso;
+   float *newiso,*newiso2;
    float *newrgba;
 
    minivtxarray *newvtx1,*newvtx2;
@@ -138,6 +142,7 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
       NMAX*=2;
 
       newiso=new float[NMAX];
+      newiso2=new float[NMAX];
       newrgba=new float[4*NMAX];
 
       newvtx1=new minivtxarray[NMAX];
@@ -146,6 +151,7 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
       for (i=0; i<N; i++)
          {
          newiso[i]=ISO[i];
+         newiso2[i]=ISO2[i];
 
          newrgba[4*i]=RGBA[4*i];
          newrgba[4*i+1]=RGBA[4*i+1];
@@ -160,12 +166,16 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
          }
 
       delete[] ISO;
+      delete[] ISO2;
+
       delete[] RGBA;
 
       delete[] VTX1;
       delete[] VTX2;
 
       ISO=newiso;
+      ISO2=newiso2;
+
       RGBA=newrgba;
 
       VTX1=newvtx1;
@@ -173,6 +183,7 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
       }
 
    ISO[N]=iso;
+   ISO2[N]=iso;
 
    RGBA[4*N]=R;
    RGBA[4*N+1]=G;
@@ -184,6 +195,36 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
    UPDATED=1;
    }
 
+// change iso value
+void minispect::changeiso(float iso,float iso2)
+   {
+   int i;
+
+   for (i=0; i<N; i++)
+      if (iso==ISO[i])
+         {
+         ISO2[i]=iso2;
+         return;
+         }
+   }
+
+// change iso color
+void minispect::changeiso(float iso,float R,float G,float B,float A)
+   {
+   int i;
+
+   for (i=0; i<N; i++)
+      if (iso==ISO[i])
+         {
+         RGBA[4*i]=R;
+         RGBA[4*i+1]=G;
+         RGBA[4*i+2]=B;
+         RGBA[4*i+3]=A;
+
+         return;
+         }
+   }
+
 // delete iso value
 void minispect::deliso(float iso)
    {
@@ -193,6 +234,7 @@ void minispect::deliso(float iso)
       if (iso==ISO[i])
          {
          ISO[i]=ISO[N-1];
+         ISO2[i]=ISO2[N-1];
 
          RGBA[4*i]=RGBA[4*(N-1)];
          RGBA[4*i+1]=RGBA[4*(N-1)+1];
@@ -222,6 +264,19 @@ int minispect::chkiso(float iso)
       if (iso==ISO[i]) return(1);
 
    return(0);
+   }
+
+// synchronize iso spectrum
+void minispect::sync()
+   {
+   int i;
+
+   for (i=0; i<N; i++)
+      if (ISO2[i]!=ISO[i])
+         {
+         ISO[i]=ISO2[i];
+         UPDATED=1;
+         }
    }
 
 // reset iso spectrum
@@ -2114,6 +2169,29 @@ void minibrick::addiso(float iso,float R,float G,float B,float A)
    if (ISRUNNING!=0) UNLOCK2_CALLBACK(START_DATA);
    }
 
+// change iso value
+void minibrick::changeiso(float iso,float iso2)
+   {
+   int i,j;
+
+   // update iso spectrum
+   for (i=0; i<COLS; i++)
+      for (j=0; j<ROWS; j++) SURFACE[i+j*COLS]->getspectrum()->changeiso(iso,iso2);
+
+   // remember modification
+   UPDATED_SPECT=1;
+   }
+
+// change iso color
+void minibrick::changeiso(float iso,float R,float G,float B,float A)
+   {
+   int i,j;
+
+   // change iso spectrum
+   for (i=0; i<COLS; i++)
+      for (j=0; j<ROWS; j++) SURFACE[i+j*COLS]->getspectrum()->changeiso(iso,R,G,B,A);
+   }
+
 // delete iso value
 void minibrick::deliso(float iso)
    {
@@ -2774,20 +2852,28 @@ void minibrick::extract(float ex,float ey,float ez,
       // update vertex arrays
       if (START_CALLBACK==NULL)
          if (check4update(ex,ey,ez,rad,OFF,DIST,farp,fovy,aspect,t)!=0)
+            {
+            sync();
+
             update(ex,ey,ez,
                    rad,OFF,DIST,farp,
                    fovy,aspect,
                    t);
+            }
 
       // start data cycle
       if (START_CALLBACK!=NULL && ISREADY!=0)
          {
          // initialize vertex arrays
          if (FRAME==0)
+            {
+            sync();
+
             update(ex,ey,ez,
                    rad,OFF,DIST,farp,
                    fovy,aspect,
                    t);
+            }
 
          // wait for the previously started thread to finish completely
          if (ISRUNNING!=0) JOIN_CALLBACK(START_DATA);
@@ -2798,6 +2884,9 @@ void minibrick::extract(float ex,float ey,float ez,
          // check for update
          if (check4update(ex,ey,ez,rad,OFF,DIST,farp,fovy,aspect,t)!=0)
             {
+            // synchronize
+            sync();
+
             // set parameters for next cycle
             CYCLE_EX=ex;
             CYCLE_EY=ey;
@@ -3033,6 +3122,19 @@ int minibrick::check4update(float ex,float ey,float ez,
    return(1);
    }
 
+// sync iso spectrum
+void minibrick::sync()
+   {
+   int i,j;
+
+   // change iso spectrum
+   for (i=0; i<COLS; i++)
+      for (j=0; j<ROWS; j++) SURFACE[i+j*COLS]->getspectrum()->sync();
+
+   // clear modification
+   UPDATED_SPECT=0;
+   }
+
 // update vertex arrays
 void minibrick::update(float ex,float ey,float ez,
                        float rad,float off,float dist,float farp,
@@ -3041,11 +3143,13 @@ void minibrick::update(float ex,float ey,float ez,
    {
    int i,j;
 
+   // page
    pagedata(ex,ey,ez,
             rad,off,dist,farp,
             fovy,aspect,
             t);
 
+   // calculate
    for (i=0; i<COLS; i++)
       for (j=0; j<ROWS; j++)
          if (LOD[i+j*COLS]>=0)
@@ -3055,6 +3159,7 @@ void minibrick::update(float ex,float ey,float ez,
                           &MINVAL[i+j*COLS],&MAXVAL[i+j*COLS],
                           SURFACE[i+j*COLS]);
 
+   // remember parameters of last cycle
    LAST_EX=ex;
    LAST_EY=ey;
    LAST_EZ=ez;
@@ -3066,7 +3171,7 @@ void minibrick::update(float ex,float ey,float ez,
    LAST_ASPECT=aspect;
    LAST_T=t;
 
-   UPDATED_SPECT=0;
+   // clear update
    UPDATED_COORD=0;
    UPDATED_LOD=0;
    }
