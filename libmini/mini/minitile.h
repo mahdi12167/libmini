@@ -35,7 +35,7 @@ class minitile
    //! configure core parameters
    static void configure_minres(float minres=9.0f); // default minimum resolution
    static void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
-   static void configure_seainf(float seainf=2.0f); // default influence of sea level
+   static void configure_seainf(float seainf=0.1f); // default influence of sea level
    static void configure_bsafety(float bsafety=0.1f); // default base offset safety
    static void configure_maxcull(int maxcull=8); // default maximum culling depth
 

@@ -151,7 +151,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(seainf,d2);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN && dh>0.0f) d2=fmax(seainf,d2);
 
    return(d2);
    }
@@ -3488,7 +3488,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(seainf,d2);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN && dh>0.0f) d2=fmax(seainf,d2);
 
    return(d2);
    }

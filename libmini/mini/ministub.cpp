@@ -33,7 +33,7 @@ ministub::ministub(short int *image,
       minres=9.0f;
       bsafety=0.1f;
       maxd2=100.0f;
-      seainf=4.0f;
+      seainf=0.1f;
       maxcull=8;
 
       seamin=-MAXFLOAT;
@@ -123,7 +123,7 @@ ministub::ministub(float *image,
       minres=9.0f;
       bsafety=0.1f;
       maxd2=100.0f;
-      seainf=4.0f;
+      seainf=0.1f;
       maxcull=8;
 
       seamin=-MAXFLOAT;
