@@ -74,6 +74,10 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.fastinit=2;             // fast initialization level
    LPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
+   LPARAMS.seainf=2.0f;            // influence of sea level on d2-values
+   LPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
+   LPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
+
    LPARAMS.lazyness=1;             // lazyness of tileset paging
    LPARAMS.update=1.0f;            // update period for tileset paging in seconds
    LPARAMS.expire=60.0f;           // tile expiration time in seconds
@@ -634,6 +638,11 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // enable fast initialization
    TERRAIN->setfastinit(LPARAMS.fastinit,LPARAMS.avgd2value);
+
+   // set sea level influence and range
+   TERRAIN->configure_seainf(LPARAMS.seainf);
+   TERRAIN->configure_seamin((LPARAMS.seamin==-MAXFLOAT)?LPARAMS.seamin:LPARAMS.seamin/LPARAMS.scale);
+   TERRAIN->configure_seamax((LPARAMS.seamax==-MAXFLOAT)?LPARAMS.seamax:LPARAMS.seamax/LPARAMS.scale);
 
    // attach tileset to render cache
    CACHE->attach(TERRAIN->getminitile());

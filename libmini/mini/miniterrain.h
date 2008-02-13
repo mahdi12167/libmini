@@ -36,6 +36,10 @@ class miniterrain
       int fastinit;             //+ fast initialization level
       float avgd2value;         //+ average d2value for fast initialization
 
+      float seainf;             //+ influence of sea level on d2-values
+      float seamin;             //+ lower boundary of sea level influence range
+      float seamax;             //+ upper boundary of sea level influence range
+
       int lazyness;             //+ lazyness of tileset paging
       float update;             //* update period for tileset paging in seconds
       float expire;             //* tile expiration time in seconds

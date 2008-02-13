@@ -47,7 +47,7 @@ void miniload::init()
 
    CONFIGURE_MINRES=9.0f;
    CONFIGURE_MAXD2=100.0f;
-   CONFIGURE_SEAINF=4.0f;
+   CONFIGURE_SEAINF=2.0f;
    CONFIGURE_BSAFETY=0.1f;
    CONFIGURE_MAXCULL=8;
 
@@ -1705,7 +1705,7 @@ void miniload::configure_maxd2(float maxd2)
 
 void miniload::configure_seainf(float seainf)
    {
-   if (seainf<0.0f) seainf=4.0f;
+   if (seainf<0.0f) seainf=2.0f;
    CONFIGURE_SEAINF=seainf;
    }
 

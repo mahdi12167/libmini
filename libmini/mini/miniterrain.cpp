@@ -25,6 +25,10 @@ miniterrain::miniterrain()
    TPARAMS.fastinit=1;             // fast initialization level
    TPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
+   TPARAMS.seainf=2.0f;            // influence of sea level on d2-values
+   TPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
+   TPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
+
    TPARAMS.lazyness=1;             // lazyness of tileset paging
    TPARAMS.update=1.0f;            // update period for tileset paging in seconds
    TPARAMS.expire=60.0f;           // tile expiration time in seconds
@@ -276,6 +280,10 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.minres=TPARAMS.minres;
          lparams.fastinit=TPARAMS.fastinit;
          lparams.avgd2value=TPARAMS.avgd2value;
+
+         lparams.seainf=TPARAMS.seainf;
+         lparams.seamin=TPARAMS.seamin;
+         lparams.seamax=TPARAMS.seamax;
 
          lparams.lazyness=TPARAMS.lazyness;
          lparams.update=TPARAMS.update;
