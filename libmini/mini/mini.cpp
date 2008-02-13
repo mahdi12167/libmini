@@ -151,7 +151,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=seainf;
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(seainf,d2);
 
    return(d2);
    }
@@ -548,11 +548,8 @@ void setsea(float level)
 // set the sea level range
 void setsearange(float seamin,float seamax)
    {
-   if (seamin==-MAXFLOAT) SEALEVELMIN=seamin;
-   else SEALEVELMIN=seamin/SCALE;
-
-   if (seamax==-MAXFLOAT) SEALEVELMAX=seamax;
-   else SEALEVELMAX=seamax/SCALE;
+   SEALEVELMIN=seamin;
+   SEALEVELMAX=seamax;
    }
 
 // undo the previous triangulation
@@ -3491,7 +3488,7 @@ inline float d2value(const float a,const float b,const float m)
    d2=fabs(a+b-2.0f*m);
    dh=0.5f*fabs(a-b);
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2*=seainf;
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(seainf,d2);
 
    return(d2);
    }
@@ -3888,11 +3885,8 @@ void setsea(float level)
 // set the sea level range
 void setsearange(float seamin,float seamax)
    {
-   if (seamin==-MAXFLOAT) SEALEVELMIN=seamin;
-   else SEALEVELMIN=seamin/SCALE;
-
-   if (seamax==-MAXFLOAT) SEALEVELMAX=seamax;
-   else SEALEVELMAX=seamax/SCALE;
+   SEALEVELMIN=seamin;
+   SEALEVELMAX=seamax;
    }
 
 // undo the previous triangulation
