@@ -144,14 +144,14 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
    }
 
 // calculate d2-value
-inline float d2value(const float a,const float b,const float m)
+inline float d2value(const float a,const float b,const float m,const int s)
    {
    float d2,dh;
 
    d2=fabs(a+b-2.0f*m);
-   dh=0.5f*fabs(a-b);
+   dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN && dh>0.0f) d2=fmax(seainf,d2);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,seainf*s*D);
 
    return(d2);
    }
@@ -186,16 +186,16 @@ void calcD2(int mins=2,float avgd2=0.1f)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j));
-            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
+            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j),s);
+            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j),s);
 
             // calculate the local d2-value more accurately
             if (s>mins || mins==2)
                {
-               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
-               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
-               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
-               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2),s));
+               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2),s));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j),s));
+               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j),s));
                }
 
             // store the local d2-value
@@ -403,16 +403,16 @@ void recalcD2(float fogatt,int mins=2)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j));
-            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
+            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j),s);
+            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j),s);
 
             // calculate the local d2-value more accurately
             if (s>mins || mins==2)
                {
-               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
-               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
-               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
-               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2),s));
+               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2),s));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j),s));
+               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j),s));
                }
 
             // store the local d2-value
@@ -3481,14 +3481,14 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
    }
 
 // calculate d2-value
-inline float d2value(const float a,const float b,const float m)
+inline float d2value(const float a,const float b,const float m,const int s)
    {
    float d2,dh;
 
    d2=fabs(a+b-2.0f*m);
-   dh=0.5f*fabs(a-b);
+   dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN && dh>0.0f) d2=fmax(seainf,d2);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,seainf*s*D);
 
    return(d2);
    }
@@ -3523,16 +3523,16 @@ void calcD2(int mins=2,float avgd2=0.1f)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j));
-            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j));
+            if ((i/s+j/s)%2==0) fc=d2value(Y(i-s2,j-s2),Y(i+s2,j+s2),Y(i,j),s);
+            else fc=d2value(Y(i-s2,j+s2),Y(i+s2,j-s2),Y(i,j),s);
 
             // calculate the local d2-value more accurately
             if (s>mins || mins==2)
                {
-               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2)));
-               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2)));
-               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j)));
-               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j)));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i+s2,j-s2),Y(i,j-s2),s));
+               fc=fmax(fc,d2value(Y(i-s2,j+s2),Y(i+s2,j+s2),Y(i,j+s2),s));
+               fc=fmax(fc,d2value(Y(i-s2,j-s2),Y(i-s2,j+s2),Y(i-s2,j),s));
+               fc=fmax(fc,d2value(Y(i+s2,j-s2),Y(i+s2,j+s2),Y(i+s2,j),s));
                }
 
             // store the local d2-value
@@ -3740,16 +3740,16 @@ void recalcD2(float fogatt,int mins=2)
          for (j=s2; j<S; j+=s)
             {
             // calculate the local d2-value
-            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j));
-            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j));
+            if ((i/s+j/s)%2==0) fc=d2value(YF(i-s2,j-s2),YF(i+s2,j+s2),YF(i,j),s);
+            else fc=d2value(YF(i-s2,j+s2),YF(i+s2,j-s2),YF(i,j),s);
 
             // calculate the local d2-value more accurately
             if (s>mins || mins==2)
                {
-               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2)));
-               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2)));
-               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j)));
-               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j)));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i+s2,j-s2),YF(i,j-s2),s));
+               fc=fmax(fc,d2value(YF(i-s2,j+s2),YF(i+s2,j+s2),YF(i,j+s2),s));
+               fc=fmax(fc,d2value(YF(i-s2,j-s2),YF(i-s2,j+s2),YF(i-s2,j),s));
+               fc=fmax(fc,d2value(YF(i+s2,j-s2),YF(i+s2,j+s2),YF(i+s2,j),s));
                }
 
             // store the local d2-value
