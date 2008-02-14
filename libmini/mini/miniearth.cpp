@@ -327,6 +327,8 @@ void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 // render cached scene
 void miniearth::render()
    {
+#ifndef NOOGL
+
    minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
@@ -444,6 +446,8 @@ void miniearth::render()
       // disable fog
       if (EPARAMS.usefog) glDisable(GL_FOG);
       }
+
+#endif
    }
 
 // shoot a ray at the scene
