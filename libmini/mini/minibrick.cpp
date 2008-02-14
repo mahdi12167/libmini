@@ -127,7 +127,7 @@ void minispect::addiso(float iso,float R,float G,float B,float A)
    minivtxarray *newvtx1,*newvtx2;
 
    for (i=0; i<N; i++)
-      if (iso==ISO[i])
+      if (iso==ISO2[i])
          {
          RGBA[4*i]=R;
          RGBA[4*i+1]=G;
@@ -201,7 +201,7 @@ void minispect::changeiso(float iso,float iso2)
    int i;
 
    for (i=0; i<N; i++)
-      if (iso==ISO[i])
+      if (iso==ISO2[i])
          {
          ISO2[i]=iso2;
          return;
@@ -214,7 +214,7 @@ void minispect::changeiso(float iso,float R,float G,float B,float A)
    int i;
 
    for (i=0; i<N; i++)
-      if (iso==ISO[i])
+      if (iso==ISO2[i])
          {
          RGBA[4*i]=R;
          RGBA[4*i+1]=G;
@@ -231,7 +231,7 @@ void minispect::deliso(float iso)
    int i;
 
    for (i=0; i<N; i++)
-      if (iso==ISO[i])
+      if (iso==ISO2[i])
          {
          ISO[i]=ISO[N-1];
          ISO2[i]=ISO2[N-1];
@@ -261,7 +261,7 @@ int minispect::chkiso(float iso)
    int i;
 
    for (i=0; i<N; i++)
-      if (iso==ISO[i]) return(1);
+      if (iso==ISO2[i]) return(1);
 
    return(0);
    }
