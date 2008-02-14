@@ -105,6 +105,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
 
    LPARAMS.range=0.001f;           // texture paging range relative to far plane
+   LPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
@@ -238,6 +239,8 @@ void minilayer::get(MINILAYER_PARAMS &lparams)
 // set parameters
 void minilayer::set(MINILAYER_PARAMS &lparams)
    {
+   float range,texres;
+
    // set new state
    LPARAMS=lparams;
 
@@ -249,8 +252,18 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
          TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
 
-         TILECACHE->getcloud()->getterrain()->setrange(LPARAMS.range*LPARAMS.farp/LPARAMS.scale);
-         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+         range=LPARAMS.range;
+
+         // adjust texture paging range to reference texture resolution
+         if (LPARAMS.refres>0.0f)
+            if (LPARAMS.cols>0 && LPARAMS.rows>0 && LPARAMS.basesize>0)
+               {
+               texres=(LPARAMS.extent[0]/LPARAMS.cols+LPARAMS.extent[1]/LPARAMS.rows)/2.0f/LPARAMS.basesize*LPARAMS.scale;
+               range*=fmax(texres/LPARAMS.refres,1.0f);
+               }
+
+         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.farp/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
          TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 

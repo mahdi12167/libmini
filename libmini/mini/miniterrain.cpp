@@ -56,6 +56,7 @@ miniterrain::miniterrain()
    TPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
 
    TPARAMS.range=0.001f;           // texture paging range relative to far plane
+   TPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
@@ -312,6 +313,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.cullslope=TPARAMS.cullslope;
 
          lparams.range=TPARAMS.range;
+         lparams.refres=TPARAMS.refres;
          lparams.radius=TPARAMS.radius;
          lparams.dropoff=TPARAMS.dropoff;
 
