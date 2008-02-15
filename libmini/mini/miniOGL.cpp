@@ -357,8 +357,6 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    GLint width2,height2;
 
-   if (mipmapped!=0) ERRORMSG(); //!!
-
    initglexts();
 
 #ifdef _WIN32
@@ -375,6 +373,19 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    if (*width<2 || *height<2) ERRORMSG();
 
    c=(*width)*(*height);
+
+   if (mipmapped!=0) 
+      {
+      width2=(*width)/2;
+      height2=(*height)/2;
+
+      while (width2>0 && height2>0)
+         {
+         c+=width2*height2;
+         width2/=2;
+         height2/=2;
+         }
+      }
 
    switch (components)
       {
@@ -521,22 +532,32 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    if (s3tc!=0 && !glext_ts3) ERRORMSG();
 #ifdef GL_ARB_texture_compression
-   else if (s3tc!=0) glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
-#endif
-   else if (mipmaps!=0)
-      {
-#ifndef GL_SGIS_generate_mipmap
-      gluBuild2DMipmaps(GL_TEXTURE_2D,texformat,*width,*height,texsource,GL_UNSIGNED_BYTE,image3);
-#else
-      if (!glext_tgm || !CONFIGURE_GENERATEMM) gluBuild2DMipmaps(GL_TEXTURE_2D,texformat,*width,*height,texsource,GL_UNSIGNED_BYTE,image3);
+   else if (s3tc!=0)
+      if (mipmapped==0) glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
       else
          {
-         glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP_SGIS,GL_TRUE);
-         glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
+         //!! pass compressed mip-map pyramid
          }
 #endif
+   else if (mipmapped==0)
+      if (mipmaps!=0)
+         {
+#ifndef GL_SGIS_generate_mipmap
+         gluBuild2DMipmaps(GL_TEXTURE_2D,texformat,*width,*height,texsource,GL_UNSIGNED_BYTE,image3);
+#else
+         if (!glext_tgm || !CONFIGURE_GENERATEMM) gluBuild2DMipmaps(GL_TEXTURE_2D,texformat,*width,*height,texsource,GL_UNSIGNED_BYTE,image3);
+         else
+            {
+            glTexParameteri(GL_TEXTURE_2D,GL_GENERATE_MIPMAP_SGIS,GL_TRUE);
+            glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
+            }
+#endif
+         }
+      else glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
+   else
+      {
+      //!! pass mip-map pyramid
       }
-   else glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
 
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&width2);
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&height2);
