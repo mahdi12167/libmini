@@ -357,6 +357,10 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    GLint width2,height2;
 
+   unsigned char *mipmap;
+   int bytes2;
+   int level;
+
    initglexts();
 
 #ifdef _WIN32
@@ -533,10 +537,38 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    if (s3tc!=0 && !glext_ts3) ERRORMSG();
 #ifdef GL_ARB_texture_compression
    else if (s3tc!=0)
-      if (mipmapped==0) glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
+      if (mipmapped==0)
+         {
+         if (((width2-1)&width2)!=0) WARNMSG();
+         if (((height2-1)&height2)!=0) WARNMSG();
+
+         glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
+         }
       else
          {
-         //!! pass compressed mip-map pyramid
+         width2=*width;
+         height2=*height;
+
+         mipmap=image3;
+         bytes2=(*width)*(*height)/2;
+         level=0;
+
+         while (width2>0 && height2>0)
+            {
+            if (mipmap>=image3+bytes) ERRORMSG();
+
+            if (((width2-1)&width2)!=0) WARNMSG();
+            if (((height2-1)&height2)!=0) WARNMSG();
+
+            glCompressedTexImage2DARB(GL_TEXTURE_2D,level,texsource,width2,height2,0,bytes2,mipmap);
+
+            width2/=2;
+            height2/=2;
+
+            mipmap+=bytes2;
+            bytes2/=4;
+            level++;
+            }
          }
 #endif
    else if (mipmapped==0)
@@ -553,10 +585,36 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             }
 #endif
          }
-      else glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
+      else
+         {
+         if ((((*width)-1)&(*width))!=0) WARNMSG();
+         if ((((*height)-1)&(*height))!=0) WARNMSG();
+
+         glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
+         }
    else
       {
-      //!! pass mip-map pyramid
+      width2=*width;
+      height2=*height;
+
+      mipmap=image3;
+      bytes=(*width)*(*height)*components;
+      level=0;
+
+      while (width2>0 && height2>0)
+         {
+         if (((width2-1)&width2)!=0) WARNMSG();
+         if (((height2-1)&height2)!=0) WARNMSG();
+
+         glTexImage2D(GL_TEXTURE_2D,level,texformat,width2,height2,0,texsource,GL_UNSIGNED_BYTE,mipmap);
+
+         width2/=2;
+         height2/=2;
+
+         mipmap+=bytes;
+         bytes/=4;
+         level++;
+         }
       }
 
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&width2);
