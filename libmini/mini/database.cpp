@@ -697,7 +697,7 @@ void databuf::automipmap()
    int i,j,k;
 
    int components;
-   unsigned char *ptr1,*ptr2,*ptr3;
+   unsigned char *ptr,*ptr1,*ptr2,*ptr3,*ptr4;
 
    int xsize2,ysize2;
    int bytes4;
@@ -714,9 +714,6 @@ void databuf::automipmap()
    if (type==3) components=3;
    else components=4;
 
-   ptr1=ptr2=(unsigned char *)data;
-   ptr2+=xsize*components;
-
    xsize2=xsize/2;
    ysize2=ysize/2;
 
@@ -726,19 +723,35 @@ void databuf::automipmap()
       {
       if ((data=realloc(data,bytes+bytes4))==NULL) ERRORMSG();
 
-      ptr3=(unsigned char *)data+bytes;
+      ptr=(unsigned char *)data+bytes;
+
+      ptr1=ptr2=ptr3=ptr4=(unsigned char *)data+bytes-(2*xsize2)*(2*ysize2)*components;
+
+      ptr2+=components;
+      ptr3+=2*xsize2*components;
+      ptr4+=(2*xsize2+1)*components;
 
       for (j=0; j<ysize2; j++)
+         {
          for (i=0; i<xsize2; i++)
-            for (k=0; i<components; k++)
+            {
+            for (k=0; k<components; k++)
                {
-               value=(*ptr1++)+(*ptr2++);
-               value+=(*ptr1++)+(*ptr2++);
-               (*ptr3++)=(value+2)/4;
+               value=(*ptr1++)+(*ptr2++)+(*ptr3++)+(*ptr4++);
+               (*ptr++)=(value+2)/4;
                }
 
-      ptr1=ptr2=(unsigned char *)data+bytes;
-      ptr2+=xsize2*components;
+            ptr1+=components;
+            ptr2+=components;
+            ptr3+=components;
+            ptr4+=components;
+            }
+
+         ptr1+=2*xsize2*components;
+         ptr2+=2*xsize2*components;
+         ptr3+=2*xsize2*components;
+         ptr4+=2*xsize2*components;
+         }
 
       bytes+=bytes4;
 
