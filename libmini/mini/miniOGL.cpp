@@ -539,8 +539,8 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    else if (s3tc!=0)
       if (mipmapped==0)
          {
-         if (((width2-1)&width2)!=0) WARNMSG();
-         if (((height2-1)&height2)!=0) WARNMSG();
+         if ((((*width)-1)&(*width))!=0) WARNMSG();
+         if ((((*height)-1)&(*height))!=0) WARNMSG();
 
          glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
          }
