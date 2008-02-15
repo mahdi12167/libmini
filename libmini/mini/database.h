@@ -20,7 +20,7 @@ class databuf
    unsigned int ysize;  // optional data size along the y-axis of 2D data
    unsigned int zsize;  // optional data size along the z-axis of 3D data
    unsigned int tsteps; // optional number of frames for time-dependent data
-   unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha)
+   unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha), 7 = mip-mapped RGB, 8 = mip-mapped RGBA
 
    //! optional metadata
    float swx,swy; // SW corner of data brick
@@ -104,6 +104,9 @@ class databuf
 
    //! check conversion hook
    static int check_conversion() {return((CONVERSION_HOOK==NULL)?0:1);}
+
+   //! automatic mip-mapping
+   void automipmap();
 
    //! set hook for automatic s3tc compression
    static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data),void *data);

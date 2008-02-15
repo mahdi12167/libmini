@@ -691,6 +691,67 @@ void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcda
    CONVERSION_DATA=data;
    }
 
+// automatic mip-mapping
+void databuf::automipmap()
+   {
+   int i,j,k;
+
+   int components;
+   unsigned char *ptr1,*ptr2,*ptr3;
+
+   int xsize2,ysize2;
+   int bytes4;
+
+   int value;
+
+   if (type!=3 && type!=4) return;
+   if (zsize>1 || tsteps>1) return;
+
+   // check for power of 2
+   if (((xsize-1)&xsize)!=0) return;
+   if (((ysize-1)&ysize)!=0) return;
+
+   if (type==3) components=3;
+   else components=4;
+
+   ptr1=ptr2=(unsigned char *)data;
+   ptr2+=xsize*components;
+
+   xsize2=xsize/2;
+   ysize2=ysize/2;
+
+   bytes4=bytes/4;
+
+   while (xsize2>0 && ysize2>0)
+      {
+      if ((data=realloc(data,bytes+bytes4))==NULL) ERRORMSG();
+
+      ptr3=(unsigned char *)data+bytes;
+
+      for (j=0; j<ysize2; j++)
+         for (i=0; i<xsize2; i++)
+            for (k=0; i<components; k++)
+               {
+               value=(*ptr1++)+(*ptr2++);
+               value+=(*ptr1++)+(*ptr2++);
+               (*ptr3++)=(value+2)/4;
+               }
+
+      ptr1=ptr2=(unsigned char *)data+bytes;
+      ptr2+=xsize2*components;
+
+      bytes+=bytes4;
+
+      xsize2/=2;
+      ysize2/=2;
+
+      bytes4/=4;
+      }
+
+   if (type==3) type=7;
+   else type=8;
+   }
+
 // automatic s3tc compression
 void databuf::autocompress()
    {
