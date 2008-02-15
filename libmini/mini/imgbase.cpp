@@ -129,6 +129,9 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality)
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
+   // automatic mip-mapping
+   if (type==FILE_TYPE_DB) buf.automipmap();
+
    // register auto-compression hook
    if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
 
