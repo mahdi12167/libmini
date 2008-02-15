@@ -374,7 +374,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    c=(*width)*(*height);
 
-   if (mipmapped!=0) 
+   if (mipmapped!=0)
       {
       width2=(*width)/2;
       height2=(*height)/2;
