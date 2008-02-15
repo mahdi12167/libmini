@@ -300,17 +300,17 @@ void disableblending()
 #endif
    }
 
-int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps)
-   {return(buildtexmap(image,width,height,1,0,mipmaps));}
+int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps,int mipmapped)
+   {return(buildtexmap(image,width,height,1,0,mipmaps,mipmapped));}
 
-int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps)
-   {return(buildtexmap(image,width,height,2,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH,mipmaps));}
+int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps,int mipmapped)
+   {return(buildtexmap(image,width,height,2,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH,mipmaps,mipmapped));}
 
-int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps,int s3tc,int bytes)
-   {return(buildtexmap(image,width,height,3,CONFIGURE_DEPTH,mipmaps,s3tc,bytes));}
+int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps,int s3tc,int bytes,int mipmapped)
+   {return(buildtexmap(image,width,height,3,CONFIGURE_DEPTH,mipmaps,s3tc,bytes,mipmapped));}
 
-int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps,int s3tc,int bytes)
-   {return(buildtexmap(image,width,height,4,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH,mipmaps,s3tc,bytes));}
+int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps,int s3tc,int bytes,int mipmapped)
+   {return(buildtexmap(image,width,height,4,(CONFIGURE_DEPTH==24)?32:CONFIGURE_DEPTH,mipmaps,s3tc,bytes,mipmapped));}
 
 int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int *height)
    {
@@ -341,7 +341,7 @@ int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int
    return(texid);
    }
 
-int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps,int s3tc,int bytes)
+int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps,int s3tc,int bytes,int mipmapped)
    {
 #ifndef NOOGL
    int i,c;
@@ -356,6 +356,8 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    int lumi,red,green,blue,alpha;
 
    GLint width2,height2;
+
+   if (mipmapped!=0) ERRORMSG(); //!!
 
    initglexts();
 

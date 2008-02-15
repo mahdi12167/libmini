@@ -43,12 +43,12 @@ void enablePRJblending();
 void enableMIPblending();
 void disableblending();
 
-int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1);
-int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1);
-int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0);
-int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0);
+int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
+int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
+int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
+int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
 int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int *height);
-int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps=1,int s3tc=0,int bytes=0);
+int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
 void bindtexmap(int texid,int width=0,int height=0,int size=0,int mipmaps=1);
 int build3Dtexmap(unsigned char *volume,int *width,int *height,int *depth,int components);
 void bind3Dtexmap(int texid);
