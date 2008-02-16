@@ -699,6 +699,7 @@ void databuf::automipmap()
    int components;
    unsigned char *ptr,*ptr1,*ptr2,*ptr3,*ptr4;
 
+   int xsize1,ysize1;
    int xsize2,ysize2;
    int bytes4;
 
@@ -714,22 +715,36 @@ void databuf::automipmap()
    if (type==3) components=3;
    else components=4;
 
-   xsize2=xsize/2;
-   ysize2=ysize/2;
+   xsize1=xsize;
+   ysize1=ysize;
 
-   bytes4=bytes/4;
-
-   while (xsize2>0 && ysize2>0)
+   while (xsize1>1 || ysize1>1)
       {
+      xsize2=xsize1/2;
+      ysize2=ysize1/2;
+
+      if (xsize2==0) xsize2=1;
+      if (ysize2==0) ysize2=1;
+
+      bytes4=xsize2*ysize2*components;
+
       if ((data=realloc(data,bytes+bytes4))==NULL) ERRORMSG();
 
       ptr=(unsigned char *)data+bytes;
 
-      ptr1=ptr2=ptr3=ptr4=(unsigned char *)data+bytes-(2*xsize2)*(2*ysize2)*components;
+      ptr1=ptr2=ptr3=ptr4=(unsigned char *)data+bytes-xsize1*ysize1*components;
 
-      ptr2+=components;
-      ptr3+=2*xsize2*components;
-      ptr4+=(2*xsize2+1)*components;
+      if (xsize1>1)
+         {
+         ptr2+=components;
+         ptr4+=components;
+         }
+
+      if (ysize1>1)
+         {
+         ptr3+=xsize1*components;
+         ptr4+=xsize1*components;
+         }
 
       for (j=0; j<ysize2; j++)
          {
@@ -741,24 +756,28 @@ void databuf::automipmap()
                (*ptr++)=(value+2)/4;
                }
 
-            ptr1+=components;
-            ptr2+=components;
-            ptr3+=components;
-            ptr4+=components;
+            if (xsize1>1)
+               {
+               ptr1+=components;
+               ptr2+=components;
+               ptr3+=components;
+               ptr4+=components;
+               }
             }
 
-         ptr1+=2*xsize2*components;
-         ptr2+=2*xsize2*components;
-         ptr3+=2*xsize2*components;
-         ptr4+=2*xsize2*components;
+         if (ysize1>1)
+            {
+            ptr1+=xsize1*components;
+            ptr2+=xsize1*components;
+            ptr3+=xsize1*components;
+            ptr4+=xsize1*components;
+            }
          }
 
       bytes+=bytes4;
 
-      xsize2/=2;
-      ysize2/=2;
-
-      bytes4/=4;
+      xsize1=xsize2;
+      ysize1=ysize2;
       }
 
    if (type==3) type=7;
