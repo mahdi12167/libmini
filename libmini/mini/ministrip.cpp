@@ -782,6 +782,8 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
    else if (buf->type==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
    else if (buf->type==5) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps=0,1,buf->bytes);
    else if (buf->type==6) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps=0,1,buf->bytes);
+   else if (buf->type==7) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,0,0,0,mipmaps=1);
+   else if (buf->type==8) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,0,0,0,mipmaps=1);
    else ERRORMSG();
 
    SHADER[num].pixshadertexw[n]=width;
