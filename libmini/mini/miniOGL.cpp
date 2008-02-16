@@ -550,7 +550,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          height2=*height;
 
          mipmap=image3;
-         bytes2=(*width)*(*height)/2;
+         bytes2=width2*height2/2;
          level=0;
 
          while (width2>0 && height2>0)
@@ -565,8 +565,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             width2/=2;
             height2/=2;
 
+            if (width2==0) width2=1;
+            if (height2==0) height2=1;
+
             mipmap+=bytes2;
-            bytes2/=4;
+            bytes2=width2*height2/2;
             level++;
             }
          }
@@ -598,7 +601,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
       height2=*height;
 
       mipmap=image3;
-      bytes=(*width)*(*height)*components;
+      bytes=width2*height2*components;
       level=0;
 
       while (width2>0 && height2>0)
@@ -611,8 +614,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          width2/=2;
          height2/=2;
 
+         if (width2==0) width2=1;
+         if (height2==0) height2=1;
+
          mipmap+=bytes;
-         bytes/=4;
+         bytes=width2*height2*components;
          level++;
          }
       }
