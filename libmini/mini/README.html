@@ -13,7 +13,7 @@ renderer which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.6.6 as of 16.February.2008<br>
+Version 8.6.6 as of 18.February.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1703,7 +1703,7 @@ to be loaded initially. We can reduce the number of initially loaded
 tiles (and minimize startup time) by telling libMini that only a
 subset of the visible tiles is mandatory for startup. After these
 tiles have been loaded initially the remaining tiles are paged in
-consecutively in the background process. Typically, a useful startup
+consecutively in the background thread. Typically, a useful startup
 subset is a small area around the initial point of view (ex,ey,ez):<p>
 
 <pre>
@@ -1899,13 +1899,16 @@ To register the above compression hook we use the following one-liner:<p>
 </pre>
 
 Finally, the S3TC auto-compression is turned on in the background
-process via datacloud::configure_autocompress(1). This is the default
-setting.<p>
+thread via datacloud::configure_autocompress(1).<p>
+
+The auto-compression also applies to mip-mapped textures. In order to
+automatically generate mip-maps prior to compressing the texture data
+we use datacloud::configure_automipmap(1).<p>
 
 Please note that the auto-compression hook is triggered from the
-background process. Therefore it cannot use any OpenGL functionality
-and must use a library like squish because the background process has
-no OpenGL context.<p>
+background thread. Therefore it cannot use OpenGL functionality,
+because the background thread has no OpenGL context. This is the
+reason why we need to utilize a library like squish.<p>
 
 <a href="#" class="top">Back to top</a>
 

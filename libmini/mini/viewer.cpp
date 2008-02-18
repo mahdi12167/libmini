@@ -219,6 +219,8 @@ void initparams()
    tprms.sealevel=VIEWER_SEALEVEL;
 
    tprms.genmipmaps=TRUE;
+   tprms.automipmap=TRUE;
+
    tprms.autocompress=(sw_autos3tc==0)?FALSE:TRUE;
    tprms.lod0uncompressed=FALSE;
 

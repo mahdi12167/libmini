@@ -64,7 +64,8 @@ miniterrain::miniterrain()
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
-   TPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
+   TPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
+   TPARAMS.automipmap=FALSE;       // auto mip-map raw textures
 
    TPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    TPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
@@ -320,6 +321,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.sealevel=TPARAMS.sealevel;
 
          lparams.genmipmaps=TPARAMS.genmipmaps;
+         lparams.automipmap=TPARAMS.automipmap;
 
          lparams.autocompress=TPARAMS.autocompress;
          lparams.lod0uncompressed=TPARAMS.lod0uncompressed;

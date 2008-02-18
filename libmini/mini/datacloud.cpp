@@ -238,6 +238,7 @@ datacloud::datacloud(miniload *terrain,int maxthreads)
 
    CONFIGURE_DONTFREE=0;
    CONFIGURE_AUTOLOCKIO=0;
+   CONFIGURE_AUTOMIPMAP=0;
    CONFIGURE_AUTOCOMPRESS=0;
    CONFIGURE_LOD0UNCOMPRESSED=0;
 
@@ -958,6 +959,10 @@ void datacloud::loadtile(tilecacheelem *tile,int background)
    // load data
    REQUEST_CALLBACK(tile->tileid,tile->tile,tile->istexture,background,REQUEST_DATA);
 
+   // auto mip-map textures in the background
+   if (CONFIGURE_AUTOMIPMAP!=0)
+      if (CONFIGURE_DONTFREE==0) tile->tile->automipmap();
+
    // autocompress textures in the background
    if (CONFIGURE_AUTOCOMPRESS!=0)
       if (CONFIGURE_DONTFREE==0)
@@ -1362,6 +1367,9 @@ void datacloud::configure_dontfree(int dontfree)
 
 void datacloud::configure_autolockio(int autolockio)
    {CONFIGURE_AUTOLOCKIO=autolockio;}
+
+void datacloud::configure_automipmap(int automipmap)
+   {CONFIGURE_AUTOMIPMAP=automipmap;}
 
 void datacloud::configure_autocompress(int autocompress)
    {CONFIGURE_AUTOCOMPRESS=autocompress;}

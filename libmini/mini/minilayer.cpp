@@ -111,7 +111,8 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
-   LPARAMS.genmipmaps=TRUE;        // enable on-the-fly generation of mipmaps
+   LPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
+   LPARAMS.automipmap=FALSE;       // auto mip-map raw textures
 
    LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
    LPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
@@ -451,6 +452,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
    TILECACHE->getcloud()->setthread(minilayer::startthread,this,minilayer::jointhread,minilayer::lock_cs,minilayer::unlock_cs,minilayer::lock_io,minilayer::unlock_io);
+   TILECACHE->getcloud()->configure_automipmap(LPARAMS.automipmap);
    TILECACHE->getcloud()->configure_autocompress(LPARAMS.autocompress);
    TILECACHE->getcloud()->configure_lod0uncompressed(LPARAMS.lod0uncompressed);
    TILECACHE->getcloud()->configure_keepalive(LPARAMS.keepalive);
