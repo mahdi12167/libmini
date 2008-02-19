@@ -2,7 +2,7 @@ libMini SVN repository contents:
 
 mini: the libMini library plus the libMini viewer
 Yukon|Stuttgart|Hawaii|Fraenkische: libMini demos
-deps: source code of libMini dependencies
+deps: source code of selected libMini dependencies
 data: hires data as a replacement for the lores data in mini/data
 WIN32: prebuilt Windows dependencies
 WIN32.exe: prebuilt Windows executables
@@ -13,7 +13,7 @@ Then the libMini viewer additionally requires the dependencies GLUT/freeGLUT squ
 These dependencies can be built from the respective source code package in the deps folder.
 For Windows, prebuilt static libaries are available in the WIN32 folder.
 
-The dependencies are also available here:
+The libMini dependencies are also available here:
 
 pthreads-win32: http://sourceware.org/pthreads-win32
 libjpeg:        http://www.ijg.org
@@ -22,3 +22,5 @@ libcurl:        http://curl.haxx.se/libcurl
 freeglut:       http://freeglut.sourceforge.net
 squish:         http://www.sjbrown.co.uk/?code=squish
 GREYCstoration: http://www.greyc.ensicaen.fr/~dtschump/greycstoration
+
+For all of the above dependencies the latest available version is recommended.
