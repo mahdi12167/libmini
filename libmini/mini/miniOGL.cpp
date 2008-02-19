@@ -550,7 +550,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          height2=*height;
 
          mipmap=image3;
-         bytes2=width2*height2/2;
+         bytes2=8*((width2+3)/4)*((height2+3)/4); // 8 bytes per 4x4 s3tc/dxt1 block
          level=0;
 
          while (width2>0 && height2>0)
@@ -571,7 +571,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
                if (height2==0) height2=1;
 
                mipmap+=bytes2;
-               bytes2=width2*height2/2;
+               bytes2=8*((width2+3)/4)*((height2+3)/4); // 8 bytes per 4x4 s3tc/dxt1 block
                level++;
                }
             }
