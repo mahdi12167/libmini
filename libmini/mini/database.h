@@ -20,7 +20,7 @@ class databuf
    unsigned int ysize;  // optional data size along the y-axis of 2D data
    unsigned int zsize;  // optional data size along the z-axis of 3D data
    unsigned int tsteps; // optional number of frames for time-dependent data
-   unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha), 7 = mip-mapped RGB, 8 = mip-mapped RGBA
+   unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha), 7 = mip-mapped RGB, 8 = mip-mapped RGBA, 9 = mip-mapped compressed RGB, 10 = mip-mapped compressed RGBA
 
    //! optional metadata
    float swx,swy; // SW corner of data brick
@@ -240,6 +240,8 @@ class databuf
 
    void convertchunk(int israw,unsigned int extfmt);
    void interpretechunk(unsigned int implfmt);
+
+   void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
    float getvalue(float x,float y,float z,unsigned int t);
 

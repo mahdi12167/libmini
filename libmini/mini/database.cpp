@@ -792,11 +792,13 @@ void databuf::autocompress()
 
    if (AUTOCOMPRESS_HOOK==NULL) return;
 
-   if (type!=3 && type!=4) return;
+   if (type!=3 && type!=4 && type!=7 && type!=8) return;
    if (zsize>1 || tsteps>1) return;
 
    if (type==3) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
-   else AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
+   else if (type==4) AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
+   else if (type==7) autocompress_mipmaps(0,&s3tcdata,&s3tcbytes);
+   else autocompress_mipmaps(1,&s3tcdata,&s3tcbytes);
 
    release();
 
@@ -804,7 +806,63 @@ void databuf::autocompress()
    bytes=s3tcbytes;
 
    if (type==3) type=5;
-   else type=6;
+   else if (type==4) type=6;
+   else if (type==7) type=9;
+   else type=10;
+   }
+
+// automatic mip-map compression
+void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes)
+   {
+   unsigned char *mipmap,*s3tcmipmap;
+   unsigned int bytesmm,s3tcbytesmm;
+
+   int width,height;
+   int components;
+
+   if (isrgbadata==0) components=3;
+   else components=4;
+
+   width=xsize;
+   height=ysize;
+
+   mipmap=(unsigned char *)data;
+
+   *s3tcdata=NULL;
+   *s3tcbytes=0;
+
+   while (width>0 && height>0)
+      {
+      bytesmm=width*height*components;
+
+      AUTOCOMPRESS_HOOK(isrgbadata,mipmap,bytesmm,&s3tcmipmap,&s3tcbytesmm,this,AUTOCOMPRESS_DATA);
+
+      if (*s3tcdata==NULL)
+         {
+         *s3tcdata=s3tcmipmap;
+         *s3tcbytes=s3tcbytesmm;
+         }
+      else
+         {
+         if ((*s3tcdata=(unsigned char *)realloc(*s3tcdata,*s3tcbytes+s3tcbytesmm))==NULL) ERRORMSG();
+
+         memcpy(*s3tcdata+*s3tcbytes,s3tcmipmap,s3tcbytesmm);
+         free(s3tcmipmap);
+
+         *s3tcbytes+=s3tcbytesmm;
+         }
+
+      if (width>1 || height>1)
+         {
+         width/=2;
+         height/=2;
+
+         if (width==0) width=1;
+         if (height==0) height=1;
+
+         mipmap+=bytesmm;
+         }
+      }
    }
 
 // set hook for automatic s3tc compression
