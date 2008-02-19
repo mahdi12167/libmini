@@ -109,7 +109,7 @@ class databuf
    void automipmap();
 
    //! set hook for automatic s3tc compression
-   static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data),void *data);
+   static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data);
 
    //! check autocompress hook
    static int check_autocompress() {return((AUTOCOMPRESS_HOOK==NULL)?0:1);}
@@ -118,7 +118,7 @@ class databuf
    void autocompress();
 
    //! set hook for automatic s3tc decompression
-   static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data),void *data);
+   static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data);
 
    //! check autodecompress hook
    static int check_autodecompress() {return((AUTODECOMPRESS_HOOK==NULL)?0:1);}
@@ -220,10 +220,10 @@ class databuf
    static int (*CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data);
    static void *CONVERSION_DATA;
 
-   static void (*AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data);
+   static void (*AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data);
    static void *AUTOCOMPRESS_DATA;
 
-   static void (*AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data);
+   static void (*AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data);
    static void *AUTODECOMPRESS_DATA;
 
    static void (*INTERPRETER_INIT)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data);

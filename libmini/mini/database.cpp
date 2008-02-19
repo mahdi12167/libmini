@@ -25,11 +25,11 @@ int (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned in
 void *databuf::CONVERSION_DATA=NULL;
 
 // static hook for automatic s3tc compression
-void (*databuf::AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data)=NULL;
+void (*databuf::AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data)=NULL;
 void *databuf::AUTOCOMPRESS_DATA=NULL;
 
 // static hook for automatic s3tc decompression
-void (*databuf::AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data)=NULL;
+void (*databuf::AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data)=NULL;
 void *databuf::AUTODECOMPRESS_DATA=NULL;
 
 // static hooks for conversion from an implicit format
@@ -795,8 +795,8 @@ void databuf::autocompress()
    if (type!=3 && type!=4 && type!=7 && type!=8) return;
    if (zsize>1 || tsteps>1) return;
 
-   if (type==3) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
-   else if (type==4) AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,this,AUTOCOMPRESS_DATA);
+   if (type==3) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
+   else if (type==4) AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
    else if (type==7) autocompress_mipmaps(0,&s3tcdata,&s3tcbytes);
    else autocompress_mipmaps(1,&s3tcdata,&s3tcbytes);
 
@@ -835,7 +835,7 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
       {
       bytesmm=width*height*components;
 
-      AUTOCOMPRESS_HOOK(isrgbadata,mipmap,bytesmm,&s3tcmipmap,&s3tcbytesmm,this,AUTOCOMPRESS_DATA);
+      AUTOCOMPRESS_HOOK(isrgbadata,mipmap,bytesmm,&s3tcmipmap,&s3tcbytesmm,width,height,AUTOCOMPRESS_DATA);
 
       if (*s3tcdata==NULL)
          {
@@ -852,11 +852,11 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
          *s3tcbytes+=s3tcbytesmm;
          }
 
-      if (width>1 || height>1)
-         {
-         width/=2;
-         height/=2;
+      width/=2;
+      height/=2;
 
+      if (width>0 || height>0)
+         {
          if (width==0) width=1;
          if (height==0) height=1;
 
@@ -866,7 +866,7 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
    }
 
 // set hook for automatic s3tc compression
-void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,databuf *obj,void *data),void *data)
+void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data)
    {
    AUTOCOMPRESS_HOOK=autocompress;
    AUTOCOMPRESS_DATA=data;
@@ -883,8 +883,8 @@ void databuf::autodecompress()
    if (type!=5 && type!=6) return;
    if (zsize>1 || tsteps>1) return;
 
-   if (type==5) AUTODECOMPRESS_HOOK(0,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
-   else AUTODECOMPRESS_HOOK(1,(unsigned char *)data,bytes,&rawdata,&rawbytes,this,AUTODECOMPRESS_DATA);
+   if (type==5) AUTODECOMPRESS_HOOK(0,(unsigned char *)data,bytes,&rawdata,&rawbytes,xsize,ysize,AUTODECOMPRESS_DATA);
+   else AUTODECOMPRESS_HOOK(1,(unsigned char *)data,bytes,&rawdata,&rawbytes,xsize,ysize,AUTODECOMPRESS_DATA);
 
    release();
 
@@ -896,7 +896,7 @@ void databuf::autodecompress()
    }
 
 // set hook for automatic s3tc decompression
-void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,databuf *obj,void *data),void *data)
+void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data)
    {
    AUTODECOMPRESS_HOOK=autodecompress;
    AUTODECOMPRESS_DATA=data;

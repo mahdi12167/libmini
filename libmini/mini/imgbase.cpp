@@ -18,24 +18,25 @@ datacalc imgbase::CALC;
 
 // S3TC auto-compression hook
 void imgbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
-                           unsigned char **s3tcdata,unsigned int *s3tcbytes,
-                           databuf *obj,void *data)
+                           unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
+                           void *data)
    {
    if (data!=NULL) ERRORMSG();
 
    squishbase::compressS3TC(isrgbadata,rawdata,bytes,
-                            s3tcdata,s3tcbytes,obj->xsize,obj->ysize,squishbase::SQUISHMODE_GOOD);
+                            s3tcdata,s3tcbytes,width,height,
+                            squishbase::SQUISHMODE_GOOD);
    }
 
 // S3TC auto-decompression hook
 void imgbase::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
-                             unsigned char **rawdata,unsigned int *rawbytes,
-                             databuf *obj,void *data)
+                             unsigned char **rawdata,unsigned int *rawbytes,int width,int height,
+                             void *data)
    {
    if (data!=NULL) ERRORMSG();
 
    squishbase::decompressS3TC(isrgbadata,s3tcdata,bytes,
-                              rawdata,rawbytes,obj->xsize,obj->ysize);
+                              rawdata,rawbytes,width,height);
    }
 
 // load image based on extension

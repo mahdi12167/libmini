@@ -31,12 +31,12 @@ class imgbase
    static datacalc CALC;
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
-                            unsigned char **s3tcdata,unsigned int *s3tcbytes,
-                            databuf *obj,void *data);
+                            unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
+                            void *data);
 
    static void autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
-                              unsigned char **rawdata,unsigned int *rawbytes,
-                              databuf *obj,void *data);
+                              unsigned char **rawdata,unsigned int *rawbytes,int width,int height,
+                              void *data);
    };
 
 #endif

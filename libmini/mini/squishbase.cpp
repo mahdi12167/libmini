@@ -11,12 +11,12 @@
 namespace squishbase {
 
 void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
-                  unsigned char **s3tcdata,unsigned int *s3tcbytes,
-                  int width,int height,int squishmode)
+                  unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
+                  int squishmode)
    {
    if (isrgbadata<0 || rawdata==NULL || bytes==0 ||
-       s3tcdata==NULL || s3tcbytes==NULL ||
-       width<1 || height<1 || squishmode<0) ERRORMSG();
+       s3tcdata==NULL || s3tcbytes==NULL || width<1 || height<1 ||
+       squishmode<0) ERRORMSG();
 
 #ifndef NOSQUISH
 
@@ -79,12 +79,10 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
    }
 
 void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
-                    unsigned char **rawdata,unsigned int *rawbytes,
-                    int width,int height)
+                    unsigned char **rawdata,unsigned int *rawbytes,int width,int height)
    {
    if (isrgbadata<0 || s3tcdata==NULL || bytes==0 ||
-       rawdata==NULL || rawbytes==NULL ||
-       width<1 || height<1) ERRORMSG();
+       rawdata==NULL || rawbytes==NULL || width<1 || height<1) ERRORMSG();
 
 #ifndef NOSQUISH
 

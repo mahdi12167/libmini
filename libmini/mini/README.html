@@ -1851,8 +1851,8 @@ of Simon Brown.<p>
 
 <pre>
    void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
-                     unsigned char **s3tcdata,unsigned int *s3tcbytes,
-                     databuf *obj,void *data)
+                     unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
+                     void *data)
       {
       int i;
 
@@ -1868,10 +1868,10 @@ of Simon Brown.<p>
 
       if (isrgbadata==0)
          {
-         rgbadata=(unsigned char *)malloc(4*obj->xsize*obj->ysize);
+         rgbadata=(unsigned char *)malloc(4*width*height);
          if (rgbadata==NULL) ERRORMSG();
 
-         for (i=0; i&lt;obj->xsize*obj->ysize; i++)
+         for (i=0; i&lt;width*height; i++)
             {
             rgbadata[4*i]=rawdata[3*i];
             rgbadata[4*i+1]=rawdata[3*i+1];
@@ -1882,11 +1882,11 @@ of Simon Brown.<p>
          rawdata=rgbadata;
          }
 
-      *s3tcbytes=squish::GetStorageRequirements(obj->xsize,obj->ysize,mode);
+      *s3tcbytes=squish::GetStorageRequirements(width,height,mode);
       *s3tcdata=(unsigned char *)malloc(*s3tcbytes);
       if (*s3tcdata==NULL) ERRORMSG();
 
-      squish::CompressImage(rawdata,obj->xsize,obj->ysize,*s3tcdata,mode);
+      squish::CompressImage(rawdata,width,height,*s3tcdata,mode);
 
       if (isrgbadata==0) free(rawdata);
       }
