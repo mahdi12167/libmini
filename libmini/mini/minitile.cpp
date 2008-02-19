@@ -1413,6 +1413,26 @@ void minitile::reload(int col,int row,
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes);
                }
+            else if (tmap.type==7)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
+               TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0,0,1);
+               }
+            else if (tmap.type==8)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
+               TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1,0,1);
+               }
+            else if (tmap.type==9)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
+               TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes,1);
+               }
+            else if (tmap.type==10)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
+               TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes,1);
+               }
             else ERRORMSG();
             }
          else
@@ -1482,6 +1502,26 @@ void minitile::reload(int col,int row,
                {
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes);
+               }
+            else if (tmap.type==7)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
+               TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0,0,1);
+               }
+            else if (tmap.type==8)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
+               TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1,0,1);
+               }
+            else if (tmap.type==9)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
+               TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes,1);
+               }
+            else if (tmap.type==10)
+               {
+               TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
+               TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes,1);
                }
             else ERRORMSG();
             }

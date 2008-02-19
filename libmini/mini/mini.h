@@ -21,7 +21,7 @@ void *initmap(short int *image,void **d2map,
               int fast=0,float avgd2=0.0f);
 
 int inittexmap(unsigned char *image=0,int *width=0,int *height=0,
-               int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0);
+               int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0,int mipmapped=0);
 
 void *initfogmap(unsigned char *image,int size,
                  float lambda,float displace,float emission,
@@ -113,7 +113,7 @@ void *initmap(float *image,void **d2map,
               int fast=0,float avgd2=0.0f);
 
 int inittexmap(unsigned char *image=0,int *width=0,int *height=0,
-               int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0);
+               int mipmaps=1,int s3tc=0,int rgba=0,int bytes=0,int mipmapped=0);
 
 void *initfogmap(unsigned char *image,int size,
                  float lambda,float displace,float emission,

@@ -298,7 +298,7 @@ void *initmap(short int *image,void **d2map,
 
 // calculate the texture map
 int inittexmap(unsigned char *image,int *width,int *height,
-               int mipmaps,int s3tc,int rgba,int bytes)
+               int mipmaps,int s3tc,int rgba,int bytes,int mipmapped)
    {
    if (S==0) ERRORMSG();
 
@@ -308,8 +308,8 @@ int inittexmap(unsigned char *image,int *width,int *height,
 
    if (*width<2 || *height<2) ERRORMSG();
 
-   if (rgba==0) tid=buildRGBtexmap(image,width,height,mipmaps,s3tc,bytes);
-   else tid=buildRGBAtexmap(image,width,height,mipmaps,s3tc,bytes);
+   if (rgba==0) tid=buildRGBtexmap(image,width,height,mipmaps,s3tc,bytes,mipmapped);
+   else tid=buildRGBAtexmap(image,width,height,mipmaps,s3tc,bytes,mipmapped);
 
    twidth=*width;
    theight=*height;
@@ -3635,7 +3635,7 @@ void *initmap(float *image,void **d2map,
 
 // calculate the texture map
 int inittexmap(unsigned char *image,int *width,int *height,
-               int mipmaps,int s3tc,int rgba,int bytes)
+               int mipmaps,int s3tc,int rgba,int bytes,int mipmapped)
    {
    if (S==0) ERRORMSG();
 
@@ -3645,8 +3645,8 @@ int inittexmap(unsigned char *image,int *width,int *height,
 
    if (*width<2 || *height<2) ERRORMSG();
 
-   if (rgba==0) tid=buildRGBtexmap(image,width,height,mipmaps,s3tc,bytes);
-   else tid=buildRGBAtexmap(image,width,height,mipmaps,s3tc,bytes);
+   if (rgba==0) tid=buildRGBtexmap(image,width,height,mipmaps,s3tc,bytes,mipmapped);
+   else tid=buildRGBAtexmap(image,width,height,mipmaps,s3tc,bytes,mipmapped);
 
    twidth=*width;
    theight=*height;
