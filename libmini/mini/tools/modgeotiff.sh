@@ -16,7 +16,7 @@ listgeo -no_norm $in >$in:r.geo
 
 if (! -e $out) cp $in $out
 
-geotifcp -g $in:r.geo $out $out:r_tmp.tif
+geotifcp -c zip -g $in:r.geo $out $out:r_tmp.tif
 
 mv -f $out:r_tmp.tif $out
 
