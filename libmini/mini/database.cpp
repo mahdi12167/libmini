@@ -20,6 +20,9 @@ unsigned int databuf::MAGIC4=13269; // actual magic identifier of DB version 4
 // helper variable for LSB vs. MSB check
 unsigned short int databuf::INTEL_CHECK=1;
 
+// global flag for automatic mip-mapping
+int databuf::AUTOS3TCMIPMAP=0;
+
 // static hook for conversion from and to an external format
 int (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data)=NULL;
 void *databuf::CONVERSION_DATA=NULL;
@@ -417,6 +420,30 @@ int databuf::readparamu(char *tag,unsigned int *v,FILE *file)
    return(1);
    }
 
+// load DB data block
+void databuf::loadblock(FILE *file)
+   {
+   const unsigned int block=1<<17;
+
+   unsigned int cnt;
+
+   if ((data=(unsigned char *)malloc(block))==NULL) ERRORMSG();
+
+   do
+      {
+      cnt=fread(&((unsigned char *)data)[bytes],1,block,file);
+      bytes+=cnt;
+
+      if (cnt==block)
+         if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) ERRORMSG();
+      }
+   while (cnt==block);
+
+   if (bytes==0) ERRORMSG();
+
+   if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
+   }
+
 // data is saved in DB format
 // data is converted from native to MSB byte order
 void databuf::savedata(const char *filename,
@@ -498,30 +525,6 @@ void databuf::savedata(const char *filename,
 
       fclose(file);
       }
-   }
-
-// load DB data block
-void databuf::loadblock(FILE *file)
-   {
-   const unsigned int block=1<<17;
-
-   unsigned int cnt;
-
-   if ((data=(unsigned char *)malloc(block))==NULL) ERRORMSG();
-
-   do
-      {
-      cnt=fread(&((unsigned char *)data)[bytes],1,block,file);
-      bytes+=cnt;
-
-      if (cnt==block)
-         if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) ERRORMSG();
-      }
-   while (cnt==block);
-
-   if (bytes==0) ERRORMSG();
-
-   if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
    }
 
 // data is loaded from DB file
@@ -651,6 +654,13 @@ void databuf::swap2(int msb)
       else return;
    }
 
+// set conversion hook for external formats
+void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
+   {
+   CONVERSION_HOOK=conversion;
+   CONVERSION_DATA=data;
+   }
+
 // convert from/into external format (e.g. JPEG/PNG)
 void databuf::convertchunk(int israw,unsigned int extfmt)
    {
@@ -684,12 +694,9 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    else extformat=extfmt;
    }
 
-// set conversion hook for external formats
-void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
-   {
-   CONVERSION_HOOK=conversion;
-   CONVERSION_DATA=data;
-   }
+// set automatic mip-mapping
+void databuf::setautomipmap(int autos3tcmipmap)
+   {AUTOS3TCMIPMAP=autos3tcmipmap;}
 
 // automatic mip-mapping
 void databuf::automipmap()
@@ -784,6 +791,13 @@ void databuf::automipmap()
    else type=8;
    }
 
+// set hook for automatic s3tc compression
+void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data)
+   {
+   AUTOCOMPRESS_HOOK=autocompress;
+   AUTOCOMPRESS_DATA=data;
+   }
+
 // automatic s3tc compression
 void databuf::autocompress()
    {
@@ -794,6 +808,8 @@ void databuf::autocompress()
 
    if (type!=3 && type!=4 && type!=7 && type!=8) return;
    if (zsize>1 || tsteps>1) return;
+
+   if (AUTOS3TCMIPMAP!=0) automipmap();
 
    if (type==3) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
    else if (type==4) AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
@@ -865,11 +881,11 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
       }
    }
 
-// set hook for automatic s3tc compression
-void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data)
+// set hook for automatic s3tc decompression
+void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data)
    {
-   AUTOCOMPRESS_HOOK=autocompress;
-   AUTOCOMPRESS_DATA=data;
+   AUTODECOMPRESS_HOOK=autodecompress;
+   AUTODECOMPRESS_DATA=data;
    }
 
 // automatic s3tc decompression
@@ -895,11 +911,13 @@ void databuf::autodecompress()
    else type=4;
    }
 
-// set hook for automatic s3tc decompression
-void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data)
+// set interpreter hook for implicit format
+void databuf::setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
+                             void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data))
    {
-   AUTODECOMPRESS_HOOK=autodecompress;
-   AUTODECOMPRESS_DATA=data;
+   INTERPRETER_INIT=parser;
+   INTERPRETER_HOOK=interpreter;
+   INTERPRETER_DATA=data;
    }
 
 // convert from implicit format
@@ -954,15 +972,6 @@ void databuf::interpretechunk(unsigned int implfmt)
                else if (comps==3) setrgb(x,y,z,t,value);
                else setrgba(x,y,z,t,value);
                }
-   }
-
-// set interpreter hook for implicit format
-void databuf::setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
-                             void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data))
-   {
-   INTERPRETER_INIT=parser;
-   INTERPRETER_HOOK=interpreter;
-   INTERPRETER_DATA=data;
    }
 
 // read one line in either Unix or Windows style

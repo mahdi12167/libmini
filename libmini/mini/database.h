@@ -105,6 +105,12 @@ class databuf
    //! check conversion hook
    static int check_conversion() {return((CONVERSION_HOOK==NULL)?0:1);}
 
+   //! set automatic mip-mapping
+   static void setautomipmap(int autos3tcmipmap=0);
+
+   //! check automatic mip-mapping
+   static int check_automipmap() {return(AUTOS3TCMIPMAP);}
+
    //! automatic mip-mapping
    void automipmap();
 
@@ -132,9 +138,6 @@ class databuf
 
    //! check interpreter hook
    static int check_interpreter() {return((INTERPRETER_HOOK==NULL)?0:1);}
-
-   //! read one line in either Unix or Windows style
-   char *readoneline(FILE *file);
 
    //! data is loaded from PNM file
    int loadPNMdata(const char *filename);
@@ -217,6 +220,8 @@ class databuf
 
    static unsigned short int INTEL_CHECK;
 
+   static int AUTOS3TCMIPMAP;
+
    static int (*CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data);
    static void *CONVERSION_DATA;
 
@@ -230,13 +235,15 @@ class databuf
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    static void *INTERPRETER_DATA;
 
-   void loadblock(FILE *file);
-
    void writeparam(char *tag,float v,FILE *file,int digits=8);
    int readparam(char *tag,float *v,FILE *file);
 
    int readparami(char *tag,int *v,FILE *file);
    int readparamu(char *tag,unsigned int *v,FILE *file);
+
+   void loadblock(FILE *file);
+
+   char *readoneline(FILE *file);
 
    void convertchunk(int israw,unsigned int extfmt);
    void interpretechunk(unsigned int implfmt);
