@@ -61,14 +61,14 @@ miniearth::miniearth()
    EPARAMS.transbias=4.0f;    // transition bias between night and day
    EPARAMS.transoffset=0.01f; // transition offset between night and day
 
-   EPARAMS.frontname="EarthDay.ppm";  // file name of front earth texture
-   EPARAMS.backname="EarthNight.ppm"; // file name of back earth texture
+   EPARAMS.frontname="EarthDay.ppm";  // file name of front earth PPM texture
+   EPARAMS.backname="EarthNight.ppm"; // file name of back earth PPM texture
 
-   EPARAMS.frontbuf=NULL; // front earth texture image buffer
-   EPARAMS.backbuf=NULL;  // back earth texture image buffer
+   EPARAMS.frontbuf=NULL; // front earth texture image buffer (databuf object)
+   EPARAMS.backbuf=NULL;  // back earth texture image buffer (databuf object)
 
-   EPARAMS.frontbufname="EarthDay.db";  // image buffer name of front earth texture
-   EPARAMS.backbufname="EarthNight.db"; // image buffer name of back earth texture
+   EPARAMS.frontbufname="EarthDay.db";  // file name of front earth DB texture
+   EPARAMS.backbufname="EarthNight.db"; // file name of back earth DB texture
 
    // initialize state:
 

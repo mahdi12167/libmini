@@ -69,12 +69,15 @@ class miniearth
       float transbias;
       float transoffset;
 
+      // earth textures as a PPM file
       char *frontname;
       char *backname;
 
+      // earth textures as a databuf object
       databuf *frontbuf;
       databuf *backbuf;
 
+      // earth textures as a DB file
       char *frontbufname;
       char *backbufname;
       };
