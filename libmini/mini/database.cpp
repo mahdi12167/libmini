@@ -2127,6 +2127,30 @@ void databuf::computeabsolute()
                if ((val=getval(i,j,k,t))<0.0f) setval(i,j,k,t,-val);
    }
 
+// print values
+void databuf::print()
+   {
+   unsigned int i,j,k,t;
+
+   if (!missing())
+      if (type==0 || type==1 || type==2)
+         for (t=0; t<tsteps; t++)
+            {
+            for (k=0; k<zsize; k++)
+               {
+               for (j=0; j<ysize; j++)
+                  {
+                  for (i=0; i<xsize; i++) printf("%g ",getval(i,j,k,t));
+                  printf("\n");
+                  }
+
+               if (k<zsize-1) printf("\n");
+               }
+
+            if (t<tsteps-1) printf("\n");
+            }
+   }
+
 // swap byte ordering between MSB and LSB
 void databuf::swapbytes()
    {

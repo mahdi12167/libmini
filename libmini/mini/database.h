@@ -209,6 +209,9 @@ class databuf
    void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float *value);
    void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value);
 
+   //! print values
+   void print();
+
    protected:
 
    static unsigned int MAGIC1;

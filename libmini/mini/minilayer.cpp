@@ -552,7 +552,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
             {
             if (TILECACHE->getelevini_coordsys_ll()!=0)
                {
-               if (TILECACHE->getelevini_coordsys_lldatum()!=3) ERRORMSG(); // WGS84 support only
+               if (TILECACHE->getelevini_coordsys_lldatum()!=3 && // WGS84 support only
+                   TILECACHE->getelevini_coordsys_lldatum()!=4) ERRORMSG(); // treat NAD83 as WGS84
 
                // get original data coordinates as LL
                LPARAMS.offsetDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_centerx(),3600*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
