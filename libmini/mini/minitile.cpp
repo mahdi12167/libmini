@@ -761,7 +761,7 @@ void minitile::draw(float res,
 minitile *minitile::load(int cols,int rows,
                          const char *basepath1,const char *basepath2,const char *basepath3,
                          float offsetx,float offsety,float offseth,
-                         float stretchx,float stretchy,
+                         float stretch,float stretchx,float stretchy,
                          float exaggeration,float scale,
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                          float sealevel,float snowline,
@@ -836,6 +836,18 @@ minitile *minitile::load(int cols,int rows,
                                coord,cellsize,
                                &scaling,&missing,
                                &utm_zone,&utm_datum)==0) ERRORMSG();
+
+            if (stretch!=1.0f)
+               {
+               coord[0]*=stretch;
+               coord[1]*=stretch;
+               coord[2]*=stretch;
+               coord[3]*=stretch;
+               coord[4]*=stretch;
+               coord[5]*=stretch;
+               coord[6]*=stretch;
+               coord[7]*=stretch;
+               }
 
             if (utm_zone!=0)
                {

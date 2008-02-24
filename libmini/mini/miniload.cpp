@@ -1073,7 +1073,7 @@ void miniload::reload(int col,int row,
 int miniload::load(int cols,int rows,
                    const char *basepath1,const char *basepath2,const char *basepath3,
                    float offsetx,float offsety,float offseth,
-                   float stretchx,float stretchy,
+                   float stretch,float stretchx,float stretchy,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
                    float minres,float bsafety,
@@ -1270,6 +1270,18 @@ int miniload::load(int cols,int rows,
                                   &scaling,&missing,
                                   &utm_zone,&utm_datum)==0) ERRORMSG();
 
+               if (stretch!=1.0f)
+                  {
+                  coord[0]*=stretch;
+                  coord[1]*=stretch;
+                  coord[2]*=stretch;
+                  coord[3]*=stretch;
+                  coord[4]*=stretch;
+                  coord[5]*=stretch;
+                  coord[6]*=stretch;
+                  coord[7]*=stretch;
+                  }
+
                if (utm_zone!=0)
                   {
                   miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
@@ -1313,19 +1325,19 @@ int miniload::load(int cols,int rows,
                else if (hfield.type==2) maxelev=MAXFLOAT;
                else maxelev=255.0f;
 
-               coord[0]=hfield.swx;
-               coord[1]=hfield.swy;
-               coord[2]=hfield.nwx;
-               coord[3]=hfield.nwy;
-               coord[4]=hfield.nex;
-               coord[5]=hfield.ney;
-               coord[6]=hfield.sex;
-               coord[7]=hfield.sey;
+               coord[0]=hfield.swx*stretch;
+               coord[1]=hfield.swy*stretch;
+               coord[2]=hfield.nwx*stretch;
+               coord[3]=hfield.nwy*stretch;
+               coord[4]=hfield.nex*stretch;
+               coord[5]=hfield.ney*stretch;
+               coord[6]=hfield.sex*stretch;
+               coord[7]=hfield.sey*stretch;
 
                SCALE=hfield.scaling*exaggeration;
 
-               offsetx-=i*(hfield.sex-hfield.swx);
-               offsety-=j*(hfield.nwy-hfield.swy);
+               offsetx-=i*(coord[6]-coord[0]);
+               offsety-=j*(coord[3]-coord[1]);
                }
             }
 
@@ -1436,14 +1448,14 @@ int miniload::load(int cols,int rows,
    if (outscale!=NULL)
       if (CONFIGURE_USEPNM!=0)
          {
-         outscale[0]=as2m[0]*stretchx/scale; // x-size of one arcsec in meters
-         outscale[1]=as2m[1]*stretchy/scale; // z-size of one arcsec in meters
+         outscale[0]=as2m[0]*stretch*stretchx/scale; // x-size of one arcsec in meters
+         outscale[1]=as2m[1]*stretch*stretchy/scale; // z-size of one arcsec in meters
          outscale[2]=SCALE/exaggeration; // one scaled meter
          }
       else
          {
-         outscale[0]=stretchx/scale; // x-scaling
-         outscale[1]=stretchy/scale; // z-scaling
+         outscale[0]=stretch*stretchx/scale; // x-scaling
+         outscale[1]=stretch*stretchy/scale; // z-scaling
          outscale[2]=SCALE/exaggeration; // one scaled meter
          }
 

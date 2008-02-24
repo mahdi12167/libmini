@@ -80,7 +80,7 @@ class miniload
    int load(int cols,int rows,
             const char *basepath1=0,const char *basepath2=0,const char *basepath3=0,
             float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
-            float stretchx=1.0f,float stretchy=1.0f,
+            float stretch=1.0f,float stretchx=1.0f,float stretchy=1.0f,
             float exaggeration=1.0f,float scale=1.0f,
             float lambda=1.0f,float attenuation=1.0f,
             float minres=0.0f,float bsafety=0.0f,

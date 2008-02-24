@@ -29,6 +29,7 @@ class minilayer
       int cols;            // number of columns per tileset
       int rows;            // number of rows per tileset
 
+      float stretch;       // horizontal coordinate stretching
       float stretchx;      // horizontal stretching in x-direction
       float stretchy;      // horizontal stretching in y-direction
 

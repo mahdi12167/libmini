@@ -32,6 +32,7 @@
 #define VIEWER_BOUNCE 5.0f
 
 #define VIEWER_BOOST 50.0f
+#define VIEWER_SLOW 10.0f
 
 #define VIEWER_ROTATION 0.1f
 
@@ -142,10 +143,10 @@ static miniv3d dir,up,right;
 static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
 
 // jumping parameters
-static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST;
+static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
 
 // steering parameters
-static double oneturn=5.0,oneincline=10.0;
+static double oneturn=5.0,oneincline=5.0;
 
 // gliding speed
 static double speed,topspeed;
@@ -995,7 +996,6 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (topspeed>maxspeed*boost) topspeed=maxspeed*boost;
          break;
       case 'a':
-      case 'A':
          angle-=oneturn;
          if (angle<0.0)
             {
@@ -1003,9 +1003,24 @@ void keyboardfunc(unsigned char key,int x,int y)
             turn+=360.0;
             }
          break;
+      case 'A':
+         angle-=oneturn/slow;
+         if (angle<0.0)
+            {
+            angle+=360.0;
+            turn+=360.0;
+            }
+         break;
       case 'd':
-      case 'D':
          angle+=oneturn;
+         if (angle>360.0)
+            {
+            angle-=360.0;
+            turn-=360.0;
+            }
+         break;
+      case 'D':
+         angle+=oneturn/slow;
          if (angle>360.0)
             {
             angle-=360.0;

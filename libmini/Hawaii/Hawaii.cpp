@@ -1209,7 +1209,7 @@ int main(int argc,char *argv[])
                 abasepath1,abasepath2,NULL, // directories for tiles and textures (and no fogmaps)
                 -viewx,-viewy, // horizontal offset in arc-seconds
                 0.0f, // no vertical offset
-                1.0f,1.0f, // no horizontal stretching
+                1.0f,1.0f,1.0f, // no horizontal stretching
                 exaggeration,scale, // vertical exaggeration and global scale
                 0.0f,0.0f, // no fog parameters required
                 0.0f, // choose default minimum resolution

@@ -18,6 +18,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.cols=0;                // number of columns per tileset
    LPARAMS.rows=0;                // number of rows per tileset
 
+   LPARAMS.stretch=0.0f;          // horizontal coordinate stretching
    LPARAMS.stretchx=0.0f;         // horizontal stretching in x-direction
    LPARAMS.stretchy=0.0f;         // horizontal stretching in y-direction
 
@@ -491,6 +492,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       LPARAMS.offset[2]=0.0f;
 
       // set horizontal stretching
+      LPARAMS.stretch=1.0f;
       LPARAMS.stretchx=1.0f;
       LPARAMS.stretchy=1.0f;
 
@@ -525,6 +527,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       LPARAMS.offset[2]=0.0f;
 
       // set horizontal stretching
+      LPARAMS.stretch=1.0f;
       LPARAMS.stretchx=1.0f;
       LPARAMS.stretchy=1.0f;
 
@@ -556,13 +559,16 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                    TILECACHE->getelevini_coordsys_lldatum()!=4) ERRORMSG(); // treat NAD83 as WGS84
 
                // get original data coordinates as LL
-               LPARAMS.offsetDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_centerx(),3600*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
-               LPARAMS.extentDAT=minicoord(miniv3d(3600*TILECACHE->getelevini_sizex(),3600*TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LLH);
+               LPARAMS.offsetDAT=minicoord(miniv3d(3600.0*TILECACHE->getelevini_centerx(),3600.0*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
+               LPARAMS.extentDAT=minicoord(miniv3d(3600.0*TILECACHE->getelevini_sizex(),3600.0*TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LLH);
 
                // adjust horizontal stretching of vtb exported LL data
                miniutm::arcsec2meter(LPARAMS.offsetDAT.vec.y,as2m);
-               LPARAMS.stretchx=3600.0f*as2m[0];
-               LPARAMS.stretchy=3600.0f*as2m[1];
+               LPARAMS.stretch=3600.0f;
+               LPARAMS.offset[0]*=3600.0f;
+               LPARAMS.offset[1]*=3600.0f;
+               LPARAMS.stretchx=as2m[0];
+               LPARAMS.stretchy=as2m[1];
                }
             else if (TILECACHE->getelevini_coordsys_utmzone()!=0)
                {
@@ -604,7 +610,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                          basepath1,basepath2,NULL, // directories for tiles and textures (and no fogmaps)
                          LPARAMS.shift[0]-LPARAMS.offset[0],LPARAMS.shift[1]-LPARAMS.offset[1], // horizontal offset
                          LPARAMS.shift[2]+LPARAMS.offset[2], // vertical offset
-                         LPARAMS.stretchx,LPARAMS.stretchy, // horizontal stretching
+                         LPARAMS.stretch,LPARAMS.stretchx,LPARAMS.stretchy, // horizontal stretching
                          LPARAMS.exaggeration,LPARAMS.scale, // vertical exaggeration and global scale
                          0.0f,0.0f, // no fog parameters required
                          0.0f, // choose default minimum resolution
@@ -629,9 +635,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    LPARAMS.extent[2]=2.0f*fmin(outparams[4],LPARAMS.maxelev*LPARAMS.exaggeration/LPARAMS.scale);
 
    // set offset of tileset center
-   LPARAMS.offset[0]*=LPARAMS.stretchx;
    LPARAMS.offset[0]+=outparams[2];
-   LPARAMS.offset[1]*=LPARAMS.stretchy;
    LPARAMS.offset[1]+=-outparams[3];
    LPARAMS.offset[2]=0.0f;
 
