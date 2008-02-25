@@ -452,4 +452,69 @@ void miniearth::render()
 
 // shoot a ray at the scene
 double miniearth::shoot(const minicoord &o,const miniv3d &d)
-   {return(TERRAIN->shoot(o,d));}
+   {
+   double t;
+
+   minilayer *ref;
+
+   ref=getreference();
+
+   // check for hit with terrain
+   t=TERRAIN->shoot(o,d);
+
+   // check for hit with earth ellipsoid
+   if (t==-MAXFLOAT)
+      if (EPARAMS.useearth)
+         if (ref->get()->warpmode!=0)
+            t=intersect_ellipsoid(miniv3d(o.vec),d,
+                                  miniv3d(0.0,0.0,0.0),miniutm::WGS84_r_major,miniutm::WGS84_r_major,miniutm::WGS84_r_minor);
+
+   return(t);
+   }
+
+// ray/sphere intersection
+double miniearth::intersect_sphere(miniv3d p,miniv3d d)
+   {
+   double a,b,c;
+   double s,r;
+
+   double t1,t2;
+
+   a=2*d*d;
+   b=2*p*d;
+   c=2*p*p;
+
+   r=b*b-a*c;
+
+   if (r<0.0) return(-MAXFLOAT);
+
+   s=sqrt(r);
+
+   t1=(-b+s)/a;
+   t2=(-b-s)/a;
+
+   if (t1<0.0)
+      if (t2<0.0) return(-MAXFLOAT);
+      else return(t2);
+   else
+      if (t2<0.0) return(t1);
+      else if (t1<t2) return(t1);
+      else return(t2);
+   }
+
+// ray/ellipsoid intersection
+double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
+                                      miniv3d o,double r1,double r2,double r3)
+   {
+   p-=o;
+
+   p.x/=r1;
+   p.y/=r2;
+   p.z/=r3;
+
+   d.x/=r1;
+   d.y/=r2;
+   d.z/=r3;
+
+   return(intersect_sphere(p,d));
+   }
