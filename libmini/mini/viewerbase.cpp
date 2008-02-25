@@ -174,4 +174,4 @@ void viewerbase::idle(double dt)
 
 // shoot a ray at the scene
 double viewerbase::shoot(const minicoord &o,const miniv3d &d)
-   {return(EARTH->getterrain()->shoot(o,d));}
+   {return(EARTH->shoot(o,d));}

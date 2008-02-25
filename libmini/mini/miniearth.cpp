@@ -463,7 +463,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d)
    t=TERRAIN->shoot(o,d);
 
    // check for hit with earth ellipsoid
-   if (t==-MAXFLOAT)
+   if (t==MAXFLOAT)
       if (EPARAMS.useearth)
          if (ref->get()->warpmode!=0)
             t=intersect_ellipsoid(miniv3d(o.vec),d,
@@ -486,7 +486,7 @@ double miniearth::intersect_unitsphere(miniv3d p,miniv3d d)
 
    r=b*b-a*c;
 
-   if (r<0.0) return(-MAXFLOAT);
+   if (r<0.0) return(MAXFLOAT);
 
    s=sqrt(r);
 
@@ -494,7 +494,7 @@ double miniearth::intersect_unitsphere(miniv3d p,miniv3d d)
    t2=(-b-s)/a;
 
    if (t1<0.0)
-      if (t2<0.0) return(-MAXFLOAT);
+      if (t2<0.0) return(MAXFLOAT);
       else return(t2);
    else
       if (t2<0.0) return(t1);
@@ -520,7 +520,7 @@ double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
 
    t=intersect_unitsphere(p,d);
 
-   if (t==-MAXFLOAT) return(t);
+   if (t==MAXFLOAT) return(t);
 
    d.x*=t*r1;
    d.y*=t*r2;
