@@ -163,7 +163,7 @@ class miniearth
 
    char *getfile(const char *src_file,const char *altpath=NULL);
 
-   double intersect_sphere(miniv3d p,miniv3d d);
+   double intersect_unitsphere(miniv3d p,miniv3d d);
 
    double intersect_ellipsoid(miniv3d p,miniv3d d,
                               miniv3d o,double r1,double r2,double r3);

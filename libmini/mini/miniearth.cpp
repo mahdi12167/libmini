@@ -473,7 +473,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d)
    }
 
 // ray/sphere intersection
-double miniearth::intersect_sphere(miniv3d p,miniv3d d)
+double miniearth::intersect_unitsphere(miniv3d p,miniv3d d)
    {
    double a,b,c;
    double s,r;
@@ -482,7 +482,7 @@ double miniearth::intersect_sphere(miniv3d p,miniv3d d)
 
    a=2*d*d;
    b=2*p*d;
-   c=2*p*p;
+   c=2*(p*p-1.0);
 
    r=b*b-a*c;
 
@@ -506,6 +506,8 @@ double miniearth::intersect_sphere(miniv3d p,miniv3d d)
 double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
                                       miniv3d o,double r1,double r2,double r3)
    {
+   float t;
+
    p-=o;
 
    p.x/=r1;
@@ -516,5 +518,13 @@ double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
    d.y/=r2;
    d.z/=r3;
 
-   return(intersect_sphere(p,d));
+   t=intersect_unitsphere(p,d);
+
+   if (t==-MAXFLOAT) return(t);
+
+   d.x*=t*r1;
+   d.y*=t*r2;
+   d.z*=t*r3;
+
+   return(d.getLength());
    }
