@@ -465,7 +465,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d)
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0)
+         if (ref->get()->warpmode!=0 && ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
             t=intersect_ellipsoid(miniv3d(o.vec),d,
                                   miniv3d(0.0,0.0,0.0),miniutm::WGS84_r_major,miniutm::WGS84_r_major,miniutm::WGS84_r_minor);
 
