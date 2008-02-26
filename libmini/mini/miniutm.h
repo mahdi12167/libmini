@@ -101,7 +101,7 @@ namespace minilon {
 // longitude arithmetic:
 
 //! add longitudes
-inline float LONADD(float a,float b=0)
+inline float LONADD(float a,float b=0.0f)
    {
    float lon=a+b;
    while (lon<0) lon+=360*60*60;
@@ -110,7 +110,7 @@ inline float LONADD(float a,float b=0)
    }
 
 //! subtract longitudes
-inline float LONSUB(float a,float b=0)
+inline float LONSUB(float a,float b=0.0f)
    {
    float diff=a-b;
    while (diff<-180*60*60) diff+=360*60*60;
@@ -121,14 +121,14 @@ inline float LONSUB(float a,float b=0)
 //! return leftmost longitude
 inline float LONLEFT(float a,float b)
    {
-   if (LONSUB(a,b)<0) return(a);
+   if (LONSUB(a,b)<0.0f) return(a);
    else return(b);
    }
 
 //! return rightmost longitude
 inline float LONRIGHT(float a,float b)
    {
-   if (LONSUB(a,b)>0) return(a);
+   if (LONSUB(a,b)>0.0f) return(a);
    else return(b);
    }
 
@@ -142,7 +142,7 @@ inline float LONLERP(float a,float b,float lerp=0.5f)
 //! average longitudes
 inline float LONMEAN(float a,float b,float weight=0.5f)
    {
-   if (LONSUB(a,b)<0) return(LONLERP(a,b,weight));
+   if (LONSUB(a,b)<0.0f) return(LONLERP(a,b,weight));
    else return(LONLERP(b,a,1.0f-weight));
    }
 

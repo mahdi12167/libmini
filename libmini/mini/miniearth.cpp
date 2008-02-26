@@ -506,8 +506,6 @@ double miniearth::intersect_unitsphere(miniv3d p,miniv3d d)
 double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
                                       miniv3d o,double r1,double r2,double r3)
    {
-   float t;
-
    p-=o;
 
    p.x/=r1;
@@ -518,13 +516,5 @@ double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
    d.y/=r2;
    d.z/=r3;
 
-   t=intersect_unitsphere(p,d);
-
-   if (t==MAXFLOAT) return(t);
-
-   d.x*=t*r1;
-   d.y*=t*r2;
-   d.z*=t*r3;
-
-   return(d.getLength());
+   return(intersect_unitsphere(p,d));
    }
