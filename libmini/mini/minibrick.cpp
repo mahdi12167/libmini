@@ -1743,7 +1743,8 @@ void minisurf::extractiso1A(const int x1,const int y1,const int z1,
    if (y1<y2 && y2==y3 && y3==y4) return;
    if (z1<z2 && z2==z3 && z3==z4) return;
 
-   if ((x2!=x3 || x3!=x4) && (y2!=y3 || y3!=y4) && (z2!=z3 || z3!=z4)) return;
+   if ((x2!=x3 || x3!=x4) && (y2!=y3 || y3!=y4) && (z2!=z3 || z3!=z4))
+      if ((x1!=x2 && x1!=x3) || (x1!=x3 && x1!=x4) || (x1!=x4 && x1!=x2)) return;
 
    buf->addvtx(x2,y2,z2,n2.x,n2.y,n2.z);
    buf->addvtx(x3,y3,z3,n3.x,n3.y,n3.z);
