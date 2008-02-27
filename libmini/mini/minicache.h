@@ -104,7 +104,8 @@ class minicache
    void configure_seaenabletex(int seaenabletex=0); // enable texture mappping for the sea surface
    void configure_zfight_sea(float zscale=0.99f); // shift sea towards the viewer to avoid Z-fighting
    void configure_zfight_prisms(float zscale=0.95f); // shift prisms towards the viewer to avoid Z-fighting
-   void configure_enableray(int enableray=0); // enable ray object
+   void configure_enableray(int enableray=0); // enable ray intersection test
+   void configure_omitsea(int omitsea=0); // omit sea level ray tests
 
    protected:
 
@@ -258,6 +259,7 @@ class minicache
    float CONFIGURE_ZSCALE_SEA;
    float CONFIGURE_ZSCALE_PRISMS;
    float CONFIGURE_ENABLERAY;
+   float CONFIGURE_OMITSEA;
 
    void initterrain(TERRAIN_TYPE *terrain);
    void freeterrain(TERRAIN_TYPE *terrain);

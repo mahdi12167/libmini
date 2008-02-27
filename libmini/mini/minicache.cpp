@@ -106,6 +106,7 @@ minicache::minicache()
    CONFIGURE_ZSCALE_SEA=0.99f;
    CONFIGURE_ZSCALE_PRISMS=0.95f;
    CONFIGURE_ENABLERAY=0;
+   CONFIGURE_OMITSEA=0;
    }
 
 // destructor
@@ -320,7 +321,8 @@ void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               t->ray->addtrianglefans(&t->cache1_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
+               if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
+                  t->ray->addtrianglefans(&t->cache1_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
                }
 
             if (op==TRIGGER_OP)
@@ -382,7 +384,8 @@ void minicache::cache(int op,float a,float b,float c)
                o.y=centery;
                o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
-               t->ray->addtrianglefans(&t->cache2_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
+               if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
+                  t->ray->addtrianglefans(&t->cache2_arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
                }
 
             if (op==TRIGGER_OP)
@@ -1894,3 +1897,4 @@ void minicache::configure_seaenabletex(int seaenabletex) {CONFIGURE_SEAENABLETEX
 void minicache::configure_zfight_sea(float zscale) {CONFIGURE_ZSCALE_SEA=zscale;}
 void minicache::configure_zfight_prisms(float zscale) {CONFIGURE_ZSCALE_PRISMS=zscale;}
 void minicache::configure_enableray(int enableray) {CONFIGURE_ENABLERAY=enableray;}
+void minicache::configure_omitsea(int omitsea) {CONFIGURE_OMITSEA=omitsea;}

@@ -527,6 +527,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
 
    // turn on ray object
    CACHE->configure_enableray(1);
+   CACHE->configure_omitsea(0);
 
    // success
    return(TRUE);
