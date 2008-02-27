@@ -277,25 +277,19 @@ class minisurf
                    const int x4,const int y4,const int z4,const float c4,const mininorm &n4,
                    minivtxarray *vtx);
 
-   inline void extractiso1A(const int x1,const int y1,const int z1,
-                            const int x2,const int y2,const int z2,const mininorm &n2,
+   inline void extractiso1A(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
+                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
                             const int x3,const int y3,const int z3,const mininorm &n3,
                             const int x4,const int y4,const int z4,const mininorm &n4,
                             minivtxarray *vtx);
 
    inline void extractiso1B(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
                             const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
-                            const int x3,const int y3,const int z3,const mininorm &n3,
-                            const int x4,const int y4,const int z4,const mininorm &n4,
-                            minivtxarray *vtx);
-
-   inline void extractiso1C(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
-                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
                             const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
                             const int x4,const int y4,const int z4,const mininorm &n4,
                             minivtxarray *vtx);
 
-   inline void extractiso1D(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
+   inline void extractiso1C(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
                             const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
                             const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
                             const int x4,const int y4,const int z4,const mininorm &n4,const float d4,
