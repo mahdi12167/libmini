@@ -722,6 +722,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    minipointdata *nearest;
 
    float sheight,ssize;
+   float salpha;
 
    // calculate visible points
    calcvdata(type1,type2);
@@ -812,11 +813,13 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
          if (getdistance2(ex,ez,ey,*vpoint)<fsqr(range))
             {
             ssize=sheight=height;
+            salpha=CONFIGURE_SIGNPOSTALPHA;
 
             if ((*vpoint)->opts!=NULL)
                {
                if ((*vpoint)->opts->signpostsize>0.0f) ssize=(*vpoint)->opts->signpostsize*SCALEELEV;
                if ((*vpoint)->opts->signpostheight>0.0f) sheight=(*vpoint)->opts->signpostheight*SCALEELEV;
+               if ((*vpoint)->opts->signpostalpha>0.0f) salpha=(*vpoint)->opts->signpostalpha;
                }
 
             // compile label information of waypoint within range
@@ -830,7 +833,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
             mtxrotate(yon,1.0f,0.0f,0.0f);
             mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
             mtxtranslate(-0.5f,0.0f,0.0f);
-            minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,CONFIGURE_SIGNPOSTALPHA); //!! use individual value
+            minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,salpha);
             mtxpop();
             }
 
