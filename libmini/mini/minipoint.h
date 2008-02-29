@@ -19,14 +19,15 @@ class minipointopts
       OPTION_TYPE=3,
       OPTION_SIGNPOSTSIZE=4,
       OPTION_SIGNPOSTHEIGHT=5,
-      OPTION_BRICKFILE=6,
-      OPTION_BRICKSIZE=7,
-      OPTION_BRICKTURN=8,
-      OPTION_BRICKINCLINE=9,
-      OPTION_BRICKCOLOR_RED=10,
-      OPTION_BRICKCOLOR_GREEN=11,
-      OPTION_BRICKCOLOR_BLUE=12,
-      OPTION_BRICKPASSES=13
+      OPTION_SIGNPOSTALPHA=6,
+      OPTION_BRICKFILE=7,
+      OPTION_BRICKSIZE=8,
+      OPTION_BRICKTURN=9,
+      OPTION_BRICKINCLINE=10,
+      OPTION_BRICKCOLOR_RED=11,
+      OPTION_BRICKCOLOR_GREEN=12,
+      OPTION_BRICKCOLOR_BLUE=13,
+      OPTION_BRICKPASSES=14
       };
 
    // default constructor
@@ -40,6 +41,7 @@ class minipointopts
    // signpost parameters
    float signpostsize;
    float signpostheight;
+   float signpostalpha;
 
    // brick parameters
    char *brickfile;
@@ -159,6 +161,9 @@ class minipoint
    void configure_dstdatum(int datum=3); // dest UTM datum
    void configure_automap(int automap=0); // take mapping from first waypoint
 
+   //! configuring of signpost rendering
+   void configure_signpostalpha(float signpostalpha=0.5f); // alpha value of signposts
+
    //! configuring of brick rendering
    void configure_brickceiling(float brickceiling=0.0f); // elevation modulates brick color
    void configure_brickpasses(int brickpasses=1); // render passes for brick display
@@ -204,6 +209,8 @@ class minipoint
    int CONFIGURE_DSTZONE;
    int CONFIGURE_DSTDATUM;
    int CONFIGURE_AUTOMAP;
+
+   float CONFIGURE_SIGNPOSTALPHA;
 
    float CONFIGURE_BRICKCEILING;
    int CONFIGURE_BRICKPASSES;

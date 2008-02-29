@@ -20,6 +20,7 @@ minipointopts::minipointopts()
 
    signpostsize=0.0f;
    signpostheight=0.0f;
+   signpostalpha=0.0f;
 
    brickfile=NULL;
    bricksize=0.0f;
@@ -66,6 +67,8 @@ minipoint::minipoint(minitile *tile)
    CONFIGURE_DSTZONE=0; // LatLon
    CONFIGURE_DSTDATUM=3; // WGS84
    CONFIGURE_AUTOMAP=0;
+
+   CONFIGURE_SIGNPOSTALPHA=0.5f;
 
    CONFIGURE_BRICKCEILING=0.0f;
    CONFIGURE_BRICKPASSES=1;
@@ -275,6 +278,7 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_TYPE: point->opts->type=ftrc(value+0.5f); break;
             case minipointopts::OPTION_SIGNPOSTSIZE: point->opts->signpostsize=value; break;
             case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; break;
+            case minipointopts::OPTION_SIGNPOSTALPHA: point->opts->signpostalpha=value; break;
             case minipointopts::OPTION_BRICKFILE: if (name!=NULL) point->opts->brickfile=strdup(name); break;
             case minipointopts::OPTION_BRICKSIZE: point->opts->bricksize=value; break;
             case minipointopts::OPTION_BRICKTURN: point->opts->brickturn=value; break;
@@ -826,7 +830,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
             mtxrotate(yon,1.0f,0.0f,0.0f);
             mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
             mtxtranslate(-0.5f,0.0f,0.0f);
-            minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,0.75f);
+            minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,CONFIGURE_SIGNPOSTALPHA); //!! use individual value
             mtxpop();
             }
 
@@ -1054,6 +1058,9 @@ void minipoint::configure_automap(int automap)
 
 void minipoint::configure_brickceiling(float brickceiling)
    {CONFIGURE_BRICKCEILING=brickceiling;}
+
+void minipoint::configure_signpostalpha(float signpostalpha)
+   {CONFIGURE_SIGNPOSTALPHA=signpostalpha;}
 
 void minipoint::configure_brickpasses(int brickpasses)
    {CONFIGURE_BRICKPASSES=brickpasses;}
