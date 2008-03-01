@@ -405,6 +405,11 @@ void loadsettings()
 
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
+   else
+      {
+      eye=viewer->getinitial();
+      initview(eye,0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
+      }
    }
 
 // save settings
@@ -1316,10 +1321,6 @@ int main(int argc,char *argv[])
 
    // load optional features
    viewer->getearth()->loadopts();
-
-   // set initial view point
-   eye=viewer->getinitial();
-   initview(eye,0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
 
    // initialize VIS bathy map
    initVISbathymap();
