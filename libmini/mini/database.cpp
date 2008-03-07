@@ -157,10 +157,28 @@ void databuf::copy(void *chunk,unsigned int length,
    {
    void *newdata;
 
-   if ((newdata=malloc(length))==NULL) ERRORMSG();
-   memcpy(newdata,chunk,length);
+   if (data!=NULL)
+      {
+      if (xs!=xsize || ys!=ysize || zs!=zsize || ts!=tsteps || ty!=type) ERRORMSG();
+      newdata=data;
+      }
+   else
+      if ((newdata=malloc(length))==NULL) ERRORMSG();
 
    set(newdata,length,xs,ys,zs,ts,ty);
+   memcpy(data,chunk,length);
+   }
+
+// copy data from buffer
+void databuf::copy(databuf *buf)
+   {copy(buf->data,buf->bytes,buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);}
+
+// duplicate data from buffer
+void databuf::duplicate(databuf *buf)
+   {
+   *this=*buf;
+   alloc(buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);
+   copy(buf);
    }
 
 // reset buffer
@@ -2287,35 +2305,49 @@ int databuf::checknodata()
    }
 
 // replace no-data values
-void databuf::replacenodata(float value)
+unsigned int databuf::replacenodata(float value)
    {
+   unsigned int count;
+
    unsigned int i,j,k,t;
+
+   count=0;
 
    // search for no-data values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
             for (k=0; k<zsize; k++)
-               if (getval(i,j,k,t)==nodata) setval(i,j,k,t,value);
+               if (getval(i,j,k,t)==nodata)
+                  {
+                  setval(i,j,k,t,value);
+                  count++;
+                  }
+
+   return(count);
    }
 
 // fill-in no-data values
-void databuf::fillnodata()
+unsigned int databuf::fillnodata()
    {
-   if (type!=0 && type!=1 && type!=2) return;
-   if (checknodata()==0) return;
+   if (type!=0 && type!=1 && type!=2) return(0);
+   if (checknodata()==0) return(0);
 
    if (type==0 || type==1) convertdata(2);
 
-   fillin_by_regiongrowing();
+   return(fillin_by_regiongrowing());
    }
 
 // replace invalid values
-void databuf::replaceinvalid(float usefs,float usefg,float useful)
+unsigned int databuf::replaceinvalid(float usefs,float usefg,float useful)
    {
+   unsigned int count;
+
    unsigned int i,j,k,t;
 
    float val;
+
+   count=0;
 
    // search for "no data" values
    for (t=0; t<tsteps; t++)
@@ -2326,8 +2358,14 @@ void databuf::replaceinvalid(float usefs,float usefg,float useful)
                val=getval(i,j,k,t);
 
                if ((val<usefs || val>usefg) &&
-                   (val>usefs || val<usefg)) setval(i,j,k,t,useful);
+                   (val>usefs || val<usefg))
+                  {
+                  setval(i,j,k,t,useful);
+                  count++;
+                  }
                }
+
+   return(count);
    }
 
 // compute absolute values
@@ -2384,9 +2422,40 @@ void databuf::print()
    }
 
 // fill-in no-data values by region growing
-void databuf::fillin_by_regiongrowing()
+unsigned int databuf::fillin_by_regiongrowing()
    {
-   //!!
+   unsigned int count;
+
+   unsigned int i,j,k,t;
+
+   databuf buf;
+
+   count=0;
+
+   // make a working copy
+   buf.duplicate(this);
+
+   while (checknodata()!=0)
+      {
+      // search for no-data values
+      for (t=0; t<tsteps; t++)
+         for (i=0; i<xsize; i++)
+            for (j=0; j<ysize; j++)
+               for (k=0; k<zsize; k++)
+                  if (getval(i,j,k,t)==nodata)
+                     {
+                     buf.setval(i,j,k,t,0.0f); //!!
+                     count++;
+                     }
+
+      // copy the working copy back
+      copy(&buf);
+      }
+
+   // free the working copy
+   buf.release();
+
+   return(count);
    }
 
 // swap byte ordering between MSB and LSB

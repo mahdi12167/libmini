@@ -71,6 +71,12 @@ class databuf
    void copy(void *chunk,unsigned int length,
              unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=0);
 
+   //! copy data from buffer
+   void copy(databuf *buf);
+
+   //! duplicate data from buffer
+   void duplicate(databuf *buf);
+
    //! reset buffer
    void reset();
 
@@ -199,13 +205,13 @@ class databuf
    int checknodata();
 
    //! replace no-data values
-   void replacenodata(float value);
+   unsigned int replacenodata(float value);
 
    //! fill-in no-data values
-   void fillnodata();
+   unsigned int fillnodata();
 
    //! replace invalid values
-   void replaceinvalid(float usefs,float usefg,float useful);
+   unsigned int replaceinvalid(float usefs,float usefg,float useful);
 
    //! compute absolute values
    void computeabsolute();
@@ -272,7 +278,7 @@ class databuf
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
-   void fillin_by_regiongrowing();
+   unsigned int fillin_by_regiongrowing();
 
    void swapbytes();
    };
