@@ -2427,33 +2427,81 @@ unsigned int databuf::fillin_by_regiongrowing()
    unsigned int count;
 
    unsigned int i,j,k,t;
+   unsigned int m,n,o,c;
 
    databuf buf;
 
+   int thres;
+
+   BOOLINT done;
+
+   float val[27];
+
+   float value;
+   int num;
+
    count=0;
 
-   // make a working copy
-   buf.duplicate(this);
-
-   while (checknodata()!=0)
+   if (checknodata()!=0)
       {
-      // search for no-data values
-      for (t=0; t<tsteps; t++)
-         for (i=0; i<xsize; i++)
-            for (j=0; j<ysize; j++)
-               for (k=0; k<zsize; k++)
-                  if (getval(i,j,k,t)==nodata)
-                     {
-                     buf.setval(i,j,k,t,0.0f); //!!
-                     count++;
-                     }
+      // calculate growing threshold for 1D 2D or 3D
+      if (xsize<2) thres=1;
+      else if (ysize<2) thres=1;
+      else if (zsize<2) thres=4;
+      else thres=12;
 
-      // copy the working copy back
-      copy(&buf);
+      // make a working copy
+      buf.duplicate(this);
+
+      done=FALSE;
+
+      while (!done)
+         {
+         done=TRUE;
+
+         // search for no-data values
+         for (t=0; t<tsteps; t++)
+            for (i=0; i<xsize; i++)
+               for (j=0; j<ysize; j++)
+                  for (k=0; k<zsize; k++)
+                     if (getval(i,j,k,t)==nodata)
+                        {
+                        // copy cells in the neighborhood
+                        for (m=-1; m<=1; m++)
+                           for (n=-1; n<=1; n++)
+                              for (o=-1; o<=1; o++)
+                                 if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize) val[m+1+(n+1+(o+1)*3)*3]=getval(i+m,j+n,k+o,t);
+                                 else val[m+1+(n+1+(o+1)*3)*3]=nodata;
+
+                        value=0.0f;
+                        num=0;
+
+                        // count valid cells
+                        for (c=0; c<27; c++)
+                           if (val[c]!=nodata)
+                              {
+                              value+=val[c];
+                              num++;
+                              }
+
+                        // check number of valid cells against growing threshold
+                        if (num>=thres)
+                           {
+                           // fill-in average value of neighbor cells
+                           buf.setval(i,j,k,t,value/num);
+                           count++;
+
+                           done=FALSE;
+                           }
+                        }
+
+         // copy the working copy back
+         copy(&buf);
+         }
+      
+      // free the working copy
+      buf.release();
       }
-
-   // free the working copy
-   buf.release();
 
    return(count);
    }
