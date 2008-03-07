@@ -15,7 +15,8 @@
 unsigned int databuf::MAGIC1=12640; // original magic identifier of DB version 1
 unsigned int databuf::MAGIC2=13048; // backwards compatibility for DB version 2
 unsigned int databuf::MAGIC3=13091; // backwards compatibility for DB version 3
-unsigned int databuf::MAGIC4=13269; // actual magic identifier of DB version 4
+unsigned int databuf::MAGIC4=13269; // backwards compatibility for DB version 4
+unsigned int databuf::MAGIC5=13398; // actual magic identifier of DB version 5
 
 // helper variable for LSB vs. MSB check
 unsigned short int databuf::INTEL_CHECK=1;
@@ -62,8 +63,10 @@ databuf::databuf()
    scaling=1.0f;
    bias=0.0f;
 
-   minvalue=1.0f;
-   maxvalue=0.0f;
+   minvalue=MAXFLOAT;
+   maxvalue=-MAXFLOAT;
+
+   nodata=-MAXFLOAT;
 
    extformat=0;
    implformat=0;
@@ -462,7 +465,7 @@ void databuf::savedata(const char *filename,
    if ((file=fopen(filename,"wb"))==NULL) ERRORMSG();
 
    // save magic identifier
-   writeparam("MAGIC",MAGIC4,file);
+   writeparam("MAGIC",MAGIC5,file);
 
    // save mandatory metadata
    writeparam("xsize",xsize,file);
@@ -488,6 +491,9 @@ void databuf::savedata(const char *filename,
    // save optional scaling
    writeparam("scaling",scaling,file);
    writeparam("bias",bias,file);
+
+   // save no-data indicator
+   writeparam("nodata",nodata,file);
 
    // save external format indicator
    writeparam("extformat",extformat,file);
@@ -549,7 +555,7 @@ int databuf::loaddata(const char *filename)
       fclose(file);
       return(0);
       }
-   else if (m!=MAGIC1 && m!=MAGIC2 && m!=MAGIC3 && m!=MAGIC4)
+   else if (m!=MAGIC1 && m!=MAGIC2 && m!=MAGIC3 && m!=MAGIC4 && m!=MAGIC5)
       {
       fclose(file);
       return(0);
@@ -579,6 +585,10 @@ int databuf::loaddata(const char *filename)
    // read optional scaling
    if (readparam("scaling",&scaling,file)==0) ERRORMSG();
    if (readparam("bias",&bias,file)==0) ERRORMSG();
+
+   // read no-data indicator
+   if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4) nodata=-MAXFLOAT;
+   else if (readparam("nodata",&nodata,file)==0) ERRORMSG();
 
    // read external format indicator
    if (m==MAGIC1) extformat=0;
@@ -1051,13 +1061,15 @@ int databuf::loadPNMdata(const char *filename)
                       &vscale,&missing,
                       &utm_zone,&utm_datum)!=0)
       {
+      nodata=missing;
+
       if (utm_zone!=0)
          {
          miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
          miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
          miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
          miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
-      }
+         }
 
       swx=coord[0];
       swy=coord[1];
@@ -2001,37 +2013,44 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
       }
    }
 
+// set the no-data indicator
+void databuf::setnodata(float value)
+   {nodata=value;}
+
 // get the minimum and maximum scalar value
 void databuf::getminmax(float *minval,float *maxval)
    {
    unsigned int i,j,k,t;
 
    float val;
-   float minv,maxv;
 
-   if (minval==NULL || maxval==NULL)
-      if (minvalue<=maxvalue) return;
-      else
-         {
-         minval=&minvalue;
-         maxval=&maxvalue;
-         }
+   if (minvalue>maxvalue)
+      {
+      minvalue=MAXFLOAT;
+      maxvalue=-MAXFLOAT;
 
-   minv=maxv=getval(0,0,0,0);
+      for (t=0; t<tsteps; t++)
+         for (i=0; i<xsize; i++)
+            for (j=0; j<ysize; j++)
+               for (k=0; k<zsize; k++)
+                  {
+                  val=getval(i,j,k,t);
 
-   for (t=0; t<tsteps; t++)
-      for (i=0; i<xsize; i++)
-         for (j=0; j<ysize; j++)
-            for (k=0; k<zsize; k++)
-               {
-               val=getval(i,j,k,t);
+                  if (val!=nodata)
+                     {
+                     if (val<minvalue) minvalue=val;
+                     if (val>maxvalue) maxvalue=val;
+                     }
+                  }
 
-               if (val<minv) minv=val;
-               else if (val>maxv) maxv=val;
-               }
+      if (minvalue>maxvalue) minvalue=maxvalue=nodata;
+      }
 
-   *minval=minv;
-   *maxval=maxv;
+   if (minval!=NULL && maxval!=NULL)
+      {
+      *minval=minvalue;
+      *maxval=maxvalue;
+      }
    }
 
 // get the minimum and maximum scalar value within a useful range
@@ -2041,55 +2060,55 @@ void databuf::getminmax(float usefs,float usefg,
    unsigned int i,j,k,t;
 
    float val;
-   float minv,maxv;
 
-   if (minval==NULL || maxval==NULL)
-      if (minvalue<=maxvalue) return;
-      else
-         {
-         minval=&minvalue;
-         maxval=&maxvalue;
-         }
+   if (minvalue>maxvalue)
+      {
+      minvalue=MAXFLOAT;
+      maxvalue=-MAXFLOAT;
 
-   minv=0.0f;
-   maxv=1.0f;
-
-   // search valid scalar value
-   for (t=0; t<tsteps; t++)
-      for (i=0; i<xsize; i++)
-         for (j=0; j<ysize; j++)
-            for (k=0; k<zsize; k++)
-               {
-               val=getval(i,j,k,t);
-
-               if ((val>=usefs && val<=usefg) ||
-                   (val<=usefs && val>=usefg))
+      // check all scalar values except the "no data" values
+      for (t=0; t<tsteps; t++)
+         for (i=0; i<xsize; i++)
+            for (j=0; j<ysize; j++)
+               for (k=0; k<zsize; k++)
                   {
-                  minv=maxv=val;
+                  val=getval(i,j,k,t);
 
-                  i=xsize;
-                  j=ysize;
-                  k=zsize;
-                  t=tsteps;
+                  if ((val<usefs || val>usefg) &&
+                      (val>usefs || val<usefg))
+                     {
+                     if (val<minvalue) minvalue=val;
+                     if (val>maxvalue) maxvalue=val;
+                     }
                   }
-               }
 
-   // check all scalar values except the "no data" values
+      if (minvalue>maxvalue) minvalue=maxvalue=nodata;
+      }
+
+   if (minval!=NULL && maxval!=NULL)
+      {
+      *minval=minvalue;
+      *maxval=maxvalue;
+      }
+   }
+
+// replace no-data values
+void databuf::replacenodata(float value)
+   {
+   unsigned int i,j,k,t;
+
+   // check for no-data values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
             for (k=0; k<zsize; k++)
-               {
-               val=getval(i,j,k,t);
+               if (getval(i,j,k,t)==nodata) setval(i,j,k,t,value);
+   }
 
-               if ((val<usefs || val>usefg) &&
-                   (val>usefs || val<usefg))
-                  if (val<minv) minv=val;
-                  else if (val>maxv) maxv=val;
-               }
-
-   *minval=minv;
-   *maxval=maxv;
+// fill-in no-data values
+void databuf::fillnodata()
+   {
+   //!! todo
    }
 
 // replace invalid values
@@ -2124,13 +2143,20 @@ void databuf::computeabsolute()
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
             for (k=0; k<zsize; k++)
-               if ((val=getval(i,j,k,t))<0.0f) setval(i,j,k,t,-val);
+               {
+               val=getval(i,j,k,t);
+
+               if (val!=nodata)
+                  if (val<0.0f) setval(i,j,k,t,-val);
+               }
    }
 
 // print values
 void databuf::print()
    {
    unsigned int i,j,k,t;
+
+   float val;
 
    if (!missing())
       if (type==0 || type==1 || type==2)
@@ -2140,7 +2166,14 @@ void databuf::print()
                {
                for (j=0; j<ysize; j++)
                   {
-                  for (i=0; i<xsize; i++) printf("%g ",getval(i,j,k,t));
+                  for (i=0; i<xsize; i++)
+                     {
+                     val=getval(i,j,k,t);
+
+                     if (val!=nodata) printf("%g ",val);
+                     else printf("none ");
+                     }
+
                   printf("\n");
                   }
 

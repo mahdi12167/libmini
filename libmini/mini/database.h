@@ -38,6 +38,9 @@ class databuf
    float minvalue;
    float maxvalue;
 
+   //! no-data indicator
+   float nodata;
+
    //! indicator for external format
    unsigned int extformat; // 0=plain, 1=JPEG, 2=PNG
 
@@ -177,10 +180,15 @@ class databuf
                       float dx,float dy,float dz); // dimension of box
 
    //! convert data from one type to another
+   //! does not check for no-data values
    void convertdata(unsigned int newtype);
 
    //! resample data at a higher resolution
+   //! does not check for no-data values
    void resampledata(unsigned int xs,unsigned int ys,unsigned int zs);
+
+   //! set the no-data indicator
+   void setnodata(float value);
 
    //! get the minimum and maximum scalar value
    void getminmax(float *minval=0,float *maxval=0);
@@ -188,6 +196,12 @@ class databuf
    //! get the minimum and maximum scalar value within a useful range
    void getminmax(float usefs,float usefg, // useful range
                   float *minval=0,float *maxval=0); // result range
+
+   //! replace no-data values
+   void replacenodata(float value);
+
+   //! fill-in no-data values
+   void fillnodata();
 
    //! replace invalid values
    void replaceinvalid(float usefs,float usefg,float useful);
@@ -218,6 +232,7 @@ class databuf
    static unsigned int MAGIC2;
    static unsigned int MAGIC3;
    static unsigned int MAGIC4;
+   static unsigned int MAGIC5;
 
    private:
 
