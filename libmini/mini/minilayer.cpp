@@ -68,7 +68,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.exaggeration=1.0f;      // exaggeration of elevations
    LPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
-   LPARAMS.load=0.1f;              // initially loaded area relative to far plane
+   LPARAMS.load=0.01f;             // initially loaded area relative to far plane
    LPARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
 
    LPARAMS.minres=9.0f;            // minimum resolution of triangulation

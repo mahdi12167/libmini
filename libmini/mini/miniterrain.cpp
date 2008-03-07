@@ -18,7 +18,7 @@ miniterrain::miniterrain()
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
    TPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
-   TPARAMS.load=0.1f;              // initially loaded area relative to far plane
+   TPARAMS.load=0.01f;             // initially loaded area relative to far plane
    TPARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
 
    TPARAMS.minres=9.0f;            // minimum resolution of triangulation
