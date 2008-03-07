@@ -19,6 +19,9 @@ int main(int argc,char *argv[])
    // load buffer
    if (imgbase::loadimg(buf,argv[1])!=0)
       {
+      // fill-in no-data values
+      buf.fillnodata();
+
       // save buffer
       imgbase::saveimg(buf,argv[2],jpgquality);
 

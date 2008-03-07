@@ -1558,10 +1558,7 @@ void databuf::convertdata(unsigned int newtype)
       byteptr=(unsigned char *)data;
       floatptr=(float *)newdata;
 
-      for (count=0; count<cells; count++) *floatptr++=scaling*(*byteptr++)+bias;
-
-      scaling=1.0f;
-      bias=0.0f;
+      for (count=0; count<cells; count++) *floatptr++=*byteptr++;
 
       free(data);
       data=newdata;
@@ -1572,11 +1569,14 @@ void databuf::convertdata(unsigned int newtype)
    else if (type==1 && newtype==0)
       {
       shortptr=(short int *)data;
-      minvalue=maxvalue=scaling*(*shortptr++)+bias;
 
-      for (count=1; count<cells; count++,shortptr++)
+      if (*shortptr==nodata) minvalue=maxvalue=*shortptr++;
+      else minvalue=maxvalue=scaling*(*shortptr++)+bias;
+
+      for (count=1; count<cells; count++)
          {
-         value=scaling*(*shortptr)+bias;
+         value=*shortptr++;
+         if (value!=nodata) value=scaling*value+bias;
 
          if (value<minvalue) minvalue=value;
          else if (value>maxvalue) maxvalue=value;
@@ -1591,12 +1591,16 @@ void databuf::convertdata(unsigned int newtype)
 
       for (count=0; count<cells; count++)
          {
-         value=scaling*(*shortptr++)+bias;
+         value=*shortptr++;
+         if (value!=nodata) value=scaling*value+bias;
+
          *byteptr++=ftrc(255.0f*(value-minvalue)/(maxvalue-minvalue)+0.5f);
          }
 
       scaling=(maxvalue-minvalue)/255.0f;
       bias=minvalue;
+
+      nodata=ftrc(255.0f*(nodata-minvalue)/(maxvalue-minvalue)+0.5f);
 
       free(data);
       data=newdata;
@@ -1611,10 +1615,7 @@ void databuf::convertdata(unsigned int newtype)
       shortptr=(short int *)data;
       floatptr=(float *)newdata;
 
-      for (count=0; count<cells; count++) *floatptr++=scaling*(*shortptr++)+bias;
-
-      scaling=1.0f;
-      bias=0.0f;
+      for (count=0; count<cells; count++) *floatptr++=*shortptr++;
 
       free(data);
       data=newdata;
@@ -1625,11 +1626,14 @@ void databuf::convertdata(unsigned int newtype)
    else if (type==2 && newtype==0)
       {
       floatptr=(float *)data;
-      minvalue=maxvalue=scaling*(*floatptr++)+bias;
 
-      for (count=1; count<cells; count++,floatptr++)
+      if (*floatptr==nodata) minvalue=maxvalue=*floatptr++;
+      else minvalue=maxvalue=scaling*(*floatptr++)+bias;
+
+      for (count=1; count<cells; count++)
          {
-         value=scaling*(*floatptr)+bias;
+         value=*floatptr++;
+         if (value!=nodata) value=scaling*value+bias;
 
          if (value<minvalue) minvalue=value;
          else if (value>maxvalue) maxvalue=value;
@@ -1644,12 +1648,16 @@ void databuf::convertdata(unsigned int newtype)
 
       for (count=0; count<cells; count++)
          {
-         value=scaling*(*floatptr++)+bias;
+         value=*floatptr++;
+         if (value!=nodata) value=scaling*value+bias;
+
          *byteptr++=ftrc(255.0f*(value-minvalue)/(maxvalue-minvalue)+0.5f);
          }
 
       scaling=(maxvalue-minvalue)/255.0f;
       bias=minvalue;
+
+      nodata=ftrc(255.0f*(nodata-minvalue)/(maxvalue-minvalue)+0.5f);
 
       free(data);
       data=newdata;
@@ -1660,11 +1668,14 @@ void databuf::convertdata(unsigned int newtype)
    else if (type==2 && newtype==1)
       {
       floatptr=(float *)data;
-      minvalue=maxvalue=scaling*(*floatptr++)+bias;
 
-      for (count=1; count<cells; count++,floatptr++)
+      if (*floatptr==nodata) minvalue=maxvalue=*floatptr++;
+      else minvalue=maxvalue=scaling*(*floatptr++)+bias;
+
+      for (count=1; count<cells; count++)
          {
-         value=scaling*(*floatptr)+bias;
+         value=*floatptr++;
+         if (value!=nodata) value=scaling*value+bias;
 
          if (value<minvalue) minvalue=value;
          else if (value>maxvalue) maxvalue=value;
@@ -1679,12 +1690,16 @@ void databuf::convertdata(unsigned int newtype)
 
       for (count=0; count<cells; count++)
          {
-         value=scaling*(*floatptr++)+bias;
+         value=*floatptr++;
+         if (value!=nodata) value=scaling*value+bias;
+
          *shortptr++=ftrc(65535.0f*(value-minvalue)/(maxvalue-minvalue)-32768.0f+0.5f);
          }
 
       scaling=(maxvalue-minvalue)/65535.0f;
       bias=minvalue+32768.0f*scaling;
+
+      nodata=ftrc(65535.0f*(nodata-minvalue)/(maxvalue-minvalue)-32768.0f+0.5f);
 
       free(data);
       data=newdata;
@@ -1697,10 +1712,18 @@ void databuf::convertdata(unsigned int newtype)
       floatptr=(float *)data;
 
       if (scaling!=1.0f || bias!=0.0f)
-         for (count=0; count<cells; count++,floatptr++) *floatptr=scaling*(*floatptr)+bias;
+         {
+         for (count=0; count<cells; count++)
+            {
+            value=*floatptr;
+            if (value!=nodata) value=scaling*value+bias;
 
-      scaling=1.0f;
-      bias=0.0f;
+            *floatptr++=value;
+            }
+
+         scaling=1.0f;
+         bias=0.0f;
+         }
       }
    }
 
@@ -1713,8 +1736,10 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
    short int *shortptr;
    float *floatptr;
 
-   if (xs<2 || ys<2 || zs<2) ERRORMSG();
-   if (xsize<2 || ysize<2 || zsize<2) ERRORMSG();
+   float value;
+
+   if (xs<2 && ys<2 && zs<2) ERRORMSG();
+   if (xsize<2 && ysize<2 && zsize<2) ERRORMSG();
 
    if (xs==xsize && ys==ysize && zs==zsize) return;
 
@@ -1727,9 +1752,16 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
             for (i=0; i<xs; i++)
                for (j=0; j<ys; j++)
                   for (k=0; k<zs; k++)
-                     byteptr[i+(j+(k+t*zs)*ys)*xs]=ftrc(getvalue((float)i/(xs-1),
-                                                                 (float)j/(ys-1),
-                                                                 (float)k/(zs-1),t)+0.5f);
+                     {
+                     if (xs<2) value=getvalue(0.0f,0.0f,0.0f,t);
+                     else if (ys<2) value=getvalue((float)i/(xs-1),0.0f,0.0f,t);
+                     else if (zs<2) value=getvalue((float)i/(xs-1),(float)j/(ys-1),0.0f,t);
+                     else value=getvalue((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t);
+
+                     if (value!=nodata) value=(value-bias)/scaling;
+
+                     byteptr[i+(j+(k+t*zs)*ys)*xs]=ftrc(value+0.5f);
+                     }
 
          free(data);
          data=byteptr;
@@ -1748,9 +1780,16 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
             for (i=0; i<xs; i++)
                for (j=0; j<ys; j++)
                   for (k=0; k<zs; k++)
-                     shortptr[i+(j+(k+t*zs)*ys)*xs]=ftrc(getvalue((float)i/(xs-1),
-                                                                  (float)j/(ys-1),
-                                                                  (float)k/(zs-1),t)+0.5f);
+                     {
+                     if (xs<2) value=getvalue(0.0f,0.0f,0.0f,t);
+                     else if (ys<2) value=getvalue((float)i/(xs-1),0.0f,0.0f,t);
+                     else if (zs<2) value=getvalue((float)i/(xs-1),(float)j/(ys-1),0.0f,t);
+                     else value=getvalue((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t);
+
+                     if (value!=nodata) value=(value-bias)/scaling;
+
+                     shortptr[i+(j+(k+t*zs)*ys)*xs]=ftrc(value+0.5f);
+                     }
 
          free(data);
          data=shortptr;
@@ -1769,9 +1808,16 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
             for (i=0; i<xs; i++)
                for (j=0; j<ys; j++)
                   for (k=0; k<zs; k++)
-                     floatptr[i+(j+(k+t*zs)*ys)*xs]=getvalue((float)i/(xs-1),
-                                                             (float)j/(ys-1),
-                                                             (float)k/(zs-1),t);
+                     {
+                     if (xs<2) value=getvalue(0.0f,0.0f,0.0f,t);
+                     else if (ys<2) value=getvalue((float)i/(xs-1),0.0f,0.0f,t);
+                     else if (zs<2) value=getvalue((float)i/(xs-1),(float)j/(ys-1),0.0f,t);
+                     else value=getvalue((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t);
+
+                     if (value!=nodata) value=(value-bias)/scaling;
+
+                     floatptr[i+(j+(k+t*zs)*ys)*xs]=value;
+                     }
 
          free(data);
          data=floatptr;
@@ -1797,15 +1843,18 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       {
       case 0:
          byteptr=(unsigned char *)data;
-         byteptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) byteptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
+         else byteptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case 1:
          shortptr=(short int *)data;
-         shortptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) shortptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
+         else shortptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case 2:
          floatptr=(float *)data;
-         floatptr[i+(j+k*ysize)*xsize]=(value-bias)/scaling;
+         if (value==nodata) floatptr[i+(j+k*ysize)*xsize]=value;
+         else floatptr[i+(j+k*ysize)*xsize]=(value-bias)/scaling;
          break;
       }
    }
@@ -1821,15 +1870,18 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       {
       case 0:
          byteptr=(unsigned char *)data;
-         byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
+         else byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case 1:
          shortptr=(short int *)data;
-         shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
+         else shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case 2:
          floatptr=(float *)data;
-         floatptr[i+(j+(k+t*zsize)*ysize)*xsize]=(value-bias)/scaling;
+         if (value==nodata) floatptr[i+(j+(k+t*zsize)*ysize)*xsize]=value;
+         else floatptr[i+(j+(k+t*zsize)*ysize)*xsize]=(value-bias)/scaling;
          break;
       }
    }
@@ -1841,17 +1893,25 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
    short int *shortptr;
    float *floatptr;
 
+   float val;
+
    switch (type)
       {
       case 0:
          byteptr=(unsigned char *)data;
-         return(scaling*(byteptr[i+(j+k*ysize)*xsize]+bias));
+         val=byteptr[i+(j+k*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       case 1:
          shortptr=(short int *)data;
-         return(scaling*(shortptr[i+(j+k*ysize)*xsize]+bias));
+         val=shortptr[i+(j+k*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       case 2:
          floatptr=(float *)data;
-         return(scaling*(floatptr[i+(j+k*ysize)*xsize]+bias));
+         val=floatptr[i+(j+k*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       }
 
    return(0.0f);
@@ -1864,17 +1924,25 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
    short int *shortptr;
    float *floatptr;
 
+   float val;
+
    switch (type)
       {
       case 0:
          byteptr=(unsigned char *)data;
-         return(scaling*(byteptr[i+(j+(k+t*zsize)*ysize)*xsize]+bias));
+         val=byteptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       case 1:
          shortptr=(short int *)data;
-         return(scaling*(shortptr[i+(j+(k+t*zsize)*ysize)*xsize]+bias));
+         val=shortptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       case 2:
          floatptr=(float *)data;
-         return(scaling*(floatptr[i+(j+(k+t*zsize)*ysize)*xsize]+bias));
+         val=floatptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         if (val==nodata) return(val);
+         else return(scaling*(val+bias));
       }
 
    return(0.0f);
@@ -1890,6 +1958,9 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    float *floatptr;
 
    unsigned int slice;
+
+   float val1,val2,val3,val4;
+   float val5,val6,val7,val8;
 
    x*=xsize-1;
    y*=ysize-1;
@@ -1928,27 +1999,135 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
       case 0:
          byteptr=&((unsigned char *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
 
-         return((1.0f-z)*((1.0f-y)*((1.0f-x)*byteptr[0]+x*byteptr[1])+
-                          y*((1.0f-x)*byteptr[xsize]+x*byteptr[xsize+1]))+
-                z*((1.0f-y)*((1.0f-x)*byteptr[slice]+x*byteptr[slice+1])+
-                   y*((1.0f-x)*byteptr[slice+xsize]+x*byteptr[slice+xsize+1])));
+         val1=byteptr[0];
+
+         if (val1==nodata) return(nodata);
+
+         if (xsize<2)
+            return(scaling*val1+bias);
+         else
+            {
+            val2=byteptr[1];
+
+            if (val2==nodata) return(nodata);
+
+            if (ysize<2)
+               return(scaling*((1.0f-x)*val1+x*val2)+bias);
+            else
+               {
+               val3=byteptr[xsize];
+               val4=byteptr[xsize+1];
+
+               if (val3==nodata || val4==nodata) return(nodata);
+
+               if (zsize<2)
+                  return(((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                          y*((1.0f-x)*val3+x*val4))*scaling+bias);
+               else
+                  {
+                  val5=byteptr[slice];
+                  val6=byteptr[slice+1];
+                  val7=byteptr[slice+xsize];
+                  val8=byteptr[slice+xsize+1];
+
+                  if (val5==nodata || val6==nodata || val7==nodata || val8==nodata) return(nodata);
+
+                  return(scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                                            y*((1.0f-x)*val3+x*val4))+
+                                  z*((1.0f-y)*((1.0f-x)*val5+x*val6)+
+                                     y*((1.0f-x)*val7+x*val8)))+bias);
+                  }
+               }
+            }
       case 1:
          shortptr=&((short int *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
 
-         return((1.0f-z)*((1.0f-y)*((1.0f-x)*shortptr[0]+x*shortptr[1])+
-                          y*((1.0f-x)*shortptr[xsize]+x*shortptr[xsize+1]))+
-                z*((1.0f-y)*((1.0f-x)*shortptr[slice]+x*shortptr[slice+1])+
-                   y*((1.0f-x)*shortptr[slice+xsize]+x*shortptr[slice+xsize+1])));
+         val1=shortptr[0];
+
+         if (val1==nodata) return(nodata);
+
+         if (xsize<2)
+            return(scaling*val1+bias);
+         else
+            {
+            val2=shortptr[1];
+
+            if (val2==nodata) return(nodata);
+
+            if (ysize<2)
+               return(scaling*((1.0f-x)*val1+x*val2)+bias);
+            else
+               {
+               val3=shortptr[xsize];
+               val4=shortptr[xsize+1];
+
+               if (val3==nodata || val4==nodata) return(nodata);
+
+               if (zsize<2)
+                  return(((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                          y*((1.0f-x)*val3+x*val4))*scaling+bias);
+               else
+                  {
+                  val5=shortptr[slice];
+                  val6=shortptr[slice+1];
+                  val7=shortptr[slice+xsize];
+                  val8=shortptr[slice+xsize+1];
+
+                  if (val5==nodata || val6==nodata || val7==nodata || val8==nodata) return(nodata);
+
+                  return(scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                                            y*((1.0f-x)*val3+x*val4))+
+                                  z*((1.0f-y)*((1.0f-x)*val5+x*val6)+
+                                     y*((1.0f-x)*val7+x*val8)))+bias);
+                  }
+               }
+            }
       case 2:
          floatptr=&((float *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
 
-         return((1.0f-z)*((1.0f-y)*((1.0f-x)*floatptr[0]+x*floatptr[1])+
-                          y*((1.0f-x)*floatptr[xsize]+x*floatptr[xsize+1]))+
-                z*((1.0f-y)*((1.0f-x)*floatptr[slice]+x*floatptr[slice+1])+
-                   y*((1.0f-x)*floatptr[slice+xsize]+x*floatptr[slice+xsize+1])));
+         val1=floatptr[0];
+
+         if (val1==nodata) return(nodata);
+
+         if (xsize<2)
+            return(scaling*val1+bias);
+         else
+            {
+            val2=floatptr[1];
+
+            if (val2==nodata) return(nodata);
+
+            if (ysize<2)
+               return(scaling*((1.0f-x)*val1+x*val2)+bias);
+            else
+               {
+               val3=floatptr[xsize];
+               val4=floatptr[xsize+1];
+
+               if (val3==nodata || val4==nodata) return(nodata);
+
+               if (zsize<2)
+                  return(((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                          y*((1.0f-x)*val3+x*val4))*scaling+bias);
+               else
+                  {
+                  val5=floatptr[slice];
+                  val6=floatptr[slice+1];
+                  val7=floatptr[slice+xsize];
+                  val8=floatptr[slice+xsize+1];
+
+                  if (val5==nodata || val6==nodata || val7==nodata || val8==nodata) return(nodata);
+
+                  return(scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                                            y*((1.0f-x)*val3+x*val4))+
+                                  z*((1.0f-y)*((1.0f-x)*val5+x*val6)+
+                                     y*((1.0f-x)*val7+x*val8)))+bias);
+                  }
+               }
+            }
       }
 
-   return(0.0f);
+   return(nodata);
    }
 
 // set rgb color
@@ -2092,12 +2271,27 @@ void databuf::getminmax(float usefs,float usefg,
       }
    }
 
+// check for no-data values
+int databuf::checknodata()
+   {
+   unsigned int i,j,k,t;
+
+   // check for no-data values
+   for (t=0; t<tsteps; t++)
+      for (i=0; i<xsize; i++)
+         for (j=0; j<ysize; j++)
+            for (k=0; k<zsize; k++)
+               if (getval(i,j,k,t)==nodata) return(1);
+
+   return(0);
+   }
+
 // replace no-data values
 void databuf::replacenodata(float value)
    {
    unsigned int i,j,k,t;
 
-   // check for no-data values
+   // search for no-data values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
@@ -2108,7 +2302,12 @@ void databuf::replacenodata(float value)
 // fill-in no-data values
 void databuf::fillnodata()
    {
-   //!! todo
+   if (type!=0 && type!=1 && type!=2) return;
+   if (checknodata()==0) return;
+
+   if (type==0 || type==1) convertdata(2);
+
+   fillin_by_regiongrowing();
    }
 
 // replace invalid values
@@ -2118,7 +2317,7 @@ void databuf::replaceinvalid(float usefs,float usefg,float useful)
 
    float val;
 
-   // check for "no data" values
+   // search for "no data" values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
@@ -2138,7 +2337,7 @@ void databuf::computeabsolute()
 
    float val;
 
-   // check for negative values
+   // search for negative values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
@@ -2182,6 +2381,12 @@ void databuf::print()
 
             if (t<tsteps-1) printf("\n");
             }
+   }
+
+// fill-in no-data values by region growing
+void databuf::fillin_by_regiongrowing()
+   {
+   //!!
    }
 
 // swap byte ordering between MSB and LSB

@@ -180,11 +180,9 @@ class databuf
                       float dx,float dy,float dz); // dimension of box
 
    //! convert data from one type to another
-   //! does not check for no-data values
    void convertdata(unsigned int newtype);
 
    //! resample data at a higher resolution
-   //! does not check for no-data values
    void resampledata(unsigned int xs,unsigned int ys,unsigned int zs);
 
    //! set the no-data indicator
@@ -196,6 +194,9 @@ class databuf
    //! get the minimum and maximum scalar value within a useful range
    void getminmax(float usefs,float usefg, // useful range
                   float *minval=0,float *maxval=0); // result range
+
+   //! check for no-data values
+   int checknodata();
 
    //! replace no-data values
    void replacenodata(float value);
@@ -216,6 +217,9 @@ class databuf
    //! get a single scalar value
    float getval(const unsigned int i,const unsigned int j,const unsigned int k);
    float getval(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t);
+
+   //! get an interpolated scalar value
+   float getvalue(float x,float y,float z,unsigned int t);
 
    //! set rgb[a] color
    void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float *value);
@@ -268,7 +272,7 @@ class databuf
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
-   float getvalue(float x,float y,float z,unsigned int t);
+   void fillin_by_regiongrowing();
 
    void swapbytes();
    };
