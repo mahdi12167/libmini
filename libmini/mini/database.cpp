@@ -2448,7 +2448,7 @@ unsigned int databuf::fillin_by_regiongrowing()
       if (xsize<2) thres=1;
       else if (ysize<2) thres=1;
       else if (zsize<2) thres=4;
-      else thres=12;
+      else thres=13;
 
       // make a working copy
       buf.duplicate(this);
@@ -2498,7 +2498,7 @@ unsigned int databuf::fillin_by_regiongrowing()
          // copy the working copy back
          copy(&buf);
          }
-      
+
       // free the working copy
       buf.release();
       }
