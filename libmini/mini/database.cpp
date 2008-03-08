@@ -2534,7 +2534,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
    float v1,v2;
    float dx,dy,dz;
    int dxnum,dynum,dznum;
-   float val;
+   float val,weight,sum;
 
    count=0;
 
@@ -2652,6 +2652,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                            if (dznum>0) dz/=dznum;
 
                            val=0.0f;
+                           sum=0.0f;
 
                            // extrapolate partial derivatives
                            for (m=-sizex/2; m<=sizex/2; m++)
@@ -2660,13 +2661,24 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                                     if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                        {
                                        v1=getval(i+m,j+n,k+o,t);
-                                       if (v1!=nodata) val+=v1-m*dx-n*dy-o*dz;
+
+                                       if (v1!=nodata)
+                                          {
+                                          v2=v1-m*dx-n*dy-o*dz;
+                                          weight=m*m+n*n+o*o;
+
+                                          if (weight>0.0f)
+                                             {
+                                             val+=v2/weight;
+                                             sum+=1.0f/weight;
+                                             }
+                                          }
                                        }
 
                            // fill-in extrapolated value
-                           if (num>0)
+                           if (sum>0.0f)
                               {
-                              val/=num;
+                              val/=sum;
                               if ((val-bias)/scaling==nodata) val+=scaling;
 
                               buf.setval(i,j,k,t,val);
