@@ -4,6 +4,8 @@
 
 #include "imgbase.h"
 
+static const int fillin_radius=4;
+
 int main(int argc,char *argv[])
    {
    databuf buf;
@@ -20,7 +22,7 @@ int main(int argc,char *argv[])
    if (imgbase::loadimg(buf,argv[1])!=0)
       {
       // fill-in no-data values
-      buf.fillnodata();
+      buf.fillnodata(fillin_radius);
 
       // save buffer
       imgbase::saveimg(buf,argv[2],jpgquality);
