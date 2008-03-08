@@ -1134,6 +1134,7 @@ int databuf::loadPNMdata(const char *filename)
       LLWGS84_sex=coord[6]/(60*60);
       LLWGS84_sey=coord[7]/(60*60);
       }
+   else vscale=1.0f;
 
    h0=dh=0.0f;
    t0=dt=0.0f;
@@ -2005,7 +2006,7 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
          else return(scaling*(val+bias));
       }
 
-   return(0.0f);
+   return(nodata);
    }
 
 // get a single scalar value
@@ -2036,7 +2037,7 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
          else return(scaling*(val+bias));
       }
 
-   return(0.0f);
+   return(nodata);
    }
 
 // sample brick at normalized position (x,y,z) and time frame t
@@ -2409,7 +2410,9 @@ unsigned int databuf::fillnodata(int radius)
 
    oldtype=type;
 
-   if (type==3) convertdata(0);
+   if (type==3)
+      if (nodata==-MAXFLOAT) return(0);
+      else convertdata(0);
 
    if (type!=0 && type!=1 && type!=2) return(0);
 
