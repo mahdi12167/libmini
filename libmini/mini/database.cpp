@@ -286,47 +286,56 @@ void databuf::writeparam(char *tag,float v,FILE *file,int digits)
       }
    else value=v;
 
-   point=1.0;
-
-   while (10.0*point<=value) point*=10.0;
-
-   if (value<1.0) putc('0',file);
-   else
-      while (point>=1.0)
-         {
-         digit=(int)floor(value/point);
-
-         if (digit<0) digit=0;
-         else if (digit>9) digit=9;
-
-         value-=digit*point;
-         point/=10.0;
-
-         putc(digit+'0',file);
-
-         digits--;
-         }
-
-   if (value>0.0)
+   if (value==MAXFLOAT)
       {
-      putc('.',file);
+      putc('m',file);
+      putc('a',file);
+      putc('x',file);
+      }
+   else
+      {
+      point=1.0;
 
-      point=0.1;
+      while (10.0*point<=value) point*=10.0;
 
-      while (value>0.0 && digits>0)
+      if (value<1.0) putc('0',file);
+      else
+         while (point>=1.0)
+            {
+            digit=(int)floor(value/point);
+
+            if (digit<0) digit=0;
+            else if (digit>9) digit=9;
+
+            value-=digit*point;
+            point/=10.0;
+
+            putc(digit+'0',file);
+
+            digits--;
+            }
+
+      if (value>0.0)
          {
-         if (digits>1) digit=(int)floor(value/point);
-         else digit=(int)floor(value/point+0.5);
+         putc('.',file);
 
-         if (digit<0) digit=0;
-         else if (digit>9) digit=9;
+         point=0.1;
 
-         value-=digit*point;
-         point/=10.0;
+         while (value>0.0 && digits>0)
+            {
+            if (digits>1) digit=(int)floor(value/point);
+            else digit=(int)floor(value/point+0.5);
 
-         putc(digit+'0',file);
+            if (digit<0) digit=0;
+            else if (digit>9) digit=9;
 
-         digits--;
+            value-=digit*point;
+            point/=10.0;
+
+            putc(digit+'0',file);
+
+            digits--;
+            }
          }
       }
 
@@ -366,47 +375,65 @@ int databuf::readparam(char *tag,float *v,FILE *file)
       }
    else point=1.0;
 
-   value=0.0;
-
-   while (ch>='0' && ch<='9')
+   if (ch=='m')
       {
-      value=10.0*value+ch-'0';
       ch=getc(file);
+
+      if (ch=='a')
+         {
+         ch=getc(file);
+
+         if (ch=='x') ch=getc(file);
+         }
+
+      value=MAXFLOAT;
+
+      expnt=exsgn=0.0;
       }
-
-   if (ch=='.')
+   else
       {
-      ch=getc(file);
+      value=0.0;
 
       while (ch>='0' && ch<='9')
          {
          value=10.0*value+ch-'0';
-         point*=10.0;
-
          ch=getc(file);
          }
-      }
 
-   if (ch=='e' || ch=='E')
-      {
-      ch=getc(file);
-
-      if (ch=='-')
+      if (ch=='.')
          {
-         exsgn=-1.0;
          ch=getc(file);
+
+         while (ch>='0' && ch<='9')
+            {
+            value=10.0*value+ch-'0';
+            point*=10.0;
+
+            ch=getc(file);
+            }
          }
-      else exsgn=1.0;
 
-      expnt=0.0;
-
-      while (ch>='0' && ch<='9')
+      if (ch=='e' || ch=='E')
          {
-         expnt=10.0*expnt+ch-'0';
          ch=getc(file);
+
+         if (ch=='-')
+            {
+            exsgn=-1.0;
+            ch=getc(file);
+            }
+         else exsgn=1.0;
+
+         expnt=0.0;
+
+         while (ch>='0' && ch<='9')
+            {
+            expnt=10.0*expnt+ch-'0';
+            ch=getc(file);
+            }
          }
+      else expnt=exsgn=0.0;
       }
-   else expnt=exsgn=0.0;
 
    while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
 
@@ -1546,6 +1573,8 @@ void databuf::convertdata(unsigned int newtype)
    short int *shortptr;
    float *floatptr;
 
+   unsigned char *rgbptr;
+
    unsigned int count;
 
    float minvalue,maxvalue,value;
@@ -1742,6 +1771,50 @@ void databuf::convertdata(unsigned int newtype)
          scaling=1.0f;
          bias=0.0f;
          }
+      }
+   else if (type==3 && newtype==0)
+      {
+      if ((newdata=malloc(cells))==NULL) ERRORMSG();
+
+      rgbptr=(unsigned char *)data;
+      byteptr=(unsigned char *)newdata;
+
+      for (count=0; count<cells; count++)
+         {
+         value=*rgbptr++;
+         value+=*rgbptr++;
+         value+=*rgbptr++;
+
+         *byteptr++=ftrc(value/3.0f+0.5f);
+         }
+
+      free(data);
+      data=newdata;
+      type=newtype;
+
+      bytes=xsize*ysize*zsize*tsteps;
+      }
+   else if (type==0 && newtype==3)
+      {
+      if ((newdata=malloc(cells*3))==NULL) ERRORMSG();
+
+      byteptr=(unsigned char *)data;
+      rgbptr=(unsigned char *)newdata;
+
+      for (count=0; count<cells; count++)
+         {
+         value=*byteptr++;
+
+         *rgbptr++=ftrc(value+0.5f);
+         *rgbptr++=ftrc(value+0.5f);
+         *rgbptr++=ftrc(value+0.5f);
+         }
+
+      free(data);
+      data=newdata;
+      type=newtype;
+
+      bytes=xsize*ysize*zsize*tsteps;
       }
    }
 
@@ -2328,14 +2401,28 @@ unsigned int databuf::replacenodata(float value)
    }
 
 // fill-in no-data values
-unsigned int databuf::fillnodata()
+unsigned int databuf::fillnodata(int radius)
    {
+   int oldtype;
+
+   unsigned int count;
+
+   oldtype=type;
+
+   if (type==3) convertdata(0);
+
    if (type!=0 && type!=1 && type!=2) return(0);
+
    if (checknodata()==0) return(0);
 
    if (type==0 || type==1) convertdata(2);
 
-   return(fillin_by_regiongrowing());
+   count=fillin_by_regiongrowing(radius);
+
+   if (oldtype==3) convertdata(0);
+   convertdata(oldtype);
+
+   return(count);
    }
 
 // replace invalid values
@@ -2422,42 +2509,68 @@ void databuf::print()
    }
 
 // fill-in no-data values by region growing
-unsigned int databuf::fillin_by_regiongrowing()
+unsigned int databuf::fillin_by_regiongrowing(int radius)
    {
    unsigned int count;
 
    unsigned int i,j,k,t;
-   unsigned int m,n,o,c;
+   int m,n,o;
 
    databuf buf;
 
+   int size;
+   int sizex,sizey,sizez;
    int thres;
 
    BOOLINT done;
 
-   float val[27];
-
-   float value;
    int num;
+   float val,avg;
+   int cnt;
 
    count=0;
 
    if (checknodata()!=0)
       {
-      // calculate growing threshold for 1D 2D or 3D
-      if (xsize<2) thres=1;
-      else if (ysize<2) thres=1;
-      else if (zsize<2) thres=4;
-      else thres=13;
-
-      // make a working copy
+      // copy working buffer
       buf.duplicate(this);
+
+      size=3;
 
       done=FALSE;
 
       while (!done)
          {
          done=TRUE;
+
+         // calculate foot print size
+         if (xsize<2)
+            {
+            sizex=1;
+            sizey=1;
+            sizez=1;
+            }
+         else if (ysize<2)
+            {
+            sizex=size;
+            sizey=1;
+            sizez=1;
+            }
+         else if (zsize<2)
+            {
+            sizex=size;
+            sizey=size;
+            sizez=1;
+            }
+         else
+            {
+            sizex=size;
+            sizey=size;
+            sizez=size;
+            }
+
+         // calculate growing threshold
+         thres=(sizex*sizey*sizez+1)/2;
 
          // search for no-data values
          for (t=0; t<tsteps; t++)
@@ -2466,40 +2579,60 @@ unsigned int databuf::fillin_by_regiongrowing()
                   for (k=0; k<zsize; k++)
                      if (getval(i,j,k,t)==nodata)
                         {
-                        // copy cells in the neighborhood
-                        for (m=-1; m<=1; m++)
-                           for (n=-1; n<=1; n++)
-                              for (o=-1; o<=1; o++)
-                                 if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize) val[m+1+(n+1+(o+1)*3)*3]=getval(i+m,j+n,k+o,t);
-                                 else val[m+1+(n+1+(o+1)*3)*3]=nodata;
-
-                        value=0.0f;
                         num=0;
 
-                        // count valid cells
-                        for (c=0; c<27; c++)
-                           if (val[c]!=nodata)
-                              {
-                              value+=val[c];
-                              num++;
-                              }
+                        // count foot print cells
+                        for (m=-sizex/2; m<=sizex/2; m++)
+                           for (n=-sizey/2; n<=sizey/2; n++)
+                              for (o=-sizez/2; o<=sizez/2; o++)
+                                 if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                    if (getval(i+m,j+n,k+o,t)!=nodata) num++;
 
-                        // check number of valid cells against growing threshold
+                        // check number of foot print cells against growing threshold
                         if (num>=thres)
                            {
-                           // fill-in average value of neighbor cells
-                           buf.setval(i,j,k,t,value/num);
-                           count++;
+                           avg=0.0f;
+                           cnt=0;
 
-                           done=FALSE;
+                           // average neighbor cells
+                           for (m=-1; m<=1; m++)
+                              for (n=-1; n<=1; n++)
+                                 for (o=-1; o<=1; o++)
+                                    if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                       {
+                                       val=getval(i+m,j+n,k+o,t);
+
+                                       if (val!=nodata)
+                                          {
+                                          avg+=val;
+                                          cnt++;
+                                          }
+                                       }
+
+                           // fill-in average value of neighbor cells
+                           if (cnt>0)
+                              {
+                              buf.setval(i,j,k,t,avg/cnt);
+                              count++;
+
+                              done=FALSE;
+                              }
                            }
                         }
 
-         // copy the working copy back
+         // copy working buffer back
          copy(&buf);
+
+         // try larger foot print size
+         if (done)
+            if (size<radius*2+1)
+               {
+               size+=2;
+               done=FALSE;
+               }
          }
 
-      // free the working copy
+      // free working buffer
       buf.release();
       }
 
