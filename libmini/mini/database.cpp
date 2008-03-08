@@ -2528,8 +2528,10 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
    BOOLINT done;
 
    int num;
-   float val,avg;
-   int cnt;
+   float v1,v2;
+   float dx,dy,dz;
+   int dxnum,dynum,dznum;
+   float val;
 
    count=0;
 
@@ -2594,28 +2596,74 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                         // check number of foot print cells against growing threshold
                         if (num>=thres)
                            {
-                           avg=0.0f;
-                           cnt=0;
+                           dx=dy=dz=0.0f;
+                           dxnum=dynum=dznum=0;
 
-                           // average neighbor cells
-                           for (m=-1; m<=1; m++)
-                              for (n=-1; n<=1; n++)
-                                 for (o=-1; o<=1; o++)
+                           // average partial derivatives
+                           for (m=-sizex/2; m<=sizex/2; m++)
+                              for (n=-sizey/2; n<=sizey/2; n++)
+                                 for (o=-sizez/2; o<=sizez/2; o++)
                                     if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
                                        {
-                                       val=getval(i+m,j+n,k+o,t);
+                                       v1=getval(i+m,j+n,k+o,t);
 
-                                       if (val!=nodata)
+                                       if (v1!=nodata)
                                           {
-                                          avg+=val;
-                                          cnt++;
+                                          if (i+m-1>=0 && m>-sizex/2)
+                                             {
+                                             v2=getval(i+m-1,j+n,k+o,t);
+
+                                             if (v2!=nodata)
+                                                {
+                                                dx+=v1-v2;
+                                                dxnum++;
+                                                }
+                                             }
+
+                                          if (j+n-1>=0 && n>-sizey/2)
+                                             {
+                                             v2=getval(i+m,j+n-1,k+o,t);
+
+                                             if (v2!=nodata)
+                                                {
+                                                dy+=v1-v2;
+                                                dynum++;
+                                                }
+                                             }
+
+                                          if (k+o-1>=0 && o>-sizez/2)
+                                             {
+                                             v2=getval(i+m,j+n,k+o-1,t);
+
+                                             if (v2!=nodata)
+                                                {
+                                                dz+=v1-v2;
+                                                dznum++;
+                                                }
+                                             }
                                           }
                                        }
 
-                           // fill-in average value of neighbor cells
-                           if (cnt>0)
+                           if (dxnum>0) dx/=dxnum;
+                           if (dynum>0) dy/=dynum;
+                           if (dznum>0) dz/=dznum;
+
+                           val=0.0f;
+
+                           // extrapolate partial derivatives
+                           for (m=-sizex/2; m<=sizex/2; m++)
+                              for (n=-sizey/2; n<=sizey/2; n++)
+                                 for (o=-sizez/2; o<=sizez/2; o++)
+                                    if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                       {
+                                       v1=getval(i+m,j+n,k+o,t);
+                                       if (v1!=nodata) val+=v1-m*dx-n*dy-o*dz;
+                                       }
+
+                           // fill-in extrapolated value
+                           if (num>0)
                               {
-                              buf.setval(i,j,k,t,avg/cnt);
+                              buf.setval(i,j,k,t,val/num);
                               count++;
 
                               done=FALSE;
