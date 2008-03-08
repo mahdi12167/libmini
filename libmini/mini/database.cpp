@@ -2422,7 +2422,10 @@ unsigned int databuf::fillnodata(int radius)
 
    count=fillin_by_regiongrowing(radius);
 
-   if (oldtype==3) convertdata(0);
+   if (oldtype==0 || oldtype==3) replaceinvalid(scaling*0.0f+bias,scaling*255.0f+bias,nodata);
+   if (oldtype==1) replaceinvalid(-scaling*32768.0f+bias,scaling*32767.0f+bias,nodata);
+
+   if (oldtype==3); convertdata(0);
    convertdata(oldtype);
 
    return(count);
@@ -2516,7 +2519,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
    {
    unsigned int count;
 
-   unsigned int i,j,k,t;
+   int i,j,k,t;
    int m,n,o;
 
    databuf buf;
@@ -2578,10 +2581,10 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
          thres=(sizex*sizey*sizez+1)/2;
 
          // search for no-data values
-         for (t=0; t<tsteps; t++)
-            for (i=0; i<xsize; i++)
-               for (j=0; j<ysize; j++)
-                  for (k=0; k<zsize; k++)
+         for (t=0; t<(int)tsteps; t++)
+            for (i=0; i<(int)xsize; i++)
+               for (j=0; j<(int)ysize; j++)
+                  for (k=0; k<(int)zsize; k++)
                      if (getval(i,j,k,t)==nodata)
                         {
                         num=0;
@@ -2590,7 +2593,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                         for (m=-sizex/2; m<=sizex/2; m++)
                            for (n=-sizey/2; n<=sizey/2; n++)
                               for (o=-sizez/2; o<=sizez/2; o++)
-                                 if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                 if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                     if (getval(i+m,j+n,k+o,t)!=nodata) num++;
 
                         // check number of foot print cells against growing threshold
@@ -2603,7 +2606,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                            for (m=-sizex/2; m<=sizex/2; m++)
                               for (n=-sizey/2; n<=sizey/2; n++)
                                  for (o=-sizez/2; o<=sizez/2; o++)
-                                    if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                    if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                        {
                                        v1=getval(i+m,j+n,k+o,t);
 
@@ -2654,7 +2657,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                            for (m=-sizex/2; m<=sizex/2; m++)
                               for (n=-sizey/2; n<=sizey/2; n++)
                                  for (o=-sizez/2; o<=sizez/2; o++)
-                                    if (i+m>=0 && i+m<xsize && j+n>=0 && j+n<ysize && k+o>=0 && k+o<zsize)
+                                    if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                        {
                                        v1=getval(i+m,j+n,k+o,t);
                                        if (v1!=nodata) val+=v1-m*dx-n*dy-o*dz;
@@ -2663,7 +2666,10 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                            // fill-in extrapolated value
                            if (num>0)
                               {
-                              buf.setval(i,j,k,t,val/num);
+                              val/=num;
+                              if ((val-bias)/scaling==nodata) val+=scaling;
+
+                              buf.setval(i,j,k,t,val);
                               count++;
 
                               done=FALSE;
