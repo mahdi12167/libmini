@@ -2567,6 +2567,8 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
    int m,n,o;
 
    databuf buf;
+   databuf cnt;
+   databuf tmp;
 
    int size;
    int sizex,sizey,sizez;
@@ -2574,7 +2576,8 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
 
    BOOLINT done;
 
-   int num;
+   int cells;
+
    float v1,v2;
    float dx,dy,dz;
    int dxnum,dynum,dznum;
@@ -2586,6 +2589,10 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
       {
       // copy working buffer
       buf.duplicate(this);
+
+      // allocate counting buffer
+      cnt.alloc(xsize,ysize,zsize,tsteps,1);
+      tmp.alloc(xsize,ysize,zsize,tsteps,1);
 
       size=3;
 
@@ -2624,6 +2631,73 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
          // calculate growing threshold
          thres=(sizex*sizey*sizez+1)/2;
 
+         // clear counting buffer
+         cnt.clear();
+
+         // search for no-data values
+         for (t=0; t<(int)tsteps; t++)
+            for (i=0; i<(int)xsize; i++)
+               for (j=0; j<(int)ysize; j++)
+                  for (k=0; k<(int)zsize; k++)
+                     if (getval(i,j,k,t)==nodata) cnt.setval(i,j,k,t,1);
+
+         // accumulate no-data values in x-direction
+         for (t=0; t<(int)tsteps; t++)
+            for (j=0; j<(int)ysize; j++)
+               for (k=0; k<(int)zsize; k++)
+                  {
+                  cells=0;
+
+                  for (i=-sizex/2; i<(int)xsize+sizex/2; i++)
+                     {
+                     if (i-sizex/2-1>=0) cells-=cnt.getval(i-sizex/2-1,j,k,t);
+                     if (i+sizex/2<(int)xsize) cells+=cnt.getval(i+sizex/2,j,k,t);
+
+                     if (i>=0 && i<(int)xsize) tmp.setval(i,j,k,t,cells);
+                     }
+                  }
+
+         // copy counting buffer back
+         cnt.copy(&tmp);
+
+         // accumulate no-data values in y-direction
+         for (t=0; t<(int)tsteps; t++)
+            for (i=0; i<(int)xsize; i++)
+               for (k=0; k<(int)zsize; k++)
+                  {
+                  cells=0;
+
+                  for (j=-sizey/2; j<(int)ysize+sizey/2; j++)
+                     {
+                     if (j-sizey/2-1>=0) cells-=cnt.getval(i,j-sizey/2-1,k,t);
+                     if (j+sizey/2<(int)ysize) cells+=cnt.getval(i,j+sizey/2,k,t);
+
+                     if (j>=0 && j<(int)ysize) tmp.setval(i,j,k,t,cells);
+                     }
+                  }
+
+         // copy counting buffer back
+         cnt.copy(&tmp);
+
+         // accumulate no-data values in z-direction
+         for (t=0; t<(int)tsteps; t++)
+            for (i=0; i<(int)xsize; i++)
+               for (j=0; j<(int)ysize; j++)
+                  {
+                  cells=0;
+
+                  for (k=-sizez/2; k<(int)zsize+sizez/2; k++)
+                     {
+                     if (k-sizez/2-1>=0) cells-=cnt.getval(i,j,k-sizez/2-1,t);
+                     if (k+sizez/2<(int)zsize) cells+=cnt.getval(i,j,k+sizez/2,t);
+
+                     if (k>=0 && k<(int)zsize) tmp.setval(i,j,k,t,cells);
+                     }
+                  }
+
+         // copy counting buffer back
+         cnt.copy(&tmp);
+
          // search for no-data values
          for (t=0; t<(int)tsteps; t++)
             for (i=0; i<(int)xsize; i++)
@@ -2631,17 +2705,8 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                   for (k=0; k<(int)zsize; k++)
                      if (getval(i,j,k,t)==nodata)
                         {
-                        num=0;
-
-                        // count foot print cells
-                        for (m=-sizex/2; m<=sizex/2; m++)
-                           for (n=-sizey/2; n<=sizey/2; n++)
-                              for (o=-sizez/2; o<=sizez/2; o++)
-                                 if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
-                                    if (getval(i+m,j+n,k+o,t)!=nodata) num++;
-
                         // check number of foot print cells against growing threshold
-                        if (num>=thres)
+                        if (cnt.getval(i,j,k,t)>=thres)
                            {
                            dx=dy=dz=0.0f;
                            dxnum=dynum=dznum=0;
@@ -2747,6 +2812,10 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
 
       // free working buffer
       buf.release();
+
+      // free counting buffer
+      cnt.release();
+      tmp.release();
       }
 
    return(count);
