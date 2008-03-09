@@ -130,11 +130,17 @@ void databuf::set(void *chunk,unsigned int length,
    else if (ty==4) bs=4;
    else if (ty==5) bs=3;
    else if (ty==6) bs=4;
+   else if (ty==7) bs=3;
+   else if (ty==8) bs=4;
+   else if (ty==9) bs=3;
+   else if (ty==10) bs=4;
    else ERRORMSG();
 
    bs*=xs*ys*zs*ts;
 
    if (ty==5 || ty==6) bs=length;
+   if (ty==7 || ty==8) bs=length;
+   if (ty==9 || ty==10) bs=length;
 
    if (length!=bs) ERRORMSG();
 
@@ -179,6 +185,44 @@ void databuf::duplicate(databuf *buf)
    *this=*buf;
    alloc(buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);
    copy(buf);
+   }
+
+// clear buffer
+void databuf::clear(float value)
+   {
+   unsigned int i;
+
+   unsigned int c;
+   int v;
+
+   unsigned char *byteptr;
+   short int *shortptr;
+   float *floatptr;
+
+   c=xsize*ysize*zsize*tsteps;
+   v=ftrc(value+0.5f);
+
+   switch (type)
+      {
+      case 0:
+         byteptr=(unsigned char *)data;
+         memset(byteptr,c,v);
+         break;
+      case 1:
+         shortptr=(short int *)data;
+         for (i=0; i<c; i++) *shortptr++=v;
+         break;
+      case 2:
+         floatptr=(float *)data;
+         for (i=0; i<c; i++) *floatptr++=value;
+         break;
+      case 3:
+         byteptr=(unsigned char *)data;
+         memset(byteptr,c*3,v);
+         break;
+      default:
+         ERRORMSG();
+      }
    }
 
 // reset buffer

@@ -77,6 +77,9 @@ class databuf
    //! duplicate data from buffer
    void duplicate(databuf *buf);
 
+   //! clear buffer
+   void clear(float value=0.0f);
+
    //! reset buffer
    void reset();
 
