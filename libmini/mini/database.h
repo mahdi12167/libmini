@@ -216,6 +216,9 @@ class databuf
    //! replace invalid values
    unsigned int replaceinvalid(float usefs,float usefg,float useful);
 
+   //! clamp to range
+   unsigned int clamp(float usefs,float usefg);
+
    //! compute absolute values
    void computeabsolute();
 

@@ -2466,8 +2466,8 @@ unsigned int databuf::fillnodata(int radius)
 
    count=fillin_by_regiongrowing(radius);
 
-   if (oldtype==0 || oldtype==3) replaceinvalid(scaling*0.0f+bias,scaling*255.0f+bias,nodata);
-   if (oldtype==1) replaceinvalid(-scaling*32768.0f+bias,scaling*32767.0f+bias,nodata);
+   if (oldtype==0 || oldtype==3) clamp(scaling*0.0f+bias,scaling*255.0f+bias);
+   if (oldtype==1) clamp(-scaling*32768.0f+bias,scaling*32767.0f+bias);
 
    if (oldtype==3); convertdata(0);
    convertdata(oldtype);
@@ -2498,6 +2498,37 @@ unsigned int databuf::replaceinvalid(float usefs,float usefg,float useful)
                    (val>usefs || val<usefg))
                   {
                   setval(i,j,k,t,useful);
+                  count++;
+                  }
+               }
+
+   return(count);
+   }
+
+// clamp to range
+unsigned int databuf::clamp(float usefs,float usefg)
+   {
+   unsigned int count;
+
+   unsigned int i,j,k,t;
+
+   float val;
+
+   count=0;
+
+   // search for out-of-bounds values
+   for (t=0; t<tsteps; t++)
+      for (i=0; i<xsize; i++)
+         for (j=0; j<ysize; j++)
+            for (k=0; k<zsize; k++)
+               {
+               val=getval(i,j,k,t);
+
+               if ((val<usefs || val>usefg) &&
+                   (val>usefs || val<usefg))
+                  {
+                  if (fabs(val-usefs)<fabs(val-usefg)) setval(i,j,k,t,usefs);
+                  else setval(i,j,k,t,usefg);
                   count++;
                   }
                }
