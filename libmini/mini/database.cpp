@@ -2639,7 +2639,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
             for (i=0; i<(int)xsize; i++)
                for (j=0; j<(int)ysize; j++)
                   for (k=0; k<(int)zsize; k++)
-                     if (getval(i,j,k,t)==nodata) cnt.setval(i,j,k,t,1);
+                     if (getval(i,j,k,t)!=nodata) cnt.setval(i,j,k,t,1);
 
          // accumulate no-data values in x-direction
          for (t=0; t<(int)tsteps; t++)
@@ -2704,7 +2704,6 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                for (j=0; j<(int)ysize; j++)
                   for (k=0; k<(int)zsize; k++)
                      if (getval(i,j,k,t)==nodata)
-                        {
                         // check number of foot print cells against growing threshold
                         if (ftrc(cnt.getval(i,j,k,t)+0.5f)>=thres)
                            {
@@ -2796,7 +2795,6 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                               done=FALSE;
                               }
                            }
-                        }
 
          // copy working buffer back
          copy(&buf);
