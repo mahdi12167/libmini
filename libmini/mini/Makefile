@@ -9,7 +9,8 @@ MODS	= mini miniOGL\
 	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  pnmbase pnmsample\
-	  database datacloud datacache\
+	  database datafill\
+	  datacloud datacache\
 	  datacalc dataparse\
 	  lunascan lunaparse lunacode
 

@@ -284,8 +284,6 @@ class databuf
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
-   unsigned int fillin_by_regiongrowing(int radius=5);
-
    void swapbytes();
    };
 
