@@ -2648,12 +2648,12 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                   {
                   cells=0;
 
-                  for (i=-sizex/2; i<(int)xsize+sizex/2; i++)
+                  for (i=-sizex/2; i<(int)xsize; i++)
                      {
-                     if (i-sizex/2-1>=0) cells-=cnt.getval(i-sizex/2-1,j,k,t);
-                     if (i+sizex/2<(int)xsize) cells+=cnt.getval(i+sizex/2,j,k,t);
+                     if (i-sizex/2-1>=0) cells-=ftrc(cnt.getval(i-sizex/2-1,j,k,t)+0.5f);
+                     if (i+sizex/2<(int)xsize) cells+=ftrc(cnt.getval(i+sizex/2,j,k,t)+0.5f);
 
-                     if (i>=0 && i<(int)xsize) tmp.setval(i,j,k,t,cells);
+                     if (i>=0) tmp.setval(i,j,k,t,cells);
                      }
                   }
 
@@ -2667,12 +2667,12 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                   {
                   cells=0;
 
-                  for (j=-sizey/2; j<(int)ysize+sizey/2; j++)
+                  for (j=-sizey/2; j<(int)ysize; j++)
                      {
-                     if (j-sizey/2-1>=0) cells-=cnt.getval(i,j-sizey/2-1,k,t);
-                     if (j+sizey/2<(int)ysize) cells+=cnt.getval(i,j+sizey/2,k,t);
+                     if (j-sizey/2-1>=0) cells-=ftrc(cnt.getval(i,j-sizey/2-1,k,t)+0.5f);
+                     if (j+sizey/2<(int)ysize) cells+=ftrc(cnt.getval(i,j+sizey/2,k,t)+0.5f);
 
-                     if (j>=0 && j<(int)ysize) tmp.setval(i,j,k,t,cells);
+                     if (j>=0) tmp.setval(i,j,k,t,cells);
                      }
                   }
 
@@ -2686,12 +2686,12 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                   {
                   cells=0;
 
-                  for (k=-sizez/2; k<(int)zsize+sizez/2; k++)
+                  for (k=-sizez/2; k<(int)zsize; k++)
                      {
-                     if (k-sizez/2-1>=0) cells-=cnt.getval(i,j,k-sizez/2-1,t);
-                     if (k+sizez/2<(int)zsize) cells+=cnt.getval(i,j,k+sizez/2,t);
+                     if (k-sizez/2-1>=0) cells-=ftrc(cnt.getval(i,j,k-sizez/2-1,t)+0.5f);
+                     if (k+sizez/2<(int)zsize) cells+=ftrc(cnt.getval(i,j,k+sizez/2,t)+0.5f);
 
-                     if (k>=0 && k<(int)zsize) tmp.setval(i,j,k,t,cells);
+                     if (k>=0) tmp.setval(i,j,k,t,cells);
                      }
                   }
 
@@ -2706,7 +2706,7 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                      if (getval(i,j,k,t)==nodata)
                         {
                         // check number of foot print cells against growing threshold
-                        if (cnt.getval(i,j,k,t)>=thres)
+                        if (ftrc(cnt.getval(i,j,k,t)+0.5f)>=thres)
                            {
                            dx=dy=dz=0.0f;
                            dxnum=dynum=dznum=0;
