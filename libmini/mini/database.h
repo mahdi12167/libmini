@@ -211,7 +211,7 @@ class databuf
    unsigned int replacenodata(float value);
 
    //! fill-in no-data values
-   unsigned int fillnodata(int radius=3);
+   unsigned int fillnodata(int radius=5);
 
    //! replace invalid values
    unsigned int replaceinvalid(float usefs,float usefg,float useful);
@@ -281,7 +281,7 @@ class databuf
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
-   unsigned int fillin_by_regiongrowing(int radius=3);
+   unsigned int fillin_by_regiongrowing(int radius=5);
 
    void swapbytes();
    };

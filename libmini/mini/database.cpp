@@ -2642,58 +2642,61 @@ unsigned int databuf::fillin_by_regiongrowing(int radius)
                      if (getval(i,j,k,t)!=nodata) cnt.setval(i,j,k,t,1);
 
          // accumulate no-data values in x-direction
-         for (t=0; t<(int)tsteps; t++)
-            for (j=0; j<(int)ysize; j++)
-               for (k=0; k<(int)zsize; k++)
-                  {
-                  cells=0;
-
-                  for (i=-sizex/2; i<(int)xsize; i++)
+         if (xsize>1)
+            for (t=0; t<(int)tsteps; t++)
+               for (j=0; j<(int)ysize; j++)
+                  for (k=0; k<(int)zsize; k++)
                      {
-                     if (i-sizex/2-1>=0) cells-=ftrc(cnt.getval(i-sizex/2-1,j,k,t)+0.5f);
-                     if (i+sizex/2<(int)xsize) cells+=ftrc(cnt.getval(i+sizex/2,j,k,t)+0.5f);
+                     cells=0;
 
-                     if (i>=0) tmp.setval(i,j,k,t,cells);
+                     for (i=-sizex/2; i<(int)xsize; i++)
+                        {
+                        if (i-sizex/2-1>=0) cells-=ftrc(cnt.getval(i-sizex/2-1,j,k,t)+0.5f);
+                        if (i+sizex/2<(int)xsize) cells+=ftrc(cnt.getval(i+sizex/2,j,k,t)+0.5f);
+
+                        if (i>=0) tmp.setval(i,j,k,t,cells);
+                        }
                      }
-                  }
 
          // copy counting buffer back
          cnt.copy(&tmp);
 
          // accumulate no-data values in y-direction
-         for (t=0; t<(int)tsteps; t++)
-            for (i=0; i<(int)xsize; i++)
-               for (k=0; k<(int)zsize; k++)
-                  {
-                  cells=0;
-
-                  for (j=-sizey/2; j<(int)ysize; j++)
+         if (ysize>1)
+            for (t=0; t<(int)tsteps; t++)
+               for (i=0; i<(int)xsize; i++)
+                  for (k=0; k<(int)zsize; k++)
                      {
-                     if (j-sizey/2-1>=0) cells-=ftrc(cnt.getval(i,j-sizey/2-1,k,t)+0.5f);
-                     if (j+sizey/2<(int)ysize) cells+=ftrc(cnt.getval(i,j+sizey/2,k,t)+0.5f);
+                     cells=0;
 
-                     if (j>=0) tmp.setval(i,j,k,t,cells);
+                     for (j=-sizey/2; j<(int)ysize; j++)
+                        {
+                        if (j-sizey/2-1>=0) cells-=ftrc(cnt.getval(i,j-sizey/2-1,k,t)+0.5f);
+                        if (j+sizey/2<(int)ysize) cells+=ftrc(cnt.getval(i,j+sizey/2,k,t)+0.5f);
+
+                        if (j>=0) tmp.setval(i,j,k,t,cells);
+                        }
                      }
-                  }
 
          // copy counting buffer back
          cnt.copy(&tmp);
 
          // accumulate no-data values in z-direction
-         for (t=0; t<(int)tsteps; t++)
-            for (i=0; i<(int)xsize; i++)
-               for (j=0; j<(int)ysize; j++)
-                  {
-                  cells=0;
-
-                  for (k=-sizez/2; k<(int)zsize; k++)
+         if (zsize>1)
+            for (t=0; t<(int)tsteps; t++)
+               for (i=0; i<(int)xsize; i++)
+                  for (j=0; j<(int)ysize; j++)
                      {
-                     if (k-sizez/2-1>=0) cells-=ftrc(cnt.getval(i,j,k-sizez/2-1,t)+0.5f);
-                     if (k+sizez/2<(int)zsize) cells+=ftrc(cnt.getval(i,j,k+sizez/2,t)+0.5f);
+                     cells=0;
 
-                     if (k>=0) tmp.setval(i,j,k,t,cells);
+                     for (k=-sizez/2; k<(int)zsize; k++)
+                        {
+                        if (k-sizez/2-1>=0) cells-=ftrc(cnt.getval(i,j,k-sizez/2-1,t)+0.5f);
+                        if (k+sizez/2<(int)zsize) cells+=ftrc(cnt.getval(i,j,k+sizez/2,t)+0.5f);
+
+                        if (k>=0) tmp.setval(i,j,k,t,cells);
+                        }
                      }
-                  }
 
          // copy counting buffer back
          cnt.copy(&tmp);

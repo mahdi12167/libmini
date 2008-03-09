@@ -4,7 +4,7 @@
 
 #include "imgbase.h"
 
-static const int fillin_radius=3;
+static const int fillin_radius=5;
 
 int main(int argc,char *argv[])
    {
