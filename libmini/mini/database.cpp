@@ -2454,7 +2454,7 @@ unsigned int databuf::fillnodata(int radius)
 
    unsigned int count;
 
-   datafill fill(*this);
+   datafill buf;
 
    oldtype=type;
 
@@ -2468,7 +2468,8 @@ unsigned int databuf::fillnodata(int radius)
 
    if (type==0 || type==1) convertdata(2);
 
-   count=fill.fillin_by_regiongrowing(radius);
+   buf=*this;
+   count=buf.fillin_by_regiongrowing(radius);
 
    if (oldtype==0 || oldtype==3) clamp(scaling*0.0f+bias,scaling*255.0f+bias);
    if (oldtype==1) clamp(-scaling*32768.0f+bias,scaling*32767.0f+bias);
