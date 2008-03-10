@@ -42,7 +42,7 @@ unsigned int datafill::fillin_by_regiongrowing(int radius)
       cnt.alloc(xsize,ysize,zsize,tsteps,1);
       tmp.alloc(xsize,ysize,zsize,tsteps,1);
 
-      size=3;
+      size=5;
 
       done=FALSE;
 
