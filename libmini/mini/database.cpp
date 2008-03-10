@@ -2473,7 +2473,7 @@ unsigned int databuf::fillnodata(int radius)
    if (oldtype==0 || oldtype==3) clamp(scaling*0.0f+bias,scaling*255.0f+bias);
    if (oldtype==1) clamp(-scaling*32768.0f+bias,scaling*32767.0f+bias);
 
-   if (oldtype==3); convertdata(0);
+   if (oldtype==3) convertdata(0);
    convertdata(oldtype);
 
    return(count);

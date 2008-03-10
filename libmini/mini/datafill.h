@@ -9,8 +9,11 @@ class datafill: public databuf
    {
    public:
 
+   //! default constructor
+   datafill(): databuf() {}
+
    //! copy constructor
-   datafill(const databuf &buf) {*this=buf;}
+   datafill(const databuf &buf): databuf(buf) {}
 
    //! fill-in no-data values by region growing
    unsigned int fillin_by_regiongrowing(int radius=5);
