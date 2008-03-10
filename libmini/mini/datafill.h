@@ -16,7 +16,11 @@ class datafill: public databuf
    datafill(const databuf &buf): databuf(buf) {}
 
    //! fill-in no-data values by region growing
-   unsigned int fillin_by_regiongrowing(int radius=5);
+   unsigned int fillin_by_regiongrowing(int radius_stop=5,int radius_start=2);
+
+   protected:
+
+   unsigned int fillin(int radius);
    };
 
 #endif

@@ -5,7 +5,24 @@
 #include "datafill.h"
 
 // fill-in no-data values by region growing
-unsigned int datafill::fillin_by_regiongrowing(int radius)
+unsigned int datafill::fillin_by_regiongrowing(int radius_stop,int radius_start)
+   {
+   int r;
+
+   unsigned int count;
+
+   count=0;
+
+   for (r=radius_start; r<=radius_stop; r++) count+=fillin(r);
+
+   return(count);
+   }
+
+// fill-in algorithm
+// replaces no-data values by repeated region growing
+// smoothly extrapolates the filled-in value via partial derivatives
+// restricts the fill-in operation to concavities with a diameter of less than radius^2+1 pixels
+unsigned int datafill::fillin(int radius)
    {
    unsigned int count;
 
@@ -42,7 +59,9 @@ unsigned int datafill::fillin_by_regiongrowing(int radius)
       cnt.alloc(xsize,ysize,zsize,tsteps,1);
       tmp.alloc(xsize,ysize,zsize,tsteps,1);
 
-      size=5;
+      // calculate foot print size
+      size=2*radius+1;
+      if (size<3) size=3;
 
       done=FALSE;
 
@@ -50,7 +69,7 @@ unsigned int datafill::fillin_by_regiongrowing(int radius)
          {
          done=TRUE;
 
-         // calculate foot print size
+         // calculate foot print size in x/y/z-direction
          if (xsize<2)
             {
             sizex=1;
@@ -249,14 +268,6 @@ unsigned int datafill::fillin_by_regiongrowing(int radius)
 
          // copy working buffer back
          copy(&buf);
-
-         // try larger foot print size
-         if (done)
-            if (size<radius*2+1)
-               {
-               size+=2;
-               done=FALSE;
-               }
          }
 
       // free working buffer
