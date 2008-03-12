@@ -22,15 +22,15 @@ class minigeom_base
 
    //! conversion constructor
    minigeom_base(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT)
-         {
-         pnt=p;
-         vec=v;
+      {
+      pnt=p;
+      vec=v;
 
-         vec.normalize();
+      vec.normalize();
 
-         minlambda=FMAX(minl,-MAXFLOAT);
-         maxlambda=FMIN(maxl,MAXFLOAT);
-         }
+      minlambda=FMAX(minl,-MAXFLOAT);
+      maxlambda=FMIN(maxl,MAXFLOAT);
+      }
 
    //! destructor
    ~minigeom_base() {}
@@ -42,6 +42,23 @@ class minigeom_base
 
    double getminlambda() {return(minlambda);}
    double getmaxlambda() {return(maxlambda);}
+
+   BOOLINT isnull() {return(minlambda>maxlambda);}
+   BOOLINT iszero() {return(minlambda==maxlambda);}
+   BOOLINT ishalf() {return(maxlambda==MAXFLOAT);}
+   BOOLINT isfull() {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
+
+   void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
+   void setzero() {minlambda=0.0; maxlambda=0.0;}
+   void sethalf() {minlambda=0.0; maxlambda=MAXFLOAT;}
+   void setfull() {minlambda=-MAXFLOAT; maxlambda=MAXFLOAT;}
+
+   void invert()
+      {
+      if (isnull() || iszero()) setfull();
+      else if (ishalf()) {vec=-vec; minlambda=-minlambda;}
+      else if (isfull()) setnull();
+      }
 
    protected:
 
