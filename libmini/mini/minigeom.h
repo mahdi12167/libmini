@@ -3,6 +3,8 @@
 #ifndef MINIGEOM_H
 #define MINIGEOM_H
 
+#include "minibase.h"
+
 #include "miniv3d.h"
 
 class minigeom_base
@@ -12,34 +14,38 @@ class minigeom_base
    //! default constructor
    minigeom_base()
       {
-      point=vector=miniv3d(0.0);
-      minlambda=maxlambda=0.0;
+      pnt=vec=miniv3d(0.0);
+
+      minlambda=0.0;
+      maxlambda=MAXFLOAT;
       }
 
    //! conversion constructor
-   minigeom_base(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=0.0)
+   minigeom_base(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT)
          {
-         point=p;
-         vector=v;
+         pnt=p;
+         vec=v;
 
-         minlambda=minl;
-         maxlambda=maxl;
+         vec.normalize();
+
+         minlambda=FMAX(minl,-MAXFLOAT);
+         maxlambda=FMIN(maxl,MAXFLOAT);
          }
 
    //! destructor
    ~minigeom_base() {}
 
-   miniv3d &getpoint() {return(point);}
-   miniv3d &getvector() {return(vector);}
+   miniv3d &getpoint() {return(pnt);}
+   miniv3d &getvector() {return(vec);}
 
-   miniv3d getpoint(const float lambda=0.0) {return(point+lambda*vector);}
+   miniv3d getpoint(const float lambda) {return(pnt+lambda*vec);}
 
-   miniv3d getminpoint() {return(getpoint(minlambda));}
-   miniv3d getmaxpoint() {return(getpoint(maxlambda));}
+   double getminlambda() {return(minlambda);}
+   double getmaxlambda() {return(maxlambda);}
 
    protected:
 
-   miniv3d point,vector;
+   miniv3d pnt,vec;
    double minlambda,maxlambda;
 
    private:
@@ -48,27 +54,65 @@ class minigeom_base
 class minigeom_segment;
 class minigeom_halfspace;
 
+//! line segment
 class minigeom_segment: public minigeom_base
    {
    public:
 
-   minigeom_segment intersect(minigeom_halfspace &halfspace);
+   //! intersect with half space
+   void intersect(minigeom_halfspace &halfspace);
 
    protected:
 
    private:
    };
 
+//! half space
 class minigeom_halfspace: public minigeom_base
    {
    public:
 
-   minigeom_segment intersect(minigeom_segment &segment);
+   //! intersect with half space
    minigeom_segment intersect(minigeom_halfspace &halfspace);
+
+   friend void minigeom_segment::intersect(minigeom_halfspace &halfspace);
 
    protected:
 
    private:
+   };
+
+//! convex polyhedron
+class minigeom_polyhedron
+   {
+   public:
+
+   //! default constructor
+   minigeom_polyhedron();
+
+   //! copy constructor
+   minigeom_polyhedron(const minigeom_polyhedron &poly);
+
+   //! destructor
+   ~minigeom_polyhedron();
+
+   //! get number of defining half spaces
+   int getnumhalfspace() {return(numhalf);}
+
+   //! get defining half space
+   minigeom_halfspace gethalfspace(int h) {return(half[h]);}
+
+   //! intersect with half space
+   void intersect(minigeom_halfspace &halfspace);
+
+   protected:
+
+   int numhalf,maxhalf;
+   minigeom_halfspace *half;
+
+   private:
+
+   void allocate(int n);
    };
 
 #endif
