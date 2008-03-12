@@ -38,11 +38,7 @@ void minigeom_segment::intersect(minigeom_halfspace &halfspace)
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda || lambda>halfspace.maxlambda)
-         {
-         minlambda=MAXFLOAT;
-         maxlambda=-MAXFLOAT;
-         }
+      if (lambda<halfspace.minlambda || lambda>halfspace.maxlambda) setnull();
    }
 
 // intersect with half space

@@ -15,9 +15,7 @@ class minigeom_base
    minigeom_base()
       {
       pnt=vec=miniv3d(0.0);
-
-      minlambda=0.0;
-      maxlambda=MAXFLOAT;
+      setnull();
       }
 
    //! conversion constructor
