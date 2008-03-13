@@ -33,6 +33,8 @@ set LINK="-L/usr/local/lib"
 # default installation directory
 set INSTALL="/usr/local"
 
+set qcwd=$cwd:as/ /\ /
+
 set rule=$1
 if ($rule == "") set rule="mini"
 if ($rule == "mini") set rule="lib"
@@ -83,15 +85,15 @@ end
 
 if ($?usesquish) then
    if (-e ../deps/squish) then
-      set incl="$incl -I$cwd/../deps/squish"
-      set link="$link -L$cwd/../deps/squish"
+      set incl="$incl -I$qcwd/../deps/squish"
+      set link="$link -L$qcwd/../deps/squish"
    endif
    set link="$link -lsquish"
 endif
 
 if ($?usegreyc) then
    if (-e ../deps/greycstoration) then
-      set incl="$incl -I$cwd/../deps/greycstoration"
+      set incl="$incl -I$qcwd/../deps/greycstoration"
    endif
 endif
 
