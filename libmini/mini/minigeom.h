@@ -81,7 +81,7 @@ class minigeom_segment: public minigeom_base
    minigeom_segment(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
    //! intersect with half space
-   void intersect(minigeom_halfspace &halfspace);
+   BOOLINT intersect(minigeom_halfspace &halfspace);
 
    protected:
 
@@ -102,7 +102,7 @@ class minigeom_halfspace: public minigeom_base
    //! intersect with half space
    minigeom_segment intersect(minigeom_halfspace &halfspace);
 
-   friend void minigeom_segment::intersect(minigeom_halfspace &halfspace);
+   friend BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace);
 
    protected:
 

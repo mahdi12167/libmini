@@ -3,10 +3,14 @@
 #include "minigeom.h"
 
 // intersect with half space
-void minigeom_segment::intersect(minigeom_halfspace &halfspace)
+BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace)
    {
+   BOOLINT cut;
+
    double dot,lambda;
    double lambda1,lambda2;
+
+   cut=FALSE;
 
    dot=vec*halfspace.vec; // dot product between line direction and plane normal
    lambda=(pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
@@ -35,18 +39,20 @@ void minigeom_segment::intersect(minigeom_halfspace &halfspace)
       // intersect half space range with segment range
       if (dot<0.0)
          {
-         if (lambda1<maxlambda) maxlambda=lambda1;
-         if (lambda2>minlambda) minlambda=lambda2;
+         if (lambda1<maxlambda) {maxlambda=lambda1; cut=TRUE;}
+         if (lambda2>minlambda) {minlambda=lambda2; cut=TRUE;}
          }
       else
          {
-         if (lambda1>minlambda) minlambda=lambda1;
-         if (lambda2<maxlambda) maxlambda=lambda2;
+         if (lambda1>minlambda) {minlambda=lambda1; cut=TRUE;}
+         if (lambda2<maxlambda) {maxlambda=lambda2; cut=TRUE;}
          }
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda || lambda>halfspace.maxlambda) setnull();
+      if (lambda<halfspace.minlambda || lambda>halfspace.maxlambda) {setnull(); cut=TRUE;}
+
+   return(cut);
    }
 
 // intersect with half space
