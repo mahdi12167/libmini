@@ -74,6 +74,12 @@ class minigeom_segment: public minigeom_base
    {
    public:
 
+   //! default constructor
+   minigeom_segment(): minigeom_base() {}
+
+   //! conversion constructor
+   minigeom_segment(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+
    //! intersect with half space
    void intersect(minigeom_halfspace &halfspace);
 
@@ -86,6 +92,12 @@ class minigeom_segment: public minigeom_base
 class minigeom_halfspace: public minigeom_base
    {
    public:
+
+   //! default constructor
+   minigeom_halfspace(): minigeom_base() {}
+
+   //! conversion constructor
+   minigeom_halfspace(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
    //! intersect with half space
    minigeom_segment intersect(minigeom_halfspace &halfspace);
