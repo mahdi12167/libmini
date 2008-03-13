@@ -65,7 +65,7 @@ minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
 
    cross=vec/halfspace.vec; // cross product of plane normals
    dir=cross/vec; // direction from plane origin towards line origin
-   dot=dir*halfspace.vec; // dot product with intersecting plane normal
+   dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
    if (dot!=0.0)
