@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib Release-vc7\libMini-vc7.lib freeglut_static.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib Release-vc7\libMini-vc7.lib freeglut_static.lib"
 				OutputFile=".\example.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -96,7 +96,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib Debug-vc7\libMinid-vc7.lib freeglut_static.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib Debug-vc7\libMinid-vc7.lib freeglut_static.lib"
 				OutputFile=".\example.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

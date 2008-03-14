@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="libMini Example"
-	ProjectGUID="{2F63A151-D133-4820-8151-F3B79EB7FC6D}"
+	Name="libMini Test"
+	ProjectGUID="{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}"
 	>
 	<Platforms>
 		<Platform
@@ -36,7 +36,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release-vc8/example-vc8.tlb"
+				TypeLibraryName=".\Release-vc8/test-vc8.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -46,9 +46,9 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;FREEGLUT_STATIC;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\Release-vc8/example-vc8.pch"
+				PrecompiledHeaderFile=".\Release-vc8/test-vc8.pch"
 				AssemblerListingLocation=".\Release-vc8/"
 				ObjectFile=".\Release-vc8/"
 				ProgramDataBaseFileName=".\Release-vc8/"
@@ -68,11 +68,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib Release-vc8\libMini-vc8.lib freeglut_static.lib"
-				OutputFile=".\example.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib ..\Release-vc8\libMini-vc8.lib ..\Release-vc8\libMiniSFX-vc8.lib ..\freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				OutputFile=".\test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\Release-vc8/example-vc8.pdb"
+				ProgramDatabaseFile=".\Release-vc8/test-vc8.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -124,17 +124,17 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug-vc8/example-vc8.tlb"
+				TypeLibraryName=".\Debug-vc8/test-vc8.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;FREEGLUT_STATIC;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug-vc8/example-vc8.pch"
+				PrecompiledHeaderFile=".\Debug-vc8/test-vc8.pch"
 				AssemblerListingLocation=".\Debug-vc8/"
 				ObjectFile=".\Debug-vc8/"
 				ProgramDataBaseFileName=".\Debug-vc8/"
@@ -155,12 +155,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib Debug-vc8\libMinid-vc8.lib freeglut_static.lib"
-				OutputFile=".\example.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib ..\Debug-vc8\libMinid-vc8.lib ..\Debug-vc8\libMiniSFXd-vc8.lib ..\freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				OutputFile=".\test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug-vc8/example-vc8.pdb"
+				ProgramDatabaseFile=".\Debug-vc8/test-vc8.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -198,7 +198,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="example.cpp"
+				RelativePath="test.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -223,7 +223,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="libMini.rc"
+				RelativePath="..\libMini.rc"
 				>
 			</File>
 		</Filter>

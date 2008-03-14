@@ -1,6 +1,7 @@
 SHELL	= sh
 
-PRGS	= db2db eval
+PRGS	= db2db eval\
+	  test
 
 SRCS	= $(PRGS:=.cpp)
 OBJS	= $(PRGS:=.o)
