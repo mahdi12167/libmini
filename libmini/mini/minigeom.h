@@ -102,11 +102,12 @@ class minigeom_halfspace: public minigeom_base
    //! intersect with half space
    minigeom_segment intersect(minigeom_halfspace &halfspace);
 
-   friend BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace);
-
    protected:
 
    private:
+
+   friend class minigeom_segment;
+   friend class minigeom_polyhedron;
    };
 
 //! convex polyhedron

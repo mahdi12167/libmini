@@ -173,23 +173,38 @@ void minigeom_polyhedron::remove(int h)
 
 BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace)
    {
+   static const double delta=1E-10;
+
    int i,j,k;
 
    minigeom_segment segment;
 
-   if (numhalf==0) return(TRUE);
-
    for (i=0; i<numhalf; i++)
-      for (j=i+1; j<numhalf; j++)
-         {
-         segment=half[i].intersect(half[j]);
+      if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec)<delta)
+         if (half[i].vec*halfspace.vec==1.0) return(FALSE);
 
-         for (k=0; k<numhalf; k++)
-            if (k!=i && k!=j)
-               segment.intersect(half[k]);
+   if (numhalf==0) return(TRUE);
+   else if (numhalf==1)
+      {
+      segment=half[0].intersect(halfspace);
+      if (!segment.isnull()) return(TRUE);
 
-         if (segment.intersect(halfspace)) return(TRUE);
-         }
+      if ((half[0].pnt-halfspace.pnt)*halfspace.vec<=0.0) return(TRUE);
+      }
+   else
+      for (i=0; i<numhalf; i++)
+         for (j=i+1; j<numhalf; j++)
+            {
+            segment=half[i].intersect(half[j]);
+
+            if (segment.isnull()) continue;
+
+            for (k=0; k<numhalf; k++)
+               if (k!=i && k!=j)
+                  segment.intersect(half[k]);
+
+            if (segment.intersect(halfspace)) return(TRUE);
+            }
 
    return(FALSE);
    }
