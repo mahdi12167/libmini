@@ -140,11 +140,14 @@ class minigeom_polyhedron
 
    private:
 
+   static const double delta;
+
    void allocate(int n);
 
    void remove(int h);
 
-   BOOLINT check4intersection(minigeom_halfspace &halfspace);
+   BOOLINT check4intersection(minigeom_halfspace &halfspace,int omit=-1);
+   BOOLINT check4redundancy(int h);
    };
 
 #endif

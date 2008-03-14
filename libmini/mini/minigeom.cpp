@@ -82,7 +82,13 @@ minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin
 
       lambda=(orig1-orig2)*halfspace.vec; // distance of plane origin to intersecting plane
-      orig=orig1+lambda/dot*dir; // line origin
+      lambda/=dot; // distance to line origin
+
+      // clamp distance
+      if (lambda<-MAXFLOAT) lambda=-MAXFLOAT;
+      else if (lambda>MAXFLOAT) lambda=MAXFLOAT;
+
+      orig=orig1+lambda*dir; // line origin
 
       // create intersection line
       line=minigeom_segment(orig,cross);
@@ -92,6 +98,8 @@ minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
    return(line);
    }
 
+const double minigeom_polyhedron::delta=1E-10;
+
 // default constructor
 minigeom_polyhedron::minigeom_polyhedron()
    {
@@ -99,6 +107,17 @@ minigeom_polyhedron::minigeom_polyhedron()
 
    numhalf=0;
    maxhalf=0;
+
+   allocate(6);
+
+   half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT/8,0,0),miniv3d(1,0,0));
+   half[1]=minigeom_halfspace(miniv3d(MAXFLOAT/8,0,0),miniv3d(-1,0,0));
+   half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT/8,0),miniv3d(0,1,0));
+   half[3]=minigeom_halfspace(miniv3d(0,MAXFLOAT/8,0),miniv3d(0,-1,0));
+   half[4]=minigeom_halfspace(miniv3d(0,0,-MAXFLOAT/8),miniv3d(0,0,1));
+   half[5]=minigeom_halfspace(miniv3d(0,0,MAXFLOAT/8),miniv3d(0,0,-1));
+
+   numhalf=6;
    }
 
 // copy constructor
@@ -126,8 +145,6 @@ void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
    {
    int i;
 
-   minigeom_polyhedron *tmp;
-
    if (halfspace.ishalf())
       if (check4intersection(halfspace))
          {
@@ -137,14 +154,7 @@ void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
          numhalf++;
 
          for (i=numhalf-2; i>=0; i--)
-            {
-            tmp=new minigeom_polyhedron(*this);
-
-            tmp->remove(i);
-            if (!tmp->check4intersection(half[i])) remove(i);
-
-            delete tmp;
-            }
+            if (check4redundancy(i)) remove(i);
          }
    }
 
@@ -181,52 +191,38 @@ void minigeom_polyhedron::remove(int h)
    {
    int i;
 
-   if (h>=numhalf) ERRORMSG();
-
    for (i=h+1; i<numhalf; i++) half[i-1]=half[i];
    numhalf--;
    }
 
-BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace)
+BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace,int omit)
    {
-   static const double delta=1E-10;
-
    int i,j,k;
 
    minigeom_segment segment;
 
    for (i=0; i<numhalf; i++)
-      if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec)<delta)
-         if (half[i].vec==halfspace.vec) return(FALSE);
+      if (i!=omit)
+         if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec)<delta)
+            if (half[i].vec==halfspace.vec) return(FALSE);
 
-   if (numhalf==0) return(TRUE);
-   else if (numhalf==1)
-      {
-      segment=half[0].intersect(halfspace);
-
-      if (!segment.isnull()) return(TRUE);
-
-      if (half[0].vec*halfspace.vec<0.0) return(TRUE);
-      else if ((half[0].pnt-halfspace.pnt)*halfspace.vec<0.0) return(TRUE);
-      }
-   else
-      for (i=0; i<numhalf; i++)
-         for (j=i+1; j<numhalf; j++)
+   for (i=0; i<numhalf; i++)
+      for (j=i+1; j<numhalf; j++)
+         if (i!=omit && j!=omit)
             {
             segment=half[i].intersect(half[j]);
 
-            if (segment.isnull())
-               {
-               //!! todo
-               }
-            else
-               {
-               for (k=0; k<numhalf; k++)
-                  if (k!=i && k!=j) segment.intersect(half[k]);
+            if (segment.isnull()) continue;
 
-               if (segment.intersect(halfspace)) return(TRUE);
-               }
+            for (k=0; k<numhalf; k++)
+               if (k!=i && k!=j)
+                  if (k!=omit) segment.intersect(half[k]);
+
+            if (segment.intersect(halfspace)) return(TRUE);
             }
 
    return(FALSE);
    }
+
+BOOLINT minigeom_polyhedron::check4redundancy(int h)
+   {return(!check4intersection(half[h],h));}
