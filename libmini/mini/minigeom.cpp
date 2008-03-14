@@ -111,7 +111,7 @@ minigeom_polyhedron::minigeom_polyhedron(const minigeom_polyhedron &poly)
 
 // destructor
 minigeom_polyhedron::~minigeom_polyhedron()
-   {if (half!=NULL) delete half;}
+   {if (half!=NULL) delete[] half;}
 
 // intersect with half space
 void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)

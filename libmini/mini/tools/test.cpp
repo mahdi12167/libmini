@@ -2,8 +2,6 @@
 
 int main(int argc,char *argv[])
    {
-   int i;
-
    if (argc!=1)
       {
       printf("usage: %s\n",argv[0]);
@@ -14,7 +12,7 @@ int main(int argc,char *argv[])
 
    // begin of test code section
 
-   // add test code here
+   // add test code here:
 
    // end of test code section
 
