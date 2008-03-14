@@ -112,12 +112,12 @@ minigeom_polyhedron::minigeom_polyhedron()
    allocate(6);
 
    // define a closed box
-   half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT,0,0),miniv3d(1,0,0));
-   half[1]=minigeom_halfspace(miniv3d(MAXFLOAT,0,0),miniv3d(-1,0,0));
-   half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT,0),miniv3d(0,1,0));
-   half[3]=minigeom_halfspace(miniv3d(0,MAXFLOAT,0),miniv3d(0,-1,0));
-   half[4]=minigeom_halfspace(miniv3d(0,0,-MAXFLOAT),miniv3d(0,0,1));
-   half[5]=minigeom_halfspace(miniv3d(0,0,MAXFLOAT),miniv3d(0,0,-1));
+   half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT/8,0,0),miniv3d(1,0,0));
+   half[1]=minigeom_halfspace(miniv3d(MAXFLOAT/8,0,0),miniv3d(-1,0,0));
+   half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT/8,0),miniv3d(0,1,0));
+   half[3]=minigeom_halfspace(miniv3d(0,MAXFLOAT/8,0),miniv3d(0,-1,0));
+   half[4]=minigeom_halfspace(miniv3d(0,0,-MAXFLOAT/8),miniv3d(0,0,1));
+   half[5]=minigeom_halfspace(miniv3d(0,0,MAXFLOAT/8),miniv3d(0,0,-1));
 
    numhalf=6;
    }
