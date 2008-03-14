@@ -19,7 +19,7 @@ int main(int argc,char *argv[])
 
    // begin of test code section
 
-   const int hsnum=6;
+   const int hsnum=7;
 
    minigeom_halfspace hs[hsnum];
 
@@ -29,6 +29,8 @@ int main(int argc,char *argv[])
    hs[3]=minigeom_halfspace(miniv3d(0,1,0),miniv3d(0,-1,0));
    hs[4]=minigeom_halfspace(miniv3d(0,0,-1),miniv3d(0,0,1));
    hs[5]=minigeom_halfspace(miniv3d(0,0,1),miniv3d(0,0,-1));
+
+   hs[6]=minigeom_halfspace(miniv3d(0,0,0),miniv3d(-1,1,0));
 
    minigeom_polyhedron cp;
 

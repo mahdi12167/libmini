@@ -60,6 +60,8 @@ class minigeom_base
 
    protected:
 
+   static const double delta;
+
    miniv3d pnt,vec;
    double minlambda,maxlambda;
 
@@ -111,7 +113,7 @@ class minigeom_halfspace: public minigeom_base
    };
 
 //! convex polyhedron
-class minigeom_polyhedron
+class minigeom_polyhedron: public minigeom_base
    {
    public:
 
@@ -139,8 +141,6 @@ class minigeom_polyhedron
    minigeom_halfspace *half;
 
    private:
-
-   static const double delta;
 
    void allocate(int n);
 
