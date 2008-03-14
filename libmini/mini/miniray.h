@@ -44,6 +44,10 @@ class miniray
    //! render triangles as wireframe for debugging purposes
    void renderwire();
 
+   //! configuring
+   void configure_maxchunksize_triangles(int maxchunksize=100); // set maximum chunk size for triangle arrays
+   void configure_maxchunksize_trianglefans(int maxchunksize=100); // set maximum chunk size for triangle fan arrays
+
    protected:
 
    private:
@@ -72,6 +76,17 @@ class miniray
       };
 
    TRIANGLEREF *FRONT,*BACK;
+
+   int CONFIGURE_MAXCHUNKSIZE_TRIANGLES;
+   int CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS;
+
+   void addtriangles_chunked(float **array,int index,int num,int stride=0,
+                             miniv3d *scaling=0,miniv3d *offset=0,
+                             int swapyz=0,miniwarp *warp=0);
+
+   void addtrianglefans_chunked(float **array,int index,int num,int stride=0,
+                                miniv3d *scaling=0,miniv3d *offset=0,
+                                int swapyz=0,miniwarp *warp=0);
 
    void calcbound(TRIANGLEREF *ref);
 

@@ -11,7 +11,12 @@
 
 // default constructor
 miniray::miniray()
-   {FRONT=BACK=NULL;}
+   {
+   FRONT=BACK=NULL;
+
+   CONFIGURE_MAXCHUNKSIZE_TRIANGLES=100;
+   CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS=20;
+   }
 
 // destructor
 miniray::~miniray()
@@ -43,6 +48,26 @@ void miniray::clearbuffer()
 void miniray::addtriangles(float **array,int index,int num,int stride,
                            miniv3d *scaling,miniv3d *offset,
                            int swapyz,miniwarp *warp)
+   {
+   int n;
+
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLES) addtriangles_chunked(array,index,num,stride,scaling,offset,swapyz,warp);
+   else
+      {
+      for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLES; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLES)
+         {
+         addtriangles_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLES,stride,scaling,offset,swapyz,warp);
+         index+=(3+stride)*CONFIGURE_MAXCHUNKSIZE_TRIANGLES;
+         }
+
+      addtriangles_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp);
+      }
+   }
+
+// add reference to triangles to the back buffer
+void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
+                                   miniv3d *scaling,miniv3d *offset,
+                                   int swapyz,miniwarp *warp)
    {
    TRIANGLEREF *ref;
 
@@ -78,6 +103,33 @@ void miniray::addtriangles(float **array,int index,int num,int stride,
 void miniray::addtrianglefans(float **array,int index,int num,int stride,
                               miniv3d *scaling,miniv3d *offset,
                               int swapyz,miniwarp *warp)
+   {
+   int n;
+
+   int i,k;
+
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS) addtrianglefans_chunked(array,index,num,stride,scaling,offset,swapyz,warp);
+   else
+      {
+      for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS)
+         {
+         addtrianglefans_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS,stride,scaling,offset,swapyz,warp);
+
+         for (i=0; i<CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; i++)
+            {
+            k=ftrc((*array)[index]+0.5f);
+            index+=3+k*(3+stride);
+            }
+         }
+
+      addtrianglefans_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp);
+      }
+   }
+
+// add reference to triangle fans to the back buffer
+void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride,
+                                      miniv3d *scaling,miniv3d *offset,
+                                      int swapyz,miniwarp *warp)
    {
    TRIANGLEREF *ref;
 
@@ -749,3 +801,11 @@ int miniray::intersect(const miniv3d &o,const miniv3d &d,
 
    return(1);
    }
+
+// configuring:
+
+void miniray::configure_maxchunksize_triangles(int maxchunksize)
+   {CONFIGURE_MAXCHUNKSIZE_TRIANGLES=maxchunksize;}
+
+void miniray::configure_maxchunksize_trianglefans(int maxchunksize)
+   {CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS=maxchunksize;}
