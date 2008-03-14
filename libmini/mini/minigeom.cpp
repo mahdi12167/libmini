@@ -10,6 +10,8 @@ BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace)
    double dot,lambda;
    double lambda1,lambda2;
 
+   if (minlambda>maxlambda) return(FALSE);
+
    cut=FALSE;
 
    dot=vec*halfspace.vec; // dot product between line direction and plane normal
@@ -104,9 +106,15 @@ minigeom_polyhedron::minigeom_polyhedron(const minigeom_polyhedron &poly)
    {
    int i;
 
+   half=NULL;
+
+   numhalf=0;
+   maxhalf=0;
+
    allocate(poly.numhalf);
 
    for (i=0; i<poly.numhalf; i++) half[i]=poly.half[i];
+   numhalf=poly.numhalf;
    }
 
 // destructor
@@ -118,6 +126,8 @@ void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
    {
    int i;
 
+   minigeom_polyhedron *tmp;
+
    if (halfspace.ishalf())
       if (check4intersection(halfspace))
          {
@@ -127,7 +137,14 @@ void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
          numhalf++;
 
          for (i=numhalf-2; i>=0; i--)
-            if (!check4intersection(half[i])) remove(i);
+            {
+            tmp=new minigeom_polyhedron(*this);
+
+            tmp->remove(i);
+            if (!tmp->check4intersection(half[i])) remove(i);
+
+            delete tmp;
+            }
          }
    }
 
@@ -152,7 +169,7 @@ void minigeom_polyhedron::allocate(int n)
 
          for (i=0; i<numhalf; i++) tmp[i]=half[i];
 
-         delete half;
+         delete[] half;
          half=tmp;
 
          maxhalf=n;
@@ -167,7 +184,6 @@ void minigeom_polyhedron::remove(int h)
    if (h>=numhalf) ERRORMSG();
 
    for (i=h+1; i<numhalf; i++) half[i-1]=half[i];
-
    numhalf--;
    }
 
@@ -181,15 +197,17 @@ BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace)
 
    for (i=0; i<numhalf; i++)
       if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec)<delta)
-         if (half[i].vec*halfspace.vec==1.0) return(FALSE);
+         if (half[i].vec==halfspace.vec) return(FALSE);
 
    if (numhalf==0) return(TRUE);
    else if (numhalf==1)
       {
       segment=half[0].intersect(halfspace);
+
       if (!segment.isnull()) return(TRUE);
 
-      if ((half[0].pnt-halfspace.pnt)*halfspace.vec<=0.0) return(TRUE);
+      if (half[0].vec*halfspace.vec<0.0) return(TRUE);
+      else if ((half[0].pnt-halfspace.pnt)*halfspace.vec<0.0) return(TRUE);
       }
    else
       for (i=0; i<numhalf; i++)
@@ -197,13 +215,17 @@ BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace)
             {
             segment=half[i].intersect(half[j]);
 
-            if (segment.isnull()) continue;
+            if (segment.isnull())
+               {
+               //!! todo
+               }
+            else
+               {
+               for (k=0; k<numhalf; k++)
+                  if (k!=i && k!=j) segment.intersect(half[k]);
 
-            for (k=0; k<numhalf; k++)
-               if (k!=i && k!=j)
-                  segment.intersect(half[k]);
-
-            if (segment.intersect(halfspace)) return(TRUE);
+               if (segment.intersect(halfspace)) return(TRUE);
+               }
             }
 
    return(FALSE);
