@@ -116,10 +116,18 @@ minigeom_polyhedron::~minigeom_polyhedron()
 // intersect with half space
 void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
    {
-   allocate(numhalf+1);
+   int i;
 
-   half[numhalf]=halfspace;
-   numhalf++;
+   if (check4intersection(halfspace))
+      {
+      allocate(numhalf+1);
+
+      half[numhalf]=halfspace;
+      numhalf++;
+
+      for (i=numhalf-2; i>=0; i--)
+         if (!check4intersection(half[i])) remove(i);
+      }
    }
 
 void minigeom_polyhedron::allocate(int n)
@@ -149,4 +157,36 @@ void minigeom_polyhedron::allocate(int n)
          maxhalf=n;
          }
       }
+   }
+
+void minigeom_polyhedron::remove(int h)
+   {
+   int i;
+
+   if (h>=numhalf) ERRORMSG();
+
+   for (i=h+1; i<numhalf; i++) half[i-1]=half[i];
+
+   numhalf--;
+   }
+
+BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace)
+   {
+   int i,j,k;
+
+   minigeom_segment segment;
+
+   for (i=0; i<numhalf; i++)
+      for (j=i+1; j<numhalf; j++)
+         {
+         segment=half[i].intersect(half[j]);
+
+         for (k=0; k<numhalf; k++)
+            if (k!=i && k!=j)
+               segment.intersect(half[k]);
+
+         if (segment.intersect(halfspace)) return(TRUE);
+         }
+
+   return(FALSE);
    }

@@ -140,6 +140,10 @@ class minigeom_polyhedron
    private:
 
    void allocate(int n);
+
+   void remove(int h);
+
+   BOOLINT check4intersection(minigeom_halfspace &halfspace);
    };
 
 #endif
