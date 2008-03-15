@@ -1278,6 +1278,9 @@ int main(int argc,char *argv[])
    glutSpecialFunc(NULL);
    glutIdleFunc(displayfunc);
 
+   // print unsupported OpenGL extensions
+   miniOGL::print_unsupported_glexts();
+
    // create the viewer object
    viewer=new viewerbase;
 

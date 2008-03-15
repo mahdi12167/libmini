@@ -7,13 +7,6 @@
 
 namespace miniOGL {
 
-// configuring
-void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation
-void configure_compression(int compression=1); // enable texture compression (may result in texture seams)
-int configure_depth(int depth=24); // bit depth of texture maps (may result in quantization artifacts)
-void configure_gamma(float gamma=1.0f); // gamma correction of texture maps
-void configure_level(float level=0.0f); // level adjustment of texture maps
-
 void initstate();
 void exitstate();
 
@@ -87,6 +80,16 @@ void enablelinesmooth();
 void disablelinesmooth();
 
 inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
+
+// configuring
+void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation
+void configure_compression(int compression=1); // enable texture compression (may result in texture seams)
+int configure_depth(int depth=24); // bit depth of texture maps (may result in quantization artifacts)
+void configure_gamma(float gamma=1.0f); // gamma correction of texture maps
+void configure_level(float level=0.0f); // level adjustment of texture maps
+
+// debugging
+void print_unsupported_glexts(); // print unsupported OpenGL extensions
 
 }
 

@@ -66,6 +66,8 @@ class minigeom_base
    double minlambda,maxlambda;
 
    private:
+
+   friend class minigeom_polyhedron;
    };
 
 class minigeom_segment;
@@ -113,7 +115,7 @@ class minigeom_halfspace: public minigeom_base
    };
 
 //! convex polyhedron
-class minigeom_polyhedron: public minigeom_base
+class minigeom_polyhedron
    {
    public:
 

@@ -210,7 +210,7 @@ BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace,in
    for (i=0; i<numhalf; i++)
       if (i!=omit)
          if (half[i].vec==halfspace.vec)
-            if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec+half[i].minlambda-halfspace.minlambda)<delta) return(FALSE);
+            if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec+half[i].minlambda-halfspace.minlambda)<minigeom_base::delta) return(FALSE);
 
    // check for intersection with all the edges of all faces
    for (i=0; i<numhalf; i++)

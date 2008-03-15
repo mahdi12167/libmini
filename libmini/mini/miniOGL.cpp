@@ -43,6 +43,24 @@ static void initglexts()
       }
    }
 
+void print_unsupported_glexts()
+   {
+   initglexts();
+
+   if (!glext_mm || !glext_tec || !glext_tfa || !glext_t3D || !glext_tc || !glext_ts3 || !glext_tgm)
+      {
+      printf("unsupported OpenGL extensions:");
+
+      if (!glext_mm) printf(" GL_EXT_blend_minmax\n");
+      if (!glext_tec) printf(" GL_SGIS_texture_edge_clamp\n");
+      if (!glext_tfa) printf(" GL_EXT_texture_filter_anisotropic\n");
+      if (!glext_t3D) printf(" GL_EXT_texture3D\n");
+      if (!glext_tc) printf(" GL_ARB_texture_compression\n");
+      if (!glext_ts3) printf(" GL_EXT_texture_compression_s3tc\n");
+      if (!glext_tgm) printf(" GL_SGIS_generate_mipmap\n");
+      }
+   }
+
 #ifdef _WIN32
 
 static void initwglprocs()
