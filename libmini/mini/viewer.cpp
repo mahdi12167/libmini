@@ -1241,7 +1241,7 @@ int main(int argc,char *argv[])
       {
       printf("short usage: %s <url> {<options>}\n",argv[0]);
       printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {<options>}\n",argv[0]);
-      printf("multi usage: %s -m {<url>} {options>}\n",argv[0]);
+      printf("multi usage: %s -m {<url>} {<options>}\n",argv[0]);
       printf("options: -s=stereo -a=anaglyph -f=full-screen -r=reset-cache -c=auto-s3tc\n");
       exit(1);
       }
