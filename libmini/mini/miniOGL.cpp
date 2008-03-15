@@ -51,13 +51,15 @@ void print_unsupported_glexts()
       {
       printf("unsupported OpenGL extensions:");
 
-      if (!glext_mm) printf(" GL_EXT_blend_minmax\n");
-      if (!glext_tec) printf(" GL_SGIS_texture_edge_clamp\n");
-      if (!glext_tfa) printf(" GL_EXT_texture_filter_anisotropic\n");
-      if (!glext_t3D) printf(" GL_EXT_texture3D\n");
-      if (!glext_tc) printf(" GL_ARB_texture_compression\n");
-      if (!glext_ts3) printf(" GL_EXT_texture_compression_s3tc\n");
-      if (!glext_tgm) printf(" GL_SGIS_generate_mipmap\n");
+      if (!glext_mm) printf(" EXT_blend_minmax");
+      if (!glext_tec) printf(" SGIS_texture_edge_clamp");
+      if (!glext_tfa) printf(" EXT_texture_filter_anisotropic");
+      if (!glext_t3D) printf(" EXT_texture3D");
+      if (!glext_tc) printf(" ARB_texture_compression");
+      if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
+      if (!glext_tgm) printf(" SGIS_generate_mipmap");
+
+      printf("\n");
       }
    }
 
