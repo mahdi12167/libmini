@@ -519,11 +519,14 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // reset reference layer
    setreference(LREF);
 
-   // set tile overlap
-   CACHE->configure_overlap(TPARAMS.overlap);
-
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);
+
+   // enable alpha test
+   CACHE->setalphatest((float)254/255);
+
+   // set tile overlap
+   CACHE->configure_overlap(TPARAMS.overlap);
 
    // turn on ray object
    CACHE->configure_enableray(1);
