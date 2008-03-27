@@ -38,6 +38,9 @@ class databuf
    float minvalue;
    float maxvalue;
 
+   //! coordinate system indicator
+   int crs,zone,datum;
+
    //! no-data indicator
    float nodata;
 

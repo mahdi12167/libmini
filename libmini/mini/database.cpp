@@ -68,6 +68,8 @@ databuf::databuf()
    minvalue=MAXFLOAT;
    maxvalue=-MAXFLOAT;
 
+   crs=zone=datum=0;
+
    nodata=-MAXFLOAT;
 
    extformat=0;
@@ -583,6 +585,11 @@ void databuf::savedata(const char *filename,
    writeparam("scaling",scaling,file);
    writeparam("bias",bias,file);
 
+   // save coordinate system indicator
+   writeparam("crs",crs,file);
+   writeparam("zone",zone,file);
+   writeparam("datum",datum,file);
+
    // save no-data indicator
    writeparam("nodata",nodata,file);
 
@@ -676,6 +683,15 @@ int databuf::loaddata(const char *filename)
    // read optional scaling
    if (readparam("scaling",&scaling,file)==0) ERRORMSG();
    if (readparam("bias",&bias,file)==0) ERRORMSG();
+
+   // read coordinate system indicator
+   if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4) crs=zone=datum=0;
+   else
+      {
+      if (readparami("crs",&crs,file)==0) ERRORMSG();
+      if (readparami("zone",&zone,file)==0) ERRORMSG();
+      if (readparami("datum",&datum,file)==0) ERRORMSG();
+      }
 
    // read no-data indicator
    if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4) nodata=-MAXFLOAT;
