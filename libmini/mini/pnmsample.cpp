@@ -464,10 +464,10 @@ void resample(int num,char **grid,
           extentx==NULL || extenty==NULL ||
           scaling==NULL)
          {
-         if (getPNMparamsLL(&comms[n],
-                            &coords[8*n],&cellsizes[2*n],
-                            &scalings[n],&missings[n],
-                            &utm_zones[n],&utm_datums[n])==0) ERRORMSG();
+         if (getPNMparams(&comms[n],
+                          &coords[8*n],&cellsizes[2*n],
+                          &scalings[n],&missings[n],
+                          &utm_zones[n],&utm_datums[n])==0) ERRORMSG();
 
          if (utm_zones[n]!=0)
             {
@@ -1237,10 +1237,10 @@ void normalize(int num,
              extentx==NULL || extenty==NULL ||
              scaling==NULL)
             {
-            if (getPNMparamsLL(&comment,
-                               coord,cellsize,
-                               &scaling0,&missing0,
-                               &utm_zone,&utm_datum)==0) ERRORMSG();
+            if (getPNMparams(&comment,
+                             coord,cellsize,
+                             &scaling0,&missing0,
+                             &utm_zone,&utm_datum)==0) ERRORMSG();
 
             // transform corners
             if (utm_zone!=0)
@@ -1527,10 +1527,10 @@ void texturemap(char *heightfile,
    if ((image=readPNMfile(heightfile,&width,&height,&components,&comment))==NULL) ERRORMSG();
    if (width!=height || (components!=1 && components!=2)) ERRORMSG();
 
-   if (getPNMparamsLL(&comment,
-                      coord,cellsize,
-                      &scaling,&missing,
-                      &utm_zone,&utm_datum)==0) ERRORMSG();
+   if (getPNMparams(&comment,
+                    coord,cellsize,
+                    &scaling,&missing,
+                    &utm_zone,&utm_datum)==0) ERRORMSG();
 
    if (utm_zone==0)
       {

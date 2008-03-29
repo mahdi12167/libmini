@@ -73,13 +73,13 @@ void putPNMparams(PNMcomment *comment, // output PNM comment
                   int missing_value=-9999); // missing data value
 
 //! calculate the grid parameters in geographic coordinates
-int getPNMparamsLL(PNMcomment *comment, // input PNM comment
-                   float *coord, // output corners in arc-seconds
-                   float *cell_size, // output cell size in arc-seconds (mean approximate value)
-                   float *vertical_scaling, // output elevation scaling factor (to yield meters)
-                   int *missing_value, // output missing data value
-                   int *utm_zone=0, // UTM zone: +- 1-60 0=LL
-                   int *utm_datum=0); // UTM datum
+int getPNMparams(PNMcomment *comment, // input PNM comment
+                 float *coord, // output corners in arc-seconds
+                 float *cell_size, // output cell size in arc-seconds (mean approximate value)
+                 float *vertical_scaling, // output elevation scaling factor (to yield meters)
+                 int *missing_value, // output missing data value
+                 int *utm_zone=0, // UTM zone: +- 1-60 0=LL
+                 int *utm_datum=0); // UTM datum
 
 }
 

@@ -315,6 +315,14 @@ void databuf::set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
    LLWGS84_ney=ne_corner_y;
    }
 
+// set coordinate system
+void databuf::set_crs(int crs_type,int crs_zone,int crs_datum)
+   {
+   crs=crs_type;
+   zone=crs_zone;
+   datum=crs_datum;
+   }
+
 // write one float parameter
 void databuf::writeparam(char *tag,float v,FILE *file,int digits)
    {
@@ -1163,11 +1171,24 @@ int databuf::loadPNMdata(const char *filename)
    if (type==1)
       if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
 
-   if (getPNMparamsLL(&comment,
-                      coord,cellsize,
-                      &vscale,&missing,
-                      &utm_zone,&utm_datum)!=0)
+   if (getPNMparams(&comment,
+                    coord,cellsize,
+                    &vscale,&missing,
+                    &utm_zone,&utm_datum)!=0)
       {
+      swx=coord[0];
+      swy=coord[1];
+      nwx=coord[2];
+      nwy=coord[3];
+      nex=coord[4];
+      ney=coord[5];
+      sex=coord[6];
+      sey=coord[7];
+
+      crs=(utm_zone==0)?1:2;
+      zone=utm_zone;
+      datum=utm_datum;
+
       nodata=missing;
 
       if (utm_zone!=0)
@@ -1177,15 +1198,6 @@ int databuf::loadPNMdata(const char *filename)
          miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
          miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
          }
-
-      swx=coord[0];
-      swy=coord[1];
-      nwx=coord[2];
-      nwy=coord[3];
-      nex=coord[4];
-      ney=coord[5];
-      sex=coord[6];
-      sey=coord[7];
 
       LLWGS84_swx=coord[0]/(60*60);
       LLWGS84_swy=coord[1]/(60*60);
@@ -1563,20 +1575,34 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 // data is saved as plain PNM image
 void databuf::savePNMdata(const char *filename)
    {
+   PNMcomment comment,*cptr;
+
    if (extformat!=0 || implformat!=0) return;
    if (zsize>1 || tsteps>1) return;
 
-   if (type==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,1);
+   if (crs==1 || crs==2)
+      {
+      putPNMparams(&comment,NULL,
+                   zone,datum,(zone==0)?4:2,
+                   swx,swy,nwx,nwy,nex,ney,sex,sey,
+                   fsqrt(fsqr(sex-swx)+fsqr(sey-swy))/xsize,fsqrt(fsqr(nwy-swy)+fsqr(nwx-swx))/ysize,
+                   2,scaling,(nodata==-MAXFLOAT)?-32678.0f:nodata);
+
+      cptr=&comment;
+      }
+   else cptr=NULL;
+
+   if (type==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,1,cptr);
    else if (type==1)
-      if (*((unsigned char *)(&INTEL_CHECK))==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,2);
+      if (*((unsigned char *)(&INTEL_CHECK))==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,2,cptr);
       else
          {
          swapbytes();
-         writePNMimage(filename,(unsigned char *)data,xsize,ysize,2);
+         writePNMimage(filename,(unsigned char *)data,xsize,ysize,2,cptr);
          swapbytes();
          }
-   else if (type==3) writePNMimage(filename,(unsigned char *)data,xsize,ysize,3);
-   else if (type==4) writePNMimage(filename,(unsigned char *)data,xsize,ysize,4);
+   else if (type==3) writePNMimage(filename,(unsigned char *)data,xsize,ysize,3,cptr);
+   else if (type==4) writePNMimage(filename,(unsigned char *)data,xsize,ysize,4,cptr);
    }
 
 // data is saved as PVM volume

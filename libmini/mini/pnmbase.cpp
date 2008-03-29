@@ -404,13 +404,13 @@ void putPNMparams(PNMcomment *comment,
 
 // calculate the grid parameters in geographic coordinates
 // returns 1 if PNM comment contains a valid descriptor, 0 otherwise
-int getPNMparamsLL(PNMcomment *comment,
-                   float *coord,
-                   float *cell_size,
-                   float *vertical_scaling,
-                   int *missing_value,
-                   int *utm_zone,
-                   int *utm_datum)
+int getPNMparams(PNMcomment *comment,
+                 float *coord,
+                 float *cell_size,
+                 float *vertical_scaling,
+                 int *missing_value,
+                 int *utm_zone,
+                 int *utm_datum)
    {
    int line;
    char *ptr;

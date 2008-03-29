@@ -832,10 +832,10 @@ minitile *minitile::load(int cols,int rows,
             if (components==2) maxelev=32767.0f;
             else maxelev=255.0f;
 
-            if (getPNMparamsLL(&comment,
-                               coord,cellsize,
-                               &scaling,&missing,
-                               &utm_zone,&utm_datum)==0) ERRORMSG();
+            if (getPNMparams(&comment,
+                             coord,cellsize,
+                             &scaling,&missing,
+                             &utm_zone,&utm_datum)==0) ERRORMSG();
 
             if (stretch!=1.0f)
                {

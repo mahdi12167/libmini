@@ -39,7 +39,9 @@ class databuf
    float maxvalue;
 
    //! coordinate system indicator
-   int crs,zone,datum;
+   int crs; // 0 = none, 1 = LL, 2 = UTM
+   int zone; // coordinate system zone
+   int datum; // coordinate system datum
 
    //! no-data indicator
    float nodata;
@@ -106,6 +108,9 @@ class databuf
                            float se_corner_x,float se_corner_y,
                            float nw_corner_x,float nw_corner_y,
                            float ne_corner_x,float ne_corner_y);
+
+   //! set coordinate system
+   void set_crs(int crs_type,int crs_zone,int crs_datum);
 
    //! native input/output
    void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB byte order
