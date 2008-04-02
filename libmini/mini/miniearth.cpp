@@ -69,6 +69,8 @@ miniearth::miniearth()
    EPARAMS.transbias=4.0f;    // transition bias between night and day
    EPARAMS.transoffset=0.01f; // transition offset between night and day
 
+   EPARAMS.shrinkZpass=FALSE; // shrink earth radius during Z rendering pass
+
    EPARAMS.frontname="EarthDay.ppm";  // file name of front earth PPM texture
    EPARAMS.backname="EarthNight.ppm"; // file name of back earth PPM texture
 
@@ -499,8 +501,13 @@ void miniearth::render()
 
       // render earth globe (without RGB writing)
       if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0)
+         if (ref->get()->warpmode!=0 && ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
+            {
+            if (EPARAMS.shrinkZpass)
+               EARTH->setscale(ref->len_o2g(1.0-ref->get()->maxelev/miniutm::EARTH_radius));
+
             EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
+            }
 
       // disable fog
       if (EPARAMS.usefog) glDisable(GL_FOG);

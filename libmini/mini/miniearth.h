@@ -74,6 +74,8 @@ class miniearth
       float transbias;
       float transoffset;
 
+      BOOLINT shrinkZpass;
+
       // earth textures as a PPM file
       char *frontname;
       char *backname;
