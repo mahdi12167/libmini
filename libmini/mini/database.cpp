@@ -1694,11 +1694,14 @@ void databuf::convertdata(unsigned int newtype)
       byteptr=(unsigned char *)data;
       floatptr=(float *)newdata;
 
-      for (count=0; count<cells; count++) *floatptr++=*byteptr++;
+      for (count=0; count<cells; count++) *floatptr++=*byteptr++*scaling+bias;
 
       free(data);
       data=newdata;
       type=newtype;
+
+      scaling=1.0f;
+      bias=0.0f;
 
       bytes=xsize*ysize*zsize*tsteps*4;
       }
@@ -1751,11 +1754,14 @@ void databuf::convertdata(unsigned int newtype)
       shortptr=(short int *)data;
       floatptr=(float *)newdata;
 
-      for (count=0; count<cells; count++) *floatptr++=*shortptr++;
+      for (count=0; count<cells; count++) *floatptr++=*shortptr++*scaling+bias;
 
       free(data);
       data=newdata;
       type=newtype;
+
+      scaling=1.0f;
+      bias=0.0f;
 
       bytes=xsize*ysize*zsize*tsteps*4;
       }

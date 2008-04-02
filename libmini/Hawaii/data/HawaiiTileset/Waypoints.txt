@@ -1941,3 +1941,171 @@ UTM 04
 618675
 2355347
 23m
+
+Goodwill Store, Beretania
+UTM 04
+619693
+2356070
+32m
+
+Danger Sign, Koko Crater
+UTM 04
+636987
+2354612
+100m
+
+Koko Crater Rim Hike, Halfway up
+UTM 04
+637044
+2354656
+142m
+
+Mormon Temple, Laie
+UTM 04
+610846
+2394213
+29m
+
+Laie Point
+UTM 04
+612332
+2394318
+18m
+
+Malaekahana Beach, Far Entry
+UTM 04
+609971
+2396560
+20m
+
+Cabins, Malaekahana Beach
+UTM 04
+609983
+2396833
+11m
+
+Malaekahana Beach, Makahoa Point
+UTM 04
+610104
+2396994
+15m
+
+Cockroach Beach, Makai Pier Vista Point
+UTM 04
+638676
+2357718
+24m
+
+Bunker Plateau, Makapuu Vista Point
+UTM 04
+639405
+2356983
+92m
+
+Glider Point, East Koolau
+UTM 04
+639027
+2356917
+127m
+
+Top Rim View, East Koolau
+UTM 04
+638583
+2357081
+234m
+
+Outlook Plateau, East Koolau
+UTM 04
+638541
+2357119
+231m
+
+Scenic Cliff, East Kalanianaole Hwy
+UTM 04
+636321
+2353255
+48m
+
+Old Pali Road, First Turn
+UTM 04
+625321
+2363254
+355m
+
+Iolani Palace, Honolulu
+UTM 04
+618322
+2356492
+21m
+
+Lilioukalani Statue, Government Building, Honolulu
+UTM 04
+618469
+2356559
+36m
+
+Waikiki Pier
+UTM 04
+622027
+2352606
+16m
+
+First Hawaiian Hotel, Waikiki
+UTM 04
+621691
+2353174
+16m
+
+Royal Hawaiian Hotel, Waikiki
+UTM 04
+621507
+2353218
+16m
+
+Duke Statue, Waikiki
+UTM 04
+621864
+2353097
+31m
+
+Duke's, Waikiki
+UTM 04
+621602
+2353210
+17m
+
+Rum Fire Bar, Waikiki
+UTM 04
+621334
+2353239
+14m
+
+Intl Mkt Plc, Waikiki
+UTM 04
+621688
+2353323
+15m
+
+Box Car Race, Kunia
+UTM 04
+600315
+2365648
+114m
+
+Road Block, Mokuleia
+UTM 04
+578950
+2386422
+22m
+
+Peacock Flats, Gate
+UTM 04
+586663
+2386139
+19m
+
+Breaker's, Haleiwa
+UTM 04
+592817
+2387209
+35m
