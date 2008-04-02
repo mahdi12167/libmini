@@ -39,6 +39,8 @@
 #define VIEWER_FOGSTART 0.5f
 #define VIEWER_FOGDENSITY 0.5f;
 
+#define VIEWER_VOIDSTART 20000.0f;
+
 #define VIEWER_CONTOURS 10.0f
 
 #define VIEWER_SEABOTTOM -10.0f
@@ -208,6 +210,8 @@ void initparams()
 
    eprms.fogstart=VIEWER_FOGSTART;
    eprms.fogdensity=VIEWER_FOGDENSITY;
+
+   eprms.voidstart=VIEWER_VOIDSTART;
 
    viewer->getearth()->set(eprms);
 
@@ -900,8 +904,7 @@ void displayfunc()
 
    // setup OpenGL state:
 
-   glClearColor(eparams->fogcolor[0],eparams->fogcolor[1],eparams->fogcolor[2],1.0f);
-   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+   viewer->clear();
 
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();

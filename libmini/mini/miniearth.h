@@ -55,6 +55,11 @@ class miniearth
       float fogstart;
       float fogdensity;
 
+      // optional void display:
+
+      float voidstart;
+      float voidcolor[3];
+
       // optional sky-dome:
 
       char *skydome;
@@ -125,6 +130,9 @@ class miniearth
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! clear scene
+   void clear();
+
    //! generate and cache scene for a particular eye point and time step
    void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time=0.0);
 
@@ -158,6 +166,8 @@ class miniearth
    miniglobe *EARTH;
 
    BOOLINT LOADED;
+
+   BOOLINT CLEAR;
 
    void initOGL();
 

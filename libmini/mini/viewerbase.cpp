@@ -139,6 +139,10 @@ minicoord viewerbase::getinitial()
 void viewerbase::initeyepoint(const minicoord &e)
    {EARTH->getterrain()->initeyepoint(e);}
 
+// clear scene
+void viewerbase::clear()
+   {EARTH->clear();}
+
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
    {EARTH->getterrain()->cache(e,d,u,aspect,gettime());}

@@ -47,6 +47,14 @@ miniearth::miniearth()
    EPARAMS.fogstart=0.5f;   // start of fog relative to far plane
    EPARAMS.fogdensity=0.5f; // relative fog density
 
+   // optional void display:
+
+   EPARAMS.voidstart=0.0f;    // end of atmosphere
+
+   EPARAMS.voidcolor[0]=0.0f; // void color
+   EPARAMS.voidcolor[1]=0.0f; // void color
+   EPARAMS.voidcolor[2]=0.0f; // void color
+
    // optional sky-dome:
 
    EPARAMS.skydome="SkyDome.ppm"; // skydome file
@@ -78,6 +86,8 @@ miniearth::miniearth()
    EARTH=new miniglobe();
 
    LOADED=FALSE;
+
+   CLEAR=FALSE;
 
    initOGL();
    }
@@ -320,6 +330,10 @@ minicoord miniearth::getinitial()
 void miniearth::initeyepoint(const minicoord &e)
    {TERRAIN->initeyepoint(e);}
 
+// clear scene
+void miniearth::clear()
+   {CLEAR=TRUE;}
+
 // generate and cache scene for a particular eye point and time step
 void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time)
    {TERRAIN->cache(e,d,u,aspect,time);}
@@ -333,6 +347,8 @@ void miniearth::render()
    minilayer::MINILAYER_PARAMS lparams;
 
    minicoord egl;
+
+   double alt,altf,fogf;
 
    GLfloat color[4];
 
@@ -352,9 +368,48 @@ void miniearth::render()
 
       egl=ref->map_g2o(lparams.eye);
 
+      // calculate void display factor
+      if (EPARAMS.voidstart<=0.0f) altf=0.0;
+      else
+         {
+         if (ref->get()->warpmode==1 || ref->get()->warpmode==2)
+            {
+            alt=miniv3d((lparams.eye-ref->getcenter()).vec)*ref->getnormal();
+
+            altf=alt/EPARAMS.voidstart;
+            }
+         else
+            {
+            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getLength();
+            alt-=miniutm::EARTH_radius;
+
+            altf=alt/EPARAMS.voidstart;
+            }
+
+         if (altf<0.0) altf=0.0;
+         else if (altf>1.0) altf=1.0;
+
+         altf=altf*altf;
+         }
+
+      // clear back buffer
+      if (CLEAR)
+         {
+         glClearColor((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
+                      (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
+                      (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2],
+                      1.0f);
+
+         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+         CLEAR=FALSE;
+         }
+
       // enable fog
       if (EPARAMS.usefog)
          {
+         fogf=(1.0-altf)*EPARAMS.fogstart+altf;
+
          color[0]=EPARAMS.fogcolor[0];
          color[1]=EPARAMS.fogcolor[1];
          color[2]=EPARAMS.fogcolor[2];
@@ -363,7 +418,7 @@ void miniearth::render()
          glFogfv(GL_FOG_COLOR,color);
 
          glFogi(GL_FOG_MODE,GL_LINEAR);
-         glFogf(GL_FOG_START,EPARAMS.fogstart*ref->len_g2o(EPARAMS.farp));
+         glFogf(GL_FOG_START,fogf*ref->len_g2o(EPARAMS.farp));
          glFogf(GL_FOG_END,ref->len_g2o(EPARAMS.farp));
 
          glEnable(GL_FOG);
@@ -372,12 +427,13 @@ void miniearth::render()
       // draw skydome
       if (EPARAMS.useskydome)
          if (ref->get()->warpmode==0 || ref->get()->warpmode==2)
-            {
-            SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                            1.9*ref->len_g2o(EPARAMS.farp));
+            if (EPARAMS.voidstart==0.0f)
+               {
+               SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                               1.9*ref->len_g2o(EPARAMS.farp));
 
-            SKYDOME->drawskydome();
-            }
+               SKYDOME->drawskydome();
+               }
 
       // render earth globe (without Z writing)
       if (EPARAMS.useearth)
@@ -428,7 +484,10 @@ void miniearth::render()
                EARTH->settexturedirectparams(light,0.0f,1.0f);
                }
 
-            EARTH->setfogparams((EPARAMS.usefog)?EPARAMS.fogstart/2.0f*ref->len_g2o(EPARAMS.farp):0.0f,(EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
+            fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
+
+            EARTH->setfogparams((EPARAMS.usefog)?fogf*ref->len_g2o(EPARAMS.farp):0.0f,
+                                (EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
                                 EPARAMS.fogdensity,
                                 EPARAMS.fogcolor);
 

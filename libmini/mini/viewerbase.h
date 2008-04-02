@@ -71,6 +71,9 @@ class viewerbase
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! clear scene
+   void clear();
+
    //! generate and cache scene for a particular eye point
    void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect);
 
