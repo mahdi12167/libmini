@@ -1,16 +1,17 @@
 SHELL	= sh
 
 MODS	= mini miniOGL\
-	  miniv3f miniv3d miniv4f miniv4d minigeom\
+	  miniv3f miniv3d miniv4f miniv4d\
 	  minitime miniio minihsv miniutm\
 	  ministub minitile miniload\
 	  minilayer miniterrain miniearth\
 	  minicache minishader miniwarp miniray\
 	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
+	  minidyna minigeom minimesh\
 	  pnmbase pnmsample\
 	  database datafill\
-	  datacloud datacache\
+	  datacloud datacache datagrid\
 	  datacalc dataparse\
 	  lunascan lunaparse lunacode
 

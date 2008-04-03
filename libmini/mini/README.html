@@ -13,7 +13,7 @@ renderer which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.7.4 as of 2.April.2008<br>
+Version 8.7.4 as of 3.April.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -127,7 +127,6 @@ Within the libMini package the following files are contained:<p>
    <tr><td>mini.cpp/P.h/.h:     </td><td>contains the core of the terrain renderer</td></tr>
    <tr><td>miniOGL.cpp/P.h/.h:  </td><td>contains all OpenGL dependent stuff</td></tr>
    <tr><td>miniv??.cpp/.h:      </td><td>contains vector class definitions</td></tr>
-   <tr><td>minigeom.cpp/.h:     </td><td>contains geometry class definitions</td></tr>
    <tr><td>minitime.cpp/.h:     </td><td>contains system time abstraction</td></tr>
    <tr><td>miniio.cpp/.h:       </td><td>contains additional file io stuff</td></tr>
    <tr><td>minihsv.cpp/.h:      </td><td>contains additional hsv conversion stuff</td></tr>
@@ -150,6 +149,9 @@ Within the libMini package the following files are contained:<p>
    <tr><td>minitree.cpp/.h:     </td><td>contains algorithms for vegetation rendering</td></tr>
    <tr><td>minibrick.cpp/.h:    </td><td>contains algorithms for C-LOD volume rendering</td></tr>
    <tr><td>minilod.cpp/.h:      </td><td>contains algorithms for S-LOD volume rendering</td></tr>
+   <tr><td>minidyna.cpp/.h:     </td><td>contains dynamic array class definition</td></tr>
+   <tr><td>minigeom.cpp/.h:     </td><td>contains geometric class definitions</td></tr>
+   <tr><td>minimesh.cpp/.h:     </td><td>contains tetrahedral mesh class definition</td></tr>
    <tr><td>pnmbase.cpp/.h:      </td><td>methods for handling PNM images</td></tr>
    <tr><td>pnmsample.cpp/.h:    </td><td>methods for multi-resolution terrain resampling</td></tr>
    <tr><td>database.cpp/.h:     </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
@@ -158,6 +160,7 @@ Within the libMini package the following files are contained:<p>
    <tr><td>dataparse.cpp/.h:    </td><td>parser and interpreter of implicit functions</td></tr>
    <tr><td>datacloud.cpp/.h:    </td><td>decouples terrain rendering from paging</td></tr>
    <tr><td>datacache.cpp/.h:    </td><td>stores remote files in a local file cache</td></tr>
+   <tr><td>datagrid.cpp/.h:     </td><td>stores a grid of databuf objects</td></tr>
    <tr><td>example.png:         </td><td>a screen shot of the example described below</td></tr>
    <tr><td>example.cpp:         </td><td>the glut example (use "build.sh example" to compile)</td></tr>
    <tr><td>stubtest.cpp:        </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
@@ -266,10 +269,10 @@ ministub, minicache and datacloud classes) are described in
 Section <a href="#Frontends">(F)</a>, <a href="#LibraryStub">(G)</a>,
 <a href="#Performance">(I)</a>
 and <a href="#AsyncPaging">(I)</a>. Please first check out whether or
-not the high level APIs suffice your needs before you bother reading
-about the low level API. A good starting point would be also to have a
-look at the reference implementation of the libMini tile set viewer
-which is described in Section <a href="#MiniViewer">(O)</a>.<p>
+not the high level APIs suffice your needs before you dive into the
+low level API. A good starting point is also to have a look at the
+reference implementation of the libMini tile set viewer which is
+described in Section <a href="#MiniViewer">(O)</a>.<p>
 
 The main include file is "mini.h" which contains the definition of the
 low level terrain rendering API (the libMini core). In order to port
@@ -279,20 +282,21 @@ all <a href="http://www.opengl.org">OpenGL</a> calls that are made
 inside of the libMini core.<p>
 
 In the following the low level terrain rendering API is explained by
-drawing a small example height field. The example code as denoted
-below in a series of eight steps is included in the distribution and
-can be compiled by typing "build.sh example" in a shell.<p>
+drawing a small example height field. This task is broken down into
+eight basic steps. The example code is included in the distribution
+and can be compiled by typing "build.sh example" in a shell.<p>
 
 <h3>[Optional] Step 1) Specify the fine tuning parameters:</h3>
 
-   Normally, the fine tuning parameters are initialized to suitable
-   values. However, for more flexibility the parameters can be set by
-   using mini::setparams(minres,maxd2,ginfo,maxcull). In the paper
-   minres is referenced to as C, maxd2 is the maximum value for the
-   linear mapping of the d2-values, ginfo is the relative importance
-   of gradients in comparison to the d2-values, and maxcull defines
-   the number of base quadtree levels for which view frustum culling
-   is performed.<p>
+   The fine tuning parameters are initialized to suitable values, so
+   normally this step can be omitted. However, for more flexibility
+   the parameters can be set explicitly via
+   mini::setparams(minres,maxd2,seainf,bsafety,maxcull). In the
+   terrain rendering paper minres is referenced to as C, maxd2 is the
+   maximum value for the linear mapping of the d2-values, seainf is
+   the influence of the extracted sea surface onto the d2-values, and
+   maxcull defines the number of base quadtree levels for which the
+   view frustum culling is performed.<p>
 
 <h3>Step 2) Open a window:</h3>
 
@@ -441,14 +445,13 @@ can be compiled by typing "build.sh example" in a shell.<p>
 
 <h3>Step 6.5) Swap buffers:</h3>
 
-   Now we are basically done. A screen shot of the result is included
-   in the distribution (example.png).<p>
+   Now we are basically done. For comparison, a screen shot of the
+   result is included in the distribution (example.png).<p>
 
 <h3>[Optional] Step 6.6) Query functions:</h3>
 
    Between each rendered frame the elevation and the normal at
-   position (x,z) of the height field can be queried by means of the
-   following functions:<p>
+   position (x,z) of the height field can be queried via:<p>
 
 <pre>
    float height=mini::getheight(i,j); // (i,j) = integer grid position
@@ -457,7 +460,7 @@ can be compiled by typing "build.sh example" in a shell.<p>
 </pre>
 
    Similarly, the height of the ground fog layer (if present) can be
-   queried with the following function:<p>
+   queried via:<p>
 
 <pre>
    float fogheight=mini::getfogheight(x,z);
@@ -491,12 +494,11 @@ Normally, the focus of interest, that is the point with the highest
 resolution, should be equal to the eye point in order to minimize the
 screen space error of the dynamic triangulation. In some cases,
 however, it might be advantageous to set the focus to a different
-location in order to tune the triangulation (the focus can be set
-directly in the drawlandscape call of the libMini core or with
-ministub::setfocus or minitile::setfocus).<p>
+location. The focus can be set directly in the drawlandscape call of
+the libMini core or via ministub::setfocus and minitile::setfocus.<p>
 
 Instead of choosing the default short signed integer representation
-(16 bit) of the height field a floating point representation can be
+(16 bit) of the height field, a floating point representation can be
 chosen by using the Mini namespace (capital first letter). This is
 equivalent to calling the constructor of the ministub class with a
 float height field as the first parameter.<p>
@@ -504,9 +506,9 @@ float height field as the first parameter.<p>
 Since the algorithm uses uniform grids of size 2^n+1 in both
 dimensions, a height field with this size should be supplied whenever
 possible. Other sizes are scaled up internally to the next possible
-size and the grid is resampled accordingly. A data set with unequal
-grid dimensions must be resampled uniformly or broken up into uniform
-tiles prior to passing it to the Mini Library.<p>
+size. A data set with unequal grid dimensions must be resampled
+uniformly or broken up into uniform tiles prior to passing it to the
+Mini Library.<p>
 
 <a href="#" class="top">Back to top</a>
 
