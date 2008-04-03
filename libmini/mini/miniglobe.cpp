@@ -48,6 +48,10 @@ void miniglobe::setshape(int shape)
 void miniglobe::setscale(float scale)
    {SCALE=scale;}
 
+// set dynamic scaling of globe
+void miniglobe::setdynscale(float scale)
+   {STRIP->setscale(scale);}
+
 // set tesselation of globe
 void miniglobe::settess(int stripes)
    {STRIPES=stripes;}

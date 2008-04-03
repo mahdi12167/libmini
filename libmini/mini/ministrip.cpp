@@ -281,6 +281,8 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    COPYVTX=0;
 
+   SCALE=1.0f;
+
    for (i=0; i<16; i++) MTX[i]=0.0;
    for (i=0; i<4; i++) MTX[i+4*i]=1.0;
 
@@ -525,6 +527,10 @@ void ministrip::addvtx()
 
    SIZE++;
    }
+
+// set scale
+void ministrip::setscale(float scale)
+   {SCALE=scale;}
 
 // set matrix
 void ministrip::setmatrix(double mtx[16])
@@ -976,6 +982,7 @@ void ministrip::render()
 
    glPushMatrix();
    glMultMatrixd(MTX);
+   glScalef(SCALE,SCALE,SCALE);
 
    if (ZSCALE!=1.0f)
       {

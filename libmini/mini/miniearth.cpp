@@ -442,6 +442,7 @@ void miniearth::render()
          if (ref->get()->warpmode!=0)
             {
             EARTH->setscale(ref->len_o2g(1.0));
+            EARTH->setdynscale(1.0);
 
             warp=*getearth()->getwarp();
             warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
@@ -504,7 +505,7 @@ void miniearth::render()
          if (ref->get()->warpmode!=0 && ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
             {
             if (EPARAMS.shrinkZpass)
-               EARTH->setscale(ref->len_o2g(1.0-ref->get()->maxelev/miniutm::EARTH_radius));
+               EARTH->setdynscale(1.0-ref->get()->maxelev/miniutm::EARTH_radius);
 
             EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
             }

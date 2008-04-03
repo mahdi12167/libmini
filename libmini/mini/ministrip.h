@@ -61,6 +61,9 @@ class ministrip
    //! add one vertex
    void addvtx(const float x,const float y,const float z);
 
+   //! set scale
+   void setscale(float scale);
+
    //! set matrix
    void setmatrix(double mtx[16]);
 
@@ -149,6 +152,8 @@ class ministrip
    float TEXX,TEXY,TEXZ,TEXW;
 
    int COPYVTX;
+
+   float SCALE;
 
    double MTX[16];
    double TEXMTX[16];
