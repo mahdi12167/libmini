@@ -8,6 +8,11 @@
 template <class Item>
 class minidyna
    {
+   private:
+
+   unsigned int SIZE;
+   Item *ARRAY;
+
    public:
 
    //! default constructor
@@ -37,6 +42,8 @@ class minidyna
    //! set array size
    void setsize(unsigned int size)
       {
+      unsigned int i;
+
       Item *a;
 
       if (size!=SIZE)
@@ -59,7 +66,6 @@ class minidyna
             delete[] ARRAY;
             ARRAY=a;
             }
-         }
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue
@@ -78,12 +84,6 @@ class minidyna
       return(ARRAY[idx]);
       }
 
-   protected:
-
-   private:
-
-   unsigned int SIZE;
-   Item *ARRAY;
    };
 
 #endif
