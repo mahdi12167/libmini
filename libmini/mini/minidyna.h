@@ -10,7 +10,7 @@ class minidyna
    {
    private:
 
-   unsigned int SIZE;
+   unsigned int SIZE,MAXSIZE;
    Item *ARRAY;
 
    public:
@@ -18,7 +18,7 @@ class minidyna
    //! default constructor
    minidyna()
       {
-      SIZE=0;
+      SIZE=MAXSIZE=0;
       ARRAY=NULL;
       }
 
@@ -44,19 +44,23 @@ class minidyna
       {
       unsigned int i;
 
+      unsigned int s;
       Item *a;
 
-      if (size!=SIZE)
-         if (size==0)
-            {
-            if (ARRAY!=NULL) delete[] ARRAY;
+      if (size==0)
+         {
+         if (ARRAY!=NULL) delete[] ARRAY;
 
-            SIZE=0;
-            ARRAY=NULL;
-            }
-         else
+         SIZE=MAXSIZE=0;
+         ARRAY=NULL;
+         }
+      else
+         {
+         for (s=1; s<size; s*=2);
+
+         if (s!=MAXSIZE)
             {
-            a=new Item[size];
+            a=new Item[s];
 
             if (size<SIZE)
                for (i=0; i<size; i++) a[i]=ARRAY[i];
@@ -65,7 +69,19 @@ class minidyna
 
             delete[] ARRAY;
             ARRAY=a;
+
+            MAXSIZE=s;
             }
+
+         SIZE=size;
+         }
+      }
+
+   //! append item to array
+   void append(const Item &v)
+      {
+      setsize(getsize()+1);
+      ARRAY[getsize()-1]=v;
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue

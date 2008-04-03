@@ -20,7 +20,7 @@ class minitet
 
    struct minitet_struct
       {
-      int idx; // data index
+      unsigned int idx; // data index
       miniv3d crd[4]; // data coordinates
       };
 
@@ -32,7 +32,7 @@ class minitet
    private:
    };
 
-class minimesh
+class minimesh: public minidyna<minitet>
    {
    public:
 
@@ -42,14 +42,9 @@ class minimesh
    //! destructor
    ~minimesh();
 
-   //! add one tetrahedron
-   void addtet(const minitet &tet);
-
    protected:
 
    private:
-
-   minidyna<minitet> TETS;
    };
 
 #endif

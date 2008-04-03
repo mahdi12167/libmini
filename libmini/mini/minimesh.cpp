@@ -3,7 +3,7 @@
 #include "minimesh.h"
 
 // default constructor
-minimesh::minimesh() {}
+minimesh::minimesh(): minidyna<minitet>() {}
 
 // destructor
 minimesh::~minimesh() {}
