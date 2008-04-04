@@ -18,34 +18,23 @@ class minitet
    //! destructor
    ~minitet();
 
-   struct minitet_struct
+   struct minival_struct
       {
       unsigned int slot; // data slot
       miniv3d crd[4]; // data coordinates
       };
 
+   typedef minidyna<minival_struct> minival_type;
+
    miniv3d vtx[4]; // corner vertices
-   minidyna<minitet_struct> val; // embedded data values
+   minival_type val; // embedded data values
 
    protected:
 
    private:
    };
 
-class minimesh: public minidyna<minitet>
-   {
-   public:
-
-   //! default constructor
-   minimesh();
-
-   //! destructor
-   ~minimesh();
-
-   protected:
-
-   private:
-   };
+typedef minidyna<minitet> minimesh;
 
 class minibspt
    {
@@ -66,6 +55,18 @@ class minibspt
    protected:
 
    private:
+
+   struct minibspt_struct
+      {
+      miniv3d nrm;
+      minitet::minival_type val;
+
+      unsigned int left,right;
+      };
+
+   minidyna<minibspt_struct> TREE;
+
+   void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minitet::minival_type &val);
    };
 
 #endif

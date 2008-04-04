@@ -8,7 +8,7 @@
 template <class Item>
 class minidyna
    {
-   private:
+   protected:
 
    unsigned int SIZE,MAXSIZE;
    Item *ARRAY;
