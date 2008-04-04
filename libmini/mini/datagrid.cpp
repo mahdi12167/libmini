@@ -124,6 +124,7 @@ void datagrid::construct()
    miniv4d v;
 
    minitet tet;
+   minitet::minival_array val;
 
    if (INVALID)
       {
@@ -167,121 +168,50 @@ void datagrid::construct()
                   vtx[j].vec=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
                   }
 
-            tet.val.setsize(1);
-            tet.val[0].slot=SLOT[i];
+            val.setsize(1);
 
             if (!FLIP[i])
                {
-               tet.vtx[0]=vtx[0].vec;
-               tet.val[0].crd[0]=crd[0];
-               tet.vtx[1]=vtx[1].vec;
-               tet.val[0].crd[1]=crd[1];
-               tet.vtx[2]=vtx[3].vec;
-               tet.val[0].crd[2]=crd[3];
-               tet.vtx[3]=vtx[4].vec;
-               tet.val[0].crd[3]=crd[4];
-
+               val[0]=minitet::minival(SLOT[i],crd[0],crd[1],crd[3],crd[4]);
+               tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[2].vec;
-               tet.val[0].crd[0]=crd[2];
-               tet.vtx[1]=vtx[3].vec;
-               tet.val[0].crd[1]=crd[3];
-               tet.vtx[2]=vtx[1].vec;
-               tet.val[0].crd[2]=crd[1];
-               tet.vtx[3]=vtx[6].vec;
-               tet.val[0].crd[3]=crd[6];
-
+               val[0]=minitet::minival(SLOT[i],crd[2],crd[3],crd[1],crd[6]);
+               tet=minitet(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[7].vec;
-               tet.val[0].crd[0]=crd[7];
-               tet.vtx[1]=vtx[6].vec;
-               tet.val[0].crd[1]=crd[6];
-               tet.vtx[2]=vtx[4].vec;
-               tet.val[0].crd[2]=crd[4];
-               tet.vtx[3]=vtx[3].vec;
-               tet.val[0].crd[3]=crd[3];
-
+               val[0]=minitet::minival(SLOT[i],crd[7],crd[6],crd[4],crd[3]);
+               tet=minitet(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[5].vec;
-               tet.val[0].crd[0]=crd[5];
-               tet.vtx[1]=vtx[4].vec;
-               tet.val[0].crd[1]=crd[4];
-               tet.vtx[2]=vtx[6].vec;
-               tet.val[0].crd[2]=crd[6];
-               tet.vtx[3]=vtx[1].vec;
-               tet.val[0].crd[3]=crd[1];
-
+               val[0]=minitet::minival(SLOT[i],crd[5],crd[4],crd[6],crd[1]);
+               tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[3].vec;
-               tet.val[0].crd[0]=crd[3];
-               tet.vtx[1]=vtx[1].vec;
-               tet.val[0].crd[1]=crd[1];
-               tet.vtx[2]=vtx[6].vec;
-               tet.val[0].crd[2]=crd[6];
-               tet.vtx[3]=vtx[4].vec;
-               tet.val[0].crd[3]=crd[4];
-
+               val[0]=minitet::minival(SLOT[i],crd[3],crd[1],crd[6],crd[4]);
+               tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
                MESH.append(tet);
                }
             else
                {
-               tet.vtx[0]=vtx[3].vec;
-               tet.val[0].crd[0]=crd[3];
-               tet.vtx[1]=vtx[0].vec;
-               tet.val[0].crd[1]=crd[0];
-               tet.vtx[2]=vtx[2].vec;
-               tet.val[0].crd[2]=crd[2];
-               tet.vtx[3]=vtx[7].vec;
-               tet.val[0].crd[3]=crd[7];
-
+               val[0]=minitet::minival(SLOT[i],crd[3],crd[0],crd[2],crd[7]);
+               tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[1].vec;
-               tet.val[0].crd[0]=crd[1];
-               tet.vtx[1]=vtx[2].vec;
-               tet.val[0].crd[1]=crd[2];
-               tet.vtx[2]=vtx[0].vec;
-               tet.val[0].crd[2]=crd[0];
-               tet.vtx[3]=vtx[5].vec;
-               tet.val[0].crd[3]=crd[5];
-
+               val[0]=minitet::minival(SLOT[i],crd[1],crd[2],crd[0],crd[5]);
+               tet=minitet(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[4].vec;
-               tet.val[0].crd[0]=crd[4];
-               tet.vtx[1]=vtx[7].vec;
-               tet.val[0].crd[1]=crd[7];
-               tet.vtx[2]=vtx[5].vec;
-               tet.val[0].crd[2]=crd[5];
-               tet.vtx[3]=vtx[0].vec;
-               tet.val[0].crd[3]=crd[0];
-
+               val[0]=minitet::minival(SLOT[i],crd[4],crd[7],crd[5],crd[0]);
+               tet=minitet(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[6].vec;
-               tet.val[0].crd[0]=crd[6];
-               tet.vtx[1]=vtx[5].vec;
-               tet.val[0].crd[1]=crd[5];
-               tet.vtx[2]=vtx[7].vec;
-               tet.val[0].crd[2]=crd[7];
-               tet.vtx[3]=vtx[2].vec;
-               tet.val[0].crd[3]=crd[2];
-
+               val[0]=minitet::minival(SLOT[i],crd[6],crd[5],crd[7],crd[2]);
+               tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
                MESH.append(tet);
 
-               tet.vtx[0]=vtx[0].vec;
-               tet.val[0].crd[0]=crd[0];
-               tet.vtx[1]=vtx[5].vec;
-               tet.val[0].crd[1]=crd[5];
-               tet.vtx[2]=vtx[2].vec;
-               tet.val[0].crd[2]=crd[2];
-               tet.vtx[3]=vtx[7].vec;
-               tet.val[0].crd[3]=crd[7];
-
+               val[0]=minitet::minival(SLOT[i],crd[0],crd[5],crd[2],crd[7]);
+               tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
                }
             }
