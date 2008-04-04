@@ -301,4 +301,5 @@ void datagrid::trigger(double time)
    }
 
 // push the mesh for a particular time step
-void datagrid::push(const minimesh &mesh,double time) {}
+void datagrid::push(const minimesh &mesh,double time)
+   {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}

@@ -23,9 +23,12 @@ class minidyna
       }
 
    //! copy constructor
-   minidyna(const minidyna &a): minidyna()
+   minidyna(const minidyna &a)
       {
       unsigned int i;
+
+      SIZE=MAXSIZE=0;
+      ARRAY=NULL;
 
       setsize(a.getsize());
 
@@ -85,7 +88,7 @@ class minidyna
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue
-   Item &operator[](int idx)
+   Item &operator[](unsigned int idx)
       {
       if (idx>=SIZE) ERRORMSG();
 
@@ -93,7 +96,7 @@ class minidyna
       }
 
    //! subscript operator for const objects returns rvalue
-   Item operator[](int idx) const
+   Item operator[](unsigned int idx) const
       {
       if (idx>=SIZE) ERRORMSG();
 

@@ -21,7 +21,7 @@ class datagrid
    datagrid();
 
    //! destructor
-   ~datagrid();
+   virtual ~datagrid();
 
    //! create data brick id
    unsigned int create(unsigned int slot, // data slot
