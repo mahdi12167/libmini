@@ -47,4 +47,25 @@ class minimesh: public minidyna<minitet>
    private:
    };
 
+class minibspt
+   {
+   public:
+
+   //! default constructor
+   minibspt();
+
+   //! destructor
+   ~minibspt();
+
+   //! insert from tetrahedral mesh
+   void insert(const minimesh &mesh);
+
+   //! extract to tetrahedral mesh
+   void extract(minimesh &mesh);
+
+   protected:
+
+   private:
+   };
+
 #endif

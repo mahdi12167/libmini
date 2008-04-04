@@ -43,9 +43,13 @@ class datagrid
    //! construct tetrahedral mesh from the data grid
    void construct();
 
-   protected:
+   //! trigger pushing the mesh for a particular time step
+   void trigger(double time);
 
-   private:
+   //! push the mesh for a particular time step
+   virtual void push(const minimesh &mesh,double time);
+
+   protected:
 
    minidyna<BOOLINT> FLAG;
    minidyna<unsigned int> SLOT;
@@ -53,7 +57,11 @@ class datagrid
 
    minidyna<databuf> DATA;
 
+   private:
+
    minimesh MESH;
+   minibspt BSPT;
+   minimesh TETS;
 
    BOOLINT INVALID;
    };

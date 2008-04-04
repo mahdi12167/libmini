@@ -259,6 +259,19 @@ void datagrid::construct()
                }
             }
 
+      BSPT.insert(MESH);
+      BSPT.extract(TETS);
+
       INVALID=FALSE;
       }
    }
+
+// trigger pushing the mesh for a particular time step
+void datagrid::trigger(double time)
+   {
+   construct();
+   push(TETS,time);
+   }
+
+// push the mesh for a particular time step
+void datagrid::push(const minimesh &mesh,double time) {}
