@@ -6,7 +6,15 @@
 
 // default constructor
 datagrid::datagrid()
-   {INVALID=FALSE;}
+   {
+   ID[0]=MTX[0]=miniv4d(1.0,0.0,0.0);
+   ID[1]=MTX[1]=miniv4d(0.0,1.0,0.0);
+   ID[2]=MTX[2]=miniv4d(0.0,0.0,1.0);
+
+   IDENTITY=TRUE;
+
+   INVALID=FALSE;
+   }
 
 // destructor
 datagrid::~datagrid()
@@ -93,6 +101,16 @@ void datagrid::move(unsigned int id,
       }
    }
 
+// apply matrix
+void datagrid::applymtx(const miniv4d mtx[3])
+   {
+   MTX[0]=mtx[0];
+   MTX[1]=mtx[1];
+   MTX[2]=mtx[2];
+
+   IDENTITY=(MTX[0]==ID[0] && MTX[1]==ID[1] && MTX[2]==ID[2]);
+   }
+
 // construct tetrahedral mesh from the data grid
 void datagrid::construct()
    {
@@ -102,6 +120,8 @@ void datagrid::construct()
 
    minicoord vtx[8];
    miniv3d crd[8];
+
+   miniv4d v;
 
    minitet tet;
 
@@ -127,18 +147,25 @@ void datagrid::construct()
             vtx[6]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
             vtx[7]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
 
-            crd[0]=miniv3d(0,0,0);
-            crd[1]=miniv3d(0,1,0);
-            crd[2]=miniv3d(1,1,0);
-            crd[3]=miniv3d(1,0,0);
+            crd[0]=miniv3d(0.0,0.0,0.0);
+            crd[1]=miniv3d(0.0,1.0,0.0);
+            crd[2]=miniv3d(1.0,1.0,0.0);
+            crd[3]=miniv3d(1.0,0.0,0.0);
 
-            crd[4]=miniv3d(0,0,1);
-            crd[5]=miniv3d(0,1,1);
-            crd[6]=miniv3d(1,1,1);
-            crd[7]=miniv3d(1,0,1);
+            crd[4]=miniv3d(0.0,0.0,1.0);
+            crd[5]=miniv3d(0.0,1.0,1.0);
+            crd[6]=miniv3d(1.0,1.0,1.0);
+            crd[7]=miniv3d(1.0,0.0,1.0);
 
             if (crs!=minicoord::MINICOORD_LINEAR)
                for (j=0; j<8; j++) vtx[j].convert2(minicoord::MINICOORD_ECEF);
+
+            if (!IDENTITY)
+               for (j=0; j<8; j++)
+                  {
+                  v=miniv4d(vtx[j].vec.x,vtx[j].vec.y,vtx[j].vec.z,1.0);
+                  vtx[j].vec=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
+                  }
 
             tet.val.setsize(1);
             tet.val[0].slot=SLOT[i];

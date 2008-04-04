@@ -5,6 +5,9 @@
 
 #include "minibase.h"
 
+#include "miniv3d.h"
+#include "miniv4d.h"
+
 #include "minidyna.h"
 #include "minimesh.h"
 
@@ -40,6 +43,9 @@ class datagrid
              float h0,float dh,  // base elevation and height of data brick
              float t0,float dt); // time frame start and exposure time
 
+   //! apply matrix
+   void applymtx(const miniv4d mtx[3]);
+
    //! construct tetrahedral mesh from the data grid
    void construct();
 
@@ -62,6 +68,9 @@ class datagrid
    minimesh MESH;
    minibspt BSPT;
    minimesh TETS;
+
+   miniv4d ID[3],MTX[3];
+   BOOLINT IDENTITY;
 
    BOOLINT INVALID;
    };
