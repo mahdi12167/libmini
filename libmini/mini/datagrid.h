@@ -21,7 +21,8 @@ class datagrid
    ~datagrid();
 
    //! create data brick id
-   unsigned int create(BOOLINT flip=FALSE);
+   unsigned int create(unsigned int slot, // data slot
+                       BOOLINT flip=FALSE); // decomposition flip
 
    //! load data
    void load(unsigned int id, // data brick id
@@ -46,8 +47,10 @@ class datagrid
 
    private:
 
-   minidyna<BOOLINT> SLOT;
+   minidyna<BOOLINT> FLAG;
+   minidyna<unsigned int> SLOT;
    minidyna<BOOLINT> FLIP;
+
    minidyna<databuf> DATA;
 
    minimesh MESH;

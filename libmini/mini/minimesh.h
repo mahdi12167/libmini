@@ -20,12 +20,12 @@ class minitet
 
    struct minitet_struct
       {
-      unsigned int idx; // data index
+      unsigned int slot; // data slot
       miniv3d crd[4]; // data coordinates
       };
 
    miniv3d vtx[4]; // corner vertices
-   minidyna<minitet_struct> val; // data values
+   minidyna<minitet_struct> val; // embedded data values
 
    protected:
 

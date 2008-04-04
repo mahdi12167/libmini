@@ -13,31 +13,34 @@ datagrid::~datagrid()
    {
    unsigned int i;
 
-   for (i=0; i<SLOT.getsize(); i++) remove(i);
+   for (i=0; i<FLAG.getsize(); i++) remove(i);
    }
 
 // create data brick id
-unsigned int datagrid::create(BOOLINT flip)
+unsigned int datagrid::create(unsigned int slot,
+                              BOOLINT flip)
    {
    unsigned int i;
 
    INVALID=TRUE;
 
-   for (i=0; i<SLOT.getsize(); i++)
-      if (!SLOT[i]) return(i);
+   for (i=0; i<FLAG.getsize(); i++)
+      if (!FLAG[i]) return(i);
 
-   SLOT.append(TRUE);
+   FLAG.append(TRUE);
+   SLOT.append(slot);
    FLIP.append(flip);
-   DATA.setsize(SLOT.getsize());
 
-   return(SLOT.getsize()-1);
+   DATA.setsize(FLAG.getsize());
+
+   return(FLAG.getsize()-1);
    }
 
 // load data
 void datagrid::load(unsigned int id,
                     const databuf &buf)
    {
-   if (SLOT[id])
+   if (FLAG[id])
       {
       DATA[id].release();
       DATA[id]=buf;
@@ -47,12 +50,12 @@ void datagrid::load(unsigned int id,
 // remove data
 void datagrid::remove(unsigned int id)
    {
-   if (SLOT[id])
+   if (FLAG[id])
       {
       INVALID=TRUE;
 
       DATA[id].release();
-      SLOT[id]=FALSE;
+      FLAG[id]=FALSE;
       }
    }
 
@@ -65,7 +68,7 @@ void datagrid::move(unsigned int id,
                     float h0,float dh,
                     float t0,float dt)
    {
-   if (SLOT[id])
+   if (FLAG[id])
       {
       if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
           DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
@@ -96,7 +99,9 @@ void datagrid::construct()
    unsigned int i,j;
 
    minicoord::MINICOORD crs;
-   minicoord crd[8];
+
+   minicoord vtx[8];
+   miniv3d crd[8];
 
    minitet tet;
 
@@ -104,98 +109,151 @@ void datagrid::construct()
       {
       MESH.setsize(0);
 
-      for (i=0; i<SLOT.getsize(); i++)
-         if (SLOT[i])
+      for (i=0; i<FLAG.getsize(); i++)
+         if (FLAG[i])
             {
             if (DATA[i].crs==0) crs=minicoord::MINICOORD_LINEAR;
             else if (DATA[i].crs==1) crs=minicoord::MINICOORD_LLH;
             else if (DATA[i].crs==2) crs=minicoord::MINICOORD_UTM;
             else ERRORMSG();
 
-            crd[0]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            crd[1]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            crd[2]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            crd[3]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
+            vtx[0]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
+            vtx[1]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
+            vtx[2]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
+            vtx[3]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
 
-            crd[4]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            crd[5]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            crd[6]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            crd[7]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+            vtx[4]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+            vtx[5]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+            vtx[6]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+            vtx[7]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+
+            crd[0]=miniv3d(0,0,0);
+            crd[1]=miniv3d(0,1,0);
+            crd[2]=miniv3d(1,1,0);
+            crd[3]=miniv3d(1,0,0);
+
+            crd[4]=miniv3d(0,0,1);
+            crd[5]=miniv3d(0,1,1);
+            crd[6]=miniv3d(1,1,1);
+            crd[7]=miniv3d(1,0,1);
 
             if (crs!=minicoord::MINICOORD_LINEAR)
-               for (j=0; j<8; j++) crd[j].convert2(minicoord::MINICOORD_ECEF);
+               for (j=0; j<8; j++) vtx[j].convert2(minicoord::MINICOORD_ECEF);
+
+            tet.val.setsize(1);
+            tet.val[0].slot=SLOT[i];
 
             if (!FLIP[i])
                {
-               tet.vtx[0]=crd[0].vec;
-               tet.vtx[1]=crd[1].vec;
-               tet.vtx[2]=crd[3].vec;
-               tet.vtx[3]=crd[4].vec;
+               tet.vtx[0]=vtx[0].vec;
+               tet.val[0].crd[0]=crd[0];
+               tet.vtx[1]=vtx[1].vec;
+               tet.val[0].crd[1]=crd[1];
+               tet.vtx[2]=vtx[3].vec;
+               tet.val[0].crd[2]=crd[3];
+               tet.vtx[3]=vtx[4].vec;
+               tet.val[0].crd[3]=crd[4];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[2].vec;
-               tet.vtx[1]=crd[3].vec;
-               tet.vtx[2]=crd[1].vec;
-               tet.vtx[3]=crd[6].vec;
+               tet.vtx[0]=vtx[2].vec;
+               tet.val[0].crd[0]=crd[2];
+               tet.vtx[1]=vtx[3].vec;
+               tet.val[0].crd[1]=crd[3];
+               tet.vtx[2]=vtx[1].vec;
+               tet.val[0].crd[2]=crd[1];
+               tet.vtx[3]=vtx[6].vec;
+               tet.val[0].crd[3]=crd[6];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[7].vec;
-               tet.vtx[1]=crd[6].vec;
-               tet.vtx[2]=crd[4].vec;
-               tet.vtx[3]=crd[3].vec;
+               tet.vtx[0]=vtx[7].vec;
+               tet.val[0].crd[0]=crd[7];
+               tet.vtx[1]=vtx[6].vec;
+               tet.val[0].crd[1]=crd[6];
+               tet.vtx[2]=vtx[4].vec;
+               tet.val[0].crd[2]=crd[4];
+               tet.vtx[3]=vtx[3].vec;
+               tet.val[0].crd[3]=crd[3];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[5].vec;
-               tet.vtx[1]=crd[4].vec;
-               tet.vtx[2]=crd[6].vec;
-               tet.vtx[3]=crd[1].vec;
+               tet.vtx[0]=vtx[5].vec;
+               tet.val[0].crd[0]=crd[5];
+               tet.vtx[1]=vtx[4].vec;
+               tet.val[0].crd[1]=crd[4];
+               tet.vtx[2]=vtx[6].vec;
+               tet.val[0].crd[2]=crd[6];
+               tet.vtx[3]=vtx[1].vec;
+               tet.val[0].crd[3]=crd[1];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[3].vec;
-               tet.vtx[1]=crd[1].vec;
-               tet.vtx[2]=crd[6].vec;
-               tet.vtx[3]=crd[4].vec;
+               tet.vtx[0]=vtx[3].vec;
+               tet.val[0].crd[0]=crd[3];
+               tet.vtx[1]=vtx[1].vec;
+               tet.val[0].crd[1]=crd[1];
+               tet.vtx[2]=vtx[6].vec;
+               tet.val[0].crd[2]=crd[6];
+               tet.vtx[3]=vtx[4].vec;
+               tet.val[0].crd[3]=crd[4];
 
                MESH.append(tet);
                }
             else
                {
-               tet.vtx[0]=crd[3].vec;
-               tet.vtx[1]=crd[0].vec;
-               tet.vtx[2]=crd[2].vec;
-               tet.vtx[3]=crd[7].vec;
+               tet.vtx[0]=vtx[3].vec;
+               tet.val[0].crd[0]=crd[3];
+               tet.vtx[1]=vtx[0].vec;
+               tet.val[0].crd[1]=crd[0];
+               tet.vtx[2]=vtx[2].vec;
+               tet.val[0].crd[2]=crd[2];
+               tet.vtx[3]=vtx[7].vec;
+               tet.val[0].crd[3]=crd[7];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[1].vec;
-               tet.vtx[1]=crd[2].vec;
-               tet.vtx[2]=crd[0].vec;
-               tet.vtx[3]=crd[5].vec;
+               tet.vtx[0]=vtx[1].vec;
+               tet.val[0].crd[0]=crd[1];
+               tet.vtx[1]=vtx[2].vec;
+               tet.val[0].crd[1]=crd[2];
+               tet.vtx[2]=vtx[0].vec;
+               tet.val[0].crd[2]=crd[0];
+               tet.vtx[3]=vtx[5].vec;
+               tet.val[0].crd[3]=crd[5];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[4].vec;
-               tet.vtx[1]=crd[7].vec;
-               tet.vtx[2]=crd[5].vec;
-               tet.vtx[3]=crd[0].vec;
+               tet.vtx[0]=vtx[4].vec;
+               tet.val[0].crd[0]=crd[4];
+               tet.vtx[1]=vtx[7].vec;
+               tet.val[0].crd[1]=crd[7];
+               tet.vtx[2]=vtx[5].vec;
+               tet.val[0].crd[2]=crd[5];
+               tet.vtx[3]=vtx[0].vec;
+               tet.val[0].crd[3]=crd[0];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[6].vec;
-               tet.vtx[1]=crd[5].vec;
-               tet.vtx[2]=crd[7].vec;
-               tet.vtx[3]=crd[2].vec;
+               tet.vtx[0]=vtx[6].vec;
+               tet.val[0].crd[0]=crd[6];
+               tet.vtx[1]=vtx[5].vec;
+               tet.val[0].crd[1]=crd[5];
+               tet.vtx[2]=vtx[7].vec;
+               tet.val[0].crd[2]=crd[7];
+               tet.vtx[3]=vtx[2].vec;
+               tet.val[0].crd[3]=crd[2];
 
                MESH.append(tet);
 
-               tet.vtx[0]=crd[0].vec;
-               tet.vtx[1]=crd[5].vec;
-               tet.vtx[2]=crd[2].vec;
-               tet.vtx[3]=crd[7].vec;
+               tet.vtx[0]=vtx[0].vec;
+               tet.val[0].crd[0]=crd[0];
+               tet.vtx[1]=vtx[5].vec;
+               tet.val[0].crd[1]=crd[5];
+               tet.vtx[2]=vtx[2].vec;
+               tet.val[0].crd[2]=crd[2];
+               tet.vtx[3]=vtx[7].vec;
+               tet.val[0].crd[3]=crd[7];
 
                MESH.append(tet);
                }
