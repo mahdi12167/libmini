@@ -64,6 +64,8 @@ miniterrain::miniterrain()
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
+   TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
+
    TPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
    TPARAMS.automipmap=FALSE;       // auto mip-map raw textures
 
@@ -530,7 +532,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
 
    // turn on ray object
    CACHE->configure_enableray(1);
-   CACHE->configure_omitsea(0);
+   CACHE->configure_omitsea(TPARAMS.omitsea);
 
    // success
    return(TRUE);

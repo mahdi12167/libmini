@@ -779,6 +779,8 @@ int minicache::rendertrigger(int phase)
       }
    else if (phase==3)
       {
+      if (ALPHATEST<1.0f) disableAtest();
+
       if (OPACITY<1.0f)
          {
          if (OPACITY<=0.0f) enableRGBAwriting();
@@ -797,8 +799,6 @@ int minicache::rendertrigger(int phase)
 
          if (USEVTXSHADER!=0) disablevtxshader();
 
-         if (ALPHATEST<1.0f) disableAtest();
-
          mtxpop();
          exitstate();
 
@@ -806,8 +806,6 @@ int minicache::rendertrigger(int phase)
 
          initstate();
          mtxpush();
-
-         if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
          if (USEVTXSHADER!=0) enablevtxshader();
 
@@ -850,8 +848,6 @@ int minicache::rendertrigger(int phase)
          mtxpop();
          mtxmodel();
          }
-
-      if (ALPHATEST<1.0f) disableAtest();
 
       mtxpop();
       exitstate();

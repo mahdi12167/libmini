@@ -75,6 +75,8 @@ class miniterrain
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
 
+      BOOLINT omitsea;          //+ omit sea level when shooting rays
+
       BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps
       BOOLINT automipmap;       //+ auto mip-map raw textures
 
