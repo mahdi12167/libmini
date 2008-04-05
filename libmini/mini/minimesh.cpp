@@ -43,6 +43,4 @@ void minibspt::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,cons
 
 // extract to tetrahedral mesh
 void minibspt::extract(minimesh &mesh)
-   {
-   //!!
-   }
+   {mesh.setsize(0);}
