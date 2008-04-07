@@ -11,6 +11,8 @@ class minigeom_base
    {
    public:
 
+   static const double delta;
+
    //! default constructor
    minigeom_base()
       {
@@ -59,8 +61,6 @@ class minigeom_base
       }
 
    protected:
-
-   static const double delta;
 
    miniv3d pnt,vec;
    double minlambda,maxlambda;

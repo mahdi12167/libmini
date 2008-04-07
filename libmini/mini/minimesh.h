@@ -104,7 +104,7 @@ class minibspt
 
    struct minibspt_struct
       {
-      miniv3d nrm;
+      miniv3d pnt,nrm;
       minitet::minival val;
 
       unsigned int left,right;
@@ -113,6 +113,7 @@ class minibspt
    minidyna<minibspt_struct> TREE;
 
    void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minitet::minival &val);
+   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minibspt_struct &node);
    };
 
 #endif
