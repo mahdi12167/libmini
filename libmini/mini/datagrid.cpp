@@ -138,18 +138,24 @@ void datagrid::construct()
 
       num=FLAG.getsize();
 
+      // calculate swizzle constant
       for (swizzle=13; gcd(num,swizzle)!=1; swizzle+=2);
 
+      // process all databuf objects
       for (i=0; i<num; i++)
          {
          act=(swizzle*i)%num;
 
+         // check if object at actual swizzled position is valid
          if (FLAG[act])
             {
+            // check coordinate system of actual databuf object
             if (DATA[act].crs==0) crs=minicoord::MINICOORD_LINEAR;
             else if (DATA[act].crs==1) crs=minicoord::MINICOORD_LLH;
             else if (DATA[act].crs==2) crs=minicoord::MINICOORD_UTM;
             else ERRORMSG();
+
+            // determine corner vertices of actual object:
 
             vtx[0]=minicoord(miniv3d(DATA[act].swx,DATA[act].swy,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
             vtx[1]=minicoord(miniv3d(DATA[act].nwx,DATA[act].nwy,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
@@ -161,6 +167,8 @@ void datagrid::construct()
             vtx[6]=minicoord(miniv3d(DATA[act].nex,DATA[act].ney,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
             vtx[7]=minicoord(miniv3d(DATA[act].sex,DATA[act].sey,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
 
+            // determine data coordinates of actual object:
+
             crd[0]=miniv3d(0.0,0.0,0.0);
             crd[1]=miniv3d(0.0,1.0,0.0);
             crd[2]=miniv3d(1.0,1.0,0.0);
@@ -171,10 +179,12 @@ void datagrid::construct()
             crd[6]=miniv3d(1.0,1.0,1.0);
             crd[7]=miniv3d(1.0,0.0,1.0);
 
+            // transform corner vertices
             if (crs!=minicoord::MINICOORD_LINEAR)
                if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR)
                   for (j=0; j<8; j++) vtx[j].convert2(GPARAMS.crs);
 
+            // multiply corner vertices with 4x3 matrix
             if (!IDENTITY)
                for (j=0; j<8; j++)
                   {
@@ -182,10 +192,14 @@ void datagrid::construct()
                   vtx[j].vec=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
                   }
 
+            // databuf objects correspond to one specific data slot
             val.setsize(1);
 
+            // check orientation of tetrahedral decomposition
             if (!FLIP[act])
                {
+               // add the 4 corner tetrahedra of the actual databuf object to the mesh:
+
                val[0]=minitet::minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]);
                tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
                MESH.append(tet);
@@ -202,12 +216,16 @@ void datagrid::construct()
                tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
                MESH.append(tet);
 
+               // add the 5th center tetrahedron of the actual databuf object to the mesh:
+
                val[0]=minitet::minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]);
                tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
                MESH.append(tet);
                }
             else
                {
+               // add the 4 corner tetrahedra of the actual databuf object to the mesh:
+
                val[0]=minitet::minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]);
                tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
@@ -224,6 +242,8 @@ void datagrid::construct()
                tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
                MESH.append(tet);
 
+               // add the 5th center tetrahedron of the actual databuf object to the mesh:
+
                val[0]=minitet::minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]);
                tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
@@ -231,8 +251,8 @@ void datagrid::construct()
             }
          }
 
-      BSPT.insert(MESH);
-      BSPT.extract(TETS);
+      BSPT.insert(MESH); // insert the entire tetrahedral mesh into bsp tree
+      BSPT.extract(TETS); // extract a non-intrusive tetrahedral mesh from bsp tree
 
       INVALID=FALSE;
       }

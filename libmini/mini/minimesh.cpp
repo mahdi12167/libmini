@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "minigeom.h"
-
 #include "minimesh.h"
 
 // default constructor
@@ -17,6 +15,7 @@ void minibspt::insert(const minimesh &mesh)
 
    minitet tet;
 
+   // insert all tetraheda of the mesh into the bsp tree
    for (i=0; i<mesh.getsize(); i++)
       {
       tet=mesh[i];
@@ -31,19 +30,29 @@ void minibspt::insert(const minimesh &mesh)
 // insert from triangular face
 void minibspt::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minitet::minival &val)
    {
+   miniv3d pnt,nrm;
    minibspt_struct node;
 
-   node.pnt=v1;
+   // set anchor point
+   pnt=v1;
 
-   node.nrm=(v2-v1)/(v3-v1);
-   node.nrm.normalize();
+   // set anchor normal
+   nrm=(v2-v1)/(v3-v1);
+   nrm.normalize();
 
-   if (node.nrm*(p-v1)<0.0) node.nrm=-node.nrm;
+   // flip anchor normal to point inward
+   if (nrm*(p-v1)<0.0) nrm=-nrm;
 
+   // set anchor plane
+   node.plane=minigeom_halfspace(pnt,nrm);
+
+   // set data slot and coordinates
    node.val=val;
 
+   // set children to be undefined
    node.left=node.right=0;
 
+   // insert the node into the bsp tree
    insert(0,v1,v2,v3,node);
    }
 
@@ -53,36 +62,42 @@ void minibspt::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const
    double d1,d2,d3;
    BOOLINT f1,f2,f3;
 
+   // check if bsp tree is empty
    if (TREE.getsize()==0) TREE.append(node);
    else
       {
-      d1=(v1-TREE[idx].pnt)*TREE[idx].nrm;
-      d2=(v2-TREE[idx].pnt)*TREE[idx].nrm;
-      d3=(v3-TREE[idx].pnt)*TREE[idx].nrm;
+      // determine distance of triangle vertices from anchor plane
+      d1=TREE[idx].plane.getdistance(v1);
+      d2=TREE[idx].plane.getdistance(v2);
+      d3=TREE[idx].plane.getdistance(v3);
 
+      // check if the anchor plane is already existing in the bsp tree
       if (d1>-minigeom_base::delta && d1<minigeom_base::delta &&
           d2>-minigeom_base::delta && d2<minigeom_base::delta &&
           d3>-minigeom_base::delta && d3<minigeom_base::delta)
          if (node.val.slot==TREE[idx].val.slot) return;
 
+      // calculate side indicator for each triangle vertex
       f1=(d1>-minigeom_base::delta);
       f2=(d2>-minigeom_base::delta);
       f3=(d3>-minigeom_base::delta);
 
+      // check if the triangle intrudes into the left half space
       if (f1 || f2 || f3)
-         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,node);
+         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,node); // insert recursively
          else
             {
-            TREE.append(node);
-            TREE[idx].left=TREE.getsize()-1;
+            TREE.append(node); // insert as new child
+            TREE[idx].left=TREE.getsize()-1; // link from parent
             }
 
+      // check if the triangle intrudes into the right half space
       if (!f1 || !f2 || !f3)
-         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,node);
+         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,node); // insert recursively
          else
             {
-            TREE.append(node);
-            TREE[idx].right=TREE.getsize()-1;
+            TREE.append(node); // insert as new child
+            TREE[idx].right=TREE.getsize()-1; // link from parent
             }
       }
    }

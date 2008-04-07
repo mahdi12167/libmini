@@ -7,6 +7,7 @@
 
 #include "miniv3d.h"
 #include "minidyna.h"
+#include "minigeom.h"
 
 class minitet
    {
@@ -104,7 +105,7 @@ class minibspt
 
    struct minibspt_struct
       {
-      miniv3d pnt,nrm;
+      minigeom_halfspace plane;
       minitet::minival val;
 
       unsigned int left,right;

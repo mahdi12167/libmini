@@ -66,8 +66,6 @@ class minigeom_base
    double minlambda,maxlambda;
 
    private:
-
-   friend class minigeom_polyhedron;
    };
 
 class minigeom_segment;
@@ -83,6 +81,9 @@ class minigeom_segment: public minigeom_base
 
    //! conversion constructor
    minigeom_segment(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+
+   //! get point distance
+   double getdistance(const miniv3d &p) {return((p-((p-pnt)*vec)*vec-pnt).getLength());}
 
    //! intersect with half space
    BOOLINT intersect(minigeom_halfspace &halfspace);
@@ -102,6 +103,9 @@ class minigeom_halfspace: public minigeom_base
 
    //! conversion constructor
    minigeom_halfspace(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+
+   //! get point distance
+   double getdistance(const miniv3d &p) {return((p-pnt)*vec-minlambda);}
 
    //! intersect with half space
    minigeom_segment intersect(minigeom_halfspace &halfspace);
