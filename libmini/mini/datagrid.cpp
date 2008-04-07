@@ -1,12 +1,16 @@
 // (c) by Stefan Roettger
 
-#include "miniwarp.h"
-
 #include "datagrid.h"
 
 // default constructor
 datagrid::datagrid()
    {
+   // configurable parameters:
+
+   GPARAMS.crs=minicoord::MINICOORD_ECEF;
+
+   // initialize state:
+
    ID[0]=MTX[0]=miniv4d(1.0,0.0,0.0);
    ID[1]=MTX[1]=miniv4d(0.0,1.0,0.0);
    ID[2]=MTX[2]=miniv4d(0.0,0.0,1.0);
@@ -116,6 +120,8 @@ void datagrid::construct()
    {
    unsigned int i,j;
 
+   unsigned int num,swizzle,act;
+
    minicoord::MINICOORD crs;
 
    minicoord vtx[8];
@@ -130,23 +136,30 @@ void datagrid::construct()
       {
       MESH.setsize(0);
 
-      for (i=0; i<FLAG.getsize(); i++)
-         if (FLAG[i])
+      num=FLAG.getsize();
+
+      for (swizzle=13; gcd(num,swizzle)!=1; swizzle+=2);
+
+      for (i=0; i<num; i++)
+         {
+         act=(swizzle*i)%num;
+
+         if (FLAG[act])
             {
-            if (DATA[i].crs==0) crs=minicoord::MINICOORD_LINEAR;
-            else if (DATA[i].crs==1) crs=minicoord::MINICOORD_LLH;
-            else if (DATA[i].crs==2) crs=minicoord::MINICOORD_UTM;
+            if (DATA[act].crs==0) crs=minicoord::MINICOORD_LINEAR;
+            else if (DATA[act].crs==1) crs=minicoord::MINICOORD_LLH;
+            else if (DATA[act].crs==2) crs=minicoord::MINICOORD_UTM;
             else ERRORMSG();
 
-            vtx[0]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            vtx[1]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            vtx[2]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
-            vtx[3]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0),crs,DATA[i].zone,DATA[i].datum);
+            vtx[0]=minicoord(miniv3d(DATA[act].swx,DATA[act].swy,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
+            vtx[1]=minicoord(miniv3d(DATA[act].nwx,DATA[act].nwy,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
+            vtx[2]=minicoord(miniv3d(DATA[act].nex,DATA[act].ney,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
+            vtx[3]=minicoord(miniv3d(DATA[act].sex,DATA[act].sey,DATA[act].h0),crs,DATA[act].zone,DATA[act].datum);
 
-            vtx[4]=minicoord(miniv3d(DATA[i].swx,DATA[i].swy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            vtx[5]=minicoord(miniv3d(DATA[i].nwx,DATA[i].nwy,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            vtx[6]=minicoord(miniv3d(DATA[i].nex,DATA[i].ney,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
-            vtx[7]=minicoord(miniv3d(DATA[i].sex,DATA[i].sey,DATA[i].h0+DATA[i].dh),crs,DATA[i].zone,DATA[i].datum);
+            vtx[4]=minicoord(miniv3d(DATA[act].swx,DATA[act].swy,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
+            vtx[5]=minicoord(miniv3d(DATA[act].nwx,DATA[act].nwy,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
+            vtx[6]=minicoord(miniv3d(DATA[act].nex,DATA[act].ney,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
+            vtx[7]=minicoord(miniv3d(DATA[act].sex,DATA[act].sey,DATA[act].h0+DATA[act].dh),crs,DATA[act].zone,DATA[act].datum);
 
             crd[0]=miniv3d(0.0,0.0,0.0);
             crd[1]=miniv3d(0.0,1.0,0.0);
@@ -159,7 +172,8 @@ void datagrid::construct()
             crd[7]=miniv3d(1.0,0.0,1.0);
 
             if (crs!=minicoord::MINICOORD_LINEAR)
-               for (j=0; j<8; j++) vtx[j].convert2(minicoord::MINICOORD_ECEF);
+               if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR)
+                  for (j=0; j<8; j++) vtx[j].convert2(GPARAMS.crs);
 
             if (!IDENTITY)
                for (j=0; j<8; j++)
@@ -170,51 +184,52 @@ void datagrid::construct()
 
             val.setsize(1);
 
-            if (!FLIP[i])
+            if (!FLIP[act])
                {
-               val[0]=minitet::minival(SLOT[i],crd[0],crd[1],crd[3],crd[4]);
+               val[0]=minitet::minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]);
                tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[2],crd[3],crd[1],crd[6]);
+               val[0]=minitet::minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]);
                tet=minitet(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[7],crd[6],crd[4],crd[3]);
+               val[0]=minitet::minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]);
                tet=minitet(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[5],crd[4],crd[6],crd[1]);
+               val[0]=minitet::minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]);
                tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[3],crd[1],crd[6],crd[4]);
+               val[0]=minitet::minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]);
                tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
                MESH.append(tet);
                }
             else
                {
-               val[0]=minitet::minival(SLOT[i],crd[3],crd[0],crd[2],crd[7]);
+               val[0]=minitet::minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]);
                tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[1],crd[2],crd[0],crd[5]);
+               val[0]=minitet::minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]);
                tet=minitet(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[4],crd[7],crd[5],crd[0]);
+               val[0]=minitet::minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]);
                tet=minitet(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[6],crd[5],crd[7],crd[2]);
+               val[0]=minitet::minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]);
                tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[i],crd[0],crd[5],crd[2],crd[7]);
+               val[0]=minitet::minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]);
                tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
                }
             }
+         }
 
       BSPT.insert(MESH);
       BSPT.extract(TETS);
@@ -233,3 +248,10 @@ void datagrid::trigger(double time)
 // push the mesh for a particular time step
 void datagrid::push(const minimesh &mesh,double time)
    {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}
+
+// greatest common divisor
+unsigned int datagrid::gcd(unsigned int a,unsigned int b)
+   {
+   if (b==0) return(a);
+   else return(gcd(b,a%b));
+   }

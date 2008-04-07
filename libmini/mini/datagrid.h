@@ -10,12 +10,22 @@
 
 #include "minidyna.h"
 #include "minimesh.h"
+#include "miniwarp.h"
 
 #include "database.h"
 
 class datagrid
    {
    public:
+
+   struct DATAGRID_PARAMS_STRUCT
+      {
+      // configurable parameters:
+
+      minicoord::MINICOORD crs;
+      };
+
+   typedef DATAGRID_PARAMS_STRUCT DATAGRID_PARAMS;
 
    //! default constructor
    datagrid();
@@ -26,6 +36,18 @@ class datagrid
    //! create data brick id
    unsigned int create(unsigned int slot, // data slot
                        BOOLINT flip=FALSE); // decomposition flip
+
+   //! get parameters
+   void get(DATAGRID_PARAMS &gparams);
+
+   //! set parameters
+   void set(DATAGRID_PARAMS &gparams);
+
+   //! get parameters
+   DATAGRID_PARAMS *get() {return(&GPARAMS);}
+
+   //! set parameters
+   void set(DATAGRID_PARAMS *gparams) {set(*gparams);}
 
    //! load data
    void load(unsigned int id, // data brick id
@@ -57,6 +79,8 @@ class datagrid
 
    protected:
 
+   DATAGRID_PARAMS GPARAMS;
+
    minidyna<BOOLINT> FLAG;
    minidyna<unsigned int> SLOT;
    minidyna<BOOLINT> FLIP;
@@ -73,6 +97,8 @@ class datagrid
    BOOLINT IDENTITY;
 
    BOOLINT INVALID;
+
+   unsigned int datagrid::gcd(unsigned int a,unsigned int b);
    };
 
 #endif
