@@ -98,7 +98,7 @@ class datagrid
 
    BOOLINT INVALID;
 
-   unsigned int datagrid::gcd(unsigned int a,unsigned int b);
+   unsigned int gcd(unsigned int a,unsigned int b);
    };
 
 #endif

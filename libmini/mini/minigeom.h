@@ -7,6 +7,8 @@
 
 #include "miniv3d.h"
 
+#include "minidyna.h"
+
 class minigeom_base
    {
    public:
@@ -21,7 +23,7 @@ class minigeom_base
       }
 
    //! conversion constructor
-   minigeom_base(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT)
+   minigeom_base(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT)
       {
       pnt=p;
       vec=v;
@@ -35,18 +37,18 @@ class minigeom_base
    //! destructor
    ~minigeom_base() {}
 
-   miniv3d &getpoint() {return(pnt);}
-   miniv3d &getvector() {return(vec);}
+   miniv3d getpoint() const {return(pnt);}
+   miniv3d getvector() const {return(vec);}
 
-   miniv3d getpoint(const float lambda) {return(pnt+lambda*vec);}
+   miniv3d getpoint(const float lambda) const {return(pnt+lambda*vec);}
 
-   double getminlambda() {return(minlambda);}
-   double getmaxlambda() {return(maxlambda);}
+   double getminlambda() const {return(minlambda);}
+   double getmaxlambda() const {return(maxlambda);}
 
-   BOOLINT isnull() {return(minlambda>maxlambda);}
-   BOOLINT iszero() {return(minlambda==maxlambda);}
-   BOOLINT ishalf() {return(maxlambda==MAXFLOAT);}
-   BOOLINT isfull() {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
+   BOOLINT isnull() const {return(minlambda>maxlambda);}
+   BOOLINT iszero() const {return(minlambda==maxlambda);}
+   BOOLINT ishalf() const {return(maxlambda==MAXFLOAT);}
+   BOOLINT isfull() const {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
 
    void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
    void setzero() {minlambda=0.0; maxlambda=0.0;}
@@ -80,13 +82,13 @@ class minigeom_segment: public minigeom_base
    minigeom_segment(): minigeom_base() {}
 
    //! conversion constructor
-   minigeom_segment(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+   minigeom_segment(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
    //! get point distance
-   double getdistance(const miniv3d &p) {return((p-((p-pnt)*vec)*vec-pnt).getLength());}
+   double getdistance(const miniv3d &p) const {return((p-((p-pnt)*vec)*vec-pnt).getLength());}
 
    //! intersect with half space
-   BOOLINT intersect(minigeom_halfspace &halfspace);
+   BOOLINT intersect(const minigeom_halfspace &halfspace);
 
    protected:
 
@@ -104,13 +106,13 @@ class minigeom_halfspace: public minigeom_base
    minigeom_halfspace(): minigeom_base() {}
 
    //! conversion constructor
-   minigeom_halfspace(const miniv3d &p,const miniv3d &v,double minl=0.0,double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+   minigeom_halfspace(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
    //! get point distance
-   double getdistance(const miniv3d &p) {return((p-pnt)*vec-minlambda);}
+   double getdistance(const miniv3d &p) const {return((p-pnt)*vec-minlambda);}
 
    //! intersect with half space
-   minigeom_segment intersect(minigeom_halfspace &halfspace);
+   minigeom_line intersect(const minigeom_halfspace &halfspace);
 
    protected:
 
@@ -130,34 +132,28 @@ class minigeom_polyhedron
    //! default constructor
    minigeom_polyhedron();
 
-   //! copy constructor
-   minigeom_polyhedron(const minigeom_polyhedron &poly);
-
    //! destructor
    ~minigeom_polyhedron();
 
    //! get number of defining half spaces
-   int getnumhalfspace() {return(numhalf);}
+   unsigned int getnumhalfspace() const {return(half.getsize());}
 
    //! get defining half space
-   minigeom_halfspace gethalfspace(int h) {return(half[h]);}
+   minigeom_halfspace gethalfspace(const unsigned int h) const {return(half[h]);}
 
    //! intersect with half space
-   void intersect(minigeom_halfspace &halfspace);
+   void intersect(const minigeom_halfspace &halfspace);
 
    protected:
 
-   int numhalf,maxhalf;
-   minigeom_halfspace *half;
+   minidyna<minigeom_halfspace> half;
 
    private:
 
-   void allocate(int n);
+   void remove(const unsigned int h);
 
-   void remove(int h);
-
-   BOOLINT check4intersection(minigeom_halfspace &halfspace,int omit=-1);
-   BOOLINT check4redundancy(int h);
+   BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0);
+   BOOLINT check4redundancy(const unsigned int h);
    };
 
 #endif

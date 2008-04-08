@@ -47,7 +47,8 @@ void minibspt::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,cons
    node.plane=minigeom_halfspace(pnt,nrm);
 
    // set data slot and coordinates
-   node.val=val;
+   node.val.setsize(1);
+   node.val[0]=val;
 
    // set children to be undefined
    node.left=node.right=0;
@@ -59,6 +60,8 @@ void minibspt::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,cons
 // insert node
 void minibspt::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minibspt_struct &node)
    {
+   unsigned int i;
+
    double d1,d2,d3;
    BOOLINT f1,f2,f3;
 
@@ -75,7 +78,12 @@ void minibspt::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const
       if (d1>-minigeom_base::delta && d1<minigeom_base::delta &&
           d2>-minigeom_base::delta && d2<minigeom_base::delta &&
           d3>-minigeom_base::delta && d3<minigeom_base::delta)
-         if (node.val.slot==TREE[idx].val.slot) return;
+         {
+         for (i=0; i<TREE[idx].val.getsize(); i++)
+            if (node.val[0].slot==TREE[idx].val[i].slot) return;
+
+         TREE[idx].val.append(node.val[0]);
+         }
 
       // calculate side indicator for each triangle vertex
       f1=(d1>-minigeom_base::delta);
@@ -136,5 +144,19 @@ void minibspt::intersect(unsigned int idx)
          TREE[TREE[idx].right].poly.intersect(plane);
          intersect(TREE[idx].right);
          }
+
+      // cut polyhedral leaves into tetrahedra
+      if (TREE[idx].left==0 && TREE[idx].right==0)
+         cut(TREE[idx].poly,TREE[idx].mesh);
       }
+   }
+
+// cut polyhedron into tetrahedra
+void minibspt::cut(const minigeom_polyhedron &poly,minimesh &mesh)
+   {
+   int num;
+
+   num=poly.getnumhalfspace();
+
+   mesh.setsize(0);
    }

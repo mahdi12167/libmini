@@ -5,7 +5,7 @@
 const double minigeom_base::delta=1E-10;
 
 // intersect with half space
-BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace)
+BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
    {
    BOOLINT cut;
 
@@ -61,14 +61,14 @@ BOOLINT minigeom_segment::intersect(minigeom_halfspace &halfspace)
    }
 
 // intersect with half space
-minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
+minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    {
    miniv3d cross,dir;
    double dot,lambda;
    miniv3d orig1,orig2;
    miniv3d orig;
 
-   minigeom_segment line;
+   minigeom_line line;
 
    // check half space and plane condition
    if ((!ishalf() || !halfspace.ishalf()) &&
@@ -94,7 +94,7 @@ minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
       orig=orig1+lambda*dir; // line origin
 
       // create intersection line
-      line=minigeom_segment(orig,cross);
+      line=minigeom_line(orig,cross);
       line.setfull();
       }
 
@@ -104,118 +104,60 @@ minigeom_segment minigeom_halfspace::intersect(minigeom_halfspace &halfspace)
 // default constructor
 minigeom_polyhedron::minigeom_polyhedron()
    {
-   half=NULL;
+   // define a bounding box with 6 faces
+   half.setsize(6);
 
-   numhalf=0;
-   maxhalf=0;
-
-   allocate(6);
-
-   // define a closed box
+   // define a closed bounding box with maximum possible size
    half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT/8,0,0),miniv3d(1,0,0));
    half[1]=minigeom_halfspace(miniv3d(MAXFLOAT/8,0,0),miniv3d(-1,0,0));
    half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT/8,0),miniv3d(0,1,0));
    half[3]=minigeom_halfspace(miniv3d(0,MAXFLOAT/8,0),miniv3d(0,-1,0));
    half[4]=minigeom_halfspace(miniv3d(0,0,-MAXFLOAT/8),miniv3d(0,0,1));
    half[5]=minigeom_halfspace(miniv3d(0,0,MAXFLOAT/8),miniv3d(0,0,-1));
-
-   numhalf=6;
-   }
-
-// copy constructor
-minigeom_polyhedron::minigeom_polyhedron(const minigeom_polyhedron &poly)
-   {
-   int i;
-
-   half=NULL;
-
-   numhalf=0;
-   maxhalf=0;
-
-   allocate(poly.numhalf);
-
-   for (i=0; i<poly.numhalf; i++) half[i]=poly.half[i];
-   numhalf=poly.numhalf;
    }
 
 // destructor
-minigeom_polyhedron::~minigeom_polyhedron()
-   {if (half!=NULL) delete[] half;}
+minigeom_polyhedron::~minigeom_polyhedron() {}
 
 // intersect with half space
-void minigeom_polyhedron::intersect(minigeom_halfspace &halfspace)
+void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
    {
-   int i;
+   unsigned int i;
 
    if (halfspace.ishalf())
       if (check4intersection(halfspace)) // check if half space cuts the polyhedron
          {
-         allocate(numhalf+1);
+         half.append(halfspace); // add half space to existing half spaces
 
-         half[numhalf]=halfspace;
-         numhalf++;
-
-         for (i=numhalf-2; i>=0; i--)
-            if (check4redundancy(i)) remove(i); // delete redundant half spaces
+         for (i=2; i<half.getsize(); i++)
+            if (check4redundancy(half.getsize()-i)) remove(half.getsize()-i); // delete redundant half spaces
          }
    }
 
-void minigeom_polyhedron::allocate(int n)
+// remove half space
+void minigeom_polyhedron::remove(const unsigned int h)
    {
-   int i;
-
-   minigeom_halfspace *tmp;
-
-   // check available space
-   if (n>maxhalf)
-      {
-      if (n<2*maxhalf) n=2*maxhalf;
-
-      // create new
-      if (half==NULL)
-         {
-         half=new minigeom_halfspace[n];
-         maxhalf=n;
-         }
-      // enlarge old
-      else
-         {
-         tmp=new minigeom_halfspace[n];
-
-         for (i=0; i<numhalf; i++) tmp[i]=half[i];
-
-         delete[] half;
-         half=tmp;
-
-         maxhalf=n;
-         }
-      }
+   half[h]=half[half.getsize()-1];
+   half.setsize(half.getsize()-1);
    }
 
-void minigeom_polyhedron::remove(int h)
+// check if a half space intersects with the polyhedron
+BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit,const unsigned int h)
    {
-   int i;
-
-   for (i=h+1; i<numhalf; i++) half[i-1]=half[i];
-   numhalf--;
-   }
-
-BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace,int omit)
-   {
-   int i,j,k;
+   unsigned int i,j,k;
 
    minigeom_segment segment;
 
    // check for equal half space
-   for (i=0; i<numhalf; i++)
-      if (i!=omit)
+   for (i=0; i<half.getsize(); i++)
+      if (!omit || i!=h)
          if (half[i].vec==halfspace.vec)
             if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec+half[i].minlambda-halfspace.minlambda)<minigeom_base::delta) return(FALSE);
 
    // check for intersection with all the edges of all faces
-   for (i=0; i<numhalf; i++)
-      for (j=i+1; j<numhalf; j++)
-         if (i!=omit && j!=omit)
+   for (i=0; i<half.getsize(); i++)
+      for (j=i+1; j<half.getsize(); j++)
+         if (!omit || (i!=h && j!=h))
             {
             // calculate a line from two shared faces
             segment=half[i].intersect(half[j]);
@@ -224,9 +166,9 @@ BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace,in
             if (segment.isnull()) continue;
 
             // shrink the line to its corresponding edge segment
-            for (k=0; k<numhalf; k++)
-               if (k!=i && k!=j)
-                  if (k!=omit) segment.intersect(half[k]);
+            for (k=0; k<half.getsize(); k++)
+               if (!omit || k!=h)
+                  if (k!=i && k!=j) segment.intersect(half[k]);
 
             // intersect edge segement with half space
             if (segment.intersect(halfspace)) return(TRUE);
@@ -235,5 +177,6 @@ BOOLINT minigeom_polyhedron::check4intersection(minigeom_halfspace &halfspace,in
    return(FALSE);
    }
 
-BOOLINT minigeom_polyhedron::check4redundancy(int h)
-   {return(!check4intersection(half[h],h));}
+// check if a half space is redundant with respect to the other half spaces
+BOOLINT minigeom_polyhedron::check4redundancy(const unsigned int h)
+   {return(!check4intersection(half[h],TRUE,h));}
