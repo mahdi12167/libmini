@@ -1155,6 +1155,22 @@ void minilayer::initeyepoint(const minicoord &e)
    update();
    }
 
+// enable a specific focus point
+void minilayer::enablefocus(const minicoord &f)
+   {
+   minicoord fi;
+
+   // transform focus point
+   fi=map_g2i(f);
+
+   // enable internal focus point
+   TERRAIN->setfocus(1,fi.vec.x,fi.vec.y,fi.vec.z);
+   }
+
+// disable the focus point
+void minilayer::disablefocus()
+   {TERRAIN->setfocus(0);}
+
 // trigger complete render buffer update at next frame
 void minilayer::update()
    {UPD=1;}

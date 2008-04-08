@@ -246,6 +246,12 @@ class minilayer
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! enable a specific focus point other than the eye point
+   void enablefocus(const minicoord &f);
+
+   //! disable the focus point
+   void disablefocus();
+
    //! trigger complete render buffer update at next frame
    void update();
 

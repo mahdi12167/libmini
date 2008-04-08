@@ -742,6 +742,24 @@ int miniterrain::getnearest(const minicoord &e)
    return(nst);
    }
 
+// enable a specific focus point
+void miniterrain::enablefocus(const minicoord &f)
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->enablefocus(f);
+   }
+
+// disable the focus point
+void miniterrain::disablefocus()
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->disablefocus();
+   }
+
 // trigger complete render buffer update at next frame
 void miniterrain::update()
    {

@@ -143,6 +143,14 @@ void viewerbase::initeyepoint(const minicoord &e)
 void viewerbase::clear()
    {EARTH->clear();}
 
+// enable a specific focus point
+void viewerbase::enablefocus(const minicoord &f)
+   {EARTH->getterrain()->enablefocus(f);}
+
+// disable the focus point
+void viewerbase::disablefocus()
+   {EARTH->getterrain()->disablefocus();}
+
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
    {EARTH->getterrain()->cache(e,d,u,aspect,gettime());}

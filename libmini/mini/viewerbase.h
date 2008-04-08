@@ -74,6 +74,12 @@ class viewerbase
    //! clear scene
    void clear();
 
+   //! enable a specific focus point other than the eye point
+   void enablefocus(const minicoord &f);
+
+   //! disable the focus point
+   void disablefocus();
+
    //! generate and cache scene for a particular eye point
    void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect);
 
