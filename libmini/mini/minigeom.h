@@ -93,6 +93,8 @@ class minigeom_segment: public minigeom_base
    private:
    };
 
+typedef minigeom_segment minigeom_line;
+
 //! half space
 class minigeom_halfspace: public minigeom_base
    {
@@ -117,6 +119,8 @@ class minigeom_halfspace: public minigeom_base
    friend class minigeom_segment;
    friend class minigeom_polyhedron;
    };
+
+typedef minigeom_halfspace minigeom_plane;
 
 //! convex polyhedron
 class minigeom_polyhedron

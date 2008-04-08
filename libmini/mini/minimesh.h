@@ -105,16 +105,20 @@ class minibspt
 
    struct minibspt_struct
       {
-      minigeom_halfspace plane;
+      minigeom_plane plane;
       minitet::minival val;
 
       unsigned int left,right;
+
+      minigeom_polyhedron poly;
       };
 
    minidyna<minibspt_struct> TREE;
 
    void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minitet::minival &val);
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minibspt_struct &node);
+
+   void intersect(unsigned int idx);
    };
 
 #endif

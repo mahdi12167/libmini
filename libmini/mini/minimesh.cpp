@@ -104,4 +104,37 @@ void minibspt::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const
 
 // extract to tetrahedral mesh
 void minibspt::extract(minimesh &mesh)
-   {mesh.setsize(0);}
+   {
+   mesh.setsize(0);
+
+   intersect(0);
+   }
+
+// intersect bsp tree
+void minibspt::intersect(unsigned int idx)
+   {
+   minigeom_plane plane;
+
+   // check if bsp tree is empty
+   if (TREE.getsize()>0)
+      {
+      // intersect left half space
+      if (TREE[idx].left!=0)
+         {
+         TREE[TREE[idx].left].poly=TREE[idx].poly;
+         TREE[TREE[idx].left].poly.intersect(TREE[idx].plane);
+         intersect(TREE[idx].left);
+         }
+
+      // intersect right half space
+      if (TREE[idx].right!=0)
+         {
+         plane=TREE[idx].plane;
+         plane.invert();
+
+         TREE[TREE[idx].right].poly=TREE[idx].poly;
+         TREE[TREE[idx].right].poly.intersect(plane);
+         intersect(TREE[idx].right);
+         }
+      }
+   }
