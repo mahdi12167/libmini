@@ -24,7 +24,7 @@ class minitet
       vtx3=v3;
       vtx4=v4;
 
-      val.setv(c);
+      val.set(c);
 
       dep123=dep142=dep243=dep341=0;
       }
@@ -50,7 +50,7 @@ class minitet
       vtx3=v[2];
       vtx4=v[3];
 
-      val.setv(c);
+      val.set(c);
 
       dep123=dep142=dep243=dep341=0;
       }

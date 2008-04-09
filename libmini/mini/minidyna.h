@@ -87,10 +87,10 @@ class minidyna
    BOOLINT isnull() {return(SIZE==0);}
 
    //! set single value
-   void setv(const Item &v) {setsize(1); ARRAY[0]=v;}
+   void set(const Item &v) {setsize(1); ARRAY[0]=v;}
 
    //! get single value
-   Item getv(const unsigned int idx=0) const {return(ARRAY[idx]);}
+   Item get(const unsigned int idx=0) const {return(ARRAY[idx]);}
 
    //! append item to array
    void append(const Item &v)

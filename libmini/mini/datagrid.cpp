@@ -197,25 +197,25 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val.setv(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
+               val.set(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
                tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
+               val.set(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
                tet=minitet(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
+               val.set(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
                tet=minitet(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
+               val.set(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
                tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
                MESH.append(tet);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val.setv(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
+               val.set(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
                tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
                MESH.append(tet);
                }
@@ -223,25 +223,25 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val.setv(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
+               val.set(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
                tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
+               val.set(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
                tet=minitet(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
+               val.set(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
                tet=minitet(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,val);
                MESH.append(tet);
 
-               val.setv(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
+               val.set(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
                tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
                MESH.append(tet);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val.setv(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
+               val.set(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
                tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
                }

@@ -177,10 +177,10 @@ class minigeom_polyhedron
    void clear();
 
    //! set single value
-   void setv(const minival &v) {val.setv(v);}
+   void setv(const minival &v) {val.set(v);}
 
    //! get single value
-   minival getv(const unsigned int idx=0) const {return(val.getv(idx));}
+   minival getv(const unsigned int idx=0) const {return(val.get(idx));}
 
    //! set multiple values
    void setval(const minival_array &a) {val=a;}
