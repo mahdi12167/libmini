@@ -151,7 +151,7 @@ class minival
    miniv3d crd1,crd2,crd3,crd4; // data coordinates
    };
 
-typedef minidyna<minival> minival_array;
+typedef minidyna<minival> minivals;
 
 //! convex polyhedron
 class minigeom_polyhedron
@@ -177,21 +177,21 @@ class minigeom_polyhedron
    void clear();
 
    //! set single value
-   void setv(const minival &v) {val.set(v);}
+   void setval(const minival &v) {vals.set(v);}
 
    //! get single value
-   minival getv(const unsigned int idx=0) const {return(val.get(idx));}
+   minival getval(const unsigned int idx=0) const {return(vals.get(idx));}
 
    //! set multiple values
-   void setval(const minival_array &a) {val=a;}
+   void setvals(const minivals &a) {vals=a;}
 
    //! get multiple values
-   minival_array getval() const {return(val);}
+   minivals getvals() const {return(vals);}
 
    protected:
 
    minidyna<minigeom_halfspace> half;
-   minival_array val;
+   minivals vals;
 
    private:
 

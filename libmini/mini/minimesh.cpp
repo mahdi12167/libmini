@@ -21,24 +21,24 @@ void minibsptree::insert(const minimesh &mesh)
    {
    unsigned int i;
 
-   minitet tet;
+   minihedron h;
 
    if (DONE) ERRORMSG();
 
    // insert all tetraheda of the mesh into the bsp tree
    for (i=0; i<mesh.getsize(); i++)
       {
-      tet=mesh[i];
+      h=mesh[i];
 
-      insert(tet.vtx1,tet.vtx2,tet.vtx3,tet.vtx4,minival_array());
-      insert(tet.vtx1,tet.vtx4,tet.vtx2,tet.vtx3,minival_array());
-      insert(tet.vtx2,tet.vtx4,tet.vtx3,tet.vtx1,minival_array());
-      insert(tet.vtx3,tet.vtx4,tet.vtx1,tet.vtx2,tet.val);
+      insert(h.vtx1,h.vtx2,h.vtx3,h.vtx4,minivals());
+      insert(h.vtx1,h.vtx4,h.vtx2,h.vtx3,minivals());
+      insert(h.vtx2,h.vtx4,h.vtx3,h.vtx1,minivals());
+      insert(h.vtx3,h.vtx4,h.vtx1,h.vtx2,h.vals);
       }
    }
 
 // insert from triangular face
-void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minival_array &val)
+void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minivals &vals)
    {
    miniv3d pnt,nrm;
    minigeom_plane plane;
@@ -57,13 +57,13 @@ void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,c
    plane=minigeom_plane(pnt,nrm);
 
    // insert the plane into the bsp tree
-   insert(0,v1,v2,v3,val,plane);
+   insert(0,v1,v2,v3,vals,plane);
    }
 
 // insert node
-void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minival_array &val,const minigeom_plane &plane)
+void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane)
    {
-   minibspt_node node;
+   minibsptree_node node;
 
    double d1,d2,d3;
    BOOLINT f1,f2,f3;
@@ -74,7 +74,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       node.plane=plane;
       node.left=node.right=0;
 
-      node.val=val;
+      node.vals=vals;
 
       TREE.append(node);
       }
@@ -90,7 +90,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
           d2>-minigeom_base::delta && d2<minigeom_base::delta &&
           d3>-minigeom_base::delta && d3<minigeom_base::delta)
          {
-         TREE[idx].val.append(val);
+         TREE[idx].vals.append(vals);
          return;
          }
 
@@ -101,13 +101,13 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
 
       // check if the triangle intrudes into the left half space
       if (f1 || f2 || f3)
-         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,val,plane); // insert recursively
+         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,vals,plane); // insert recursively
          else
             {
             node.plane=plane;
             node.left=node.right=0;
 
-            node.val=val;
+            node.vals=vals;
 
             TREE.append(node); // insert as new child
             TREE[idx].left=TREE.getsize()-1; // link from parent
@@ -115,13 +115,13 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
 
       // check if the triangle intrudes into the right half space
       if (!f1 || !f2 || !f3)
-         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,val,plane); // insert recursively
+         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,vals,plane); // insert recursively
          else
             {
             node.plane=plane;
             node.left=node.right=0;
 
-            node.val=val;
+            node.vals=vals;
 
             TREE.append(node); // insert as new child
             TREE[idx].right=TREE.getsize()-1; // link from parent
@@ -141,8 +141,8 @@ void minibsptree::extract(minimesh &mesh)
    mesh.setnull();
    }
 
-// extract to polyhedral tree
-void minibsptree::extract(minibspt &tree)
+// extract to sorted tetrahedral mesh
+void minibsptree::extract(minimesh &mesh,const miniv3d &eye)
    {
    if (!DONE)
       {
@@ -150,7 +150,7 @@ void minibsptree::extract(minibspt &tree)
       DONE=TRUE;
       }
 
-   tree.setnull();
+   mesh.setnull();
    }
 
 // intersect bsp tree
@@ -162,7 +162,7 @@ void minibsptree::intersect(unsigned int idx)
    if (!TREE.isnull())
       {
       // append slots to polyhedron
-      TREE[idx].poly.getval().append(TREE[idx].val);
+      TREE[idx].poly.getvals().append(TREE[idx].vals);
 
       // intersect left half space
       if (TREE[idx].left!=0)
@@ -186,15 +186,13 @@ void minibsptree::intersect(unsigned int idx)
       // break polyhedral leaves into tetrahedra
       if (TREE[idx].left==0 && TREE[idx].right==0)
          {
-         TREE[idx].val.setnull();
-         tetrahedrize(TREE[idx].poly,TREE[idx].mesh);
+         TREE[idx].vals.setnull();
+         tetrahedralize(TREE[idx].poly,TREE[idx].mesh);
+         TREE[idx].poly.clear();
          }
       }
    }
 
 // tetrahedrize a convex polyhedron
-void minibsptree::tetrahedrize(minigeom_polyhedron &poly,minimesh &mesh)
-   {
-   poly.clear();
-   mesh.setnull();
-   }
+void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
+   {mesh.setnull();}

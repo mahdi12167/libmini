@@ -72,13 +72,13 @@ class datagrid
    void construct();
 
    //! trigger pushing the mesh for a particular time step
-   void trigger(const double time,const BOOLINT tree=FALSE);
+   void trigger(const double time);
+
+   //! trigger pushing the mesh for a particular time step and eye point
+   void trigger(const double time,const miniv3d &eye);
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,const double time);
-
-   //! push the tree for a particular time step
-   virtual void push(const minibspt &tree,const double time);
 
    protected:
 
@@ -94,8 +94,8 @@ class datagrid
 
    minimesh MESH;
    minibsptree BSPT;
-   minimesh TETS;
-   minibspt POLY;
+   minimesh UNSORTED;
+   minimesh SORTED;
 
    miniv4d ID[3],MTX[3];
    BOOLINT IDENTITY;

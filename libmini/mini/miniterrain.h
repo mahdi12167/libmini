@@ -154,7 +154,7 @@ class miniterrain
       float nprseacolor[3];
 
       float nprseatrans;
-      float nprseagrey;
+      float nprseagray;
 
       // optional way-points:
 

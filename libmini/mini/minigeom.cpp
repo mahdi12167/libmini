@@ -136,7 +136,7 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
 void minigeom_polyhedron::clear()
    {
    half.setnull();
-   val.setnull();
+   vals.setnull();
    }
 
 // remove half space

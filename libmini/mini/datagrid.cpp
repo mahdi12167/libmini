@@ -129,8 +129,8 @@ void datagrid::construct()
 
    miniv4d v;
 
-   minitet tet;
-   minival_array val;
+   minihedron h;
+   minivals vals;
 
    if (INVALID)
       {
@@ -197,82 +197,83 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val.set(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
-               tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
+               h=minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
-               tet=minitet(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
+               h=minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
-               tet=minitet(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
+               h=minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
-               tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
+               h=minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals);
+               MESH.append(h);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val.set(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
-               tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
+               h=minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals);
+               MESH.append(h);
                }
             else
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val.set(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
-               tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
+               h=minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
-               tet=minitet(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
+               h=minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
-               tet=minitet(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
+               h=minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals);
+               MESH.append(h);
 
-               val.set(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
-               tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
+               h=minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals);
+               MESH.append(h);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val.set(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
-               tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
-               MESH.append(tet);
+               vals.set(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
+               h=minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals);
+               MESH.append(h);
                }
             }
          }
 
       BSPT.clear(); // clear the bsp tree
       BSPT.insert(MESH); // insert the entire tetrahedral mesh into bsp tree
-      BSPT.extract(TETS); // extract a non-intrusive tetrahedral mesh from bsp tree
-      BSPT.extract(POLY); // extract a non-intrusive polyhedral tree from bsp tree
+      BSPT.extract(UNSORTED); // extract a non-intrusive unsorted tetrahedral mesh from bsp tree
 
       INVALID=FALSE;
       }
    }
 
 // trigger pushing the mesh for a particular time step
-void datagrid::trigger(const double time,const BOOLINT tree)
+void datagrid::trigger(const double time)
    {
    construct();
+   push(UNSORTED,time);
+   }
 
-   if (!tree) push(TETS,time);
-   else push(POLY,time);
+// trigger pushing the mesh for a particular time step and eye point
+void datagrid::trigger(const double time,const miniv3d &eye)
+   {
+   construct();
+   BSPT.extract(SORTED,eye); // extract a non-intrusive sorted tetrahedral from bsp tree
+   push(SORTED,time);
    }
 
 // push the mesh for a particular time step
 void datagrid::push(const minimesh &mesh,const double time)
    {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}
-
-// push the tree for a particular time step
-void datagrid::push(const minibspt &tree,const double time)
-   {printf("pushing tree of size %u for time step %g\n",tree.getsize(),time);}
 
 // greatest common divisor
 unsigned int datagrid::gcd(const unsigned int a,const unsigned int b)
