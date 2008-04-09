@@ -138,7 +138,7 @@ void minibsptree::extract(minimesh &mesh)
       DONE=TRUE;
       }
 
-   mesh.setnull();
+   mesh.setnull(); //!!
    }
 
 // extract to sorted tetrahedral mesh
@@ -150,7 +150,7 @@ void minibsptree::extract(minimesh &mesh,const miniv3d &eye)
       DONE=TRUE;
       }
 
-   mesh.setnull();
+   mesh.setnull(); //!!
    }
 
 // intersect bsp tree
@@ -195,4 +195,10 @@ void minibsptree::intersect(unsigned int idx)
 
 // tetrahedrize a convex polyhedron
 void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
-   {mesh.setnull();}
+   {
+   unsigned int h;
+
+   for (h=0; h<poly.getnumhalfspace(); h++) poly.getface(h);
+
+   mesh.setnull(); //!!
+   }

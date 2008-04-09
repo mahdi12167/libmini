@@ -107,7 +107,7 @@ class minigeom_halfspace: public minigeom_base
    double getdistance(const miniv3d &p) const {return((p-pnt)*vec-minlambda);}
 
    //! intersect with half space
-   minigeom_line intersect(const minigeom_halfspace &halfspace);
+   minigeom_line intersect(const minigeom_halfspace &halfspace) const;
 
    private:
 
@@ -188,6 +188,9 @@ class minigeom_polyhedron
    //! get multiple values
    minivals getvals() const {return(vals);}
 
+   //! get face segments of corresponding half space
+   minidyna<minigeom_segment> getface(const unsigned int h) const;
+
    protected:
 
    minidyna<minigeom_halfspace> half;
@@ -197,8 +200,8 @@ class minigeom_polyhedron
 
    void remove(const unsigned int h);
 
-   BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0);
-   BOOLINT check4redundancy(const unsigned int h);
+   BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0) const;
+   BOOLINT check4redundancy(const unsigned int h) const;
    };
 
 #endif

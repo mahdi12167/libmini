@@ -61,7 +61,7 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
    }
 
 // intersect with half space
-minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
+minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace) const
    {
    miniv3d cross,dir;
    double dot,lambda;
@@ -147,7 +147,7 @@ void minigeom_polyhedron::remove(const unsigned int h)
    }
 
 // check if a half space intersects with the polyhedron
-BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit,const unsigned int h)
+BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit,const unsigned int h) const
    {
    unsigned int i,j,k;
 
@@ -183,5 +183,34 @@ BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfsp
    }
 
 // check if a half space is redundant with respect to the other half spaces
-BOOLINT minigeom_polyhedron::check4redundancy(const unsigned int h)
+BOOLINT minigeom_polyhedron::check4redundancy(const unsigned int h) const
    {return(!check4intersection(half[h],TRUE,h));}
+
+// get face segments of corresponding half space
+minidyna<minigeom_segment> minigeom_polyhedron::getface(const unsigned int h) const
+   {
+   unsigned int i,j;
+
+   minigeom_segment segment;
+   minidyna<minigeom_segment> segments;
+
+   // create a segment for each half space
+   for (i=0; i<half.getsize(); i++)
+      if (i!=h)
+         {
+         // calculate a line from two shared faces
+         segment=half[h].intersect(half[i]);
+
+         // the faces were parallel
+         if (segment.isnull()) continue;
+
+         // shrink the line to its corresponding edge segment
+         for (j=0; j<half.getsize(); j++)
+            if (j!=h && j!=i) segment.intersect(half[j]);
+
+         // append one face segment
+         segments.append(segment);
+         }
+
+   return(segments);
+   }
