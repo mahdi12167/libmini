@@ -110,7 +110,7 @@ class minibsptree
    void extract(minimesh &mesh);
 
    //! extract to sorted tetrahedral mesh
-   void extract(minimesh &mesh,const miniv3d &eye);
+   void extract(const miniv3d &eye,minimesh &mesh);
 
    private:
 
@@ -127,12 +127,18 @@ class minibsptree
    minidyna<minibsptree_node> TREE;
    BOOLINT DONE;
 
+   miniv3d EYE;
+   BOOLINT GOTEYE;
+   minimesh COLLECT;
+
    void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minivals &vals);
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane);
 
    void intersect(unsigned int idx);
    void polygonize(const minidyna<minigeom_segment> &segments,minigon &gon);
    void tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh);
+
+   void collect(const unsigned int idx,const miniv3d &eye);
    };
 
 #endif

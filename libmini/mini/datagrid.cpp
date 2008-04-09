@@ -267,7 +267,7 @@ void datagrid::trigger(const double time)
 void datagrid::trigger(const double time,const miniv3d &eye)
    {
    construct();
-   BSPT.extract(SORTED,eye); // extract a non-intrusive sorted tetrahedral from bsp tree
+   BSPT.extract(eye,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
    push(SORTED,time);
    }
 

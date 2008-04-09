@@ -62,6 +62,15 @@ class minigeom_base
    void sethalf() {minlambda=0.0; maxlambda=MAXFLOAT;}
    void setfull() {minlambda=-MAXFLOAT; maxlambda=MAXFLOAT;}
 
+   BOOLINT isincl(const miniv3d &p) const
+      {
+      double d;
+
+      d=(p-pnt)*vec;
+
+      return(d>minlambda-delta && d<maxlambda+delta);
+      }
+
    void swap()
       {
       double tmp;

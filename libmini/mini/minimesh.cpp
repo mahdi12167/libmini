@@ -4,7 +4,10 @@
 
 // default constructor
 minibsptree::minibsptree()
-   {DONE=FALSE;}
+   {
+   DONE=FALSE;
+   GOTEYE=FALSE;
+   }
 
 // destructor
 minibsptree::~minibsptree() {}
@@ -132,17 +135,23 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
 // extract to tetrahedral mesh
 void minibsptree::extract(minimesh &mesh)
    {
+   unsigned int i;
+
    if (!DONE)
       {
       intersect(0);
       DONE=TRUE;
       }
 
-   mesh.setnull(); //!!
+   mesh.setnull();
+
+   for (i=0; i<TREE.getsize(); i++)
+      if (TREE[i].left==0 && TREE[i].right==0)
+         mesh.append(TREE[i].mesh);
    }
 
 // extract to sorted tetrahedral mesh
-void minibsptree::extract(minimesh &mesh,const miniv3d &eye)
+void minibsptree::extract(const miniv3d &eye,minimesh &mesh)
    {
    if (!DONE)
       {
@@ -150,7 +159,20 @@ void minibsptree::extract(minimesh &mesh,const miniv3d &eye)
       DONE=TRUE;
       }
 
-   mesh.setnull(); //!!
+   if (GOTEYE)
+      if (eye==EYE)
+         {
+         mesh=COLLECT;
+         return;
+         }
+
+   EYE=eye;
+   GOTEYE=TRUE;
+
+   COLLECT.setnull();
+   collect(0,eye);
+
+   mesh=COLLECT;
    }
 
 // intersect bsp tree
@@ -281,4 +303,30 @@ void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
             mesh.append(minihedron(anchor,v1,v2,v3,poly.getvals()));
          }
       }
+   }
+
+// collect tetrahedra by descending the bsp tree with respect to the eye point
+void minibsptree::collect(const unsigned int idx,const miniv3d &eye)
+   {
+   // check if bsp tree is empty
+   if (!TREE.isnull())
+      if (TREE[idx].left==0 && TREE[idx].right==0)
+         COLLECT.append(TREE[idx].mesh); // append leave nodes
+      else
+         if (!TREE[idx].plane.isincl(eye)) // check which half space includes the eye point
+            {
+            // collect left half space
+            if (TREE[idx].left!=0) collect(TREE[idx].left,eye);
+
+            // collect right half space
+            if (TREE[idx].right!=0) collect(TREE[idx].right,eye);
+            }
+         else
+            {
+            // collect right half space
+            if (TREE[idx].right!=0) collect(TREE[idx].right,eye);
+
+            // collect left half space
+            if (TREE[idx].left!=0) collect(TREE[idx].left,eye);
+            }
    }
