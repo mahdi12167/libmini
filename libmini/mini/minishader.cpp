@@ -348,7 +348,7 @@ void minishader::setNPRshader(minicache *cache,
                               float fadefactor,
                               float sealevel,
                               float seacolor[3],float seatrans,
-                              float seagrey)
+                              float seagray)
    {
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
@@ -566,7 +566,7 @@ void minishader::setNPRshader(minicache *cache,
    // use pixel shader plugin
    cache->setpixshader((bathystart==bathyend || NPRBATHYMAP==NULL)?fragprog1A:fragprog1B);
    cache->setpixshaderparams(npr_a,npr_b,npr_c,npr_d);
-   cache->setpixshaderparams(seagrey,seagrey,seagrey,sealevel/scale,1);
+   cache->setpixshaderparams(seagray,seagray,seagray,sealevel/scale,1);
    cache->setpixshaderparams(cnt_a,cnt_b,cnt_c,cnt_d,2);
    cache->setpixshaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);

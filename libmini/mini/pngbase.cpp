@@ -110,7 +110,7 @@ unsigned char *decompressPNGimage(unsigned char *data,unsigned int bytes,int *wi
    // ask PNG to expand paletted colors into true RGB triplets
    if (color_type==PNG_COLOR_TYPE_PALETTE) png_set_palette_to_rgb(png_ptr);
 
-   // ask PNG to expand grayscale images to full 8 bits
+   // ask PNG to expand gray-scale images to full 8 bits
    if (color_type==PNG_COLOR_TYPE_GRAY && bit_depth<8) png_set_gray_1_2_4_to_8(png_ptr);
 
    // ask PNG to expand paletted or RGB images with transparency to full alpha channels

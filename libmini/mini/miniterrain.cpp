@@ -159,7 +159,7 @@ miniterrain::miniterrain()
    TPARAMS.nprseacolor[2]=1.0f;  // NPR color of sea surface
 
    TPARAMS.nprseatrans=0.25f;    // NPR transparency of sea surface
-   TPARAMS.nprseagrey=0.5f;      // NPR greyness of bathymetry
+   TPARAMS.nprseagray=0.5f;      // NPR grayness of bathymetry
 
    // optional way-points:
 
@@ -814,7 +814,7 @@ void miniterrain::render()
                                      TPARAMS.nprfadefactor,
                                      fmax(TPARAMS.sealevel,0.0f),
                                      TPARAMS.nprseacolor,TPARAMS.nprseatrans,
-                                     TPARAMS.nprseagrey);
+                                     TPARAMS.nprseagray);
          else
             {
             CACHE->setvtxshader();

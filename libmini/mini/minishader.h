@@ -35,7 +35,7 @@ class minishader
                             float fadefactor,
                             float sealevel,
                             float seacolor[3],float seatrans,
-                            float seagrey);
+                            float seagray);
 
    static void setNPRbathymap(unsigned char *bathymap,
                               int bathywidth,int bathyheight,int bathycomps);
