@@ -59,10 +59,6 @@ class miniv3f
       }
 
    float x,y,z;
-
-   protected:
-
-   private:
    };
 
 inline miniv3f& miniv3f::operator += (const miniv3f &v)

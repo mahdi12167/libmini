@@ -13,85 +13,96 @@ class minitet
    {
    public:
 
-   class minival
-      {
-      public:
-
-      minival() {}
-
-      minival(const unsigned int s,const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4)
-         {
-         slot=s;
-
-         crd[0]=c1;
-         crd[1]=c2;
-         crd[2]=c3;
-         crd[3]=c4;
-         }
-
-      minival(const unsigned int s,const miniv3d c[4])
-         {
-         slot=s;
-
-         crd[0]=c[0];
-         crd[1]=c[1];
-         crd[2]=c[2];
-         crd[3]=c[3];
-         }
-
-      unsigned int slot; // data slot
-      miniv3d crd[4]; // data coordinates
-      };
-
-   typedef minidyna<minival> minival_array;
-
    //! default constructor
-   minitet() {}
+   minitet() {dep123=dep142=dep243=dep341=0;}
+
+   //! constructor
+   minitet(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minival &c)
+      {
+      vtx1=v1;
+      vtx2=v2;
+      vtx3=v3;
+      vtx4=v4;
+
+      val.setv(c);
+
+      dep123=dep142=dep243=dep341=0;
+      }
 
    //! constructor
    minitet(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minival_array &a)
       {
-      vtx[0]=v1;
-      vtx[1]=v2;
-      vtx[2]=v3;
-      vtx[3]=v4;
+      vtx1=v1;
+      vtx2=v2;
+      vtx3=v3;
+      vtx4=v4;
 
       val=a;
+
+      dep123=dep142=dep243=dep341=0;
+      }
+
+   //! constructor
+   minitet(const miniv3d v[4],const minival &c)
+      {
+      vtx1=v[0];
+      vtx2=v[1];
+      vtx3=v[2];
+      vtx4=v[3];
+
+      val.setv(c);
+
+      dep123=dep142=dep243=dep341=0;
       }
 
    //! constructor
    minitet(const miniv3d v[4],const minival_array &a)
       {
-      vtx[0]=v[0];
-      vtx[1]=v[1];
-      vtx[2]=v[2];
-      vtx[3]=v[3];
+      vtx1=v[0];
+      vtx2=v[1];
+      vtx3=v[2];
+      vtx4=v[3];
 
       val=a;
+
+      dep123=dep142=dep243=dep341=0;
       }
 
    //! destructor
    ~minitet();
 
-   miniv3d vtx[4]; // corner vertices
+   miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minival_array val; // embedded data values
 
-   protected:
-
-   private:
+   unsigned int dep123,dep142,dep243,dep341; // face dependencies
    };
 
 typedef minidyna<minitet> minimesh;
 
-class minibspt
+struct minibspt_node
+   {
+   minigeom_plane plane;
+   unsigned int left,right;
+
+   minival_array val;
+   minigeom_polyhedron poly;
+   minimesh mesh;
+   };
+
+typedef minidyna<minibspt_node> minibspt;
+
+class minibsptree
    {
    public:
 
    //! default constructor
-   minibspt();
+   minibsptree();
 
    //! destructor
-   ~minibspt();
+   ~minibsptree();
+
+   //! clear bsp tree
+   void clear();
 
    //! insert from tetrahedral mesh
    void insert(const minimesh &mesh);
@@ -99,28 +110,19 @@ class minibspt
    //! extract to tetrahedral mesh
    void extract(minimesh &mesh);
 
-   protected:
+   //! extract to polyhedral tree
+   void extract(minibspt &tree);
 
    private:
 
-   struct minibspt_struct
-      {
-      minigeom_plane plane;
-      minitet::minival_array val;
+   minibspt TREE;
+   BOOLINT DONE;
 
-      unsigned int left,right;
-
-      minigeom_polyhedron poly;
-      minimesh mesh;
-      };
-
-   minidyna<minibspt_struct> TREE;
-
-   void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minitet::minival &val);
-   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minibspt_struct &node);
+   void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minival_array &val);
+   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minival_array &val,const minigeom_plane &plane);
 
    void intersect(unsigned int idx);
-   void cut(const minigeom_polyhedron &poly,minimesh &mesh);
+   void tetrahedrize(minigeom_polyhedron &poly,minimesh &mesh);
    };
 
 #endif

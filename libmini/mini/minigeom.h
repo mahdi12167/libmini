@@ -6,7 +6,6 @@
 #include "minibase.h"
 
 #include "miniv3d.h"
-
 #include "minidyna.h"
 
 class minigeom_base
@@ -16,11 +15,7 @@ class minigeom_base
    static const double delta;
 
    //! default constructor
-   minigeom_base()
-      {
-      pnt=vec=miniv3d(0.0);
-      setnull();
-      }
+   minigeom_base() {}
 
    //! conversion constructor
    minigeom_base(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT)
@@ -66,8 +61,6 @@ class minigeom_base
 
    miniv3d pnt,vec;
    double minlambda,maxlambda;
-
-   private:
    };
 
 class minigeom_segment;
@@ -84,15 +77,14 @@ class minigeom_segment: public minigeom_base
    //! conversion constructor
    minigeom_segment(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
+   //! destructor
+   ~minigeom_segment() {}
+
    //! get point distance
    double getdistance(const miniv3d &p) const {return((p-((p-pnt)*vec)*vec-pnt).getLength());}
 
    //! intersect with half space
    BOOLINT intersect(const minigeom_halfspace &halfspace);
-
-   protected:
-
-   private:
    };
 
 typedef minigeom_segment minigeom_line;
@@ -108,13 +100,14 @@ class minigeom_halfspace: public minigeom_base
    //! conversion constructor
    minigeom_halfspace(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
+   //! destructor
+   ~minigeom_halfspace() {}
+
    //! get point distance
    double getdistance(const miniv3d &p) const {return((p-pnt)*vec-minlambda);}
 
    //! intersect with half space
    minigeom_line intersect(const minigeom_halfspace &halfspace);
-
-   protected:
 
    private:
 
@@ -123,6 +116,42 @@ class minigeom_halfspace: public minigeom_base
    };
 
 typedef minigeom_halfspace minigeom_plane;
+
+class minival
+   {
+   public:
+
+   //! default constructor
+   minival() {}
+
+   //! destructor
+   ~minival() {}
+
+   minival(const unsigned int s,const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4)
+      {
+      slot=s;
+
+      crd1=c1;
+      crd2=c2;
+      crd3=c3;
+      crd4=c4;
+      }
+
+   minival(const unsigned int s,const miniv3d c[4])
+      {
+      slot=s;
+
+      crd1=c[0];
+      crd2=c[1];
+      crd3=c[2];
+      crd4=c[3];
+      }
+
+   unsigned int slot; // data slot
+   miniv3d crd1,crd2,crd3,crd4; // data coordinates
+   };
+
+typedef minidyna<minival> minival_array;
 
 //! convex polyhedron
 class minigeom_polyhedron
@@ -144,9 +173,25 @@ class minigeom_polyhedron
    //! intersect with half space
    void intersect(const minigeom_halfspace &halfspace);
 
+   //! clear half spaces
+   void clear();
+
+   //! set single value
+   void setv(const minival &v) {val.setv(v);}
+
+   //! get single value
+   minival getv(const unsigned int idx=0) const {return(val.getv(idx));}
+
+   //! set multiple values
+   void setval(const minival_array &a) {val=a;}
+
+   //! get multiple values
+   minival_array getval() const {return(val);}
+
    protected:
 
    minidyna<minigeom_halfspace> half;
+   minival_array val;
 
    private:
 

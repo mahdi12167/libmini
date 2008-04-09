@@ -63,10 +63,6 @@ class miniv4d
       }
 
    double x,y,z,w;
-
-   protected:
-
-   private:
    };
 
 inline miniv4d& miniv4d::operator += (const miniv4d &v)

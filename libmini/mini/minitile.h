@@ -314,7 +314,7 @@ class minitile
    void freetile(int col,int row,int freetex);
    void freetile2(int col,int row);
 
-   int gcd(int a,int b);
+   int gcd(const int a,const int b);
    };
 
 #endif

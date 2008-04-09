@@ -80,11 +80,33 @@ class minidyna
          }
       }
 
+   //! set null!
+   void setnull() {setsize(0);}
+
+   //! is null?
+   BOOLINT isnull() {return(SIZE==0);}
+
+   //! set single value
+   void setv(const Item &v) {setsize(1); ARRAY[0]=v;}
+
+   //! get single value
+   Item getv(const unsigned int idx=0) const {return(ARRAY[idx]);}
+
    //! append item to array
    void append(const Item &v)
       {
       setsize(getsize()+1);
       ARRAY[getsize()-1]=v;
+      }
+
+   //! append array
+   void append(const minidyna &a)
+      {
+      unsigned int i;
+
+      setsize(getsize()+a.getsize());
+
+      for (i=0; i<a.getsize(); i++) ARRAY[getsize()-i-1]=a[a.getsize()-i-1];
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue

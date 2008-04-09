@@ -104,10 +104,8 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
 // default constructor
 minigeom_polyhedron::minigeom_polyhedron()
    {
-   // define a bounding box with 6 faces
+   // pre-define a closed bounding box with maximum possible size
    half.setsize(6);
-
-   // define a closed bounding box with maximum possible size
    half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT/8,0,0),miniv3d(1,0,0));
    half[1]=minigeom_halfspace(miniv3d(MAXFLOAT/8,0,0),miniv3d(-1,0,0));
    half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT/8,0),miniv3d(0,1,0));
@@ -132,6 +130,13 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
          for (i=2; i<half.getsize(); i++)
             if (check4redundancy(half.getsize()-i)) remove(half.getsize()-i); // delete redundant half spaces
          }
+   }
+
+// clear half spaces
+void minigeom_polyhedron::clear()
+   {
+   half.setnull();
+   val.setnull();
    }
 
 // remove half space

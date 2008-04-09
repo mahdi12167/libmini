@@ -63,10 +63,6 @@ class miniv4f
       }
 
    float x,y,z,w;
-
-   protected:
-
-   private:
    };
 
 inline miniv4f& miniv4f::operator += (const miniv4f &v)

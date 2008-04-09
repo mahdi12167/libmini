@@ -29,8 +29,8 @@ datagrid::~datagrid()
    }
 
 // create data brick id
-unsigned int datagrid::create(unsigned int slot,
-                              BOOLINT flip)
+unsigned int datagrid::create(const unsigned int slot,
+                              const BOOLINT flip)
    {
    unsigned int i;
 
@@ -49,7 +49,7 @@ unsigned int datagrid::create(unsigned int slot,
    }
 
 // load data
-void datagrid::load(unsigned int id,
+void datagrid::load(const unsigned int id,
                     const databuf &buf)
    {
    if (FLAG[id])
@@ -60,7 +60,7 @@ void datagrid::load(unsigned int id,
    }
 
 // remove data
-void datagrid::remove(unsigned int id)
+void datagrid::remove(const unsigned int id)
    {
    if (FLAG[id])
       {
@@ -72,13 +72,13 @@ void datagrid::remove(unsigned int id)
    }
 
 // move data
-void datagrid::move(unsigned int id,
-                    float swx,float swy,
-                    float nwx,float nwy,
-                    float nex,float ney,
-                    float sex,float sey,
-                    float h0,float dh,
-                    float t0,float dt)
+void datagrid::move(const unsigned int id,
+                    const float swx,const float swy,
+                    const float nwx,const float nwy,
+                    const float nex,const float ney,
+                    const float sex,const float sey,
+                    const float h0,const float dh,
+                    const float t0,const float dt)
    {
    if (FLAG[id])
       {
@@ -130,11 +130,11 @@ void datagrid::construct()
    miniv4d v;
 
    minitet tet;
-   minitet::minival_array val;
+   minival_array val;
 
    if (INVALID)
       {
-      MESH.setsize(0);
+      MESH.setnull();
 
       num=FLAG.getsize();
 
@@ -192,33 +192,30 @@ void datagrid::construct()
                   vtx[j].vec=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
                   }
 
-            // databuf objects correspond to one specific data slot
-            val.setsize(1);
-
             // check orientation of tetrahedral decomposition
             if (!FLIP[act])
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val[0]=minitet::minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]);
+               val.setv(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
                tet=minitet(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]);
+               val.setv(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
                tet=minitet(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]);
+               val.setv(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
                tet=minitet(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]);
+               val.setv(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
                tet=minitet(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,val);
                MESH.append(tet);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val[0]=minitet::minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]);
+               val.setv(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
                tet=minitet(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,val);
                MESH.append(tet);
                }
@@ -226,51 +223,59 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               val[0]=minitet::minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]);
+               val.setv(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
                tet=minitet(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]);
+               val.setv(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
                tet=minitet(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]);
+               val.setv(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
                tet=minitet(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,val);
                MESH.append(tet);
 
-               val[0]=minitet::minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]);
+               val.setv(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
                tet=minitet(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,val);
                MESH.append(tet);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               val[0]=minitet::minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]);
+               val.setv(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
                tet=minitet(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,val);
                MESH.append(tet);
                }
             }
          }
 
+      BSPT.clear(); // clear the bsp tree
       BSPT.insert(MESH); // insert the entire tetrahedral mesh into bsp tree
       BSPT.extract(TETS); // extract a non-intrusive tetrahedral mesh from bsp tree
+      BSPT.extract(POLY); // extract a non-intrusive polyhedral tree from bsp tree
 
       INVALID=FALSE;
       }
    }
 
 // trigger pushing the mesh for a particular time step
-void datagrid::trigger(double time)
+void datagrid::trigger(const double time,const BOOLINT tree)
    {
    construct();
-   push(TETS,time);
+
+   if (!tree) push(TETS,time);
+   else push(POLY,time);
    }
 
 // push the mesh for a particular time step
-void datagrid::push(const minimesh &mesh,double time)
+void datagrid::push(const minimesh &mesh,const double time)
    {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}
 
+// push the tree for a particular time step
+void datagrid::push(const minibspt &tree,const double time)
+   {printf("pushing tree of size %u for time step %g\n",tree.getsize(),time);}
+
 // greatest common divisor
-unsigned int datagrid::gcd(unsigned int a,unsigned int b)
+unsigned int datagrid::gcd(const unsigned int a,const unsigned int b)
    {
    if (b==0) return(a);
    else return(gcd(b,a%b));

@@ -59,10 +59,6 @@ class miniv3d
       }
 
    double x,y,z;
-
-   protected:
-
-   private:
    };
 
 inline miniv3d& miniv3d::operator += (const miniv3d &v)

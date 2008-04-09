@@ -33,10 +33,6 @@ class datagrid
    //! destructor
    virtual ~datagrid();
 
-   //! create data brick id
-   unsigned int create(unsigned int slot, // data slot
-                       BOOLINT flip=FALSE); // decomposition flip
-
    //! get parameters
    void get(DATAGRID_PARAMS &gparams);
 
@@ -49,21 +45,25 @@ class datagrid
    //! set parameters
    void set(DATAGRID_PARAMS *gparams) {set(*gparams);}
 
+   //! create data brick id
+   unsigned int create(const unsigned int slot, // data slot
+                       const BOOLINT flip=FALSE); // decomposition flip
+
    //! load data
-   void load(unsigned int id, // data brick id
+   void load(const unsigned int id, // data brick id
              const databuf &buf); // data buffer
 
    //! remove data
-   void remove(unsigned int id); // data brick id
+   void remove(const unsigned int id); // data brick id
 
    //! move data
-   void move(unsigned int id, // data brick id
-             float swx,float swy, // SW corner of data brick
-             float nwx,float nwy, // NW corner of data brick
-             float nex,float ney, // NE corner of data brick
-             float sex,float sey, // SE corner of data brick
-             float h0,float dh,  // base elevation and height of data brick
-             float t0,float dt); // time frame start and exposure time
+   void move(const unsigned int id, // data brick id
+             const float swx,const float swy, // SW corner of data brick
+             const float nwx,const float nwy, // NW corner of data brick
+             const float nex,const float ney, // NE corner of data brick
+             const float sex,const float sey, // SE corner of data brick
+             const float h0,const float dh,  // base elevation and height of data brick
+             const float t0,const float dt); // time frame start and exposure time
 
    //! apply matrix
    void applymtx(const miniv4d mtx[3]);
@@ -72,10 +72,13 @@ class datagrid
    void construct();
 
    //! trigger pushing the mesh for a particular time step
-   void trigger(double time);
+   void trigger(const double time,const BOOLINT tree=FALSE);
 
    //! push the mesh for a particular time step
-   virtual void push(const minimesh &mesh,double time);
+   virtual void push(const minimesh &mesh,const double time);
+
+   //! push the tree for a particular time step
+   virtual void push(const minibspt &tree,const double time);
 
    protected:
 
@@ -90,15 +93,16 @@ class datagrid
    private:
 
    minimesh MESH;
-   minibspt BSPT;
+   minibsptree BSPT;
    minimesh TETS;
+   minibspt POLY;
 
    miniv4d ID[3],MTX[3];
    BOOLINT IDENTITY;
 
    BOOLINT INVALID;
 
-   unsigned int gcd(unsigned int a,unsigned int b);
+   unsigned int gcd(const unsigned int a,const unsigned int b);
    };
 
 #endif
