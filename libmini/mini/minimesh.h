@@ -9,6 +9,8 @@
 #include "minidyna.h"
 #include "minigeom.h"
 
+typedef minidyna<miniv3d> minigon;
+
 class minihedron
    {
    public:
@@ -129,6 +131,7 @@ class minibsptree
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane);
 
    void intersect(unsigned int idx);
+   void polygonize(const minidyna<minigeom_segment> &segments,minigon &gon);
    void tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh);
    };
 

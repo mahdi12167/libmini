@@ -29,6 +29,18 @@ class minigeom_base
       maxlambda=FMIN(maxl,MAXFLOAT);
       }
 
+   //! conversion constructor
+   minigeom_base(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT)
+      {
+      pnt=p;
+      vec=(v1-p)/(v2-p);
+
+      vec.normalize();
+
+      minlambda=FMAX(minl,-MAXFLOAT);
+      maxlambda=FMIN(maxl,MAXFLOAT);
+      }
+
    //! destructor
    ~minigeom_base() {}
 
@@ -49,6 +61,15 @@ class minigeom_base
    void setzero() {minlambda=0.0; maxlambda=0.0;}
    void sethalf() {minlambda=0.0; maxlambda=MAXFLOAT;}
    void setfull() {minlambda=-MAXFLOAT; maxlambda=MAXFLOAT;}
+
+   void swap()
+      {
+      double tmp;
+
+      tmp=minlambda;
+      minlambda=maxlambda;
+      maxlambda=tmp;
+      }
 
    void invert()
       {
@@ -77,6 +98,9 @@ class minigeom_segment: public minigeom_base
    //! conversion constructor
    minigeom_segment(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
 
+   //! conversion constructor
+   minigeom_segment(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,minl,maxl) {}
+
    //! destructor
    ~minigeom_segment() {}
 
@@ -99,6 +123,9 @@ class minigeom_halfspace: public minigeom_base
 
    //! conversion constructor
    minigeom_halfspace(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+
+   //! conversion constructor
+   minigeom_halfspace(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,minl,maxl) {}
 
    //! destructor
    ~minigeom_halfspace() {}

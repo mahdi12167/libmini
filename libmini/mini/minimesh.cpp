@@ -193,12 +193,92 @@ void minibsptree::intersect(unsigned int idx)
       }
    }
 
-// tetrahedrize a convex polyhedron
+// polygonize a set of line segments
+void polygonize(const minidyna<minigeom_segment> &segments,minigon &gon)
+   {
+   unsigned int i,j;
+
+   miniv3d a,b,c,d;
+
+   unsigned int idx;
+   double dist,d1,d2;
+
+   minigeom_segment tmp;
+
+   gon.setnull();
+
+   if (segments.getsize()<3) return;
+
+   for (i=0; i<segments.getsize(); i++)
+      {
+      a=segments[i].getpoint(segments[i].getminlambda());
+      b=segments[i].getpoint(segments[i].getmaxlambda());
+
+      gon.append(a);
+
+      idx=i;
+      dist=MAXFLOAT;
+
+      for (j=i+1; j<segments.getsize(); j++)
+         {
+         c=segments[j].getpoint(segments[j].getminlambda());
+         d=segments[j].getpoint(segments[j].getmaxlambda());
+
+         d1=(c-b).getLength();
+         d2=(d-b).getLength();
+
+         if (d1<dist)
+            {
+            idx=j;
+            dist=d1;
+            }
+
+         if (d2<dist)
+            {
+            idx=j;
+            dist=d2;
+
+            segments[j].swap();
+            }
+         }
+
+      if (i+2<segments.getsize())
+         {
+         tmp=segments[i+1];
+         segments[i+1]=segments[idx];
+         segments[idx]=tmp;
+         }
+      }
+   }
+
+// tetrahedralize a convex polyhedron
 void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
    {
-   unsigned int h;
+   unsigned int i,j;
 
-   for (h=0; h<poly.getnumhalfspace(); h++) poly.getface(h);
+   minidyna<minigeom_segment> segments;
+   minigon gon;
 
-   mesh.setnull(); //!!
+   miniv3d anchor,v1,v2,v3;
+
+   mesh.setnull();
+
+   segments=poly.getface(0);
+   anchor=segments[0].getpoint(segments[0].getminlambda());
+
+   for (i=1; i<poly.getnumhalfspace(); i++)
+      {
+      segments=poly.getface(i);
+      polygonize(segments,gon);
+
+      for (j=0; j+2<gon.getsize(); j++)
+         {
+         v1=gon[j];
+         v2=gon[j+1];
+         v3=gon[j+2];
+
+         if (minigeom_plane(v1,v2,v3).getdistance(anchor)>minigeom_base::delta)
+            mesh.append(minihedron(anchor,v1,v2,v3,poly.getvals()));
+         }
+      }
    }
