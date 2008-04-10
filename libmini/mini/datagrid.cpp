@@ -259,16 +259,34 @@ void datagrid::construct()
 // trigger pushing the mesh for a particular time step
 void datagrid::trigger(const double time)
    {
-   construct();
-   push(UNSORTED,time);
+   construct(); // construct bsp tree from databuf objects
+   push(UNSORTED,time); // push the static unsorted mesh
    }
 
 // trigger pushing the mesh for a particular time step and eye point
-void datagrid::trigger(const double time,const miniv3d &eye)
+void datagrid::trigger(const double time,const minicoord &eye)
    {
-   construct();
-   BSPT.extract(eye,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
-   push(SORTED,time);
+   minicoord ep;
+
+   miniv4d v;
+   miniv3d e;
+
+   ep=eye;
+
+   // transform eye point
+   if (ep.type!=minicoord::MINICOORD_LINEAR)
+      if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR) ep.convert2(GPARAMS.crs);
+
+   // multiply eye point with 4x3 matrix
+   if (!IDENTITY)
+      {
+      v=miniv4d(ep.vec.x,ep.vec.y,ep.vec.z,1.0);
+      e=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
+      }
+
+   construct(); // construct bsp tree from databuf objects
+   BSPT.extract(e,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
+   push(SORTED,time); // push the dynamic sorted mesh
    }
 
 // push the mesh for a particular time step
