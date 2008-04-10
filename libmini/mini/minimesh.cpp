@@ -38,27 +38,8 @@ void minibsptree::insert(const minimesh &mesh)
    }
 
 // insert from triangular face
-void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minivals &vals)
-   {
-   miniv3d pnt,nrm;
-   minigeom_plane plane;
-
-   // set anchor point
-   pnt=v1;
-
-   // set anchor normal
-   nrm=(v2-v1)/(v3-v1);
-   nrm.normalize();
-
-   // flip anchor normal to point inward
-   if (nrm*(p-v1)<0.0) nrm=-nrm;
-
-   // set anchor plane
-   plane=minigeom_plane(pnt,nrm);
-
-   // insert the plane into the bsp tree
-   insert(0,v1,v2,v3,vals,plane);
-   }
+void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals)
+   {insert(0,v1,v2,v3,vals,minigeom_plane(v1,v2,v3,h));}
 
 // insert node
 void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane)
@@ -192,11 +173,12 @@ void minibsptree::intersect(unsigned int idx)
          intersect(TREE[idx].right);
          }
 
-      // break polyhedral leaves into tetrahedra
+      // break polyhedral leaves into a set of connected tetrahedra
       if (TREE[idx].left==0 && TREE[idx].right==0)
          {
          TREE[idx].vals.setnull();
          tetrahedralize(TREE[idx].poly,TREE[idx].mesh);
+         connect(TREE[idx].mesh);
          TREE[idx].poly.clear();
          }
       }
@@ -292,13 +274,79 @@ void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
       }
    }
 
+// connect the faces of a tetrahedral mesh
+void minibsptree::connect(minimesh &mesh)
+   {
+   mesh.setnull(); //!!
+   }
+
+// sort a tetrahedral mesh with respect to the eye point
+void minibsptree::sort(const unsigned int idx,const miniv3d &eye,minimesh &mesh)
+   {
+   unsigned int i;
+
+   for (i=0; i<TREE[idx].mesh.getsize(); i++) TREE[idx].mesh[i].flag=FALSE;
+
+   SORT.setnull();
+
+   descend(idx,0,eye);
+
+   mesh=SORT;
+   }
+
+// descend a tetrahedral mesh with respect to the eye point
+void minibsptree::descend(const unsigned int idx,const unsigned int h,const miniv3d &eye)
+   {
+   miniv3d v1,v2,v3,v4;
+   BOOLINT bf1,bf2,bf3,bf4;
+
+   // check if valid
+   if (h==0) return;
+
+   // check if already visited
+   if (TREE[idx].mesh[h].flag) return;
+
+   // mark as already visited
+   TREE[idx].mesh[h].flag=TRUE;
+
+   // get vertices of tetrahedron
+   v1=TREE[idx].mesh[h].vtx1;
+   v2=TREE[idx].mesh[h].vtx2;
+   v3=TREE[idx].mesh[h].vtx3;
+   v4=TREE[idx].mesh[h].vtx4;
+
+   // calculate back faces
+   bf1=minigeom_plane(v1,v2,v3,v4).isincl(eye);
+   bf2=minigeom_plane(v1,v4,v2,v3).isincl(eye);
+   bf3=minigeom_plane(v2,v4,v3,v1).isincl(eye);
+   bf4=minigeom_plane(v3,v4,v1,v2).isincl(eye);
+
+   // descend to back faces
+   if (bf1) descend(idx,TREE[idx].mesh[h].dep123,eye);
+   if (bf2) descend(idx,TREE[idx].mesh[h].dep142,eye);
+   if (bf3) descend(idx,TREE[idx].mesh[h].dep243,eye);
+   if (bf4) descend(idx,TREE[idx].mesh[h].dep341,eye);
+
+   // append actual tetrahedron to sorted mesh
+   SORT.append(TREE[idx].mesh[h]);
+
+   // descend to front faces
+   if (!bf1) descend(idx,TREE[idx].mesh[h].dep123,eye);
+   if (!bf2) descend(idx,TREE[idx].mesh[h].dep142,eye);
+   if (!bf3) descend(idx,TREE[idx].mesh[h].dep243,eye);
+   if (!bf4) descend(idx,TREE[idx].mesh[h].dep341,eye);
+   }
+
 // collect tetrahedra by descending the bsp tree with respect to the eye point
 void minibsptree::collect(const unsigned int idx,const miniv3d &eye)
    {
    // check if bsp tree is empty
    if (!TREE.isnull())
       if (TREE[idx].left==0 && TREE[idx].right==0)
-         COLLECT.append(TREE[idx].mesh); // append leave nodes
+         {
+         sort(idx,eye,TREE[idx].mesh); // sort leave node
+         COLLECT.append(TREE[idx].mesh); // append leave node
+         }
       else
          if (!TREE[idx].plane.isincl(eye)) // check which half space includes the eye point
             {
