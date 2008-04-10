@@ -13,6 +13,8 @@ datagrid::datagrid()
 
    // initialize state:
 
+   GOTEP=FALSE;
+
    ID[0]=MTX[0]=miniv4d(1.0,0.0,0.0);
    ID[1]=MTX[1]=miniv4d(0.0,1.0,0.0);
    ID[2]=MTX[2]=miniv4d(0.0,0.0,1.0);
@@ -278,6 +280,16 @@ void datagrid::trigger(const double time,const minicoord &eye)
    // transform eye point
    if (ep.type!=minicoord::MINICOORD_LINEAR)
       if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR) ep.convert2(GPARAMS.crs);
+
+   if (GOTEP)
+      if (ep==EP)
+         {
+         push(SORTED,time); // push the sorted mesh
+         return;
+         }
+
+   EP=ep;
+   GOTEP=TRUE;
 
    // multiply eye point with 4x3 matrix
    if (!IDENTITY)

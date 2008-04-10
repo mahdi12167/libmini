@@ -128,7 +128,6 @@ class minibsptree
    BOOLINT DONE;
 
    miniv3d EYE;
-   BOOLINT GOTEYE;
    minimesh COLLECT;
 
    void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p,const minivals &vals);

@@ -4,10 +4,7 @@
 
 // default constructor
 minibsptree::minibsptree()
-   {
-   DONE=FALSE;
-   GOTEYE=FALSE;
-   }
+   {DONE=FALSE;}
 
 // destructor
 minibsptree::~minibsptree() {}
@@ -159,16 +156,6 @@ void minibsptree::extract(const miniv3d &eye,minimesh &mesh)
       DONE=TRUE;
       }
 
-   if (GOTEYE)
-      if (eye==EYE)
-         {
-         mesh=COLLECT;
-         return;
-         }
-
-   EYE=eye;
-   GOTEYE=TRUE;
-
    COLLECT.setnull();
    collect(0,eye);
 
@@ -295,7 +282,7 @@ void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
 
       for (j=0; j+2<gon.getsize(); j++)
          {
-         v1=gon[j];
+         v1=gon[0];
          v2=gon[j+1];
          v3=gon[j+2];
 
