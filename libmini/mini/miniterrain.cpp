@@ -730,7 +730,7 @@ int miniterrain::getnearest(const minicoord &e)
       if (isdisplayed(n))
          {
          offset=LAYER[n]->getcenter()-e;
-         dist=offset.vec.getLength();
+         dist=offset.vec.getlength();
 
          if (dist<mindist)
             {

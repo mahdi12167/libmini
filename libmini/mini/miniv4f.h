@@ -45,9 +45,9 @@ class miniv4f
    //! destructor
    ~miniv4f() {}
 
-   void setCoords(const float vx,const float vy,const float vz,const float vw=0.0f) {x=vx; y=vy; z=vz; w=vw;}
+   void setcoords(const float vx,const float vy,const float vz,const float vw=0.0f) {x=vx; y=vy; z=vz; w=vw;}
 
-   float getLength() const {return(fsqrt(x*x+y*y+z*z+w*w));}
+   float getlength() const {return(fsqrt(x*x+y*y+z*z+w*w));}
 
    inline miniv4f& operator += (const miniv4f &v);
    inline miniv4f& operator -= (const miniv4f &v);
@@ -57,7 +57,7 @@ class miniv4f
 
    float normalize()
       {
-      float length=getLength();
+      float length=getlength();
       if (length>0.0f) *this/=length;
       return(length);
       }

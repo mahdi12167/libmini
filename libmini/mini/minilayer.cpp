@@ -945,7 +945,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
             north0=REFERENCE->getwarp()->getnorth();
             north0.convert2(minicoord::MINICOORD_ECEF);
 
-            radius=center0.vec.getLength();
+            radius=center0.vec.getlength();
 
             if (radius>0.0)
                {
@@ -958,7 +958,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                north=WARP->getnorth();
                north.convert2(minicoord::MINICOORD_ECEF);
 
-               if (center.vec.getLength()>0.0)
+               if (center.vec.getlength()>0.0)
                   {
                   center=minicoord(miniv3d(invFLT[0]*center.vec,invFLT[1]*center.vec,invFLT[2]*center.vec),minicoord::MINICOORD_ECEF);
 
@@ -1004,7 +1004,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       north=WARP->getnorth();
       north.convert2(minicoord::MINICOORD_ECEF);
 
-      if (center.vec.getLength()>0.0)
+      if (center.vec.getlength()>0.0)
          {
          if (REFERENCE==NULL) scale=1.0/scaleLOC;
          else scale=1.0/REFERENCE->getwarp()->getscaleloc();
@@ -1247,7 +1247,7 @@ BOOLINT minilayer::isculled()
    dir=eye.vec-ctr.vec;
 
    height=-LPARAMS.extent[2]/2.0f;
-   height-=LPARAMS.cullslope*dir.getLength();
+   height-=LPARAMS.cullslope*dir.getlength();
 
    if (dir*nrm<height) return(TRUE);
 

@@ -137,7 +137,7 @@ class minigeom_segment: public minigeom_base
    ~minigeom_segment() {}
 
    //! get point distance
-   double getdistance(const miniv3d &p) const {return((p-((p-pnt)*vec)*vec-pnt).getLength());}
+   double getdistance(const miniv3d &p) const {return((p-((p-pnt)*vec)*vec-pnt).getlength());}
 
    //! intersect with half space
    BOOLINT intersect(const minigeom_halfspace &halfspace);

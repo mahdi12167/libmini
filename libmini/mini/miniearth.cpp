@@ -382,7 +382,7 @@ void miniearth::render()
             }
          else
             {
-            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getLength();
+            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength();
             alt-=miniutm::EARTH_radius;
 
             altf=alt/EPARAMS.voidstart;

@@ -135,9 +135,12 @@ class minibsptree
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane);
 
    void intersect(unsigned int idx);
+
    void polygonize(const minidyna<minigeom_segment> &segments,minigon &gon);
    void tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh);
+
    void connect(minimesh &mesh);
+   unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minimesh &mesh);
 
    void sort(const unsigned int idx,const miniv3d &eye,minimesh &mesh);
    void descend(const unsigned int idx,const unsigned int h,const miniv3d &eye);

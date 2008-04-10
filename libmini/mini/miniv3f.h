@@ -41,9 +41,9 @@ class miniv3f
    //! destructor
    ~miniv3f() {}
 
-   void setCoords(const float vx,const float vy,const float vz) {x=vx; y=vy; z=vz;}
+   void setcoords(const float vx,const float vy,const float vz) {x=vx; y=vy; z=vz;}
 
-   float getLength() const {return(fsqrt(x*x+y*y+z*z));}
+   float getlength() const {return(fsqrt(x*x+y*y+z*z));}
 
    inline miniv3f& operator += (const miniv3f &v);
    inline miniv3f& operator -= (const miniv3f &v);
@@ -53,7 +53,7 @@ class miniv3f
 
    float normalize()
       {
-      float length=getLength();
+      float length=getlength();
       if (length>0.0f) *this/=length;
       return(length);
       }

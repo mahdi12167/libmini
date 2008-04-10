@@ -215,8 +215,8 @@ void polygonize(const minidyna<minigeom_segment> &segments,minigon &gon)
          c=segments[j].getpoint(segments[j].getminlambda());
          d=segments[j].getpoint(segments[j].getmaxlambda());
 
-         d1=(c-b).getLength();
-         d2=(d-b).getLength();
+         d1=(c-b).getlength();
+         d2=(d-b).getlength();
 
          if (d1<dist)
             {
@@ -277,7 +277,63 @@ void minibsptree::tetrahedralize(const minigeom_polyhedron &poly,minimesh &mesh)
 // connect the faces of a tetrahedral mesh
 void minibsptree::connect(minimesh &mesh)
    {
-   mesh.setnull(); //!!
+   unsigned int i;
+
+   miniv3d v1,v2,v3,v4;
+   miniv3d nrm;
+
+   // set dependencies for all tetrahedra
+   for (i=0; i<mesh.getsize(); i++)
+      {
+      // get vertices of tetrahedron
+      v1=mesh[i].vtx1;
+      v2=mesh[i].vtx1;
+      v3=mesh[i].vtx1;
+      v4=mesh[i].vtx1;
+
+      // search for face dependencies
+      mesh[i].dep123=getdep(v1,v2,v3,v4,mesh);
+      mesh[i].dep142=getdep(v1,v4,v2,v3,mesh);
+      mesh[i].dep243=getdep(v2,v4,v3,v1,mesh);
+      mesh[i].dep341=getdep(v3,v4,v1,v2,mesh);
+      }
+   }
+
+// search for a face dependency
+unsigned int minibsptree::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minimesh &mesh)
+   {
+   unsigned int i;
+
+   miniv3d m;
+   miniv3d p1,p2,p3,p4;
+   miniv3d m1,m2,m3,m4;
+
+   // calculate face midpoint
+   m=(v1+v2+v3)/3;
+
+   // search all tetrahedra
+   for (i=0; i<mesh.getsize(); i++)
+      {
+      // get vertices of tetrahedron
+      p1=mesh[i].vtx1;
+      p2=mesh[i].vtx1;
+      p3=mesh[i].vtx1;
+      p4=mesh[i].vtx1;
+
+      // calculate face midpoints
+      m1=(p1+p2+p3)/3;
+      m2=(p1+p4+p2)/3;
+      m3=(p2+p4+p3)/3;
+      m4=(p3+p4+p1)/3;
+
+      // check for face and orientation match
+      if ((m1-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
+      if ((m2-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
+      if ((m3-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
+      if ((m4-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
+      }
+
+   return(0);
    }
 
 // sort a tetrahedral mesh with respect to the eye point
