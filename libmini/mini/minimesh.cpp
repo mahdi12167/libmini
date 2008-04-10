@@ -298,10 +298,8 @@ void minibsptree::sort(const unsigned int idx,const miniv3d &eye,minimesh &mesh)
 void minibsptree::descend(const unsigned int idx,const unsigned int h,const miniv3d &eye)
    {
    miniv3d v1,v2,v3,v4;
+   unsigned int fd1,fd2,fd3,fd4;
    BOOLINT bf1,bf2,bf3,bf4;
-
-   // check if valid
-   if (h==0) return;
 
    // check if already visited
    if (TREE[idx].mesh[h].flag) return;
@@ -315,26 +313,33 @@ void minibsptree::descend(const unsigned int idx,const unsigned int h,const mini
    v3=TREE[idx].mesh[h].vtx3;
    v4=TREE[idx].mesh[h].vtx4;
 
+   // get face dependencies
+   fd1=TREE[idx].mesh[h].dep123;
+   fd2=TREE[idx].mesh[h].dep142;
+   fd3=TREE[idx].mesh[h].dep243;
+   fd4=TREE[idx].mesh[h].dep341;
+
    // calculate back faces
-   bf1=minigeom_plane(v1,v2,v3,v4).isincl(eye);
-   bf2=minigeom_plane(v1,v4,v2,v3).isincl(eye);
-   bf3=minigeom_plane(v2,v4,v3,v1).isincl(eye);
-   bf4=minigeom_plane(v3,v4,v1,v2).isincl(eye);
+   bf1=bf2=bf3=bf4=FALSE;
+   if (fd1!=0) bf1=minigeom_plane(v1,v2,v3,v4).isincl(eye);
+   if (fd2!=0) bf2=minigeom_plane(v1,v4,v2,v3).isincl(eye);
+   if (fd3!=0) bf3=minigeom_plane(v2,v4,v3,v1).isincl(eye);
+   if (fd4!=0) bf4=minigeom_plane(v3,v4,v1,v2).isincl(eye);
 
    // descend to back faces
-   if (bf1) descend(idx,TREE[idx].mesh[h].dep123,eye);
-   if (bf2) descend(idx,TREE[idx].mesh[h].dep142,eye);
-   if (bf3) descend(idx,TREE[idx].mesh[h].dep243,eye);
-   if (bf4) descend(idx,TREE[idx].mesh[h].dep341,eye);
+   if (fd1!=0) if (bf1) descend(idx,fd1,eye);
+   if (fd2!=0) if (bf2) descend(idx,fd2,eye);
+   if (fd3!=0) if (bf3) descend(idx,fd3,eye);
+   if (fd4!=0) if (bf4) descend(idx,fd4,eye);
 
    // append actual tetrahedron to sorted mesh
    SORT.append(TREE[idx].mesh[h]);
 
    // descend to front faces
-   if (!bf1) descend(idx,TREE[idx].mesh[h].dep123,eye);
-   if (!bf2) descend(idx,TREE[idx].mesh[h].dep142,eye);
-   if (!bf3) descend(idx,TREE[idx].mesh[h].dep243,eye);
-   if (!bf4) descend(idx,TREE[idx].mesh[h].dep341,eye);
+   if (fd1!=0) if (!bf1) descend(idx,fd1,eye);
+   if (fd2!=0) if (!bf2) descend(idx,fd2,eye);
+   if (fd3!=0) if (!bf3) descend(idx,fd3,eye);
+   if (fd4!=0) if (!bf4) descend(idx,fd4,eye);
    }
 
 // collect tetrahedra by descending the bsp tree with respect to the eye point
