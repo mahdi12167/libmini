@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "minimath.h"
+
 #include "miniOGL.h"
 
 #include "minicache.h"
@@ -731,8 +733,8 @@ void minicache::rendertexmap(int m,int n,int S)
          invtra[1].z=mvmtx[9];
          invtra[2].z=mvmtx[10];
 
-         miniwarp::inv_mtx(invtra,invtra);
-         miniwarp::tra_mtx(invtra,invtra);
+         inv_mtx(invtra,invtra);
+         tra_mtx(invtra,invtra);
 
          light=miniv3d(t->lx,t->ly,t->lz);
          light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
@@ -1032,8 +1034,8 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       invtra[1].z=mvmtx[9];
       invtra[2].z=mvmtx[10];
 
-      miniwarp::inv_mtx(invtra,invtra);
-      miniwarp::tra_mtx(invtra,invtra);
+      inv_mtx(invtra,invtra);
+      tra_mtx(invtra,invtra);
 
       light=miniv3d(lx,ly,lz);
       light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);

@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minimath.h"
+
 #include "datagrid.h"
 
 // default constructor
@@ -292,10 +294,3 @@ void datagrid::trigger(const double time,const minicoord &eye)
 // push the mesh for a particular time step
 void datagrid::push(const minimesh &mesh,const double time)
    {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}
-
-// greatest common divisor
-unsigned int datagrid::gcd(const unsigned int a,const unsigned int b)
-   {
-   if (b==0) return(a);
-   else return(gcd(b,a%b));
-   }

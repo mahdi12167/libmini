@@ -4,6 +4,8 @@
 
 #include "mini.h"
 
+#include "minimath.h"
+
 #include "miniutm.h"
 #include "pnmbase.h"
 #include "pnmsample.h"
@@ -1813,13 +1815,6 @@ void minitile::freetile2(int col,int row)
 
          Mini::deletemaps();
          }
-   }
-
-// greatest common divisor
-int minitile::gcd(const int a,const int b)
-   {
-   if (b==0) return(a);
-   else return(gcd(b,a%b));
    }
 
 // configure core parameters:

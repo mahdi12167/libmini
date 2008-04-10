@@ -1,5 +1,6 @@
 // (c) by Stefan Roettger
 
+#include "minimath.h"
 #include "minitime.h"
 
 #include "database.h"
@@ -949,7 +950,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
             if (radius>0.0)
                {
                pointwarp(center0,north0,center0,1.0,mtxFLT);
-               miniwarp::inv_mtx(invFLT,mtxFLT);
+               inv_mtx(invFLT,mtxFLT);
 
                center=WARP->getcenter();
                center.convert2(minicoord::MINICOORD_ECEF);
@@ -988,9 +989,9 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   mtxAFF[1]=miniv4d(0.0,1.0,0.0,center.vec.y*scale);
                   mtxAFF[2]=miniv4d(0.0,0.0,1.0,center.vec.z*scale);
 
-                  miniwarp::mlt_mtx(mtxAFF,invFLT,mtxAFF);
+                  mlt_mtx(mtxAFF,invFLT,mtxAFF);
                   mtxAFF[2].x=mtxAFF[2].y=mtxAFF[2].z=0.0;
-                  miniwarp::mlt_mtx(mtxAFF,mtxFLT,mtxAFF);
+                  mlt_mtx(mtxAFF,mtxFLT,mtxAFF);
                   }
                }
             }
