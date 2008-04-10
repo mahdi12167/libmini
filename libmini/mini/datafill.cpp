@@ -46,7 +46,7 @@ unsigned int datafill::fillin(int radius)
    int dxnum,dynum,dznum;
    float val,weight,sum;
 
-   if (type!=2) ERRORMSG();
+   if (type!=DATABUF_TYPE_FLOAT) ERRORMSG();
 
    count=0;
 

@@ -2449,7 +2449,7 @@ void minibrick::checkdata(databuf *brick,databuf *minmax,databuf *normal,
    if (brick->xsize<2 || brick->ysize<2 || brick->zsize<2 || brick->tsteps<1) ERRORMSG();
 
    // always convert to float
-   brick->convertdata(2);
+   brick->convertdata(databuf::DATABUF_TYPE_FLOAT);
 
    for (xs=3; xs<brick->xsize; xs=2*xs-1);
    for (ys=3; ys<brick->ysize; ys=2*ys-1);

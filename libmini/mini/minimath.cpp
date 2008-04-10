@@ -22,7 +22,7 @@ unsigned int gcd(unsigned int a,unsigned int b)
    }
 
 // lowest common multiple
-unsigned int lcm(const unsigned int a,const unsigned int b)
+unsigned int lcm(unsigned int a,unsigned int b)
    {return(a*b/gcd(a,b));}
 
 // matrix copying:

@@ -4,6 +4,7 @@
 
 #include "miniio.h"
 #include "miniutm.h"
+
 #include "pnmbase.h"
 #include "pnmsample.h"
 
@@ -1321,8 +1322,8 @@ int miniload::load(int cols,int rows,
 
             if (!hfield.missing())
                {
-               if (hfield.type==1) maxelev=32767.0f;
-               else if (hfield.type==2) maxelev=MAXFLOAT;
+               if (hfield.type==databuf::DATABUF_TYPE_SHORT) maxelev=32767.0f;
+               else if (hfield.type==databuf::DATABUF_TYPE_FLOAT) maxelev=MAXFLOAT;
                else maxelev=255.0f;
 
                coord[0]=hfield.swx*stretch;

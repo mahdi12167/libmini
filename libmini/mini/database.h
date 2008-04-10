@@ -12,6 +12,21 @@ class databuf
    {
    public:
 
+   enum DATABUF_TYPE
+      {
+      DATABUF_TYPE_BYTE=0,
+      DATABUF_TYPE_SHORT=1,
+      DATABUF_TYPE_FLOAT=2,
+      DATABUF_TYPE_RGB=3,
+      DATABUF_TYPE_RGBA=4,
+      DATABUF_TYPE_RGB_S3TC=5,
+      DATABUF_TYPE_RGBA_S3TC=6,
+      DATABUF_TYPE_RGB_MM=7,
+      DATABUF_TYPE_RGBA_MM=8,
+      DATABUF_TYPE_RGB_MM_S3TC=9,
+      DATABUF_TYPE_RGBA_MM_S3TC=10
+      };
+
    //! default constructor
    databuf();
 

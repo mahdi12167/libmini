@@ -7,6 +7,7 @@
 #include "minimath.h"
 
 #include "miniutm.h"
+
 #include "pnmbase.h"
 #include "pnmsample.h"
 
@@ -1368,25 +1369,25 @@ void minitile::reload(int col,int row,
    SIZE2[col+row*COLS]=width;
    DIM2[col+row*COLS]=COLDIM/(width-1);
 
-   if (hmap.type!=2)
+   if (hmap.type!=databuf::DATABUF_TYPE_FLOAT)
       {
       mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAINF,CONFIGURE_BSAFETY,CONFIGURE_MAXCULL);
 
       mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
-      if (hmap.type==0)
+      if (hmap.type==databuf::DATABUF_TYPE_BYTE)
          {
          if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) ERRORMSG();
          for (k=0; k<width*height; k++) hfield[k]=((unsigned char *)hmap.data)[k];
          }
-      else if (hmap.type==1) hfield=(short int *)(hmap.data);
+      else if (hmap.type==databuf::DATABUF_TYPE_SHORT) hfield=(short int *)(hmap.data);
       else ERRORMSG();
 
       MAP2[col+row*COLS]=mini::initmap(hfield,&D2MAP2[col+row*COLS],
                                        &SIZE2[col+row*COLS],&DIM2[col+row*COLS],SCALE,
                                        CELLASPECT,NULL,NULL,FAST,AVGD2);
 
-      if (hmap.type==0) free(hfield);
+      if (hmap.type==databuf::DATABUF_TYPE_BYTE) free(hfield);
 
       USEFLOAT2[col+row*COLS]=0;
 
@@ -1407,42 +1408,42 @@ void minitile::reload(int col,int row,
             TEXWIDTH[col+row*COLS]=width;
             TEXHEIGHT[col+row*COLS]=height;
 
-            if (tmap.type==3)
+            if (tmap.type==databuf::DATABUF_TYPE_RGB)
                {
                TEXMIPMAPS[col+row*COLS]=CONFIGURE_MIPMAPS; // enable mipmaps if the texture is not compressed
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0);
                }
-            else if (tmap.type==4)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA)
                {
                TEXMIPMAPS[col+row*COLS]=CONFIGURE_MIPMAPS; // enable mipmaps if the texture is not compressed
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1);
                }
-            else if (tmap.type==5)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes);
                }
-            else if (tmap.type==6)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes);
                }
-            else if (tmap.type==7)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_MM)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0,0,1);
                }
-            else if (tmap.type==8)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_MM)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1,0,1);
                }
-            else if (tmap.type==9)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes,1);
                }
-            else if (tmap.type==10)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
                TEXID[col+row*COLS]=mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes,1);
@@ -1463,7 +1464,7 @@ void minitile::reload(int col,int row,
          width=fmap.xsize;
          height=fmap.ysize;
 
-         if (width<2 || width!=height || fmap.type!=0) ERRORMSG();
+         if (width<2 || width!=height || fmap.type!=databuf::DATABUF_TYPE_BYTE) ERRORMSG();
 
          FOGMAP2[col+row*COLS]=mini::initfogmap((unsigned char *)fmap.data,width,LAMBDA,DISPLACE,EMISSION,ATTENUATION,FR,FG,FB,FAST);
          }
@@ -1497,42 +1498,42 @@ void minitile::reload(int col,int row,
             TEXWIDTH[col+row*COLS]=width;
             TEXHEIGHT[col+row*COLS]=height;
 
-            if (tmap.type==3)
+            if (tmap.type==databuf::DATABUF_TYPE_RGB)
                {
                TEXMIPMAPS[col+row*COLS]=CONFIGURE_MIPMAPS; // enable mipmaps if the texture is not compressed
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0);
                }
-            else if (tmap.type==4)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA)
                {
                TEXMIPMAPS[col+row*COLS]=CONFIGURE_MIPMAPS; // enable mipmaps if the texture is not compressed
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1);
                }
-            else if (tmap.type==5)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes);
                }
-            else if (tmap.type==6)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=0; // disable mipmaps if the texture is compressed
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes);
                }
-            else if (tmap.type==7)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_MM)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,0,0,1);
                }
-            else if (tmap.type==8)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_MM)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable mipmaps
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],0,1,0,1);
                }
-            else if (tmap.type==9)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,0,tmap.bytes,1);
                }
-            else if (tmap.type==10)
+            else if (tmap.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
                {
                TEXMIPMAPS[col+row*COLS]=1; // enable compressed mipmaps
                TEXID[col+row*COLS]=Mini::inittexmap((unsigned char *)tmap.data,&TEXWIDTH[col+row*COLS],&TEXHEIGHT[col+row*COLS],TEXMIPMAPS[col+row*COLS],1,1,tmap.bytes,1);
@@ -1553,7 +1554,7 @@ void minitile::reload(int col,int row,
          width=fmap.xsize;
          height=fmap.ysize;
 
-         if (width<2 || width!=height || fmap.type!=0) ERRORMSG();
+         if (width<2 || width!=height || fmap.type!=databuf::DATABUF_TYPE_BYTE) ERRORMSG();
 
          FOGMAP2[col+row*COLS]=Mini::initfogmap((unsigned char *)fmap.data,width,LAMBDA,DISPLACE,EMISSION,ATTENUATION,FR,FG,FB,FAST);
          }
