@@ -164,6 +164,7 @@ class minigeom_segment: public minigeom_base
    };
 
 typedef minigeom_segment minigeom_line;
+typedef minidyna<minigeom_segment,10> minigeom_segments;
 
 //! half space
 class minigeom_halfspace: public minigeom_base
@@ -198,6 +199,7 @@ class minigeom_halfspace: public minigeom_base
    };
 
 typedef minigeom_halfspace minigeom_plane;
+typedef minidyna<minigeom_halfspace,10> minigeom_halfspaces;
 
 //! convex polyhedron
 class minigeom_polyhedron
@@ -223,11 +225,11 @@ class minigeom_polyhedron
    void clear();
 
    //! get face segments of corresponding half space
-   minidyna<minigeom_segment> getface(const unsigned int h) const;
+   minigeom_segments getface(const unsigned int h) const;
 
    protected:
 
-   minidyna<minigeom_halfspace> half;
+   minidyna<minigeom_halfspace,6> half;
 
    private:
 
@@ -236,5 +238,7 @@ class minigeom_polyhedron
    BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0) const;
    BOOLINT check4redundancy(const unsigned int h) const;
    };
+
+typedef minidyna<minigeom_polyhedron,10> minigeom_polyhedra;
 
 #endif

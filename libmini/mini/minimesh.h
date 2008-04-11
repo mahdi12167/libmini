@@ -9,7 +9,7 @@
 #include "minidyna.h"
 #include "minigeom.h"
 
-typedef minidyna<miniv3d> minigon;
+typedef minidyna<miniv3d,10> minigon;
 
 class minival
    {
@@ -129,7 +129,7 @@ class minimesh: public minidyna<minihedron>
 
    minidyna<minihedron> SORT;
 
-   minigon polygonize(const minidyna<minigeom_segment> &segments) const;
+   minigon polygonize(const minigeom_segments &segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
 
    void connect();

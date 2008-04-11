@@ -3,7 +3,7 @@
 #include "minimesh.h"
 
 // polygonize a set of line segments
-minigon minimesh::polygonize(const minidyna<minigeom_segment> &segments) const
+minigon minimesh::polygonize(const minigeom_segments &segments) const
    {
    unsigned int i,j;
 

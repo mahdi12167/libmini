@@ -105,7 +105,6 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
 minigeom_polyhedron::minigeom_polyhedron()
    {
    // pre-define a closed bounding box with maximum possible size
-   half.setsize(6);
    half[0]=minigeom_halfspace(miniv3d(-MAXFLOAT/8,0,0),miniv3d(1,0,0));
    half[1]=minigeom_halfspace(miniv3d(MAXFLOAT/8,0,0),miniv3d(-1,0,0));
    half[2]=minigeom_halfspace(miniv3d(0,-MAXFLOAT/8,0),miniv3d(0,1,0));
@@ -139,7 +138,7 @@ void minigeom_polyhedron::clear()
 // remove half space
 void minigeom_polyhedron::remove(const unsigned int h)
    {
-   half[h]=half[half.getsize()-1];
+   half.set(h,half.ref(half.getsize()-1));
    half.setsize(half.getsize()-1);
    }
 
@@ -183,12 +182,12 @@ BOOLINT minigeom_polyhedron::check4redundancy(const unsigned int h) const
    {return(!check4intersection(half[h],TRUE,h));}
 
 // get face segments of corresponding half space
-minidyna<minigeom_segment> minigeom_polyhedron::getface(const unsigned int h) const
+minigeom_segments minigeom_polyhedron::getface(const unsigned int h) const
    {
    unsigned int i,j;
 
    minigeom_segment segment;
-   minidyna<minigeom_segment> segments;
+   minigeom_segments segments;
 
    // create a segment for each half space
    for (i=0; i<half.getsize(); i++)
