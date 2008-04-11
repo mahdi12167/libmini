@@ -37,11 +37,11 @@ void minibsptree::insert(const minimesh &mesh)
       }
    }
 
-// insert from triangular face
+// insert triangular face into bsp tree
 void minibsptree::insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals)
    {insert(0,v1,v2,v3,vals,minigeom_plane(v1,v2,v3,h));}
 
-// insert node
+// insert dividing plane into bsp tree
 void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane)
    {
    minibsptree_node node;
@@ -61,12 +61,12 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       }
    else
       {
-      // determine distance of triangle vertices from anchor plane
+      // determine distance of triangle vertices from dividing plane
       d1=TREE[idx].plane.getdistance(v1);
       d2=TREE[idx].plane.getdistance(v2);
       d3=TREE[idx].plane.getdistance(v3);
 
-      // check if the anchor plane is already existing in the bsp tree
+      // check if the dividing plane is already existing in the bsp tree
       if (d1>-minigeom_base::delta && d1<minigeom_base::delta &&
           d2>-minigeom_base::delta && d2<minigeom_base::delta &&
           d3>-minigeom_base::delta && d3<minigeom_base::delta)
@@ -129,7 +129,7 @@ void minibsptree::extract(minimesh &mesh)
    }
 
 // extract to sorted tetrahedral mesh
-void minibsptree::extract(const miniv3d &eye,minimesh &mesh)
+void minibsptree::extract(const miniv3d &eye,const double radius,minimesh &mesh)
    {
    if (!DONE)
       {
@@ -138,7 +138,7 @@ void minibsptree::extract(const miniv3d &eye,minimesh &mesh)
       }
 
    COLLECT.setnull();
-   collect(0,eye);
+   collect(0,eye,radius);
 
    mesh=COLLECT;
    }
@@ -399,8 +399,10 @@ void minibsptree::descend(const unsigned int idx,const unsigned int h,const mini
    }
 
 // collect tetrahedra by descending the bsp tree with respect to the eye point
-void minibsptree::collect(const unsigned int idx,const miniv3d &eye)
+void minibsptree::collect(const unsigned int idx,const miniv3d &eye,const double radius)
    {
+   double dist;
+
    // check if bsp tree is empty
    if (!TREE.isnull())
       if (TREE[idx].left==0 && TREE[idx].right==0)
@@ -409,20 +411,27 @@ void minibsptree::collect(const unsigned int idx,const miniv3d &eye)
          COLLECT.append(TREE[idx].mesh); // append leave node
          }
       else
-         if (!TREE[idx].plane.isincl(eye)) // check which half space includes the eye point
+         {
+         // calculate distance of eye point to dividing plane
+         dist=TREE[idx].plane.getdistance(eye);
+
+         if (dist<0.0) // check which half space includes the eye point
             {
             // collect left half space
-            if (TREE[idx].left!=0) collect(TREE[idx].left,eye);
+            if (TREE[idx].left!=0)
+               if (dist+radius>0.0) collect(TREE[idx].left,eye,radius);
 
             // collect right half space
-            if (TREE[idx].right!=0) collect(TREE[idx].right,eye);
+            if (TREE[idx].right!=0) collect(TREE[idx].right,eye,radius);
             }
          else
             {
             // collect right half space
-            if (TREE[idx].right!=0) collect(TREE[idx].right,eye);
+            if (TREE[idx].right!=0)
+               if (dist-radius<0.0) collect(TREE[idx].right,eye,radius);
 
             // collect left half space
-            if (TREE[idx].left!=0) collect(TREE[idx].left,eye);
+            if (TREE[idx].left!=0) collect(TREE[idx].left,eye,radius);
             }
+         }
    }

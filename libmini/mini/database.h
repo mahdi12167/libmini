@@ -27,6 +27,20 @@ class databuf
       DATABUF_TYPE_RGBA_MM_S3TC=10
       };
 
+   enum DATABUF_CRS
+      {
+      DATABUF_CRS_LINEAR=0,
+      DATABUF_CRS_LLH=1,
+      DATABUF_CRS_UTM=2
+      };
+
+   enum DATABUF_EXTFMT
+      {
+      DATABUF_EXTFMT_PLAIN=0,
+      DATABUF_EXTFMT_JPEG=1,
+      DATABUF_EXTFMT_PNG=2
+      };
+
    //! default constructor
    databuf();
 
@@ -78,7 +92,7 @@ class databuf
    unsigned int bytes; // number of raw data bytes
 
    //! check for missing data
-   int missing() {return(data==NULL || extformat!=0 || implformat!=0);}
+   int missing() {return(data==NULL || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0);}
 
    //! allocate a new memory chunk
    void alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=0);
@@ -128,7 +142,7 @@ class databuf
    void set_crs(int crs_type,int crs_zone,int crs_datum);
 
    //! native input/output
-   void savedata(const char *filename,unsigned int extfmt=0); // data is saved in MSB byte order
+   void savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
    int loaddata(const char *filename); // data is converted from MSB to native byte order
 
    //! convert byte order

@@ -211,6 +211,7 @@ class minival
 
    unsigned int slot; // data slot
    miniv3d crd1,crd2,crd3,crd4; // data coordinates
+   miniv3d ref1,ref2,ref3,ref4; // reference coordinates
    };
 
 typedef minidyna<minival> minivals;

@@ -26,7 +26,7 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
    switch (extformat)
       {
-      case 1: // JPEG
+      case databuf::DATABUF_EXTFMT_JPEG:
 
          if (israwdata==0)
             {
@@ -74,7 +74,7 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
          break;
 
-      case 2: // PNG
+      case databuf::DATABUF_EXTFMT_PNG:
 
          if (israwdata==0)
             {

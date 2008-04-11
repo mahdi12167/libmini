@@ -70,11 +70,12 @@ databuf::databuf()
    minvalue=MAXFLOAT;
    maxvalue=-MAXFLOAT;
 
-   crs=zone=datum=0;
+   crs=DATABUF_CRS_LINEAR;
+   zone=datum=0;
 
    nodata=-MAXFLOAT;
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    data=NULL;
@@ -113,7 +114,7 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
 
    bytes=bs;
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    xsize=xs;
@@ -153,7 +154,7 @@ void databuf::set(void *chunk,unsigned int length,
    data=chunk;
    bytes=bs;
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    xsize=xs;
@@ -566,7 +567,7 @@ void databuf::savedata(const char *filename,
    if (bytes==0) ERRORMSG();
 
    // convert into external format
-   if (extfmt!=0) convertchunk(1,extfmt);
+   if (extfmt!=DATABUF_EXTFMT_PLAIN) convertchunk(1,extfmt);
 
    // open file for writing
    if ((file=fopen(filename,"wb"))==NULL) ERRORMSG();
@@ -630,7 +631,7 @@ void databuf::savedata(const char *filename,
    putc('\0',file);
 
    // save data chunk
-   if (*((unsigned char *)(&INTEL_CHECK))==0 || extformat!=0 || implformat!=0)
+   if (*((unsigned char *)(&INTEL_CHECK))==0 || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0)
       {
       if (fwrite(data,bytes,1,file)!=1) ERRORMSG();
       fclose(file);
@@ -699,7 +700,11 @@ int databuf::loaddata(const char *filename)
    if (readparam("bias",&bias,file)==0) ERRORMSG();
 
    // read coordinate system indicator
-   if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4) crs=zone=datum=0;
+   if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4)
+      {
+      crs=DATABUF_CRS_LINEAR;
+      zone=datum=0;
+      }
    else
       {
       if (readparami("crs",&crs,file)==0) ERRORMSG();
@@ -712,7 +717,7 @@ int databuf::loaddata(const char *filename)
    else if (readparam("nodata",&nodata,file)==0) ERRORMSG();
 
    // read external format indicator
-   if (m==MAGIC1) extformat=0;
+   if (m==MAGIC1) extformat=DATABUF_EXTFMT_PLAIN;
    else if (readparamu("extformat",&extformat,file)==0) ERRORMSG();
 
    // read implicit format indicator
@@ -761,10 +766,10 @@ int databuf::loaddata(const char *filename)
       }
 
    // check for LSB->MSB conversion
-   if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==0 && implformat==0) swapbytes();
+   if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==DATABUF_EXTFMT_PLAIN && implformat==0) swapbytes();
 
    // convert from external format
-   if (extformat!=0) convertchunk(0,extformat);
+   if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
 
    // convert from implicit format
    if (implformat!=0) interpretechunk(implformat);
@@ -775,7 +780,7 @@ int databuf::loaddata(const char *filename)
 // convert byte order
 void databuf::swap2(int msb)
    {
-   if (extformat!=0 || implformat!=0) return;
+   if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
 
    if (*((unsigned char *)(&INTEL_CHECK))==0)
       if (msb!=0) return;
@@ -821,7 +826,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    if (israw==0)
       if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
 
-   if (israw==0) extformat=0;
+   if (israw==0) extformat=DATABUF_EXTFMT_PLAIN;
    else extformat=extfmt;
    }
 
@@ -1156,7 +1161,7 @@ int databuf::loadPNMdata(const char *filename)
       return(0);
       }
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    xsize=width;
@@ -1192,7 +1197,9 @@ int databuf::loadPNMdata(const char *filename)
       sex=coord[6];
       sey=coord[7];
 
-      crs=(utm_zone==0)?1:2;
+      if (utm_zone==0) crs=DATABUF_CRS_LLH;
+      else crs=DATABUF_CRS_UTM;
+
       zone=utm_zone;
       datum=utm_datum;
 
@@ -1329,7 +1336,7 @@ int databuf::loadPVMdata(const char *filename,
 
    if (width<2 || height<2 || depth<2 || components!=1) ERRORMSG();
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    xsize=width;
@@ -1400,7 +1407,7 @@ int databuf::loadPVMdata(const char *filename,
 
    if (width<2 || height<2 || depth<2 || components!=1) ERRORMSG();
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    xsize=width;
@@ -1550,7 +1557,7 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
    if (msb==0)
       if (*((unsigned char *)(&INTEL_CHECK))==0) swapbytes();
 
-   extformat=0;
+   extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
 
    midx=lon+xspace*(xsize-1)/2.0f;
@@ -1588,10 +1595,10 @@ void databuf::savePNMdata(const char *filename)
    {
    PNMcomment comment,*cptr;
 
-   if (extformat!=0 || implformat!=0) return;
+   if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
    if (zsize>1 || tsteps>1) return;
 
-   if (crs==1 || crs==2)
+   if (crs==DATABUF_CRS_LLH || crs==DATABUF_CRS_UTM)
       {
       putPNMparams(&comment,NULL,
                    zone,datum,(zone==0)?4:2,
@@ -1619,7 +1626,7 @@ void databuf::savePNMdata(const char *filename)
 // data is saved as PVM volume
 void databuf::savePVMdata(const char *filename)
    {
-   if (extformat!=0 || implformat!=0) return;
+   if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
    if (tsteps>1) return;
 
    if (type==DATABUF_TYPE_BYTE) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);

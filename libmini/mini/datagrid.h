@@ -18,32 +18,14 @@ class datagrid
    {
    public:
 
-   struct DATAGRID_PARAMS_STRUCT
-      {
-      // configurable parameters:
-
-      minicoord::MINICOORD crs;
-      };
-
-   typedef DATAGRID_PARAMS_STRUCT DATAGRID_PARAMS;
-
    //! default constructor
    datagrid();
 
    //! destructor
    virtual ~datagrid();
 
-   //! get parameters
-   void get(DATAGRID_PARAMS &gparams);
-
-   //! set parameters
-   void set(DATAGRID_PARAMS &gparams);
-
-   //! get parameters
-   DATAGRID_PARAMS *get() {return(&GPARAMS);}
-
-   //! set parameters
-   void set(DATAGRID_PARAMS *gparams) {set(*gparams);}
+   //! set coordinate system
+   void setcrs(const minicoord::MINICOORD crs=minicoord::MINICOORD_ECEF);
 
    //! create data brick id
    unsigned int create(const unsigned int slot, // data slot
@@ -75,14 +57,14 @@ class datagrid
    void trigger(const double time);
 
    //! trigger pushing the mesh for a particular time step and eye point
-   void trigger(const double time,const minicoord &eye);
+   void trigger(const double time,const minicoord &eye,const double radius=MAXFLOAT);
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,const double time);
 
    protected:
 
-   DATAGRID_PARAMS GPARAMS;
+   minicoord::MINICOORD CRS;
 
    minidyna<BOOLINT> FLAG;
    minidyna<unsigned int> SLOT;

@@ -7,11 +7,7 @@
 // default constructor
 datagrid::datagrid()
    {
-   // configurable parameters:
-
-   GPARAMS.crs=minicoord::MINICOORD_ECEF;
-
-   // initialize state:
+   CRS=minicoord::MINICOORD_ECEF;
 
    GOTEP=FALSE;
 
@@ -31,6 +27,10 @@ datagrid::~datagrid()
 
    for (i=0; i<FLAG.getsize(); i++) remove(i);
    }
+
+// set coordinate system
+void datagrid::setcrs(const minicoord::MINICOORD crs)
+   {CRS=crs;}
 
 // create data brick id
 unsigned int datagrid::create(const unsigned int slot,
@@ -154,9 +154,9 @@ void datagrid::construct()
          if (FLAG[act])
             {
             // check coordinate system of actual databuf object
-            if (DATA[act].crs==0) crs=minicoord::MINICOORD_LINEAR;
-            else if (DATA[act].crs==1) crs=minicoord::MINICOORD_LLH;
-            else if (DATA[act].crs==2) crs=minicoord::MINICOORD_UTM;
+            if (DATA[act].crs==databuf::DATABUF_CRS_LINEAR) crs=minicoord::MINICOORD_LINEAR;
+            else if (DATA[act].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
+            else if (DATA[act].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
             else ERRORMSG();
 
             // determine corner vertices of actual object:
@@ -185,8 +185,8 @@ void datagrid::construct()
 
             // transform corner vertices
             if (crs!=minicoord::MINICOORD_LINEAR)
-               if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR)
-                  for (j=0; j<8; j++) vtx[j].convert2(GPARAMS.crs);
+               if (CRS!=minicoord::MINICOORD_LINEAR)
+                  for (j=0; j<8; j++) vtx[j].convert2(CRS);
 
             // multiply corner vertices with 4x3 matrix
             if (!IDENTITY)
@@ -268,7 +268,7 @@ void datagrid::trigger(const double time)
    }
 
 // trigger pushing the mesh for a particular time step and eye point
-void datagrid::trigger(const double time,const minicoord &eye)
+void datagrid::trigger(const double time,const minicoord &eye,const double radius)
    {
    minicoord ep;
 
@@ -279,7 +279,7 @@ void datagrid::trigger(const double time,const minicoord &eye)
 
    // transform eye point
    if (ep.type!=minicoord::MINICOORD_LINEAR)
-      if (GPARAMS.crs!=minicoord::MINICOORD_LINEAR) ep.convert2(GPARAMS.crs);
+      if (CRS!=minicoord::MINICOORD_LINEAR) ep.convert2(CRS);
 
    if (GOTEP)
       if (ep==EP)
@@ -299,7 +299,7 @@ void datagrid::trigger(const double time,const minicoord &eye)
       }
 
    construct(); // construct bsp tree from databuf objects
-   BSPT.extract(e,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
+   BSPT.extract(e,radius,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
    push(SORTED,time); // push the dynamic sorted mesh
    }
 

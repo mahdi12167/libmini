@@ -110,7 +110,7 @@ class minibsptree
    void extract(minimesh &mesh);
 
    //! extract to sorted tetrahedral mesh
-   void extract(const miniv3d &eye,minimesh &mesh);
+   void extract(const miniv3d &eye,const double radius,minimesh &mesh);
 
    private:
 
@@ -145,7 +145,7 @@ class minibsptree
    void sort(const unsigned int idx,const miniv3d &eye,minimesh &mesh);
    void descend(const unsigned int idx,const unsigned int h,const miniv3d &eye);
 
-   void collect(const unsigned int idx,const miniv3d &eye);
+   void collect(const unsigned int idx,const miniv3d &eye,const double radius=MAXFLOAT);
    };
 
 #endif
