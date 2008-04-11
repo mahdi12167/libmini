@@ -81,14 +81,28 @@ class minigeom_base
       double d;
 
       d=(p-pnt)*vec;
-
       return(d>minlambda-delta && d<maxlambda+delta);
       }
 
-   void flip(const miniv3d &h)
+   BOOLINT isequal(const minigeom_base &b)
       {
-      if (ishalf())
-         if (!isincl(h)) vec=-vec;
+      double d;
+
+      if (vec==b.vec)
+         if (isnull() && b.isnull()) return(TRUE);
+         else if (isfull() && b.isfull()) return(TRUE);
+         else if (ishalf() && b.ishalf())
+            {
+            d=(b.pnt-pnt)*vec;
+            if (FABS(d+minlambda-b.minlambda)<delta) return(TRUE);
+            }
+         else
+            {
+            d=(b.pnt-pnt)*vec;
+            if (FABS(d+minlambda-b.minlambda)<delta && FABS(d+maxlambda-b.maxlambda)<delta) return(TRUE);
+            }
+
+      return(FALSE);
       }
 
    void swap()
@@ -98,6 +112,12 @@ class minigeom_base
       tmp=minlambda;
       minlambda=maxlambda;
       maxlambda=tmp;
+      }
+
+   void flip(const miniv3d &h)
+      {
+      if (ishalf())
+         if (!isincl(h)) {vec=-vec; minlambda=-minlambda;}
       }
 
    void invert()
@@ -179,43 +199,6 @@ class minigeom_halfspace: public minigeom_base
 
 typedef minigeom_halfspace minigeom_plane;
 
-class minival
-   {
-   public:
-
-   //! default constructor
-   minival() {}
-
-   //! destructor
-   ~minival() {}
-
-   minival(const unsigned int s,const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4)
-      {
-      slot=s;
-
-      crd1=c1;
-      crd2=c2;
-      crd3=c3;
-      crd4=c4;
-      }
-
-   minival(const unsigned int s,const miniv3d c[4])
-      {
-      slot=s;
-
-      crd1=c[0];
-      crd2=c[1];
-      crd3=c[2];
-      crd4=c[3];
-      }
-
-   unsigned int slot; // data slot
-   miniv3d crd1,crd2,crd3,crd4; // data coordinates
-   miniv3d ref1,ref2,ref3,ref4; // reference coordinates
-   };
-
-typedef minidyna<minival> minivals;
-
 //! convex polyhedron
 class minigeom_polyhedron
    {
@@ -239,25 +222,12 @@ class minigeom_polyhedron
    //! clear half spaces
    void clear();
 
-   //! set single value
-   void setval(const minival &v) {vals.set(v);}
-
-   //! get single value
-   minival getval(const unsigned int idx=0) const {return(vals.get(idx));}
-
-   //! set multiple values
-   void setvals(const minivals &a) {vals=a;}
-
-   //! get multiple values
-   minivals getvals() const {return(vals);}
-
    //! get face segments of corresponding half space
    minidyna<minigeom_segment> getface(const unsigned int h) const;
 
    protected:
 
    minidyna<minigeom_halfspace> half;
-   minivals vals;
 
    private:
 

@@ -154,10 +154,9 @@ void datagrid::construct()
          if (FLAG[act])
             {
             // check coordinate system of actual databuf object
-            if (DATA[act].crs==databuf::DATABUF_CRS_LINEAR) crs=minicoord::MINICOORD_LINEAR;
-            else if (DATA[act].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
+            crs=minicoord::MINICOORD_LINEAR;
+            if (DATA[act].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
             else if (DATA[act].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
-            else ERRORMSG();
 
             // determine corner vertices of actual object:
 
@@ -201,25 +200,25 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               vals.set(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4]));
+               vals.set(minival(SLOT[act],crd[0],crd[1],crd[3],crd[4],vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec));
                h=minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6]));
+               vals.set(minival(SLOT[act],crd[2],crd[3],crd[1],crd[6],vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec));
                h=minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3]));
+               vals.set(minival(SLOT[act],crd[7],crd[6],crd[4],crd[3],vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec));
                h=minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1]));
+               vals.set(minival(SLOT[act],crd[5],crd[4],crd[6],crd[1],vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec));
                h=minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals);
                MESH.append(h);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               vals.set(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4]));
+               vals.set(minival(SLOT[act],crd[3],crd[1],crd[6],crd[4],vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec));
                h=minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals);
                MESH.append(h);
                }
@@ -227,25 +226,25 @@ void datagrid::construct()
                {
                // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-               vals.set(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7]));
+               vals.set(minival(SLOT[act],crd[3],crd[0],crd[2],crd[7],vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec));
                h=minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5]));
+               vals.set(minival(SLOT[act],crd[1],crd[2],crd[0],crd[5],vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec));
                h=minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0]));
+               vals.set(minival(SLOT[act],crd[4],crd[7],crd[5],crd[0],vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec));
                h=minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals);
                MESH.append(h);
 
-               vals.set(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2]));
+               vals.set(minival(SLOT[act],crd[6],crd[5],crd[7],crd[2],vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec));
                h=minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals);
                MESH.append(h);
 
                // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-               vals.set(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7]));
+               vals.set(minival(SLOT[act],crd[0],crd[5],crd[2],crd[7],vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec));
                h=minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals);
                MESH.append(h);
                }

@@ -122,7 +122,7 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
    {
    unsigned int i;
 
-   if (halfspace.ishalf())
+   if (halfspace.ishalf()) // check validity of half space
       if (check4intersection(halfspace)) // check if half space cuts the polyhedron
          {
          half.append(halfspace); // add half space to existing half spaces
@@ -134,10 +134,7 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
 
 // clear half spaces
 void minigeom_polyhedron::clear()
-   {
-   half.setnull();
-   vals.setnull();
-   }
+   {half.setnull();}
 
 // remove half space
 void minigeom_polyhedron::remove(const unsigned int h)
@@ -153,11 +150,10 @@ BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfsp
 
    minigeom_segment segment;
 
-   // check for equal half space
+   // check for identical half space
    for (i=0; i<half.getsize(); i++)
       if (!omit || i!=h)
-         if (half[i].vec==halfspace.vec)
-            if (FABS((half[i].pnt-halfspace.pnt)*halfspace.vec+half[i].minlambda-halfspace.minlambda)<minigeom_base::delta) return(FALSE);
+         if (half[i].isequal(halfspace)) return(FALSE);
 
    // check for intersection with all the edges of all faces
    for (i=0; i<half.getsize(); i++)
