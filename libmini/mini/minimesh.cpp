@@ -20,8 +20,8 @@ minigon minimesh::polygonize(const minigeom_segments &segments) const
 
    for (i=0; i<segments.getsize(); i++)
       {
-      a=segments[i].getpoint(segments[i].getminlambda());
-      b=segments[i].getpoint(segments[i].getmaxlambda());
+      a=segments[i].getminpoint();
+      b=segments[i].getmaxpoint();
 
       gon.append(a);
 
@@ -30,8 +30,8 @@ minigon minimesh::polygonize(const minigeom_segments &segments) const
 
       for (j=i+1; j<segments.getsize(); j++)
          {
-         c=segments[j].getpoint(segments[j].getminlambda());
-         d=segments[j].getpoint(segments[j].getmaxlambda());
+         c=segments[j].getminpoint();
+         d=segments[j].getmaxpoint();
 
          d1=(c-b).getlength();
          d2=(d-b).getlength();
@@ -86,7 +86,7 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
          v2=gon[j+1];
          v3=gon[j+2];
 
-         if (minigeom_plane(v1,v2,v3).getdistance(anchor)>minigeom_base::delta)
+         if (FABS(minigeom_plane(v1,v2,v3).getdistance(anchor))>minigeom_base::delta)
             mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
          }
       }
@@ -101,30 +101,22 @@ void minimesh::connect()
    {
    unsigned int i;
 
-   minihedron h;
-
    miniv3d v1,v2,v3,v4;
 
    // set dependencies for all tetrahedra
    for (i=0; i<getsize(); i++)
       {
-      // get unconnected tetrahedron
-      h=get(i);
-
       // get vertices of tetrahedron
-      v1=h.vtx1;
-      v2=h.vtx1;
-      v3=h.vtx1;
-      v4=h.vtx1;
+      v1=ref(i).vtx1;
+      v2=ref(i).vtx2;
+      v3=ref(i).vtx3;
+      v4=ref(i).vtx4;
 
       // search for face dependencies
-      h.dep123=getdep(v1,v2,v3,v4);
-      h.dep142=getdep(v1,v4,v2,v3);
-      h.dep243=getdep(v2,v4,v3,v1);
-      h.dep341=getdep(v3,v4,v1,v2);
-
-      // set connected tetrahedron
-      set(i,h);
+      ref(i).dep123=getdep(v1,v2,v3,v4);
+      ref(i).dep142=getdep(v1,v4,v2,v3);
+      ref(i).dep243=getdep(v2,v4,v3,v1);
+      ref(i).dep341=getdep(v3,v4,v1,v2);
       }
    }
 
@@ -140,14 +132,14 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    // calculate face midpoint
    m=(v1+v2+v3)/3;
 
-   // search all tetrahedra
+   // search all tetrahedra for face match
    for (i=0; i<getsize(); i++)
       {
       // get vertices of tetrahedron
-      p1=get(i).vtx1;
-      p2=get(i).vtx1;
-      p3=get(i).vtx1;
-      p4=get(i).vtx1;
+      p1=ref(i).vtx1;
+      p2=ref(i).vtx2;
+      p3=ref(i).vtx3;
+      p4=ref(i).vtx4;
 
       // calculate face midpoints
       m1=(p1+p2+p3)/3;

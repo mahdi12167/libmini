@@ -63,6 +63,9 @@ class minigeom_base
 
    miniv3d getpoint(const float lambda) const {return(pnt+lambda*vec);}
 
+   miniv3d getminpoint() const {return(pnt+minlambda*vec);}
+   miniv3d getmaxpoint() const {return(pnt+maxlambda*vec);}
+
    double getminlambda() const {return(minlambda);}
    double getmaxlambda() const {return(maxlambda);}
 
