@@ -2109,3 +2109,39 @@ UTM 04
 592817
 2387209
 35m
+
+East Edge, Koko Crater
+UTM 04
+637085
+2354673
+165m
+
+Parking, Lyon Arboretum
+UTM 04
+624178
+2359462
+176m
+
+Shelter, Lyon Arboretum
+UTM 04
+624071
+2359525
+201m
+
+Inspiration Point, Lyon Arboretum
+UTM 04
+624025
+2359621
+221m
+
+Hoomaluhia Hut with a Lake View
+UTM 04
+623989
+2365488
+84m
+
+Lanikai Playground
+UTM 04
+633013
+2365887
+22m
