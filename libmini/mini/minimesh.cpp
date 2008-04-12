@@ -164,10 +164,83 @@ void minimesh::append(const minigeom_polyhedron &poly)
 // set embedded data values
 void minimesh::setvals(const minivals &vals)
    {
-   unsigned int i;
+   unsigned int i,j;
 
+   miniv3d v1,v2,v3,v4;
+   double b0,b1,b2,b3,b4;
+
+   minival val;
+
+   // apply the embedded data values to each tetrahedron
    for (i=0; i<getsize(); i++)
-      ref(i).vals=vals; //!! re-apply actual coordinates
+      {
+      // set the embedded data values
+      ref(i).vals=vals;
+
+      // get vertices of tetrahedron
+      v1=ref(i).vtx1;
+      v2=ref(i).vtx2;
+      v3=ref(i).vtx3;
+      v4=ref(i).vtx4;
+
+      // for each embedded data value
+      for (j=0; j<vals.getsize(); j++)
+         {
+         // get embedded data value
+         val=ref(i).vals.ref(j);
+
+         // calculate determinant of reference tetrahedron
+         b0=getdet(val.ref1,val.ref2,val.ref3,val.ref4);
+
+         // calculate barycentric coordinates #1
+         b4=getdet(val.ref1,val.ref2,val.ref3,v1);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v1);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v1);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v1);
+
+         // reconstruct data coordinate #1
+         ref(i).vals.ref(j).crd1=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
+
+         // calculate barycentric coordinates #2
+         b4=getdet(val.ref1,val.ref2,val.ref3,v2);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v2);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v2);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v2);
+
+         // reconstruct data coordinate #2
+         ref(i).vals.ref(j).crd2=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
+
+         // calculate barycentric coordinates #3
+         b4=getdet(val.ref1,val.ref2,val.ref3,v3);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v3);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v3);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v3);
+
+         // reconstruct data coordinate #3
+         ref(i).vals.ref(j).crd3=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
+
+         // calculate barycentric coordinates #4
+         b4=getdet(val.ref1,val.ref2,val.ref3,v4);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v4);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v4);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v4);
+
+         // reconstruct data coordinate #4
+         ref(i).vals.ref(j).crd4=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
+         }
+      }
+   }
+
+// get determinant
+double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
+   {
+   miniv3d mtx[3];
+
+   mtx[0]=miniv3d(v1-p);
+   mtx[1]=miniv3d(v2-p);
+   mtx[2]=miniv3d(v3-p);
+
+   return(det_mtx(mtx));
    }
 
 // sort a tetrahedral mesh with respect to the eye point
@@ -178,10 +251,9 @@ minimesh minimesh::sort(const miniv3d &eye)
    for (i=0; i<getsize(); i++) ref(i).flag=FALSE;
 
    SORT.setnull();
-
    descend(0,eye);
 
-   return(minimesh(SORT));
+   return(SORT);
    }
 
 // descend a tetrahedral mesh with respect to the eye point
@@ -198,16 +270,16 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    ref(idx).flag=TRUE;
 
    // get vertices of tetrahedron
-   v1=get(idx).vtx1;
-   v2=get(idx).vtx2;
-   v3=get(idx).vtx3;
-   v4=get(idx).vtx4;
+   v1=ref(idx).vtx1;
+   v2=ref(idx).vtx2;
+   v3=ref(idx).vtx3;
+   v4=ref(idx).vtx4;
 
    // get face dependencies
-   fd1=get(idx).dep123;
-   fd2=get(idx).dep142;
-   fd3=get(idx).dep243;
-   fd4=get(idx).dep341;
+   fd1=ref(idx).dep123;
+   fd2=ref(idx).dep142;
+   fd3=ref(idx).dep243;
+   fd4=ref(idx).dep341;
 
    // calculate back faces
    bf1=bf2=bf3=bf4=FALSE;
@@ -223,7 +295,7 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    if (fd4!=0) if (bf4) descend(fd4,eye);
 
    // append actual tetrahedron to sorted mesh
-   SORT.append(get(idx));
+   SORT.append(ref(idx));
 
    // descend to front faces
    if (fd1!=0) if (!bf1) descend(fd1,eye);
@@ -412,9 +484,13 @@ void minibsptree::intersect(unsigned int idx)
          // propagate embedded data values
          TREE[TREE[idx].right].vals.append(TREE[idx].vals);
 
+         // invert half space
+         plane=TREE[idx].plane;
+         plane.invert();
+
          // add half space to polyhedron
          TREE[TREE[idx].right].poly=TREE[idx].poly;
-         TREE[TREE[idx].right].poly.intersect(TREE[idx].plane);
+         TREE[TREE[idx].right].poly.intersect(plane);
 
          // descend recursively
          intersect(TREE[idx].right);
@@ -434,7 +510,7 @@ void minibsptree::intersect(unsigned int idx)
       }
    }
 
-// collect tetrahedra by descending the bsp tree with respect to the eye point
+// collect tetrahedra by descending the bsp tree with respect to the eye point and visibility radius
 void minibsptree::collect(const unsigned int idx,const miniv3d &eye,const double radius)
    {
    double dist;

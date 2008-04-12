@@ -94,11 +94,11 @@ class minihedron
       {
       miniv3d mtx[3];
 
-      mtx[0]=miniv3d(vtx2-vtx1);
-      mtx[1]=miniv3d(vtx3-vtx1);
-      mtx[2]=miniv3d(vtx4-vtx1);
+      mtx[0]=miniv3d(vtx1-vtx4);
+      mtx[1]=miniv3d(vtx2-vtx4);
+      mtx[2]=miniv3d(vtx3-vtx4);
 
-      return(det_mtx(mtx)/2.0);
+      return(FABS(det_mtx(mtx))/2.0);
       }
 
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
@@ -147,6 +147,8 @@ class minimesh: public minidyna<minihedron>
    unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h) const;
 
    void descend(const unsigned int idx,const miniv3d &eye);
+
+   double getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
    };
 
 class minibsptree
