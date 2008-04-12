@@ -6,6 +6,8 @@
 #include "minibase.h"
 
 #include "miniv3d.h"
+#include "minimath.h"
+
 #include "minidyna.h"
 #include "minigeom.h"
 
@@ -88,7 +90,16 @@ class minihedron
    ~minihedron();
 
    //! get volume
-   double getvolume() const {return(0.0);} //!! calculate det/2
+   double getvolume() const
+      {
+      miniv3d mtx[3];
+
+      mtx[0]=miniv3d(vtx2-vtx1);
+      mtx[1]=miniv3d(vtx3-vtx1);
+      mtx[2]=miniv3d(vtx4-vtx1);
+
+      return(det_mtx(mtx)/2.0);
+      }
 
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minivals vals; // embedded data values

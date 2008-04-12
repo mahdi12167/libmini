@@ -136,10 +136,10 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    for (i=0; i<getsize(); i++)
       {
       // get vertices of tetrahedron
-      p1=ref(i).vtx1;
-      p2=ref(i).vtx2;
-      p3=ref(i).vtx3;
-      p4=ref(i).vtx4;
+      p1=get(i).vtx1;
+      p2=get(i).vtx2;
+      p3=get(i).vtx3;
+      p4=get(i).vtx4;
 
       // calculate face midpoints
       m1=(p1+p2+p3)/3;

@@ -110,6 +110,14 @@ void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const mi
    mlt_mtx(mtx,mtx1,mtx2,mtx3,mtx4,m);
    }
 
+// calculate determinant of 3x3 matrix
+double det_mtx(const miniv3d mtx[3])
+   {
+   return(mtx[0].x*(mtx[2].z*mtx[1].y-mtx[1].z*mtx[2].y)+
+          mtx[0].y*(mtx[1].z*mtx[2].x-mtx[2].z*mtx[1].x)+
+          mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x));
+   }
+
 // invert a 3x3 matrix
 void inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
    {
@@ -117,9 +125,7 @@ void inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
    miniv3d m[3];
 
    // calculate determinant
-   det=mtx[0].x*(mtx[2].z*mtx[1].y-mtx[1].z*mtx[2].y)+
-       mtx[0].y*(mtx[1].z*mtx[2].x-mtx[2].z*mtx[1].x)+
-       mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x);
+   det=det_mtx(mtx);
 
    // check determinant
    if (det==0.0) inv[0]=inv[1]=inv[2]=miniv3d(0.0);
@@ -156,7 +162,7 @@ void inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    // decompose 4x3 inversion into matrix #1 = inverted 3x3 sub-matrix
    cpy_mtx(m1,m);
 
-   // decompose 4x3 inversion into matrix #2 = inverted 1x3 sub-matrix = negated offset
+   // decompose 4x3 inversion into matrix #2 = inverted 1x3 sub-matrix = negated vector
    m2[0]=miniv4d(1.0,0.0,0.0,-mtx[0].w);
    m2[1]=miniv4d(0.0,1.0,0.0,-mtx[1].w);
    m2[2]=miniv4d(0.0,0.0,1.0,-mtx[2].w);
