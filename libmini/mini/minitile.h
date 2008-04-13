@@ -26,7 +26,7 @@ class minitile
             float attenuation=1.0f, // relative importance of fog
             float fogR=1.0f,float fogG=1.0f,float fogB=1.0f, // fog color
             float minres=0.0f, // absolute minimum of global resolution
-            float minoff=0.0f, // absolute minimum base offset
+            float minoff=0.0f, // absolute minimum of base offset
             int loaded=0); // interprete 2D arrays as images
 
    //! destructor
