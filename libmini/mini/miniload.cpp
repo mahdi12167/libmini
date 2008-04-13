@@ -48,8 +48,8 @@ void miniload::init()
 
    CONFIGURE_MINRES=9.0f;
    CONFIGURE_MAXD2=100.0f;
-   CONFIGURE_SEAINF=0.1f;
-   CONFIGURE_BSAFETY=0.1f;
+   CONFIGURE_SEAD2=0.1f;
+   CONFIGURE_MINOFF=0.1f;
    CONFIGURE_MAXCULL=8;
 
    CONFIGURE_SEAMIN=-MAXFLOAT;
@@ -607,8 +607,8 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
-   minitile::configure_seainf(obj->CONFIGURE_SEAINF);
-   minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
+   minitile::configure_sead2(obj->CONFIGURE_SEAD2);
+   minitile::configure_minoff(obj->CONFIGURE_MINOFF);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
 
    minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
@@ -716,8 +716,8 @@ void miniload::preload(int col,int row,void *data)
 
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
-   minitile::configure_seainf(obj->CONFIGURE_SEAINF);
-   minitile::configure_bsafety(obj->CONFIGURE_BSAFETY);
+   minitile::configure_sead2(obj->CONFIGURE_SEAD2);
+   minitile::configure_minoff(obj->CONFIGURE_MINOFF);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
 
    minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
@@ -769,8 +769,8 @@ void miniload::deliver()
 
    minitile::configure_minres(CONFIGURE_MINRES);
    minitile::configure_maxd2(CONFIGURE_MAXD2);
-   minitile::configure_seainf(CONFIGURE_SEAINF);
-   minitile::configure_bsafety(CONFIGURE_BSAFETY);
+   minitile::configure_sead2(CONFIGURE_SEAD2);
+   minitile::configure_minoff(CONFIGURE_MINOFF);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
 
    minitile::configure_seamin(CONFIGURE_SEAMIN);
@@ -868,8 +868,8 @@ void miniload::draw(float res,
 
    minitile::configure_minres(CONFIGURE_MINRES);
    minitile::configure_maxd2(CONFIGURE_MAXD2);
-   minitile::configure_seainf(CONFIGURE_SEAINF);
-   minitile::configure_bsafety(CONFIGURE_BSAFETY);
+   minitile::configure_sead2(CONFIGURE_SEAD2);
+   minitile::configure_minoff(CONFIGURE_MINOFF);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
 
    minitile::configure_seamin(CONFIGURE_SEAMIN);
@@ -1077,7 +1077,7 @@ int miniload::load(int cols,int rows,
                    float stretch,float stretchx,float stretchy,
                    float exaggeration,float scale,
                    float lambda,float attenuation,
-                   float minres,float bsafety,
+                   float minres,float minoff,
                    float outparams[5],
                    float outscale[3])
    {
@@ -1429,7 +1429,7 @@ int miniload::load(int cols,int rows,
                      COLS,ROWS,COLDIM,ROWDIM,SCALE,
                      CENTERX,CENTERY,CENTERZ,
                      NULL,lambda*exaggeration/scale,0.0f,0.0f,attenuation,0.0f,0.0f,0.0f,
-                     minres,bsafety);
+                     minres,minoff);
 
    TILE->setrequest(request,this,preload,PFARP,PUPDATE);
 
@@ -1716,16 +1716,16 @@ void miniload::configure_maxd2(float maxd2)
    CONFIGURE_MAXD2=maxd2;
    }
 
-void miniload::configure_seainf(float seainf)
+void miniload::configure_sead2(float sead2)
    {
-   if (seainf<0.0f) seainf=0.1f;
-   CONFIGURE_SEAINF=seainf;
+   if (sead2<0.0f) sead2=0.1f;
+   CONFIGURE_SEAD2=sead2;
    }
 
-void miniload::configure_bsafety(float bsafety)
+void miniload::configure_minoff(float minoff)
    {
-   if (bsafety<0.0f) bsafety=0.1f;
-   CONFIGURE_BSAFETY=bsafety;
+   if (minoff<0.0f) minoff=0.1f;
+   CONFIGURE_MINOFF=minoff;
    }
 
 void miniload::configure_maxcull(int maxcull)

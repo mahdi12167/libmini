@@ -28,8 +28,8 @@ namespace mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float seainf=0.1f; // sea level influence
-float bsafety=0.1f; // base offset safety
+float sead2=0.1f; // sea level d2-value
+float minoff=0.1f; // minimum base offset
 int maxcull=8; // maximum culling depth
 
 short int **y; // height field
@@ -119,8 +119,8 @@ namespace Mini {
 
 float minres=9.0f; // minimum resolution
 float maxd2=100.0f; // maximum d2-value
-float seainf=0.1f; // sea level influence
-float bsafety=0.1f; // base offset safety
+float sead2=0.1f; // sea level d2-value
+float minoff=0.1f; // minimum base offset
 int maxcull=8; // maximum culling depth
 
 float **y; // height field

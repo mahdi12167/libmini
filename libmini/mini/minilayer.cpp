@@ -76,7 +76,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.fastinit=2;             // fast initialization level
    LPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
 
-   LPARAMS.seainf=0.1f;            // influence of sea level on d2-values
+   LPARAMS.sead2=0.1f;             // influence of sea level on d2-values
    LPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
    LPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
 
@@ -661,7 +661,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN->setfastinit(LPARAMS.fastinit,LPARAMS.avgd2value);
 
    // set sea level influence and range
-   TERRAIN->configure_seainf(LPARAMS.seainf);
+   TERRAIN->configure_sead2(LPARAMS.sead2);
    TERRAIN->configure_seamin((LPARAMS.seamin==-MAXFLOAT)?LPARAMS.seamin:LPARAMS.seamin/LPARAMS.scale);
    TERRAIN->configure_seamax((LPARAMS.seamax==-MAXFLOAT)?LPARAMS.seamax:LPARAMS.seamax/LPARAMS.scale);
 

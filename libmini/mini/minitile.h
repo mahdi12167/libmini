@@ -26,7 +26,7 @@ class minitile
             float attenuation=1.0f, // relative importance of fog
             float fogR=1.0f,float fogG=1.0f,float fogB=1.0f, // fog color
             float minres=0.0f, // absolute minimum of global resolution
-            float bsafety=0.0f, // absolute minimum base offset safety
+            float minoff=0.0f, // absolute minimum base offset
             int loaded=0); // interprete 2D arrays as images
 
    //! destructor
@@ -35,8 +35,8 @@ class minitile
    //! configure core parameters
    static void configure_minres(float minres=9.0f); // default minimum resolution
    static void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
-   static void configure_seainf(float seainf=0.1f); // default influence of sea level
-   static void configure_bsafety(float bsafety=0.1f); // default base offset safety
+   static void configure_sead2(float sead2=0.1f); // default sea level d2-value
+   static void configure_minoff(float minoff=0.1f); // default minimum base offset
    static void configure_maxcull(int maxcull=8); // default maximum culling depth
 
    //! configuring
@@ -94,7 +94,7 @@ class minitile
                          void (*shader)(float nx,float ny,float nz,float elev,float *rgb)=0,
                          float sealevel=0.0f,float snowline=3000.0f,
                          float lambda=1.0f,float attenuation=1.0f,
-                         float minres=0.0f,float bsafety=0.0f,
+                         float minres=0.0f,float minoff=0.0f,
                          float outparams[5]=0,
                          float outscale[3]=0);
 
@@ -285,8 +285,8 @@ class minitile
 
    static float CONFIGURE_MINRES;
    static float CONFIGURE_MAXD2;
-   static float CONFIGURE_SEAINF;
-   static float CONFIGURE_BSAFETY;
+   static float CONFIGURE_SEAD2;
+   static float CONFIGURE_MINOFF;
    static int CONFIGURE_MAXCULL;
 
    static float CONFIGURE_SEAMIN;

@@ -83,7 +83,7 @@ class miniload
             float stretch=1.0f,float stretchx=1.0f,float stretchy=1.0f,
             float exaggeration=1.0f,float scale=1.0f,
             float lambda=1.0f,float attenuation=1.0f,
-            float minres=0.0f,float bsafety=0.0f,
+            float minres=0.0f,float minoff=0.0f,
             float outparams[5]=0,
             float outscale[3]=0);
 
@@ -164,8 +164,8 @@ class miniload
    //! configure core parameters
    void configure_minres(float minres=9.0f); // default minimum resolution
    void configure_maxd2(float maxd2=100.0f); // default maximum d2-value
-   void configure_seainf(float seainf=0.1f); // default influence of sea level
-   void configure_bsafety(float bsafety=0.1f); // default base offset safety
+   void configure_sead2(float sead2=0.1f); // default sea level d2-value
+   void configure_minoff(float minoff=0.1f); // default minimum base offset
    void configure_maxcull(int maxcull=8); // default maximum culling depth
 
    //! configuring
@@ -263,8 +263,8 @@ class miniload
 
    float CONFIGURE_MINRES;
    float CONFIGURE_MAXD2;
-   float CONFIGURE_SEAINF;
-   float CONFIGURE_BSAFETY;
+   float CONFIGURE_SEAD2;
+   float CONFIGURE_MINOFF;
    int CONFIGURE_MAXCULL;
 
    float CONFIGURE_SEAMIN;

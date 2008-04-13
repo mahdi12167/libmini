@@ -36,7 +36,7 @@ class miniterrain
       int fastinit;             //+ fast initialization level
       float avgd2value;         //+ average d2value for fast initialization
 
-      float seainf;             //+ influence of sea level on d2-values
+      float sead2;              //+ influence of sea level on d2-values
       float seamin;             //+ lower boundary of sea level influence range
       float seamax;             //+ upper boundary of sea level influence range
 

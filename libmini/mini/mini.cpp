@@ -11,16 +11,16 @@ namespace mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float sinf,
-               float bsaf,
+               float sead,
+               float mino,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || sinf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || sead<0.0f || mino<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   seainf=sinf;
-   bsafety=bsaf;
+   sead2=sead;
+   minoff=mino;
    maxcull=maxc;
    }
 
@@ -151,7 +151,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    d2=fabs(a+b-2.0f*m);
    dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,seainf*s*D);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2*s*D);
 
    return(d2);
    }
@@ -2506,7 +2506,7 @@ void drawlandscape(float res,
       {
       baseoff=fabs(FY-getbaseheight(FX,FZ));
 
-      if (bsafety>0.0f) baseoff=fmax(baseoff-bsafety*minres*D,0.0f);
+      if (minoff>0.0f) baseoff=fmax(baseoff-minoff*minres*D,0.0f);
 
       DF2=fsqr(baseoff);
 
@@ -3186,7 +3186,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
       baseoff=fabs(FY-getbaseheight(FX,FZ));
 
-      if (bsafety>0.0f) baseoff=fmax(baseoff-bsafety*minres*D,0.0f);
+      if (minoff>0.0f) baseoff=fmax(baseoff-minoff*minres*D,0.0f);
 
       DF2=fsqr(baseoff);
 
@@ -3348,16 +3348,16 @@ namespace Mini {
 // set fine tuning parameters
 void setparams(float minr,
                float maxd,
-               float sinf,
-               float bsaf,
+               float sead,
+               float mino,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || sinf<0.0f || bsaf<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd<=0.0f || sead<0.0f || mino<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
    maxd2=maxd;
-   seainf=sinf;
-   bsafety=bsaf;
+   sead2=sead;
+   minoff=mino;
    maxcull=maxc;
    }
 
@@ -3488,7 +3488,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    d2=fabs(a+b-2.0f*m);
    dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,seainf*s*D);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2*s*D);
 
    return(d2);
    }
@@ -5843,7 +5843,7 @@ void drawlandscape(float res,
       {
       baseoff=fabs(FY-getbaseheight(FX,FZ));
 
-      if (bsafety>0.0f) baseoff=fmax(baseoff-bsafety*minres*D,0.0f);
+      if (minoff>0.0f) baseoff=fmax(baseoff-minoff*minres*D,0.0f);
 
       DF2=fsqr(baseoff);
 
@@ -6524,7 +6524,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
       baseoff=fabs(FY-getbaseheight(FX,FZ));
 
-      if (bsafety>0.0f) baseoff=fmax(baseoff-bsafety*minres*D,0.0f);
+      if (minoff>0.0f) baseoff=fmax(baseoff-minoff*minres*D,0.0f);
 
       DF2=fsqr(baseoff);
 

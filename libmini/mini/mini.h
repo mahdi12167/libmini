@@ -9,8 +9,8 @@ namespace mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float sinf=0.1f,
-               float bsaf=0.1f,
+               float sead=0.1f,
+               float mino=0.1f,
                int maxc=8);
 
 void *initmap(short int *image,void **d2map,
@@ -101,8 +101,8 @@ namespace Mini {
 
 void setparams(float minr=9.0f,
                float maxd=100.0f,
-               float sinf=0.1f,
-               float bsaf=0.1f,
+               float sead=0.1f,
+               float mino=0.1f,
                int maxc=8);
 
 void *initmap(float *image,void **d2map,

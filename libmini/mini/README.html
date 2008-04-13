@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.7.5 as of 11.April.2008<br>
+Version 8.7.5 as of 13.April.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -292,12 +292,12 @@ and can be compiled by typing "build.sh example" in a shell.<p>
    The fine tuning parameters are initialized to suitable values, so
    normally this step can be omitted. However, for more flexibility
    the parameters can be set explicitly via
-   mini::setparams(minres,maxd2,seainf,bsafety,maxcull). In the
-   terrain rendering paper minres is referenced to as C, maxd2 is the
-   maximum value for the linear mapping of the d2-values, seainf is
-   the influence of the extracted sea surface onto the d2-values, and
-   maxcull defines the number of base quadtree levels for which the
-   view frustum culling is performed.<p>
+   mini::setparams(minres,maxd2,sead2,minoff,maxcull). In the terrain
+   rendering paper minres is referenced to as C, maxd2 is the maximum
+   value for the linear mapping of the d2-values, sead2 determines the
+   influence of the extracted sea surface onto the d2-values, and
+   maxcull defines the number of quadtree levels for which the view
+   frustum culling is performed.<p>
 
 <h3>Step 2) Open a window:</h3>
 

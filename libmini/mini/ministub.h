@@ -20,8 +20,8 @@ class ministub
             int fogsize=0,float lambda=0.0f,float displace=0.0f,float attenuation=1.0f,
             void (*prismedge)(float x,float y,float yf,float z)=0,
             void **d2map2=0,int *size2=0,
-            float minres=0.0f,float bsafety=0.0f,
-            float maxd2=0.0f,float seainf=0.0f,
+            float minres=0.0f,float minoff=0.0f,
+            float maxd2=0.0f,float sead2=0.0f,
             float seamin=0.0f,float seamax=0.0f,
             int maxcull=0);
 
@@ -36,8 +36,8 @@ class ministub
             int fogsize=0,float lambda=0.0f,float displace=0.0f,float attenuation=1.0f,
             void (*prismedge)(float x,float y,float yf,float z)=0,
             void **d2map2=0,int *size2=0,
-            float minres=0.0f,float bsafety=0.0f,
-            float maxd2=0.0f,float seainf=0.0f,
+            float minres=0.0f,float minoff=0.0f,
+            float maxd2=0.0f,float sead2=0.0f,
             float seamin=0.0f,float seamax=0.0f,
             int maxcull=0);
 
@@ -110,8 +110,8 @@ class ministub
    void *D2MAP2[4];
    int SIZE2[4];
 
-   float MINRES,BSAFETY;
-   float MAXD2,SEAINF;
+   float MINRES,MINOFF;
+   float MAXD2,SEAD2;
    float SEAMIN,SEAMAX;
    int MAXCULL;
 
