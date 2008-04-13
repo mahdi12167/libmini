@@ -41,8 +41,8 @@ datahash::~datahash()
       }
    }
 
-// insert item
-void datahash::insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem)
+// insert data item
+void datahash::insertdata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem)
    {
    int i;
 
@@ -84,8 +84,8 @@ void datahash::insert(const unsigned char *str,const unsigned char *str2,const u
    HASHMAP[id]=item;
    }
 
-// remove item
-void datahash::remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3)
+// remove data item
+void datahash::removedata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3)
    {
    unsigned int id;
 
@@ -117,8 +117,8 @@ void datahash::remove(const unsigned char *str,const unsigned char *str2,const u
       }
    }
 
-// check for item
-void *datahash::check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
+// check for data item
+void *datahash::checkdata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const
    {
    unsigned int id;
 
@@ -594,7 +594,7 @@ jobqueueelem *datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlo
    jobqueueelem *job;
 
    // check hash map for already existing job
-   job=(jobqueueelem *)JOBQUEUEMAP->check(mapfile,texfile,fogfile);
+   job=(jobqueueelem *)JOBQUEUEMAP->checkdata(mapfile,texfile,fogfile);
 
    if (job==NULL) return(NULL);
 
@@ -645,10 +645,10 @@ jobqueueelem *datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlo
 void datacloud::insertjob(jobqueueelem *job,jobqueueelem *newjob)
    {
    // insert job into hash map
-   JOBQUEUEMAP->insert(newjob->hfield->tileid,
-                       (newjob->texture==NULL)?NULL:newjob->texture->tileid,
-                       (newjob->fogmap==NULL)?NULL:newjob->fogmap->tileid,
-                       (void *)newjob);
+   JOBQUEUEMAP->insertdata(newjob->hfield->tileid,
+                           (newjob->texture==NULL)?NULL:newjob->texture->tileid,
+                           (newjob->fogmap==NULL)?NULL:newjob->fogmap->tileid,
+                           (void *)newjob);
 
    // insert in empty queue
    if (JOBQUEUE==NULL)
@@ -689,9 +689,9 @@ void datacloud::insertjob(jobqueueelem *job,jobqueueelem *newjob)
 void datacloud::deletejob(jobqueueelem *job)
    {
    // remove job from hash map
-   JOBQUEUEMAP->remove(job->hfield->tileid,
-                       (job->texture==NULL)?NULL:job->texture->tileid,
-                       (job->fogmap==NULL)?NULL:job->fogmap->tileid);
+   JOBQUEUEMAP->removedata(job->hfield->tileid,
+                           (job->texture==NULL)?NULL:job->texture->tileid,
+                           (job->fogmap==NULL)?NULL:job->fogmap->tileid);
 
    // decrease refcounts
    if (job->hfield!=NULL) job->hfield->refcount--;
@@ -819,7 +819,7 @@ tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLIN
    tilecacheelem *tile;
 
    // check hash map for already existing tile
-   tile=(tilecacheelem *)TILECACHEMAP->check(tileid,NULL,NULL);
+   tile=(tilecacheelem *)TILECACHEMAP->checkdata(tileid,NULL,NULL);
 
    if (tile==NULL) return(NULL);
 
@@ -844,7 +844,7 @@ void datacloud::inserttile(tilecacheelem *tile,tilecacheelem *newtile)
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
    // insert tile into hash map
-   TILECACHEMAP->insert(newtile->tileid,NULL,NULL,(void *)newtile);
+   TILECACHEMAP->insertdata(newtile->tileid,NULL,NULL,(void *)newtile);
 
    // increase pending tile count
    if (!newtile->isavailable) PENDINGTILES++;
@@ -894,7 +894,7 @@ void datacloud::deletetile(tilecacheelem *tile)
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
    // delete tile from hash map
-   TILECACHEMAP->remove(tile->tileid,NULL,NULL);
+   TILECACHEMAP->removedata(tile->tileid,NULL,NULL);
 
    // decrease pending tile count
    if (!tile->isavailable) PENDINGTILES--;

@@ -23,14 +23,14 @@ class datahash
    //! destructor
    ~datahash();
 
-   //! insert item
-   void insert(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem);
+   //! insert data item
+   void insertdata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3,void *elem);
 
-   //! remove item
-   void remove(const unsigned char *str,const unsigned char *str2,const unsigned char *str3);
+   //! remove data item
+   void removedata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3);
 
-   //! check for item
-   void *check(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
+   //! check for data item
+   void *checkdata(const unsigned char *str,const unsigned char *str2,const unsigned char *str3) const;
 
    protected:
 
