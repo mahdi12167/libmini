@@ -93,16 +93,17 @@ class minigeom_base
 
       if (vec==b.vec)
          if (isnull() && b.isnull()) return(TRUE);
+         if (iszero() && b.iszero()) return(TRUE);
          else if (isfull() && b.isfull()) return(TRUE);
          else if (ishalf() && b.ishalf())
             {
             d=(b.pnt-pnt)*vec;
-            if (FABS(d+minlambda-b.minlambda)<delta) return(TRUE);
+            if (FABS(d+b.minlambda-minlambda)<delta) return(TRUE);
             }
          else
             {
             d=(b.pnt-pnt)*vec;
-            if (FABS(d+minlambda-b.minlambda)<delta && FABS(d+maxlambda-b.maxlambda)<delta) return(TRUE);
+            if (FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta) return(TRUE);
             }
 
       return(FALSE);
@@ -112,22 +113,31 @@ class minigeom_base
       {
       double tmp;
 
+      vec=-vec;
       tmp=minlambda;
-      minlambda=maxlambda;
-      maxlambda=tmp;
+      minlambda=-maxlambda;
+      maxlambda=-tmp;
       }
 
    void flip(const miniv3d &h)
       {
       if (ishalf())
-         if (!isincl(h)) {vec=-vec; minlambda=-minlambda;}
+         if (!isincl(h))
+            {
+            vec=-vec;
+            minlambda=-minlambda;
+            }
       }
 
    void invert()
       {
       if (isnull() || iszero()) setfull();
-      else if (ishalf()) {vec=-vec; minlambda=-minlambda;}
       else if (isfull()) setnull();
+      else if (ishalf())
+         {
+         vec=-vec;
+         minlambda=-minlambda;
+         }
       }
 
    protected:

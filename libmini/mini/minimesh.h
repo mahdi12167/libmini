@@ -200,6 +200,8 @@ class minibsptree
    void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals);
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane);
 
+   unsigned int append(const minivals &vals,const minigeom_plane &plane);
+
    void intersect(unsigned int idx);
 
    void collect(const unsigned int idx,const miniv3d &eye,const double radius=MAXFLOAT);
