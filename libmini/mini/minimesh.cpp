@@ -73,6 +73,8 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
 
    minimesh mesh;
 
+   if (poly.getnumhalfspace()==0) return(mesh);
+
    gon=polygonize(poly.getface(0));
    anchor=gon[0];
 
@@ -107,10 +109,10 @@ void minimesh::connect()
    for (i=0; i<getsize(); i++)
       {
       // get vertices of tetrahedron
-      v1=ref(i).vtx1;
-      v2=ref(i).vtx2;
-      v3=ref(i).vtx3;
-      v4=ref(i).vtx4;
+      v1=get(i).vtx1;
+      v2=get(i).vtx2;
+      v3=get(i).vtx3;
+      v4=get(i).vtx4;
 
       // search for face dependencies
       ref(i).dep123=getdep(v1,v2,v3,v4);
@@ -125,9 +127,8 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    {
    unsigned int i;
 
-   miniv3d m;
+   miniv3d m,m1,m2,m3,m4;
    miniv3d p1,p2,p3,p4;
-   miniv3d m1,m2,m3,m4;
 
    // calculate face midpoint
    m=(v1+v2+v3)/3;
@@ -142,10 +143,10 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
       p4=get(i).vtx4;
 
       // calculate face midpoints
-      m1=(p1+p2+p3)/3;
-      m2=(p1+p4+p2)/3;
-      m3=(p2+p4+p3)/3;
-      m4=(p3+p4+p1)/3;
+      m1=(p1+p2+p3)/3.0;
+      m2=(p1+p4+p2)/3.0;
+      m3=(p2+p4+p3)/3.0;
+      m4=(p3+p4+p1)/3.0;
 
       // check for face and orientation match
       if ((m1-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
@@ -178,16 +179,16 @@ void minimesh::setvals(const minivals &vals)
       ref(i).vals=vals;
 
       // get vertices of tetrahedron
-      v1=ref(i).vtx1;
-      v2=ref(i).vtx2;
-      v3=ref(i).vtx3;
-      v4=ref(i).vtx4;
+      v1=get(i).vtx1;
+      v2=get(i).vtx2;
+      v3=get(i).vtx3;
+      v4=get(i).vtx4;
 
       // for each embedded data value
       for (j=0; j<vals.getsize(); j++)
          {
          // get embedded data value
-         val=ref(i).vals.ref(j);
+         val=get(i).vals.get(j);
 
          // calculate determinant of reference tetrahedron
          b0=getdet(val.ref1,val.ref2,val.ref3,val.ref4);
@@ -248,7 +249,7 @@ minimesh minimesh::sort(const miniv3d &eye)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).flag=FALSE;
+   for (i=0; i<getsize(); i++) ref(i).visit=FALSE;
 
    SORT.setnull();
    descend(0,eye);
@@ -264,22 +265,22 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    BOOLINT bf1,bf2,bf3,bf4;
 
    // check if already visited
-   if (ref(idx).flag) return;
+   if (get(idx).visit) return;
 
    // mark as already visited
-   ref(idx).flag=TRUE;
+   ref(idx).visit=TRUE;
 
    // get vertices of tetrahedron
-   v1=ref(idx).vtx1;
-   v2=ref(idx).vtx2;
-   v3=ref(idx).vtx3;
-   v4=ref(idx).vtx4;
+   v1=get(idx).vtx1;
+   v2=get(idx).vtx2;
+   v3=get(idx).vtx3;
+   v4=get(idx).vtx4;
 
    // get face dependencies
-   fd1=ref(idx).dep123;
-   fd2=ref(idx).dep142;
-   fd3=ref(idx).dep243;
-   fd4=ref(idx).dep341;
+   fd1=get(idx).dep123;
+   fd2=get(idx).dep142;
+   fd3=get(idx).dep243;
+   fd4=get(idx).dep341;
 
    // calculate back faces
    bf1=bf2=bf3=bf4=FALSE;
@@ -295,7 +296,7 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    if (fd4!=0) if (bf4) descend(fd4,eye);
 
    // append actual tetrahedron to sorted mesh
-   SORT.append(ref(idx));
+   SORT.append(get(idx));
 
    // descend to front faces
    if (fd1!=0) if (!bf1) descend(fd1,eye);
@@ -484,7 +485,7 @@ void minibsptree::intersect(unsigned int idx)
       if (TREE[idx].left==0 && TREE[idx].right==0)
          {
          // add half space to polyhedron
-         TREE[idx].poly.intersect(plane);
+         TREE[idx].poly.intersect(TREE[idx].plane);
 
          // calculate connected tetrahedra
          TREE[idx].mesh.append(TREE[idx].poly);
@@ -493,7 +494,7 @@ void minibsptree::intersect(unsigned int idx)
          TREE[idx].mesh.setvals(TREE[idx].vals);
          }
 
-      // release processed data
+      // shrink visited nodes
       TREE[idx].poly.clear();
       TREE[idx].vals.setnull();
       }

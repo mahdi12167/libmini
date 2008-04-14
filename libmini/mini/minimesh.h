@@ -42,7 +42,12 @@ class minival
 
    unsigned int slot; // data slot
    miniv3d crd1,crd2,crd3,crd4; // data coordinates
+
+   protected:
+
    miniv3d ref1,ref2,ref3,ref4; // reference coordinates
+
+   friend class minimesh;
    };
 
 typedef minidyna<minival,3> minivals;
@@ -55,7 +60,7 @@ class minihedron
    minihedron()
       {
       dep123=dep142=dep243=dep341=0;
-      flag=FALSE;
+      visit=FALSE;
       }
 
    //! constructor
@@ -69,7 +74,7 @@ class minihedron
       vals.set(c);
 
       dep123=dep142=dep243=dep341=0;
-      flag=FALSE;
+      visit=FALSE;
       }
 
    //! constructor
@@ -83,7 +88,7 @@ class minihedron
       vals=a;
 
       dep123=dep142=dep243=dep341=0;
-      flag=FALSE;
+      visit=FALSE;
       }
 
    //! destructor
@@ -104,8 +109,12 @@ class minihedron
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minivals vals; // embedded data values
 
+   protected:
+
    unsigned int dep123,dep142,dep243,dep341; // face dependencies
-   BOOLINT flag; // spare flag
+   BOOLINT visit; // sorting flag
+
+   friend class minimesh;
    };
 
 class minimesh: public minidyna<minihedron>
@@ -144,11 +153,11 @@ class minimesh: public minidyna<minihedron>
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
 
    void connect();
+
    unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h) const;
+   double getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 
    void descend(const unsigned int idx,const miniv3d &eye);
-
-   double getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
    };
 
 class minibsptree
@@ -204,7 +213,7 @@ class minibsptree
 
    void intersect(unsigned int idx);
 
-   void collect(const unsigned int idx,const miniv3d &eye,const double radius=MAXFLOAT);
+   void collect(const unsigned int idx,const miniv3d &eye,const double radius);
    };
 
 #endif

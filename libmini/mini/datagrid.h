@@ -86,8 +86,6 @@ class datagrid
    BOOLINT IDENTITY;
 
    BOOLINT INVALID;
-
-   unsigned int gcd(const unsigned int a,const unsigned int b);
    };
 
 #endif
