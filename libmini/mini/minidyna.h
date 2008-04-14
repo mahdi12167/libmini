@@ -41,8 +41,7 @@ class minidyna
       }
 
    //! destructor
-   ~minidyna()
-      {if (ARRAY!=NULL) delete[] ARRAY;}
+   ~minidyna() {setsize(0);}
 
    //! get array size
    unsigned int getsize() const {return(SIZE);}
@@ -70,15 +69,18 @@ class minidyna
             {
             a=new Item[s-MINSIZE];
 
-            if (size<SIZE)
-               for (i=MINSIZE; i<size; i++) a[i-MINSIZE]=ARRAY[i-MINSIZE];
-            else
-               for (i=MINSIZE; i<SIZE; i++) a[i-MINSIZE]=ARRAY[i-MINSIZE];
+            if (ARRAY!=NULL)
+               {
+               if (size<SIZE)
+                  for (i=MINSIZE; i<size; i++) a[i-MINSIZE]=ARRAY[i-MINSIZE];
+               else
+                  for (i=MINSIZE; i<SIZE; i++) a[i-MINSIZE]=ARRAY[i-MINSIZE];
 
-            delete[] ARRAY;
-            ARRAY=a;
+               delete[] ARRAY;
+               }
 
             MAXSIZE=s;
+            ARRAY=a;
             }
 
          SIZE=size;

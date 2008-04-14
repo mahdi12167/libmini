@@ -15,7 +15,7 @@ class minigeom_base
    static const double delta;
 
    //! default constructor
-   minigeom_base() {}
+   minigeom_base() {setnull();}
 
    //! conversion constructor
    minigeom_base(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT)
@@ -93,17 +93,17 @@ class minigeom_base
 
       if (vec==b.vec)
          if (isnull() && b.isnull()) return(TRUE);
-         if (iszero() && b.iszero()) return(TRUE);
+         if (iszero() && b.iszero()) return(minlambda==b.minlambda);
          else if (isfull() && b.isfull()) return(TRUE);
          else if (ishalf() && b.ishalf())
             {
             d=(b.pnt-pnt)*vec;
-            if (FABS(d+b.minlambda-minlambda)<delta) return(TRUE);
+            return(FABS(d+b.minlambda-minlambda)<delta);
             }
          else
             {
             d=(b.pnt-pnt)*vec;
-            if (FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta) return(TRUE);
+            return(FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta);
             }
 
       return(FALSE);
@@ -114,9 +114,9 @@ class minigeom_base
       double tmp;
 
       vec=-vec;
-      tmp=minlambda;
+      tmp=-minlambda;
       minlambda=-maxlambda;
-      maxlambda=-tmp;
+      maxlambda=tmp;
       }
 
    void flip(const miniv3d &h)
@@ -212,7 +212,7 @@ class minigeom_halfspace: public minigeom_base
    };
 
 typedef minigeom_halfspace minigeom_plane;
-typedef minidyna<minigeom_halfspace,10> minigeom_halfspaces;
+typedef minidyna<minigeom_halfspace,6> minigeom_halfspaces;
 
 //! convex polyhedron
 class minigeom_polyhedron
@@ -242,7 +242,7 @@ class minigeom_polyhedron
 
    protected:
 
-   minidyna<minigeom_halfspace,6> half;
+   minigeom_halfspaces half;
 
    private:
 

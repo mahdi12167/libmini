@@ -12,7 +12,7 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
    double dot,lambda;
    double lambda1,lambda2;
 
-   if (minlambda>maxlambda) return(FALSE);
+   if (isnull()) return(FALSE);
 
    cut=FALSE;
 
@@ -54,8 +54,7 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda-delta ||
-          lambda>halfspace.maxlambda+delta) {setnull(); cut=TRUE;}
+      if (lambda<halfspace.minlambda-delta || lambda>halfspace.maxlambda+delta) {setnull(); cut=TRUE;}
 
    return(cut);
    }
@@ -126,8 +125,8 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
          {
          half.append(halfspace); // add half space to existing half spaces
 
-         for (i=2; i<half.getsize(); i++)
-            if (check4redundancy(half.getsize()-i)) remove(half.getsize()-i); // delete redundant half spaces
+         for (i=1; i<half.getsize(); i++)
+            if (check4redundancy(half.getsize()-i-1)) remove(half.getsize()-i-1); // delete redundant half spaces
          }
    }
 
@@ -138,7 +137,7 @@ void minigeom_polyhedron::clear()
 // remove half space
 void minigeom_polyhedron::remove(const unsigned int h)
    {
-   half.set(h,half.ref(half.getsize()-1));
+   half.set(h,half.get(half.getsize()-1));
    half.setsize(half.getsize()-1);
    }
 
@@ -170,7 +169,7 @@ BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfsp
                if (!omit || k!=h)
                   if (k!=i && k!=j) segment.intersect(half[k]);
 
-            // intersect edge segement with half space
+            // test edge segment for intersection with half space
             if (segment.intersect(halfspace)) return(TRUE);
             }
 
