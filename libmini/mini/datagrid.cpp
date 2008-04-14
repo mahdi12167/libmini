@@ -9,8 +9,6 @@ datagrid::datagrid()
    {
    CRS=minicoord::MINICOORD_ECEF;
 
-   GOTEP=FALSE;
-
    ID[0]=MTX[0]=miniv4d(1.0,0.0,0.0);
    ID[1]=MTX[1]=miniv4d(0.0,1.0,0.0);
    ID[2]=MTX[2]=miniv4d(0.0,0.0,1.0);
@@ -41,7 +39,14 @@ unsigned int datagrid::create(const unsigned int slot,
    INVALID=TRUE;
 
    for (i=0; i<FLAG.getsize(); i++)
-      if (!FLAG[i]) return(i);
+      if (!FLAG[i])
+         {
+         FLAG[i]=TRUE;
+         SLOT[i]=slot;
+         FLIP[i]=flip;
+
+         return(i);
+         }
 
    FLAG.append(TRUE);
    SLOT.append(slot);
@@ -279,16 +284,6 @@ void datagrid::trigger(const double time,const minicoord &eye,const double radiu
    // transform eye point
    if (ep.type!=minicoord::MINICOORD_LINEAR)
       if (CRS!=minicoord::MINICOORD_LINEAR) ep.convert2(CRS);
-
-   if (GOTEP)
-      if (ep==EP)
-         {
-         push(SORTED,time); // push the sorted mesh
-         return;
-         }
-
-   EP=ep;
-   GOTEP=TRUE;
 
    // multiply eye point with 4x3 matrix
    if (!IDENTITY)

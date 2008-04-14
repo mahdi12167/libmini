@@ -201,6 +201,9 @@ class minibsptree
    BOOLINT DONE;
 
    miniv3d EYE;
+   double RADIUS;
+   BOOLINT GOTEYE;
+
    minimesh COLLECT;
 
    double VOL;
@@ -213,7 +216,7 @@ class minibsptree
 
    void intersect(unsigned int idx);
 
-   void collect(const unsigned int idx,const miniv3d &eye,const double radius);
+   void collect(const unsigned int idx);
    };
 
 #endif

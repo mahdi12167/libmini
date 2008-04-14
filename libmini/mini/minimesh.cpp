@@ -323,6 +323,7 @@ double minimesh::getvolume() const
 minibsptree::minibsptree()
    {
    DONE=FALSE;
+   GOTEYE=FALSE;
    VOLDONE=FALSE;
    }
 
@@ -335,6 +336,7 @@ void minibsptree::clear()
    TREE.setnull();
 
    DONE=FALSE;
+   GOTEYE=FALSE;
    VOLDONE=FALSE;
    }
 
@@ -438,8 +440,19 @@ void minibsptree::extract(const miniv3d &eye,const double radius,minimesh &mesh)
       DONE=TRUE;
       }
 
+   if (GOTEYE)
+      if (eye==EYE && radius==RADIUS)
+         {
+         mesh=COLLECT; // reuse the previously collected sorted mesh
+         return;
+         }
+
+   EYE=eye;
+   RADIUS=radius;
+   GOTEYE=TRUE;
+
    COLLECT.setnull();
-   collect(0,eye,radius);
+   collect(0);
 
    mesh=COLLECT;
    }
@@ -501,36 +514,36 @@ void minibsptree::intersect(unsigned int idx)
    }
 
 // collect tetrahedra by descending the bsp tree with respect to the eye point and visibility radius
-void minibsptree::collect(const unsigned int idx,const miniv3d &eye,const double radius)
+void minibsptree::collect(const unsigned int idx)
    {
    double dist;
 
    // check if bsp tree is empty
    if (!TREE.isnull())
       if (TREE[idx].left==0 && TREE[idx].right==0)
-         COLLECT.append(TREE[idx].mesh.sort(eye)); // append sorted leave node
+         COLLECT.append(TREE[idx].mesh.sort(EYE)); // append sorted leave node
       else
          {
          // calculate distance of eye point to dividing plane
-         dist=TREE[idx].plane.getdistance(eye);
+         dist=TREE[idx].plane.getdistance(EYE);
 
          if (dist<0.0) // check which half space includes the eye point
             {
             // collect left half space
             if (TREE[idx].left!=0)
-               if (dist+radius>0.0) collect(TREE[idx].left,eye,radius);
+               if (dist+RADIUS>0.0) collect(TREE[idx].left);
 
             // collect right half space
-            if (TREE[idx].right!=0) collect(TREE[idx].right,eye,radius);
+            if (TREE[idx].right!=0) collect(TREE[idx].right);
             }
          else
             {
             // collect right half space
             if (TREE[idx].right!=0)
-               if (dist-radius<0.0) collect(TREE[idx].right,eye,radius);
+               if (dist-RADIUS<0.0) collect(TREE[idx].right);
 
             // collect left half space
-            if (TREE[idx].left!=0) collect(TREE[idx].left,eye,radius);
+            if (TREE[idx].left!=0) collect(TREE[idx].left);
             }
          }
    }

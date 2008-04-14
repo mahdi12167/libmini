@@ -76,11 +76,9 @@ class datagrid
 
    minimesh MESH;
    minibsptree BSPT;
+
    minimesh UNSORTED;
    minimesh SORTED;
-
-   minicoord EP;
-   BOOLINT GOTEP;
 
    miniv4d ID[3],MTX[3];
    BOOLINT IDENTITY;
