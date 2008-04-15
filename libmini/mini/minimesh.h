@@ -24,6 +24,22 @@ class minival
    ~minival() {}
 
    minival(const unsigned int s,
+           const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4)
+      {
+      slot=s;
+
+      crd1=c1;
+      crd2=c2;
+      crd3=c3;
+      crd4=c4;
+
+      ref1=c1;
+      ref2=c2;
+      ref3=c3;
+      ref4=c4;
+      }
+
+   minival(const unsigned int s,
            const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4,
            const miniv3d &r1,const miniv3d &r2,const miniv3d &r3,const miniv3d &r4)
       {
