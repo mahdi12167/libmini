@@ -110,7 +110,7 @@ class minidyna
       }
 
    //! get single value
-   Item get(const unsigned int idx=0) const
+   const Item &get(const unsigned int idx=0) const
       {
       if (idx>=SIZE) ERRORMSG();
 
@@ -118,7 +118,7 @@ class minidyna
       else return(ARRAY[idx-MINSIZE]);
       }
 
-   //! get a reference to single value
+   //! get reference to single value
    Item &ref(const unsigned int idx=0)
       {
       if (idx>=SIZE) ERRORMSG();
@@ -145,7 +145,7 @@ class minidyna
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue
-   Item &operator[](unsigned int idx)
+   Item &operator[](const unsigned int idx)
       {
       if (idx>=SIZE) ERRORMSG();
 
@@ -154,7 +154,7 @@ class minidyna
       }
 
    //! subscript operator for const objects returns rvalue
-   Item operator[](const unsigned int idx) const
+   const Item &operator[](const unsigned int idx) const
       {
       if (idx>=SIZE) ERRORMSG();
 

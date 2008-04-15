@@ -87,7 +87,7 @@ class minigeom_base
       return(d>minlambda-delta && d<maxlambda+delta);
       }
 
-   BOOLINT isequal(const minigeom_base &b)
+   BOOLINT isequal(const minigeom_base &b) const
       {
       double d;
 

@@ -2,8 +2,25 @@
 
 #include "minimesh.h"
 
+// default constructor
+minimesh::minimesh(): minidyna<minihedron>() {}
+
+// copy contructor
+minimesh::minimesh(const minidyna<minihedron> &mesh): minidyna<minihedron>(mesh) {}
+
+// destructor
+minimesh::~minimesh() {}
+
+// append a tetrahdron
+void minimesh::append(const minihedron &h)
+   {minidyna<minihedron>::append(h);}
+
+// append a tetrahedral mesh
+void minimesh::append(const minimesh &m)
+   {minidyna<minihedron>::append(m);}
+
 // polygonize a set of line segments
-minigon minimesh::polygonize(const minigeom_segments &segments) const
+minigon minimesh::polygonize(minigeom_segments segments) const
    {
    unsigned int i,j;
 
@@ -413,10 +430,12 @@ unsigned int minibsptree::append(const minivals &vals,const minigeom_plane &plan
    return(TREE.getsize()-1);
    }
 
-// extract to tetrahedral mesh
-void minibsptree::extract(minimesh &mesh)
+// extract tetrahedral mesh
+minimesh minibsptree::extract()
    {
    unsigned int i;
+
+   minimesh mesh;
 
    if (!DONE)
       {
@@ -424,15 +443,15 @@ void minibsptree::extract(minimesh &mesh)
       DONE=TRUE;
       }
 
-   mesh.setnull();
-
    for (i=0; i<TREE.getsize(); i++)
       if (TREE[i].left==0 && TREE[i].right==0)
          mesh.append(TREE[i].mesh);
+
+   return(mesh);
    }
 
-// extract to sorted tetrahedral mesh
-void minibsptree::extract(const miniv3d &eye,const double radius,minimesh &mesh)
+// extract sorted tetrahedral mesh
+minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    {
    if (!DONE)
       {
@@ -441,11 +460,7 @@ void minibsptree::extract(const miniv3d &eye,const double radius,minimesh &mesh)
       }
 
    if (GOTEYE)
-      if (eye==EYE && radius==RADIUS)
-         {
-         mesh=COLLECT; // reuse the previously collected sorted mesh
-         return;
-         }
+      if (eye==EYE && radius==RADIUS) return(COLLECT); // return the previously collected mesh
 
    EYE=eye;
    RADIUS=radius;
@@ -454,7 +469,7 @@ void minibsptree::extract(const miniv3d &eye,const double radius,minimesh &mesh)
    COLLECT.setnull();
    collect(0);
 
-   mesh=COLLECT;
+   return(COLLECT);
    }
 
 // intersect bsp tree
@@ -513,7 +528,9 @@ void minibsptree::intersect(unsigned int idx)
       }
    }
 
-// collect tetrahedra by descending the bsp tree with respect to the eye point and visibility radius
+// collect tetrahedra by descending the bsp tree
+// also sort tetrahedra with respect to the eye point
+// also cull tetrahedra with respect to the visibility radius
 void minibsptree::collect(const unsigned int idx)
    {
    double dist;

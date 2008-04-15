@@ -258,7 +258,8 @@ void datagrid::construct()
 
       BSPT.clear(); // clear the bsp tree
       BSPT.insert(MESH); // insert the entire tetrahedral mesh into bsp tree
-      BSPT.extract(UNSORTED); // extract a non-intrusive unsorted tetrahedral mesh from bsp tree
+
+      UNSORTED=BSPT.extract(); // extract a non-intrusive unsorted tetrahedral mesh from bsp tree
 
       INVALID=FALSE;
       }
@@ -293,7 +294,7 @@ void datagrid::trigger(const double time,const minicoord &eye,const double radiu
       }
 
    construct(); // construct bsp tree from databuf objects
-   BSPT.extract(e,radius,SORTED); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
+   SORTED=BSPT.extract(e,radius); // extract a non-intrusive sorted tetrahedral mesh from bsp tree
    push(SORTED,time); // push the dynamic sorted mesh
    }
 

@@ -137,7 +137,7 @@ void minigeom_polyhedron::clear()
 // remove half space
 void minigeom_polyhedron::remove(const unsigned int h)
    {
-   half.set(h,half.get(half.getsize()-1));
+   half[h]=half[half.getsize()-1];
    half.setsize(half.getsize()-1);
    }
 

@@ -92,7 +92,7 @@ class minihedron
       }
 
    //! destructor
-   ~minihedron();
+   ~minihedron() {}
 
    //! get volume
    double getvolume() const
@@ -122,16 +122,19 @@ class minimesh: public minidyna<minihedron>
    public:
 
    //! default constructor
-   minimesh(): minidyna<minihedron>() {}
+   minimesh();
 
    //! copy contructor
-   minimesh(const minidyna<minihedron> &mesh): minidyna<minihedron>(mesh) {}
+   minimesh(const minidyna<minihedron> &mesh);
+
+   //! destructor
+   ~minimesh();
 
    //! append a tetrahdron
-   void append(const minihedron &h) {minidyna<minihedron>::append(h);}
+   void append(const minihedron &h);
 
    //! append a tetrahedral mesh
-   void append(const minimesh &m) {minidyna<minihedron>::append(m);}
+   void append(const minimesh &m);
 
    //! append a polyhedron
    void append(const minigeom_polyhedron &poly);
@@ -149,7 +152,7 @@ class minimesh: public minidyna<minihedron>
 
    minidyna<minihedron> SORT;
 
-   minigon polygonize(const minigeom_segments &segments) const;
+   minigon polygonize(minigeom_segments segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
 
    void connect();
@@ -173,14 +176,14 @@ class minibsptree
    //! clear bsp tree
    void clear();
 
-   //! insert from tetrahedral mesh
+   //! insert tetrahedral mesh
    void insert(const minimesh &mesh);
 
-   //! extract to tetrahedral mesh
-   void extract(minimesh &mesh);
+   //! extract tetrahedral mesh
+   minimesh extract();
 
-   //! extract to sorted tetrahedral mesh
-   void extract(const miniv3d &eye,const double radius,minimesh &mesh);
+   //! extract sorted tetrahedral mesh
+   minimesh extract(const miniv3d &eye,const double radius);
 
    //! get volume of tetrahedralized polyhedra
    double getvolume();
