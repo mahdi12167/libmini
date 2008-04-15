@@ -91,7 +91,7 @@ class minidyna
    void setnull() {setsize(0);}
 
    //! is null?
-   BOOLINT isnull() {return(SIZE==0);}
+   BOOLINT isnull() const {return(SIZE==0);}
 
    //! set single value
    void set(const Item &v)

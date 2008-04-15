@@ -48,6 +48,7 @@ class miniv4f
    void setcoords(const float vx,const float vy,const float vz,const float vw=0.0f) {x=vx; y=vy; z=vz; w=vw;}
 
    float getlength() const {return(fsqrt(x*x+y*y+z*z+w*w));}
+   float getlength2() const {return(x*x+y*y+z*z+w*w);}
 
    inline miniv4f& operator += (const miniv4f &v);
    inline miniv4f& operator -= (const miniv4f &v);

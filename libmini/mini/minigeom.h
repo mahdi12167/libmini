@@ -91,20 +91,15 @@ class minigeom_base
       {
       double d;
 
-      if (vec==b.vec)
-         if (isnull() && b.isnull()) return(TRUE);
-         if (iszero() && b.iszero()) return(minlambda==b.minlambda);
-         else if (isfull() && b.isfull()) return(TRUE);
-         else if (ishalf() && b.ishalf())
-            {
-            d=(b.pnt-pnt)*vec;
-            return(FABS(d+b.minlambda-minlambda)<delta);
-            }
-         else
-            {
-            d=(b.pnt-pnt)*vec;
-            return(FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta);
-            }
+      if (isnull() && b.isnull()) return(TRUE);
+      else if (isfull() && b.isfull()) return(TRUE);
+      else if ((vec-b.vec).getlength2()<fsqr(delta))
+         {
+         d=(b.pnt-pnt)*vec;
+
+         if (ishalf() && b.ishalf()) return(FABS(d+b.minlambda-minlambda)<delta);
+         else return(FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta);
+         }
 
       return(FALSE);
       }

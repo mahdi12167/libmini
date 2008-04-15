@@ -50,8 +50,8 @@ minigon minimesh::polygonize(minigeom_segments segments) const
          c=segments[j].getminpoint();
          d=segments[j].getmaxpoint();
 
-         d1=(c-b).getlength();
-         d2=(d-b).getlength();
+         d1=(c-b).getlength2();
+         d2=(d-b).getlength2();
 
          if (d1<dist)
             {
@@ -166,10 +166,10 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
       m4=(p3+p4+p1)/3.0;
 
       // check for face and orientation match
-      if ((m1-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
-      if ((m2-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
-      if ((m3-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
-      if ((m4-m).getlength()<minigeom_base::delta) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
+      if ((m1-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
+      if ((m2-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
+      if ((m3-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
+      if ((m4-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
       }
 
    return(0);
@@ -250,7 +250,7 @@ void minimesh::setvals(const minivals &vals)
    }
 
 // get determinant
-double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
+double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3) const
    {
    miniv3d mtx[3];
 
@@ -396,22 +396,29 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d2=TREE[idx].plane.getdistance(v2);
       d3=TREE[idx].plane.getdistance(v3);
 
-      // check if the dividing plane is already existing in the bsp tree
+      // check if the dividing plane is coplanar
       if (FABS(d1)<minigeom_base::delta && FABS(d2)<minigeom_base::delta && FABS(d3)<minigeom_base::delta)
+         if (!vals.isnull())
+            // check plane orientation
+            if (TREE[idx].plane.isequal(plane))
+               if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,vals,plane); // insert recursively
+               else TREE[idx].left=append(vals,plane); // link left node
+            else
+               if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,vals,plane); // insert recursively
+               else TREE[idx].right=append(vals,plane); // link right node
+         else return;
+      else
          {
-         TREE[idx].vals.append(vals);
-         return;
+         // check if the triangle intrudes into the left half space
+         if (d1>-minigeom_base::delta || d2>-minigeom_base::delta || d3>-minigeom_base::delta)
+            if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,vals,plane); // insert recursively
+            else TREE[idx].left=append(vals,plane); // link left node
+
+         // check if the triangle intrudes into the right half space
+         if (d1<minigeom_base::delta || d2<minigeom_base::delta || d3<minigeom_base::delta)
+            if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,vals,plane); // insert recursively
+            else TREE[idx].right=append(vals,plane); // link right node
          }
-
-      // check if the triangle intrudes into the left half space
-      if (d1>-minigeom_base::delta || d2>-minigeom_base::delta || d3>-minigeom_base::delta)
-         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,vals,plane); // insert recursively
-         else TREE[idx].left=append(vals,plane); // link left node
-
-      // check if the triangle intrudes into the right half space
-      if (d1<minigeom_base::delta || d2<minigeom_base::delta || d3<minigeom_base::delta)
-         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,vals,plane); // insert recursively
-         else TREE[idx].right=append(vals,plane); // link right node
       }
    }
 
@@ -537,14 +544,17 @@ void minibsptree::collect(const unsigned int idx)
 
    // check if bsp tree is empty
    if (!TREE.isnull())
+      // check for leaf node
       if (TREE[idx].left==0 && TREE[idx].right==0)
-         COLLECT.append(TREE[idx].mesh.sort(EYE)); // append sorted leave node
+         // append sorted leaf node
+         COLLECT.append(TREE[idx].mesh.sort(EYE));
       else
          {
          // calculate distance of eye point to dividing plane
          dist=TREE[idx].plane.getdistance(EYE);
 
-         if (dist<0.0) // check which half space includes the eye point
+         // check which half space includes the eye point
+         if (dist<0.0)
             {
             // collect left half space
             if (TREE[idx].left!=0)

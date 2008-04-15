@@ -44,6 +44,7 @@ class miniv3d
    void setcoords(const double vx,const double vy,const double vz) {x=vx; y=vy; z=vz;}
 
    double getlength() const {return(fsqrt(x*x+y*y+z*z));}
+   double getlength2() const {return(x*x+y*y+z*z);}
 
    inline miniv3d& operator += (const miniv3d &v);
    inline miniv3d& operator -= (const miniv3d &v);
