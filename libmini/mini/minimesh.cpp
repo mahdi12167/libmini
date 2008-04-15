@@ -397,7 +397,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d3=TREE[idx].plane.getdistance(v3);
 
       // check if the dividing plane is coplanar
-      if (FABS(d1)<minigeom_base::delta && FABS(d2)<minigeom_base::delta && FABS(d3)<minigeom_base::delta)
+      if (FABS(d1)<=minigeom_base::delta && FABS(d2)<=minigeom_base::delta && FABS(d3)<=minigeom_base::delta)
          if (!vals.isnull())
             // check plane orientation
             if (TREE[idx].plane.isequal(plane))
@@ -410,12 +410,12 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       else
          {
          // check if the triangle intrudes into the left half space
-         if (d1>-minigeom_base::delta || d2>-minigeom_base::delta || d3>-minigeom_base::delta)
+         if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta)
             if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,vals,plane); // insert recursively
             else TREE[idx].left=append(vals,plane); // link left node
 
          // check if the triangle intrudes into the right half space
-         if (d1<minigeom_base::delta || d2<minigeom_base::delta || d3<minigeom_base::delta)
+         if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta)
             if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,vals,plane); // insert recursively
             else TREE[idx].right=append(vals,plane); // link right node
          }
