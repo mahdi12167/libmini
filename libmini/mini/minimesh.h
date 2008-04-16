@@ -70,7 +70,7 @@ class minival
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minival &v)
-   {return(out << "minival( " << v.slot << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
+   {return(out << "minival( slot=" << v.slot << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
 
 typedef minidyna<minival,3> minivals;
 
@@ -284,6 +284,6 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minibsptree::minibsptree_node &node)
-   {return(out << "node( " << node.plane << ", " << node.left << ", " << node.right << " )");}
+   {return(out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right << ", #vals=" << node.vals.getsize() << " )");}
 
 #endif

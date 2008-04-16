@@ -468,7 +468,7 @@ minimesh minibsptree::extract()
       }
 
    for (i=0; i<TREE.getsize(); i++)
-      if (TREE[i].left==0 && TREE[i].right==0)
+      if (TREE[i].left==0)
          mesh.append(TREE[i].mesh);
 
    return(mesh);
@@ -534,7 +534,7 @@ void minibsptree::intersect(unsigned int idx)
          }
 
       // break polyhedral leaves into a set of connected tetrahedra
-      if (TREE[idx].left==0 && TREE[idx].right==0)
+      if (TREE[idx].left==0)
          {
          // add half space to polyhedron
          TREE[idx].poly.intersect(TREE[idx].plane);
@@ -561,35 +561,38 @@ void minibsptree::collect(const unsigned int idx)
 
    // check if bsp tree is empty
    if (!TREE.isnull())
-      // check for leaf node
-      if (TREE[idx].left==0 && TREE[idx].right==0)
-         // append sorted leaf node
-         COLLECT.append(TREE[idx].mesh.sort(EYE));
+      {
+      // calculate distance of eye point to dividing plane
+      dist=TREE[idx].plane.getdistance(EYE);
+
+      // check which half space includes the eye point
+      if (dist<0.0)
+         {
+         // collect left half space
+         if (TREE[idx].left!=0)
+            if (dist+RADIUS>0.0) collect(TREE[idx].left);
+
+         // check for leaf node
+         if (TREE[idx].left==0)
+            COLLECT.append(TREE[idx].mesh.sort(EYE)); // append sorted leaf node
+
+         // collect right half space
+         if (TREE[idx].right!=0) collect(TREE[idx].right);
+         }
       else
          {
-         // calculate distance of eye point to dividing plane
-         dist=TREE[idx].plane.getdistance(EYE);
+         // collect right half space
+         if (TREE[idx].right!=0)
+            if (dist-RADIUS<0.0) collect(TREE[idx].right);
 
-         // check which half space includes the eye point
-         if (dist<0.0)
-            {
-            // collect left half space
-            if (TREE[idx].left!=0)
-               if (dist+RADIUS>0.0) collect(TREE[idx].left);
+         // check for leaf node
+         if (TREE[idx].left==0)
+            COLLECT.append(TREE[idx].mesh.sort(EYE)); // append sorted leaf node
 
-            // collect right half space
-            if (TREE[idx].right!=0) collect(TREE[idx].right);
-            }
-         else
-            {
-            // collect right half space
-            if (TREE[idx].right!=0)
-               if (dist-RADIUS<0.0) collect(TREE[idx].right);
-
-            // collect left half space
-            if (TREE[idx].left!=0) collect(TREE[idx].left);
-            }
+         // collect left half space
+         if (TREE[idx].left!=0) collect(TREE[idx].left);
          }
+      }
    }
 
 // get volume of tetrahedralized polyhedra
@@ -608,7 +611,7 @@ double minibsptree::getvolume()
    VOL=0.0;
 
    for (i=0; i<TREE.getsize(); i++)
-      if (TREE[i].left==0 && TREE[i].right==0)
+      if (TREE[i].left==0)
          VOL+=TREE[i].mesh.getvolume();
 
    VOLDONE=TRUE;
