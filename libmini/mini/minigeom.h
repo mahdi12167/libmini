@@ -126,7 +126,7 @@ class minigeom_base
 
    void invert()
       {
-      if (isnull() || iszero()) setfull();
+      if (isnull()) setfull();
       else if (isfull()) setnull();
       else if (ishalf())
          {
