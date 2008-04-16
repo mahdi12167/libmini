@@ -144,6 +144,20 @@ class minidyna
       for (i=0; i<a.getsize(); i++) set(SIZE-i-1,a.get(a.getsize()-i-1));
       }
 
+   //! assignment operator
+   minidyna &operator=(const minidyna &a)
+      {
+      unsigned int i;
+
+      setsize(a.getsize());
+
+      for (i=0; i<SIZE; i++)
+         if (i<MINSIZE) MINARRAY[i]=a.get(i);
+         else ARRAY[i-MINSIZE]=a.get(i);
+
+      return(*this);
+      }
+
    //! subscript operator for non-const objects returns modifiable lvalue
    Item &operator[](const unsigned int idx)
       {

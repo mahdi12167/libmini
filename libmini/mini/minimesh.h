@@ -141,6 +141,9 @@ class minimesh: public minidyna<minihedron>
    minimesh();
 
    //! copy contructor
+   minimesh(const minimesh &mesh);
+
+   //! copy contructor
    minimesh(const minidyna<minihedron> &mesh);
 
    //! destructor

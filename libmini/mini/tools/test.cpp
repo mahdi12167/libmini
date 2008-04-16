@@ -30,6 +30,10 @@ int main(int argc,char *argv[])
 
    bspt.insert(mesh);
 
+   minimesh sorted;
+
+   sorted=bspt.extract();
+
    printf("\nfinished test code\n");
 
    return(0);

@@ -6,6 +6,9 @@
 minimesh::minimesh(): minidyna<minihedron>() {}
 
 // copy contructor
+minimesh::minimesh(const minimesh &mesh): minidyna<minihedron>(mesh) {}
+
+// copy contructor
 minimesh::minimesh(const minidyna<minihedron> &mesh): minidyna<minihedron>(mesh) {}
 
 // destructor
