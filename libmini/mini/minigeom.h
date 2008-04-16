@@ -3,6 +3,8 @@
 #ifndef MINIGEOM_H
 #define MINIGEOM_H
 
+#include "iostream"
+
 #include "minibase.h"
 
 #include "miniv3d.h"
@@ -141,6 +143,15 @@ class minigeom_base
    double minlambda,maxlambda;
    };
 
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minigeom_base &g)
+   {
+   if (g.ishalf()) out << "minigeom( " << g.getpoint() << ", " << g.getvector() << " )";
+   else out << "minigeom( " << g.getpoint() << ", " << g.getvector() << ", " << g.getminlambda() << ", " << g.getmaxlambda() << " )";
+
+   return(out);
+   }
+
 class minigeom_segment;
 class minigeom_halfspace;
 
@@ -246,6 +257,24 @@ class minigeom_polyhedron
    BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0) const;
    BOOLINT check4redundancy(const unsigned int h) const;
    };
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron &poly)
+   {
+   unsigned int i;
+
+   out << "minipoly[ ";
+
+   for (i=0; i<poly.getnumhalfspace(); i++)
+      {
+      out << poly.gethalfspace(i);
+      if (i<poly.getnumhalfspace()-1) out << ", ";
+      }
+
+   out << " ]";
+
+   return(out);
+   }
 
 typedef minidyna<minigeom_polyhedron,10> minigeom_polyhedra;
 

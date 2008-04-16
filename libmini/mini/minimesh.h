@@ -3,6 +3,8 @@
 #ifndef MINIMESH_H
 #define MINIMESH_H
 
+#include "ostream"
+
 #include "minibase.h"
 
 #include "miniv3d.h"
@@ -65,6 +67,10 @@ class minival
 
    friend class minimesh;
    };
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minival &v)
+   {return(out << "minival( " << v.slot << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
 
 typedef minidyna<minival,3> minivals;
 
@@ -133,6 +139,10 @@ class minihedron
    friend class minimesh;
    };
 
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minihedron &h)
+   {return(out << "minihedron( " << h.vtx1 << ", " << h.vtx2 << ", " << h.vtx3 << ", " << h.vtx4 << ", " << h.vals << " )");}
+
 class minimesh: public minidyna<minihedron>
    {
    public:
@@ -181,6 +191,20 @@ class minimesh: public minidyna<minihedron>
 
    void descend(const unsigned int idx,const miniv3d &eye);
    };
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minimesh &mesh)
+   {
+   unsigned int i;
+
+   out << "minimesh[" << std::endl;
+
+   for (i=0; i<mesh.getsize(); i++) out << mesh.get(i) << std::endl;
+
+   out << "]" << std::endl;
+
+   return(out);
+   }
 
 class minibsptree
    {

@@ -3,6 +3,8 @@
 // add include files here:
 // ...
 
+#include "iostream"
+
 #include "minimesh.h"
 
 int main(int argc,char *argv[])
@@ -33,6 +35,8 @@ int main(int argc,char *argv[])
    minimesh sorted;
 
    sorted=bspt.extract();
+
+   std::cout << sorted;
 
    printf("\nfinished test code\n");
 

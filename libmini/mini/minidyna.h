@@ -3,6 +3,8 @@
 #ifndef MINIDYNA_H
 #define MINIDYNA_H
 
+#include <iostream>
+
 #include "minibase.h"
 
 template <class Item,const unsigned int Minsize=0>
@@ -145,7 +147,7 @@ class minidyna
       }
 
    //! assignment operator
-   minidyna &operator=(const minidyna &a)
+   minidyna &operator = (const minidyna &a)
       {
       unsigned int i;
 
@@ -159,7 +161,7 @@ class minidyna
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue
-   Item &operator[](const unsigned int idx)
+   Item &operator [] (const unsigned int idx)
       {
       if (idx>=SIZE) ERRORMSG();
 
@@ -168,7 +170,7 @@ class minidyna
       }
 
    //! subscript operator for const objects returns rvalue
-   const Item &operator[](const unsigned int idx) const
+   const Item &operator [] (const unsigned int idx) const
       {
       if (idx>=SIZE) ERRORMSG();
 
@@ -177,5 +179,24 @@ class minidyna
       }
 
    };
+
+//! stream output
+template <class Item,const unsigned int Minsize>
+inline std::ostream& operator << (std::ostream &out,const minidyna<Item,Minsize> &a)
+   {
+   unsigned int i;
+
+   out << "minidyna[ ";
+
+   for (i=0; i<a.getsize(); i++)
+      {
+      out << a.get(i);
+      if (i<a.getsize()-1) out << ", ";
+      }
+
+   out << " ]";
+
+   return(out);
+   }
 
 #endif
