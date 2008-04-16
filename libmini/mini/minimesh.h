@@ -263,6 +263,27 @@ class minibsptree
    void intersect(unsigned int idx);
 
    void collect(const unsigned int idx);
+
+   friend inline std::ostream& operator << (std::ostream &out,const minibsptree &tree);
+   friend inline std::ostream& operator << (std::ostream &out,const minibsptree_node &node);
    };
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
+   {
+   unsigned int i;
+
+   out << "minibsptree[" << std::endl;
+
+   for (i=0; i<tree.TREE.getsize(); i++) out << tree.TREE.get(i) << std::endl;
+
+   out << "]" << std::endl;
+
+   return(out);
+   }
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const minibsptree::minibsptree_node &node)
+   {return(out << "node( " << node.plane << ", " << node.left << ", " << node.right << " )");}
 
 #endif
