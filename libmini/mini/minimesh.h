@@ -282,6 +282,12 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minibsptree::minibsptree_node &node)
-   {return(out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right << " )");}
+   {
+   out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right;
+   if (node.leftvals.getsize()>0 || node.rightvals.getsize()>0) out << ", leftvals=" << node.leftvals << ", rightvals=" << node.rightvals;
+   out << " )";
+
+   return(out);
+   }
 
 #endif

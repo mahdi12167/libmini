@@ -21,7 +21,7 @@ int main(int argc,char *argv[])
    // ...
 
    minihedron h1=minihedron(miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(1,miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
-   minihedron h2=minihedron(miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(2,miniv3d(0,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
+   minihedron h2=minihedron(miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(2,miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
 
    minimesh mesh;
 

@@ -174,7 +174,9 @@ void datacache::setremoteurl(const char *url)
    if (RURL!=NULL)
       {
       if (strstr(RURL,"http://")!=NULL) LOCAL=FALSE;
+      if (strstr(RURL,"https://")!=NULL) LOCAL=FALSE;
       if (strstr(RURL,"ftp://")!=NULL) LOCAL=FALSE;
+      if (strstr(RURL,"ftps://")!=NULL) LOCAL=FALSE;
       }
 
    if (CLOUD!=NULL)

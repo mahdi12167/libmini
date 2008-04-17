@@ -401,24 +401,16 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d3=TREE[idx].plane.getdistance(v3);
       dh=TREE[idx].plane.getdistance(h);
 
-      // check if the dividing plane is coplanar
+      // check if the dividing plane is already existing
       if (FABS(d1)<=minigeom_base::delta && FABS(d2)<=minigeom_base::delta && FABS(d3)<=minigeom_base::delta)
          if (!vals.isnull()) // check if data coordinates are present
             if (dh>0.0) // check plane orientation
                if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h,vals); // insert recursively
-               else
-                  {
-                  append(vals,minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
-                  TREE[idx].left=TREE.getsize()-1; // link left node from parent
-                  }
+               else TREE[idx].leftvals.append(vals); // append data coordinates
             else
                if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h,vals); // insert recursively
-               else
-                  {
-                  append(vals,minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
-                  TREE[idx].right=TREE.getsize()-1; // link right node from parent
-                  }
-         else return;
+               else TREE[idx].rightvals.append(vals); // append data coordinates
+         else return; // no modification required
       else
          {
          // check if the tetrahedon intrudes into the left half space
