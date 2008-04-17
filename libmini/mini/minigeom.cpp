@@ -126,7 +126,7 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
          half.append(halfspace); // add half space to existing half spaces
 
          for (i=1; i<half.getsize(); i++) // check for redundant half spaces
-            if (check4redundancy(half.getsize()-i-1))
+            if (check4redundancy(half.getsize()-i-1)) // check half spaces in reverse order
                {
                remove(half.getsize()-i-1); // delete redundant half space
                i--; // account for reduced size
