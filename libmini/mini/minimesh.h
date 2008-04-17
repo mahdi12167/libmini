@@ -238,9 +238,9 @@ class minibsptree
       minigeom_plane plane;
       unsigned int left,right;
 
-      minivals vals;
+      minivals leftvals,rightvals;
       minigeom_polyhedron poly;
-      minimesh mesh;
+      minimesh leftmesh,rightmesh;
       };
 
    minidyna<minibsptree_node> TREE;
@@ -255,9 +255,7 @@ class minibsptree
    double VOL;
    BOOLINT VOLDONE;
 
-   void insert(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals);
-   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const minivals &vals,const minigeom_plane &plane);
-
+   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals);
    void append(const minivals &vals,const minigeom_plane &plane);
 
    void intersect(unsigned int idx);
@@ -275,7 +273,7 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 
    out << "minibsptree[" << std::endl;
 
-   for (i=0; i<tree.TREE.getsize(); i++) out << tree.TREE.get(i) << std::endl;
+   for (i=0; i<tree.TREE.getsize(); i++) out << i << ": " << tree.TREE.get(i) << std::endl;
 
    out << "]" << std::endl;
 
@@ -284,6 +282,6 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minibsptree::minibsptree_node &node)
-   {return(out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right << ", #vals=" << node.vals.getsize() << " )");}
+   {return(out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right << " )");}
 
 #endif

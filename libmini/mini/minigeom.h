@@ -146,8 +146,9 @@ class minigeom_base
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minigeom_base &g)
    {
-   if (g.ishalf()) out << "minigeom( point=" << g.getpoint() << ", vector=" << g.getvector() << " )";
-   else out << "minigeom( point=" << g.getpoint() << ", vector=" << g.getvector() << ", minlambda=" << g.getminlambda() << ", maxlambda=" << g.getmaxlambda() << " )";
+   out << "minigeom( point=" << g.getpoint() << ", vector=" << g.getvector();
+   if (!g.ishalf()) out << ", minlambda=" << g.getminlambda() << ", maxlambda=" << g.getmaxlambda();
+   out << " )";
 
    return(out);
    }
