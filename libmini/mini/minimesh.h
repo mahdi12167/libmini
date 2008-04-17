@@ -113,6 +113,20 @@ class minihedron
       visit=FALSE;
       }
 
+   //! constructor
+   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const unsigned int s)
+      {
+      vtx1=v1;
+      vtx2=v2;
+      vtx3=v3;
+      vtx4=v4;
+
+      vals.set(minival(s,v1,v2,v3,v4));
+
+      dep123=dep142=dep243=dep341=0;
+      visit=FALSE;
+      }
+
    //! destructor
    ~minihedron() {}
 
