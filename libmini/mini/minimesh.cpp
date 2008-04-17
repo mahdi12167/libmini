@@ -358,6 +358,7 @@ minibsptree::~minibsptree() {}
 // clear bsp tree
 void minibsptree::clear()
    {
+   MESH.setnull();
    TREE.setnull();
 
    DONE=FALSE;
@@ -367,83 +368,110 @@ void minibsptree::clear()
 
 // insert from tetrahedral mesh
 void minibsptree::insert(const minimesh &mesh)
+   {MESH.append(mesh);}
+
+// insert from tetrahedral mesh
+void minibsptree::insert()
    {
    unsigned int i;
 
    minihedron h;
 
-   if (DONE) ERRORMSG();
-
-   // insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<mesh.getsize(); i++)
+   // phase #1: insert each tetrahedron of the input mesh into the bsp tree
+   for (i=0; i<MESH.getsize(); i++)
       {
-      h=mesh[i];
+      // get a tetrahedron
+      h=MESH[i];
 
-      insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4,minivals());
-      insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3,minivals());
-      insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1,minivals());
-      insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2,h.vals);
+      // insert the tetrahedral faces as a dividing plane to the bsp tree
+      insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4);
+      insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3);
+      insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1);
+      insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2);
+      }
+
+   // phase #2: insert each tetrahedron of the input mesh into the bsp tree
+   for (i=0; i<MESH.getsize(); i++)
+      {
+      // get a tetrahedron
+      h=MESH[i];
+
+      // assign the data coordinates of the tetrahedron to the bsp tree
+      setvals(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4,h.vals);
       }
    }
 
-// insert dividing plane into bsp tree
-void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals)
+// insert tetrahedral face as a dividing plane
+void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h)
    {
-   double d1,d2,d3,dh;
+   double d1,d2,d3;
 
    // check if the bsp tree is empty
-   if (TREE.isnull()) append(vals,minigeom_plane(v1,v2,v3,h));
+   if (TREE.isnull()) append(minigeom_plane(v1,v2,v3,h));
    else
       {
-      // determine the distance of the tetrahedral vertices from the dividing plane
+      // determine the distance of the tetrahedral face vertices from the actual dividing plane
       d1=TREE[idx].plane.getdistance(v1);
       d2=TREE[idx].plane.getdistance(v2);
       d3=TREE[idx].plane.getdistance(v3);
-      dh=TREE[idx].plane.getdistance(h);
 
       // check if the dividing plane is already existing
-      if (FABS(d1)<=minigeom_base::delta && FABS(d2)<=minigeom_base::delta && FABS(d3)<=minigeom_base::delta)
-         if (!vals.isnull()) // check if data coordinates are present
-            if (dh>0.0) // check plane orientation
-               if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h,vals); // insert recursively
-               else TREE[idx].leftvals.append(vals); // append data coordinates
-            else
-               if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h,vals); // insert recursively
-               else TREE[idx].rightvals.append(vals); // append data coordinates
-         else return; // no modification required
-      else
+      if (FABS(d1)>minigeom_base::delta || FABS(d2)>minigeom_base::delta || FABS(d3)>minigeom_base::delta)
          {
-         // check if the tetrahedon intrudes into the left half space
-         if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta || dh>minigeom_base::delta)
-            if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h,vals); // insert recursively
+         // check if the tetrahedral face intrudes into the left half space
+         if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta)
+            if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h); // insert recursively
             else
                {
-               append(vals,minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
+               append(minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
                TREE[idx].left=TREE.getsize()-1; // link left node from parent
                }
 
-         // check if the tetrahedon intrudes into the right half space
-         if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta || dh<-minigeom_base::delta)
-            if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h,vals); // insert recursively
+         // check if the tetrahedral face intrudes into the right half space
+         if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta)
+            if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h); // insert recursively
             else
                {
-               append(vals,minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
+               append(minigeom_plane(v1,v2,v3,h)); // append node to bsp tree
                TREE[idx].right=TREE.getsize()-1; // link right node from parent
                }
          }
       }
    }
 
+// assign data coordinates to tetrahedral nodes
+void minibsptree::setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minivals &vals)
+   {
+   double d1,d2,d3,d4;
+
+   // check if the bsp tree is empty
+   if (!TREE.isnull())
+      {
+      // determine the distance of the tetrahedral vertices from the actual dividing plane
+      d1=TREE[idx].plane.getdistance(v1);
+      d2=TREE[idx].plane.getdistance(v2);
+      d3=TREE[idx].plane.getdistance(v3);
+      d4=TREE[idx].plane.getdistance(v4);
+
+      // check if the tetrahedon intrudes into the left half space
+      if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta || d4>minigeom_base::delta)
+         if (TREE[idx].left!=0) setvals(TREE[idx].left,v1,v2,v3,v4,vals); // insert recursively
+         else TREE[idx].leftvals.append(vals); // append data coordinates
+
+      // check if the tetrahedon intrudes into the right half space
+      if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta || d4<-minigeom_base::delta)
+         if (TREE[idx].right!=0) setvals(TREE[idx].right,v1,v2,v3,v4,vals); // insert recursively
+         else TREE[idx].rightvals.append(vals); // append data coordinates
+      }
+   }
+
 // append node to bsp tree
-void minibsptree::append(const minivals &vals,const minigeom_plane &plane)
+void minibsptree::append(const minigeom_plane &plane)
    {
    minibsptree_node node;
 
    node.plane=plane;
    node.left=node.right=0;
-
-   node.leftvals=vals;
-   node.rightvals.setnull();
 
    TREE.append(node);
    }
@@ -457,6 +485,7 @@ minimesh minibsptree::extract()
 
    if (!DONE)
       {
+      insert();
       intersect(0);
       DONE=TRUE;
       }
@@ -476,6 +505,7 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    {
    if (!DONE)
       {
+      insert();
       intersect(0);
       DONE=TRUE;
       }
@@ -506,10 +536,6 @@ void minibsptree::intersect(unsigned int idx)
       // intersect the left half space
       if (TREE[idx].left!=0)
          {
-         // propagate the embedded data values
-         TREE[TREE[idx].left].leftvals.append(TREE[idx].leftvals);
-         TREE[TREE[idx].left].rightvals.append(TREE[idx].leftvals);
-
          // add the actual half space to the left child's polyhedron
          TREE[TREE[idx].left].poly=TREE[idx].poly;
          TREE[TREE[idx].left].poly.intersect(TREE[idx].plane);
@@ -521,10 +547,6 @@ void minibsptree::intersect(unsigned int idx)
       // intersect the right half space
       if (TREE[idx].right!=0)
          {
-         // propagate the embedded data values
-         TREE[TREE[idx].right].leftvals.append(TREE[idx].rightvals);
-         TREE[TREE[idx].right].rightvals.append(TREE[idx].rightvals);
-
          // invert the actual half space
          plane=TREE[idx].plane;
          plane.invert();
@@ -547,7 +569,7 @@ void minibsptree::intersect(unsigned int idx)
          // calculate the connected tetrahedra
          TREE[idx].leftmesh.append(poly);
 
-         // calculate the embedded data coordinates
+         // propagate the embedded data coordinates
          TREE[idx].leftmesh.setvals(TREE[idx].leftvals);
          }
 
@@ -565,11 +587,11 @@ void minibsptree::intersect(unsigned int idx)
          // calculate the connected tetrahedra
          TREE[idx].rightmesh.append(poly);
 
-         // calculate the embedded data coordinates
+         // propagate the embedded data coordinates
          TREE[idx].rightmesh.setvals(TREE[idx].rightvals);
          }
 
-      // deflate all visited nodes
+      // deflate already visited nodes
       TREE[idx].poly.clear();
       TREE[idx].leftvals.setnull();
       TREE[idx].rightvals.setnull();
@@ -620,6 +642,7 @@ double minibsptree::getvolume()
 
    if (!DONE)
       {
+      insert();
       intersect(0);
       DONE=TRUE;
       }

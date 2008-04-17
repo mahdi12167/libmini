@@ -243,6 +243,8 @@ class minibsptree
       minimesh leftmesh,rightmesh;
       };
 
+   minimesh MESH;
+
    minidyna<minibsptree_node> TREE;
    BOOLINT DONE;
 
@@ -255,8 +257,12 @@ class minibsptree
    double VOL;
    BOOLINT VOLDONE;
 
-   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,const minivals &vals);
-   void append(const minivals &vals,const minigeom_plane &plane);
+   void insert();
+
+   void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h);
+   inline void append(const minigeom_plane &plane);
+
+   void setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minivals &vals);
 
    void intersect(unsigned int idx);
 
@@ -284,7 +290,8 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 inline std::ostream& operator << (std::ostream &out,const minibsptree::minibsptree_node &node)
    {
    out << "node( plane=" << node.plane << ", left=" << node.left << ", right=" << node.right;
-   if (node.leftvals.getsize()>0 || node.rightvals.getsize()>0) out << ", leftvals=" << node.leftvals << ", rightvals=" << node.rightvals;
+   if (node.leftvals.getsize()>0) out << ", leftvals=" << node.leftvals;
+   if (node.rightvals.getsize()>0) out << ", rightvals=" << node.rightvals;
    out << " )";
 
    return(out);

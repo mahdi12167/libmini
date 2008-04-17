@@ -34,11 +34,11 @@ int main(int argc,char *argv[])
 
    bspt.insert(mesh);
 
-   std::cout << bspt;
-
    minimesh sorted;
 
    sorted=bspt.extract();
+
+   std::cout << bspt;
 
    std::cout << sorted;
 
