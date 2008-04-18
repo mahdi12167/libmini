@@ -375,6 +375,8 @@ void minibsptree::insert(const minimesh &mesh)
 // insert from tetrahedral mesh copy
 void minibsptree::insert()
    {
+   static const unsigned int prime=271;
+
    unsigned int i;
 
    unsigned int swizzle,num,act;
@@ -384,7 +386,7 @@ void minibsptree::insert()
    num=MESH.getsize();
 
    // calculate the swizzle constant
-   for (swizzle=13; gcd(num,swizzle)!=1; swizzle+=2);
+   for (swizzle=prime; gcd(num,swizzle)!=1; swizzle+=2);
 
    // phase #1: insert each tetrahedron of the input mesh into the bsp tree
    for (i=0; i<num; i++)
