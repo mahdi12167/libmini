@@ -219,13 +219,13 @@ class minipoint
    float CONFIGURE_BRICKSTAGGER;
    float CONFIGURE_BRICKSTRIPES;
 
-   void shellsort(minipointdata *a[],const int n,
+   void shellsort(minipointdata *a[],int n,
                   float x,float y,float elev,
                   float dx,float dy,float de);
 
-   int compare(minipointdata *a,minipointdata *b,
-               float x,float y,float elev,
-               float dx,float dy,float de);
+   int compare(const minipointdata *a,const minipointdata *b,
+               const float x,const float y,const float elev,
+               const float dx,const float dy,const float de);
 
    void drawsequence(float ex,float ey,float ez,
                      float brad,float farp,

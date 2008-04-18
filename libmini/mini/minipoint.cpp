@@ -637,7 +637,7 @@ void minipoint::sortvdata(float x,float y,float elev,
    }
 
 // shellsort as proposed by Robert Sedgewick in "Algorithms"
-void minipoint::shellsort(minipointdata **a,const int n,
+void minipoint::shellsort(minipointdata **a,int n,
                           float x,float y,float elev,
                           float dx,float dy,float de)
    {
@@ -665,9 +665,9 @@ void minipoint::shellsort(minipointdata **a,const int n,
    }
 
 // comparison operator for shellsort
-inline int minipoint::compare(minipointdata *a,minipointdata *b,
-                              float x,float y,float elev,
-                              float dx,float dy,float de)
+inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
+                              const float x,const float y,const float elev,
+                              const float dx,const float dy,const float de)
    {
    return(dx*(a->x-x)+dy*(a->y-y)+de*(a->height-elev)>
           dx*(b->x-x)+dy*(b->y-y)+de*(b->height-elev));
