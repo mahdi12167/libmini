@@ -1601,10 +1601,10 @@ void databuf::savePNMdata(const char *filename)
    if (crs==DATABUF_CRS_LLH || crs==DATABUF_CRS_UTM)
       {
       putPNMparams(&comment,NULL,
-                   zone,datum,(zone==0)?4:2,
+                   (crs==DATABUF_CRS_LLH)?0:1,zone,datum,(crs==DATABUF_CRS_LLH)?4:2,
                    swx,swy,nwx,nwy,nex,ney,sex,sey,
                    fsqrt(fsqr(sex-swx)+fsqr(sey-swy))/xsize,fsqrt(fsqr(nwy-swy)+fsqr(nwx-swx))/ysize,
-                   2,scaling,(nodata==-MAXFLOAT)?-32678.0f:nodata);
+                   2,scaling,(nodata==-MAXFLOAT)?-32678:ftrc(nodata+0.5f));
 
       cptr=&comment;
       }
