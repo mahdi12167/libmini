@@ -43,6 +43,13 @@ set option1=$2
 set option2=$3
 set option3=$4
 
+foreach option ("nosquish" "usegreyc" "wall")
+   if ($rule == $option) then
+      set rule="lib"
+      set option1=$option
+   endif
+end
+
 set incl=""
 if ("$INCLUDE" != "") set incl=" $INCLUDE"
 
