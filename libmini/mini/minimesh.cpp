@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minimath.h"
+
 #include "minimesh.h"
 
 // default constructor
@@ -370,18 +372,28 @@ void minibsptree::clear()
 void minibsptree::insert(const minimesh &mesh)
    {MESH.append(mesh);}
 
-// insert from tetrahedral mesh
+// insert from tetrahedral mesh copy
 void minibsptree::insert()
    {
    unsigned int i;
 
+   unsigned int swizzle,num,act;
+
    minihedron h;
 
+   num=MESH.getsize();
+
+   // calculate the swizzle constant
+   for (swizzle=13; gcd(num,swizzle)!=1; swizzle+=2);
+
    // phase #1: insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<MESH.getsize(); i++)
+   for (i=0; i<num; i++)
       {
+      // swizzle the actual position
+      act=(swizzle*i)%num;
+
       // get a tetrahedron
-      h=MESH[i];
+      h=MESH[act];
 
       // insert the tetrahedral faces as a dividing plane to the bsp tree
       insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4);
@@ -391,7 +403,7 @@ void minibsptree::insert()
       }
 
    // phase #2: insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<MESH.getsize(); i++)
+   for (i=0; i<num; i++)
       {
       // get a tetrahedron
       h=MESH[i];
