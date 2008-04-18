@@ -99,32 +99,32 @@ endif
 
 if ($rule == "deps") then
    if ($HOSTTYPE == "iris4d") make MAKEDEPEND="CC -M$incl$stub$defs" TARGET=IRIX $depend
-   if ($HOSTTYPE == "i386") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i386-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i386-cygwin") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i486") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i486-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i586") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i586-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i686") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "i686-linux") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "x86_64-linux") make MAKEDEPEND="c++ -M -m64 -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
-   if ($HOSTTYPE == "powerpc") make MAKEDEPEND="c++ -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i386") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i386-linux") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i386-cygwin") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i486") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i486-linux") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i586") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i586-linux") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i686") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "i686-linux") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "x86_64-linux") make MAKEDEPEND="gcc -M -m64 -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
+   if ($HOSTTYPE == "powerpc") make MAKEDEPEND="gcc -M -I/usr/X11R6/include$incl$stub$defs" TARGET=LINUX $depend
    if ($HOSTTYPE == "powermac") make MAKEDEPEND="c++ -M$incl$stub$defs" TARGET=MACOSX $depend
    if ($HOSTTYPE == "intel-pc") make MAKEDEPEND="c++ -M$incl$stub$defs" TARGET=MACOSX $depend
 else
    if ($HOSTTYPE == "iris4d") make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84$incl$stub$defs" LINK="-lglut -lX11 -lXm -lXt -lXmu$link" $rule
-   if ($HOSTTYPE == "i386") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i386-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i386-cygwin") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i486") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i486-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i586") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i586-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i686") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "i686-linux") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
-   if ($HOSTTYPE == "x86_64-linux") make COMPILER="c++" OPTS="-m64 -O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib64 -lX11$link" $rule
-   if ($HOSTTYPE == "powerpc") make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i386") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i386-linux") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i386-cygwin") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i486") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i486-linux") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i586") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i586-linux") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i686") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "i686-linux") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
+   if ($HOSTTYPE == "x86_64-linux") make COMPILER="gcc" OPTS="-m64 -O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib64 -lX11$link" $rule
+   if ($HOSTTYPE == "powerpc") make COMPILER="gcc" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
    if ($HOSTTYPE == "powermac") make COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework OpenGL -framework GLUT -lobjc$link" $rule
    if ($HOSTTYPE == "intel-pc") make COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework OpenGL -framework GLUT -lobjc$link" $rule
 endif
