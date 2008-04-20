@@ -2618,6 +2618,7 @@ void drawlandscape(float res,
          {
          initstate();
 
+         color(1.0f,1.0f,1.0f);
          bindtexmap(tid,twidth,theight,S,tmipmaps);
 
          mtxpush();
@@ -3562,7 +3563,7 @@ void calcD2(int mins=2,float avgd2=0.1f)
                      propagate(i,j,s,i+s+s2,j-s2);
                      propagate(i,j,s,i-s2,j+s+s2);
                      break;
-               }
+                  }
             }
       }
    }
