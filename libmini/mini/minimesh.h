@@ -277,6 +277,8 @@ class minibsptree
    unsigned int PHASE,STEP;
 
    void insert();
+   void insert1(unsigned int idx);
+   void insert2(unsigned int idx);
 
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h);
    inline void append(const minigeom_plane &plane);

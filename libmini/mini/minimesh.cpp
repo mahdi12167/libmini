@@ -409,8 +409,6 @@ void minibsptree::insert()
 
    unsigned int swizzle,num,act;
 
-   minihedron h;
-
    num=MESH.getsize();
 
    // calculate the swizzle constant
@@ -422,25 +420,39 @@ void minibsptree::insert()
       // swizzle the actual position
       act=(swizzle*i)%num;
 
-      // get a tetrahedron
-      h=MESH[act];
-
       // insert the tetrahedral faces as a dividing plane to the bsp tree
-      insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4);
-      insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3);
-      insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1);
-      insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2);
+      insert1(act);
       }
 
    // phase #2: insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<num; i++)
-      {
-      // get a tetrahedron
-      h=MESH[i];
+   for (i=0; i<num; i++) insert2(i);
+   }
 
-      // assign the data coordinates of the tetrahedron to the bsp tree
-      setvals(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4,h.vals);
-      }
+// insert tetrahedron (phase #1)
+void minibsptree::insert1(unsigned int idx)
+   {
+   minihedron h;
+
+   // get the tetrahedron
+   h=MESH[idx];
+
+   // insert the tetrahedral faces as a dividing plane to the bsp tree
+   insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4);
+   insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3);
+   insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1);
+   insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2);
+   }
+
+// insert tetrahedron (phase #2)
+void minibsptree::insert2(unsigned int idx)
+   {
+   minihedron h;
+
+   // get the tetrahedron
+   h=MESH[idx];
+
+   // assign the data coordinates of the tetrahedron to the bsp tree
+   setvals(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4,h.vals);
    }
 
 // insert tetrahedral face as a dividing plane
