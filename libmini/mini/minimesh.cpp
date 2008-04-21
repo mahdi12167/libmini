@@ -352,6 +352,9 @@ minibsptree::minibsptree()
    DONE=FALSE;
    GOTEYE=FALSE;
    VOLDONE=FALSE;
+
+   PHASE=0;
+   STEP=0;
    }
 
 // destructor
@@ -366,11 +369,36 @@ void minibsptree::clear()
    DONE=FALSE;
    GOTEYE=FALSE;
    VOLDONE=FALSE;
+
+   PHASE=0;
+   STEP=0;
    }
 
 // insert from tetrahedral mesh
 void minibsptree::insert(const minimesh &mesh)
    {MESH.append(mesh);}
+
+// preprocess input mesh one step at a time
+BOOLINT minibsptree::preprocess()
+   {
+   if (!DONE)
+      switch (PHASE)
+         {
+         case 0:
+            insert();
+            PHASE=1;
+            break;
+         case 1:
+            intersect();
+            PHASE=2;
+            break;
+         case 2:
+            DONE=TRUE;
+            break;
+         }
+
+   return(DONE);
+   }
 
 // insert from tetrahedral mesh copy
 void minibsptree::insert()
@@ -497,14 +525,10 @@ minimesh minibsptree::extract()
 
    minimesh mesh;
 
-   if (!DONE)
-      {
-      insert();
-      intersect();
-      DONE=TRUE;
-      }
+   // preprocess the input mesh
+   while (!preprocess());
 
-   // append each tetrahedralized mesh to the output mesh
+   // append each tetrahedralized node to the output mesh
    for (i=0; i<TREE.getsize(); i++)
       {
       if (TREE[i].left==0) mesh.append(TREE[i].leftmesh);
@@ -517,12 +541,8 @@ minimesh minibsptree::extract()
 // extract sorted tetrahedral mesh
 minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    {
-   if (!DONE)
-      {
-      insert();
-      intersect();
-      DONE=TRUE;
-      }
+   // preprocess the input mesh
+   while (!preprocess());
 
    if (GOTEYE)
       if (eye==EYE && radius==RADIUS) return(COLLECT); // return the previously collected mesh
@@ -531,7 +551,7 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    RADIUS=radius;
    GOTEYE=TRUE;
 
-   // sort and append each tetrahedralized mesh to the output mesh
+   // sort and append each tetrahedralized node to the output mesh
    COLLECT.setnull();
    collect(0);
 
@@ -653,17 +673,14 @@ double minibsptree::getvolume()
    {
    unsigned int i;
 
-   if (!DONE)
-      {
-      insert();
-      intersect();
-      DONE=TRUE;
-      }
+   // preprocess the input mesh
+   while (!preprocess());
 
    if (VOLDONE) return(VOL);
 
    VOL=0.0;
 
+   // get volume of each tetrahedralized node of the output mesh
    for (i=0; i<TREE.getsize(); i++)
       {
       if (TREE[i].left==0) VOL+=TREE[i].leftmesh.getvolume();

@@ -236,10 +236,13 @@ class minibsptree
    //! insert tetrahedral mesh
    void insert(const minimesh &mesh);
 
-   //! extract tetrahedral mesh
+   //! preprocess input mesh one step at a time
+   BOOLINT preprocess();
+
+   //! process input mesh and extract tetrahedral output mesh
    minimesh extract();
 
-   //! extract sorted tetrahedral mesh
+   //! process input mesh and extract sorted tetrahedral output mesh
    minimesh extract(const miniv3d &eye,const double radius);
 
    //! get volume of tetrahedralized polyhedra
@@ -270,6 +273,8 @@ class minibsptree
 
    double VOL;
    BOOLINT VOLDONE;
+
+   unsigned int PHASE,STEP;
 
    void insert();
 
