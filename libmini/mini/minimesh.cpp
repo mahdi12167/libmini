@@ -443,6 +443,10 @@ BOOLINT minibsptree::preprocess()
    return(DONE);
    }
 
+// get status of preprocessing
+BOOLINT minibsptree::getstatus()
+   {return(DONE);}
+
 // insert tetrahedron (phase #1)
 void minibsptree::insert1(unsigned int idx)
    {

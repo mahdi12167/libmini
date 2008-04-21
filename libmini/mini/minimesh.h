@@ -239,6 +239,9 @@ class minibsptree
    //! preprocess input mesh one step at a time
    BOOLINT preprocess();
 
+   //! get status of preprocessing
+   BOOLINT getstatus();
+
    //! process input mesh and extract tetrahedral output mesh
    minimesh extract();
 

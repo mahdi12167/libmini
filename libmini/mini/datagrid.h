@@ -50,8 +50,11 @@ class datagrid
    //! apply matrix
    void applymtx(const miniv4d mtx[3]);
 
-   //! construct tetrahedral mesh from the data grid
+   //! construct tetrahedral mesh from all data bricks
    void construct();
+
+   //! preprocess tetrahedral mesh one step at a time
+   BOOLINT preprocess();
 
    //! trigger pushing the mesh for a particular time step
    void trigger(const double time);
@@ -74,8 +77,8 @@ class datagrid
 
    private:
 
-   minimesh MESH;
-   minibsptree BSPT;
+   minibsptree BSPT1,BSPT2;
+   BOOLINT CONSTRUCTED;
 
    minimesh UNSORTED;
    minimesh SORTED;
@@ -84,6 +87,8 @@ class datagrid
    BOOLINT IDENTITY;
 
    BOOLINT INVALID;
+
+   void decompose();
    };
 
 #endif
