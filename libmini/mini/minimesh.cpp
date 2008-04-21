@@ -376,56 +376,71 @@ void minibsptree::clear()
 
 // insert from tetrahedral mesh
 void minibsptree::insert(const minimesh &mesh)
-   {MESH.append(mesh);}
+   {if (!DONE && PHASE==0) MESH.append(mesh);}
 
 // preprocess input mesh one step at a time
 BOOLINT minibsptree::preprocess()
    {
+   unsigned int idx;
+
    if (!DONE)
       switch (PHASE)
          {
          case 0:
-            insert();
-            PHASE=1;
+            // phase #0: calculate the swizzle constant
+            if (MESH.getsize()>0)
+               for (SWIZZLE=PRIME; gcd(MESH.getsize(),SWIZZLE)!=1; SWIZZLE+=2);
+            else DONE=TRUE;
+
+            PHASE++;
+
             break;
          case 1:
-            intersect();
-            PHASE=2;
+            // swizzle the actual position
+            idx=(SWIZZLE*STEP)%MESH.getsize();
+
+            // phase #1: insert each tetrahedron of the input mesh into the bsp tree
+            insert1(idx);
+
+            if (++STEP>=MESH.getsize())
+               {
+               STEP=0;
+               PHASE++;
+               }
+
             break;
          case 2:
+            // phase #2: insert each tetrahedron of the input mesh into the bsp tree
+            insert2(STEP);
+
+            if (++STEP>=MESH.getsize())
+               {
+               STEP=0;
+               PHASE++;
+               }
+
+            break;
+         case 3:
+            // phase #3: intersect each node of the bsp tree
+            intersect(STEP);
+
+            if (++STEP>=TREE.getsize())
+               {
+               STEP=0;
+               PHASE++;
+               }
+
+            break;
+         case 4:
+            // phase #4: clean up
+            MESH.setnull();
+
             DONE=TRUE;
+
             break;
          }
 
    return(DONE);
-   }
-
-// insert from tetrahedral mesh copy
-void minibsptree::insert()
-   {
-   static const unsigned int prime=271;
-
-   unsigned int i;
-
-   unsigned int swizzle,num,act;
-
-   num=MESH.getsize();
-
-   // calculate the swizzle constant
-   for (swizzle=prime; gcd(num,swizzle)!=1; swizzle+=2);
-
-   // phase #1: insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<num; i++)
-      {
-      // swizzle the actual position
-      act=(swizzle*i)%num;
-
-      // insert the tetrahedral faces as a dividing plane to the bsp tree
-      insert1(act);
-      }
-
-   // phase #2: insert each tetrahedron of the input mesh into the bsp tree
-   for (i=0; i<num; i++) insert2(i);
    }
 
 // insert tetrahedron (phase #1)
@@ -570,17 +585,8 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    return(COLLECT);
    }
 
-// intersect bsp tree
-void minibsptree::intersect()
-   {
-   unsigned int idx;
-
-   // process all nodes in ascending order
-   for (idx=0; idx<TREE.getsize(); idx++) process(idx);
-   }
-
-// process one node of the bsp tree
-void minibsptree::process(unsigned int idx)
+// intersect one node of the bsp tree
+void minibsptree::intersect(unsigned int idx)
    {
    minigeom_plane plane;
    minigeom_polyhedron poly;
