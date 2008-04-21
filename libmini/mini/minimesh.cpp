@@ -500,7 +500,7 @@ minimesh minibsptree::extract()
    if (!DONE)
       {
       insert();
-      intersect(0);
+      intersect();
       DONE=TRUE;
       }
 
@@ -520,7 +520,7 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    if (!DONE)
       {
       insert();
-      intersect(0);
+      intersect();
       DONE=TRUE;
       }
 
@@ -539,77 +539,76 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    }
 
 // intersect bsp tree
-void minibsptree::intersect(unsigned int idx)
+void minibsptree::intersect()
+   {
+   unsigned int idx;
+
+   // process all nodes in ascending order
+   for (idx=0; idx<TREE.getsize(); idx++) process(idx);
+   }
+
+// process one node of the bsp tree
+void minibsptree::process(unsigned int idx)
    {
    minigeom_plane plane;
    minigeom_polyhedron poly;
 
-   // check if the bsp tree is empty
-   if (!TREE.isnull())
+   // intersect the left half space
+   if (TREE[idx].left!=0)
       {
-      // intersect the left half space
-      if (TREE[idx].left!=0)
-         {
-         // add the actual half space to the left child's polyhedron
-         TREE[TREE[idx].left].poly=TREE[idx].poly;
-         TREE[TREE[idx].left].poly.intersect(TREE[idx].plane);
+      // add the actual half space to the left child's polyhedron
+      TREE[TREE[idx].left].poly=TREE[idx].poly;
+      TREE[TREE[idx].left].poly.intersect(TREE[idx].plane);
+      }
 
-         // descend recursively
-         intersect(TREE[idx].left);
-         }
+   // intersect the right half space
+   if (TREE[idx].right!=0)
+      {
+      // invert the actual half space
+      plane=TREE[idx].plane;
+      plane.invert();
 
-      // intersect the right half space
-      if (TREE[idx].right!=0)
-         {
-         // invert the actual half space
-         plane=TREE[idx].plane;
-         plane.invert();
+      // add the actual inverted half space to the right child's polyhedron
+      TREE[TREE[idx].right].poly=TREE[idx].poly;
+      TREE[TREE[idx].right].poly.intersect(plane);
+      }
 
-         // add the actual inverted half space to the right child's polyhedron
-         TREE[TREE[idx].right].poly=TREE[idx].poly;
-         TREE[TREE[idx].right].poly.intersect(plane);
+   // break the left half space into a set of connected tetrahedra
+   if (TREE[idx].left==0 && TREE[idx].leftvals.getsize()>0)
+      {
+      // add the actual half space to the node's polyhedron
+      poly=TREE[idx].poly;
+      poly.intersect(TREE[idx].plane);
 
-         // descend recursively
-         intersect(TREE[idx].right);
-         }
+      // calculate the connected tetrahedra
+      TREE[idx].leftmesh.append(poly);
 
-      // break the left half space into a set of connected tetrahedra
-      if (TREE[idx].left==0 && TREE[idx].leftvals.getsize()>0)
-         {
-         // add the actual half space to the node's polyhedron
-         poly=TREE[idx].poly;
-         poly.intersect(TREE[idx].plane);
-
-         // calculate the connected tetrahedra
-         TREE[idx].leftmesh.append(poly);
-
-         // propagate the embedded data coordinates
-         TREE[idx].leftmesh.setvals(TREE[idx].leftvals);
-         }
-
-      // break the right half space into a set of connected tetrahedra
-      if (TREE[idx].right==0 && TREE[idx].rightvals.getsize()>0)
-         {
-         // invert the actual half space
-         plane=TREE[idx].plane;
-         plane.invert();
-
-         // add the actual inverted half space to the node's polyhedron
-         poly=TREE[idx].poly;
-         poly.intersect(plane);
-
-         // calculate the connected tetrahedra
-         TREE[idx].rightmesh.append(poly);
-
-         // propagate the embedded data coordinates
-         TREE[idx].rightmesh.setvals(TREE[idx].rightvals);
-         }
-
-      // deflate already visited nodes
-      TREE[idx].poly.clear();
+      // propagate the embedded data coordinates
+      TREE[idx].leftmesh.setvals(TREE[idx].leftvals);
       TREE[idx].leftvals.setnull();
+      }
+
+   // break the right half space into a set of connected tetrahedra
+   if (TREE[idx].right==0 && TREE[idx].rightvals.getsize()>0)
+      {
+      // invert the actual half space
+      plane=TREE[idx].plane;
+      plane.invert();
+
+      // add the actual inverted half space to the node's polyhedron
+      poly=TREE[idx].poly;
+      poly.intersect(plane);
+
+      // calculate the connected tetrahedra
+      TREE[idx].rightmesh.append(poly);
+
+      // propagate the embedded data coordinates
+      TREE[idx].rightmesh.setvals(TREE[idx].rightvals);
       TREE[idx].rightvals.setnull();
       }
+
+   // clear the actual polyhedron
+   TREE[idx].poly.clear();
    }
 
 // collect tetrahedra by descending the bsp tree
@@ -657,7 +656,7 @@ double minibsptree::getvolume()
    if (!DONE)
       {
       insert();
-      intersect(0);
+      intersect();
       DONE=TRUE;
       }
 
