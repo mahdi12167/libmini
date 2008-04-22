@@ -10,6 +10,10 @@
 // default constructor
 miniterrain::miniterrain()
    {
+   // auto-determined parameters:
+
+   TPARAMS.time=0.0; // actual time
+
    // configurable parameters:
 
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
@@ -774,6 +778,8 @@ void miniterrain::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,flo
    {
    int n;
 
+   TPARAMS.time=time;
+
    for (n=0; n<LNUM; n++)
       LAYER[n]->cache(e,d,u,aspect,time);
    }
@@ -895,6 +901,13 @@ void miniterrain::render_presea()
 
          // render waypoints before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
+
+         // render data grid before sea surface
+         if (el.vec.z>=lparams.sealevel/lparams.scale)
+            {
+            DATAGRID.trigger(TPARAMS.time);
+            DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+            }
          }
    }
 
@@ -916,6 +929,13 @@ void miniterrain::render_postsea()
 
          // render waypoints after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
+
+         // render data grid after sea surface
+         if (el.vec.z<lparams.sealevel/lparams.scale)
+            {
+            DATAGRID.trigger(TPARAMS.time);
+            DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+            }
          }
    }
 
@@ -1080,3 +1100,7 @@ double miniterrain::getcachemem()
 
    return(cachemem);
    }
+
+// add datagrid object
+void miniterrain::addgrid(const datagrid &obj)
+   {DATAGRID=obj;}

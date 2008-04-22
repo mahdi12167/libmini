@@ -10,6 +10,8 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "datagrid.h"
+
 #include "minilayer.h"
 
 //! aggregate class for rendering multiple layers
@@ -19,6 +21,10 @@ class miniterrain
 
    struct MINITERRAIN_PARAMS_STRUCT
       {
+      // auto-determined parameters:
+
+      double time; // actual time
+
       // configurable parameters:
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
@@ -320,6 +326,9 @@ class miniterrain
    //! get total amount of cache memory
    double getcachemem();
 
+   //! add datagrid object
+   void addgrid(const datagrid &obj);
+
    // default coordinate conversions (g=global, l=local, o=opengl):
 
    //! map coordinates
@@ -379,6 +388,8 @@ class miniterrain
    void (*CURLEXIT)(int id,void *data);
    void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
+
+   datagrid DATAGRID;
 
    int reserve();
 
