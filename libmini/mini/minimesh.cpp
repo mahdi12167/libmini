@@ -376,7 +376,11 @@ void minibsptree::clear()
 
 // insert from tetrahedral mesh
 void minibsptree::insert(const minimesh &mesh)
-   {if (!DONE && PHASE==0) MESH.append(mesh);}
+   {
+   if (DONE || PHASE!=0) ERRORMSG();
+
+   MESH.append(mesh);
+   }
 
 // preprocess input mesh one step at a time
 BOOLINT minibsptree::preprocess()
@@ -384,61 +388,61 @@ BOOLINT minibsptree::preprocess()
    unsigned int idx;
 
    if (!DONE)
-      switch (PHASE)
-         {
-         case 0:
-            // phase #0: calculate the swizzle constant
-            if (MESH.getsize()>0)
+      if (MESH.getsize()==0) DONE=TRUE;
+      else
+         switch (PHASE)
+            {
+            case 0:
+               // phase #0: calculate the swizzle constant
                for (SWIZZLE=PRIME; gcd(MESH.getsize(),SWIZZLE)!=1; SWIZZLE+=2);
-            else DONE=TRUE;
 
-            PHASE++;
-
-            break;
-         case 1:
-            // swizzle the actual position
-            idx=(SWIZZLE*STEP)%MESH.getsize();
-
-            // phase #1: insert each tetrahedron of the input mesh into the bsp tree
-            insert1(idx);
-
-            if (++STEP>=MESH.getsize())
-               {
-               STEP=0;
                PHASE++;
-               }
 
-            break;
-         case 2:
-            // phase #2: insert each tetrahedron of the input mesh into the bsp tree
-            insert2(STEP);
+               break;
+            case 1:
+               // swizzle the actual position
+               idx=(SWIZZLE*STEP)%MESH.getsize();
 
-            if (++STEP>=MESH.getsize())
-               {
-               STEP=0;
-               PHASE++;
-               }
+               // phase #1: insert each tetrahedron of the input mesh into the bsp tree
+               insert1(idx);
 
-            break;
-         case 3:
-            // phase #3: intersect each node of the bsp tree
-            intersect(STEP);
+               if (++STEP>=MESH.getsize())
+                  {
+                  STEP=0;
+                  PHASE++;
+                  }
 
-            if (++STEP>=TREE.getsize())
-               {
-               STEP=0;
-               PHASE++;
-               }
+               break;
+            case 2:
+               // phase #2: insert each tetrahedron of the input mesh into the bsp tree
+               insert2(STEP);
 
-            break;
-         case 4:
-            // phase #4: clean up
-            MESH.setnull();
+               if (++STEP>=MESH.getsize())
+                  {
+                  STEP=0;
+                  PHASE++;
+                  }
 
-            DONE=TRUE;
+               break;
+            case 3:
+               // phase #3: intersect each node of the bsp tree
+               intersect(STEP);
 
-            break;
-         }
+               if (++STEP>=TREE.getsize())
+                  {
+                  STEP=0;
+                  PHASE++;
+                  }
+
+               break;
+            case 4:
+               // phase #4: clean up
+               MESH.setnull();
+
+               DONE=TRUE;
+
+               break;
+            }
 
    return(DONE);
    }
@@ -549,46 +553,6 @@ void minibsptree::append(const minigeom_plane &plane)
    TREE.append(node);
    }
 
-// extract tetrahedral mesh
-minimesh minibsptree::extract()
-   {
-   unsigned int i;
-
-   minimesh mesh;
-
-   // preprocess the input mesh
-   while (!preprocess());
-
-   // append each tetrahedralized node to the output mesh
-   for (i=0; i<TREE.getsize(); i++)
-      {
-      if (TREE[i].left==0) mesh.append(TREE[i].leftmesh);
-      if (TREE[i].right==0) mesh.append(TREE[i].rightmesh);
-      }
-
-   return(mesh);
-   }
-
-// extract sorted tetrahedral mesh
-minimesh minibsptree::extract(const miniv3d &eye,const double radius)
-   {
-   // preprocess the input mesh
-   while (!preprocess());
-
-   if (GOTEYE)
-      if (eye==EYE && radius==RADIUS) return(COLLECT); // return the previously collected mesh
-
-   EYE=eye;
-   RADIUS=radius;
-   GOTEYE=TRUE;
-
-   // sort and append each tetrahedralized node to the output mesh
-   COLLECT.setnull();
-   collect(0);
-
-   return(COLLECT);
-   }
-
 // intersect one node of the bsp tree
 void minibsptree::intersect(unsigned int idx)
    {
@@ -651,6 +615,46 @@ void minibsptree::intersect(unsigned int idx)
 
    // clear the actual polyhedron
    TREE[idx].poly.clear();
+   }
+
+// extract tetrahedral mesh
+minimesh minibsptree::extract()
+   {
+   unsigned int i;
+
+   minimesh mesh;
+
+   // preprocess the input mesh
+   while (!preprocess());
+
+   // append each tetrahedralized node to the output mesh
+   for (i=0; i<TREE.getsize(); i++)
+      {
+      if (TREE[i].left==0) mesh.append(TREE[i].leftmesh);
+      if (TREE[i].right==0) mesh.append(TREE[i].rightmesh);
+      }
+
+   return(mesh);
+   }
+
+// extract sorted tetrahedral mesh
+minimesh minibsptree::extract(const miniv3d &eye,const double radius)
+   {
+   // preprocess the input mesh
+   while (!preprocess());
+
+   if (GOTEYE)
+      if (eye==EYE && radius==RADIUS) return(COLLECT); // return the previously collected mesh
+
+   EYE=eye;
+   RADIUS=radius;
+   GOTEYE=TRUE;
+
+   // sort and append each tetrahedralized node to the output mesh
+   COLLECT.setnull();
+   collect(0);
+
+   return(COLLECT);
    }
 
 // collect tetrahedra by descending the bsp tree

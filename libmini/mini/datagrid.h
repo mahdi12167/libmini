@@ -77,6 +77,11 @@ class datagrid
 
    private:
 
+   minimesh MESH;
+   BOOLINT DONE;
+
+   unsigned int PHASE,STEP;
+
    minibsptree BSPT1,BSPT2;
    BOOLINT CONSTRUCTED;
 
@@ -88,7 +93,8 @@ class datagrid
 
    BOOLINT INVALID;
 
-   void decompose();
+   BOOLINT decompose();
+   void decompose(unsigned int idx);
    };
 
 #endif

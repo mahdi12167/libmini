@@ -268,6 +268,11 @@ class minibsptree
    minidyna<minibsptree_node> TREE;
    BOOLINT DONE;
 
+   unsigned int PHASE,STEP;
+
+   static const unsigned int PRIME=271;
+   unsigned int SWIZZLE;
+
    miniv3d EYE;
    double RADIUS;
    BOOLINT GOTEYE;
@@ -276,11 +281,6 @@ class minibsptree
 
    double VOL;
    BOOLINT VOLDONE;
-
-   unsigned int PHASE,STEP;
-
-   static const unsigned int PRIME=271;
-   unsigned int SWIZZLE;
 
    void insert1(unsigned int idx);
    void insert2(unsigned int idx);
