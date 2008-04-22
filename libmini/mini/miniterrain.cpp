@@ -918,10 +918,8 @@ void miniterrain::render_presea()
 
       // render data grid before sea surface
       if (el.vec.z>=lparams.sealevel/lparams.scale)
-         {
-         DATAGRID.trigger(TPARAMS.time);
-         DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-         }
+         if (!SORTED) DATAGRID.trigger(TPARAMS.time);
+         else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
       }
    }
 
@@ -949,10 +947,8 @@ void miniterrain::render_postsea()
       {
       // render data grid before sea surface
       if (el.vec.z>=lparams.sealevel/lparams.scale)
-         {
-         DATAGRID.trigger(TPARAMS.time);
-         DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-         }
+         if (!SORTED) DATAGRID.trigger(TPARAMS.time);
+         else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
       }
    }
 
@@ -1119,5 +1115,8 @@ double miniterrain::getcachemem()
    }
 
 // add datagrid object
-void miniterrain::addgrid(const datagrid &obj)
-   {DATAGRID=obj;}
+void miniterrain::addgrid(const datagrid &obj,BOOLINT sorted)
+   {
+   DATAGRID=obj;
+   SORTED=sorted;
+   }

@@ -327,7 +327,7 @@ class miniterrain
    double getcachemem();
 
    //! add datagrid object
-   void addgrid(const datagrid &obj);
+   void addgrid(const datagrid &obj,BOOLINT sorted=FALSE);
 
    // default coordinate conversions (g=global, l=local, o=opengl):
 
@@ -390,6 +390,7 @@ class miniterrain
    int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
 
    datagrid DATAGRID;
+   BOOLINT SORTED;
 
    int reserve();
 
