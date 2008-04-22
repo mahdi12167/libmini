@@ -14,22 +14,18 @@ datagrid::datagrid()
 
    CONSTRUCTED=FALSE;
 
-   ID[0]=MTX[0]=miniv4d(1.0,0.0,0.0);
-   ID[1]=MTX[1]=miniv4d(0.0,1.0,0.0);
-   ID[2]=MTX[2]=miniv4d(0.0,0.0,1.0);
+   ID[0]=MTXPRE[0]=MTXPOST[0]=miniv4d(1.0,0.0,0.0);
+   ID[1]=MTXPRE[1]=MTXPOST[1]=miniv4d(0.0,1.0,0.0);
+   ID[2]=MTXPRE[2]=MTXPOST[2]=miniv4d(0.0,0.0,1.0);
 
-   IDENTITY=TRUE;
+   IDPRE=IDPOST=TRUE;
 
    INVALID=FALSE;
    }
 
 // destructor
 datagrid::~datagrid()
-   {
-   unsigned int i;
-
-   for (i=0; i<FLAG.getsize(); i++) remove(i);
-   }
+   {clear();}
 
 // set coordinate system
 void datagrid::setcrs(const minicoord::MINICOORD crs)
@@ -119,14 +115,45 @@ void datagrid::move(const unsigned int id,
       }
    }
 
-// apply matrix
+// clear all data bricks
+void datagrid::clear()
+   {
+   unsigned int i;
+
+   for (i=0; i<FLAG.getsize(); i++) remove(i);
+   }
+
+// check if any valid bricks are present
+BOOLINT datagrid::isclear()
+   {
+   unsigned int i;
+
+   for (i=0; i<FLAG.getsize(); i++)
+      if (FLAG[i]) return(TRUE);
+
+   return(FALSE);
+   }
+
+// apply pre matrix
 void datagrid::applymtx(const miniv4d mtx[3])
    {
-   MTX[0]=mtx[0];
-   MTX[1]=mtx[1];
-   MTX[2]=mtx[2];
+   INVALID=TRUE;
 
-   IDENTITY=(MTX[0]==ID[0] && MTX[1]==ID[1] && MTX[2]==ID[2]);
+   MTXPRE[0]=mtx[0];
+   MTXPRE[1]=mtx[1];
+   MTXPRE[2]=mtx[2];
+
+   IDPRE=(MTXPRE[0]==ID[0] && MTXPRE[1]==ID[1] && MTXPRE[2]==ID[2]);
+   }
+
+// specify post matrix
+void datagrid::specmtx(const miniv4d mtx[3])
+   {
+   MTXPOST[0]=mtx[0];
+   MTXPOST[1]=mtx[1];
+   MTXPOST[2]=mtx[2];
+
+   IDPOST=(MTXPOST[0]==ID[0] && MTXPOST[1]==ID[1] && MTXPOST[2]==ID[2]);
    }
 
 // construct tetrahedral mesh from all data bricks
@@ -258,11 +285,11 @@ void datagrid::decompose(unsigned int idx)
             for (i=0; i<8; i++) vtx[i].convert2(CRS);
 
       // multiply corner vertices with 4x3 matrix
-      if (!IDENTITY)
+      if (!IDPRE)
          for (i=0; i<8; i++)
             {
             v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
-            vtx[i].vec=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
+            vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
             }
 
       // check orientation of tetrahedral decomposition
@@ -333,10 +360,10 @@ void datagrid::trigger(const double time,const minicoord &eye,const double radiu
       if (CRS!=minicoord::MINICOORD_LINEAR) ep.convert2(CRS);
 
    // multiply eye point with 4x3 matrix
-   if (!IDENTITY)
+   if (!IDPRE)
       {
       v=miniv4d(ep.vec.x,ep.vec.y,ep.vec.z,1.0);
-      e=miniv3d(MTX[0]*v,MTX[1]*v,MTX[2]*v);
+      e=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
       }
 
    if (!CONSTRUCTED) construct(); // construct the bsp tree at least once

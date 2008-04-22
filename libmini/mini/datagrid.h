@@ -47,8 +47,17 @@ class datagrid
              const float h0,const float dh,  // base elevation and height of data brick
              const float t0,const float dt); // time frame start and exposure time
 
-   //! apply matrix
+   //! clear all data bricks
+   void clear();
+
+   //! check if any valid bricks are present
+   BOOLINT isclear();
+
+   //! apply matrix (pre of producing a tetrahedral mesh)
    void applymtx(const miniv4d mtx[3]);
+
+   //! specify matrix (post of producing a tetrahedral mesh)
+   void specmtx(const miniv4d mtx[3]);
 
    //! construct tetrahedral mesh from all data bricks
    void construct();
@@ -75,6 +84,9 @@ class datagrid
 
    minidyna<databuf> DATA;
 
+   miniv4d MTXPRE[3],MTXPOST[3];
+   BOOLINT IDPRE,IDPOST;
+
    private:
 
    minimesh MESH;
@@ -88,8 +100,7 @@ class datagrid
    minimesh UNSORTED;
    minimesh SORTED;
 
-   miniv4d ID[3],MTX[3];
-   BOOLINT IDENTITY;
+   miniv4d ID[3];
 
    BOOLINT INVALID;
 

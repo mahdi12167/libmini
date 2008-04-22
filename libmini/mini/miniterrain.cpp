@@ -5,6 +5,8 @@
 #include "miniOGL.h"
 #include "minishader.h"
 
+#include "miniwarp.h"
+
 #include "miniterrain.h"
 
 // default constructor
@@ -892,6 +894,9 @@ void miniterrain::render_presea()
 
    minilayer::MINILAYER_PARAMS lparams;
 
+   miniwarp warp;
+   miniv4d mtx[4];
+
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
@@ -901,14 +906,23 @@ void miniterrain::render_presea()
 
          // render waypoints before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
-
-         // render data grid before sea surface
-         if (el.vec.z>=lparams.sealevel/lparams.scale)
-            {
-            DATAGRID.trigger(TPARAMS.time);
-            DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-            }
          }
+
+   if (!DATAGRID.isclear())
+      {
+      // set post matrix (world to rendering coordinates)
+      warp=*REFERENCE->getwarp();
+      warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+      warp.getwarp(mtx);
+      DATAGRID.specmtx(mtx);
+
+      // render data grid before sea surface
+      if (el.vec.z>=lparams.sealevel/lparams.scale)
+         {
+         DATAGRID.trigger(TPARAMS.time);
+         DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+         }
+      }
    }
 
 // post sea render function
@@ -929,14 +943,17 @@ void miniterrain::render_postsea()
 
          // render waypoints after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
-
-         // render data grid after sea surface
-         if (el.vec.z<lparams.sealevel/lparams.scale)
-            {
-            DATAGRID.trigger(TPARAMS.time);
-            DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-            }
          }
+
+   if (!DATAGRID.isclear())
+      {
+      // render data grid before sea surface
+      if (el.vec.z>=lparams.sealevel/lparams.scale)
+         {
+         DATAGRID.trigger(TPARAMS.time);
+         DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+         }
+      }
    }
 
 // determine whether or not a layer is displayed
