@@ -25,10 +25,11 @@ class minival
    //! destructor
    ~minival() {}
 
-   minival(const unsigned int s,
+   minival(const unsigned int s,const unsigned int b,
            const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4)
       {
       slot=s;
+      brickid=b;
 
       crd1=c1;
       crd2=c2;
@@ -41,11 +42,12 @@ class minival
       ref4=c4;
       }
 
-   minival(const unsigned int s,
+   minival(const unsigned int s,const unsigned int b,
            const miniv3d &c1,const miniv3d &c2,const miniv3d &c3,const miniv3d &c4,
            const miniv3d &r1,const miniv3d &r2,const miniv3d &r3,const miniv3d &r4)
       {
       slot=s;
+      brickid=b;
 
       crd1=c1;
       crd2=c2;
@@ -59,6 +61,7 @@ class minival
       }
 
    unsigned int slot; // data slot
+   unsigned int brickid; // data brick id
    miniv3d crd1,crd2,crd3,crd4; // data coordinates
 
    protected:
@@ -70,7 +73,7 @@ class minival
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minival &v)
-   {return(out << "minival( slot=" << v.slot << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
+   {return(out << "minival( slot=" << v.slot << ", brickid=" << v.brickid << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
 
 typedef minidyna<minival,3> minivals;
 
@@ -114,14 +117,14 @@ class minihedron
       }
 
    //! constructor
-   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const unsigned int s)
+   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const unsigned int s,const unsigned int b)
       {
       vtx1=v1;
       vtx2=v2;
       vtx3=v3;
       vtx4=v4;
 
-      vals.set(minival(s,v1,v2,v3,v4));
+      vals.set(minival(s,b,v1,v2,v3,v4));
 
       dep123=dep142=dep243=dep341=0;
       visit=FALSE;
