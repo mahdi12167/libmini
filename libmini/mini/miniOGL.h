@@ -89,6 +89,7 @@ void configure_gamma(float gamma=1.0f); // gamma correction of texture maps
 void configure_level(float level=0.0f); // level adjustment of texture maps
 
 // debugging
+int get_unsupported_glexts(); // get number of unsupported OpenGL extensions
 void print_unsupported_glexts(); // print unsupported OpenGL extensions
 
 }

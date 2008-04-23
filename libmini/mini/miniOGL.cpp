@@ -43,6 +43,23 @@ static void initglexts()
       }
    }
 
+int get_unsupported_glexts()
+   {
+   int num;
+
+   num=0;
+
+   if (!glext_mm) num++;
+   if (!glext_tec) num++;
+   if (!glext_tfa) num++;
+   if (!glext_t3D) num++;
+   if (!glext_tc) num++;
+   if (!glext_ts3) num++;
+   if (!glext_tgm) num++;
+
+   return(num);
+   }
+
 void print_unsupported_glexts()
    {
    initglexts();
