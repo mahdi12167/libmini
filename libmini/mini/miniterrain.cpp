@@ -895,7 +895,7 @@ void miniterrain::render_presea()
    minilayer::MINILAYER_PARAMS lparams;
 
    miniwarp warp;
-   miniv4d mtx[4];
+   miniv4d mtx[3];
 
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
@@ -916,7 +916,7 @@ void miniterrain::render_presea()
       warp.getwarp(mtx);
       DATAGRID.specmtx(mtx);
 
-      // render data grid before sea surface
+      // trigger data grid before sea surface
       if (el.vec.z>=lparams.sealevel/lparams.scale)
          if (!SORTED) DATAGRID.trigger(TPARAMS.time);
          else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
@@ -945,8 +945,8 @@ void miniterrain::render_postsea()
 
    if (!DATAGRID.isclear())
       {
-      // render data grid before sea surface
-      if (el.vec.z>=lparams.sealevel/lparams.scale)
+      // trigger data grid after sea surface
+      if (el.vec.z<lparams.sealevel/lparams.scale)
          if (!SORTED) DATAGRID.trigger(TPARAMS.time);
          else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
       }
