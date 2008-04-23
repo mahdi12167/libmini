@@ -145,7 +145,7 @@ class databuf
    void set_time(float time,float range);
 
    //! set coordinate system
-   void set_crs(int crs_type,int crs_zone,int crs_datum);
+   void set_crs(int crs_type,int crs_zone=0,int crs_datum=0);
 
    //! native input/output
    void savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
