@@ -215,6 +215,9 @@ miniterrain::miniterrain()
    CURLEXIT=NULL;
    GETURL=NULL;
    CHECKURL=NULL;
+
+   DATAGRID=NULL;
+   SORTED=FALSE;
    }
 
 // destructor
@@ -908,19 +911,20 @@ void miniterrain::render_presea()
          if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
 
-   if (!DATAGRID.isclear())
-      {
-      // set post matrix (world to rendering coordinates)
-      warp=*REFERENCE->getwarp();
-      warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-      warp.getwarp(mtx);
-      DATAGRID.specmtx(mtx);
+   if (DATAGRID!=NULL)
+      if (!DATAGRID->isclear())
+         {
+         // set post matrix (world to rendering coordinates)
+         warp=*REFERENCE->getwarp();
+         warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+         warp.getwarp(mtx);
+         DATAGRID->specmtx(mtx);
 
-      // trigger data grid before sea surface
-      if (el.vec.z>=lparams.sealevel/lparams.scale)
-         if (!SORTED) DATAGRID.trigger(TPARAMS.time);
-         else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-      }
+         // trigger data grid before sea surface
+         if (el.vec.z>=lparams.sealevel/lparams.scale)
+            if (!SORTED) DATAGRID->trigger(TPARAMS.time);
+            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+         }
    }
 
 // post sea render function
@@ -943,13 +947,14 @@ void miniterrain::render_postsea()
          if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
 
-   if (!DATAGRID.isclear())
-      {
-      // trigger data grid after sea surface
-      if (el.vec.z<lparams.sealevel/lparams.scale)
-         if (!SORTED) DATAGRID.trigger(TPARAMS.time);
-         else DATAGRID.trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-      }
+   if (DATAGRID!=NULL)
+      if (!DATAGRID->isclear())
+         {
+         // trigger data grid after sea surface
+         if (el.vec.z<lparams.sealevel/lparams.scale)
+            if (!SORTED) DATAGRID->trigger(TPARAMS.time);
+            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+         }
    }
 
 // determine whether or not a layer is displayed
@@ -1115,7 +1120,7 @@ double miniterrain::getcachemem()
    }
 
 // add datagrid object
-void miniterrain::addgrid(const datagrid &obj,BOOLINT sorted)
+void miniterrain::addgrid(datagrid *obj,BOOLINT sorted)
    {
    DATAGRID=obj;
    SORTED=sorted;
