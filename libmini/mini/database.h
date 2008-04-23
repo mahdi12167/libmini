@@ -138,6 +138,12 @@ class databuf
                            float nw_corner_x,float nw_corner_y,
                            float ne_corner_x,float ne_corner_y);
 
+   //! set height extent
+   void set_height(float bottom,float height);
+
+   //! set time range
+   void set_time(float time,float range);
+
    //! set coordinate system
    void set_crs(int crs_type,int crs_zone,int crs_datum);
 

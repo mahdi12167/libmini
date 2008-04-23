@@ -322,6 +322,20 @@ void databuf::set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
    LLWGS84_ney=ne_corner_y;
    }
 
+// set height extent
+void databuf::set_height(float bottom,float height)
+   {
+   h0=bottom;
+   dh=height;
+   }
+
+// set time range
+void databuf::set_time(float time,float range)
+   {
+   t0=time;
+   dt=range;
+   }
+
 // set coordinate system
 void databuf::set_crs(int crs_type,int crs_zone,int crs_datum)
    {
