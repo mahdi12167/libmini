@@ -129,9 +129,9 @@ BOOLINT datagrid::isclear()
    unsigned int i;
 
    for (i=0; i<FLAG.getsize(); i++)
-      if (FLAG[i]) return(TRUE);
+      if (FLAG[i]) return(FALSE);
 
-   return(FALSE);
+   return(TRUE);
    }
 
 // apply pre matrix
@@ -249,7 +249,7 @@ void datagrid::decompose(unsigned int idx)
 
    // check if object at actual position is valid
    if (FLAG[idx])
-      if (!DATA[idx].isempty())
+      if (!DATA[idx].missing())
          {
          // check coordinate system of actual databuf object
          crs=minicoord::MINICOORD_LINEAR;
