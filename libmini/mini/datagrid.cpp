@@ -7,6 +7,7 @@ datagrid::datagrid()
    {
    CRS=minicoord::MINICOORD_ECEF;
 
+   INVALID=FALSE;
    DONE=FALSE;
 
    PHASE=0;
@@ -19,8 +20,6 @@ datagrid::datagrid()
    ID[2]=MTXPRE[2]=MTXPOST[2]=miniv4d(0.0,0.0,1.0);
 
    IDPRE=IDPOST=TRUE;
-
-   INVALID=FALSE;
    }
 
 // destructor
@@ -187,9 +186,11 @@ BOOLINT datagrid::preprocess()
 BOOLINT datagrid::decompose()
    {
    if (INVALID)
-      if (MESH.getsize()==0)
+      if (isclear())
          {
          BSPT1.clear();
+
+         INVALID=FALSE;
          DONE=TRUE;
          }
       else
@@ -222,7 +223,6 @@ BOOLINT datagrid::decompose()
                MESH.setnull(); // release the mesh
 
                INVALID=FALSE;
-
                DONE=TRUE;
 
                PHASE=0;

@@ -89,6 +89,8 @@ class datagrid
 
    private:
 
+   BOOLINT INVALID;
+
    minimesh MESH;
    BOOLINT DONE;
 
@@ -101,8 +103,6 @@ class datagrid
    minimesh SORTED;
 
    miniv4d ID[3];
-
-   BOOLINT INVALID;
 
    BOOLINT decompose();
    void decompose(unsigned int idx);

@@ -913,18 +913,19 @@ void miniterrain::render_presea()
 
    if (DATAGRID!=NULL)
       if (!DATAGRID->isclear())
-         {
-         // set post matrix (world to rendering coordinates)
-         warp=*REFERENCE->getwarp();
-         warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-         warp.getwarp(mtx);
-         DATAGRID->specmtx(mtx);
-
          // trigger data grid before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale)
+            {
+            // set post matrix (world to rendering coordinates)
+            warp=*REFERENCE->getwarp();
+            warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+            warp.getwarp(mtx);
+            DATAGRID->specmtx(mtx);
+
+            // push either sorted or unsorted grid
             if (!SORTED) DATAGRID->trigger(TPARAMS.time);
             else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-         }
+            }
    }
 
 // post sea render function
@@ -935,6 +936,9 @@ void miniterrain::render_postsea()
    minicoord el;
 
    minilayer::MINILAYER_PARAMS lparams;
+
+   miniwarp warp;
+   miniv4d mtx[3];
 
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
@@ -949,12 +953,19 @@ void miniterrain::render_postsea()
 
    if (DATAGRID!=NULL)
       if (!DATAGRID->isclear())
-         {
          // trigger data grid after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale)
+            {
+            // set post matrix (world to rendering coordinates)
+            warp=*REFERENCE->getwarp();
+            warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+            warp.getwarp(mtx);
+            DATAGRID->specmtx(mtx);
+
+            // push either sorted or unsorted grid
             if (!SORTED) DATAGRID->trigger(TPARAMS.time);
             else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
-         }
+            }
    }
 
 // determine whether or not a layer is displayed
