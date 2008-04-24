@@ -285,6 +285,8 @@ class minibsptree
    double VOL;
    BOOLINT VOLDONE;
 
+   BOOLINT MESHDEBUG;
+
    void insert1(unsigned int idx);
    void insert2(unsigned int idx);
 

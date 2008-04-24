@@ -355,6 +355,8 @@ minibsptree::minibsptree()
 
    PHASE=0;
    STEP=0;
+
+   MESHDEBUG=TRUE; //!!
    }
 
 // destructor
@@ -436,6 +438,13 @@ BOOLINT minibsptree::preprocess()
 
                break;
             case 4:
+               // debug output
+               if (MESHDEBUG)
+                  {
+                  std::cout << MESH;
+                  std::cout << *this;
+                  }
+
                // phase #4: clean up
                MESH.setnull();
 
@@ -634,6 +643,9 @@ minimesh minibsptree::extract()
       if (TREE[i].right==0) mesh.append(TREE[i].rightmesh);
       }
 
+   // debug output
+   if (MESHDEBUG) std::cout << mesh;
+
    return(mesh);
    }
 
@@ -653,6 +665,9 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    // sort and append each tetrahedralized node to the output mesh
    COLLECT.setnull();
    collect(0);
+
+   // debug output
+   if (MESHDEBUG) std::cout << COLLECT;
 
    return(COLLECT);
    }
