@@ -105,6 +105,9 @@ inline double FSQR(const double x) {return(x*x);}
 #undef fpow
 #define fpow(x,y) pow((double)(x),(double)(y))
 
+inline float fmround(const float v,const int n=6) {return(ffloor(v*fpow(10.0f,n)+0.5f)/fpow(10.0f,n));}
+inline double mround(const double v,const int n=6) {return(floor(v*pow(10.0,n)+0.5)/pow(10.0,n));}
+
 #ifdef _MSC_VER
 #define strdup _strdup
 #define snprintf _snprintf
