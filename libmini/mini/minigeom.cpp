@@ -100,18 +100,18 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    return(line);
    }
 
+const double minigeom_polyhedron::range=1.0E9;
+
 // default constructor
 minigeom_polyhedron::minigeom_polyhedron()
    {
-   static const double safety=1.0E3;
-
    // pre-define a closed bounding box with maximum possible size
-   half.append(minigeom_halfspace(miniv3d(-MAXFLOAT/safety,0,0),miniv3d(1,0,0)));
-   half.append(minigeom_halfspace(miniv3d(MAXFLOAT/safety,0,0),miniv3d(-1,0,0)));
-   half.append(minigeom_halfspace(miniv3d(0,-MAXFLOAT/safety,0),miniv3d(0,1,0)));
-   half.append(minigeom_halfspace(miniv3d(0,MAXFLOAT/safety,0),miniv3d(0,-1,0)));
-   half.append(minigeom_halfspace(miniv3d(0,0,-MAXFLOAT/safety),miniv3d(0,0,1)));
-   half.append(minigeom_halfspace(miniv3d(0,0,MAXFLOAT/safety),miniv3d(0,0,-1)));
+   half.append(minigeom_halfspace(miniv3d(-range,0,0),miniv3d(1,0,0)));
+   half.append(minigeom_halfspace(miniv3d(range,0,0),miniv3d(-1,0,0)));
+   half.append(minigeom_halfspace(miniv3d(0,-range,0),miniv3d(0,1,0)));
+   half.append(minigeom_halfspace(miniv3d(0,range,0),miniv3d(0,-1,0)));
+   half.append(minigeom_halfspace(miniv3d(0,0,-range),miniv3d(0,0,1)));
+   half.append(minigeom_halfspace(miniv3d(0,0,range),miniv3d(0,0,-1)));
    }
 
 // destructor

@@ -226,6 +226,8 @@ class minigeom_polyhedron
    {
    public:
 
+   static const double range;
+
    //! default constructor
    minigeom_polyhedron();
 
