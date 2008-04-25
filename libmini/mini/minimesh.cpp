@@ -130,7 +130,7 @@ void minimesh::connect()
    // set dependencies for all tetrahedra
    for (i=0; i<getsize(); i++)
       {
-      // get vertices of tetrahedron
+      // get vertices of the actual tetrahedron
       v1=get(i).vtx1;
       v2=get(i).vtx2;
       v3=get(i).vtx3;
@@ -155,10 +155,10 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    // calculate face midpoint
    m=(v1+v2+v3)/3;
 
-   // search all tetrahedra for face match
+   // search all tetrahedra for a face match
    for (i=0; i<getsize(); i++)
       {
-      // get vertices of tetrahedron
+      // get vertices of the actual tetrahedron
       p1=get(i).vtx1;
       p2=get(i).vtx2;
       p3=get(i).vtx3;
@@ -170,11 +170,11 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
       m3=(p2+p4+p3)/3.0;
       m4=(p3+p4+p1)/3.0;
 
-      // check for face and orientation match
-      if ((m1-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
-      if ((m2-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
-      if ((m3-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
-      if ((m4-m).getlength2()<fsqr(minigeom_base::delta)) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
+      // check for a face and orientation match
+      if ((m1-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
+      if ((m2-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
+      if ((m3-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
+      if ((m4-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
       }
 
    return(0);
@@ -200,7 +200,7 @@ void minimesh::setvals(const minivals &vals)
       // set the embedded data values
       ref(i).vals=vals;
 
-      // get the vertices of tetrahedron
+      // get the vertices of the actual tetrahedron
       v1=get(i).vtx1;
       v2=get(i).vtx2;
       v3=get(i).vtx3;
@@ -273,7 +273,7 @@ minimesh minimesh::sort(const miniv3d &eye)
 
    for (i=0; i<getsize(); i++) ref(i).visit=FALSE;
 
-   // sort and append each tetrahedron to the output mesh
+   // sort and append all tetrahedra to the output mesh
    SORT.setnull();
    descend(0,eye);
 
@@ -290,13 +290,13 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    // check if the tetrahedral mesh is empty
    if (!isnull())
       {
-      // check if the tetrahedron has been already visited
+      // check if the actual tetrahedron has been already visited
       if (get(idx).visit) return;
 
       // mark as already visited
       ref(idx).visit=TRUE;
 
-      // get the vertices of tetrahedron
+      // get the vertices of the tetrahedron
       v1=get(idx).vtx1;
       v2=get(idx).vtx2;
       v3=get(idx).vtx3;
@@ -396,19 +396,19 @@ BOOLINT minibsptree::preprocess()
             {
             case 0:
                // phase #0: calculate the swizzle constant
-               for (SWIZZLE=PRIME; gcd(MESH.getsize(),SWIZZLE)!=1; SWIZZLE+=2);
+               for (SWIZZLE=PRIME; gcd(4*MESH.getsize(),SWIZZLE)!=1; SWIZZLE+=2);
 
                PHASE++;
 
                break;
             case 1:
                // swizzle the actual position
-               idx=(SWIZZLE*STEP)%MESH.getsize();
+               idx=(SWIZZLE*STEP)%(4*MESH.getsize());
 
                // phase #1: insert each tetrahedron of the input mesh into the bsp tree
-               insert1(idx);
+               insert1(idx/4,idx%4);
 
-               if (++STEP>=MESH.getsize())
+               if (++STEP>=4*MESH.getsize())
                   {
                   STEP=0;
                   PHASE++;
@@ -461,18 +461,21 @@ BOOLINT minibsptree::getstatus()
    {return(DONE);}
 
 // insert tetrahedron (phase #1)
-void minibsptree::insert1(unsigned int idx)
+void minibsptree::insert1(unsigned int idx,unsigned int face)
    {
    minihedron h;
 
-   // get the tetrahedron
+   // get a tetrahedron
    h=MESH[idx];
 
-   // insert the tetrahedral faces as a dividing plane to the bsp tree
-   insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4);
-   insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3);
-   insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1);
-   insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2);
+   // insert one tetrahedral face as a dividing plane
+   switch (face)
+      {
+      case 0: insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4); break;
+      case 1: insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3); break;
+      case 2: insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1); break;
+      case 3: insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2); break;
+      }
    }
 
 // insert tetrahedron (phase #2)
@@ -480,7 +483,7 @@ void minibsptree::insert2(unsigned int idx)
    {
    minihedron h;
 
-   // get the tetrahedron
+   // get a tetrahedron
    h=MESH[idx];
 
    // assign the data coordinates of the tetrahedron to the bsp tree

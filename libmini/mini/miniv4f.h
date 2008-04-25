@@ -154,6 +154,6 @@ inline int operator >= (const miniv4f &a,const miniv4f &b)
    {return(a.x*a.x+a.y*a.y+a.z*a.z+a.w*a.w>=b.x*b.x+b.y*b.y+b.z*b.z+b.w*b.w);}
 
 inline std::ostream& operator << (std::ostream &out,const miniv4f &v)
-   {return(out << '(' << fmround(v.x) << ',' << fmround(v.y) << ',' << fmround(v.z) << ',' << fmround(v.w) << ')');}
+   {return(out << '(' << fround2(v.x) << ',' << fround2(v.y) << ',' << fround2(v.z) << ',' << fround2(v.w) << ')');}
 
 #endif

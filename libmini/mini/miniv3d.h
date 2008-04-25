@@ -155,6 +155,6 @@ inline int operator >= (const miniv3d &a,const miniv3d &b)
    {return(a.x*a.x+a.y*a.y+a.z*a.z>=b.x*b.x+b.y*b.y+b.z*b.z);}
 
 inline std::ostream& operator << (std::ostream &out,const miniv3d &v)
-   {return(out << '(' << mround(v.x) << ',' << mround(v.y) << ',' << mround(v.z) << ')');}
+   {return(out << '(' << round2(v.x) << ',' << round2(v.y) << ',' << round2(v.z) << ')');}
 
 #endif

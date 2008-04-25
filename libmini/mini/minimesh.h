@@ -287,7 +287,7 @@ class minibsptree
 
    BOOLINT MESHDEBUG;
 
-   void insert1(unsigned int idx);
+   void insert1(unsigned int idx,unsigned int face);
    void insert2(unsigned int idx);
 
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h);

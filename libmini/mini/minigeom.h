@@ -15,7 +15,11 @@ class minigeom_base
    public:
 
    static const double delta;
+   static const double delta2;
+
    static const double alpha;
+   static const double sinalpha;
+   static const double cosalpha;
 
    //! default constructor
    minigeom_base() {setnull();}
@@ -74,7 +78,7 @@ class minigeom_base
 
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
-   BOOLINT ishalf() const {return(maxlambda==MAXFLOAT);}
+   BOOLINT ishalf() const {return(minlambda>-MAXFLOAT && maxlambda==MAXFLOAT);}
    BOOLINT isfull() const {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
 
    void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
@@ -86,8 +90,17 @@ class minigeom_base
       {
       double d;
 
-      d=(p-pnt)*vec;
-      return(d>minlambda-delta && d<maxlambda+delta);
+      if (isnull()) return(FALSE);
+      else if (isfull()) return(TRUE);
+      else
+         {
+         d=(p-pnt)*vec;
+
+         if (ishalf()) return(d>minlambda-delta);
+         else return(d>minlambda-delta && d<maxlambda+delta);
+         }
+
+      return(FALSE);
       }
 
    BOOLINT isequal(const minigeom_base &b) const
@@ -96,7 +109,7 @@ class minigeom_base
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if ((vec-b.vec).getlength2()<fsqr(alpha))
+      else if (vec*b.vec>cosalpha)
          {
          d=(b.pnt-pnt)*vec;
 
@@ -228,7 +241,7 @@ class minigeom_polyhedron
    public:
 
    //! default constructor
-   minigeom_polyhedron(const double range=1.0E9);
+   minigeom_polyhedron(const double range=1.0E4); //!!
 
    //! destructor
    ~minigeom_polyhedron();
