@@ -2,10 +2,10 @@
 
 #include "minigeom.h"
 
-const double minigeom_base::delta=1E-3;
+const double minigeom_base::delta=1E-5;
 const double minigeom_base::delta2=FSQR(delta);
 
-const double minigeom_base::alpha=1E-4;
+const double minigeom_base::alpha=1E-5;
 const double minigeom_base::sinalpha=sin(alpha*PI/2.0);
 const double minigeom_base::cosalpha=cos(alpha*PI/2.0);
 
@@ -211,7 +211,7 @@ minigeom_segments minigeom_polyhedron::getface(const unsigned int h) const
             if (j!=h && j!=i) segment.intersect(half[j]);
 
          // append one face segment
-         segments.append(segment);
+         if (!segment.isnull()) segments.append(segment);
          }
 
    return(segments);
