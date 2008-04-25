@@ -282,6 +282,8 @@ inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron &p
 
    for (i=0; i<poly.getnumhalfspace(); i++)
       {
+      printf("size=%u i=%u ",poly.getnumhalfspace(),i); //!!
+
       out << poly.gethalfspace(i);
       if (i<poly.getnumhalfspace()-1) out << ", ";
       }

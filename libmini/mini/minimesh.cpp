@@ -95,9 +95,10 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
 
    minimesh mesh;
 
-   if (poly.getnumhalfspace()==0) return(mesh);
+   if (poly.getnumhalfspace()<4) return(mesh);
 
    gon=polygonize(poly.getface(0));
+   std::cout << poly << std::endl; //!!
    anchor=gon[0];
 
    for (i=1; i<poly.getnumhalfspace(); i++)
