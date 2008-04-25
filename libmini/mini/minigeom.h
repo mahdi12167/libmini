@@ -14,7 +14,7 @@ class minigeom_base
    {
    public:
 
-   static const double delta;
+   static const double delta,alpha;
 
    //! default constructor
    minigeom_base() {setnull();}
@@ -95,7 +95,7 @@ class minigeom_base
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if ((vec-b.vec).getlength2()<fsqr(delta))
+      else if ((vec-b.vec).getlength2()<fsqr(alpha))
          {
          d=(b.pnt-pnt)*vec;
 
@@ -226,10 +226,8 @@ class minigeom_polyhedron
    {
    public:
 
-   static const double range;
-
    //! default constructor
-   minigeom_polyhedron();
+   minigeom_polyhedron(const double range=1.0E9);
 
    //! destructor
    ~minigeom_polyhedron();

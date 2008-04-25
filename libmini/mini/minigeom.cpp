@@ -3,6 +3,7 @@
 #include "minigeom.h"
 
 const double minigeom_base::delta=1E-5;
+const double minigeom_base::alpha=1E-5;
 
 // intersect with half space
 BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
@@ -100,10 +101,8 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    return(line);
    }
 
-const double minigeom_polyhedron::range=1.0E9;
-
 // default constructor
-minigeom_polyhedron::minigeom_polyhedron()
+minigeom_polyhedron::minigeom_polyhedron(const double range)
    {
    // pre-define a closed bounding box with maximum possible size
    half.append(minigeom_halfspace(miniv3d(-range,0,0),miniv3d(1,0,0)));
