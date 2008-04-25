@@ -14,7 +14,8 @@ class minigeom_base
    {
    public:
 
-   static const double delta,alpha;
+   static const double delta;
+   static const double alpha;
 
    //! default constructor
    minigeom_base() {setnull();}
