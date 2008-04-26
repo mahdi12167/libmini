@@ -126,7 +126,38 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
 // reject degenerate tetrahedra
 void minimesh::reject()
    {
-   //!!
+   unsigned int i;
+
+   miniv3d v1,v2,v3,v4;
+
+   double d1,d2,d3,d4;
+   double mind,maxd;
+
+   // check all tetrahedra
+   for (i=0; i<getsize(); i++)
+      {
+      // get vertices of the actual tetrahedron
+      v1=get(i).vtx1;
+      v2=get(i).vtx2;
+      v3=get(i).vtx3;
+      v4=get(i).vtx4;
+
+      // calculate distances of corners to opposing face
+      d1=minigeom_plane(v1,v2,v3,v4).getdistance(v4);
+      d2=minigeom_plane(v1,v4,v2,v3).getdistance(v3);
+      d3=minigeom_plane(v2,v4,v3,v1).getdistance(v1);
+      d4=minigeom_plane(v3,v4,v1,v2).getdistance(v2);
+
+      // calculate minimum and maximum distance
+      mind=FMIN(FMIN(d1,d2),FMIN(d3,d4));
+      maxd=FMAX(FMAX(d1,d2),FMAX(d3,d4));
+
+      // check for degenerate aspect
+      if (mind/maxd<0.001); //!! remove it
+
+      // check for degenerate size
+      if (mind<0.001); //!! remove it
+      }
    }
 
 // connect the faces of a tetrahedral mesh
