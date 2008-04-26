@@ -241,7 +241,7 @@ class minigeom_polyhedron
    public:
 
    //! default constructor
-   minigeom_polyhedron(const double range=1.0E4); //!!
+   minigeom_polyhedron(const double range=1.0E9);
 
    //! destructor
    ~minigeom_polyhedron();

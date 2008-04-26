@@ -358,7 +358,7 @@ minibsptree::minibsptree()
    PHASE=0;
    STEP=0;
 
-   MESHDEBUG=TRUE; //!!
+   MESHDEBUG=FALSE;
    }
 
 // destructor
