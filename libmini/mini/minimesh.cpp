@@ -117,9 +117,16 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
          }
       }
 
+   mesh.reject();
    mesh.connect();
 
    return(mesh);
+   }
+
+// reject degenerate tetrahedra
+void minimesh::reject()
+   {
+   //!!
    }
 
 // connect the faces of a tetrahedral mesh
@@ -151,13 +158,21 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    {
    unsigned int i;
 
-   miniv3d m,m1,m2,m3,m4;
+   minigeom_plane plane;
+
    miniv3d p1,p2,p3,p4;
+   miniv3d m1,m2,m3,m4;
 
-   // calculate face midpoint
-   m=(v1+v2+v3)/3;
+   unsigned int idx;
+   double dist,d;
 
-   // search all tetrahedra for a face match
+   // calculate matching plane
+   plane=minigeom_plane(v1,v2,v3,h);
+
+   idx=0;
+   dist=-MAXFLOAT;
+
+   // search all tetrahedra for a match
    for (i=0; i<getsize(); i++)
       {
       // get vertices of the actual tetrahedron
@@ -172,14 +187,46 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
       m3=(p2+p4+p3)/3.0;
       m4=(p3+p4+p1)/3.0;
 
-      // check for a face and orientation match
-      if ((m1-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p1,p2,p3,p4).isincl(h)) return(i);
-      if ((m2-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p1,p4,p2,p3).isincl(h)) return(i);
-      if ((m3-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p2,p4,p3,p1).isincl(h)) return(i);
-      if ((m4-m).getlength2()<minigeom_base::delta2) if (!minigeom_plane(p3,p4,p1,p2).isincl(h)) return(i);
+      // check each face for a match:
+
+      d=plane.getdistance(m1);
+
+      if (d<minigeom_base::delta)
+         if (d>dist)
+            {
+            idx=i;
+            dist=d;
+            }
+
+      d=plane.getdistance(m2);
+
+      if (d<minigeom_base::delta)
+         if (d>dist)
+            {
+            idx=i;
+            dist=d;
+            }
+
+      d=plane.getdistance(m3);
+
+      if (d<minigeom_base::delta)
+         if (d>dist)
+            {
+            idx=i;
+            dist=d;
+            }
+
+      d=plane.getdistance(m4);
+
+      if (d<minigeom_base::delta)
+         if (d>dist)
+            {
+            idx=i;
+            dist=d;
+            }
       }
 
-   return(0);
+   return(idx);
    }
 
 // append a polyhedron

@@ -201,6 +201,7 @@ class minimesh: public minidyna<minihedron>
    minigon polygonize(minigeom_segments segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
 
+   void reject();
    void connect();
 
    unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h) const;
