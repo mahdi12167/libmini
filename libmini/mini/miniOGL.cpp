@@ -33,6 +33,7 @@ static void initglexts()
 
       if (strstr(GL_EXTs,"GL_EXT_blend_minmax")!=NULL) glext_mm=TRUE;
       if (strstr(GL_EXTs,"GL_SGIS_texture_edge_clamp")!=NULL) glext_tec=TRUE;
+      if (strstr(GL_EXTs,"GL_EXT_texture_edge_clamp")!=NULL) glext_tec=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_filter_anisotropic")!=NULL) glext_tfa=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture3D")!=NULL) glext_t3D=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_texture_compression")!=NULL) glext_tc=TRUE;
@@ -702,14 +703,20 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
 
       if (size>0 || width>0 || height>0)
          {
-#ifndef GL_CLAMP_TO_EDGE_SGIS
+#if !defined(GL_CLAMP_TO_EDGE_SGIS) && !defined(GL_CLAMP_TO_EDGE_EXT)
          glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
          glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 #else
          if (glext_tec)
             {
+#ifdef GL_CLAMP_TO_EDGE_SGIS
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_SGIS);
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_SGIS);
+#endif
+#ifdef GL_CLAMP_TO_EDGE_EXT
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_EXT);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_EXT);
+#endif
             }
          else
             {
