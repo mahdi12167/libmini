@@ -146,6 +146,15 @@ class minidyna
       for (i=0; i<a.getsize(); i++) set(SIZE-i-1,a.get(a.getsize()-i-1));
       }
 
+   //! remove item
+   void remove(const unsigned int idx)
+      {
+      if (idx>=SIZE) ERRORMSG();
+
+      ref(idx)=get(SIZE-1);
+      setsize(SIZE-1);
+      }
+
    //! assignment operator
    minidyna &operator = (const minidyna &a)
       {

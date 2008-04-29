@@ -5,7 +5,11 @@
 #include "minimesh.h"
 
 // default constructor
-minimesh::minimesh(): minidyna<minihedron>() {}
+minimesh::minimesh(): minidyna<minihedron>()
+   {
+   CONFIGURE_DEGENERATE_SIZE=0.0;
+   CONFIGURE_DEGENERATE_ASPECT=0.0;
+   }
 
 // copy contructor
 minimesh::minimesh(const minimesh &mesh): minidyna<minihedron>(mesh) {}
@@ -152,11 +156,21 @@ void minimesh::reject()
       mind=FMIN(FMIN(d1,d2),FMIN(d3,d4));
       maxd=FMAX(FMAX(d1,d2),FMAX(d3,d4));
 
-      // check for degenerate aspect
-      if (mind/maxd<0.001); //!! remove it
-
       // check for degenerate size
-      if (mind<0.001); //!! remove it
+      if (CONFIGURE_DEGENERATE_SIZE>0.0)
+         if (mind<CONFIGURE_DEGENERATE_SIZE)
+            {
+            remove(i);
+            i--;
+            }
+
+      // check for degenerate aspect
+      if (CONFIGURE_DEGENERATE_ASPECT>0.0)
+	 if (mind/maxd<CONFIGURE_DEGENERATE_ASPECT)
+            {
+            remove(i);
+            i--;
+            }
       }
    }
 
@@ -436,7 +450,7 @@ minibsptree::minibsptree()
    PHASE=0;
    STEP=0;
 
-   MESHDEBUG=FALSE;
+   TREEDEBUG=FALSE;
    }
 
 // destructor
@@ -519,7 +533,7 @@ BOOLINT minibsptree::preprocess()
                break;
             case 4:
                // debug output
-               if (MESHDEBUG)
+               if (TREEDEBUG)
                   {
                   std::cout << MESH;
                   std::cout << *this;
@@ -727,7 +741,7 @@ minimesh minibsptree::extract()
       }
 
    // debug output
-   if (MESHDEBUG) std::cout << mesh;
+   if (TREEDEBUG) std::cout << mesh;
 
    return(mesh);
    }
@@ -750,7 +764,7 @@ minimesh minibsptree::extract(const miniv3d &eye,const double radius)
    collect(0);
 
    // debug output
-   if (MESHDEBUG) std::cout << COLLECT;
+   if (TREEDEBUG) std::cout << COLLECT;
 
    return(COLLECT);
    }

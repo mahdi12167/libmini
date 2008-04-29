@@ -198,6 +198,9 @@ class minimesh: public minidyna<minihedron>
 
    minidyna<minihedron> SORT;
 
+   double CONFIGURE_DEGENERATE_SIZE;
+   double CONFIGURE_DEGENERATE_ASPECT;
+
    minigon polygonize(minigeom_segments segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
 
@@ -286,7 +289,7 @@ class minibsptree
    double VOL;
    BOOLINT VOLDONE;
 
-   BOOLINT MESHDEBUG;
+   BOOLINT TREEDEBUG;
 
    void insert1(unsigned int idx,unsigned int face);
    void insert2(unsigned int idx);

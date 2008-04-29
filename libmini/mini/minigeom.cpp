@@ -144,10 +144,7 @@ void minigeom_polyhedron::clear()
 
 // remove half space
 void minigeom_polyhedron::remove(const unsigned int h)
-   {
-   half[h]=half[half.getsize()-1];
-   half.setsize(half.getsize()-1);
-   }
+   {half.remove(h);}
 
 // check if a half space intersects with the polyhedron
 BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit,const unsigned int h) const
