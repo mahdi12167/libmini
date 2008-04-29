@@ -211,6 +211,9 @@ class minimesh: public minidyna<minihedron>
    double getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3) const;
 
    void descend(const unsigned int idx,const miniv3d &eye);
+
+   void configure_degenerate_size(float size);
+   void configure_degenerate_aspect(float aspect);
    };
 
 //! stream output

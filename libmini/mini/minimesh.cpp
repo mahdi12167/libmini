@@ -440,6 +440,14 @@ double minimesh::getvolume() const
    return(vol);
    }
 
+// configuring:
+
+void minimesh::configure_degenerate_size(float size)
+   {CONFIGURE_DEGENERATE_SIZE=size;}
+
+void minimesh::configure_degenerate_aspect(float aspect)
+   {CONFIGURE_DEGENERATE_ASPECT=aspect;}
+
 // default constructor
 minibsptree::minibsptree()
    {
