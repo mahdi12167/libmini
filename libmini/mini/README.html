@@ -933,9 +933,10 @@ automatic generation of texture coordinates can be disabled by calling
 mini::inittexmap() with no parameters. Then all generated vertices are
 passed to a callback function allowing the entire graphics state to be
 handled externally. This feature also allows compatibility with
-graphics standards such as DirectX. Using the callback mechanism from
-within the minitile and miniload frontends is also possible and works
-analogue to the case described in the following.<p>
+graphics standards such as DirectX or rendering engines like
+Irrlicht. Using the callback mechanism from within the minitile and
+miniload frontends is also possible and works analogue to the case
+described in the following.<p>
 
 If the internal OpenGL state management of the Mini Library is not
 needed, one can access the library through the ministub class as shown
