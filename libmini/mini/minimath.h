@@ -68,47 +68,73 @@ class minifixed
       }
 
    //! constructor
-   minifixed(const double v)
+   minifixed(const double v) {set(v);}
+
+   //! destructor
+   ~minifixed() {}
+
+   static double getlimit() {return(N::getlimit()*N::getlimit());}
+
+   void set(const double v)
       {
       double av;
 
       S=(v>=0.0);
-      av=(S)?v:-v;
+      av=S?v:-v;
 
-      M=N(floor(av));
-      F=N(av-floor(av));
+      M=N(floor(av)/N::getlimit());
+      F=N((av-floor(av))*N::getlimit());
       }
 
-   //! destructor
-   ~minifixed() {}
+   double get()
+      {
+      double v;
+
+      v=M.get()*N::getlimit();
+      v+=F.get()/N::getlimit();
+
+      if (S) return(v);
+      else return(-v);
+      }
 
    BOOLINT getsgn() const {return(S);}
    N getmag() const {return(M);}
    N getfrc() const {return(F);}
 
-   static minifixed zero() {return(minifixed(TRUE,N::zero(),N::zero()));}
+   static minifixed zero() {return(minifixed());}
    static minifixed one() {return(minifixed(TRUE,N::one(),N::zero()));}
 
-   BOOLINT isequal(const minifixed &value) const {return(S==value.getsgn() && M.isequal(value.getmag()) && F.isequal(value.getfrc()));}
+   BOOLINT isequal(const minifixed &value) const
+      {
+      if (M.isequal(value.getmag()))
+         if (F.isequal(value.getfrc()))
+            if (S==value.getsgn()) return(TRUE);
+            else
+               if (M.isequal(N::zero()))
+                  if (F.isequal(N::zero())) return(TRUE);
+
+      return(FALSE);
+      }
 
    BOOLINT add(const minifixed &value,minifixed &result) const
       {
       N result1,result2;
       BOOLINT overflow1,overflow2;
 
-      if (getsgn())
+      if (S)
          if (value.getsgn())
             {
-            overflow1=getfrc().add(value.getfrc(),result1);
-            overflow2=getmag().add(value.getmag(),result2);
+            overflow1=F.add(value.getfrc(),result1);
+            overflow2=M.add(value.getmag(),result2);
 
             if (overflow1) overflow1=result2.add(N::one(),result2);
+
             result=minifixed(TRUE,result2,result1);
             }
          else
             {
-            overflow1=getmag().sub(value.getmag(),result1);
-            overflow2=getfrc().sub(value.getfrc(),result2);
+            overflow1=M.sub(value.getmag(),result1);
+            overflow2=F.sub(value.getfrc(),result2);
 
             if (overflow2) overflow2=result1.sub(N::one(),result1);
 
@@ -120,8 +146,8 @@ class minifixed
       else
          if (value.getsgn())
             {
-            overflow1=value.getmag().sub(getmag(),result1);
-            overflow2=value.getfrc().sub(getfrc(),result2);
+            overflow1=value.getmag().sub(M,result1);
+            overflow2=value.getfrc().sub(F,result2);
 
             if (overflow2) overflow2=result1.sub(N::one(),result1);
 
@@ -132,27 +158,32 @@ class minifixed
             }
          else
             {
-            overflow1=getfrc().add(value.getfrc(),result1);
-            overflow2=getmag().add(value.getmag(),result2);
+            overflow1=F.add(value.getfrc(),result1);
+            overflow2=M.add(value.getmag(),result2);
 
             if (overflow1) overflow1=result2.add(N::one(),result2);
+
             result=minifixed(FALSE,result2,result1);
             }
 
       return(overflow1 || overflow2);
       }
 
-   minifixed neg() const {return(minifixed(!getsgn(),getmag(),getfrc()));}
-   minifixed abs() const {return(minifixed(TRUE,getmag(),getfrc()));}
+   minifixed neg() const {return(minifixed(!S,M,F));}
+   minifixed abs() const {return(minifixed(TRUE,M,F));}
 
    BOOLINT sub(const minifixed &value,minifixed &result) const {return(add(value.neg(),result));}
 
    BOOLINT grt(const minifixed &value) const
       {
       minifixed result;
+
       sub(value,result);
 
-      return(result.getsgn());
+      if (result.getsgn())
+         if (!result.isequal(zero())) return(TRUE);
+
+      return(FALSE);
       }
 
    minifixed min(const minifixed &value) {return((grt(value))?*this:value);}
@@ -172,16 +203,18 @@ class minifixed_base
    minifixed_base() {V=0;}
 
    //! constructor
-   minifixed_base(const unsigned long long int v) {V=v;}
+   minifixed_base(const unsigned int m,const unsigned int f) {V=(m<<16)+f;}
 
    //! constructor
-   minifixed_base(const double v) {V=(unsigned long long int)floor(FABS(v));}
+   minifixed_base(const double v) {V=(unsigned int)ffloor(v*(1<<16)+0.5);}
 
    //! destructor
    ~minifixed_base() {}
 
-   static minifixed_base zero() {return(minifixed_base((unsigned long long int)0));}
-   static minifixed_base one() {return(minifixed_base((unsigned long long int)1));}
+   static double getlimit() {return(1<<16);}
+
+   static minifixed_base zero() {return(minifixed_base());}
+   static minifixed_base one() {return(minifixed_base(1,0));}
 
    BOOLINT isequal(const minifixed_base &value) const {return(value.V==V);}
 
@@ -197,7 +230,7 @@ class minifixed_base
       return(result.V>V);
       }
 
-   unsigned long long int V;
+   unsigned int V;
    };
 
 typedef minifixed<minifixed_base> minifixed1;
