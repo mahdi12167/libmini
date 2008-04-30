@@ -3,6 +3,8 @@
 // add include files here:
 // ...
 
+#include "minimath.h"
+
 int main(int argc,char *argv[])
    {
    if (argc!=1)
@@ -15,6 +17,9 @@ int main(int argc,char *argv[])
 
    // add test code here:
    // ...
+
+   minifixed4 test1(1),test2(2),test3;
+   test1.add(test2,test3);
 
    printf("\nfinished test code\n");
 

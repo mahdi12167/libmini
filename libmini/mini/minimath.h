@@ -75,6 +75,13 @@ class minifixed
 
    static double getlimit() {return(N::getlimit()*N::getlimit());}
 
+   static minifixed zero() {return(minifixed());}
+   static minifixed one() {return(minifixed(TRUE,N::one(),N::zero()));}
+
+   BOOLINT getsgn() const {return(S);}
+   N getmag() const {return(M);}
+   N getfrc() const {return(F);}
+
    void set(const double v)
       {
       double av;
@@ -97,13 +104,6 @@ class minifixed
       else return(-v);
       }
 
-   BOOLINT getsgn() const {return(S);}
-   N getmag() const {return(M);}
-   N getfrc() const {return(F);}
-
-   static minifixed zero() {return(minifixed());}
-   static minifixed one() {return(minifixed(TRUE,N::one(),N::zero()));}
-
    BOOLINT isequal(const minifixed &value) const
       {
       if (M.isequal(value.getmag()))
@@ -115,6 +115,9 @@ class minifixed
 
       return(FALSE);
       }
+
+   minifixed neg() const {return(minifixed(!S,M,F));}
+   minifixed abs() const {return(minifixed(TRUE,M,F));}
 
    BOOLINT add(const minifixed &value,minifixed &result) const
       {
@@ -169,9 +172,6 @@ class minifixed
       return(overflow1 || overflow2);
       }
 
-   minifixed neg() const {return(minifixed(!S,M,F));}
-   minifixed abs() const {return(minifixed(TRUE,M,F));}
-
    BOOLINT sub(const minifixed &value,minifixed &result) const {return(add(value.neg(),result));}
 
    BOOLINT grt(const minifixed &value) const
@@ -206,7 +206,7 @@ class minifixed_base
    minifixed_base(const unsigned int m,const unsigned int f) {V=(m<<16)+f;}
 
    //! constructor
-   minifixed_base(const double v) {V=(unsigned int)ffloor(v*(1<<16)+0.5);}
+   minifixed_base(const double v) {set(v);}
 
    //! destructor
    ~minifixed_base() {}
@@ -215,6 +215,9 @@ class minifixed_base
 
    static minifixed_base zero() {return(minifixed_base());}
    static minifixed_base one() {return(minifixed_base(1,0));}
+
+   void set(const double v) {V=(unsigned int)ffloor(v*(1<<16)+0.5);}
+   double get() {return(V/(1<<16));}
 
    BOOLINT isequal(const minifixed_base &value) const {return(value.V==V);}
 
