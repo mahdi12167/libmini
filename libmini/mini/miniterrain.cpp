@@ -90,7 +90,8 @@ miniterrain::miniterrain()
    TPARAMS.localpath="C:\\Windows\\Temp\\"; // local directory for Windows
 #endif
 
-   TPARAMS.altpath="data/"; // alternative data path
+   TPARAMS.altpath="data/";            // alternative data path
+   TPARAMS.altpath="/usr/share/mini/"; // installation data path
 
    // optional feature switches:
 
@@ -343,6 +344,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.localpath=TPARAMS.localpath;
 
          lparams.altpath=TPARAMS.altpath;
+         lparams.instpath=TPARAMS.instpath;
 
          // finally pass the updated layer state
          LAYER[n]->set(lparams);

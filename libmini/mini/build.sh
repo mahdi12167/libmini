@@ -33,6 +33,9 @@ set LINK="-L/usr/local/lib"
 # default installation directory
 set INSTALL="/usr/local"
 
+# default data directory
+set DATA="/usr/share"
+
 set qcwd=$cwd:as/ /\ /
 
 set rule=$1
@@ -70,7 +73,11 @@ endif
 
 if ($rule == "install") then
    if ("$option1" != "") set INSTALL="$option1"
-   exec make INSTALL="$INSTALL" install
+   if ("$USER" != "root") then
+      echo "installation requires super-user priviledges"
+      exit 1
+   endif
+   exec make INSTALL="$INSTALL" DATA="$DATA" install
 endif
 
 set defs=""

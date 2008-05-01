@@ -98,6 +98,7 @@ class miniterrain
       char *localpath;          //+ local directory
 
       char *altpath;            //+ alternative data path
+      char *instpath;           //+ installation data path
 
       // optional feature switches:
 

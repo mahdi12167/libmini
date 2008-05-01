@@ -225,7 +225,11 @@ void miniearth::loadopts()
    char *skyname=NULL;
 
    if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,lparams.altpath);
-   else skyname=getfile(EPARAMS.skydome,lparams.altpath);
+   else
+      {
+      skyname=getfile(EPARAMS.skydome,lparams.altpath);
+      if (skyname==NULL) skyname=getfile(EPARAMS.skydome,lparams.instpath);
+      }
 
    if (skyname!=NULL)
       {
@@ -238,7 +242,11 @@ void miniearth::loadopts()
    char *ename1=NULL;
 
    if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,lparams.altpath);
-   else ename1=getfile(EPARAMS.frontname,lparams.altpath);
+   else
+      {
+      ename1=getfile(EPARAMS.frontname,lparams.altpath);
+      if (ename1==NULL) ename1=getfile(EPARAMS.frontname,lparams.instpath);
+      }
 
    if (ename1!=NULL)
       {
@@ -249,7 +257,11 @@ void miniearth::loadopts()
    char *ename2=NULL;
 
    if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,lparams.altpath);
-   else ename2=getfile(EPARAMS.backname,lparams.altpath);
+   else
+      {
+      ename2=getfile(EPARAMS.backname,lparams.altpath);
+      if (ename2==NULL) ename2=getfile(EPARAMS.backname,lparams.instpath);
+      }
 
    if (ename2!=NULL)
       {
@@ -264,7 +276,11 @@ void miniearth::loadopts()
    if (EPARAMS.frontbuf==NULL)
       {
       if (ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,lparams.altpath);
-      else ebname1=getfile(EPARAMS.frontbufname,lparams.altpath);
+      else
+         {
+         ebname1=getfile(EPARAMS.frontbufname,lparams.altpath);
+         if (ebname1==NULL) ebname1=getfile(EPARAMS.frontbufname,lparams.instpath);
+         }
 
       if (ebname1!=NULL)
          {
@@ -287,7 +303,11 @@ void miniearth::loadopts()
    if (EPARAMS.backbuf==NULL)
       {
       if (ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,lparams.altpath);
-      else ebname2=getfile(EPARAMS.backbufname,lparams.altpath);
+      else
+         {
+         ebname2=getfile(EPARAMS.backbufname,lparams.altpath);
+         if (ebname2==NULL) ebname2=getfile(EPARAMS.backbufname,lparams.instpath);
+         }
 
       if (ebname2!=NULL)
          {

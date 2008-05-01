@@ -67,9 +67,12 @@ vdepend: depend
 install:
 	@-echo "copying libraries to $(INSTALL)/lib"
 	@-$(CP) libMini*.a $(INSTALL)/lib
-	@-if [ ! -e $(INSTALL)/include/mini ]; then mkdir $(INSTALL)/include/mini; fi
 	@-echo "copying headers to $(INSTALL)/include/mini"
+	@-if [ ! -e $(INSTALL)/include/mini ]; then mkdir $(INSTALL)/include/mini; fi
 	@-$(CP) *.h $(INSTALL)/include/mini
+	@-echo "copying data to $(DATA)/mini"
+	@-if [ ! -e $(DATA)/mini ]; then mkdir $(DATA)/mini; fi
+	@-$(CP) data/* $(DATA)/mini
 
 tools:	lib libsfx
 	@-(cd tools; make all)

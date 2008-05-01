@@ -137,7 +137,8 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.localpath="C:\\Windows\\Temp\\"; // local directory for Windows
 #endif
 
-   LPARAMS.altpath="data/"; // alternative data path
+   LPARAMS.altpath="data/";             // alternative data path
+   LPARAMS.instpath="/usr/share/mini/"; // installation data path
 
    // optional feature switches:
 
@@ -683,7 +684,9 @@ void minilayer::loadopts()
 
    // load waypoints:
 
-   char *wpname=TILECACHE->getfile(LPARAMS.waypoints,LPARAMS.altpath);
+   char *wpname;
+
+   wpname=TILECACHE->getfile(LPARAMS.waypoints,LPARAMS.altpath);
 
    if (wpname!=NULL)
       {
@@ -702,7 +705,10 @@ void minilayer::loadopts()
 
    // load brick data:
 
-   char *bname=TILECACHE->getfile(LPARAMS.brick,LPARAMS.altpath);
+   char *bname;
+
+   bname=TILECACHE->getfile(LPARAMS.brick,LPARAMS.altpath);
+   if (bname==NULL) bname=TILECACHE->getfile(LPARAMS.brick,LPARAMS.instpath);
 
    if (bname!=NULL)
       {
