@@ -166,7 +166,7 @@ void minimesh::reject()
 
       // check for degenerate aspect
       if (CONFIGURE_DEGENERATE_ASPECT>0.0)
-	 if (mind/maxd<CONFIGURE_DEGENERATE_ASPECT)
+         if (mind/maxd<CONFIGURE_DEGENERATE_ASPECT)
             {
             remove(i);
             i--;
