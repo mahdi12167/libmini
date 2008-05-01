@@ -90,8 +90,8 @@ miniterrain::miniterrain()
    TPARAMS.localpath="C:\\Windows\\Temp\\"; // local directory for Windows
 #endif
 
-   TPARAMS.altpath="data/";            // alternative data path
-   TPARAMS.altpath="/usr/share/mini/"; // installation data path
+   TPARAMS.altpath="data/";             // alternative data path
+   TPARAMS.instpath="/usr/share/mini/"; // installation data path
 
    // optional feature switches:
 
