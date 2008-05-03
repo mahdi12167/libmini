@@ -951,7 +951,7 @@ resolve the OpenGL dependencies.<p>
 <pre>
    #include &lt;OpenGL headers&gt;
 
-   #include "ministub.h"
+   #include &lt;mini/ministub.h&gt;
 
    // height field is a float array
    float hfield[]={0,0,0,0,0,
@@ -1142,7 +1142,7 @@ Free sky dome textures can be downloaded at<p>
 In order to load a real height field or texture use the PNM reader via<p>
 
 <pre>
-   #include "pnmbase.h"
+   #include &lt;mini/pnmbase.h&gt;
 
    unsigned char *data;
    int width,height,components;
@@ -1531,7 +1531,7 @@ Then we enable the asynchronous paging mechanism (with a single
 background thread):<p>
 
 <pre>
-   #include "datacloud.h"
+   #include &lt;mini/datacloud.h&gt;
 
    static const int numthreads=1;
 
@@ -1582,7 +1582,7 @@ could be used as well:<p>
 <pre>
    #include &lt;pthread.h&gt;
 
-   #include "datacloud.h"
+   #include &lt;mini/datacloud.h&gt;
 
    pthread_t pthread[numthreads];
    pthread_mutex_t mutex,iomutex;
