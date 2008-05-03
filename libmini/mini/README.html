@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.7.6 as of 1.May.2008<br>
+Version 8.7.6 as of 3.May.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -286,6 +286,23 @@ In the following the low level terrain rendering API is explained by
 drawing a small example height field. This task is broken down into
 eight basic steps. The example code is included in the distribution
 and can be compiled by typing "build.sh example" in a shell.<p>
+
+<h3>Step 0) Include the libMini core header:</h3>
+
+<pre>
+   #include &lt;mini/mini.h&gt;
+</pre>
+
+<div class="note">
+   <b>Note:</b> On Linux the libMini headers are usually placed in the
+                "/usr/local/include/mini" directory after installation
+                (via build.sh; build.sh install). So the libMini
+                headers should be included with the "mini/" prefix,
+                since "/usr/local/include" is already in the default
+                search path. On Windows the libMini installation path
+                can be added with the VisualStudio-> Tools-> Options->
+                Projects-> Directories menu entry.
+</div><p>
 
 <h3>[Optional] Step 1) Specify the fine tuning parameters:</h3>
 
