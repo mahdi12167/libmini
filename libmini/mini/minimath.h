@@ -189,6 +189,24 @@ class minifixed
    minifixed min(const minifixed &value) {return((grt(value))?*this:value);}
    minifixed max(const minifixed &value) {return((grt(value))?value:*this);}
 
+   minifixed mul(const minifixed &value,minifixed &result) const
+      {
+      N result1,result2,result3,result4;
+      N overflow1,overflow2,overflow3,overflow4;
+
+      overflow1=F.mul(value.getfrc(),result1);
+      overflow2=F.mul(value.getmag(),result2);
+      overflow3=M.mul(value.getfrc(),result3);
+      overflow4=M.mul(value.getmag(),result4);
+
+      result=minifixed(N::zero(),overflow1);
+      result.add(minifixed(overflow2,result2),result);
+      result.add(minifixed(overflow3,result3),result);
+      result.add(minifixed(result4,N::zero),result);
+
+      return(minifixed(N::zero(),overflow4));
+      }
+
    private:
 
    BOOLINT S;
@@ -231,6 +249,14 @@ class minifixed_base
       {
       result.V=V-value.V;
       return(result.V>V);
+      }
+
+   minifixed_base mul(const minifixed_base &value,minifixed_base &result) const
+      {
+      unsigned long long int mv;
+      mv=(unsigned long long int)V*(unsigned long long int)value.V;
+      result.V=(unsigned int)(mv>>16);
+      return(minifixed_base(0,(unsigned int)(mv>>48)));
       }
 
    unsigned int V;
