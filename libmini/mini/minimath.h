@@ -191,20 +191,24 @@ class minifixed
 
    minifixed mul(const minifixed &value,minifixed &result) const
       {
+      BOOLINT sign;
+
       N result1,result2,result3,result4;
       N overflow1,overflow2,overflow3,overflow4;
+
+      sign=!(S^value.getsgn());
 
       overflow1=F.mul(value.getfrc(),result1);
       overflow2=F.mul(value.getmag(),result2);
       overflow3=M.mul(value.getfrc(),result3);
       overflow4=M.mul(value.getmag(),result4);
 
-      result=minifixed(N::zero(),overflow1);
-      result.add(minifixed(overflow2,result2),result);
-      result.add(minifixed(overflow3,result3),result);
-      result.add(minifixed(result4,N::zero),result);
+      result=minifixed(sign,N::zero(),overflow1);
+      result.add(minifixed(sign,overflow2,result2),result);
+      result.add(minifixed(sign,overflow3,result3),result);
+      result.add(minifixed(sign,result4,N::zero()),result);
 
-      return(minifixed(N::zero(),overflow4));
+      return(minifixed(TRUE,N::zero(),overflow4));
       }
 
    private:

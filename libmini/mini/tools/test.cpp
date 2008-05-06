@@ -19,8 +19,11 @@ int main(int argc,char *argv[])
    // ...
 
    minifixed4 test1(1),test2(2),test3;
+
    test1.add(test2,test3);
    printf("1+2=%g\n",test3.get());
+   test2.mul(test3,test3);
+   printf("2*3=%g\n",test3.get());
 
    printf("\nfinished test code\n");
 
