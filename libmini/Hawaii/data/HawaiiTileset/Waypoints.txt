@@ -2145,3 +2145,21 @@ UTM 04
 633013
 2365887
 22m
+
+Water Reservoir Access, Keolu Hills
+LL
+21.369138
+-157.727017
+84m
+
+Water Reservoir, Keolu Hills
+LL
+21.369229
+-157.727783
+118m
+
+Ahuialama Falls
+LL
+21.339528
+-157.805386
+780f
