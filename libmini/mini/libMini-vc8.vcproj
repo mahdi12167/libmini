@@ -1289,6 +1289,10 @@
 				>
 			</File>
 			<File
+				RelativePath="minimpfp.h"
+				>
+			</File>
+			<File
 				RelativePath="minitime.h"
 				>
 			</File>
