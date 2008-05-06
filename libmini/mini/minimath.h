@@ -211,13 +211,13 @@ class minifixed_base
    //! destructor
    ~minifixed_base() {}
 
-   static double getlimit() {return(1<<16);}
+   static double getlimit() {return((double)(1<<16));}
 
    static minifixed_base zero() {return(minifixed_base());}
    static minifixed_base one() {return(minifixed_base(1,0));}
 
-   void set(const double v) {V=(unsigned int)ffloor(v*(1<<16)+0.5);}
-   double get() {return(V/(1<<16));}
+   void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
+   double get() {return(V/(double)(1<<16));}
 
    BOOLINT isequal(const minifixed_base &value) const {return(value.V==V);}
 

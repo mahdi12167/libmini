@@ -18,7 +18,7 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   minifixed1 test1(1),test2(2),test3;
+   minifixed4 test1(1),test2(2),test3;
    test1.add(test2,test3);
    printf("1+2=%g\n",test3.get());
 
