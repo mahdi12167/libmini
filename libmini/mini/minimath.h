@@ -68,6 +68,14 @@ class minifixed
       }
 
    //! constructor
+   minifixed(const N &m,const N &f)
+      {
+      S=TRUE;
+      M=m;
+      F=f;
+      }
+
+   //! constructor
    minifixed(const double v) {set(v);}
 
    //! destructor
@@ -76,7 +84,7 @@ class minifixed
    static double getlimit() {return(N::getlimit()*N::getlimit());}
 
    static minifixed zero() {return(minifixed());}
-   static minifixed one() {return(minifixed(TRUE,N::one(),N::zero()));}
+   static minifixed one() {return(minifixed(N::one(),N::zero()));}
 
    BOOLINT getsgn() const {return(S);}
    N getmag() const {return(M);}
@@ -117,7 +125,7 @@ class minifixed
       }
 
    minifixed neg() const {return(minifixed(!S,M,F));}
-   minifixed abs() const {return(minifixed(TRUE,M,F));}
+   minifixed abs() const {return(minifixed(M,F));}
 
    BOOLINT add(const minifixed &value,minifixed &result) const
       {
@@ -132,7 +140,7 @@ class minifixed
 
             if (overflow1) overflow1=result2.add(N::one(),result2);
 
-            result=minifixed(TRUE,result2,result1);
+            result=minifixed(result2,result1);
             }
          else
             {
@@ -141,8 +149,7 @@ class minifixed
 
             if (overflow2) overflow2=result1.sub(N::one(),result1);
 
-            if (overflow1 || overflow2) result=minifixed(FALSE,result1,result2);
-            else result=minifixed(TRUE,result1,result2);
+            result=minifixed(!overflow1 && !overflow2,result1,result2);
 
             return(FALSE);
             }
@@ -154,8 +161,7 @@ class minifixed
 
             if (overflow2) overflow2=result1.sub(N::one(),result1);
 
-            if (overflow1 || overflow2) result=minifixed(FALSE,result1,result2);
-            else result=minifixed(TRUE,result1,result2);
+            result=minifixed(!overflow1 && !overflow2,result1,result2);
 
             return(FALSE);
             }
@@ -203,12 +209,12 @@ class minifixed
       overflow3=M.mul(value.getfrc(),result3);
       overflow4=M.mul(value.getmag(),result4);
 
-      result=minifixed(sign,N::zero(),overflow1);
-      result.add(minifixed(sign,overflow2,result2),result);
-      result.add(minifixed(sign,overflow3,result3),result);
-      result.add(minifixed(sign,result4,N::zero()),result);
+      result=minifixed(sign,N::zero(),N(overflow1.getmag(),result1.getmag()));
+      result.add(minifixed(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result);
+      result.add(minifixed(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result);
+      result.add(minifixed(sign,N(result4.getfrc(),overflow4.getfrc()),N::zero()),result);
 
-      return(minifixed(TRUE,N::zero(),overflow4));
+      return(minifixed(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
       }
 
    private:
@@ -238,6 +244,9 @@ class minifixed_base
    static minifixed_base zero() {return(minifixed_base());}
    static minifixed_base one() {return(minifixed_base(1,0));}
 
+   unsigned int getmag() const {return(V>>16);}
+   unsigned int getfrc() const {return(V&((1<<16)-1));}
+
    void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
    double get() {return(V/(double)(1<<16));}
 
@@ -260,7 +269,7 @@ class minifixed_base
       unsigned long long int mv;
       mv=(unsigned long long int)V*(unsigned long long int)value.V;
       result.V=(unsigned int)(mv>>16);
-      return(minifixed_base(0,(unsigned int)(mv>>48)));
+      return(minifixed_base((unsigned int)(mv>>48),(unsigned int)(mv&((1<<16)-1))));
       }
 
    unsigned int V;
