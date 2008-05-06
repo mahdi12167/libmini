@@ -41,6 +41,7 @@ class minimpfp
    //! destructor
    ~minimpfp() {}
 
+   static unsigned int getbits() {return(2*N::getbits());}
    static double getlimit() {return(N::getlimit()*N::getlimit());}
 
    static minimpfp zero() {return(minimpfp());}
@@ -199,6 +200,7 @@ class minimpfp_base
    //! destructor
    ~minimpfp_base() {}
 
+   static unsigned int getbits() {return(32);}
    static double getlimit() {return((double)(1<<16));}
 
    static minimpfp_base zero() {return(minimpfp_base());}
