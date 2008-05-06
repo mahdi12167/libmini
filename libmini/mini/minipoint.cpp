@@ -520,7 +520,9 @@ void minipoint::load(char *filename,
 
       if (point.elevation==NULL) ERRORMSG();
 
-      if (sscanf(point.elevation,"%g",&point.elev)!=1) ERRORMSG();
+      if (sscanf(point.elevation,"%gm",&point.elev)!=1)
+         if (sscanf(point.elevation,"%gf",&point.elev)!=1) ERRORMSG();
+         else point.elev*=0.3048f; // feet to meters
 
       if (CONFIGURE_DSTZONE==0)
          {
