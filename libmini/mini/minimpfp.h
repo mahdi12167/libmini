@@ -126,8 +126,6 @@ class minimpfp
 
                result=minimpfp(result1,result2);
                }
-
-            return(FALSE);
             }
       else
          if (value.getsgn())
@@ -151,8 +149,6 @@ class minimpfp
 
                result=minimpfp(result1,result2);
                }
-
-            return(FALSE);
             }
          else
             {
