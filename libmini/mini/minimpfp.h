@@ -51,6 +51,8 @@ class minimpfp
    N getmag() const {return(M);}
    N getfrc() const {return(F);}
 
+   minimpfp swap() const {return(minimpfp(S,F,M));}
+
    void set(const double v)
       {
       double av;
@@ -62,7 +64,7 @@ class minimpfp
       F=N((av-floor(av))*N::getlimit());
       }
 
-   double get()
+   double get() const
       {
       double v;
 
@@ -99,9 +101,9 @@ class minimpfp
             overflow1=F.add(value.getfrc(),result1);
             overflow2=M.add(value.getmag(),result2);
 
-            result=minimpfp(result2,result1);
+            if (overflow1) overflow1=result2.add(N::one().swap(),result2);
 
-            if (overflow1) overflow1=result.add(one(),result);
+            result=minimpfp(result2,result1);
             }
          else
             {
@@ -112,17 +114,17 @@ class minimpfp
                value.getmag().sub(M,result1);
                overflow2=value.getfrc().sub(F,result2);
 
-               result=minimpfp(FALSE,result1,result2);
+               if (overflow2) result1.sub(N::one().swap(),result1);
 
-               if (overflow2) result.add(one(),result);
+               result=minimpfp(FALSE,result1,result2);
                }
             else
                {
                overflow2=F.sub(value.getfrc(),result2);
 
-               result=minimpfp(result1,result2);
+               if (overflow2) result1.sub(N::one().swap(),result1);
 
-               if (overflow2) result.sub(one(),result);
+               result=minimpfp(result1,result2);
                }
 
             return(FALSE);
@@ -137,17 +139,17 @@ class minimpfp
                M.sub(value.getmag(),result1);
                overflow2=F.sub(value.getfrc(),result2);
 
-               result=minimpfp(FALSE,result1,result2);
+               if (overflow2) result1.sub(N::one().swap(),result1);
 
-               if (overflow2) result.add(one(),result);
+               result=minimpfp(FALSE,result1,result2);
                }
             else
                {
                overflow2=value.getfrc().sub(F,result2);
 
-               result=minimpfp(result1,result2);
+               if (overflow2) result1.sub(N::one().swap(),result1);
 
-               if (overflow2) result.sub(one(),result);
+               result=minimpfp(result1,result2);
                }
 
             return(FALSE);
@@ -157,9 +159,9 @@ class minimpfp
             overflow1=F.add(value.getfrc(),result1);
             overflow2=M.add(value.getmag(),result2);
 
-            result=minimpfp(FALSE,result2,result1);
+            if (overflow1) overflow1=result2.add(N::one().swap(),result2);
 
-            if (overflow1) overflow1=result.sub(one(),result);
+            result=minimpfp(FALSE,result2,result1);
             }
 
       return(overflow1 || overflow2);
@@ -235,8 +237,10 @@ class minimpfp_base
    unsigned int getmag() const {return(V>>16);}
    unsigned int getfrc() const {return(V&((1<<16)-1));}
 
+   minimpfp_base swap() const {return(minimpfp_base(getfrc(),getmag()));}
+
    void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
-   double get() {return(V/(double)(1<<16));}
+   double get() const {return(V/(double)(1<<16));}
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
 
