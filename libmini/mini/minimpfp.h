@@ -111,14 +111,19 @@ class minimpfp
                {
                value.getmag().sub(M,result1);
                overflow2=value.getfrc().sub(F,result2);
+
+               result=minimpfp(FALSE,result1,result2);
+
+               if (overflow2) result.add(one(),result);
                }
-            else overflow2=F.sub(value.getfrc(),result2);
+            else
+               {
+               overflow2=F.sub(value.getfrc(),result2);
 
-            result=minimpfp(!overflow1,result1,result2);
+               result=minimpfp(result1,result2);
 
-            if (overflow2)
-               if (overflow1) result.add(one(),result);
-               else result.sub(one(),result);
+               if (overflow2) result.sub(one(),result);
+               }
 
             return(FALSE);
             }
@@ -131,14 +136,19 @@ class minimpfp
                {
                M.sub(value.getmag(),result1);
                overflow2=F.sub(value.getfrc(),result2);
+
+               result=minimpfp(FALSE,result1,result2);
+
+               if (overflow2) result.add(one(),result);
                }
-            else overflow2=value.getfrc().sub(F,result2);
+            else
+               {
+               overflow2=value.getfrc().sub(F,result2);
 
-            result=minimpfp(!overflow1,result1,result2);
+               result=minimpfp(result1,result2);
 
-            if (overflow2)
-               if (overflow1) result.add(one(),result);
-               else result.sub(one(),result);
+               if (overflow2) result.sub(one(),result);
+               }
 
             return(FALSE);
             }
