@@ -99,18 +99,26 @@ class minimpfp
             overflow1=F.add(value.getfrc(),result1);
             overflow2=M.add(value.getmag(),result2);
 
-            if (overflow1) overflow1=result2.add(N::one(),result2);
-
             result=minimpfp(result2,result1);
+
+            if (overflow1) overflow1=result.add(one(),result);
             }
          else
             {
             overflow1=M.sub(value.getmag(),result1);
-            overflow2=F.sub(value.getfrc(),result2);
 
-            if (overflow2) overflow2=result1.sub(N::one(),result1);
+            if (overflow1)
+               {
+               value.getmag().sub(M,result1);
+               overflow2=value.getfrc().sub(F,result2);
+               }
+            else overflow2=F.sub(value.getfrc(),result2);
 
-            result=minimpfp(!overflow1 && !overflow2,result1,result2);
+            result=minimpfp(!overflow1,result1,result2);
+
+            if (overflow2)
+               if (overflow1) result.add(one(),result);
+               else result.sub(one(),result);
 
             return(FALSE);
             }
@@ -118,11 +126,19 @@ class minimpfp
          if (value.getsgn())
             {
             overflow1=value.getmag().sub(M,result1);
-            overflow2=value.getfrc().sub(F,result2);
 
-            if (overflow2) overflow2=result1.sub(N::one(),result1);
+            if (overflow1)
+               {
+               M.sub(value.getmag(),result1);
+               overflow2=F.sub(value.getfrc(),result2);
+               }
+            else overflow2=value.getfrc().sub(F,result2);
 
-            result=minimpfp(!overflow1 && !overflow2,result1,result2);
+            result=minimpfp(!overflow1,result1,result2);
+
+            if (overflow2)
+               if (overflow1) result.add(one(),result);
+               else result.sub(one(),result);
 
             return(FALSE);
             }
@@ -131,9 +147,9 @@ class minimpfp
             overflow1=F.add(value.getfrc(),result1);
             overflow2=M.add(value.getmag(),result2);
 
-            if (overflow1) overflow1=result2.add(N::one(),result2);
-
             result=minimpfp(FALSE,result2,result1);
+
+            if (overflow1) overflow1=result.sub(one(),result);
             }
 
       return(overflow1 || overflow2);
@@ -240,6 +256,5 @@ class minimpfp_base
 typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
-typedef minimpfp<minimpfp4> minimpfp8;     // 512 bit precision
 
 #endif

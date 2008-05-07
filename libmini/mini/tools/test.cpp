@@ -23,7 +23,7 @@ int main(int argc,char *argv[])
 
    double time;
 
-   unsigned int i,j;
+   int i,j;
 
    minifp test1,test2,test3;
 
@@ -32,11 +32,11 @@ int main(int argc,char *argv[])
 
    time=minigettime();
 
-   const unsigned int addmax1=100000;
-   const unsigned int addmax2=10;
+   const int addmax1=100000;
+   const int addmax2=10;
 
-   for (i=0; i<addmax1; i++)
-      for (j=0; j<addmax2; j++)
+   for (i=-addmax1-1; i<addmax1; i++)
+      for (j=-addmax2-1; j<addmax2; j++)
          {
          test1=minifp(i);
          test2=minifp(j);
@@ -47,15 +47,15 @@ int main(int argc,char *argv[])
             printf("%g+%g!=%g\n",(double)i,(double)j,test3.get());
          }
 
-   printf("%gkadds/s\n",(double)addmax1*addmax2/(minigettime()-time)/1000);
+   printf("%gkadds/s\n",(double)4*addmax1*addmax2/(minigettime()-time)/1000);
 
    time=minigettime();
 
-   const unsigned int mulmax1=10000;
-   const unsigned int mulmax2=100;
+   const int mulmax1=10000;
+   const int mulmax2=100;
 
-   for (i=0; i<mulmax1; i++)
-      for (j=0; j<mulmax2; j++)
+   for (i=-mulmax1-1; i<mulmax1; i++)
+      for (j=-mulmax2-1; j<mulmax2; j++)
          {
          test1=minifp(i);
          test2=minifp(j);
@@ -66,7 +66,7 @@ int main(int argc,char *argv[])
             printf("%g*%g!=%g\n",(double)i,(double)j,test3.get());
          }
 
-   printf("%gkmuls/s\n",(double)mulmax1*mulmax2/(minigettime()-time)/1000);
+   printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/(minigettime()-time)/1000);
 
    printf("\nfinished test code\n");
 
