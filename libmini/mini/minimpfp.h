@@ -85,6 +85,18 @@ class minimpfp
       return(FALSE);
       }
 
+   BOOLINT isnotequal(const minimpfp &value) const
+      {
+      if (M.isnotequal(value.getmag())) return(TRUE);
+      if (F.isnotequal(value.getfrc())) return(TRUE);
+      if (S==value.getsgn()) return(FALSE);
+
+      if (M.isnotequal(N::zero())) return(TRUE);
+      if (F.isnotequal(N::zero())) return(TRUE);
+
+      return(FALSE);
+      }
+
    minimpfp neg() const {return(minimpfp(!S,M,F));}
    minimpfp abs() const {return(minimpfp(M,F));}
 
@@ -180,7 +192,7 @@ class minimpfp
       sub(value,result);
 
       if (result.getsgn())
-         if (!result.isequal(zero())) return(TRUE);
+         if (result.isnotequal(zero())) return(TRUE);
 
       return(FALSE);
       }
@@ -189,7 +201,7 @@ class minimpfp
    minimpfp max(const minimpfp &value) {return((grt(value))?value:*this);}
 
    void mul(const minimpfp &value,minimpfp &result) const
-      {if (!mul2(value,result).isequal(zero())) result=result.maxval();}
+      {if (mul2(value,result).isnotequal(zero())) result=result.maxval();}
 
    minimpfp mul2(const minimpfp &value,minimpfp &result) const
       {
@@ -251,6 +263,7 @@ class minimpfp_base
    double get() const {return(V/(double)(1<<16));}
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
+   BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
 
    BOOLINT add2(const minimpfp_base &value,minimpfp_base &result) const
       {
