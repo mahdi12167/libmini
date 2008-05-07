@@ -19,7 +19,7 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   typedef minimpfp1 minifp;
+   typedef minimpfp4 minifp;
 
    double time1,time2;
 
