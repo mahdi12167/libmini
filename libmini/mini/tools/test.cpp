@@ -19,7 +19,7 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   typedef minimpfp4 minifp;
+   typedef minimpfp1 minifp;
 
    double time1,time2;
 
@@ -44,13 +44,13 @@ int main(int argc,char *argv[])
    for (i=-addmax1-1; i<addmax1; i++)
       for (j=-addmax2-1; j<addmax2; j++)
          {
-         test1=minifp(i);
-         test2=minifp(j);
+         test1=minifp(0.1*i);
+         test2=minifp(0.1*j);
 
          test1.add(test2,test3);
 
-         if (test3.get()!=(double)i+(double)j)
-            printf("%g+%g!=%g\n",(double)i,(double)j,test3.get());
+         if (FABS(test3.get()-0.1*i-0.1*j)>1E-3)
+            printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
    time1=minigettime()-time1;
@@ -82,13 +82,13 @@ int main(int argc,char *argv[])
    for (i=-mulmax1-1; i<mulmax1; i++)
       for (j=-mulmax2-1; j<mulmax2; j++)
          {
-         test1=minifp(i);
-         test2=minifp(j);
+         test1=minifp(0.1*i);
+         test2=minifp(0.1*j);
 
          test1.mul(test2,test3);
 
-         if (test3.get()!=(double)i*(double)j)
-            printf("%g*%g!=%g\n",(double)i,(double)j,test3.get());
+         if (FABS(test3.get()-0.1*i*0.1*j)>1E-3)
+            ;//!!printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
    time1=minigettime()-time1;
