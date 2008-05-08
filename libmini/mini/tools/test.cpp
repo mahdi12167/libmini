@@ -19,7 +19,7 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   typedef minimpfp1 minifp;
+   typedef minimpfp2 minifp;
 
    double time1,time2;
 
@@ -38,8 +38,8 @@ int main(int argc,char *argv[])
 
    time1=minigettime();
 
-   const long long int addmax1=100000;
-   const long long int addmax2=10;
+   const long long int addmax1=100;
+   const long long int addmax2=100;
 
    for (i=-addmax1-1; i<addmax1; i++)
       for (j=-addmax2-1; j<addmax2; j++)
@@ -76,7 +76,7 @@ int main(int argc,char *argv[])
 
    time1=minigettime();
 
-   const long long int mulmax1=10000;
+   const long long int mulmax1=100;
    const long long int mulmax2=100;
 
    for (i=-mulmax1-1; i<mulmax1; i++)
