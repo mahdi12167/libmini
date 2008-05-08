@@ -274,7 +274,7 @@ class minimpfp_base
    static minimpfp_base one() {return(minimpfp_base(1,0));}
 
    static minimpfp_base min() {return(minimpfp_base(0,1));}
-   static minimpfp_base max() {return(minimpfp_base(-1,-1));}
+   static minimpfp_base max() {return(minimpfp_base((unsigned int)-1,(unsigned int)-1));}
 
    unsigned int getmag() const {return(V>>16);}
    unsigned int getfrc() const {return(V&((1<<16)-1));}
