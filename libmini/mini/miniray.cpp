@@ -758,7 +758,7 @@ int miniray::intersect(const miniv3d &o,const miniv3d &d,
                        const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
                        miniv3d *tuv)
    {
-   static const float epsilon=0.000001f;
+   static const float epsilon=1E-5f;
 
    double t,u,v;
    miniv3d edge1,edge2,tvec,pvec,qvec;
