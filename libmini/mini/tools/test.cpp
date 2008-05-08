@@ -19,7 +19,7 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   typedef minimpfp2 minifp;
+   typedef minimpfp1 minifp;
 
    double time1,time2;
 
@@ -44,6 +44,9 @@ int main(int argc,char *argv[])
    for (i=-addmax1-1; i<addmax1; i++)
       for (j=-addmax2-1; j<addmax2; j++)
          {
+         //!!i=91;
+         //!!j=-11;
+
          test1=minifp(0.1*i);
          test2=minifp(0.1*j);
 
