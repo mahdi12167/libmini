@@ -155,56 +155,64 @@ class minimpfp
             {
             sign=TRUE;
 
-            overflow1=F.sub2(value.getfrc(),result1);
-            overflow2=M.sub2(value.getmag(),result2);
+            overflow1=M.sub2(value.getmag(),result1);
 
             if (overflow1)
                {
-               overflow1=result2.sub2(N::min(),result2);
-               result1.nrm();
+               sign=FALSE;
+               result1.cpm();
 
-               if (overflow1)
-                  {
-                  sign=FALSE;
-                  result2.cpm();
-                  }
+               overflow2=value.getfrc().sub2(F,result2);
                }
+            else overflow2=F.sub2(value.getfrc(),result2);
 
             if (overflow2)
                {
-               sign=FALSE;
-               result2.cpm();
+               result2.nrm();
+               overflow2=result1.sub2(N::min(),result1);
+
+               if (overflow2)
+                  {
+                  sign=FALSE;
+                  result1=N::zero();
+                  result2.cpm();
+                  result2.nrm();
+                  }
                }
 
-            result=minimpfp(sign,result2,result1);
+            result=minimpfp(sign,result1,result2);
             }
       else
          if (value.getsgn())
             {
             sign=TRUE;
 
-            overflow1=value.getfrc().sub2(F,result1);
-            overflow2=value.getmag().sub2(M,result2);
+            overflow1=value.getmag().sub2(M,result1);
 
             if (overflow1)
                {
-               overflow1=result2.sub2(N::min(),result2);
-               result1.nrm();
+               sign=FALSE;
+               result1.cpm();
 
-               if (overflow1)
-                  {
-                  sign=FALSE;
-                  result2.cpm();
-                  }
+               overflow2=F.sub2(value.getfrc(),result2);
                }
+            else overflow2=value.getfrc().sub2(F,result2);
 
             if (overflow2)
                {
-               sign=FALSE;
-               result2.cpm();
+               result2.nrm();
+               overflow2=result1.sub2(N::min(),result1);
+
+               if (overflow2)
+                  {
+                  sign=FALSE;
+                  result1=N::zero();
+                  result2.cpm();
+                  result2.nrm();
+                  }
                }
 
-            result=minimpfp(sign,result2,result1);
+            result=minimpfp(sign,result1,result2);
             }
          else
             {
@@ -312,7 +320,7 @@ class minimpfp_base
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
 
    void nrm() {}
-   void cpm() {V=(V^V)+1;}
+   void cpm() {V=~V+1;}
 
    BOOLINT add2(const minimpfp_base &value,minimpfp_base &result) const
       {
