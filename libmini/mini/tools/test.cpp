@@ -21,13 +21,11 @@ int main(int argc,char *argv[])
 
    typedef minimpfp4 minifp;
 
-   double time1,time2;
+   double time;
 
    long long int i,j;
 
    minifp test1,test2,test3;
-
-   double test;
 
    // constants:
 
@@ -36,7 +34,7 @@ int main(int argc,char *argv[])
 
    // add speed test:
 
-   time1=minigettime();
+   time=minigettime();
 
    const long long int addmax1=100;
    const long long int addmax2=100;
@@ -53,28 +51,13 @@ int main(int argc,char *argv[])
             printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
-   time1=minigettime()-time1;
+   time=minigettime()-time;
 
-   printf("%gkadds/s\n",(double)4*addmax1*addmax2/time1/1E3);
-
-   // add double test:
-
-   time2=minigettime();
-
-   for (i=-addmax1-1; i<addmax1; i++)
-      for (j=-addmax2-1; j<addmax2; j++)
-         {
-         test=(double)i+(double)j;
-         if (test==MAXFLOAT) ERRORMSG();
-         }
-
-   time2=minigettime()-time2;
-
-   printf("(%gkdadds/s)\n",(double)4*addmax1*addmax2/time2/1E3);
+   printf("%gkadds/s\n",(double)4*addmax1*addmax2/time/1E3);
 
    // mul speed test:
 
-   time1=minigettime();
+   time=minigettime();
 
    const long long int mulmax1=100;
    const long long int mulmax2=100;
@@ -91,24 +74,9 @@ int main(int argc,char *argv[])
             printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
-   time1=minigettime()-time1;
+   time=minigettime()-time;
 
-   printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/time1/1E3);
-
-   // mul double test:
-
-   time2=minigettime();
-
-   for (i=-mulmax1-1; i<mulmax1; i++)
-      for (j=-mulmax2-1; j<mulmax2; j++)
-         {
-         test=(double)i*(double)j;
-         if (test==MAXFLOAT) ERRORMSG();
-         }
-
-   time2=minigettime()-time2;
-
-   printf("(%gkdmuls/s)\n",(double)4*mulmax1*mulmax2/time2/1E3);
+   printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
 
    printf("\nfinished test code\n");
 

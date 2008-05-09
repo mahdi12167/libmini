@@ -252,7 +252,7 @@ class minimpfp
    minimpfp max(const minimpfp &value) {return((grt(value))?value:*this);}
 
    void mul(const minimpfp &value,minimpfp &result) const
-      {if (mul2(value,result).isnotzero()) result=result.maxval();}
+      {if (mul2(value,result).getmag().isnotzero()) result=result.maxval();}
 
    minimpfp mul2(const minimpfp &value,minimpfp &result) const
       {
