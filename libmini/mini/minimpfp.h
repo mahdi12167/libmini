@@ -346,6 +346,14 @@ class minimpfp_base
       return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)(mv&((1<<16)-1))));
       }
 
+   minimpfp_base div2(const minimpfp_base &value,minimpfp_base &result) const
+      {
+      unsigned long long int dv;
+      dv=(((unsigned long long int)V)<<32)/(unsigned long long int)value.V;
+      result.V=(unsigned int)(dv>>16);
+      return(minimpfp_base((unsigned int)(dv>>48),(unsigned int)(dv&((1<<16)-1))));
+      }
+
    unsigned int V;
    };
 
