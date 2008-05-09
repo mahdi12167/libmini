@@ -259,7 +259,6 @@ class minimpfp
    minimpfp mul2(const minimpfp &value,minimpfp &result) const
       {
       BOOLINT sign;
-
       N result1,result2,result3,result4;
       N overflow1,overflow2,overflow3,overflow4;
 
@@ -276,6 +275,52 @@ class minimpfp
       result.add2(minimpfp(sign,N(result4.getfrc(),overflow4.getfrc()),N::zero()),result);
 
       return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
+      }
+
+   minimpfp div2(const minimpfp &value,minimpfp &result) const
+      {
+      BOOLINT sign;
+      N result1,result2;
+      minimpfp result3,result4;
+      minimpfp remainder1,remainder2;
+
+      sign=!(S^value.getsgn());
+
+      if (M.iszero())
+         if (value.getmag().iszero())
+            {
+            //!!
+            }
+         else
+            {
+            //!!
+            }
+      else
+         if (value.getmag().iszero())
+            {
+            //!!
+            }
+         else
+            {
+            M.div2(value.getmag(),result1);
+            result2=result1;
+
+            repeat
+               {
+               minimpfp(result1,N::zero()).mul2(value,result3);
+               sub2(result3,result4);
+               result4.getmag().div2(value.getmag(),result1);
+               result2.add(result1,result2);
+               }
+            until (result1.iszero());
+
+            remainder1=result4.getfrc().div2(value.getmag(),result1);
+            remainder2=N::zero(); //!!
+
+            result=minimpfp(sign,result2,result1);
+            }
+
+      return(minimpfp(remainder1,remainder2));
       }
 
    private:
