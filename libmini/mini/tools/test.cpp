@@ -6,6 +6,8 @@
 #include "minimpfp.h"
 #include "minitime.h"
 
+// end of include files
+
 int main(int argc,char *argv[])
    {
    if (argc!=1)
@@ -75,6 +77,8 @@ int main(int argc,char *argv[])
    time=minigettime()-time;
 
    printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
+
+   // end of test code
 
    printf("\nfinished test code\n");
 
