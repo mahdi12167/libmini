@@ -3,6 +3,8 @@
 #ifndef MINIMPFP_H
 #define MINIMPFP_H
 
+#include "iostream"
+
 #include "minibase.h"
 
 // multi-precision fixed-point arithmetic:
@@ -350,5 +352,54 @@ class minimpfp_base
 typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
+
+typedef minimpfp4 minimf;
+
+// multi-precision floating point operators:
+
+inline minimf operator + (const minimf &a,const minimf &b)
+   {
+   minimf result;
+   a.add(b,result);
+   return(result);
+   }
+
+inline minimf operator - (const minimf &a,const minimf &b)
+   {
+   minimf result;
+   a.sub(b,result);
+   return(result);
+   }
+
+inline minimf operator - (const minimf &v)
+   {return(v.neg());}
+
+inline minimf operator * (const minimf &a,const minimf &b)
+   {
+   minimf result;
+   a.mul(b,result);
+   return(result);
+   }
+
+inline int operator == (const minimf &a,const minimf &b)
+   {return(a.isequal(b));}
+
+inline int operator != (const minimf &a,const minimf &b)
+   {return(a.isnotequal(b));}
+
+inline int operator < (const minimf &a,const minimf &b)
+   {return(!a.grt(b));}
+
+inline int operator > (const minimf &a,const minimf &b)
+   {return(a.grt(b));}
+
+inline int operator <= (const minimf &a,const minimf &b)
+   {return(a.isequal(b) || !a.grt(b));}
+
+inline int operator >= (const minimf &a,const minimf &b)
+   {return(a.isequal(b) || a.grt(b));}
+
+inline std::ostream& operator << (std::ostream &out,const minimf &mf)
+   {return(out << mf.get());}
 
 #endif

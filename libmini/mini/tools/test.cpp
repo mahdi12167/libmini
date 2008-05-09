@@ -19,18 +19,16 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   typedef minimpfp4 minifp;
-
    double time;
 
    long long int i,j;
 
-   minifp test1,test2,test3;
+   minimf test1,test2,test3;
 
    // constants:
 
-   printf("bits=%u\n",minifp::getbits());
-   printf("limit=%g\n",minifp::getlimit());
+   printf("bits=%u\n",minimf::getbits());
+   printf("limit=%g\n",minimf::getlimit());
 
    // add speed test:
 
@@ -42,8 +40,8 @@ int main(int argc,char *argv[])
    for (i=-addmax1-1; i<addmax1; i++)
       for (j=-addmax2-1; j<addmax2; j++)
          {
-         test1=minifp(0.1*i);
-         test2=minifp(0.1*j);
+         test1=minimf(0.1*i);
+         test2=minimf(0.1*j);
 
          test1.add(test2,test3);
 
@@ -65,8 +63,8 @@ int main(int argc,char *argv[])
    for (i=-mulmax1-1; i<mulmax1; i++)
       for (j=-mulmax2-1; j<mulmax2; j++)
          {
-         test1=minifp(0.1*i);
-         test2=minifp(0.1*j);
+         test1=minimf(0.1*i);
+         test2=minimf(0.1*j);
 
          test1.mul(test2,test3);
 
