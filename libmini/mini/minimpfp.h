@@ -277,30 +277,33 @@ class minimpfp
       return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
       }
 
+   void div(const minimpfp &value,minimpfp &result) const
+      {if (div2(value,result).getmag().isequal(N::max())) result=result.maxval();}
+
    minimpfp div2(const minimpfp &value,minimpfp &result) const
+      {
+      minimpfp result1,result2;
+      minimpfp remainder;
+
+      remainder=div3(value,result1);
+      remainder=remainder.div3(minimpfp(value.getsgn(),N::zero(),value.getmag()),result2);
+
+      result=minimpfp(result1.getsgn(),result1.getmag(),result2.getmag());
+
+      return(minimpfp(remainder.getfrc(),N::zero()));
+      }
+
+   minimpfp div3(const minimpfp &value,minimpfp &result) const
       {
       BOOLINT sign;
       N result1,result2;
-      minimpfp result3,result4;
-      minimpfp remainder1,remainder2;
+      minimpfp result3;
+      minimpfp remainder;
 
       sign=!(S^value.getsgn());
 
-      if (M.iszero())
-         if (value.getmag().iszero())
-            {
-            //!!
-            }
-         else
-            {
-            //!!
-            }
-      else
-         if (value.getmag().iszero())
-            {
-            //!!
-            }
-         else
+      if (value.isnotzero())
+         if (value.getmag().isnotzero())
             {
             M.div2(value.getmag(),result1);
             result2=result1;
@@ -308,19 +311,26 @@ class minimpfp
             repeat
                {
                minimpfp(result1,N::zero()).mul2(value,result3);
-               sub2(result3,result4);
-               result4.getmag().div2(value.getmag(),result1);
+               sub2(result3,remainder);
+               remainder.getmag().div2(value.getmag(),result1);
                result2.add(result1,result2);
                }
             until (result1.iszero());
 
-            remainder1=result4.getfrc().div2(value.getmag(),result1);
-            remainder2=N::zero(); //!!
-
-            result=minimpfp(sign,result2,result1);
+            result=miminpfp(sign,result2,N::zero());
             }
+         else
+            {
+            remainder=div2(minimpfp(value.getsgn(),value.getfrc(),N::zero()),result);
+            result=minimpfp(sign,result.getfrc(),N::zero());
+            }
+      else
+         {
+         remainder=max();
+         result=minimpfp(sign,N::max(),N::max());
+         }
 
-      return(minimpfp(remainder1,remainder2));
+      return(remainder);
       }
 
    private:
@@ -393,10 +403,11 @@ class minimpfp_base
 
    minimpfp_base div2(const minimpfp_base &value,minimpfp_base &result) const
       {
-      unsigned long long int dv;
+      unsigned long long int dv,mv;
       dv=(((unsigned long long int)V)<<32)/(unsigned long long int)value.V;
       result.V=(unsigned int)(dv>>16);
-      return(minimpfp_base((unsigned int)(dv>>48),(unsigned int)(dv&((1<<16)-1))));
+      mv=(unsigned long long int)result.V*(unsigned long long int)value.V;
+      return(V-(mv>>16));
       }
 
    unsigned int V;
