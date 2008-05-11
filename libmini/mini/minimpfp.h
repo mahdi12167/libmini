@@ -308,16 +308,16 @@ class minimpfp
             M.div2(value.getmag(),result1);
             result2=result1;
 
-            repeat
+            do
                {
                minimpfp(result1,N::zero()).mul2(value,result3);
                sub2(result3,remainder);
                remainder.getmag().div2(value.getmag(),result1);
-               result2.add(result1,result2);
+               result2.add2(result1,result2);
                }
-            until (result1.iszero());
+            while (result1.isnotzero());
 
-            result=miminpfp(sign,result2,N::zero());
+            result=minimpfp(sign,result2,N::zero());
             }
          else
             {
@@ -331,6 +331,24 @@ class minimpfp
          }
 
       return(remainder);
+      }
+
+   minimpfp sqrt(minimpfp &result) const
+      {
+      minimpfp r,r2,e;
+
+      r.set(sqrt(get()));
+
+      do
+         {
+         div2(r,r2);
+         r2.sub2(r,r2);
+         r2.mul2(minimpfp(0.5),e);
+         r.add2(e,r);
+         }
+      while (e.isnotzero());
+
+      return(r);
       }
 
    private:
@@ -442,6 +460,13 @@ inline minimf operator * (const minimf &a,const minimf &b)
    {
    minimf result;
    a.mul(b,result);
+   return(result);
+   }
+
+inline minimf operator / (const minimf &a,const minimf &b)
+   {
+   minimf result;
+   a.div(b,result);
    return(result);
    }
 
