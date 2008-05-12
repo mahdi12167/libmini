@@ -115,6 +115,9 @@ class minimpfp
       return(FALSE);
       }
 
+   minimpfp left() const {return(minimpfp(S,F,N::zero()));}
+   minimpfp right() const {return(minimpfp(S,N::zero(),M));}
+
    minimpfp neg() const {return(minimpfp(!S,M,F));}
    minimpfp abs() const {return(minimpfp(M,F));}
 
@@ -282,15 +285,21 @@ class minimpfp
 
    minimpfp div2(const minimpfp &value,minimpfp &result) const
       {
-      minimpfp result1,result2;
+      minimpfp result1,result2,result3,result4;
       minimpfp remainder;
 
       remainder=div3(value,result1);
-      remainder=remainder.div3(minimpfp(value.getsgn(),N::zero(),value.getmag()),result2);
+      remainder=remainder.div3(value.right(),result2);
+      remainder=remainder.right();
+      remainder=remainder.div3(value,result3);
+      remainder=remainder.div3(value.right(),result4);
 
-      result=minimpfp(result1.getsgn(),result1.getmag(),result2.getmag());
+      result=result1.left();
+      result.add2(result2.right(),result);
+      result.add2(result3.left(),result);
+      result.add2(result4,result);
 
-      return(minimpfp(remainder.getfrc(),N::zero()));
+      return(remainder.left());
       }
 
    minimpfp div3(const minimpfp &value,minimpfp &result) const
@@ -302,32 +311,26 @@ class minimpfp
 
       sign=!(S^value.getsgn());
 
-      if (value.isnotzero())
-         if (value.getmag().isnotzero())
-            {
-            M.div2(value.getmag(),result1);
-            result2=result1;
+      if (value.getmag().isnotzero())
+         {
+         M.div2(value.getmag(),result1);
+         result2=result1;
 
-            do
-               {
-               minimpfp(result1,N::zero()).mul2(value,result3);
-               sub2(result3,remainder);
-               remainder.getmag().div2(value.getmag(),result1);
-               result2.add2(result1,result2);
-               }
-            while (result1.isnotzero());
-
-            result=minimpfp(sign,result2,N::zero());
-            }
-         else
+         do
             {
-            remainder=div2(minimpfp(value.getsgn(),value.getfrc(),N::zero()),result);
-            result=minimpfp(sign,result.getfrc(),N::zero());
+            minimpfp(result1.right(),result1.left()).mul2(value,result3);
+            sub2(result3,remainder);
+            remainder.getmag().div2(value.getmag(),result1);
+            result2.add2(result1,result2);
             }
+         while (result1.isnotzero());
+
+         result=minimpfp(sign,result2.right(),result2.left());
+         }
       else
          {
-         remainder=max();
-         result=minimpfp(sign,N::max(),N::max());
+         remainder=*this;
+         result=zero();
          }
 
       return(remainder);
@@ -393,6 +396,9 @@ class minimpfp_base
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
+
+   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
+   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
 
    void nrm() {}
    void cpm() {V=~V+1;}

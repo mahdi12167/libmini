@@ -94,8 +94,8 @@ int main(int argc,char *argv[])
 
             test1.div(test2,test3);
 
-            if (FABS(test3.get()-0.1*i*0.1*j)>1E-3)
-               printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
+            if (FABS(test3.get()-(double)i/j)>1E-3)
+               printf("%g/%g!=%g\n",0.1*i,0.1*j,test3.get());
             }
 
    time=minigettime()-time;
