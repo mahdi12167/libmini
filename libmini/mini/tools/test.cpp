@@ -78,6 +78,30 @@ int main(int argc,char *argv[])
 
    printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
 
+   // div speed test:
+
+   time=minigettime();
+
+   const long long int divmax1=100;
+   const long long int divmax2=100;
+
+   for (i=-divmax1-1; i<divmax1; i++)
+      for (j=-divmax2-1; j<divmax2+1; j++)
+         if (j!=0)
+            {
+            test1=minimf(0.1*i);
+            test2=minimf(0.1*j);
+
+            test1.div(test2,test3);
+
+            if (FABS(test3.get()-0.1*i*0.1*j)>1E-3)
+               printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
+            }
+
+   time=minigettime()-time;
+
+   printf("%gkdivs/s\n",(double)4*divmax1*divmax2/time/1E3);
+
    // end of test code
 
    printf("\nfinished test code\n");
