@@ -61,7 +61,7 @@ class minimpfp
       S=(v>=0.0);
       av=S?v:-v;
 
-      M=N(floor(av)/N::getlimit());
+      M=N(floor(av)*(1.0/N::getlimit()));
       F=N((av-floor(av))*N::getlimit());
       }
 
@@ -70,7 +70,7 @@ class minimpfp
       double v;
 
       v=M.get()*N::getlimit();
-      v+=F.get()/N::getlimit();
+      v+=F.get()*(1.0/N::getlimit());
 
       return(S?v:-v);
       }
@@ -114,9 +114,6 @@ class minimpfp
 
       return(FALSE);
       }
-
-   minimpfp left() const {return(minimpfp(S,F,N::zero()));}
-   minimpfp right() const {return(minimpfp(S,N::zero(),M));}
 
    minimpfp neg() const {return(minimpfp(!S,M,F));}
    minimpfp abs() const {return(minimpfp(M,F));}
@@ -281,49 +278,43 @@ class minimpfp
       }
 
    void div(const minimpfp &value,minimpfp &result) const
-      {if (div2(value,result).getmag().isequal(N::max())) result=result.maxval();}
+      {if (div2(value,result).getmag().isnotzero()) result=result.maxval();}
 
    minimpfp div2(const minimpfp &value,minimpfp &result) const
+      {return(mul2(value.inv(),result));}
+
+   minimpfp inv() const
       {
-      minimpfp remainder;
-
-      remainder=div3(value,result);
-
-      return(remainder);
-      }
-
-   minimpfp div3(const minimpfp &value,minimpfp &result) const
-      {
-      BOOLINT sign;
       N result1,result2;
-      minimpfp result3;
       minimpfp remainder;
 
-      if (M.isnotzero() && value.getmag().isnotzero())
-         {
-         sign=!(S^value.getsgn());
-
-         M.div2(value.getmag(),result1);
-         result2=result1;
-
-         do
-            {
-            minimpfp(sign,result1.right(),result1.left()).mul2(value,result3);
-            sub2(result3,remainder);
-            remainder.getmag().div2(value.getmag(),result1);
-            result2.add2(result1,result2);
-            }
-         while (result1.right().isnotzero());
-
-         result=minimpfp(sign,result2.right(),result2.left());
-         }
+      if (iszero()) return(maxval());
+      else if (M.iszero()) return(minimpfp(S,F.inv(),N::zero()));
+      else if (F.iszero()) return(minimpfp(S,N::zero(),M.inv()));
       else
          {
-         remainder=*this;
-         result=zero();
+         result1=M.inv();
+         result2=result1;
+
+         mul2(minimpfp(S,N::zero(),result2),remainder);
+         remainder.neg();
+         remainder.nrm();
+
+         while (remainder.getmag().isnotzero())
+            {
+            result1=remainder.getmag().inv();
+            result2.add2(result1,result2);
+
+            mul2(minimpfp(S,N::zero(),result2),remainder);
+            remainder.cpm();
+            remainder.nrm();
+            }
+
+         result1=remainder.getfrc().inv();
+         result2.add2(result1,result2);
          }
 
-      return(remainder);
+      return(minimpfp(S,N::zero(),result2));
       }
 
    minimpfp sqrt(minimpfp &result) const
@@ -379,16 +370,13 @@ class minimpfp_base
    unsigned int getfrc() const {return(V&((1<<16)-1));}
 
    void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
-   double get() const {return(V/(double)(1<<16));}
+   double get() const {return(V*(1.0/(double)(1<<16)));}
 
    BOOLINT iszero() const {return(V==0);}
    BOOLINT isnotzero() const {return(V!=0);}
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
-
-   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
-   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
 
    void nrm() {}
    void cpm() {V=~V+1;}
@@ -415,13 +403,11 @@ class minimpfp_base
       return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)(mv&((1<<16)-1))));
       }
 
-   minimpfp_base div2(const minimpfp_base &value,minimpfp_base &result) const
+   minimpfp_base inv() const
       {
-      unsigned long long int dv,mv;
-      dv=(((unsigned long long int)V)<<32)/(unsigned long long int)value.V;
-      result.V=(unsigned int)(dv>>16);
-      mv=(unsigned long long int)result.V*(unsigned long long int)value.V;
-      return(V-(mv>>16));
+      unsigned long long int iv;
+      iv=((unsigned long long int)(1<<16)<<32)/(unsigned long long int)V;
+      return((unsigned int)(iv>>16));
       }
 
    unsigned int V;
