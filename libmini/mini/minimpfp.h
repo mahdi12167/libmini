@@ -285,21 +285,11 @@ class minimpfp
 
    minimpfp div2(const minimpfp &value,minimpfp &result) const
       {
-      minimpfp result1,result2,result3,result4;
       minimpfp remainder;
 
-      remainder=div3(value,result1);
-      remainder=remainder.div3(value.right(),result2);
-      remainder=remainder.right();
-      remainder=remainder.div3(value,result3);
-      remainder=remainder.div3(value.right(),result4);
+      remainder=div3(value,result);
 
-      result=result1.left();
-      result.add2(result2.right(),result);
-      result.add2(result3.left(),result);
-      result.add2(result4,result);
-
-      return(remainder.left());
+      return(remainder);
       }
 
    minimpfp div3(const minimpfp &value,minimpfp &result) const
@@ -309,21 +299,21 @@ class minimpfp
       minimpfp result3;
       minimpfp remainder;
 
-      sign=!(S^value.getsgn());
-
-      if (value.getmag().isnotzero())
+      if (M.isnotzero() && value.getmag().isnotzero())
          {
+         sign=!(S^value.getsgn());
+
          M.div2(value.getmag(),result1);
          result2=result1;
 
          do
             {
-            minimpfp(result1.right(),result1.left()).mul2(value,result3);
+            minimpfp(sign,result1.right(),result1.left()).mul2(value,result3);
             sub2(result3,remainder);
             remainder.getmag().div2(value.getmag(),result1);
             result2.add2(result1,result2);
             }
-         while (result1.isnotzero());
+         while (result1.right().isnotzero());
 
          result=minimpfp(sign,result2.right(),result2.left());
          }
