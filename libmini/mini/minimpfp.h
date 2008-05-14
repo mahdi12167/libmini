@@ -288,37 +288,99 @@ class minimpfp
 
    minimpfp inv() const
       {
+      minimpfp result;
+      inv2(result);
+      return(result);
+      }
+
+   minimpfp inv2(minimpfp &result) const
+      {
       BOOLINT sign;
-      N result,fraction;
-      minimpfp remainder;
+      N result1,result2;
+      N overflow1,overflow2;
+      minimpfp result3,result4;
+      minimpfp fraction,remainder;
       minimpfp overflow;
 
-      if (iszero()) return(maxval());
-      else if (M.iszero()) return(minimpfp(S,F.inv(),N::zero()));
-      else if (F.iszero()) return(minimpfp(S,N::zero(),M.inv()));
-      else if (isequal(one())) return(one());
+      if (iszero())
+         {
+         result=maxval();
+         return(max());
+         }
+      else if (M.iszero())
+         {
+         overflow1=F.inv2(result1);
+         result=minimpfp(S,result1,overflow1.left());
+         return(minimpfp(overflow1.right(),N::zero()));
+         }
+      else if (F.iszero())
+         {
+         overflow1=M.inv2(result1);
+         result=minimpfp(S,overflow1.right(),result1);
+         return(minimpfp(N::zero(),overflow1.left()));
+         }
       else
          {
-         result=M.inv();
+         overflow1=M.inv2(result1);
 
-         M.left().mul2(F.right().inv(),fraction);
-         overflow=mul2(minimpfp(fraction.right(),fraction.left()),remainder);
+         if (overflow1.right().iszero()) sign=FALSE;
+         else
+            {
+            result1=N::max();
+            overflow1=N::zero();
+            sign=TRUE;
+            }
 
-         sign=FALSE;
+         result3=minimpfp(result1,overflow1.left());
+
+         overflow2=F.inv2(result2);
+
+         if (overflow2.right().isnotzero())
+            {
+            result2=N::max();
+            overflow2=N::zero();
+            }
+
+         result4=minimpfp(result2,overflow2.left());
+
+         minimpfp(M,N::zero()).mul2(result4,fraction);
+         overflow=mul2(fraction,remainder);
 
          while (overflow.getmag().iszero())
             {
-            if (sign) result.add2(remainder.getmag().inv(),result);
-            else result.sub2(remainder.getmag().inv(),result);
+            overflow1=remainder.getmag().inv2(result1);
+
+            if (overflow1.right().isnotzero())
+               {
+               result1=N::max();
+               overflow1=N::zero();
+               }
+
+            result4=minimpfp(result1,overflow1.left());
+
+            if (sign) result3.add2(result4,result3);
+            else result3.sub2(result4,result3);
 
             sign=!sign;
 
-            remainder.getmag().left().mul2(remainder.getfrc().right().inv(),fraction);
-            overflow=remainder.mul2(minimpfp(fraction.right(),fraction.left()),remainder);
+            overflow2=remainder.getfrc().inv2(result2);
+
+            if (overflow2.right().isnotzero())
+               {
+               result2=N::max();
+               overflow2=N::zero();
+               }
+
+            result4=minimpfp(result2,overflow2.left());
+
+            minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+            overflow=remainder.mul2(fraction,remainder);
             }
          }
 
-      return(minimpfp(S,N::zero(),result));
+      result=minimpfp(S,N::zero(),result3.getmag());
+
+      return(minimpfp(N::zero(),result3.getfrc()));
       }
 
    minimpfp sqrt(minimpfp &result) const
@@ -410,12 +472,13 @@ class minimpfp_base
       return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
       }
 
-   minimpfp_base inv() const
+   minimpfp_base inv2(minimpfp_base &result) const
       {
       unsigned long long int iv;
-      if (V<=1) return(max());
+      if (V==0) {result=max(); return(max());}
       iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
-      return(minimpfp_base((unsigned int)(iv>>32)&0xFFFF,(unsigned int)(iv>>16)&0xFFFF));
+      result.V=(unsigned int)(iv>>16);
+      return(minimpfp_base((unsigned int)(iv>>48),(unsigned int)iv&0xFFFF));
       }
 
    unsigned int V;
