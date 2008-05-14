@@ -289,10 +289,9 @@ class minimpfp
    minimpfp inv() const
       {
       BOOLINT sign;
-      N result1,result2,result3;
-      N overflow1;
-      minimpfp overflow2;
+      N result,fraction;
       minimpfp remainder;
+      minimpfp overflow;
 
       if (iszero()) return(maxval());
       else if (M.iszero()) return(minimpfp(S,F.inv(),N::zero()));
@@ -300,29 +299,26 @@ class minimpfp
       else if (isequal(one())) return(one());
       else
          {
-         result1=M.inv();
-         result2=result1;
+         result=M.inv();
 
-         overflow1=M.left().mul2(F.right().inv(),result3);
-         overflow2=mul2(minimpfp(result3.right(),result3.left()),remainder);
+         M.left().mul2(F.right().inv(),fraction);
+         overflow=mul2(minimpfp(fraction.right(),fraction.left()),remainder);
 
          sign=FALSE;
 
-         while (overflow1.iszero() && overflow2.getmag().iszero())
+         while (overflow.getmag().iszero())
             {
-            result1=remainder.getmag().inv();
-
-            if (sign) result2.add2(result1,result2);
-            else result2.sub2(result1,result2);
+            if (sign) result.add2(remainder.getmag().inv(),result);
+            else result.sub2(remainder.getmag().inv(),result);
 
             sign=!sign;
 
-            overflow1=remainder.getmag().left().mul2(remainder.getfrc().right().inv(),result3);
-            overflow2=remainder.mul2(minimpfp(result3.right(),result3.left()),remainder);
+            remainder.getmag().left().mul2(remainder.getfrc().right().inv(),fraction);
+            overflow=remainder.mul2(minimpfp(fraction.right(),fraction.left()),remainder);
             }
          }
 
-      return(minimpfp(S,N::zero(),result2));
+      return(minimpfp(S,N::zero(),result));
       }
 
    minimpfp sqrt(minimpfp &result) const
@@ -429,7 +425,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp1 minimf; //!! minimpfp4
+typedef minimpfp1 minimf; //!!
 
 // multi-precision floating point operators:
 
