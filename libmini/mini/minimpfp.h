@@ -43,7 +43,7 @@ class minimpfp
    static double getlimit() {return(N::getlimit()*N::getlimit());}
 
    static minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
-   static minimpfp one() {return(minimpfp(N::one(),N::zero()));}
+   static minimpfp one() {return(minimpfp(N::min(),N::zero()));}
 
    static minimpfp min() {return(minimpfp(N::zero(),N::min()));}
    static minimpfp max() {return(minimpfp(N::max(),N::max()));}
@@ -114,6 +114,9 @@ class minimpfp
 
       return(FALSE);
       }
+
+   minimpfp left() const {return(minimpfp(F,N::zero()));}
+   minimpfp right() const {return(minimpfp(N::zero(),M));}
 
    minimpfp neg() const {return(minimpfp(!S,M,F));}
    minimpfp abs() const {return(minimpfp(M,F));}
@@ -285,33 +288,38 @@ class minimpfp
 
    minimpfp inv() const
       {
-      N result1,result2;
+      BOOLINT sign;
+      N result1,result2,result3;
+      N overflow1;
+      minimpfp overflow2;
       minimpfp remainder;
 
       if (iszero()) return(maxval());
       else if (M.iszero()) return(minimpfp(S,F.inv(),N::zero()));
       else if (F.iszero()) return(minimpfp(S,N::zero(),M.inv()));
+      else if (isequal(one())) return(one());
       else
          {
          result1=M.inv();
          result2=result1;
 
-         mul2(minimpfp(S,N::zero(),result2),remainder);
-         remainder.neg();
-         remainder.nrm();
+         overflow1=M.left().mul2(F.right().inv(),result3);
+         overflow2=mul2(minimpfp(result3.right(),result3.left()),remainder);
 
-         while (remainder.getmag().isnotzero())
+         sign=FALSE;
+
+         while (overflow1.iszero() && overflow2.getmag().iszero())
             {
             result1=remainder.getmag().inv();
-            result2.add2(result1,result2);
 
-            mul2(minimpfp(S,N::zero(),result2),remainder);
-            remainder.cpm();
-            remainder.nrm();
+            if (sign) result2.add2(result1,result2);
+            else result2.sub2(result1,result2);
+
+            sign=!sign;
+
+            overflow1=remainder.getmag().left().mul2(remainder.getfrc().right().inv(),result3);
+            overflow2=remainder.mul2(minimpfp(result3.right(),result3.left()),remainder);
             }
-
-         result1=remainder.getfrc().inv();
-         result2.add2(result1,result2);
          }
 
       return(minimpfp(S,N::zero(),result2));
@@ -364,10 +372,10 @@ class minimpfp_base
    static minimpfp_base one() {return(minimpfp_base(1,0));}
 
    static minimpfp_base min() {return(minimpfp_base(0,1));}
-   static minimpfp_base max() {return(minimpfp_base((unsigned int)-1,(unsigned int)-1));}
+   static minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
 
    unsigned int getmag() const {return(V>>16);}
-   unsigned int getfrc() const {return(V&((1<<16)-1));}
+   unsigned int getfrc() const {return(V&0xFFFF);}
 
    void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
    double get() const {return(V*(1.0/(double)(1<<16)));}
@@ -377,6 +385,9 @@ class minimpfp_base
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
+
+   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
+   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
 
    void nrm() {}
    void cpm() {V=~V+1;}
@@ -400,14 +411,15 @@ class minimpfp_base
       unsigned long long int mv;
       mv=(unsigned long long int)V*(unsigned long long int)value.V;
       result.V=(unsigned int)(mv>>16);
-      return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)(mv&((1<<16)-1))));
+      return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
       }
 
    minimpfp_base inv() const
       {
       unsigned long long int iv;
-      iv=((unsigned long long int)(1<<16)<<32)/(unsigned long long int)V;
-      return((unsigned int)(iv>>16));
+      if (V<=1) return(max());
+      iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
+      return(minimpfp_base((unsigned int)(iv>>32)&0xFFFF,(unsigned int)(iv>>16)&0xFFFF));
       }
 
    unsigned int V;
@@ -417,7 +429,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp4 minimf;
+typedef minimpfp1 minimf; //!! minimpfp4
 
 // multi-precision floating point operators:
 
