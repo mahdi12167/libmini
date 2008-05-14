@@ -386,9 +386,11 @@ class minimpfp
       return(minimpfp(N::zero(),result3.getfrc()));
       }
 
-   minimpfp sqrt(minimpfp &result) const
+   minimpfp sqroot() const
       {
       minimpfp r,r2,e;
+
+      if (!S) return(zero());
 
       r.set(sqrt(get()));
 
@@ -399,7 +401,7 @@ class minimpfp
          r2.mul2(minimpfp(0.5),e);
          r.add2(e,r);
          }
-      while (e.isnotzero());
+      while (e.grt(min()));
 
       return(r);
       }

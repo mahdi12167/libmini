@@ -102,6 +102,26 @@ int main(int argc,char *argv[])
 
    printf("%gkdivs/s\n",(double)4*divmax1*divmax2/time/1E3);
 
+   // sqrt speed test:
+
+   time=minigettime();
+
+   const long long int sqrtmax=10000;
+
+   for (i=0; i<sqrtmax; i++)
+         {
+         test1=minimf(0.1*i);
+
+         test2=test1.sqroot();
+
+         if (FABS(test2.get()-sqrt(0.1*i))>1E-3)
+            printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
+         }
+
+   time=minigettime()-time;
+
+   printf("%gksqrts/s\n",(double)sqrtmax/time/1E3);
+
    // end of test code
 
    printf("\nfinished test code\n");
