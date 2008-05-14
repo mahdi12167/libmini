@@ -321,14 +321,14 @@ class minimpfp
          }
       else
          {
+         sign=FALSE;
+
          overflow1=M.inv2(result1);
 
-         if (overflow1.right().iszero()) sign=FALSE;
-         else
+         if (overflow1.right().isnotzero())
             {
             result1=N::max();
             overflow1=N::zero();
-            sign=TRUE;
             }
 
          result3=minimpfp(result1,overflow1.left());
@@ -346,37 +346,40 @@ class minimpfp
          minimpfp(M,N::zero()).mul2(result4,fraction);
          overflow=mul2(fraction,remainder);
 
-         while (overflow.getmag().iszero())
-            {
-            overflow1=remainder.getmag().inv2(result1);
-
-            if (overflow1.right().isnotzero())
+         if (remainder.getmag().isnotzero())
+            while (overflow.getmag().iszero())
                {
-               result1=N::max();
-               overflow1=N::zero();
+               overflow1=remainder.getmag().inv2(result1);
+
+               if (overflow1.right().isnotzero())
+                  {
+                  result1=N::max();
+                  overflow1=N::zero();
+                  }
+
+               result4=minimpfp(result1,overflow1.left());
+
+               if (sign) result3.add2(result4,result3);
+               else result3.sub2(result4,result3);
+
+               sign=!sign;
+
+               if (remainder.getfrc().iszero()) break;
+
+               overflow2=remainder.getfrc().inv2(result2);
+
+               if (overflow2.right().isnotzero())
+                  {
+                  result2=N::max();
+                  overflow2=N::zero();
+                  }
+
+               result4=minimpfp(result2,overflow2.left());
+
+               minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+               overflow=remainder.mul2(fraction,remainder);
                }
-
-            result4=minimpfp(result1,overflow1.left());
-
-            if (sign) result3.add2(result4,result3);
-            else result3.sub2(result4,result3);
-
-            sign=!sign;
-
-            overflow2=remainder.getfrc().inv2(result2);
-
-            if (overflow2.right().isnotzero())
-               {
-               result2=N::max();
-               overflow2=N::zero();
-               }
-
-            result4=minimpfp(result2,overflow2.left());
-
-            minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
-            overflow=remainder.mul2(fraction,remainder);
             }
-         }
 
       result=minimpfp(S,N::zero(),result3.getmag());
 
@@ -488,7 +491,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp1 minimf; //!!
+typedef minimpfp4 minimf;
 
 // multi-precision floating point operators:
 
