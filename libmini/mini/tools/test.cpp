@@ -122,6 +122,21 @@ int main(int argc,char *argv[])
 
    printf("%gksqrts/s\n",(double)sqrtmax/time/1E3);
 
+   // precision test:
+
+   minimf c(255.271);
+
+   minimf x=c*c*c*c*c*c*c;
+   minimf y=(x-1)*(x+1);
+   minimf z=x*x-y;
+
+   printf("precision test value #1: %g\n",z.get());
+
+   minimf inv=minimf(1.0)/c;
+   minimf mlt=inv*c;
+
+   printf("precision test value #2: %g\n",mlt.get());
+
    // end of test code
 
    printf("\nfinished test code\n");
