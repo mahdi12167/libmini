@@ -53,7 +53,7 @@ int main(int argc,char *argv[])
 
    time=minigettime()-time;
 
-   printf("%gkadds/s\n",(double)4*addmax1*addmax2/time/1E3);
+   printf("%gk adds/s\n",(double)4*addmax1*addmax2/time/1E3);
 
    // mul speed test:
 
@@ -76,7 +76,7 @@ int main(int argc,char *argv[])
 
    time=minigettime()-time;
 
-   printf("%gkmuls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
+   printf("%gk muls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
 
    // div speed test:
 
@@ -100,7 +100,7 @@ int main(int argc,char *argv[])
 
    time=minigettime()-time;
 
-   printf("%gkdivs/s\n",(double)4*divmax1*divmax2/time/1E3);
+   printf("%gk divs/s\n",(double)4*divmax1*divmax2/time/1E3);
 
    // sqrt speed test:
 
@@ -109,18 +109,38 @@ int main(int argc,char *argv[])
    const long long int sqrtmax=10000;
 
    for (i=0; i<sqrtmax; i++)
-         {
-         test1=minimf(0.1*i);
+      {
+      test1=minimf(0.1*i);
 
-         test2=test1.sqroot();
+      test2=test1.sqroot();
 
-         if (FABS(test2.get()-sqrt(0.1*i))>1E-3)
-            printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
-         }
+      if (FABS(test2.get()-sqrt(0.1*i))>1E-3)
+         printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
+      }
 
    time=minigettime()-time;
 
-   printf("%gksqrts/s\n",(double)sqrtmax/time/1E3);
+   printf("%gk sqrts/s\n",(double)sqrtmax/time/1E3);
+
+   // inv sqrt speed test:
+
+   time=minigettime();
+
+   const long long int invsqrtmax=10000;
+
+   for (i=1; i<invsqrtmax+1; i++)
+      {
+      test1=minimf(0.1*i);
+
+      test2=test1.invsqroot();
+
+      if (FABS(test2.get()-1.0/sqrt(0.1*i))>1E-3)
+         printf("invsqrt(%g)!=%g\n",0.1*i,test2.get());
+      }
+
+   time=minigettime()-time;
+
+   printf("%gk invsqrts/s\n",(double)invsqrtmax/time/1E3);
 
    // precision test:
 
@@ -130,10 +150,14 @@ int main(int argc,char *argv[])
    minimf y=(x-1)*(x+1);
    minimf z=x*x-y;
 
+   z.sub(minimf::one(),z);
+
    printf("precision test value #1: %g\n",z.get());
 
    minimf inv=minimf(1.0)/c;
    minimf mlt=inv*c;
+
+   mlt.sub(minimf::one(),mlt);
 
    printf("precision test value #2: %g\n",mlt.get());
 

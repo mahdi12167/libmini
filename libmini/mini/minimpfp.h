@@ -48,6 +48,7 @@ class minimpfp
    static minimpfp min() {return(minimpfp(N::zero(),N::min()));}
    static minimpfp max() {return(minimpfp(N::max(),N::max()));}
 
+   minimpfp minval() const {return(minimpfp(S,N::zero(),N::min()));}
    minimpfp maxval() const {return(minimpfp(S,N::max(),N::max()));}
 
    BOOLINT getsgn() const {return(S);}
@@ -125,8 +126,8 @@ class minimpfp
       {
       if (!S)
          {
-         add(max());
-         add(min());
+         add2(max(),*this);
+         add2(min(),*this);
          }
       }
 
@@ -134,8 +135,8 @@ class minimpfp
 
    void add(const minimpfp &value,minimpfp &result) const
       {
-      if (add2(value,result))
-         if (!S^value.getsgn()) result=result.maxval();
+      if (S^value.getsgn()) add2(value,result);
+      else if (add2(value,result)) result=result.maxval();
       }
 
    void add(const minimpfp &value) {add(value,*this);}
@@ -245,10 +246,28 @@ class minimpfp
       {
       minimpfp result;
 
-      sub(value,result);
+      if (S)
+         if (value.getsgn())
+            {
+            sub2(value,result);
 
-      if (!result.getsgn())
-         if (result.isnotzero()) return(TRUE);
+            if (!result.getsgn())
+               if (result.isnotzero()) return(TRUE);
+            }
+         else
+            if (isnotzero() || value.isnotzero()) return(FALSE);
+            else return(TRUE);
+      else
+         if (value.getsgn())
+            if (isnotzero() || value.isnotzero()) return(TRUE);
+            else return(FALSE);
+         else
+            {
+            sub2(value,result);
+
+            if (result.getsgn())
+               if (result.isnotzero()) return(TRUE);
+            }
 
       return(FALSE);
       }
@@ -257,16 +276,34 @@ class minimpfp
       {
       minimpfp result;
 
-      sub(value,result);
+      if (S)
+         if (value.getsgn())
+            {
+            sub2(value,result);
 
-      if (result.getsgn())
-         if (result.isnotzero()) return(TRUE);
+            if (result.getsgn())
+               if (result.isnotzero()) return(TRUE);
+            }
+         else
+            if (isnotzero() || value.isnotzero()) return(TRUE);
+            else return(FALSE);
+      else
+         if (value.getsgn())
+            if (isnotzero() || value.isnotzero()) return(FALSE);
+            else return(TRUE);
+         else
+            {
+            sub2(value,result);
+
+            if (!result.getsgn())
+               if (result.isnotzero()) return(TRUE);
+            }
 
       return(FALSE);
       }
 
-   minimpfp min(const minimpfp &value) {return((sml(value))?value:*this);}
-   minimpfp max(const minimpfp &value) {return((grt(value))?value:*this);}
+   minimpfp min(const minimpfp &value) {return((sml(value))?*this:value);}
+   minimpfp max(const minimpfp &value) {return((grt(value))?*this:value);}
 
    void mul(const minimpfp &value,minimpfp &result) const
       {if (mul2(value,result).getmag().isnotzero()) result=result.maxval();}
@@ -400,20 +437,51 @@ class minimpfp
 
    minimpfp sqroot() const
       {
-      minimpfp r,r2,e;
+      minimpfp r,r2,e,e2,e3;
 
       if (!S) return(zero());
+      if (iszero()) return(zero());
 
       r.set(sqrt(get()));
+      e=max();
 
       do
          {
-         div2(r,r2);
-         r2.sub2(r,r2);
-         r2.mul2(minimpfp(0.5),e);
-         r.add2(e,r);
+         e2=e;
+         div(r,r2);
+         r2.sub(r,r2);
+         r2.mul(minimpfp(0.5),e);
+         r.add(e,r);
+         e.add(e,e3);
          }
-      while (e.grt(min()));
+      while (e3.abs().sml(e2.abs()));
+
+      return(r);
+      }
+
+   minimpfp invsqroot() const
+      {
+      minimpfp r,r2,e,e2,e3;
+
+      if (!S) return(zero());
+      if (iszero()) return(maxval());
+
+      r.set(1.0/sqrt(get()));
+      e=max();
+
+      do
+         {
+         e2=e;
+         mul(r,r2);
+         r2.mul(r,r2);
+         r2.mul(minimpfp(0.5),r2);
+         minimpfp(1.5).sub(r2,r2);
+         r2.mul(r,r2);
+         r2.sub(r,e);
+         r=r2;
+         e.add(e,e3);
+         }
+      while (e3.abs().sml(e2.abs()));
 
       return(r);
       }
