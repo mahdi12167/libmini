@@ -9,6 +9,7 @@
 
 // multi-precision fixed-point arithmetic:
 
+// 32 bit base precision
 class minimpfp_base
    {
    public:
@@ -98,6 +99,7 @@ class minimpfp_base
       }
    };
 
+// double template precision
 template <class N>
 class minimpfp
    {
@@ -510,16 +512,6 @@ class minimpfp
             minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
             result=maxval();
             return(max());
-            }
-         else if (F.ismin())
-            {
-            result=maxval();
-            return(max());
-            }
-         else if (F.ismax())
-            {
-            result=minimpfp(S,N::min(),N::min());
-            return(minimpfp(N::min(),N::min()));
             }
          else
             {
