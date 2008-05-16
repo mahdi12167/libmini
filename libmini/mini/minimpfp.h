@@ -93,7 +93,6 @@ class minimpfp_base
       unsigned long long int iv;
       if (V==0) {MINIMPFP_DIVBYZERO=TRUE; result=max(); return(max());}
       iv=((unsigned long long int)0xFFFFFFFFFFFFFFFFll)/(unsigned long long int)V;
-      if (V<=(unsigned int)(1<<31)) iv++;
       result.V=(unsigned int)(iv>>32);
       return(minimpfp_base((unsigned int)(iv>>16)&0xFFFF,(unsigned int)iv&0xFFFF));
       }
