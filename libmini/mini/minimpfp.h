@@ -9,6 +9,96 @@
 
 // multi-precision fixed-point arithmetic:
 
+class minimpfp_base
+   {
+   public:
+
+   //! default constructor
+   minimpfp_base() {}
+
+   //! constructor
+   minimpfp_base(const unsigned int m,const unsigned int f) {V=(m<<16)+f;}
+
+   //! constructor
+   minimpfp_base(const double v) {set(v);}
+
+   //! destructor
+   ~minimpfp_base() {}
+
+   unsigned int V;
+
+   static BOOLINT MINIMPFP_DIVBYZERO;
+   static BOOLINT MINIMPFP_OVERFLOW;
+
+   static unsigned int getbits() {return(32);}
+   static double getlimit() {return((double)(1<<16));}
+
+   static minimpfp_base zero() {return(minimpfp_base(0,0));}
+   static minimpfp_base one() {return(minimpfp_base(1,0));}
+
+   static minimpfp_base min() {return(minimpfp_base(0,1));}
+   static minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
+
+   unsigned int getmag() const {return(V>>16);}
+   unsigned int getfrc() const {return(V&0xFFFF);}
+
+   void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
+   double get() const {return(V*(1.0/(double)(1<<16)));}
+
+   BOOLINT iszero() const {return(V==0);}
+   BOOLINT isnotzero() const {return(V!=0);}
+
+   BOOLINT isone() const {return(V==(1<<16));}
+   BOOLINT isnotone() const {return(V!=(1<<16));}
+
+   BOOLINT ismin() const {return(V==1);}
+   BOOLINT isnotmin() const {return(V!=1);}
+
+   BOOLINT ismax() const {return(V==0xFFFFFFFF);}
+   BOOLINT isnotmax() const {return(V!=0xFFFFFFFF);}
+
+   BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
+   BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
+
+   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
+   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
+
+   void nrm() {/*nop*/}
+   void cpm() {V=~V+1;}
+
+   BOOLINT add2(const minimpfp_base &value,minimpfp_base &result) const
+      {
+      unsigned int v=V;
+      result.V=V+value.V;
+      return(result.V<v);
+      }
+
+   BOOLINT sub2(const minimpfp_base &value,minimpfp_base &result) const
+      {
+      unsigned int v=V;
+      result.V=V-value.V;
+      return(result.V>v);
+      }
+
+   minimpfp_base mul2(const minimpfp_base &value,minimpfp_base &result) const
+      {
+      unsigned long long int mv;
+      mv=(unsigned long long int)V*(unsigned long long int)value.V;
+      result.V=(unsigned int)(mv>>16);
+      return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
+      }
+
+   minimpfp_base inv2(minimpfp_base &result) const
+      {
+      unsigned long long int iv;
+      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; result=max(); return(max());}
+      iv=((unsigned long long int)0xFFFFFFFFFFFFFFFFll)/(unsigned long long int)V;
+      if (V<=(unsigned int)(1<<31)) iv++;
+      result.V=(unsigned int)(iv>>32);
+      return(minimpfp_base((unsigned int)(iv>>16)&0xFFFF,(unsigned int)iv&0xFFFF));
+      }
+   };
+
 template <class N>
 class minimpfp
    {
@@ -92,6 +182,54 @@ class minimpfp
       return(FALSE);
       }
 
+   BOOLINT isone() const
+      {
+      if (M.ismin())
+         if (F.iszero()) return(TRUE);
+
+      return(FALSE);
+      }
+
+   BOOLINT isnotone() const
+      {
+      if (M.isnotmin()) return(TRUE);
+      if (F.isnotzero()) return(TRUE);
+
+      return(FALSE);
+      }
+
+   BOOLINT ismin() const
+      {
+      if (M.iszero())
+         if (F.ismin()) return(TRUE);
+
+      return(FALSE);
+      }
+
+   BOOLINT isnotmin() const
+      {
+      if (M.isnotzero()) return(TRUE);
+      if (F.isnotmin()) return(TRUE);
+
+      return(FALSE);
+      }
+
+   BOOLINT ismax() const
+      {
+      if (M.ismax())
+         if (F.ismax()) return(TRUE);
+
+      return(FALSE);
+      }
+
+   BOOLINT isnotmax() const
+      {
+      if (M.isnotmax()) return(TRUE);
+      if (F.isnotmax()) return(TRUE);
+
+      return(FALSE);
+      }
+
    BOOLINT isequal(const minimpfp &value) const
       {
       if (M.isequal(value.getmag()))
@@ -136,7 +274,11 @@ class minimpfp
    void add(const minimpfp &value,minimpfp &result) const
       {
       if (S^value.getsgn()) add2(value,result);
-      else if (add2(value,result)) result=result.maxval();
+      else if (add2(value,result))
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
+         result=result.maxval();
+         }
       }
 
    void add(const minimpfp &value) {add(value,*this);}
@@ -306,7 +448,13 @@ class minimpfp
    minimpfp max(const minimpfp &value) {return((grt(value))?*this:value);}
 
    void mul(const minimpfp &value,minimpfp &result) const
-      {if (mul2(value,result).getmag().isnotzero()) result=result.maxval();}
+      {
+      if (mul2(value,result).getmag().isnotzero())
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
+         result=result.maxval();
+         }
+      }
 
    minimpfp mul2(const minimpfp &value,minimpfp &result) const
       {
@@ -330,7 +478,13 @@ class minimpfp
       }
 
    void div(const minimpfp &value,minimpfp &result) const
-      {if (div2(value,result).getmag().isnotzero()) result=result.maxval();}
+      {
+      if (div2(value,result).getmag().isnotzero())
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
+         result=result.maxval();
+         }
+      }
 
    minimpfp div2(const minimpfp &value,minimpfp &result) const
       {return(mul2(value.inv(),result));}
@@ -351,83 +505,66 @@ class minimpfp
       minimpfp fraction,remainder;
       minimpfp overflow;
 
-      if (iszero())
-         {
-         result=maxval();
-         return(max());
-         }
-      else if (M.iszero())
-         {
-         overflow1=F.inv2(result1);
-         result=minimpfp(S,result1,overflow1.left());
-         return(minimpfp(overflow1.right(),N::zero()));
-         }
-      else if (F.iszero())
-         {
-         overflow1=M.inv2(result1);
-         result=minimpfp(S,overflow1.right(),result1);
-         return(minimpfp(N::zero(),overflow1.left()));
-         }
+      if (M.iszero())
+         if (F.iszero())
+            {
+            minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
+            result=maxval();
+            return(max());
+            }
+         else if (F.ismin())
+            {
+            result=maxval();
+            return(max());
+            }
+         else if (F.ismax())
+            {
+            result=minimpfp(S,N::min(),N::min());
+            return(minimpfp(N::min(),N::min()));
+            }
+         else
+            {
+            overflow1=F.inv2(result1);
+            result=minimpfp(S,result1,overflow1);
+            return(zero());
+            }
       else
-         {
-         sign=FALSE;
-
-         overflow1=M.inv2(result1);
-
-         if (overflow1.right().isnotzero())
+         if (F.iszero())
             {
-            result1=N::max();
-            overflow1=N::zero();
+            overflow1=M.inv2(result1);
+            result=minimpfp(S,N::zero(),result1);
+            return(minimpfp(overflow1,N::zero()));
             }
 
-         result3=minimpfp(result1,overflow1.left());
+      sign=FALSE;
 
-         overflow2=F.inv2(result2);
+      overflow1=M.inv2(result1);
+      result3=minimpfp(result1,overflow1);
 
-         if (overflow2.right().isnotzero())
+      overflow2=F.inv2(result2);
+      result4=minimpfp(result2,overflow2);
+
+      minimpfp(M,N::zero()).mul2(result4,fraction);
+      overflow=mul2(fraction,remainder);
+
+      if (remainder.getmag().isnotzero())
+         while (overflow.getmag().iszero())
             {
-            result2=N::max();
-            overflow2=N::zero();
-            }
+            overflow1=remainder.getmag().inv2(result1);
+            result4=minimpfp(result1,overflow1);
 
-         result4=minimpfp(result2,overflow2.left());
+            if (sign) result3.add2(result4,result3);
+            else result3.sub2(result4,result3);
 
-         minimpfp(M,N::zero()).mul2(result4,fraction);
-         overflow=mul2(fraction,remainder);
+            sign=!sign;
 
-         if (remainder.getmag().isnotzero())
-            while (overflow.getmag().iszero())
-               {
-               overflow1=remainder.getmag().inv2(result1);
+            if (remainder.getfrc().iszero()) break;
 
-               if (overflow1.right().isnotzero())
-                  {
-                  result1=N::max();
-                  overflow1=N::zero();
-                  }
+            overflow2=remainder.getfrc().inv2(result2);
+            result4=minimpfp(result2,overflow2);
 
-               result4=minimpfp(result1,overflow1.left());
-
-               if (sign) result3.add2(result4,result3);
-               else result3.sub2(result4,result3);
-
-               sign=!sign;
-
-               if (remainder.getfrc().iszero()) break;
-
-               overflow2=remainder.getfrc().inv2(result2);
-
-               if (overflow2.right().isnotzero())
-                  {
-                  result2=N::max();
-                  overflow2=N::zero();
-                  }
-
-               result4=minimpfp(result2,overflow2.left());
-
-               minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
-               overflow=remainder.mul2(fraction,remainder);
-               }
+            minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+            overflow=remainder.mul2(fraction,remainder);
             }
 
       result=minimpfp(S,N::zero(),result3.getmag());
@@ -490,83 +627,6 @@ class minimpfp
 
    BOOLINT S;
    N M,F;
-   };
-
-class minimpfp_base
-   {
-   public:
-
-   //! default constructor
-   minimpfp_base() {}
-
-   //! constructor
-   minimpfp_base(const unsigned int m,const unsigned int f) {V=(m<<16)+f;}
-
-   //! constructor
-   minimpfp_base(const double v) {set(v);}
-
-   //! destructor
-   ~minimpfp_base() {}
-
-   static unsigned int getbits() {return(32);}
-   static double getlimit() {return((double)(1<<16));}
-
-   static minimpfp_base zero() {return(minimpfp_base(0,0));}
-   static minimpfp_base one() {return(minimpfp_base(1,0));}
-
-   static minimpfp_base min() {return(minimpfp_base(0,1));}
-   static minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
-
-   unsigned int getmag() const {return(V>>16);}
-   unsigned int getfrc() const {return(V&0xFFFF);}
-
-   void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
-   double get() const {return(V*(1.0/(double)(1<<16)));}
-
-   BOOLINT iszero() const {return(V==0);}
-   BOOLINT isnotzero() const {return(V!=0);}
-
-   BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
-   BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
-
-   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
-   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
-
-   void nrm() {}
-   void cpm() {V=~V+1;}
-
-   BOOLINT add2(const minimpfp_base &value,minimpfp_base &result) const
-      {
-      unsigned int v=V;
-      result.V=V+value.V;
-      return(result.V<v);
-      }
-
-   BOOLINT sub2(const minimpfp_base &value,minimpfp_base &result) const
-      {
-      unsigned int v=V;
-      result.V=V-value.V;
-      return(result.V>v);
-      }
-
-   minimpfp_base mul2(const minimpfp_base &value,minimpfp_base &result) const
-      {
-      unsigned long long int mv;
-      mv=(unsigned long long int)V*(unsigned long long int)value.V;
-      result.V=(unsigned int)(mv>>16);
-      return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
-      }
-
-   minimpfp_base inv2(minimpfp_base &result) const
-      {
-      unsigned long long int iv;
-      if (V==0) {result=max(); return(max());}
-      iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
-      result.V=(unsigned int)(iv>>16);
-      return(minimpfp_base((unsigned int)(iv>>48),(unsigned int)iv&0xFFFF));
-      }
-
-   unsigned int V;
    };
 
 typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
