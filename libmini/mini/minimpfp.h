@@ -540,6 +540,8 @@ class minimpfp
       result4=minimpfp(result2,overflow2);
 
       minimpfp(M.right(),M.left()).mul2(result4,fraction);
+      fraction.add2(min(),fraction);
+
       mul2(fraction,remainder);
 
       sign=FALSE;
@@ -566,6 +568,8 @@ class minimpfp
          result4=minimpfp(result2,overflow2);
 
          minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+         fraction.add2(min(),fraction);
+
          overflow=remainder.mul2(fraction,remainder);
          }
 
@@ -595,6 +599,8 @@ class minimpfp
          result4=minimpfp(result2,overflow2);
 
          minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+         fraction.add2(min(),fraction);
+
          overflow=remainder.mul2(fraction,remainder);
          }
 
