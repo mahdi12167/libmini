@@ -108,6 +108,7 @@ int main(int argc,char *argv[])
 
    const long long int sqrtmax=10000;
 
+   if (0) //!!
    for (i=0; i<sqrtmax; i++)
       {
       test1=minimf(0.1*i);
@@ -128,6 +129,7 @@ int main(int argc,char *argv[])
 
    const long long int invsqrtmax=10000;
 
+   if (0) //!!
    for (i=1; i<invsqrtmax+1; i++)
       {
       test1=minimf(0.1*i);

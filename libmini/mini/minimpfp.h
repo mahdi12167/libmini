@@ -493,7 +493,11 @@ class minimpfp
    minimpfp inv() const
       {
       minimpfp result;
+
+      if (isone()) return(*this);
+
       inv2(result);
+
       return(result);
       }
 
@@ -535,7 +539,9 @@ class minimpfp
       overflow2=F.inv2(result2);
       result4=minimpfp(result2,overflow2);
 
-      minimpfp(M,N::zero()).mul2(result4,fraction);
+      overflow=minimpfp(M,N::zero()).mul2(result4,fraction);
+      fraction.add2(min(),fraction); //!!
+
       overflow=mul2(fraction,remainder);
 
       if (remainder.getmag().isnotzero())
@@ -554,13 +560,15 @@ class minimpfp
             overflow2=remainder.getfrc().inv2(result2);
             result4=minimpfp(result2,overflow2);
 
-            minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+            overflow=minimpfp(remainder.getmag(),N::zero()).mul2(result4,fraction);
+            fraction.add2(min(),fraction); //!!
+
             overflow=remainder.mul2(fraction,remainder);
             }
 
       result=minimpfp(S,N::zero(),result3.getmag());
 
-      return(minimpfp(N::zero(),result3.getfrc()));
+      return(minimpfp(result3.getfrc(),N::zero()));
       }
 
    minimpfp sqroot() const
