@@ -543,7 +543,7 @@ class minimpfp
       overflow.add2(minimpfp(result3.right(),result3.left()),overflow);
       overflow.add2(minimpfp(result5.right(),result5.left()),overflow);
 
-      result=overflow.right();
+      result=minimpfp(S,N::zero(),overflow.getmag());
 
       return(overflow.left().right());
       }
@@ -566,6 +566,8 @@ class minimpfp
 
       do
          {
+         printf("rem=%g\n",remainder.get()); //!!
+
          overflow1=remainder.getmag().inv2(result1);
 
          if (sign) result.add2(result1,result);
