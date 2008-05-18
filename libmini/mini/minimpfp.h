@@ -543,10 +543,10 @@ class minimpfp
       overflow.add2(minimpfp(N::zero(),result5.getfrc()),overflow);
       overflow.add2(minimpfp(result4.getfrc().right(),result4.getfrc().left()),overflow);
 
-      result=overflow.right();
-      result.add2(minimpfp(N::zero(),result5.getmag()),result);
-      result.add2(minimpfp(result4.getmag().right(),result4.getmag().left()),result);
-      result.add2(result3,result);
+      result=minimpfp(S,N::zero(),overflow.getmag());
+      result.add2(minimpfp(S,N::zero(),result5.getmag()),result);
+      result.add2(minimpfp(S,result4.getmag().right(),result4.getmag().left()),result);
+      result.add2(minimpfp(S,result3.getmag(),result3.getfrc()),result);
 
       return(overflow.left().right());
       }
@@ -597,6 +597,12 @@ class minimpfp
             return(minimpfp(result1,result2));
             }
          }
+
+      overflow1=remainder.getmag().inv2(result1);
+      result3=minimpfp(N(overflow1.getmag(),result1.getmag()),N(result1.getfrc(),overflow1.getfrc()));
+
+      if (sign) result.add2(result3,result);
+      else result.sub2(result3,result);
 
       return(remainder);
       }
@@ -662,7 +668,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp2 minimf; //!!
+typedef minimpfp1 minimf; //!!
 
 // multi-precision floating point operators:
 
