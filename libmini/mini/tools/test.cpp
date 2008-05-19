@@ -93,7 +93,7 @@ int main(int argc,char *argv[])
       printf("%.10f: rem=%g\n",res,rem);
       if (i%2==0) res+=1.0/floor(rem);
       else res-=1.0/floor(rem);
-      rem=floor(rem)/(rem-floor(rem))*rem; 
+      rem=floor(rem)/(rem-floor(rem))*rem;
       }
    exit(0);
 
