@@ -532,7 +532,9 @@ class minimpfp
                }
             else
                {
-               //!!
+               minimpfp(F.right(),F.left()).inv2(result);
+               result=minimpfp(result.getmag().right(),N(result.getmag().getfrc(),result.getfrc().getmag()));
+               return(minimpfp(N::zero(),result.getfrc().left()));
                }
       else
          if (M.getmag().iszero())
@@ -549,7 +551,9 @@ class minimpfp
             }
          else
             {
-            //!!
+            minimpfp(M.right(),M.left()).inv2(result);
+            result=minimpfp(N(result.getmag().getfrc(),result.getfrc().getmag()),result.getfrc().left());
+            return(minimpfp(result.getmag().right(),N::zero()));
             }
 
       remainder=inv3(minimpfp(M.right(),N(M.getfrc(),F.getmag())),result3);
