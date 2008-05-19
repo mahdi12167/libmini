@@ -518,17 +518,26 @@ class minimpfp
             return(max());
             }
          else
-            {
-            overflow1=F.inv2(result1);
-            result=minimpfp(S,N(result1.getfrc(),overflow1.getfrc()),overflow1.left());
-            return(minimpfp(overflow1.right(),N::zero()));
-            }
+            if (F.getmag().iszero())
+                {
+                overflow1=F.inv2(result1);
+                result=minimpfp(result1,overflow1.left());
+                return(minimpfp(overflow1.right(),N::zero()));
+                }
+            else
+               {
+               //!!
+               }
       else
-         if (F.iszero())
+         if (M.getfrc().iszero())
             {
-            overflow2=M.inv2(result2);
-            result=minimpfp(S,overflow2.right(),result2);
+            overflow2=F.inv2(result2);
+            result=minimpfp(overflow2.right(),result2);
             return(minimpfp(N::zero(),overflow2.left()));
+            }
+         else
+            {
+            //!!
             }
 
       remainder=inv3(minimpfp(M.right(),N(M.getfrc(),F.getmag())),result3);
