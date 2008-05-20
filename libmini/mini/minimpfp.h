@@ -539,7 +539,7 @@ class minimpfp
       else
          if (M.right().iszero())
             {
-            overflow2=F.inv2(result2);
+            overflow2=M.inv2(result2);
             result=minimpfp(overflow2.right(),result2);
             return(minimpfp(N::zero(),overflow2.left()));
             }
