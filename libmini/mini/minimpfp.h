@@ -532,29 +532,30 @@ class minimpfp
                }
             else
                {
-               minimpfp(F.right(),F.left()).inv2(result);
-               result=minimpfp(result.getmag().right(),N(result.getmag().getfrc(),result.getfrc().getmag()));
-               return(minimpfp(N::zero(),result.getfrc().left()));
+               overflow=minimpfp(F.right(),F.left()).inv2(remainder);
+               result=minimpfp(remainder.getfrc().right(),N(remainder.getfrc().getfrc(),overflow.getfrc().getmag()));
+               return(minimpfp(N::zero(),overflow.getfrc().left()));
                }
       else
-         if (M.right().iszero())
-            {
-            overflow2=M.inv2(result2);
-            result=minimpfp(overflow2.right(),result2);
-            return(minimpfp(N::zero(),overflow2.left()));
-            }
-         else if (M.left().iszero())
-            {
-            overflow2=M.right().inv2(result2);
-            result=minimpfp(N::zero(),N(overflow2.getmag(),result2.getmag()));
-            return(minimpfp(N::zero(),N(result2.getfrc(),overflow2.getfrc())));
-            }
-         else
-            {
-            minimpfp(M.right(),M.left()).inv2(result);
-            result=minimpfp(N(result.getmag().getfrc(),result.getfrc().getmag()),result.getfrc().left());
-            return(minimpfp(result.getmag().right(),N::zero()));
-            }
+         if (F.iszero())
+            if (M.right().iszero())
+               {
+               overflow2=M.inv2(result2);
+               result=minimpfp(overflow2.right(),result2);
+               return(minimpfp(N::zero(),overflow2.left()));
+               }
+            else if (M.left().iszero())
+               {
+               overflow2=M.right().inv2(result2);
+               result=minimpfp(N::zero(),N(overflow2.getmag(),result2.getmag()));
+               return(minimpfp(N::zero(),N(result2.getfrc(),overflow2.getfrc())));
+               }
+            else
+               {
+               overflow=minimpfp(M.right(),M.left()).inv2(remainder);
+               result=minimpfp(N::zero(),remainder.getfrc().right());
+               return(minimpfp(N::zero(),N(remainder.getfrc().getfrc(),overflow.getfrc().getmag())));
+               }
 
       remainder=inv3(minimpfp(M.right(),N(M.getfrc(),F.getmag())),result3);
       overflow=minimpfp(result3.right(),result3.left());
@@ -619,13 +620,10 @@ class minimpfp
          {
          overflow1=remainder.getmag().inv2(result1);
 
-         if (remainder.getfrc().iszero())
-            {
-            if (remainder.getsgn()) result.add2(result1,result);
-            else result.sub2(result1,result);
+         if (remainder.getsgn()) result.add2(result1,result);
+         else result.sub2(result1,result);
 
-            return (zero());
-            }
+         if (remainder.getfrc().iszero()) return (zero());
 
          result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
          result3.mul2(minimpfp(N::zero(),remainder.getfrc()),fraction);
@@ -636,19 +634,12 @@ class minimpfp
          result3=minimpfp(N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc()));
          result4=minimpfp(!remainder.getsgn(),N(remainder.getmag().getfrc(),remainder.getfrc().getmag()),remainder.getfrc().left());
 
-         overflow=result3.mul2(result4,result4);
-
-         if (overflow.getmag().iszero())
-            {
-            if (remainder.getsgn()) result.add2(result1,result);
-            else result.sub2(result1,result);
-
-            remainder=result4;
-            }
+         overflow=result3.mul2(result4,remainder);
          }
       while (overflow.getmag().iszero());
 
-      return(minimpfp(remainder.getsgn(),remainder.getmag().right(),
+      return(minimpfp(remainder.getsgn(),
+                      N(overflow.getmag().getfrc(),remainder.getmag().getmag()),
                       N(remainder.getmag().getfrc(),remainder.getfrc().getmag())));
       }
 

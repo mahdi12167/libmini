@@ -84,7 +84,7 @@ int main(int argc,char *argv[])
    double v=0.9;
    minimf t(v),r;
    r=t.inv2(t);
-   printf("test: %.18f %.18f\n",t.get(),(t.get()*65536+r.getfrc().get()/65536)/65536);
+   printf("test: %.18f %.18f\n",t.get(),r.get());
    printf("\n");
    double rem=v;
    double res=0.0;
