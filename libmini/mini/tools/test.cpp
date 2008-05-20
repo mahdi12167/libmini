@@ -81,7 +81,7 @@ int main(int argc,char *argv[])
    // div speed test:
 
    //!!
-   double v=0.9;
+   double v=100000.9; //!! 0.9 9.0
    minimf t(v),r;
    r=t.inv2(t);
    printf("test: %.18f %.18f\n",t.get(),r.get());

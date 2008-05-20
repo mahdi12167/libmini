@@ -610,20 +610,23 @@ class minimpfp
 
       result=N::zero();
 
-      if (value.getmag().iszero())
-         return(minimpfp(value.getfrc().right(),
-                         value.getfrc().left()));
+      if (value.getmag().iszero()) return(minimpfp(value.getfrc().right(),value.getfrc().left()));
 
       remainder=value;
 
       do
          {
+         printf("rem=%.18f\n",remainder.get()); //!!
+
          overflow1=remainder.getmag().inv2(result1);
 
-         if (remainder.getsgn()) result.add2(result1,result);
-         else result.sub2(result1,result);
+         if (remainder.getfrc().iszero())
+            {
+            if (remainder.getsgn()) result.add2(result1,result);
+            else result.sub2(result1,result);
 
-         if (remainder.getfrc().iszero()) return (zero());
+            return (zero());
+            }
 
          result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
          result3.mul2(minimpfp(N::zero(),remainder.getfrc()),fraction);
@@ -632,15 +635,25 @@ class minimpfp
          overflow2=result2.inv2(result2);
 
          result3=minimpfp(N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc()));
-         result4=minimpfp(!remainder.getsgn(),N(remainder.getmag().getfrc(),remainder.getfrc().getmag()),remainder.getfrc().left());
+         overflow=remainder.mul2(result3,result4);
 
-         overflow=result3.mul2(result4,remainder);
+         if (overflow.getmag().isnotzero())
+            {
+            overflow=zero();
+            break;
+            }
+         else
+            {
+            if (remainder.getsgn()) result.add2(result1,result);
+            else result.sub2(result1,result);
+
+            remainder=minimpfp(!remainder.getsgn(),N(result4.getmag().getfrc(),result4.getfrc().getmag()),N(result4.getfrc().getfrc(),overflow.getfrc().getmag()));
+            overflow=minimpfp(result4.getmag().right(),N::zero());
+            }
          }
       while (overflow.getmag().iszero());
 
-      return(minimpfp(remainder.getsgn(),
-                      N(overflow.getmag().getfrc(),remainder.getmag().getmag()),
-                      N(remainder.getmag().getfrc(),remainder.getfrc().getmag())));
+      return(minimpfp(remainder.getsgn(),N(overflow.getmag().getfrc(),remainder.getmag().getmag()),N(remainder.getmag().getfrc(),remainder.getfrc().getmag())));
       }
 
    minimpfp sqroot() const
