@@ -90,7 +90,7 @@ int main(int argc,char *argv[])
    double res=0.0;
    for (int i=0; i<10; i++)
       {
-      printf("%.10f: rem=%g\n",res,rem);
+      printf("%.10f: rem=%.15f\n",res,rem);
       if (i%2==0) res+=1.0/floor(rem);
       else res-=1.0/floor(rem);
       rem=floor(rem)/(rem-floor(rem))*rem;
