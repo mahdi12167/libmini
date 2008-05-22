@@ -463,18 +463,22 @@ class minimpfp
       N result1,result2,result3,result4;
       N overflow1,overflow2,overflow3,overflow4;
 
+      // multiply sign
       sign=!(S^value.getsgn());
 
+      // calculate sub-terms
       overflow1=F.mul2(value.getfrc(),result1);
       overflow2=F.mul2(value.getmag(),result2);
       overflow3=M.mul2(value.getfrc(),result3);
       overflow4=M.mul2(value.getmag(),result4);
 
+      // sum up sub-terms
       result=minimpfp(sign,N::zero(),N(overflow1.getmag(),result1.getmag()));
       result.add2(minimpfp(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result);
       result.add2(minimpfp(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result);
       result.add2(minimpfp(sign,N(result4.getfrc(),overflow4.getfrc()),N::zero()),result);
 
+      // return overflow
       return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
       }
 
@@ -507,9 +511,10 @@ class minimpfp
       {
       N result1,result2;
       N overflow1,overflow2;
-      N result3,result4,result5,result6;
+      minimpfp result3,result4,result5,result6;
       minimpfp remainder,overflow;
 
+      // check for valid magnitude and fraction
       if (M.iszero())
          if (F.iszero())
             {
@@ -557,50 +562,30 @@ class minimpfp
                return(minimpfp(N::zero(),N(remainder.getfrc().getfrc(),overflow.getfrc().getmag())));
                }
 
+      // invert most significant quarter
       remainder=inv3(*this,result3);
-      overflow=minimpfp(result3.right(),result3.left());
+      overflow=minimpfp(result3.getsgn(),result3.getfrc().right(),result3.getfrc().left());
 
-      if (remainder.getsgn())
-         {
-         remainder=inv3(remainder,result4);
-         overflow.add2(minimpfp(result4,N::zero()),overflow);
-         }
-      else
-         {
-         remainder=inv3(remainder.neg(),result4);
-         overflow.sub2(minimpfp(result4,N::zero()),overflow);
-         remainder=remainder.neg();
-         }
+      // invert second-most significant quarter
+      remainder=inv3(remainder,result4);
+      overflow.add2(minimpfp(result4.getsgn(),result4.getfrc(),N::zero()),overflow);
 
-      if (remainder.getsgn())
-         {
-         remainder=inv3(remainder,result5);
-         overflow.add2(minimpfp(N::zero(),result5),overflow);
-         }
-      else
-         {
-         remainder=inv3(remainder.neg(),result5);
-         overflow.sub2(minimpfp(N::zero(),result5),overflow);
-         remainder=remainder.neg();
-         }
+      // invert third-most significant quarter
+      remainder=inv3(remainder,result5);
+      overflow.add2(minimpfp(result5.getsgn(),N::zero(),result5.getfrc()),overflow);
 
-      if (remainder.getsgn())
-         {
-         remainder=inv3(remainder,result6);
-         overflow.sub2(minimpfp(N::zero(),result6.right()),overflow);
-         }
-      else
-         {
-         remainder=inv3(remainder.neg(),result6);
-         overflow.add2(minimpfp(N::zero(),result6.right()),overflow);
-         }
+      // invert least significant quarter
+      remainder=inv3(remainder,result6);
+      overflow.sub2(minimpfp(result6.getsgn(),N::zero(),result6.getfrc().right()),overflow);
 
+      // compute fraction
       result=minimpfp(S,N::zero(),overflow.getmag());
 
+      // compute remainder
       return(overflow.left().right());
       }
 
-   minimpfp inv3(const minimpfp value,N &result) const
+   minimpfp inv3(const minimpfp value,minimpfp &result) const
       {
       BOOLINT done;
       minimpfp remainder;
@@ -609,46 +594,114 @@ class minimpfp
       minimpfp result3,result4;
       minimpfp fraction,overflow;
 
-      result=N::zero();
+      // initialize accumulator
+      result=zero();
 
-      if (value.getmag().right().iszero()) return(minimpfp(N(value.getmag().getfrc(),value.getfrc().getmag()),value.getfrc().left()));
+      // quarter magnitude is zero
+      if (value.getmag().right().iszero())
+         {
+         // shift left one quarter
+         result1=N(value.getmag().getfrc(),value.getfrc().getmag());
+         result2=value.getfrc().left();
 
+         // return shifted remainder
+         return(minimpfp(result1,result2));
+         }
+
+      // set overflow flag to false
       done=FALSE;
+
+      // set remainder to initial value
       remainder=value;
 
+      // accumulate until overflow occurs
       do
          {
-         printf("rem=%.18f\n",remainder.get()/N::getlimit()); //!!
-
+         // invert quarter magnitude
          overflow1=remainder.getmag().right().inv2(result1);
 
+         // check for zero fraction
          if (remainder.getmag().left().iszero() && remainder.getfrc().iszero())
             {
-            if (remainder.getsgn()) result.add2(result1,result);
-            else result.sub2(result1,result);
+            // accumulate inverted quarter magnitude
+            if (remainder.getsgn()) result.add2(minimpfp(overflow1.right(),result1),result);
+            else result.sub2(minimpfp(overflow1.right(),result1),result);
 
-            return (zero());
+            // remainder is zero
+            return(zero());
             }
 
-         result3=minimpfp(N(overflow1.getmag(),result1.getmag()),N(result1.getfrc(),overflow1.getfrc()));
-         result3.mul2(minimpfp(remainder.getmag().left().right(),remainder.getfrc()),fraction);
+         // check if fraction has 2 or 3 valid quarters
+         if (remainder.getmag().left().isnotzero())
+            {
+            // multiply inverted magnitude with fraction
+            result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
+            result3.mul2(minimpfp(remainder.getmag().left().right(),remainder.getfrc()),fraction);
 
-         overflow2=fraction.getmag().inv2(result2);
+            // calculate magnitude multiplied by inverted fraction
+            overflow2=fraction.getmag().inv2(result2);
 
-         result3=minimpfp(N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc()));
-         overflow=remainder.mul2(result3,result4);
+            // multiply with remainder
+            result3=minimpfp(N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc()));
+            overflow=remainder.mul2(result3,result4);
+            }
+         else
+            {
+            // multiply inverted magnitude with shifted fraction
+            result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
+            result3.mul2(minimpfp(remainder.getfrc().right(),remainder.getfrc().left()),fraction);
 
-         if (remainder.getsgn()) result.add2(result1,result);
-         else result.sub2(result1,result);
+            // calculate magnitude multiplied by inverted fraction
+            overflow2=fraction.getmag().inv2(result2);
 
-         if (overflow.getmag().isnotzero() || result4.getmag().right().isnotzero()) done=TRUE;
-         else remainder=minimpfp(!remainder.getsgn(),N(result4.getmag().getfrc(),result4.getfrc().getmag()),N(result4.getfrc().getfrc(),overflow.getfrc().getmag()));
+            // multiply with shifted remainder
+            result3=minimpfp(overflow2.right(),result2);
+            overflow=remainder.mul2(result3,result4);
+            }
+
+         // check overflow
+         if (overflow.getmag().isnotzero())
+            {
+            overflow=zero();
+            done=TRUE;
+            }
+         else
+            {
+            // accumulate inverted quarter magnitude
+            if (remainder.getsgn()) result.add2(minimpfp(overflow1.right(),result1),result);
+            else result.sub2(minimpfp(overflow1.right(),result1),result);
+
+            // check most significant quarter of remainder
+            if (result4.getmag().right().isnotzero())
+               {
+               // shift left one quarter
+               result1=N(result4.getmag().getfrc(),result4.getfrc().getmag());
+               result2=result4.getfrc().left();
+
+               // negate shifted remainder
+               remainder=minimpfp(!remainder.getsgn(),result1,result2);
+               overflow=minimpfp(result4.getmag().right(),N::zero());
+               done=TRUE;
+               }
+            else
+               {
+               // shift left one quarter
+               result1=N(result4.getmag().getfrc(),result4.getfrc().getmag());
+               result2=N(result4.getfrc().getfrc(),overflow.getfrc().getmag());
+
+               // negate shifted remainder
+               remainder=minimpfp(!remainder.getsgn(),result1,result2);
+               }
+            }
          }
       while (!done);
 
-      printf("overflow\n"); //!!
+      // shift right one quarter
+      result1=N(overflow.getmag().getfrc(),remainder.getmag().getmag());
+      result2=N(remainder.getmag().getfrc(),remainder.getfrc().getmag());
 
-      return(minimpfp(remainder.getsgn(),N(overflow.getmag().getfrc(),remainder.getmag().getmag()),N(remainder.getmag().getfrc(),remainder.getfrc().getmag())));
+      // return shifted remainder
+      return(minimpfp(remainder.getsgn(),result1,result2));
       }
 
    minimpfp sqroot() const

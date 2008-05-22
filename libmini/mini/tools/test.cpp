@@ -81,20 +81,10 @@ int main(int argc,char *argv[])
    // div speed test:
 
    //!!
-   double v=100.09; //!! 1.1 2.3 100.09 100000.9 9.0 0.9
+   double v=1.00009;
    minimf t(v),r;
    r=t.inv2(t);
-   printf("test: %.18f %.18f\n",t.get(),r.get());
-   printf("\n");
-   double rem=v;
-   double res=0.0;
-   for (int i=0; i<10; i++)
-      {
-      printf("%.10f: rem=%.15f\n",res,rem);
-      if (i%2==0) res+=1.0/floor(rem);
-      else res-=1.0/floor(rem);
-      rem=floor(rem)/(rem-floor(rem))*rem;
-      }
+   printf("test: %.18f -> %.18f %.18f\n",1.0/v,t.get(),r.get());
    exit(0);
 
    time=minigettime();
