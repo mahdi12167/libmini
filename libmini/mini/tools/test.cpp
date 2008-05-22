@@ -82,9 +82,9 @@ int main(int argc,char *argv[])
 
    //!!
    double v=1.00009;
-   minimf t(v),r;
-   r=t.inv2(t);
-   printf("test: %.18f -> %.18f %.18f\n",1.0/v,t.get(),r.get());
+   minimf t(v);
+   t=t.inv();
+   printf("test: %.18f -> %.18f",1.0/v,t.get());
    exit(0);
 
    time=minigettime();
@@ -115,7 +115,6 @@ int main(int argc,char *argv[])
 
    const long long int sqrtmax=10000;
 
-   if (0) //!!
    for (i=0; i<sqrtmax; i++)
       {
       test1=minimf(0.1*i);
@@ -129,27 +128,6 @@ int main(int argc,char *argv[])
    time=minigettime()-time;
 
    printf("%gk sqrts/s\n",(double)sqrtmax/time/1E3);
-
-   // inv sqrt speed test:
-
-   time=minigettime();
-
-   const long long int invsqrtmax=10000;
-
-   if (0) //!!
-   for (i=1; i<invsqrtmax+1; i++)
-      {
-      test1=minimf(0.1*i);
-
-      test2=test1.invsqroot();
-
-      if (FABS(test2.get()-1.0/sqrt(0.1*i))>1E-6)
-         printf("invsqrt(%g)!=%g\n",0.1*i,test2.get());
-      }
-
-   time=minigettime()-time;
-
-   printf("%gk invsqrts/s\n",(double)invsqrtmax/time/1E3);
 
    // precision test:
 

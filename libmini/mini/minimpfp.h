@@ -31,17 +31,18 @@ class minimpfp_base
    static BOOLINT MINIMPFP_DIVBYZERO;
    static BOOLINT MINIMPFP_OVERFLOW;
 
-   static unsigned int getbits() {return(32);}
-   static double getlimit() {return((double)(1<<16));}
+   static const unsigned int getbits() {return(32);}
+   static const double getlimit() {return((double)(1<<16));}
+   static const unsigned int getlog2() {return(5);}
 
-   static minimpfp_base zero() {return(minimpfp_base(0,0));}
-   static minimpfp_base one() {return(minimpfp_base(1,0));}
+   static const minimpfp_base zero() {return(minimpfp_base(0,0));}
+   static const minimpfp_base one() {return(minimpfp_base(1,0));}
 
-   static minimpfp_base min() {return(minimpfp_base(0,1));}
-   static minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
+   static const minimpfp_base min() {return(minimpfp_base(0,1));}
+   static const minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
 
-   unsigned int getmag() const {return(V>>16);}
-   unsigned int getfrc() const {return(V&0xFFFF);}
+   unsigned const int getmag() const {return(V>>16);}
+   unsigned const int getfrc() const {return(V&0xFFFF);}
 
    void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
    double get() const {return(V*(1.0/(double)(1<<16)));}
@@ -60,9 +61,6 @@ class minimpfp_base
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
-
-   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
-   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
 
    void nrm() {/*nop*/}
    void cpm() {V=~V+1;}
@@ -89,13 +87,40 @@ class minimpfp_base
       return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
       }
 
-   minimpfp_base inv2(minimpfp_base &result) const
+   minimpfp_base left2(const unsigned int bits,minimpfp_base &result) const
       {
-      unsigned long long int iv;
-      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; result=max(); return(max());}
-      iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
-      result.V=(unsigned int)(iv>>16);
-      return(minimpfp_base((unsigned int)(iv>>48),(unsigned int)iv&0xFFFF));
+      unsigned long long int lv;
+      lv=((unsigned long long int)V)<<bits;
+      result.V=(unsigned int)lv;
+      return(minimpfp_base((unsigned int)(lv>>48),(unsigned int)(lv>>32)&0xFFFF));
+      }
+
+   minimpfp_base right2(const unsigned int bits,minimpfp_base &result) const
+      {
+      unsigned long long int rv;
+      rv=(((unsigned long long int)V)<<32)>>bits;
+      result.V=(unsigned int)(rv>>32);
+      return(minimpfp_base(((unsigned int)rv)>>16,((unsigned int)rv)&0xFFFF));
+      }
+
+   unsigned int getmsbit() const
+      {
+      static const unsigned int table[16]={0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
+
+      if (V&0xFFFF0000==1)
+         if (V&0xFF000000==1)
+            if (V&0xF0000000==1) return(table[V>>28]+28);
+            else return(table[V>>24]+24);
+         else
+            if (V&0x00F00000==1) return(table[V>>20]+20);
+            else return(table[V>>16]+16);
+      else
+         if (V&0x0000FF00==1)
+            if (V&0x0000F000==1) return(table[V>>12]+12);
+            else return(table[V>>8]+8);
+         else
+            if (V&0x000000F0==1) return(table[V>>4]+4);
+            else return(table[V]);
       }
    };
 
@@ -130,14 +155,15 @@ class minimpfp
    //! destructor
    ~minimpfp() {}
 
-   static unsigned int getbits() {return(2*N::getbits());}
-   static double getlimit() {return(N::getlimit()*N::getlimit());}
+   static const unsigned int getbits() {return(2*N::getbits());}
+   static const double getlimit() {return(N::getlimit()*N::getlimit());}
+   static const unsigned int getlog2() {return(N::getlog2()+1);}
 
-   static minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
-   static minimpfp one() {return(minimpfp(N::min(),N::zero()));}
+   static const minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
+   static const minimpfp one() {return(minimpfp(N::min(),N::zero()));}
 
-   static minimpfp min() {return(minimpfp(N::zero(),N::min()));}
-   static minimpfp max() {return(minimpfp(N::max(),N::max()));}
+   static const minimpfp min() {return(minimpfp(N::zero(),N::min()));}
+   static const minimpfp max() {return(minimpfp(N::max(),N::max()));}
 
    minimpfp minval() const {return(minimpfp(S,N::zero(),N::min()));}
    minimpfp maxval() const {return(minimpfp(S,N::max(),N::max()));}
@@ -482,6 +508,73 @@ class minimpfp
       return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
       }
 
+   minimpfp left2(const unsigned int bits,minimpfp &result) const
+      {
+      N result1,result2;
+      N overflow1,overflow2;
+
+      if (bits<=N::getbits())
+         {
+         overflow1=F.left2(bits,result1);
+         overflow2=M.left2(bits,result2);
+
+         result2.add2(overflow1,result2);
+
+         result=minimpfp(S,result2,result1);
+
+         return(minimpfp(N::zero(),overflow2));
+         }
+      else
+         {
+         overflow1=F.left2(bits-N::getbits(),result1);
+         overflow2=M.left2(bits-N::getbits(),result2);
+
+         result2.add2(overflow1,result2);
+
+         result=minimpfp(S,result1,N::zero());
+
+         return(minimpfp(overflow2,result2));
+         }
+      }
+
+   minimpfp right2(const unsigned int bits,minimpfp &result) const
+      {
+      N result1,result2;
+      N overflow1,overflow2;
+
+      if (bits<=N::getbits())
+         {
+         overflow1=M.right2(bits,result1);
+         overflow2=F.right2(bits,result2);
+
+         result2.add2(overflow1,result2);
+
+         result=minimpfp(S,result1,result2);
+
+         return(minimpfp(overflow2,N::zero()));
+         }
+      else
+         {
+         overflow1=M.right2(bits-N::getbits(),result1);
+         overflow2=F.right2(bits-N::getbits(),result2);
+
+         result2.add2(overflow1,result2);
+
+         result=minimpfp(S,N::zero(),result1);
+
+         return(minimpfp(result2,overflow2));
+         }
+      }
+
+   unsigned int getmsbit() const
+      {
+      unsigned int bit;
+
+      bit=M.getmsbit();
+      if (bit!=0) return(bit+N::getbits());
+      else return(F.getmsbit());
+      }
+
    void div(const minimpfp &value,minimpfp &result) const
       {
       if (div2(value,result).getmag().isnotzero())
@@ -496,212 +589,66 @@ class minimpfp
 
    minimpfp inv() const
       {
+      unsigned int bit;
       minimpfp result;
 
-      if (inv2(result).getmag().isnotzero())
+      // check for division by zero
+      if (iszero())
          {
-         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         result=result.maxval();
+         minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
+         return(maxval());
          }
 
+      // check for overflow
+      if (ismin())
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
+         return(maxval());
+         }
+
+      // get most significant bit
+      bit=getmsbit();
+
+      // shift most significant bit behind binary point
+      if (bit>N::getbits()) result=right2(bit-N::getbits(),result);
+      else result=left2(N::getbits()-bit,result);
+
+      // compute inverse
+      result=result.inv2();
+
+      // shift inverse in place again
+      if (bit>N::getbits()) result=right2(bit-N::getbits(),result);
+      else result=left2(N::getbits()-bit,result);
+
+      // return shifted inverse
       return(result);
       }
 
-   minimpfp inv2(minimpfp &result) const
+   // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
+   // assumes that the value v to be inverted is in the range 0.5-1
+   // starting value is x_0=3-2*v
+   minimpfp inv2() const
       {
-      N result1,result2;
-      N overflow1,overflow2;
-      minimpfp result3,result4,result5,result6;
-      minimpfp remainder,overflow;
+      static const minimpfp c1(2.0);
+      static const minimpfp c2(3.0);
 
-      // check for valid magnitude and fraction
-      if (M.iszero())
-         if (F.iszero())
-            {
-            minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
-            result=maxval();
-            return(max());
-            }
-         else
-            if (F.right().iszero())
-               {
-               overflow1=F.inv2(result1);
-               result=minimpfp(result1,overflow1.left());
-               return(minimpfp(overflow1.right(),N::zero()));
-               }
-            else if (F.left().iszero())
-               {
-               overflow1=F.right().inv2(result1);
-               result=minimpfp(N(overflow1.getmag(),result1.getmag()),N(result1.getfrc(),overflow1.getfrc()));
-               return(zero());
-               }
-            else
-               {
-               overflow=minimpfp(F.right(),F.left()).inv2(remainder);
-               result=minimpfp(remainder.getfrc().right(),N(remainder.getfrc().getfrc(),overflow.getfrc().getmag()));
-               return(minimpfp(N::zero(),overflow.getfrc().left()));
-               }
-      else
-         if (F.iszero())
-            if (M.right().iszero())
-               {
-               overflow2=M.inv2(result2);
-               result=minimpfp(overflow2.right(),result2);
-               return(minimpfp(N::zero(),overflow2.left()));
-               }
-            else if (M.left().iszero())
-               {
-               overflow2=M.right().inv2(result2);
-               result=minimpfp(N::zero(),N(overflow2.getmag(),result2.getmag()));
-               return(minimpfp(N::zero(),N(result2.getfrc(),overflow2.getfrc())));
-               }
-            else
-               {
-               overflow=minimpfp(M.right(),M.left()).inv2(remainder);
-               result=minimpfp(N::zero(),remainder.getfrc().right());
-               return(minimpfp(N::zero(),N(remainder.getfrc().getfrc(),overflow.getfrc().getmag())));
-               }
+      unsigned int i;
 
-      // invert most significant quarter
-      remainder=inv3(*this,result3);
-      overflow=minimpfp(result3.getsgn(),result3.getfrc().right(),result3.getfrc().left());
+      minimpfp x;
 
-      // invert second-most significant quarter
-      remainder=inv3(remainder,result4);
-      overflow.add2(minimpfp(result4.getsgn(),result4.getfrc(),N::zero()),overflow);
+      // compute starting value
+      mul2(c1,x);
+      c2.sub2(x,x);
 
-      // invert third-most significant quarter
-      remainder=inv3(remainder,result5);
-      overflow.add2(minimpfp(result5.getsgn(),N::zero(),result5.getfrc()),overflow);
-
-      // invert least significant quarter
-      remainder=inv3(remainder,result6);
-      overflow.sub2(minimpfp(result6.getsgn(),N::zero(),result6.getfrc().right()),overflow);
-
-      // compute fraction
-      result=minimpfp(S,N::zero(),overflow.getmag());
-
-      // compute remainder
-      return(overflow.left().right());
-      }
-
-   minimpfp inv3(const minimpfp value,minimpfp &result) const
-      {
-      BOOLINT done;
-      minimpfp remainder;
-      N result1,result2;
-      N overflow1,overflow2;
-      minimpfp result3,result4;
-      minimpfp fraction,overflow;
-
-      // initialize accumulator
-      result=zero();
-
-      // quarter magnitude is zero
-      if (value.getmag().right().iszero())
+      // Newton-Raphson iteration
+      for (i=0; i<N::getlog2(); i++)
          {
-         // shift left one quarter
-         result1=N(value.getmag().getfrc(),value.getfrc().getmag());
-         result2=value.getfrc().left();
-
-         // return shifted remainder
-         return(minimpfp(result1,result2));
+         mul2(x,x);
+         c1.sub2(x,x);
+         x.mul2(x,x);
          }
 
-      // set overflow flag to false
-      done=FALSE;
-
-      // set remainder to initial value
-      remainder=value;
-
-      // accumulate until overflow occurs
-      do
-         {
-         // invert quarter magnitude
-         overflow1=remainder.getmag().right().inv2(result1);
-
-         // check for zero fraction
-         if (remainder.getmag().left().iszero() && remainder.getfrc().iszero())
-            {
-            // accumulate inverted quarter magnitude
-            if (remainder.getsgn()) result.add2(minimpfp(overflow1.right(),result1),result);
-            else result.sub2(minimpfp(overflow1.right(),result1),result);
-
-            // remainder is zero
-            return(zero());
-            }
-
-         // check if fraction has 2 or 3 valid quarters
-         if (remainder.getmag().left().isnotzero())
-            {
-            // multiply inverted magnitude with fraction
-            result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
-            result3.mul2(minimpfp(remainder.getmag().left().right(),remainder.getfrc()),fraction);
-
-            // calculate magnitude multiplied by inverted fraction
-            overflow2=fraction.getmag().inv2(result2);
-
-            // multiply with remainder
-            result3=minimpfp(N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc()));
-            overflow=remainder.mul2(result3,result4);
-            }
-         else
-            {
-            // multiply inverted magnitude with shifted fraction
-            result3=minimpfp(N(overflow1.getmag(),result1.getmag()),result1.left());
-            result3.mul2(minimpfp(remainder.getfrc().right(),remainder.getfrc().left()),fraction);
-
-            // calculate magnitude multiplied by inverted fraction
-            overflow2=fraction.getmag().inv2(result2);
-
-            // multiply with shifted remainder
-            result3=minimpfp(overflow2.right(),result2);
-            overflow=remainder.mul2(result3,result4);
-            }
-
-         // check overflow
-         if (overflow.getmag().isnotzero())
-            {
-            overflow=zero();
-            done=TRUE;
-            }
-         else
-            {
-            // accumulate inverted quarter magnitude
-            if (remainder.getsgn()) result.add2(minimpfp(overflow1.right(),result1),result);
-            else result.sub2(minimpfp(overflow1.right(),result1),result);
-
-            // check most significant quarter of remainder
-            if (result4.getmag().right().isnotzero())
-               {
-               // shift left one quarter
-               result1=N(result4.getmag().getfrc(),result4.getfrc().getmag());
-               result2=result4.getfrc().left();
-
-               // negate shifted remainder
-               remainder=minimpfp(!remainder.getsgn(),result1,result2);
-               overflow=minimpfp(result4.getmag().right(),N::zero());
-               done=TRUE;
-               }
-            else
-               {
-               // shift left one quarter
-               result1=N(result4.getmag().getfrc(),result4.getfrc().getmag());
-               result2=N(result4.getfrc().getfrc(),overflow.getfrc().getmag());
-
-               // negate shifted remainder
-               remainder=minimpfp(!remainder.getsgn(),result1,result2);
-               }
-            }
-         }
-      while (!done);
-
-      // shift right one quarter
-      result1=N(overflow.getmag().getfrc(),remainder.getmag().getmag());
-      result2=N(remainder.getmag().getfrc(),remainder.getfrc().getmag());
-
-      // return shifted remainder
-      return(minimpfp(remainder.getsgn(),result1,result2));
+      return(x);
       }
 
    minimpfp sqroot() const
@@ -719,36 +666,9 @@ class minimpfp
          e2=e;
          div(r,r2);
          r2.sub(r,r2);
-         r2.mul(minimpfp(0.5),e);
+         r2.right2(1,e);
          r.add(e,r);
-         e.add(e,e3);
-         }
-      while (e3.abs().sml(e2.abs()));
-
-      return(r);
-      }
-
-   minimpfp invsqroot() const
-      {
-      minimpfp r,r2,e,e2,e3;
-
-      if (!S) return(zero());
-      if (iszero()) return(maxval());
-
-      r.set(1.0/sqrt(get()));
-      e=max();
-
-      do
-         {
-         e2=e;
-         mul(r,r2);
-         r2.mul(r,r2);
-         r2.mul(minimpfp(0.5),r2);
-         minimpfp(1.5).sub(r2,r2);
-         r2.mul(r,r2);
-         r2.sub(r,e);
-         r=r2;
-         e.add(e,e3);
+         e.left2(1,e3);
          }
       while (e3.abs().sml(e2.abs()));
 
@@ -765,7 +685,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp1 minimf; //!!
+typedef minimpfp4 minimf;
 
 // multi-precision floating point operators:
 
