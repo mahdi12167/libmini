@@ -62,6 +62,9 @@ class minimpfp_base
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
 
+   minimpfp_base left() const {return(minimpfp_base(getfrc(),0));}
+   minimpfp_base right() const {return(minimpfp_base(0,getmag()));}
+
    void nrm() {/*nop*/}
    void cpm() {V=~V+1;}
 
@@ -632,22 +635,38 @@ class minimpfp
       static const minimpfp c1(2.0);
       static const minimpfp c2(3.0);
 
+      static const unsigned int shift=N::getbits()/2-2; //!!
+
       unsigned int i;
 
-      minimpfp x,y;
+      minimpfp c3;
+      minimpfp x,y,o;
 
       // compute starting value
       mul2(c1,x);
       c2.sub2(x,x);
 
+      // compute subtractor constant
+      c1.left2(shift,c3);
+
+      // shift starting value left
+      x.left2(shift,x);
+
       // Newton-Raphson iteration
       for (i=0; i<N::getlog2(); i++)
          {
          mul2(x,y);
-         c1.sub2(y,y);
-         x.mul2(y,x);
+         c3.sub2(y,y);
+         o=x.mul2(y,x);
+         x.right2(shift,x);
+         o=o.right().right2(shift,y);
+         x.add2(o,x);
          }
 
+      // shift inverse right
+      x.right2(shift,x);
+
+      // return shifted inverse
       return(x);
       }
 
