@@ -81,10 +81,10 @@ int main(int argc,char *argv[])
    // div speed test:
 
    //!!
-   double v=1.00009;
+   double v=100.0009;
    minimf t(v);
    t=t.inv();
-   printf("test: %.18f -> %.18f",1.0/v,t.get());
+   printf("test: %.18f -> %.18f\n",1.0/v,t.get());
    exit(0);
 
    time=minigettime();
@@ -115,6 +115,7 @@ int main(int argc,char *argv[])
 
    const long long int sqrtmax=10000;
 
+   if (0) //!!
    for (i=0; i<sqrtmax; i++)
       {
       test1=minimf(0.1*i);

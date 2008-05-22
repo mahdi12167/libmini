@@ -107,19 +107,19 @@ class minimpfp_base
       {
       static const unsigned int table[16]={0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
 
-      if (V&0xFFFF0000==1)
-         if (V&0xFF000000==1)
-            if (V&0xF0000000==1) return(table[V>>28]+28);
+      if (V&0xFFFF0000)
+         if (V&0xFF000000)
+            if (V&0xF0000000) return(table[V>>28]+28);
             else return(table[V>>24]+24);
          else
-            if (V&0x00F00000==1) return(table[V>>20]+20);
+            if (V&0x00F00000) return(table[V>>20]+20);
             else return(table[V>>16]+16);
       else
-         if (V&0x0000FF00==1)
-            if (V&0x0000F000==1) return(table[V>>12]+12);
+         if (V&0x0000FF00)
+            if (V&0x0000F000) return(table[V>>12]+12);
             else return(table[V>>8]+8);
          else
-            if (V&0x000000F0==1) return(table[V>>4]+4);
+            if (V&0x000000F0) return(table[V>>4]+4);
             else return(table[V]);
       }
    };
@@ -610,15 +610,15 @@ class minimpfp
       bit=getmsbit();
 
       // shift most significant bit behind binary point
-      if (bit>N::getbits()) result=right2(bit-N::getbits(),result);
-      else result=left2(N::getbits()-bit,result);
+      if (bit>N::getbits()) right2(bit-N::getbits(),result);
+      else left2(N::getbits()-bit,result);
 
       // compute inverse
       result=result.inv2();
 
-      // shift inverse in place again
-      if (bit>N::getbits()) result=right2(bit-N::getbits(),result);
-      else result=left2(N::getbits()-bit,result);
+      // shift inverse in place
+      if (bit>N::getbits()) result.right2(bit-N::getbits(),result);
+      else result.left2(N::getbits()-bit,result);
 
       // return shifted inverse
       return(result);
@@ -634,7 +634,7 @@ class minimpfp
 
       unsigned int i;
 
-      minimpfp x;
+      minimpfp x,y;
 
       // compute starting value
       mul2(c1,x);
@@ -643,9 +643,9 @@ class minimpfp
       // Newton-Raphson iteration
       for (i=0; i<N::getlog2(); i++)
          {
-         mul2(x,x);
-         c1.sub2(x,x);
-         x.mul2(x,x);
+         mul2(x,y);
+         c1.sub2(y,y);
+         x.mul2(y,x);
          }
 
       return(x);
