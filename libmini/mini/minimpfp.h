@@ -616,20 +616,6 @@ class minimpfp
 
    minimpfp inv() const
       {
-      minimpfp result;
-
-      // check for overflow
-      if (ismin())
-         {
-         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         return(maxval());
-         }
-
-      return(inv2());
-      }
-
-   minimpfp inv2() const
-      {
       unsigned int bit;
       minimpfp result;
 
@@ -637,6 +623,13 @@ class minimpfp
       if (iszero())
          {
          minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
+         return(maxval());
+         }
+
+      // check for overflow
+      if (ismin())
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
          return(maxval());
          }
 
@@ -648,8 +641,8 @@ class minimpfp
       else left2(N::getbits()-bit,result);
 
       // compute inverse
-      if (result.getsgn()) result=result.inv3();
-      else result=result.neg().inv3().neg();
+      if (result.getsgn()) result=result.inv2();
+      else result=result.neg().inv2().neg();
 
       // shift inverse in place
       if (bit>N::getbits()) result.right2(bit-N::getbits(),result);
@@ -662,7 +655,7 @@ class minimpfp
    // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
    // assumes that the value v to be inverted is in the range 0.5-1
    // starting value is x_0=3-2*v
-   minimpfp inv3() const
+   minimpfp inv2() const
       {
       static const minimpfp c1(2.0);
       static const minimpfp c2(3.0);
