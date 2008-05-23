@@ -106,13 +106,12 @@ class minimpfp_base
       return(minimpfp_base(((unsigned int)rv)>>16,((unsigned int)rv)&0xFFFF));
       }
 
-   minimpfp_base inv2(minimpfp_base &result) const
+   minimpfp_base inv2() const
       {
-      unsigned long long int iv;
-      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; result=max(); return(max());}
-      iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
-      result.V=(unsigned int)(iv>>16);
-      return(minimpfp_base((unsigned int)(iv>>48),(unsigned int)iv&0xFFFF));
+      unsigned int iv;
+      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; return(max());}
+      else iv=0xFFFFFFFF/V;
+      return(minimpfp_base(iv>>16,iv&0xFFFF));
       }
 
    unsigned int getmsbit() const
@@ -653,28 +652,24 @@ class minimpfp
       }
 
    // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
-   // assumes that the value v to be inverted is in the range 0.5-1
-   // starting value is x_0=3-2*v
+   // assumes that the value v to be inverted is in the range [0.5-1[
+   // starting value is derived recursively from an inversion with half precision
+   // due to quadratic convergence one iteration round suffices per recursion level
    minimpfp inv2() const
       {
-      static const minimpfp c1(2.0);
-      static const minimpfp c2(3.0);
+      static const minimpfp two(2.0);
 
-      unsigned int i;
-
+      N x2;
       minimpfp x,y;
 
       // compute starting value
-      mul2(c1,x);
-      c2.sub2(x,x);
+      x2=F.right().inv2();
+      x=minimpfp(x2.right(),x2.left());
 
-      // Newton-Raphson iteration
-      for (i=0; i<N::getlog2()-2; i++)
-         {
-         mul2(x,y);
-         c1.sub2(y,y);
-         x.mul2(y,x);
-         }
+      // one round of Newton-Raphson iteration
+      mul2(x,y);
+      two.sub2(y,y);
+      x.mul2(y,x);
 
       // return inverted value
       return(x);
