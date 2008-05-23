@@ -129,7 +129,7 @@ int main(int argc,char *argv[])
 
    // precision test:
 
-   minimf c(65535.271);
+   minimf c(271.3);
 
    minimf x=c*c*c*c;
    minimf y=(x-1)*(x+1);

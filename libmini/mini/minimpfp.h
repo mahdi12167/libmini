@@ -641,10 +641,11 @@ class minimpfp
 
    // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
    // assumes that the value v to be inverted is in the range 0.5-1
+   // starting value is x_0=3-2*v
    minimpfp inv2() const
       {
       static const minimpfp c1(2.0);
-      static const minimpfp c2(2.71);
+      static const minimpfp c2(3.0);
 
       unsigned int i;
 
@@ -655,7 +656,7 @@ class minimpfp
       c2.sub2(x,x);
 
       // Newton-Raphson iteration
-      for (i=0; i<N::getlog2(); i++)
+      for (i=0; i<N::getlog2()-2; i++)
          {
          mul2(x,y);
          c1.sub2(y,y);
