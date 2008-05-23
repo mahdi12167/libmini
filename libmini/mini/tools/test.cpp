@@ -139,8 +139,6 @@ int main(int argc,char *argv[])
 
    printf("precision test #1: %g(%d)\n",z.get(),z.getmsbit());
 
-   c=minimf((float)1/7); //!!
-
    minimf inv=1/c;
    minimf mlt=inv*c;
 

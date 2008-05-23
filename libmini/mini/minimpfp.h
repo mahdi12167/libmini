@@ -125,6 +125,8 @@ class minimpfp_base
             if (V&0x000000F0) return(table[V>>4]+4);
             else return(table[V]);
       }
+
+   void print() const {printf("%08X",V);}
    };
 
 // double template precision
@@ -501,11 +503,10 @@ class minimpfp
       overflow3=M.mul2(value.getfrc(),result3);
       overflow4=M.mul2(value.getmag(),result4);
 
-      // sum up sub-terms
-      result=minimpfp(sign,N::zero(),N(overflow1.getmag(),result1.getmag()));
-      result.add2(minimpfp(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result);
-      result.add2(minimpfp(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result);
-      result.add2(minimpfp(sign,N(result4.getfrc(),overflow4.getfrc()),N::zero()),result);
+      // sum up sub-terms with overflow
+      result=minimpfp(sign,N(result4.getfrc(),overflow4.getfrc()),N(overflow1.getmag(),result1.getmag()));
+      if (result.add2(minimpfp(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result)) result4.add2(N::one(),result4);
+      if (result.add2(minimpfp(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result)) result4.add2(N::one(),result4);
 
       // return overflow
       return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
@@ -689,6 +690,16 @@ class minimpfp
       return(r);
       }
 
+   void print() const
+      {
+      if (!S) printf("-");
+      printf("(");
+      M.print();
+      printf(",");
+      F.print();
+      printf(")");
+      }
+
    private:
 
    BOOLINT S;
@@ -699,7 +710,7 @@ typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
 
-typedef minimpfp2 minimf; //!!
+typedef minimpfp4 minimf;
 
 // multi-precision floating point operators:
 
