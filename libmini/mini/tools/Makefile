@@ -1,6 +1,7 @@
 SHELL	= sh
 
 PRGS	= db2db eval\
+	  mpfptest\
 	  test
 
 SRCS	= $(PRGS:=.cpp)
