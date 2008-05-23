@@ -80,13 +80,6 @@ int main(int argc,char *argv[])
 
    // div speed test:
 
-   //!!
-   double v=1000.0009;
-   minimf t(v);
-   t=t.inv();
-   printf("test: %.18f -> %.18f\n",1.0/v,t.get());
-   exit(0);
-
    time=minigettime();
 
    const long long int divmax1=100;
@@ -131,20 +124,20 @@ int main(int argc,char *argv[])
 
    // precision test:
 
-   minimf c(255.271);
+   minimf c(65535.271);
 
-   minimf x=c*c*c*c*c*c*c;
+   minimf x=c*c*c*c;
    minimf y=(x-1)*(x+1);
    minimf z=x*x-y;
 
-   z.sub(minimf::one(),z);
+   z=(z-1).abs();
 
    printf("precision test value #1: %g\n",z.get());
 
-   minimf inv=minimf(1.0)/c;
+   minimf inv=1/c;
    minimf mlt=inv*c;
 
-   mlt.sub(minimf::one(),mlt);
+   mlt=(mlt-1).abs();
 
    printf("precision test value #2: %g\n",mlt.get());
 

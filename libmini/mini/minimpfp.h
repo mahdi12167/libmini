@@ -516,7 +516,12 @@ class minimpfp
       N result1,result2;
       N overflow1,overflow2;
 
-      if (bits<=N::getbits())
+      if (bits==0)
+         {
+         result=*this;
+         return(zero());
+         }
+      else if (bits<=N::getbits())
          {
          overflow1=F.left2(bits,result1);
          overflow2=M.left2(bits,result2);
@@ -545,7 +550,12 @@ class minimpfp
       N result1,result2;
       N overflow1,overflow2;
 
-      if (bits<=N::getbits())
+      if (bits==0)
+         {
+         result=*this;
+         return(zero());
+         }
+      else if (bits<=N::getbits())
          {
          overflow1=M.right2(bits,result1);
          overflow2=F.right2(bits,result2);
@@ -617,7 +627,8 @@ class minimpfp
       else left2(N::getbits()-bit,result);
 
       // compute inverse
-      result=result.inv2();
+      if (result.getsgn()) result=result.inv2();
+      else result=result.neg().inv2().neg();
 
       // shift inverse in place
       if (bit>N::getbits()) result.right2(bit-N::getbits(),result);
@@ -629,44 +640,28 @@ class minimpfp
 
    // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
    // assumes that the value v to be inverted is in the range 0.5-1
-   // starting value is x_0=3-2*v
    minimpfp inv2() const
       {
       static const minimpfp c1(2.0);
-      static const minimpfp c2(3.0);
-
-      static const unsigned int shift=N::getbits()/2-2; //!!
+      static const minimpfp c2(2.8753);
 
       unsigned int i;
 
-      minimpfp c3;
-      minimpfp x,y,o;
+      minimpfp x,y;
 
       // compute starting value
       mul2(c1,x);
       c2.sub2(x,x);
 
-      // compute subtractor constant
-      c1.left2(shift,c3);
-
-      // shift starting value left
-      x.left2(shift,x);
-
       // Newton-Raphson iteration
       for (i=0; i<N::getlog2(); i++)
          {
          mul2(x,y);
-         c3.sub2(y,y);
-         o=x.mul2(y,x);
-         x.right2(shift,x);
-         o=o.right().right2(shift,y);
-         x.add2(o,x);
+         c1.sub2(y,y);
+         x.mul2(y,x);
          }
 
-      // shift inverse right
-      x.right2(shift,x);
-
-      // return shifted inverse
+      // return inverted value
       return(x);
       }
 
