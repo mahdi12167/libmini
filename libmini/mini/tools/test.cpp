@@ -137,14 +137,16 @@ int main(int argc,char *argv[])
 
    z=(z-1).abs();
 
-   printf("precision test value #1: %g\n",z.get());
+   printf("precision test #1: %g(%d)\n",z.get(),z.getmsbit());
+
+   c=minimf((float)1/7); //!!
 
    minimf inv=1/c;
    minimf mlt=inv*c;
 
    mlt=(mlt-1).abs();
 
-   printf("precision test value #2: %g\n",mlt.get());
+   printf("precision test #2: %g(%d)\n",mlt.get(),mlt.getmsbit());
 
    // end of test code
 
