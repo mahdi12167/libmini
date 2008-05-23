@@ -493,6 +493,7 @@ class minimpfp
       BOOLINT sign;
       N result1,result2,result3,result4;
       N overflow1,overflow2,overflow3,overflow4;
+      minimpfp overflow;
 
       // multiply sign
       sign=!(S^value.getsgn());
@@ -503,13 +504,16 @@ class minimpfp
       overflow3=M.mul2(value.getfrc(),result3);
       overflow4=M.mul2(value.getmag(),result4);
 
-      // sum up sub-terms with overflow
+      // sum up sub-terms without overflow
       result=minimpfp(sign,N(result4.getfrc(),overflow4.getfrc()),N(overflow1.getmag(),result1.getmag()));
-      if (result.add2(minimpfp(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result)) result4.add2(N::one(),result4);
-      if (result.add2(minimpfp(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result)) result4.add2(N::one(),result4);
+      overflow=minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc()));
+
+      // sum up sub-terms with overflow
+      if (result.add2(minimpfp(sign,N(overflow2.getmag(),result2.getmag()),N(result2.getfrc(),overflow2.getfrc())),result)) overflow.add2(one(),overflow);
+      if (result.add2(minimpfp(sign,N(overflow3.getmag(),result3.getmag()),N(result3.getfrc(),overflow3.getfrc())),result)) overflow.add2(one(),overflow);
 
       // return overflow
-      return(minimpfp(N(overflow4.getmag(),result4.getmag()),N(result1.getfrc(),overflow1.getfrc())));
+      return(overflow);
       }
 
    minimpfp left2(const unsigned int bits,minimpfp &result) const
