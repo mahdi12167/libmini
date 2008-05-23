@@ -643,7 +643,7 @@ class minimpfp
    minimpfp inv2() const
       {
       static const minimpfp c1(2.0);
-      static const minimpfp c2(2.8753);
+      static const minimpfp c2(2.71);
 
       unsigned int i;
 

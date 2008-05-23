@@ -26,6 +26,7 @@ int main(int argc,char *argv[])
    long long int i,j;
 
    minimf test1,test2,test3;
+   double error1,error2,error3,error4;
 
    // constants:
 
@@ -47,8 +48,9 @@ int main(int argc,char *argv[])
 
          test1.add(test2,test3);
 
-         if (FABS(test3.get()-0.1*i-0.1*j)>1E-6)
-            printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
+         error1=FABS(test3.get()-0.1*i-0.1*j);
+
+         if (error1>1E-3) printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
    time=minigettime()-time;
@@ -70,8 +72,9 @@ int main(int argc,char *argv[])
 
          test1.mul(test2,test3);
 
-         if (FABS(test3.get()-0.1*i*0.1*j)>1E-6)
-            printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
+         error2=FABS(test3.get()-0.1*i*0.1*j);
+
+         if (error2>1E-3) printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
    time=minigettime()-time;
@@ -94,8 +97,9 @@ int main(int argc,char *argv[])
 
             test1.div(test2,test3);
 
-            if (FABS(test3.get()-(double)i/j)>1E-6)
-               printf("%g/%g!=%g\n",0.1*i,0.1*j,test3.get());
+            error3=FABS(test3.get()-(double)i/j);
+
+            if (error3>1E-3) printf("%g/%g!=%g\n",0.1*i,0.1*j,test3.get());
             }
 
    time=minigettime()-time;
@@ -114,8 +118,9 @@ int main(int argc,char *argv[])
 
       test2=test1.sqroot();
 
-      if (FABS(test2.get()-sqrt(0.1*i))>1E-6)
-         printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
+      error4=FABS(test2.get()-sqrt(0.1*i));
+
+      if (error4>1E-3) printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
       }
 
    time=minigettime()-time;
