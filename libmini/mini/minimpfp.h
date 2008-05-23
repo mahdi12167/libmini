@@ -323,6 +323,7 @@ class minimpfp
 
    void add(const minimpfp &value) {add(value,*this);}
 
+   // recursive addition
    BOOLINT add2(const minimpfp &value,minimpfp &result) const
       {
       BOOLINT sign;
@@ -331,6 +332,7 @@ class minimpfp
 
       if (S)
          if (value.getsgn())
+            // add two positive numbers
             {
             overflow1=F.add2(value.getfrc(),result1);
             overflow2=M.add2(value.getmag(),result2);
@@ -340,6 +342,7 @@ class minimpfp
             result=minimpfp(result2,result1);
             }
          else
+            // subtract second from first number
             {
             sign=TRUE;
 
@@ -372,6 +375,7 @@ class minimpfp
             }
       else
          if (value.getsgn())
+            // subtract first from second number
             {
             sign=TRUE;
 
@@ -403,6 +407,7 @@ class minimpfp
             result=minimpfp(sign,result1,result2);
             }
          else
+            // add two negative numbers
             {
             overflow1=value.getfrc().add2(F,result1);
             overflow2=value.getmag().add2(M,result2);
@@ -496,6 +501,7 @@ class minimpfp
          }
       }
 
+   // recursive multiplication
    minimpfp mul2(const minimpfp &value,minimpfp &result) const
       {
       BOOLINT sign;
@@ -524,17 +530,20 @@ class minimpfp
       return(overflow);
       }
 
+   // recursive left bit shift
    minimpfp left2(const unsigned int bits,minimpfp &result) const
       {
       N result1,result2;
       N overflow1,overflow2;
 
       if (bits==0)
+         // no shift
          {
          result=*this;
          return(zero());
          }
       else if (bits<=N::getbits())
+         // shift no more than half word size
          {
          overflow1=F.left2(bits,result1);
          overflow2=M.left2(bits,result2);
@@ -546,6 +555,7 @@ class minimpfp
          return(minimpfp(N::zero(),overflow2));
          }
       else
+         // shift more than half word size
          {
          overflow1=F.left2(bits-N::getbits(),result1);
          overflow2=M.left2(bits-N::getbits(),result2);
@@ -558,17 +568,20 @@ class minimpfp
          }
       }
 
+   // recursive right bit shift
    minimpfp right2(const unsigned int bits,minimpfp &result) const
       {
       N result1,result2;
       N overflow1,overflow2;
 
       if (bits==0)
+         // no shift
          {
          result=*this;
          return(zero());
          }
       else if (bits<=N::getbits())
+         // shift no more than half word size
          {
          overflow1=M.right2(bits,result1);
          overflow2=F.right2(bits,result2);
@@ -580,6 +593,7 @@ class minimpfp
          return(minimpfp(overflow2,N::zero()));
          }
       else
+         // shift more than half word size
          {
          overflow1=M.right2(bits-N::getbits(),result1);
          overflow2=F.right2(bits-N::getbits(),result2);
@@ -613,6 +627,7 @@ class minimpfp
    minimpfp div2(const minimpfp &value,minimpfp &result) const
       {return(mul2(value.inv(),result));}
 
+   // recursive inversion (reciprocal value)
    minimpfp inv() const
       {
       unsigned int bit;
@@ -675,6 +690,8 @@ class minimpfp
       return(x);
       }
 
+   // Newton-Raphson iteration with x_n+1=1/2*(v/x_n+x_n)
+   // starting value is approximated from floating-point root
    minimpfp sqroot() const
       {
       minimpfp r,r2,e,e2,e3;
@@ -699,8 +716,13 @@ class minimpfp
       return(r);
       }
 
+   // Newton-Raphson iteration with x_n+1=(3/2-1/2*v*x_n^2)*x_n
+   // starting value is approximated from inverse floating-point root
    minimpfp invsqroot() const
       {
+      static const minimpfp c1(0.5);
+      static const minimpfp c2(1.5);
+
       minimpfp r,r2,e,e2,e3;
 
       if (!S) return(zero());
@@ -714,12 +736,12 @@ class minimpfp
          e2=e;
          mul(r,r2);
          r2.mul(r,r2);
-         r2.mul(minimpfp(0.5),r2);
-         minimpfp(1.5).sub(r2,r2);
+         r2.mul(c1,r2);
+         c2.sub(r2,r2);
          r2.mul(r,r2);
          r2.sub(r,e);
          r=r2;
-         e.add(e,e3);
+         e.left2(1,e3);
          }
       while (e3.abs().sml(e2.abs()));
 

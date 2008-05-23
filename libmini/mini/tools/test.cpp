@@ -26,7 +26,7 @@ int main(int argc,char *argv[])
    long long int i,j;
 
    minimf test1,test2,test3;
-   double error1,error2,error3,error4;
+   double error1,error2,error3,error4,error5;
 
    // constants:
 
@@ -126,6 +126,27 @@ int main(int argc,char *argv[])
    time=minigettime()-time;
 
    printf("%gk sqrts/s\n",(double)sqrtmax/time/1E3);
+
+   // 1/sqrt speed test:
+
+   time=minigettime();
+
+   const long long int invsqrtmax=10000;
+
+   for (i=1; i<invsqrtmax+1; i++)
+      {
+      test1=minimf(0.1*i);
+
+      test2=test1.invsqroot();
+
+      error5=FABS(test2.get()-1.0/sqrt(0.1*i));
+
+      if (error5>1E-3) printf("1/sqrt(%g)!=%g\n",0.1*i,test2.get());
+      }
+
+   time=minigettime()-time;
+
+   printf("%gk invsqrts/s\n",(double)invsqrtmax/time/1E3);
 
    // precision test:
 
