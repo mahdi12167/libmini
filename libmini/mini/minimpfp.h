@@ -106,6 +106,15 @@ class minimpfp_base
       return(minimpfp_base(((unsigned int)rv)>>16,((unsigned int)rv)&0xFFFF));
       }
 
+   minimpfp_base inv2(minimpfp_base &result) const
+      {
+      unsigned long long int iv;
+      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; result=max(); return(max());}
+      iv=(((unsigned long long int)1)<<48)/(unsigned long long int)V;
+      result.V=(unsigned int)(iv>>16);
+      return(minimpfp_base((unsigned int)(iv>>48),(unsigned int)iv&0xFFFF));
+      }
+
    unsigned int getmsbit() const
       {
       static const unsigned int table[16]={0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
@@ -607,6 +616,20 @@ class minimpfp
 
    minimpfp inv() const
       {
+      minimpfp result;
+
+      // check for overflow
+      if (ismin())
+         {
+         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
+         return(maxval());
+         }
+
+      return(inv2());
+      }
+
+   minimpfp inv2() const
+      {
       unsigned int bit;
       minimpfp result;
 
@@ -614,13 +637,6 @@ class minimpfp
       if (iszero())
          {
          minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
-         return(maxval());
-         }
-
-      // check for overflow
-      if (ismin())
-         {
-         minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
          return(maxval());
          }
 
@@ -632,8 +648,8 @@ class minimpfp
       else left2(N::getbits()-bit,result);
 
       // compute inverse
-      if (result.getsgn()) result=result.inv2();
-      else result=result.neg().inv2().neg();
+      if (result.getsgn()) result=result.inv3();
+      else result=result.neg().inv3().neg();
 
       // shift inverse in place
       if (bit>N::getbits()) result.right2(bit-N::getbits(),result);
@@ -646,7 +662,7 @@ class minimpfp
    // Newton-Raphson iteration with x_n+1=x_n*(2-v*x_n)
    // assumes that the value v to be inverted is in the range 0.5-1
    // starting value is x_0=3-2*v
-   minimpfp inv2() const
+   minimpfp inv3() const
       {
       static const minimpfp c1(2.0);
       static const minimpfp c2(3.0);
@@ -695,6 +711,33 @@ class minimpfp
       return(r);
       }
 
+   minimpfp invsqroot() const
+      {
+      minimpfp r,r2,e,e2,e3;
+
+      if (!S) return(zero());
+      if (iszero()) return(maxval());
+
+      r.set(1.0/sqrt(get()));
+      e=max();
+
+      do
+         {
+         e2=e;
+         mul(r,r2);
+         r2.mul(r,r2);
+         r2.mul(minimpfp(0.5),r2);
+         minimpfp(1.5).sub(r2,r2);
+         r2.mul(r,r2);
+         r2.sub(r,e);
+         r=r2;
+         e.add(e,e3);
+         }
+      while (e3.abs().sml(e2.abs()));
+
+      return(r);
+      }
+
    void print() const
       {
       if (!S) printf("-");
@@ -703,6 +746,12 @@ class minimpfp
       printf(",");
       F.print();
       printf(")");
+      }
+
+   static BOOLINT isvalid()
+      {
+      return(minimpfp_base::MINIMPFP_OVERFLOW ||
+             minimpfp_base::MINIMPFP_DIVBYZERO);
       }
 
    private:

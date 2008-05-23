@@ -146,6 +146,10 @@ int main(int argc,char *argv[])
 
    printf("precision test #2: %g(%d)\n",mlt.get(),mlt.getmsbit());
 
+   // validity test:
+
+   printf("validity test: %d\n",!minimf::isvalid());
+
    // end of test code
 
    printf("\nfinished test code\n");
