@@ -195,7 +195,7 @@ class minimpfp
       S=(v>=0.0);
       av=S?v:-v;
 
-      if (v>=limit) M=F=N::max();
+      if (av>=limit) M=F=N::max();
       else
          {
          M=N(floor(av)*(1.0/limit2));
@@ -205,7 +205,7 @@ class minimpfp
 
    double get() const
       {
-      static const double limit=getlimit();
+      static const double limit=N::getlimit();
 
       double v;
 
