@@ -782,6 +782,8 @@ class minimpfp
 typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
 typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
+typedef minimpfp<minimpfp4> minimpfp8;     // 512 bit precision
+typedef minimpfp<minimpfp8> minimpfp16;    // 1024 bit precision
 
 typedef minimpfp4 minimf;
 
