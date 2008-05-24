@@ -187,21 +187,30 @@ class minimpfp
 
    void set(const double v)
       {
+      static const double limit=getlimit();
+      static const double limit2=N::getlimit();
+
       double av;
 
       S=(v>=0.0);
       av=S?v:-v;
 
-      M=N(floor(av)*(1.0/N::getlimit()));
-      F=N((av-floor(av))*N::getlimit());
+      if (v>=limit) M=F=N::max();
+      else
+         {
+         M=N(floor(av)*(1.0/limit2));
+         F=N((av-floor(av))*limit2);
+         }
       }
 
    double get() const
       {
+      static const double limit=getlimit();
+
       double v;
 
-      v=M.get()*N::getlimit();
-      v+=F.get()*(1.0/N::getlimit());
+      v=M.get()*limit;
+      v+=F.get()*(1.0/limit);
 
       return(S?v:-v);
       }
