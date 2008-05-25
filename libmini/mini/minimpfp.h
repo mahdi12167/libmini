@@ -18,46 +18,47 @@ class minimpfp_base
    minimpfp_base() {}
 
    //! constructor
-   minimpfp_base(const unsigned int m,const unsigned int f) {V=(m<<16)+f;}
+   minimpfp_base(const unsigned int m,const unsigned int f)
+      {V=(((unsigned long long int )m)<<32)+(unsigned long long int)f;}
 
    //! constructor
-   minimpfp_base(const double v) {set(v);}
+   minimpfp_base(const double v)
+      {set(v);}
 
    //! destructor
    ~minimpfp_base() {}
 
-   unsigned int V;
+   unsigned long long int V;
 
    static BOOLINT MINIMPFP_DIVBYZERO;
    static BOOLINT MINIMPFP_OVERFLOW;
 
-   static const unsigned int getbits() {return(32);}
-   static const double getlimit() {return((double)(1<<16));}
-   static const unsigned int getlog2() {return(5);}
+   static const unsigned int getbits() {return(64);}
+   static const double getlimit() {return((double)(1ll<<32));}
 
    static const minimpfp_base zero() {return(minimpfp_base(0,0));}
    static const minimpfp_base one() {return(minimpfp_base(1,0));}
 
    static const minimpfp_base min() {return(minimpfp_base(0,1));}
-   static const minimpfp_base max() {return(minimpfp_base(0xFFFF,0xFFFF));}
+   static const minimpfp_base max() {return(minimpfp_base(0xFFFFFFFF,0xFFFFFFFF));}
 
-   unsigned const int getmag() const {return(V>>16);}
-   unsigned const int getfrc() const {return(V&0xFFFF);}
+   const unsigned int getmag() const {return(V>>32);}
+   const unsigned int getfrc() const {return(V);}
 
-   void set(const double v) {V=(unsigned int)floor(v*(1<<16)+0.5);}
-   double get() const {return(V*(1.0/(double)(1<<16)));}
+   void set(const double v) {V=(unsigned long long int)floor(v*(1ll<<32)+0.5);}
+   double get() const {return(V*(1.0/(double)(1ll<<32)));}
 
    BOOLINT iszero() const {return(V==0);}
    BOOLINT isnotzero() const {return(V!=0);}
 
-   BOOLINT isone() const {return(V==(1<<16));}
-   BOOLINT isnotone() const {return(V!=(1<<16));}
+   BOOLINT isone() const {return(V==(1ll<<32));}
+   BOOLINT isnotone() const {return(V!=(1ll<<32));}
 
    BOOLINT ismin() const {return(V==1);}
    BOOLINT isnotmin() const {return(V!=1);}
 
-   BOOLINT ismax() const {return(V==0xFFFFFFFF);}
-   BOOLINT isnotmax() const {return(V!=0xFFFFFFFF);}
+   BOOLINT ismax() const {return(V==0xFFFFFFFFFFFFFFFFll);}
+   BOOLINT isnotmax() const {return(V!=0xFFFFFFFFFFFFFFFFll);}
 
    BOOLINT isequal(const minimpfp_base &value) const {return(value.V==V);}
    BOOLINT isnotequal(const minimpfp_base &value) const {return(value.V!=V);}
@@ -70,71 +71,105 @@ class minimpfp_base
 
    BOOLINT add2(const minimpfp_base &value,minimpfp_base &result) const
       {
-      unsigned int v=V;
+      unsigned long long int v=V;
       result.V=V+value.V;
       return(result.V<v);
       }
 
    BOOLINT sub2(const minimpfp_base &value,minimpfp_base &result) const
       {
-      unsigned int v=V;
+      unsigned int long long v=V;
       result.V=V-value.V;
       return(result.V>v);
       }
 
    minimpfp_base mul2(const minimpfp_base &value,minimpfp_base &result) const
       {
-      unsigned long long int mv;
-      mv=(unsigned long long int)V*(unsigned long long int)value.V;
-      result.V=(unsigned int)(mv>>16);
-      return(minimpfp_base((unsigned int)(mv>>48),(unsigned int)mv&0xFFFF));
+      unsigned long long int r1,r2;
+      unsigned long long int m1,m2,f1,f2;
+      unsigned long long int mv1,mv2,mv3,mv4;
+      m1=(V>>32);
+      m2=(value.V>>32);
+      f1=(V&0xFFFFFFFFll);
+      f2=(value.V&0xFFFFFFFFll);
+      mv1=f1*f2;
+      mv2=f1*m2;
+      mv3=m1*f2;
+      mv4=m1*m2;
+      r1=(mv1>>32)|(mv4<<32);
+      mv4>>=32;
+      r2=r1+mv2;
+      if (r2<r1) mv4++;
+      r1=r2+mv3;
+      if (r1<r2) mv4++;
+      result.V=r1;
+      return(minimpfp_base(mv1,mv4));
       }
 
    minimpfp_base left2(const unsigned int bits,minimpfp_base &result) const
       {
-      unsigned long long int lv;
-      lv=((unsigned long long int)V)<<bits;
-      result.V=(unsigned int)lv;
-      return(minimpfp_base((unsigned int)(lv>>48),(unsigned int)(lv>>32)&0xFFFF));
+      unsigned long long int lv1,lv2;
+      lv1=V<<bits;
+      lv2=V>>(64-bits);
+      result.V=lv1;
+      return(minimpfp_base(lv2>>32,lv2));
       }
 
    minimpfp_base right2(const unsigned int bits,minimpfp_base &result) const
       {
-      unsigned long long int rv;
-      rv=(((unsigned long long int)V)<<32)>>bits;
-      result.V=(unsigned int)(rv>>32);
-      return(minimpfp_base(((unsigned int)rv)>>16,((unsigned int)rv)&0xFFFF));
+      unsigned long long int lv1,lv2;
+      lv1=V>>bits;
+      lv2=V<<(64-bits);
+      result.V=lv1;
+      return(minimpfp_base(lv2>>32,lv2));
       }
 
    minimpfp_base inv2() const
       {
-      unsigned int iv;
+      unsigned long long int iv;
       if (V==0) {MINIMPFP_DIVBYZERO=TRUE; return(max());}
-      else iv=0xFFFFFFFF/V;
-      return(minimpfp_base(iv>>16,iv&0xFFFF));
+      else iv=0xFFFFFFFFFFFFFFFFll/V;
+      return(minimpfp_base(iv>>32,iv));
       }
 
    unsigned int getmsbit() const
       {
       static const unsigned int table[16]={0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
 
-      if (V&0xFFFF0000)
-         if (V&0xFF000000)
-            if (V&0xF0000000) return(table[V>>28]+28);
-            else return(table[V>>24]+24);
+      if (V&0xFFFFFFFF00000000ll)
+         if (V&0xFFFF000000000000ll)
+            if (V&0xFF00000000000000ll)
+               if (V&0xF000000000000000ll) return(table[V>>60]+60);
+               else return(table[V>>56]+56);
+            else
+               if (V&0x00F0000000000000ll) return(table[V>>52]+52);
+               else return(table[V>>48]+48);
          else
-            if (V&0x00F00000) return(table[V>>20]+20);
-            else return(table[V>>16]+16);
+            if (V&0x0000FF0000000000ll)
+               if (V&0x0000F00000000000ll) return(table[V>>44]+44);
+               else return(table[V>>40]+40);
+            else
+               if (V&0x000000F000000000ll) return(table[V>>36]+36);
+               else return(table[V>>32]+32);
       else
-         if (V&0x0000FF00)
-            if (V&0x0000F000) return(table[V>>12]+12);
-            else return(table[V>>8]+8);
+         if (V&0x00000000FFFF0000ll)
+            if (V&0x00000000FF000000ll)
+               if (V&0x00000000F0000000ll) return(table[V>>28]+28);
+               else return(table[V>>24]+24);
+            else
+               if (V&0x0000000000F00000ll) return(table[V>>20]+20);
+               else return(table[V>>16]+16);
          else
-            if (V&0x000000F0) return(table[V>>4]+4);
-            else return(table[V]);
+            if (V&0x000000000000FF00ll)
+               if (V&0x000000000000F000ll) return(table[V>>12]+12);
+               else return(table[V>>8]+8);
+            else
+               if (V&0x00000000000000F0ll) return(table[V>>4]+4);
+               else return(table[V]);
       }
 
-   void print() const {printf("%08X",V);}
+   void print() const
+      {printf("%08X%08X",(unsigned int)(V>>32),(unsigned int)V);}
    };
 
 // double template precision
@@ -170,7 +205,6 @@ class minimpfp
 
    static const unsigned int getbits() {return(2*N::getbits());}
    static const double getlimit() {return(N::getlimit()*N::getlimit());}
-   static const unsigned int getlog2() {return(N::getlog2()+1);}
 
    static const minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
    static const minimpfp one() {return(minimpfp(N::min(),N::zero()));}
@@ -779,13 +813,12 @@ class minimpfp
    N M,F;
    };
 
-typedef minimpfp<minimpfp_base> minimpfp1; // 64bit precision
-typedef minimpfp<minimpfp1> minimpfp2;     // 128bit precision
-typedef minimpfp<minimpfp2> minimpfp4;     // 256 bit precision
-typedef minimpfp<minimpfp4> minimpfp8;     // 512 bit precision
-typedef minimpfp<minimpfp8> minimpfp16;    // 1024 bit precision
+typedef minimpfp<minimpfp_base> minimpfp1; // 128 bit precision
+typedef minimpfp<minimpfp1> minimpfp2;     // 256 bit precision
+typedef minimpfp<minimpfp2> minimpfp4;     // 512 bit precision
+typedef minimpfp<minimpfp4> minimpfp8;     // 1024 bit precision
 
-typedef minimpfp4 minimf;
+typedef minimpfp2 minimf;
 
 // multi-precision floating point operators:
 

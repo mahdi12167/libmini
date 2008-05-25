@@ -47,6 +47,8 @@ int main(int argc,char *argv[])
 
    printf("%gk adds/s\n",(double)4*addmax1*addmax2/time/1E3);
 
+   exit(0); //!!
+
    // mul speed test:
 
    time=minigettime();
