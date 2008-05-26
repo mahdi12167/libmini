@@ -19,7 +19,7 @@ class minimpfp_base
 
    //! constructor
    minimpfp_base(const unsigned int m,const unsigned int f)
-      {V=(((unsigned long long int )m)<<32)+(unsigned long long int)f;}
+      {V=(((unsigned long long int )m)<<32)|(unsigned long long int)f;}
 
    //! constructor
    minimpfp_base(const double v)
@@ -103,7 +103,7 @@ class minimpfp_base
       r1=r2+mv3;
       if (r1<r2) mv4++;
       result.V=r1;
-      return(minimpfp_base(mv1,mv4));
+      return(minimpfp_base((unsigned int)mv4,(unsigned int)mv1));
       }
 
    minimpfp_base left2(const unsigned int bits,minimpfp_base &result) const
