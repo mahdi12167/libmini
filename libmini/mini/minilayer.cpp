@@ -1334,14 +1334,16 @@ void minilayer::renderpoints()
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
                             LPARAMS.fovy,LPARAMS.aspect,
                             len_g2i(LPARAMS.bricksize),
-                            2,2);
+                            minipointopts::OPTION_TYPE_NONE,
+                            minipointopts::OPTION_TYPE_SIGNPOST);
          }
       else
          {
          POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
                                len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
                                LPARAMS.signpostturn,LPARAMS.signpostincline,
-                               1,1);
+                               minipointopts::OPTION_TYPE_NONE,
+                               minipointopts::OPTION_TYPE_BRICK);
 
          POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),

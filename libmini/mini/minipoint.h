@@ -10,6 +10,33 @@
 #include "minitile.h"
 #include "minilod.h"
 
+// forward declarations
+class minipointopts;
+class minipointrndr;
+
+// waypoint data
+typedef struct
+   {
+   float x,y;
+   float elev; // waypoint elevation
+   float height; // terrain height
+
+   char *desc;
+   char *meta;
+   char *comment;
+   char *system;
+   char *latitude;
+   char *longitude;
+   char *elevation;
+   int zone,datum;
+
+   minipointopts *opts;
+   minipointrndr *rndr;
+
+   int number;
+   }
+minipointdata;
+
 //! waypoint options
 class minipointopts
    {
@@ -39,9 +66,9 @@ class minipointopts
    enum
       {
       OPTION_TYPE_NONE=-1,
-      OPTION_TYPE_ANY=0;
-      OPTION_TYPE_SIGNPOST=1;
-      OPTION_TYPE_BRICK=2;
+      OPTION_TYPE_ANY=0,
+      OPTION_TYPE_SIGNPOST=1,
+      OPTION_TYPE_BRICK=2
       };
 
    //! default constructor
@@ -60,6 +87,9 @@ class minipointopts
    float signpostincline; // downward inclination angle
    float signpostalpha; // opacity
 
+   // global signpost parameters
+   float signpostrange; // display range
+
    // brick parameters
    char *brickfile; // data file
    float bricksize; // 0=default size
@@ -70,7 +100,7 @@ class minipointopts
    float brickcolor_blue; // blue color component
    int brickpasses; // 0=default 1=striped 2-4=semi-transparent
 
-   // optional brick parameters
+   // global brick parameters
    float brickrad; // brick radius
    float brickceiling; // elevation modulates brick color
    float brickalpha; // opacity of brick
@@ -92,7 +122,7 @@ class minipointrndr
       }
 
    //! destructor
-   ~minipointrndr();
+   virtual ~minipointrndr();
 
    BOOLINT required_sort() {return(SORT);}
    int required_passes() {return(PASSES);}
@@ -111,29 +141,6 @@ class minipointrndr
    BOOLINT SORT;
    int PASSES;
    };
-
-// waypoint data
-typedef struct
-   {
-   float x,y;
-   float elev; // waypoint elevation
-   float height; // terrain height
-
-   char *desc;
-   char *meta;
-   char *comment;
-   char *system;
-   char *latitude;
-   char *longitude;
-   char *elevation;
-   int zone,datum;
-
-   minipointopts *opts;
-   minipointrndr *rndr;
-
-   int number;
-   }
-minipointdata;
 
 //! waypoint class
 class minipoint
@@ -169,7 +176,8 @@ class minipoint
    minipointdata *getpoint(int p);
 
    //! calculate visible waypoints
-   void calcvdata(int exclude=OPTION_TYPE_NONE);
+   void calcvdata(int fallback=minipointopts::OPTION_TYPE_NONE,
+                  int exclude=minipointopts::OPTION_TYPE_NONE);
 
    //! sort visible waypoints
    void sortvdata(float x,float y,float elev,
@@ -183,7 +191,8 @@ class minipoint
 
    //! get nearest waypoint
    minipointdata *getnearest(float x,float y,float elev,
-                             int exclude=OPTION_TYPE_NONE);
+                             int fallback=minipointopts::OPTION_TYPE_NONE,
+                             int exclude=minipointopts::OPTION_TYPE_NONE);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
@@ -192,13 +201,16 @@ class minipoint
    void draw(float ex,float ey,float ez,
              float farp,float fovy,float aspect,
              double time,
-             int fallback=OPTION_TYPE_NONE,
-             int exclude=OPTION_TYPE_NONE);
+             minipointopts *global,
+             int fallback=minipointopts::OPTION_TYPE_NONE,
+             int exclude=minipointopts::OPTION_TYPE_NONE);
 
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,
-                      float turn,float yon);
+                      float turn,float yon,
+                      int fallback=minipointopts::OPTION_TYPE_SIGNPOST,
+                      int exclude=minipointopts::OPTION_TYPE_BRICK);
 
    //! set brick file name
    void setbrick(char *filename);
@@ -207,7 +219,9 @@ class minipoint
    void drawbricks(float ex,float ey,float ez,
                    float brad,float farp,
                    float fovy,float aspect,
-                   float size);
+                   float size,
+                   int fallback=minipointopts::OPTION_TYPE_BRICK,
+                   int exclude=minipointopts::OPTION_TYPE_SIGNPOST);
 
    //! getters
    float getoffsetlat() {return(OFFSETLAT);}

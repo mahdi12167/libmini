@@ -22,6 +22,7 @@ minipointopts::minipointopts()
    signpostturn=0.0f;
    signpostincline=0.0f;
    signpostalpha=0.0f;
+   signpostrange=0.0f;
 
    brickfile=NULL;
    bricksize=0.0f;
@@ -31,7 +32,6 @@ minipointopts::minipointopts()
    brickcolor_green=0.0f;
    brickcolor_blue=0.0f;
    brickpasses=0;
-
    brickrad=0.0f;
    brickceiling=0.0f;
    brickalpha=0.0f;
@@ -603,7 +603,8 @@ minipointdata *minipoint::getpoint(int p)
    }
 
 // calculate visible waypoints
-void minipoint::calcvdata(int type1,int type2)
+void minipoint::calcvdata(int fallback,
+                          int exclude)
    {
    int i,j,k;
 
@@ -624,7 +625,7 @@ void minipoint::calcvdata(int type1,int type2)
             if (point->opts==NULL) type=0;
             else type=point->opts->type;
 
-            if (type!=type1 && type!=type2) continue; //!!
+            //!! if (type!=type1 && type!=type2) continue;
 
             point->height=TILE->getheight(point->x,-point->y);
 
@@ -690,7 +691,9 @@ inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
    }
 
 // get nearest waypoint
-minipointdata *minipoint::getnearest(float x,float y,float elev,int type1,int type2)
+minipointdata *minipoint::getnearest(float x,float y,float elev,
+                                     int fallback,
+                                     int exclude)
    {
    int i;
 
@@ -705,7 +708,7 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,int type1,int ty
       if ((*vpoint)->opts==NULL) type=0;
       else type=(*vpoint)->opts->type;
 
-      if (type!=type1 && type!=type2) continue; //!!
+      //!! if (type!=type1 && type!=type2) continue;
 
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
@@ -722,6 +725,7 @@ float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
 void minipoint::draw(float ex,float ey,float ez,
                      float farp,float fovy,float aspect,
                      double time,
+                     minipointopts *global,
                      int fallback,
                      int exclude)
    {
@@ -731,14 +735,16 @@ void minipoint::draw(float ex,float ey,float ez,
 //! render waypoints with signposts
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
-                              float turn,float yon)
+                              float turn,float yon,
+                              int fallback,
+                              int exclude)
    {
    minipointopts global;
 
    global.signpostheight=height;
-   global.signpostrange=range;
    global.signpostturn=turn;
    global.signpostincline=yon;
+   global.signpostrange=range;
 
    global.signpostalpha=CONFIGURE_SIGNPOSTALPHA;
 
@@ -746,8 +752,8 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
         0.0f,0.0f,0.0f,
         0.0,
         &global,
-        OPTION_TYPE_SIGNPOST,
-        OPTION_TYPE_BRICK);
+        fallback,
+        exclude);
    }
 
 // set brick file name
@@ -763,12 +769,14 @@ void minipoint::setbrick(char *filename)
 void minipoint::drawbricks(float ex,float ey,float ez,
                            float brad,float farp,
                            float fovy,float aspect,
-                           float size)
+                           float size,
+                           int fallback,
+                           int exclude)
    {
    minipointopts global;
 
-   global.brickrad=brad;
    global.bricksize=size;
+   global.brickrad=brad;
 
    global.brickpasses=CONFIGURE_BRICKPASSES;
    global.brickceiling=CONFIGURE_BRICKCEILING;
@@ -781,8 +789,8 @@ void minipoint::drawbricks(float ex,float ey,float ez,
         farp,fovy,aspect,
         0.0,
         &global,
-        OPTION_TYPE_BRICK,
-        OPTION_TYPE_SIGNPOST);
+        fallback,
+        exclude);
    }
 
 /*
@@ -969,8 +977,6 @@ void minipoint::drawbricks(float ex,float ey,float ez,
       }
    }
 
-*/
-
 // render waypoints with multiple pass sequence
 void minipoint::drawsequence(float ex,float ey,float ez,
                              float brad,float farp,
@@ -1122,6 +1128,8 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    // render visible points
    LODS->render(ex,ey,ez,farp,fovy,aspect);
    }
+
+*/
 
 // configuring:
 
