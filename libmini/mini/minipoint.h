@@ -65,13 +65,13 @@ class minipointopts
 
    enum
       {
-      OPTION_TYPE_NONE=-1, // omitted type
-      OPTION_TYPE_ANY=0, // unspecific type
-      OPTION_TYPE_SIGNPOST=1, // signpost
-      OPTION_TYPE_BRICK1=2, // 1-pass brick
-      OPTION_TYPE_BRICK2=3, // 2-pass brick
-      OPTION_TYPE_BRICK3=4, // 3-pass brick
-      OPTION_TYPE_BRICK4=5, // 4-pass brick
+      OPTION_TYPE_NONE=-1, // invisible type
+      OPTION_TYPE_ANY=0, // non-specific type
+      OPTION_TYPE_SIGNPOST=1, // signpost type
+      OPTION_TYPE_BRICK1=2, // 1-pass brick type
+      OPTION_TYPE_BRICK2=3, // 2-pass brick type
+      OPTION_TYPE_BRICK3=4, // 3-pass brick type
+      OPTION_TYPE_BRICK4=5, // 4-pass brick type
       };
 
    //! default constructor
@@ -208,11 +208,14 @@ class minipoint
    //! get number of waypoints
    int getnum() {return(PNUM);}
 
+   //! get waypoint
+   minipointdata *getpoint(int p);
+
    //! get first waypoint
    minipointdata *getfirst() {return(getpoint(0));}
 
-   //! get waypoint
-   minipointdata *getpoint(int p);
+   //! get last waypoint
+   minipointdata *getlast() {return(getpoint(PNUM-1));}
 
    //! calculate visible waypoints
    void calcvdata();
@@ -230,8 +233,8 @@ class minipoint
    //! get nearest waypoint
    minipointdata *getnearest(float x,float y,float elev,
                              int fallback=minipointopts::OPTION_TYPE_NONE,
-                             int exclstart=minipointopts::OPTION_TYPE_NONE,
-                             int exclend=minipointopts::OPTION_TYPE_NONE);
+                             int rangestart=minipointopts::OPTION_TYPE_ANY,
+                             int rangeend=minipointopts::OPTION_TYPE_NONE);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
@@ -241,16 +244,16 @@ class minipoint
              float farp,float fovy,float aspect,
              double time,minipointopts *global,
              int fallback=minipointopts::OPTION_TYPE_NONE,
-             int exclstart=minipointopts::OPTION_TYPE_NONE,
-             int exclend=minipointopts::OPTION_TYPE_NONE);
+             int rangestart=minipointopts::OPTION_TYPE_ANY,
+             int rangeend=minipointopts::OPTION_TYPE_NONE);
 
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,
                       float turn,float yon,
                       int fallback=minipointopts::OPTION_TYPE_SIGNPOST,
-                      int exclstart=minipointopts::OPTION_TYPE_BRICK1,
-                      int exclend=minipointopts::OPTION_TYPE_BRICK4);
+                      int rangestart=minipointopts::OPTION_TYPE_SIGNPOST,
+                      int rangeend=minipointopts::OPTION_TYPE_SIGNPOST);
 
    //! set brick file name
    void setbrick(char *filename);
@@ -261,8 +264,8 @@ class minipoint
                    float fovy,float aspect,
                    float size,
                    int fallback=minipointopts::OPTION_TYPE_NONE,
-                   int exclstart=minipointopts::OPTION_TYPE_SIGNPOST,
-                   int exclend=minipointopts::OPTION_TYPE_SIGNPOST);
+                   int rangestart=minipointopts::OPTION_TYPE_BRICK1,
+                   int rangeend=minipointopts::OPTION_TYPE_BRICK4);
 
    //! getters
    float getoffsetlat() {return(OFFSETLAT);}
@@ -316,7 +319,7 @@ class minipoint
 
    private:
 
-   int TAKEN,TRANS;
+   BOOLINT TAKEN,TRANS;
 
    float OFFSETLAT,OFFSETLON;
    float SCALEX,SCALEY,SCALEELEV;
@@ -352,14 +355,6 @@ class minipoint
    int compare(const minipointdata *a,const minipointdata *b,
                const float x,const float y,const float elev,
                const float dx,const float dy,const float de);
-
-   /*
-   //!!
-   void drawsequence(float ex,float ey,float ez,
-                     float brad,float farp,
-                     float fovy,float aspect,
-                     float size,int mpasses,int passes);
-   */
    };
 
 #endif

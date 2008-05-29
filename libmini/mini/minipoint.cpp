@@ -67,7 +67,7 @@ minipoint::minipoint(minitile *tile)
    CACHE=NULL;
    ALTPATH=NULL;
 
-   TAKEN=TRANS=0;
+   TAKEN=TRANS=FALSE;
 
    OFFSETLAT=OFFSETLON=0.0f;
    SCALEX=SCALEY=SCALEELEV=1.0f;
@@ -77,6 +77,7 @@ minipoint::minipoint(minitile *tile)
    LODS=NULL;
 
    registerrndr(&RNDR_SIGNPOST);
+
    registerrndr(&RNDR_BRICK1);
    registerrndr(&RNDR_BRICK2);
    registerrndr(&RNDR_BRICK3);
@@ -393,14 +394,14 @@ void minipoint::load(char *filename,
       if (TILE->getwarp()->getdat()==minicoord::MINICOORD_LLH)
          {
          CONFIGURE_DSTZONE=0;
-         TAKEN=1;
+         TAKEN=TRUE;
          }
       else if (TILE->getwarp()->getdat()==minicoord::MINICOORD_UTM)
          {
          CONFIGURE_DSTZONE=TILE->getwarp()->getutmzone();
          CONFIGURE_DSTDATUM=TILE->getwarp()->getutmdatum();
 
-         TAKEN=1;
+         TAKEN=TRUE;
          }
       }
 
@@ -517,10 +518,10 @@ void minipoint::load(char *filename,
          point.x=LONSUB(point.x);
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
 
-         if (CONFIGURE_AUTOMAP!=0 && TAKEN==0)
+         if (CONFIGURE_AUTOMAP!=0 && !TAKEN)
             {
             CONFIGURE_DSTZONE=0;
-            TAKEN=1;
+            TAKEN=TRUE;
             }
          }
       // read UTM coordinates
@@ -556,12 +557,12 @@ void minipoint::load(char *filename,
 
          miniutm::UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
 
-         if (CONFIGURE_AUTOMAP!=0 && TAKEN==0)
+         if (CONFIGURE_AUTOMAP!=0 && !TAKEN)
             {
             CONFIGURE_DSTZONE=zone;
             CONFIGURE_DSTDATUM=CONFIGURE_SRCDATUM;
 
-            TAKEN=1;
+            TAKEN=TRUE;
             }
          }
       else ERRORMSG();
@@ -618,7 +619,7 @@ void minipoint::load(char *filename,
 
    fclose(file);
 
-   if (TRANS==0)
+   if (!TRANS)
       {
       OFFSETLAT=offsetlat;
       OFFSETLON=offsetlon;
@@ -627,7 +628,7 @@ void minipoint::load(char *filename,
       SCALEY=scaley;
       SCALEELEV=scaleelev;
 
-      TRANS=1;
+      TRANS=TRUE;
       }
    }
 
@@ -743,7 +744,7 @@ inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
 
 // get nearest waypoint
 minipointdata *minipoint::getnearest(float x,float y,float elev,
-                                     int fallback,int exclstart,int exclend)
+                                     int fallback,int rangestart,int rangeend)
    {
    int i;
 
@@ -759,7 +760,9 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,
       else type=(*vpoint)->opts->type;
 
       if (type==minipointopts::OPTION_TYPE_ANY) type=fallback;
-      if (type>=exclstart && type<=exclend) continue;
+
+      if (rangestart<=rangeend)
+         if (type<rangestart || type>rangeend) continue;
 
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
@@ -776,7 +779,7 @@ float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
 void minipoint::draw(float ex,float ey,float ez,
                      float farp,float fovy,float aspect,
                      double time,minipointopts *global,
-                     int fallback,int exclstart,int exclend)
+                     int fallback,int rangestart,int rangeend)
    {
    //!!
    }
@@ -785,10 +788,11 @@ void minipoint::draw(float ex,float ey,float ez,
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
                               float turn,float yon,
-                              int fallback,int exclstart,int exclend)
+                              int fallback,int rangestart,int rangeend)
    {
    minipointopts global;
 
+   global.signpostsize=height;
    global.signpostheight=height;
    global.signpostrange=range;
    global.signpostturn=turn;
@@ -799,7 +803,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    draw(ex,ey,ez,
         0.0f,0.0f,0.0f,
         0.0,&global,
-        fallback,exclstart,exclend);
+        fallback,rangestart,rangeend);
    }
 
 // set brick file name
@@ -816,13 +820,14 @@ void minipoint::drawbricks(float ex,float ey,float ez,
                            float brad,float farp,
                            float fovy,float aspect,
                            float size,
-                           int fallback,int exclstart,int exclend)
+                           int fallback,int rangestart,int rangeend)
    {
    minipointopts global;
 
    global.brickrad=brad;
    global.bricksize=size;
 
+   global.brickfile=strdup(BRICKNAME);
    global.brickalpha=CONFIGURE_BRICKALPHA;
    global.brickceiling=CONFIGURE_BRICKCEILING;
    global.bricklods=CONFIGURE_BRICKLODS;
@@ -832,7 +837,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    draw(ex,ey,ez,
         farp,fovy,aspect,
         0.0,&global,
-        fallback,exclstart,exclend);
+        fallback,rangestart,rangeend);
    }
 
 // signpost rendering method
