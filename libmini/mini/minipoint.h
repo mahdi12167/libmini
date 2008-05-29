@@ -115,13 +115,14 @@ class minipointopts
    int brickindex;
    };
 
-//! virtual waypoint renderer
+//! waypoint renderer prototype
 class minipointrndr
    {
    public:
 
    //! default constructor
-   minipointrndr(int type,int passes) {TYPE=type; PASSES=passes;}
+   minipointrndr(int type=minipointopts::OPTION_TYPE_NONE,int passes=0)
+      {TYPE=type; PASSES=passes;}
 
    //! destructor
    virtual ~minipointrndr() {}
@@ -150,7 +151,8 @@ class minipointrndr_signpost: public minipointrndr
    public:
 
    //! default constructor
-   minipointrndr_signpost(): minipointrndr(minipointopts::OPTION_TYPE_SIGNPOST,2) {}
+   minipointrndr_signpost():
+      minipointrndr(minipointopts::OPTION_TYPE_SIGNPOST,2) {}
 
    //! destructor
    ~minipointrndr_signpost() {}
@@ -167,7 +169,8 @@ class minipointrndr_brick: public minipointrndr
    public:
 
    //! default constructor
-   minipointrndr_brick(int passes=4): minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,passes) {}
+   minipointrndr_brick(int passes=4):
+      minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,passes) {}
 
    //! destructor
    ~minipointrndr_brick() {}
@@ -231,10 +234,7 @@ class minipoint
    int getvnum() {return(VNUM);}
 
    //! get nearest waypoint
-   minipointdata *getnearest(float x,float y,float elev,
-                             int fallback=minipointopts::OPTION_TYPE_NONE,
-                             int rangestart=minipointopts::OPTION_TYPE_ANY,
-                             int rangeend=minipointopts::OPTION_TYPE_NONE);
+   minipointdata *getnearest(float x,float y,float elev);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
@@ -243,17 +243,12 @@ class minipoint
    void draw(float ex,float ey,float ez,
              float farp,float fovy,float aspect,
              double time,minipointopts *global,
-             int fallback=minipointopts::OPTION_TYPE_NONE,
-             int rangestart=minipointopts::OPTION_TYPE_ANY,
-             int rangeend=minipointopts::OPTION_TYPE_NONE);
+             minipointrndr *fallback=NULL);
 
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,
-                      float turn,float yon,
-                      int fallback=minipointopts::OPTION_TYPE_SIGNPOST,
-                      int rangestart=minipointopts::OPTION_TYPE_SIGNPOST,
-                      int rangeend=minipointopts::OPTION_TYPE_SIGNPOST);
+                      float turn,float yon);
 
    //! set brick file name
    void setbrick(char *filename);
@@ -262,10 +257,7 @@ class minipoint
    void drawbricks(float ex,float ey,float ez,
                    float brad,float farp,
                    float fovy,float aspect,
-                   float size,
-                   int fallback=minipointopts::OPTION_TYPE_NONE,
-                   int rangestart=minipointopts::OPTION_TYPE_BRICK1,
-                   int rangeend=minipointopts::OPTION_TYPE_BRICK4);
+                   float size);
 
    //! getters
    float getoffsetlat() {return(OFFSETLAT);}
@@ -290,6 +282,7 @@ class minipoint
    void configure_brickceiling(float brickceiling=0.0f); // elevation modulates brick color
    void configure_bricklods(int bricklods=16); // number of brick LODs
    void configure_brickstagger(float brickstagger=1.25f); // staggering of brick LODs
+   void configure_brickpasses(float brickpasses=1); // brick render passes
    void configure_brickstripes(float brickstripes=0.0f); // offset of brick stripes
 
    protected:
@@ -339,14 +332,12 @@ class minipoint
    float CONFIGURE_BRICKCEILING;
    int CONFIGURE_BRICKLODS;
    float CONFIGURE_BRICKSTAGGER;
+   int  CONFIGURE_BRICKPASSES;
    float CONFIGURE_BRICKSTRIPES;
 
+   static minipointrndr RNDR_NONE;
    static minipointrndr_signpost RNDR_SIGNPOST;
-
-   static minipointrndr_brick RNDR_BRICK1;
-   static minipointrndr_brick RNDR_BRICK2;
-   static minipointrndr_brick RNDR_BRICK3;
-   static minipointrndr_brick RNDR_BRICK4;
+   static minipointrndr_brick RNDR_BRICK[4];
 
    void shellsort(minipointdata *a[],int n,
                   float x,float y,float elev,

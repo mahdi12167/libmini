@@ -1322,33 +1322,18 @@ void minilayer::renderpoints()
 
       mtxmult(oglmtx);
 
+      POINTS->configure_brickpasses(LPARAMS.brickpasses);
       POINTS->configure_brickstripes(LPARAMS.brickscroll*LPARAMS.time);
 
       if (!LPARAMS.usebricks)
-         {
          POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
                                len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
                                LPARAMS.signpostturn,LPARAMS.signpostincline);
-
-         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
-                            len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
-                            LPARAMS.fovy,LPARAMS.aspect,
-                            len_g2i(LPARAMS.bricksize),
-                            minipointopts::OPTION_TYPE_NONE);
-         }
       else
-         {
-         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
-                               len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
-                               LPARAMS.signpostturn,LPARAMS.signpostincline,
-                               minipointopts::OPTION_TYPE_NONE);
-
          POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
                             LPARAMS.fovy,LPARAMS.aspect,
-                            len_g2i(LPARAMS.bricksize),
-                            minipointopts::OPTION_TYPE_BRICK1+LPARAMS.brickpasses-1);
-         }
+                            len_g2i(LPARAMS.bricksize));
 
       mtxpop();
       }

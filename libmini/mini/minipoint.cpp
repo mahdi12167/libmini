@@ -11,6 +11,17 @@
 
 #include "minipoint.h"
 
+minipointrndr minipoint::RNDR_NONE;
+minipointrndr_signpost minipoint::RNDR_SIGNPOST;
+
+minipointrndr_brick minipoint::RNDR_BRICK[4]=
+   {
+   minipointrndr_brick(1),
+   minipointrndr_brick(2),
+   minipointrndr_brick(3),
+   minipointrndr_brick(4)
+   };
+
 // default constructor
 minipointopts::minipointopts()
    {
@@ -76,12 +87,13 @@ minipoint::minipoint(minitile *tile)
 
    LODS=NULL;
 
+   registerrndr(&RNDR_NONE);
    registerrndr(&RNDR_SIGNPOST);
 
-   registerrndr(&RNDR_BRICK1);
-   registerrndr(&RNDR_BRICK2);
-   registerrndr(&RNDR_BRICK3);
-   registerrndr(&RNDR_BRICK4);
+   registerrndr(&RNDR_BRICK[0]);
+   registerrndr(&RNDR_BRICK[1]);
+   registerrndr(&RNDR_BRICK[2]);
+   registerrndr(&RNDR_BRICK[3]);
 
    CONFIGURE_SRCDATUM=3; // WGS84
    CONFIGURE_DSTZONE=0; // LatLon
@@ -94,6 +106,7 @@ minipoint::minipoint(minitile *tile)
    CONFIGURE_BRICKCEILING=0.0f;
    CONFIGURE_BRICKLODS=16;
    CONFIGURE_BRICKSTAGGER=1.25f;
+   CONFIGURE_BRICKPASSES=1;
    CONFIGURE_BRICKSTRIPES=0.0f;
    }
 
@@ -743,30 +756,17 @@ inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
    }
 
 // get nearest waypoint
-minipointdata *minipoint::getnearest(float x,float y,float elev,
-                                     int fallback,int rangestart,int rangeend)
+minipointdata *minipoint::getnearest(float x,float y,float elev)
    {
    int i;
 
    minipointdata **vpoint=VPOINTS,*nearest=NULL;
 
-   int type;
-
    if (vpoint==NULL) return(NULL);
 
    for (i=0; i<VNUM; i++,vpoint++)
-      {
-      if ((*vpoint)->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
-      else type=(*vpoint)->opts->type;
-
-      if (type==minipointopts::OPTION_TYPE_ANY) type=fallback;
-
-      if (rangestart<=rangeend)
-         if (type<rangestart || type>rangeend) continue;
-
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
-      }
 
    return(nearest);
    }
@@ -775,20 +775,19 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,
 float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
    {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(point->height-elev));}
 
-//! render waypoints
+// render waypoints
 void minipoint::draw(float ex,float ey,float ez,
                      float farp,float fovy,float aspect,
                      double time,minipointopts *global,
-                     int fallback,int rangestart,int rangeend)
+                     minipointrndr *fallback)
    {
    //!!
    }
 
-//! render waypoints with signposts
+// render waypoints with signposts
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
-                              float turn,float yon,
-                              int fallback,int rangestart,int rangeend)
+                              float turn,float yon)
    {
    minipointopts global;
 
@@ -803,7 +802,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    draw(ex,ey,ez,
         0.0f,0.0f,0.0f,
         0.0,&global,
-        fallback,rangestart,rangeend);
+        &RNDR_SIGNPOST);
    }
 
 // set brick file name
@@ -815,12 +814,11 @@ void minipoint::setbrick(char *filename)
    BRICKNAME=strdup(filename);
    }
 
-//! render waypoints with bricks
+// render waypoints with bricks
 void minipoint::drawbricks(float ex,float ey,float ez,
                            float brad,float farp,
                            float fovy,float aspect,
-                           float size,
-                           int fallback,int rangestart,int rangeend)
+                           float size)
    {
    minipointopts global;
 
@@ -837,7 +835,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    draw(ex,ey,ez,
         farp,fovy,aspect,
         0.0,&global,
-        fallback,rangestart,rangeend);
+        &RNDR_BRICK[CONFIGURE_BRICKPASSES-1]);
    }
 
 // signpost rendering method
@@ -849,8 +847,6 @@ void minipointrndr_signpost::render(minipointdata *point,int pass,
    //!!
    }
 
-minipointrndr_signpost minipoint::RNDR_SIGNPOST;
-
 // brick rendering method
 void minipointrndr_brick::render(minipointdata *point,int pass,
                                  float ex,float ey,float ez,
@@ -859,11 +855,6 @@ void minipointrndr_brick::render(minipointdata *point,int pass,
    {
    //!!
    }
-
-minipointrndr_brick minipoint::RNDR_BRICK1(1);
-minipointrndr_brick minipoint::RNDR_BRICK2(2);
-minipointrndr_brick minipoint::RNDR_BRICK3(3);
-minipointrndr_brick minipoint::RNDR_BRICK4(4);
 
 /*
 
@@ -1236,6 +1227,9 @@ void minipoint::configure_bricklods(int bricklods)
 
 void minipoint::configure_brickstagger(float brickstagger)
    {CONFIGURE_BRICKSTAGGER=brickstagger;}
+
+void minipoint::configure_brickpasses(float brickpasses)
+   {CONFIGURE_BRICKPASSES=brickpasses;}
 
 void minipoint::configure_brickstripes(float brickstripes)
    {CONFIGURE_BRICKSTRIPES=brickstripes;}
