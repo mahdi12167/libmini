@@ -161,7 +161,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.brickrad=1000.0f;  // brick viewing radius in meters
 
    LPARAMS.brickpasses=4;     // brick render passes
-   LPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to first waypoint elevation
+   LPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to elevation of first waypoint
    LPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
 
    // initialize state:
@@ -699,8 +699,8 @@ void minilayer::loadopts()
       POINTS->load(wpname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
       free(wpname);
 
-      POINTS->configure_brickceiling(LPARAMS.brickceiling*POINTS->getfirst()->elev*LPARAMS.scale/LPARAMS.exaggeration);
-      POINTS->configure_brickpasses(LPARAMS.brickpasses);
+      if (POINTS->getfirst()!=NULL)
+         POINTS->configure_brickceiling(LPARAMS.brickceiling*POINTS->getfirst()->elev*LPARAMS.scale/LPARAMS.exaggeration);
       }
 
    // load brick data:
@@ -1334,21 +1334,20 @@ void minilayer::renderpoints()
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
                             LPARAMS.fovy,LPARAMS.aspect,
                             len_g2i(LPARAMS.bricksize),
-                            minipointopts::OPTION_TYPE_NONE,
-                            minipointopts::OPTION_TYPE_SIGNPOST);
+                            minipointopts::OPTION_TYPE_NONE);
          }
       else
          {
          POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
                                len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
                                LPARAMS.signpostturn,LPARAMS.signpostincline,
-                               minipointopts::OPTION_TYPE_NONE,
-                               minipointopts::OPTION_TYPE_BRICK);
+                               minipointopts::OPTION_TYPE_NONE);
 
          POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
                             len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
                             LPARAMS.fovy,LPARAMS.aspect,
-                            len_g2i(LPARAMS.bricksize));
+                            len_g2i(LPARAMS.bricksize),
+                            minipointopts::OPTION_TYPE_BRICK1+LPARAMS.brickpasses-1);
          }
 
       mtxpop();

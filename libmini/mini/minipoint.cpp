@@ -22,6 +22,7 @@ minipointopts::minipointopts()
    signpostturn=0.0f;
    signpostincline=0.0f;
    signpostalpha=0.0f;
+
    signpostrange=0.0f;
 
    brickfile=NULL;
@@ -31,13 +32,16 @@ minipointopts::minipointopts()
    brickcolor_red=0.0f;
    brickcolor_green=0.0f;
    brickcolor_blue=0.0f;
-   brickpasses=0;
+   brickalpha=0.0f;
+
    brickrad=0.0f;
    brickceiling=0.0f;
-   brickalpha=0.0f;
    bricklods=0;
    brickstagger=0.0f;
    brickstripes=0.0f;
+
+   brickloaded=0;
+   brickindex=-1;
    }
 
 // destructor
@@ -56,6 +60,10 @@ minipoint::minipoint(minitile *tile)
    MAXVNUM=0;
    VNUM=0;
 
+   RNDRS=NULL;
+   MAXRNUM=0;
+   RNUM=0;
+
    CACHE=NULL;
    ALTPATH=NULL;
 
@@ -68,6 +76,12 @@ minipoint::minipoint(minitile *tile)
 
    LODS=NULL;
 
+   registerrndr(&RNDR_SIGNPOST);
+   registerrndr(&RNDR_BRICK1);
+   registerrndr(&RNDR_BRICK2);
+   registerrndr(&RNDR_BRICK3);
+   registerrndr(&RNDR_BRICK4);
+
    CONFIGURE_SRCDATUM=3; // WGS84
    CONFIGURE_DSTZONE=0; // LatLon
    CONFIGURE_DSTDATUM=3; // WGS84
@@ -75,9 +89,8 @@ minipoint::minipoint(minitile *tile)
 
    CONFIGURE_SIGNPOSTALPHA=0.5f;
 
-   CONFIGURE_BRICKPASSES=1;
-   CONFIGURE_BRICKCEILING=0.0f;
    CONFIGURE_BRICKALPHA=0.5f;
+   CONFIGURE_BRICKCEILING=0.0f;
    CONFIGURE_BRICKLODS=16;
    CONFIGURE_BRICKSTAGGER=1.25f;
    CONFIGURE_BRICKSTRIPES=0.0f;
@@ -103,7 +116,6 @@ minipoint::~minipoint()
             if (POINTS[i][j].elevation!=NULL) free(POINTS[i][j].elevation);
 
             if (POINTS[i][j].opts!=NULL) delete POINTS[i][j].opts;
-            if (POINTS[i][j].rndr!=NULL) delete POINTS[i][j].rndr;
             }
 
          free(POINTS[i]);
@@ -117,6 +129,8 @@ minipoint::~minipoint()
 
    if (VPOINTS!=NULL) free(VPOINTS);
 
+   if (RNDRS!=NULL) free(RNDRS);
+
    if (ALTPATH!=NULL) free(ALTPATH);
 
    if (BRICKNAME!=NULL) free(BRICKNAME);
@@ -124,14 +138,22 @@ minipoint::~minipoint()
    if (LODS!=NULL) delete LODS;
    }
 
-// get file
-char *minipoint::getfile(char *filename,char *altpath)
+// register renderer
+void minipoint::registerrndr(minipointrndr *rndr)
    {
-   if (checkfile(filename)!=0) return(strdup(filename));
+   if (RNUM>=MAXRNUM)
+      {
+      MAXRNUM=2*MAXRNUM+1;
 
-   if (CACHE!=NULL) return(CACHE->getfile(filename,altpath));
+      if (RNDRS==NULL)
+         {if ((RNDRS=(minipointrndr **)malloc(MAXRNUM*sizeof(minipointrndr *)))==NULL) ERRORMSG();}
+      else
+         {if ((RNDRS=(minipointrndr **)realloc(RNDRS,MAXRNUM*sizeof(minipointrndr *)))==NULL) ERRORMSG();}
+      }
 
-   return(NULL);
+   RNDRS[RNUM]=rndr;
+
+   RNUM++;
    }
 
 // add waypoint
@@ -141,6 +163,8 @@ void minipoint::add(minipointdata *point)
 
    float posx,posy;
    int col,row;
+
+   int type;
 
    if (TILE==NULL) ERRORMSG();
 
@@ -192,7 +216,17 @@ void minipoint::add(minipointdata *point)
    point->system=point->latitude=point->longitude=point->elevation=NULL;
 
    point->opts=NULL;
-   point->rndr=NULL; //!! check type
+   point->rndr=NULL;
+
+   if (point->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
+   else type=point->opts->type;
+
+   for (i=0; i<RNUM; i++)
+      if (RNDRS[i]->gettype()==type)
+         {
+         point->rndr=RNDRS[i];
+         break;
+         }
    }
 
 // add character to string
@@ -246,7 +280,7 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("brickcolor_red",minipointopts::OPTION_BRICKCOLOR_RED);
    scanner.addtoken("brickcolor_green",minipointopts::OPTION_BRICKCOLOR_GREEN);
    scanner.addtoken("brickcolor_blue",minipointopts::OPTION_BRICKCOLOR_BLUE);
-   scanner.addtoken("brickpasses",minipointopts::OPTION_BRICKPASSES);
+   scanner.addtoken("brickalpha",minipointopts::OPTION_BRICKALPHA);
 
    scanner.setcode(point->comment);
 
@@ -289,7 +323,7 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_TYPE: point->opts->type=ftrc(value+0.5f); break;
             case minipointopts::OPTION_SIGNPOSTSIZE: point->opts->signpostsize=value; break;
             case minipointopts::OPTION_SIGNPOSTHEIGHT: point->opts->signpostheight=value; break;
-            case minipointopts::OPTION_SIGNPOSTNOAUTO: point->opts->signpostnoauto=(BOOLINT)ftrc(value+0.5f); break;
+            case minipointopts::OPTION_SIGNPOSTNOAUTO: point->opts->signpostnoauto=ftrc(value+0.5f); break;
             case minipointopts::OPTION_SIGNPOSTTURN: point->opts->signpostturn=value; break;
             case minipointopts::OPTION_SIGNPOSTINCLINE: point->opts->signpostincline=value; break;
             case minipointopts::OPTION_SIGNPOSTALPHA: point->opts->signpostalpha=value; break;
@@ -300,7 +334,7 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_BRICKCOLOR_RED: point->opts->brickcolor_red=value; break;
             case minipointopts::OPTION_BRICKCOLOR_GREEN: point->opts->brickcolor_green=value; break;
             case minipointopts::OPTION_BRICKCOLOR_BLUE: point->opts->brickcolor_blue=value; break;
-            case minipointopts::OPTION_BRICKPASSES: point->opts->brickpasses=ftrc(value+0.5f); break;
+            case minipointopts::OPTION_BRICKALPHA: point->opts->brickalpha=value; break;
             }
          }
 
@@ -317,6 +351,16 @@ void minipoint::setcache(datacache *cache,char *altpath)
    ALTPATH=NULL;
 
    if (altpath!=NULL) ALTPATH=strdup(altpath);
+   }
+
+// get file
+char *minipoint::getfile(char *filename,char *altpath)
+   {
+   if (checkfile(filename)!=0) return(strdup(filename));
+
+   if (CACHE!=NULL) return(CACHE->getfile(filename,altpath));
+
+   return(NULL);
    }
 
 // load waypoints
@@ -603,14 +647,11 @@ minipointdata *minipoint::getpoint(int p)
    }
 
 // calculate visible waypoints
-void minipoint::calcvdata(int fallback,
-                          int exclude)
+void minipoint::calcvdata()
    {
    int i,j,k;
 
    minipointdata *point;
-
-   int type;
 
    if (TILE==NULL) return;
 
@@ -621,11 +662,6 @@ void minipoint::calcvdata(int fallback,
          for (k=0; k<NUM[i+j*COLS]; k++)
             {
             point=&POINTS[i+j*COLS][k];
-
-            if (point->opts==NULL) type=0;
-            else type=point->opts->type;
-
-            //!! if (type!=type1 && type!=type2) continue;
 
             point->height=TILE->getheight(point->x,-point->y);
 
@@ -686,14 +722,28 @@ inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
                               const float x,const float y,const float elev,
                               const float dx,const float dy,const float de)
    {
-   return(dx*(a->x-x)+dy*(a->y-y)+de*(a->height-elev)>
-          dx*(b->x-x)+dy*(b->y-y)+de*(b->height-elev));
+   float d1,d2;
+   int type1,type2;
+
+   if (a->opts==NULL) type1=minipointopts::OPTION_TYPE_ANY;
+   else type1=a->opts->type;
+
+   if (b->opts==NULL) type2=minipointopts::OPTION_TYPE_ANY;
+   else type2=b->opts->type;
+
+   if (type1==type2)
+      {
+      d1=dx*(a->x-x)+dy*(a->y-y)+de*(a->height-elev);
+      d2=dx*(b->x-x)+dy*(b->y-y)+de*(b->height-elev);
+
+      return(d1>d2);
+      }
+   else return(type1<type2);
    }
 
 // get nearest waypoint
 minipointdata *minipoint::getnearest(float x,float y,float elev,
-                                     int fallback,
-                                     int exclude)
+                                     int fallback,int exclstart,int exclend)
    {
    int i;
 
@@ -705,10 +755,11 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,
 
    for (i=0; i<VNUM; i++,vpoint++)
       {
-      if ((*vpoint)->opts==NULL) type=0;
+      if ((*vpoint)->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
       else type=(*vpoint)->opts->type;
 
-      //!! if (type!=type1 && type!=type2) continue;
+      if (type==minipointopts::OPTION_TYPE_ANY) type=fallback;
+      if (type>=exclstart && type<=exclend) continue;
 
       if (nearest==NULL) nearest=*vpoint;
       else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
@@ -724,10 +775,8 @@ float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
 //! render waypoints
 void minipoint::draw(float ex,float ey,float ez,
                      float farp,float fovy,float aspect,
-                     double time,
-                     minipointopts *global,
-                     int fallback,
-                     int exclude)
+                     double time,minipointopts *global,
+                     int fallback,int exclstart,int exclend)
    {
    //!!
    }
@@ -736,24 +785,21 @@ void minipoint::draw(float ex,float ey,float ez,
 void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
                               float turn,float yon,
-                              int fallback,
-                              int exclude)
+                              int fallback,int exclstart,int exclend)
    {
    minipointopts global;
 
    global.signpostheight=height;
+   global.signpostrange=range;
    global.signpostturn=turn;
    global.signpostincline=yon;
-   global.signpostrange=range;
 
    global.signpostalpha=CONFIGURE_SIGNPOSTALPHA;
 
    draw(ex,ey,ez,
         0.0f,0.0f,0.0f,
-        0.0,
-        &global,
-        fallback,
-        exclude);
+        0.0,&global,
+        fallback,exclstart,exclend);
    }
 
 // set brick file name
@@ -770,28 +816,49 @@ void minipoint::drawbricks(float ex,float ey,float ez,
                            float brad,float farp,
                            float fovy,float aspect,
                            float size,
-                           int fallback,
-                           int exclude)
+                           int fallback,int exclstart,int exclend)
    {
    minipointopts global;
 
-   global.bricksize=size;
    global.brickrad=brad;
+   global.bricksize=size;
 
-   global.brickpasses=CONFIGURE_BRICKPASSES;
-   global.brickceiling=CONFIGURE_BRICKCEILING;
    global.brickalpha=CONFIGURE_BRICKALPHA;
+   global.brickceiling=CONFIGURE_BRICKCEILING;
    global.bricklods=CONFIGURE_BRICKLODS;
    global.brickstagger=CONFIGURE_BRICKSTAGGER;
    global.brickstripes=CONFIGURE_BRICKSTRIPES;
 
    draw(ex,ey,ez,
         farp,fovy,aspect,
-        0.0,
-        &global,
-        fallback,
-        exclude);
+        0.0,&global,
+        fallback,exclstart,exclend);
    }
+
+// signpost rendering method
+void minipointrndr_signpost::render(minipointdata *point,int pass,
+                                    float ex,float ey,float ez,
+                                    float farp,float fovy,float aspect,double time,
+                                    minipointopts *global)
+   {
+   //!!
+   }
+
+minipointrndr_signpost minipoint::RNDR_SIGNPOST;
+
+// brick rendering method
+void minipointrndr_brick::render(minipointdata *point,int pass,
+                                 float ex,float ey,float ez,
+                                 float farp,float fovy,float aspect,double time,
+                                 minipointopts *global)
+   {
+   //!!
+   }
+
+minipointrndr_brick minipoint::RNDR_BRICK1(1);
+minipointrndr_brick minipoint::RNDR_BRICK2(2);
+minipointrndr_brick minipoint::RNDR_BRICK3(3);
+minipointrndr_brick minipoint::RNDR_BRICK4(4);
 
 /*
 
@@ -818,7 +885,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    float salpha;
 
    // calculate visible points
-   calcvdata(type1,type2); //!!
+   calcvdata();
    vpoint=getvdata();
 
    // check if any points were found
@@ -949,7 +1016,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    minipointdata **vpoint;
 
    // calculate visible points
-   calcvdata(type1,type2); //!!
+   calcvdata();
    vpoint=getvdata();
 
    // check if any points were found
@@ -959,7 +1026,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    if (LODS==NULL)
       {
       LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
-      LODS->configure_brickpasses(CONFIGURE_BRICKPASSES);
+      LODS->configure_brickpasses(PASSES);
 
       // check if a brick file name was set
       if (BRICKNAME!=NULL)
@@ -972,7 +1039,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    // draw multiple pass sequences
    for (passes=1; passes<=4; passes++)
       {
-      if (CONFIGURE_BRICKPASSES==passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
+      if (PASSES==passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
       drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,passes,passes);
       }
    }
@@ -990,14 +1057,13 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    float bsize;
 
    int bindex,vindex;
-   int bpasses;
 
    char *bname;
 
-   float bred,bgreen,bblue;
+   float bred,bgreen,bblue,balpha;
 
    float midx,midy,basez;
-   float color,r,g,b;
+   float color,r,g,b,a;
 
    float alpha,beta;
    float sa,ca,sb,cb;
@@ -1021,12 +1087,8 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       else if (BRICKNAME!=NULL) bindex=0;
       else bindex=-1;
 
-      // get brick passes
-      if ((*vpoint)->opts==NULL) bpasses=0;
-      else bpasses=(*vpoint)->opts->brickpasses;
-
       // check brick passes
-      if (bpasses!=mpasses) continue;
+      if (PASSES!=mpasses) continue;
 
       // check for individual brick file
       if ((*vpoint)->opts!=NULL)
@@ -1058,12 +1120,13 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       basez=((*vpoint)->elev-0.25f*bsize)/SCALEELEV;
 
       // get individual brick color
-      if ((*vpoint)->opts==NULL) bred=bgreen=bblue=0.0f;
+      if ((*vpoint)->opts==NULL) bred=bgreen=bblue=balpha=0.0f;
       else
          {
          bred=(*vpoint)->opts->brickcolor_red;
          bgreen=(*vpoint)->opts->brickcolor_green;
          bblue=(*vpoint)->opts->brickcolor_blue;
+         balpha=(*vpoint)->opts->brickalpha;
          }
 
       // check for individual brick color
@@ -1072,6 +1135,9 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          r=bred;
          g=bgreen;
          b=bblue;
+         a=balpha;
+
+         if (a==0.0f) a=CONFIGURE_BRICKALPHA;
          }
       else
          {
@@ -1092,13 +1158,15 @@ void minipoint::drawsequence(float ex,float ey,float ez,
             g=2.0f-2.0f*color;
             b=0.0f;
             }
+
+         a=CONFIGURE_BRICKALPHA;
          }
 
       // set position and color
       vindex=LODS->addvolume(bindex,
                              midx,midy,basez,
                              bsize/SCALEX,bsize/SCALEY,bsize/SCALEELEV,
-                             r,g,b,CONFIGURE_BRICKALPHA);
+                             r,g,b,a);
 
       // set orientation
       if ((*vpoint)->opts!=NULL)
@@ -1152,14 +1220,11 @@ void minipoint::configure_signpostalpha(float signpostalpha)
 
 // configuring of brick rendering:
 
-void minipoint::configure_brickpasses(int brickpasses)
-   {CONFIGURE_BRICKPASSES=brickpasses;}
+void minipoint::configure_brickalpha(float brickalpha)
+   {CONFIGURE_BRICKALPHA=brickalpha;}
 
 void minipoint::configure_brickceiling(float brickceiling)
    {CONFIGURE_BRICKCEILING=brickceiling;}
-
-void minipoint::configure_brickalpha(float brickalpha)
-   {CONFIGURE_BRICKALPHA=brickalpha;}
 
 void minipoint::configure_bricklods(int bricklods)
    {CONFIGURE_BRICKLODS=bricklods;}

@@ -14,7 +14,7 @@
 class minipointopts;
 class minipointrndr;
 
-// waypoint data
+//! waypoint data
 typedef struct
    {
    float x,y;
@@ -60,15 +60,18 @@ class minipointopts
       OPTION_BRICKCOLOR_RED=14,
       OPTION_BRICKCOLOR_GREEN=15,
       OPTION_BRICKCOLOR_BLUE=16,
-      OPTION_BRICKPASSES=17
+      OPTION_BRICKALPHA=17
       };
 
    enum
       {
-      OPTION_TYPE_NONE=-1,
-      OPTION_TYPE_ANY=0,
-      OPTION_TYPE_SIGNPOST=1,
-      OPTION_TYPE_BRICK=2
+      OPTION_TYPE_NONE=-1, // omitted type
+      OPTION_TYPE_ANY=0, // unspecific type
+      OPTION_TYPE_SIGNPOST=1, // signpost
+      OPTION_TYPE_BRICK1=2, // 1-pass brick
+      OPTION_TYPE_BRICK2=3, // 2-pass brick
+      OPTION_TYPE_BRICK3=4, // 3-pass brick
+      OPTION_TYPE_BRICK4=5, // 4-pass brick
       };
 
    //! default constructor
@@ -77,7 +80,7 @@ class minipointopts
    //! destructor
    ~minipointopts();
 
-   int type; // type of the waypoint: none=-1 any=0 signpost=1 brick=2
+   int type; // type of the waypoint
 
    // signpost parameters
    float signpostsize; // 0=default size
@@ -98,15 +101,18 @@ class minipointopts
    float brickcolor_red; // red color component
    float brickcolor_green; // green color component
    float brickcolor_blue; // blue color component
-   int brickpasses; // 0=default 1=striped 2-4=semi-transparent
+   float brickalpha; // opacity
 
    // global brick parameters
    float brickrad; // brick radius
    float brickceiling; // elevation modulates brick color
-   float brickalpha; // opacity of brick
    int bricklods; // number of brick LODs
    float brickstagger; // staggering of brick LODs
    float brickstripes; // offset of brick stripes
+
+   // brick variables
+   BOOLINT brickloaded;
+   int brickindex;
    };
 
 //! virtual waypoint renderer
@@ -115,31 +121,61 @@ class minipointrndr
    public:
 
    //! default constructor
-   minipointrndr(BOOLINT sort,int passes)
-      {
-      SORT=sort;
-      PASSES=passes;
-      }
+   minipointrndr(int type,int passes) {TYPE=type; PASSES=passes;}
 
    //! destructor
-   virtual ~minipointrndr();
+   virtual ~minipointrndr() {}
 
-   BOOLINT required_sort() {return(SORT);}
-   int required_passes() {return(PASSES);}
+   int gettype() {return(TYPE);}
+   int getpasses() {return(PASSES);}
 
    virtual void init() {}
 
    virtual void render(minipointdata *point,int pass,
                        float ex,float ey,float ez,
                        float farp,float fovy,float aspect,double time,
-                       minipointopts *global);
+                       minipointopts *global) {}
 
    virtual void exit() {}
 
    protected:
 
-   BOOLINT SORT;
+   int TYPE;
    int PASSES;
+   };
+
+//! signpost renderer
+class minipointrndr_signpost: public minipointrndr
+   {
+   public:
+
+   //! default constructor
+   minipointrndr_signpost(): minipointrndr(minipointopts::OPTION_TYPE_SIGNPOST,2) {}
+
+   //! destructor
+   ~minipointrndr_signpost() {}
+
+   void render(minipointdata *point,int pass,
+               float ex,float ey,float ez,
+               float farp,float fovy,float aspect,double time,
+               minipointopts *global);
+   };
+
+//! brick renderer
+class minipointrndr_brick: public minipointrndr
+   {
+   public:
+
+   //! default constructor
+   minipointrndr_brick(int passes=4): minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,passes) {}
+
+   //! destructor
+   ~minipointrndr_brick() {}
+
+   void render(minipointdata *point,int pass,
+               float ex,float ey,float ez,
+               float farp,float fovy,float aspect,double time,
+               minipointopts *global);
    };
 
 //! waypoint class
@@ -155,6 +191,9 @@ class minipoint
 
    //! add waypoint
    void add(minipointdata *point);
+
+   //! register renderer
+   void registerrndr(minipointrndr *rndr);
 
    //! set file cache
    void setcache(datacache *cache,char *altpath);
@@ -176,8 +215,7 @@ class minipoint
    minipointdata *getpoint(int p);
 
    //! calculate visible waypoints
-   void calcvdata(int fallback=minipointopts::OPTION_TYPE_NONE,
-                  int exclude=minipointopts::OPTION_TYPE_NONE);
+   void calcvdata();
 
    //! sort visible waypoints
    void sortvdata(float x,float y,float elev,
@@ -192,7 +230,8 @@ class minipoint
    //! get nearest waypoint
    minipointdata *getnearest(float x,float y,float elev,
                              int fallback=minipointopts::OPTION_TYPE_NONE,
-                             int exclude=minipointopts::OPTION_TYPE_NONE);
+                             int exclstart=minipointopts::OPTION_TYPE_NONE,
+                             int exclend=minipointopts::OPTION_TYPE_NONE);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);
@@ -200,17 +239,18 @@ class minipoint
    //! render waypoints
    void draw(float ex,float ey,float ez,
              float farp,float fovy,float aspect,
-             double time,
-             minipointopts *global,
+             double time,minipointopts *global,
              int fallback=minipointopts::OPTION_TYPE_NONE,
-             int exclude=minipointopts::OPTION_TYPE_NONE);
+             int exclstart=minipointopts::OPTION_TYPE_NONE,
+             int exclend=minipointopts::OPTION_TYPE_NONE);
 
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
                       float height,float range,
                       float turn,float yon,
                       int fallback=minipointopts::OPTION_TYPE_SIGNPOST,
-                      int exclude=minipointopts::OPTION_TYPE_BRICK);
+                      int exclstart=minipointopts::OPTION_TYPE_BRICK1,
+                      int exclend=minipointopts::OPTION_TYPE_BRICK4);
 
    //! set brick file name
    void setbrick(char *filename);
@@ -220,8 +260,9 @@ class minipoint
                    float brad,float farp,
                    float fovy,float aspect,
                    float size,
-                   int fallback=minipointopts::OPTION_TYPE_BRICK,
-                   int exclude=minipointopts::OPTION_TYPE_SIGNPOST);
+                   int fallback=minipointopts::OPTION_TYPE_NONE,
+                   int exclstart=minipointopts::OPTION_TYPE_SIGNPOST,
+                   int exclend=minipointopts::OPTION_TYPE_SIGNPOST);
 
    //! getters
    float getoffsetlat() {return(OFFSETLAT);}
@@ -242,9 +283,8 @@ class minipoint
    void configure_signpostalpha(float signpostalpha=0.5f); // alpha value of signposts
 
    //! configuring of brick rendering
-   void configure_brickpasses(int brickpasses=1); // render passes for brick display
+   void configure_brickalpha(float brickalpha=0.5f); // alpha value of bricks
    void configure_brickceiling(float brickceiling=0.0f); // elevation modulates brick color
-   void configure_brickalpha(float brickalpha=0.5f); // opacity of brick
    void configure_bricklods(int bricklods=16); // number of brick LODs
    void configure_brickstagger(float brickstagger=1.25f); // staggering of brick LODs
    void configure_brickstripes(float brickstripes=0.0f); // offset of brick stripes
@@ -261,15 +301,18 @@ class minipoint
    minipointdata **VPOINTS;
    int VNUM,MAXVNUM;
 
+   minipointrndr **RNDRS;
+   int RNUM,MAXRNUM;
+
    datacache *CACHE;
    char *ALTPATH;
-
-   char *getfile(char *filename,char *altpath);
 
    char *addch(char *str,char ch);
 
    void parsecomment(minipointdata *point);
    void parseoption(minipointdata *point,lunascan *scanner);
+
+   char *getfile(char *filename,char *altpath);
 
    private:
 
@@ -289,12 +332,18 @@ class minipoint
 
    float CONFIGURE_SIGNPOSTALPHA;
 
-   int CONFIGURE_BRICKPASSES;
-   float CONFIGURE_BRICKCEILING;
    float CONFIGURE_BRICKALPHA;
+   float CONFIGURE_BRICKCEILING;
    int CONFIGURE_BRICKLODS;
    float CONFIGURE_BRICKSTAGGER;
    float CONFIGURE_BRICKSTRIPES;
+
+   static minipointrndr_signpost RNDR_SIGNPOST;
+
+   static minipointrndr_brick RNDR_BRICK1;
+   static minipointrndr_brick RNDR_BRICK2;
+   static minipointrndr_brick RNDR_BRICK3;
+   static minipointrndr_brick RNDR_BRICK4;
 
    void shellsort(minipointdata *a[],int n,
                   float x,float y,float elev,
@@ -304,103 +353,13 @@ class minipoint
                const float x,const float y,const float elev,
                const float dx,const float dy,const float de);
 
+   /*
+   //!!
    void drawsequence(float ex,float ey,float ez,
                      float brad,float farp,
                      float fovy,float aspect,
                      float size,int mpasses,int passes);
-   };
-
-//! signpost renderer
-class minipointrndr_signpost: public minipointrndr
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_signpost(): minipointrndr(TRUE,2) {}
-
-   //! destructor
-   ~minipointrndr_signpost() {}
-
-   void render(minipointdata *point,int pass,
-               float ex,float ey,float ez,
-               float farp,float fovy,float aspect,double time,
-               minipointopts *global);
-   };
-
-//! virtual brick renderer
-class minipointrndr_brick: public minipointrndr
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_brick(int passes): minipointrndr(FALSE,passes)
-      {
-      //!!
-      brickloaded=0;
-      brickindex=-1;
-      }
-
-   //! destructor
-   virtual ~minipointrndr_brick() {}
-
-   void render(minipointdata *point,int pass,
-               float ex,float ey,float ez,
-               float farp,float fovy,float aspect,double time,
-               minipointopts *global);
-
-   private:
-
-   // brick state variables
-   int brickloaded;
-   int brickindex;
-   };
-
-//! 1-pass brick renderer
-class minipointrndr_brick1: public minipointrndr_brick
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_brick1(): minipointrndr_brick(1) {}
-
-   //! destructor
-   ~minipointrndr_brick1() {}
-   };
-
-//! 2-pass brick renderer
-class minipointrndr_brick2: public minipointrndr_brick
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_brick2(): minipointrndr_brick(2) {}
-
-   //! destructor
-   ~minipointrndr_brick2() {}
-   };
-
-//! 3-pass brick renderer
-class minipointrndr_brick3: public minipointrndr_brick
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_brick3(): minipointrndr_brick(3) {}
-
-   //! destructor
-   ~minipointrndr_brick3() {}
-   };
-
-//! 4-pass brick renderer
-class minipointrndr_brick4: public minipointrndr_brick
-   {
-   public:
-
-   //! default constructor
-   minipointrndr_brick4(): minipointrndr_brick(4) {}
-
-   //! destructor
-   ~minipointrndr_brick4() {}
+   */
    };
 
 #endif
