@@ -1221,15 +1221,15 @@ void minipointrndr_brick::render(minipointdata *vpoint,int pass)
                                  -sa*cb,-sb,ca*cb);
             }
          }
-
-      // set rendering passes
-      LODS->addpasses(bindex,TYPE-minipointopts::OPTION_TYPE_BRICK1+1);
       }
    }
 
 // brick exit method
 void minipointrndr_brick::exit()
    {
+   // set rendering passes
+   LODS->configure_brickpasses(TYPE-minipointopts::OPTION_TYPE_BRICK1+1);
+
    // set stripe pattern
    LODS->configure_brickoffset(GLOBAL->brickstripes);
 

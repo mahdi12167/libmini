@@ -48,9 +48,6 @@ class minilod
                          unsigned int lods=0,
                          float stagger=1.5f);
 
-   //! add brick passes to minibrick volume
-   void addpasses(unsigned int bindex,int passes);
-
    //! add volume at specific location
    unsigned int addvolume(unsigned int bindex,
                           float midx,float midy,float basez,

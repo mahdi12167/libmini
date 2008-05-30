@@ -86,6 +86,7 @@ unsigned int minilod::addbrick(char *brickname,
    BRICKS[BNUM].lods=lods;
    BRICKS[BNUM].stagger=stagger;
 
+   // extract mesh for each level of detail
    for (i=0; i<lods; i++)
       {
       // set brick pager
@@ -95,13 +96,10 @@ unsigned int minilod::addbrick(char *brickname,
       // set iso spectrum
       BRICKS[BNUM].brick[i].addiso(0.5f,1.0f,1.0f,1.0f,1.0f);
 
-      // set render method
-      BRICKS[BNUM].brick[i].configure_renderpasses(CONFIGURE_BRICKPASSES);
-
       // calculate staggered distance
       dist=0.999f*brad*fpow(stagger,i);
 
-      // extract meshes
+      // extract mesh
       BRICKS[BNUM].brick[i].setdistance(dist);
       BRICKS[BNUM].brick[i].extract(0.0f,0.0f,0.0f,-brad,dist,90.0f,1.0f);
       BRICKS[BNUM].brick[i].release();
@@ -110,17 +108,6 @@ unsigned int minilod::addbrick(char *brickname,
    BNUM++;
 
    return(BNUM-1);
-   }
-
-// add brick passes to minibrick volume
-void minilod::addpasses(unsigned int bindex,int passes)
-   {
-   unsigned int i;
-
-   if (bindex>=BNUM) ERRORMSG();
-
-   for (i=0; i<BRICKS[bindex].lods; i++)
-      BRICKS[bindex].brick[i].configure_renderpasses(passes);
    }
 
 // add volume at specific location
@@ -211,7 +198,7 @@ void minilod::render(float ex,float ey,float ez,
    {
    int ph;
 
-   unsigned int i,j;
+   unsigned int i;
 
    minibrickdata *brk;
    miniloddata *vol;
@@ -221,12 +208,7 @@ void minilod::render(float ex,float ey,float ez,
    float dist;
    int lod;
 
-   // configure bricks
-   for (i=0; i<BNUM; i++)
-      for (j=0; j<BRICKS[i].lods; j++)
-         BRICKS[i].brick[j].configure_stripeoffset(CONFIGURE_BRICKOFFSET);
-
-   // render volumes
+   // render mesh for each rendering phase
    for (ph=MINIBRICK_FIRST_RENDER_PHASE; ph<=MINIBRICK_LAST_RENDER_PHASE; ph++)
       if (phase==MINIBRICK_ONE_RENDER_PHASE || ph==phase)
          for (i=0; i<VNUM; i++)
@@ -259,6 +241,12 @@ void minilod::render(float ex,float ey,float ez,
 
             // set color
             brick->addiso(0.5f,vol->r,vol->g,vol->b,vol->a);
+
+            // set render method
+            brick->configure_renderpasses(CONFIGURE_BRICKPASSES);
+
+            // set stripe offset
+            brick->configure_stripeoffset(CONFIGURE_BRICKOFFSET);
 
             // render mesh
             brick->render(ex,ey,ez,0.0f,farp,fovy,aspect,0.0f,ph);
