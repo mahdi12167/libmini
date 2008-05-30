@@ -43,15 +43,8 @@ class miniray
 
    //! set locking callbacks
    //! when the callbacks are set ray shooting can be triggered safely from a separate thread
-   //! when shooting a sequence of rays the lock should be applied/released explicitly before/after the sequence
-   void setcallbacks(void (*lock)(void *data),void *data,
-                     void (*unlock)(void *data));
-
-   //! explicitly lock a sequence of ray shooting operations
-   void lock();
-
-   //! explicitly unlock a sequence of ray shooting operations
-   void unlock();
+   static void setcallbacks(void (*lock)(void *data),void *data,
+                            void (*unlock)(void *data));
 
    //! render triangles as wireframe for debugging purposes
    void renderwire();
@@ -89,10 +82,9 @@ class miniray
 
    TRIANGLEREF *FRONT,*BACK;
 
-   BOOLINT LOCKED;
-   void (*LOCK_CALLBACK)(void *data);
-   void (*UNLOCK_CALLBACK)(void *data);
-   void *LOCK_DATA;
+   static void (*LOCK_CALLBACK)(void *data);
+   static void (*UNLOCK_CALLBACK)(void *data);
+   static void *LOCK_DATA;
 
    int CONFIGURE_MAXCHUNKSIZE_TRIANGLES;
    int CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS;

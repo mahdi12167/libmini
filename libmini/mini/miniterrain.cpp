@@ -1072,6 +1072,11 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,int *id)
    return(dist);
    }
 
+// set locking callbacks for ray shooting
+void miniterrain::setraycallbacks(void (*lock)(void *data),void *data,
+                                  void (*unlock)(void *data))
+   {miniray::setcallbacks(lock,data,unlock);}
+
 // return memory consumption
 double miniterrain::getmem()
    {

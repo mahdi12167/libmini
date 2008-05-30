@@ -9,13 +9,14 @@
 
 #include "miniray.h"
 
+void (*miniray::LOCK_CALLBACK)(void *data)=NULL;
+void (*miniray::UNLOCK_CALLBACK)(void *data)=NULL;
+void *miniray::LOCK_DATA=NULL;
+
 // default constructor
 miniray::miniray()
    {
    FRONT=BACK=NULL;
-
-   LOCKED=FALSE;
-   LOCK_CALLBACK=NULL;
 
    CONFIGURE_MAXCHUNKSIZE_TRIANGLES=100;
    CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS=20;
@@ -169,13 +170,13 @@ void miniray::swapbuffer()
    {
    TRIANGLEREF *ref;
 
-   lock();
+   if (LOCK_CALLBACK!=NULL) LOCK_CALLBACK(LOCK_DATA);
 
    ref=FRONT;
    FRONT=BACK;
    BACK=ref;
 
-   unlock();
+   if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);
    }
 
 // shoot a ray and return the distance to the closest triangle
@@ -187,7 +188,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d)
 
    TRIANGLEREF *ref;
 
-   lock();
+   if (LOCK_CALLBACK!=NULL) LOCK_CALLBACK(LOCK_DATA);
 
    dn=d;
    dn.normalize();
@@ -202,7 +203,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d)
       ref=ref->next;
       }
 
-   unlock();
+   if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);
 
    return(result);
    }
@@ -214,28 +215,6 @@ void miniray::setcallbacks(void (*lock)(void *data),void *data,
    LOCK_CALLBACK=lock;
    UNLOCK_CALLBACK=unlock;
    LOCK_DATA=data;
-   }
-
-// lock shooting sequence
-void miniray::lock()
-   {
-   if (LOCK_CALLBACK!=NULL)
-      if (!LOCKED)
-         {
-         LOCK_CALLBACK(LOCK_DATA);
-         LOCKED=TRUE;
-         }
-   }
-
-// unlock shooting sequence
-void miniray::unlock()
-   {
-   if (LOCK_CALLBACK!=NULL)
-      if (LOCKED)
-         {
-         UNLOCK_CALLBACK(LOCK_DATA);
-         LOCKED=FALSE;
-         }
    }
 
 void miniray::calcbound(TRIANGLEREF *ref)

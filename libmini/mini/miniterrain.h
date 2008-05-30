@@ -315,6 +315,10 @@ class miniterrain
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,int *id=NULL);
 
+   //! set locking callbacks for ray shooting
+   static void setraycallbacks(void (*lock)(void *data),void *data,
+                               void (*unlock)(void *data));
+
    //! return memory consumption
    double getmem();
 
