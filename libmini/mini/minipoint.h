@@ -67,12 +67,12 @@ class minipointopts
    enum
       {
       OPTION_TYPE_NONE=-1, // invisible type
-      OPTION_TYPE_ANY=0, // non-specific type
-      OPTION_TYPE_SIGNPOST=1, // signpost type
-      OPTION_TYPE_BRICK1=2, // 1-pass brick type
-      OPTION_TYPE_BRICK2=3, // 2-pass brick type
-      OPTION_TYPE_BRICK3=4, // 3-pass brick type
-      OPTION_TYPE_BRICK4=5, // 4-pass brick type
+      OPTION_TYPE_ANY=-2, // non-specific type
+      OPTION_TYPE_SIGNPOST=0, // signpost type
+      OPTION_TYPE_BRICK1=1, // 1-pass brick type
+      OPTION_TYPE_BRICK2=2, // 2-pass brick type
+      OPTION_TYPE_BRICK3=3, // 3-pass brick type
+      OPTION_TYPE_BRICK4=4, // 4-pass brick type
       };
 
    //! default constructor
@@ -205,7 +205,7 @@ class minipointrndr_brick: public minipointrndr
    public:
 
    //! default constructor
-   minipointrndr_brick(int passes=4);
+   minipointrndr_brick(int type);
 
    //! destructor
    ~minipointrndr_brick();

@@ -16,16 +16,16 @@ minipointrndr_signpost minipoint::RNDR_SIGNPOST;
 
 minipointrndr_brick minipoint::RNDR_BRICK[4]=
    {
-   minipointrndr_brick(1),
-   minipointrndr_brick(2),
-   minipointrndr_brick(3),
-   minipointrndr_brick(4)
+   minipointrndr_brick(minipointopts::OPTION_TYPE_BRICK1),
+   minipointrndr_brick(minipointopts::OPTION_TYPE_BRICK2),
+   minipointrndr_brick(minipointopts::OPTION_TYPE_BRICK3),
+   minipointrndr_brick(minipointopts::OPTION_TYPE_BRICK4)
    };
 
 // default constructor
 minipointopts::minipointopts()
    {
-   type=0;
+   type=minipointopts::OPTION_TYPE_ANY;
 
    signpostsize=0.0f;
    signpostheight=0.0f;
@@ -240,7 +240,7 @@ BOOLINT minipoint::add(minipointdata *point)
 // add character to string
 char *minipoint::addch(char *str,char ch)
    {
-   const int space=4;
+   const int space=8;
 
    if (str==NULL)
       {
@@ -1039,8 +1039,8 @@ void minipointrndr_signpost::exit()
    }
 
 // default constructor
-minipointrndr_brick::minipointrndr_brick(int passes):
-   minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,1)
+minipointrndr_brick::minipointrndr_brick(int type):
+   minipointrndr(type,1)
    {LODS=NULL;}
 
 // destructor
