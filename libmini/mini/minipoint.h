@@ -105,11 +105,15 @@ class minipointopts
    float brickalpha; // opacity
 
    // global brick parameters
-   float brickrad; // brick radius
+   float brickradius; // brick display radius
    float brickceiling; // elevation modulates brick color
    int bricklods; // number of brick LODs
    float brickstagger; // staggering of brick LODs
    float brickstripes; // offset of brick stripes
+
+   // brick variables
+   BOOLINT brickloaded;
+   int brickindex;
 
    // generic data
    void *data;
@@ -130,15 +134,29 @@ class minipointrndr
    int gettype() {return(TYPE);}
    int getpasses() {return(PASSES);}
 
-   virtual void pre(minipoint *points,
-                    float ex,float ey,float ez,
-                    float dx,float dy,float dz,
-                    float farp,float fovy,float aspect,
-                    double time,minipointopts *global) {}
+   virtual void init(minipoint *points,
+                     float ex,float ey,float ez,
+                     float dx,float dy,float dz,
+                     float farp,float fovy,float aspect,
+                     double time,minipointopts *global)
+      {
+      if (points==NULL ||
+          ex==MAXFLOAT || ey==MAXFLOAT || ez==MAXFLOAT ||
+          dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
+          farp==MAXFLOAT || fovy<0.0f || aspect<0.0f ||
+          time<0.0 || global==NULL) ERRORMSG();
+      }
 
-   virtual void render(minipointdata *vpoint,int pass) {}
+   virtual void pre(int pass)
+      {if (pass<0) ERRORMSG();}
 
-   virtual void post(int pass) {}
+   virtual void render(minipointdata *vpoint,int pass)
+      {if (vpoint==NULL || pass<0) ERRORMSG();}
+
+   virtual void post(int pass)
+      {if (pass<0) ERRORMSG();}
+
+   virtual void exit() {}
 
    protected:
 
@@ -158,15 +176,19 @@ class minipointrndr_signpost: public minipointrndr
    //! destructor
    ~minipointrndr_signpost() {}
 
-   void pre(minipoint *points,
-            float ex,float ey,float ez,
-            float dx,float dy,float dz,
-            float farp,float fovy,float aspect,
-            double time,minipointopts *global);
+   void init(minipoint *points,
+             float ex,float ey,float ez,
+             float dx,float dy,float dz,
+             float farp,float fovy,float aspect,
+             double time,minipointopts *global);
+
+   void pre(int pass);
 
    void render(minipointdata *vpoint,int pass);
 
    void post(int pass);
+
+   void exit();
 
    private:
 
@@ -174,8 +196,9 @@ class minipointrndr_signpost: public minipointrndr
 
    float EX,EY,EZ;
    minipointopts *GLOBAL;
-   minipointdata *NEAREST;
    float SCALEELEV;
+
+   minipointdata *NEAREST;
    };
 
 //! brick renderer
@@ -184,27 +207,32 @@ class minipointrndr_brick: public minipointrndr
    public:
 
    //! default constructor
-   minipointrndr_brick(int passes=4):
-      minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,passes) {}
+   minipointrndr_brick(int passes=4);
 
    //! destructor
-   ~minipointrndr_brick() {}
+   ~minipointrndr_brick();
 
-   void pre(minipoint *points,
-            float ex,float ey,float ez,
-            float dx,float dy,float dz,
-            float farp,float fovy,float aspect,
-            double time,minipointopts *global);
+   void init(minipoint *points,
+             float ex,float ey,float ez,
+             float dx,float dy,float dz,
+             float farp,float fovy,float aspect,
+             double time,minipointopts *global);
 
    void render(minipointdata *vpoint,int pass);
 
-   void post(int pass);
+   void exit();
 
    private:
 
    minipoint *POINTS;
 
+   float EX,EY,EZ;
+   float FARP,FOVY,ASPECT;
    minipointopts *GLOBAL;
+   float OFFSETLAT,OFFSETLON;
+   float SCALEX,SCALEY,SCALEELEV;
+
+   minilod *LODS;
    };
 
 //! waypoint class
@@ -277,7 +305,7 @@ class minipoint
                       float height,float range,
                       float turn,float yon);
 
-   //! set brick file name
+   //! set default brick file name
    void setbrick(char *filename);
 
    //! render waypoints with bricks
@@ -294,6 +322,9 @@ class minipoint
    float getscaleelev() {return(SCALEELEV);}
    int getzone() {return(CONFIGURE_DSTZONE);}
    int getdatum() {return(CONFIGURE_DSTDATUM);}
+
+   //! get file through data cache
+   char *getfile(char *filename) {return(getfile(filename,ALTPATH));}
 
    //! configuring
    void configure_srcdatum(int datum=3); // source UTM datum
@@ -345,8 +376,6 @@ class minipoint
    float SCALEX,SCALEY,SCALEELEV;
 
    char *BRICKNAME;
-
-   minilod *LODS;
 
    int CONFIGURE_SRCDATUM;
    int CONFIGURE_DSTZONE;

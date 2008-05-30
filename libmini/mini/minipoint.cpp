@@ -45,11 +45,14 @@ minipointopts::minipointopts()
    brickcolor_blue=0.0f;
    brickalpha=0.0f;
 
-   brickrad=0.0f;
+   brickradius=0.0f;
    brickceiling=0.0f;
    bricklods=0;
    brickstagger=0.0f;
    brickstripes=0.0f;
+
+   brickloaded=FALSE;
+   brickindex=-1;
 
    data=NULL;
    }
@@ -86,8 +89,6 @@ minipoint::minipoint(minitile *tile)
    SCALEX=SCALEY=SCALEELEV=1.0f;
 
    BRICKNAME=NULL;
-
-   LODS=NULL;
 
    registerrndr(&RNDR_NONE);
    registerrndr(&RNDR_SIGNPOST);
@@ -150,8 +151,6 @@ minipoint::~minipoint()
    if (ALTPATH!=NULL) free(ALTPATH);
 
    if (BRICKNAME!=NULL) free(BRICKNAME);
-
-   if (LODS!=NULL) delete LODS;
    }
 
 // register renderer
@@ -817,17 +816,20 @@ void minipoint::draw(float ex,float ey,float ez,
       // call renderer for each point and pass
       if (rndr!=NULL)
          {
-         rndr->pre(this,
-                   ex,ey,ez,
-                   dx,dy,dz,
-                   farp,fovy,aspect,
-                   time,global);
+         rndr->init(this,
+                    ex,ey,ez,
+                    dx,dy,dz,
+                    farp,fovy,aspect,
+                    time,global);
 
          for (i=1; i<=rndr->getpasses(); i++)
             {
+            rndr->pre(i);
             for (j=p1; j<p2; j++) rndr->render(VPOINTS[j],i);
             rndr->post(i);
             }
+
+         rndr->exit();
          }
       }
    }
@@ -869,7 +871,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
         &RNDR_SIGNPOST);
    }
 
-// set brick file name
+// set default brick file name
 void minipoint::setbrick(char *filename)
    {
    if (filename==NULL) ERRORMSG();
@@ -886,7 +888,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    {
    minipointopts global;
 
-   global.brickrad=brad;
+   global.brickradius=brad;
    global.bricksize=size;
 
    global.brickfile=strdup(BRICKNAME);
@@ -903,13 +905,17 @@ void minipoint::drawbricks(float ex,float ey,float ez,
         &RNDR_BRICK[CONFIGURE_BRICKPASSES-1]);
    }
 
-// signpost pre-render method
-void minipointrndr_signpost::pre(minipoint *points,
-                                 float ex,float ey,float ez,
-                                 float dx,float dy,float dz,
-                                 float farp,float fovy,float aspect,
-                                 double time,minipointopts *global)
+// signpost init method
+void minipointrndr_signpost::init(minipoint *points,
+                                  float ex,float ey,float ez,
+                                  float dx,float dy,float dz,
+                                  float farp,float fovy,float aspect,
+                                  double time,minipointopts *global)
    {
+   if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
+       farp==MAXFLOAT || fovy<0.0f || aspect<0.0f ||
+       time<0.0) ERRORMSG();
+
    POINTS=points;
 
    EX=ex;
@@ -918,17 +924,27 @@ void minipointrndr_signpost::pre(minipoint *points,
 
    GLOBAL=global;
 
-   NEAREST=points->getnearest(ex,ez,ey);
    SCALEELEV=points->getscaleelev();
+
+   NEAREST=points->getnearest(ex,ez,ey);
 
    initstate();
    disableculling();
    enableblending();
+   }
 
-   linewidth(2);
-   enablelinesmooth();
+// signpost pre-render method
+void minipointrndr_signpost::pre(int pass)
+   {
+   if (pass==1)
+      {
+      linewidth(2);
+      enablelinesmooth();
 
-   color(0.5f,0.5f,0.5f);
+      color(0.5f,0.5f,0.5f);
+      }
+   else if (pass==2)
+      minitext::configure_zfight(0.975f);
    }
 
 // signpost rendering method
@@ -1014,109 +1030,77 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
 void minipointrndr_signpost::post(int pass)
    {
    if (pass==1)
-      {
       linewidth(1);
-
-      minitext::configure_zfight(0.975f);
-      }
    else if (pass==2)
-      {
       disablelinesmooth();
-
-      disableblending();
-      enableBFculling();
-      exitstate();
-      }
    }
 
-// brick data
-typedef struct
+// signpost exit method
+void minipointrndr_signpost::exit()
    {
-   BOOLINT brickloaded;
-   int brickindex;
+   disableblending();
+   enableBFculling();
+   exitstate();
    }
-minipointbrickdata;
 
-// brick pre-render method
-void minipointrndr_brick::pre(minipoint *points,
-                              float ex,float ey,float ez,
-                              float dx,float dy,float dz,
-                              float farp,float fovy,float aspect,
-                              double time,minipointopts *global)
+// default constructor
+minipointrndr_brick::minipointrndr_brick(int passes):
+   minipointrndr(minipointopts::OPTION_TYPE_BRICK1+passes-1,1)
+   {LODS=NULL;}
+
+// destructor
+minipointrndr_brick::~minipointrndr_brick()
+   {if (LODS!=NULL) delete LODS;}
+
+// brick init method
+void minipointrndr_brick::init(minipoint *points,
+                               float ex,float ey,float ez,
+                               float dx,float dy,float dz,
+                               float farp,float fovy,float aspect,
+                               double time,minipointopts *global)
    {
+   if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
+       time<0.0) ERRORMSG();
+
    POINTS=points;
 
+   EX=ex;
+   EY=ey;
+   EZ=ez;
+
+   FARP=farp;
+   FOVY=fovy;
+   ASPECT=aspect;
+
    GLOBAL=global;
+
+   OFFSETLAT=points->getoffsetlat();
+   OFFSETLON=points->getoffsetlon();
+   SCALEX=points->getscalex();
+   SCALEY=points->getscaley();
+   SCALEELEV=points->getscaleelev();
+
+   // initialize brick LOD renderer
+   if (LODS==NULL)
+      {
+      // create new brick LOD renderer
+      LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
+
+      // check if a default brick file name was set
+      if (global->brickfile!=NULL)
+         LODS->addbrick(global->brickfile,global->brickradius,global->bricklods,global->brickstagger);
+      }
+
+   // clear all volumes
+   LODS->clearvolumes();
    }
 
 // brick rendering method
 void minipointrndr_brick::render(minipointdata *vpoint,int pass)
    {
-   //!!
-   }
-
-// signpost post-render method
-void minipointrndr_brick::post(int pass)
-   {
-   //!!
-   }
-
-/*
-
-// render waypoints with bricks
-void minipoint::drawbricks(float ex,float ey,float ez,
-                           float brad,float farp,
-                           float fovy,float aspect,
-                           float size,
-                           int type1,int type2)
-   {
-   int passes;
-
-   minipointdata **vpoint;
-
-   // calculate visible points
-   calcvdata();
-   vpoint=getvdata();
-
-   // check if any points were found
-   if (vpoint==NULL) return;
-
-   // initialize renderer
-   if (LODS==NULL)
-      {
-      LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
-      LODS->configure_brickpasses(PASSES);
-
-      // check if a brick file name was set
-      if (BRICKNAME!=NULL)
-         LODS->addbrick(BRICKNAME,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
-      }
-
-   // set stripe pattern
-   LODS->configure_brickoffset(CONFIGURE_BRICKSTRIPES);
-
-   // draw multiple pass sequences
-   for (passes=1; passes<=4; passes++)
-      {
-      if (PASSES==passes) drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,0,passes);
-      drawsequence(ex,ey,ez,brad,farp,fovy,aspect,size,passes,passes);
-      }
-   }
-
-// render waypoints with multiple pass sequence
-void minipoint::drawsequence(float ex,float ey,float ez,
-                             float brad,float farp,
-                             float fovy,float aspect,
-                             float size,int mpasses,int passes)
-   {
-   int i;
-
-   minipointdata **vpoint;
-
    float bsize;
 
    int bindex,vindex;
-
    char *bname;
 
    float bred,bgreen,bblue,balpha;
@@ -1127,65 +1111,55 @@ void minipoint::drawsequence(float ex,float ey,float ez,
    float alpha,beta;
    float sa,ca,sb,cb;
 
-   // get visible points
-   vpoint=getvdata();
-
-   // clear all volumes
-   LODS->clearvolumes();
-
-   // update visible points
-   for (i=0; i<getvnum(); i++,vpoint++)
+   if (pass==1)
       {
       // get brick size
-      if ((*vpoint)->opts==NULL) bsize=size;
-      else if ((*vpoint)->opts->bricksize>0.0f) bsize=(*vpoint)->opts->bricksize*SCALEELEV;
-      else bsize=size;
+      if (vpoint->opts==NULL) bsize=GLOBAL->bricksize;
+      else if (vpoint->opts->bricksize>0.0f) bsize=vpoint->opts->bricksize*SCALEELEV;
+      else bsize=GLOBAL->bricksize;
 
       // get brick index
-      if ((*vpoint)->opts!=NULL) bindex=(*vpoint)->opts->brickindex;
-      else if (BRICKNAME!=NULL) bindex=0;
+      if (vpoint->opts!=NULL) bindex=vpoint->opts->brickindex;
+      else if (GLOBAL->brickfile!=NULL) bindex=0;
       else bindex=-1;
 
-      // check brick passes
-      if (PASSES!=mpasses) continue;
-
       // check for individual brick file
-      if ((*vpoint)->opts!=NULL)
+      if (vpoint->opts!=NULL)
          {
-         if ((*vpoint)->opts->brickfile!=NULL)
-            if (!(*vpoint)->opts->brickloaded)
+         if (vpoint->opts->brickfile!=NULL)
+            if (!vpoint->opts->brickloaded)
                {
-               bname=getfile((*vpoint)->opts->brickfile,ALTPATH);
+               bname=POINTS->getfile(vpoint->opts->brickfile);
 
                if (bname!=NULL)
                   {
-                  bindex=(*vpoint)->opts->brickindex=LODS->addbrick(bname,brad,CONFIGURE_BRICKLODS,CONFIGURE_BRICKSTAGGER);
+                  bindex=vpoint->opts->brickindex=LODS->addbrick(bname,GLOBAL->brickradius,GLOBAL->bricklods,GLOBAL->brickstagger);
                   free(bname);
                   }
 
-               (*vpoint)->opts->brickloaded=TRUE;
+               vpoint->opts->brickloaded=TRUE;
                }
 
-         if (!(*vpoint)->opts->brickloaded)
-            if (BRICKNAME!=NULL) bindex=(*vpoint)->opts->brickindex=0;
+         if (!vpoint->opts->brickloaded)
+            if (GLOBAL->brickfile!=NULL) bindex=vpoint->opts->brickindex=0;
          }
 
       // check for valid brick index
-      if (bindex<0) continue;
+      if (bindex<0) return;
 
       // calculate position
-      midx=(*vpoint)->x/SCALEX-OFFSETLON;
-      midy=(*vpoint)->y/SCALEY-OFFSETLAT;
-      basez=((*vpoint)->elev-0.25f*bsize)/SCALEELEV;
+      midx=vpoint->x/SCALEX-OFFSETLON;
+      midy=vpoint->y/SCALEY-OFFSETLAT;
+      basez=(vpoint->elev-0.25f*bsize)/SCALEELEV;
 
       // get individual brick color
-      if ((*vpoint)->opts==NULL) bred=bgreen=bblue=balpha=0.0f;
+      if (vpoint->opts==NULL) bred=bgreen=bblue=balpha=0.0f;
       else
          {
-         bred=(*vpoint)->opts->brickcolor_red;
-         bgreen=(*vpoint)->opts->brickcolor_green;
-         bblue=(*vpoint)->opts->brickcolor_blue;
-         balpha=(*vpoint)->opts->brickalpha;
+         bred=vpoint->opts->brickcolor_red;
+         bgreen=vpoint->opts->brickcolor_green;
+         bblue=vpoint->opts->brickcolor_blue;
+         balpha=vpoint->opts->brickalpha;
          }
 
       // check for individual brick color
@@ -1196,13 +1170,13 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          b=bblue;
          a=balpha;
 
-         if (a==0.0f) a=CONFIGURE_BRICKALPHA;
+         if (a==0.0f) a=GLOBAL->brickalpha;
          }
       else
          {
          // check elevation
-         if (CONFIGURE_BRICKCEILING==0.0f) color=0.0f;
-         else color=basez/CONFIGURE_BRICKCEILING;
+         if (GLOBAL->brickceiling==0.0f) color=0.0f;
+         else color=basez/GLOBAL->brickceiling;
 
          // calculate color
          if (color<0.5f)
@@ -1218,7 +1192,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
             b=0.0f;
             }
 
-         a=CONFIGURE_BRICKALPHA;
+         a=GLOBAL->brickalpha;
          }
 
       // set position and color
@@ -1228,10 +1202,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
                              r,g,b,a);
 
       // set orientation
-      if ((*vpoint)->opts!=NULL)
+      if (vpoint->opts!=NULL)
          {
-         alpha=-(*vpoint)->opts->brickturn*RAD;
-         beta=(*vpoint)->opts->brickincline*RAD;
+         alpha=-vpoint->opts->brickturn*RAD;
+         beta=vpoint->opts->brickincline*RAD;
 
          if (alpha!=0.0f || beta!=0.0f)
             {
@@ -1249,14 +1223,19 @@ void minipoint::drawsequence(float ex,float ey,float ez,
          }
 
       // set rendering passes
-      LODS->addpasses(bindex,passes);
+      LODS->addpasses(bindex,TYPE-minipointopts::OPTION_TYPE_BRICK1+1);
       }
-
-   // render visible points
-   LODS->render(ex,ey,ez,farp,fovy,aspect);
    }
 
-*/
+// brick exit method
+void minipointrndr_brick::exit()
+   {
+   // set stripe pattern
+   LODS->configure_brickoffset(GLOBAL->brickstripes);
+
+   // render visible bricks
+   LODS->render(EX,EY,EZ,FARP,FOVY,ASPECT);
+   }
 
 // configuring:
 
