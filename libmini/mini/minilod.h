@@ -69,7 +69,7 @@ class minilod
                float fovy,float aspect,
                int phase=MINIBRICK_ONE_RENDER_PHASE);
 
-   //! configuring of brick rendering
+   //! configuring of brick renderer
    void configure_brickpasses(int brickpasses=1); // render passes for brick display
    void configure_brickoffset(float brickoffset=0.0f); // offset of brick stripes
 

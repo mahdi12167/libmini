@@ -33,7 +33,6 @@ minipointopts::minipointopts()
    signpostturn=0.0f;
    signpostincline=0.0f;
    signpostalpha=0.0f;
-
    signpostrange=0.0f;
 
    brickfile=NULL;
@@ -44,13 +43,11 @@ minipointopts::minipointopts()
    brickcolor_green=0.0f;
    brickcolor_blue=0.0f;
    brickalpha=0.0f;
-
    brickradius=0.0f;
    brickceiling=0.0f;
    bricklods=0;
    brickstagger=0.0f;
    brickstripes=0.0f;
-
    brickloaded=FALSE;
    brickindex=-1;
 
@@ -172,7 +169,7 @@ void minipoint::registerrndr(minipointrndr *rndr)
    }
 
 // add waypoint
-void minipoint::add(minipointdata *point)
+BOOLINT minipoint::add(minipointdata *point)
    {
    int i;
 
@@ -203,7 +200,7 @@ void minipoint::add(minipointdata *point)
    posx=(point->x-TILE->getcenterx())/TILE->getcoldim()+COLS/2.0f;
    posy=(-point->y-TILE->getcenterz())/TILE->getrowdim()+ROWS/2.0f;
 
-   if (posx<0.0f || posx>COLS || posy<0.0f || posy>ROWS) return;
+   if (posx<0.0f || posx>COLS || posy<0.0f || posy>ROWS) return(FALSE);
 
    col=ftrc(posx);
    row=ftrc(posy);
@@ -225,14 +222,6 @@ void minipoint::add(minipointdata *point)
 
    if (strlen(point->comment)>0) parsecomment(point);
 
-   POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
-
-   point->desc=point->meta=point->comment=NULL;
-   point->system=point->latitude=point->longitude=point->elevation=NULL;
-
-   point->opts=NULL;
-   point->rndr=NULL;
-
    if (point->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
    else type=point->opts->type;
 
@@ -242,6 +231,10 @@ void minipoint::add(minipointdata *point)
          point->rndr=RNDRS[i];
          break;
          }
+
+   POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
+
+   return(TRUE);
    }
 
 // add character to string
@@ -446,6 +439,7 @@ void minipoint::load(char *filename,
       point.zone=point.datum=0;
 
       point.opts=NULL;
+      point.rndr=NULL;
 
       // read full description
       while (ch!='\n' && ch!='\r' && ch!=EOF)
@@ -618,17 +612,18 @@ void minipoint::load(char *filename,
       point.elev*=scaleelev;
       point.height=-MAXFLOAT;
 
-      add(&point);
+      if (!add(&point))
+         {
+         if (point.desc!=NULL) free(point.desc);
+         if (point.meta!=NULL) free(point.meta);
+         if (point.comment!=NULL) free(point.comment);
+         if (point.system!=NULL) free(point.system);
+         if (point.latitude!=NULL) free(point.latitude);
+         if (point.longitude!=NULL) free(point.longitude);
+         if (point.elevation!=NULL) free(point.elevation);
 
-      if (point.desc!=NULL) free(point.desc);
-      if (point.meta!=NULL) free(point.meta);
-      if (point.comment!=NULL) free(point.comment);
-      if (point.system!=NULL) free(point.system);
-      if (point.latitude!=NULL) free(point.latitude);
-      if (point.longitude!=NULL) free(point.longitude);
-      if (point.elevation!=NULL) free(point.elevation);
-
-      if (point.opts!=NULL) delete point.opts;
+         if (point.opts!=NULL) delete point.opts;
+         }
       }
 
    fclose(file);
@@ -800,17 +795,17 @@ void minipoint::draw(float ex,float ey,float ez,
    // sort visible points
    sortvdata(ex,ez,ey,dx,dz,dy);
 
-   // search for point range with equal renderer
+   // process sorted points
    for (p1=0; p1<VNUM; p1=p2)
       {
-      p2=p1;
-
-      // check for equal renderer
-      while (++p2<VNUM)
-         if (VPOINTS[p1]->rndr!=VPOINTS[p2]->rndr) break;
-
-      // get renderer for entire range
+      // get renderer
       rndr=VPOINTS[p1]->rndr;
+
+      // search points until renderer differs
+      for (p2=p1+1; p2<VNUM; p2++)
+         if (VPOINTS[p2]->rndr!=rndr) break;
+
+      // use fallback renderer if necessary
       if (rndr==NULL) rndr=fallback;
 
       // call renderer for each point and pass
@@ -1251,12 +1246,12 @@ void minipoint::configure_dstdatum(int datum)
 void minipoint::configure_automap(int automap)
    {CONFIGURE_AUTOMAP=automap;}
 
-// configuring of signpost rendering:
+// configuring of signpost renderer:
 
 void minipoint::configure_signpostalpha(float signpostalpha)
    {CONFIGURE_SIGNPOSTALPHA=signpostalpha;}
 
-// configuring of brick rendering:
+// configuring of brick renderer:
 
 void minipoint::configure_brickalpha(float brickalpha)
    {CONFIGURE_BRICKALPHA=brickalpha;}

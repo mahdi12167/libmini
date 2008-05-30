@@ -183,9 +183,7 @@ class minipointrndr_signpost: public minipointrndr
              double time,minipointopts *global);
 
    void pre(int pass);
-
    void render(minipointdata *vpoint,int pass);
-
    void post(int pass);
 
    void exit();
@@ -247,7 +245,7 @@ class minipoint
    ~minipoint();
 
    //! add waypoint
-   void add(minipointdata *point);
+   BOOLINT add(minipointdata *point);
 
    //! register renderer
    void registerrndr(minipointrndr *rndr);
@@ -332,10 +330,10 @@ class minipoint
    void configure_dstdatum(int datum=3); // dest UTM datum
    void configure_automap(int automap=0); // take mapping from first waypoint
 
-   //! configuring of signpost rendering
+   //! configuring of signpost renderer
    void configure_signpostalpha(float signpostalpha=0.5f); // alpha value of signposts
 
-   //! configuring of brick rendering
+   //! configuring of brick renderer
    void configure_brickalpha(float brickalpha=0.5f); // alpha value of bricks
    void configure_brickceiling(float brickceiling=0.0f); // elevation modulates brick color
    void configure_bricklods(int bricklods=16); // number of brick LODs
