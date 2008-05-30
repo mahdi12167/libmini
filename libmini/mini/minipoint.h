@@ -11,6 +11,7 @@
 #include "minilod.h"
 
 // forward declarations
+class minipoint;
 class minipointopts;
 class minipointrndr;
 
@@ -85,7 +86,7 @@ class minipointopts
    // signpost parameters
    float signpostsize; // 0=default size
    float signpostheight; // height of post
-   float signpostnoauto; // automatic orientation
+   BOOLINT signpostnoauto; // automatic orientation
    float signpostturn; // clockwise turning angle
    float signpostincline; // downward inclination angle
    float signpostalpha; // opacity
@@ -110,9 +111,8 @@ class minipointopts
    float brickstagger; // staggering of brick LODs
    float brickstripes; // offset of brick stripes
 
-   // brick variables
-   BOOLINT brickloaded;
-   int brickindex;
+   // generic data
+   void *data;
    };
 
 //! waypoint renderer prototype
@@ -130,14 +130,15 @@ class minipointrndr
    int gettype() {return(TYPE);}
    int getpasses() {return(PASSES);}
 
-   virtual void init() {}
+   virtual void pre(minipoint *points,
+                    float ex,float ey,float ez,
+                    float dx,float dy,float dz,
+                    float farp,float fovy,float aspect,
+                    double time,minipointopts *global) {}
 
-   virtual void render(minipointdata *point,int pass,
-                       float ex,float ey,float ez,
-                       float farp,float fovy,float aspect,double time,
-                       minipointopts *global) {}
+   virtual void render(minipointdata *vpoint,int pass) {}
 
-   virtual void exit() {}
+   virtual void post(int pass) {}
 
    protected:
 
@@ -157,10 +158,24 @@ class minipointrndr_signpost: public minipointrndr
    //! destructor
    ~minipointrndr_signpost() {}
 
-   void render(minipointdata *point,int pass,
-               float ex,float ey,float ez,
-               float farp,float fovy,float aspect,double time,
-               minipointopts *global);
+   void pre(minipoint *points,
+            float ex,float ey,float ez,
+            float dx,float dy,float dz,
+            float farp,float fovy,float aspect,
+            double time,minipointopts *global);
+
+   void render(minipointdata *vpoint,int pass);
+
+   void post(int pass);
+
+   private:
+
+   minipoint *POINTS;
+
+   float EX,EY,EZ;
+   minipointopts *GLOBAL;
+   minipointdata *NEAREST;
+   float SCALEELEV;
    };
 
 //! brick renderer
@@ -175,10 +190,21 @@ class minipointrndr_brick: public minipointrndr
    //! destructor
    ~minipointrndr_brick() {}
 
-   void render(minipointdata *point,int pass,
-               float ex,float ey,float ez,
-               float farp,float fovy,float aspect,double time,
-               minipointopts *global);
+   void pre(minipoint *points,
+            float ex,float ey,float ez,
+            float dx,float dy,float dz,
+            float farp,float fovy,float aspect,
+            double time,minipointopts *global);
+
+   void render(minipointdata *vpoint,int pass);
+
+   void post(int pass);
+
+   private:
+
+   minipoint *POINTS;
+
+   minipointopts *GLOBAL;
    };
 
 //! waypoint class
@@ -241,6 +267,7 @@ class minipoint
 
    //! render waypoints
    void draw(float ex,float ey,float ez,
+             float dx,float dy,float dz,
              float farp,float fovy,float aspect,
              double time,minipointopts *global,
              minipointrndr *fallback=NULL);

@@ -29,7 +29,7 @@ minipointopts::minipointopts()
 
    signpostsize=0.0f;
    signpostheight=0.0f;
-   signpostnoauto=0;
+   signpostnoauto=FALSE;
    signpostturn=0.0f;
    signpostincline=0.0f;
    signpostalpha=0.0f;
@@ -51,13 +51,15 @@ minipointopts::minipointopts()
    brickstagger=0.0f;
    brickstripes=0.0f;
 
-   brickloaded=0;
-   brickindex=-1;
+   data=NULL;
    }
 
 // destructor
 minipointopts::~minipointopts()
-   {if (brickfile!=NULL) free(brickfile);}
+   {
+   if (brickfile!=NULL) free(brickfile);
+   if (data!=NULL) free(data);
+   }
 
 // default constructor
 minipoint::minipoint(minitile *tile)
@@ -760,9 +762,12 @@ minipointdata *minipoint::getnearest(float x,float y,float elev)
    {
    int i;
 
-   minipointdata **vpoint=VPOINTS,*nearest=NULL;
+   minipointdata **vpoint,*nearest;
 
-   if (vpoint==NULL) return(NULL);
+   if (VPOINTS==NULL) return(NULL);
+
+   vpoint=VPOINTS;
+   nearest=NULL;
 
    for (i=0; i<VNUM; i++,vpoint++)
       if (nearest==NULL) nearest=*vpoint;
@@ -777,11 +782,54 @@ float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
 
 // render waypoints
 void minipoint::draw(float ex,float ey,float ez,
+                     float dx,float dy,float dz,
                      float farp,float fovy,float aspect,
                      double time,minipointopts *global,
                      minipointrndr *fallback)
    {
-   //!!
+   int i,j;
+
+   int p1,p2;
+   minipointrndr *rndr;
+
+   // calculate visible points
+   calcvdata();
+
+   // check if any points were found
+   if (VNUM==0) return;
+
+   // sort visible points
+   sortvdata(ex,ez,ey,dx,dz,dy);
+
+   // search for point range with equal renderer
+   for (p1=0; p1<VNUM; p1=p2)
+      {
+      p2=p1;
+
+      // check for equal renderer
+      while (++p2<VNUM)
+         if (VPOINTS[p1]->rndr!=VPOINTS[p2]->rndr) break;
+
+      // get renderer for entire range
+      rndr=VPOINTS[p1]->rndr;
+      if (rndr==NULL) rndr=fallback;
+
+      // call renderer for each point and pass
+      if (rndr!=NULL)
+         {
+         rndr->pre(this,
+                   ex,ey,ez,
+                   dx,dy,dz,
+                   farp,fovy,aspect,
+                   time,global);
+
+         for (i=1; i<=rndr->getpasses(); i++)
+            {
+            for (j=p1; j<p2; j++) rndr->render(VPOINTS[j],i);
+            rndr->post(i);
+            }
+         }
+      }
    }
 
 // render waypoints with signposts
@@ -789,7 +837,22 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
                               float height,float range,
                               float turn,float yon)
    {
+   float dx,dy,dz;
+
+   float sint,cost;
+   float siny,cosy;
+
    minipointopts global;
+
+   sint=sin(2.0f*PI/360.0f*turn);
+   cost=cos(2.0f*PI/360.0f*turn);
+
+   siny=sin(2.0f*PI/360.0f*yon);
+   cosy=cos(2.0f*PI/360.0f*yon);
+
+   dx=cosy*sint;
+   dz=cosy*cost;
+   dy=siny;
 
    global.signpostsize=height;
    global.signpostheight=height;
@@ -800,6 +863,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    global.signpostalpha=CONFIGURE_SIGNPOSTALPHA;
 
    draw(ex,ey,ez,
+        dx,dy,dz,
         0.0f,0.0f,0.0f,
         0.0,&global,
         &RNDR_SIGNPOST);
@@ -833,74 +897,29 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    global.brickstripes=CONFIGURE_BRICKSTRIPES;
 
    draw(ex,ey,ez,
+        0.0f,0.0f,0.0f,
         farp,fovy,aspect,
         0.0,&global,
         &RNDR_BRICK[CONFIGURE_BRICKPASSES-1]);
    }
 
-// signpost rendering method
-void minipointrndr_signpost::render(minipointdata *point,int pass,
-                                    float ex,float ey,float ez,
-                                    float farp,float fovy,float aspect,double time,
-                                    minipointopts *global)
-   {
-   //!!
-   }
-
-// brick rendering method
-void minipointrndr_brick::render(minipointdata *point,int pass,
+// signpost pre-render method
+void minipointrndr_signpost::pre(minipoint *points,
                                  float ex,float ey,float ez,
-                                 float farp,float fovy,float aspect,double time,
-                                 minipointopts *global)
+                                 float dx,float dy,float dz,
+                                 float farp,float fovy,float aspect,
+                                 double time,minipointopts *global)
    {
-   //!!
-   }
+   POINTS=points;
 
-/*
+   EX=ex;
+   EY=ey;
+   EZ=ez;
 
-// render waypoints with signposts
-void minipoint::drawsignposts(float ex,float ey,float ez,
-                              float height,float range,
-                              float turn,float yon,
-                              int type1,int type2)
-   {
-   int i;
+   GLOBAL=global;
 
-   float sint,cost;
-   float siny,cosy;
-
-   float dx,dy,dz;
-
-   const int maxinfo=1000;
-   static char info[maxinfo];
-
-   minipointdata **vpoint;
-   minipointdata *nearest;
-
-   float sheight,ssize;
-   float salpha;
-
-   // calculate visible points
-   calcvdata();
-   vpoint=getvdata();
-
-   // check if any points were found
-   if (vpoint==NULL) return;
-
-   nearest=getnearest(ex,ez,ey,type1,type2);
-
-   sint=sin(2.0f*PI/360.0f*turn);
-   cost=cos(2.0f*PI/360.0f*turn);
-
-   siny=sin(2.0f*PI/360.0f*yon);
-   cosy=cos(2.0f*PI/360.0f*yon);
-
-   dx=cosy*sint;
-   dz=cosy*cost;
-   dy=siny;
-
-   // sort visible points
-   sortvdata(ex,ez,ey,dx,dz,dy);
+   NEAREST=points->getnearest(ex,ez,ey);
+   SCALEELEV=points->getscaleelev();
 
    initstate();
    disableculling();
@@ -909,96 +928,140 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    linewidth(2);
    enablelinesmooth();
 
-   // mark all waypoints with a post
-   for (i=0; i<getvnum(); i++,vpoint++)
+   color(0.5f,0.5f,0.5f);
+   }
+
+// signpost rendering method
+void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
+   {
+   const int maxinfo=1000;
+   static char info[maxinfo];
+
+   float sheight,ssize;
+   float sturn,syon;
+   float salpha;
+
+   // mark waypoint with a post
+   if (pass==1)
       {
-      sheight=height;
+      sheight=GLOBAL->signpostheight;
 
-      if ((*vpoint)->opts!=NULL)
-         if ((*vpoint)->opts->signpostheight>0.0f) sheight=(*vpoint)->opts->signpostheight*SCALEELEV;
+      if (vpoint->opts!=NULL)
+         if (vpoint->opts->signpostheight>0.0f) sheight=vpoint->opts->signpostheight*SCALEELEV;
 
-      if (*vpoint==nearest) color(1.0f,0.0f,0.0f);
-      else color(0.0f,0.0f,1.0f);
-
-      drawline((*vpoint)->x,(*vpoint)->height,-(*vpoint)->y,(*vpoint)->x,(*vpoint)->height+sheight,-(*vpoint)->y);
+      drawline(vpoint->x,vpoint->height,-vpoint->y,vpoint->x,vpoint->height+sheight,-vpoint->y);
       }
-
-   linewidth(1);
-
-   minitext::configure_zfight(0.975f);
-
-   // display nearest waypoint
-   if (nearest!=NULL)
+   // label waypoint within range
+   else if (pass==2)
       {
-      ssize=sheight=height;
+      // check distance
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)<fsqr(GLOBAL->signpostrange)) return;
 
-      if (nearest->opts!=NULL)
+      // get global waypoint parameters
+      ssize=GLOBAL->signpostsize;
+      sheight=GLOBAL->signpostheight;
+      sturn=GLOBAL->signpostturn;
+      syon=GLOBAL->signpostincline;
+      salpha=GLOBAL->signpostalpha;
+
+      // get optional waypoint parameters
+      if (vpoint->opts!=NULL)
          {
-         if (nearest->opts->signpostsize>0.0f) ssize=nearest->opts->signpostsize*SCALEELEV;
-         if (nearest->opts->signpostheight>0.0f) sheight=nearest->opts->signpostheight*SCALEELEV;
-         }
+         if (vpoint->opts->signpostsize>0.0f) ssize=vpoint->opts->signpostsize*SCALEELEV;
+         if (vpoint->opts->signpostheight>0.0f) sheight=vpoint->opts->signpostheight*SCALEELEV;
 
-      // compile label information of nearest waypoint
-      if (nearest->zone==0)
-         snprintf(info,maxinfo,"\n %s \n\n Lat=%s Lon=%s \n Elev=%s \n",
-                  nearest->desc,
-                  nearest->latitude,nearest->longitude,
-                  nearest->elevation);
-      else
-         snprintf(info,maxinfo,"\n %s \n\n %s East=%s North=%s \n Elev=%s \n",
-                  nearest->desc,
-                  nearest->system,nearest->longitude,nearest->latitude,
-                  nearest->elevation);
-
-      // label nearest waypoint
-      mtxpush();
-      mtxtranslate(0.0f,sheight,0.0f);
-      mtxtranslate(nearest->x,nearest->height,-nearest->y);
-      mtxrotate(-turn,0.0f,1.0f,0.0f);
-      mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
-      mtxrotate(yon,1.0f,0.0f,0.0f);
-      mtxtranslate(-0.5f,0.0f,0.0f);
-      minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,1.0f);
-      mtxpop();
-      }
-
-   // process waypoints from back to front
-   vpoint=getvdata();
-   for (i=0; i<getvnum(); i++,vpoint++)
-      if (*vpoint!=nearest)
-         if (getdistance2(ex,ez,ey,*vpoint)<fsqr(range))
+         if (!vpoint->opts->signpostnoauto)
             {
-            ssize=sheight=height;
-            salpha=CONFIGURE_SIGNPOSTALPHA;
-
-            if ((*vpoint)->opts!=NULL)
-               {
-               if ((*vpoint)->opts->signpostsize>0.0f) ssize=(*vpoint)->opts->signpostsize*SCALEELEV;
-               if ((*vpoint)->opts->signpostheight>0.0f) sheight=(*vpoint)->opts->signpostheight*SCALEELEV;
-               if ((*vpoint)->opts->signpostalpha>0.0f) salpha=(*vpoint)->opts->signpostalpha;
-               }
-
-            // compile label information of waypoint within range
-            snprintf(info,maxinfo,"\n %s \n",(*vpoint)->desc);
-
-            // label waypoint within range
-            mtxpush();
-            mtxtranslate(0.0f,sheight,0.0f);
-            mtxtranslate((*vpoint)->x,(*vpoint)->height,-(*vpoint)->y);
-            mtxrotate(-turn,0.0f,1.0f,0.0f);
-            mtxrotate(yon,1.0f,0.0f,0.0f);
-            mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
-            mtxtranslate(-0.5f,0.0f,0.0f);
-            minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,salpha);
-            mtxpop();
+            sturn=vpoint->opts->signpostturn;
+            syon=vpoint->opts->signpostincline;
             }
 
-   disablelinesmooth();
+         if (vpoint->opts->signpostalpha>0.0f) salpha=vpoint->opts->signpostalpha;
+         }
 
-   disableblending();
-   enableBFculling();
-   exitstate();
+      // compile label information of waypoint within range
+      if (vpoint==NEAREST)
+         {
+         if (vpoint->zone==0)
+            snprintf(info,maxinfo,"\n %s \n\n Lat=%s Lon=%s \n Elev=%s \n",
+                     vpoint->desc,
+                     vpoint->latitude,vpoint->longitude,
+                     vpoint->elevation);
+         else
+            snprintf(info,maxinfo,"\n %s \n\n %s East=%s North=%s \n Elev=%s \n",
+                     vpoint->desc,
+                     vpoint->system,vpoint->longitude,vpoint->latitude,
+                     vpoint->elevation);
+
+         salpha=1.0f;
+         }
+      else snprintf(info,maxinfo,"\n %s \n",vpoint->desc);
+
+      // label waypoint within range
+      mtxpush();
+      mtxtranslate(0.0f,sheight,0.0f);
+      mtxtranslate(vpoint->x,vpoint->height,-vpoint->y);
+      mtxrotate(-sturn,0.0f,1.0f,0.0f);
+      mtxrotate(syon,1.0f,0.0f,0.0f);
+      mtxscale(2.0f*ssize,2.0f*ssize,2.0f*ssize);
+      mtxtranslate(-0.5f,0.0f,0.0f);
+      minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,salpha);
+      mtxpop();
+      }
    }
+
+// signpost post-render method
+void minipointrndr_signpost::post(int pass)
+   {
+   if (pass==1)
+      {
+      linewidth(1);
+
+      minitext::configure_zfight(0.975f);
+      }
+   else if (pass==2)
+      {
+      disablelinesmooth();
+
+      disableblending();
+      enableBFculling();
+      exitstate();
+      }
+   }
+
+// brick data
+typedef struct
+   {
+   BOOLINT brickloaded;
+   int brickindex;
+   }
+minipointbrickdata;
+
+// brick pre-render method
+void minipointrndr_brick::pre(minipoint *points,
+                              float ex,float ey,float ez,
+                              float dx,float dy,float dz,
+                              float farp,float fovy,float aspect,
+                              double time,minipointopts *global)
+   {
+   POINTS=points;
+
+   GLOBAL=global;
+   }
+
+// brick rendering method
+void minipointrndr_brick::render(minipointdata *vpoint,int pass)
+   {
+   //!!
+   }
+
+// signpost post-render method
+void minipointrndr_brick::post(int pass)
+   {
+   //!!
+   }
+
+/*
 
 // render waypoints with bricks
 void minipoint::drawbricks(float ex,float ey,float ez,
@@ -1090,7 +1153,7 @@ void minipoint::drawsequence(float ex,float ey,float ez,
       if ((*vpoint)->opts!=NULL)
          {
          if ((*vpoint)->opts->brickfile!=NULL)
-            if ((*vpoint)->opts->brickloaded==0)
+            if (!(*vpoint)->opts->brickloaded)
                {
                bname=getfile((*vpoint)->opts->brickfile,ALTPATH);
 
@@ -1100,10 +1163,10 @@ void minipoint::drawsequence(float ex,float ey,float ez,
                   free(bname);
                   }
 
-               (*vpoint)->opts->brickloaded=1;
+               (*vpoint)->opts->brickloaded=TRUE;
                }
 
-         if ((*vpoint)->opts->brickloaded==0)
+         if (!(*vpoint)->opts->brickloaded)
             if (BRICKNAME!=NULL) bindex=(*vpoint)->opts->brickindex=0;
          }
 

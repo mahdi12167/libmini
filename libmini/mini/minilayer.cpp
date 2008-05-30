@@ -1286,6 +1286,7 @@ int minilayer::getcacheid()
 void minilayer::renderpoints()
    {
    minicoord ei;
+   miniv3d di;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -1295,6 +1296,7 @@ void minilayer::renderpoints()
    if (LPARAMS.usewaypoints)
       {
       ei=map_g2i(LPARAMS.eye);
+      di=rot_g2i(LPARAMS.dir,LPARAMS.eye);
 
       mtxpush();
 
