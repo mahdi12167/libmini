@@ -1066,10 +1066,10 @@ void minilayer::updatecoords()
 
    if (TERRAIN!=NULL)
       {
-      warp=WARP;
+      warp=*WARP;
       warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
-      TERRAIN->getminitile()->copywarp(warp);
+      TERRAIN->getminitile()->copywarp(&warp);
       }
 
    // create warp object for each exposed coordinate transformation:
