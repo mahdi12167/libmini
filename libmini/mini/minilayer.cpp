@@ -1060,12 +1060,16 @@ void minilayer::pointwarp(minicoord &center,minicoord &north,minicoord &normal,
 // update the coordinate transformations
 void minilayer::updatecoords()
    {
+   miniwarp warp;
+
    // copy warp object to encapsulated tileset:
 
    if (TERRAIN!=NULL)
       {
-      TERRAIN->getminitile()->copywarp(WARP);
-      TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+      warp=WARP;
+      warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+
+      TERRAIN->getminitile()->copywarp(warp);
       }
 
    // create warp object for each exposed coordinate transformation:
