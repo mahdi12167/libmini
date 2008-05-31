@@ -19,22 +19,22 @@ minitree::minitree(minicache *cache,minitile *tile)
    TREECACHE_NUM=1;
 
    TREECACHE_SIZE1=TREECACHE_SIZE2=0;
-   TREECACHE_MAXSIZE=1;
+   TREECACHE_MAXSIZE1=TREECACHE_MAXSIZE2=1;
 
-   if ((TREECACHE_CACHE1=(float *)malloc(TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((TREECACHE_CACHE2=(float *)malloc(TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((TREECACHE_CACHE1=(float *)malloc(TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((TREECACHE_CACHE2=(float *)malloc(TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
 
-   if ((TREECACHE_COORD1=(float *)malloc(TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((TREECACHE_COORD2=(float *)malloc(TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((TREECACHE_COORD1=(float *)malloc(TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((TREECACHE_COORD2=(float *)malloc(TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
 
    GRASSCACHE_SIZE1=GRASSCACHE_SIZE2=0;
-   GRASSCACHE_MAXSIZE=1;
+   GRASSCACHE_MAXSIZE1=GRASSCACHE_MAXSIZE2=1;
 
-   if ((GRASSCACHE_CACHE1=(float *)malloc(GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((GRASSCACHE_CACHE2=(float *)malloc(GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((GRASSCACHE_CACHE1=(float *)malloc(GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((GRASSCACHE_CACHE2=(float *)malloc(GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
 
-   if ((GRASSCACHE_COORD1=(float *)malloc(GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((GRASSCACHE_COORD2=(float *)malloc(GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((GRASSCACHE_COORD1=(float *)malloc(GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+   if ((GRASSCACHE_COORD2=(float *)malloc(GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
 
    TREECACHE_TREES1=TREECACHE_TREES2=0;
 
@@ -824,19 +824,30 @@ void minitree::cachedata(float x,float y,float z)
    {
    float *ptr;
 
-   if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE || TREECACHE_SIZE2>=TREECACHE_MAXSIZE)
+   if (TREECACHE_NUM==1)
       {
-      TREECACHE_MAXSIZE*=2;
+      if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE1)
+         {
+         TREECACHE_MAXSIZE1*=2;
 
-      if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         }
 
-      if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
+      ptr=&TREECACHE_CACHE1[3*TREECACHE_SIZE1++];
       }
+   else
+      {
+      if (TREECACHE_SIZE2>=TREECACHE_MAXSIZE2)
+         {
+         TREECACHE_MAXSIZE2*=2;
 
-   if (TREECACHE_NUM==1) ptr=&TREECACHE_CACHE1[3*TREECACHE_SIZE1++];
-   else ptr=&TREECACHE_CACHE2[3*TREECACHE_SIZE2++];
+         if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         }
+
+      ptr=&TREECACHE_CACHE2[3*TREECACHE_SIZE2++];
+      }
 
    *ptr++=x;
    *ptr++=y;
@@ -848,24 +859,29 @@ void minitree::cachedata(float x,float y,float z,float s,float t,float r)
    {
    float *ptr1,*ptr2;
 
-   if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE || TREECACHE_SIZE2>=TREECACHE_MAXSIZE)
-      {
-      TREECACHE_MAXSIZE*=2;
-
-      if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-
-      if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      }
-
    if (TREECACHE_NUM==1)
       {
+      if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE1)
+         {
+         TREECACHE_MAXSIZE1*=2;
+
+         if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         }
+
       ptr1=&TREECACHE_CACHE1[3*TREECACHE_SIZE1];
       ptr2=&TREECACHE_COORD1[3*TREECACHE_SIZE1++];
       }
    else
       {
+      if (TREECACHE_SIZE2>=TREECACHE_MAXSIZE2)
+         {
+         TREECACHE_MAXSIZE2*=2;
+
+         if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         }
+
       ptr1=&TREECACHE_CACHE2[3*TREECACHE_SIZE2];
       ptr2=&TREECACHE_COORD2[3*TREECACHE_SIZE2++];
       }
@@ -884,24 +900,29 @@ void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
    {
    float *ptr1,*ptr2;
 
-   if (GRASSCACHE_SIZE1>=GRASSCACHE_MAXSIZE || GRASSCACHE_SIZE2>=GRASSCACHE_MAXSIZE)
-      {
-      GRASSCACHE_MAXSIZE*=2;
-
-      if ((GRASSCACHE_CACHE1=(float *)realloc(GRASSCACHE_CACHE1,GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((GRASSCACHE_CACHE2=(float *)realloc(GRASSCACHE_CACHE2,GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-
-      if ((GRASSCACHE_COORD1=(float *)realloc(GRASSCACHE_COORD1,GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((GRASSCACHE_COORD2=(float *)realloc(GRASSCACHE_COORD2,GRASSCACHE_MAXSIZE*3*sizeof(float)))==NULL) ERRORMSG();
-      }
-
    if (TREECACHE_NUM==1)
       {
+      if (GRASSCACHE_SIZE1>=GRASSCACHE_MAXSIZE1)
+         {
+         GRASSCACHE_MAXSIZE1*=2;
+
+         if ((GRASSCACHE_CACHE1=(float *)realloc(GRASSCACHE_CACHE1,GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((GRASSCACHE_COORD1=(float *)realloc(GRASSCACHE_COORD1,GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
+         }
+
       ptr1=&GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1];
       ptr2=&GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1++];
       }
    else
       {
+      if (GRASSCACHE_SIZE2>=GRASSCACHE_MAXSIZE2)
+         {
+         GRASSCACHE_MAXSIZE2*=2;
+
+         if ((GRASSCACHE_CACHE2=(float *)realloc(GRASSCACHE_CACHE2,GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         if ((GRASSCACHE_COORD2=(float *)realloc(GRASSCACHE_COORD2,GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+         }
+
       ptr1=&GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2];
       ptr2=&GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2++];
       }

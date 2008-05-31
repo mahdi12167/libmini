@@ -339,7 +339,10 @@ void minitile::setcallbacks(void (*beginfan)(),
 
 // copy warp object
 void minitile::copywarp(miniwarp *warp)
-   {WARP=new miniwarp(*warp);}
+   {
+   if (WARP==NULL) WARP=new miniwarp(*warp);
+   else *WARP=*warp;
+   }
 
 // check the visibility of the tiles
 void minitile::checktiles(float ex,float ez,

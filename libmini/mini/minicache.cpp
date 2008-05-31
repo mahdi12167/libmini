@@ -183,23 +183,25 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    t->cache_size1=0;
    t->cache_size2=0;
 
-   t->cache_maxsize=1;
+   t->cache_maxsize1=1;
+   t->cache_maxsize2=1;
 
-   if ((t->cache1_op=(unsigned char *)malloc(t->cache_maxsize))==NULL) ERRORMSG();
-   if ((t->cache2_op=(unsigned char *)malloc(t->cache_maxsize))==NULL) ERRORMSG();
+   if ((t->cache1_op=(unsigned char *)malloc(t->cache_maxsize1))==NULL) ERRORMSG();
+   if ((t->cache2_op=(unsigned char *)malloc(t->cache_maxsize2))==NULL) ERRORMSG();
 
-   if ((t->cache1_arg=(float *)malloc(3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
-   if ((t->cache2_arg=(float *)malloc(3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->cache1_arg=(float *)malloc(3*t->cache_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->cache2_arg=(float *)malloc(3*t->cache_maxsize2*sizeof(float)))==NULL) ERRORMSG();
 
    t->cache_phase=-1;
 
    t->prism_size1=0;
    t->prism_size2=0;
 
-   t->prism_maxsize=1;
+   t->prism_maxsize1=1;
+   t->prism_maxsize2=1;
 
-   if ((t->prism_cache1=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
-   if ((t->prism_cache2=(float *)malloc(4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->prism_cache1=(float *)malloc(4*t->prism_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+   if ((t->prism_cache2=(float *)malloc(4*t->prism_maxsize2*sizeof(float)))==NULL) ERRORMSG();
 
    t->ray=new miniray;
    t->first_fancnt=0;
@@ -273,21 +275,18 @@ void minicache::cache(int op,float a,float b,float c)
 
    t=&TERRAIN[CACHE_ID];
 
-   // enlarge vertex cache
-   if (t->cache_size1>=t->cache_maxsize || t->cache_size2>=t->cache_maxsize)
-      {
-      t->cache_maxsize*=2;
-
-      if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize))==NULL) ERRORMSG();
-      if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize))==NULL) ERRORMSG();
-
-      if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
-      if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
-      }
-
    if (t->cache_num==1)
-      // update vertex buffer #1
       {
+      // enlarge vertex buffer #1
+      if (t->cache_size1>=t->cache_maxsize1)
+         {
+         t->cache_maxsize1*=2;
+
+         if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize1))==NULL) ERRORMSG();
+         if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+         }
+
+      // update state
       if (op==BEGINFAN_OP)
          {
          t->fancnt1++;
@@ -344,13 +343,23 @@ void minicache::cache(int op,float a,float b,float c)
             t->first_fancnt=0;
             }
 
+      // append operand
       t->cache1_op[t->cache_size1]=op;
 
       ptr=&t->cache1_arg[3*t->cache_size1++];
       }
    else
-      // update vertex buffer #2
       {
+      // enlarge vertex buffer #2
+      if (t->cache_size2>=t->cache_maxsize2)
+         {
+         t->cache_maxsize2*=2;
+
+         if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize2))==NULL) ERRORMSG();
+         if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize2*sizeof(float)))==NULL) ERRORMSG();
+         }
+
+      // update state
       if (op==BEGINFAN_OP)
          {
          t->fancnt2++;
@@ -407,12 +416,13 @@ void minicache::cache(int op,float a,float b,float c)
             t->first_fancnt=0;
             }
 
+      // append operand
       t->cache2_op[t->cache_size2]=op;
 
       ptr=&t->cache2_arg[3*t->cache_size2++];
       }
 
-   // update vertex cache
+   // append vertex cache
    *ptr++=a;
    *ptr++=b;
    *ptr=c;
@@ -431,19 +441,32 @@ void minicache::cacheprismedge(float x,float y,float yf,float z)
       {
       t=&TERRAIN[CACHE_ID];
 
-      // enlarge prism cache
-      if (t->prism_size1>=t->prism_maxsize || t->prism_size2>=t->prism_maxsize)
+      if (t->cache_num==1)
          {
-         t->prism_maxsize*=2;
+         // enlarge prism cache #1
+         if (t->prism_size1>=t->prism_maxsize1)
+            {
+            t->prism_maxsize1*=2;
 
-         if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
-         if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+            if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+            }
+
+         ptr=&t->prism_cache1[4*t->prism_size1++];
+         }
+      else
+         {
+         // enlarge prism cache #2
+         if (t->prism_size2>=t->prism_maxsize2)
+            {
+            t->prism_maxsize2*=2;
+
+            if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize2*sizeof(float)))==NULL) ERRORMSG();
+            }
+
+         ptr=&t->prism_cache2[4*t->prism_size2++];
          }
 
-      if (t->cache_num==1) ptr=&t->prism_cache1[4*t->prism_size1++];
-      else ptr=&t->prism_cache2[4*t->prism_size2++];
-
-      // update prism cache
+      // append prism cache
       *ptr++=x;
       *ptr++=y;
       *ptr++=yf;
@@ -475,6 +498,23 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
          t->vtxcnt2=0;
 
          t->cache_num=2;
+
+         // shrink vertex buffer #1
+         if (t->cache_size1<t->cache_maxsize1/4)
+            {
+            t->cache_maxsize1/=2;
+
+            if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize1))==NULL) ERRORMSG();
+            if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+            }
+
+         // shrink prism buffer #1
+         if (t->prism_size1<t->prism_maxsize1/4)
+            {
+            t->prism_maxsize1/=2;
+
+            if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize1*sizeof(float)))==NULL) ERRORMSG();
+            }
          }
       else
          {
@@ -485,27 +525,23 @@ void minicache::cachetrigger(int phase,float scale,float ex,float ey,float ez)
          t->vtxcnt1=0;
 
          t->cache_num=1;
-         }
 
-      // shrink vertex buffer
-      if (t->cache_size1<t->cache_maxsize/4 && t->cache_size2<t->cache_maxsize/4)
-         {
-         t->cache_maxsize/=2;
+         // shrink vertex buffer #2
+         if (t->cache_size2<t->cache_maxsize2/4)
+            {
+            t->cache_maxsize2/=2;
 
-         if ((t->cache1_op=(unsigned char *)realloc(t->cache1_op,t->cache_maxsize))==NULL) ERRORMSG();
-         if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize))==NULL) ERRORMSG();
+            if ((t->cache2_op=(unsigned char *)realloc(t->cache2_op,t->cache_maxsize2))==NULL) ERRORMSG();
+            if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize2*sizeof(float)))==NULL) ERRORMSG();
+            }
 
-         if ((t->cache1_arg=(float *)realloc(t->cache1_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
-         if ((t->cache2_arg=(float *)realloc(t->cache2_arg,3*t->cache_maxsize*sizeof(float)))==NULL) ERRORMSG();
-         }
+         // shrink prism buffer #2
+         if (t->prism_size2<t->prism_maxsize2/4)
+            {
+            t->prism_maxsize2/=2;
 
-      // shrink prism buffer
-      if (t->prism_size1<t->prism_maxsize/4 && t->prism_size2<t->prism_maxsize/4)
-         {
-         t->prism_maxsize/=2;
-
-         if ((t->prism_cache1=(float *)realloc(t->prism_cache1,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
-         if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+            if ((t->prism_cache2=(float *)realloc(t->prism_cache2,4*t->prism_maxsize2*sizeof(float)))==NULL) ERRORMSG();
+            }
          }
       }
 

@@ -128,7 +128,7 @@ class minicache
       float *cache1_arg,*cache2_arg;
 
       int cache_size1,cache_size2;
-      int cache_maxsize;
+      int cache_maxsize1,cache_maxsize2;
 
       int cache_phase;
 
@@ -140,7 +140,7 @@ class minicache
       float *prism_cache1,*prism_cache2;
 
       int prism_size1,prism_size2;
-      int prism_maxsize;
+      int prism_maxsize1,prism_maxsize2;
 
       miniray *ray;
 
