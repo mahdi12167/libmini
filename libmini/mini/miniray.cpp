@@ -170,13 +170,13 @@ void miniray::swapbuffer()
    {
    TRIANGLEREF *ref;
 
-   if (LOCK_CALLBACK!=NULL) LOCK_CALLBACK(LOCK_DATA);
+   lock();
 
    ref=FRONT;
    FRONT=BACK;
    BACK=ref;
 
-   if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);
+   unlock();
    }
 
 // shoot a ray and return the distance to the closest triangle
@@ -188,7 +188,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d)
 
    TRIANGLEREF *ref;
 
-   if (LOCK_CALLBACK!=NULL) LOCK_CALLBACK(LOCK_DATA);
+   lock();
 
    dn=d;
    dn.normalize();
@@ -203,7 +203,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d)
       ref=ref->next;
       }
 
-   if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);
+   unlock();
 
    return(result);
    }
@@ -216,6 +216,14 @@ void miniray::setcallbacks(void (*lock)(void *data),void *data,
    UNLOCK_CALLBACK=unlock;
    LOCK_DATA=data;
    }
+
+// lock ray shooting
+void miniray::lock()
+   {if (LOCK_CALLBACK!=NULL) LOCK_CALLBACK(LOCK_DATA);}
+
+// unlock ray shooting
+void miniray::unlock()
+   {if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);}
 
 void miniray::calcbound(TRIANGLEREF *ref)
    {

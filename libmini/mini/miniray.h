@@ -46,6 +46,12 @@ class miniray
    static void setcallbacks(void (*lock)(void *data),void *data,
                             void (*unlock)(void *data));
 
+   //! lock ray shooting
+   static void lock();
+
+   //! unlock ray shooting
+   static void unlock();
+
    //! render triangles as wireframe for debugging purposes
    void renderwire();
 
