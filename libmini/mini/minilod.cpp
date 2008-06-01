@@ -60,9 +60,10 @@ unsigned int minilod::addbrick(char *brickname,
 
    if (brickname==NULL) brickname="Data.db";
 
-   if (brad<0.0f || stagger<=1.0f) ERRORMSG();
+   if (brad<0.0f) brad=0.0f;
+   if (stagger<=1.0f) stagger=1.5f;
 
-   if (brad==0.0f) lods=1;
+   if (brad==0.0f || lods==0) lods=1;
 
    if (BRICKS==NULL)
       {
@@ -101,7 +102,7 @@ unsigned int minilod::addbrick(char *brickname,
 
       // extract mesh
       BRICKS[BNUM].brick[i].setdistance(dist);
-      BRICKS[BNUM].brick[i].extract(0.0f,0.0f,0.0f,-brad,dist,90.0f,1.0f);
+      BRICKS[BNUM].brick[i].extract(0.0f,0.0f,0.0f,-brad,(brad==0.0f)?MAXFLOAT:dist,90.0f,1.0f);
       BRICKS[BNUM].brick[i].release();
       }
 

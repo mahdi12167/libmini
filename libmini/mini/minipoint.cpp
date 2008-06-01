@@ -861,7 +861,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
 
    draw(ex,ey,ez,
         dx,dy,dz,
-        0.0f,0.0f,0.0f,
+        MAXFLOAT,90.0f,1.0f,
         0.0,&global,
         &RNDR_SIGNPOST);
    }
@@ -908,7 +908,7 @@ void minipointrndr_signpost::init(minipoint *points,
                                   double time,minipointopts *global)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
-       farp==MAXFLOAT || fovy<0.0f || aspect<0.0f ||
+       farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
 
    POINTS=points;
@@ -936,7 +936,7 @@ void minipointrndr_signpost::pre(int pass)
       linewidth(2);
       enablelinesmooth();
 
-      color(0.5f,0.5f,0.5f);
+      color(0.25f,0.25f,0.5f);
       }
    else if (pass==2)
       minitext::configure_zfight(0.975f);
@@ -966,7 +966,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
    else if (pass==2)
       {
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,vpoint)<fsqr(GLOBAL->signpostrange)) return;
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(GLOBAL->signpostrange)) return;
 
       // get global waypoint parameters
       ssize=GLOBAL->signpostsize;

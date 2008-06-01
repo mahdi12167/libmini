@@ -316,6 +316,7 @@ class miniterrain
    double shoot(const minicoord &o,const miniv3d &d,int *id=NULL);
 
    //! set locking callbacks for ray shooting
+   //! when the callbacks are set ray shooting can be triggered safely from a separate thread
    static void setraycallbacks(void (*lock)(void *data),void *data,
                                void (*unlock)(void *data));
 

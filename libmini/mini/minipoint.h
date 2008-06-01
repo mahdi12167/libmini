@@ -143,7 +143,7 @@ class minipointrndr
       if (points==NULL ||
           ex==MAXFLOAT || ey==MAXFLOAT || ez==MAXFLOAT ||
           dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
-          farp==MAXFLOAT || fovy<0.0f || aspect<0.0f ||
+          farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
           time<0.0 || global==NULL) ERRORMSG();
       }
 
