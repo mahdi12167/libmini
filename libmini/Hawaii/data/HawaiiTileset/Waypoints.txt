@@ -48,8 +48,7 @@ UTM 04
 22m
 
 Office, Makai
-; $type=2
-; $brickpasses=1
+; $type=1
 ; $brickcolor_red=0.5
 ; $brickcolor_green=1
 ; $brickcolor_blue=0.5
@@ -59,18 +58,16 @@ UTM 04
 5m
 
 Lanai@Office, Makai
-; $type=2
-; $brickpasses=4
+; $type=4
 UTM 04
 638099
 2358127
 5m
 
 Ship
-; $type=2
+; $type=4
 ; $bricksize=150
 ; $brickturn=90
-; $brickpasses=4
 ; $brickfile="Ship.db"
 LL
 21.394
@@ -78,11 +75,10 @@ LL
 -25m
 
 Animated Radar Cone
-; $type=2
+; $type=1
 ; $bricksize=300
 ; $brickturn=90
 ; $brickincline=150
-; $brickpasses=1
 LL
 21.394
 -157.678
