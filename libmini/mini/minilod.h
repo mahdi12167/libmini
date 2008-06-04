@@ -46,7 +46,7 @@ class minilod
    unsigned int addbrick(char *brickname,
                          float brad=0.0f,
                          unsigned int lods=0,
-                         float stagger=1.5f);
+                         float stagger=0.0f);
 
    //! add volume at specific location
    unsigned int addvolume(unsigned int bindex,
@@ -68,6 +68,12 @@ class minilod
                float farp,
                float fovy,float aspect,
                int phase=MINIBRICK_ONE_RENDER_PHASE);
+
+   //! get number of bricks
+   unsigned int getbricks() {return(BNUM);}
+
+   //! get number of volumes
+   unsigned int getvolumes() {return(VNUM);}
 
    //! configuring of brick renderer
    void configure_brickpasses(int brickpasses=1); // render passes for brick display
