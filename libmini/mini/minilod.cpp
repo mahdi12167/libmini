@@ -276,7 +276,8 @@ void minilod::DBload_callback(int col,int row,int lod,databuf *volume,void *data
    CALC.doregister();
 
    // load volume
-   volume->loaddata(brickdata->bname);
+   if (strstr(brickdata->bname,".pvm")!=NULL) volume->loadPVMdata(brickdata->bname);
+   else volume->loaddata(brickdata->bname);
 
    // deregister implicit calculator
    CALC.deregister();
