@@ -158,7 +158,7 @@ class minilayer
       char *brick;
 
       float bricksize;
-      float brickrad;
+      float brickradius;
 
       int brickpasses;
       float brickceiling;

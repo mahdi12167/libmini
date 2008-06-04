@@ -61,7 +61,16 @@ class minipointopts
       OPTION_BRICKCOLOR_RED=14,
       OPTION_BRICKCOLOR_GREEN=15,
       OPTION_BRICKCOLOR_BLUE=16,
-      OPTION_BRICKALPHA=17
+      OPTION_BRICKALPHA=17,
+      OPTION_DATAFILE=18,
+      OPTION_DATASIZE=19,
+      OPTION_DATATURN=20,
+      OPTION_DATAINCLINE=21,
+      OPTION_DATACOLOR_RED=22,
+      OPTION_DATACOLOR_GREEN=23,
+      OPTION_DATACOLOR_BLUE=24,
+      OPTION_DATAALPHA=25,
+      OPTION_DATARANGE=26
       };
 
    enum
@@ -114,6 +123,21 @@ class minipointopts
    // brick variables
    BOOLINT brickloaded;
    int brickindex;
+
+   // generic parameters
+   char *datafile;
+   float datasize;
+   float dataturn;
+   float dataincline;
+   float datacolor_red;
+   float datacolor_green;
+   float datacolor_blue;
+   float dataalpha;
+   float datarange;
+
+   // generic variables
+   BOOLINT dataloaded;
+   int dataindex;
 
    // generic data
    void *data;
@@ -306,6 +330,9 @@ class minipoint
    //! set default brick file name
    void setbrick(char *filename);
 
+   //! get default brick file name
+   char *getbrick();
+
    //! render waypoints with bricks
    void drawbricks(float ex,float ey,float ez,
                    float brad,float farp,
@@ -323,6 +350,10 @@ class minipoint
 
    //! get file through data cache
    char *getfile(char *filename) {return(getfile(filename,ALTPATH));}
+
+   static minipointrndr *getrndr_none() {return(&RNDR_NONE);}
+   static minipointrndr *getrndr_signpost() {return(&RNDR_SIGNPOST);}
+   static minipointrndr *getrndr_brick(int passes) {return(&RNDR_BRICK[passes]);}
 
    //! configuring
    void configure_srcdatum(int datum=3); // source UTM datum

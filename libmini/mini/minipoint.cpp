@@ -51,6 +51,18 @@ minipointopts::minipointopts()
    brickloaded=FALSE;
    brickindex=-1;
 
+   datafile=NULL;
+   datasize=0.0f;
+   dataturn=0.0f;
+   dataincline=0.0f;
+   datacolor_red=0.0f;
+   datacolor_green=0.0f;
+   datacolor_blue=0.0f;
+   dataalpha=0.0f;
+   datarange=0.0f;
+   dataloaded=FALSE;
+   dataindex=-1;
+
    data=NULL;
    }
 
@@ -58,6 +70,7 @@ minipointopts::minipointopts()
 minipointopts::~minipointopts()
    {
    if (brickfile!=NULL) free(brickfile);
+   if (datafile!=NULL) free(datafile);
    if (data!=NULL) free(data);
    }
 
@@ -290,6 +303,16 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("brickcolor_blue",minipointopts::OPTION_BRICKCOLOR_BLUE);
    scanner.addtoken("brickalpha",minipointopts::OPTION_BRICKALPHA);
 
+   scanner.addtoken("datafile",minipointopts::OPTION_DATAFILE);
+   scanner.addtoken("datasize",minipointopts::OPTION_DATASIZE);
+   scanner.addtoken("dataturn",minipointopts::OPTION_DATATURN);
+   scanner.addtoken("dataincline",minipointopts::OPTION_DATAINCLINE);
+   scanner.addtoken("datacolor_red",minipointopts::OPTION_DATACOLOR_RED);
+   scanner.addtoken("datacolor_green",minipointopts::OPTION_DATACOLOR_GREEN);
+   scanner.addtoken("datacolor_blue",minipointopts::OPTION_DATACOLOR_BLUE);
+   scanner.addtoken("dataalpha",minipointopts::OPTION_DATAALPHA);
+   scanner.addtoken("datarange",minipointopts::OPTION_DATARANGE);
+
    scanner.setcode(point->comment);
 
    // options are of the form $option=value
@@ -343,6 +366,15 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_BRICKCOLOR_GREEN: point->opts->brickcolor_green=value; break;
             case minipointopts::OPTION_BRICKCOLOR_BLUE: point->opts->brickcolor_blue=value; break;
             case minipointopts::OPTION_BRICKALPHA: point->opts->brickalpha=value; break;
+            case minipointopts::OPTION_DATAFILE: if (name!=NULL) point->opts->datafile=strdup(name); break;
+            case minipointopts::OPTION_DATASIZE: point->opts->datasize=value; break;
+            case minipointopts::OPTION_DATATURN: point->opts->dataturn=value; break;
+            case minipointopts::OPTION_DATAINCLINE: point->opts->dataincline=value; break;
+            case minipointopts::OPTION_DATACOLOR_RED: point->opts->datacolor_red=value; break;
+            case minipointopts::OPTION_DATACOLOR_GREEN: point->opts->datacolor_green=value; break;
+            case minipointopts::OPTION_DATACOLOR_BLUE: point->opts->datacolor_blue=value; break;
+            case minipointopts::OPTION_DATAALPHA: point->opts->dataalpha=value; break;
+            case minipointopts::OPTION_DATARANGE: point->opts->datarange=value; break;
             }
          }
 
@@ -874,6 +906,10 @@ void minipoint::setbrick(char *filename)
    if (BRICKNAME!=NULL) free(BRICKNAME);
    BRICKNAME=strdup(filename);
    }
+
+// get default brick file name
+char *minipoint::getbrick()
+   {return(BRICKNAME);}
 
 // render waypoints with bricks
 void minipoint::drawbricks(float ex,float ey,float ez,

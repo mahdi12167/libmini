@@ -178,14 +178,14 @@ miniterrain::miniterrain()
    TPARAMS.signpostheight=100.0f; // height of signposts in meters
    TPARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
 
-   TPARAMS.brick="Cone.db"; // brick file
+   TPARAMS.brick="Cone.db";     // brick file
 
-   TPARAMS.bricksize=100.0f;  // brick size in meters
-   TPARAMS.brickrad=1000.0f;  // brick viewing radius in meters
+   TPARAMS.bricksize=100.0f;    // brick size in meters
+   TPARAMS.brickradius=1000.0f; // brick display radius in meters
 
-   TPARAMS.brickpasses=4;     // brick render passes
-   TPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to first waypoint elevation
-   TPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
+   TPARAMS.brickpasses=4;       // brick render passes
+   TPARAMS.brickceiling=3.0f;   // upper boundary for brick color mapping relative to elevation of first waypoint
+   TPARAMS.brickscroll=0.5f;    // scroll period of striped bricks in seconds
 
    // create the render cache
    CACHE=new minicache;
@@ -395,7 +395,7 @@ void miniterrain::propagate_wp()
          lparams->brick=TPARAMS.brick;
 
          lparams->bricksize=TPARAMS.bricksize;
-         lparams->brickrad=TPARAMS.brickrad;
+         lparams->brickradius=TPARAMS.brickradius;
 
          lparams->brickpasses=TPARAMS.brickpasses;
          lparams->brickceiling=TPARAMS.brickceiling;

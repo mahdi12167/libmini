@@ -155,14 +155,14 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.signpostheight=100.0f; // height of signposts in meters
    LPARAMS.signpostrange=0.1f;    // viewing range of signposts relative to far plane
 
-   LPARAMS.brick="Cone.db"; // brick file
+   LPARAMS.brick="Cone.db";     // brick file
 
-   LPARAMS.bricksize=100.0f;  // brick size in meters
-   LPARAMS.brickrad=1000.0f;  // brick viewing radius in meters
+   LPARAMS.bricksize=100.0f;    // brick size in meters
+   LPARAMS.brickradius=1000.0f; // brick display radius in meters
 
-   LPARAMS.brickpasses=4;     // brick render passes
-   LPARAMS.brickceiling=3.0f; // upper boundary for brick color mapping relative to elevation of first waypoint
-   LPARAMS.brickscroll=0.5f;  // scroll period of striped bricks in seconds
+   LPARAMS.brickpasses=4;       // brick render passes
+   LPARAMS.brickceiling=3.0f;   // upper boundary for brick color mapping relative to elevation of first waypoint
+   LPARAMS.brickscroll=0.5f;    // scroll period of striped bricks in seconds
 
    // initialize state:
 
@@ -1295,6 +1295,8 @@ void minilayer::renderpoints()
    miniv4d mtx[3];
    double oglmtx[16];
 
+   minipointopts global;
+
    if (!LOADED || POINTS==NULL || !VISIBLE) return;
 
    if (LPARAMS.usewaypoints)
@@ -1328,18 +1330,27 @@ void minilayer::renderpoints()
 
       mtxmult(oglmtx);
 
-      POINTS->configure_brickpasses(LPARAMS.brickpasses);
-      POINTS->configure_brickstripes(LPARAMS.brickscroll*LPARAMS.time);
+      global.signpostsize=len_g2i(LPARAMS.signpostheight);
+      global.signpostheight=len_g2i(LPARAMS.signpostheight);
+      global.signpostrange=LPARAMS.signpostrange*len_g2i(LPARAMS.farp);
+      global.signpostturn=LPARAMS.signpostturn;
+      global.signpostincline=LPARAMS.signpostincline;
+      global.signpostalpha=0.5f;
 
-      if (!LPARAMS.usebricks)
-         POINTS->drawsignposts(ei.vec.x,ei.vec.y,-ei.vec.z,
-                               len_g2i(LPARAMS.signpostheight),LPARAMS.signpostrange*len_g2i(LPARAMS.farp),
-                               LPARAMS.signpostturn,LPARAMS.signpostincline);
-      else
-         POINTS->drawbricks(ei.vec.x,ei.vec.y,-ei.vec.z,
-                            len_g2i(LPARAMS.brickrad),len_g2i(LPARAMS.farp),
-                            LPARAMS.fovy,LPARAMS.aspect,
-                            len_g2i(LPARAMS.bricksize));
+      global.brickfile=strdup(POINTS->getbrick());
+      global.bricksize=len_g2i(LPARAMS.bricksize);
+      global.brickradius=len_g2i(LPARAMS.brickradius);
+      global.brickalpha=0.5f;
+      global.brickceiling=LPARAMS.brickceiling;
+      global.bricklods=16;
+      global.brickstagger=1.25f;
+      global.brickstripes=LPARAMS.brickscroll*LPARAMS.time;
+
+      POINTS->draw(ei.vec.x,ei.vec.y,-ei.vec.z,
+                   di.x,di.y,-di.z,
+                   len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,
+                   LPARAMS.time,&global,
+                   !LPARAMS.usebricks?minipoint::getrndr_signpost():minipoint::getrndr_brick(LPARAMS.brickpasses));
 
       mtxpop();
       }

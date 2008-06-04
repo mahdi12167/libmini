@@ -49,7 +49,7 @@
 #define VIEWER_SIGNPOSTRANGE 0.25f
 
 #define VIEWER_BRICKSIZE 100.0f
-#define VIEWER_BRICKRAD 1000.0f
+#define VIEWER_BRICKRADIUS 1000.0f
 
 #define VIEWER_BRICKSCROLL 0.5f
 
@@ -254,7 +254,7 @@ void initparams()
    tprms.signpostrange=VIEWER_SIGNPOSTRANGE;
 
    tprms.bricksize=VIEWER_BRICKSIZE;
-   tprms.brickrad=VIEWER_BRICKRAD;
+   tprms.brickradius=VIEWER_BRICKRADIUS;
 
    tprms.brickpasses=(sw_mpass==0)?1:2;
    tprms.brickscroll=VIEWER_BRICKSCROLL;
