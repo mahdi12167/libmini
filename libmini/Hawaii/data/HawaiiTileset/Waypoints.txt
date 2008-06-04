@@ -2159,3 +2159,51 @@ LL
 21.339528
 -157.805386
 780f
+
+Wahiawa Gardens
+LL
+21.503031
+-158.017557
+290m
+
+Kukaniloko Birth Stones
+LL
+21.504738
+-158.036145
+284m
+
+Bale, Hawaii Kai
+LL
+21.284819
+-157.708355
+1m
+
+Shack, Hawaii Kai
+LL
+21.284079
+-157.706891
+1m
+
+Lucy's/Baci, Kailua
+LL
+21.396222
+157.742765
+0m
+
+Subaru Servco, Honolulu
+LL
+21.336101
+-157.901144
+3m
+
+Kaneapu Rock, Lanikai
+LL
+21.394279
+157.721460
+34m
+
+Kaneapu Puu, Lanikai
+LL
+21.394273
+-157.721039
+49m
