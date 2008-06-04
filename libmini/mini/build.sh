@@ -73,9 +73,9 @@ endif
 
 if ($rule == "install") then
    if ("$option1" != "") set INSTALL="$option1"
-   if ("$USER" != "root") then
+   if ("$option2" != "") set DATA="$option2"
+   if ("$INSTALL" == "/usr/local" && "$USER" != "root") then
       echo "installation requires super-user priviledges"
-      exit 1
    endif
    exec make INSTALL="$INSTALL" DATA="$DATA" install
 endif
