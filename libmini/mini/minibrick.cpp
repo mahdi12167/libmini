@@ -1417,272 +1417,84 @@ void minisurf::extractiso(const float isoval,
    d3=c3-isoval;
    d4=c4-isoval;
 
-   if (d1<=0.0f) flag|=1;
-   else flag|=2;
-   if (d2<=0.0f) flag|=4;
-   else flag|=8;
-   if (d3<=0.0f) flag|=16;
-   else flag|=32;
-   if (d4<=0.0f) flag|=64;
-   else flag|=128;
+   if (d1<0.0f) flag|=1;
+   if (d2<0.0f) flag|=2;
+   if (d3<0.0f) flag|=4;
+   if (d4<0.0f) flag|=8;
 
    switch (flag)
       {
-      // isoval=c for two vertices
-      case 1+8:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,
-                      x4,y4,z4,n4,buf); break;
-      case 2+4:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,
-                      x3,y3,z3,n3,buf); break;
-      case 1+32:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,
-                      x2,y2,z2,n2,buf); break;
-      case 2+16:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,
-                      x4,y4,z4,n4,buf); break;
-      case 1+128:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,
-                      x3,y3,z3,n3,buf); break;
-      case 2+64:
-         extractiso1A(x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,
-                      x2,y2,z2,n2,buf); break;
-      case 4+32:
-         extractiso1A(x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,
-                      x4,y4,z4,n4,buf); break;
-      case 8+16:
-         extractiso1A(x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,
-                      x1,y1,z1,n1,buf); break;
-      case 16+128:
-         extractiso1A(x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,
-                      x2,y2,z2,n2,buf); break;
-      case 32+64:
-         extractiso1A(x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,
-                      x1,y1,z1,n1,buf); break;
-      case 8+64:
-         extractiso1A(x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,
-                      x3,y3,z3,n3,buf); break;
-      case 4+128:
-         extractiso1A(x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,
-                      x1,y1,z1,n1,buf); break;
+      // 1st case: isoval<c for one and isoval>=c for other three vertices
+      // 2nd case: isoval>=c for one and isoval<c for other three vertices
+      case 1:
+         extractiso1(x1,y1,z1,n1,fabs(d1),
+                     x2,y2,z2,n2,fabs(d2),
+                     x3,y3,z3,n3,fabs(d3),
+                     x4,y4,z4,n4,fabs(d4),buf); break;
+      case 2+4+8:
+         extractiso1(x1,y1,z1,n1,fabs(d1),
+                     x2,y2,z2,n2,fabs(d2),
+                     x4,y4,z4,n4,fabs(d4),
+                     x3,y3,z3,n3,fabs(d3),buf); break;
+      case 2:
+         extractiso1(x2,y2,z2,n2,fabs(d2),
+                     x1,y1,z1,n1,fabs(d1),
+                     x4,y4,z4,n4,fabs(d4),
+                     x3,y3,z3,n3,fabs(d3),buf); break;
+      case 1+4+8:
+         extractiso1(x2,y2,z2,n2,fabs(d2),
+                     x1,y1,z1,n1,fabs(d1),
+                     x3,y3,z3,n3,fabs(d3),
+                     x4,y4,z4,n4,fabs(d4),buf); break;
+      case 4:
+         extractiso1(x3,y3,z3,n3,fabs(d3),
+                     x1,y1,z1,n1,fabs(d1),
+                     x2,y2,z2,n2,fabs(d2),
+                     x4,y4,z4,n4,fabs(d4),buf); break;
+      case 1+2+8:
+         extractiso1(x3,y3,z3,n3,fabs(d3),
+                     x1,y1,z1,n1,fabs(d1),
+                     x4,y4,z4,n4,fabs(d4),
+                     x2,y2,z2,n2,fabs(d2),buf); break;
+      case 8:
+         extractiso1(x4,y4,z4,n4,fabs(d4),
+                     x1,y1,z1,n1,fabs(d1),
+                     x3,y3,z3,n3,fabs(d3),
+                     x2,y2,z2,n2,fabs(d2),buf); break;
+      case 1+2+4:
+         extractiso1(x4,y4,z4,n4,fabs(d4),
+                     x1,y1,z1,n1,fabs(d1),
+                     x2,y2,z2,n2,fabs(d2),
+                     x3,y3,z3,n3,fabs(d3),buf); break;
 
-      // isoval=c for one vertex
-      case 4+32+64:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,buf); break;
-      case 8+16+128:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,buf); break;
-      case 4+16+128:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,buf); break;
-      case 8+32+64:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,buf); break;
-      case 8+16+64:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,buf); break;
-      case 4+32+128:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,buf); break;
-      case 1+32+64:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,buf); break;
-      case 2+16+128:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,buf); break;
-      case 1+16+128:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,buf); break;
-      case 2+32+64:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,buf); break;
-      case 2+16+64:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,buf); break;
-      case 1+32+128:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,buf); break;
-      case 1+8+64:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,buf); break;
-      case 2+4+128:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,buf); break;
-      case 1+4+128:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,buf); break;
-      case 2+8+64:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,buf); break;
-      case 2+4+64:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,buf); break;
-      case 1+8+128:
-         extractiso1B(x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,buf); break;
-      case 1+8+16:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,buf); break;
-      case 2+4+32:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,buf); break;
-      case 1+4+32:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,buf); break;
-      case 2+8+16:
-         extractiso1B(x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,buf); break;
-      case 2+4+16:
-         extractiso1B(x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,buf); break;
-      case 1+8+32:
-         extractiso1B(x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,buf); break;
-
-      // 1st case: isoval<c for one and isoval>c for other three vertices
-      // 2nd case: isoval>c for one and isoval<c for other three vertices
-      case 1+8+32+128:
-         extractiso1C(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 2+4+16+64:
-         extractiso1C(x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),buf); break;
-      case 2+4+32+128:
-         extractiso1C(x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x3,y3,z3,n3,fabs(d3),buf); break;
-      case 1+8+16+64:
-         extractiso1C(x2,y2,z2,n2,fabs(d2),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 2+8+16+128:
-         extractiso1C(x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 1+4+32+64:
-         extractiso1C(x3,y3,z3,n3,fabs(d3),
-                      x1,y1,z1,n1,fabs(d1),
-                      x4,y4,z4,n4,fabs(d4),
-                      x2,y2,z2,n2,fabs(d2),buf); break;
-      case 2+8+32+64:
-         extractiso1C(x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x3,y3,z3,n3,fabs(d3),
-                      x2,y2,z2,n2,fabs(d2),buf); break;
-      case 1+4+16+128:
-         extractiso1C(x4,y4,z4,n4,fabs(d4),
-                      x1,y1,z1,n1,fabs(d1),
-                      x2,y2,z2,n2,fabs(d2),
-                      x3,y3,z3,n3,fabs(d3),buf); break;
-
-      // 1st case: isoval<c for two and isoval>c for other two vertices
-      // 2nd case: isoval>c for two and isoval<c for other two vertices
-      case 1+4+32+128:
+      // 1st case: isoval<c for two and isoval>=c for other two vertices
+      // 2nd case: isoval>=c for two and isoval<c for other two vertices
+      case 1+2:
          extractiso2(x1,y1,z1,n1,fabs(d1),
                      x2,y2,z2,n2,fabs(d2),
                      x3,y3,z3,n3,fabs(d3),
                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 2+8+16+64:
+      case 4+8:
          extractiso2(x1,y1,z1,n1,fabs(d1),
                      x2,y2,z2,n2,fabs(d2),
                      x4,y4,z4,n4,fabs(d4),
                      x3,y3,z3,n3,fabs(d3),buf); break;
-      case 1+8+16+128:
+      case 1+4:
          extractiso2(x1,y1,z1,n1,fabs(d1),
                      x3,y3,z3,n3,fabs(d3),
                      x4,y4,z4,n4,fabs(d4),
                      x2,y2,z2,n2,fabs(d2),buf); break;
-      case 2+4+32+64:
+      case 2+8:
          extractiso2(x1,y1,z1,n1,fabs(d1),
                      x3,y3,z3,n3,fabs(d3),
                      x2,y2,z2,n2,fabs(d2),
                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 2+4+16+128:
+      case 2+4:
          extractiso2(x2,y2,z2,n2,fabs(d2),
                      x3,y3,z3,n3,fabs(d3),
                      x1,y1,z1,n1,fabs(d1),
                      x4,y4,z4,n4,fabs(d4),buf); break;
-      case 1+8+32+64:
+      case 1+8:
          extractiso2(x2,y2,z2,n2,fabs(d2),
                      x3,y3,z3,n3,fabs(d3),
                      x4,y4,z4,n4,fabs(d4),
@@ -1691,68 +1503,11 @@ void minisurf::extractiso(const float isoval,
    }
 
 // marching tetrahedra subcase #1
-void minisurf::extractiso1A(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
-                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
-                            const int x3,const int y3,const int z3,const mininorm &n3,
-                            const int x4,const int y4,const int z4,const mininorm &n4,
-                            minivtxarray *buf)
-   {
-   float f;
-
-   float px,py,pz;
-
-   mininorm pn;
-
-   f=1.0f/(d1+d2);
-
-   px=f*(d2*x1+d1*x2);
-   py=f*(d2*y1+d1*y2);
-   pz=f*(d2*z1+d1*z2);
-   pn=f*(d2*n1+d1*n2);
-
-   buf->addvtx(px,py,pz,pn.x,pn.y,pn.z);
-   buf->addvtx(x3,y3,z3,n3.x,n3.y,n3.z);
-   buf->addvtx(x4,y4,z4,n4.x,n4.y,n4.z);
-   }
-
-// marching tetrahedra subcase #2
-void minisurf::extractiso1B(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
-                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
-                            const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
-                            const int x4,const int y4,const int z4,const mininorm &n4,
-                            minivtxarray *buf)
-   {
-   float f1,f2;
-
-   float px1,py1,pz1,
-         px2,py2,pz2;
-
-   mininorm pn1,pn2;
-
-   f1=1.0f/(d1+d2);
-   f2=1.0f/(d2+d3);
-
-   px1=f1*(d2*x1+d1*x2);
-   py1=f1*(d2*y1+d1*y2);
-   pz1=f1*(d2*z1+d1*z2);
-   pn1=f1*(d2*n1+d1*n2);
-
-   px2=f2*(d3*x2+d2*x3);
-   py2=f2*(d3*y2+d2*y3);
-   pz2=f2*(d3*z2+d2*z3);
-   pn2=f2*(d3*n2+d2*n3);
-
-   buf->addvtx(px1,py1,pz1,pn1.x,pn1.y,pn1.z);
-   buf->addvtx(px2,py2,pz2,pn2.x,pn2.y,pn2.z);
-   buf->addvtx(x4,y4,z4,n4.x,n4.y,n4.z);
-   }
-
-// marching tetrahedra subcase #3
-void minisurf::extractiso1C(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
-                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
-                            const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
-                            const int x4,const int y4,const int z4,const mininorm &n4,const float d4,
-                            minivtxarray *buf)
+void minisurf::extractiso1(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
+                           const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
+                           const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
+                           const int x4,const int y4,const int z4,const mininorm &n4,const float d4,
+                           minivtxarray *buf)
    {
    float f1,f2,f3;
 
@@ -1786,7 +1541,7 @@ void minisurf::extractiso1C(const int x1,const int y1,const int z1,const mininor
    buf->addvtx(px3,py3,pz3,pn3.x,pn3.y,pn3.z);
    }
 
-// marching tetrahedra subcase #4
+// marching tetrahedra subcase #2
 void minisurf::extractiso2(const int x1,const int y1,const int z1,const mininorm &n1,const float d1,
                            const int x2,const int y2,const int z2,const mininorm &n2,const float d2,
                            const int x3,const int y3,const int z3,const mininorm &n3,const float d3,
