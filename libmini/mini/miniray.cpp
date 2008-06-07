@@ -180,9 +180,9 @@ void miniray::swapbuffer()
    }
 
 // shoot a ray and return the distance to the closest triangle
-double miniray::shoot(const miniv3d &o,const miniv3d &d)
+double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    {
-   float result;
+   double result;
 
    miniv3d dn;
 
@@ -199,7 +199,12 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d)
 
    while (ref!=NULL)
       {
-      if (checkbound(o,dn,ref->b,ref->r2)!=0) result=calcdist(ref,o,d,result);
+      if (checkbound(o,dn,ref->b,ref->r2)!=0)
+         {
+         result=calcdist(ref,o,d,result);
+         if (result<hitdist) break;
+         }
+
       ref=ref->next;
       }
 
@@ -773,7 +778,7 @@ int miniray::checkbound(const miniv3d &o,const miniv3d &d,
    return(0);
    }
 
-float miniray::checkdist(const miniv3d &o,const miniv3d &d,
+double miniray::checkdist(const miniv3d &o,const miniv3d &d,
                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
    miniv3d tuv;
@@ -787,7 +792,7 @@ int miniray::intersect(const miniv3d &o,const miniv3d &d,
                        const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
                        miniv3d *tuv)
    {
-   static const float epsilon=1E-5f;
+   static const double epsilon=1E-5;
 
    double t,u,v;
    miniv3d edge1,edge2,tvec,pvec,qvec;

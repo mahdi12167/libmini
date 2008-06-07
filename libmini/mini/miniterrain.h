@@ -313,7 +313,7 @@ class miniterrain
    float getflattening();
 
    //! shoot a ray at the scene
-   double shoot(const minicoord &o,const miniv3d &d,int *id=NULL);
+   double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);
 
    //! set locking callbacks for ray shooting
    //! when the callbacks are set ray shooting can be triggered safely from a separate thread

@@ -37,9 +37,11 @@ class miniray
 
    //! shoot a ray and return the distance to the closest triangle
    //! only the triangles referenced in the front buffer are considered
+   //! only the triangles with a positive distance are considered
    //! o is the origin of the ray, d is the ray direction
    //! a return value of MAXFLOAT indicates that there was no hit
-   double shoot(const miniv3d &o,const miniv3d &d);
+   //! the first hit with a smaller distance than hitdist will be returned
+   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
 
    //! set locking callbacks
    //! when the callbacks are set ray shooting can be triggered safely from a separate thread
@@ -114,8 +116,8 @@ class miniray
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);
 
-   inline float checkdist(const miniv3d &o,const miniv3d &d,
-                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
+   inline double checkdist(const miniv3d &o,const miniv3d &d,
+                           const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 
    // Moeller-Trumbore ray/triangle intersection
    inline int intersect(const miniv3d &o,const miniv3d &d,
