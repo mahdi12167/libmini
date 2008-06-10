@@ -538,7 +538,7 @@ void miniearth::render()
    }
 
 // shoot a ray at the scene
-double miniearth::shoot(const minicoord &o,const miniv3d &d)
+double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    {
    double t;
 
@@ -547,7 +547,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d)
    ref=getreference();
 
    // check for hit with terrain
-   t=TERRAIN->shoot(o,d);
+   t=TERRAIN->shoot(o,d,hitdist);
 
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)

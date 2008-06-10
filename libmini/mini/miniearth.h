@@ -142,7 +142,7 @@ class miniearth
    void render();
 
    //! shoot a ray at the scene
-   double shoot(const minicoord &o,const miniv3d &d);
+   double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
 
    //! get null layer
    minilayer *getnull() {return(TERRAIN->getlayer(TERRAIN->getnull()));}
