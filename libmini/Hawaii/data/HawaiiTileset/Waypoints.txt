@@ -1,40 +1,10 @@
-Residence, Green Flamingo Nursery, 41-585 Flamingo St., Waimanalo, Hawai'i
-UTM 04
-0631433
-2361214
-22m
-
-Shearpower, Keolu Hills
-UTM 04
-0631709
-2364367
-3m
-
-7/11, Waimanalo
-UTM 04
-0632502
-2361177
-16m
-
-76 Gas Nr. 1, Waimanalo
-UTM 04
-0632608
-2361218
-21m
-
-Chiang Mai, Honolulu
-UTM 04
-0621654
-2355106
-16m
-
 Makai Research Pier Gate
 UTM 04
 0637956
 2357987
 9m
 
-T.C.'s Helicopter Platform, Makai
+T.C.'s Helicopter Platform, Makai Pier
 UTM 04
 0638128
 2358101
@@ -64,7 +34,14 @@ UTM 04
 2358127
 5m
 
-Ship
+TestWaypoint@Pier, Makai
+; $type=5
+UTM 04
+0638074
+2358039
+0m
+
+Ship, Makai
 ; $type=4
 ; $bricksize=150
 ; $brickturn=90
@@ -74,7 +51,7 @@ LL
 -157.679
 -25m
 
-Animated Radar Cone
+Animated Radar Cone, Makai
 ; $type=1
 ; $bricksize=300
 ; $brickturn=90
@@ -83,6 +60,36 @@ LL
 21.394
 -157.678
 -200m
+
+Residence, Green Flamingo Nursery, 41-585 Flamingo St., Waimanalo, Hawai'i
+UTM 04
+0631433
+2361214
+22m
+
+Shearpower, Keolu Hills
+UTM 04
+0631709
+2364367
+3m
+
+7/11, Waimanalo
+UTM 04
+0632502
+2361177
+16m
+
+76 Gas Nr. 1, Waimanalo
+UTM 04
+0632608
+2361218
+21m
+
+Chiang Mai, Honolulu
+UTM 04
+0621654
+2355106
+16m
 
 Ross, Hawai'i Kai
 UTM 04
