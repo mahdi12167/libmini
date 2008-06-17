@@ -1140,6 +1140,15 @@ double miniterrain::getcachemem()
    return(cachemem);
    }
 
+// register waypoint renderer
+void miniterrain::registerrndr(minipointrndr *rndr)
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      if (LAYER[n]->getpoints()!=NULL) LAYER[n]->getpoints()->registerrndr(rndr);
+   }
+
 // add datagrid object
 void miniterrain::addgrid(datagrid *obj,BOOLINT sorted)
    {

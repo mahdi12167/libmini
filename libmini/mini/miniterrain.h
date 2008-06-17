@@ -10,6 +10,7 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "minipoint.h"
 #include "datagrid.h"
 
 #include "minilayer.h"
@@ -331,6 +332,9 @@ class miniterrain
 
    //! get total amount of cache memory
    double getcachemem();
+
+   //! register waypoint renderer
+   void registerrndr(minipointrndr *rndr);
 
    //! add datagrid object
    void addgrid(datagrid *obj,BOOLINT sorted=FALSE);
