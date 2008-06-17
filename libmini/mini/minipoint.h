@@ -388,6 +388,8 @@ class minipoint
    minipointrndr **RNDRS;
    int RNUM,MAXRNUM;
 
+   BOOLINT LOOKUP;
+
    datacache *CACHE;
    char *ALTPATH;
 
@@ -424,6 +426,8 @@ class minipoint
    static minipointrndr RNDR_NONE;
    static minipointrndr_signpost RNDR_SIGNPOST;
    static minipointrndr_brick RNDR_BRICK[4];
+
+   void lookuprndrs();
 
    void shellsort(minipointdata *a[],int n,
                   float x,float y,float elev,

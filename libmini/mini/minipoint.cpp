@@ -90,6 +90,8 @@ minipoint::minipoint(minitile *tile)
    MAXRNUM=0;
    RNUM=0;
 
+   LOOKUP=FALSE;
+
    CACHE=NULL;
    ALTPATH=NULL;
 
@@ -189,8 +191,6 @@ BOOLINT minipoint::add(minipointdata *point)
    float posx,posy;
    int col,row;
 
-   int type;
-
    if (TILE==NULL) ERRORMSG();
 
    if (POINTS==NULL)
@@ -234,16 +234,6 @@ BOOLINT minipoint::add(minipointdata *point)
    point->number=PNUM++;
 
    if (strlen(point->comment)>0) parsecomment(point);
-
-   if (point->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
-   else type=point->opts->type;
-
-   for (i=0; i<RNUM; i++)
-      if (RNDRS[i]->gettype()==type)
-         {
-         point->rndr=RNDRS[i];
-         break;
-         }
 
    POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
 
@@ -688,6 +678,40 @@ minipointdata *minipoint::getpoint(int p)
    return(NULL);
    }
 
+// lookup renderers
+void minipoint::lookuprndrs()
+   {
+   int i,j,k,l;
+
+   minipointdata *point;
+
+   int type;
+
+   if (TILE==NULL) return;
+
+   if (!LOOKUP)
+      {
+      for (i=0; i<COLS; i++)
+         for (j=0; j<ROWS; j++)
+            for (k=0; k<NUM[i+j*COLS]; k++)
+               {
+               point=&POINTS[i+j*COLS][k];
+
+               if (point->opts==NULL) type=minipointopts::OPTION_TYPE_ANY;
+               else type=point->opts->type;
+
+               for (l=0; l<RNUM; l++)
+                  if (RNDRS[l]->gettype()==type)
+                     {
+                     point->rndr=RNDRS[l];
+                     break;
+                     }
+               }
+
+      LOOKUP=TRUE;
+      }
+   }
+
 // calculate visible waypoints
 void minipoint::calcvdata()
    {
@@ -817,6 +841,9 @@ void minipoint::draw(float ex,float ey,float ez,
 
    int p1,p2;
    minipointrndr *rndr;
+
+   // lookup renderers
+   lookuprndrs();
 
    // calculate visible points
    calcvdata();
@@ -1017,7 +1044,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
          if (vpoint->opts->signpostsize>0.0f) ssize=vpoint->opts->signpostsize*SCALEELEV;
          if (vpoint->opts->signpostheight>0.0f) sheight=vpoint->opts->signpostheight*SCALEELEV;
 
-         if (!vpoint->opts->signpostnoauto)
+         if (vpoint->opts->signpostnoauto)
             {
             sturn=vpoint->opts->signpostturn;
             syon=vpoint->opts->signpostincline;
