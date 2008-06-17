@@ -486,6 +486,10 @@ void minibsptree::insert(const minimesh &mesh)
    MESH.append(mesh);
    }
 
+// preprocess entire input mesh
+void minibsptree::preprocessall()
+   {while (!preprocess());}
+
 // preprocess input mesh one step at a time
 BOOLINT minibsptree::preprocess()
    {

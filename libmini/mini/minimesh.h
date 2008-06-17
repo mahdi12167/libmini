@@ -246,6 +246,9 @@ class minibsptree
    //! insert tetrahedral mesh
    void insert(const minimesh &mesh);
 
+   //! preprocess entire input mesh
+   void preprocessall();
+
    //! preprocess input mesh one step at a time
    BOOLINT preprocess();
 
