@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.2 as of 17.June.2008<br>
+Version 8.8.2 as of 18.June.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -2067,13 +2067,23 @@ waypoint. Here is an example:<p>
    542m
 </pre>
 
+The general layout of the data fields of each waypoint is the following:<p>
+
+<pre>
+   waypoint description ; meta-information
+   ; comment lines
+   coordinate system (LL or UTM)
+   position (lat/lon or x/y)
+   elevation (m_eter or f_eet)
+</pre>
+
 The coordinate system of the first waypoint in the definition file
 must match the coordinate system of the tile set. Then the waypoints
 will be displayed as signposts at the corresponding position in the
 tile set. The first waypoint also determines the initial point of view
 when starting the libMini Viewer.<p>
 
-You can also run the libMini Viewer in anaglyph stereo mode by
+Optionally, you can run the libMini Viewer in anaglyph stereo mode by
 appending "-s -a" to the command line. You need to put on red/cyan
 glasses to get the stereo effect. To start the viewer in full-screen
 mode use the -f option. For full usage information on all available
@@ -2140,10 +2150,11 @@ Each way point has the following attributes:<p>
 
 <ul>
    <li><b>desc</b>: the point description</li>
-   <li><b>meta</b>: the meta-information separated by a field delimiter</li>
+   <li><b>meta</b>: the meta-information (separated from the description by a semicolon)</li>
+   <li><b>comment</b>: the comment section (indicated by lines that begin with a semicolon)</li>
    <li><b>x</b>, <b>y</b>: the actual (transformed) point coordinates</li>
    <li><b>longitude</b>, <b>latitude</b>: the measured point coordinates</li>
-   <li><b>height</b>: the height of the terrain at the point in meters</li>
+   <li><b>height</b>: the actual height of the terrain at the point in meters</li>
    <li><b>elevation</b>: the measured elevation of the point in meters</li>
    <li><b>zone</b>: the UTM zone of the measured coordinates (equals 0 for Lat/Lon)</li>
    <li><b>datum</b>: the UTM datum of the measured coordinates (assuming WGS84 datum for Lat/Lon)</li>
