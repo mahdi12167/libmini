@@ -191,15 +191,15 @@ void minimesh::connect()
       v4=get(i).vtx4;
 
       // search for face dependencies
-      ref(i).dep123=getdep(v1,v2,v3,v4);
-      ref(i).dep142=getdep(v1,v4,v2,v3);
-      ref(i).dep243=getdep(v2,v4,v3,v1);
-      ref(i).dep341=getdep(v3,v4,v1,v2);
+      ref(i).dep123=getdep(v1,v2,v3,v4,i);
+      ref(i).dep142=getdep(v1,v4,v2,v3,i);
+      ref(i).dep243=getdep(v2,v4,v3,v1,i);
+      ref(i).dep341=getdep(v3,v4,v1,v2,i);
       }
    }
 
 // search for a face dependency
-unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h) const
+unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,unsigned int omit) const
    {
    unsigned int i;
 
@@ -219,57 +219,58 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
    // search all tetrahedra for a match
    for (i=0; i<getsize(); i++)
-      {
-      // get vertices of the actual tetrahedron
-      p1=get(i).vtx1;
-      p2=get(i).vtx2;
-      p3=get(i).vtx3;
-      p4=get(i).vtx4;
+      if (i!=omit)
+         {
+         // get vertices of the actual tetrahedron
+         p1=get(i).vtx1;
+         p2=get(i).vtx2;
+         p3=get(i).vtx3;
+         p4=get(i).vtx4;
 
-      // calculate face midpoints
-      m1=(p1+p2+p3)/3.0;
-      m2=(p1+p4+p2)/3.0;
-      m3=(p2+p4+p3)/3.0;
-      m4=(p3+p4+p1)/3.0;
+         // calculate face midpoints
+         m1=(p1+p2+p3)/3.0;
+         m2=(p1+p4+p2)/3.0;
+         m3=(p2+p4+p3)/3.0;
+         m4=(p3+p4+p1)/3.0;
 
-      // check each face for a match:
+         // check each face for a match:
 
-      d=plane.getdistance(m1);
+         d=plane.getdistance(m1);
 
-      if (d<minigeom_base::delta)
-         if (d>dist)
-            {
-            idx=i;
-            dist=d;
-            }
+         if (d<minigeom_base::delta)
+            if (d>dist)
+               {
+               idx=i;
+               dist=d;
+               }
 
-      d=plane.getdistance(m2);
+         d=plane.getdistance(m2);
 
-      if (d<minigeom_base::delta)
-         if (d>dist)
-            {
-            idx=i;
-            dist=d;
-            }
+         if (d<minigeom_base::delta)
+            if (d>dist)
+               {
+               idx=i;
+               dist=d;
+               }
 
-      d=plane.getdistance(m3);
+         d=plane.getdistance(m3);
 
-      if (d<minigeom_base::delta)
-         if (d>dist)
-            {
-            idx=i;
-            dist=d;
-            }
+         if (d<minigeom_base::delta)
+            if (d>dist)
+               {
+               idx=i;
+               dist=d;
+               }
 
-      d=plane.getdistance(m4);
+         d=plane.getdistance(m4);
 
-      if (d<minigeom_base::delta)
-         if (d>dist)
-            {
-            idx=i;
-            dist=d;
-            }
-      }
+         if (d<minigeom_base::delta)
+            if (d>dist)
+               {
+               idx=i;
+               dist=d;
+               }
+         }
 
    return(idx);
    }

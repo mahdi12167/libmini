@@ -207,7 +207,7 @@ class minimesh: public minidyna<minihedron>
    void reject();
    void connect();
 
-   unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h) const;
+   unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,unsigned int omit) const;
    double getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3) const;
 
    void descend(const unsigned int idx,const miniv3d &eye);
