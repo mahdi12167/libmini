@@ -798,22 +798,24 @@ void minibsptree::collect(const unsigned int idx)
       if (dist<0.0)
          {
          // collect the left half space
-         if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
-         else if (dist+RADIUS>0.0) collect(TREE[idx].left);
+         if (dist+RADIUS>0.0)
+            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
+            else collect(TREE[idx].left); // descend
 
          // collect the right half space
          if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE)); // sort right mesh
-         else collect(TREE[idx].right);
+         else collect(TREE[idx].right); // descend
          }
       else
          {
          // collect the right half space
          if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE)); // sort right mesh
-         else collect(TREE[idx].right);
+         else collect(TREE[idx].right); // descend
 
          // collect the left half space
-         if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
-         else if (dist+RADIUS>0.0) collect(TREE[idx].left);
+         if (dist+RADIUS>0.0)
+            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
+            else collect(TREE[idx].left);
          }
       }
    }
