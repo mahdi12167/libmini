@@ -133,6 +133,15 @@ class minihedron
    //! destructor
    ~minihedron() {}
 
+   //! add offset to vertices
+   void offset(const miniv3d &offset)
+      {
+      vtx1+=offset;
+      vtx2+=offset;
+      vtx3+=offset;
+      vtx4+=offset;
+      }
+
    //! get volume
    double getvolume() const
       {
@@ -243,8 +252,11 @@ class minibsptree
    //! clear bsp tree
    void clear();
 
-   //! insert tetrahedral mesh
+   //! insert from tetrahedral mesh
    void insert(const minimesh &mesh);
+
+   //! insert from tetrahedral mesh with bounding box
+   void insertbbox(const minimesh &mesh);
 
    //! preprocess entire input mesh
    void preprocessall();
@@ -252,7 +264,7 @@ class minibsptree
    //! preprocess input mesh one step at a time
    BOOLINT preprocess();
 
-   //! get status of preprocessing
+   //! get preprocessing status
    BOOLINT getstatus();
 
    //! process input mesh and extract tetrahedral output mesh

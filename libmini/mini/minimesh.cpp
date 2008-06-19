@@ -487,6 +487,14 @@ void minibsptree::insert(const minimesh &mesh)
    MESH.append(mesh);
    }
 
+// insert from tetrahedral mesh with bounding box
+void minibsptree::insertbbox(const minimesh &mesh)
+   {
+   if (DONE || PHASE!=0) ERRORMSG();
+
+   MESH.append(mesh); //!!
+   }
+
 // preprocess entire input mesh
 void minibsptree::preprocessall()
    {while (!preprocess());}
@@ -563,7 +571,7 @@ BOOLINT minibsptree::preprocess()
    return(DONE);
    }
 
-// get status of preprocessing
+// get preprocessing status
 BOOLINT minibsptree::getstatus()
    {return(DONE);}
 
