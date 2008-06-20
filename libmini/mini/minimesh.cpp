@@ -490,9 +490,78 @@ void minibsptree::insert(const minimesh &mesh)
 // insert from tetrahedral mesh with bounding box
 void minibsptree::insertbbox(const minimesh &mesh)
    {
+   unsigned int i;
+
+   minihedron tet;
+   miniv3d bbmin,bbmax;
+
    if (DONE || PHASE!=0) ERRORMSG();
 
-   MESH.append(mesh); //!!
+   // store mesh for later insertion
+   MESH.append(mesh);
+
+   // calculate bounding box for immediate insertion
+   if (mesh.getsize()>0)
+      {
+      bbmin=bbmax=mesh[0].vtx1;
+
+      for (i=0; i<mesh.getsize(); i++)
+         {
+         tet=mesh[i];
+
+         if (tet.vtx1.x<bbmin.x) bbmin.x=tet.vtx1.x;
+         if (tet.vtx1.x>bbmax.x) bbmax.x=tet.vtx1.x;
+         if (tet.vtx1.y<bbmin.y) bbmin.y=tet.vtx1.y;
+         if (tet.vtx1.y>bbmax.y) bbmax.y=tet.vtx1.y;
+         if (tet.vtx1.z<bbmin.z) bbmin.z=tet.vtx1.z;
+         if (tet.vtx1.z>bbmax.z) bbmax.z=tet.vtx1.z;
+
+         if (tet.vtx2.x<bbmin.x) bbmin.x=tet.vtx2.x;
+         if (tet.vtx2.x>bbmax.x) bbmax.x=tet.vtx2.x;
+         if (tet.vtx2.y<bbmin.y) bbmin.y=tet.vtx2.y;
+         if (tet.vtx2.y>bbmax.y) bbmax.y=tet.vtx2.y;
+         if (tet.vtx2.z<bbmin.z) bbmin.z=tet.vtx2.z;
+         if (tet.vtx2.z>bbmax.z) bbmax.z=tet.vtx2.z;
+
+         if (tet.vtx3.x<bbmin.x) bbmin.x=tet.vtx3.x;
+         if (tet.vtx3.x>bbmax.x) bbmax.x=tet.vtx3.x;
+         if (tet.vtx3.y<bbmin.y) bbmin.y=tet.vtx3.y;
+         if (tet.vtx3.y>bbmax.y) bbmax.y=tet.vtx3.y;
+         if (tet.vtx3.z<bbmin.z) bbmin.z=tet.vtx3.z;
+         if (tet.vtx3.z>bbmax.z) bbmax.z=tet.vtx3.z;
+
+         if (tet.vtx4.x<bbmin.x) bbmin.x=tet.vtx4.x;
+         if (tet.vtx4.x>bbmax.x) bbmax.x=tet.vtx4.x;
+         if (tet.vtx4.y<bbmin.y) bbmin.y=tet.vtx4.y;
+         if (tet.vtx4.y>bbmax.y) bbmax.y=tet.vtx4.y;
+         if (tet.vtx4.z<bbmin.z) bbmin.z=tet.vtx4.z;
+         if (tet.vtx4.z>bbmax.z) bbmax.z=tet.vtx4.z;
+         }
+
+      // left face triangles
+      insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmin.z));
+      insert(0,miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
+
+      // right face triangles
+      insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmax.z));
+      insert(0,miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
+
+      // front face triangles
+      insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z));
+      insert(0,miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
+
+      // back face triangles
+      insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z));
+      insert(0,miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
+
+      // bottom face triangles
+      insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmin.z));
+      insert(0,miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
+
+      // top face triangles
+      insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmax.z));
+      insert(0,miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
+      }
    }
 
 // preprocess entire input mesh
