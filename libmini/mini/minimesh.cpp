@@ -505,6 +505,7 @@ void minibsptree::insertbbox(const minimesh &mesh)
       {
       bbmin=bbmax=mesh[0].vtx1;
 
+      // calculate bounding box
       for (i=0; i<mesh.getsize(); i++)
          {
          tet=mesh[i];
@@ -538,27 +539,27 @@ void minibsptree::insertbbox(const minimesh &mesh)
          if (tet.vtx4.z>bbmax.z) bbmax.z=tet.vtx4.z;
          }
 
-      // left face triangles
+      // insert left face triangles
       insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmin.z));
       insert(0,miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
 
-      // right face triangles
+      // insert right face triangles
       insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmax.z));
       insert(0,miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
 
-      // front face triangles
+      // insert front face triangles
       insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z));
       insert(0,miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
 
-      // back face triangles
+      // insert back face triangles
       insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z));
       insert(0,miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
 
-      // bottom face triangles
+      // insert bottom face triangles
       insert(0,miniv3d(bbmin.x,bbmin.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmin.z));
       insert(0,miniv3d(bbmax.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmin.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmax.z));
 
-      // top face triangles
+      // insert top face triangles
       insert(0,miniv3d(bbmax.x,bbmax.y,bbmax.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmax.x,bbmin.y,bbmax.z));
       insert(0,miniv3d(bbmin.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmax.y,bbmax.z),miniv3d(bbmax.x,bbmax.y,bbmin.z),miniv3d(bbmin.x,bbmin.y,bbmin.z));
       }
