@@ -133,6 +133,15 @@ class minihedron
    //! destructor
    ~minihedron() {}
 
+   //! scale vertices by factor
+   void scale(const double scale)
+      {
+      vtx1*=scale;
+      vtx2*=scale;
+      vtx3*=scale;
+      vtx4*=scale;
+      }
+
    //! add offset to vertices
    void offset(const miniv3d &offset)
       {
@@ -196,6 +205,12 @@ class minimesh: public minidyna<minihedron>
 
    //! set embedded data values
    void setvals(const minivals &vals);
+
+   //! scale mesh by factor
+   void scale(const double scale);
+
+   //! add offset to mesh
+   void offset(const miniv3d &offset);
 
    //! sort a tetrahedral mesh with respect to the eye point
    minimesh sort(const miniv3d &eye);

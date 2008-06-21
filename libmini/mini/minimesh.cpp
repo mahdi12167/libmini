@@ -361,6 +361,22 @@ double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,con
    return(det_mtx(mtx));
    }
 
+// scale mesh by factor
+void minimesh::scale(const double scale)
+   {
+   unsigned int i;
+
+   for (i=0; i<getsize(); i++) ref(i).scale(scale);
+   }
+
+// add offset to mesh
+void minimesh::offset(const miniv3d &offset)
+   {
+   unsigned int i;
+
+   for (i=0; i<getsize(); i++) ref(i).offset(offset);
+   }
+
 // sort a tetrahedral mesh with respect to the eye point
 minimesh minimesh::sort(const miniv3d &eye)
    {
