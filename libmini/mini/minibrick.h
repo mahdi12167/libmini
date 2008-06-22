@@ -241,7 +241,7 @@ class minisurf
                     float ambient=0.1f,
                     float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
                     float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
-                    float stripewidqth=1.0f,float stripeoffset=0.0f,
+                    float stripewidth=1.0f,float stripeoffset=0.0f,
                     float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
                     int correctz=0);
 

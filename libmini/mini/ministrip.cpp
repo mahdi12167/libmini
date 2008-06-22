@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "minibrick.h"
+
 #include "ministrip.h"
 
 int ministrip::INSTANCES=0;
@@ -1068,6 +1070,37 @@ void ministrip::render()
    glPopMatrix();
 
 #endif
+   }
+
+// render triangle strips with multi-pass blending
+void ministrip::rendermulti(int passes,
+                            float ambient,
+                            float bordercontrol,float centercontrol,float colorcontrol,
+                            float bordercontrol2,float centercontrol2,float colorcontrol2,
+                            float stripewidth,float stripeoffset,
+                            float stripedx,float stripedy,float stripedz,
+                            int correctz)
+   {
+   int i;
+
+   static minisurf surf;
+
+   if (passes<1 || passes>4) ERRORMSG();
+
+   useshader(0); // disable regular shader
+
+   for (i=MINIBRICK_SECOND_RENDER_PHASE; i<=MINIBRICK_LAST_RENDER_PHASE; i++)
+      {
+      // enable external multi-pass shader
+      surf.setextstate(1,i,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,stripewidth,stripeoffset,stripedx,stripedy,stripedz,correctz);
+
+      // render strips with external multi-pass shader
+      render();
+
+      // disable external multi-pass shader
+      surf.setextstate(0,i,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,stripewidth,stripeoffset,stripedx,stripedy,stripedz,correctz);
+      }
    }
 
 // get vertex shader
