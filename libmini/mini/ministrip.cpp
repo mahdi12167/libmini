@@ -1076,7 +1076,7 @@ void ministrip::render()
 #endif
    }
 
-// render triangle strips with multi-pass blending
+// render triangle strips with multi-pass method for unordered semi-transparent geometry
 void ministrip::rendermulti(int passes,
                             float ambient,
                             float bordercontrol,float centercontrol,float colorcontrol,

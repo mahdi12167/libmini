@@ -118,7 +118,7 @@ class ministrip
    //! render triangle strips
    void render();
 
-   //! render triangle strips with multi-pass blending
+   //! render triangle strips with multi-pass method for unordered semi-transparent geometry
    void rendermulti(int passes=4,
                     float ambient=0.1f,
                     float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
