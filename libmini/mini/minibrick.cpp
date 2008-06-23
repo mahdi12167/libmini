@@ -1015,6 +1015,7 @@ void minisurf::setstate(int enable,
       if (enable!=0) enabletorch(FIRST_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
       else disabletorch(FIRST_RENDER_PHASE);
 
+   // set common OpenGL states
    if (phase!=FIRST_RENDER_PHASE)
       if (enable!=0)
          {
@@ -1163,6 +1164,7 @@ void minisurf::setstate(int enable,
             else enableRGBAwriting();
       }
 
+   // unset common OpenGL states
    if (phase!=FIRST_RENDER_PHASE)
       if (enable==0)
          {

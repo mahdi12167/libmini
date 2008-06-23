@@ -1089,17 +1089,29 @@ void ministrip::rendermulti(int passes,
 
    useshader(0); // disable regular shader
 
+   // multi-pass rendering
    for (i=MINIBRICK_SECOND_RENDER_PHASE; i<=MINIBRICK_LAST_RENDER_PHASE; i++)
       {
       // enable external multi-pass shader
-      surf.setextstate(1,i,passes,
-                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,stripewidth,stripeoffset,stripedx,stripedy,stripedz,correctz);
+      surf.setextstate(1,
+                       i,passes,
+                       ambient,
+                       bordercontrol,centercontrol,colorcontrol,
+                       bordercontrol2,centercontrol2,colorcontrol2,
+                       stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                       correctz);
 
       // render strips with external multi-pass shader
       render();
 
       // disable external multi-pass shader
-      surf.setextstate(0,i,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,stripewidth,stripeoffset,stripedx,stripedy,stripedz,correctz);
+      surf.setextstate(0,
+                       i,passes,
+                       ambient,
+                       bordercontrol,centercontrol,colorcontrol,
+                       bordercontrol2,centercontrol2,colorcontrol2,
+                       stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                       correctz);
       }
    }
 
