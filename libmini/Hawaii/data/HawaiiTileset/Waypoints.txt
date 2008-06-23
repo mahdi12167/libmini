@@ -37,9 +37,9 @@ UTM 04
 TestWaypoint@Pier, Makai
 ; $type=5
 UTM 04
-0638200
+0638500
 2358000
-0m
+10m
 
 Ship, Makai
 ; $type=4
