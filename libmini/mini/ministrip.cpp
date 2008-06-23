@@ -417,6 +417,10 @@ ministrip::~ministrip()
 #endif
    }
 
+// clear strip
+void ministrip::clear()
+   {SIZE=0;}
+
 // begin next triangle strip
 void ministrip::beginstrip()
    {

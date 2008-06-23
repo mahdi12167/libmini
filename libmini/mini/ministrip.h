@@ -46,6 +46,9 @@ class ministrip
    //! destructor
    ~ministrip();
 
+   //! clear strip
+   void clear();
+
    //! begin next triangle strip
    void beginstrip();
 
