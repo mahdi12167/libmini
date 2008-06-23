@@ -112,6 +112,9 @@ class ministrip
    //! set actual shader
    void useshader(int num=0);
 
+   //! get actual shader
+   int getshader();
+
    //! render triangle strips
    void render();
 

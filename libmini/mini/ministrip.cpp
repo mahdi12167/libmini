@@ -949,6 +949,10 @@ void ministrip::setfogparams(int num,
 void ministrip::useshader(int num)
    {USESHADER=num;}
 
+// get actual shader
+int ministrip::getshader()
+   {return(USESHADER);}
+
 // check for OpenGL extensions
 void ministrip::initglexts()
    {
@@ -1085,9 +1089,13 @@ void ministrip::rendermulti(int passes,
 
    static minisurf surf;
 
+   int shader;
+
    if (passes<1 || passes>4) ERRORMSG();
 
-   useshader(0); // disable regular shader
+   // disable regular shader
+   shader=getshader();
+   useshader(0);
 
    // multi-pass rendering
    for (i=MINIBRICK_SECOND_RENDER_PHASE; i<=MINIBRICK_LAST_RENDER_PHASE; i++)
@@ -1113,6 +1121,9 @@ void ministrip::rendermulti(int passes,
                        stripewidth,stripeoffset,stripedx,stripedy,stripedz,
                        correctz);
       }
+
+   // enable previous shader
+   useshader(shader);
    }
 
 // get vertex shader
