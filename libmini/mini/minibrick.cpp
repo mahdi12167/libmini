@@ -1255,16 +1255,24 @@ void minisurf::render(int phase,
    }
 
 // initialize state for each phase
-void minisurf::setextstate(int enable,
-                           int phase,
-                           int passes,
-                           float ambient,
-                           float bordercontrol,float centercontrol,float colorcontrol,
-                           float bordercontrol2,float centercontrol2,float colorcontrol2,
-                           float stripewidth,float stripeoffset,
-                           float stripedx,float stripedy,float stripedz,
-                           int correctz)
+int minisurf::setextstate(int enable,
+                          int phase,
+                          int passes,
+                          float ambient,
+                          float bordercontrol,float centercontrol,float colorcontrol,
+                          float bordercontrol2,float centercontrol2,float colorcontrol2,
+                          float stripewidth,float stripeoffset,
+                          float stripedx,float stripedy,float stripedz,
+                          int correctz)
    {
+   if (phase==ONE_RENDER_PHASE) ERRORMSG();
+
+   if (phase==FIRST_RENDER_PHASE) return(0);
+   if (passes==1 && phase>SECOND_RENDER_PHASE) return(0);
+   if (passes==2 && phase>SECOND_RENDER_PHASE && (correctz==0 || phase!=LAST_RENDER_PHASE)) return(0);
+   if (passes==3 && phase>THIRD_RENDER_PHASE && (correctz==0 || phase!=LAST_RENDER_PHASE)) return(0);
+   if (passes==4 && phase>FOURTH_RENDER_PHASE && (correctz==0 || phase!=LAST_RENDER_PHASE)) return(0);
+
    // set stripe pattern
    setstripewidth(stripewidth);
    setstripedir(stripedx,stripedy,stripedz);
@@ -1277,6 +1285,8 @@ void minisurf::setextstate(int enable,
    setstate(enable,phase,passes,
             ambient,bordercontrol,centercontrol,colorcontrol,
             bordercontrol2,centercontrol2,colorcontrol2);
+
+   return(1);
    }
 
 // cache one data block

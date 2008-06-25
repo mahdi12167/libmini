@@ -235,15 +235,15 @@ class minisurf
    //! initialize state for each phase
    //! for rendering additional external geometry
    //! use only if you exactly know what you are doing (this is not for wimps :)
-   void setextstate(int enable,
-                    int phase,
-                    int passes,
-                    float ambient=0.1f,
-                    float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
-                    float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
-                    float stripewidth=1.0f,float stripeoffset=0.0f,
-                    float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
-                    int correctz=0);
+   int setextstate(int enable,
+                   int phase,
+                   int passes,
+                   float ambient=0.1f,
+                   float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
+                   float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
+                   float stripewidth=1.0f,float stripeoffset=0.0f,
+                   float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
+                   int correctz=0);
 
    //! cache one data block
    void cacheblock(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int s,
