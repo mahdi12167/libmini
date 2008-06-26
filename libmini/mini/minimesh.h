@@ -133,6 +133,9 @@ class minihedron
    //! destructor
    ~minihedron() {}
 
+   miniv3d barycenter() const
+      {return(0.25*(vtx1+vtx2+vtx3+vtx4));}
+
    //! scale vertices by factor
    void scale(const double scale)
       {
@@ -140,6 +143,19 @@ class minihedron
       vtx2*=scale;
       vtx3*=scale;
       vtx4*=scale;
+      }
+
+   //! shrink vertices by factor relative to barycenter
+   void shrink(const double shrink)
+      {
+      miniv3d b;
+
+      b=barycenter();
+
+      vtx1=(vtx1-b)*shrink+b;
+      vtx2=(vtx2-b)*shrink+b;
+      vtx3=(vtx3-b)*shrink+b;
+      vtx4=(vtx4-b)*shrink+b;
       }
 
    //! add offset to vertices
@@ -206,8 +222,17 @@ class minimesh: public minidyna<minihedron>
    //! set embedded data values
    void setvals(const minivals &vals);
 
+   //! get barycenter of mesh
+   miniv3d barycenter() const;
+
    //! scale mesh by factor
    void scale(const double scale);
+
+   //! shrink tetrahedra by factor relative to barycenter
+   void shrink(const double shrink);
+
+   //! shrink mesh by factor relative to barycenter
+   void shrinkmesh(const double shrink);
 
    //! add offset to mesh
    void offset(const miniv3d &offset);

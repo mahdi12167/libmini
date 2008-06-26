@@ -361,12 +361,49 @@ double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,con
    return(det_mtx(mtx));
    }
 
+// get barycenter of mesh
+miniv3d minimesh::barycenter() const
+   {
+   unsigned int i;
+
+   miniv3d b;
+
+   b=miniv3d(0.0);
+
+   if (getsize()==0) return(b);
+
+   for (i=0; i<getsize(); i++)
+      b+=get(i).vtx1+get(i).vtx2+get(i).vtx3+get(i).vtx4;
+
+   return(b/(4.0*getsize()));
+   }
+
 // scale mesh by factor
 void minimesh::scale(const double scale)
    {
    unsigned int i;
 
    for (i=0; i<getsize(); i++) ref(i).scale(scale);
+   }
+
+// shrink tetrahedra by factor relative to barycenter
+void minimesh::shrink(const double shrink)
+   {
+   unsigned int i;
+
+   for (i=0; i<getsize(); i++) ref(i).shrink(shrink);
+   }
+
+// shrink mesh by factor relative to barycenter
+void minimesh::shrinkmesh(const double shrink)
+   {
+   miniv3d b;
+
+   b=barycenter();
+
+   offset(-b);
+   scale(shrink);
+   offset(b);
    }
 
 // add offset to mesh
