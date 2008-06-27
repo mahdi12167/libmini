@@ -467,9 +467,23 @@ void savesettings()
 // read pixels and save to file
 void readrgbpixels()
    {
+   int i,j,k;
+
    unsigned char *pixels;
 
+   unsigned char tmp;
+
    pixels=readrgbpixels(0,0,winwidth,winheight);
+
+   for (i=0; i<winwidth; i++)
+      for (j=0; j<winheight/2; j++)
+         for (k=0; k<3; k++)
+            {
+            tmp=pixels[3*(i+j*winwidth)+k];
+            pixels[3*(i+j*winwidth)+k]=pixels[3*(i+(winheight-1-j)*winwidth)+k];
+            pixels[3*(i+(winheight-1-j)*winwidth)+k]=tmp;
+            }
+
    writePNMimage("pixels.ppm",pixels,winwidth,winheight,3);
    free(pixels);
    }
