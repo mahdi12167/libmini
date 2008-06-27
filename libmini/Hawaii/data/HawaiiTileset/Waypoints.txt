@@ -39,7 +39,7 @@ TestWaypoint@Pier, Makai
 UTM 04
 0638500
 2358000
-10m
+25m
 
 Ship, Makai
 ; $type=4
