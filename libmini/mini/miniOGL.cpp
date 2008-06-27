@@ -1022,4 +1022,38 @@ void disablelinesmooth()
 #endif
    }
 
+unsigned char *readrgbpixels(int x,int y,int width,int height)
+   {
+   unsigned char *pixels=NULL;
+
+#ifndef NOOGL
+   glFinish();
+
+   if ((pixels=(unsigned char *)malloc(3*width*height))==NULL) ERRORMSG();
+
+   glReadBuffer(GL_BACK);
+   glReadPixels(x,y,width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+#endif
+
+   return(pixels);
+   }
+
+void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y)
+   {
+#ifndef NOOGL
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluOrtho2D(0.0f,winwidth-1,0.0f,winheight-1);
+   glMatrixMode(GL_MODELVIEW);
+
+   glRasterPos2i(x,y);
+   glDrawBuffer(GL_BACK);
+
+   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+   glDrawPixels(width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+#endif
+   }
+
 }

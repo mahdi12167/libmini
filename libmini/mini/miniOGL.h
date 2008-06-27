@@ -223,6 +223,9 @@ inline void drawline(const float x1,const float y1,const float z1,const float x2
 #endif
    }
 
+unsigned char *readrgbpixels(int x,int y,int width,int height);
+void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+
 }
 
 using namespace miniOGL;

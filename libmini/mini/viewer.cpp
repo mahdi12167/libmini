@@ -94,6 +94,8 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 #include <mini/minitile.h>
 #include <mini/minitext.h>
 
+#include <mini/pnmbase.h>
+
 #include <mini/viewerbase.h>
 
 #ifndef __APPLE__
@@ -460,6 +462,16 @@ void savesettings()
    fprintf(file,"fogdensity=%f\n",eparams->fogdensity);
 
    fclose(file);
+   }
+
+// read pixels and save to file
+void readrgbpixels()
+   {
+   unsigned char *pixels;
+
+   pixels=readrgbpixels(0,0,winwidth,winheight);
+   writePNMimage("pixels.ppm",pixels,winwidth,winheight,3);
+   free(pixels);
    }
 
 // initialize VIS bathy map
@@ -1206,6 +1218,9 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case 'O':
          savesettings();
+         break;
+      case 'P':
+         readrgbpixels();
          break;
       case 'Q':
       case 27:
