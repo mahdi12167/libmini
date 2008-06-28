@@ -662,11 +662,13 @@ void databuf::savedata(const char *filename,
 
 // data is loaded from DB file
 // data is converted from MSB to native byte order
-int databuf::loaddata(const char *filename)
+int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned int tstop)
    {
    FILE *file;
 
    unsigned int m;
+
+   unsigned int tstep;
 
    // open file for reading
    if ((file=fopen(filename,"rb"))==NULL)
@@ -765,28 +767,49 @@ int databuf::loaddata(const char *filename)
    if (bytes!=0)
       if (getc(file)!='\0') ERRORMSG();
 
-   // read data chunk
-   if (bytes==0)
+   // check for stub
+   if (stub==0)
       {
-      loadblock(file);
-      fclose(file);
+      // read data chunk
+      if (bytes==0)
+         {
+         loadblock(file);
+         fclose(file);
+         }
+      else
+         {
+         if (tstart<tstop && extformat==DATABUF_EXTFMT_PLAIN && implformat==0)
+            {
+            tstep=xsize*ysize*zsize;
+
+            if (type==DATABUF_TYPE_BYTE) tstep=1*tstep;
+            else if (type==DATABUF_TYPE_SHORT) tstep=2*tstep;
+            else if (type==DATABUF_TYPE_FLOAT) tstep=4*tstep;
+            else if (type==DATABUF_TYPE_RGB) tstep=3*tstep;
+            else if (type==DATABUF_TYPE_RGBA) tstep=4*tstep;
+            else ERRORMSG();
+
+            if (fseek(file,offset,SEEK_CUR)!=0) ERRORMSG();
+
+            tsteps=tstop-tstart;
+            t0+=tstart*dt;
+            }
+
+         if ((data=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
+
+         if (fread(data,bytes,1,file)!=1) ERRORMSG();
+         fclose(file);
+         }
+
+      // check for LSB->MSB conversion
+      if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==DATABUF_EXTFMT_PLAIN && implformat==0) swapbytes();
+
+      // convert from external format
+      if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
+
+      // convert from implicit format
+      if (implformat!=0) interpretechunk(implformat);
       }
-   else
-      {
-      if ((data=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
-
-      if (fread(data,bytes,1,file)!=1) ERRORMSG();
-      fclose(file);
-      }
-
-   // check for LSB->MSB conversion
-   if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==DATABUF_EXTFMT_PLAIN && implformat==0) swapbytes();
-
-   // convert from external format
-   if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
-
-   // convert from implicit format
-   if (implformat!=0) interpretechunk(implformat);
 
    return(1);
    }
