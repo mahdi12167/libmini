@@ -662,6 +662,8 @@ void databuf::savedata(const char *filename,
 
 // data is loaded from DB file
 // data is converted from MSB to native byte order
+// if stub!=0 the loading of the data chunk is omitted
+// if tstart<tstop the time steps in the range [tstart,tstop[ are loaded
 int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned int tstop)
    {
    FILE *file;
@@ -789,9 +791,10 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
             else if (type==DATABUF_TYPE_RGBA) tstep=4*tstep;
             else ERRORMSG();
 
-            if (fseek(file,offset,SEEK_CUR)!=0) ERRORMSG();
+            if (fseek(file,tstart*tstep,SEEK_CUR)!=0) ERRORMSG();
 
             tsteps=tstop-tstart;
+            bytes=tsteps*tstep;
             t0+=tstart*dt;
             }
 
