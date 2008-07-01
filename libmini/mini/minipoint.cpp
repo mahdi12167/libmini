@@ -7,9 +7,14 @@
 #include "miniOGL.h"
 #include "minitext.h"
 
+#include "minisort.h"
+
 #include "lunascan.h"
 
 #include "minipoint.h"
+
+float minipoint::SHELLSORT_X,minipoint::SHELLSORT_Y,minipoint::SHELLSORT_ELEV;
+float minipoint::SHELLSORT_DX,minipoint::SHELLSORT_DY,minipoint::SHELLSORT_DE;
 
 minipointrndr minipoint::RNDR_NONE;
 minipointrndr_signpost minipoint::RNDR_SIGNPOST;
@@ -752,55 +757,35 @@ void minipoint::sortvdata(float x,float y,float elev,
                           float dx,float dy,float de)
    {
    if (VPOINTS!=NULL)
-      shellsort(VPOINTS,VNUM,x,y,elev,dx,dy,de);
-   }
-
-// shellsort as proposed by Robert Sedgewick in "Algorithms"
-void minipoint::shellsort(minipointdata **a,int n,
-                          float x,float y,float elev,
-                          float dx,float dy,float de)
-   {
-   int i,j,h;
-
-   minipointdata *v;
-
-   for (h=1; h<=(n-1)/9; h=3*h+1);
-
-   while (h>0)
       {
-      for (i=h; i<n; i++)
-         {
-         j=i;
-         v=a[i];
-         while (j>=h && compare(v,a[j-h],x,y,elev,dx,dy,de))
-            {
-            a[j]=a[j-h];
-            j-=h;
-            }
-         a[j]=v;
-         }
-      h/=3;
+      SHELLSORT_X=x;
+      SHELLSORT_Y=y;
+      SHELLSORT_ELEV=elev;
+
+      SHELLSORT_DX=dx;
+      SHELLSORT_DY=dy;
+      SHELLSORT_DE=de;
+
+      shellsort(VPOINTS,VNUM);
       }
    }
 
 // comparison operator for shellsort
-inline int minipoint::compare(const minipointdata *a,const minipointdata *b,
-                              const float x,const float y,const float elev,
-                              const float dx,const float dy,const float de)
+inline int operator < (const minipointdata &a,const minipointdata &b)
    {
    float d1,d2;
    int type1,type2;
 
-   if (a->opts==NULL) type1=minipointopts::OPTION_TYPE_ANY;
-   else type1=a->opts->type;
+   if (a.opts==NULL) type1=minipointopts::OPTION_TYPE_ANY;
+   else type1=a.opts->type;
 
-   if (b->opts==NULL) type2=minipointopts::OPTION_TYPE_ANY;
-   else type2=b->opts->type;
+   if (b.opts==NULL) type2=minipointopts::OPTION_TYPE_ANY;
+   else type2=b.opts->type;
 
    if (type1==type2)
       {
-      d1=dx*(a->x-x)+dy*(a->y-y)+de*(a->height-elev);
-      d2=dx*(b->x-x)+dy*(b->y-y)+de*(b->height-elev);
+      d1=minipoint::SHELLSORT_DX*(a.x-minipoint::SHELLSORT_X)+minipoint::SHELLSORT_DY*(a.y-minipoint::SHELLSORT_Y)+minipoint::SHELLSORT_DE*(a.height-minipoint::SHELLSORT_ELEV);
+      d2=minipoint::SHELLSORT_DX*(b.x-minipoint::SHELLSORT_X)+minipoint::SHELLSORT_DY*(b.y-minipoint::SHELLSORT_Y)+minipoint::SHELLSORT_DE*(b.height-minipoint::SHELLSORT_ELEV);
 
       return(d1>d2);
       }

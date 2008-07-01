@@ -423,19 +423,16 @@ class minipoint
    int  CONFIGURE_BRICKPASSES;
    float CONFIGURE_BRICKSTRIPES;
 
+   static float SHELLSORT_X,SHELLSORT_Y,SHELLSORT_ELEV;
+   static float SHELLSORT_DX,SHELLSORT_DY,SHELLSORT_DE;
+
+   friend inline int operator < (const minipointdata &a,const minipointdata &b);
+
    static minipointrndr RNDR_NONE;
    static minipointrndr_signpost RNDR_SIGNPOST;
    static minipointrndr_brick RNDR_BRICK[4];
 
    void lookuprndrs();
-
-   void shellsort(minipointdata *a[],int n,
-                  float x,float y,float elev,
-                  float dx,float dy,float de);
-
-   int compare(const minipointdata *a,const minipointdata *b,
-               const float x,const float y,const float elev,
-               const float dx,const float dy,const float de);
    };
 
 #endif
