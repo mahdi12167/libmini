@@ -174,6 +174,8 @@ int lunascan::addstring(char *string,unsigned int id)
 
    serial=POOLSIZE;
 
+   if (POOL[serial].string!=NULL) free(POOL[serial].string);
+
    POOL[serial].string=strdup(string);
    POOL[serial].id=id;
 
