@@ -1,4 +1,4 @@
-#ifndef MINISIRT_H
+#ifndef MINISORT_H
 #define MINISORT_H
 
 #include "minibase.h"
@@ -7,7 +7,7 @@ namespace minisort {
 
 // Shellsort as proposed by Robert Sedgewick in "Algorithms"
 template <class Item>
-void shellsort(Item *a,const int n)
+void shellsort(Item a[],const int n)
    {
    int i,j,h;
 
