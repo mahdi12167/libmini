@@ -1358,8 +1358,6 @@ void minitile::reload(int col,int row,
 
    RELOADED[col+row*COLS]=1;
 
-   if (ispreloaded(col,row)==0) updatetile(col,row);
-
    if (hmap.missing()) return;
 
    RELOADED[col+row*COLS]=1;
@@ -1563,9 +1561,7 @@ void minitile::reload(int col,int row,
          }
       }
 
-   if (ispreloaded(col,row)==0) updatetile(col,row);
-
-   if (MAP[col+row*COLS]==NULL) updatetile(col,row);
+   if (isloaded(col,row)==0) updatetile(col,row);
    }
 
 // set callback for requesting visible tiles
