@@ -68,7 +68,7 @@ void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
 inline void normal(const float dx,const float dy,const float dz);
-inline void texcoord(const float s,const float t);
+inline void texcoord(const float s,const float t,const float u=0.0f);
 inline void fanvertex(const float x,const float y,const float z);
 void endfans();
 
@@ -198,10 +198,10 @@ inline void normal(const float dx,const float dy,const float dz)
 #endif
    }
 
-inline void texcoord(const float s,const float t)
+inline void texcoord(const float s,const float t,const float u)
    {
 #ifndef NOOGL
-   glTexCoord2f(s,t);
+   glTexCoord3f(s,t,u);
 #endif
    }
 
