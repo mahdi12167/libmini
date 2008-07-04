@@ -8,7 +8,7 @@ MODS	= mini miniOGL\
 	  minicache minishader miniwarp miniray\
 	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
-	  minigeom minimesh\
+	  minigeom minimesh miniproj\
 	  pnmbase pnmsample\
 	  database datafill\
 	  datacloud datacache datagrid\
