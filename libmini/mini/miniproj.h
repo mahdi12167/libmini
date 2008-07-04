@@ -22,7 +22,7 @@ class miniproj
              const miniv3d &v2,const double c2,
              const miniv3d &v3,const double c3,
              const miniv3d &v4,const double c4,
-             const miniv3d &col,const double rho,
+             const miniv3d &col,
              const miniv3d &eye);
 
    private:
@@ -34,15 +34,18 @@ class miniproj
                         const miniv3d &v2,const double c2,
                         const miniv3d &v3,const double c3,
                         const miniv3d &v4,const double c4,
-                        const miniv3d &col,const double rho,
                         const miniv3d &eye);
 
    inline void draw4fan(const miniv3d &v1,const double c1,
                         const miniv3d &v2,const double c2,
                         const miniv3d &v3,const double c3,
                         const miniv3d &v4,const double c4,
-                        const miniv3d &col,const double rho,
                         const miniv3d &eye);
+
+   int gentexmap(int dim,float maxe,float maxl);
+
+   void initproj(float maxl);
+   void exitproj();
    };
 
 #endif

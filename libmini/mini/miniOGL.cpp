@@ -934,35 +934,35 @@ void mtxpop()
 #endif
    }
 
-void mtxscale(float sx,float sy,float sz)
+void mtxscale(const float sx,const float sy,const float sz)
    {
 #ifndef NOOGL
    glScalef(sx,sy,sz);
 #endif
    }
 
-void mtxtranslate(float tx,float ty,float tz)
+void mtxtranslate(const float tx,const float ty,const float tz)
    {
 #ifndef NOOGL
    glTranslatef(tx,ty,tz);
 #endif
    }
 
-void mtxrotate(float angle,float ax,float ay,float az)
+void mtxrotate(const float angle,const float ax,const float ay,const float az)
    {
 #ifndef NOOGL
    glRotatef(angle,ax,ay,az);
 #endif
    }
 
-void mtxmult(float mtx[16])
+void mtxmult(const float mtx[16])
    {
 #ifndef NOOGL
    glMultMatrixf(mtx);
 #endif
    }
 
-void mtxmult(double mtx[16])
+void mtxmult(const double mtx[16])
    {
 #ifndef NOOGL
    glMultMatrixd(mtx);
@@ -1001,7 +1001,7 @@ int getvtxcnt()
 #endif
    }
 
-void linewidth(int w)
+void linewidth(const int w)
    {
 #ifndef NOOGL
    glLineWidth(w);

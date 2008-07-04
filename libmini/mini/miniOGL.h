@@ -57,29 +57,32 @@ void mtxtex();
 void mtxpush();
 void mtxpop();
 
-void mtxscale(float sx,float sy,float sz);
-void mtxtranslate(float tx,float ty,float tz);
-void mtxrotate(float angle,float ax,float ay,float az);
+void mtxscale(const float sx,const float sy,const float sz);
+void mtxtranslate(const float tx,const float ty,const float tz);
+void mtxrotate(const float angle,const float ax,const float ay,const float az);
 
-void mtxmult(float mtx[16]);
-void mtxmult(double mtx[16]);
+void mtxmult(const float mtx[16]);
+void mtxmult(const double mtx[16]);
 
 void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
 inline void normal(const float dx,const float dy,const float dz);
-inline void texcoord(const float s,const float t,const float u=0.0f);
+inline void texcoord(const float s,const float t,const float u=0.0f,const float v=0.0f);
 inline void fanvertex(const float x,const float y,const float z);
 void endfans();
 
 int getfancnt();
 int getvtxcnt();
 
-void linewidth(int w);
+void linewidth(const int w);
 void enablelinesmooth();
 void disablelinesmooth();
 
 inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
+
+unsigned char *readrgbpixels(int x,int y,int width,int height);
+void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
 // configuring
 void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation
@@ -198,10 +201,10 @@ inline void normal(const float dx,const float dy,const float dz)
 #endif
    }
 
-inline void texcoord(const float s,const float t,const float u)
+inline void texcoord(const float s,const float t,const float u,const float v)
    {
 #ifndef NOOGL
-   glTexCoord3f(s,t,u);
+   glTexCoord4f(s,t,u,v);
 #endif
    }
 
@@ -222,9 +225,6 @@ inline void drawline(const float x1,const float y1,const float z1,const float x2
    glEnd();
 #endif
    }
-
-unsigned char *readrgbpixels(int x,int y,int width,int height);
-void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
 }
 
