@@ -5,10 +5,17 @@
 #include "miniproj.h"
 
 // default constructor
-miniproj::miniproj() {}
+miniproj::miniproj()
+   {
+   MAXE=0.0f;
+   MAXL=0.0f;
+
+   TEXID=0;
+   }
 
 // destructor
-miniproj::~miniproj() {}
+miniproj::~miniproj()
+   {if (TEXID!=0) deletetexmap(TEXID);}
 
 // calculate whether or not a triangle is front- or back-facing
 inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e)
@@ -249,12 +256,23 @@ int miniproj::gentexmap(int dim,float maxe,float maxl)
    }
 
 // initialize projection state
-void miniproj::initproj(float maxl)
+void miniproj::initproj(float maxe,float maxl)
    {
    float mtx[16]={0.5f,0.5,0,0,
                   0,0,1.0f/maxl,0,
                   0,0,0,0,
                   0,0,0,0};
+
+   if (maxe<=0.0f || maxl<=0.0f) ERRORMSG();
+
+   if (maxe!=MAXE || maxl!=MAXL)
+      {
+      if (TEXID!=0) deletetexmap(TEXID);
+      TEXID=gentexmap(256,maxe,maxl);
+
+      MAXE=maxe;
+      MAXL=maxl;
+      }
 
    initstate();
    beginfans();
@@ -263,11 +281,15 @@ void miniproj::initproj(float maxl)
    mtxpush();
    mtxmult(mtx);
    mtxmodel();
+
+   bindtexmap(TEXID,0,0,0,0);
    }
 
 // de-initialize projection state
 void miniproj::exitproj()
    {
+   bindtexmap(0,0,0,0,0);
+
    mtxtex();
    mtxpop();
    mtxmodel();
