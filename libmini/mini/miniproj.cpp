@@ -260,10 +260,10 @@ int miniproj::gentexmap(int dim,float maxe,float maxl)
 // initialize projection state
 void miniproj::initproj(int dim,float maxe,float maxl)
    {
-   float mtx[16]={0.5f,0.5f,0,0,
-                  0,0,1.0f/maxl,0,
-                  0,0,0,0,
-                  0,0,0,0};
+   float mtx[16]={0.5f,0,0,0,
+                  0.5f,0,0,0,
+                  0,1.0f/maxl,0,0,
+                  0,0,0,1};
 
    if (dim<2 || maxe<=0.0f || maxl<=0.0f) ERRORMSG();
 
