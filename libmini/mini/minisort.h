@@ -7,11 +7,11 @@ namespace minisort {
 
 // Shellsort as proposed by Robert Sedgewick in "Algorithms"
 template <class Item>
-void shellsort(Item a[],const int n)
+void shellsort(Item *a[],const int n)
    {
    int i,j,h;
 
-   Item v;
+   Item *v;
 
    for (h=1; h<=(n-1)/9; h=3*h+1);
 
@@ -21,7 +21,7 @@ void shellsort(Item a[],const int n)
          {
          j=i;
          v=a[i];
-         while (j>=h && v<a[j-h])
+         while (j>=h && (*v)<(*a[j-h]))
             {
             a[j]=a[j-h];
             j-=h;

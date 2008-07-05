@@ -38,6 +38,9 @@ typedef struct
    }
 minipointdata;
 
+//! comparison operator of waypoint data
+inline int operator < (const minipointdata &a,const minipointdata &b);
+
 //! waypoint options
 class minipointopts
    {

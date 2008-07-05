@@ -766,11 +766,11 @@ void minipoint::sortvdata(float x,float y,float elev,
       SHELLSORT_DY=dy;
       SHELLSORT_DE=de;
 
-      shellsort(VPOINTS,VNUM);
+      shellsort<minipointdata>(VPOINTS,VNUM);
       }
    }
 
-// comparison operator for shellsort
+// comparison operator of waypoint data
 inline int operator < (const minipointdata &a,const minipointdata &b)
    {
    float d1,d2;
