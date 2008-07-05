@@ -7,6 +7,8 @@
 // default constructor
 miniproj::miniproj()
    {
+   DIM=0;
+
    MAXE=0.0f;
    MAXL=0.0f;
 
@@ -116,7 +118,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       }
    else
       {
-      lambda=(v1-m).getlength();
+      lambda=(m-v1).getlength();
       texcoord(c234,c1,lambda);
       fanvertex(m.x,m.y,m.z);
       }
@@ -256,31 +258,36 @@ int miniproj::gentexmap(int dim,float maxe,float maxl)
    }
 
 // initialize projection state
-void miniproj::initproj(float maxe,float maxl)
+void miniproj::initproj(int dim,float maxe,float maxl)
    {
-   float mtx[16]={0.5f,0.5,0,0,
+   float mtx[16]={0.5f,0.5f,0,0,
                   0,0,1.0f/maxl,0,
                   0,0,0,0,
                   0,0,0,0};
 
-   if (maxe<=0.0f || maxl<=0.0f) ERRORMSG();
+   if (dim<2 || maxe<=0.0f || maxl<=0.0f) ERRORMSG();
 
-   if (maxe!=MAXE || maxl!=MAXL)
+   if (dim!=DIM || maxe!=MAXE || maxl!=MAXL)
       {
-      if (TEXID!=0) deletetexmap(TEXID);
-      TEXID=gentexmap(256,maxe,maxl);
+      DIM=dim;
 
       MAXE=maxe;
       MAXL=maxl;
+
+      if (TEXID!=0) deletetexmap(TEXID);
+      TEXID=gentexmap(dim,maxe,maxl);
       }
 
    initstate();
    disableculling();
    enableblending();
+   disableZwriting();
 
    mtxtex();
    mtxpush();
    mtxid();
+   mtxtranslate(0.5f/DIM,0.5f/DIM,0.0f);
+   mtxscale((float)(DIM-1)/DIM,(float)(DIM-1)/DIM,0.0f);
    mtxmult(mtx);
    mtxmodel();
 
@@ -300,6 +307,7 @@ void miniproj::exitproj()
    mtxpop();
    mtxmodel();
 
+   enableZwriting();
    enableBFculling();
    disableblending();
    exitstate();

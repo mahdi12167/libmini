@@ -18,7 +18,7 @@ class miniproj
    ~miniproj();
 
    //! initialize projection state
-   void initproj(float maxe,float maxl);
+   void initproj(int dim,float maxe,float maxl);
 
    //! project a tetrahedron
    void proj(const miniv3d &v1,const double c1,
@@ -33,6 +33,7 @@ class miniproj
 
    private:
 
+   int DIM;
    float MAXE,MAXL;
 
    int TEXID;
