@@ -114,13 +114,13 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       {
       lambda=(v1-m).getlength();
       texcoord(c1,c234,lambda);
-      fanvertex(v1.x,v1.y,v1.z);
+      fanvertex(m.x,m.y,m.z);
       }
    else
       {
       lambda=(m-v1).getlength();
       texcoord(c234,c1,lambda);
-      fanvertex(m.x,m.y,m.z);
+      fanvertex(v1.x,v1.y,v1.z);
       }
 
    // render silhouette vertices
@@ -166,12 +166,12 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
    if (d*(m1-eye)<0.0f)
       {
       texcoord(c12,c34,lambda);
-      fanvertex(m1.x,m1.y,m1.z);
+      fanvertex(m2.x,m2.y,m2.z);
       }
    else
       {
       texcoord(c34,c12,lambda);
-      fanvertex(m2.x,m2.y,m2.z);
+      fanvertex(m1.x,m1.y,m1.z);
       }
 
    // render silhouette vertices
