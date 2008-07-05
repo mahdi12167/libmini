@@ -57,6 +57,7 @@ void mtxtex();
 void mtxpush();
 void mtxpop();
 
+void mtxid();
 void mtxscale(const float sx,const float sy,const float sz);
 void mtxtranslate(const float tx,const float ty,const float tz);
 void mtxrotate(const float angle,const float ax,const float ay,const float az);

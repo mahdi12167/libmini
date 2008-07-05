@@ -934,6 +934,13 @@ void mtxpop()
 #endif
    }
 
+void mtxid()
+   {
+#ifndef NOOGL
+   glLoadIdentity();
+#endif
+   }
+
 void mtxscale(const float sx,const float sy,const float sz)
    {
 #ifndef NOOGL

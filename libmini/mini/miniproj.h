@@ -17,6 +17,9 @@ class miniproj
    //! destructor
    ~miniproj();
 
+   //! initialize projection state
+   void initproj(float maxe,float maxl);
+
    //! project a tetrahedron
    void proj(const miniv3d &v1,const double c1,
              const miniv3d &v2,const double c2,
@@ -24,6 +27,9 @@ class miniproj
              const miniv3d &v4,const double c4,
              const miniv3d &col,
              const miniv3d &eye);
+
+   //! de-initialize projection state
+   void exitproj();
 
    private:
 
@@ -47,9 +53,6 @@ class miniproj
                         const miniv3d &eye);
 
    int gentexmap(int dim,float maxe,float maxl);
-
-   void initproj(float maxe,float maxl);
-   void exitproj();
    };
 
 #endif

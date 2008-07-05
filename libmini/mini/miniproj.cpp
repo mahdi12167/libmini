@@ -275,25 +275,32 @@ void miniproj::initproj(float maxe,float maxl)
       }
 
    initstate();
-   beginfans();
+   disableculling();
+   enableblending();
 
    mtxtex();
    mtxpush();
+   mtxid();
    mtxmult(mtx);
    mtxmodel();
 
    bindtexmap(TEXID,0,0,0,0);
+
+   beginfans();
    }
 
 // de-initialize projection state
 void miniproj::exitproj()
    {
+   endfans();
+
    bindtexmap(0,0,0,0,0);
 
    mtxtex();
    mtxpop();
    mtxmodel();
 
-   endfans();
+   enableBFculling();
+   disableblending();
    exitstate();
    }
