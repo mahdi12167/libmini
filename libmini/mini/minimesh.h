@@ -237,6 +237,12 @@ class minimesh: public minidyna<minihedron>
    //! add offset to mesh
    void offset(const miniv3d &offset);
 
+   //! get the maximum extent of the tetrahedra
+   double getextent() const;
+
+   //! get the bounding box of the tetrahedral mesh
+   void getbbox(miniv3d &bbmin,miniv3d &bbmax) const;
+
    //! sort a tetrahedral mesh with respect to the eye point
    minimesh sort(const miniv3d &eye);
 
