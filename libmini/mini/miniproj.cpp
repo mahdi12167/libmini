@@ -13,11 +13,18 @@ miniproj::miniproj()
    MAXL=0.0f;
 
    TEXID=0;
+
+   initglsetup();
+   setupprogs();
    }
 
 // destructor
 miniproj::~miniproj()
-   {if (TEXID!=0) deletetexmap(TEXID);}
+   {
+   if (TEXID!=0) deletetexmap(TEXID);
+
+   deleteprogs();
+   }
 
 // calculate whether or not a triangle is front- or back-facing
 inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e)
@@ -311,4 +318,211 @@ void miniproj::exitproj()
    enableBFculling();
    disableblending();
    exitstate();
+   }
+
+// vertex and fragment programs:
+
+// enable vertex shader
+void miniproj::enablevtxshader()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   GLuint vtxprogid;
+
+   initglexts();
+   initwglprocs();
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (VTXPROG!=NULL)
+         {
+         if (VTXPROGID==0)
+            {
+            glGenProgramsARB(1,&vtxprogid);
+            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
+            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(VTXPROG),VTXPROG);
+            VTXPROGID=vtxprogid;
+            }
+
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID);
+         glEnable(GL_VERTEX_PROGRAM_ARB);
+         }
+
+#endif
+
+#endif
+   }
+
+// disable vertex shader
+void miniproj::disablevtxshader()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (VTXPROG!=NULL)
+         {
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
+         glDisable(GL_VERTEX_PROGRAM_ARB);
+         }
+
+#endif
+
+#endif
+   }
+
+// enable pixel shader
+void miniproj::enablepixshader()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   GLuint frgprogid;
+
+   initglexts();
+   initwglprocs();
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (FRGPROG!=NULL)
+         {
+         if (FRGPROGID==0)
+            {
+            glGenProgramsARB(1,&frgprogid);
+            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
+            glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROG),FRGPROG);
+            FRGPROGID=frgprogid;
+            }
+
+         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
+         glEnable(GL_FRAGMENT_PROGRAM_ARB);
+         }
+
+#endif
+
+#endif
+   }
+
+// disable pixel shader
+void miniproj::disablepixshader()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (FRGPROG!=NULL)
+         {
+         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
+         glDisable(GL_FRAGMENT_PROGRAM_ARB);
+         }
+
+#endif
+
+#endif
+   }
+
+// initialize vertex and fragment program setup
+void miniproj::setupprogs()
+   {
+   VTXPROG=NULL;
+   VTXPROGID=0;
+
+   FRGPROG=NULL;
+   FRGPROGID=0;
+   }
+
+// delete vertex and fragment program
+void miniproj::deleteprogs()
+   {
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   GLuint progid;
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      {
+      if (VTXPROGID!=0)
+         {
+         progid=VTXPROGID;
+         glDeleteProgramsARB(1,&progid);
+         }
+
+      if (FRGPROGID!=0)
+         {
+         progid=FRGPROGID;
+         glDeleteProgramsARB(1,&progid);
+         }
+      }
+
+#endif
+   }
+
+// OpenGL extensions:
+
+// initialize OpenGL extension setup
+void miniproj::initglsetup()
+   {
+   GLSETUP=0;
+   WGLSETUP=0;
+
+   GLEXT_MT=0;
+   GLEXT_VP=0;
+   GLEXT_FP=0;
+   }
+
+// check for OpenGL extensions
+void miniproj::initglexts()
+   {
+#ifndef NOOGL
+
+   char *gl_exts;
+
+   if (GLSETUP==0)
+      {
+      GLEXT_MT=0;
+      GLEXT_VP=0;
+      GLEXT_FP=0;
+
+      if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
+
+      if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
+      if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
+      if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
+
+      GLSETUP=1;
+      }
+
+#endif
+   }
+
+// Windows OpenGL extension setup
+void miniproj::initwglprocs()
+   {
+#ifndef NOOGL
+
+#ifdef _WIN32
+
+   if (WGLSETUP==0)
+      {
+#ifdef GL_ARB_multitexture
+      glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+      glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
+      glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
+      glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
+      glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
+      glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
+#endif
+
+      WGLSETUP=1;
+      }
+
+#endif
+
+#endif
    }
