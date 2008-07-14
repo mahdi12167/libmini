@@ -237,7 +237,6 @@ void miniproj::initproj(float emi,float rho)
    enablepixshader();
 
    beginfans();
-   normal(0.0f,0.0f,0.0f); //!!
    }
 
 // de-initialize projection state
@@ -368,7 +367,7 @@ void miniproj::setupprogs()
    static char *vtxprog="!!ARBvp1.0 \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,tex,pos,vec; \n\
+      TEMP vtx,col,nrm,tex,pos,vec,dir,len; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
@@ -384,26 +383,38 @@ void miniproj::setupprogs()
       DP4 vec.y,invtra[1],nrm; \n\
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n\
+      ### normalize view vector \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL dir,pos,len.x; \n\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       MOV result.texcoord[0],vec; \n\
       MOV result.texcoord[1],tex; \n\
+      MOV result.texcoord[2],pos; \n\
+      MAD result.texcoord[3],dir,tex.z,pos; \n\
       END \n";
 
    // pixel shader
    static char *frgprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
-      TEMP col,nrm,tex,len; \n\
+      TEMP col,nrm,tex,pos1,pos2,len; \n\
       ### fetch actual fragment \n\
       MOV col,fragment.color; \n\
       MOV nrm,fragment.texcoord[0]; \n\
       MOV tex,fragment.texcoord[1]; \n\
+      MOV pos1,fragment.texcoord[2]; \n\
+      MOV pos2,fragment.texcoord[3]; \n\
+      ### calculate thickness \n\
+      SUB pos1,pos2,pos1; \n\
+      DP3 len.x,pos1,pos1; \n\
+      POW len.x,len.x,c1.x; \n\
       ### calculate optical depth \n\
-      ADD len.x,tex.x,tex.y; \n\
-      MUL len.x,len.x,tex.z; \n\
-      MUL len.x,len.x,c1.x; \n\
+      ADD len.y,tex.x,tex.y; \n\
+      MUL len.y,len.y,c1.x; \n\
+      MUL len.x,len.x,len.y; \n\
       MUL len.x,len.x,c0.y; \n\
       ### calculate absorption \n\
       POW len.x,c1.y,-len.x; \n\
