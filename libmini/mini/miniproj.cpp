@@ -64,6 +64,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
    // calculate thick vertex
    lambda=intersect(v1,v1-eye,v2,d1,d2,m);
 
+   // calculate thick normal
    n=d1/d2;
 
    n.x=FABS(n.x);
@@ -116,7 +117,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v2-v1)/(v3-v1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
@@ -132,7 +133,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v3-v1)/(v4-v1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
@@ -148,7 +149,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v4-v1)/(v2-v1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
@@ -169,7 +170,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v2-m)/(v3-m);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
@@ -185,7 +186,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v3-m)/(v4-m);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
@@ -201,7 +202,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       n=(v4-m)/(v2-m);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
@@ -250,7 +251,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v1-m1)/(v3-m1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
@@ -266,7 +267,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v3-m1)/(v2-m1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
@@ -282,7 +283,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v2-m1)/(v4-m1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
@@ -298,7 +299,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v4-m1)/(v1-m1);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
@@ -316,7 +317,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v1-m2)/(v3-m2);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
@@ -332,7 +333,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v3-m2)/(v2-m2);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
@@ -348,7 +349,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v2-m2)/(v4-m2);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
@@ -364,7 +365,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
       n=(v4-m2)/(v1-m2);
       n.normalize();
 
-      // render thick vertex
+      // render front-facing thick vertex
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
