@@ -70,7 +70,7 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
    n.y=FABS(n.y);
    n.z=FABS(n.z);
 
-   // barycentric interpolation
+   // barycentric interpolation at thick vertex
    if (n.x>n.y)
       if (n.x>n.z)
          {
@@ -106,31 +106,113 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
          }
 
-   beginfan();
-
-   // render thick vertex
+   // check orientation
    if (lambda<0.0)
       {
+      // calculate thickness
       lambda=(v1-m).getlength();
+
+      // calculate back-facing normal
+      n=(v2-v1)/(v3-v1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
       fanvertex(m.x,m.y,m.z);
+
+      // render silhouette vertices
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+
+      // calculate back-facing normal
+      n=(v3-v1)/(v4-v1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c1,c234,lambda);
+      fanvertex(m.x,m.y,m.z);
+
+      // render silhouette vertices
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+
+      // calculate back-facing normal
+      n=(v4-v1)/(v2-v1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c1,c234,lambda);
+      fanvertex(m.x,m.y,m.z);
+
+      // render silhouette vertices
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
       }
    else
       {
+      // calculate thickness
       lambda=(m-v1).getlength();
+
+      // calculate back-facing normal
+      n=(v2-m)/(v3-m);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
       fanvertex(v1.x,v1.y,v1.z);
-      }
 
-   // render silhouette vertices
-   texcoord(c2,c2,0.0f);
-   fanvertex(v2.x,v2.y,v2.z);
-   texcoord(c3,c3,0.0f);
-   fanvertex(v3.x,v3.y,v3.z);
-   texcoord(c4,c4,0.0f);
-   fanvertex(v4.x,v4.y,v4.z);
-   texcoord(c2,c2,0.0f);
-   fanvertex(v2.x,v2.y,v2.z);
+      // render silhouette vertices
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+
+      // calculate back-facing normal
+      n=(v3-m)/(v4-m);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c234,c1,lambda);
+      fanvertex(v1.x,v1.y,v1.z);
+
+      // render silhouette vertices
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+
+      // calculate back-facing normal
+      n=(v4-m)/(v2-m);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c234,c1,lambda);
+      fanvertex(v1.x,v1.y,v1.z);
+
+      // render silhouette vertices
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+      }
    }
 
 // draw a triangle fan with 4 triangles
@@ -140,7 +222,7 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye)
    {
-   miniv3d m1,m2,d;
+   miniv3d m1,m2,d,n;
 
    double lambda,
           alpha,beta,
@@ -152,38 +234,148 @@ void miniproj::draw4fan(const miniv3d &v1,const double c1,
    // calculate thick vertex (second intersection)
    beta=intersect(v3,v4-v3,eye,v1-eye,v2-eye,m2);
 
+   // linear interpolation at thick vertex
    c12=(1.0f-alpha)*c1+alpha*c2;
    c34=(1.0f-beta)*c3+beta*c4;
 
    d=m2-m1;
 
+   // calculate thickness
    lambda=d.getlength();
 
-   beginfan();
-
-   // render thick vertex
+   // check orientation
    if (d*(m1-eye)<0.0f)
       {
+      // calculate back-facing normal
+      n=(v1-m1)/(v3-m1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
       fanvertex(m2.x,m2.y,m2.z);
+
+      // render silhouette vertices
+      texcoord(c1,c1,0.0f);
+      fanvertex(v1.x,v1.y,v1.z);
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+
+      // calculate back-facing normal
+      n=(v3-m1)/(v2-m1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c12,c34,lambda);
+      fanvertex(m2.x,m2.y,m2.z);
+
+      // render silhouette vertices
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+
+      // calculate back-facing normal
+      n=(v2-m1)/(v4-m1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c12,c34,lambda);
+      fanvertex(m2.x,m2.y,m2.z);
+
+      // render silhouette vertices
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+
+      // calculate back-facing normal
+      n=(v4-m1)/(v1-m1);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c12,c34,lambda);
+      fanvertex(m2.x,m2.y,m2.z);
+
+      // render silhouette vertices
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+      texcoord(c1,c1,0.0f);
+      fanvertex(v1.x,v1.y,v1.z);
       }
    else
       {
+      // calculate back-facing normal
+      n=(v1-m2)/(v3-m2);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
       fanvertex(m1.x,m1.y,m1.z);
-      }
 
-   // render silhouette vertices
-   texcoord(c1,c1,0.0f);
-   fanvertex(v1.x,v1.y,v1.z);
-   texcoord(c3,c3,0.0f);
-   fanvertex(v3.x,v3.y,v3.z);
-   texcoord(c2,c2,0.0f);
-   fanvertex(v2.x,v2.y,v2.z);
-   texcoord(c4,c4,0.0f);
-   fanvertex(v4.x,v4.y,v4.z);
-   texcoord(c1,c1,0.0f);
-   fanvertex(v1.x,v1.y,v1.z);
+      // render silhouette vertices
+      texcoord(c1,c1,0.0f);
+      fanvertex(v1.x,v1.y,v1.z);
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+
+      // calculate back-facing normal
+      n=(v3-m2)/(v2-m2);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c34,c12,lambda);
+      fanvertex(m1.x,m1.y,m1.z);
+
+      // render silhouette vertices
+      texcoord(c3,c3,0.0f);
+      fanvertex(v3.x,v3.y,v3.z);
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+
+      // calculate back-facing normal
+      n=(v2-m2)/(v4-m2);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c34,c12,lambda);
+      fanvertex(m1.x,m1.y,m1.z);
+
+      // render silhouette vertices
+      texcoord(c2,c2,0.0f);
+      fanvertex(v2.x,v2.y,v2.z);
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+
+      // calculate back-facing normal
+      n=(v4-m2)/(v1-m2);
+      n.normalize();
+
+      // render thick vertex
+      beginfan();
+      normal(n.x,n.y,n.z);
+      texcoord(c34,c12,lambda);
+      fanvertex(m1.x,m1.y,m1.z);
+
+      // render silhouette vertices
+      texcoord(c4,c4,0.0f);
+      fanvertex(v4.x,v4.y,v4.z);
+      texcoord(c1,c1,0.0f);
+      fanvertex(v1.x,v1.y,v1.z);
+      }
    }
 
 // project a tetrahedron
