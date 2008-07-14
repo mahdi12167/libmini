@@ -605,7 +605,6 @@ void miniproj::setupprogs()
       RSQ len.x,len.x; \n\
       MUL dir,pos1,len.x; \n\
       ### calculate thickness \n\
-      MOV nrm,dir; ### \n\
       SUB pos1,pos2,pos1; \n\
       DP3 len.x,nrm,pos1; \n\
       DP3 len.y,nrm,dir; \n\
