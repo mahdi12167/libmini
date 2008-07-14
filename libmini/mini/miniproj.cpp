@@ -593,17 +593,24 @@ void miniproj::setupprogs()
    static char *frgprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
-      TEMP col,nrm,tex,pos1,pos2,len; \n\
+      TEMP col,nrm,tex,pos1,pos2,dir,len; \n\
       ### fetch actual fragment \n\
       MOV col,fragment.color; \n\
       MOV nrm,fragment.texcoord[0]; \n\
       MOV tex,fragment.texcoord[1]; \n\
       MOV pos1,fragment.texcoord[2]; \n\
       MOV pos2,fragment.texcoord[3]; \n\
-      ### calculate thickness \n\
-      SUB pos1,pos2,pos1; \n\
+      ### normalize view vector \n\
       DP3 len.x,pos1,pos1; \n\
-      POW len.x,len.x,c1.x; \n\
+      RSQ len.x,len.x; \n\
+      MUL dir,pos1,len.x; \n\
+      ### calculate thickness \n\
+      MOV nrm,dir; ### \n\
+      SUB pos1,pos2,pos1; \n\
+      DP3 len.x,nrm,pos1; \n\
+      DP3 len.y,nrm,dir; \n\
+      RCP len.y,len.y; \n\
+      MUL len.x,len.x,len.y; \n\
       ### calculate optical depth \n\
       ADD len.y,tex.x,tex.y; \n\
       MUL len.y,len.y,c1.x; \n\
