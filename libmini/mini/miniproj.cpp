@@ -7,12 +7,8 @@
 // default constructor
 miniproj::miniproj()
    {
-   DIM=0;
-
-   MAXE=0.0f;
-   MAXL=0.0f;
-
-   TEXID=0;
+   EMI=0.0f;
+   RHO=0.0f;
 
    initglsetup();
    setupprogs();
@@ -20,11 +16,7 @@ miniproj::miniproj()
 
 // destructor
 miniproj::~miniproj()
-   {
-   if (TEXID!=0) deletetexmap(TEXID);
-
-   deleteprogs();
-   }
+   {deleteprogs();}
 
 // calculate whether or not a triangle is front- or back-facing
 inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e)
@@ -228,79 +220,24 @@ void miniproj::proj(const miniv3d &v1,const double c1,
       }
    }
 
-// build opacity lookup table
-int miniproj::gentexmap(int dim,float maxe,float maxl)
-   {
-   int i,j;
-
-   float e,l;
-
-   unsigned char *image,*ptr;
-
-   int texid;
-
-   if (dim<2) ERRORMSG();
-   if ((dim&(dim-1))!=0) ERRORMSG();
-
-   if (maxe<=0.0f || maxl<=0.0f) ERRORMSG();
-
-   if ((image=(unsigned char *)malloc(2*sqr(dim)))==NULL) ERRORMSG();
-
-   ptr=image;
-
-   for (j=0; j<dim; j++)
-      for (i=0; i<dim; i++)
-         {
-         e=i*maxe/(dim-1);
-         l=j*maxl/(dim-1);
-
-         *ptr++=255;
-         *ptr++=ftrc(255.0f*(1.0f-fexp(-e*l))+0.5f);
-         }
-
-   texid=buildLAtexmap(image,&dim,&dim);
-   free(image);
-
-   return(texid);
-   }
-
 // initialize projection state
-void miniproj::initproj(int dim,float maxe,float maxl)
+void miniproj::initproj(float emi,float rho)
    {
-   float mtx[16]={0.5f,0,0,0,
-                  0.5f,0,0,0,
-                  0,1.0f/maxl,0,0,
-                  0,0,0,1};
+   if (emi<0.0f || rho<0.0f) ERRORMSG();
 
-   if (dim<2 || maxe<=0.0f || maxl<=0.0f) ERRORMSG();
-
-   if (dim!=DIM || maxe!=MAXE || maxl!=MAXL)
-      {
-      DIM=dim;
-
-      MAXE=maxe;
-      MAXL=maxl;
-
-      if (TEXID!=0) deletetexmap(TEXID);
-      TEXID=gentexmap(dim,maxe,maxl);
-      }
+   EMI=emi;
+   RHO=rho;
 
    initstate();
    disableculling();
    enableblending();
    disableZwriting();
 
-   mtxtex();
-   mtxpush();
-   mtxid();
-   mtxtranslate(0.5f/DIM,0.5f/DIM,0.0f);
-   mtxscale((float)(DIM-1)/DIM,(float)(DIM-1)/DIM,0.0f);
-   mtxmult(mtx);
-   mtxmodel();
-
-   bindtexmap(TEXID,0,0,0,0);
+   enablevtxshader();
+   enablepixshader();
 
    beginfans();
+   normal(0.0f,0.0f,0.0f); //!!
    }
 
 // de-initialize projection state
@@ -308,11 +245,8 @@ void miniproj::exitproj()
    {
    endfans();
 
-   bindtexmap(0,0,0,0,0);
-
-   mtxtex();
-   mtxpop();
-   mtxmodel();
+   disablevtxshader();
+   disablepixshader();
 
    enableZwriting();
    enableBFculling();
@@ -334,7 +268,7 @@ void miniproj::enablevtxshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          if (VTXPROGID==0)
@@ -361,7 +295,7 @@ void miniproj::disablevtxshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
@@ -385,7 +319,7 @@ void miniproj::enablepixshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRGPROG!=NULL)
          {
          if (FRGPROGID==0)
@@ -395,6 +329,9 @@ void miniproj::enablepixshader()
             glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROG),FRGPROG);
             FRGPROGID=frgprogid;
             }
+
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
 
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
          glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -412,7 +349,7 @@ void miniproj::disablepixshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRGPROG!=NULL)
          {
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
@@ -427,10 +364,59 @@ void miniproj::disablepixshader()
 // initialize vertex and fragment program setup
 void miniproj::setupprogs()
    {
-   VTXPROG=NULL;
+   // vertex shader
+   static char *vtxprog="!!ARBvp1.0 \n\
+      PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      TEMP vtx,col,nrm,tex,pos,vec; \n\
+      ### fetch actual vertex \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV nrm,vertex.normal; \n\
+      MOV tex,vertex.texcoord[0]; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n\
+      ### write resulting vertex \n\
+      MOV result.position,pos; \n\
+      MOV result.color,col; \n\
+      MOV result.texcoord[0],vec; \n\
+      MOV result.texcoord[1],tex; \n\
+      END \n";
+
+   // pixel shader
+   static char *frgprog="!!ARBfp1.0 \n\
+      PARAM c0=program.env[0]; \n\
+      PARAM c1=program.env[1]; \n\
+      TEMP col,nrm,tex,len; \n\
+      ### fetch actual fragment \n\
+      MOV col,fragment.color; \n\
+      MOV nrm,fragment.texcoord[0]; \n\
+      MOV tex,fragment.texcoord[1]; \n\
+      ### calculate optical depth \n\
+      ADD len.x,tex.x,tex.y; \n\
+      MUL len.x,len.x,tex.z; \n\
+      MUL len.x,len.x,c1.x; \n\
+      MUL len.x,len.x,c0.y; \n\
+      ### calculate absorption \n\
+      POW len.x,c1.y,-len.x; \n\
+      SUB len.x,c1.z,len.x; \n\
+      ### write resulting fragment \n\
+      MUL result.color.xyz,col,c0.x; \n\
+      MOV result.color.w,len.x; \n\
+      END \n";
+
+   VTXPROG=vtxprog;
    VTXPROGID=0;
 
-   FRGPROG=NULL;
+   FRGPROG=frgprog;
    FRGPROGID=0;
    }
 
@@ -441,7 +427,7 @@ void miniproj::deleteprogs()
 
    GLuint progid;
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
       if (VTXPROGID!=0)
          {
