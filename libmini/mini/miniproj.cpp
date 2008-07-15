@@ -559,6 +559,7 @@ void miniproj::setupprogs()
    // vertex shader
    static char *vtxprog="!!ARBvp1.0 \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       TEMP vtx,col,nrm,tex,pos,vec,dir,len; \n\
       ### fetch actual vertex \n\
@@ -566,11 +567,18 @@ void miniproj::setupprogs()
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n\
       MOV tex,vertex.texcoord[0]; \n\
-      ### transform vertex with modelview \n\
+      ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\
       DP4 pos.w,mat[3],vtx; \n\
+      ### write resulting vertex \n\
+      MOV result.position,pos; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
       ### transform normal with inverse transpose \n\
       DP4 vec.x,invtra[0],nrm; \n\
       DP4 vec.y,invtra[1],nrm; \n\
@@ -580,8 +588,7 @@ void miniproj::setupprogs()
       DP3 len.x,pos,pos; \n\
       RSQ len.x,len.x; \n\
       MUL dir,pos,len.x; \n\
-      ### write resulting vertex \n\
-      MOV result.position,pos; \n\
+      ### write resulting vertex attributes \n\
       MOV result.color,col; \n\
       MOV result.texcoord[0],vec; \n\
       MOV result.texcoord[1],tex; \n\
