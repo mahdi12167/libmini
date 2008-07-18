@@ -190,11 +190,12 @@ class minihedron
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minivals vals; // embedded data values
 
+   BOOLINT intersect; // intersection flag
+
    protected:
 
    unsigned int dep123,dep142,dep243,dep341; // face dependencies
 
-   BOOLINT intersect; // intersection flag
    BOOLINT visit; // sorting flag
 
    friend class minimesh;
