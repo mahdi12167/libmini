@@ -28,6 +28,15 @@ class miniproj
              const miniv3d &col,
              const miniv3d &eye);
 
+   //! clip&project a tetrahedron
+   void clip(const miniv3d &v1,const double c1,
+             const miniv3d &v2,const double c2,
+             const miniv3d &v3,const double c3,
+             const miniv3d &v4,const double c4,
+             const miniv3d &col,
+             const miniv3d &eye,
+             const miniv3d &dir);
+
    //! de-initialize projection state
    void exitproj();
 
@@ -38,17 +47,47 @@ class miniproj
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
 
-   inline void draw3fan(const miniv3d &v1,const double c1,
+   inline void proj3tri(const miniv3d &v1,const double c1,
                         const miniv3d &v2,const double c2,
                         const miniv3d &v3,const double c3,
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
-   inline void draw4fan(const miniv3d &v1,const double c1,
+   inline void proj4tri(const miniv3d &v1,const double c1,
                         const miniv3d &v2,const double c2,
                         const miniv3d &v3,const double c3,
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye);
+
+   void projpri(const miniv3d &v1,const double c1,
+                const miniv3d &v2,const double c2,
+                const miniv3d &v3,const double c3,
+                const miniv3d &v4,const double c4,
+                const miniv3d &v5,const double c5,
+                const miniv3d &v6,const double c6,
+                const miniv3d &col,
+                const miniv3d &eye);
+
+   void clip1A(const miniv3d &v1,const double c1,const double d1,
+               const miniv3d &v2,const double c2,const double d2,
+               const miniv3d &v3,const double c3,const double d3,
+               const miniv3d &v4,const double c4,const double d4,
+               const miniv3d &col,
+               const miniv3d &eye);
+
+   void clip1B(const miniv3d &v1,const double c1,const double d1,
+               const miniv3d &v2,const double c2,const double d2,
+               const miniv3d &v3,const double c3,const double d3,
+               const miniv3d &v4,const double c4,const double d4,
+               const miniv3d &col,
+               const miniv3d &eye);
+
+   void clip2(const miniv3d &v1,const double c1,const double d1,
+              const miniv3d &v2,const double c2,const double d2,
+              const miniv3d &v3,const double c3,const double d3,
+              const miniv3d &v4,const double c4,const double d4,
+              const miniv3d &col,
+              const miniv3d &eye);
 
    // vertex and fragment programs:
 

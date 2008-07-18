@@ -45,8 +45,8 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
-// draw a triangle fan with 3 triangles
-inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
+// project 3 triangles
+inline void miniproj::proj3tri(const miniv3d &v1,const double c1,
                                const miniv3d &v2,const double c2,
                                const miniv3d &v3,const double c3,
                                const miniv3d &v4,const double c4,
@@ -216,8 +216,8 @@ inline void miniproj::draw3fan(const miniv3d &v1,const double c1,
       }
    }
 
-// draw a triangle fan with 4 triangles
-void miniproj::draw4fan(const miniv3d &v1,const double c1,
+// project 4 triangles
+void miniproj::proj4tri(const miniv3d &v1,const double c1,
                         const miniv3d &v2,const double c2,
                         const miniv3d &v3,const double c3,
                         const miniv3d &v4,const double c4,
@@ -403,13 +403,177 @@ void miniproj::proj(const miniv3d &v1,const double c1,
 
    switch (ff)
       {
-      case 1: case 14: draw3fan(v4,c4,v1,c1,v2,c2,v3,c3,eye); break;
-      case 2: case 13: draw3fan(v3,c3,v1,c1,v2,c2,v4,c4,eye); break;
-      case 3: case 12: draw4fan(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
-      case 4: case 11: draw3fan(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
-      case 5: case 10: draw4fan(v1,c1,v4,c4,v2,c2,v3,c3,eye); break;
-      case 6: case  9: draw4fan(v1,c1,v3,c3,v2,c2,v4,c4,eye); break;
-      case 7: case  8: draw3fan(v2,c2,v1,c1,v3,c3,v4,c4,eye); break;
+      case 1: case 14: proj3tri(v4,c4,v1,c1,v2,c2,v3,c3,eye); break;
+      case 2: case 13: proj3tri(v3,c3,v1,c1,v2,c2,v4,c4,eye); break;
+      case 3: case 12: proj4tri(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
+      case 4: case 11: proj3tri(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
+      case 5: case 10: proj4tri(v1,c1,v4,c4,v2,c2,v3,c3,eye); break;
+      case 6: case  9: proj4tri(v1,c1,v3,c3,v2,c2,v4,c4,eye); break;
+      case 7: case  8: proj3tri(v2,c2,v1,c1,v3,c3,v4,c4,eye); break;
+      }
+   }
+
+// break a prism into 3 tetrahedra
+// needs to be in front of the near plane
+void miniproj::projpri(const miniv3d &v1,const double c1,
+                       const miniv3d &v2,const double c2,
+                       const miniv3d &v3,const double c3,
+                       const miniv3d &v4,const double c4,
+                       const miniv3d &v5,const double c5,
+                       const miniv3d &v6,const double c6,
+                       const miniv3d &col,
+                       const miniv3d &eye)
+   {
+   BOOLINT ff1,ff2;
+
+   ff1=isfront(v1,v2,v3,v4,eye);
+   ff2=isfront(v6,v3,v4,v5,eye);
+
+   if (!ff1)
+      if (ff2)
+         {
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         }
+      else
+         {
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         }
+   else
+      if (ff2)
+         {
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         }
+      else
+         {
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         }
+   }
+
+// clipping subcase #1A
+void miniproj::clip1A(const miniv3d &v1,const double c1,const double d1,
+                      const miniv3d &v2,const double c2,const double d2,
+                      const miniv3d &v3,const double c3,const double d3,
+                      const miniv3d &v4,const double c4,const double d4,
+                      const miniv3d &col,
+                      const miniv3d &eye)
+   {
+   miniv3d p1,p2,p3;
+   float pc1,pc2,pc3;
+
+   p1=(d2*v1+d1*v2)/(d1+d2);
+   pc1=(d2*c1+d1*c2)/(d1+d2);
+
+   p2=(d3*v1+d1*v3)/(d1+d3);
+   pc2=(d3*c1+d1*c3)/(d1+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+
+   projpri(v2,c2,v3,c3,v4,c4,p1,pc1,p2,pc2,p3,pc3,col,eye);
+   }
+
+// clipping subcase #1B
+void miniproj::clip1B(const miniv3d &v1,const double c1,const double d1,
+                      const miniv3d &v2,const double c2,const double d2,
+                      const miniv3d &v3,const double c3,const double d3,
+                      const miniv3d &v4,const double c4,const double d4,
+                      const miniv3d &col,
+                      const miniv3d &eye)
+   {
+   miniv3d p1,p2,p3;
+   float pc1,pc2,pc3;
+
+   p1=(d2*v1+d1*v2)/(d1+d2);
+   pc1=(d2*c1+d1*c2)/(d1+d2);
+
+   p2=(d3*v1+d1*v3)/(d1+d3);
+   pc2=(d3*c1+d1*c3)/(d1+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+
+   proj(v1,c1,p1,pc1,p2,pc2,p3,pc3,col,eye);
+   }
+
+// clipping subcase #2
+void miniproj::clip2(const miniv3d &v1,const double c1,const double d1,
+                     const miniv3d &v2,const double c2,const double d2,
+                     const miniv3d &v3,const double c3,const double d3,
+                     const miniv3d &v4,const double c4,const double d4,
+                     const miniv3d &col,
+                     const miniv3d &eye)
+   {
+   miniv3d p1,p2,p3,p4;
+   float pc1,pc2,pc3,pc4;
+
+   p1=(d3*v1+d1*v3)/(d1+d3);
+   pc1=(d3*c1+d1*c3)/(d1+d3);
+
+   p2=(d3*v2+d2*v3)/(d2+d3);
+   pc2=(d3*c2+d2*c3)/(d2+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+
+   p4=(d4*v2+d2*v4)/(d2+d4);
+   pc4=(d4*c2+d2*c4)/(d2+d4);
+
+   projpri(v3,c3,p1,pc1,p2,pc2,v4,c4,p3,pc3,p4,pc4,col,eye);
+   }
+
+// clip&project a tetrahedron
+void miniproj::clip(const miniv3d &v1,const double c1,
+                    const miniv3d &v2,const double c2,
+                    const miniv3d &v3,const double c3,
+                    const miniv3d &v4,const double c4,
+                    const miniv3d &col,
+                    const miniv3d &eye,
+                    const miniv3d &dir)
+   {
+   int ff;
+
+   double d1,d2,d3,d4;
+
+   d1=dir*(v1-eye);
+   d2=dir*(v2-eye);
+   d3=dir*(v3-eye);
+   d4=dir*(v4-eye);
+
+   ff=0;
+
+   if (d1<0.0) ff|=1;
+   if (d2<0.0) ff|=2;
+   if (d3<0.0) ff|=4;
+   if (d4<0.0) ff|=8;
+
+   switch (ff)
+      {
+      case 0: proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye); break;
+
+      case 1: clip1A(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
+      case 2: clip1A(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
+      case 4: clip1A(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
+      case 8: clip1A(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
+
+      case 14: clip1B(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
+      case 13: clip1B(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
+      case 11: clip1B(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
+      case 7: clip1B(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
+
+      case 3: clip2(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
+      case 5: clip2(v1,c1,FABS(d1),v3,c3,FABS(d3),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
+      case 6: clip2(v2,c2,FABS(d2),v3,c3,FABS(d3),v1,c1,FABS(d1),v4,c4,FABS(d4),col,eye); break;
+      case 9: clip2(v1,c1,FABS(d1),v4,c4,FABS(d4),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
+      case 10: clip2(v2,c2,FABS(d2),v4,c4,FABS(d4),v1,c1,FABS(d1),v3,c3,FABS(d3),col,eye); break;
+      case 12: clip2(v3,c3,FABS(d3),v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),col,eye); break;
       }
    }
 
