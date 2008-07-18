@@ -85,6 +85,8 @@ class minihedron
    minihedron()
       {
       dep123=dep142=dep243=dep341=0;
+
+      intersect=FALSE;
       visit=FALSE;
       }
 
@@ -99,6 +101,8 @@ class minihedron
       vals.set(c);
 
       dep123=dep142=dep243=dep341=0;
+
+      intersect=FALSE;
       visit=FALSE;
       }
 
@@ -113,6 +117,8 @@ class minihedron
       vals=a;
 
       dep123=dep142=dep243=dep341=0;
+
+      intersect=FALSE;
       visit=FALSE;
       }
 
@@ -127,6 +133,8 @@ class minihedron
       vals.set(minival(s,b,v1,v2,v3,v4));
 
       dep123=dep142=dep243=dep341=0;
+
+      intersect=FALSE;
       visit=FALSE;
       }
 
@@ -185,6 +193,8 @@ class minihedron
    protected:
 
    unsigned int dep123,dep142,dep243,dep341; // face dependencies
+
+   BOOLINT intersect; // intersection flag
    BOOLINT visit; // sorting flag
 
    friend class minimesh;
@@ -244,7 +254,7 @@ class minimesh: public minidyna<minihedron>
    void getbbox(miniv3d &bbmin,miniv3d &bbmax) const;
 
    //! sort a tetrahedral mesh with respect to the eye point
-   minimesh sort(const miniv3d &eye);
+   minimesh sort(const miniv3d &eye,BOOLINT intersect);
 
    //! get volume
    double getvolume() const;

@@ -493,11 +493,15 @@ void minimesh::getbbox(miniv3d &bbmin,miniv3d &bbmax) const
    }
 
 // sort a tetrahedral mesh with respect to the eye point
-minimesh minimesh::sort(const miniv3d &eye)
+minimesh minimesh::sort(const miniv3d &eye,BOOLINT intersect)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).visit=FALSE;
+   for (i=0; i<getsize(); i++)
+      {
+      ref(i).intersect=intersect;
+      ref(i).visit=FALSE;
+      }
 
    // sort and append all tetrahedra to the output mesh
    SORT.setnull();
@@ -973,23 +977,23 @@ void minibsptree::collect(const unsigned int idx)
          {
          // collect the left half space
          if (dist+RADIUS>0.0)
-            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
+            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE,FALSE)); // sort left mesh
             else collect(TREE[idx].left); // descend
 
          // collect the right half space
-         if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE)); // sort right mesh
+         if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE,TRUE)); // sort right mesh
          else collect(TREE[idx].right); // descend
          }
       else
          {
          // collect the right half space
-         if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE)); // sort right mesh
-         else collect(TREE[idx].right); // descend
+         if (dist+RADIUS>0.0)
+            if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE,FALSE)); // sort right mesh
+            else collect(TREE[idx].right); // descend
 
          // collect the left half space
-         if (dist+RADIUS>0.0)
-            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE)); // sort left mesh
-            else collect(TREE[idx].left);
+         if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE,TRUE)); // sort left mesh
+         else collect(TREE[idx].left);
          }
       }
    }
