@@ -35,7 +35,8 @@ class miniproj
              const miniv3d &v4,const double c4,
              const miniv3d &col,
              const miniv3d &eye,
-             const miniv3d &dir);
+             const miniv3d &dir,
+             const double nearp);
 
    //! de-initialize projection state
    void exitproj();

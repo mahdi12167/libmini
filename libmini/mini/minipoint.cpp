@@ -818,7 +818,7 @@ float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
 // render waypoints
 void minipoint::draw(float ex,float ey,float ez,
                      float dx,float dy,float dz,
-                     float farp,float fovy,float aspect,
+                     float nearp,float farp,float fovy,float aspect,
                      double time,minipointopts *global,
                      minipointrndr *fallback)
    {
@@ -858,7 +858,7 @@ void minipoint::draw(float ex,float ey,float ez,
          rndr->init(this,
                     ex,ey,ez,
                     dx,dy,dz,
-                    farp,fovy,aspect,
+                    nearp,farp,fovy,aspect,
                     time,global);
 
          for (i=1; i<=rndr->getpasses(); i++)
@@ -905,7 +905,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
 
    draw(ex,ey,ez,
         dx,dy,dz,
-        MAXFLOAT,90.0f,1.0f,
+        0.0f,MAXFLOAT,90.0f,1.0f,
         0.0,&global,
         &RNDR_SIGNPOST);
    }
@@ -943,7 +943,7 @@ void minipoint::drawbricks(float ex,float ey,float ez,
 
    draw(ex,ey,ez,
         0.0f,0.0f,0.0f,
-        farp,fovy,aspect,
+        0.0f,farp,fovy,aspect,
         0.0,&global,
         &RNDR_BRICK[CONFIGURE_BRICKPASSES-1]);
    }
@@ -952,11 +952,11 @@ void minipoint::drawbricks(float ex,float ey,float ez,
 void minipointrndr_signpost::init(minipoint *points,
                                   float ex,float ey,float ez,
                                   float dx,float dy,float dz,
-                                  float farp,float fovy,float aspect,
+                                  float nearp,float farp,float fovy,float aspect,
                                   double time,minipointopts *global)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
-       farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
+       nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
 
    POINTS=points;
@@ -1099,7 +1099,7 @@ minipointrndr_brick::~minipointrndr_brick()
 void minipointrndr_brick::init(minipoint *points,
                                float ex,float ey,float ez,
                                float dx,float dy,float dz,
-                               float farp,float fovy,float aspect,
+                               float nearp,float farp,float fovy,float aspect,
                                double time,minipointopts *global)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
@@ -1111,6 +1111,7 @@ void minipointrndr_brick::init(minipoint *points,
    EY=ey;
    EZ=ez;
 
+   NEARP=nearp;
    FARP=farp;
    FOVY=fovy;
    ASPECT=aspect;

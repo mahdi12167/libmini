@@ -1348,7 +1348,7 @@ void minilayer::renderpoints()
 
       POINTS->draw(ei.vec.x,ei.vec.y,-ei.vec.z,
                    di.x,di.y,-di.z,
-                   len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,
+                   len_g2i(LPARAMS.nearp),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,
                    LPARAMS.time,&global,
                    !LPARAMS.usebricks?minipoint::getrndr_signpost():minipoint::getrndr_brick(LPARAMS.brickpasses));
 

@@ -165,13 +165,13 @@ class minipointrndr
    virtual void init(minipoint *points,
                      float ex,float ey,float ez,
                      float dx,float dy,float dz,
-                     float farp,float fovy,float aspect,
+                     float nearp,float farp,float fovy,float aspect,
                      double time,minipointopts *global)
       {
       if (points==NULL ||
           ex==MAXFLOAT || ey==MAXFLOAT || ez==MAXFLOAT ||
           dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
-          farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
+          nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
           time<0.0 || global==NULL) ERRORMSG();
       }
 
@@ -207,7 +207,7 @@ class minipointrndr_signpost: public minipointrndr
    void init(minipoint *points,
              float ex,float ey,float ez,
              float dx,float dy,float dz,
-             float farp,float fovy,float aspect,
+             float nearp,float farp,float fovy,float aspect,
              double time,minipointopts *global);
 
    void pre(int pass);
@@ -241,7 +241,7 @@ class minipointrndr_brick: public minipointrndr
    void init(minipoint *points,
              float ex,float ey,float ez,
              float dx,float dy,float dz,
-             float farp,float fovy,float aspect,
+             float nearp,float farp,float fovy,float aspect,
              double time,minipointopts *global);
 
    void render(minipointdata *vpoint,int pass);
@@ -253,7 +253,7 @@ class minipointrndr_brick: public minipointrndr
    minipoint *POINTS;
 
    float EX,EY,EZ;
-   float FARP,FOVY,ASPECT;
+   float NEARP,FARP,FOVY,ASPECT;
    minipointopts *GLOBAL;
    float OFFSETLAT,OFFSETLON;
    float SCALEX,SCALEY,SCALEELEV;
@@ -322,7 +322,7 @@ class minipoint
    //! render waypoints
    void draw(float ex,float ey,float ez,
              float dx,float dy,float dz,
-             float farp,float fovy,float aspect,
+             float nearp,float farp,float fovy,float aspect,
              double time,minipointopts *global,
              minipointrndr *fallback=NULL);
 
