@@ -347,7 +347,7 @@ void datagrid::trigger(const double time)
    }
 
 // trigger pushing the mesh for a particular time step and eye point
-void datagrid::trigger(const double time,const minicoord &eye,const double radius)
+void datagrid::trigger(const double time,const minicoord &eye,const double minradius,const double maxradius)
    {
    minicoord ep;
 
@@ -368,7 +368,7 @@ void datagrid::trigger(const double time,const minicoord &eye,const double radiu
       }
 
    if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
-   SORTED=BSPT2.extract(e,radius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   SORTED=BSPT2.extract(e,minradius,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
    push(SORTED,time); // push the dynamic sorted mesh
    }
 

@@ -69,7 +69,7 @@ class datagrid
    void trigger(const double time);
 
    //! trigger pushing the mesh for a particular time step and eye point
-   void trigger(const double time,const minicoord &eye,const double radius=MAXFLOAT);
+   void trigger(const double time,const minicoord &eye,const double minradius=0.0,const double maxradius=MAXFLOAT);
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,const double time);

@@ -937,16 +937,17 @@ minimesh minibsptree::extract()
    }
 
 // extract sorted tetrahedral mesh
-minimesh minibsptree::extract(const miniv3d &eye,const double radius)
+minimesh minibsptree::extract(const miniv3d &eye,const double minradius,const double maxradius)
    {
    // preprocess the input mesh
    while (!preprocess());
 
    if (GOTEYE)
-      if (eye==EYE && radius==RADIUS) return(COLLECT); // return the previously collected mesh
+      if (eye==EYE && minradius==MINR && maxradius==MAXR) return(COLLECT); // return the previously collected mesh
 
    EYE=eye;
-   RADIUS=radius;
+   MINR=minradius;
+   MAXR=maxradius;
    GOTEYE=TRUE;
 
    // sort and append each tetrahedralized node to the output mesh
@@ -976,8 +977,8 @@ void minibsptree::collect(const unsigned int idx)
       if (dist<0.0)
          {
          // collect the left half space
-         if (dist+RADIUS>0.0)
-            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE,FALSE)); // sort left mesh
+         if (dist+MAXR>0.0)
+            if (TREE[idx].left==0) COLLECT.append(TREE[idx].leftmesh.sort(EYE,dist+MINR>0.0)); // sort left mesh
             else collect(TREE[idx].left); // descend
 
          // collect the right half space
@@ -987,8 +988,8 @@ void minibsptree::collect(const unsigned int idx)
       else
          {
          // collect the right half space
-         if (dist+RADIUS>0.0)
-            if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE,FALSE)); // sort right mesh
+         if (dist-MAXR<0.0)
+            if (TREE[idx].right==0) COLLECT.append(TREE[idx].rightmesh.sort(EYE,dist-MINR<0.0)); // sort right mesh
             else collect(TREE[idx].right); // descend
 
          // collect the left half space

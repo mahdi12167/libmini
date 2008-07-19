@@ -545,7 +545,7 @@ void miniproj::clip(const miniv3d &v1,const double c1,
 
    double d1,d2,d3,d4;
 
-   p=eye+1.001f*nearp*dir;
+   p=eye+nearp*dir;
 
    d1=dir*(v1-p);
    d2=dir*(v2-p);

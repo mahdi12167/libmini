@@ -328,7 +328,7 @@ class minibsptree
    minimesh extract();
 
    //! process input mesh and extract sorted tetrahedral output mesh
-   minimesh extract(const miniv3d &eye,const double radius);
+   minimesh extract(const miniv3d &eye,const double minradius=0.0,const double maxradius=MAXFLOAT);
 
    //! get volume of tetrahedralized polyhedra
    double getvolume();
@@ -356,7 +356,7 @@ class minibsptree
    unsigned int SWIZZLE;
 
    miniv3d EYE;
-   double RADIUS;
+   double MINR,MAXR;
    BOOLINT GOTEYE;
 
    minimesh COLLECT;
