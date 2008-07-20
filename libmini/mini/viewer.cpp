@@ -195,6 +195,8 @@ void initparams()
    prms.nearp=VIEWER_NEARP;
    prms.farp=VIEWER_FARP;
 
+   viewer->set(prms);
+
    viewer->getearth()->get(eprms);
 
    eprms.usefog=TRUE;
