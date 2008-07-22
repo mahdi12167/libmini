@@ -32,11 +32,7 @@ class MyThread: public OpenThreads::Thread
       BACKGROUND=background;
       }
 
-   virtual void run()
-      {
-      THREAD(BACKGROUND);
-      OpenThreads::Thread::YieldCurrentThread();
-      }
+   virtual void run() {THREAD(BACKGROUND);}
 
    private:
 
