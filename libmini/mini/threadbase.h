@@ -3,9 +3,48 @@
 #ifndef THREADBASE_H
 #define THREADBASE_H
 
-#include <pthread.h>
+#ifndef USEOPENTH
+#   include <pthread.h>
+#else
+#   include <OpenThreads/Thread>
+#   include <OpenThreads/Mutex>
+#endif
 
 #include "datacloud.h"
+
+#ifdef USEOPENTH
+
+class MyThread: public OpenThreads::Thread
+   {
+   public:
+
+   MyThread(): OpenThreads::Thread()
+      {
+      THREAD=NULL;
+      BACKGROUND=NULL;
+      }
+
+   virtual ~MyThread() {}
+
+   void setthread(void *(*thread)(void *background),backarrayelem *background)
+      {
+      THREAD=thread;
+      BACKGROUND=background;
+      }
+
+   virtual void run()
+      {
+      THREAD(BACKGROUND);
+      OpenThreads::Thread::YieldCurrentThread();
+      }
+
+   private:
+
+   void *(*THREAD)(void *background);
+   backarrayelem *BACKGROUND;
+   };
+
+#endif
 
 class threadbase
    {
@@ -28,15 +67,24 @@ class threadbase
 
    private:
 
+#ifndef USEOPENTH
    typedef pthread_t *PTHREADPTR;
+#else
+   typedef MyThread *MTHREADPTR;
+#endif
 
    struct MULTITHREAD_STRUCT
       {
       int numthreads;
 
+#ifndef USEOPENTH
       PTHREADPTR pthread;
       pthread_mutex_t mutex,iomutex;
       pthread_attr_t attr;
+#else
+      MTHREADPTR mthread;
+      OpenThreads::Mutex mutex,iomutex;
+#endif
       };
 
    typedef MULTITHREAD_STRUCT MULTITHREAD_TYPE;

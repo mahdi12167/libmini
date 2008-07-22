@@ -13,8 +13,12 @@ threadbase::threadbase()
 
    INSTANCES++;
 
+#ifndef USOPENTH
 #ifdef PTW32_STATIC_LIB
    if (INSTANCES==1) pthread_win32_process_attach_np();
+#endif
+#else
+   if (INSTANCES==1) OpenThreads::Thread::Init();
 #endif
    }
 
@@ -22,8 +26,10 @@ threadbase::~threadbase()
    {
    INSTANCES--;
 
+#ifndef USOPENTH
 #ifdef PTW32_STATIC_LIB
    if (INSTANCES==0) pthread_win32_process_detach_np();
+#endif
 #endif
    }
 
@@ -75,6 +81,8 @@ void threadbase::unlock_io(int id,void *data)
    obj->unlock_io_safe(id);
    }
 
+#ifndef USEOPENTH
+
 void threadbase::threadinit_safe(int threads,int id)
    {
    initmultithread(id);
@@ -122,6 +130,47 @@ void threadbase::lock_io_safe(int id)
 
 void threadbase::unlock_io_safe(int id)
    {pthread_mutex_unlock(&MULTITHREAD[id]->iomutex);}
+
+#else
+
+void threadbase::threadinit_safe(int threads,int id)
+   {
+   initmultithread(id);
+
+   MULTITHREAD[id]->numthreads=threads;
+
+   MULTITHREAD[id]->mthread=new MyThread[threads];
+   }
+
+void threadbase::threadexit_safe(int id)
+   {
+   delete[] MULTITHREAD[id]->mthread;
+
+   exitmultithread(id);
+   }
+
+void threadbase::startthread_safe(void *(*thread)(void *background),backarrayelem *background,int id)
+   {
+   MULTITHREAD[id]->mthread[background->background-1].setthread(thread,background);
+   MULTITHREAD[id]->mthread[background->background-1].start();
+   }
+
+void threadbase::jointhread_safe(backarrayelem *background,int id)
+   {MULTITHREAD[id]->mthread[background->background-1].join();}
+
+void threadbase::lock_cs_safe(int id)
+   {MULTITHREAD[id]->mutex.lock();}
+
+void threadbase::unlock_cs_safe(int id)
+   {MULTITHREAD[id]->mutex.unlock();}
+
+void threadbase::lock_io_safe(int id)
+   {MULTITHREAD[id]->iomutex.lock();}
+
+void threadbase::unlock_io_safe(int id)
+   {MULTITHREAD[id]->iomutex.unlock();}
+
+#endif
 
 void threadbase::initmultithread(int id)
    {
