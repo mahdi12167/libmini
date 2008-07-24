@@ -68,7 +68,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib ..\Release-vc8\libMini-vc8.lib ..\Release-vc8\libMiniSFX-vc8.lib ..\freeglut_static.lib ..\openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				AdditionalLibraryDirectories="..\Release-vc8,.."
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib libMini-vc8.lib libMiniSFX-vc8.lib freeglut_static.lib openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -155,7 +156,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib ..\Debug-vc8\libMinid-vc8.lib ..\Debug-vc8\libMiniSFXd-vc8.lib ..\freeglut_static.lib ..\openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				AdditionalLibraryDirectories="..\Debug-vc8,.."
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib libMinid-vc8.lib libMiniSFXd-vc8.lib freeglut_static.lib openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
