@@ -26,7 +26,7 @@
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USEOPENTH;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Release-vc7/viewer-vc7.pch"
 				AssemblerListingLocation=".\Release-vc7/"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib Release-vc7\libMini-vc7.lib Release-vc7\libMiniSFX-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib Release-vc7\libMini-vc7.lib Release-vc7\libMiniSFX-vc7.lib freeglut_static.lib openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -82,7 +82,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USEOPENTH;FREEGLUT_STATIC;PTW32_STATIC_LIB;CURL_STATICLIB;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Debug-vc7/viewer-vc7.pch"
@@ -96,7 +96,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib Debug-vc7\libMinid-vc7.lib Debug-vc7\libMiniSFXd-vc7.lib freeglut_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib ws2_32.lib Debug-vc7\libMinid-vc7.lib Debug-vc7\libMiniSFXd-vc7.lib freeglut_static.lib openthreads_static.lib pthread_static.lib curllib_static.lib libjpeg.lib libpng.lib squish.lib zlib.lib"
 				OutputFile=".\viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
