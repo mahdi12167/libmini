@@ -105,12 +105,9 @@ foreach option ("$option0" "$option1" "$option2" "$option3" "$option4")
    endif
 end
 
-if ($?usesquish) then
-   if (-e ../deps/squish) then
-      set incl="$incl -I$qcwd/../deps/squish"
-      set link="$link -L$qcwd/../deps/squish"
-   endif
-   set link="$link -lsquish"
+if (-e ../deps/freeglut) then
+   set incl="$incl -I$qcwd/../deps/freeglut/include"
+   set link="$link -L$qcwd/../deps/freeglut"
 endif
 
 if ($?useopenth) then
@@ -119,6 +116,14 @@ if ($?useopenth) then
       set link="$link -L$qcwd/../deps/openthreads/lib"
    endif
    set link="$link -lOpenThreads"
+endif
+
+if ($?usesquish) then
+   if (-e ../deps/squish) then
+      set incl="$incl -I$qcwd/../deps/squish"
+      set link="$link -L$qcwd/../deps/squish"
+   endif
+   set link="$link -lsquish"
 endif
 
 if ($?usegreyc) then
