@@ -3,26 +3,27 @@
 #usage: build.sh [rule {option}]
 
 # available rules:
-# no rule  -> same as mini
-# mini     -> same as lib
-# lib      -> build main library
-# libsfx   -> build viewer library
-# stub     -> build without OpenGL
-# example  -> build example
-# stubtest -> build stubtest
-# viewer   -> build viewer
-# tools    -> build tools
-# all      -> build everything
-# deps     -> make main dependencies
-# vdeps    -> make viewer dependencies
-# install  -> make install
-# clean    -> remove object files
-# tidy     -> clean up all temporary files
+# no rule   -> same as mini
+# mini      -> same as lib
+# lib       -> build main library
+# libsfx    -> build viewer library
+# stub      -> build without OpenGL
+# example   -> build example
+# stubtest  -> build stubtest
+# viewer    -> build viewer
+# tools     -> build tools
+# all       -> build everything
+# deps      -> make main dependencies
+# vdeps     -> make viewer dependencies
+# install   -> make install
+# clean     -> remove object files
+# tidy      -> clean up all temporary files
 
 # available options:
-# nosquish -> build without squish
-# usegreyc -> build with greyc
-# wall     -> build with all warnings
+# useopenth -> build with openthreads
+# nosquish  -> build without squish
+# usegreyc  -> build with greyc
+# wall      -> build with all warnings
 
 # additional include directories
 set INCLUDE="-I/usr/local/include"
@@ -42,14 +43,16 @@ set rule=$1
 if ($rule == "") set rule="mini"
 if ($rule == "mini") set rule="lib"
 
+set option0=""
 set option1=$2
 set option2=$3
 set option3=$4
+set option4=$5
 
-foreach option ("nosquish" "usegreyc" "wall")
+foreach option ("useopenth" "nosquish" "usegreyc" "wall")
    if ($rule == $option) then
       set rule="lib"
-      set option3=$option
+      set option0=$option
    endif
 end
 
@@ -81,9 +84,14 @@ if ($rule == "install") then
 endif
 
 set defs=""
+unset useopenth
 set usesquish
 unset usegreyc
-foreach option ("$option1" "$option2" "$option3")
+foreach option ("$option0" "$option1" "$option2" "$option3" "$option4")
+   if ("$option" == "useopenth") then
+      set defs="$defs -DUSEOPENTH"
+      set useopenth
+   endif
    if ("$option" == "nosquish") then
       set defs="$defs -DNOSQUISH"
       unset usesquish
@@ -103,6 +111,14 @@ if ($?usesquish) then
       set link="$link -L$qcwd/../deps/squish"
    endif
    set link="$link -lsquish"
+endif
+
+if ($?useopenth) then
+   if (-e ../deps/openthreads) then
+      set incl="$incl -I$qcwd/../deps/openthreads/include"
+      set link="$link -L$qcwd/../deps/openthreads/lib"
+   endif
+   set link="$link -lOpenThreads"
 endif
 
 if ($?usegreyc) then
