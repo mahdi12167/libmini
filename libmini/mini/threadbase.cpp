@@ -13,7 +13,7 @@ threadbase::threadbase()
 
    INSTANCES++;
 
-#ifndef USOPENTH
+#ifndef USEOPENTH
 #ifdef PTW32_STATIC_LIB
    if (INSTANCES==1) pthread_win32_process_attach_np();
 #endif
@@ -26,7 +26,7 @@ threadbase::~threadbase()
    {
    INSTANCES--;
 
-#ifndef USOPENTH
+#ifndef USEOPENTH
 #ifdef PTW32_STATIC_LIB
    if (INSTANCES==0) pthread_win32_process_detach_np();
 #endif
