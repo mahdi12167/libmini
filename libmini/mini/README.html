@@ -190,19 +190,19 @@ Within the libMini package the following files are contained:<p>
 </table><p>
 
 Additionally, the Yukon Ground Fog Demo, the Stuttgart Demo, the
-Hawaii Demo and the Fraenkische Schweiz Demo can be downloaded (please
-follow the usage instructions in the README):<p>
+Hawaii Demo and the Fraenkische Schweiz Demo can be downloaded from
+here (please follow the usage instructions in the README):<p>
 
    <a href="http://stereofx.org/download/Yukon.zip">http://stereofx.org/download/Yukon.zip</a><br>
    <a href="http://stereofx.org/download/Stuttgart.zip">http://stereofx.org/download/Stuttgart.zip</a><br>
    <a href="http://stereofx.org/download/Hawaii.zip">http://stereofx.org/download/Hawaii.zip</a><br>
    <a href="http://stereofx.org/download/Fraenkische.zip">http://stereofx.org/download/Fraenkische.zip</a><p>
 
-The libMini package also contains the so called libMini Viewer (see
-Section <a href="#MiniViewer">(O)</a>). It is a generic viewing
-utility for terrain data. For example, it can be used to display the
-data of the demos that are mentioned above or to stream terrain data
-over the internet.<p>
+The libMini package also contains the libMini Viewer (see
+Section <a href="#MiniViewer">(O)</a>). This application is a generic
+viewing utility for terrain data and tile sets. For example, it can be
+used to display the demo data mentioned above or to stream terrain
+data over the internet.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -232,9 +232,11 @@ a rather positive sense.<p>
 <h2>(B) COMPILATION:</h2>
 
 The build.sh shell script compiles the library on Irix, Linux and
-MacOS X. Simply type "./build.sh" in your Unix shell. To install the
-library and the necessary include files in /usr/local on your Unix
-machine type "./build.sh install" as a super-user.<p>
+MacOS X. Simply type "./build.sh" in your Unix
+shell. <a href="http://www.opengl.org">OpenGL</a> is required as the
+only dependency of the library. To install the library and the
+necessary include files in /usr/local on your Unix machine type
+"./build.sh install" as a super-user.<p>
 
 The library also compiles on Windows using the supplied VC++ 7.1 or
 8.0 project files. From the Windows command line use the build.bat
@@ -249,17 +251,14 @@ batch file (requires VC++ 8.0) or use cygwin in the following way:<p>
 
 Other than the specified operating systems are not supported.<p>
 
-On Windows it is recommended to use
+As described in the following section, the distribution also contains
+a libMini application example . The example can be compiled by typing
+"./build.sh example" in a shell. It requires GLUT to be installed. On
+Windows it is recommended to use
 the <a href="http://freeglut.sourceforge.net">freeGLUT library</a> as
 a replacement for the standard GLUT library. For convenience, the
-libMini distribution already contains the freeglut headers and the
-prebuilt static freeGLUT library.
-
-On Windows it is also recommended to use POSIX threads since a
-pthreads compatible implementation like
-<a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>
-considerably improves paging performance for the Hawaii and
-Fraenkische demos and the libMini Viewer.<p>
+libMini distribution already contains the freeGLUT headers and the
+prebuilt static freeGLUT library.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -281,14 +280,13 @@ described in Section <a href="#MiniViewer">(O)</a>.<p>
 The main include file is "mini.h" which contains the definition of the
 low level terrain rendering API (the libMini core). In order to port
 it to a different graphics architecture, only the file "miniOGL.cpp"
-needs to be adapted. It encapsulates
-all <a href="http://www.opengl.org">OpenGL</a> calls that are made
+needs to be adapted. It encapsulates all OpenGL calls that are made
 inside of the libMini core.<p>
 
 In the following the low level terrain rendering API is explained by
 drawing a small example height field. This task is broken down into
-eight basic steps. The example code is included in the distribution
-and can be compiled by typing "build.sh example" in a shell.<p>
+eight basic steps. The full example code is included in the
+distribution (see "example.cpp").<p>
 
 <h3>Step 0) Include the libMini core header:</h3>
 
@@ -1597,7 +1595,7 @@ for optionally querying the image size of a texture map):<p>
 We finally have to define the callbacks for creating and locking the
 background thread. In the following example implementation we are
 using POSIX threads (pthreads), but any other multi-threading library
-could be used as well:<p>
+like OpenThreads could be used as well:<p>
 
 <pre>
    #include &lt;pthread.h&gt;
@@ -1985,15 +1983,22 @@ To compile the viewer type "./build.sh viewer" on the command line. It
 requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
 <a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng</a>
 and <a href="http://www.sjbrown.co.uk/?code=squish">squish</a> to be
-installed. On Windows it is recommended to use a pthreads compatible
-implementation like <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>
-and the <a href="http://freeglut.sourceforge.net">freeGLUT library</a>.
-Optionally, the libMini Viewer can be built without squish support
-("./build.sh viewer nosquish") or with
+installed. On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
+library</a> must be installed additionally.<p>
+
+The libMini Viewer can be configured to
+use <ahref="http://www.openscenegraph.org/svn/osg/OpenThreads">OpenThreads</a>
+instead of pthreads by typing "./build.sh viewer useopenth". On
+Windows, however, the default is to use OpenThreads instead of a
+pthread implementation such as
+<a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>.<p>
+
+Optionally, the libMini Viewer can also be built without squish
+support ("./build.sh viewer nosquish") or with
 <a href="http://www.greyc.ensicaen.fr/~dtschump/greycstoration">GREYCstoration</a>
 support ("./build.sh viewer usegreyc").<p>
 
-See the examples below how to use the viewer from the command line:<p>
+See the following examples how to use the viewer from the command line:<p>
 
 <pre>
    local usage:
