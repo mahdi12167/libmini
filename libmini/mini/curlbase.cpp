@@ -48,7 +48,7 @@ size_t curlbase::WriteMemoryCallback(void *ptr,size_t size,size_t nmemb,void *da
    return(realsize);
    }
 
-void curlbase::curlinit(int threads,int id,char *proxyname,char *proxyport,void *data)
+void curlbase::curlinit(int threads,int id,const char *proxyname,const char *proxyport,void *data)
    {
    curlbase *obj=(curlbase *)data;
    obj->curlinit_safe(threads,id,proxyname,proxyport);
@@ -60,19 +60,19 @@ void curlbase::curlexit(int id,void *data)
    obj->curlexit_safe(id);
    }
 
-void curlbase::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data)
+void curlbase::getURL(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data)
    {
    curlbase *obj=(curlbase *)data;
    obj->getURL_safe(src_url,src_id,src_file,dst_file,background,id);
    }
 
-int curlbase::checkURL(char *src_url,char *src_id,char *src_file,int id,void *data)
+int curlbase::checkURL(const char *src_url,const char *src_id,const char *src_file,int id,void *data)
    {
    curlbase *obj=(curlbase *)data;
    return(obj->checkURL_safe(src_url,src_id,src_file,id));
    }
 
-void curlbase::curlinit_safe(int threads,int id,char *proxyname,char *proxyport)
+void curlbase::curlinit_safe(int threads,int id,const char *proxyname,const char *proxyport)
    {
    int i;
 
@@ -127,7 +127,7 @@ void curlbase::curlexit_safe(int id)
    exitmulticurl(id);
    }
 
-void curlbase::getURL_safe(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id)
+void curlbase::getURL_safe(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id)
    {
    char *url;
 
@@ -162,7 +162,7 @@ void curlbase::getURL_safe(char *src_url,char *src_id,char *src_file,char *dst_f
    free(url);
    }
 
-int curlbase::checkURL_safe(char *src_url,char *src_id,char *src_file,int id)
+int curlbase::checkURL_safe(const char *src_url,const char *src_id,const char *src_file,int id)
    {
    char *url;
    int threads;

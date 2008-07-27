@@ -16,11 +16,11 @@ class curlbase
    curlbase();
    ~curlbase();
 
-   static void curlinit(int threads,int id,char *proxyname,char *proxyport,void *data);
+   static void curlinit(int threads,int id,const char *proxyname,const char *proxyport,void *data);
    static void curlexit(int id,void *data);
 
-   static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
-   static int checkURL(char *src_url,char *src_id,char *src_file,int id,void *data);
+   static void getURL(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data);
+   static int checkURL(const char *src_url,const char *src_id,const char *src_file,int id,void *data);
 
    private:
 
@@ -45,11 +45,11 @@ class curlbase
 
    static int INSTANCES;
 
-   void curlinit_safe(int threads,int id,char *proxyname,char *proxyport);
+   void curlinit_safe(int threads,int id,const char *proxyname,const char *proxyport);
    void curlexit_safe(int id);
 
-   void getURL_safe(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id);
-   int checkURL_safe(char *src_url,char *src_id,char *src_file,int id);
+   void getURL_safe(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id);
+   int checkURL_safe(const char *src_url,const char *src_id,const char *src_file,int id);
 
    void initmulticurl(int id);
    void exitmulticurl(int id);

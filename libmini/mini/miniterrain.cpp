@@ -412,10 +412,10 @@ void miniterrain::setcallbacks(void *threaddata,
                                void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
                                void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
                                void *curldata,
-                               void (*curlinit)(int threads,int id,char *proxyname,char *proxyport,void *data),
+                               void (*curlinit)(int threads,int id,const char *proxyname,const char *proxyport,void *data),
                                void (*curlexit)(int id,void *data),
-                               void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data),
-                               int (*checkurl)(char *src_url,char *src_id,char *src_file,int id,void *data))
+                               void (*geturl)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data),
+                               int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data))
    {
    THREADDATA=threaddata;
 

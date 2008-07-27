@@ -43,7 +43,7 @@ class datacache
    datacloud *getcloud() {return(CLOUD);}
 
    //! set callback for requesting tiles
-   void setloader(void (*request)(char *file,int istexture,databuf *buf,void *data),void *data,
+   void setloader(void (*request)(const char *file,int istexture,databuf *buf,void *data),void *data,
                   int paging=0,
                   float pfarp=0.0f,
                   float prange=0.0f,int pbasesize=0,
@@ -51,8 +51,8 @@ class datacache
                   int expire=0);
 
    //! set optional callback for requesting tiles from a server
-   void setreceiver(void (*receive)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),void *data,
-                    int (*check)(char *src_url,char *src_id,char *src_file,void *data));
+   void setreceiver(void (*receive)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data),void *data,
+                    int (*check)(const char *src_url,const char *src_id,const char *src_file,void *data));
 
    //! set remote url
    void setremoteurl(const char *url);
@@ -184,10 +184,10 @@ class datacache
    void loadvtbelevini();
    void loadvtbimagini();
 
-   void myrequest(unsigned char *mapfile,databuf *map,int istexture,int background);
-   int mycheck(unsigned char *mapfile,int istexture);
-   int myinquiry(int col,int row,unsigned char *mapfile,int hlod,float *minvalue,float *maxvalue);
-   void myquery(int col,int row,unsigned char *texfile,int tlod,int *tsizex,int *tsizey);
+   void myrequest(const unsigned char *mapfile,databuf *map,int istexture,int background);
+   int mycheck(const unsigned char *mapfile,int istexture);
+   int myinquiry(int col,int row,const unsigned char *mapfile,int hlod,float *minvalue,float *maxvalue);
+   void myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey);
 
    char *sourcefilename(const char *id,const char *filename);
    char *localfilename(const char *filename);
@@ -202,11 +202,11 @@ class datacache
 
    datacloud *CLOUD;
 
-   void (*REQUEST_CALLBACK)(char *file,int istexture,databuf *buf,void *data);
+   void (*REQUEST_CALLBACK)(const char *file,int istexture,databuf *buf,void *data);
    void *REQUEST_DATA;
 
-   void (*RECEIVE_CALLBACK)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
-   int (*CHECK_CALLBACK)(char *src_url,char *src_id,char *src_file,void *data);
+   void (*RECEIVE_CALLBACK)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data);
+   int (*CHECK_CALLBACK)(const char *src_url,const char *src_id,const char *src_file,void *data);
    void *RECEIVE_DATA;
 
    char *RURL,*RID;
@@ -290,10 +290,10 @@ class datacache
    int CONFIGURE_NETTHREADS;
    int CONFIGURE_AUTOLOCKIO;
 
-   static void mystaticrequest(unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
-   static int mystaticcheck(unsigned char *mapfile,int istexture,void *data);
-   static int mystaticinquiry(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
-   static void mystaticquery(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
+   static void mystaticrequest(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
+   static int mystaticcheck(const unsigned char *mapfile,int istexture,void *data);
+   static int mystaticinquiry(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
+   static void mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
    };
 
 #endif

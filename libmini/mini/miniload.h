@@ -72,9 +72,9 @@ class miniload
 
    //! reload a specific tile
    void reload(int col,int row, // tile to reload
-               unsigned char *hmap, // filename of height map
-               unsigned char *tmap, // filename of texture map
-               unsigned char *fmap=0); // optional filename of ground fog map
+               const unsigned char *hmap, // filename of height map
+               const unsigned char *tmap, // filename of texture map
+               const unsigned char *fmap=0); // optional filename of ground fog map
 
    //! loader for paged tile sets
    int load(int cols,int rows,
@@ -88,8 +88,8 @@ class miniload
             float outscale[3]=0);
 
    //! set callbacks for requesting and preloading tiles
-   void setloader(int (*request)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap),void *data,
-                  void (*preload)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data)=0,
+   void setloader(int (*request)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap),void *data,
+                  void (*preload)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data)=0,
                   void (*deliver)(int *col,int *row,databuf *hfield,int *hlod,databuf *texture,int *tlod,databuf *fogmap,void *data)=0,
                   int paging=0,
                   float pfarp=0.0f,
@@ -98,10 +98,10 @@ class miniload
                   int expire=0);
 
    //! set callback for inquiry of height map elevation range
-   void setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
+   void setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
 
    //! set callback for query of texture map base size
-   void setquery(void (*query)(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
+   void setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
 
    //! compute texture paging range from screen space error
    float calcrange(float dim, // size of one texel in meters
@@ -232,15 +232,15 @@ class miniload
    void deliver();
    void expire();
 
-   int (*REQUEST_CALLBACK)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap);
-   void (*PRELOAD_CALLBACK)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data);
+   int (*REQUEST_CALLBACK)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap);
+   void (*PRELOAD_CALLBACK)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data);
    void (*DELIVER_CALLBACK)(int *col,int *row,databuf *hfield,int *hlod,databuf *texture,int *tlod,databuf *fogmap,void *data);
    void *REQUEST_DATA;
 
-   int (*INQUIRY_CALLBACK)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
+   int (*INQUIRY_CALLBACK)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
    void *INQUIRY_DATA;
 
-   void (*QUERY_CALLBACK)(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
+   void (*QUERY_CALLBACK)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
    void *QUERY_DATA;
 
    int PAGING;

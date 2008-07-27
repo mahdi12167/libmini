@@ -249,25 +249,25 @@ BOOLINT minipoint::add(minipointdata *point)
 char *minipoint::addch(char *str,char ch)
    {
    const int space=8;
+   char *str2;
 
    if (str==NULL)
       {
-      if ((str=(char *)malloc(space))==NULL) ERRORMSG();
-      str[0]='\0';
+      if ((str2=(char *)malloc(space))==NULL) ERRORMSG();
+      str2[0]='\0';
       }
    else if (strlen(str)%space>=space-1)
       {
-      char *str2;
       if ((str2=(char *)malloc(strlen(str)+1+space))==NULL) ERRORMSG();
       strcpy(str2,str);
       free(str);
-      str=str2;
       }
+   else str2=str;
 
-   str[strlen(str)+1]='\0';
-   str[strlen(str)]=ch;
+   str2[strlen(str2)+1]='\0';
+   str2[strlen(str2)]=ch;
 
-   return(str);
+   return(str2);
    }
 
 // parse comment
@@ -378,7 +378,7 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
    }
 
 // set file cache
-void minipoint::setcache(datacache *cache,char *altpath)
+void minipoint::setcache(datacache *cache,const char *altpath)
    {
    CACHE=cache;
 
@@ -389,7 +389,7 @@ void minipoint::setcache(datacache *cache,char *altpath)
    }
 
 // get file
-char *minipoint::getfile(char *filename,char *altpath)
+char *minipoint::getfile(const char *filename,const char *altpath)
    {
    if (checkfile(filename)!=0) return(strdup(filename));
 
@@ -399,7 +399,7 @@ char *minipoint::getfile(char *filename,char *altpath)
    }
 
 // load waypoints
-void minipoint::load(char *filename,
+void minipoint::load(const char *filename,
                      float offsetlat,float offsetlon,
                      float scalex,float scaley,float scaleelev,
                      minitile *tile,
@@ -911,7 +911,7 @@ void minipoint::drawsignposts(float ex,float ey,float ez,
    }
 
 // set default brick file name
-void minipoint::setbrick(char *filename)
+void minipoint::setbrick(const char *filename)
    {
    if (filename==NULL) ERRORMSG();
 

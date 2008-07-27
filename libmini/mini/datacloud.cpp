@@ -295,8 +295,8 @@ datacloud::~datacloud()
    }
 
 // set callbacks for requesting tiles
-void datacloud::setloader(void (*request)(unsigned char *mapfile,databuf *map,int istexture,int background,void *data),void *data,
-                          int (*check)(unsigned char *mapfile,int istexture,void *data),
+void datacloud::setloader(void (*request)(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data),void *data,
+                          int (*check)(const unsigned char *mapfile,int istexture,void *data),
                           int paging,
                           float pfarp,
                           float prange,int pbasesize,
@@ -315,11 +315,11 @@ void datacloud::setloader(void (*request)(unsigned char *mapfile,databuf *map,in
    }
 
 // set optional callback for inquiry of height map elevation range
-void datacloud::setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data)
+void datacloud::setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data)
    {TERRAIN->setinquiry(inquiry,data);}
 
 // set optional callback for query of texture map base size
-void datacloud::setquery(void (*query)(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
+void datacloud::setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
    {TERRAIN->setquery(query,data);}
 
 // set scheduling properties
@@ -479,7 +479,7 @@ double datacloud::getmem()
 
 // own callbacks:
 
-int datacloud::myrequest(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,databuf *hfield,databuf *texture,databuf *fogmap)
+int datacloud::myrequest(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,databuf *hfield,databuf *texture,databuf *fogmap)
    {
    BOOLINT immediate=FALSE;
 
@@ -515,7 +515,7 @@ int datacloud::myrequest(int col,int row,unsigned char *mapfile,int hlod,unsigne
    return(0);
    }
 
-void datacloud::mypreload(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile)
+void datacloud::mypreload(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile)
    {
    // schedule job as deferred with lo prio
    insertjob(col,row,mapfile,hlod,texfile,tlod,fogfile,FALSE,TRUE);
@@ -528,7 +528,7 @@ void datacloud::mydeliver(int *col,int *row,databuf *hfield,int *hlod,databuf *t
    }
 
 // file existence check
-BOOLINT datacloud::checkfile(unsigned char *mapfile,BOOLINT istexture)
+BOOLINT datacloud::checkfile(const unsigned char *mapfile,BOOLINT istexture)
    {
    BOOLINT check;
 
@@ -540,7 +540,7 @@ BOOLINT datacloud::checkfile(unsigned char *mapfile,BOOLINT istexture)
    }
 
 // insert one job into the queue
-void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
+void datacloud::insertjob(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
    double time;
 
@@ -589,7 +589,7 @@ void datacloud::insertjob(int col,int row,unsigned char *mapfile,int hlod,unsign
    }
 
 // check job for existence
-jobqueueelem *datacloud::checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
+jobqueueelem *datacloud::checkjob(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio)
    {
    jobqueueelem *job;
 
@@ -729,7 +729,7 @@ void datacloud::deletejob(jobqueueelem *job)
    }
 
 // insert a tile into the cache
-tilecacheelem *datacloud::inserttile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
+tilecacheelem *datacloud::inserttile(const unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
    {
    tilecacheelem *oldtile,*newtile;
 
@@ -814,7 +814,7 @@ tilecacheelem *datacloud::inserttile(unsigned char *tileid,int col,int row,BOOLI
    }
 
 // check tile for existence
-tilecacheelem *datacloud::checktile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
+tilecacheelem *datacloud::checktile(const unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod)
    {
    tilecacheelem *tile;
 
@@ -1342,13 +1342,13 @@ void datacloud::pager(int background)
 
 // static callback wrappers:
 
-int datacloud::mystaticrequest(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap)
+int datacloud::mystaticrequest(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap)
    {
    datacloud *mycloud=(datacloud *)data;
    return(mycloud->myrequest(col,row,mapfile,hlod,texfile,tlod,fogfile,hfield,texture,fogmap));
    }
 
-void datacloud::mystaticpreload(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data)
+void datacloud::mystaticpreload(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data)
    {
    datacloud *mycloud=(datacloud *)data;
    mycloud->mypreload(col,row,mapfile,hlod,texfile,tlod,fogfile);

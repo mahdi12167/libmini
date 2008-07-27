@@ -279,10 +279,10 @@ class minipoint
    void registerrndr(minipointrndr *rndr);
 
    //! set file cache
-   void setcache(datacache *cache,char *altpath);
+   void setcache(datacache *cache,const char *altpath);
 
    //! load waypoints
-   void load(char *filename,
+   void load(const char *filename,
              float offsetlat=0.0f,float offsetlon=0.0f,
              float scalex=1.0f,float scaley=1.0f,float scaleelev=1.0f,
              minitile *tile=0,
@@ -332,7 +332,7 @@ class minipoint
                       float turn,float yon);
 
    //! set default brick file name
-   void setbrick(char *filename);
+   void setbrick(const char *filename);
 
    //! get default brick file name
    char *getbrick();
@@ -353,7 +353,7 @@ class minipoint
    int getdatum() {return(CONFIGURE_DSTDATUM);}
 
    //! get file through data cache
-   char *getfile(char *filename) {return(getfile(filename,ALTPATH));}
+   char *getfile(const char *filename) {return(getfile(filename,ALTPATH));}
 
    static minipointrndr *getrndr_none() {return(&RNDR_NONE);}
    static minipointrndr *getrndr_signpost() {return(&RNDR_SIGNPOST);}
@@ -401,7 +401,7 @@ class minipoint
    void parsecomment(minipointdata *point);
    void parseoption(minipointdata *point,lunascan *scanner);
 
-   char *getfile(char *filename,char *altpath);
+   char *getfile(const char *filename,const char *altpath);
 
    private:
 

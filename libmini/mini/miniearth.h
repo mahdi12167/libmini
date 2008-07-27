@@ -62,7 +62,7 @@ class miniearth
 
       // optional sky-dome:
 
-      char *skydome;
+      const char *skydome;
 
       // optional earth globe:
 
@@ -77,16 +77,16 @@ class miniearth
       BOOLINT shrinkZpass;
 
       // earth textures as a PPM file
-      char *frontname;
-      char *backname;
+      const char *frontname;
+      const char *backname;
 
       // earth textures as a databuf object
       databuf *frontbuf;
       databuf *backbuf;
 
       // earth textures as a DB file
-      char *frontbufname;
-      char *backbufname;
+      const char *frontbufname;
+      const char *backbufname;
       };
 
    typedef MINIEARTH_PARAMS_STRUCT MINIEARTH_PARAMS;

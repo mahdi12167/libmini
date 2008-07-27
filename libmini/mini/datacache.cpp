@@ -127,7 +127,7 @@ datacache::~datacache()
    }
 
 // set callback for requesting tiles
-void datacache::setloader(void (*request)(char *file,int istexture,databuf *buf,void *data),void *data,
+void datacache::setloader(void (*request)(const char *file,int istexture,databuf *buf,void *data),void *data,
                           int paging,
                           float pfarp,
                           float prange,int pbasesize,
@@ -152,8 +152,8 @@ void datacache::setloader(void (*request)(char *file,int istexture,databuf *buf,
    }
 
 // set callback for requesting tiles from a server
-void datacache::setreceiver(void (*receive)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data),void *data,
-                            int (*check)(char *src_url,char *src_id,char *src_file,void *data))
+void datacache::setreceiver(void (*receive)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data),void *data,
+                            int (*check)(const char *src_url,const char *src_id,const char *src_file,void *data))
    {
    RECEIVE_CALLBACK=receive;
    CHECK_CALLBACK=check;
@@ -884,7 +884,7 @@ void datacache::reset()
 
 // private callbacks:
 
-void datacache::myrequest(unsigned char *mapfile,databuf *map,int istexture,int background)
+void datacache::myrequest(const unsigned char *mapfile,databuf *map,int istexture,int background)
    {
    char *filename;
    char *localname;
@@ -916,7 +916,7 @@ void datacache::myrequest(unsigned char *mapfile,databuf *map,int istexture,int 
    free(filename);
    }
 
-int datacache::mycheck(unsigned char *mapfile,int istexture)
+int datacache::mycheck(const unsigned char *mapfile,int istexture)
    {
    char *filename;
 
@@ -953,7 +953,7 @@ int datacache::mycheck(unsigned char *mapfile,int istexture)
    return(isavailable?1:0);
    }
 
-int datacache::myinquiry(int col,int row,unsigned char *mapfile,int hlod,float *minvalue,float *maxvalue)
+int datacache::myinquiry(int col,int row,const unsigned char *mapfile,int hlod,float *minvalue,float *maxvalue)
    {
    char *filename;
 
@@ -990,7 +990,7 @@ int datacache::myinquiry(int col,int row,unsigned char *mapfile,int hlod,float *
    return(1);
    }
 
-void datacache::myquery(int col,int row,unsigned char *texfile,int tlod,int *tsizex,int *tsizey)
+void datacache::myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey)
    {
    char *filename;
 
@@ -1231,25 +1231,25 @@ unsigned int datacache::hashsum(const char *str) const
 
 // static callback wrappers:
 
-void datacache::mystaticrequest(unsigned char *mapfile,databuf *map,int istexture,int background,void *data)
+void datacache::mystaticrequest(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data)
    {
    datacache *mycache=(datacache *)data;
    mycache->myrequest(mapfile,map,istexture,background);
    }
 
-int datacache::mystaticcheck(unsigned char *mapfile,int istexture,void *data)
+int datacache::mystaticcheck(const unsigned char *mapfile,int istexture,void *data)
    {
    datacache *mycache=(datacache *)data;
    return(mycache->mycheck(mapfile,istexture));
    }
 
-int datacache::mystaticinquiry(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue)
+int datacache::mystaticinquiry(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue)
    {
    datacache *mycache=(datacache *)data;
    return(mycache->myinquiry(col,row,mapfile,hlod,minvalue,maxvalue));
    }
 
-void datacache::mystaticquery(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
+void datacache::mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
    {
    datacache *mycache=(datacache *)data;
    mycache->myquery(col,row,texfile,tlod,tsizex,tsizey);

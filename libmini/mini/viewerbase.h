@@ -117,8 +117,8 @@ class viewerbase
 
    void inithooks();
 
-   static void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
-   static int check_callback(char *src_url,char *src_id,char *src_file,void *data);
+   static void receive_callback(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data);
+   static int check_callback(const char *src_url,const char *src_id,const char *src_file,void *data);
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data);
    };

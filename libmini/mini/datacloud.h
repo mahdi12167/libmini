@@ -123,8 +123,8 @@ class datacloud
    miniload *getterrain() {return(TERRAIN);}
 
    //! set callbacks for requesting tiles
-   void setloader(void (*request)(unsigned char *mapfile,databuf *map,int istexture,int background,void *data),void *data,
-                  int (*check)(unsigned char *mapfile,int istexture,void *data),
+   void setloader(void (*request)(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data),void *data,
+                  int (*check)(const unsigned char *mapfile,int istexture,void *data),
                   int paging=0,
                   float pfarp=0.0f,
                   float prange=0.0f,int pbasesize=0,
@@ -132,10 +132,10 @@ class datacloud
                   int expire=0);
 
    //! set optional callback for inquiry of height map elevation range
-   void setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
+   void setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
 
    //! set optional callback for query of texture map base size
-   void setquery(void (*query)(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
+   void setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
 
    //! set scheduling properties
    void setschedule(double timeslot=0.02,double expire=0.5,double maxdelay=1.0);
@@ -192,19 +192,19 @@ class datacloud
 
    protected:
 
-   int myrequest(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,databuf *hfield,databuf *texture,databuf *fogmap);
-   void mypreload(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile);
+   int myrequest(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,databuf *hfield,databuf *texture,databuf *fogmap);
+   void mypreload(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile);
    void mydeliver(int *col,int *row,databuf *hfield,int *hlod,databuf *texture,int *tlod,databuf *fogmap);
 
-   BOOLINT checkfile(unsigned char *mapfile,BOOLINT istexture);
+   BOOLINT checkfile(const unsigned char *mapfile,BOOLINT istexture);
 
-   void insertjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
-   jobqueueelem *checkjob(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
+   void insertjob(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
+   jobqueueelem *checkjob(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,BOOLINT immediate,BOOLINT loprio);
    void insertjob(jobqueueelem *job,jobqueueelem *newjob);
    void deletejob(jobqueueelem *job);
 
-   tilecacheelem *inserttile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod);
-   tilecacheelem *checktile(unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod);
+   tilecacheelem *inserttile(const unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod);
+   tilecacheelem *checktile(const unsigned char *tileid,int col,int row,BOOLINT istexture,BOOLINT immediate,BOOLINT loprio,int lod);
    void inserttile(tilecacheelem *tile,tilecacheelem *newtile);
    void deletetile(tilecacheelem *tile);
 
@@ -241,8 +241,8 @@ class datacloud
 
    datahash *JOBQUEUEMAP;
 
-   void (*REQUEST_CALLBACK)(unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
-   int (*CHECK_CALLBACK)(unsigned char *mapfile,int istexture,void *data);
+   void (*REQUEST_CALLBACK)(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
+   int (*CHECK_CALLBACK)(const unsigned char *mapfile,int istexture,void *data);
    void *REQUEST_DATA;
 
    double TIMESLOT; // seconds
@@ -281,8 +281,8 @@ class datacloud
 
    static void *triggerpager(void *background);
 
-   static int mystaticrequest(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap);
-   static void mystaticpreload(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data);
+   static int mystaticrequest(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap);
+   static void mystaticpreload(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data);
    static void mystaticdeliver(int *col,int *row,databuf *hfield,int *hlod,databuf *texture,int *tlod,databuf *fogmap,void *data);
    };
 

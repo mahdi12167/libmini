@@ -1571,20 +1571,20 @@ for optionally checking the elevation range of a height field and one
 for optionally querying the image size of a texture map):<p>
 
 <pre>
-   void request_callback(unsigned char *mapfile,databuf *map,int istexture,int background,void *data)
+   void request_callback(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data)
       {map->loaddata((char *)mapfile);}
 
-   int check_callback(unsigned char *mapfile,int istexture,void *data)
+   int check_callback(const unsigned char *mapfile,int istexture,void *data)
       {return(checkfile((char *)mapfile));}
 
-   void inquiry_callback(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue)
+   void inquiry_callback(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue)
       {
       *minvalue=0.0f;
       *maxvalue=10000.0f;
       return(1);
       }
 
-   void query_callback(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
+   void query_callback(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
       {
       int tbasesize=2048; // size of texture LOD 0
       while (tlod-->0) tbasesize/=2;
@@ -1838,13 +1838,13 @@ example code of the previous section:<p>
 The callbacks used by the transfer module are slightly different:<p>
 
 <pre>
-   void request_callback(char *file,int istexture,databuf *buf,void *data)
+   void request_callback(const char *file,int istexture,databuf *buf,void *data)
       {buf->loaddata(file);}
 
-   void receive_callback(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
+   void receive_callback(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data)
       {geturl(src_url,src_id,src_file,dst_file,background);}
 
-   int check_callback(char *src_url,char *src_id,char *src_file,void *data)
+   int check_callback(const char *src_url,const char *src_id,const char *src_file,void *data)
       {return(checkurl(src_url,src_id,src_file));}
 </pre>
 

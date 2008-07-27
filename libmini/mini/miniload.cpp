@@ -1026,9 +1026,9 @@ float miniload::gettexmem()
 
 // reload a specific tile
 void miniload::reload(int col,int row,
-                      unsigned char *hmap,
-                      unsigned char *tmap,
-                      unsigned char *fmap)
+                      const unsigned char *hmap,
+                      const unsigned char *tmap,
+                      const unsigned char *fmap)
    {
    if (TILE==NULL) ERRORMSG();
 
@@ -1464,8 +1464,8 @@ int miniload::load(int cols,int rows,
    }
 
 // set callbacks for requesting and preloading tiles
-void miniload::setloader(int (*request)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap),void *data,
-                         void (*preload)(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data),
+void miniload::setloader(int (*request)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap),void *data,
+                         void (*preload)(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data),
                          void (*deliver)(int *col,int *row,databuf *hfield,int *hlod,databuf *texture,int *tlod,databuf *fogmap,void *data),
                          int paging,
                          float pfarp,
@@ -1512,14 +1512,14 @@ void miniload::setloader(int (*request)(int col,int row,unsigned char *mapfile,i
    }
 
 // set callback for inquiry of height map elevation range
-void miniload::setinquiry(int (*inquiry)(int col,int row,unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data)
+void miniload::setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data)
    {
    INQUIRY_CALLBACK=inquiry;
    INQUIRY_DATA=data;
    }
 
 // set callback for query of texture map base size
-void miniload::setquery(void (*query)(int col,int row,unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
+void miniload::setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
    {
    QUERY_CALLBACK=query;
    QUERY_DATA=data;

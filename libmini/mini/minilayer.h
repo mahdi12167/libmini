@@ -125,20 +125,20 @@ class minilayer
       int locthreads;           //+ number of local threads
       int numthreads;           //+ number of net threads
 
-      char *proxyname;          //+ proxy server name
-      char *proxyport;          //+ proxy server port
+      const char *proxyname;    //+ proxy server name
+      const char *proxyport;    //+ proxy server port
 
-      char *elevprefix;         //+ elev tileset prefix
-      char *imagprefix;         //+ imag tileset prefix
+      const char *elevprefix;   //+ elev tileset prefix
+      const char *imagprefix;   //+ imag tileset prefix
 
-      char *tilesetfile;        //+ tileset sav file
-      char *vtbinisuffix;       //+ suffix of vtb ini file
-      char *startupfile;        //+ startup sav file
+      const char *tilesetfile;  //+ tileset sav file
+      const char *vtbinisuffix; //+ suffix of vtb ini file
+      const char *startupfile;  //+ startup sav file
 
-      char *localpath;          //+ local directory
+      const char *localpath;    //+ local directory
 
-      char *altpath;            //+ alternative data path
-      char *instpath;           //+ installation data path
+      const char *altpath;      //+ alternative data path
+      const char *instpath;     //+ installation data path
 
       // optional feature switches:
 
@@ -147,7 +147,7 @@ class minilayer
 
       // optional way-points:
 
-      char *waypoints;
+      const char *waypoints;
 
       float signpostheight;
       float signpostrange;
@@ -155,7 +155,7 @@ class minilayer
       float signpostturn;
       float signpostincline;
 
-      char *brick;
+      const char *brick;
 
       float bricksize;
       float brickradius;
@@ -206,10 +206,10 @@ class minilayer
                      void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
                      void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
                      void *curldata,
-                     void (*curlinit)(int threads,int id,char *proxyname,char *proxyport,void *data),
+                     void (*curlinit)(int threads,int id,const char *proxyname,const char *proxyport,void *data),
                      void (*curlexit)(int id,void *data),
-                     void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data),
-                     int (*checkurl)(char *src_url,char *src_id,char *src_file,int id,void *data));
+                     void (*geturl)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data),
+                     int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data));
 
    //! load tileset
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,BOOLINT reset=FALSE);
@@ -379,12 +379,12 @@ class minilayer
    void (*UNLOCK_IO)(int id,void *data);
 
    void *CURLDATA;
-   void (*CURLINIT)(int threads,int id,char *proxyname,char *proxyport,void *data);
+   void (*CURLINIT)(int threads,int id,const char *proxyname,const char *proxyport,void *data);
    void (*CURLEXIT)(int id,void *data);
-   void (*GETURL)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data);
-   int (*CHECKURL)(char *src_url,char *src_id,char *src_file,int id,void *data);
+   void (*GETURL)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data);
+   int (*CHECKURL)(const char *src_url,const char *src_id,const char *src_file,int id,void *data);
 
-   static void request_callback(char *file,int istexture,databuf *buf,void *data);
+   static void request_callback(const char *file,int istexture,databuf *buf,void *data);
 
    void threadinit(int threads,int id);
    void threadexit(int id);
@@ -398,11 +398,11 @@ class minilayer
    static void lock_io(void *data);
    static void unlock_io(void *data);
 
-   void curlinit(int threads,int id,char *proxyname,char *proxyport);
+   void curlinit(int threads,int id,const char *proxyname,const char *proxyport);
    void curlexit(int id);
 
-   static void getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data);
-   static int checkURL(char *src_url,char *src_id,char *src_file,void *data);
+   static void getURL(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data);
+   static int checkURL(const char *src_url,const char *src_id,const char *src_file,void *data);
    };
 
 #endif

@@ -294,7 +294,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
    }
 
 // load requested data
-void minilayer::request_callback(char *file,int istexture,databuf *buf,void *data)
+void minilayer::request_callback(const char *file,int istexture,databuf *buf,void *data)
    {
    minilayer *obj=(minilayer *)data;
 
@@ -358,19 +358,19 @@ void minilayer::unlock_io(void *data)
    obj->UNLOCK_IO(obj->getthreadid(),obj->THREADDATA);
    }
 
-void minilayer::curlinit(int threads,int id,char *proxyname,char *proxyport)
+void minilayer::curlinit(int threads,int id,const char *proxyname,const char *proxyport)
    {CURLINIT(threads,id,proxyname,proxyport,CURLDATA);}
 
 void minilayer::curlexit(int id)
    {CURLEXIT(id,CURLDATA);}
 
-void minilayer::getURL(char *src_url,char *src_id,char *src_file,char *dst_file,int background,void *data)
+void minilayer::getURL(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,void *data)
    {
    minilayer *obj=(minilayer *)data;
    obj->GETURL(src_url,src_id,src_file,dst_file,background,obj->getthreadid(),obj->CURLDATA);
    }
 
-int minilayer::checkURL(char *src_url,char *src_id,char *src_file,void *data)
+int minilayer::checkURL(const char *src_url,const char *src_id,const char *src_file,void *data)
    {
    minilayer *obj=(minilayer *)data;
    return(obj->CHECKURL(src_url,src_id,src_file,obj->getthreadid(),obj->CURLDATA));
@@ -385,10 +385,10 @@ void minilayer::setcallbacks(void *threaddata,
                              void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
                              void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
                              void *curldata,
-                             void (*curlinit)(int threads,int id,char *proxyname,char *proxyport,void *data),
+                             void (*curlinit)(int threads,int id,const char *proxyname,const char *proxyport,void *data),
                              void (*curlexit)(int id,void *data),
-                             void (*geturl)(char *src_url,char *src_id,char *src_file,char *dst_file,int background,int id,void *data),
-                             int (*checkurl)(char *src_url,char *src_id,char *src_file,int id,void *data))
+                             void (*geturl)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data),
+                             int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data))
    {
    THREADDATA=threaddata;
 
