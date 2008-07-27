@@ -32,7 +32,7 @@ void minishader::setVISshader(minicache *cache,
    float sea_a,sea_b;
 
    // fragment program for the terrain
-   static char *fragprog1A="!!ARBfp1.0 \n\
+   static const char *fragprog1A="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -82,7 +82,7 @@ void minishader::setVISshader(minicache *cache,
       END \n";
 
    // fragment program for the terrain with color mapping before the fade-out
-   static char *fragprog1B="!!ARBfp1.0 \n\
+   static const char *fragprog1B="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -142,7 +142,7 @@ void minishader::setVISshader(minicache *cache,
       END \n";
 
    // fragment program for the terrain with color mapping after the fade-out
-   static char *fragprog1C="!!ARBfp1.0 \n\
+   static const char *fragprog1C="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -202,7 +202,7 @@ void minishader::setVISshader(minicache *cache,
       END \n";
 
    // fragment program for the sea surface
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -356,7 +356,7 @@ void minishader::setNPRshader(minicache *cache,
    float npr_a,npr_b,npr_c,npr_d;
 
    // fragment program for the terrain
-   static char *fragprog1A="!!ARBfp1.0 \n\
+   static const char *fragprog1A="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -404,7 +404,7 @@ void minishader::setNPRshader(minicache *cache,
       END \n";
 
    // fragment program for the terrain with color mapping
-   static char *fragprog1B="!!ARBfp1.0 \n\
+   static const char *fragprog1B="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -462,7 +462,7 @@ void minishader::setNPRshader(minicache *cache,
       END \n";
 
    // fragment program for the sea surface
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\

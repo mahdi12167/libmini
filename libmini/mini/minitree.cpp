@@ -946,7 +946,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog1="!!ARBvp1.0 \n\
+   static const char *vtxprog1="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,pos; \n\
@@ -967,7 +967,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   static char *vtxprog2="!!ARBvp1.0 \n\
+   static const char *vtxprog2="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,tex,pos; \n\
@@ -1368,7 +1368,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
 
 #if defined(GL_ARB_multitexture) && defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,tex,pos; \n\
@@ -1386,7 +1386,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   static char *fragprog1="!!ARBfp1.0 \n\
+   static const char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1411,7 +1411,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1440,7 +1440,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static char *fragprog3="!!ARBfp1.0 \n\
+   static const char *fragprog3="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1467,7 +1467,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static char *fragprog4="!!ARBfp1.0 \n\
+   static const char *fragprog4="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1744,7 +1744,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       TEMP vtx,col,pos; \n\
@@ -1763,7 +1763,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   static char *fragprog1="!!ARBfp1.0 \n\
+   static const char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       TEMP col,pos; \n\
       MOV result.color.xyz,fragment.color; \n\
@@ -1772,7 +1772,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       TEMP col,pos; \n\
       TEX result.color.xyz,fragment.texcoord[0],texture[0],2D; \n\

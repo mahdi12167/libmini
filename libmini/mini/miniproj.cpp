@@ -726,7 +726,7 @@ void miniproj::disablepixshader()
 void miniproj::setupprogs()
    {
    // vertex shader
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
@@ -766,7 +766,7 @@ void miniproj::setupprogs()
       END \n";
 
    // pixel shader
-   static char *frgprog="!!ARBfp1.0 \n\
+   static const char *frgprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       TEMP col,nrm,tex,pos1,pos2,dir,len; \n\
@@ -799,16 +799,19 @@ void miniproj::setupprogs()
       MOV result.color.w,len.x; \n\
       END \n";
 
-   VTXPROG=vtxprog;
+   VTXPROG=strdup(vtxprog);
    VTXPROGID=0;
 
-   FRGPROG=frgprog;
+   FRGPROG=strdup(frgprog);
    FRGPROGID=0;
    }
 
 // delete vertex and fragment program
 void miniproj::deleteprogs()
    {
+   free(VTXPROG);
+   free(FRGPROG);
+
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
    GLuint progid;

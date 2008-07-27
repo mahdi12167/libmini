@@ -969,7 +969,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
@@ -998,7 +998,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static char *fragprog="!!ARBfp1.0 \n\
+   static const char *fragprog="!!ARBfp1.0 \n\
       PARAM l=program.env[0]; \n\
       PARAM p=program.env[1]; \n\
       TEMP col,nrm,len; \n\
@@ -1267,12 +1267,12 @@ void minicache::setprismcolor(float prismR,float prismG,float prismB,float prism
    }
 
 // set vertex shader plugin
-void minicache::setvtxshader(char *vp)
+void minicache::setvtxshader(const char *vp)
    {
 #ifndef NOOGL
 
    // default vertex shader
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM t=program.env[0]; \n\
       PARAM e=program.env[1]; \n\
       PARAM c0=program.env[2]; \n\
@@ -1424,12 +1424,12 @@ void minicache::disablevtxshader()
    }
 
 // set pixel shader plugin
-void minicache::setpixshader(char *fp)
+void minicache::setpixshader(const char *fp)
    {
 #ifndef NOOGL
 
    // default pixel shader
-   static char *fragprog="!!ARBfp1.0 \n\
+   static const char *fragprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -1514,12 +1514,12 @@ void minicache::setpixshadertex(unsigned char *image,int width,int height,int co
    }
 
 // set sea shader plugin
-void minicache::setseashader(char *sp)
+void minicache::setseashader(const char *sp)
    {
 #ifndef NOOGL
 
    // default sea shader
-   static char *seaprog="!!ARBfp1.0 \n\
+   static const char *seaprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\

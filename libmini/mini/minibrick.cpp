@@ -561,7 +561,7 @@ void minisurf::enabletorch(int phase,
 
    float fog_a,fog_b,fog_c;
 
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
       PARAM mod[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
@@ -590,7 +590,7 @@ void minisurf::enabletorch(int phase,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static char *fragprog1="!!ARBfp1.0 \n\
+   static const char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       TEMP col,nrm,pos,len; \n\
@@ -618,7 +618,7 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -778,7 +778,7 @@ void minisurf::enablepattern(float ambient,
 
    float fog_a,fog_b,fog_c;
 
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
       PARAM mod[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
@@ -809,7 +809,7 @@ void minisurf::enablepattern(float ambient,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static char *fragprog1="!!ARBfp1.0 \n\
+   static const char *fragprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -843,7 +843,7 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
-   static char *fragprog2="!!ARBfp1.0 \n\
+   static const char *fragprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\

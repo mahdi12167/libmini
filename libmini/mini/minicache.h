@@ -62,12 +62,12 @@ class minicache
    void setprismcolor(float prismR=1.0f,float prismG=1.0f,float prismB=1.0f,float prismA=0.9f);
 
    //! define optional vertex shader
-   void setvtxshader(char *vtxprog=0);
+   void setvtxshader(const char *vtxprog=0);
    void setvtxshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
    void usevtxshader(int on=1) {USEVTXSHADER=on;}
 
    //! define optional pixel shader
-   void setpixshader(char *fragprog=0);
+   void setpixshader(const char *fragprog=0);
    void setpixshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
    void setpixshadertex(unsigned char *image,int width,int height,int components=3);
    void setpixshadertexRGB(unsigned char *image,int width,int height);
@@ -75,7 +75,7 @@ class minicache
    void usepixshader(int on=1) {USEPIXSHADER=on;}
 
    //! define optional sea shader
-   void setseashader(char *seaprog=0);
+   void setseashader(const char *seaprog=0);
    void setseashaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
    void setseashadertex(unsigned char *image,int width,int height,int components=3);
    void setseashadertexRGB(unsigned char *image,int width,int height);
