@@ -96,7 +96,7 @@ void lunascan::init()
       }
    }
 
-int lunascan::addtoken(char *string,unsigned int id,int info)
+int lunascan::addtoken(const char *string,unsigned int id,int info)
    {
    int serial;
 
@@ -117,7 +117,7 @@ int lunascan::addtoken(char *string,unsigned int id,int info)
    return(serial);
    }
 
-int lunascan::getstring(char *string)
+int lunascan::getstring(const char *string)
    {
    int i;
 
@@ -138,7 +138,7 @@ int lunascan::getstring(char *string)
    return(LUNA_UNKNOWN);
    }
 
-int lunascan::addstring(char *string,unsigned int id)
+int lunascan::addstring(const char *string,unsigned int id)
    {
    int i;
 
@@ -217,13 +217,13 @@ void lunascan::addhash(int serial)
    HASH[hash].num++;
    }
 
-void lunascan::setcode(char *code)
+void lunascan::setcode(const char *code)
    {
    if (CODESTACKSIZE>0) ERRORMSG();
    pushcode(code);
    }
 
-void lunascan::setcode(char *code,int bytes)
+void lunascan::setcode(const char *code,int bytes)
    {
    char *code0;
 
@@ -238,7 +238,7 @@ void lunascan::setcode(char *code,int bytes)
    free(code0);
    }
 
-void lunascan::pushcode(char *code)
+void lunascan::pushcode(const char *code)
    {
    init();
 
@@ -734,13 +734,13 @@ void lunascan::ungetmychar()
          }
    }
 
-unsigned int lunascan::gethash(char *string)
+unsigned int lunascan::gethash(const char *string)
    {
    static const unsigned int hashconst=271;
 
    unsigned int hash;
 
-   char *ptr;
+   const char *ptr;
 
    hash=0;
 
@@ -794,7 +794,7 @@ void lunascan::setscopestacksize(int size)
    SCOPESTACKSIZE=size;
    }
 
-void lunascan::SCANNERMSG(char *msg)
+void lunascan::SCANNERMSG(const char *msg)
    {
    if (PLINE>0) fprintf(stderr,"scanner error in column %d of line %d: %s\n",PCOL,PLINE,msg);
    else fprintf(stderr,"scanner error: %s\n",msg);

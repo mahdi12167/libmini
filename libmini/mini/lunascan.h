@@ -23,11 +23,11 @@ class lunascan
    //! destructor
    ~lunascan();
 
-   int addtoken(char *string,unsigned int id,int info=0);
+   int addtoken(const char *string,unsigned int id,int info=0);
 
-   void setcode(char *code);
-   void setcode(char *code,int bytes);
-   void pushcode(char *code);
+   void setcode(const char *code);
+   void setcode(const char *code,int bytes);
+   void pushcode(const char *code);
    char *getcode();
    void freecode();
 
@@ -111,8 +111,8 @@ class lunascan
 
    void init();
 
-   int getstring(char *string);
-   int addstring(char *string,unsigned int id);
+   int getstring(const char *string);
+   int addstring(const char *string,unsigned int id);
 
    void addhash(int serial);
 
@@ -131,9 +131,9 @@ class lunascan
    inline void getrawchar();
    inline void ungetmychar();
 
-   inline unsigned int gethash(char *string);
+   inline unsigned int gethash(const char *string);
 
-   void SCANNERMSG(char *msg);
+   void SCANNERMSG(const char *msg);
    };
 
 #endif
