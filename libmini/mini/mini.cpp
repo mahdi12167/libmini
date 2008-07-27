@@ -3,7 +3,7 @@
 #include "miniP.h"
 
 // set the global error handler for the mini library
-void setminierrorhandler(void (*handler)(char *file,int line,int fatal))
+void setminierrorhandler(void (*handler)(const char *file,int line,int fatal))
    {minibase::minierrorhandler=handler;}
 
 namespace mini {

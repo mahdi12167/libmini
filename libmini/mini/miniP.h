@@ -6,7 +6,7 @@
 #include "mini.h"
 
 // the global error handler for the mini library
-void (*minibase::minierrorhandler)(char *file,int line,int fatal)=NULL;
+void (*minibase::minierrorhandler)(const char *file,int line,int fatal)=NULL;
 
 namespace mini {
 

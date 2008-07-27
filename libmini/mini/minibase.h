@@ -12,12 +12,12 @@
 
 namespace minibase {
 
-extern void (*minierrorhandler)(char *file,int line,int fatal);
+extern void (*minierrorhandler)(const char *file,int line,int fatal);
 
 #define WARNMSG() minierrormsg(__FILE__,__LINE__)
 #define ERRORMSG() minierrormsg(__FILE__,__LINE__,1)
 
-inline void minierrormsg(char *file,int line,int fatal=0)
+inline void minierrormsg(const char *file,int line,int fatal=0)
    {
    if (minierrorhandler==0)
       {
