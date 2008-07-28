@@ -43,7 +43,7 @@ class minilod
    ~minilod();
 
    //! add minibrick volume
-   unsigned int addbrick(char *brickname,
+   unsigned int addbrick(const char *brickname,
                          float brad=0.0f,
                          unsigned int lods=0,
                          float stagger=0.0f);

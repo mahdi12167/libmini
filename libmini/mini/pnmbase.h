@@ -19,7 +19,7 @@ class PNMcomment
    void reset();
 
    char addchar(char ch);
-   void addstring(char *str);
+   void addstring(const char *str);
    void addfloat(float v,int leading=0);
    void addunits(int units);
 
@@ -58,7 +58,7 @@ unsigned char *readPVMvolume(const char *filename,
 
 //! put a geographic grid descriptor into a PNM comment
 void putPNMparams(PNMcomment *comment, // output PNM comment
-                  char *pnm_description=0, // data description
+                  const char *pnm_description=0, // data description
                   int coord_sys=0, // reference coordinate system: 0=LL 1=UTM
                   int coord_zone=0, // UTM zone: +- 1-60 0=LL (negative zones on southern hemisphere)
                   int coord_datum=0, // UTM datum: 1=NAD27 2=WGS72 3=WGS84 4=GRS80 5=Sphere 0=LL

@@ -43,7 +43,7 @@ char PNMcomment::addchar(char ch)
    return(ch);
    }
 
-void PNMcomment::addstring(char *str)
+void PNMcomment::addstring(const char *str)
    {while (*str!='\0') addchar(*str++);}
 
 void PNMcomment::addfloat(float v,int leading)
@@ -291,7 +291,7 @@ unsigned char *readPVMvolume(const char *filename,
 // put a geographic grid descriptor into a PNM comment
 // default values correspond to USGS 1:250,000 DEM quads
 void putPNMparams(PNMcomment *comment,
-                  char *pnm_description,
+                  const char *pnm_description,
                   int coord_sys,
                   int coord_zone,
                   int coord_datum,

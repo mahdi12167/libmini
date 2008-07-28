@@ -24,7 +24,7 @@ void drawframeRGBA(float x,float y,float width,float height,
                    float r,float g,float b,float alpha);
 
 void drawstring(float width,
-                float hue,float sat,float val,float alpha,char *str,
+                float hue,float sat,float val,float alpha,const char *str,
                 float backval=0.0f,float backalpha=0.0f);
 
 // configuring

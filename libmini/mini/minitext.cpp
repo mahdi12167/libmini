@@ -242,7 +242,7 @@ void drawframeRGBA(float x,float y,float width,float height,
    }
 
 void drawstring(float width,
-                float hue,float sat,float val,float alpha,char *str,
+                float hue,float sat,float val,float alpha,const char *str,
                 float backval,float backalpha)
    {
 #ifndef NOOGL
@@ -250,7 +250,7 @@ void drawstring(float width,
 
    int c,cmax,l;
    float scale;
-   char *ptr;
+   const char *ptr;
 
    if (str==NULL) return;
 

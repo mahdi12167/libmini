@@ -47,7 +47,7 @@ minilod::~minilod()
    }
 
 // add minibrick volume
-unsigned int minilod::addbrick(char *brickname,
+unsigned int minilod::addbrick(const char *brickname,
                                float brad,
                                unsigned int lods,
                                float stagger)
