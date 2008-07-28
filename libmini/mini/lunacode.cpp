@@ -1860,5 +1860,5 @@ void lunacode::printcode(int code)
       }
    }
 
-void lunacode::CODEMSG(char *msg)
+void lunacode::CODEMSG(const char *msg)
    {fprintf(stderr,"code error: %s\n",msg);}

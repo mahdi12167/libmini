@@ -188,7 +188,7 @@ class lunacode
 
    inline double mod(double a,double b);
 
-   void CODEMSG(char *msg);
+   void CODEMSG(const char *msg);
    };
 
 #endif

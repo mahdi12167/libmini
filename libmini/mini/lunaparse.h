@@ -57,8 +57,8 @@ class lunaparse
    //! destructor
    ~lunaparse();
 
-   void setLUNAcode(char *code) {SCANNER.setcode(code);}
-   void setLUNAcode(char *code,int bytes) {SCANNER.setcode(code,bytes);}
+   void setLUNAcode(const char *code) {SCANNER.setcode(code);}
+   void setLUNAcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
    void parseLUNA();
 
    void print();
@@ -157,7 +157,7 @@ class lunaparse
    void parse_statement(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx);
    void parse_expression(BOOLINT comma=FALSE);
    void parse_expression(int push,int push_idx);
-   void PARSERMSG(char *msg,BOOLINT after=FALSE);
+   void PARSERMSG(const char *msg,BOOLINT after=FALSE);
    };
 
 #endif

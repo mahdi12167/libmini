@@ -902,7 +902,7 @@ void lunaparse::printtoken()
       }
    }
 
-void lunaparse::PARSERMSG(char *msg,BOOLINT after)
+void lunaparse::PARSERMSG(const char *msg,BOOLINT after)
    {
    if (SCANNER.getline()>0)
       if (after && SCANNER.popline()>0) fprintf(stderr,"parser error in column %d of line %d after line %d: %s\n",SCANNER.getcol(),SCANNER.getline(),SCANNER.popline(),msg);
