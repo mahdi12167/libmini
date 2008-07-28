@@ -93,6 +93,8 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
 
    unsigned int count;
 
+   bs=0;
+
    if (ty==DATABUF_TYPE_BYTE) bs=1;
    else if (ty==DATABUF_TYPE_SHORT) bs=2;
    else if (ty==DATABUF_TYPE_FLOAT) bs=4;
@@ -129,6 +131,8 @@ void databuf::set(void *chunk,unsigned int length,
                   unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
    {
    unsigned int bs;
+
+   bs=0;
 
    if (ty==DATABUF_TYPE_BYTE) bs=1;
    else if (ty==DATABUF_TYPE_SHORT) bs=2;
@@ -345,9 +349,9 @@ void databuf::set_crs(int crs_type,int crs_zone,int crs_datum)
    }
 
 // write one float parameter
-void databuf::writeparam(char *tag,float v,FILE *file,int digits)
+void databuf::writeparam(const char *tag,float v,FILE *file,int digits)
    {
-   char *ptr;
+   const char *ptr;
 
    double value,point;
    int digit;
@@ -420,9 +424,10 @@ void databuf::writeparam(char *tag,float v,FILE *file,int digits)
    }
 
 // read one float parameter
-int databuf::readparam(char *tag,float *v,FILE *file)
+int databuf::readparam(const char *tag,float *v,FILE *file)
    {
-   char ch,*ptr;
+   char ch;
+   const char *ptr;
 
    double value,point;
    double expnt,exsgn;
@@ -522,7 +527,7 @@ int databuf::readparam(char *tag,float *v,FILE *file)
    }
 
 // read one integer parameter
-int databuf::readparami(char *tag,int *v,FILE *file)
+int databuf::readparami(const char *tag,int *v,FILE *file)
    {
    float value;
 
@@ -534,7 +539,7 @@ int databuf::readparami(char *tag,int *v,FILE *file)
    }
 
 // read one unsigned parameter
-int databuf::readparamu(char *tag,unsigned int *v,FILE *file)
+int databuf::readparamu(const char *tag,unsigned int *v,FILE *file)
    {
    float value;
 

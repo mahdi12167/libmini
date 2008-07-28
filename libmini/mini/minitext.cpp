@@ -11,7 +11,7 @@ namespace minitext {
 
 float CONFIGURE_ZSCALE=0.95f; // must be 1.0f for orthographic projections
 
-void drawsymbol(float hue,float sat,float val,float alpha,char *symbol)
+void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
    {
 #ifndef NOOGL
    float rgb[3];

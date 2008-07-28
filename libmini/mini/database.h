@@ -312,11 +312,11 @@ class databuf
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    static void *INTERPRETER_DATA;
 
-   void writeparam(char *tag,float v,FILE *file,int digits=8);
-   int readparam(char *tag,float *v,FILE *file);
+   void writeparam(const char *tag,float v,FILE *file,int digits=8);
+   int readparam(const char *tag,float *v,FILE *file);
 
-   int readparami(char *tag,int *v,FILE *file);
-   int readparamu(char *tag,unsigned int *v,FILE *file);
+   int readparami(const char *tag,int *v,FILE *file);
+   int readparamu(const char *tag,unsigned int *v,FILE *file);
 
    void loadblock(FILE *file);
 
