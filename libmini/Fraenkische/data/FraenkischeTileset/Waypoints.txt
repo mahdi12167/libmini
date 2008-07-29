@@ -1437,3 +1437,16 @@ UTM 32
 557978
 5447450
 430m
+
+Grab Fritz, Heidenau
+LL
+50.985120
+13.867963
+118m
+
+Pension "Villa Else", Heidenau
+# www.pension-villaelse.de
+LL
+50.966275
+13.886151
+116m
