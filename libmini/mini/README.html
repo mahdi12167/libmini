@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.6 as of 28.July.2008<br>
+Version 8.8.6 as of 29.July.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1444,7 +1444,7 @@ will show contours:<p>
       SUB vtx.y,c0.w,vtx.y;\
       MUL_SAT vtx.y,vtx.y,c0.y;\
       CMP vtx.y,vtx.x,vtx.y,c0.w;\
-      MUL col,col,vtx.y;\
+      MUL col.xyz,col,vtx.y;\
       MUL result.color,col,fragment.color;\
       END";
 

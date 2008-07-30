@@ -61,7 +61,7 @@ void minishader::setVISshader(minicache *cache,
       ABS vtx.y,vtx.y; \n\
       SUB vtx.y,c0.w,vtx.y; \n\
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col,col,vtx.y; \n\
+      MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
       ### modulate with directional light \n\
@@ -121,7 +121,7 @@ void minishader::setVISshader(minicache *cache,
       ABS vtx.y,vtx.y; \n\
       SUB vtx.y,c0.w,vtx.y; \n\
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col,col,vtx.y; \n\
+      MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
       ### modulate with directional light \n\
@@ -181,7 +181,7 @@ void minishader::setVISshader(minicache *cache,
       ABS vtx.y,vtx.y; \n\
       SUB vtx.y,c0.w,vtx.y; \n\
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col,col,vtx.y; \n\
+      MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
       ### modulate with directional light \n\
@@ -383,7 +383,7 @@ void minishader::setNPRshader(minicache *cache,
       ABS vtx.y,vtx.y; \n\
       SUB vtx.y,c4.w,vtx.y; \n\
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col,col,vtx.y; \n\
+      MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
       ### modulate with directional light \n\
@@ -441,7 +441,7 @@ void minishader::setNPRshader(minicache *cache,
       ABS vtx.y,vtx.y; \n\
       SUB vtx.y,c4.w,vtx.y; \n\
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col,col,vtx.y; \n\
+      MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n\
       ### modulate with directional light \n\
