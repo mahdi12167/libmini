@@ -69,10 +69,19 @@ class datagrid
    void trigger(const double time);
 
    //! trigger pushing the mesh for a particular time step and eye point
-   void trigger(const double time,const minicoord &eye,const double minradius=0.0,const double maxradius=MAXFLOAT);
+   void trigger(const double time,
+                const minicoord &eye,const miniv3d &dir,
+                const float nearp,const float farp,const float fovy,const float aspect,
+                const double maxradius=MAXFLOAT);
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,const double time);
+
+   //! push the mesh for a particular time step and eye point
+   virtual void push(const minimesh &mesh,
+                     const double time,
+                     const minicoord &eye,const miniv3d &dir,
+                     const float nearp,const float farp,const float fovy,const float aspect);
 
    protected:
 
@@ -86,6 +95,8 @@ class datagrid
 
    miniv4d MTXPRE[3],MTXPOST[3];
    BOOLINT IDPRE,IDPOST;
+
+   miniv4d INVTRAPRE[3],INVTRAPOST[3];
 
    private:
 

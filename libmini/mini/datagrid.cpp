@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minimath.h"
+
 #include "datagrid.h"
 
 // default constructor
@@ -15,9 +17,9 @@ datagrid::datagrid()
 
    CONSTRUCTED=FALSE;
 
-   ID[0]=MTXPRE[0]=MTXPOST[0]=miniv4d(1.0,0.0,0.0);
-   ID[1]=MTXPRE[1]=MTXPOST[1]=miniv4d(0.0,1.0,0.0);
-   ID[2]=MTXPRE[2]=MTXPOST[2]=miniv4d(0.0,0.0,1.0);
+   ID[0]=MTXPRE[0]=MTXPOST[0]=INVTRAPRE[0]=INVTRAPOST[0]=miniv4d(1.0,0.0,0.0);
+   ID[1]=MTXPRE[1]=MTXPOST[1]=INVTRAPRE[1]=INVTRAPOST[1]=miniv4d(0.0,1.0,0.0);
+   ID[2]=MTXPRE[2]=MTXPOST[2]=INVTRAPRE[2]=INVTRAPOST[2]=miniv4d(0.0,0.0,1.0);
 
    IDPRE=IDPOST=TRUE;
    }
@@ -143,6 +145,13 @@ void datagrid::applymtx(const miniv4d mtx[3])
    MTXPRE[2]=mtx[2];
 
    IDPRE=(MTXPRE[0]==ID[0] && MTXPRE[1]==ID[1] && MTXPRE[2]==ID[2]);
+
+   if (IDPRE) cpy_mtx(INVTRAPRE,ID);
+   else
+      {
+      inv_mtx(INVTRAPRE,MTXPRE);
+      tra_mtx(INVTRAPRE,INVTRAPRE);
+      }
    }
 
 // specify post matrix
@@ -153,6 +162,13 @@ void datagrid::specmtx(const miniv4d mtx[3])
    MTXPOST[2]=mtx[2];
 
    IDPOST=(MTXPOST[0]==ID[0] && MTXPOST[1]==ID[1] && MTXPOST[2]==ID[2]);
+
+   if (IDPOST) cpy_mtx(INVTRAPOST,ID);
+   else
+      {
+      inv_mtx(INVTRAPOST,MTXPOST);
+      tra_mtx(INVTRAPOST,INVTRAPOST);
+      }
    }
 
 // construct tetrahedral mesh from all data bricks
@@ -347,31 +363,70 @@ void datagrid::trigger(const double time)
    }
 
 // trigger pushing the mesh for a particular time step and eye point
-void datagrid::trigger(const double time,const minicoord &eye,const double minradius,const double maxradius)
+void datagrid::trigger(const double time,
+                       const minicoord &eye,const miniv3d &dir,
+                       const float nearp,const float farp,const float fovy,const float aspect,
+                       const double maxradius)
    {
-   minicoord ep;
+   minicoord ep,epd;
+   miniv3d ed;
 
    miniv4d v;
-   miniv3d e;
+   miniv3d e,d;
+
+   float factor1,factor2;
+
+   static const double scale=1000.0;
 
    ep=eye;
+   ed=dir;
 
    // transform eye point
    if (ep.type!=minicoord::MINICOORD_LINEAR)
-      if (CRS!=minicoord::MINICOORD_LINEAR) ep.convert2(CRS);
+      if (CRS!=minicoord::MINICOORD_LINEAR)
+         {
+         epd=ep+minicoord(scale*ed,ep.type,ep.utm_zone,ep.utm_datum);
+
+         ep.convert2(CRS);
+         epd.convert2(CRS);
+
+         ed=(epd-ep).vec;
+         ed.normalize();
+         }
 
    // multiply eye point with 4x3 matrix
    if (!IDPRE)
       {
-      v=miniv4d(ep.vec.x,ep.vec.y,ep.vec.z,1.0);
+      v=miniv4d(ep.vec,1.0);
       e=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
+
+      v=miniv4d(ed,1.0);
+      d=miniv3d(INVTRAPRE[0]*v,INVTRAPRE[1]*v,INVTRAPRE[2]*v);
       }
 
+   // compute safety factors
+   factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
+   factor2=1.01f;
+
    if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
-   SORTED=BSPT2.extract(e,minradius,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push(SORTED,time); // push the dynamic sorted mesh
+   SORTED=BSPT2.extract(e,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   push(SORTED,time,e,d,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
    }
 
 // push the mesh for a particular time step
-void datagrid::push(const minimesh &mesh,const double time)
-   {printf("pushing mesh of size %u for time step %g\n",mesh.getsize(),time);}
+void datagrid::push(const minimesh &mesh,
+                    const double time)
+   {
+   printf("pushing mesh of size %u for time step %g\n",
+          mesh.getsize(),time);
+   }
+
+// push the mesh for a particular time step and eye point
+void datagrid::push(const minimesh &mesh,
+                    const double time,
+                    const minicoord &eye,const miniv3d &dir,
+                    const float nearp,const float farp,const float fovy,const float aspect)
+   {
+   printf("pushing view-dependent mesh of size %u for time step %g\n",
+          mesh.getsize(),time);
+   }

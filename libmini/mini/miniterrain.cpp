@@ -926,7 +926,7 @@ void miniterrain::render_presea()
 
             // push either sorted or unsorted grid
             if (!SORTED) DATAGRID->trigger(TPARAMS.time);
-            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
             }
    }
 
@@ -966,7 +966,7 @@ void miniterrain::render_postsea()
 
             // push either sorted or unsorted grid
             if (!SORTED) DATAGRID->trigger(TPARAMS.time);
-            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.farp);
+            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
             }
    }
 
