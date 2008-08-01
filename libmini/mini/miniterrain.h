@@ -337,7 +337,7 @@ class miniterrain
    void registerrndr(minipointrndr *rndr);
 
    //! add datagrid object
-   void addgrid(datagrid *obj,BOOLINT sorted=FALSE);
+   void addgrid(datagrid *obj,BOOLINT sort=FALSE);
 
    // default coordinate conversions (g=global, l=local, o=opengl):
 
@@ -400,7 +400,7 @@ class miniterrain
    int (*CHECKURL)(const char *src_url,const char *src_id,const char *src_file,int id,void *data);
 
    datagrid *DATAGRID;
-   BOOLINT SORTED;
+   BOOLINT SORT;
 
    int reserve();
 

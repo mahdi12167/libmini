@@ -218,7 +218,7 @@ miniterrain::miniterrain()
    CHECKURL=NULL;
 
    DATAGRID=NULL;
-   SORTED=FALSE;
+   SORT=FALSE;
    }
 
 // destructor
@@ -925,7 +925,7 @@ void miniterrain::render_presea()
             DATAGRID->specmtx(mtx);
 
             // push either sorted or unsorted grid
-            if (!SORTED) DATAGRID->trigger(TPARAMS.time);
+            if (!SORT) DATAGRID->trigger(TPARAMS.time);
             else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
             }
    }
@@ -965,7 +965,7 @@ void miniterrain::render_postsea()
             DATAGRID->specmtx(mtx);
 
             // push either sorted or unsorted grid
-            if (!SORTED) DATAGRID->trigger(TPARAMS.time);
+            if (!SORT) DATAGRID->trigger(TPARAMS.time);
             else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
             }
    }
@@ -1150,8 +1150,8 @@ void miniterrain::registerrndr(minipointrndr *rndr)
    }
 
 // add datagrid object
-void miniterrain::addgrid(datagrid *obj,BOOLINT sorted)
+void miniterrain::addgrid(datagrid *obj,BOOLINT sort)
    {
    DATAGRID=obj;
-   SORTED=sorted;
+   SORT=sort;
    }

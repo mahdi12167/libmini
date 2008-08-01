@@ -427,6 +427,9 @@ void datagrid::push(const minimesh &mesh,
                     const minicoord &eye,const miniv3d &dir,
                     const float nearp,const float farp,const float fovy,const float aspect)
    {
-   printf("pushing view-dependent mesh of size %u for time step %g\n",
+   printf("pushing mesh of size %u for time step %g\n",
           mesh.getsize(),time);
+
+   printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g\n",
+          eye.vec.x,eye.vec.y,eye.vec.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect);
    }
