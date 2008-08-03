@@ -2,6 +2,8 @@
 
 #include "threadbase.h"
 
+#ifndef NOVIEWER
+
 int threadbase::INSTANCES=0;
 
 threadbase::threadbase()
@@ -205,3 +207,5 @@ void threadbase::exitmultithread(int id)
       MAXMULTITHREAD=0;
       }
    }
+
+#endif

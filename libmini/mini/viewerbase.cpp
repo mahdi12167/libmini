@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#ifndef NOVIEWER
+
 #include "minitime.h"
 
 #include "database.h"
@@ -187,3 +189,5 @@ void viewerbase::idle(double dt)
 // shoot a ray at the scene
 double viewerbase::shoot(const minicoord &o,const miniv3d &d)
    {return(EARTH->shoot(o,d));}
+
+#endif

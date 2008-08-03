@@ -20,6 +20,7 @@
 # tidy      -> clean up all temporary files
 
 # available options:
+# noviewer  -> build without viewer
 # useopenth -> build with openthreads
 # nosquish  -> build without squish
 # usegreyc  -> build with greyc
@@ -48,8 +49,9 @@ set option1=$2
 set option2=$3
 set option3=$4
 set option4=$5
+set option5=$6
 
-foreach option ("useopenth" "nosquish" "usegreyc" "wall")
+foreach option ("noviewer" "useopenth" "nosquish" "usegreyc" "wall")
    if ($rule == $option) then
       set rule="lib"
       set option0=$option
@@ -84,10 +86,15 @@ if ($rule == "install") then
 endif
 
 set defs=""
+unset noviewer
 unset useopenth
 set usesquish
 unset usegreyc
-foreach option ("$option0" "$option1" "$option2" "$option3" "$option4")
+foreach option ("$option0" "$option1" "$option2" "$option3" "$option4" "$option5")
+   if ("$option" == "noviewer") then
+      set defs="$defs -DNOVIEWER"
+      set noviewer
+   endif
    if ("$option" == "useopenth") then
       set defs="$defs -DUSEOPENTH"
       set useopenth
@@ -110,7 +117,7 @@ if (-e ../deps/freeglut) then
    set link="$link -L$qcwd/../deps/freeglut"
 endif
 
-if ($?useopenth) then
+if ($?useopenth && ! $?noviewer) then
    if (-e ../deps/openthreads) then
       set incl="$incl -I$qcwd/../deps/openthreads/include"
       set link="$link -L$qcwd/../deps/openthreads/lib"

@@ -3,6 +3,8 @@
 #ifndef THREADBASE_H
 #define THREADBASE_H
 
+#ifndef NOVIEWER
+
 #ifndef USEOPENTH
 #   include <pthread.h>
 #else
@@ -105,5 +107,7 @@ class threadbase
    void initmultithread(int id);
    void exitmultithread(int id);
    };
+
+#endif
 
 #endif

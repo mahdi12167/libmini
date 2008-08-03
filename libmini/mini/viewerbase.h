@@ -3,6 +3,8 @@
 #ifndef VIEWERBASE_H
 #define VIEWERBASE_H
 
+#ifndef NOVIEWER
+
 #include "minibase.h"
 
 #include "convbase.h"
@@ -122,5 +124,7 @@ class viewerbase
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data);
    };
+
+#endif
 
 #endif
