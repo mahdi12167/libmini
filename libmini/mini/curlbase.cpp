@@ -2,6 +2,8 @@
 
 #include "curlbase.h"
 
+#ifndef NOVIEWER
+
 int curlbase::INSTANCES=0;
 
 curlbase::curlbase()
@@ -230,3 +232,5 @@ void curlbase::exitmulticurl(int id)
       MAXMULTICURL=0;
       }
    }
+
+#endif
