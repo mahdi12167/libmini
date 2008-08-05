@@ -12,7 +12,7 @@
 #   include <OpenThreads/Mutex>
 #endif
 
-#include "datacloud.h"
+#include <mini/datacloud.h>
 
 #ifdef USEOPENTH
 

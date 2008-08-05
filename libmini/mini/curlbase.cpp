@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#include "curlbase.h"
+#include <mini/curlbase.h>
 
 #ifndef NOVIEWER
 

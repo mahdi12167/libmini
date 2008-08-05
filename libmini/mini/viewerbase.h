@@ -5,17 +5,17 @@
 
 #ifndef NOVIEWER
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "convbase.h"
+#include <mini/convbase.h>
 
-#include "miniv3d.h"
-#include "miniv4d.h"
+#include <mini/miniv3d.h>
+#include <mini/miniv4d.h>
 
-#include "miniearth.h"
+#include <mini/miniearth.h>
 
-#include "threadbase.h"
-#include "curlbase.h"
+#include <mini/threadbase.h>
+#include <mini/curlbase.h>
 
 //! base class for viewing tilesets
 class viewerbase

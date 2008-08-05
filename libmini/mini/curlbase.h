@@ -5,7 +5,7 @@
 
 #ifndef NOVIEWER
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
 #include <curl/curl.h>
 #include <curl/types.h>

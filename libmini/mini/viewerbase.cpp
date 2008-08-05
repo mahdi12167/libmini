@@ -2,17 +2,17 @@
 
 #ifndef NOVIEWER
 
-#include "minitime.h"
+#include <mini/minitime.h>
 
-#include "database.h"
+#include <mini/database.h>
 
 #ifndef NOSQUISH
-#include "squishbase.h"
+#include <mini/squishbase.h>
 #endif
 
-#include "miniOGL.h"
+#include <mini/miniOGL.h>
 
-#include "viewerbase.h"
+#include <mini/viewerbase.h>
 
 // default constructor
 viewerbase::viewerbase()

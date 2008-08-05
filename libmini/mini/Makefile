@@ -37,7 +37,7 @@ ZIP	= zip -qr9
 .SUFFIXES: .cpp
 
 .cpp.o:
-	$(COMPILER) $(OPTS) -c $*.cpp
+	$(COMPILER) -I.. $(OPTS) -c $*.cpp
 
 trap:
 

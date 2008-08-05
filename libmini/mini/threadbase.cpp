@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#include "threadbase.h"
+#include <mini/threadbase.h>
 
 #ifndef NOVIEWER
 

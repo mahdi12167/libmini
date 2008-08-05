@@ -3,8 +3,8 @@
 #ifndef IMGBASE_H
 #define IMGBASE_H
 
-#include "database.h"
-#include "datacalc.h"
+#include <mini/database.h>
+#include <mini/datacalc.h>
 
 class imgbase
    {

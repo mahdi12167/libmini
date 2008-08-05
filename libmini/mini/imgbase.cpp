@@ -1,18 +1,18 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "miniio.h"
+#include <mini/miniio.h>
 
-#include "database.h"
-#include "datacalc.h"
+#include <mini/database.h>
+#include <mini/datacalc.h>
 
-#include "squishbase.h"
+#include <mini/squishbase.h>
 
-#include "jpegbase.h"
-#include "pngbase.h"
+#include <mini/jpegbase.h>
+#include <mini/pngbase.h>
 
-#include "imgbase.h"
+#include <mini/imgbase.h>
 
 datacalc imgbase::CALC;
 
