@@ -117,30 +117,31 @@ class minicache
       TRIGGER_OP=4
       };
 
+   struct CACHE_STRUCT
+      {
+      unsigned char *op;
+      float *arg;
+      int size,maxsize;
+
+      int fancnt,vtxcnt;
+
+      float *prism_cache;
+      int prism_size,prism_maxsize;
+      };
+
+   typedef CACHE_STRUCT CACHE_TYPE;
+
    struct TERRAIN_STRUCT
       {
       minitile *tile;
       float scale,lambda;
 
       int cache_num;
-
-      unsigned char *cache1_op,*cache2_op;
-      float *cache1_arg,*cache2_arg;
-
-      int cache_size1,cache_size2;
-      int cache_maxsize1,cache_maxsize2;
-
       int cache_phase;
 
+      CACHE_TYPE cache[2];
+
       int last_beginfan;
-
-      int fancnt1,fancnt2;
-      int vtxcnt1,vtxcnt2;
-
-      float *prism_cache1,*prism_cache2;
-
-      int prism_size1,prism_size2;
-      int prism_maxsize1,prism_maxsize2;
 
       miniray *ray;
 
@@ -160,10 +161,10 @@ class minicache
       float ls,lo;
       };
 
+   typedef TERRAIN_STRUCT TERRAIN_TYPE;
+
    int CACHE_ID;
    int RENDER_ID;
-
-   typedef TERRAIN_STRUCT TERRAIN_TYPE;
 
    static minicache *CACHE;
 
@@ -171,16 +172,16 @@ class minicache
    int NUMTERRAIN,MAXTERRAIN;
 
    static void cache_beginfan();
-   static void cache_fanvertex(float i,float y,float j);
-   static void cache_texmap(int m,int n,int S);
-   static void cache_prismedge(float x,float y,float yf,float z);
-   static void cache_trigger(int phase,float scale,float ex,float ey,float ez);
-   static void cache_sync(int id);
+   static void cache_fanvertex(const float i,const float y,const float j);
+   static void cache_texmap(const int m,const int n,const int S);
+   static void cache_prismedge(const float x,const float y,const float yf,const float z);
+   static void cache_trigger(const int phase,const float scale,const float ex,const float ey,const float ez);
+   static void cache_sync(const int id);
 
-   void cache(int op,float a=0.0f,float b=0.0f,float c=0.0f);
-   void cacheprismedge(float x,float y,float yf,float z);
-   void cachetrigger(int phase,float scale,float ex,float ey,float ez);
-   void cachesync(int id);
+   void cache(const int op,const float arg1=0.0f,const float arg2=0.0f,const float arg3=0.0f);
+   void cacheprismedge(const float x,const float y,const float yf,const float z);
+   void cachetrigger(const int phase,const float scale,const float ex,const float ey,const float ez);
+   void cachesync(const int id);
 
    inline int rendercache(int id,int phase);
 
