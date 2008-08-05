@@ -3,9 +3,9 @@
 #ifndef CONVBASE_H
 #define CONVBASE_H
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "database.h"
+#include <mini/database.h>
 
 namespace convbase {
 

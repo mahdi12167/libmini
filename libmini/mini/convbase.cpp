@@ -1,13 +1,13 @@
 // (c) by Stefan Roettger
 
-#include "jpegbase.h"
-#include "pngbase.h"
+#include <mini/jpegbase.h>
+#include <mini/pngbase.h>
 
 #ifdef USEGREYC
-#include "greycbase.h"
+#include <mini/greycbase.h>
 #endif
 
-#include "convbase.h"
+#include <mini/convbase.h>
 
 namespace convbase {
 

@@ -1,8 +1,8 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "jpegbase.h"
+#include <mini/jpegbase.h>
 
 namespace jpegbase {
 

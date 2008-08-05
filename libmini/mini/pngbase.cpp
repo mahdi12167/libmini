@@ -1,8 +1,8 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "pngbase.h"
+#include <mini/pngbase.h>
 
 namespace pngbase {
 
