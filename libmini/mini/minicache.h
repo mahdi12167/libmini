@@ -49,6 +49,9 @@ class minicache
    //! render back buffer of the cache
    int rendercache();
 
+   //! set culling mode
+   void setculling(int on=1);
+
    //! define triangle mesh opacity
    void setopacity(float alpha=1.0f);
 
@@ -64,7 +67,7 @@ class minicache
    //! define optional vertex shader
    void setvtxshader(const char *vtxprog=0);
    void setvtxshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
-   void usevtxshader(int on=1) {USEVTXSHADER=on;}
+   void usevtxshader(int on=1);
 
    //! define optional pixel shader
    void setpixshader(const char *fragprog=0);
@@ -72,7 +75,7 @@ class minicache
    void setpixshadertex(unsigned char *image,int width,int height,int components=3);
    void setpixshadertexRGB(unsigned char *image,int width,int height);
    void setpixshadertexRGBA(unsigned char *image,int width,int height);
-   void usepixshader(int on=1) {USEPIXSHADER=on;}
+   void usepixshader(int on=1);
 
    //! define optional sea shader
    void setseashader(const char *seaprog=0);
@@ -80,7 +83,7 @@ class minicache
    void setseashadertex(unsigned char *image,int width,int height,int components=3);
    void setseashadertexRGB(unsigned char *image,int width,int height);
    void setseashadertexRGBA(unsigned char *image,int width,int height);
-   void useseashader(int on=0) {USESEASHADER=on;}
+   void useseashader(int on=0);
 
    //! define optional sea callbacks
    void setseacb(void (*preseacb)(void *data)=0,
@@ -190,6 +193,8 @@ class minicache
    inline int rendertrigger(int phase);
    inline int rendertrigger(int phase,float scale);
    inline int rendertrigger();
+
+   int CULLMODE;
 
    float OPACITY,ALPHATEST;
    float SEA_R,SEA_G,SEA_B,SEA_A;

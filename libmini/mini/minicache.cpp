@@ -24,6 +24,8 @@ minicache::minicache()
    CACHE_ID=0;
    RENDER_ID=0;
 
+   CULLMODE=1;
+
    OPACITY=1.0f;
    ALPHATEST=1.0f;
 
@@ -660,6 +662,8 @@ int minicache::rendertrigger(int phase)
       initstate();
       mtxpush();
 
+      if (CULLMODE==0) disableculling();
+
       if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
       if (OPACITY<1.0f)
@@ -682,6 +686,8 @@ int minicache::rendertrigger(int phase)
       }
    else if (phase==3)
       {
+      if (CULLMODE==0) enableBFculling();
+
       if (ALPHATEST<1.0f) disableAtest();
 
       if (OPACITY<1.0f)
@@ -1106,6 +1112,10 @@ void minicache::setlight(minitile *terrain,float lx,float ly,float lz,float ls,f
 void minicache::makecurrent()
    {CACHE=this;}
 
+// set culling mode
+void minicache::setculling(int on)
+   {CULLMODE=on;}
+
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
    {OPACITY=alpha;}
@@ -1289,6 +1299,10 @@ void minicache::disablevtxshader()
 #endif
    }
 
+// switch vertex shader plugin on/off
+void minicache::usevtxshader(int on)
+   {USEVTXSHADER=on;}
+
 // set pixel shader plugin
 void minicache::setpixshader(const char *fp)
    {
@@ -1379,6 +1393,10 @@ void minicache::setpixshadertex(unsigned char *image,int width,int height,int co
       }
    }
 
+// switch pixel shader plugin on/off
+void minicache::usepixshader(int on)
+   {USEPIXSHADER=on;}
+
 // set sea shader plugin
 void minicache::setseashader(const char *sp)
    {
@@ -1468,6 +1486,10 @@ void minicache::setseashadertex(unsigned char *image,int width,int height,int co
       SEASHADERTEXHEIGHT=height;
       }
    }
+
+// switch sea shader plugin on/off
+void minicache::useseashader(int on)
+   {USESEASHADER=on;}
 
 // define optional sea callbacks
 void minicache::setseacb(void (*preseacb)(void *data),
