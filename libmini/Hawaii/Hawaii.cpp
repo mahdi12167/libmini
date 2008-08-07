@@ -602,7 +602,7 @@ void initview(float x,float y,float a,float p)
    upd=1;
    }
 
-int request_callback(int col,int row,unsigned char *mapfile,int hlod,unsigned char *texfile,int tlod,unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap)
+int request_callback(int col,int row,const unsigned char *mapfile,int hlod,const unsigned char *texfile,int tlod,const unsigned char *fogfile,void *data,databuf *hfield,databuf *texture,databuf *fogmap)
    {
    int present;
 
