@@ -41,10 +41,10 @@ class minitree
    void setmode_12(float redwgt,float greenwgt,float bluewgt,float alphathres,float alphaslope);
 
    //! return actual tree mode
-   int getmode() {return(TREEMODE);}
+   int getmode();
 
    //! return actual number of cached trees
-   int gettrees() {return((TREECACHE_NUM==1)?TREECACHE_TREES2:TREECACHE_TREES1);}
+   int gettrees();
 
    protected:
 
@@ -55,23 +55,24 @@ class minitree
 
    private:
 
+   struct TREECACHE_STRUCT
+      {
+      float *buf,*crd;
+      int size,maxsize;
+
+      int treecnt;
+
+      float *grass_buf,*grass_crd;
+      int grass_size,grass_maxsize;
+      };
+
+   typedef TREECACHE_STRUCT TREECACHE_TYPE;
+
    int PRISM_ID;
 
    int TREECACHE_NUM;
 
-   float *TREECACHE_CACHE1,*TREECACHE_CACHE2;
-   float *TREECACHE_COORD1,*TREECACHE_COORD2;
-
-   int TREECACHE_SIZE1,TREECACHE_SIZE2;
-   int TREECACHE_MAXSIZE1,TREECACHE_MAXSIZE2;
-
-   float *GRASSCACHE_CACHE1,*GRASSCACHE_CACHE2;
-   float *GRASSCACHE_COORD1,*GRASSCACHE_COORD2;
-
-   int GRASSCACHE_SIZE1,GRASSCACHE_SIZE2;
-   int GRASSCACHE_MAXSIZE1,GRASSCACHE_MAXSIZE2;
-
-   int TREECACHE_TREES1,TREECACHE_TREES2;
+   TREECACHE_TYPE TREECACHE[2];
 
    float TREECACHE_LAMBDA;
 
@@ -82,13 +83,13 @@ class minitree
 
    float TREECACHE_EX,TREECACHE_EY,TREECACHE_EZ;
 
-   int TREECACHE_TEXID,GRASSCACHE_TEXID,GRASSCACHE_PERTURBID,RENDERCACHE_TEXID;
+   int TREE_TEXID,GRASS_TEXID,GRASS_PERTURBID,RENDER_TEXID;
 
-   int TREECACHE_VTXPROGID1,TREECACHE_VTXPROGID2,RENDERCACHE_VTXPROGID;
-   int GRASSCACHE_VTXPROGID,GRASSCACHE_FRAGPROGID1,GRASSCACHE_FRAGPROGID2,GRASSCACHE_FRAGPROGID3,GRASSCACHE_FRAGPROGID4;
-   int RENDERCACHE_FRAGPROGID1,RENDERCACHE_FRAGPROGID2;
+   int TREE_VTXPROGID1,TREE_VTXPROGID2,RENDER_VTXPROGID;
+   int GRASS_VTXPROGID,GRASS_FRAGPROGID1,GRASS_FRAGPROGID2,GRASS_FRAGPROGID3,GRASS_FRAGPROGID4;
+   int RENDER_FRAGPROGID1,RENDER_FRAGPROGID2;
 
-   int GRASSCACHE_CLASSES;
+   int GRASS_CLASSES;
 
    static void prismedge(float x,float y,float yf,float z,void *data);
    static void prismcache(int phase,float scale,float ex,float ey,float ez,void *data);

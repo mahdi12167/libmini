@@ -9,6 +9,8 @@
 // default constructor
 minitree::minitree(minicache *cache,minitile *tile)
    {
+   int i;
+
    CACHE=cache;
    ATTACHED_ID=tile->getid();
 
@@ -16,35 +18,32 @@ minitree::minitree(minicache *cache,minitile *tile)
 
    PRISM_ID=0;
 
-   TREECACHE_NUM=1;
+   TREECACHE_NUM=0;
 
-   TREECACHE_SIZE1=TREECACHE_SIZE2=0;
-   TREECACHE_MAXSIZE1=TREECACHE_MAXSIZE2=1;
+   for (i=0; i<2; i++)
+      {
+      TREECACHE[i].size=0;
+      TREECACHE[i].maxsize=1;
 
-   if ((TREECACHE_CACHE1=(float *)malloc(TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((TREECACHE_CACHE2=(float *)malloc(TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((TREECACHE[i].buf=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((TREECACHE[i].crd=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) ERRORMSG();
 
-   if ((TREECACHE_COORD1=(float *)malloc(TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((TREECACHE_COORD2=(float *)malloc(TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
+      TREECACHE[i].treecnt=0;
 
-   GRASSCACHE_SIZE1=GRASSCACHE_SIZE2=0;
-   GRASSCACHE_MAXSIZE1=GRASSCACHE_MAXSIZE2=1;
+      TREECACHE[i].grass_size=0;
+      TREECACHE[i].grass_maxsize=1;
 
-   if ((GRASSCACHE_CACHE1=(float *)malloc(GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((GRASSCACHE_CACHE2=(float *)malloc(GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-
-   if ((GRASSCACHE_COORD1=(float *)malloc(GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-   if ((GRASSCACHE_COORD2=(float *)malloc(GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-
-   TREECACHE_TREES1=TREECACHE_TREES2=0;
+      if ((TREECACHE[i].grass_buf=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((TREECACHE[i].grass_crd=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      }
 
    TREECACHE_LAMBDA=0.0f;
 
-   TREECACHE_TEXID=GRASSCACHE_TEXID=GRASSCACHE_PERTURBID=RENDERCACHE_TEXID=0;
+   TREE_TEXID=GRASS_TEXID=GRASS_PERTURBID=RENDER_TEXID=0;
 
-   TREECACHE_VTXPROGID1=TREECACHE_VTXPROGID2=RENDERCACHE_VTXPROGID=0;
-   GRASSCACHE_VTXPROGID=GRASSCACHE_FRAGPROGID1=GRASSCACHE_FRAGPROGID2=GRASSCACHE_FRAGPROGID3=GRASSCACHE_FRAGPROGID4=0;
-   RENDERCACHE_FRAGPROGID1=RENDERCACHE_FRAGPROGID2=0;
+   TREE_VTXPROGID1=TREE_VTXPROGID2=RENDER_VTXPROGID=0;
+   GRASS_VTXPROGID=GRASS_FRAGPROGID1=GRASS_FRAGPROGID2=GRASS_FRAGPROGID3=GRASS_FRAGPROGID4=0;
+   RENDER_FRAGPROGID1=RENDER_FRAGPROGID2=0;
 
    CONFIGURE_ZSCALE=0.95f;
    CONFIGURE_BLEND=0;
@@ -138,22 +137,21 @@ minitree::minitree(minicache *cache,minitile *tile)
 // destructor
 minitree::~minitree()
    {
-   free(TREECACHE_CACHE1);
-   free(TREECACHE_CACHE2);
+   int i;
 
-   free(TREECACHE_COORD1);
-   free(TREECACHE_COORD2);
+   for (i=0; i<2; i++)
+      {
+      free(TREECACHE[i].buf);
+      free(TREECACHE[i].crd);
 
-   free(GRASSCACHE_CACHE1);
-   free(GRASSCACHE_CACHE2);
+      free(TREECACHE[i].grass_buf);
+      free(TREECACHE[i].grass_crd);
+      }
 
-   free(GRASSCACHE_COORD1);
-   free(GRASSCACHE_COORD2);
-
-   deletetexmap(TREECACHE_TEXID);
-   deletetexmap(GRASSCACHE_TEXID);
-   deletetexmap(GRASSCACHE_PERTURBID);
-   deletetexmap(RENDERCACHE_TEXID);
+   deletetexmap(TREE_TEXID);
+   deletetexmap(GRASS_TEXID);
+   deletetexmap(GRASS_PERTURBID);
+   deletetexmap(RENDER_TEXID);
 
 #ifndef NOOGL
 
@@ -161,63 +159,63 @@ minitree::~minitree()
 
    GLuint progid;
 
-   if (TREECACHE_VTXPROGID1!=0)
+   if (TREE_VTXPROGID1!=0)
       {
-      progid=TREECACHE_VTXPROGID1;
+      progid=TREE_VTXPROGID1;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (TREECACHE_VTXPROGID2!=0)
+   if (TREE_VTXPROGID2!=0)
       {
-      progid=TREECACHE_VTXPROGID2;
+      progid=TREE_VTXPROGID2;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (GRASSCACHE_VTXPROGID!=0)
+   if (GRASS_VTXPROGID!=0)
       {
-      progid=GRASSCACHE_VTXPROGID;
+      progid=GRASS_VTXPROGID;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (GRASSCACHE_FRAGPROGID1!=0)
+   if (GRASS_FRAGPROGID1!=0)
       {
-      progid=GRASSCACHE_FRAGPROGID1;
+      progid=GRASS_FRAGPROGID1;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (GRASSCACHE_FRAGPROGID2!=0)
+   if (GRASS_FRAGPROGID2!=0)
       {
-      progid=GRASSCACHE_FRAGPROGID2;
+      progid=GRASS_FRAGPROGID2;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (GRASSCACHE_FRAGPROGID3!=0)
+   if (GRASS_FRAGPROGID3!=0)
       {
-      progid=GRASSCACHE_FRAGPROGID3;
+      progid=GRASS_FRAGPROGID3;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (GRASSCACHE_FRAGPROGID4!=0)
+   if (GRASS_FRAGPROGID4!=0)
       {
-      progid=GRASSCACHE_FRAGPROGID4;
+      progid=GRASS_FRAGPROGID4;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (RENDERCACHE_VTXPROGID!=0)
+   if (RENDER_VTXPROGID!=0)
       {
-      progid=RENDERCACHE_VTXPROGID;
+      progid=RENDER_VTXPROGID;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (RENDERCACHE_FRAGPROGID1!=0)
+   if (RENDER_FRAGPROGID1!=0)
       {
-      progid=RENDERCACHE_FRAGPROGID1;
+      progid=RENDER_FRAGPROGID1;
       glDeleteProgramsARB(1,&progid);
       }
 
-   if (RENDERCACHE_FRAGPROGID2!=0)
+   if (RENDER_FRAGPROGID2!=0)
       {
-      progid=RENDERCACHE_FRAGPROGID2;
+      progid=RENDER_FRAGPROGID2;
       glDeleteProgramsARB(1,&progid);
       }
 
@@ -258,25 +256,30 @@ void minitree::configure_blend(int blend) {CONFIGURE_BLEND=blend;}
 // 12: randomized billboards with translucent grass layer
 void minitree::setmode(int treemode)
    {
+   int i;
+
    if (treemode<-2 || treemode>12) ERRORMSG();
 
    TREEMODE=treemode;
 
-   TREECACHE_SIZE1=TREECACHE_SIZE2=0;
-   GRASSCACHE_SIZE1=GRASSCACHE_SIZE2=0;
-   TREECACHE_TREES1=TREECACHE_TREES2=0;
+   for (i=0; i<2; i++)
+      {
+      TREECACHE[i].size=0;
+      TREECACHE[i].treecnt=0;
+      TREECACHE[i].grass_size=0;
+      }
 
-   deletetexmap(TREECACHE_TEXID);
-   TREECACHE_TEXID=0;
+   deletetexmap(TREE_TEXID);
+   TREE_TEXID=0;
 
-   deletetexmap(GRASSCACHE_TEXID);
-   GRASSCACHE_TEXID=0;
+   deletetexmap(GRASS_TEXID);
+   GRASS_TEXID=0;
 
-   deletetexmap(GRASSCACHE_PERTURBID);
-   GRASSCACHE_PERTURBID=0;
+   deletetexmap(GRASS_PERTURBID);
+   GRASS_PERTURBID=0;
 
-   deletetexmap(RENDERCACHE_TEXID);
-   RENDERCACHE_TEXID=0;
+   deletetexmap(RENDER_TEXID);
+   RENDER_TEXID=0;
 
    if (TREEMODE<0) CACHE->attach(NULL,NULL,NULL,prismrender,NULL,NULL,this);
    else if (TREEMODE>0) CACHE->attach(NULL,prismedge,prismcache,NULL,prismtrigger,prismsync,this);
@@ -303,8 +306,8 @@ void minitree::setmode_m2(char *texfile,float texsize)
    if (TREEMODE_M2_TEXFILE!=NULL) free(TREEMODE_M2_TEXFILE);
    TREEMODE_M2_TEXFILE=strdup(texfile);
 
-   deletetexmap(RENDERCACHE_TEXID);
-   RENDERCACHE_TEXID=0;
+   deletetexmap(RENDER_TEXID);
+   RENDER_TEXID=0;
 
    TREEMODE_M2_TEXSIZE=texsize;
    }
@@ -347,8 +350,8 @@ void minitree::setmode_4(char *texfile_rgb,char *texfile_a,float treeaspect,floa
    if (texfile_a!=NULL) TREEMODE_4_TEXFILE_A=strdup(texfile_a);
    else TREEMODE_4_TEXFILE_A=NULL;
 
-   deletetexmap(TREECACHE_TEXID);
-   TREECACHE_TEXID=0;
+   deletetexmap(TREE_TEXID);
+   TREE_TEXID=0;
 
    TREEMODE_4_TREEASPECT=treeaspect;
    TREEMODE_4_MINALPHA=minalpha;
@@ -376,8 +379,8 @@ void minitree::setmode_7(char *texfile_rgb,char *texfile_a,int treenum)
    if (texfile_a!=NULL) TREEMODE_7_TEXFILE_A=strdup(texfile_a);
    else TREEMODE_7_TEXFILE_A=NULL;
 
-   deletetexmap(TREECACHE_TEXID);
-   TREECACHE_TEXID=0;
+   deletetexmap(TREE_TEXID);
+   TREE_TEXID=0;
 
    TREEMODE_7_TREENUM=treenum;
    }
@@ -408,8 +411,8 @@ void minitree::setmode_9(char *volfile,float texsize,
    if (TREEMODE_9_VOLFILE!=NULL) free(TREEMODE_9_VOLFILE);
    TREEMODE_9_VOLFILE=strdup(volfile);
 
-   deletetexmap(GRASSCACHE_TEXID);
-   GRASSCACHE_TEXID=0;
+   deletetexmap(GRASS_TEXID);
+   GRASS_TEXID=0;
 
    TREEMODE_9_TEXSIZE=texsize;
    TREEMODE_9_GRASSDEPTH=grassdepth;
@@ -431,8 +434,8 @@ void minitree::setmode_10(float perturbsize,int perturbres,int perturbstart,floa
        perturbseed<0.0f || perturbseed>1.0f ||
        perturbfx<0.0f || perturbfx>1.0f) ERRORMSG();
 
-   deletetexmap(GRASSCACHE_PERTURBID);
-   GRASSCACHE_PERTURBID=0;
+   deletetexmap(GRASS_PERTURBID);
+   GRASS_PERTURBID=0;
 
    TREEMODE_10_PERTURBSIZE=perturbsize;
    TREEMODE_10_PERTURBRES=perturbres;
@@ -458,6 +461,20 @@ void minitree::setmode_12(float redwgt,float greenwgt,float bluewgt,float alphat
 
    TREEMODE_12_ALPHATHRES=alphathres;
    TREEMODE_12_ALPHASLOPE=alphaslope;
+   }
+
+// return actual tree mode
+int minitree::getmode()
+   {return(TREEMODE);}
+
+// return actual number of cached trees
+int minitree::gettrees()
+   {
+   TREECACHE_TYPE *c;
+
+   c=&TREECACHE[1-TREECACHE_NUM];
+
+   return(c->treecnt);
    }
 
 // render callbacks:
@@ -515,24 +532,19 @@ void minitree::treeedge(float x,float y,float yf,float z)
 // switch tree cache buffers
 void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
    {
+   TREECACHE_TYPE *c;
+
    if (PRISM_ID==ATTACHED_ID)
       {
       if (phase==0)
          {
-         if (TREECACHE_NUM==1)
-            {
-            TREECACHE_SIZE2=0;
-            GRASSCACHE_SIZE2=0;
-            TREECACHE_TREES2=0;
-            TREECACHE_NUM=2;
-            }
-         else
-            {
-            TREECACHE_SIZE1=0;
-            GRASSCACHE_SIZE1=0;
-            TREECACHE_TREES1=0;
-            TREECACHE_NUM=1;
-            }
+         c=&TREECACHE[1-TREECACHE_NUM];
+
+         c->size=0;
+         c->treecnt=0;
+         c->grass_size=0;
+
+         TREECACHE_NUM=1-TREECACHE_NUM;
 
          TREECACHE_COUNT=0;
 
@@ -550,15 +562,17 @@ int minitree::treetrigger(int phase)
    {
    int vtx=0;
 
+   TREECACHE_TYPE *c;
+
    if (PRISM_ID==ATTACHED_ID)
       if (phase==4)
          {
-         if (TREECACHE_NUM==1) vtx+=rendertrees(TREECACHE_CACHE2,TREECACHE_COORD2,TREECACHE_SIZE2,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
-         else vtx+=rendertrees(TREECACHE_CACHE1,TREECACHE_COORD1,TREECACHE_SIZE1,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         c=&TREECACHE[1-TREECACHE_NUM];
+
+         vtx+=rendertrees(c->buf,c->crd,c->size,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
          if (TREEMODE>=9)
-            if (TREECACHE_NUM==1) vtx+=rendergrass(GRASSCACHE_CACHE2,GRASSCACHE_COORD2,GRASSCACHE_SIZE2,CACHE->gettile(PRISM_ID)->getwarp());
-            else vtx+=rendergrass(GRASSCACHE_CACHE1,GRASSCACHE_COORD1,GRASSCACHE_SIZE1,CACHE->gettile(PRISM_ID)->getwarp());
+            vtx+=rendergrass(c->grass_buf,c->grass_crd,c->grass_size,CACHE->gettile(PRISM_ID)->getwarp());
          }
 
    return(vtx);
@@ -815,40 +829,27 @@ void minitree::treedata(float x1,float y1,float z1,float h1,
          break;
       }
 
-   if (TREECACHE_NUM==1) TREECACHE_TREES1++;
-   else TREECACHE_TREES2++;
+   TREECACHE[TREECACHE_NUM].treecnt++;
    }
 
 // cache tree data (one vertex)
 void minitree::cachedata(float x,float y,float z)
    {
+   TREECACHE_TYPE *c;
+
    float *ptr;
 
-   if (TREECACHE_NUM==1)
+   c=&TREECACHE[TREECACHE_NUM];
+
+   if (c->size>=c->maxsize)
       {
-      if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE1)
-         {
-         TREECACHE_MAXSIZE1*=2;
+      c->maxsize*=2;
 
-         if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr=&TREECACHE_CACHE1[3*TREECACHE_SIZE1++];
-      }
-   else
-      {
-      if (TREECACHE_SIZE2>=TREECACHE_MAXSIZE2)
-         {
-         TREECACHE_MAXSIZE2*=2;
-
-         if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr=&TREECACHE_CACHE2[3*TREECACHE_SIZE2++];
+      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
       }
 
+   ptr=&c->buf[3*c->size++];
    *ptr++=x;
    *ptr++=y;
    *ptr=z;
@@ -857,39 +858,26 @@ void minitree::cachedata(float x,float y,float z)
 // cache tree data (one vertex plus texture coords)
 void minitree::cachedata(float x,float y,float z,float s,float t,float r)
    {
+   TREECACHE_TYPE *c;
+
    float *ptr1,*ptr2;
 
-   if (TREECACHE_NUM==1)
+   c=&TREECACHE[TREECACHE_NUM];
+
+   if (c->size>=c->maxsize)
       {
-      if (TREECACHE_SIZE1>=TREECACHE_MAXSIZE1)
-         {
-         TREECACHE_MAXSIZE1*=2;
+      c->maxsize*=2;
 
-         if ((TREECACHE_CACHE1=(float *)realloc(TREECACHE_CACHE1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((TREECACHE_COORD1=(float *)realloc(TREECACHE_COORD1,TREECACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr1=&TREECACHE_CACHE1[3*TREECACHE_SIZE1];
-      ptr2=&TREECACHE_COORD1[3*TREECACHE_SIZE1++];
-      }
-   else
-      {
-      if (TREECACHE_SIZE2>=TREECACHE_MAXSIZE2)
-         {
-         TREECACHE_MAXSIZE2*=2;
-
-         if ((TREECACHE_CACHE2=(float *)realloc(TREECACHE_CACHE2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((TREECACHE_COORD2=(float *)realloc(TREECACHE_COORD2,TREECACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr1=&TREECACHE_CACHE2[3*TREECACHE_SIZE2];
-      ptr2=&TREECACHE_COORD2[3*TREECACHE_SIZE2++];
+      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
       }
 
+   ptr1=&c->buf[3*c->size];
    *ptr1++=x;
    *ptr1++=y;
    *ptr1=z;
 
+   ptr2=&c->crd[3*c->size++];
    *ptr2++=s;
    *ptr2++=t;
    *ptr2=r;
@@ -898,39 +886,26 @@ void minitree::cachedata(float x,float y,float z,float s,float t,float r)
 // cache grass data (one vertex plus texture coords)
 void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
    {
+   TREECACHE_TYPE *c;
+
    float *ptr1,*ptr2;
 
-   if (TREECACHE_NUM==1)
+   c=&TREECACHE[TREECACHE_NUM];
+
+   if (c->grass_size>=c->grass_maxsize)
       {
-      if (GRASSCACHE_SIZE1>=GRASSCACHE_MAXSIZE1)
-         {
-         GRASSCACHE_MAXSIZE1*=2;
+      c->grass_maxsize*=2;
 
-         if ((GRASSCACHE_CACHE1=(float *)realloc(GRASSCACHE_CACHE1,GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((GRASSCACHE_COORD1=(float *)realloc(GRASSCACHE_COORD1,GRASSCACHE_MAXSIZE1*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr1=&GRASSCACHE_CACHE1[3*GRASSCACHE_SIZE1];
-      ptr2=&GRASSCACHE_COORD1[3*GRASSCACHE_SIZE1++];
-      }
-   else
-      {
-      if (GRASSCACHE_SIZE2>=GRASSCACHE_MAXSIZE2)
-         {
-         GRASSCACHE_MAXSIZE2*=2;
-
-         if ((GRASSCACHE_CACHE2=(float *)realloc(GRASSCACHE_CACHE2,GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         if ((GRASSCACHE_COORD2=(float *)realloc(GRASSCACHE_COORD2,GRASSCACHE_MAXSIZE2*3*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      ptr1=&GRASSCACHE_CACHE2[3*GRASSCACHE_SIZE2];
-      ptr2=&GRASSCACHE_COORD2[3*GRASSCACHE_SIZE2++];
+      if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
       }
 
+   ptr1=&c->grass_buf[3*c->grass_size];
    *ptr1++=x;
    *ptr1++=y;
    *ptr1=z;
 
+   ptr2=&c->grass_crd[3*c->grass_size++];
    *ptr2++=s;
    *ptr2++=t;
    *ptr2=r;
@@ -1078,15 +1053,15 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-         if (TREECACHE_VTXPROGID1==0)
+         if (TREE_VTXPROGID1==0)
             {
             glGenProgramsARB(1,&vtxprogid);
             glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
             glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog1),vtxprog1);
-            TREECACHE_VTXPROGID1=vtxprogid;
+            TREE_VTXPROGID1=vtxprogid;
             }
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREECACHE_VTXPROGID1);
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID1);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,271.0f/TREEMODE_X_TREEWIDTH,TREEMODE_3_COLFLUCT,331.0f/TREEMODE_X_TREEWIDTH,0.0f);
@@ -1109,7 +1084,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
       case 4:
 
-         if (TREECACHE_TEXID==0)
+         if (TREE_TEXID==0)
             {
             if (TREEMODE_4_TEXFILE_RGB==NULL) ERRORMSG();
 
@@ -1119,7 +1094,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
                if (components!=3) ERRORMSG();
 
                prevdepth=miniOGL::configure_depth(32);
-               TREECACHE_TEXID=buildRGBtexmap(image,&width,&height);
+               TREE_TEXID=buildRGBtexmap(image,&width,&height);
                miniOGL::configure_depth(prevdepth);
                free(image);
                }
@@ -1133,13 +1108,13 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
                if (width2!=width || height2!=height) ERRORMSG();
 
-               TREECACHE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
+               TREE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
                free(image2);
                free(image);
                }
             }
 
-         bindtexmap(TREECACHE_TEXID,1,1);
+         bindtexmap(TREE_TEXID,1,1);
 
          glColor3f(1.0f,1.0f,1.0f);
 
@@ -1175,21 +1150,21 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-         if (TREECACHE_VTXPROGID2==0)
+         if (TREE_VTXPROGID2==0)
             {
             glGenProgramsARB(1,&vtxprogid);
             glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
             glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog2),vtxprog2);
-            TREECACHE_VTXPROGID2=vtxprogid;
+            TREE_VTXPROGID2=vtxprogid;
             }
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREECACHE_VTXPROGID2);
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID2);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
          glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
-         if (TREECACHE_TEXID==0)
+         if (TREE_TEXID==0)
             {
             if (TREEMODE_4_TEXFILE_RGB==NULL) ERRORMSG();
 
@@ -1199,7 +1174,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
                if (components!=3) ERRORMSG();
 
                prevdepth=miniOGL::configure_depth(32);
-               TREECACHE_TEXID=buildRGBtexmap(image,&width,&height);
+               TREE_TEXID=buildRGBtexmap(image,&width,&height);
                miniOGL::configure_depth(prevdepth);
                free(image);
                }
@@ -1213,13 +1188,13 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
                if (width2!=width || height2!=height) ERRORMSG();
 
-               TREECACHE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
+               TREE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
                free(image2);
                free(image);
                }
             }
 
-         bindtexmap(TREECACHE_TEXID,1,1);
+         bindtexmap(TREE_TEXID,1,1);
 
          glColor3f(1.0f,1.0f,1.0f);
 
@@ -1264,21 +1239,21 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-         if (TREECACHE_VTXPROGID2==0)
+         if (TREE_VTXPROGID2==0)
             {
             glGenProgramsARB(1,&vtxprogid);
             glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
             glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog2),vtxprog2);
-            TREECACHE_VTXPROGID2=vtxprogid;
+            TREE_VTXPROGID2=vtxprogid;
             }
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREECACHE_VTXPROGID2);
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID2);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
          glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
-         if (TREECACHE_TEXID==0)
+         if (TREE_TEXID==0)
             {
             if (TREEMODE_7_TEXFILE_RGB==NULL) ERRORMSG();
 
@@ -1288,7 +1263,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
                if (components!=3) ERRORMSG();
 
                prevdepth=miniOGL::configure_depth(32);
-               TREECACHE_TEXID=buildRGBtexmap(image,&width,&height);
+               TREE_TEXID=buildRGBtexmap(image,&width,&height);
                miniOGL::configure_depth(prevdepth);
                free(image);
                }
@@ -1302,13 +1277,13 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
                if (width2!=width || height2!=height) ERRORMSG();
 
-               TREECACHE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
+               TREE_TEXID=buildRGBAtexmap(image,image2,&width,&height);
                free(image2);
                free(image);
                }
             }
 
-         bindtexmap(TREECACHE_TEXID,1,1);
+         bindtexmap(TREE_TEXID,1,1);
 
          glColor3f(1.0f,1.0f,1.0f);
 
@@ -1561,67 +1536,67 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
 
    glColor4f(1.0f,1.0f,1.0f,TREEMODE_9_GRASSALPHA);
 
-   if (GRASSCACHE_VTXPROGID==0)
+   if (GRASS_VTXPROGID==0)
       {
       glGenProgramsARB(1,&vtxprogid);
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
       glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-      GRASSCACHE_VTXPROGID=vtxprogid;
+      GRASS_VTXPROGID=vtxprogid;
       }
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,GRASSCACHE_VTXPROGID);
+   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,GRASS_VTXPROGID);
    glEnable(GL_VERTEX_PROGRAM_ARB);
 
    if (TREEMODE==9)
       {
-      if (GRASSCACHE_FRAGPROGID1==0)
+      if (GRASS_FRAGPROGID1==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         GRASSCACHE_FRAGPROGID1=fragprogid;
+         GRASS_FRAGPROGID1=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASSCACHE_FRAGPROGID1);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID1);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
    else if (TREEMODE==10)
       {
-      if (GRASSCACHE_FRAGPROGID2==0)
+      if (GRASS_FRAGPROGID2==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         GRASSCACHE_FRAGPROGID2=fragprogid;
+         GRASS_FRAGPROGID2=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASSCACHE_FRAGPROGID2);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID2);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
    else if (TREEMODE==11)
       {
-      if (GRASSCACHE_FRAGPROGID3==0)
+      if (GRASS_FRAGPROGID3==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog3),fragprog3);
-         GRASSCACHE_FRAGPROGID3=fragprogid;
+         GRASS_FRAGPROGID3=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASSCACHE_FRAGPROGID3);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID3);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
    else
       {
-      if (GRASSCACHE_FRAGPROGID4==0)
+      if (GRASS_FRAGPROGID4==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog4),fragprog4);
-         GRASSCACHE_FRAGPROGID4=fragprogid;
+         GRASS_FRAGPROGID4=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASSCACHE_FRAGPROGID4);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID4);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
 
@@ -1634,29 +1609,29 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
 
    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,0.0f,0.0f,-1.0f/(fogend-fogstart),fogend/(fogend-fogstart));
 
-   if (GRASSCACHE_TEXID==0)
+   if (GRASS_TEXID==0)
       {
       if (TREEMODE_9_VOLFILE==NULL) ERRORMSG();
       if ((volume=readPVMvolume(TREEMODE_9_VOLFILE,&width,&height,&depth,&components))==NULL) ERRORMSG();
       if (components!=1 && components!=3 && components!=4) ERRORMSG();
 
       volume=build3Dmipmap(volume,width,height,depth,components,TREEMODE_9_MIPMAPLEVELS);
-      GRASSCACHE_CLASSES=depth;
+      GRASS_CLASSES=depth;
       depth*=TREEMODE_9_MIPMAPLEVELS;
 
-      GRASSCACHE_TEXID=build3Dtexmap(volume,&width,&height,&depth,components);
+      GRASS_TEXID=build3Dtexmap(volume,&width,&height,&depth,components);
       free(volume);
       }
 
-   bind3Dtexmap(GRASSCACHE_TEXID);
+   bind3Dtexmap(GRASS_TEXID);
 
    if (TREEMODE<=10)
       glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                 GRASSCACHE_CLASSES-1,0.5f,
-                                 1.0f/(GRASSCACHE_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASSCACHE_CLASSES*TREEMODE_9_MIPMAPLEVELS));
+                                 GRASS_CLASSES-1,0.5f,
+                                 1.0f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS));
    else
       glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                 (float)(GRASSCACHE_CLASSES-1)/(GRASSCACHE_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASSCACHE_CLASSES*TREEMODE_9_MIPMAPLEVELS),
+                                 (float)(GRASS_CLASSES-1)/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),
                                  0.0f,0.0f);
 
    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,
@@ -1665,18 +1640,18 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
 
    if (TREEMODE>=10)
       {
-      if (GRASSCACHE_PERTURBID==0)
+      if (GRASS_PERTURBID==0)
          {
          psize=pwidth=pheight=TREEMODE_10_PERTURBRES;
 
          perturbation=pn_perlin2D(psize,TREEMODE_10_PERTURBSTART,TREEMODE_10_PERTURBPERS,TREEMODE_10_PERTURBSEED);
 
-         GRASSCACHE_PERTURBID=buildLtexmap(perturbation,&pwidth,&pheight);
+         GRASS_PERTURBID=buildLtexmap(perturbation,&pwidth,&pheight);
          free(perturbation);
          }
 
       glActiveTextureARB(GL_TEXTURE1_ARB);
-      bindtexmap(GRASSCACHE_PERTURBID);
+      bindtexmap(GRASS_PERTURBID);
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
       glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,
@@ -1842,41 +1817,41 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    if (TREEMODE==-2) glColor4f(1.0f,1.0f,1.0f,ta);
    else glColor4f(tr,tg,tb,ta);
 
-   if (RENDERCACHE_VTXPROGID==0)
+   if (RENDER_VTXPROGID==0)
       {
       glGenProgramsARB(1,&vtxprogid);
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
       glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-      RENDERCACHE_VTXPROGID=vtxprogid;
+      RENDER_VTXPROGID=vtxprogid;
       }
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,RENDERCACHE_VTXPROGID);
+   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,RENDER_VTXPROGID);
    glEnable(GL_VERTEX_PROGRAM_ARB);
 
    if (TREEMODE!=-2)
       {
-      if (RENDERCACHE_FRAGPROGID1==0)
+      if (RENDER_FRAGPROGID1==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         RENDERCACHE_FRAGPROGID1=fragprogid;
+         RENDER_FRAGPROGID1=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDERCACHE_FRAGPROGID1);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDER_FRAGPROGID1);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
    else
       {
-      if (RENDERCACHE_FRAGPROGID2==0)
+      if (RENDER_FRAGPROGID2==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         RENDERCACHE_FRAGPROGID2=fragprogid;
+         RENDER_FRAGPROGID2=fragprogid;
          }
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDERCACHE_FRAGPROGID2);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDER_FRAGPROGID2);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       }
 
@@ -1891,17 +1866,17 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    if (TREEMODE==-2)
       {
-      if (RENDERCACHE_TEXID==0)
+      if (RENDER_TEXID==0)
          {
          if (TREEMODE_M2_TEXFILE==NULL) ERRORMSG();
          if ((image=readPNMfile(TREEMODE_M2_TEXFILE,&width,&height,&components))==NULL) ERRORMSG();
          if (components!=3) ERRORMSG();
 
-         RENDERCACHE_TEXID=buildRGBtexmap(image,&width,&height);
+         RENDER_TEXID=buildRGBtexmap(image,&width,&height);
          free(image);
          }
 
-      bindtexmap(RENDERCACHE_TEXID);
+      bindtexmap(RENDER_TEXID);
       }
 
    glVertexPointer(4,GL_FLOAT,0,cache);

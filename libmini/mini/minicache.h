@@ -128,7 +128,7 @@ class minicache
 
       int fancnt,vtxcnt;
 
-      float *prism_cache;
+      float *prism_buf;
       int prism_size,prism_maxsize;
       };
 
@@ -242,8 +242,8 @@ class minicache
    int SEASHADERTEXWIDTH;
    int SEASHADERTEXHEIGHT;
 
-   int PRISMCACHE_VTXPROGID;
-   int PRISMCACHE_FRAGPROGID;
+   int PRISM_VTXPROGID;
+   int PRISM_FRAGPROGID;
 
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);

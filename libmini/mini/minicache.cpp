@@ -90,8 +90,8 @@ minicache::minicache()
 
    SEASHADERTEXID=0;
 
-   PRISMCACHE_VTXPROGID=0;
-   PRISMCACHE_FRAGPROGID=0;
+   PRISM_VTXPROGID=0;
+   PRISM_FRAGPROGID=0;
 
    PRESEA_CB=NULL;
    POSTSEA_CB=NULL;
@@ -156,15 +156,15 @@ minicache::~minicache()
          glDeleteProgramsARB(1,&progid);
          }
 
-      if (PRISMCACHE_VTXPROGID!=0)
+      if (PRISM_VTXPROGID!=0)
          {
-         progid=PRISMCACHE_VTXPROGID;
+         progid=PRISM_VTXPROGID;
          glDeleteProgramsARB(1,&progid);
          }
 
-      if (PRISMCACHE_FRAGPROGID!=0)
+      if (PRISM_FRAGPROGID!=0)
          {
-         progid=PRISMCACHE_FRAGPROGID;
+         progid=PRISM_FRAGPROGID;
          glDeleteProgramsARB(1,&progid);
          }
       }
@@ -202,7 +202,7 @@ void minicache::initterrain(TERRAIN_TYPE *t)
       c->prism_size=0;
       c->prism_maxsize=1;
 
-      if ((c->prism_cache=(float *)malloc(4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->prism_buf=(float *)malloc(4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
       }
 
    t->cache_phase=-1;
@@ -236,7 +236,7 @@ void minicache::freeterrain(TERRAIN_TYPE *t)
       free(c->op);
       free(c->arg);
 
-      free(c->prism_cache);
+      free(c->prism_buf);
       }
 
    delete t->ray;
@@ -376,11 +376,11 @@ void minicache::cacheprismedge(const float x,const float y,const float yf,const 
          {
          c->prism_maxsize*=2;
 
-         if ((c->prism_cache=(float *)realloc(c->prism_cache,4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
 
       // append prism cache
-      ptr=&c->prism_cache[4*c->prism_size++];
+      ptr=&c->prism_buf[4*c->prism_size++];
       *ptr++=x;
       *ptr++=y;
       *ptr++=yf;
@@ -430,7 +430,7 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
          {
          c1->prism_maxsize/=2;
 
-         if ((c1->prism_cache=(float *)realloc(c1->prism_cache,4*c1->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((c1->prism_buf=(float *)realloc(c1->prism_buf,4*c1->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
          }
       }
 
@@ -816,9 +816,9 @@ int minicache::rendertrigger()
          if (t->tile!=NULL)
             {
             if (PRISMRENDER_CALLBACK!=NULL)
-               vtx+=PRISMRENDER_CALLBACK(c->prism_cache,c->prism_size/3,t->lambda,t->tile->getwarp(),CALLBACK_DATA);
+               vtx+=PRISMRENDER_CALLBACK(c->prism_buf,c->prism_size/3,t->lambda,t->tile->getwarp(),CALLBACK_DATA);
             else
-               vtx+=renderprisms(c->prism_cache,c->prism_size/3,t->lambda,t->tile->getwarp(),
+               vtx+=renderprisms(c->prism_buf,c->prism_size/3,t->lambda,t->tile->getwarp(),
                                  PRISM_R,PRISM_G,PRISM_B,PRISM_A,
                                  t->lx,t->ly,t->lz,
                                  t->ls,t->lo);
@@ -904,20 +904,20 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    if (GLEXT_VP!=0 && GLEXT_FP!=0)
       {
-      if (PRISMCACHE_VTXPROGID==0)
+      if (PRISM_VTXPROGID==0)
          {
          glGenProgramsARB(1,&vtxprogid);
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
          glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-         PRISMCACHE_VTXPROGID=vtxprogid;
+         PRISM_VTXPROGID=vtxprogid;
          }
 
-      if (PRISMCACHE_FRAGPROGID==0)
+      if (PRISM_FRAGPROGID==0)
          {
          glGenProgramsARB(1,&fragprogid);
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog),fragprog);
-         PRISMCACHE_FRAGPROGID=fragprogid;
+         PRISM_FRAGPROGID=fragprogid;
          }
 
       initstate();
@@ -976,12 +976,12 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
          mtxmult(oglmtx);
          }
 
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISMCACHE_VTXPROGID);
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISM_VTXPROGID);
       glEnable(GL_VERTEX_PROGRAM_ARB);
 
       glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISMCACHE_FRAGPROGID);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISM_FRAGPROGID);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
       glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f);
