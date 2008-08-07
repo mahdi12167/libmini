@@ -284,7 +284,7 @@ void initview(float x,float y,float a,float p)
    upd=1;
    }
 
-void request_callback(char *file,int istexture,databuf *buf,void *data)
+void request_callback(const char *file,int istexture,databuf *buf,void *data)
    {buf->loadPNMdata(file);}
 
 void reshapefunc(int width,int height)
