@@ -175,11 +175,11 @@ class minicache
    int NUMTERRAIN,MAXTERRAIN;
 
    static void cache_beginfan();
-   static void cache_fanvertex(const float i,const float y,const float j);
-   static void cache_texmap(const int m,const int n,const int S);
-   static void cache_prismedge(const float x,const float y,const float yf,const float z);
-   static void cache_trigger(const int phase,const float scale,const float ex,const float ey,const float ez);
-   static void cache_sync(const int id);
+   static void cache_fanvertex(float i,float y,float j);
+   static void cache_texmap(int m,int n,int S);
+   static void cache_prismedge(float x,float y,float yf,float z);
+   static void cache_trigger(int phase,float scale,float ex,float ey,float ez);
+   static void cache_sync(int id);
 
    void cache(const int op,const float arg1=0.0f,const float arg2=0.0f,const float arg3=0.0f);
    void cacheprismedge(const float x,const float y,const float yf,const float z);

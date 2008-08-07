@@ -247,19 +247,19 @@ void minicache::freeterrain(TERRAIN_TYPE *t)
 void minicache::cache_beginfan()
    {CACHE->cache(BEGINFAN_OP);}
 
-void minicache::cache_fanvertex(const float i,const float y,const float j)
+void minicache::cache_fanvertex(float i,float y,float j)
    {CACHE->cache(FANVERTEX_OP,i,y,j);}
 
-void minicache::cache_texmap(const int m,const int n,const int S)
+void minicache::cache_texmap(int m,int n,int S)
    {CACHE->cache(TEXMAP_OP,m,n,S);}
 
-void minicache::cache_prismedge(const float x,const float y,const float yf,const float z)
+void minicache::cache_prismedge(float x,float y,float yf,float z)
    {CACHE->cacheprismedge(x,y,yf,z);}
 
-void minicache::cache_trigger(const int phase,const float scale,const float ex,const float ey,const float ez)
+void minicache::cache_trigger(int phase,float scale,float ex,float ey,float ez)
    {CACHE->cachetrigger(phase,scale,ex,ey,ez);}
 
-void minicache::cache_sync(const int id)
+void minicache::cache_sync(int id)
    {CACHE->cachesync(id);}
 
 // caching functions:
