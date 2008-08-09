@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.6 as of 7.August.2008<br>
+Version 8.8.6 as of 9.August.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1325,9 +1325,11 @@ minicache::setshader("!!ARBvp...").<p>
 
 <pre>
    // default vertex shader
-   static char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM t=program.env[0]; \n\
       PARAM e=program.env[1]; \n\
+      PARAM u=program.env[2]; \n\
+      PARAM v=program.env[3]; \n\
       PARAM c0=program.env[2]; \n\
       PARAM c1=program.env[3]; \n\
       PARAM c2=program.env[4]; \n\
@@ -1362,6 +1364,9 @@ minicache::setshader("!!ARBvp...").<p>
       MUL result.texcoord[0].z,vtx.y,e.y; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
+      ### calculate eye linear coordinates \n\
+      DP4 result.texcoord[2].x,pos,u; \n\
+      DP4 result.texcoord[2].y,pos,v; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -1386,7 +1391,7 @@ environment.<p>
 
 <pre>
    // default pixel shader
-   static char *fragprog="!!ARBfp1.0 \n\
+   static const char *fragprog="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\

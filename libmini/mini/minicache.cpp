@@ -220,6 +220,19 @@ void minicache::initterrain(TERRAIN_TYPE *t)
 
    t->ls=0.0f;
    t->lo=1.0f;
+
+   t->s1=0.0f;
+   t->s2=0.0f;
+   t->s3=0.0f;
+   t->s4=0.0f;
+
+   t->t1=0.0f;
+   t->t2=0.0f;
+   t->t3=0.0f;
+   t->t4=0.0f;
+
+   t->detail_texid=0;
+   t->detail_width=t->detail_height=0;
    }
 
 // free terrain
@@ -238,6 +251,8 @@ void minicache::freeterrain(TERRAIN_TYPE *t)
 
       free(c->prism_buf);
       }
+
+   if (t->detail_texid!=0) deletetexmap(t->detail_texid);
 
    delete t->ray;
    }
@@ -618,11 +633,16 @@ void minicache::rendertexmap(int m,int n,int S)
       else texid=0;
 
       if (USEVTXSHADER!=0)
+         {
          setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
                             -1.0f/(S-1)*(texh-1)/texh,
                             0.5f/texh,
                             1.0f-0.5f/texh,
                             t->scale);
+
+         setvtxshadertexgen(t->s1,t->s2,t->s3,t->s4,
+                            t->t1,t->t2,t->t3,t->t4);
+         }
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
          {
@@ -1151,6 +1171,8 @@ void minicache::setvtxshader(const char *vp)
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM t=program.env[0]; \n\
       PARAM e=program.env[1]; \n\
+      PARAM u=program.env[2]; \n\
+      PARAM v=program.env[3]; \n\
       PARAM c0=program.env[2]; \n\
       PARAM c1=program.env[3]; \n\
       PARAM c2=program.env[4]; \n\
@@ -1185,6 +1207,9 @@ void minicache::setvtxshader(const char *vp)
       MUL result.texcoord[0].z,vtx.y,e.y; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
+      ### calculate eye linear coordinates \n\
+      DP4 result.texcoord[2].x,pos,u; \n\
+      DP4 result.texcoord[2].y,pos,v; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -1252,7 +1277,7 @@ void minicache::enablevtxshader()
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
          for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]);
+            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]);
          }
       }
 
@@ -1273,6 +1298,25 @@ void minicache::setvtxshadertexprm(float s1,float s2,float o1,float o2,float sca
          {
          glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,s1,s2,o1,o2);
          glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,1,0.0f,scale,0.0f,0.0f);
+         }
+
+#endif
+
+#endif
+   }
+
+// set vertex shader texture coordinate generation parameter vector
+void minicache::setvtxshadertexgen(float s1,float s2,float s3,float s4,float t1,float t2,float t3,float t4)
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (VTXPROGID!=0)
+         {
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,s1,s2,s3,s4);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t1,t2,t3,t4);
          }
 
 #endif
@@ -1363,14 +1407,6 @@ void minicache::setpixshaderparams(float p1,float p2,float p3,float p4,int n)
    PIXSHADERPAR4[n]=p4;
    }
 
-// set pixel shader RGB texture map
-void minicache::setpixshadertexRGB(unsigned char *image,int width,int height)
-   {setpixshadertex(image,width,height,3);}
-
-// set pixel shader RGBA texture map
-void minicache::setpixshadertexRGBA(unsigned char *image,int width,int height)
-   {setpixshadertex(image,width,height,4);}
-
 // set pixel shader RGB[A] texture map
 void minicache::setpixshadertex(unsigned char *image,int width,int height,int components)
    {
@@ -1392,6 +1428,66 @@ void minicache::setpixshadertex(unsigned char *image,int width,int height,int co
       PIXSHADERTEXHEIGHT=height;
       }
    }
+
+// set pixel shader RGB texture map
+void minicache::setpixshadertexRGB(unsigned char *image,int width,int height)
+   {setpixshadertex(image,width,height,3);}
+
+// set pixel shader RGBA texture map
+void minicache::setpixshadertexRGBA(unsigned char *image,int width,int height)
+   {setpixshadertex(image,width,height,4);}
+
+// define parameter vector for eye linear texture coordinate generation per tileset
+void minicache::setpixshadertexgen(minitile *terrain,float s1,float s2,float s3,float s4,float t1,float t2,float t3,float t4)
+   {
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[terrain->getid()];
+
+   t->s1=s1;
+   t->s2=s2;
+   t->s3=s3;
+   t->s4=s4;
+
+   t->t1=t1;
+   t->t2=t2;
+   t->t3=t3;
+   t->t4=t4;
+   }
+
+// define RGB[A] detail texture per tileset
+void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components)
+   {
+   TERRAIN_TYPE *t;
+
+   if (width<2 || height<2) ERRORMSG();
+
+   t=&TERRAIN[terrain->getid()];
+
+   if (t->detail_texid!=0)
+      {
+      deletetexmap(t->detail_texid);
+      t->detail_texid=0;
+      }
+
+   if (image!=NULL)
+      {
+      if (components==3) t->detail_texid=buildRGBtexmap(image,&width,&height,1);
+      else if (components==4) t->detail_texid=buildRGBAtexmap(image,&width,&height,1);
+      else ERRORMSG();
+
+      t->detail_width=width;
+      t->detail_height=height;
+      }
+   }
+
+// define RGB detail texture per tileset
+void minicache::setpixshaderdetailtexRGB(minitile *terrain,unsigned char *image,int width,int height)
+   {setpixshaderdetailtex(terrain,image,width,height,3);}
+
+// define RGBA detail texture per tileset
+void minicache::setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height)
+   {setpixshaderdetailtex(terrain,image,width,height,4);}
 
 // switch pixel shader plugin on/off
 void minicache::usepixshader(int on)
@@ -1457,14 +1553,6 @@ void minicache::setseashaderparams(float p1,float p2,float p3,float p4,int n)
    SEASHADERPAR4[n]=p4;
    }
 
-// set sea shader RGB texture map
-void minicache::setseashadertexRGB(unsigned char *image,int width,int height)
-   {setseashadertex(image,width,height,3);}
-
-// set sea shader RGBA texture map
-void minicache::setseashadertexRGBA(unsigned char *image,int width,int height)
-   {setseashadertex(image,width,height,4);}
-
 // set sea shader RGB[A] texture map
 void minicache::setseashadertex(unsigned char *image,int width,int height,int components)
    {
@@ -1486,6 +1574,14 @@ void minicache::setseashadertex(unsigned char *image,int width,int height,int co
       SEASHADERTEXHEIGHT=height;
       }
    }
+
+// set sea shader RGB texture map
+void minicache::setseashadertexRGB(unsigned char *image,int width,int height)
+   {setseashadertex(image,width,height,3);}
+
+// set sea shader RGBA texture map
+void minicache::setseashadertexRGBA(unsigned char *image,int width,int height)
+   {setseashadertex(image,width,height,4);}
 
 // switch sea shader plugin on/off
 void minicache::useseashader(int on)
