@@ -76,45 +76,45 @@ void unlock_cs(void *data)
 static int winwidth,winheight,winid;
 
 // SRTM
-static char *srtmmaps[]={"data/FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
-                         "GTOPO30/World.W020N90.map.pgm", // fill SRTM holes
-                         "SRTM/N47E010.pgm",
-                         "SRTM/N47E011.pgm",
-                         "SRTM/N47E012.pgm",
-                         "SRTM/N47E013.pgm",
-                         "SRTM/N48E010.pgm",
-                         "SRTM/N48E011.pgm",
-                         "SRTM/N48E012.pgm",
-                         "SRTM/N48E013.pgm",
-                         "SRTM/N49E010.pgm",
-                         "SRTM/N49E011.pgm",
-                         "SRTM/N49E012.pgm",
-                         "SRTM/N49E013.pgm",
-                         "SRTM/N50E010.pgm",
-                         "SRTM/N50E011.pgm",
-                         "SRTM/N50E012.pgm",
-                         "SRTM/N50E013.pgm"};
+static const char *srtmmaps[]={"data/FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
+                               "GTOPO30/World.W020N90.map.pgm", // fill SRTM holes
+                               "SRTM/N47E010.pgm",
+                               "SRTM/N47E011.pgm",
+                               "SRTM/N47E012.pgm",
+                               "SRTM/N47E013.pgm",
+                               "SRTM/N48E010.pgm",
+                               "SRTM/N48E011.pgm",
+                               "SRTM/N48E012.pgm",
+                               "SRTM/N48E013.pgm",
+                               "SRTM/N49E010.pgm",
+                               "SRTM/N49E011.pgm",
+                               "SRTM/N49E012.pgm",
+                               "SRTM/N49E013.pgm",
+                               "SRTM/N50E010.pgm",
+                               "SRTM/N50E011.pgm",
+                               "SRTM/N50E012.pgm",
+                               "SRTM/N50E013.pgm"};
 
 // LandSat ETM and MSS orthophotos
-static char *landmaps[]={"data/FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
-                         "LandSat-ETM/p193r025.ppm",
-                         "LandSat-ETM/p193r026.ppm",
-                         "LandSat-ETM/p194r025.ppm", // cloudy -> poor quality
-                         "LandSat-MSS/p208r25_1m19730528.ppm",
-                         "LandSat-MSS/p208r26_1m19730528.ppm",
-                         "LandSat-MSS/p209r25_3m19790516.ppm",
-                         "LandSat-MSS/p209r26_2m19760609.ppm", // cloudy -> poor quality
-                         "LandSat-MSS/p208r27_1m19720813.ppm", // snowy -> very poor quality
-                         "LandSat-MSS/p209r27_1m19750606.ppm"}; // snowy -> very poor quality
+static const char *landmaps[]={"data/FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
+                               "LandSat-ETM/p193r025.ppm",
+                               "LandSat-ETM/p193r026.ppm",
+                               "LandSat-ETM/p194r025.ppm", // cloudy -> poor quality
+                               "LandSat-MSS/p208r25_1m19730528.ppm",
+                               "LandSat-MSS/p208r26_1m19730528.ppm",
+                               "LandSat-MSS/p209r25_3m19790516.ppm",
+                               "LandSat-MSS/p209r26_2m19760609.ppm", // cloudy -> poor quality
+                               "LandSat-MSS/p208r27_1m19720813.ppm", // snowy -> very poor quality
+                               "LandSat-MSS/p209r27_1m19750606.ppm"}; // snowy -> very poor quality
 
 // Tree maps
-static char *treemaps[]={"data/FraenkischeTileset/trees/LandSat-NDVI-BBox.demo.pgm",
-                         "LandSat-NDVI/p193r026-trees.pgm"};
+static const char *treemaps[]={"data/FraenkischeTileset/trees/LandSat-NDVI-BBox.demo.pgm",
+                               "LandSat-NDVI/p193r026-trees.pgm"};
 
 // base path to the generated tiles and textures
-static char basepath1[]="tiles";
-static char basepath2[]="landsat";
-static char basepath3[]="trees";
+static const char basepath1[]="tiles";
+static const char basepath2[]="landsat";
+static const char basepath3[]="trees";
 
 // number of tiles
 static const int tiles=30;
@@ -245,7 +245,7 @@ static int output=0;
 
 // record file
 static FILE *record=NULL;
-static char recordfile[]="data/Record.txt";
+static const char recordfile[]="data/Record.txt";
 static int actframe=0,newframe=0;
 static char key='\0';
 
