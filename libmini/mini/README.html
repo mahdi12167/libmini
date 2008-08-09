@@ -1438,7 +1438,7 @@ will show contours:<p>
    cache.usevtxshader();
 
    // fragment program for adding contour lines to the bathymetry
-   static char *fragprog="!!ARBfp1.0\
+   static const char *fragprog="!!ARBfp1.0\
       PARAM c0=program.env[0];\
       TEMP col,vtx;\
       TEX col,fragment.texcoord[0],texture[0],2D;\
