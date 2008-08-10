@@ -8,7 +8,7 @@ ZIP	= zip -qry9
 trap:
 
 app:
-	$(COMPILER) $(OPTS) -o ${MAIN} -I$(INSTALL_INC) ${MAIN}.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm # -lpthread
+	$(COMPILER) $(OPTS) -W -Wall -o ${MAIN} -I$(INSTALL_INC) ${MAIN}.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm # -lpthread
 
 tools:
 	@-(cd tools; make all)

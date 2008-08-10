@@ -73,12 +73,12 @@ void reshapefunc(int width,int height)
 
 void keyboardfunc(unsigned char key,int x,int y)
    {
+   static int wire=0;
+
    float mousex,mousey;
 
    mousex=(float)x/(winwidth-1);
    mousey=(float)y/(winwidth-1);
-
-   static int wire=0;
 
    if (key=='w')
       {

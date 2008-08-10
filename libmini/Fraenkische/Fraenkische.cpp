@@ -322,7 +322,6 @@ void reshapefunc(int width,int height)
 void keypressed(unsigned char key)
    {
    float elev,coef;
-
    BOOLINT addfog=FALSE;
 
    if (trees!=NULL)
@@ -451,6 +450,11 @@ void keypressed(unsigned char key)
 
 void keyboardfunc(unsigned char key,int x,int y)
    {
+   float mousex,mousey;
+
+   mousex=(float)x/(winwidth-1);
+   mousey=(float)y/(winwidth-1);
+
    if (sw_replay!=0 && sw_record==0)
       if (key!='l' && key!=27) return;
 

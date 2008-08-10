@@ -933,6 +933,11 @@ void keyboardfunc(unsigned char key,int x,int y)
    {
    float elev,coef;
 
+   float mousex,mousey;
+
+   mousex=(float)x/(winwidth-1);
+   mousey=(float)y/(winwidth-1);
+
    if (key=='0') initview(viewx,viewy,viewa,viewp);
    else if (key=='w' || key=='W'|| key==' ')
       if (topspeed==0.0f) topspeed=maxspeed/scale;
