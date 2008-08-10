@@ -101,7 +101,7 @@ int main(int argc,char *argv[])
 
    int width,height,components;
 
-   unsigned char **hfields,**textures;
+   const unsigned char **hfields,**textures;
 
    const int incoming=17164776;
 
@@ -128,8 +128,8 @@ int main(int argc,char *argv[])
    glutSpecialFunc(NULL);
    glutIdleFunc(displayfunc);
 
-   if ((hfields=(unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
-   if ((textures=(unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
+   if ((hfields=(const unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
+   if ((textures=(const unsigned char **)malloc(cols*rows*sizeof(unsigned char *)))==NULL) exit(1);
 
    if ((file=fopen("data/Stuttgart.raw","rb"))==NULL) exit(1);
    if ((data=(unsigned char *)malloc(incoming))==NULL) exit(1);
