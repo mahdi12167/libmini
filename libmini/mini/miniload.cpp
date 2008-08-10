@@ -80,10 +80,10 @@ miniload::miniload()
    {init();}
 
 // constructor
-miniload::miniload(unsigned char **hfields,unsigned char **textures,
+miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
                    int cols,int rows,float coldim,float rowdim,float scale,
                    float centerx,float centery,float centerz,
-                   unsigned char **fogmaps,float lambda,float displace,
+                   const unsigned char **fogmaps,float lambda,float displace,
                    float emission,float attenuation,
                    float fogR,float fogG,float fogB)
    {
@@ -1785,7 +1785,7 @@ void miniload::configure_dontfree(int dontfree)
 void miniload::configure_usezeronumbering(int usezeronumbering)
    {CONFIGURE_USEZERONUMBERING=usezeronumbering;}
 
-void miniload::configure_tilesetpath(char *tilesetpath)
+void miniload::configure_tilesetpath(const char *tilesetpath)
    {
    if (CONFIGURE_TILESETPATH!=NULL) free(CONFIGURE_TILESETPATH);
    CONFIGURE_TILESETPATH=NULL;

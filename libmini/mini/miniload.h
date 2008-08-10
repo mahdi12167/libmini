@@ -16,13 +16,13 @@ class miniload
    //! constructor
    //! loads a regularly tiled terrain
    //! each tile is assumed to have a corner centric data representation
-   miniload(unsigned char **hfields, // 2D array of filenames for height fields
-            unsigned char **textures, // 2D array of filenames for texture maps
+   miniload(const unsigned char **hfields, // 2D array of filenames for height fields
+            const unsigned char **textures, // 2D array of filenames for texture maps
             int cols,int rows, // number of tile columns and rows
             float coldim,float rowdim, // dimension of a column or a row
             float scale, // vertical scaling of elevations
             float centerx=0.0f,float centery=0.0f,float centerz=0.0f, // map center
-            unsigned char **fogmaps=0, // optional 2D array of filenames for ground fog maps
+            const unsigned char **fogmaps=0, // optional 2D array of filenames for ground fog maps
             float lambda=0.0f, // vertical scaling of fog elevations
             float displace=0.0f, // vertical fog displacement above ground
             float emission=0.0f, // fog appearance control
@@ -183,7 +183,7 @@ class miniload
 
    //! configuring the loader
    void configure_usezeronumbering(int usezeronumbering=0); // col/row numbering starts with zero
-   void configure_tilesetpath(char *tilesetpath); // define tile set path
+   void configure_tilesetpath(const char *tilesetpath); // define tile set path
    void configure_usepnm(int usepnm); // use either PNM or DB
 
    unsigned char **HFIELDS,**TEXTURES;

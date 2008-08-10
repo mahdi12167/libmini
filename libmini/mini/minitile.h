@@ -13,13 +13,13 @@ class minitile
    //! default constructor
    //! constructs a regularly tiled terrain
    //! each tile is assumed to have a corner centric data representation
-   minitile(unsigned char **hfields, // 2D array of filenames for height fields
-            unsigned char **textures, // 2D array of filenames for texture maps
+   minitile(const unsigned char **hfields, // 2D array of filenames for height fields
+            const unsigned char **textures, // 2D array of filenames for texture maps
             int cols,int rows, // number of tile columns and rows
             float coldim,float rowdim, // dimension of a column or a row
             float scale, // vertical scaling of elevations
             float centerx=0.0f,float centery=0.0f,float centerz=0.0f, // map center
-            unsigned char **fogmaps=0, // optional 2D array of filenames for ground fog maps
+            const unsigned char **fogmaps=0, // optional 2D array of filenames for ground fog maps
             float lambda=0.0f, // vertical scaling of fog elevations
             float displace=0.0f, // vertical fog displacement above ground
             float emission=0.0f, // fog appearance control
@@ -45,7 +45,7 @@ class minitile
    static void configure_mipmaps(int mipmaps=1); // turn mipmaps on or off
 
    //! configuring the loader
-   static void configure_tilesetpath(char *tilesetpath); // define tile set path
+   static void configure_tilesetpath(const char *tilesetpath); // define tile set path
 
    //! draw scene
    void draw(float res, // resolution
@@ -174,9 +174,9 @@ class minitile
 
    //! reload a specific tile
    void reload(int col,int row, // tile to reload
-               unsigned char *hmap, // filename of height map
-               unsigned char *tmap, // filename of texture map
-               unsigned char *fmap=0, // optional filename of ground fog map
+               const unsigned char *hmap, // filename of height map
+               const unsigned char *tmap, // filename of texture map
+               const unsigned char *fmap=0, // optional filename of ground fog map
                int updatetex=1, // update actual texture map or leave it untouched
                int loaded=0); // interprete filenames as images
 

@@ -38,7 +38,7 @@ void writePNMimage(const char *pnmfilename,
                    PNMcomment *comment=0);
 
 //! read a PNM image with optional comment from a file or memory
-unsigned char *readPNMimage(unsigned char *pnmimage,
+unsigned char *readPNMimage(const unsigned char *pnmimage,
                             int *width,int *height,int *components,
                             int loaded=0,unsigned char **ptr=0,
                             PNMcomment *comment=0);

@@ -28,10 +28,10 @@ int minitile::CONFIGURE_MIPMAPS=1;
 char minitile::CONFIGURE_TILESETPATH[MAX_STR]="";
 
 // default constructor
-minitile::minitile(unsigned char **hfields,unsigned char **textures,
+minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
                    int cols,int rows,float coldim,float rowdim,float scale,
                    float centerx,float centery,float centerz,
-                   unsigned char **fogmaps,float lambda,float displace,
+                   const unsigned char **fogmaps,float lambda,float displace,
                    float emission,float attenuation,
                    float fogR,float fogG,float fogB,
                    float minres,float minoff,
@@ -942,18 +942,18 @@ minitile *minitile::load(int cols,int rows,
          }
 
    if (basepath3==NULL)
-      terrain=new minitile((unsigned char **)hmaps,
-                           (unsigned char **)tmaps,
+      terrain=new minitile((const unsigned char **)hmaps,
+                           (const unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
                            centerx/scale,offseth/scale,-centerz/scale,
                            NULL,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,
                            minres,minoff);
    else
-      terrain=new minitile((unsigned char **)hmaps,
-                           (unsigned char **)tmaps,
+      terrain=new minitile((const unsigned char **)hmaps,
+                           (const unsigned char **)tmaps,
                            cols,rows,xdim/scale,zdim/scale,scaling/scale,
                            centerx/scale,offseth/scale,-centerz/scale,
-                           (unsigned char **)fmaps,
+                           (const unsigned char **)fmaps,
                            lambda/scale,0.0f,0.0f,attenuation,0.0f,0.0f,0.0f,
                            minres,minoff);
 
@@ -1234,9 +1234,9 @@ int minitile::getunusedlods(int col,int row,
 
 // reload a specific tile
 void minitile::reload(int col,int row,
-                      unsigned char *hmap,
-                      unsigned char *tmap,
-                      unsigned char *fmap,
+                      const unsigned char *hmap,
+                      const unsigned char *tmap,
+                      const unsigned char *fmap,
                       int updatetex,
                       int loaded)
    {
@@ -1862,5 +1862,5 @@ void minitile::configure_mipmaps(int mipmaps)
 
 // configuring the loader:
 
-void minitile::configure_tilesetpath(char *tilesetpath)
+void minitile::configure_tilesetpath(const char *tilesetpath)
    {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}

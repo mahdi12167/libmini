@@ -135,9 +135,9 @@ int main(int argc,char *argv[])
    const unsigned char texture[]="data/Yukon.texmap.ppm";
    const unsigned char fogmap[]="data/Yukon.fogmap.pgm";
 
-   unsigned char *hfields=hfield;
-   unsigned char *textures=texture;
-   unsigned char *fogmaps=fogmap;
+   const unsigned char *hfields=hfield;
+   const unsigned char *textures=texture;
+   const unsigned char *fogmaps=fogmap;
 
    const int cols=1;
    const int rows=1;
@@ -160,8 +160,8 @@ int main(int argc,char *argv[])
    const unsigned char layer1[]="data/Yukon.fogmap1.pgm";
    const unsigned char layer2[]="data/Yukon.fogmap2.pgm";
 
-   unsigned char *layers1=layer1;
-   unsigned char *layers2=layer2;
+   const unsigned char *layers1=layer1;
+   const unsigned char *layers2=layer2;
 
    const float lambda1=0.15f;
    const float lambda2=0.4f;

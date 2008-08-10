@@ -101,7 +101,7 @@ void writePNMimage(const char *pnmfilename,
    }
 
 // read a PNM image
-unsigned char *readPNMimage(unsigned char *pnmimage,
+unsigned char *readPNMimage(const unsigned char *pnmimage,
                             int *width,int *height,int *components,
                             int loaded,unsigned char **ptr,
                             PNMcomment *comment)
@@ -149,7 +149,7 @@ unsigned char *readPNMimage(unsigned char *pnmimage,
       }
    else
       {
-      image=pnmimage;
+      image=(unsigned char *)pnmimage;
 
       ch=*image++;
 
