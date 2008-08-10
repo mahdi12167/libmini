@@ -1580,7 +1580,7 @@ for optionally querying the image size of a texture map):<p>
       {map->loaddata((char *)mapfile);}
 
    int check_callback(const unsigned char *mapfile,int istexture,void *data)
-      {return(checkfile((char *)mapfile));}
+      {return(checkfile((const char *)mapfile));}
 
    void inquiry_callback(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue)
       {
