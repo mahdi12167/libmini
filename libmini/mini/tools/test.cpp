@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include "minibase.h"
 
 // add include files here:

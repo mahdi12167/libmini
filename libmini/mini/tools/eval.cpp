@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include "minibase.h"
 
 #include "miniio.h"

@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include <mini/minibase.h>
 #include <mini/mini.h>
 

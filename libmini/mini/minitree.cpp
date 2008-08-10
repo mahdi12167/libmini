@@ -299,7 +299,7 @@ void minitree::setmode_mx(float base,float tr,float tg,float tb,float ta)
    }
 
 // set parameters for mode -2
-void minitree::setmode_m2(char *texfile,float texsize)
+void minitree::setmode_m2(const char *texfile,float texsize)
    {
    if (texfile==NULL || texsize<=0.0f) ERRORMSG();
 
@@ -339,7 +339,7 @@ void minitree::setmode_3(float colfluct)
    }
 
 // set parameters for mode 4+
-void minitree::setmode_4(char *texfile_rgb,char *texfile_a,float treeaspect,float minalpha)
+void minitree::setmode_4(const char *texfile_rgb,const char *texfile_a,float treeaspect,float minalpha)
    {
    if (texfile_rgb==NULL) ERRORMSG();
    if (treeaspect<0.0f) ERRORMSG();
@@ -368,7 +368,7 @@ void minitree::setmode_6(float shrubfrac,float shrubprob)
    }
 
 // set parameters for mode 7+
-void minitree::setmode_7(char *texfile_rgb,char *texfile_a,int treenum)
+void minitree::setmode_7(const char *texfile_rgb,const char *texfile_a,int treenum)
    {
    if (texfile_rgb==NULL) ERRORMSG();
    if (treenum<=0) ERRORMSG();
@@ -396,7 +396,7 @@ void minitree::setmode_8(float treestep,float treerand)
    }
 
 // set parameters for mode 9+
-void minitree::setmode_9(char *volfile,float texsize,
+void minitree::setmode_9(const char *volfile,float texsize,
                          float grassdepth,float minheight,float baseheight,float maxheight,
                          float treestart,float mipmaprange,int mipmaplevels,float grassalpha)
    {

@@ -27,16 +27,16 @@ class minitree
 
    //! setup of negative modes
    void setmode_mx(float base,float tr,float tg,float tb,float ta);
-   void setmode_m2(char *texfile,float texsize);
+   void setmode_m2(const char *texfile,float texsize);
 
    //! setup of positive modes
    void setmode_x(float res,float sqrfactor,int maxlevel,float minspace,float minheight,float treewidth,float treevariance,float tr,float tg,float tb);
    void setmode_3(float colfluct);
-   void setmode_4(char *texfile_rgb,char *texfile_a,float treeaspect,float minalpha);
+   void setmode_4(const char *texfile_rgb,const char *texfile_a,float treeaspect,float minalpha);
    void setmode_6(float shrubfrac,float shrubprob);
-   void setmode_7(char *texfile_rgb,char *texfile_a,int treenum);
+   void setmode_7(const char *texfile_rgb,const char *texfile_a,int treenum);
    void setmode_8(float treestep,float treerand);
-   void setmode_9(char *volfile,float texsize,float grassdepth,float minheight,float baseheight,float maxheight,float treestart,float mipmaprange,int mipmaplevels,float grassalpha);
+   void setmode_9(const char *volfile,float texsize,float grassdepth,float minheight,float baseheight,float maxheight,float treestart,float mipmaprange,int mipmaplevels,float grassalpha);
    void setmode_10(float perturbsize,int perturbres,int perturbstart,float perturbpers,float perturbseed,float perturbfx);
    void setmode_12(float redwgt,float greenwgt,float bluewgt,float alphathres,float alphaslope);
 
