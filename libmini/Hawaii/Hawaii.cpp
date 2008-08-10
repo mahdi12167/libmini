@@ -2,22 +2,22 @@
 
 #undef PTHREADS // enable this if pthreads are installed
 
-#include "mini/minibase.h"
+#include <mini/minibase.h>
 
-#include "mini/miniOGL.h"
-#include "mini/minitime.h"
-#include "mini/miniio.h"
-#include "mini/minihsv.h"
-#include "mini/miniutm.h"
-#include "mini/miniload.h"
-#include "mini/minicache.h"
-#include "mini/minibrick.h"
-#include "mini/minipoint.h"
-#include "mini/minitext.h"
-#include "mini/minisky.h"
+#include <mini/miniOGL.h>
+#include <mini/minitime.h>
+#include <mini/miniio.h>
+#include <mini/minihsv.h>
+#include <mini/miniutm.h>
+#include <mini/miniload.h>
+#include <mini/minicache.h>
+#include <mini/minibrick.h>
+#include <mini/minipoint.h>
+#include <mini/minitext.h>
+#include <mini/minisky.h>
 
-#include "mini/pnmbase.h"
-#include "mini/pnmsample.h"
+#include <mini/pnmbase.h>
+#include <mini/pnmsample.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>

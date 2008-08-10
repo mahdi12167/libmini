@@ -1,7 +1,7 @@
 trap:
 
 all:
-	$(COMPILER) $(OPTS) -W -Wall -o Stuttgart -I$(INSTALL_INC) Stuttgart.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm
+	$(COMPILER) $(OPTS) -I.. -W -Wall -o Stuttgart -I$(INSTALL_INC) Stuttgart.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm
 
 clean:
 	@-rm -f *~ ii_files Debug* Release* *.ncb *.opt *.plg Stuttgart Stuttgart.zip

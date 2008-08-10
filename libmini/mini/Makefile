@@ -37,7 +37,7 @@ ZIP	= zip -qr9
 .SUFFIXES: .cpp
 
 .cpp.o:
-	$(COMPILER) -I.. $(OPTS) -c $*.cpp
+	$(COMPILER) $(OPTS) -I.. -c $*.cpp
 
 trap:
 
@@ -50,19 +50,19 @@ libsfx:	$(VOBJS)
 	@-$(AR) libMiniSFX.a $(VOBJS)
 
 example: lib
-	$(COMPILER) $(OPTS) -o example -I.. example.cpp -L. -lMini $(LINK) -lGL -lGLU -lm
+	$(COMPILER) $(OPTS) -I.. -o example example.cpp -L. -lMini $(LINK) -lGL -lGLU -lm
 
 stubtest: lib
-	$(COMPILER) $(OPTS) -o stubtest -I.. stubtest.cpp -L. -lMini -lm
+	$(COMPILER) $(OPTS) -I.. -o stubtest stubtest.cpp -L. -lMini -lm
 
 viewer:	lib libsfx
-	$(COMPILER) $(OPTS) -o viewer -I.. viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lm
+	$(COMPILER) $(OPTS) -I.. -o viewer viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lm
 
 depend:
-	@-$(MAKEDEPEND) $(SRCS) >Makefile.d 2>/dev/null
+	@-$(MAKEDEPEND) $(SRCS) -I.. >Makefile.d 2>/dev/null
 
 vdepend: depend
-	@-$(MAKEDEPEND) $(VSRCS) >>Makefile.d 2>/dev/null
+	@-$(MAKEDEPEND) $(VSRCS) -I.. >>Makefile.d 2>/dev/null
 
 install:
 	@-echo "copying libraries to $(INSTALL)/lib"

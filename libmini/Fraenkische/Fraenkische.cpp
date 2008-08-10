@@ -7,24 +7,24 @@
 #define DEMO_IMAGTILESETFILE "imag.tileset.sav"
 #define DEMO_STARTUPFILE "startup.sav"
 
-#include "mini/minibase.h"
+#include <mini/minibase.h>
 
-#include "mini/miniOGL.h"
-#include "mini/minitime.h"
-#include "mini/miniio.h"
-#include "mini/miniload.h"
-#include "mini/minicache.h"
-#include "mini/minitree.h"
-#include "mini/minipoint.h"
-#include "mini/minitext.h"
-#include "mini/minisky.h"
+#include <mini/miniOGL.h>
+#include <mini/minitime.h>
+#include <mini/miniio.h>
+#include <mini/miniload.h>
+#include <mini/minicache.h>
+#include <mini/minitree.h>
+#include <mini/minipoint.h>
+#include <mini/minitext.h>
+#include <mini/minisky.h>
 
-#include "mini/pnmbase.h"
-#include "mini/pnmsample.h"
+#include <mini/pnmbase.h>
+#include <mini/pnmsample.h>
 
-#include "mini/database.h"
-#include "mini/datacloud.h"
-#include "mini/datacache.h"
+#include <mini/database.h>
+#include <mini/datacloud.h>
+#include <mini/datacache.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>

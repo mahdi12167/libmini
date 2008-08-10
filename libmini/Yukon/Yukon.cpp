@@ -1,6 +1,8 @@
-#include "mini/minibase.h"
-#include "mini/minitime.h"
-#include "mini/minitile.h"
+// (c) by Stefan Roettger
+
+#include <mini/minibase.h>
+#include <mini/minitime.h>
+#include <mini/minitile.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>

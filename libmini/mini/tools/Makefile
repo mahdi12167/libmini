@@ -12,7 +12,7 @@ RM	= rm -rf
 .SUFFIXES: .cpp
 
 .cpp.o:
-	$(COMPILER) -I.. -I../.. $(OPTS) -c $*.cpp
+	$(COMPILER) $(OPTS) -I.. -I../.. -c $*.cpp
 	$(COMPILER) $(OPTS) -o $* $*.o -L.. -lMiniSFX -lMini $(LINK) -ljpeg -lpng -lGL -lGLU -lm
 
 trap:
