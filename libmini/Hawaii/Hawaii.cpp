@@ -606,6 +606,8 @@ int request_callback(int col,int row,const unsigned char *mapfile,int hlod,const
    {
    int present;
 
+   if (col<0 || row<0 || hlod<0 || tlod<0 || data!=NULL) ERRORMSG();
+
    if (hfield!=NULL && texture!=NULL && fogmap!=NULL)
       {
       if (mapfile!=NULL) hfield->loadPNMdata((char *)mapfile);
@@ -629,11 +631,17 @@ int request_callback(int col,int row,const unsigned char *mapfile,int hlod,const
    }
 
 int SEAavailable_callback(int col,int row,int lod,void *data)
-   {return(lod==0);}
+   {
+   if (col<0 || row<0 || data!=NULL) ERRORMSG();
+
+   return(lod==0);
+   }
 
 void SEAload_callback(int col,int row,int lod,databuf *volume,void *data)
    {
    float px,py;
+
+   if (col<0 || row<0 || lod<0 || data!=NULL) ERRORMSG();
 
    miniutm::UTM2LL(moex,moey,4,3,&py,&px);
 
@@ -646,7 +654,11 @@ void SEAload_callback(int col,int row,int lod,databuf *volume,void *data)
 const char PVMfilename[]="data/Storm/Storm.pvm";
 
 int PVMavailable_callback(int col,int row,int lod,void *data)
-   {return(lod<=1);}
+   {
+   if (col<0 || row<0 || data!=NULL) ERRORMSG();
+
+   return(lod<=1);
+   }
 
 void PVMload_callback(int col,int row,int lod,databuf *volume,void *data)
    {
@@ -655,6 +667,8 @@ void PVMload_callback(int col,int row,int lod,databuf *volume,void *data)
    float px,py;
 
    unsigned int xs,ys,zs;
+
+   if (col<0 || row<0 || data!=NULL) ERRORMSG();
 
    miniutm::UTM2LL(moex,moey,4,3,&py,&px);
    volume->loadPVMdata(PVMfilename,1,21,0.0f,2.0f,px,py,0.0f,100.0f,100.0f,2000.0f);
@@ -683,15 +697,25 @@ const char MOE1filename[]="data/PRECIPf_01-02.MOEVar";
 const char MOE2filename[]="data/UH_TempDeriv_3600.MoeVar";
 
 int MOE1available_callback(int col,int row,int lod,void *data)
-   {return(lod==0 && checkfile(MOE1filename));}
+   {
+   if (col<0 || row<0 || data!=NULL) ERRORMSG();
+
+   return(lod==0 && checkfile(MOE1filename));
+   }
 
 int MOE2available_callback(int col,int row,int lod,void *data)
-   {return(lod==0 && checkfile(MOE2filename));}
+   {
+   if (col<0 || row<0 || data!=NULL) ERRORMSG();
+
+   return(lod==0 && checkfile(MOE2filename));
+   }
 
 void MOE1load_callback(int col,int row,int lod,databuf *volume,void *data)
    {
    float usefs,usefg;
    float minval,maxval;
+
+   if (col<0 || row<0 || lod<0 || data!=NULL) ERRORMSG();
 
    volume->loadMOEdata(MOE1filename,&usefs,&usefg);
 
@@ -711,6 +735,8 @@ void MOE1load_callback(int col,int row,int lod,databuf *volume,void *data)
 void MOE2load_callback(int col,int row,int lod,databuf *volume,void *data)
    {
    float usefs,usefg;
+
+   if (col<0 || row<0 || lod<0 || data!=NULL) ERRORMSG();
 
    volume->loadMOEdata(MOE2filename,&usefs,&usefg);
 
