@@ -359,9 +359,9 @@ float transformpoint(unsigned char *image,
    }
 
 // resample a collection of heterogeneous grids
-void resample(int num,char **grid,
+void resample(int num,const char **grid,
               int tiles,int down,int maxsize,
-              char *basepath,
+              const char *basepath,
               float *centerx,float *centery,
               float *extentx,float *extenty,
               float *scaling,int missing,
@@ -1177,8 +1177,8 @@ void resample(int num,char **grid,
 
 // generate the normal maps of a grid collection
 void normalize(int num,
-               char **grid,
-               char *basepath,
+               const char **grid,
+               const char *basepath,
                float *centerx,float *centery,
                float *extentx,float *extenty,
                float *scaling,
@@ -1316,11 +1316,11 @@ void normalize(int num,
 void configure_supersampling(int supersampling) {CONFIGURE_SUPERSAMPLING=supersampling;}
 void configure_downsampling(int downsampling) {CONFIGURE_DOWNSAMPLING=downsampling;}
 void configure_startupfile(int startupfile) {CONFIGURE_STARTUPFILE=startupfile;}
-void configure_tilesetpath(char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
-void configure_stdprefix(char *stdprefix) {strncpy(CONFIGURE_STDPREFIX,stdprefix,MAX_STR);}
-void configure_rgbprefix(char *rgbprefix) {strncpy(CONFIGURE_RGBPREFIX,rgbprefix,MAX_STR);}
-void configure_tilesetname(char *tilesetname) {strncpy(CONFIGURE_TILESETNAME,tilesetname,MAX_STR);}
-void configure_startupname(char *startupname) {strncpy(CONFIGURE_STARTUPNAME,startupname,MAX_STR);}
+void configure_tilesetpath(const char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
+void configure_stdprefix(const char *stdprefix) {strncpy(CONFIGURE_STDPREFIX,stdprefix,MAX_STR);}
+void configure_rgbprefix(const char *rgbprefix) {strncpy(CONFIGURE_RGBPREFIX,rgbprefix,MAX_STR);}
+void configure_tilesetname(const char *tilesetname) {strncpy(CONFIGURE_TILESETNAME,tilesetname,MAX_STR);}
+void configure_startupname(const char *startupname) {strncpy(CONFIGURE_STARTUPNAME,startupname,MAX_STR);}
 
 // object data for getelevation wrapper
 typedef struct
@@ -1488,8 +1488,8 @@ unsigned char *normalmap(unsigned char *hfield,
    }
 
 // calculate a texture map from a DEM tile
-void texturemap(char *heightfile,
-                char *texturefile,
+void texturemap(const char *heightfile,
+                const char *texturefile,
                 int twidth,int theight,
                 void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                 float sealevel,float snowline)

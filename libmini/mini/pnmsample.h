@@ -9,11 +9,11 @@ namespace pnmsample {
 // the first grid defines the resampling extent
 // each grid is assumed to have a corner centric data representation
 void resample(int num, // number of heterogeneous grids
-              char **grid, // filenames of heterogeneous grids
+              const char **grid, // filenames of heterogeneous grids
               int tiles=8, // number of tiles along the largest edge
               int down=0, // number of downsampling levels
               int maxsize=4000, // maximum size of a tile
-              char *basepath=0, // base path to the generated files
+              const char *basepath=0, // base path to the generated files
               float *centerx=0,float *centery=0, // positions of map centers
               float *extentx=0,float *extenty=0, // map extents
               float *scaling=0, // vertical scaling of elevations
@@ -26,8 +26,8 @@ void resample(int num, // number of heterogeneous grids
 
 // generate the normal maps of a grid collection
 void normalize(int num, // number of heterogeneous grids
-               char **grid, // filenames of heterogeneous grids
-               char *basepath=0, // base path to the generated files
+               const char **grid, // filenames of heterogeneous grids
+               const char *basepath=0, // base path to the generated files
                float *centerx=0,float *centery=0, // positions of map centers
                float *extentx=0,float *extenty=0, // map extents
                float *scaling=0, // vertical scaling of elevations
@@ -38,11 +38,11 @@ void normalize(int num, // number of heterogeneous grids
 void configure_supersampling(int supersampling=1); // specify texture supersampling
 void configure_downsampling(int downsampling=3); // specify texture downsampling
 void configure_startupfile(int startupfile=0); // enable ouput of startup file
-void configure_tilesetpath(char *tilesetpath); // define tile set path
-void configure_stdprefix(char *stdprefix); // standard prefix of tileset file
-void configure_rgbprefix(char *rgbprefix); // rgb prefix of tileset file
-void configure_tilesetname(char *tilesetname); // name of tileset file
-void configure_startupname(char *startupname); // name of startup file
+void configure_tilesetpath(const char *tilesetpath); // define tile set path
+void configure_stdprefix(const char *stdprefix); // standard prefix of tileset file
+void configure_rgbprefix(const char *rgbprefix); // rgb prefix of tileset file
+void configure_tilesetname(const char *tilesetname); // name of tileset file
+void configure_startupname(const char *startupname); // name of startup file
 
 // calculate an RGB normal map from a DEM
 // Nx=2R-1, Nz=2G-1, Ny=sqrt(1-Nx*Nx-Nz*Nz), B=!missing
@@ -64,8 +64,8 @@ unsigned char *normalmap(unsigned char *hfield, // height field
                          float snowline=3000.0f); // elevation of snow line
 
 // calculate a texture map from a DEM tile
-void texturemap(char *heightfile,
-                char *texturefile,
+void texturemap(const char *heightfile,
+                const char *texturefile,
                 int twidth,int theight,
                 void (*shader)(float nx,float ny,float nz,float elev,float *rgb),
                 float sealevel=0.0f,float snowline=3000.0f);
