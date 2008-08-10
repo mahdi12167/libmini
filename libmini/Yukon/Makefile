@@ -1,7 +1,7 @@
 trap:
 
 all:
-	$(COMPILER) $(OPTS) -I.. -W -Wall -o Yukon -I$(INSTALL_INC) Yukon.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm
+	$(COMPILER) $(OPTS) -I.. -I$(INSTALL_INC) -W -Wall -o Yukon Yukon.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm
 
 clean:
 	@-rm -f *~ ii_files Debug* Release* *.ncb *.opt *.plg Yukon Yukon.zip

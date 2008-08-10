@@ -59,10 +59,10 @@ viewer:	lib libsfx
 	$(COMPILER) $(OPTS) -I.. -o viewer viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lm
 
 depend:
-	@-$(MAKEDEPEND) $(SRCS) -I.. >Makefile.d 2>/dev/null
+	@-$(MAKEDEPEND) $(OPTS) -I.. $(SRCS) >Makefile.d 2>/dev/null
 
 vdepend: depend
-	@-$(MAKEDEPEND) $(VSRCS) -I.. >>Makefile.d 2>/dev/null
+	@-$(MAKEDEPEND) $(OPTS) -I.. $(VSRCS) >>Makefile.d 2>/dev/null
 
 install:
 	@-echo "copying libraries to $(INSTALL)/lib"
