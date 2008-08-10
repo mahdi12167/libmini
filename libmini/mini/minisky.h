@@ -13,7 +13,7 @@ class minisky
    //! destructor
    ~minisky();
 
-   void loadskydome(char *skyfile,
+   void loadskydome(const char *skyfile,
                     float mx=0.0f,float my=0.0f,float mz=0.0f,
                     float diameter=1.0f,
                     float scale=1.0f);

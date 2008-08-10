@@ -39,7 +39,7 @@ inline void minisky::drawvertex(float alpha,float beta,int width,int height)
    fanvertex(fsin(alpha)*fsin(beta),fcos(beta),fcos(alpha)*fsin(beta));
    }
 
-void minisky::loadskydome(char *skyfile,
+void minisky::loadskydome(const char *skyfile,
                           float mx,float my,float mz,
                           float diameter,
                           float scale)
