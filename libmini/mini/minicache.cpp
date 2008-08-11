@@ -633,16 +633,11 @@ void minicache::rendertexmap(int m,int n,int S)
       else texid=0;
 
       if (USEVTXSHADER!=0)
-         {
          setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
                             -1.0f/(S-1)*(texh-1)/texh,
                             0.5f/texh,
                             1.0f-0.5f/texh,
                             t->scale);
-
-         setvtxshadertexgen(t->s1,t->s2,t->s3,t->s4,
-                            t->t1,t->t2,t->t3,t->t4);
-         }
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
          {
@@ -1173,17 +1168,18 @@ void minicache::setvtxshader(const char *vp)
       PARAM e=program.env[1]; \n\
       PARAM u=program.env[2]; \n\
       PARAM v=program.env[3]; \n\
-      PARAM c0=program.env[2]; \n\
-      PARAM c1=program.env[3]; \n\
-      PARAM c2=program.env[4]; \n\
-      PARAM c3=program.env[5]; \n\
-      PARAM c4=program.env[6]; \n\
-      PARAM c5=program.env[7]; \n\
-      PARAM c6=program.env[8]; \n\
-      PARAM c7=program.env[9]; \n\
+      PARAM d=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,pos,vec; \n\
+      TEMP vtx,col,nrm,pos,vec,gen; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
@@ -1208,8 +1204,10 @@ void minicache::setvtxshader(const char *vp)
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
       ### calculate eye linear coordinates \n\
-      DP4 result.texcoord[2].x,pos,u; \n\
-      DP4 result.texcoord[2].y,pos,v; \n\
+      DP4 gen.x,pos,u; \n\
+      DP4 gen.y,pos,v; \n\
+      MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
+      MAD result.texcoord[2].y,gen.y,d.z,d.w; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -1276,8 +1274,11 @@ void minicache::enablevtxshader()
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID);
          glEnable(GL_VERTEX_PROGRAM_ARB);
 
+         setvtxshadertexgen();
+         bindvtxshaderdetailtex();
+
          for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]);
+            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,5+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]);
          }
       }
 
@@ -1306,17 +1307,77 @@ void minicache::setvtxshadertexprm(float s1,float s2,float o1,float o2,float sca
    }
 
 // set vertex shader texture coordinate generation parameter vector
-void minicache::setvtxshadertexgen(float s1,float s2,float s3,float s4,float t1,float t2,float t3,float t4)
+void minicache::setvtxshadertexgen()
    {
 #ifndef NOOGL
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (VTXPROGID!=0)
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[RENDER_ID];
+
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,t->s1,t->s2,t->s3,t->s4);
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t->t1,t->t2,t->t3,t->t4);
+
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,1.0f,0.0f,1.0f,0.0f);
+
+#endif
+
+#endif
+   }
+
+// bind vertex shader detail texture
+void minicache::bindvtxshaderdetailtex()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[RENDER_ID];
+
+   if (t->detail_texid!=0)
+      {
+      if (GLEXT_MT!=0)
          {
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,s1,s2,s3,s4);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t1,t2,t3,t4);
+#ifdef GL_ARB_multitexture
+         glActiveTextureARB(GL_TEXTURE2_ARB);
+         bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,1);
+         glActiveTextureARB(GL_TEXTURE0_ARB);
+#endif
+         }
+
+      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,
+                                 0.5f/t->detail_width,(t->detail_width-1)/t->detail_width,
+                                 0.5f/t->detail_height,(t->detail_height-1)/t->detail_height);
+      }
+
+#endif
+
+#endif
+   }
+
+// unbind vertex shader detail texture
+void minicache::unbindvtxshaderdetailtex()
+   {
+#ifndef NOOGL
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[RENDER_ID];
+
+   if (t->detail_texid!=0)
+      if (GLEXT_MT!=0)
+         {
+#ifdef GL_ARB_multitexture
+         glActiveTextureARB(GL_TEXTURE2_ARB);
+         bindtexmap(0,0,0,0,0);
+         glActiveTextureARB(GL_TEXTURE0_ARB);
+#endif
          }
 
 #endif
@@ -1336,6 +1397,8 @@ void minicache::disablevtxshader()
          {
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
          glDisable(GL_VERTEX_PROGRAM_ARB);
+
+         unbindvtxshaderdetailtex();
          }
 
 #endif

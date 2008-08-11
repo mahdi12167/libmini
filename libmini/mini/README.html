@@ -1330,17 +1330,18 @@ minicache::setshader("!!ARBvp...").<p>
       PARAM e=program.env[1]; \n\
       PARAM u=program.env[2]; \n\
       PARAM v=program.env[3]; \n\
-      PARAM c0=program.env[2]; \n\
-      PARAM c1=program.env[3]; \n\
-      PARAM c2=program.env[4]; \n\
-      PARAM c3=program.env[5]; \n\
-      PARAM c4=program.env[6]; \n\
-      PARAM c5=program.env[7]; \n\
-      PARAM c6=program.env[8]; \n\
-      PARAM c7=program.env[9]; \n\
+      PARAM d=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,pos,vec; \n\
+      TEMP vtx,col,nrm,pos,vec,gen; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
@@ -1365,8 +1366,10 @@ minicache::setshader("!!ARBvp...").<p>
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
       ### calculate eye linear coordinates \n\
-      DP4 result.texcoord[2].x,pos,u; \n\
-      DP4 result.texcoord[2].y,pos,v; \n\
+      DP4 gen.x,pos,u; \n\
+      DP4 gen.y,pos,v; \n\
+      MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
+      MAD result.texcoord[2].y,gen.y,d.z,d.w; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -1378,16 +1381,19 @@ coordinate vector. The parameter e holds the scaling factor of the
 incoming elevations to compute the current true elevation. These true
 elevation values are passed to the pixel shader in the z-component of
 the texture coordinate vector so that per-fragment computations can
-easily depend on elevation. The parameter vectors t and e are supplied
-automatically by the minicache, but the parameter vectors c0-c7 may
-hold four additional constants that can be supplied by the user via
-minicache::setvtxshaderparams(x,y,z,w[,n]).<p>
+easily depend on elevation. The parameters u,v and d are used for eye
+linear texture coordinate generation with texture unit #2. The
+parameter vectors t, e and d are supplied automatically by the
+minicache, but the parameter vectors u/v and c0-c7 may hold
+user-definable constants that can be supplied via
+minicache::setvtxshadertexgen(tileset,s1..t4) and
+minicache::setvtxshaderparams(x,y,z,w[,n]), respectively.<p>
 
 The default pixel shader takes the actual 2D texture coordinates and
 fetches the corresponding color from texture #0 which holds the
-current texture tile. After that the texture color is multiplied with
-the current fragment color to mimic the standard modulating texture
-environment.<p>
+current texture tile. After that the texture color is shaded and
+multiplied with the current fragment color to mimic the standard
+modulating texture environment.<p>
 
 <pre>
    // default pixel shader

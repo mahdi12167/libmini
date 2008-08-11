@@ -287,7 +287,9 @@ class minicache
 
    void enablevtxshader();
    void setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale);
-   void setvtxshadertexgen(float s1,float s2,float s3,float s4,float t1,float t2,float t3,float t4);
+   void setvtxshadertexgen();
+   void bindvtxshaderdetailtex();
+   void unbindvtxshaderdetailtex();
    void disablevtxshader();
 
    void enablepixshader();
