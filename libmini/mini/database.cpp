@@ -576,12 +576,12 @@ void databuf::loadblock(FILE *file)
 
 // data is saved in DB format
 // data is converted from native to MSB byte order
-void databuf::savedata(const char *filename,
-                       unsigned int extfmt)
+int databuf::savedata(const char *filename,
+                      unsigned int extfmt)
    {
    FILE *file;
 
-   if (data==NULL) return;
+   if (data==NULL) return(0);
 
    if (bytes==0) ERRORMSG();
 
@@ -589,7 +589,12 @@ void databuf::savedata(const char *filename,
    if (extfmt!=DATABUF_EXTFMT_PLAIN) convertchunk(1,extfmt);
 
    // open file for writing
-   if ((file=fopen(filename,"wb"))==NULL) ERRORMSG();
+   if ((file=fopen(filename,"wb"))==NULL)
+      {
+      fprintf(stderr,"unable to save %s!\n",filename);
+      WARNMSG();
+      return(0);
+      }
 
    // save magic identifier
    writeparam("MAGIC",MAGIC5,file);
@@ -663,6 +668,8 @@ void databuf::savedata(const char *filename,
 
       fclose(file);
       }
+
+   return(1);
    }
 
 // data is loaded from DB file

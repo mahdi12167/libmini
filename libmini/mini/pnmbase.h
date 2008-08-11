@@ -32,10 +32,10 @@ class PNMcomment
    };
 
 //! write a PNM image with optional comment to a file
-void writePNMimage(const char *pnmfilename,
-                   unsigned char *image,
-                   int width,int height,int components,
-                   PNMcomment *comment=0);
+int writePNMimage(const char *pnmfilename,
+                  unsigned char *image,
+                  int width,int height,int components,
+                  PNMcomment *comment=0);
 
 //! read a PNM image with optional comment from a file or memory
 unsigned char *readPNMimage(const unsigned char *pnmimage,
@@ -49,8 +49,8 @@ unsigned char *readPNMfile(const char *pnmfilename,
                            PNMcomment *comment=0);
 
 //! write a PVM volume
-void writePVMvolume(const char *filename,unsigned char *volume,
-                    int width,int height,int depth,int components);
+int writePVMvolume(const char *filename,unsigned char *volume,
+                   int width,int height,int depth,int components);
 
 //! read a PVM volume
 unsigned char *readPVMvolume(const char *filename,

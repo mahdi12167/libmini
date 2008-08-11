@@ -148,7 +148,7 @@ class databuf
    void set_crs(int crs_type,int crs_zone=0,int crs_datum=0);
 
    //! native input/output
-   void savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
+   int savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
    int loaddata(const char *filename,int stub=0,unsigned int tstart=0,unsigned int tstop=0); // data is converted from MSB to native byte order
 
    //! convert byte order

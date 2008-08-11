@@ -64,10 +64,10 @@ void PNMcomment::addunits(int units)
    }
 
 // write a PNM image
-void writePNMimage(const char *pnmfilename,
-                   unsigned char *image,
-                   int width,int height,int components,
-                   PNMcomment *comment)
+int writePNMimage(const char *pnmfilename,
+                  unsigned char *image,
+                  int width,int height,int components,
+                  PNMcomment *comment)
    {
    FILE *file;
 
@@ -75,7 +75,7 @@ void writePNMimage(const char *pnmfilename,
 
    if (width<1 || height<1) ERRORMSG();
 
-   if ((file=fopen(pnmfilename,"wb"))==NULL) ERRORMSG();
+   if ((file=fopen(pnmfilename,"wb"))==NULL) return(0);
 
    if (components==1 || components==2) fprintf(file,"P5");
    else if (components==3) fprintf(file,"P6");
@@ -98,6 +98,8 @@ void writePNMimage(const char *pnmfilename,
 
    if (fwrite(image,width*height*components,1,file)!=1) ERRORMSG();
    fclose(file);
+
+   return(1);
    }
 
 // read a PNM image
@@ -239,19 +241,21 @@ unsigned char *readPNMfile(const char *pnmfilename,
    }
 
 // write a PVM volume
-void writePVMvolume(const char *filename,unsigned char *volume,
-                    int width,int height,int depth,int components)
+int writePVMvolume(const char *filename,unsigned char *volume,
+                   int width,int height,int depth,int components)
    {
    FILE *file;
 
    if (width<1 || height<1 || depth<1 || components<1) ERRORMSG();
 
-   if ((file=fopen(filename,"wb"))==NULL) ERRORMSG();
+   if ((file=fopen(filename,"wb"))==NULL) return(0);
 
    fprintf(file,"PVM\n%d %d %d\n%d\n",width,height,depth,components);
 
    if (fwrite(volume,width*height*depth*components,1,file)!=1) ERRORMSG();
    fclose(file);
+
+   return(1);
    }
 
 // read a PVM volume
