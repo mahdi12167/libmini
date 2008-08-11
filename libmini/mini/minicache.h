@@ -99,7 +99,7 @@ class minicache
    int getvtxcnt(); // rendered vertices
 
    //! get cached terrain object
-   minitile *gettile(int id);
+   minitile *getminitile(int id);
 
    //! get ray intersection test object
    miniray *getray(int id);

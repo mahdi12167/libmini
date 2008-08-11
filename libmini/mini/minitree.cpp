@@ -569,10 +569,10 @@ int minitree::treetrigger(int phase)
          {
          c=&TREECACHE[1-TREECACHE_NUM];
 
-         vtx+=rendertrees(c->buf,c->crd,c->size,CACHE->gettile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
+         vtx+=rendertrees(c->buf,c->crd,c->size,CACHE->getminitile(PRISM_ID)->getwarp(),TREEMODE_X_TR,TREEMODE_X_TG,TREEMODE_X_TB);
 
          if (TREEMODE>=9)
-            vtx+=rendergrass(c->grass_buf,c->grass_crd,c->grass_size,CACHE->gettile(PRISM_ID)->getwarp());
+            vtx+=rendergrass(c->grass_buf,c->grass_crd,c->grass_size,CACHE->getminitile(PRISM_ID)->getwarp());
          }
 
    return(vtx);

@@ -1973,7 +1973,7 @@ int minicache::getvtxcnt(int id)
    }
 
 // get cached terrain object
-minitile *minicache::gettile(int id)
+minitile *minicache::getminitile(int id)
    {return(TERRAIN[id].tile);}
 
 // get ray intersection test object
