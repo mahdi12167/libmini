@@ -550,6 +550,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
    v1=p2.vec-p1.vec;
    v1.normalize();
+
    return(v1);
    }
 
