@@ -545,14 +545,12 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
       v1=miniv4d(v,1.0);
       return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
       }
-   else
-      {
-      p1=warp(p);
-      p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
-      v1=p2.vec-p1.vec;
-      v1.normalize();
-      return(v1);
-      }
+
+   p1=warp(p);
+   p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
+   v1=p2.vec-p1.vec;
+   v1.normalize();
+   return(v1);
    }
 
 // update conversion matrices
