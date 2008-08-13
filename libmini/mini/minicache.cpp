@@ -466,20 +466,23 @@ int minicache::rendercache()
 
    int id,phase;
 
-   for (id=0; id<MAXTERRAIN; id++)
-      if (TERRAIN[id].tile!=NULL)
-         {
-         TERRAIN[id].render_phase=0;
-         TERRAIN[id].render_count=0;
-         }
-
-   for (phase=0; phase<=4; phase++)
+   if (NUMTERRAIN>0)
       {
-      rendertrigger(phase);
-
       for (id=0; id<MAXTERRAIN; id++)
          if (TERRAIN[id].tile!=NULL)
-            if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
+            {
+            TERRAIN[id].render_phase=0;
+            TERRAIN[id].render_count=0;
+            }
+
+      for (phase=0; phase<=4; phase++)
+         {
+         rendertrigger(phase);
+
+         for (id=0; id<MAXTERRAIN; id++)
+            if (TERRAIN[id].tile!=NULL)
+               if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
+         }
       }
 
    return(vtx);
