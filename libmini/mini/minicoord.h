@@ -3,8 +3,6 @@
 #ifndef MINICOORD_H
 #define MINICOORD_H
 
-#include "minibase.h"
-
 #include "miniv3d.h"
 #include "miniv4d.h"
 
