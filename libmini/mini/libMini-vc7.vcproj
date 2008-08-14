@@ -222,6 +222,26 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="miniv4d.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="minimath.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -243,26 +263,6 @@
 			</File>
 			<File
 				RelativePath="minimpfp.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="miniv4d.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -422,6 +422,46 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="minicoord.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="miniwarp.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="minilayer.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -503,26 +543,6 @@
 			</File>
 			<File
 				RelativePath="minishader.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="miniwarp.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -1080,6 +1100,12 @@
 				RelativePath="miniload.h">
 			</File>
 			<File
+				RelativePath="minicoord.h">
+			</File>
+			<File
+				RelativePath="miniwarp.h">
+			</File>
+			<File
 				RelativePath="minilayer.h">
 			</File>
 			<File
@@ -1093,9 +1119,6 @@
 			</File>
 			<File
 				RelativePath="minishader.h">
-			</File>
-			<File
-				RelativePath="miniwarp.h">
 			</File>
 			<File
 				RelativePath="miniray.h">

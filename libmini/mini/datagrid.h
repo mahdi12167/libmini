@@ -94,11 +94,12 @@ class datagrid
    minidyna<databuf> DATA;
 
    miniv4d MTXPRE[3],MTXPOST[3];
-   BOOLINT IDPRE,IDPOST;
-
    miniv4d INVTRAPRE[3],INVTRAPOST[3];
 
    private:
+
+   miniv4d ID[3];
+   BOOLINT IDPRE,IDPOST;
 
    BOOLINT INVALID;
 
@@ -112,8 +113,6 @@ class datagrid
 
    minimesh UNSORTED;
    minimesh SORTED;
-
-   miniv4d ID[3];
 
    BOOLINT decompose();
    void decompose(unsigned int idx);

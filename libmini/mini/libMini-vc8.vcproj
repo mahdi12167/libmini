@@ -544,7 +544,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="minigeom.cpp"
+				RelativePath="minicoord.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -569,32 +569,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="minimesh.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="miniproj.cpp"
+				RelativePath="miniwarp.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -720,31 +695,6 @@
 			</File>
 			<File
 				RelativePath="minishader.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="3"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="miniwarp.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -970,6 +920,81 @@
 			</File>
 			<File
 				RelativePath="minilod.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="minigeom.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="minimesh.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="3"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="miniproj.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -1371,6 +1396,14 @@
 				>
 			</File>
 			<File
+				RelativePath="minicoord.h"
+				>
+			</File>
+			<File
+				RelativePath="miniwarp.h"
+				>
+			</File>
+			<File
 				RelativePath="minilayer.h"
 				>
 			</File>
@@ -1388,10 +1421,6 @@
 			</File>
 			<File
 				RelativePath="minishader.h"
-				>
-			</File>
-			<File
-				RelativePath="miniwarp.h"
 				>
 			</File>
 			<File
