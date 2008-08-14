@@ -10,6 +10,8 @@
 
 #include "minidyna.h"
 #include "minimesh.h"
+#include "minibspt.h"
+
 #include "miniwarp.h"
 
 #include "database.h"
