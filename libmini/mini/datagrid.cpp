@@ -87,7 +87,6 @@ void datagrid::remove(const unsigned int id)
       if (!DATA[id].missing())
          {
          INVALID=TRUE;
-
          DATA[id].release();
          }
 
@@ -135,12 +134,12 @@ void datagrid::reference(const unsigned int id,
                          minilayer *layer)
    {
    if (FLAG[id])
+      {
       if (!DATA[id].missing())
-         if (REF[id]!=layer)
-            {
-            INVALID=TRUE;
-            REF[id]=layer;
-            }
+         if (REF[id]!=layer) INVALID=TRUE;
+
+      REF[id]=layer;
+      }
    }
 
 // clear all data bricks
