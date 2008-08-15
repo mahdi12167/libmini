@@ -12,7 +12,10 @@
 #include "minimesh.h"
 #include "minibspt.h"
 
+#include "minicoord.h"
 #include "miniwarp.h"
+
+#include "minilayer.h"
 
 #include "database.h"
 
@@ -49,6 +52,10 @@ class datagrid
              const float h0,const float dh,  // base elevation and height of data brick
              const float t0,const float dt); // time frame start and exposure time
 
+   //! reference to layer
+   void reference(const unsigned int id, // data brick id
+                  minilayer *layer); // reference layer
+
    //! clear all data bricks
    void clear();
 
@@ -77,11 +84,14 @@ class datagrid
                 const double maxradius=MAXFLOAT);
 
    //! push the mesh for a particular time step
-   virtual void push(const minimesh &mesh,const double time);
+   virtual void push(const minimesh &mesh,
+                     const double time,
+                     const miniv4d mtx[3]);
 
    //! push the mesh for a particular time step and eye point
    virtual void push(const minimesh &mesh,
                      const double time,
+                     const miniv4d mtx[3],
                      const minicoord &eye,const miniv3d &dir,
                      const float nearp,const float farp,const float fovy,const float aspect);
 
@@ -95,13 +105,11 @@ class datagrid
 
    minidyna<databuf> DATA;
 
+   minidyna<minilayer *> REF;
+
    miniv4d MTXPRE[3],MTXPOST[3];
-   miniv4d INVTRAPRE[3],INVTRAPOST[3];
 
    private:
-
-   miniv4d ID[3];
-   BOOLINT IDPRE,IDPOST;
 
    BOOLINT INVALID;
 

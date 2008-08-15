@@ -15,6 +15,7 @@
 #include "miniv4d.h"
 
 #include "miniutm.h"
+#include "minicoord.h"
 #include "miniwarp.h"
 
 //! aggregate class for rendering a layer

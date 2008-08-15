@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "minimath.h"
-
 #include "datagrid.h"
 
 // default constructor
@@ -17,11 +15,9 @@ datagrid::datagrid()
 
    CONSTRUCTED=FALSE;
 
-   ID[0]=MTXPRE[0]=MTXPOST[0]=INVTRAPRE[0]=INVTRAPOST[0]=miniv4d(1.0,0.0,0.0);
-   ID[1]=MTXPRE[1]=MTXPOST[1]=INVTRAPRE[1]=INVTRAPOST[1]=miniv4d(0.0,1.0,0.0);
-   ID[2]=MTXPRE[2]=MTXPOST[2]=INVTRAPRE[2]=INVTRAPOST[2]=miniv4d(0.0,0.0,1.0);
-
-   IDPRE=IDPOST=TRUE;
+   MTXPRE[0]=MTXPOST[0]=miniv4d(1.0,0.0,0.0);
+   MTXPRE[1]=MTXPOST[1]=miniv4d(0.0,1.0,0.0);
+   MTXPRE[2]=MTXPOST[2]=miniv4d(0.0,0.0,1.0);
    }
 
 // destructor
@@ -38,8 +34,6 @@ unsigned int datagrid::create(const unsigned int slot,
    {
    unsigned int i;
 
-   INVALID=TRUE;
-
    for (i=0; i<FLAG.getsize(); i++)
       if (!FLAG[i])
          {
@@ -47,12 +41,16 @@ unsigned int datagrid::create(const unsigned int slot,
          SLOT[i]=slot;
          FLIP[i]=flip;
 
+         REF[i]=NULL;
+
          return(i);
          }
 
    FLAG.append(TRUE);
    SLOT.append(slot);
    FLIP.append(flip);
+
+   REF.append(NULL);
 
    DATA.setsize(FLAG.getsize());
 
@@ -65,7 +63,18 @@ void datagrid::load(const unsigned int id,
    {
    if (FLAG[id])
       {
-      DATA[id].release();
+      if (DATA[id].missing()) INVALID=TRUE;
+      else
+         {
+         if (DATA[id].swx!=buf.swx || DATA[id].swy!=buf.swy ||
+             DATA[id].nwx!=buf.nwx || DATA[id].nwy!=buf.nwy ||
+             DATA[id].nex!=buf.nex || DATA[id].ney!=buf.ney ||
+             DATA[id].sex!=buf.sex || DATA[id].sey!=buf.sey ||
+             DATA[id].h0!=buf.h0 || DATA[id].dh!=buf.dh) INVALID=TRUE;
+
+         DATA[id].release();
+         }
+
       DATA[id]=buf;
       }
    }
@@ -75,9 +84,13 @@ void datagrid::remove(const unsigned int id)
    {
    if (FLAG[id])
       {
-      INVALID=TRUE;
+      if (!DATA[id].missing())
+         {
+         INVALID=TRUE;
 
-      DATA[id].release();
+         DATA[id].release();
+         }
+
       FLAG[id]=FALSE;
       }
    }
@@ -92,28 +105,42 @@ void datagrid::move(const unsigned int id,
                     const float t0,const float dt)
    {
    if (FLAG[id])
-      {
-      if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
-          DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
-          DATA[id].nex!=nex || DATA[id].ney!=ney ||
-          DATA[id].sex!=sex || DATA[id].sey!=sey ||
-          DATA[id].h0!=h0 || DATA[id].dh!=dh) INVALID=TRUE;
+      if (!DATA[id].missing())
+         {
+         if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
+             DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
+             DATA[id].nex!=nex || DATA[id].ney!=ney ||
+             DATA[id].sex!=sex || DATA[id].sey!=sey ||
+             DATA[id].h0!=h0 || DATA[id].dh!=dh) INVALID=TRUE;
 
-      DATA[id].swx=swx;
-      DATA[id].swy=swy;
-      DATA[id].nwx=nwx;
-      DATA[id].nwy=nwy;
-      DATA[id].nex=nex;
-      DATA[id].ney=ney;
-      DATA[id].sex=sex;
-      DATA[id].sey=sey;
+         DATA[id].swx=swx;
+         DATA[id].swy=swy;
+         DATA[id].nwx=nwx;
+         DATA[id].nwy=nwy;
+         DATA[id].nex=nex;
+         DATA[id].ney=ney;
+         DATA[id].sex=sex;
+         DATA[id].sey=sey;
 
-      DATA[id].h0=h0;
-      DATA[id].dh=dh;
+         DATA[id].h0=h0;
+         DATA[id].dh=dh;
 
-      DATA[id].t0=t0;
-      DATA[id].dt=dt;
-      }
+         DATA[id].t0=t0;
+         DATA[id].dt=dt;
+         }
+   }
+
+// reference to layer
+void datagrid::reference(const unsigned int id,
+                         minilayer *layer)
+   {
+   if (FLAG[id])
+      if (!DATA[id].missing())
+         if (REF[id]!=layer)
+            {
+            INVALID=TRUE;
+            REF[id]=layer;
+            }
    }
 
 // clear all data bricks
@@ -130,7 +157,8 @@ BOOLINT datagrid::isclear()
    unsigned int i;
 
    for (i=0; i<FLAG.getsize(); i++)
-      if (FLAG[i]) return(FALSE);
+      if (FLAG[i])
+         if (!DATA[i].missing()) return(FALSE);
 
    return(TRUE);
    }
@@ -143,15 +171,6 @@ void datagrid::applymtx(const miniv4d mtx[3])
    MTXPRE[0]=mtx[0];
    MTXPRE[1]=mtx[1];
    MTXPRE[2]=mtx[2];
-
-   IDPRE=(MTXPRE[0]==ID[0] && MTXPRE[1]==ID[1] && MTXPRE[2]==ID[2]);
-
-   if (IDPRE) cpy_mtx(INVTRAPRE,ID);
-   else
-      {
-      inv_mtx(INVTRAPRE,MTXPRE);
-      tra_mtx(INVTRAPRE,INVTRAPRE);
-      }
    }
 
 // specify post matrix
@@ -160,15 +179,6 @@ void datagrid::specmtx(const miniv4d mtx[3])
    MTXPOST[0]=mtx[0];
    MTXPOST[1]=mtx[1];
    MTXPOST[2]=mtx[2];
-
-   IDPOST=(MTXPOST[0]==ID[0] && MTXPOST[1]==ID[1] && MTXPOST[2]==ID[2]);
-
-   if (IDPOST) cpy_mtx(INVTRAPOST,ID);
-   else
-      {
-      inv_mtx(INVTRAPOST,MTXPOST);
-      tra_mtx(INVTRAPOST,INVTRAPOST);
-      }
    }
 
 // construct tetrahedral mesh from all data bricks
@@ -302,12 +312,15 @@ void datagrid::decompose(unsigned int idx)
                for (i=0; i<8; i++) vtx[i].convert2(CRS);
 
          // multiply corner vertices with 4x3 matrix
-         if (!IDPRE)
-            for (i=0; i<8; i++)
-               {
-               v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
-               vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
-               }
+         for (i=0; i<8; i++)
+            {
+            v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
+            vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
+            }
+
+         // check reference to layer
+         if (REF[idx]!=NULL)
+            for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
 
          // check orientation of tetrahedral decomposition
          if (!FLIP[idx])
@@ -359,7 +372,7 @@ void datagrid::decompose(unsigned int idx)
 void datagrid::trigger(const double time)
    {
    if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
-   push(UNSORTED,time); // push the static unsorted mesh
+   push(UNSORTED,time,MTXPOST); // push the static unsorted mesh
    }
 
 // trigger pushing the mesh for a particular time step and eye point
@@ -370,9 +383,6 @@ void datagrid::trigger(const double time,
    {
    minicoord ep,epd;
    miniv3d ed;
-
-   miniv4d v;
-   miniv3d e,d;
 
    float factor1,factor2;
 
@@ -394,41 +404,33 @@ void datagrid::trigger(const double time,
          ed.normalize();
          }
 
-   // multiply eye point with 4x3 matrix
-   if (!IDPRE)
-      {
-      v=miniv4d(ep.vec,1.0);
-      e=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
-
-      v=miniv4d(ed,1.0);
-      d=miniv3d(INVTRAPRE[0]*v,INVTRAPRE[1]*v,INVTRAPRE[2]*v);
-      }
-
    // compute safety factors
    factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
    factor2=1.01f;
 
    if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
-   SORTED=BSPT2.extract(e,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push(SORTED,time,e,d,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
+   SORTED=BSPT2.extract(ep.vec,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   push(SORTED,time,MTXPOST,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
    }
 
 // push the mesh for a particular time step
 void datagrid::push(const minimesh &mesh,
-                    const double time)
+                    const double time,
+                    const miniv4d mtx[3])
    {
-   printf("pushing mesh of size %u for time step %g\n",
-          mesh.getsize(),time);
+   printf("pushing mesh of size %u for time step %g with offset=(%g,%g,%g)\n",
+          mesh.getsize(),time,mtx[0].w,mtx[1].w,mtx[2].w);
    }
 
 // push the mesh for a particular time step and eye point
 void datagrid::push(const minimesh &mesh,
                     const double time,
+                    const miniv4d mtx[3],
                     const minicoord &eye,const miniv3d &dir,
                     const float nearp,const float farp,const float fovy,const float aspect)
    {
-   printf("pushing mesh of size %u for time step %g\n",
-          mesh.getsize(),time);
+   printf("pushing mesh of size %u for time step %g with offset=(%g,%g,%g)\n",
+          mesh.getsize(),time,mtx[0].w,mtx[1].w,mtx[2].w);
 
    printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g\n",
           eye.vec.x,eye.vec.y,eye.vec.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect);

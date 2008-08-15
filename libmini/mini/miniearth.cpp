@@ -6,6 +6,7 @@
 #include "minishader.h"
 
 #include "miniutm.h"
+#include "minicoord.h"
 #include "miniwarp.h"
 
 #include "miniearth.h"

@@ -5,6 +5,7 @@
 #include "miniOGL.h"
 #include "minishader.h"
 
+#include "minicoord.h"
 #include "miniwarp.h"
 
 #include "miniterrain.h"
