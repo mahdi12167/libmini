@@ -5,12 +5,13 @@
 // default constructor
 minibsptree::minibsptree()
    {
-   DONE=FALSE;
-   GOTEYE=FALSE;
-   VOLDONE=FALSE;
+   CONSTRUCTED=FALSE;
 
    PHASE=0;
    STEP=0;
+
+   GOTEYE=FALSE;
+   VOLDONE=FALSE;
 
    TREEDEBUG=FALSE;
    }
@@ -21,21 +22,22 @@ minibsptree::~minibsptree() {}
 // clear bsp tree
 void minibsptree::clear()
    {
-   MESH.setnull();
    TREE.setnull();
+   MESH.setnull();
 
-   DONE=FALSE;
-   GOTEYE=FALSE;
-   VOLDONE=FALSE;
+   CONSTRUCTED=FALSE;
 
    PHASE=0;
    STEP=0;
+
+   GOTEYE=FALSE;
+   VOLDONE=FALSE;
    }
 
 // insert from tetrahedral mesh
 void minibsptree::insert(const minimesh &mesh)
    {
-   if (DONE || PHASE!=0) ERRORMSG();
+   if (CONSTRUCTED || PHASE!=0) ERRORMSG();
 
    MESH.append(mesh);
    }
@@ -45,7 +47,7 @@ void minibsptree::insertbbox(const minimesh &mesh)
    {
    miniv3d bbmin,bbmax;
 
-   if (DONE || PHASE!=0) ERRORMSG();
+   if (CONSTRUCTED || PHASE!=0) ERRORMSG();
 
    // store mesh for later insertion
    MESH.append(mesh);
@@ -91,8 +93,8 @@ BOOLINT minibsptree::preprocess()
    {
    unsigned int idx;
 
-   if (!DONE)
-      if (MESH.getsize()==0) DONE=TRUE;
+   if (!CONSTRUCTED)
+      if (MESH.getsize()==0) CONSTRUCTED=TRUE;
       else
          switch (PHASE)
             {
@@ -141,17 +143,17 @@ BOOLINT minibsptree::preprocess()
                // phase #4: clean up
                MESH.setnull();
 
-               DONE=TRUE;
+               CONSTRUCTED=TRUE;
 
                break;
             }
 
-   return(DONE);
+   return(CONSTRUCTED);
    }
 
 // get preprocessing status
 BOOLINT minibsptree::getstatus()
-   {return(DONE);}
+   {return(CONSTRUCTED);}
 
 // insert tetrahedron (phase #1)
 void minibsptree::insert1(unsigned int idx,unsigned int face)

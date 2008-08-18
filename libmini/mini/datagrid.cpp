@@ -8,12 +8,12 @@ datagrid::datagrid()
    CRS=minicoord::MINICOORD_ECEF;
 
    INVALID=FALSE;
-   DONE=FALSE;
+   CONSTRUCTED=TRUE;
+
+   DECOMPOSED=FALSE;
 
    PHASE=0;
    STEP=0;
-
-   CONSTRUCTED=FALSE;
 
    MTXPRE[0]=MTXPOST[0]=miniv4d(1.0,0.0,0.0);
    MTXPRE[1]=MTXPOST[1]=miniv4d(0.0,1.0,0.0);
@@ -30,7 +30,8 @@ void datagrid::setcrs(const minicoord::MINICOORD crs)
 
 // create data brick id
 unsigned int datagrid::create(const unsigned int slot,
-                              const BOOLINT flip)
+                              const BOOLINT flip,
+                              const BOOLINT bbox)
    {
    unsigned int i;
 
@@ -40,7 +41,7 @@ unsigned int datagrid::create(const unsigned int slot,
          FLAG[i]=TRUE;
          SLOT[i]=slot;
          FLIP[i]=flip;
-
+         BBOX[i]=bbox;
          REF[i]=NULL;
 
          return(i);
@@ -49,7 +50,7 @@ unsigned int datagrid::create(const unsigned int slot,
    FLAG.append(TRUE);
    SLOT.append(slot);
    FLIP.append(flip);
-
+   BBOX.append(bbox);
    REF.append(NULL);
 
    DATA.setsize(FLAG.getsize());
@@ -150,18 +151,6 @@ void datagrid::clear()
    for (i=0; i<FLAG.getsize(); i++) remove(i);
    }
 
-// check if any valid bricks are present
-BOOLINT datagrid::isclear()
-   {
-   unsigned int i;
-
-   for (i=0; i<FLAG.getsize(); i++)
-      if (FLAG[i])
-         if (!DATA[i].missing()) return(FALSE);
-
-   return(TRUE);
-   }
-
 // apply pre matrix
 void datagrid::applymtx(const miniv4d mtx[3])
    {
@@ -189,77 +178,82 @@ BOOLINT datagrid::preprocess()
    {
    BOOLINT status1,status2;
 
-   // decompose all data bricks into tetrahedra
-   if (!decompose()) status2=FALSE;
-   else
+   if (INVALID)
       {
-      status1=BSPT1.getstatus(); // get processing status
-      status2=BSPT1.preprocess(); // process bsp tree one step at a time
+      INVALID=FALSE; // preprocessing has started
+      CONSTRUCTED=FALSE; // preprocessing has not yet finished
+
+      DECOMPOSED=FALSE; // decomposition has not yet finished
+      
+      PHASE=0;
+      STEP=0;
+      }
+
+   // decompose all data bricks into tetrahedra
+   if (decompose())
+      {
+      status1=BSPT.getstatus(); // get processing status
+      status2=BSPT.preprocess(); // process bsp tree one step at a time
 
       if (!status1 && status2)
          {
-         BSPT2=BSPT1; // copy preprocessed bsp tree
-         UNSORTED=BSPT2.extract(); // extract a non-intrusive unsorted tetrahedral mesh from the bsp tree
-         CONSTRUCTED=TRUE; // bsp tree was constructed at least once
+         UNSORTED=BSPT.extract(); // extract a non-intrusive unsorted tetrahedral mesh from the bsp tree
+         CONSTRUCTED=TRUE; // preprocessing has finished
          }
       }
 
-   return(status2);
+   return(CONSTRUCTED);
    }
 
 // decompose all data bricks into tetrahedra
 BOOLINT datagrid::decompose()
    {
-   if (INVALID)
-      if (isclear())
+   if (!DECOMPOSED)
+      switch (PHASE)
          {
-         BSPT1.clear();
+         case 0:
+            // phase #0: reset
+            BSPT.clear();
 
-         INVALID=FALSE;
-         DONE=TRUE;
-         }
-      else
-         switch (PHASE)
-            {
-            case 0:
-               // phase #0: reset the mesh
-               MESH.setnull();
+            PHASE++;
 
-               DONE=FALSE;
+            break;
+         case 1:
+            // phase #1: decompose one data brick into 5 tetrahedra
+            MESH=decompose(STEP);
 
-               PHASE++;
+            PHASE++;
 
-               break;
-            case 1:
-               // phase #1: decompose one data brick into 5 tetrahedra
-               decompose(STEP);
+            break;
+         case 2:
+            // phase #2: insert the tetrahedral mesh into the bsp tree
+            if (BBOX[STEP]) BSPT.insertbbox(MESH);
+            else BSPT.insert(MESH);
 
-               if (++STEP>=FLAG.getsize())
-                  {
-                  STEP=0;
-                  PHASE++;
-                  }
-
-               break;
-            case 2:
-               // phase #2: build the bsp tree
-               BSPT1.clear(); // clear the bsp tree
-               BSPT1.insert(MESH); // insert the entire tetrahedral mesh into the bsp tree
-               MESH.setnull(); // release the mesh
-
-               INVALID=FALSE;
-               DONE=TRUE;
-
-               PHASE=0;
+            if (++STEP>=FLAG.getsize())
+               {
                STEP=0;
+               PHASE++;
+               }
+            else PHASE--;
 
-               break;
-            }
+            break;
+         case 3:
+            // phase #3: clean up
+            MESH.setnull();
 
-   return(DONE);
+            STEP=0;
+            PHASE=0;
+
+            DECOMPOSED=TRUE;
+
+            break;
+         }
+
+   return(DECOMPOSED);
    }
 
-void datagrid::decompose(unsigned int idx)
+minimesh datagrid::decompose(unsigned int idx)
    {
    unsigned int i;
 
@@ -271,6 +265,8 @@ void datagrid::decompose(unsigned int idx)
    miniv4d v;
 
    minivals vals;
+
+   minimesh mesh;
 
    // check if object at actual position is valid
    if (FLAG[idx])
@@ -327,50 +323,59 @@ void datagrid::decompose(unsigned int idx)
             // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
             vals.set(minival(SLOT[idx],idx,crd[0],crd[1],crd[3],crd[4],vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec));
-            MESH.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals));
+            mesh.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[2],crd[3],crd[1],crd[6],vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec));
-            MESH.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals));
+            mesh.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[7],crd[6],crd[4],crd[3],vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec));
-            MESH.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals));
+            mesh.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[5],crd[4],crd[6],crd[1],vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec));
-            MESH.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals));
+            mesh.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals));
 
             // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
             vals.set(minival(SLOT[idx],idx,crd[3],crd[1],crd[6],crd[4],vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec));
-            MESH.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals));
+            mesh.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals));
             }
          else
             {
             // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
             vals.set(minival(SLOT[idx],idx,crd[3],crd[0],crd[2],crd[7],vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec));
-            MESH.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals));
+            mesh.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[1],crd[2],crd[0],crd[5],vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec));
-            MESH.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals));
+            mesh.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[4],crd[7],crd[5],crd[0],vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec));
-            MESH.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals));
+            mesh.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals));
 
             vals.set(minival(SLOT[idx],idx,crd[6],crd[5],crd[7],crd[2],vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec));
-            MESH.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals));
+            mesh.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals));
 
             // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
             vals.set(minival(SLOT[idx],idx,crd[0],crd[5],crd[2],crd[7],vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec));
-            MESH.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals));
+            mesh.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals));
             }
       }
+
+   return(mesh);
+   }
+
+// check if the grid is empty
+BOOLINT datagrid::isempty()
+   {
+   if (INVALID) construct(); // construct the bsp tree
+   return(UNSORTED.getsize()==0); // check extracted mesh size
    }
 
 // trigger pushing the mesh for a particular time step
 void datagrid::trigger(const double time)
    {
-   if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
+   if (INVALID) construct(); // construct the bsp tree
    push(UNSORTED,time,MTXPOST); // push the static unsorted mesh
    }
 
@@ -407,8 +412,8 @@ void datagrid::trigger(const double time,
    factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
    factor2=1.01f;
 
-   if (!CONSTRUCTED) construct(); // construct the bsp tree at least once
-   SORTED=BSPT2.extract(ep.vec,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   if (INVALID) construct(); // construct the bsp tree
+   SORTED=BSPT.extract(ep.vec,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
    push(SORTED,time,MTXPOST,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
    }
 

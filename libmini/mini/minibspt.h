@@ -63,11 +63,10 @@ class minibsptree
       minimesh leftmesh,rightmesh;
       };
 
-   minimesh MESH;
-
    minidyna<minibsptree_node> TREE;
-   BOOLINT DONE;
+   BOOLINT CONSTRUCTED;
 
+   minimesh MESH;
    unsigned int PHASE,STEP;
 
    static const unsigned int PRIME=271;

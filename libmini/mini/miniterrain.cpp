@@ -915,7 +915,7 @@ void miniterrain::render_presea()
          }
 
    if (DATAGRID!=NULL)
-      if (!DATAGRID->isclear())
+      if (!DATAGRID->isempty())
          // trigger data grid before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale)
             {
@@ -955,7 +955,7 @@ void miniterrain::render_postsea()
          }
 
    if (DATAGRID!=NULL)
-      if (!DATAGRID->isclear())
+      if (!DATAGRID->isempty())
          // trigger data grid after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale)
             {

@@ -34,7 +34,8 @@ class datagrid
 
    //! create data brick id
    unsigned int create(const unsigned int slot, // data slot
-                       const BOOLINT flip=FALSE); // decomposition flip
+                       const BOOLINT flip=FALSE, // decomposition flip
+                       const BOOLINT bbox=FALSE); // bbox insertion
 
    //! load data
    void load(const unsigned int id, // data brick id
@@ -59,9 +60,6 @@ class datagrid
    //! clear all data bricks
    void clear();
 
-   //! check if any valid bricks are present
-   BOOLINT isclear();
-
    //! apply matrix (pre of producing a tetrahedral mesh)
    void applymtx(const miniv4d mtx[3]);
 
@@ -73,6 +71,9 @@ class datagrid
 
    //! preprocess tetrahedral mesh one step at a time
    BOOLINT preprocess();
+
+   //! check if the grid is empty
+   BOOLINT isempty();
 
    //! trigger pushing the mesh for a particular time step
    void trigger(const double time);
@@ -102,10 +103,9 @@ class datagrid
    minidyna<BOOLINT> FLAG;
    minidyna<unsigned int> SLOT;
    minidyna<BOOLINT> FLIP;
-
-   minidyna<databuf> DATA;
-
+   minidyna<BOOLINT> BBOX;
    minidyna<minilayer *> REF;
+   minidyna<databuf> DATA;
 
    miniv4d MTXPRE[3],MTXPOST[3];
 
@@ -113,19 +113,18 @@ class datagrid
 
    BOOLINT INVALID;
 
-   minimesh MESH;
-   BOOLINT DONE;
-
-   unsigned int PHASE,STEP;
-
-   minibsptree BSPT1,BSPT2;
+   minibsptree BSPT;
    BOOLINT CONSTRUCTED;
+
+   minimesh MESH;
+   BOOLINT DECOMPOSED;
+   unsigned int PHASE,STEP;
 
    minimesh UNSORTED;
    minimesh SORTED;
 
    BOOLINT decompose();
-   void decompose(unsigned int idx);
+   minimesh decompose(unsigned int idx);
    };
 
 #endif
