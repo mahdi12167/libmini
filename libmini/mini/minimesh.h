@@ -175,6 +175,17 @@ class minihedron
       vtx4+=offset;
       }
 
+   //! multiply vertices with matrix
+   void multiply(const miniv4d matrix[3])
+      {
+      miniv4d v1(vtx1,1.0),v2(vtx2,1.0),v3(vtx3,1.0),v4(vtx4,1.0);
+
+      vtx1=miniv3d(matrix[0]*v1,matrix[1]*v1,matrix[2]*v1);
+      vtx2=miniv3d(matrix[0]*v2,matrix[1]*v2,matrix[2]*v2);
+      vtx3=miniv3d(matrix[0]*v3,matrix[1]*v3,matrix[2]*v3);
+      vtx4=miniv3d(matrix[0]*v4,matrix[1]*v4,matrix[2]*v4);
+      }
+
    //! get volume
    double getvolume() const
       {
@@ -247,6 +258,9 @@ class minimesh: public minidyna<minihedron>
 
    //! add offset to mesh
    void offset(const miniv3d &offset);
+
+   //! multiply mesh with matrix
+   void multiply(const miniv4d matrix[3]);
 
    //! get the maximum extent of the tetrahedra
    double getextent() const;

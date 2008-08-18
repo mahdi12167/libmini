@@ -54,9 +54,6 @@ class miniray
    //! unlock ray shooting
    static void unlock();
 
-   //! render triangles as wireframe for debugging purposes
-   void renderwire();
-
    //! configuring
    void configure_maxchunksize_triangles(int maxchunksize=100); // set maximum chunk size for triangle arrays
    void configure_maxchunksize_trianglefans(int maxchunksize=100); // set maximum chunk size for triangle fan arrays
@@ -110,8 +107,6 @@ class miniray
    double calcdist(TRIANGLEREF *ref,
                    const miniv3d &o,const miniv3d &d,
                    double dist);
-
-   void renderwire(TRIANGLEREF *ref);
 
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);

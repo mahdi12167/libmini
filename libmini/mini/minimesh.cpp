@@ -412,6 +412,14 @@ void minimesh::offset(const miniv3d &offset)
    for (i=0; i<getsize(); i++) ref(i).offset(offset);
    }
 
+// multiply mesh with matrix
+void minimesh::multiply(const miniv4d matrix[3])
+   {
+   unsigned int i;
+
+   for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
+   }
+
 // get the maximum extent of the tetrahedra
 double minimesh::getextent() const
    {
