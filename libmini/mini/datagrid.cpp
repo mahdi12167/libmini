@@ -410,10 +410,10 @@ void datagrid::trigger(const double time,
 
    // compute safety factors
    factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
-   factor2=1.01f;
+   factor2=1.1f;
 
    if (INVALID) construct(); // construct the bsp tree
-   SORTED=BSPT.extract(ep.vec,factor1*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   SORTED=BSPT.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
    push(SORTED,time,MTXPOST,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
    }
 
