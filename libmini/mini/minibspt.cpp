@@ -104,10 +104,8 @@ BOOLINT minibsptree::preprocess()
 
                break;
             case 1:
-               // swizzle the actual position
-               idx=(SWIZZLE*STEP)%(4*MESH.getsize());
-
                // phase #1: insert each tetrahedron of the input mesh into the bsp tree
+               idx=(SWIZZLE*STEP)%(4*MESH.getsize()); // swizzle the actual position
                insert1(idx/4,idx%4);
 
                if (++STEP>=4*MESH.getsize())
@@ -140,13 +138,6 @@ BOOLINT minibsptree::preprocess()
 
                break;
             case 4:
-               // debug output
-               if (TREEDEBUG)
-                  {
-                  std::cout << MESH;
-                  std::cout << *this;
-                  }
-
                // phase #4: clean up
                MESH.setnull();
 
