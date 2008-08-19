@@ -66,22 +66,22 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 #define ftrc(x) (int)ffloor(x)
 #define FTRC(x) (int)floor(x)
 
-inline double fABS(const float x) {return((x<0.0)?-x:x);}
+inline float fABS(const float x) {return((x<0.0)?-x:x);}
 inline double FABS(const double x) {return((x<0.0)?-x:x);}
 #define fabs(x) fABS(x)
 
 inline int min(const int a,const int b) {return((a<b)?a:b);}
-inline double fMIN(const float a,const float b) {return((a<b)?a:b);}
+inline float fMIN(const float a,const float b) {return((a<b)?a:b);}
 inline double FMIN(const double a,const double b) {return((a<b)?a:b);}
 #define fmin(a,b) fMIN(a,b)
 
 inline int max(const int a,const int b) {return((a>b)?a:b);}
-inline double fMAX(const float a,const float b) {return((a>b)?a:b);}
+inline float fMAX(const float a,const float b) {return((a>b)?a:b);}
 inline double FMAX(const double a,const double b) {return((a>b)?a:b);}
 #define fmax(a,b) fMAX(a,b)
 
 inline int sqr(const int x) {return(x*x);}
-inline double fsqr(const float x) {return(x*x);}
+inline float fsqr(const float x) {return(x*x);}
 inline double FSQR(const double x) {return(x*x);}
 
 #ifdef darwin
@@ -107,8 +107,8 @@ inline double FSQR(const double x) {return(x*x);}
 #      define fatan(x) (float)atan(x)
 #      define fatan2(y,x) (float)atan2(y,x)
 #      define fexp(x) (float)exp(x)
-#      define flog(x) (float)log(x)
-#      define fpow(x,y) (float)pow(x,y)
+#      define flog(x) (float)log((float)(x))
+#      define fpow(x,y) (float)pow((float)(x),y)
 #   endif
 #endif
 
