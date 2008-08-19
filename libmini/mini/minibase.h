@@ -108,7 +108,7 @@ inline double FSQR(const double x) {return(x*x);}
 #      define fatan2(y,x) (float)atan2(y,x)
 #      define fexp(x) (float)exp(x)
 #      define flog(x) (float)log((float)(x))
-#      define fpow(x,y) (float)pow((float)(x),y)
+#      define fpow(x,y) (float)pow((float)(x),(float)(y))
 #   endif
 #endif
 
