@@ -53,9 +53,14 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 #   define MAXFLOAT (FLT_MAX)
 #endif
 
-#ifndef __sgi
-#   define ffloor(x) (float)floor(x)
-#   define fceil(x) (float)ceil(x)
+#ifdef darwin
+#   define ffloor(x) floorf(x)
+#   define fceil(x) ceilf(x)
+#else
+#   ifndef __sgi
+#      define ffloor(x) (float)floor(x)
+#      define fceil(x) (float)ceil(x)
+#   endif
 #endif
 
 #define ftrc(x) (int)ffloor(x)
@@ -79,18 +84,32 @@ inline int sqr(const int x) {return(x*x);}
 inline double fsqr(const float x) {return(x*x);}
 inline double FSQR(const double x) {return(x*x);}
 
-#ifndef __sgi
-#   define fsqrt(x) (float)sqrt(x)
-#   define fsin(x) (float)sin(x)
-#   define fcos(x) (float)cos(x)
-#   define ftan(x) (float)tan(x)
-#   define fasin(x) (float)asin(x)
-#   define facos(x) (float)acos(x)
-#   define fatan(x) (float)atan(x)
-#   define fatan2(y,x) (float)atan2(y,x)
-#   define fexp(x) (float)exp(x)
-#   define flog(x) (float)log(x)
-#   define fpow(x,y) (float)pow(x,y)
+#ifdef darwin
+#   define fsqrt(x) sqrtf(x)
+#   define fsin(x) sinf(x)
+#   define fcos(x) cosf(x)
+#   define ftan(x) tanf(x)
+#   define fasin(x) asinf(x)
+#   define facos(x) acosf(x)
+#   define fatan(x) atanf(x)
+#   define fatan2(y,x) atan2f(y,x)
+#   define fexp(x) expf(x)
+#   define flog(x) logf(x)
+#   define fpow(x,y) powf(x,y)
+#else
+#   ifndef __sgi
+#      define fsqrt(x) (float)sqrt(x)
+#      define fsin(x) (float)sin(x)
+#      define fcos(x) (float)cos(x)
+#      define ftan(x) (float)tan(x)
+#      define fasin(x) (float)asin(x)
+#      define facos(x) (float)acos(x)
+#      define fatan(x) (float)atan(x)
+#      define fatan2(y,x) (float)atan2(y,x)
+#      define fexp(x) (float)exp(x)
+#      define flog(x) (float)log(x)
+#      define fpow(x,y) (float)pow(x,y)
+#   endif
 #endif
 
 inline float fround2(const float v,const unsigned int n=6) {return(ffloor(v*fpow(10.0f,(int)n)+0.5f)/fpow(10.0f,(int)n));}
