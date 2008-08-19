@@ -30,34 +30,34 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
    }
 
 #ifndef NULL
-#define NULL (0)
+#   define NULL (0)
 #endif
 
 #define BOOLINT char
 
 #ifndef TRUE
-#define TRUE (1)
+#   define TRUE (1)
 #endif
 #ifndef FALSE
-#define FALSE (0)
+#   define FALSE (0)
 #endif
 
 #ifndef PI
-#define PI (3.14159265358979323846)
+#   define PI (3.14159265358979323846)
 #endif
-
 #ifndef RAD
-#define RAD (PI/180.0)
+#   define RAD (PI/180.0)
 #endif
 
 #ifndef MAXFLOAT
-#define MAXFLOAT (FLT_MAX)
+#   define MAXFLOAT (FLT_MAX)
 #endif
 
-#undef ffloor
-#define ffloor(x) floor((double)(x))
-#undef fceil
-#define fceil(x) ceil((double)(x))
+#ifndef __sgi
+#   define ffloor(x) (float)floor(x)
+#   define fceil(x) (float)ceil(x)
+#endif
+
 #define ftrc(x) (int)ffloor(x)
 #define FTRC(x) (int)floor(x)
 
@@ -79,31 +79,19 @@ inline int sqr(const int x) {return(x*x);}
 inline double fsqr(const float x) {return(x*x);}
 inline double FSQR(const double x) {return(x*x);}
 
-#undef fsqrt
-#define fsqrt(x) sqrt((double)(x))
-
-#undef fsin
-#define fsin(x) sin((double)(x))
-#undef fcos
-#define fcos(x) cos((double)(x))
-#undef ftan
-#define ftan(x) tan((double)(x))
-
-#undef fasin
-#define fasin(x) asin((double)(x))
-#undef facos
-#define facos(x) acos((double)(x))
-#undef fatan
-#define fatan(x) atan((double)(x))
-#undef fatan2
-#define fatan2(y,x) atan2((double)(y),(double)(x))
-
-#undef fexp
-#define fexp(x) exp((double)(x))
-#undef flog
-#define flog(x) log((double)(x))
-#undef fpow
-#define fpow(x,y) pow((double)(x),(double)(y))
+#ifndef __sgi
+#   define fsqrt(x) (float)sqrt(x)
+#   define fsin(x) (float)sin(x)
+#   define fcos(x) (float)cos(x)
+#   define ftan(x) (float)tan(x)
+#   define fasin(x) (float)asin(x)
+#   define facos(x) (float)acos(x)
+#   define fatan(x) (float)atan(x)
+#   define fatan2(y,x) (float)atan2(y,x)
+#   define fexp(x) (float)exp(x)
+#   define flog(x) (float)log(x)
+#   define fpow(x,y) (float)pow(x,y)
+#endif
 
 inline float fround2(const float v,const unsigned int n=6) {return(ffloor(v*fpow(10.0f,(int)n)+0.5f)/fpow(10.0f,(int)n));}
 inline double round2(const double v,const unsigned int n=6) {return(floor(v*pow(10.0,(int)n)+0.5)/pow(10.0,(int)n));}
