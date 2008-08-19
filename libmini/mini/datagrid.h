@@ -60,11 +60,11 @@ class datagrid
    //! clear all data bricks
    void clear();
 
-   //! apply matrix (pre of producing a tetrahedral mesh)
-   void applymtx(const miniv4d mtx[3]);
+   //! specify matrix to be applied before producing a tetrahedral mesh
+   void specmtxpre(const miniv4d mtx[3]);
 
-   //! specify matrix (post of producing a tetrahedral mesh)
-   void specmtx(const miniv4d mtx[3]);
+   //! specify matrix to be applied after producing a tetrahedral mesh
+   void specmtxpost(const miniv4d mtx[3]);
 
    //! construct tetrahedral mesh from all data bricks
    void construct();
@@ -86,14 +86,12 @@ class datagrid
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,
-                     const double time,
-                     const miniv4d mtx[3]);
+                     const double time);
 
    //! push the mesh for a particular time step and eye point
    virtual void push(const minimesh &mesh,
                      const double time,
-                     const miniv4d mtx[3],
-                     const minicoord &eye,const miniv3d &dir,
+                     const miniv3d &eye,const miniv3d &dir,
                      const float nearp,const float farp,const float fovy,const float aspect);
 
    protected:
@@ -125,6 +123,14 @@ class datagrid
 
    BOOLINT decompose();
    minimesh decompose(unsigned int idx);
+
+   void push_post(const minimesh &mesh,
+                  const double time);
+
+   void push_post(minimesh &mesh,
+                  const double time,
+                  const miniv3d &eye,const miniv3d &dir,
+                  const float nearp,const float farp,const float fovy,const float aspect);
    };
 
 #endif

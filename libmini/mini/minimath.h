@@ -44,6 +44,7 @@ void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const mi
 void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const miniv4d mtx3[3],const miniv4d mtx4[3],const miniv4d mtx5[3],const miniv4d mtx6[3],const miniv4d mtx7[3],const miniv4d mtx8[3]);
 
 double det_mtx(const miniv3d mtx[3]);
+double det_mtx(const miniv4d mtx[3]);
 
 void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
 void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);

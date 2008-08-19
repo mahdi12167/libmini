@@ -535,8 +535,7 @@ void miniproj::clip(const miniv3d &v1,const double c1,
                     const miniv3d &v3,const double c3,
                     const miniv3d &v4,const double c4,
                     const miniv3d &col,
-                    const miniv3d &eye,
-                    const miniv3d &dir,
+                    const miniv3d &eye,const miniv3d &dir,
                     const double nearp)
    {
    int ff;

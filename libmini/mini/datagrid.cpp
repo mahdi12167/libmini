@@ -151,8 +151,8 @@ void datagrid::clear()
    for (i=0; i<FLAG.getsize(); i++) remove(i);
    }
 
-// apply pre matrix
-void datagrid::applymtx(const miniv4d mtx[3])
+// specify pre matrix
+void datagrid::specmtxpre(const miniv4d mtx[3])
    {
    INVALID=TRUE;
 
@@ -162,7 +162,7 @@ void datagrid::applymtx(const miniv4d mtx[3])
    }
 
 // specify post matrix
-void datagrid::specmtx(const miniv4d mtx[3])
+void datagrid::specmtxpost(const miniv4d mtx[3])
    {
    MTXPOST[0]=mtx[0];
    MTXPOST[1]=mtx[1];
@@ -306,7 +306,7 @@ minimesh datagrid::decompose(unsigned int idx)
             if (CRS!=minicoord::MINICOORD_LINEAR)
                for (i=0; i<8; i++) vtx[i].convert2(CRS);
 
-         // multiply corner vertices with 4x3 matrix
+         // multiply corner vertices with pre matrix
          for (i=0; i<8; i++)
             {
             v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
@@ -376,7 +376,7 @@ BOOLINT datagrid::isempty()
 void datagrid::trigger(const double time)
    {
    if (INVALID) construct(); // construct the bsp tree
-   push(UNSORTED,time,MTXPOST); // push the static unsorted mesh
+   push_post(UNSORTED,time); // push the static unsorted mesh
    }
 
 // trigger pushing the mesh for a particular time step and eye point
@@ -412,30 +412,70 @@ void datagrid::trigger(const double time,
    factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
    factor2=1.1f;
 
+   // extract view-dependent mesh
    if (INVALID) construct(); // construct the bsp tree
    SORTED=BSPT.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push(SORTED,time,MTXPOST,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
+   push_post(SORTED,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
+   }
+
+// push the mesh for a particular time step
+void datagrid::push_post(const minimesh &mesh,
+                         const double time)
+   {
+   minimesh m;
+
+   m=mesh;
+   m.multiply(MTXPOST); // multiply mesh with post matrix //!! check for id and change
+   push(m,time);
+   }
+
+// push the mesh for a particular time step and eye point
+void datagrid::push_post(minimesh &mesh,
+                         const double time,
+                         const miniv3d &eye,const miniv3d &dir,
+                         const float nearp,const float farp,const float fovy,const float aspect)
+   {
+   miniv4d v;
+   miniv3d e,d;
+
+   miniv4d invtra[3];
+
+   double scale;
+
+   mesh.multiply(MTXPOST); // multiply mesh with post matrix
+
+   v=miniv4d(eye,1.0);
+   e=miniv3d(MTXPOST[0]*v,MTXPOST[1]*v,MTXPOST[2]*v);
+
+   inv_mtx(invtra,MTXPOST);
+   tra_mtx(invtra,invtra);
+
+   v=miniv4d(dir,1.0);
+   d=miniv3d(invtra[0]*v,invtra[1]*v,invtra[2]*v);
+   d.normalize();
+
+   scale=pow(det_mtx(MTXPOST),1.0/3);
+
+   push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect);
    }
 
 // push the mesh for a particular time step
 void datagrid::push(const minimesh &mesh,
-                    const double time,
-                    const miniv4d mtx[3])
+                    const double time)
    {
-   printf("pushing mesh of size %u for time step %g with offset=(%g,%g,%g)\n",
-          mesh.getsize(),time,mtx[0].w,mtx[1].w,mtx[2].w);
+   printf("pushing mesh of size %u for time step %g\n",
+          mesh.getsize(),time);
    }
 
 // push the mesh for a particular time step and eye point
 void datagrid::push(const minimesh &mesh,
                     const double time,
-                    const miniv4d mtx[3],
-                    const minicoord &eye,const miniv3d &dir,
+                    const miniv3d &eye,const miniv3d &dir,
                     const float nearp,const float farp,const float fovy,const float aspect)
    {
-   printf("pushing mesh of size %u for time step %g with offset=(%g,%g,%g)\n",
-          mesh.getsize(),time,mtx[0].w,mtx[1].w,mtx[2].w);
+   printf("pushing mesh of size %u for time step %g\n",
+          mesh.getsize(),time);
 
    printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g\n",
-          eye.vec.x,eye.vec.y,eye.vec.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect);
+          eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect);
    }

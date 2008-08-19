@@ -118,6 +118,14 @@ double det_mtx(const miniv3d mtx[3])
           mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x));
    }
 
+// calculate determinant of 4x3 matrix
+double det_mtx(const miniv4d mtx[3])
+   {
+   return(mtx[0].x*(mtx[2].z*mtx[1].y-mtx[1].z*mtx[2].y)+
+          mtx[0].y*(mtx[1].z*mtx[2].x-mtx[2].z*mtx[1].x)+
+          mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x));
+   }
+
 // invert a 3x3 matrix
 void inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
    {
