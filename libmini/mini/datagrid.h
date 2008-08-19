@@ -92,7 +92,8 @@ class datagrid
    virtual void push(const minimesh &mesh,
                      const double time,
                      const miniv3d &eye,const miniv3d &dir,
-                     const float nearp,const float farp,const float fovy,const float aspect);
+                     const float nearp,const float farp,const float fovy,const float aspect,
+                     const float scale);
 
    protected:
 

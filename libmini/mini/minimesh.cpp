@@ -381,7 +381,8 @@ void minimesh::scale(const double scale)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).scale(scale);
+   if (scale!=1.0)
+      for (i=0; i<getsize(); i++) ref(i).scale(scale);
    }
 
 // shrink tetrahedra by factor relative to barycenter
@@ -389,7 +390,8 @@ void minimesh::shrink(const double shrink)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).shrink(shrink);
+   if (shrink!=1.0)
+      for (i=0; i<getsize(); i++) ref(i).shrink(shrink);
    }
 
 // shrink mesh by factor relative to barycenter
@@ -397,11 +399,14 @@ void minimesh::shrinkmesh(const double shrink)
    {
    miniv3d b;
 
-   b=barycenter();
+   if (shrink!=1.0)
+      {
+      b=barycenter();
 
-   offset(-b);
-   scale(shrink);
-   offset(b);
+      offset(-b);
+      scale(shrink);
+      offset(b);
+      }
    }
 
 // add offset to mesh
@@ -409,7 +414,8 @@ void minimesh::offset(const miniv3d &offset)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).offset(offset);
+   if (offset!=miniv3d(0.0))
+      for (i=0; i<getsize(); i++) ref(i).offset(offset);
    }
 
 // multiply mesh with matrix
@@ -417,7 +423,10 @@ void minimesh::multiply(const miniv4d matrix[3])
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
+   if (matrix[0]!=miniv4d(1.0,0.0,0.0) ||
+       matrix[1]!=miniv4d(0.0,1.0,0.0) ||
+       matrix[2]!=miniv4d(0.0,0.0,1.0))
+      for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
    }
 
 // get the maximum extent of the tetrahedra

@@ -425,7 +425,7 @@ void datagrid::push_post(const minimesh &mesh,
    minimesh m;
 
    m=mesh;
-   m.multiply(MTXPOST); // multiply mesh with post matrix //!! check for id and change
+   m.multiply(MTXPOST); // multiply mesh with post matrix
    push(m,time);
    }
 
@@ -456,7 +456,7 @@ void datagrid::push_post(minimesh &mesh,
 
    scale=pow(det_mtx(MTXPOST),1.0/3);
 
-   push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect);
+   push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect,scale);
    }
 
 // push the mesh for a particular time step
@@ -471,11 +471,12 @@ void datagrid::push(const minimesh &mesh,
 void datagrid::push(const minimesh &mesh,
                     const double time,
                     const miniv3d &eye,const miniv3d &dir,
-                    const float nearp,const float farp,const float fovy,const float aspect)
+                    const float nearp,const float farp,const float fovy,const float aspect,
+                    const float scale)
    {
    printf("pushing mesh of size %u for time step %g\n",
           mesh.getsize(),time);
 
-   printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g\n",
-          eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect);
+   printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g scale=%g\n",
+          eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect,scale);
    }
