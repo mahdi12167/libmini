@@ -903,10 +903,6 @@ void miniterrain::render_presea()
    miniwarp warp;
    miniv4d mtx[3];
 
-   static const miniv4d id[3]={miniv4d(1.0,0.0,0.0),
-                               miniv4d(0.0,1.0,0.0),
-                               miniv4d(0.0,0.0,1.0)};
-
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
@@ -923,7 +919,7 @@ void miniterrain::render_presea()
          // trigger data grid before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale)
             {
-            DATAGRID->specmtx(id);
+            DATAGRID->specmtx(minimath::mtx_one);
 
             // set post matrix (world to rendering coordinates)
             if (REFERENCE!=NULL)
@@ -954,10 +950,6 @@ void miniterrain::render_postsea()
    miniwarp warp;
    miniv4d mtx[3];
 
-   static const miniv4d id[3]={miniv4d(1.0,0.0,0.0),
-                               miniv4d(0.0,1.0,0.0),
-                               miniv4d(0.0,0.0,1.0)};
-
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
@@ -974,7 +966,7 @@ void miniterrain::render_postsea()
          // trigger data grid after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale)
             {
-            DATAGRID->specmtx(id);
+            DATAGRID->specmtx(minimath::mtx_one);
 
             // set post matrix (world to rendering coordinates)
             if (REFERENCE!=NULL)
