@@ -18,6 +18,8 @@ datagrid::datagrid()
    MTXPRE[0]=MTXPOST[0]=miniv4d(1.0,0.0,0.0);
    MTXPRE[1]=MTXPOST[1]=miniv4d(0.0,1.0,0.0);
    MTXPRE[2]=MTXPOST[2]=miniv4d(0.0,0.0,1.0);
+
+   USEPRE=USEPOST=FALSE;
    }
 
 // destructor
@@ -161,6 +163,10 @@ void datagrid::specmtxpre(const miniv4d mtx[3])
    MTXPRE[2]=mtx[2];
    }
 
+// enable usage of the pre matrix
+void datagrid::usemtxpre(const BOOLINT enable)
+   {USEPRE=enable;}
+
 // specify post matrix
 void datagrid::specmtxpost(const miniv4d mtx[3])
    {
@@ -168,6 +174,10 @@ void datagrid::specmtxpost(const miniv4d mtx[3])
    MTXPOST[1]=mtx[1];
    MTXPOST[2]=mtx[2];
    }
+
+// enable usage of the post matrix
+void datagrid::usemtxpost(const BOOLINT enable)
+   {USEPOST=enable;}
 
 // construct tetrahedral mesh from all data bricks
 void datagrid::construct()
@@ -307,11 +317,12 @@ minimesh datagrid::decompose(unsigned int idx)
                for (i=0; i<8; i++) vtx[i].convert2(CRS);
 
          // multiply corner vertices with pre matrix
-         for (i=0; i<8; i++)
-            {
-            v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
-            vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
-            }
+         if (USEPRE)
+            for (i=0; i<8; i++)
+               {
+               v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
+               vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
+               }
 
          // check reference to layer
          if (REF[idx]!=NULL)
@@ -424,9 +435,13 @@ void datagrid::push_post(const minimesh &mesh,
    {
    minimesh m;
 
-   m=mesh;
-   m.multiply(MTXPOST); // multiply mesh with post matrix
-   push(m,time);
+   if (USEPOST)
+      {
+      m=mesh;
+      m.multiply(MTXPOST); // multiply mesh with post matrix
+      push(m,time);
+      }
+   else push(mesh,time);
    }
 
 // push the mesh for a particular time step and eye point
@@ -442,21 +457,25 @@ void datagrid::push_post(minimesh &mesh,
 
    double scale;
 
-   mesh.multiply(MTXPOST); // multiply mesh with post matrix
+   if (USEPOST)
+      {
+      mesh.multiply(MTXPOST); // multiply mesh with post matrix
 
-   v=miniv4d(eye,1.0);
-   e=miniv3d(MTXPOST[0]*v,MTXPOST[1]*v,MTXPOST[2]*v);
+      v=miniv4d(eye,1.0);
+      e=miniv3d(MTXPOST[0]*v,MTXPOST[1]*v,MTXPOST[2]*v);
 
-   inv_mtx(invtra,MTXPOST);
-   tra_mtx(invtra,invtra);
+      inv_mtx(invtra,MTXPOST);
+      tra_mtx(invtra,invtra);
 
-   v=miniv4d(dir,1.0);
-   d=miniv3d(invtra[0]*v,invtra[1]*v,invtra[2]*v);
-   d.normalize();
+      v=miniv4d(dir,1.0);
+      d=miniv3d(invtra[0]*v,invtra[1]*v,invtra[2]*v);
+      d.normalize();
 
-   scale=pow(det_mtx(MTXPOST),1.0/3);
+      scale=pow(det_mtx(MTXPOST),1.0/3);
 
-   push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect,scale);
+      push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect,scale);
+      }
+   else push(mesh,time,eye,dir,nearp,farp,fovy,aspect,1.0f);
    }
 
 // push the mesh for a particular time step

@@ -919,7 +919,7 @@ void miniterrain::render_presea()
          // trigger data grid before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale)
             {
-            DATAGRID->specmtxpost(minimath::mtx_one);
+            DATAGRID->usemtxpost(FALSE);
 
             // set post matrix (world to rendering coordinates)
             if (REFERENCE!=NULL)
@@ -930,6 +930,7 @@ void miniterrain::render_presea()
                   warp.getwarp(mtx);
 
                   DATAGRID->specmtxpost(mtx);
+                  DATAGRID->usemtxpost(TRUE);
                   }
 
             // push either sorted or unsorted grid
@@ -966,7 +967,7 @@ void miniterrain::render_postsea()
          // trigger data grid after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale)
             {
-            DATAGRID->specmtxpost(minimath::mtx_one);
+            DATAGRID->usemtxpost(FALSE);
 
             // set post matrix (world to rendering coordinates)
             if (REFERENCE!=NULL)
@@ -977,6 +978,7 @@ void miniterrain::render_postsea()
                   warp.getwarp(mtx);
 
                   DATAGRID->specmtxpost(mtx);
+                  DATAGRID->usemtxpost(TRUE);
                   }
 
             // push either sorted or unsorted grid

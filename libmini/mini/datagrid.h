@@ -63,8 +63,14 @@ class datagrid
    //! specify matrix to be applied before producing a tetrahedral mesh
    void specmtxpre(const miniv4d mtx[3]);
 
+   //! enable usage of the pre matrix
+   void usemtxpre(const BOOLINT enable=FALSE);
+
    //! specify matrix to be applied after producing a tetrahedral mesh
    void specmtxpost(const miniv4d mtx[3]);
+
+   //! enable usage of the post matrix
+   void usemtxpost(const BOOLINT enable=FALSE);
 
    //! construct tetrahedral mesh from all data bricks
    void construct();
@@ -107,6 +113,7 @@ class datagrid
    minidyna<databuf> DATA;
 
    miniv4d MTXPRE[3],MTXPOST[3];
+   BOOLINT USEPRE,USEPOST;
 
    private:
 
