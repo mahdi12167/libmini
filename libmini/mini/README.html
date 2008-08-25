@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.6 as of 19.August.2008<br>
+Version 8.8.7 as of 25.August.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -2424,15 +2424,14 @@ define the exact position of the four corner vertices (corner-centric
 grid representation). TEX means that the contained data is a texture
 map and that the corner coordinates define the position of the
 midpoint of the four corner pixels (cell-centric grid
-representation). The missing value field is usually used by DEM
-formats to identify cells with unknown or unspecified elevation. A
-typical value is -9999. The no-data value for imagery assumed by the
-built-in resampler is absolute black (0,0,0). This is a safe
-assumption since real world imagery may indeed contain some really
-dark colors but hardly ever real black. In case it does though, the
-black pixels can be substituted easily with (0,0,1). If you think this
-still makes a visual difference then please remember not to fire
-cannons at chickadees.<p>
+representation). The missing value field is used by DEM formats to
+identify cells with unknown or unspecified elevation. A typical value
+is -9999. The no-data value for imagery assumed by the built-in
+resampler is absolute black (0,0,0). This is a safe assumption since
+real world imagery may indeed contain some really dark colors but
+hardly ever real black. In case it does though, the black pixels can
+be substituted easily with (0,0,1). If you think this makes a visual
+difference then please remember not to fire cannons at chickadees.<p>
 
 <a href="#" class="top">Back to top</a>
 

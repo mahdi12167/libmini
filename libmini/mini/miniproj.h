@@ -18,7 +18,8 @@ class miniproj
    ~miniproj();
 
    //! initialize projection state
-   void initproj(float emi,float rho);
+   void initproj(float emi,float rho,
+                 BOOLINT zclip=FALSE);
 
    //! project a tetrahedron
    void proj(const miniv3d &v1,const double c1,
@@ -43,6 +44,8 @@ class miniproj
    private:
 
    float EMI,RHO;
+
+   BOOLINT ZCLIP;
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
@@ -88,6 +91,8 @@ class miniproj
               const miniv3d &v4,const double c4,const double d4,
               const miniv3d &col,
               const miniv3d &eye);
+
+   void copyviewport();
 
    // vertex and fragment programs:
 

@@ -396,11 +396,13 @@ void miniproj::proj(const miniv3d &v1,const double c1,
 
    ff=0;
 
+   // calculate front faces
    if (isfront(v4,v1,v2,v3,eye)) ff|=1;
    if (isfront(v3,v1,v4,v2,eye)) ff|=2;
    if (isfront(v1,v2,v4,v3,eye)) ff|=4;
    if (isfront(v2,v3,v4,v1,eye)) ff|=8;
 
+   // determine projection type with either 3 or 4 triangles
    switch (ff)
       {
       case 1: case 14: proj3tri(v4,c4,v1,c1,v2,c2,v3,c3,eye); break;
@@ -424,37 +426,38 @@ void miniproj::projpri(const miniv3d &v1,const double c1,
                        const miniv3d &col,
                        const miniv3d &eye)
    {
-   BOOLINT ff1,ff2;
+   int ff;
 
-   ff1=isfront(v1,v2,v3,v4,eye);
-   ff2=isfront(v6,v3,v4,v5,eye);
+   ff=0;
 
-   if (!ff1)
-      if (ff2)
-         {
+   // calculate front faces
+   if (isfront(v1,v2,v3,v4,eye)) ff|=1;
+   if (isfront(v6,v3,v4,v5,eye)) ff|=2;
+
+   // determine projection order
+   switch (ff)
+      {
+      case 0:
          proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
-         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
-         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
-         }
-      else
-         {
-         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
          proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
          proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
-         }
-   else
-      if (ff2)
-         {
-         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
-         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
-         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
-         }
-      else
-         {
+         break;
+      case 1:
          proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
          proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
          proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
-         }
+         break;
+      case 2:
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         break;
+      case 3:
+         proj(v2,c2,v3,c3,v4,c4,v5,c5,col,eye);
+         proj(v3,c3,v4,c4,v5,c5,v6,c6,col,eye);
+         proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye);
+         break;
+      }
    }
 
 // clipping subcase #1A
@@ -553,25 +556,28 @@ void miniproj::clip(const miniv3d &v1,const double c1,
 
    ff=0;
 
+   // calculate invisible corners
    if (d1<0.0) ff|=1;
    if (d2<0.0) ff|=2;
    if (d3<0.0) ff|=4;
    if (d4<0.0) ff|=8;
 
+   // determine clipping type
    switch (ff)
       {
+      // no clipping
       case 0: proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye); break;
-
+      // one corner needs to be clipped (leaving a prism)
       case 1: clip1A(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 2: clip1A(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 4: clip1A(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
       case 8: clip1A(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
-
+      // three corners need to be clipped (leaving a tetrahedron)
       case 14: clip1B(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 13: clip1B(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 11: clip1B(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
       case 7: clip1B(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
-
+      // two corners need to be clipped (leaving a prism)
       case 3: clip2(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 5: clip2(v1,c1,FABS(d1),v3,c3,FABS(d3),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
       case 6: clip2(v2,c2,FABS(d2),v3,c3,FABS(d3),v1,c1,FABS(d1),v4,c4,FABS(d4),col,eye); break;
@@ -582,12 +588,17 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    }
 
 // initialize projection state
-void miniproj::initproj(float emi,float rho)
+void miniproj::initproj(float emi,float rho,
+                        BOOLINT zclip)
    {
    if (emi<0.0f || rho<0.0f) ERRORMSG();
 
    EMI=emi;
    RHO=rho;
+
+   ZCLIP=zclip;
+
+   if (ZCLIP) copyviewport();
 
    initstate();
    disableculling();
@@ -612,6 +623,46 @@ void miniproj::exitproj()
    enableBFculling();
    disableblending();
    exitstate();
+   }
+
+// copy the depth component of the viewport
+void miniproj::copyviewport()
+   {
+#ifndef NOOGL
+
+   GLint viewport[4];
+
+   int startx,starty;
+   int width,height;
+
+   GLuint texid;
+
+   glFinish();
+
+   glGetIntegerv(GL_VIEWPORT,viewport);
+
+   startx=viewport[0];
+   starty=viewport[1];
+
+   width=viewport[2];
+   height=viewport[3];
+
+   glGenTextures(1,&texid);
+   glBindTexture(GL_TEXTURE_2D,texid);
+
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+
+   glReadBuffer(GL_BACK);
+   glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+
+   glBindTexture(GL_TEXTURE_2D,0);
+
+   glDeleteTextures(1,&texid);
+
+#endif
    }
 
 // vertex and fragment programs:
