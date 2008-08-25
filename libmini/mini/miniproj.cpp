@@ -569,16 +569,19 @@ void miniproj::clip(const miniv3d &v1,const double c1,
       {
       // no clipping
       case 0: proj(v1,c1,v2,c2,v3,c3,v4,c4,col,eye); break;
+
       // one corner needs to be clipped (leaving a prism)
       case 1: clip1A(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 2: clip1A(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 4: clip1A(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
       case 8: clip1A(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
+
       // three corners need to be clipped (leaving a tetrahedron)
       case 14: clip1B(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 13: clip1B(v2,c2,FABS(d2),v1,c1,FABS(d1),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 11: clip1B(v3,c3,FABS(d3),v1,c1,FABS(d1),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
       case 7: clip1B(v4,c4,FABS(d4),v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),col,eye); break;
+
       // two corners need to be clipped (leaving a prism)
       case 3: clip2(v1,c1,FABS(d1),v2,c2,FABS(d2),v3,c3,FABS(d3),v4,c4,FABS(d4),col,eye); break;
       case 5: clip2(v1,c1,FABS(d1),v3,c3,FABS(d3),v2,c2,FABS(d2),v4,c4,FABS(d4),col,eye); break;
@@ -640,8 +643,6 @@ void miniproj::initzclip()
    int startx,starty;
    int width,height;
 
-   GLuint texid;
-
    glFinish();
 
    // get viewport dimensions
@@ -653,25 +654,28 @@ void miniproj::initzclip()
    width=viewport[2];
    height=viewport[3];
 
-   if (GLEXT_MT!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0)
       {
-#ifdef GL_ARB_multitexture
+#if defined(GL_ARB_multitexture) && defined(GL_ARB_texture_rectangle)
+
+      GLuint texid;
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
       glGenTextures(1,&texid);
-      glBindTexture(GL_TEXTURE_2D,texid);
+      glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
 
       ZTEXID=texid;
 
-      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
 
       // copy depth component of viewport
       glReadBuffer(GL_BACK);
-      glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+      glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -686,14 +690,14 @@ void miniproj::exitzclip()
    {
 #ifndef NOOGL
 
-   GLuint texid;
-
-   if (GLEXT_MT!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0)
       {
-#ifdef GL_ARB_multitexture
+#if defined(GL_ARB_multitexture) && defined(GL_ARB_texture_rectangle)
+
+      GLuint texid;
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
-      glBindTexture(GL_TEXTURE_2D,0);
+      glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
       texid=ZTEXID;
@@ -720,7 +724,7 @@ void miniproj::enablevtxshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          if (VTXPROGID==0)
@@ -747,7 +751,7 @@ void miniproj::disablevtxshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
@@ -771,8 +775,8 @@ void miniproj::enablepixshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRGPROG!=NULL)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (FRGPROG!=NULL && FRGPROGZ!=NULL)
          {
          if (FRGPROGID==0)
             {
@@ -782,10 +786,20 @@ void miniproj::enablepixshader()
             FRGPROGID=frgprogid;
             }
 
+         if (FRGPROGZID==0)
+            {
+            glGenProgramsARB(1,&frgprogid);
+            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
+            glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROGZ),FRGPROGZ);
+            FRGPROGZID=frgprogid;
+            }
+
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
 
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
+         if (ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
+         else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
+
          glEnable(GL_FRAGMENT_PROGRAM_ARB);
          }
 
@@ -801,8 +815,8 @@ void miniproj::disablepixshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRGPROG!=NULL)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+      if (FRGPROG!=NULL && FRGPROGZ!=NULL)
          {
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
          glDisable(GL_FRAGMENT_PROGRAM_ARB);
@@ -890,11 +904,52 @@ void miniproj::setupprogs()
       MOV result.color.w,len.x; \n\
       END \n";
 
+   // pixel shader with z-clipping
+   static const char *frgprogz="!!ARBfp1.0 \n\
+      PARAM c0=program.env[0]; \n\
+      PARAM c1=program.env[1]; \n\
+      TEMP col,nrm,tex,pos1,pos2,zclip,dir,len; \n\
+      ### fetch actual fragment \n\
+      MOV col,fragment.color; \n\
+      MOV nrm,fragment.texcoord[0]; \n\
+      MOV tex,fragment.texcoord[1]; \n\
+      MOV pos1,fragment.texcoord[2]; \n\
+      MOV pos2,fragment.texcoord[3]; \n\
+      TEX zclip,fragment.position,texture[4],RECT; \n\
+      ### normalize view vector \n\
+      DP3 len.x,pos1,pos1; \n\
+      RSQ len.x,len.x; \n\
+      MUL dir,pos1,len.x; \n\
+      ### calculate thickness \n\
+      SUB pos1,pos2,pos1; \n\
+      DP3 len.x,nrm,pos1; \n\
+      DP3 len.y,nrm,dir; \n\
+      RCP len.y,len.y; \n\
+      MUL len.x,len.x,len.y; \n\
+      ### calculate optical depth \n\
+      ADD len.y,tex.x,tex.y; \n\
+      MUL len.y,len.y,c1.x; \n\
+      MUL len.x,len.x,len.y; \n\
+      MUL len.x,len.x,c0.y; \n\
+      ### calculate absorption \n\
+      POW len.x,c1.y,-len.x; \n\
+      SUB len.x,c1.z,len.x; \n\
+      ### write resulting fragment \n\
+      MUL zclip,zclip,1000.0; ##!! \n\
+      FRC zclip,zclip; ##!! \n\
+      MUL col,col,zclip.z; ##!! \n\
+      MUL result.color.xyz,col,c0.x; \n\
+      MOV result.color.w,len.x; \n\
+      END \n";
+
    VTXPROG=strdup(vtxprog);
    VTXPROGID=0;
 
    FRGPROG=strdup(frgprog);
    FRGPROGID=0;
+
+   FRGPROGZ=strdup(frgprogz);
+   FRGPROGZID=0;
    }
 
 // delete vertex and fragment program
@@ -902,12 +957,13 @@ void miniproj::deleteprogs()
    {
    free(VTXPROG);
    free(FRGPROG);
+   free(FRGPROGZ);
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
    GLuint progid;
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
       if (VTXPROGID!=0)
          {
@@ -918,6 +974,12 @@ void miniproj::deleteprogs()
       if (FRGPROGID!=0)
          {
          progid=FRGPROGID;
+         glDeleteProgramsARB(1,&progid);
+         }
+
+      if (FRGPROGZID!=0)
+         {
+         progid=FRGPROGZID;
          glDeleteProgramsARB(1,&progid);
          }
       }
@@ -948,12 +1010,14 @@ void miniproj::initglexts()
    if (GLSETUP==0)
       {
       GLEXT_MT=0;
+      GLEXT_TR=0;
       GLEXT_VP=0;
       GLEXT_FP=0;
 
       if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
       if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
+      if (strstr(gl_exts,"GL_ARB_texture_rectangle")!=NULL) GLEXT_TR=1;
       if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
       if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
 

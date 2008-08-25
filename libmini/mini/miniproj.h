@@ -48,7 +48,7 @@ class miniproj
    float EMI,RHO;
 
    BOOLINT ZCLIP;
-   unsigned int ZTEXID;
+   int ZTEXID;
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
@@ -100,8 +100,8 @@ class miniproj
 
    // vertex and fragment programs:
 
-   char *VTXPROG,*FRGPROG;
-   int VTXPROGID,FRGPROGID;
+   char *VTXPROG,*FRGPROG,*FRGPROGZ;
+   int VTXPROGID,FRGPROGID,FRGPROGZID;
 
    void enablevtxshader();
    void disablevtxshader();
@@ -117,6 +117,7 @@ class miniproj
    int GLSETUP;
 
    int GLEXT_MT;
+   int GLEXT_TR;
    int GLEXT_VP;
    int GLEXT_FP;
 
