@@ -10,6 +10,8 @@ miniproj::miniproj()
    EMI=0.0f;
    RHO=0.0f;
 
+   ZCLIP=FALSE;
+
    initglsetup();
    setupprogs();
    }
@@ -588,22 +590,19 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    }
 
 // initialize projection state
-void miniproj::initproj(float emi,float rho,
-                        BOOLINT zclip)
+void miniproj::initproj(float emi,float rho)
    {
    if (emi<0.0f || rho<0.0f) ERRORMSG();
 
    EMI=emi;
    RHO=rho;
 
-   ZCLIP=zclip;
-
-   if (ZCLIP) copyviewport();
-
    initstate();
    disableculling();
    enableblending();
    disableZwriting();
+
+   if (ZCLIP) initzclip();
 
    enablevtxshader();
    enablepixshader();
@@ -619,14 +618,20 @@ void miniproj::exitproj()
    disablevtxshader();
    disablepixshader();
 
+   if (ZCLIP) exitzclip();
+
    enableZwriting();
    enableBFculling();
    disableblending();
    exitstate();
    }
 
-// copy the depth component of the viewport
-void miniproj::copyviewport()
+// enable z-clipping
+void miniproj::setzclip(BOOLINT zclip)
+   {ZCLIP=zclip;}
+
+// initialize z-clipping
+void miniproj::initzclip()
    {
 #ifndef NOOGL
 
@@ -639,6 +644,7 @@ void miniproj::copyviewport()
 
    glFinish();
 
+   // get viewport dimensions
    glGetIntegerv(GL_VIEWPORT,viewport);
 
    startx=viewport[0];
@@ -647,20 +653,55 @@ void miniproj::copyviewport()
    width=viewport[2];
    height=viewport[3];
 
-   glGenTextures(1,&texid);
-   glBindTexture(GL_TEXTURE_2D,texid);
+   if (GLEXT_MT!=0)
+      {
+#ifdef GL_ARB_multitexture
 
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+      glActiveTextureARB(GL_TEXTURE4_ARB);
 
-   glReadBuffer(GL_BACK);
-   glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+      glGenTextures(1,&texid);
+      glBindTexture(GL_TEXTURE_2D,texid);
 
-   glBindTexture(GL_TEXTURE_2D,0);
+      ZTEXID=texid;
 
-   glDeleteTextures(1,&texid);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+
+      // copy depth component of viewport
+      glReadBuffer(GL_BACK);
+      glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+
+      glActiveTextureARB(GL_TEXTURE0_ARB);
+
+#endif
+      }
+
+#endif
+   }
+
+// de-initialize z-clipping
+void miniproj::exitzclip()
+   {
+#ifndef NOOGL
+
+   GLuint texid;
+
+   if (GLEXT_MT!=0)
+      {
+#ifdef GL_ARB_multitexture
+
+      glActiveTextureARB(GL_TEXTURE4_ARB);
+      glBindTexture(GL_TEXTURE_2D,0);
+      glActiveTextureARB(GL_TEXTURE0_ARB);
+
+      texid=ZTEXID;
+
+      glDeleteTextures(1,&texid);
+
+#endif
+      }
 
 #endif
    }
