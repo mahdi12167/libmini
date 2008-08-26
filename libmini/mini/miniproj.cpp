@@ -630,8 +630,14 @@ void miniproj::exitproj()
    }
 
 // enable z-clipping
-void miniproj::setzclip(BOOLINT zclip)
-   {ZCLIP=zclip;}
+void miniproj::setzclip(float nearp,float farp)
+   {
+   if (nearp>0.0f && farp>0.0f && nearp<farp) ZCLIP=TRUE;
+   else ZCLIP=FALSE;
+
+   ZNEAR=nearp;
+   ZFAR=farp;
+   }
 
 // initialize z-clipping
 void miniproj::initzclip()
@@ -935,7 +941,7 @@ void miniproj::setupprogs()
       POW len.x,c1.y,-len.x; \n\
       SUB len.x,c1.z,len.x; \n\
       ### write resulting fragment \n\
-      MUL zclip,zclip,1000.0; ##!! \n\
+      MUL zclip,zclip,100.0; ##!! \n\
       FRC zclip,zclip; ##!! \n\
       MUL col,col,zclip.z; ##!! \n\
       MUL result.color.xyz,col,c0.x; \n\

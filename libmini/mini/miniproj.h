@@ -41,13 +41,14 @@ class miniproj
    void exitproj();
 
    //! enable z-clipping
-   void setzclip(BOOLINT zclip=FALSE);
+   void setzclip(float nearp=0.0f,float farp=0.0f);
 
    private:
 
    float EMI,RHO;
 
    BOOLINT ZCLIP;
+   float ZNEAR,ZFAR;
    int ZTEXID;
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
