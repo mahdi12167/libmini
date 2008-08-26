@@ -805,7 +805,7 @@ void miniproj::enablepixshader()
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
 
-         if (ZCLIP) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR)*ZFAR,1.0f/ZNEAR*ZFAR,0.0f,0.0f);
+         if (ZCLIP) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR),1.0f/ZNEAR,0.0f,0.0f);
 
          if (!ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
          else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
@@ -919,18 +919,32 @@ void miniproj::setupprogs()
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
-      TEMP col,nrm,tex,pos1,pos2,zclip,dir,len; \n\
+      TEMP col,nrm,tex,pos1,pos2,pos3,zval,dir,len; \n\
       ### fetch actual fragment \n\
       MOV col,fragment.color; \n\
       MOV nrm,fragment.texcoord[0]; \n\
       MOV tex,fragment.texcoord[1]; \n\
       MOV pos1,fragment.texcoord[2]; \n\
       MOV pos2,fragment.texcoord[3]; \n\
-      TEX zclip,fragment.position,texture[4],RECT; \n\
+      TEX zval,fragment.position,texture[4],RECT; \n\
+      ### reconstruct z-value \n\
+      MAD zval.z,zval.z,c2.x,c2.y; \n\
+      RCP zval.z,zval.z; \n\
       ### normalize view vector \n\
       DP3 len.x,pos1,pos1; \n\
       RSQ len.x,len.x; \n\
       MUL dir,pos1,len.x; \n\
+      ### calculate hit point \n\
+      RCP len.z,-dir.z; \n\
+      MUL zval.z,zval.z,len.z; \n\
+      MUL pos3,dir,zval.z; \n\
+      ### clip against hit point \n\
+      DP3 len.x,dir,pos2; \n\
+      SUB len.x,len.x,zval.z; \n\
+      CMP pos2,len.x,pos2,pos3; \n\
+      DP3 len.x,dir,pos1; \n\
+      SUB len.x,len.x,zval.z; \n\
+      CMP pos1,len.x,pos1,pos3; \n\
       ### calculate thickness \n\
       SUB pos1,pos2,pos1; \n\
       DP3 len.x,nrm,pos1; \n\
@@ -945,12 +959,6 @@ void miniproj::setupprogs()
       ### calculate absorption \n\
       POW len.x,c1.y,-len.x; \n\
       SUB len.x,c1.z,len.x; \n\
-      ### reconstruct z-value \n\
-      MAD zclip.z,zclip.z,c2.x,c2.y; \n\
-      RCP zclip.z,zclip.z; \n\
-      ### attenuate color with z-value \n\
-      ADD zclip.z,-zclip.z,1.0; \n\
-      MUL col,col,zclip.z; \n\
       ### write resulting fragment \n\
       MUL result.color.xyz,col,c0.x; \n\
       MOV result.color.w,len.x; \n\
