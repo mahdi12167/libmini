@@ -683,6 +683,8 @@ void miniproj::initzclip()
       glReadBuffer(GL_BACK);
       glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
 
+      glEnable(GL_TEXTURE_RECTANGLE_ARB);
+
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
 #endif
@@ -703,7 +705,10 @@ void miniproj::exitzclip()
       GLuint texid;
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
+
+      glDisable(GL_TEXTURE_RECTANGLE_ARB);
       glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
       texid=ZTEXID;
