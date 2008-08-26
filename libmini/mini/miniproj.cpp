@@ -649,6 +649,8 @@ void miniproj::initzclip()
    int startx,starty;
    int width,height;
 
+   static const float factor=0.9f;
+
    glFinish();
 
    // get viewport dimensions
@@ -660,9 +662,9 @@ void miniproj::initzclip()
    width=viewport[2];
    height=viewport[3];
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
-#if defined(GL_ARB_multitexture) && defined(GL_ARB_texture_rectangle)
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
       GLuint texid;
 
@@ -687,6 +689,9 @@ void miniproj::initzclip()
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
+      // calculate factors for z-value reconstruction
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR)/factor,1.0f/ZNEAR/factor,0.0f,0.0f);
+
 #endif
       }
 
@@ -698,9 +703,9 @@ void miniproj::exitzclip()
    {
 #ifndef NOOGL
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0)
+   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
-#if defined(GL_ARB_multitexture) && defined(GL_ARB_texture_rectangle)
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
       GLuint texid;
 
@@ -735,7 +740,7 @@ void miniproj::enablevtxshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          if (VTXPROGID==0)
@@ -762,7 +767,7 @@ void miniproj::disablevtxshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROG!=NULL)
          {
          glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
@@ -786,7 +791,7 @@ void miniproj::enablepixshader()
    initglexts();
    initwglprocs();
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRGPROG!=NULL && FRGPROGZ!=NULL)
          {
          if (!ZCLIP)
@@ -810,8 +815,6 @@ void miniproj::enablepixshader()
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
 
-         if (ZCLIP) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR),1.0f/ZNEAR,0.0f,0.0f);
-
          if (!ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
          else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
 
@@ -830,7 +833,7 @@ void miniproj::disablepixshader()
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRGPROG!=NULL && FRGPROGZ!=NULL)
          {
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
@@ -900,12 +903,13 @@ void miniproj::setupprogs()
       DP3 len.x,pos1,pos1; \n\
       RSQ len.x,len.x; \n\
       MUL dir,pos1,len.x; \n\
-      ### calculate thickness \n\
-      SUB pos1,pos2,pos1; \n\
-      DP3 len.x,nrm,pos1; \n\
+      ### perspective reprojection \n\
+      SUB pos2,pos2,pos1; \n\
+      DP3 len.x,nrm,pos2; \n\
       DP3 len.y,nrm,dir; \n\
       RCP len.y,len.y; \n\
       MUL len.x,len.x,len.y; \n\
+      MAD pos2,dir,len.x,pos1; \n\
       ### calculate optical depth \n\
       ADD len.y,tex.x,tex.y; \n\
       MUL len.y,len.y,c1.x; \n\
@@ -939,6 +943,13 @@ void miniproj::setupprogs()
       DP3 len.x,pos1,pos1; \n\
       RSQ len.x,len.x; \n\
       MUL dir,pos1,len.x; \n\
+      ### perspective reprojection \n\
+      SUB pos2,pos2,pos1; \n\
+      DP3 len.x,nrm,pos2; \n\
+      DP3 len.y,nrm,dir; \n\
+      RCP len.y,len.y; \n\
+      MUL len.x,len.x,len.y; \n\
+      MAD pos2,dir,len.x,pos1; \n\
       ### calculate hit point \n\
       RCP len.z,-dir.z; \n\
       MUL zval.z,zval.z,len.z; \n\
@@ -951,11 +962,8 @@ void miniproj::setupprogs()
       SUB len.x,len.x,zval.z; \n\
       CMP pos1,len.x,pos1,pos3; \n\
       ### calculate thickness \n\
-      SUB pos1,pos2,pos1; \n\
-      DP3 len.x,nrm,pos1; \n\
-      DP3 len.y,nrm,dir; \n\
-      RCP len.y,len.y; \n\
-      MUL len.x,len.x,len.y; \n\
+      SUB pos2,pos2,pos1; \n\
+      DP3 len.x,dir,pos2; \n\
       ### calculate optical depth \n\
       ADD len.y,tex.x,tex.y; \n\
       MUL len.y,len.y,c1.x; \n\
@@ -990,7 +998,7 @@ void miniproj::deleteprogs()
 
    GLuint progid;
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
       if (VTXPROGID!=0)
          {
