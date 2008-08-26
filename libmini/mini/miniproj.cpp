@@ -784,27 +784,31 @@ void miniproj::enablepixshader()
    if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRGPROG!=NULL && FRGPROGZ!=NULL)
          {
-         if (FRGPROGID==0)
-            {
-            glGenProgramsARB(1,&frgprogid);
-            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
-            glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROG),FRGPROG);
-            FRGPROGID=frgprogid;
-            }
+         if (!ZCLIP)
+            if (FRGPROGID==0)
+               {
+               glGenProgramsARB(1,&frgprogid);
+               glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
+               glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROG),FRGPROG);
+               FRGPROGID=frgprogid;
+               }
 
-         if (FRGPROGZID==0)
-            {
-            glGenProgramsARB(1,&frgprogid);
-            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
-            glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROGZ),FRGPROGZ);
-            FRGPROGZID=frgprogid;
-            }
+         if (ZCLIP)
+            if (FRGPROGZID==0)
+               {
+               glGenProgramsARB(1,&frgprogid);
+               glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
+               glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROGZ),FRGPROGZ);
+               FRGPROGZID=frgprogid;
+               }
 
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
 
-         if (ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
-         else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
+         if (ZCLIP) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR)*ZFAR,1.0f/ZNEAR*ZFAR,0.0f,0.0f);
+
+         if (!ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
+         else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
 
          glEnable(GL_FRAGMENT_PROGRAM_ARB);
          }
@@ -914,6 +918,7 @@ void miniproj::setupprogs()
    static const char *frgprogz="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
+      PARAM c2=program.env[2]; \n\
       TEMP col,nrm,tex,pos1,pos2,zclip,dir,len; \n\
       ### fetch actual fragment \n\
       MOV col,fragment.color; \n\
@@ -940,10 +945,13 @@ void miniproj::setupprogs()
       ### calculate absorption \n\
       POW len.x,c1.y,-len.x; \n\
       SUB len.x,c1.z,len.x; \n\
+      ### reconstruct z-value \n\
+      MAD zclip.z,zclip.z,c2.x,c2.y; \n\
+      RCP zclip.z,zclip.z; \n\
+      ### attenuate color with z-value \n\
+      ADD zclip.z,-zclip.z,1.0; \n\
+      MUL col,col,zclip.z; \n\
       ### write resulting fragment \n\
-      MUL zclip,zclip,100.0; ##!! \n\
-      FRC zclip,zclip; ##!! \n\
-      MUL col,col,zclip.z; ##!! \n\
       MUL result.color.xyz,col,c0.x; \n\
       MOV result.color.w,len.x; \n\
       END \n";
