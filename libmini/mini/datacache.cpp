@@ -823,10 +823,14 @@ void datacache::save()
 
    filename=sourcefilename(RID,STARTUPFILE);
    localname=localfilename(filename);
-
-   if ((file=fopen(localname,"wb"))==NULL) ERRORMSG();
-
    free(filename);
+
+   if ((file=fopen(localname,"wb"))==NULL)
+      {
+      free(localname);
+      return;
+      }
+
    free(localname);
 
    for (i=0; i<HASHSIZE; i++)

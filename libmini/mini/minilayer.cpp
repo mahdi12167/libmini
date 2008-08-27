@@ -1337,7 +1337,9 @@ void minilayer::renderpoints()
       global.signpostincline=LPARAMS.signpostincline;
       global.signpostalpha=0.5f;
 
-      global.brickfile=strdup(POINTS->getbrick());
+      if (POINTS->getbrick()==NULL) global.brickfile=NULL;
+      else global.brickfile=strdup(POINTS->getbrick());
+
       global.bricksize=len_g2i(LPARAMS.bricksize);
       global.brickradius=len_g2i(LPARAMS.brickradius);
       global.brickalpha=0.5f;
