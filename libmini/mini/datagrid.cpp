@@ -194,7 +194,7 @@ BOOLINT datagrid::preprocess()
       CONSTRUCTED=FALSE; // preprocessing has not yet finished
 
       DECOMPOSED=FALSE; // decomposition has not yet finished
-      
+
       PHASE=0;
       STEP=0;
       }
