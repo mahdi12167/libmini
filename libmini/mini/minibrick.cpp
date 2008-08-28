@@ -571,10 +571,10 @@ void minisurf::enabletorch(int phase,
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n\
       ### transform vertex with modelview \n\
-      DP4 pos.x,mod[0],vtx; \n\
-      DP4 pos.y,mod[1],vtx; \n\
-      DP4 pos.z,mod[2],vtx; \n\
-      DP4 pos.w,mod[3],vtx; \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
       ### transform normal with inverse transpose \n\
       DP4 vec.x,invtra[0],nrm; \n\
       DP4 vec.y,invtra[1],nrm; \n\
