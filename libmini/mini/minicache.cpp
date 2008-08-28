@@ -918,12 +918,10 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    GLuint vtxprogid,fragprogid;
 
-   GLfloat mvmtx[16];
-   miniv3d invtra[3];
-   miniv3d light;
-
    miniv4d mtx[3];
    double oglmtx[16];
+
+   miniv3d light;
 
    if (lambda<=0.0f || cnt==0) return(vtx);
 
@@ -958,25 +956,6 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
       mtxmodel();
 
-      glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-
-      invtra[0].x=mvmtx[0];
-      invtra[1].x=mvmtx[1];
-      invtra[2].x=mvmtx[2];
-      invtra[0].y=mvmtx[4];
-      invtra[1].y=mvmtx[5];
-      invtra[2].y=mvmtx[6];
-      invtra[0].z=mvmtx[8];
-      invtra[1].z=mvmtx[9];
-      invtra[2].z=mvmtx[10];
-
-      inv_mtx(invtra,invtra);
-      tra_mtx(invtra,invtra);
-
-      light=miniv3d(lx,ly,lz);
-      light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
-      light.normalize();
-
       if (warp!=NULL)
          {
          warp->getwarp(mtx);
@@ -1003,6 +982,10 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
          mtxmult(oglmtx);
          }
+
+      light=miniv3d(lx,ly,lz);
+      light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
+      light.normalize();
 
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISM_VTXPROGID);
       glEnable(GL_VERTEX_PROGRAM_ARB);
