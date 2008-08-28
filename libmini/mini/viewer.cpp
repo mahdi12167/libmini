@@ -77,6 +77,9 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #define VIEWER_SBASE 0.5f
 
+#define VIEWER_MAXIDLE 10
+#define VIEWER_MINDIFF 0.001
+
 // main section:
 
 #include <mini/minibase.h>
@@ -157,6 +160,9 @@ static double speed,topspeed;
 
 // stereo base
 static const float sbase=VIEWER_SBASE;
+
+// wakeup flag
+static int wakeup=1;
 
 // consumed time per frame
 static double accu_delta=0.0;
@@ -360,7 +366,12 @@ void loadsettings()
       viewer->getearth()->get(eprms);
       viewer->getearth()->getterrain()->get(tprms);
 
-      if ((file=fopen(savname,"rb"))==NULL) ERRORMSG();
+      if ((file=fopen(savname,"rb"))==NULL)
+         {
+         free(savname);
+         return;
+         }
+
       free(savname);
 
       // load essential parameters:
@@ -430,7 +441,12 @@ void savesettings()
 
    if (savname==NULL) savname=strdup(VIEWER_SAVFILE);
 
-   if ((file=fopen(savname,"wb"))==NULL) ERRORMSG();
+   if ((file=fopen(savname,"wb"))==NULL)
+      {
+      free(savname);
+      return;
+      }
+
    free(savname);
 
    // save essential parameters:
@@ -829,8 +845,8 @@ void renderhud()
    glDisable(GL_BLEND);
    }
 
-// GLUT display function
-void displayfunc()
+// render the scene
+void render()
    {
    double delta,idle;
 
@@ -930,6 +946,12 @@ void displayfunc()
 
    viewer->getearth()->getterrain()->propagate_wp();
 
+   // check for eye movement:
+
+   if (FABS(speed-topspeed)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(angle-turn)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(dez)>VIEWER_MINDIFF) wakeup=1;
+
    // setup OpenGL state:
 
    viewer->clear();
@@ -1015,9 +1037,31 @@ void displayfunc()
       }
    }
 
+// GLUT display function
+void displayfunc()
+   {
+   int pending;
+
+   static int numidle=0;
+
+   pending=viewer->getearth()->getterrain()->getpending();
+
+   if (pending!=0 || wakeup!=0) numidle=0;
+   else if (numidle<VIEWER_MAXIDLE) numidle++;
+
+   wakeup=0;
+
+   if (numidle<VIEWER_MAXIDLE) render();
+   else viewer->idle(0.0);
+   }
+
 // GLUT reshape function
 void reshapefunc(int width,int height)
-   {initwindow(width,height);}
+   {
+   initwindow(width,height);
+
+   wakeup=1;
+   }
 
 // GLUT keyboard function
 void keyboardfunc(unsigned char key,int x,int y)
@@ -1245,6 +1289,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          else glutLeaveGameMode();
          exit(0);
       }
+
+   wakeup=1;
    }
 
 // main function

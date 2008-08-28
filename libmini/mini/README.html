@@ -1723,10 +1723,9 @@ following example code snippet:<p>
 In order to quit an application which is using the asynchronous tile
 cache the background thread needs to be stopped beforehand. It is
 stopped implicitly if the datacloud object is deleted but it can be
-stopped at any time with an explicit call of
-cloud->stopthread(). Before the application can quit it also needs to
-release the background thread (see threadexit() in the above
-example).<p>
+stopped at any time with an explicit call of cloud->stopthread().
+Before the application can quit it also needs to release the
+background thread (see threadexit() in the above example).<p>
 
 <div class="note">
    <b>Note:</b> By default, the tile cache module releases all the
