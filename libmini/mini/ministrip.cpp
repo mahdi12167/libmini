@@ -36,7 +36,7 @@ void ministrip::initsnippets()
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
-      ### transform vertex with modelview \n\
+      ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\

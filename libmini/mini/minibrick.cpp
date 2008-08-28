@@ -563,7 +563,7 @@ void minisurf::enabletorch(int phase,
 
    static const char *vtxprog="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
-      PARAM mod[4]={state.matrix.modelview}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       ### fetch actual vertex \n\
@@ -780,7 +780,7 @@ void minisurf::enablepattern(float ambient,
 
    static const char *vtxprog="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
-      PARAM mod[4]={state.matrix.modelview}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       ### fetch actual vertex \n\
       TEMP vtx,col,nrm,pos,vec; \n\
@@ -788,10 +788,10 @@ void minisurf::enablepattern(float ambient,
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n\
       ### transform vertex with modelview \n\
-      DP4 pos.x,mod[0],vtx; \n\
-      DP4 pos.y,mod[1],vtx; \n\
-      DP4 pos.z,mod[2],vtx; \n\
-      DP4 pos.w,mod[3],vtx; \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
       ### transform normal with inverse transpose \n\
       DP4 vec.x,invtra[0],nrm; \n\
       DP4 vec.y,invtra[1],nrm; \n\

@@ -1342,13 +1342,14 @@ minicache::setshader("!!ARBvp...").<p>
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       TEMP vtx,col,nrm,pos,vec,gen; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n\
-      ### transform vertex with modelview \n\
+      ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\
@@ -1368,6 +1369,10 @@ minicache::setshader("!!ARBvp...").<p>
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
       ### calculate eye linear coordinates \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
       DP4 gen.x,pos,u; \n\
       DP4 gen.y,pos,v; \n\
       MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
