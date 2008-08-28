@@ -196,6 +196,8 @@ class minicache
    void cachetrigger(const int phase,const float scale,const float ex,const float ey,const float ez);
    void cachesync(const int id);
 
+   void getmodelview();
+
    inline int rendercache(int id,int phase);
 
    inline void rendertexmap(int m,int n,int S);
@@ -267,6 +269,8 @@ class minicache
    void *CB_DATA;
 
    private:
+
+   miniv3d MVINVTRA[3];
 
    float CONFIGURE_OVERLAP;
    int CONFIGURE_MINSIZE;

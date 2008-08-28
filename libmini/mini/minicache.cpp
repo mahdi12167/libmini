@@ -459,6 +459,31 @@ void minicache::cachesync(const int id)
    if (PRISMSYNC_CALLBACK!=NULL) PRISMSYNC_CALLBACK(id,CALLBACK_DATA);
    }
 
+// get the modelview matrix
+void minicache::getmodelview()
+   {
+#ifndef NOOGL
+
+   GLfloat mvmtx[16];
+
+   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+
+   MVINVTRA[0].x=mvmtx[0];
+   MVINVTRA[1].x=mvmtx[1];
+   MVINVTRA[2].x=mvmtx[2];
+   MVINVTRA[0].y=mvmtx[4];
+   MVINVTRA[1].y=mvmtx[5];
+   MVINVTRA[2].y=mvmtx[6];
+   MVINVTRA[0].z=mvmtx[8];
+   MVINVTRA[1].z=mvmtx[9];
+   MVINVTRA[2].z=mvmtx[10];
+
+   inv_mtx(MVINVTRA,MVINVTRA);
+   tra_mtx(MVINVTRA,MVINVTRA);
+
+#endif
+   }
+
 // render all back buffers of the cache
 int minicache::rendercache()
    {
@@ -468,6 +493,8 @@ int minicache::rendercache()
 
    if (NUMTERRAIN>0)
       {
+      getmodelview();
+
       for (id=0; id<MAXTERRAIN; id++)
          if (TERRAIN[id].tile!=NULL)
             {
@@ -551,10 +578,6 @@ void minicache::rendertexmap(int m,int n,int S)
    float xdim,zdim;
    float centerx,centery,centerz;
 
-   GLfloat mvmtx[16];
-   miniv3d invtra[3];
-   miniv3d light;
-
    miniwarp *warp;
 
    miniv4d mtx[3];
@@ -563,6 +586,8 @@ void minicache::rendertexmap(int m,int n,int S)
    float ox,oz;
 
    int texid,texw,texh,texmm;
+
+   miniv3d light;
 
    TERRAIN_TYPE *t;
 
@@ -581,8 +606,6 @@ void minicache::rendertexmap(int m,int n,int S)
    centerz=t->tile->getcenterz();
 
    mtxpush();
-
-   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
 
    warp=t->tile->getwarp();
 
@@ -644,21 +667,8 @@ void minicache::rendertexmap(int m,int n,int S)
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
          {
-         invtra[0].x=mvmtx[0];
-         invtra[1].x=mvmtx[1];
-         invtra[2].x=mvmtx[2];
-         invtra[0].y=mvmtx[4];
-         invtra[1].y=mvmtx[5];
-         invtra[2].y=mvmtx[6];
-         invtra[0].z=mvmtx[8];
-         invtra[1].z=mvmtx[9];
-         invtra[2].z=mvmtx[10];
-
-         inv_mtx(invtra,invtra);
-         tra_mtx(invtra,invtra);
-
          light=miniv3d(t->lx,t->ly,t->lz);
-         light=miniv3d(invtra[0]*light,invtra[1]*light,invtra[2]*light);
+         light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
          light.normalize();
 
          if (texid==0) setpixshadertexprm(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo);
