@@ -1699,7 +1699,7 @@ update the scene until there are no pending tiles left to be paged
 in. This can be achieved in the following way:<p>
 
 <pre>
-   static int pending=cloud->getpending();
+   static int pending=1;
    if (pending!=0) tileset->draw(...);
    pending=cloud->getpending();
 </pre>
