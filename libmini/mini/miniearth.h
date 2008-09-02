@@ -141,8 +141,14 @@ class miniearth
    //! render scene
    void render();
 
+   //! freeze scene
+   void freeze(BOOLINT flag);
+
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
+
+   //! add datagrid object
+   void addgrid(datagrid *obj,BOOLINT sort=FALSE);
 
    //! get null layer
    minilayer *getnull() {return(TERRAIN->getlayer(TERRAIN->getnull()));}
@@ -171,9 +177,16 @@ class miniearth
 
    BOOLINT CLEAR;
 
+   BOOLINT FREEZE;
+   BOOLINT GRABBED;
+
    void initOGL();
 
    char *getfile(const char *src_file,const char *altpath=NULL);
+
+   void rendercache();
+   void grabbuffers();
+   void drawbuffers();
 
    double intersect_unitsphere(miniv3d p,miniv3d d);
 

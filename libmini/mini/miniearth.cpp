@@ -92,6 +92,9 @@ miniearth::miniearth()
 
    CLEAR=FALSE;
 
+   FREEZE=FALSE;
+   GRABBED=FALSE;
+
    initOGL();
    }
 
@@ -359,10 +362,10 @@ void miniearth::clear()
 
 // generate and cache scene for a particular eye point and time step
 void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time)
-   {TERRAIN->cache(e,d,u,aspect,time);}
+   {if (!FREEZE) TERRAIN->cache(e,d,u,aspect,time);}
 
 // render cached scene
-void miniearth::render()
+void miniearth::rendercache()
    {
 #ifndef NOOGL
 
@@ -537,6 +540,51 @@ void miniearth::render()
 
 #endif
    }
+
+// grab scene
+void miniearth::grabbuffers()
+   {
+   //!! glCopyTexImage2D(GL_RGB);
+   //!! glCopyTexImage2D(GL_DEPTH_COMPONENT);
+   }
+
+// draw scene
+void miniearth::drawbuffers()
+   {
+   //!! glColorMask(GL_TRUE);
+   //!! glDepthMask(GL_TRUE);
+   }
+
+// render scene
+void miniearth::render()
+   {
+   // render cached scene
+   if (!FREEZE || !GRABBED) rendercache();
+
+   if (FREEZE)
+      {
+      if (!GRABBED)
+         {
+         // grab buffers
+         grabbuffers();
+         GRABBED=TRUE;
+         }
+
+      // draw buffers
+      drawbuffers();
+      }
+   }
+
+// freeze scene
+void miniearth::freeze(BOOLINT flag)
+   {
+   FREEZE=flag;
+   GRABBED=FALSE;
+   }
+
+// add datagrid object
+void miniearth::addgrid(datagrid *obj,BOOLINT sort)
+   {TERRAIN->addgrid(obj,sort);}
 
 // shoot a ray at the scene
 double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
