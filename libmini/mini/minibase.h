@@ -53,7 +53,7 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 #   define MAXFLOAT (FLT_MAX)
 #endif
 
-#ifdef darwin
+#ifdef __APPLE__
 #   define ffloor(x) floorf(x)
 #   define fceil(x) ceilf(x)
 #else
@@ -84,7 +84,7 @@ inline int sqr(const int x) {return(x*x);}
 inline float fsqr(const float x) {return(x*x);}
 inline double FSQR(const double x) {return(x*x);}
 
-#ifdef darwin
+#ifdef __APPLE__
 #   define fsqrt(x) sqrtf(x)
 #   define fsin(x) sinf(x)
 #   define fcos(x) cosf(x)
