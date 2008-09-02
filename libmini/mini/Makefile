@@ -1,5 +1,7 @@
 SHELL	= sh
 
+HDRS	= minibase minidyna minisort
+
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
 	  minimath minimpfp minitime miniio minihsv miniutm\
@@ -65,13 +67,13 @@ depend:
 vdepend: depend
 	@-$(MAKEDEPEND) $(OPTS) -I.. $(VSRCS) >>Makefile.d 2>/dev/null
 
-install:
+install: lib libsfx
 	@-echo "copying libraries to $(INSTALL)/lib"
 	@-if [ ! -e $(INSTALL)/lib ]; then mkdir -p $(INSTALL)/lib; fi
 	@-$(CP) libMini*.a $(INSTALL)/lib
 	@-echo "copying headers to $(INSTALL)/include/mini"
 	@-if [ ! -e $(INSTALL)/include/mini ]; then mkdir -p $(INSTALL)/include/mini; fi
-	@-$(CP) *.h $(INSTALL)/include/mini
+	@-$(CP) $(HDRS:=.h) $(MODS:=.h) $(VMODS:=.h) $(INSTALL)/include/mini
 	@-echo "copying data to $(DATA)/mini"
 	@-if [ ! -e $(DATA)/mini ]; then mkdir -p $(DATA)/mini; fi
 	@-$(CP) data/* $(DATA)/mini
