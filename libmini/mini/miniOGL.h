@@ -85,6 +85,9 @@ inline void drawline(const float x1,const float y1,const float z1,const float x2
 unsigned char *readrgbpixels(int x,int y,int width,int height);
 void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
+float *readzpixels(int x,int y,int width,int height);
+void writezpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+
 int copyframebuf(int depthcomp=0);
 void bindframebuf(int texid);
 void deleteframebuf(int texid);

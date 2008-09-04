@@ -217,9 +217,6 @@ miniterrain::miniterrain()
    CURLEXIT=NULL;
    GETURL=NULL;
    CHECKURL=NULL;
-
-   DATAGRID=NULL;
-   SORT=FALSE;
    }
 
 // destructor
@@ -900,9 +897,6 @@ void miniterrain::render_presea()
 
    minilayer::MINILAYER_PARAMS lparams;
 
-   miniwarp warp;
-   miniv4d mtx[3];
-
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
@@ -913,30 +907,6 @@ void miniterrain::render_presea()
          // render waypoints before sea surface
          if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
-
-   if (DATAGRID!=NULL)
-      if (!DATAGRID->isempty())
-         // trigger data grid before sea surface
-         if (el.vec.z>=lparams.sealevel/lparams.scale)
-            {
-            DATAGRID->usemtxpost(FALSE);
-
-            // set post matrix (world to rendering coordinates)
-            if (REFERENCE!=NULL)
-               if (REFERENCE->getwarp()!=NULL)
-                  {
-                  warp=*REFERENCE->getwarp();
-                  warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-                  warp.getwarp(mtx);
-
-                  DATAGRID->specmtxpost(mtx);
-                  DATAGRID->usemtxpost(TRUE);
-                  }
-
-            // push either sorted or unsorted grid
-            if (!SORT) DATAGRID->trigger(TPARAMS.time);
-            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
-            }
    }
 
 // post sea render function
@@ -948,9 +918,6 @@ void miniterrain::render_postsea()
 
    minilayer::MINILAYER_PARAMS lparams;
 
-   miniwarp warp;
-   miniv4d mtx[3];
-
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
@@ -961,30 +928,6 @@ void miniterrain::render_postsea()
          // render waypoints after sea surface
          if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
          }
-
-   if (DATAGRID!=NULL)
-      if (!DATAGRID->isempty())
-         // trigger data grid after sea surface
-         if (el.vec.z<lparams.sealevel/lparams.scale)
-            {
-            DATAGRID->usemtxpost(FALSE);
-
-            // set post matrix (world to rendering coordinates)
-            if (REFERENCE!=NULL)
-               if (REFERENCE->getwarp()!=NULL)
-                  {
-                  warp=*REFERENCE->getwarp();
-                  warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-                  warp.getwarp(mtx);
-
-                  DATAGRID->specmtxpost(mtx);
-                  DATAGRID->usemtxpost(TRUE);
-                  }
-
-            // push either sorted or unsorted grid
-            if (!SORT) DATAGRID->trigger(TPARAMS.time);
-            else DATAGRID->trigger(TPARAMS.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
-            }
    }
 
 // determine whether or not a layer is displayed
@@ -1164,11 +1107,4 @@ void miniterrain::registerrndr(minipointrndr *rndr)
 
    for (n=0; n<LNUM; n++)
       if (LAYER[n]->getpoints()!=NULL) LAYER[n]->getpoints()->registerrndr(rndr);
-   }
-
-// add datagrid object
-void miniterrain::addgrid(datagrid *obj,BOOLINT sort)
-   {
-   DATAGRID=obj;
-   SORT=sort;
    }

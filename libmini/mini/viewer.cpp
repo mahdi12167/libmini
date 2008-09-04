@@ -1052,8 +1052,8 @@ void displayfunc()
 
    wakeup=0;
 
-   if (numidle<VIEWER_MAXIDLE) render();
-   else viewer->idle(0.0);
+   viewer->getearth()->freeze(numidle>=VIEWER_MAXIDLE);
+   render();
    }
 
 // GLUT reshape function

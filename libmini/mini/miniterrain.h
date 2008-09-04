@@ -11,8 +11,6 @@
 #include "miniv4d.h"
 
 #include "minipoint.h"
-#include "datagrid.h"
-
 #include "minilayer.h"
 
 //! aggregate class for rendering multiple layers
@@ -336,9 +334,6 @@ class miniterrain
    //! register waypoint renderer
    void registerrndr(minipointrndr *rndr);
 
-   //! add datagrid object
-   void addgrid(datagrid *obj,BOOLINT sort=FALSE);
-
    // default coordinate conversions (g=global, l=local, o=opengl):
 
    //! map coordinates
@@ -398,9 +393,6 @@ class miniterrain
    void (*CURLEXIT)(int id,void *data);
    void (*GETURL)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data);
    int (*CHECKURL)(const char *src_url,const char *src_id,const char *src_file,int id,void *data);
-
-   datagrid *DATAGRID;
-   BOOLINT SORT;
 
    int reserve();
 

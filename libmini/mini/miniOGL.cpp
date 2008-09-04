@@ -1083,8 +1083,10 @@ void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 #ifndef NOOGL
 
    glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
    glLoadIdentity();
    glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
    glLoadIdentity();
    gluOrtho2D(0.0f,winwidth-1,0.0f,winheight-1);
    glMatrixMode(GL_MODELVIEW);
@@ -1094,6 +1096,62 @@ void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
    glDrawPixels(width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   glMatrixMode(GL_MODELVIEW);
+
+#endif
+   }
+
+float *readzpixels(int x,int y,int width,int height)
+   {
+   float *pixels=NULL;
+
+#ifndef NOOGL
+
+   glFinish();
+
+   if ((pixels=(float *)malloc(sizeof(float)*width*height))==NULL) ERRORMSG();
+
+   glReadBuffer(GL_BACK);
+   glReadPixels(x,y,width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+
+#endif
+
+   return(pixels);
+   }
+
+void writezpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y)
+   {
+#ifndef NOOGL
+
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0f,winwidth-1,0.0f,winheight-1);
+   glMatrixMode(GL_MODELVIEW);
+
+   glRasterPos2i(x,y);
+   glDrawBuffer(GL_BACK);
+
+   glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+   glDrawPixels(width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+
+   glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   glMatrixMode(GL_MODELVIEW);
 
 #endif
    }

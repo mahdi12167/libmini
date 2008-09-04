@@ -95,6 +95,9 @@ miniearth::miniearth()
    FREEZE=FALSE;
    GRABBED=FALSE;
 
+   DATAGRID=NULL;
+   SORT=FALSE;
+
    initOGL();
    }
 
@@ -543,25 +546,99 @@ void miniearth::rendercache()
 #endif
    }
 
+// render data grid
+void miniearth::renderdgrid()
+   {
+   minilayer *ref;
+   minilayer::MINILAYER_PARAMS lparams;
+
+   miniwarp warp;
+   miniv4d mtx[3];
+
+   ref=getreference();
+
+   if (ref!=NULL)
+      {
+      ref->get(lparams);
+
+      // trigger data grid
+      if (DATAGRID!=NULL)
+         if (!DATAGRID->isempty())
+            {
+            DATAGRID->usemtxpost(FALSE);
+
+            // set post matrix (world to rendering coordinates)
+            if (ref->getwarp()!=NULL)
+               {
+               warp=*ref->getwarp();
+               warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+               warp.getwarp(mtx);
+
+               DATAGRID->specmtxpost(mtx);
+               DATAGRID->usemtxpost(TRUE);
+               }
+
+            // push either sorted or unsorted grid
+            if (!SORT) DATAGRID->trigger(lparams.time);
+            else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
+            }
+      }
+   }
+
 // grab scene
 void miniearth::grabbuffers()
    {
-   RGBTEXID=copyframebuf();
-   ZTEXID=copyframebuf(1);
+#ifndef NOOGL
+
+   GLint viewport[4];
+
+   int startx,starty;
+
+   // get viewport dimensions
+   glGetIntegerv(GL_VIEWPORT,viewport);
+
+   startx=viewport[0];
+   starty=viewport[1];
+
+   BUFWIDTH=viewport[2];
+   BUFHEIGHT=viewport[3];
+
+   RGBBUF=readrgbpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+   ZBUF=readzpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+
+#endif
    }
 
 // draw scene
 void miniearth::drawbuffers()
    {
-   //!! glColorMask(GL_TRUE);
-   //!! glDepthMask(GL_TRUE);
+#ifndef NOOGL
+
+   GLint viewport[4];
+
+   int startx,starty;
+   int width,height;
+
+   // get viewport dimensions
+   glGetIntegerv(GL_VIEWPORT,viewport);
+
+   startx=viewport[0];
+   starty=viewport[1];
+
+   width=viewport[2];
+   height=viewport[3];
+
+   writergbpixels(RGBBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+   writezpixels(ZBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+
+#endif
    }
 
 // free scene
 void miniearth::freebuffers()
    {
-   deleteframebuf(RGBTEXID);
-   deleteframebuf(ZTEXID);
+   free(RGBBUF);
+   free(ZBUF);
    }
 
 // render scene
@@ -571,23 +648,22 @@ void miniearth::render()
    if (!FREEZE || !GRABBED) rendercache();
 
    if (FREEZE)
-      {
-      if (!GRABBED)
+      if (GRABBED) drawbuffers(); // draw buffers
+      else
          {
          // grab buffers
          grabbuffers();
          GRABBED=TRUE;
          }
-
-      // draw buffers
-      drawbuffers();
-      }
    else
       {
       // free buffers
       if (GRABBED) freebuffers();
       GRABBED=FALSE;
       }
+
+   // render data grid
+   renderdgrid();
    }
 
 // freeze scene
@@ -596,7 +672,10 @@ void miniearth::freeze(BOOLINT flag)
 
 // add datagrid object
 void miniearth::addgrid(datagrid *obj,BOOLINT sort)
-   {TERRAIN->addgrid(obj,sort);}
+   {
+   DATAGRID=obj;
+   SORT=sort;
+   }
 
 // shoot a ray at the scene
 double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)

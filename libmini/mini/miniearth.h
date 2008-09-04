@@ -15,6 +15,8 @@
 #include "minisky.h"
 #include "miniglobe.h"
 
+#include "datagrid.h"
+
 //! base class for viewing tilesets
 class miniearth
    {
@@ -180,13 +182,20 @@ class miniearth
    BOOLINT FREEZE;
    BOOLINT GRABBED;
 
-   int RGBTEXID,ZTEXID;
+   int BUFWIDTH,BUFHEIGHT;
+   unsigned char *RGBBUF;
+   float *ZBUF;
+
+   datagrid *DATAGRID;
+   BOOLINT SORT;
 
    void initOGL();
 
    char *getfile(const char *src_file,const char *altpath=NULL);
 
    void rendercache();
+   void renderdgrid();
+
    void grabbuffers();
    void drawbuffers();
    void freebuffers();

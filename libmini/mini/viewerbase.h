@@ -99,7 +99,7 @@ class viewerbase
 
    //! idle for the remainder of the frame
    //! dt is the time spent for rendering the last frame
-   void idle(double dt);
+   void idle(double dt=0.0);
 
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);
