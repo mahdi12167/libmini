@@ -1098,7 +1098,7 @@ void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 #endif
    }
 
-int copydepthcomp()
+int copyframebuf(int depthcomp)
    {
 #ifndef NOOGL
 
@@ -1129,15 +1129,17 @@ int copydepthcomp()
       glGenTextures(1,&texid);
       glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
 
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
 
+      if (depthcomp!=0) glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
+
       // copy depth component of viewport
       glReadBuffer(GL_BACK);
-      glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+      if (depthcomp==0) glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_RGB,startx,starty,width,height,0);
+      else glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
 
 #endif
       }
@@ -1149,7 +1151,7 @@ int copydepthcomp()
 #endif
    }
 
-void binddepthcomp(int texid)
+void bindframebuf(int texid)
    {
 #ifndef NOOGL
 
@@ -1176,7 +1178,7 @@ void binddepthcomp(int texid)
 #endif
    }
 
-void deletedepthcomp(int texid)
+void deleteframebuf(int texid)
    {deletetexmap(texid);}
 
 }
