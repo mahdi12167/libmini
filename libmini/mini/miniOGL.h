@@ -85,6 +85,10 @@ inline void drawline(const float x1,const float y1,const float z1,const float x2
 unsigned char *readrgbpixels(int x,int y,int width,int height);
 void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
+int copydepthcomp();
+void binddepthcomp(int texid);
+void deletedepthcomp(int texid);
+
 // configuring
 void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation
 void configure_compression(int compression=1); // enable texture compression (may result in texture seams)

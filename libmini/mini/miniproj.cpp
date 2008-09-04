@@ -644,48 +644,16 @@ void miniproj::initzclip()
    {
 #ifndef NOOGL
 
-   GLint viewport[4];
-
-   int startx,starty;
-   int width,height;
-
    static const float factor=0.9f;
 
-   glFinish();
-
-   // get viewport dimensions
-   glGetIntegerv(GL_VIEWPORT,viewport);
-
-   startx=viewport[0];
-   starty=viewport[1];
-
-   width=viewport[2];
-   height=viewport[3];
-
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-      GLuint texid;
-
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
-      glGenTextures(1,&texid);
-      glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
-
-      ZTEXID=texid;
-
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
-
-      // copy depth component of viewport
-      glReadBuffer(GL_BACK);
-      glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
-
-      glEnable(GL_TEXTURE_RECTANGLE_ARB);
+      ZTEXID=copydepthcomp();
+      binddepthcomp(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -703,22 +671,16 @@ void miniproj::exitzclip()
    {
 #ifndef NOOGL
 
-   if (GLEXT_MT!=0 && GLEXT_TR!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
       {
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
-      GLuint texid;
-
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
-      glDisable(GL_TEXTURE_RECTANGLE_ARB);
-      glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+      binddepthcomp(0);
+      deletedepthcomp(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
-
-      texid=ZTEXID;
-
-      glDeleteTextures(1,&texid);
 
 #endif
       }
@@ -1045,14 +1007,12 @@ void miniproj::initglexts()
    if (GLSETUP==0)
       {
       GLEXT_MT=0;
-      GLEXT_TR=0;
       GLEXT_VP=0;
       GLEXT_FP=0;
 
       if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
       if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
-      if (strstr(gl_exts,"GL_ARB_texture_rectangle")!=NULL) GLEXT_TR=1;
       if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
       if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
 

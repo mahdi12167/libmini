@@ -118,7 +118,6 @@ class miniproj
    int GLSETUP;
 
    int GLEXT_MT;
-   int GLEXT_TR;
    int GLEXT_VP;
    int GLEXT_FP;
 

@@ -26,6 +26,7 @@ BOOLINT glext_t3D;
 BOOLINT glext_tc;
 BOOLINT glext_ts3;
 BOOLINT glext_tgm;
+BOOLINT glext_tr;
 
 #ifdef _WIN32
 

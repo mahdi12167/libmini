@@ -28,6 +28,7 @@ static void initglexts()
       glext_tc=FALSE;
       glext_ts3=FALSE;
       glext_tgm=FALSE;
+      glext_tr=FALSE;
 
       if ((GL_EXTs=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
@@ -39,6 +40,7 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_ARB_texture_compression")!=NULL) glext_tc=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_compression_s3tc")!=NULL) glext_ts3=TRUE;
       if (strstr(GL_EXTs,"GL_SGIS_generate_mipmap")!=NULL) glext_tgm=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_texture_rectangle")!=NULL) glext_tr=TRUE;
 
       done=TRUE;
       }
@@ -57,6 +59,7 @@ int get_unsupported_glexts()
    if (!glext_tc) num++;
    if (!glext_ts3) num++;
    if (!glext_tgm) num++;
+   if (!glext_tr) num++;
 
    return(num);
    }
@@ -65,7 +68,7 @@ void print_unsupported_glexts()
    {
    initglexts();
 
-   if (!glext_mm || !glext_tec || !glext_tfa || !glext_t3D || !glext_tc || !glext_ts3 || !glext_tgm)
+   if (get_unsupported_glexts()!=0)
       {
       printf("unsupported OpenGL extensions:");
 
@@ -76,6 +79,7 @@ void print_unsupported_glexts()
       if (!glext_tc) printf(" ARB_texture_compression");
       if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
       if (!glext_tgm) printf(" SGIS_generate_mipmap");
+      if (!glext_tr) printf(" GL_ARB_texture_rectangle");
 
       printf("\n");
       }
@@ -118,6 +122,7 @@ static void initwglprocs()
 void initstate()
    {
 #ifndef NOOGL
+
    initglexts();
 
 #ifdef _WIN32
@@ -151,12 +156,14 @@ void initstate()
    maxblendeq=FALSE;
 
    fancnt=vtxcnt=0;
+
 #endif
    }
 
 void exitstate()
    {
 #ifndef NOOGL
+
    if (depth_func!=GL_LEQUAL) glDepthFunc(depth_func);
    if (!depth_test) glDisable(GL_DEPTH_TEST);
 
@@ -174,6 +181,7 @@ void exitstate()
       }
 
    if (glGetError()!=0) WARNMSG();
+
 #endif
    }
 
@@ -315,18 +323,21 @@ void enablePRJblending()
 void enableMIPblending()
    {
 #ifndef NOOGL
+
 #ifdef GL_EXT_blend_minmax
    glBlendFunc(GL_ONE,GL_ONE);
    if (glext_mm) glBlendEquation(GL_MAX_EXT);
    glEnable(GL_BLEND);
    maxblendeq=TRUE;
 #endif
+
 #endif
    }
 
 void disableblending()
    {
 #ifndef NOOGL
+
 #ifdef GL_EXT_blend_minmax
    if (maxblendeq)
       {
@@ -334,7 +345,9 @@ void disableblending()
       maxblendeq=FALSE;
       }
 #endif
+
    glDisable(GL_BLEND);
+
 #endif
    }
 
@@ -382,6 +395,7 @@ int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int
 int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps,int s3tc,int bytes,int mipmapped)
    {
 #ifndef NOOGL
+
    int i,c;
 
    GLuint texid;
@@ -678,6 +692,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    *height=height2;
 
    return(texid);
+
 #else
    return(0);
 #endif
@@ -686,6 +701,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 void bindtexmap(int texid,int width,int height,int size,int mipmaps)
    {
 #ifndef NOOGL
+
    GLfloat v1[]={1.0f,0.0f,0.0f,0.0f},
            v2[]={0.0f,0.0f,1.0f,1.0f};
 
@@ -768,6 +784,7 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
       glDisable(GL_TEXTURE_GEN_S);
       glDisable(GL_TEXTURE_GEN_T);
       }
+
 #endif
    }
 
@@ -780,7 +797,9 @@ int build3Dtexmap(unsigned char *volume,
    if (components<1) ERRORMSG();
 
 #ifndef NOOGL
+
 #ifdef GL_EXT_texture3D
+
    GLuint texid;
 
    GLint width2,height2,depth2;
@@ -815,9 +834,11 @@ int build3Dtexmap(unsigned char *volume,
    *depth=depth2;
 
    return(texid);
+
 #else
    return(0);
 #endif
+
 #else
    return(0);
 #endif
@@ -828,7 +849,9 @@ void bind3Dtexmap(int texid)
    if (texid<0) ERRORMSG();
 
 #ifndef NOOGL
+
 #ifdef GL_EXT_texture3D
+
    if (texid>0)
       {
       glBindTexture(GL_TEXTURE_3D,texid);
@@ -844,7 +867,9 @@ void bind3Dtexmap(int texid)
       glEnable(GL_TEXTURE_3D);
       }
    else glDisable(GL_TEXTURE_3D);
+
 #endif
+
 #endif
    }
 
@@ -860,9 +885,13 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes)
    {
 #ifndef NOOGL
+
 #if defined(GL_ARB_texture_compression) && defined(GL_COMPRESSED_RGB_S3TC_DXT1_EXT)
+
    GLint success,format,size;
    unsigned char *texture;
+
+   initglexts();
 
 #ifdef _WIN32
    initwglprocs();
@@ -893,7 +922,9 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
    *bytes=size;
 
    return(1);
+
 #endif
+
 #endif
 
    return(0);
@@ -1034,12 +1065,14 @@ unsigned char *readrgbpixels(int x,int y,int width,int height)
    unsigned char *pixels=NULL;
 
 #ifndef NOOGL
+
    glFinish();
 
    if ((pixels=(unsigned char *)malloc(3*width*height))==NULL) ERRORMSG();
 
    glReadBuffer(GL_BACK);
    glReadPixels(x,y,width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+
 #endif
 
    return(pixels);
@@ -1048,6 +1081,7 @@ unsigned char *readrgbpixels(int x,int y,int width,int height)
 void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y)
    {
 #ifndef NOOGL
+
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glMatrixMode(GL_PROJECTION);
@@ -1060,7 +1094,89 @@ void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
    glDrawPixels(width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+
 #endif
    }
+
+int copydepthcomp()
+   {
+#ifndef NOOGL
+
+   GLuint texid=0;
+
+   GLint viewport[4];
+
+   int startx,starty;
+   int width,height;
+
+   initglexts();
+
+   glFinish();
+
+   // get viewport dimensions
+   glGetIntegerv(GL_VIEWPORT,viewport);
+
+   startx=viewport[0];
+   starty=viewport[1];
+
+   width=viewport[2];
+   height=viewport[3];
+
+   if (glext_tr)
+      {
+#ifdef GL_ARB_texture_rectangle
+
+      glGenTextures(1,&texid);
+      glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
+
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
+
+      // copy depth component of viewport
+      glReadBuffer(GL_BACK);
+      glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+
+#endif
+      }
+
+   return(texid);
+
+#else
+   return(0);
+#endif
+   }
+
+void binddepthcomp(int texid)
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+   if (glext_tr)
+      {
+#ifdef GL_ARB_texture_rectangle
+
+      if (texid>0)
+         {
+         glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
+         glEnable(GL_TEXTURE_RECTANGLE_ARB);
+         }
+      else
+         {
+         glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+         glDisable(GL_TEXTURE_RECTANGLE_ARB);
+         }
+
+#endif
+      }
+
+#endif
+   }
+
+void deletedepthcomp(int texid)
+   {deletetexmap(texid);}
 
 }
