@@ -180,6 +180,8 @@ class miniearth
    BOOLINT FREEZE;
    BOOLINT GRABBED;
 
+   int RGBTEXID,ZTEXID;
+
    void initOGL();
 
    char *getfile(const char *src_file,const char *altpath=NULL);
@@ -187,6 +189,7 @@ class miniearth
    void rendercache();
    void grabbuffers();
    void drawbuffers();
+   void freebuffers();
 
    double intersect_unitsphere(miniv3d p,miniv3d d);
 

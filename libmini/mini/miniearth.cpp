@@ -117,6 +117,8 @@ miniearth::~miniearth()
       EPARAMS.backbuf->release();
       delete EPARAMS.backbuf;
       }
+
+   if (GRABBED) freebuffers();
    }
 
 // get parameters
@@ -544,8 +546,8 @@ void miniearth::rendercache()
 // grab scene
 void miniearth::grabbuffers()
    {
-   //!! glCopyTexImage2D(GL_RGB);
-   //!! glCopyTexImage2D(GL_DEPTH_COMPONENT);
+   RGBTEXID=copyframebuf();
+   ZTEXID=copyframebuf(1);
    }
 
 // draw scene
@@ -553,6 +555,13 @@ void miniearth::drawbuffers()
    {
    //!! glColorMask(GL_TRUE);
    //!! glDepthMask(GL_TRUE);
+   }
+
+// free scene
+void miniearth::freebuffers()
+   {
+   deleteframebuf(RGBTEXID);
+   deleteframebuf(ZTEXID);
    }
 
 // render scene
@@ -573,14 +582,17 @@ void miniearth::render()
       // draw buffers
       drawbuffers();
       }
+   else
+      {
+      // free buffers
+      if (GRABBED) freebuffers();
+      GRABBED=FALSE;
+      }
    }
 
 // freeze scene
 void miniearth::freeze(BOOLINT flag)
-   {
-   FREEZE=flag;
-   GRABBED=FALSE;
-   }
+   {FREEZE=flag;}
 
 // add datagrid object
 void miniearth::addgrid(datagrid *obj,BOOLINT sort)
