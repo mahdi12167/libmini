@@ -185,6 +185,14 @@ void exitstate()
 #endif
    }
 
+void clearwindow(float r,float g,float b,float a)
+   {
+#ifndef NOOGL
+   glClearColor(r,g,b,a);
+   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+#endif
+   }
+
 void disableculling()
    {
 #ifndef NOOGL
@@ -348,6 +356,35 @@ void disableblending()
 
    glDisable(GL_BLEND);
 
+#endif
+   }
+
+void enablefog(float fogstart,float fogend,float r,float g,float b,float a)
+   {
+#ifndef NOOGL
+
+   GLfloat color[4];
+
+   color[0]=r;
+   color[1]=g;
+   color[2]=b;
+   color[3]=a;
+
+   glFogfv(GL_FOG_COLOR,color);
+
+   glFogi(GL_FOG_MODE,GL_LINEAR);
+   glFogf(GL_FOG_START,fogstart);
+   glFogf(GL_FOG_END,fogend);
+
+   glEnable(GL_FOG);
+
+#endif
+   }
+
+void disablefog()
+   {
+#ifndef NOOGL
+   glDisable(GL_FOG);
 #endif
    }
 

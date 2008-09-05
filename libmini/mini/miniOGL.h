@@ -10,6 +10,8 @@ namespace miniOGL {
 void initstate();
 void exitstate();
 
+void clearwindow(float r,float g,float b,float a=1.0f);
+
 void disableculling();
 void enableBFculling();
 void enableFFculling();
@@ -35,6 +37,9 @@ void enableEMIblending();
 void enablePRJblending();
 void enableMIPblending();
 void disableblending();
+
+void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
+void disablefog();
 
 int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
 int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);

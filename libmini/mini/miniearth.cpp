@@ -372,16 +372,12 @@ void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 // render cached scene
 void miniearth::rendercache()
    {
-#ifndef NOOGL
-
    minilayer *ref;
    minilayer::MINILAYER_PARAMS lparams;
 
    minicoord egl;
 
    double alt,altf,fogf;
-
-   GLfloat color[4];
 
    miniwarp warp;
 
@@ -426,12 +422,9 @@ void miniearth::rendercache()
       // clear back buffer
       if (CLEAR)
          {
-         glClearColor((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
-                      (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
-                      (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2],
-                      1.0f);
-
-         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+         clearwindow((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
+                     (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
+                     (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
 
          CLEAR=FALSE;
          }
@@ -441,18 +434,11 @@ void miniearth::rendercache()
          {
          fogf=(1.0-altf)*EPARAMS.fogstart+altf;
 
-         color[0]=EPARAMS.fogcolor[0];
-         color[1]=EPARAMS.fogcolor[1];
-         color[2]=EPARAMS.fogcolor[2];
-         color[3]=1.0f;
-
-         glFogfv(GL_FOG_COLOR,color);
-
-         glFogi(GL_FOG_MODE,GL_LINEAR);
-         glFogf(GL_FOG_START,fogf*ref->len_g2o(EPARAMS.farp));
-         glFogf(GL_FOG_END,ref->len_g2o(EPARAMS.farp));
-
-         glEnable(GL_FOG);
+         enablefog(fogf*ref->len_g2o(EPARAMS.farp),
+                   ref->len_g2o(EPARAMS.farp),
+                   EPARAMS.fogcolor[0],
+                   EPARAMS.fogcolor[1],
+                   EPARAMS.fogcolor[2]);
          }
 
       // draw skydome
@@ -540,10 +526,8 @@ void miniearth::rendercache()
             }
 
       // disable fog
-      if (EPARAMS.usefog) glDisable(GL_FOG);
+      if (EPARAMS.usefog) disablefog();
       }
-
-#endif
    }
 
 // render data grid
@@ -595,7 +579,7 @@ void miniearth::grabbuffers()
    int startx,starty;
 
    // get viewport dimensions
-   glGetIntegerv(GL_VIEWPORT,viewport);
+   glGetIntegerv(GL_VIEWPORT,viewport); //!!
 
    startx=viewport[0];
    starty=viewport[1];
@@ -620,7 +604,7 @@ void miniearth::drawbuffers()
    int width,height;
 
    // get viewport dimensions
-   glGetIntegerv(GL_VIEWPORT,viewport);
+   glGetIntegerv(GL_VIEWPORT,viewport); //!!
 
    startx=viewport[0];
    starty=viewport[1];
