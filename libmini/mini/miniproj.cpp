@@ -11,6 +11,7 @@ miniproj::miniproj()
    RHO=0.0f;
 
    ZCLIP=FALSE;
+   ZCLIPTEXID=0;
 
    initglsetup();
    setupprogs();
@@ -630,13 +631,15 @@ void miniproj::exitproj()
    }
 
 // enable z-clipping
-void miniproj::setzclip(float nearp,float farp)
+void miniproj::setzclip(float nearp,float farp,int zcliptexid)
    {
    if (nearp>0.0f && farp>0.0f && nearp<farp) ZCLIP=TRUE;
    else ZCLIP=FALSE;
 
    ZNEAR=nearp;
    ZFAR=farp;
+
+   ZCLIPTEXID=zcliptexid;
    }
 
 // initialize z-clipping
@@ -652,7 +655,9 @@ void miniproj::initzclip()
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
-      ZTEXID=copytexrect(1);
+      if (ZCLIPTEXID!=0) ZTEXID=ZCLIPTEXID;
+      else ZTEXID=copytexrect(1);
+
       bindtexrect(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
