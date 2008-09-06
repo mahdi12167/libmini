@@ -1097,7 +1097,24 @@ void disablelinesmooth()
 #endif
    }
 
-unsigned char *readrgbpixels(int x,int y,int width,int height)
+void getviewport(int *x,int *y,int *width,int *height)
+   {
+#ifndef NOOGL
+
+   GLint viewport[4];
+
+   glGetIntegerv(GL_VIEWPORT,viewport);
+
+   *x=viewport[0];
+   *y=viewport[1];
+
+   *width=viewport[2];
+   *height=viewport[3];
+
+#endif
+   }
+
+unsigned char *readRGBpixels(int x,int y,int width,int height)
    {
    unsigned char *pixels=NULL;
 
@@ -1115,7 +1132,7 @@ unsigned char *readrgbpixels(int x,int y,int width,int height)
    return(pixels);
    }
 
-void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y)
+void writeRGBpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y)
    {
 #ifndef NOOGL
 
@@ -1143,7 +1160,7 @@ void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 #endif
    }
 
-float *readzpixels(int x,int y,int width,int height)
+float *readZpixels(int x,int y,int width,int height)
    {
    float *pixels=NULL;
 
@@ -1161,7 +1178,7 @@ float *readzpixels(int x,int y,int width,int height)
    return(pixels);
    }
 
-void writezpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y)
+void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y)
    {
 #ifndef NOOGL
 
@@ -1193,7 +1210,7 @@ void writezpixels(float *pixels,int width,int height,int winwidth,int winheight,
 #endif
    }
 
-int copyframebuf(int depthcomp)
+int copytexrect(int depthcomp)
    {
 #ifndef NOOGL
 
@@ -1246,7 +1263,7 @@ int copyframebuf(int depthcomp)
 #endif
    }
 
-void bindframebuf(int texid)
+void bindtexrect(int texid)
    {
 #ifndef NOOGL
 
@@ -1273,7 +1290,7 @@ void bindframebuf(int texid)
 #endif
    }
 
-void deleteframebuf(int texid)
+void deletetexrect(int texid)
    {deletetexmap(texid);}
 
 }

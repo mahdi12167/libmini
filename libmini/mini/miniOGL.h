@@ -87,15 +87,17 @@ void disablelinesmooth();
 
 inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
-unsigned char *readrgbpixels(int x,int y,int width,int height);
-void writergbpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+void getviewport(int *x,int *y,int *width,int *height);
 
-float *readzpixels(int x,int y,int width,int height);
-void writezpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+unsigned char *readRGBpixels(int x,int y,int width,int height);
+void writeRGBpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
-int copyframebuf(int depthcomp=0);
-void bindframebuf(int texid);
-void deleteframebuf(int texid);
+float *readZpixels(int x,int y,int width,int height);
+void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+
+int copytexrect(int depthcomp=0);
+void bindtexrect(int texid);
+void deletetexrect(int texid);
 
 // configuring
 void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation

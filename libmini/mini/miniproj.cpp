@@ -652,8 +652,8 @@ void miniproj::initzclip()
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
-      ZTEXID=copyframebuf(1);
-      bindframebuf(ZTEXID);
+      ZTEXID=copytexrect(1);
+      bindtexrect(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -677,8 +677,8 @@ void miniproj::exitzclip()
 
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
-      bindframebuf(0);
-      deleteframebuf(ZTEXID);
+      bindtexrect(0);
+      deletetexrect(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 

@@ -483,7 +483,7 @@ void savesettings()
    }
 
 // read pixels and save to file
-void readrgbpixels()
+void screenshot()
    {
    int i,j,k;
 
@@ -491,7 +491,7 @@ void readrgbpixels()
 
    unsigned char tmp;
 
-   pixels=readrgbpixels(0,0,winwidth,winheight);
+   pixels=readRGBpixels(0,0,winwidth,winheight);
 
    for (i=0; i<winwidth; i++)
       for (j=0; j<winheight/2; j++)
@@ -1281,7 +1281,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          savesettings();
          break;
       case 'P':
-         readrgbpixels();
+         screenshot();
          break;
       case 'Q':
       case 27:

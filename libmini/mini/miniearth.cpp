@@ -572,50 +572,28 @@ void miniearth::renderdgrid()
 // grab scene
 void miniearth::grabbuffers()
    {
-#ifndef NOOGL
-
-   GLint viewport[4];
-
    int startx,starty;
 
    // get viewport dimensions
-   glGetIntegerv(GL_VIEWPORT,viewport); //!!
+   getviewport(&startx,&starty,&BUFWIDTH,&BUFHEIGHT);
 
-   startx=viewport[0];
-   starty=viewport[1];
-
-   BUFWIDTH=viewport[2];
-   BUFHEIGHT=viewport[3];
-
-   RGBBUF=readrgbpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
-   ZBUF=readzpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
-
-#endif
+   // read rgb and z channels
+   RGBBUF=readRGBpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+   ZBUF=readZpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
    }
 
 // draw scene
 void miniearth::drawbuffers()
    {
-#ifndef NOOGL
-
-   GLint viewport[4];
-
    int startx,starty;
    int width,height;
 
    // get viewport dimensions
-   glGetIntegerv(GL_VIEWPORT,viewport); //!!
+   getviewport(&startx,&starty,&width,&height);
 
-   startx=viewport[0];
-   starty=viewport[1];
-
-   width=viewport[2];
-   height=viewport[3];
-
-   writergbpixels(RGBBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
-   writezpixels(ZBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
-
-#endif
+   // write rgb and z channels
+   writeRGBpixels(RGBBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+   writeZpixels(ZBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
    }
 
 // free scene
