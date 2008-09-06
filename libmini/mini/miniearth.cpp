@@ -95,6 +95,10 @@ miniearth::miniearth()
    FREEZE=FALSE;
    GRABBED=FALSE;
 
+   RGBBUF=NULL;
+   ZBUF=NULL;
+   RGBTEXID=ZTEXID=0;
+
    DATAGRID=NULL;
    SORT=FALSE;
 
@@ -564,7 +568,7 @@ void miniearth::renderdgrid()
 
             // push either sorted or unsorted grid
             if (!SORT) DATAGRID->trigger(lparams.time);
-            else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect);
+            else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect,MAXFLOAT,ZTEXID);
             }
       }
    }
@@ -621,11 +625,16 @@ void miniearth::freebuffers()
       {
       free(RGBBUF);
       free(ZBUF);
+
+      RGBBUF=NULL;
+      ZBUF=NULL;
       }
    else
       {
       deletetexrect(RGBTEXID);
       deletetexrect(ZTEXID);
+
+      RGBTEXID=ZTEXID=0;
       }
    }
 

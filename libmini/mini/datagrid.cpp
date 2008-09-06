@@ -394,7 +394,8 @@ void datagrid::trigger(const double time)
 void datagrid::trigger(const double time,
                        const minicoord &eye,const miniv3d &dir,
                        const float nearp,const float farp,const float fovy,const float aspect,
-                       const double maxradius)
+                       const double maxradius,
+                       const int zcliptexid)
    {
    minicoord ep,epd;
    miniv3d ed;
@@ -426,7 +427,7 @@ void datagrid::trigger(const double time,
    // extract view-dependent mesh
    if (INVALID) construct(); // construct the bsp tree
    SORTED=BSPT.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push_post(SORTED,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect); // push the dynamic sorted mesh
+   push_post(SORTED,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect,zcliptexid); // push the dynamic sorted mesh
    }
 
 // push the mesh for a particular time step
@@ -448,7 +449,8 @@ void datagrid::push_post(const minimesh &mesh,
 void datagrid::push_post(minimesh &mesh,
                          const double time,
                          const miniv3d &eye,const miniv3d &dir,
-                         const float nearp,const float farp,const float fovy,const float aspect)
+                         const float nearp,const float farp,const float fovy,const float aspect,
+                         const int zcliptexid)
    {
    miniv4d v;
    miniv3d e,d;
@@ -473,9 +475,9 @@ void datagrid::push_post(minimesh &mesh,
 
       scale=pow(det_mtx(MTXPOST),1.0/3);
 
-      push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect,scale);
+      push(mesh,time,e,d,nearp*scale,farp*scale,fovy,aspect,scale,zcliptexid);
       }
-   else push(mesh,time,eye,dir,nearp,farp,fovy,aspect,1.0f);
+   else push(mesh,time,eye,dir,nearp,farp,fovy,aspect,1.0f,zcliptexid);
    }
 
 // push the mesh for a particular time step
@@ -491,11 +493,12 @@ void datagrid::push(const minimesh &mesh,
                     const double time,
                     const miniv3d &eye,const miniv3d &dir,
                     const float nearp,const float farp,const float fovy,const float aspect,
-                    const float scale)
+                    const float scale,
+                    const int zcliptexid)
    {
    printf("pushing mesh of size %u for time step %g\n",
           mesh.getsize(),time);
 
-   printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g scale=%g\n",
-          eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect,scale);
+   printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g scale=%g zcliptexid=%d\n",
+          eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect,scale,zcliptexid);
    }

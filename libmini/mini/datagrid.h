@@ -88,7 +88,8 @@ class datagrid
    void trigger(const double time,
                 const minicoord &eye,const miniv3d &dir,
                 const float nearp,const float farp,const float fovy,const float aspect,
-                const double maxradius=MAXFLOAT);
+                const double maxradius=MAXFLOAT,
+                const int zcliptexid=0);
 
    //! push the mesh for a particular time step
    virtual void push(const minimesh &mesh,
@@ -99,7 +100,8 @@ class datagrid
                      const double time,
                      const miniv3d &eye,const miniv3d &dir,
                      const float nearp,const float farp,const float fovy,const float aspect,
-                     const float scale);
+                     const float scale,
+                     const int zcliptexid);
 
    protected:
 
@@ -138,7 +140,8 @@ class datagrid
    void push_post(minimesh &mesh,
                   const double time,
                   const miniv3d &eye,const miniv3d &dir,
-                  const float nearp,const float farp,const float fovy,const float aspect);
+                  const float nearp,const float farp,const float fovy,const float aspect,
+                  const int zcliptexid);
    };
 
 #endif
