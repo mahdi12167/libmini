@@ -97,6 +97,7 @@ void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,
 
 int copytexrect(int depthcomp=0);
 void bindtexrect(int texid);
+void painttexrect(int texid,int depthcomp=0);
 void deletetexrect(int texid);
 
 // configuring

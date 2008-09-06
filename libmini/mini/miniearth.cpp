@@ -574,12 +574,21 @@ void miniearth::grabbuffers()
    {
    int startx,starty;
 
-   // get viewport dimensions
-   getviewport(&startx,&starty,&BUFWIDTH,&BUFHEIGHT);
+   if (!EPARAMS.useshaders)
+      {
+      // get viewport dimensions
+      getviewport(&startx,&starty,&BUFWIDTH,&BUFHEIGHT);
 
-   // read rgb and z channels
-   RGBBUF=readRGBpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
-   ZBUF=readZpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+      // read rgb and z channels
+      RGBBUF=readRGBpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+      ZBUF=readZpixels(startx,starty,BUFWIDTH,BUFHEIGHT);
+      }
+   else
+      {
+      // copy rgb and z channels
+      RGBTEXID=copytexrect();
+      ZTEXID=copytexrect(1);
+      }
    }
 
 // draw scene
@@ -588,19 +597,36 @@ void miniearth::drawbuffers()
    int startx,starty;
    int width,height;
 
-   // get viewport dimensions
-   getviewport(&startx,&starty,&width,&height);
+   if (!EPARAMS.useshaders)
+      {
+      // get viewport dimensions
+      getviewport(&startx,&starty,&width,&height);
 
-   // write rgb and z channels
-   writeRGBpixels(RGBBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
-   writeZpixels(ZBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+      // write rgb and z channels
+      writeRGBpixels(RGBBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+      writeZpixels(ZBUF,BUFWIDTH,BUFHEIGHT,width,height,startx,starty);
+      }
+   else
+      {
+      // paint rgb and z channels
+      painttexrect(RGBTEXID);
+      painttexrect(ZTEXID,1);
+      }
    }
 
 // free scene
 void miniearth::freebuffers()
    {
-   free(RGBBUF);
-   free(ZBUF);
+   if (!EPARAMS.useshaders)
+      {
+      free(RGBBUF);
+      free(ZBUF);
+      }
+   else
+      {
+      deletetexrect(RGBTEXID);
+      deletetexrect(ZTEXID);
+      }
    }
 
 // render scene

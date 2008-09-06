@@ -1276,7 +1276,7 @@ int copytexrect(int depthcomp)
 
       if (depthcomp!=0) glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_DEPTH_TEXTURE_MODE,GL_LUMINANCE);
 
-      // copy depth component of viewport
+      // copy color or depth component of viewport
       glReadBuffer(GL_BACK);
       if (depthcomp==0) glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_RGB,startx,starty,width,height,0);
       else glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
@@ -1315,6 +1315,13 @@ void bindtexrect(int texid)
 #endif
       }
 
+#endif
+   }
+
+void painttexrect(int texid,int depthcomp)
+   {
+#ifndef NOOGL
+   clearwindow(1,1,1); //!!
 #endif
    }
 

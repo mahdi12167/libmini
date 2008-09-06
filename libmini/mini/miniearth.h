@@ -182,6 +182,7 @@ class miniearth
    BOOLINT FREEZE;
    BOOLINT GRABBED;
 
+   int RGBTEXID,ZTEXID;
    int BUFWIDTH,BUFHEIGHT;
    unsigned char *RGBBUF;
    float *ZBUF;
