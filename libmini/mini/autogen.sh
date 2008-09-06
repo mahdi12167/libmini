@@ -1,8 +1,6 @@
 #! /bin/sh
 set -e
 
-# $Id: autogen.sh,v 1.2 2006/09/07 22:19:58 rvinyard Exp $
-#
 # Copyright (c) 2002  Daniel Elstner  <daniel.elstner@gmx.net>
 #
 # This program is free software; you can redistribute it and/or modify
