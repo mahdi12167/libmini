@@ -1176,8 +1176,14 @@ void writeRGBpixels(unsigned char *pixels,int width,int height,int winwidth,int 
    glRasterPos2i(x,y);
    glDrawBuffer(GL_BACK);
 
+   glColor3f(1.0f,1.0f,1.0f);
+
+   glDepthMask(GL_FALSE);
+
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
    glDrawPixels(width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
+
+   glDepthMask(GL_TRUE);
 
    glMatrixMode(GL_MODELVIEW);
    glPopMatrix();
@@ -1221,6 +1227,8 @@ void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,
 
    glRasterPos2i(x,y);
    glDrawBuffer(GL_BACK);
+
+   glColor3f(1.0f,1.0f,1.0f);
 
    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
@@ -1268,6 +1276,8 @@ int copytexrect(int depthcomp)
 
       glGenTextures(1,&texid);
       glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
+
+      glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -1344,6 +1354,7 @@ void painttexrect(int texid,int depthcomp)
    if (depthcomp==0) glDepthMask(GL_FALSE);
    else glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
+   color(1.0f,1.0f,1.0f);
    bindtexrect(texid);
 
    beginfans();
