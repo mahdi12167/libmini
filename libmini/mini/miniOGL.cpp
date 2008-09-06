@@ -1321,7 +1321,56 @@ void bindtexrect(int texid)
 void painttexrect(int texid,int depthcomp)
    {
 #ifndef NOOGL
-   clearwindow(1,1,1); //!!
+
+   int startx,starty;
+   int width,height;
+
+   getviewport(&startx,&starty,&width,&height);
+
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glScalef(width-1,height-1,0.0f);
+   glMatrixMode(GL_TEXTURE);
+   glPushMatrix();
+   glLoadIdentity();
+   glTranslatef(0.5f,0.5f,0.0f);
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(startx,startx+width-1,starty,starty+height-1);
+   glMatrixMode(GL_MODELVIEW);
+
+   if (depthcomp==0) glDepthMask(GL_FALSE);
+   else glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+   bindtexrect(texid);
+
+   beginfans();
+   beginfan();
+   texcoord(0,0);
+   fanvertex(0.0f,0.0f,0.0f);
+   texcoord(width-1,0);
+   fanvertex(1.0f,0.0f,0.0f);
+   texcoord(width-1,height-1);
+   fanvertex(1.0f,1.0f,0.0f);
+   texcoord(0,height-1);
+   fanvertex(0.0f,1.0f,0.0f);
+   endfans();
+
+   bindtexrect(0);
+
+   if (depthcomp==0) glDepthMask(GL_TRUE);
+   else glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_TEXTURE);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   glMatrixMode(GL_MODELVIEW);
+
 #endif
    }
 
