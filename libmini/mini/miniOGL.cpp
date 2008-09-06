@@ -41,6 +41,9 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_EXT_texture_compression_s3tc")!=NULL) glext_ts3=TRUE;
       if (strstr(GL_EXTs,"GL_SGIS_generate_mipmap")!=NULL) glext_tgm=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_texture_rectangle")!=NULL) glext_tr=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_multitexture")!=NULL) glext_mt=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_vertex_program")!=NULL) glext_vp=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_fragment_program")!=NULL) glext_fp=TRUE;
 
       done=TRUE;
       }
@@ -60,6 +63,9 @@ int get_unsupported_glexts()
    if (!glext_ts3) num++;
    if (!glext_tgm) num++;
    if (!glext_tr) num++;
+   if (!glext_mt) num++;
+   if (!glext_vp) num++;
+   if (!glext_fp) num++;
 
    return(num);
    }
@@ -80,6 +86,9 @@ void print_unsupported_glexts()
       if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
       if (!glext_tgm) printf(" SGIS_generate_mipmap");
       if (!glext_tr) printf(" GL_ARB_texture_rectangle");
+      if (!glext_mt) printf(" GL_ARB_multitexture");
+      if (!glext_vp) printf(" GL_ARB_vertex_program");
+      if (!glext_fp) printf(" GL_ARB_fragment_program");
 
       printf("\n");
       }
@@ -108,6 +117,25 @@ static void initwglprocs()
          {
          if ((glCompressedTexImage2DARB=(PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)wglGetProcAddress("glCompressedTexImage2DARB"))==NULL) ERRORMSG();
          if ((glGetCompressedTexImageARB=(PFNGLGETCOMPRESSEDTEXIMAGEARBPROC)wglGetProcAddress("glGetCompressedTexImageARB"))==NULL) ERRORMSG();
+         }
+#endif
+
+#ifdef GL_ARB_multitexture
+      if (glext_mt)
+         {
+         glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
+         glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
+         }
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+      if (glext_vp && glext_fp)
+         {
+         glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
+         glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
+         glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
+         glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
+         glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
          }
 #endif
 

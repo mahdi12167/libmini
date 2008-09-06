@@ -27,6 +27,9 @@ BOOLINT glext_tc;
 BOOLINT glext_ts3;
 BOOLINT glext_tgm;
 BOOLINT glext_tr;
+BOOLINT glext_mt;
+BOOLINT glext_vp;
+BOOLINT glext_fp;
 
 #ifdef _WIN32
 
@@ -41,6 +44,19 @@ PFNGLTEXIMAGE3DEXTPROC glTexImage3D=NULL;
 #ifdef GL_ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB=NULL;
 PFNGLGETCOMPRESSEDTEXIMAGEARBPROC glGetCompressedTexImageARB=NULL;
+#endif
+
+#ifdef GL_ARB_multitexture
+PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
+PFNGLBINDPROGRAMARBPROC glBindProgramARB;
+PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
+PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
+PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
 #endif
 
 #endif
