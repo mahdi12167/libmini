@@ -683,7 +683,8 @@ void miniproj::exitzclip()
       glActiveTextureARB(GL_TEXTURE4_ARB);
 
       bindtexrect(0);
-      deletetexrect(ZTEXID);
+
+      if (ZCLIPTEXID==0) deletetexrect(ZTEXID);
 
       glActiveTextureARB(GL_TEXTURE0_ARB);
 
