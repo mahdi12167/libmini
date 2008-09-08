@@ -108,7 +108,7 @@ foreach option ("$option0" "$option1" "$option2" "$option3" "$option4" "$option5
       set usegreyc
    endif
    if ("$option" == "wall") then
-      set defs="$defs -W -Wall"
+      set defs="$defs -Wall -Wextra"
    endif
 end
 
