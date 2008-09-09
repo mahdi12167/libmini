@@ -122,7 +122,10 @@ void minishader::setVISshader(minicache *cache,
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
       POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
+      LRP col.xyz,fog.x,c4,col; \n";
+
+   // fragment program for the terrain (terminating snippet #3)
+   static const char *fragprog_t3="\
       ### write resulting color \n\
       MOV result.color,col; \n\
       END \n";
@@ -214,17 +217,17 @@ void minishader::setVISshader(minicache *cache,
 
    // concatenate pixel shader
    if (bathystart==bathyend || VISBATHYMAP==NULL)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // without color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else if (seabottom<0.0f)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -238,7 +241,7 @@ void minishader::setVISshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,fragprog_t2);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
@@ -375,7 +378,10 @@ void minishader::setNPRshader(minicache *cache,
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
       POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
+      LRP col.xyz,fog.x,c4,col; \n";
+
+   // fragment program for the terrain (terminating snippet #3)
+   static const char *fragprog_t3="\
       ### write resulting color \n\
       MOV result.color,col; \n\
       END \n";
@@ -471,13 +477,13 @@ void minishader::setNPRshader(minicache *cache,
 
    // concatenate pixel shader
    if (bathystart==bathyend || NPRBATHYMAP==NULL)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // without color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -491,7 +497,7 @@ void minishader::setNPRshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,fragprog_t2);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
@@ -540,7 +546,7 @@ void minishader::unsetshaders(minicache *cache)
    }
 
 // concatenate shader program from snippets
-char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7)
+char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7,const char *s8)
    {
    char *prog1,*prog2;
 
@@ -555,6 +561,8 @@ char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const 
    free(prog2);
    prog2=strcct(prog1,s7);
    free(prog1);
+   prog1=strcct(prog2,s8);
+   free(prog2);
 
-   return(prog2);
+   return(prog1);
    }
