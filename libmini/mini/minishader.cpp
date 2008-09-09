@@ -92,14 +92,14 @@ void minishader::setVISshader(minicache *cache,
    // fragment program for the terrain (snippet #5, overlay mode)
    static const char *fragprog1_s5o="\
       ## blend in detail texture \n\
-      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
    // fragment program for the terrain (snippet #5, modulate mode)
    static const char *fragprog1_s5m="\
       ### blend in detail texture \n\
-      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
       MAD colt,colt,opa.a,opa.x; \n\
@@ -345,14 +345,14 @@ void minishader::setNPRshader(minicache *cache,
    // fragment program for the terrain (snippet #5, overlay mode)
    static const char *fragprog1_s5o="\
       ## blend in detail texture \n\
-      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
    // fragment program for the terrain (snippet #5, modulate mode)
    static const char *fragprog1_s5m="\
       ### blend in detail texture \n\
-      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
       MAD colt,colt,opa.a,opa.x; \n\
