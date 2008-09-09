@@ -31,6 +31,8 @@ void minishader::setVISshader(minicache *cache,
    {
    char *fragprog;
 
+   BOOLINT usefog,usemap,usecnt,usesea;
+
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
@@ -159,8 +161,14 @@ void minishader::setVISshader(minicache *cache,
    cache->setvtxshader();
    cache->usevtxshader(1);
 
+   // check parameters
+   usefog=(fogstart<fogend);
+   usemap=(exaggeration*(bathystart-bathyend)!=0.0f && VISBATHYMAP!=NULL);
+   usecnt=(exaggeration*contours!=0.0f);
+   usesea=(sealevel!=-MAXFLOAT && exaggeration*seabottom!=0.0f);
+
    // calculate the fog parameters
-   if (fogstart<fogend)
+   if (usefog)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
@@ -174,7 +182,7 @@ void minishader::setVISshader(minicache *cache,
       }
 
    // calculate the bathymetry parameters
-   if (exaggeration*(bathystart-bathyend)!=0.0f)
+   if (usemap)
       {
       bathy_a=bathystart*exaggeration/scale;
       bathy_b=scale/(exaggeration*(bathystart-bathyend));
@@ -188,7 +196,7 @@ void minishader::setVISshader(minicache *cache,
       }
 
    // calculate the contour parameters
-   if (exaggeration*contours!=0.0f)
+   if (usecnt)
       {
       cnt_a=scale/(exaggeration*fabs(contours));
       cnt_b=3.0f;
@@ -204,7 +212,7 @@ void minishader::setVISshader(minicache *cache,
       }
 
    // calculate the sea parameters
-   if (sealevel!=-MAXFLOAT && exaggeration*seabottom!=0.0f)
+   if (usesea)
       {
       sea_a=sealevel*exaggeration/scale;
       sea_b=scale/(exaggeration*fabs(seabottom));
@@ -216,18 +224,18 @@ void minishader::setVISshader(minicache *cache,
       }
 
    // concatenate pixel shader
-   if (bathystart==bathyend || VISBATHYMAP==NULL)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
+   if (!usemap)
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else if (seabottom<0.0f)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -241,7 +249,7 @@ void minishader::setVISshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
@@ -288,6 +296,8 @@ void minishader::setNPRshader(minicache *cache,
                               float seagray)
    {
    char *fragprog;
+
+   BOOLINT usefog,usemap,usecnt;
 
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
@@ -415,8 +425,13 @@ void minishader::setNPRshader(minicache *cache,
    cache->setvtxshader();
    cache->usevtxshader(1);
 
+   // check parameters
+   usefog=(fogstart<fogend);
+   usemap=(exaggeration*(bathystart-bathyend)!=0.0f && NPRBATHYMAP!=NULL);
+   usecnt=(exaggeration*contours!=0.0f);
+
    // calculate the fog parameters
-   if (fogstart<fogend)
+   if (usefog)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
@@ -430,7 +445,7 @@ void minishader::setNPRshader(minicache *cache,
       }
 
    // calculate the bathymetry parameters
-   if (exaggeration*(bathystart-bathyend)!=0.0f)
+   if (usemap)
       {
       bathy_a=bathystart*exaggeration/scale;
       bathy_b=scale/(exaggeration*(bathystart-bathyend));
@@ -444,7 +459,7 @@ void minishader::setNPRshader(minicache *cache,
       }
 
    // calculate the contour parameters
-   if (exaggeration*contours!=0.0f)
+   if (usecnt)
       {
       cnt_a=scale/(exaggeration*fabs(contours));
       cnt_b=5.0f;
@@ -476,14 +491,14 @@ void minishader::setNPRshader(minicache *cache,
       }
 
    // concatenate pixel shader
-   if (bathystart==bathyend || NPRBATHYMAP==NULL)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
+   if (!usemap)
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,(exaggeration*contours!=0.0f)?fragprog1_s4:NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3); // with color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -497,7 +512,7 @@ void minishader::setNPRshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,(fogstart<fogend)?fragprog_t2:NULL,fragprog_t3);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
