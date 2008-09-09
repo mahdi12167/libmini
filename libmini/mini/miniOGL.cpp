@@ -85,10 +85,10 @@ void print_unsupported_glexts()
       if (!glext_tc) printf(" ARB_texture_compression");
       if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
       if (!glext_tgm) printf(" SGIS_generate_mipmap");
-      if (!glext_tr) printf(" GL_ARB_texture_rectangle");
-      if (!glext_mt) printf(" GL_ARB_multitexture");
-      if (!glext_vp) printf(" GL_ARB_vertex_program");
-      if (!glext_fp) printf(" GL_ARB_fragment_program");
+      if (!glext_tr) printf(" ARB_texture_rectangle");
+      if (!glext_mt) printf(" ARB_multitexture");
+      if (!glext_vp) printf(" ARB_vertex_program");
+      if (!glext_fp) printf(" ARB_fragment_program");
 
       printf("\n");
       }
