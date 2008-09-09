@@ -101,6 +101,8 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #include <mini/viewerbase.h>
 
+#include <mini/panorndr.h>
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -1294,6 +1296,15 @@ void keyboardfunc(unsigned char key,int x,int y)
    wakeup=1;
    }
 
+// initialize waypoint addons
+void initaddons()
+   {
+   static minipointrndr_panorndr pano;
+
+   // register waypoint renderer
+   viewer->getearth()->getterrain()->registerrndr(&pano);
+   }
+
 // main function
 int main(int argc,char *argv[])
    {
@@ -1414,6 +1425,9 @@ int main(int argc,char *argv[])
 
    // load settings
    loadsettings();
+
+   // initialize waypoint addons
+   initaddons();
 
    // enter event loop
    glutMainLoop();

@@ -115,8 +115,8 @@ void miniglobe::create_globe(float radius,const float color[3])
    {
    int i,j;
 
-   int const alpha_steps=4*STRIPES;
-   int const beta_steps=STRIPES;
+   const int alpha_steps=4*STRIPES;
+   const int beta_steps=STRIPES;
 
    float u,v;
    float alpha,beta;

@@ -40,6 +40,8 @@ class minishader
    static void setNPRbathymap(unsigned char *bathymap,
                               int bathywidth,int bathyheight,int bathycomps);
 
+   static void setdetailtexmode(int mode,float alpha);
+
    static void unsetshaders(minicache *cache);
 
    protected:
@@ -53,6 +55,11 @@ class minishader
    static unsigned char *NPRBATHYMAP;
    static int NPRBATHYWIDTH,NPRBATHYHEIGHT,NPRBATHYCOMPS;
    static int NPRBATHYMOD;
+
+   static int DETAILTEXMODE;
+   static float DETAILTEXALPHA;
+
+   static char *concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7);
    };
 
 #endif

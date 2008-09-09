@@ -12,6 +12,9 @@ unsigned char *minishader::NPRBATHYMAP=NULL;
 int minishader::NPRBATHYWIDTH=0,minishader::NPRBATHYHEIGHT=0,minishader::NPRBATHYCOMPS=0;
 int minishader::NPRBATHYMOD=0;
 
+int minishader::DETAILTEXMODE=0;
+float minishader::DETAILTEXALPHA=0.0f;
+
 // enable vertex and pixel shader for VIS purposes
 void minishader::setVISshader(minicache *cache,
                               float scale,float exaggeration,
@@ -26,63 +29,15 @@ void minishader::setVISshader(minicache *cache,
                               float bottomcolor[3],
                               float seamodulate)
    {
+   char *fragprog;
+
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float sea_a,sea_b;
 
-   // fragment program for the terrain
-   static const char *fragprog1A="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
-      TEMP col,colb,nrm,vtx,len,fog; \n\
-      ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
-      ### fade-out at sea bottom \n\
-      SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
-      MUL_SAT vtx.w,-vtx.y,c0.y; \n\
-      SUB vtx.w,c0.w,vtx.w; \n\
-      MAD vtx.w,vtx.w,-vtx.w,c0.w; \n\
-      MUL vtx.w,vtx.w,c1.w; \n\
-      LRP colb.xyz,vtx.w,c1,col; \n\
-      CMP col.xyz,vtx.y,colb,col; \n\
-      ### modulate with contours \n\
-      MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
-      FRC vtx.y,vtx.y; \n\
-      MAD vtx.y,vtx.y,c2.z,-c2.w; \n\
-      ABS vtx.y,vtx.y; \n\
-      SUB vtx.y,c0.w,vtx.y; \n\
-      MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col.xyz,col,vtx.y; \n\
-      ### modulate with fragment color \n\
-      MUL col,col,fragment.color; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
-      POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
-
-   // fragment program for the terrain with color mapping before the fade-out
-   static const char *fragprog1B="!!ARBfp1.0 \n\
+   // fragment program for the terrain (snippet #1)
+   static const char *fragprog1_s1="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -93,10 +48,13 @@ void minishader::setVISshader(minicache *cache,
       PARAM t=program.env[9]; \n\
       PARAM l=program.env[10]; \n\
       PARAM p=program.env[11]; \n\
-      TEMP col,colt,colb,nrm,vtx,len,fog; \n\
+      TEMP col,colb,colt,nrm,vtx,len,opa,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
+      MAD col,col,a.x,a.b; \n";
+
+   // fragment program for the terrain (snippet #2)
+   static const char *fragprog1_s2="\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL vtx.z,-vtx.z,c5.y; \n\
@@ -105,7 +63,10 @@ void minishader::setVISshader(minicache *cache,
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,c5.w; \n\
       MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.z,colt,col; \n\
+      CMP col.xyz,-vtx.z,colt,col; \n";
+
+   // fragment program for the terrain (snippet #3)
+   static const char *fragprog1_s3="\
       ### fade-out at sea bottom \n\
       SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
       MUL_SAT vtx.w,-vtx.y,c0.y; \n\
@@ -113,7 +74,10 @@ void minishader::setVISshader(minicache *cache,
       MAD vtx.w,vtx.w,-vtx.w,c0.w; \n\
       MUL vtx.w,vtx.w,c1.w; \n\
       LRP colb.xyz,vtx.w,c1,col; \n\
-      CMP col.xyz,vtx.y,colb,col; \n\
+      CMP col.xyz,vtx.y,colb,col; \n";
+
+   // fragment program for the terrain (snippet #4)
+   static const char *fragprog1_s4="\
       ### modulate with contours \n\
       MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
       FRC vtx.y,vtx.y; \n\
@@ -123,7 +87,26 @@ void minishader::setVISshader(minicache *cache,
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
       MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
-      MUL col,col,fragment.color; \n\
+      MUL col,col,fragment.color; \n";
+
+   // fragment program for the terrain (snippet #5, overlay mode)
+   static const char *fragprog1_s5o="\
+      ## blend in detail texture \n\
+      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      MUL opa.a,colt.a,c3.a; \n\
+      LRP col,opa.a,colt,col; \n";
+
+   // fragment program for the terrain (snippet #5, modulate mode)
+   static const char *fragprog1_s5m="\
+      ### blend in detail texture \n\
+      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      MUL opa.a,colt.a,c3.a; \n\
+      SUB opa.x,c4.a,opa.a; \n\
+      MAD colt,colt,opa.a,opa.x; \n\
+      MUL col,col,colt; \n";
+
+   // fragment program for the terrain (terminating snippet #1)
+   static const char *fragprog_t1="\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -131,7 +114,10 @@ void minishader::setVISshader(minicache *cache,
       MUL nrm,nrm,len.x; \n\
       DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n";
+
+   // fragment program for the terrain (terminating snippet #2)
+   static const char *fragprog_t2="\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -141,68 +127,8 @@ void minishader::setVISshader(minicache *cache,
       MOV result.color,col; \n\
       END \n";
 
-   // fragment program for the terrain with color mapping after the fade-out
-   static const char *fragprog1C="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
-      TEMP col,colt,colb,nrm,vtx,len,fog; \n\
-      ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
-      ### fade-out at sea bottom \n\
-      SUB vtx.y,fragment.texcoord[0].z,c0.x; \n\
-      MUL_SAT vtx.w,-vtx.y,c0.y; \n\
-      SUB vtx.w,c0.w,vtx.w; \n\
-      MAD vtx.w,vtx.w,-vtx.w,c0.w; \n\
-      MUL vtx.w,vtx.w,c1.w; \n\
-      LRP colb.xyz,vtx.w,c1,col; \n\
-      CMP col.xyz,vtx.y,colb,col; \n\
-      ### blend with color map \n\
-      SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
-      MUL vtx.z,-vtx.z,c5.y; \n\
-      MOV vtx.y,c5.z; \n\
-      MAD vtx.x,vtx.z,t.x,t.y; \n\
-      TEX colt,vtx,texture[1],2D; \n\
-      LRP colt.xyz,colt.w,colt,c5.w; \n\
-      MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.z,colt,col; \n\
-      ### modulate with contours \n\
-      MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
-      FRC vtx.y,vtx.y; \n\
-      MAD vtx.y,vtx.y,c2.z,-c2.w; \n\
-      ABS vtx.y,vtx.y; \n\
-      SUB vtx.y,c0.w,vtx.y; \n\
-      MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col.xyz,col,vtx.y; \n\
-      ### modulate with fragment color \n\
-      MUL col,col,fragment.color; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
-      POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
-
-   // fragment program for the sea surface
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   // fragment program for the sea surface (snippet #1)
+   static const char *fragprog2_s1="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -214,27 +140,14 @@ void minishader::setVISshader(minicache *cache,
       PARAM p=program.env[11]; \n\
       TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
-      MOV col,fragment.color; \n\
+      MOV col,fragment.color; \n";
+
+   // fragment program for the sea surface (snippet #2)
+   static const char *fragprog2_s2="\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
       MAD tex,tex,a.x,a.b; \n\
-      LRP col.xyz,c0.x,tex,col; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
-      POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
+      LRP col.xyz,c0.x,tex,col; \n";
 
    // set primary sea color
    cache->setseacolor(seacolor[0],seacolor[1],seacolor[2],seatrans);
@@ -299,20 +212,41 @@ void minishader::setVISshader(minicache *cache,
       sea_b=0.0f;
       }
 
+   // concatenate pixel shader
+   if (bathystart==bathyend || VISBATHYMAP==NULL)
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,NULL,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // without color mapping, without detail texture
+   else if (seabottom<0.0f)
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping before the fade-out, without detail texture
+   else
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s3,fragprog1_s2,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping after the fade-out, without detail texture
+
    // use pixel shader plugin
-   cache->setpixshader((bathystart==bathyend || VISBATHYMAP==NULL)?fragprog1A:(seabottom<0.0f)?fragprog1B:fragprog1C);
+   cache->setpixshader(fragprog);
    cache->setpixshaderparams(sea_a,sea_b,0.0f,1.0f);
    cache->setpixshaderparams(bottomcolor[0],bottomcolor[1],bottomcolor[2],bottomtrans,1);
    cache->setpixshaderparams(cnt_a,cnt_b,cnt_c,cnt_d,2);
-   cache->setpixshaderparams(fog_a,fog_b,fog_c,0.0f,3);
-   cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
+   cache->setpixshaderparams(fog_a,fog_b,fog_c,DETAILTEXALPHA,3);
+   cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
    cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
    cache->usepixshader(1);
-   cache->setseashader(fragprog2);
+   free(fragprog);
+
+   // concatenate sea shader
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,fragprog_t2);
+
+   // use sea shader plugin
+   cache->setseashader(fragprog);
    cache->setseashaderparams(seamodulate,0.0f,0.0f,0.0f);
    cache->setseashaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setseashaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
    cache->useseashader(1);
+   free(fragprog);
 
    // set bathymetry color map
    if (VISBATHYMAP!=NULL && VISBATHYMOD!=0)
@@ -350,61 +284,15 @@ void minishader::setNPRshader(minicache *cache,
                               float seacolor[3],float seatrans,
                               float seagray)
    {
+   char *fragprog;
+
    float fog_a,fog_b,fog_c;
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float npr_a,npr_b,npr_c,npr_d;
 
-   // fragment program for the terrain
-   static const char *fragprog1A="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
-      TEMP col,nrm,vtx,len,fog; \n\
-      ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
-      ### fade texture \n\
-      DP3 col.xyz,col,c0; \n\
-      ADD col.xyz,col,c0.w; \n\
-      ### replace bathymetry \n\
-      SUB vtx.y,fragment.texcoord[0].z,c1.w; \n\
-      CMP col.xyz,vtx.y,c1,col; \n\
-      ### modulate with contours \n\
-      MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
-      FRC vtx.y,vtx.y; \n\
-      MAD vtx.y,vtx.y,c2.z,-c2.w; \n\
-      ABS vtx.y,vtx.y; \n\
-      SUB vtx.y,c4.w,vtx.y; \n\
-      MUL_SAT vtx.y,vtx.y,c2.y; \n\
-      MUL col.xyz,col,vtx.y; \n\
-      ### modulate with fragment color \n\
-      MUL col,col,fragment.color; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
-      POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
-
-   // fragment program for the terrain with color mapping
-   static const char *fragprog1B="!!ARBfp1.0 \n\
+   // fragment program for the terrain (snippet #1)
+   static const char *fragprog1_s1="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -415,16 +303,22 @@ void minishader::setNPRshader(minicache *cache,
       PARAM t=program.env[9]; \n\
       PARAM l=program.env[10]; \n\
       PARAM p=program.env[11]; \n\
-      TEMP col,colt,nrm,vtx,len,fog; \n\
+      TEMP col,colt,nrm,vtx,len,opa,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
+      MAD col,col,a.x,a.b; \n";
+
+   // fragment program for the terrain (snippet #2)
+   static const char *fragprog1_s2="\
       ### fade texture \n\
       DP3 col.xyz,col,c0; \n\
       ADD col.xyz,col,c0.w; \n\
       ### replace bathymetry \n\
       SUB vtx.y,fragment.texcoord[0].z,c1.w; \n\
-      CMP col.xyz,vtx.y,c1,col; \n\
+      CMP col.xyz,vtx.y,c1,col; \n";
+
+   // fragment program for the terrain (snippet #3)
+   static const char *fragprog1_s3="\
       ### blend with color map \n\
       SUB vtx.z,fragment.texcoord[0].z,c5.x; \n\
       MUL vtx.z,-vtx.z,c5.y; \n\
@@ -433,7 +327,10 @@ void minishader::setNPRshader(minicache *cache,
       TEX colt,vtx,texture[1],2D; \n\
       LRP colt.xyz,colt.w,colt,c5.w; \n\
       MUL colt.xyz,colt,col; \n\
-      CMP col.xyz,-vtx.z,colt,col; \n\
+      CMP col.xyz,-vtx.z,colt,col; \n";
+
+   // fragment program for the terrain (snippet #4)
+   static const char *fragprog1_s4="\
       ### modulate with contours \n\
       MUL vtx.y,fragment.texcoord[0].z,-c2.x; \n\
       FRC vtx.y,vtx.y; \n\
@@ -443,7 +340,26 @@ void minishader::setNPRshader(minicache *cache,
       MUL_SAT vtx.y,vtx.y,c2.y; \n\
       MUL col.xyz,col,vtx.y; \n\
       ### modulate with fragment color \n\
-      MUL col,col,fragment.color; \n\
+      MUL col,col,fragment.color; \n";
+
+   // fragment program for the terrain (snippet #5, overlay mode)
+   static const char *fragprog1_s5o="\
+      ## blend in detail texture \n\
+      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      MUL opa.a,colt.a,c3.a; \n\
+      LRP col,opa.a,colt,col; \n";
+
+   // fragment program for the terrain (snippet #5, modulate mode)
+   static const char *fragprog1_s5m="\
+      ### blend in detail texture \n\
+      TEX colt,fragment.texcoord[3],texture[3],2D; \n\
+      MUL opa.a,colt.a,c3.a; \n\
+      SUB opa.x,c4.a,opa.a; \n\
+      MAD colt,colt,opa.a,opa.x; \n\
+      MUL col,col,colt; \n";
+
+   // fragment program for the terrain (terminating snippet #1)
+   static const char *fragprog_t1="\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -451,7 +367,10 @@ void minishader::setNPRshader(minicache *cache,
       MUL nrm,nrm,len.x; \n\
       DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n";
+
+   // fragment program for the terrain (terminating snippet #2)
+   static const char *fragprog_t2="\
       ### modulate with spherical fog \n\
       MOV fog.x,fragment.fogcoord.x; \n\
       MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
@@ -461,8 +380,8 @@ void minishader::setNPRshader(minicache *cache,
       MOV result.color,col; \n\
       END \n";
 
-   // fragment program for the sea surface
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   // fragment program for the sea surface (snippet #1)
+   static const char *fragprog2_s1="!!ARBfp1.0 \n\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
       PARAM c2=program.env[2]; \n\
@@ -474,27 +393,14 @@ void minishader::setNPRshader(minicache *cache,
       PARAM p=program.env[11]; \n\
       TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
-      MOV col,fragment.color; \n\
+      MOV col,fragment.color; \n";
+
+   // fragment program for the sea surface (snippet #2)
+   static const char *fragprog2_s2="\
       ### modulate with texture color \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
       MAD tex,tex,a.x,a.b; \n\
-      LRP col.xyz,c0.x,tex,col; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
-      POW fog.x,fog.x,c3.z; \n\
-      LRP col.xyz,fog.x,c4,col; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
+      LRP col.xyz,c0.x,tex,col; \n";
 
    // set primary sea color
    cache->setseacolor(seacolor[0],seacolor[1],seacolor[2],seatrans);
@@ -563,20 +469,37 @@ void minishader::setNPRshader(minicache *cache,
       npr_d=fadefactor;
       }
 
+   // concatenate pixel shader
+   if (bathystart==bathyend || NPRBATHYMAP==NULL)
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // without color mapping, without detail texture
+   else
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5o,fragprog_t1,fragprog_t2); // with color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,fragprog1_s5m,fragprog_t1,fragprog_t2); // with color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,fragprog1_s4,NULL,fragprog_t1,fragprog_t2); // with color mapping, without detail texture
+
    // use pixel shader plugin
-   cache->setpixshader((bathystart==bathyend || NPRBATHYMAP==NULL)?fragprog1A:fragprog1B);
+   cache->setpixshader(fragprog);
    cache->setpixshaderparams(npr_a,npr_b,npr_c,npr_d);
    cache->setpixshaderparams(seagray,seagray,seagray,sealevel/scale,1);
    cache->setpixshaderparams(cnt_a,cnt_b,cnt_c,cnt_d,2);
-   cache->setpixshaderparams(fog_a,fog_b,fog_c,0.0f,3);
+   cache->setpixshaderparams(fog_a,fog_b,fog_c,DETAILTEXALPHA,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
    cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
    cache->usepixshader(1);
-   cache->setseashader(fragprog2);
+   free(fragprog);
+
+   // concatenate sea shader
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,fragprog_t2);
+
+   // use sea shader plugin
+   cache->setseashader(fragprog);
    cache->setseashaderparams(0.0f,0.0f,0.0f,0.0f);
    cache->setseashaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setseashaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
    cache->useseashader(1);
+   free(fragprog);
 
    // set bathymetry color map
    if (NPRBATHYMAP!=NULL && NPRBATHYMOD!=0)
@@ -601,10 +524,37 @@ void minishader::setNPRbathymap(unsigned char *bathymap,
    NPRBATHYMOD=1;
    }
 
+// set detail texturing mode (0=off 1=overlay 2=modulate)
+void minishader::setdetailtexmode(int mode,float alpha)
+   {
+   DETAILTEXMODE=mode;
+   DETAILTEXALPHA=alpha;
+   }
+
 // disable vertex and pixel shaders
 void minishader::unsetshaders(minicache *cache)
    {
    cache->usevtxshader(0);
    cache->usepixshader(0);
    cache->useseashader(0);
+   }
+
+// concatenate shader program from snippets
+char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7)
+   {
+   char *prog1,*prog2;
+
+   prog1=strcct(s1,s2);
+   prog2=strcct(prog1,s3);
+   free(prog1);
+   prog1=strcct(prog2,s4);
+   free(prog2);
+   prog2=strcct(prog1,s5);
+   free(prog1);
+   prog1=strcct(prog2,s6);
+   free(prog2);
+   prog2=strcct(prog1,s7);
+   free(prog1);
+
+   return(prog2);
    }

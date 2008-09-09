@@ -86,6 +86,7 @@ class minipointopts
       OPTION_TYPE_BRICK3=3, // 3-pass brick type
       OPTION_TYPE_BRICK4=4, // 4-pass brick type
       OPTION_TYPE_UNUSED=5, // unused type
+      OPTION_TYPE_FREE=6, // free range
       };
 
    //! default constructor
