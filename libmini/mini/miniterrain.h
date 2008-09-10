@@ -162,6 +162,11 @@ class miniterrain
       float nprseatrans;
       float nprseagray;
 
+      // optional detail textures:
+
+      int detailtexmode;
+      float detailtexalpha;
+
       // optional way-points:
 
       const char *waypoints;
@@ -331,6 +336,9 @@ class miniterrain
    //! get total amount of cache memory
    double getcachemem();
 
+   //! add detail texture
+   void adddetailtex(int texid,int width,int height,miniv4d &u,miniv4d &v,float alpha);
+
    //! register waypoint renderer
    void registerrndr(minipointrndr *rndr);
 
@@ -377,6 +385,11 @@ class miniterrain
 
    int LREF;
    minilayer *REFERENCE;
+
+   int DETAILTEXID;
+   int DETAILTEXWIDTH,DETAILTEXHEIGHT;
+   miniv4d DETAILTEXU,DETAILTEXV;
+   float DETAILTEXALPHA;
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);

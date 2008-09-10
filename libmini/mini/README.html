@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.7 as of 9.September.2008<br>
+Version 8.8.7 as of 10.September.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1406,28 +1406,29 @@ modulating texture environment.<p>
 <pre>
    // default pixel shader
    static const char *fragprog="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM c6=program.env[6]; \n\
-      PARAM c7=program.env[7]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.b; \n\
+      MAD col,col,a.x,a.y; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
       RSQ len.x,len.x; \n\
       MUL nrm,nrm,len.x; \n\
-      DP3 nrm.z,nrm,l; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
       ### modulate with fragment color \n\

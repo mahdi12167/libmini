@@ -169,6 +169,11 @@ miniterrain::miniterrain()
    TPARAMS.nprseatrans=0.25f;    // NPR transparency of sea surface
    TPARAMS.nprseagray=0.5f;      // NPR grayness of bathymetry
 
+   // optional detail textures:
+
+   TPARAMS.detailtexmode=0;     // detail texture mode (0=off 1=overlay 2=modulate)
+   TPARAMS.detailtexalpha=0.0f; // detail texture opacity
+
    // optional way-points:
 
    TPARAMS.waypoints="Waypoints.txt"; // waypoint file
@@ -201,6 +206,11 @@ miniterrain::miniterrain()
 
    DEFAULT_LAYER=LNUM;
    setreference(DEFAULT_LAYER);
+
+   DETAILTEXID=0;
+   DETAILTEXWIDTH=DETAILTEXHEIGHT=0;
+   DETAILTEXU=DETAILTEXV=miniv4d(0.0);
+   DETAILTEXALPHA=0.0f;
 
    THREADDATA=NULL;
    THREADINIT=NULL;
@@ -856,6 +866,29 @@ void miniterrain::render()
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
                                      0.0f,0.0f,0.0f,0.0f,1.0f);
+
+         for (n=0; n<LNUM; n++)
+            if (LAYER[n]->getterrain()!=NULL)
+               if (TPARAMS.detailtexmode!=0)
+                  {
+                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
+                                            DETAILTEXU.x,DETAILTEXU.y,DETAILTEXU.z,DETAILTEXU.w,
+                                            DETAILTEXV.x,DETAILTEXV.y,DETAILTEXV.z,DETAILTEXV.w);
+
+                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),DETAILTEXALPHA);
+
+                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),DETAILTEXID,DETAILTEXWIDTH,DETAILTEXHEIGHT);
+                  }
+               else
+                  {
+                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+
+                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),0.0f);
+
+                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),0,0,0);
+                  }
+
+         minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha);
          }
 
       // render vertex arrays
@@ -1098,6 +1131,20 @@ double miniterrain::getcachemem()
       if (LAYER[n]->getcache()!=NULL) cachemem+=LAYER[n]->getcache()->getmem();
 
    return(cachemem);
+   }
+
+// add detail texture
+void miniterrain::adddetailtex(int texid,int width,int height,miniv4d &u,miniv4d &v,float alpha)
+   {
+   DETAILTEXID=texid;
+
+   DETAILTEXWIDTH=width;
+   DETAILTEXHEIGHT=height;
+
+   DETAILTEXU=u;
+   DETAILTEXV=v;
+
+   DETAILTEXALPHA=alpha;
    }
 
 // register waypoint renderer

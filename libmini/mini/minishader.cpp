@@ -40,16 +40,17 @@ void minishader::setVISshader(minicache *cache,
 
    // fragment program for the terrain (snippet #1)
    static const char *fragprog1_s1="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
       TEMP col,colb,colt,nrm,vtx,len,opa,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
@@ -95,14 +96,16 @@ void minishader::setVISshader(minicache *cache,
    static const char *fragprog1_s5o="\
       ## blend in detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
-      MUL opa.a,colt.a,c3.a; \n\
+      MUL opa.a,colt.a,o.a; \n\
+      MUL opa.a,opa.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
    // fragment program for the terrain (snippet #5, modulate mode)
    static const char *fragprog1_s5m="\
       ### blend in detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
-      MUL opa.a,colt.a,c3.a; \n\
+      MUL opa.a,colt.a,o.a; \n\
+      MUL opa.a,opa.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
       MAD colt,colt,opa.a,opa.x; \n\
       MUL col,col,colt; \n";
@@ -134,15 +137,16 @@ void minishader::setVISshader(minicache *cache,
 
    // fragment program for the sea surface (snippet #1)
    static const char *fragprog2_s1="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
       TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
@@ -306,16 +310,17 @@ void minishader::setNPRshader(minicache *cache,
 
    // fragment program for the terrain (snippet #1)
    static const char *fragprog1_s1="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
       TEMP col,colt,nrm,vtx,len,opa,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
@@ -359,14 +364,16 @@ void minishader::setNPRshader(minicache *cache,
    static const char *fragprog1_s5o="\
       ## blend in detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
-      MUL opa.a,colt.a,c3.a; \n\
+      MUL opa.a,colt.a,o.a; \n\
+      MUL opa.a,opa.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
    // fragment program for the terrain (snippet #5, modulate mode)
    static const char *fragprog1_s5m="\
       ### blend in detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
-      MUL opa.a,colt.a,c3.a; \n\
+      MUL opa.a,colt.a,o.a; \n\
+      MUL opa.a,opa.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
       MAD colt,colt,opa.a,opa.x; \n\
       MUL col,col,colt; \n";
@@ -398,15 +405,16 @@ void minishader::setNPRshader(minicache *cache,
 
    // fragment program for the sea surface (snippet #1)
    static const char *fragprog2_s1="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
       TEMP col,tex,nrm,len,fog; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";

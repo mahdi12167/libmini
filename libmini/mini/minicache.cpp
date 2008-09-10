@@ -233,6 +233,8 @@ void minicache::initterrain(TERRAIN_TYPE *t)
 
    t->detail_texid=0;
    t->detail_width=t->detail_height=0;
+   t->detail_alpha=0.0f;
+   t->detail_nofree=0;
    }
 
 // free terrain
@@ -252,7 +254,8 @@ void minicache::freeterrain(TERRAIN_TYPE *t)
       free(c->prism_buf);
       }
 
-   if (t->detail_texid!=0) deletetexmap(t->detail_texid);
+   if (t->detail_texid!=0)
+      if (t->detail_nofree==0) deletetexmap(t->detail_texid);
 
    delete t->ray;
    }
@@ -671,8 +674,8 @@ void minicache::rendertexmap(int m,int n,int S)
          light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
          light.normalize();
 
-         if (texid==0) setpixshadertexprm(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo);
-         else setpixshadertexprm(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo);
+         if (texid==0) setpixshadertexprm(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha); // make unspecified texture white
+         else setpixshadertexprm(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha);
          }
       }
 
@@ -990,13 +993,13 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISM_VTXPROGID);
       glEnable(GL_VERTEX_PROGRAM_ARB);
 
-      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f);
+      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f); // replace w-component
 
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISM_FRAGPROGID);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f);
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f);
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f); // light direction
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f); // light scale and offset
 
       color(pr,pg,pb,pa);
 
@@ -1279,7 +1282,7 @@ void minicache::enablevtxshader()
          bindvtxshaderdetailtex();
 
          for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,5+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]);
+            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,5+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]); // external constants
          }
       }
 
@@ -1298,8 +1301,8 @@ void minicache::setvtxshadertexprm(float s1,float s2,float o1,float o2,float sca
    if (GLEXT_VP!=0 && GLEXT_FP!=0)
       if (VTXPROGID!=0)
          {
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,s1,s2,o1,o2);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,1,0.0f,scale,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,s1,s2,o1,o2); // texgen scale and offset
+         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,1,0.0f,scale,0.0f,0.0f); // elevation scale
          }
 
 #endif
@@ -1318,10 +1321,10 @@ void minicache::setvtxshadertexgen()
 
    t=&TERRAIN[RENDER_ID];
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,t->s1,t->s2,t->s3,t->s4);
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t->t1,t->t2,t->t3,t->t4);
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,t->s1,t->s2,t->s3,t->s4); // detail texgen s-coordinate
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t->t1,t->t2,t->t3,t->t4); // detail texgen t-coordinate
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,1.0f,0.0f,1.0f,0.0f);
+   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and bias
 
 #endif
 
@@ -1339,7 +1342,7 @@ void minicache::bindvtxshaderdetailtex()
 
    t=&TERRAIN[RENDER_ID];
 
-   if (t->detail_texid!=0)
+   if (t->detail_texid!=0 && t->detail_width>0 && t->detail_height>0)
       {
       if (GLEXT_MT!=0)
          {
@@ -1351,8 +1354,8 @@ void minicache::bindvtxshaderdetailtex()
          }
 
       glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,
-                                 0.5f/t->detail_width,(t->detail_width-1)/t->detail_width,
-                                 0.5f/t->detail_height,(t->detail_height-1)/t->detail_height);
+                                 0.5f/t->detail_width,(t->detail_width-1)/t->detail_width, // detail texgen scale and bias for s-coordinate
+                                 0.5f/t->detail_height,(t->detail_height-1)/t->detail_height); // detail texgen scale and bias for t-coordinate
       }
 
 #endif
@@ -1418,18 +1421,19 @@ void minicache::setpixshader(const char *fp)
 
    // default pixel shader
    static const char *fragprog="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM c6=program.env[6]; \n\
-      PARAM c7=program.env[7]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
@@ -1519,6 +1523,16 @@ void minicache::setpixshadertexgen(minitile *terrain,float s1,float s2,float s3,
    t->t4=t4;
    }
 
+// define detail texture opacity parameter per tileset
+void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
+   {
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[terrain->getid()];
+
+   t->detail_alpha=alpha;
+   }
+
 // define RGB[A] detail texture per tileset
 void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components)
    {
@@ -1530,7 +1544,7 @@ void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int
 
    if (t->detail_texid!=0)
       {
-      deletetexmap(t->detail_texid);
+      if (t->detail_nofree==0) deletetexmap(t->detail_texid);
       t->detail_texid=0;
       }
 
@@ -1542,6 +1556,10 @@ void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int
 
       t->detail_width=width;
       t->detail_height=height;
+
+      t->detail_alpha=1.0f;
+
+      t->detail_nofree=0;
       }
    }
 
@@ -1552,6 +1570,31 @@ void minicache::setpixshaderdetailtexRGB(minitile *terrain,unsigned char *image,
 // define RGBA detail texture per tileset
 void minicache::setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height)
    {setpixshaderdetailtex(terrain,image,width,height,4);}
+
+// define detail texture id per tileset
+void minicache::setpixshaderdetailtexid(minitile *terrain,int texid,int width,int height)
+   {
+   TERRAIN_TYPE *t;
+
+   if (texid!=0 && (width<2 || height<2)) ERRORMSG();
+
+   t=&TERRAIN[terrain->getid()];
+
+   if (t->detail_texid!=0)
+      {
+      if (t->detail_nofree==0) deletetexmap(t->detail_texid);
+      t->detail_texid=0;
+      }
+
+   t->detail_texid=texid;
+
+   t->detail_width=width;
+   t->detail_height=height;
+
+   t->detail_alpha=1.0f;
+
+   t->detail_nofree=1;
+   }
 
 // switch pixel shader plugin on/off
 void minicache::usepixshader(int on)
@@ -1564,18 +1607,19 @@ void minicache::setseashader(const char *sp)
 
    // default sea shader
    static const char *seaprog="!!ARBfp1.0 \n\
-      PARAM c0=program.env[0]; \n\
-      PARAM c1=program.env[1]; \n\
-      PARAM c2=program.env[2]; \n\
-      PARAM c3=program.env[3]; \n\
-      PARAM c4=program.env[4]; \n\
-      PARAM c5=program.env[5]; \n\
-      PARAM c6=program.env[6]; \n\
-      PARAM c7=program.env[7]; \n\
-      PARAM a=program.env[8]; \n\
-      PARAM t=program.env[9]; \n\
-      PARAM l=program.env[10]; \n\
-      PARAM p=program.env[11]; \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,nrm,len; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
@@ -1698,10 +1742,7 @@ void minicache::enablepixshader()
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRAGPROGID);
          glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
-         for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]);
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,1.0f,0.0f,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
          if (GLEXT_MT!=0)
             if (PIXSHADERTEXID!=0)
@@ -1711,11 +1752,14 @@ void minicache::enablepixshader()
                bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
                glActiveTextureARB(GL_TEXTURE0_ARB);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,9,
-                                          (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH,
-                                          (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT);
+               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
+                                          (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                                          (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
 #endif
                }
+
+         for (i=0; i<8; i++)
+            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
          }
       }
 
@@ -1727,7 +1771,8 @@ void minicache::enablepixshader()
 // set pixel shader texture mapping parameters
 void minicache::setpixshadertexprm(float s,float o,
                                    float lx,float ly,float lz,
-                                   float ls,float lo)
+                                   float ls,float lo,
+                                   float a)
    {
 #ifndef NOOGL
 
@@ -1736,10 +1781,12 @@ void minicache::setpixshadertexprm(float s,float o,
    if (GLEXT_VP!=0 && GLEXT_FP!=0)
       if (FRAGPROGID!=0 || SEAPROGID!=0)
          {
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,s,o,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,s,o,0.0f,0.0f); // color scale and offset
 
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,10,lx,ly,lz,0.0f);
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,11,ls,lo,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,lx,ly,lz,0.0f); // light direction
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,ls,lo,0.0f,0.0f); // light scale and offset
+
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,4,0.0f,0.0f,0.0f,a); // detail texture alpha
          }
 
 #endif
@@ -1813,10 +1860,7 @@ void minicache::enableseashader()
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,SEAPROGID);
          glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
-         for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]);
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,8,1.0f,0.0f,0.0f,0.0f);
+         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
          if (GLEXT_MT!=0)
             if (SEASHADERTEXID!=0)
@@ -1826,11 +1870,14 @@ void minicache::enableseashader()
                bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
                glActiveTextureARB(GL_TEXTURE0_ARB);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,9,
-                                          (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH,
-                                          (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT);
+               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
+                                          (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                                          (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
 #endif
                }
+
+         for (i=0; i<8; i++)
+            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
          }
       }
 
