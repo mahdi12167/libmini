@@ -16,6 +16,8 @@ int ministrip::SNIPPETS=0;
 // initialize shader snippets
 void ministrip::initsnippets()
    {
+   // vertex program snippets:
+
    addsnippet(MINI_SNIPPET_VTX_BEGIN,"!!ARBvp1.0\n");
 
    addsnippet(MINI_SNIPPET_VTX_HEADER,"\
@@ -28,6 +30,7 @@ void ministrip::initsnippets()
       PARAM c6=program.env[6]; \n\
       PARAM c7=program.env[7]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       PARAM texmat[4]={state.matrix.texture[0]}; \n\
       TEMP vtx,col,pos; \n");
@@ -40,7 +43,18 @@ void ministrip::initsnippets()
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
       DP4 pos.z,mat[2],vtx; \n\
-      DP4 pos.w,mat[3],vtx; \n");
+      DP4 pos.w,mat[3],vtx; \n\
+      ### write transformed vertex \n\
+      MOV result.position,pos; \n");
+
+   addsnippet(MINI_SNIPPET_VTX_VIEWPOS,"\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
+      ### write view position to tex coords \n\
+      MOV result.texcoord[1],pos; \n");
 
    addsnippet(MINI_SNIPPET_VTX_NORMAL,"\
       ### fetch actual normal \n\
@@ -77,13 +91,12 @@ void ministrip::initsnippets()
       DP3 result.fogcoord.x,pos,pos; \n");
 
    addsnippet(MINI_SNIPPET_VTX_FOOTER,"\
-      ### write resulting vertex \n\
-      MOV result.position,pos; \n\
-      MOV result.color,col; \n\
-      ### write view position to tex coords \n\
-      MOV result.texcoord[1],pos; \n");
+      ### write resulting color \n\
+      MOV result.color,col; \n");
 
    addsnippet(MINI_SNIPPET_VTX_END,"END\n");
+
+   // fragment program snippets:
 
    addsnippet(MINI_SNIPPET_FRG_BEGIN,"!!ARBfp1.0\n");
 
@@ -232,6 +245,7 @@ void ministrip::initshader()
    concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN);
    concatvtxshader(slot,MINI_SNIPPET_VTX_HEADER);
    concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_VIEWPOS);
    concatvtxshader(slot,MINI_SNIPPET_VTX_NORMAL);
    concatvtxshader(slot,MINI_SNIPPET_VTX_FOOTER);
    concatvtxshader(slot,MINI_SNIPPET_VTX_END);

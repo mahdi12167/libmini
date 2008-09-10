@@ -7,6 +7,7 @@
 #define MINI_SNIPPET_VTX_BEGIN "snippet_vtx_begin"
 #define MINI_SNIPPET_VTX_HEADER "snippet_vtx_header"
 #define MINI_SNIPPET_VTX_BASIC "snippet_vtx_basic"
+#define MINI_SNIPPET_VTX_VIEWPOS "snippet_vtx_viewpos"
 #define MINI_SNIPPET_VTX_NORMAL "snippet_vtx_normal"
 #define MINI_SNIPPET_VTX_NORMAL_DIRECT "snippet_vtx_normal_direct"
 #define MINI_SNIPPET_VTX_TEX "snippet_vtx_tex"
