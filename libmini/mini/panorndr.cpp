@@ -7,6 +7,29 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    minipointrndr(minipointopts::OPTION_TYPE_FREE,1)
    {
    STRIP=new ministrip(0,3,2);
+   SLOT=STRIP->getfreeslot();
+
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BEGIN);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_HEADER);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BASIC);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_TEX);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_FOOTER);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_END);
+
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BEGIN);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_HEADER);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BASIC);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOOTER);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_END);
+
+   //!!
+   databuf buf;
+   buf.loaddata("data/EarthDay.db"); 
+   STRIP->setpixshadertexbuf(SLOT,&buf,1);
+
+   STRIP->useshader(SLOT);
+
    create_sphere(1.0f,1.0f,1.0f,1.0f,0.9f,10);
    }
 

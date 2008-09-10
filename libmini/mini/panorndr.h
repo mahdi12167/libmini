@@ -32,6 +32,7 @@ class minipointrndr_panorndr: public minipointrndr
    protected:
 
    ministrip *STRIP;
+   int SLOT;
 
    void create_sphere(float radius,
                       const float r,const float g,const float b,const float a,
