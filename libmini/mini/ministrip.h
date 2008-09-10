@@ -192,6 +192,8 @@ class ministrip
 
    struct SHADER_STRUCT
       {
+      int occupied;
+
       char *vtxprog;
 
       int vtxprogid;

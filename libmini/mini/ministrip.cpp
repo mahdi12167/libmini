@@ -182,24 +182,6 @@ void ministrip::initsnippets()
    addsnippet(MINI_SNIPPET_FRG_END,"END\n");
    }
 
-// initialize default shader
-void ministrip::initshader()
-   {
-   concatvtxshader(0,MINI_SNIPPET_VTX_BEGIN);
-   concatvtxshader(0,MINI_SNIPPET_VTX_HEADER);
-   concatvtxshader(0,MINI_SNIPPET_VTX_BASIC);
-   concatvtxshader(0,MINI_SNIPPET_VTX_NORMAL);
-   concatvtxshader(0,MINI_SNIPPET_VTX_FOOTER);
-   concatvtxshader(0,MINI_SNIPPET_VTX_END);
-
-   concatpixshader(0,MINI_SNIPPET_FRG_BEGIN);
-   concatpixshader(0,MINI_SNIPPET_FRG_HEADER);
-   concatpixshader(0,MINI_SNIPPET_FRG_BASIC);
-   concatpixshader(0,MINI_SNIPPET_FRG_SHADE);
-   concatpixshader(0,MINI_SNIPPET_FRG_FOOTER);
-   concatpixshader(0,MINI_SNIPPET_FRG_END);
-   }
-
 // free shader snippets
 void ministrip::freesnippets()
    {
@@ -231,9 +213,35 @@ int ministrip::getfreeslot()
    int n;
 
    for (n=0; n<SHADERMAX; n++)
-      if (SHADER[n].vtxprog==NULL && SHADER[n].frgprog==NULL) return(n);
+      if (SHADER[n].occupied==0)
+         {
+         SHADER[n].occupied=1;
+         return(n);
+         }
 
    return(-1);
+   }
+
+// initialize default shader
+void ministrip::initshader()
+   {
+   int slot;
+
+   slot=getfreeslot();
+
+   concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_HEADER);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_NORMAL);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_FOOTER);
+   concatvtxshader(slot,MINI_SNIPPET_VTX_END);
+
+   concatpixshader(slot,MINI_SNIPPET_FRG_BEGIN);
+   concatpixshader(slot,MINI_SNIPPET_FRG_HEADER);
+   concatpixshader(slot,MINI_SNIPPET_FRG_BASIC);
+   concatpixshader(slot,MINI_SNIPPET_FRG_SHADE);
+   concatpixshader(slot,MINI_SNIPPET_FRG_FOOTER);
+   concatpixshader(slot,MINI_SNIPPET_FRG_END);
    }
 
 // default constructor
@@ -299,6 +307,8 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
       {
       for (i=0; i<SHADERMAX; i++)
          {
+         SHADER[i].occupied=0;
+
          SHADER[i].vtxprog=NULL;
          SHADER[i].vtxprogid=0;
          SHADER[i].vtxdirty=0;
@@ -333,6 +343,7 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
          }
 
       initsnippets();
+      initshader();
       }
 
    INSTANCES++;
@@ -362,6 +373,8 @@ ministrip::~ministrip()
       {
       for (i=0; i<SHADERMAX; i++)
          {
+         SHADER[i].occupied=0;
+
          if (SHADER[i].vtxprog!=NULL)
             {
             free(SHADER[i].vtxprog);
@@ -374,6 +387,22 @@ ministrip::~ministrip()
             free(SHADER[i].frgprog);
             SHADER[i].frgprog=NULL;
             SHADER[i].frgdirty=0;
+            }
+
+         for (j=0; j<SHADERVTXPRMMAX; j++)
+            {
+            SHADER[i].vtxshaderpar1[j]=0.0f;
+            SHADER[i].vtxshaderpar2[j]=0.0f;
+            SHADER[i].vtxshaderpar3[j]=0.0f;
+            SHADER[i].vtxshaderpar4[j]=0.0f;
+            }
+
+         for (j=0; j<SHADERFRGPRMMAX; j++)
+            {
+            SHADER[i].pixshaderpar1[j]=0.0f;
+            SHADER[i].pixshaderpar2[j]=0.0f;
+            SHADER[i].pixshaderpar3[j]=0.0f;
+            SHADER[i].pixshaderpar4[j]=0.0f;
             }
 
          for (j=0; j<SHADERFRGTEXMAX; j++)
