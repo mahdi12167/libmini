@@ -97,6 +97,8 @@ void minipointrndr_panorndr::init(minipoint *points,
        nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
 
+   POINTS=points;
+
    EX=ex;
    EY=ey;
    EZ=ez;
@@ -116,10 +118,8 @@ void minipointrndr_panorndr::pre(int pass)
 // rendering method
 void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    {
+   char *filename;
    databuf buf;
-
-   int texid;
-   int width,height,mipmaps;
 
    if (pass==1)
       {
@@ -132,18 +132,26 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
 
          if (vpoint->opts->datafile!=NULL)
+            {
             if (!vpoint->opts->dataloaded)
                {
-               buf.loaddata(vpoint->opts->datafile); //!! get file
+               filename=POINTS->getfile(vpoint->opts->datafile);
+
+               if (filename!=NULL)
+                  {
+                  buf.loaddata(filename);
+                  free(filename);
+
+                  vpoint->opts->datatexmipmaps=1;
+                  vpoint->opts->datatexid=ministrip::db2texid(&buf,&vpoint->opts->datatexwidth,&vpoint->opts->datatexheight,&vpoint->opts->datatexmipmaps);
+                  buf.release();
+                  }
+
                vpoint->opts->dataloaded=TRUE;
-
-               mipmaps=1;
-               texid=ministrip::db2texid(&buf,&width,&height,&mipmaps);
-               buf.release();
-
-               STRIP->setpixshadertexid(SLOT,texid,width,height,mipmaps);
-               vpoint->opts->datatexid=texid;
                }
+
+            STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
+            }
          }
 
       STRIP->setscale(SCALEELEV);

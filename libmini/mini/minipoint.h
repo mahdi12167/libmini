@@ -144,8 +144,12 @@ class minipointopts
    BOOLINT dataloaded;
    int dataindex;
 
-   // generic data
+   // generic texture id
    int datatexid;
+   int datatexwidth,datatexheight;
+   int datatexmipmaps;
+
+   // generic data
    void *data;
    };
 

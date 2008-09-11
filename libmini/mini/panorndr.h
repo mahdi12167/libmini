@@ -40,6 +40,8 @@ class minipointrndr_panorndr: public minipointrndr
 
    private:
 
+   minipoint *POINTS;
+
    float EX,EY,EZ;
    minipointopts *GLOBAL;
    float SCALEELEV;

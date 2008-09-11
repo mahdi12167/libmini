@@ -69,6 +69,10 @@ minipointopts::minipointopts()
    dataindex=-1;
 
    datatexid=0;
+   datatexwidth=0;
+   datatexheight=0;
+   datatexmipmaps=0;
+
    data=NULL;
    }
 
