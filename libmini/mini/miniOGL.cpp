@@ -24,7 +24,7 @@ static void initglexts()
       glext_mm=FALSE;
       glext_tec=FALSE;
       glext_tfa=FALSE;
-      glext_t3D=FALSE;
+      glext_t3D=TRUE;
       glext_tc=FALSE;
       glext_ts3=FALSE;
       glext_tgm=FALSE;
@@ -41,7 +41,9 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_SGIS_texture_edge_clamp")!=NULL) glext_tec=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_edge_clamp")!=NULL) glext_tec=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_filter_anisotropic")!=NULL) glext_tfa=TRUE;
-      if (strstr(GL_EXTs,"GL_EXT_texture3D")!=NULL) glext_t3D=TRUE;
+#ifndef GL_VERSION_1_2
+      if (strstr(GL_EXTs,"GL_EXT_texture3D")==NULL) glext_t3D=FALSE;
+#endif
       if (strstr(GL_EXTs,"GL_ARB_texture_compression")!=NULL) glext_tc=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_compression_s3tc")!=NULL) glext_ts3=TRUE;
       if (strstr(GL_EXTs,"GL_SGIS_generate_mipmap")!=NULL) glext_tgm=TRUE;
@@ -939,6 +941,8 @@ void bind3Dtexmap(int texid)
 #ifndef NOOGL
 
 #ifdef GL_EXT_texture3D
+
+   if (!glext_t3D) return;
 
    if (texid>0)
       {

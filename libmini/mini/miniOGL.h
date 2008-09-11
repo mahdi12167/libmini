@@ -183,6 +183,10 @@ void print_unsupported_glexts(); // print unsupported OpenGL extensions
 #   ifndef glTexImage3D
 #      define glTexImage3D glTexImage3DEXT
 #   endif
+#else
+#   ifndef GL_EXT_texture3D
+#      define GL_EXT_texture3D
+#   endif
 #endif
 
 #endif
