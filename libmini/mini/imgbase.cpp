@@ -12,7 +12,7 @@
 #include <mini/jpegbase.h>
 #include <mini/pngbase.h>
 
-#include <mini/imgbase.h>
+#include "imgbase.h"
 
 datacalc imgbase::CALC;
 

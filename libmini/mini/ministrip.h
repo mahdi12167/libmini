@@ -147,6 +147,9 @@ class ministrip
    //! get pixel shader
    char *getpixshader(int num);
 
+   //! convert databuffer to texture id
+   static int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
+
    protected:
 
    int SIZE;

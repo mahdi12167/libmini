@@ -839,6 +839,7 @@ void ministrip::setpixshadertexid(int num,int texid,int width,int height,int mip
 // set pixel shader RGB[A] texture map from image buffer
 void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
    {
+   int texid;
    int width,height;
 
    if (num<0 || num>=SHADERMAX) ERRORMSG();
@@ -863,17 +864,9 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
       SHADER[num].pixshadertexnofree[n]=0;
       }
 
-   if (buf->type==0) SHADER[num].pixshadertexid[n]=buildLtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
-   else if (buf->type==3) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
-   else if (buf->type==4) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps);
-   else if (buf->type==5) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps=0,1,buf->bytes);
-   else if (buf->type==6) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps=0,1,buf->bytes);
-   else if (buf->type==7) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps=1,0,0,1);
-   else if (buf->type==8) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps=1,0,0,1);
-   else if (buf->type==9) SHADER[num].pixshadertexid[n]=buildRGBtexmap((unsigned char *)buf->data,&width,&height,mipmaps=1,1,buf->bytes,1);
-   else if (buf->type==10) SHADER[num].pixshadertexid[n]=buildRGBAtexmap((unsigned char *)buf->data,&width,&height,mipmaps=1,1,buf->bytes,1);
-   else ERRORMSG();
+   texid=db2texid(buf,&width,&height,&mipmaps);
 
+   SHADER[num].pixshadertexid[n]=texid;
    SHADER[num].pixshadertexw[n]=width;
    SHADER[num].pixshadertexh[n]=height;
    SHADER[num].pixshadertexmm[n]=mipmaps;
@@ -1221,6 +1214,33 @@ char *ministrip::getpixshader(int num)
    if (num<0 || num>=SHADERMAX) ERRORMSG();
 
    return(SHADER[num].frgprog);
+   }
+
+// convert databuffer to texture id
+int ministrip::db2texid(databuf *buf,int *width,int *height,int *mipmaps)
+   {
+   int texid;
+
+   if (buf->missing()) ERRORMSG();
+
+   if (buf->xsize<2 || buf->ysize<2 ||
+       buf->zsize>1 || buf->tsteps>1) ERRORMSG();
+
+   *width=buf->xsize;
+   *height=buf->ysize;
+
+   if (buf->type==databuf::DATABUF_TYPE_BYTE) texid=buildLtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_S3TC) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=0,1,buf->bytes);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_S3TC) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=0,1,buf->bytes);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_MM) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,0,0,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,0,0,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_MM_S3TC) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM_S3TC) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
+   else ERRORMSG();
+
+   return(texid);
    }
 
 // Windows OpenGL extension setup

@@ -3,7 +3,7 @@
 #include <mini/minibase.h>
 
 #ifndef NOSQUISH
-#include <mini/squishbase.h>
+#include "squishbase.h"
 #endif
 
 #include <squish.h> // HINT: do not install the header file in /usr/include on MacOS X

@@ -12,7 +12,7 @@
 
 #include <mini/miniOGL.h>
 
-#include <mini/viewerbase.h>
+#include "viewerbase.h"
 
 // default constructor
 viewerbase::viewerbase()

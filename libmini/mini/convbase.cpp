@@ -7,7 +7,7 @@
 #include <mini/greycbase.h>
 #endif
 
-#include <mini/convbase.h>
+#include "convbase.h"
 
 namespace convbase {
 

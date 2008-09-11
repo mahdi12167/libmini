@@ -1,5 +1,8 @@
 // (c) by Stefan Roettger
 
+#include <mini/miniOGL.h>
+#include <mini/database.h>
+
 #include "panorndr.h"
 
 // default constructor
@@ -115,6 +118,9 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    {
    databuf buf;
 
+   int texid;
+   int width,height,mipmaps;
+
    if (pass==1)
       {
       mtxpush();
@@ -131,7 +137,12 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                buf.loaddata(vpoint->opts->datafile); //!! get file
                vpoint->opts->dataloaded=TRUE;
 
-               STRIP->setpixshadertexbuf(SLOT,&buf,1); //!! pass texid
+               mipmaps=1;
+               texid=ministrip::db2texid(&buf,&width,&height,&mipmaps);
+               buf.release();
+
+               STRIP->setpixshadertexid(SLOT,texid,width,height,mipmaps);
+               vpoint->opts->datatexid=texid;
                }
          }
 

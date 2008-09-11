@@ -2,7 +2,7 @@
 
 #include <pthread.h>
 
-#include "minitime.h"
+#include <mini/minitime.h>
 
 #include "greycbase.h"
 
