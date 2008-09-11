@@ -23,11 +23,6 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOOTER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_END);
 
-   //!!
-   databuf buf;
-   buf.loaddata("data/EarthDay.db"); 
-   STRIP->setpixshadertexbuf(SLOT,&buf,1);
-
    STRIP->useshader(SLOT);
 
    create_sphere(1.0f,1.0f,1.0f,1.0f,0.9f,10);
@@ -118,6 +113,8 @@ void minipointrndr_panorndr::pre(int pass)
 // rendering method
 void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    {
+   databuf buf;
+
    if (pass==1)
       {
       mtxpush();
@@ -127,6 +124,15 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          {
          mtxrotate(vpoint->opts->dataturn,0.0f,1.0f,0.0f);
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
+
+         if (vpoint->opts->datafile!=NULL)
+            if (!vpoint->opts->dataloaded)
+               {
+               buf.loaddata(vpoint->opts->datafile); //!! get file
+               vpoint->opts->dataloaded=TRUE;
+
+               STRIP->setpixshadertexbuf(SLOT,&buf,1); //!! pass texid
+               }
          }
 
       STRIP->setscale(SCALEELEV);

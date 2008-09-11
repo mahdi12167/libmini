@@ -68,6 +68,7 @@ minipointopts::minipointopts()
    dataloaded=FALSE;
    dataindex=-1;
 
+   datatexid=0;
    data=NULL;
    }
 
@@ -76,6 +77,8 @@ minipointopts::~minipointopts()
    {
    if (brickfile!=NULL) free(brickfile);
    if (datafile!=NULL) free(datafile);
+
+   if (datatexid!=0) deletetexmap(datatexid);
    if (data!=NULL) free(data);
    }
 

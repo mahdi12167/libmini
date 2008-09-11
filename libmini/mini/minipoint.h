@@ -145,6 +145,7 @@ class minipointopts
    int dataindex;
 
    // generic data
+   int datatexid;
    void *data;
    };
 

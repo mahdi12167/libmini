@@ -95,6 +95,7 @@ class ministrip
    static void setpixshadertex(int num,unsigned char *image,int width,int height,int components=3,int mipmaps=1,int n=0);
    static void setpixshadertexRGB(int num,unsigned char *image,int width,int height,int mipmaps=1,int n=0);
    static void setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int mipmaps=1,int n=0);
+   static void setpixshadertexid(int num,int id,int width,int height,int mipmaps=1,int n=0);
    static void setpixshadertexbuf(int num,databuf *buf,int mipmaps=1,int n=0);
 
    //! set direct shading parameters
@@ -219,6 +220,7 @@ class ministrip
       int pixshadertexw[SHADERFRGTEXMAX];
       int pixshadertexh[SHADERFRGTEXMAX];
       int pixshadertexmm[SHADERFRGTEXMAX];
+      int pixshadertexnofree[SHADERFRGTEXMAX];
       };
 
    typedef SHADER_STRUCT SHADER_TYPE;
