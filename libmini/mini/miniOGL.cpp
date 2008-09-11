@@ -28,7 +28,12 @@ static void initglexts()
       glext_tc=FALSE;
       glext_ts3=FALSE;
       glext_tgm=FALSE;
+      glext_np2=FALSE;
+      glext_dt=FALSE;
       glext_tr=FALSE;
+      glext_mt=FALSE;
+      glext_vp=FALSE;
+      glext_fp=FALSE;
 
       if ((GL_EXTs=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
@@ -40,6 +45,8 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_ARB_texture_compression")!=NULL) glext_tc=TRUE;
       if (strstr(GL_EXTs,"GL_EXT_texture_compression_s3tc")!=NULL) glext_ts3=TRUE;
       if (strstr(GL_EXTs,"GL_SGIS_generate_mipmap")!=NULL) glext_tgm=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_texture_non_power_of_two")!=NULL) glext_np2=TRUE;
+      if (strstr(GL_EXTs,"GL_ARB_depth_texture")!=NULL) glext_dt=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_texture_rectangle")!=NULL) glext_tr=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_multitexture")!=NULL) glext_mt=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_vertex_program")!=NULL) glext_vp=TRUE;
@@ -62,6 +69,8 @@ int get_unsupported_glexts()
    if (!glext_tc) num++;
    if (!glext_ts3) num++;
    if (!glext_tgm) num++;
+   if (!glext_np2) num++;
+   if (!glext_dt) num++;
    if (!glext_tr) num++;
    if (!glext_mt) num++;
    if (!glext_vp) num++;
@@ -85,6 +94,8 @@ void print_unsupported_glexts()
       if (!glext_tc) printf(" ARB_texture_compression");
       if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
       if (!glext_tgm) printf(" SGIS_generate_mipmap");
+      if (!glext_np2) printf(" ARB_texture_non_power_of_two");
+      if (!glext_dt) printf(" ARB_depth_texture");
       if (!glext_tr) printf(" ARB_texture_rectangle");
       if (!glext_mt) printf(" ARB_multitexture");
       if (!glext_vp) printf(" ARB_vertex_program");
@@ -656,8 +667,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    else if (s3tc!=0)
       if (mipmapped==0)
          {
-         if ((((*width)-1)&(*width))!=0) WARNMSG();
-         if ((((*height)-1)&(*height))!=0) WARNMSG();
+         if (!glext_np2)
+            {
+            if ((((*width)-1)&(*width))!=0) WARNMSG();
+            if ((((*height)-1)&(*height))!=0) WARNMSG();
+            }
 
          glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
          }
@@ -674,8 +688,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             {
             if (mipmap>=image3+bytes) ERRORMSG();
 
-            if (((width2-1)&width2)!=0) WARNMSG();
-            if (((height2-1)&height2)!=0) WARNMSG();
+            if (!glext_np2)
+               {
+               if (((width2-1)&width2)!=0) WARNMSG();
+               if (((height2-1)&height2)!=0) WARNMSG();
+               }
 
             glCompressedTexImage2DARB(GL_TEXTURE_2D,level,texsource,width2,height2,0,bytes2,mipmap);
 
@@ -710,8 +727,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          }
       else
          {
-         if ((((*width)-1)&(*width))!=0) WARNMSG();
-         if ((((*height)-1)&(*height))!=0) WARNMSG();
+         if (!glext_np2)
+            {
+            if ((((*width)-1)&(*width))!=0) WARNMSG();
+            if ((((*height)-1)&(*height))!=0) WARNMSG();
+            }
 
          glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
          }
@@ -726,8 +746,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
       while (width2>0 && height2>0)
          {
-         if (((width2-1)&width2)!=0) WARNMSG();
-         if (((height2-1)&height2)!=0) WARNMSG();
+         if (!glext_np2)
+            {
+            if (((width2-1)&width2)!=0) WARNMSG();
+            if (((height2-1)&height2)!=0) WARNMSG();
+            }
 
          glTexImage2D(GL_TEXTURE_2D,level,texformat,width2,height2,0,texsource,GL_UNSIGNED_BYTE,mipmap);
 
@@ -1205,7 +1228,9 @@ float *readZpixels(int x,int y,int width,int height)
    if ((pixels=(float *)malloc(sizeof(float)*width*height))==NULL) ERRORMSG();
 
    glReadBuffer(GL_BACK);
-   glReadPixels(x,y,width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+#ifdef GL_ARB_depth_texture
+   if (glext_dt) glReadPixels(x,y,width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+#endif
 
 #endif
 
@@ -1233,7 +1258,9 @@ void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,
    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-   glDrawPixels(width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+#ifdef GL_ARB_depth_texture
+   if (glext_dt) glDrawPixels(width,height,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+#endif
 
    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
@@ -1289,7 +1316,9 @@ int copytexrect(int depthcomp)
       // copy color or depth component of viewport
       glReadBuffer(GL_BACK);
       if (depthcomp==0) glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_RGB,startx,starty,width,height,0);
-      else glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+#ifdef GL_ARB_depth_texture
+      else if (glext_dt) glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
+#endif
 
 #endif
       }

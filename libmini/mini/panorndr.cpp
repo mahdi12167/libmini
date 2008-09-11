@@ -48,10 +48,11 @@ void minipointrndr_panorndr::create_sphere(float radius,
    float u,v;
    float alpha,beta;
    float nx,ny,nz;
+   float tb;
 
    STRIP->setcol(r,g,b,a);
 
-   for (j=-beta_steps; j<beta_steps; j++)
+   for (j=-beta_steps+1; j<beta_steps-1; j++)
       {
       STRIP->beginstrip();
 
@@ -67,19 +68,23 @@ void minipointrndr_panorndr::create_sphere(float radius,
          nz=-fsin(alpha)*fcos(beta);
          ny=fsin(beta);
 
+         tb=ftan(beta);
+
          STRIP->setnrm(nx,ny,nz);
-         STRIP->settex(u,0.5f-v/2);
+         STRIP->settex(u,0.5f-tb/2);
          STRIP->addvtx(nx*radius,ny*radius,nz*radius);
 
          v=(float)(j+1)/beta_steps;
          beta=v*PI/2;
+
+         tb=ftan(beta);
 
          nx=fcos(alpha)*fcos(beta);
          nz=-fsin(alpha)*fcos(beta);
          ny=fsin(beta);
 
          STRIP->setnrm(nx,ny,nz);
-         STRIP->settex(u,0.5f-v/2);
+         STRIP->settex(u,0.5f-tb/2);
          STRIP->addvtx(nx*radius,ny*radius,nz*radius);
          }
       }
@@ -108,7 +113,9 @@ void minipointrndr_panorndr::init(minipoint *points,
    SCALEELEV=points->getscaleelev();
 
    initstate();
+   enableFFculling();
    enableblending();
+   enableAtest(0.1f);
    }
 
 // pre-render method
@@ -137,6 +144,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          {
          mtxrotate(-90.0f-vpoint->opts->dataturn,0.0f,1.0f,0.0f);
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
+         mtxtranslate(0.0f,0.5f*SCALEELEV,0.0f);
 
          if (vpoint->opts->datafile!=NULL)
             {
@@ -178,6 +186,8 @@ void minipointrndr_panorndr::post(int pass)
 // exit method
 void minipointrndr_panorndr::exit()
    {
+   disableAtest();
    disableblending();
+   enableBFculling();
    exitstate();
    }
