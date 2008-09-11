@@ -52,12 +52,12 @@ class databuf
    unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha), 7 = mip-mapped RGB, 8 = mip-mapped RGBA, 9 = mip-mapped compressed RGB, 10 = mip-mapped compressed RGBA
 
    //! optional metadata
-   float swx,swy; // SW corner of data brick
-   float nwx,nwy; // NW corner of data brick
-   float nex,ney; // NE corner of data brick
-   float sex,sey; // SE corner of data brick
-   float h0,dh;   // base elevation and height of data brick
-   float t0,dt;   // time frame start and exposure time
+   double swx,swy; // SW corner of data brick
+   double nwx,nwy; // NW corner of data brick
+   double nex,ney; // NE corner of data brick
+   double sex,sey; // SE corner of data brick
+   double h0,dh;   // base elevation and height of data brick
+   double t0,dt;   // time frame start and exposure time
 
    //! optional scaling
    float scaling; // scale factor of data values, default=1.0f
@@ -82,10 +82,10 @@ class databuf
    unsigned int implformat;
 
    //! optional corner points in Lat/Lon (WGS84, degrees)
-   float LLWGS84_swx,LLWGS84_swy; // SW corner of data brick
-   float LLWGS84_nwx,LLWGS84_nwy; // NW corner of data brick
-   float LLWGS84_nex,LLWGS84_ney; // NE corner of data brick
-   float LLWGS84_sex,LLWGS84_sey; // SE corner of data brick
+   double LLWGS84_swx,LLWGS84_swy; // SW corner of data brick
+   double LLWGS84_nwx,LLWGS84_nwy; // NW corner of data brick
+   double LLWGS84_nex,LLWGS84_ney; // NE corner of data brick
+   double LLWGS84_sex,LLWGS84_sey; // SE corner of data brick
 
    //! data chunk
    void *data;         // pointer to raw data, null pointer indicates missing data
@@ -121,28 +121,28 @@ class databuf
    void release();
 
    //! set native extents
-   void set_extents(float left,float right,float bottom,float top);
+   void set_extents(double left,double right,double bottom,double top);
 
    //! set LLWGS84 extents
-   void set_LLWGS84extents(float left,float right,float bottom,float top);
+   void set_LLWGS84extents(double left,double right,double bottom,double top);
 
    //! set native extents
-   void set_corners(float sw_corner_x,float sw_corner_y,
-                    float se_corner_x,float se_corner_y,
-                    float nw_corner_x,float nw_corner_y,
-                    float ne_corner_x,float ne_corner_y);
+   void set_corners(double sw_corner_x,double sw_corner_y,
+                    double se_corner_x,double se_corner_y,
+                    double nw_corner_x,double nw_corner_y,
+                    double ne_corner_x,double ne_corner_y);
 
    //! set LLWGS84 corners
-   void set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
-                           float se_corner_x,float se_corner_y,
-                           float nw_corner_x,float nw_corner_y,
-                           float ne_corner_x,float ne_corner_y);
+   void set_LLWGS84corners(double sw_corner_x,double sw_corner_y,
+                           double se_corner_x,double se_corner_y,
+                           double nw_corner_x,double nw_corner_y,
+                           double ne_corner_x,double ne_corner_y);
 
    //! set height extent
-   void set_height(float bottom,float height);
+   void set_height(double bottom,double height);
 
    //! set time range
-   void set_time(float time,float range);
+   void set_time(double time,double range);
 
    //! set coordinate system
    void set_crs(int crs_type,int crs_zone=0,int crs_datum=0);
@@ -205,16 +205,16 @@ class databuf
 
    //! data is loaded from PVM file
    int loadPVMdata(const char *filename,
-                   float midx=0.0f,float midy=0.0f,float basez=0.0f,
-                   float dx=1.0f,float dy=1.0f,float dz=1.0f);
+                   double midx=0.0,double midy=0.0,double basez=0.0,
+                   double dx=1.0,double dy=1.0,double dz=1.0);
 
    //! data is loaded from PVM time series
    //! the actual time step n is appended to the file name, e.g. filename.pvm-t01
    int loadPVMdata(const char *filename,
                    unsigned int t, unsigned int n,
-                   float timestart,float timestep,
-                   float midx,float midy,float basez,
-                   float dx,float dy,float dz);
+                   double timestart,double timestep,
+                   double midx,double midy,double basez,
+                   double dx,double dy,double dz);
 
    //! data is loaded from MOE file
    int loadMOEdata(const char *filename,float *useful_smallest=0,float *useful_greatest=0);
@@ -227,9 +227,9 @@ class databuf
 
    //! data is generated from plane equation
    void generateplane(int size, // grid size
-                      float px,float py,float pz, // point on plane
-                      float nx,float ny,float nz, // plane normal
-                      float dx,float dy,float dz); // dimension of box
+                      double px,double py,double pz, // point on plane
+                      double nx,double ny,double nz, // plane normal
+                      double dx,double dy,double dz); // dimension of box
 
    //! convert data from one type to another
    void convertdata(unsigned int newtype);
@@ -312,9 +312,10 @@ class databuf
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    static void *INTERPRETER_DATA;
 
-   void writeparam(const char *tag,float v,FILE *file,int digits=8);
-   int readparam(const char *tag,float *v,FILE *file);
+   void writeparam(const char *tag,double v,FILE *file,int digits=10);
+   int readparam(const char *tag,double *v,FILE *file);
 
+   int readparamf(const char *tag,float *v,FILE *file);
    int readparami(const char *tag,int *v,FILE *file);
    int readparamu(const char *tag,unsigned int *v,FILE *file);
 

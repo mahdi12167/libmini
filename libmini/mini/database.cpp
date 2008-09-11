@@ -52,17 +52,17 @@ databuf::databuf()
 
    type=DATABUF_TYPE_BYTE;
 
-   swx=swy=0.0f;
-   nwx=nwy=0.0f;
-   nex=ney=0.0f;
-   sex=sey=0.0f;
-   h0=dh=0.0f;
-   t0=dt=0.0f;
+   swx=swy=0.0;
+   nwx=nwy=0.0;
+   nex=ney=0.0;
+   sex=sey=0.0;
+   h0=dh=0.0;
+   t0=dt=0.0;
 
-   LLWGS84_swx=LLWGS84_swy=0.0f;
-   LLWGS84_nwx=LLWGS84_nwy=0.0f;
-   LLWGS84_nex=LLWGS84_ney=0.0f;
-   LLWGS84_sex=LLWGS84_sey=0.0f;
+   LLWGS84_swx=LLWGS84_swy=0.0;
+   LLWGS84_nwx=LLWGS84_nwy=0.0;
+   LLWGS84_nex=LLWGS84_ney=0.0;
+   LLWGS84_sex=LLWGS84_sey=0.0;
 
    scaling=1.0f;
    bias=0.0f;
@@ -257,7 +257,7 @@ void databuf::release()
    }
 
 // set native extents
-void databuf::set_extents(float left,float right,float bottom,float top)
+void databuf::set_extents(double left,double right,double bottom,double top)
    {
    swx=left;
    swy=bottom;
@@ -273,7 +273,7 @@ void databuf::set_extents(float left,float right,float bottom,float top)
    }
 
 // set LLWGS84 extents
-void databuf::set_LLWGS84extents(float left,float right,float bottom,float top)
+void databuf::set_LLWGS84extents(double left,double right,double bottom,double top)
    {
    LLWGS84_swx=left;
    LLWGS84_swy=bottom;
@@ -289,10 +289,10 @@ void databuf::set_LLWGS84extents(float left,float right,float bottom,float top)
    }
 
 // set native corners
-void databuf::set_corners(float sw_corner_x,float sw_corner_y,
-                          float se_corner_x,float se_corner_y,
-                          float nw_corner_x,float nw_corner_y,
-                          float ne_corner_x,float ne_corner_y)
+void databuf::set_corners(double sw_corner_x,double sw_corner_y,
+                          double se_corner_x,double se_corner_y,
+                          double nw_corner_x,double nw_corner_y,
+                          double ne_corner_x,double ne_corner_y)
    {
    swx=sw_corner_x;
    swy=sw_corner_y;
@@ -308,10 +308,10 @@ void databuf::set_corners(float sw_corner_x,float sw_corner_y,
    }
 
 // set LLWGS84 corners
-void databuf::set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
-                                 float se_corner_x,float se_corner_y,
-                                 float nw_corner_x,float nw_corner_y,
-                                 float ne_corner_x,float ne_corner_y)
+void databuf::set_LLWGS84corners(double sw_corner_x,double sw_corner_y,
+                                 double se_corner_x,double se_corner_y,
+                                 double nw_corner_x,double nw_corner_y,
+                                 double ne_corner_x,double ne_corner_y)
    {
    LLWGS84_swx=sw_corner_x;
    LLWGS84_swy=sw_corner_y;
@@ -327,14 +327,14 @@ void databuf::set_LLWGS84corners(float sw_corner_x,float sw_corner_y,
    }
 
 // set height extent
-void databuf::set_height(float bottom,float height)
+void databuf::set_height(double bottom,double height)
    {
    h0=bottom;
    dh=height;
    }
 
 // set time range
-void databuf::set_time(float time,float range)
+void databuf::set_time(double time,double range)
    {
    t0=time;
    dt=range;
@@ -348,8 +348,8 @@ void databuf::set_crs(int crs_type,int crs_zone,int crs_datum)
    datum=crs_datum;
    }
 
-// write one float parameter
-void databuf::writeparam(const char *tag,float v,FILE *file,int digits)
+// write one double parameter
+void databuf::writeparam(const char *tag,double v,FILE *file,int digits)
    {
    const char *ptr;
 
@@ -360,7 +360,7 @@ void databuf::writeparam(const char *tag,float v,FILE *file,int digits)
 
    putc('=',file);
 
-   if (v<0.0f)
+   if (v<0.0)
       {
       putc('-',file);
       value=-v;
@@ -423,8 +423,8 @@ void databuf::writeparam(const char *tag,float v,FILE *file,int digits)
    putc('\n',file);
    }
 
-// read one float parameter
-int databuf::readparam(const char *tag,float *v,FILE *file)
+// read one double parameter
+int databuf::readparam(const char *tag,double *v,FILE *file)
    {
    char ch;
    const char *ptr;
@@ -526,14 +526,26 @@ int databuf::readparam(const char *tag,float *v,FILE *file)
    return(1);
    }
 
-// read one integer parameter
-int databuf::readparami(const char *tag,int *v,FILE *file)
+// read one float parameter
+int databuf::readparamf(const char *tag,float *v,FILE *file)
    {
-   float value;
+   double value;
 
    if (readparam(tag,&value,file)==0) return(0);
 
-   *v=ftrc(value+0.5f);
+   *v=(float)value;
+
+   return(1);
+   }
+
+// read one integer parameter
+int databuf::readparami(const char *tag,int *v,FILE *file)
+   {
+   double value;
+
+   if (readparam(tag,&value,file)==0) return(0);
+
+   *v=FTRC(value+0.5);
 
    return(1);
    }
@@ -541,11 +553,11 @@ int databuf::readparami(const char *tag,int *v,FILE *file)
 // read one unsigned parameter
 int databuf::readparamu(const char *tag,unsigned int *v,FILE *file)
    {
-   float value;
+   double value;
 
    if (readparam(tag,&value,file)==0) return(0);
 
-   *v=ftrc(fabs(value)+0.5f);
+   *v=FTRC(FABS(value)+0.5);
 
    return(1);
    }
@@ -726,8 +738,8 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    if (readparam("dt",&dt,file)==0) ERRORMSG();
 
    // read optional scaling
-   if (readparam("scaling",&scaling,file)==0) ERRORMSG();
-   if (readparam("bias",&bias,file)==0) ERRORMSG();
+   if (readparamf("scaling",&scaling,file)==0) ERRORMSG();
+   if (readparamf("bias",&bias,file)==0) ERRORMSG();
 
    // read coordinate system indicator
    if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4)
@@ -744,7 +756,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
 
    // read no-data indicator
    if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4) nodata=-MAXFLOAT;
-   else if (readparam("nodata",&nodata,file)==0) ERRORMSG();
+   else if (readparamf("nodata",&nodata,file)==0) ERRORMSG();
 
    // read external format indicator
    if (m==MAGIC1) extformat=DATABUF_EXTFMT_PLAIN;
@@ -757,10 +769,10 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    // read optional corner points in Lat/Lon
    if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3)
       {
-      LLWGS84_swx=LLWGS84_swy=0.0f;
-      LLWGS84_nwx=LLWGS84_nwy=0.0f;
-      LLWGS84_nex=LLWGS84_ney=0.0f;
-      LLWGS84_sex=LLWGS84_sey=0.0f;
+      LLWGS84_swx=LLWGS84_swy=0.0;
+      LLWGS84_nwx=LLWGS84_nwy=0.0;
+      LLWGS84_nex=LLWGS84_ney=0.0;
+      LLWGS84_sex=LLWGS84_sey=0.0;
       }
    else
       {
@@ -1276,8 +1288,8 @@ int databuf::loadPNMdata(const char *filename)
       }
    else vscale=1.0f;
 
-   h0=dh=0.0f;
-   t0=dt=0.0f;
+   h0=dh=0.0;
+   t0=dt=0.0;
 
    scaling=vscale;
    bias=0.0f;
@@ -1374,8 +1386,8 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
 
 // data is loaded from PVM file
 int databuf::loadPVMdata(const char *filename,
-                         float midx,float midy,float basez,
-                         float dx,float dy,float dz)
+                         double midx,double midy,double basez,
+                         double dx,double dy,double dz)
    {
    int width,height,depth,components;
 
@@ -1400,19 +1412,19 @@ int databuf::loadPVMdata(const char *filename,
 
    bytes=xsize*ysize*zsize;
 
-   swx=midx-dx/2.0f;
-   swy=midy-dy/2.0f;
-   nwx=midx-dx/2.0f;
-   nwy=midy+dy/2.0f;
-   nex=midx+dx/2.0f;
-   ney=midy+dy/2.0f;
-   sex=midx+dx/2.0f;
-   sey=midy-dy/2.0f;
+   swx=midx-dx/2.0;
+   swy=midy-dy/2.0;
+   nwx=midx-dx/2.0;
+   nwy=midy+dy/2.0;
+   nex=midx+dx/2.0;
+   ney=midy+dy/2.0;
+   sex=midx+dx/2.0;
+   sey=midy-dy/2.0;
 
    h0=basez;
    dh=dz;
 
-   t0=dt=0.0f;
+   t0=dt=0.0;
 
    scaling=1.0f/255.0f;
    bias=0.0f;
@@ -1423,9 +1435,9 @@ int databuf::loadPVMdata(const char *filename,
 // data is loaded from PVM time series
 int databuf::loadPVMdata(const char *filename,
                          unsigned int t,unsigned int n,
-                         float timestart,float timestep,
-                         float midx,float midy,float basez,
-                         float dx,float dy,float dz)
+                         double timestart,double timestep,
+                         double midx,double midy,double basez,
+                         double dx,double dy,double dz)
    {
    static const int maxstr=1000;
 
@@ -1495,14 +1507,14 @@ int databuf::loadPVMdata(const char *filename,
       free(moredata);
       }
 
-   swx=midx-dx/2.0f;
-   swy=midy-dy/2.0f;
-   nwx=midx-dx/2.0f;
-   nwy=midy+dy/2.0f;
-   nex=midx+dx/2.0f;
-   ney=midy+dy/2.0f;
-   sex=midx+dx/2.0f;
-   sey=midy-dy/2.0f;
+   swx=midx-dx/2.0;
+   swy=midy-dy/2.0;
+   nwx=midx-dx/2.0;
+   nwy=midy+dy/2.0;
+   nex=midx+dx/2.0;
+   ney=midy+dy/2.0;
+   sex=midx+dx/2.0;
+   sey=midy-dy/2.0;
 
    h0=basez;
    dh=dz;
@@ -1618,14 +1630,17 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
    midy=lat+yspace*(ysize-1)/2.0f;
    dy=fabs(yspace)*(ysize-1);
 
-   swx=midx-dx/2.0f;
-   swy=midy-dy/2.0f;
-   nwx=midx-dx/2.0f;
-   nwy=midy+dy/2.0f;
-   nex=midx+dx/2.0f;
-   ney=midy+dy/2.0f;
-   sex=midx+dx/2.0f;
-   sey=midy-dy/2.0f;
+   dx/=2.0f;
+   dy/=2.0f;
+
+   swx=midx-dx;
+   swy=midy-dy;
+   nwx=midx-dx;
+   nwy=midy+dy;
+   nex=midx+dx;
+   ney=midy+dy;
+   sex=midx+dx;
+   sey=midy-dy;
 
    h0=zorig;
    dh=zspace*(zsize-1);
@@ -1688,37 +1703,40 @@ void databuf::savePVMdata(const char *filename)
 
 // data is generated from plane equation
 void databuf::generateplane(int size,
-                            float px,float py,float pz,
-                            float nx,float ny,float nz,
-                            float dx,float dy,float dz)
+                            double px,double py,double pz,
+                            double nx,double ny,double nz,
+                            double dx,double dy,double dz)
    {
    alloc(2,2,2,1,2);
 
-   swx=px-dx/2.0f;
-   swy=py-dy/2.0f;
-   nwx=px-dx/2.0f;
-   nwy=py+dy/2.0f;
-   nex=px+dx/2.0f;
-   ney=py+dy/2.0f;
-   sex=px+dx/2.0f;
-   sey=py-dy/2.0f;
+   dx/=2.0;
+   dy/=2.0;
 
-   h0=pz-dz/2.0f;
+   swx=px-dx/2.0;
+   swy=py-dy/2.0;
+   nwx=px-dx/2.0;
+   nwy=py+dy/2.0;
+   nex=px+dx/2.0;
+   ney=py+dy/2.0;
+   sex=px+dx/2.0;
+   sey=py-dy/2.0;
+
+   h0=pz-dz/2.0;
    dh=dz;
 
-   t0=dt=0.0f;
+   t0=dt=0.0;
 
    scaling=1.0f;
    bias=0.0f;
 
-   setval(0,0,0,(swx-px)*nx+(swy-py)*ny-dh/2.0f*nz);
-   setval(1,0,0,(sex-px)*nx+(sey-py)*ny-dh/2.0f*nz);
-   setval(0,1,0,(nwx-px)*nx+(nwy-py)*ny-dh/2.0f*nz);
-   setval(1,1,0,(nex-px)*nx+(ney-py)*ny-dh/2.0f*nz);
-   setval(0,0,1,(swx-px)*nx+(swy-py)*ny+dh/2.0f*nz);
-   setval(1,0,1,(sex-px)*nx+(sey-py)*ny+dh/2.0f*nz);
-   setval(0,1,1,(nwx-px)*nx+(nwy-py)*ny+dh/2.0f*nz);
-   setval(1,1,1,(nex-px)*nx+(ney-py)*ny+dh/2.0f*nz);
+   setval(0,0,0,(swx-px)*nx+(swy-py)*ny-dh/2.0*nz);
+   setval(1,0,0,(sex-px)*nx+(sey-py)*ny-dh/2.0*nz);
+   setval(0,1,0,(nwx-px)*nx+(nwy-py)*ny-dh/2.0*nz);
+   setval(1,1,0,(nex-px)*nx+(ney-py)*ny-dh/2.0*nz);
+   setval(0,0,1,(swx-px)*nx+(swy-py)*ny+dh/2.0*nz);
+   setval(1,0,1,(sex-px)*nx+(sey-py)*ny+dh/2.0*nz);
+   setval(0,1,1,(nwx-px)*nx+(nwy-py)*ny+dh/2.0*nz);
+   setval(1,1,1,(nex-px)*nx+(ney-py)*ny+dh/2.0*nz);
 
    resampledata(size,size,size);
    }
