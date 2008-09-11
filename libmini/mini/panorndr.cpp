@@ -22,7 +22,7 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BEGIN);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_HEADER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BASIC);
-   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX_MASK);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOOTER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_END);
 

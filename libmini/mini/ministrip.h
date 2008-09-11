@@ -18,6 +18,7 @@
 #define MINI_SNIPPET_FRG_HEADER "snippet_frg_header"
 #define MINI_SNIPPET_FRG_BASIC "snippet_frg_basic"
 #define MINI_SNIPPET_FRG_TEX "snippet_frg_tex"
+#define MINI_SNIPPET_FRG_TEX_MASK "snippet_frg_tex_mask"
 #define MINI_SNIPPET_FRG_TEX2_DIRECT "snippet_frg_tex2_direct"
 #define MINI_SNIPPET_FRG_SHADE "snippet_frg_shade"
 #define MINI_SNIPPET_FRG_SHADE_DIRECT "snippet_frg_shade_direct"

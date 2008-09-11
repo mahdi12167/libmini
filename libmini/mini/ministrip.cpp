@@ -122,6 +122,20 @@ void ministrip::initsnippets()
       ### modulate with texture color \n\
       MUL col,col,tex; \n");
 
+   addsnippet(MINI_SNIPPET_FRG_TEX_MASK,"\
+      ### fetch actual texel \n\
+      TEMP tex,crd; \n\
+      TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      ### check coordinate range \n\
+      MOV crd,fragment.texcoord[0]; \n\
+      CMP tex.a,crd.x,0.0,tex.a; \n\
+      CMP tex.a,crd.y,0.0,tex.a; \n\
+      SUB crd,1.0,crd; \n\
+      CMP tex.a,crd.x,0.0,tex.a; \n\
+      CMP tex.a,crd.y,0.0,tex.a; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n");
+
    addsnippet(MINI_SNIPPET_FRG_TEX2_DIRECT,"\
       ### fetch two texels \n\
       TEMP tex1,tex2; \n\
