@@ -125,6 +125,13 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       {
       mtxpush();
       mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
+      mtxtex();
+      mtxpush();
+      mtxid();
+      mtxtranslate(0.5f,0.5f,0.0f);
+      mtxscale(1.0f,2.0f,0.0f);
+      mtxtranslate(-0.5f,-0.5f,0.0f);
+      mtxmodel();
 
       if (vpoint->opts!=NULL)
          {
@@ -157,6 +164,9 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       STRIP->setscale(SCALEELEV);
       STRIP->render();
 
+      mtxtex();
+      mtxpop();
+      mtxmodel();
       mtxpop();
       }
    }

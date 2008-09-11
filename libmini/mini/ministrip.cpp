@@ -1111,7 +1111,6 @@ void ministrip::render()
       {
       glMatrixMode(GL_TEXTURE);
       glPushMatrix();
-      glLoadIdentity();
       glMultMatrixd(TEXMTX);
       glMatrixMode(GL_MODELVIEW);
 
