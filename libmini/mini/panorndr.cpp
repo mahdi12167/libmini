@@ -136,7 +136,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       mtxpush();
       mtxid();
       mtxtranslate(0.5f,0.5f,0.0f);
-      mtxscale(1.0f,2.0f,0.0f);
+      mtxscale(-1.0f,2.0f,0.0f);
       mtxtranslate(-0.5f,-0.5f,0.0f);
       mtxmodel();
 

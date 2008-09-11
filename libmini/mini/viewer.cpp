@@ -78,7 +78,7 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 #define VIEWER_SBASE 0.5f
 
 #define VIEWER_MAXIDLE 10
-#define VIEWER_MINDIFF 0.001
+#define VIEWER_MINDIFF 0.001f
 
 // main section:
 
@@ -149,7 +149,7 @@ static double angle,turn,pitch,incline;
 static miniv3d dir,up,right;
 
 // gliding parameters
-static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
+static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER/fsqrt(VIEWER_SCALE);
 
 // jumping parameters
 static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
