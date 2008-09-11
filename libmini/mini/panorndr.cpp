@@ -128,7 +128,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
 
       if (vpoint->opts!=NULL)
          {
-         mtxrotate(vpoint->opts->dataturn,0.0f,1.0f,0.0f);
+         mtxrotate(-90.0f-vpoint->opts->dataturn,0.0f,1.0f,0.0f);
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
 
          if (vpoint->opts->datafile!=NULL)
