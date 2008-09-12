@@ -1,12 +1,9 @@
 // (c) by Stefan Roettger
 
+#undef OpenGL // enable for OpenGL window
+
 #include <mini/minibase.h>
-
-// add include files here:
-// ...
-
 #include <mini/miniOGL.h>
-#include <mini/database.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -15,31 +12,6 @@
 #endif
 
 static int winwidth,winheight,winid;
-
-static int texid;
-
-void init3Dtex()
-   {
-   databuf buf;
-
-   int max3Dtexsize;
-   int width,height,depth;
-
-   buf.loadPVMdata("test.pvm",0,0,0,1,1,1);
-
-   max3Dtexsize=getmax3Dtexsize();
-   buf.resampledata(max3Dtexsize,max3Dtexsize,max3Dtexsize);
-
-   width=buf.xsize;
-   height=buf.ysize;
-   depth=buf.zsize;
-
-   texid=build3Dtexmap((unsigned char *)buf.data,&width,&height,&depth,1);
-   buf.release();
-   }
-
-void exit3Dtex()
-   {deletetexmap(texid);}
 
 void displayfunc()
    {
@@ -63,22 +35,19 @@ void displayfunc()
    glLoadIdentity();
    gluLookAt(ex,ey,ez,ex+dx,ey+dy,ez+dz,ux,uy,uz);
 
-   bind3Dtexmap(texid);
+   // add OpenGL test code here:
+   // ...
 
    beginfans();
    color(1,0,0);
    beginfan();
-   texcoord(0,0,0);
    fanvertex(-5,3,0);
-   texcoord(1,1,0);
    fanvertex(5,3,0);
-   texcoord(1,1,1);
-   fanvertex(5,1,5);
-   texcoord(0,0,1);
-   fanvertex(-5,1,5);
+   fanvertex(5,0,5);
+   fanvertex(-5,0,5);
    endfans();
 
-   bind3Dtexmap(0);
+   // end of test OpenGL code
 
    glutSwapBuffers();
    }
@@ -102,13 +71,10 @@ void keyboardfunc(unsigned char key,int x,int y)
 
    if (key=='q' || key==27)
       {
-      exit3Dtex();
       glutDestroyWindow(winid);
       exit(0);
       }
    }
-
-// end of include files
 
 int main(int argc,char *argv[])
    {
@@ -117,11 +83,6 @@ int main(int argc,char *argv[])
       printf("usage: %s\n",argv[0]);
       exit(1);
       }
-
-   printf("running test code\n\n");
-
-   // add test code here:
-   // ...
 
    winwidth=winheight=512;
 
@@ -138,13 +99,20 @@ int main(int argc,char *argv[])
    glutSpecialFunc(NULL);
    glutIdleFunc(NULL);
 
-   init3Dtex();
+   printf("running test code\n\n");
 
-   glutMainLoop();
+   // add test code here:
+   // ...
+
+   printf("maxtexsize=%d max3Dtexsize=%d\n",getmaxtexsize(),getmax3Dtexsize());
 
    // end of test code
 
    printf("\nfinished test code\n");
+
+#ifdef OpenGL
+   glutMainLoop();
+#endif
 
    return(0);
    }
