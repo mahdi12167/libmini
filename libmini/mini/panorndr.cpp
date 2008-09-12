@@ -28,7 +28,7 @@ minipointrndr_panorndr::minipointrndr_panorndr():
 
    STRIP->useshader(SLOT);
 
-   create_sphere(1.0f,1.0f,1.0f,1.0f,0.9f,10);
+   create_sphere(1.0f,1.0f,1.0f,1.0f,1.0f,10);
    }
 
 // destructor
@@ -114,8 +114,7 @@ void minipointrndr_panorndr::init(minipoint *points,
 
    initstate();
    enableFFculling();
-   enableblending();
-   enableAtest(0.1f);
+   enableAtest(0.5f);
    }
 
 // pre-render method
@@ -187,7 +186,6 @@ void minipointrndr_panorndr::post(int pass)
 void minipointrndr_panorndr::exit()
    {
    disableAtest();
-   disableblending();
    enableBFculling();
    exitstate();
    }
