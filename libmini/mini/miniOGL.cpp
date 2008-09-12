@@ -497,6 +497,8 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
    int bytes2;
    int level;
 
+   int maxtexsize;
+
    initglexts();
 
 #ifdef _WIN32
@@ -680,6 +682,9 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             if ((((*height)-1)&(*height))!=0) WARNMSG();
             }
 
+         maxtexsize=getmaxtexsize();
+         if (*width>maxtexsize || *height>maxtexsize) WARNMSG();
+
          glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
          }
       else
@@ -700,6 +705,9 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
                if (((width2-1)&width2)!=0) WARNMSG();
                if (((height2-1)&height2)!=0) WARNMSG();
                }
+
+            maxtexsize=getmaxtexsize();
+            if (width2>maxtexsize || height2>maxtexsize) WARNMSG();
 
             glCompressedTexImage2DARB(GL_TEXTURE_2D,level,texsource,width2,height2,0,bytes2,mipmap);
 
@@ -740,6 +748,9 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             if ((((*height)-1)&(*height))!=0) WARNMSG();
             }
 
+         maxtexsize=getmaxtexsize();
+         if (*width>maxtexsize || *height>maxtexsize) WARNMSG();
+
          glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
          }
    else
@@ -758,6 +769,9 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             if (((width2-1)&width2)!=0) WARNMSG();
             if (((height2-1)&height2)!=0) WARNMSG();
             }
+
+         maxtexsize=getmaxtexsize();
+         if (width2>maxtexsize || height2>maxtexsize) WARNMSG();
 
          glTexImage2D(GL_TEXTURE_2D,level,texformat,width2,height2,0,texsource,GL_UNSIGNED_BYTE,mipmap);
 
@@ -901,9 +915,14 @@ int build3Dtexmap(unsigned char *volume,
 
    GLint width2,height2,depth2;
 
+   int max3Dtexsize;
+
    initglexts();
 
    if (!glext_t3D) return(0);
+
+   max3Dtexsize=getmax3Dtexsize();
+   if (*width>max3Dtexsize || *height>max3Dtexsize || *depth>max3Dtexsize) WARNMSG();
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_3D,texid);
@@ -1154,6 +1173,26 @@ void disablelinesmooth()
    {
 #ifndef NOOGL
    glDisable(GL_LINE_SMOOTH);
+#endif
+   }
+
+int getmaxtexsize()
+   {
+#ifndef NOOGL
+   GLint param;
+   glGetIntegerv(GL_MAX_TEXTURE_SIZE,&param);
+   return(param);
+#endif
+   }
+
+int getmax3Dtexsize()
+   {
+#ifndef NOOGL
+   GLint param=0;
+#ifdef GL_EXT_texture3D
+   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,&param);
+#endif
+   return(param);
 #endif
    }
 

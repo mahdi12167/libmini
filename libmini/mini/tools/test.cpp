@@ -2,11 +2,11 @@
 
 #include <mini/minibase.h>
 
-#include <mini/miniOGL.h>
-#include <mini/database.h>
-
 // add include files here:
 // ...
+
+#include <mini/miniOGL.h>
+#include <mini/database.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -17,6 +17,29 @@
 static int winwidth,winheight,winid;
 
 static int texid;
+
+void init3Dtex()
+   {
+   databuf buf;
+
+   int max3Dtexsize;
+   int width,height,depth;
+
+   buf.loadPVMdata("test.pvm",0,0,0,1,1,1);
+
+   max3Dtexsize=getmax3Dtexsize();
+   buf.resampledata(max3Dtexsize,max3Dtexsize,max3Dtexsize);
+
+   width=buf.xsize;
+   height=buf.ysize;
+   depth=buf.zsize;
+
+   texid=build3Dtexmap((unsigned char *)buf.data,&width,&height,&depth,1);
+   buf.release();
+   }
+
+void exit3Dtex()
+   {deletetexmap(texid);}
 
 void displayfunc()
    {
@@ -79,7 +102,7 @@ void keyboardfunc(unsigned char key,int x,int y)
 
    if (key=='q' || key==27)
       {
-      deletetexmap(texid);
+      exit3Dtex();
       glutDestroyWindow(winid);
       exit(0);
       }
@@ -100,9 +123,6 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   databuf buf;
-   int width,height,depth;
-
    winwidth=winheight=512;
 
    glutInit(&argc,argv);
@@ -118,15 +138,7 @@ int main(int argc,char *argv[])
    glutSpecialFunc(NULL);
    glutIdleFunc(NULL);
 
-   buf.loadPVMdata("test.pvm",0,0,0,1,1,1);
-   buf.resampledata(128,128,128);
-
-   width=buf.xsize;
-   height=buf.ysize;
-   depth=buf.zsize;
-
-   texid=build3Dtexmap((unsigned char *)buf.data,&width,&height,&depth,1);
-   buf.release();
+   init3Dtex();
 
    glutMainLoop();
 

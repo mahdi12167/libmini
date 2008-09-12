@@ -87,6 +87,9 @@ void disablelinesmooth();
 
 inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
+int getmaxtexsize();
+int getmax3Dtexsize();
+
 void getviewport(int *x,int *y,int *width,int *height);
 
 unsigned char *readRGBpixels(int x,int y,int width,int height);
@@ -176,6 +179,9 @@ void print_unsupported_glexts(); // print unsupported OpenGL extensions
 #   endif
 #   ifndef GL_TEXTURE_3D
 #      define GL_TEXTURE_3D GL_TEXTURE_3D_EXT
+#   endif
+#   ifndef GL_MAX_3D_TEXTURE_SIZE
+#      define GL_MAX_3D_TEXTURE_SIZE GL_MAX_3D_TEXTURE_SIZE_EXT
 #   endif
 #   ifndef GL_TEXTURE_WRAP_R
 #      define GL_TEXTURE_WRAP_R GL_TEXTURE_WRAP_R_EXT
