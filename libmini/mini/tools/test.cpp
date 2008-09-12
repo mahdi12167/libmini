@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#undef OpenGL // enable for OpenGL window
+#undef OpenGL // enable this to open an OpenGL window
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -104,7 +104,8 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-   printf("maxtexsize=%d max3Dtexsize=%d\n",getmaxtexsize(),getmax3Dtexsize());
+   miniOGL::print_unsupported_glexts();
+   miniOGL::print_graphics_info();
 
    // end of test code
 

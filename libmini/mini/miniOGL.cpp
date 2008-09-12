@@ -85,7 +85,7 @@ void print_unsupported_glexts()
    {
    initglexts();
 
-   if (get_unsupported_glexts()!=0)
+   if (get_unsupported_glexts()>0)
       {
       printf("unsupported OpenGL extensions:");
 
@@ -105,6 +105,14 @@ void print_unsupported_glexts()
 
       printf("\n");
       }
+   }
+
+void print_graphics_info()
+   {
+   initglexts();
+
+   printf("maxtexsize=%d\n",getmaxtexsize());
+   printf("max3Dtexsize=%d\n",getmax3Dtexsize());
    }
 
 #ifdef _WIN32
@@ -1190,7 +1198,7 @@ int getmax3Dtexsize()
 #ifndef NOOGL
    GLint param=0;
 #ifdef GL_EXT_texture3D
-   glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,&param);
+   if (glext_t3D) glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,&param);
 #endif
    return(param);
 #endif

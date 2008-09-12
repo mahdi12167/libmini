@@ -316,6 +316,9 @@ class miniterrain
    //! get the flattening factor
    float getflattening();
 
+   //! get the nearest waypoint
+   minipointdata *getnearestpoint();
+
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);
 

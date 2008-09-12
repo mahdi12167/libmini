@@ -275,11 +275,14 @@ class minilayer
    //! get the flattening factor
    float getflattening();
 
-   //! get the internal cache id
-   int getcacheid(); // -1 = none
+   //! get the internal cache id (-1 = no tileset)
+   int getcacheid();
 
    //! render waypoints
    void renderpoints();
+
+   //! get the nearest waypoint
+   minipointdata *getnearestpoint();
 
    // coordinate conversions (g=global, l=local, o=opengl):
 

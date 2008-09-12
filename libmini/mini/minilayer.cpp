@@ -1357,3 +1357,23 @@ void minilayer::renderpoints()
       mtxpop();
       }
    }
+
+// get the nearest waypoint
+minipointdata *minilayer::getnearestpoint()
+   {
+   minicoord ei;
+
+   minipointdata *nearest;
+
+   if (!LOADED || POINTS==NULL || !VISIBLE) return(NULL);
+
+   nearest=NULL;
+
+   if (LPARAMS.usewaypoints)
+      {
+      ei=map_g2i(LPARAMS.eye);
+      nearest=POINTS->getnearest(ei.vec.x,-ei.vec.z,ei.vec.y);
+      }
+
+   return(nearest);
+   }

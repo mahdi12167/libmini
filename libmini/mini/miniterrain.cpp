@@ -1000,6 +1000,35 @@ float miniterrain::getflattening()
    else return(1.0f);
    }
 
+// get the nearest waypoint
+minipointdata *miniterrain::getnearestpoint()
+   {
+   int ref,nst;
+
+   minilayer::MINILAYER_PARAMS lparams;
+
+   minipointdata *nearest;
+
+   nearest=NULL;
+
+   if (LNUM>0)
+      {
+      // get reference layer
+      ref=getreference();
+
+      // get eye point
+      LAYER[ref]->get(lparams);
+
+      // get nearest layer
+      nst=getnearest(lparams.eye);
+
+      // get nearest waypoint from nearest layer
+      if (isdisplayed(nst) && !isculled(nst)) nearest=LAYER[nst]->getnearestpoint();
+      }
+
+   return(nearest);
+   }
+
 // shoot a ray at the scene
 double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int *id)
    {

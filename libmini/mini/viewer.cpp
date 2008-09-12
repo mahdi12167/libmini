@@ -862,6 +862,8 @@ void render()
 
    minilayer *ref,*nst;
 
+   minipointdata *nearest;
+
    double lightdir;
    miniv3d light;
 
@@ -936,6 +938,23 @@ void render()
       el.vec.z=elev+hover;
       }
 
+   // check for eye movement:
+
+   if (FABS(speed-topspeed)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(angle-turn)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(dez)>VIEWER_MINDIFF) wakeup=1;
+
+   // check for nearest waypoint:
+
+   nearest=viewer->getearth()->getterrain()->getnearestpoint();
+
+   if (nearest!=NULL)
+      if (nearest->opts!=NULL)
+         if (nearest->opts->type==6) printf("%s\n",nearest->desc); //!!
+
+   // remap eye coordinates:
+
    eye=nst->map_l2g(el);
 
    egl=nst->map_g2o(eye);
@@ -943,17 +962,12 @@ void render()
    ugl=nst->rot_g2o(up,eye);
    rgl=nst->rot_g2o(right,eye);
 
+   // change orientation of signposts:
+
    tparams->signpostturn=turn;
    tparams->signpostincline=-incline;
 
    viewer->getearth()->getterrain()->propagate_wp();
-
-   // check for eye movement:
-
-   if (FABS(speed-topspeed)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(angle-turn)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(dez)>VIEWER_MINDIFF) wakeup=1;
 
    // setup OpenGL state:
 
@@ -1371,7 +1385,7 @@ int main(int argc,char *argv[])
    glutIdleFunc(displayfunc);
 
    // print unsupported OpenGL extensions
-   if (miniOGL::get_unsupported_glexts()>0) miniOGL::print_unsupported_glexts();
+   miniOGL::print_unsupported_glexts();
 
    // create the viewer object
    viewer=new viewerbase;
