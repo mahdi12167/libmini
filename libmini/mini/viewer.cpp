@@ -863,6 +863,7 @@ void render()
    minilayer *ref,*nst;
 
    minipointdata *nearest;
+   miniv4d nearvec;
 
    double lightdir;
    miniv3d light;
@@ -951,7 +952,16 @@ void render()
 
    if (nearest!=NULL)
       if (nearest->opts!=NULL)
-         if (nearest->opts->type==6) printf("%s\n",nearest->desc); //!!
+         if (nearest->opts->type==minipointopts::OPTION_TYPE_FREE)
+            {
+            nearvec=miniv3d(nearest->x,nearest->y,nearest->elev+nearest->opts->datasize/VIEWER_SCALE/2.0f)-miniv3d(el.vec);
+
+            if (nearvec.getlength()<5.0f*nearest->opts->datasize/VIEWER_SCALE/2.0f)
+               {
+               el.vec+=0.1*nearvec;
+               wakeup=1;
+               }
+            }
 
    // remap eye coordinates:
 
