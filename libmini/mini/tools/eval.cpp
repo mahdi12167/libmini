@@ -1,10 +1,9 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "miniio.h"
-
-#include "lunaparse.h"
+#include <mini/miniio.h>
+#include <mini/lunaparse.h>
 
 int main(int argc,char *argv[])
    {

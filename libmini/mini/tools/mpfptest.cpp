@@ -1,9 +1,9 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "minimpfp.h"
-#include "minitime.h"
+#include <mini/minimpfp.h>
+#include <mini/minitime.h>
 
 int main(int argc,char *argv[])
    {

@@ -2712,7 +2712,11 @@ void databuf::print()
 
    float val;
 
-   if (!missing())
+   if (missing()) printf("empty\n");
+   else
+      {
+      printf("xsize=%d ysize=%d zsize=%d tsteps=%d bytes=%u\n",xsize,ysize,zsize,tsteps,bytes);
+
       if (type==DATABUF_TYPE_BYTE || type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT)
          for (t=0; t<tsteps; t++)
             {
@@ -2736,6 +2740,7 @@ void databuf::print()
 
             if (t<tsteps-1) printf("\n");
             }
+      }
    }
 
 // swap byte ordering between MSB and LSB

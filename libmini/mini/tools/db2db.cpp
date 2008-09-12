@@ -1,10 +1,9 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
+#include <mini/minibase.h>
 
-#include "database.h"
-
-#include "imgbase.h"
+#include <mini/database.h>
+#include <mini/imgbase.h>
 
 static const int fillin_radius=5;
 

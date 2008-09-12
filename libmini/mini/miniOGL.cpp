@@ -472,6 +472,12 @@ int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int
 
 int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps,int s3tc,int bytes,int mipmapped)
    {
+   if (image==NULL) ERRORMSG();
+
+   if (width==NULL || height==NULL) ERRORMSG();
+   if (*width<2 || *height<2) ERRORMSG();
+   if (components<1) ERRORMSG();
+
 #ifndef NOOGL
 
    int i,c;
@@ -503,9 +509,6 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
       else glHint(GL_TEXTURE_COMPRESSION_HINT_ARB,GL_NICEST);
 #endif
 
-   if (width==NULL || height==NULL) ERRORMSG();
-   if (*width<2 || *height<2) ERRORMSG();
-
    c=(*width)*(*height);
 
    if (mipmapped!=0)
@@ -520,6 +523,8 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          height2/=2;
          }
       }
+
+   texsource=texformat=GL_RGB;
 
    switch (components)
       {
@@ -883,7 +888,9 @@ int build3Dtexmap(unsigned char *volume,
                   int components)
    {
    if (volume==NULL) ERRORMSG();
+
    if (width==NULL || height==NULL || depth==NULL) ERRORMSG();
+   if (*width<2 || *height<2 || *depth<2) ERRORMSG();
    if (components<1) ERRORMSG();
 
 #ifndef NOOGL
@@ -897,8 +904,6 @@ int build3Dtexmap(unsigned char *volume,
    initglexts();
 
    if (!glext_t3D) return(0);
-
-   if (*width<2 || *height<2 || *depth<2) ERRORMSG();
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_3D,texid);
