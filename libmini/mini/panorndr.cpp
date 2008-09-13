@@ -127,17 +127,14 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    char *filename;
    databuf buf;
 
+   float scalex,scaley;
+
    if (pass==1)
       {
       mtxpush();
       mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
-      mtxtex();
-      mtxpush();
-      mtxid();
-      mtxtranslate(0.5f,0.5f,0.0f);
-      mtxscale(-1.0f,2.0f,0.0f);
-      mtxtranslate(-0.5f,-0.5f,0.0f);
-      mtxmodel();
+
+      scalex=scaley=1.0f;
 
       if (vpoint->opts!=NULL)
          {
@@ -147,7 +144,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
 
          if (vpoint->opts->datafile!=NULL)
             {
-            if (!vpoint->opts->dataloaded)
+            if (!vpoint->opts->databoolvalue)
                {
                filename=POINTS->getfile(vpoint->opts->datafile);
 
@@ -161,12 +158,26 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                   buf.release();
                   }
 
-               vpoint->opts->dataloaded=TRUE;
+               vpoint->opts->databoolvalue=TRUE;
                }
 
-            STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
+            if (vpoint->opts->datatexid!=0 && vpoint->opts->datatexwidth>0 && vpoint->opts->datatexheight>0)
+               {
+               STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
+
+               if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
+               scaley=1.0f/(vpoint->opts->datatexheight/(scalex*vpoint->opts->datatexwidth))/PI;
+               }
             }
          }
+
+      mtxtex();
+      mtxpush();
+      mtxid();
+      mtxtranslate(0.5f,0.5f,0.0f);
+      mtxscale(-scalex,scaley,0.0f);
+      mtxtranslate(-0.5f,-0.5f,0.0f);
+      mtxmodel();
 
       STRIP->setscale(SCALEELEV);
       STRIP->render();

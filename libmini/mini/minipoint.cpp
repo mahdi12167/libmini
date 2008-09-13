@@ -64,9 +64,13 @@ minipointopts::minipointopts()
    datacolor_green=0.0f;
    datacolor_blue=0.0f;
    dataalpha=0.0f;
+   dataswitch=0;
+   datacontrol=0.0f;
    datarange=0.0f;
-   dataloaded=FALSE;
-   dataindex=-1;
+
+   databoolvalue=FALSE;
+   dataintvalue=0;
+   datafloatvalue=0.0f;
 
    datatexid=0;
    datatexwidth=0;

@@ -138,11 +138,14 @@ class minipointopts
    float datacolor_green;
    float datacolor_blue;
    float dataalpha;
+   int dataswitch;
+   float datacontrol;
    float datarange;
 
    // generic variables
-   BOOLINT dataloaded;
-   int dataindex;
+   BOOLINT databoolvalue;
+   int dataintvalue;
+   float datafloatvalue;
 
    // generic texture id
    int datatexid;
