@@ -167,9 +167,8 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
 
                if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
                scaley=1.0f/(vpoint->opts->datatexheight/(scalex*vpoint->opts->datatexwidth))/PI;
-
-               vpoint->opts->dataswitch=1;
                }
+            else vpoint->opts->dataswitch=1;
             }
          }
 
@@ -182,7 +181,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       mtxmodel();
 
       STRIP->setscale(SCALEELEV);
-      if (vpoint->opts->dataswitch!=0) STRIP->render();
+      if (vpoint->opts->dataswitch==0) STRIP->render();
 
       mtxtex();
       mtxpop();
