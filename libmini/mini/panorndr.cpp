@@ -15,6 +15,8 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BEGIN);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_HEADER);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BASIC);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_VIEWPOS);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_NORMAL);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_TEX);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_FOOTER);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_END);
@@ -23,6 +25,7 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_HEADER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_BASIC);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_TEX_MASK);
+   STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_SHADE_ALPHA);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_FOOTER);
    STRIP->concatpixshader(SLOT,MINI_SNIPPET_FRG_END);
 
@@ -114,7 +117,8 @@ void minipointrndr_panorndr::init(minipoint *points,
 
    initstate();
    enableFFculling();
-   enableAtest(0.5f);
+   enableblending();
+   enableAtest(0.01f);
    }
 
 // pre-render method
@@ -198,6 +202,7 @@ void minipointrndr_panorndr::post(int pass)
 void minipointrndr_panorndr::exit()
    {
    disableAtest();
+   disableblending();
    enableBFculling();
    exitstate();
    }

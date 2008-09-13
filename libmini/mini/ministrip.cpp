@@ -179,6 +179,26 @@ void ministrip::initsnippets()
       ABS nrm.z,nrm.z; \n\
       MUL col.xyz,col,nrm.z; \n");
 
+   addsnippet(MINI_SNIPPET_FRG_SHADE_ALPHA,"\
+      ### fetch view position \n\
+      TEMP pos; \n\
+      MOV pos,fragment.texcoord[1]; \n\
+      ### fetch fragment normal \n\
+      TEMP nrm; \n\
+      MOV nrm,fragment.texcoord[2]; \n\
+      ### calculate head light \n\
+      TEMP len; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL pos,pos,len.x; \n\
+      DP3 nrm.z,nrm,pos; \n\
+      ### modulate fragment alpha \n\
+      ABS nrm.z,nrm.z; \n\
+      MUL col.a,col.a,nrm.z; \n");
+
    addsnippet(MINI_SNIPPET_FRG_SHADE_DIRECT,"\
       ### fetch fragment normal \n\
       TEMP nrm; \n\
