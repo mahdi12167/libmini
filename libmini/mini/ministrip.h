@@ -22,6 +22,7 @@
 #define MINI_SNIPPET_FRG_TEX2_DIRECT "snippet_frg_tex2_direct"
 #define MINI_SNIPPET_FRG_SHADE "snippet_frg_shade"
 #define MINI_SNIPPET_FRG_SHADE_ALPHA "snippet_frg_shade_alpha"
+#define MINI_SNIPPET_FRG_SHADE_ALPHA2 "snippet_frg_shade_alpha2"
 #define MINI_SNIPPET_FRG_SHADE_DIRECT "snippet_frg_shade_direct"
 #define MINI_SNIPPET_FRG_FOG "snippet_frg_fog"
 #define MINI_SNIPPET_FRG_FOOTER "snippet_frg_footer"

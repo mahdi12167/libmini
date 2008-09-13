@@ -637,10 +637,10 @@ void renderinfo()
    {
    int i,j,t;
 
-   const float sx=0.6f;
+   const float sx=0.7f;
    const float sy=0.02f;
 
-   const float xr=0.38f;
+   const float xr=0.28f;
    const float yr=0.38f;
 
    const float size=0.3f;
