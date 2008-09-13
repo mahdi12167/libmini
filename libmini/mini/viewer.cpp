@@ -955,16 +955,17 @@ void render()
    if (nearest!=NULL)
       if (nearest->opts!=NULL)
          if (nearest->opts->type==minipointopts::OPTION_TYPE_FREE)
-            {
-            nearrad=nearest->opts->datasize/tparams->scale/2.0f;
-            nearvec=miniv3d(nearest->x,nearest->y,nearest->elev+nearrad)-miniv3d(el.vec);
-
-            if (nearvec.getlength()<5.0f*nearrad)
+            if (nearest->opts->dataswitch!=0)
                {
-               el.vec+=0.1*nearvec;
-               wakeup=1;
+               nearrad=nearest->opts->datasize/tparams->scale/2.0f;
+               nearvec=miniv3d(nearest->x,nearest->y,nearest->elev+nearrad)-miniv3d(el.vec);
+
+               if (nearvec.getlength()<5.0f*nearrad)
+                  {
+                  el.vec+=0.1*nearvec;
+                  wakeup=1;
+                  }
                }
-            }
 
    // remap eye coordinates:
 
