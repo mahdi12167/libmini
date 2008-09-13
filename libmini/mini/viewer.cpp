@@ -2,7 +2,7 @@
 
 // configuration section:
 
-#define VIEWER_WINWIDTH 768
+#define VIEWER_WINWIDTH 1024
 #define VIEWER_WINHEIGHT 512
 
 #define VIEWER_WINTITLE "libMini Viewer"
