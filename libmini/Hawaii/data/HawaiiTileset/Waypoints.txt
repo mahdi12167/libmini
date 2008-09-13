@@ -161,6 +161,14 @@ LL
 -157.679275
 0m
 
+Wonderful Beach
+; $type=6
+; $datafile="pano_malaekahana_beach.db" $datasize=50 $dataturn=240
+LL
+21.34
+-157.68
+100m
+
 Kaena Point Beach
 UTM 04
 0578470

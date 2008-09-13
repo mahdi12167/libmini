@@ -25,7 +25,7 @@
 
 #define VIEWER_MAXSPEED 50.0f
 #define VIEWER_GRAVITY 9.81f
-#define VIEWER_HOVER 1.81f
+#define VIEWER_HOVER 10.0f
 
 #define VIEWER_JUMP 20.0f
 #define VIEWER_DAMP 10.0f
@@ -149,7 +149,7 @@ static double angle,turn,pitch,incline;
 static miniv3d dir,up,right;
 
 // gliding parameters
-static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER/fsqrt(VIEWER_SCALE);
+static double maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER/VIEWER_SCALE;
 
 // jumping parameters
 static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
