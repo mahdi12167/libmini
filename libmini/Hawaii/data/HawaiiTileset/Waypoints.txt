@@ -147,7 +147,7 @@ UTM 04
 
 Stored Boats, Magnum Beach, Waimanalo
 ; $type=6
-; $datafile="pano_magnumbeach_boats.db" $datasize=50 $dataturn=205
+; $datafile="pano_magnumbeach_boats.db" $datasize=50 $dataturn=215
 LL
 21.325967
 -157.682425
@@ -155,7 +155,7 @@ LL
 
 Sea Wall, Magnum Beach, Waimanalo
 ; $type=6
-; $datafile="pano_magnumbeach_wall.db" $datasize=50 $dataturn=220
+; $datafile="pano_magnumbeach_wall.db" $datasize=50 $dataturn=215
 LL
 21.325129
 -157.679275
