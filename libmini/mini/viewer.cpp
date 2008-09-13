@@ -865,7 +865,7 @@ void render()
    minipointdata *nearest;
 
    float nearrad;
-   miniv4d nearvec;
+   miniv3d nearvec;
 
    double lightdir;
    miniv3d light;
