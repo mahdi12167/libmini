@@ -139,11 +139,27 @@ UTM 04
 2356453
 225m
 
-Public Beach, Waimanalo
+Public "Magum" Beach, Waimanalo
 UTM 04
 0636738
 2358779
 14m
+
+Stored Boats, Magnum Beach, Waimanalo
+; $type=6
+; $datafile="pano_magnumbeach_boats.db" $datasize=50 $dataturn=205
+LL
+21.325967
+-157.682425
+0m
+
+Sea Wall, Magnum Beach, Waimanalo
+; $type=6
+; $datafile="pano_magnumbeach_wall.db" $datasize=50 $dataturn=220
+LL
+21.325129
+-157.679275
+0m
 
 Kaena Point Beach
 UTM 04
@@ -1992,6 +2008,14 @@ UTM 04
 610104
 2396994
 15m
+
+Wonderful Beach, Malaekahana
+; $type=6
+; $datafile="pano_malaekahana_beach.db" $datasize=50 $dataturn=240
+LL
+21.667314
+-157.936509
+0m
 
 Cockroach Beach, Makai Pier Vista Point
 UTM 04
