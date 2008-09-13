@@ -863,6 +863,8 @@ void render()
    minilayer *ref,*nst;
 
    minipointdata *nearest;
+
+   float nearrad;
    miniv4d nearvec;
 
    double lightdir;
@@ -954,9 +956,10 @@ void render()
       if (nearest->opts!=NULL)
          if (nearest->opts->type==minipointopts::OPTION_TYPE_FREE)
             {
-            nearvec=miniv3d(nearest->x,nearest->y,nearest->elev+nearest->opts->datasize/VIEWER_SCALE/2.0f)-miniv3d(el.vec);
+            nearrad=nearest->opts->datasize/tparams->scale/2.0f;
+            nearvec=miniv3d(nearest->x,nearest->y,nearest->elev+nearrad)-miniv3d(el.vec);
 
-            if (nearvec.getlength()<5.0f*nearest->opts->datasize/VIEWER_SCALE/2.0f)
+            if (nearvec.getlength()<5.0f*nearrad)
                {
                el.vec+=0.1*nearvec;
                wakeup=1;
