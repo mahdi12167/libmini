@@ -579,14 +579,15 @@ void rendercompass()
    const float sx=0.05f;
    const float sy=0.05f;
 
-   const float xr=0.15f;
-   const float yr=0.15f;
+   const float xr=0.2f;
+   const float yr=0.2f;
 
    const float alpha=0.5f;
 
    glLoadIdentity();
    glTranslatef(sx,sy,0.0f);
    glScalef(xr,yr,0.0f);
+   glScalef((float)winheight/winwidth,1.0f,0.0f);
    glTranslatef(0.5f,0.5f,0.0f);
    glRotatef(turn,0.0f,0.0f,1.0f);
 
