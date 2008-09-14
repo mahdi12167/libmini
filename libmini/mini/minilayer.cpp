@@ -148,6 +148,7 @@ minilayer::minilayer(minicache *cache)
    // optional way-points:
 
    LPARAMS.waypoints="Waypoints.txt"; // waypoint file
+   LPARAMS.extrawps="Waypoints2.txt"; // extra waypoint file
 
    LPARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
    LPARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
@@ -701,6 +702,18 @@ void minilayer::loadopts()
 
       if (POINTS->getfirst()!=NULL)
          POINTS->configure_brickceiling(LPARAMS.brickceiling*POINTS->getfirst()->elev*LPARAMS.scale/LPARAMS.exaggeration);
+      }
+
+   // load extra waypoints:
+
+   char *ewname;
+
+   ewname=TILECACHE->getfile(LPARAMS.extrawps,LPARAMS.altpath);
+
+   if (ewname!=NULL)
+      {
+      if (POINTS!=NULL) POINTS->load(ewname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
+      free(ewname);
       }
 
    // load brick data:

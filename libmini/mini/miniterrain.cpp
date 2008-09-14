@@ -177,6 +177,7 @@ miniterrain::miniterrain()
    // optional way-points:
 
    TPARAMS.waypoints="Waypoints.txt"; // waypoint file
+   TPARAMS.extrawps="Waypoints2.txt"; // extra waypoint file
 
    TPARAMS.signpostturn=0.0f;     // horizontal orientation of signposts in degrees
    TPARAMS.signpostincline=0.0f;  // vertical orientation of signposts in degrees
@@ -393,6 +394,7 @@ void miniterrain::propagate_wp()
          lparams->usebricks=TPARAMS.usebricks;
 
          lparams->waypoints=TPARAMS.waypoints;
+         lparams->extrawps=TPARAMS.extrawps;
 
          lparams->signpostheight=TPARAMS.signpostheight;
          lparams->signpostrange=TPARAMS.signpostrange;

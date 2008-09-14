@@ -170,6 +170,7 @@ class miniterrain
       // optional way-points:
 
       const char *waypoints;
+      const char *extrawps;
 
       float signpostheight;
       float signpostrange;
