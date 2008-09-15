@@ -128,6 +128,8 @@ void minipointrndr_panorndr::pre(int pass)
 // rendering method
 void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    {
+   float range;
+
    char *filename;
    databuf buf;
 
@@ -135,6 +137,30 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
 
    if (pass==1)
       {
+      // calculate maximum range
+      range=(GLOBAL->datarange>0.0f)?GLOBAL->datarange:GLOBAL->signpostrange;
+      if (vpoint->opts!=NULL)
+         if (vpoint->opts->datarange>0.0f) range=vpoint->opts->datarange;
+
+      // check distance
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range))
+         {
+         if (vpoint->opts!=NULL)
+            if (vpoint->opts->dataswitch==0 && vpoint->opts->databoolvalue)
+               {
+               if (vpoint->opts->datatexid!=0) deletetexmap(vpoint->opts->datatexid);
+
+               vpoint->opts->datatexid=0;
+               vpoint->opts->datatexwidth=0;
+               vpoint->opts->datatexheight=0;
+               vpoint->opts->datatexmipmaps=0;
+
+               vpoint->opts->databoolvalue=FALSE;
+               }
+
+         return;
+         }
+
       mtxpush();
       mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
 
@@ -146,7 +172,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
          mtxtranslate(0.0f,0.5f*SCALEELEV,0.0f);
 
-         if (vpoint->opts->datafile!=NULL)
+         if (vpoint->opts->datafile!=NULL && vpoint->opts->dataswitch==0)
             {
             if (!vpoint->opts->databoolvalue)
                {

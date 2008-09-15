@@ -317,6 +317,8 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("datacolor_green",minipointopts::OPTION_DATACOLOR_GREEN);
    scanner.addtoken("datacolor_blue",minipointopts::OPTION_DATACOLOR_BLUE);
    scanner.addtoken("dataalpha",minipointopts::OPTION_DATAALPHA);
+   scanner.addtoken("dataswitch",minipointopts::OPTION_DATASWITCH);
+   scanner.addtoken("datacontrol",minipointopts::OPTION_DATACONTROL);
    scanner.addtoken("datarange",minipointopts::OPTION_DATARANGE);
 
    scanner.setcode(point->comment);
@@ -380,6 +382,8 @@ void minipoint::parseoption(minipointdata *point,lunascan *scanner)
             case minipointopts::OPTION_DATACOLOR_GREEN: point->opts->datacolor_green=value; break;
             case minipointopts::OPTION_DATACOLOR_BLUE: point->opts->datacolor_blue=value; break;
             case minipointopts::OPTION_DATAALPHA: point->opts->dataalpha=value; break;
+            case minipointopts::OPTION_DATASWITCH: point->opts->dataswitch=ftrc(value+0.5f); break;
+            case minipointopts::OPTION_DATACONTROL: point->opts->datacontrol=value; break;
             case minipointopts::OPTION_DATARANGE: point->opts->datarange=value; break;
             }
          }
@@ -1007,6 +1011,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
    const int maxinfo=1000;
    static char info[maxinfo];
 
+   float range;
    float sheight,ssize;
    float sturn,syon;
    float salpha;
@@ -1024,8 +1029,13 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
    // label waypoint within range
    else if (pass==2)
       {
+      // calculate maximum range
+      range=GLOBAL->signpostrange;
+      if (vpoint->opts!=NULL)
+         if (vpoint->opts->signpostrange>0.0f) range=vpoint->opts->signpostrange;
+
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(GLOBAL->signpostrange)) return;
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range)) return;
 
       // get global waypoint parameters
       ssize=GLOBAL->signpostsize;
