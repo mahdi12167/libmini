@@ -815,11 +815,14 @@ inline int operator < (const minipointdata &a,const minipointdata &b)
    }
 
 // get nearest waypoint
-minipointdata *minipoint::getnearest(float x,float y,float elev)
+minipointdata *minipoint::getnearest(float x,float y,float elev,
+                                     int type)
    {
    int i;
 
    minipointdata **vpoint,*nearest;
+
+   int t;
 
    if (VPOINTS==NULL) return(NULL);
 
@@ -827,8 +830,14 @@ minipointdata *minipoint::getnearest(float x,float y,float elev)
    nearest=NULL;
 
    for (i=0; i<VNUM; i++,vpoint++)
-      if (nearest==NULL) nearest=*vpoint;
-      else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
+      {
+      if ((*vpoint)->opts==NULL) t=minipointopts::OPTION_TYPE_ANY;
+      else t=(*vpoint)->opts->type;
+
+      if (t==type || type==minipointopts::OPTION_TYPE_ANY)
+         if (nearest==NULL) nearest=*vpoint;
+         else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
+      }
 
    return(nearest);
    }

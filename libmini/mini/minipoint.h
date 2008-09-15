@@ -325,7 +325,8 @@ class minipoint
    int getvnum() {return(VNUM);}
 
    //! get nearest waypoint
-   minipointdata *getnearest(float x,float y,float elev);
+   minipointdata *getnearest(float x,float y,float elev,
+                             int type=minipointopts::OPTION_TYPE_ANY);
 
    //! get squared distance to waypoint
    float getdistance2(float x,float y,float elev,minipointdata *point);

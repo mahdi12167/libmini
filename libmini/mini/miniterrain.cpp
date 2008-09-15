@@ -1003,7 +1003,7 @@ float miniterrain::getflattening()
    }
 
 // get the nearest waypoint
-minipointdata *miniterrain::getnearestpoint()
+minipointdata *miniterrain::getnearestpoint(int type)
    {
    int ref,nst;
 
@@ -1025,7 +1025,7 @@ minipointdata *miniterrain::getnearestpoint()
       nst=getnearest(lparams.eye);
 
       // get nearest waypoint from nearest layer
-      if (isdisplayed(nst) && !isculled(nst)) nearest=LAYER[nst]->getnearestpoint();
+      if (isdisplayed(nst) && !isculled(nst)) nearest=LAYER[nst]->getnearestpoint(type);
       }
 
    return(nearest);
