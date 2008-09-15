@@ -140,11 +140,12 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       // calculate maximum range
       range=(GLOBAL->datarange>0.0f)?GLOBAL->datarange:GLOBAL->signpostrange;
       if (vpoint->opts!=NULL)
-         if (vpoint->opts->datarange>0.0f) range=vpoint->opts->datarange;
+         if (vpoint->opts->datarange>0.0f) range=vpoint->opts->datarange*SCALEELEV;
 
       // check distance
       if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range))
          {
+         // release already loaded texture
          if (vpoint->opts!=NULL)
             if (vpoint->opts->dataswitch==0 && vpoint->opts->databoolvalue)
                {
@@ -158,22 +159,33 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                vpoint->opts->databoolvalue=FALSE;
                }
 
+         // skip rendering
          return;
          }
 
+      // translate by waypoint coordinates
       mtxpush();
       mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
 
+      // set default texture coordinate scaling
       scalex=scaley=1.0f;
 
       if (vpoint->opts!=NULL)
          {
+         // calculate size
+         if (vpoint->opts->datasize==0.0f)
+            if (GLOBAL->datasize>0.0f) vpoint->opts->datasize=GLOBAL->datasize/SCALEELEV;
+            else vpoint->opts->datasize=GLOBAL->signpostsize/SCALEELEV/2.0f;
+
+         // rotate and scale waypoint
          mtxrotate(-90.0f-vpoint->opts->dataturn,0.0f,1.0f,0.0f);
          mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
          mtxtranslate(0.0f,0.5f*SCALEELEV,0.0f);
 
+         // enable texture
          if (vpoint->opts->datafile!=NULL && vpoint->opts->dataswitch==0)
             {
+            // load texture and store texture id
             if (!vpoint->opts->databoolvalue)
                {
                filename=POINTS->getfile(vpoint->opts->datafile);
@@ -191,10 +203,13 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                vpoint->opts->databoolvalue=TRUE;
                }
 
+            // bind texture id
             if (vpoint->opts->datatexid!=0 && vpoint->opts->datatexwidth>0 && vpoint->opts->datatexheight>0)
                {
+               // pass texture id
                STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
 
+               // calculate texture coordinate scaling for proper texel aspect ratio
                if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
                scaley=1.0f/(vpoint->opts->datatexheight/(scalex*vpoint->opts->datatexwidth))/PI;
                }
@@ -202,6 +217,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
             }
          }
 
+      // apply texture coordinate scaling
       mtxtex();
       mtxpush();
       mtxid();
@@ -210,9 +226,11 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       mtxtranslate(-0.5f,-0.5f,0.0f);
       mtxmodel();
 
+      // render at appropriate scale
       STRIP->setscale(SCALEELEV);
       if (vpoint->opts->dataswitch==0) STRIP->render();
 
+      // pop matrices
       mtxtex();
       mtxpop();
       mtxmodel();

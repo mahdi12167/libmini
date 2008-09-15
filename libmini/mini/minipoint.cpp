@@ -1039,7 +1039,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
       // calculate maximum range
       range=GLOBAL->signpostrange;
       if (vpoint->opts!=NULL)
-         if (vpoint->opts->signpostrange>0.0f) range=vpoint->opts->signpostrange;
+         if (vpoint->opts->signpostrange>0.0f) range=vpoint->opts->signpostrange*SCALEELEV;
 
       // check distance
       if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range)) return;
