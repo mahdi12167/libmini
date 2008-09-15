@@ -163,12 +163,15 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          return;
          }
 
-      // translate by waypoint coordinates
+      // push matrices
+      mtxtex();
       mtxpush();
-      mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
+      mtxid();
+      mtxmodel();
+      mtxpush();
 
-      // set default texture coordinate scaling
-      scalex=scaley=1.0f;
+      // translate by waypoint coordinates
+      mtxtranslate(vpoint->x,vpoint->elev,-vpoint->y);
 
       if (vpoint->opts!=NULL)
          {
@@ -209,22 +212,51 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                // pass texture id
                STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
 
+               // set default texture coordinate scaling
+               scalex=scaley=1.0f;
+
                // calculate texture coordinate scaling for proper texel aspect ratio
-               if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
-               scaley=1.0f/(vpoint->opts->datatexheight/(scalex*vpoint->opts->datatexwidth))/PI;
+               if (vpoint->opts->datatexwidth>=vpoint->opts->datatexheight)
+                  {
+                  // horizontally aligned texture
+                  if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
+                  scaley=1.0f/(vpoint->opts->datatexheight/(scalex*vpoint->opts->datatexwidth))/PI;
+
+                  // apply texture coordinate shift
+                  if (vpoint->opts->dataincline!=0.0f)
+                     {
+                     mtxtex();
+                     mtxtranslate(0.0f,vpoint->opts->dataincline/90.0f,0.0f);
+                     mtxmodel();
+                     }
+                  }
+               else
+                  {
+                  // vertically aligned texture
+                  if (vpoint->opts->datacontrol!=0.0f) scaley=360.0f/vpoint->opts->datacontrol;
+                  scalex=1.0f/(vpoint->opts->datatexwidth/(scaley*vpoint->opts->datatexheight))/PI;
+
+                  // flip axis
+                  mtxtex();
+                  if (vpoint->opts->datacontrol!=0.0f) mtxtranslate(0.0f,vpoint->opts->dataincline/vpoint->opts->datacontrol,0.0f);
+                  else mtxtranslate(0.0f,vpoint->opts->dataincline/360.0f,0.0f);
+                  mtxtranslate(0.5f,0.5f,0.0f);
+                  mtxrotate(90.0f,0.0f,0.0f,1.0f);
+                  mtxtranslate(-0.5f,-0.5f,0.0f);
+                  mtxmodel();
+                  mtxrotate(-90.0f,1.0f,0.0f,0.0f);
+                  }
+
+               // apply texture coordinate scaling
+               mtxtex();
+               mtxtranslate(0.5f,0.5f,0.0f);
+               mtxscale(-scalex,scaley,0.0f);
+               mtxtranslate(-0.5f,-0.5f,0.0f);
+               mtxmodel();
                }
             else vpoint->opts->dataswitch=1;
             }
          }
-
-      // apply texture coordinate scaling
-      mtxtex();
-      mtxpush();
-      mtxid();
-      mtxtranslate(0.5f,0.5f,0.0f);
-      mtxscale(-scalex,scaley,0.0f);
-      mtxtranslate(-0.5f,-0.5f,0.0f);
-      mtxmodel();
 
       // render at appropriate scale
       STRIP->setscale(SCALEELEV);
