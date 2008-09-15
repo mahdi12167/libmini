@@ -963,7 +963,7 @@ void render()
             if (nearvec.getlength()<5.0f*nearrad)
                {
                el.vec+=0.1*nearvec;
-               wakeup=1;
+               if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=1;
                }
             }
 
