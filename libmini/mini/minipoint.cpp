@@ -468,8 +468,6 @@ void minipoint::load(const char *filename,
 
    ch=fgetc(file);
 
-   while (ch=='\n' || ch=='\r') ch=fgetc(file);
-
    while (ch!=EOF)
       {
       point.x=point.y=0.0f;
@@ -482,6 +480,18 @@ void minipoint::load(const char *filename,
 
       point.opts=NULL;
       point.rndr=NULL;
+
+      // skip empty lines and comments
+      while (ch=='\n' || ch=='\r' || ch==delimiter)
+         if (ch==delimiter)
+            {
+            ch=fgetc(file);
+            while (ch!='\n' && ch!='\r' && ch!=EOF) ch=fgetc(file);
+            }
+         else ch=fgetc(file);
+
+      // check for end of file
+      if (ch==EOF) break;
 
       // read full description
       while (ch!='\n' && ch!='\r' && ch!=EOF)
@@ -623,9 +633,6 @@ void minipoint::load(const char *filename,
          point.elevation=addch(point.elevation,ch);
          ch=fgetc(file);
          }
-
-      // skip end of line
-      while (ch=='\n' || ch=='\r') ch=fgetc(file);
 
       if (point.elevation==NULL) ERRORMSG();
 
