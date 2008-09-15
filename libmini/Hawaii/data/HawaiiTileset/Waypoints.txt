@@ -1048,7 +1048,7 @@ UTM 04
 UTM 04
 632307
 2366230
-25m
+12m
 
 Atop of Maunawili Falls
 UTM 04
@@ -1378,13 +1378,14 @@ Manoa Falls Trailhead
 UTM 04
 624340
 2359385
-33m
+124m
 
 Manoa Falls View
+; falls at 330m elevation
 UTM 04
 624486
 2360362
-55m
+239m
 
 UH Academy of Arts
 UTM 04
