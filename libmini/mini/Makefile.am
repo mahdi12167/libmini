@@ -42,7 +42,7 @@ libMini_la_SOURCES = $(MODS:=.cpp)
 libMiniSFX_la_LIBADD = $(MINI_LIBS)
 libMiniSFX_la_SOURCES = $(VMODS:=.cpp)
 
-library_include_HEADERS = ($HDRS:=.h) $(MODS:=.h) $(VMODS:=.h)
+library_include_HEADERS = $(patsubst %,%.h,${HDRS}) $(patsubst %,%.h,${MODS}) $(patsubst %,%.h,${VMODS})
 
 EXTRA_DIST =\
 	miniP.h miniOGLP.h\

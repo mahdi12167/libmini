@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-INCLUDES = -I$(top_builddir) $(MINI_CFLAGS)
+INCLUDES = -I$(top_builddir) -I$(top_builddir)/.. $(MINI_CFLAGS)
 
 noinst_PROGRAMS = db2db eval mpfptest test
 

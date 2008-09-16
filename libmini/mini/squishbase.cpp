@@ -2,11 +2,11 @@
 
 #include <mini/minibase.h>
 
-#ifndef NOSQUISH
 #include "squishbase.h"
-#endif
 
+#ifndef NOSQUISH
 #include <squish.h> // HINT: do not install the header file in /usr/include on MacOS X
+#endif
 
 namespace squishbase {
 
