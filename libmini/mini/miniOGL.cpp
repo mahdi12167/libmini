@@ -1425,11 +1425,13 @@ void painttexrect(int texid,int depthcomp)
    glMatrixMode(GL_MODELVIEW);
    glPushMatrix();
    glLoadIdentity();
+   glTranslatef(0.5f,0.5f,0.0f);
    glScalef(width-1,height-1,0.0f);
    glMatrixMode(GL_TEXTURE);
    glPushMatrix();
    glLoadIdentity();
    glTranslatef(0.5f,0.5f,0.0f);
+   glScalef(width,height,0.0f);
    glMatrixMode(GL_PROJECTION);
    glPushMatrix();
    glLoadIdentity();
@@ -1444,13 +1446,13 @@ void painttexrect(int texid,int depthcomp)
 
    beginfans();
    beginfan();
-   texcoord(0,0);
+   texcoord(0.0f,0.0f);
    fanvertex(0.0f,0.0f,0.0f);
-   texcoord(width-1,0);
+   texcoord(1.0f,0.0f);
    fanvertex(1.0f,0.0f,0.0f);
-   texcoord(width-1,height-1);
+   texcoord(1.0f,1.0f);
    fanvertex(1.0f,1.0f,0.0f);
-   texcoord(0,height-1);
+   texcoord(0.0f,1.0f);
    fanvertex(0.0f,1.0f,0.0f);
    endfans();
 
