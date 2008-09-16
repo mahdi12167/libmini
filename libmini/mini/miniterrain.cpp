@@ -173,6 +173,7 @@ miniterrain::miniterrain()
 
    TPARAMS.detailtexmode=0;     // detail texture mode (0=off 1=overlay 2=modulate)
    TPARAMS.detailtexalpha=0.0f; // detail texture opacity
+   TPARAMS.detailtexmask=0;     // detail texture mask (0=off 1=on)
 
    // optional way-points:
 
@@ -890,7 +891,7 @@ void miniterrain::render()
                   CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),0,0,0);
                   }
 
-         minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha);
+         minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha,TPARAMS.detailtexmask);
          }
 
       // render vertex arrays

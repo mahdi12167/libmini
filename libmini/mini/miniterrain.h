@@ -166,6 +166,7 @@ class miniterrain
 
       int detailtexmode;
       float detailtexalpha;
+      int detailtexmask;
 
       // optional way-points:
 

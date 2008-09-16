@@ -40,7 +40,7 @@ class minishader
    static void setNPRbathymap(unsigned char *bathymap,
                               int bathywidth,int bathyheight,int bathycomps);
 
-   static void setdetailtexmode(int mode,float alpha);
+   static void setdetailtexmode(int mode,float alpha=1.0f,int mask=0);
 
    static void unsetshaders(minicache *cache);
 

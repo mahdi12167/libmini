@@ -585,10 +585,11 @@ void minishader::setNPRbathymap(unsigned char *bathymap,
    }
 
 // set detail texturing mode (0=off 1=overlay 2=modulate)
-void minishader::setdetailtexmode(int mode,float alpha)
+void minishader::setdetailtexmode(int mode,float alpha,int mask)
    {
    DETAILTEXMODE=mode;
    DETAILTEXALPHA=alpha;
+   DETAILTEXMASK=mask;
    }
 
 // disable vertex and pixel shaders
