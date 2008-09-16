@@ -14,6 +14,7 @@ int minishader::NPRBATHYMOD=0;
 
 int minishader::DETAILTEXMODE=0;
 float minishader::DETAILTEXALPHA=0.0f;
+int minishader::DETAILTEXMASK=0;
 
 // enable vertex and pixel shader for VIS purposes
 void minishader::setVISshader(minicache *cache,
@@ -51,7 +52,7 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[8]; \n\
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
-      TEMP col,colb,colt,nrm,vtx,len,opa,fog; \n\
+      TEMP col,colb,colt,nrm,vtx,len,crd,opa,fog; \n\
       ### fetch texture color \n\
       TEX col,fragment.texcoord[0],texture[0],2D; \n\
       MAD col,col,a.x,a.b; \n";
@@ -92,18 +93,33 @@ void minishader::setVISshader(minicache *cache,
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n";
 
-   // fragment program for the terrain (snippet #5, overlay mode)
-   static const char *fragprog1_s5o="\
-      ## blend in detail texture \n\
+   // fragment program for the terrain (snippet #5, load detail)
+   static const char *fragprog1_s5l="\
+      ## load detail texture \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n";
+
+   // fragment program for the terrain (snippet #5, load+mask detail)
+   static const char *fragprog1_s5lm="\
+      ## load detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
+      ### check coordinate range \n\
+      MOV crd,fragment.texcoord[2]; \n\
+      CMP colt.a,crd.x,0.0,colt.a; \n\
+      CMP colt.a,crd.y,0.0,colt.a; \n\
+      SUB crd,1.0,crd; \n\
+      CMP colt.a,crd.x,0.0,colt.a; \n\
+      CMP colt.a,crd.y,0.0,colt.a; \n";
+
+   // fragment program for the terrain (snippet #6, overlay mode)
+   static const char *fragprog1_s6o="\
+      ## blend in detail texture \n\
       MUL opa.a,colt.a,o.a; \n\
       MUL opa.a,opa.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
-   // fragment program for the terrain (snippet #5, modulate mode)
-   static const char *fragprog1_s5m="\
+   // fragment program for the terrain (snippet #6, modulate mode)
+   static const char *fragprog1_s6m="\
       ### blend in detail texture \n\
-      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,o.a; \n\
       MUL opa.a,opa.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
@@ -229,17 +245,17 @@ void minishader::setVISshader(minicache *cache,
 
    // concatenate pixel shader
    if (!usemap)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,NULL,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else if (seabottom<0.0f)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,usesea?fragprog1_s3:NULL,usecnt?fragprog1_s4:NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping before the fade-out, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,usesea?fragprog1_s3:NULL,fragprog1_s2,usecnt?fragprog1_s4:NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping after the fade-out, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -253,7 +269,7 @@ void minishader::setVISshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
@@ -360,18 +376,33 @@ void minishader::setNPRshader(minicache *cache,
       ### modulate with fragment color \n\
       MUL col,col,fragment.color; \n";
 
-   // fragment program for the terrain (snippet #5, overlay mode)
-   static const char *fragprog1_s5o="\
-      ## blend in detail texture \n\
+   // fragment program for the terrain (snippet #5, load detail)
+   static const char *fragprog1_s5l="\
+      ## load detail texture \n\
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n";
+
+   // fragment program for the terrain (snippet #5, load+mask detail)
+   static const char *fragprog1_s5lm="\
+      ## load detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
+      ### check coordinate range \n\
+      MOV crd,fragment.texcoord[2]; \n\
+      CMP colt.a,crd.x,0.0,colt.a; \n\
+      CMP colt.a,crd.y,0.0,colt.a; \n\
+      SUB crd,1.0,crd; \n\
+      CMP colt.a,crd.x,0.0,colt.a; \n\
+      CMP colt.a,crd.y,0.0,colt.a; \n";
+
+   // fragment program for the terrain (snippet #6, overlay mode)
+   static const char *fragprog1_s6o="\
+      ## blend in detail texture \n\
       MUL opa.a,colt.a,o.a; \n\
       MUL opa.a,opa.a,c3.a; \n\
       LRP col,opa.a,colt,col; \n";
 
-   // fragment program for the terrain (snippet #5, modulate mode)
-   static const char *fragprog1_s5m="\
+   // fragment program for the terrain (snippet #6, modulate mode)
+   static const char *fragprog1_s6m="\
       ### blend in detail texture \n\
-      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
       MUL opa.a,colt.a,o.a; \n\
       MUL opa.a,opa.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
@@ -500,13 +531,13 @@ void minishader::setNPRshader(minicache *cache,
 
    // concatenate pixel shader
    if (!usemap)
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,NULL,usecnt?fragprog1_s4:NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // without color mapping, without detail texture
    else
-      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,fragprog1_s5o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture overlay
-      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,fragprog1_s5m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture modulation
-      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, without detail texture
+      if (DETAILTEXMODE==1) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6o,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture overlay
+      else if (DETAILTEXMODE==2) fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,(DETAILTEXMASK==0)?fragprog1_s5l:fragprog1_s5lm,fragprog1_s6m,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, with detail texture modulation
+      else fragprog=concatprog(fragprog1_s1,fragprog1_s2,fragprog1_s3,usecnt?fragprog1_s4:NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3); // with color mapping, without detail texture
 
    // use pixel shader plugin
    cache->setpixshader(fragprog);
@@ -520,7 +551,7 @@ void minishader::setNPRshader(minicache *cache,
    free(fragprog);
 
    // concatenate sea shader
-   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
+   fragprog=concatprog(fragprog2_s1,fragprog2_s2,NULL,NULL,NULL,NULL,fragprog_t1,usefog?fragprog_t2:NULL,fragprog_t3);
 
    // use sea shader plugin
    cache->setseashader(fragprog);
@@ -569,7 +600,7 @@ void minishader::unsetshaders(minicache *cache)
    }
 
 // concatenate shader program from snippets
-char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7,const char *s8)
+char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7,const char *s8,const char *s9)
    {
    char *prog1,*prog2;
 
@@ -586,6 +617,8 @@ char *minishader::concatprog(const char *s1,const char *s2,const char *s3,const 
    free(prog1);
    prog1=strcct(prog2,s8);
    free(prog2);
+   prog2=strcct(prog1,s9);
+   free(prog1);
 
-   return(prog1);
+   return(prog2);
    }
