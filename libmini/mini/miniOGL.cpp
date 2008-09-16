@@ -1210,12 +1210,12 @@ inline void deleteprog(int progid)
 #endif
    }
 
-int buildvtxprog(const char *prog) {buildprog(prog,TRUE);}
+int buildvtxprog(const char *prog) {return(buildprog(prog,TRUE));}
 void bindvtxprog(int progid) {bindprog(progid,TRUE);}
 void setvtxprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,TRUE);}
 void deletevtxprog(int progid) {deleteprog(progid);}
 
-int buildfrgprog(const char *prog) {buildprog(prog,FALSE);}
+int buildfrgprog(const char *prog) {return(buildprog(prog,FALSE));}
 void bindfrgprog(int progid) {bindprog(progid,FALSE);}
 void setfrgprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,FALSE);}
 void deletefrgprog(int progid) {deleteprog(progid);}
