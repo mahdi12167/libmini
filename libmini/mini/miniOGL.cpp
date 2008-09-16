@@ -1023,16 +1023,6 @@ void deletetexmap(int texid)
 #endif
    }
 
-void texunit(int unit)
-   {
-#ifndef NOOGL
-   initglexts();
-#ifdef GL_ARB_multitexture
-   if (glext_mt!=0) glActiveTextureARB(GL_TEXTURE0_ARB+unit);
-#endif
-#endif
-   }
-
 int compressRGBtexmap(unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes)
    {
@@ -1080,6 +1070,26 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
 #endif
 
    return(0);
+   }
+
+void texunit(int unit)
+   {
+#ifndef NOOGL
+   initglexts();
+#ifdef GL_ARB_multitexture
+   if (glext_mt!=0) glActiveTextureARB(GL_TEXTURE0_ARB+unit);
+#endif
+#endif
+   }
+
+void texclientunit(int unit)
+   {
+#ifndef NOOGL
+   initglexts();
+#ifdef GL_ARB_multitexture
+   if (glext_mt!=0) glClientActiveTextureARB(GL_TEXTURE0_ARB+unit);
+#endif
+#endif
    }
 
 void mtxmodel()

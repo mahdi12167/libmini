@@ -51,10 +51,12 @@ void bindtexmap(int texid,int width=0,int height=0,int size=0,int mipmaps=1);
 int build3Dtexmap(unsigned char *volume,int *width,int *height,int *depth,int components);
 void bind3Dtexmap(int texid);
 void deletetexmap(int texid);
-void texunit(int unit);
 
 int compressRGBtexmap(unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes);
+
+void texunit(int unit);
+void texclientunit(int unit);
 
 void mtxmodel();
 void mtxproj();
