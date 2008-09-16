@@ -422,7 +422,6 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
    GLSETUP=0;
    WGLSETUP=0;
 
-   GLEXT_MT=0;
    GLEXT_VP=0;
    GLEXT_FP=0;
    }
@@ -979,20 +978,16 @@ void ministrip::enablepixshader(int num)
             for (i=0; i<SHADERFRGPRMMAX; i++)
                glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,SHADER[num].pixshaderpar1[i],SHADER[num].pixshaderpar2[i],SHADER[num].pixshaderpar3[i],SHADER[num].pixshaderpar4[i]);
 
-            if (GLEXT_MT!=0)
-               {
-#ifdef GL_ARB_multitexture
-               for (i=0; i<SHADERFRGTEXMAX; i++)
-                  if (SHADER[num].pixshadertexid[i]!=0)
-                     {
-                     glActiveTextureARB(GL_TEXTURE0_ARB+i);
-                     if (SHADER[num].pixshadertexcl[i]==0) bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
-                     else bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
-                     }
+            for (i=0; i<SHADERFRGTEXMAX; i++)
+               if (SHADER[num].pixshadertexid[i]!=0)
+                  {
+                  texunit(i);
 
-               glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-               }
+                  if (SHADER[num].pixshadertexcl[i]==0) bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
+                  else bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
+                  }
+
+            texunit(0);
             }
          }
 
@@ -1016,19 +1011,14 @@ void ministrip::disablepixshader(int num)
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
          glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-         if (GLEXT_MT!=0)
-            {
-#ifdef GL_ARB_multitexture
-            for (i=0; i<SHADERFRGTEXMAX; i++)
-               if (SHADER[num].pixshadertexid[i]!=0)
-                  {
-                  glActiveTextureARB(GL_TEXTURE0_ARB+i);
-                  bindtexmap(0,0,0,0,0);
-                  }
+         for (i=0; i<SHADERFRGTEXMAX; i++)
+            if (SHADER[num].pixshadertexid[i]!=0)
+               {
+               texunit(i);
+               bindtexmap(0,0,0,0,0);
+               }
 
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-            }
+         texunit(0);
          }
 
 #endif
@@ -1098,13 +1088,11 @@ void ministrip::initglexts()
 
    if (GLSETUP==0)
       {
-      GLEXT_MT=0;
       GLEXT_VP=0;
       GLEXT_FP=0;
 
       if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
-      if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
       if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
       if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
 
@@ -1164,12 +1152,7 @@ void ministrip::render()
       glMultMatrixd(TEXMTX);
       glMatrixMode(GL_MODELVIEW);
 
-      if (GLEXT_MT!=0)
-         {
-#ifdef GL_ARB_multitexture
-         glClientActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-         }
+      texclientunit(0);
 
       glTexCoordPointer(TEXCOMPS,GL_FLOAT,0,TEXARRAY);
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1315,11 +1298,6 @@ void ministrip::initwglprocs()
 
    if (WGLSETUP==0)
       {
-#ifdef GL_ARB_multitexture
-      glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
-      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
-#endif
-
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
       glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
       glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
