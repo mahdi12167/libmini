@@ -100,6 +100,12 @@ void disablelinesmooth();
 
 inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
+void vertexarray(float *array);
+void colorarray(float *array,int comps=3);
+void normalarray(float *array);
+void texcoordarray(float *array,int comps=2);
+void renderarrays(int size);
+
 int getmaxtexsize();
 int getmax3Dtexsize();
 

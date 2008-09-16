@@ -1350,6 +1350,61 @@ void disablelinesmooth()
 #endif
    }
 
+void vertexarray(float *array)
+   {
+#ifndef NOOGL
+   if (array!=NULL)
+      {
+      glVertexPointer(3,GL_FLOAT,0,array);
+      glEnableClientState(GL_VERTEX_ARRAY);
+      }
+   else glDisableClientState(GL_VERTEX_ARRAY);
+#endif
+   }
+
+void colorarray(float *array,int comps)
+   {
+#ifndef NOOGL
+   if (array!=NULL)
+      {
+      glColorPointer(comps,GL_FLOAT,0,array);
+      glEnableClientState(GL_COLOR_ARRAY);
+      }
+   else glDisableClientState(GL_COLOR_ARRAY);
+#endif
+   }
+
+void normalarray(float *array)
+   {
+#ifndef NOOGL
+   if (array!=NULL)
+      {
+      glNormalPointer(GL_FLOAT,0,array);
+      glEnableClientState(GL_NORMAL_ARRAY);
+      }
+   else glDisableClientState(GL_NORMAL_ARRAY);
+#endif
+   }
+
+void texcoordarray(float *array,int comps)
+   {
+#ifndef NOOGL
+   if (array!=NULL)
+      {
+      glTexCoordPointer(comps,GL_FLOAT,0,array);
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      }
+   else glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
+   }
+
+void renderarrays(int size)
+   {
+#ifndef NOOGL
+   glDrawArrays(GL_TRIANGLE_STRIP,0,size);
+#endif
+   }
+
 int getmaxtexsize()
    {
 #ifndef NOOGL

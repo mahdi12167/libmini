@@ -984,21 +984,19 @@ int ministrip::getshader()
 // render triangle strips
 void ministrip::render()
    {
-#ifndef NOOGL
+   if (COLARRAY==NULL) color(COLR,COLG,COLB,COLA);
+   if (NRMARRAY==NULL) normal(NRMX,NRMY,NRMZ);
 
-   if (COLARRAY==NULL) glColor4f(COLR,COLG,COLB,COLA);
-   if (NRMARRAY==NULL) glNormal3f(NRMX,NRMY,NRMZ);
-
-   glPushMatrix();
-   glMultMatrixd(MTX);
-   glScalef(SCALE,SCALE,SCALE);
+   mtxpush();
+   mtxmult(MTX);
+   mtxscale(SCALE,SCALE,SCALE);
 
    if (ZSCALE!=1.0f)
       {
-      glMatrixMode(GL_PROJECTION);
-      glPushMatrix();
-      glScalef(ZSCALE,ZSCALE,ZSCALE);
-      glMatrixMode(GL_MODELVIEW);
+      mtxproj();
+      mtxpush();
+      mtxscale(ZSCALE,ZSCALE,ZSCALE);
+      mtxmodel();
       }
 
    if (USESHADER>=0)
@@ -1007,52 +1005,35 @@ void ministrip::render()
       enablepixshader(USESHADER);
       }
 
-   glVertexPointer(3,GL_FLOAT,0,VTXARRAY);
-   glEnableClientState(GL_VERTEX_ARRAY);
-
-   if (COLARRAY!=NULL)
-      {
-      glColorPointer(COLCOMPS,GL_FLOAT,0,COLARRAY);
-      glEnableClientState(GL_COLOR_ARRAY);
-      }
-   else glDisableClientState(GL_COLOR_ARRAY);
-
-   if (NRMARRAY!=NULL)
-      {
-      glNormalPointer(GL_FLOAT,0,NRMARRAY);
-      glEnableClientState(GL_NORMAL_ARRAY);
-      }
-   else glDisableClientState(GL_NORMAL_ARRAY);
+   vertexarray(VTXARRAY);
+   colorarray(COLARRAY,COLCOMPS);
+   normalarray(NRMARRAY);
 
    if (TEXARRAY!=NULL)
       {
-      glMatrixMode(GL_TEXTURE);
-      glPushMatrix();
-      glMultMatrixd(TEXMTX);
-      glMatrixMode(GL_MODELVIEW);
+      mtxtex();
+      mtxpush();
+      mtxmult(TEXMTX);
+      mtxmodel();
 
       texclientunit(0);
-
-      glTexCoordPointer(TEXCOMPS,GL_FLOAT,0,TEXARRAY);
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      texcoordarray(TEXARRAY,TEXCOMPS);
       }
-   else glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+   else texcoordarray(NULL);
 
-   glDrawArrays(GL_TRIANGLE_STRIP,0,SIZE);
+   renderarrays(SIZE);
 
-   glDisableClientState(GL_VERTEX_ARRAY);
-
-   if (COLARRAY!=NULL) glDisableClientState(GL_COLOR_ARRAY);
-
-   if (NRMARRAY!=NULL) glDisableClientState(GL_NORMAL_ARRAY);
+   vertexarray(NULL);
+   colorarray(NULL);
+   normalarray(NULL);
 
    if (TEXARRAY!=NULL)
       {
-      glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+      texcoordarray(NULL);
 
-      glMatrixMode(GL_TEXTURE);
-      glPopMatrix();
-      glMatrixMode(GL_MODELVIEW);
+      mtxtex();
+      mtxpop();
+      mtxmodel();
       }
 
    if (USESHADER>=0)
@@ -1063,14 +1044,12 @@ void ministrip::render()
 
    if (ZSCALE!=1.0f)
       {
-      glMatrixMode(GL_PROJECTION);
-      glPopMatrix();
-      glMatrixMode(GL_MODELVIEW);
+      mtxproj();
+      mtxpop();
+      mtxmodel();
       }
 
-   glPopMatrix();
-
-#endif
+   mtxpop();
    }
 
 // render triangle strips with multi-pass method for unordered semi-transparent geometry
