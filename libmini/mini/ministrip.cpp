@@ -418,12 +418,6 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
       }
 
    INSTANCES++;
-
-   GLSETUP=0;
-   WGLSETUP=0;
-
-   GLEXT_VP=0;
-   GLEXT_FP=0;
    }
 
 // destructor
@@ -449,6 +443,7 @@ ministrip::~ministrip()
             {
             free(SHADER[i].vtxprog);
             SHADER[i].vtxprog=NULL;
+            if (SHADER[i].vtxprogid!=0) deletevtxprog(SHADER[i].vtxprogid);
             SHADER[i].vtxdirty=0;
             }
 
@@ -456,6 +451,7 @@ ministrip::~ministrip()
             {
             free(SHADER[i].frgprog);
             SHADER[i].frgprog=NULL;
+            if (SHADER[i].frgprogid!=0) deletefrgprog(SHADER[i].frgprogid);
             SHADER[i].frgdirty=0;
             }
 
@@ -491,31 +487,6 @@ ministrip::~ministrip()
 
       freesnippets();
       }
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   GLuint progid;
-
-   if (INSTANCES==0)
-      if (GLEXT_VP!=0 && GLEXT_FP!=0)
-         for (i=0; i<SHADERMAX; i++)
-            {
-            if (SHADER[i].vtxprogid!=0)
-               {
-               progid=SHADER[i].vtxprogid;
-               glDeleteProgramsARB(1,&progid);
-               SHADER[i].vtxprogid=0;
-               }
-
-            if (SHADER[i].frgprogid!=0)
-               {
-               progid=SHADER[i].frgprogid;
-               glDeleteProgramsARB(1,&progid);
-               SHADER[i].frgprogid=0;
-               }
-            }
-
-#endif
    }
 
 // clear strip
@@ -710,71 +681,35 @@ void ministrip::setvtxshaderparams(int num,float p1,float p2,float p3,float p4,i
 // enable vertex shader
 void ministrip::enablevtxshader(int num)
    {
-   if (num<0 || num>=SHADERMAX) ERRORMSG();
-
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    int i;
 
-   GLuint vtxprogid;
+   if (num<0 || num>=SHADERMAX) ERRORMSG();
 
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (SHADER[num].vtxprog!=NULL)
+   if (SHADER[num].vtxprog!=NULL)
+      {
+      if (SHADER[num].vtxdirty!=0)
          {
-         if (SHADER[num].vtxdirty!=0)
-            {
-            if (SHADER[num].vtxprogid!=0)
-               {
-               vtxprogid=SHADER[num].vtxprogid;
-               glDeleteProgramsARB(1,&vtxprogid);
-               }
+         if (SHADER[num].vtxprogid!=0) deletevtxprog(SHADER[num].vtxprogid);
 
-            glGenProgramsARB(1,&vtxprogid);
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(SHADER[num].vtxprog),SHADER[num].vtxprog);
-            SHADER[num].vtxprogid=vtxprogid;
-
-            SHADER[num].vtxdirty=0;
-            }
-
-         if (SHADER[num].vtxprogid!=0)
-            {
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,SHADER[num].vtxprogid);
-            glEnable(GL_VERTEX_PROGRAM_ARB);
-
-            for (i=0; i<SHADERVTXPRMMAX; i++)
-               glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,i,SHADER[num].vtxshaderpar1[i],SHADER[num].vtxshaderpar2[i],SHADER[num].vtxshaderpar3[i],SHADER[num].vtxshaderpar4[i]);
-            }
+         SHADER[num].vtxprogid=buildvtxprog(SHADER[num].vtxprog);
+         SHADER[num].vtxdirty=0;
          }
 
-#endif
+      if (SHADER[num].vtxprogid!=0)
+         {
+         bindvtxprog(SHADER[num].vtxprogid);
 
-#endif
+         for (i=0; i<SHADERVTXPRMMAX; i++)
+            setvtxprogpar(i,SHADER[num].vtxshaderpar1[i],SHADER[num].vtxshaderpar2[i],SHADER[num].vtxshaderpar3[i],SHADER[num].vtxshaderpar4[i]);
+         }
+      }
    }
 
 // disable vertex shader
 void ministrip::disablevtxshader(int num)
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (SHADER[num].vtxprog!=NULL)
-         if (SHADER[num].vtxprogid!=0)
-            {
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-            glDisable(GL_VERTEX_PROGRAM_ARB);
-            }
-
-#endif
-
-#endif
+   if (SHADER[num].vtxprog!=NULL)
+      if (SHADER[num].vtxprogid!=0) bindvtxprog(0);
    }
 
 // set pixel shader
@@ -938,92 +873,59 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int clamp,int mipmaps,in
 // enable pixel shader
 void ministrip::enablepixshader(int num)
    {
+   int i;
+
    if (num<0 || num>=SHADERMAX) ERRORMSG();
 
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   int i;
-
-   GLuint frgprogid;
-
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (SHADER[num].frgprog!=NULL)
+   if (SHADER[num].frgprog!=NULL)
+      {
+      if (SHADER[num].frgdirty!=0)
          {
-         if (SHADER[num].frgdirty!=0)
-            {
-            if (SHADER[num].frgprogid!=0)
-               {
-               frgprogid=SHADER[num].frgprogid;
-               glDeleteProgramsARB(1,&frgprogid);
-               }
+         if (SHADER[num].frgprogid!=0) deletefrgprog(SHADER[num].frgprogid);
 
-            glGenProgramsARB(1,&frgprogid);
-            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
-            glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(SHADER[num].frgprog),SHADER[num].frgprog);
-            SHADER[num].frgprogid=frgprogid;
-
-            SHADER[num].frgdirty=0;
-            }
-
-         if (SHADER[num].frgprogid!=0)
-            {
-            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,SHADER[num].frgprogid);
-            glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-            for (i=0; i<SHADERFRGPRMMAX; i++)
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,i,SHADER[num].pixshaderpar1[i],SHADER[num].pixshaderpar2[i],SHADER[num].pixshaderpar3[i],SHADER[num].pixshaderpar4[i]);
-
-            for (i=0; i<SHADERFRGTEXMAX; i++)
-               if (SHADER[num].pixshadertexid[i]!=0)
-                  {
-                  texunit(i);
-
-                  if (SHADER[num].pixshadertexcl[i]==0) bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
-                  else bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
-                  }
-
-            texunit(0);
-            }
+         SHADER[num].frgprogid=buildfrgprog(SHADER[num].frgprog);
+         SHADER[num].frgdirty=0;
          }
 
-#endif
-
-#endif
-   }
-
-// disable pixel shader
-void ministrip::disablepixshader(int num)
-   {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   int i;
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (SHADER[num].frgprog!=NULL)
+      if (SHADER[num].frgprogid!=0)
          {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-         glDisable(GL_FRAGMENT_PROGRAM_ARB);
+         bindfrgprog(SHADER[num].frgprogid);
+
+         for (i=0; i<SHADERFRGPRMMAX; i++)
+            setfrgprogpar(i,SHADER[num].pixshaderpar1[i],SHADER[num].pixshaderpar2[i],SHADER[num].pixshaderpar3[i],SHADER[num].pixshaderpar4[i]);
 
          for (i=0; i<SHADERFRGTEXMAX; i++)
             if (SHADER[num].pixshadertexid[i]!=0)
                {
                texunit(i);
-               bindtexmap(0,0,0,0,0);
+
+               if (SHADER[num].pixshadertexcl[i]==0) bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
+               else bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
                }
 
          texunit(0);
          }
+      }
+   }
 
-#endif
+// disable pixel shader
+void ministrip::disablepixshader(int num)
+   {
+   int i;
 
-#endif
+   if (SHADER[num].frgprog!=NULL)
+      {
+      if (SHADER[num].frgprogid!=0) bindfrgprog(0);
+
+      for (i=0; i<SHADERFRGTEXMAX; i++)
+         if (SHADER[num].pixshadertexid[i]!=0)
+            {
+            texunit(i);
+            bindtexmap(0,0,0,0,0);
+            }
+
+      texunit(0);
+      }
    }
 
 // set direct shading parameters
@@ -1078,29 +980,6 @@ void ministrip::useshader(int num)
 // get actual shader
 int ministrip::getshader()
    {return(USESHADER);}
-
-// check for OpenGL extensions
-void ministrip::initglexts()
-   {
-#ifndef NOOGL
-
-   char *gl_exts;
-
-   if (GLSETUP==0)
-      {
-      GLEXT_VP=0;
-      GLEXT_FP=0;
-
-      if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
-
-      if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
-      if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
-
-      GLSETUP=1;
-      }
-
-#endif
-   }
 
 // render triangle strips
 void ministrip::render()
@@ -1287,29 +1166,4 @@ int ministrip::db2texid(databuf *buf,int *width,int *height,int *mipmaps)
    else ERRORMSG();
 
    return(texid);
-   }
-
-// Windows OpenGL extension setup
-void ministrip::initwglprocs()
-   {
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-   if (WGLSETUP==0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-      glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-      glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-      glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-      glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
-      glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-#endif
-
-      WGLSETUP=1;
-      }
-
-#endif
-
-#endif
    }

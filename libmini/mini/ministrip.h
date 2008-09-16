@@ -248,37 +248,6 @@ class ministrip
    static int SNIPPETS;
 
    int USESHADER;
-
-   // OpenGL extensions:
-
-   int GLSETUP;
-
-   int GLEXT_VP;
-   int GLEXT_FP;
-
-   void initglexts();
-
-   // Windows OpenGL extensions:
-
-   int WGLSETUP;
-
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-   PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
-   PFNGLBINDPROGRAMARBPROC glBindProgramARB;
-   PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
-   PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
-   PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
-#endif
-
-#endif
-
-#endif
-
-   void initwglprocs();
    };
 
 #endif
