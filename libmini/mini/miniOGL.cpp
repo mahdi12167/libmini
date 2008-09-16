@@ -1092,7 +1092,7 @@ void texclientunit(int unit)
 #endif
    }
 
-int buildprog(const char *prog,BOOLINT vtxorfrg)
+inline int buildprog(const char *prog,BOOLINT vtxorfrg)
    {
 #ifndef NOOGL
 
@@ -1128,7 +1128,7 @@ int buildprog(const char *prog,BOOLINT vtxorfrg)
 #endif
    }
 
-void bindprog(int progid,BOOLINT vtxorfrg)
+inline void bindprog(int progid,BOOLINT vtxorfrg)
    {
 #ifndef NOOGL
 
@@ -1167,7 +1167,7 @@ void bindprog(int progid,BOOLINT vtxorfrg)
 #endif
    }
 
-void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfrg)
+inline void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfrg)
    {
 #ifndef NOOGL
 
@@ -1186,7 +1186,7 @@ void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfrg)
 #endif
    }
 
-void deleteprog(int progid)
+inline void deleteprog(int progid)
    {
 #ifndef NOOGL
 
@@ -1209,6 +1209,16 @@ void deleteprog(int progid)
 
 #endif
    }
+
+int buildvtxprog(const char *prog) {buildprog(prog,TRUE);}
+void bindvtxprog(int progid) {bindprog(progid,TRUE);}
+void setvtxprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,TRUE);}
+void deletevtxprog(int progid) {deleteprog(progid);}
+
+int buildfrgprog(const char *prog) {buildprog(prog,FALSE);}
+void bindfrgprog(int progid) {bindprog(progid,FALSE);}
+void setfrgprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,FALSE);}
+void deletefrgprog(int progid) {deleteprog(progid);}
 
 void mtxmodel()
    {
