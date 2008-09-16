@@ -99,7 +99,6 @@ minicache::minicache()
    GLSETUP=0;
    WGLSETUP=0;
 
-   GLEXT_MT=0;
    GLEXT_VP=0;
    GLEXT_FP=0;
 
@@ -1344,14 +1343,9 @@ void minicache::bindvtxshaderdetailtex()
 
    if (t->detail_texid!=0 && t->detail_width>0 && t->detail_height>0)
       {
-      if (GLEXT_MT!=0)
-         {
-#ifdef GL_ARB_multitexture
-         glActiveTextureARB(GL_TEXTURE2_ARB);
-         bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,1);
-         glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-         }
+      texunit(2);
+      bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,1);
+      texunit(0);
 
       glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,
                                  0.5f/t->detail_width,(t->detail_width-1)/t->detail_width, // detail texgen scale and bias for s-coordinate
@@ -1375,14 +1369,11 @@ void minicache::unbindvtxshaderdetailtex()
    t=&TERRAIN[RENDER_ID];
 
    if (t->detail_texid!=0)
-      if (GLEXT_MT!=0)
-         {
-#ifdef GL_ARB_multitexture
-         glActiveTextureARB(GL_TEXTURE2_ARB);
-         bindtexmap(0,0,0,0,0);
-         glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-         }
+      {
+      texunit(2);
+      bindtexmap(0,0,0,0,0);
+      texunit(0);
+      }
 
 #endif
 
@@ -1744,19 +1735,16 @@ void minicache::enablepixshader()
 
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
-         if (GLEXT_MT!=0)
-            if (PIXSHADERTEXID!=0)
-               {
-#ifdef GL_ARB_multitexture
-               glActiveTextureARB(GL_TEXTURE1_ARB);
-               bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
-               glActiveTextureARB(GL_TEXTURE0_ARB);
+         if (PIXSHADERTEXID!=0)
+            {
+            texunit(1);
+            bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
+            texunit(0);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                          (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                                          (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
-#endif
-               }
+            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
+                                       (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                                       (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+            }
 
          for (i=0; i<8; i++)
             glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
@@ -1807,15 +1795,12 @@ void minicache::disablepixshader()
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
          glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-         if (GLEXT_MT!=0)
-            if (PIXSHADERTEXID!=0)
-               {
-#ifdef GL_ARB_multitexture
-               glActiveTextureARB(GL_TEXTURE1_ARB);
-               bindtexmap(0);
-               glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-               }
+         if (PIXSHADERTEXID!=0)
+            {
+            texunit(1);
+            bindtexmap(0);
+            texunit(0);
+            }
          }
 
 #endif
@@ -1862,19 +1847,16 @@ void minicache::enableseashader()
 
          glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
-         if (GLEXT_MT!=0)
-            if (SEASHADERTEXID!=0)
-               {
-#ifdef GL_ARB_multitexture
-               glActiveTextureARB(GL_TEXTURE1_ARB);
-               bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
-               glActiveTextureARB(GL_TEXTURE0_ARB);
+         if (SEASHADERTEXID!=0)
+            {
+            texunit(1);
+            bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
+            texunit(0);
 
-               glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                          (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                                          (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
-#endif
-               }
+            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
+                                       (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                                       (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+            }
 
          for (i=0; i<8; i++)
             glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
@@ -1899,15 +1881,12 @@ void minicache::disableseashader()
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
          glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-         if (GLEXT_MT!=0)
-            if (SEASHADERTEXID!=0)
-               {
-#ifdef GL_ARB_multitexture
-               glActiveTextureARB(GL_TEXTURE1_ARB);
-               bindtexmap(0);
-               glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
-               }
+         if (SEASHADERTEXID!=0)
+            {
+            texunit(1);
+            bindtexmap(0);
+            texunit(0);
+            }
          }
 
 #endif
@@ -1924,13 +1903,11 @@ void minicache::initglexts()
 
    if (GLSETUP==0)
       {
-      GLEXT_MT=0;
       GLEXT_VP=0;
       GLEXT_FP=0;
 
       if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
-      if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
       if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
       if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
 
@@ -1949,11 +1926,6 @@ void minicache::initwglprocs()
 
    if (WGLSETUP==0)
       {
-#ifdef GL_ARB_multitexture
-      glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
-      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
-#endif
-
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
       glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
       glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");

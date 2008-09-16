@@ -314,7 +314,6 @@ class minicache
 
    int GLSETUP;
 
-   int GLEXT_MT;
    int GLEXT_VP;
    int GLEXT_FP;
 
@@ -327,11 +326,6 @@ class minicache
 #ifndef NOOGL
 
 #ifdef _WIN32
-
-#ifdef GL_ARB_multitexture
-   PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-   PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
-#endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
    PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
