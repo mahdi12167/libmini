@@ -58,6 +58,11 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
 void texunit(int unit);
 void texclientunit(int unit);
 
+int buildprog(const char *prog,BOOLINT vtxorfrg);
+void bindprog(int progid,BOOLINT vtxorfrg);
+void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfrg);
+void deleteprog(int progid);
+
 void mtxmodel();
 void mtxproj();
 void mtxtex();

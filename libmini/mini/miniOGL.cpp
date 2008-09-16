@@ -1092,6 +1092,124 @@ void texclientunit(int unit)
 #endif
    }
 
+int buildprog(const char *prog,BOOLINT vtxorfrg)
+   {
+#ifndef NOOGL
+
+   GLuint progid=0;
+
+   initglexts();
+
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (glext_vp && glext_fp)
+      {
+      glGenProgramsARB(1,&progid);
+
+      if (vtxorfrg)
+         {
+         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,progid);
+         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(prog),prog);
+         }
+      else
+         {
+         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,progid);
+         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(prog),prog);
+         }
+      }
+#endif
+
+   return(progid);
+#else
+   return(0);
+#endif
+   }
+
+void bindprog(int progid,BOOLINT vtxorfrg)
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (glext_vp && glext_fp)
+      if (progid!=0)
+         if (vtxorfrg)
+            {
+            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,progid);
+            glEnable(GL_VERTEX_PROGRAM_ARB);
+            }
+         else
+            {
+            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,progid);
+            glEnable(GL_FRAGMENT_PROGRAM_ARB);
+            }
+      else
+         if (vtxorfrg)
+            {
+            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
+            glDisable(GL_VERTEX_PROGRAM_ARB);
+            }
+         else
+            {
+            glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
+            glDisable(GL_FRAGMENT_PROGRAM_ARB);
+            }
+#endif
+
+#endif
+   }
+
+void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfrg)
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (glext_vp && glext_fp)
+      if (vtxorfrg) glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,n,p1,p2,p3,p4);
+      else glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,n,p1,p2,p3,p4);
+#endif
+
+#endif
+   }
+
+void deleteprog(int progid)
+   {
+#ifndef NOOGL
+
+   GLuint id;
+
+   initglexts();
+
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (glext_vp && glext_fp)
+      if (progid!=0)
+         {
+         id=progid;
+         glDeleteProgramsARB(1,&id);
+         }
+#endif
+
+#endif
+   }
+
 void mtxmodel()
    {
 #ifndef NOOGL
