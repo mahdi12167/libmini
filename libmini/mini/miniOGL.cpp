@@ -58,63 +58,6 @@ static void initglexts()
       }
    }
 
-int get_unsupported_glexts()
-   {
-   int num;
-
-   num=0;
-
-   if (!glext_mm) num++;
-   if (!glext_tec) num++;
-   if (!glext_tfa) num++;
-   if (!glext_t3D) num++;
-   if (!glext_tc) num++;
-   if (!glext_ts3) num++;
-   if (!glext_tgm) num++;
-   if (!glext_np2) num++;
-   if (!glext_dt) num++;
-   if (!glext_tr) num++;
-   if (!glext_mt) num++;
-   if (!glext_vp) num++;
-   if (!glext_fp) num++;
-
-   return(num);
-   }
-
-void print_unsupported_glexts()
-   {
-   initglexts();
-
-   if (get_unsupported_glexts()>0)
-      {
-      printf("unsupported OpenGL extensions:");
-
-      if (!glext_mm) printf(" EXT_blend_minmax");
-      if (!glext_tec) printf(" SGIS_texture_edge_clamp");
-      if (!glext_tfa) printf(" EXT_texture_filter_anisotropic");
-      if (!glext_t3D) printf(" EXT_texture3D");
-      if (!glext_tc) printf(" ARB_texture_compression");
-      if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
-      if (!glext_tgm) printf(" SGIS_generate_mipmap");
-      if (!glext_np2) printf(" ARB_texture_non_power_of_two");
-      if (!glext_dt) printf(" ARB_depth_texture");
-      if (!glext_tr) printf(" ARB_texture_rectangle");
-      if (!glext_mt) printf(" ARB_multitexture");
-      if (!glext_vp) printf(" ARB_vertex_program");
-      if (!glext_fp) printf(" ARB_fragment_program");
-
-      printf("\n");
-      }
-   }
-
-void print_graphics_info()
-   {
-   initglexts();
-
-   printf("maxtexsize=%d\n",getmaxtexsize());
-   printf("max3Dtexsize=%d\n",getmax3Dtexsize());
-   }
-
 #ifdef _WIN32
 
 static void initwglprocs()
@@ -167,6 +110,75 @@ static void initwglprocs()
 #endif
 
 #endif
+
+int get_unsupported_glexts()
+   {
+   int num=0;
+
+#ifndef NOOGL
+
+   initglexts();
+
+   if (!glext_mm) num++;
+   if (!glext_tec) num++;
+   if (!glext_tfa) num++;
+   if (!glext_t3D) num++;
+   if (!glext_tc) num++;
+   if (!glext_ts3) num++;
+   if (!glext_tgm) num++;
+   if (!glext_np2) num++;
+   if (!glext_dt) num++;
+   if (!glext_tr) num++;
+   if (!glext_mt) num++;
+   if (!glext_vp) num++;
+   if (!glext_fp) num++;
+
+#endif
+
+   return(num);
+   }
+
+void print_unsupported_glexts()
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+   if (get_unsupported_glexts()>0)
+      {
+      printf("unsupported OpenGL extensions:");
+
+      if (!glext_mm) printf(" EXT_blend_minmax");
+      if (!glext_tec) printf(" SGIS_texture_edge_clamp");
+      if (!glext_tfa) printf(" EXT_texture_filter_anisotropic");
+      if (!glext_t3D) printf(" EXT_texture3D");
+      if (!glext_tc) printf(" ARB_texture_compression");
+      if (!glext_ts3) printf(" EXT_texture_compression_s3tc");
+      if (!glext_tgm) printf(" SGIS_generate_mipmap");
+      if (!glext_np2) printf(" ARB_texture_non_power_of_two");
+      if (!glext_dt) printf(" ARB_depth_texture");
+      if (!glext_tr) printf(" ARB_texture_rectangle");
+      if (!glext_mt) printf(" ARB_multitexture");
+      if (!glext_vp) printf(" ARB_vertex_program");
+      if (!glext_fp) printf(" ARB_fragment_program");
+
+      printf("\n");
+      }
+
+#endif
+   }
+
+void print_graphics_info()
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+   printf("maxtexsize=%d\n",getmaxtexsize());
+   printf("max3Dtexsize=%d\n",getmax3Dtexsize());
+
+#endif
+   }
 
 void initstate()
    {
@@ -927,6 +939,10 @@ int build3Dtexmap(unsigned char *volume,
 
    initglexts();
 
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
    if (!glext_t3D) return(0);
 
    max3Dtexsize=getmax3Dtexsize();
@@ -974,6 +990,8 @@ void bind3Dtexmap(int texid)
 
 #ifdef GL_EXT_texture3D
 
+   initglexts();
+
    if (!glext_t3D) return;
 
    if (texid>0)
@@ -1002,6 +1020,16 @@ void deletetexmap(int texid)
 #ifndef NOOGL
    GLuint GLtexid=texid;
    if (texid>0) glDeleteTextures(1,&GLtexid);
+#endif
+   }
+
+void texunit(int unit)
+   {
+#ifndef NOOGL
+   initglexts();
+#ifdef GL_ARB_multitexture
+   if (glext_mt!=0) glActiveTextureARB(GL_TEXTURE0_ARB+unit);
+#endif
 #endif
    }
 
@@ -1197,6 +1225,7 @@ int getmax3Dtexsize()
    {
 #ifndef NOOGL
    GLint param=0;
+   initglexts();
 #ifdef GL_EXT_texture3D
    if (glext_t3D) glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,&param);
 #endif
@@ -1279,6 +1308,8 @@ float *readZpixels(int x,int y,int width,int height)
 
 #ifndef NOOGL
 
+   initglexts();
+
    glFinish();
 
    if ((pixels=(float *)malloc(sizeof(float)*width*height))==NULL) ERRORMSG();
@@ -1296,6 +1327,8 @@ float *readZpixels(int x,int y,int width,int height)
 void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y)
    {
 #ifndef NOOGL
+
+   initglexts();
 
    glMatrixMode(GL_MODELVIEW);
    glPushMatrix();
@@ -1353,10 +1386,9 @@ int copytexrect(int depthcomp)
    width=viewport[2];
    height=viewport[3];
 
+#ifdef GL_ARB_texture_rectangle
    if (glext_tr)
       {
-#ifdef GL_ARB_texture_rectangle
-
       glGenTextures(1,&texid);
       glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
 
@@ -1375,9 +1407,8 @@ int copytexrect(int depthcomp)
 #ifdef GL_ARB_depth_texture
       else if (glext_dt) glCopyTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_DEPTH_COMPONENT,startx,starty,width,height,0);
 #endif
-
-#endif
       }
+#endif
 
    return(texid);
 
@@ -1392,10 +1423,8 @@ void bindtexrect(int texid)
 
    initglexts();
 
-   if (glext_tr)
-      {
 #ifdef GL_ARB_texture_rectangle
-
+   if (glext_tr)
       if (texid>0)
          {
          glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
@@ -1406,9 +1435,7 @@ void bindtexrect(int texid)
          glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
          glDisable(GL_TEXTURE_RECTANGLE_ARB);
          }
-
 #endif
-      }
 
 #endif
    }
