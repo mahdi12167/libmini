@@ -210,7 +210,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
             if (vpoint->opts->datatexid!=0 && vpoint->opts->datatexwidth>0 && vpoint->opts->datatexheight>0)
                {
                // pass texture id
-               STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,vpoint->opts->datatexmipmaps);
+               STRIP->setpixshadertexid(SLOT,vpoint->opts->datatexid,vpoint->opts->datatexwidth,vpoint->opts->datatexheight,1,vpoint->opts->datatexmipmaps);
 
                // set default texture coordinate scaling
                scalex=scaley=1.0f;

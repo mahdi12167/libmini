@@ -295,13 +295,13 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
 
       if (frontbuf==NULL || backbuf==NULL)
          {
-         STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,1,0);
-         STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,1,1);
+         STRIP->setpixshadertex(SLOT,image1,width1,height1,comps1,0,1,0);
+         STRIP->setpixshadertex(SLOT,image2,width2,height2,comps2,0,1,1);
          }
       else
          {
-         STRIP->setpixshadertexbuf(SLOT,frontbuf,1,0);
-         STRIP->setpixshadertexbuf(SLOT,backbuf,1,1);
+         STRIP->setpixshadertexbuf(SLOT,frontbuf,0,1,0);
+         STRIP->setpixshadertexbuf(SLOT,backbuf,0,1,1);
          }
 
       for (i=0; i<16; i++) texmtx[i]=0.0;

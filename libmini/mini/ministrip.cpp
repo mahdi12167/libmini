@@ -407,6 +407,7 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
             SHADER[i].pixshadertexid[j]=0;
             SHADER[i].pixshadertexw[j]=0;
             SHADER[i].pixshadertexh[j]=0;
+            SHADER[i].pixshadertexcl[j]=0;
             SHADER[i].pixshadertexmm[j]=0;
             SHADER[i].pixshadertexnofree[j]=0;
             }
@@ -483,6 +484,7 @@ ministrip::~ministrip()
 
                SHADER[i].pixshadertexw[j]=0;
                SHADER[i].pixshadertexh[j]=0;
+               SHADER[i].pixshadertexcl[j]=0;
                SHADER[i].pixshadertexmm[j]=0;
                SHADER[i].pixshadertexnofree[j]=0;
                }
@@ -825,15 +827,15 @@ void ministrip::setpixshaderparams(int num,float p1,float p2,float p3,float p4,i
    }
 
 // set pixel shader RGB texture map
-void ministrip::setpixshadertexRGB(int num,unsigned char *image,int width,int height,int mipmaps,int n)
-   {setpixshadertex(num,image,width,height,3,mipmaps,n);}
+void ministrip::setpixshadertexRGB(int num,unsigned char *image,int width,int height,int clamp,int mipmaps,int n)
+   {setpixshadertex(num,image,width,height,3,clamp,mipmaps,n);}
 
 // set pixel shader RGBA texture map
-void ministrip::setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int mipmaps,int n)
-   {setpixshadertex(num,image,width,height,4,mipmaps,n);}
+void ministrip::setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int clamp,int mipmaps,int n)
+   {setpixshadertex(num,image,width,height,4,clamp,mipmaps,n);}
 
 // set pixel shader RGB[A] texture map
-void ministrip::setpixshadertex(int num,unsigned char *image,int width,int height,int components,int mipmaps,int n)
+void ministrip::setpixshadertex(int num,unsigned char *image,int width,int height,int components,int clamp,int mipmaps,int n)
    {
    if (num<0 || num>=SHADERMAX) ERRORMSG();
    if (n<0 || n>=SHADERFRGTEXMAX) ERRORMSG();
@@ -847,6 +849,7 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
 
       SHADER[num].pixshadertexw[n]=0;
       SHADER[num].pixshadertexh[n]=0;
+      SHADER[num].pixshadertexcl[n]=0;
       SHADER[num].pixshadertexmm[n]=0;
       SHADER[num].pixshadertexnofree[n]=0;
       }
@@ -860,13 +863,14 @@ void ministrip::setpixshadertex(int num,unsigned char *image,int width,int heigh
 
       SHADER[num].pixshadertexw[n]=width;
       SHADER[num].pixshadertexh[n]=height;
+      SHADER[num].pixshadertexcl[n]=clamp;
       SHADER[num].pixshadertexmm[n]=mipmaps;
       SHADER[num].pixshadertexnofree[n]=0;
       }
    }
 
 // set pixel shader RGB[A] texture map from texture id
-void ministrip::setpixshadertexid(int num,int texid,int width,int height,int mipmaps,int n)
+void ministrip::setpixshadertexid(int num,int texid,int width,int height,int clamp,int mipmaps,int n)
    {
    if (num<0 || num>=SHADERMAX) ERRORMSG();
    if (n<0 || n>=SHADERFRGTEXMAX) ERRORMSG();
@@ -880,6 +884,7 @@ void ministrip::setpixshadertexid(int num,int texid,int width,int height,int mip
 
       SHADER[num].pixshadertexw[n]=0;
       SHADER[num].pixshadertexh[n]=0;
+      SHADER[num].pixshadertexcl[n]=0;
       SHADER[num].pixshadertexmm[n]=0;
       SHADER[num].pixshadertexnofree[n]=0;
       }
@@ -887,12 +892,13 @@ void ministrip::setpixshadertexid(int num,int texid,int width,int height,int mip
    SHADER[num].pixshadertexid[n]=texid;
    SHADER[num].pixshadertexw[n]=width;
    SHADER[num].pixshadertexh[n]=height;
+   SHADER[num].pixshadertexcl[n]=clamp;
    SHADER[num].pixshadertexmm[n]=mipmaps;
    SHADER[num].pixshadertexnofree[n]=1;
    }
 
 // set pixel shader RGB[A] texture map from image buffer
-void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
+void ministrip::setpixshadertexbuf(int num,databuf *buf,int clamp,int mipmaps,int n)
    {
    int texid;
    int width,height;
@@ -915,6 +921,7 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
 
       SHADER[num].pixshadertexw[n]=0;
       SHADER[num].pixshadertexh[n]=0;
+      SHADER[num].pixshadertexcl[n]=0;
       SHADER[num].pixshadertexmm[n]=0;
       SHADER[num].pixshadertexnofree[n]=0;
       }
@@ -924,6 +931,7 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int mipmaps,int n)
    SHADER[num].pixshadertexid[n]=texid;
    SHADER[num].pixshadertexw[n]=width;
    SHADER[num].pixshadertexh[n]=height;
+   SHADER[num].pixshadertexcl[n]=clamp;
    SHADER[num].pixshadertexmm[n]=mipmaps;
    SHADER[num].pixshadertexnofree[n]=0;
    }
@@ -978,7 +986,8 @@ void ministrip::enablepixshader(int num)
                   if (SHADER[num].pixshadertexid[i]!=0)
                      {
                      glActiveTextureARB(GL_TEXTURE0_ARB+i);
-                     bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
+                     if (SHADER[num].pixshadertexcl[i]==0) bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
+                     else bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
                      }
 
                glActiveTextureARB(GL_TEXTURE0_ARB);

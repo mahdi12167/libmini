@@ -95,11 +95,11 @@ class ministrip
    static void setpixshader(int num,char *frgprog);
    static void concatpixshader(int num,const char *snippetname);
    static void setpixshaderparams(int num,float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
-   static void setpixshadertex(int num,unsigned char *image,int width,int height,int components=3,int mipmaps=1,int n=0);
-   static void setpixshadertexRGB(int num,unsigned char *image,int width,int height,int mipmaps=1,int n=0);
-   static void setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int mipmaps=1,int n=0);
-   static void setpixshadertexid(int num,int id,int width,int height,int mipmaps=1,int n=0);
-   static void setpixshadertexbuf(int num,databuf *buf,int mipmaps=1,int n=0);
+   static void setpixshadertex(int num,unsigned char *image,int width,int height,int components=3,int clamp=1,int mipmaps=1,int n=0);
+   static void setpixshadertexRGB(int num,unsigned char *image,int width,int height,int clamp=1,int mipmaps=1,int n=0);
+   static void setpixshadertexRGBA(int num,unsigned char *image,int width,int height,int clamp=1,int mipmaps=1,int n=0);
+   static void setpixshadertexid(int num,int id,int width,int height,int clamp=1,int mipmaps=1,int n=0);
+   static void setpixshadertexbuf(int num,databuf *buf,int clamp=1,int mipmaps=1,int n=0);
 
    //! set direct shading parameters
    void setshadedirectparams(int num,
@@ -225,6 +225,7 @@ class ministrip
       int pixshadertexid[SHADERFRGTEXMAX];
       int pixshadertexw[SHADERFRGTEXMAX];
       int pixshadertexh[SHADERFRGTEXMAX];
+      int pixshadertexcl[SHADERFRGTEXMAX];
       int pixshadertexmm[SHADERFRGTEXMAX];
       int pixshadertexnofree[SHADERFRGTEXMAX];
       };
