@@ -978,7 +978,7 @@ void ministrip::enablepixshader(int num)
                   if (SHADER[num].pixshadertexid[i]!=0)
                      {
                      glActiveTextureARB(GL_TEXTURE0_ARB+i);
-                     bindtexmap(SHADER[num].pixshadertexid[i],0,0,0,SHADER[num].pixshadertexmm[i]);
+                     bindtexmap(SHADER[num].pixshadertexid[i],SHADER[num].pixshadertexw[i],SHADER[num].pixshadertexh[i],0,SHADER[num].pixshadertexmm[i]);
                      }
 
                glActiveTextureARB(GL_TEXTURE0_ARB);
