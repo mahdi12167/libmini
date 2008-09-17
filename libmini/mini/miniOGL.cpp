@@ -1220,94 +1220,17 @@ void bindfrgprog(int progid) {bindprog(progid,FALSE);}
 void setfrgprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,FALSE);}
 void deletefrgprog(int progid) {deleteprog(progid);}
 
-void mtxmodel()
+void mtxgetmodel(float mtx[16])
    {
 #ifndef NOOGL
-   glMatrixMode(GL_MODELVIEW);
+   glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
 #endif
    }
 
-void mtxproj()
+void mtxgetmodel(double mtx[16])
    {
 #ifndef NOOGL
-   glMatrixMode(GL_PROJECTION);
-#endif
-   }
-
-void mtxtex()
-   {
-#ifndef NOOGL
-   glMatrixMode(GL_TEXTURE);
-#endif
-   }
-
-void mtxpush()
-   {
-#ifndef NOOGL
-   glPushMatrix();
-#endif
-   }
-
-void mtxpop()
-   {
-#ifndef NOOGL
-   glPopMatrix();
-#endif
-   }
-
-void mtxid()
-   {
-#ifndef NOOGL
-   glLoadIdentity();
-#endif
-   }
-
-void mtxscale(const float sx,const float sy,const float sz)
-   {
-#ifndef NOOGL
-   glScalef(sx,sy,sz);
-#endif
-   }
-
-void mtxtranslate(const float tx,const float ty,const float tz)
-   {
-#ifndef NOOGL
-   glTranslatef(tx,ty,tz);
-#endif
-   }
-
-void mtxrotate(const float angle,const float ax,const float ay,const float az)
-   {
-#ifndef NOOGL
-   glRotatef(angle,ax,ay,az);
-#endif
-   }
-
-void mtxmult(const float mtx[16])
-   {
-#ifndef NOOGL
-   glMultMatrixf(mtx);
-#endif
-   }
-
-void mtxmult(const double mtx[16])
-   {
-#ifndef NOOGL
-   glMultMatrixd(mtx);
-#endif
-   }
-
-void beginfans()
-   {
-#ifndef NOOGL
-   fancnt=vtxcnt=0;
-#endif
-   }
-
-void endfans()
-   {
-#ifndef NOOGL
-   if (fancnt>0) glEnd();
+   glGetDoublev(GL_MODELVIEW_MATRIX,mtx);
 #endif
    }
 

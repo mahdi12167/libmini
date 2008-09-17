@@ -68,28 +68,31 @@ void bindfrgprog(int progid);
 void setfrgprogpar(int n,float p1,float p2,float p3,float p4);
 void deletefrgprog(int progid);
 
-void mtxmodel();
-void mtxproj();
-void mtxtex();
+inline void mtxmodel();
+inline void mtxproj();
+inline void mtxtex();
 
-void mtxpush();
-void mtxpop();
+inline void mtxpush();
+inline void mtxpop();
 
-void mtxid();
-void mtxscale(const float sx,const float sy,const float sz);
-void mtxtranslate(const float tx,const float ty,const float tz);
-void mtxrotate(const float angle,const float ax,const float ay,const float az);
+inline void mtxid();
+inline void mtxscale(const float sx,const float sy,const float sz);
+inline void mtxtranslate(const float tx,const float ty,const float tz);
+inline void mtxrotate(const float angle,const float ax,const float ay,const float az);
 
-void mtxmult(const float mtx[16]);
-void mtxmult(const double mtx[16]);
+inline void mtxmult(const float mtx[16]);
+inline void mtxmult(const double mtx[16]);
 
-void beginfans();
+void mtxgetmodel(float mtx[16]);
+void mtxgetmodel(double mtx[16]);
+
+inline void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
 inline void normal(const float dx,const float dy,const float dz);
 inline void texcoord(const float s,const float t,const float r=0.0f);
 inline void fanvertex(const float x,const float y,const float z);
-void endfans();
+inline void endfans();
 
 int getfancnt();
 int getvtxcnt();
@@ -225,6 +228,90 @@ namespace miniOGL {
 extern int fancnt,vtxcnt;
 #endif
 
+void mtxmodel()
+   {
+#ifndef NOOGL
+   glMatrixMode(GL_MODELVIEW);
+#endif
+   }
+
+void mtxproj()
+   {
+#ifndef NOOGL
+   glMatrixMode(GL_PROJECTION);
+#endif
+   }
+
+void mtxtex()
+   {
+#ifndef NOOGL
+   glMatrixMode(GL_TEXTURE);
+#endif
+   }
+
+void mtxpush()
+   {
+#ifndef NOOGL
+   glPushMatrix();
+#endif
+   }
+
+void mtxpop()
+   {
+#ifndef NOOGL
+   glPopMatrix();
+#endif
+   }
+
+void mtxid()
+   {
+#ifndef NOOGL
+   glLoadIdentity();
+#endif
+   }
+
+void mtxscale(const float sx,const float sy,const float sz)
+   {
+#ifndef NOOGL
+   glScalef(sx,sy,sz);
+#endif
+   }
+
+void mtxtranslate(const float tx,const float ty,const float tz)
+   {
+#ifndef NOOGL
+   glTranslatef(tx,ty,tz);
+#endif
+   }
+
+void mtxrotate(const float angle,const float ax,const float ay,const float az)
+   {
+#ifndef NOOGL
+   glRotatef(angle,ax,ay,az);
+#endif
+   }
+
+void mtxmult(const float mtx[16])
+   {
+#ifndef NOOGL
+   glMultMatrixf(mtx);
+#endif
+   }
+
+void mtxmult(const double mtx[16])
+   {
+#ifndef NOOGL
+   glMultMatrixd(mtx);
+#endif
+   }
+
+void beginfans()
+   {
+#ifndef NOOGL
+   fancnt=vtxcnt=0;
+#endif
+   }
+
 inline void beginfan()
    {
 #ifndef NOOGL
@@ -259,6 +346,13 @@ inline void fanvertex(const float x,const float y,const float z)
 #ifndef NOOGL
    glVertex3f(x,y,z);
    vtxcnt++;
+#endif
+   }
+
+void endfans()
+   {
+#ifndef NOOGL
+   if (fancnt>0) glEnd();
 #endif
    }
 
