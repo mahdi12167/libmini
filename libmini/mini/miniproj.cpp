@@ -12,6 +12,8 @@ miniproj::miniproj()
 
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
+
+   setupprogs();
    }
 
 // destructor
@@ -692,13 +694,17 @@ void miniproj::enablepixshader()
    if (FRGPROG!=NULL && FRGPROGZ!=NULL)
       {
       if (!ZCLIP)
+         {
          if (FRGPROGID==0) FRGPROGID=buildfrgprog(FRGPROG);
 
-      if (ZCLIP)
+         bindfrgprog(FRGPROGID);
+         }
+      else
+         {
          if (FRGPROGZID==0) FRGPROGZID=buildfrgprog(FRGPROGZ);
 
-      if (!ZCLIP) bindfrgprog(FRGPROGID);
-      else bindfrgprog(FRGPROGZID);
+         bindfrgprog(FRGPROGZID);
+         }
 
       setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
       setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
