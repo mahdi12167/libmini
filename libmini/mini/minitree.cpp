@@ -1564,7 +1564,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   GLfloat fogstart,fogend;
+   float fogstart,fogend;
 
    miniv4d mtx[3];
    double oglmtx[16];
