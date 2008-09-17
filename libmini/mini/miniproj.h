@@ -113,44 +113,6 @@ class miniproj
 
    void setupprogs();
    void deleteprogs();
-
-   // OpenGL extensions:
-
-   int GLSETUP;
-
-   int GLEXT_MT;
-   int GLEXT_VP;
-   int GLEXT_FP;
-
-   void initglsetup();
-   void initglexts();
-
-   // Windows OpenGL extensions:
-
-   int WGLSETUP;
-
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-#ifdef GL_ARB_multitexture
-   PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-   PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
-#endif
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-   PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
-   PFNGLBINDPROGRAMARBPROC glBindProgramARB;
-   PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
-   PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
-   PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
-#endif
-
-#endif
-
-#endif
-
-   void initwglprocs();
    };
 
 #endif

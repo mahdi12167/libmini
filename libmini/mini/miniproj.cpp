@@ -12,9 +12,6 @@ miniproj::miniproj()
 
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
-
-   initglsetup();
-   setupprogs();
    }
 
 // destructor
@@ -645,53 +642,31 @@ void miniproj::setzclip(float nearp,float farp,int zcliptexid)
 // initialize z-clipping
 void miniproj::initzclip()
    {
-#ifndef NOOGL
-
    static const float factor=0.9f;
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   texunit(4);
 
-      glActiveTextureARB(GL_TEXTURE4_ARB);
+   if (ZCLIPTEXID!=0) ZTEXID=ZCLIPTEXID;
+   else ZTEXID=copytexrect(1);
 
-      if (ZCLIPTEXID!=0) ZTEXID=ZCLIPTEXID;
-      else ZTEXID=copytexrect(1);
+   bindtexrect(ZTEXID);
 
-      bindtexrect(ZTEXID);
+   texunit(0);
 
-      glActiveTextureARB(GL_TEXTURE0_ARB);
-
-      // calculate factors for z-value reconstruction
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR)/factor,1.0f/ZNEAR/factor,0.0f,0.0f);
-
-#endif
-      }
-
-#endif
+   // calculate factors for z-value reconstruction
+   setfrgprogpar(2,(ZNEAR-ZFAR)/(ZNEAR*ZFAR)/factor,1.0f/ZNEAR/factor,0.0f,0.0f);
    }
 
 // de-initialize z-clipping
 void miniproj::exitzclip()
    {
-#ifndef NOOGL
+   texunit(4);
 
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   bindtexrect(0);
 
-      glActiveTextureARB(GL_TEXTURE4_ARB);
+   if (ZCLIPTEXID==0) deletetexrect(ZTEXID);
 
-      bindtexrect(0);
-
-      if (ZCLIPTEXID==0) deletetexrect(ZTEXID);
-
-      glActiveTextureARB(GL_TEXTURE0_ARB);
-
-#endif
-      }
-
-#endif
+   texunit(0);
    }
 
 // vertex and fragment programs:
@@ -699,119 +674,40 @@ void miniproj::exitzclip()
 // enable vertex shader
 void miniproj::enablevtxshader()
    {
-#ifndef NOOGL
+   if (VTXPROG!=NULL)
+      {
+      if (VTXPROGID==0) VTXPROGID=buildvtxprog(VTXPROG);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   GLuint vtxprogid;
-
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (VTXPROG!=NULL)
-         {
-         if (VTXPROGID==0)
-            {
-            glGenProgramsARB(1,&vtxprogid);
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(VTXPROG),VTXPROG);
-            VTXPROGID=vtxprogid;
-            }
-
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID);
-         glEnable(GL_VERTEX_PROGRAM_ARB);
-         }
-
-#endif
-
-#endif
+      bindvtxprog(VTXPROGID);
+      }
    }
 
 // disable vertex shader
 void miniproj::disablevtxshader()
-   {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (VTXPROG!=NULL)
-         {
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-         glDisable(GL_VERTEX_PROGRAM_ARB);
-         }
-
-#endif
-
-#endif
-   }
+   {if (VTXPROG!=NULL) bindvtxprog(0);}
 
 // enable pixel shader
 void miniproj::enablepixshader()
    {
-#ifndef NOOGL
+   if (FRGPROG!=NULL && FRGPROGZ!=NULL)
+      {
+      if (!ZCLIP)
+         if (FRGPROGID==0) FRGPROGID=buildfrgprog(FRGPROG);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+      if (ZCLIP)
+         if (FRGPROGZID==0) FRGPROGZID=buildfrgprog(FRGPROGZ);
 
-   GLuint frgprogid;
+      if (!ZCLIP) bindfrgprog(FRGPROGID);
+      else bindfrgprog(FRGPROGZID);
 
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRGPROG!=NULL && FRGPROGZ!=NULL)
-         {
-         if (!ZCLIP)
-            if (FRGPROGID==0)
-               {
-               glGenProgramsARB(1,&frgprogid);
-               glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
-               glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROG),FRGPROG);
-               FRGPROGID=frgprogid;
-               }
-
-         if (ZCLIP)
-            if (FRGPROGZID==0)
-               {
-               glGenProgramsARB(1,&frgprogid);
-               glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,frgprogid);
-               glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRGPROGZ),FRGPROGZ);
-               FRGPROGZID=frgprogid;
-               }
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,EMI,RHO,0.0f,0.0f);
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,0.5f,fexp(1.0f),1.0f,0.0f);
-
-         if (!ZCLIP) glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGID);
-         else glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRGPROGZID);
-
-         glEnable(GL_FRAGMENT_PROGRAM_ARB);
-         }
-
-#endif
-
-#endif
+      setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
+      setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
+      }
    }
 
 // disable pixel shader
 void miniproj::disablepixshader()
-   {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRGPROG!=NULL && FRGPROGZ!=NULL)
-         {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-         glDisable(GL_FRAGMENT_PROGRAM_ARB);
-         }
-
-#endif
-
-#endif
-   }
+   {if (FRGPROG!=NULL && FRGPROGZ!=NULL) bindfrgprog(0);}
 
 // initialize vertex and fragment program setup
 void miniproj::setupprogs()
@@ -962,98 +858,7 @@ void miniproj::deleteprogs()
    free(FRGPROG);
    free(FRGPROGZ);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   GLuint progid;
-
-   if (GLEXT_MT!=0 && GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-      if (VTXPROGID!=0)
-         {
-         progid=VTXPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (FRGPROGID!=0)
-         {
-         progid=FRGPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (FRGPROGZID!=0)
-         {
-         progid=FRGPROGZID;
-         glDeleteProgramsARB(1,&progid);
-         }
-      }
-
-#endif
-   }
-
-// OpenGL extensions:
-
-// initialize OpenGL extension setup
-void miniproj::initglsetup()
-   {
-   GLSETUP=0;
-   WGLSETUP=0;
-
-   GLEXT_MT=0;
-   GLEXT_VP=0;
-   GLEXT_FP=0;
-   }
-
-// check for OpenGL extensions
-void miniproj::initglexts()
-   {
-#ifndef NOOGL
-
-   char *gl_exts;
-
-   if (GLSETUP==0)
-      {
-      GLEXT_MT=0;
-      GLEXT_VP=0;
-      GLEXT_FP=0;
-
-      if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
-
-      if (strstr(gl_exts,"GL_ARB_multitexture")!=NULL) GLEXT_MT=1;
-      if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
-      if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
-
-      GLSETUP=1;
-      }
-
-#endif
-   }
-
-// Windows OpenGL extension setup
-void miniproj::initwglprocs()
-   {
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-   if (WGLSETUP==0)
-      {
-#ifdef GL_ARB_multitexture
-      glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
-      glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
-#endif
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-      glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-      glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-      glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-      glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
-      glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-#endif
-
-      WGLSETUP=1;
-      }
-
-#endif
-
-#endif
+   if (VTXPROGID!=0) deletevtxprog(VTXPROGID);
+   if (FRGPROGID!=0) deletefrgprog(FRGPROGID);
+   if (FRGPROGZID!=0) deletefrgprog(FRGPROGZID);
    }
