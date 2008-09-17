@@ -1321,10 +1321,24 @@ void texcoordarray(float *array,int comps)
 #endif
    }
 
-void renderarrays(int size)
+void rendertriangles(int start,int size)
    {
 #ifndef NOOGL
-   glDrawArrays(GL_TRIANGLE_STRIP,0,size);
+   glDrawArrays(GL_TRIANGLES,start,size);
+#endif
+   }
+
+void renderstrip(int start,int size)
+   {
+#ifndef NOOGL
+   glDrawArrays(GL_TRIANGLE_STRIP,start,size);
+#endif
+   }
+
+void renderfan(int start,int size)
+   {
+#ifndef NOOGL
+   glDrawArrays(GL_TRIANGLE_FAN,start,size);
 #endif
    }
 

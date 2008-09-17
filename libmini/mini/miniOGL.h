@@ -107,7 +107,10 @@ void vertexarray(float *array);
 void colorarray(float *array,int comps=3);
 void normalarray(float *array);
 void texcoordarray(float *array,int comps=2);
-void renderarrays(int size);
+
+void rendertriangles(int start,int size);
+void renderstrip(int start,int size);
+void renderfan(int start,int size);
 
 int getmaxtexsize();
 int getmax3Dtexsize();

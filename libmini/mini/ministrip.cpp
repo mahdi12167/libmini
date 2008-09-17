@@ -1021,7 +1021,7 @@ void ministrip::render()
       }
    else texcoordarray(NULL);
 
-   renderarrays(SIZE);
+   renderstrip(0,SIZE);
 
    vertexarray(NULL);
    colorarray(NULL);

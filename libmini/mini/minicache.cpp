@@ -471,13 +471,10 @@ int minicache::rendercache()
    return(vtx);
    }
 
-//!!
 // render back buffer of the cache
 int minicache::rendercache(int id,int phase)
    {
    int vtx=0;
-
-#ifndef NOOGL
 
    int i,p;
 
@@ -501,7 +498,7 @@ int minicache::rendercache(int id,int phase)
          {
          case BEGINFAN_OP:
             p=ftrc(c->arg[3*i]+0.5f);
-            glDrawArrays(GL_TRIANGLE_FAN,i+1,p);
+            renderfan(i+1,p);
             i+=p;
             break;
          case FANVERTEX_OP:
@@ -519,8 +516,6 @@ int minicache::rendercache(int id,int phase)
       }
 
    t->render_count=i;
-
-#endif
 
    return(vtx);
    }
@@ -661,7 +656,7 @@ int minicache::rendertrigger(int phase)
       if (USEVTXSHADER!=0) enablevtxshader();
       if (USEPIXSHADER!=0) enablepixshader();
 
-      glEnableClientState(GL_VERTEX_ARRAY);
+      glEnableClientState(GL_VERTEX_ARRAY); //!!
       }
    else if (phase==3)
       {
@@ -683,7 +678,7 @@ int minicache::rendertrigger(int phase)
          {
          bindtexmap(0,0,0,0);
 
-         glDisableClientState(GL_VERTEX_ARRAY);
+         glDisableClientState(GL_VERTEX_ARRAY); //!!
 
          if (USEVTXSHADER!=0) disablevtxshader();
 
@@ -697,7 +692,7 @@ int minicache::rendertrigger(int phase)
 
          if (USEVTXSHADER!=0) enablevtxshader();
 
-         glEnableClientState(GL_VERTEX_ARRAY);
+         glEnableClientState(GL_VERTEX_ARRAY); //!!
          }
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
@@ -728,7 +723,7 @@ int minicache::rendertrigger(int phase)
 
       bindtexmap(0,0,0,0);
 
-      glDisableClientState(GL_VERTEX_ARRAY);
+      glDisableClientState(GL_VERTEX_ARRAY); //!!
 
       if (CONFIGURE_ZSCALE_SEA!=1.0f)
          {
@@ -761,7 +756,7 @@ int minicache::rendertrigger(int phase,float scale)
    t->render_phase=phase;
 
    if (t->render_phase==1) t->scale=scale;
-   else if (t->render_phase==2 || t->render_phase==3) glVertexPointer(3,GL_FLOAT,0,c->arg);
+   else if (t->render_phase==2 || t->render_phase==3) glVertexPointer(3,GL_FLOAT,0,c->arg); //!!
    else if (t->render_phase==4) t->lambda=scale;
 
    if (PRISMTRIGGER_CALLBACK!=NULL) vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
