@@ -1405,7 +1405,7 @@ modulating texture environment.<p>
 
 <pre>
    // default pixel shader
-   static const char *fragprog="!!ARBfp1.0 \n\
+   static const char *frgprog="!!ARBfp1.0 \n\
       PARAM a=program.env[0]; \n\
       PARAM t=program.env[1]; \n\
       PARAM l=program.env[2]; \n\
@@ -1453,7 +1453,7 @@ will show contours:<p>
    cache.usevtxshader();
 
    // fragment program for adding contour lines to the bathymetry
-   static const char *fragprog="!!ARBfp1.0\
+   static const char *frgprog="!!ARBfp1.0\
       PARAM c0=program.env[0];\
       TEMP col,vtx;\
       TEX col,fragment.texcoord[0],texture[0],2D;\
@@ -1469,7 +1469,7 @@ will show contours:<p>
       END";
 
    // enable pixel shader plugin
-   cache.setpixshader(fragprog);
+   cache.setpixshader(frgprog);
    cache.setpixshaderparams(contourspacing,contourwidth,2.0f,1.0f);
    cache.usepixshader();
 

@@ -265,10 +265,10 @@ class minisurf
    static int INSTANCES;
 
    static int VTXPROGID;
-   static int FRAGPROGID;
+   static int FRGPROGID;
 
    static int VTXPROGID2;
-   static int FRAGPROGID2;
+   static int FRGPROGID2;
 
    void extractiso(const float isoval,
                    const int x1,const int y1,const int z1,const float c1,const mininorm &n1,
@@ -298,7 +298,7 @@ class minisurf
                     float fogdensity=1.0f,
                     float fogcolor[3]=0);
 
-   void disabletorch(int phase);
+   void disabletorch();
 
    void enablepattern(float ambient,
                       float bordercontrol,
@@ -313,37 +313,6 @@ class minisurf
                           float ambient,
                           float bordercontrol,float centercontrol,float colorcontrol,
                           float bordercontrol2,float centercontrol2,float colorcontrol2);
-
-   // OpenGL extensions:
-
-   int GLSETUP;
-
-   int GLEXT_VP;
-   int GLEXT_FP;
-
-   void initglexts();
-
-   // Windows OpenGL extensions:
-
-   int WGLSETUP;
-
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-   PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
-   PFNGLBINDPROGRAMARBPROC glBindProgramARB;
-   PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
-   PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
-   PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
-#endif
-
-#endif
-
-#endif
-
-   void initwglprocs();
    };
 
 class minibrick

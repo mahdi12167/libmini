@@ -663,6 +663,10 @@ int minicache::rendertrigger(int phase)
       if (USEPIXSHADER!=0) enablepixshader();
 
       vertexarray(c->arg);
+
+      colorarray(NULL);
+      normalarray(NULL);
+      texcoordarray(NULL);
       }
    else if (phase==3)
       {

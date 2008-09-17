@@ -457,6 +457,31 @@ void getfog(float *start,float *end)
 #endif
    }
 
+void enableplane(int n,float a,float b,float c,float d)
+   {
+#ifndef NOOGL
+
+   GLdouble equ[4];
+
+   equ[0]=a;
+   equ[1]=b;
+   equ[2]=c;
+   equ[3]=d;
+
+   glClipPlane(GL_CLIP_PLANE0+n,equ);
+
+   glEnable(GL_CLIP_PLANE0+n);
+
+#endif
+   }
+
+void disableplane(int n)
+   {
+#ifndef NOOGL
+   glDisable(GL_CLIP_PLANE0+n);
+#endif
+   }
+
 int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps,int mipmapped)
    {return(buildtexmap(image,width,height,1,0,mipmaps,mipmapped));}
 
@@ -1326,6 +1351,24 @@ void texcoordarray(float *array,int comps)
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
       }
    else glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
+   }
+
+void interleavedNVarray(float *array)
+   {
+#ifndef NOOGL
+   if (array!=NULL)
+      {
+      glInterleavedArrays(GL_N3F_V3F,0,array);
+
+      glEnableClientState(GL_NORMAL_ARRAY);
+      glEnableClientState(GL_VERTEX_ARRAY);
+      }
+   else
+      {
+      glDisableClientState(GL_NORMAL_ARRAY);
+      glDisableClientState(GL_VERTEX_ARRAY);
+      }
 #endif
    }
 

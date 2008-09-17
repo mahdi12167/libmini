@@ -43,6 +43,9 @@ void disablefog();
 
 void getfog(float *start,float *end);
 
+void enableplane(int n,float a,float b,float c,float d);
+void disableplane(int n);
+
 int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
 int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
 int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
@@ -109,6 +112,7 @@ void vertexarray(float *array,int comps=3);
 void colorarray(float *array,int comps=3);
 void normalarray(float *array);
 void texcoordarray(float *array,int comps=2);
+void interleavedNVarray(float *array);
 
 void rendertriangles(int start,int size);
 void renderquads(int start,int size);

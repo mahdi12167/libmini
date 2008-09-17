@@ -434,10 +434,10 @@ minivtxarray *minispect::getreadbuf(int n)
 int minisurf::INSTANCES=0;
 
 int minisurf::VTXPROGID;
-int minisurf::FRAGPROGID;
+int minisurf::FRGPROGID;
 
 int minisurf::VTXPROGID2;
-int minisurf::FRAGPROGID2;
+int minisurf::FRGPROGID2;
 
 // default constructor
 minisurf::minisurf()
@@ -455,59 +455,42 @@ minisurf::minisurf()
    if (INSTANCES++==0)
       {
       VTXPROGID=0;
-      FRAGPROGID=0;
+      FRGPROGID=0;
 
       VTXPROGID2=0;
-      FRAGPROGID2=0;
+      FRGPROGID2=0;
       }
-
-   GLSETUP=0;
-   WGLSETUP=0;
-
-   GLEXT_VP=0;
-   GLEXT_FP=0;
    }
 
 // destructor
 minisurf::~minisurf()
    {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   GLuint progid;
-
    if (--INSTANCES==0)
-      if (GLEXT_VP!=0 && GLEXT_FP!=0)
+      {
+      if (VTXPROGID!=0)
          {
-         if (VTXPROGID!=0)
-            {
-            progid=VTXPROGID;
-            glDeleteProgramsARB(1,&progid);
-            VTXPROGID=0;
-            }
-
-         if (FRAGPROGID!=0)
-            {
-            progid=FRAGPROGID;
-            glDeleteProgramsARB(1,&progid);
-            FRAGPROGID=0;
-            }
-
-         if (VTXPROGID2!=0)
-            {
-            progid=VTXPROGID2;
-            glDeleteProgramsARB(1,&progid);
-            VTXPROGID2=0;
-            }
-
-         if (FRAGPROGID2!=0)
-            {
-            progid=FRAGPROGID2;
-            glDeleteProgramsARB(1,&progid);
-            FRAGPROGID2=0;
-            }
+         deletevtxprog(VTXPROGID);
+         VTXPROGID=0;
          }
 
-#endif
+      if (FRGPROGID!=0)
+         {
+         deletefrgprog(FRGPROGID);
+         FRGPROGID=0;
+         }
+
+      if (VTXPROGID2!=0)
+         {
+         deletevtxprog(VTXPROGID2);
+         VTXPROGID2=0;
+         }
+
+      if (FRGPROGID2!=0)
+         {
+         deletefrgprog(FRGPROGID2);
+         FRGPROGID2=0;
+         }
+      }
    }
 
 // reset surface
@@ -518,29 +501,6 @@ void minisurf::reset()
    for (i=0; i<SPECTRUM.getnum(); i++) SPECTRUM.getwritebuf(i)->reset();
    }
 
-// check for OpenGL extensions
-void minisurf::initglexts()
-   {
-#ifndef NOOGL
-
-   char *gl_exts;
-
-   if (GLSETUP==0)
-      {
-      GLEXT_VP=0;
-      GLEXT_FP=0;
-
-      if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
-
-      if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
-      if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
-
-      GLSETUP=1;
-      }
-
-#endif
-   }
-
 // enable torch light
 void minisurf::enabletorch(int phase,
                            float ambient,
@@ -549,16 +509,6 @@ void minisurf::enabletorch(int phase,
                            float fogdensity,
                            float fogcolor[3])
    {
-#ifndef NOOGL
-
-   static GLfloat ZROlight[]={0.0f,0.0f,0.0f,1.0f};
-   static GLfloat lightdir[]={0.0f,0.0f,1.0f,0.0f};
-
-   GLfloat AMBlight[]={ambient,ambient,ambient,1.0f};
-   GLfloat DIRlight[]={1.0f-ambient,1.0f-ambient,1.0f-ambient,1.0f};
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    float fog_a,fog_b,fog_c;
 
    static const char *vtxprog="!!ARBvp1.0 \n\
@@ -590,7 +540,7 @@ void minisurf::enabletorch(int phase,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static const char *fragprog1="!!ARBfp1.0 \n\
+   static const char *frgprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       TEMP col,nrm,pos,len; \n\
@@ -618,7 +568,7 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   static const char *frgprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -654,115 +604,49 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
-   GLuint vtxprogid,fragprogid;
+   // build vertex program
+   if (VTXPROGID==0) VTXPROGID=buildvtxprog(vtxprog);
 
-#endif
+   // build fragment program
+   if (FRGPROGID==0)
+      if (fogstart<fogend && fogcolor!=NULL) FRGPROGID=buildfrgprog(frgprog2);
+      else FRGPROGID=buildfrgprog(frgprog1);
 
-   // Phong alpha shading
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   // bind shader programs
+   bindvtxprog(VTXPROGID);
+   bindfrgprog(FRGPROGID);
+
+   // define border appearance
+   setfrgprogpar(0,0.0f,0.0f,bordercontrol,0.0f);
+
+   // define non-border appearance
+   if (phase==FIRST_RENDER_PHASE) setfrgprogpar(1,1.0f-ambient,ambient,0.0f,1.0f);
+   else setfrgprogpar(1,(1.0f-ambient)*colorcontrol,ambient*colorcontrol+1.0f-colorcontrol,-centercontrol,1.0f);
+
+   // calculate the fog parameters
+   if (fogstart<fogend && fogcolor!=NULL)
       {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-      if (VTXPROGID==0)
-         {
-         glGenProgramsARB(1,&vtxprogid);
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-         VTXPROGID=vtxprogid;
-         }
-
-      if (FRAGPROGID==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         if (fogstart<fogend && fogcolor!=NULL) glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         else glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         FRAGPROGID=fragprogid;
-         }
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID);
-      glEnable(GL_VERTEX_PROGRAM_ARB);
-
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRAGPROGID);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,0.0f,0.0f,bordercontrol,0.0f);
-
-      if (phase==FIRST_RENDER_PHASE) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,1.0f-ambient,ambient,0.0f,1.0f);
-      else glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,(1.0f-ambient)*colorcontrol,ambient*colorcontrol+1.0f-colorcontrol,-centercontrol,1.0f);
-
-      // calculate the fog parameters
-      if (fogstart<fogend && fogcolor!=NULL)
-         {
-         fog_a=fsqr(1.0f/fogend);
-         fog_b=0.0f;
-         fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
-         }
-      else
-         {
-         fog_a=0.0f;
-         fog_b=0.0f;
-         fog_c=1.0f;
-         }
-
-      // pass the fog parameters
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,fog_a,fog_b,fog_c,0.0f);
-      if (fogcolor!=NULL) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,4,fogcolor[0],fogcolor[1],fogcolor[2],0.0f);
-
-#endif
+      fog_a=fsqr(1.0f/fogend);
+      fog_b=0.0f;
+      fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
       }
-   // Gouraud shading (results in popping artifacts)
-   else if (phase==FIRST_RENDER_PHASE)
+   else
       {
-      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,GL_FALSE);
-      glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
-      glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ZROlight);
-
-      glLightfv(GL_LIGHT0,GL_AMBIENT,AMBlight);
-      glLightfv(GL_LIGHT0,GL_DIFFUSE,DIRlight);
-
-      glPushMatrix();
-      glLoadIdentity();
-      glLightfv(GL_LIGHT0,GL_POSITION,lightdir);
-      glPopMatrix();
-
-      glEnable(GL_COLOR_MATERIAL);
-      glEnable(GL_NORMALIZE);
-
-      glEnable(GL_LIGHT0);
-      glEnable(GL_LIGHTING);
+      fog_a=0.0f;
+      fog_b=0.0f;
+      fog_c=1.0f;
       }
 
-#endif
+   // pass the fog parameters
+   setfrgprogpar(3,fog_a,fog_b,fog_c,0.0f);
+   if (fogcolor!=NULL) setfrgprogpar(4,fogcolor[0],fogcolor[1],fogcolor[2],0.0f);
    }
 
 // disable torch light
-void minisurf::disabletorch(int phase)
+void minisurf::disabletorch()
    {
-#ifndef NOOGL
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-
-      glDisable(GL_VERTEX_PROGRAM_ARB);
-      glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-#endif
-      }
-   else if (phase==FIRST_RENDER_PHASE)
-      {
-      glDisable(GL_COLOR_MATERIAL);
-      glDisable(GL_NORMALIZE);
-
-      glDisable(GL_LIGHT0);
-      glDisable(GL_LIGHTING);
-      }
-
-#endif
+   bindvtxprog(0);
+   bindfrgprog(0);
    }
 
 // enable pattern
@@ -772,10 +656,6 @@ void minisurf::enablepattern(float ambient,
                              float fogdensity,
                              float fogcolor[3])
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    float fog_a,fog_b,fog_c;
 
    static const char *vtxprog="!!ARBvp1.0 \n\
@@ -809,7 +689,7 @@ void minisurf::enablepattern(float ambient,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static const char *fragprog1="!!ARBfp1.0 \n\
+   static const char *frgprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -843,7 +723,7 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   static const char *frgprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -884,91 +764,54 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
-   GLuint vtxprogid,fragprogid;
+   // build vertex program
+   if (VTXPROGID2==0) VTXPROGID2=buildvtxprog(vtxprog);
 
-#endif
+   // build fragment program
+   if (FRGPROGID2==0)
+      if (fogstart<fogend && fogcolor!=NULL) FRGPROGID2=buildfrgprog(frgprog2);
+      else FRGPROGID2=buildfrgprog(frgprog1);
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   // bind shader programs
+   bindvtxprog(VTXPROGID2);
+   bindfrgprog(FRGPROGID2);
+
+   // define border appearance
+   setfrgprogpar(0,0.0f,0.0f,bordercontrol,0.0f);
+
+   // define non-border appearance
+   setfrgprogpar(1,1.0f-ambient,ambient,0.0f,0.0f);
+   setfrgprogpar(2,STRIPEWIDTH*STRIPEDX,STRIPEWIDTH*STRIPEDY,STRIPEWIDTH*STRIPEDZ,STRIPEOFFSET);
+
+   // calculate the fog parameters
+   if (fogstart<fogend && fogcolor!=NULL)
       {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-      if (VTXPROGID2==0)
-         {
-         glGenProgramsARB(1,&vtxprogid);
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-         VTXPROGID2=vtxprogid;
-         }
-
-      if (FRAGPROGID2==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         if (fogstart<fogend && fogcolor!=NULL) glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         else glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         FRAGPROGID2=fragprogid;
-         }
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID2);
-      glEnable(GL_VERTEX_PROGRAM_ARB);
-
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRAGPROGID2);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,0.0f,0.0f,bordercontrol,0.0f);
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,1.0f-ambient,ambient,0.0f,0.0f);
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,STRIPEWIDTH*STRIPEDX,STRIPEWIDTH*STRIPEDY,STRIPEWIDTH*STRIPEDZ,STRIPEOFFSET);
-
-      // calculate the fog parameters
-      if (fogstart<fogend && fogcolor!=NULL)
-         {
-         fog_a=fsqr(1.0f/fogend);
-         fog_b=0.0f;
-         fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
-         }
-      else
-         {
-         fog_a=0.0f;
-         fog_b=0.0f;
-         fog_c=1.0f;
-         }
-
-      // pass the fog parameters
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,fog_a,fog_b,fog_c,0.0f);
-      if (fogcolor!=NULL) glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,4,fogcolor[0],fogcolor[1],fogcolor[2],0.0f);
-
-#endif
+      fog_a=fsqr(1.0f/fogend);
+      fog_b=0.0f;
+      fog_c=log(fmin(0.5f*fogdensity,1.0f))/(2.0f*log(fogstart/fogend/2.0f+0.5f));
+      }
+   else
+      {
+      fog_a=0.0f;
+      fog_b=0.0f;
+      fog_c=1.0f;
       }
 
-#endif
+   // pass the fog parameters
+   setfrgprogpar(3,fog_a,fog_b,fog_c,0.0f);
+   if (fogcolor!=NULL) setfrgprogpar(4,fogcolor[0],fogcolor[1],fogcolor[2],0.0f);
    }
 
 // disable pattern
 void minisurf::disablepattern()
    {
-#ifndef NOOGL
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-
-      glDisable(GL_VERTEX_PROGRAM_ARB);
-      glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-#endif
-      }
-
-#endif
+   bindvtxprog(0);
+   bindfrgprog(0);
    }
 
 // render triangles
 void minisurf::renderarrays(int phase)
    {
-#ifndef NOOGL
-
    int n;
 
    for (n=0; n<SPECTRUM.getnum(); n++)
@@ -976,25 +819,18 @@ void minisurf::renderarrays(int phase)
           (phase!=FIRST_RENDER_PHASE && SPECTRUM.getA(n)>0.0f && SPECTRUM.getA(n)<1.0f))
          if (SPECTRUM.getreadbuf(n)->getsize()>0)
             {
-            glColor4f(SPECTRUM.getR(n),
-                      SPECTRUM.getG(n),
-                      SPECTRUM.getB(n),
-                      SPECTRUM.getA(n));
+            color(SPECTRUM.getR(n),
+                  SPECTRUM.getG(n),
+                  SPECTRUM.getB(n),
+                  SPECTRUM.getA(n));
 
-            glDisableClientState(GL_COLOR_ARRAY);
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            colorarray(NULL);
+            texcoordarray(NULL);
 
-            glEnableClientState(GL_NORMAL_ARRAY);
-            glEnableClientState(GL_VERTEX_ARRAY);
-
-            glInterleavedArrays(GL_N3F_V3F,0,SPECTRUM.getreadbuf(n)->getarray());
-            glDrawArrays(GL_TRIANGLES,0,SPECTRUM.getreadbuf(n)->getsize());
-
-            glDisableClientState(GL_NORMAL_ARRAY);
-            glDisableClientState(GL_VERTEX_ARRAY);
+            interleavedNVarray(SPECTRUM.getreadbuf(n)->getarray());
+            rendertriangles(0,SPECTRUM.getreadbuf(n)->getsize());
+            interleavedNVarray(NULL);
             }
-
-#endif
    }
 
 // initialize state for each phase
@@ -1005,15 +841,10 @@ void minisurf::setstate(int enable,
                         float bordercontrol,float centercontrol,float colorcontrol,
                         float bordercontrol2,float centercontrol2,float colorcontrol2)
    {
-#ifndef NOOGL
-
-   initglexts();
-   initwglprocs();
-
    // first pass for opaque triangles
    if (phase==ONE_RENDER_PHASE || phase==FIRST_RENDER_PHASE)
       if (enable!=0) enabletorch(FIRST_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
-      else disabletorch(FIRST_RENDER_PHASE);
+      else disabletorch();
 
    // set common OpenGL states
    if (phase!=FIRST_RENDER_PHASE)
@@ -1048,7 +879,7 @@ void minisurf::setstate(int enable,
             }
          else
             {
-            disabletorch(SECOND_RENDER_PHASE);
+            disabletorch();
 
             enableZwriting();
             disableblending();
@@ -1076,7 +907,7 @@ void minisurf::setstate(int enable,
             }
          else
             {
-            disabletorch(SECOND_RENDER_PHASE);
+            disabletorch();
 
             enableZwriting();
             disableblending();
@@ -1093,7 +924,7 @@ void minisurf::setstate(int enable,
             }
          else
             {
-            disabletorch(THIRD_RENDER_PHASE);
+            disabletorch();
 
             enableZwriting();
             disableblending();
@@ -1121,7 +952,7 @@ void minisurf::setstate(int enable,
             }
          else
             {
-            disabletorch(SECOND_RENDER_PHASE);
+            disabletorch();
 
             enableZwriting();
             disableblending();
@@ -1151,7 +982,7 @@ void minisurf::setstate(int enable,
             }
          else
             {
-            disabletorch(FOURTH_RENDER_PHASE);
+            disabletorch();
 
             enableZwriting();
             disableblending();
@@ -1171,8 +1002,6 @@ void minisurf::setstate(int enable,
          enableBFculling();
          disableAtest();
          }
-
-#endif
    }
 
 // render pass
@@ -1200,8 +1029,6 @@ void minisurf::render(int phase,
                       float bordercontrol,float centercontrol,float colorcontrol,
                       float bordercontrol2,float centercontrol2,float colorcontrol2)
    {
-#ifndef NOOGL
-
    // single pass for opaque triangles
    if (SPECTRUM.getopaqnum()!=0)
       if (phase==ONE_RENDER_PHASE || phase==FIRST_RENDER_PHASE)
@@ -1250,8 +1077,6 @@ void minisurf::render(int phase,
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
                renderpass(LAST_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
          }
-
-#endif
    }
 
 // initialize state for each phase
@@ -1601,31 +1426,6 @@ void minisurf::extractiso2(const int x1,const int y1,const int z1,const mininorm
    buf->addvtx(px1,py1,pz1,pn1.x,pn1.y,pn1.z);
    buf->addvtx(px4,py4,pz4,pn4.x,pn4.y,pn4.z);
    buf->addvtx(px3,py3,pz3,pn3.x,pn3.y,pn3.z);
-   }
-
-// Windows OpenGL extension setup
-void minisurf::initwglprocs()
-   {
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-   if (WGLSETUP==0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-      glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-      glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-      glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-      glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
-      glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-#endif
-
-      WGLSETUP=1;
-      }
-
-#endif
-
-#endif
    }
 
 // brick volume:
@@ -2628,11 +2428,7 @@ void minibrick::render(float ex,float ey,float ez,
                        float t,
                        int phase)
    {
-#ifndef NOOGL
-
    int i,j;
-
-   GLdouble equ[4];
 
    if (farp<=0.0f) ERRORMSG();
 
@@ -2650,7 +2446,7 @@ void minibrick::render(float ex,float ey,float ez,
 
    initstate();
 
-   glPushMatrix();
+   mtxpush();
 
    // rotate in world space
    if (FREEZE!=0)
@@ -2658,40 +2454,34 @@ void minibrick::render(float ex,float ey,float ez,
           DX2!=0.0f || DY2!=0.0f || DZ2!=0.0f ||
           DX3!=0.0f || DY3!=0.0f || DZ3!=0.0f)
          {
-         GLfloat mtx[16]={DX1,DY1,DZ1,0.0f,
-                          DX2,DY2,DZ2,0.0f,
-                          -DX3,-DY3,-DZ3,0.0f,
-                          0.0f,0.0f,0.0f,1.0f};
+         float mtx[16]={DX1,DY1,DZ1,0.0f,
+                        DX2,DY2,DZ2,0.0f,
+                        -DX3,-DY3,-DZ3,0.0f,
+                        0.0f,0.0f,0.0f,1.0f};
 
-         glTranslatef(((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
+         mtxtranslate(((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
                       (BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
                       -((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
 
-         glMultMatrixf(mtx);
+         mtxmult(mtx);
 
-         glTranslatef(-((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
+         mtxtranslate(-((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
                       -(BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
                       ((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
          }
 
    // transform from object to world space
-   glScalef(SCALEX,SCALEELEV,-SCALEY);
-   glTranslatef(OFFSETLON,0.0f,OFFSETLAT);
+   mtxscale(SCALEX,SCALEELEV,-SCALEY);
+   mtxtranslate(OFFSETLON,0.0f,OFFSETLAT);
 
    // enable clipping planes
    for (i=0; i<6; i++)
       if (CLIP_ON[i]!=0)
-         {
-         equ[0]=CLIP_NX[i];
-         equ[1]=CLIP_NY[i];
-         equ[2]=CLIP_NZ[i];
-
-         equ[3]=-CLIP_NX[i]*CLIP_OX[i]-CLIP_NY[i]*CLIP_OY[i]-CLIP_NZ[i]*CLIP_OZ[i];
-
-         glClipPlane(GL_CLIP_PLANE0+i,equ);
-
-         glEnable(GL_CLIP_PLANE0+i);
-         }
+         enableplane(i,
+                     CLIP_NX[i],
+                     CLIP_NY[i],
+                     CLIP_NZ[i],
+                     -CLIP_NX[i]*CLIP_OX[i]-CLIP_NY[i]*CLIP_OY[i]-CLIP_NZ[i]*CLIP_OZ[i]);
 
    // render vertex arrays
    for (i=0; i<COLS; i++)
@@ -2713,9 +2503,9 @@ void minibrick::render(float ex,float ey,float ez,
 
    // disable clipping planes
    for (i=0; i<6; i++)
-      if (CLIP_ON[i]!=0) glDisable(GL_CLIP_PLANE0+i);
+      if (CLIP_ON[i]!=0) disableplane(i);
 
-   glPopMatrix();
+   mtxpop();
 
    exitstate();
 
@@ -2727,8 +2517,6 @@ void minibrick::render(float ex,float ey,float ez,
 
       FRAME++;
       }
-
-#endif
    }
 
 // release all buffers
@@ -3643,21 +3431,19 @@ void minibrick::calcblock(const unsigned int i,const unsigned int j,const unsign
 // render a brick tile
 void minibrick::drawdata(databuf *brick,minisurf *surface,int phase)
    {
-#ifndef NOOGL
+   float mtx[16]={brick->sex-brick->swx,0.0f,brick->nwx-brick->swx,0.0f,
+                  brick->sey-brick->swy,0.0f,brick->nwy-brick->swy,0.0f,
+                  0.0f,brick->dh,0.0f,0.0f,
+                  0.0f,0.0f,0.0f,1.0f};
 
-   GLfloat mtx[16]={brick->sex-brick->swx,0.0f,brick->nwx-brick->swx,0.0f,
-                    brick->sey-brick->swy,0.0f,brick->nwy-brick->swy,0.0f,
-                    0.0f,brick->dh,0.0f,0.0f,
-                    0.0f,0.0f,0.0f,1.0f};
-
-   glPushMatrix();
+   mtxpush();
 
    // warp tile from computational to object space
    // assuming that the tile can be approximated by a rectangle
    // with the origin being the south-west corner
-   glTranslatef(brick->swx,brick->h0,brick->swy);
-   glMultMatrixf(mtx);
-   glScalef(1.0f/(brick->xsize-1),1.0f/(brick->ysize-1),1.0f/(brick->zsize-1));
+   mtxtranslate(brick->swx,brick->h0,brick->swy);
+   mtxmult(mtx);
+   mtxscale(1.0f/(brick->xsize-1),1.0f/(brick->ysize-1),1.0f/(brick->zsize-1));
 
    // set stripe pattern
    surface->setstripewidth(CONFIGURE_STRIPEWIDTH);
@@ -3674,9 +3460,7 @@ void minibrick::drawdata(databuf *brick,minisurf *surface,int phase)
                    CONFIGURE_BRDRCTRL,CONFIGURE_CNTRCTRL,CONFIGURE_COLRCTRL,
                    CONFIGURE_BRDRCTRL2,CONFIGURE_CNTRCTRL2,CONFIGURE_COLRCTRL2);
 
-   glPopMatrix();
-
-#endif
+   mtxpop();
    }
 
 // process triangles
