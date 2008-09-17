@@ -103,7 +103,7 @@ void linewidth(const int w);
 void enablelinesmooth();
 void disablelinesmooth();
 
-inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
+inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
 void vertexarray(float *array,int comps=3);
 void colorarray(float *array,int comps=3);
@@ -363,7 +363,7 @@ void endfans()
 #endif
    }
 
-inline void drawline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2)
+inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2)
    {
 #ifndef NOOGL
    glBegin(GL_LINES);

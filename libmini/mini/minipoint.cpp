@@ -1040,7 +1040,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
       if (vpoint->opts!=NULL)
          if (vpoint->opts->signpostheight>0.0f) sheight=vpoint->opts->signpostheight*SCALEELEV;
 
-      drawline(vpoint->x,vpoint->height,-vpoint->y,vpoint->x,vpoint->height+sheight,-vpoint->y);
+      renderline(vpoint->x,vpoint->height,-vpoint->y,vpoint->x,vpoint->height+sheight,-vpoint->y);
       }
    // label waypoint within range
    else if (pass==2)

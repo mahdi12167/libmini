@@ -13,7 +13,6 @@ float CONFIGURE_ZSCALE=0.95f; // must be 1.0f for orthographic projections
 
 void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
    {
-#ifndef NOOGL
    float rgb[3];
 
    float px,py,lx,ly;
@@ -22,8 +21,7 @@ void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
 
    hsv2rgb(hue,sat,val,rgb);
 
-   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
-   glBegin(GL_LINES);
+   color(rgb[0],rgb[1],rgb[2],alpha);
 
    px=py=0.0f;
 
@@ -47,22 +45,14 @@ void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
          }
 
       if (draw)
-         if (px!=lx || py!=ly)
-            {
-            glVertex2f(lx,ly);
-            glVertex2f(px,py);
-            }
+         if (px!=lx || py!=ly) renderline(lx,ly,0.0f,px,py,0.0f);
       }
-
-   glEnd();
-#endif
    }
 
 void drawletter(float hue,float sat,float val,float alpha,char letter)
    {
-#ifndef NOOGL
-   glPushMatrix();
-   glScalef(1.0f/4,1.0f/6,0.0f);
+   mtxpush();
+   mtxscale(1.0f/4,1.0f/6,0.0f);
 
    switch (toupper(letter))
       {
@@ -135,117 +125,90 @@ void drawletter(float hue,float sat,float val,float alpha,char letter)
       case '\'': drawsymbol(hue,sat,val,alpha,"uennnndn"); break;
       }
 
-   glPopMatrix();
-#endif
+   mtxpop();
    }
 
 void drawline(float x1,float y1,float x2,float y2,
               float hue,float sat,float val,float alpha)
    {
-#ifndef NOOGL
    float rgb[3];
 
    hsv2rgb(hue,sat,val,rgb);
 
-   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x1,y1);
-   glVertex2f(x2,y2);
-   glEnd();
-#endif
+   color(rgb[0],rgb[1],rgb[2],alpha);
+   renderline(x1,y1,0.0f,x2,y2,0.0f);
    }
 
 void drawlineRGBA(float x1,float y1,float x2,float y2,
                   float r,float g,float b,float alpha)
    {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x1,y1);
-   glVertex2f(x2,y2);
-   glEnd();
-#endif
+   color(r,g,b,alpha);
+   renderline(x1,y1,0.0f,x2,y2,0.0f);
    }
 
 void drawquad(float x,float y,float width,float height,
               float hue,float sat,float val,float alpha)
    {
-#ifndef NOOGL
    float rgb[3];
 
    hsv2rgb(hue,sat,val,rgb);
 
-   glColor4f(rgb[0],rgb[1],rgb[2],alpha);
-   glBegin(GL_TRIANGLE_FAN);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glEnd();
-#endif
+   color(rgb[0],rgb[1],rgb[2],alpha);
+
+   beginfans();
+   beginfan();
+   fanvertex(x,y,0.0f);
+   fanvertex(x+width,y,0.0f);
+   fanvertex(x+width,y+height,0.0f);
+   fanvertex(x,y+height,0.0f);
+   endfans();
    }
 
 void drawquadRGBA(float x,float y,float width,float height,
                   float r,float g,float b,float alpha)
    {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_TRIANGLE_FAN);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glEnd();
-#endif
+   color(r,g,b,alpha);
+
+   beginfans();
+   beginfan();
+   fanvertex(x,y,0.0f);
+   fanvertex(x+width,y,0.0f);
+   fanvertex(x+width,y+height,0.0f);
+   fanvertex(x,y+height,0.0f);
+   endfans();
    }
 
 void drawframe(float x,float y,float width,float height,
                float hue,float sat,float val,float alpha)
    {
-#ifndef NOOGL
    float rgb1[3],rgb2[3];
 
    hsv2rgb(hue,sat,fmax(val-0.25f,0.0f),rgb1);
    hsv2rgb(hue,sat,fmin(val+0.25f,1.0f),rgb2);
 
-   glBegin(GL_LINES);
-   glColor4f(rgb1[0],rgb1[1],rgb1[2],alpha);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glColor4f(rgb2[0],rgb2[1],rgb2[2],alpha);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y);
-   glEnd();
-#endif
+   color(rgb1[0],rgb1[1],rgb1[2],alpha);
+   renderline(x,y,0.0f,x+width,y,0.0f);
+   renderline(x+width,y,0.0f,x+width,y+height,0.0f);
+
+   color(rgb2[0],rgb2[1],rgb2[2],alpha);
+   renderline(x+width,y+height,0.0f,x,y+height,0.0f);
+   renderline(x,y+height,0.0f,x,y,0.0f);
    }
 
 void drawframeRGBA(float x,float y,float width,float height,
                    float r,float g,float b,float alpha)
    {
-#ifndef NOOGL
-   glColor4f(r,g,b,alpha);
-   glBegin(GL_LINES);
-   glVertex2f(x,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x+width,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y+height);
-   glVertex2f(x,y);
-   glEnd();
-#endif
+   color(r,g,b,alpha);
+   renderline(x,y,0.0f,x+width,y,0.0f);
+   renderline(x+width,y,0.0f,x+width,y+height,0.0f);
+   renderline(x+width,y+height,0.0f,x,y+height,0.0f);
+   renderline(x,y+height,0.0f,x,y,0.0f);
    }
 
 void drawstring(float width,
                 float hue,float sat,float val,float alpha,const char *str,
                 float backval,float backalpha)
    {
-#ifndef NOOGL
    const float linefeed=0.2f;
 
    int c,cmax,l;
@@ -267,55 +230,54 @@ void drawstring(float width,
       {
       drawquad(0.0f,0.0f,scale*cmax,scale*(l+(l-1)*linefeed),0.0f,0.0f,backval,backalpha);
 
-      glMatrixMode(GL_PROJECTION);
-      glPushMatrix();
-      glScalef(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
-      glMatrixMode(GL_MODELVIEW);
+      mtxproj();
+      mtxpush();
+      mtxscale(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
+      mtxmodel();
       }
 
-   glPushMatrix();
-   glScalef(scale,scale,0.0f);
-   glTranslatef(0.0f,(l-1)*(1.0f+linefeed),0.0f);
-   glPushMatrix();
+   mtxpush();
+   mtxscale(scale,scale,0.0f);
+   mtxtranslate(0.0f,(l-1)*(1.0f+linefeed),0.0f);
+   mtxpush();
 
    while (*str!='\0')
       {
       if (*str=='\n')
          {
-         glPopMatrix();
-         glTranslatef(0.0f,-(1.0f+linefeed),0.0f);
-         glPushMatrix();
+         mtxpop();
+         mtxtranslate(0.0f,-(1.0f+linefeed),0.0f);
+         mtxpush();
          }
       else
          {
          if (*str>='a' && *str<='z')
             {
-            glPushMatrix();
-            glTranslatef(0.2f,0.0f,0.0f);
-            glScalef(0.6f,0.75f,1.0f);
+            mtxpush();
+            mtxtranslate(0.2f,0.0f,0.0f);
+            mtxscale(0.6f,0.75f,1.0f);
 
             drawletter(hue,sat,val,alpha,*str);
 
-            glPopMatrix();
+            mtxpop();
             }
          else drawletter(hue,sat,val,alpha,*str);
 
-         glTranslatef(1.0f,0.0f,0.0f);
+         mtxtranslate(1.0f,0.0f,0.0f);
          }
 
       str++;
       }
 
-   glPopMatrix();
-   glPopMatrix();
+   mtxpop();
+   mtxpop();
 
    if (backalpha>0.0f)
       {
-      glMatrixMode(GL_PROJECTION);
-      glPopMatrix();
-      glMatrixMode(GL_MODELVIEW);
+      mtxproj();
+      mtxpop();
+      mtxmodel();
       }
-#endif
    }
 
 // configuring
