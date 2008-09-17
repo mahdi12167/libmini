@@ -42,13 +42,11 @@ minitree::minitree(minicache *cache,minitile *tile)
    TREE_TEXID=GRASS_TEXID=GRASS_PERTURBID=RENDER_TEXID=0;
 
    TREE_VTXPROGID1=TREE_VTXPROGID2=RENDER_VTXPROGID=0;
-   GRASS_VTXPROGID=GRASS_FRAGPROGID1=GRASS_FRAGPROGID2=GRASS_FRAGPROGID3=GRASS_FRAGPROGID4=0;
-   RENDER_FRAGPROGID1=RENDER_FRAGPROGID2=0;
+   GRASS_VTXPROGID=GRASS_FRGPROGID1=GRASS_FRGPROGID2=GRASS_FRGPROGID3=GRASS_FRGPROGID4=0;
+   RENDER_FRGPROGID1=RENDER_FRGPROGID2=0;
 
    CONFIGURE_ZSCALE=0.95f;
    CONFIGURE_BLEND=0;
-
-   WGLSETUP=0;
 
    // initialize parameters for negative modes:
 
@@ -153,75 +151,16 @@ minitree::~minitree()
    deletetexmap(GRASS_PERTURBID);
    deletetexmap(RENDER_TEXID);
 
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   GLuint progid;
-
-   if (TREE_VTXPROGID1!=0)
-      {
-      progid=TREE_VTXPROGID1;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (TREE_VTXPROGID2!=0)
-      {
-      progid=TREE_VTXPROGID2;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (GRASS_VTXPROGID!=0)
-      {
-      progid=GRASS_VTXPROGID;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (GRASS_FRAGPROGID1!=0)
-      {
-      progid=GRASS_FRAGPROGID1;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (GRASS_FRAGPROGID2!=0)
-      {
-      progid=GRASS_FRAGPROGID2;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (GRASS_FRAGPROGID3!=0)
-      {
-      progid=GRASS_FRAGPROGID3;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (GRASS_FRAGPROGID4!=0)
-      {
-      progid=GRASS_FRAGPROGID4;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (RENDER_VTXPROGID!=0)
-      {
-      progid=RENDER_VTXPROGID;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (RENDER_FRAGPROGID1!=0)
-      {
-      progid=RENDER_FRAGPROGID1;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-   if (RENDER_FRAGPROGID2!=0)
-      {
-      progid=RENDER_FRAGPROGID2;
-      glDeleteProgramsARB(1,&progid);
-      }
-
-#endif
-
-#endif
+   if (TREE_VTXPROGID1!=0) deletevtxprog(TREE_VTXPROGID1);
+   if (TREE_VTXPROGID2!=0) deletevtxprog(TREE_VTXPROGID2);
+   if (GRASS_VTXPROGID!=0) deletevtxprog(GRASS_VTXPROGID);
+   if (GRASS_FRGPROGID1!=0) deletefrgprog(GRASS_FRGPROGID1);
+   if (GRASS_FRGPROGID2!=0) deletefrgprog(GRASS_FRGPROGID2);
+   if (GRASS_FRGPROGID3!=0) deletefrgprog(GRASS_FRGPROGID3);
+   if (GRASS_FRGPROGID4!=0) deletefrgprog(GRASS_FRGPROGID4);
+   if (RENDER_VTXPROGID!=0) deletevtxprog(RENDER_VTXPROGID);
+   if (RENDER_FRGPROGID1!=0) deletefrgprog(RENDER_FRGPROGID1);
+   if (RENDER_FRGPROGID2!=0) deletefrgprog(RENDER_FRGPROGID2);
 
    if (TREEMODE_M2_TEXFILE!=NULL) free(TREEMODE_M2_TEXFILE);
 
@@ -917,10 +856,6 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
    {
    int vtx=0;
 
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    static const char *vtxprog1="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
@@ -960,11 +895,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   GLuint vtxprogid;
-
-   GLfloat mvmtx[16];
-
-#endif
+   float mvmtx[16];
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -979,20 +910,18 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
    if (cnt==0) return(vtx);
 
-   initwglprocs();
-
    initstate();
 
-   glDisable(GL_CULL_FACE);
+   disableculling();
 
-   glPushMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glScalef(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
-   glMatrixMode(GL_TEXTURE);
-   glPushMatrix();
-   glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpush();
+   mtxproj();
+   mtxpush();
+   mtxscale(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
+   mtxtex();
+   mtxpush();
+   mtxid();
+   mtxmodel();
 
    if (warp!=NULL)
       {
@@ -1025,12 +954,11 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       {
       case 1:
 
-         glColor3f(tr,tg,tb);
+         color(tr,tg,tb);
 
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glDrawArrays(GL_LINES,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
+         vertexarray(cache);
+         renderlines(0,cnt);
+         vertexarray(NULL);
 
          vtx+=cnt;
 
@@ -1038,12 +966,11 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
       case 2:
 
-         glColor3f(tr,tg,tb);
+         color(tr,tg,tb);
 
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glDrawArrays(GL_TRIANGLES,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
+         vertexarray(cache);
+         rendertriangles(0,cnt);
+         vertexarray(NULL);
 
          vtx+=cnt;
 
@@ -1051,34 +978,20 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
       case 3:
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+         if (TREE_VTXPROGID1==0) TREE_VTXPROGID1=buildvtxprog(vtxprog1);
 
-         if (TREE_VTXPROGID1==0)
-            {
-            glGenProgramsARB(1,&vtxprogid);
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog1),vtxprog1);
-            TREE_VTXPROGID1=vtxprogid;
-            }
+         bindvtxprog(TREE_VTXPROGID1);
+         setvtxprogpar(0,271.0f/TREEMODE_X_TREEWIDTH,TREEMODE_3_COLFLUCT,331.0f/TREEMODE_X_TREEWIDTH,0.0f);
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID1);
-         glEnable(GL_VERTEX_PROGRAM_ARB);
+         color(tr,tg,tb);
 
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,271.0f/TREEMODE_X_TREEWIDTH,TREEMODE_3_COLFLUCT,331.0f/TREEMODE_X_TREEWIDTH,0.0f);
+         vertexarray(cache);
+         rendertriangles(0,cnt);
+         vertexarray(NULL);
 
-         glColor3f(tr,tg,tb);
-
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glDrawArrays(GL_TRIANGLES,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
-
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-         glDisable(GL_VERTEX_PROGRAM_ARB);
+         bindvtxprog(0);
 
          vtx+=cnt;
-
-#endif
 
          break;
 
@@ -1116,28 +1029,21 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
          bindtexmap(TREE_TEXID,1,1);
 
-         glColor3f(1.0f,1.0f,1.0f);
+         color(1.0f,1.0f,1.0f);
 
-         if (CONFIGURE_BLEND!=0)
-            {
-            glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-            }
+         if (CONFIGURE_BLEND!=0) enableblending();
 
-         glAlphaFunc(GL_GREATER,TREEMODE_4_MINALPHA);
-         glEnable(GL_ALPHA_TEST);
+         enableAtest(TREEMODE_4_MINALPHA);
 
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glTexCoordPointer(3,GL_FLOAT,0,coords);
-         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-         glDrawArrays(GL_QUADS,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
-         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+         vertexarray(cache);
+         texcoordarray(coords,3);
+         renderquads(0,cnt);
+         vertexarray(NULL);
+         texcoordarray(NULL);
 
-         glDisable(GL_ALPHA_TEST);
+         disableAtest();
 
-         if (CONFIGURE_BLEND!=0) glDisable(GL_BLEND);
+         if (CONFIGURE_BLEND!=0) disableblending();
 
          bindtexmap(0,0,0);
 
@@ -1148,21 +1054,12 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       case 5:
       case 6:
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+         if (TREE_VTXPROGID2==0) TREE_VTXPROGID2=buildvtxprog(vtxprog2);
 
-         if (TREE_VTXPROGID2==0)
-            {
-            glGenProgramsARB(1,&vtxprogid);
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog2),vtxprog2);
-            TREE_VTXPROGID2=vtxprogid;
-            }
+         bindvtxprog(TREE_VTXPROGID2);
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID2);
-         glEnable(GL_VERTEX_PROGRAM_ARB);
-
-         glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
+         mtxgetmodel(mvmtx);
+         setvtxprogpar(0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
          if (TREE_TEXID==0)
             {
@@ -1196,37 +1093,27 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
          bindtexmap(TREE_TEXID,1,1);
 
-         glColor3f(1.0f,1.0f,1.0f);
+         color(1.0f,1.0f,1.0f);
 
-         if (CONFIGURE_BLEND!=0)
-            {
-            glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-            }
+         if (CONFIGURE_BLEND!=0) enableblending();
 
-         glAlphaFunc(GL_GREATER,TREEMODE_4_MINALPHA);
-         glEnable(GL_ALPHA_TEST);
+         enableAtest(TREEMODE_4_MINALPHA);
 
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glTexCoordPointer(3,GL_FLOAT,0,coords);
-         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-         glDrawArrays(GL_QUADS,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
-         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+         vertexarray(cache);
+         texcoordarray(coords,3);
+         renderquads(0,cnt);
+         vertexarray(NULL);
+         texcoordarray(NULL);
 
-         glDisable(GL_ALPHA_TEST);
+         disableAtest();
 
-         if (CONFIGURE_BLEND!=0) glDisable(GL_BLEND);
+         if (CONFIGURE_BLEND!=0) disableblending();
 
          bindtexmap(0,0,0);
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-         glDisable(GL_VERTEX_PROGRAM_ARB);
+         bindvtxprog(0);
 
          vtx+=cnt;
-
-#endif
 
          break;
 
@@ -1237,21 +1124,12 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
       case 11:
       case 12:
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+         if (TREE_VTXPROGID2==0) TREE_VTXPROGID2=buildvtxprog(vtxprog2);
 
-         if (TREE_VTXPROGID2==0)
-            {
-            glGenProgramsARB(1,&vtxprogid);
-            glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-            glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog2),vtxprog2);
-            TREE_VTXPROGID2=vtxprogid;
-            }
+         bindvtxprog(TREE_VTXPROGID2);
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,TREE_VTXPROGID2);
-         glEnable(GL_VERTEX_PROGRAM_ARB);
-
-         glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
+         mtxgetmodel(mvmtx);
+         setvtxprogpar(0,-mvmtx[10],0.0f,mvmtx[2],0.0f);
 
          if (TREE_TEXID==0)
             {
@@ -1285,51 +1163,39 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 
          bindtexmap(TREE_TEXID,1,1);
 
-         glColor3f(1.0f,1.0f,1.0f);
+         color(1.0f,1.0f,1.0f);
 
-         if (CONFIGURE_BLEND!=0)
-            {
-            glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-            }
+         if (CONFIGURE_BLEND!=0) enableblending();
 
-         glAlphaFunc(GL_GREATER,TREEMODE_4_MINALPHA);
-         glEnable(GL_ALPHA_TEST);
+         enableAtest(TREEMODE_4_MINALPHA);
 
-         glVertexPointer(3,GL_FLOAT,0,cache);
-         glEnableClientState(GL_VERTEX_ARRAY);
-         glTexCoordPointer(3,GL_FLOAT,0,coords);
-         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-         glDrawArrays(GL_QUADS,0,cnt);
-         glDisableClientState(GL_VERTEX_ARRAY);
-         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+         vertexarray(cache);
+         texcoordarray(coords,3);
+         renderquads(0,cnt);
+         vertexarray(NULL);
+         texcoordarray(NULL);
 
-         glDisable(GL_ALPHA_TEST);
+         disableAtest();
 
-         if (CONFIGURE_BLEND!=0) glDisable(GL_BLEND);
+         if (CONFIGURE_BLEND!=0) disableblending();
 
          bindtexmap(0,0,0);
 
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-         glDisable(GL_VERTEX_PROGRAM_ARB);
+         bindvtxprog(0);
 
          vtx+=cnt;
-
-#endif
 
          break;
       }
 
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   glMatrixMode(GL_TEXTURE);
-   glPopMatrix();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpop();
+   mtxproj();
+   mtxpop();
+   mtxtex();
+   mtxpop();
+   mtxmodel();
 
    exitstate();
-
-#endif
 
    return(vtx);
    }
@@ -1338,10 +1204,6 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
 int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
    {
    int vtx=0;
-
-#ifndef NOOGL
-
-#if defined(GL_ARB_multitexture) && defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1361,7 +1223,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   static const char *fragprog1="!!ARBfp1.0 \n\
+   static const char *frgprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1386,7 +1248,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   static const char *frgprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1415,7 +1277,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static const char *fragprog3="!!ARBfp1.0 \n\
+   static const char *frgprog3="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1442,7 +1304,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static const char *fragprog4="!!ARBfp1.0 \n\
+   static const char *frgprog4="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM d=program.env[1]; \n\
       PARAM e=program.env[2]; \n\
@@ -1474,9 +1336,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       MOV result.color,col; \n\
       END \n";
 
-   GLuint vtxprogid,fragprogid;
-
-   GLfloat fogstart,fogend;
+   float fogstart,fogend;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -1489,20 +1349,18 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
 
    if (cnt==0) return(vtx);
 
-   initwglprocs();
-
    initstate();
 
-   glDisable(GL_CULL_FACE);
+   disableculling();
 
-   glPushMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glScalef(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
-   glMatrixMode(GL_TEXTURE);
-   glPushMatrix();
-   glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpush();
+   mtxproj();
+   mtxpush();
+   mtxscale(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
+   mtxtex();
+   mtxpush();
+   mtxid();
+   mtxmodel();
 
    if (warp!=NULL)
       {
@@ -1531,83 +1389,46 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
       mtxmult(oglmtx);
       }
 
-   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-   glEnable(GL_BLEND);
+   enableblending();
 
-   glColor4f(1.0f,1.0f,1.0f,TREEMODE_9_GRASSALPHA);
+   color(1.0f,1.0f,1.0f,TREEMODE_9_GRASSALPHA);
 
-   if (GRASS_VTXPROGID==0)
-      {
-      glGenProgramsARB(1,&vtxprogid);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-      glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-      GRASS_VTXPROGID=vtxprogid;
-      }
+   if (GRASS_VTXPROGID==0) GRASS_VTXPROGID=buildvtxprog(vtxprog);
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,GRASS_VTXPROGID);
-   glEnable(GL_VERTEX_PROGRAM_ARB);
+   bindvtxprog(GRASS_VTXPROGID);
 
    if (TREEMODE==9)
       {
-      if (GRASS_FRAGPROGID1==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         GRASS_FRAGPROGID1=fragprogid;
-         }
+      if (GRASS_FRGPROGID1==0) GRASS_FRGPROGID1=buildfrgprog(frgprog1);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID1);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(GRASS_FRGPROGID1);
       }
    else if (TREEMODE==10)
       {
-      if (GRASS_FRAGPROGID2==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         GRASS_FRAGPROGID2=fragprogid;
-         }
+      if (GRASS_FRGPROGID2==0) GRASS_FRGPROGID2=buildfrgprog(frgprog2);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID2);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(GRASS_FRGPROGID2);
       }
    else if (TREEMODE==11)
       {
-      if (GRASS_FRAGPROGID3==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog3),fragprog3);
-         GRASS_FRAGPROGID3=fragprogid;
-         }
+      if (GRASS_FRGPROGID3==0) GRASS_FRGPROGID3=buildfrgprog(frgprog3);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID3);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(GRASS_FRGPROGID3);
       }
    else
       {
-      if (GRASS_FRAGPROGID4==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog4),fragprog4);
-         GRASS_FRAGPROGID4=fragprogid;
-         }
+      if (GRASS_FRGPROGID4==0) GRASS_FRGPROGID4=buildfrgprog(frgprog4);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,GRASS_FRAGPROGID4);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(GRASS_FRGPROGID4);
       }
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,1.0f/TREEMODE_9_TEXSIZE,0.0f,0.0f,0.0f);
+   setvtxprogpar(0,1.0f/TREEMODE_9_TEXSIZE,0.0f,0.0f,0.0f);
 
    // assume linear fog
-   glGetFloatv(GL_FOG_START,&fogstart);
-   glGetFloatv(GL_FOG_END,&fogend);
+   getfog(&fogstart,&fogend);
    if (fogend<=fogstart) ERRORMSG();
 
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,0.0f,0.0f,-1.0f/(fogend-fogstart),fogend/(fogend-fogstart));
+   setfrgprogpar(0,0.0f,0.0f,-1.0f/(fogend-fogstart),fogend/(fogend-fogstart));
 
    if (GRASS_TEXID==0)
       {
@@ -1626,17 +1447,17 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
    bind3Dtexmap(GRASS_TEXID);
 
    if (TREEMODE<=10)
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                 GRASS_CLASSES-1,0.5f,
-                                 1.0f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS));
+      setfrgprogpar(1,
+                    GRASS_CLASSES-1,0.5f,
+                    1.0f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS));
    else
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                 (float)(GRASS_CLASSES-1)/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),
-                                 0.0f,0.0f);
+      setfrgprogpar(1,
+                    (float)(GRASS_CLASSES-1)/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),0.5f/(GRASS_CLASSES*TREEMODE_9_MIPMAPLEVELS),
+                    0.0f,0.0f);
 
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,
-                              1.0f/TREEMODE_9_MIPMAPRANGE,1.0f,
-                              1.0f/TREEMODE_9_MIPMAPLEVELS,TREEMODE_9_MIPMAPLEVELS-1);
+   setfrgprogpar(2,
+                 1.0f/TREEMODE_9_MIPMAPRANGE,1.0f,
+                 1.0f/TREEMODE_9_MIPMAPLEVELS,TREEMODE_9_MIPMAPLEVELS-1);
 
    if (TREEMODE>=10)
       {
@@ -1650,61 +1471,52 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
          free(perturbation);
          }
 
-      glActiveTextureARB(GL_TEXTURE1_ARB);
+      texunit(1);
       bindtexmap(GRASS_PERTURBID);
-      glActiveTextureARB(GL_TEXTURE0_ARB);
+      texunit(0);
 
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,
-                                 TREEMODE_9_TEXSIZE/TREEMODE_10_PERTURBSIZE,TREEMODE_10_PERTURBFX,
-                                 2.0f,-1.0f);
+      setfrgprogpar(3,
+                    TREEMODE_9_TEXSIZE/TREEMODE_10_PERTURBSIZE,TREEMODE_10_PERTURBFX,
+                    2.0f,-1.0f);
 
       if (TREEMODE==12)
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,4,
-                                    TREEMODE_12_ALPHASLOPE*TREEMODE_12_REDWGT/TREEMODE_12_ALPHATHRES,
-                                    TREEMODE_12_ALPHASLOPE*TREEMODE_12_GREENWGT/TREEMODE_12_ALPHATHRES,
-                                    TREEMODE_12_ALPHASLOPE*TREEMODE_12_BLUEWGT/TREEMODE_12_ALPHATHRES,
-                                    -TREEMODE_12_ALPHASLOPE/2.0f);
+         setfrgprogpar(4,
+                       TREEMODE_12_ALPHASLOPE*TREEMODE_12_REDWGT/TREEMODE_12_ALPHATHRES,
+                       TREEMODE_12_ALPHASLOPE*TREEMODE_12_GREENWGT/TREEMODE_12_ALPHATHRES,
+                       TREEMODE_12_ALPHASLOPE*TREEMODE_12_BLUEWGT/TREEMODE_12_ALPHATHRES,
+                       -TREEMODE_12_ALPHASLOPE/2.0f);
       }
 
-   glVertexPointer(3,GL_FLOAT,0,cache);
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glTexCoordPointer(3,GL_FLOAT,0,coords);
-   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-   glDrawArrays(GL_TRIANGLES,0,cnt);
-   glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+   vertexarray(cache);
+   texcoordarray(coords,3);
+   rendertriangles(0,cnt);
+   vertexarray(NULL);
+   texcoordarray(NULL);
 
    if (TREEMODE>=10)
       {
-      glActiveTextureARB(GL_TEXTURE1_ARB);
+      texunit(1);
       bindtexmap(0);
-      glActiveTextureARB(GL_TEXTURE0_ARB);
+      texunit(0);
       }
 
    bind3Dtexmap(0);
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-   glDisable(GL_VERTEX_PROGRAM_ARB);
+   bindvtxprog(0);
+   bindfrgprog(0);
 
-   glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-   glDisable(GL_FRAGMENT_PROGRAM_ARB);
+   disableblending();
 
-   glDisable(GL_BLEND);
-
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   glMatrixMode(GL_TEXTURE);
-   glPopMatrix();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpop();
+   mtxproj();
+   mtxpop();
+   mtxtex();
+   mtxpop();
+   mtxmodel();
 
    exitstate();
 
    vtx+=cnt;
-
-#endif
-
-#endif
 
    return(vtx);
    }
@@ -1714,10 +1526,6 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
                            float tr,float tg,float tb,float ta)
    {
    int vtx=0;
-
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -1738,7 +1546,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MOV result.fogcoord.x,pos.z; \n\
       END \n";
 
-   static const char *fragprog1="!!ARBfp1.0 \n\
+   static const char *frgprog1="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       TEMP col,pos; \n\
       MOV result.color.xyz,fragment.color; \n\
@@ -1747,7 +1555,7 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
 
-   static const char *fragprog2="!!ARBfp1.0 \n\
+   static const char *frgprog2="!!ARBfp1.0 \n\
       PARAM c=program.env[0]; \n\
       TEMP col,pos; \n\
       TEX result.color.xyz,fragment.texcoord[0],texture[0],2D; \n\
@@ -1755,8 +1563,6 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MAD_SAT pos.z,fragment.fogcoord.x,c.z,c.w; \n\
       MUL result.color.w,col.w,pos.z; \n\
       END \n";
-
-   GLuint vtxprogid,fragprogid;
 
    GLfloat fogstart,fogend;
 
@@ -1768,24 +1574,20 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    if (lambda<=0.0f || cnt==0) return(vtx);
 
-   initwglprocs();
-
    initstate();
 
-   glDisable(GL_CULL_FACE);
-   glDepthMask(GL_FALSE);
+   disableculling();
+   disableZwriting();
+   enableblending();
 
-   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-   glEnable(GL_BLEND);
-
-   glPushMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glScalef(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
-   glMatrixMode(GL_TEXTURE);
-   glPushMatrix();
-   glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpush();
+   mtxproj();
+   mtxpush();
+   mtxscale(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
+   mtxtex();
+   mtxpush();
+   mtxid();
+   mtxmodel();
 
    if (warp!=NULL)
       {
@@ -1814,55 +1616,33 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       mtxmult(oglmtx);
       }
 
-   if (TREEMODE==-2) glColor4f(1.0f,1.0f,1.0f,ta);
-   else glColor4f(tr,tg,tb,ta);
+   if (TREEMODE==-2) color(1.0f,1.0f,1.0f,ta);
+   else color(tr,tg,tb,ta);
 
-   if (RENDER_VTXPROGID==0)
-      {
-      glGenProgramsARB(1,&vtxprogid);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-      glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-      RENDER_VTXPROGID=vtxprogid;
-      }
+   if (RENDER_VTXPROGID==0) RENDER_VTXPROGID=buildvtxprog(vtxprog);
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,RENDER_VTXPROGID);
-   glEnable(GL_VERTEX_PROGRAM_ARB);
+   bindvtxprog(RENDER_VTXPROGID);
 
    if (TREEMODE!=-2)
       {
-      if (RENDER_FRAGPROGID1==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog1),fragprog1);
-         RENDER_FRAGPROGID1=fragprogid;
-         }
+      if (RENDER_FRGPROGID1==0) RENDER_FRGPROGID1=buildfrgprog(frgprog1);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDER_FRAGPROGID1);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(RENDER_FRGPROGID1);
       }
    else
       {
-      if (RENDER_FRAGPROGID2==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog2),fragprog2);
-         RENDER_FRAGPROGID2=fragprogid;
-         }
+      if (RENDER_FRGPROGID2==0) RENDER_FRGPROGID2=buildfrgprog(frgprog2);
 
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,RENDER_FRAGPROGID2);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
+      bindfrgprog(RENDER_FRGPROGID2);
       }
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,1.0f/TREEMODE_M2_TEXSIZE,0.0f,1.0f/(255.0f*lambda*TREEMODE_MX_BASE),1.0f);
+   setvtxprogpar(0,1.0f/TREEMODE_M2_TEXSIZE,0.0f,1.0f/(255.0f*lambda*TREEMODE_MX_BASE),1.0f);
 
    // assume linear fog
-   glGetFloatv(GL_FOG_START,&fogstart);
-   glGetFloatv(GL_FOG_END,&fogend);
+   getfog(&fogstart,&fogend);
    if (fogend<=fogstart) ERRORMSG();
 
-   glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,0.0f,ta,-1.0f/(fogend-fogstart),fogend/(fogend-fogstart));
+   setfrgprogpar(0,0.0f,ta,-1.0f/(fogend-fogstart),fogend/(fogend-fogstart));
 
    if (TREEMODE==-2)
       {
@@ -1879,33 +1659,25 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       bindtexmap(RENDER_TEXID);
       }
 
-   glVertexPointer(4,GL_FLOAT,0,cache);
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glDrawArrays(GL_TRIANGLES,0,3*cnt);
-   glDisableClientState(GL_VERTEX_ARRAY);
+   vertexarray(cache,4);
+   rendertriangles(0,3*cnt);
+   vertexarray(NULL);
 
    if (TREEMODE==-2) bindtexmap(0);
 
-   glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-   glDisable(GL_VERTEX_PROGRAM_ARB);
+   bindvtxprog(0);
+   bindfrgprog(0);
 
-   glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-   glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   glMatrixMode(GL_TEXTURE);
-   glPopMatrix();
-   glMatrixMode(GL_MODELVIEW);
+   mtxpop();
+   mtxproj();
+   mtxpop();
+   mtxtex();
+   mtxpop();
+   mtxmodel();
 
    exitstate();
 
    vtx+=3*cnt;
-
-#endif
-
-#endif
 
    return(vtx);
    }
@@ -2184,33 +1956,4 @@ unsigned char *minitree::pn_perlin2D(int size,int start,float persist,float seed
    free(noise);
 
    return(image);
-   }
-
-// Windows OpenGL extension setup
-void minitree::initwglprocs()
-   {
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-   if (WGLSETUP==0)
-      {
-#ifdef GL_ARB_multitexture
-      if ((glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB"))==NULL) ERRORMSG();
-#endif
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-      if ((glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB"))==NULL) ERRORMSG();
-      if ((glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB"))==NULL) ERRORMSG();
-      if ((glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB"))==NULL) ERRORMSG();
-      if ((glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB"))==NULL) ERRORMSG();
-      if ((glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB"))==NULL) ERRORMSG();
-#endif
-
-      WGLSETUP=1;
-      }
-
-#endif
-
-#endif
    }

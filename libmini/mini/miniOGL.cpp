@@ -449,6 +449,14 @@ void disablefog()
 #endif
    }
 
+void getfog(float *start,float *end)
+   {
+#ifndef NOOGL
+   glGetFloatv(GL_FOG_START,start);
+   glGetFloatv(GL_FOG_END,end);
+#endif
+   }
+
 int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps,int mipmapped)
    {return(buildtexmap(image,width,height,1,0,mipmaps,mipmapped));}
 
@@ -1325,6 +1333,20 @@ void rendertriangles(int start,int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_TRIANGLES,start,size);
+#endif
+   }
+
+void renderquads(int start,int size)
+   {
+#ifndef NOOGL
+   glDrawArrays(GL_QUADS,start,size);
+#endif
+   }
+
+void renderlines(int start,int size)
+   {
+#ifndef NOOGL
+   glDrawArrays(GL_LINES,start,size);
 #endif
    }
 

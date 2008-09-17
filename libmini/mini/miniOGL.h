@@ -41,6 +41,8 @@ void disableblending();
 void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
 void disablefog();
 
+void getfog(float *start,float *end);
+
 int buildLtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
 int buildLAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int mipmapped=0);
 int buildRGBtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
@@ -109,6 +111,8 @@ void normalarray(float *array);
 void texcoordarray(float *array,int comps=2);
 
 void rendertriangles(int start,int size);
+void renderquads(int start,int size);
+void renderlines(int start,int size);
 void renderstrip(int start,int size);
 void renderfan(int start,int size);
 
