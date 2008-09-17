@@ -3,6 +3,8 @@
 #ifndef MINISKY_H
 #define MINISKY_H
 
+#include "ministrip.h"
+
 class minisky
    {
    public:
@@ -16,11 +18,11 @@ class minisky
    void loadskydome(const char *skyfile,
                     float mx=0.0f,float my=0.0f,float mz=0.0f,
                     float diameter=1.0f,
-                    float scale=1.0f);
+                    float scaley=1.0f);
 
    void setpos(float mx,float my,float mz,
                float diameter,
-               float scale=1.0f);
+               float scaley=1.0f);
 
    void drawskydome();
 
@@ -28,21 +30,23 @@ class minisky
 
    private:
 
+   ministrip *STRIP;
+   int TEXID;
+
+   int LOADED;
+
    int ALPHA_STEPS;
    int BETA_STEPS;
+
+   float CENTERX,CENTERY,CENTERZ;
+   float RADIUS,SCALEY;
 
    inline float mapalpha(float alpha,int texsize);
    inline float mapbeta(float beta,int texsize);
 
-   inline void drawvertex(float alpha,float beta,int width,int height);
+   inline void addvertex(float alpha,float beta,int width,int height);
 
-   int texid;
-   int width,height,components;
-
-   float centerx,centery,centerz;
-   float radius,scaley;
-
-   int loaded;
+   void createskydome(int width,int height);
    };
 
 #endif

@@ -446,15 +446,14 @@ void miniearth::rendercache()
          }
 
       // draw skydome
-      if (EPARAMS.useskydome)
+      if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
          if (ref->get()->warpmode==0 || ref->get()->warpmode==2)
-            if (EPARAMS.voidstart==0.0f)
-               {
-               SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                               1.9*ref->len_g2o(EPARAMS.farp));
+            {
+            SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                            1.9*ref->len_g2o(EPARAMS.farp));
 
-               SKYDOME->drawskydome();
-               }
+            SKYDOME->drawskydome();
+            }
 
       // render earth globe (without Z writing)
       if (EPARAMS.useearth)

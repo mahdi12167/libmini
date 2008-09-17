@@ -10,7 +10,7 @@
 // default constructor
 minisky::minisky()
    {
-   loaded=FALSE;
+   LOADED=FALSE;
 
    ALPHA_STEPS=30;
    BETA_STEPS=15;
@@ -18,7 +18,53 @@ minisky::minisky()
 
 // destructor
 minisky::~minisky()
-   {if (loaded) deletetexmap(texid);}
+   {
+   if (LOADED)
+      {
+      delete STRIP;
+      deletetexmap(TEXID);
+      }
+   }
+
+void minisky::loadskydome(const char *skyfile,
+                          float mx,float my,float mz,
+                          float diameter,
+                          float scaley)
+   {
+   unsigned char *image;
+   int width,height,components;
+
+   if ((image=readPNMfile(skyfile,&width,&height,&components))==NULL) return;
+   if (width<2 || height<2 || components!=3) ERRORMSG();
+
+   if (LOADED)
+      {
+      delete STRIP;
+      deletetexmap(TEXID);
+      }
+
+   STRIP=new ministrip(0,0,2);
+
+   TEXID=buildRGBtexmap(image,&width,&height);
+   free(image);
+
+   createskydome(width,height);
+   setpos(mx,my,mz,diameter,scaley);
+
+   LOADED=TRUE;
+   }
+
+void minisky::setpos(float mx,float my,float mz,
+                     float diameter,
+                     float scaley)
+   {
+   CENTERX=mx;
+   CENTERY=my;
+   CENTERZ=mz;
+
+   RADIUS=diameter/2.0f;
+   SCALEY=scaley;
+   }
 
 inline float minisky::mapalpha(float alpha,int texsize)
    {
@@ -33,90 +79,59 @@ inline float minisky::mapbeta(float beta,int texsize)
    return((1.0f-b)*0.5f/texsize+b*(1.0f-0.5f/texsize));
    }
 
-inline void minisky::drawvertex(float alpha,float beta,int width,int height)
+inline void minisky::addvertex(float alpha,float beta,int width,int height)
    {
-   texcoord(mapalpha(alpha,width),mapbeta(beta,height));
-   fanvertex(fsin(alpha)*fsin(beta),fcos(beta),fcos(alpha)*fsin(beta));
+   STRIP->settex(mapalpha(alpha,width),mapbeta(beta,height));
+   STRIP->addvtx(fsin(alpha)*fsin(beta),fcos(beta),fcos(alpha)*fsin(beta));
    }
 
-void minisky::loadskydome(const char *skyfile,
-                          float mx,float my,float mz,
-                          float diameter,
-                          float scale)
-   {
-   unsigned char *image;
-
-   if ((image=readPNMfile(skyfile,&width,&height,&components))==NULL) return;
-   if (width<2 || height<2 || components!=3) ERRORMSG();
-
-   if (loaded) deletetexmap(texid);
-   texid=buildRGBtexmap(image,&width,&height);
-   free(image);
-
-   centerx=mx;
-   centery=my;
-   centerz=mz;
-
-   radius=diameter/2.0f;
-   scaley=scale;
-
-   loaded=TRUE;
-   }
-
-void minisky::setpos(float mx,float my,float mz,
-                     float diameter,
-                     float scale)
-   {
-   centerx=mx;
-   centery=my;
-   centerz=mz;
-
-   radius=diameter/2.0f;
-   scaley=scale;
-   }
-
-void minisky::drawskydome()
+void minisky::createskydome(int width,int height)
    {
    int i,j;
 
    float alpha,beta;
 
-   if (loaded)
+   STRIP->setcol(1.0f,1.0f,1.0f);
+
+   beta=0.0f;
+
+   for (i=0; i<BETA_STEPS; i++)
       {
-      initstate();
-
-      mtxpush();
-      mtxtranslate(centerx,centery,centerz);
-      mtxscale(radius,radius*scaley,radius);
-
-      disableculling();
-
-      bindtexmap(texid);
-
-      beginfans();
-      color(1.0f,1.0f,1.0f);
+      STRIP->beginstrip();
 
       alpha=0.0f;
-      for (i=0; i<ALPHA_STEPS; i++)
+
+      for (j=0; j<=ALPHA_STEPS; j++)
          {
-         beta=0.0f;
-         for (j=0; j<BETA_STEPS; j++)
-            {
-            beginfan();
-            drawvertex(alpha,beta,width,height);
-            drawvertex(alpha+2.0f*PI/ALPHA_STEPS,beta,width,height);
-            drawvertex(alpha+2.0f*PI/ALPHA_STEPS,beta+PI/BETA_STEPS,width,height);
-            drawvertex(alpha,beta+PI/BETA_STEPS,width,height);
-            beta+=PI/BETA_STEPS;
-            }
+         addvertex(alpha,beta,width,height);
+         addvertex(alpha,beta+PI/BETA_STEPS,width,height);
+
          alpha+=2.0f*PI/ALPHA_STEPS;
          }
 
-      endfans();
+      beta+=PI/BETA_STEPS;
+      }
+   }
+
+void minisky::drawskydome()
+   {
+   if (LOADED)
+      {
+      initstate();
+
+      enableFFculling();
+
+      mtxpush();
+      mtxtranslate(CENTERX,CENTERY,CENTERZ);
+      mtxscale(RADIUS,RADIUS*SCALEY,RADIUS);
+
+      bindtexmap(TEXID);
+      STRIP->render();
       bindtexmap(0);
 
-      enableBFculling();
       mtxpop();
+
+      enableBFculling();
 
       exitstate();
       }

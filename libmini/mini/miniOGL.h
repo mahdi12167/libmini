@@ -129,7 +129,7 @@ int configure_depth(int depth=24); // bit depth of texture maps (may result in q
 void configure_gamma(float gamma=1.0f); // gamma correction of texture maps
 void configure_level(float level=0.0f); // level adjustment of texture maps
 
-// debugging
+// graphics info
 int get_unsupported_glexts(); // get number of unsupported OpenGL extensions
 void print_unsupported_glexts(); // print unsupported OpenGL extensions
 void print_graphics_info(); // print useful OpenGL information

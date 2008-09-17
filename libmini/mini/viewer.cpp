@@ -214,7 +214,7 @@ void initparams()
    eprms.usebathymap=FALSE;
    eprms.usecontours=FALSE;
    eprms.usenprshader=FALSE;
-   eprms.useskydome=TRUE;
+   eprms.useskydome=FALSE;
    eprms.usewaypoints=TRUE;
    eprms.usebricks=(sw_bricks==0)?FALSE:TRUE;
    eprms.useearth=TRUE;

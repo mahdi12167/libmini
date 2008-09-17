@@ -344,9 +344,9 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    SIZE=0;
 
-   COLR=0.0f;
-   COLG=0.0f;
-   COLB=0.0f;
+   COLR=1.0f;
+   COLG=1.0f;
+   COLB=1.0f;
    COLA=1.0f;
 
    NRMX=0.0f;
