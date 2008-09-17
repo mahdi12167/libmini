@@ -631,6 +631,12 @@ int minicache::rendertrigger(int phase)
    {
    int vtx=0;
 
+   TERRAIN_TYPE *t;
+   CACHE_TYPE *c;
+
+   t=&TERRAIN[RENDER_ID];
+   c=&t->cache[1-t->cache_num];
+
    if (phase==2)
       {
       initstate();
@@ -656,7 +662,7 @@ int minicache::rendertrigger(int phase)
       if (USEVTXSHADER!=0) enablevtxshader();
       if (USEPIXSHADER!=0) enablepixshader();
 
-      glEnableClientState(GL_VERTEX_ARRAY); //!!
+      vertexarray(c->arg);
       }
    else if (phase==3)
       {
@@ -678,7 +684,7 @@ int minicache::rendertrigger(int phase)
          {
          bindtexmap(0,0,0,0);
 
-         glDisableClientState(GL_VERTEX_ARRAY); //!!
+         vertexarray(NULL);
 
          if (USEVTXSHADER!=0) disablevtxshader();
 
@@ -692,7 +698,7 @@ int minicache::rendertrigger(int phase)
 
          if (USEVTXSHADER!=0) enablevtxshader();
 
-         glEnableClientState(GL_VERTEX_ARRAY); //!!
+         vertexarray(c->arg);
          }
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
@@ -723,7 +729,7 @@ int minicache::rendertrigger(int phase)
 
       bindtexmap(0,0,0,0);
 
-      glDisableClientState(GL_VERTEX_ARRAY); //!!
+      vertexarray(NULL);
 
       if (CONFIGURE_ZSCALE_SEA!=1.0f)
          {
@@ -748,15 +754,12 @@ int minicache::rendertrigger(int phase,float scale)
    int vtx=0;
 
    TERRAIN_TYPE *t;
-   CACHE_TYPE *c;
 
    t=&TERRAIN[RENDER_ID];
-   c=&t->cache[1-t->cache_num];
 
    t->render_phase=phase;
 
    if (t->render_phase==1) t->scale=scale;
-   else if (t->render_phase==2 || t->render_phase==3) glVertexPointer(3,GL_FLOAT,0,c->arg); //!!
    else if (t->render_phase==4) t->lambda=scale;
 
    if (PRISMTRIGGER_CALLBACK!=NULL) vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
@@ -908,14 +911,11 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    color(pr,pg,pb,pa);
 
-#ifndef NOOGL //!!
-   glVertexPointer(4,GL_FLOAT,0,cache);
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glDrawArrays(GL_TRIANGLES,0,3*cnt);
-   glDisableClientState(GL_VERTEX_ARRAY);
+   vertexarray(cache,4);
+   rendertriangles(0,3*cnt);
+   vertexarray(NULL);
 
    vtx+=3*cnt;
-#endif
 
    bindvtxprog(0);
    bindfrgprog(0);

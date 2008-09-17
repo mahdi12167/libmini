@@ -1273,12 +1273,12 @@ void disablelinesmooth()
 #endif
    }
 
-void vertexarray(float *array)
+void vertexarray(float *array,int comps)
    {
 #ifndef NOOGL
    if (array!=NULL)
       {
-      glVertexPointer(3,GL_FLOAT,0,array);
+      glVertexPointer(comps,GL_FLOAT,0,array);
       glEnableClientState(GL_VERTEX_ARRAY);
       }
    else glDisableClientState(GL_VERTEX_ARRAY);
