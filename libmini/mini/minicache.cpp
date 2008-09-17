@@ -58,10 +58,10 @@ minicache::minicache()
       VTXSHADERPAR4[i]=0.0f;
       }
 
-   FRAGPROG=NULL;
-   FRAGDIRTY=0;
+   FRGPROG=NULL;
+   FRGDIRTY=0;
 
-   FRAGPROGID=0;
+   FRGPROGID=0;
    USEPIXSHADER=0;
 
    for (i=0; i<8; i++)
@@ -91,16 +91,10 @@ minicache::minicache()
    SEASHADERTEXID=0;
 
    PRISM_VTXPROGID=0;
-   PRISM_FRAGPROGID=0;
+   PRISM_FRGPROGID=0;
 
    PRESEA_CB=NULL;
    POSTSEA_CB=NULL;
-
-   GLSETUP=0;
-   WGLSETUP=0;
-
-   GLEXT_VP=0;
-   GLEXT_FP=0;
 
    CONFIGURE_OVERLAP=0.02f;
    CONFIGURE_MINSIZE=33;
@@ -125,55 +119,19 @@ minicache::~minicache()
       free(TERRAIN);
       }
 
-#ifndef NOOGL
-
-   GLuint progid;
-
    if (VTXPROG!=NULL) free(VTXPROG);
-   if (FRAGPROG!=NULL) free(FRAGPROG);
+   if (FRGPROG!=NULL) free(FRGPROG);
    if (SEAPROG!=NULL) free(SEAPROG);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (VTXPROGID!=0) deletevtxprog(VTXPROGID);
+   if (FRGPROGID!=0) deletefrgprog(FRGPROGID);
+   if (SEAPROGID!=0) deletefrgprog(SEAPROGID);
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      {
-      if (VTXPROGID!=0)
-         {
-         progid=VTXPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (FRAGPROGID!=0)
-         {
-         progid=FRAGPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (SEAPROGID!=0)
-         {
-         progid=SEAPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (PRISM_VTXPROGID!=0)
-         {
-         progid=PRISM_VTXPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-
-      if (PRISM_FRAGPROGID!=0)
-         {
-         progid=PRISM_FRAGPROGID;
-         glDeleteProgramsARB(1,&progid);
-         }
-      }
-
-#endif
+   if (PRISM_VTXPROGID!=0) deletevtxprog(PRISM_VTXPROGID);
+   if (PRISM_FRGPROGID!=0) deletefrgprog(PRISM_FRGPROGID);
 
    if (PIXSHADERTEXID!=0) deletetexmap(PIXSHADERTEXID);
    if (SEASHADERTEXID!=0) deletetexmap(SEASHADERTEXID);
-
-#endif
    }
 
 // initialize terrain
@@ -464,11 +422,9 @@ void minicache::cachesync(const int id)
 // get the modelview matrix
 void minicache::getmodelview()
    {
-#ifndef NOOGL
+   double mvmtx[16];
 
-   GLfloat mvmtx[16];
-
-   glGetFloatv(GL_MODELVIEW_MATRIX,mvmtx);
+   mtxgetmodel(mvmtx);
 
    MVINVTRA[0].x=mvmtx[0];
    MVINVTRA[1].x=mvmtx[1];
@@ -482,8 +438,6 @@ void minicache::getmodelview()
 
    inv_mtx(MVINVTRA,MVINVTRA);
    tra_mtx(MVINVTRA,MVINVTRA);
-
-#endif
    }
 
 // render all back buffers of the cache
@@ -517,6 +471,7 @@ int minicache::rendercache()
    return(vtx);
    }
 
+//!!
 // render back buffer of the cache
 int minicache::rendercache(int id,int phase)
    {
@@ -574,8 +529,6 @@ int minicache::rendercache(int id,int phase)
 
 void minicache::rendertexmap(int m,int n,int S)
    {
-#ifndef NOOGL
-
    int cols,rows;
    float xdim,zdim;
    float centerx,centery,centerz;
@@ -677,15 +630,11 @@ void minicache::rendertexmap(int m,int n,int S)
          else setpixshadertexprm(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha);
          }
       }
-
-#endif
    }
 
 int minicache::rendertrigger(int phase)
    {
    int vtx=0;
-
-#ifndef NOOGL
 
    if (phase==2)
       {
@@ -796,16 +745,12 @@ int minicache::rendertrigger(int phase)
 
    if (phase==4) vtx+=rendertrigger();
 
-#endif
-
    return(vtx);
    }
 
 int minicache::rendertrigger(int phase,float scale)
    {
    int vtx=0;
-
-#ifndef NOOGL
 
    TERRAIN_TYPE *t;
    CACHE_TYPE *c;
@@ -821,16 +766,12 @@ int minicache::rendertrigger(int phase,float scale)
 
    if (PRISMTRIGGER_CALLBACK!=NULL) vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
 
-#endif
-
    return(vtx);
    }
 
 int minicache::rendertrigger()
    {
    int vtx=0;
-
-#ifndef NOOGL
 
    int id;
 
@@ -855,8 +796,6 @@ int minicache::rendertrigger()
             }
          }
 
-#endif
-
    return(vtx);
    }
 
@@ -866,10 +805,6 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
                             float ls,float lo)
    {
    int vtx=0;
-
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
 
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
@@ -900,7 +835,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   static const char *fragprog="!!ARBfp1.0 \n\
+   static const char *frgprog="!!ARBfp1.0 \n\
       PARAM l=program.env[0]; \n\
       PARAM p=program.env[1]; \n\
       TEMP col,nrm,len; \n\
@@ -918,8 +853,6 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MOV result.color,col; \n\
       END \n";
 
-   GLuint vtxprogid,fragprogid;
-
    miniv4d mtx[3];
    double oglmtx[16];
 
@@ -927,105 +860,77 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
 
    if (lambda<=0.0f || cnt==0) return(vtx);
 
-   initglexts();
-   initwglprocs();
+   if (PRISM_VTXPROGID==0) PRISM_VTXPROGID=buildvtxprog(vtxprog);
+   if (PRISM_FRGPROGID==0) PRISM_FRGPROGID=buildfrgprog(frgprog);
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   initstate();
+
+   enableblending();
+
+   mtxpush();
+   mtxproj();
+   mtxpush();
+   mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
+   mtxmodel();
+
+   if (warp!=NULL)
       {
-      if (PRISM_VTXPROGID==0)
-         {
-         glGenProgramsARB(1,&vtxprogid);
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(vtxprog),vtxprog);
-         PRISM_VTXPROGID=vtxprogid;
-         }
+      warp->getwarp(mtx);
 
-      if (PRISM_FRAGPROGID==0)
-         {
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(fragprog),fragprog);
-         PRISM_FRAGPROGID=fragprogid;
-         }
+      oglmtx[0]=mtx[0].x;
+      oglmtx[4]=mtx[0].y;
+      oglmtx[8]=mtx[0].z;
+      oglmtx[12]=mtx[0].w;
 
-      initstate();
+      oglmtx[1]=mtx[1].x;
+      oglmtx[5]=mtx[1].y;
+      oglmtx[9]=mtx[1].z;
+      oglmtx[13]=mtx[1].w;
 
-      enableblending();
+      oglmtx[2]=mtx[2].x;
+      oglmtx[6]=mtx[2].y;
+      oglmtx[10]=mtx[2].z;
+      oglmtx[14]=mtx[2].w;
 
-      mtxpush();
-      mtxproj();
-      mtxpush();
-      mtxscale(CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS,CONFIGURE_ZSCALE_PRISMS); // prevent Z-fighting
-      mtxmodel();
+      oglmtx[3]=0.0;
+      oglmtx[7]=0.0;
+      oglmtx[11]=0.0;
+      oglmtx[15]=1.0;
 
-      if (warp!=NULL)
-         {
-         warp->getwarp(mtx);
-
-         oglmtx[0]=mtx[0].x;
-         oglmtx[4]=mtx[0].y;
-         oglmtx[8]=mtx[0].z;
-         oglmtx[12]=mtx[0].w;
-
-         oglmtx[1]=mtx[1].x;
-         oglmtx[5]=mtx[1].y;
-         oglmtx[9]=mtx[1].z;
-         oglmtx[13]=mtx[1].w;
-
-         oglmtx[2]=mtx[2].x;
-         oglmtx[6]=mtx[2].y;
-         oglmtx[10]=mtx[2].z;
-         oglmtx[14]=mtx[2].w;
-
-         oglmtx[3]=0.0;
-         oglmtx[7]=0.0;
-         oglmtx[11]=0.0;
-         oglmtx[15]=1.0;
-
-         mtxmult(oglmtx);
-         }
-
-      light=miniv3d(lx,ly,lz);
-      light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
-      light.normalize();
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,PRISM_VTXPROGID);
-      glEnable(GL_VERTEX_PROGRAM_ARB);
-
-      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,0.0f,0.0f,0.0f,1.0f); // replace w-component
-
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,PRISM_FRAGPROGID);
-      glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,light.x,light.y,light.z,0.0f); // light direction
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,ls,lo,0.0f,0.0f); // light scale and offset
-
-      color(pr,pg,pb,pa);
-
-      glVertexPointer(4,GL_FLOAT,0,cache);
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glDrawArrays(GL_TRIANGLES,0,3*cnt);
-      glDisableClientState(GL_VERTEX_ARRAY);
-
-      vtx+=3*cnt;
-
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-      glDisable(GL_VERTEX_PROGRAM_ARB);
-
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-      glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-      mtxpop();
-      mtxproj();
-      mtxpop();
-      mtxmodel();
-
-      exitstate();
+      mtxmult(oglmtx);
       }
 
+   light=miniv3d(lx,ly,lz);
+   light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
+   light.normalize();
+
+   bindvtxprog(PRISM_VTXPROGID);
+   setvtxprogpar(0,0.0f,0.0f,0.0f,1.0f); // replace w-component
+
+   bindfrgprog(PRISM_FRGPROGID);
+   setfrgprogpar(0,light.x,light.y,light.z,0.0f); // light direction
+   setfrgprogpar(1,ls,lo,0.0f,0.0f); // light scale and offset
+
+   color(pr,pg,pb,pa);
+
+#ifndef NOOGL //!!
+   glVertexPointer(4,GL_FLOAT,0,cache);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glDrawArrays(GL_TRIANGLES,0,3*cnt);
+   glDisableClientState(GL_VERTEX_ARRAY);
+
+   vtx+=3*cnt;
 #endif
 
-#endif
+   bindvtxprog(0);
+   bindfrgprog(0);
+
+   mtxpop();
+   mtxproj();
+   mtxpop();
+   mtxmodel();
+
+   exitstate();
 
    return(vtx);
    }
@@ -1158,8 +1063,6 @@ void minicache::setprismcolor(float prismR,float prismG,float prismB,float prism
 // set vertex shader plugin
 void minicache::setvtxshader(const char *vp)
    {
-#ifndef NOOGL
-
    // default vertex shader
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM t=program.env[0]; \n\
@@ -1225,8 +1128,6 @@ void minicache::setvtxshader(const char *vp)
 
    VTXPROG=strdup(vp);
    VTXDIRTY=1;
-
-#endif
    }
 
 // set vertex shader parameter vector
@@ -1243,100 +1144,54 @@ void minicache::setvtxshaderparams(float p1,float p2,float p3,float p4,int n)
 // enable vertex shader plugin
 void minicache::enablevtxshader()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    int i;
 
-   GLuint vtxprogid;
-
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (VTXDIRTY!=0)
       {
-      if (VTXDIRTY!=0)
-         {
-         if (VTXPROGID!=0)
-            {
-            vtxprogid=VTXPROGID;
-            glDeleteProgramsARB(1,&vtxprogid);
-            }
+      if (VTXPROGID!=0) deletevtxprog(VTXPROGID);
 
-         glGenProgramsARB(1,&vtxprogid);
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,vtxprogid);
-         glProgramStringARB(GL_VERTEX_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(VTXPROG),VTXPROG);
-         VTXPROGID=vtxprogid;
-
-         VTXDIRTY=0;
-         }
-
-      if (VTXPROGID!=0)
-         {
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,VTXPROGID);
-         glEnable(GL_VERTEX_PROGRAM_ARB);
-
-         setvtxshadertexgen();
-         bindvtxshaderdetailtex();
-
-         for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,5+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]); // external constants
-         }
+      VTXPROGID=buildvtxprog(VTXPROG);
+      VTXDIRTY=0;
       }
 
-#endif
+   if (VTXPROGID!=0)
+      {
+      bindvtxprog(VTXPROGID);
 
-#endif
+      setvtxshadertexgen();
+      bindvtxshaderdetailtex();
+
+      for (i=0; i<8; i++)
+         setvtxprogpar(5+i,VTXSHADERPAR1[i],VTXSHADERPAR2[i],VTXSHADERPAR3[i],VTXSHADERPAR4[i]); // external constants
+      }
    }
 
 // set vertex shader texture mapping parameters
 void minicache::setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale)
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (VTXPROGID!=0)
-         {
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,0,s1,s2,o1,o2); // texgen scale and offset
-         glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,1,0.0f,scale,0.0f,0.0f); // elevation scale
-         }
-
-#endif
-
-#endif
+   if (VTXPROGID!=0)
+      {
+      setvtxprogpar(0,s1,s2,o1,o2); // texgen scale and offset
+      setvtxprogpar(1,0.0f,scale,0.0f,0.0f); // elevation scale
+      }
    }
 
 // set vertex shader texture coordinate generation parameter vector
 void minicache::setvtxshadertexgen()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    TERRAIN_TYPE *t;
 
    t=&TERRAIN[RENDER_ID];
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,2,t->s1,t->s2,t->s3,t->s4); // detail texgen s-coordinate
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,3,t->t1,t->t2,t->t3,t->t4); // detail texgen t-coordinate
+   setvtxprogpar(2,t->s1,t->s2,t->s3,t->s4); // detail texgen s-coordinate
+   setvtxprogpar(3,t->t1,t->t2,t->t3,t->t4); // detail texgen t-coordinate
 
-   glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and bias
-
-#endif
-
-#endif
+   setvtxprogpar(4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and bias
    }
 
 // bind vertex shader detail texture
 void minicache::bindvtxshaderdetailtex()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    TERRAIN_TYPE *t;
 
    t=&TERRAIN[RENDER_ID];
@@ -1347,23 +1202,15 @@ void minicache::bindvtxshaderdetailtex()
       bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,1);
       texunit(0);
 
-      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,4,
-                                 0.5f/t->detail_width,(t->detail_width-1)/t->detail_width, // detail texgen scale and bias for s-coordinate
-                                 0.5f/t->detail_height,(t->detail_height-1)/t->detail_height); // detail texgen scale and bias for t-coordinate
+      setvtxprogpar(4,
+                    0.5f/t->detail_width,(t->detail_width-1)/t->detail_width, // detail texgen scale and bias for s-coordinate
+                    0.5f/t->detail_height,(t->detail_height-1)/t->detail_height); // detail texgen scale and bias for t-coordinate
       }
-
-#endif
-
-#endif
    }
 
 // unbind vertex shader detail texture
 void minicache::unbindvtxshaderdetailtex()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    TERRAIN_TYPE *t;
 
    t=&TERRAIN[RENDER_ID];
@@ -1374,31 +1221,16 @@ void minicache::unbindvtxshaderdetailtex()
       bindtexmap(0,0,0,0,0);
       texunit(0);
       }
-
-#endif
-
-#endif
    }
 
 // disable vertex shader plugin
 void minicache::disablevtxshader()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (VTXPROGID!=0)
-         {
-         glBindProgramARB(GL_VERTEX_PROGRAM_ARB,0);
-         glDisable(GL_VERTEX_PROGRAM_ARB);
-
-         unbindvtxshaderdetailtex();
-         }
-
-#endif
-
-#endif
+   if (VTXPROGID!=0)
+      {
+      bindvtxprog(0);
+      unbindvtxshaderdetailtex();
+      }
    }
 
 // switch vertex shader plugin on/off
@@ -1408,10 +1240,8 @@ void minicache::usevtxshader(int on)
 // set pixel shader plugin
 void minicache::setpixshader(const char *fp)
    {
-#ifndef NOOGL
-
    // default pixel shader
-   static const char *fragprog="!!ARBfp1.0 \n\
+   static const char *frgprog="!!ARBfp1.0 \n\
       PARAM a=program.env[0]; \n\
       PARAM t=program.env[1]; \n\
       PARAM l=program.env[2]; \n\
@@ -1441,18 +1271,16 @@ void minicache::setpixshader(const char *fp)
       MUL result.color,col,fragment.color; \n\
       END \n";
 
-   if (fp==NULL) fp=fragprog;
+   if (fp==NULL) fp=frgprog;
 
-   if (FRAGPROG!=NULL)
+   if (FRGPROG!=NULL)
       {
-      if (strcmp(fp,FRAGPROG)==0) return;
-      free(FRAGPROG);
+      if (strcmp(fp,FRGPROG)==0) return;
+      free(FRGPROG);
       }
 
-   FRAGPROG=strdup(fp);
-   FRAGDIRTY=1;
-
-#endif
+   FRGPROG=strdup(fp);
+   FRGDIRTY=1;
    }
 
 // set pixel shader parameter vector
@@ -1594,8 +1422,6 @@ void minicache::usepixshader(int on)
 // set sea shader plugin
 void minicache::setseashader(const char *sp)
    {
-#ifndef NOOGL
-
    // default sea shader
    static const char *seaprog="!!ARBfp1.0 \n\
       PARAM a=program.env[0]; \n\
@@ -1637,8 +1463,6 @@ void minicache::setseashader(const char *sp)
 
    SEAPROG=strdup(sp);
    SEADIRTY=1;
-
-#endif
    }
 
 // set sea shader parameter vector
@@ -1699,61 +1523,35 @@ void minicache::setseacb(void (*preseacb)(void *data),
 // enable pixel shader plugin
 void minicache::enablepixshader()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    int i;
 
-   GLuint fragprogid;
-
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (FRGDIRTY!=0)
       {
-      if (FRAGDIRTY!=0)
-         {
-         if (FRAGPROGID!=0)
-            {
-            fragprogid=FRAGPROGID;
-            glDeleteProgramsARB(1,&fragprogid);
-            }
+      if (FRGPROGID!=0) deletefrgprog(FRGPROGID);
 
-         glGenProgramsARB(1,&fragprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,fragprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(FRAGPROG),FRAGPROG);
-         FRAGPROGID=fragprogid;
-
-         FRAGDIRTY=0;
-         }
-
-      if (FRAGPROGID!=0)
-         {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,FRAGPROGID);
-         glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
-
-         if (PIXSHADERTEXID!=0)
-            {
-            texunit(1);
-            bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
-            texunit(0);
-
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                       (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                                       (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
-            }
-
-         for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
-         }
+      FRGPROGID=buildfrgprog(FRGPROG);
+      FRGDIRTY=0;
       }
 
-#endif
+   if (FRGPROGID!=0)
+      {
+      bindfrgprog(FRGPROGID);
+      setfrgprogpar(0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
-#endif
+      if (PIXSHADERTEXID!=0)
+         {
+         texunit(1);
+         bindtexmap(PIXSHADERTEXID,PIXSHADERTEXWIDTH,PIXSHADERTEXHEIGHT,0,0);
+         texunit(0);
+
+         setfrgprogpar(1,
+                       (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                       (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+         }
+
+      for (i=0; i<8; i++)
+         setfrgprogpar(5+i,PIXSHADERPAR1[i],PIXSHADERPAR2[i],PIXSHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
+      }
    }
 
 // set pixel shader texture mapping parameters
@@ -1762,184 +1560,81 @@ void minicache::setpixshadertexprm(float s,float o,
                                    float ls,float lo,
                                    float a)
    {
-#ifndef NOOGL
+   if (FRGPROGID!=0 || SEAPROGID!=0)
+      {
+      setfrgprogpar(0,s,o,0.0f,0.0f); // color scale and offset
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+      setfrgprogpar(2,lx,ly,lz,0.0f); // light direction
+      setfrgprogpar(3,ls,lo,0.0f,0.0f); // light scale and offset
 
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRAGPROGID!=0 || SEAPROGID!=0)
-         {
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,s,o,0.0f,0.0f); // color scale and offset
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,2,lx,ly,lz,0.0f); // light direction
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,3,ls,lo,0.0f,0.0f); // light scale and offset
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,4,0.0f,0.0f,0.0f,a); // detail texture alpha
-         }
-
-#endif
-
-#endif
+      setfrgprogpar(4,0.0f,0.0f,0.0f,a); // detail texture alpha
+      }
    }
 
 // disable pixel shader plugin
 void minicache::disablepixshader()
    {
-#ifndef NOOGL
+   if (FRGPROGID!=0)
+      {
+      bindfrgprog(0);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (FRAGPROGID!=0)
+      if (PIXSHADERTEXID!=0)
          {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-         glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-         if (PIXSHADERTEXID!=0)
-            {
-            texunit(1);
-            bindtexmap(0);
-            texunit(0);
-            }
+         texunit(1);
+         bindtexmap(0);
+         texunit(0);
          }
-
-#endif
-
-#endif
+      }
    }
 
 // enable sea shader plugin
 void minicache::enableseashader()
    {
-#ifndef NOOGL
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
    int i;
 
-   GLuint seaprogid;
-
-   initglexts();
-   initwglprocs();
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
+   if (SEADIRTY!=0)
       {
-      if (SEADIRTY!=0)
-         {
-         if (SEAPROGID!=0)
-            {
-            seaprogid=SEAPROGID;
-            glDeleteProgramsARB(1,&seaprogid);
-            }
+      if (SEAPROGID!=0) deletefrgprog(SEAPROGID);
 
-         glGenProgramsARB(1,&seaprogid);
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,seaprogid);
-         glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(SEAPROG),SEAPROG);
-         SEAPROGID=seaprogid;
-
-         SEADIRTY=0;
-         }
-
-      if (SEAPROGID!=0)
-         {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,SEAPROGID);
-         glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-         glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
-
-         if (SEASHADERTEXID!=0)
-            {
-            texunit(1);
-            bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
-            texunit(0);
-
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,1,
-                                       (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                                       (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
-            }
-
-         for (i=0; i<8; i++)
-            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,5+i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
-         }
+      SEAPROGID=buildfrgprog(SEAPROG);
+      SEADIRTY=0;
       }
 
-#endif
+   if (SEAPROGID!=0)
+      {
+      bindfrgprog(SEAPROGID);
+      setfrgprogpar(0,1.0f,0.0f,0.0f,0.0f); // color scale and offset
 
-#endif
+      if (SEASHADERTEXID!=0)
+         {
+         texunit(1);
+         bindtexmap(SEASHADERTEXID,SEASHADERTEXWIDTH,SEASHADERTEXHEIGHT,0,0);
+         texunit(0);
+
+         setfrgprogpar(1,
+                       (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
+                       (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+         }
+
+      for (i=0; i<8; i++)
+         setfrgprogpar(5+i,SEASHADERPAR1[i],SEASHADERPAR2[i],SEASHADERPAR3[i],PIXSHADERPAR4[i]); // external constants
+      }
    }
 
 // disable sea shader plugin
 void minicache::disableseashader()
    {
-#ifndef NOOGL
+   if (SEAPROGID!=0)
+      {
+      bindfrgprog(0);
 
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-
-   if (GLEXT_VP!=0 && GLEXT_FP!=0)
-      if (SEAPROGID!=0)
+      if (SEASHADERTEXID!=0)
          {
-         glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,0);
-         glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-         if (SEASHADERTEXID!=0)
-            {
-            texunit(1);
-            bindtexmap(0);
-            texunit(0);
-            }
+         texunit(1);
+         bindtexmap(0);
+         texunit(0);
          }
-
-#endif
-
-#endif
-   }
-
-// check for OpenGL extensions
-void minicache::initglexts()
-   {
-#ifndef NOOGL
-
-   char *gl_exts;
-
-   if (GLSETUP==0)
-      {
-      GLEXT_VP=0;
-      GLEXT_FP=0;
-
-      if ((gl_exts=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
-
-      if (strstr(gl_exts,"GL_ARB_vertex_program")!=NULL) GLEXT_VP=1;
-      if (strstr(gl_exts,"GL_ARB_fragment_program")!=NULL) GLEXT_FP=1;
-
-      GLSETUP=1;
       }
-
-#endif
-   }
-
-// Windows OpenGL extension setup
-void minicache::initwglprocs()
-   {
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-   if (WGLSETUP==0)
-      {
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-      glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-      glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-      glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-      glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
-      glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-#endif
-
-      WGLSETUP=1;
-      }
-
-#endif
-
-#endif
    }
 
 // get triangle fan count of active cache

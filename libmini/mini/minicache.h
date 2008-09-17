@@ -70,7 +70,7 @@ class minicache
    void usevtxshader(int on=1);
 
    //! define optional pixel shader
-   void setpixshader(const char *fragprog=0);
+   void setpixshader(const char *frgprog=0);
    void setpixshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
    void setpixshadertex(unsigned char *image,int width,int height,int components=3);
    void setpixshadertexRGB(unsigned char *image,int width,int height);
@@ -228,10 +228,10 @@ class minicache
    float VTXSHADERPAR3[8];
    float VTXSHADERPAR4[8];
 
-   char *FRAGPROG;
-   int FRAGDIRTY;
+   char *FRGPROG;
+   int FRGDIRTY;
 
-   int FRAGPROGID;
+   int FRGPROGID;
    int USEPIXSHADER;
 
    float PIXSHADERPAR1[8];
@@ -259,7 +259,7 @@ class minicache
    int SEASHADERTEXHEIGHT;
 
    int PRISM_VTXPROGID;
-   int PRISM_FRAGPROGID;
+   int PRISM_FRGPROGID;
 
    void (*PRISMEDGE_CALLBACK)(float x,float y,float yf,float z,void *data);
    void (*PRISMCACHE_CALLBACK)(int phase,float scale,float ex,float ey,float ez,void *data);
@@ -309,37 +309,6 @@ class minicache
 
    int getfancnt(int id);
    int getvtxcnt(int id);
-
-   // OpenGL extensions:
-
-   int GLSETUP;
-
-   int GLEXT_VP;
-   int GLEXT_FP;
-
-   void initglexts();
-
-   // Windows OpenGL extensions:
-
-   int WGLSETUP;
-
-#ifndef NOOGL
-
-#ifdef _WIN32
-
-#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
-   PFNGLGENPROGRAMSARBPROC glGenProgramsARB;
-   PFNGLBINDPROGRAMARBPROC glBindProgramARB;
-   PFNGLPROGRAMSTRINGARBPROC glProgramStringARB;
-   PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB;
-   PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB;
-#endif
-
-#endif
-
-#endif
-
-   void initwglprocs();
    };
 
 #endif
