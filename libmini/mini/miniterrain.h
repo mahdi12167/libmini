@@ -342,7 +342,7 @@ class miniterrain
    double getcachemem();
 
    //! add detail texture
-   void adddetailtex(int texid,int width,int height,miniv4d &u,miniv4d &v,float alpha);
+   void adddetailtex(int texid,int width,int height,int mipmaps,miniv4d &u,miniv4d &v,float alpha);
 
    //! register waypoint renderer
    void registerrndr(minipointrndr *rndr);
@@ -393,6 +393,7 @@ class miniterrain
 
    int DETAILTEXID;
    int DETAILTEXWIDTH,DETAILTEXHEIGHT;
+   int DETAILTEXMIPMAPS;
    miniv4d DETAILTEXU,DETAILTEXV;
    float DETAILTEXALPHA;
 

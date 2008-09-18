@@ -190,6 +190,7 @@ void minicache::initterrain(TERRAIN_TYPE *t)
 
    t->detail_texid=0;
    t->detail_width=t->detail_height=0;
+   t->detail_mipmaps=0;
    t->detail_alpha=0.0f;
    t->detail_nofree=0;
    }
@@ -1198,7 +1199,7 @@ void minicache::bindvtxshaderdetailtex()
    if (t->detail_texid!=0 && t->detail_width>0 && t->detail_height>0)
       {
       texunit(2);
-      bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,1);
+      bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,t->detail_mipmaps);
       texunit(0);
 
       setvtxprogpar(4,
@@ -1352,7 +1353,7 @@ void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
    }
 
 // define RGB[A] detail texture per tileset
-void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components)
+void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components,int mipmaps)
    {
    TERRAIN_TYPE *t;
 
@@ -1368,12 +1369,14 @@ void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int
 
    if (image!=NULL)
       {
-      if (components==3) t->detail_texid=buildRGBtexmap(image,&width,&height,1);
-      else if (components==4) t->detail_texid=buildRGBAtexmap(image,&width,&height,1);
+      if (components==3) t->detail_texid=buildRGBtexmap(image,&width,&height,mipmaps);
+      else if (components==4) t->detail_texid=buildRGBAtexmap(image,&width,&height,mipmaps);
       else ERRORMSG();
 
       t->detail_width=width;
       t->detail_height=height;
+
+      t->detail_mipmaps=mipmaps;
 
       t->detail_alpha=1.0f;
 
@@ -1382,15 +1385,15 @@ void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int
    }
 
 // define RGB detail texture per tileset
-void minicache::setpixshaderdetailtexRGB(minitile *terrain,unsigned char *image,int width,int height)
-   {setpixshaderdetailtex(terrain,image,width,height,3);}
+void minicache::setpixshaderdetailtexRGB(minitile *terrain,unsigned char *image,int width,int height,int mipmaps)
+   {setpixshaderdetailtex(terrain,image,width,height,3,mipmaps);}
 
 // define RGBA detail texture per tileset
-void minicache::setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height)
-   {setpixshaderdetailtex(terrain,image,width,height,4);}
+void minicache::setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height,int mipmaps)
+   {setpixshaderdetailtex(terrain,image,width,height,4,mipmaps);}
 
 // define detail texture id per tileset
-void minicache::setpixshaderdetailtexid(minitile *terrain,int texid,int width,int height)
+void minicache::setpixshaderdetailtexid(minitile *terrain,int texid,int width,int height,int mipmaps)
    {
    TERRAIN_TYPE *t;
 
@@ -1408,6 +1411,8 @@ void minicache::setpixshaderdetailtexid(minitile *terrain,int texid,int width,in
 
    t->detail_width=width;
    t->detail_height=height;
+
+   t->detail_mipmaps=mipmaps;
 
    t->detail_alpha=1.0f;
 
