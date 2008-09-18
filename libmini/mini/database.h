@@ -155,7 +155,7 @@ class databuf
    void swap2(int msb=1);
 
    //! set conversion hook for external formats
-   static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data);
+   static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data=NULL);
 
    //! check conversion hook
    static int check_conversion() {return((CONVERSION_HOOK==NULL)?0:1);}
@@ -169,8 +169,11 @@ class databuf
    //! automatic mip-mapping
    void automipmap();
 
+   //! check mip-mapping
+   int check_mipmap();
+
    //! set hook for automatic s3tc compression
-   static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data);
+   static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data=NULL);
 
    //! check autocompress hook
    static int check_autocompress() {return((AUTOCOMPRESS_HOOK==NULL)?0:1);}
@@ -178,8 +181,11 @@ class databuf
    //! automatic s3tc compression
    void autocompress();
 
+   //! check s3tc compression
+   int check_s3tc();
+
    //! set hook for automatic s3tc decompression
-   static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data);
+   static void setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data=NULL);
 
    //! check autodecompress hook
    static int check_autodecompress() {return((AUTODECOMPRESS_HOOK==NULL)?0:1);}

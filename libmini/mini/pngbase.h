@@ -10,6 +10,4 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
 
 }
 
-using namespace pngbase;
-
 #endif

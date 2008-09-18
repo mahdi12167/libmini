@@ -10,6 +10,4 @@ void compressJPEGimage(unsigned char *image,int width,int height,int components,
 
 }
 
-using namespace jpegbase;
-
 #endif

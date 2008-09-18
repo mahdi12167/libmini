@@ -10,6 +10,4 @@ void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
 
 }
 
-using namespace greycbase;
-
 #endif

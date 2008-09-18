@@ -991,6 +991,17 @@ void databuf::automipmap()
    else type=DATABUF_TYPE_RGBA_MM;
    }
 
+// check mip-mapping
+int databuf::check_mipmap()
+   {
+   if (type==DATABUF_TYPE_RGB_MM ||
+       type==DATABUF_TYPE_RGBA_MM ||
+       type==DATABUF_TYPE_RGB_MM_S3TC ||
+       type==DATABUF_TYPE_RGBA_MM_S3TC) return(1);
+
+   return(0);
+   }
+
 // set hook for automatic s3tc compression
 void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data)
    {
@@ -1004,27 +1015,30 @@ void databuf::autocompress()
    unsigned char *s3tcdata;
    unsigned int s3tcbytes;
 
+   if (AUTOS3TCMIPMAP!=0) automipmap();
+
    if (AUTOCOMPRESS_HOOK==NULL) return;
 
    if (type!=DATABUF_TYPE_RGB && type!=DATABUF_TYPE_RGBA && type!=DATABUF_TYPE_RGB_MM && type!=DATABUF_TYPE_RGBA_MM) return;
    if (zsize>1 || tsteps>1) return;
-
-   if (AUTOS3TCMIPMAP!=0) automipmap();
 
    if (type==DATABUF_TYPE_RGB) AUTOCOMPRESS_HOOK(0,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
    else if (type==DATABUF_TYPE_RGBA) AUTOCOMPRESS_HOOK(1,(unsigned char *)data,bytes,&s3tcdata,&s3tcbytes,xsize,ysize,AUTOCOMPRESS_DATA);
    else if (type==DATABUF_TYPE_RGB_MM) autocompress_mipmaps(0,&s3tcdata,&s3tcbytes);
    else autocompress_mipmaps(1,&s3tcdata,&s3tcbytes);
 
-   release();
+   if (s3tcdata!=NULL)
+      {
+      release();
 
-   data=s3tcdata;
-   bytes=s3tcbytes;
+      data=s3tcdata;
+      bytes=s3tcbytes;
 
-   if (type==DATABUF_TYPE_RGB) type=DATABUF_TYPE_RGB_S3TC;
-   else if (type==DATABUF_TYPE_RGBA) type=DATABUF_TYPE_RGBA_S3TC;
-   else if (type==DATABUF_TYPE_RGB_MM) type=DATABUF_TYPE_RGB_MM_S3TC;
-   else type=DATABUF_TYPE_RGBA_MM_S3TC;
+      if (type==DATABUF_TYPE_RGB) type=DATABUF_TYPE_RGB_S3TC;
+      else if (type==DATABUF_TYPE_RGBA) type=DATABUF_TYPE_RGBA_S3TC;
+      else if (type==DATABUF_TYPE_RGB_MM) type=DATABUF_TYPE_RGB_MM_S3TC;
+      else type=DATABUF_TYPE_RGBA_MM_S3TC;
+      }
    }
 
 // automatic mip-map compression
@@ -1081,6 +1095,17 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
       }
    }
 
+// check s3tc compression
+int databuf::check_s3tc()
+   {
+   if (type==DATABUF_TYPE_RGB_S3TC ||
+       type==DATABUF_TYPE_RGBA_S3TC ||
+       type==DATABUF_TYPE_RGB_MM_S3TC ||
+       type==DATABUF_TYPE_RGBA_MM_S3TC) return(1);
+
+   return(0);
+   }
+
 // set hook for automatic s3tc decompression
 void databuf::setautodecompress(void (*autodecompress)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data),void *data)
    {
@@ -1102,13 +1127,16 @@ void databuf::autodecompress()
    if (type==DATABUF_TYPE_RGB_S3TC) AUTODECOMPRESS_HOOK(0,(unsigned char *)data,bytes,&rawdata,&rawbytes,xsize,ysize,AUTODECOMPRESS_DATA);
    else AUTODECOMPRESS_HOOK(1,(unsigned char *)data,bytes,&rawdata,&rawbytes,xsize,ysize,AUTODECOMPRESS_DATA);
 
-   release();
+   if (rawdata!=NULL)
+      {
+      release();
 
-   data=rawdata;
-   bytes=rawbytes;
+      data=rawdata;
+      bytes=rawbytes;
 
-   if (type==DATABUF_TYPE_RGB_S3TC) type=DATABUF_TYPE_RGB;
-   else type=DATABUF_TYPE_RGBA;
+      if (type==DATABUF_TYPE_RGB_S3TC) type=DATABUF_TYPE_RGB;
+      else type=DATABUF_TYPE_RGBA;
+      }
    }
 
 // set interpreter hook for implicit format

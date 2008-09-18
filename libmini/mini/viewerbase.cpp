@@ -6,9 +6,7 @@
 
 #include <mini/database.h>
 
-#ifndef NOSQUISH
 #include <mini/squishbase.h>
-#endif
 
 #include <mini/miniOGL.h>
 
@@ -94,21 +92,6 @@ void viewerbase::set(VIEWER_PARAMS &params)
 void viewerbase::propagate()
    {set(PARAMS);}
 
-#ifndef NOSQUISH
-
-// S3TC auto-compression hook
-void viewerbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
-                              unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
-                              void *data)
-   {
-   if (data!=NULL) ERRORMSG();
-
-   squishbase::compressS3TC(isrgbadata,rawdata,bytes,
-                            s3tcdata,s3tcbytes,width,height);
-   }
-
-#endif
-
 // initialize the terrain hooks
 void viewerbase::inithooks()
    {
@@ -125,12 +108,8 @@ void viewerbase::inithooks()
    // register libMini conversion hook (JPEG/PNG)
    convbase::setconversion(&PARAMS.conversion_params);
 
-#ifndef NOSQUISH
-
    // register auto-compression hook
-   databuf::setautocompress(autocompress,NULL);
-
-#endif
+   databuf::setautocompress(squishbase::autocompress,NULL);
    }
 
 // get initial view point

@@ -10,6 +10,7 @@
 
 namespace squishbase {
 
+// compress to S3TC
 void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                   unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
                   int squishmode)
@@ -78,6 +79,7 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
 #endif
    }
 
+// decompress from S3TC
 void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
                     unsigned char **rawdata,unsigned int *rawbytes,int width,int height)
    {
@@ -122,6 +124,28 @@ void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
    *rawbytes=0;
 
 #endif
+   }
+
+// S3TC auto-compression hook
+void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
+                  unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
+                  void *data)
+   {
+   if (data!=NULL) ERRORMSG();
+
+   compressS3TC(isrgbadata,rawdata,bytes,
+                s3tcdata,s3tcbytes,width,height);
+   }
+
+// S3TC auto-decompression hook
+void autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
+                    unsigned char **rawdata,unsigned int *rawbytes,int width,int height,
+                    void *data)
+   {
+   if (data!=NULL) ERRORMSG();
+
+   decompressS3TC(isrgbadata,s3tcdata,bytes,
+                  rawdata,rawbytes,width,height);
    }
 
 }

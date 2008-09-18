@@ -38,7 +38,7 @@ class viewerbase
 
       // image conversion parameters:
 
-      MINI_CONVERSION_PARAMS conversion_params;
+      convbase::MINI_CONVERSION_PARAMS conversion_params;
       };
 
    typedef VIEWER_PARAMS_STRUCT VIEWER_PARAMS;

@@ -81,7 +81,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
    else if (type==FILE_TYPE_JPG)
       {
       jpgdata=readfile(filename,&jpgbytes);
-      rawdata=decompressJPEGimage(jpgdata,jpgbytes,&jpgwidth,&jpgheight,&jpgcomponents);
+      rawdata=jpegbase::decompressJPEGimage(jpgdata,jpgbytes,&jpgwidth,&jpgheight,&jpgcomponents);
 
       if (jpgcomponents==1) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,0);
       else if (jpgcomponents==3) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,3);
@@ -90,7 +90,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
    else if (type==FILE_TYPE_PNG)
       {
       pngdata=readfile(filename,&pngbytes);
-      rawdata=decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
+      rawdata=pngbase::decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
 
       if (pngcomponents==1) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,0);
       else if (pngcomponents==2)
@@ -149,22 +149,22 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality)
    else if (type==FILE_TYPE_PVM) buf.savePVMdata(filename);
    else if (type==FILE_TYPE_JPG && buf.zsize==1 && buf.tsteps==1)
       {
-      if (buf.type==0) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
-      else if (buf.type==3) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
-      else if (buf.type==4) compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
+      if (buf.type==0) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==3) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==4) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
 
       writefile(filename,jpgdata,jpgbytes);
       }
    else if (type==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
       {
-      if (buf.type==0) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes);
+      if (buf.type==0) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes);
       else if (buf.type==1)
          {
          buf.swap2();
-         compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes);
+         pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes);
          }
-      else if (buf.type==3) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes);
-      else if (buf.type==4) compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes);
+      else if (buf.type==3) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes);
+      else if (buf.type==4) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes);
 
       writefile(filename,pngdata,pngbytes);
       }

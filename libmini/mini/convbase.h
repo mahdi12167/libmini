@@ -30,6 +30,4 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
 }
 
-using namespace convbase;
-
 #endif
