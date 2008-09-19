@@ -251,6 +251,9 @@ BOOLINT minipoint::add(minipointdata *point)
 
    if (strlen(point->comment)>0) parsecomment(point);
 
+   point->size=0.0f;
+   point->offset=0.0f;
+
    POINTS[col+row*COLS][NUM[col+row*COLS]++]=*point;
 
    return(TRUE);
@@ -816,8 +819,7 @@ inline int operator < (const minipointdata &a,const minipointdata &b)
 
 // get nearest waypoint
 minipointdata *minipoint::getnearest(float x,float y,float elev,
-                                     int type,
-                                     BOOLINT useelev)
+                                     int type)
    {
    int i;
 
@@ -837,7 +839,7 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,
 
       if (t==type || type==minipointopts::OPTION_TYPE_ANY)
          if (nearest==NULL) nearest=*vpoint;
-         else if (getdistance2(x,y,elev,useelev,*vpoint)<getdistance2(x,y,elev,useelev,nearest)) nearest=*vpoint;
+         else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
       }
 
    return(nearest);
@@ -1048,7 +1050,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
          if (vpoint->opts->signpostrange>0.0f) range=vpoint->opts->signpostrange*SCALEELEV;
 
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,FALSE,vpoint)>fsqr(range)) return;
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range)) return;
 
       // get global waypoint parameters
       ssize=GLOBAL->signpostsize;
@@ -1100,6 +1102,9 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
       mtxtranslate(-0.5f,0.0f,0.0f);
       minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,salpha);
       mtxpop();
+
+      // report render offset
+      vpoint->offset=sheight;
       }
    }
 
@@ -1229,6 +1234,9 @@ void minipointrndr_brick::render(minipointdata *vpoint,int pass)
       midx=vpoint->x/SCALEX-OFFSETLON;
       midy=vpoint->y/SCALEY-OFFSETLAT;
       basez=(vpoint->elev-0.25f*bsize)/SCALEELEV;
+
+      // report render offset
+      vpoint->offset=vpoint->elev+0.25f*bsize-vpoint->height;
 
       // get individual brick color
       if (vpoint->opts==NULL) bred=bgreen=bblue=balpha=0.0f;

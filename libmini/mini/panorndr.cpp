@@ -129,6 +129,7 @@ void minipointrndr_panorndr::pre(int pass)
 void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    {
    float range;
+   float size;
 
    char *filename;
    databuf buf;
@@ -143,7 +144,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          if (vpoint->opts->datarange>0.0f) range=vpoint->opts->datarange*SCALEELEV;
 
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,TRUE,vpoint)>fsqr(range))
+      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range))
          {
          // release already loaded texture
          if (vpoint->opts!=NULL)
@@ -176,14 +177,18 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
       if (vpoint->opts!=NULL)
          {
          // calculate size
-         if (vpoint->opts->datasize==0.0f)
-            if (GLOBAL->datasize>0.0f) vpoint->opts->datasize=GLOBAL->datasize/SCALEELEV;
-            else vpoint->opts->datasize=GLOBAL->signpostsize/SCALEELEV/2.0f;
+         if (vpoint->opts->datasize>0.0f) size=vpoint->opts->datasize*SCALEELEV;
+         else if (GLOBAL->datasize>0.0f) size=GLOBAL->datasize;
+         else size=GLOBAL->signpostsize;
+
+         // report render size and offset
+         vpoint->size=size;
+         vpoint->offset=vpoint->elev+0.5f*size-vpoint->height;
 
          // rotate and scale waypoint
          mtxrotate(-90.0f-vpoint->opts->dataturn,0.0f,1.0f,0.0f);
-         mtxscale(vpoint->opts->datasize,vpoint->opts->datasize,vpoint->opts->datasize);
-         mtxtranslate(0.0f,0.5f*SCALEELEV,0.0f);
+         mtxscale(0.5f*size,0.5f*size,0.5f*size);
+         mtxtranslate(0.0f,1.0f,0.0f);
 
          // enable texture
          if (vpoint->opts->datafile!=NULL && vpoint->opts->dataswitch==0)
@@ -258,8 +263,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
             }
          }
 
-      // render at appropriate scale
-      STRIP->setscale(SCALEELEV);
+      // render the strip if not disabled
       if (vpoint->opts->dataswitch==0) STRIP->render();
 
       // pop matrices
