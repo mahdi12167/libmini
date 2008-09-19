@@ -960,7 +960,7 @@ void render()
             nearrad=nearest->size/2.0f;
             nearvec=miniv3d(nearest->x,nearest->y,nearest->height+nearest->offset)-miniv3d(el.vec);
 
-            if (nearvec.getlength()<5.0f*nearrad)
+            if (nearvec.getlength()<3.0f*nearrad)
                {
                el.vec+=0.1*nearvec;
                if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=1;
