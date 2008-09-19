@@ -238,8 +238,8 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                else
                   {
                   // vertically aligned texture
-                  if (vpoint->opts->datacontrol!=0.0f) scaley=360.0f/vpoint->opts->datacontrol;
-                  scalex=1.0f/(vpoint->opts->datatexwidth/(scaley*vpoint->opts->datatexheight))/PI;
+                  if (vpoint->opts->datacontrol!=0.0f) scalex=360.0f/vpoint->opts->datacontrol;
+                  scaley=1.0f/(vpoint->opts->datatexwidth/(scalex*vpoint->opts->datatexheight))/PI;
 
                   // flip axis
                   mtxtex();
