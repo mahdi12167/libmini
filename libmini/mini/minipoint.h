@@ -331,7 +331,7 @@ class minipoint
 
    //! get squared distance to waypoint
    inline float getdistance2(float x,float y,float elev,BOOLINT useelev,minipointdata *point)
-      {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(useelev?point->elev:point->height-elev));}
+      {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr((useelev?point->elev:point->height)-elev));}
 
    //! get distance to waypoint
    inline float getdistance(float x,float y,float elev,minipointdata *point)
