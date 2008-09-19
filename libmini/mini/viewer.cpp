@@ -573,6 +573,19 @@ void initNPRbathymap()
       }
    }
 
+// report actual position
+void reportpos(float lat,float lon,float elev)
+   {
+   static BOOLINT done=FALSE;
+
+   if (wakeup!=0) done=FALSE;
+   else if (!done)
+      {
+      printf("ARC\n%g\n%g\n%gm\n",lat,lon,elev);
+      done=TRUE;
+      }
+   }
+
 // render compass
 void rendercompass()
    {
@@ -828,6 +841,8 @@ void renderhud()
 
                glTranslatef(0.05f,0.0f,0.0f);
                minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
+
+               reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_elev);
                }
             }
          }

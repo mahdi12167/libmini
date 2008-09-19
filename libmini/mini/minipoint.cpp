@@ -550,7 +550,8 @@ void minipoint::load(const char *filename,
       if (point.system==NULL) ERRORMSG();
 
       // read Lat/Lon coordinates
-      if (strcmp(point.system,"LL")==0)
+      if (strcmp(point.system,"LL")==0 ||
+          strcmp(point.system,"ARC")==0)
          {
          while (ch!='\n' && ch!='\r' && ch!=EOF)
             {
@@ -575,8 +576,11 @@ void minipoint::load(const char *filename,
          if (sscanf(point.latitude,"%g",&point.y)!=1) ERRORMSG();
          if (sscanf(point.longitude,"%g",&point.x)!=1) ERRORMSG();
 
-         point.x*=60*60;
-         point.y*=60*60;
+         if (strcmp(point.system,"LL")==0)
+            {
+            point.x*=60*60;
+            point.y*=60*60;
+            }
 
          point.x=LONSUB(point.x);
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
