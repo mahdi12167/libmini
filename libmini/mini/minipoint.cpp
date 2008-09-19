@@ -1103,7 +1103,8 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
       minitext::drawstring(1.0f,240.0f,0.5f,0.5f,1.0f,info,1.0f,salpha);
       mtxpop();
 
-      // report render offset
+      // report render size and offset
+      vpoint->size=0.0f;
       vpoint->offset=sheight;
       }
    }
@@ -1235,7 +1236,8 @@ void minipointrndr_brick::render(minipointdata *vpoint,int pass)
       midy=vpoint->y/SCALEY-OFFSETLAT;
       basez=(vpoint->elev-0.25f*bsize)/SCALEELEV;
 
-      // report render offset
+      // report render size and offset
+      vpoint->size=bsize;
       vpoint->offset=vpoint->elev+0.25f*bsize-vpoint->height;
 
       // get individual brick color
