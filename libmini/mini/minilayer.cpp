@@ -1372,7 +1372,8 @@ void minilayer::renderpoints()
    }
 
 // get the nearest waypoint
-minipointdata *minilayer::getnearestpoint(int type)
+minipointdata *minilayer::getnearestpoint(int type,
+                                          BOOLINT useelev)
    {
    minicoord ei;
 
@@ -1385,7 +1386,7 @@ minipointdata *minilayer::getnearestpoint(int type)
    if (LPARAMS.usewaypoints)
       {
       ei=map_g2i(LPARAMS.eye);
-      nearest=POINTS->getnearest(ei.vec.x,-ei.vec.z,ei.vec.y,type);
+      nearest=POINTS->getnearest(ei.vec.x,-ei.vec.z,ei.vec.y,type,useelev);
       }
 
    return(nearest);

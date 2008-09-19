@@ -319,7 +319,8 @@ class miniterrain
    float getflattening();
 
    //! get the nearest waypoint
-   minipointdata *getnearestpoint(int type=minipointopts::OPTION_TYPE_ANY);
+   minipointdata *getnearestpoint(int type=minipointopts::OPTION_TYPE_ANY,
+                                  BOOLINT useelev=FALSE);
 
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);

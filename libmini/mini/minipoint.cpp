@@ -816,7 +816,8 @@ inline int operator < (const minipointdata &a,const minipointdata &b)
 
 // get nearest waypoint
 minipointdata *minipoint::getnearest(float x,float y,float elev,
-                                     int type)
+                                     int type,
+                                     BOOLINT useelev)
    {
    int i;
 
@@ -836,15 +837,11 @@ minipointdata *minipoint::getnearest(float x,float y,float elev,
 
       if (t==type || type==minipointopts::OPTION_TYPE_ANY)
          if (nearest==NULL) nearest=*vpoint;
-         else if (getdistance2(x,y,elev,*vpoint)<getdistance2(x,y,elev,nearest)) nearest=*vpoint;
+         else if (getdistance2(x,y,elev,useelev,*vpoint)<getdistance2(x,y,elev,useelev,nearest)) nearest=*vpoint;
       }
 
    return(nearest);
    }
-
-// get squared distance to waypoint
-float minipoint::getdistance2(float x,float y,float elev,minipointdata *point)
-   {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(point->height-elev));}
 
 // render waypoints
 void minipoint::draw(float ex,float ey,float ez,
@@ -1051,7 +1048,7 @@ void minipointrndr_signpost::render(minipointdata *vpoint,int pass)
          if (vpoint->opts->signpostrange>0.0f) range=vpoint->opts->signpostrange*SCALEELEV;
 
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range)) return;
+      if (POINTS->getdistance2(EX,EZ,EY,FALSE,vpoint)>fsqr(range)) return;
 
       // get global waypoint parameters
       ssize=GLOBAL->signpostsize;

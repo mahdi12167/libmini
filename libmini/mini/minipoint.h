@@ -326,10 +326,16 @@ class minipoint
 
    //! get nearest waypoint
    minipointdata *getnearest(float x,float y,float elev,
-                             int type=minipointopts::OPTION_TYPE_ANY);
+                             int type=minipointopts::OPTION_TYPE_ANY,
+                             BOOLINT useelev=FALSE);
 
    //! get squared distance to waypoint
-   float getdistance2(float x,float y,float elev,minipointdata *point);
+   inline float getdistance2(float x,float y,float elev,BOOLINT useelev,minipointdata *point)
+      {return(fsqr(point->x-x)+fsqr(point->y-y)+fsqr(useelev?point->elev:point->height-elev));}
+
+   //! get distance to waypoint
+   inline float getdistance(float x,float y,float elev,minipointdata *point)
+      {return(fsqrt(getdistance2(x,y,elev,FALSE,point)));}
 
    //! render waypoints
    void draw(float ex,float ey,float ez,

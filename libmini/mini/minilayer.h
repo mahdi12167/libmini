@@ -283,7 +283,8 @@ class minilayer
    void renderpoints();
 
    //! get the nearest waypoint
-   minipointdata *getnearestpoint(int type=minipointopts::OPTION_TYPE_ANY);
+   minipointdata *getnearestpoint(int type=minipointopts::OPTION_TYPE_ANY,
+                                  BOOLINT useelev=FALSE);
 
    // coordinate conversions (g=global, l=local, o=opengl):
 

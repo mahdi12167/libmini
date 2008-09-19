@@ -143,7 +143,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
          if (vpoint->opts->datarange>0.0f) range=vpoint->opts->datarange*SCALEELEV;
 
       // check distance
-      if (POINTS->getdistance2(EX,EZ,EY,vpoint)>fsqr(range))
+      if (POINTS->getdistance2(EX,EZ,EY,TRUE,vpoint)>fsqr(range))
          {
          // release already loaded texture
          if (vpoint->opts!=NULL)

@@ -951,7 +951,7 @@ void render()
 
    // check for nearest waypoint:
 
-   nearest=viewer->getearth()->getterrain()->getnearestpoint(minipointopts::OPTION_TYPE_FREE);
+   nearest=viewer->getearth()->getterrain()->getnearestpoint(minipointopts::OPTION_TYPE_FREE,TRUE);
 
    if (nearest!=NULL)
       if (nearest->opts!=NULL)
