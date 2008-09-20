@@ -2,8 +2,6 @@
 
 set app=$0
 
-echo $app
-
 set option=$1
 set file=$2
 
