@@ -1,5 +1,9 @@
 #!/bin/tcsh -f
 
+set app=$0
+
+echo $app
+
 set option=$1
 set file=$2
 
@@ -34,16 +38,16 @@ set rmspctab="s/ *$tab/$tab/g"
 
 if ($file == "") then
    if ($tabify == 1) then
-      find . \( -name \*.cpp -o -name \*.h \) -exec tabify.sh -t {} \; -exec tabify.sh -u {} \;
+      find . \( -name \*.cpp -o -name \*.h \) -exec $app -t {} \; -exec $app -u {} \;
    endif
    if ($tabify == 2) then
-      find . \( -name \*.cpp -o -name \*.h \) -exec tabify.sh -u {} \; -exec tabify.sh -t {} \;
+      find . \( -name \*.cpp -o -name \*.h \) -exec $app -u {} \; -exec $app -t {} \;
    endif
    if ($tabify == 3) then
-      find . \( -name \*.cpp -o -name \*.h \) -exec tabify.sh -T {} \; -exec tabify.sh -U {} \;
+      find . \( -name \*.cpp -o -name \*.h \) -exec $app -T {} \; -exec $app -U {} \;
    endif
    if ($tabify == 4) then
-      find . \( -name \*.cpp -o -name \*.h \) -exec tabify.sh -U {} \; -exec tabify.sh -T {} \;
+      find . \( -name \*.cpp -o -name \*.h \) -exec $app -U {} \; -exec $app -T {} \;
    endif
 else
    if ($tabify == 1) then
