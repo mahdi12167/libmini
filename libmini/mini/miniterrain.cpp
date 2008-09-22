@@ -1064,7 +1064,14 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
       nst=getnearest(o);
 
       // shoot a ray at the nearest layer
-      if (isdisplayed(nst) && !isculled(nst)) dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
+      if (isdisplayed(nst) && !isculled(nst))
+         {
+         // enable binary search tree
+         CACHE->getray(LAYER[nst]->getcacheid())->enabletree();
+
+         // shoot a ray and get the traveled distance
+         dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
+         }
       else dist=MAXFLOAT;
 
       // check for valid hit

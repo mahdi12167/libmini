@@ -187,6 +187,8 @@ void miniray::swapbuffer()
    unlock();
    }
 
+int COUNTER; //!!
+
 // shoot a ray and return the distance to the closest triangle
 double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    {
@@ -200,6 +202,8 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    dn=d;
    dn.normalize();
+
+   COUNTER=0; //!!
 
    if (TREE==NULL)
       {
@@ -223,6 +227,8 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    else result=checktree(TREE,o,dn,hitdist);
 
    unlock();
+
+   printf("COUNTER=%d\n",COUNTER); //!!
 
    return(result);
    }
@@ -720,6 +726,8 @@ int miniray::checkbound(const miniv3d &o,const miniv3d &d,
    miniv3d bmo;
    double bmo2,bmod;
 
+   COUNTER++; //!!
+
    bmo=b-o;
    bmo2=bmo*bmo;
    if (bmo2<r2) return(1);
@@ -735,6 +743,8 @@ double miniray::checkdist(const miniv3d &o,const miniv3d &d,
                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
    miniv3d tuv;
+
+   COUNTER++; //!!
 
    if (intersect(o,d,v1,v2,v3,&tuv)==0) return(MAXFLOAT);
    else return(tuv.x);
