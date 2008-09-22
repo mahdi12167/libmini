@@ -30,8 +30,6 @@ miniray::~miniray()
    clearbuffer();
    swapbuffer();
    clearbuffer();
-
-   deletetree();
    }
 
 // clear back triangle reference buffer
@@ -106,7 +104,7 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
    ref->next=BACK;
    BACK=ref;
 
-   ref->down=NULL;
+   ref->skip=NULL;
    }
 
 // add reference to triangle fans to the back buffer
@@ -170,7 +168,7 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
    ref->next=BACK;
    BACK=ref;
 
-   ref->down=NULL;
+   ref->skip=NULL;
    }
 
 // swap front and back triangle reference buffer
@@ -180,11 +178,11 @@ void miniray::swapbuffer()
 
    lock();
 
+   deletetree(TREE);
+
    ref=FRONT;
    FRONT=BACK;
    BACK=ref;
-
-   deletetree();
 
    unlock();
    }
@@ -232,10 +230,91 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 // enable construction of binary tree for multiple shots
 void miniray::enabletree()
    {
-   TREE=NULL; //!!
+   if (FRONT!=NULL)
+      {
+      TREE=new TRIANGLEREF;
+      calcnode(FRONT,NULL,TREE);
+      }
    }
 
-// check binary tree for multiple hits
+// build binary tree
+void miniray::calcnode(TRIANGLEREF *start,TRIANGLEREF *stop,TRIANGLEREF *tree)
+   {
+   TRIANGLEREF *ref1,*ref2;
+
+   tree->array=NULL;
+
+   ref1=ref2=start;
+
+   while (ref2!=stop)
+      {
+      ref1=ref1->next;
+      ref2=ref2->next;
+
+      if (ref2!=stop) ref2=ref2->next;
+      }
+
+   if (ref1==stop)
+      {
+      calcbound(start);
+
+      tree->next=start;
+      tree->skip=NULL;
+
+      tree->b=start->b;
+      tree->r2=start->r2;
+      }
+   else if (ref1->next==stop)
+      {
+      calcbound(start);
+      calcbound(ref1);
+
+      tree->next=start;
+      tree->skip=ref1;
+
+      mergebounds(tree);
+      }
+   else
+      {
+      tree->next=new TRIANGLEREF;
+      tree->skip=new TRIANGLEREF;
+
+      calcnode(start,ref1,tree->next);
+      calcnode(ref1,stop,tree->skip);
+
+      mergebounds(tree);
+      }
+   }
+
+// merge bounds of tree children
+void miniray::mergebounds(TRIANGLEREF *node)
+   {
+   double d;
+   double r1,r2;
+
+   d=(node->next->b-node->skip->b).getlength();
+
+   r1=sqrt(node->next->r2);
+   r2=sqrt(node->skip->r2);
+
+   if (r1>=d+r2)
+      {
+      node->b=node->next->b;
+      node->r2=node->next->r2;
+      }
+   else if (r2>=d+r1)
+      {
+      node->b=node->skip->b;
+      node->r2=node->skip->r2;
+      }
+   else
+      {
+      node->b=0.5*((r1-r2+d)/d*node->next->b+(r2-r1+d)/d*node->skip->b);
+      node->r2=0.25*FSQR(r1+r2+d);
+      }
+   }
+
+// check binary tree
 double miniray::checktree(TRIANGLEREF *node,
                           const miniv3d &o,const miniv3d &d,double hitdist)
    {
@@ -253,7 +332,7 @@ double miniray::checktree(TRIANGLEREF *node,
 
          if (result1<hitdist) return(result1);
 
-         if (node->down!=NULL) result2=checktree(node->down,o,d,hitdist);
+         if (node->skip!=NULL) result2=checktree(node->skip,o,d,hitdist);
 
          result=FMIN(result1,result2);
          }
@@ -262,10 +341,17 @@ double miniray::checktree(TRIANGLEREF *node,
    return(result);
    }
 
-// delete binary tree for multiple shots
-void miniray::deletetree()
+// delete binary tree
+void miniray::deletetree(TRIANGLEREF *node)
    {
-   TREE=NULL; //!!
+   if (node!=NULL)
+      if (node->array==NULL)
+         {
+         deletetree(node->next);
+         deletetree(node->skip);
+
+         delete node;
+         }
    }
 
 // set locking callbacks

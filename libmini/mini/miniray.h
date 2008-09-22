@@ -88,7 +88,7 @@ class miniray
       double r2;
 
       TRIANGLEREF *next;
-      TRIANGLEREF *down;
+      TRIANGLEREF *skip;
       };
 
    TRIANGLEREF *FRONT,*BACK;
@@ -122,10 +122,13 @@ class miniray
    inline double checkdist(const miniv3d &o,const miniv3d &d,
                            const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 
+   void calcnode(TRIANGLEREF *start,TRIANGLEREF *stop,TRIANGLEREF *tree);
+   void mergebounds(TRIANGLEREF *node);
+
    double checktree(TRIANGLEREF *node,
                     const miniv3d &o,const miniv3d &d,double hitdist);
 
-   void deletetree();
+   void deletetree(TRIANGLEREF *node);
 
    // Moeller-Trumbore ray/triangle intersection
    inline int intersect(const miniv3d &o,const miniv3d &d,
