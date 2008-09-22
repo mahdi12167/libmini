@@ -4,8 +4,6 @@
 
 #include "mini.h"
 
-#include "minimath.h"
-
 #include "miniutm.h"
 
 #include "pnmbase.h"
@@ -212,8 +210,6 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    COL=ROW=0;
    PHASE=-1;
 
-   SWIZZLE=1;
-
    FOCUS=FALSE;
 
    RELSCALE0=1.0f;
@@ -233,8 +229,6 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
 
    PCOL=PROW=0;
    PUPDATE=0;
-
-   PSWIZZLE=1;
 
    REDUCTION=1.0f;
    RATIO=1.0f;
@@ -344,6 +338,64 @@ void minitile::copywarp(miniwarp *warp)
    else *WARP=*warp;
    }
 
+// interleave bits via z-order
+void minitile::interleavebits(unsigned int s,unsigned int &x,unsigned int &y)
+   {
+   unsigned int z;
+   unsigned int b,m;
+
+   z=0;
+   b=m=1;
+
+   while (b<s)
+      {
+      if (x&b) z|=m;
+      m<<=1;
+
+      if (y&b) z|=m;
+      m<<=1;
+
+      b<<=1;
+      }
+
+   x=z%s;
+   y=z/s;
+   }
+
+// swizzle bits via z-order
+void minitile::swizzlebits(int &x,int &y,int w,int h)
+   {
+   int s;
+
+   for (s=2; s<=w && s<=h; s<<=1);
+   s>>=1;
+
+   if (x<s)
+      if (y<s)
+         interleavebits((unsigned int)s,(unsigned int &)x,(unsigned int &)y);
+      else
+         {
+         y-=s;
+         swizzlebits(x,y,w,h-s);
+         y+=s;
+         }
+   else
+      if (y<s)
+         {
+         x-=s;
+         swizzlebits(x,y,w-s,h);
+         x+=s;
+         }
+      else
+         {
+         x-=s;
+         y-=s;
+         swizzlebits(x,y,w-s,h-s);
+         x+=s;
+         y+=s;
+         }
+   }
+
 // check the visibility of the tiles
 void minitile::checktiles(float ex,float ez,
                           float farp,float fovy,float aspect)
@@ -388,10 +440,6 @@ void minitile::checktiles(float ex,float ez,
 
    d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(ez+c*fmax(farp,PFARP)))/ROWDIM);
    PTOP=max(ROWS-1-min(max(ftrc(d)-1,0),ROWS-1),min(TOP+1,ROWS-1));
-
-   // calculate optimal swizzle parameters
-   for (SWIZZLE=13; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
-   for (PSWIZZLE=13; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
    }
 
 // update a reloaded tile
@@ -610,9 +658,7 @@ void minitile::draw(float res,
    int steps;
    int psteps;
 
-   int col,row,
-       swizzle;
-
+   int col,row;
    int width,height;
 
    if (update<0) ERRORMSG();
@@ -661,10 +707,10 @@ void minitile::draw(float res,
          col=PCOL-PLEFT;
          row=PROW-PBOTTOM;
 
-         swizzle=(PSWIZZLE*(col+row*width))%(width*height);
+         swizzlebits(col,row,width,height);
 
-         col=swizzle%width+PLEFT;
-         row=swizzle/width+PBOTTOM;
+         col+=PLEFT;
+         row+=PBOTTOM;
 
          PRELOAD_CALLBACK(col,row,REQUEST_OBJ);
 
@@ -704,10 +750,10 @@ void minitile::draw(float res,
       col=COL-LEFT;
       row=ROW-BOTTOM;
 
-      swizzle=(SWIZZLE*(col+row*width))%(width*height);
+      swizzlebits(col,row,width,height);
 
-      col=swizzle%width+LEFT;
-      row=swizzle/width+BOTTOM;
+      col+=LEFT;
+      row+=BOTTOM;
 
       if ((PHASE!=2 && PHASE!=3) || UPDATED[col+row*COLS]==0)
          drawtile(res,

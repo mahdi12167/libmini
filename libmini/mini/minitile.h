@@ -245,8 +245,6 @@ class minitile
    int COL,ROW;
    int PHASE;
 
-   int SWIZZLE;
-
    int FOCUS;
    float FX,FY,FZ;
 
@@ -259,8 +257,6 @@ class minitile
 
    int PCOL,PROW;
    int PUPDATE;
-
-   int PSWIZZLE;
 
    float REDUCTION;
    float RATIO;
@@ -294,6 +290,9 @@ class minitile
    static int CONFIGURE_MIPMAPS;
 
    static char CONFIGURE_TILESETPATH[];
+
+   inline void interleavebits(unsigned int s,unsigned int &x,unsigned int &y);
+   inline void swizzlebits(int &x,int &y,int w,int h);
 
    void checktiles(float ex,float ez,
                    float farp,float fovy,float aspect);
