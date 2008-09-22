@@ -97,7 +97,7 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->warp=warp;
 
-   calcbound(ref);
+   ref->hasbound=0;
 
    ref->next=BACK;
    BACK=ref;
@@ -159,7 +159,7 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
 
    ref->warp=warp;
 
-   calcbound(ref);
+   ref->hasbound=0;
 
    ref->next=BACK;
    BACK=ref;
@@ -199,6 +199,8 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    while (ref!=NULL)
       {
+      if (ref->hasbound==0) calcbound(ref);
+
       if (checkbound(o,dn,ref->b,ref->r2)!=0)
          {
          result=calcdist(ref,o,d,result);
@@ -355,6 +357,8 @@ void miniray::calcbound(TRIANGLEREF *ref)
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
                  FSQR(vmax.z-vmin.z));
+
+   ref->hasbound=1;
    }
 
 double miniray::calcdist(TRIANGLEREF *ref,

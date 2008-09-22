@@ -56,7 +56,7 @@ class miniray
 
    //! configuring
    void configure_maxchunksize_triangles(int maxchunksize=100); // set maximum chunk size for triangle arrays
-   void configure_maxchunksize_trianglefans(int maxchunksize=100); // set maximum chunk size for triangle fan arrays
+   void configure_maxchunksize_trianglefans(int maxchunksize=20); // set maximum chunk size for triangle fan arrays
 
    protected:
 
@@ -78,6 +78,8 @@ class miniray
       int swapyz;
 
       miniwarp *warp;
+
+      int hasbound;
 
       miniv3d b;
       double r2;
