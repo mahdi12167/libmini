@@ -18,6 +18,8 @@ miniray::miniray()
    {
    FRONT=BACK=NULL;
 
+   TREE=NULL;
+
    CONFIGURE_MAXCHUNKSIZE_TRIANGLES=100;
    CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS=20;
    }
@@ -28,6 +30,8 @@ miniray::~miniray()
    clearbuffer();
    swapbuffer();
    clearbuffer();
+
+   deletetree();
    }
 
 // clear back triangle reference buffer
@@ -101,6 +105,8 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->next=BACK;
    BACK=ref;
+
+   ref->down=NULL;
    }
 
 // add reference to triangle fans to the back buffer
@@ -163,6 +169,8 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
 
    ref->next=BACK;
    BACK=ref;
+
+   ref->down=NULL;
    }
 
 // swap front and back triangle reference buffer
@@ -175,6 +183,8 @@ void miniray::swapbuffer()
    ref=FRONT;
    FRONT=BACK;
    BACK=ref;
+
+   deletetree();
 
    unlock();
    }
@@ -193,26 +203,69 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    dn=d;
    dn.normalize();
 
-   result=MAXFLOAT;
-
-   ref=FRONT;
-
-   while (ref!=NULL)
+   if (TREE==NULL)
       {
-      if (ref->hasbound==0) calcbound(ref);
+      result=MAXFLOAT;
 
-      if (checkbound(o,dn,ref->b,ref->r2)!=0)
+      ref=FRONT;
+
+      while (ref!=NULL)
          {
-         result=calcdist(ref,o,d,result);
-         if (result<hitdist) break;
-         }
+         if (ref->hasbound==0) calcbound(ref);
 
-      ref=ref->next;
+         if (checkbound(o,dn,ref->b,ref->r2)!=0)
+            {
+            result=calcdist(ref,o,d,result);
+            if (result<hitdist) break;
+            }
+
+         ref=ref->next;
+         }
       }
+   else result=checktree(TREE,o,dn,hitdist);
 
    unlock();
 
    return(result);
+   }
+
+// enable construction of binary tree for multiple shots
+void miniray::enabletree()
+   {
+   TREE=NULL; //!!
+   }
+
+// check binary tree for multiple hits
+double miniray::checktree(TRIANGLEREF *node,
+                          const miniv3d &o,const miniv3d &d,double hitdist)
+   {
+   double result;
+   double result1,result2;
+
+   result=MAXFLOAT;
+
+   if (checkbound(o,d,node->b,node->r2)!=0)
+      if (node->array==NULL)
+         {
+         result1=result2=MAXFLOAT;
+
+         if (node->next!=NULL) result1=checktree(node->next,o,d,hitdist);
+
+         if (result1<hitdist) return(result1);
+
+         if (node->down!=NULL) result2=checktree(node->down,o,d,hitdist);
+
+         result=FMIN(result1,result2);
+         }
+      else result=calcdist(node,o,d,result);
+
+   return(result);
+   }
+
+// delete binary tree for multiple shots
+void miniray::deletetree()
+   {
+   TREE=NULL; //!!
    }
 
 // set locking callbacks
