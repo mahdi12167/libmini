@@ -341,7 +341,58 @@ void minitile::copywarp(miniwarp *warp)
 // swizzle position via implicit quad-tree
 void minitile::swizzlepos(int &x,int &y,int w,int h)
    {
-   //!!
+   int pos,pmin,pmax,pmid;
+   int xmin,xmax,xmid,ymin,ymax,ymid;
+
+   return;
+
+   pos=x+y*w;
+
+   pmin=0;
+   pmax=w*h-1;
+
+   xmin=0;
+   xmax=w-1;
+
+   ymin=0;
+   ymax=h-1;
+
+   while (pmin<pmax)
+      if (xmax-xmin>ymax-ymin)
+         {
+         xmid=(xmin+xmax)/2;
+         pmid=pmin+(xmid-xmin+1)*(ymax-ymin+1)-1;
+
+         if (pos>pmid)
+            {
+            pmin=pmid+1;
+            xmin=xmid+1;
+            }
+         else
+            {
+            pmax=pmid;
+            xmax=xmid;
+            }
+         }
+      else
+         {
+         ymid=(ymin+ymax)/2;
+         pmid=pmin+(ymid-ymin+1)*(xmax-xmin+1)-1;
+
+         if (pos>pmid)
+            {
+            pmin=pmid+1;
+            ymin=ymid+1;
+            }
+         else
+            {
+            pmax=pmid;
+            ymax=ymid;
+            }
+         }
+
+   x=xmin;
+   y=ymin;
    }
 
 // check the visibility of the tiles
@@ -655,7 +706,7 @@ void minitile::draw(float res,
          col=PCOL-PLEFT;
          row=PROW-PBOTTOM;
 
-         swizzlebits(col,row,width,height);
+         swizzlepos(col,row,width,height);
 
          col+=PLEFT;
          row+=PBOTTOM;
@@ -698,7 +749,7 @@ void minitile::draw(float res,
       col=COL-LEFT;
       row=ROW-BOTTOM;
 
-      swizzlebits(col,row,width,height);
+      swizzlepos(col,row,width,height);
 
       col+=LEFT;
       row+=BOTTOM;
