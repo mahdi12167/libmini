@@ -338,44 +338,10 @@ void minitile::copywarp(miniwarp *warp)
    else *WARP=*warp;
    }
 
-// interleave bits via z-order
-void minitile::interleavebits(int &x,int &y,int s)
+// swizzle position via implicit quad-tree
+void minitile::swizzlepos(int &x,int &y,int w,int h)
    {
-   int b;
-   unsigned int m,z;
-
-   b=m=1;
-   z=0;
-
-   while (b<s)
-      {
-      if (x&b) z|=m;
-      m<<=1;
-
-      if (y&b) z|=m;
-      m<<=1;
-
-      b<<=1;
-      }
-
-   x=z%s;
-   y=z/s;
-   }
-
-// swizzle bits via z-order
-void minitile::swizzlebits(int &x,int &y,int w,int h)
-   {
-   int s;
-
-   for (s=2; s<=w && s<=h; s<<=1);
-   s>>=1;
-
-   if (x<s)
-      if (y<s) interleavebits(x,y,s);
-      else {y-=s; swizzlebits(x,y,w,h-s); y+=s;}
-   else
-      if (y<s) {x-=s; swizzlebits(x,y,w-s,h); x+=s;}
-      else {x-=s; y-=s; swizzlebits(x,y,w-s,h-s); x+=s; y+=s;}
+   //!!
    }
 
 // check the visibility of the tiles
