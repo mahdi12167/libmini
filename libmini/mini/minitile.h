@@ -291,7 +291,7 @@ class minitile
 
    static char CONFIGURE_TILESETPATH[];
 
-   inline void interleavebits(unsigned int s,unsigned int &x,unsigned int &y);
+   inline void interleavebits(int &x,int &y,int s);
    inline void swizzlebits(int &x,int &y,int w,int h);
 
    void checktiles(float ex,float ez,

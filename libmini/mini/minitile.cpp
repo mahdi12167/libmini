@@ -339,13 +339,13 @@ void minitile::copywarp(miniwarp *warp)
    }
 
 // interleave bits via z-order
-void minitile::interleavebits(unsigned int s,unsigned int &x,unsigned int &y)
+void minitile::interleavebits(int &x,int &y,int s)
    {
-   unsigned int z;
-   unsigned int b,m;
+   int b;
+   unsigned int m,z;
 
-   z=0;
    b=m=1;
+   z=0;
 
    while (b<s)
       {
@@ -371,29 +371,11 @@ void minitile::swizzlebits(int &x,int &y,int w,int h)
    s>>=1;
 
    if (x<s)
-      if (y<s)
-         interleavebits((unsigned int)s,(unsigned int &)x,(unsigned int &)y);
-      else
-         {
-         y-=s;
-         swizzlebits(x,y,w,h-s);
-         y+=s;
-         }
+      if (y<s) interleavebits(x,y,s);
+      else {y-=s; swizzlebits(x,y,w,h-s); y+=s;}
    else
-      if (y<s)
-         {
-         x-=s;
-         swizzlebits(x,y,w-s,h);
-         x+=s;
-         }
-      else
-         {
-         x-=s;
-         y-=s;
-         swizzlebits(x,y,w-s,h-s);
-         x+=s;
-         y+=s;
-         }
+      if (y<s) {x-=s; swizzlebits(x,y,w-s,h); x+=s;}
+      else {x-=s; y-=s; swizzlebits(x,y,w-s,h-s); x+=s; y+=s;}
    }
 
 // check the visibility of the tiles
