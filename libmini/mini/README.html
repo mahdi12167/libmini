@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.8.8 as of 22.September.2008<br>
+Version 8.8.8 as of 23.September.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -2080,17 +2080,23 @@ consecutive lines separated by a single empty line define one
 waypoint. Here is an example:<p>
 
 <pre>
-   Pali Lookout, Oahu
-   UTM 04
-   0625143
-   2363262
-   379m
-
    Hubertusklause, Deckersberg
    LL
    49.470846
    11.440757
    542m
+
+   Manana Island
+   ARC
+   76781.9
+   -567560.3
+   110.2m
+
+   Pali Lookout, Oahu
+   UTM 04
+   0625143
+   2363262
+   379m
 </pre>
 
 The general layout of the data fields of each waypoint is the following:<p>
@@ -2098,8 +2104,8 @@ The general layout of the data fields of each waypoint is the following:<p>
 <pre>
    waypoint description ; meta-information
    ; comment lines
-   coordinate system (LL or UTM)
-   position (lat/lon or x/y)
+   coordinate system (LL, ARC or UTM)
+   position (lat/lon or x/y on two separate lines)
    elevation (m_eter or f_eet)
 </pre>
 

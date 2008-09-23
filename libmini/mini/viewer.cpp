@@ -574,14 +574,14 @@ void initNPRbathymap()
    }
 
 // report actual position
-void reportpos(float lat,float lon,float elev)
+void reportpos(double lat,double lon,double elev)
    {
    static BOOLINT done=FALSE;
 
    if (wakeup!=0) done=FALSE;
    else if (!done)
       {
-      printf("ARC\n%g\n%g\n%gm\n",lat,lon,elev);
+      printf("ARC\n%.1f\n%.1f\n%.1fm\n",lat,lon,elev);
       done=TRUE;
       }
    }
