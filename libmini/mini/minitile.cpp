@@ -396,7 +396,7 @@ void minitile::checktiles(float ex,float ez,
 // swizzle tile position
 void minitile::swizzletile(int &x,int &y,int w,int h,int s)
    {
-   int pos;
+   unsigned int pos;
 
    pos=x+y*w;
    pos=(s*pos)%(w*h);
