@@ -43,9 +43,6 @@ class miniray
    //! the first hit with a smaller distance than hitdist will be returned
    double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
 
-   //! enable construction of binary tree for multiple shots
-   void enabletree();
-
    //! set locking callbacks
    //! when the callbacks are set ray shooting can be triggered safely from a separate thread
    static void setcallbacks(void (*lock)(void *data),void *data,
@@ -88,12 +85,9 @@ class miniray
       double r2;
 
       TRIANGLEREF *next;
-      TRIANGLEREF *skip;
       };
 
    TRIANGLEREF *FRONT,*BACK;
-
-   TRIANGLEREF *TREE;
 
    static void (*LOCK_CALLBACK)(void *data);
    static void (*UNLOCK_CALLBACK)(void *data);
@@ -121,14 +115,6 @@ class miniray
 
    inline double checkdist(const miniv3d &o,const miniv3d &d,
                            const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
-
-   void calcnode(TRIANGLEREF *start,TRIANGLEREF *stop,TRIANGLEREF *tree);
-   void mergebounds(TRIANGLEREF *node);
-
-   double checktree(TRIANGLEREF *node,
-                    const miniv3d &o,const miniv3d &d,double hitdist);
-
-   void deletetree(TRIANGLEREF *node);
 
    // Moeller-Trumbore ray/triangle intersection
    inline int intersect(const miniv3d &o,const miniv3d &d,

@@ -18,8 +18,6 @@ miniray::miniray()
    {
    FRONT=BACK=NULL;
 
-   TREE=NULL;
-
    CONFIGURE_MAXCHUNKSIZE_TRIANGLES=100;
    CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS=20;
    }
@@ -103,8 +101,6 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->next=BACK;
    BACK=ref;
-
-   ref->skip=NULL;
    }
 
 // add reference to triangle fans to the back buffer
@@ -167,8 +163,6 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
 
    ref->next=BACK;
    BACK=ref;
-
-   ref->skip=NULL;
    }
 
 // swap front and back triangle reference buffer
@@ -177,8 +171,6 @@ void miniray::swapbuffer()
    TRIANGLEREF *ref;
 
    lock();
-
-   deletetree(TREE);
 
    ref=FRONT;
    FRONT=BACK;
@@ -201,157 +193,26 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    dn=d;
    dn.normalize();
 
-   if (TREE==NULL)
+   result=MAXFLOAT;
+
+   ref=FRONT;
+
+   while (ref!=NULL)
       {
-      result=MAXFLOAT;
+      if (ref->hasbound==0) calcbound(ref);
 
-      ref=FRONT;
-
-      while (ref!=NULL)
+      if (checkbound(o,dn,ref->b,ref->r2)!=0)
          {
-         if (ref->hasbound==0) calcbound(ref);
-
-         if (checkbound(o,dn,ref->b,ref->r2)!=0)
-            {
-            result=calcdist(ref,o,d,result);
-            if (result<hitdist) break;
-            }
-
-         ref=ref->next;
+         result=calcdist(ref,o,d,result);
+         if (result<hitdist) break;
          }
+
+      ref=ref->next;
       }
-   else result=checktree(TREE,o,dn,hitdist);
 
    unlock();
 
    return(result);
-   }
-
-// enable construction of binary tree for multiple shots
-void miniray::enabletree()
-   {
-   if (FRONT!=NULL)
-      {
-      TREE=new TRIANGLEREF;
-      calcnode(FRONT,NULL,TREE);
-      }
-   }
-
-// build binary tree
-void miniray::calcnode(TRIANGLEREF *start,TRIANGLEREF *stop,TRIANGLEREF *tree)
-   {
-   TRIANGLEREF *ref1,*ref2;
-
-   tree->array=NULL;
-
-   ref1=ref2=start;
-
-   while (ref2!=stop)
-      {
-      ref1=ref1->next;
-      ref2=ref2->next;
-
-      if (ref2!=stop) ref2=ref2->next;
-      }
-
-   if (ref1==stop)
-      {
-      calcbound(start);
-
-      tree->next=start;
-      tree->skip=NULL;
-
-      tree->b=start->b;
-      tree->r2=start->r2;
-      }
-   else if (ref1->next==stop)
-      {
-      calcbound(start);
-      calcbound(ref1);
-
-      tree->next=start;
-      tree->skip=ref1;
-
-      mergebounds(tree);
-      }
-   else
-      {
-      tree->next=new TRIANGLEREF;
-      tree->skip=new TRIANGLEREF;
-
-      calcnode(start,ref1,tree->next);
-      calcnode(ref1,stop,tree->skip);
-
-      mergebounds(tree);
-      }
-   }
-
-// merge bounds of tree children
-void miniray::mergebounds(TRIANGLEREF *node)
-   {
-   double d;
-   double r1,r2;
-
-   d=(node->next->b-node->skip->b).getlength();
-
-   r1=sqrt(node->next->r2);
-   r2=sqrt(node->skip->r2);
-
-   if (r1>=d+r2)
-      {
-      node->b=node->next->b;
-      node->r2=node->next->r2;
-      }
-   else if (r2>=d+r1)
-      {
-      node->b=node->skip->b;
-      node->r2=node->skip->r2;
-      }
-   else
-      {
-      node->b=0.5*((r1-r2+d)/d*node->next->b+(r2-r1+d)/d*node->skip->b);
-      node->r2=0.25*FSQR(r1+r2+d);
-      }
-   }
-
-// check binary tree
-double miniray::checktree(TRIANGLEREF *node,
-                          const miniv3d &o,const miniv3d &d,double hitdist)
-   {
-   double result;
-   double result1,result2;
-
-   result=MAXFLOAT;
-
-   if (checkbound(o,d,node->b,node->r2)!=0)
-      if (node->array==NULL)
-         {
-         result1=result2=MAXFLOAT;
-
-         if (node->next!=NULL) result1=checktree(node->next,o,d,hitdist);
-
-         if (result1<hitdist) return(result1);
-
-         if (node->skip!=NULL) result2=checktree(node->skip,o,d,hitdist);
-
-         result=FMIN(result1,result2);
-         }
-      else result=calcdist(node,o,d,result);
-
-   return(result);
-   }
-
-// delete binary tree
-void miniray::deletetree(TRIANGLEREF *node)
-   {
-   if (node!=NULL)
-      if (node->array==NULL)
-         {
-         deletetree(node->next);
-         deletetree(node->skip);
-
-         delete node;
-         }
    }
 
 // set locking callbacks
