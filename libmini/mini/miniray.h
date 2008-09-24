@@ -113,6 +113,9 @@ class miniray
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);
 
+   inline int checkbbox(const miniv3d &o,const miniv3d &d,
+                        const miniv3d &b,const double r1,const double r2,const double r3);
+
    inline double checkdist(const miniv3d &o,const miniv3d &d,
                            const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 

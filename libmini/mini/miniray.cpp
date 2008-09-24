@@ -211,7 +211,6 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
       {
       if (ref->hasbound==0) calcbound(ref);
 
-      // warp matrix is assumed to be ortho-normal
       if (ref->warp==NULL)
          {
          oi=o;
@@ -226,7 +225,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
          oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
 
          ref->warp->gettra(tra);
-         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn);
+         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
 
          lastwarp=ref->warp;
          }
@@ -586,6 +585,67 @@ int miniray::checkbound(const miniv3d &o,const miniv3d &d,
    bmod=bmo*d;
    if (bmod<0.0) return(0);
    if (r2+bmod*bmod>bmo2) return(1);
+
+   return(0);
+   }
+
+// geometric ray/bbox intersection test
+int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
+                       const miniv3d &b,const double r1,const double r2,const double r3)
+   {
+   miniv3d h;
+   double l;
+
+   if (d.x!=0.0)
+      {
+      l=(b.x+r1-o.x)/d.x;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.y-b.y)<r2 && FABS(h.z-b.z)<r3) return(1);
+         }
+
+      l=(b.x-r1-o.x)/d.x;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.y-b.y)<r2 && FABS(h.z-b.z)<r3) return(1);
+         }
+      }
+
+   if (d.y!=0.0)
+      {
+      l=(b.y+r2-o.y)/d.y;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.x-b.x)<r1 && FABS(h.z-b.z)<r3) return(1);
+         }
+
+      l=(b.y-r2-o.y)/d.y;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.x-b.x)<r1 && FABS(h.z-b.z)<r3) return(1);
+         }
+      }
+
+   if (d.z!=0.0)
+      {
+      l=(b.z+r3-o.z)/d.z;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.x-b.x)<r1 && FABS(h.y-b.y)<r2) return(1);
+         }
+
+      l=(b.y-r3-o.z)/d.z;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (FABS(h.x-b.x)<r1 && FABS(h.y-b.y)<r2) return(1);
+         }
+      }
 
    return(0);
    }
