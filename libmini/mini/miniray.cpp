@@ -373,7 +373,10 @@ void miniray::calcbound(TRIANGLEREF *ref)
    vmax.z=vmax.z*ref->scaling.z+ref->offset.z;
 
    ref->b=0.5*(vmin+vmax);
-   ref->r=0.5*(vmax-vmin);
+
+   ref->r=miniv3d(0.5*FABS(vmax.x-vmin.x),
+                  0.5*FABS(vmax.y-vmin.y),
+                  0.5*FABS(vmax.z-vmin.z));
 
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
