@@ -4,6 +4,7 @@
 
 #include "mini.h"
 
+#include "minimath.h"
 #include "miniutm.h"
 
 #include "pnmbase.h"
@@ -210,6 +211,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    COL=ROW=0;
    PHASE=-1;
 
+   SWIZZLE=1;
+
    FOCUS=FALSE;
 
    RELSCALE0=1.0f;
@@ -229,6 +232,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
 
    PCOL=PROW=0;
    PUPDATE=0;
+
+   PSWIZZLE=1;
 
    REDUCTION=1.0f;
    RATIO=1.0f;
@@ -338,63 +343,6 @@ void minitile::copywarp(miniwarp *warp)
    else *WARP=*warp;
    }
 
-// swizzle position via implicit quad-tree
-void minitile::swizzlepos(int &x,int &y,int w,int h)
-   {
-   int pos,pmin,pmax,pmid;
-   int xmin,xmax,xmid,ymin,ymax,ymid;
-
-   return;
-
-   pos=x+y*w;
-
-   pmin=0;
-   pmax=w*h-1;
-
-   xmin=0;
-   xmax=w-1;
-
-   ymin=0;
-   ymax=h-1;
-
-   while (pmin<pmax)
-      if (xmax-xmin>ymax-ymin)
-         {
-         xmid=(xmin+xmax)/2;
-         pmid=pmin+(xmid-xmin+1)*(ymax-ymin+1)-1;
-
-         if (pos>pmid)
-            {
-            pmin=pmid+1;
-            xmin=xmid+1;
-            }
-         else
-            {
-            pmax=pmid;
-            xmax=xmid;
-            }
-         }
-      else
-         {
-         ymid=(ymin+ymax)/2;
-         pmid=pmin+(ymid-ymin+1)*(xmax-xmin+1)-1;
-
-         if (pos>pmid)
-            {
-            pmin=pmid+1;
-            ymin=ymid+1;
-            }
-         else
-            {
-            pmax=pmid;
-            ymax=ymid;
-            }
-         }
-
-   x=xmin;
-   y=ymin;
-   }
-
 // check the visibility of the tiles
 void minitile::checktiles(float ex,float ez,
                           float farp,float fovy,float aspect)
@@ -439,6 +387,22 @@ void minitile::checktiles(float ex,float ez,
 
    d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(ez+c*fmax(farp,PFARP)))/ROWDIM);
    PTOP=max(ROWS-1-min(max(ftrc(d)-1,0),ROWS-1),min(TOP+1,ROWS-1));
+
+   // calculate optimal swizzle parameters
+   for (SWIZZLE=13; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
+   for (PSWIZZLE=13; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
+   }
+
+// swizzle tile position
+void minitile::swizzletile(int &x,int &y,int w,int h,int s)
+   {
+   int pos;
+
+   pos=x+y*w;
+   pos=(s*pos)%(w*h);
+
+   x=pos%w;
+   y=pos/w;
    }
 
 // update a reloaded tile
@@ -706,7 +670,7 @@ void minitile::draw(float res,
          col=PCOL-PLEFT;
          row=PROW-PBOTTOM;
 
-         swizzlepos(col,row,width,height);
+         swizzletile(col,row,width,height,PSWIZZLE);
 
          col+=PLEFT;
          row+=PBOTTOM;
@@ -749,7 +713,7 @@ void minitile::draw(float res,
       col=COL-LEFT;
       row=ROW-BOTTOM;
 
-      swizzlepos(col,row,width,height);
+      swizzletile(col,row,width,height,SWIZZLE);
 
       col+=LEFT;
       row+=BOTTOM;

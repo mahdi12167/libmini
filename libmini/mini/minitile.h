@@ -245,6 +245,8 @@ class minitile
    int COL,ROW;
    int PHASE;
 
+   int SWIZZLE;
+
    int FOCUS;
    float FX,FY,FZ;
 
@@ -257,6 +259,8 @@ class minitile
 
    int PCOL,PROW;
    int PUPDATE;
+
+   int PSWIZZLE;
 
    float REDUCTION;
    float RATIO;
@@ -291,10 +295,10 @@ class minitile
 
    static char CONFIGURE_TILESETPATH[];
 
-   void swizzlepos(int &x,int &y,int w,int h);
-
    void checktiles(float ex,float ez,
                    float farp,float fovy,float aspect);
+
+   void swizzletile(int &x,int &y,int w,int h,int s);
 
    void updatetile(int col,int row);
 
