@@ -389,8 +389,8 @@ void minitile::checktiles(float ex,float ez,
    PTOP=max(ROWS-1-min(max(ftrc(d)-1,0),ROWS-1),min(TOP+1,ROWS-1));
 
    // calculate optimal swizzle parameters
-   for (SWIZZLE=13; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
-   for (PSWIZZLE=13; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
+   for (SWIZZLE=3; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
+   for (PSWIZZLE=3; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
    }
 
 // swizzle tile position
