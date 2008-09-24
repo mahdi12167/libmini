@@ -81,7 +81,7 @@ class miniray
 
       int hasbound;
 
-      miniv3d b;
+      miniv3d b,r;
       double r2;
 
       TRIANGLEREF *next;
@@ -114,7 +114,7 @@ class miniray
                          const miniv3d &b,const double r2);
 
    inline int checkbbox(const miniv3d &o,const miniv3d &d,
-                        const miniv3d &b,const double r1,const double r2,const double r3);
+                        const miniv3d &b,const miniv3d r);
 
    inline double checkdist(const miniv3d &o,const miniv3d &d,
                            const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);

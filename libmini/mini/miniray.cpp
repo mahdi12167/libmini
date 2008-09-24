@@ -231,10 +231,11 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
          }
 
       if (checkbound(oi,di,ref->b,ref->r2)!=0)
-         {
-         result=calcdist(ref,oi,di,result);
-         if (result<hitdist) break;
-         }
+         if (checkbbox(oi,di,ref->b,ref->r)!=0)
+            {
+            result=calcdist(ref,oi,di,result);
+            if (result<hitdist) break;
+            }
 
       ref=ref->next;
       }
@@ -371,7 +372,8 @@ void miniray::calcbound(TRIANGLEREF *ref)
    vmax.y=vmax.y*ref->scaling.y+ref->offset.y;
    vmax.z=vmax.z*ref->scaling.z+ref->offset.z;
 
-   ref->b=(vmin+vmax)/2.0;
+   ref->b=0.5*(vmin+vmax);
+   ref->r=0.5*(vmax-vmin);
 
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
@@ -591,59 +593,61 @@ int miniray::checkbound(const miniv3d &o,const miniv3d &d,
 
 // geometric ray/bbox intersection test
 int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
-                       const miniv3d &b,const double r1,const double r2,const double r3)
+                       const miniv3d &b,const miniv3d r)
    {
-   miniv3d h;
    double l;
+   miniv3d h;
+
+   if (FABS(o.x-b.x)<r.x && FABS(o.y-b.y)<r.y && FABS(o.z-b.z)<r.z) return(1);
 
    if (d.x!=0.0)
       {
-      l=(b.x+r1-o.x)/d.x;
+      l=(b.x+r.x-o.x)/d.x;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<r2 && FABS(h.z-b.z)<r3) return(1);
+         if (FABS(h.y-b.y)<r.y && FABS(h.z-b.z)<r.z) return(1);
          }
 
-      l=(b.x-r1-o.x)/d.x;
+      l=(b.x-r.x-o.x)/d.x;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<r2 && FABS(h.z-b.z)<r3) return(1);
+         if (FABS(h.y-b.y)<r.y && FABS(h.z-b.z)<r.z) return(1);
          }
       }
 
    if (d.y!=0.0)
       {
-      l=(b.y+r2-o.y)/d.y;
+      l=(b.y+r.y-o.y)/d.y;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r1 && FABS(h.z-b.z)<r3) return(1);
+         if (FABS(h.x-b.x)<r.x && FABS(h.z-b.z)<r.z) return(1);
          }
 
-      l=(b.y-r2-o.y)/d.y;
+      l=(b.y-r.y-o.y)/d.y;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r1 && FABS(h.z-b.z)<r3) return(1);
+         if (FABS(h.x-b.x)<r.x && FABS(h.z-b.z)<r.z) return(1);
          }
       }
 
    if (d.z!=0.0)
       {
-      l=(b.z+r3-o.z)/d.z;
+      l=(b.z+r.z-o.z)/d.z;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r1 && FABS(h.y-b.y)<r2) return(1);
+         if (FABS(h.x-b.x)<r.x && FABS(h.y-b.y)<r.y) return(1);
          }
 
-      l=(b.y-r3-o.z)/d.z;
+      l=(b.z-r.z-o.z)/d.z;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r1 && FABS(h.y-b.y)<r2) return(1);
+         if (FABS(h.x-b.x)<r.x && FABS(h.y-b.y)<r.y) return(1);
          }
       }
 
