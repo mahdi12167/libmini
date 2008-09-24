@@ -188,6 +188,14 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    TRIANGLEREF *ref;
 
+   miniwarp *lastwarp;
+
+   miniv4d inv[3];
+   miniv3d tra[3];
+
+   miniv4d o1;
+   miniv3d oi,di;
+
    lock();
 
    dn=d;
@@ -195,15 +203,37 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    result=MAXFLOAT;
 
+   lastwarp=NULL;
+
    ref=FRONT;
 
    while (ref!=NULL)
       {
       if (ref->hasbound==0) calcbound(ref);
 
-      if (checkbound(o,dn,ref->b,ref->r2)!=0)
+      // warp matrix is assumed to be ortho-normal
+      if (ref->warp==NULL)
          {
-         result=calcdist(ref,o,d,result);
+         oi=o;
+         di=dn;
+
+         lastwarp=NULL;
+         }
+      else if (ref->warp!=lastwarp)
+         {
+         ref->warp->getinv(inv);
+         o1=miniv4d(o.x,o.y,o.z,1.0);
+         oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
+
+         ref->warp->gettra(tra);
+         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn);
+
+         lastwarp=ref->warp;
+         }
+
+      if (checkbound(oi,di,ref->b,ref->r2)!=0)
+         {
+         result=calcdist(ref,oi,di,result);
          if (result<hitdist) break;
          }
 
@@ -241,8 +271,6 @@ void miniray::calcbound(TRIANGLEREF *ref)
 
    miniv3d v;
    miniv3d vmin,vmax;
-
-   miniv4d mtx[3],v1;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
@@ -346,14 +374,6 @@ void miniray::calcbound(TRIANGLEREF *ref)
 
    ref->b=(vmin+vmax)/2.0;
 
-   // warp matrix is assumed to be ortho-normal
-   if (ref->warp!=NULL)
-      {
-      ref->warp->getwarp(mtx);
-      v1=miniv4d(ref->b,1.0);
-      ref->b=miniv3d(mtx[0]*v1,mtx[1]*v1,mtx[2]*v1);
-      }
-
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
                  FSQR(vmax.z-vmin.z));
@@ -372,33 +392,11 @@ double miniray::calcdist(TRIANGLEREF *ref,
    float *array;
    int num,stride;
 
-   miniv4d o1;
-   miniv3d oi,di;
-
-   miniv4d inv[3];
-   miniv3d tra[3];
-
    miniv3d v1,v2,v3;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
    stride=ref->stride;
-
-   // warp matrix is assumed to be ortho-normal
-   if (ref->warp!=NULL)
-      {
-      ref->warp->getinv(inv);
-      o1=miniv4d(o.x,o.y,o.z,1.0);
-      oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
-
-      ref->warp->gettra(tra);
-      di=miniv3d(tra[0]*d,tra[1]*d,tra[2]*d);
-      }
-   else
-      {
-      oi=o;
-      di=d;
-      }
 
    result=dist;
 
@@ -436,7 +434,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            dist=checkdist(oi,di,v1,v2,v3);
+            dist=checkdist(o,d,v1,v2,v3);
 
             if (dist>0.0f) result=fmin(result,dist);
             }
@@ -473,7 +471,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            dist=checkdist(oi,di,v1,v2,v3);
+            dist=checkdist(o,d,v1,v2,v3);
 
             if (dist>0.0f) result=fmin(result,dist);
             }
@@ -517,7 +515,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               dist=checkdist(oi,di,v1,v2,v3);
+               dist=checkdist(o,d,v1,v2,v3);
 
                if (dist>0.0f) result=fmin(result,dist);
 
@@ -563,7 +561,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               dist=checkdist(oi,di,v1,v2,v3);
+               dist=checkdist(o,d,v1,v2,v3);
 
                if (dist>0.0f) result=fmin(result,dist);
 
