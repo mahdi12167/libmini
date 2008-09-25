@@ -1131,7 +1131,7 @@ miniv3d minilayer::getnormal()
    {return(rot_i2g(miniv3d(0.0,1.0,0.0),map_g2i(getcenter())));}
 
 // get the elevation at position (x,y,z)
-double minilayer::getheight(const minicoord &p)
+double minilayer::getheight(const minicoord &p,int approx)
    {
    float elev;
    minicoord pi;
@@ -1140,14 +1140,14 @@ double minilayer::getheight(const minicoord &p)
 
    pi=map_g2i(p);
 
-   elev=TERRAIN->getheight(pi.vec.x,pi.vec.z);
+   elev=TERRAIN->getheight(pi.vec.x,pi.vec.z,approx);
    if (elev==-MAXFLOAT) return(elev);
 
    return(len_i2g(elev));
    }
 
 // get the normal at position (x,y,z)
-miniv3d minilayer::getnormal(const minicoord &p)
+miniv3d minilayer::getnormal(const minicoord &p,int approx)
    {
    float nx,ny,nz;
    minicoord pi;
@@ -1156,7 +1156,7 @@ miniv3d minilayer::getnormal(const minicoord &p)
 
    pi=map_g2i(p);
 
-   TERRAIN->getnormal(pi.vec.x,pi.vec.z,&nx,&ny,&nz);
+   TERRAIN->getnormal(pi.vec.x,pi.vec.z,&nx,&ny,&nz,approx);
 
    return(rot_i2g(miniv3d(nx,ny,nz),pi));
    }

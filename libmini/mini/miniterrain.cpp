@@ -691,7 +691,7 @@ minicoord miniterrain::getcenter(int n)
    }
 
 // get the elevation at position (x,y,z)
-double miniterrain::getheight(const minicoord &p)
+double miniterrain::getheight(const minicoord &p,int approx)
    {
    int n;
 
@@ -705,7 +705,7 @@ double miniterrain::getheight(const minicoord &p)
 
       if (isdisplayed(nst) && !isculled(nst))
          {
-         elev=LAYER[nst]->getheight(p);
+         elev=LAYER[nst]->getheight(p,approx);
          if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nst]->len_g2l(elev)));
          }
 
@@ -713,7 +713,7 @@ double miniterrain::getheight(const minicoord &p)
          if (n!=nst)
             if (isdisplayed(n) && !isculled(n))
                {
-               elev=LAYER[n]->getheight(p);
+               elev=LAYER[n]->getheight(p,approx);
                if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
                }
       }
@@ -722,7 +722,7 @@ double miniterrain::getheight(const minicoord &p)
    }
 
 // get the normal at position (x,y,z)
-miniv3d miniterrain::getnormal(const minicoord &p)
+miniv3d miniterrain::getnormal(const minicoord &p,int approx)
    {
    int n;
 
@@ -736,7 +736,7 @@ miniv3d miniterrain::getnormal(const minicoord &p)
 
       if (isdisplayed(nst) && !isculled(nst))
          {
-         nrml=LAYER[nst]->getnormal(p);
+         nrml=LAYER[nst]->getnormal(p,approx);
          if (nrml!=miniv3d(0.0)) return(nrml);
          }
 
@@ -744,7 +744,7 @@ miniv3d miniterrain::getnormal(const minicoord &p)
          if (n!=nst)
             if (isdisplayed(n) && !isculled(n))
                {
-               nrml=LAYER[n]->getnormal(p);
+               nrml=LAYER[n]->getnormal(p,approx);
                if (nrml!=miniv3d(0.0)) return(nrml);
                }
       }

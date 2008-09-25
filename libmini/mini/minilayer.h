@@ -241,10 +241,10 @@ class minilayer
    miniv3d getnormal();
 
    //! get the elevation at position (x,y,z)
-   double getheight(const minicoord &p);
+   double getheight(const minicoord &p,int approx=1);
 
    //! get the normal at position (x,y,z)
-   miniv3d getnormal(const minicoord &p);
+   miniv3d getnormal(const minicoord &p,int approx=1);
 
    //! get initial view point
    minicoord getinitial();

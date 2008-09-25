@@ -1077,9 +1077,9 @@ float minitile::getfogheight(float x,float z,int approx)
    }
 
 // calculate the normal vector at position (x,z)
-void minitile::getnormal(float x,float z,float *nx,float *ny,float *nz)
+void minitile::getnormal(float x,float z,float *nx,float *ny,float *nz,int approx)
    {
-   switch (setblock(x,z))
+   switch (setblock(x,z,approx))
       {
       case 1: mini::getnormal(x,z,nx,ny,nz); break;
       case 2: Mini::getnormal(x,z,nx,ny,nz); break;
@@ -1108,11 +1108,7 @@ int minitile::getdim(float x,float z,float *dimx,float *dimz,float *radius2)
    if (pi==COLS) bi--;
    if (pj==ROWS) bj--;
 
-   if (MAP[bi+bj*COLS]==NULL)
-      {
-      if (REQUEST_CALLBACK!=NULL) REQUEST_CALLBACK(bi,bj,0,REQUEST_OBJ);
-      if (MAP[bi+bj*COLS]==NULL) return(0);
-      }
+   if (MAP[bi+bj*COLS]==NULL) return(0);
 
    dx=DIM[bi+bj*COLS];
    dz=dx*CELLASPECT;

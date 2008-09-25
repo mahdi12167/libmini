@@ -63,7 +63,7 @@ class miniload
    //! get-functions for geometric properties
    float getheight(float x,float z,int approx=0);
    float getfogheight(float x,float z,int approx=0);
-   void getnormal(float x,float z,float *nx,float *ny,float *nz);
+   void getnormal(float x,float z,float *nx,float *ny,float *nz,int approx=0);
    int getdim(float x,float z,float *dimx,float *dimz,float *radius2=0);
 
    //! get-functions for fog properties

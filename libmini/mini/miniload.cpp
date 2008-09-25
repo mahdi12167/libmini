@@ -952,10 +952,10 @@ float miniload::getfogheight(float x,float z,int approx)
    }
 
 // calculate the normal vector at position (x,z)
-void miniload::getnormal(float x,float z,float *nx,float *ny,float *nz)
+void miniload::getnormal(float x,float z,float *nx,float *ny,float *nz,int approx)
    {
    if (TILE==NULL) ERRORMSG();
-   TILE->getnormal(x,z,nx,ny,nz);
+   TILE->getnormal(x,z,nx,ny,nz,approx);
    }
 
 // calculate the cell dimension at position (x,z)
