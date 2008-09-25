@@ -601,23 +601,23 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
    double l;
    miniv3d h;
 
-   if (FABS(o.x-b.x)<r.x && FABS(o.y-b.y)<r.y && FABS(o.z-b.z)<r.z) return(1);
-
    if (d.x!=0.0)
       {
       l=(b.x+r.x-o.x)/d.x;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<r.y && FABS(h.z-b.z)<r.z) return(1);
+         if (FABS(h.y-b.y)<=r.y && FABS(h.z-b.z)<=r.z) return(1);
          }
+      else if (d.x>0.0) return(0);
 
       l=(b.x-r.x-o.x)/d.x;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<r.y && FABS(h.z-b.z)<r.z) return(1);
+         if (FABS(h.y-b.y)<=r.y && FABS(h.z-b.z)<=r.z) return(1);
          }
+      else if (d.x<0.0) return(0);
       }
 
    if (d.y!=0.0)
@@ -626,15 +626,17 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r.x && FABS(h.z-b.z)<r.z) return(1);
+         if (FABS(h.x-b.x)<=r.x && FABS(h.z-b.z)<=r.z) return(1);
          }
+      else if (d.y>0.0) return(0);
 
       l=(b.y-r.y-o.y)/d.y;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r.x && FABS(h.z-b.z)<r.z) return(1);
+         if (FABS(h.x-b.x)<=r.x && FABS(h.z-b.z)<=r.z) return(1);
          }
+      else if (d.y<0.0) return(0);
       }
 
    if (d.z!=0.0)
@@ -643,15 +645,17 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r.x && FABS(h.y-b.y)<r.y) return(1);
+         if (FABS(h.x-b.x)<=r.x && FABS(h.y-b.y)<=r.y) return(1);
          }
+      else if (d.z>0.0) return(0);
 
       l=(b.z-r.z-o.z)/d.z;
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<r.x && FABS(h.y-b.y)<r.y) return(1);
+         if (FABS(h.x-b.x)<=r.x && FABS(h.y-b.y)<=r.y) return(1);
          }
+      else if (d.z<0.0) return(0);
       }
 
    return(0);
