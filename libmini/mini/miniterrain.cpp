@@ -721,6 +721,37 @@ double miniterrain::getheight(const minicoord &p)
    return(-MAXFLOAT);
    }
 
+// get the normal at position (x,y,z)
+miniv3d miniterrain::getnormal(const minicoord &p)
+   {
+   int n;
+
+   int nst;
+
+   miniv3d nrml;
+
+   if (LNUM>0)
+      {
+      nst=getnearest(p);
+
+      if (isdisplayed(nst) && !isculled(nst))
+         {
+         nrml=LAYER[nst]->getnormal(p);
+         if (nrml!=miniv3d(0.0)) return(nrml);
+         }
+
+      for (n=0; n<LNUM; n++)
+         if (n!=nst)
+            if (isdisplayed(n) && !isculled(n))
+               {
+               nrml=LAYER[n]->getnormal(p);
+               if (nrml!=miniv3d(0.0)) return(nrml);
+               }
+      }
+
+   return(miniv3d(0.0));
+   }
+
 // get initial view point
 minicoord miniterrain::getinitial()
    {

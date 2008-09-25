@@ -1146,6 +1146,21 @@ double minilayer::getheight(const minicoord &p)
    return(len_i2g(elev));
    }
 
+// get the normal at position (x,y,z)
+miniv3d minilayer::getnormal(const minicoord &p)
+   {
+   float nx,ny,nz;
+   minicoord pi;
+
+   if (!LOADED || TERRAIN==NULL) return(miniv3d(0.0));
+
+   pi=map_g2i(p);
+
+   TERRAIN->getnormal(pi.vec.x,pi.vec.z,&nx,&ny,&nz);
+
+   return(rot_i2g(miniv3d(nx,ny,nz),pi));
+   }
+
 // get initial view point
 minicoord minilayer::getinitial()
    {

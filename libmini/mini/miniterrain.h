@@ -279,6 +279,9 @@ class miniterrain
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p);
 
+   //! get the normal at position (x,y,z)
+   miniv3d getnormal(const minicoord &p);
+
    //! get initial view point
    minicoord getinitial();
 

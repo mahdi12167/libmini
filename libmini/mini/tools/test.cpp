@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#undef OpenGL // enable this to open an OpenGL window
+#undef OpenGL // enable this to create an OpenGL window
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
