@@ -601,10 +601,6 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    databuf hfield,texture,fogmap;
 
-   if (obj->HFIELDS[col+row*cols]==NULL) return;
-
-   obj->LRU[col+row*cols]=obj->TIME;
-
    minitile::configure_minres(obj->CONFIGURE_MINRES);
    minitile::configure_maxd2(obj->CONFIGURE_MAXD2);
    minitile::configure_sead2(obj->CONFIGURE_SEAD2);
@@ -617,6 +613,10 @@ void miniload::request(int col,int row,int needtex,void *data)
 
    obj->checklods(col,row,0);
    if (needtex>0) obj->checktexs(col,row,0);
+
+   if (obj->HFIELDS[col+row*cols]==NULL) return;
+
+   obj->LRU[col+row*cols]=obj->TIME;
 
    if (obj->PRELOAD_CALLBACK!=NULL)
       {
@@ -706,8 +706,6 @@ void miniload::preload(int col,int row,void *data)
 
    int updatelod,updatetex;
 
-   if (obj->HFIELDS[col+row*cols]==NULL) return;
-
    if (obj->PRELOAD_CALLBACK==NULL)
       {
       request(col,row,1,data);
@@ -727,7 +725,9 @@ void miniload::preload(int col,int row,void *data)
    obj->checklods(col,row,obj->PRELOD);
    obj->checktexs(col,row,obj->PRETEX);
 
-   if (tile->isloaded(col,row)==0 || tile->isloaded(col,row)==0)
+   if (obj->HFIELDS[col+row*cols]==NULL) return;
+
+   if (tile->isloaded(col,row)==0 || tile->gettexid(col,row)==0)
       if (obj->MANDATORY[col+row*cols]!=0) return;
 
    updatelod=updatetex=0;
@@ -1681,7 +1681,7 @@ void miniload::updateroi(float res,
    for (i=left; i<=right; i++)
       for (j=bottom; j<=top; j++)
          {
-         needtex=(TEXTURES[i+j*COLS]!=NULL && TILE->gettexid(i,j)==0)?1:0;
+         needtex=(TILE->gettexid(i,j)==0)?1:0;
          if (TILE->isloaded(i,j)==0 || needtex!=0) request(i,j,needtex,this);
          }
    }
