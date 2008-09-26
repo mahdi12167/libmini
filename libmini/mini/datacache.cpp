@@ -501,22 +501,20 @@ void datacache::loadvtbelevini()
                      else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
                      fullname=strcct(pathname,filename);
-                     insertfilename(fullname,TRUE,LOCAL,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
+                     insertfilename(fullname,TRUE,LOCAL,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,FALSE);
                      free(fullname);
                      }
 
                // register first non-existent lod with data cache
-               if (minlod==0 || minlod>1)
+               if (minlod>1 || minlod<=0)
                   {
                   lod=minlod-1;
 
                   if (lod>=0) snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
                   else snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
 
-                  lod=max(lod,0);
-
                   fullname=strcct(pathname,filename);
-                  insertfilename(fullname,FALSE,FALSE,TRUE,FALSE,ELEVINI_MINELEV,ELEVINI_MAXELEV,(1<<lod)+1,(1<<lod)+1,TRUE,TRUE);
+                  insertfilename(fullname,FALSE,FALSE,TRUE,FALSE,1.0f,0.0f,0,0,TRUE,FALSE);
                   free(fullname);
                   }
 
@@ -634,22 +632,20 @@ void datacache::loadvtbimagini()
                      else snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod); // write actual lod in mini notation
 
                      fullname=strcct(pathname,filename);
-                     insertfilename(fullname,TRUE,LOCAL,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
+                     insertfilename(fullname,TRUE,LOCAL,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,FALSE);
                      free(fullname);
                      }
 
                // register first non-existent lod with data cache
-               if (minlod==0 || minlod>1)
+               if (minlod>1 || minlod<=0)
                   {
                   lod=minlod-1;
 
                   if (lod>=0) snprintf(filename,maxstr,"/tile.%d-%d.db%d",col,row,maxlod-lod);
                   else snprintf(filename,maxstr,"/tile.%d-%d.db",col,row);
 
-                  lod=max(lod,0);
-
                   fullname=strcct(pathname,filename);
-                  insertfilename(fullname,FALSE,FALSE,FALSE,TRUE,1.0f,0.0f,1<<lod,1<<lod,TRUE,TRUE);
+                  insertfilename(fullname,FALSE,FALSE,FALSE,TRUE,1.0f,0.0f,0,0,TRUE,FALSE);
                   free(fullname);
                   }
 
