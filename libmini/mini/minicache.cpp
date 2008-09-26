@@ -1452,7 +1452,7 @@ void minicache::setseashader(const char *sp)
       TEX colt,fragment.texcoord[0],texture[0],2D; \n\
       MAD colt,colt,a.x,a.y; \n\
       ### modulate with fragment color \n\
-      MUL col.xyz,col,colt; \n\
+      MUL col,col,colt; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
