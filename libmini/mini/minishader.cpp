@@ -622,7 +622,7 @@ void minishader::setNPRbathymap(unsigned char *bathymap,
    NPRBATHYMOD=1;
    }
 
-// set contour line mode (0=all 1=bathymetry)
+// set contour line mode (0=full 1=bathy)
 void minishader::setcontourmode(int mode)
    {CONTOURMODE=mode;}
 

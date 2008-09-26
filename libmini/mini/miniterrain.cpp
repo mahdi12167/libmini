@@ -134,6 +134,7 @@ miniterrain::miniterrain()
    TPARAMS.bathycomps=0;         // components of colormap (either 3 or 4)
 
    TPARAMS.contours=10.0f;       // contour distance in meters
+   TPARAMS.contourmode=0;        // contour line mode (0=full 1=bathy)
 
    TPARAMS.seacolor[0]=0.0f;     // color of sea surface (matches with Blue Marble default sea color)
    TPARAMS.seacolor[1]=0.0f;     // color of sea surface (matches with Blue Marble default sea color)
@@ -161,6 +162,7 @@ miniterrain::miniterrain()
    TPARAMS.nprbathycomps=0;      // components of colormap (either 3 or 4)
 
    TPARAMS.nprcontours=100.0f;   // NPR contour distance in meters
+   TPARAMS.nprcontourmode=1;     // contour line mode (0=full 1=bathy)
 
    TPARAMS.nprseacolor[0]=0.5f;  // NPR color of sea surface
    TPARAMS.nprseacolor[1]=0.75f; // NPR color of sea surface
@@ -847,6 +849,7 @@ void miniterrain::render()
       if (TPARAMS.useshaders)
          {
          if (TPARAMS.usevisshader)
+            {
             minishader::setVISshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -859,7 +862,11 @@ void miniterrain::render()
                                      TPARAMS.seatrans,TPARAMS.bottomtrans,
                                      TPARAMS.bottomcolor,
                                      TPARAMS.seamodulate);
+
+            minishader::setcontourmode(TPARAMS.contourmode);
+            }
          else if (TPARAMS.usenprshader)
+            {
             minishader::setNPRshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -871,6 +878,9 @@ void miniterrain::render()
                                      fmax(TPARAMS.sealevel,0.0f),
                                      TPARAMS.nprseacolor,TPARAMS.nprseatrans,
                                      TPARAMS.nprseagray);
+
+            minishader::setcontourmode(TPARAMS.nprcontourmode);
+            }
          else
             {
             CACHE->setvtxshader();

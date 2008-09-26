@@ -135,6 +135,7 @@ class miniterrain
       int bathywidth,bathyheight,bathycomps;
 
       float contours;
+      int contourmode;
 
       float seacolor[3];
 
@@ -156,6 +157,7 @@ class miniterrain
       int nprbathywidth,nprbathyheight,nprbathycomps;
 
       float nprcontours;
+      int nprcontourmode;
 
       float nprseacolor[3];
 
