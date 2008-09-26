@@ -1419,10 +1419,14 @@ modulating texture environment.<p>
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
-      TEMP col,nrm,len; \n\
+      TEMP col,colt,nrm,len; \n\
+      ### fetch fragment color \n\
+      MOV col,fragment.color; \n\
       ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.y; \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      ### modulate with fragment color \n\
+      MUL col,col,colt; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -1431,8 +1435,8 @@ modulating texture environment.<p>
       DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with fragment color \n\
-      MUL result.color,col,fragment.color; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
       END \n";
 </pre>
 
@@ -1453,20 +1457,24 @@ will show contours:<p>
    cache.usevtxshader();
 
    // fragment program for adding contour lines to the bathymetry
-   static const char *frgprog="!!ARBfp1.0\
-      PARAM c0=program.env[0];\
-      TEMP col,vtx;\
-      TEX col,fragment.texcoord[0],texture[0],2D;\
-      MUL vtx.x,fragment.texcoord[0].z,c0.x;\
-      FRC vtx.y,vtx.x;\
-      MAD vtx.y,vtx.y,c0.z,-c0.w;\
-      ABS vtx.y,vtx.y;\
-      SUB vtx.y,c0.w,vtx.y;\
-      MUL_SAT vtx.y,vtx.y,c0.y;\
-      CMP vtx.y,vtx.x,vtx.y,c0.w;\
-      MUL col.xyz,col,vtx.y;\
-      MUL result.color,col,fragment.color;\
-      END";
+   static const char *frgprog="!!ARBfp1.0 \n\
+      PARAM a=program.env[0]; \n\
+      PARAM c0=program.env[5]; \n\
+      TEMP col,colt,vtx; \n\
+      MOV col,fragment.color; \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      MUL col,col,colt; \n\
+      MUL vtx.x,fragment.texcoord[0].z,c0.x; \n\
+      FRC vtx.y,vtx.x; \n\
+      MAD vtx.y,vtx.y,c0.z,-c0.w; \n\
+      ABS vtx.y,vtx.y; \n\
+      SUB vtx.y,c0.w,vtx.y; \n\
+      MUL_SAT vtx.y,vtx.y,c0.y; \n\
+      CMP vtx.y,vtx.x,vtx.y,c0.w; \n\
+      MUL col.xyz,col,vtx.y; \n\
+      MOV result.color,col; \n\
+      END \n";
 
    // enable pixel shader plugin
    cache.setpixshader(frgprog);

@@ -1255,10 +1255,14 @@ void minicache::setpixshader(const char *fp)
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
-      TEMP col,nrm,len; \n\
+      TEMP col,colt,nrm,len; \n\
+      ### fetch fragment color \n\
+      MOV col,fragment.color; \n\
       ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.y; \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      ### modulate with fragment color \n\
+      MUL col,col,colt; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -1267,8 +1271,8 @@ void minicache::setpixshader(const char *fp)
       DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with fragment color \n\
-      MUL result.color,col,fragment.color; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
       END \n";
 
    if (fp==NULL) fp=frgprog;
@@ -1441,10 +1445,14 @@ void minicache::setseashader(const char *sp)
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
-      TEMP col,nrm,len; \n\
+      TEMP col,colt,nrm,len; \n\
+      ### fetch fragment color \n\
+      MOV col,fragment.color; \n\
       ### fetch texture color \n\
-      TEX col,fragment.texcoord[0],texture[0],2D; \n\
-      MAD col,col,a.x,a.y; \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      ### modulate with fragment color \n\
+      MUL col.xyz,col,colt; \n\
       ### modulate with directional light \n\
       MOV nrm,fragment.texcoord[1]; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -1453,8 +1461,8 @@ void minicache::setseashader(const char *sp)
       DP3_SAT nrm.z,nrm,l; \n\
       MAD nrm.z,nrm.z,p.x,p.y; \n\
       MUL_SAT col.xyz,col,nrm.z; \n\
-      ### modulate with fragment color \n\
-      MUL result.color,col,fragment.color; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
       END \n";
 
    if (sp==NULL) sp=seaprog;

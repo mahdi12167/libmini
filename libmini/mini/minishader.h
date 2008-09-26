@@ -60,7 +60,7 @@ class minishader
    static float DETAILTEXALPHA;
    static int DETAILTEXMASK;
 
-   static char *concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7,const char *s8,const char *s9);
+   static char *concatprog(const char *s1,const char *s2,const char *s3,const char *s4,const char *s5,const char *s6,const char *s7,const char *s8,const char *s9,const char *s10);
    };
 
 #endif

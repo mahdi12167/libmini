@@ -1259,55 +1259,63 @@ int main(int argc,char *argv[])
    cache.usevtxshader(sw_contours);
 
    // fragment program for adding contour lines to the bathymetry
-   static const char *fragprog1="!!ARBfp1.0\
-      PARAM c0=program.env[0];\
-      TEMP col,vtx;\
-      TEX col,fragment.texcoord[0],texture[0],2D;\
-      MUL vtx.x,fragment.texcoord[0].z,c0.x;\
-      FRC vtx.y,vtx.x;\
-      MAD vtx.y,vtx.y,c0.z,-c0.w;\
-      ABS vtx.y,vtx.y;\
-      SUB vtx.y,c0.w,vtx.y;\
-      MUL_SAT vtx.y,vtx.y,c0.y;\
-      CMP vtx.y,vtx.x,vtx.y,c0.w;\
-      MUL col,col,vtx.y;\
-      MUL result.color,col,fragment.color;\
-      END";
+   static const char *frgprog1="!!ARBfp1.0 \n\
+      PARAM a=program.env[0]; \n\
+      PARAM c0=program.env[5]; \n\
+      TEMP col,colt,vtx; \n\
+      MOV col,fragment.color; \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      MUL col,col,colt; \n\
+      MUL vtx.x,fragment.texcoord[0].z,c0.x; \n\
+      FRC vtx.y,vtx.x; \n\
+      MAD vtx.y,vtx.y,c0.z,-c0.w; \n\
+      ABS vtx.y,vtx.y; \n\
+      SUB vtx.y,c0.w,vtx.y; \n\
+      MUL_SAT vtx.y,vtx.y,c0.y; \n\
+      CMP vtx.y,vtx.x,vtx.y,c0.w; \n\
+      MUL col.xyz,col,vtx.y; \n\
+      MOV result.color,col; \n\
+      END \n";
 
    // fragment program for shading normal maps
-   static const char *fragprog2="!!ARBfp1.0\
-      PARAM c0=program.env[0];\
-      PARAM c1=program.env[1];\
-      PARAM c2=program.env[2];\
-      PARAM t=program.env[8];\
-      TEMP col,nrm;\
-      TEX nrm,fragment.texcoord[0],texture[0],2D;\
-      MAD nrm.xy,nrm,c0.x,c0.y;\
-      MOV col.w,nrm.z;\
-      MAD nrm.z,nrm.x,nrm.x,c0.y;\
-      MAD nrm.z,nrm.y,nrm.y,nrm.z;\
-      RSQ nrm.z,-nrm.z;\
-      RCP_SAT nrm.z,nrm.z;\
-      MAD_SAT col.x,fragment.texcoord[0].z,c1.x,c1.y;\
-      MAD col.x,col.x,t.x,t.y;\
-      MAD col.y,nrm.z,t.z,t.w;\
-      TEX col.xyz,col,texture[1],2D;\
-      MUL col.xyz,col,col.w;\
-      DP3_SAT nrm,nrm,c2;\
-      MAD nrm,nrm,c0.z,c0.w;\
-      MUL col,col,nrm;\
-      MUL result.color,col,fragment.color;\
-      END";
+   static const char *frgprog2="!!ARBfp1.0 \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      TEMP col,colt,nrm; \n\
+      MOV col,fragment.color; \n\
+      TEX nrm,fragment.texcoord[0],texture[0],2D; \n\
+      MUL nrm,nrm,a.x; \n\
+      MAD nrm.xy,nrm,c0.x,c0.y; \n\
+      MOV colt.w,nrm.z; \n\
+      MAD nrm.z,nrm.x,nrm.x,c0.y; \n\
+      MAD nrm.z,nrm.y,nrm.y,nrm.z; \n\
+      RSQ nrm.z,-nrm.z; \n\
+      RCP_SAT nrm.z,nrm.z; \n\
+      MAD_SAT colt.x,fragment.texcoord[0].z,c1.x,c1.y; \n\
+      MAD colt.x,colt.x,t.x,t.y; \n\
+      MAD colt.y,nrm.z,t.z,t.w; \n\
+      TEX colt.xyz,colt,texture[1],2D; \n\
+      MUL colt.xyz,colt,colt.w; \n\
+      MUL col.xyz,col,colt; \n\
+      DP3_SAT nrm,nrm,c2; \n\
+      MAD nrm,nrm,c0.z,c0.w; \n\
+      MUL col.xyz,col,nrm; \n\
+      MOV result.color,col; \n\
+      END \n";
 
    // use pixel shader plugin
-   cache.setpixshader(fragprog1);
+   cache.setpixshader(frgprog1);
    cache.setpixshaderparams(scale/1000.0f,3.0f,2.0f,1.0f);
    cache.usepixshader(sw_contours);
 
    // override pixel shader plugin
    if (sw_normals!=0)
       {
-      cache.setpixshader(fragprog2);
+      cache.setpixshader(frgprog2);
       cache.setpixshaderparams(2.0f,-1.0f,0.75f,0.25f,0);
       cache.setpixshaderparams(scale/2000.0f,0.0f,0.0f,0.0f,1);
       cache.usepixshader(1);
