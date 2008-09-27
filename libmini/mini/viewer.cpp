@@ -959,7 +959,7 @@ void render()
 
    // check for eye movement:
 
-   if (FABS(speed-topspeed)>VIEWER_MINDIFF) wakeup=1;
+   if (FABS(speed)>VIEWER_MINDIFF) wakeup=1;
    if (FABS(angle-turn)>VIEWER_MINDIFF) wakeup=1;
    if (FABS(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
    if (FABS(dez)>VIEWER_MINDIFF) wakeup=1;
