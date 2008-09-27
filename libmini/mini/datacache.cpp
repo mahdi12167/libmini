@@ -990,7 +990,7 @@ int datacache::myinquiry(int col,int row,const unsigned char *mapfile,int hlod,f
    return(1);
    }
 
-void datacache::myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey)
+int datacache::myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey)
    {
    char *filename;
 
@@ -1010,7 +1010,7 @@ void datacache::myquery(int col,int row,const unsigned char *texfile,int tlod,in
 
    if (info==NULL) ERRORMSG();
 
-   if (!info->isavailable) ERRORMSG();
+   if (!info->isavailable) return(0);
 
    if (info->width==0 || info->height==0)
       {
@@ -1024,6 +1024,8 @@ void datacache::myquery(int col,int row,const unsigned char *texfile,int tlod,in
 
    *tsizex=info->width;
    *tsizey=info->height;
+
+   return(1);
    }
 
 // concatenate source file name
@@ -1249,10 +1251,10 @@ int datacache::mystaticinquiry(int col,int row,const unsigned char *mapfile,int 
    return(mycache->myinquiry(col,row,mapfile,hlod,minvalue,maxvalue));
    }
 
-void datacache::mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
+int datacache::mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey)
    {
    datacache *mycache=(datacache *)data;
-   mycache->myquery(col,row,texfile,tlod,tsizex,tsizey);
+   return(mycache->myquery(col,row,texfile,tlod,tsizex,tsizey));
    }
 
 // configuring:

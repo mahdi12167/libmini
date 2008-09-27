@@ -135,7 +135,7 @@ class datacloud
    void setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
 
    //! set optional callback for query of texture map base size
-   void setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
+   void setquery(int (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
 
    //! set scheduling properties
    void setschedule(double timeslot=0.02,double expire=0.5,double maxdelay=1.0);

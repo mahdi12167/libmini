@@ -319,7 +319,7 @@ void datacloud::setinquiry(int (*inquiry)(int col,int row,const unsigned char *m
    {TERRAIN->setinquiry(inquiry,data);}
 
 // set optional callback for query of texture map base size
-void datacloud::setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
+void datacloud::setquery(int (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
    {TERRAIN->setquery(query,data);}
 
 // set scheduling properties

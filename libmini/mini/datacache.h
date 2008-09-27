@@ -187,7 +187,7 @@ class datacache
    void myrequest(const unsigned char *mapfile,databuf *map,int istexture,int background);
    int mycheck(const unsigned char *mapfile,int istexture);
    int myinquiry(int col,int row,const unsigned char *mapfile,int hlod,float *minvalue,float *maxvalue);
-   void myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey);
+   int myquery(int col,int row,const unsigned char *texfile,int tlod,int *tsizex,int *tsizey);
 
    char *sourcefilename(const char *id,const char *filename);
    char *localfilename(const char *filename);
@@ -293,7 +293,7 @@ class datacache
    static void mystaticrequest(const unsigned char *mapfile,databuf *map,int istexture,int background,void *data);
    static int mystaticcheck(const unsigned char *mapfile,int istexture,void *data);
    static int mystaticinquiry(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
-   static void mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
+   static int mystaticquery(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
    };
 
 #endif

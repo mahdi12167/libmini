@@ -316,6 +316,7 @@ void miniload::checklods(int col,int row,int prelod)
    unsigned char *newlod;
 
    int present;
+   float minvalue,maxvalue;
 
    if (MAXLOD[col+row*COLS]<0)
       {
@@ -323,8 +324,10 @@ void miniload::checklods(int col,int row,int prelod)
 
       if (HFIELDS[col+row*COLS]==NULL) return;
 
-      if (REQUEST_CALLBACK==NULL) present=(checkfile((char *)HFIELDS[col+row*COLS])!=0);
-      else present=(REQUEST_CALLBACK(col,row,HFIELDS[col+row*COLS],0,NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL)!=0);
+      if (INQUIRY_CALLBACK==NULL)
+         if (REQUEST_CALLBACK==NULL) present=checkfile((char *)HFIELDS[col+row*COLS]);
+         else present=REQUEST_CALLBACK(col,row,HFIELDS[col+row*COLS],0,NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL);
+      else present=INQUIRY_CALLBACK(col,row,HFIELDS[col+row*COLS],0,INQUIRY_DATA,&minvalue,&maxvalue);
 
       if (present==0)
          {
@@ -344,8 +347,11 @@ void miniload::checklods(int col,int row,int prelod)
          newlod=updatelod(col,row,1);
          ACTLOD[col+row*COLS]=NEWLOD[col+row*COLS];
 
-         if (REQUEST_CALLBACK==NULL) present=(checkfile((char *)newlod)!=0);
-         else present=(REQUEST_CALLBACK(col,row,newlod,NEWLOD[col+row*COLS],NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL)!=0);
+         if (INQUIRY_CALLBACK==NULL)
+            if (REQUEST_CALLBACK==NULL) present=checkfile((char *)newlod);
+            else present=REQUEST_CALLBACK(col,row,newlod,NEWLOD[col+row*COLS],NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL);
+         else if ((present=INQUIRY_CALLBACK(col,row,newlod,NEWLOD[col+row*COLS],INQUIRY_DATA,&minvalue,&maxvalue))!=0)
+            if (minvalue==maxvalue) present=0;
 
          if (present==0)
             {
@@ -370,8 +376,8 @@ void miniload::checklods(int col,int row,int prelod)
                {
                updatefog(col,row);
 
-               if (REQUEST_CALLBACK==NULL) present=(checkfile((char *)FOGS[col+row*COLS])!=0);
-               else present=(REQUEST_CALLBACK(col,row,NULL,NEWLOD[col+row*COLS],NULL,0,FOGS[col+row*COLS],REQUEST_DATA,NULL,NULL,NULL)!=0);
+               if (REQUEST_CALLBACK==NULL) present=checkfile((char *)FOGS[col+row*COLS]);
+               else present=REQUEST_CALLBACK(col,row,NULL,NEWLOD[col+row*COLS],NULL,0,FOGS[col+row*COLS],REQUEST_DATA,NULL,NULL,NULL);
 
                if (present==0)
                   {
@@ -460,8 +466,10 @@ void miniload::checktexs(int col,int row,int pretex)
 
       if (HFIELDS[col+row*COLS]==NULL || TEXTURES[col+row*COLS]==NULL) return;
 
-      if (REQUEST_CALLBACK==NULL) present=(checkfile((char *)TEXTURES[col+row*COLS])!=0);
-      else present=(REQUEST_CALLBACK(col,row,NULL,0,TEXTURES[col+row*COLS],0,NULL,REQUEST_DATA,NULL,NULL,NULL)!=0);
+      if (QUERY_CALLBACK==NULL)
+         if (REQUEST_CALLBACK==NULL) present=checkfile((char *)TEXTURES[col+row*COLS]);
+         else present=REQUEST_CALLBACK(col,row,NULL,0,TEXTURES[col+row*COLS],0,NULL,REQUEST_DATA,NULL,NULL,NULL);
+      else present=QUERY_CALLBACK(col,row,TEXTURES[col+row*COLS],0,QUERY_DATA,&width,&height);
 
       if (present==0)
          {
@@ -481,8 +489,10 @@ void miniload::checktexs(int col,int row,int pretex)
          newtex=updatetex(col,row,1);
          ACTTEX[col+row*COLS]=NEWTEX[col+row*COLS];
 
-         if (REQUEST_CALLBACK==NULL) present=(checkfile((char *)newtex)!=0);
-         else present=(REQUEST_CALLBACK(col,row,NULL,0,newtex,NEWTEX[col+row*COLS],NULL,REQUEST_DATA,NULL,NULL,NULL)!=0);
+         if (QUERY_CALLBACK==NULL)
+            if (REQUEST_CALLBACK==NULL) present=checkfile((char *)newtex);
+            else present=REQUEST_CALLBACK(col,row,NULL,0,newtex,NEWTEX[col+row*COLS],NULL,REQUEST_DATA,NULL,NULL,NULL);
+         else present=QUERY_CALLBACK(col,row,newtex,NEWTEX[col+row*COLS],QUERY_DATA,&width,&height);
 
          if (present==0)
             {
@@ -1087,6 +1097,9 @@ int miniload::load(int cols,int rows,
    int width,height,components;
    PNMcomment comment;
 
+   int present;
+   float minvalue,maxvalue;
+
    databuf hfield,texture,fogmap;
 
    float coord[8],cellsize[2],scaling;
@@ -1315,10 +1328,16 @@ int miniload::load(int cols,int rows,
       for (i=0; i<COLS && hfield.missing(); i++)
          for (j=0; j<ROWS && hfield.missing(); j++)
             {
-            REQUEST_CALLBACK(0,0,HFIELDS[i+j*COLS],0,NULL,0,NULL,REQUEST_DATA,
-                             &hfield,&texture,&fogmap);
+            present=0;
 
-            if (!texture.missing() || !fogmap.missing()) ERRORMSG();
+            if (INQUIRY_CALLBACK==NULL) present=REQUEST_CALLBACK(0,0,HFIELDS[i+j*COLS],0,NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL);
+            else present=INQUIRY_CALLBACK(0,0,HFIELDS[i+j*COLS],0,INQUIRY_DATA,&minvalue,&maxvalue);
+
+            if (present!=0)
+               {
+               REQUEST_CALLBACK(0,0,HFIELDS[i+j*COLS],0,NULL,0,NULL,REQUEST_DATA,&hfield,&texture,&fogmap);
+               if (!texture.missing() || !fogmap.missing()) ERRORMSG();
+               }
 
             if (!hfield.missing())
                {
@@ -1519,7 +1538,7 @@ void miniload::setinquiry(int (*inquiry)(int col,int row,const unsigned char *ma
    }
 
 // set callback for query of texture map base size
-void miniload::setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
+void miniload::setquery(int (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data)
    {
    QUERY_CALLBACK=query;
    QUERY_DATA=data;

@@ -101,7 +101,7 @@ class miniload
    void setinquiry(int (*inquiry)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue),void *data);
 
    //! set callback for query of texture map base size
-   void setquery(void (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
+   void setquery(int (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
 
    //! compute texture paging range from screen space error
    float calcrange(float dim, // size of one texel in meters
@@ -240,7 +240,7 @@ class miniload
    int (*INQUIRY_CALLBACK)(int col,int row,const unsigned char *mapfile,int hlod,void *data,float *minvalue,float *maxvalue);
    void *INQUIRY_DATA;
 
-   void (*QUERY_CALLBACK)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
+   int (*QUERY_CALLBACK)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey);
    void *QUERY_DATA;
 
    int PAGING;
