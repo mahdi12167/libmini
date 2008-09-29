@@ -211,12 +211,6 @@ miniterrain::miniterrain()
    DEFAULT_LAYER=LNUM;
    setreference(DEFAULT_LAYER);
 
-   DETAILTEXID=0;
-   DETAILTEXWIDTH=DETAILTEXHEIGHT=0;
-   DETAILTEXMIPMAPS=0;
-   DETAILTEXU=DETAILTEXV=miniv4d(0.0);
-   DETAILTEXALPHA=0.0f;
-
    THREADDATA=NULL;
    THREADINIT=NULL;
    THREADEXIT=NULL;
@@ -914,19 +908,10 @@ void miniterrain::render()
 
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->getterrain()!=NULL)
-               if (TPARAMS.detailtexmode!=0)
+               if (TPARAMS.detailtexmode==0)
                   {
                   CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
-                                            DETAILTEXU.x,DETAILTEXU.y,DETAILTEXU.z,DETAILTEXU.w,
-                                            DETAILTEXV.x,DETAILTEXV.y,DETAILTEXV.z,DETAILTEXV.w);
-
-                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),DETAILTEXALPHA);
-
-                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),DETAILTEXID,DETAILTEXWIDTH,DETAILTEXHEIGHT,DETAILTEXMIPMAPS);
-                  }
-               else
-                  {
-                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+                                            0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
 
                   CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),0.0f);
 
@@ -1208,19 +1193,18 @@ double miniterrain::getcachemem()
    }
 
 // add detail texture
-void miniterrain::adddetailtex(int texid,int width,int height,int mipmaps,miniv4d &u,miniv4d &v,float alpha)
+void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,miniv4d &u,miniv4d &v,float alpha)
    {
-   DETAILTEXID=texid;
+   if (n>=0 && n<LNUM)
+      if (LAYER[n]->getterrain()!=NULL)
+         {
+         CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
+                                   u.x,u.y,u.z,u.w,v.x,v.y,v.z,v.w);
 
-   DETAILTEXWIDTH=width;
-   DETAILTEXHEIGHT=height;
+         CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),alpha);
 
-   DETAILTEXMIPMAPS=mipmaps;
-
-   DETAILTEXU=u;
-   DETAILTEXV=v;
-
-   DETAILTEXALPHA=alpha;
+         CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),texid,width,height,mipmaps);
+         }
    }
 
 // register waypoint renderer
