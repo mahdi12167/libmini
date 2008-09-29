@@ -4,8 +4,9 @@
 
 #include "mini.h"
 
-#include "minimath.h"
+#include "miniio.h"
 #include "miniutm.h"
+#include "minimath.h"
 
 #include "pnmbase.h"
 #include "pnmsample.h"
