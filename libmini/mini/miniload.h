@@ -219,6 +219,8 @@ class miniload
    void init();
    void cleanup();
 
+   unsigned char *concatenate(unsigned char *basename,int lod);
+
    unsigned char *updatelod(int col,int row,int lodinc);
    void updatefog(int col,int row);
    void checklods(int col,int row,int prelod);

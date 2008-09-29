@@ -260,6 +260,21 @@ void miniload::setfogmode(int fogmode)
    TILE->setfogmode(fogmode);
    }
 
+// concatenate tile name depending on lod
+unsigned char *miniload::concatenate(unsigned char *basename,int lod)
+   {
+   unsigned char *lodname;
+
+   if (lod==0) lodname=(unsigned char *)strdup((char *)basename);
+   else
+      {
+      if ((lodname=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+      snprintf((char *)lodname,MAX_STR,"%s%d",(char *)basename,lod);
+      }
+
+   return(lodname);
+   }
+
 // update actual LOD
 unsigned char *miniload::updatelod(int col,int row,int lodinc)
    {
@@ -273,13 +288,7 @@ unsigned char *miniload::updatelod(int col,int row,int lodinc)
    if (TILE->isloaded(col,row)!=0)
       if (lod==NEWLOD[col+row*COLS]) return(NULL);
 
-   if (lod==0) newlod=(unsigned char *)strdup((char *)HFIELDS[col+row*COLS]);
-   else
-      {
-      if ((newlod=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
-      snprintf((char *)newlod,MAX_STR,"%s%d",(char *)HFIELDS[col+row*COLS],lod);
-      }
-
+   newlod=concatenate(HFIELDS[col+row*COLS],lod);
    NEWLOD[col+row*COLS]=lod;
 
    return(newlod);
@@ -296,12 +305,7 @@ void miniload::updatefog(int col,int row)
 
    lod=min(NEWLOD[col+row*COLS],MAXFOG[col+row*COLS]);
 
-   if (lod==0) newlod=(unsigned char *)strdup((char *)FOGMAPS[col+row*COLS]);
-   else
-      {
-      if ((newlod=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
-      snprintf((char *)newlod,MAX_STR,"%s%d",(char *)FOGMAPS[col+row*COLS],lod);
-      }
+   newlod=concatenate(FOGMAPS[col+row*COLS],lod);
 
    if (FOGS[col+row*COLS]!=NULL) free(FOGS[col+row*COLS]);
    FOGS[col+row*COLS]=newlod;
@@ -428,13 +432,7 @@ unsigned char *miniload::updatetex(int col,int row,int texinc)
    if (TILE->gettexid(col,row)!=0)
       if (tex==NEWTEX[col+row*COLS]) return(NULL);
 
-   if (tex==0) newtex=(unsigned char *)strdup((char *)TEXTURES[col+row*COLS]);
-   else
-      {
-      if ((newtex=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
-      snprintf((char *)newtex,MAX_STR,"%s%d",(char *)TEXTURES[col+row*COLS],tex);
-      }
-
+   newtex=concatenate(TEXTURES[col+row*COLS],tex);
    NEWTEX[col+row*COLS]=tex;
 
    return(newtex);
@@ -1093,6 +1091,8 @@ int miniload::load(int cols,int rows,
    {
    int i,j;
 
+   int maxlod;
+   unsigned char *lodname;
    int present;
 
    unsigned char *image;
@@ -1272,8 +1272,31 @@ int miniload::load(int cols,int rows,
       for (i=0; i<COLS && image==NULL; i++)
          for (j=0; j<ROWS && image==NULL; j++)
             {
-            present=checkfile((char *)HFIELDS[i+j*COLS]);
-            if (present!=0) image=readPNMfile((char *)HFIELDS[i+j*COLS],&width,&height,&components,&comment);
+            maxlod=0;
+            present=1;
+
+            while (present!=0)
+               {
+               lodname=concatenate(HFIELDS[i+j*COLS],maxlod);
+               present=checkfile((char *)lodname);
+               free(lodname);
+
+               if (maxlod>0 && present==0)
+                  {
+                  maxlod--;
+                  present=1;
+                  break;
+                  }
+
+               maxlod++;
+               }
+
+            if (present!=0)
+               {
+               lodname=concatenate(HFIELDS[i+j*COLS],maxlod);
+               image=readPNMfile((char *)lodname,&width,&height,&components,&comment);
+               free(lodname);
+               }
 
             if (image!=NULL)
                {
@@ -1329,15 +1352,36 @@ int miniload::load(int cols,int rows,
       for (i=0; i<COLS && hfield.missing(); i++)
          for (j=0; j<ROWS && hfield.missing(); j++)
             {
-            present=0;
+            maxlod=0;
+            present=1;
 
-            if (INQUIRY_CALLBACK==NULL) present=REQUEST_CALLBACK(0,0,HFIELDS[i+j*COLS],0,NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL);
-            else present=INQUIRY_CALLBACK(0,0,HFIELDS[i+j*COLS],0,INQUIRY_DATA,&minvalue,&maxvalue);
+            while (present!=0)
+               {
+               lodname=concatenate(HFIELDS[i+j*COLS],maxlod);
+
+               if (INQUIRY_CALLBACK==NULL) present=REQUEST_CALLBACK(i,j,lodname,maxlod,NULL,0,NULL,REQUEST_DATA,NULL,NULL,NULL);
+               else present=INQUIRY_CALLBACK(i,j,lodname,maxlod,INQUIRY_DATA,&minvalue,&maxvalue);
+
+               free(lodname);
+
+               if (maxlod>0 && present==0)
+                  {
+                  maxlod--;
+                  present=1;
+                  break;
+                  }
+
+               maxlod++;
+               }
 
             if (present!=0)
                {
-               REQUEST_CALLBACK(0,0,HFIELDS[i+j*COLS],0,NULL,0,NULL,REQUEST_DATA,&hfield,&texture,&fogmap);
+               lodname=concatenate(HFIELDS[i+j*COLS],maxlod);
+
+               REQUEST_CALLBACK(i,j,lodname,maxlod,NULL,0,NULL,REQUEST_DATA,&hfield,&texture,&fogmap);
                if (!texture.missing() || !fogmap.missing()) ERRORMSG();
+
+               free(lodname);
                }
 
             if (!hfield.missing())
