@@ -867,13 +867,13 @@ void miniterrain::render()
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
                                      TPARAMS.nprbathystart,TPARAMS.nprbathyend,
-                                     (TPARAMS.usecontours)?TPARAMS.nprcontours:0.0f,
+                                     TPARAMS.nprcontours,
                                      TPARAMS.nprfadefactor,
                                      fmax(TPARAMS.sealevel,0.0f),
                                      TPARAMS.nprseacolor,TPARAMS.nprseatrans,
                                      TPARAMS.nprseagray);
 
-            minishader::setcontourmode(TPARAMS.nprcontourmode);
+            minishader::setcontourmode((TPARAMS.usecontours)?0:TPARAMS.nprcontourmode);
             }
          else
             {
