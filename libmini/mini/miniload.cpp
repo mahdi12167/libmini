@@ -1093,14 +1093,14 @@ int miniload::load(int cols,int rows,
    {
    int i,j;
 
+   int present;
+
    unsigned char *image;
    int width,height,components;
    PNMcomment comment;
 
-   int present;
-   float minvalue,maxvalue;
-
    databuf hfield,texture,fogmap;
+   float minvalue,maxvalue;
 
    float coord[8],cellsize[2],scaling;
    int utm_zone,utm_datum,missing;
@@ -1255,7 +1255,7 @@ int miniload::load(int cols,int rows,
    for (i=0; i<COLS*ROWS; i++)
       {
       FOGS[i]=NULL;
-      MAXFOG[i]=0;
+      MAXFOG[i]=-1;
       }
 
    TIME=0;
@@ -1272,7 +1272,8 @@ int miniload::load(int cols,int rows,
       for (i=0; i<COLS && image==NULL; i++)
          for (j=0; j<ROWS && image==NULL; j++)
             {
-            image=readPNMfile((char *)HFIELDS[i+j*COLS],&width,&height,&components,&comment);
+            present=checkfile((char *)HFIELDS[i+j*COLS]);
+            if (present!=0) image=readPNMfile((char *)HFIELDS[i+j*COLS],&width,&height,&components,&comment);
 
             if (image!=NULL)
                {

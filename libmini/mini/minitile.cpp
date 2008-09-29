@@ -787,7 +787,9 @@ minitile *minitile::load(int cols,int rows,
    {
    int i,j;
 
-   char **hmaps=NULL,**tmaps=NULL,**fmaps=NULL;
+   char **hmaps,**tmaps,**fmaps;
+
+   int present;
 
    unsigned char *image;
    int width,height,components;
@@ -814,6 +816,7 @@ minitile *minitile::load(int cols,int rows,
    tmaps=new char *[cols*rows];
 
    if (basepath3!=NULL) fmaps=new char *[cols*rows];
+   else fmaps=NULL;
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
@@ -840,7 +843,8 @@ minitile *minitile::load(int cols,int rows,
    for (i=0; i<cols && image==NULL; i++)
       for (j=0; j<rows && image==NULL; j++)
          {
-         image=readPNMfile(hmaps[i+j*cols],&width,&height,&components,&comment);
+         present=checkfile(hmaps[i+j*cols]);
+         if (present!=0) image=readPNMfile(hmaps[i+j*cols],&width,&height,&components,&comment);
 
          if (image!=NULL)
             {
@@ -877,7 +881,7 @@ minitile *minitile::load(int cols,int rows,
             }
          }
 
-   if (image==NULL) ERRORMSG();
+   if (image==NULL) return(NULL);
 
    free(image);
 
