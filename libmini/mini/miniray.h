@@ -4,6 +4,7 @@
 #define MINIRAY_H
 
 #include "miniv3d.h"
+#include "minidyna.h"
 
 #include "miniwarp.h"
 
@@ -43,8 +44,15 @@ class miniray
    //! the first hit with a smaller distance than hitdist will be returned
    double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
 
+   //! extract triangles that possibly intersect a plane
+   //! o is the origin of the plane
+   //! n is the normal of the plane
+   //! radius is the maximum allowed distance to the origin
+   //! extracted triangles are likely but not guaranteed to intersect the plane
+   minidyna<miniv3d> extract(const miniv3d &o,const miniv3d &n,double radius);
+
    //! set locking callbacks
-   //! when the callbacks are set ray shooting can be triggered safely from a separate thread
+   //! when the callbacks are set ray shooting and plane extraction can be triggered safely from a separate thread
    static void setcallbacks(void (*lock)(void *data),void *data,
                             void (*unlock)(void *data));
 
@@ -110,11 +118,16 @@ class miniray
                    const miniv3d &o,const miniv3d &d,
                    double dist);
 
+   minidyna<miniv3d> calcmesh(TRIANGLEREF *ref);
+
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);
 
    inline int checkbbox(const miniv3d &o,const miniv3d &d,
                         const miniv3d &b,const miniv3d r);
+
+   inline int checkplane(const miniv3d &o,const miniv3d &n,const double radius,
+                         const miniv3d &b,const double r2);
 
    inline double checkdist(const miniv3d &o,const miniv3d &d,
                            const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);

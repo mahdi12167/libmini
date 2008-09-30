@@ -203,6 +203,8 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    result=MAXFLOAT;
 
+   oi=di=miniv3d(0.0);
+
    lastwarp=NULL;
 
    ref=FRONT;
@@ -245,6 +247,67 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    return(result);
    }
 
+// extract triangles that possibly intersect a plane
+minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radius)
+   {
+   minidyna<miniv3d> result;
+
+   miniv3d dn;
+
+   TRIANGLEREF *ref;
+
+   miniwarp *lastwarp;
+
+   miniv4d inv[3];
+   miniv3d tra[3];
+
+   miniv4d o1;
+   miniv3d oi,di;
+
+   lock();
+
+   dn=n;
+   dn.normalize();
+
+   oi=di=miniv3d(0.0);
+
+   lastwarp=NULL;
+
+   ref=FRONT;
+
+   while (ref!=NULL)
+      {
+      if (ref->hasbound==0) calcbound(ref);
+
+      if (ref->warp==NULL)
+         {
+         oi=o;
+         di=dn;
+
+         lastwarp=NULL;
+         }
+      else if (ref->warp!=lastwarp)
+         {
+         ref->warp->getinv(inv);
+         o1=miniv4d(o.x,o.y,o.z,1.0);
+         oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
+
+         ref->warp->gettra(tra);
+         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
+
+         lastwarp=ref->warp;
+         }
+
+      if (checkplane(oi,di,radius,ref->b,ref->r2)!=0) result.append(calcmesh(ref));
+
+      ref=ref->next;
+      }
+
+   unlock();
+
+   return(result);
+   }
+
 // set locking callbacks
 void miniray::setcallbacks(void (*lock)(void *data),void *data,
                            void (*unlock)(void *data))
@@ -262,6 +325,7 @@ void miniray::lock()
 void miniray::unlock()
    {if (LOCK_CALLBACK!=NULL) UNLOCK_CALLBACK(LOCK_DATA);}
 
+// calculate bounding box and sphere
 void miniray::calcbound(TRIANGLEREF *ref)
    {
    int i,j,k;
@@ -385,6 +449,7 @@ void miniray::calcbound(TRIANGLEREF *ref)
    ref->hasbound=1;
    }
 
+// calculate smallest hit distance
 double miniray::calcdist(TRIANGLEREF *ref,
                          const miniv3d &o,const miniv3d &d,
                          double dist)
@@ -576,6 +641,228 @@ double miniray::calcdist(TRIANGLEREF *ref,
    return(result);
    }
 
+// calculate triangle mesh
+minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
+   {
+   int i,j,k;
+
+   minidyna<miniv3d> result;
+
+   float *array;
+   int num,stride;
+
+   miniv3d v1,v2,v3;
+
+   miniv4d mtx[3];
+
+   miniv4d p1;
+
+   array=*(ref->array)+ref->index;
+   num=ref->num;
+   stride=ref->stride;
+
+   if (ref->warp!=NULL) ref->warp->getwarp(mtx);
+
+   if (ref->isfan==0)
+      if (ref->swapyz==0)
+         for (i=0; i<num; i++)
+            {
+            v1.x=*array++;
+            v1.y=*array++;
+            v1.z=*array++;
+
+            array+=stride;
+
+            v2.x=*array++;
+            v2.y=*array++;
+            v2.z=*array++;
+
+            array+=stride;
+
+            v3.x=*array++;
+            v3.y=*array++;
+            v3.z=*array++;
+
+            array+=stride;
+
+            v1.x=v1.x*ref->scaling.x+ref->offset.x;
+            v1.y=v1.y*ref->scaling.y+ref->offset.y;
+            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+
+            v2.x=v2.x*ref->scaling.x+ref->offset.x;
+            v2.y=v2.y*ref->scaling.y+ref->offset.y;
+            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+
+            v3.x=v3.x*ref->scaling.x+ref->offset.x;
+            v3.y=v3.y*ref->scaling.y+ref->offset.y;
+            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+
+            p1=miniv4d(v1,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+
+            p1=miniv4d(v2,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+
+            p1=miniv4d(v3,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+            }
+      else
+         for (i=0; i<num; i++)
+            {
+            v1.x=*array++;
+            v1.z=*array++;
+            v1.y=*array++;
+
+            array+=stride;
+
+            v2.x=*array++;
+            v2.z=*array++;
+            v2.y=*array++;
+
+            array+=stride;
+
+            v3.x=*array++;
+            v3.z=*array++;
+            v3.y=*array++;
+
+            array+=stride;
+
+            v1.x=v1.x*ref->scaling.x+ref->offset.x;
+            v1.y=v1.y*ref->scaling.y+ref->offset.y;
+            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+
+            v2.x=v2.x*ref->scaling.x+ref->offset.x;
+            v2.y=v2.y*ref->scaling.y+ref->offset.y;
+            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+
+            v3.x=v3.x*ref->scaling.x+ref->offset.x;
+            v3.y=v3.y*ref->scaling.y+ref->offset.y;
+            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+
+            p1=miniv4d(v1,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+
+            p1=miniv4d(v2,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+
+            p1=miniv4d(v3,1.0);
+            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+            }
+   else
+      if (ref->swapyz==0)
+         for (i=0; i<num; i++)
+            {
+            k=ftrc(*array+0.5f);
+
+            array+=3;
+
+            v1.x=*array++;
+            v1.y=*array++;
+            v1.z=*array++;
+
+            array+=stride;
+
+            v2.x=*array++;
+            v2.y=*array++;
+            v2.z=*array++;
+
+            array+=stride;
+
+            v1.x=v1.x*ref->scaling.x+ref->offset.x;
+            v1.y=v1.y*ref->scaling.y+ref->offset.y;
+            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+
+            v2.x=v2.x*ref->scaling.x+ref->offset.x;
+            v2.y=v2.y*ref->scaling.y+ref->offset.y;
+            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+
+            p1=miniv4d(v1,1.0);
+            v1=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+            p1=miniv4d(v2,1.0);
+            v2=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+            for (j=2; j<k; j++)
+               {
+               v3.x=*array++;
+               v3.y=*array++;
+               v3.z=*array++;
+
+               array+=stride;
+
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+
+               p1=miniv4d(v3,1.0);
+               v3=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+               result.append(v1);
+               result.append(v2);
+               result.append(v3);
+
+               v2=v3;
+               }
+            }
+      else
+         for (i=0; i<num; i++)
+            {
+            k=ftrc(*array+0.5f);
+
+            array+=3;
+
+            v1.x=*array++;
+            v1.z=*array++;
+            v1.y=*array++;
+
+            array+=stride;
+
+            v2.x=*array++;
+            v2.z=*array++;
+            v2.y=*array++;
+
+            array+=stride;
+
+            v1.x=v1.x*ref->scaling.x+ref->offset.x;
+            v1.y=v1.y*ref->scaling.y+ref->offset.y;
+            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+
+            v2.x=v2.x*ref->scaling.x+ref->offset.x;
+            v2.y=v2.y*ref->scaling.y+ref->offset.y;
+            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+
+            p1=miniv4d(v1,1.0);
+            v1=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+            p1=miniv4d(v2,1.0);
+            v2=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+            for (j=2; j<k; j++)
+               {
+               v3.x=*array++;
+               v3.z=*array++;
+               v3.y=*array++;
+
+               array+=stride;
+
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+
+               p1=miniv4d(v3,1.0);
+               v3=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+
+               result.append(v1);
+               result.append(v2);
+               result.append(v3);
+
+               v2=v3;
+               }
+            }
+
+   return(result);
+   }
+
 // geometric ray/sphere intersection test
 int miniray::checkbound(const miniv3d &o,const miniv3d &d,
                         const miniv3d &b,const double r2)
@@ -661,6 +948,23 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
    return(0);
    }
 
+// geometric plane/sphere intersection test
+int miniray::checkplane(const miniv3d &o,const miniv3d &n,const double radius,
+                        const miniv3d &b,const double r2)
+   {
+   miniv3d h;
+   double l;
+
+   h=b-o;
+   l=h*n;
+
+   if (l*l>r2) return(0); // no intersection
+   if (h*h>2.0*(radius*radius+r2)) return(0); // no inclusion (approximate)
+
+   return(1);
+   }
+
+// calculate hit distance
 double miniray::checkdist(const miniv3d &o,const miniv3d &d,
                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
