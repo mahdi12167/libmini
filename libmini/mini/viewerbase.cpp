@@ -169,4 +169,13 @@ void viewerbase::idle(double dt)
 double viewerbase::shoot(const minicoord &o,const miniv3d &d)
    {return(EARTH->shoot(o,d));}
 
+// extract triangles that [possibly] intersect a plane
+minidyna<miniv3d> viewerbase::extract(const minicoord &p,const miniv3d &v,double radius)
+   {return(EARTH->extract(p,v,radius));}
+
+// set locking callbacks
+void viewerbase::setraycallbacks(void (*lock)(void *data),void *data,
+                                 void (*unlock)(void *data))
+   {miniray::setcallbacks(lock,data,unlock);}
+
 #endif

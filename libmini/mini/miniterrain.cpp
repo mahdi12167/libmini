@@ -1127,7 +1127,33 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
    return(dist);
    }
 
-// set locking callbacks for ray shooting
+// extract triangles that [possibly] intersect a plane
+minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,double radius)
+   {
+   int n;
+
+   int ref;
+
+   minidyna<miniv3d> result;
+
+   minicoord pgl;
+   miniv3d vgl;
+
+   // get reference layer
+   ref=getreference();
+
+   // transform coordinates
+   pgl=LAYER[ref]->map_g2o(p);
+   vgl=LAYER[ref]->rot_g2o(v,p);
+
+   // gather [possibly] intersecting triangles
+   for (n=0; n<LNUM; n++)
+      if (isdisplayed(n) && !isculled(n)) result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
+
+   return(result);
+   }
+
+// set locking callbacks
 void miniterrain::setraycallbacks(void (*lock)(void *data),void *data,
                                   void (*unlock)(void *data))
    {miniray::setcallbacks(lock,data,unlock);}

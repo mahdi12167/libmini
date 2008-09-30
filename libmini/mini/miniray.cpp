@@ -247,7 +247,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    return(result);
    }
 
-// extract triangles that possibly intersect a plane
+// extract triangles that [possibly] intersect a plane
 minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radius)
    {
    minidyna<miniv3d> result;

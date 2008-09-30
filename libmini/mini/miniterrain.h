@@ -10,6 +10,8 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "minidyna.h"
+
 #include "minipoint.h"
 #include "minilayer.h"
 
@@ -329,8 +331,10 @@ class miniterrain
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);
 
-   //! set locking callbacks for ray shooting
-   //! when the callbacks are set ray shooting can be triggered safely from a separate thread
+   //! extract triangles that [possibly] intersect a plane
+   minidyna<miniv3d> extract(const minicoord &p,const miniv3d &v,double radius);
+
+   //! set locking callbacks for ray shooting (and plane extraction)
    static void setraycallbacks(void (*lock)(void *data),void *data,
                                void (*unlock)(void *data));
 

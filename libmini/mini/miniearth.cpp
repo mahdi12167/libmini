@@ -741,3 +741,12 @@ double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
 
    return(intersect_unitsphere(p,d));
    }
+
+// extract triangles that [possibly] intersect a plane
+minidyna<miniv3d> miniearth::extract(const minicoord &p,const miniv3d &v,double radius)
+   {return(TERRAIN->extract(p,v,radius));}
+
+// set locking callbacks
+void miniearth::setraycallbacks(void (*lock)(void *data),void *data,
+                                void (*unlock)(void *data))
+   {miniray::setcallbacks(lock,data,unlock);}

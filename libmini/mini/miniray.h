@@ -44,7 +44,7 @@ class miniray
    //! the first hit with a smaller distance than hitdist will be returned
    double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
 
-   //! extract triangles that possibly intersect a plane
+   //! extract triangles that [possibly] intersect a plane
    //! o is the origin of the plane
    //! n is the normal of the plane
    //! radius is the maximum allowed distance to the origin

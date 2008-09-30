@@ -12,6 +12,8 @@
 #include <mini/miniv3d.h>
 #include <mini/miniv4d.h>
 
+#include <mini/minidyna.h>
+
 #include <mini/miniearth.h>
 
 #include <mini/threadbase.h>
@@ -103,6 +105,13 @@ class viewerbase
 
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);
+
+   //! extract triangles that [possibly] intersect a plane
+   minidyna<miniv3d> extract(const minicoord &p,const miniv3d &v,double radius);
+
+   //! set locking callbacks for ray shooting (and plane extraction)
+   static void setraycallbacks(void (*lock)(void *data),void *data,
+                               void (*unlock)(void *data));
 
    protected:
 
