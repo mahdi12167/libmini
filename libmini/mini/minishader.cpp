@@ -307,6 +307,10 @@ void minishader::setVISshader(minicache *cache,
       VISBATHYMOD=0;
       NPRBATHYMOD=1;
       }
+
+   // check for sea texture binding
+   if (seamodulate==0.0f) cache->configure_seaenabletex(0);
+   else cache->configure_seaenabletex(1);
    }
 
 // set bathymetry color map for VIS shader
