@@ -611,6 +611,9 @@ void minishader::setNPRshader(minicache *cache,
       NPRBATHYMOD=0;
       VISBATHYMOD=1;
       }
+
+   // switch off sea texture binding
+   cache->configure_seaenabletex(0);
    }
 
 // set bathymetry color map for NPR shader
