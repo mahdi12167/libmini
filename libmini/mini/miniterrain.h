@@ -145,6 +145,7 @@ class miniterrain
       float seamodulate;
       float seabottom;
       float bottomtrans;
+      int seamode;
 
       float bottomcolor[3];
 

@@ -144,6 +144,7 @@ miniterrain::miniterrain()
    TPARAMS.seamodulate=0.0f;     // modulation factor of sea surface texture
    TPARAMS.seabottom=-10.0f;     // depth where sea transparency gets saturated
    TPARAMS.bottomtrans=1.0f;     // saturated transparency at sea bottom
+   TPARAMS.seamode=0;            // sea surface mode (0=normal 1=stipple)
 
    TPARAMS.bottomcolor[0]=0.0f;  // saturated color at sea bottom
    TPARAMS.bottomcolor[1]=0.1f;  // saturated color at sea bottom
@@ -858,6 +859,7 @@ void miniterrain::render()
                                      TPARAMS.seamodulate);
 
             minishader::setcontourmode(TPARAMS.contourmode);
+            minishader::setseamode(TPARAMS.seamode);
             }
          else if (TPARAMS.usenprshader)
             {
@@ -874,6 +876,7 @@ void miniterrain::render()
                                      TPARAMS.nprseagray);
 
             minishader::setcontourmode((TPARAMS.usecontours)?0:TPARAMS.nprcontourmode);
+            minishader::setseamode(TPARAMS.seamode);
             }
          else
             {

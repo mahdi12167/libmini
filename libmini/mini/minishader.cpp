@@ -18,6 +18,8 @@ int minishader::DETAILTEXMODE=0;
 float minishader::DETAILTEXALPHA=0.0f;
 int minishader::DETAILTEXMASK=0;
 
+int minishader::SEAMODE=0;
+
 // enable vertex and pixel shader for VIS purposes
 void minishader::setVISshader(minicache *cache,
                               float scale,float exaggeration,
@@ -307,7 +309,7 @@ void minishader::setVISshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=concatprog(frgprog2_i,frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=concatprog(frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
@@ -629,7 +631,7 @@ void minishader::setNPRshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=concatprog(frgprog2_i,frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=concatprog(frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
@@ -676,6 +678,10 @@ void minishader::setdetailtexmode(int mode,float alpha,int mask)
    DETAILTEXALPHA=alpha;
    DETAILTEXMASK=mask;
    }
+
+// set sea surface mode (0=normal 1=stipple)
+void minishader::setseamode(int mode)
+   {SEAMODE=mode;}
 
 // disable vertex and pixel shaders
 void minishader::unsetshaders(minicache *cache)
