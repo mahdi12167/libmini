@@ -490,6 +490,14 @@ void datacache::loadvtbelevini()
                else
                   {if (fscanf(file," %d/%d\n",&maxlod,&minlod)!=2) HAS_ELEVINI=FALSE;}
 
+               // swap minimum and maximum lod if necessary
+               if (minlod>maxlod)
+                  {
+                  lod=minlod;
+                  minlod=maxlod;
+                  maxlod=lod;
+                  }
+
                // concatenate path to elev tileset
                pathname=strcct(RID,VTBELEVPATH);
 
@@ -620,6 +628,14 @@ void datacache::loadvtbimagini()
                   {if (fscanf(file," %d/%d",&maxlod,&minlod)!=2) HAS_IMAGINI=FALSE;}
                else
                   {if (fscanf(file," %d/%d\n",&maxlod,&minlod)!=2) HAS_IMAGINI=FALSE;}
+
+               // swap minimum and maximum lod if necessary
+               if (minlod>maxlod)
+                  {
+                  lod=minlod;
+                  minlod=maxlod;
+                  maxlod=lod;
+                  }
 
                // concatenate path to imag tileset
                pathname=strcct(RID,VTBIMAGPATH);
