@@ -182,12 +182,25 @@ void minishader::setVISshader(minicache *cache,
       PARAM c2=program.env[7]; \n\
       PARAM c3=program.env[8]; \n\
       PARAM c4=program.env[9]; \n\
-      TEMP col,colt,nrm,len,fog; \n\
+      TEMP col,colt,nrm,len,fog,pos; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
 
-   // fragment program for the sea surface (main snippet, load texture)
-   static const char *frgprog2_s="\
+   // fragment program for the sea surface (snippet #1, stipple)
+   static const char *frgprog2_s1="\
+      ### emulate stipple pattern \n\
+      MOV pos.xy,fragment.position; \n\
+      MUL pos.xy,pos,0.5; \n\
+      FRC pos.xy,pos; \n\
+      MUL pos.x,pos.x,0.5; \n\
+      ADD pos.x,pos.x,pos.y; \n\
+      SUB pos.x,pos.x,0.25; \n\
+      SUB pos.x,col.a,pos.x; \n\
+      KIL pos.x; \n\
+      MOV col.a,1.0; \n";
+
+   // fragment program for the sea surface (snippet #2, load texture)
+   static const char *frgprog2_s2="\
       ### fetch texture color \n\
       TEX colt,fragment.texcoord[0],texture[0],2D; \n\
       MAD colt,colt,a.x,a.y; \n\
@@ -289,7 +302,7 @@ void minishader::setVISshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=concatprog(frgprog2_i,frgprog2_s,NULL,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=concatprog(frgprog2_i,frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
@@ -487,12 +500,25 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c2=program.env[7]; \n\
       PARAM c3=program.env[8]; \n\
       PARAM c4=program.env[9]; \n\
-      TEMP col,colt,nrm,len,fog; \n\
+      TEMP col,colt,nrm,len,fog,pos; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
 
-   // fragment program for the sea surface (main snippet, load texture)
-   static const char *frgprog2_s="\
+   // fragment program for the sea surface (snippet #1, stipple)
+   static const char *frgprog2_s1="\
+      ### emulate stipple pattern \n\
+      MOV pos.xy,fragment.position; \n\
+      MUL pos.xy,pos,0.5; \n\
+      FRC pos.xy,pos; \n\
+      MUL pos.x,pos.x,0.5; \n\
+      ADD pos.x,pos.x,pos.y; \n\
+      SUB pos.x,pos.x,0.25; \n\
+      SUB pos.x,col.a,pos.x; \n\
+      KIL pos.x; \n\
+      MOV col.a,1.0; \n";
+
+   // fragment program for the sea surface (snippet #2, load texture)
+   static const char *frgprog2_s2="\
       ### fetch texture color \n\
       TEX colt,fragment.texcoord[0],texture[0],2D; \n\
       MAD colt,colt,a.x,a.y; \n\
@@ -593,7 +619,7 @@ void minishader::setNPRshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=concatprog(frgprog2_i,frgprog2_s,NULL,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=concatprog(frgprog2_i,frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
