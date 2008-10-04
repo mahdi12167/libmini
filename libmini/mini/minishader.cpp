@@ -193,6 +193,9 @@ void minishader::setVISshader(minicache *cache,
       MUL pos.xy,pos,0.5; \n\
       FRC pos.xy,pos; \n\
       SUB pos.xy,pos,0.25; \n\
+      SUB pos.z,pos.x,0.25; \n\
+      SUB pos.w,0.5,pos.y; \n\
+      CMP pos.y,pos.z,pos.y,pos.w; \n\
       MAD pos.x,pos.x,0.5,pos.y; \n\
       MAD col.a,col.a,4.0,0.5; \n\
       FLR col.a,col.a; \n\
@@ -513,6 +516,9 @@ void minishader::setNPRshader(minicache *cache,
       MUL pos.xy,pos,0.5; \n\
       FRC pos.xy,pos; \n\
       SUB pos.xy,pos,0.25; \n\
+      SUB pos.z,pos.x,0.25; \n\
+      SUB pos.w,0.5,pos.y; \n\
+      CMP pos.y,pos.z,pos.y,pos.w; \n\
       MAD pos.x,pos.x,0.5,pos.y; \n\
       MAD col.a,col.a,4.0,0.5; \n\
       FLR col.a,col.a; \n\
