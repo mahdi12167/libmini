@@ -1649,7 +1649,14 @@ void miniload::restrictroi(float rx,float rz,
    if (rrad<0.0f) ERRORMSG();
 
    // calculate bounding box of roi
-   if (rrad>0.0f)
+   if (rrad==MAXFLOAT)
+      {
+      left=0;
+      right=COLS-1;
+      bottom=0;
+      top=ROWS-1;
+      }
+   else
       {
       d=ffloor(((rx-rrad)-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
       left=min(max(ftrc(d),0),COLS-1);
@@ -1662,13 +1669,6 @@ void miniload::restrictroi(float rx,float rz,
 
       d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(rz+rrad))/ROWDIM);
       top=ROWS-1-min(max(ftrc(d),0),ROWS-1);
-      }
-   else
-      {
-      left=0;
-      right=COLS-1;
-      bottom=0;
-      top=ROWS-1;
       }
 
    // define all tiles not to be mandatory
