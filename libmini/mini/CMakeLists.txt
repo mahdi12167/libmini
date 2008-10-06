@@ -100,17 +100,23 @@ TARGET_LINK_LIBRARIES(miniSFX
    ${SQUISH_LIBRARY}
    )
 
-ADD_EXECUTABLE(viewer viewer.cpp)
-TARGET_LINK_LIBRARIES(viewer
-   mini
-   miniSFX
-   ${PTHREAD_LIBRARY}
-   ${CURL_LIBRARY}
-   ${JPEG_LIBRARY}
-   ${PNG_LIBRARY}
-   ${SQUISH_LIBRARY}
-   ${GLUT_LIBRARY}
-   )
+MACRO(MAKE_EXECUTABLE name)
+   ADD_EXECUTABLE(${name} ${name}.cpp)
+   TARGET_LINK_LIBRARIES(${name}
+      mini
+      miniSFX
+      ${PTHREAD_LIBRARY}
+      ${CURL_LIBRARY}
+      ${JPEG_LIBRARY}
+      ${PNG_LIBRARY}
+      ${SQUISH_LIBRARY}
+      ${GLUT_LIBRARY}
+      )
+ENDMACRO(MAKE_EXECUTABLE)
+
+MAKE_EXECUTABLE(viewer)
+
+ADD_SUBDIRECTORY(tools)
 
 INSTALL(
    TARGETS mini miniSFX viewer
