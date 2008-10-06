@@ -121,7 +121,6 @@ Within the libMini package the following files are contained:<p>
 
 <table>
    <tr><td>README.html:         </td><td>this file</td></tr>
-   <tr><td>README2.html:        </td><td>the libMini usage guide</td></tr>
    <tr><td>LICENSE.txt:         </td><td>the LGPL 2.1 license</td></tr>
    <tr><td>minibase.h:          </td><td>contains basic declarations</td></tr>
    <tr><td>mini.cpp/P.h/.h:     </td><td>contains the core of the terrain renderer</td></tr>
@@ -182,14 +181,18 @@ Within the libMini package the following files are contained:<p>
    <tr><td>imgbase.cpp/.h:      </td><td>image reading and writing support for the libMini Viewer</td></tr>
    <tr><td>panorndr.cpp/.h:     </td><td>waypoint addon for the libMini Viewer</td></tr>
    <tr><td>luna*.cpp/.h:        </td><td>interpreter for LUNA, an RPN-style language for LUNAtics</td></tr>
-   <tr><td>SkyDome.ppm:         </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
-   <tr><td>Cone.db:             </td><td>a sample DB volume (implicitly defined cone)</td></tr>
-   <tr><td>GL/*:                </td><td>Windows freeGLUT headers</td></tr>
-   <tr><td>freeglut_static.lib: </td><td>Windows freeGLUT library for building the example and the libMini Viewer</td></tr>
+   <tr><td>data/SkyDome.ppm:    </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
+   <tr><td>data/Cone.db:        </td><td>a sample DB volume (implicitly defined cone)</td></tr>
+   <tr><td>GL/*:                </td><td>Windows OpenGL and freeGLUT headers</td></tr>
+   <tr><td>freeglut_static.lib: </td><td>Windows freeGLUT library</td></tr>
    <tr><td>*.sln/.vcproj:       </td><td>Windows Visual C++ solution and project files</td></tr>
    <tr><td>Makefile:            </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
    <tr><td>build.bat:           </td><td>the Windows build batch file</td></tr>
    <tr><td>build.sh:            </td><td>the Unix build script</td></tr>
+   <tr><td>autogen.sh:          </td><td>the autogen script file</td></tr>
+   <tr><td>configure.ac:        </td><td>the autoconf definition file</td></tr>
+   <tr><td>Makefile.am:         </td><td>the automake definition file</td></tr>
+   <tr><td>CMakeLists.txt:      </td><td>the cmake definition file</td></tr>
 </table><p>
 
 Additionally, the Yukon Ground Fog Demo, the Stuttgart Demo, the
@@ -242,8 +245,10 @@ necessary include files in /usr/local on your Unix machine type
 "./build.sh install" as a super-user.<p>
 
 The library also compiles on Windows using the supplied VC++ 7.1 or
-8.0 project files. From the Windows command line use the build.bat
-batch file (requires VC++ 8.0) or use cygwin in the following way:<p>
+8.0 project files. For later versions of VC++, it is recommended to
+generate the required project files with CMake. From the Windows
+command line use the build.bat batch file (requires VC++ 8.0) or use
+cygwin in the following way:<p>
 
 <ul>
    <li>Run the <a href="http://cygwin.com">cygwin</a> setup program</li>
@@ -252,7 +257,8 @@ batch file (requires VC++ 8.0) or use cygwin in the following way:<p>
    <li>In bash, type: "cd mini" and "./build.sh"</li>
 </ul>
 
-Other than the specified operating systems are not supported.<p>
+Other than the specified operating systems are not officially
+supported but libMini may still build via automake or CMake.<p>
 
 As described in the following section, the distribution also contains
 a libMini application example . The example can be compiled by typing
