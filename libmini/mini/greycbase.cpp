@@ -6,8 +6,6 @@
 
 #include "greycbase.h"
 
-namespace greycbase {
-
 #ifdef USEGREYC
 
 #define cimg_display_type 0
@@ -16,6 +14,8 @@ namespace greycbase {
 using namespace cimg_library;
 
 #endif
+
+namespace greycbase {
 
 void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
                        float p,float a)
