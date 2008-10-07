@@ -1,6 +1,8 @@
 // (c) by Stefan Roettger
 
+#ifndef USEOPENTH
 #include <pthread.h>
+#endif
 
 #include <mini/minitime.h>
 
