@@ -7,9 +7,7 @@ PROJECT(libMini)
 #    3: cmake -D<libname>_LIBRARY="..." -D<libname>_INCLUDE_DIR="..." .
 #       where <libname> is any of {PTHREAD,OPENTHREADS,CURL,JPEG,PNG,ZLIB,SQUISH,GREYCSTORATION,GLUT}
 
-cmake_minimum_required(VERSION 2.4)
-
-INCLUDE(libMini-config.cmake)
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/libMini-config.cmake)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
