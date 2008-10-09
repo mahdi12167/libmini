@@ -5,11 +5,11 @@
 
 #ifndef NOVIEWER
 
-#include <mini/minibase.h>
-
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
+
+#include <mini/minibase.h>
 
 class curlbase
    {

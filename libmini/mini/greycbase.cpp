@@ -4,6 +4,8 @@
 #include <pthread.h>
 #endif
 
+#include <mini/minibase.h>
+
 #include <mini/minitime.h>
 
 #include "greycbase.h"

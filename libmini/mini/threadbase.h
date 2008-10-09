@@ -12,6 +12,8 @@
 #   include <OpenThreads/Mutex>
 #endif
 
+#include <mini/minibase.h>
+
 #include <mini/datacloud.h>
 
 #ifdef USEOPENTH
