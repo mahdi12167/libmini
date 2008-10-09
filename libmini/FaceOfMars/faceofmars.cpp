@@ -1,5 +1,5 @@
-// FaceOfMars Demo for libmini-terrain-engine with Irrlicht v.0.7
-// Linux OpenGL version v.0.6 as of 25.Jan.2005
+// FaceOfMars Demo for libMini with Irrlicht 1.4
+// Linux OpenGL version v.0.7 as of 8.Oct.2008
 //
 // v.0.1: initial Windows version (zenprogramming)
 // v.0.2: fixed texture scaling and offset (zenprogramming)
@@ -7,15 +7,18 @@
 // v.0.4: fixed TCoord, FPS viewer, bounding box, texture orientation (roettger)
 // v.0.5: fixed target direction (roettger)
 // v.0.6: upgraded to libMini v5.2 (roettger)
+// v.0.7: upgraded to libMini v8.9 (roettger)
 //
 // try to strafe with the cursor keys!
 //
 // libmini by Stefan Roettger
-// http://www9.cs.fau.de/~roettger
+// http://www.stereofx.org/terrain.html
 //
-// example and Irrlicht-interface-functions by zenprogramming
+// example and Irrlicht interface functions by zenprogramming
 // mailto: zenprogramming at yahoo dot de
 // http://zenprogramming.tripod.com
+
+#undef WIREFRAME
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,15 +29,14 @@ using namespace core;
 using namespace scene;
 using namespace video;
 
-#include "ministub.hpp"
-
+#include <mini/ministub.h>
 
 // mesh generation stuff:
 
-int triangleindex = -1;
-int vertex0 = 0;
+int triangleindex=-1;
+int vertex0=0;
 
-SMeshBuffer *buffer = 0;
+SMeshBuffer *buffer=0;
 S3DVertex vertex;
 
 // height field definition:
@@ -44,10 +46,9 @@ float dim=1.0f;
 float scale=0.2f;
 float res=5.0E5f;
 
-
 // libmini callbacks:
 
-// libmini->Irrlicht-interface-functions
+// libmini->Irrlicht interface functions
 // this function starts every trianglefan
 void mybeginfan()
    {
@@ -55,7 +56,7 @@ void mybeginfan()
    vertex0=buffer->getVertexCount();
    }
 
-// libmini->Irrlicht-interface-functions
+// libmini->Irrlicht interface functions
 // this function computes one vertex
 // vertices are already culled by the mini library
 // so just add each vertex to a vertex buffer
@@ -81,26 +82,17 @@ void myfanvertex(float i,float y,float j)
    triangleindex++;
    }
 
-
-// process keyboard events etc.
-class MyEventReceiver : public IEventReceiver
+// process keyboard events
+class MyEventReceiver: public IEventReceiver
    {
    public:
 
    virtual bool OnEvent(SEvent event)
       {
-      if (event.EventType == EET_KEY_INPUT_EVENT)
-         {
-         switch(event.KeyInput.Key)
-            {
-            case KEY_KEY_Q:
-               {
-               exit(0);
-               }
-               return true;
-            }
-         }
-      return false;
+      if (event.EventType==EET_KEY_INPUT_EVENT)
+         if (event.KeyInput.Key==KEY_KEY_Q) exit(0);
+
+      return(false);
       }
    };
 
@@ -109,9 +101,9 @@ int main(int argc,char *argv[])
    {
    MyEventReceiver receiver;
 
-   IrrlichtDevice *device = createDevice(EDT_OPENGL,core::dimension2d<s32>(640,480),16,false,false,false,&receiver);
-   video::IVideoDriver *driver = device->getVideoDriver();
-   scene::ISceneManager *smgr = device->getSceneManager();
+   IrrlichtDevice *device=createDevice(EDT_OPENGL,core::dimension2d<s32>(640,480),16,false,false,false,&receiver);
+   video::IVideoDriver *driver=device->getVideoDriver();
+   scene::ISceneManager *smgr=device->getSceneManager();
 
    video::SMaterial material;
 
@@ -119,48 +111,48 @@ int main(int argc,char *argv[])
    material.Lighting=false;
    driver->setMaterial(material);
 
-   IImage *heightimage = driver->createImageFromFile("faceofmarsmap.bmp");
-   size = heightimage->getDimension().Width;
+   IImage *heightimage=driver->createImageFromFile("faceofmarsmap.bmp");
+   size=heightimage->getDimension().Width;
 
-   short int *hfield = new short int[size*size];
+   short int *hfield=new short int[size*size];
 
    for (int i=0; i<size; i++)
       for (int j=0; j<size; j++)
-         hfield[i+j*size] = heightimage->getPixel(i,size-1-j).getRed();
+         hfield[i+j*size]=heightimage->getPixel(i,size-1-j).getRed();
 
-   ministub *stub = new ministub(hfield,
-                                 &size,&dim,scale,
-                                 1.0f,0.0f,0.0f,0.0f,
-                                 mybeginfan,myfanvertex);
+   ministub *stub=new ministub(hfield,
+                               &size,&dim,scale,
+                               1.0f,0.0f,0.0f,0.0f,
+                               mybeginfan,myfanvertex);
 
-   int lastfps = 0;
+   int lastfps=0;
 
    vertex.Normal.set(0,1,0);
    vertex.TCoords.set(0,0);
    vertex.Color.set(255,255,255,255);
 
-   scene::IAnimatedMeshSceneNode *terrainnode = 0;
-   ITexture *terraintexture = driver->getTexture("faceofmars.jpg");
+   scene::IAnimatedMeshSceneNode *terrainnode=0;
+   ITexture *terraintexture=driver->getTexture("faceofmars.jpg");
 
-   scene::ICameraSceneNode *camera = smgr->addCameraSceneNodeFPS(0,50,50);
+   scene::ICameraSceneNode *camera=smgr->addCameraSceneNodeFPS(0,50,50);
    camera->setPosition(vector3df(0.0f,0.0f,0.0f));
    camera->setTarget(vector3df(0.0f,0.0f,-1.0f));
    camera->setUpVector(vector3df(0.0f,1.0f,0.0f));
 
    while(device->run())
       {
-      buffer = new SMeshBuffer();
+      buffer=new SMeshBuffer();
 
-      float aspect = camera->getAspectRatio();
-      float fovy = 180.0f/PI*camera->getFOV();
-      float nearp = camera->getNearValue();
-      float farp = camera->getFarValue();
+      float aspect=camera->getAspectRatio();
+      float fovy=180.0f/PI*camera->getFOV();
+      float nearp=camera->getNearValue();
+      float farp=camera->getFarValue();
 
-      vector3df pos = camera->getPosition();
-      vector3df tgt = camera->getTarget();
+      vector3df pos=camera->getPosition();
+      vector3df tgt=camera->getTarget();
 
-      float glide = stub->getheight(pos.X,pos.Z)+10.0f*nearp;
-      if (glide<0.0f) glide = 100.0f;
+      float glide=stub->getheight(pos.X,pos.Z)+10.0f*nearp;
+      if (glide<0.0f) glide=100.0f;
 
       camera->setPosition(vector3df(pos.X,glide,pos.Z));
 
@@ -173,33 +165,35 @@ int main(int argc,char *argv[])
                  2.0f*fovy,aspect,
                  nearp,farp);
 
-      SMesh* meshtmp = new SMesh();
-      SAnimatedMesh *animatedMesh = new SAnimatedMesh();
+      SMesh* meshtmp=new SMesh();
+      SAnimatedMesh *animatedMesh=new SAnimatedMesh();
       buffer->recalculateBoundingBox();
       meshtmp->addMeshBuffer(buffer);
       meshtmp->recalculateBoundingBox();
       animatedMesh->addMesh(meshtmp);
       animatedMesh->recalculateBoundingBox();
-      scene::IAnimatedMesh *mesh = animatedMesh;
+      scene::IAnimatedMesh *mesh=animatedMesh;
       buffer->drop();
 
-      terrainnode = smgr->addAnimatedMeshSceneNode(mesh);
+      terrainnode=smgr->addAnimatedMeshSceneNode(mesh);
       terrainnode->setMaterialFlag(EMF_LIGHTING,false);
-      // terrainnode->setMaterialFlag(EMF_WIREFRAME,true);
+#ifdef WIREFRAME
+      terrainnode->setMaterialFlag(EMF_WIREFRAME,true);
+#endif
       terrainnode->setMaterialTexture(0,terraintexture);
 
       driver->beginScene(true,true,SColor(50,50,50,0));
       smgr->drawAll();
       driver->endScene();
 
-      int fps = driver->getFPS();
+      int fps=driver->getFPS();
       if (lastfps!=fps)
          {
          wchar_t tmp[1024];
-         swprintf(tmp,1024,L"FaceOfMars Demo v.0.6: libmini and Irrlicht engine (fps:%d triangles:%d)",
+         swprintf(tmp,1024,L"FaceOfMars Demo v.0.7: libMini and Irrlicht engine (fps:%d triangles:%d)",
                   fps,driver->getPrimitiveCountDrawn());
          device->setWindowCaption(tmp);
-         lastfps = fps;
+         lastfps=fps;
          }
 
       terrainnode->remove();
@@ -207,10 +201,11 @@ int main(int argc,char *argv[])
       animatedMesh->drop();
       }
 
-   delete(stub);
-   delete(hfield);
+   delete stub;
+   delete hfield;
+
    heightimage->drop();
    device->drop();
 
-   return 0;
+   return(0);
    }
