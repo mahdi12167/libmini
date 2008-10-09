@@ -31,13 +31,13 @@ set spc4='    '
 set spc8='        '
 set tab='	'
 
-set rmtab4="s/$tab/$spc4/"
-set rmtab8="s/$tab/$spc8/"
+set rmtab4="s/$tab/$spc4/g"
+set rmtab8="s/$tab/$spc8/g"
 
 set rmspc="s/[$spc$tab]*"'$'"//"
 set rmspctab="s/$spc*$tab/$tab/g"
 
-set ctrlm='\0x0a'
+set ctrlm=''
 set rmctrlm="s/$ctrlm//"
 
 if ($file == "") then
