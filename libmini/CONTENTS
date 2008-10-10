@@ -1,26 +1,32 @@
 libMini SVN repository contents:
 
 mini: the libMini library plus the libMini viewer
-Yukon|Stuttgart|Hawaii|Fraenkische: libMini demos
+Yukon|Stuttgart|Hawaii|Fraenkische|FaceOfMars: libMini demos
+tags: major tagged libMini versions
 deps: source code of selected libMini dependencies
 data: hires data as a replacement for the lores data in mini/data
-WIN32: prebuilt Windows dependencies
+WIN32: prebuilt static Windows dependencies
 WIN32.exe: prebuilt Windows executables
 
-For building libMini, only OpenGL is required to be installed. See the libMini README for instructions.
+For building libMini, only OpenGL needs to be installed. See the libMini README for instructions.
 For building the libMini viewer on *nix, it is assumed that pthreads libjpeg libpng and libcurl are installed.
 Then the libMini viewer additionally requires the dependencies GLUT/freeGLUT squish and GREYCstoration (optional).
 These dependencies can be built from the respective source code package in the deps folder.
 For Windows, prebuilt static libaries are available in the WIN32 folder.
 
-The libMini dependencies are also available here:
+The libMini dependencies are available here:
 
 pthreads-win32: http://sourceware.org/pthreads-win32
+openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
+libcurl:        http://curl.haxx.se/libcurl
 libjpeg:        http://www.ijg.org
 libpng:         http://www.libpng.org
-libcurl:        http://curl.haxx.se/libcurl
-freeglut:       http://freeglut.sourceforge.net
 squish:         http://www.sjbrown.co.uk/?code=squish
 GREYCstoration: http://www.greyc.ensicaen.fr/~dtschump/greycstoration
+freeglut:       http://freeglut.sourceforge.net
 
-For all of the above dependencies the latest available version is recommended.
+As of this writing, libMini did successfully build with the latest
+available versions of the above dependencies.
+
+Waimanalo, 9.Oct.2008
+Stefan Roettger
