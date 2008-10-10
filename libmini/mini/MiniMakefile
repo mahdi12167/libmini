@@ -1,3 +1,4 @@
+MAKE	= make -f MiniMakefile
 SHELL	= sh
 
 HDRS	= minibase minidyna minisort
