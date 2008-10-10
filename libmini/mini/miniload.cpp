@@ -1012,7 +1012,8 @@ float miniload::getmem()
    }
 
 // return texture memory foot print of visible and preloaded tiles in raw mega bytes
-// if compressed with S3TC divide by 6
+// the foot print includes a factor of 4/3 if mipmaps are present
+// if data is compressed with S3TC divide foot print by 6
 float miniload::gettexmem()
    {
    int i,j;
@@ -1027,7 +1028,7 @@ float miniload::gettexmem()
       for (j=TILE->getpreloadedbottom(); j<=TILE->getpreloadedtop(); j++)
          if (TILE->gettexid(i,j)!=0)
             if (TILE->gettexmm(i,j)==0) tmem+=3*TILE->gettexw(i,j)*TILE->gettexh(i,j);
-            else tmem+=1.5f*3*TILE->gettexw(i,j)*TILE->gettexh(i,j);
+            else tmem+=1.333f*3*TILE->gettexw(i,j)*TILE->gettexh(i,j);
 
    return(tmem/fsqr(1024));
    }
