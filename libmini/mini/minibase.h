@@ -70,12 +70,16 @@ inline float fABS(const float x) {return((x<0.0)?-x:x);}
 inline double FABS(const double x) {return((x<0.0)?-x:x);}
 #define fabs(x) fABS(x)
 
+#ifndef min
 inline int min(const int a,const int b) {return((a<b)?a:b);}
+#endif
 inline float fMIN(const float a,const float b) {return((a<b)?a:b);}
 inline double FMIN(const double a,const double b) {return((a<b)?a:b);}
 #define fmin(a,b) fMIN(a,b)
 
+#ifndef max
 inline int max(const int a,const int b) {return((a>b)?a:b);}
+#endif
 inline float fMAX(const float a,const float b) {return((a>b)?a:b);}
 inline double FMAX(const double a,const double b) {return((a>b)?a:b);}
 #define fmax(a,b) fMAX(a,b)
