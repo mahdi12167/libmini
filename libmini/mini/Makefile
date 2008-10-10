@@ -80,16 +80,16 @@ install: lib libsfx
 	@-$(CP) data/* $(DATA)/mini
 
 tools:	lib libsfx
-	@-(cd tools; make all)
+	@-(cd tools; $(MAKE) all)
 
 clean:
 	@-$(RM) $(OBJS) $(VOBJS) ii_files
-	@-(cd tools; make clean)
+	@-(cd tools; $(MAKE) clean)
 
 tidy:	clean
 	@-$(RM) *~ Makefile.d Debug* Release* *.ncb *.opt *.plg
 	@-$(RM) libMini*.a example stubtest viewer
-	@-(cd tools; make tidy)
+	@-(cd tools; $(MAKE) tidy)
 
 zip:	tidy
 	@-(cd ..; $(ZIP) mini/MINI.zip mini -x \*/.\?\?\* -x \*CVS/\*)
