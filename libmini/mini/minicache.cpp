@@ -632,12 +632,6 @@ int minicache::rendertrigger(int phase)
    {
    int vtx=0;
 
-   TERRAIN_TYPE *t;
-   CACHE_TYPE *c;
-
-   t=&TERRAIN[RENDER_ID];
-   c=&t->cache[1-t->cache_num];
-
    if (phase==2)
       {
       initstate();
@@ -662,8 +656,6 @@ int minicache::rendertrigger(int phase)
 
       if (USEVTXSHADER!=0) enablevtxshader();
       if (USEPIXSHADER!=0) enablepixshader();
-
-      vertexarray(c->arg);
 
       colorarray(NULL);
       normalarray(NULL);
@@ -702,8 +694,6 @@ int minicache::rendertrigger(int phase)
          mtxpush();
 
          if (USEVTXSHADER!=0) enablevtxshader();
-
-         vertexarray(c->arg);
          }
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
@@ -759,12 +749,15 @@ int minicache::rendertrigger(int phase,float scale)
    int vtx=0;
 
    TERRAIN_TYPE *t;
+   CACHE_TYPE *c;
 
    t=&TERRAIN[RENDER_ID];
+   c=&t->cache[1-t->cache_num];
 
    t->render_phase=phase;
 
    if (t->render_phase==1) t->scale=scale;
+   else if (t->render_phase==2 || t->render_phase==3) vertexarray(c->arg);
    else if (t->render_phase==4) t->lambda=scale;
 
    if (PRISMTRIGGER_CALLBACK!=NULL) vtx+=PRISMTRIGGER_CALLBACK(phase,CALLBACK_DATA);
