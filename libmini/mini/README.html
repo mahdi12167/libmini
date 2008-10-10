@@ -522,8 +522,7 @@ Normally, the focus of interest, that is the point with the highest
 resolution, should be equal to the eye point in order to minimize the
 screen space error of the dynamic triangulation. In some cases,
 however, it might be advantageous to set the focus to a different
-location. The focus can be set directly in the drawlandscape call of
-the libMini core or via ministub::setfocus and minitile::setfocus.<p>
+location.<p>
 
 Instead of choosing the default short signed integer representation
 (16 bit) of the height field, a floating point representation can be
@@ -605,20 +604,20 @@ to a significantly improved cache coherency and performance.<p>
 <h2>(F) MINITILE AND MINILOAD FRONTEND:</h2>
 
 As mentioned above, a tiled terrain can be used to save memory and
-gain speed. In this case the minitile class provides a starting point
-how to render a tiled terrain with the Mini Library. In the
-constructor of the minitile class a array of file names is passed
-which defines the PGM height image of each tile and its corresponding
+gain speed. In such a case the minitile class provides a starting
+point how to render a tiled terrain with the Mini Library. In the
+constructor of the minitile class an array of file names is passed
+which define the PGM height image of each tile and its corresponding
 PPM texture (in column first order). The tiles must have the same
 geometric extent but need not have equal resolution which means that
 grid size or cell dimension may differ.<p>
 
 Besides rendering a tiled terrain, the minitile class is also a
-convenient way to just display a single height field plus texture
-without going into the details of the low level API described in
-Section <a href="#TerrainRenderingAPI">(C)</a>. For an example use of
-the minitile class please check out the Yukon Demo or the Stuttgart
-Demo.<p>
+convenient way to just display a single height field plus a texture
+without going into the details of the low level API as described in
+Section <a href="#TerrainRenderingAPI">(C)</a>. For an example use
+case of the minitile class please check out the Yukon Demo or the
+Stuttgart Demo.<p>
 
 If the landscape that should be visualized is extremely large and
 detailed the terrain may not fit entirely into main memory. This
@@ -631,13 +630,13 @@ plane should be chosen to be considerably smaller than the actual
 extent of the entire scene. The second paging mode loads the
 appropriate LOD for each tile if a resolution pyramid is present. This
 reduces the memory foot print drastically but may also increase the
-latency during a movement of the viewer, since the LODs need to be
-updated dynamically. The second mode allows much larger viewing
-distances as the first mode. Depending on the tile size this comes at
-the expense of more or less latency whenever the LODs need to be
-updated from disk. To hide the latency the so-called preloading can be
-enabled so that the requested LODs are already available before they
-are actually needed for rendering.<p>
+latency during a movement of the viewer, since all the visible LODs
+need to be updated dynamically. The second mode allows much larger
+viewing distances as the first mode. Depending on the tile size this
+comes at the expense of some latency whenever a different LOD needs to
+be loaded from disk. To hide the latency the so-called preloading can
+be enabled so that the requested LODs are already available before
+they actually need to be rendered.<p>
 
 By default, the tiles are stored in the PNM (PGM/PPM) format of the
 netpbm library which is available
