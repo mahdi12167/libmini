@@ -1,3 +1,10 @@
+TestWaypoint@Pier, Makai
+; $type=5
+UTM 04
+0638500
+2358000
+10m
+
 Makai Research Pier Gate
 UTM 04
 0637956
