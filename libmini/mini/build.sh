@@ -39,7 +39,8 @@ set INSTALL="/usr/local"
 set DATA="/usr/share"
 
 # make command
-set make="make -f MiniMakefile"
+set mmfile=MiniMakefile
+set make="make -f $(mmfile)"
 
 # number of make jobs on Linux & Mac
 set jobs=-j2
