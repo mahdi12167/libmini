@@ -81,6 +81,9 @@ class datagrid
    //! check if the grid is empty
    BOOLINT isempty();
 
+   //! check if the grid is below sea level
+   BOOLINT isbelowsealevel();
+
    //! trigger pushing the mesh for a particular time step
    void trigger(const double time);
 

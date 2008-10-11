@@ -391,6 +391,9 @@ void miniearth::rendercache()
    miniv3d lgl;
    float light[3];
 
+   miniterrain::MINITERRAIN_PARAMS tparams;
+   int seamode;
+
    ref=getreference();
 
    if (ref!=NULL)
@@ -513,6 +516,25 @@ void miniearth::rendercache()
                                 EPARAMS.fogcolor);
 
             EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
+            }
+
+      // check data grid for underwater volumes
+      if (DATAGRID!=NULL)
+         if (!DATAGRID->isempty())
+            {
+            // get the actual terrain state
+            TERRAIN->get(tparams);
+
+            // use stippling if there are underwater volumes
+            if (DATAGRID->isbelowsealevel()) seamode=1;
+            else seamode=0;
+
+            // pass the updated terrain state
+            if (seamode!=tparams.seamode)
+               {
+               tparams.seamode=seamode;
+               TERRAIN->set(tparams);
+               }
             }
 
       // render terrain

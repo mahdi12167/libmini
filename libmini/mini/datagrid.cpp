@@ -383,6 +383,20 @@ BOOLINT datagrid::isempty()
    return(UNSORTED.getsize()==0); // check extracted mesh size
    }
 
+// check if the grid is below sea level
+BOOLINT datagrid::isbelowsealevel()
+   {
+   unsigned int i;
+
+   for (i=0; i<FLAG.getsize(); i++)
+      if (FLAG[i])
+         if (!DATA[i].missing())
+            if (DATA[i].crs!=databuf::DATABUF_CRS_LINEAR)
+               if (DATA[i].h0<0.0f) return(TRUE);
+
+   return(FALSE);
+   }
+
 // trigger pushing the mesh for a particular time step
 void datagrid::trigger(const double time)
    {
