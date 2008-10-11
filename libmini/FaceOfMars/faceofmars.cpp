@@ -1,5 +1,5 @@
 // FaceOfMars Demo for libMini with Irrlicht 1.4
-// Linux OpenGL version v.0.7 as of 8.Oct.2008
+// Linux OpenGL version v.0.7 as of 10.Oct.2008
 //
 // v.0.1: initial Windows version (zenprogramming)
 // v.0.2: fixed texture scaling and offset (zenprogramming)
@@ -31,7 +31,7 @@ using namespace video;
 
 #include <mini/ministub.h>
 
-// mesh generation stuff:
+// mesh generation:
 
 int triangleindex=-1;
 int vertex0=0;
@@ -44,7 +44,7 @@ S3DVertex vertex;
 int size=0;
 float dim=1.0f;
 float scale=0.2f;
-float res=5.0E5f;
+float res=100.0f;
 
 // libmini callbacks:
 
@@ -87,10 +87,10 @@ class MyEventReceiver: public IEventReceiver
    {
    public:
 
-   virtual bool OnEvent(SEvent event)
+   virtual bool OnEvent(const SEvent &event)
       {
       if (event.EventType==EET_KEY_INPUT_EVENT)
-         if (event.KeyInput.Key==KEY_KEY_Q) exit(0);
+         if (event.KeyInput.Key==KEY_KEY_Q || event.KeyInput.Key==KEY_ESCAPE) exit(0);
 
       return(false);
       }
@@ -107,7 +107,7 @@ int main(int argc,char *argv[])
 
    video::SMaterial material;
 
-   material.Texture1=0;
+   material.setTexture(0,0);
    material.Lighting=false;
    driver->setMaterial(material);
 

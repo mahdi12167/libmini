@@ -1,9 +1,12 @@
 MINI	= ../mini
-IRR	= ../irrlicht
+IRR	= ../../irrlicht-1.4.2
+
+IRRINC	= $(IRR)/include
+IRRLIB	= $(IRR)/lib/Linux
 
 demo:
-	c++ -c faceofmars.cpp -I$(MINI)/.. -I$(IRR)/include
-	c++ faceofmars.o -L$(MINI) -lMini -L$(IRR) -lIrrlicht -lGL -lGLU -L/usr/X11R6/lib -lX11 -lXm -lXt -lXmu -lXxf86vm -ljpeg -lz -lm -o faceofmars
+	c++ -c faceofmars.cpp -I$(MINI)/.. -I$(IRRINC)
+	c++ faceofmars.o -L$(MINI) -lMini -L$(IRRLIB) -lIrrlicht -lGL -lGLU -lm -o faceofmars
 
 clean:
 	@-rm -f *~ *.o faceofmars
