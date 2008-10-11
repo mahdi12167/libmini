@@ -836,11 +836,15 @@ void renderhud()
                hit_elev=viewer->getearth()->getterrain()->getheight(hit);
                if (hit_elev==-MAXFLOAT) hit_elev=0.0;
 
-               snprintf(str,MAXSTR,"dist=%3.3f elev=%3.3f\nlat=%3.6f lon=%3.6f",
-                        dist,hit_elev,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+               if (dist<1000.0)
+                  snprintf(str,MAXSTR,"dist=%3.3fm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
+                           dist,hit_elev,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+               else
+                  snprintf(str,MAXSTR,"dist=%3.3fkm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
+                           dist/1000.0,hit_elev,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
 
-               glTranslatef(0.05f,0.0f,0.0f);
-               minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
+               glTranslatef(0.05f,-0.01f,0.0f);
+               minitext::drawstring(0.5f,240.0f,1.0f,0.25f,1.0f,str);
 
                reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_elev);
                }
