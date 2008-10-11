@@ -843,8 +843,31 @@ void miniterrain::render()
       // enable shaders
       if (TPARAMS.useshaders)
          {
+         // set detail texture parameters
+         for (n=0; n<LNUM; n++)
+            if (LAYER[n]->getterrain()!=NULL)
+               if (TPARAMS.detailtexmode==0)
+                  {
+                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
+                                            0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+
+                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),0.0f);
+
+                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),0,0,0,0);
+                  }
+
+         // set detail texture mode
+         minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha,TPARAMS.detailtexmask);
+
+         // set sea surface mode
+         minishader::setseamode(TPARAMS.seamode);
+
          if (TPARAMS.usevisshader)
             {
+            // set contour line mode
+            minishader::setcontourmode(TPARAMS.contourmode);
+
+            // use standard VIS shader
             minishader::setVISshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -857,12 +880,13 @@ void miniterrain::render()
                                      TPARAMS.seatrans,TPARAMS.bottomtrans,
                                      TPARAMS.bottomcolor,
                                      TPARAMS.seamodulate);
-
-            minishader::setcontourmode(TPARAMS.contourmode);
-            minishader::setseamode(TPARAMS.seamode);
             }
          else if (TPARAMS.usenprshader)
             {
+            // set contour line mode
+            minishader::setcontourmode((TPARAMS.usecontours)?0:TPARAMS.nprcontourmode);
+
+            // use alternative NPR shader
             minishader::setNPRshader(CACHE,
                                      LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
@@ -874,12 +898,10 @@ void miniterrain::render()
                                      fmax(TPARAMS.sealevel,0.0f),
                                      TPARAMS.nprseacolor,TPARAMS.nprseatrans,
                                      TPARAMS.nprseagray);
-
-            minishader::setcontourmode((TPARAMS.usecontours)?0:TPARAMS.nprcontourmode);
-            minishader::setseamode(TPARAMS.seamode);
             }
          else
             {
+            // use default shader
             CACHE->setvtxshader();
             CACHE->usevtxshader(1);
             CACHE->setpixshader();
@@ -888,6 +910,7 @@ void miniterrain::render()
             CACHE->useseashader(1);
             }
 
+         // set lighting parameters
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->getterrain()!=NULL)
                if (TPARAMS.usediffuse)
@@ -908,20 +931,6 @@ void miniterrain::render()
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
                                      0.0f,0.0f,0.0f,0.0f,1.0f);
-
-         for (n=0; n<LNUM; n++)
-            if (LAYER[n]->getterrain()!=NULL)
-               if (TPARAMS.detailtexmode==0)
-                  {
-                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
-                                            0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
-
-                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),0.0f);
-
-                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),0,0,0,0);
-                  }
-
-         minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha,TPARAMS.detailtexmask);
          }
 
       // render vertex arrays
