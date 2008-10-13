@@ -45,6 +45,7 @@ unsigned int datagrid::create(const unsigned int slot,
          FLIP[i]=flip;
          BBOX[i]=bbox;
          REF[i]=NULL;
+         DATA[i]=databuf();
 
          return(i);
          }
@@ -54,10 +55,22 @@ unsigned int datagrid::create(const unsigned int slot,
    FLIP.append(flip);
    BBOX.append(bbox);
    REF.append(NULL);
-
-   DATA.setsize(FLAG.getsize());
+   DATA.append(databuf());
 
    return(FLAG.getsize()-1);
+   }
+
+// assign slot
+void datagrid::assign(const unsigned int id,
+                      const unsigned int slot)
+   {
+   if (FLAG[id])
+      {
+      if (!DATA[id].missing())
+         if (SLOT[id]!=slot) INVALID=TRUE;
+
+      SLOT[id]=slot;
+      }
    }
 
 // load data
@@ -107,29 +120,29 @@ void datagrid::move(const unsigned int id,
                     const float t0,const float dt)
    {
    if (FLAG[id])
+      {
       if (!DATA[id].missing())
-         {
          if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
              DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
              DATA[id].nex!=nex || DATA[id].ney!=ney ||
              DATA[id].sex!=sex || DATA[id].sey!=sey ||
              DATA[id].h0!=h0 || DATA[id].dh!=dh) INVALID=TRUE;
 
-         DATA[id].swx=swx;
-         DATA[id].swy=swy;
-         DATA[id].nwx=nwx;
-         DATA[id].nwy=nwy;
-         DATA[id].nex=nex;
-         DATA[id].ney=ney;
-         DATA[id].sex=sex;
-         DATA[id].sey=sey;
+      DATA[id].swx=swx;
+      DATA[id].swy=swy;
+      DATA[id].nwx=nwx;
+      DATA[id].nwy=nwy;
+      DATA[id].nex=nex;
+      DATA[id].ney=ney;
+      DATA[id].sex=sex;
+      DATA[id].sey=sey;
 
-         DATA[id].h0=h0;
-         DATA[id].dh=dh;
+      DATA[id].h0=h0;
+      DATA[id].dh=dh;
 
-         DATA[id].t0=t0;
-         DATA[id].dt=dt;
-         }
+      DATA[id].t0=t0;
+      DATA[id].dt=dt;
+      }
    }
 
 // reference to layer
@@ -515,4 +528,13 @@ void datagrid::push(const minimesh &mesh,
 
    printf("view parameters: eye=(%g,%g,%g) dir=(%g,%g,%g) nearp=%g farp=%g fovy=%g aspect=%g scale=%g zcliptexid=%d\n",
           eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect,scale,zcliptexid);
+   }
+
+// get a particular data brick
+const databuf *datagrid::getdata(const unsigned int id)
+   {
+   if (FLAG[id])
+      if (!DATA[id].missing()) return(&DATA[id]);
+
+   return(NULL);
    }

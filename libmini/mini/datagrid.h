@@ -37,6 +37,10 @@ class datagrid
                        const BOOLINT flip=FALSE, // decomposition flip
                        const BOOLINT bbox=FALSE); // bbox insertion
 
+   //! assign slot
+   void assign(const unsigned int id, // data brick id
+               const unsigned int slot); // data slot
+
    //! load data
    void load(const unsigned int id, // data brick id
              const databuf &buf); // data buffer
@@ -105,6 +109,9 @@ class datagrid
                      const float nearp,const float farp,const float fovy,const float aspect,
                      const float scale,
                      const int zcliptexid);
+
+   //! get a particular data brick
+   const databuf *getdata(const unsigned int id); // data brick id
 
    protected:
 
