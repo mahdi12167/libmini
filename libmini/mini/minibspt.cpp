@@ -332,7 +332,7 @@ minimesh minibsptree::extract()
    minimesh mesh;
 
    // preprocess the input mesh
-   while (!preprocess());
+   preprocessall();
 
    // append each tetrahedralized node to the output mesh
    for (i=0; i<TREE.getsize(); i++)
@@ -351,7 +351,7 @@ minimesh minibsptree::extract()
 minimesh minibsptree::extract(const miniv3d &eye,const double minradius,const double maxradius)
    {
    // preprocess the input mesh
-   while (!preprocess());
+   preprocessall();
 
    if (GOTEYE)
       if (eye==EYE && minradius==MINR && maxradius==MAXR) return(COLLECT); // return the previously collected mesh
@@ -416,7 +416,7 @@ double minibsptree::getvolume()
    unsigned int i;
 
    // preprocess the input mesh
-   while (!preprocess());
+   preprocessall();
 
    if (VOLDONE) return(VOL);
 

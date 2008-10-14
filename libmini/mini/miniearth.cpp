@@ -520,22 +520,21 @@ void miniearth::rendercache()
 
       // check data grid for underwater volumes
       if (DATAGRID!=NULL)
-         if (!DATAGRID->isempty())
+         {
+         // get the actual terrain state
+         TERRAIN->get(tparams);
+
+         // use stippling if there are underwater volumes
+         if (DATAGRID->isbelowsealevel()) seamode=1;
+         else seamode=0;
+
+         // pass the updated terrain state
+         if (seamode!=tparams.seamode)
             {
-            // get the actual terrain state
-            TERRAIN->get(tparams);
-
-            // use stippling if there are underwater volumes
-            if (DATAGRID->isbelowsealevel()) seamode=1;
-            else seamode=0;
-
-            // pass the updated terrain state
-            if (seamode!=tparams.seamode)
-               {
-               tparams.seamode=seamode;
-               TERRAIN->set(tparams);
-               }
+            tparams.seamode=seamode;
+            TERRAIN->set(tparams);
             }
+         }
 
       // render terrain
       TERRAIN->render();
@@ -572,6 +571,11 @@ void miniearth::renderdgrid()
 
       // trigger data grid
       if (DATAGRID!=NULL)
+         {
+         // construct mesh
+         DATAGRID->construct();
+
+         // check if constructed mesh is empty
          if (!DATAGRID->isempty())
             {
             DATAGRID->usemtxpost(FALSE);
@@ -591,6 +595,7 @@ void miniearth::renderdgrid()
             if (!SORT) DATAGRID->trigger(lparams.time);
             else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect,MAXFLOAT,ZTEXID);
             }
+         }
       }
    }
 

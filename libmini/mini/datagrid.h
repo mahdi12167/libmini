@@ -77,32 +77,33 @@ class datagrid
    void usemtxpost(const BOOLINT enable=FALSE);
 
    //! construct tetrahedral mesh from all data bricks
+   //! needs to be called at least once before pulling the trigger
    void construct();
 
-   //! preprocess tetrahedral mesh one step at a time
+   //! construct tetrahedral mesh one step at a time
    BOOLINT preprocess();
 
-   //! check if the grid is empty
+   //! check if the constructed tetrahedral mesh is empty
    BOOLINT isempty();
 
    //! check if the grid is below sea level
    BOOLINT isbelowsealevel();
 
-   //! trigger pushing the mesh for a particular time step
+   //! trigger pushing the tetrahedral mesh for a particular time step
    void trigger(const double time);
 
-   //! trigger pushing the mesh for a particular time step and eye point
+   //! trigger pushing the tetrahedral mesh for a particular time step and eye point
    void trigger(const double time,
                 const minicoord &eye,const miniv3d &dir,
                 const float nearp,const float farp,const float fovy,const float aspect,
                 const double maxradius=MAXFLOAT,
                 const int zcliptexid=0);
 
-   //! push the mesh for a particular time step
+   //! push the tetrahedral mesh for a particular time step
    virtual void push(const minimesh &mesh,
                      const double time);
 
-   //! push the mesh for a particular time step and eye point
+   //! push the tetrahedral mesh for a particular time step and eye point
    virtual void push(const minimesh &mesh,
                      const double time,
                      const miniv3d &eye,const miniv3d &dir,
@@ -110,8 +111,8 @@ class datagrid
                      const float scale,
                      const int zcliptexid);
 
-   //! get a particular data brick
-   const databuf *getdata(const unsigned int id); // data brick id
+   //! get a data brick
+   const databuf *getdata(const unsigned int id) const; // data brick id
 
    protected:
 
@@ -133,13 +134,13 @@ class datagrid
 
    minibsptree BSPT;
    BOOLINT CONSTRUCTED;
+   minibsptree LAST;
 
    minimesh MESH;
    BOOLINT DECOMPOSED;
    unsigned int PHASE,STEP;
 
    minimesh UNSORTED;
-   minimesh SORTED;
 
    BOOLINT decompose();
    minimesh decompose(unsigned int idx);

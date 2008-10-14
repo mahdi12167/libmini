@@ -220,8 +220,10 @@ BOOLINT datagrid::preprocess()
 
       if (!status1 && status2)
          {
+         LAST=BSPT; // copy constructed bsp tree
          UNSORTED=BSPT.extract(); // extract a non-intrusive unsorted tetrahedral mesh from the bsp tree
          CONSTRUCTED=TRUE; // preprocessing has finished
+         BSPT.clear(); // clear actual bsp tree
          }
       }
 
@@ -242,7 +244,7 @@ BOOLINT datagrid::decompose()
 
             break;
          case 1:
-            // phase #1: decompose one data brick into 5 tetrahedra
+            // phase #1: decompose each data brick into 5 tetrahedra
             MESH=decompose(STEP);
 
             PHASE++;
@@ -276,6 +278,7 @@ BOOLINT datagrid::decompose()
    return(DECOMPOSED);
    }
 
+// decompose data brick into tetrahedra
 minimesh datagrid::decompose(unsigned int idx)
    {
    unsigned int i;
@@ -389,12 +392,9 @@ minimesh datagrid::decompose(unsigned int idx)
    return(mesh);
    }
 
-// check if the grid is empty
+// check if the constructed tetrahedral mesh is empty
 BOOLINT datagrid::isempty()
-   {
-   if (INVALID) construct(); // construct the bsp tree
-   return(UNSORTED.getsize()==0); // check extracted mesh size
-   }
+   {return(UNSORTED.getsize()==0);}
 
 // check if the grid is below sea level
 BOOLINT datagrid::isbelowsealevel()
@@ -410,20 +410,22 @@ BOOLINT datagrid::isbelowsealevel()
    return(FALSE);
    }
 
-// trigger pushing the mesh for a particular time step
+// trigger pushing the tetrahedral mesh for a particular time step
 void datagrid::trigger(const double time)
    {
-   if (INVALID) construct(); // construct the bsp tree
-   push_post(UNSORTED,time); // push the static unsorted mesh
+   // push the static unsorted mesh
+   push_post(UNSORTED,time);
    }
 
-// trigger pushing the mesh for a particular time step and eye point
+// trigger pushing the tetrahedral mesh for a particular time step and eye point
 void datagrid::trigger(const double time,
                        const minicoord &eye,const miniv3d &dir,
                        const float nearp,const float farp,const float fovy,const float aspect,
                        const double maxradius,
                        const int zcliptexid)
    {
+   minimesh sorted;
+
    minicoord ep,epd;
    miniv3d ed;
 
@@ -452,12 +454,11 @@ void datagrid::trigger(const double time,
    factor2=1.1f;
 
    // extract view-dependent mesh
-   if (INVALID) construct(); // construct the bsp tree
-   SORTED=BSPT.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push_post(SORTED,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect,zcliptexid); // push the dynamic sorted mesh
+   sorted=LAST.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   push_post(sorted,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect,zcliptexid); // push the dynamic sorted mesh
    }
 
-// push the mesh for a particular time step
+// push the tetrahedral mesh for a particular time step
 void datagrid::push_post(const minimesh &mesh,
                          const double time)
    {
@@ -472,7 +473,7 @@ void datagrid::push_post(const minimesh &mesh,
    else push(mesh,time);
    }
 
-// push the mesh for a particular time step and eye point
+// push the tetrahedral mesh for a particular time step and eye point
 void datagrid::push_post(minimesh &mesh,
                          const double time,
                          const miniv3d &eye,const miniv3d &dir,
@@ -507,7 +508,7 @@ void datagrid::push_post(minimesh &mesh,
    else push(mesh,time,eye,dir,nearp,farp,fovy,aspect,1.0f,zcliptexid);
    }
 
-// push the mesh for a particular time step
+// push the tetrahedral mesh for a particular time step
 void datagrid::push(const minimesh &mesh,
                     const double time)
    {
@@ -515,7 +516,7 @@ void datagrid::push(const minimesh &mesh,
           mesh.getsize(),time);
    }
 
-// push the mesh for a particular time step and eye point
+// push the tetrahedral mesh for a particular time step and eye point
 void datagrid::push(const minimesh &mesh,
                     const double time,
                     const miniv3d &eye,const miniv3d &dir,
@@ -530,8 +531,8 @@ void datagrid::push(const minimesh &mesh,
           eye.x,eye.y,eye.z,dir.x,dir.y,dir.z,nearp,farp,fovy,aspect,scale,zcliptexid);
    }
 
-// get a particular data brick
-const databuf *datagrid::getdata(const unsigned int id)
+// get a data brick
+const databuf *datagrid::getdata(const unsigned int id) const
    {
    if (FLAG[id])
       if (!DATA[id].missing()) return(&DATA[id]);
