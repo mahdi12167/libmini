@@ -224,6 +224,7 @@ BOOLINT datagrid::preprocess()
          UNSORTED=BSPT.extract(); // extract a non-intrusive unsorted tetrahedral mesh from the bsp tree
          CONSTRUCTED=TRUE; // preprocessing has finished
          BSPT.clear(); // clear actual bsp tree
+         BSPT.preprocessall(); // finish
          }
       }
 

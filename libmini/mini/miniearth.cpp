@@ -591,7 +591,7 @@ void miniearth::renderdgrid()
                DATAGRID->usemtxpost(TRUE);
                }
 
-            // push either sorted or unsorted grid
+            // push either sorted or unsorted mesh
             if (!SORT) DATAGRID->trigger(lparams.time);
             else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect,MAXFLOAT,ZTEXID);
             }
