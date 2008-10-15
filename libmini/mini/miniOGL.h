@@ -122,7 +122,10 @@ void renderfan(int start,int size);
 
 int getmaxtexsize();
 int getmax3Dtexsize();
+
 int getmaxtexunits();
+int getmaxtexcoords();
+int getmaxteximageunits();
 
 void getviewport(int *x,int *y,int *width,int *height);
 

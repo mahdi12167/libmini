@@ -177,6 +177,8 @@ void print_graphics_info()
    printf("maxtexsize=%d\n",getmaxtexsize());
    printf("max3Dtexsize=%d\n",getmax3Dtexsize());
    printf("maxtexunits=%d\n",getmaxtexunits());
+   printf("maxtexcoords=%d\n",getmaxtexcoords());
+   printf("maxteximageunits=%d\n",getmaxteximageunits());
 
 #endif
    }
@@ -1435,6 +1437,28 @@ int getmaxtexunits()
    GLint param=1;
 #ifdef GL_ARB_multitexture
    if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&param);
+#endif
+   return(param);
+#endif
+   }
+
+int getmaxtexcoords()
+   {
+#ifndef NOOGL
+   GLint param=1;
+#ifdef GL_ARB_multitexture
+   if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB,&param);
+#endif
+   return(param);
+#endif
+   }
+
+int getmaxteximageunits()
+   {
+#ifndef NOOGL
+   GLint param=1;
+#ifdef GL_ARB_multitexture
+   if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB,&param);
 #endif
    return(param);
 #endif
