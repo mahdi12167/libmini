@@ -189,9 +189,45 @@ class minidyna
 
    };
 
+//! cmp operator
+template <class Item,const unsigned int Minsize>
+inline int operator == (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
+   {
+   unsigned int i;
+
+   unsigned int size;
+
+   size=a.getsize();
+
+   if (b.getsize()!=size) return(0);
+
+   for (i=0; i<size; i++)
+      if (a[i]!=b[i]) return(0);
+
+   return(1);
+   }
+
+//! neq operator
+template <class Item,const unsigned int Minsize>
+inline int operator != (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
+   {
+   unsigned int i;
+
+   unsigned int size;
+
+   size=a.getsize();
+
+   if (b.getsize()!=size) return(1);
+
+   for (i=0; i<size; i++)
+      if (a[i]!=b[i]) return(1);
+
+   return(0);
+   }
+
 //! add operator
 template <class Item,const unsigned int Minsize>
-inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
    unsigned int i;
 
@@ -201,7 +237,7 @@ inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const 
    sizea=a.getsize();
    sizeb=b.getsize();
 
-   size=(a<b)?a:b;
+   size=(sizea<sizeb)?sizea:sizeb;
 
    array.setsize(size);
 
@@ -212,7 +248,7 @@ inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const 
 
 //! sub operator
 template <class Item,const unsigned int Minsize>
-inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
    unsigned int i;
 
@@ -222,7 +258,7 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const 
    sizea=a.getsize();
    sizeb=b.getsize();
 
-   size=(a<b)?a:b;
+   size=(sizea<sizeb)?sizea:sizeb;
 
    array.setsize(size);
 
@@ -250,42 +286,51 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &v)
 
 //! mul operator
 template <class Item,const unsigned int Minsize>
-inline minidyna<Item,Minsize> operator * (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+inline minidyna<Item,Minsize> operator * (const double a,const minidyna<Item,Minsize> &b)
    {
    unsigned int i;
 
    minidyna<Item,Minsize> array;
-   unsigned int sizea,sizeb,size;
+   unsigned int size;
 
-   sizea=a.getsize();
-   sizeb=b.getsize();
-
-   size=(a<b)?a:b;
-
+   size=b.getsize();
    array.setsize(size);
 
-   for (i=0; i<size; i++) array[i]=a[i]*b[i];
+   for (i=0; i<size; i++) array[i]=a*b[i];
+
+   return(array);
+   }
+
+//! mul operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator * (const minidyna<Item,Minsize> &a,const double b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=a.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]*b;
 
    return(array);
    }
 
 //! div operator
 template <class Item,const unsigned int Minsize>
-inline minidyna<Item,Minsize> operator / (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+inline minidyna<Item,Minsize> operator / (const minidyna<Item,Minsize> &a,const double b)
    {
    unsigned int i;
 
    minidyna<Item,Minsize> array;
-   unsigned int sizea,sizeb,size;
+   unsigned int size;
 
-   sizea=a.getsize();
-   sizeb=b.getsize();
-
-   size=(a<b)?a:b;
-
+   size=a.getsize();
    array.setsize(size);
 
-   for (i=0; i<size; i++) array[i]=a[i]/b[i];
+   for (i=0; i<size; i++) array[i]=a[i]/b;
 
    return(array);
    }
