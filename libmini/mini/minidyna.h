@@ -189,6 +189,107 @@ class minidyna
 
    };
 
+//! add operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int sizea,sizeb,size;
+
+   sizea=a.getsize();
+   sizeb=b.getsize();
+
+   size=(a<b)?a:b;
+
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]+b[i];
+
+   return(array);
+   }
+
+//! sub operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int sizea,sizeb,size;
+
+   sizea=a.getsize();
+   sizeb=b.getsize();
+
+   size=(a<b)?a:b;
+
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]-b[i];
+
+   return(array);
+   }
+
+// neg operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &v)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=v.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=-v[i];
+
+   return(array);
+   }
+
+//! mul operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator * (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int sizea,sizeb,size;
+
+   sizea=a.getsize();
+   sizeb=b.getsize();
+
+   size=(a<b)?a:b;
+
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]*b[i];
+
+   return(array);
+   }
+
+//! div operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator / (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int sizea,sizeb,size;
+
+   sizea=a.getsize();
+   sizeb=b.getsize();
+
+   size=(a<b)?a:b;
+
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]/b[i];
+
+   return(array);
+   }
+
 //! stream output
 template <class Item,const unsigned int Minsize>
 inline std::ostream& operator << (std::ostream &out,const minidyna<Item,Minsize> &a)
