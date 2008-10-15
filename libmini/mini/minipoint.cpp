@@ -1362,7 +1362,7 @@ void minipoint::configure_bricklods(int bricklods)
 void minipoint::configure_brickstagger(float brickstagger)
    {CONFIGURE_BRICKSTAGGER=brickstagger;}
 
-void minipoint::configure_brickpasses(float brickpasses)
+void minipoint::configure_brickpasses(int brickpasses)
    {CONFIGURE_BRICKPASSES=brickpasses;}
 
 void minipoint::configure_brickstripes(float brickstripes)

@@ -231,7 +231,7 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const 
    return(array);
    }
 
-// neg operator
+//! neg operator
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &v)
    {

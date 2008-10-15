@@ -393,7 +393,7 @@ class minipoint
    void configure_brickceiling(float brickceiling=0.0f); // elevation modulates brick color
    void configure_bricklods(int bricklods=16); // number of brick LODs
    void configure_brickstagger(float brickstagger=1.25f); // staggering of brick LODs
-   void configure_brickpasses(float brickpasses=1); // brick render passes
+   void configure_brickpasses(int brickpasses=1); // brick render passes
    void configure_brickstripes(float brickstripes=0.0f); // offset of brick stripes
 
    protected:
