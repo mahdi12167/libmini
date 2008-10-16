@@ -6,6 +6,7 @@
 #include "minibase.h"
 
 #include "miniv3d.h"
+#include "minidyna.h"
 
 class miniproj
    {
@@ -17,22 +18,25 @@ class miniproj
    //! destructor
    ~miniproj();
 
+   // dynamic coordinate array
+   typedef minidyna<miniv3d,8> dynacoord;
+
    //! initialize projection state
    void initproj(float emi,float rho);
 
    //! project a tetrahedron
-   void proj(const miniv3d &v1,const double c1,
-             const miniv3d &v2,const double c2,
-             const miniv3d &v3,const double c3,
-             const miniv3d &v4,const double c4,
+   void proj(const miniv3d &v1,const double c1,const dynacoord &a1,
+             const miniv3d &v2,const double c2,const dynacoord &a2,
+             const miniv3d &v3,const double c3,const dynacoord &a3,
+             const miniv3d &v4,const double c4,const dynacoord &a4,
              const miniv3d &col,
              const miniv3d &eye);
 
    //! clip&project a tetrahedron
-   void clip(const miniv3d &v1,const double c1,
-             const miniv3d &v2,const double c2,
-             const miniv3d &v3,const double c3,
-             const miniv3d &v4,const double c4,
+   void clip(const miniv3d &v1,const double c1,const dynacoord &a1,
+             const miniv3d &v2,const double c2,const dynacoord &a2,
+             const miniv3d &v3,const double c3,const dynacoord &a3,
+             const miniv3d &v4,const double c4,const dynacoord &a4,
              const miniv3d &col,
              const miniv3d &eye,const miniv3d &dir,
              const double nearp);
@@ -54,46 +58,47 @@ class miniproj
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
+   inline void pass(const int idx1,const miniv3d &v1,const dynacoord &a1,const int idx2,const miniv3d &v2,const dynacoord &a2);
 
-   inline void proj3tri(const miniv3d &v1,const double c1,
-                        const miniv3d &v2,const double c2,
-                        const miniv3d &v3,const double c3,
-                        const miniv3d &v4,const double c4,
+   inline void proj3tri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                        const miniv3d &v2,const double c2,const dynacoord &a2,
+                        const miniv3d &v3,const double c3,const dynacoord &a3,
+                        const miniv3d &v4,const double c4,const dynacoord &a4,
                         const miniv3d &eye);
 
-   inline void proj4tri(const miniv3d &v1,const double c1,
-                        const miniv3d &v2,const double c2,
-                        const miniv3d &v3,const double c3,
-                        const miniv3d &v4,const double c4,
+   inline void proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                        const miniv3d &v2,const double c2,const dynacoord &a2,
+                        const miniv3d &v3,const double c3,const dynacoord &a3,
+                        const miniv3d &v4,const double c4,const dynacoord &a4,
                         const miniv3d &eye);
 
-   void projpri(const miniv3d &v1,const double c1,
-                const miniv3d &v2,const double c2,
-                const miniv3d &v3,const double c3,
-                const miniv3d &v4,const double c4,
-                const miniv3d &v5,const double c5,
-                const miniv3d &v6,const double c6,
+   void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                const miniv3d &v2,const double c2,const dynacoord &a2,
+                const miniv3d &v3,const double c3,const dynacoord &a3,
+                const miniv3d &v4,const double c4,const dynacoord &a4,
+                const miniv3d &v5,const double c5,const dynacoord &a5,
+                const miniv3d &v6,const double c6,const dynacoord &a6,
                 const miniv3d &col,
                 const miniv3d &eye);
 
-   void clip1A(const miniv3d &v1,const double c1,const double d1,
-               const miniv3d &v2,const double c2,const double d2,
-               const miniv3d &v3,const double c3,const double d3,
-               const miniv3d &v4,const double c4,const double d4,
+   void clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+               const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+               const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+               const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
                const miniv3d &col,
                const miniv3d &eye);
 
-   void clip1B(const miniv3d &v1,const double c1,const double d1,
-               const miniv3d &v2,const double c2,const double d2,
-               const miniv3d &v3,const double c3,const double d3,
-               const miniv3d &v4,const double c4,const double d4,
+   void clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+               const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+               const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+               const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
                const miniv3d &col,
                const miniv3d &eye);
 
-   void clip2(const miniv3d &v1,const double c1,const double d1,
-              const miniv3d &v2,const double c2,const double d2,
-              const miniv3d &v3,const double c3,const double d3,
-              const miniv3d &v4,const double c4,const double d4,
+   void clip2(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+              const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+              const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+              const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
               const miniv3d &col,
               const miniv3d &eye);
 
