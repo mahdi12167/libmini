@@ -1,3 +1,5 @@
+# cmake build file for libMini tools
+
 PROJECT(${PROJECT_NAME}_tools)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

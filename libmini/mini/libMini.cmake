@@ -1,3 +1,5 @@
+# libMini header and module list
+
 SET(MINI_HDRS
    mini.h miniOGL.h
    minibase.h minidyna.h minisort.h

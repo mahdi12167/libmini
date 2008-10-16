@@ -1,11 +1,16 @@
-PROJECT(libMini)
-
+# cmake build file for libMini
+#
 # usage:
 #
-#    1: cmake -DLIBMINI_THIRDPARTY_DIR="..." .
-#    2: setenv LIBMINI_THIRDPARTY_DIR "..."; cmake .
-#    3: cmake -D<libname>_LIBRARY="..." -D<libname>_INCLUDE_DIR="..." .
+#    1: cmake .
+#    2: cmake -DLIBMINI_THIRDPARTY_DIR="..." .
+#    3: setenv LIBMINI_THIRDPARTY_DIR "..."; cmake .
+#    4: cmake -D<libname>_LIBRARY="..." -D<libname>_INCLUDE_DIR="..." .
 #       where <libname> is any of {PTHREAD,OPENTHREADS,CURL,JPEG,PNG,ZLIB,SQUISH,GREYCSTORATION,GLUT}
+
+PROJECT(libMini)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/libMini-config.cmake)
 

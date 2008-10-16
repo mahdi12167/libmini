@@ -1,3 +1,5 @@
+# cmake build file for squish
+
 PROJECT(squish)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)

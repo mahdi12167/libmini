@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+# cmake build configuration for libMini
 
 # path to libMini
 IF (NOT LIBMINI_PATH)
