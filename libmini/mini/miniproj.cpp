@@ -53,18 +53,23 @@ inline void miniproj::pass(const int idx1,const miniv3d &v1,const dynacoord &a1,
    unsigned int idx;
    unsigned int size1,size2;
 
+   static const int offset=3;
+
    size1=a1.getsize();
    size2=a2.getsize();
 
-   setfrgprogpar(idx1*(size1+1),v1.x,v1.y,v1.z,1.0f);
+   //!! broken
+   /*
+   setfrgprogpar(idx1*(size1+1)+offset,v1.x,v1.y,v1.z,1.0f);
 
    for (idx=0; idx<size1; idx++)
-      setfrgprogpar(idx1*(size1+1)+idx+1,a1[idx].x,a1[idx].y,a1[idx].z,1.0f);
+      setfrgprogpar(idx1*(size1+1)+idx+1+offset,a1[idx].x,a1[idx].y,a1[idx].z,1.0f);
 
    setfrgprogpar(idx2*(size2+1),v2.x,v2.y,v2.z,1.0f);
 
    for (idx=0; idx<size2; idx++)
-      setfrgprogpar(idx2*(size2+1)+idx+1,a2[idx].x,a2[idx].y,a2[idx].z,1.0f);
+      setfrgprogpar(idx2*(size2+1)+idx+1+offset,a2[idx].x,a2[idx].y,a2[idx].z,1.0f);
+   */
    }
 
 // project 3 triangles
