@@ -715,8 +715,8 @@ void miniproj::setzclip(float nearp,float farp,int zcliptexid)
 // initialize z-clipping
 void miniproj::initzclip()
    {
-   static const float scale=1.0f;
-   static const float bias=2.0f/255;
+   static const float scale=0.9f;
+   static const float bias=2.0f/(1<<24);
 
    float factor;
 
