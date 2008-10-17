@@ -715,10 +715,11 @@ void miniproj::setzclip(float nearp,float farp,int zcliptexid)
 // initialize z-clipping
 void miniproj::initzclip()
    {
-   static const float scale=0.9f;
-   static const float bias=2.0f/(1<<24);
+   static const int zbits=24;
+   static const float zscale=0.9f;
+   static const float zbias=2.0f/((1<<zbits)-1);
 
-   float factor;
+   float zfactor;
 
    texunit(4);
 
@@ -730,8 +731,8 @@ void miniproj::initzclip()
    texunit(0);
 
    // calculate factors for z-value reconstruction
-   factor=(ZNEAR-ZFAR)/(ZNEAR*ZFAR);
-   setfrgprogpar(2,factor/scale,(1.0f/ZNEAR-bias*factor)/scale,0.0f,0.0f);
+   zfactor=(ZNEAR-ZFAR)/(ZNEAR*ZFAR);
+   setfrgprogpar(2,zfactor/zscale,(1.0f/ZNEAR-zbias*zfactor)/zscale,0.0f,0.0f);
    }
 
 // de-initialize z-clipping

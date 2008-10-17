@@ -17,6 +17,12 @@ extern void (*minierrorhandler)(const char *file,int line,int fatal);
 #define WARNMSG() minierrormsg(__FILE__,__LINE__)
 #define ERRORMSG() minierrormsg(__FILE__,__LINE__,1)
 
+#ifdef LIBMINI_DEBUG
+#   define ERRORCHK(cond) {if (cond) minierrormsg(__FILE__,__LINE__,1);}
+#else
+#   define ERRORCHK(cond) {/*empty*/}
+#endif
+
 inline void minierrormsg(const char *file,int line,int fatal=0)
    {
    if (minierrorhandler==0)
