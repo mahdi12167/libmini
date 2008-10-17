@@ -1,17 +1,17 @@
 // (c) by Stefan Roettger
 
-#include <mini/minibase.h>
-
-#include "jpegbase.h"
-
-namespace jpegbase {
-
 #include <stdio.h>
 
 extern "C"
    {
    #include <jpeglib.h>
    }
+
+#include <mini/minibase.h>
+
+#include "jpegbase.h"
+
+namespace jpegbase {
 
 typedef struct
    {
