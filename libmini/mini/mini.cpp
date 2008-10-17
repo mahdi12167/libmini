@@ -138,7 +138,7 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
 
    l1=2.0f*s*D*minres;
    l2=l1-fsqrt(fsqr(X(i)-X(i0))+fsqr(Z(j)-Z(j0)));
-   if (l2<=0.0f) ERRORMSG();
+   ERRORCHK(l2<=0.0f);
 
    increase(dcpr(i,j,s/2)*l1/l2/2.0f,i0,j0,s);
    }
