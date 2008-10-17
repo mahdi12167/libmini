@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#undef OpenGL // enable this to create an OpenGL window
+#undef OPENGLTEST // enable this to perform an OpenGL test
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -91,6 +91,7 @@ int main(int argc,char *argv[])
    glutInitDisplayMode(GLUT_RGB|GLUT_ALPHA|GLUT_DEPTH|GLUT_DOUBLE);
    winid=glutCreateWindow("libMini Test");
 
+#ifdef OPENGLTEST
    glutDisplayFunc(displayfunc);
    glutReshapeFunc(reshapefunc);
    glutMouseFunc(NULL);
@@ -98,6 +99,7 @@ int main(int argc,char *argv[])
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
    glutIdleFunc(NULL);
+#endif
 
    printf("running test code\n\n");
 
@@ -111,7 +113,7 @@ int main(int argc,char *argv[])
 
    printf("\nfinished test code\n");
 
-#ifdef OpenGL
+#ifdef OPENGLTEST
    glutMainLoop();
 #endif
 
