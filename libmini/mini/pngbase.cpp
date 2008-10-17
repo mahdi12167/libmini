@@ -1,17 +1,17 @@
 // (c) by Stefan Roettger
 
-#include <mini/minibase.h>
-
-#include "pngbase.h"
-
-namespace pngbase {
-
 #include <stdio.h>
 
 extern "C"
    {
    #include <png.h>
    }
+
+#include <mini/minibase.h>
+
+#include "pngbase.h"
+
+namespace pngbase {
 
 struct PNG_USER_READ_STRUCT
    {
