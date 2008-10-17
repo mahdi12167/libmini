@@ -10,7 +10,7 @@ datagrid::datagrid()
    INVALID=FALSE;
    CONSTRUCTED=TRUE;
 
-   DECOMPOSED=FALSE;
+   DECOMPOSED=TRUE;
 
    PHASE=0;
    STEP=0;
