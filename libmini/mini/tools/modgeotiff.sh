@@ -9,6 +9,8 @@ endif
 set in="$1"
 set out="$2"
 
+set compr="-c zip"
+
 if ("$in:e" != "tif" && "$in:e" != "TIF") exit
 if ("$out:e" != "tif" && "$out:e" != "TIF") exit
 
@@ -16,7 +18,7 @@ listgeo -no_norm "$in" >"$in:r.geo"
 
 if (! -e "$out") cp "$in" "$out"
 
-geotifcp -c zip -g "$in:r.geo" "$out" "$out:r_tmp.tif"
+geotifcp $compr -g "$in:r.geo" "$out" "$out:r_tmp.tif"
 
 mv -f "$out:r_tmp.tif" "$out"
 
