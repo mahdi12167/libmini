@@ -4,12 +4,6 @@
 #include <pthread.h>
 #endif
 
-#include <mini/minibase.h>
-
-#include <mini/minitime.h>
-
-#include "greycbase.h"
-
 #ifdef USEGREYC
 
 #define cimg_display_type 0
@@ -18,6 +12,12 @@
 using namespace cimg_library;
 
 #endif
+
+#include <mini/minibase.h>
+
+#include <mini/minitime.h>
+
+#include "greycbase.h"
 
 namespace greycbase {
 
