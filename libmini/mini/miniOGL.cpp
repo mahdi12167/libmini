@@ -34,6 +34,7 @@ static void initglexts()
       glext_mt=FALSE;
       glext_vp=FALSE;
       glext_fp=FALSE;
+      glext_gpp=FALSE;
 
       if ((GL_EXTs=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
@@ -53,6 +54,7 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_ARB_multitexture")!=NULL) glext_mt=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_vertex_program")!=NULL) glext_vp=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_fragment_program")!=NULL) glext_fp=TRUE;
+      if (strstr(GL_EXTs,"GL_EXT_gpu_program_parameters")!=NULL) glext_gpp=TRUE;
 
       done=TRUE;
       }
@@ -103,6 +105,11 @@ static void initwglprocs()
          }
 #endif
 
+#ifdef GL_EXT_gpu_program_parameters
+      if (glext_gpp)
+         glProgramEnvParameters4fvEXT=(PFNGLPROGRAMENVPARAMETERS4FVEXTPROC)wglGetProcAddress("glProgramEnvParameters4fvEXT");
+#endif
+
       done=TRUE;
       }
    }
@@ -132,6 +139,7 @@ int get_unsupported_glexts()
    if (!glext_mt) num++;
    if (!glext_vp) num++;
    if (!glext_fp) num++;
+   if (!glext_gpp) num++;
 
 #endif
 
@@ -161,6 +169,7 @@ void print_unsupported_glexts()
       if (!glext_mt) printf(" ARB_multitexture");
       if (!glext_vp) printf(" ARB_vertex_program");
       if (!glext_fp) printf(" ARB_fragment_program");
+      if (!glext_gpp) printf(" EXT_gpu_program_parameters");
 
       printf("\n");
       }
