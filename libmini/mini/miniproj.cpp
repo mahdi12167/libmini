@@ -151,51 +151,57 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       pass(0,v1,a1,1,m,a234);
 
       // render front-facing thick vertex
+      pass(2,v2,a2,3,v3,a3);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
       fanvertex(m.x,m.y,m.z);
 
       // render silhouette vertices
-      pass(2,v2,a2,3,v3,a3);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v3-v1)/(v4-v1);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v3,a3,3,v4,a4);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
       fanvertex(m.x,m.y,m.z);
 
       // render silhouette vertices
-      pass(2,v3,a3,3,v4,a4);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v4-v1)/(v2-v1);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v4,a4,3,v2,a2);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c1,c234,lambda);
       fanvertex(m.x,m.y,m.z);
 
       // render silhouette vertices
-      pass(2,v4,a4,3,v2,a2);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
+      endfans();
       }
    else
       {
@@ -210,51 +216,57 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       pass(0,m,a234,1,v1,a1);
 
       // render front-facing thick vertex
+      pass(2,v2,a2,3,v3,a3);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
       fanvertex(v1.x,v1.y,v1.z);
 
       // render silhouette vertices
-      pass(2,v2,a2,3,v3,a3);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v3-m)/(v4-m);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v3,a3,3,v4,a4);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
       fanvertex(v1.x,v1.y,v1.z);
 
       // render silhouette vertices
-      pass(2,v3,a3,3,v4,a4);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v4-m)/(v2-m);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v4,a4,3,v2,a2);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c234,c1,lambda);
       fanvertex(v1.x,v1.y,v1.z);
 
       // render silhouette vertices
-      pass(2,v4,a4,3,v2,a2);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
+      endfans();
       }
    }
 
@@ -301,68 +313,76 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       pass(0,m1,a12,1,m2,a34);
 
       // render front-facing thick vertex
+      pass(2,v1,a1,3,v3,a3);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
       fanvertex(m2.x,m2.y,m2.z);
 
       // render silhouette vertices
-      pass(2,v1,a1,3,v3,a3);
       texcoord(c1,c1,0.0f);
       fanvertex(v1.x,v1.y,v1.z);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v3-m1)/(v2-m1);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v3,a3,3,v2,a2);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
       fanvertex(m2.x,m2.y,m2.z);
 
       // render silhouette vertices
-      pass(2,v3,a3,3,v2,a2);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v2-m1)/(v4-m1);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v2,a2,3,v4,a4);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
       fanvertex(m2.x,m2.y,m2.z);
 
       // render silhouette vertices
-      pass(2,v2,a2,3,v4,a4);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v4-m1)/(v1-m1);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v4,a4,3,v1,a1);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c12,c34,lambda);
       fanvertex(m2.x,m2.y,m2.z);
 
       // render silhouette vertices
-      pass(2,v4,a4,3,v1,a1);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
       texcoord(c1,c1,0.0f);
       fanvertex(v1.x,v1.y,v1.z);
+      endfans();
       }
    else
       {
@@ -374,68 +394,76 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       pass(0,m2,a34,1,m1,a12);
 
       // render front-facing thick vertex
+      pass(2,v1,a1,3,v3,a3);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
       fanvertex(m1.x,m1.y,m1.z);
 
       // render silhouette vertices
-      pass(2,v1,a1,3,v3,a3);
       texcoord(c1,c1,0.0f);
       fanvertex(v1.x,v1.y,v1.z);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v3-m2)/(v2-m2);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v3,a3,3,v2,a2);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
       fanvertex(m1.x,m1.y,m1.z);
 
       // render silhouette vertices
-      pass(2,v3,a3,3,v2,a2);
       texcoord(c3,c3,0.0f);
       fanvertex(v3.x,v3.y,v3.z);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v2-m2)/(v4-m2);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v2,a2,3,v4,a4);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
       fanvertex(m1.x,m1.y,m1.z);
 
       // render silhouette vertices
-      pass(2,v2,a2,3,v4,a4);
       texcoord(c2,c2,0.0f);
       fanvertex(v2.x,v2.y,v2.z);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
+      endfans();
 
       // calculate back-facing normal
       n=(v4-m2)/(v1-m2);
       n.normalize();
 
       // render front-facing thick vertex
+      pass(2,v4,a4,3,v1,a1);
+      beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
       texcoord(c34,c12,lambda);
       fanvertex(m1.x,m1.y,m1.z);
 
       // render silhouette vertices
-      pass(2,v4,a4,3,v1,a1);
       texcoord(c4,c4,0.0f);
       fanvertex(v4.x,v4.y,v4.z);
       texcoord(c1,c1,0.0f);
       fanvertex(v1.x,v1.y,v1.z);
+      endfans();
       }
    }
 
@@ -680,15 +708,11 @@ void miniproj::initproj(float emi,float rho)
 
    enablevtxshader();
    enablepixshader();
-
-   beginfans();
    }
 
 // de-initialize projection state
 void miniproj::exitproj()
    {
-   endfans();
-
    disablevtxshader();
    disablepixshader();
 
