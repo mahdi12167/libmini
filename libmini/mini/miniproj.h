@@ -58,7 +58,7 @@ class miniproj
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
-   inline void pass(const int idx1,const miniv3d &v1,const dynacoord &a1,const int idx2,const miniv3d &v2,const dynacoord &a2);
+   inline void pass(const int idx,const miniv3d &v,const dynacoord &a);
 
    inline void proj3tri(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const miniv3d &v2,const double c2,const dynacoord &a2,

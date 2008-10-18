@@ -1231,6 +1231,39 @@ inline void setprogpar(int n,float p1,float p2,float p3,float p4,BOOLINT vtxorfr
 #endif
    }
 
+inline void setprogpars(int n,int count,const float *params,BOOLINT vtxorfrg)
+   {
+#ifndef NOOGL
+
+   initglexts();
+
+#ifdef _WIN32
+   initwglprocs();
+#endif
+
+#if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
+   if (glext_vp && glext_fp)
+      {
+#ifdef GL_EXT_gpu_program_parameters
+      if (glext_gpp)
+         {
+         if (vtxorfrg) glProgramEnvParameters4fvEXT(GL_VERTEX_PROGRAM_ARB,n,count,params);
+         else glProgramEnvParameters4fvEXT(GL_FRAGMENT_PROGRAM_ARB,n,count,params);
+         return;
+         }
+#endif
+      if (vtxorfrg)
+         for (int i=0; i<count; i++)
+            glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB,n+i,params[4*i],params[4*i+1],params[4*i+2],params[4*i+3]);
+      else
+         for (int i=0; i<count; i++)
+            glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB,n+i,params[4*i],params[4*i+1],params[4*i+2],params[4*i+3]);
+      }
+#endif
+
+#endif
+   }
+
 inline void deleteprog(int progid)
    {
 #ifndef NOOGL
@@ -1258,11 +1291,13 @@ inline void deleteprog(int progid)
 int buildvtxprog(const char *prog) {return(buildprog(prog,TRUE));}
 void bindvtxprog(int progid) {bindprog(progid,TRUE);}
 void setvtxprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,TRUE);}
+void setvtxprogpars(int n,int count,const float *params) {setprogpars(n,count,params,TRUE);}
 void deletevtxprog(int progid) {deleteprog(progid);}
 
 int buildfrgprog(const char *prog) {return(buildprog(prog,FALSE));}
 void bindfrgprog(int progid) {bindprog(progid,FALSE);}
 void setfrgprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p2,p3,p4,FALSE);}
+void setfrgprogpars(int n,int count,const float *params) {setprogpars(n,count,params,FALSE);}
 void deletefrgprog(int progid) {deleteprog(progid);}
 
 void mtxgetmodel(float mtx[16])

@@ -48,25 +48,32 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    }
 
 // pass constants down to the shader
-inline void miniproj::pass(const int idx1,const miniv3d &v1,const dynacoord &a1,const int idx2,const miniv3d &v2,const dynacoord &a2)
+inline void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
    {
-   unsigned int idx;
-   unsigned int size1,size2;
+   unsigned int i;
+   unsigned int size;
 
    static const int offset=3;
 
-   size1=a1.getsize();
-   size2=a2.getsize();
+   size=a.getsize();
 
-   setfrgprogpar(idx1*(size1+1)+offset,v1.x,v1.y,v1.z,1.0f);
+   float params[(size+1)*4];
+   float *ptr=params;
 
-   for (idx=0; idx<size1; idx++)
-      setfrgprogpar(idx1*(size1+1)+idx+1+offset,a1[idx].x,a1[idx].y,a1[idx].z,1.0f);
+   *ptr++=v.x;
+   *ptr++=v.y;
+   *ptr++=v.z;
+   *ptr++=1.0f;
 
-   setfrgprogpar(idx2*(size2+1)+offset,v2.x,v2.y,v2.z,1.0f);
+   for (i=0; i<size; i++)
+      {
+      *ptr++=a[i].x;
+      *ptr++=a[i].y;
+      *ptr++=a[i].z;
+      *ptr++=1.0f;
+      }
 
-   for (idx=0; idx<size2; idx++)
-      setfrgprogpar(idx2*(size2+1)+idx+1+offset,a2[idx].x,a2[idx].y,a2[idx].z,1.0f);
+   setfrgprogpars(idx*(size+1)+offset,size+1,params);
    }
 
 // project 3 triangles
@@ -148,10 +155,12 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // pass down shader constants at thick vertex
-      pass(0,v1,a1,1,m,a234);
+      pass(0,v1,a1);
+      pass(1,m,a234);
 
       // render front-facing thick vertex
-      pass(2,v2,a2,3,v3,a3);
+      pass(2,v2,a2);
+      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -170,7 +179,8 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3,3,v4,a4);
+      pass(2,v3,a3);
+      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -189,7 +199,8 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4,3,v2,a2);
+      pass(2,v4,a4);
+      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -213,10 +224,12 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // pass down shader constants at thick vertex
-      pass(0,m,a234,1,v1,a1);
+      pass(0,m,a234);
+      pass(1,v1,a1);
 
       // render front-facing thick vertex
-      pass(2,v2,a2,3,v3,a3);
+      pass(2,v2,a2);
+      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -235,7 +248,8 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3,3,v4,a4);
+      pass(2,v3,a3);
+      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -254,7 +268,8 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4,3,v2,a2);
+      pass(2,v4,a4);
+      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -310,10 +325,12 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // pass down shader constants at thick vertex
-      pass(0,m1,a12,1,m2,a34);
+      pass(0,m1,a12);
+      pass(1,m2,a34);
 
       // render front-facing thick vertex
-      pass(2,v1,a1,3,v3,a3);
+      pass(2,v1,a1);
+      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -332,7 +349,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3,3,v2,a2);
+      pass(2,v3,a3);
+      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -351,7 +369,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2,3,v4,a4);
+      pass(2,v2,a2);
+      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -370,7 +389,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4,3,v1,a1);
+      pass(2,v4,a4);
+      pass(3,v1,a1);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -391,10 +411,12 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // pass down shader constants at thick vertex
-      pass(0,m2,a34,1,m1,a12);
+      pass(0,m2,a34);
+      pass(1,m1,a12);
 
       // render front-facing thick vertex
-      pass(2,v1,a1,3,v3,a3);
+      pass(2,v1,a1);
+      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -413,7 +435,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3,3,v2,a2);
+      pass(2,v3,a3);
+      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -432,7 +455,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2,3,v4,a4);
+      pass(2,v2,a2);
+      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -451,7 +475,8 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4,3,v1,a1);
+      pass(2,v4,a4);
+      pass(3,v1,a1);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);

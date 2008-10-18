@@ -66,11 +66,13 @@ void texclientunit(int unit);
 int buildvtxprog(const char *prog);
 void bindvtxprog(int progid);
 void setvtxprogpar(int n,float p1,float p2,float p3,float p4);
+void setvtxprogpars(int n,int count,const float *params);
 void deletevtxprog(int progid);
 
 int buildfrgprog(const char *prog);
 void bindfrgprog(int progid);
 void setfrgprogpar(int n,float p1,float p2,float p3,float p4);
+void setfrgprogpars(int n,int count,const float *params);
 void deletefrgprog(int progid);
 
 inline void mtxmodel();
