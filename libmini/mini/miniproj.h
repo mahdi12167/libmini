@@ -47,7 +47,7 @@ class miniproj
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
 
-   private:
+   protected:
 
    float EMI,RHO;
 
