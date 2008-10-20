@@ -48,7 +48,7 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    }
 
 // pass constants down to the shader
-inline void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
+void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
    {
    unsigned int i;
    unsigned int size;

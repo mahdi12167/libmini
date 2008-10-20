@@ -16,13 +16,13 @@ class miniproj
    miniproj();
 
    //! destructor
-   ~miniproj();
+   virtual ~miniproj();
 
    // dynamic coordinate array
    typedef minidyna<miniv3d,8> dynacoord;
 
    //! initialize projection state
-   void initproj(float emi,float rho);
+   virtual void initproj(float emi,float rho);
 
    //! project a tetrahedron
    void proj(const miniv3d &v1,const double c1,const dynacoord &a1,
@@ -42,7 +42,7 @@ class miniproj
              const double nearp);
 
    //! de-initialize projection state
-   void exitproj();
+   virtual void exitproj();
 
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
@@ -58,7 +58,8 @@ class miniproj
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
-   inline void pass(const int idx,const miniv3d &v,const dynacoord &a);
+
+   virtual void pass(const int idx,const miniv3d &v,const dynacoord &a);
 
    inline void proj3tri(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const miniv3d &v2,const double c2,const dynacoord &a2,
@@ -102,8 +103,8 @@ class miniproj
               const miniv3d &col,
               const miniv3d &eye);
 
-   void initzclip();
-   void exitzclip();
+   virtual void initzclip();
+   virtual void exitzclip();
 
    // vertex and fragment programs:
 
