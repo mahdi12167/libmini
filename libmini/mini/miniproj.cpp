@@ -53,12 +53,13 @@ void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
    unsigned int i;
    unsigned int size;
 
+   float *params,*ptr;
+
    static const int offset=3;
 
    size=a.getsize();
 
-   float params[(size+1)*4];
-   float *ptr=params;
+   params=ptr=new float[(size+1)*4];
 
    *ptr++=v.x;
    *ptr++=v.y;
@@ -74,6 +75,8 @@ void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
       }
 
    setfrgprogpars(idx*(size+1)+offset,size+1,params);
+
+   delete params;
    }
 
 // project 3 triangles
