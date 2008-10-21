@@ -805,6 +805,7 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
    static const char *vtxprog="!!ARBvp1.0 \n\
       PARAM c=program.env[0]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       ### fetch actual vertex \n\
@@ -827,6 +828,11 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
