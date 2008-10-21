@@ -773,7 +773,7 @@ void miniproj::setzclip(float nearp,float farp,int zcliptexid)
 void miniproj::initzclip()
    {
    static const int zbits=24;
-   static const float zscale=0.9f;
+   static const float zscale=1.0f; // 0.9 for buggy Intel GMA 950
    static const float zbias=2.0f/((1<<zbits)-1);
 
    float zfactor;
