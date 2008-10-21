@@ -324,6 +324,7 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BEGIN);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_HEADER);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_BASIC);
+   STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_VIEWPOS);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_NORMAL_DIRECT);
    if (SHADE==0) STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_TEX);
    STRIP->concatvtxshader(SLOT,MINI_SNIPPET_VTX_FOG);
