@@ -676,7 +676,9 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
 
    double d1,d2,d3,d4;
 
-   p=eye+nearp*dir;
+   static const double factor=1.1;
+
+   p=eye+factor*nearp*dir;
 
    d1=dir*(v1-p);
    d2=dir*(v2-p);
@@ -736,6 +738,9 @@ void miniproj::initproj(float emi,float rho)
 
    enablevtxshader();
    enablepixshader();
+
+   setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
+   setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
    }
 
 // de-initialize projection state
@@ -820,7 +825,6 @@ void miniproj::disablevtxshader()
 void miniproj::enablepixshader()
    {
    if (FRGPROG!=NULL && FRGPROGZ!=NULL)
-      {
       if (!ZCLIP)
          {
          if (FRGPROGID==0) FRGPROGID=buildfrgprog(FRGPROG);
@@ -833,10 +837,6 @@ void miniproj::enablepixshader()
 
          bindfrgprog(FRGPROGZID);
          }
-
-      setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
-      setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
-      }
    }
 
 // disable pixel shader

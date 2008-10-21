@@ -430,7 +430,7 @@ void datagrid::trigger(const double time,
    minicoord ep,epd;
    miniv3d ed;
 
-   float factor1,factor2;
+   float factor;
 
    static const double scale=1000.0;
 
@@ -450,13 +450,12 @@ void datagrid::trigger(const double time,
          ed.normalize();
          }
 
-   // compute safety factors
-   factor1=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
-   factor2=1.1f;
+   // compute safety factor
+   factor=fsqrt(1.0f+fsqr(ftan(fovy/2.0f*RAD))*(1.0f+fsqr(aspect)));
 
    // extract view-dependent mesh
-   sorted=LAST.extract(ep.vec,factor1*factor2*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
-   push_post(sorted,time,ep.vec,ed,factor2*nearp,farp,fovy,aspect,zcliptexid); // push the dynamic sorted mesh
+   sorted=LAST.extract(ep.vec,factor*nearp,maxradius); // extract a non-intrusive sorted tetrahedral mesh from the bsp tree
+   push_post(sorted,time,ep.vec,ed,nearp,farp,fovy,aspect,zcliptexid); // push the dynamic sorted mesh
    }
 
 // push the tetrahedral mesh for a particular time step
