@@ -66,8 +66,7 @@ void datagrid::assign(const unsigned int id,
    {
    if (FLAG[id])
       {
-      if (!DATA[id].missing())
-         if (SLOT[id]!=slot) INVALID=TRUE;
+      if (SLOT[id]!=slot) INVALID=TRUE;
 
       SLOT[id]=slot;
       }
@@ -79,18 +78,13 @@ void datagrid::load(const unsigned int id,
    {
    if (FLAG[id])
       {
-      if (DATA[id].missing()) INVALID=TRUE;
-      else
-         {
-         if (DATA[id].swx!=buf.swx || DATA[id].swy!=buf.swy ||
-             DATA[id].nwx!=buf.nwx || DATA[id].nwy!=buf.nwy ||
-             DATA[id].nex!=buf.nex || DATA[id].ney!=buf.ney ||
-             DATA[id].sex!=buf.sex || DATA[id].sey!=buf.sey ||
-             DATA[id].h0!=buf.h0 || DATA[id].dh!=buf.dh) INVALID=TRUE;
+      if (DATA[id].swx!=buf.swx || DATA[id].swy!=buf.swy ||
+          DATA[id].nwx!=buf.nwx || DATA[id].nwy!=buf.nwy ||
+          DATA[id].nex!=buf.nex || DATA[id].ney!=buf.ney ||
+          DATA[id].sex!=buf.sex || DATA[id].sey!=buf.sey ||
+          DATA[id].h0!=buf.h0 || DATA[id].dh!=buf.dh) INVALID=TRUE;
 
-         DATA[id].release();
-         }
-
+      DATA[id].release();
       DATA[id]=buf;
       }
    }
@@ -100,12 +94,9 @@ void datagrid::remove(const unsigned int id)
    {
    if (FLAG[id])
       {
-      if (!DATA[id].missing())
-         {
-         INVALID=TRUE;
-         DATA[id].release();
-         }
+      INVALID=TRUE;
 
+      DATA[id].release();
       FLAG[id]=FALSE;
       }
    }
@@ -121,12 +112,11 @@ void datagrid::move(const unsigned int id,
    {
    if (FLAG[id])
       {
-      if (!DATA[id].missing())
-         if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
-             DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
-             DATA[id].nex!=nex || DATA[id].ney!=ney ||
-             DATA[id].sex!=sex || DATA[id].sey!=sey ||
-             DATA[id].h0!=h0 || DATA[id].dh!=dh) INVALID=TRUE;
+      if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
+          DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
+          DATA[id].nex!=nex || DATA[id].ney!=ney ||
+          DATA[id].sex!=sex || DATA[id].sey!=sey ||
+          DATA[id].h0!=h0 || DATA[id].dh!=dh) INVALID=TRUE;
 
       DATA[id].swx=swx;
       DATA[id].swy=swy;
@@ -151,8 +141,7 @@ void datagrid::reference(const unsigned int id,
    {
    if (FLAG[id])
       {
-      if (!DATA[id].missing())
-         if (REF[id]!=layer) INVALID=TRUE;
+      if (REF[id]!=layer) INVALID=TRUE;
 
       REF[id]=layer;
       }
@@ -297,97 +286,96 @@ minimesh datagrid::decompose(unsigned int idx)
 
    // check if object at actual position is valid
    if (FLAG[idx])
-      if (!DATA[idx].missing())
+      {
+      // check coordinate system of actual databuf object
+      crs=minicoord::MINICOORD_LINEAR;
+      if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
+      else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
+
+      // determine corner vertices of actual object:
+
+      vtx[0]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[1]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[2]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[3]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+
+      vtx[4]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[5]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[6]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[7]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+
+      // determine data coordinates of actual object:
+
+      crd[0]=miniv3d(0.0,0.0,0.0);
+      crd[1]=miniv3d(0.0,1.0,0.0);
+      crd[2]=miniv3d(1.0,1.0,0.0);
+      crd[3]=miniv3d(1.0,0.0,0.0);
+
+      crd[4]=miniv3d(0.0,0.0,1.0);
+      crd[5]=miniv3d(0.0,1.0,1.0);
+      crd[6]=miniv3d(1.0,1.0,1.0);
+      crd[7]=miniv3d(1.0,0.0,1.0);
+
+      // transform corner vertices
+      if (crs!=minicoord::MINICOORD_LINEAR)
+         if (CRS!=minicoord::MINICOORD_LINEAR)
+            for (i=0; i<8; i++) vtx[i].convert2(CRS);
+
+      // multiply corner vertices with pre matrix
+      if (USEPRE)
+         for (i=0; i<8; i++)
+            {
+            v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
+            vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
+            }
+
+      // check reference to layer
+      if (REF[idx]!=NULL)
+         for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
+
+      // check orientation of tetrahedral decomposition
+      if (!FLIP[idx])
          {
-         // check coordinate system of actual databuf object
-         crs=minicoord::MINICOORD_LINEAR;
-         if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
-         else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
+         // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-         // determine corner vertices of actual object:
+         vals.set(minival(SLOT[idx],idx,crd[0],crd[1],crd[3],crd[4],vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec));
+         mesh.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals));
 
-         vtx[0]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[1]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[2]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[3]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+         vals.set(minival(SLOT[idx],idx,crd[2],crd[3],crd[1],crd[6],vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec));
+         mesh.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals));
 
-         vtx[4]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[5]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[6]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[7]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+         vals.set(minival(SLOT[idx],idx,crd[7],crd[6],crd[4],crd[3],vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec));
+         mesh.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals));
 
-         // determine data coordinates of actual object:
+         vals.set(minival(SLOT[idx],idx,crd[5],crd[4],crd[6],crd[1],vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec));
+         mesh.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals));
 
-         crd[0]=miniv3d(0.0,0.0,0.0);
-         crd[1]=miniv3d(0.0,1.0,0.0);
-         crd[2]=miniv3d(1.0,1.0,0.0);
-         crd[3]=miniv3d(1.0,0.0,0.0);
+         // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-         crd[4]=miniv3d(0.0,0.0,1.0);
-         crd[5]=miniv3d(0.0,1.0,1.0);
-         crd[6]=miniv3d(1.0,1.0,1.0);
-         crd[7]=miniv3d(1.0,0.0,1.0);
+         vals.set(minival(SLOT[idx],idx,crd[3],crd[1],crd[6],crd[4],vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec));
+         mesh.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals));
+         }
+      else
+         {
+         // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
-         // transform corner vertices
-         if (crs!=minicoord::MINICOORD_LINEAR)
-            if (CRS!=minicoord::MINICOORD_LINEAR)
-               for (i=0; i<8; i++) vtx[i].convert2(CRS);
+         vals.set(minival(SLOT[idx],idx,crd[3],crd[0],crd[2],crd[7],vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec));
+         mesh.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals));
 
-         // multiply corner vertices with pre matrix
-         if (USEPRE)
-            for (i=0; i<8; i++)
-               {
-               v=miniv4d(vtx[i].vec.x,vtx[i].vec.y,vtx[i].vec.z,1.0);
-               vtx[i].vec=miniv3d(MTXPRE[0]*v,MTXPRE[1]*v,MTXPRE[2]*v);
-               }
+         vals.set(minival(SLOT[idx],idx,crd[1],crd[2],crd[0],crd[5],vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec));
+         mesh.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals));
 
-         // check reference to layer
-         if (REF[idx]!=NULL)
-            for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
+         vals.set(minival(SLOT[idx],idx,crd[4],crd[7],crd[5],crd[0],vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec));
+         mesh.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals));
 
-         // check orientation of tetrahedral decomposition
-         if (!FLIP[idx])
-            {
-            // add the 4 corner tetrahedra of the actual databuf object to the mesh:
+         vals.set(minival(SLOT[idx],idx,crd[6],crd[5],crd[7],crd[2],vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec));
+         mesh.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals));
 
-            vals.set(minival(SLOT[idx],idx,crd[0],crd[1],crd[3],crd[4],vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec));
-            mesh.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals));
+         // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
-            vals.set(minival(SLOT[idx],idx,crd[2],crd[3],crd[1],crd[6],vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec));
-            mesh.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals));
-
-            vals.set(minival(SLOT[idx],idx,crd[7],crd[6],crd[4],crd[3],vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec));
-            mesh.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals));
-
-            vals.set(minival(SLOT[idx],idx,crd[5],crd[4],crd[6],crd[1],vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec));
-            mesh.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals));
-
-            // add the 5th center tetrahedron of the actual databuf object to the mesh:
-
-            vals.set(minival(SLOT[idx],idx,crd[3],crd[1],crd[6],crd[4],vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec));
-            mesh.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals));
-            }
-         else
-            {
-            // add the 4 corner tetrahedra of the actual databuf object to the mesh:
-
-            vals.set(minival(SLOT[idx],idx,crd[3],crd[0],crd[2],crd[7],vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec));
-            mesh.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals));
-
-            vals.set(minival(SLOT[idx],idx,crd[1],crd[2],crd[0],crd[5],vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec));
-            mesh.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals));
-
-            vals.set(minival(SLOT[idx],idx,crd[4],crd[7],crd[5],crd[0],vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec));
-            mesh.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals));
-
-            vals.set(minival(SLOT[idx],idx,crd[6],crd[5],crd[7],crd[2],vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec));
-            mesh.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals));
-
-            // add the 5th center tetrahedron of the actual databuf object to the mesh:
-
-            vals.set(minival(SLOT[idx],idx,crd[0],crd[5],crd[2],crd[7],vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec));
-            mesh.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals));
-            }
+         vals.set(minival(SLOT[idx],idx,crd[0],crd[5],crd[2],crd[7],vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec));
+         mesh.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals));
+         }
       }
 
    return(mesh);
@@ -404,9 +392,8 @@ BOOLINT datagrid::isbelowsealevel()
 
    for (i=0; i<FLAG.getsize(); i++)
       if (FLAG[i])
-         if (!DATA[i].missing())
-            if (DATA[i].crs!=databuf::DATABUF_CRS_LINEAR)
-               if (DATA[i].h0<0.0f) return(TRUE);
+         if (DATA[i].crs!=databuf::DATABUF_CRS_LINEAR)
+            if (DATA[i].h0<0.0f) return(TRUE);
 
    return(FALSE);
    }
@@ -534,8 +521,7 @@ void datagrid::push(const minimesh &mesh,
 // get a data brick
 const databuf *datagrid::getdata(const unsigned int id) const
    {
-   if (FLAG[id])
-      if (!DATA[id].missing()) return(&DATA[id]);
+   if (FLAG[id]) return(&DATA[id]);
 
    return(NULL);
    }
