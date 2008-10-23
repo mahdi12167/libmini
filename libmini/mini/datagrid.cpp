@@ -155,6 +155,10 @@ void datagrid::clear()
    for (i=0; i<FLAG.getsize(); i++) remove(i);
    }
 
+// check if the data bricks are all clear
+BOOLINT datagrid::isclear()
+   {return(FLAG.getsize()==0);}
+
 // specify pre matrix
 void datagrid::specmtxpre(const miniv4d mtx[3])
    {

@@ -64,6 +64,9 @@ class datagrid
    //! clear all data bricks
    void clear();
 
+   //! check if the data bricks are all clear
+   BOOLINT isclear();
+
    //! specify matrix to be applied before producing a tetrahedral mesh
    void specmtxpre(const miniv4d mtx[3]);
 
