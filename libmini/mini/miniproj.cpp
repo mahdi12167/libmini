@@ -731,7 +731,7 @@ void miniproj::initproj(float emi,float rho)
 
    initstate();
    disableculling();
-   enableblending();
+   enableRKEblending();
    disableZwriting();
 
    if (ZCLIP) initzclip();
@@ -916,6 +916,8 @@ void miniproj::setupprogs()
       ### calculate absorption \n\
       POW len.x,c1.y,-len.x; \n\
       SUB len.x,c1.z,len.x; \n\
+      ### pre-multiply alpha \n\
+      MUL col.xyz,col,len.x; \n\
       ### write resulting fragment \n\
       MUL result.color.xyz,col,c0.x; \n\
       MOV result.color.w,len.x; \n\
@@ -970,6 +972,8 @@ void miniproj::setupprogs()
       ### calculate absorption \n\
       POW len.x,c1.y,-len.x; \n\
       SUB len.x,c1.z,len.x; \n\
+      ### pre-multiply alpha \n\
+      MUL col.xyz,col,len.x; \n\
       ### write resulting fragment \n\
       MUL result.color.xyz,col,c0.x; \n\
       MOV result.color.w,len.x; \n\

@@ -393,6 +393,14 @@ void enableEMIblending()
 #endif
    }
 
+void enableRKEblending()
+   {
+#ifndef NOOGL
+   glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+   glEnable(GL_BLEND);
+#endif
+   }
+
 void enablePRJblending()
    {
 #ifndef NOOGL

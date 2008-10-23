@@ -34,6 +34,7 @@ void enableblending();
 void enableADDblending();
 void enableATTblending();
 void enableEMIblending();
+void enableRKEblending();
 void enablePRJblending();
 void enableMIPblending();
 void disableblending();
