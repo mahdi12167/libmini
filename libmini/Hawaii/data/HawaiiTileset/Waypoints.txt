@@ -61,7 +61,11 @@ LL
 -157.678
 -200m
 
-Residence, Green Flamingo Nursery, 41-585 Flamingo St., Waimanalo, Hawai'i
+Residence, Green Flamingo Nursery, Waimanalo, Hawai'i
+; Byl Leonard
+; Orchid Row B&B
+; 41-585 Flamingo St.
+; Waimanalo, HI 96795
 UTM 04
 0631433
 2361214
