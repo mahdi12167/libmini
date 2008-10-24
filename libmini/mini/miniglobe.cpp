@@ -29,6 +29,8 @@ miniglobe::miniglobe()
 
    CONFIGURE_FRONTBUF=NULL;
    CONFIGURE_BACKBUF=NULL;
+
+   CONFIGURE_RELEASEBUF=0;
    }
 
 // destructor
@@ -302,6 +304,12 @@ void miniglobe::create_shader(const char *frontname,const char *backname,
          {
          STRIP->setpixshadertexbuf(SLOT,frontbuf,0,1,0);
          STRIP->setpixshadertexbuf(SLOT,backbuf,0,1,1);
+
+         if (CONFIGURE_RELEASEBUF!=0)
+            {
+            frontbuf->release();
+            backbuf->release();
+            }
          }
 
       for (i=0; i<16; i++) texmtx[i]=0.0;
@@ -356,3 +364,6 @@ void miniglobe::configure_frontbuf(databuf *frontbuf)
 
 void miniglobe::configure_backbuf(databuf *backbuf)
    {CONFIGURE_BACKBUF=backbuf;}
+
+void miniglobe::configure_releasebuf(int releasebuf)
+   {CONFIGURE_RELEASEBUF=releasebuf;}

@@ -284,6 +284,8 @@ void miniearth::loadopts()
 
    // load earth image buffers:
 
+   EARTH->configure_releasebuf(1);
+
    char *ebname1=NULL;
 
    if (EPARAMS.frontbuf==NULL)

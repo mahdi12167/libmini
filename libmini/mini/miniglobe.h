@@ -80,6 +80,7 @@ class miniglobe
    void configure_backname(const char *backname);
    void configure_frontbuf(databuf *frontbuf);
    void configure_backbuf(databuf *backbuf);
+   void configure_releasebuf(int releasebuf);
 
    protected:
 
@@ -99,6 +100,8 @@ class miniglobe
 
    databuf *CONFIGURE_FRONTBUF;
    databuf *CONFIGURE_BACKBUF;
+
+   int CONFIGURE_RELEASEBUF;
 
    private:
 
