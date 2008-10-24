@@ -238,7 +238,7 @@ miniterrain::~miniterrain()
    if (LAYER!=NULL)
       {
       for (n=0; n<LNUM; n++) delete LAYER[n];
-      delete LAYER;
+      delete[] LAYER;
       }
 
    // delete the render cache

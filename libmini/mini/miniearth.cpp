@@ -715,9 +715,13 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0 && ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
-            t=intersect_ellipsoid(miniv3d(o.vec),d,
-                                  miniv3d(0.0,0.0,0.0),miniutm::WGS84_r_major,miniutm::WGS84_r_major,miniutm::WGS84_r_minor);
+         if (ref->get()->warpmode!=0)
+            if (ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
+               t=intersect_ellipsoid(miniv3d(o.vec),d,
+                                     miniv3d(0.0,0.0,0.0),miniutm::WGS84_r_major,miniutm::WGS84_r_major,miniutm::WGS84_r_minor);
+            else
+               t=intersect_plane(miniv3d(o.vec),d,
+                                 miniv3d(ref->getcenter().vec),ref->getnormal());
 
    return(t);
    }
@@ -767,6 +771,19 @@ double miniearth::intersect_ellipsoid(miniv3d p,miniv3d d,
    d.z/=r3;
 
    return(intersect_unitsphere(p,d));
+   }
+
+// ray/plane intersection
+double miniearth::intersect_plane(miniv3d p,miniv3d d,
+                                  miniv3d o,miniv3d n)
+   {
+   double c;
+
+   c=d*n;
+
+   if (c>=0.0) return(MAXFLOAT);
+
+   return(n*(o-p)/c);
    }
 
 // extract triangles that [possibly] intersect a plane

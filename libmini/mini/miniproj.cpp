@@ -76,7 +76,7 @@ void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
 
    setfrgprogpars(idx*(size+1)+offset,size+1,params);
 
-   delete params;
+   delete[] params;
    }
 
 // project 3 triangles

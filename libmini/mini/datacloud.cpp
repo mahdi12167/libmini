@@ -37,7 +37,7 @@ datahash::~datahash()
             }
          }
 
-      delete HASHMAP;
+      delete[] HASHMAP;
       }
    }
 
