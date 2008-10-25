@@ -243,6 +243,9 @@ class minilayer
    //! get north vector of tileset
    miniv3d getnorth();
 
+   //! get east vector of tileset
+   miniv3d geteast();
+
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p,int approx=1);
 
