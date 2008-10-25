@@ -1130,6 +1130,10 @@ minicoord minilayer::getcenter()
 miniv3d minilayer::getnormal()
    {return(rot_i2g(miniv3d(0.0,1.0,0.0),map_g2i(getcenter())));}
 
+// get north vector of tileset
+miniv3d minilayer::getnorth()
+   {return(rot_i2g(miniv3d(0.0,0.0,-1.0),map_g2i(getcenter())));}
+
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p,int approx)
    {
