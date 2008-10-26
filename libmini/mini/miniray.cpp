@@ -24,6 +24,10 @@ miniray::miniray()
 
 // destructor
 miniray::~miniray()
+   {clear();}
+
+// clear triangle reference buffers
+void miniray::clear()
    {
    clearbuffer();
    swapbuffer();

@@ -957,6 +957,7 @@ void minicache::attach(minitile *terrain,
    if (NUMTERRAIN>=MAXTERRAIN)
       {
       if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
+      for (id=0; id<NUMTERRAIN; id++) TERRAIN[id].ray->clear();
       for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
       MAXTERRAIN*=2;
       }

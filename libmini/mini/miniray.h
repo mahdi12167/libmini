@@ -20,6 +20,9 @@ class miniray
    //! destructor
    ~miniray();
 
+   //! clear triangle reference buffers
+   void clear();
+
    //! clear back triangle reference buffer
    void clearbuffer();
 
