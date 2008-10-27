@@ -557,6 +557,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    CACHE->configure_enableray(1);
    CACHE->configure_omitsea(TPARAMS.omitsea);
 
+   // mark scene for complete update
+   update();
+
    // success
    return(TRUE);
    }
