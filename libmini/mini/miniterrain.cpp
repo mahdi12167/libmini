@@ -538,6 +538,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // load optional features
    if (loadopts) LAYER[n]->loadopts();
 
+   // propagate parameters
+   propagate();
+
    // reset reference layer
    setreference(LREF);
 
