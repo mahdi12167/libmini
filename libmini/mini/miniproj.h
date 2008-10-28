@@ -7,6 +7,7 @@
 
 #include "miniv3d.h"
 #include "minidyna.h"
+#include "minimesh.h"
 
 class miniproj
    {
@@ -41,6 +42,25 @@ class miniproj
              const miniv3d &eye,const miniv3d &dir,
              const double nearp);
 
+   //! project a tetrahedron (minivals version)
+   void proj(const miniv3d &v1,const double c1,
+             const miniv3d &v2,const double c2,
+             const miniv3d &v3,const double c3,
+             const miniv3d &v4,const double c4,
+             const unsigned int maxslots,const minivals &vals,
+             const miniv3d &col,
+             const miniv3d &eye);
+
+   //! clip&project a tetrahedron (minivals version)
+   void clip(const miniv3d &v1,const double c1,
+             const miniv3d &v2,const double c2,
+             const miniv3d &v3,const double c3,
+             const miniv3d &v4,const double c4,
+             const unsigned int maxslots,const minivals &vals,
+             const miniv3d &col,
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp);
+
    //! de-initialize projection state
    virtual void exitproj();
 
@@ -58,6 +78,10 @@ class miniproj
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
+
+   inline void map(const unsigned int which,
+                   const unsigned int maxslots,const minivals vals,
+                   dynacoord &a);
 
    virtual void pass(const int idx,const miniv3d &v,const dynacoord &a);
 

@@ -723,6 +723,86 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
+// map minivals to dynacoord
+void miniproj::map(const unsigned int which,
+                   const unsigned int maxslots,const minivals vals,
+                   dynacoord &a)
+   {
+   unsigned int i;
+
+   unsigned int size;
+   unsigned int slot;
+
+   size=vals.getsize();
+   a.setsize(maxslots);
+
+   for (i=0; i<maxslots; i++) a[i]=miniv3d(0.0);
+
+   for (i=0; i<size; i++)
+      {
+      slot=vals[i].slot;
+      if (slot>=maxslots) continue;
+
+      switch (which)
+         {
+         case 1: a[slot]=vals[i].crd1; break;
+         case 2: a[slot]=vals[i].crd2; break;
+         case 3: a[slot]=vals[i].crd3; break;
+         case 4: a[slot]=vals[i].crd4; break;
+         }
+      }
+   }
+
+// project a tetrahedron (minivals version)
+void miniproj::proj(const miniv3d &v1,const double c1,
+                    const miniv3d &v2,const double c2,
+                    const miniv3d &v3,const double c3,
+                    const miniv3d &v4,const double c4,
+                    const unsigned int maxslots,const minivals &vals,
+                    const miniv3d &col,
+                    const miniv3d &eye)
+   {
+   dynacoord a1,a2,a3,a4;
+
+   map(1,maxslots,vals,a1);
+   map(2,maxslots,vals,a2);
+   map(3,maxslots,vals,a3);
+   map(4,maxslots,vals,a4);
+
+   proj(v1,c1,a1,
+        v2,c2,a2,
+        v3,c3,a3,
+        v4,c4,a4,
+        col,
+        eye);
+   }
+
+// clip&project a tetrahedron (minivals version)
+void miniproj::clip(const miniv3d &v1,const double c1,
+                    const miniv3d &v2,const double c2,
+                    const miniv3d &v3,const double c3,
+                    const miniv3d &v4,const double c4,
+                    const unsigned int maxslots,const minivals &vals,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   dynacoord a1,a2,a3,a4;
+
+   map(1,maxslots,vals,a1);
+   map(2,maxslots,vals,a2);
+   map(3,maxslots,vals,a3);
+   map(4,maxslots,vals,a4);
+
+   clip(v1,c1,a1,
+        v2,c2,a2,
+        v3,c3,a3,
+        v4,c4,a4,
+        col,
+        eye,dir,
+        nearp);
+   }
+
 // initialize projection state
 void miniproj::initproj(float emi,float rho)
    {
