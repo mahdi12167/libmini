@@ -309,37 +309,37 @@ void minimesh::setvals(const minivals &vals)
          b0=getdet(val.ref1,val.ref2,val.ref3,val.ref4);
 
          // calculate barycentric coordinates #1
-         b4=getdet(v1,val.ref1,val.ref2,val.ref3);
-         b3=getdet(v1,val.ref1,val.ref4,val.ref2);
-         b1=getdet(v1,val.ref2,val.ref4,val.ref3);
-         b2=getdet(v1,val.ref3,val.ref4,val.ref1);
+         b4=getdet(val.ref1,val.ref2,val.ref3,v1);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v1);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v1);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v1);
 
          // reconstruct data coordinate #1
          ref(i).vals.ref(j).crd1=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
 
          // calculate barycentric coordinates #2
-         b4=getdet(v2,val.ref1,val.ref2,val.ref3);
-         b3=getdet(v2,val.ref1,val.ref4,val.ref2);
-         b1=getdet(v2,val.ref2,val.ref4,val.ref3);
-         b2=getdet(v2,val.ref3,val.ref4,val.ref1);
+         b4=getdet(val.ref1,val.ref2,val.ref3,v2);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v2);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v2);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v2);
 
          // reconstruct data coordinate #2
          ref(i).vals.ref(j).crd2=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
 
          // calculate barycentric coordinates #3
-         b4=getdet(v3,val.ref1,val.ref2,val.ref3);
-         b3=getdet(v3,val.ref1,val.ref4,val.ref2);
-         b1=getdet(v3,val.ref2,val.ref4,val.ref3);
-         b2=getdet(v3,val.ref3,val.ref4,val.ref1);
+         b4=getdet(val.ref1,val.ref2,val.ref3,v3);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v3);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v3);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v3);
 
          // reconstruct data coordinate #3
          ref(i).vals.ref(j).crd3=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
 
          // calculate barycentric coordinates #4
-         b4=getdet(v4,val.ref1,val.ref2,val.ref3);
-         b3=getdet(v4,val.ref1,val.ref4,val.ref2);
-         b1=getdet(v4,val.ref2,val.ref4,val.ref3);
-         b2=getdet(v4,val.ref3,val.ref4,val.ref1);
+         b4=getdet(val.ref1,val.ref2,val.ref3,v4);
+         b3=getdet(val.ref1,val.ref4,val.ref2,v4);
+         b1=getdet(val.ref2,val.ref4,val.ref3,v4);
+         b2=getdet(val.ref3,val.ref4,val.ref1,v4);
 
          // reconstruct data coordinate #4
          ref(i).vals.ref(j).crd4=(b1*val.crd1+b2*val.crd2+b3*val.crd3+b4*val.crd4)/b0;
@@ -348,7 +348,7 @@ void minimesh::setvals(const minivals &vals)
    }
 
 // get determinant
-double minimesh::getdet(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3) const
+double minimesh::getdet(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p) const
    {
    miniv3d mtx[3];
 
