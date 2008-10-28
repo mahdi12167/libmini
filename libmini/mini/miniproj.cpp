@@ -59,12 +59,14 @@ void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
 
    size=a.getsize();
 
+   if (size==0) return;
+
    params=ptr=new float[(size+1)*4];
 
    *ptr++=v.x;
    *ptr++=v.y;
    *ptr++=v.z;
-   *ptr++=1.0f;
+   *ptr++=size;
 
    for (i=0; i<size; i++)
       {
