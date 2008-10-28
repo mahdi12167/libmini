@@ -9,7 +9,7 @@ endif
 set in="$1"
 set out="$2"
 
-set compr="-c zip"
+set compr="-c lzw"
 
 if ("$in:e" != "tif" && "$in:e" != "TIF") exit
 if ("$out:e" != "tif" && "$out:e" != "TIF") exit

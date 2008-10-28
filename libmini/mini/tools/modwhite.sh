@@ -13,5 +13,5 @@ set out="$2"
 if ("$in:e" != "tif" && "$in:e" != "TIF") exit
 if ("$out:e" != "tif" && "$out:e" != "TIF") exit
 
-convert -fill "#ffffff" -opaque "#000000" "$in" "$out"
+convert -fill "#000000" -opaque "#ffffff" "$in" "$out"
 modgeotiff.sh "$in" "$out"
