@@ -701,15 +701,15 @@ void miniproj::map(const unsigned int which,
 
    for (i=0; i<size; i++)
       {
-      slot=vals[i].slot;
+      slot=vals[size-1-i].slot;
       if (slot>=maxslots) continue;
 
       switch (which)
          {
-         case 1: a[slot]=vals[i].crd1; break;
-         case 2: a[slot]=vals[i].crd2; break;
-         case 3: a[slot]=vals[i].crd3; break;
-         case 4: a[slot]=vals[i].crd4; break;
+         case 1: a[slot]=vals[size-1-i].crd1; break;
+         case 2: a[slot]=vals[size-1-i].crd2; break;
+         case 3: a[slot]=vals[size-1-i].crd3; break;
+         case 4: a[slot]=vals[size-1-i].crd4; break;
          }
       }
    }
