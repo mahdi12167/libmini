@@ -699,6 +699,8 @@ void miniproj::map(const unsigned int which,
 
    for (i=0; i<maxslots; i++) a[i]=miniv3d(0.0);
 
+   // process elements in reverse order
+   // so that the first element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
       {
       slot=vals[size-1-i].slot;
