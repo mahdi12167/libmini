@@ -94,8 +94,7 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
           w1,w2,w3,
           c234;
 
-   dynacoord a234;
-
+   // calculate span vectors
    d1=v3-v2;
    d2=v4-v2;
 
@@ -105,6 +104,7 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
    // calculate thick normal
    n=d1/d2;
 
+   // use absolute normal components
    n.x=FABS(n.x);
    n.y=FABS(n.y);
    n.z=FABS(n.z);
@@ -118,7 +118,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
          w3=FABS((v2.y-m.y)*(v3.z-m.z)-(v2.z-m.z)*(v3.y-m.y));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.x;
-         a234=(w1*a2+w2*a3+w3*a4)/n.x;
          }
       else
          {
@@ -127,7 +126,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
          w3=FABS((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
-         a234=(w1*a2+w2*a3+w3*a4)/n.z;
          }
    else
       if (n.y>n.z)
@@ -137,7 +135,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
          w3=FABS((v2.z-m.z)*(v3.x-m.x)-(v2.x-m.x)*(v3.z-m.z));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.y;
-         a234=(w1*a2+w2*a3+w3*a4)/n.y;
          }
       else
          {
@@ -146,8 +143,13 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
          w3=FABS((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
-         a234=(w1*a2+w2*a3+w3*a4)/n.z;
          }
+
+   // pass down shader constants
+   pass(0,v1,a1);
+   pass(1,v2,a2);
+   pass(2,v3,a3);
+   pass(3,v4,a4);
 
    // check orientation
    if (lambda<0.0)
@@ -155,17 +157,11 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       // calculate thickness
       lambda=(v1-m).getlength();
 
-      // pass down shader constants at thick vertex
-      pass(0,v1,a1);
-      pass(1,m,a234);
-
       // calculate back-facing normal
       n=(v2-v1)/(v3-v1);
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2);
-      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -184,8 +180,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3);
-      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -204,8 +198,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4);
-      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -224,17 +216,11 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       // calculate thickness
       lambda=(m-v1).getlength();
 
-      // pass down shader constants at thick vertex
-      pass(0,m,a234);
-      pass(1,v1,a1);
-
       // calculate back-facing normal
       n=(v2-m)/(v3-m);
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2);
-      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -253,8 +239,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3);
-      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -273,8 +257,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4);
-      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -303,8 +285,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
           alpha,beta,
           c12,c34;
 
-   dynacoord a12,a34;
-
    // calculate thick vertex (first intersection)
    alpha=intersect(v1,v2-v1,eye,v3-eye,v4-eye,m1);
 
@@ -314,28 +294,27 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
    // linear interpolation at thick vertex
    c12=(1.0f-alpha)*c1+alpha*c2;
    c34=(1.0f-beta)*c3+beta*c4;
-   a12=(1.0f-alpha)*a1+alpha*a2;
-   a34=(1.0f-beta)*a3+beta*a4;
 
+   // calculate thick vector
    d=m2-m1;
 
    // calculate thickness
    lambda=d.getlength();
 
+   // pass down shader constants
+   pass(0,v1,a1);
+   pass(1,v2,a2);
+   pass(2,v3,a3);
+   pass(3,v4,a4);
+
    // check orientation
    if (d*(m1-eye)<0.0f)
       {
-      // pass down shader constants at thick vertex
-      pass(0,m1,a12);
-      pass(1,m2,a34);
-
       // calculate back-facing normal
       n=(v1-m1)/(v3-m1);
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v1,a1);
-      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -354,8 +333,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3);
-      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -374,8 +351,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2);
-      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -394,8 +369,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4);
-      pass(3,v1,a1);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -411,17 +384,11 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    else
       {
-      // pass down shader constants at thick vertex
-      pass(0,m2,a34);
-      pass(1,m1,a12);
-
       // calculate back-facing normal
       n=(v1-m2)/(v3-m2);
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v1,a1);
-      pass(3,v3,a3);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -440,8 +407,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v3,a3);
-      pass(3,v2,a2);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -460,8 +425,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v2,a2);
-      pass(3,v4,a4);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -480,8 +443,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       n.normalize();
 
       // render front-facing thick vertex
-      pass(2,v4,a4);
-      pass(3,v1,a1);
       beginfans();
       beginfan();
       normal(n.x,n.y,n.z);
@@ -855,7 +816,7 @@ void miniproj::setzclip(float nearp,float farp,int zcliptexid)
 void miniproj::initzclip()
    {
    static const int zbits=24;
-   static const float zscale=1.0f; // 0.9 for buggy Intel GMA 950
+   static const float zscale=1.0f; // use 0.9 for sloppy Intel GMA 950
    static const float zbias=2.0f/((1<<zbits)-1);
 
    float zfactor;
