@@ -155,13 +155,13 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       // calculate thickness
       lambda=(v1-m).getlength();
 
-      // calculate back-facing normal
-      n=(v2-v1)/(v3-v1);
-      n.normalize();
-
       // pass down shader constants at thick vertex
       pass(0,v1,a1);
       pass(1,m,a234);
+
+      // calculate back-facing normal
+      n=(v2-v1)/(v3-v1);
+      n.normalize();
 
       // render front-facing thick vertex
       pass(2,v2,a2);
@@ -224,13 +224,13 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
       // calculate thickness
       lambda=(m-v1).getlength();
 
-      // calculate back-facing normal
-      n=(v2-m)/(v3-m);
-      n.normalize();
-
       // pass down shader constants at thick vertex
       pass(0,m,a234);
       pass(1,v1,a1);
+
+      // calculate back-facing normal
+      n=(v2-m)/(v3-m);
+      n.normalize();
 
       // render front-facing thick vertex
       pass(2,v2,a2);
@@ -325,13 +325,13 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
    // check orientation
    if (d*(m1-eye)<0.0f)
       {
-      // calculate back-facing normal
-      n=(v1-m1)/(v3-m1);
-      n.normalize();
-
       // pass down shader constants at thick vertex
       pass(0,m1,a12);
       pass(1,m2,a34);
+
+      // calculate back-facing normal
+      n=(v1-m1)/(v3-m1);
+      n.normalize();
 
       // render front-facing thick vertex
       pass(2,v1,a1);
@@ -411,13 +411,13 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    else
       {
-      // calculate back-facing normal
-      n=(v1-m2)/(v3-m2);
-      n.normalize();
-
       // pass down shader constants at thick vertex
       pass(0,m2,a34);
       pass(1,m1,a12);
+
+      // calculate back-facing normal
+      n=(v1-m2)/(v3-m2);
+      n.normalize();
 
       // render front-facing thick vertex
       pass(2,v1,a1);
