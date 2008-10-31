@@ -85,16 +85,16 @@ class miniproj
 
    virtual void pass(const int idx,const miniv3d &v,const dynacoord &a);
 
-   inline void proj3tri(const miniv3d &v1,const double c1,const dynacoord &a1,
-                        const miniv3d &v2,const double c2,const dynacoord &a2,
-                        const miniv3d &v3,const double c3,const dynacoord &a3,
-                        const miniv3d &v4,const double c4,const dynacoord &a4,
+   inline void proj3tri(const miniv3d &v1,const double c1,
+                        const miniv3d &v2,const double c2,
+                        const miniv3d &v3,const double c3,
+                        const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
-   inline void proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
-                        const miniv3d &v2,const double c2,const dynacoord &a2,
-                        const miniv3d &v3,const double c3,const dynacoord &a3,
-                        const miniv3d &v4,const double c4,const dynacoord &a4,
+   inline void proj4tri(const miniv3d &v1,const double c1,
+                        const miniv3d &v2,const double c2,
+                        const miniv3d &v3,const double c3,
+                        const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
    void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,

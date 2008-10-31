@@ -82,10 +82,10 @@ void miniproj::pass(const int idx,const miniv3d &v,const dynacoord &a)
    }
 
 // project 3 triangles
-inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord &a1,
-                               const miniv3d &v2,const double c2,const dynacoord &a2,
-                               const miniv3d &v3,const double c3,const dynacoord &a3,
-                               const miniv3d &v4,const double c4,const dynacoord &a4,
+inline void miniproj::proj3tri(const miniv3d &v1,const double c1,
+                               const miniv3d &v2,const double c2,
+                               const miniv3d &v3,const double c3,
+                               const miniv3d &v4,const double c4,
                                const miniv3d &eye)
    {
    miniv3d d1,d2,m,n;
@@ -144,12 +144,6 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
 
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
          }
-
-   // pass down shader constants
-   pass(0,v1,a1);
-   pass(1,v2,a2);
-   pass(2,v3,a3);
-   pass(3,v4,a4);
 
    // check orientation
    if (lambda<0.0)
@@ -273,10 +267,10 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,const dynacoord
    }
 
 // project 4 triangles
-void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
-                        const miniv3d &v2,const double c2,const dynacoord &a2,
-                        const miniv3d &v3,const double c3,const dynacoord &a3,
-                        const miniv3d &v4,const double c4,const dynacoord &a4,
+void miniproj::proj4tri(const miniv3d &v1,const double c1,
+                        const miniv3d &v2,const double c2,
+                        const miniv3d &v3,const double c3,
+                        const miniv3d &v4,const double c4,
                         const miniv3d &eye)
    {
    miniv3d m1,m2,d,n;
@@ -300,12 +294,6 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,const dynacoord &a1,
 
    // calculate thickness
    lambda=d.getlength();
-
-   // pass down shader constants
-   pass(0,v1,a1);
-   pass(1,v2,a2);
-   pass(2,v3,a3);
-   pass(3,v4,a4);
 
    // check orientation
    if (d*(m1-eye)<0.0f)
@@ -481,16 +469,22 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
    if (isfront(v1,v2,v4,v3,eye)) ff|=4;
    if (isfront(v2,v3,v4,v1,eye)) ff|=8;
 
+   // pass down shader constants
+   pass(0,v1,a1);
+   pass(1,v2,a2);
+   pass(2,v3,a3);
+   pass(3,v4,a4);
+
    // determine projection type with either 3 or 4 triangles
    switch (ff)
       {
-      case 1: case 14: proj3tri(v4,c4,a4,v1,c1,a1,v2,c2,a2,v3,c3,a3,eye); break;
-      case 2: case 13: proj3tri(v3,c3,a3,v1,c1,a1,v2,c2,a2,v4,c4,a4,eye); break;
-      case 3: case 12: proj4tri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye); break;
-      case 4: case 11: proj3tri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye); break;
-      case 5: case 10: proj4tri(v1,c1,a1,v4,c4,a4,v2,c2,a2,v3,c3,a3,eye); break;
-      case 6: case  9: proj4tri(v1,c1,a1,v3,c3,a3,v2,c2,a2,v4,c4,a4,eye); break;
-      case 7: case  8: proj3tri(v2,c2,a2,v1,c1,a1,v3,c3,a3,v4,c4,a4,eye); break;
+      case 1: case 14: proj3tri(v4,c4,v1,c1,v2,c2,v3,c3,eye); break;
+      case 2: case 13: proj3tri(v3,c3,v1,c1,v2,c2,v4,c4,eye); break;
+      case 3: case 12: proj4tri(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
+      case 4: case 11: proj3tri(v1,c1,v2,c2,v3,c3,v4,c4,eye); break;
+      case 5: case 10: proj4tri(v1,c1,v4,c4,v2,c2,v3,c3,eye); break;
+      case 6: case  9: proj4tri(v1,c1,v3,c3,v2,c2,v4,c4,eye); break;
+      case 7: case  8: proj3tri(v2,c2,v1,c1,v3,c3,v4,c4,eye); break;
       }
    }
 
