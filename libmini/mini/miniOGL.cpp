@@ -1645,7 +1645,7 @@ void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,
 #endif
    }
 
-int copytexrect(int depthcomp)
+int copytexrect(int depthcomp,int nofrills)
    {
 #ifndef NOOGL
 
@@ -1675,7 +1675,7 @@ int copytexrect(int depthcomp)
       glGenTextures(1,&texid);
       glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
 
-      glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+      if (nofrills==0) glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
       glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -1700,7 +1700,7 @@ int copytexrect(int depthcomp)
 #endif
    }
 
-void bindtexrect(int texid)
+void bindtexrect(int texid,int nofrills)
    {
 #ifndef NOOGL
 
@@ -1711,12 +1711,12 @@ void bindtexrect(int texid)
       if (texid>0)
          {
          glBindTexture(GL_TEXTURE_RECTANGLE_ARB,texid);
-         glEnable(GL_TEXTURE_RECTANGLE_ARB);
+         if (nofrills==0) glEnable(GL_TEXTURE_RECTANGLE_ARB);
          }
       else
          {
          glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
-         glDisable(GL_TEXTURE_RECTANGLE_ARB);
+         if (nofrills==0) glDisable(GL_TEXTURE_RECTANGLE_ARB);
          }
 #endif
 

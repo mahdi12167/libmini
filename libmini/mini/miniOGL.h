@@ -138,8 +138,8 @@ void writeRGBpixels(unsigned char *pixels,int width,int height,int winwidth,int 
 float *readZpixels(int x,int y,int width,int height);
 void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
-int copytexrect(int depthcomp=0);
-void bindtexrect(int texid);
+int copytexrect(int depthcomp=0,int nofrills=0);
+void bindtexrect(int texid,int nofrills=0);
 void painttexrect(int texid,int depthcomp=0);
 void deletetexrect(int texid);
 
