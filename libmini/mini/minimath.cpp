@@ -113,17 +113,17 @@ void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const mi
 // calculate determinant of 3x3 matrix
 double det_mtx(const miniv3d mtx[3])
    {
-   return(mtx[0].x*(mtx[2].z*mtx[1].y-mtx[1].z*mtx[2].y)+
-          mtx[0].y*(mtx[1].z*mtx[2].x-mtx[2].z*mtx[1].x)+
-          mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x));
+   return(mtx[0].x*(mtx[1].y*mtx[2].z-mtx[2].y*mtx[1].z)+
+          mtx[0].y*(mtx[2].x*mtx[1].z-mtx[1].x*mtx[2].z)+
+          mtx[0].z*(mtx[1].x*mtx[2].y-mtx[2].x*mtx[1].y));
    }
 
 // calculate determinant of 4x3 matrix
 double det_mtx(const miniv4d mtx[3])
    {
-   return(mtx[0].x*(mtx[2].z*mtx[1].y-mtx[1].z*mtx[2].y)+
-          mtx[0].y*(mtx[1].z*mtx[2].x-mtx[2].z*mtx[1].x)+
-          mtx[0].z*(mtx[2].y*mtx[1].x-mtx[1].y*mtx[2].x));
+   return(mtx[0].x*(mtx[1].y*mtx[2].z-mtx[2].y*mtx[1].z)+
+          mtx[0].y*(mtx[2].x*mtx[1].z-mtx[1].x*mtx[2].z)+
+          mtx[0].z*(mtx[1].x*mtx[2].y-mtx[2].x*mtx[1].y));
    }
 
 // invert a 3x3 matrix
@@ -143,15 +143,15 @@ void inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
 
       cpy_mtx(m,mtx);
 
-      inv[0].x=det*(m[2].z*m[1].y-m[1].z*m[2].y);
-      inv[1].x=det*(m[1].z*m[2].x-m[2].z*m[1].x);
-      inv[2].x=det*(m[2].y*m[1].x-m[1].y*m[2].x);
-      inv[0].y=det*(m[0].z*m[2].y-m[2].z*m[0].y);
-      inv[1].y=det*(m[2].z*m[0].x-m[0].z*m[2].x);
-      inv[2].y=det*(m[0].y*m[2].x-m[2].y*m[0].x);
-      inv[0].z=det*(m[1].z*m[0].y-m[0].z*m[1].y);
-      inv[1].z=det*(m[0].z*m[1].x-m[1].z*m[0].x);
-      inv[2].z=det*(m[1].y*m[0].x-m[0].y*m[1].x);
+      inv[0].x=det*(m[1].y*m[2].z-m[2].y*m[1].z);
+      inv[1].x=det*(m[2].x*m[1].z-m[1].x*m[2].z);
+      inv[2].x=det*(m[1].x*m[2].y-m[2].x*m[1].y);
+      inv[0].y=det*(m[2].y*m[0].z-m[0].y*m[2].z);
+      inv[1].y=det*(m[0].x*m[2].z-m[2].x*m[0].z);
+      inv[2].y=det*(m[2].x*m[0].y-m[0].x*m[2].y);
+      inv[0].z=det*(m[0].y*m[1].z-m[1].y*m[0].z);
+      inv[1].z=det*(m[1].x*m[0].z-m[0].x*m[1].z);
+      inv[2].z=det*(m[0].x*m[1].y-m[1].x*m[0].y);
       }
    }
 
