@@ -31,7 +31,8 @@ class miniproj
              const miniv3d &v3,const double c3,const dynacoord &a3,
              const miniv3d &v4,const double c4,const dynacoord &a4,
              const miniv3d &col,
-             const miniv3d &eye);
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp);
 
    //! clip&project a tetrahedron
    void clip(const miniv3d &v1,const double c1,const dynacoord &a1,
@@ -49,7 +50,8 @@ class miniproj
              const miniv3d &v4,const double c4,
              const unsigned int maxslots,const minivals &vals,
              const miniv3d &col,
-             const miniv3d &eye);
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp);
 
    //! clip&project a tetrahedron (minivals version)
    void clip(const miniv3d &v1,const double c1,
@@ -64,12 +66,24 @@ class miniproj
    //! de-initialize projection state
    virtual void exitproj();
 
+   //! enable projection mode
+   void setproj(float delta=0.0f);
+
+   //! get projection mode
+   BOOLINT getproj();
+
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
+
+   //! get z-clipping
+   BOOLINT getzclip();
 
    protected:
 
    float EMI,RHO;
+
+   BOOLINT PROJMODE;
+   float DELTA;
 
    BOOLINT ZCLIP;
    float ZNEAR,ZFAR;
@@ -97,6 +111,28 @@ class miniproj
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
+   inline void coords(const double c,const dynacoord &a,const double d);
+
+   inline void slice1tri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                         const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                         const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                         const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                         const double delta);
+
+   inline void slice2tri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                         const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                         const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                         const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                         const double delta);
+
+   inline void slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
+                        const miniv3d &v2,const double c2,const dynacoord &a2,
+                        const miniv3d &v3,const double c3,const dynacoord &a3,
+                        const miniv3d &v4,const double c4,const dynacoord &a4,
+                        const miniv3d &eye,const miniv3d &dir,
+                        const double nearp,
+                        const double delta);
+
    void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,
                 const miniv3d &v3,const double c3,const dynacoord &a3,
@@ -104,28 +140,32 @@ class miniproj
                 const miniv3d &v5,const double c5,const dynacoord &a5,
                 const miniv3d &v6,const double c6,const dynacoord &a6,
                 const miniv3d &col,
-                const miniv3d &eye);
+                const miniv3d &eye,const miniv3d &dir,
+                const double nearp);
 
    void clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
                const miniv3d &col,
-               const miniv3d &eye);
+               const miniv3d &eye,const miniv3d &dir,
+               const double nearp);
 
    void clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
                const miniv3d &col,
-               const miniv3d &eye);
+               const miniv3d &eye,const miniv3d &dir,
+               const double nearp);
 
    void clip2(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
               const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
               const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
               const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
               const miniv3d &col,
-              const miniv3d &eye);
+              const miniv3d &eye,const miniv3d &dir,
+              const double nearp);
 
    virtual void initzclip();
    virtual void exitzclip();
