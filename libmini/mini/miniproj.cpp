@@ -909,22 +909,28 @@ void miniproj::initproj(float emi,float rho)
    enableRKEblending();
    disableZwriting();
 
-   if (ZCLIP) initzclip();
+   if (ZCLIP && PROJMODE) initzclip();
 
-   enablevtxshader();
-   enablepixshader();
+   if (PROJMODE)
+      {
+      enablevtxshader();
+      enablepixshader();
 
-   setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
-   setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
+      setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
+      setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
+      }
    }
 
 // de-initialize projection state
 void miniproj::exitproj()
    {
-   disablevtxshader();
-   disablepixshader();
+   if (PROJMODE)
+      {
+      disablevtxshader();
+      disablepixshader();
+      }
 
-   if (ZCLIP) exitzclip();
+   if (ZCLIP && PROJMODE) exitzclip();
 
    enableZwriting();
    enableBFculling();
