@@ -111,7 +111,7 @@ class miniproj
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
-   inline void coords(const double c,const dynacoord &a,const double d);
+   virtual void coords(const double c,const dynacoord &a,const double d);
 
    inline void slice1tri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                          const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
