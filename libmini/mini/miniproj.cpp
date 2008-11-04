@@ -476,13 +476,7 @@ void miniproj::coords(const double c,const dynacoord &a,const double d)
 
    texcoord(c,c,d);
 
-   for (i=0; i<size; i++)
-      {
-      texunit(i+1);
-      texcoord(a[i].x,a[i].y,a[i].z);
-      }
-
-   texunit(0);
+   for (i=0; i<size; i++) multitexcoord(i+1,a[i].x,a[i].y,a[i].z);
    }
 
 // extract 1 triangle from tetrahedron

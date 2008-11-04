@@ -52,6 +52,7 @@ PFNGLGETCOMPRESSEDTEXIMAGEARBPROC glGetCompressedTexImageARB=NULL;
 #ifdef GL_ARB_multitexture
 PFNGLACTIVETEXTUREARBPROC glActiveTextureARB=NULL;
 PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB=NULL;
+PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB=NULL;
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)

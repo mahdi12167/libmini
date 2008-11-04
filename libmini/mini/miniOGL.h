@@ -99,6 +99,7 @@ inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
 inline void normal(const float dx,const float dy,const float dz);
 inline void texcoord(const float s,const float t,const float r=0.0f);
+inline void multitexcoord(const int unit,const float s,const float t,const float r=0.0f);
 inline void fanvertex(const float x,const float y,const float z);
 inline void endfans();
 
@@ -358,6 +359,17 @@ inline void texcoord(const float s,const float t,const float r)
    {
 #ifndef NOOGL
    glTexCoord3f(s,t,r);
+#endif
+   }
+
+inline void multitexcoord(const int unit,const float s,const float t,const float r)
+   {
+#ifndef NOOGL
+   initglexts();
+   initwglprocs();
+#ifdef GL_ARB_multitexture
+   if (glext_mt!=0) glMultiTexCoord3fARB(GL_TEXTURE0_ARB+unit,s,t,r);
+#endif
 #endif
    }
 
