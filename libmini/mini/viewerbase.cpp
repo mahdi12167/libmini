@@ -140,13 +140,13 @@ void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,floa
 void viewerbase::render()
    {
    // enable wireframe mode
-   if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+   if (PARAMS.usewireframe) polygonmode(1);
 
    // render earth
    EARTH->render();
 
    // disable wireframe mode
-   if (PARAMS.usewireframe) glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+   if (PARAMS.usewireframe) polygonmode(0);
    }
 
 // get time

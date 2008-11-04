@@ -143,6 +143,8 @@ void bindtexrect(int texid,int nofrills=0);
 void painttexrect(int texid,int depthcomp=0);
 void deletetexrect(int texid);
 
+void polygonmode(int wire);
+
 // configuring
 void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation
 void configure_compression(int compression=1); // enable texture compression (may result in texture seams)

@@ -1785,4 +1785,12 @@ void painttexrect(int texid,int depthcomp)
 void deletetexrect(int texid)
    {deletetexmap(texid);}
 
+void polygonmode(int wire)
+   {
+#ifndef NOOGL
+   if (wire==0) glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+   else glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+#endif
+   }
+
 }
