@@ -1323,6 +1323,19 @@ void mtxgetmodel(double mtx[16])
 #endif
    }
 
+void multitexcoord(const int unit,const float s,const float t,const float r)
+   {
+#ifndef NOOGL
+   initglexts();
+#ifdef _WIN32
+   initwglprocs();
+#endif
+#ifdef GL_ARB_multitexture
+   if (glext_mt!=0) glMultiTexCoord3fARB(GL_TEXTURE0_ARB+unit,s,t,r);
+#endif
+#endif
+   }
+
 int getfancnt()
    {
 #ifndef NOOGL
