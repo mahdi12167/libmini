@@ -57,6 +57,12 @@ class datagrid
              const float h0,const float dh,  // base elevation and height of data brick
              const float t0,const float dt); // time frame start and exposure time
 
+   //! clip data
+   void clip(const unsigned int id, // data brick id
+             const float we1=0.0,const float we2=1.0, // normalized clip coords in west-east direction
+             const float sn1=0.0,const float sn2=1.0, // normalized clip coords in south-north direction
+             const float bt1=0.0,const float bt2=1.0); // normalized clip coords in bottom-top direction
+
    //! reference to layer
    void reference(const unsigned int id, // data brick id
                   minilayer *layer); // reference layer
@@ -125,6 +131,8 @@ class datagrid
    minidyna<unsigned int> SLOT;
    minidyna<BOOLINT> FLIP;
    minidyna<BOOLINT> BBOX;
+   minidyna<miniv3d> CRD1;
+   minidyna<miniv3d> CRD2;
    minidyna<minilayer *> REF;
    minidyna<databuf> DATA;
 
@@ -147,6 +155,9 @@ class datagrid
 
    BOOLINT decompose();
    minimesh decompose(unsigned int idx);
+
+   miniv3d interpolate(unsigned int idx,
+                       miniv3d crd);
 
    void push_post(const minimesh &mesh,
                   const double time);

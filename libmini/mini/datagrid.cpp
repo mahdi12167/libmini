@@ -44,6 +44,8 @@ unsigned int datagrid::create(const unsigned int slot,
          SLOT[i]=slot;
          FLIP[i]=flip;
          BBOX[i]=bbox;
+         CRD1[i]=miniv3d(0.0);
+         CRD2[i]=miniv3d(1.0);
          REF[i]=NULL;
          DATA[i]=databuf();
 
@@ -54,6 +56,8 @@ unsigned int datagrid::create(const unsigned int slot,
    SLOT.append(slot);
    FLIP.append(flip);
    BBOX.append(bbox);
+   CRD1.append(miniv3d(0.0));
+   CRD2.append(miniv3d(1.0));
    REF.append(NULL);
    DATA.append(databuf());
 
@@ -132,6 +136,26 @@ void datagrid::move(const unsigned int id,
 
       DATA[id].t0=t0;
       DATA[id].dt=dt;
+      }
+   }
+
+// clip data
+void datagrid::clip(const unsigned int id,
+                    const float we1,const float we2,
+                    const float sn1,const float sn2,
+                    const float bt1,const float bt2)
+   {
+   miniv3d crd1,crd2;
+
+   if (FLAG[id])
+      {
+      crd1=miniv3d(FMIN(FMAX(we1,0.0),1.0),FMIN(FMAX(sn1,0.0),1.0),FMIN(FMAX(bt1,0.0),1.0));
+      crd2=miniv3d(FMIN(FMAX(we2,0.0),1.0),FMIN(FMAX(sn2,0.0),1.0),FMIN(FMAX(bt2,0.0),1.0));
+
+      if (crd1!=CRD1[id] || crd2!=CRD2[id]) INVALID=TRUE;
+
+      CRD1[id]=crd1;
+      CRD2[id]=crd2;
       }
    }
 
@@ -296,29 +320,29 @@ minimesh datagrid::decompose(unsigned int idx)
       if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
       else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
 
-      // determine corner vertices of actual object:
+      // determine clipped data coordinates of actual object:
 
-      vtx[0]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[1]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[2]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[3]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0),crs,DATA[idx].zone,DATA[idx].datum);
+      crd[0]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD1[idx].z);
+      crd[1]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD1[idx].z);
+      crd[2]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD1[idx].z);
+      crd[3]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD1[idx].z);
 
-      vtx[4]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[5]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[6]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[7]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,DATA[idx].datum);
+      crd[4]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD2[idx].z);
+      crd[5]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD2[idx].z);
+      crd[6]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD2[idx].z);
+      crd[7]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD2[idx].z);
 
-      // determine data coordinates of actual object:
+      // determine clipped corner vertices of actual object:
 
-      crd[0]=miniv3d(0.0,0.0,0.0);
-      crd[1]=miniv3d(0.0,1.0,0.0);
-      crd[2]=miniv3d(1.0,1.0,0.0);
-      crd[3]=miniv3d(1.0,0.0,0.0);
+      vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,DATA[idx].datum);
 
-      crd[4]=miniv3d(0.0,0.0,1.0);
-      crd[5]=miniv3d(0.0,1.0,1.0);
-      crd[6]=miniv3d(1.0,1.0,1.0);
-      crd[7]=miniv3d(1.0,0.0,1.0);
+      vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,DATA[idx].datum);
+      vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,DATA[idx].datum);
 
       // transform corner vertices
       if (crs!=minicoord::MINICOORD_LINEAR)
@@ -383,6 +407,28 @@ minimesh datagrid::decompose(unsigned int idx)
       }
 
    return(mesh);
+   }
+
+// interpolate data brick corners tri-linearily
+miniv3d datagrid::interpolate(unsigned int idx,
+                              miniv3d crd)
+   {
+   miniv3d vtx[8];
+
+   vtx[0]=miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0);
+   vtx[1]=miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0);
+   vtx[2]=miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0);
+   vtx[3]=miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0);
+
+   vtx[4]=miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh);
+   vtx[5]=miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh);
+   vtx[6]=miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh);
+   vtx[7]=miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh);
+
+   return((1.0-crd.z)*((1.0-crd.y)*((1.0-crd.x)*vtx[0]+crd.x*vtx[3])+
+                       crd.y*((1.0-crd.x)*vtx[1]+crd.x*vtx[2]))+
+          crd.z*((1.0-crd.y)*((1.0-crd.x)*vtx[4]+crd.x*vtx[7])+
+                 crd.y*((1.0-crd.x)*vtx[5]+crd.x*vtx[6])));
    }
 
 // check if the constructed tetrahedral mesh is empty
