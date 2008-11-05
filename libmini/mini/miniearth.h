@@ -173,6 +173,9 @@ class miniearth
    //! get nearest layer
    minilayer *getnearest(const minicoord &p) {return(TERRAIN->getlayer(TERRAIN->getnearest(p)));}
 
+   //! get texture id of z-buffer rectangle
+   int getztexid() {return(ZTEXID);}
+
    protected:
 
    MINIEARTH_PARAMS EPARAMS;
