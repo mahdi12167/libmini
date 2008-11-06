@@ -359,8 +359,9 @@ minimesh datagrid::decompose(unsigned int idx)
             }
 
       // check reference to layer
-      if (REF[idx]!=NULL)
-         for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
+      if (crs!=minicoord::MINICOORD_LINEAR)
+         if (REF[idx]!=NULL)
+            for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
 
       // check orientation of tetrahedral decomposition
       if (!FLIP[idx])
