@@ -347,7 +347,8 @@ minimesh datagrid::decompose(unsigned int idx)
       // transform corner vertices
       if (crs!=minicoord::MINICOORD_LINEAR)
          if (CRS!=minicoord::MINICOORD_LINEAR)
-            for (i=0; i<8; i++) vtx[i].convert2(CRS);
+            if (REF[idx]==NULL)
+               for (i=0; i<8; i++) vtx[i].convert2(CRS);
 
       // multiply corner vertices with pre matrix
       if (USEPRE)
