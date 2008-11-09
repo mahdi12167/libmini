@@ -12,4 +12,4 @@ clean:
 	@-rm -f *~ *.o faceofmars
 
 demo:   clean
-        @-(cd ..; zip -qr9 FaceOfMars/FaceOfMars.zip FaceOfMars -x \*/CVS\*)
+	@-(cd ..; zip -qr9 FaceOfMars/FaceOfMars.zip FaceOfMars -x \*/CVS\*)
