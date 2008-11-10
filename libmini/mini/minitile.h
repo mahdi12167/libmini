@@ -240,6 +240,7 @@ class minitile
 
    float CENTERI,CENTERJ;
 
+   int VISIBLE;
    int LEFT,RIGHT,BOTTOM,TOP;
 
    int COL,ROW;
@@ -255,6 +256,7 @@ class minitile
 
    float PFARP;
 
+   int PVISIBLE;
    int PLEFT,PRIGHT,PBOTTOM,PTOP;
 
    int PCOL,PROW;

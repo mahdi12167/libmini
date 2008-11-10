@@ -759,26 +759,27 @@ void minipoint::calcvdata()
 
    for (i=TILE->getvisibleleft(); i<=TILE->getvisibleright(); i++)
       for (j=TILE->getvisiblebottom(); j<=TILE->getvisibletop(); j++)
-         for (k=0; k<NUM[i+j*COLS]; k++)
-            {
-            point=&POINTS[i+j*COLS][k];
-
-            point->height=TILE->getheight(point->x,-point->y);
-
-            if (VNUM>=MAXVNUM)
+         if (TILE->isvisible(i,j))
+            for (k=0; k<NUM[i+j*COLS]; k++)
                {
-               MAXVNUM=2*MAXVNUM+1;
+               point=&POINTS[i+j*COLS][k];
 
-               if (VPOINTS==NULL)
-                  {if ((VPOINTS=(minipointdata **)malloc(MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
-               else
-                  {if ((VPOINTS=(minipointdata **)realloc(VPOINTS,MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
+               point->height=TILE->getheight(point->x,-point->y);
+
+               if (VNUM>=MAXVNUM)
+                  {
+                  MAXVNUM=2*MAXVNUM+1;
+
+                  if (VPOINTS==NULL)
+                     {if ((VPOINTS=(minipointdata **)malloc(MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
+                  else
+                     {if ((VPOINTS=(minipointdata **)realloc(VPOINTS,MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
+                  }
+
+               VPOINTS[VNUM]=point;
+
+               VNUM++;
                }
-
-            VPOINTS[VNUM]=point;
-
-            VNUM++;
-            }
    }
 
 // sort visible waypoints along viewing axis

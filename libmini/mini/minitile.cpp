@@ -204,6 +204,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    CENTERI=COLS/2.0f;
    CENTERJ=ROWS/2.0f;
 
+   VISIBLE=1;
+
    LEFT=0;
    RIGHT=COLS-1;
    BOTTOM=0;
@@ -225,6 +227,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    MOD=FALSE;
 
    PFARP=0.0f;
+
+   PVISIBLE=1;
 
    PLEFT=0;
    PRIGHT=COLS-1;
@@ -361,35 +365,55 @@ void minitile::checktiles(float ex,float ez,
    CENTERI=(ex-(CENTERX-COLDIM*COLS/2.0f))/COLDIM;
    CENTERJ=(ez-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM;
 
-   // calculate rendering bounding box:
+   // calculate rendering area:
 
    d=ffloor(((ex-c*farp)-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
-   LEFT=min(max(ftrc(d)-1,0),COLS-1);
+   LEFT=ftrc(d)-1;
 
    d=ffloor(((CENTERX+COLDIM*COLS/2.0f)-(ex+c*farp))/COLDIM);
-   RIGHT=COLS-1-min(max(ftrc(d)-1,0),COLS-1);
+   RIGHT=COLS-ftrc(d);
 
    d=ffloor(((ez-c*farp)-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM);
-   BOTTOM=min(max(ftrc(d)-1,0),ROWS-1);
+   BOTTOM=ftrc(d)-1;
 
    d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(ez+c*farp))/ROWDIM);
-   TOP=ROWS-1-min(max(ftrc(d)-1,0),ROWS-1);
+   TOP=ROWS-ftrc(d);
 
-   // calculate preloading bounding box:
+   // calculate preloading area:
 
    d=ffloor(((ex-c*fmax(farp,PFARP))-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
-   PLEFT=min(min(max(ftrc(d)-1,0),COLS-1),max(LEFT-1,0));
+   PLEFT=min(ftrc(d)-1,LEFT-1);
 
    d=ffloor(((CENTERX+COLDIM*COLS/2.0f)-(ex+c*fmax(farp,PFARP)))/COLDIM);
-   PRIGHT=max(COLS-1-min(max(ftrc(d)-1,0),COLS-1),min(RIGHT+1,COLS-1));
+   PRIGHT=max(COLS-ftrc(d),RIGHT+1);
 
    d=ffloor(((ez-c*fmax(farp,PFARP))-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM);
-   PBOTTOM=min(min(max(ftrc(d)-1,0),ROWS-1),max(BOTTOM-1,0));
+   PBOTTOM=min(ftrc(d)-1,BOTTOM-1);
 
    d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(ez+c*fmax(farp,PFARP)))/ROWDIM);
-   PTOP=max(ROWS-1-min(max(ftrc(d)-1,0),ROWS-1),min(TOP+1,ROWS-1));
+   PTOP=max(ROWS-ftrc(d),TOP+1);
 
-   // calculate optimal swizzle parameters
+   // check visibility of rendering area
+   VISIBLE=1;
+   if (LEFT>COLS-1 || RIGHT<0 || BOTTOM>ROWS-1 || TOP<0) VISIBLE=0;
+
+   // clamp rendering area
+   LEFT=min(max(LEFT,0),COLS-1);
+   RIGHT=min(max(RIGHT,0),COLS-1);
+   BOTTOM=min(max(BOTTOM,0),ROWS-1);
+   TOP=min(max(TOP,0),ROWS-1);
+
+   // check visibility of preloading area
+   PVISIBLE=1;
+   if (PLEFT>COLS-1 || PRIGHT<0 || PBOTTOM>ROWS-1 || PTOP<0) PVISIBLE=0;
+
+   // clamp preloading area
+   PLEFT=min(max(PLEFT,0),COLS-1);
+   PRIGHT=min(max(PRIGHT,0),COLS-1);
+   PBOTTOM=min(max(PBOTTOM,0),ROWS-1);
+   PTOP=min(max(PTOP,0),ROWS-1);
+
+   // calculate coprime swizzle parameters
    for (SWIZZLE=3; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
    for (PSWIZZLE=3; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
    }
@@ -642,8 +666,9 @@ void minitile::draw(float res,
       {
       checktiles(ex,ez,farp,fovy,aspect);
 
-      for (col=PLEFT; col<=PRIGHT; col++)
-         for (row=PBOTTOM; row<=PTOP; row++) updatetile(col,row);
+      if (PVISIBLE!=0)
+         for (col=PLEFT; col<=PRIGHT; col++)
+            for (row=PBOTTOM; row<=PTOP; row++) updatetile(col,row);
 
       RELSCALE=RELSCALE0;
       SEALEVEL=SEALEVEL0;
@@ -652,123 +677,132 @@ void minitile::draw(float res,
       ROW=BOTTOM;
       }
 
-   if (PRELOAD_CALLBACK!=NULL)
-      {
-      width=PRIGHT-PLEFT+1;
-      height=PTOP-PBOTTOM+1;
-
-      if (PUPDATE<=0) psteps=1;
-      else psteps=max(width*height/max(max(PUPDATE,update),1),1);
-
-      for (i=0; i<psteps; i++)
+   if (PVISIBLE!=0)
+      if (PRELOAD_CALLBACK!=NULL)
          {
-         if (PCOL<PLEFT) PCOL=PLEFT;
-         else if (PCOL>PRIGHT) PCOL=PRIGHT;
+         width=PRIGHT-PLEFT+1;
+         height=PTOP-PBOTTOM+1;
 
-         if (PROW<PBOTTOM) PROW=PBOTTOM;
-         else if (PROW>PTOP) PROW=PTOP;
+         if (PUPDATE<=0) psteps=1;
+         else psteps=max(width*height/max(max(PUPDATE,update),1),1);
 
-         col=PCOL-PLEFT;
-         row=PROW-PBOTTOM;
-
-         swizzletile(col,row,width,height,PSWIZZLE);
-
-         col+=PLEFT;
-         row+=PBOTTOM;
-
-         PRELOAD_CALLBACK(col,row,REQUEST_OBJ);
-
-         if (++PCOL>PRIGHT)
+         for (i=0; i<psteps; i++)
             {
-            PCOL=PLEFT;
-            if (++PROW>PTOP) PROW=PBOTTOM;
+            if (PCOL<PLEFT) PCOL=PLEFT;
+            else if (PCOL>PRIGHT) PCOL=PRIGHT;
+
+            if (PROW<PBOTTOM) PROW=PBOTTOM;
+            else if (PROW>PTOP) PROW=PTOP;
+
+            col=PCOL-PLEFT;
+            row=PROW-PBOTTOM;
+
+            swizzletile(col,row,width,height,PSWIZZLE);
+
+            col+=PLEFT;
+            row+=PBOTTOM;
+
+            PRELOAD_CALLBACK(col,row,REQUEST_OBJ);
+
+            if (++PCOL>PRIGHT)
+               {
+               PCOL=PLEFT;
+               if (++PROW>PTOP) PROW=PBOTTOM;
+               }
+            }
+         }
+
+   if (VISIBLE!=0)
+      {
+      if (SYNC_CALLBACK!=NULL) SYNC_CALLBACK(ID);
+
+      width=RIGHT-LEFT+1;
+      height=TOP-BOTTOM+1;
+
+      if (PHASE<0 || update<=1)
+         {
+         PHASE=0;
+         if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
+
+         if (SEALEVEL==-MAXFLOAT) steps=2*width*height;
+         else steps=3*width*height;
+         }
+      else
+         if (SEALEVEL==-MAXFLOAT) steps=(2*width*height+update-1)/update;
+         else steps=(3*width*height+update-1)/update;
+
+      if (PHASE==0)
+         {
+         PHASE=1;
+         if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,SCALE*RELSCALE,ex,ey,ez);
+         }
+
+      for (i=0; i<steps; i++)
+         {
+         col=COL-LEFT;
+         row=ROW-BOTTOM;
+
+         swizzletile(col,row,width,height,SWIZZLE);
+
+         col+=LEFT;
+         row+=BOTTOM;
+
+         if ((PHASE!=2 && PHASE!=3) || UPDATED[col+row*COLS]==0)
+            drawtile(res,
+                     ex,ey,ez,
+                     dx,dy,dz,
+                     ux,uy,uz,
+                     fovy,aspect,
+                     nearp,farp,
+                     col,row,PHASE,
+                     update);
+
+         if (PHASE==1) UPDATED[col+row*COLS]=0;
+
+         if (++COL>RIGHT)
+            {
+            COL=LEFT;
+            if (++ROW>TOP)
+               {
+               ROW=BOTTOM;
+
+               PHASE++;
+               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
+
+               if (PHASE==3 && SEALEVEL==-MAXFLOAT)
+                  {
+                  PHASE++;
+                  if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,LAMBDA,ex,ey,ez);
+                  }
+
+               if (PHASE==4)
+                  {
+                  if (PRISMEDGE_CALLBACK==NULL)
+                     {
+                     mini::drawprismcache(ex,ey,ez,
+                                          dx,dy,dz,
+                                          nearp,farp,
+                                          (FOGMODE==1)?EMISSION:0.0f,FR,FG,FB);
+
+                     Mini::drawprismcache(ex,ey,ez,
+                                          dx,dy,dz,
+                                          nearp,farp,
+                                          (FOGMODE==1)?EMISSION:0.0f,FR,FG,FB);
+                     }
+
+                  PHASE=0;
+                  if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
+
+                  break;
+                  }
+               }
             }
          }
       }
-
-   if (SYNC_CALLBACK!=NULL) SYNC_CALLBACK(ID);
-
-   width=RIGHT-LEFT+1;
-   height=TOP-BOTTOM+1;
-
-   if (PHASE<0 || update<=1)
+   else
       {
       PHASE=0;
       if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
-
-      if (SEALEVEL==-MAXFLOAT) steps=2*width*height;
-      else steps=3*width*height;
-      }
-   else
-      if (SEALEVEL==-MAXFLOAT) steps=(2*width*height+update-1)/update;
-      else steps=(3*width*height+update-1)/update;
-
-   if (PHASE==0)
-      {
-      PHASE=1;
-      if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,SCALE*RELSCALE,ex,ey,ez);
-      }
-
-   for (i=0; i<steps; i++)
-      {
-      col=COL-LEFT;
-      row=ROW-BOTTOM;
-
-      swizzletile(col,row,width,height,SWIZZLE);
-
-      col+=LEFT;
-      row+=BOTTOM;
-
-      if ((PHASE!=2 && PHASE!=3) || UPDATED[col+row*COLS]==0)
-         drawtile(res,
-                  ex,ey,ez,
-                  dx,dy,dz,
-                  ux,uy,uz,
-                  fovy,aspect,
-                  nearp,farp,
-                  col,row,PHASE,
-                  update);
-
-      if (PHASE==1) UPDATED[col+row*COLS]=0;
-
-      if (++COL>RIGHT)
-         {
-         COL=LEFT;
-         if (++ROW>TOP)
-            {
-            ROW=BOTTOM;
-
-            PHASE++;
-            if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,(PHASE!=4)?SCALE*RELSCALE:LAMBDA,ex,ey,ez);
-
-            if (PHASE==3 && SEALEVEL==-MAXFLOAT)
-               {
-               PHASE++;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,LAMBDA,ex,ey,ez);
-               }
-
-            if (PHASE==4)
-               {
-               if (PRISMEDGE_CALLBACK==NULL)
-                  {
-                  mini::drawprismcache(ex,ey,ez,
-                                       dx,dy,dz,
-                                       nearp,farp,
-                                       (FOGMODE==1)?EMISSION:0.0f,FR,FG,FB);
-
-                  Mini::drawprismcache(ex,ey,ez,
-                                       dx,dy,dz,
-                                       nearp,farp,
-                                       (FOGMODE==1)?EMISSION:0.0f,FR,FG,FB);
-                  }
-
-               PHASE=0;
-               if (TRIGGER_CALLBACK!=NULL) TRIGGER_CALLBACK(PHASE,0.0f,ex,ey,ez);
-
-               break;
-               }
-            }
-         }
       }
    }
 
@@ -1151,6 +1185,7 @@ int minitile::isvisible(int col,int row)
    {
    if (col<0 || col>=COLS || row<0 || row>=ROWS) ERRORMSG();
 
+   if (VISIBLE==0) return(0);
    if (col<LEFT || col>RIGHT || row<BOTTOM || row>TOP) return(0);
 
    if (MAP[col+row*COLS]==NULL) return(0);
@@ -1162,6 +1197,7 @@ int minitile::ispreloaded(int col,int row)
    {
    if (col<0 || col>=COLS || row<0 || row>=ROWS) ERRORMSG();
 
+   if (PVISIBLE==0) return(0);
    if (col<PLEFT || col>PRIGHT || row<PBOTTOM || row>PTOP) return(0);
 
    if (MAP[col+row*COLS]==NULL) return(0);
