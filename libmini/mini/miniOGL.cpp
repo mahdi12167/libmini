@@ -259,7 +259,7 @@ void exitstate()
 #endif
    }
 
-void clearwindow(float r,float g,float b,float a)
+void clearbuffer(float r,float g,float b,float a)
    {
 #ifndef NOOGL
    glClearColor(r,g,b,a);

@@ -431,7 +431,7 @@ void miniearth::rendercache()
       // clear back buffer
       if (CLEAR)
          {
-         clearwindow((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
+         clearbuffer((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
                      (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
                      (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
 

@@ -1404,8 +1404,8 @@ int main(int argc,char *argv[])
 
    glutInit(&argc,argv);
    glutInitWindowSize(winwidth,winheight);
-   if (sw_stereo!=0 && sw_anaglyph==0) glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_STENCIL|GLUT_DOUBLE|GLUT_STEREO);
-   else glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_STENCIL|GLUT_DOUBLE);
+   if (sw_stereo!=0 && sw_anaglyph==0) glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE|GLUT_STEREO);
+   else glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
    if (sw_full==0) winid=glutCreateWindow(VIEWER_WINTITLE);
    else glutEnterGameMode();
 

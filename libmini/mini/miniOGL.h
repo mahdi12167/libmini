@@ -10,7 +10,7 @@ namespace miniOGL {
 void initstate();
 void exitstate();
 
-void clearwindow(float r,float g,float b,float a=1.0f);
+void clearbuffer(float r,float g,float b,float a=1.0f);
 
 void disableculling();
 void enableBFculling();
