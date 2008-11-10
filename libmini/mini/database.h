@@ -288,6 +288,12 @@ class databuf
    void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float *value);
    void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value);
 
+   //! get rgb[a] color
+   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float *value);
+   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value);
+   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float *value);
+   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value);
+
    //! print values
    void print();
 

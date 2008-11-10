@@ -2502,6 +2502,68 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
       }
    }
 
+// get rgb color
+void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float *value)
+   {
+   unsigned char *ptr;
+
+   if (type==DATABUF_TYPE_RGB)
+      {
+      ptr=&((unsigned char *)data)[3*(i+(j+k*ysize)*xsize)];
+
+      value[0]=ptr[0]*scaling+bias;
+      value[1]=ptr[1]*scaling+bias;
+      value[2]=ptr[2]*scaling+bias;
+      }
+   }
+
+// get rgb color
+void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value)
+   {
+   unsigned char *ptr;
+
+   if (type==DATABUF_TYPE_RGB)
+      {
+      ptr=&((unsigned char *)data)[4*(i+(j+(k+t*zsize)*ysize)*xsize)];
+
+      value[0]=ptr[0]*scaling+bias;
+      value[1]=ptr[1]*scaling+bias;
+      value[2]=ptr[2]*scaling+bias;
+      }
+   }
+
+// get rgba color
+void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float *value)
+   {
+   unsigned char *ptr;
+
+   if (type==DATABUF_TYPE_RGBA)
+      {
+      ptr=&((unsigned char *)data)[4*(i+(j+k*ysize)*xsize)];
+
+      value[0]=ptr[0]*scaling+bias;
+      value[1]=ptr[1]*scaling+bias;
+      value[2]=ptr[2]*scaling+bias;
+      value[3]=ptr[3]*scaling+bias;
+      }
+   }
+
+// get rgba color
+void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value)
+   {
+   unsigned char *ptr;
+
+   if (type==DATABUF_TYPE_RGBA)
+      {
+      ptr=&((unsigned char *)data)[4*(i+(j+(k+t*zsize)*ysize)*xsize)];
+
+      value[0]=ptr[0]*scaling+bias;
+      value[1]=ptr[1]*scaling+bias;
+      value[2]=ptr[2]*scaling+bias;
+      value[3]=ptr[3]*scaling+bias;
+      }
+   }
+
 // set the no-data indicator
 void databuf::setnodata(float value)
    {nodata=value;}
