@@ -11,6 +11,7 @@ double miniutm::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
 double miniutm::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
 double miniutm::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
 double miniutm::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
+double miniutm::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
 int miniutm::act_datum=0; // actual configured datum
 int miniutm::act_zone=0; // actual configured UTM zone
@@ -302,6 +303,44 @@ void miniutm::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    *lon*=360*60*60/(2*PI);
    }
 
+// calculate the Mercator equations
+void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
+   {
+   double e;  // eccentricity
+   double es; // eccentricity squared
+
+   double phi;
+   double phi_center;
+
+   double con;
+   double com;
+
+   double ts;
+   double m1;
+
+   es=1.0-r_minor*r_minor/(r_major*r_major);
+   e=sqrt(es);
+
+   phi=lat*2*PI/(360*60*60);
+   phi_center=lat_center*2*PI/(360*60*60);
+
+   con=e*sin(phi);
+   com=0.5*e;
+   con=pow(((1.0-con)/(1.0+con)),com);
+
+   ts=tan(0.5*(0.5*PI-phi))/con;
+   m1=cos(phi_center)/sqrt(1.0-sqr(e*sin(phi_center)));
+
+   *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
+   *y=-r_major*m1*log(ts);
+   }
+
+// calculate the inverse Mercator equations
+void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
+   {
+   //!!
+   }
+
 // Molodensky transformation
 void miniutm::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
@@ -400,7 +439,7 @@ void miniutm::initUTM(int zone) // zone number
 
    if (zone==act_zone) return;
 
-   lon_center=(6*abs(zone)-183)*PI/180.0;
+   lon_center=(6*abs(zone)-183)*60*60;
 
    false_easting=500000.0;
    false_northing=(zone<0)?10000000.0:0.0;
@@ -426,12 +465,12 @@ void miniutm::calcLL2UTM(double lat,double lon, // geographic input coordinates 
    double sin_phi,cos_phi; // sine and cosine values
    double a,as,t,ts,n,m,b; // temporary variables
 
+   delta_lon=LONSUB(lon,lon_center);
+
    lon*=2*PI/(360*60*60);
    lat*=2*PI/(360*60*60);
 
-   delta_lon=lon-lon_center;
-   while (delta_lon<-PI) delta_lon+=PI;
-   while (delta_lon>PI) delta_lon-=PI;
+   delta_lon*=2*PI/(360*60*60);
 
    sin_phi=sin(lat);
    cos_phi=cos(lat);

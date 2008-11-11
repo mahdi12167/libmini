@@ -14,6 +14,7 @@ class miniutm
    static double WGS84_f;       // WGS84 flattening
    static double WGS84_e2;      // WGS84 eccentricity squared
    static double WGS84_ed2;     // WGS84 eccentricity derived
+   static double WGS84_e;       // WGS84 eccentricity
 
    //! transform Lat/Lon to UTM
    static void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
@@ -61,6 +62,10 @@ class miniutm
    // ECEF conversion functions
    static void calcLLH2ECEF(double lat,double lon,double h,double xyz[3]);
    static void calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h);
+
+   // Mercator conversion functions
+   static void calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
+   static void calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
 
    // Molodensky transformation between two datums
    static void molodensky(int src,int dst,double *lat,double *lon);
