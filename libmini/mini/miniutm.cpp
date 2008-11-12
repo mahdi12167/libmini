@@ -303,44 +303,6 @@ void miniutm::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    *lon*=360*60*60/(2*PI);
    }
 
-// calculate the Mercator equations
-void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
-   {
-   double e;  // eccentricity
-   double es; // eccentricity squared
-
-   double phi;
-   double phi_center;
-
-   double con;
-   double com;
-
-   double ts;
-   double m1;
-
-   es=1.0-r_minor*r_minor/(r_major*r_major);
-   e=sqrt(es);
-
-   phi=lat*2*PI/(360*60*60);
-   phi_center=lat_center*2*PI/(360*60*60);
-
-   con=e*sin(phi);
-   com=0.5*e;
-   con=pow(((1.0-con)/(1.0+con)),com);
-
-   ts=tan(0.5*(0.5*PI-phi))/con;
-   m1=cos(phi_center)/sqrt(1.0-sqr(e*sin(phi_center)));
-
-   *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
-   *y=-r_major*m1*log(ts);
-   }
-
-// calculate the inverse Mercator equations
-void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
-   {
-   //!!
-   }
-
 // Molodensky transformation
 void miniutm::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
@@ -379,7 +341,7 @@ void miniutm::molodensky(double *lat,double *lon,double *h, // transformed coord
    *h+=dh;
    }
 
-// Molodensky transformation between two datums (adapted from Peter Dana's notes)
+// Molodensky transformation between two datums
 void miniutm::molodensky(int src,int dst,double *lat,double *lon)
    {
    double r_maj,r_min; // src semi-major and minor radius
@@ -426,6 +388,7 @@ void miniutm::arcsec2meter(double lat,float *as2m)
 
 // adapted from GCTP (the General Cartographic Transformation Package):
 
+// per-zone parameters of the Universal Transverse Mercator (UTM) projection
 double miniutm::lon_center; // center longitude
 double miniutm::e0,miniutm::e1,miniutm::e2,miniutm::e3; // eccentricity constants
 double miniutm::e,miniutm::es,miniutm::esp; // eccentricity constants
@@ -444,7 +407,7 @@ void miniutm::initUTM(int zone) // zone number
    false_easting=500000.0;
    false_northing=(zone<0)?10000000.0:0.0;
 
-   es=1.0-r_minor*r_minor/(r_major*r_major);
+   es=1.0-FSQR(r_minor/r_major);
    e=sqrt(es);
 
    e0=1.0-0.25*es*(1.0+0.0625*es*(3.0+1.25*es));
@@ -505,7 +468,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    double a,as,t,ts,n,r,b,bs;      // temporary variables
 
    static const int iterations=10;
-   static const float maxerror=1E-20f;
+   static const double maxerror=1E-20;
 
    x-=false_easting;
    y-=false_northing;
@@ -518,7 +481,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
       delta_phi=(con+e1*sin(2.0*phi)-e2*sin(4.0*phi)+e3*sin(6.0*phi))/e0-phi;
       phi+=delta_phi;
 
-      if (fabs(delta_phi)<maxerror) break;
+      if (FABS(delta_phi)<maxerror) break;
       }
 
    sin_phi=sin(phi);
@@ -543,4 +506,85 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
 
    // UTM longitude extends from -180 to 180 degrees
    *lon=LONSUB((lon_center+b*(1.0-bs/6.0*(1.0+2.0*t+a-bs/20.0*(5.0-2.0*a+28.0*t-3.0*as+8.0*esp+24.0*ts)))/cos_phi)*360*60*60/(2*PI));
+   }
+
+// calculate the Mercator equations
+void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
+   {
+   double e;  // eccentricity
+   double es; // eccentricity squared
+
+   double phi;
+   double phi_center;
+
+   double con;
+   double com;
+
+   double m1;
+   double ts;
+
+   static const double epsln=1E-5;
+
+   es=1.0-FSQR(r_minor/r_major);
+   e=sqrt(es);
+
+   phi=lat*2*PI/(360*60*60);
+   phi_center=lat_center*2*PI/(360*60*60);
+
+   if (phi>0.5*PI-epsln) phi=0.5*PI-epsln;
+   if (phi<-0.5*PI+epsln) phi=-0.5*PI+epsln;
+
+   con=e*sin(phi);
+   com=0.5*e;
+   con=pow(((1.0-con)/(1.0+con)),com);
+
+   m1=cos(phi_center)/sqrt(1.0-FSQR(e*sin(phi_center)));
+   ts=tan(0.5*(0.5*PI-phi))/con;
+
+   *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
+   *y=-r_major*m1*log(ts);
+   }
+
+// calculate the inverse Mercator equations
+void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
+   {
+   int i;
+
+   double e;  // eccentricity
+   double es; // eccentricity squared
+   double eh; // eccentricity half
+
+   double phi,dphi;
+   double phi_center;
+
+   double con;
+
+   double m1;
+   double ts;
+
+   static const int iterations=10;
+   static const double maxerror=1E-20;
+
+   es=1.0-FSQR(r_minor/r_major);
+   e=sqrt(es);
+   eh=0.5*e;
+
+   phi_center=lat_center*2*PI/(360*60*60);
+
+   m1=cos(phi_center)/sqrt(1.0-FSQR(e*sin(phi_center)));
+   ts=exp(-y/(r_major*m1));
+
+   phi=0.5*PI-2*atan(ts);
+
+   for (i=0; i<iterations; i++)
+      {
+      con=e*sin(phi);
+      dphi=0.5*PI-2*atan(ts*(pow(((1.0-con)/(1.0+con)),eh)))-phi;
+      phi+=dphi;
+
+      if (FABS(dphi)<maxerror) break;
+      }
+
+   *lat=phi*360*60*60/(2*PI);
+   *lon=LONSUB(lon_center+x/(r_major*m1)*360*60*60/(2*PI));
    }
