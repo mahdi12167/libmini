@@ -110,6 +110,11 @@ void viewerbase::inithooks()
 
    // register auto-compression hook
    databuf::setautocompress(squishbase::autocompress,NULL);
+
+   // turn on auto-mipmapping and auto-compression
+   EARTH->getterrain()->get()->automipmap=TRUE;
+   EARTH->getterrain()->get()->autocompress=TRUE;
+   propagate();
    }
 
 // get initial view point
