@@ -7,14 +7,14 @@ class miniutm
    {
    public:
 
-   static double EARTH_radius; // radius of the earth
+   static const double EARTH_radius; // radius of the earth
 
-   static double WGS84_r_major; // WGS84 semi-major axis
-   static double WGS84_r_minor; // WGS84 semi-minor axis
-   static double WGS84_f;       // WGS84 flattening
-   static double WGS84_e2;      // WGS84 eccentricity squared
-   static double WGS84_ed2;     // WGS84 eccentricity derived
-   static double WGS84_e;       // WGS84 eccentricity
+   static const double WGS84_r_major; // WGS84 semi-major axis
+   static const double WGS84_r_minor; // WGS84 semi-minor axis
+   static const double WGS84_f;       // WGS84 flattening
+   static const double WGS84_e2;      // WGS84 eccentricity squared
+   static const double WGS84_ed2;     // WGS84 eccentricity derived
+   static const double WGS84_e;       // WGS84 eccentricity
 
    //! transform Lat/Lon to UTM
    static void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
@@ -33,6 +33,20 @@ class miniutm
    static void UTM2LL(double x,double y,
                       int zone,int datum,
                       float *lat,float *lon);
+
+   //! transform Lat/Lon to Mercator
+   void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
+                double *x,double *y); // output Mercator coordinates (WGS84 datum)
+
+   void LL2MERC(double lat,double lon,
+                float *x,float *y);
+
+   //! transform Mercator to Lat/Lon
+   void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
+                double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+
+   void MERC2LL(double x,double y,
+                float *lat,float *lon);
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
@@ -59,13 +73,13 @@ class miniutm
    static void calcLL2UTM(double lat,double lon,double *x,double *y);
    static void calcUTM2LL(double x,double y,double *lat,double *lon);
 
+   // Mercator conversion functions
+   static void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
+   static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
+
    // ECEF conversion functions
    static void calcLLH2ECEF(double lat,double lon,double h,double xyz[3]);
    static void calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h);
-
-   // Mercator conversion functions
-   static void calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
-   static void calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
 
    // Molodensky transformation between two datums
    static void molodensky(int src,int dst,double *lat,double *lon);

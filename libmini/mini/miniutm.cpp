@@ -4,14 +4,14 @@
 
 #include "miniutm.h"
 
-double miniutm::EARTH_radius=6370997.0; // radius of the earth
+const double miniutm::EARTH_radius=6370997.0; // radius of the earth
 
-double miniutm::WGS84_r_major=6378137.0; // WGS84 semi-major axis
-double miniutm::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
-double miniutm::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
-double miniutm::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
-double miniutm::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
-double miniutm::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
+const double miniutm::WGS84_r_major=6378137.0; // WGS84 semi-major axis
+const double miniutm::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
+const double miniutm::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
+const double miniutm::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
+const double miniutm::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
+const double miniutm::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
 int miniutm::act_datum=0; // actual configured datum
 int miniutm::act_zone=0; // actual configured UTM zone
@@ -175,7 +175,7 @@ void miniutm::LL2UTM(double lat,double lon,
    }
 
 // transform UTM to Lat/Lon
-// input in meters, output in arc-seconds, height in meters
+// input in meters, output in arc-seconds
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
@@ -203,6 +203,46 @@ void miniutm::UTM2LL(double x,double y,
    *lon=(float)tlon;
    }
 
+// transform Lat/Lon to Mercator
+// input in arc-seconds, output in meters
+void miniutm::LL2MERC(double lat,double lon,
+                      double *x,double *y)
+   {
+   choose_datum(3);
+   calcLL2MERC(lat,lon,x,y,0.0,0.0);
+   }
+
+void miniutm::LL2MERC(double lat,double lon,
+                      float *x,float *y)
+   {
+   double tx,ty;
+
+   LL2MERC(lat,lon,&tx,&ty);
+
+   *x=(float)tx;
+   *y=(float)ty;
+   }
+
+// transform Mercator to Lat/Lon
+// input in meters, output in arc-seconds
+void miniutm::MERC2LL(double x,double y,
+                      double *lat,double *lon)
+   {
+   choose_datum(3);
+   calcMERC2LL(x,y,lat,lon,0.0,0.0);
+   }
+
+void miniutm::MERC2LL(double x,double y,
+                      float *lat,float *lon)
+   {
+   double tlat,tlon;
+
+   MERC2LL(x,y,&tlat,&tlon);
+
+   *lat=(float)tlat;
+   *lon=(float)tlon;
+   }
+
 // transform Lat/Lon/H to ECEF
 // input in arc-seconds, height in meters, output in meters
 // latitude in [-90*60*60,90*60*60] arc-seconds
@@ -225,7 +265,7 @@ void miniutm::LLH2ECEF(double lat,double lon,double h,
    }
 
 // transform ECEF to Lat/Lon/H
-// input in meters, output in arc-seconds
+// input in meters, height in meters, output in arc-seconds
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
@@ -351,6 +391,10 @@ void miniutm::molodensky(int src,int dst,double *lat,double *lon)
 
    if (src==dst) return;
 
+   // treat WGS84 and GRS80 datum as identical
+   if (src==3 && dst==4) return;
+   if (src==4 && dst==3) return;
+
    choose_datum(src);
 
    r_maj=r_major;
@@ -370,6 +414,8 @@ void miniutm::molodensky(int src,int dst,double *lat,double *lon)
    }
 
 // 1 arc-second equals about 30 meters
+// 1 arc-minute equals about 1.8 kilometers
+// 1 arc-degree equals about 111 kilometers (at the equator)
 void miniutm::arcsec2meter(double lat,double *as2m)
    {
    if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
@@ -386,7 +432,8 @@ void miniutm::arcsec2meter(double lat,float *as2m)
    as2m[0]=(float)(as2m[1]*cos(lat*2*PI/(360*60*60)));
    }
 
-// adapted from GCTP (the General Cartographic Transformation Package):
+// adapted coordinate system transformations from GCTP,
+// the General Cartographic Transformation Package:
 
 // per-zone parameters of the Universal Transverse Mercator (UTM) projection
 double miniutm::lon_center; // center longitude
@@ -467,7 +514,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    double sin_phi,cos_phi,tan_phi; // sine, cosine and tangent values
    double a,as,t,ts,n,r,b,bs;      // temporary variables
 
-   static const int iterations=10;
+   static const int maxiter=10;
    static const double maxerror=1E-20;
 
    x-=false_easting;
@@ -476,7 +523,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    con=y/(r_major*scale_factor);
    phi=con;
 
-   for (i=0; i<iterations; i++)
+   for (i=0; i<maxiter; i++)
       {
       delta_phi=(con+e1*sin(2.0*phi)-e2*sin(4.0*phi)+e3*sin(6.0*phi))/e0-phi;
       phi+=delta_phi;
@@ -509,17 +556,16 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    }
 
 // calculate the Mercator equations
-void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
+void miniutm::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
    {
    double e;  // eccentricity
    double es; // eccentricity squared
+   double eh; // eccentricity half
 
    double phi;
    double phi_center;
 
-   double con;
-   double com;
-
+   double co;
    double m1;
    double ts;
 
@@ -527,6 +573,7 @@ void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_
 
    es=1.0-FSQR(r_minor/r_major);
    e=sqrt(es);
+   eh=0.5*e;
 
    phi=lat*2*PI/(360*60*60);
    phi_center=lat_center*2*PI/(360*60*60);
@@ -534,19 +581,18 @@ void miniutm::calcLLH2MERC(double lat,double lon,double *x,double *y,double lat_
    if (phi>0.5*PI-epsln) phi=0.5*PI-epsln;
    if (phi<-0.5*PI+epsln) phi=-0.5*PI+epsln;
 
-   con=e*sin(phi);
-   com=0.5*e;
-   con=pow(((1.0-con)/(1.0+con)),com);
+   co=e*sin(phi);
+   co=pow(((1.0-co)/(1.0+co)),eh);
 
    m1=cos(phi_center)/sqrt(1.0-FSQR(e*sin(phi_center)));
-   ts=tan(0.5*(0.5*PI-phi))/con;
+   ts=tan(0.5*(0.5*PI-phi))/co;
 
    *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
    *y=-r_major*m1*log(ts);
    }
 
 // calculate the inverse Mercator equations
-void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
+void miniutm::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
    {
    int i;
 
@@ -557,12 +603,11 @@ void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_
    double phi,dphi;
    double phi_center;
 
-   double con;
-
+   double co;
    double m1;
    double ts;
 
-   static const int iterations=10;
+   static const int maxiter=10;
    static const double maxerror=1E-20;
 
    es=1.0-FSQR(r_minor/r_major);
@@ -576,10 +621,10 @@ void miniutm::calcMERC2LLH(double x,double y,double *lat,double *lon,double lat_
 
    phi=0.5*PI-2*atan(ts);
 
-   for (i=0; i<iterations; i++)
+   for (i=0; i<maxiter; i++)
       {
-      con=e*sin(phi);
-      dphi=0.5*PI-2*atan(ts*(pow(((1.0-con)/(1.0+con)),eh)))-phi;
+      co=e*sin(phi);
+      dphi=0.5*PI-2*atan(ts*(pow(((1.0-co)/(1.0+co)),eh)))-phi;
       phi+=dphi;
 
       if (FABS(dphi)<maxerror) break;
