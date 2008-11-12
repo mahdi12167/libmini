@@ -35,18 +35,18 @@ class miniutm
                       float *lat,float *lon);
 
    //! transform Lat/Lon to Mercator
-   void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
-                double *x,double *y); // output Mercator coordinates (WGS84 datum)
+   static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
+                       double *x,double *y); // output Mercator coordinates (WGS84 datum)
 
-   void LL2MERC(double lat,double lon,
-                float *x,float *y);
+   static void LL2MERC(double lat,double lon,
+                       float *x,float *y);
 
    //! transform Mercator to Lat/Lon
-   void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
-                double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+   static void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
+                       double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
 
-   void MERC2LL(double x,double y,
-                float *lat,float *lon);
+   static void MERC2LL(double x,double y,
+                       float *lat,float *lon);
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
