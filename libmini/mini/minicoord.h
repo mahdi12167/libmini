@@ -17,8 +17,9 @@ class minicoord
       MINICOORD_NONE,   // undefined
       MINICOORD_ECEF,   // Earth Centered Earth Fixed
       MINICOORD_LLH,    // Lat/Lon/H WGS84
+      MINICOORD_MERC,   // Mercator WGS84
       MINICOORD_UTM,    // Universal Transverse Mercator
-      MINICOORD_LINEAR, // linear space
+      MINICOORD_LINEAR, // linear coordinate space
       };
 
    //! default constructor
