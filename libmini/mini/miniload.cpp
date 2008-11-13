@@ -47,7 +47,7 @@ void miniload::init()
    RELOADED=0;
 
    CONFIGURE_MINRES=9.0f;
-   CONFIGURE_MAXD2=100.0f;
+   CONFIGURE_MAXD2=1000.0f;
    CONFIGURE_SEAD2=0.1f;
    CONFIGURE_MINOFF=0.1f;
    CONFIGURE_MAXCULL=8;
@@ -1777,7 +1777,7 @@ void miniload::configure_minres(float minres)
 
 void miniload::configure_maxd2(float maxd2)
    {
-   if (maxd2<=0.0f) maxd2=100.0f;
+   if (maxd2<=0.0f) maxd2=1000.0f;
    CONFIGURE_MAXD2=maxd2;
    }
 
