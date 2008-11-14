@@ -1,7 +1,7 @@
 // (c) by Stefan Roettger
 
 #ifndef NOSQUISH
-#include <squish.h> // HINT: do not install the header file in /usr/include on MacOS X
+#include <squish.h> // HINT: do not install the header in /usr/include on MacOS X
 #endif
 
 #include <mini/minibase.h>
@@ -9,6 +9,9 @@
 #include "squishbase.h"
 
 namespace squishbase {
+
+// squish mode for auto-compression
+int AUTOCOMPRESSMODE=SQUISHMODE_FAST;
 
 // compress to S3TC
 void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
@@ -134,7 +137,8 @@ void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
    if (data!=NULL) ERRORMSG();
 
    compressS3TC(isrgbadata,rawdata,bytes,
-                s3tcdata,s3tcbytes,width,height);
+                s3tcdata,s3tcbytes,width,height,
+                AUTOCOMPRESSMODE);
    }
 
 // S3TC auto-decompression hook
@@ -147,5 +151,9 @@ void autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
    decompressS3TC(isrgbadata,s3tcdata,bytes,
                   rawdata,rawbytes,width,height);
    }
+
+// set squish mode for auto-compression
+void setautocompressmode(int mode)
+   {AUTOCOMPRESSMODE=mode;}
 
 }

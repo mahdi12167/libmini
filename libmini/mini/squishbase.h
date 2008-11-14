@@ -27,6 +27,9 @@ void autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
                     unsigned char **rawdata,unsigned int *rawbytes,int width,int height,
                     void *data);
 
+// set squish mode for auto-compression
+void setautocompressmode(int mode=SQUISHMODE_FAST);
+
 }
 
 #endif

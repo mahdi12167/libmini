@@ -32,7 +32,7 @@ ministub::ministub(short int *image,
       {
       minres=9.0f;
       minoff=0.1f;
-      maxd2=1000.0f;
+      maxd2=200.0f;
       sead2=0.1f;
       maxcull=8;
 
@@ -122,7 +122,7 @@ ministub::ministub(float *image,
       {
       minres=9.0f;
       minoff=0.1f;
-      maxd2=1000.0f;
+      maxd2=200.0f;
       sead2=0.1f;
       maxcull=8;
 
