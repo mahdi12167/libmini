@@ -1649,7 +1649,7 @@ void miniload::restrictroi(float rx,float rz,
 
    if (rrad<0.0f) ERRORMSG();
 
-   // calculate bounding box of roi
+   // calculate roi area
    if (rrad==MAXFLOAT)
       {
       left=0;
@@ -1660,23 +1660,29 @@ void miniload::restrictroi(float rx,float rz,
    else
       {
       d=ffloor(((rx-rrad)-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
-      left=min(max(ftrc(d),0),COLS-1);
+      left=ftrc(d);
 
       d=ffloor(((CENTERX+COLDIM*COLS/2.0f)-(rx+rrad))/COLDIM);
-      right=COLS-1-min(max(ftrc(d),0),COLS-1);
+      right=COLS-1-ftrc(d);
 
       d=ffloor(((rz-rrad)-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM);
-      bottom=min(max(ftrc(d),0),ROWS-1);
+      bottom=ftrc(d);
 
       d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(rz+rrad))/ROWDIM);
-      top=ROWS-1-min(max(ftrc(d),0),ROWS-1);
+      top=ROWS-1-ftrc(d);
       }
 
-   // define all tiles not to be mandatory
+   // define all tiles to be non-mandatory
    for (i=0; i<COLS; i++)
       for (j=0; j<ROWS; j++) MANDATORY[i+j*COLS]=0;
 
-   // redefine tiles inside the bounding box to be mandatory
+   // check for collapsed roi area
+   if (rrad==0.0f) return;
+
+   // check for invisible roi area
+   if (left>COLS-1 || right<0 || bottom>ROWS-1 || top<0) return;
+
+   // redefine tiles inside the roi area to be mandatory
    for (i=left; i<=right; i++)
       for (j=bottom; j<=top; j++) MANDATORY[i+j*COLS]=1;
    }
@@ -1719,30 +1725,36 @@ void miniload::updateroi(float res,
       rrad+=c*farp;
       }
 
-   // calculate bounding box of roi
-   if (rrad>0.0f)
-      {
-      d=ffloor(((rx-rrad)-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
-      left=min(max(ftrc(d),0),COLS-1);
-
-      d=ffloor(((CENTERX+COLDIM*COLS/2.0f)-(rx+rrad))/COLDIM);
-      right=COLS-1-min(max(ftrc(d),0),COLS-1);
-
-      d=ffloor(((rz-rrad)-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM);
-      bottom=min(max(ftrc(d),0),ROWS-1);
-
-      d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(rz+rrad))/ROWDIM);
-      top=ROWS-1-min(max(ftrc(d),0),ROWS-1);
-      }
-   else
+   // calculate roi area
+   if (rrad==MAXFLOAT)
       {
       left=0;
       right=COLS-1;
       bottom=0;
       top=ROWS-1;
       }
+   else
+      {
+      d=ffloor(((rx-rrad)-(CENTERX-COLDIM*COLS/2.0f))/COLDIM);
+      left=ftrc(d);
 
-   // request missing tiles inside the bounding box
+      d=ffloor(((CENTERX+COLDIM*COLS/2.0f)-(rx+rrad))/COLDIM);
+      right=COLS-1-ftrc(d);
+
+      d=ffloor(((rz-rrad)-(CENTERZ-ROWDIM*ROWS/2.0f))/ROWDIM);
+      bottom=ftrc(d);
+
+      d=ffloor(((CENTERZ+ROWDIM*ROWS/2.0f)-(rz+rrad))/ROWDIM);
+      top=ROWS-1-ftrc(d);
+      }
+
+   // check for collapsed roi area
+   if (rrad==0.0f) return;
+
+   // check for invisible roi area
+   if (left>COLS-1 || right<0 || bottom>ROWS-1 || top<0) return;
+
+   // request missing tiles inside the roi area
    for (i=left; i<=right; i++)
       for (j=bottom; j<=top; j++)
          {
@@ -1764,7 +1776,7 @@ void miniload::updateall()
 
    updateroi(1.0,
              ex,ey,ez,ex,ez,
-             0.0f,0.0f);
+             MAXFLOAT,0.0f);
    }
 
 // configure core parameters:

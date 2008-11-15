@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 8.9.2 as of 14.November.2008<br>
+Version 8.9.2 as of 15.November.2008<br>
 Copyright (c) 1995-2008 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1782,7 +1782,7 @@ applying the following trick before the first frame is rendered:<p>
 This has the effect, that only low resolution tiles are loaded
 initially. These are replaced by higher resolution tiles as soon as
 they are coming in over the net. To apply the trick to the entire tile
-set use tileset.updateall().<p>
+set use tileset->updateall().<p>
 
 For very large tile sets it is also important to save disk space. With
 S3TC compression only a compression of 1:6 is possible. In order to go
