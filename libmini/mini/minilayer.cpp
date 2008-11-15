@@ -1198,6 +1198,9 @@ void minilayer::initeyepoint(const minicoord &e)
                       ei.vec.x,ei.vec.y+1000*len_g2i(LPARAMS.farp),ei.vec.z,
                       ei.vec.x,ei.vec.z,len_g2i(LPARAMS.farp));
 
+   // unmark loaded area
+   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,0.0f);
+
    // mark scene for complete update
    update();
    }
