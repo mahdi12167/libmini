@@ -1682,6 +1682,12 @@ void miniload::restrictroi(float rx,float rz,
    // check for invisible roi area
    if (left>COLS-1 || right<0 || bottom>ROWS-1 || top<0) return;
 
+   // clamp roi area
+   left=min(max(left,0),COLS-1);
+   right=min(max(right,0),COLS-1);
+   bottom=min(max(bottom,0),ROWS-1);
+   top=min(max(top,0),ROWS-1);
+
    // redefine tiles inside the roi area to be mandatory
    for (i=left; i<=right; i++)
       for (j=bottom; j<=top; j++) MANDATORY[i+j*COLS]=1;
@@ -1753,6 +1759,12 @@ void miniload::updateroi(float res,
 
    // check for invisible roi area
    if (left>COLS-1 || right<0 || bottom>ROWS-1 || top<0) return;
+
+   // clamp roi area
+   left=min(max(left,0),COLS-1);
+   right=min(max(right,0),COLS-1);
+   bottom=min(max(bottom,0),ROWS-1);
+   top=min(max(top,0),ROWS-1);
 
    // request missing tiles inside the roi area
    for (i=left; i<=right; i++)
