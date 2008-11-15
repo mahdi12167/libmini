@@ -552,7 +552,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    *lat=(phi-n*tan_phi*bs/r*(0.5-bs/24.0*(5.0+3.0*t+10.0*a-4.0*as-9.0*esp-bs/30.0*(61.0+90.0*t+298.0*a+45.0*ts-252.0*esp-3.0*as))))*360*60*60/(2*PI);
 
    // UTM longitude extends from -180 to 180 degrees
-   *lon=LONSUB((lon_center+b*(1.0-bs/6.0*(1.0+2.0*t+a-bs/20.0*(5.0-2.0*a+28.0*t-3.0*as+8.0*esp+24.0*ts)))/cos_phi)*360*60*60/(2*PI));
+   *lon=LONSUB(lon_center+b*(1.0-bs/6.0*(1.0+2.0*t+a-bs/20.0*(5.0-2.0*a+28.0*t-3.0*as+8.0*esp+24.0*ts)))/cos_phi*360*60*60/(2*PI));
    }
 
 // calculate the Mercator equations
