@@ -263,7 +263,7 @@ void clearbuffer(float r,float g,float b,float a)
    {
 #ifndef NOOGL
    glClearColor(r,g,b,a);
-   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 #endif
    }
 
@@ -438,6 +438,39 @@ void disableblending()
 
    glDisable(GL_BLEND);
 
+#endif
+   }
+
+void enablestenciling(int pass)
+   {
+#ifndef NOOGL
+
+   if (pass==1)
+      {
+      glStencilFunc(GL_LEQUAL,1,3);
+
+      glStencilOp(GL_KEEP, // fail
+                  GL_KEEP, // zfail
+                  GL_REPLACE); // zpass
+      }
+   else
+      {
+      glStencilFunc(GL_EQUAL,1,3);
+
+      glStencilOp(GL_KEEP, // fail
+                  GL_INCR, // zfail
+                  GL_INCR); // zpass
+      }
+
+   glEnable(GL_STENCIL_TEST);
+
+#endif
+   }
+
+void disablestenciling()
+   {
+#ifndef NOOGL
+   glDisable(GL_STENCIL_TEST);
 #endif
    }
 

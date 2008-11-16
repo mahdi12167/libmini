@@ -39,6 +39,9 @@ void enablePRJblending();
 void enableMIPblending();
 void disableblending();
 
+void enablestenciling(int pass);
+void disablestenciling();
+
 void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
 void disablefog();
 
