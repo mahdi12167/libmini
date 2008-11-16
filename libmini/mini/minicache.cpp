@@ -485,7 +485,19 @@ int minicache::rendercache()
 
          for (id=0; id<MAXTERRAIN; id++)
             if (TERRAIN[id].tile!=NULL)
-               if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
+               if (TERRAIN[id].isvisible!=0)
+                  {
+                  if (STENCILMODE!=0 && phase==2) enablestenciling(1);
+
+                  vtx+=rendercache(id,phase);
+
+                  if (STENCILMODE!=0 && phase==2)
+                     {
+                     enablestenciling(2);
+                     renderbounds(id);
+                     disablestenciling();
+                     }
+                  }
          }
       }
 
@@ -813,6 +825,23 @@ int minicache::rendertrigger()
          }
 
    return(vtx);
+   }
+
+void minicache::renderbounds(int id)
+   {
+   TERRAIN_TYPE *t;
+   CACHE_TYPE *c;
+
+   t=&TERRAIN[id];
+   c=&t->cache[1-t->cache_num];
+
+   disableRGBAwriting();
+   disableZwriting();
+
+   //!! render bounds c->min to c->max
+
+   enableRGBAwriting();
+   enableZwriting();
    }
 
 int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
