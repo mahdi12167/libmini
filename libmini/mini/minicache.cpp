@@ -25,6 +25,7 @@ minicache::minicache()
    RENDER_ID=0;
 
    CULLMODE=1;
+   STENCILMODE=0;
 
    OPACITY=1.0f;
    ALPHATEST=1.0f;
@@ -156,6 +157,9 @@ void minicache::initterrain(TERRAIN_TYPE *t)
       c->fancnt=0;
       c->vtxcnt=0;
 
+      c->minx=c->miny=c->minz=MAXFLOAT;
+      c->maxx=c->maxy=c->maxz=-MAXFLOAT;
+
       c->prism_size=0;
       c->prism_maxsize=1;
 
@@ -276,6 +280,18 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
       {
       c->vtxcnt++;
       c->arg[3*t->last_beginfan]++;
+
+      if (STENCILMODE)
+         {
+         if (arg1<c->minx) c->minx=arg1;
+         if (arg1>c->maxx) c->maxx=arg1;
+
+         if (arg2<c->miny) c->miny=arg2;
+         if (arg2>c->maxy) c->maxy=arg2;
+
+         if (arg3<c->minz) c->minz=arg3;
+         if (arg3>c->maxz) c->maxz=arg3;
+         }
       }
    else
       // update ray object
@@ -388,6 +404,10 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
       // reset counts of back buffer
       c2->fancnt=0;
       c2->vtxcnt=0;
+
+      // reset bounds of back buffer
+      c2->minx=c2->miny=c2->minz=MAXFLOAT;
+      c2->maxx=c2->maxy=c2->maxz=-MAXFLOAT;
 
       // swap vertex buffers
       t->cache_num=1-t->cache_num;
@@ -1033,6 +1053,10 @@ void minicache::makecurrent()
 // set culling mode
 void minicache::setculling(int on)
    {CULLMODE=on;}
+
+// set stenciling mode
+void minicache::setstenciling(int on)
+   {STENCILMODE=on;}
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)

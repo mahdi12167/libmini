@@ -52,6 +52,9 @@ class minicache
    //! set culling mode
    void setculling(int on=1);
 
+   //! set stenciling mode
+   void setstenciling(int on=1);
+
    //! define triangle mesh opacity
    void setopacity(float alpha=1.0f);
 
@@ -134,6 +137,10 @@ class minicache
 
       int fancnt,vtxcnt;
 
+      float minx,maxx;
+      float miny,maxy;
+      float minz,maxz;
+
       float *prism_buf;
       int prism_size,prism_maxsize;
       };
@@ -212,6 +219,7 @@ class minicache
    inline int rendertrigger();
 
    int CULLMODE;
+   int STENCILMODE;
 
    float OPACITY,ALPHATEST;
    float SEA_R,SEA_G,SEA_B,SEA_A;
