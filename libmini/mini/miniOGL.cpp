@@ -1515,6 +1515,8 @@ int getmaxtexsize()
    GLint param;
    glGetIntegerv(GL_MAX_TEXTURE_SIZE,&param);
    return(param);
+#else
+   return(0);
 #endif
    }
 
@@ -1527,6 +1529,8 @@ int getmax3Dtexsize()
    if (glext_t3D) glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,&param);
 #endif
    return(param);
+#else
+   return(0);
 #endif
    }
 
@@ -1538,6 +1542,8 @@ int getmaxtexunits()
    if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&param);
 #endif
    return(param);
+#else
+   return(0);
 #endif
    }
 
@@ -1549,6 +1555,8 @@ int getmaxtexcoords()
    if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB,&param);
 #endif
    return(param);
+#else
+   return(0);
 #endif
    }
 
@@ -1560,6 +1568,8 @@ int getmaxteximageunits()
    if (glext_mt) glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB,&param);
 #endif
    return(param);
+#else
+   return(0);
 #endif
    }
 
