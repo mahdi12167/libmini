@@ -101,7 +101,7 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->warp=warp;
 
-   ref->hasbound=0;
+   calcbound(ref);
 
    ref->next=BACK;
    BACK=ref;
@@ -163,7 +163,7 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
 
    ref->warp=warp;
 
-   ref->hasbound=0;
+   calcbound(ref);
 
    ref->next=BACK;
    BACK=ref;
@@ -215,8 +215,6 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    while (ref!=NULL)
       {
-      if (ref->hasbound==0) calcbound(ref);
-
       if (ref->warp==NULL)
          {
          oi=o;
@@ -281,8 +279,6 @@ minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radi
 
    while (ref!=NULL)
       {
-      if (ref->hasbound==0) calcbound(ref);
-
       if (ref->warp==NULL)
          {
          oi=o;
@@ -335,8 +331,6 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
 
    while (ref!=NULL)
       {
-      if (ref->hasbound==0) calcbound(ref);
-
       p=calcpoint(ref,&lastwarp,ref->b);
       r=sqrt(ref->r2);
 
@@ -495,8 +489,6 @@ void miniray::calcbound(TRIANGLEREF *ref)
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
                  FSQR(vmax.z-vmin.z));
-
-   ref->hasbound=1;
    }
 
 // calculate smallest hit distance

@@ -93,8 +93,6 @@ class miniray
 
       miniwarp *warp;
 
-      int hasbound;
-
       miniv3d b,r;
       double r2;
 
