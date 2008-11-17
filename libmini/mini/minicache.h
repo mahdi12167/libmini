@@ -284,6 +284,8 @@ class minicache
 
    private:
 
+   miniv4d MVMATRIX[3];
+   miniv4d MVINVMTX[3];
    miniv3d MVINVTRA[3];
 
    float CONFIGURE_OVERLAP;

@@ -148,6 +148,8 @@ void bindtexrect(int texid,int nofrills=0);
 void painttexrect(int texid,int depthcomp=0);
 void deletetexrect(int texid);
 
+void paintbuffer();
+
 void polygonmode(int wire);
 
 // configuring

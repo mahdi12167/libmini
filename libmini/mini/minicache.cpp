@@ -428,18 +428,21 @@ void minicache::getmodelview()
 
    mtxgetmodel(mvmtx);
 
-   MVINVTRA[0].x=mvmtx[0];
-   MVINVTRA[1].x=mvmtx[1];
-   MVINVTRA[2].x=mvmtx[2];
-   MVINVTRA[0].y=mvmtx[4];
-   MVINVTRA[1].y=mvmtx[5];
-   MVINVTRA[2].y=mvmtx[6];
-   MVINVTRA[0].z=mvmtx[8];
-   MVINVTRA[1].z=mvmtx[9];
-   MVINVTRA[2].z=mvmtx[10];
+   MVMATRIX[0].x=mvmtx[0];
+   MVMATRIX[1].x=mvmtx[1];
+   MVMATRIX[2].x=mvmtx[2];
+   MVMATRIX[0].y=mvmtx[4];
+   MVMATRIX[1].y=mvmtx[5];
+   MVMATRIX[2].y=mvmtx[6];
+   MVMATRIX[0].z=mvmtx[8];
+   MVMATRIX[1].z=mvmtx[9];
+   MVMATRIX[2].z=mvmtx[10];
+   MVMATRIX[0].w=mvmtx[12];
+   MVMATRIX[1].w=mvmtx[13];
+   MVMATRIX[2].w=mvmtx[14];
 
-   inv_mtx(MVINVTRA,MVINVTRA);
-   tra_mtx(MVINVTRA,MVINVTRA);
+   inv_mtx(MVINVMTX,MVMATRIX);
+   tra_mtx(MVINVTRA,MVINVMTX);
    }
 
 // render all back buffers of the cache
@@ -813,42 +816,49 @@ void minicache::renderbounds(int id)
    TERRAIN_TYPE *t;
 
    miniv3d bmin,bmax;
+   miniv3d eye;
 
-   t=&TERRAIN[id]; //!! prio?
+   t=&TERRAIN[id];
 
    t->ray->getbounds(bmin,bmax);
 
-   mtxpop();
-   mtxpush();
+   eye=miniv3d(MVINVMTX[0].w,MVINVMTX[1].w,MVINVMTX[2].w);
 
-   //!! disableRGBAwriting();
+   disableRGBAwriting();
    disableZtest();
    disableZwriting();
 
    if (CULLMODE!=0) disableculling();
 
-   //!! cut by farp
-   beginfans();
-   color(1.0f,1.0f,1.0f);
-   beginfan();
-   fanvertex(bmin.x,bmin.y,bmin.z);
-   fanvertex(bmax.x,bmin.y,bmin.z);
-   fanvertex(bmax.x,bmax.y,bmin.z);
-   fanvertex(bmin.x,bmax.y,bmin.z);
-   fanvertex(bmin.x,bmax.y,bmax.z);
-   fanvertex(bmin.x,bmin.y,bmax.z);
-   fanvertex(bmax.x,bmin.y,bmax.z);
-   fanvertex(bmax.x,bmin.y,bmin.z);
-   beginfan();
-   fanvertex(bmax.x,bmax.y,bmax.z);
-   fanvertex(bmin.x,bmax.y,bmax.z);
-   fanvertex(bmin.x,bmin.y,bmax.z);
-   fanvertex(bmax.x,bmin.y,bmax.z);
-   fanvertex(bmax.x,bmin.y,bmin.z);
-   fanvertex(bmax.x,bmax.y,bmin.z);
-   fanvertex(bmin.x,bmax.y,bmin.z);
-   fanvertex(bmin.x,bmax.y,bmax.z);
-   endfans();
+   if (eye.x>=bmin.x && eye.x<=bmax.x &&
+       eye.y>=bmin.y && eye.y<=bmax.y &&
+       eye.z>=bmin.z && eye.z<=bmax.z) paintbuffer();
+   else
+      {
+      mtxpop();
+      mtxpush();
+
+      beginfans();
+      beginfan();
+      fanvertex(bmin.x,bmin.y,bmin.z);
+      fanvertex(bmax.x,bmin.y,bmin.z);
+      fanvertex(bmax.x,bmax.y,bmin.z);
+      fanvertex(bmin.x,bmax.y,bmin.z);
+      fanvertex(bmin.x,bmax.y,bmax.z);
+      fanvertex(bmin.x,bmin.y,bmax.z);
+      fanvertex(bmax.x,bmin.y,bmax.z);
+      fanvertex(bmax.x,bmin.y,bmin.z);
+      beginfan();
+      fanvertex(bmax.x,bmax.y,bmax.z);
+      fanvertex(bmin.x,bmax.y,bmax.z);
+      fanvertex(bmin.x,bmin.y,bmax.z);
+      fanvertex(bmax.x,bmin.y,bmax.z);
+      fanvertex(bmax.x,bmin.y,bmin.z);
+      fanvertex(bmax.x,bmax.y,bmin.z);
+      fanvertex(bmin.x,bmax.y,bmin.z);
+      fanvertex(bmin.x,bmax.y,bmax.z);
+      endfans();
+      }
 
    if (CULLMODE!=0) enableBFculling();
 

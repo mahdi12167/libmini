@@ -193,6 +193,19 @@ void tra_mtx(miniv3d tra[3],const miniv3d mtx[3])
    }
 
 // transpose a 4x3 matrix
+void tra_mtx(miniv3d tra[3],const miniv4d mtx[3])
+   {
+   miniv3d m[3];
+
+   // compute transposition
+   m[0]=miniv3d(mtx[0].x,mtx[1].x,mtx[2].x);
+   m[1]=miniv3d(mtx[0].y,mtx[1].y,mtx[2].y);
+   m[2]=miniv3d(mtx[0].z,mtx[1].z,mtx[2].z);
+
+   cpy_mtx(tra,m);
+   }
+
+// transpose a 4x3 matrix
 void tra_mtx(miniv4d tra[3],const miniv4d mtx[3])
    {
    miniv3d m[3];

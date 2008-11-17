@@ -1842,6 +1842,36 @@ void painttexrect(int texid,int depthcomp)
 void deletetexrect(int texid)
    {deletetexmap(texid);}
 
+void paintbuffer()
+   {
+#ifndef NOOGL
+
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0f,1.0f,0.0f,1.0f);
+   glMatrixMode(GL_MODELVIEW);
+
+   beginfans();
+   beginfan();
+   fanvertex(0.0f,0.0f,0.0f);
+   fanvertex(1.0f,0.0f,0.0f);
+   fanvertex(1.0f,1.0f,0.0f);
+   fanvertex(0.0f,1.0f,0.0f);
+   endfans();
+
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   glMatrixMode(GL_MODELVIEW);
+
+#endif
+   }
+
 void polygonmode(int wire)
    {
 #ifndef NOOGL

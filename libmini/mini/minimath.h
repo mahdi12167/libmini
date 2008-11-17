@@ -50,6 +50,7 @@ void inv_mtx(miniv3d inv[3],const miniv3d mtx[3]);
 void inv_mtx(miniv4d inv[3],const miniv4d mtx[3]);
 
 void tra_mtx(miniv3d tra[3],const miniv3d mtx[3]);
+void tra_mtx(miniv3d tra[3],const miniv4d mtx[3]);
 void tra_mtx(miniv4d tra[3],const miniv4d mtx[3]);
 
 }
