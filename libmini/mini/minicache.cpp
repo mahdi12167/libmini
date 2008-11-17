@@ -471,16 +471,18 @@ int minicache::rendercache()
             if (TERRAIN[id].tile!=NULL)
                if (TERRAIN[id].isvisible!=0)
                   {
-                  if (STENCILMODE!=0 && phase==2) enablestenciling(1);
+                  if (STENCILMODE!=0)
+                     if (phase==2 || phase==3) enablestenciling(1);
 
                   vtx+=rendercache(id,phase);
 
-                  if (STENCILMODE!=0 && phase==2)
-                     {
-                     enablestenciling(2);
-                     renderbounds(id);
-                     disablestenciling();
-                     }
+                  if (STENCILMODE!=0)
+                     if (phase==2 || phase==3)
+                        {
+                        enablestenciling(2);
+                        renderbounds(id);
+                        disablestenciling();
+                        }
                   }
          }
       }
