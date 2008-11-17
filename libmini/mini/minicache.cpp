@@ -814,31 +814,39 @@ void minicache::renderbounds(int id)
 
    miniv3d bmin,bmax;
 
-   t=&TERRAIN[id];
+   t=&TERRAIN[id]; //!! prio?
 
    t->ray->getbounds(bmin,bmax);
 
+   mtxpop();
    mtxpush();
-   mtxid();
 
-   disableRGBAwriting();
+   //!! disableRGBAwriting();
    disableZtest();
    disableZwriting();
 
    if (CULLMODE!=0) disableculling();
 
+   //!! cut by farp
    beginfans();
+   color(1.0f,1.0f,1.0f);
    beginfan();
    fanvertex(bmin.x,bmin.y,bmin.z);
    fanvertex(bmax.x,bmin.y,bmin.z);
+   fanvertex(bmax.x,bmax.y,bmin.z);
    fanvertex(bmin.x,bmax.y,bmin.z);
+   fanvertex(bmin.x,bmax.y,bmax.z);
    fanvertex(bmin.x,bmin.y,bmax.z);
+   fanvertex(bmax.x,bmin.y,bmax.z);
    fanvertex(bmax.x,bmin.y,bmin.z);
    beginfan();
    fanvertex(bmax.x,bmax.y,bmax.z);
    fanvertex(bmin.x,bmax.y,bmax.z);
+   fanvertex(bmin.x,bmin.y,bmax.z);
    fanvertex(bmax.x,bmin.y,bmax.z);
+   fanvertex(bmax.x,bmin.y,bmin.z);
    fanvertex(bmax.x,bmax.y,bmin.z);
+   fanvertex(bmin.x,bmax.y,bmin.z);
    fanvertex(bmin.x,bmax.y,bmax.z);
    endfans();
 
@@ -847,8 +855,6 @@ void minicache::renderbounds(int id)
    enableRGBAwriting();
    enableZtest();
    enableZwriting();
-
-   mtxpop();
    }
 
 int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
