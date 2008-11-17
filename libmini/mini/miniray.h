@@ -54,6 +54,9 @@ class miniray
    //! extracted triangles are likely but not guaranteed to intersect the plane
    minidyna<miniv3d> extract(const miniv3d &o,const miniv3d &n,double radius);
 
+   //! get triangle bounds
+   void getbounds(miniv3d &bmin,miniv3d &bmax);
+
    //! set locking callbacks
    //! when the callbacks are set ray shooting and plane extraction can be triggered safely from a separate thread
    static void setcallbacks(void (*lock)(void *data),void *data,
@@ -120,6 +123,8 @@ class miniray
    double calcdist(TRIANGLEREF *ref,
                    const miniv3d &o,const miniv3d &d,
                    double dist);
+
+   inline miniv3d calcpoint(TRIANGLEREF *ref,miniwarp **lastwarp,miniv3d p);
 
    minidyna<miniv3d> calcmesh(TRIANGLEREF *ref);
 

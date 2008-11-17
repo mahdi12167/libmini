@@ -55,6 +55,9 @@ class minicache
    //! set stenciling mode
    void setstenciling(int on=1);
 
+   //! set ray shooting mode
+   void setshooting(int on=1);
+
    //! define triangle mesh opacity
    void setopacity(float alpha=1.0f);
 
@@ -116,7 +119,6 @@ class minicache
    void configure_seaenabletex(int seaenabletex=0); // enable texture mappping for the sea surface
    void configure_zfight_sea(float zscale=0.99f); // shift sea towards the viewer to avoid Z-fighting
    void configure_zfight_prisms(float zscale=0.95f); // shift prisms towards the viewer to avoid Z-fighting
-   void configure_enableray(int enableray=0); // enable ray intersection test
    void configure_omitsea(int omitsea=0); // omit sea level ray tests
 
    protected:
@@ -136,10 +138,6 @@ class minicache
       int size,maxsize;
 
       int fancnt,vtxcnt;
-
-      float minx,maxx;
-      float miny,maxy;
-      float minz,maxz;
 
       float *prism_buf;
       int prism_size,prism_maxsize;
@@ -222,6 +220,7 @@ class minicache
 
    int CULLMODE;
    int STENCILMODE;
+   int RAYMODE;
 
    float OPACITY,ALPHATEST;
    float SEA_R,SEA_G,SEA_B,SEA_A;
@@ -293,7 +292,6 @@ class minicache
    int CONFIGURE_SEAENABLETEX;
    float CONFIGURE_ZSCALE_SEA;
    float CONFIGURE_ZSCALE_PRISMS;
-   float CONFIGURE_ENABLERAY;
    float CONFIGURE_OMITSEA;
 
    void initterrain(TERRAIN_TYPE *terrain);

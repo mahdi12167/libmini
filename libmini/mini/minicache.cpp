@@ -26,6 +26,7 @@ minicache::minicache()
 
    CULLMODE=1;
    STENCILMODE=0;
+   RAYMODE=0;
 
    OPACITY=1.0f;
    ALPHATEST=1.0f;
@@ -103,7 +104,6 @@ minicache::minicache()
    CONFIGURE_SEAENABLETEX=0;
    CONFIGURE_ZSCALE_SEA=0.99f;
    CONFIGURE_ZSCALE_PRISMS=0.95f;
-   CONFIGURE_ENABLERAY=0;
    CONFIGURE_OMITSEA=0;
    }
 
@@ -156,9 +156,6 @@ void minicache::initterrain(TERRAIN_TYPE *t)
 
       c->fancnt=0;
       c->vtxcnt=0;
-
-      c->minx=c->miny=c->minz=MAXFLOAT;
-      c->maxx=c->maxy=c->maxz=-MAXFLOAT;
 
       c->prism_size=0;
       c->prism_maxsize=1;
@@ -280,22 +277,10 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
       {
       c->vtxcnt++;
       c->arg[3*t->last_beginfan]++;
-
-      if (STENCILMODE)
-         {
-         if (arg1<c->minx) c->minx=arg1;
-         if (arg1>c->maxx) c->maxx=arg1;
-
-         if (arg2<c->miny) c->miny=arg2;
-         if (arg2>c->maxy) c->maxy=arg2;
-
-         if (arg3<c->minz) c->minz=arg3;
-         if (arg3>c->maxz) c->maxz=arg3;
-         }
       }
    else
       // update ray object
-      if (CONFIGURE_ENABLERAY!=0)
+      if (RAYMODE!=0)
          {
          if (t->first_fancnt>0)
             {
@@ -404,10 +389,6 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
       // reset counts of back buffer
       c2->fancnt=0;
       c2->vtxcnt=0;
-
-      // reset bounds of back buffer
-      c2->minx=c2->miny=c2->minz=MAXFLOAT;
-      c2->maxx=c2->maxy=c2->maxz=-MAXFLOAT;
 
       // swap vertex buffers
       t->cache_num=1-t->cache_num;
@@ -830,18 +811,44 @@ int minicache::rendertrigger()
 void minicache::renderbounds(int id)
    {
    TERRAIN_TYPE *t;
-   CACHE_TYPE *c;
+
+   miniv3d bmin,bmax;
 
    t=&TERRAIN[id];
-   c=&t->cache[1-t->cache_num];
+
+   t->ray->getbounds(bmin,bmax);
+
+   mtxpush();
+   mtxid();
 
    disableRGBAwriting();
+   disableZtest();
    disableZwriting();
 
-   //!! render bounds c->min to c->max
+   if (CULLMODE!=0) disableculling();
+
+   beginfans();
+   beginfan();
+   fanvertex(bmin.x,bmin.y,bmin.z);
+   fanvertex(bmax.x,bmin.y,bmin.z);
+   fanvertex(bmin.x,bmax.y,bmin.z);
+   fanvertex(bmin.x,bmin.y,bmax.z);
+   fanvertex(bmax.x,bmin.y,bmin.z);
+   beginfan();
+   fanvertex(bmax.x,bmax.y,bmax.z);
+   fanvertex(bmin.x,bmax.y,bmax.z);
+   fanvertex(bmax.x,bmin.y,bmax.z);
+   fanvertex(bmax.x,bmax.y,bmin.z);
+   fanvertex(bmin.x,bmax.y,bmax.z);
+   endfans();
+
+   if (CULLMODE!=0) enableBFculling();
 
    enableRGBAwriting();
+   enableZtest();
    enableZwriting();
+
+   mtxpop();
    }
 
 int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
@@ -1085,7 +1092,17 @@ void minicache::setculling(int on)
 
 // set stenciling mode
 void minicache::setstenciling(int on)
-   {STENCILMODE=on;}
+   {
+   STENCILMODE=on;
+   if (STENCILMODE!=0) RAYMODE=1;
+   }
+
+// set ray shooting mode
+void minicache::setshooting(int on)
+   {
+   RAYMODE=on;
+   if (STENCILMODE!=0) RAYMODE=1;
+   }
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
@@ -1767,5 +1784,4 @@ void minicache::configure_seatwosided(int seatwosided) {CONFIGURE_SEATWOSIDED=se
 void minicache::configure_seaenabletex(int seaenabletex) {CONFIGURE_SEAENABLETEX=seaenabletex;}
 void minicache::configure_zfight_sea(float zscale) {CONFIGURE_ZSCALE_SEA=zscale;}
 void minicache::configure_zfight_prisms(float zscale) {CONFIGURE_ZSCALE_PRISMS=zscale;}
-void minicache::configure_enableray(int enableray) {CONFIGURE_ENABLERAY=enableray;}
 void minicache::configure_omitsea(int omitsea) {CONFIGURE_OMITSEA=omitsea;}

@@ -312,6 +312,52 @@ minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radi
    return(result);
    }
 
+// get triangle bounds
+void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
+   {
+   TRIANGLEREF *ref;
+
+   miniwarp *lastwarp;
+
+   miniv3d p;
+   double r;
+
+   miniv3d b1,b2;
+
+   lock();
+
+   b1=miniv3d(MAXFLOAT);
+   b2=miniv3d(-MAXFLOAT);
+
+   lastwarp=NULL;
+
+   ref=FRONT;
+
+   while (ref!=NULL)
+      {
+      if (ref->hasbound==0) calcbound(ref);
+
+      p=calcpoint(ref,&lastwarp,ref->b);
+      r=sqrt(ref->r2);
+
+      if (p.x-r<b1.x) b1.x=p.x-r;
+      if (p.x+r>b2.x) b2.x=p.x+r;
+
+      if (p.y-r<b1.y) b1.y=p.y-r;
+      if (p.y+r>b2.y) b2.y=p.y+r;
+
+      if (p.z-r<b1.z) b1.z=p.z-r;
+      if (p.z+r>b2.z) b2.z=p.z+r;
+
+      ref=ref->next;
+      }
+
+   unlock();
+
+   bmin=b1;
+   bmax=b2;
+   }
+
 // set locking callbacks
 void miniray::setcallbacks(void (*lock)(void *data),void *data,
                            void (*unlock)(void *data))
@@ -645,10 +691,38 @@ double miniray::calcdist(TRIANGLEREF *ref,
    return(result);
    }
 
+// calculate triangle mesh point
+miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarp **lastwarp,miniv3d p)
+   {
+   static miniv4d mtx[3];
+   static BOOLINT one;
+
+   miniv4d p1;
+
+   if (ref->warp!=*lastwarp)
+      {
+      if (ref->warp!=NULL)
+         {
+         ref->warp->getwarp(mtx);
+         one=FALSE;
+         }
+      else one=TRUE;
+
+      *lastwarp=ref->warp;
+      }
+
+   if (one) return(p);
+
+   p1=miniv4d(p,1.0);
+   return(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+   }
+
 // calculate triangle mesh
 minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
    {
    int i,j,k;
+
+   miniwarp *lastwarp;
 
    minidyna<miniv3d> result;
 
@@ -657,15 +731,11 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
    miniv3d v1,v2,v3;
 
-   miniv4d mtx[3];
-
-   miniv4d p1;
+   lastwarp=NULL;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
    stride=ref->stride;
-
-   if (ref->warp!=NULL) ref->warp->getwarp(mtx);
 
    if (ref->isfan==0)
       if (ref->swapyz==0)
@@ -701,14 +771,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            p1=miniv4d(v1,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
-
-            p1=miniv4d(v2,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
-
-            p1=miniv4d(v3,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+            result.append(calcpoint(ref,&lastwarp,v1));
+            result.append(calcpoint(ref,&lastwarp,v2));
+            result.append(calcpoint(ref,&lastwarp,v3));
             }
       else
          for (i=0; i<num; i++)
@@ -743,14 +808,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
             v3.y=v3.y*ref->scaling.y+ref->offset.y;
             v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-            p1=miniv4d(v1,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
-
-            p1=miniv4d(v2,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
-
-            p1=miniv4d(v3,1.0);
-            result.append(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+            result.append(calcpoint(ref,&lastwarp,v1));
+            result.append(calcpoint(ref,&lastwarp,v2));
+            result.append(calcpoint(ref,&lastwarp,v3));
             }
    else
       if (ref->swapyz==0)
@@ -780,11 +840,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
             v2.y=v2.y*ref->scaling.y+ref->offset.y;
             v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            p1=miniv4d(v1,1.0);
-            v1=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
-
-            p1=miniv4d(v2,1.0);
-            v2=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+            v1=calcpoint(ref,&lastwarp,v1);
+            v2=calcpoint(ref,&lastwarp,v2);
 
             for (j=2; j<k; j++)
                {
@@ -798,8 +855,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               p1=miniv4d(v3,1.0);
-               v3=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+               v3=calcpoint(ref,&lastwarp,v3);
 
                result.append(v1);
                result.append(v2);
@@ -835,11 +891,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
             v2.y=v2.y*ref->scaling.y+ref->offset.y;
             v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            p1=miniv4d(v1,1.0);
-            v1=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
-
-            p1=miniv4d(v2,1.0);
-            v2=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+            v1=calcpoint(ref,&lastwarp,v1);
+            v2=calcpoint(ref,&lastwarp,v2);
 
             for (j=2; j<k; j++)
                {
@@ -853,8 +906,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
 
-               p1=miniv4d(v3,1.0);
-               v3=miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1);
+               v3=calcpoint(ref,&lastwarp,v3);
 
                result.append(v1);
                result.append(v2);

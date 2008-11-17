@@ -550,12 +550,12 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // enable alpha test
    CACHE->setalphatest((float)254/255);
 
+   // turn on ray object
+   CACHE->setshooting(1);
+   CACHE->configure_omitsea(TPARAMS.omitsea);
+
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
-
-   // turn on ray object
-   CACHE->configure_enableray(1);
-   CACHE->configure_omitsea(TPARAMS.omitsea);
 
    // mark scene for complete update
    update();
