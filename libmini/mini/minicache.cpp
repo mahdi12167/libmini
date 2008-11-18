@@ -467,7 +467,7 @@ int minicache::rendercache()
          {
          rendertrigger(phase);
 
-         for (id=0; id<MAXTERRAIN; id++)
+         for (id=MAXTERRAIN-1; id>=0; id--)
             if (TERRAIN[id].tile!=NULL)
                if (TERRAIN[id].isvisible!=0)
                   {

@@ -84,7 +84,7 @@ void miniglobe::setfogparams(float fogstart,float fogend,
    {STRIP->setfogparams(SLOT,fogstart,fogend,fogdensity,fogcolor);}
 
 // render the globe
-void miniglobe::render(int phase)
+void miniglobe::render()
    {
    if (DONE==0)
       {
@@ -100,15 +100,7 @@ void miniglobe::render(int phase)
       }
 
    initstate();
-
-   if (phase==FIRST_RENDER_PHASE) disableZwriting();
-   if (phase==LAST_RENDER_PHASE) disableRGBAwriting();
-
    STRIP->render();
-
-   if (phase==FIRST_RENDER_PHASE) enableZwriting();
-   if (phase==LAST_RENDER_PHASE) enableRGBAwriting();
-
    exitstate();
    }
 

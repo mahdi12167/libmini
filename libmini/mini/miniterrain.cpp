@@ -550,6 +550,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // enable alpha test
    CACHE->setalphatest((float)254/255);
 
+   // turn on stenciling
+   CACHE->setstenciling(1);
+
    // turn on ray object
    CACHE->setshooting(1);
    CACHE->configure_omitsea(TPARAMS.omitsea);
@@ -712,7 +715,7 @@ double miniterrain::getheight(const minicoord &p,int approx)
          if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nst]->len_g2l(elev)));
          }
 
-      for (n=0; n<LNUM; n++)
+      for (n=LNUM-1; n>=0; n--)
          if (n!=nst)
             if (isdisplayed(n) && !isculled(n))
                {
@@ -743,7 +746,7 @@ miniv3d miniterrain::getnormal(const minicoord &p,int approx)
          if (nrml!=miniv3d(0.0)) return(nrml);
          }
 
-      for (n=0; n<LNUM; n++)
+      for (n=LNUM-1; n>=0; n--)
          if (n!=nst)
             if (isdisplayed(n) && !isculled(n))
                {
@@ -1118,7 +1121,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
          id_hit=nst;
          }
       else
-         for (n=0; n<LNUM; n++)
+         for (n=LNUM-1; n>=0; n--)
             if (n!=nst)
                if (isdisplayed(n) && !isculled(n))
                   {

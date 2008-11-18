@@ -78,8 +78,6 @@ class miniearth
       float transbias;
       float transoffset;
 
-      BOOLINT shrinkZpass;
-
       // earth textures as a PPM file
       const char *frontname;
       const char *backname;

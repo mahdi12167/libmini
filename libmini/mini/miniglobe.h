@@ -7,10 +7,6 @@
 
 #include "ministrip.h"
 
-#define MINIGLOBE_ONE_RENDER_PHASE miniglobe::ONE_RENDER_PHASE
-#define MINIGLOBE_FIRST_RENDER_PHASE miniglobe::FIRST_RENDER_PHASE
-#define MINIGLOBE_LAST_RENDER_PHASE miniglobe::LAST_RENDER_PHASE
-
 class miniglobe
    {
    public:
@@ -32,11 +28,6 @@ class miniglobe
       SHAPE_MOON=42
       }
    SHAPE_ENUM;
-
-   //! exposed render phases
-   static const int ONE_RENDER_PHASE=0;    // render all phases in one pass
-   static const int FIRST_RENDER_PHASE=1;  // render pass without updating Z
-   static const int LAST_RENDER_PHASE=2;   // render pass without updating RGB
 
    //! default constructor
    miniglobe();
@@ -73,7 +64,7 @@ class miniglobe
                      float *fogcolor);
 
    //! render the globe
-   void render(int phase=ONE_RENDER_PHASE);
+   void render();
 
    //! configuring
    void configure_frontname(const char *frontname);

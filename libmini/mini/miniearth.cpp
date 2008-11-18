@@ -70,8 +70,6 @@ miniearth::miniearth()
    EPARAMS.transbias=4.0f;    // transition bias between night and day
    EPARAMS.transoffset=0.01f; // transition offset between night and day
 
-   EPARAMS.shrinkZpass=FALSE; // shrink earth radius during Z rendering pass
-
    EPARAMS.frontname="EarthDay.ppm";  // file name of front earth PPM texture
    EPARAMS.backname="EarthNight.ppm"; // file name of back earth PPM texture
 
@@ -460,7 +458,28 @@ void miniearth::rendercache()
             SKYDOME->drawskydome();
             }
 
-      // render earth globe (without Z writing)
+      // check data grid for underwater volumes
+      if (DATAGRID!=NULL)
+         {
+         // get the actual terrain state
+         TERRAIN->get(tparams);
+
+         // use stippling if there are underwater volumes
+         if (DATAGRID->isbelowsealevel()) seamode=1;
+         else seamode=0;
+
+         // pass the updated terrain state
+         if (seamode!=tparams.seamode)
+            {
+            tparams.seamode=seamode;
+            TERRAIN->set(tparams);
+            }
+         }
+
+      // render terrain
+      TERRAIN->render();
+
+      // render earth globe
       if (EPARAMS.useearth)
          if (ref->get()->warpmode!=0)
             {
@@ -517,38 +536,9 @@ void miniearth::rendercache()
                                 EPARAMS.fogdensity,
                                 EPARAMS.fogcolor);
 
-            EARTH->render(MINIGLOBE_FIRST_RENDER_PHASE);
-            }
-
-      // check data grid for underwater volumes
-      if (DATAGRID!=NULL)
-         {
-         // get the actual terrain state
-         TERRAIN->get(tparams);
-
-         // use stippling if there are underwater volumes
-         if (DATAGRID->isbelowsealevel()) seamode=1;
-         else seamode=0;
-
-         // pass the updated terrain state
-         if (seamode!=tparams.seamode)
-            {
-            tparams.seamode=seamode;
-            TERRAIN->set(tparams);
-            }
-         }
-
-      // render terrain
-      TERRAIN->render();
-
-      // render earth globe (without RGB writing)
-      if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0 && ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
-            {
-            if (EPARAMS.shrinkZpass)
-               EARTH->setdynscale(1.0-ref->get()->maxelev/miniutm::EARTH_radius);
-
-            EARTH->render(MINIGLOBE_LAST_RENDER_PHASE);
+            enablestenciling(0);
+            EARTH->render();
+            disablestenciling();
             }
 
       // disable fog
