@@ -216,8 +216,6 @@ class minicache
    inline int rendertrigger(int phase,float scale);
    inline int rendertrigger();
 
-   void renderbounds(int id);
-
    int CULLMODE;
    int STENCILMODE;
    int RAYMODE;

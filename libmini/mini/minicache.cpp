@@ -469,21 +469,7 @@ int minicache::rendercache()
 
          for (id=MAXTERRAIN-1; id>=0; id--)
             if (TERRAIN[id].tile!=NULL)
-               if (TERRAIN[id].isvisible!=0)
-                  {
-                  if (STENCILMODE!=0)
-                     if (phase==2 || phase==3) enablestenciling(1);
-
-                  vtx+=rendercache(id,phase);
-
-                  if (STENCILMODE!=0)
-                     if (phase==2 || phase==3)
-                        {
-                        enablestenciling(2);
-                        renderbounds(id);
-                        disablestenciling();
-                        }
-                  }
+               if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
          }
       }
 
@@ -657,6 +643,8 @@ int minicache::rendertrigger(int phase)
 
       if (CULLMODE==0) disableculling();
 
+      if (STENCILMODE!=0) enablestenciling(1);
+
       if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
       if (OPACITY<1.0f)
@@ -682,6 +670,8 @@ int minicache::rendertrigger(int phase)
    else if (phase==3)
       {
       if (CULLMODE==0) enableBFculling();
+
+      if (STENCILMODE!=0) disablestenciling();
 
       if (ALPHATEST<1.0f) disableAtest();
 
@@ -811,62 +801,6 @@ int minicache::rendertrigger()
          }
 
    return(vtx);
-   }
-
-void minicache::renderbounds(int id)
-   {
-   TERRAIN_TYPE *t;
-
-   miniv3d bmin,bmax;
-   miniv3d eye;
-
-   t=&TERRAIN[id];
-
-   t->ray->getbounds(bmin,bmax);
-
-   eye=miniv3d(MVINVMTX[0].w,MVINVMTX[1].w,MVINVMTX[2].w);
-
-   disableRGBAwriting();
-   disableZtest();
-   disableZwriting();
-
-   if (CULLMODE!=0) disableculling();
-
-   if (eye.x>=bmin.x && eye.x<=bmax.x &&
-       eye.y>=bmin.y && eye.y<=bmax.y &&
-       eye.z>=bmin.z && eye.z<=bmax.z) paintbuffer();
-   else
-      {
-      mtxpop();
-      mtxpush();
-
-      beginfans();
-      beginfan();
-      fanvertex(bmin.x,bmin.y,bmin.z);
-      fanvertex(bmax.x,bmin.y,bmin.z);
-      fanvertex(bmax.x,bmax.y,bmin.z);
-      fanvertex(bmin.x,bmax.y,bmin.z);
-      fanvertex(bmin.x,bmax.y,bmax.z);
-      fanvertex(bmin.x,bmin.y,bmax.z);
-      fanvertex(bmax.x,bmin.y,bmax.z);
-      fanvertex(bmax.x,bmin.y,bmin.z);
-      beginfan();
-      fanvertex(bmax.x,bmax.y,bmax.z);
-      fanvertex(bmin.x,bmax.y,bmax.z);
-      fanvertex(bmin.x,bmin.y,bmax.z);
-      fanvertex(bmax.x,bmin.y,bmax.z);
-      fanvertex(bmax.x,bmin.y,bmin.z);
-      fanvertex(bmax.x,bmax.y,bmin.z);
-      fanvertex(bmin.x,bmax.y,bmin.z);
-      fanvertex(bmin.x,bmax.y,bmax.z);
-      endfans();
-      }
-
-   if (CULLMODE!=0) enableBFculling();
-
-   enableRGBAwriting();
-   enableZtest();
-   enableZwriting();
    }
 
 int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
