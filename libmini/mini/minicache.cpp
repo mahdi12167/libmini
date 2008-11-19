@@ -473,8 +473,9 @@ int minicache::rendercache()
             if (TERRAIN[id].tile!=NULL)
                if (TERRAIN[id].isvisible!=0)
                   {
-                  if (phase==2)
-                     if (TERRAIN[id].ispatch!=0)
+                  if (TERRAIN[id].ispatch!=0)
+                     {
+                     if (phase==2)
                         {
                         mtxproj();
                         mtxpush();
@@ -482,15 +483,26 @@ int minicache::rendercache()
                         mtxmodel();
                         }
 
+                     if (phase==3) enablestenciling(3);
+                     }
+                  else
+                     if (phase==3) enablestenciling(1);
+
                   vtx+=rendercache(id,phase);
 
-                  if (phase==2)
-                     if (TERRAIN[id].ispatch!=0)
+                  if (TERRAIN[id].ispatch!=0)
+                     {
+                     if (phase==2)
                         {
                         mtxproj();
                         mtxpop();
                         mtxmodel();
                         }
+
+                     if (phase==3) disablestenciling();
+                     }
+                  else
+                     if (phase==3) disablestenciling();
                   }
          }
       }
