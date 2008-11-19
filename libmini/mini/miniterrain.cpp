@@ -727,6 +727,48 @@ double miniterrain::getheight(const minicoord &p,int approx)
    return(-MAXFLOAT);
    }
 
+// get the relative elevation at position (x,y,z)
+double miniterrain::getrelheight(const minicoord &p,int approx)
+   {
+   int n;
+
+   int nst;
+
+   double elev;
+   minicoord pos;
+
+   if (LNUM>0)
+      {
+      nst=getnearest(p);
+
+      if (isdisplayed(nst) && !isculled(nst))
+         {
+         elev=LAYER[nst]->getheight(p,approx);
+         if (elev!=-MAXFLOAT)
+            {
+            pos=LAYER[nst]->map_g2t(p);
+            if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
+            return(pos.vec.z);
+            }
+         }
+
+      for (n=LNUM-1; n>=0; n--)
+         if (n!=nst)
+            if (isdisplayed(n) && !isculled(n))
+               {
+               elev=LAYER[n]->getheight(p,approx);
+               if (elev!=-MAXFLOAT)
+                  {
+                  pos=LAYER[n]->map_g2t(p);
+                  if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
+                  return(pos.vec.z);
+                  }
+               }
+      }
+
+   return(-MAXFLOAT);
+   }
+
 // get the normal at position (x,y,z)
 miniv3d miniterrain::getnormal(const minicoord &p,int approx)
    {
@@ -782,6 +824,7 @@ int miniterrain::getnearest(const minicoord &e)
    int nst;
    double dist,mindist;
    minicoord offset;
+   miniv3d extent;
 
    nst=-1;
    mindist=MAXFLOAT;
@@ -790,7 +833,9 @@ int miniterrain::getnearest(const minicoord &e)
       if (isdisplayed(n))
          {
          offset=LAYER[n]->getcenter()-e;
-         dist=offset.vec.getlength();
+         extent=LAYER[n]->getextent();
+
+         dist=offset.vec.getlength()-extent.getlength()/2.0;
 
          if (dist<mindist)
             {

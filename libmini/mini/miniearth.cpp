@@ -52,9 +52,17 @@ miniearth::miniearth()
 
    EPARAMS.voidstart=0.0f;    // end of atmosphere
 
-   EPARAMS.voidcolor[0]=0.0f; // void color
-   EPARAMS.voidcolor[1]=0.0f; // void color
-   EPARAMS.voidcolor[2]=0.0f; // void color
+   EPARAMS.voidcolor[0]=0.0f; // deep space color
+   EPARAMS.voidcolor[1]=0.0f; // deep space color
+   EPARAMS.voidcolor[2]=0.0f; // deep space color
+
+   // optional abyss display:
+
+   EPARAMS.abyssstart=0.0f;    // start of abyss
+
+   EPARAMS.abysscolor[0]=0.0f; // deep sea color
+   EPARAMS.abysscolor[1]=0.0f; // deep sea color
+   EPARAMS.abysscolor[2]=0.0f; // deep sea color
 
    // optional sky-dome:
 
@@ -381,7 +389,8 @@ void miniearth::rendercache()
 
    minicoord egl;
 
-   double alt,altf,fogf;
+   double alt;
+   double altf,seaf,fogf;
 
    miniwarp warp;
 
@@ -402,23 +411,19 @@ void miniearth::rendercache()
 
       egl=ref->map_g2o(lparams.eye);
 
+      // compute altitude
+      alt=TERRAIN->getrelheight(lparams.eye);
+      if (alt==-MAXFLOAT)
+         if (ref->get()->warpmode==1 || ref->get()->warpmode==2)
+            alt=miniv3d((lparams.eye-ref->getcenter()).vec)*ref->getnormal();
+         else
+            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength()-miniutm::EARTH_radius;
+
       // calculate void display factor
       if (EPARAMS.voidstart<=0.0f) altf=0.0;
       else
          {
-         if (ref->get()->warpmode==1 || ref->get()->warpmode==2)
-            {
-            alt=miniv3d((lparams.eye-ref->getcenter()).vec)*ref->getnormal();
-
-            altf=alt/EPARAMS.voidstart;
-            }
-         else
-            {
-            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength();
-            alt-=miniutm::EARTH_radius;
-
-            altf=alt/EPARAMS.voidstart;
-            }
+         altf=alt/EPARAMS.voidstart;
 
          if (altf<0.0) altf=0.0;
          else if (altf>1.0) altf=1.0;
@@ -426,12 +431,31 @@ void miniearth::rendercache()
          altf=altf*altf;
          }
 
+      // calculate abyss display factor
+      if (EPARAMS.abyssstart>=0.0f) seaf=0.0;
+      else
+         {
+         seaf=alt/EPARAMS.abyssstart;
+
+         if (seaf<0.0) seaf=0.0;
+         else if (seaf>1.0) seaf=1.0;
+         }
+
       // clear back buffer
       if (CLEAR)
          {
-         clearbuffer((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
-                     (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
-                     (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
+         if (altf>0.0f)
+            clearbuffer((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
+                        (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
+                        (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
+         else if (seaf>0.0f)
+            clearbuffer((1.0-seaf)*EPARAMS.fogcolor[0]+seaf*EPARAMS.abysscolor[0],
+                        (1.0-seaf)*EPARAMS.fogcolor[1]+seaf*EPARAMS.abysscolor[1],
+                        (1.0-seaf)*EPARAMS.fogcolor[2]+seaf*EPARAMS.abysscolor[2]);
+         else
+            clearbuffer(EPARAMS.fogcolor[0],
+                        EPARAMS.fogcolor[1],
+                        EPARAMS.fogcolor[2]);
 
          CLEAR=FALSE;
          }

@@ -40,6 +40,7 @@
 #define VIEWER_FOGDENSITY 0.5f;
 
 #define VIEWER_VOIDSTART 20000.0f;
+#define VIEWER_ABYSSSTART -500.0f;
 
 #define VIEWER_CONTOURS 10.0f
 
@@ -224,6 +225,7 @@ void initparams()
    eprms.fogdensity=VIEWER_FOGDENSITY;
 
    eprms.voidstart=VIEWER_VOIDSTART;
+   eprms.abyssstart=VIEWER_ABYSSSTART;
 
    viewer->getearth()->set(eprms);
 

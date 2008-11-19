@@ -64,6 +64,11 @@ class miniearth
       float voidstart;
       float voidcolor[3];
 
+      // optional abyss display:
+
+      float abyssstart;
+      float abysscolor[3];
+
       // optional sky-dome:
 
       const char *skydome;
