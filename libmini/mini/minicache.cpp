@@ -102,7 +102,7 @@ minicache::minicache()
    CONFIGURE_SEATWOSIDED=1;
    CONFIGURE_SEAENABLETEX=0;
    CONFIGURE_ZSCALE_SEA=0.99f;
-   CONFIGURE_ZWRITE_SEA=1;
+   CONFIGURE_ZSCALE_PATCH=0.95f;
    CONFIGURE_ZSCALE_PRISMS=0.95f;
    CONFIGURE_CALCBOUNDS=0;
    CONFIGURE_OMITSEA=0;
@@ -469,9 +469,29 @@ int minicache::rendercache()
          {
          rendertrigger(phase);
 
-         for (id=MAXTERRAIN-1; id>=0; id--)
+         for (id=0; id<MAXTERRAIN; id++)
             if (TERRAIN[id].tile!=NULL)
-               if (TERRAIN[id].isvisible!=0) vtx+=rendercache(id,phase);
+               if (TERRAIN[id].isvisible!=0)
+                  {
+                  if (phase==2)
+                     if (TERRAIN[id].ispatch!=0)
+                        {
+                        mtxproj();
+                        mtxpush();
+                        mtxscale(CONFIGURE_ZSCALE_PATCH,CONFIGURE_ZSCALE_PATCH,CONFIGURE_ZSCALE_PATCH); // prevent Z-fighting
+                        mtxmodel();
+                        }
+
+                  vtx+=rendercache(id,phase);
+
+                  if (phase==2)
+                     if (TERRAIN[id].ispatch!=0)
+                        {
+                        mtxproj();
+                        mtxpop();
+                        mtxmodel();
+                        }
+                  }
          }
       }
 
@@ -717,8 +737,6 @@ int minicache::rendertrigger(int phase)
          mtxpush();
          mtxscale(CONFIGURE_ZSCALE_SEA,CONFIGURE_ZSCALE_SEA,CONFIGURE_ZSCALE_SEA); // prevent Z-fighting
          mtxmodel();
-
-         if (CONFIGURE_ZWRITE_SEA==0) disableZwriting();
          }
       }
    else if (phase==4)
@@ -739,8 +757,6 @@ int minicache::rendertrigger(int phase)
          mtxproj();
          mtxpop();
          mtxmodel();
-
-         if (CONFIGURE_ZWRITE_SEA==0) enableZwriting();
          }
 
       mtxpop();
@@ -1735,7 +1751,7 @@ void minicache::configure_minsize(int minsize) {CONFIGURE_MINSIZE=minsize;}
 void minicache::configure_seatwosided(int seatwosided) {CONFIGURE_SEATWOSIDED=seatwosided;}
 void minicache::configure_seaenabletex(int seaenabletex) {CONFIGURE_SEAENABLETEX=seaenabletex;}
 void minicache::configure_zfight_sea(float zscale) {CONFIGURE_ZSCALE_SEA=zscale;}
-void minicache::configure_zwrite_sea(int zwrite) {CONFIGURE_ZWRITE_SEA=zwrite;}
+void minicache::configure_zfight_patch(float zscale) {CONFIGURE_ZSCALE_PATCH=zscale;}
 void minicache::configure_zfight_prisms(float zscale) {CONFIGURE_ZSCALE_PRISMS=zscale;}
 void minicache::configure_calcbounds(int calcbounds) {CONFIGURE_CALCBOUNDS=calcbounds;}
 void minicache::configure_omitsea(int omitsea) {CONFIGURE_OMITSEA=omitsea;}

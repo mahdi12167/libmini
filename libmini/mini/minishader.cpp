@@ -331,10 +331,6 @@ void minishader::setVISshader(minicache *cache,
    // check for sea texture binding
    if (seamodulate==0.0f) cache->configure_seaenabletex(0);
    else cache->configure_seaenabletex(1);
-
-   // check for sea level stippling
-   if (SEAMODE!=0) cache->configure_zwrite_sea(1);
-   else cache->configure_zwrite_sea(0);
    }
 
 // set bathymetry color map for VIS shader
@@ -656,10 +652,6 @@ void minishader::setNPRshader(minicache *cache,
 
    // switch off sea texture binding
    cache->configure_seaenabletex(0);
-
-   // check for sea level stippling
-   if (SEAMODE!=0) cache->configure_zwrite_sea(1);
-   else cache->configure_zwrite_sea(0);
    }
 
 // set bathymetry color map for NPR shader
