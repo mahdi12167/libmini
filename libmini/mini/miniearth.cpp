@@ -536,16 +536,7 @@ void miniearth::rendercache()
                                 EPARAMS.fogdensity,
                                 EPARAMS.fogcolor);
 
-            enablestenciling(2);
-            disableRGBAwriting();
-            disableZwriting();
-            disableZtest();
-            paintbuffer();
-            enableZtest();
-            enableZwriting();
-            enableRGBAwriting();
-
-            enablestenciling(0);
+            enablestenciling(3);
             EARTH->render();
             disablestenciling();
             }

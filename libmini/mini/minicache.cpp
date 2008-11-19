@@ -104,6 +104,7 @@ minicache::minicache()
    CONFIGURE_SEAENABLETEX=0;
    CONFIGURE_ZSCALE_SEA=0.99f;
    CONFIGURE_ZSCALE_PRISMS=0.95f;
+   CONFIGURE_CALCBOUNDS=0;
    CONFIGURE_OMITSEA=0;
    }
 
@@ -303,7 +304,7 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
             o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
-               t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp());
+               t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp(),CONFIGURE_CALCBOUNDS);
             }
 
          if (op==TRIGGER_OP)
@@ -706,6 +707,8 @@ int minicache::rendertrigger(int phase)
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
 
+      if (STENCILMODE!=0) enablestenciling(2);
+
       if (SEA_A!=1.0f) enableblending();
 
       color(SEA_R,SEA_G,SEA_B,SEA_A);
@@ -724,6 +727,8 @@ int minicache::rendertrigger(int phase)
    else if (phase==4)
       {
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
+
+      if (STENCILMODE!=0) disablestenciling();
 
       if (SEA_A!=1.0f) disableblending();
 
@@ -1736,4 +1741,5 @@ void minicache::configure_seatwosided(int seatwosided) {CONFIGURE_SEATWOSIDED=se
 void minicache::configure_seaenabletex(int seaenabletex) {CONFIGURE_SEAENABLETEX=seaenabletex;}
 void minicache::configure_zfight_sea(float zscale) {CONFIGURE_ZSCALE_SEA=zscale;}
 void minicache::configure_zfight_prisms(float zscale) {CONFIGURE_ZSCALE_PRISMS=zscale;}
+void minicache::configure_calcbounds(int calcbounds) {CONFIGURE_CALCBOUNDS=calcbounds;}
 void minicache::configure_omitsea(int omitsea) {CONFIGURE_OMITSEA=omitsea;}
