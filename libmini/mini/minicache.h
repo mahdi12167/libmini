@@ -117,7 +117,8 @@ class minicache
    void configure_minsize(int minsize=33); // disable overlap for mesh size less than minsize
    void configure_seatwosided(int seatwosided=1); // disable back face culling for the sea surface
    void configure_seaenabletex(int seaenabletex=0); // enable texture mappping for the sea surface
-   void configure_zfight_sea(float zscale=0.99f); // shift sea towards the viewer to avoid Z-fighting
+   void configure_zfight_sea(float zscale=0.99f); // shift sea level towards the viewer to avoid Z-fighting
+   void configure_zwrite_sea(int zwrite=0); // disable Z-writing when suppressing the sea level Z-fighting
    void configure_zfight_prisms(float zscale=0.95f); // shift prisms towards the viewer to avoid Z-fighting
    void configure_calcbounds(int calcbounds=0); // calculate chunk bounds on-the-fly
    void configure_omitsea(int omitsea=0); // omit sea level ray tests
@@ -292,6 +293,7 @@ class minicache
    int CONFIGURE_SEATWOSIDED;
    int CONFIGURE_SEAENABLETEX;
    float CONFIGURE_ZSCALE_SEA;
+   int CONFIGURE_ZWRITE_SEA;
    float CONFIGURE_ZSCALE_PRISMS;
    int CONFIGURE_CALCBOUNDS;
    int CONFIGURE_OMITSEA;

@@ -226,7 +226,7 @@ void drawstring(float width,
 
    scale=width/cmax;
 
-   if (backalpha>0.0f)
+   if (backalpha>0.0f && CONFIGURE_ZSCALE<1.0f)
       {
       drawquad(0.0f,0.0f,scale*cmax,scale*(l+(l-1)*linefeed),0.0f,0.0f,backval,backalpha);
 
@@ -234,6 +234,8 @@ void drawstring(float width,
       mtxpush();
       mtxscale(CONFIGURE_ZSCALE,CONFIGURE_ZSCALE,CONFIGURE_ZSCALE); // prevent Z-fighting
       mtxmodel();
+
+      disableZwriting();
       }
 
    mtxpush();
@@ -272,11 +274,13 @@ void drawstring(float width,
    mtxpop();
    mtxpop();
 
-   if (backalpha>0.0f)
+   if (backalpha>0.0f && CONFIGURE_ZSCALE<1.0f)
       {
       mtxproj();
       mtxpop();
       mtxmodel();
+
+      enableZwriting();
       }
    }
 
