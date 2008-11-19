@@ -29,12 +29,14 @@ class miniray
    //! add reference to triangles to the back buffer
    void addtriangles(float **array,int index,int num,int stride=0,
                      miniv3d *scaling=0,miniv3d *offset=0,
-                     int swapyz=0,miniwarp *warp=0);
+                     int swapyz=0,miniwarp *warp=0,
+                     int calcbounds=0);
 
    //! add reference to triangle fans to the back buffer
    void addtrianglefans(float **array,int index,int num,int stride=0,
                         miniv3d *scaling=0,miniv3d *offset=0,
-                        int swapyz=0,miniwarp *warp=0);
+                        int swapyz=0,miniwarp *warp=0,
+                        int calcbounds=0);
 
    //! swap front and back triangle reference buffer
    void swapbuffer();
@@ -93,6 +95,8 @@ class miniray
 
       miniwarp *warp;
 
+      int hasbound;
+
       miniv3d b,r;
       double r2;
 
@@ -110,11 +114,13 @@ class miniray
 
    void addtriangles_chunked(float **array,int index,int num,int stride=0,
                              miniv3d *scaling=0,miniv3d *offset=0,
-                             int swapyz=0,miniwarp *warp=0);
+                             int swapyz=0,miniwarp *warp=0,
+                             int calcbounds=0);
 
    void addtrianglefans_chunked(float **array,int index,int num,int stride=0,
                                 miniv3d *scaling=0,miniv3d *offset=0,
-                                int swapyz=0,miniwarp *warp=0);
+                                int swapyz=0,miniwarp *warp=0,
+                                int calcbounds=0);
 
    void calcbound(TRIANGLEREF *ref);
 

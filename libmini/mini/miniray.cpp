@@ -55,27 +55,29 @@ void miniray::clearbuffer()
 // add reference to triangles to the back buffer
 void miniray::addtriangles(float **array,int index,int num,int stride,
                            miniv3d *scaling,miniv3d *offset,
-                           int swapyz,miniwarp *warp)
+                           int swapyz,miniwarp *warp,
+                           int calcbounds)
    {
    int n;
 
-   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLES) addtriangles_chunked(array,index,num,stride,scaling,offset,swapyz,warp);
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLES) addtriangles_chunked(array,index,num,stride,scaling,offset,swapyz,warp,calcbounds);
    else
       {
       for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLES; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLES)
          {
-         addtriangles_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLES,stride,scaling,offset,swapyz,warp);
+         addtriangles_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLES,stride,scaling,offset,swapyz,warp,calcbounds);
          index+=(3+stride)*CONFIGURE_MAXCHUNKSIZE_TRIANGLES;
          }
 
-      addtriangles_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp);
+      addtriangles_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,calcbounds);
       }
    }
 
 // add reference to triangles to the back buffer
 void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
                                    miniv3d *scaling,miniv3d *offset,
-                                   int swapyz,miniwarp *warp)
+                                   int swapyz,miniwarp *warp,
+                                   int calcbounds)
    {
    TRIANGLEREF *ref;
 
@@ -101,7 +103,8 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->warp=warp;
 
-   calcbound(ref);
+   if (calcbounds!=0) calcbound(ref);
+   else ref->hasbound=0;
 
    ref->next=BACK;
    BACK=ref;
@@ -110,18 +113,19 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 // add reference to triangle fans to the back buffer
 void miniray::addtrianglefans(float **array,int index,int num,int stride,
                               miniv3d *scaling,miniv3d *offset,
-                              int swapyz,miniwarp *warp)
+                              int swapyz,miniwarp *warp,
+                              int calcbounds)
    {
    int n;
 
    int i,k;
 
-   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS) addtrianglefans_chunked(array,index,num,stride,scaling,offset,swapyz,warp);
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS) addtrianglefans_chunked(array,index,num,stride,scaling,offset,swapyz,warp,calcbounds);
    else
       {
       for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS)
          {
-         addtrianglefans_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS,stride,scaling,offset,swapyz,warp);
+         addtrianglefans_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS,stride,scaling,offset,swapyz,warp,calcbounds);
 
          for (i=0; i<CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; i++)
             {
@@ -130,14 +134,15 @@ void miniray::addtrianglefans(float **array,int index,int num,int stride,
             }
          }
 
-      addtrianglefans_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp);
+      addtrianglefans_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,calcbounds);
       }
    }
 
 // add reference to triangle fans to the back buffer
 void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride,
                                       miniv3d *scaling,miniv3d *offset,
-                                      int swapyz,miniwarp *warp)
+                                      int swapyz,miniwarp *warp,
+                                      int calcbounds)
    {
    TRIANGLEREF *ref;
 
@@ -163,7 +168,8 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
 
    ref->warp=warp;
 
-   calcbound(ref);
+   if (calcbounds!=0) calcbound(ref);
+   else ref->hasbound=0;
 
    ref->next=BACK;
    BACK=ref;
@@ -215,6 +221,8 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    while (ref!=NULL)
       {
+      if (ref->hasbound==0) calcbound(ref);
+
       if (ref->warp==NULL)
          {
          oi=o;
@@ -279,6 +287,8 @@ minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radi
 
    while (ref!=NULL)
       {
+      if (ref->hasbound==0) calcbound(ref);
+
       if (ref->warp==NULL)
          {
          oi=o;
@@ -331,6 +341,8 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
 
    while (ref!=NULL)
       {
+      if (ref->hasbound==0) calcbound(ref);
+
       p=calcpoint(ref,&lastwarp,ref->b);
       r=sqrt(ref->r2);
 
@@ -489,6 +501,8 @@ void miniray::calcbound(TRIANGLEREF *ref)
    ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
                  FSQR(vmax.y-vmin.y)+
                  FSQR(vmax.z-vmin.z));
+
+   ref->hasbound=1;
    }
 
 // calculate smallest hit distance
