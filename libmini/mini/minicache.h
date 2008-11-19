@@ -36,7 +36,10 @@ class minicache
    void detach(minitile *terrain);
 
    //! determine whether or not a tileset is displayed
-   void display(minitile *terrain,int yes=1);
+   void display(minitile *terrain,int visible=1);
+
+   //! specify whether or not a tileset is treated like a patch
+   void setpatch(minitile *terrain,int patch=0);
 
    //! specify per-tileset lighting
    void setlight(minitile *terrain,float lx,float ly,float lz,float ls,float lo);
@@ -51,9 +54,6 @@ class minicache
 
    //! set culling mode
    void setculling(int on=1);
-
-   //! set stenciling mode
-   void setstenciling(int on=1);
 
    //! set ray shooting mode
    void setshooting(int on=1);
@@ -172,6 +172,7 @@ class minicache
       int render_count;
 
       int isvisible;
+      int ispatch;
 
       float lx,ly,lz;
       float ls,lo;
@@ -219,7 +220,6 @@ class minicache
    inline int rendertrigger();
 
    int CULLMODE;
-   int STENCILMODE;
    int RAYMODE;
 
    float OPACITY,ALPHATEST;

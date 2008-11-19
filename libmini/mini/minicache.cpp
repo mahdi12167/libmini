@@ -25,7 +25,6 @@ minicache::minicache()
    RENDER_ID=0;
 
    CULLMODE=1;
-   STENCILMODE=0;
    RAYMODE=0;
 
    OPACITY=1.0f;
@@ -173,6 +172,7 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    t->render_phase=-1;
 
    t->isvisible=1;
+   t->ispatch=0;
 
    t->lx=0.0f;
    t->ly=0.0f;
@@ -645,8 +645,6 @@ int minicache::rendertrigger(int phase)
 
       if (CULLMODE==0) disableculling();
 
-      if (STENCILMODE!=0) enablestenciling(1);
-
       if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
       if (OPACITY<1.0f)
@@ -672,8 +670,6 @@ int minicache::rendertrigger(int phase)
    else if (phase==3)
       {
       if (CULLMODE==0) enableBFculling();
-
-      if (STENCILMODE!=0) disablestenciling();
 
       if (ALPHATEST<1.0f) disableAtest();
 
@@ -708,8 +704,6 @@ int minicache::rendertrigger(int phase)
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
 
-      if (STENCILMODE!=0) enablestenciling(2);
-
       if (SEA_A!=1.0f) enableblending();
 
       color(SEA_R,SEA_G,SEA_B,SEA_A);
@@ -730,8 +724,6 @@ int minicache::rendertrigger(int phase)
    else if (phase==4)
       {
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
-
-      if (STENCILMODE!=0) disablestenciling();
 
       if (SEA_A!=1.0f) disableblending();
 
@@ -1020,11 +1012,19 @@ void minicache::detach(minitile *terrain)
    }
 
 // determine whether or not a tileset is displayed
-void minicache::display(minitile *terrain,int yes)
+void minicache::display(minitile *terrain,int visible)
    {
    if (terrain==NULL) ERRORMSG();
 
-   TERRAIN[terrain->getid()].isvisible=yes;
+   TERRAIN[terrain->getid()].isvisible=visible;
+   }
+
+// specify whether or not a tileset is treated like a patch
+void minicache::setpatch(minitile *terrain,int patch)
+   {
+   if (terrain==NULL) ERRORMSG();
+
+   TERRAIN[terrain->getid()].ispatch=patch;
    }
 
 // specify per-tileset lighting
@@ -1052,19 +1052,9 @@ void minicache::makecurrent()
 void minicache::setculling(int on)
    {CULLMODE=on;}
 
-// set stenciling mode
-void minicache::setstenciling(int on)
-   {
-   STENCILMODE=on;
-   if (STENCILMODE!=0) RAYMODE=1;
-   }
-
 // set ray shooting mode
 void minicache::setshooting(int on)
-   {
-   RAYMODE=on;
-   if (STENCILMODE!=0) RAYMODE=1;
-   }
+   {RAYMODE=on;}
 
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
