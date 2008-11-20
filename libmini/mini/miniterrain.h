@@ -425,6 +425,9 @@ class miniterrain
    int setnull();
    int setearth();
 
+   void check4patches();
+   int checkpatch(int n);
+
    void render_presea();
    void render_postsea();
 

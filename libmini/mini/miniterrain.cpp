@@ -557,6 +557,9 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
 
+   // recompute whether or not a layer is a patch
+   check4patches();
+
    // mark scene for complete update
    update();
 
@@ -896,7 +899,7 @@ void miniterrain::render()
          {
          // set detail texture parameters
          for (n=0; n<LNUM; n++)
-            if (LAYER[n]->getterrain()!=NULL)
+            if (LAYER[n]->istileset())
                if (TPARAMS.detailtexmode==0)
                   {
                   CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
@@ -963,7 +966,7 @@ void miniterrain::render()
 
          // set lighting parameters
          for (n=0; n<LNUM; n++)
-            if (LAYER[n]->getterrain()!=NULL)
+            if (LAYER[n]->istileset())
                if (TPARAMS.usediffuse)
                   {
                   lgl=LAYER[getnull()]->rot_g2o(TPARAMS.lightdir,LAYER[getnull()]->getcenter());
@@ -998,6 +1001,36 @@ void miniterrain::render()
             CACHE->useseashader(0);
             }
       }
+   }
+
+// recompute whether or not a layer is a patch
+void miniterrain::check4patches()
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      if (LAYER[n]->istileset())
+         CACHE->setpatch(LAYER[n]->getterrain()->getminitile(),checkpatch(n));
+   }
+
+// check whether or not a layer is a patch
+int miniterrain::checkpatch(int n)
+   {
+   int i;
+
+   double ext2;
+   minicoord midp;
+
+   ext2=LAYER[n]->getextent().getlength2();
+   midp=LAYER[n]->getcenter();
+
+   for (i=0; i<LNUM; i++)
+      if (i!=n)
+         if (LAYER[i]->istileset())
+            if (LAYER[i]->getextent().getlength2()>ext2)
+               if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
+
+   return(0);
    }
 
 // pre sea render callback
@@ -1060,7 +1093,7 @@ void miniterrain::render_postsea()
 void miniterrain::display(int n,BOOLINT yes)
    {
    if (n>=0 && n<LNUM)
-      if (LAYER[n]->getterrain()!=NULL) LAYER[n]->display(yes);
+      if (LAYER[n]->istileset()) LAYER[n]->display(yes);
    }
 
 // check whether or not a layer is displayed
@@ -1231,7 +1264,7 @@ double miniterrain::getmem()
    mem=0.0;
 
    for (n=0; n<LNUM; n++)
-      if (LAYER[n]->getterrain()!=NULL) mem+=LAYER[n]->getterrain()->getmem();
+      if (LAYER[n]->istileset()) mem+=LAYER[n]->getterrain()->getmem();
 
    return(mem);
    }
@@ -1246,7 +1279,7 @@ double miniterrain::gettexmem()
    texmem=0.0;
 
    for (n=0; n<LNUM; n++)
-      if (LAYER[n]->getterrain()!=NULL) texmem+=LAYER[n]->getterrain()->gettexmem();
+      if (LAYER[n]->istileset()) texmem+=LAYER[n]->getterrain()->gettexmem();
 
    return(texmem);
    }
@@ -1285,7 +1318,7 @@ double miniterrain::getcachemem()
 void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,miniv4d &u,miniv4d &v,float alpha)
    {
    if (n>=0 && n<LNUM)
-      if (LAYER[n]->getterrain()!=NULL)
+      if (LAYER[n]->istileset())
          {
          CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
                                    u.x,u.y,u.z,u.w,v.x,v.y,v.z,v.w);

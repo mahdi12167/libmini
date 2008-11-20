@@ -1277,6 +1277,10 @@ void minilayer::display(BOOLINT yes)
       CACHE->display(TERRAIN->getminitile(),VISIBLE);
    }
 
+// check whether or not the layer is a tileset
+BOOLINT minilayer::istileset()
+   {return(TERRAIN!=NULL);}
+
 // check whether or not the layer is displayed
 BOOLINT minilayer::isdisplayed()
    {return(VISIBLE);}

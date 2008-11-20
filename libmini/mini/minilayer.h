@@ -273,6 +273,9 @@ class minilayer
    //! determine whether or not the layer is displayed
    void display(BOOLINT yes=TRUE);
 
+   //! check whether or not the layer is a tileset
+   BOOLINT istileset();
+
    //! check whether or not the layer is displayed
    BOOLINT isdisplayed();
 
