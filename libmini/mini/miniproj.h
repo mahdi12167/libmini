@@ -118,12 +118,31 @@ class miniproj
 
    dynaclip CLIP;
 
-   inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
-   inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
+   void proj(const miniv3d &v1,const double c1,const dynacoord &a1,
+             const miniv3d &v2,const double c2,const dynacoord &a2,
+             const miniv3d &v3,const double c3,const dynacoord &a3,
+             const miniv3d &v4,const double c4,const dynacoord &a4,
+             const unsigned int clipn,
+             const miniv3d &col,
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp);
+
+   void clip(const miniv3d &v1,const double c1,const dynacoord &a1,
+             const miniv3d &v2,const double c2,const dynacoord &a2,
+             const miniv3d &v3,const double c3,const dynacoord &a3,
+             const miniv3d &v4,const double c4,const dynacoord &a4,
+             const unsigned int clipn,
+             const miniv3d &p,const miniv3d &n,
+             const miniv3d &col,
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp);
 
    inline void map(const unsigned int which,
                    const unsigned int maxslots,const minivals vals,
                    dynacoord &a);
+
+   inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
+   inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
 
    virtual void pass(const int idx,const miniv3d &v,const dynacoord &a);
 
@@ -161,12 +180,21 @@ class miniproj
                         const double nearp,
                         const double delta);
 
+   inline void projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                       const miniv3d &v2,const double c2,const dynacoord &a2,
+                       const miniv3d &v3,const double c3,const dynacoord &a3,
+                       const miniv3d &v4,const double c4,const dynacoord &a4,
+                       const miniv3d &col,
+                       const miniv3d &eye,const miniv3d &dir,
+                       const double nearp);
+
    void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,
                 const miniv3d &v3,const double c3,const dynacoord &a3,
                 const miniv3d &v4,const double c4,const dynacoord &a4,
                 const miniv3d &v5,const double c5,const dynacoord &a5,
                 const miniv3d &v6,const double c6,const dynacoord &a6,
+                const unsigned int clipn,
                 const miniv3d &col,
                 const miniv3d &eye,const miniv3d &dir,
                 const double nearp);
@@ -175,6 +203,7 @@ class miniproj
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+               const unsigned int clipn,
                const miniv3d &col,
                const miniv3d &eye,const miniv3d &dir,
                const double nearp);
@@ -183,6 +212,7 @@ class miniproj
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+               const unsigned int clipn,
                const miniv3d &col,
                const miniv3d &eye,const miniv3d &dir,
                const double nearp);
@@ -191,6 +221,7 @@ class miniproj
               const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
               const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
               const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+              const unsigned int clipn,
               const miniv3d &col,
               const miniv3d &eye,const miniv3d &dir,
               const double nearp);

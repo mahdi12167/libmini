@@ -23,6 +23,123 @@ miniproj::miniproj()
 miniproj::~miniproj()
    {deleteprogs();}
 
+// project a tetrahedron
+void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
+                    const miniv3d &v2,const double c2,const dynacoord &a2,
+                    const miniv3d &v3,const double c3,const dynacoord &a3,
+                    const miniv3d &v4,const double c4,const dynacoord &a4,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   if (c1==0.0 && c2==0.0 && c3==0.0 && c4==0.0) return;
+
+   proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,0,col,eye,dir,nearp);
+   }
+
+// clip&project a tetrahedron
+void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
+                    const miniv3d &v2,const double c2,const dynacoord &a2,
+                    const miniv3d &v3,const double c3,const dynacoord &a3,
+                    const miniv3d &v4,const double c4,const dynacoord &a4,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   miniv3d p;
+
+   static const double factor=1.1;
+
+   if (c1==0.0 && c2==0.0 && c3==0.0 && c4==0.0) return;
+
+   p=eye+factor*nearp*dir;
+
+   clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,0,p,dir,col,eye,dir,nearp);
+   }
+
+// map minivals to dynacoord
+void miniproj::map(const unsigned int which,
+                   const unsigned int maxslots,const minivals vals,
+                   dynacoord &a)
+   {
+   unsigned int i;
+
+   unsigned int size;
+   unsigned int slot;
+
+   size=vals.getsize();
+   a.setsize(maxslots);
+
+   for (i=0; i<maxslots; i++) a[i]=miniv3d(0.0);
+
+   // the last element mapping to the same slot takes precedence
+   for (i=0; i<size; i++)
+      {
+      slot=vals[i].slot;
+      if (slot>=maxslots) continue;
+
+      switch (which)
+         {
+         case 1: a[slot]=vals[i].crd1; break;
+         case 2: a[slot]=vals[i].crd2; break;
+         case 3: a[slot]=vals[i].crd3; break;
+         case 4: a[slot]=vals[i].crd4; break;
+         }
+      }
+   }
+
+// project a tetrahedron (minivals version)
+void miniproj::proj(const miniv3d &v1,const double c1,
+                    const miniv3d &v2,const double c2,
+                    const miniv3d &v3,const double c3,
+                    const miniv3d &v4,const double c4,
+                    const unsigned int maxslots,const minivals &vals,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   dynacoord a1,a2,a3,a4;
+
+   map(1,maxslots,vals,a1);
+   map(2,maxslots,vals,a2);
+   map(3,maxslots,vals,a3);
+   map(4,maxslots,vals,a4);
+
+   proj(v1,c1,a1,
+        v2,c2,a2,
+        v3,c3,a3,
+        v4,c4,a4,
+        col,
+        eye,dir,
+        nearp);
+   }
+
+// clip&project a tetrahedron (minivals version)
+void miniproj::clip(const miniv3d &v1,const double c1,
+                    const miniv3d &v2,const double c2,
+                    const miniv3d &v3,const double c3,
+                    const miniv3d &v4,const double c4,
+                    const unsigned int maxslots,const minivals &vals,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   dynacoord a1,a2,a3,a4;
+
+   map(1,maxslots,vals,a1);
+   map(2,maxslots,vals,a2);
+   map(3,maxslots,vals,a3);
+   map(4,maxslots,vals,a4);
+
+   clip(v1,c1,a1,
+        v2,c2,a2,
+        v3,c3,a3,
+        v4,c4,a4,
+        col,
+        eye,dir,
+        nearp);
+   }
+
 // calculate whether or not a triangle is front- or back-facing
 inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e)
    {
@@ -420,17 +537,15 @@ void miniproj::proj4tri(const miniv3d &v1,const double c1,
 
 // project a tetrahedron
 // needs to be in front of the near plane
-void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
-                    const miniv3d &v2,const double c2,const dynacoord &a2,
-                    const miniv3d &v3,const double c3,const dynacoord &a3,
-                    const miniv3d &v4,const double c4,const dynacoord &a4,
-                    const miniv3d &col,
-                    const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
+void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                       const miniv3d &v2,const double c2,const dynacoord &a2,
+                       const miniv3d &v3,const double c3,const dynacoord &a3,
+                       const miniv3d &v4,const double c4,const dynacoord &a4,
+                       const miniv3d &col,
+                       const miniv3d &eye,const miniv3d &dir,
+                       const double nearp)
    {
    int ff;
-
-   if (c1==0.0 && c2==0.0 && c3==0.0 && c4==0.0) return;
 
    color(col.x,col.y,col.z);
 
@@ -463,6 +578,27 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
          }
       }
    else slicetet(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye,dir,nearp,DELTA);
+   }
+
+// project a tetrahedron
+void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
+                    const miniv3d &v2,const double c2,const dynacoord &a2,
+                    const miniv3d &v3,const double c3,const dynacoord &a3,
+                    const miniv3d &v4,const double c4,const dynacoord &a4,
+                    const unsigned int clipn,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp)
+   {
+   unsigned int n;
+
+   for (n=clipn; n<CLIP.getsize(); n++)
+      if (CLIP[n].ENABLED) break;
+
+   if (n<CLIP.getsize())
+      clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp);
+   else
+      projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
 
 // pass coords down to the render pipeline
@@ -620,6 +756,7 @@ void miniproj::projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
                        const miniv3d &v4,const double c4,const dynacoord &a4,
                        const miniv3d &v5,const double c5,const dynacoord &a5,
                        const miniv3d &v6,const double c6,const dynacoord &a6,
+                       const unsigned int clipn,
                        const miniv3d &col,
                        const miniv3d &eye,const miniv3d &dir,
                        const double nearp)
@@ -636,24 +773,24 @@ void miniproj::projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
    switch (ff)
       {
       case 0:
-         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
-         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,col,eye,dir,nearp);
-         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,col,eye,dir,nearp);
+         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp);
+         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,clipn,col,eye,dir,nearp);
+         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,clipn,col,eye,dir,nearp);
          break;
       case 1:
-         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,col,eye,dir,nearp);
-         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,col,eye,dir,nearp);
-         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
+         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,clipn,col,eye,dir,nearp);
+         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,clipn,col,eye,dir,nearp);
+         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp);
          break;
       case 2:
-         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
-         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,col,eye,dir,nearp);
-         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,col,eye,dir,nearp);
+         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp);
+         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,clipn,col,eye,dir,nearp);
+         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,clipn,col,eye,dir,nearp);
          break;
       case 3:
-         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,col,eye,dir,nearp);
-         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,col,eye,dir,nearp);
-         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
+         proj(v2,c2,a2,v3,c3,a3,v4,c4,a4,v5,c5,a5,clipn,col,eye,dir,nearp);
+         proj(v3,c3,a3,v4,c4,a4,v5,c5,a5,v6,c6,a6,clipn,col,eye,dir,nearp);
+         proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp);
          break;
       }
    }
@@ -663,6 +800,7 @@ void miniproj::clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,cons
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                       const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                      const unsigned int clipn,
                       const miniv3d &col,
                       const miniv3d &eye,const miniv3d &dir,
                       const double nearp)
@@ -683,7 +821,7 @@ void miniproj::clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    pc3=(d4*c1+d1*c4)/(d1+d4);
    pa3=(d4*a1+d1*a4)/(d1+d4);
 
-   projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,col,eye,dir,nearp);
+   projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
 // clipping subcase #1B
@@ -691,6 +829,7 @@ void miniproj::clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,cons
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                       const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                      const unsigned int clipn,
                       const miniv3d &col,
                       const miniv3d &eye,const miniv3d &dir,
                       const double nearp)
@@ -711,7 +850,7 @@ void miniproj::clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    pc3=(d4*c1+d1*c4)/(d1+d4);
    pa3=(d4*a1+d1*a4)/(d1+d4);
 
-   proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,col,eye,dir,nearp);
+   proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
 // clipping subcase #2
@@ -719,6 +858,7 @@ void miniproj::clip2(const miniv3d &v1,const double c1,const dynacoord &a1,const
                      const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                      const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                      const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                     const unsigned int clipn,
                      const miniv3d &col,
                      const miniv3d &eye,const miniv3d &dir,
                      const double nearp)
@@ -743,32 +883,28 @@ void miniproj::clip2(const miniv3d &v1,const double c1,const dynacoord &a1,const
    pc4=(d4*c2+d2*c4)/(d2+d4);
    pa4=(d4*a2+d2*a4)/(d2+d4);
 
-   projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,col,eye,dir,nearp);
+   projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,clipn,col,eye,dir,nearp);
    }
 
-// clip&project a tetrahedron
+// clip a tetrahedron
 void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
                     const miniv3d &v2,const double c2,const dynacoord &a2,
                     const miniv3d &v3,const double c3,const dynacoord &a3,
                     const miniv3d &v4,const double c4,const dynacoord &a4,
+                    const unsigned int clipn,
+                    const miniv3d &p,const miniv3d &n,
                     const miniv3d &col,
                     const miniv3d &eye,const miniv3d &dir,
                     const double nearp)
    {
    int ff;
 
-   miniv3d p;
-
    double d1,d2,d3,d4;
 
-   static const double factor=1.1;
-
-   p=eye+factor*nearp*dir;
-
-   d1=dir*(v1-p);
-   d2=dir*(v2-p);
-   d3=dir*(v3-p);
-   d4=dir*(v4-p);
+   d1=n*(v1-p);
+   d2=n*(v2-p);
+   d3=n*(v3-p);
+   d4=n*(v4-p);
 
    ff=0;
 
@@ -782,111 +918,28 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
    switch (ff)
       {
       // no clipping
-      case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp); break;
+      case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp); break;
 
       // one corner needs to be clipped (leaving a prism)
-      case 1: clip1A(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 2: clip1A(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 4: clip1A(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 8: clip1A(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),col,eye,dir,nearp); break;
+      case 1: clip1A(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 2: clip1A(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 4: clip1A(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 8: clip1A(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
 
       // three corners need to be clipped (leaving a tetrahedron)
-      case 14: clip1B(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 13: clip1B(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 11: clip1B(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 7: clip1B(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),col,eye,dir,nearp); break;
+      case 14: clip1B(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 13: clip1B(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 11: clip1B(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 7: clip1B(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
 
       // two corners need to be clipped (leaving a prism)
-      case 3: clip2(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 5: clip2(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 6: clip2(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),col,eye,dir,nearp); break;
-      case 9: clip2(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),col,eye,dir,nearp); break;
-      case 10: clip2(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),col,eye,dir,nearp); break;
-      case 12: clip2(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),col,eye,dir,nearp); break;
+      case 3: clip2(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 5: clip2(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 6: clip2(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
+      case 9: clip2(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
+      case 10: clip2(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
+      case 12: clip2(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp); break;
       }
-   }
-
-// map minivals to dynacoord
-void miniproj::map(const unsigned int which,
-                   const unsigned int maxslots,const minivals vals,
-                   dynacoord &a)
-   {
-   unsigned int i;
-
-   unsigned int size;
-   unsigned int slot;
-
-   size=vals.getsize();
-   a.setsize(maxslots);
-
-   for (i=0; i<maxslots; i++) a[i]=miniv3d(0.0);
-
-   // the last element mapping to the same slot takes precedence
-   for (i=0; i<size; i++)
-      {
-      slot=vals[i].slot;
-      if (slot>=maxslots) continue;
-
-      switch (which)
-         {
-         case 1: a[slot]=vals[i].crd1; break;
-         case 2: a[slot]=vals[i].crd2; break;
-         case 3: a[slot]=vals[i].crd3; break;
-         case 4: a[slot]=vals[i].crd4; break;
-         }
-      }
-   }
-
-// project a tetrahedron (minivals version)
-void miniproj::proj(const miniv3d &v1,const double c1,
-                    const miniv3d &v2,const double c2,
-                    const miniv3d &v3,const double c3,
-                    const miniv3d &v4,const double c4,
-                    const unsigned int maxslots,const minivals &vals,
-                    const miniv3d &col,
-                    const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
-   {
-   dynacoord a1,a2,a3,a4;
-
-   map(1,maxslots,vals,a1);
-   map(2,maxslots,vals,a2);
-   map(3,maxslots,vals,a3);
-   map(4,maxslots,vals,a4);
-
-   proj(v1,c1,a1,
-        v2,c2,a2,
-        v3,c3,a3,
-        v4,c4,a4,
-        col,
-        eye,dir,
-        nearp);
-   }
-
-// clip&project a tetrahedron (minivals version)
-void miniproj::clip(const miniv3d &v1,const double c1,
-                    const miniv3d &v2,const double c2,
-                    const miniv3d &v3,const double c3,
-                    const miniv3d &v4,const double c4,
-                    const unsigned int maxslots,const minivals &vals,
-                    const miniv3d &col,
-                    const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
-   {
-   dynacoord a1,a2,a3,a4;
-
-   map(1,maxslots,vals,a1);
-   map(2,maxslots,vals,a2);
-   map(3,maxslots,vals,a3);
-   map(4,maxslots,vals,a4);
-
-   clip(v1,c1,a1,
-        v2,c2,a2,
-        v3,c3,a3,
-        v4,c4,a4,
-        col,
-        eye,dir,
-        nearp);
    }
 
 // initialize projection state
