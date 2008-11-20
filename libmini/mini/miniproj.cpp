@@ -995,6 +995,20 @@ void miniproj::exitzclip()
    texunit(0);
    }
 
+// add clipping plane
+void miniproj::addclip(int num,const miniv3d &p,const miniv3d &n)
+   {
+   CLIP.setsize(num+1);
+   CLIP[num]=miniprojclip(p,n);
+   }
+
+// delete clipping plane
+void miniproj::delclip(int num)
+   {
+   CLIP.setsize(num+1);
+   CLIP[num]=miniprojclip();
+   }
+
 // vertex and fragment programs:
 
 // enable vertex shader

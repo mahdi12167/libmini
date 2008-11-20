@@ -9,6 +9,23 @@
 #include "minidyna.h"
 #include "minimesh.h"
 
+class miniprojclip
+   {
+   public:
+
+   //! default constructor
+   miniprojclip() {ENABLED=FALSE;}
+
+   //! constructor
+   miniprojclip(const miniv3d &p,const miniv3d &n) {ENABLED=TRUE; P=p; N=n;}
+
+   //! destructor
+   ~miniprojclip() {}
+
+   BOOLINT ENABLED;
+   miniv3d P,N;
+   };
+
 class miniproj
    {
    public:
@@ -21,6 +38,9 @@ class miniproj
 
    // dynamic coordinate array
    typedef minidyna<miniv3d,8> dynacoord;
+
+   // dynamic clip plane array
+   typedef minidyna<miniprojclip,6> dynaclip;
 
    //! initialize projection state
    virtual void initproj(float emi,float rho);
@@ -78,6 +98,12 @@ class miniproj
    //! get z-clipping
    BOOLINT getzclip();
 
+   //! add clipping plane
+   void addclip(int num,const miniv3d &p,const miniv3d &n);
+
+   //! delete clipping plane
+   void delclip(int num);
+
    protected:
 
    float EMI,RHO;
@@ -89,6 +115,8 @@ class miniproj
    float ZNEAR,ZFAR;
    int ZCLIPTEXID;
    int ZTEXID;
+
+   dynaclip CLIP;
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
