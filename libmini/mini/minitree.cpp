@@ -479,6 +479,22 @@ void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
          {
          c=&TREECACHE[1-TREECACHE_NUM];
 
+         if (c->size<c->maxsize/4)
+            {
+            c->maxsize/=2;
+
+            if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            }
+
+         if (c->grass_size<c->grass_maxsize/4)
+            {
+            c->grass_maxsize/=2;
+
+            if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            }
+
          c->size=0;
          c->treecnt=0;
          c->grass_size=0;

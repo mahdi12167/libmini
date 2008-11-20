@@ -372,11 +372,10 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
    miniv4d v1;
 
    TERRAIN_TYPE *t;
-   CACHE_TYPE *c1,*c2;
+   CACHE_TYPE *c;
 
    t=&TERRAIN[CACHE_ID];
-   c1=&t->cache[t->cache_num];
-   c2=&t->cache[1-t->cache_num];
+   c=&t->cache[1-t->cache_num];
 
    t->cache_phase=phase;
 
@@ -384,33 +383,33 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
 
    if (t->cache_phase==0)
       {
+      // shrink back vertex buffer
+      if (c->size<c->maxsize/4)
+         {
+         c->maxsize/=2;
+
+         if ((c->op=(unsigned char *)realloc(c->op,c->maxsize))==NULL) ERRORMSG();
+         if ((c->arg=(float *)realloc(c->arg,3*c->maxsize*sizeof(float)))==NULL) ERRORMSG();
+         }
+
+      // shrink back prism buffer
+      if (c->prism_size<c->prism_maxsize/4)
+         {
+         c->prism_maxsize/=2;
+
+         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         }
+
       // reset size of back buffer
-      c2->size=0;
-      c2->prism_size=0;
+      c->size=0;
+      c->prism_size=0;
 
       // reset counts of back buffer
-      c2->fancnt=0;
-      c2->vtxcnt=0;
+      c->fancnt=0;
+      c->vtxcnt=0;
 
       // swap vertex buffers
       t->cache_num=1-t->cache_num;
-
-      // shrink front vertex buffer
-      if (c1->size<c1->maxsize/4)
-         {
-         c1->maxsize/=2;
-
-         if ((c1->op=(unsigned char *)realloc(c1->op,c1->maxsize))==NULL) ERRORMSG();
-         if ((c1->arg=(float *)realloc(c1->arg,3*c1->maxsize*sizeof(float)))==NULL) ERRORMSG();
-         }
-
-      // shrink front prism buffer
-      if (c1->prism_size<c1->prism_maxsize/4)
-         {
-         c1->prism_maxsize/=2;
-
-         if ((c1->prism_buf=(float *)realloc(c1->prism_buf,4*c1->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
-         }
       }
 
    if (PRISMCACHE_CALLBACK!=NULL) PRISMCACHE_CALLBACK(phase,scale,ex,ey,ez,CALLBACK_DATA);
