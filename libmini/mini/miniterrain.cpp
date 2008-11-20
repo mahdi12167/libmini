@@ -1026,7 +1026,7 @@ int miniterrain::checkpatch(int n)
 
    for (i=0; i<LNUM; i++)
       if (i!=n)
-         if (LAYER[i]->istileset())
+         if (LAYER[i]->isdisplayed())
             if (LAYER[i]->getextent().getlength2()>ext2)
                if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
 
@@ -1089,11 +1089,22 @@ void miniterrain::render_postsea()
          }
    }
 
+// check whether or not a layer is a tileset
+BOOLINT miniterrain::istileset(int n)
+   {
+   if (n>=0 && n<LNUM) return(LAYER[n]->istileset());
+   return(FALSE);
+   }
+
 // determine whether or not a layer is displayed
-void miniterrain::display(int n,BOOLINT yes)
+void miniterrain::display(int n,BOOLINT visible)
    {
    if (n>=0 && n<LNUM)
-      if (LAYER[n]->istileset()) LAYER[n]->display(yes);
+      if (LAYER[n]->istileset())
+         {
+         LAYER[n]->display(visible);
+         check4patches();
+         }
    }
 
 // check whether or not a layer is displayed

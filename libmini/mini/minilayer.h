@@ -270,11 +270,11 @@ class minilayer
    //! generate and cache scene for a particular eye point
    void cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time);
 
-   //! determine whether or not the layer is displayed
-   void display(BOOLINT yes=TRUE);
-
    //! check whether or not the layer is a tileset
    BOOLINT istileset();
+
+   //! determine whether or not the layer is displayed
+   void display(BOOLINT visible=TRUE);
 
    //! check whether or not the layer is displayed
    BOOLINT isdisplayed();

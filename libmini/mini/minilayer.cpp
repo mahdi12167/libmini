@@ -1268,18 +1268,18 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    CACHE->display(TERRAIN->getminitile(),VISIBLE && !isculled());
    }
 
+// check whether or not the layer is a tileset
+BOOLINT minilayer::istileset()
+   {return(TERRAIN!=NULL);}
+
 // determine whether or not the layer is displayed
-void minilayer::display(BOOLINT yes)
+void minilayer::display(BOOLINT visible)
    {
-   VISIBLE=yes;
+   VISIBLE=visible;
 
    if (TERRAIN!=NULL)
       CACHE->display(TERRAIN->getminitile(),VISIBLE);
    }
-
-// check whether or not the layer is a tileset
-BOOLINT minilayer::istileset()
-   {return(TERRAIN!=NULL);}
 
 // check whether or not the layer is displayed
 BOOLINT minilayer::isdisplayed()
