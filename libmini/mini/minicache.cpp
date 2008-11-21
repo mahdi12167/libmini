@@ -993,11 +993,11 @@ void minicache::attach(minitile *terrain,
 
    if (NUMTERRAIN>=MAXTERRAIN)
       {
-      for (id=0; id<NUMTERRAIN; id++) TERRAIN[id].ray->clear();
-
       if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
       for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
       MAXTERRAIN*=2;
+
+      for (id=0; id<NUMTERRAIN; id++) TERRAIN[id].ray->clear();
       }
 
    if (terrain!=NULL)
@@ -1037,8 +1037,6 @@ void minicache::detach(minitile *terrain)
    if (terrain==NULL) ERRORMSG();
 
    id=terrain->getid();
-
-   TERRAIN[id].ray->clear();
 
    TERRAIN[id].tile=NULL;
 
