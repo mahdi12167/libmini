@@ -993,8 +993,9 @@ void minicache::attach(minitile *terrain,
 
    if (NUMTERRAIN>=MAXTERRAIN)
       {
-      if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
       for (id=0; id<NUMTERRAIN; id++) TERRAIN[id].ray->clear();
+
+      if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
       for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
       MAXTERRAIN*=2;
       }
@@ -1031,11 +1032,17 @@ void minicache::attach(minitile *terrain,
 // detach a tileset
 void minicache::detach(minitile *terrain)
    {
+   int id;
+
    if (terrain==NULL) ERRORMSG();
 
-   TERRAIN[terrain->getid()].tile=NULL;
+   id=terrain->getid();
 
-   freeterrain(&TERRAIN[terrain->getid()]);
+   TERRAIN[id].ray->clear();
+
+   TERRAIN[id].tile=NULL;
+
+   freeterrain(&TERRAIN[id]);
    }
 
 // determine whether or not a tileset is displayed
