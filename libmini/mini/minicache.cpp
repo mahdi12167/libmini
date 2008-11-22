@@ -305,14 +305,14 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
             o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
-               t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,0,&s,&o,0,t->tile->getwarp(),CONFIGURE_CALCBOUNDS);
+               t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,
+                                       0,&s,&o,0,t->tile->getwarp(),CONFIGURE_CALCBOUNDS);
             }
 
          if (op==TRIGGER_OP)
             {
-            if (t->cache_phase==0) t->ray->clearbuffer();
+            if (t->cache_phase==0) t->ray->clearandswap();
             else if (t->cache_phase==1) t->first_scale=arg2;
-            else if (t->cache_phase==4) t->ray->swapbuffer();
             }
          else if (op==TEXMAP_OP)
             {

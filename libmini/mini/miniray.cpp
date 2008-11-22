@@ -189,6 +189,13 @@ void miniray::swapbuffer()
    unlock();
    }
 
+// clear and swap back triangle reference buffer
+void miniray::clearandswap()
+   {
+   clearbuffer();
+   swapbuffer();
+   }
+
 // shoot a ray and return the distance to the closest triangle
 double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
    {
