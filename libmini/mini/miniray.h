@@ -41,8 +41,8 @@ class miniray
    //! swap front and back triangle reference buffer
    void swapbuffer();
 
-   //! clear and swap back triangle reference buffer
-   void clearandswap();
+   //! swap and clear back triangle reference buffer
+   void swapandclear();
 
    //! shoot a ray and return the distance to the closest triangle
    //! only the triangles referenced in the front buffer are considered

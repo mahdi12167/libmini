@@ -311,7 +311,7 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
 
          if (op==TRIGGER_OP)
             {
-            if (t->cache_phase==0) t->ray->clearandswap();
+            if (t->cache_phase==0) t->ray->swapandclear();
             else if (t->cache_phase==1) t->first_scale=arg2;
             }
          else if (op==TEXMAP_OP)
