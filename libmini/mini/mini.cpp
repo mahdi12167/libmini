@@ -167,7 +167,7 @@ void calcD2(int mins=2,float avgd2=0.1f)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=avgd2*DH[S-1]*SCALE/(S-1)/D/maxd2;
+   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2*fmax(SCALE,1.0f));
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -199,7 +199,7 @@ void calcD2(int mins=2,float avgd2=0.1f)
                }
 
             // store the local d2-value
-            increase(fc/s/D/maxd2,i,j,s2);
+            increase(fc/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -416,7 +416,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fc*fogatt/s/D/maxd2,i,j,s2);
+            increase(fc*fogatt/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -2471,7 +2471,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2;
+   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
 
    EX=ex-OX;
    EY=ey-OY;
@@ -3167,7 +3167,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2;
+   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
 
    ORTHO=fovy<0.0f;
 
@@ -3505,7 +3505,7 @@ void calcD2(int mins=2,float avgd2=0.1f)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=avgd2*DH[S-1]*SCALE/(S-1)/D/maxd2;
+   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2*fmax(SCALE,1.0f));
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -3537,7 +3537,7 @@ void calcD2(int mins=2,float avgd2=0.1f)
                }
 
             // store the local d2-value
-            increase(fc/s/D/maxd2,i,j,s2);
+            increase(fc/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -3754,7 +3754,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fc*fogatt/s/D/maxd2,i,j,s2);
+            increase(fc*fogatt/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -5809,7 +5809,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2;
+   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
 
    EX=ex-OX;
    EY=ey-OY;
@@ -6505,7 +6505,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2;
+   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
 
    ORTHO=fovy<0.0f;
 

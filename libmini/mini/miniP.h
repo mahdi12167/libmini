@@ -27,7 +27,7 @@ namespace mini {
 #define dcpr(i,j,s2) ((bc[i-s2][j]+(bc[i][j-s2]<<8))/65535.0f)
 
 float minres=9.0f; // minimum resolution
-float maxd2=200.0f; // maximum d2-value
+float maxd2=100.0f; // maximum d2-value
 float sead2=0.1f; // sea level d2-value
 float minoff=0.1f; // minimum base offset
 int maxcull=8; // maximum culling depth
@@ -118,7 +118,7 @@ namespace Mini {
 #define dcpr(i,j,s2) ((bc[i-s2][j]+(bc[i][j-s2]<<8))/65535.0f)
 
 float minres=9.0f; // minimum resolution
-float maxd2=200.0f; // maximum d2-value
+float maxd2=100.0f; // maximum d2-value
 float sead2=0.1f; // sea level d2-value
 float minoff=0.1f; // minimum base offset
 int maxcull=8; // maximum culling depth
