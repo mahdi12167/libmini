@@ -61,7 +61,8 @@ class miniproj
              const miniv3d &v4,const double c4,const dynacoord &a4,
              const miniv3d &col,
              const miniv3d &eye,const miniv3d &dir,
-             const double nearp);
+             const double nearp,
+             const double clipf=0.0);
 
    //! project a tetrahedron (minivals version)
    void proj(const miniv3d &v1,const double c1,
@@ -81,7 +82,8 @@ class miniproj
              const unsigned int maxslots,const minivals &vals,
              const miniv3d &col,
              const miniv3d &eye,const miniv3d &dir,
-             const double nearp);
+             const double nearp,
+             const double clipf=0.0);
 
    //! de-initialize projection state
    virtual void exitproj();

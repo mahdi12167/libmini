@@ -44,13 +44,16 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
                     const miniv3d &v4,const double c4,const dynacoord &a4,
                     const miniv3d &col,
                     const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
+                    const double nearp,
+                    const double clipf)
    {
    miniv3d p;
 
-   static const double factor=1.1;
+   double factor=1.1;
 
    if (c1==0.0 && c2==0.0 && c3==0.0 && c4==0.0) return;
+
+   if (clipf>1.0) factor=clipf;
 
    p=eye+factor*nearp*dir;
 
@@ -122,7 +125,8 @@ void miniproj::clip(const miniv3d &v1,const double c1,
                     const unsigned int maxslots,const minivals &vals,
                     const miniv3d &col,
                     const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
+                    const double nearp,
+                    const double clipf)
    {
    dynacoord a1,a2,a3,a4;
 
@@ -137,7 +141,8 @@ void miniproj::clip(const miniv3d &v1,const double c1,
         v4,c4,a4,
         col,
         eye,dir,
-        nearp);
+        nearp,
+        clipf);
    }
 
 // calculate whether or not a triangle is front- or back-facing
