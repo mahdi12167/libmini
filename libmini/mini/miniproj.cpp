@@ -13,6 +13,9 @@ miniproj::miniproj()
    PROJMODE=TRUE;
    DELTA=0.0f;
 
+   PLANEMODE=FALSE;
+   PLANEPNT=PLANENRM=miniv3d(0.0);
+
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
 
@@ -689,6 +692,40 @@ void miniproj::slice2tri(const miniv3d &v1,const double c1,const dynacoord &a1,c
    endfans();
    }
 
+// extract slice from tetrahedron
+void miniproj::slicetri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                        const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                        const double delta)
+   {
+   int ff;
+
+   ff=0;
+
+   if (d1<0.0) ff|=1;
+   if (d2<0.0) ff|=2;
+   if (d3<0.0) ff|=4;
+   if (d4<0.0) ff|=8;
+
+   switch (ff)
+      {
+      // 1 triangle
+      case 1: case 14: slice1tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
+      case 2: case 13: slice1tri(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
+      case 4: case 11: slice1tri(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
+      case 8: case 7: slice1tri(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
+
+      // 2 triangles
+      case 3: slice2tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
+      case 5: slice2tri(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
+      case 6: slice2tri(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),delta); break;
+      case 9: slice2tri(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
+      case 10: slice2tri(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),delta); break;
+      case 12: slice2tri(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),delta); break;
+      }
+   }
+
 // slice tetrahedron from back to front
 void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const miniv3d &v2,const double c2,const dynacoord &a2,
@@ -698,58 +735,51 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const double nearp,
                         const double delta)
    {
-   int ff;
-
    double d1,d2,d3,d4;
-   double dmin,dmax,dsnap;
+   double dmin,dmax;
+   double dsnap;
 
-   d1=(v1-eye)*dir;
-   d2=(v2-eye)*dir;
-   d3=(v3-eye)*dir;
-   d4=(v4-eye)*dir;
-
-   dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-   dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
-
-   dsnap=(floor((dmax-nearp)/delta)+0.5)*delta+nearp;
-
-   d1-=dsnap;
-   d2-=dsnap;
-   d3-=dsnap;
-   d4-=dsnap;
-
-   while (dsnap>dmin && dsnap>nearp)
+   if (PLANEMODE)
       {
-      ff=0;
+      d1=(v1-PLANEPNT)*PLANENRM;
+      d2=(v2-PLANEPNT)*PLANENRM;
+      d3=(v3-PLANEPNT)*PLANENRM;
+      d4=(v4-PLANEPNT)*PLANENRM;
 
-      if (d1<0.0) ff|=1;
-      if (d2<0.0) ff|=2;
-      if (d3<0.0) ff|=4;
-      if (d4<0.0) ff|=8;
+      dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
+      dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
 
-      switch (ff)
+      if (dmin<0.0 && dmax>0.0)
+         slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
+      }
+   else
+      {
+      d1=(v1-eye)*dir;
+      d2=(v2-eye)*dir;
+      d3=(v3-eye)*dir;
+      d4=(v4-eye)*dir;
+
+      dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
+      dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
+
+      dsnap=(floor((dmax-nearp)/delta)+0.5)*delta+nearp;
+
+      d1-=dsnap;
+      d2-=dsnap;
+      d3-=dsnap;
+      d4-=dsnap;
+
+      while (dsnap>dmin && dsnap>nearp)
          {
-         // 1 triangle
-         case 1: case 14: slice1tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-         case 2: case 13: slice1tri(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-         case 4: case 11: slice1tri(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
-         case 8: case 7: slice1tri(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
+         slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
 
-         // 2 triangles
-         case 3: slice2tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-         case 5: slice2tri(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
-         case 6: slice2tri(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),delta); break;
-         case 9: slice2tri(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
-         case 10: slice2tri(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),delta); break;
-         case 12: slice2tri(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),delta); break;
+         d1+=delta;
+         d2+=delta;
+         d3+=delta;
+         d4+=delta;
+
+         dsnap-=delta;
          }
-
-      d1+=delta;
-      d2+=delta;
-      d3+=delta;
-      d4+=delta;
-
-      dsnap-=delta;
       }
    }
 
@@ -996,6 +1026,16 @@ void miniproj::setproj(float delta)
    else PROJMODE=TRUE;
 
    DELTA=delta;
+   }
+
+// enable cutting plane mode
+void miniproj::setplane(BOOLINT plane,
+                        const miniv3d &p,const miniv3d &n)
+   {
+   PLANEMODE=plane;
+
+   PLANEPNT=p;
+   PLANENRM=n;
    }
 
 // get projection mode

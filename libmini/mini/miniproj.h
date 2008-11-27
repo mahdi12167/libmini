@@ -91,6 +91,10 @@ class miniproj
    //! enable projection mode
    void setproj(float delta=0.0f);
 
+   //! enable cutting plane mode
+   void setplane(BOOLINT plane,
+                 const miniv3d &p=miniv3d(0.0),const miniv3d &n=miniv3d(0.0));
+
    //! get projection mode
    BOOLINT getproj();
 
@@ -112,6 +116,9 @@ class miniproj
 
    BOOLINT PROJMODE;
    float DELTA;
+
+   BOOLINT PLANEMODE;
+   miniv3d PLANEPNT,PLANENRM;
 
    BOOLINT ZCLIP;
    float ZNEAR,ZFAR;
@@ -173,6 +180,12 @@ class miniproj
                          const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                          const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
                          const double delta);
+
+   inline void slicetri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                        const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                        const double delta);
 
    inline void slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const miniv3d &v2,const double c2,const dynacoord &a2,
