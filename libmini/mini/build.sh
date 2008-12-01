@@ -115,7 +115,7 @@ foreach option ("$option0" "$option1" "$option2" "$option3" "$option4" "$option5
       set usegreyc
    endif
    if ("$option" == "wall") then
-      set defs="$defs -Wall -Wextra"
+      set defs="$defs -Wuninitialized -Wunused -Wtype-limits -Wsign-compare -Wformat"
    endif
 end
 
