@@ -33,8 +33,8 @@ class minimpfp_base
    static BOOLINT MINIMPFP_DIVBYZERO;
    static BOOLINT MINIMPFP_OVERFLOW;
 
-   static const unsigned int getbits() {return(64);}
-   static const double getlimit() {return((double)(1ll<<32));}
+   static unsigned int getbits() {return(64);}
+   static double getlimit() {return((double)(1ll<<32));}
 
    static const minimpfp_base zero() {return(minimpfp_base(0,0));}
    static const minimpfp_base one() {return(minimpfp_base(1,0));}
@@ -42,8 +42,8 @@ class minimpfp_base
    static const minimpfp_base min() {return(minimpfp_base(0,1));}
    static const minimpfp_base max() {return(minimpfp_base(0xFFFFFFFF,0xFFFFFFFF));}
 
-   const unsigned int getmag() const {return(V>>32);}
-   const unsigned int getfrc() const {return(V);}
+   unsigned int getmag() const {return(V>>32);}
+   unsigned int getfrc() const {return(V);}
 
    void set(const double v) {V=(unsigned long long int)floor(v*(1ll<<32)+0.5);}
    double get() const {return(V*(1.0/(double)(1ll<<32)));}
@@ -203,8 +203,8 @@ class minimpfp
    //! destructor
    ~minimpfp() {}
 
-   static const unsigned int getbits() {return(2*N::getbits());}
-   static const double getlimit() {return(N::getlimit()*N::getlimit());}
+   static unsigned int getbits() {return(2*N::getbits());}
+   static double getlimit() {return(N::getlimit()*N::getlimit());}
 
    static const minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
    static const minimpfp one() {return(minimpfp(N::min(),N::zero()));}

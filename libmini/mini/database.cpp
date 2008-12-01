@@ -1563,7 +1563,8 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    char *str;
 
-   int msb;
+   int msb=1;
+
    float lon,lat,zorig;
    float xspace,yspace,zspace;
    float days,seconds,tstep;
