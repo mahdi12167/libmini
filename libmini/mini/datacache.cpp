@@ -799,7 +799,7 @@ void datacache::load(BOOLINT reset)
 
       name[c]='\0';
 
-      fscanf(file,"%d %d %d %d %g %g %d %d\n",&v1,&v2,&v3,&v4,&minvalue,&maxvalue,&width,&height);
+      if (fscanf(file,"%d %d %d %d %g %g %d %d\n",&v1,&v2,&v3,&v4,&minvalue,&maxvalue,&width,&height)!=8) ERRORMSG();
 
       ch=getc(file);
 

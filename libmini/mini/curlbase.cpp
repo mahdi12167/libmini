@@ -155,7 +155,7 @@ void curlbase::getURL_safe(const char *src_url,const char *src_id,const char *sr
       FILE *file;
 
       if ((file=fopen(dst_file,"wb"))==NULL) exit(1);
-      fwrite(chunk.memory,1,chunk.size,file);
+      if (fwrite(chunk.memory,chunk.size,1,file)!=1) exit(1);
       fclose(file);
 
       free(chunk.memory);

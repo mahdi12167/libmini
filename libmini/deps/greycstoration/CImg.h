@@ -4507,7 +4507,7 @@ namespace cimg_library {
         CloseHandle(pi.hProcess);
       } else
 #endif
-      std::system(command);
+      if (std::system(command)<0) exit(1);
       command = module_name = 0;
     }
 
