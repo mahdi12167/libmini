@@ -7,7 +7,7 @@ ENDIF (NOT LIBMINI_PATH)
 
 # Unix compiler definitions
 IF (UNIX)
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -finline-functions -Wuninitialized -Wunused -Wsign-compare -Wformat")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -finline-functions -Wall -Wno-parentheses")
 ENDIF (UNIX)
 
 # Windows compiler definitions
