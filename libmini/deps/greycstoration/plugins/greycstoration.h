@@ -1,7 +1,7 @@
 /*
   #
   #  File        : greycstoration.h
-  #                ( C++ header file )
+  #                ( C++ header file - CImg plug-in )
   #
   #  Description : GREYCstoration plug-in allowing easy integration in
   #                third parties softwares.
@@ -390,58 +390,58 @@ static void* greycstoration_thread(void *arg) {
       const unsigned int b = p.tile_border;
       unsigned int ctile = 0;
       if (threed) {
-        for (unsigned int z=0; z<source.depth && !*(p.stop_request); z+=p.tile)
-          for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
-            for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
-              if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
-                const unsigned int
-                  x1 = x+p.tile-1,
-                  y1 = y+p.tile-1,
-                  z1 = z+p.tile-1,
-                  xe = x1<source.width?x1:source.width-1,
-                  ye = y1<source.height?y1:source.height-1,
-                  ze = z1<source.depth?z1:source.depth-1;
-                CImg<T> img = source.get_crop(x-b,y-b,z-b,xe+b,ye+b,ze+b,true);
-                CImg<unsigned char> mask_tile = mask.is_empty()?mask:mask.get_crop(x-b,y-b,z-b,xe+b,ye+b,ze+b,true);
+    for (unsigned int z=0; z<source.depth && !*(p.stop_request); z+=p.tile)
+      for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
+        for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
+          if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
+        const unsigned int
+          x1 = x+p.tile-1,
+          y1 = y+p.tile-1,
+          z1 = z+p.tile-1,
+          xe = x1<source.width?x1:source.width-1,
+          ye = y1<source.height?y1:source.height-1,
+          ze = z1<source.depth?z1:source.depth-1;
+        CImg<T> img = source.get_crop(x-b,y-b,z-b,xe+b,ye+b,ze+b,true);
+        CImg<unsigned char> mask_tile = mask.is_empty()?mask:mask.get_crop(x-b,y-b,z-b,xe+b,ye+b,ze+b,true);
                 img.greycstoration_params[0] = p;
                 greycstoration_mutex_unlock(p);
-                if (p.patch_based) img.blur_patch(p.patch_size,p.sigma_p,p.sigma_s,p.lookup_size,p.fast_approx);
+        if (p.patch_based) img.blur_patch(p.patch_size,p.sigma_p,p.sigma_s,p.lookup_size,p.fast_approx);
                 else img.blur_anisotropic(mask_tile,p.amplitude,p.sharpness,p.anisotropy,
                                           p.alpha,p.sigma,p.dl,p.da,p.gauss_prec,p.interpolation,p.fast_approx,p.gfact);
                 greycstoration_mutex_lock(p);
-                temporary.draw_image(img.crop(b,b,b,img.width-b,img.height-b,img.depth-b),x,y,z);
-              }
+        temporary.draw_image(x,y,z,img.crop(b,b,b,img.width-b,img.height-b,img.depth-b));
+          }
       } else {
-        for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
-          for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
-            if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
-              const unsigned int
-                x1 = x+p.tile-1,
-                y1 = y+p.tile-1,
-                xe = x1<source.width?x1:source.width-1,
-                ye = y1<source.height?y1:source.height-1;
-              CImg<T> img = source.get_crop(x-b,y-b,xe+b,ye+b,true);
-              CImg<unsigned char> mask_tile = mask.is_empty()?mask:mask.get_crop(x-b,y-b,xe+b,ye+b,true);
+    for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
+      for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
+        if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
+          const unsigned int
+        x1 = x+p.tile-1,
+        y1 = y+p.tile-1,
+        xe = x1<source.width?x1:source.width-1,
+        ye = y1<source.height?y1:source.height-1;
+          CImg<T> img = source.get_crop(x-b,y-b,xe+b,ye+b,true);
+          CImg<unsigned char> mask_tile = mask.is_empty()?mask:mask.get_crop(x-b,y-b,xe+b,ye+b,true);
               img.greycstoration_params[0] = p;
               greycstoration_mutex_unlock(p);
               if (p.patch_based) img.blur_patch(p.patch_size,p.sigma_p,p.sigma_s,p.lookup_size,p.fast_approx);
-              else img.blur_anisotropic(mask_tile,p.amplitude,p.sharpness,p.anisotropy,
+          else img.blur_anisotropic(mask_tile,p.amplitude,p.sharpness,p.anisotropy,
                                         p.alpha,p.sigma,p.dl,p.da,p.gauss_prec,p.interpolation,p.fast_approx,p.gfact);
-              temporary.draw_image(img.crop(b,b,img.width-b,img.height-b),x,y);
+          temporary.draw_image(x,y,img.crop(b,b,img.width-b,img.height-b));
               greycstoration_mutex_lock(p);
-            }
+        }
       }
     }
     greycstoration_mutex_unlock(p);
 
     if (!p.thread) {
       if (p.nb_threads>1) {
-        bool stopflag = true;
-        do {
-          stopflag = true;
-          for (unsigned int k=1; k<p.nb_threads; k++) if (source.greycstoration_params[k].is_running) stopflag = false;
-          if (!stopflag) cimg::wait(50);
-        } while (!stopflag);
+    bool stopflag = true;
+    do {
+      stopflag = true;
+      for (unsigned int k=1; k<p.nb_threads; k++) if (source.greycstoration_params[k].is_running) stopflag = false;
+      if (!stopflag) cimg::wait(50);
+    } while (!stopflag);
       }
       if (p.counter) delete p.counter;
       if (p.temporary) { source = *(p.temporary); delete p.temporary; }
