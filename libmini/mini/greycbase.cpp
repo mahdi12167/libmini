@@ -6,7 +6,7 @@
 
 #ifdef USEGREYC
 
-#define cimg_display_type 0
+#define cimg_display 0
 #define cimg_plugin "plugins/greycstoration.h"
 #include "CImg.h"
 using namespace cimg_library;
