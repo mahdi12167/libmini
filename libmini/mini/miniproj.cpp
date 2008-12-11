@@ -749,7 +749,7 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
       dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
       dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
 
-      if (dmin<0.0 && dmax>0.0)
+      if (dmin<=0.0 && dmax>=0.0)
          slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
       }
    else
@@ -769,7 +769,7 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
       d3-=dsnap;
       d4-=dsnap;
 
-      while (dsnap>dmin && dsnap>nearp)
+      while (dsnap>=dmin && dsnap>nearp)
          {
          slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
 
@@ -1028,6 +1028,10 @@ void miniproj::setproj(float delta)
    DELTA=delta;
    }
 
+// get projection mode
+BOOLINT miniproj::getproj()
+   {return(PROJMODE);}
+
 // enable cutting plane mode
 void miniproj::setplane(BOOLINT plane,
                         const miniv3d &p,const miniv3d &n)
@@ -1037,10 +1041,6 @@ void miniproj::setplane(BOOLINT plane,
    PLANEPNT=p;
    PLANENRM=n;
    }
-
-// get projection mode
-BOOLINT miniproj::getproj()
-   {return(PROJMODE);}
 
 // enable z-clipping
 void miniproj::setzclip(float nearp,float farp,int zcliptexid)

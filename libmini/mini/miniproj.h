@@ -91,12 +91,12 @@ class miniproj
    //! enable projection mode
    void setproj(float delta=0.0f);
 
+   //! get projection mode
+   BOOLINT getproj();
+
    //! enable cutting plane mode
    void setplane(BOOLINT plane,
                  const miniv3d &p=miniv3d(0.0),const miniv3d &n=miniv3d(0.0));
-
-   //! get projection mode
-   BOOLINT getproj();
 
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
