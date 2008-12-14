@@ -71,7 +71,7 @@ depend:
 vdepend: depend
 	@-$(MAKEDEPEND) $(OPTS) -I.. $(VSRCS) >>$(MMFILE).d 2>/dev/null
 
-install: lib libsfx
+install:
 	@-echo "copying libraries to $(INSTALL)/lib"
 	@-if [ ! -e $(INSTALL)/lib ]; then mkdir -p $(INSTALL)/lib; fi
 	@-$(CP) libMini*.a $(INSTALL)/lib
