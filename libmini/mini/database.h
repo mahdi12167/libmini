@@ -31,7 +31,8 @@ class databuf
       {
       DATABUF_CRS_LINEAR=0,
       DATABUF_CRS_LLH=1,
-      DATABUF_CRS_UTM=2
+      DATABUF_CRS_UTM=2,
+      DATABUF_CRS_MERC=3
       };
 
    enum DATABUF_EXTFMT
