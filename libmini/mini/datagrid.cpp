@@ -319,6 +319,7 @@ minimesh datagrid::decompose(unsigned int idx)
       crs=minicoord::MINICOORD_LINEAR;
       if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
       else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
+      else if (DATA[idx].crs==databuf::DATABUF_CRS_MERC) crs=minicoord::MINICOORD_MERC;
 
       // determine clipped data coordinates of actual object:
 
