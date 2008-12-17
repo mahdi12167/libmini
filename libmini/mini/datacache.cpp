@@ -71,10 +71,9 @@ datacache::datacache(miniload *terrain)
    ELEVINI_MAXDEMSIZE=0;
    ELEVINI_MINELEV=0.0f;
    ELEVINI_MAXELEV=0.0f;
-   ELEVINI_COORDSYS_LL=0;
-   ELEVINI_COORDSYS_LLDATUM=0;
+   ELEVINI_COORDSYS=0;
+   ELEVINI_COORDSYS_DATUM=0;
    ELEVINI_COORDSYS_UTMZONE=0;
-   ELEVINI_COORDSYS_UTMDATUM=0;
 
    HAS_IMAGINI=HAS_IMAGINI_GEO=HAS_IMAGINI_COORDSYS=FALSE;
 
@@ -89,10 +88,9 @@ datacache::datacache(miniload *terrain)
    IMAGINI_SIZEX=0.0f;
    IMAGINI_SIZEY=0.0f;
    IMAGINI_MAXTEXSIZE=0;
-   IMAGINI_COORDSYS_LL=0;
-   IMAGINI_COORDSYS_LLDATUM=0;
+   IMAGINI_COORDSYS=0;
+   IMAGINI_COORDSYS_DATUM=0;
    IMAGINI_COORDSYS_UTMZONE=0;
-   IMAGINI_COORDSYS_UTMDATUM=0;
 
    CONFIGURE_DONTFREE=0;
    CONFIGURE_LOCTHREADS=1;
@@ -546,11 +544,8 @@ void datacache::loadvtbelevini()
             {
             HAS_ELEVINI_COORDSYS=TRUE;
 
-            // read LL coord sys info
-            if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&ELEVINI_COORDSYS_LL,&ELEVINI_COORDSYS_LLDATUM)!=2) HAS_ELEVINI_COORDSYS=FALSE;
-
-            // read UTM coord sys info
-            if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&ELEVINI_COORDSYS_UTMZONE,&ELEVINI_COORDSYS_UTMDATUM)!=2) HAS_ELEVINI_COORDSYS=FALSE;
+            // read coord sys info
+            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&ELEVINI_COORDSYS,&ELEVINI_COORDSYS_DATUM,&ELEVINI_COORDSYS_UTMZONE)!=3) HAS_ELEVINI_COORDSYS=FALSE;
             }
          }
 
@@ -685,11 +680,8 @@ void datacache::loadvtbimagini()
             {
             HAS_IMAGINI_COORDSYS=TRUE;
 
-            // read LL coord sys info
-            if (fscanf(file,"CoordSys_LL=(%d,%d)\n",&IMAGINI_COORDSYS_LL,&IMAGINI_COORDSYS_LLDATUM)!=2) HAS_IMAGINI_COORDSYS=FALSE;
-
-            // read UTM coord sys info
-            if (fscanf(file,"CoordSys_UTM=(%d,%d)\n",&IMAGINI_COORDSYS_UTMZONE,&IMAGINI_COORDSYS_UTMDATUM)!=2) HAS_IMAGINI_COORDSYS=FALSE;
+            // read coord sys info
+            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&IMAGINI_COORDSYS,&IMAGINI_COORDSYS_DATUM,&IMAGINI_COORDSYS_UTMZONE)!=3) HAS_IMAGINI_COORDSYS=FALSE;
             }
          }
 

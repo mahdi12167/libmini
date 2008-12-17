@@ -556,10 +556,10 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
          if (TILECACHE->haselevini_coordsys())
             {
-            if (TILECACHE->getelevini_coordsys_ll()!=0)
+            if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_LLH)
                {
-               if (TILECACHE->getelevini_coordsys_lldatum()!=3 && // WGS84 support only
-                   TILECACHE->getelevini_coordsys_lldatum()!=4) ERRORMSG(); // treat NAD83 as WGS84
+               if (TILECACHE->getelevini_coordsys_datum()!=3 && // WGS84 support only
+                   TILECACHE->getelevini_coordsys_datum()!=4) ERRORMSG(); // treat NAD83 as WGS84
 
                // get original data coordinates as LL
                LPARAMS.offsetDAT=minicoord(miniv3d(3600.0*TILECACHE->getelevini_centerx(),3600.0*TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LLH);
@@ -573,11 +573,17 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                LPARAMS.stretchx=as2m[0];
                LPARAMS.stretchy=as2m[1];
                }
-            else if (TILECACHE->getelevini_coordsys_utmzone()!=0)
+            else if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_UTM)
                {
                // get original data coordinates as UTM
-               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
-               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_utmdatum());
+               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_datum());
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_UTM,TILECACHE->getelevini_coordsys_utmzone(),TILECACHE->getelevini_coordsys_datum());
+               }
+            else if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_MERC)
+               {
+               // get original data coordinates as Mercator
+               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_MERC);
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_MERC);
                }
             }
          }
