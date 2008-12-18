@@ -22,6 +22,7 @@ unsigned int datafill::fillin_by_regiongrowing(int radius_stop,int radius_start)
 // replaces no-data values by repeated region growing
 // smoothly extrapolates the filled-in value via partial derivatives
 // restricts the fill-in operation to concavities with a diameter of less than radius^2+1 pixels
+// a radius of zero will fill-in all no-data values
 unsigned int datafill::fillin(int radius)
    {
    unsigned int count;
@@ -50,6 +51,7 @@ unsigned int datafill::fillin(int radius)
 
    count=0;
 
+   // check for no-data values
    if (checknodata()!=0)
       {
       // copy working buffer
@@ -61,7 +63,7 @@ unsigned int datafill::fillin(int radius)
 
       // calculate foot print size
       size=2*radius+1;
-      if (size<3) size=3;
+      if (size<1) size=1;
 
       done=FALSE;
 
@@ -98,75 +100,84 @@ unsigned int datafill::fillin(int radius)
          // calculate growing threshold
          thres=(sizex*sizey*sizez+1)/2;
 
-         // clear counting buffer
-         cnt.clear();
+         // count no-data values if growing threshold is greater than one
+         if (thres>1)
+            {
+            // clear counting buffer
+            cnt.clear();
 
-         // search for no-data values
-         for (t=0; t<(int)tsteps; t++)
-            for (i=0; i<(int)xsize; i++)
-               for (j=0; j<(int)ysize; j++)
-                  for (k=0; k<(int)zsize; k++)
-                     if (getval(i,j,k,t)!=nodata) cnt.setval(i,j,k,t,1);
-
-         // accumulate no-data values in x-direction
-         if (xsize>1)
-            for (t=0; t<(int)tsteps; t++)
-               for (j=0; j<(int)ysize; j++)
-                  for (k=0; k<(int)zsize; k++)
-                     {
-                     cells=0;
-
-                     for (i=-sizex/2; i<(int)xsize; i++)
-                        {
-                        if (i-sizex/2-1>=0) cells-=ftrc(cnt.getval(i-sizex/2-1,j,k,t)+0.5f);
-                        if (i+sizex/2<(int)xsize) cells+=ftrc(cnt.getval(i+sizex/2,j,k,t)+0.5f);
-
-                        if (i>=0) tmp.setval(i,j,k,t,cells);
-                        }
-                     }
-
-         // copy counting buffer back
-         cnt.copy(&tmp);
-
-         // accumulate no-data values in y-direction
-         if (ysize>1)
-            for (t=0; t<(int)tsteps; t++)
-               for (i=0; i<(int)xsize; i++)
-                  for (k=0; k<(int)zsize; k++)
-                     {
-                     cells=0;
-
-                     for (j=-sizey/2; j<(int)ysize; j++)
-                        {
-                        if (j-sizey/2-1>=0) cells-=ftrc(cnt.getval(i,j-sizey/2-1,k,t)+0.5f);
-                        if (j+sizey/2<(int)ysize) cells+=ftrc(cnt.getval(i,j+sizey/2,k,t)+0.5f);
-
-                        if (j>=0) tmp.setval(i,j,k,t,cells);
-                        }
-                     }
-
-         // copy counting buffer back
-         cnt.copy(&tmp);
-
-         // accumulate no-data values in z-direction
-         if (zsize>1)
+            // search for no-data values
             for (t=0; t<(int)tsteps; t++)
                for (i=0; i<(int)xsize; i++)
                   for (j=0; j<(int)ysize; j++)
-                     {
-                     cells=0;
+                     for (k=0; k<(int)zsize; k++)
+                        if (getval(i,j,k,t)!=nodata) cnt.setval(i,j,k,t,1);
 
-                     for (k=-sizez/2; k<(int)zsize; k++)
+            // accumulate no-data values in x-direction
+            if (xsize>1)
+               for (t=0; t<(int)tsteps; t++)
+                  for (j=0; j<(int)ysize; j++)
+                     for (k=0; k<(int)zsize; k++)
                         {
-                        if (k-sizez/2-1>=0) cells-=ftrc(cnt.getval(i,j,k-sizez/2-1,t)+0.5f);
-                        if (k+sizez/2<(int)zsize) cells+=ftrc(cnt.getval(i,j,k+sizez/2,t)+0.5f);
+                        cells=0;
 
-                        if (k>=0) tmp.setval(i,j,k,t,cells);
+                        for (i=-sizex/2; i<(int)xsize; i++)
+                           {
+                           if (i-sizex/2-1>=0) cells-=ftrc(cnt.getval(i-sizex/2-1,j,k,t)+0.5f);
+                           if (i+sizex/2<(int)xsize) cells+=ftrc(cnt.getval(i+sizex/2,j,k,t)+0.5f);
+
+                           if (i>=0) tmp.setval(i,j,k,t,cells);
+                           }
                         }
-                     }
 
-         // copy counting buffer back
-         cnt.copy(&tmp);
+            // copy counting buffer back
+            cnt.copy(&tmp);
+
+            // accumulate no-data values in y-direction
+            if (ysize>1)
+               for (t=0; t<(int)tsteps; t++)
+                  for (i=0; i<(int)xsize; i++)
+                     for (k=0; k<(int)zsize; k++)
+                        {
+                        cells=0;
+
+                        for (j=-sizey/2; j<(int)ysize; j++)
+                           {
+                           if (j-sizey/2-1>=0) cells-=ftrc(cnt.getval(i,j-sizey/2-1,k,t)+0.5f);
+                           if (j+sizey/2<(int)ysize) cells+=ftrc(cnt.getval(i,j+sizey/2,k,t)+0.5f);
+
+                           if (j>=0) tmp.setval(i,j,k,t,cells);
+                           }
+                        }
+
+            // copy counting buffer back
+            cnt.copy(&tmp);
+
+            // accumulate no-data values in z-direction
+            if (zsize>1)
+               for (t=0; t<(int)tsteps; t++)
+                  for (i=0; i<(int)xsize; i++)
+                     for (j=0; j<(int)ysize; j++)
+                        {
+                        cells=0;
+
+                        for (k=-sizez/2; k<(int)zsize; k++)
+                           {
+                           if (k-sizez/2-1>=0) cells-=ftrc(cnt.getval(i,j,k-sizez/2-1,t)+0.5f);
+                           if (k+sizez/2<(int)zsize) cells+=ftrc(cnt.getval(i,j,k+sizez/2,t)+0.5f);
+
+                           if (k>=0) tmp.setval(i,j,k,t,cells);
+                           }
+                        }
+
+            // copy counting buffer back
+            cnt.copy(&tmp);
+            }
+         else
+            {
+            // clear counting buffer
+            cnt.clear(1.0f);
+            }
 
          // search for no-data values
          for (t=0; t<(int)tsteps; t++)
