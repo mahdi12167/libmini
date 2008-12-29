@@ -1,4 +1,5 @@
 # cmake build file for libMini
+# (c) by Stefan Roettger
 #
 # usage:
 #

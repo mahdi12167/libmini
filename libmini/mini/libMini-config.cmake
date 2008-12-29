@@ -1,4 +1,5 @@
 # cmake build configuration for libMini
+# (c) by Stefan Roettger
 
 # path to libMini
 IF (NOT LIBMINI_PATH)

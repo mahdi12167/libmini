@@ -1,5 +1,8 @@
 #!/bin/tcsh -f
 
+# unix build script
+# (c) by Stefan Roettger
+
 #usage: build.sh [rule {option}]
 
 # available rules:

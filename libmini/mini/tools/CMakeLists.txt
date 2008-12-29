@@ -1,4 +1,5 @@
 # cmake build file for libMini tools
+# (c) by Stefan Roettger
 
 PROJECT(${PROJECT_NAME}_tools)
 

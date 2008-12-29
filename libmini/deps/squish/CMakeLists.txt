@@ -1,8 +1,13 @@
 # cmake build file for squish
+# (c) by Stefan Roettger
 
 PROJECT(squish)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+
+IF (UNIX)
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O")
+ENDIF (UNIX)
 
 SET(SQUISH_HDRS
   squish.h
