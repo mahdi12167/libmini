@@ -14,7 +14,16 @@ Then the libMini viewer additionally requires the dependencies GLUT/freeGLUT squ
 These dependencies can be built from the respective source code package in the deps folder.
 For Windows, prebuilt static libaries are available in the WIN32 folder.
 
-The libMini dependencies are available here:
+Some notes about copyright and licensing:
+
+1) The libMini library in the mini folder is copyright by Stefan Roettger.
+   It is licensed under the terms of the LGPL as stated in the corresponding README.
+2) For convenience purposes, the deps folder contains external source code which libMini depends on.
+   The source code of those dependencies is merely provided as a redistribution of the original code.
+   Therefore, the original copyright and licensing terms of the dependencies remain unchanged.
+3) The libMini demos have there own licensing terms.
+
+The original libMini dependencies are available here:
 
 pthreads-win32: http://sourceware.org/pthreads-win32
 openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
