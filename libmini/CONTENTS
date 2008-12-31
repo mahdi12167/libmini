@@ -8,7 +8,7 @@ data: hires data as a replacement for the lores data in mini/data
 WIN32: prebuilt static Windows dependencies
 WIN32.exe: prebuilt Windows executables
 
-For building libMini, only OpenGL needs to be installed. See the libMini README for instructions.
+For building libMini, OpenGL needs to be installed. See the libMini README for instructions.
 For building the libMini viewer on *nix, it is assumed that pthreads libjpeg libpng and libcurl are installed.
 Then the libMini viewer additionally requires the dependencies GLUT/freeGLUT squish and GREYCstoration (optional).
 These dependencies can be built from the respective source code package in the deps folder.
@@ -30,8 +30,8 @@ openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
 libcurl:        http://curl.haxx.se/libcurl
 libjpeg:        http://www.ijg.org
 libpng:         http://www.libpng.org
-squish:         http://www.sjbrown.co.uk/?code=squish
-GREYCstoration: http://www.greyc.ensicaen.fr/~dtschump/greycstoration
+squish:         http://libsquish.googlecode.com
+GREYCstoration: http://cimg.sourceforge.net/greycstoration
 freeglut:       http://freeglut.sourceforge.net
 
 As of this writing, libMini did successfully build with the latest
