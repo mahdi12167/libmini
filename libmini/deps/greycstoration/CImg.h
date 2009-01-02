@@ -5599,7 +5599,7 @@ namespace cimg_library {
       return alwrite;
     }
 
-    inline const char* option(const char *const name, const int argc, char **argv,
+    inline const char* option(const char *const name, const int argc, const char *const *const argv,
                               const char *defaut, const char *const usage=0) {
       static bool first = true, visu = false;
       const char *res = 0;
@@ -5629,7 +5629,7 @@ namespace cimg_library {
       return res;
     }
 
-    inline bool option(const char *const name, const int argc, char **argv,
+    inline bool option(const char *const name, const int argc, const char *const *const argv,
                        const bool defaut, const char *const usage=0) {
       const char *s = cimg::option(name,argc,argv,(char*)0);
       const bool res = s?(cimg::strcasecmp(s,"false") && cimg::strcasecmp(s,"off") && cimg::strcasecmp(s,"0")):defaut;
@@ -5637,7 +5637,7 @@ namespace cimg_library {
       return res;
     }
 
-    inline int option(const char *const name, const int argc, char **argv,
+    inline int option(const char *const name, const int argc, const char *const *const argv,
                       const int defaut, const char *const usage=0) {
       const char *s = cimg::option(name,argc,argv,(char*)0);
       const int res = s?std::atoi(s):defaut;
@@ -5647,18 +5647,17 @@ namespace cimg_library {
       return res;
     }
 
-    inline char option(const char *const name, const int argc, char **argv,
+    inline char option(const char *const name, const int argc, const char *const *const argv,
                        const char defaut, const char *const usage=0) {
       const char *s = cimg::option(name,argc,argv,(char*)0);
       const char res = s?s[0]:defaut;
       char tmp[8];
-      tmp[0] = res;
-      tmp[1] ='\0';
+      tmp[0] = res; tmp[1] ='\0';
       cimg::option(name,0,0,tmp,usage);
       return res;
     }
 
-    inline float option(const char *const name, const int argc, char **argv,
+    inline float option(const char *const name, const int argc, const char *const *const argv,
                         const float defaut, const char *const usage=0) {
       const char *s = cimg::option(name,argc,argv,(char*)0);
       const float res = s?cimg::atof(s):defaut;
@@ -5668,7 +5667,7 @@ namespace cimg_library {
       return res;
     }
 
-    inline double option(const char *const name, const int argc, char **argv,
+    inline double option(const char *const name, const int argc, const char *const *const argv,
                          const double defaut, const char *const usage=0) {
       const char *s = cimg::option(name,argc,argv,(char*)0);
       const double res = s?cimg::atof(s):defaut;
@@ -5678,7 +5677,7 @@ namespace cimg_library {
       return res;
     }
 
-    inline const char* argument(const unsigned int nb, const int argc, char **argv, const unsigned int nb_singles=0, ...) {
+    inline const char* argument(const unsigned int nb, const int argc, const char *const *const argv, const unsigned int nb_singles=0, ...) {
       for (int k = 1, pos = 0; k<argc;) {
         const char *const item = argv[k];
         bool option = (*item=='-'), single_option = false;
@@ -10776,13 +10775,31 @@ namespace cimg_library {
       return data;
     }
 
-    //! Return an iterator to the last image pixel
+    //! Return reference to the first image pixel
+    const T& first() const {
+      return *data;
+    }
+
+    T& first() {
+       return *data;
+    }
+
+    //! Return an iterator pointing after the last image pixel
     iterator end() {
       return data + size();
     }
 
     const_iterator end() const {
       return data + size();
+    }
+
+    //! Return a reference to the last image pixel
+    const T& last() const {
+       return data[size() - 1];
+    }
+
+    T& last() {
+       return data[size() - 1];
     }
 
     //! Return a pointer to the pixel buffer.
@@ -10976,7 +10993,7 @@ namespace cimg_library {
       return !is_empty() && x>=0 && x<dimx() && y>=0 && y<dimy() && z>=0 && z<dimz() && v>=0 && v<dimv();
     }
 
-    //! Return \c true if specified pixel is inside image boundaries. If true, returns pixel coordinates in (x,y,z,v).
+    //! Return \c true if specified referenced value is inside image boundaries. If true, returns pixel coordinates in (x,y,z,v).
     template<typename t>
     bool contains(const T& pixel, t& x, t& y, t& z, t& v) const {
       const unsigned long wh = width*height, whz = wh*depth, siz = whz*dim;
@@ -10992,7 +11009,7 @@ namespace cimg_library {
       return true;
     }
 
-    //! Return \c true if specified pixel is inside image boundaries. If true, returns pixel coordinates in (x,y,z).
+    //! Return \c true if specified referenced value is inside image boundaries. If true, returns pixel coordinates in (x,y,z).
     template<typename t>
     bool contains(const T& pixel, t& x, t& y, t& z) const {
       const unsigned long wh = width*height, whz = wh*depth, siz = whz*dim;
@@ -11006,7 +11023,7 @@ namespace cimg_library {
       return true;
     }
 
-    //! Return \c true if specified pixel is inside image boundaries. If true, returns pixel coordinates in (x,y).
+    //! Return \c true if specified referenced value is inside image boundaries. If true, returns pixel coordinates in (x,y).
     template<typename t>
     bool contains(const T& pixel, t& x, t& y) const {
       const unsigned long wh = width*height, siz = wh*depth*dim;
@@ -11018,7 +11035,7 @@ namespace cimg_library {
       return true;
     }
 
-    //! Return \c true if specified pixel is inside image boundaries. If true, returns pixel coordinates in (x).
+    //! Return \c true if specified referenced value is inside image boundaries. If true, returns pixel coordinates in (x).
     template<typename t>
     bool contains(const T& pixel, t& x) const {
       const T *const ppixel = &pixel;
@@ -11027,7 +11044,7 @@ namespace cimg_library {
       return true;
     }
 
-    //! Return \c true if pixel is inside the image boundaries.
+    //! Return \c true if specified referenced value is inside the image boundaries.
     bool contains(const T& pixel) const {
       const T *const ppixel = &pixel;
       return !is_empty() && ppixel>=data && ppixel<data+size();
@@ -27441,11 +27458,12 @@ namespace cimg_library {
 
         bool
           go_up = false, go_down = false, go_left = false, go_right = false,
-          go_inc = false, go_dec = false, go_in = false, go_out = false;
+          go_inc = false, go_dec = false, go_in = false, go_out = false,
+          go_in_center = false;
         const CImg<T>& visu = zoom?zoom:*this;
         const CImg<intT> selection = visu._get_select(disp,0,2,XYZ,0,x0,y0,z0);
         if (disp.wheel) {
-          if (disp.is_keyCTRLLEFT) { if (!mkey || mkey==1) go_out = !(go_in = disp.wheel>0); mkey = 1; }
+          if (disp.is_keyCTRLLEFT) { if (!mkey || mkey==1) go_out = !(go_in = disp.wheel>0); go_in_center = false; mkey = 1; }
           else if (disp.is_keySHIFTLEFT) { if (!mkey || mkey==2) go_right = !(go_left = disp.wheel>0); mkey = 2; }
           else if (disp.is_keyALT || depth==1) { if (!mkey || mkey==3) go_down = !(go_up = disp.wheel>0); mkey = 3; }
           else mkey = 0;
@@ -27505,7 +27523,7 @@ namespace cimg_library {
           key = disp.key = disp.button = disp.wheel = 0;
         } break;
         case cimg::keyHOME : case cimg::keyBACKSPACE : reset_view = resize_disp = true; key = 0; break;
-        case cimg::keyPADADD : go_in = true; key = 0; break;
+        case cimg::keyPADADD : go_in = true; go_in_center = true; key = 0; break;
         case cimg::keyPADSUB : go_out = true; key = 0; break;
         case cimg::keyARROWLEFT : case cimg::keyPAD4: go_left = true; key = 0; break;
         case cimg::keyARROWRIGHT : case cimg::keyPAD6: go_right = true; key = 0; break;
@@ -27520,8 +27538,8 @@ namespace cimg_library {
         }
         if (go_in) {
           const int
-            mx = disp.mouse_x,
-            my = disp.mouse_y,
+            mx = go_in_center?disp.dimx()/2:disp.mouse_x,
+            my = go_in_center?disp.dimy()/2:disp.mouse_y,
             mX = mx*(width+(depth>1?depth:0))/disp.width,
             mY = my*(height+(depth>1?depth:0))/disp.height;
           int X = XYZ[0], Y = XYZ[1], Z = XYZ[2];
@@ -28114,7 +28132,9 @@ namespace cimg_library {
     disp.assign(cimg_fitscreen(width,height,depth),title?title:ntitle,1);
       }
 
-      const CImgList<tc> tcolors(CImg<tc>::vector(200,200,200)), &ncolors = colors?colors:tcolors;
+      CImgList<tc> _colors;
+      if (!colors) _colors.insert(primitives.size,CImg<tc>::vector(200,200,200));
+      const CImgList<tc> &ncolors = colors?colors:_colors;
 
       // Init 3D objects and compute object statistics
       CImg<floatT>
@@ -32324,13 +32344,17 @@ namespace cimg_library {
         throw CImgArgumentException("CImg<%s>::save_off() : Specified filename is (null).",
                                     pixel_type());
       if (height<3) return get_resize(-100,3,1,1,0)._save_off(file,filename,primitives,colors,invert_faces);
+      CImgList<tc> _colors;
+      if (!colors) _colors.insert(primitives.size,CImg<tc>::vector(200,200,200));
+      const CImgList<tc>& ncolors = colors?colors:_colors;
+
       std::FILE *const nfile = file?file:cimg::fopen(filename,"w");
       std::fprintf(nfile,"OFF\n%u %u %u\n",width,primitives.size,3*primitives.size);
       cimg_forX(*this,i) std::fprintf(nfile,"%f %f %f\n",(float)((*this)(i,0)),(float)((*this)(i,1)),(float)((*this)(i,2)));
       cimglist_for(primitives,l) {
         const unsigned int prim = primitives[l].size();
         const bool textured = (prim>4);
-        const CImg<tc>& color = colors[l];
+        const CImg<tc>& color = ncolors[l];
         const unsigned int s = textured?color.dimv():color.size();
         const float
           r = textured?(s>0?(float)(color.get_shared_channel(0).mean()/255.0f):1.0f):(s>0?(float)(color(0)/255.0f):1.0f),
@@ -33223,7 +33247,7 @@ namespace cimg_library {
       return n>=0 && n<(int)size;
     }
 
-    //! Return \c true if one of the image list contains the pixel. If true, set coordinates (n,x,y,z,v).
+    //! Return \c true if one of the image list contains the specified referenced value. If true, set coordinates (n,x,y,z,v).
     template<typename t>
     bool contains(const T& pixel, t& n, t& x, t&y, t& z, t& v) const {
       if (is_empty()) return false;
@@ -33231,35 +33255,35 @@ namespace cimg_library {
       return false;
     }
 
-    //! Return \c true if one of the image list contains the pixel. If true, set coordinates (n,x,y,z).
+    //! Return \c true if one of the image list contains the specified referenced value. If true, set coordinates (n,x,y,z).
     template<typename t>
     bool contains(const T& pixel, t& n, t& x, t&y, t& z) const {
       t v;
       return contains(pixel,n,x,y,z,v);
     }
 
-    //! Return \c true if one of the image list contains the pixel. If true, set coordinates (n,x,y).
+    //! Return \c true if one of the image list contains the specified referenced value. If true, set coordinates (n,x,y).
     template<typename t>
     bool contains(const T& pixel, t& n, t& x, t&y) const {
       t z,v;
       return contains(pixel,n,x,y,z,v);
     }
 
-    //! Return \c true if one of the image list contains the pixel. If true, set coordinates (n,x).
+    //! Return \c true if one of the image list contains the specified referenced value. If true, set coordinates (n,x).
     template<typename t>
     bool contains(const T& pixel, t& n, t& x) const {
       t y,z,v;
       return contains(pixel,n,x,y,z,v);
     }
 
-    //! Return \c true if one of the image list contains the pixel. If true, set coordinates (n).
+    //! Return \c true if one of the image list contains the specified referenced value. If true, set coordinates (n).
     template<typename t>
     bool contains(const T& pixel, t& n) const {
       t x,y,z,v;
       return contains(pixel,n,x,y,z,v);
     }
 
-    //! Return \c true if one of the image list contains the pixel.
+    //! Return \c true if one of the image list contains the specified referenced value.
     bool contains(const T& pixel) const {
       unsigned int n,x,y,z,v;
       return contains(pixel,n,x,y,z,v);
@@ -33858,6 +33882,15 @@ namespace cimg_library {
       return data;
     }
 
+    //! Return a reference to the first image.
+    const CImg<T>& first() const {
+      return *data;
+    }
+
+    CImg<T>& first() {
+      return *data;
+    }
+
     //! Returns an iterator just past the last element.
     iterator end() {
       return data + size;
@@ -33865,6 +33898,15 @@ namespace cimg_library {
 
     const_iterator end() const {
       return data + size;
+    }
+
+    //! Return a reference to the last image.
+    const CImg<T>& last() const {
+      return data[size - 1];
+    }
+
+    CImg<T>& last() {
+      return data[size - 1];
     }
 
     //! Insert a copy of the image \p img into the current image list, at position \p pos.
