@@ -8,11 +8,9 @@ foreach file (CImg.h plugins/greycstoration.h)
    ../mini/tabify.sh -u greycstoration/$file
 end
 
+svn up squish-head
+
 foreach file (squish-head/*.cpp squish-head/*.h squish-head/*.inl)
    cp -f $file $file:s/-head//
    ../mini/tabify.sh -u $file:s/-head//
 end
-
-pushd squish >&/dev/null
-patch -u -p1 <../squish.diff
-popd >&/dev/null
