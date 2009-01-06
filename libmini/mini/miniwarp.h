@@ -77,6 +77,9 @@ class miniwarp
    //! get actual scaling factor
    double getscale();
 
+   //! get nth corner of warp box
+   miniv3d getcorner(int n);
+
    //! get tileset coordinate system
    minicoord::MINICOORD gettls();
 
@@ -171,6 +174,8 @@ class miniwarp
    miniv4d INV[3],TRA[3];
    miniv4d INVTRA[3];
    float SCALE;
+
+   miniv3d CORNER[8];
 
    private:
 

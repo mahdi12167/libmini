@@ -195,6 +195,10 @@ void miniwarp::getinvtra(miniv3d invtra[3])
 double miniwarp::getscale()
    {return(SCALE);}
 
+// get nth corner of warp box
+miniv3d miniwarp::getcorner(int n)
+   {return(CORNER[n]);}
+
 // get data coordinate system
 minicoord::MINICOORD miniwarp::getdat()
    {return(SYSDAT);}
@@ -571,7 +575,11 @@ void miniwarp::calc_wrp()
    p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
 
    // warp geo-referenced corners
-   for (i=0; i<8; i++) p[i].convert2(SYSWRP);
+   for (i=0; i<8; i++)
+      {
+      p[i].convert2(SYSWRP);
+      CORNER[i]=p[i].vec;
+      }
 
    // calculate warped barycenter
    b=(p[0].vec+p[1].vec+p[2].vec+p[3].vec+p[4].vec+p[5].vec+p[6].vec+p[7].vec)/8.0;
