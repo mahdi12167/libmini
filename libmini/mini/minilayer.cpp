@@ -1119,38 +1119,39 @@ void minilayer::updatecoords()
       TERRAIN->getminitile()->copywarp(WARP);
       TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
-      createwarps();
+      createwarps(WARP);
 
       miniray::unlock();
       }
    }
 
 // create the per-tile warps
-void minilayer::createwarps()
+void minilayer::createwarps(miniwarp *warp)
    {
    int i,j,k;
 
    int cols,rows;
 
-   miniwarp warp;
-   miniv3d crnr1[8],crnr2[8];
+   miniwarp twarp;
 
+   miniv3d crnr1[8],crnr2[8];
    double u,v,w;
 
    miniv3d p;
    minicoord e;
 
-   if (!istileset()) return;
-   if (getwarp()->gettls()==minicoord::MINICOORD_LINEAR) return;
-
    cols=getcols();
    rows=getrows();
+
+   if (!istileset()) return;
+   if (cols==0 || rows==0) return;
+   if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
          {
-         warp=*getwarp();
-         warp.getcorners(crnr1);
+         twarp=*warp;
+         twarp.getcorners(crnr1);
 
          for (k=0; k<8; k++)
             {
@@ -1211,10 +1212,10 @@ void minilayer::createwarps()
             crnr2[k]=e.vec;
             }
 
-         warp.setcorners(crnr2);
-         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
+         twarp.setcorners(crnr2);
+         twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
-         TERRAIN->getminitile()->copywarp(&warp,i,j);
+         TERRAIN->getminitile()->copywarp(&twarp,i,j);
          }
    }
 
