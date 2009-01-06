@@ -287,7 +287,6 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
                     LPARAMS.scale);
 
          updatecoords();
-         createwarps();
 
          WARPMODE=LPARAMS.warpmode;
          SCALE=LPARAMS.scale;
@@ -662,9 +661,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // update warp objects for each exposed coordinate transformation
    updatecoords();
-
-   // create per-tile warp objects
-   createwarps();
 
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
@@ -1083,20 +1079,6 @@ void minilayer::pointwarp(minicoord &center,minicoord &north,minicoord &normal,
 // update the coordinate transformations
 void minilayer::updatecoords()
    {
-   // copy warp object to encapsulated tileset:
-
-   if (TERRAIN!=NULL)
-      {
-      miniray::lock();
-
-      TERRAIN->getminitile()->copywarp(WARP);
-      TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
-
-      //!! copywarps
-
-      miniray::unlock();
-      }
-
    // create warp object for each exposed coordinate transformation:
 
    WARP_G2L=*WARP;
@@ -1128,6 +1110,19 @@ void minilayer::updatecoords()
 
    WARP_T2G=*WARP;
    WARP_T2G.setwarp(miniwarp::MINIWARP_TILESET,miniwarp::MINIWARP_METRIC);
+
+   // copy warp object to encapsulated tileset
+   if (TERRAIN!=NULL)
+      {
+      miniray::lock();
+
+      TERRAIN->getminitile()->copywarp(WARP);
+      TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+
+      createwarps();
+
+      miniray::unlock();
+      }
    }
 
 // create the per-tile warps
@@ -1217,8 +1212,9 @@ void minilayer::createwarps()
             }
 
          warp.setcorners(crnr2);
+         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
-         //!! WARPS[i+j*COLS]=warp;
+         TERRAIN->getminitile()->copywarp(&warp,i,j);
          }
    }
 
