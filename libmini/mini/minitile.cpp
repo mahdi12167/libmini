@@ -94,6 +94,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    if ((UPDATED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
    if ((MODIFIED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
 
+   if ((WARPS=(miniwarp **)malloc(cols*rows*sizeof(miniwarp *)))==NULL) ERRORMSG();
+
    SCALE=scale;
    CELLASPECT=rowdim/coldim;
 
@@ -175,6 +177,8 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
          RELOADED[i+j*cols]=0;
          UPDATED[i+j*cols]=0;
          MODIFIED[i+j*cols]=0;
+
+         WARPS[i+j*cols]=NULL;
          }
 
    TEXMODE=0;
@@ -284,6 +288,10 @@ minitile::~minitile()
    free(UPDATED);
    free(MODIFIED);
 
+   for (i=0; i<COLS; i++)
+      for (j=0; j<ROWS; j++)
+         if (WARPS[i+j*COLS]!=NULL) delete WARPS[i+j*COLS];
+
    if (WARP!=NULL) delete WARP;
    }
 
@@ -346,6 +354,17 @@ void minitile::copywarp(miniwarp *warp)
    {
    if (WARP==NULL) WARP=new miniwarp(*warp);
    else *WARP=*warp;
+   }
+
+// copy warp object
+void minitile::copywarp(miniwarp *warp,int col,int row)
+   {
+   miniwarp **w;
+
+   w=&WARPS[col+row*COLS];
+
+   if (*w==NULL) *w=new miniwarp(*warp);
+   else **w=*warp;
    }
 
 // check the visibility of the tiles

@@ -84,6 +84,7 @@ class minitile
 
    //! copy warp object
    void copywarp(miniwarp *warp);
+   void copywarp(miniwarp *warp,int col,int row);
 
    //! loader for tile sets
    static minitile *load(int cols,int rows,
@@ -156,6 +157,7 @@ class minitile
    int getpreloadedtop() {return(PTOP);}
 
    miniwarp *getwarp() {return(WARP);}
+   miniwarp *getwarp(int col,int row) {return(WARPS[col+row*COLS]);}
 
    // functions for grid reloading:
 
@@ -268,6 +270,7 @@ class minitile
    float RATIO;
 
    miniwarp *WARP;
+   miniwarp **WARPS;
 
    void (*BEGINFAN_CALLBACK)();
    void (*FANVERTEX_CALLBACK)(float i,float y,float j);
