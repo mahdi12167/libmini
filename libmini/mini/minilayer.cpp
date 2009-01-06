@@ -1152,7 +1152,7 @@ void minilayer::createwarps()
    rows=getrows();
 
    for (i=0; i<cols; i++)
-      for (j=0; j<cols; j++)
+      for (j=0; j<rows; j++)
          {
          warp=*getwarp();
          warp.getcorners(crnr1);
