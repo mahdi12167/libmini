@@ -231,6 +231,12 @@ class minilayer
    //! set reference layer
    void setreference(minilayer *ref);
 
+   //! get columns of tileset
+   int getcols();
+
+   //! get rows of tileset
+   int getrows();
+
    //! get extent of tileset
    miniv3d getextent();
 
@@ -382,6 +388,8 @@ class minilayer
                   double scale,miniv4d mtx[3]);
 
    void updatecoords();
+
+   void createwarps();
 
    int getthreadid();
 

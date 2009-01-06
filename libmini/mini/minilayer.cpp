@@ -1088,6 +1088,8 @@ void minilayer::updatecoords()
       TERRAIN->getminitile()->copywarp(WARP);
       TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
+      //!! copywarps
+
       miniray::unlock();
       }
 
@@ -1123,6 +1125,105 @@ void minilayer::updatecoords()
    WARP_T2G=*WARP;
    WARP_T2G.setwarp(miniwarp::MINIWARP_TILESET,miniwarp::MINIWARP_METRIC);
    }
+
+// create the per-tile warps
+void minilayer::createwarps()
+   {
+   int i,j,k;
+
+   int cols,rows;
+
+   miniwarp warp;
+   miniv3d crnr1[8],crnr2[8];
+
+   double u,v,w;
+
+   miniv3d p;
+   minicoord e;
+
+   if (getwarp()->gettls()==minicoord::MINICOORD_LINEAR) return;
+
+   cols=getcols();
+   rows=getrows();
+
+   for (i=0; i<cols; i++)
+      for (j=0; j<cols; j++)
+         {
+         warp=*getwarp();
+         warp.getcorners(crnr1);
+
+         for (k=0; k<8; k++)
+            {
+            switch (k)
+               {
+               case 0:
+                  u=(double)i/cols;
+                  v=(double)j/rows;
+                  w=0.0;
+                  break;
+               case 1:
+                  u=(double)(i+1)/cols;
+                  v=(double)j/rows;
+                  w=0.0;
+                  break;
+               case 2:
+                  u=(double)i/cols;
+                  v=(double)(j+1)/rows;
+                  w=0.0;
+                  break;
+               case 3:
+                  u=(double)(i+1)/cols;
+                  v=(double)(j+1)/rows;
+                  w=0.0;
+                  break;
+               case 4:
+                  u=(double)i/cols;
+                  v=(double)j/rows;
+                  w=1.0;
+                  break;
+               case 5:
+                  u=(double)(i+1)/cols;
+                  v=(double)j/rows;
+                  w=1.0;
+                  break;
+               case 6:
+                  u=(double)i/cols;
+                  v=(double)(j+1)/rows;
+                  w=1.0;
+                  break;
+               case 7:
+                  u=(double)(i+1)/cols;
+                  v=(double)(j+1)/rows;
+                  w=1.0;
+                  break;
+               default:
+                  u=v=w=0.0;
+                  break;
+               }
+
+            p=(1.0-w)*((1.0-v)*((1.0-u)*crnr1[0]+u*crnr1[1])+v*((1.0-u)*crnr1[2]+u*crnr1[3]))+
+              w*((1.0-v)*((1.0-u)*crnr1[4]+u*crnr1[5])+v*((1.0-u)*crnr1[6]+u*crnr1[7]));
+
+            e=minicoord(p,minicoord::MINICOORD_ECEF);
+            e=map_g2t(e);
+            e.convert2(minicoord::MINICOORD_ECEF);
+
+            crnr2[k]=e.vec;
+            }
+
+         warp.setcorners(crnr2);
+
+         //!! WARPS[i+j*COLS]=warp;
+         }
+   }
+
+// get columns of tileset
+int minilayer::getcols()
+   {return(LPARAMS.cols);}
+
+// get rows of tileset
+int minilayer::getrows()
+   {return(LPARAMS.rows);}
 
 // get extent of tileset
 miniv3d minilayer::getextent()

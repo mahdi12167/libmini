@@ -195,17 +195,33 @@ void miniwarp::getinvtra(miniv3d invtra[3])
 double miniwarp::getscale()
    {return(SCALE);}
 
-// get nth corner of warp box
-miniv3d miniwarp::getcorner(int n)
-   {return(CORNER[n]);}
+// get corners of warp box
+void miniwarp::getcorners(miniv3d p[8])
+   {
+   int i;
 
-// get data coordinate system
-minicoord::MINICOORD miniwarp::getdat()
-   {return(SYSDAT);}
+   for (i=0; i<8; i++) p[i]=CORNER[i];
+   }
+
+// set corners of warp box
+void miniwarp::setcorners(const miniv3d p[8])
+   {
+   int i;
+
+   for (i=0; i<8; i++) CORNER[i]=p[i];
+
+   calc_wrp_mtx();
+
+   inv_mtx(INV_2WRP,MTX_2WRP);
+   }
 
 // get tileset coordinate system
 minicoord::MINICOORD miniwarp::gettls()
    {return(SYSTLS);}
+
+// get data coordinate system
+minicoord::MINICOORD miniwarp::getdat()
+   {return(SYSDAT);}
 
 // get geo-graphic center point
 minicoord miniwarp::getcenter()
@@ -526,7 +542,7 @@ void miniwarp::update_scl()
    if (SCALE!=0.0) SCALE=1.0/SCALE;
    }
 
-// calculate warp coordinate conversion
+// calculate warp box
 void miniwarp::calc_wrp()
    {
    int i;
@@ -536,7 +552,6 @@ void miniwarp::calc_wrp()
    double x1,x2,y1,y2,z1,z2;
 
    minicoord p[8];
-   miniv4d b,e[3];
 
    cpy_mtx(MTX_2WRP,MTX_ONE);
 
@@ -581,13 +596,21 @@ void miniwarp::calc_wrp()
       CORNER[i]=p[i].vec;
       }
 
+   calc_wrp_mtx();
+   }
+
+// calculate approximate warp matrix
+void miniwarp::calc_wrp_mtx()
+   {
+   miniv3d b,e[3];
+
    // calculate warped barycenter
-   b=(p[0].vec+p[1].vec+p[2].vec+p[3].vec+p[4].vec+p[5].vec+p[6].vec+p[7].vec)/8.0;
+   b=(CORNER[0]+CORNER[1]+CORNER[2]+CORNER[3]+CORNER[4]+CORNER[5]+CORNER[6]+CORNER[7])/8.0;
 
    // average warped edges along each axis
-   e[0]=(p[1].vec-p[0].vec+p[3].vec-p[2].vec+p[5].vec-p[4].vec+p[7].vec-p[6].vec)/4.0;
-   e[1]=(p[2].vec-p[0].vec+p[3].vec-p[1].vec+p[6].vec-p[4].vec+p[7].vec-p[5].vec)/4.0;
-   e[2]=(p[4].vec-p[0].vec+p[5].vec-p[1].vec+p[6].vec-p[2].vec+p[7].vec-p[3].vec)/4.0;
+   e[0]=(CORNER[1]-CORNER[0]+CORNER[3]-CORNER[2]+CORNER[5]-CORNER[4]+CORNER[7]-CORNER[6])/4.0;
+   e[1]=(CORNER[2]-CORNER[0]+CORNER[3]-CORNER[1]+CORNER[6]-CORNER[4]+CORNER[7]-CORNER[5])/4.0;
+   e[2]=(CORNER[4]-CORNER[0]+CORNER[5]-CORNER[1]+CORNER[6]-CORNER[2]+CORNER[7]-CORNER[3])/4.0;
 
    // construct approxiate matrix for the warp
    MTX_2WRP[0]=miniv4d(e[0].x,e[1].x,e[2].x,b.x);
