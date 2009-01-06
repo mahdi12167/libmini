@@ -84,8 +84,9 @@ miniwarp::~miniwarp() {}
 // define tileset coordinates
 void miniwarp::def_tileset(const minicoord::MINICOORD sysTLS)
    {
-   if (sysTLS==minicoord::MINICOORD_LLH) ERRORMSG();
-   if (sysTLS==minicoord::MINICOORD_UTM) ERRORMSG();
+   if (sysTLS==minicoord::MINICOORD_LLH ||
+       sysTLS==minicoord::MINICOORD_MERC ||
+       sysTLS==minicoord::MINICOORD_UTM) ERRORMSG();
 
    SYSTLS=sysTLS;
 
@@ -540,8 +541,8 @@ void miniwarp::calc_wrp()
 
    // check if warp coordinate conversion is possible
    if (SYSDAT!=minicoord::MINICOORD_LLH &&
-       SYSDAT!=minicoord::MINICOORD_UTM &&
-       SYSDAT!=minicoord::MINICOORD_ECEF) return;
+       SYSDAT!=minicoord::MINICOORD_MERC &&
+       SYSDAT!=minicoord::MINICOORD_UTM) return;
 
    // fetch geo-referenced bounding box
    bboxGEO[0]=BBOXDAT[0];

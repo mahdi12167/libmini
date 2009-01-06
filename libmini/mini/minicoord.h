@@ -56,7 +56,7 @@ class minicoord
    //! linear conversion defined by 4x3 matrix
    void convert(const miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
 
-   //! non-linear conversion defined by point 2 point correspondences
+   //! tri-linear conversion defined by point 2 point correspondences
    void convert(const miniv3d src[2], // bounding box in original domain
                 const miniv3d dst[8]); // 8 points in warp domain
 

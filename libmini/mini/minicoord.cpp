@@ -252,7 +252,7 @@ void minicoord::convert(const miniv4d mtx[3])
    type=MINICOORD_LINEAR;
    }
 
-// non-linear conversion defined by point 2 point correspondences
+// tri-linear conversion defined by point 2 point correspondences
 void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
    {
    miniv3d u,v;
