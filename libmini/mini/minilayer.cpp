@@ -287,6 +287,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
                     LPARAMS.scale);
 
          updatecoords();
+         createwarps();
 
          WARPMODE=LPARAMS.warpmode;
          SCALE=LPARAMS.scale;
@@ -661,6 +662,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // update warp objects for each exposed coordinate transformation
    updatecoords();
+
+   // create per-tile warp objects
+   createwarps();
 
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
@@ -1141,6 +1145,7 @@ void minilayer::createwarps()
    miniv3d p;
    minicoord e;
 
+   if (!istileset()) return;
    if (getwarp()->gettls()==minicoord::MINICOORD_LINEAR) return;
 
    cols=getcols();
