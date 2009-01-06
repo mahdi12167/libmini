@@ -566,7 +566,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                LPARAMS.extentDAT=minicoord(miniv3d(3600.0*TILECACHE->getelevini_sizex(),3600.0*TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_LLH);
 
                // adjust horizontal stretching of vtb exported LL data
-               miniutm::arcsec2meter(LPARAMS.offsetDAT.vec.y,as2m);
+               minicrs::arcsec2meter(LPARAMS.offsetDAT.vec.y,as2m);
                LPARAMS.stretch=3600.0f;
                LPARAMS.offset[0]*=3600.0f;
                LPARAMS.offset[1]*=3600.0f;
@@ -786,16 +786,16 @@ void minilayer::setearth()
 
    // set original data coordinates
    LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_ECEF);
-   LPARAMS.extentDAT=minicoord(miniv3d(2*miniutm::EARTH_radius,2*miniutm::EARTH_radius,2*miniutm::EARTH_radius),minicoord::MINICOORD_ECEF);
+   LPARAMS.extentDAT=minicoord(miniv3d(2*minicrs::EARTH_radius,2*minicrs::EARTH_radius,2*minicrs::EARTH_radius),minicoord::MINICOORD_ECEF);
 
    // set geo-referenced coordinates
    LPARAMS.centerGEO=LPARAMS.offsetDAT;
-   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,miniutm::EARTH_radius),minicoord::MINICOORD_ECEF);
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,minicrs::EARTH_radius),minicoord::MINICOORD_ECEF);
 
    // set extent
-   LPARAMS.extent[0]=2*miniutm::EARTH_radius;
-   LPARAMS.extent[1]=2*miniutm::EARTH_radius;
-   LPARAMS.extent[2]=2*miniutm::EARTH_radius;
+   LPARAMS.extent[0]=2*minicrs::EARTH_radius;
+   LPARAMS.extent[1]=2*minicrs::EARTH_radius;
+   LPARAMS.extent[2]=2*minicrs::EARTH_radius;
 
    // set offset
    LPARAMS.offset[0]=0.0f;

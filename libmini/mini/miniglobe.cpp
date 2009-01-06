@@ -3,7 +3,7 @@
 #include "minibase.h"
 
 #include "miniOGL.h"
-#include "miniutm.h"
+#include "minicrs.h"
 
 #include "pnmbase.h"
 
@@ -181,7 +181,7 @@ void miniglobe::create_earth(const float color[3])
          alpha=u*360*60*60;
          beta=v*90*60*60;
 
-         miniutm::LLH2ECEF(beta,alpha,0.0f,xyz);
+         minicrs::LLH2ECEF(beta,alpha,0.0f,xyz);
 
          xyz[0]/=SCALE;
          xyz[1]/=SCALE;
@@ -200,7 +200,7 @@ void miniglobe::create_earth(const float color[3])
          v=(float)(j+1)/beta_steps;
          beta=v*90*60*60;
 
-         miniutm::LLH2ECEF(beta,alpha,0.0f,xyz);
+         minicrs::LLH2ECEF(beta,alpha,0.0f,xyz);
 
          xyz[0]/=SCALE;
          xyz[1]/=SCALE;

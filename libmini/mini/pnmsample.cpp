@@ -4,7 +4,7 @@
 
 #include "mini.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 #include "pnmbase.h"
 
 #include "pnmsample.h"
@@ -340,7 +340,7 @@ float transformpoint(unsigned char *image,
       }
    else
       {
-      miniutm::LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
+      minicrs::LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
 
       s1=getdistance(x,y,utm_coord[0],utm_coord[1],utm_coord[2]-utm_coord[0],utm_coord[3]-utm_coord[1]);
       s2=getdistance(x,y,utm_coord[4],utm_coord[5],utm_coord[6]-utm_coord[4],utm_coord[7]-utm_coord[5]);
@@ -493,10 +493,10 @@ void resample(int num,const char **grid,
                            (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1]));
 
             // transform corners
-            miniutm::UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
-            miniutm::UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
-            miniutm::UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
-            miniutm::UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
+            minicrs::UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
+            minicrs::UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
+            minicrs::UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
+            minicrs::UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
 
             // cell size changes approximately by the same factor as the extent changes:
 
@@ -649,7 +649,7 @@ void resample(int num,const char **grid,
    maxelev+=addelev;
    if (maxelev==0.0f) maxelev=1.0f;
 
-   miniutm::arcsec2meter(centersy[0],as2m);
+   minicrs::arcsec2meter(centersy[0],as2m);
 
    float sizex=extentsx[0];
    float sizey=extentsy[0];
@@ -1247,10 +1247,10 @@ void normalize(int num,
                {
                for (i=0; i<8; i++) utm_coord[i]=coord[i];
 
-               miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-               miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-               miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-               miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+               minicrs::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+               minicrs::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+               minicrs::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+               minicrs::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
             centerx0=LONLERP(LONMEAN(coord[0],coord[2]),LONMEAN(coord[4],coord[6]));
@@ -1280,7 +1280,7 @@ void normalize(int num,
             missing0=missing;
             }
 
-         miniutm::arcsec2meter(centery0,as2m);
+         minicrs::arcsec2meter(centery0,as2m);
 
          nmap=normalizemap(hmap,
                            width,height,components,
@@ -1538,7 +1538,7 @@ void texturemap(const char *heightfile,
       zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
 
       centerz=(coord[1]+coord[3]+coord[5]+coord[7])/4.0f;
-      miniutm::arcsec2meter(centerz,as2m);
+      minicrs::arcsec2meter(centerz,as2m);
 
       xdim*=as2m[0];
       zdim*=as2m[1];

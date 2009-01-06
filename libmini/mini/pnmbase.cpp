@@ -2,7 +2,7 @@
 
 #include "minibase.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 
 #include "pnmbase.h"
 
@@ -754,10 +754,10 @@ int getPNMparams(PNMcomment *comment,
                         (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y));
 
          // transform corners
-         miniutm::UTM2LL(coord_SW_x,coord_SW_y,coord_zone,coord_datum,&coord_SW_y,&coord_SW_x);
-         miniutm::UTM2LL(coord_NW_x,coord_NW_y,coord_zone,coord_datum,&coord_NW_y,&coord_NW_x);
-         miniutm::UTM2LL(coord_NE_x,coord_NE_y,coord_zone,coord_datum,&coord_NE_y,&coord_NE_x);
-         miniutm::UTM2LL(coord_SE_x,coord_SE_y,coord_zone,coord_datum,&coord_SE_y,&coord_SE_x);
+         minicrs::UTM2LL(coord_SW_x,coord_SW_y,coord_zone,coord_datum,&coord_SW_y,&coord_SW_x);
+         minicrs::UTM2LL(coord_NW_x,coord_NW_y,coord_zone,coord_datum,&coord_NW_y,&coord_NW_x);
+         minicrs::UTM2LL(coord_NE_x,coord_NE_y,coord_zone,coord_datum,&coord_NE_y,&coord_NE_x);
+         minicrs::UTM2LL(coord_SE_x,coord_SE_y,coord_zone,coord_datum,&coord_SE_y,&coord_SE_x);
 
          // cell size changes approximately by the same factor as the extent changes:
 

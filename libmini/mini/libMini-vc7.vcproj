@@ -342,7 +342,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="miniutm.cpp">
+				RelativePath="minicrs.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -1108,7 +1108,7 @@
 				RelativePath="minihsv.h">
 			</File>
 			<File
-				RelativePath="miniutm.h">
+				RelativePath="minicrs.h">
 			</File>
 			<File
 				RelativePath="ministub.h">

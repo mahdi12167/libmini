@@ -1,9 +1,9 @@
 // (c) by Stefan Roettger
 
-#ifndef MINIUTM_H
-#define MINIUTM_H
+#ifndef MINICRS_H
+#define MINICRS_H
 
-class miniutm
+class minicrs
    {
    public:
 

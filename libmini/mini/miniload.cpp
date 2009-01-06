@@ -3,7 +3,7 @@
 #include "minibase.h"
 
 #include "miniio.h"
-#include "miniutm.h"
+#include "minicrs.h"
 
 #include "pnmbase.h"
 #include "pnmsample.h"
@@ -1323,10 +1323,10 @@ int miniload::load(int cols,int rows,
 
                if (utm_zone!=0)
                   {
-                  miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-                  miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-                  miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-                  miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+                  minicrs::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+                  minicrs::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+                  minicrs::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+                  minicrs::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                   }
 
                SCALE=scaling*exaggeration;
@@ -1448,7 +1448,7 @@ int miniload::load(int cols,int rows,
       CENTERY=offseth;
       CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
-      miniutm::arcsec2meter(CENTERZ,as2m);
+      minicrs::arcsec2meter(CENTERZ,as2m);
 
       COLDIM*=as2m[0];
       ROWDIM*=as2m[1];

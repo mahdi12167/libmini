@@ -7,7 +7,7 @@ HDRS	= minibase minidyna minisort
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
-	  minimath minimpfp minitime miniio minihsv miniutm\
+	  minimath minimpfp minitime miniio minihsv minicrs\
 	  ministub minitile miniload\
 	  minicoord miniwarp\
 	  minilayer miniterrain miniearth\

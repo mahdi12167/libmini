@@ -5,7 +5,7 @@
 #include "miniOGL.h"
 #include "minishader.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 #include "minicoord.h"
 #include "miniwarp.h"
 
@@ -417,7 +417,7 @@ void miniearth::rendercache()
          if (ref->get()->warpmode==1 || ref->get()->warpmode==2)
             alt=miniv3d((lparams.eye-ref->getcenter()).vec)*ref->getnormal();
          else
-            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength()-miniutm::EARTH_radius;
+            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength()-minicrs::EARTH_radius;
 
       // calculate void display factor
       if (EPARAMS.voidstart<=0.0f) altf=0.0;
@@ -734,7 +734,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
          if (ref->get()->warpmode!=0)
             if (ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
                t=intersect_ellipsoid(miniv3d(o.vec),d,
-                                     miniv3d(0.0,0.0,0.0),miniutm::WGS84_r_major,miniutm::WGS84_r_major,miniutm::WGS84_r_minor);
+                                     miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
             else
                t=intersect_plane(miniv3d(o.vec),d,
                                  miniv3d(ref->getcenter().vec),ref->getnormal());

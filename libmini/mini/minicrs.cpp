@@ -2,41 +2,41 @@
 
 #include "minibase.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 
-const double miniutm::EARTH_radius=6370997.0; // radius of the earth
+const double minicrs::EARTH_radius=6370997.0; // radius of the earth
 
-const double miniutm::WGS84_r_major=6378137.0; // WGS84 semi-major axis
-const double miniutm::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
-const double miniutm::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
-const double miniutm::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
-const double miniutm::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
-const double miniutm::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
+const double minicrs::WGS84_r_major=6378137.0; // WGS84 semi-major axis
+const double minicrs::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
+const double minicrs::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
+const double minicrs::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
+const double minicrs::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
+const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
-int miniutm::act_datum=0; // actual configured datum
-int miniutm::act_zone=0; // actual configured UTM zone
+int minicrs::act_datum=0; // actual configured datum
+int minicrs::act_zone=0; // actual configured UTM zone
 
-double miniutm::r_major=EARTH_radius,miniutm::r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
-double miniutm::o_dx=0.0,miniutm::o_dy=0.0,miniutm::o_dz=0.0; // origin shift of ellipsoid
+double minicrs::r_major=EARTH_radius,minicrs::r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
+double minicrs::o_dx=0.0,minicrs::o_dy=0.0,minicrs::o_dz=0.0; // origin shift of ellipsoid
 
-double miniutm::scale_factor=0.9996; // scale factor
+double minicrs::scale_factor=0.9996; // scale factor
 
 // ellipsoid selector based on semi-major and minor radius
-void miniutm::choose_ellipsoid(double r_maj,double r_min)
+void minicrs::choose_ellipsoid(double r_maj,double r_min)
    {
    r_major=r_maj;
    r_minor=r_min;
    }
 
 // ellipsoid selector based on semi-major radius and flattening
-void miniutm::choose_ellipsoid_flat(double r_maj,double f)
+void minicrs::choose_ellipsoid_flat(double r_maj,double f)
    {
    if (f>0.0) choose_ellipsoid(r_maj,(1.0-1.0/f)*r_maj);
    else choose_ellipsoid(r_maj,r_maj);
    }
 
 // datum selector based on ellipsoid and shift
-void miniutm::choose_datum(int ellipsoid,
+void minicrs::choose_datum(int ellipsoid,
                            double dx,double dy,double dz)
    {
    if (ellipsoid<1 || ellipsoid>25) ellipsoid=3;
@@ -102,7 +102,7 @@ void miniutm::choose_datum(int ellipsoid,
    }
 
 // datum selector
-void miniutm::choose_datum(int datum)
+void minicrs::choose_datum(int datum)
    {
    if (datum<1 || datum>14) datum=3; // fallback to WGS84
 
@@ -150,7 +150,7 @@ void miniutm::choose_datum(int datum)
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void miniutm::LL2UTM(double lat,double lon,
+void minicrs::LL2UTM(double lat,double lon,
                      int zone,int datum,
                      double *x,double *y)
    {
@@ -162,7 +162,7 @@ void miniutm::LL2UTM(double lat,double lon,
    calcLL2UTM(lat,lon,x,y);
    }
 
-void miniutm::LL2UTM(double lat,double lon,
+void minicrs::LL2UTM(double lat,double lon,
                      int zone,int datum,
                      float *x,float *y)
    {
@@ -179,7 +179,7 @@ void miniutm::LL2UTM(double lat,double lon,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void miniutm::UTM2LL(double x,double y,
+void minicrs::UTM2LL(double x,double y,
                      int zone,int datum,
                      double *lat,double *lon)
    {
@@ -191,7 +191,7 @@ void miniutm::UTM2LL(double x,double y,
    molodensky(datum,3,lat,lon);
    }
 
-void miniutm::UTM2LL(double x,double y,
+void minicrs::UTM2LL(double x,double y,
                      int zone,int datum,
                      float *lat,float *lon)
    {
@@ -205,14 +205,14 @@ void miniutm::UTM2LL(double x,double y,
 
 // transform Lat/Lon to Mercator
 // input in arc-seconds, output in meters
-void miniutm::LL2MERC(double lat,double lon,
+void minicrs::LL2MERC(double lat,double lon,
                       double *x,double *y)
    {
    choose_datum(3);
    calcLL2MERC(lat,lon,x,y,0.0,0.0);
    }
 
-void miniutm::LL2MERC(double lat,double lon,
+void minicrs::LL2MERC(double lat,double lon,
                       float *x,float *y)
    {
    double tx,ty;
@@ -225,14 +225,14 @@ void miniutm::LL2MERC(double lat,double lon,
 
 // transform Mercator to Lat/Lon
 // input in meters, output in arc-seconds
-void miniutm::MERC2LL(double x,double y,
+void minicrs::MERC2LL(double x,double y,
                       double *lat,double *lon)
    {
    choose_datum(3);
    calcMERC2LL(x,y,lat,lon,0.0,0.0);
    }
 
-void miniutm::MERC2LL(double x,double y,
+void minicrs::MERC2LL(double x,double y,
                       float *lat,float *lon)
    {
    double tlat,tlon;
@@ -248,11 +248,11 @@ void miniutm::MERC2LL(double x,double y,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void miniutm::LLH2ECEF(double lat,double lon,double h,
+void minicrs::LLH2ECEF(double lat,double lon,double h,
                        double xyz[3])
    {calcLLH2ECEF(lat,lon,h,xyz);}
 
-void miniutm::LLH2ECEF(double lat,double lon,double h,
+void minicrs::LLH2ECEF(double lat,double lon,double h,
                        float xyz[3])
    {
    double txyz[3];
@@ -269,11 +269,11 @@ void miniutm::LLH2ECEF(double lat,double lon,double h,
 // latitude in [-90*60*60,90*60*60] arc-seconds
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
-void miniutm::ECEF2LLH(double xyz[3],
+void minicrs::ECEF2LLH(double xyz[3],
                        double *lat,double *lon,double *h)
    {calcECEF2LLH(xyz,lat,lon,h);}
 
-void miniutm::ECEF2LLH(float xyz[3],
+void minicrs::ECEF2LLH(float xyz[3],
                        float *lat,float *lon,float *h)
    {
    double txyz[3];
@@ -291,7 +291,7 @@ void miniutm::ECEF2LLH(float xyz[3],
    }
 
 // calculate the ECEF equations
-void miniutm::calcLLH2ECEF(double lat,double lon,double h,double xyz[3])
+void minicrs::calcLLH2ECEF(double lat,double lon,double h,double xyz[3])
    {
    double slat,clat,slon,clon; // sine and cosine values
    double r;                   // radius in prime vertical
@@ -312,7 +312,7 @@ void miniutm::calcLLH2ECEF(double lat,double lon,double h,double xyz[3])
    }
 
 // calculate the inverse ECEF equations
-void miniutm::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
+void minicrs::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    {
    double sth,cth,slat,clat; // sine and cosine values
    double p,th;              // temporary variables
@@ -344,7 +344,7 @@ void miniutm::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    }
 
 // Molodensky transformation
-void miniutm::molodensky(double *lat,double *lon,double *h, // transformed coordinates
+void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
                          double dr_maj,double df,           // ellipsoid change
                          double dx,double dy,double dz)     // origin change
@@ -382,7 +382,7 @@ void miniutm::molodensky(double *lat,double *lon,double *h, // transformed coord
    }
 
 // Molodensky transformation between two datums
-void miniutm::molodensky(int src,int dst,double *lat,double *lon)
+void minicrs::molodensky(int src,int dst,double *lat,double *lon)
    {
    double r_maj,r_min; // src semi-major and minor radius
    double dx,dy,dz;    // src origin shift
@@ -416,7 +416,7 @@ void miniutm::molodensky(int src,int dst,double *lat,double *lon)
 // 1 arc-second equals about 30 meters
 // 1 arc-minute equals about 1.8 kilometers
 // 1 arc-degree equals about 111 kilometers (at the equator)
-void miniutm::arcsec2meter(double lat,double *as2m)
+void minicrs::arcsec2meter(double lat,double *as2m)
    {
    if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
 
@@ -424,7 +424,7 @@ void miniutm::arcsec2meter(double lat,double *as2m)
    as2m[0]=as2m[1]*cos(lat*2*PI/(360*60*60));
    }
 
-void miniutm::arcsec2meter(double lat,float *as2m)
+void minicrs::arcsec2meter(double lat,float *as2m)
    {
    if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
 
@@ -436,14 +436,14 @@ void miniutm::arcsec2meter(double lat,float *as2m)
 // the General Cartographic Transformation Package:
 
 // per-zone parameters of the Universal Transverse Mercator (UTM) projection
-double miniutm::lon_center; // center longitude
-double miniutm::e0,miniutm::e1,miniutm::e2,miniutm::e3; // eccentricity constants
-double miniutm::e,miniutm::es,miniutm::esp; // eccentricity constants
-double miniutm::false_northing; // y offset in meters
-double miniutm::false_easting; // x offset in meters
+double minicrs::lon_center; // center longitude
+double minicrs::e0,minicrs::e1,minicrs::e2,minicrs::e3; // eccentricity constants
+double minicrs::e,minicrs::es,minicrs::esp; // eccentricity constants
+double minicrs::false_northing; // y offset in meters
+double minicrs::false_easting; // x offset in meters
 
 // initialize the Universal Transverse Mercator (UTM) projection
-void miniutm::initUTM(int zone) // zone number
+void minicrs::initUTM(int zone) // zone number
    {
    if (zone==0 || abs(zone)>60) ERRORMSG();
 
@@ -468,7 +468,7 @@ void miniutm::initUTM(int zone) // zone number
    }
 
 // calculate the UTM equations
-void miniutm::calcLL2UTM(double lat,double lon, // geographic input coordinates (Lat/Lon)
+void minicrs::calcLL2UTM(double lat,double lon, // geographic input coordinates (Lat/Lon)
                          double *x,double *y)   // output UTM coordinates (Easting and Northing)
    {
    double delta_lon;       // delta longitude
@@ -504,7 +504,7 @@ void miniutm::calcLL2UTM(double lat,double lon, // geographic input coordinates 
    }
 
 // calculate the inverse UTM equations
-void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (Easting and Northing)
+void minicrs::calcUTM2LL(double x,double y,       // input UTM coordinates (Easting and Northing)
                          double *lat,double *lon) // geographic output coordinates (Lat/Lon)
    {
    int i;
@@ -556,7 +556,7 @@ void miniutm::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    }
 
 // calculate the Mercator equations
-void miniutm::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
+void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
    {
    double e;  // eccentricity
    double es; // eccentricity squared
@@ -592,7 +592,7 @@ void miniutm::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
    }
 
 // calculate the inverse Mercator equations
-void miniutm::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
+void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
    {
    int i;
 

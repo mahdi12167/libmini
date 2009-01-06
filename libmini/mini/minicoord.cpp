@@ -2,7 +2,7 @@
 
 #include "minibase.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 
 #include "minicoord.h"
 
@@ -110,18 +110,18 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
          switch (t)
             {
             case MINICOORD_MERC:
-               miniutm::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
+               minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
                utm_zone=utm_datum=0;
                break;
             case MINICOORD_UTM:
-               miniutm::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
                utm_zone=zone;
                utm_datum=datum;
                break;
             case MINICOORD_ECEF:
-               miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
+               minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                utm_zone=utm_datum=0;
@@ -134,20 +134,20 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
          switch (t)
             {
             case MINICOORD_LLH:
-               miniutm::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
+               minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                type=t;
                utm_zone=utm_datum=0;
                break;
             case MINICOORD_UTM:
-               miniutm::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
-               miniutm::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
+               minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
                utm_zone=zone;
                utm_datum=datum;
                break;
             case MINICOORD_ECEF:
-               miniutm::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
-               miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
+               minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
+               minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                utm_zone=utm_datum=0;
@@ -160,19 +160,19 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
          switch (t)
             {
             case MINICOORD_LLH:
-               miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
                type=t;
                utm_zone=utm_datum=0;
                break;
             case MINICOORD_MERC:
-               miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
-               miniutm::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
+               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
                utm_zone=utm_datum=0;
                break;
             case MINICOORD_ECEF:
-               miniutm::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
-               miniutm::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
+               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                utm_zone=utm_datum=0;
@@ -188,7 +188,7 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
+               minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                type=t;
                utm_zone=utm_datum=0;
                break;
@@ -196,8 +196,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
-               miniutm::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
+               minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
+               minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
                utm_zone=utm_datum=0;
                break;
@@ -205,8 +205,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const int datum)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               miniutm::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
-               miniutm::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
+               minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
                utm_zone=zone;
                utm_datum=datum;

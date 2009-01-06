@@ -5,7 +5,7 @@
 #include "mini.h"
 
 #include "miniio.h"
-#include "miniutm.h"
+#include "minicrs.h"
 #include "minimath.h"
 
 #include "pnmbase.h"
@@ -924,10 +924,10 @@ minitile *minitile::load(int cols,int rows,
 
             if (utm_zone!=0)
                {
-               miniutm::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-               miniutm::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-               miniutm::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-               miniutm::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+               minicrs::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+               minicrs::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+               minicrs::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+               minicrs::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
             offsetx-=i*(coord[6]-coord[0]);
@@ -971,7 +971,7 @@ minitile *minitile::load(int cols,int rows,
    centerx=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
    centerz=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
 
-   miniutm::arcsec2meter(centerz,as2m);
+   minicrs::arcsec2meter(centerz,as2m);
 
    as2m[0]*=stretchx;
    as2m[1]*=stretchy;

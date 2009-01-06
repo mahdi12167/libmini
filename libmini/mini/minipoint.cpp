@@ -2,7 +2,7 @@
 
 #include "miniio.h"
 
-#include "miniutm.h"
+#include "minicrs.h"
 
 #include "miniOGL.h"
 #include "minitext.h"
@@ -622,7 +622,7 @@ void minipoint::load(const char *filename,
          if (sscanf(point.longitude,"%g",&point.x)!=1) ERRORMSG();
          if (sscanf(point.latitude,"%g",&point.y)!=1) ERRORMSG();
 
-         miniutm::UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
+         minicrs::UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
 
          if (CONFIGURE_AUTOMAP!=0 && !TAKEN)
             {
@@ -656,7 +656,7 @@ void minipoint::load(const char *filename,
          }
       else
          {
-         miniutm::LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
+         minicrs::LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
 
          point.x+=offsetlon;
          point.y+=offsetlat;
