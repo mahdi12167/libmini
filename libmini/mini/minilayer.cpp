@@ -1130,6 +1130,9 @@ void minilayer::createwarps(miniwarp *warp)
    {
    int i,j,k;
 
+   minicoord center;
+   miniv3d east,north;
+
    int cols,rows;
 
    miniwarp twarp;
@@ -1137,7 +1140,7 @@ void minilayer::createwarps(miniwarp *warp)
    miniv3d crnr1[8],crnr2[8];
    double u,v,w;
 
-   miniv3d p;
+   miniv3d p,d;
    minicoord e;
 
    cols=getcols();
@@ -1146,6 +1149,13 @@ void minilayer::createwarps(miniwarp *warp)
    if (!istileset()) return;
    if (cols==0 || rows==0) return;
    if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
+
+   center=REFERENCE->getcenter();
+   east=REFERENCE->geteast();
+   north=REFERENCE->getnorth();
+
+   east=rot_g2o(east,center);
+   north=rot_g2o(north,center);
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
@@ -1210,12 +1220,16 @@ void minilayer::createwarps(miniwarp *warp)
             e=map_g2t(e);
             e=map_g2o(e);
 
+            d=miniv3d(e.vec)-p;
+
             if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
                {
-               //!! flatten
+               p+=(d*east)*east;
+               p+=(d*north)*north;
                }
+            else p+=d;
 
-            crnr2[k]=e.vec;
+            crnr2[k]=p;
             }
 
          twarp.setcorners(crnr2);
