@@ -51,6 +51,7 @@ miniwarp::miniwarp()
    cpy_mtx(MTX_2AFF,MTX_ZERO);
    cpy_mtx(MTX_2REF,MTX_ZERO);
    cpy_mtx(MTX_2FIN,MTX_ZERO);
+   cpy_mtx(MTX_2NRM,MTX_ZERO);
    cpy_mtx(MTX_2TIL,MTX_ZERO);
    cpy_mtx(MTX_2WRP,MTX_ZERO);
 
@@ -65,6 +66,7 @@ miniwarp::miniwarp()
    cpy_mtx(INV_2AFF,MTX_ZERO);
    cpy_mtx(INV_2REF,MTX_ZERO);
    cpy_mtx(INV_2FIN,MTX_ZERO);
+   cpy_mtx(INV_2NRM,MTX_ZERO);
    cpy_mtx(INV_2TIL,MTX_ZERO);
    cpy_mtx(INV_2WRP,MTX_ZERO);
 
@@ -194,6 +196,10 @@ void miniwarp::getinvtra(miniv3d invtra[3])
 // get actual scaling factor
 double miniwarp::getscale()
    {return(SCALE);}
+
+// set tile selection factors
+void miniwarp::settile(const miniv3d &scale,const miniv3d &bias)
+   {calc_til_mtx(scale,bias);}
 
 // get corners of warp box
 void miniwarp::getcorners(miniv3d p[8])
@@ -419,11 +425,15 @@ void miniwarp::update_mtx()
 
       inv_mtx(INV_2FIN,MTX_2FIN);
 
+      // conversion 2 normal coordinates:
+
+      mlt_mtx(MTX_2NRM,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2REF,INV_2FIN);
+
+      inv_mtx(INV_2NRM,MTX_2NRM);
+
       // conversion 2 tile coordinates:
 
-      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2REF,INV_2FIN);
-
-      inv_mtx(INV_2TIL,MTX_2TIL);
+      calc_til();
 
       // conversion 2 warp coordinates:
 
@@ -473,6 +483,7 @@ void miniwarp::update_wrp()
             case MINIWARP_AFFINE: mlt_mtx(MTX,MTX_2AFF,MTX); break;
             case MINIWARP_REFERENCE: mlt_mtx(MTX,MTX_2REF,MTX); break;
             case MINIWARP_FINAL: mlt_mtx(MTX,MTX_2FIN,MTX); break;
+            case MINIWARP_NORMAL: mlt_mtx(MTX,MTX_2NRM,MTX); break;
             case MINIWARP_TILE: mlt_mtx(MTX,MTX_2TIL,MTX); break;
             case MINIWARP_WARP: mlt_mtx(MTX,MTX_2WRP,MTX); break;
             }
@@ -482,7 +493,8 @@ void miniwarp::update_wrp()
          switch (i)
             {
             case MINIWARP_TILE: mlt_mtx(MTX,INV_2WRP,MTX); break;
-            case MINIWARP_FINAL: mlt_mtx(MTX,INV_2TIL,MTX); break;
+            case MINIWARP_NORMAL: mlt_mtx(MTX,INV_2TIL,MTX); break;
+            case MINIWARP_FINAL: mlt_mtx(MTX,INV_2NRM,MTX); break;
             case MINIWARP_REFERENCE: mlt_mtx(MTX,INV_2FIN,MTX); break;
             case MINIWARP_AFFINE: mlt_mtx(MTX,INV_2REF,MTX); break;
             case MINIWARP_REVERTED: mlt_mtx(MTX,INV_2AFF,MTX); break;
@@ -536,6 +548,20 @@ void miniwarp::update_scl()
 
    SCALE=sqrt(avg/3.0f);
    if (SCALE!=0.0) SCALE=1.0/SCALE;
+   }
+
+// calculate tile selection
+void miniwarp::calc_til()
+   {calc_til_mtx(miniv3d(1.0),miniv3d(0.0));}
+
+// calculate tile selection matrix
+void miniwarp::calc_til_mtx(const miniv3d &scale,const miniv3d &bias)
+   {
+   MTX_2TIL[0]=miniv4d(scale.x,0.0,0.0,bias.x);
+   MTX_2TIL[1]=miniv4d(0.0,scale.y,0.0,bias.y);
+   MTX_2TIL[2]=miniv4d(0.0,0.0,scale.z,bias.z);
+
+   inv_mtx(INV_2TIL,MTX_2TIL);
    }
 
 // calculate warp box

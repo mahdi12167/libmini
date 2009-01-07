@@ -1218,6 +1218,8 @@ void minilayer::createwarps(miniwarp *warp)
             e=minicoord(p);
             e=map_o2g(e);
             e=map_g2t(e);
+
+            e.convert2(minicoord::MINICOORD_ECEF);
             e=map_g2o(e);
 
             d=miniv3d(e.vec)-p;
@@ -1232,7 +1234,9 @@ void minilayer::createwarps(miniwarp *warp)
             crnr2[k]=p;
             }
 
+         twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
          twarp.setcorners(crnr2);
+
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
          TERRAIN->getminitile()->copywarp(&twarp,i,j);

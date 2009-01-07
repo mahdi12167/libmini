@@ -25,8 +25,9 @@ class miniwarp
       MINIWARP_AFFINE=9,     // affine coordinates
       MINIWARP_REFERENCE=10, // reference coordinates
       MINIWARP_FINAL=11,     // final coordinates
-      MINIWARP_TILE=12,      // tile coordinates
-      MINIWARP_WARP=13       // warp coordinates
+      MINIWARP_NORMAL=12,    // normal coordinates
+      MINIWARP_TILE=13,      // tile coordinates
+      MINIWARP_WARP=14       // warp coordinates
       };
 
    //! default constructor
@@ -76,6 +77,9 @@ class miniwarp
 
    //! get actual scaling factor
    double getscale();
+
+   //! set tile selection factors
+   void settile(const miniv3d &scale,const miniv3d &bias);
 
    //! get corners of warp box
    void getcorners(miniv3d p[8]);
@@ -154,6 +158,7 @@ class miniwarp
    miniv4d MTX_2AFF[3];
    miniv4d MTX_2REF[3];
    miniv4d MTX_2FIN[3];
+   miniv4d MTX_2NRM[3];
    miniv4d MTX_2TIL[3];
    miniv4d MTX_2WRP[3];
 
@@ -168,6 +173,7 @@ class miniwarp
    miniv4d INV_2AFF[3];
    miniv4d INV_2REF[3];
    miniv4d INV_2FIN[3];
+   miniv4d INV_2NRM[3];
    miniv4d INV_2TIL[3];
    miniv4d INV_2WRP[3];
 
@@ -188,6 +194,9 @@ class miniwarp
    void update_tra();
    void update_invtra();
    void update_scl();
+
+   void calc_til();
+   void calc_til_mtx(const miniv3d &scale,const miniv3d &bias);
 
    void calc_wrp();
    void calc_wrp_mtx();
