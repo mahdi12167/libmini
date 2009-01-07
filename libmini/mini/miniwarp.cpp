@@ -210,7 +210,7 @@ void miniwarp::setcorners(const miniv3d p[8])
 
    for (i=0; i<8; i++) CORNER[i]=p[i];
 
-   update_mtx();
+   calc_wrp_mtx();
    }
 
 // get tileset coordinate system
@@ -429,8 +429,6 @@ void miniwarp::update_mtx()
 
       calc_wrp();
 
-      inv_mtx(INV_2WRP,MTX_2WRP);
-
       // conversion 2 metric coordinates:
 
       MTX_2PLN[0]=miniv4d(1.0/SCALELOC,0.0,0.0);
@@ -550,7 +548,6 @@ void miniwarp::calc_wrp()
    double x1,x2,y1,y2,z1,z2;
 
    minicoord p[8];
-
    miniv4d v;
 
    cpy_mtx(MTX_2WRP,MTX_ONE);
@@ -589,7 +586,7 @@ void miniwarp::calc_wrp()
    p[6]=minicoord(miniv3d(x1,y2,z2),minicoord::MINICOORD_LLH);
    p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
 
-   // warp geo-referenced corners
+   // transform to final coordinates
    for (i=0; i<8; i++)
       {
       p[i].convert2(SYSWRP);
@@ -621,4 +618,6 @@ void miniwarp::calc_wrp_mtx()
    MTX_2WRP[0]=miniv4d(e[0].x,e[1].x,e[2].x,b.x);
    MTX_2WRP[1]=miniv4d(e[0].y,e[1].y,e[2].y,b.y);
    MTX_2WRP[2]=miniv4d(e[0].z,e[1].z,e[2].z,b.z);
+
+   inv_mtx(INV_2WRP,MTX_2WRP);
    }

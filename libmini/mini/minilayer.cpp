@@ -1206,8 +1206,14 @@ void minilayer::createwarps(miniwarp *warp)
               w*((1.0-v)*((1.0-u)*crnr1[4]+u*crnr1[5])+v*((1.0-u)*crnr1[6]+u*crnr1[7]));
 
             e=minicoord(p,minicoord::MINICOORD_ECEF);
+            e=map_o2g(e);
             e=map_g2t(e);
             e.convert2(minicoord::MINICOORD_ECEF);
+
+            if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+               {
+               //!! flatten
+               }
 
             crnr2[k]=e.vec;
             }
