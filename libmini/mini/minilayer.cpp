@@ -1205,10 +1205,10 @@ void minilayer::createwarps(miniwarp *warp)
             p=(1.0-w)*((1.0-v)*((1.0-u)*crnr1[0]+u*crnr1[1])+v*((1.0-u)*crnr1[2]+u*crnr1[3]))+
               w*((1.0-v)*((1.0-u)*crnr1[4]+u*crnr1[5])+v*((1.0-u)*crnr1[6]+u*crnr1[7]));
 
-            e=minicoord(p,minicoord::MINICOORD_ECEF);
+            e=minicoord(p);
             e=map_o2g(e);
             e=map_g2t(e);
-            e.convert2(minicoord::MINICOORD_ECEF);
+            e=map_g2o(e);
 
             if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
                {
