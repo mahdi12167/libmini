@@ -210,9 +210,7 @@ void miniwarp::setcorners(const miniv3d p[8])
 
    for (i=0; i<8; i++) CORNER[i]=p[i];
 
-   calc_wrp_mtx();
-
-   inv_mtx(INV_2WRP,MTX_2WRP);
+   update_mtx();
    }
 
 // get tileset coordinate system
@@ -423,7 +421,7 @@ void miniwarp::update_mtx()
 
       // conversion 2 tile coordinates:
 
-      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2FIN);
+      mlt_mtx(MTX_2TIL,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REV,INV_2AFF,INV_2REF,INV_2FIN);
 
       inv_mtx(INV_2TIL,MTX_2TIL);
 
@@ -553,6 +551,8 @@ void miniwarp::calc_wrp()
 
    minicoord p[8];
 
+   miniv4d v;
+
    cpy_mtx(MTX_2WRP,MTX_ONE);
 
    // check if warp coordinate conversion is disabled
@@ -593,7 +593,12 @@ void miniwarp::calc_wrp()
    for (i=0; i<8; i++)
       {
       p[i].convert2(SYSWRP);
-      CORNER[i]=p[i].vec;
+
+      v=miniv4d(p[i].vec/SCALELOC,1.0);
+      v=miniv4d(MTX_2REF[0]*v,MTX_2REF[1]*v,MTX_2REF[2]*v,1.0);
+      v=miniv4d(MTX_2FIN[0]*v,MTX_2FIN[1]*v,MTX_2FIN[2]*v,1.0);
+
+      CORNER[i]=v;
       }
 
    calc_wrp_mtx();
