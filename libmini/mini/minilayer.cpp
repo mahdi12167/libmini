@@ -1139,8 +1139,6 @@ void minilayer::createwarps(miniwarp *warp,
    double u,v,w;
    miniv3d crnr[8];
 
-   cols=rows=1;//!!
-
    if (cols==0 || rows==0) return;
    if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
 
@@ -1225,14 +1223,6 @@ void minilayer::createwarps(miniwarp *warp,
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
          TERRAIN->getminitile()->copywarp(&twarp,i,j);
-
-         //!!
-         if (i==cols/2 && j==rows/2)
-            {
-            miniv4d mtx[3];
-            twarp.getwarp(mtx);
-            std::cout << "warp:" << std::endl << mtx[0] << std::endl << mtx[1] << std::endl << mtx[2] << std::endl;
-            }
          }
    }
 
