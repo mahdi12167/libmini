@@ -70,6 +70,15 @@ miniwarp::miniwarp()
    cpy_mtx(INV_2TIL,MTX_ZERO);
    cpy_mtx(INV_2WRP,MTX_ZERO);
 
+   CORNER[0]=miniv3d(0.0,0.0,0.0);
+   CORNER[1]=miniv3d(1.0,0.0,0.0);
+   CORNER[2]=miniv3d(0.0,1.0,0.0);
+   CORNER[3]=miniv3d(1.0,1.0,0.0);
+   CORNER[4]=miniv3d(0.0,0.0,1.0);
+   CORNER[5]=miniv3d(1.0,0.0,1.0);
+   CORNER[6]=miniv3d(0.0,1.0,1.0);
+   CORNER[7]=miniv3d(1.0,1.0,1.0);
+
    FROM=TO=MINIWARP_PLAIN;
 
    cpy_mtx(MTX,MTX_ONE);
@@ -197,28 +206,6 @@ void miniwarp::getinvtra(miniv3d invtra[3])
 double miniwarp::getscale()
    {return(SCALE);}
 
-// set tile selection factors
-void miniwarp::settile(const miniv3d &scale,const miniv3d &bias)
-   {calc_til_mtx(scale,bias);}
-
-// get corners of warp box
-void miniwarp::getcorners(miniv3d p[8])
-   {
-   int i;
-
-   for (i=0; i<8; i++) p[i]=CORNER[i];
-   }
-
-// set corners of warp box
-void miniwarp::setcorners(const miniv3d p[8])
-   {
-   int i;
-
-   for (i=0; i<8; i++) CORNER[i]=p[i];
-
-   calc_wrp_mtx();
-   }
-
 // get tileset coordinate system
 minicoord::MINICOORD miniwarp::gettls()
    {return(SYSTLS);}
@@ -250,6 +237,28 @@ int miniwarp::getutmdatum()
 // get local down-scaling factor
 double miniwarp::getscaleloc()
    {return(SCALELOC);}
+
+// set tile selection window
+void miniwarp::settile(const miniv3d &scale,const miniv3d &bias)
+   {calc_til_mtx(scale,bias);}
+
+// get corners of warp box
+void miniwarp::getcorners(miniv3d p[8])
+   {
+   int i;
+
+   for (i=0; i<8; i++) p[i]=CORNER[i];
+   }
+
+// set corners of warp box
+void miniwarp::setcorners(const miniv3d p[8])
+   {
+   int i;
+
+   for (i=0; i<8; i++) CORNER[i]=p[i];
+
+   calc_wrp_mtx();
+   }
 
 // perform warp of a point
 minicoord miniwarp::warp(const miniv4d &p)
@@ -550,7 +559,7 @@ void miniwarp::update_scl()
    if (SCALE!=0.0) SCALE=1.0/SCALE;
    }
 
-// calculate tile selection
+// calculate tile selection window
 void miniwarp::calc_til()
    {calc_til_mtx(miniv3d(1.0),miniv3d(0.0));}
 

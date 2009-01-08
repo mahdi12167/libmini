@@ -78,15 +78,6 @@ class miniwarp
    //! get actual scaling factor
    double getscale();
 
-   //! set tile selection factors
-   void settile(const miniv3d &scale,const miniv3d &bias);
-
-   //! get corners of warp box
-   void getcorners(miniv3d p[8]);
-
-   //! set corners of warp box
-   void setcorners(const miniv3d p[8]);
-
    //! get tileset coordinate system
    minicoord::MINICOORD gettls();
 
@@ -110,6 +101,15 @@ class miniwarp
 
    //! get local down-scaling factor
    double getscaleloc();
+
+   //! set tile selection window
+   void settile(const miniv3d &scale,const miniv3d &bias);
+
+   //! get corners of warp box
+   void getcorners(miniv3d p[8]);
+
+   //! set corners of warp box
+   void setcorners(const miniv3d p[8]);
 
    //! perform warp of a point
    minicoord warp(const miniv4d &p); // fourth component is time
