@@ -23,16 +23,6 @@ miniwarpbase::miniwarpbase()
    CORNER[7]=miniv3d(0.5,0.5,0.5);
    }
 
-// copy constructor
-miniwarpbase::miniwarpbase(const miniwarp &warp)
-   {
-   int i;
-
-   cpy_mtx(MTX,warp.MTX);
-
-   for (i=0; i<8; i++) CORNER[i]=warp.CORNER[i];
-   }
-
 // destructor
 miniwarpbase::~miniwarpbase() {}
 

@@ -15,9 +15,6 @@ class miniwarpbase
    //! default constructor
    miniwarpbase();
 
-   //! copy constructor
-   miniwarpbase(const miniwarp &warp);
-
    //! destructor
    ~miniwarpbase();
 
