@@ -54,9 +54,6 @@ class miniwarp
    //! define conversion to reference coordinates
    void def_2reference(const miniv4d mtxREF[3]);
 
-   //! define warp coordinates
-   void def_warp(const minicoord::MINICOORD sysWRP);
-
    //! get inverse affine coordinate conversion
    void get_invaff(miniv4d invAFF[3]);
 
@@ -105,11 +102,11 @@ class miniwarp
    //! set tile selection window
    void settile(const miniv3d &scale,const miniv3d &bias);
 
-   //! get corners of warp box
-   void getcorners(miniv3d p[8]);
-
    //! set corners of warp box
    void setcorners(const miniv3d p[8]);
+
+   //! get corners of warp box
+   void getcorners(miniv3d p[8]);
 
    //! perform warp of a point
    minicoord warp(const miniv4d &p); // fourth component is time
@@ -142,8 +139,6 @@ class miniwarp
 
    miniv4d MTXAFF[3];
    miniv4d MTXREF[3];
-
-   minicoord::MINICOORD SYSWRP;
 
    BOOLINT HAS_DATA;
 
@@ -195,11 +190,8 @@ class miniwarp
    void update_invtra();
    void update_scl();
 
-   void calc_til();
-   void calc_til_mtx(const miniv3d &scale,const miniv3d &bias);
-
+   void calc_til(const miniv3d &scale,const miniv3d &bias);
    void calc_wrp();
-   void calc_wrp_mtx();
    };
 
 #endif

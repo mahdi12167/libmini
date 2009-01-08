@@ -36,8 +36,6 @@ miniwarp::miniwarp()
    cpy_mtx(MTXAFF,MTX_ONE);
    cpy_mtx(MTXREF,MTX_ONE);
 
-   SYSWRP=minicoord::MINICOORD_NONE;
-
    HAS_DATA=FALSE;
 
    cpy_mtx(MTX_2MET,MTX_ZERO);
@@ -70,14 +68,14 @@ miniwarp::miniwarp()
    cpy_mtx(INV_2TIL,MTX_ZERO);
    cpy_mtx(INV_2WRP,MTX_ZERO);
 
-   CORNER[0]=miniv3d(0.0,0.0,0.0);
-   CORNER[1]=miniv3d(1.0,0.0,0.0);
-   CORNER[2]=miniv3d(0.0,1.0,0.0);
-   CORNER[3]=miniv3d(1.0,1.0,0.0);
-   CORNER[4]=miniv3d(0.0,0.0,1.0);
-   CORNER[5]=miniv3d(1.0,0.0,1.0);
-   CORNER[6]=miniv3d(0.0,1.0,1.0);
-   CORNER[7]=miniv3d(1.0,1.0,1.0);
+   CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
+   CORNER[1]=miniv3d(0.5,-0.5,-0.5);
+   CORNER[2]=miniv3d(-0.5,0.5,-0.5);
+   CORNER[3]=miniv3d(0.5,0.5,-0.5);
+   CORNER[4]=miniv3d(-0.5,-0.5,0.5);
+   CORNER[5]=miniv3d(0.5,-0.5,0.5);
+   CORNER[6]=miniv3d(-0.5,0.5,0.5);
+   CORNER[7]=miniv3d(0.5,0.5,0.5);
 
    FROM=TO=MINIWARP_PLAIN;
 
@@ -95,10 +93,6 @@ miniwarp::~miniwarp() {}
 // define tileset coordinates
 void miniwarp::def_tileset(const minicoord::MINICOORD sysTLS)
    {
-   if (sysTLS==minicoord::MINICOORD_LLH ||
-       sysTLS==minicoord::MINICOORD_MERC ||
-       sysTLS==minicoord::MINICOORD_UTM) ERRORMSG();
-
    SYSTLS=sysTLS;
 
    update_mtx();
@@ -157,14 +151,6 @@ void miniwarp::def_2affine(const miniv4d mtxAFF[3])
 void miniwarp::def_2reference(const miniv4d mtxREF[3])
    {
    cpy_mtx(MTXREF,mtxREF);
-
-   update_mtx();
-   }
-
-// define warp coordinates
-void miniwarp::def_warp(const minicoord::MINICOORD sysWRP)
-   {
-   SYSWRP=sysWRP;
 
    update_mtx();
    }
@@ -240,15 +226,7 @@ double miniwarp::getscaleloc()
 
 // set tile selection window
 void miniwarp::settile(const miniv3d &scale,const miniv3d &bias)
-   {calc_til_mtx(scale,bias);}
-
-// get corners of warp box
-void miniwarp::getcorners(miniv3d p[8])
-   {
-   int i;
-
-   for (i=0; i<8; i++) p[i]=CORNER[i];
-   }
+   {calc_til(scale,bias);}
 
 // set corners of warp box
 void miniwarp::setcorners(const miniv3d p[8])
@@ -257,7 +235,15 @@ void miniwarp::setcorners(const miniv3d p[8])
 
    for (i=0; i<8; i++) CORNER[i]=p[i];
 
-   calc_wrp_mtx();
+   calc_wrp();
+   }
+
+// get corners of warp box
+void miniwarp::getcorners(miniv3d p[8])
+   {
+   int i;
+
+   for (i=0; i<8; i++) p[i]=CORNER[i];
    }
 
 // perform warp of a point
@@ -442,7 +428,7 @@ void miniwarp::update_mtx()
 
       // conversion 2 tile coordinates:
 
-      calc_til();
+      calc_til(miniv3d(1.0),miniv3d(0.0));
 
       // conversion 2 warp coordinates:
 
@@ -559,12 +545,8 @@ void miniwarp::update_scl()
    if (SCALE!=0.0) SCALE=1.0/SCALE;
    }
 
-// calculate tile selection window
-void miniwarp::calc_til()
-   {calc_til_mtx(miniv3d(1.0),miniv3d(0.0));}
-
 // calculate tile selection matrix
-void miniwarp::calc_til_mtx(const miniv3d &scale,const miniv3d &bias)
+void miniwarp::calc_til(const miniv3d &scale,const miniv3d &bias)
    {
    MTX_2TIL[0]=miniv4d(scale.x,0.0,0.0,bias.x);
    MTX_2TIL[1]=miniv4d(0.0,scale.y,0.0,bias.y);
@@ -573,71 +555,8 @@ void miniwarp::calc_til_mtx(const miniv3d &scale,const miniv3d &bias)
    inv_mtx(INV_2TIL,MTX_2TIL);
    }
 
-// calculate warp box
-void miniwarp::calc_wrp()
-   {
-   int i;
-
-   minicoord bboxGEO[2];
-
-   double x1,x2,y1,y2,z1,z2;
-
-   minicoord p[8];
-   miniv4d v;
-
-   cpy_mtx(MTX_2WRP,MTX_ONE);
-
-   // check if warp coordinate conversion is disabled
-   if (SYSWRP==minicoord::MINICOORD_NONE) return;
-
-   // check if warp coordinate conversion is possible
-   if (SYSDAT!=minicoord::MINICOORD_LLH &&
-       SYSDAT!=minicoord::MINICOORD_MERC &&
-       SYSDAT!=minicoord::MINICOORD_UTM) return;
-
-   // fetch geo-referenced bounding box
-   bboxGEO[0]=BBOXDAT[0];
-   bboxGEO[1]=BBOXDAT[1];
-
-   // convert bounding box to geographic coordinates
-   bboxGEO[0].convert2(minicoord::MINICOORD_LLH);
-   bboxGEO[1].convert2(minicoord::MINICOORD_LLH);
-
-   // get extents of geo-referenced bbox
-   x1=bboxGEO[0].vec.x;
-   x2=bboxGEO[1].vec.x;
-   y1=bboxGEO[0].vec.y;
-   y2=bboxGEO[1].vec.y;
-   z1=bboxGEO[0].vec.z;
-   z2=bboxGEO[1].vec.z;
-
-   // construct corners of geo-referenced bbox
-   p[0]=minicoord(miniv3d(x1,y1,z1),minicoord::MINICOORD_LLH);
-   p[1]=minicoord(miniv3d(x2,y1,z1),minicoord::MINICOORD_LLH);
-   p[2]=minicoord(miniv3d(x1,y2,z1),minicoord::MINICOORD_LLH);
-   p[3]=minicoord(miniv3d(x2,y2,z1),minicoord::MINICOORD_LLH);
-   p[4]=minicoord(miniv3d(x1,y1,z2),minicoord::MINICOORD_LLH);
-   p[5]=minicoord(miniv3d(x2,y1,z2),minicoord::MINICOORD_LLH);
-   p[6]=minicoord(miniv3d(x1,y2,z2),minicoord::MINICOORD_LLH);
-   p[7]=minicoord(miniv3d(x2,y2,z2),minicoord::MINICOORD_LLH);
-
-   // transform to final coordinates
-   for (i=0; i<8; i++)
-      {
-      p[i].convert2(SYSWRP);
-
-      v=miniv4d(p[i].vec/SCALELOC,1.0);
-      v=miniv4d(MTX_2REF[0]*v,MTX_2REF[1]*v,MTX_2REF[2]*v,1.0);
-      v=miniv4d(MTX_2FIN[0]*v,MTX_2FIN[1]*v,MTX_2FIN[2]*v,1.0);
-
-      CORNER[i]=v;
-      }
-
-   calc_wrp_mtx();
-   }
-
 // calculate approximate warp matrix
-void miniwarp::calc_wrp_mtx()
+void miniwarp::calc_wrp()
    {
    miniv3d b,e[3];
 
