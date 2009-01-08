@@ -1115,7 +1115,9 @@ void minilayer::updatecoords()
       TERRAIN->getminitile()->copywarp(WARP);
       TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
-      createwarps(WARP,LPARAMS.offsetDAT,LPARAMS.extentDAT);
+      createwarps(WARP,
+                  LPARAMS.cols,LPARAMS.rows,
+                  LPARAMS.offsetDAT,LPARAMS.extentDAT);
 
       miniray::unlock();
       }
@@ -1123,11 +1125,10 @@ void minilayer::updatecoords()
 
 // create the per-tile warps
 void minilayer::createwarps(miniwarp *warp,
+                            int cols,int rows,
                             minicoord offsetDAT,minicoord extentDAT)
    {
    int i,j,k;
-
-   int cols,rows;
 
    miniwarp twarp;
 
@@ -1139,12 +1140,8 @@ void minilayer::createwarps(miniwarp *warp,
    minicoord fcenter;
    miniv3d feast,fnorth;
 
-   cols=getcols();
-   rows=getrows();
-
    cols=rows=1;//!!
 
-   if (!istileset()) return;
    if (cols==0 || rows==0) return;
    if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
 
@@ -1214,7 +1211,6 @@ void minilayer::createwarps(miniwarp *warp,
                                 offsetDAT.vec.z+w*extentDAT.vec.z),offsetDAT.type,offsetDAT.utm_zone,offsetDAT.utm_datum);
 
             p.convert2(minicoord::MINICOORD_ECEF);
-
             e=map_g2o(p);
 
             /*
