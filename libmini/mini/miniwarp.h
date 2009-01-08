@@ -5,8 +5,36 @@
 
 #include "minicoord.h"
 
+class miniwarp;
+
+//! warp kernel base
+class miniwarpbase
+   {
+   public:
+
+   //! default constructor
+   miniwarpbase();
+
+   //! copy constructor
+   miniwarpbase(const miniwarp &warp);
+
+   //! destructor
+   ~miniwarpbase();
+
+   //! get actual warp matrix
+   void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
+
+   //! get corners of warp box
+   void getcorners(miniv3d p[8]);
+
+   protected:
+
+   miniv4d MTX[3];
+   miniv3d CORNER[8];
+   };
+
 //! warp kernel for global coordinate systems
-class miniwarp
+class miniwarp: public miniwarpbase
    {
    public:
 
@@ -60,9 +88,6 @@ class miniwarp
    //! set actual warp
    void setwarp(MINIWARP from,MINIWARP to);
 
-   //! get actual warp matrix
-   void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
-
    //! get inverse of actual warp matrix
    void getinv(miniv4d inv[3]);
 
@@ -104,9 +129,6 @@ class miniwarp
 
    //! set corners of warp box
    void setcorners(const miniv3d p[8]);
-
-   //! get corners of warp box
-   void getcorners(miniv3d p[8]);
 
    //! perform warp of a point
    minicoord warp(const miniv4d &p); // fourth component is time
@@ -174,12 +196,9 @@ class miniwarp
 
    MINIWARP FROM,TO;
 
-   miniv4d MTX[3];
    miniv4d INV[3],TRA[3];
    miniv4d INVTRA[3];
    float SCALE;
-
-   miniv3d CORNER[8];
 
    private:
 

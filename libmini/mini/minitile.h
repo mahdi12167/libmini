@@ -157,7 +157,7 @@ class minitile
    int getpreloadedtop() {return(PTOP);}
 
    miniwarp *getwarp() {return(WARP);}
-   miniwarp *getwarp(int col,int row) {return(WARPS[col+row*COLS]);}
+   miniwarpbase *getwarp(int col,int row) {return(WARPS[col+row*COLS]);}
 
    // functions for grid reloading:
 
@@ -270,7 +270,7 @@ class minitile
    float RATIO;
 
    miniwarp *WARP;
-   miniwarp **WARPS;
+   miniwarpbase **WARPS;
 
    void (*BEGINFAN_CALLBACK)();
    void (*FANVERTEX_CALLBACK)(float i,float y,float j);

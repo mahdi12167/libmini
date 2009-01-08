@@ -6,7 +6,50 @@
 
 #include "miniwarp.h"
 
-miniwarp::miniwarp()
+// default constuctor
+miniwarpbase::miniwarpbase()
+   {
+   MTX[0]=miniv3d(1.0,0.0,0.0);
+   MTX[1]=miniv3d(0.0,1.0,0.0);
+   MTX[2]=miniv3d(0.0,0.0,1.0);
+
+   CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
+   CORNER[1]=miniv3d(0.5,-0.5,-0.5);
+   CORNER[2]=miniv3d(-0.5,0.5,-0.5);
+   CORNER[3]=miniv3d(0.5,0.5,-0.5);
+   CORNER[4]=miniv3d(-0.5,-0.5,0.5);
+   CORNER[5]=miniv3d(0.5,-0.5,0.5);
+   CORNER[6]=miniv3d(-0.5,0.5,0.5);
+   CORNER[7]=miniv3d(0.5,0.5,0.5);
+   }
+
+// copy constructor
+miniwarpbase::miniwarpbase(const miniwarp &warp)
+   {
+   int i;
+
+   cpy_mtx(MTX,warp.MTX);
+
+   for (i=0; i<8; i++) CORNER[i]=warp.CORNER[i];
+   }
+
+// destructor
+miniwarpbase::~miniwarpbase() {}
+
+// get actual warp matrix
+void miniwarpbase::getwarp(miniv4d mtx[3])
+   {cpy_mtx(mtx,MTX);}
+
+// get corners of warp box
+void miniwarpbase::getcorners(miniv3d p[8])
+   {
+   int i;
+
+   for (i=0; i<8; i++) p[i]=CORNER[i];
+   }
+
+// default constructor
+miniwarp::miniwarp(): miniwarpbase()
    {
    // set up zero matrix
    MTX_ZERO[0]=MTX_ZERO[1]=MTX_ZERO[2]=miniv3d(0.0);
@@ -68,18 +111,8 @@ miniwarp::miniwarp()
    cpy_mtx(INV_2TIL,MTX_ZERO);
    cpy_mtx(INV_2WRP,MTX_ZERO);
 
-   CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
-   CORNER[1]=miniv3d(0.5,-0.5,-0.5);
-   CORNER[2]=miniv3d(-0.5,0.5,-0.5);
-   CORNER[3]=miniv3d(0.5,0.5,-0.5);
-   CORNER[4]=miniv3d(-0.5,-0.5,0.5);
-   CORNER[5]=miniv3d(0.5,-0.5,0.5);
-   CORNER[6]=miniv3d(-0.5,0.5,0.5);
-   CORNER[7]=miniv3d(0.5,0.5,0.5);
-
    FROM=TO=MINIWARP_PLAIN;
 
-   cpy_mtx(MTX,MTX_ONE);
    cpy_mtx(INV,MTX_ONE);
    cpy_mtx(TRA,MTX_ONE);
    cpy_mtx(INVTRA,MTX_ONE);
@@ -172,10 +205,6 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
    update_scl();
    }
 
-// get actual warp matrix
-void miniwarp::getwarp(miniv4d mtx[3])
-   {cpy_mtx(mtx,MTX);}
-
 // get inverse of actual warp matrix
 void miniwarp::getinv(miniv4d inv[3])
    {cpy_mtx(inv,INV);}
@@ -236,14 +265,6 @@ void miniwarp::setcorners(const miniv3d p[8])
    for (i=0; i<8; i++) CORNER[i]=p[i];
 
    calc_wrp();
-   }
-
-// get corners of warp box
-void miniwarp::getcorners(miniv3d p[8])
-   {
-   int i;
-
-   for (i=0; i<8; i++) p[i]=CORNER[i];
    }
 
 // perform warp of a point

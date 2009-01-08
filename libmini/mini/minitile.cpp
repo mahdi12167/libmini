@@ -94,7 +94,7 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    if ((UPDATED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
    if ((MODIFIED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
 
-   if ((WARPS=(miniwarp **)malloc(cols*rows*sizeof(miniwarp *)))==NULL) ERRORMSG();
+   if ((WARPS=(miniwarpbase **)malloc(cols*rows*sizeof(miniwarpbase *)))==NULL) ERRORMSG();
 
    SCALE=scale;
    CELLASPECT=rowdim/coldim;
@@ -359,11 +359,11 @@ void minitile::copywarp(miniwarp *warp)
 // copy warp object
 void minitile::copywarp(miniwarp *warp,int col,int row)
    {
-   miniwarp **w;
+   miniwarpbase **w;
 
    w=&WARPS[col+row*COLS];
 
-   if (*w==NULL) *w=new miniwarp(*warp);
+   if (*w==NULL) *w=new miniwarpbase(*warp);
    else **w=*warp;
    }
 
