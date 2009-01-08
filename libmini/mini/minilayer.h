@@ -389,7 +389,8 @@ class minilayer
 
    void updatecoords();
 
-   void createwarps(miniwarp *warp);
+   void createwarps(miniwarp *warp,
+                    minicoord offsetDAT,minicoord extentDAT);
 
    int getthreadid();
 

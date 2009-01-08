@@ -1046,10 +1046,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    WARP->def_2affine(mtxAFF);
 
-   // define warp coordinates:
-
-   WARP->def_warp(minicoord::MINICOORD_ECEF);
-
    // define reference coordinates:
 
    setreference(REFERENCE);
@@ -1119,14 +1115,15 @@ void minilayer::updatecoords()
       TERRAIN->getminitile()->copywarp(WARP);
       TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
-      createwarps(WARP);
+      createwarps(WARP,LPARAMS.offsetDAT,LPARAMS.extentDAT);
 
       miniray::unlock();
       }
    }
 
 // create the per-tile warps
-void minilayer::createwarps(miniwarp *warp)
+void minilayer::createwarps(miniwarp *warp,
+                            minicoord offsetDAT,minicoord extentDAT)
    {
    int i,j,k;
 
@@ -1134,17 +1131,18 @@ void minilayer::createwarps(miniwarp *warp)
 
    miniwarp twarp;
 
-   miniv3d crnr1[8],crnr2[8];
+   miniv3d crnr[8];
    double u,v,w;
 
-   miniv3d p,d;
-   minicoord e;
+   minicoord p,e,d;
 
    minicoord fcenter;
    miniv3d feast,fnorth;
 
    cols=getcols();
    rows=getrows();
+
+   cols=rows=1;//!!
 
    if (!istileset()) return;
    if (cols==0 || rows==0) return;
@@ -1161,85 +1159,92 @@ void minilayer::createwarps(miniwarp *warp)
       for (j=0; j<rows; j++)
          {
          twarp=*warp;
-         twarp.getcorners(crnr1);
 
          for (k=0; k<8; k++)
             {
             switch (k)
                {
                case 0:
-                  u=(double)i/cols;
-                  v=(double)j/rows;
-                  w=0.0;
+                  u=(double)i/cols-0.5;
+                  v=(double)j/rows-0.5;
+                  w=-0.5;
                   break;
                case 1:
-                  u=(double)(i+1)/cols;
-                  v=(double)j/rows;
-                  w=0.0;
+                  u=(double)(i+1)/cols-0.5;
+                  v=(double)j/rows-0.5;
+                  w=-0.5;
                   break;
                case 2:
-                  u=(double)i/cols;
-                  v=(double)(j+1)/rows;
-                  w=0.0;
+                  u=(double)i/cols-0.5;
+                  v=(double)(j+1)/rows-0.5;
+                  w=-0.5;
                   break;
                case 3:
-                  u=(double)(i+1)/cols;
-                  v=(double)(j+1)/rows;
-                  w=0.0;
+                  u=(double)(i+1)/cols-0.5;
+                  v=(double)(j+1)/rows-0.5;
+                  w=-0.5;
                   break;
                case 4:
-                  u=(double)i/cols;
-                  v=(double)j/rows;
-                  w=1.0;
+                  u=(double)i/cols-0.5;
+                  v=(double)j/rows-0.5;
+                  w=0.5;
                   break;
                case 5:
-                  u=(double)(i+1)/cols;
-                  v=(double)j/rows;
-                  w=1.0;
+                  u=(double)(i+1)/cols-0.5;
+                  v=(double)j/rows-0.5;
+                  w=0.5;
                   break;
                case 6:
-                  u=(double)i/cols;
-                  v=(double)(j+1)/rows;
-                  w=1.0;
+                  u=(double)i/cols-0.5;
+                  v=(double)(j+1)/rows-0.5;
+                  w=0.5;
                   break;
                case 7:
-                  u=(double)(i+1)/cols;
-                  v=(double)(j+1)/rows;
-                  w=1.0;
+                  u=(double)(i+1)/cols-0.5;
+                  v=(double)(j+1)/rows-0.5;
+                  w=0.5;
                   break;
                default:
                   u=v=w=0.0;
                   break;
                }
 
-            p=(1.0-w)*((1.0-v)*((1.0-u)*crnr1[0]+u*crnr1[1])+v*((1.0-u)*crnr1[2]+u*crnr1[3]))+
-              w*((1.0-v)*((1.0-u)*crnr1[4]+u*crnr1[5])+v*((1.0-u)*crnr1[6]+u*crnr1[7]));
+            p=minicoord(miniv3d(offsetDAT.vec.x+u*extentDAT.vec.x,
+                                offsetDAT.vec.y+v*extentDAT.vec.y,
+                                offsetDAT.vec.z+w*extentDAT.vec.z),offsetDAT.type,offsetDAT.utm_zone,offsetDAT.utm_datum);
 
-            e=minicoord(p);
-            e=map_o2g(e);
-            e=map_g2t(e);
+            p.convert2(minicoord::MINICOORD_ECEF);
 
-            e.convert2(minicoord::MINICOORD_ECEF);
-            e=map_g2o(e);
+            e=map_g2o(p);
 
-            d=miniv3d(e.vec)-p;
-
+            /*
             if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
                {
-               p+=(d*feast)*feast;
-               p+=(d*fnorth)*fnorth;
-               }
-            else p+=d;
+               p=map_t2g(p);
+               p=map_g2o(p);
 
-            crnr2[k]=p;
+               d=e-p;
+               e=p+(d*feast)*feast+(d*fnorth)*fnorth;
+               }
+            */
+
+            crnr[k]=e.vec;
             }
 
          twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
-         twarp.setcorners(crnr2);
+         twarp.setcorners(crnr);
 
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
          TERRAIN->getminitile()->copywarp(&twarp,i,j);
+
+         //!!
+         if (i==cols/2 && j==rows/2)
+            {
+            miniv4d mtx[3];
+            twarp.getwarp(mtx);
+            std::cout << "warp:" << std::endl << mtx[0] << std::endl << mtx[1] << std::endl << mtx[2] << std::endl;
+            }
          }
    }
 
