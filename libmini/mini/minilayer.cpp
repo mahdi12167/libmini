@@ -1132,13 +1132,12 @@ void minilayer::createwarps(miniwarp *warp,
 
    miniwarp twarp;
 
-   miniv3d crnr[8];
-   double u,v,w;
-
-   minicoord p,e,d;
-
    minicoord fcenter;
-   miniv3d feast,fnorth;
+   miniv3d fnormal;
+
+   minicoord p;
+   double u,v,w;
+   miniv3d crnr[8];
 
    cols=rows=1;//!!
 
@@ -1146,11 +1145,7 @@ void minilayer::createwarps(miniwarp *warp,
    if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
 
    fcenter=REFERENCE->getcenter();
-   feast=REFERENCE->geteast();
-   fnorth=REFERENCE->getnorth();
-
-   feast=rot_g2o(feast,fcenter);
-   fnorth=rot_g2o(fnorth,fcenter);
+   fnormal=REFERENCE->getnormal();
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
@@ -1206,25 +1201,23 @@ void minilayer::createwarps(miniwarp *warp,
                   break;
                }
 
-            p=minicoord(miniv3d(offsetDAT.vec.x+u*extentDAT.vec.x,
-                                offsetDAT.vec.y+v*extentDAT.vec.y,
-                                offsetDAT.vec.z+w*extentDAT.vec.z),offsetDAT.type,offsetDAT.utm_zone,offsetDAT.utm_datum);
-
-            p.convert2(minicoord::MINICOORD_ECEF);
-            e=map_g2o(p);
-
-            /*
             if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
                {
-               p=map_t2g(p);
-               p=map_g2o(p);
-
-               d=e-p;
-               e=p+(d*feast)*feast+(d*fnorth)*fnorth;
+               p=offsetDAT;
+               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
+               p.convert2(minicoord::MINICOORD_ECEF);
+               p.vec+=((p.vec-fcenter.vec)*fnormal)*fnormal;
+               p.convert2(offsetDAT.type);
+               p.vec+=miniv4d(0.0,0.0,w*extentDAT.vec.z);
                }
-            */
+            else
+               {
+               p=offsetDAT;
+               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+               }
 
-            crnr[k]=e.vec;
+            p.convert2(minicoord::MINICOORD_ECEF);
+            crnr[k]=map_g2o(p).vec;
             }
 
          twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
