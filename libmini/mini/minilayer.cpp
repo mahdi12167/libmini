@@ -1206,17 +1206,16 @@ void minilayer::createwarps(miniwarp *warp,
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
                p.convert2(minicoord::MINICOORD_ECEF);
-               p.vec+=((p.vec-fcenter.vec)*fnormal)*fnormal;
-               p.convert2(offsetDAT.type);
-               p.vec+=miniv4d(0.0,0.0,w*extentDAT.vec.z);
+               p.vec+=(miniv3d(p.vec-fcenter.vec)*fnormal)*fnormal;
+               p.vec+=w*extentDAT.vec.z*fnormal;
                }
             else
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+               p.convert2(minicoord::MINICOORD_ECEF);
                }
 
-            p.convert2(minicoord::MINICOORD_ECEF);
             crnr[k]=map_g2o(p).vec;
             }
 
