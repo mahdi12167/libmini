@@ -18,9 +18,11 @@ if ("$dir" == "") then
    exit
 endif
 
-if ($dir == ".") set $dir="./"
-
-set md5=$dir.md5
+if ($dir == ".") then
+   set md5=".md5"
+else
+   set md5=$dir.md5
+endif
 
 if (! -e $md5) then
    find $dir \( -type f -a \! -name .md5 \) -exec md5sum {} \; > $md5
