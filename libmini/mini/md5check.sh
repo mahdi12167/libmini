@@ -20,8 +20,10 @@ endif
 
 if ($dir == ".") then
    set md5=".md5"
+   set tmp=".tmp.md5"
 else
    set md5=$dir.md5
+   set tmp=$dir.tmp.md5
 endif
 
 if (! -e $md5) then
@@ -30,22 +32,22 @@ if (! -e $md5) then
 else
    echo checking integrity
    if ($stamp) then
-      find $dir \( -type f -a \! -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec egrep \{\}\$ $md5 \; > $md5.tmp
+      find $dir \( -type f -a \! -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec egrep \{\}\$ $md5 \; > $tmp
 
-      md5sum --check --status $md5.tmp
+      md5sum --check --status $tmp
 
       if ($status) then
          echo detected md5 mismatch
-         md5sum --check $md5.tmp | grep FAILED
-         rm $md5.tmp
+         md5sum --check $tmp | grep FAILED
+         rm $tmp
          exit 1
       else
          echo verified md5 file list
       endif
 
-      find $dir \( -type f -a -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec md5sum {} \; >> $md5.tmp
+      find $dir \( -type f -a -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec md5sum {} \; >> $tmp
 
-      mv -f $md5.tmp $md5
+      mv -f $tmp $md5
    else
       md5sum --check --status $md5
 
