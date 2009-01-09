@@ -6,8 +6,8 @@ set option=$1
 set file=$2
 
 if ("$option" == "") then
-   echo "usage: tabify -x|u|t|X|U|T [<file>]"
-   echo " replaces all tabs with 4-space (-x) or 8-space (-X)"
+   echo "usage: tabify.sh -x|u|t|X|U|T [<file>]"
+   echo " replaces all tabs in <file> with 4-space (-x) or 8-space (-X)"
    echo " or replaces all tabs at the beginning of each line with 4-space (-u) or 8-space (-U) and the other way round (-t|T)"
    echo " additionally removes trailing white space, all spaces before a tab, and gets rid of all ctrl-m"
    echo " whithout a specified file argument all .cpp and .h files are treated accordingly"
