@@ -25,10 +25,10 @@ else
 endif
 
 if (! -e $md5) then
-   find $dir \( -type f -a \! -name .md5 \) -exec md5sum {} \; > $md5
+   find $dir \( -type f -a \! -name .md5 -a \! -path \*.svn\* \) -exec md5sum {} \; > $md5
 else
    if ($stamp) then
-      find $dir \( -type f -a \! -newer $md5 -a \! -name .md5 \) -exec egrep \{\}\$ $md5 \; > $md5.tmp
+      find $dir \( -type f -a \! -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec egrep \{\}\$ $md5 \; > $md5.tmp
 
       md5sum --check --status $md5.tmp
 
@@ -38,7 +38,7 @@ else
          exit 1
       endif
 
-      find $dir \( -type f -a -newer $md5 -a \! -name .md5 \) -exec md5sum {} \; >> $md5.tmp
+      find $dir \( -type f -a -newer $md5 -a \! -name .md5 -a \! -path \*.svn\* \) -exec md5sum {} \; >> $md5.tmp
 
       mv -f $md5.tmp $md5
    else
