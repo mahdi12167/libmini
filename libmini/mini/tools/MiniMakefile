@@ -24,4 +24,5 @@ clean:
 
 tidy:	clean
 	@-$(RM) *~
+	@-$(RM) CMakeCache.txt CMakeFiles MakeFile cmake_install.cmake
 	@-$(RM) $(PRGS)
