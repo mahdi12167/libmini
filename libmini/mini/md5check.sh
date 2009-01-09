@@ -18,6 +18,8 @@ if ("$dir" == "") then
    exit
 endif
 
+set dir=$dir:h
+
 if ($dir == ".") then
    set md5=".md5"
    set tmp=".tmp.md5"
