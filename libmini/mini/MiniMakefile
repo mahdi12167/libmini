@@ -91,7 +91,7 @@ clean:
 
 tidy:	clean
 	@-$(RM) *~ $(MMFILE).d Debug* Release* *.ncb *.opt *.plg
-	@-$(RM) CMakeCache.txt CMakeFiles MakeFile cmake_install.cmake
+	@-$(RM) CMakeCache.txt CMakeFiles Makefile cmake_install.cmake
 	@-$(RM) libMini*.a example stubtest viewer
 	@-(cd tools; $(MAKE) tidy)
 
