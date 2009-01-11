@@ -30,11 +30,11 @@ endif
 
 if (! -e $md5) then
    echo creating md5 file list
-   find $dir \( -type f -a \! -name \*.md5 -a \! -path \*.svn\* \) -exec md5sum {} \; > $md5
+   find $dir \( -type f -a \! -name \*.md5 -a \! -path \*.svn/\* -a \! -path \*CVS/\* \) -exec md5sum {} \; > $md5
 else
    echo checking integrity
    if ($stamp) then
-      find $dir \( -type f -a \! -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn\* \) -exec egrep \{\}\$ $md5 \; > $tmp
+      find $dir \( -type f -a \! -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn/\*  -a \! -path \*CVS/\* \) -exec egrep \{\}\$ $md5 \; > $tmp
 
       md5sum --check --status $tmp
 
@@ -47,7 +47,7 @@ else
          echo verified md5 file list
       endif
 
-      find $dir \( -type f -a -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn\* \) -exec md5sum {} \; >> $tmp
+      find $dir \( -type f -a -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn/\* -a \! -path \*CVS/\* \) -exec md5sum {} \; >> $tmp
 
       mv -f $tmp $md5
    else
