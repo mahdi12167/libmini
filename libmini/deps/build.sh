@@ -2,7 +2,7 @@
 
 # update curl:
 
-cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl login
+cvs -d:pserver:anonymous:@cool.haxx.se:/cvsroot/curl login
 cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co curl
 
 # update squish:
@@ -16,7 +16,7 @@ end
 
 # update GREYCstoration:
 
-cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg login
+cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
 cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co CImg
 
 foreach file (CImg.h plugins/greycstoration.h)
