@@ -1,25 +1,31 @@
 #!/bin/tcsh -f
 
-# update curl:
+# this script pulls the most recent tested versions of the libMini dependencies
+# pthreads, libjpeg and libpng/libz are assumed to be installed on the system by default
+# then the remaining dependencies are:
 
+# curl
 cvs -d:pserver:anonymous:@cool.haxx.se:/cvsroot/curl login
-cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co curl
+cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co -r curl-7_19_2 curl
 
-# update squish:
-
-svn co http://libsquish.googlecode.com/svn/trunk squish-head
-
-foreach file (squish-head/*.cpp squish-head/*.h squish-head/*.inl)
-   cp -f $file $file:s/-head//
-   ../mini/tabify.sh -u $file:s/-head//
+# squish
+svn co -r 9 http://libsquish.googlecode.com/svn/trunk libsquish
+foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl)
+   cp -f $file $file:s/libsquish/squish/
+   ../mini/tabify.sh -u $file:s/libsquish/squish/
 end
 
-# update GREYCstoration:
-
+# GREYCstoration
 cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
-cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co CImg
-
+cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.110 CImg/CImg.h
+cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.2 CImg/plugins/greycstoration.h
 foreach file (CImg.h plugins/greycstoration.h)
    cp -f CImg/$file greycstoration/$file
    ../mini/tabify.sh -u greycstoration/$file
 end
+
+# openthreads
+svn up openthreads
+
+# freeglut
+svn up freeglut
