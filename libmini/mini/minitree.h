@@ -111,12 +111,12 @@ class minitree
    inline void cachedata(float x,float y,float z,float s,float t,float r=0.0f);
    inline void cachegrass(float x,float y,float z,float s,float t,float r=0.0f);
 
-   int rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
+   int rendertrees(float *cache,float *coords,int cnt,miniwarpbase *warp,
                    float tr=0.0f,float tg=0.25f,float tb=0.05f);
 
-   int rendergrass(float *cache,float *coords,int cnt,miniwarp *warp);
+   int rendergrass(float *cache,float *coords,int cnt,miniwarpbase *warp);
 
-   int renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+   int renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp,
                     float tr=0.0f,float tg=0.25f,float tb=0.05f,float ta=0.9f);
 
    unsigned char *build3Dmipmap(unsigned char *volume,

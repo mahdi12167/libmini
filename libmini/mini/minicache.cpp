@@ -38,6 +38,8 @@ minicache::minicache()
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
+   NONLIN=0;
+
    PRISMEDGE_CALLBACK=NULL;
    PRISMCACHE_CALLBACK=NULL;
    PRISMRENDER_CALLBACK=NULL;
@@ -566,7 +568,7 @@ void minicache::rendertexmap(int m,int n,int S)
    float xdim,zdim;
    float centerx,centery,centerz;
 
-   miniwarp *warp;
+   miniwarpbase *warp;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -595,7 +597,12 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
-   warp=t->tile->getwarp();
+   if (NONLIN!=0)
+      {
+      warp=t->tile->getwarp(m,n);
+      if (warp==NULL) warp=t->tile->getwarp();
+      }
+   else warp=t->tile->getwarp();
 
    if (warp!=NULL)
       {
@@ -832,7 +839,7 @@ int minicache::rendertrigger()
    return(vtx);
    }
 
-int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp,
                             float pr,float pg,float pb,float pa,
                             float lx,float ly,float lz,
                             float ls,float lo)

@@ -70,6 +70,9 @@ class minicache
    //! define color of prism boundary
    void setprismcolor(float prismR=1.0f,float prismG=1.0f,float prismB=1.0f,float prismA=0.9f);
 
+   //! enable non-linear warp
+   void usenonlinear(int on=0);
+
    //! define optional vertex shader
    void setvtxshader(const char *vtxprog=0);
    void setvtxshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
@@ -227,6 +230,8 @@ class minicache
 
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;
 
+   int NONLIN;
+
    char *VTXPROG;
    int VTXDIRTY;
 
@@ -301,7 +306,7 @@ class minicache
    void initterrain(TERRAIN_TYPE *terrain);
    void freeterrain(TERRAIN_TYPE *terrain);
 
-   int renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+   int renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp,
                     float pr=1.0f,float pg=1.0f,float pb=1.0f,float pa=0.9f,
                     float lx=0.0f,float ly=0.0f,float lz=0.0f,
                     float ls=0.0f,float lo=1.0f);

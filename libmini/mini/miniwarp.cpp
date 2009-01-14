@@ -27,11 +27,11 @@ miniwarpbase::miniwarpbase()
 miniwarpbase::~miniwarpbase() {}
 
 // get actual warp matrix
-void miniwarpbase::getwarp(miniv4d mtx[3])
+void miniwarpbase::getwarp(miniv4d mtx[3]) const
    {cpy_mtx(mtx,MTX);}
 
 // get corners of warp box
-void miniwarpbase::getcorners(miniv3d p[8])
+void miniwarpbase::getcorners(miniv3d p[8]) const
    {
    int i;
 

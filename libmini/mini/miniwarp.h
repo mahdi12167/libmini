@@ -19,10 +19,10 @@ class miniwarpbase
    ~miniwarpbase();
 
    //! get actual warp matrix
-   void getwarp(miniv4d mtx[3]); // fourth row is assumed to be (0,0,0,1)
+   void getwarp(miniv4d mtx[3]) const; // fourth row is assumed to be (0,0,0,1)
 
    //! get corners of warp box
-   void getcorners(miniv3d p[8]);
+   void getcorners(miniv3d p[8]) const;
 
    protected:
 

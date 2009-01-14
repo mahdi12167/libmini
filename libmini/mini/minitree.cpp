@@ -867,7 +867,7 @@ void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
    }
 
 // render cached trees
-int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
+int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarpbase *warp,
                           float tr,float tg,float tb)
    {
    int vtx=0;
@@ -1217,7 +1217,7 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarp *warp,
    }
 
 // render cached grass
-int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
+int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarpbase *warp)
    {
    int vtx=0;
 
@@ -1538,7 +1538,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarp *warp)
    }
 
 // render boundary of cached prisms
-int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarp *warp,
+int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp,
                            float tr,float tg,float tb,float ta)
    {
    int vtx=0;
