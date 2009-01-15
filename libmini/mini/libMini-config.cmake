@@ -7,9 +7,11 @@ IF (NOT LIBMINI_PATH)
 ENDIF (NOT LIBMINI_PATH)
 
 # Unix compiler definitions
-IF (UNIX)
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -finline-functions -Wall -Wno-parentheses")
-ENDIF (UNIX)
+IF (NOT CMAKE_BUILD_TYPE)
+   IF (UNIX)
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -finline-functions -Wall -Wno-parentheses")
+   ENDIF (UNIX)
+ENDIF (NOT CMAKE_BUILD_TYPE)
 
 # Windows compiler definitions
 IF (WIN32)
