@@ -597,15 +597,16 @@ void miniearth::renderdgrid()
             DATAGRID->usemtxpost(FALSE);
 
             // set post matrix (world to rendering coordinates)
-            if (ref->getwarp()!=NULL)
-               {
-               warp=*ref->getwarp();
-               warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-               warp.getwarp(mtx);
+            if (ref->istileset())
+               if (ref->getwarp()!=NULL)
+                  {
+                  warp=*ref->getwarp();
+                  warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+                  warp.getwarp(mtx);
 
-               DATAGRID->specmtxpost(mtx);
-               DATAGRID->usemtxpost(TRUE);
-               }
+                  DATAGRID->specmtxpost(mtx);
+                  DATAGRID->usemtxpost(TRUE);
+                  }
 
             // push either sorted or unsorted mesh
             if (!SORT) DATAGRID->trigger(lparams.time);
