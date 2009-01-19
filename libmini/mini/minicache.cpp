@@ -1162,7 +1162,7 @@ void minicache::initshader()
       PARAM prj[4]={state.matrix.projection}; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,pos,vec,gen; \n";
+      TEMP vtx,col,nrm,pos,vec,eye,gen; \n";
 
    // default vertex shader (main snippet #1)
    static const char *vtxprog_s1="\
@@ -1171,15 +1171,8 @@ void minicache::initshader()
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n";
 
-   // default vertex shader (main snippet #2, texgen)
-   static const char *vtxprog_s2="\
-      ### calculate tex coords \n\
-      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
-      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
-      MUL result.texcoord[0].z,vtx.y,e.y; \n";
-
-   // default vertex shader (main snippet #3, linear transformation)
-   static const char *vtxprog_s3l="\
+   // default vertex shader (main snippet #2, linear transformation)
+   static const char *vtxprog_s2l="\
       ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
@@ -1191,8 +1184,8 @@ void minicache::initshader()
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n";
 
-   // default vertex shader (main snippet #3, non-linear transformation)
-   static const char *vtxprog_s3nl="\
+   // default vertex shader (main snippet #2, non-linear transformation)
+   static const char *vtxprog_s2nl="\
       PARAM p1=program.env[13]; \n\
       PARAM p2=program.env[14]; \n\
       PARAM p3=program.env[15]; \n\
@@ -1223,7 +1216,7 @@ void minicache::initshader()
       LRP pos4,pos.x,p8,p7; \n\
       LRP pos5,pos.y,pos2,pos1; \n\
       LRP pos6,pos.y,pos4,pos3; \n\
-      LRP vtx,pos.z,pos6,pos5; \n\
+      LRP eye,pos.z,pos6,pos5; \n\
       ### tri-linear normal interpolation \n\
       LRP vec1,pos.x,n2,n1; \n\
       LRP vec2,pos.x,n4,n3; \n\
@@ -1233,44 +1226,46 @@ void minicache::initshader()
       LRP vec6,pos.y,vec4,vec3; \n\
       LRP vec,pos.z,vec6,vec5; \n\
       ### project vertex \n\
-      DP4 pos.x,prj[0],vtx; \n\
-      DP4 pos.y,prj[1],vtx; \n\
-      DP4 pos.z,prj[2],vtx; \n\
-      DP4 pos.w,prj[3],vtx; \n";
+      DP4 pos.x,prj[0],eye; \n\
+      DP4 pos.y,prj[1],eye; \n\
+      DP4 pos.z,prj[2],eye; \n\
+      DP4 pos.w,prj[3],eye; \n";
 
-   // default vertex shader (main snippet #4, write vertex)
-   static const char *vtxprog_s4="\
+   // default vertex shader (main snippet #3, write vertex)
+   static const char *vtxprog_s3="\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n";
 
-   // default vertex shader (main snippet #5, world coords, linear trans)
-   static const char *vtxprog_s5l="\
-      ### calculate world coordinates \n\
-      DP4 pos.x,matrix[0],vtx; \n\
-      DP4 pos.y,matrix[1],vtx; \n\
-      DP4 pos.z,matrix[2],vtx; \n\
-      DP4 pos.w,matrix[3],vtx; \n";
+   // default vertex shader (main snippet #4, texgen)
+   static const char *vtxprog_s4="\
+      ### calculate tex coords \n\
+      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
+      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
+      MUL result.texcoord[0].z,vtx.y,e.y; \n";
 
-   // default vertex shader (main snippet #5, world coords, non-lin trans)
-   static const char *vtxprog_s5nl="\
-      ### get world coordinates \n\
-      MOV pos,vtx; \n";
+   // default vertex shader (main snippet #5, eye coords)
+   static const char *vtxprog_s5="\
+      ### calculate eye coordinates \n\
+      DP4 eye.x,matrix[0],vtx; \n\
+      DP4 eye.y,matrix[1],vtx; \n\
+      DP4 eye.z,matrix[2],vtx; \n\
+      DP4 eye.w,matrix[3],vtx; \n";
 
-   // default vertex shader (main snippet #6, eye coords)
+   // default vertex shader (main snippet #6, eye linear coords)
    static const char *vtxprog_s6="\
       ### calculate eye linear coordinates \n\
-      DP4 gen.x,pos,u; \n\
-      DP4 gen.y,pos,v; \n\
+      DP4 gen.x,eye,u; \n\
+      DP4 gen.y,eye,v; \n\
       MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
       MAD result.texcoord[2].y,gen.y,d.z,d.w; \n";
 
    // default vertex shader (terminator snippet)
    static const char *vtxprog_t="\
       ### calculate spherical fog coord \n\
-      DP3 result.fogcoord.x,pos,pos; \n\
+      DP3 result.fogcoord.x,eye,eye; \n\
       END \n";
 
    // default pixel shader (initializer snippet)
@@ -1319,9 +1314,9 @@ void minicache::initshader()
 
    if (VTXPROG_STD==NULL)
       if (NONLIN==0)
-         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3l,vtxprog_s4,vtxprog_s5l,vtxprog_s6,vtxprog_t);
+         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2l,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
       else
-         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3nl,vtxprog_s4,vtxprog_s5nl,vtxprog_s6,vtxprog_t);
+         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2nl,vtxprog_s3,vtxprog_s4,NULL,vtxprog_s6,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
