@@ -1193,6 +1193,22 @@ void minicache::initshader()
 
    // default vertex shader (main snippet #3, non-linear transformation)
    static const char *vtxprog_s3nl="\
+      PARAM p1=program.env[13]; \n\
+      PARAM p2=program.env[14]; \n\
+      PARAM p3=program.env[15]; \n\
+      PARAM p4=program.env[16]; \n\
+      PARAM p5=program.env[17]; \n\
+      PARAM p6=program.env[18]; \n\
+      PARAM p7=program.env[19]; \n\
+      PARAM p8=program.env[20]; \n\
+      PARAM n1=program.env[21]; \n\
+      PARAM n2=program.env[22]; \n\
+      PARAM n3=program.env[23]; \n\
+      PARAM n4=program.env[24]; \n\
+      PARAM n5=program.env[25]; \n\
+      PARAM n6=program.env[26]; \n\
+      PARAM n7=program.env[27]; \n\
+      PARAM n8=program.env[28]; \n\
       TEMP pos1,pos2,pos3,pos4,pos5,pos6; \n\
       TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
       ### transform vertex with modelview \n\
@@ -1216,7 +1232,7 @@ void minicache::initshader()
       LRP vec5,pos.y,vec2,vec1; \n\
       LRP vec6,pos.y,vec4,vec3; \n\
       LRP vec,pos.z,vec6,vec5; \n\
-      ### transform vertex with projection \n\
+      ### project vertex \n\
       DP4 pos.x,prj[0],vtx; \n\
       DP4 pos.y,prj[1],vtx; \n\
       DP4 pos.z,prj[2],vtx; \n\
