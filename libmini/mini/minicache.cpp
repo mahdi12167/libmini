@@ -1159,6 +1159,7 @@ void minicache::initshader()
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
+      PARAM prj[4]={state.matrix.projection}; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
       TEMP vtx,col,nrm,pos,vec,gen; \n";
@@ -1168,7 +1169,17 @@ void minicache::initshader()
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
-      MOV nrm,vertex.normal; \n\
+      MOV nrm,vertex.normal; \n";
+
+   // default vertex shader (main snippet #2, texgen)
+   static const char *vtxprog_s2="\
+      ### calculate tex coords \n\
+      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
+      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
+      MUL result.texcoord[0].z,vtx.y,e.y; \n";
+
+   // default vertex shader (main snippet #3, linear transformation)
+   static const char *vtxprog_s3l="\
       ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
@@ -1180,28 +1191,56 @@ void minicache::initshader()
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n";
 
-   // default vertex shader (main snippet #2)
-   static const char *vtxprog_s2="\
+   // default vertex shader (main snippet #3, non-linear transformation)
+   static const char *vtxprog_s3nl="\
+      TEMP pos1,pos2,pos3,pos4,pos5,pos6,vec1,vec2; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
+      ### tri-linear interpolation \n\
+      LRP pos1,pos.x,p2,p1; \n\
+      LRP pos2,pos.x,p4,p3; \n\
+      LRP pos3,pos.x,p6,p5; \n\
+      LRP pos4,pos.x,p7,p6; \n\
+      LRP pos5,pos.y,pos2,pos1; \n\
+      LRP pos6,pos.y,pos4,pos3; \n\
+      LRP vtx,pos.z,pos6,pos5; \n\
+      ### bi-linear interpolation \n\
+      LRP vec1,pos.x,n2,n1; \n\
+      LRP vec2,pos.x,n4,n3; \n\
+      LRP vec,pos.y,vec2,vec1; \n\
+      ### transform vertex with projection \n\
+      DP4 pos.x,prj[0],vtx; \n\
+      DP4 pos.y,prj[1],vtx; \n\
+      DP4 pos.z,prj[2],vtx; \n\
+      DP4 pos.w,prj[3],vtx; \n";
+
+   // default vertex shader (main snippet #4, write vertex)
+   static const char *vtxprog_s4="\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n";
 
-   // default vertex shader (main snippet #3)
-   static const char *vtxprog_s3="\
-      ### calculate tex coords \n\
-      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
-      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
-      MUL result.texcoord[0].z,vtx.y,e.y; \n";
-
-   // default vertex shader (main snippet #4)
-   static const char *vtxprog_s4="\
-      ### calculate eye linear coordinates \n\
+   // default vertex shader (main snippet #5, world coords, linear trans)
+   static const char *vtxprog_s5l="\
+      ### calculate world coordinates \n\
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
       DP4 pos.z,matrix[2],vtx; \n\
-      DP4 pos.w,matrix[3],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n";
+
+   // default vertex shader (main snippet #5, world coords, non-lin trans)
+   static const char *vtxprog_s5nl="\
+      ### get world coordinates \n\
+      MOV pos,vtx; \n";
+
+   // default vertex shader (main snippet #6, eye coords)
+   static const char *vtxprog_s6="\
+      ### calculate eye linear coordinates \n\
       DP4 gen.x,pos,u; \n\
       DP4 gen.y,pos,v; \n\
       MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
@@ -1258,7 +1297,10 @@ void minicache::initshader()
       END \n";
 
    if (VTXPROG_STD==NULL)
-      VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_t);
+      if (NONLIN==0)
+         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3l,vtxprog_s4,vtxprog_s5l,vtxprog_s6,vtxprog_t);
+      else
+         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3nl,vtxprog_s4,vtxprog_s5nl,vtxprog_s6,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
