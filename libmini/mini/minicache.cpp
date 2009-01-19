@@ -47,7 +47,8 @@ minicache::minicache()
    PRISMSYNC_CALLBACK=NULL;
    CALLBACK_DATA=NULL;
 
-   VTXPROG_STD=NULL;
+   VTXPROG_STD_L=NULL;
+   VTXPROG_STD_NL=NULL;
    FRGPROG_STD=NULL;
    SEAPROG_STD=NULL;
 
@@ -127,7 +128,8 @@ minicache::~minicache()
       free(TERRAIN);
       }
 
-   if (VTXPROG_STD!=NULL) free(VTXPROG_STD);
+   if (VTXPROG_STD_L!=NULL) free(VTXPROG_STD_L);
+   if (VTXPROG_STD_NL!=NULL) free(VTXPROG_STD_NL);
    if (FRGPROG_STD!=NULL) free(FRGPROG_STD);
    if (SEAPROG_STD!=NULL) free(SEAPROG_STD);
 
@@ -1314,11 +1316,11 @@ void minicache::initshader()
       MOV result.color,col; \n\
       END \n";
 
-   if (VTXPROG_STD==NULL)
-      if (NONLIN==0)
-         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2l,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
-      else
-         VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2nl,vtxprog_s3,vtxprog_s4,NULL,vtxprog_s6,vtxprog_t);
+   if (VTXPROG_STD_L==NULL)
+      VTXPROG_STD_L=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2l,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+
+   if (VTXPROG_STD_NL==NULL)
+      VTXPROG_STD_NL=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2nl,vtxprog_s3,vtxprog_s4,NULL,vtxprog_s6,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
@@ -1367,7 +1369,9 @@ void minicache::setvtxshader(const char *vp)
    {
    initshader();
 
-   if (vp==NULL) vp=VTXPROG_STD;
+   if (vp==NULL)
+      if (NONLIN==0) vp=VTXPROG_STD_L;
+      else vp=VTXPROG_STD_NL;
 
    if (VTXPROG!=NULL)
       {

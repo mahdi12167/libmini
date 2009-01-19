@@ -247,7 +247,8 @@ class minicache
 
    int NONLIN;
 
-   char *VTXPROG_STD;
+   char *VTXPROG_STD_L;
+   char *VTXPROG_STD_NL;
    char *FRGPROG_STD;
    char *SEAPROG_STD;
 
