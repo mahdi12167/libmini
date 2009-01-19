@@ -605,12 +605,14 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
-   if (NONLIN!=0)
+   if (NONLIN==0) warp=t->tile->getwarp();
+   else
       {
       warp=t->tile->getwarp(m,n);
       if (warp==NULL) warp=t->tile->getwarp();
+
+      if (USEVTXSHADER!=0) setvtxshadernonlin(warp);
       }
-   else warp=t->tile->getwarp();
 
    if (warp!=NULL)
       {
@@ -1468,6 +1470,32 @@ void minicache::unbindvtxshaderdetailtex()
       bindtexmap(0,0,0,0,0);
       texunit(0);
       }
+   }
+
+// set vertex shader non-linear transformation
+void minicache::setvtxshadernonlin(miniwarpbase *warp)
+   {
+   int i;
+
+   miniv3d p[8],n[8];
+   float pars[64];
+
+   warp->getcorners(p,n);
+
+   for (i=0; i<8; i++)
+      {
+      pars[4*i]=p[i].x;
+      pars[4*i+1]=p[i].y;
+      pars[4*i+2]=p[i].z;
+      pars[4*i+3]=1.0f;
+
+      pars[32+4*i]=n[i].x;
+      pars[32+4*i+1]=n[i].y;
+      pars[32+4*i+2]=n[i].z;
+      pars[32+4*i+3]=1.0f;
+      }
+
+   setvtxprogpars(13,16,pars);
    }
 
 // disable vertex shader plugin

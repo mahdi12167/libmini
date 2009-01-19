@@ -336,6 +336,7 @@ class minicache
    void setvtxshadertexgen();
    void bindvtxshaderdetailtex();
    void unbindvtxshaderdetailtex();
+   void setvtxshadernonlin(miniwarpbase *warp);
    void disablevtxshader();
 
    void enablepixshader();
