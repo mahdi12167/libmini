@@ -1178,22 +1178,25 @@ void minicache::initshader()
       DP4 vec.x,invtra[0],nrm; \n\
       DP4 vec.y,invtra[1],nrm; \n\
       DP4 vec.z,invtra[2],nrm; \n\
-      DP4 vec.w,invtra[3],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n";
+
+   // default vertex shader (main snippet #2)
+   static const char *vtxprog_s2="\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n";
 
-   // default vertex shader (main snippet #2)
-   static const char *vtxprog_s2="\
+   // default vertex shader (main snippet #3)
+   static const char *vtxprog_s3="\
       ### calculate tex coords \n\
       MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
       MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
       MUL result.texcoord[0].z,vtx.y,e.y; \n";
 
-   // default vertex shader (main snippet #3)
-   static const char *vtxprog_s3="\
+   // default vertex shader (main snippet #4)
+   static const char *vtxprog_s4="\
       ### calculate eye linear coordinates \n\
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
@@ -1255,7 +1258,7 @@ void minicache::initshader()
       END \n";
 
    if (VTXPROG_STD==NULL)
-      VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_t);
+      VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
