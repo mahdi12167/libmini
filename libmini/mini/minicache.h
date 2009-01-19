@@ -73,6 +73,9 @@ class minicache
    //! enable non-linear warp
    void usenonlinear(int on=0);
 
+   //! check for non-linear warp
+   int getnonlinear();
+
    //! define optional vertex shader
    void setvtxshader(const char *vtxprog=0);
    void setvtxshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
@@ -99,6 +102,18 @@ class minicache
    void setseashadertexRGB(unsigned char *image,int width,int height);
    void setseashadertexRGBA(unsigned char *image,int width,int height);
    void useseashader(int on=0);
+
+   //! concatenate shader program from snippets
+   static char *concatprog(const char *s1,
+                           const char *s2=0,
+                           const char *s3=0,
+                           const char *s4=0,
+                           const char *s5=0,
+                           const char *s6=0,
+                           const char *s7=0,
+                           const char *s8=0,
+                           const char *s9=0,
+                           const char *s10=0);
 
    //! define optional sea callbacks
    void setseacb(void (*preseacb)(void *data)=0,
@@ -232,6 +247,10 @@ class minicache
 
    int NONLIN;
 
+   char *VTXPROG_STD;
+   char *FRGPROG_STD;
+   char *SEAPROG_STD;
+
    char *VTXPROG;
    int VTXDIRTY;
 
@@ -311,6 +330,7 @@ class minicache
                     float lx=0.0f,float ly=0.0f,float lz=0.0f,
                     float ls=0.0f,float lo=1.0f);
 
+   void initshader();
    void enablevtxshader();
    void setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale);
    void setvtxshadertexgen();

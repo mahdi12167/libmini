@@ -47,6 +47,10 @@ minicache::minicache()
    PRISMSYNC_CALLBACK=NULL;
    CALLBACK_DATA=NULL;
 
+   VTXPROG_STD=NULL;
+   FRGPROG_STD=NULL;
+   SEAPROG_STD=NULL;
+
    VTXPROG=NULL;
    VTXDIRTY=0;
 
@@ -122,6 +126,10 @@ minicache::~minicache()
 
       free(TERRAIN);
       }
+
+   if (VTXPROG_STD!=NULL) free(VTXPROG_STD);
+   if (FRGPROG_STD!=NULL) free(FRGPROG_STD);
+   if (SEAPROG_STD!=NULL) free(SEAPROG_STD);
 
    if (VTXPROG!=NULL) free(VTXPROG);
    if (FRGPROG!=NULL) free(FRGPROG);
@@ -906,6 +914,9 @@ int minicache::renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp
 
    if (lambda<=0.0f || cnt==0) return(vtx);
 
+   if (warp!=NULL)
+      if (NONLIN!=0) return(vtx);
+
    if (PRISM_VTXPROGID==0) PRISM_VTXPROGID=buildvtxprog(vtxprog);
    if (PRISM_FRGPROGID==0) PRISM_FRGPROGID=buildfrgprog(frgprog);
 
@@ -1121,11 +1132,19 @@ void minicache::setprismcolor(float prismR,float prismG,float prismB,float prism
    PRISM_A=prismA;
    }
 
-// set vertex shader plugin
-void minicache::setvtxshader(const char *vp)
+// enable non-linear warp
+void minicache::usenonlinear(int on)
+   {NONLIN=on;}
+
+// check for non-linear warp
+int minicache::getnonlinear()
+   {return(NONLIN);}
+
+// initialize shader programs from snippets
+void minicache::initshader()
    {
-   // default vertex shader
-   static const char *vtxprog="!!ARBvp1.0 \n\
+   // default vertex shader (initializer snippet)
+   static const char *vtxprog_i="!!ARBvp1.0 \n\
       PARAM t=program.env[0]; \n\
       PARAM e=program.env[1]; \n\
       PARAM u=program.env[2]; \n\
@@ -1142,7 +1161,10 @@ void minicache::setvtxshader(const char *vp)
       PARAM mat[4]={state.matrix.mvp}; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,pos,vec,gen; \n\
+      TEMP vtx,col,nrm,pos,vec,gen; \n";
+
+   // default vertex shader (main snippet #1)
+   static const char *vtxprog_s1="\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n\
@@ -1160,12 +1182,18 @@ void minicache::setvtxshader(const char *vp)
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
+      ### pass normal as tex coords \n\
+      MOV result.texcoord[1],vec; \n";
+
+   // default vertex shader (main snippet #2)
+   static const char *vtxprog_s2="\
       ### calculate tex coords \n\
       MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
       MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
-      MUL result.texcoord[0].z,vtx.y,e.y; \n\
-      ### pass normal as tex coords \n\
-      MOV result.texcoord[1],vec; \n\
+      MUL result.texcoord[0].z,vtx.y,e.y; \n";
+
+   // default vertex shader (main snippet #3)
+   static const char *vtxprog_s3="\
       ### calculate eye linear coordinates \n\
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
@@ -1174,12 +1202,109 @@ void minicache::setvtxshader(const char *vp)
       DP4 gen.x,pos,u; \n\
       DP4 gen.y,pos,v; \n\
       MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
-      MAD result.texcoord[2].y,gen.y,d.z,d.w; \n\
+      MAD result.texcoord[2].y,gen.y,d.z,d.w; \n";
+
+   // default vertex shader (terminator snippet)
+   static const char *vtxprog_t="\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
-   if (vp==NULL) vp=vtxprog;
+   // default pixel shader (initializer snippet)
+   static const char *frgprog_i="!!ARBfp1.0 \n\
+      PARAM a=program.env[0]; \n\
+      PARAM t=program.env[1]; \n\
+      PARAM l=program.env[2]; \n\
+      PARAM p=program.env[3]; \n\
+      PARAM o=program.env[4]; \n\
+      PARAM c0=program.env[5]; \n\
+      PARAM c1=program.env[6]; \n\
+      PARAM c2=program.env[7]; \n\
+      PARAM c3=program.env[8]; \n\
+      PARAM c4=program.env[9]; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
+      TEMP col,colt,nrm,len; \n";
+
+   // default pixel shader (main snippet #1)
+   static const char *frgprog_s1="\
+      ### fetch fragment color \n\
+      MOV col,fragment.color; \n\
+      ### fetch texture color \n\
+      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
+      MAD colt,colt,a.x,a.y; \n\
+      ### modulate with fragment color \n\
+      MUL col,col,colt; \n";
+
+   // default pixel shader (main snippet #2)
+   static const char *frgprog_s2="\
+      ### modulate with directional light \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3_SAT nrm.z,nrm,l; \n\
+      MAD nrm.z,nrm.z,p.x,p.y; \n\
+      MUL_SAT col.xyz,col,nrm.z; \n";
+
+   // default pixel shader (terminator snippet)
+   static const char *frgprog_t="\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
+   if (VTXPROG_STD==NULL)
+      VTXPROG_STD=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_t);
+
+   if (FRGPROG_STD==NULL)
+      FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
+
+   if (SEAPROG_STD==NULL)
+      SEAPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
+   }
+
+// concatenate shader program from snippets
+char *minicache::concatprog(const char *s1,
+                            const char *s2,
+                            const char *s3,
+                            const char *s4,
+                            const char *s5,
+                            const char *s6,
+                            const char *s7,
+                            const char *s8,
+                            const char *s9,
+                            const char *s10)
+   {
+   char *prog1,*prog2;
+
+   prog1=strcct(s1,s2);
+   prog2=strcct(prog1,s3);
+   free(prog1);
+   prog1=strcct(prog2,s4);
+   free(prog2);
+   prog2=strcct(prog1,s5);
+   free(prog1);
+   prog1=strcct(prog2,s6);
+   free(prog2);
+   prog2=strcct(prog1,s7);
+   free(prog1);
+   prog1=strcct(prog2,s8);
+   free(prog2);
+   prog2=strcct(prog1,s9);
+   free(prog1);
+   prog1=strcct(prog2,s10);
+   free(prog2);
+
+   return(prog1);
+   }
+
+// set vertex shader plugin
+void minicache::setvtxshader(const char *vp)
+   {
+   initshader();
+
+   if (vp==NULL) vp=VTXPROG_STD;
 
    if (VTXPROG!=NULL)
       {
@@ -1301,42 +1426,9 @@ void minicache::usevtxshader(int on)
 // set pixel shader plugin
 void minicache::setpixshader(const char *fp)
    {
-   // default pixel shader
-   static const char *frgprog="!!ARBfp1.0 \n\
-      PARAM a=program.env[0]; \n\
-      PARAM t=program.env[1]; \n\
-      PARAM l=program.env[2]; \n\
-      PARAM p=program.env[3]; \n\
-      PARAM o=program.env[4]; \n\
-      PARAM c0=program.env[5]; \n\
-      PARAM c1=program.env[6]; \n\
-      PARAM c2=program.env[7]; \n\
-      PARAM c3=program.env[8]; \n\
-      PARAM c4=program.env[9]; \n\
-      PARAM c5=program.env[10]; \n\
-      PARAM c6=program.env[11]; \n\
-      PARAM c7=program.env[12]; \n\
-      TEMP col,colt,nrm,len; \n\
-      ### fetch fragment color \n\
-      MOV col,fragment.color; \n\
-      ### fetch texture color \n\
-      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
-      MAD colt,colt,a.x,a.y; \n\
-      ### modulate with fragment color \n\
-      MUL col,col,colt; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
+   initshader();
 
-   if (fp==NULL) fp=frgprog;
+   if (fp==NULL) fp=FRGPROG_STD;
 
    if (FRGPROG!=NULL)
       {
@@ -1491,42 +1583,9 @@ void minicache::usepixshader(int on)
 // set sea shader plugin
 void minicache::setseashader(const char *sp)
    {
-   // default sea shader
-   static const char *seaprog="!!ARBfp1.0 \n\
-      PARAM a=program.env[0]; \n\
-      PARAM t=program.env[1]; \n\
-      PARAM l=program.env[2]; \n\
-      PARAM p=program.env[3]; \n\
-      PARAM o=program.env[4]; \n\
-      PARAM c0=program.env[5]; \n\
-      PARAM c1=program.env[6]; \n\
-      PARAM c2=program.env[7]; \n\
-      PARAM c3=program.env[8]; \n\
-      PARAM c4=program.env[9]; \n\
-      PARAM c5=program.env[10]; \n\
-      PARAM c6=program.env[11]; \n\
-      PARAM c7=program.env[12]; \n\
-      TEMP col,colt,nrm,len; \n\
-      ### fetch fragment color \n\
-      MOV col,fragment.color; \n\
-      ### fetch texture color \n\
-      TEX colt,fragment.texcoord[0],texture[0],2D; \n\
-      MAD colt,colt,a.x,a.y; \n\
-      ### modulate with fragment color \n\
-      MUL col,col,colt; \n\
-      ### modulate with directional light \n\
-      MOV nrm,fragment.texcoord[1]; \n\
-      DP3 len.x,nrm,nrm; \n\
-      RSQ len.x,len.x; \n\
-      MUL nrm,nrm,len.x; \n\
-      DP3_SAT nrm.z,nrm,l; \n\
-      MAD nrm.z,nrm.z,p.x,p.y; \n\
-      MUL_SAT col.xyz,col,nrm.z; \n\
-      ### write resulting color \n\
-      MOV result.color,col; \n\
-      END \n";
+   initshader();
 
-   if (sp==NULL) sp=seaprog;
+   if (sp==NULL) sp=SEAPROG_STD;
 
    if (SEAPROG!=NULL)
       {

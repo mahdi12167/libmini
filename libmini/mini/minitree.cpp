@@ -926,6 +926,9 @@ int minitree::rendertrees(float *cache,float *coords,int cnt,miniwarpbase *warp,
 
    if (cnt==0) return(vtx);
 
+   if (warp!=NULL)
+      if (CACHE->getnonlinear()!=0) return(vtx);
+
    initstate();
 
    disableculling();
@@ -1365,6 +1368,9 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarpbase *warp)
 
    if (cnt==0) return(vtx);
 
+   if (warp!=NULL)
+      if (CACHE->getnonlinear()!=0) return(vtx);
+
    initstate();
 
    disableculling();
@@ -1589,6 +1595,9 @@ int minitree::renderprisms(float *cache,int cnt,float lambda,miniwarpbase *warp,
    int width,height,components;
 
    if (lambda<=0.0f || cnt==0) return(vtx);
+
+   if (warp!=NULL)
+      if (CACHE->getnonlinear()!=0) return(vtx);
 
    initstate();
 
