@@ -1193,24 +1193,29 @@ void minicache::initshader()
 
    // default vertex shader (main snippet #3, non-linear transformation)
    static const char *vtxprog_s3nl="\
-      TEMP pos1,pos2,pos3,pos4,pos5,pos6,vec1,vec2; \n\
+      TEMP pos1,pos2,pos3,pos4,pos5,pos6; \n\
+      TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
       ### transform vertex with modelview \n\
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
       DP4 pos.z,matrix[2],vtx; \n\
       DP4 pos.w,matrix[3],vtx; \n\
-      ### tri-linear interpolation \n\
+      ### tri-linear vertex interpolation \n\
       LRP pos1,pos.x,p2,p1; \n\
       LRP pos2,pos.x,p4,p3; \n\
       LRP pos3,pos.x,p6,p5; \n\
-      LRP pos4,pos.x,p7,p6; \n\
+      LRP pos4,pos.x,p8,p7; \n\
       LRP pos5,pos.y,pos2,pos1; \n\
       LRP pos6,pos.y,pos4,pos3; \n\
       LRP vtx,pos.z,pos6,pos5; \n\
-      ### bi-linear interpolation \n\
+      ### tri-linear normal interpolation \n\
       LRP vec1,pos.x,n2,n1; \n\
       LRP vec2,pos.x,n4,n3; \n\
-      LRP vec,pos.y,vec2,vec1; \n\
+      LRP vec3,pos.x,n6,n5; \n\
+      LRP vec4,pos.x,n8,n7; \n\
+      LRP vec5,pos.y,vec2,vec1; \n\
+      LRP vec6,pos.y,vec4,vec3; \n\
+      LRP vec,pos.z,vec6,vec5; \n\
       ### transform vertex with projection \n\
       DP4 pos.x,prj[0],vtx; \n\
       DP4 pos.y,prj[1],vtx; \n\

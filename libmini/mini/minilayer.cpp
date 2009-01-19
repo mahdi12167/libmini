@@ -1136,8 +1136,12 @@ void minilayer::createwarps(miniwarp *warp,
    miniv3d fnormal;
 
    minicoord p;
+   miniv3d n;
+
    double u,v,w;
+
    miniv3d crnr[8];
+   miniv3d nrml[8];
 
    if (cols==0 || rows==0) return;
    if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
@@ -1204,6 +1208,9 @@ void minilayer::createwarps(miniwarp *warp,
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
                p.convert2(minicoord::MINICOORD_ECEF);
+
+               n=(p.vec).normalize();
+
                p.vec+=(miniv3d(p.vec-fcenter.vec)*fnormal)*fnormal;
                p.vec+=w*extentDAT.vec.z*fnormal;
                }
@@ -1212,13 +1219,16 @@ void minilayer::createwarps(miniwarp *warp,
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
                p.convert2(minicoord::MINICOORD_ECEF);
+
+               n=(p.vec).normalize();
                }
 
             crnr[k]=map_g2o(p).vec;
+            nrml[k]=rot_g2o(n,p);
             }
 
          twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
-         twarp.setcorners(crnr);
+         twarp.setcorners(crnr,nrml);
 
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
