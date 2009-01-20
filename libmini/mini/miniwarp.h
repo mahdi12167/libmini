@@ -22,13 +22,14 @@ class miniwarpbase
    void getwarp(miniv4d mtx[3]) const; // fourth row is assumed to be (0,0,0,1)
 
    //! get corners of warp box
-   void getcorners(miniv3d p[8],miniv3d n[8]) const;
+   double getcorners(miniv3d p[8],miniv3d n[8]) const;
 
    protected:
 
    miniv4d MTX[3];
    miniv3d CORNER[8];
    miniv3d NORMAL[8];
+   double EXTENT;
    };
 
 //! warp kernel for global coordinate systems
@@ -126,7 +127,7 @@ class miniwarp: public miniwarpbase
    void settile(const miniv3d &scale,const miniv3d &bias);
 
    //! set corners of warp box
-   void setcorners(const miniv3d p[8],const miniv3d n[8]);
+   void setcorners(const miniv3d p[8],const miniv3d n[8],double e);
 
    //! perform warp of a point
    minicoord warp(const miniv4d &p); // fourth component is time

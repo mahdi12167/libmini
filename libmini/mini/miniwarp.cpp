@@ -36,7 +36,7 @@ void miniwarpbase::getwarp(miniv4d mtx[3]) const
    {cpy_mtx(mtx,MTX);}
 
 // get corners of warp box
-void miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
+double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
    {
    int i;
 
@@ -45,6 +45,8 @@ void miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
       p[i]=CORNER[i];
       n[i]=NORMAL[i];
       }
+
+   return(EXTENT);
    }
 
 // default constructor
@@ -257,7 +259,7 @@ void miniwarp::settile(const miniv3d &scale,const miniv3d &bias)
    {calc_til(scale,bias);}
 
 // set corners of warp box
-void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8])
+void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8],double e)
    {
    int i;
 
@@ -266,6 +268,8 @@ void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8])
       CORNER[i]=p[i];
       NORMAL[i]=n[i];
       }
+
+   EXTENT=e;
 
    calc_wrp();
    }

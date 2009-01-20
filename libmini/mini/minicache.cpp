@@ -619,7 +619,7 @@ void minicache::rendertexmap(int m,int n,int S)
       else if (USEVTXSHADER!=0)
          {
          nonlin=TRUE;
-         setvtxshadernonlin(S,warp);
+         setvtxshadernonlin(S,t->scale,warp);
          warp=NULL;
          }
       }
@@ -1215,6 +1215,7 @@ void minicache::initshader()
       TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
       ### normalize vertex \n\
       MUL pos,m,vtx; \n\
+      ADD pos.y,pos.y,0.5; \n\
       ### tri-linear vertex interpolation \n\
       SUB gen.xyz,1.0,pos; \n\
       MUL pos1,pos.x,p2; \n\
@@ -1491,14 +1492,16 @@ void minicache::unbindvtxshaderdetailtex()
    }
 
 // set vertex shader non-linear transformation
-void minicache::setvtxshadernonlin(int S,miniwarpbase *warp)
+void minicache::setvtxshadernonlin(int S,float scale,miniwarpbase *warp)
    {
    int i;
 
    miniv3d p[8],n[8];
+   double e;
+
    float pars[64];
 
-   warp->getcorners(p,n);
+   e=warp->getcorners(p,n);
 
    for (i=0; i<8; i++)
       {
@@ -1513,7 +1516,7 @@ void minicache::setvtxshadernonlin(int S,miniwarpbase *warp)
       pars[32+4*i+3]=1.0f;
       }
 
-   setvtxprogpar(13,1.0f/(S-1),1.0/10000,1.0f/(S-1),1.0); //!!
+   setvtxprogpar(13,1.0f/(S-1),scale/e,1.0f/(S-1),1.0);
    setvtxprogpars(14,16,pars);
    }
 
