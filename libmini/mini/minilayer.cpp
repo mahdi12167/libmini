@@ -1234,7 +1234,7 @@ void minilayer::createwarps(miniwarp *warp,
 
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
-         TERRAIN->getminitile()->copywarp(&twarp,i,j);
+         TERRAIN->getminitile()->copywarp(&twarp,i,rows-1-j);
          }
    }
 

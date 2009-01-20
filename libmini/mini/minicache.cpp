@@ -1192,7 +1192,6 @@ void minicache::initshader()
       MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
       MUL result.texcoord[0].z,vtx.y,e.y; \n";
 
-   //!!
    // default vertex shader (main snippet #3, non-linear transformation)
    static const char *vtxprog_s3="\
       PARAM m=program.env[13]; \n\
