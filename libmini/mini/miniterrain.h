@@ -82,6 +82,8 @@ class miniterrain
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
 
+      BOOLINT nonlin;           //* use non-linear warp
+
       BOOLINT omitsea;          //+ omit sea level when shooting rays
 
       BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps

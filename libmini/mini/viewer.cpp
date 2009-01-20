@@ -237,6 +237,8 @@ void initparams()
    tprms.range=VIEWER_RANGE;
    tprms.sealevel=VIEWER_SEALEVEL;
 
+   tprms.nonlin=TRUE;
+
    tprms.genmipmaps=TRUE;
    tprms.automipmap=TRUE;
 

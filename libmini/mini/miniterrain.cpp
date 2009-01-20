@@ -71,6 +71,8 @@ miniterrain::miniterrain()
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
+   TPARAMS.nonlin=FALSE;           // use non-linear warp
+
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
    TPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
@@ -897,6 +899,9 @@ void miniterrain::render()
       // enable shaders
       if (TPARAMS.useshaders)
          {
+         // use non-linear warp
+         CACHE->usenonlinear(TPARAMS.nonlin);
+
          // set detail texture parameters
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())
