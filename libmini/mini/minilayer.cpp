@@ -1209,7 +1209,8 @@ void minilayer::createwarps(miniwarp *warp,
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
                p.convert2(minicoord::MINICOORD_ECEF);
 
-               n=(p.vec).normalize();
+               n=p.vec;
+               n.normalize();
 
                p.vec+=(miniv3d(p.vec-fcenter.vec)*fnormal)*fnormal;
                p.vec+=w*extentDAT.vec.z*fnormal;
@@ -1220,7 +1221,8 @@ void minilayer::createwarps(miniwarp *warp,
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
                p.convert2(minicoord::MINICOORD_ECEF);
 
-               n=(p.vec).normalize();
+               n=p.vec;
+               n.normalize();
                }
 
             crnr[k]=map_g2o(p).vec;
