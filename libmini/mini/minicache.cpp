@@ -38,7 +38,7 @@ minicache::minicache()
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
-   NONLIN=0;
+   NONLIN=1; //!!
 
    PRISMEDGE_CALLBACK=NULL;
    PRISMCACHE_CALLBACK=NULL;
@@ -1192,6 +1192,7 @@ void minicache::initshader()
       MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
       MUL result.texcoord[0].z,vtx.y,e.y; \n";
 
+   //!!
    // default vertex shader (main snippet #3, non-linear transformation)
    static const char *vtxprog_s3="\
       PARAM m=program.env[13]; \n\
@@ -1215,6 +1216,8 @@ void minicache::initshader()
       TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
       ### normalize vertex \n\
       MUL pos,m,vtx; \n\
+      MUL vtx,m,vtx; \n\
+      MOV vtx.z,-vtx.z; \n\
       ### tri-linear vertex interpolation \n\
       SUB gen.xyz,1.0,pos; \n\
       MUL pos1,pos.x,p2; \n\
@@ -1225,12 +1228,12 @@ void minicache::initshader()
       MAD pos3,gen.x,p5,pos3; \n\
       MUL pos4,pos.x,p8; \n\
       MAD pos4,gen.x,p7,pos4; \n\
-      MUL pos5,pos.y,pos2; \n\
-      MAD pos5,gen.y,pos1,pos5; \n\
-      MUL pos6,pos.y,pos4; \n\
-      MAD pos6,gen.y,pos3,pos6; \n\
-      MUL vtx,pos.z,pos6; \n\
-      MAD vtx,gen.z,pos5,vtx; \n\
+      MUL pos5,pos.z,pos2; \n\
+      MAD pos5,gen.z,pos1,pos5; \n\
+      MUL pos6,pos.z,pos4; \n\
+      MAD pos6,gen.z,pos3,pos6; \n\
+      MUL vtx.x,pos.y,pos6; \n\
+      MAD vtx.x,gen.y,pos5,vtx; \n\
       ### tri-linear normal interpolation \n\
       MUL vec1,pos.x,n2; \n\
       MAD vec1,gen.x,n1,vec1; \n\
@@ -1240,12 +1243,12 @@ void minicache::initshader()
       MAD vec3,gen.x,n5,vec3; \n\
       MUL vec4,pos.x,n8; \n\
       MAD vec4,gen.x,n7,vec4; \n\
-      MUL vec5,pos.y,vec2; \n\
-      MAD vec5,gen.y,vec1,vec5; \n\
-      MUL vec6,pos.y,vec4; \n\
-      MAD vec6,gen.y,vec3,vec6; \n\
-      MUL nrm,pos.z,vec6; \n\
-      MAD nrm,gen.z,vec5,nrm; \n";
+      MUL vec5,pos.z,vec2; \n\
+      MAD vec5,gen.z,vec1,vec5; \n\
+      MUL vec6,pos.z,vec4; \n\
+      MAD vec6,gen.z,vec3,vec6; \n\
+      MUL nrm,pos.y,vec6; \n\
+      MAD nrm,gen.y,vec5,nrm; \n";
 
    // default vertex shader (main snippet #4, linear transformation)
    static const char *vtxprog_s4="\
@@ -1513,7 +1516,7 @@ void minicache::setvtxshadernonlin(int S,miniwarpbase *warp)
       pars[32+4*i+3]=1.0f;
       }
 
-   setvtxprogpar(13,1.0f/(S-1),1.0,1.0f/(S-1),0.0);
+   setvtxprogpar(13,1.0f/(S-1),1.0/10000,1.0f/(S-1),1.0); //!!
    setvtxprogpars(14,16,pars);
    }
 
