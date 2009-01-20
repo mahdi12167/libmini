@@ -38,7 +38,7 @@ minicache::minicache()
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
-   NONLIN=1; //!!
+   NONLIN=0;
 
    PRISMEDGE_CALLBACK=NULL;
    PRISMCACHE_CALLBACK=NULL;
