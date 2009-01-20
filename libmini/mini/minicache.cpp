@@ -579,6 +579,7 @@ void minicache::rendertexmap(int m,int n,int S)
    float centerx,centery,centerz;
 
    miniwarpbase *warp;
+   BOOLINT nonlin;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -607,13 +608,20 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
+   nonlin=FALSE;
+
    if (NONLIN==0) warp=t->tile->getwarp();
    else
       {
       warp=t->tile->getwarp(m,n);
-      if (warp==NULL) warp=t->tile->getwarp();
 
-      if (USEVTXSHADER!=0) setvtxshadernonlin(warp);
+      if (warp==NULL) warp=t->tile->getwarp();
+      else if (USEVTXSHADER!=0)
+         {
+         nonlin=TRUE;
+         setvtxshadernonlin(S,warp);
+         warp=NULL;
+         }
       }
 
    if (warp!=NULL)
@@ -643,17 +651,20 @@ void minicache::rendertexmap(int m,int n,int S)
       mtxmult(oglmtx);
       }
 
-   ox=xdim*(m-(cols-1)/2.0f)+centerx;
-   oz=zdim*(n-(rows-1)/2.0f)+centerz;
+   if (!nonlin)
+      {
+      ox=xdim*(m-(cols-1)/2.0f)+centerx;
+      oz=zdim*(n-(rows-1)/2.0f)+centerz;
 
-   mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
+      mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
 
-   // avoid gaps between tiles (excluding the sea surface)
-   if (t->render_phase==2)
-      if (CONFIGURE_OVERLAP!=0.0f)
-         if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
+      // avoid gaps between tiles (excluding the sea surface)
+      if (t->render_phase==2)
+         if (CONFIGURE_OVERLAP!=0.0f)
+            if (S>=CONFIGURE_MINSIZE) mtxscale((S-1+CONFIGURE_OVERLAP)/(S-1),1.0f,(S-1+CONFIGURE_OVERLAP)/(S-1));
 
-   mtxscale(xdim/(S-1),t->scale,-zdim/(S-1));
+      mtxscale(xdim/(S-1),t->scale,-zdim/(S-1));
+      }
 
    if (t->render_phase==2 || t->render_phase==3)
       {
@@ -1163,10 +1174,9 @@ void minicache::initshader()
       PARAM c6=program.env[11]; \n\
       PARAM c7=program.env[12]; \n\
       PARAM mat[4]={state.matrix.mvp}; \n\
-      PARAM prj[4]={state.matrix.projection}; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      TEMP vtx,col,nrm,pos,vec,eye,gen; \n";
+      TEMP vtx,col,nrm,pos,vec,gen; \n";
 
    // default vertex shader (main snippet #1)
    static const char *vtxprog_s1="\
@@ -1175,44 +1185,36 @@ void minicache::initshader()
       MOV col,vertex.color; \n\
       MOV nrm,vertex.normal; \n";
 
-   // default vertex shader (main snippet #2, linear transformation)
-   static const char *vtxprog_s2l="\
-      ### transform vertex with combined modelview \n\
-      DP4 pos.x,mat[0],vtx; \n\
-      DP4 pos.y,mat[1],vtx; \n\
-      DP4 pos.z,mat[2],vtx; \n\
-      DP4 pos.w,mat[3],vtx; \n\
-      ### transform normal with inverse transpose \n\
-      DP4 vec.x,invtra[0],nrm; \n\
-      DP4 vec.y,invtra[1],nrm; \n\
-      DP4 vec.z,invtra[2],nrm; \n\
-      DP4 vec.w,invtra[3],nrm; \n";
+   // default vertex shader (main snippet #2, texgen)
+   static const char *vtxprog_s2="\
+      ### calculate tex coords \n\
+      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
+      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
+      MUL result.texcoord[0].z,vtx.y,e.y; \n";
 
-   // default vertex shader (main snippet #2, non-linear transformation)
-   static const char *vtxprog_s2nl="\
-      PARAM p1=program.env[13]; \n\
-      PARAM p2=program.env[14]; \n\
-      PARAM p3=program.env[15]; \n\
-      PARAM p4=program.env[16]; \n\
-      PARAM p5=program.env[17]; \n\
-      PARAM p6=program.env[18]; \n\
-      PARAM p7=program.env[19]; \n\
-      PARAM p8=program.env[20]; \n\
-      PARAM n1=program.env[21]; \n\
-      PARAM n2=program.env[22]; \n\
-      PARAM n3=program.env[23]; \n\
-      PARAM n4=program.env[24]; \n\
-      PARAM n5=program.env[25]; \n\
-      PARAM n6=program.env[26]; \n\
-      PARAM n7=program.env[27]; \n\
-      PARAM n8=program.env[28]; \n\
+   // default vertex shader (main snippet #3, non-linear transformation)
+   static const char *vtxprog_s3="\
+      PARAM m=program.env[13]; \n\
+      PARAM p1=program.env[14]; \n\
+      PARAM p2=program.env[15]; \n\
+      PARAM p3=program.env[16]; \n\
+      PARAM p4=program.env[17]; \n\
+      PARAM p5=program.env[18]; \n\
+      PARAM p6=program.env[19]; \n\
+      PARAM p7=program.env[20]; \n\
+      PARAM p8=program.env[21]; \n\
+      PARAM n1=program.env[22]; \n\
+      PARAM n2=program.env[23]; \n\
+      PARAM n3=program.env[24]; \n\
+      PARAM n4=program.env[25]; \n\
+      PARAM n5=program.env[26]; \n\
+      PARAM n6=program.env[27]; \n\
+      PARAM n7=program.env[28]; \n\
+      PARAM n8=program.env[29]; \n\
       TEMP pos1,pos2,pos3,pos4,pos5,pos6; \n\
       TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
-      ### transform vertex with modelview \n\
-      DP4 pos.x,matrix[0],vtx; \n\
-      DP4 pos.y,matrix[1],vtx; \n\
-      DP4 pos.z,matrix[2],vtx; \n\
-      DP4 pos.w,matrix[3],vtx; \n\
+      ### normalize vertex \n\
+      MUL pos,m,vtx; \n\
       ### tri-linear vertex interpolation \n\
       SUB gen.xyz,1.0,pos; \n\
       MUL pos1,pos.x,p2; \n\
@@ -1227,8 +1229,8 @@ void minicache::initshader()
       MAD pos5,gen.y,pos1,pos5; \n\
       MUL pos6,pos.y,pos4; \n\
       MAD pos6,gen.y,pos3,pos6; \n\
-      MUL eye,pos.z,pos6; \n\
-      MAD eye,gen.z,pos5,eye; \n\
+      MUL vtx,pos.z,pos6; \n\
+      MAD vtx,gen.z,pos5,vtx; \n\
       ### tri-linear normal interpolation \n\
       MUL vec1,pos.x,n2; \n\
       MAD vec1,gen.x,n1,vec1; \n\
@@ -1242,49 +1244,46 @@ void minicache::initshader()
       MAD vec5,gen.y,vec1,vec5; \n\
       MUL vec6,pos.y,vec4; \n\
       MAD vec6,gen.y,vec3,vec6; \n\
-      MUL vec,pos.z,vec6; \n\
-      MAD vec,gen.z,vec5,vec; \n\
-      ### project vertex \n\
-      DP4 pos.x,prj[0],eye; \n\
-      DP4 pos.y,prj[1],eye; \n\
-      DP4 pos.z,prj[2],eye; \n\
-      DP4 pos.w,prj[3],eye; \n";
+      MUL nrm,pos.z,vec6; \n\
+      MAD nrm,gen.z,vec5,nrm; \n";
 
-   // default vertex shader (main snippet #3, write vertex)
-   static const char *vtxprog_s3="\
+   // default vertex shader (main snippet #4, linear transformation)
+   static const char *vtxprog_s4="\
+      ### transform vertex with combined modelview \n\
+      DP4 pos.x,mat[0],vtx; \n\
+      DP4 pos.y,mat[1],vtx; \n\
+      DP4 pos.z,mat[2],vtx; \n\
+      DP4 pos.w,mat[3],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n";
+
+   // default vertex shader (main snippet #5, write vertex)
+   static const char *vtxprog_s5="\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n";
 
-   // default vertex shader (main snippet #4, texgen)
-   static const char *vtxprog_s4="\
-      ### calculate tex coords \n\
-      MAD result.texcoord[0].x,vtx.x,t.x,t.z; \n\
-      MAD result.texcoord[0].y,vtx.z,t.y,t.w; \n\
-      MUL result.texcoord[0].z,vtx.y,e.y; \n";
-
-   // default vertex shader (main snippet #5, eye coords)
-   static const char *vtxprog_s5="\
-      ### calculate eye coordinates \n\
-      DP4 eye.x,matrix[0],vtx; \n\
-      DP4 eye.y,matrix[1],vtx; \n\
-      DP4 eye.z,matrix[2],vtx; \n\
-      DP4 eye.w,matrix[3],vtx; \n";
-
    // default vertex shader (main snippet #6, eye linear coords)
    static const char *vtxprog_s6="\
       ### calculate eye linear coordinates \n\
-      DP4 gen.x,eye,u; \n\
-      DP4 gen.y,eye,v; \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
+      DP4 gen.x,pos,u; \n\
+      DP4 gen.y,pos,v; \n\
       MAD result.texcoord[2].x,gen.x,d.x,d.y; \n\
       MAD result.texcoord[2].y,gen.y,d.z,d.w; \n";
 
    // default vertex shader (terminator snippet)
    static const char *vtxprog_t="\
       ### calculate spherical fog coord \n\
-      DP3 result.fogcoord.x,eye,eye; \n\
+      DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
 
    // default pixel shader (initializer snippet)
@@ -1332,10 +1331,10 @@ void minicache::initshader()
       END \n";
 
    if (VTXPROG_STD_L==NULL)
-      VTXPROG_STD_L=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2l,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_L=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
 
    if (VTXPROG_STD_NL==NULL)
-      VTXPROG_STD_NL=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2nl,vtxprog_s3,vtxprog_s4,NULL,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_NL=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
@@ -1492,7 +1491,7 @@ void minicache::unbindvtxshaderdetailtex()
    }
 
 // set vertex shader non-linear transformation
-void minicache::setvtxshadernonlin(miniwarpbase *warp)
+void minicache::setvtxshadernonlin(int S,miniwarpbase *warp)
    {
    int i;
 
@@ -1514,7 +1513,8 @@ void minicache::setvtxshadernonlin(miniwarpbase *warp)
       pars[32+4*i+3]=1.0f;
       }
 
-   setvtxprogpars(13,16,pars);
+   setvtxprogpar(13,1.0f/(S-1),1.0,1.0f/(S-1),0.0);
+   setvtxprogpars(14,16,pars);
    }
 
 // disable vertex shader plugin

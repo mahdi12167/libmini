@@ -1230,7 +1230,7 @@ void minilayer::createwarps(miniwarp *warp,
          twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
          twarp.setcorners(crnr,nrml);
 
-         twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_TILE);
+         twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
          TERRAIN->getminitile()->copywarp(&twarp,i,j);
          }
