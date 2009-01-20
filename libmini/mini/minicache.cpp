@@ -1214,21 +1214,36 @@ void minicache::initshader()
       DP4 pos.z,matrix[2],vtx; \n\
       DP4 pos.w,matrix[3],vtx; \n\
       ### tri-linear vertex interpolation \n\
-      LRP pos1,pos.x,p2,p1; \n\
-      LRP pos2,pos.x,p4,p3; \n\
-      LRP pos3,pos.x,p6,p5; \n\
-      LRP pos4,pos.x,p8,p7; \n\
-      LRP pos5,pos.y,pos2,pos1; \n\
-      LRP pos6,pos.y,pos4,pos3; \n\
-      LRP eye,pos.z,pos6,pos5; \n\
+      SUB gen.xyz,1.0,pos; \n\
+      MUL pos1,pos.x,p2; \n\
+      MAD pos1,gen.x,p1,pos1; \n\
+      MUL pos2,pos.x,p4; \n\
+      MAD pos2,gen.x,p3,pos2; \n\
+      MUL pos3,pos.x,p6; \n\
+      MAD pos3,gen.x,p5,pos3; \n\
+      MUL pos4,pos.x,p8; \n\
+      MAD pos4,gen.x,p7,pos4; \n\
+      MUL pos5,pos.y,pos2; \n\
+      MAD pos5,gen.y,pos1,pos5; \n\
+      MUL pos6,pos.y,pos4; \n\
+      MAD pos6,gen.y,pos3,pos6; \n\
+      MUL eye,pos.z,pos6; \n\
+      MAD eye,gen.z,pos5,eye; \n\
       ### tri-linear normal interpolation \n\
-      LRP vec1,pos.x,n2,n1; \n\
-      LRP vec2,pos.x,n4,n3; \n\
-      LRP vec3,pos.x,n6,n5; \n\
-      LRP vec4,pos.x,n8,n7; \n\
-      LRP vec5,pos.y,vec2,vec1; \n\
-      LRP vec6,pos.y,vec4,vec3; \n\
-      LRP vec,pos.z,vec6,vec5; \n\
+      MUL vec1,pos.x,n2; \n\
+      MAD vec1,gen.x,n1,vec1; \n\
+      MUL vec2,pos.x,n4; \n\
+      MAD vec2,gen.x,n3,vec2; \n\
+      MUL vec3,pos.x,n6; \n\
+      MAD vec3,gen.x,n5,vec3; \n\
+      MUL vec4,pos.x,n8; \n\
+      MAD vec4,gen.x,n7,vec4; \n\
+      MUL vec5,pos.y,vec2; \n\
+      MAD vec5,gen.y,vec1,vec5; \n\
+      MUL vec6,pos.y,vec4; \n\
+      MAD vec6,gen.y,vec3,vec6; \n\
+      MUL vec,pos.z,vec6; \n\
+      MAD vec,gen.z,vec5,vec; \n\
       ### project vertex \n\
       DP4 pos.x,prj[0],eye; \n\
       DP4 pos.y,prj[1],eye; \n\
