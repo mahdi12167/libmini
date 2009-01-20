@@ -58,6 +58,7 @@ minilayer::minilayer(minicache *cache)
    // configurable parameters:
 
    LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   LPARAMS.nonlin=FALSE;           // use non-linear warp
 
    LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
 

@@ -20,6 +20,7 @@ miniterrain::miniterrain()
    // configurable parameters:
 
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   TPARAMS.nonlin=FALSE;           // use non-linear warp
 
    TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
@@ -70,8 +71,6 @@ miniterrain::miniterrain()
    TPARAMS.overlap=0.001f;         // tile overlap in texels
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
-
-   TPARAMS.nonlin=FALSE;           // use non-linear warp
 
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
@@ -293,6 +292,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          // update the layer state:
 
          lparams.warpmode=TPARAMS.warpmode;
+         lparams.nonlin=TPARAMS.nonlin;
 
          lparams.scale=TPARAMS.scale;
          lparams.exaggeration=TPARAMS.exaggeration;

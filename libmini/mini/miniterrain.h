@@ -30,7 +30,8 @@ class miniterrain
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
-      int warpmode;             //+ warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      BOOLINT nonlin;           //* use non-linear warp
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
@@ -81,8 +82,6 @@ class miniterrain
       float overlap;            //* tile overlap in texels
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
-
-      BOOLINT nonlin;           //* use non-linear warp
 
       BOOLINT omitsea;          //+ omit sea level when shooting rays
 

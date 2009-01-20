@@ -63,7 +63,8 @@ class minilayer
       // [parameters marked with * must be changed via set()]
       // [parameters marked with + must not be changed after calling load()]
 
-      int warpmode;             //+ warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      BOOLINT nonlin;           //* use non-linear warp
 
       float vicinity;           //+ projected vicinity of flat warp mode relative to earth radius
 
