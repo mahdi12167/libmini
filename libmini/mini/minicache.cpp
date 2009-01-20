@@ -1216,8 +1216,6 @@ void minicache::initshader()
       TEMP vec1,vec2,vec3,vec4,vec5,vec6; \n\
       ### normalize vertex \n\
       MUL pos,m,vtx; \n\
-      MUL vtx,m,vtx; \n\
-      MOV vtx.z,-vtx.z; \n\
       ### tri-linear vertex interpolation \n\
       SUB gen.xyz,1.0,pos; \n\
       MUL pos1,pos.x,p2; \n\
@@ -1232,8 +1230,8 @@ void minicache::initshader()
       MAD pos5,gen.z,pos1,pos5; \n\
       MUL pos6,pos.z,pos4; \n\
       MAD pos6,gen.z,pos3,pos6; \n\
-      MUL vtx.x,pos.y,pos6; \n\
-      MAD vtx.x,gen.y,pos5,vtx; \n\
+      MUL vtx,pos.y,pos6; \n\
+      MAD vtx,gen.y,pos5,vtx; \n\
       ### tri-linear normal interpolation \n\
       MUL vec1,pos.x,n2; \n\
       MAD vec1,gen.x,n1,vec1; \n\
