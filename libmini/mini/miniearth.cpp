@@ -229,25 +229,25 @@ BOOLINT miniearth::load(const char *baseurl,const char *baseid,const char *basep
 void miniearth::loadopts()
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS lparams;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    if (LOADED) return;
 
-   ref=TERRAIN->getlayer(TERRAIN->getreference());
+   ref=getreference();
 
    if (ref==NULL) return;
 
-   ref->get(lparams);
+   lparams=ref->get();
 
    // load skydome:
 
    char *skyname=NULL;
 
-   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,lparams.altpath);
+   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,lparams->altpath);
    else
       {
-      skyname=getfile(EPARAMS.skydome,lparams.altpath);
-      if (skyname==NULL) skyname=getfile(EPARAMS.skydome,lparams.instpath);
+      skyname=getfile(EPARAMS.skydome,lparams->altpath);
+      if (skyname==NULL) skyname=getfile(EPARAMS.skydome,lparams->instpath);
       }
 
    if (skyname!=NULL)
@@ -260,11 +260,11 @@ void miniearth::loadopts()
 
    char *ename1=NULL;
 
-   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,lparams.altpath);
+   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,lparams->altpath);
    else
       {
-      ename1=getfile(EPARAMS.frontname,lparams.altpath);
-      if (ename1==NULL) ename1=getfile(EPARAMS.frontname,lparams.instpath);
+      ename1=getfile(EPARAMS.frontname,lparams->altpath);
+      if (ename1==NULL) ename1=getfile(EPARAMS.frontname,lparams->instpath);
       }
 
    if (ename1!=NULL)
@@ -275,11 +275,11 @@ void miniearth::loadopts()
 
    char *ename2=NULL;
 
-   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,lparams.altpath);
+   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,lparams->altpath);
    else
       {
-      ename2=getfile(EPARAMS.backname,lparams.altpath);
-      if (ename2==NULL) ename2=getfile(EPARAMS.backname,lparams.instpath);
+      ename2=getfile(EPARAMS.backname,lparams->altpath);
+      if (ename2==NULL) ename2=getfile(EPARAMS.backname,lparams->instpath);
       }
 
    if (ename2!=NULL)
@@ -296,11 +296,11 @@ void miniearth::loadopts()
 
    if (EPARAMS.frontbuf==NULL)
       {
-      if (ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,lparams.altpath);
+      if (ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,lparams->altpath);
       else
          {
-         ebname1=getfile(EPARAMS.frontbufname,lparams.altpath);
-         if (ebname1==NULL) ebname1=getfile(EPARAMS.frontbufname,lparams.instpath);
+         ebname1=getfile(EPARAMS.frontbufname,lparams->altpath);
+         if (ebname1==NULL) ebname1=getfile(EPARAMS.frontbufname,lparams->instpath);
          }
 
       if (ebname1!=NULL)
@@ -323,11 +323,11 @@ void miniearth::loadopts()
 
    if (EPARAMS.backbuf==NULL)
       {
-      if (ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,lparams.altpath);
+      if (ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,lparams->altpath);
       else
          {
-         ebname2=getfile(EPARAMS.backbufname,lparams.altpath);
-         if (ebname2==NULL) ebname2=getfile(EPARAMS.backbufname,lparams.instpath);
+         ebname2=getfile(EPARAMS.backbufname,lparams->altpath);
+         if (ebname2==NULL) ebname2=getfile(EPARAMS.backbufname,lparams->instpath);
          }
 
       if (ebname2!=NULL)
@@ -385,7 +385,7 @@ void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 void miniearth::rendercache()
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS lparams;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    minicoord egl;
 
@@ -407,17 +407,12 @@ void miniearth::rendercache()
 
    if (ref!=NULL)
       {
-      ref->get(lparams);
+      lparams=ref->get();
 
-      egl=ref->map_g2o(lparams.eye);
+      egl=ref->map_g2o(lparams->eye);
 
       // compute altitude
-      alt=TERRAIN->getrelheight(lparams.eye);
-      if (alt==-MAXFLOAT)
-         if (ref->get()->warpmode==1 || ref->get()->warpmode==2)
-            alt=miniv3d((lparams.eye-ref->getcenter()).vec)*ref->getnormal();
-         else
-            alt=miniv3d((lparams.eye-getearth()->getcenter()).vec).getlength()-minicrs::EARTH_radius;
+      alt=getrelheight(lparams->eye);
 
       // calculate void display factor
       if (EPARAMS.voidstart<=0.0f) altf=0.0;
@@ -474,7 +469,7 @@ void miniearth::rendercache()
 
       // draw skydome
       if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
-         if (ref->get()->warpmode==0 || ref->get()->warpmode==2)
+         if (lparams->warpmode==0 || lparams->warpmode==2)
             {
             SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
                             1.9*ref->len_g2o(EPARAMS.farp));
@@ -484,7 +479,7 @@ void miniearth::rendercache()
 
       // render earth globe
       if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0)
+         if (lparams->warpmode!=0)
             {
             EARTH->setscale(ref->len_o2g(1.0));
             EARTH->setdynscale(1.0);
@@ -574,7 +569,7 @@ void miniearth::rendercache()
 void miniearth::renderdgrid()
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS lparams;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    miniwarp warp;
    miniv4d mtx[3];
@@ -583,7 +578,7 @@ void miniearth::renderdgrid()
 
    if (ref!=NULL)
       {
-      ref->get(lparams);
+      lparams=ref->get();
 
       // trigger data grid
       if (DATAGRID!=NULL)
@@ -609,8 +604,8 @@ void miniearth::renderdgrid()
                   }
 
             // push either sorted or unsorted mesh
-            if (!SORT) DATAGRID->trigger(lparams.time);
-            else DATAGRID->trigger(lparams.time,lparams.eye.vec,lparams.dir,lparams.nearp,lparams.farp,lparams.fovy,lparams.aspect,MAXFLOAT,ZTEXID);
+            if (!SORT) DATAGRID->trigger(lparams->time);
+            else DATAGRID->trigger(lparams->time,lparams->eye.vec,lparams->dir,lparams->nearp,lparams->farp,lparams->fovy,lparams->aspect,MAXFLOAT,ZTEXID);
             }
          }
       }
@@ -710,6 +705,38 @@ void miniearth::render()
 void miniearth::freeze(BOOLINT flag)
    {FREEZE=flag;}
 
+// get the relative elevation above sea level at position (x,y,z)
+double miniearth::getrelheight(const minicoord &p)
+   {
+   minilayer *ref;
+   minilayer::MINILAYER_PARAMS *lparams;
+
+   minicoord pos;
+
+   ref=getreference();
+
+   if (ref!=NULL)
+      {
+      lparams=ref->get();
+
+      if (lparams->warpmode==1 || lparams->warpmode==2)
+         return(miniv3d((p-ref->getcenter()).vec)*ref->getnormal());
+      else
+         {
+         pos=p;
+
+         if (lparams->warpmode!=0)
+            if (pos.type==minicoord::MINICOORD_LINEAR) pos.type=minicoord::MINICOORD_ECEF;
+
+         if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
+
+         return(pos.vec.z);
+         }
+      }
+
+   return(0.0);
+   }
+
 // add datagrid object
 void miniearth::addgrid(datagrid *obj,BOOLINT sort)
    {
@@ -723,24 +750,32 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    double t;
 
    minilayer *ref;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    ref=getreference();
 
-   // check for hit with terrain
-   t=TERRAIN->shoot(o,d,hitdist);
+   if (ref!=NULL)
+      {
+      lparams=ref->get();
 
-   // check for hit with earth ellipsoid
-   if (t==MAXFLOAT)
-      if (EPARAMS.useearth)
-         if (ref->get()->warpmode!=0)
-            if (ref->get()->warpmode!=1 && ref->get()->warpmode!=2)
-               t=intersect_ellipsoid(miniv3d(o.vec),d,
-                                     miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
-            else
-               t=intersect_plane(miniv3d(o.vec),d,
-                                 miniv3d(ref->getcenter().vec),ref->getnormal());
+      // check for hit with terrain
+      t=TERRAIN->shoot(o,d,hitdist);
 
-   return(t);
+      // check for hit with earth ellipsoid
+      if (t==MAXFLOAT)
+         if (EPARAMS.useearth)
+            if (lparams->warpmode!=0)
+               if (lparams->warpmode!=1 && lparams->warpmode!=2)
+                  t=intersect_ellipsoid(miniv3d(o.vec),d,
+                                        miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
+               else
+                  t=intersect_plane(miniv3d(o.vec),d,
+                                    miniv3d(ref->getcenter().vec),ref->getnormal());
+
+      return(t);
+      }
+
+   return(MAXFLOAT);
    }
 
 // ray/sphere intersection

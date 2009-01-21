@@ -151,6 +151,9 @@ class miniearth
    //! freeze scene
    void freeze(BOOLINT flag);
 
+   //! get the relative elevation above sea level at position (x,y,z)
+   double getrelheight(const minicoord &p);
+
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
 

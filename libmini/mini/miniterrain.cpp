@@ -729,48 +729,6 @@ double miniterrain::getheight(const minicoord &p,int approx)
    return(-MAXFLOAT);
    }
 
-// get the relative elevation at position (x,y,z)
-double miniterrain::getrelheight(const minicoord &p,int approx)
-   {
-   int n;
-
-   int nst;
-
-   double elev;
-   minicoord pos;
-
-   if (LNUM>0)
-      {
-      nst=getnearest(p);
-
-      if (isdisplayed(nst) && !isculled(nst))
-         {
-         elev=LAYER[nst]->getheight(p,approx);
-         if (elev!=-MAXFLOAT)
-            {
-            pos=LAYER[nst]->map_g2t(p);
-            if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
-            return(pos.vec.z);
-            }
-         }
-
-      for (n=LNUM-1; n>=0; n--)
-         if (n!=nst)
-            if (isdisplayed(n) && !isculled(n))
-               {
-               elev=LAYER[n]->getheight(p,approx);
-               if (elev!=-MAXFLOAT)
-                  {
-                  pos=LAYER[n]->map_g2t(p);
-                  if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
-                  return(pos.vec.z);
-                  }
-               }
-      }
-
-   return(-MAXFLOAT);
-   }
-
 // get the normal at position (x,y,z)
 miniv3d miniterrain::getnormal(const minicoord &p,int approx)
    {
@@ -1059,17 +1017,17 @@ void miniterrain::render_presea()
 
    minicoord el;
 
-   minilayer::MINILAYER_PARAMS lparams;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
-         LAYER[n]->get(lparams);
+         lparams=LAYER[n]->get();
 
-         el=LAYER[n]->map_g2l(lparams.eye);
+         el=LAYER[n]->map_g2l(lparams->eye);
 
          // render waypoints before sea surface
-         if (el.vec.z>=lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
+         if (el.vec.z>=lparams->sealevel/lparams->scale) LAYER[n]->renderpoints();
          }
    }
 
@@ -1080,17 +1038,17 @@ void miniterrain::render_postsea()
 
    minicoord el;
 
-   minilayer::MINILAYER_PARAMS lparams;
+   minilayer::MINILAYER_PARAMS *lparams;
 
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !isculled(n))
          {
-         LAYER[n]->get(lparams);
+         lparams=LAYER[n]->get();
 
-         el=LAYER[n]->map_g2l(lparams.eye);
+         el=LAYER[n]->map_g2l(lparams->eye);
 
          // render waypoints after sea surface
-         if (el.vec.z<lparams.sealevel/lparams.scale) LAYER[n]->renderpoints();
+         if (el.vec.z<lparams->sealevel/lparams->scale) LAYER[n]->renderpoints();
          }
    }
 
@@ -1145,24 +1103,20 @@ float miniterrain::getflattening()
 // get the nearest waypoint
 minipointdata *miniterrain::getnearestpoint(int type)
    {
-   int ref,nst;
-
-   minilayer::MINILAYER_PARAMS lparams;
+   int nst;
 
    minipointdata *nearest;
+
+   minilayer::MINILAYER_PARAMS *lparams;
 
    nearest=NULL;
 
    if (LNUM>0)
       {
-      // get reference layer
-      ref=getreference();
-
-      // get eye point
-      LAYER[ref]->get(lparams);
+      lparams=LAYER[getreference()]->get();
 
       // get nearest layer
-      nst=getnearest(lparams.eye);
+      nst=getnearest(lparams->eye);
 
       // get nearest waypoint from nearest layer
       if (isdisplayed(nst) && !isculled(nst)) nearest=LAYER[nst]->getnearestpoint(type);
@@ -1202,7 +1156,8 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
       nst=getnearest(o);
 
       // shoot a ray at the nearest layer
-      if (isdisplayed(nst) && !isculled(nst)) dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
+      if (isdisplayed(nst) && !isculled(nst))
+         dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
       else dist=MAXFLOAT;
 
       // check for valid hit
@@ -1251,16 +1206,20 @@ minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,doubl
    minicoord pgl;
    miniv3d vgl;
 
-   // get reference layer
-   ref=getreference();
+   if (LNUM>0)
+      {
+      // get reference layer
+      ref=getreference();
 
-   // transform coordinates
-   pgl=LAYER[ref]->map_g2o(p);
-   vgl=LAYER[ref]->rot_g2o(v,p);
+      // transform coordinates
+      pgl=LAYER[ref]->map_g2o(p);
+      vgl=LAYER[ref]->rot_g2o(v,p);
 
-   // gather [possibly] intersecting triangles
-   for (n=0; n<LNUM; n++)
-      if (isdisplayed(n) && !isculled(n)) result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
+      // gather [possibly] intersecting triangles
+      for (n=0; n<LNUM; n++)
+         if (isdisplayed(n) && !isculled(n))
+            result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
+      }
 
    return(result);
    }
