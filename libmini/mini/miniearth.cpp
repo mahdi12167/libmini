@@ -400,8 +400,7 @@ void miniearth::rendercache()
    miniv3d lgl;
    float light[3];
 
-   miniterrain::MINITERRAIN_PARAMS tparams;
-   int seamode;
+   miniterrain::MINITERRAIN_PARAMS *tparams;
 
    ref=getreference();
 
@@ -542,19 +541,11 @@ void miniearth::rendercache()
       // check data grid for underwater volumes
       if (DATAGRID!=NULL)
          {
-         // get the actual terrain state
-         TERRAIN->get(tparams);
+         tparams=TERRAIN->get();
 
          // use stippling if there are underwater volumes
-         if (DATAGRID->isbelowsealevel()) seamode=1;
-         else seamode=0;
-
-         // pass the updated terrain state
-         if (seamode!=tparams.seamode)
-            {
-            tparams.seamode=seamode;
-            TERRAIN->set(tparams);
-            }
+         if (DATAGRID->isbelowsealevel()) tparams->seamode=1;
+         else tparams->seamode=0;
          }
 
       // render terrain
@@ -737,13 +728,6 @@ double miniearth::getrelheight(const minicoord &p)
    return(0.0);
    }
 
-// add datagrid object
-void miniearth::addgrid(datagrid *obj,BOOLINT sort)
-   {
-   DATAGRID=obj;
-   SORT=sort;
-   }
-
 // shoot a ray at the scene
 double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    {
@@ -846,3 +830,10 @@ minidyna<miniv3d> miniearth::extract(const minicoord &p,const miniv3d &v,double 
 void miniearth::setraycallbacks(void (*lock)(void *data),void *data,
                                 void (*unlock)(void *data))
    {miniray::setcallbacks(lock,data,unlock);}
+
+// add datagrid object
+void miniearth::addgrid(datagrid *obj,BOOLINT sort)
+   {
+   DATAGRID=obj;
+   SORT=sort;
+   }
