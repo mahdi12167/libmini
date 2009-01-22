@@ -873,8 +873,6 @@ void minilayer::setreference(minilayer *ref)
    {
    miniv4d mtxREF[3];
 
-   if (!LOADED) return;
-
    REFERENCE=ref;
 
    if (WARP!=NULL)
@@ -1147,8 +1145,11 @@ void minilayer::createwarps(int cols,int rows,
    if (cols==0 || rows==0) return;
    if (WARP->gettls()==minicoord::MINICOORD_LINEAR) return;
 
-   fcenter=WARP->getcenter();
-   if (WARP->getgeo()!=minicoord::MINICOORD_LINEAR) fcenter.convert2(minicoord::MINICOORD_ECEF);
+   if (REFERENCE==NULL) return;
+   if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) return;
+
+   fcenter=REFERENCE->getwarp()->getcenter();
+   fcenter.convert2(minicoord::MINICOORD_ECEF);
 
    if (fcenter.vec.getlength()>0.0)
       {
@@ -1156,18 +1157,6 @@ void minilayer::createwarps(int cols,int rows,
       fnormal.normalize();
       }
    else fnormal=miniv3d(0.0,0.0,1.0);
-
-   if (REFERENCE!=NULL)
-      {
-      fcenter=REFERENCE->getwarp()->getcenter();
-      if (REFERENCE->getwarp()->getgeo()!=minicoord::MINICOORD_LINEAR) fcenter.convert2(minicoord::MINICOORD_ECEF);      fcenter.convert2(minicoord::MINICOORD_ECEF);
-
-      if (fcenter.vec.getlength()>0.0)
-         {
-         fnormal=fcenter.vec;
-         fnormal.normalize();
-         }
-      }
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
