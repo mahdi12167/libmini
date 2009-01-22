@@ -1144,6 +1144,7 @@ void minilayer::createwarps(int cols,int rows,
 
    if (cols==0 || rows==0) return;
    if (WARP->gettls()==minicoord::MINICOORD_LINEAR) return;
+   if (LPARAMS.warpmode==0) return;
 
    if (REFERENCE==NULL) return;
    if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) return;
@@ -1224,7 +1225,7 @@ void minilayer::createwarps(int cols,int rows,
                p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
                p.vec+=w*extentDAT.vec.z*fnormal;
                }
-            else if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+            else
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
@@ -1232,13 +1233,6 @@ void minilayer::createwarps(int cols,int rows,
 
                n=p.vec;
                n.normalize();
-               }
-            else
-               {
-               p=offsetDAT;
-               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
-
-               n=miniv3d(0.0,0.0,1.0);
                }
 
             crnr[k]=map_g2o(p).vec;
