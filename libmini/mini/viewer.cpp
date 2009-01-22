@@ -326,6 +326,8 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    eye=e;
 
+   viewer->initeyepoint(eye);
+
    elev=viewer->getearth()->getterrain()->getheight(eye);
 
    ref=viewer->getearth()->getreference();
