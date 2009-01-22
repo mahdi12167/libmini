@@ -26,6 +26,18 @@ class minidyna
       ARRAY=NULL;
       }
 
+   //! constructor
+   minidyna(const Item &v)
+      {
+      unsigned int i;
+
+      MINSIZE=(Minsize==0)?1:Minsize;
+      SIZE=MAXSIZE=MINSIZE;
+      ARRAY=NULL;
+
+      for (i=0; i<MINSIZE; i++) set(i,v);
+      }
+
    //! copy constructor
    minidyna(const minidyna &a)
       {

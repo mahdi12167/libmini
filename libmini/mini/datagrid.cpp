@@ -49,6 +49,10 @@ unsigned int datagrid::create(const unsigned int slot,
          REF[i]=NULL;
          DATA[i]=databuf();
 
+         SPEC[i]=FALSE;
+         VTX[i]=minidyna<minicoord,8>(minicoord(miniv3d(0.0)));
+         VEC[i]=minidyna<miniv3d,8>(miniv3d(0.0));
+
          return(i);
          }
 
@@ -60,6 +64,10 @@ unsigned int datagrid::create(const unsigned int slot,
    CRD2.append(miniv3d(1.0));
    REF.append(NULL);
    DATA.append(databuf());
+
+   SPEC.append(FALSE);
+   VTX.append(minidyna<minicoord,8>(minicoord(miniv3d(0.0))));
+   VEC.append(minidyna<miniv3d,8>(miniv3d(0.0)));
 
    return(FLAG.getsize()-1);
    }
@@ -82,6 +90,10 @@ void datagrid::load(const unsigned int id,
    {
    if (FLAG[id])
       {
+      if (SPEC[id]) INVALID=TRUE;
+
+      SPEC[id]=FALSE;
+
       if (DATA[id].swx!=buf.swx || DATA[id].swy!=buf.swy ||
           DATA[id].nwx!=buf.nwx || DATA[id].nwy!=buf.nwy ||
           DATA[id].nex!=buf.nex || DATA[id].ney!=buf.ney ||
@@ -90,6 +102,21 @@ void datagrid::load(const unsigned int id,
 
       DATA[id].release();
       DATA[id]=buf;
+      }
+   }
+
+// specify data
+void datagrid::spec(const unsigned int id,
+                    const minicoord vtx[8],
+                    const miniv3d vec[8])
+   {
+   if (FLAG[id])
+      {
+      if (!SPEC[id]) INVALID=TRUE;
+
+      SPEC[id]=TRUE;
+
+      //!! ...
       }
    }
 
@@ -116,6 +143,10 @@ void datagrid::move(const unsigned int id,
    {
    if (FLAG[id])
       {
+      if (SPEC[id]) INVALID=TRUE;
+
+      SPEC[id]=FALSE;
+
       if (DATA[id].swx!=swx || DATA[id].swy!=swy ||
           DATA[id].nwx!=nwx || DATA[id].nwy!=nwy ||
           DATA[id].nex!=nex || DATA[id].ney!=ney ||
@@ -149,6 +180,10 @@ void datagrid::clip(const unsigned int id,
 
    if (FLAG[id])
       {
+      if (SPEC[id]) INVALID=TRUE;
+
+      SPEC[id]=FALSE;
+
       crd1=miniv3d(FMIN(FMAX(we1,0.0),1.0),FMIN(FMAX(sn1,0.0),1.0),FMIN(FMAX(bt1,0.0),1.0));
       crd2=miniv3d(FMIN(FMAX(we2,0.0),1.0),FMIN(FMAX(sn2,0.0),1.0),FMIN(FMAX(bt2,0.0),1.0));
 

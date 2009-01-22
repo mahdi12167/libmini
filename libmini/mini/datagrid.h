@@ -45,6 +45,11 @@ class datagrid
    void load(const unsigned int id, // data brick id
              const databuf &buf); // data buffer
 
+   //! specify data
+   void spec(const unsigned int id, // data brick id
+             const minicoord vtx[8], // corner position
+             const miniv3d vec[8]); // corner vector
+
    //! remove data
    void remove(const unsigned int id); // data brick id
 
@@ -135,6 +140,10 @@ class datagrid
    minidyna<miniv3d> CRD2;
    minidyna<minilayer *> REF;
    minidyna<databuf> DATA;
+
+   minidyna<BOOLINT> SPEC;
+   minidyna< minidyna<minicoord,8> > VTX;
+   minidyna< minidyna<miniv3d,8> > VEC;
 
    miniv4d MTXPRE[3],MTXPOST[3];
    BOOLINT USEPRE,USEPOST;
