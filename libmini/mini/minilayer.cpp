@@ -1116,18 +1116,18 @@ void minilayer::updatecoords()
       TERRAIN->getminitile()->copywarp(WARP);
       TERRAIN->getminitile()->getwarp()->setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
 
-      createwarps(WARP,
-                  LPARAMS.cols,LPARAMS.rows,
-                  LPARAMS.offsetDAT,LPARAMS.extentDAT);
+      createwarps(LPARAMS.cols,LPARAMS.rows,
+                  LPARAMS.offsetDAT,LPARAMS.extentDAT,
+                  LPARAMS.scale);
 
       miniray::unlock();
       }
    }
 
 // create the per-tile warps
-void minilayer::createwarps(miniwarp *warp,
-                            int cols,int rows,
-                            minicoord offsetDAT,minicoord extentDAT)
+void minilayer::createwarps(int cols,int rows,
+                            minicoord offsetDAT,minicoord extentDAT,
+                            double scaleLOC)
    {
    int i,j,k;
 
@@ -1145,15 +1145,34 @@ void minilayer::createwarps(miniwarp *warp,
    miniv3d nrml[8];
 
    if (cols==0 || rows==0) return;
-   if (warp->gettls()==minicoord::MINICOORD_LINEAR) return;
+   if (WARP->gettls()==minicoord::MINICOORD_LINEAR) return;
 
-   fcenter=REFERENCE->getcenter();
-   fnormal=REFERENCE->getnormal();
+   fcenter=WARP->getcenter();
+   if (WARP->getgeo()!=minicoord::MINICOORD_LINEAR) fcenter.convert2(minicoord::MINICOORD_ECEF);
+
+   if (fcenter.vec.getlength()>0.0)
+      {
+      fnormal=fcenter.vec;
+      fnormal.normalize();
+      }
+   else fnormal=miniv3d(0.0,0.0,1.0);
+
+   if (REFERENCE!=NULL)
+      {
+      fcenter=REFERENCE->getwarp()->getcenter();
+      if (REFERENCE->getwarp()->getgeo()!=minicoord::MINICOORD_LINEAR) fcenter.convert2(minicoord::MINICOORD_ECEF);      fcenter.convert2(minicoord::MINICOORD_ECEF);
+
+      if (fcenter.vec.getlength()>0.0)
+         {
+         fnormal=fcenter.vec;
+         fnormal.normalize();
+         }
+      }
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
          {
-         twarp=*warp;
+         twarp=*WARP;
 
          for (k=0; k<8; k++)
             {
@@ -1204,34 +1223,42 @@ void minilayer::createwarps(miniwarp *warp,
                   break;
                }
 
-            if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
-               {
-               p=offsetDAT;
-               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
-               p.convert2(minicoord::MINICOORD_ECEF);
-
-               n=p.vec;
-               n.normalize();
-
-               p.vec+=(miniv3d(p.vec-fcenter.vec)*fnormal)*fnormal;
-               p.vec+=w*extentDAT.vec.z*fnormal;
-               }
-            else
+            if (LPARAMS.warpmode==0)
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
-               p.convert2(minicoord::MINICOORD_ECEF);
 
-               n=p.vec;
-               n.normalize();
+               n=miniv3d(0.0,0.0,1.0);
                }
+            else
+               if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+                  {
+                  p=offsetDAT;
+                  p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
+                  p.convert2(minicoord::MINICOORD_ECEF);
+
+                  n=p.vec;
+                  n.normalize();
+
+                  p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
+                  p.vec+=w*extentDAT.vec.z*fnormal;
+                  }
+               else
+                  {
+                  p=offsetDAT;
+                  p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+                  p.convert2(minicoord::MINICOORD_ECEF);
+
+                  n=p.vec;
+                  n.normalize();
+                  }
 
             crnr[k]=map_g2o(p).vec;
             nrml[k]=rot_g2o(n,p);
             }
 
          twarp.settile(miniv3d(cols,rows,1.0),miniv3d(-i+0.5*(cols-1),-j+0.5*(rows-1),0.0));
-         twarp.setcorners(crnr,nrml,extentDAT.vec.z/LPARAMS.scale);
+         twarp.setcorners(crnr,nrml,extentDAT.vec.z/scaleLOC);
 
          twarp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_WARP);
 
