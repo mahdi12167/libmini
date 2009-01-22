@@ -1212,35 +1212,34 @@ void minilayer::createwarps(int cols,int rows,
                   break;
                }
 
-            if (LPARAMS.warpmode==0)
+            if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+               {
+               p=offsetDAT;
+               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
+               p.convert2(minicoord::MINICOORD_ECEF);
+
+               n=p.vec;
+               n.normalize();
+
+               p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
+               p.vec+=w*extentDAT.vec.z*fnormal;
+               }
+            else if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+               {
+               p=offsetDAT;
+               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+               p.convert2(minicoord::MINICOORD_ECEF);
+
+               n=p.vec;
+               n.normalize();
+               }
+            else
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
 
                n=miniv3d(0.0,0.0,1.0);
                }
-            else
-               if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
-                  {
-                  p=offsetDAT;
-                  p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
-                  p.convert2(minicoord::MINICOORD_ECEF);
-
-                  n=p.vec;
-                  n.normalize();
-
-                  p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
-                  p.vec+=w*extentDAT.vec.z*fnormal;
-                  }
-               else
-                  {
-                  p=offsetDAT;
-                  p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
-                  p.convert2(minicoord::MINICOORD_ECEF);
-
-                  n=p.vec;
-                  n.normalize();
-                  }
 
             crnr[k]=map_g2o(p).vec;
             nrml[k]=rot_g2o(n,p);
