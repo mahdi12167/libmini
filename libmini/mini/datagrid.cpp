@@ -110,13 +110,19 @@ void datagrid::spec(const unsigned int id,
                     const minicoord vtx[8],
                     const miniv3d vec[8])
    {
+   minidyna<minicoord,8> mvtx(vtx);
+   minidyna<miniv3d,8> mvec(vec);
+
    if (FLAG[id])
       {
       if (!SPEC[id]) INVALID=TRUE;
 
       SPEC[id]=TRUE;
 
-      //!! ...
+      if (VTX[id]!=mvtx || VEC[id]!=mvec) INVALID=TRUE;
+
+      VTX[id]=mvtx;
+      VEC[id]=mvec;
       }
    }
 
