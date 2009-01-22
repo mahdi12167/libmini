@@ -356,35 +356,62 @@ minimesh datagrid::decompose(unsigned int idx)
    // check if object at actual position is valid
    if (FLAG[idx])
       {
-      // check coordinate system of actual databuf object
-      crs=minicoord::MINICOORD_LINEAR;
-      if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
-      else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
-      else if (DATA[idx].crs==databuf::DATABUF_CRS_MERC) crs=minicoord::MINICOORD_MERC;
+      if (!SPEC[idx])
+         {
+         // check coordinate system of actual databuf object
+         crs=minicoord::MINICOORD_LINEAR;
+         if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
+         else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
+         else if (DATA[idx].crs==databuf::DATABUF_CRS_MERC) crs=minicoord::MINICOORD_MERC;
 
-      // determine clipped data coordinates of actual object:
+         // determine clipped data coordinates of actual object:
 
-      crd[0]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD1[idx].z);
-      crd[1]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD1[idx].z);
-      crd[2]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD1[idx].z);
-      crd[3]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD1[idx].z);
+         crd[0]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD1[idx].z);
+         crd[1]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD1[idx].z);
+         crd[2]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD1[idx].z);
+         crd[3]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD1[idx].z);
 
-      crd[4]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD2[idx].z);
-      crd[5]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD2[idx].z);
-      crd[6]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD2[idx].z);
-      crd[7]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD2[idx].z);
+         crd[4]=miniv3d(CRD1[idx].x,CRD1[idx].y,CRD2[idx].z);
+         crd[5]=miniv3d(CRD1[idx].x,CRD2[idx].y,CRD2[idx].z);
+         crd[6]=miniv3d(CRD2[idx].x,CRD2[idx].y,CRD2[idx].z);
+         crd[7]=miniv3d(CRD2[idx].x,CRD1[idx].y,CRD2[idx].z);
 
-      // determine clipped corner vertices of actual object:
+         // determine clipped corner vertices of actual object:
 
-      vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,DATA[idx].datum);
 
-      vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,DATA[idx].datum);
-      vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,DATA[idx].datum);
+         }
+      else
+         {
+         crs=minicoord::MINICOORD_ECEF;
+
+         vtx[0]=VTX[idx][0];
+         vtx[1]=VTX[idx][1];
+         vtx[2]=VTX[idx][2];
+         vtx[3]=VTX[idx][3];
+
+         vtx[4]=VTX[idx][4];
+         vtx[5]=VTX[idx][5];
+         vtx[6]=VTX[idx][6];
+         vtx[7]=VTX[idx][7];
+
+         crd[0]=VEC[idx][0];
+         crd[1]=VEC[idx][1];
+         crd[2]=VEC[idx][2];
+         crd[3]=VEC[idx][3];
+
+         crd[4]=VEC[idx][4];
+         crd[5]=VEC[idx][5];
+         crd[6]=VEC[idx][6];
+         crd[7]=VEC[idx][7];
+         }
 
       // transform corner vertices
       if (crs!=minicoord::MINICOORD_LINEAR)
