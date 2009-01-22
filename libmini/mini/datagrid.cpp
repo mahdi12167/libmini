@@ -106,6 +106,9 @@ void datagrid::load(const unsigned int id,
    }
 
 // specify data
+// ordering of data box corner positions vtx[i] and coordinate vectors vec[i] is as follows:
+// i=0..3 -> left_front_bottom, left_back_bottom, right_back_bottom, right_front_bottom
+// i=4..7 -> left_front_top, left_back_top, right_back_top, right_front_top
 void datagrid::spec(const unsigned int id,
                     const minicoord vtx[8],
                     const miniv3d vec[8])
