@@ -198,6 +198,10 @@ class minihedron
       return(FABS(det_mtx(mtx))/2.0);
       }
 
+   //! check for degeneracy
+   BOOLINT check() const
+      {return(getvolume()==0.0);}
+
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minivals vals; // embedded data values
 
