@@ -1129,35 +1129,45 @@ void minilayer::createwarps(int cols,int rows,
    {
    int i,j,k;
 
-   miniwarp twarp;
+   int mode;
 
    minicoord fcenter;
    miniv3d fnormal;
 
-   minicoord p;
-   miniv3d n;
+   miniwarp twarp;
 
    double u,v,w;
+
+   minicoord p;
+   miniv3d n;
 
    miniv3d crnr[8];
    miniv3d nrml[8];
 
-   if (cols==0 || rows==0) return;
-   if (WARP->gettls()==minicoord::MINICOORD_LINEAR) return;
-   if (LPARAMS.warpmode==0) return;
+   mode=LPARAMS.warpmode;
 
-   if (REFERENCE==NULL) return;
-   if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) return;
+   if (WARP->gettls()==minicoord::MINICOORD_LINEAR) mode=0;
 
-   fcenter=REFERENCE->getwarp()->getcenter();
-   fcenter.convert2(minicoord::MINICOORD_ECEF);
-
-   if (fcenter.vec.getlength()>0.0)
+   if (mode==1 || mode==2)
       {
-      fnormal=fcenter.vec;
-      fnormal.normalize();
+      if (REFERENCE==NULL) mode=0;
+      if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) mode=0;
       }
-   else fnormal=miniv3d(0.0,0.0,1.0);
+
+   fcenter=minicoord(miniv3d(0.0),minicoord::MINICOORD_LINEAR);
+   fnormal=miniv3d(0.0,0.0,1.0);
+
+   if (mode==1 || mode==2)
+      {
+      fcenter=REFERENCE->getwarp()->getcenter();
+      fcenter.convert2(minicoord::MINICOORD_ECEF);
+
+      if (fcenter.vec.getlength()>0.0)
+         {
+         fnormal=fcenter.vec;
+         fnormal.normalize();
+         }
+      }
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)
@@ -1213,7 +1223,17 @@ void minilayer::createwarps(int cols,int rows,
                   break;
                }
 
-            if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2)
+            if (mode==0)
+               {
+               p=offsetDAT;
+               p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+
+               n=miniv3d(0.0,0.0,1.0);
+
+               crnr[k]=map_t2g(p).vec;
+               nrml[k]=rot_t2g(n,p);
+               }
+            else if (mode==1 || mode==2)
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);

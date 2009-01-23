@@ -579,7 +579,6 @@ void minicache::rendertexmap(int m,int n,int S)
    float centerx,centery,centerz;
 
    miniwarpbase *warp;
-   BOOLINT nonlin;
 
    miniv4d mtx[3];
    double oglmtx[16];
@@ -608,20 +607,12 @@ void minicache::rendertexmap(int m,int n,int S)
 
    mtxpush();
 
-   nonlin=FALSE;
-
-   if (NONLIN==0) warp=t->tile->getwarp();
+   if (NONLIN==0 || USEVTXSHADER==0) warp=t->tile->getwarp();
    else
       {
       warp=t->tile->getwarp(m,n);
-
-      if (warp==NULL) warp=t->tile->getwarp();
-      else if (USEVTXSHADER!=0)
-         {
-         nonlin=TRUE;
-         setvtxshadernonlin(S,t->scale,warp);
-         warp=NULL;
-         }
+      setvtxshadernonlin(S,t->scale,warp);
+      warp=NULL;
       }
 
    if (warp!=NULL)
@@ -651,7 +642,7 @@ void minicache::rendertexmap(int m,int n,int S)
       mtxmult(oglmtx);
       }
 
-   if (!nonlin)
+   if (NONLIN==0 || USEVTXSHADER==0)
       {
       ox=xdim*(m-(cols-1)/2.0f)+centerx;
       oz=zdim*(n-(rows-1)/2.0f)+centerz;
