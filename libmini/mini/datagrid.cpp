@@ -106,9 +106,9 @@ void datagrid::load(const unsigned int id,
    }
 
 // specify data
-// ordering of data box corner positions vtx[i] and coordinate vectors vec[i] is as follows:
-// i=0..3 -> left_front_bottom, left_back_bottom, right_back_bottom, right_front_bottom
-// i=4..7 -> left_front_top, left_back_top, right_back_top, right_front_top
+// ordering of data box corner positions vtx[i] and coordinate vectors vec[i] is as follows in LatLon notation:
+// i=0..3 -> west_south_bottom, west_north_bottom, east_north_bottom, east_south_bottom
+// i=4..7 -> west_south_top, west_north_top, east_north_top, east_south_top
 void datagrid::spec(const unsigned int id,
                     const minicoord vtx[8],
                     const miniv3d vec[8])
@@ -395,25 +395,11 @@ minimesh datagrid::decompose(unsigned int idx)
          {
          crs=minicoord::MINICOORD_ECEF;
 
-         vtx[0]=VTX[idx][0];
-         vtx[1]=VTX[idx][1];
-         vtx[2]=VTX[idx][2];
-         vtx[3]=VTX[idx][3];
-
-         vtx[4]=VTX[idx][4];
-         vtx[5]=VTX[idx][5];
-         vtx[6]=VTX[idx][6];
-         vtx[7]=VTX[idx][7];
-
-         crd[0]=VEC[idx][0];
-         crd[1]=VEC[idx][1];
-         crd[2]=VEC[idx][2];
-         crd[3]=VEC[idx][3];
-
-         crd[4]=VEC[idx][4];
-         crd[5]=VEC[idx][5];
-         crd[6]=VEC[idx][6];
-         crd[7]=VEC[idx][7];
+         for (i=0; i<8; i++)
+            {
+            vtx[i]=VTX[idx][i];
+            crd[i]=VEC[idx][i];
+            }
          }
 
       // transform corner vertices
