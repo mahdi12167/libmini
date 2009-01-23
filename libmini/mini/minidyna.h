@@ -47,7 +47,7 @@ class minidyna
       SIZE=MAXSIZE=MINSIZE;
       ARRAY=NULL;
 
-      for (i=0; i<MINSIZE; i++) MINARRAY[i]=v;
+      for (i=0; i<MINSIZE; i++) MINARRAY[i]=v[i];
       }
 
    //! copy constructor
