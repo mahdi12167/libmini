@@ -1,6 +1,9 @@
 # cmake build configuration for libMini
 # (c) by Stefan Roettger
 
+# turn off automatic cmake regeneration
+SET(CMAKE_SUPPRESS_REGENERATION TRUE)
+
 # path to libMini
 IF (NOT LIBMINI_PATH)
    SET(LIBMINI_PATH ${CMAKE_CURRENT_SOURCE_DIR})

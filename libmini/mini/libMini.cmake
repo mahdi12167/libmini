@@ -37,6 +37,14 @@ SET(MINI_SRCS
    lunascan.cpp lunaparse.cpp lunacode.cpp
    )
 
+SET(MINISFX_HDRS
+   viewerbase.h
+   threadbase.h curlbase.h
+   jpegbase.h pngbase.h squishbase.h greycbase.h
+   convbase.h imgbase.h
+   panorndr.h
+   )
+
 SET(MINISFX_SRCS
    viewerbase.cpp
    threadbase.cpp curlbase.cpp
