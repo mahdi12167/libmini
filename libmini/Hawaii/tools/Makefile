@@ -1,7 +1,7 @@
 SHELL	= sh
 
-PRGS    = raw2pnm dem2pgm pnminfo\
-          pnm2pvm tree2pgm
+PRGS	= raw2pnm dem2pgm pnminfo\
+	  pnm2pvm tree2pgm
 
 SRCS	= $(PRGS:=.cpp)
 OBJS	= $(PRGS:=.o)
