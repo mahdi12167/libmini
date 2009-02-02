@@ -12,20 +12,20 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
 SET(SQUISH_HDRS
-  squish.h
-  )
+   squish.h
+   )
 
 SET(SQUISH_SRCS
-  alpha.cpp
-  clusterfit.cpp
-  colourblock.cpp
-  colourfit.cpp
-  colourset.cpp
-  maths.cpp
-  rangefit.cpp
-  singlecolourfit.cpp
-  squish.cpp
-  )
+   alpha.cpp
+   clusterfit.cpp
+   colourblock.cpp
+   colourfit.cpp
+   colourset.cpp
+   maths.cpp
+   rangefit.cpp
+   singlecolourfit.cpp
+   squish.cpp
+   )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
