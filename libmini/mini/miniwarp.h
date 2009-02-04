@@ -46,6 +46,9 @@ class miniwarpbase
    //! get corners of warp box
    double getcorners(miniv3d p[8],miniv3d n[8]=NULL) const;
 
+   //! tri-linear warp
+   miniv3d triwarp(const miniv3d &c) const;
+
    protected:
 
    miniv4d MTX[3];
@@ -58,6 +61,7 @@ class miniwarpbase
    miniv3d CORNER[8];
    miniv3d NORMAL[8];
    double EXTENT;
+   double EXT1;
    };
 
 //! warp kernel for global coordinate systems

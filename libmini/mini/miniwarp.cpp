@@ -30,7 +30,7 @@ miniwarpbase::miniwarpbase()
    for (i=0; i<8; i++)
       NORMAL[i]=miniv3d(0.0,0.0,1.0);
 
-   EXTENT=1.0;
+   EXTENT=EXT1=1.0;
    }
 
 // destructor
@@ -82,6 +82,21 @@ double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
          }
 
    return(EXTENT);
+   }
+
+// tri-linear warp
+miniv3d miniwarpbase::triwarp(const miniv3d &c) const
+   {
+   miniv3d w;
+
+   w.x=c.x*CRDGEN.x;
+   w.y=c.y*CRDGEN.y*EXT1;
+   w.z=c.z*CRDGEN.z;
+
+   return((1.0-w.z)*((1.0-w.y)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
+                     w.y*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
+          w.z*((1.0-w.y)*((1.0-w.x)*CORNER[4]+w.x*CORNER[5])+
+               w.y*((1.0-w.x)*CORNER[6]+w.x*CORNER[7])));
    }
 
 // default constructor
@@ -276,6 +291,8 @@ void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8],double e)
    {
    int i;
 
+   if (e<=0.0) ERRORMSG();
+
    for (i=0; i<8; i++)
       {
       CORNER[i]=p[i];
@@ -283,6 +300,7 @@ void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8],double e)
       }
 
    EXTENT=e;
+   EXT1=1.0/e;
 
    calc_wrp();
    }

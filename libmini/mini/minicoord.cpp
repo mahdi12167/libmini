@@ -265,14 +265,10 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
    u.y=(vec.y-src[0].y)/(src[1].y-src[0].y);
    u.z=(vec.z-src[0].z)/(src[1].z-src[0].z);
 
-   v=(1.0-u.z)*((1.0-u.y)*((1.0-u.x)*dst[0]+
-                           u.x*dst[1])+
-                u.y*((1.0-u.x)*dst[2]+
-                     u.x*dst[3]))+
-     u.z*((1.0-u.y)*((1.0-u.x)*dst[4]+
-                     u.x*dst[5])+
-          u.y*((1.0-u.x)*dst[6]+
-               u.x*dst[7]));
+   v=(1.0-u.z)*((1.0-u.y)*((1.0-u.x)*dst[0]+u.x*dst[1])+
+                u.y*((1.0-u.x)*dst[2]+u.x*dst[3]))+
+     u.z*((1.0-u.y)*((1.0-u.x)*dst[4]+u.x*dst[5])+
+          u.y*((1.0-u.x)*dst[6]+u.x*dst[7]));
 
    vec=miniv4d(v,vec.w);
 

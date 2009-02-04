@@ -562,9 +562,14 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
    miniv3d v1,v2,v3;
 
+   miniwarpbase *warp;
+
    array=*(ref->array)+ref->index;
    num=ref->num;
    stride=ref->stride;
+
+   if (ref->warp!=NULL && ref->warp->getnonlin()) warp=ref->warp;
+   else warp=NULL;
 
    result=dist;
 
@@ -590,18 +595,26 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               v3=warp->triwarp(v3);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            v3.x=v3.x*ref->scaling.x+ref->offset.x;
-            v3.y=v3.y*ref->scaling.y+ref->offset.y;
-            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               }
 
             dist=checkdist(o,d,v1,v2,v3);
 
