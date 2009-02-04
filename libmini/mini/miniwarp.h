@@ -3,6 +3,10 @@
 #ifndef MINIWARP_H
 #define MINIWARP_H
 
+#include "minibase.h"
+
+#include "miniv3d.h"
+#include "miniv4d.h"
 #include "minicoord.h"
 
 class miniwarp;
@@ -33,6 +37,9 @@ class miniwarpbase
    //! get actual scaling factor
    double getscale();
 
+   //! enable non-linear warp
+   void usenonlin(BOOLINT on,miniv3d crdgen);
+
    //! get corners of warp box
    double getcorners(miniv3d p[8],miniv3d n[8]) const;
 
@@ -43,6 +50,8 @@ class miniwarpbase
    miniv4d INVTRA[3];
    float SCALE;
 
+   BOOLINT NONLIN;
+   miniv3d CRDGEN;
    miniv3d CORNER[8];
    miniv3d NORMAL[8];
    double EXTENT;

@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "minibase.h"
-
 #include "minimath.h"
 
 #include "miniwarp.h"
@@ -16,6 +14,9 @@ miniwarpbase::miniwarpbase()
    MTX[2]=INV[2]=TRA[2]=INVTRA[2]=miniv3d(0.0,0.0,1.0);
 
    SCALE=1.0;
+
+   NONLIN=FALSE;
+   CRDGEN=miniv3d(1.0);
 
    CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
    CORNER[1]=miniv3d(0.5,-0.5,-0.5);
@@ -54,6 +55,13 @@ void miniwarpbase::getinvtra(miniv3d invtra[3])
 // get actual scaling factor
 double miniwarpbase::getscale()
    {return(SCALE);}
+
+// enable non-linear warp
+void miniwarpbase::usenonlin(BOOLINT on,miniv3d crdgen)
+   {
+   NONLIN=on;
+   CRDGEN=crdgen;
+   }
 
 // get corners of warp box
 double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const

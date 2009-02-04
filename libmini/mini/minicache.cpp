@@ -321,7 +321,11 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
                {
                if (NONLIN==0 || USEVTXSHADER==0) warp=t->tile->getwarp();
-               else warp=t->tile->getwarp(t->first_col,t->first_row);
+               else
+                  {
+                  warp=t->tile->getwarp(t->first_col,t->first_row);
+                  warp->usenonlin(TRUE,miniv3d(1.0/t->first_size,t->first_scale,1.0/t->first_size));
+                  }
 
                t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,
                                        0,&s,&o,0,warp,CONFIGURE_CALCBOUNDS);
