@@ -238,16 +238,24 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
          lastwarp=NULL;
          }
       else if (ref->warp!=lastwarp)
-         {
-         ref->warp->getinv(inv);
-         o1=miniv4d(o.x,o.y,o.z,1.0);
-         oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
+         if (ref->warp->getnonlin())
+            {
+            oi=o;
+            di=dn;
 
-         ref->warp->gettra(tra);
-         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
+            lastwarp=ref->warp;
+            }
+         else
+            {
+            ref->warp->getinv(inv);
+            o1=miniv4d(o.x,o.y,o.z,1.0);
+            oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
 
-         lastwarp=ref->warp;
-         }
+            ref->warp->gettra(tra);
+            di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
+
+            lastwarp=ref->warp;
+            }
 
       if (checkbound(oi,di,ref->b,ref->r2)!=0)
          if (checkbbox(oi,di,ref->b,ref->r)!=0)
@@ -304,16 +312,24 @@ minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radi
          lastwarp=NULL;
          }
       else if (ref->warp!=lastwarp)
-         {
-         ref->warp->getinv(inv);
-         o1=miniv4d(o.x,o.y,o.z,1.0);
-         oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
+         if (ref->warp->getnonlin())
+            {
+            oi=o;
+            di=dn;
 
-         ref->warp->gettra(tra);
-         di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
+            lastwarp=ref->warp;
+            }
+         else
+            {
+            ref->warp->getinv(inv);
+            o1=miniv4d(o.x,o.y,o.z,1.0);
+            oi=miniv3d(inv[0]*o1,inv[1]*o1,inv[2]*o1);
 
-         lastwarp=ref->warp;
-         }
+            ref->warp->gettra(tra);
+            di=miniv3d(tra[0]*dn,tra[1]*dn,tra[2]*dn); // warp matrix is assumed to be ortho-normal
+
+            lastwarp=ref->warp;
+            }
 
       if (checkplane(oi,di,radius,ref->b,ref->r2)!=0) result.append(calcmesh(ref));
 
@@ -399,57 +415,35 @@ void miniray::calcbound(TRIANGLEREF *ref)
    miniv3d v;
    miniv3d vmin,vmax;
 
-   array=*(ref->array)+ref->index;
-   num=ref->num;
-   stride=ref->stride;
+   miniv3d corner[8];
 
    vmin.x=vmin.y=vmin.z=MAXFLOAT;
    vmax.x=vmax.y=vmax.z=-MAXFLOAT;
 
-   if (ref->isfan==0)
-      if (ref->swapyz==0)
-         for (i=0; i<3*num; i++)
-            {
-            v.x=*array++;
-            v.y=*array++;
-            v.z=*array++;
+   if (ref->warp!=NULL && ref->warp->getnonlin())
+      {
+      ref->warp->getcorners(corner);
 
-            array+=stride;
+      for (i=0; i<8; i++)
+         {
+         if (corner[i].x<vmin.x) vmin.x=corner[i].x;
+         if (corner[i].y<vmin.y) vmin.y=corner[i].y;
+         if (corner[i].z<vmin.z) vmin.z=corner[i].z;
 
-            if (v.x<vmin.x) vmin.x=v.x;
-            if (v.y<vmin.y) vmin.y=v.y;
-            if (v.z<vmin.z) vmin.z=v.z;
-
-            if (v.x>vmax.x) vmax.x=v.x;
-            if (v.y>vmax.y) vmax.y=v.y;
-            if (v.z>vmax.z) vmax.z=v.z;
-            }
-      else
-         for (i=0; i<3*num; i++)
-            {
-            v.x=*array++;
-            v.z=*array++;
-            v.y=*array++;
-
-            array+=stride;
-
-            if (v.x<vmin.x) vmin.x=v.x;
-            if (v.y<vmin.y) vmin.y=v.y;
-            if (v.z<vmin.z) vmin.z=v.z;
-
-            if (v.x>vmax.x) vmax.x=v.x;
-            if (v.y>vmax.y) vmax.y=v.y;
-            if (v.z>vmax.z) vmax.z=v.z;
-            }
+         if (corner[i].x>vmax.x) vmax.x=corner[i].x;
+         if (corner[i].y>vmax.y) vmax.y=corner[i].y;
+         if (corner[i].z>vmax.z) vmax.z=corner[i].z;
+         }
+      }
    else
-      if (ref->swapyz==0)
-         for (i=0; i<num; i++)
-            {
-            k=ftrc(*array+0.5f);
+      {
+      array=*(ref->array)+ref->index;
+      num=ref->num;
+      stride=ref->stride;
 
-            array+=3;
-
-            for (j=0; j<k; j++)
+      if (ref->isfan==0)
+         if (ref->swapyz==0)
+            for (i=0; i<3*num; i++)
                {
                v.x=*array++;
                v.y=*array++;
@@ -465,39 +459,81 @@ void miniray::calcbound(TRIANGLEREF *ref)
                if (v.y>vmax.y) vmax.y=v.y;
                if (v.z>vmax.z) vmax.z=v.z;
                }
-            }
+         else
+            for (i=0; i<3*num; i++)
+               {
+               v.x=*array++;
+               v.z=*array++;
+               v.y=*array++;
+
+               array+=stride;
+
+               if (v.x<vmin.x) vmin.x=v.x;
+               if (v.y<vmin.y) vmin.y=v.y;
+               if (v.z<vmin.z) vmin.z=v.z;
+
+               if (v.x>vmax.x) vmax.x=v.x;
+               if (v.y>vmax.y) vmax.y=v.y;
+               if (v.z>vmax.z) vmax.z=v.z;
+               }
       else
-         for (i=0; i<num; i++)
-            {
-            k=ftrc(*array+0.5f);
-
-            array+=3;
-
-            for (j=0; j<k; j++)
+         if (ref->swapyz==0)
+            for (i=0; i<num; i++)
                {
-               v.x=*array++;
-               v.z=*array++;
-               v.y=*array++;
+               k=ftrc(*array+0.5f);
 
-               array+=stride;
+               array+=3;
 
-               if (v.x<vmin.x) vmin.x=v.x;
-               if (v.y<vmin.y) vmin.y=v.y;
-               if (v.z<vmin.z) vmin.z=v.z;
+               for (j=0; j<k; j++)
+                  {
+                  v.x=*array++;
+                  v.y=*array++;
+                  v.z=*array++;
 
-               if (v.x>vmax.x) vmax.x=v.x;
-               if (v.y>vmax.y) vmax.y=v.y;
-               if (v.z>vmax.z) vmax.z=v.z;
+                  array+=stride;
+
+                  if (v.x<vmin.x) vmin.x=v.x;
+                  if (v.y<vmin.y) vmin.y=v.y;
+                  if (v.z<vmin.z) vmin.z=v.z;
+
+                  if (v.x>vmax.x) vmax.x=v.x;
+                  if (v.y>vmax.y) vmax.y=v.y;
+                  if (v.z>vmax.z) vmax.z=v.z;
+                  }
                }
-            }
+         else
+            for (i=0; i<num; i++)
+               {
+               k=ftrc(*array+0.5f);
 
-   vmin.x=vmin.x*ref->scaling.x+ref->offset.x;
-   vmin.y=vmin.y*ref->scaling.y+ref->offset.y;
-   vmin.z=vmin.z*ref->scaling.z+ref->offset.z;
+               array+=3;
 
-   vmax.x=vmax.x*ref->scaling.x+ref->offset.x;
-   vmax.y=vmax.y*ref->scaling.y+ref->offset.y;
-   vmax.z=vmax.z*ref->scaling.z+ref->offset.z;
+               for (j=0; j<k; j++)
+                  {
+                  v.x=*array++;
+                  v.z=*array++;
+                  v.y=*array++;
+
+                  array+=stride;
+
+                  if (v.x<vmin.x) vmin.x=v.x;
+                  if (v.y<vmin.y) vmin.y=v.y;
+                  if (v.z<vmin.z) vmin.z=v.z;
+
+                  if (v.x>vmax.x) vmax.x=v.x;
+                  if (v.y>vmax.y) vmax.y=v.y;
+                  if (v.z>vmax.z) vmax.z=v.z;
+                  }
+               }
+
+      vmin.x=vmin.x*ref->scaling.x+ref->offset.x;
+      vmin.y=vmin.y*ref->scaling.y+ref->offset.y;
+      vmin.z=vmin.z*ref->scaling.z+ref->offset.z;
+
+      vmax.x=vmax.x*ref->scaling.x+ref->offset.x;
+      vmax.y=vmax.y*ref->scaling.y+ref->offset.y;
+      vmax.z=vmax.z*ref->scaling.z+ref->offset.z;
+      }
 
    ref->b=0.5*(vmin+vmax);
 
@@ -554,6 +590,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -591,6 +628,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -627,6 +665,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -643,6 +682,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
+               //!!
                v3.x=v3.x*ref->scaling.x+ref->offset.x;
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
@@ -673,6 +713,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -689,6 +730,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
+               //!!
                v3.x=v3.x*ref->scaling.x+ref->offset.x;
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
@@ -702,32 +744,6 @@ double miniray::calcdist(TRIANGLEREF *ref,
             }
 
    return(result);
-   }
-
-// calculate triangle mesh point
-miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p)
-   {
-   static miniv4d mtx[3];
-   static BOOLINT one;
-
-   miniv4d p1;
-
-   if (ref->warp!=*lastwarp)
-      {
-      if (ref->warp!=NULL)
-         {
-         ref->warp->getwarp(mtx);
-         one=FALSE;
-         }
-      else one=TRUE;
-
-      *lastwarp=ref->warp;
-      }
-
-   if (one) return(p);
-
-   p1=miniv4d(p,1.0);
-   return(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
    }
 
 // calculate triangle mesh
@@ -772,6 +788,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -809,6 +826,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -845,6 +863,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -864,6 +883,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
+               //!!
                v3.x=v3.x*ref->scaling.x+ref->offset.x;
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
@@ -896,6 +916,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
+            //!!
             v1.x=v1.x*ref->scaling.x+ref->offset.x;
             v1.y=v1.y*ref->scaling.y+ref->offset.y;
             v1.z=v1.z*ref->scaling.z+ref->offset.z;
@@ -915,6 +936,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
+               //!!
                v3.x=v3.x*ref->scaling.x+ref->offset.x;
                v3.y=v3.y*ref->scaling.y+ref->offset.y;
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
@@ -930,6 +952,32 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
             }
 
    return(result);
+   }
+
+// calculate triangle mesh point
+miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p)
+   {
+   static miniv4d mtx[3];
+   static BOOLINT one;
+
+   miniv4d p1;
+
+   if (ref->warp!=*lastwarp)
+      {
+      if (ref->warp!=NULL)
+         {
+         ref->warp->getwarp(mtx);
+         one=FALSE;
+         }
+      else one=TRUE;
+
+      *lastwarp=ref->warp;
+      }
+
+   if (one) return(p);
+
+   p1=miniv4d(p,1.0); //!!
+   return(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
    }
 
 // geometric ray/sphere intersection test
@@ -1035,7 +1083,7 @@ int miniray::checkplane(const miniv3d &o,const miniv3d &n,const double radius,
 
 // calculate hit distance
 double miniray::checkdist(const miniv3d &o,const miniv3d &d,
-                         const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
+                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
    miniv3d tuv;
 

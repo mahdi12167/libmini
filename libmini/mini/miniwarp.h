@@ -26,22 +26,25 @@ class miniwarpbase
    void getwarp(miniv4d mtx[3]) const; // fourth row is assumed to be (0,0,0,1)
 
    //! get inverse of actual warp matrix
-   void getinv(miniv4d inv[3]);
+   void getinv(miniv4d inv[3]) const;
 
    //! get transpose of actual warp matrix
-   void gettra(miniv3d tra[3]);
+   void gettra(miniv3d tra[3]) const;
 
    //! get inverse transpose of actual warp matrix
-   void getinvtra(miniv3d invtra[3]);
+   void getinvtra(miniv3d invtra[3]) const;
 
    //! get actual scaling factor
-   double getscale();
+   double getscale() const;
 
    //! enable non-linear warp
    void usenonlin(BOOLINT on,miniv3d crdgen);
 
+   //! check for non-linear warp
+   BOOLINT getnonlin() const;
+
    //! get corners of warp box
-   double getcorners(miniv3d p[8],miniv3d n[8]) const;
+   double getcorners(miniv3d p[8],miniv3d n[8]=NULL) const;
 
    protected:
 

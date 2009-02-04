@@ -41,19 +41,19 @@ void miniwarpbase::getwarp(miniv4d mtx[3]) const
    {cpy_mtx(mtx,MTX);}
 
 // get inverse of actual warp matrix
-void miniwarpbase::getinv(miniv4d inv[3])
+void miniwarpbase::getinv(miniv4d inv[3]) const
    {cpy_mtx(inv,INV);}
 
 // get transpose of actual warp matrix
-void miniwarpbase::gettra(miniv3d tra[3])
+void miniwarpbase::gettra(miniv3d tra[3]) const
    {cpy_mtx(tra,TRA);}
 
 // get inverse transpose of actual warp matrix
-void miniwarpbase::getinvtra(miniv3d invtra[3])
+void miniwarpbase::getinvtra(miniv3d invtra[3]) const
    {cpy_mtx(invtra,INVTRA);}
 
 // get actual scaling factor
-double miniwarpbase::getscale()
+double miniwarpbase::getscale() const
    {return(SCALE);}
 
 // enable non-linear warp
@@ -63,16 +63,23 @@ void miniwarpbase::usenonlin(BOOLINT on,miniv3d crdgen)
    CRDGEN=crdgen;
    }
 
+// check for non-linear warp
+BOOLINT miniwarpbase::getnonlin() const
+   {return(NONLIN);}
+
 // get corners of warp box
 double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
    {
    int i;
 
-   for (i=0; i<8; i++)
-      {
-      p[i]=CORNER[i];
-      n[i]=NORMAL[i];
-      }
+   if (n==NULL)
+      for (i=0; i<8; i++) p[i]=CORNER[i];
+   else
+      for (i=0; i<8; i++)
+         {
+         p[i]=CORNER[i];
+         n[i]=NORMAL[i];
+         }
 
    return(EXTENT);
    }
