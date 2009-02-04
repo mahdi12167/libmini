@@ -21,12 +21,28 @@ class miniwarpbase
    //! get actual warp matrix
    void getwarp(miniv4d mtx[3]) const; // fourth row is assumed to be (0,0,0,1)
 
+   //! get inverse of actual warp matrix
+   void getinv(miniv4d inv[3]);
+
+   //! get transpose of actual warp matrix
+   void gettra(miniv3d tra[3]);
+
+   //! get inverse transpose of actual warp matrix
+   void getinvtra(miniv3d invtra[3]);
+
+   //! get actual scaling factor
+   double getscale();
+
    //! get corners of warp box
    double getcorners(miniv3d p[8],miniv3d n[8]) const;
 
    protected:
 
    miniv4d MTX[3];
+   miniv4d INV[3],TRA[3];
+   miniv4d INVTRA[3];
+   float SCALE;
+
    miniv3d CORNER[8];
    miniv3d NORMAL[8];
    double EXTENT;
@@ -86,18 +102,6 @@ class miniwarp: public miniwarpbase
 
    //! set actual warp
    void setwarp(MINIWARP from,MINIWARP to);
-
-   //! get inverse of actual warp matrix
-   void getinv(miniv4d inv[3]);
-
-   //! get transpose of actual warp matrix
-   void gettra(miniv3d tra[3]);
-
-   //! get inverse transpose of actual warp matrix
-   void getinvtra(miniv3d invtra[3]);
-
-   //! get actual scaling factor
-   double getscale();
 
    //! get tileset coordinate system
    minicoord::MINICOORD gettls();
@@ -194,10 +198,6 @@ class miniwarp: public miniwarpbase
    miniv4d INV_2WRP[3];
 
    MINIWARP FROM,TO;
-
-   miniv4d INV[3],TRA[3];
-   miniv4d INVTRA[3];
-   float SCALE;
 
    private:
 

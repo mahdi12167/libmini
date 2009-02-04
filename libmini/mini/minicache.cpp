@@ -268,7 +268,7 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
 
    float *ptr;
 
-   miniwarp *warp;
+   miniwarpbase *warp;
 
    t=&TERRAIN[CACHE_ID];
    c=&t->cache[t->cache_num];

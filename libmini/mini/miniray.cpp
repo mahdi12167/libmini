@@ -55,7 +55,7 @@ void miniray::clearbuffer()
 // add reference to triangles to the back buffer
 void miniray::addtriangles(float **array,int index,int num,int stride,
                            miniv3d *scaling,miniv3d *offset,
-                           int swapyz,miniwarp *warp,
+                           int swapyz,miniwarpbase *warp,
                            int calcbounds)
    {
    int n;
@@ -76,7 +76,7 @@ void miniray::addtriangles(float **array,int index,int num,int stride,
 // add reference to triangles to the back buffer
 void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
                                    miniv3d *scaling,miniv3d *offset,
-                                   int swapyz,miniwarp *warp,
+                                   int swapyz,miniwarpbase *warp,
                                    int calcbounds)
    {
    TRIANGLEREF *ref;
@@ -113,7 +113,7 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 // add reference to triangle fans to the back buffer
 void miniray::addtrianglefans(float **array,int index,int num,int stride,
                               miniv3d *scaling,miniv3d *offset,
-                              int swapyz,miniwarp *warp,
+                              int swapyz,miniwarpbase *warp,
                               int calcbounds)
    {
    int n;
@@ -141,7 +141,7 @@ void miniray::addtrianglefans(float **array,int index,int num,int stride,
 // add reference to triangle fans to the back buffer
 void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride,
                                       miniv3d *scaling,miniv3d *offset,
-                                      int swapyz,miniwarp *warp,
+                                      int swapyz,miniwarpbase *warp,
                                       int calcbounds)
    {
    TRIANGLEREF *ref;
@@ -205,7 +205,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
    TRIANGLEREF *ref;
 
-   miniwarp *lastwarp;
+   miniwarpbase *lastwarp;
 
    miniv4d inv[3];
    miniv3d tra[3];
@@ -273,7 +273,7 @@ minidyna<miniv3d> miniray::extract(const miniv3d &o,const miniv3d &n,double radi
 
    TRIANGLEREF *ref;
 
-   miniwarp *lastwarp;
+   miniwarpbase *lastwarp;
 
    miniv4d inv[3];
    miniv3d tra[3];
@@ -330,7 +330,7 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
    {
    TRIANGLEREF *ref;
 
-   miniwarp *lastwarp;
+   miniwarpbase *lastwarp;
 
    miniv3d p;
    double r;
@@ -705,7 +705,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
    }
 
 // calculate triangle mesh point
-miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarp **lastwarp,miniv3d p)
+miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p)
    {
    static miniv4d mtx[3];
    static BOOLINT one;
@@ -735,7 +735,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
    {
    int i,j,k;
 
-   miniwarp *lastwarp;
+   miniwarpbase *lastwarp;
 
    minidyna<miniv3d> result;
 

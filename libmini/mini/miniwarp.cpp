@@ -11,9 +11,11 @@ miniwarpbase::miniwarpbase()
    {
    int i;
 
-   MTX[0]=miniv3d(1.0,0.0,0.0);
-   MTX[1]=miniv3d(0.0,1.0,0.0);
-   MTX[2]=miniv3d(0.0,0.0,1.0);
+   MTX[0]=INV[0]=TRA[0]=INVTRA[0]=miniv3d(1.0,0.0,0.0);
+   MTX[1]=INV[1]=TRA[1]=INVTRA[1]=miniv3d(0.0,1.0,0.0);
+   MTX[2]=INV[2]=TRA[2]=INVTRA[2]=miniv3d(0.0,0.0,1.0);
+
+   SCALE=1.0;
 
    CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
    CORNER[1]=miniv3d(0.5,-0.5,-0.5);
@@ -26,6 +28,8 @@ miniwarpbase::miniwarpbase()
 
    for (i=0; i<8; i++)
       NORMAL[i]=miniv3d(0.0,0.0,1.0);
+
+   EXTENT=1.0;
    }
 
 // destructor
@@ -34,6 +38,22 @@ miniwarpbase::~miniwarpbase() {}
 // get actual warp matrix
 void miniwarpbase::getwarp(miniv4d mtx[3]) const
    {cpy_mtx(mtx,MTX);}
+
+// get inverse of actual warp matrix
+void miniwarpbase::getinv(miniv4d inv[3])
+   {cpy_mtx(inv,INV);}
+
+// get transpose of actual warp matrix
+void miniwarpbase::gettra(miniv3d tra[3])
+   {cpy_mtx(tra,TRA);}
+
+// get inverse transpose of actual warp matrix
+void miniwarpbase::getinvtra(miniv3d invtra[3])
+   {cpy_mtx(invtra,INVTRA);}
+
+// get actual scaling factor
+double miniwarpbase::getscale()
+   {return(SCALE);}
 
 // get corners of warp box
 double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
@@ -113,12 +133,6 @@ miniwarp::miniwarp(): miniwarpbase()
    cpy_mtx(INV_2WRP,MTX_ZERO);
 
    FROM=TO=MINIWARP_PLAIN;
-
-   cpy_mtx(INV,MTX_ONE);
-   cpy_mtx(TRA,MTX_ONE);
-   cpy_mtx(INVTRA,MTX_ONE);
-
-   SCALE=1.0;
    }
 
 // destructor
@@ -205,22 +219,6 @@ void miniwarp::setwarp(MINIWARP from,MINIWARP to)
    update_invtra();
    update_scl();
    }
-
-// get inverse of actual warp matrix
-void miniwarp::getinv(miniv4d inv[3])
-   {cpy_mtx(inv,INV);}
-
-// get transpose of actual warp matrix
-void miniwarp::gettra(miniv3d tra[3])
-   {cpy_mtx(tra,TRA);}
-
-// get inverse transpose of actual warp matrix
-void miniwarp::getinvtra(miniv3d invtra[3])
-   {cpy_mtx(invtra,INVTRA);}
-
-// get actual scaling factor
-double miniwarp::getscale()
-   {return(SCALE);}
 
 // get tileset coordinate system
 minicoord::MINICOORD miniwarp::gettls()
