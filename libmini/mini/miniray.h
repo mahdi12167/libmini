@@ -131,9 +131,9 @@ class miniray
                    const miniv3d &o,const miniv3d &d,
                    double dist);
 
-   inline miniv3d calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p);
-
    minidyna<miniv3d> calcmesh(TRIANGLEREF *ref);
+
+   inline miniv3d calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p);
 
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);
