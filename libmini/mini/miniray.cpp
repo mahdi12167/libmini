@@ -346,8 +346,6 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
    {
    TRIANGLEREF *ref;
 
-   miniwarpbase *lastwarp;
-
    miniv3d p;
    double r;
 
@@ -358,15 +356,13 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
    b1=miniv3d(MAXFLOAT);
    b2=miniv3d(-MAXFLOAT);
 
-   lastwarp=NULL;
-
    ref=FRONT;
 
    while (ref!=NULL)
       {
       if (ref->hasbound==0) calcbound(ref);
 
-      p=calcpoint(ref,&lastwarp,ref->b);
+      p=calcpoint(ref->warp,ref->b);
       r=sqrt(ref->r2);
 
       if (p.x-r<b1.x) b1.x=p.x-r;
@@ -641,18 +637,26 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               v3=warp->triwarp(v3);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            v3.x=v3.x*ref->scaling.x+ref->offset.x;
-            v3.y=v3.y*ref->scaling.y+ref->offset.y;
-            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               }
 
             dist=checkdist(o,d,v1,v2,v3);
 
@@ -678,14 +682,21 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               }
 
             for (j=2; j<k; j++)
                {
@@ -695,10 +706,13 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
-               //!!
-               v3.x=v3.x*ref->scaling.x+ref->offset.x;
-               v3.y=v3.y*ref->scaling.y+ref->offset.y;
-               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               if (warp!=NULL) v3=warp->triwarp(v3);
+               else
+                  {
+                  v3.x=v3.x*ref->scaling.x+ref->offset.x;
+                  v3.y=v3.y*ref->scaling.y+ref->offset.y;
+                  v3.z=v3.z*ref->scaling.z+ref->offset.z;
+                  }
 
                dist=checkdist(o,d,v1,v2,v3);
 
@@ -726,14 +740,21 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               }
 
             for (j=2; j<k; j++)
                {
@@ -743,10 +764,13 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
-               //!!
-               v3.x=v3.x*ref->scaling.x+ref->offset.x;
-               v3.y=v3.y*ref->scaling.y+ref->offset.y;
-               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               if (warp!=NULL) v3=warp->triwarp(v3);
+               else
+                  {
+                  v3.x=v3.x*ref->scaling.x+ref->offset.x;
+                  v3.y=v3.y*ref->scaling.y+ref->offset.y;
+                  v3.z=v3.z*ref->scaling.z+ref->offset.z;
+                  }
 
                dist=checkdist(o,d,v1,v2,v3);
 
@@ -764,8 +788,6 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
    {
    int i,j,k;
 
-   miniwarpbase *lastwarp;
-
    minidyna<miniv3d> result;
 
    float *array;
@@ -773,11 +795,14 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
    miniv3d v1,v2,v3;
 
-   lastwarp=NULL;
+   miniwarpbase *warp;
 
    array=*(ref->array)+ref->index;
    num=ref->num;
    stride=ref->stride;
+
+   if (ref->warp!=NULL && ref->warp->getnonlin()) warp=ref->warp;
+   else warp=NULL;
 
    if (ref->isfan==0)
       if (ref->swapyz==0)
@@ -801,22 +826,30 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               v3=warp->triwarp(v3);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            v3.x=v3.x*ref->scaling.x+ref->offset.x;
-            v3.y=v3.y*ref->scaling.y+ref->offset.y;
-            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               }
 
-            result.append(calcpoint(ref,&lastwarp,v1));
-            result.append(calcpoint(ref,&lastwarp,v2));
-            result.append(calcpoint(ref,&lastwarp,v3));
+            result.append(calcpoint(ref->warp,v1));
+            result.append(calcpoint(ref->warp,v2));
+            result.append(calcpoint(ref->warp,v3));
             }
       else
          for (i=0; i<num; i++)
@@ -839,22 +872,30 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               v3=warp->triwarp(v3);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
 
-            v3.x=v3.x*ref->scaling.x+ref->offset.x;
-            v3.y=v3.y*ref->scaling.y+ref->offset.y;
-            v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               v3.x=v3.x*ref->scaling.x+ref->offset.x;
+               v3.y=v3.y*ref->scaling.y+ref->offset.y;
+               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               }
 
-            result.append(calcpoint(ref,&lastwarp,v1));
-            result.append(calcpoint(ref,&lastwarp,v2));
-            result.append(calcpoint(ref,&lastwarp,v3));
+            result.append(calcpoint(ref->warp,v1));
+            result.append(calcpoint(ref->warp,v2));
+            result.append(calcpoint(ref->warp,v3));
             }
    else
       if (ref->swapyz==0)
@@ -876,17 +917,24 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               }
 
-            v1=calcpoint(ref,&lastwarp,v1);
-            v2=calcpoint(ref,&lastwarp,v2);
+            v1=calcpoint(ref->warp,v1);
+            v2=calcpoint(ref->warp,v2);
 
             for (j=2; j<k; j++)
                {
@@ -896,12 +944,15 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
-               //!!
-               v3.x=v3.x*ref->scaling.x+ref->offset.x;
-               v3.y=v3.y*ref->scaling.y+ref->offset.y;
-               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               if (warp!=NULL) v3=warp->triwarp(v3);
+               else
+                  {
+                  v3.x=v3.x*ref->scaling.x+ref->offset.x;
+                  v3.y=v3.y*ref->scaling.y+ref->offset.y;
+                  v3.z=v3.z*ref->scaling.z+ref->offset.z;
+                  }
 
-               v3=calcpoint(ref,&lastwarp,v3);
+               v3=calcpoint(ref->warp,v3);
 
                result.append(v1);
                result.append(v2);
@@ -929,17 +980,24 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             array+=stride;
 
-            //!!
-            v1.x=v1.x*ref->scaling.x+ref->offset.x;
-            v1.y=v1.y*ref->scaling.y+ref->offset.y;
-            v1.z=v1.z*ref->scaling.z+ref->offset.z;
+            if (warp!=NULL)
+               {
+               v1=warp->triwarp(v1);
+               v2=warp->triwarp(v2);
+               }
+            else
+               {
+               v1.x=v1.x*ref->scaling.x+ref->offset.x;
+               v1.y=v1.y*ref->scaling.y+ref->offset.y;
+               v1.z=v1.z*ref->scaling.z+ref->offset.z;
 
-            v2.x=v2.x*ref->scaling.x+ref->offset.x;
-            v2.y=v2.y*ref->scaling.y+ref->offset.y;
-            v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               v2.x=v2.x*ref->scaling.x+ref->offset.x;
+               v2.y=v2.y*ref->scaling.y+ref->offset.y;
+               v2.z=v2.z*ref->scaling.z+ref->offset.z;
+               }
 
-            v1=calcpoint(ref,&lastwarp,v1);
-            v2=calcpoint(ref,&lastwarp,v2);
+            v1=calcpoint(ref->warp,v1);
+            v2=calcpoint(ref->warp,v2);
 
             for (j=2; j<k; j++)
                {
@@ -949,12 +1007,15 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
-               //!!
-               v3.x=v3.x*ref->scaling.x+ref->offset.x;
-               v3.y=v3.y*ref->scaling.y+ref->offset.y;
-               v3.z=v3.z*ref->scaling.z+ref->offset.z;
+               if (warp!=NULL) v3=warp->triwarp(v3);
+               else
+                  {
+                  v3.x=v3.x*ref->scaling.x+ref->offset.x;
+                  v3.y=v3.y*ref->scaling.y+ref->offset.y;
+                  v3.z=v3.z*ref->scaling.z+ref->offset.z;
+                  }
 
-               v3=calcpoint(ref,&lastwarp,v3);
+               v3=calcpoint(ref->warp,v3);
 
                result.append(v1);
                result.append(v2);
@@ -968,29 +1029,11 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
    }
 
 // calculate triangle mesh point
-miniv3d miniray::calcpoint(TRIANGLEREF *ref,miniwarpbase **lastwarp,miniv3d p)
+miniv3d miniray::calcpoint(miniwarpbase *warp,miniv3d p)
    {
-   static miniv4d mtx[3];
-   static BOOLINT one;
-
-   miniv4d p1;
-
-   if (ref->warp!=*lastwarp)
-      {
-      if (ref->warp!=NULL)
-         {
-         ref->warp->getwarp(mtx);
-         one=FALSE;
-         }
-      else one=TRUE;
-
-      *lastwarp=ref->warp;
-      }
-
-   if (one) return(p);
-
-   p1=miniv4d(p,1.0); //!!
-   return(miniv3d(mtx[0]*p1,mtx[1]*p1,mtx[2]*p1));
+   if (warp==NULL) return(p);
+   if (warp->getnonlin()) return(warp->triwarp(p));
+   return(warp->linwarp(p));
    }
 
 // geometric ray/sphere intersection test

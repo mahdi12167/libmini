@@ -37,6 +37,9 @@ class miniwarpbase
    //! get actual scaling factor
    double getscale() const;
 
+   //! linear warp
+   miniv3d linwarp(const miniv3d &p) const;
+
    //! enable non-linear warp
    void usenonlin(BOOLINT on,miniv3d crdgen);
 

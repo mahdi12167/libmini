@@ -56,6 +56,13 @@ void miniwarpbase::getinvtra(miniv3d invtra[3]) const
 double miniwarpbase::getscale() const
    {return(SCALE);}
 
+// linear warp
+miniv3d miniwarpbase::linwarp(const miniv3d &p) const
+   {
+   miniv4d p1(p,1.0);
+   return(miniv3d(MTX[0]*p1,MTX[1]*p1,MTX[2]*p1));
+   }
+
 // enable non-linear warp
 void miniwarpbase::usenonlin(BOOLINT on,miniv3d crdgen)
    {
