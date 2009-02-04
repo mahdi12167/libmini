@@ -320,7 +320,7 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
 
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
                {
-               if (NONLIN==0 || USEVTXSHADER==0) warp=t->tile->getwarp();
+               if (NONLIN==0) warp=t->tile->getwarp();
                else
                   {
                   warp=t->tile->getwarp(t->first_col,t->first_row);
