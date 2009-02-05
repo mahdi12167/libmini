@@ -97,13 +97,13 @@ miniv3d miniwarpbase::triwarp(const miniv3d &c) const
    miniv3d w;
 
    w.x=c.x*CRDGEN.x;
-   w.y=c.y*CRDGEN.y*EXT1;
+   w.y=c.y*CRDGEN.y*EXT1+0.5;
    w.z=c.z*CRDGEN.z;
 
-   return((1.0-w.z)*((1.0-w.y)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
-                     w.y*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
-          w.z*((1.0-w.y)*((1.0-w.x)*CORNER[4]+w.x*CORNER[5])+
-               w.y*((1.0-w.x)*CORNER[6]+w.x*CORNER[7])));
+   return((1.0-w.y)*((1.0-w.z)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
+                     w.z*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
+          w.y*((1.0-w.z)*((1.0-w.x)*CORNER[4]+w.x*CORNER[5])+
+               w.z*((1.0-w.x)*CORNER[6]+w.x*CORNER[7])));
    }
 
 // default constructor

@@ -324,7 +324,7 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
                else
                   {
                   warp=t->tile->getwarp(t->first_col,t->first_row);
-                  warp->usenonlin(TRUE,miniv3d(1.0/t->first_size,t->first_scale,1.0/t->first_size));
+                  warp->usenonlin(TRUE,miniv3d(1.0/(t->first_size-1),t->first_scale,1.0/(t->first_size-1)));
                   }
 
                t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,
