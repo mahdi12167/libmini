@@ -4,12 +4,12 @@ Copyright (c) 2002-2008 by Stefan Roettger
 To compile under Linux, MacOS X, Irix or Windows follow these steps:
 
  1) make sure that OpenGL and the GLUT library are installed
- 2) download the latest "MINI-x.x.zip" and "Hawaii.zip" from this
+ 2) download the latest "MINI-x.y.zip" and "Hawaii.zip" from this
     location: http://stereofx.org/download
  3) unpack both zip archives to the same directory
  4) compile the library using the "build.sh" script in the "mini" directory
  5) compile the demo using the "build.sh" script in the "Hawaii" directory
-    (for Windows use cygwin or the supplied VC++ project files)
+    (for Windows use cygwin or generate VC++ project files with CMake)
  6) type "Hawaii" on the console or double click at "Hawaii.exe"
  7) then try the following keys: w a d s < > j b m 0 l p o c (q quits the demo)
 

@@ -1,3 +1,6 @@
+MMFILE	= MiniMakefile
+MAKE	= make -f $(MMFILE)
+
 SHELL	= sh
 
 PRGS	= raw2pnm dem2pgm pnminfo\
@@ -18,12 +21,12 @@ RM	= rm -rf
 trap:
 
 all:	$(OBJS)
-	@-(cd SDTS; make prg)
+	@-(cd SDTS; $(MAKE) prg)
 
 clean:
 	@-$(RM) $(OBJS) ii_files
-	@-(cd SDTS; make clean)
+	@-(cd SDTS; $(MAKE) clean)
 
 tidy:	clean
 	@-$(RM) $(PRGS)
-	@-(cd SDTS; make tidy)
+	@-(cd SDTS; $(MAKE) tidy)

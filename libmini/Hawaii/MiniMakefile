@@ -1,3 +1,6 @@
+MMFILE	= MiniMakefile
+MAKE	= make -f $(MMFILE)
+
 SHELL	= sh
 
 MAIN	= Hawaii
@@ -11,13 +14,13 @@ app:
 	$(COMPILER) $(OPTS) -I.. -I$(INSTALL_INC) -Wall -o ${MAIN} ${MAIN}.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm # -lpthread
 
 tools:
-	@-(cd tools; make all)
+	@-(cd tools; $(MAKE) all)
 
 all:	app tools
 
 clean:
 	@-$(RM) ii_files Debug* Release* *.ncb *.opt *.plg ${MAIN} ${MAIN}*.zip
-	@-(cd tools; make clean)
+	@-(cd tools; $(MAKE) clean)
 
 tidy:	clean
 	@-find . -name \*.tileset.sav -exec $(RM) {} \;
@@ -25,7 +28,7 @@ tidy:	clean
 	@-find . \( -name stub.\* -o -name tile.\*.p\?m\* \) -exec $(RM) {} \;
 	@-find . \( -name normalized.\* \) -exec $(RM) {} \;
 	@-find . \( -name \*~ -o -name core \) -exec $(RM) {} \;
-	@-(cd tools; make tidy)
+	@-(cd tools; $(MAKE) tidy)
 
 gridlo:	app
 	@-find . \( -name stub.\* -o -name tile.\*.p\?m\* \) -exec $(RM) {} \;
@@ -39,5 +42,5 @@ zip:	tidy
 	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}-all.zip ${MAIN} -x \*/CVS\*)
 
 demo:	tidy gridlo
-	@-make clean
+	@-$(MAKE) clean
 	@-(cd ..; $(ZIP) ${MAIN}/${MAIN}.zip ${MAIN} -x \*/CVS\* -x \*/USGS-DEM\* -x \*/LandSat-ETM\* -x \*/Bathymetry-DEM\* -x \*/normalized/normalized.\* -x \*/Waypoints\*.txt -x \*/startup.sav -x \*/settings.sav -x \*/Screens\*)
