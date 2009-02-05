@@ -9,13 +9,13 @@
 #    4: cmake -D<libname>_LIBRARY="..." -D<libname>_INCLUDE_DIR="..." .
 #       where <libname> is any of {PTHREAD,OPENTHREADS,CURL,JPEG,PNG,ZLIB,SQUISH,GREYCSTORATION,GLUT}
 #
-# optional usage:
+# optional usage examples:
+#
 #    cmake -DBUILD_TYPE=Debug .
 #    cmake -DBUILD_TYPE=Release .
 #    cmake -DBUILD_SHARED_LIBS=ON .
-#    cmake -DCMAKE_VERBOSE_MAKEFILE=TRUE .
+#    cmake -DCMAKE_VERBOSE_MAKEFILE=TRUE . (cmake .; make VERBOSE=1)
 #    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
-#    make VERBOSE=1
 
 PROJECT(libMini)
 

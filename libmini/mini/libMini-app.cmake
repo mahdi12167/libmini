@@ -1,8 +1,8 @@
 # cmake application build file
 # (c) by Stefan Roettger
 
-# expects ${APPNAME} to be set
-# expects ${LIBMINI_PATH} to be set if libMini has not been installed in a standard directory
+# expects ${APPNAME} to be set to the name of the application
+# expects ${LIBMINI_PATH} to point to the libMini root directory (for non-standard installations)
 
 PROJECT(${APPNAME})
 
