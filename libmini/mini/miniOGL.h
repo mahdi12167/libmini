@@ -184,7 +184,10 @@ void print_graphics_info(); // print useful OpenGL information
 #   include <GL/gl.h>
 #   include <GL/glu.h>
 #   ifndef __sgi
-#      include "GL/glext.h"
+       extern "C"
+          {
+          #include <GL/glext.h>
+          }
 #   endif
 #else
 #   include <OpenGL/gl.h>
