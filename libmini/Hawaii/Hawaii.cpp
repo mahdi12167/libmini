@@ -8,7 +8,7 @@
 #include <mini/minitime.h>
 #include <mini/miniio.h>
 #include <mini/minihsv.h>
-#include <mini/miniutm.h>
+#include <mini/minicrs.h>
 #include <mini/miniload.h>
 #include <mini/minicache.h>
 #include <mini/minibrick.h>
@@ -643,7 +643,7 @@ void SEAload_callback(int col,int row,int lod,databuf *volume,void *data)
 
    if (col<0 || row<0 || lod<0 || data!=NULL) ERRORMSG();
 
-   miniutm::UTM2LL(moex,moey,4,3,&py,&px);
+   minicrs::UTM2LL(moex,moey,4,3,&py,&px);
 
    px+=(col-sea_m/2.0f)*sea_ext;
    py+=(row-sea_n/2.0f)*sea_ext;
@@ -670,7 +670,7 @@ void PVMload_callback(int col,int row,int lod,databuf *volume,void *data)
 
    if (col<0 || row<0 || data!=NULL) ERRORMSG();
 
-   miniutm::UTM2LL(moex,moey,4,3,&py,&px);
+   minicrs::UTM2LL(moex,moey,4,3,&py,&px);
    volume->loadPVMdata(PVMfilename,1,21,0.0f,2.0f,px,py,0.0f,100.0f,100.0f,2000.0f);
 
    for (xs=3; xs<volume->xsize; xs=2*xs-1);
@@ -1016,17 +1016,17 @@ void keyboardfunc(unsigned char key,int x,int y)
    else if (key=='j') ay=exaggeration*height*fps;
    else if (key=='b')
       {
-      miniutm::UTM2LL(benx,beny,5,4,&ez,&ex); // UTM zone 5 NAD83 datum
+      minicrs::UTM2LL(benx,beny,5,4,&ez,&ex); // UTM zone 5 NAD83 datum
       initview(ex,ez,bena,benp);
       }
    else if (key=='g')
       {
-      miniutm::UTM2LL(gfnx,gfny,4,3,&ez,&ex); // UTM zone 4 WGS84 datum
+      minicrs::UTM2LL(gfnx,gfny,4,3,&ez,&ex); // UTM zone 4 WGS84 datum
       initview(ex,ez,gfna,gfnp);
       }
    else if (key=='m')
       {
-      miniutm::UTM2LL(moex,moey,4,3,&ez,&ex); // UTM zone 4 WGS84 datum
+      minicrs::UTM2LL(moex,moey,4,3,&ez,&ex); // UTM zone 4 WGS84 datum
       initview(ex,ez,moea,moep);
       }
    else if (key=='p') sw_dropwp=1-sw_dropwp;
@@ -1350,7 +1350,7 @@ int main(int argc,char *argv[])
    brick.addiso(0.5f,1.0f,0.0f,0.0f,1.0f);
 
    // set clipping plane
-   miniutm::UTM2LL(moex,moey,4,3,&py,&px);
+   minicrs::UTM2LL(moex,moey,4,3,&py,&px);
    brick.addclip(0,px,0.0f,py,-1.0f,0.0f,0.0f);
 
    // set render method
