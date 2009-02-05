@@ -39,7 +39,7 @@ noinst_PROGRAMS = example stubtest viewer
 libMini_la_LIBADD = $(MINI_LIBS) -lMini
 libMini_la_SOURCES = $(MODS:=.cpp)
 
-libMiniSFX_la_LIBADD = $(MINI_LIBS)
+libMiniSFX_la_LIBADD = $(MINI_LIBS) -lMini
 libMiniSFX_la_SOURCES = $(VMODS:=.cpp)
 
 library_include_HEADERS = $(patsubst %,%.h,${HDRS}) $(patsubst %,%.h,${MODS}) $(patsubst %,%.h,${VMODS})
