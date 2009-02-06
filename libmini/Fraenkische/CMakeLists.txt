@@ -1,7 +1,7 @@
 # cmake application build file
 # (c) by Stefan Roettger
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 SET(APPNAME Fraenkische)
 
