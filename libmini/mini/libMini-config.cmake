@@ -66,7 +66,7 @@ SET_MYPATH(WIN32_FREEGLUT_PATH freeglut)
 
 MACRO(FIND_MYLIBRARY name file paths)
    IF (NOT ${name})
-      FIND_LIBRARY(${name} ${file} PATHS ${paths} PATH_SUFFIXES lib)
+      FIND_LIBRARY(${name} ${file} PATHS ${paths} PATH_SUFFIXES lib debug release minsizerel relwithdebinfo)
    ENDIF (NOT ${name})
 ENDMACRO(FIND_MYLIBRARY)
 
