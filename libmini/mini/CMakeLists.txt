@@ -11,11 +11,11 @@
 #
 # optional usage examples:
 #
-#    cmake -DBUILD_TYPE=Debug .
-#    cmake -DBUILD_TYPE=Release .
-#    cmake -DBUILD_SHARED_LIBS=ON .
+#    cmake -DCMAKE_BUILD_TYPE=Debug .
+#    cmake -DCMAKE_BUILD_TYPE=Release .
 #    cmake -DCMAKE_VERBOSE_MAKEFILE=TRUE . (cmake .; make VERBOSE=1)
 #    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
+#    cmake -DBUILD_SHARED_LIBS=ON .
 
 PROJECT(libMini)
 
