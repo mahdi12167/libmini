@@ -1,6 +1,7 @@
 SHELL	= sh
 
-PRGS	= db2db eval\
+PRGS	= eval\
+	  db2db\
 	  mpfptest\
 	  test
 
