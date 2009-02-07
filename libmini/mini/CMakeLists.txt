@@ -11,8 +11,8 @@
 #
 # optional usage examples:
 #
-#    cmake -DCMAKE_BUILD_TYPE=Debug .
-#    cmake -DCMAKE_BUILD_TYPE=Release .
+#    cmake -DCMAKE_BUILD_TYPE=DEBUG .
+#    cmake -DCMAKE_BUILD_TYPE=RELEASE .
 #    cmake -DCMAKE_VERBOSE_MAKEFILE=TRUE . (cmake .; make VERBOSE=1)
 #    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
 #    cmake -DBUILD_SHARED_LIBS=ON .
