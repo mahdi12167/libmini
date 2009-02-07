@@ -78,7 +78,11 @@ SET_MYPATH(WIN32_FREEGLUT_PATH freeglut)
 
 MACRO(FIND_MYLIBRARY name file paths)
    IF (NOT ${name})
-      FIND_LIBRARY(${name} ${file} PATHS ${paths} PATH_SUFFIXES lib debug release minsizerel relwithdebinfo)
+      IF (NOT CMAKE_BUILD_TYPE MATCHES Debug)
+         FIND_LIBRARY(${name} ${file} PATHS ${paths} PATH_SUFFIXES lib release minsizerel relwithdebinfo)
+      ELSE (NOT CMAKE_BUILD_TYPE MATCHES Debug)
+         FIND_LIBRARY(${name} NAMES ${file}d ${file} PATHS ${paths} PATH_SUFFIXES lib debug)
+      ENDIF (NOT CMAKE_BUILD_TYPE MATCHES Debug)
    ENDIF (NOT ${name})
 ENDMACRO(FIND_MYLIBRARY)
 
