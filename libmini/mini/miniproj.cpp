@@ -177,7 +177,7 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
-// pass transformation matrix down to the shader
+// pass transformation matrices down to the shader
 void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                        const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
    {
@@ -620,7 +620,7 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    else
       {
-      // pass down transformation matrix
+      // pass down transformation matrices
       passmtx(v1,v2,v3,v4,a1,a2,a3,a4);
 
       // calculate slices
