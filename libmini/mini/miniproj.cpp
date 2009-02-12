@@ -187,7 +187,10 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
    miniv3d mtx1[3],inv1[3],mtx2[3];
 
+   dynacoord mtx;
+
    size=a1.getsize();
+   mtx.setsize(3*size);
 
    mtx1[0]=v2-v1;
    mtx1[1]=v3-v1;
@@ -203,12 +206,16 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
       mlt_mtx(mtx2,mtx2,inv1);
 
-      pass(i,mtx2[0],mtx2[1],mtx2[2]);
+      mtx[3*i]=mtx2[0];
+      mtx[3*i+1]=mtx2[1];
+      mtx[3*i+2]=mtx2[2];
       }
+
+   pass(mtx);
    }
 
 // pass constants down to the shader
-void miniproj::pass(const int,const miniv3d &,const miniv3d &,const miniv3d &) {}
+void miniproj::pass(const dynacoord &) {}
 void miniproj::pass(const int,const miniv3d &,const dynacoord &) {}
 
 // project 3 triangles
