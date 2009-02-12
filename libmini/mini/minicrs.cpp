@@ -43,6 +43,7 @@ void minicrs::choose_datum(int ellipsoid,
 
    switch (ellipsoid)
       {
+      // global datums:
       // 1=Clarke1866 (Clarke ellipsoid of 1866)
       case 1: choose_ellipsoid(6378206.4,6356583.8); break;
       // 2=WGS72 (World Geodetic System of 1972)
@@ -51,6 +52,8 @@ void minicrs::choose_datum(int ellipsoid,
       case 3: choose_ellipsoid(6378137.0,6356752.314245); break;
       // 4=GRS80 (Geodetic Reference System of 1980)
       case 4: choose_ellipsoid(6378137.0,6356752.31414); break;
+
+      // uncommon global datums:
       // 5=Clarke1880 (Clarke ellipsoid of 1880)
       case 5: choose_ellipsoid_flat(6378249.145,293.465); break;
       // 6=WGS60 (World Geodetic System of 1960)
@@ -65,6 +68,8 @@ void minicrs::choose_datum(int ellipsoid,
       case 10: choose_ellipsoid_flat(6378140.0,298.257); break;
       // 11=Sphere (with constant mean radius)
       case 11: choose_ellipsoid_flat(EARTH_radius,0.0); break;
+
+      // common local datums:
       // 12=Bessel1841 (German ellipsoid of 1841)
       case 12: choose_ellipsoid(6377397.155,6356078.96284); break;
       // 13=Bessel1841Mod (Modified German ellipsoid for Namibia)
@@ -83,6 +88,8 @@ void minicrs::choose_datum(int ellipsoid,
       case 19: choose_ellipsoid_flat(6378160.0,298.25); break;
       // 20=Indonesian1974 (Indonesian ellipsoid of 1974)
       case 20: choose_ellipsoid_flat(6378160.0,298.247); break;
+
+      // uncommon local datums:
       // 21=Fischer1960 (Fischer ellipsoid of 1960)
       case 21: choose_ellipsoid_flat(6378166.0,298.3); break;
       // 22=Fischer1960Mod (Modified Fischer ellipsoid of 1960)
@@ -93,6 +100,7 @@ void minicrs::choose_datum(int ellipsoid,
       case 24: choose_ellipsoid_flat(6378200.0,298.3); break;
       // 25=Hough1956 (Hough ellipsoid of 1956/1960)
       case 25: choose_ellipsoid_flat(6378270.0,297.0); break;
+
       default: ERRORMSG();
       }
 
