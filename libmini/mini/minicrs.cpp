@@ -43,7 +43,7 @@ void minicrs::choose_datum(int ellipsoid,
 
    switch (ellipsoid)
       {
-      // global datums:
+      // global ellipsoids:
       // 1=Clarke1866 (Clarke ellipsoid of 1866)
       case 1: choose_ellipsoid(6378206.4,6356583.8); break;
       // 2=WGS72 (World Geodetic System of 1972)
@@ -53,7 +53,7 @@ void minicrs::choose_datum(int ellipsoid,
       // 4=GRS80 (Geodetic Reference System of 1980)
       case 4: choose_ellipsoid(6378137.0,6356752.31414); break;
 
-      // uncommon global datums:
+      // uncommon global ellipsoids:
       // 5=Clarke1880 (Clarke ellipsoid of 1880)
       case 5: choose_ellipsoid_flat(6378249.145,293.465); break;
       // 6=WGS60 (World Geodetic System of 1960)
@@ -69,7 +69,7 @@ void minicrs::choose_datum(int ellipsoid,
       // 11=Sphere (with constant mean radius)
       case 11: choose_ellipsoid_flat(EARTH_radius,0.0); break;
 
-      // common local datums:
+      // local ellipsoids:
       // 12=Bessel1841 (German ellipsoid of 1841)
       case 12: choose_ellipsoid(6377397.155,6356078.96284); break;
       // 13=Bessel1841Mod (Modified German ellipsoid for Namibia)
@@ -89,7 +89,7 @@ void minicrs::choose_datum(int ellipsoid,
       // 20=Indonesian1974 (Indonesian ellipsoid of 1974)
       case 20: choose_ellipsoid_flat(6378160.0,298.247); break;
 
-      // uncommon local datums:
+      // uncommon local ellipsoids:
       // 21=Fischer1960 (Fischer ellipsoid of 1960)
       case 21: choose_ellipsoid_flat(6378166.0,298.3); break;
       // 22=Fischer1960Mod (Modified Fischer ellipsoid of 1960)
@@ -118,16 +118,19 @@ void minicrs::choose_datum(int datum)
 
    switch (datum)
       {
+      // global datums:
       // 1=NAD27 (Mean North American Datum of 1927)
       case 1: choose_datum(1,-8.0,160.0,176.0); break;
       // 2=WGS72 (World Geodetic System of 1972)
       case 2: choose_datum(2,0.0,0.0,0.0); break;
       // 3=WGS84 (World Geodetic System of 1984)
       case 3: choose_datum(3,0.0,0.0,0.0); break;
-      // 4=NAD83 (Mean North American Datum of 1983)
+      // 4=NAD83 (Mean North American Datum of 1983, practically identical to WGS84)
       case 4: choose_datum(4,0.0,0.0,0.0); break;
       // 5=Sphere (with constant mean radius)
       case 5: choose_datum(11,0.0,0.0,0.0); break;
+
+      // local datums:
       // 6=ED50 (Mean European Datum of 1950, centered at the Munich Frauenkirche)
       case 6: choose_datum(8,-87.0,-98.0,-121.0); break;
       // 7=ED79 (Mean European Datum of 1979)
@@ -147,6 +150,7 @@ void minicrs::choose_datum(int datum)
       // 14=SouthAmerican1969 (Mean South American Datum of 1969)
       case 14: choose_datum(19,-57.0,1.0,-41.0); break;
       // add custom datums here...
+
       default: ERRORMSG();
       }
 

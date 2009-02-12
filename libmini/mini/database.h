@@ -35,6 +35,16 @@ class databuf
       DATABUF_CRS_MERC=3
       };
 
+    enum DATABUF_DATUM
+      {
+      // inspired by USGS datum codes
+      DATABUF_DATUM_NAD27=1,
+      DATABUF_DATUM_WGS72=2,
+      DATABUF_DATUM_WGS84=3,
+      DATABUF_DATUM_NAD83=4,
+      DATABUF_DATUM_SPHERE=5,
+      };
+
    enum DATABUF_EXTFMT
       {
       DATABUF_EXTFMT_PLAIN=0,
@@ -69,7 +79,7 @@ class databuf
    float maxvalue;
 
    //! coordinate system indicator
-   int crs; // 0 = none, 1 = LL, 2 = UTM
+   int crs; // 0 = none, 1 = LL, 2 = UTM, 3 = Merc
    int zone; // coordinate system zone
    int datum; // coordinate system datum
 
