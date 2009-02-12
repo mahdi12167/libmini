@@ -105,7 +105,7 @@ inline void texcoord(const float s,const float t,const float r=0.0f);
 inline void fanvertex(const float x,const float y,const float z);
 inline void endfans();
 
-void multitexcoord(const int unit,const float s,const float t,const float r=0.0f);
+void multitexcoord(const unsigned int unit,const float s,const float t,const float r=0.0f);
 
 int getfancnt();
 int getvtxcnt();

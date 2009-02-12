@@ -1364,7 +1364,7 @@ void mtxgetmodel(double mtx[16])
 #endif
    }
 
-void multitexcoord(const int unit,const float s,const float t,const float r)
+void multitexcoord(const unsigned int unit,const float s,const float t,const float r)
    {
 #ifndef NOOGL
    initglexts();
@@ -1372,7 +1372,9 @@ void multitexcoord(const int unit,const float s,const float t,const float r)
    initwglprocs();
 #endif
 #ifdef GL_ARB_multitexture
-   if (glext_mt!=0) glMultiTexCoord3fARB(GL_TEXTURE0_ARB+unit,s,t,r);
+   if (glext_mt!=0)
+      if (unit<GL_MAX_TEXTURE_UNITS_ARB)
+         glMultiTexCoord3fARB(GL_TEXTURE0_ARB+unit,s,t,r);
 #endif
 #endif
    }
