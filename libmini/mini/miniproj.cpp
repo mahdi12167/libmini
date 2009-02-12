@@ -2,6 +2,8 @@
 
 #include "miniOGL.h"
 
+#include "minimath.h"
+
 #include "miniproj.h"
 
 // default constructor
@@ -175,7 +177,38 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
+// pass transformation matrix down to the shader
+void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
+                       const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
+   {
+   unsigned int i;
+
+   unsigned int size;
+
+   miniv3d mtx1[3],inv1[3],mtx2[3];
+
+   size=a1.getsize();
+
+   mtx1[0]=v2-v1;
+   mtx1[1]=v3-v1;
+   mtx1[2]=v4-v1;
+
+   inv_mtx(inv1,mtx1);
+
+   for (i=0; i<size; i++)
+      {
+      mtx2[0]=a2[i]-a1[i];
+      mtx2[1]=a3[i]-a1[i];
+      mtx2[2]=a4[i]-a1[i];
+
+      mlt_mtx(mtx2,mtx2,inv1);
+
+      pass(i,mtx2[0],mtx2[1],mtx2[2]);
+      }
+   }
+
 // pass constants down to the shader
+void miniproj::pass(const int,const miniv3d &,const miniv3d &,const miniv3d &) {}
 void miniproj::pass(const int,const miniv3d &,const dynacoord &) {}
 
 // project 3 triangles
@@ -585,7 +618,14 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
          case 7: case  8: proj3tri(v2,c2,v1,c1,v3,c3,v4,c4,eye); break;
          }
       }
-   else slicetet(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye,dir,nearp,DELTA);
+   else
+      {
+      // pass down transformation matrix
+      passmtx(v1,v2,v3,v4,a1,a2,a3,a4);
+
+      // calculate slices
+      slicetet(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye,dir,nearp,DELTA);
+      }
    }
 
 // project a tetrahedron
