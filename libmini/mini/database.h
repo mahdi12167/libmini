@@ -37,12 +37,22 @@ class databuf
 
     enum DATABUF_DATUM
       {
-      // inspired by USGS datum codes
+      // USGS datum codes
       DATABUF_DATUM_NAD27=1,
       DATABUF_DATUM_WGS72=2,
       DATABUF_DATUM_WGS84=3,
       DATABUF_DATUM_NAD83=4,
+      // libMini datum codes
       DATABUF_DATUM_SPHERE=5,
+      DATABUF_DATUM_ED50=6,
+      DATABUF_DATUM_ED79=7,
+      DATABUF_DATUM_OldHawaiian=8,
+      DATABUF_DATUM_Luzon=9,
+      DATABUF_DATUM_Tokyo=10,
+      DATABUF_DATUM_OSGB1936=11,
+      DATABUF_DATUM_Australian1984=12,
+      DATABUF_DATUM_Geodetic1949=13,
+      DATABUF_DATUM_SouthAmerican1969=14
       };
 
    enum DATABUF_EXTFMT
