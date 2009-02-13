@@ -1498,7 +1498,8 @@ void minilayer::renderpoints()
 
    minipointopts global;
 
-   if (!LOADED || POINTS==NULL || !VISIBLE) return;
+   if (!LOADED || POINTS==NULL) return;
+   if (!VISIBLE || LPARAMS.nonlin) return;
 
    if (LPARAMS.usewaypoints)
       {
@@ -1566,7 +1567,8 @@ minipointdata *minilayer::getnearestpoint(int type)
 
    minipointdata *nearest;
 
-   if (!LOADED || POINTS==NULL || !VISIBLE) return(NULL);
+   if (!LOADED || POINTS==NULL) return(NULL);
+   if (!VISIBLE || LPARAMS.nonlin) return(NULL);
 
    nearest=NULL;
 
