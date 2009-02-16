@@ -1332,7 +1332,7 @@ int main(int argc,char *argv[])
    // set sea level brick pager
    if (sw_sea!=0)
       sea.setloader(SEAavailable_callback,NULL,SEAload_callback,
-                    -viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,
+                    -viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale,
                     1,1.5f,ftrc(1000*fps));
 
    // set iso spectrum
@@ -1341,7 +1341,7 @@ int main(int argc,char *argv[])
    // set volume brick pager
    if (sw_brick!=0)
       brick.setloader(PVMavailable_callback,NULL,PVMload_callback,
-                      -viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,
+                      -viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale,
                       1,1.5f,ftrc(1000*fps));
 
    // set iso spectrum
@@ -1364,7 +1364,7 @@ int main(int argc,char *argv[])
    // set test brick pager #1
    if (sw_test1!=0)
       test1.setloader(MOE1available_callback,NULL,MOE1load_callback,
-                      -viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale);
+                      -viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale);
 
    // set iso spectrum
    test1.addiso(0.0005f,0.25f,0.5f,1.0f,0.9f);
@@ -1379,7 +1379,7 @@ int main(int argc,char *argv[])
    // set test brick pager #2
    if (sw_test2!=0)
       test2.setloader(MOE2available_callback,NULL,MOE2load_callback,
-                      -viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale);
+                      -viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale);
 
    // set iso spectrum
    test2.addiso(0.5f,1.0f,0.5f,0.25f,1.0f);
@@ -1387,8 +1387,8 @@ int main(int argc,char *argv[])
    test2.addiso(0.2f,1.0f,1.0f,1.0f,0.1f);
 
    // load way points
-   points.load("data/HawaiiTileset/Waypoints.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
-   points.load("data/Geocache.txt",-viewy,-viewx,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   points.load("data/HawaiiTileset/Waypoints.txt",-viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   points.load("data/Geocache.txt",-viewx,-viewy,0.0f,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
 
    // create sky dome
    skydome.loadskydome("data/HawaiiTileset/SkyDome.ppm",
