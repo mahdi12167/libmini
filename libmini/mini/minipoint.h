@@ -178,17 +178,22 @@ class minipointrndr
    int gettype() {return(TYPE);}
    int getpasses() {return(PASSES);}
 
-   virtual void init(minipoint *points,
-                     float ex,float ey,float ez,
-                     float dx,float dy,float dz,
-                     float nearp,float farp,float fovy,float aspect,
-                     double time,minipointopts *global)
+   virtual BOOLINT init(minipoint *points,
+                        float ex,float ey,float ez,
+                        float dx,float dy,float dz,
+                        float nearp,float farp,float fovy,float aspect,
+                        double time,minipointopts *global,
+                        BOOLINT withecef)
       {
       if (points==NULL ||
           ex==MAXFLOAT || ey==MAXFLOAT || ez==MAXFLOAT ||
           dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
           nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
           time<0.0 || global==NULL) ERRORMSG();
+
+      if (withecef) return(FALSE);
+
+      return(TRUE);
       }
 
    virtual void pre(int pass)
@@ -220,11 +225,12 @@ class minipointrndr_signpost: public minipointrndr
    //! destructor
    ~minipointrndr_signpost() {}
 
-   void init(minipoint *points,
-             float ex,float ey,float ez,
-             float dx,float dy,float dz,
-             float nearp,float farp,float fovy,float aspect,
-             double time,minipointopts *global);
+   BOOLINT init(minipoint *points,
+                float ex,float ey,float ez,
+                float dx,float dy,float dz,
+                float nearp,float farp,float fovy,float aspect,
+                double time,minipointopts *global,
+                BOOLINT withecef);
 
    void pre(int pass);
    void render(minipointdata *vpoint,int pass);
@@ -254,11 +260,12 @@ class minipointrndr_brick: public minipointrndr
    //! destructor
    ~minipointrndr_brick();
 
-   void init(minipoint *points,
-             float ex,float ey,float ez,
-             float dx,float dy,float dz,
-             float nearp,float farp,float fovy,float aspect,
-             double time,minipointopts *global);
+   BOOLINT init(minipoint *points,
+                float ex,float ey,float ez,
+                float dx,float dy,float dz,
+                float nearp,float farp,float fovy,float aspect,
+                double time,minipointopts *global,
+                BOOLINT withecef);
 
    void render(minipointdata *vpoint,int pass);
 

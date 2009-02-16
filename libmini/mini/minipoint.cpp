@@ -910,11 +910,12 @@ void minipoint::draw(float ex,float ey,float ez,
       // call renderer for each point and pass
       if (rndr!=NULL)
          {
-         rndr->init(this,
-                    ex,ey,ez,
-                    dx,dy,dz,
-                    nearp,farp,fovy,aspect,
-                    time,global);
+         if (!rndr->init(this,
+                         ex,ey,ez,
+                         dx,dy,dz,
+                         nearp,farp,fovy,aspect,
+                         time,global,
+                         withecef)) continue;
 
          for (i=1; i<=rndr->getpasses(); i++)
             {
@@ -1004,15 +1005,18 @@ void minipoint::drawbricks(float ex,float ey,float ez,
    }
 
 // signpost init method
-void minipointrndr_signpost::init(minipoint *points,
-                                  float ex,float ey,float ez,
-                                  float dx,float dy,float dz,
-                                  float nearp,float farp,float fovy,float aspect,
-                                  double time,minipointopts *global)
+BOOLINT minipointrndr_signpost::init(minipoint *points,
+                                     float ex,float ey,float ez,
+                                     float dx,float dy,float dz,
+                                     float nearp,float farp,float fovy,float aspect,
+                                     double time,minipointopts *global,
+                                     BOOLINT withecef)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
        nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
+
+   if (withecef) return(FALSE);
 
    POINTS=points;
 
@@ -1029,6 +1033,8 @@ void minipointrndr_signpost::init(minipoint *points,
    initstate();
    disableculling();
    enableblending();
+
+   return(TRUE);
    }
 
 // signpost pre-render method
@@ -1161,14 +1167,17 @@ minipointrndr_brick::~minipointrndr_brick()
    {if (LODS!=NULL) delete LODS;}
 
 // brick init method
-void minipointrndr_brick::init(minipoint *points,
-                               float ex,float ey,float ez,
-                               float dx,float dy,float dz,
-                               float nearp,float farp,float fovy,float aspect,
-                               double time,minipointopts *global)
+BOOLINT minipointrndr_brick::init(minipoint *points,
+                                  float ex,float ey,float ez,
+                                  float dx,float dy,float dz,
+                                  float nearp,float farp,float fovy,float aspect,
+                                  double time,minipointopts *global,
+                                  BOOLINT withecef)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
        time<0.0) ERRORMSG();
+
+   if (withecef) return(FALSE);
 
    POINTS=points;
 
@@ -1204,6 +1213,8 @@ void minipointrndr_brick::init(minipoint *points,
 
    // clear all volumes
    LODS->clearvolumes();
+
+   return(TRUE);
    }
 
 // brick rendering method
