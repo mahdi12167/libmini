@@ -879,11 +879,11 @@ int main(int argc,char *argv[])
                        cols*outparams[0],rows*outparams[1]/(cols*outparams[0]));
 
    // load way points
-   if (sw_demo!=0) points.load("data/Splash.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+   if (sw_demo!=0) points.load("data/Splash.txt",-viewx*3600,-viewy*3600,0.0f,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
    else
       {
-      points.load("data/FraenkischeTileset/Waypoints.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
-      points.load("data/Cities.txt",-viewy*3600,-viewx*3600,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+      points.load("data/FraenkischeTileset/Waypoints.txt",-viewx*3600,-viewy*3600,0.0f,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
+      points.load("data/Cities.txt",-viewx*3600,-viewy*3600,0.0f,arcsec[0],arcsec[1],exaggeration/scale,terrain.getminitile());
       }
 
    // initialize trees
