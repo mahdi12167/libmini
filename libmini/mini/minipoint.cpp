@@ -113,7 +113,7 @@ minipoint::minipoint(minitile *tile)
 
    TAKEN=TRANS=FALSE;
 
-   OFFSETLAT=OFFSETLON=0.0f;
+   OFFSETX=OFFSETY=OFFSETH=0.0f;
    SCALEX=SCALEY=SCALEELEV=1.0f;
 
    BRICKNAME=NULL;
@@ -418,7 +418,7 @@ char *minipoint::getfile(const char *filename,const char *altpath)
 
 // load waypoints
 void minipoint::load(const char *filename,
-                     float offsetlat,float offsetlon,
+                     float offsetx,float offsety,float offseth,
                      float scalex,float scaley,float scaleelev,
                      minitile *tile,
                      char delimiter)
@@ -434,6 +434,8 @@ void minipoint::load(const char *filename,
    minipointdata point;
 
    int zone;
+
+   float tmpx,tmpy;
 
    if (tile!=NULL)
       if (TILE==NULL) TILE=tile;
@@ -647,27 +649,43 @@ void minipoint::load(const char *filename,
          if (sscanf(point.elevation,"%gf",&point.elev)!=1) ERRORMSG();
          else point.elev*=0.3048f; // feet to meters
 
+      // compute destination coordinates
       if (CONFIGURE_DSTZONE==0)
          {
-         point.x=LONSUB(point.x,-offsetlon);
-         point.y+=offsetlat;
+         // add LatLon offset
+         point.x=LONSUB(point.x,-offsetx);
+         point.y+=offsety;
+         point.elev+=offseth;
 
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
+
+         // compute ECEF coordinates
+         minicrs::LLH2ECEF(point.y,point.x,point.elev,point.ecef);
          }
       else
          {
+         // compute UTM coordinates
          minicrs::LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
 
-         point.x+=offsetlon;
-         point.y+=offsetlat;
+         // add UTM offset
+         point.x+=offsetx;
+         point.y+=offsety;
+         point.elev+=offseth;
+
+         // compute ECEF coordinates
+         minicrs::UTM2LL(point.x,point.y,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&tmpy,&tmpx);
+         minicrs::LLH2ECEF(tmpy,tmpx,point.elev,point.ecef);
          }
 
+      // scale
       point.x*=scalex;
       point.y*=scaley;
 
+      // exaggerate
       point.elev*=scaleelev;
       point.height=-MAXFLOAT;
 
+      // ready to add
       if (!add(&point))
          {
          if (point.desc!=NULL) free(point.desc);
@@ -686,8 +704,9 @@ void minipoint::load(const char *filename,
 
    if (!TRANS)
       {
-      OFFSETLAT=offsetlat;
-      OFFSETLON=offsetlon;
+      OFFSETX=offsetx;
+      OFFSETY=offsety;
+      OFFSETH=offseth;
 
       SCALEX=scalex;
       SCALEY=scaley;
@@ -855,7 +874,8 @@ void minipoint::draw(float ex,float ey,float ez,
                      float dx,float dy,float dz,
                      float nearp,float farp,float fovy,float aspect,
                      double time,minipointopts *global,
-                     minipointrndr *fallback)
+                     minipointrndr *fallback,
+                     BOOLINT withecef)
    {
    int i,j;
 
@@ -1163,8 +1183,10 @@ void minipointrndr_brick::init(minipoint *points,
 
    GLOBAL=global;
 
-   OFFSETLAT=points->getoffsetlat();
-   OFFSETLON=points->getoffsetlon();
+   OFFSETX=points->getoffsetx();
+   OFFSETY=points->getoffsety();
+   OFFSETH=points->getoffseth();
+
    SCALEX=points->getscalex();
    SCALEY=points->getscaley();
    SCALEELEV=points->getscaleelev();
@@ -1173,7 +1195,7 @@ void minipointrndr_brick::init(minipoint *points,
    if (LODS==NULL)
       {
       // create new brick LOD renderer
-      LODS=new minilod(OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
+      LODS=new minilod(OFFSETX,OFFSETY,OFFSETH,SCALEX,SCALEY,SCALEELEV);
 
       // check if a default brick file name was set
       if (global->brickfile!=NULL)
@@ -1237,9 +1259,9 @@ void minipointrndr_brick::render(minipointdata *vpoint,int pass)
       if (bindex<0) return;
 
       // calculate position
-      midx=vpoint->x/SCALEX-OFFSETLON;
-      midy=vpoint->y/SCALEY-OFFSETLAT;
-      basez=(vpoint->elev-0.25f*bsize)/SCALEELEV;
+      midx=vpoint->x/SCALEX-OFFSETX;
+      midy=vpoint->y/SCALEY-OFFSETY;
+      basez=(vpoint->elev-0.25f*bsize-OFFSETH)/SCALEELEV;
 
       // report render size and offset
       vpoint->size=bsize;

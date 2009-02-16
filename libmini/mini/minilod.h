@@ -36,7 +36,7 @@ class minilod
    public:
 
    //! default constructor
-   minilod(float offsetlat=0.0f,float offsetlon=0.0f,
+   minilod(float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
            float scalex=1.0f,float scaley=1.0f,float scaleelev=1.0f);
 
    //! destructor
@@ -81,7 +81,7 @@ class minilod
 
    protected:
 
-   float OFFSETLAT,OFFSETLON;
+   float OFFSETX,OFFSETY,OFFSETH;
    float SCALEX,SCALEY,SCALEELEV;
 
    minibrickdata *BRICKS;

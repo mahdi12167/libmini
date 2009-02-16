@@ -328,7 +328,7 @@ class minibrick
    //! set paging callbacks
    void setloader(int (*isavailable)(int col,int row,int lod,void *data),void *data,
                   void (*loadvolume)(int col,int row,int lod,databuf *volume,void *data),
-                  float offsetlat=0.0f,float offsetlon=0.0f,
+                  float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
                   float scalex=1.0f,float scaley=1.0f,float scaleelev=1.0f,
                   int paging=0,
                   float safety=0.0f,
@@ -340,7 +340,7 @@ class minibrick
                        float dx3,float dy3,float dz3);
 
    //! reset the coordinate system
-   void resetcoords(float offsetlat=0.0f,float offsetlon=0.0f,
+   void resetcoords(float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
                     float scalex=1.0f,float scaley=1.0f,float scaleelev=1.0f);
 
    //! reset the brick position
@@ -465,7 +465,7 @@ class minibrick
    void (*LOAD_CALLBACK)(int col,int row,int lod,databuf *volume,void *data);
    void *LOAD_DATA;
 
-   float OFFSETLAT,OFFSETLON;
+   float OFFSETX,OFFSETY,OFFSETH;
    float SCALEX,SCALEY,SCALEELEV;
 
    float DX1,DY1,DZ1;

@@ -7,11 +7,12 @@
 datacalc minilod::CALC;
 
 // default constructor
-minilod::minilod(float offsetlat,float offsetlon,
+minilod::minilod(float offsetx,float offsety,float offseth,
                  float scalex,float scaley,float scaleelev)
    {
-   OFFSETLAT=offsetlat;
-   OFFSETLON=offsetlon;
+   OFFSETX=offsetx;
+   OFFSETY=offsety;
+   OFFSETH=offseth;
 
    SCALEX=scalex;
    SCALEY=scaley;
@@ -92,7 +93,7 @@ unsigned int minilod::addbrick(const char *brickname,
       {
       // set brick pager
       BRICKS[BNUM].brick[i].setloader(DBavailable_callback,&BRICKS[BNUM],DBload_callback,
-                                      OFFSETLAT,OFFSETLON,SCALEX,SCALEY,SCALEELEV);
+                                      OFFSETX,OFFSETY,OFFSETH,SCALEX,SCALEY,SCALEELEV);
 
       // set iso spectrum
       BRICKS[BNUM].brick[i].addiso(0.5f,1.0f,1.0f,1.0f,1.0f);
@@ -221,7 +222,7 @@ void minilod::render(float ex,float ey,float ez,
             brk=&BRICKS[vol->bindex];
 
             // calculate distance
-            dist=fsqr((vol->x+OFFSETLON)*SCALEX-ex)+fsqr((vol->y+OFFSETLAT)*SCALEY-ez)+fsqr(vol->e*SCALEELEV-ey);
+            dist=fsqr((vol->x+OFFSETX)*SCALEX-ex)+fsqr((vol->y+OFFSETY)*SCALEY-ez)+fsqr((vol->e+OFFSETH)*SCALEELEV-ey);
             dist/=fsqr(brk->brad);
 
             // calculate lod

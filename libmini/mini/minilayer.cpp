@@ -704,7 +704,7 @@ void minilayer::loadopts()
 
       if (!LPARAMS.usepnm) POINTS->configure_automap(1);
 
-      POINTS->load(wpname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
+      POINTS->load(wpname,-LPARAMS.offset[0],-LPARAMS.offset[1],-LPARAMS.offset[2],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
       free(wpname);
 
       if (POINTS->getfirst()!=NULL)
@@ -719,7 +719,7 @@ void minilayer::loadopts()
 
    if (ewname!=NULL)
       {
-      if (POINTS!=NULL) POINTS->load(ewname,-LPARAMS.offset[1],-LPARAMS.offset[0],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
+      if (POINTS!=NULL) POINTS->load(ewname,-LPARAMS.offset[0],-LPARAMS.offset[1],-LPARAMS.offset[2],LPARAMS.scaling[0],LPARAMS.scaling[1],LPARAMS.exaggeration/LPARAMS.scale,TERRAIN->getminitile());
       free(ewname);
       }
 

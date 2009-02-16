@@ -22,6 +22,8 @@ typedef struct
    float elev; // waypoint elevation
    float height; // terrain height
 
+   double ecef[3];
+
    char *desc;
    char *meta;
    char *comment;
@@ -269,7 +271,7 @@ class minipointrndr_brick: public minipointrndr
    float EX,EY,EZ;
    float NEARP,FARP,FOVY,ASPECT;
    minipointopts *GLOBAL;
-   float OFFSETLAT,OFFSETLON;
+   float OFFSETX,OFFSETY,OFFSETH;
    float SCALEX,SCALEY,SCALEELEV;
 
    minilod *LODS;
@@ -297,9 +299,9 @@ class minipoint
 
    //! load waypoints
    void load(const char *filename,
-             float offsetlat=0.0f,float offsetlon=0.0f,
+             float offsetx=0.0f,float offsety=0.0f,float offseth=0.0f,
              float scalex=1.0f,float scaley=1.0f,float scaleelev=1.0f,
-             minitile *tile=0,
+             minitile *tile=NULL,
              char delimiter=';');
 
    //! get number of waypoints
@@ -344,7 +346,8 @@ class minipoint
              float dx,float dy,float dz,
              float nearp,float farp,float fovy,float aspect,
              double time,minipointopts *global,
-             minipointrndr *fallback=NULL);
+             minipointrndr *fallback=NULL,
+             BOOLINT withecef=FALSE);
 
    //! render waypoints with signposts
    void drawsignposts(float ex,float ey,float ez,
@@ -364,8 +367,9 @@ class minipoint
                    float size);
 
    //! getters
-   float getoffsetlat() {return(OFFSETLAT);}
-   float getoffsetlon() {return(OFFSETLON);}
+   float getoffsetx() {return(OFFSETX);}
+   float getoffsety() {return(OFFSETY);}
+   float getoffseth() {return(OFFSETH);}
    float getscalex() {return(SCALEX);}
    float getscaley() {return(SCALEY);}
    float getscaleelev() {return(SCALEELEV);}
@@ -427,7 +431,7 @@ class minipoint
 
    BOOLINT TAKEN,TRANS;
 
-   float OFFSETLAT,OFFSETLON;
+   float OFFSETX,OFFSETY,OFFSETH;
    float SCALEX,SCALEY,SCALEELEV;
 
    char *BRICKNAME;

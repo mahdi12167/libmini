@@ -1538,7 +1538,7 @@ minibrick::~minibrick()
 // set paging callbacks
 void minibrick::setloader(int (*isavailable)(int col,int row,int lod,void *data),void *data,
                           void (*loadvolume)(int col,int row,int lod,databuf *volume,void *data),
-                          float offsetlat,float offsetlon,
+                          float offsetx,float offsety,float offseth,
                           float scalex,float scaley,float scaleelev,
                           int paging,
                           float safety,
@@ -1548,8 +1548,9 @@ void minibrick::setloader(int (*isavailable)(int col,int row,int lod,void *data)
    LOAD_CALLBACK=loadvolume;
    LOAD_DATA=data;
 
-   OFFSETLAT=offsetlat;
-   OFFSETLON=offsetlon;
+   OFFSETX=offsetx;
+   OFFSETY=offsety;
+   OFFSETH=offseth;
 
    SCALEX=scalex;
    SCALEY=scaley;
@@ -1582,11 +1583,12 @@ void minibrick::setorientation(float dx1,float dy1,float dz1,
    }
 
 // reset the coordinate system
-void minibrick::resetcoords(float offsetlat,float offsetlon,
+void minibrick::resetcoords(float offsetx,float offsety,float offseth,
                             float scalex,float scaley,float scaleelev)
    {
-   OFFSETLAT=offsetlat;
-   OFFSETLON=offsetlon;
+   OFFSETX=offsetx;
+   OFFSETY=offsety;
+   OFFSETH=offseth;
 
    SCALEX=scalex;
    SCALEY=scaley;
@@ -1801,9 +1803,9 @@ int minibrick::isvisible(databuf *brick,float ex,float ey,float ez,float rad,flo
    float px,pz,py;
    float mindist;
 
-   px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETLON)*SCALEX;
-   py=(brick->h0+brick->dh/2.0f)*SCALEELEV;
-   pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETLAT)*SCALEY;
+   px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETX)*SCALEX;
+   py=(brick->h0+brick->dh/2.0f+OFFSETH)*SCALEELEV;
+   pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETY)*SCALEY;
 
    if (rad>=0.0f || (rad<0.0f && dist<=0.0f)) dist=fsqrt(fsqr(px-ex)+fsqr(py-ey)+fsqr(pz-ez));
 
@@ -1844,9 +1846,9 @@ int minibrick::getlod(databuf *brick,int lod,int maxlod,float ex,float ey,float 
 
    int size;
 
-   px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETLON)*SCALEX;
-   py=(brick->h0+brick->dh/2.0f)*SCALEELEV;
-   pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETLAT)*SCALEY;
+   px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETX)*SCALEX;
+   py=(brick->h0+brick->dh/2.0f+OFFSETH)*SCALEELEV;
+   pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETY)*SCALEY;
 
    mindist=fsqrt(fmax(fsqr((brick->nex-brick->swx)*SCALEX)+fsqr((brick->ney-brick->swy)*SCALEY),
                       fsqr((brick->sex-brick->nwx)*SCALEX)+fsqr((brick->sey-brick->nwy)*SCALEY))+
@@ -2459,20 +2461,20 @@ void minibrick::render(float ex,float ey,float ez,
                         -DX3,-DY3,-DZ3,0.0f,
                         0.0f,0.0f,0.0f,1.0f};
 
-         mtxtranslate(((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
-                      (BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
-                      -((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
+         mtxtranslate(((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETX)*SCALEX,
+                      (BRICKS->h0+BRICKS->dh/2.0f+OFFSETH)*SCALEELEV,
+                      -((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETY)*SCALEY);
 
          mtxmult(mtx);
 
-         mtxtranslate(-((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETLON)*SCALEX,
-                      -(BRICKS->h0+BRICKS->dh/2.0f)*SCALEELEV,
-                      ((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETLAT)*SCALEY);
+         mtxtranslate(-((BRICKS->swx+BRICKS->nwx+BRICKS->nex+BRICKS->sex)/4.0f+OFFSETX)*SCALEX,
+                      -(BRICKS->h0+BRICKS->dh/2.0f+OFFSETH)*SCALEELEV,
+                      ((BRICKS->swy+BRICKS->nwy+BRICKS->ney+BRICKS->sey)/4.0f+OFFSETY)*SCALEY);
          }
 
    // transform from object to world space
    mtxscale(SCALEX,SCALEELEV,-SCALEY);
-   mtxtranslate(OFFSETLON,0.0f,OFFSETLAT);
+   mtxtranslate(OFFSETX,OFFSETH,OFFSETY);
 
    // enable clipping planes
    for (i=0; i<6; i++)
@@ -2734,9 +2736,9 @@ void minibrick::updatedata(int lod,float ex,float ey,float ez,float rad,float of
       RES=2.0f*(rad+1.0f)*(1<<lod);
       SLOD=-MAXFLOAT;
 
-      ex=ex/SCALEX-OFFSETLON;
-      ey=ey/SCALEELEV;
-      ez=ez/SCALEY-OFFSETLAT;
+      ex=ex/SCALEX-OFFSETX;
+      ey=ey/SCALEELEV-OFFSETH;
+      ez=ez/SCALEY-OFFSETY;
 
       dx=brick->sex-brick->swx;
       dy=brick->sey-brick->swy;
@@ -2763,9 +2765,9 @@ void minibrick::updatedata(int lod,float ex,float ey,float ez,float rad,float of
 
       if (dist<=0.0f)
          {
-         px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETLON)*SCALEX;
-         py=(brick->h0+brick->dh/2.0f)*SCALEELEV;
-         pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETLAT)*SCALEY;
+         px=((brick->swx+brick->nwx+brick->nex+brick->sex)/4.0f+OFFSETX)*SCALEX;
+         py=(brick->h0+brick->dh/2.0f+OFFSETH)*SCALEELEV;
+         pz=((brick->swy+brick->nwy+brick->ney+brick->sey)/4.0f+OFFSETY)*SCALEY;
 
          dist=fsqrt(fsqr(px-ex)+fsqr(py-ey)+fsqr(pz-ez));
          }
@@ -3499,9 +3501,9 @@ void minibrick::processarrays(databuf *brick,minisurf *surface)
          s.z=-(brick->nwy-brick->swy)/(brick->ysize-1)*SCALEY;
 
          // translate to left bottom front corner
-         o.x=(brick->swx+OFFSETLON)*SCALEX;
-         o.y=brick->h0*SCALEELEV;
-         o.z=-(brick->swy+OFFSETLAT)*SCALEY;
+         o.x=(brick->swx+OFFSETX)*SCALEX;
+         o.y=(brick->h0+OFFSETH)*SCALEELEV;
+         o.z=-(brick->swy+OFFSETY)*SCALEY;
 
          RAY->addtriangles(array,3,num,3,&s,&o,1);
          }
