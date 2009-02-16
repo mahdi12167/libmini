@@ -1498,8 +1498,7 @@ void minilayer::renderpoints()
 
    minipointopts global;
 
-   if (!LOADED || POINTS==NULL) return;
-   if (!VISIBLE || LPARAMS.nonlin) return;
+   if (!LOADED || POINTS==NULL || !VISIBLE) return;
 
    if (LPARAMS.usewaypoints)
       {
@@ -1554,7 +1553,8 @@ void minilayer::renderpoints()
                    di.x,di.y,-di.z,
                    len_g2i(LPARAMS.nearp),len_g2i(LPARAMS.farp),LPARAMS.fovy,LPARAMS.aspect,
                    LPARAMS.time,&global,
-                   !LPARAMS.usebricks?minipoint::getrndr_signpost():minipoint::getrndr_brick(LPARAMS.brickpasses));
+                   !LPARAMS.usebricks?minipoint::getrndr_signpost():minipoint::getrndr_brick(LPARAMS.brickpasses),
+                   LPARAMS.nonlin);
 
       mtxpop();
       }
@@ -1567,8 +1567,7 @@ minipointdata *minilayer::getnearestpoint(int type)
 
    minipointdata *nearest;
 
-   if (!LOADED || POINTS==NULL) return(NULL);
-   if (!VISIBLE || LPARAMS.nonlin) return(NULL);
+   if (!LOADED || POINTS==NULL || !VISIBLE) return(NULL);
 
    nearest=NULL;
 
