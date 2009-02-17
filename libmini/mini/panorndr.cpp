@@ -94,16 +94,19 @@ void minipointrndr_panorndr::create_sphere(float radius,
    }
 
 // init method
-void minipointrndr_panorndr::init(minipoint *points,
-                                  float ex,float ey,float ez,
-                                  float dx,float dy,float dz,
-                                  float nearp,float farp,float fovy,float aspect,
-                                  double time,minipointopts *global)
+BOOLINT minipointrndr_panorndr::init(minipoint *points,
+                                     float ex,float ey,float ez,
+                                     float dx,float dy,float dz,
+                                     float nearp,float farp,float fovy,float aspect,
+                                     double time,minipointopts *global,
+                                     BOOLINT usewarp)
    {
    if (points==NULL ||
        dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
        nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
+
+   if (usewarp) return(FALSE);
 
    POINTS=points;
 
@@ -119,6 +122,8 @@ void minipointrndr_panorndr::init(minipoint *points,
    enableFFculling();
    enableblending();
    enableAtest(0.01f);
+
+   return(TRUE);
    }
 
 // pre-render method

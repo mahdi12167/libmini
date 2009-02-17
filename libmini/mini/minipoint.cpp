@@ -435,8 +435,6 @@ void minipoint::load(const char *filename,
 
    int zone;
 
-   float tmpx,tmpy;
-
    if (tile!=NULL)
       if (TILE==NULL) TILE=tile;
       else if (tile!=TILE) ERRORMSG();
@@ -658,9 +656,6 @@ void minipoint::load(const char *filename,
          point.elev+=offseth;
 
          if (point.y<-90*60*60 || point.y>90*60*60) ERRORMSG();
-
-         // compute ECEF coordinates
-         minicrs::LLH2ECEF(point.y,point.x,point.elev,point.ecef);
          }
       else
          {
@@ -671,10 +666,6 @@ void minipoint::load(const char *filename,
          point.x+=offsetx;
          point.y+=offsety;
          point.elev+=offseth;
-
-         // compute ECEF coordinates
-         minicrs::UTM2LL(point.x,point.y,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&tmpy,&tmpx);
-         minicrs::LLH2ECEF(tmpy,tmpx,point.elev,point.ecef);
          }
 
       // scale
@@ -875,7 +866,7 @@ void minipoint::draw(float ex,float ey,float ez,
                      float nearp,float farp,float fovy,float aspect,
                      double time,minipointopts *global,
                      minipointrndr *fallback,
-                     BOOLINT withecef)
+                     BOOLINT usewarp)
    {
    int i,j;
 
@@ -915,7 +906,7 @@ void minipoint::draw(float ex,float ey,float ez,
                          dx,dy,dz,
                          nearp,farp,fovy,aspect,
                          time,global,
-                         withecef)) continue;
+                         usewarp)) continue;
 
          for (i=1; i<=rndr->getpasses(); i++)
             {
@@ -1010,13 +1001,13 @@ BOOLINT minipointrndr_signpost::init(minipoint *points,
                                      float dx,float dy,float dz,
                                      float nearp,float farp,float fovy,float aspect,
                                      double time,minipointopts *global,
-                                     BOOLINT withecef)
+                                     BOOLINT usewarp)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
        nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
        time<0.0) ERRORMSG();
 
-   if (withecef) return(FALSE);
+   if (usewarp) return(FALSE);
 
    POINTS=points;
 
@@ -1172,12 +1163,12 @@ BOOLINT minipointrndr_brick::init(minipoint *points,
                                   float dx,float dy,float dz,
                                   float nearp,float farp,float fovy,float aspect,
                                   double time,minipointopts *global,
-                                  BOOLINT withecef)
+                                  BOOLINT usewarp)
    {
    if (dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
        time<0.0) ERRORMSG();
 
-   if (withecef) return(FALSE);
+   if (usewarp) return(FALSE);
 
    POINTS=points;
 

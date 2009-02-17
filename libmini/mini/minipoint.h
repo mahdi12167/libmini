@@ -22,8 +22,6 @@ typedef struct
    float elev; // waypoint elevation
    float height; // terrain height
 
-   double ecef[3];
-
    char *desc;
    char *meta;
    char *comment;
@@ -183,7 +181,7 @@ class minipointrndr
                         float dx,float dy,float dz,
                         float nearp,float farp,float fovy,float aspect,
                         double time,minipointopts *global,
-                        BOOLINT withecef)
+                        BOOLINT usewarp)
       {
       if (points==NULL ||
           ex==MAXFLOAT || ey==MAXFLOAT || ez==MAXFLOAT ||
@@ -191,7 +189,7 @@ class minipointrndr
           nearp<=0.0f || farp<=0.0f || fovy<=0.0f || aspect<=0.0f ||
           time<0.0 || global==NULL) ERRORMSG();
 
-      if (withecef) return(FALSE);
+      if (usewarp) return(FALSE);
 
       return(TRUE);
       }

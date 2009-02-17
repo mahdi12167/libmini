@@ -17,11 +17,12 @@ class minipointrndr_panorndr: public minipointrndr
    //! destructor
    ~minipointrndr_panorndr();
 
-   void init(minipoint *points,
-             float ex,float ey,float ez,
-             float dx,float dy,float dz,
-             float nearp,float farp,float fovy,float aspect,
-             double time,minipointopts *global);
+   BOOLINT init(minipoint *points,
+                float ex,float ey,float ez,
+                float dx,float dy,float dz,
+                float nearp,float farp,float fovy,float aspect,
+                double time,minipointopts *global,
+                BOOLINT usewarp);
 
    void pre(int pass);
    void render(minipointdata *vpoint,int pass);
