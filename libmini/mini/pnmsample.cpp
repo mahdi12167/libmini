@@ -405,20 +405,18 @@ void resample(int num,const char **grid,
    int *utm_datums=new int[num];
 
    float *scalings=new float[num];
-   BOOLINT *additives=new BOOLINT[num];
-
    int *missings=new int[num];
 
    float *maxelevs=new float[num];
 
    float elev,rgb[3];
-   float maxelev,addelev;
+   float maxelev;
 
    float as2m[2];
 
    done=TRUE;
 
-   maxelev=addelev=0.0f;
+   maxelev=0.0f;
 
    // for all grids
    for (n=0; n<num; n++)
@@ -522,13 +520,6 @@ void resample(int num,const char **grid,
             cellsizes[2*n]=fmin(cellsizes[2*n],extentsx[n]/(widths[n]-1));
             cellsizes[2*n+1]=fmin(cellsizes[2*n+1],extentsy[n]/(heights[n]-1));
             }
-
-         if (scalings[n]<0.0f)
-            {
-            scalings[n]*=-1.0f;
-            additives[n]=TRUE;
-            }
-         else additives[n]=FALSE;
          }
       else
          {
@@ -558,15 +549,7 @@ void resample(int num,const char **grid,
          cellsizes[2*n+1]=extentsy[n]/(heights[n]-1);
 
          scalings[n]=scaling[n];
-
          missings[n]=missing;
-
-         if (scalings[n]<0.0f)
-            {
-            scalings[n]*=-1.0f;
-            additives[n]=TRUE;
-            }
-         else additives[n]=FALSE;
          }
 
       // compute maximum elevation:
@@ -586,8 +569,7 @@ void resample(int num,const char **grid,
                   if (fabs(elev)>maxelevs[n]) maxelevs[n]=fabs(elev);
                }
 
-      if (!additives[n]) maxelev=fmax(maxelev,maxelevs[n]);
-      else addelev=fmax(addelev,maxelevs[n]);
+      maxelev=fmax(maxelev,maxelevs[n]);
 
       // write stub file
       if (widths[n]>1 && heights[n]>1)
@@ -602,7 +584,7 @@ void resample(int num,const char **grid,
                       coords[8*n+4],coords[8*n+5],
                       coords[8*n+6],coords[8*n+7],
                       cellsizes[2*n],cellsizes[2*n+1],
-                      2,(!additives[n])?scalings[n]:-scalings[n],missings[n]);
+                      2,scalings[n],missings[n]);
 
          if (comps[n]==1)
             {
@@ -646,7 +628,6 @@ void resample(int num,const char **grid,
       maps[n]=NULL;
       }
 
-   maxelev+=addelev;
    if (maxelev==0.0f) maxelev=1.0f;
 
    minicrs::arcsec2meter(centersy[0],as2m);
@@ -763,7 +744,7 @@ void resample(int num,const char **grid,
             float rangemax=-32768.0f;
 
             int *valid=new int[num];
-            int vnum=0,vn,vm,va;
+            int vnum=0,vn,vm;
 
             // gather relevant grids
             for (n=0; n<num; n++)
@@ -810,24 +791,13 @@ void resample(int num,const char **grid,
             // sort relevant grids by cell size
             for (vn=0; vn<vnum-1; vn++)
                for (vm=vnum-1; vm>vn; vm--)
-                  if ((cellsizes[2*valid[vm]]<cellsizes[2*valid[vm-1]] &&
-                       cellsizes[2*valid[vm]+1]<cellsizes[2*valid[vm-1]+1] &&
-                       !additives[valid[vm]] && !additives[valid[vm-1]]) ||
-                      (!additives[valid[vm]] && additives[valid[vm-1]]))
+                  if (cellsizes[2*valid[vm]]<cellsizes[2*valid[vm-1]] &&
+                      cellsizes[2*valid[vm]+1]<cellsizes[2*valid[vm-1]+1])
                      {
                      int tmp=valid[vm];
                      valid[vm]=valid[vm-1];
                      valid[vm-1]=tmp;
                      }
-
-            // mark first additive grid
-            va=vnum-1;
-            for (vn=0; vn<vnum; vn++)
-               if (additives[valid[vn]])
-                  {
-                  va=vn-1;
-                  break;
-                  }
 
             int s;
             int lod1=0,lod2=0;
@@ -906,13 +876,10 @@ void resample(int num,const char **grid,
 
                                  // check for missing supersamples
                                  if (elev!=missings[n])
-                                    if (!additives[n])
-                                       {
-                                       sample=elev;
-                                       vn=va;
-                                       }
-                                    else
-                                       if (sample!=missings[0]) sample+=elev;
+                                    {
+                                    sample=elev;
+                                    break;
+                                    }
                                  }
 
                               // check for missing elevation
@@ -1168,8 +1135,6 @@ void resample(int num,const char **grid,
    delete[] utm_datums;
 
    delete[] scalings;
-   delete[] additives;
-
    delete[] missings;
 
    delete[] maxelevs;
