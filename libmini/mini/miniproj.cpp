@@ -1041,9 +1041,6 @@ void miniproj::getnormalmtx()
    NORMALMTX[0].z=mvmtx[8];
    NORMALMTX[1].z=mvmtx[9];
    NORMALMTX[2].z=mvmtx[10];
-   NORMALMTX[0].w=mvmtx[12];
-   NORMALMTX[1].w=mvmtx[13];
-   NORMALMTX[2].w=mvmtx[14];
 
    inv_mtx(NORMALMTX,NORMALMTX);
    tra_mtx(NORMALMTX,NORMALMTX);
@@ -1054,38 +1051,52 @@ void miniproj::initproj(float emi,float rho)
    {
    if (emi<0.0f || rho<0.0f) ERRORMSG();
 
+   // save global emission and opacity
    EMI=emi;
    RHO=rho;
 
+   // set OpenGL state
    initstate();
    disableculling();
    enableRKEblending();
    disableZwriting();
 
+   // get z-clip texture if necessary
    if (ZCLIP && PROJMODE) initzclip();
 
+   // check for projective or slicing mode
    if (PROJMODE)
       {
+      // enable projective shaders
       enablevtxshader();
       enablepixshader();
 
+      // pass shader parameters
       setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
       setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
       }
-   else getnormalmtx();
+   else
+      {
+      // get normal matrix if necessary
+      getnormalmtx();
+      }
    }
 
 // de-initialize projection state
 void miniproj::exitproj()
    {
+   // check for projective or slicing mode
    if (PROJMODE)
       {
+      // disable projective shaders
       disablevtxshader();
       disablepixshader();
       }
 
+   // release z-clip texture if necessary
    if (ZCLIP && PROJMODE) exitzclip();
 
+   // reset OpenGL state
    enableZwriting();
    enableBFculling();
    disableblending();
