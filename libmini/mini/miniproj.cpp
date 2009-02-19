@@ -204,7 +204,8 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       mtx2[1]=a3[i]-a1[i];
       mtx2[2]=a4[i]-a1[i];
 
-      mlt_mtx(mtx2,mtx2,inv1);
+      mlt_mtx(mtx2,mtx2,inv1); // transform to world coords
+      mlt_mtx(mtx2,NORMALMTX,mtx2); // transform to eye coords
 
       mtx[3*i]=mtx2[0];
       mtx[3*i+1]=mtx2[1];
@@ -1024,6 +1025,30 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
+// get normal matrix (inverse transpose modelview matrix)
+void miniproj::getnormalmtx()
+   {
+   double mvmtx[16];
+
+   mtxgetmodel(mvmtx);
+
+   NORMALMTX[0].x=mvmtx[0];
+   NORMALMTX[1].x=mvmtx[1];
+   NORMALMTX[2].x=mvmtx[2];
+   NORMALMTX[0].y=mvmtx[4];
+   NORMALMTX[1].y=mvmtx[5];
+   NORMALMTX[2].y=mvmtx[6];
+   NORMALMTX[0].z=mvmtx[8];
+   NORMALMTX[1].z=mvmtx[9];
+   NORMALMTX[2].z=mvmtx[10];
+   NORMALMTX[0].w=mvmtx[12];
+   NORMALMTX[1].w=mvmtx[13];
+   NORMALMTX[2].w=mvmtx[14];
+
+   inv_mtx(NORMALMTX,NORMALMTX);
+   tra_mtx(NORMALMTX,NORMALMTX);
+   }
+
 // initialize projection state
 void miniproj::initproj(float emi,float rho)
    {
@@ -1047,6 +1072,7 @@ void miniproj::initproj(float emi,float rho)
       setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
       setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
       }
+   else getnormalmtx();
    }
 
 // de-initialize projection state
