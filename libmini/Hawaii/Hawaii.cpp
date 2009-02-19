@@ -224,9 +224,7 @@ static const char *usgsmaps[]={"data/HawaiiTileset/tiles/USGS-DEM-BBox.pgm",
                                "USGS-DEM-24000/SCHOFIELD-BARRACKS.pgm",
                                "USGS-DEM-24000/WAIANAE.pgm",
                                "USGS-DEM-24000/WAIMEA.pgm",
-                               "USGS-DEM-24000/WAIPAHU.pgm",
-                               // optional
-                               "data/HawaiiTileset/tiles/BensHouse.pgm"};
+                               "USGS-DEM-24000/WAIPAHU.pgm"};
 
 // LandSat ETM orthophotos
 static const char *landmaps[]={"data/HawaiiTileset/landsat/LandSat-ETM-BBox.ppm",
