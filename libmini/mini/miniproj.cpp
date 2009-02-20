@@ -185,27 +185,44 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
    unsigned int size;
 
+   miniv4d vh1,vh2,vh3,vh4;
+   miniv3d vtx1,vtx2,vtx3,vtx4;
+
    miniv3d mtx1[3],inv1[3],mtx2[3];
 
    dynacoord mtx;
 
+   // homogenize vertices
+   vh1=miniv4d(v1.x,v1.y,v1.z,1.0);
+   vh2=miniv4d(v2.x,v2.y,v2.z,1.0);
+   vh3=miniv4d(v3.x,v3.y,v3.z,1.0);
+   vh4=miniv4d(v4.x,v4.y,v4.z,1.0);
+
+   // transform to eye coords
+   vtx1=miniv3d(MVMATRIX[0]*vh1,MVMATRIX[1]*vh1,MVMATRIX[2]*vh1);
+   vtx2=miniv3d(MVMATRIX[0]*vh2,MVMATRIX[1]*vh2,MVMATRIX[2]*vh2);
+   vtx3=miniv3d(MVMATRIX[0]*vh3,MVMATRIX[1]*vh3,MVMATRIX[2]*vh3);
+   vtx4=miniv3d(MVMATRIX[0]*vh4,MVMATRIX[1]*vh4,MVMATRIX[2]*vh4);
+
    size=a1.getsize();
    mtx.setsize(3*size);
 
-   mtx1[0]=v2-v1;
-   mtx1[1]=v3-v1;
-   mtx1[2]=v4-v1;
+   // calculate forward mapping matrix
+   mtx1[0]=vtx2-vtx1;
+   mtx1[1]=vtx3-vtx1;
+   mtx1[2]=vtx4-vtx1;
 
+   // calculate backward mapping matrix
    inv_mtx(inv1,mtx1);
 
+   // calculate transformation matrices
    for (i=0; i<size; i++)
       {
       mtx2[0]=a2[i]-a1[i];
       mtx2[1]=a3[i]-a1[i];
       mtx2[2]=a4[i]-a1[i];
 
-      mlt_mtx(mtx2,mtx2,inv1); // transform to world coords
-      mlt_mtx(mtx2,NORMALMTX,mtx2); // transform to eye coords
+      mlt_mtx(mtx2,mtx2,inv1);
 
       mtx[3*i]=mtx2[0];
       mtx[3*i+1]=mtx2[1];
@@ -1025,25 +1042,25 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
-// get normal matrix (inverse transpose modelview matrix)
-void miniproj::getnormalmtx()
+// get modelview matrix
+void miniproj::getmodelview()
    {
    double mvmtx[16];
 
    mtxgetmodel(mvmtx);
 
-   NORMALMTX[0].x=mvmtx[0];
-   NORMALMTX[1].x=mvmtx[1];
-   NORMALMTX[2].x=mvmtx[2];
-   NORMALMTX[0].y=mvmtx[4];
-   NORMALMTX[1].y=mvmtx[5];
-   NORMALMTX[2].y=mvmtx[6];
-   NORMALMTX[0].z=mvmtx[8];
-   NORMALMTX[1].z=mvmtx[9];
-   NORMALMTX[2].z=mvmtx[10];
-
-   inv_mtx(NORMALMTX,NORMALMTX);
-   tra_mtx(NORMALMTX,NORMALMTX);
+   MVMATRIX[0].x=mvmtx[0];
+   MVMATRIX[1].x=mvmtx[1];
+   MVMATRIX[2].x=mvmtx[2];
+   MVMATRIX[0].y=mvmtx[4];
+   MVMATRIX[1].y=mvmtx[5];
+   MVMATRIX[2].y=mvmtx[6];
+   MVMATRIX[0].z=mvmtx[8];
+   MVMATRIX[1].z=mvmtx[9];
+   MVMATRIX[2].z=mvmtx[10];
+   MVMATRIX[0].w=mvmtx[12];
+   MVMATRIX[1].w=mvmtx[13];
+   MVMATRIX[2].w=mvmtx[14];
    }
 
 // initialize projection state
@@ -1077,8 +1094,8 @@ void miniproj::initproj(float emi,float rho)
       }
    else
       {
-      // get normal matrix if necessary
-      getnormalmtx();
+      // get modelview matrix if necessary
+      getmodelview();
       }
    }
 
