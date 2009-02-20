@@ -192,6 +192,9 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
    dynacoord mtx;
 
+   size=a1.getsize();
+   mtx.setsize(3*size);
+
    // homogenize vertices
    vh1=miniv4d(v1.x,v1.y,v1.z,1.0);
    vh2=miniv4d(v2.x,v2.y,v2.z,1.0);
@@ -203,9 +206,6 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
    vtx2=miniv3d(MVMATRIX[0]*vh2,MVMATRIX[1]*vh2,MVMATRIX[2]*vh2);
    vtx3=miniv3d(MVMATRIX[0]*vh3,MVMATRIX[1]*vh3,MVMATRIX[2]*vh3);
    vtx4=miniv3d(MVMATRIX[0]*vh4,MVMATRIX[1]*vh4,MVMATRIX[2]*vh4);
-
-   size=a1.getsize();
-   mtx.setsize(3*size);
 
    // calculate forward mapping matrix
    mtx1[0]=vtx2-vtx1;
@@ -229,6 +229,7 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       mtx[3*i+2]=mtx2[2];
       }
 
+   // pass entire parameter array
    pass(mtx);
    }
 
