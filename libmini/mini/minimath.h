@@ -15,13 +15,21 @@ unsigned int lcm(unsigned int a,unsigned int b); // lowest common multiple
 
 // const matrices:
 
-static const miniv4d mtx_zero[3]={miniv4d(0.0,0.0,0.0),
-                                  miniv4d(0.0,0.0,0.0),
-                                  miniv4d(0.0,0.0,0.0)};
+static const miniv3d mtx_zero3[3]={miniv3d(0.0,0.0,0.0),
+                                   miniv3d(0.0,0.0,0.0),
+                                   miniv3d(0.0,0.0,0.0)};
 
-static const miniv4d mtx_one[3]={miniv4d(1.0,0.0,0.0),
-                                 miniv4d(0.0,1.0,0.0),
-                                 miniv4d(0.0,0.0,1.0)};
+static const miniv4d mtx_zero4[3]={miniv4d(0.0,0.0,0.0),
+                                   miniv4d(0.0,0.0,0.0),
+                                   miniv4d(0.0,0.0,0.0)};
+
+static const miniv3d mtx_one3[3]={miniv3d(1.0,0.0,0.0),
+                                  miniv3d(0.0,1.0,0.0),
+                                  miniv3d(0.0,0.0,1.0)};
+
+static const miniv4d mtx_one4[3]={miniv4d(1.0,0.0,0.0),
+                                  miniv4d(0.0,1.0,0.0),
+                                  miniv4d(0.0,0.0,1.0)};
 
 // matrix operations:
 

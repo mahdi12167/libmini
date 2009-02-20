@@ -163,9 +163,6 @@ class miniwarp: public miniwarpbase
 
    protected:
 
-   miniv3d MTX_ZERO[3];
-   miniv3d MTX_ONE[3];
-
    minicoord::MINICOORD SYSTLS;
 
    minicoord BBOXDAT[2];
