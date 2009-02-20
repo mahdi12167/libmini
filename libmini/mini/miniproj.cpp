@@ -222,7 +222,7 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       mtx2[1]=a3[i]-a1[i];
       mtx2[2]=a4[i]-a1[i];
 
-      mlt_mtx(mtx2,mtx2,inv1);
+      mlt_mtx(mtx2,inv1,mtx2); //!! todo
 
       mtx[3*i]=mtx2[0];
       mtx[3*i+1]=mtx2[1];
