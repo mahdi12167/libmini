@@ -126,40 +126,40 @@ miniwarp::miniwarp(): miniwarpbase()
 
    SCALELOC=1.0;
 
-   cpy_mtx(MTXAFF,minimath::mtx_one3);
-   cpy_mtx(MTXREF,minimath::mtx_one3);
+   cpy_mtx(MTXAFF,minimath::mtx_one4);
+   cpy_mtx(MTXREF,minimath::mtx_one4);
 
    HAS_DATA=FALSE;
 
-   cpy_mtx(MTX_2MET,minimath::mtx_zero3);
-   cpy_mtx(MTX_2PLN,minimath::mtx_zero3);
-   cpy_mtx(MTX_2CNT,minimath::mtx_zero3);
-   cpy_mtx(MTX_2DAT,minimath::mtx_zero3);
-   cpy_mtx(MTX_2ORG,minimath::mtx_zero3);
-   cpy_mtx(MTX_2LOC,minimath::mtx_zero3);
-   cpy_mtx(MTX_2INT,minimath::mtx_zero3);
-   cpy_mtx(MTX_2REV,minimath::mtx_zero3);
-   cpy_mtx(MTX_2AFF,minimath::mtx_zero3);
-   cpy_mtx(MTX_2REF,minimath::mtx_zero3);
-   cpy_mtx(MTX_2FIN,minimath::mtx_zero3);
-   cpy_mtx(MTX_2NRM,minimath::mtx_zero3);
-   cpy_mtx(MTX_2TIL,minimath::mtx_zero3);
-   cpy_mtx(MTX_2WRP,minimath::mtx_zero3);
+   cpy_mtx(MTX_2MET,minimath::mtx_zero4);
+   cpy_mtx(MTX_2PLN,minimath::mtx_zero4);
+   cpy_mtx(MTX_2CNT,minimath::mtx_zero4);
+   cpy_mtx(MTX_2DAT,minimath::mtx_zero4);
+   cpy_mtx(MTX_2ORG,minimath::mtx_zero4);
+   cpy_mtx(MTX_2LOC,minimath::mtx_zero4);
+   cpy_mtx(MTX_2INT,minimath::mtx_zero4);
+   cpy_mtx(MTX_2REV,minimath::mtx_zero4);
+   cpy_mtx(MTX_2AFF,minimath::mtx_zero4);
+   cpy_mtx(MTX_2REF,minimath::mtx_zero4);
+   cpy_mtx(MTX_2FIN,minimath::mtx_zero4);
+   cpy_mtx(MTX_2NRM,minimath::mtx_zero4);
+   cpy_mtx(MTX_2TIL,minimath::mtx_zero4);
+   cpy_mtx(MTX_2WRP,minimath::mtx_zero4);
 
-   cpy_mtx(INV_2MET,minimath::mtx_zero3);
-   cpy_mtx(INV_2PLN,minimath::mtx_zero3);
-   cpy_mtx(INV_2CNT,minimath::mtx_zero3);
-   cpy_mtx(INV_2DAT,minimath::mtx_zero3);
-   cpy_mtx(INV_2ORG,minimath::mtx_zero3);
-   cpy_mtx(INV_2LOC,minimath::mtx_zero3);
-   cpy_mtx(INV_2INT,minimath::mtx_zero3);
-   cpy_mtx(INV_2REV,minimath::mtx_zero3);
-   cpy_mtx(INV_2AFF,minimath::mtx_zero3);
-   cpy_mtx(INV_2REF,minimath::mtx_zero3);
-   cpy_mtx(INV_2FIN,minimath::mtx_zero3);
-   cpy_mtx(INV_2NRM,minimath::mtx_zero3);
-   cpy_mtx(INV_2TIL,minimath::mtx_zero3);
-   cpy_mtx(INV_2WRP,minimath::mtx_zero3);
+   cpy_mtx(INV_2MET,minimath::mtx_zero4);
+   cpy_mtx(INV_2PLN,minimath::mtx_zero4);
+   cpy_mtx(INV_2CNT,minimath::mtx_zero4);
+   cpy_mtx(INV_2DAT,minimath::mtx_zero4);
+   cpy_mtx(INV_2ORG,minimath::mtx_zero4);
+   cpy_mtx(INV_2LOC,minimath::mtx_zero4);
+   cpy_mtx(INV_2INT,minimath::mtx_zero4);
+   cpy_mtx(INV_2REV,minimath::mtx_zero4);
+   cpy_mtx(INV_2AFF,minimath::mtx_zero4);
+   cpy_mtx(INV_2REF,minimath::mtx_zero4);
+   cpy_mtx(INV_2FIN,minimath::mtx_zero4);
+   cpy_mtx(INV_2NRM,minimath::mtx_zero4);
+   cpy_mtx(INV_2TIL,minimath::mtx_zero4);
+   cpy_mtx(INV_2WRP,minimath::mtx_zero4);
 
    FROM=TO=MINIWARP_PLAIN;
    }
@@ -506,7 +506,7 @@ void miniwarp::update_mtx()
 
       if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSTLS=minicoord::MINICOORD_LINEAR;
 
-      if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,minimath::mtx_one3);
+      if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,minimath::mtx_one4);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);
@@ -518,7 +518,7 @@ void miniwarp::update_wrp()
    {
    int i;
 
-   cpy_mtx(MTX,minimath::mtx_one3);
+   cpy_mtx(MTX,minimath::mtx_one4);
 
    if (FROM<TO)
       // warp forward by concatenating the respective conversion matrices
