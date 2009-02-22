@@ -128,6 +128,8 @@ class miniproj
    dynaclip CLIP;
 
    miniv4d MVMATRIX[3];
+   miniv4d MVINVMTX[3];
+   miniv4d MVINVTRA[3];
 
    void proj(const miniv3d &v1,const double c1,const dynacoord &a1,
              const miniv3d &v2,const double c2,const dynacoord &a2,
