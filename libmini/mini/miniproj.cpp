@@ -183,7 +183,7 @@ void miniproj::transform(const miniv3d &v1,const miniv3d &v2,miniv3d mtx[3])
    miniv3d vn1,vn2;
 
    double dot;
-   miniv3d cross;
+   miniv3d axis;
 
    miniv3d mtx1[3],mtx2[3];
 
@@ -202,20 +202,22 @@ void miniproj::transform(const miniv3d &v1,const miniv3d &v2,miniv3d mtx[3])
    // not colinear
    else
       {
-      cross=vn2/vn1;
+      // calculate rotation axis
+      axis=vn2/vn1;
+      axis.normalize();
 
-      // backward matrix
+      // backward rotation matrix
       mtx1[0]=vn1;
-      mtx1[1]=cross;
-      mtx1[2]=vn1/cross;
+      mtx1[1]=axis;
+      mtx1[2]=vn1/axis;
 
-      // forward matrix
+      // forward rotation matrix
       mtx2[0]=vn2;
-      mtx2[1]=cross;
-      mtx2[2]=vn2/cross;
+      mtx2[1]=axis;
+      mtx2[2]=vn2/axis;
 
-      // combined matrix
-      inv_mtx(mtx2,mtx2);
+      // combined rotation matrix
+      tra_mtx(mtx2,mtx2);
       mlt_mtx(mtx,mtx2,mtx1);
       }
    }
