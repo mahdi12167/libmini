@@ -151,7 +151,7 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    }
 
 // calculate whether or not a triangle is front- or back-facing
-inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e)
+inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const
    {
    miniv3d n;
 
@@ -161,7 +161,7 @@ inline BOOLINT miniproj::isfront(const miniv3d &p,const miniv3d &v1,const miniv3
    }
 
 // calculate the intersection of a ray with a plane
-inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m)
+inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m) const
    {
    miniv3d n;
 
@@ -175,51 +175,6 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    m=p+lambda*d;
 
    return(lambda);
-   }
-
-// calculate transformation matrix
-void miniproj::transform(const miniv3d &v1,const miniv3d &v2,miniv3d mtx[3])
-   {
-   miniv3d vn1,vn2;
-
-   double dot;
-   miniv3d axis;
-
-   miniv3d mtx1[3],mtx2[3];
-
-   vn1=v1;
-   vn2=v2;
-
-   vn1.normalize();
-   vn2.normalize();
-
-   dot=vn1*vn2;
-
-   // co-linear
-   if (dot>0.999) cpy_mtx(mtx,minimath::mtx_one3);
-   // negative colinear
-   else if (dot<-0.999) cpy_mtx(mtx,minimath::mtx_neg_one3);
-   // not colinear
-   else
-      {
-      // calculate rotation axis
-      axis=vn2/vn1;
-      axis.normalize();
-
-      // backward rotation matrix
-      mtx1[0]=vn1;
-      mtx1[1]=axis;
-      mtx1[2]=vn1/axis;
-
-      // forward rotation matrix
-      mtx2[0]=vn2;
-      mtx2[1]=axis;
-      mtx2[2]=vn2/axis;
-
-      // combined rotation matrix
-      tra_mtx(mtx2,mtx2);
-      mlt_mtx(mtx,mtx2,mtx1);
-      }
    }
 
 // pass transformation matrices down to the shader
@@ -251,10 +206,10 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       ma=(a1[i]+a2[i]+a3[i]+a4[i])/4.0;
 
       // calculate object to world coord transformations
-      transform(v1-mv,a1[i]-ma,mtx1);
-      transform(v2-mv,a2[i]-ma,mtx2);
-      transform(v3-mv,a3[i]-ma,mtx3);
-      transform(v4-mv,a4[i]-ma,mtx4);
+      rot_mtx(mtx1,v1-mv,a1[i]-ma);
+      rot_mtx(mtx2,v2-mv,a2[i]-ma);
+      rot_mtx(mtx3,v3-mv,a3[i]-ma);
+      rot_mtx(mtx4,v4-mv,a4[i]-ma);
 
       // average object to world coord transformations
       cmb[0]=(mtx1[0]+mtx2[0]+mtx3[0]+mtx4[0])/4.0;

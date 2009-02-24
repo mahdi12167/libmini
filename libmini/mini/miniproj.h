@@ -154,9 +154,8 @@ class miniproj
                    const unsigned int maxslots,const minivals vals,
                    dynacoord &a);
 
-   inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e);
-   inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m);
-   inline void transform(const miniv3d &v1,const miniv3d &v2,miniv3d mtx[3]);
+   inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const;
+   inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m) const;
 
    void getmodelview();
 
