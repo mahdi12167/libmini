@@ -213,6 +213,8 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       mlt_mtx(mtx2,inv1,mtx2); // transform to world coords
       mlt_mtx(mtx2,mtx2,mtx3); // transform to eye coords
 
+      cpy_mtx(mtx2,minimath::mtx_one3); //!!
+
       mtx[3*i]=mtx2[0];
       mtx[3*i+1]=mtx2[1];
       mtx[3*i+2]=mtx2[2];
