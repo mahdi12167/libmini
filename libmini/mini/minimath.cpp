@@ -262,7 +262,7 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
    else
       {
       // calculate rotation axis
-      a=vn2/vn1;
+      a=vn1/vn2;
       s=a.normalize();
       c=sqrt(1.0-s*s);
 
