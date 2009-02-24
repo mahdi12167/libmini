@@ -71,6 +71,8 @@ void tra_mtx(miniv3d tra[3],const miniv3d mtx[3]);
 void tra_mtx(miniv3d tra[3],const miniv4d mtx[3]);
 void tra_mtx(miniv4d tra[3],const miniv4d mtx[3]);
 
+void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
+
 }
 
 using namespace minimath;

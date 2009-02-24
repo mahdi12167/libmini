@@ -235,4 +235,46 @@ void tra_mtx(miniv4d tra[3],const miniv4d mtx[3])
    cpy_mtx(tra,m);
    }
 
+// calculate a rotation matrix
+void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
+   {
+   miniv3d vn1,vn2;
+
+   double dot;
+
+   miniv3d a;
+   double s,c;
+   double ax2,ay2,az2;
+
+   vn1=v1;
+   vn2=v2;
+
+   vn1.normalize();
+   vn2.normalize();
+
+   dot=vn1*vn2;
+
+   // co-linear
+   if (dot>0.999) cpy_mtx(rot,minimath::mtx_one3);
+   // negative colinear
+   else if (dot<-0.999) cpy_mtx(rot,minimath::mtx_neg_one3);
+   // not colinear
+   else
+      {
+      // calculate rotation axis
+      a=vn2/vn1;
+      s=a.normalize();
+      c=sqrt(1.0-s*s);
+
+      // calculate squares
+      ax2=a.x*a.x;
+      ay2=a.y*a.y;
+      az2=a.z*a.z;
+
+      rot[0]=miniv3d(ax2+(1.0-ax2)*c,a.x*a.y*(1.0-c)-a.z*s,a.x*a.z*(1.0-c)+a.y*s);
+      rot[1]=miniv3d(a.x*a.y*(1.0-c)+a.z*s,ay2+(1.0-ay2)*c,a.y*a.z*(1.0-c)-a.x*s);
+      rot[2]=miniv3d(a.x*a.z*(1.0-c)-a.y*s,a.y*a.z*(1.0-c)+a.x*s,az2+(1.0-az2)*c);
+      }
+   }
+
 }
