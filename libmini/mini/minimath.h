@@ -31,6 +31,14 @@ static const miniv4d mtx_one4[3]={miniv4d(1.0,0.0,0.0),
                                   miniv4d(0.0,1.0,0.0),
                                   miniv4d(0.0,0.0,1.0)};
 
+static const miniv3d mtx_neg_one3[3]={miniv3d(-1.0,0.0,0.0),
+                                      miniv3d(0.0,-1.0,0.0),
+                                      miniv3d(0.0,0.0,-1.0)};
+
+static const miniv4d mtx_neg_one4[3]={miniv4d(-1.0,0.0,0.0),
+                                      miniv4d(0.0,-1.0,0.0),
+                                      miniv4d(0.0,0.0,-1.0)};
+
 // matrix operations:
 
 void cpy_mtx(miniv3d cpy[3],miniv3d mtx[3]);

@@ -177,6 +177,49 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
+// calculate transformation matrix
+void miniproj::transform(const miniv3d &v1,const miniv3d &v2,miniv3d mtx[3])
+   {
+   miniv3d vn1,vn2;
+
+   double dot;
+   miniv3d cross;
+
+   miniv3d mtx1[3],mtx2[3];
+
+   vn1=v1;
+   vn2=v2;
+
+   vn1.normalize();
+   vn2.normalize();
+
+   dot=vn1*vn2;
+
+   // co-linear
+   if (dot>0.999) cpy_mtx(mtx,minimath::mtx_one3);
+   // negative colinear
+   else if (dot<-0.999) cpy_mtx(mtx,minimath::mtx_neg_one3);
+   // not colinear
+   else
+      {
+      cross=vn2/vn1;
+
+      // backward matrix
+      mtx1[0]=vn1;
+      mtx1[1]=cross;
+      mtx1[2]=vn1/cross;
+
+      // forward matrix
+      mtx2[0]=vn2;
+      mtx2[1]=cross;
+      mtx2[2]=vn2/cross;
+
+      // combined matrix
+      inv_mtx(mtx2,mtx2);
+      mlt_mtx(mtx,mtx2,mtx1);
+      }
+   }
+
 // pass transformation matrices down to the shader
 void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                        const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
@@ -185,39 +228,41 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
    unsigned int size;
 
-   miniv3d mtx1[3],inv1[3],mtx2[3],mtx3[3];
+   miniv3d mv,ma;
+   miniv3d mtx1[3],mtx2[3],mtx3[3],mtx4[3];
+   miniv3d itm[3],cmb[3];
 
    dynacoord mtx;
+
+   cpy_mtx(itm,MVINVTRA);
 
    size=a1.getsize();
    mtx.setsize(3*size);
 
-   // calculate forward mapping matrix
-   mtx1[0]=v2-v1;
-   mtx1[1]=v3-v1;
-   mtx1[2]=v4-v1;
-
-   // calculate backward mapping matrix
-   inv_mtx(inv1,mtx1);
-
-   // copy inverse modelview matrix
-   cpy_mtx(mtx3,MVINVTRA);
+   mv=(v1+v2+v3+v4)/4.0;
 
    // calculate transformation matrices
    for (i=0; i<size; i++)
       {
-      mtx2[0]=a2[i]-a1[i];
-      mtx2[1]=a3[i]-a1[i];
-      mtx2[2]=a4[i]-a1[i];
+      ma=(a1[i]+a2[i]+a3[i]+a4[i])/4.0;
 
-      mlt_mtx(mtx2,inv1,mtx2); // transform to world coords
-      mlt_mtx(mtx2,mtx2,mtx3); // transform to eye coords
+      // calculate transformations
+      transform(v1-mv,a1[i]-ma,mtx1);
+      transform(v2-mv,a2[i]-ma,mtx2);
+      transform(v3-mv,a3[i]-ma,mtx3);
+      transform(v4-mv,a4[i]-ma,mtx4);
 
-      cpy_mtx(mtx2,minimath::mtx_one3); //!!
+      // transform to world coords
+      cmb[0]=(mtx1[0]+mtx2[0]+mtx3[0]+mtx4[0])/4.0;
+      cmb[1]=(mtx1[1]+mtx2[1]+mtx3[1]+mtx4[1])/4.0;
+      cmb[2]=(mtx1[2]+mtx2[2]+mtx3[2]+mtx4[2])/4.0;
 
-      mtx[3*i]=mtx2[0];
-      mtx[3*i+1]=mtx2[1];
-      mtx[3*i+2]=mtx2[2];
+      // transform to eye coords
+      mlt_mtx(cmb,itm,cmb);
+
+      mtx[3*i]=cmb[0];
+      mtx[3*i+1]=cmb[1];
+      mtx[3*i+2]=cmb[2];
       }
 
    // pass entire parameter array
