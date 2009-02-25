@@ -177,9 +177,9 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
-// pass transformation matrices down to the shader
-void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
-                       const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
+// pass parameter array
+void miniproj::pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
+                    const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
    {
    unsigned int i;
 
@@ -190,7 +190,7 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
    size=a1.getsize();
    mtx.setsize(3*size);
 
-   // calculate transformation matrices
+   // calculate parameter array
    for (i=0; i<size; i++)
       {
       mtx[3*i]=minimath::mtx_one3[0];
@@ -198,7 +198,7 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
       mtx[3*i+2]=minimath::mtx_one3[2];
       }
 
-   // pass entire parameter array
+   // pass parameter array
    pass(mtx);
    }
 
@@ -615,8 +615,8 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    else
       {
-      // pass down transformation matrices
-      passmtx(v1,v2,v3,v4,a1,a2,a3,a4);
+      // pass down parameter array
+      pass(v1,v2,v3,v4,a1,a2,a3,a4);
 
       // calculate slices
       slicetet(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye,dir,nearp,DELTA);
