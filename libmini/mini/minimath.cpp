@@ -6,6 +6,30 @@
 
 namespace minimath {
 
+const miniv3d mtx_zero3[3]={miniv3d(0.0,0.0,0.0),
+                            miniv3d(0.0,0.0,0.0),
+                            miniv3d(0.0,0.0,0.0)};
+
+const miniv4d mtx_zero4[3]={miniv4d(0.0,0.0,0.0),
+                            miniv4d(0.0,0.0,0.0),
+                            miniv4d(0.0,0.0,0.0)};
+
+const miniv3d mtx_one3[3]={miniv3d(1.0,0.0,0.0),
+                           miniv3d(0.0,1.0,0.0),
+                           miniv3d(0.0,0.0,1.0)};
+
+const miniv4d mtx_one4[3]={miniv4d(1.0,0.0,0.0),
+                           miniv4d(0.0,1.0,0.0),
+                           miniv4d(0.0,0.0,1.0)};
+
+const miniv3d mtx_neg_one3[3]={miniv3d(-1.0,0.0,0.0),
+                               miniv3d(0.0,-1.0,0.0),
+                               miniv3d(0.0,0.0,-1.0)};
+
+const miniv4d mtx_neg_one4[3]={miniv4d(-1.0,0.0,0.0),
+                               miniv4d(0.0,-1.0,0.0),
+                               miniv4d(0.0,0.0,-1.0)};
+
 // greatest common divisor
 unsigned int gcd(unsigned int a,unsigned int b)
    {
