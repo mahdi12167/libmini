@@ -185,44 +185,17 @@ void miniproj::passmtx(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,con
 
    unsigned int size;
 
-   miniv3d mv,ma;
-   miniv3d mtx1[3],mtx2[3],mtx3[3],mtx4[3];
-   miniv3d eye[3],cmb[3];
-
    dynacoord mtx;
-
-   cpy_mtx(eye,MVINVTRA);
 
    size=a1.getsize();
    mtx.setsize(3*size);
 
-   // calculate world coord barycenter
-   mv=(v1+v2+v3+v4)/4.0;
-
    // calculate transformation matrices
    for (i=0; i<size; i++)
       {
-      // calculate object coord barycenter
-      ma=(a1[i]+a2[i]+a3[i]+a4[i])/4.0;
-
-      // calculate object to world coord transformations
-      rot_mtx(mtx1,v1-mv,a1[i]-ma);
-      rot_mtx(mtx2,v2-mv,a2[i]-ma);
-      rot_mtx(mtx3,v3-mv,a3[i]-ma);
-      rot_mtx(mtx4,v4-mv,a4[i]-ma);
-
-      // average object to world coord transformations
-      cmb[0]=(mtx1[0]+mtx2[0]+mtx3[0]+mtx4[0])/4.0;
-      cmb[1]=(mtx1[1]+mtx2[1]+mtx3[1]+mtx4[1])/4.0;
-      cmb[2]=(mtx1[2]+mtx2[2]+mtx3[2]+mtx4[2])/4.0;
-
-      // calculate transformation to eye coords
-      mlt_mtx(cmb,eye,cmb);
-
-      // store combined transformation
-      mtx[3*i]=cmb[0];
-      mtx[3*i+1]=cmb[1];
-      mtx[3*i+2]=cmb[2];
+      mtx[3*i]=minimath::mtx_one3[0];
+      mtx[3*i+1]=minimath::mtx_one3[1];
+      mtx[3*i+2]=minimath::mtx_one3[2];
       }
 
    // pass entire parameter array
