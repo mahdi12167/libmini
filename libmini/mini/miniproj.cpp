@@ -1055,7 +1055,7 @@ void miniproj::initproj(float emi,float rho)
    // get z-clip texture if necessary
    if (ZCLIP && PROJMODE) initzclip();
 
-   // check for projective or slicing mode
+   // check for projection or slicing mode
    if (PROJMODE)
       {
       // enable projective shaders
@@ -1076,7 +1076,7 @@ void miniproj::initproj(float emi,float rho)
 // de-initialize projection state
 void miniproj::exitproj()
    {
-   // check for projective or slicing mode
+   // check for projection or slicing mode
    if (PROJMODE)
       {
       // disable projective shaders
