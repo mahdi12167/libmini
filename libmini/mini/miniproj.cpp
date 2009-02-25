@@ -178,6 +178,7 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    }
 
 // pass parameter array
+// called when in slicing mode
 void miniproj::pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                     const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4)
    {
@@ -203,8 +204,8 @@ void miniproj::pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const 
    }
 
 // pass constants down to the shader
-void miniproj::pass(const dynacoord &) {}
-void miniproj::pass(const int,const miniv3d &,const dynacoord &) {}
+void miniproj::pass(const dynacoord &) {} // called when in slicing mode
+void miniproj::pass(const int,const miniv3d &,const dynacoord &) {} // called when in projection mode
 
 // project 3 triangles
 inline void miniproj::proj3tri(const miniv3d &v1,const double c1,
