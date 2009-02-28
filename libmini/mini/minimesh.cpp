@@ -443,6 +443,25 @@ void minimesh::multiply(const miniv3d matrix[3])
       for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
    }
 
+// multiply mesh with matrix (vertices and normals)
+void minimesh::multiply(const miniv4d matrix1[3],const miniv3d matrix2[3])
+   {
+   unsigned int i;
+
+   if ((matrix1[0]!=minimath::mtx_one4[0] ||
+        matrix1[1]!=minimath::mtx_one4[1] ||
+        matrix1[2]!=minimath::mtx_one4[2]) &&
+       (matrix2[0]!=minimath::mtx_one3[0] ||
+        matrix2[1]!=minimath::mtx_one3[1] ||
+        matrix2[2]!=minimath::mtx_one3[2]))
+      for (i=0; i<getsize(); i++) ref(i).multiply(matrix1,matrix2);
+   else
+      {
+      multiply(matrix1);
+      multiply(matrix2);
+      }
+   }
+
 // get the maximum extent of the tetrahedra
 double minimesh::getextent() const
    {

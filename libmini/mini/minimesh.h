@@ -275,6 +275,13 @@ class minihedron
       nrm4=miniv3d(matrix[0]*nrm4,matrix[1]*nrm4,matrix[2]*nrm4);
       }
 
+   //! multiply vertices and normals with matrix
+   void multiply(const miniv4d matrix1[3],const miniv3d matrix2[3])
+      {
+      multiply(matrix1);
+      multiply(matrix2);
+      }
+
    //! get volume
    double getvolume() const
       {
@@ -360,6 +367,9 @@ class minimesh: public minidyna<minihedron>
 
    //! multiply mesh with matrix (normals)
    void multiply(const miniv3d matrix[3]);
+
+   //! multiply mesh with matrix (vertices and normals)
+   void multiply(const miniv4d matrix1[3],const miniv3d matrix2[3]);
 
    //! get the maximum extent of the tetrahedra
    double getextent() const;

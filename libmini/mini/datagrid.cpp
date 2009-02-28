@@ -573,10 +573,15 @@ void datagrid::push_post(const minimesh &mesh,
    {
    minimesh m;
 
+   miniv3d invtra[3];
+
    if (USEPOST)
       {
+      inv_mtx(invtra,MTXPOST);
+      tra_mtx(invtra,invtra);
+
       m=mesh;
-      m.multiply(MTXPOST); // multiply mesh with post matrix
+      m.multiply(MTXPOST,invtra); // multiply mesh with post matrix
       push(m,time);
       }
    else push(mesh,time);
@@ -592,22 +597,21 @@ void datagrid::push_post(minimesh &mesh,
    miniv4d v;
    miniv3d e,d;
 
-   miniv4d invtra[3];
+   miniv3d invtra[3];
 
    double scale;
 
    if (USEPOST)
       {
-      mesh.multiply(MTXPOST); // multiply mesh with post matrix
+      inv_mtx(invtra,MTXPOST);
+      tra_mtx(invtra,invtra);
+
+      mesh.multiply(MTXPOST,invtra); // multiply mesh with post matrix
 
       v=miniv4d(eye,1.0);
       e=miniv3d(MTXPOST[0]*v,MTXPOST[1]*v,MTXPOST[2]*v);
 
-      inv_mtx(invtra,MTXPOST);
-      tra_mtx(invtra,invtra);
-
-      v=miniv4d(dir,1.0);
-      d=miniv3d(invtra[0]*v,invtra[1]*v,invtra[2]*v);
+      d=miniv3d(invtra[0]*dir,invtra[1]*dir,invtra[2]*dir);
       d.normalize();
 
       scale=pow(det_mtx(MTXPOST),1.0/3);
