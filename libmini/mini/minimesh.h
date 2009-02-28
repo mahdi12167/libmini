@@ -84,8 +84,6 @@ class minihedron
    //! default constructor
    minihedron()
       {
-      hasnormals=FALSE;
-
       dep123=dep142=dep243=dep341=0;
 
       intersect=FALSE;
@@ -101,32 +99,6 @@ class minihedron
       vtx4=v4;
 
       vals.set(c);
-
-      hasnormals=FALSE;
-
-      dep123=dep142=dep243=dep341=0;
-
-      intersect=FALSE;
-      visit=FALSE;
-      }
-
-   //! constructor
-   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minival &c,
-              const miniv3d &n1,const miniv3d &n2,const miniv3d &n3,const miniv3d &n4)
-      {
-      vtx1=v1;
-      vtx2=v2;
-      vtx3=v3;
-      vtx4=v4;
-
-      vals.set(c);
-
-      hasnormals=TRUE;
-
-      nrm1=n1;
-      nrm2=n2;
-      nrm3=n3;
-      nrm4=n4;
 
       dep123=dep142=dep243=dep341=0;
 
@@ -144,32 +116,6 @@ class minihedron
 
       vals=a;
 
-      hasnormals=FALSE;
-
-      dep123=dep142=dep243=dep341=0;
-
-      intersect=FALSE;
-      visit=FALSE;
-      }
-
-   //! constructor
-   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minivals &a,
-              const miniv3d &n1,const miniv3d &n2,const miniv3d &n3,const miniv3d &n4)
-      {
-      vtx1=v1;
-      vtx2=v2;
-      vtx3=v3;
-      vtx4=v4;
-
-      vals=a;
-
-      hasnormals=TRUE;
-
-      nrm1=n1;
-      nrm2=n2;
-      nrm3=n3;
-      nrm4=n4;
-
       dep123=dep142=dep243=dep341=0;
 
       intersect=FALSE;
@@ -185,32 +131,6 @@ class minihedron
       vtx4=v4;
 
       vals.set(minival(s,b,v1,v2,v3,v4));
-
-      hasnormals=FALSE;
-
-      dep123=dep142=dep243=dep341=0;
-
-      intersect=FALSE;
-      visit=FALSE;
-      }
-
-   //! constructor
-   minihedron(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const unsigned int s,const unsigned int b,
-              const miniv3d &n1,const miniv3d &n2,const miniv3d &n3,const miniv3d &n4)
-      {
-      vtx1=v1;
-      vtx2=v2;
-      vtx3=v3;
-      vtx4=v4;
-
-      vals.set(minival(s,b,v1,v2,v3,v4));
-
-      hasnormals=TRUE;
-
-      nrm1=n1;
-      nrm2=n2;
-      nrm3=n3;
-      nrm4=n4;
 
       dep123=dep142=dep243=dep341=0;
 
@@ -266,22 +186,6 @@ class minihedron
       vtx4=miniv3d(matrix[0]*v4,matrix[1]*v4,matrix[2]*v4);
       }
 
-   //! multiply normals with matrix
-   void multiply(const miniv3d matrix[3])
-      {
-      nrm1=miniv3d(matrix[0]*nrm1,matrix[1]*nrm1,matrix[2]*nrm1);
-      nrm2=miniv3d(matrix[0]*nrm2,matrix[1]*nrm2,matrix[2]*nrm2);
-      nrm3=miniv3d(matrix[0]*nrm3,matrix[1]*nrm3,matrix[2]*nrm3);
-      nrm4=miniv3d(matrix[0]*nrm4,matrix[1]*nrm4,matrix[2]*nrm4);
-      }
-
-   //! multiply vertices and normals with matrix
-   void multiply(const miniv4d matrix1[3],const miniv3d matrix2[3])
-      {
-      multiply(matrix1);
-      multiply(matrix2);
-      }
-
    //! get volume
    double getvolume() const
       {
@@ -300,9 +204,6 @@ class minihedron
 
    miniv3d vtx1,vtx2,vtx3,vtx4; // corner vertices
    minivals vals; // embedded data values
-
-   BOOLINT hasnormals; // normal detection flag
-   miniv3d nrm1,nrm2,nrm3,nrm4; // normal vectors
 
    BOOLINT intersect; // intersection flag
 
@@ -364,12 +265,6 @@ class minimesh: public minidyna<minihedron>
 
    //! multiply mesh with matrix (vertices)
    void multiply(const miniv4d matrix[3]);
-
-   //! multiply mesh with matrix (normals)
-   void multiply(const miniv3d matrix[3]);
-
-   //! multiply mesh with matrix (vertices and normals)
-   void multiply(const miniv4d matrix1[3],const miniv3d matrix2[3]);
 
    //! get the maximum extent of the tetrahedra
    double getextent() const;

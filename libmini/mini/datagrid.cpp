@@ -350,8 +350,6 @@ minimesh datagrid::decompose(unsigned int idx)
    minicoord vtx[8];
    miniv3d crd[8];
 
-   miniv3d nrm[8];
-
    miniv4d v;
 
    minivals vals;
@@ -423,58 +421,48 @@ minimesh datagrid::decompose(unsigned int idx)
          if (REF[idx]!=NULL)
             for (i=0; i<8; i++) vtx[i]=REF[idx]->map_t2g(vtx[i]);
 
-      // determine normal vector
-      if (CRS!=minicoord::MINICOORD_ECEF)
-         for (i=0; i<8; i++) nrm[i]=miniv3d(0.0,0.0,1.0);
-      else
-         for (i=0; i<8; i++)
-            {
-            nrm[i]=vtx[i].vec;
-            nrm[i].normalize();
-            }
-
       // check orientation of tetrahedral decomposition
       if (!FLIP[idx])
          {
          // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
          vals.set(minival(SLOT[idx],idx,crd[0],crd[1],crd[3],crd[4],vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec));
-         mesh.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals,nrm[0],nrm[1],nrm[3],nrm[4]));
+         mesh.append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[2],crd[3],crd[1],crd[6],vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec));
-         mesh.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals,nrm[2],nrm[3],nrm[1],nrm[6]));
+         mesh.append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[7],crd[6],crd[4],crd[3],vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec));
-         mesh.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals,nrm[7],nrm[6],nrm[4],nrm[3]));
+         mesh.append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[5],crd[4],crd[6],crd[1],vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec));
-         mesh.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals,nrm[5],nrm[4],nrm[6],nrm[1]));
+         mesh.append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,vals));
 
          // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
          vals.set(minival(SLOT[idx],idx,crd[3],crd[1],crd[6],crd[4],vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec));
-         mesh.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals,nrm[3],nrm[1],nrm[6],nrm[4]));
+         mesh.append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,vals));
          }
       else
          {
          // add the 4 corner tetrahedra of the actual databuf object to the mesh:
 
          vals.set(minival(SLOT[idx],idx,crd[3],crd[0],crd[2],crd[7],vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec));
-         mesh.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals,nrm[3],nrm[0],nrm[2],nrm[7]));
+         mesh.append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[1],crd[2],crd[0],crd[5],vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec));
-         mesh.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals,nrm[1],nrm[2],nrm[0],nrm[5]));
+         mesh.append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[4],crd[7],crd[5],crd[0],vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec));
-         mesh.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals,nrm[4],nrm[7],nrm[5],nrm[0]));
+         mesh.append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,vals));
 
          vals.set(minival(SLOT[idx],idx,crd[6],crd[5],crd[7],crd[2],vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec));
-         mesh.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals,nrm[6],nrm[5],nrm[7],nrm[2]));
+         mesh.append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,vals));
 
          // add the 5th center tetrahedron of the actual databuf object to the mesh:
 
          vals.set(minival(SLOT[idx],idx,crd[0],crd[5],crd[2],crd[7],vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec));
-         mesh.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals,nrm[0],nrm[5],nrm[2],nrm[7]));
+         mesh.append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,vals));
          }
       }
 
@@ -573,15 +561,10 @@ void datagrid::push_post(const minimesh &mesh,
    {
    minimesh m;
 
-   miniv3d invtra[3];
-
    if (USEPOST)
       {
-      inv_mtx(invtra,MTXPOST);
-      tra_mtx(invtra,invtra);
-
       m=mesh;
-      m.multiply(MTXPOST,invtra); // multiply mesh with post matrix
+      m.multiply(MTXPOST); // multiply mesh with post matrix
       push(m,time);
       }
    else push(mesh,time);
@@ -603,13 +586,13 @@ void datagrid::push_post(minimesh &mesh,
 
    if (USEPOST)
       {
-      inv_mtx(invtra,MTXPOST);
-      tra_mtx(invtra,invtra);
-
-      mesh.multiply(MTXPOST,invtra); // multiply mesh with post matrix
+      mesh.multiply(MTXPOST); // multiply mesh with post matrix
 
       v=miniv4d(eye,1.0);
       e=miniv3d(MTXPOST[0]*v,MTXPOST[1]*v,MTXPOST[2]*v);
+
+      inv_mtx(invtra,MTXPOST);
+      tra_mtx(invtra,invtra);
 
       d=miniv3d(invtra[0]*dir,invtra[1]*dir,invtra[2]*dir);
       d.normalize();
