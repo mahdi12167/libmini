@@ -421,14 +421,25 @@ void minimesh::offset(const miniv3d &offset)
       for (i=0; i<getsize(); i++) ref(i).offset(offset);
    }
 
-// multiply mesh with matrix
+// multiply mesh with matrix (vertices)
 void minimesh::multiply(const miniv4d matrix[3])
    {
    unsigned int i;
 
-   if (matrix[0]!=miniv4d(1.0,0.0,0.0) ||
-       matrix[1]!=miniv4d(0.0,1.0,0.0) ||
-       matrix[2]!=miniv4d(0.0,0.0,1.0))
+   if (matrix[0]!=minimath::mtx_one4[0] ||
+       matrix[1]!=minimath::mtx_one4[1] ||
+       matrix[2]!=minimath::mtx_one4[2])
+      for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
+   }
+
+// multiply mesh with matrix (normals)
+void minimesh::multiply(const miniv3d matrix[3])
+   {
+   unsigned int i;
+
+   if (matrix[0]!=minimath::mtx_one3[0] ||
+       matrix[1]!=minimath::mtx_one3[1] ||
+       matrix[2]!=minimath::mtx_one3[2])
       for (i=0; i<getsize(); i++) ref(i).multiply(matrix);
    }
 

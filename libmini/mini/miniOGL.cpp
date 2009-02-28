@@ -1316,7 +1316,7 @@ inline void setprogpars(int n,int count,const float *params,BOOLINT vtxorfrg)
    if (glext_vp && glext_fp)
       {
 #ifdef GL_EXT_gpu_program_parameters
-      if (glext_gpp && !glrndr_ati)
+      if (glext_gpp)
          {
          if (vtxorfrg) glProgramEnvParameters4fvEXT(GL_VERTEX_PROGRAM_ARB,n,count,params);
          else glProgramEnvParameters4fvEXT(GL_FRAGMENT_PROGRAM_ARB,n,count,params);

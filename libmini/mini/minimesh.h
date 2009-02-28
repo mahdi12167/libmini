@@ -355,8 +355,11 @@ class minimesh: public minidyna<minihedron>
    //! add offset to mesh
    void offset(const miniv3d &offset);
 
-   //! multiply mesh with matrix
+   //! multiply mesh with matrix (vertices)
    void multiply(const miniv4d matrix[3]);
+
+   //! multiply mesh with matrix (normals)
+   void multiply(const miniv3d matrix[3]);
 
    //! get the maximum extent of the tetrahedra
    double getextent() const;
