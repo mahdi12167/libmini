@@ -197,6 +197,15 @@ void inv_mtx(miniv3d inv[3],const miniv3d mtx[3])
    }
 
 // invert a 4x3 matrix
+void inv_mtx(miniv3d inv[3],const miniv4d mtx[3])
+   {
+   miniv3d m[3];
+
+   cpy_mtx(m,mtx);
+   inv_mtx(inv,m);
+   }
+
+// invert a 4x3 matrix
 void inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    {
    miniv3d m[3];
