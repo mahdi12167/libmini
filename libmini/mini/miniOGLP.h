@@ -19,6 +19,10 @@ GLint depth_func,front_face,cull_face_mode,blend_src,blend_dst;
 
 BOOLINT maxblendeq;
 
+BOOLINT glrndr_sgi;
+BOOLINT glrndr_nvidia;
+BOOLINT glrndr_ati;
+
 BOOLINT glext_mm;
 BOOLINT glext_tec;
 BOOLINT glext_tfa;

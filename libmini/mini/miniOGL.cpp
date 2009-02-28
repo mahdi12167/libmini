@@ -15,12 +15,27 @@ void configure_level(float level) {CONFIGURE_LEVEL=level;}
 
 static void initglexts()
    {
+   char *GL_RNDR;
    char *GL_EXTs;
 
    static BOOLINT done=FALSE;
 
    if (!done)
       {
+      // figure out OpenGL renderer:
+
+      glrndr_sgi=FALSE;
+      glrndr_nvidia=FALSE;
+      glrndr_ati=FALSE;
+
+      if ((GL_RNDR=(char *)glGetString(GL_RENDERER))==NULL) ERRORMSG();
+
+      if (strstr(GL_RNDR,"SGI")!=NULL) glrndr_sgi=TRUE;
+      if (strstr(GL_RNDR,"NVIDIA")!=NULL) glrndr_nvidia=TRUE;
+      if (strstr(GL_RNDR,"ATI")!=NULL) glrndr_ati=TRUE;
+
+      // figure out its OpenGL extensions:
+
       glext_mm=FALSE;
       glext_tec=FALSE;
       glext_tfa=FALSE;
@@ -183,6 +198,12 @@ void print_graphics_info()
 #ifndef NOOGL
 
    initglexts();
+
+   printf("renderer: ");
+   if (glrndr_sgi) printf("SGI\n");
+   else if (glrndr_nvidia) printf("NVIDIA\n");
+   else if (glrndr_ati) printf("ATI\n");
+   else printf("UNKNOWN\n");
 
    printf("maxtexsize=%d\n",getmaxtexsize());
    printf("max3Dtexsize=%d\n",getmax3Dtexsize());
@@ -1295,7 +1316,7 @@ inline void setprogpars(int n,int count,const float *params,BOOLINT vtxorfrg)
    if (glext_vp && glext_fp)
       {
 #ifdef GL_EXT_gpu_program_parameters
-      if (glext_gpp)
+      if (glext_gpp && !glrndr_ati)
          {
          if (vtxorfrg) glProgramEnvParameters4fvEXT(GL_VERTEX_PROGRAM_ARB,n,count,params);
          else glProgramEnvParameters4fvEXT(GL_FRAGMENT_PROGRAM_ARB,n,count,params);
