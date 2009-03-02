@@ -1,5 +1,5 @@
 # cmake build file for squish
-# (c) by Stefan Roettger
+# by Stefan Roettger (stefan@stereofx.org)
 
 PROJECT(squish)
 
