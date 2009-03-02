@@ -28,7 +28,7 @@ static void initglexts()
       glrndr_nvidia=FALSE;
       glrndr_ati=FALSE;
 
-      if ((GL_RNDR=(char *)glGetString(GL_RENDERER))==NULL) ERRORMSG();
+      if ((GL_RNDR=(char *)glGetString(GL_VENDOR))==NULL) ERRORMSG();
 
       if (strstr(GL_RNDR,"SGI")!=NULL) glrndr_sgi=TRUE;
       if (strstr(GL_RNDR,"NVIDIA")!=NULL) glrndr_nvidia=TRUE;
