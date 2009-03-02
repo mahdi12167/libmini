@@ -9,7 +9,7 @@ cvs -d:pserver:anonymous:@cool.haxx.se:/cvsroot/curl login
 cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co -r curl-7_19_2 curl
 
 # squish
-svn co -r 10 http://libsquish.googlecode.com/svn/trunk libsquish
+svn co -r 11 http://libsquish.googlecode.com/svn/trunk libsquish
 foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
    cp -f $file $file:s/libsquish/squish/
    ../mini/tabify.sh -u $file:s/libsquish/squish/
