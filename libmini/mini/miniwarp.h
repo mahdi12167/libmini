@@ -217,6 +217,9 @@ class miniwarp: public miniwarpbase
 
    private:
 
+   miniv3d MTX_ZERO[3];
+   miniv3d MTX_ONE[3];
+
    void update_mtx();
    void update_wrp();
    void update_inv();

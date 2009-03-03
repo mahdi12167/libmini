@@ -13,17 +13,6 @@ namespace minimath {
 unsigned int gcd(unsigned int a,unsigned int b); // greatest common divisor
 unsigned int lcm(unsigned int a,unsigned int b); // lowest common multiple
 
-// const matrices:
-
-extern const miniv3d mtx_zero3[3];
-extern const miniv4d mtx_zero4[3];
-
-extern const miniv3d mtx_one3[3];
-extern const miniv4d mtx_one4[3];
-
-extern const miniv3d mtx_neg_one3[3];
-extern const miniv4d mtx_neg_one4[3];
-
 // matrix operations:
 
 void cpy_mtx(miniv3d cpy[3],miniv3d mtx[3]);

@@ -6,30 +6,6 @@
 
 namespace minimath {
 
-const miniv3d mtx_zero3[3]={miniv3d(0.0,0.0,0.0),
-                            miniv3d(0.0,0.0,0.0),
-                            miniv3d(0.0,0.0,0.0)};
-
-const miniv4d mtx_zero4[3]={miniv4d(0.0,0.0,0.0),
-                            miniv4d(0.0,0.0,0.0),
-                            miniv4d(0.0,0.0,0.0)};
-
-const miniv3d mtx_one3[3]={miniv3d(1.0,0.0,0.0),
-                           miniv3d(0.0,1.0,0.0),
-                           miniv3d(0.0,0.0,1.0)};
-
-const miniv4d mtx_one4[3]={miniv4d(1.0,0.0,0.0),
-                           miniv4d(0.0,1.0,0.0),
-                           miniv4d(0.0,0.0,1.0)};
-
-const miniv3d mtx_neg_one3[3]={miniv3d(-1.0,0.0,0.0),
-                               miniv3d(0.0,-1.0,0.0),
-                               miniv3d(0.0,0.0,-1.0)};
-
-const miniv4d mtx_neg_one4[3]={miniv4d(-1.0,0.0,0.0),
-                               miniv4d(0.0,-1.0,0.0),
-                               miniv4d(0.0,0.0,-1.0)};
-
 // greatest common divisor
 unsigned int gcd(unsigned int a,unsigned int b)
    {
@@ -279,6 +255,14 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
    double s,c;
    double ax2,ay2,az2;
 
+   static const miniv3d mtx_one[3]={miniv3d(1.0,0.0,0.0),
+                                    miniv3d(0.0,1.0,0.0),
+                                    miniv3d(0.0,0.0,1.0)};
+
+   static const miniv3d mtx_neg_one[3]={miniv3d(-1.0,0.0,0.0),
+                                        miniv3d(0.0,-1.0,0.0),
+                                        miniv3d(0.0,0.0,-1.0)};
+
    vn1=v1;
    vn2=v2;
 
@@ -288,9 +272,9 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
    dot=vn1*vn2;
 
    // co-linear
-   if (dot>0.999) cpy_mtx(rot,minimath::mtx_one3);
+   if (dot>0.999) cpy_mtx(rot,mtx_one);
    // negative colinear
-   else if (dot<-0.999) cpy_mtx(rot,minimath::mtx_neg_one3);
+   else if (dot<-0.999) cpy_mtx(rot,mtx_neg_one);
    // not colinear
    else
       {
