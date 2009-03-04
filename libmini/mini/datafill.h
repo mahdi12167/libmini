@@ -18,6 +18,9 @@ class datafill: public databuf
    //! grow boundary by extrapolation
    unsigned int grow_by_extrapolation();
 
+   //! grow boundary by extrapolation and replace the rest
+   unsigned int grow_by_extrapolation(float value);
+
    //! fill-in no-data values by region growing
    unsigned int fillin_by_regiongrowing(int radius_stop=5,int radius_start=2);
 

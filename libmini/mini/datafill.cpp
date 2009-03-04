@@ -8,6 +8,17 @@
 unsigned int datafill::grow_by_extrapolation()
    {return(fillin(0));}
 
+// grow boundary by extrapolation and replace the rest
+unsigned int datafill::grow_by_extrapolation(float value)
+   {
+   unsigned int count;
+
+   count=fillin(0);
+   count+=replacenodata(value);
+
+   return(count);
+   }
+
 // fill-in no-data values by region growing
 unsigned int datafill::fillin_by_regiongrowing(int radius_stop,int radius_start)
    {
