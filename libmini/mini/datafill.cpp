@@ -4,6 +4,10 @@
 
 #include "datafill.h"
 
+// grow boundary by extrapolation
+unsigned int datafill::grow_by_extrapolation()
+   {return(fillin(0));}
+
 // fill-in no-data values by region growing
 unsigned int datafill::fillin_by_regiongrowing(int radius_stop,int radius_start)
    {

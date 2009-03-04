@@ -15,6 +15,9 @@ class datafill: public databuf
    //! copy constructor
    datafill(const databuf &buf): databuf(buf) {}
 
+   //! grow boundary by extrapolation
+   unsigned int grow_by_extrapolation();
+
    //! fill-in no-data values by region growing
    unsigned int fillin_by_regiongrowing(int radius_stop=5,int radius_start=2);
 
