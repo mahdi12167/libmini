@@ -617,17 +617,17 @@ int databuf::readstring(const char *tag,char **str,FILE *file)
       {
       if (*str==NULL)
          {
-         *str=(char *)malloc(2);
+         if ((*str=(char *)malloc(2))==NULL) ERRORMSG();
 
-         *str[0]=ch;
-         *str[1]='\0';
+         (*str)[0]=ch;
+         (*str)[1]='\0';
          }
       else
          {
-         *str=(char *)realloc(*str,strlen(*str)+2);
+         if ((*str=(char *)realloc(*str,strlen(*str)+2))==NULL) ERRORMSG();
 
-         *str[strlen(*str)]=ch;
-         *str[strlen(*str)+1]='\0';
+         (*str)[strlen(*str)]=ch;
+         (*str)[strlen(*str)+1]='\0';
          }
 
       ch=getc(file);
