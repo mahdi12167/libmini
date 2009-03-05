@@ -72,6 +72,9 @@ class databuf
    unsigned int tsteps; // optional number of frames for time-dependent data
    unsigned int type;   // 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha), 7 = mip-mapped RGB, 8 = mip-mapped RGBA, 9 = mip-mapped compressed RGB, 10 = mip-mapped compressed RGBA
 
+   //! optional comment
+   char *comment;
+
    //! optional metadata
    double swx,swy; // SW corner of data brick
    double nwx,nwy; // NW corner of data brick
@@ -79,6 +82,12 @@ class databuf
    double sex,sey; // SE corner of data brick
    double h0,dh;   // base elevation and height of data brick
    double t0,dt;   // time frame start and exposure time
+
+   //! optional corner points in Lat/Lon (WGS84, degrees)
+   double LLWGS84_swx,LLWGS84_swy; // SW corner of data brick
+   double LLWGS84_nwx,LLWGS84_nwy; // NW corner of data brick
+   double LLWGS84_nex,LLWGS84_ney; // NE corner of data brick
+   double LLWGS84_sex,LLWGS84_sey; // SE corner of data brick
 
    //! optional scaling
    float scaling; // scale factor of data values, default=1.0f
@@ -101,12 +110,6 @@ class databuf
 
    //! indicator for implicit format
    unsigned int implformat;
-
-   //! optional corner points in Lat/Lon (WGS84, degrees)
-   double LLWGS84_swx,LLWGS84_swy; // SW corner of data brick
-   double LLWGS84_nwx,LLWGS84_nwy; // NW corner of data brick
-   double LLWGS84_nex,LLWGS84_ney; // NE corner of data brick
-   double LLWGS84_sex,LLWGS84_sey; // SE corner of data brick
 
    //! data chunk
    void *data;         // pointer to raw data, null pointer indicates missing data
@@ -140,6 +143,9 @@ class databuf
 
    //! release buffer
    void release();
+
+   //! set comment string
+   void set_comment(char *str);
 
    //! set native extents
    void set_extents(double left,double right,double bottom,double top);
@@ -325,6 +331,7 @@ class databuf
    static unsigned int MAGIC3;
    static unsigned int MAGIC4;
    static unsigned int MAGIC5;
+   static unsigned int MAGIC6;
 
    private:
 
@@ -351,6 +358,9 @@ class databuf
    int readparamf(const char *tag,float *v,FILE *file);
    int readparami(const char *tag,int *v,FILE *file);
    int readparamu(const char *tag,unsigned int *v,FILE *file);
+
+   void writestring(const char *tag,const char *str,FILE *file);
+   int readstring(const char *tag,char **str,FILE *file);
 
    void loadblock(FILE *file);
 

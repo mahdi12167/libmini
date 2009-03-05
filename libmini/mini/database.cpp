@@ -19,7 +19,8 @@ unsigned int databuf::MAGIC1=12640; // original magic identifier of DB version 1
 unsigned int databuf::MAGIC2=13048; // backwards compatibility for DB version 2
 unsigned int databuf::MAGIC3=13091; // backwards compatibility for DB version 3
 unsigned int databuf::MAGIC4=13269; // backwards compatibility for DB version 4
-unsigned int databuf::MAGIC5=13398; // actual magic identifier of DB version 5
+unsigned int databuf::MAGIC5=13398; // backwards compatibility for DB version 5
+unsigned int databuf::MAGIC6=13761; // actual magic identifier of DB version 6
 
 // helper variable for LSB vs. MSB check
 unsigned short int databuf::INTEL_CHECK=1;
@@ -51,6 +52,8 @@ databuf::databuf()
    tsteps=0;
 
    type=DATABUF_TYPE_BYTE;
+
+   comment=NULL;
 
    swx=swy=0.0;
    nwx=nwy=0.0;
@@ -245,6 +248,8 @@ void databuf::reset()
    {
    data=NULL;
    bytes=0;
+
+   comment=NULL;
    }
 
 // release buffer
@@ -254,7 +259,14 @@ void databuf::release()
 
    data=NULL;
    bytes=0;
+
+   if (comment!=NULL) free(comment);
+   comment=NULL;
    }
+
+// set comment string
+void databuf::set_comment(char *str)
+   {comment=strdup(str);}
 
 // set native extents
 void databuf::set_extents(double left,double right,double bottom,double top)
@@ -562,6 +574,68 @@ int databuf::readparamu(const char *tag,unsigned int *v,FILE *file)
    return(1);
    }
 
+// write one string parameter
+void databuf::writestring(const char *tag,const char *str,FILE *file)
+   {
+   const char *ptr;
+
+   for (ptr=tag; *ptr!='\0'; ptr++) putc(*ptr,file);
+
+   putc('=',file);
+
+   if (str!=NULL)
+      for (ptr=str; *ptr!='\0' && *ptr!='\n'; ptr++) putc(*ptr,file);
+
+   putc('\n',file);
+   }
+
+// read one string parameter
+int databuf::readstring(const char *tag,char **str,FILE *file)
+   {
+   int ch;
+   const char *ptr;
+
+   ch=getc(file);
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   for (ptr=tag; ch==*ptr && *ptr!='\0'; ptr++) ch=getc(file);
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   if (ch!='=')
+      {
+      ungetc(ch,file);
+      return(0);
+      }
+
+   ch=getc(file);
+
+   *str=NULL;
+
+   while (ch!='\n' && ch!=EOF)
+      {
+      if (*str==NULL)
+         {
+         *str=(char *)malloc(2);
+
+         *str[0]=ch;
+         *str[1]='\0';
+         }
+      else
+         {
+         *str=(char *)realloc(*str,strlen(*str)+2);
+
+         *str[strlen(*str)]=ch;
+         *str[strlen(*str)+1]='\0';
+         }
+
+      ch=getc(file);
+      }
+
+   return(1);
+   }
+
 // load DB data block
 void databuf::loadblock(FILE *file)
    {
@@ -609,7 +683,7 @@ int databuf::savedata(const char *filename,
       }
 
    // save magic identifier
-   writeparam("MAGIC",MAGIC5,file);
+   writeparam("MAGIC",MAGIC6,file);
 
    // save mandatory metadata
    writeparam("xsize",xsize,file);
@@ -617,6 +691,9 @@ int databuf::savedata(const char *filename,
    writeparam("zsize",zsize,file);
    writeparam("tsteps",tsteps,file);
    writeparam("type",type,file);
+
+   // save optional comment
+   writestring("comment",comment,file);
 
    // save optional metadata
    writeparam("swx",swx,file);
@@ -710,7 +787,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       fclose(file);
       return(0);
       }
-   else if (m!=MAGIC1 && m!=MAGIC2 && m!=MAGIC3 && m!=MAGIC4 && m!=MAGIC5)
+   else if (m!=MAGIC1 && m!=MAGIC2 && m!=MAGIC3 && m!=MAGIC4 && m!=MAGIC5 && m!=MAGIC6)
       {
       fclose(file);
       return(0);
@@ -722,6 +799,11 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    if (readparamu("zsize",&zsize,file)==0) ERRORMSG();
    if (readparamu("tsteps",&tsteps,file)==0) ERRORMSG();
    if (readparamu("type",&type,file)==0) ERRORMSG();
+
+   // read comment
+   if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4 || m==MAGIC5) comment=NULL;
+   else
+      if (readstring("comment",&comment,file)==0) ERRORMSG();
 
    // read optional metadata
    if (readparam("swx",&swx,file)==0) ERRORMSG();
