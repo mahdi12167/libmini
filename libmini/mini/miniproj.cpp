@@ -78,8 +78,6 @@ void miniproj::map(const unsigned int which,
    size=vals.getsize();
    a.setsize(maxslots);
 
-   for (i=0; i<maxslots; i++) a[i]=miniv3d(0.0);
-
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
       {
@@ -617,7 +615,10 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
       if (CLIP[n].ENABLED) break;
 
    if (n<CLIP.getsize())
-      clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp);
+      if (CLIP[n].CLIPALL)
+         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp);
+      else
+         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp); //!! clip slot only
    else
       projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
@@ -633,7 +634,8 @@ void miniproj::coords(const double c,const dynacoord &a,const double d)
 
    texcoord(c,c,d);
 
-   for (i=0; i<size; i++) multitexcoord(i+1,a[i].x,a[i].y,a[i].z);
+   for (i=0; i<size; i++)
+      if (a[i].ACTIVE) multitexcoord(i+1,a[i].CRD.x,a[i].CRD.y,a[i].CRD.z);
    }
 
 // extract 1 triangle from tetrahedron
@@ -1148,16 +1150,27 @@ void miniproj::exitzclip()
 // add clipping plane
 void miniproj::addclip(int num,const miniv3d &p,const miniv3d &n)
    {
-   CLIP.setsize(num+1);
+   CLIP.growsize(num+1);
    CLIP[num]=miniprojclip(p,n);
+   }
+
+// add clipping plane to specific slot
+void miniproj::addclip(int num,const miniv3d &p,const miniv3d &n,unsigned int slot)
+   {
+   CLIP.growsize(num+1);
+   CLIP[num]=miniprojclip(p,n,slot);
    }
 
 // delete clipping plane
 void miniproj::delclip(int num)
    {
-   CLIP.setsize(num+1);
+   CLIP.growsize(num+1);
    CLIP[num]=miniprojclip();
    }
+
+//! clear clipping planes
+void miniproj::clearclip()
+   {CLIP.setnull();}
 
 // vertex and fragment programs:
 

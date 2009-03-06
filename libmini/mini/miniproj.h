@@ -3,26 +3,135 @@
 #ifndef MINIPROJ_H
 #define MINIPROJ_H
 
+#include <iostream>
+
 #include "minibase.h"
 
 #include "miniv3d.h"
 #include "minidyna.h"
 #include "minimesh.h"
 
+class miniprojcrd
+   {
+   public:
+
+   //! default constructor
+   miniprojcrd()
+      {
+      ACTIVE=FALSE;
+      CRD=miniv3d(0.0);
+      }
+
+   //! constructor
+   miniprojcrd(const miniv3d &crd)
+      {
+      ACTIVE=TRUE;
+      CRD=crd;
+      }
+
+   //! destructor
+   ~miniprojcrd() {}
+
+   BOOLINT ACTIVE;
+   miniv3d CRD;
+   };
+
+//! add operator
+inline miniprojcrd operator + (const miniprojcrd &a,const miniprojcrd &b)
+   {
+   if (a.ACTIVE && b.ACTIVE) return(a.CRD+b.CRD);
+   else return(miniprojcrd());
+   }
+
+//! sub operator
+inline miniprojcrd operator - (const miniprojcrd &a,const miniprojcrd &b)
+   {
+   if (a.ACTIVE && b.ACTIVE) return(a.CRD-b.CRD);
+   else return(miniprojcrd());
+   }
+
+//! neg operator
+inline miniprojcrd operator - (const miniprojcrd &v)
+   {
+   if (v.ACTIVE) return(-v.CRD);
+   else return(miniprojcrd());
+   }
+
+//! mul operator
+inline miniprojcrd operator * (const double a,const miniprojcrd &b)
+   {
+   if (b.ACTIVE) return(a*b.CRD);
+   else return(miniprojcrd());
+   }
+
+//! mul operator
+inline miniprojcrd operator * (const miniprojcrd &a,const double b)
+   {
+   if (a.ACTIVE) return(a.CRD*b);
+   else return(miniprojcrd());
+   }
+
+//! div operator
+inline miniprojcrd operator / (const miniprojcrd &a,const double b)
+   {
+   if (a.ACTIVE) return(a.CRD/b);
+   else return(miniprojcrd());
+   }
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const miniprojcrd &v)
+   {
+   if (v.ACTIVE) out << v.CRD;
+   else out << "none";
+
+   return(out);
+   }
+
 class miniprojclip
    {
    public:
 
    //! default constructor
-   miniprojclip() {ENABLED=FALSE;}
+   miniprojclip()
+      {
+      ENABLED=FALSE;
+
+      CLIPALL=TRUE;
+      SLOT=0;
+
+      P=N=miniv3d(0.0);
+      }
 
    //! constructor
-   miniprojclip(const miniv3d &p,const miniv3d &n) {ENABLED=TRUE; P=p; N=n;}
+   miniprojclip(const miniv3d &p,const miniv3d &n)
+      {
+      ENABLED=TRUE;
+
+      CLIPALL=TRUE;
+      SLOT=0;
+
+      P=p;
+      N=n;
+      }
+
+   //! constructor
+   miniprojclip(const miniv3d &p,const miniv3d &n,unsigned int slot)
+      {
+      ENABLED=TRUE;
+
+      CLIPALL=FALSE;
+      SLOT=slot;
+
+      P=p;
+      N=n;
+      }
 
    //! destructor
    ~miniprojclip() {}
 
    BOOLINT ENABLED;
+   BOOLINT CLIPALL;
+   unsigned int SLOT;
    miniv3d P,N;
    };
 
@@ -37,7 +146,7 @@ class miniproj
    virtual ~miniproj();
 
    // dynamic coordinate array
-   typedef minidyna<miniv3d,8> dynacoord;
+   typedef minidyna<miniprojcrd,8> dynacoord;
 
    // dynamic clip plane array
    typedef minidyna<miniprojclip,6> dynaclip;
@@ -107,8 +216,14 @@ class miniproj
    //! add clipping plane
    void addclip(int num,const miniv3d &p,const miniv3d &n);
 
+   //! add clipping plane to specific slot
+   void addclip(int num,const miniv3d &p,const miniv3d &n,unsigned int slot);
+
    //! delete clipping plane
    void delclip(int num);
+
+   //! clear clipping planes
+   void clearclip();
 
    protected:
 

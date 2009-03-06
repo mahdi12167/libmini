@@ -113,6 +113,10 @@ class minidyna
          }
       }
 
+   //! grow array size
+   void growsize(unsigned int size)
+      {if (size>SIZE) setsize(size);}
+
    //! set null!
    void setnull() {setsize(0);}
 
