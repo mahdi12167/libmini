@@ -1016,8 +1016,8 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
-// clipping subcase #1AS
-void miniproj::clip1AS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+// clipping subcase #1As
+void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                        const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
@@ -1046,8 +1046,8 @@ void miniproj::clip1AS(const miniv3d &v1,const double c1,const dynacoord &a1,con
    projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
-// clipping subcase #1BS
-void miniproj::clip1BS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+// clipping subcase #1Bs
+void miniproj::clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                        const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
@@ -1076,8 +1076,8 @@ void miniproj::clip1BS(const miniv3d &v1,const double c1,const dynacoord &a1,con
    proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
-// clipping subcase #2S
-void miniproj::clip2S(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+// clipping subcase #2s
+void miniproj::clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                       const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
@@ -1146,24 +1146,24 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp); break;
 
       // one corner needs to be clipped (leaving a prism)
-      case 1: clip1AS(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 2: clip1AS(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 4: clip1AS(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 8: clip1AS(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 1: clip1As(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 2: clip1As(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 4: clip1As(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 8: clip1As(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
 
       // three corners need to be clipped (leaving a tetrahedron)
-      case 14: clip1BS(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 13: clip1BS(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 11: clip1BS(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 7: clip1BS(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 14: clip1Bs(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 13: clip1Bs(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 11: clip1Bs(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 7: clip1Bs(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
 
       // two corners need to be clipped (leaving a prism)
-      case 3: clip2S(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 5: clip2S(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 6: clip2S(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 9: clip2S(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
-      case 10: clip2S(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
-      case 12: clip2S(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp,slot); break;
+      case 3: clip2s(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 5: clip2s(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 6: clip2s(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 9: clip2s(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 10: clip2s(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 12: clip2s(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp,slot); break;
       }
    }
 

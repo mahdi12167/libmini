@@ -379,7 +379,7 @@ class miniproj
               const miniv3d &eye,const miniv3d &dir,
               const double nearp);
 
-   void clip1AS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+   void clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                 const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                 const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
@@ -389,7 +389,7 @@ class miniproj
                 const double nearp,
                 const unsigned int slot);
 
-   void clip1BS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+   void clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                 const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                 const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
@@ -399,7 +399,7 @@ class miniproj
                 const double nearp,
                 const unsigned int slot);
 
-   void clip2S(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+   void clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
                const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
