@@ -1016,6 +1016,100 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
+// clipping subcase #1AS
+void miniproj::clip1AS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                       const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                       const unsigned int clipn,
+                       const miniv3d &col,
+                       const miniv3d &eye,const miniv3d &dir,
+                       const double nearp,
+                       const unsigned int slot)
+   {
+   miniv3d p1,p2,p3;
+   float pc1,pc2,pc3;
+   dynacoord pa1,pa2,pa3;
+
+   p1=(d2*v1+d1*v2)/(d1+d2);
+   pc1=(d2*c1+d1*c2)/(d1+d2);
+   pa1=(d2*a1+d1*a2)/(d1+d2);
+
+   p2=(d3*v1+d1*v3)/(d1+d3);
+   pc2=(d3*c1+d1*c3)/(d1+d3);
+   pa2=(d3*a1+d1*a3)/(d1+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+   pa3=(d4*a1+d1*a4)/(d1+d4);
+
+   projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+   }
+
+// clipping subcase #1BS
+void miniproj::clip1BS(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                       const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                       const unsigned int clipn,
+                       const miniv3d &col,
+                       const miniv3d &eye,const miniv3d &dir,
+                       const double nearp,
+                       const unsigned int slot)
+   {
+   miniv3d p1,p2,p3;
+   float pc1,pc2,pc3;
+   dynacoord pa1,pa2,pa3;
+
+   p1=(d2*v1+d1*v2)/(d1+d2);
+   pc1=(d2*c1+d1*c2)/(d1+d2);
+   pa1=(d2*a1+d1*a2)/(d1+d2);
+
+   p2=(d3*v1+d1*v3)/(d1+d3);
+   pc2=(d3*c1+d1*c3)/(d1+d3);
+   pa2=(d3*a1+d1*a3)/(d1+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+   pa3=(d4*a1+d1*a4)/(d1+d4);
+
+   proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+   }
+
+// clipping subcase #2S
+void miniproj::clip2S(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
+                      const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
+                      const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
+                      const miniv3d &v4,const double c4,const dynacoord &a4,const double d4,
+                      const unsigned int clipn,
+                      const miniv3d &col,
+                      const miniv3d &eye,const miniv3d &dir,
+                      const double nearp,
+                      const unsigned int slot)
+   {
+   miniv3d p1,p2,p3,p4;
+   float pc1,pc2,pc3,pc4;
+   dynacoord pa1,pa2,pa3,pa4;
+
+   p1=(d3*v1+d1*v3)/(d1+d3);
+   pc1=(d3*c1+d1*c3)/(d1+d3);
+   pa1=(d3*a1+d1*a3)/(d1+d3);
+
+   p2=(d3*v2+d2*v3)/(d2+d3);
+   pc2=(d3*c2+d2*c3)/(d2+d3);
+   pa2=(d3*a2+d2*a3)/(d2+d3);
+
+   p3=(d4*v1+d1*v4)/(d1+d4);
+   pc3=(d4*c1+d1*c4)/(d1+d4);
+   pa3=(d4*a1+d1*a4)/(d1+d4);
+
+   p4=(d4*v2+d2*v4)/(d2+d4);
+   pc4=(d4*c2+d2*c4)/(d2+d4);
+   pa4=(d4*a2+d2*a4)/(d2+d4);
+
+   projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,clipn,col,eye,dir,nearp);
+   }
+
 // clip a particular slot of a tetrahedron
 void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
                     const miniv3d &v2,const double c2,const dynacoord &a2,
@@ -1028,7 +1122,49 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
                     const double nearp,
                     const unsigned int slot)
    {
-   //!!
+   int ff;
+
+   double d1,d2,d3,d4;
+
+   d1=n*(v1-p);
+   d2=n*(v2-p);
+   d3=n*(v3-p);
+   d4=n*(v4-p);
+
+   ff=0;
+
+   // calculate invisible corners
+   if (d1<0.0) ff|=1;
+   if (d2<0.0) ff|=2;
+   if (d3<0.0) ff|=4;
+   if (d4<0.0) ff|=8;
+
+   // determine clipping type
+   switch (ff)
+      {
+      // no clipping
+      case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp); break;
+
+      // one corner needs to be clipped (leaving a prism)
+      case 1: clip1AS(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 2: clip1AS(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 4: clip1AS(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 8: clip1AS(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+
+      // three corners need to be clipped (leaving a tetrahedron)
+      case 14: clip1BS(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 13: clip1BS(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 11: clip1BS(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 7: clip1BS(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+
+      // two corners need to be clipped (leaving a prism)
+      case 3: clip2S(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 5: clip2S(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 6: clip2S(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 9: clip2S(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 10: clip2S(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 12: clip2S(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp,slot); break;
+      }
    }
 
 // get modelview matrix
