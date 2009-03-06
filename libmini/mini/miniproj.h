@@ -379,6 +379,8 @@ class miniproj
               const miniv3d &eye,const miniv3d &dir,
               const double nearp);
 
+   inline BOOLINT deact(const unsigned int slot,dynacoord &a);
+
    void clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                 const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
