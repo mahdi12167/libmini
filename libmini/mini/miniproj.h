@@ -194,6 +194,9 @@ class miniproj
              const double nearp,
              const double clipf=0.0);
 
+   //! map slot to brickid
+   BOOLINT brickid(const unsigned int slot,const minivals &vals,unsigned int *id);
+
    //! de-initialize projection state
    virtual void exitproj();
 
@@ -265,8 +268,19 @@ class miniproj
              const miniv3d &eye,const miniv3d &dir,
              const double nearp);
 
+   void clip(const miniv3d &v1,const double c1,const dynacoord &a1,
+             const miniv3d &v2,const double c2,const dynacoord &a2,
+             const miniv3d &v3,const double c3,const dynacoord &a3,
+             const miniv3d &v4,const double c4,const dynacoord &a4,
+             const unsigned int clipn,
+             const miniv3d &p,const miniv3d &n,
+             const miniv3d &col,
+             const miniv3d &eye,const miniv3d &dir,
+             const double nearp,
+             const unsigned int slot);
+
    inline void map(const unsigned int which,
-                   const unsigned int maxslots,const minivals vals,
+                   const unsigned int maxslots,const minivals &vals,
                    dynacoord &a);
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const;

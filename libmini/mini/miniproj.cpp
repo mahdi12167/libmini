@@ -65,9 +65,33 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
    clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,0,p,dir,col,eye,dir,nearp);
    }
 
+// map slot to brickid
+BOOLINT miniproj::brickid(const unsigned int slot,const minivals &vals,unsigned int *id)
+   {
+   unsigned int i;
+
+   unsigned int size;
+
+   BOOLINT active;
+
+   size=vals.getsize();
+
+   active=FALSE;
+
+   // the last element mapping to the same slot takes precedence
+   for (i=0; i<size; i++)
+      if (vals[i].slot==slot)
+         {
+         active=TRUE;
+         *id=vals[i].brickid;
+         }
+
+   return(active);
+   }
+
 // map minivals to dynacoord
 void miniproj::map(const unsigned int which,
-                   const unsigned int maxslots,const minivals vals,
+                   const unsigned int maxslots,const minivals &vals,
                    dynacoord &a)
    {
    unsigned int i;
@@ -618,7 +642,7 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
       if (CLIP[n].CLIPALL)
          clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp);
       else
-         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp); //!! clip slot only
+         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp,CLIP[n].SLOT);
    else
       projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
@@ -990,6 +1014,21 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       case 10: clip2(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
       case 12: clip2(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp); break;
       }
+   }
+
+// clip a particular slot of a tetrahedron
+void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
+                    const miniv3d &v2,const double c2,const dynacoord &a2,
+                    const miniv3d &v3,const double c3,const dynacoord &a3,
+                    const miniv3d &v4,const double c4,const dynacoord &a4,
+                    const unsigned int clipn,
+                    const miniv3d &p,const miniv3d &n,
+                    const miniv3d &col,
+                    const miniv3d &eye,const miniv3d &dir,
+                    const double nearp,
+                    const unsigned int slot)
+   {
+   //!!
    }
 
 // get modelview matrix
