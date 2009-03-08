@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#define TEST //!!
+
 #undef OPENGLTEST // enable this to perform an OpenGL test
 
 #include <mini/minibase.h>
@@ -9,6 +11,11 @@
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
+#endif
+
+#ifdef TEST
+#include <mini/minimesh.h>
+#include <mini/minibspt.h>
 #endif
 
 static int winwidth,winheight,winid;
@@ -106,8 +113,36 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
+#ifndef TEST
+
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
+
+#else
+
+   minihedron h1=minihedron(miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(1,0,miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
+   minihedron h2=minihedron(miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(2,1,miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
+
+   minimesh mesh;
+
+   mesh.append(h1);
+   mesh.append(h2);
+
+   std::cout << mesh;
+
+   minibsptree bspt;
+
+   bspt.insert(mesh);
+
+   minimesh sorted;
+
+   sorted=bspt.extract();
+
+   std::cout << bspt;
+
+   std::cout << sorted;
+
+#endif
 
    // end of test code
 
