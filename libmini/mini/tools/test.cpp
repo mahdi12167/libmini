@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#define TEST //!!
+#define MESHTEST //!!
 
 #undef OPENGLTEST // enable this to perform an OpenGL test
 
@@ -13,7 +13,7 @@
 #include <GLUT/glut.h>
 #endif
 
-#ifdef TEST
+#ifdef MESHTEST
 #include <mini/minimesh.h>
 #include <mini/minibspt.h>
 #endif
@@ -83,6 +83,46 @@ void keyboardfunc(unsigned char key,int x,int y)
       }
    }
 
+#ifdef MESHTEST
+
+void addhex(miniv3d midpoint,double size,BOOLINT flip,unsigned int slot,unsigned int brickid,minimesh *mesh)
+   {
+   miniv3d vtx[8];
+   miniv3d crd1,crd2;
+
+   crd1=midpoint-size/2.0*miniv3d(1,1,1);
+   crd2=midpoint+size/2.0*miniv3d(1,1,1);
+
+   vtx[0]=miniv3d(crd1.x,crd1.y,crd1.z);
+   vtx[1]=miniv3d(crd1.x,crd2.y,crd1.z);
+   vtx[2]=miniv3d(crd2.x,crd2.y,crd1.z);
+   vtx[3]=miniv3d(crd2.x,crd1.y,crd1.z);
+
+   vtx[4]=miniv3d(crd1.x,crd1.y,crd2.z);
+   vtx[5]=miniv3d(crd1.x,crd2.y,crd2.z);
+   vtx[6]=miniv3d(crd2.x,crd2.y,crd2.z);
+   vtx[7]=miniv3d(crd2.x,crd1.y,crd2.z);
+
+   if (!flip)
+      {
+      mesh->append(minihedron(vtx[0],vtx[1],vtx[3],vtx[4],slot,brickid));
+      mesh->append(minihedron(vtx[2],vtx[3],vtx[1],vtx[6],slot,brickid));
+      mesh->append(minihedron(vtx[7],vtx[6],vtx[4],vtx[3],slot,brickid));
+      mesh->append(minihedron(vtx[5],vtx[4],vtx[6],vtx[1],slot,brickid));
+      mesh->append(minihedron(vtx[3],vtx[1],vtx[6],vtx[4],slot,brickid));
+      }
+   else
+      {
+      mesh->append(minihedron(vtx[3],vtx[0],vtx[2],vtx[7],slot,brickid));
+      mesh->append(minihedron(vtx[1],vtx[2],vtx[0],vtx[5],slot,brickid));
+      mesh->append(minihedron(vtx[4],vtx[7],vtx[5],vtx[0],slot,brickid));
+      mesh->append(minihedron(vtx[6],vtx[5],vtx[7],vtx[2],slot,brickid));
+      mesh->append(minihedron(vtx[0],vtx[5],vtx[2],vtx[7],slot,brickid));
+      }
+   }
+
+#endif
+
 int main(int argc,char *argv[])
    {
    if (argc!=1)
@@ -113,34 +153,28 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-#ifndef TEST
+#ifndef MESHTEST
 
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
 
 #else
 
-   minihedron h1=minihedron(miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(1,0,miniv3d(0,0,0),miniv3d(1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
-   minihedron h2=minihedron(miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1),minival(2,1,miniv3d(0.25,0,0),miniv3d(-1,0,0),miniv3d(0,1,0),miniv3d(0,0,1)));
-
    minimesh mesh;
-
-   mesh.append(h1);
-   mesh.append(h2);
-
+   addhex(miniv3d(-1,-1,0),1,TRUE,1,0,&mesh);
+   addhex(miniv3d(1,-1,0),1,FALSE,1,0,&mesh);
+   addhex(miniv3d(-1,1,0),1,FALSE,1,0,&mesh);
+   addhex(miniv3d(1,1,0),1,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
-
-   bspt.insert(mesh);
-
-   minimesh sorted;
-
-   sorted=bspt.extract();
-
+   minimesh unsorted;
+   bspt.insertbbox(mesh);
+   unsorted=bspt.extract();
    std::cout << bspt;
+   std::cout << unsorted;
 
-   std::cout << sorted;
+   std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
 
 #endif
 
