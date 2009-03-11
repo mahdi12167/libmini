@@ -85,13 +85,18 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 #ifdef MESHTEST
 
-void addhex(miniv3d midpoint,double size,BOOLINT flip,unsigned int slot,unsigned int brickid,minimesh *mesh)
+void addhex(miniv3d midpoint,double size,miniv3d offset,BOOLINT flip,
+            unsigned int slot,unsigned int brickid,
+            minimesh *mesh)
    {
+   int i;
+
    miniv3d vtx[8];
    miniv3d crd1,crd2;
+   miniv3d mtx[3];
 
-   crd1=midpoint-size/2.0*miniv3d(1,1,1);
-   crd2=midpoint+size/2.0*miniv3d(1,1,1);
+   crd1=midpoint-size/2.0*miniv3d(1.0);
+   crd2=midpoint+size/2.0*miniv3d(1.0);
 
    vtx[0]=miniv3d(crd1.x,crd1.y,crd1.z);
    vtx[1]=miniv3d(crd1.x,crd2.y,crd1.z);
@@ -102,6 +107,14 @@ void addhex(miniv3d midpoint,double size,BOOLINT flip,unsigned int slot,unsigned
    vtx[5]=miniv3d(crd1.x,crd2.y,crd2.z);
    vtx[6]=miniv3d(crd2.x,crd2.y,crd2.z);
    vtx[7]=miniv3d(crd2.x,crd1.y,crd2.z);
+
+   rot_mtx(mtx,miniv3d(0.0,0.0,1.0),offset);
+
+   for (i=0; i<8; i++)
+      {
+      vtx[i]+=miniv3d(0.0,0.0,offset.getlength());
+      vtx[i]=miniv3d(mtx[0]*vtx[i],mtx[1]*vtx[i],mtx[2]*vtx[i]);
+      }
 
    if (!flip)
       {
@@ -161,10 +174,11 @@ int main(int argc,char *argv[])
 #else
 
    minimesh mesh;
-   addhex(miniv3d(-1,-1,0),1,TRUE,1,0,&mesh);
-   addhex(miniv3d(1,-1,0),1,FALSE,1,0,&mesh);
-   addhex(miniv3d(-1,1,0),1,FALSE,1,0,&mesh);
-   addhex(miniv3d(1,1,0),1,TRUE,1,0,&mesh);
+   miniv3d offset(-5.4E6,1.3E6,2.9E6);
+   addhex(miniv3d(-1.0,-1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
+   addhex(miniv3d(1.0,-1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
+   addhex(miniv3d(-1.0,1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
+   addhex(miniv3d(1.0,1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
