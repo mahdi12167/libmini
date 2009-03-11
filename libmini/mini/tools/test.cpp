@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#define MESHTEST //!!
+#undef MESHTEST
 
 #undef OPENGLTEST // enable this to perform an OpenGL test
 
@@ -14,6 +14,7 @@
 #endif
 
 #ifdef MESHTEST
+#include <mini/minicoord.h>
 #include <mini/minimesh.h>
 #include <mini/minibspt.h>
 #endif
@@ -85,52 +86,45 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 #ifdef MESHTEST
 
-void addhex(miniv3d midpoint,double size,miniv3d offset,BOOLINT flip,
+void addhex(miniv3d midpoint,double size,minicoord crd,BOOLINT flip,
             unsigned int slot,unsigned int brickid,
             minimesh *mesh)
    {
    int i;
 
-   miniv3d vtx[8];
+   minicoord vtx[8];
    miniv3d crd1,crd2;
-   miniv3d mtx[3];
 
-   crd1=midpoint-size/2.0*miniv3d(1.0);
-   crd2=midpoint+size/2.0*miniv3d(1.0);
+   crd1=midpoint-miniv3d(size/2.0);
+   crd2=midpoint+miniv3d(size/2.0);
 
-   vtx[0]=miniv3d(crd1.x,crd1.y,crd1.z);
-   vtx[1]=miniv3d(crd1.x,crd2.y,crd1.z);
-   vtx[2]=miniv3d(crd2.x,crd2.y,crd1.z);
-   vtx[3]=miniv3d(crd2.x,crd1.y,crd1.z);
+   vtx[0]=crd; vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
+   vtx[1]=crd; vtx[1].vec+=miniv4d(crd1.x,crd2.y,crd1.z);
+   vtx[2]=crd; vtx[2].vec+=miniv4d(crd2.x,crd2.y,crd1.z);
+   vtx[3]=crd; vtx[3].vec+=miniv4d(crd2.x,crd1.y,crd1.z);
 
-   vtx[4]=miniv3d(crd1.x,crd1.y,crd2.z);
-   vtx[5]=miniv3d(crd1.x,crd2.y,crd2.z);
-   vtx[6]=miniv3d(crd2.x,crd2.y,crd2.z);
-   vtx[7]=miniv3d(crd2.x,crd1.y,crd2.z);
+   vtx[4]=crd; vtx[4].vec+=miniv4d(crd1.x,crd1.y,crd2.z);
+   vtx[5]=crd; vtx[5].vec+=miniv4d(crd1.x,crd2.y,crd2.z);
+   vtx[6]=crd; vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
+   vtx[7]=crd; vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
-   rot_mtx(mtx,miniv3d(0.0,0.0,1.0),offset);
-
-   for (i=0; i<8; i++)
-      {
-      vtx[i]+=miniv3d(0.0,0.0,offset.getlength());
-      vtx[i]=miniv3d(mtx[0]*vtx[i],mtx[1]*vtx[i],mtx[2]*vtx[i]);
-      }
+   for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 
    if (!flip)
       {
-      mesh->append(minihedron(vtx[0],vtx[1],vtx[3],vtx[4],slot,brickid));
-      mesh->append(minihedron(vtx[2],vtx[3],vtx[1],vtx[6],slot,brickid));
-      mesh->append(minihedron(vtx[7],vtx[6],vtx[4],vtx[3],slot,brickid));
-      mesh->append(minihedron(vtx[5],vtx[4],vtx[6],vtx[1],slot,brickid));
-      mesh->append(minihedron(vtx[3],vtx[1],vtx[6],vtx[4],slot,brickid));
+      mesh->append(minihedron(vtx[0].vec,vtx[1].vec,vtx[3].vec,vtx[4].vec,slot,brickid));
+      mesh->append(minihedron(vtx[2].vec,vtx[3].vec,vtx[1].vec,vtx[6].vec,slot,brickid));
+      mesh->append(minihedron(vtx[7].vec,vtx[6].vec,vtx[4].vec,vtx[3].vec,slot,brickid));
+      mesh->append(minihedron(vtx[5].vec,vtx[4].vec,vtx[6].vec,vtx[1].vec,slot,brickid));
+      mesh->append(minihedron(vtx[3].vec,vtx[1].vec,vtx[6].vec,vtx[4].vec,slot,brickid));
       }
    else
       {
-      mesh->append(minihedron(vtx[3],vtx[0],vtx[2],vtx[7],slot,brickid));
-      mesh->append(minihedron(vtx[1],vtx[2],vtx[0],vtx[5],slot,brickid));
-      mesh->append(minihedron(vtx[4],vtx[7],vtx[5],vtx[0],slot,brickid));
-      mesh->append(minihedron(vtx[6],vtx[5],vtx[7],vtx[2],slot,brickid));
-      mesh->append(minihedron(vtx[0],vtx[5],vtx[2],vtx[7],slot,brickid));
+      mesh->append(minihedron(vtx[3].vec,vtx[0].vec,vtx[2].vec,vtx[7].vec,slot,brickid));
+      mesh->append(minihedron(vtx[1].vec,vtx[2].vec,vtx[0].vec,vtx[5].vec,slot,brickid));
+      mesh->append(minihedron(vtx[4].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,slot,brickid));
+      mesh->append(minihedron(vtx[6].vec,vtx[5].vec,vtx[7].vec,vtx[2].vec,slot,brickid));
+      mesh->append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[7].vec,slot,brickid));
       }
    }
 
@@ -174,11 +168,16 @@ int main(int argc,char *argv[])
 #else
 
    minimesh mesh;
-   miniv3d offset(-5.4E6,1.3E6,2.9E6);
-   addhex(miniv3d(-1.0,-1.0,0.0),2.0,offset,TRUE,1,0,&mesh);
-   addhex(miniv3d(1.0,-1.0,0.0),2.0,offset,FALSE,1,0,&mesh);
-   addhex(miniv3d(-1.0,1.0,0.0),2.0,offset,FALSE,1,0,&mesh);
-   addhex(miniv3d(1.0,1.0,0.0),2.0,offset,TRUE,1,0,&mesh);
+   double gfnx=631433.0;
+   double gfny=2361214.0;
+   double gfnh=1000.0;
+   int gfnz=4;
+   double brick=1.0;
+   minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,3);
+   addhex(brick*miniv3d(-1.0,-1.0,0.0),2.0*brick,crd,TRUE,1,0,&mesh);
+   addhex(brick*miniv3d(1.0,-1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
+   addhex(brick*miniv3d(-1.0,1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
+   addhex(brick*miniv3d(1.0,1.0,0.0),2.0*brick,crd,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
