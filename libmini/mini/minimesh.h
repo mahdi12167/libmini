@@ -77,6 +77,39 @@ inline std::ostream& operator << (std::ostream &out,const minival &v)
 
 typedef minidyna<minival,3> minivals;
 
+class minimapval
+   {
+   public:
+
+   //! default constructor
+   minimapval()
+      {
+      ACTIVE=FALSE;
+      MAP2=0;
+      BRICKID=0;
+      DIRTY=FALSE;
+      }
+
+   //! constructor
+   minimapval(const unsigned int to,const unsigned int id)
+      {
+      ACTIVE=TRUE;
+      MAP2=to;
+      BRICKID=id;
+      DIRTY=FALSE;
+      }
+
+   //! destructor
+   ~minimapval() {}
+
+   BOOLINT ACTIVE;
+   unsigned int MAP2;
+   unsigned int BRICKID;
+   BOOLINT DIRTY;
+   };
+
+typedef minidyna<minimapval,8> minivalmapper;
+
 class minihedron
    {
    public:
