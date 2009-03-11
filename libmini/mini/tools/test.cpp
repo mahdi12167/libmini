@@ -175,10 +175,10 @@ int main(int argc,char *argv[])
 
    minimesh mesh;
    miniv3d offset(-5.4E6,1.3E6,2.9E6);
-   addhex(miniv3d(-1.0,-1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
-   addhex(miniv3d(1.0,-1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
-   addhex(miniv3d(-1.0,1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
-   addhex(miniv3d(1.0,1.0,0.0),1.0,offset,TRUE,1,0,&mesh);
+   addhex(miniv3d(-1.0,-1.0,0.0),2.0,offset,TRUE,1,0,&mesh);
+   addhex(miniv3d(1.0,-1.0,0.0),2.0,offset,FALSE,1,0,&mesh);
+   addhex(miniv3d(-1.0,1.0,0.0),2.0,offset,FALSE,1,0,&mesh);
+   addhex(miniv3d(1.0,1.0,0.0),2.0,offset,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
