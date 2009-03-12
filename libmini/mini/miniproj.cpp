@@ -109,7 +109,7 @@ void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
 // reorganize mapping from minivals to dynacoord
 void miniproj::remap(const minivals &vals)
    {
-   ERRORMSG(); //!!
+   ERRORMSG(); //!! remap to active slots
    }
 
 // map minivals to dynacoord
@@ -123,12 +123,12 @@ void miniproj::map(const unsigned int which,
    unsigned int slot;
 
    size=vals.getsize();
-   a.setsize(maxslots,miniprojcrd());
+   a.setsize(maxslots,miniprojcrd()); //!! use active slots
 
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
       {
-      slot=vals[i].slot;
+      slot=vals[i].slot; //!! use mapper
       if (slot>=maxslots) continue;
 
       switch (which)
@@ -154,7 +154,7 @@ void miniproj::proj(const miniv3d &v1,const double c1,
    dynacoord a1,a2,a3,a4;
 
    if (ACTIVE==0) initmap(maxslots,vals);
-   else remap(vals);
+   else remap(vals); //!! notify dirty brickids
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
@@ -184,7 +184,7 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    dynacoord a1,a2,a3,a4;
 
    if (ACTIVE==0) initmap(maxslots,vals);
-   else remap(vals);
+   else remap(vals); //!! notify dirty brickids
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
