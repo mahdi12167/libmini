@@ -113,9 +113,32 @@ class minidyna
          }
       }
 
+   //! set array size with initialization
+   void setsize(unsigned int size,const Item &c)
+      {
+      unsigned int i;
+
+      setsize(size);
+
+      for (i=0; i<SIZE; i++) set(i,c);
+      }
+
    //! grow array size
    void growsize(unsigned int size)
       {if (size>SIZE) setsize(size);}
+
+   //! grow array size with initialization of grown part
+   void growsize(unsigned int size,const Item &c)
+      {
+      unsigned int i;
+
+      unsigned int s;
+
+      s=SIZE;
+      growsize(size);
+
+      for (i=s; i<SIZE; i++) set(i,c);
+      }
 
    //! set null!
    void setnull() {setsize(0);}

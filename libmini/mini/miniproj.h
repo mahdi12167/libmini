@@ -210,6 +210,9 @@ class miniproj
    void setplane(BOOLINT plane,
                  const miniv3d &p=miniv3d(0.0),const miniv3d &n=miniv3d(0.0));
 
+   //! enable remapping of of active slots
+   void setactive(const unsigned int active);
+
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
 
@@ -237,6 +240,9 @@ class miniproj
 
    BOOLINT PLANEMODE;
    miniv3d PLANEPNT,PLANENRM;
+
+   minivalmapper MAP;
+   unsigned int ACTIVE;
 
    BOOLINT ZCLIP;
    float ZNEAR,ZFAR;
@@ -278,6 +284,9 @@ class miniproj
              const miniv3d &eye,const miniv3d &dir,
              const double nearp,
              const unsigned int slot);
+
+   void initmap(const unsigned int maxslots,const minivals &vals);
+   void remap(const minivals &vals);
 
    inline void map(const unsigned int which,
                    const unsigned int maxslots,const minivals &vals,

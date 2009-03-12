@@ -18,6 +18,9 @@ miniproj::miniproj()
    PLANEMODE=FALSE;
    PLANEPNT=PLANENRM=miniv3d(0.0);
 
+   ACTIVE=0;
+   MAP=minivalmapper();
+
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
 
@@ -89,6 +92,26 @@ BOOLINT miniproj::brickid(const unsigned int slot,const minivals &vals,unsigned 
    return(active);
    }
 
+// init mapping from minivals to dynacoord
+void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
+   {
+   unsigned int i;
+
+   unsigned int id;
+
+   MAP.setsize(maxslots);
+
+   for (i=0; i<maxslots; i++)
+      if (brickid(i,vals,&id)) MAP[i]=minimapval(i,id);
+      else MAP[i]=minimapval();
+   }
+
+// reorganize mapping from minivals to dynacoord
+void miniproj::remap(const minivals &vals)
+   {
+   ERRORMSG(); //!!
+   }
+
 // map minivals to dynacoord
 void miniproj::map(const unsigned int which,
                    const unsigned int maxslots,const minivals &vals,
@@ -100,7 +123,7 @@ void miniproj::map(const unsigned int which,
    unsigned int slot;
 
    size=vals.getsize();
-   a.setsize(maxslots);
+   a.setsize(maxslots,miniprojcrd());
 
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
@@ -130,6 +153,9 @@ void miniproj::proj(const miniv3d &v1,const double c1,
    {
    dynacoord a1,a2,a3,a4;
 
+   if (ACTIVE==0) initmap(maxslots,vals);
+   else remap(vals);
+
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
    map(3,maxslots,vals,a3);
@@ -156,6 +182,9 @@ void miniproj::clip(const miniv3d &v1,const double c1,
                     const double clipf)
    {
    dynacoord a1,a2,a3,a4;
+
+   if (ACTIVE==0) initmap(maxslots,vals);
+   else remap(vals);
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
@@ -1303,6 +1332,13 @@ void miniproj::setproj(float delta)
 BOOLINT miniproj::getproj()
    {return(PROJMODE);}
 
+// enable remapping of of active slots
+void miniproj::setactive(const unsigned int active)
+   {
+   ACTIVE=active;
+   MAP.setsize(active,minimapval());
+   }
+
 // enable cutting plane mode
 void miniproj::setplane(BOOLINT plane,
                         const miniv3d &p,const miniv3d &n)
@@ -1367,21 +1403,21 @@ void miniproj::exitzclip()
 // add clipping plane
 void miniproj::addclip(int num,const miniv3d &p,const miniv3d &n)
    {
-   CLIP.growsize(num+1);
+   CLIP.growsize(num+1,miniprojclip());
    CLIP[num]=miniprojclip(p,n);
    }
 
 // add clipping plane to specific slot
 void miniproj::addclip(int num,const miniv3d &p,const miniv3d &n,unsigned int slot)
    {
-   CLIP.growsize(num+1);
+   CLIP.growsize(num+1,miniprojclip());
    CLIP[num]=miniprojclip(p,n,slot);
    }
 
 // delete clipping plane
 void miniproj::delclip(int num)
    {
-   CLIP.growsize(num+1);
+   CLIP.growsize(num+1,miniprojclip());
    CLIP[num]=miniprojclip();
    }
 
