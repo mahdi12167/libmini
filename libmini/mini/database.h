@@ -132,13 +132,13 @@ class databuf
    //! copy data from buffer
    void copy(databuf *buf);
 
-   //! duplicate data from buffer
+   //! duplicate data from buffer (by allocating memory)
    void duplicate(databuf *buf);
 
    //! clear buffer
    void clear(float value=0.0f);
 
-   //! reset buffer
+   //! reset buffer (without releasing memory)
    void reset();
 
    //! release buffer

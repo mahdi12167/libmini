@@ -18,70 +18,70 @@ class miniprojcrd
    //! default constructor
    miniprojcrd()
       {
-      ACTIVE=FALSE;
-      CRD=miniv3d(0.0);
+      active=FALSE;
+      crd=miniv3d(0.0);
       }
 
    //! constructor
-   miniprojcrd(const miniv3d &crd)
+   miniprojcrd(const miniv3d &c)
       {
-      ACTIVE=TRUE;
-      CRD=crd;
+      active=TRUE;
+      crd=c;
       }
 
    //! destructor
    ~miniprojcrd() {}
 
-   BOOLINT ACTIVE;
-   miniv3d CRD;
+   BOOLINT active;
+   miniv3d crd;
    };
 
 //! add operator
 inline miniprojcrd operator + (const miniprojcrd &a,const miniprojcrd &b)
    {
-   if (a.ACTIVE && b.ACTIVE) return(a.CRD+b.CRD);
+   if (a.active && b.active) return(a.crd+b.crd);
    else return(miniprojcrd());
    }
 
 //! sub operator
 inline miniprojcrd operator - (const miniprojcrd &a,const miniprojcrd &b)
    {
-   if (a.ACTIVE && b.ACTIVE) return(a.CRD-b.CRD);
+   if (a.active && b.active) return(a.crd-b.crd);
    else return(miniprojcrd());
    }
 
 //! neg operator
 inline miniprojcrd operator - (const miniprojcrd &v)
    {
-   if (v.ACTIVE) return(-v.CRD);
+   if (v.active) return(-v.crd);
    else return(miniprojcrd());
    }
 
 //! mul operator
 inline miniprojcrd operator * (const double a,const miniprojcrd &b)
    {
-   if (b.ACTIVE) return(a*b.CRD);
+   if (b.active) return(a*b.crd);
    else return(miniprojcrd());
    }
 
 //! mul operator
 inline miniprojcrd operator * (const miniprojcrd &a,const double b)
    {
-   if (a.ACTIVE) return(a.CRD*b);
+   if (a.active) return(a.crd*b);
    else return(miniprojcrd());
    }
 
 //! div operator
 inline miniprojcrd operator / (const miniprojcrd &a,const double b)
    {
-   if (a.ACTIVE) return(a.CRD/b);
+   if (a.active) return(a.crd/b);
    else return(miniprojcrd());
    }
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const miniprojcrd &v)
    {
-   if (v.ACTIVE) out << v.CRD;
+   if (v.active) out << v.crd;
    else out << "none";
 
    return(out);
@@ -94,45 +94,45 @@ class miniprojclip
    //! default constructor
    miniprojclip()
       {
-      ENABLED=FALSE;
+      enabled=FALSE;
 
-      CLIPALL=TRUE;
-      SLOT=0;
+      clipall=TRUE;
+      slot=0;
 
-      P=N=miniv3d(0.0);
+      pos=nrm=miniv3d(0.0);
       }
 
    //! constructor
    miniprojclip(const miniv3d &p,const miniv3d &n)
       {
-      ENABLED=TRUE;
+      enabled=TRUE;
 
-      CLIPALL=TRUE;
-      SLOT=0;
+      clipall=TRUE;
+      slot=0;
 
-      P=p;
-      N=n;
+      pos=p;
+      nrm=n;
       }
 
    //! constructor
-   miniprojclip(const miniv3d &p,const miniv3d &n,unsigned int slot)
+   miniprojclip(const miniv3d &p,const miniv3d &n,unsigned int s)
       {
-      ENABLED=TRUE;
+      enabled=TRUE;
 
-      CLIPALL=FALSE;
-      SLOT=slot;
+      clipall=FALSE;
+      slot=s;
 
-      P=p;
-      N=n;
+      pos=p;
+      nrm=n;
       }
 
    //! destructor
    ~miniprojclip() {}
 
-   BOOLINT ENABLED;
-   BOOLINT CLIPALL;
-   unsigned int SLOT;
-   miniv3d P,N;
+   BOOLINT enabled;
+   BOOLINT clipall;
+   unsigned int slot;
+   miniv3d pos,nrm;
    };
 
 class miniproj
@@ -210,8 +210,11 @@ class miniproj
    void setplane(BOOLINT plane,
                  const miniv3d &p=miniv3d(0.0),const miniv3d &n=miniv3d(0.0));
 
+   //! get number of active slots
+   unsigned int getactive(const unsigned int maxslots,const minimesh &mesh);
+
    //! enable remapping of of active slots
-   void setactive(const unsigned int active);
+   void setactive(const unsigned int active=0);
 
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);

@@ -665,13 +665,13 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
    unsigned int n;
 
    for (n=clipn; n<CLIP.getsize(); n++)
-      if (CLIP[n].ENABLED) break;
+      if (CLIP[n].enabled) break;
 
    if (n<CLIP.getsize())
-      if (CLIP[n].CLIPALL)
-         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp);
+      if (CLIP[n].clipall)
+         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp);
       else
-         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].P,CLIP[n].N,col,eye,dir,nearp,CLIP[n].SLOT);
+         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp,CLIP[n].slot);
    else
       projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
@@ -688,7 +688,7 @@ void miniproj::coords(const double c,const dynacoord &a,const double d)
    texcoord(c,c,d);
 
    for (i=0; i<size; i++)
-      if (a[i].ACTIVE) multitexcoord(i+1,a[i].CRD.x,a[i].CRD.y,a[i].CRD.z);
+      if (a[i].active) multitexcoord(i+1,a[i].crd.x,a[i].crd.y,a[i].crd.z);
    }
 
 // extract 1 triangle from tetrahedron
@@ -1054,10 +1054,10 @@ BOOLINT miniproj::deact(const unsigned int slot,dynacoord &a)
 
    size=a.getsize();
 
-   if (slot<size) a[slot].ACTIVE=FALSE;
+   if (slot<size) a[slot].active=FALSE;
 
    for (i=0; i<size; i++)
-      if (a[i].ACTIVE) return(TRUE);
+      if (a[i].active) return(TRUE);
 
    return(FALSE);
    }
@@ -1331,6 +1331,45 @@ void miniproj::setproj(float delta)
 // get projection mode
 BOOLINT miniproj::getproj()
    {return(PROJMODE);}
+
+// get number of active slots
+unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mesh)
+   {
+   unsigned int i,j;
+
+   unsigned int size,vals;
+
+   unsigned int slot;
+   unsigned int active,maxactive;
+
+   minidyna<BOOLINT,8> slots;
+
+   size=mesh.getsize();
+
+   maxactive=0;
+
+   for (i=0; i<size; i++)
+      {
+      vals=mesh[i].vals.getsize();
+
+      slots.setsize(maxslots,FALSE);
+
+      for (j=0; j<vals; j++)
+         {
+         slot=mesh[i].vals[j].slot;
+         if (slot<maxslots) slots[slot]=TRUE;
+         }
+
+      active=0;
+
+      for (j=0; j<maxslots; j++)
+         if (slots[j]) active++;
+
+      if (active>maxactive) maxactive=active;
+      }
+
+   return(maxactive);
+   }
 
 // enable remapping of of active slots
 void miniproj::setactive(const unsigned int active)

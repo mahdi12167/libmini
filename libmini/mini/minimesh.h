@@ -84,28 +84,28 @@ class minimapval
    //! default constructor
    minimapval()
       {
-      ACTIVE=FALSE;
-      MAP2=0;
-      BRICKID=0;
-      DIRTY=FALSE;
+      active=FALSE;
+      map2=0;
+      brickid=0;
+      dirty=FALSE;
       }
 
    //! constructor
    minimapval(const unsigned int to,const unsigned int id)
       {
-      ACTIVE=TRUE;
-      MAP2=to;
-      BRICKID=id;
-      DIRTY=FALSE;
+      active=TRUE;
+      map2=to;
+      brickid=id;
+      dirty=FALSE;
       }
 
    //! destructor
    ~minimapval() {}
 
-   BOOLINT ACTIVE;
-   unsigned int MAP2;
-   unsigned int BRICKID;
-   BOOLINT DIRTY;
+   BOOLINT active;
+   unsigned int map2;
+   unsigned int brickid;
+   BOOLINT dirty;
    };
 
 typedef minidyna<minimapval,8> minivalmapper;
