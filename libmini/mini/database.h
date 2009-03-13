@@ -59,7 +59,8 @@ class databuf
       {
       DATABUF_EXTFMT_PLAIN=0,
       DATABUF_EXTFMT_JPEG=1,
-      DATABUF_EXTFMT_PNG=2
+      DATABUF_EXTFMT_PNG=2,
+      DATABUF_EXTFMT_Z=3
       };
 
    //! default constructor
@@ -106,7 +107,7 @@ class databuf
    float nodata;
 
    //! indicator for external format
-   unsigned int extformat; // 0=plain, 1=JPEG, 2=PNG
+   unsigned int extformat; // 0=plain, 1=JPEG, 2=PNG, 3=Z
 
    //! indicator for implicit format
    unsigned int implformat;

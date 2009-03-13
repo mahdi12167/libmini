@@ -124,6 +124,19 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
          break;
 
+      case databuf::DATABUF_EXTFMT_Z:
+
+         if (israwdata==0)
+            {
+            //!! decompress with libz
+            }
+         else
+            {
+            //!! compress with libz
+            }
+
+         break;
+
       default: return(0);
       }
 
