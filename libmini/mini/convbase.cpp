@@ -2,6 +2,7 @@
 
 #include <mini/jpegbase.h>
 #include <mini/pngbase.h>
+#include <mini/zlibbase.h>
 
 #ifdef USEGREYC
 #include <mini/greycbase.h>
@@ -15,7 +16,7 @@ namespace convbase {
 void setconversion(MINI_CONVERSION_PARAMS *params)
    {databuf::setconversion(conversionhook,params);}
 
-// libMini conversion hook for external formats (JPEG/PNG)
+// libMini conversion hook for external formats (JPEG/PNG/Z)
 int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,
                    unsigned char **newdata,unsigned int *newbytes,
                    databuf *obj,void *data)
@@ -117,7 +118,7 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
 #endif
 
-            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes);
+            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes,conversion_params->png_gamma,conversion_params->zlib_level);
 
             if (*newdata==NULL) return(0); // return failure
             }
@@ -128,11 +129,15 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
          if (israwdata==0)
             {
-            //!! decompress with libz
+            *newdata=zlibbase::decompressZLIB(srcdata,bytes,newbytes);
+
+            if (*newdata==NULL) return(0); // return failure
             }
          else
             {
-            //!! compress with libz
+            zlibbase::compressZLIB(srcdata,bytes,newdata,newbytes,conversion_params->zlib_level);
+
+            if (*newdata==NULL) return(0); // return failure
             }
 
          break;

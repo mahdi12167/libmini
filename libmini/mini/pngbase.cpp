@@ -212,7 +212,7 @@ void user_flush_fn(png_structp png_ptr)
    }
 
 // compress PNG image
-void compressPNGimage(unsigned char *image,int width,int height,int components,unsigned char **data,unsigned int *bytes,float gamma)
+void compressPNGimage(unsigned char *image,int width,int height,int components,unsigned char **data,unsigned int *bytes,float gamma,int level)
    {
    int i;
 
@@ -266,7 +266,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
    png_set_gamma(png_ptr,gamma,1.0/2.2);
 
    // set PNG compression level
-   png_set_compression_level(png_ptr,Z_BEST_COMPRESSION);
+   png_set_compression_level(png_ptr,level);
 
    // set PNG image type
    if (components==1 || components==2) color_type=PNG_COLOR_TYPE_GRAY;

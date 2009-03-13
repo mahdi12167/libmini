@@ -964,7 +964,7 @@ void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcda
    CONVERSION_DATA=data;
    }
 
-// convert from/into external format (e.g. JPEG/PNG)
+// convert from/into external format (e.g. JPEG/PNG/Z)
 void databuf::convertchunk(int israw,unsigned int extfmt)
    {
    int success;

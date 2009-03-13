@@ -23,7 +23,7 @@ MODS	= mini miniOGL\
 
 VMODS	= viewerbase\
 	  threadbase curlbase\
-	  jpegbase pngbase squishbase greycbase\
+	  jpegbase pngbase zlibbase squishbase greycbase\
 	  convbase imgbase\
 	  panorndr
 

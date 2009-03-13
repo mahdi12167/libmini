@@ -18,6 +18,9 @@ struct MINI_CONVERSION_HOOK_STRUCT
 
    float greyc_p;
    float greyc_a;
+
+   float png_gamma;
+   int zlib_level;
    };
 
 typedef MINI_CONVERSION_HOOK_STRUCT MINI_CONVERSION_PARAMS;

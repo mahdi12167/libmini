@@ -40,7 +40,7 @@ SET(MINI_SRCS
 SET(MINISFX_HDRS
    viewerbase.h
    threadbase.h curlbase.h
-   jpegbase.h pngbase.h squishbase.h greycbase.h
+   jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h
    convbase.h imgbase.h
    panorndr.h
    )
@@ -48,7 +48,7 @@ SET(MINISFX_HDRS
 SET(MINISFX_SRCS
    viewerbase.cpp
    threadbase.cpp curlbase.cpp
-   jpegbase.cpp pngbase.cpp squishbase.cpp greycbase.cpp
+   jpegbase.cpp pngbase.cpp zlibbase.cpp squishbase.cpp greycbase.cpp
    convbase.cpp imgbase.cpp
    panorndr.cpp
    )
