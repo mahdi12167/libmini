@@ -131,6 +131,8 @@ inline double FSQR(const double x) {return(x*x);}
 inline float fround2(const float v,const unsigned int n=6) {return(ffloor(v*fpow(10.0f,(int)n)+0.5f)/fpow(10.0f,(int)n));}
 inline double round2(const double v,const unsigned int n=6) {return(floor(v*pow(10.0,(int)n)+0.5)/pow(10.0,(int)n));}
 
+inline int checknan(const double v) {return(v!=v);}
+
 #ifdef _MSC_VER
 #define strdup _strdup
 #define snprintf _snprintf
