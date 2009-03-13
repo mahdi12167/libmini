@@ -298,6 +298,29 @@ class databuf
    //! compute absolute values
    void computeabsolute();
 
+   //! check for nan
+   inline int checknan(const float value)
+      {
+      if (value!=value) return(1);
+      else return(0);
+      }
+
+   //! check for invalid value (and nan)
+   inline int checknodata(const float value)
+      {
+      if (value==nodata) return(1);
+      else if (value!=value) return(1); // nan
+      else return(0);
+      }
+
+   //! check for valid value (and nan)
+   inline int checkval(const float value)
+      {
+      if (value==nodata) return(0);
+      else if (value!=value) return(0); // nan
+      else return(1);
+      }
+
    //! set a single scalar value
    void setval(const unsigned int i,const unsigned int j,const unsigned int k,const float value);
    void setval(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value);

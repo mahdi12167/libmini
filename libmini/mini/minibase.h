@@ -10,6 +10,8 @@
 #include <float.h>
 #include <math.h>
 
+#include <limits> // for nan
+
 namespace minibase {
 
 extern void (*minierrorhandler)(const char *file,int line,int fatal);
@@ -57,6 +59,10 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 
 #ifndef MAXFLOAT
 #   define MAXFLOAT (FLT_MAX)
+#endif
+
+#ifndef NAN
+#   define NAN (quiet_NaN)
 #endif
 
 #ifdef __APPLE__

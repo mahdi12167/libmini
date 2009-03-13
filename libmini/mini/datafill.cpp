@@ -126,7 +126,7 @@ unsigned int datafill::fillin(int radius)
             for (i=0; i<(int)xsize; i++)
                for (j=0; j<(int)ysize; j++)
                   for (k=0; k<(int)zsize; k++)
-                     if (getval(i,j,k,t)!=nodata) cnt.setval(i,j,k,t,1);
+                     if (checkval(getval(i,j,k,t))) cnt.setval(i,j,k,t,1);
 
          // accumulate no-data values in x-direction
          if (xsize>1)
@@ -199,7 +199,7 @@ unsigned int datafill::fillin(int radius)
          for (i=0; i<(int)xsize; i++)
             for (j=0; j<(int)ysize; j++)
                for (k=0; k<(int)zsize; k++)
-                  if (getval(i,j,k,t)==nodata)
+                  if (checknodata(getval(i,j,k,t)))
                      // check number of foot print cells against growing threshold
                      if (ftrc(cnt.getval(i,j,k,t)+0.5f)>=thres)
                         {
@@ -214,13 +214,13 @@ unsigned int datafill::fillin(int radius)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
 
-                                    if (v1!=nodata)
+                                    if (checkval(v1))
                                        {
                                        if (i+m-1>=0 && m>-sizex/2)
                                           {
                                           v2=getval(i+m-1,j+n,k+o,t);
 
-                                          if (v2!=nodata)
+                                          if (checkval(v2))
                                              {
                                              dx+=v1-v2;
                                              dxnum++;
@@ -231,7 +231,7 @@ unsigned int datafill::fillin(int radius)
                                           {
                                           v2=getval(i+m,j+n-1,k+o,t);
 
-                                          if (v2!=nodata)
+                                          if (checkval(v2))
                                              {
                                              dy+=v1-v2;
                                              dynum++;
@@ -242,7 +242,7 @@ unsigned int datafill::fillin(int radius)
                                           {
                                           v2=getval(i+m,j+n,k+o-1,t);
 
-                                          if (v2!=nodata)
+                                          if (checkval(v2))
                                              {
                                              dz+=v1-v2;
                                              dznum++;
@@ -266,7 +266,7 @@ unsigned int datafill::fillin(int radius)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
 
-                                    if (v1!=nodata)
+                                    if (checkval(v1))
                                        {
                                        v2=v1-m*dx-n*dy-o*dz;
                                        weight=m*m+n*n+o*o;
