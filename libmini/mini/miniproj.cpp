@@ -133,12 +133,21 @@ void miniproj::map(const unsigned int which,
    unsigned int slot;
 
    size=vals.getsize();
-   a.setsize(maxslots,miniprojcrd()); //!! use active slots
+
+   if (ACTIVE==0) a.setsize(maxslots,miniprojcrd());
+   else a.setsize(ACTIVE,miniprojcrd());
 
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
       {
-      slot=vals[i].slot; //!! use mapper
+      slot=vals[i].slot;
+
+      if (ACTIVE>0)
+         {
+         if (slot>=ACTIVE) continue;
+         slot=MAP[slot].slot;
+         }
+
       if (slot>=maxslots) continue;
 
       switch (which)
