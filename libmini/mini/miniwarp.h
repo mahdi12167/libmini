@@ -168,7 +168,9 @@ class miniwarp: public miniwarpbase
    minicoord BBOXDAT[2];
 
    minicoord::MINICOORD SYSDAT;
-   int UTMZONE,UTMDATUM;
+
+   int UTMZONE;
+   minicoord::MINICOORD_DATUM UTMDATUM;
 
    minicoord CENTERGEO;
    minicoord NORTHGEO;

@@ -122,7 +122,9 @@ miniwarp::miniwarp(): miniwarpbase()
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
    SYSDAT=minicoord::MINICOORD_NONE;
-   UTMZONE=UTMDATUM=0;
+
+   UTMZONE=0;
+   UTMDATUM=minicoord::MINICOORD_DATUM_NONE;
 
    CENTERGEO=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
    NORTHGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
@@ -194,6 +196,7 @@ void miniwarp::def_data(const minicoord bboxDAT[2])
    BBOXDAT[1]=bboxDAT[1];
 
    SYSDAT=BBOXDAT[0].type;
+
    UTMZONE=BBOXDAT[0].utm_zone;
    UTMDATUM=BBOXDAT[0].utm_datum;
 

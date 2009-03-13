@@ -381,15 +381,15 @@ minimesh datagrid::decompose(unsigned int idx)
 
          // determine clipped corner vertices of actual object:
 
-         vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
 
-         vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,DATA[idx].datum);
-         vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,DATA[idx].datum);
+         vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
          }
       else
          {

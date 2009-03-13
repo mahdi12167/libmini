@@ -35,7 +35,7 @@ class databuf
       DATABUF_CRS_MERC=3
       };
 
-    enum DATABUF_DATUM
+   enum DATABUF_DATUM
       {
       // USGS datum codes
       DATABUF_DATUM_NAD27=1,

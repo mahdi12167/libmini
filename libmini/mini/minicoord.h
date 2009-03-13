@@ -11,7 +11,7 @@ class minicoord
    {
    public:
 
-   //! generic coordinate systems
+   //! supported coordinate systems
    enum MINICOORD
       {
       MINICOORD_NONE,   // undefined
@@ -20,6 +20,28 @@ class minicoord
       MINICOORD_MERC,   // Mercator WGS84
       MINICOORD_UTM,    // Universal Transverse Mercator
       MINICOORD_LINEAR, // linear coordinate space
+      };
+
+   //! supported coordinate datums
+   enum MINICOORD_DATUM
+      {
+      MINICOORD_DATUM_NONE=0,
+      // USGS datum codes
+      MINICOORD_DATUM_NAD27=1,
+      MINICOORD_DATUM_WGS72=2,
+      MINICOORD_DATUM_WGS84=3,
+      MINICOORD_DATUM_NAD83=4,
+      // libMini datum codes
+      MINICOORD_DATUM_SPHERE=5,
+      MINICOORD_DATUM_ED50=6,
+      MINICOORD_DATUM_ED79=7,
+      MINICOORD_DATUM_OldHawaiian=8,
+      MINICOORD_DATUM_Luzon=9,
+      MINICOORD_DATUM_Tokyo=10,
+      MINICOORD_DATUM_OSGB1936=11,
+      MINICOORD_DATUM_Australian1984=12,
+      MINICOORD_DATUM_Geodetic1949=13,
+      MINICOORD_DATUM_SouthAmerican1969=14
       };
 
    //! default constructor
@@ -31,12 +53,12 @@ class minicoord
    //! constructors
    minicoord(const miniv3d &v);
    minicoord(const miniv3d &v,const MINICOORD t);
-   minicoord(const miniv3d &v,const MINICOORD t,const int zone,const int datum);
+   minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
    minicoord(const miniv4d &v);
    minicoord(const miniv4d &v,const MINICOORD t);
-   minicoord(const miniv4d &v,const MINICOORD t,const int zone,const int datum);
+   minicoord(const miniv4d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
    minicoord(const double cx,const double cy,const double cz,const MINICOORD t);
-   minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const int datum);
+   minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
 
    //! destructor
    ~minicoord();
@@ -48,7 +70,7 @@ class minicoord
    inline minicoord& operator /= (const double c);
 
    //! convert from 1 coordinate system 2 another
-   void convert2(const MINICOORD t,const int zone=0,const int datum=0);
+   void convert2(const MINICOORD t,const int zone=0,const MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
 
    //! linear conversion defined by 3x3 matrix and offset
    void convert(const miniv3d mtx[3],const miniv3d offset);
@@ -63,7 +85,8 @@ class minicoord
    miniv4d vec; // geo-referenced coordinates (plus time)
    MINICOORD type; // actual coordinate system type
 
-   int utm_zone,utm_datum; // actual UTM zone and datum
+   int utm_zone; // actual UTM zone
+   MINICOORD_DATUM utm_datum; // actual UTM datum
 
    protected:
 
