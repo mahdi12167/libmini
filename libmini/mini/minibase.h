@@ -62,7 +62,7 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 #endif
 
 #ifndef NAN
-#   define NAN (quiet_NaN)
+#   define NAN (std::numeric_limits<double>::quiet_NaN())
 #endif
 
 #ifdef __APPLE__
