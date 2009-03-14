@@ -25,7 +25,7 @@ unsigned char *decompressZLIB(unsigned char *chunk,unsigned int chunklen,unsigne
 
    len=4*chunklen;
 
-   for (i=0; i<20; i++)
+   for (i=0; i<10; i++)
       {
       if ((mem=(Bytef *)malloc(len))==NULL) break;
 
@@ -55,9 +55,9 @@ void compressZLIB(unsigned char *data,unsigned int bytes,unsigned char **chunk,u
 
    int status;
 
-   len=bytes+bytes/100+12;
+   len=2*bytes+12;
 
-   for (i=0; i<20; i++)
+   for (i=0; i<10; i++)
       {
       if ((mem=(Bytef *)malloc(len))==NULL) break;
 
