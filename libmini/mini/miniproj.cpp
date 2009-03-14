@@ -109,17 +109,71 @@ void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
 // reorganize mapping from minivals to dynacoord
 void miniproj::remap(const minivals &vals)
    {
-   unsigned int i;
+   unsigned int i,j;
 
-   ERRORMSG(); //!! remap to active slots
+   unsigned int size;
+
+   unsigned int slot,id;
+   BOOLINT found;
+
+   minivalmapper map;
+
+   size=vals.getsize();
+
+   map.setsize(ACTIVE,minimapval());
+
+   for (i=0; i<size; i++)
+      {
+      slot=vals[i].slot;
+
+      if (slot>=ACTIVE) continue;
+
+      for (j=0; j<ACTIVE; j++)
+         if (MAP[j].active)
+            if (MAP[j].map2==slot)
+               {
+               map[j].active=TRUE;
+               map[j].map2=slot;
+               break;
+               }
+      }
+
+   for (i=0; i<size; i++)
+      {
+      slot=vals[i].slot;
+      id=vals[i].brickid;
+
+      if (slot>=ACTIVE) continue;
+
+      found=FALSE;
+
+      for (j=0; j<ACTIVE; j++)
+         if (map[j].active)
+            if (map[j].map2==slot)
+               {
+               found=TRUE;
+               map[j].brickid=id;
+               break;
+               }
+
+      if (!found)
+         for (j=0; j<ACTIVE; j++)
+            if (!map[j].active)
+               {
+               map[j].active=TRUE;
+               map[j].map2=slot;
+               map[j].brickid=id;
+               break;
+               }
+      }
 
    for (i=0; i<ACTIVE; i++)
-      if (MAP[i].active)
-         if (MAP[i].dirty)
-            {
-            dirty(i,MAP[i]);
-            MAP[i].dirty=FALSE;
-            }
+      if (map[i].active!=MAP[i].active) dirty(i,map[i],MAP[i]);
+      else if (map[i].active)
+         if (map[i].map2!=MAP[i].map2) dirty(i,map[i],MAP[i]);
+         else if (map[i].brickid!=MAP[i].brickid) dirty(i,map[i],MAP[i]);
+
+   MAP=map;
    }
 
 // map minivals to dynacoord
@@ -130,6 +184,7 @@ void miniproj::map(const unsigned int which,
    unsigned int i;
 
    unsigned int size;
+
    unsigned int slot;
 
    size=vals.getsize();
@@ -161,7 +216,7 @@ void miniproj::map(const unsigned int which,
    }
 
 // flag remapped slot as dirty
-void miniproj::dirty(const unsigned int slot,const minimapval &mapval) {}
+void miniproj::dirty(const unsigned int slot,const minimapval &mapval,const minimapval &prev) {}
 
 // project a tetrahedron (minivals version)
 void miniproj::proj(const miniv3d &v1,const double c1,
@@ -206,7 +261,7 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    dynacoord a1,a2,a3,a4;
 
    if (ACTIVE==0) initmap(maxslots,vals);
-   else remap(vals); //!! notify dirty brickids
+   else remap(vals);
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);

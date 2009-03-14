@@ -87,7 +87,6 @@ class minimapval
       active=FALSE;
       map2=0;
       brickid=0;
-      dirty=FALSE;
       }
 
    //! constructor
@@ -96,7 +95,6 @@ class minimapval
       active=TRUE;
       map2=to;
       brickid=id;
-      dirty=FALSE;
       }
 
    //! destructor
@@ -105,7 +103,6 @@ class minimapval
    BOOLINT active;
    unsigned int map2;
    unsigned int brickid;
-   BOOLINT dirty;
    };
 
 typedef minidyna<minimapval,8> minivalmapper;
