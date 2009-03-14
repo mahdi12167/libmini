@@ -97,7 +97,7 @@ void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
    {
    unsigned int i;
 
-   unsigned int id;
+   unsigned int id=0;
 
    MAP.setsize(maxslots);
 
