@@ -14,7 +14,7 @@ class imgbase
    static int loadimg(databuf &buf,char *filename);
 
    //! save image based on extension
-   static int saveimg(databuf &buf,char *filename,float jpgquality=0.0f);
+   static int saveimg(databuf &buf,char *filename,float jpgquality=0.0f,int pnglevel=0);
 
    private:
 

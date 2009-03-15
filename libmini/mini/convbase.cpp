@@ -33,6 +33,10 @@ void setparameters(MINI_CONVERSION_PARAMS *params)
 void setconversion(MINI_CONVERSION_PARAMS *params)
    {databuf::setconversion(conversionhook,params);}
 
+// check conversion hook
+int check_conversion()
+   {return(databuf::check_conversion());}
+
 // libMini conversion hook for external formats (JPEG/PNG/Z)
 int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,
                    unsigned char **newdata,unsigned int *newbytes,

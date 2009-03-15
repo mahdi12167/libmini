@@ -12,6 +12,8 @@
 #include <mini/jpegbase.h>
 #include <mini/pngbase.h>
 
+#include <mini/convbase.h>
+
 #include "imgbase.h"
 
 datacalc imgbase::CALC;
@@ -57,6 +59,8 @@ int imgbase::loadimg(databuf &buf,char *filename)
 
    unsigned char *rawdata;
 
+   convbase::MINI_CONVERSION_PARAMS conversion_params;
+
    if (checkfile(filename)==0) return(0);
 
    ext=strrchr(filename,'.');
@@ -70,6 +74,13 @@ int imgbase::loadimg(databuf &buf,char *filename)
       else if (strcmp(ext,".pvm")==0) type=FILE_TYPE_PVM;
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
+
+   // register libMini conversion hook
+   if (convbase::check_conversion()==0)
+      {
+      convbase::setparameters(&conversion_params);
+      convbase::setconversion(&conversion_params);
+      }
 
    // register implicit calculator
    if (databuf::check_interpreter()==0) CALC.doregister();
@@ -107,7 +118,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
    }
 
 // save image based on extension
-int imgbase::saveimg(databuf &buf,char *filename,float jpgquality)
+int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
    {
    FILE_TYPE type;
    char *ext;
@@ -152,19 +163,21 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality)
       if (buf.type==0) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
       else if (buf.type==3) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
       else if (buf.type==4) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
+      else return(0);
 
       writefile(filename,jpgdata,jpgbytes);
       }
    else if (type==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
       {
-      if (buf.type==0) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes);
+      if (buf.type==0) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes,0.0f,pnglevel);
       else if (buf.type==1)
          {
          buf.swap2();
-         pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes);
+         pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes,0.0f,pnglevel);
          }
-      else if (buf.type==3) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes);
-      else if (buf.type==4) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes);
+      else if (buf.type==3) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes,0.0f,pnglevel);
+      else if (buf.type==4) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes,0.0f,pnglevel);
+      else return(0);
 
       writefile(filename,pngdata,pngbytes);
       }

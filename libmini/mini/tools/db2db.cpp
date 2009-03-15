@@ -12,6 +12,7 @@ int main(int argc,char *argv[])
    databuf buf;
 
    float jpgquality=0.9f;
+   int pnglevel=6;
 
    if (argc!=3)
       {
@@ -26,7 +27,7 @@ int main(int argc,char *argv[])
       buf.fillnodata(fillin_radius);
 
       // save buffer
-      imgbase::saveimg(buf,argv[2],jpgquality);
+      imgbase::saveimg(buf,argv[2],jpgquality,pnglevel);
 
       // release buffer
       buf.release();
