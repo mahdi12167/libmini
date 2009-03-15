@@ -8,6 +8,7 @@
 int main(int argc,char *argv[])
    {
    databuf buf;
+   BOOLINT extfmt_z;
 
    convbase::MINI_CONVERSION_PARAMS conversion_params;
 
@@ -21,14 +22,21 @@ int main(int argc,char *argv[])
    convbase::setparameters(&conversion_params);
    convbase::setconversion(&conversion_params);
 
-   // load buffer
-   if (buf.loaddata(argv[1])!=0)
+   // load stub
+   if (buf.loaddata(argv[1],1)!=0)
       {
-      // save buffer
-      buf.savedata(argv[2],databuf::DATABUF_EXTFMT_Z);
+      extfmt_z=buf.extformat==databuf::DATABUF_EXTFMT_Z;
 
-      // release buffer
-      buf.release();
+      // load buffer
+      if (buf.loaddata(argv[1])!=0)
+         {
+         // save buffer
+         if (extfmt_z) buf.savedata(argv[2]);
+         else buf.savedata(argv[2],databuf::DATABUF_EXTFMT_Z);
+
+         // release buffer
+         buf.release();
+         }
       }
 
    return(0);
