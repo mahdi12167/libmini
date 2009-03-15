@@ -25,6 +25,9 @@ struct MINI_CONVERSION_HOOK_STRUCT
 
 typedef MINI_CONVERSION_HOOK_STRUCT MINI_CONVERSION_PARAMS;
 
+//! set default conversion parameters for external formats
+void setparameters(MINI_CONVERSION_PARAMS *params);
+
 //! set conversion hook for external formats
 void setconversion(MINI_CONVERSION_PARAMS *params);
 

@@ -12,6 +12,23 @@
 
 namespace convbase {
 
+// set default conversion parameters for external formats
+void setparameters(MINI_CONVERSION_PARAMS *params)
+   {
+   // parameter set for "better-quality" compressed images: quality=75 denoising=OFF -> ratio 1:20
+   // parameter set for "less-size" compressed images: quality=50 denoising=ON -> ratio 1:40
+
+   params->jpeg_quality=75.0f; // jpeg quality in percent
+
+   params->usegreycstoration=FALSE; // use greycstoration for image denoising
+
+   params->greyc_p=0.8f; // greycstoration sharpness, useful range=[0.7-0.9]
+   params->greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
+
+   params->png_gamma=0.0f; // png gamma (0.0=default 1.0=neutral)
+   params->zlib_level=6; // zlib compression level (0=none 6=default 9=highest)
+   }
+
 // set conversion hook for external formats
 void setconversion(MINI_CONVERSION_PARAMS *params)
    {databuf::setconversion(conversionhook,params);}

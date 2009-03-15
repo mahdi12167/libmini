@@ -29,18 +29,7 @@ viewerbase::viewerbase()
 
    // image conversion parameters:
 
-   // parameter set for "better-quality" compressed images: quality=75 denoising=OFF -> ratio 1:20
-   // parameter set for "less-size" compressed images: quality=50 denoising=ON -> ratio 1:40
-
-   PARAMS.conversion_params.jpeg_quality=75.0f; // jpeg quality in percent
-
-   PARAMS.conversion_params.usegreycstoration=FALSE; // use greycstoration for image denoising
-
-   PARAMS.conversion_params.greyc_p=0.8f; // greycstoration sharpness, useful range=[0.7-0.9]
-   PARAMS.conversion_params.greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
-
-   PARAMS.conversion_params.png_gamma=0.0f; // png gamma (0.0=default 1.0=neutral)
-   PARAMS.conversion_params.zlib_level=6; // zlib compression level (0=none 6=default 9=highest)
+   convbase::setparameters(&PARAMS.conversion_params);
 
    // initialize state:
 
@@ -108,7 +97,7 @@ void viewerbase::inithooks()
                                      curlbase::curlinit,curlbase::curlexit,
                                      curlbase::getURL,curlbase::checkURL);
 
-   // register libMini conversion hook (JPEG/PNG)
+   // register libMini conversion hook (JPEG/PNG/Z)
    convbase::setconversion(&PARAMS.conversion_params);
 
    // register auto-compression hook
