@@ -71,25 +71,25 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
 // map slot to brickid
 BOOLINT miniproj::brickid(const unsigned int slot,const minivals &vals,unsigned int *id)
    {
-   unsigned int i;
+   unsigned int i,j;
 
    unsigned int size;
 
-   BOOLINT active;
-
    size=vals.getsize();
-
-   active=FALSE;
 
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
-      if (vals[i].slot==slot)
-         {
-         active=TRUE;
-         *id=vals[i].brickid;
-         }
+      {
+      j=size-1-i;
 
-   return(active);
+      if (vals[j].slot==slot)
+         {
+         *id=vals[j].brickid;
+         return(TRUE);
+         }
+      }
+
+   return(FALSE);
    }
 
 // init mapping from minivals to dynacoord
