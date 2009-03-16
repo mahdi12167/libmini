@@ -200,7 +200,9 @@ void miniproj::map(const unsigned int which,
       if (ACTIVE>0)
          {
          if (slot>=ACTIVE) continue;
-         slot=MAP[slot].map2;
+
+         if (MAP[slot].active) slot=MAP[slot].map2;
+         else continue;
          }
 
       if (slot>=maxslots) continue;
