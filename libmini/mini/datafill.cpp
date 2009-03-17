@@ -5,15 +5,25 @@
 #include "datafill.h"
 
 // grow boundary by extrapolation
-unsigned int datafill::grow_by_extrapolation()
-   {return(fillin(0));}
+unsigned int datafill::grow_by_extrapolation(int radius)
+   {
+   int r;
+
+   unsigned int count;
+
+   count=0;
+
+   for (r=0; r<radius; r++) count+=fillin(0);
+
+   return(count);
+   }
 
 // grow boundary by extrapolation and replace the rest
-unsigned int datafill::grow_by_extrapolation(float value)
+unsigned int datafill::grow_by_extrapolation_and_replace(int radius,float value)
    {
    unsigned int count;
 
-   count=fillin(0);
+   count=grow_by_extrapolation(radius);
    count+=replacenodata(value);
 
    return(count);
@@ -39,6 +49,17 @@ unsigned int datafill::fillin_by_regiongrowing(int radius_stop,int radius_start)
       while (count>0);
 
    return(sum);
+   }
+
+// fill-in no-data values by region growing and replace the rest
+unsigned int datafill::fillin_by_regiongrowing_and_replace(int radius_stop,int radius_start,float value)
+   {
+   unsigned int count;
+
+   count=fillin_by_regiongrowing(radius_stop,radius_start);
+   count+=replacenodata(value);
+
+   return(count);
    }
 
 // fill-in algorithm

@@ -16,13 +16,16 @@ class datafill: public databuf
    datafill(const databuf &buf): databuf(buf) {}
 
    //! grow boundary by extrapolation
-   unsigned int grow_by_extrapolation();
+   unsigned int grow_by_extrapolation(int radius=1);
 
    //! grow boundary by extrapolation and replace the rest
-   unsigned int grow_by_extrapolation(float value);
+   unsigned int grow_by_extrapolation_and_replace(int radius=1,float value=0.0f);
 
    //! fill-in no-data values by region growing
    unsigned int fillin_by_regiongrowing(int radius_stop=5,int radius_start=2);
+
+   //! fill-in no-data values by region growing and replace the rest
+   unsigned int fillin_by_regiongrowing_and_replace(int radius_stop=5,int radius_start=2,float value=0.0f);
 
    protected:
 
