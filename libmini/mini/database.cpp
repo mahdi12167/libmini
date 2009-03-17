@@ -2553,7 +2553,7 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    }
 
 // set rgb color
-void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float *value)
+void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float value[3])
    {
    unsigned char *ptr;
 
@@ -2568,7 +2568,7 @@ void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned in
    }
 
 // set rgb color
-void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value)
+void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value[3])
    {
    unsigned char *ptr;
 
@@ -2583,7 +2583,7 @@ void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned in
    }
 
 // set rgba color
-void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float *value)
+void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float value[4])
    {
    unsigned char *ptr;
 
@@ -2599,7 +2599,7 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
    }
 
 // set rgba color
-void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value)
+void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value[4])
    {
    unsigned char *ptr;
 
@@ -2615,7 +2615,7 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
    }
 
 // get rgb color
-void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float *value)
+void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float value[3])
    {
    unsigned char *ptr;
 
@@ -2630,7 +2630,7 @@ void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned in
    }
 
 // get rgb color
-void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value)
+void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[4])
    {
    unsigned char *ptr;
 
@@ -2645,7 +2645,7 @@ void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned in
    }
 
 // get rgba color
-void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float *value)
+void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float value[4])
    {
    unsigned char *ptr;
 
@@ -2775,6 +2775,68 @@ unsigned int databuf::replacedata(float value1,float value2)
                   setval(i,j,k,t,value2);
                   count++;
                   }
+
+   return(count);
+   }
+
+// replace rgb values
+unsigned int databuf::replacergb(const float value1[3],const float value2[3])
+   {
+   unsigned int count;
+
+   unsigned int i,j,k,t;
+
+   float rgb[3];
+
+   count=0;
+
+   if (type!=DATABUF_TYPE_RGB) return(0);
+
+   // search for rgb values
+   for (t=0; t<tsteps; t++)
+      for (i=0; i<xsize; i++)
+         for (j=0; j<ysize; j++)
+            for (k=0; k<zsize; k++)
+               {
+               getrgb(i,j,k,t,rgb);
+
+               if (rgb[0]==value1[0] && rgb[1]==value1[1] && rgb[2]==value1[2])
+                  {
+                  setrgb(i,j,k,t,value2);
+                  count++;
+                  }
+               }
+
+   return(count);
+   }
+
+// replace rgba values
+unsigned int databuf::replacergba(const float value1[4],const float value2[4])
+   {
+   unsigned int count;
+
+   unsigned int i,j,k,t;
+
+   float rgba[4];
+
+   count=0;
+
+   if (type!=DATABUF_TYPE_RGBA) return(0);
+
+   // search for rgb values
+   for (t=0; t<tsteps; t++)
+      for (i=0; i<xsize; i++)
+         for (j=0; j<ysize; j++)
+            for (k=0; k<zsize; k++)
+               {
+               getrgba(i,j,k,t,rgba);
+
+               if (rgba[0]==value1[0] && rgba[1]==value1[1] && rgba[2]==value1[2] && rgba[3]==value1[3])
+                  {
+                  setrgba(i,j,k,t,value2);
+                  count++;
+                  }
+               }
 
    return(count);
    }

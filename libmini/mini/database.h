@@ -284,6 +284,10 @@ class databuf
    //! replace data values
    unsigned int replacedata(float value1,float value2);
 
+   //! replace rgb[a] values
+   unsigned int replacergb(const float value1[3],const float value2[3]);
+   unsigned int replacergba(const float value1[4],const float value2[4]);
+
    //! check for no-data values
    int checknodata();
 
@@ -330,16 +334,16 @@ class databuf
    float getvalue(float x,float y,float z,unsigned int t);
 
    //! set rgb[a] color
-   void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float *value);
-   void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value);
-   void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float *value);
-   void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float *value);
+   void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float value[3]);
+   void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value[3]);
+   void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const float value[4]);
+   void setrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value[4]);
 
    //! get rgb[a] color
-   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float *value);
-   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value);
-   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float *value);
-   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value);
+   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,float value[3]);
+   void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[3]);
+   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float value[4]);
+   void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[4]);
 
    //! print values
    void print();
