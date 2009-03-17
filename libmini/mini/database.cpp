@@ -2756,6 +2756,29 @@ void databuf::getminmax(float usefs,float usefg,
       }
    }
 
+// replace data values
+unsigned int databuf::replacedata(float value1,float value2)
+   {
+   unsigned int count;
+
+   unsigned int i,j,k,t;
+
+   count=0;
+
+   // search for data values
+   for (t=0; t<tsteps; t++)
+      for (i=0; i<xsize; i++)
+         for (j=0; j<ysize; j++)
+            for (k=0; k<zsize; k++)
+               if (getval(i,j,k,t)==value1)
+                  {
+                  setval(i,j,k,t,value2);
+                  count++;
+                  }
+
+   return(count);
+   }
+
 // check for no-data values
 int databuf::checknodata()
    {

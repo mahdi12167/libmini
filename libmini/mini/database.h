@@ -281,6 +281,9 @@ class databuf
    void getminmax(float usefs,float usefg, // useful range
                   float *minval=0,float *maxval=0); // result range
 
+   //! replace data values
+   unsigned int replacedata(float value1,float value2);
+
    //! check for no-data values
    int checknodata();
 
