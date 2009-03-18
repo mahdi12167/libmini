@@ -20,10 +20,7 @@ minimesh::~minimesh() {}
 
 // append a tetrahdron
 void minimesh::append(const minihedron &h)
-   {
-   if (h.check()) WARNMSG();
-   minidyna<minihedron>::append(h);
-   }
+   {if (!h.check()) minidyna<minihedron>::append(h);}
 
 // append a tetrahedral mesh
 void minimesh::append(const minimesh &m)

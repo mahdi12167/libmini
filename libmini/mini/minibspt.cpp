@@ -168,23 +168,11 @@ void minibsptree::remap()
    {
    unsigned int i;
 
-   unsigned int swizzle;
-   unsigned int idx;
-
-   static const unsigned int prime=271;
-
-   // calculate the coprime swizzle constant
-   for (swizzle=prime; gcd(MAP.getsize(),swizzle)!=1; swizzle+=2);
-
    // initialize the tetrahedral face remapping
    for (i=0; i<MAP.getsize(); i++) MAP[i].map2=i;
 
    // calculate the priority of the tetrahedral faces
-   for (i=0; i<MAP.getsize(); i++)
-      {
-      idx=(swizzle*i)%MAP.getsize(); // swizzle the actual index
-      MAP[i].prio=idx; // store swizzled index as priority
-      }
+   for (i=0; i<MAP.getsize(); i++) MAP[i].prio=i;
 
    // calculate the tetrahedral face remapping by sorting the face priorities
    shellsort<minibsptree_face>(MAP);
