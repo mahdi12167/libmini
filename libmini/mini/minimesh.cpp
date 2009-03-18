@@ -6,7 +6,7 @@
 minimesh::minimesh(): minidyna<minihedron>()
    {
    CONFIGURE_DEGENERATE_SIZE=0.0;
-   CONFIGURE_DEGENERATE_ASPECT=0.01;
+   CONFIGURE_DEGENERATE_ASPECT=0.001;
    }
 
 // copy contructor

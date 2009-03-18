@@ -86,27 +86,26 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 #ifdef MESHTEST
 
-void addhex(miniv3d midpoint,double size,minicoord crd,BOOLINT flip,
+void addhex(miniv3d crd1,miniv3d crd2,
+            minicoord crd,BOOLINT flip,
             unsigned int slot,unsigned int brickid,
             minimesh *mesh)
    {
    int i;
 
    minicoord vtx[8];
-   miniv3d crd1,crd2;
 
-   crd1=midpoint-miniv3d(size/2.0);
-   crd2=midpoint+miniv3d(size/2.0);
+   for (i=0; i<8; i++) vtx[i]=crd;
 
-   vtx[0]=crd; vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
-   vtx[1]=crd; vtx[1].vec+=miniv4d(crd1.x,crd2.y,crd1.z);
-   vtx[2]=crd; vtx[2].vec+=miniv4d(crd2.x,crd2.y,crd1.z);
-   vtx[3]=crd; vtx[3].vec+=miniv4d(crd2.x,crd1.y,crd1.z);
+   vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
+   vtx[1].vec+=miniv4d(crd1.x,crd2.y,crd1.z);
+   vtx[2].vec+=miniv4d(crd2.x,crd2.y,crd1.z);
+   vtx[3].vec+=miniv4d(crd2.x,crd1.y,crd1.z);
 
-   vtx[4]=crd; vtx[4].vec+=miniv4d(crd1.x,crd1.y,crd2.z);
-   vtx[5]=crd; vtx[5].vec+=miniv4d(crd1.x,crd2.y,crd2.z);
-   vtx[6]=crd; vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
-   vtx[7]=crd; vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
+   vtx[4].vec+=miniv4d(crd1.x,crd1.y,crd2.z);
+   vtx[5].vec+=miniv4d(crd1.x,crd2.y,crd2.z);
+   vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
+   vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
    for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 
@@ -174,10 +173,10 @@ int main(int argc,char *argv[])
    int gfnz=4;
    double brick=10.0;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
-   addhex(brick*miniv3d(-0.5,-0.5,0.0),brick,crd,TRUE,1,0,&mesh);
-   addhex(brick*miniv3d(0.5,-0.5,0.0),brick,crd,FALSE,1,0,&mesh);
-   addhex(brick*miniv3d(-0.5,0.5,0.0),brick,crd,FALSE,1,0,&mesh);
-   addhex(brick*miniv3d(0.5,0.5,0.0),brick,crd,TRUE,1,0,&mesh);
+   addhex(miniv3d(-1.0,-1.0,-0.5)*brick,miniv3d(0.0,0.0,0.5)*brick,crd,TRUE,1,0,&mesh);
+   addhex(miniv3d(0.0,-1.0,-0.5)*brick,miniv3d(1.0,0.0,0.5)*brick,crd,TRUE,1,0,&mesh);
+   addhex(miniv3d(-1.0,0.0,-0.5)*brick,miniv3d(0.0,1.0,0.5)*brick,crd,TRUE,1,0,&mesh);
+   addhex(miniv3d(0.0,0.0,-0.5)*brick,miniv3d(1.0,1.0,0.5)*brick,crd,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
