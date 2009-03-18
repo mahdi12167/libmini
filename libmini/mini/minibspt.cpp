@@ -12,8 +12,6 @@ minibsptree::minibsptree()
 
    GOTEYE=FALSE;
    VOLDONE=FALSE;
-
-   TREEDEBUG=FALSE;
    }
 
 // destructor
@@ -156,10 +154,10 @@ void minibsptree::insert1(unsigned int idx,unsigned int face)
    // insert one tetrahedral face as a dividing plane
    switch (face)
       {
-      case 0: insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4); break;
-      case 1: insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3); break;
-      case 2: insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1); break;
-      case 3: insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2); break;
+      case 0: insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3); break;
+      case 1: insert(0,h.vtx2,h.vtx4,h.vtx3,h.vtx1); break;
+      case 2: insert(0,h.vtx3,h.vtx4,h.vtx1,h.vtx2); break;
+      case 3: insert(0,h.vtx1,h.vtx2,h.vtx3,h.vtx4); break;
       }
    }
 
@@ -331,9 +329,6 @@ minimesh minibsptree::extract()
       if (TREE[i].right==0) mesh.append(TREE[i].rightmesh);
       }
 
-   // debug output
-   if (TREEDEBUG) std::cout << mesh;
-
    return(mesh);
    }
 
@@ -354,9 +349,6 @@ minimesh minibsptree::extract(const miniv3d &eye,const double minradius,const do
    // sort and append each tetrahedralized node to the output mesh
    COLLECT.setnull();
    collect(0);
-
-   // debug output
-   if (TREEDEBUG) std::cout << COLLECT;
 
    return(COLLECT);
    }

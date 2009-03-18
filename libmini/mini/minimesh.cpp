@@ -5,7 +5,7 @@
 // default constructor
 minimesh::minimesh(): minidyna<minihedron>()
    {
-   CONFIGURE_DEGENERATE_SIZE=0.0;
+   CONFIGURE_DEGENERATE_SIZE=0.001;
    CONFIGURE_DEGENERATE_ASPECT=0.001;
    }
 
