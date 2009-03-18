@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger
 
 #undef MESHTEST
+#define MESHTEST //!!
 
 #undef OPENGLTEST // enable this to perform an OpenGL test
 
@@ -107,7 +108,13 @@ void addhex(miniv3d crd1,miniv3d crd2,
    vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
    vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
+#if 1
    for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
+#endif
+
+#if 0
+   for (i=0; i<8; i++) vtx[i].vec-=miniv3d(-5.50079e+06,-2.2524e+06,2.30771e+06);
+#endif
 
    if (!flip)
       {
@@ -171,20 +178,17 @@ int main(int argc,char *argv[])
    double gfny=2361214.0;
    double gfnh=1000.0;
    int gfnz=4;
-   double brick=10.0;
+   double brick=5.0;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
    addhex(miniv3d(-1.0,-1.0,-0.5)*brick,miniv3d(0.0,0.0,0.5)*brick,crd,TRUE,1,0,&mesh);
-   addhex(miniv3d(0.0,-1.0,-0.5)*brick,miniv3d(1.0,0.0,0.5)*brick,crd,TRUE,1,0,&mesh);
-   addhex(miniv3d(-1.0,0.0,-0.5)*brick,miniv3d(0.0,1.0,0.5)*brick,crd,TRUE,1,0,&mesh);
+   addhex(miniv3d(0.0,-1.0,-0.5)*brick,miniv3d(1.0,0.0,0.5)*brick,crd,FALSE,1,0,&mesh);
+   addhex(miniv3d(-1.0,0.0,-0.5)*brick,miniv3d(0.0,1.0,0.5)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,0.0,-0.5)*brick,miniv3d(1.0,1.0,0.5)*brick,crd,TRUE,1,0,&mesh);
-   std::cout << mesh;
 
    minibsptree bspt;
    minimesh unsorted;
    bspt.insert(mesh);
    unsorted=bspt.extract();
-   std::cout << bspt;
-   std::cout << unsorted;
 
    std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
    std::cout << "vol_in=" << mesh.getvolume() << " vol_out=" << unsorted.getvolume() << std::endl;
