@@ -93,35 +93,24 @@ void minibsptree::preprocessall()
 // preprocess input mesh one step at a time
 BOOLINT minibsptree::preprocess()
    {
-   unsigned int idx;
-
    if (!CONSTRUCTED)
       if (MESH.getsize()==0) CONSTRUCTED=TRUE;
       else
          switch (PHASE)
             {
             case 0:
-               // phase #0: calculate the tetrahedral face remapping
-               MAP.setsize(4*MESH.getsize());
-               remap();
+               // phase #0: insert each face of the tetrahedral input mesh into the bsp tree
+               insert1(STEP/4,STEP%4);
 
-               PHASE++;
-
-               break;
-            case 1:
-               // phase #1: insert each face of the tetrahedral input mesh into the bsp tree
-               idx=MAP[STEP].map2;
-               insert1(idx/4,idx%4);
-
-               if (++STEP>=MAP.getsize())
+               if (++STEP>=4*MESH.getsize())
                   {
                   STEP=0;
                   PHASE++;
                   }
 
                break;
-            case 2:
-               // phase #2: insert each tetrahedron of the input mesh into the bsp tree
+            case 1:
+               // phase #1: insert each tetrahedron of the input mesh into the bsp tree
                insert2(STEP);
 
                if (++STEP>=MESH.getsize())
@@ -131,8 +120,8 @@ BOOLINT minibsptree::preprocess()
                   }
 
                break;
-            case 3:
-               // phase #3: intersect each node of the bsp tree
+            case 2:
+               // phase #2: intersect each node of the bsp tree
                intersect(STEP);
 
                if (++STEP>=TREE.getsize())
@@ -142,10 +131,9 @@ BOOLINT minibsptree::preprocess()
                   }
 
                break;
-            case 4:
-               // phase #4: clean up
+            case 3:
+               // phase #3: clean up
                MESH.setnull();
-               MAP.setnull();
 
                CONSTRUCTED=TRUE;
 
@@ -159,26 +147,7 @@ BOOLINT minibsptree::preprocess()
 BOOLINT minibsptree::getstatus()
    {return(CONSTRUCTED);}
 
-// comparison operator of face priorities
-inline int operator < (const minibsptree::minibsptree_face &a,const minibsptree::minibsptree_face &b)
-   {return(a.prio<b.prio);}
-
-// calculate the tetrahedral face remapping
-void minibsptree::remap()
-   {
-   unsigned int i;
-
-   // initialize the tetrahedral face remapping
-   for (i=0; i<MAP.getsize(); i++) MAP[i].map2=i;
-
-   // calculate the priority of the tetrahedral faces
-   for (i=0; i<MAP.getsize(); i++) MAP[i].prio=i;
-
-   // calculate the tetrahedral face remapping by sorting the face priorities
-   shellsort<minibsptree_face>(MAP);
-   }
-
-// insert tetrahedron (phase #1)
+// insert tetrahedron (step #1)
 void minibsptree::insert1(unsigned int idx,unsigned int face)
    {
    minihedron h;
@@ -196,7 +165,7 @@ void minibsptree::insert1(unsigned int idx,unsigned int face)
       }
    }
 
-// insert tetrahedron (phase #2)
+// insert tetrahedron (step #2)
 void minibsptree::insert2(unsigned int idx)
    {
    minihedron h;

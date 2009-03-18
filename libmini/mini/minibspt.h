@@ -53,12 +53,6 @@ class minibsptree
 
    private:
 
-   struct minibsptree_face
-      {
-      unsigned int map2;
-      float prio;
-      };
-
    struct minibsptree_node
       {
       minigeom_plane plane;
@@ -73,9 +67,7 @@ class minibsptree
    BOOLINT CONSTRUCTED;
 
    minimesh MESH;
-
    unsigned int PHASE,STEP;
-   minidyna<minibsptree_face> MAP;
 
    miniv3d EYE;
    double MINR,MAXR;
@@ -87,8 +79,6 @@ class minibsptree
    BOOLINT VOLDONE;
 
    BOOLINT TREEDEBUG;
-
-   void remap();
 
    void insert1(unsigned int idx,unsigned int face);
    void insert2(unsigned int idx);
@@ -102,14 +92,9 @@ class minibsptree
 
    void collect(const unsigned int idx);
 
-   friend inline int operator < (const minibsptree_face &a,const minibsptree_face &b);
-
    friend inline std::ostream& operator << (std::ostream &out,const minibsptree &tree);
    friend inline std::ostream& operator << (std::ostream &out,const minibsptree_node &node);
    };
-
-//! comparison operator of face priorities
-inline int operator < (const minibsptree::minibsptree_face &a,const minibsptree::minibsptree_face &b);
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
