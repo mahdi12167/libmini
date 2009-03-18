@@ -152,6 +152,8 @@ void minibsptree::insert1(unsigned int idx,unsigned int face)
    h=MESH[idx];
 
    // insert one tetrahedral face as a dividing plane
+   // the faces attaching to the fourth vertex are inserted first
+   // therefore it is the origin of the first three dividing planes
    switch (face)
       {
       case 0: insert(0,h.vtx1,h.vtx4,h.vtx2,h.vtx3); break;
