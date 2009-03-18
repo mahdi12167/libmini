@@ -67,10 +67,9 @@ class minibsptree
    BOOLINT CONSTRUCTED;
 
    minimesh MESH;
-   unsigned int PHASE,STEP;
 
-   static const unsigned int PRIME=271;
-   unsigned int SWIZZLE;
+   unsigned int PHASE,STEP;
+   minidyna<unsigned int> MAP;
 
    miniv3d EYE;
    double MINR,MAXR;
@@ -82,6 +81,8 @@ class minibsptree
    BOOLINT VOLDONE;
 
    BOOLINT TREEDEBUG;
+
+   void remap();
 
    void insert1(unsigned int idx,unsigned int face);
    void insert2(unsigned int idx);

@@ -99,18 +99,19 @@ BOOLINT minibsptree::preprocess()
          switch (PHASE)
             {
             case 0:
-               // phase #0: calculate the swizzle constant
-               for (SWIZZLE=PRIME; gcd(4*MESH.getsize(),SWIZZLE)!=1; SWIZZLE+=2);
+               // phase #0: calculate the tetrahedral face remapping
+               MAP.setsize(4*MESH.getsize());
+               remap();
 
                PHASE++;
 
                break;
             case 1:
-               // phase #1: insert each tetrahedron of the input mesh into the bsp tree
-               idx=(SWIZZLE*STEP)%(4*MESH.getsize()); // swizzle the actual position
+               // phase #1: insert each face of the tetrahedral input mesh into the bsp tree
+               idx=MAP[STEP];
                insert1(idx/4,idx%4);
 
-               if (++STEP>=4*MESH.getsize())
+               if (++STEP>=MAP.getsize())
                   {
                   STEP=0;
                   PHASE++;
@@ -142,6 +143,7 @@ BOOLINT minibsptree::preprocess()
             case 4:
                // phase #4: clean up
                MESH.setnull();
+               MAP.setnull();
 
                CONSTRUCTED=TRUE;
 
@@ -154,6 +156,27 @@ BOOLINT minibsptree::preprocess()
 // get preprocessing status
 BOOLINT minibsptree::getstatus()
    {return(CONSTRUCTED);}
+
+// calculate the tetrahedral face remapping
+void minibsptree::remap()
+   {
+   unsigned int i;
+
+   unsigned int swizzle;
+   unsigned int idx;
+
+   static const unsigned int prime=271;
+
+   // calculate the coprime swizzle constant
+   for (swizzle=prime; gcd(MAP.getsize(),swizzle)!=1; swizzle+=2);
+
+   // calculate the tetrahedral face mapping
+   for (i=0; i<MAP.getsize(); i++)
+      {
+      idx=(swizzle*i)%MAP.getsize(); // swizzle the actual index
+      MAP[i]=idx; // store remapped index
+      }
+   }
 
 // insert tetrahedron (phase #1)
 void minibsptree::insert1(unsigned int idx,unsigned int face)

@@ -173,7 +173,7 @@ int main(int argc,char *argv[])
    double gfnh=1000.0;
    int gfnz=4;
    double brick=1.0;
-   minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,3);
+   minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
    addhex(brick*miniv3d(-1.0,-1.0,0.0),2.0*brick,crd,TRUE,1,0,&mesh);
    addhex(brick*miniv3d(1.0,-1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
    addhex(brick*miniv3d(-1.0,1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
