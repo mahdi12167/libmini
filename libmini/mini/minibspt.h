@@ -16,6 +16,10 @@
 
 class minibsptree
    {
+   protected:
+
+   static const double delta;
+
    public:
 
    //! default constructor

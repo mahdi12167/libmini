@@ -12,7 +12,7 @@
 
 class minigeom_base
    {
-   public:
+   protected:
 
    static const double delta;
    static const double delta2;
@@ -20,6 +20,8 @@ class minigeom_base
    static const double alpha;
    static const double sinalpha;
    static const double cosalpha;
+
+   public:
 
    //! default constructor
    minigeom_base() {setnull();}

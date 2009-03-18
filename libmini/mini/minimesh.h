@@ -252,6 +252,10 @@ inline std::ostream& operator << (std::ostream &out,const minihedron &h)
 
 class minimesh: public minidyna<minihedron>
    {
+   protected:
+
+   static const double delta;
+
    public:
 
    //! default constructor

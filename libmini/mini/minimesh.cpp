@@ -2,6 +2,8 @@
 
 #include "minimesh.h"
 
+const double minimesh::delta=1E-5;
+
 // default constructor
 minimesh::minimesh(): minidyna<minihedron>()
    {
@@ -114,7 +116,7 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
          v2=gon[j+1];
          v3=gon[j+2];
 
-         if (FABS(minigeom_plane(v1,v2,v3).getdistance(anchor))>minigeom_base::delta)
+         if (FABS(minigeom_plane(v1,v2,v3).getdistance(anchor))>delta)
             mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
          }
       }
@@ -244,7 +246,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
          d=plane.getdistance(m1);
 
-         if (d<minigeom_base::delta)
+         if (d<delta)
             if (d>dist)
                {
                idx=i;
@@ -253,7 +255,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
          d=plane.getdistance(m2);
 
-         if (d<minigeom_base::delta)
+         if (d<delta)
             if (d>dist)
                {
                idx=i;
@@ -262,7 +264,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
          d=plane.getdistance(m3);
 
-         if (d<minigeom_base::delta)
+         if (d<delta)
             if (d>dist)
                {
                idx=i;
@@ -271,7 +273,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
          d=plane.getdistance(m4);
 
-         if (d<minigeom_base::delta)
+         if (d<delta)
             if (d>dist)
                {
                idx=i;

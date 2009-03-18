@@ -2,6 +2,8 @@
 
 #include "minibspt.h"
 
+const double minibsptree::delta=1E-5;
+
 // default constructor
 minibsptree::minibsptree()
    {
@@ -190,10 +192,10 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d3=TREE[idx].plane.getdistance(v3);
 
       // check if the dividing plane is already existing
-      if (FABS(d1)>minigeom_base::delta || FABS(d2)>minigeom_base::delta || FABS(d3)>minigeom_base::delta)
+      if (FABS(d1)>delta || FABS(d2)>delta || FABS(d3)>delta)
          {
          // check if the tetrahedral face intrudes into the left half space
-         if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta)
+         if (d1>delta || d2>delta || d3>delta)
             if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h); // insert recursively
             else
                {
@@ -202,7 +204,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
                }
 
          // check if the tetrahedral face intrudes into the right half space
-         if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta)
+         if (d1<-delta || d2<-delta || d3<-delta)
             if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h); // insert recursively
             else
                {
@@ -228,12 +230,12 @@ void minibsptree::setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,c
       d4=TREE[idx].plane.getdistance(v4);
 
       // check if the tetrahedon intrudes into the left half space
-      if (d1>minigeom_base::delta || d2>minigeom_base::delta || d3>minigeom_base::delta || d4>minigeom_base::delta)
+      if (d1>delta || d2>delta || d3>delta || d4>delta)
          if (TREE[idx].left!=0) setvals(TREE[idx].left,v1,v2,v3,v4,vals); // insert recursively
          else TREE[idx].leftvals.append(vals); // append data coordinates
 
       // check if the tetrahedon intrudes into the right half space
-      if (d1<-minigeom_base::delta || d2<-minigeom_base::delta || d3<-minigeom_base::delta || d4<-minigeom_base::delta)
+      if (d1<-delta || d2<-delta || d3<-delta || d4<-delta)
          if (TREE[idx].right!=0) setvals(TREE[idx].right,v1,v2,v3,v4,vals); // insert recursively
          else TREE[idx].rightvals.append(vals); // append data coordinates
       }
