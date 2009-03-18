@@ -5,7 +5,7 @@
 // default constructor
 minimesh::minimesh(): minidyna<minihedron>()
    {
-   CONFIGURE_DEGENERATE_SIZE=0.01;
+   CONFIGURE_DEGENERATE_SIZE=0.0;
    CONFIGURE_DEGENERATE_ASPECT=0.01;
    }
 
@@ -169,11 +169,11 @@ void minimesh::reject()
 
       // calculate minimum and maximum distance
       mind=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-      maxe=FMAX(FMAX(FMAX(e1,e2),FMAX(e3,e4)),FMAX(e5,e6));
+      maxe=sqrt(FMAX(FMAX(FMAX(e1,e2),FMAX(e3,e4)),FMAX(e5,e6)));
 
       // remove tetrahedra with degenerate size or aspect
       if (mind<CONFIGURE_DEGENERATE_SIZE ||
-          FSQR(mind)/maxe<FSQR(CONFIGURE_DEGENERATE_ASPECT))
+          mind/maxe<CONFIGURE_DEGENERATE_ASPECT)
          {
          remove(i);
          i--;

@@ -172,22 +172,23 @@ int main(int argc,char *argv[])
    double gfny=2361214.0;
    double gfnh=1000.0;
    int gfnz=4;
-   double brick=1.0;
+   double brick=10.0;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
-   addhex(brick*miniv3d(-1.0,-1.0,0.0),2.0*brick,crd,TRUE,1,0,&mesh);
-   addhex(brick*miniv3d(1.0,-1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
-   addhex(brick*miniv3d(-1.0,1.0,0.0),2.0*brick,crd,FALSE,1,0,&mesh);
-   addhex(brick*miniv3d(1.0,1.0,0.0),2.0*brick,crd,TRUE,1,0,&mesh);
+   addhex(brick*miniv3d(-0.5,-0.5,0.0),brick,crd,TRUE,1,0,&mesh);
+   addhex(brick*miniv3d(0.5,-0.5,0.0),brick,crd,FALSE,1,0,&mesh);
+   addhex(brick*miniv3d(-0.5,0.5,0.0),brick,crd,FALSE,1,0,&mesh);
+   addhex(brick*miniv3d(0.5,0.5,0.0),brick,crd,TRUE,1,0,&mesh);
    std::cout << mesh;
 
    minibsptree bspt;
    minimesh unsorted;
-   bspt.insertbbox(mesh);
+   bspt.insert(mesh);
    unsorted=bspt.extract();
    std::cout << bspt;
    std::cout << unsorted;
 
    std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
+   std::cout << "vol_in=" << mesh.getvolume() << " vol_out=" << unsorted.getvolume() << std::endl;
 
 #endif
 
