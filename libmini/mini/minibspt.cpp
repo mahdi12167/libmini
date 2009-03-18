@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "minisort.h"
-
 #include "minibspt.h"
 
 // default constructor
