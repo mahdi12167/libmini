@@ -5,8 +5,8 @@
 // default constructor
 minimesh::minimesh(): minidyna<minihedron>()
    {
-   CONFIGURE_DEGENERATE_SIZE=0.0;
-   CONFIGURE_DEGENERATE_ASPECT=0.0;
+   CONFIGURE_DEGENERATE_SIZE=0.01;
+   CONFIGURE_DEGENERATE_ASPECT=0.01;
    }
 
 // copy contructor
@@ -133,9 +133,18 @@ void minimesh::reject()
    miniv3d v1,v2,v3,v4;
 
    double d1,d2,d3,d4;
-   double mind,maxd;
+   double e1,e2,e3,e4,e5,e6;
+   double mind,maxe;
 
-   // check all tetrahedra
+   // check all tetrahedra for validity
+   for (i=0; i<getsize(); i++)
+      if (get(i).check())
+         {
+         remove(i);
+         i--;
+         }
+
+   // check all tetrahedra for degeneracy
    for (i=0; i<getsize(); i++)
       {
       // get vertices of the actual tetrahedron
@@ -150,25 +159,25 @@ void minimesh::reject()
       d3=minigeom_plane(v2,v4,v3,v1).getdistance(v1);
       d4=minigeom_plane(v3,v4,v1,v2).getdistance(v2);
 
+      // calculate squared corner distances
+      e1=(v4-v1)*(v4-v1);
+      e2=(v4-v2)*(v4-v2);
+      e3=(v4-v3)*(v4-v3);
+      e4=(v2-v1)*(v2-v1);
+      e5=(v3-v2)*(v3-v2);
+      e6=(v1-v3)*(v1-v3);
+
       // calculate minimum and maximum distance
       mind=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-      maxd=FMAX(FMAX(d1,d2),FMAX(d3,d4));
+      maxe=FMAX(FMAX(FMAX(e1,e2),FMAX(e3,e4)),FMAX(e5,e6));
 
-      // check for degenerate size
-      if (CONFIGURE_DEGENERATE_SIZE>0.0)
-         if (mind<CONFIGURE_DEGENERATE_SIZE)
-            {
-            remove(i);
-            i--;
-            }
-
-      // check for degenerate aspect
-      if (CONFIGURE_DEGENERATE_ASPECT>0.0)
-         if (mind/maxd<CONFIGURE_DEGENERATE_ASPECT)
-            {
-            remove(i);
-            i--;
-            }
+      // remove tetrahedra with degenerate size or aspect
+      if (mind<CONFIGURE_DEGENERATE_SIZE ||
+          FSQR(mind)/maxe<FSQR(CONFIGURE_DEGENERATE_ASPECT))
+         {
+         remove(i);
+         i--;
+         }
       }
    }
 
