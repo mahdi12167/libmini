@@ -78,8 +78,6 @@ class minibsptree
    double VOL;
    BOOLINT VOLDONE;
 
-   BOOLINT TREEDEBUG;
-
    void insert1(unsigned int idx,unsigned int face);
    void insert2(unsigned int idx);
 
