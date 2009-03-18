@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minisort.h"
+
 #include "minibspt.h"
 
 // default constructor
@@ -108,7 +110,7 @@ BOOLINT minibsptree::preprocess()
                break;
             case 1:
                // phase #1: insert each face of the tetrahedral input mesh into the bsp tree
-               idx=MAP[STEP];
+               idx=MAP[STEP].map2;
                insert1(idx/4,idx%4);
 
                if (++STEP>=MAP.getsize())
@@ -157,6 +159,10 @@ BOOLINT minibsptree::preprocess()
 BOOLINT minibsptree::getstatus()
    {return(CONSTRUCTED);}
 
+// comparison operator of face priorities
+inline int operator < (const minibsptree::minibsptree_face &a,const minibsptree::minibsptree_face &b)
+   {return(a.prio<b.prio);}
+
 // calculate the tetrahedral face remapping
 void minibsptree::remap()
    {
@@ -170,12 +176,18 @@ void minibsptree::remap()
    // calculate the coprime swizzle constant
    for (swizzle=prime; gcd(MAP.getsize(),swizzle)!=1; swizzle+=2);
 
-   // calculate the tetrahedral face mapping
+   // initialize the tetrahedral face remapping
+   for (i=0; i<MAP.getsize(); i++) MAP[i].map2=i;
+
+   // calculate the priority of the tetrahedral faces
    for (i=0; i<MAP.getsize(); i++)
       {
       idx=(swizzle*i)%MAP.getsize(); // swizzle the actual index
-      MAP[i]=idx; // store remapped index
+      MAP[i].prio=idx; // store swizzled index as priority
       }
+
+   // calculate the tetrahedral face remapping by sorting the face priorities
+   shellsort<minibsptree_face>(MAP);
    }
 
 // insert tetrahedron (phase #1)
