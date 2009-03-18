@@ -225,7 +225,7 @@ class minihedron
       mtx[1]=miniv3d(vtx2-vtx4);
       mtx[2]=miniv3d(vtx3-vtx4);
 
-      return(FABS(det_mtx(mtx))/2.0);
+      return(FABS(det_mtx(mtx))/6.0);
       }
 
    //! check for degeneracy
