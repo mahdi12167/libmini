@@ -2,13 +2,13 @@
 
 #include "minimesh.h"
 
-const double minimesh::delta=1E-5;
+const double minimesh::delta=1E-3;
 
 // default constructor
 minimesh::minimesh(): minidyna<minihedron>()
    {
-   CONFIGURE_DEGENERATE_SIZE=0.001;
-   CONFIGURE_DEGENERATE_ASPECT=0.001;
+   CONFIGURE_DEGENERATE_SIZE=1E-3;
+   CONFIGURE_DEGENERATE_ASPECT=1E-3;
    }
 
 // copy contructor

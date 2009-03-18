@@ -2,7 +2,7 @@
 
 #include "minibspt.h"
 
-const double minibsptree::delta=1E-5;
+const double minibsptree::delta=1E-3;
 
 // default constructor
 minibsptree::minibsptree()
