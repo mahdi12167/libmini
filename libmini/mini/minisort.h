@@ -7,7 +7,9 @@
 
 namespace minisort {
 
-// Shellsort as proposed by Robert Sedgewick in "Algorithms":
+// Shellsort as proposed by Robert Sedgewick in "Algorithms"
+//  the algorithm sorts the elements in ascending order
+//  the < operator needs to be defined for two elements
 
 // templated version for indexed arrays
 template <class Item>
@@ -36,7 +38,7 @@ void shellsort(Item a[],const unsigned int n)
       }
    }
 
-// templated version for indexed pointer arrays
+// templated version for pointer arrays
 template <class Item>
 void shellsort(Item *a[],const unsigned int n)
    {
@@ -63,7 +65,7 @@ void shellsort(Item *a[],const unsigned int n)
       }
    }
 
-// templated version for minidyna arrays
+// templated version for dynamic arrays
 template <class Item>
 void shellsort(minidyna<Item> &a)
    {
