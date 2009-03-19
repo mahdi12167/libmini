@@ -306,8 +306,8 @@ int main(int argc,char *argv[])
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
    addhex(miniv3d(-1.0,-1.0,0.0)*brick,miniv3d(0.0,0.0,1.0)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,0.0)*brick,miniv3d(1.0,0.0,1.0)*brick,crd,TRUE,1,1,&mesh);
-   addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,TRUE,1,2,&mesh);
-   addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,FALSE,1,3,&mesh);
+   //!! addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,TRUE,1,2,&mesh);
+   //!! addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,FALSE,1,3,&mesh);
 
    minibsptree bspt;
    minimesh unsorted;
