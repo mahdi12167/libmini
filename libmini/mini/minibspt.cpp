@@ -84,6 +84,10 @@ void minibsptree::insertbbox(const minimesh &mesh)
       }
    }
 
+// get number of inserted nodes
+unsigned int minibsptree::getnodes()
+   {return(TREE.getsize());}
+
 // preprocess entire input mesh
 void minibsptree::preprocessall()
    {while (!preprocess());}

@@ -129,10 +129,10 @@ void addhex(miniv3d crd1,miniv3d crd2,
 
    minicoord vtx[8];
 
-#if 0
+#if 1
    for (i=0; i<8; i++) vtx[i]=crd;
 #else
-   for (i=0; i<8; i++) vtx[i].vec=miniv3d(0.0);
+   for (i=0; i<8; i++) vtx[i].vec=miniv3d(0.0,0.0,0.0);
 #endif
 
    vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
@@ -145,11 +145,16 @@ void addhex(miniv3d crd1,miniv3d crd2,
    vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
    vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
-#if 0
+#if 1
    for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 #endif
 
 #if 1
+   crd.convert2(minicoord::MINICOORD_ECEF);
+   for (i=0; i<8; i++) vtx[i].vec-=crd.vec;
+#endif
+
+#if 0
    if (!flip)
       {
       vtx[5].vec.z-=0.9*(vtx[5].vec.z-vtx[1].vec.z);
@@ -297,7 +302,7 @@ int main(int argc,char *argv[])
    double gfny=2361214.0;
    double gfnh=1000.0;
    int gfnz=4;
-   double brick=1.0;
+   double brick=3.0;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_UTM,gfnz,minicoord::MINICOORD_DATUM_WGS84);
    addhex(miniv3d(-1.0,-1.0,0.0)*brick,miniv3d(0.0,0.0,1.0)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,0.0)*brick,miniv3d(1.0,0.0,1.0)*brick,crd,TRUE,1,1,&mesh);
@@ -312,6 +317,7 @@ int main(int argc,char *argv[])
    std::cout << bspt << std::endl;
    std::cout << unsorted << std::endl;
 
+   std::cout << "bspt=" << bspt.getnodes() << std::endl;
    std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
    std::cout << "vol_in=" << mesh.getvolume() << " vol_out=" << unsorted.getvolume() << std::endl;
 

@@ -37,6 +37,9 @@ class minibsptree
    //! insert from tetrahedral mesh with bounding box
    void insertbbox(const minimesh &mesh);
 
+   //! get number of inserted nodes
+   unsigned int getnodes();
+
    //! preprocess entire input mesh
    void preprocessall();
 
