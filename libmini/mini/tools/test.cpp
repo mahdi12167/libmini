@@ -132,7 +132,7 @@ void addhex(miniv3d crd1,miniv3d crd2,
 #if 0
    for (i=0; i<8; i++) vtx[i]=crd;
 #else
-   for (i=0; i<8; i++) vtx[i]=miniv3d(0.0);
+   for (i=0; i<8; i++) vtx[i].vec=miniv3d(0.0);
 #endif
 
    vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
@@ -169,15 +169,18 @@ void addhex(miniv3d crd1,miniv3d crd2,
 #endif
 
 #if 1
-   vtx[0].vec=reproject(vtx[0].vec,vtx[0].vec-vtx[4].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
-   vtx[1].vec=reproject(vtx[1].vec,vtx[1].vec-vtx[5].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
-   vtx[2].vec=reproject(vtx[2].vec,vtx[2].vec-vtx[6].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
-   vtx[3].vec=reproject(vtx[3].vec,vtx[3].vec-vtx[7].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
+   miniv3d rep[8];
+   rep[0]=reproject(vtx[0].vec,vtx[0].vec-vtx[4].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
+   rep[1]=reproject(vtx[1].vec,vtx[1].vec-vtx[5].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
+   rep[2]=reproject(vtx[2].vec,vtx[2].vec-vtx[6].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
+   rep[3]=reproject(vtx[3].vec,vtx[3].vec-vtx[7].vec,vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec);
 
-   vtx[4].vec=reproject(vtx[4].vec,vtx[4].vec-vtx[0].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
-   vtx[5].vec=reproject(vtx[5].vec,vtx[5].vec-vtx[1].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
-   vtx[6].vec=reproject(vtx[6].vec,vtx[6].vec-vtx[2].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
-   vtx[7].vec=reproject(vtx[7].vec,vtx[7].vec-vtx[3].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
+   rep[4]=reproject(vtx[4].vec,vtx[4].vec-vtx[0].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
+   rep[5]=reproject(vtx[5].vec,vtx[5].vec-vtx[1].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
+   rep[6]=reproject(vtx[6].vec,vtx[6].vec-vtx[2].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
+   rep[7]=reproject(vtx[7].vec,vtx[7].vec-vtx[3].vec,vtx[4].vec,vtx[5].vec,vtx[6].vec,vtx[7].vec);
+
+   for (i=0; i<8; i++) vtx[i].vec=rep[i];
 #endif
 
 #if 0
