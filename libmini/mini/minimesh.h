@@ -316,8 +316,8 @@ class minimesh: public minidyna<minihedron>
 
    minidyna<minihedron> SORT;
 
-   double CONFIGURE_DEGENERATE_SIZE;
-   double CONFIGURE_DEGENERATE_ASPECT;
+   static double CONFIGURE_DEGENERATE_SIZE;
+   static double CONFIGURE_DEGENERATE_ASPECT;
 
    minigon polygonize(minigeom_segments segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
@@ -330,8 +330,8 @@ class minimesh: public minidyna<minihedron>
 
    void descend(const unsigned int idx,const miniv3d &eye);
 
-   void configure_degenerate_size(float size);
-   void configure_degenerate_aspect(float aspect);
+   static void configure_degenerate_size(float size);
+   static void configure_degenerate_aspect(float aspect);
    };
 
 //! stream output

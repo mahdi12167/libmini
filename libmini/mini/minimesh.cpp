@@ -4,12 +4,11 @@
 
 const double minimesh::delta=1E-3;
 
+double minimesh::CONFIGURE_DEGENERATE_SIZE=1E-3;
+double minimesh::CONFIGURE_DEGENERATE_ASPECT=1E-3;
+
 // default constructor
-minimesh::minimesh(): minidyna<minihedron>()
-   {
-   CONFIGURE_DEGENERATE_SIZE=1E-3;
-   CONFIGURE_DEGENERATE_ASPECT=1E-3;
-   }
+minimesh::minimesh(): minidyna<minihedron>() {}
 
 // copy contructor
 minimesh::minimesh(const minimesh &mesh): minidyna<minihedron>(mesh) {}
