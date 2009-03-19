@@ -1,8 +1,5 @@
 // (c) by Stefan Roettger
 
-#undef MESHTEST
-#define MESHTEST //!!
-
 #undef OPENGLTEST // enable this to perform an OpenGL test
 
 #include <mini/minibase.h>
@@ -12,12 +9,6 @@
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
-#endif
-
-#ifdef MESHTEST
-#include <mini/minicoord.h>
-#include <mini/minimesh.h>
-#include <mini/minibspt.h>
 #endif
 
 static int winwidth,winheight,winid;
@@ -85,61 +76,6 @@ void keyboardfunc(unsigned char key,int x,int y)
       }
    }
 
-#ifdef MESHTEST
-
-void addhex(miniv3d crd1,miniv3d crd2,
-            minicoord crd,BOOLINT flip,
-            unsigned int slot,unsigned int brickid,
-            minimesh *mesh)
-   {
-   int i;
-
-   minicoord vtx[8];
-
-   for (i=0; i<8; i++) vtx[i]=crd;
-
-   vtx[0].vec+=miniv4d(crd1.x,crd1.y,crd1.z);
-   vtx[1].vec+=miniv4d(crd1.x,crd2.y,crd1.z);
-   vtx[2].vec+=miniv4d(crd2.x,crd2.y,crd1.z);
-   vtx[3].vec+=miniv4d(crd2.x,crd1.y,crd1.z);
-
-   vtx[4].vec+=miniv4d(crd1.x,crd1.y,crd2.z);
-   vtx[5].vec+=miniv4d(crd1.x,crd2.y,crd2.z);
-   vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
-   vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
-
-   for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
-
-   if (!flip)
-      {
-      // top
-      mesh->append(minihedron(vtx[6].vec,vtx[3].vec,vtx[4].vec,vtx[7].vec,slot,brickid));
-      mesh->append(minihedron(vtx[4].vec,vtx[1].vec,vtx[6].vec,vtx[5].vec,slot,brickid));
-
-      // center
-      mesh->append(minihedron(vtx[1].vec,vtx[4].vec,vtx[6].vec,vtx[3].vec,slot,brickid));
-
-      // bottom
-      mesh->append(minihedron(vtx[1].vec,vtx[4].vec,vtx[3].vec,vtx[0].vec,slot,brickid));
-      mesh->append(minihedron(vtx[3].vec,vtx[6].vec,vtx[1].vec,vtx[2].vec,slot,brickid));
-      }
-   else
-      {
-      // top
-      mesh->append(minihedron(vtx[5].vec,vtx[0].vec,vtx[7].vec,vtx[4].vec,slot,brickid));
-      mesh->append(minihedron(vtx[7].vec,vtx[2].vec,vtx[5].vec,vtx[6].vec,slot,brickid));
-
-      // center
-      mesh->append(minihedron(vtx[2].vec,vtx[7].vec,vtx[5].vec,vtx[0].vec,slot,brickid));
-
-      // bottom
-      mesh->append(minihedron(vtx[2].vec,vtx[7].vec,vtx[0].vec,vtx[3].vec,slot,brickid));
-      mesh->append(minihedron(vtx[0].vec,vtx[5].vec,vtx[2].vec,vtx[1].vec,slot,brickid));
-      }
-   }
-
-#endif
-
 int main(int argc,char *argv[])
    {
    if (argc!=1)
@@ -170,34 +106,8 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-#ifndef MESHTEST
-
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
-
-#else
-
-   minimesh mesh;
-   double gfnx=-157.0*3600;
-   double gfny=21.0*3600;
-   double gfnh=1000.0;
-   double brick=1000000.0/30;
-   minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
-   addhex(miniv3d(-1.0,-1.0,0.0)*brick,miniv3d(0.0,0.0,1.0)*brick,crd,FALSE,1,0,&mesh);
-   addhex(miniv3d(0.0,-1.0,0.0)*brick,miniv3d(1.0,0.0,1.0)*brick,crd,TRUE,1,1,&mesh);
-   addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,TRUE,1,2,&mesh);
-   addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,FALSE,1,3,&mesh);
-
-   minibsptree bspt;
-   minimesh unsorted;
-   bspt.insert(mesh);
-   unsorted=bspt.extract();
-
-   std::cout << "bspt=" << bspt.getnodes() << std::endl;
-   std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
-   std::cout << "vol_in=" << mesh.getvolume() << " vol_out=" << unsorted.getvolume() << std::endl;
-
-#endif
 
    // end of test code
 
