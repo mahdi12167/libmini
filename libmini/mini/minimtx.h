@@ -71,13 +71,13 @@ class minimtx: public minidyna<Item>
 
       // compute upper triangular form
       for (i=0; i<getrows()-1; i++)
-         for (j=getrows()-1; j>i; j--)
+         for (j=getrows()-1; j+1>i; j--)
             if (get(i,j)!=0)
-               for (k=j-1; k>i; k--)
+               for (k=j-1; k+1>i; k--)
                   if (get(i,k)!=0)
                      {
                      factor=get(i,j)/get(i,k);
-                     for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(i,k));
+                     for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(l,k));
                      set(i,j,0);
                      break;
                      }
