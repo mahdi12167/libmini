@@ -90,11 +90,11 @@ class minimtx: public minidyna<Item>
       // back-substitution
       for (i=getrows()-1; i+1>0; i--)
          {
-         sum=1/get(getrows(),i);
+         sum=get(getrows(),i);
 
          for (j=i+1; j<getrows(); j++) sum-=get(i,j)*sol.get(0,j);
 
-         sol.set(0,i,sum);
+         sol.set(0,i,sum/get(i,i));
          }
 
       return(sol);
