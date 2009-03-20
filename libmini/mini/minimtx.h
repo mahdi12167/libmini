@@ -44,6 +44,16 @@ class minimtx: public minidyna<Item>
       return(minidyna<Item>::get(x+y*COLS));
       }
 
+   void diag(const Item &val=1)
+      {
+      unsigned int i;
+
+      if (getcols()<getrows())
+         for (i=0; i<getcols(); i++) set(i,i,val);
+      else 
+         for (i=0; i<getrows(); i++) set(i,i,val);
+     }
+
    //! Gaussian elimination with back-substitution
    // constant vector is right-most column
    // assumes non-zero entries on the diagonal
