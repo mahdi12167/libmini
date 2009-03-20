@@ -82,7 +82,7 @@ class minimtx: public minidyna<Item>
 
                factor=get(i,j)/get(i,k);
 
-               for (l=i+1; l<getrows(); l++) set(l,j,get(l,j)-factor*get(i,k));
+               for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(i,k));
 
                set(i,j,0);
                }
@@ -92,7 +92,7 @@ class minimtx: public minidyna<Item>
          {
          sum=get(getrows(),i);
 
-         for (j=i+1; j<getrows(); j++) sum-=get(i,j)*sol.get(0,j);
+         for (j=i+1; j<getrows(); j++) sum-=get(j,i)*sol.get(0,j);
 
          sol.set(0,i,sum/get(i,i));
          }
@@ -136,17 +136,30 @@ inline std::ostream& operator << (std::ostream &out,const minimtx<Item,Minsize> 
 
    out << "minimtx[ ";
 
-   for (j=0; j<a.getrows(); j++)
+   if (a.getcols()>1)
+      for (j=0; j<a.getrows(); j++)
+         {
+         out << "[ ";
+
+         for (i=0; i<a.getcols(); i++)
+            {
+            out << a.get(i,j);
+            if (i+1<a.getcols()) out << ",";
+            }
+
+         out << " ]";
+         }
+   else
       {
       out << "[ ";
 
-      for (i=0; i<a.getcols(); i++)
+      for (j=0; j<a.getrows(); j++)
          {
-         out << a.get(i,j);
-         if (i+1<a.getcols()) out << ",";
+         out << a.get(0,j);
+         if (j+1<a.getrows()) out << ",";
          }
 
-      out << " ]";
+      out << " ]T";
       }
 
    out << " ]";
