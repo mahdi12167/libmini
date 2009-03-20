@@ -398,7 +398,7 @@ inline std::ostream& operator << (std::ostream &out,const minidyna<Item,Minsize>
    for (i=0; i<a.getsize(); i++)
       {
       out << a.get(i);
-      if (i<a.getsize()-1) out << ", ";
+      if (i+1<a.getsize()) out << ", ";
       }
 
    out << " ]";

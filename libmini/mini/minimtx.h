@@ -3,6 +3,8 @@
 #ifndef MINIMTX_H
 #define MINIMTX_H
 
+#include <iostream>
+
 #include "minidyna.h"
 
 //! templated dynamic matrix
@@ -114,6 +116,32 @@ inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const mi
          }
 
    return(mtx);
+   }
+
+//! stream output
+template <class Item,const unsigned int Minsize>
+inline std::ostream& operator << (std::ostream &out,const minimtx<Item,Minsize> &a)
+   {
+   unsigned int i,j;
+
+   out << "minimtx[ ";
+
+   for (j=0; j<a.getrows(); j++)
+      {
+      out << "[ ";
+
+      for (i=0; i<a.getcols(); i++)
+         {
+         out << a.get(i,j);
+         if (i+1<a.getcols()) out << ",";
+         }
+
+      out << " ]";
+      }
+
+   out << " ]";
+
+   return(out);
    }
 
 #endif
