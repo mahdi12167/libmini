@@ -84,17 +84,17 @@ class minimtx: public minidyna<Item>
 
                for (l=i+1; l<getrows(); l++) set(l,j,get(l,j)-factor*get(i,k));
 
-               set(i,j)=0;
+               set(i,j,0);
                }
 
       // back-substitution
       for (i=getrows()-1; i+1>0; i--)
          {
-         sum=get(getrows(),i);
+         sum=1/get(getrows(),i);
 
          for (j=i+1; j<getrows(); j++) sum-=get(i,j)*sol.get(0,j);
 
-         sol.set(0,sum);
+         sol.set(0,i,sum);
          }
 
       return(sol);
