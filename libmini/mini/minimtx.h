@@ -7,7 +7,7 @@
 
 //! templated dynamic matrix
 template <class Item,const unsigned int Minsize=0>
-class minimtx: public minidyna<Item,Minsize*Minsize>
+class minimtx: public minidyna<Item>
    {
    public:
 
@@ -28,18 +28,64 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
 
    // accessors:
 
-   void set(const Item &val=0) {minidyna<Item,Minsize*Minsize>::set(val);}
+   void set(const Item &val=0) {minidyna<Item>::set(val);}
 
    void set(unsigned int x,unsigned int y,const Item &val)
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      minidyna<Item,Minsize*Minsize>::set(x+y*COLS,val);
+      minidyna<Item>::set(x+y*COLS,val);
       }
 
    Item get(unsigned int x,unsigned int y) const
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      return(minidyna<Item,Minsize*Minsize>::get(x+y*COLS));
+      return(minidyna<Item>::get(x+y*COLS));
+      }
+
+   //! Gaussian elimination with back-substitution
+   // constant vector is right-most column
+   // assumes non-zero entries on the diagonal
+   minimtx<Item> solve()
+      {
+      unsigned int i,j,k,l;
+
+      Item factor,sum;
+
+      minimtx<Item,Minsize> sol(1,getrows());
+
+      // check dimensions
+      if (getcols()!=getrows()+1) return(sol);
+
+      // check diagonal elements to be non-zero
+      for (i=0; i<getrows(); i++)
+         if (get(i,i)==0) return(sol);
+
+      // compute upper triangular form
+      for (j=getrows()-1; j>0; j--)
+         for (i=0; i<j; i++)
+            if (get(i,j)!=0)
+               {
+               for (k=j-1; k>0; k--)
+                  if (get(i,k)!=0) break;
+
+               factor=get(i,j)/get(i,k);
+
+               for (l=i+1; l<getrows(); l++) set(l,j,get(l,j)-factor*get(i,k));
+
+               set(i,j)=0;
+               }
+
+      // back-substitution
+      for (i=getrows()-1; i+1>0; i--)
+         {
+         sum=get(getrows(),i);
+
+         for (j=i+1; j<getrows(); j++) sum-=get(i,j)*sol.get(0,j);
+
+         sol.set(0,sum);
+         }
+
+      return(sol);
       }
 
    protected:
