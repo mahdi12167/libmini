@@ -37,6 +37,8 @@ void cpy_mtx(miniv4d cpy[3],const miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1];
 void cpy_mtx(miniv4d cpy[3],const miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
 void cpy_mtx(miniv3d cpy[3],const miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}
 
+void cpy_mtx4(miniv4d cpy[4],const miniv4d mtx[4]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2]; cpy[3]=mtx[3];}
+
 // multiply two 3x3 matrices
 void mlt_mtx(miniv3d mtx[3],const miniv3d mtx1[3],const miniv3d mtx2[3])
    {
@@ -127,6 +129,24 @@ void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3],const mi
    mlt_mtx(mtx,mtx1,mtx2,mtx3,mtx4,m);
    }
 
+// multiply two 4x4 matrices
+void mlt_mtx4(miniv4d mtx[4],const miniv4d mtx1[4],const miniv4d mtx2[4])
+   {
+   int i;
+
+   miniv4d m[4];
+
+   for (i=0; i<4; i++)
+      {
+      m[i].x=mtx1[i].x*mtx2[0].x+mtx1[i].y*mtx2[1].x+mtx1[i].z*mtx2[2].x+mtx1[i].w*mtx2[3].x;
+      m[i].y=mtx1[i].x*mtx2[0].y+mtx1[i].y*mtx2[1].y+mtx1[i].z*mtx2[2].y+mtx1[i].w*mtx2[3].y;
+      m[i].z=mtx1[i].x*mtx2[0].z+mtx1[i].y*mtx2[1].z+mtx1[i].z*mtx2[2].z+mtx1[i].w*mtx2[3].z;
+      m[i].w=mtx1[i].x*mtx2[0].w+mtx1[i].y*mtx2[1].w+mtx1[i].z*mtx2[2].w+mtx1[i].w*mtx2[3].w;
+      }
+
+   cpy_mtx4(mtx,m);
+   }
+
 // calculate determinant of 3x3 matrix
 double det_mtx(const miniv3d mtx[3])
    {
@@ -141,6 +161,35 @@ double det_mtx(const miniv4d mtx[3])
    return(mtx[0].x*(mtx[1].y*mtx[2].z-mtx[2].y*mtx[1].z)+
           mtx[0].y*(mtx[2].x*mtx[1].z-mtx[1].x*mtx[2].z)+
           mtx[0].z*(mtx[1].x*mtx[2].y-mtx[2].x*mtx[1].y));
+   }
+
+// calculate determinant of 4x4 matrix
+double det_mtx4(const miniv4d mtx[4])
+   {
+   return(mtx[0].w*mtx[1].z*mtx[2].y*mtx[3].x-
+          mtx[0].z*mtx[1].w*mtx[2].y*mtx[3].x-
+          mtx[0].w*mtx[1].y*mtx[2].z*mtx[3].x+
+          mtx[0].y*mtx[1].w*mtx[2].z*mtx[3].x+
+          mtx[0].z*mtx[1].y*mtx[2].w*mtx[3].x-
+          mtx[0].y*mtx[1].z*mtx[2].w*mtx[3].x-
+          mtx[0].w*mtx[1].z*mtx[2].x*mtx[3].y+
+          mtx[0].z*mtx[1].w*mtx[2].x*mtx[3].y+
+          mtx[0].w*mtx[1].x*mtx[2].z*mtx[3].y-
+          mtx[0].x*mtx[1].w*mtx[2].z*mtx[3].y-
+          mtx[0].z*mtx[1].x*mtx[2].w*mtx[3].y+
+          mtx[0].x*mtx[1].z*mtx[2].w*mtx[3].y+
+          mtx[0].w*mtx[1].y*mtx[2].x*mtx[3].z-
+          mtx[0].y*mtx[1].w*mtx[2].x*mtx[3].z-
+          mtx[0].w*mtx[1].x*mtx[2].y*mtx[3].z+
+          mtx[0].x*mtx[1].w*mtx[2].y*mtx[3].z+
+          mtx[0].y*mtx[1].x*mtx[2].w*mtx[3].z-
+          mtx[0].x*mtx[1].y*mtx[2].w*mtx[3].z-
+          mtx[0].z*mtx[1].y*mtx[2].x*mtx[3].w+
+          mtx[0].y*mtx[1].z*mtx[2].x*mtx[3].w+
+          mtx[0].z*mtx[1].x*mtx[2].y*mtx[3].w-
+          mtx[0].x*mtx[1].z*mtx[2].y*mtx[3].w-
+          mtx[0].y*mtx[1].x*mtx[2].z*mtx[3].w+
+          mtx[0].x*mtx[1].y*mtx[2].z*mtx[3].w);
    }
 
 // invert a 3x3 matrix
@@ -205,6 +254,42 @@ void inv_mtx(miniv4d inv[3],const miniv4d mtx[3])
    mlt_mtx(inv,m1,m2);
    }
 
+// invert a 4x4 matrix
+void inv_mtx4(miniv4d inv[4],const miniv4d mtx[4])
+   {
+   double det;
+   miniv4d m[4];
+
+   // calculate determinant
+   det=det_mtx4(mtx);
+
+   // check determinant
+   if (det==0.0) inv[0]=inv[1]=inv[2]=inv[3]=miniv4d(0.0);
+   else
+      {
+      det=1.0/det;
+
+      cpy_mtx4(m,mtx);
+
+      inv[0].x=det*(m[1].z*m[2].w*m[3].y-m[1].w*m[2].z*m[3].y+m[1].w*m[2].y*m[3].z-m[1].y*m[2].w*m[3].z-m[1].z*m[2].y*m[3].w+m[1].y*m[2].z*m[3].w);
+      inv[0].y=det*(m[0].w*m[2].z*m[3].y-m[0].z*m[2].w*m[3].y-m[0].w*m[2].y*m[3].z+m[0].y*m[2].w*m[3].z+m[0].z*m[2].y*m[3].w-m[0].y*m[2].z*m[3].w);
+      inv[0].z=det*(m[0].z*m[1].w*m[3].y-m[0].w*m[1].z*m[3].y+m[0].w*m[1].y*m[3].z-m[0].y*m[1].w*m[3].z-m[0].z*m[1].y*m[3].w+m[0].y*m[1].z*m[3].w);
+      inv[0].w=det*(m[0].w*m[1].z*m[2].y-m[0].z*m[1].w*m[2].y-m[0].w*m[1].y*m[2].z+m[0].y*m[1].w*m[2].z+m[0].z*m[1].y*m[2].w-m[0].y*m[1].z*m[2].w);
+      inv[1].x=det*(m[1].w*m[2].z*m[3].x-m[1].z*m[2].w*m[3].x-m[1].w*m[2].x*m[3].z+m[1].x*m[2].w*m[3].z+m[1].z*m[2].x*m[3].w-m[1].x*m[2].z*m[3].w);
+      inv[1].y=det*(m[0].z*m[2].w*m[3].x-m[0].w*m[2].z*m[3].x+m[0].w*m[2].x*m[3].z-m[0].x*m[2].w*m[3].z-m[0].z*m[2].x*m[3].w+m[0].x*m[2].z*m[3].w);
+      inv[1].z=det*(m[0].w*m[1].z*m[3].x-m[0].z*m[1].w*m[3].x-m[0].w*m[1].x*m[3].z+m[0].x*m[1].w*m[3].z+m[0].z*m[1].x*m[3].w-m[0].x*m[1].z*m[3].w);
+      inv[1].w=det*(m[0].z*m[1].w*m[2].x-m[0].w*m[1].z*m[2].x+m[0].w*m[1].x*m[2].z-m[0].x*m[1].w*m[2].z-m[0].z*m[1].x*m[2].w+m[0].x*m[1].z*m[2].w);
+      inv[2].x=det*(m[1].y*m[2].w*m[3].x-m[1].w*m[2].y*m[3].x+m[1].w*m[2].x*m[3].y-m[1].x*m[2].w*m[3].y-m[1].y*m[2].x*m[3].w+m[1].x*m[2].y*m[3].w);
+      inv[2].y=det*(m[0].w*m[2].y*m[3].x-m[0].y*m[2].w*m[3].x-m[0].w*m[2].x*m[3].y+m[0].x*m[2].w*m[3].y+m[0].y*m[2].x*m[3].w-m[0].x*m[2].y*m[3].w);
+      inv[2].z=det*(m[0].y*m[1].w*m[3].x-m[0].w*m[1].y*m[3].x+m[0].w*m[1].x*m[3].y-m[0].x*m[1].w*m[3].y-m[0].y*m[1].x*m[3].w+m[0].x*m[1].y*m[3].w);
+      inv[2].w=det*(m[0].w*m[1].y*m[2].x-m[0].y*m[1].w*m[2].x-m[0].w*m[1].x*m[2].y+m[0].x*m[1].w*m[2].y+m[0].y*m[1].x*m[2].w-m[0].x*m[1].y*m[2].w);
+      inv[3].x=det*(m[1].z*m[2].y*m[3].x-m[1].y*m[2].z*m[3].x-m[1].z*m[2].x*m[3].y+m[1].x*m[2].z*m[3].y+m[1].y*m[2].x*m[3].z-m[1].x*m[2].y*m[3].z);
+      inv[3].y=det*(m[0].y*m[2].z*m[3].x-m[0].z*m[2].y*m[3].x+m[0].z*m[2].x*m[3].y-m[0].x*m[2].z*m[3].y-m[0].y*m[2].x*m[3].z+m[0].x*m[2].y*m[3].z);
+      inv[3].z=det*(m[0].z*m[1].y*m[3].x-m[0].y*m[1].z*m[3].x-m[0].z*m[1].x*m[3].y+m[0].x*m[1].z*m[3].y+m[0].y*m[1].x*m[3].z-m[0].x*m[1].y*m[3].z);
+      inv[3].w=det*(m[0].y*m[1].z*m[2].x-m[0].z*m[1].y*m[2].x+m[0].z*m[1].x*m[2].y-m[0].x*m[1].z*m[2].y-m[0].y*m[1].x*m[2].z+m[0].x*m[1].y*m[2].z);
+      }
+   }
+
 // transpose a 3x3 matrix
 void tra_mtx(miniv3d tra[3],const miniv3d mtx[3])
    {
@@ -242,6 +327,20 @@ void tra_mtx(miniv4d tra[3],const miniv4d mtx[3])
    m[2]=miniv3d(mtx[0].z,mtx[1].z,mtx[2].z);
 
    cpy_mtx(tra,m);
+   }
+
+// transpose a 4x4 matrix
+void tra_mtx4(miniv4d tra[4],const miniv4d mtx[4])
+   {
+   miniv4d m[4];
+
+   // compute transposition
+   m[0]=miniv4d(mtx[0].x,mtx[1].x,mtx[2].x,mtx[3].x);
+   m[1]=miniv4d(mtx[0].y,mtx[1].y,mtx[2].y,mtx[3].y);
+   m[2]=miniv4d(mtx[0].z,mtx[1].z,mtx[2].z,mtx[3].z);
+   m[3]=miniv4d(mtx[0].w,mtx[1].w,mtx[2].w,mtx[3].w);
+
+   cpy_mtx4(tra,m);
    }
 
 // calculate a rotation matrix
