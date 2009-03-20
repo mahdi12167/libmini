@@ -55,14 +55,14 @@ inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const mi
 
    Item val;
 
-   minimtx<Item,Minsize> mtx(a.getrows(),b.getcols());
+   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
 
-   for (i=0; i<a.getcols(); i++)
-      for (j=0; j<b.getrows(); j++)
+   for (i=0; i<b.getcols(); i++)
+      for (j=0; j<a.getrows(); j++)
          {
          val=0;
 
-         for (k=0; k<a.getcols(); k++) val+=a.get(k,j)*b.get(i,k);
+         for (k=0; k<b.getcols(); k++) val+=a.get(k,j)*b.get(i,k);
 
          mtx.set(i,j,val);
          }
