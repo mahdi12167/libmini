@@ -55,46 +55,45 @@ class minimtx: public minidyna<Item>
      }
 
    //! Gaussian elimination with back-substitution
-   // constant vector is right-most column
-   // assumes non-zero entries on the diagonal
+   //  solves linear system of equations defined by square matrix
+   //  constant vector is right-most column of working matrix
+   //  working matrix has to be in the form (N+1)xN
    minimtx<Item> solve()
       {
       unsigned int i,j,k,l;
 
       Item factor,sum;
 
-      minimtx<Item,Minsize> sol(1,getrows());
+      minimtx<Item,Minsize> sol(1,getrows(),0);
 
       // check dimensions
       if (getcols()!=getrows()+1) return(sol);
 
-      // check diagonal elements to be non-zero
-      for (i=0; i<getrows(); i++)
-         if (get(i,i)==0) return(sol);
-
       // compute upper triangular form
-      for (j=getrows()-1; j>0; j--)
-         for (i=0; i<j; i++)
+      for (i=0; i<getrows()-1; i++)
+         for (j=getrows()-1; j>i; j--)
             if (get(i,j)!=0)
-               {
-               for (k=j-1; k>0; k--)
-                  if (get(i,k)!=0) break;
-
-               factor=get(i,j)/get(i,k);
-
-               for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(i,k));
-
-               set(i,j,0);
-               }
+               for (k=j-1; k>i; k--)
+                  if (get(i,k)!=0)
+                     {
+                     factor=get(i,j)/get(i,k);
+                     for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(i,k));
+                     set(i,j,0);
+                     break;
+                     }
 
       // back-substitution
       for (i=getrows()-1; i+1>0; i--)
          {
          sum=get(getrows(),i);
+         for (l=i+1; l<getrows(); l++) sum-=get(l,i)*sol.get(0,l);
 
-         for (j=i+1; j<getrows(); j++) sum-=get(j,i)*sol.get(0,j);
-
-         sol.set(0,i,sum/get(i,i));
+         for (l=i; l+1>0; l--)
+            if (get(l,i)!=0)
+               {
+               sol.set(0,i,sum/get(l,i));
+               break;
+               }
          }
 
       return(sol);
