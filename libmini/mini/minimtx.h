@@ -50,7 +50,7 @@ class minimtx: public minidyna<Item>
 
       if (getcols()<getrows())
          for (i=0; i<getcols(); i++) set(i,i,val);
-      else 
+      else
          for (i=0; i<getrows(); i++) set(i,i,val);
      }
 
