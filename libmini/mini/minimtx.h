@@ -5,11 +5,12 @@
 
 #include <iostream>
 
+#include "minibase.h"
 #include "minidyna.h"
 
 //! templated dynamic matrix
 template <class Item,const unsigned int Minsize=0>
-class minimtx: public minidyna<Item>
+class minimtx: public minidyna<Item,Minsize*Minsize>
    {
    public:
 
@@ -30,18 +31,18 @@ class minimtx: public minidyna<Item>
 
    // accessors:
 
-   void set(const Item &val=0) {minidyna<Item>::set(val);}
+   void set(const Item &val=0) {minidyna<Item,Minsize*Minsize>::set(val);}
 
    void set(unsigned int x,unsigned int y,const Item &val)
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      minidyna<Item>::set(x+y*COLS,val);
+      minidyna<Item,Minsize*Minsize>::set(x+y*COLS,val);
       }
 
    Item get(unsigned int x,unsigned int y) const
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      return(minidyna<Item>::get(x+y*COLS));
+      return(minidyna<Item,Minsize*Minsize>::get(x+y*COLS));
       }
 
    void diag(const Item &val=1)
@@ -56,47 +57,68 @@ class minimtx: public minidyna<Item>
 
    //! Gaussian elimination with back-substitution
    //  solves linear system of equations defined by square matrix
-   //  constant vector is right-most column of working matrix
-   //  working matrix has to be in the form (N+1)xN
-   minimtx<Item> solve()
+   //  working matrix has to be in the augmented form (N+1)xN
+   //  right-hand-side vector is right-most column of working matrix
+   //  returns true if the linear system has a solution
+   BOOLINT solve(minimtx<Item,Minsize> &sol)
       {
       unsigned int i,j,k,l;
 
-      Item factor,sum;
+      Item item,factor,sum;
 
-      minimtx<Item,Minsize> sol(1,getrows(),0);
+      minimtx<unsigned int,Minsize> row(1,getrows());
 
       // check dimensions
-      if (getcols()!=getrows()+1) return(sol);
+      if (getrows()<1) return(FALSE);
+      if (getcols()!=getrows()+1) return(FALSE);
 
-      // compute upper triangular form
+      // initialize solution vector
+      for (i=0; i<getrows(); i++)
+         {
+         sol.set(0,i,0);
+         row.set(0,i,i);
+         }
+
+      // reorder rows to have non-zero elements on the diagonal
       for (i=0; i<getrows()-1; i++)
-         for (j=getrows()-1; j+1>i; j--)
-            if (get(i,j)!=0)
-               for (k=j-1; k+1>i; k--)
-                  if (get(i,k)!=0)
+         if (get(i,i)==0)
+            for (j=i+1; j<getrows(); j++)
+               if (get(i,j)!=0)
+                  {
+                  l=row.get(0,i);
+                  row.set(0,i,row.get(0,j));
+                  row.set(0,j,l);
+
+                  for (k=0; k<getcols(); k++)
                      {
-                     factor=get(i,j)/get(i,k);
-                     for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(l,k));
-                     set(i,j,0);
-                     break;
+                     item=get(k,i);
+                     set(k,i,get(k,j));
+                     set(k,j,item);
                      }
+                  }
+
+      // compute upper triangular form 
+      for (i=0; i<getrows()-1; i++)
+         for (j=getrows()-1; j>i; j--)
+            if (get(i,j)!=0)
+               if (get(i,i)!=0)
+                  {
+                  factor=get(i,j)/get(i,i);
+                  for (k=i+1; k<getcols(); k++) set(k,j,get(k,j)-factor*get(k,i));
+                  set(i,j,0);
+                  }
 
       // back-substitution
       for (i=getrows()-1; i+1>0; i--)
-         {
-         sum=get(getrows(),i);
-         for (l=i+1; l<getrows(); l++) sum-=get(l,i)*sol.get(0,l);
+         if (get(i,i)!=0)
+            {
+            sum=get(getrows(),i);
+            for (j=i+1; j<getrows(); j++) sum-=get(j,i)*sol.get(0,row.get(0,j));
+            sol.set(0,row.get(0,i),sum/get(i,i));
+            }
+         else if (get(getrows(),i)!=0) return(FALSE);
 
-         for (l=i; l+1>0; l--)
-            if (get(l,i)!=0)
-               {
-               sol.set(0,i,sum/get(l,i));
-               break;
-               }
-         }
-
-      return(sol);
+      return(TRUE);
       }
 
    protected:
@@ -118,9 +140,7 @@ inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const mi
       for (j=0; j<a.getrows(); j++)
          {
          val=0;
-
          for (k=0; k<b.getcols(); k++) val+=a.get(k,j)*b.get(i,k);
-
          mtx.set(i,j,val);
          }
 
@@ -165,5 +185,7 @@ inline std::ostream& operator << (std::ostream &out,const minimtx<Item,Minsize> 
 
    return(out);
    }
+
+typedef minimtx<double,8> minimatrix;
 
 #endif
