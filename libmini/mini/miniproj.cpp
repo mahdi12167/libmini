@@ -1317,30 +1317,6 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
-// get modelview matrix
-void miniproj::getmodelview()
-   {
-   double mvmtx[16];
-
-   mtxgetmodel(mvmtx);
-
-   MVMATRIX[0].x=mvmtx[0];
-   MVMATRIX[1].x=mvmtx[1];
-   MVMATRIX[2].x=mvmtx[2];
-   MVMATRIX[0].y=mvmtx[4];
-   MVMATRIX[1].y=mvmtx[5];
-   MVMATRIX[2].y=mvmtx[6];
-   MVMATRIX[0].z=mvmtx[8];
-   MVMATRIX[1].z=mvmtx[9];
-   MVMATRIX[2].z=mvmtx[10];
-   MVMATRIX[0].w=mvmtx[12];
-   MVMATRIX[1].w=mvmtx[13];
-   MVMATRIX[2].w=mvmtx[14];
-
-   inv_mtx(MVINVMTX,MVMATRIX);
-   tra_mtx(MVINVTRA,MVINVMTX);
-   }
-
 // initialize projection state
 void miniproj::initproj(float emi,float rho)
    {
@@ -1369,11 +1345,6 @@ void miniproj::initproj(float emi,float rho)
       // pass shader parameters
       setfrgprogpar(0,EMI,RHO,0.0f,0.0f);
       setfrgprogpar(1,0.5f,fexp(1.0f),1.0f,0.0f);
-      }
-   else
-      {
-      // get modelview matrix if necessary
-      getmodelview();
       }
    }
 

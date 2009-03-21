@@ -254,10 +254,6 @@ class miniproj
 
    dynaclip CLIP;
 
-   miniv4d MVMATRIX[3];
-   miniv4d MVINVMTX[3];
-   miniv4d MVINVTRA[3];
-
    void proj(const miniv3d &v1,const double c1,const dynacoord &a1,
              const miniv3d &v2,const double c2,const dynacoord &a2,
              const miniv3d &v3,const double c3,const dynacoord &a3,
@@ -299,8 +295,6 @@ class miniproj
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const;
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m) const;
-
-   void getmodelview();
 
    virtual void pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                      const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4);
