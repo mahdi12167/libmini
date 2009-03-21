@@ -114,9 +114,9 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
             {
             sum=get(getrows(),i);
             for (j=i+1; j<getrows(); j++) sum-=get(j,i)*sol.get(0,row.get(0,j));
-            sol.set(0,row.get(0,i),sum/get(i,i));
+            if (get(i,i)!=0) sol.set(0,row.get(0,i),sum/get(i,i));
+            else if (sum!=0) return(FALSE);
             }
-         else if (get(getrows(),i)!=0) return(FALSE);
 
       return(TRUE);
       }
