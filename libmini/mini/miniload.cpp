@@ -1332,7 +1332,7 @@ int miniload::load(int cols,int rows,
                SCALE=scaling*exaggeration;
 
                offsetx-=i*(coord[6]-coord[0]);
-               offsety-=j*(coord[3]-coord[1]);
+               offsety+=j*(coord[3]-coord[1]);
                }
             }
 
@@ -1403,7 +1403,7 @@ int miniload::load(int cols,int rows,
                SCALE=hfield.scaling*exaggeration;
 
                offsetx-=i*(coord[6]-coord[0]);
-               offsety-=j*(coord[3]-coord[1]);
+               offsety+=j*(coord[3]-coord[1]);
                }
             }
 

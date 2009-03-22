@@ -12,7 +12,8 @@ class minitile
 
    //! default constructor
    //! constructs a regularly tiled terrain
-   //! each tile is assumed to have a corner centric data representation
+   //! tiles are specified from south west to north east in column-major ordering
+   //! each elevation tile is assumed to have a corner centric data representation
    minitile(const unsigned char **hfields, // 2D array of filenames for height fields
             const unsigned char **textures, // 2D array of filenames for texture maps
             int cols,int rows, // number of tile columns and rows

@@ -56,10 +56,10 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
      }
 
    //! Gaussian elimination with back-substitution
-   //  solves linear system of equations defined by square matrix
-   //  working matrix has to be in the augmented form (N+1)xN
-   //  right-hand-side vector is right-most column of working matrix
-   //  returns true if the linear system has a solution
+   //! solves linear system of equations defined by square matrix
+   //! working matrix has to be in the augmented form (N+1)xN
+   //! right-hand-side vector is right-most column of working matrix
+   //! returns true if the linear system has a solution
    BOOLINT solve(minimtx<Item,Minsize> &sol)
       {
       unsigned int i,j,k,l;
