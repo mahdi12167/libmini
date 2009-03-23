@@ -299,7 +299,10 @@ class miniproj
    virtual void pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                      const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4);
 
-   virtual void pass(const int idx,const miniv3d &v,const dynacoord &a);
+   virtual void passSLI(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
+                        const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4);
+
+   virtual void passPRJ(const int idx,const miniv3d &v,const dynacoord &a);
 
    inline void proj3tri(const miniv3d &v1,const double c1,
                         const miniv3d &v2,const double c2,

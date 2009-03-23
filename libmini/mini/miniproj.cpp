@@ -307,12 +307,16 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    return(lambda);
    }
 
-// pass parameters down to the shader when in slicing mode
+// pass parameters down to the shader
 void miniproj::pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
                     const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4) {}
 
+// pass parameters down to the shader when in slicing mode
+void miniproj::passSLI(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
+                       const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4) {}
+
 // pass parameters down to the shader when in projection mode
-void miniproj::pass(const int,const miniv3d &,const dynacoord &) {}
+void miniproj::passPRJ(const int,const miniv3d &,const dynacoord &) {}
 
 // project 3 triangles
 inline void miniproj::proj3tri(const miniv3d &v1,const double c1,
@@ -693,6 +697,9 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
 
    color(col.x,col.y,col.z);
 
+   // pass down shader parameters
+   pass(v1,v2,v3,v4,a1,a2,a3,a4);
+
    if (PROJMODE)
       {
       ff=0;
@@ -703,11 +710,11 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
       if (isfront(v1,v2,v4,v3,eye)) ff|=4;
       if (isfront(v2,v3,v4,v1,eye)) ff|=8;
 
-      // pass down shader parameters
-      pass(0,v1,a1);
-      pass(1,v2,a2);
-      pass(2,v3,a3);
-      pass(3,v4,a4);
+      // pass down projection shader parameters
+      passPRJ(0,v1,a1);
+      passPRJ(1,v2,a2);
+      passPRJ(2,v3,a3);
+      passPRJ(3,v4,a4);
 
       // determine projection type with either 3 or 4 triangles
       switch (ff)
@@ -723,8 +730,8 @@ void miniproj::projtri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    else
       {
-      // pass down shader parameters
-      pass(v1,v2,v3,v4,a1,a2,a3,a4);
+      // pass down slicing shader parameters
+      passSLI(v1,v2,v3,v4,a1,a2,a3,a4);
 
       // calculate slices
       slicetet(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,eye,dir,nearp,DELTA);
@@ -1338,7 +1345,7 @@ void miniproj::initproj(float emi,float rho)
    // check for projection or slicing mode
    if (PROJMODE)
       {
-      // enable projective shaders
+      // enable projection shaders
       enablevtxshader();
       enablepixshader();
 
@@ -1354,7 +1361,7 @@ void miniproj::exitproj()
    // check for projection or slicing mode
    if (PROJMODE)
       {
-      // disable projective shaders
+      // disable projection shaders
       disablevtxshader();
       disablepixshader();
       }
