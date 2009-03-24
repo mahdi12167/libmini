@@ -11,21 +11,18 @@
 #include "minidyna.h"
 #include "minimesh.h"
 
+//! coordinate base class
 class miniprojcrd
    {
    public:
 
    //! default constructor
-   miniprojcrd()
-      {
-      active=FALSE;
-      crd=miniv3d(0.0);
-      }
+   miniprojcrd() {}
 
    //! constructor
-   miniprojcrd(const miniv3d &c)
+   miniprojcrd(const miniv3d &c,const BOOLINT enabled=TRUE)
       {
-      active=TRUE;
+      active=enabled;
       crd=c;
       }
 
@@ -40,42 +37,42 @@ class miniprojcrd
 inline miniprojcrd operator + (const miniprojcrd &a,const miniprojcrd &b)
    {
    if (a.active && b.active) return(a.crd+b.crd);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! sub operator
 inline miniprojcrd operator - (const miniprojcrd &a,const miniprojcrd &b)
    {
    if (a.active && b.active) return(a.crd-b.crd);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! neg operator
 inline miniprojcrd operator - (const miniprojcrd &v)
    {
    if (v.active) return(-v.crd);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! mul operator
 inline miniprojcrd operator * (const double a,const miniprojcrd &b)
    {
    if (b.active) return(a*b.crd);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! mul operator
 inline miniprojcrd operator * (const miniprojcrd &a,const double b)
    {
    if (a.active) return(a.crd*b);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! div operator
 inline miniprojcrd operator / (const miniprojcrd &a,const double b)
    {
    if (a.active) return(a.crd/b);
-   else return(miniprojcrd());
+   else return(miniprojcrd(miniv3d(0.0),FALSE));
    }
 
 //! stream output
@@ -87,6 +84,37 @@ inline std::ostream& operator << (std::ostream &out,const miniprojcrd &v)
    return(out);
    }
 
+//! dynamic coordinate array
+typedef minidyna<miniprojcrd,8> dynacoord;
+
+//! mapper base class
+class miniprojmap
+   {
+   public:
+
+   //! default constructor
+   miniprojmap() {}
+
+   //! constructor
+   miniprojmap(const unsigned int to,const unsigned int id,const BOOLINT enabled=TRUE)
+      {
+      active=enabled;
+      map2=to;
+      brickid=id;
+      }
+
+   //! destructor
+   ~miniprojmap() {}
+
+   BOOLINT active;
+   unsigned int map2;
+   unsigned int brickid;
+   };
+
+//! dynamic mapper array
+typedef minidyna<miniprojmap,8> miniprojmapper;
+
+//! clip plane base class
 class miniprojclip
    {
    public:
@@ -135,6 +163,9 @@ class miniprojclip
    miniv3d pos,nrm;
    };
 
+//! dynamic clip plane array
+typedef minidyna<miniprojclip,6> dynaclip;
+
 class miniproj
    {
    public:
@@ -144,12 +175,6 @@ class miniproj
 
    //! destructor
    virtual ~miniproj();
-
-   // dynamic coordinate array
-   typedef minidyna<miniprojcrd,8> dynacoord;
-
-   // dynamic clip plane array
-   typedef minidyna<miniprojclip,6> dynaclip;
 
    //! initialize projection state
    virtual void initproj(float emi,float rho);
@@ -244,8 +269,8 @@ class miniproj
    BOOLINT PLANEMODE;
    miniv3d PLANEPNT,PLANENRM;
 
-   minivalmapper MAP;
    unsigned int ACTIVE;
+   miniprojmapper MAP;
 
    BOOLINT ZCLIP;
    float ZNEAR,ZFAR;
@@ -291,7 +316,7 @@ class miniproj
                    const unsigned int maxslots,const minivals &vals,
                    dynacoord &a);
 
-   virtual void dirty(const unsigned int slot,const minimapval &mapval,const minimapval &prev);
+   virtual void dirty(const unsigned int slot,const miniprojmap &map,const miniprojmap &prev);
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const;
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m) const;

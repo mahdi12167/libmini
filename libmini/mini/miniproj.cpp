@@ -19,7 +19,7 @@ miniproj::miniproj()
    PLANEPNT=PLANENRM=miniv3d(0.0);
 
    ACTIVE=0;
-   MAP=minivalmapper();
+   MAP=miniprojmapper();
 
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
@@ -102,8 +102,8 @@ void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
    MAP.setsize(maxslots);
 
    for (i=0; i<maxslots; i++)
-      if (brickid(i,vals,&id)) MAP[i]=minimapval(i,id);
-      else MAP[i]=minimapval();
+      if (brickid(i,vals,&id)) MAP[i]=miniprojmap(i,id);
+      else MAP[i]=miniprojmap(0,0,FALSE);
    }
 
 // reorganize mapping from minivals to dynacoord
@@ -116,11 +116,11 @@ void miniproj::remap(const minivals &vals)
    unsigned int slot,id;
    BOOLINT found;
 
-   minivalmapper map;
+   miniprojmapper map;
 
    size=vals.getsize();
 
-   map.setsize(ACTIVE,minimapval());
+   map.setsize(ACTIVE,miniprojmap(0,0,FALSE));
 
    for (i=0; i<size; i++)
       {
@@ -189,8 +189,8 @@ void miniproj::map(const unsigned int which,
 
    size=vals.getsize();
 
-   if (ACTIVE==0) a.setsize(maxslots,miniprojcrd());
-   else a.setsize(ACTIVE,miniprojcrd());
+   if (ACTIVE==0) a.setsize(maxslots,miniprojcrd(miniv3d(0.0),FALSE));
+   else a.setsize(ACTIVE,miniprojcrd(miniv3d(0.0),FALSE));
 
    // the last element mapping to the same slot takes precedence
    for (i=0; i<size; i++)
@@ -218,7 +218,7 @@ void miniproj::map(const unsigned int which,
    }
 
 // flag remapped slot as dirty
-void miniproj::dirty(const unsigned int slot,const minimapval &mapval,const minimapval &prev) {}
+void miniproj::dirty(const unsigned int slot,const miniprojmap &map,const miniprojmap &prev) {}
 
 // project a tetrahedron (minivals version)
 void miniproj::proj(const miniv3d &v1,const double c1,
@@ -754,12 +754,9 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
       if (CLIP[n].enabled) break;
 
    if (n<CLIP.getsize())
-      if (CLIP[n].clipall)
-         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp);
-      else
-         clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp,CLIP[n].slot);
-   else
-      projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
+      if (CLIP[n].clipall) clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp);
+      else clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp,CLIP[n].slot);
+   else projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
 
 // pass coords down to the render pipeline
@@ -903,8 +900,7 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
       dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
       dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
 
-      if (dmin<=0.0 && dmax>=0.0)
-         slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
+      if (dmin<=0.0 && dmax>=0.0) slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
       }
    else
       {
@@ -1430,10 +1426,7 @@ unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mes
 
 // enable remapping of of active slots
 void miniproj::setactive(const unsigned int active)
-   {
-   ACTIVE=active;
-   MAP.setsize(active,minimapval());
-   }
+   {ACTIVE=active;}
 
 // enable cutting plane mode
 void miniproj::setplane(BOOLINT plane,
