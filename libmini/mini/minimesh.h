@@ -13,8 +13,10 @@
 #include "minidyna.h"
 #include "minigeom.h"
 
+//! polygon base class
 typedef minidyna<miniv3d,10> minigon;
 
+//! value base class
 class minival
    {
    public:
@@ -75,38 +77,10 @@ class minival
 inline std::ostream& operator << (std::ostream &out,const minival &v)
    {return(out << "minival( slot=" << v.slot << ", brickid=" << v.brickid << ", " << v.crd1 << ", " << v.crd2 << ", " << v.crd3 << ", " << v.crd4 << " )");}
 
+//! dynamic value array
 typedef minidyna<minival,3> minivals;
 
-class minimapval
-   {
-   public:
-
-   //! default constructor
-   minimapval()
-      {
-      active=FALSE;
-      map2=0;
-      brickid=0;
-      }
-
-   //! constructor
-   minimapval(const unsigned int to,const unsigned int id)
-      {
-      active=TRUE;
-      map2=to;
-      brickid=id;
-      }
-
-   //! destructor
-   ~minimapval() {}
-
-   BOOLINT active;
-   unsigned int map2;
-   unsigned int brickid;
-   };
-
-typedef minidyna<minimapval,8> minivalmapper;
-
+//! tetrahedron base class
 class minihedron
    {
    public:
@@ -250,6 +224,7 @@ class minihedron
 inline std::ostream& operator << (std::ostream &out,const minihedron &h)
    {return(out << "minihedron( " << h.vtx1 << ", " << h.vtx2 << ", " << h.vtx3 << ", " << h.vtx4 << ", " << h.vals << " )");}
 
+//! dynamic tetrahedron array
 class minimesh: public minidyna<minihedron>
    {
    protected:

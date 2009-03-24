@@ -11,6 +11,7 @@ class miniv3f;
 class miniv4d;
 class miniv4f;
 
+//! 3 component double vector
 class miniv3d
    {
    public:

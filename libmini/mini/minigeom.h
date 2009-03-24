@@ -10,6 +10,7 @@
 #include "miniv3d.h"
 #include "minidyna.h"
 
+//! geometry base class
 class minigeom_base
    {
    protected:
@@ -293,6 +294,7 @@ inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron &p
    return(out);
    }
 
+//! dynamic polyhedron array
 typedef minidyna<minigeom_polyhedron,10> minigeom_polyhedra;
 
 #endif

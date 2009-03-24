@@ -14,6 +14,7 @@
 
 #include "minimesh.h"
 
+//! binary space partition tree
 class minibsptree
    {
    protected:
