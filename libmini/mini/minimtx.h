@@ -126,6 +126,48 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
    unsigned int COLS,ROWS;
    };
 
+//! add operator
+template <class Item,const unsigned int Minsize>
+inline minimtx<Item,Minsize> operator + (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
+   {
+   unsigned int i,j;
+
+   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+
+   for (i=0; i<b.getcols(); i++)
+      for (j=0; j<a.getrows(); j++) mtx.set(i,j,a.get(i,j)+b.get(i,j));
+
+   return(mtx);
+   }
+
+//! sub operator
+template <class Item,const unsigned int Minsize>
+inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
+   {
+   unsigned int i,j;
+
+   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+
+   for (i=0; i<b.getcols(); i++)
+      for (j=0; j<a.getrows(); j++) mtx.set(i,j,a.get(i,j)-b.get(i,j));
+
+   return(mtx);
+   }
+
+//! neg operator
+template <class Item,const unsigned int Minsize>
+inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &v)
+   {
+   unsigned int i,j;
+
+   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+
+   for (i=0; i<b.getcols(); i++)
+      for (j=0; j<a.getrows(); j++) mtx.set(i,j,-v.get(i,j));
+
+   return(mtx);
+   }
+
 //! mul operator
 template <class Item,const unsigned int Minsize>
 inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
