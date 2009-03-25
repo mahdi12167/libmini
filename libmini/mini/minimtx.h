@@ -95,7 +95,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
                      }
                   }
 
-      // compute upper triangular form 
+      // compute upper triangular form
       for (i=0; i<getrows()-1; i++)
          for (j=getrows()-1; j>i; j--)
             if (get(i,j)!=0)
