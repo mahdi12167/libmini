@@ -11,7 +11,7 @@ class miniv4f;
 class miniv3d;
 class miniv3f;
 
-//! 4 component double vector
+//! 4D double vector
 class miniv4d
    {
    public:
@@ -48,7 +48,7 @@ class miniv4d
 
    void setcoords(const double vx,const double vy,const double vz,const double vw=0.0) {x=vx; y=vy; z=vz; w=vw;}
 
-   double getlength() const {return(fsqrt(x*x+y*y+z*z+w*w));}
+   double getlength() const {return(sqrt(x*x+y*y+z*z+w*w));}
    double getlength2() const {return(x*x+y*y+z*z+w*w);}
 
    inline miniv4d& operator += (const miniv4d &v);

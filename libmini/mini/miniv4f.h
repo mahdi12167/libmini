@@ -11,7 +11,7 @@ class miniv4d;
 class miniv3f;
 class miniv3d;
 
-//! 4 component float vector
+//! 4D float vector
 class miniv4f
    {
    public:

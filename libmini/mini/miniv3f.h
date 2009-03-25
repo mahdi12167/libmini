@@ -11,7 +11,7 @@ class miniv3d;
 class miniv4f;
 class miniv4d;
 
-//! 3 component float vector
+//! 3D float vector
 class miniv3f
    {
    public:
