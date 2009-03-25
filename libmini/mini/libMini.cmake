@@ -52,3 +52,7 @@ SET(MINISFX_SRCS
    convbase.cpp imgbase.cpp
    panorndr.cpp
    )
+
+IF (MINI_BUILD_TYPE MATCHES RELEASE)
+   SET_SOURCE_FILES_PROPERTIES(greycbase.cpp COMPILE_FLAGS -O) # -O3 takes too long
+ENDIF (MINI_BUILD_TYPE MATCHES RELEASE)
