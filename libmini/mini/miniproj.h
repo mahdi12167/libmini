@@ -341,7 +341,7 @@ class miniproj
                         const miniv3d &v4,const double c4,
                         const miniv3d &eye);
 
-   void coords(const double c,const dynacoord &a,const double d);
+   inline void coords(const double c,const dynacoord &a,const double d);
 
    inline void slice1tri(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                          const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
@@ -377,16 +377,16 @@ class miniproj
                        const miniv3d &eye,const miniv3d &dir,
                        const double nearp);
 
-   void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
-                const miniv3d &v2,const double c2,const dynacoord &a2,
-                const miniv3d &v3,const double c3,const dynacoord &a3,
-                const miniv3d &v4,const double c4,const dynacoord &a4,
-                const miniv3d &v5,const double c5,const dynacoord &a5,
-                const miniv3d &v6,const double c6,const dynacoord &a6,
-                const unsigned int clipn,
-                const miniv3d &col,
-                const miniv3d &eye,const miniv3d &dir,
-                const double nearp);
+   inline void projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
+                       const miniv3d &v2,const double c2,const dynacoord &a2,
+                       const miniv3d &v3,const double c3,const dynacoord &a3,
+                       const miniv3d &v4,const double c4,const dynacoord &a4,
+                       const miniv3d &v5,const double c5,const dynacoord &a5,
+                       const miniv3d &v6,const double c6,const dynacoord &a6,
+                       const unsigned int clipn,
+                       const miniv3d &col,
+                       const miniv3d &eye,const miniv3d &dir,
+                       const double nearp);
 
    void clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
