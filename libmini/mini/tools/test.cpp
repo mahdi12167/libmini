@@ -15,7 +15,6 @@
 #endif
 
 #ifdef MESHTEST
-#include <mini/minivec.h>
 #include <mini/minicoord.h>
 #include <mini/minimesh.h>
 #include <mini/minibspt.h>
@@ -177,12 +176,6 @@ int main(int argc,char *argv[])
    miniOGL::print_graphics_info();
 
 #else
-
-   minivecmf a,b,c;
-   a=miniv3d(1.0);
-   b=miniv3d(2.0);
-   c=a+b;
-   std::cout << c << std::endl;
 
    minimesh mesh;
    double gfnx=-157.0*3600;
