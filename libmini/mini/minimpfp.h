@@ -949,7 +949,7 @@ inline std::ostream& operator << (std::ostream &out,const minimf &mf)
    {return(out << mf.get());}
 
 inline minimf abs(const minimf &v)
-   {return((v<minimf::zero())?-v:v);}
+   {return(v.abs());}
 
 inline minimf min(const minimf &a,const minimf &b)
    {return((a<b)?a:b);}
