@@ -948,6 +948,12 @@ inline int operator >= (const minimf &a,const double b)
 inline std::ostream& operator << (std::ostream &out,const minimf &mf)
    {return(out << mf.get());}
 
+inline minimf abs(const minimf &v)
+   {return((v<minimf::zero())?-v:v);}
+
+inline minimf sqr(const minimf &v)
+   {return(v*v);}
+
 inline minimf sqrt(const minimf &v)
    {return(v.sqroot());}
 
