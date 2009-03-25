@@ -951,13 +951,19 @@ inline std::ostream& operator << (std::ostream &out,const minimf &mf)
 inline minimf abs(const minimf &v)
    {return((v<minimf::zero())?-v:v);}
 
+inline minimf min(const minimf &a,const minimf &b)
+   {return((a<b)?a:b);}
+
+inline minimf max(const minimf &a,const minimf &b)
+   {return((a>b)?a:b);}
+
 inline minimf sqr(const minimf &v)
    {return(v*v);}
 
 inline minimf sqrt(const minimf &v)
    {return(v.sqroot());}
 
-inline double round2(const minimf &v)
-   {return(round2(v.get()));}
+inline double round2(const minimf &v,const unsigned int n=6)
+   {return(round2(v.get(),n));}
 
 #endif
