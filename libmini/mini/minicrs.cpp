@@ -466,7 +466,7 @@ void minicrs::initUTM(int zone) // zone number
    false_easting=500000.0;
    false_northing=(zone<0)?10000000.0:0.0;
 
-   es=1.0-FSQR(r_minor/r_major);
+   es=1.0-dsqr(r_minor/r_major);
    e=sqrt(es);
 
    e0=1.0-0.25*es*(1.0+0.0625*es*(3.0+1.25*es));
@@ -540,7 +540,7 @@ void minicrs::calcUTM2LL(double x,double y,       // input UTM coordinates (East
       delta_phi=(con+e1*sin(2.0*phi)-e2*sin(4.0*phi)+e3*sin(6.0*phi))/e0-phi;
       phi+=delta_phi;
 
-      if (FABS(delta_phi)<maxerror) break;
+      if (dabs(delta_phi)<maxerror) break;
       }
 
    sin_phi=sin(phi);
@@ -583,7 +583,7 @@ void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
 
    static const double epsln=1E-5;
 
-   es=1.0-FSQR(r_minor/r_major);
+   es=1.0-dsqr(r_minor/r_major);
    e=sqrt(es);
    eh=0.5*e;
 
@@ -596,7 +596,7 @@ void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
    co=e*sin(phi);
    co=pow(((1.0-co)/(1.0+co)),eh);
 
-   m1=cos(phi_center)/sqrt(1.0-FSQR(e*sin(phi_center)));
+   m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
    ts=tan(0.5*(0.5*PI-phi))/co;
 
    *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
@@ -622,13 +622,13 @@ void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_c
    static const int maxiter=10;
    static const double maxerror=1E-20;
 
-   es=1.0-FSQR(r_minor/r_major);
+   es=1.0-dsqr(r_minor/r_major);
    e=sqrt(es);
    eh=0.5*e;
 
    phi_center=lat_center*2*PI/(360*60*60);
 
-   m1=cos(phi_center)/sqrt(1.0-FSQR(e*sin(phi_center)));
+   m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
    ts=exp(-y/(r_major*m1));
 
    phi=0.5*PI-2*atan(ts);
@@ -639,7 +639,7 @@ void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_c
       dphi=0.5*PI-2*atan(ts*(pow(((1.0-co)/(1.0+co)),eh)))-phi;
       phi+=dphi;
 
-      if (FABS(dphi)<maxerror) break;
+      if (dabs(dphi)<maxerror) break;
       }
 
    *lat=phi*360*60*60/(2*PI);

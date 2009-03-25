@@ -21,10 +21,10 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
    lambda=(pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
 
    // check if line and plane are parallel
-   if (FABS(dot)>alpha)
+   if (dabs(dot)>alpha)
       {
       // project minimum distance into segment space
-      if (FABS(halfspace.minlambda)!=MAXFLOAT) lambda1=(halfspace.minlambda-lambda)/dot;
+      if (dabs(halfspace.minlambda)!=MAXFLOAT) lambda1=(halfspace.minlambda-lambda)/dot;
       else if (dot<0.0) lambda1=-halfspace.minlambda;
       else lambda1=halfspace.minlambda;
 
@@ -33,7 +33,7 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
       else if (lambda1>MAXFLOAT) lambda1=MAXFLOAT;
 
       // project maximum distance into segment space
-      if (FABS(halfspace.maxlambda)!=MAXFLOAT) lambda2=(halfspace.maxlambda-lambda)/dot;
+      if (dabs(halfspace.maxlambda)!=MAXFLOAT) lambda2=(halfspace.maxlambda-lambda)/dot;
       else if (dot<0.0) lambda2=-halfspace.maxlambda;
       else lambda2=halfspace.maxlambda;
 
@@ -78,7 +78,7 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
-   if (FABS(dot)>alpha)
+   if (dabs(dot)>alpha)
       {
       orig1=pnt+minlambda*vec; // plane origin
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin

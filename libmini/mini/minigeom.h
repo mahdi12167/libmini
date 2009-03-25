@@ -31,8 +31,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=FMAX(minl,-MAXFLOAT);
-      maxlambda=FMIN(maxl,MAXFLOAT);
+      minlambda=dmax(minl,-MAXFLOAT);
+      maxlambda=dmin(maxl,MAXFLOAT);
       }
 
    //! conversion constructor
@@ -43,8 +43,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=FMAX(minl,-MAXFLOAT);
-      maxlambda=FMIN(maxl,MAXFLOAT);
+      minlambda=dmax(minl,-MAXFLOAT);
+      maxlambda=dmin(maxl,MAXFLOAT);
       }
 
    //! conversion constructor
@@ -55,8 +55,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=FMAX(minl,-MAXFLOAT);
-      maxlambda=FMIN(maxl,MAXFLOAT);
+      minlambda=dmax(minl,-MAXFLOAT);
+      maxlambda=dmin(maxl,MAXFLOAT);
 
       flip(h);
       }
@@ -112,8 +112,8 @@ class minigeom_base
          {
          d=(b.pnt-pnt)*vec;
 
-         if (ishalf() && b.ishalf()) return(FABS(d+b.minlambda-minlambda)<delta);
-         else return(FABS(d+b.minlambda-minlambda)<delta && FABS(d+b.maxlambda-maxlambda)<delta);
+         if (ishalf() && b.ishalf()) return(dabs(d+b.minlambda-minlambda)<delta);
+         else return(dabs(d+b.minlambda-minlambda)<delta && dabs(d+b.maxlambda-maxlambda)<delta);
          }
 
       return(FALSE);

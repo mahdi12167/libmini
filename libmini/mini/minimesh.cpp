@@ -115,7 +115,7 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
          v2=gon[j+1];
          v3=gon[j+2];
 
-         if (FABS(minigeom_plane(v1,v2,v3).getdistance(anchor))>delta)
+         if (dabs(minigeom_plane(v1,v2,v3).getdistance(anchor))>delta)
             mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
          }
       }
@@ -169,8 +169,8 @@ void minimesh::reject()
       e6=(v1-v3)*(v1-v3);
 
       // calculate minimum and maximum distance
-      mind=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-      maxe=sqrt(FMAX(FMAX(FMAX(e1,e2),FMAX(e3,e4)),FMAX(e5,e6)));
+      mind=dmin(dmin(d1,d2),dmin(d3,d4));
+      maxe=sqrt(dmax(dmax(dmax(e1,e2),dmax(e3,e4)),dmax(e5,e6)));
 
       // remove tetrahedra with degenerate size or aspect
       if (mind<CONFIGURE_DEGENERATE_SIZE ||

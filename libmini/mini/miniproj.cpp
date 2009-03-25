@@ -342,42 +342,42 @@ inline void miniproj::proj3tri(const miniv3d &v1,const double c1,
    n=d1/d2;
 
    // use absolute normal components
-   n.x=FABS(n.x);
-   n.y=FABS(n.y);
-   n.z=FABS(n.z);
+   n.x=dabs(n.x);
+   n.y=dabs(n.y);
+   n.z=dabs(n.z);
 
    // barycentric interpolation at thick vertex
    if (n.x>n.y)
       if (n.x>n.z)
          {
-         w1=FABS((v3.y-m.y)*(v4.z-m.z)-(v3.z-m.z)*(v4.y-m.y));
-         w2=FABS((v2.y-m.y)*(v4.z-m.z)-(v2.z-m.z)*(v4.y-m.y));
-         w3=FABS((v2.y-m.y)*(v3.z-m.z)-(v2.z-m.z)*(v3.y-m.y));
+         w1=dabs((v3.y-m.y)*(v4.z-m.z)-(v3.z-m.z)*(v4.y-m.y));
+         w2=dabs((v2.y-m.y)*(v4.z-m.z)-(v2.z-m.z)*(v4.y-m.y));
+         w3=dabs((v2.y-m.y)*(v3.z-m.z)-(v2.z-m.z)*(v3.y-m.y));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.x;
          }
       else
          {
-         w1=FABS((v3.x-m.x)*(v4.y-m.y)-(v3.y-m.y)*(v4.x-m.x));
-         w2=FABS((v2.x-m.x)*(v4.y-m.y)-(v2.y-m.y)*(v4.x-m.x));
-         w3=FABS((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
+         w1=dabs((v3.x-m.x)*(v4.y-m.y)-(v3.y-m.y)*(v4.x-m.x));
+         w2=dabs((v2.x-m.x)*(v4.y-m.y)-(v2.y-m.y)*(v4.x-m.x));
+         w3=dabs((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
          }
    else
       if (n.y>n.z)
          {
-         w1=FABS((v3.z-m.z)*(v4.x-m.x)-(v3.x-m.x)*(v4.z-m.z));
-         w2=FABS((v2.z-m.z)*(v4.x-m.x)-(v2.x-m.x)*(v4.z-m.z));
-         w3=FABS((v2.z-m.z)*(v3.x-m.x)-(v2.x-m.x)*(v3.z-m.z));
+         w1=dabs((v3.z-m.z)*(v4.x-m.x)-(v3.x-m.x)*(v4.z-m.z));
+         w2=dabs((v2.z-m.z)*(v4.x-m.x)-(v2.x-m.x)*(v4.z-m.z));
+         w3=dabs((v2.z-m.z)*(v3.x-m.x)-(v2.x-m.x)*(v3.z-m.z));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.y;
          }
       else
          {
-         w1=FABS((v3.x-m.x)*(v4.y-m.y)-(v3.y-m.y)*(v4.x-m.x));
-         w2=FABS((v2.x-m.x)*(v4.y-m.y)-(v2.y-m.y)*(v4.x-m.x));
-         w3=FABS((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
+         w1=dabs((v3.x-m.x)*(v4.y-m.y)-(v3.y-m.y)*(v4.x-m.x));
+         w2=dabs((v2.x-m.x)*(v4.y-m.y)-(v2.y-m.y)*(v4.x-m.x));
+         w3=dabs((v2.x-m.x)*(v3.y-m.y)-(v2.y-m.y)*(v3.x-m.x));
 
          c234=(w1*c2+w2*c3+w3*c4)/n.z;
          }
@@ -862,18 +862,18 @@ void miniproj::slicetri(const miniv3d &v1,const double c1,const dynacoord &a1,co
    switch (ff)
       {
       // 1 triangle
-      case 1: case 14: slice1tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-      case 2: case 13: slice1tri(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-      case 4: case 11: slice1tri(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
-      case 8: case 7: slice1tri(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
+      case 1: case 14: slice1tri(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),delta); break;
+      case 2: case 13: slice1tri(v2,c2,a2,dabs(d2),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),delta); break;
+      case 4: case 11: slice1tri(v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),delta); break;
+      case 8: case 7: slice1tri(v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),delta); break;
 
       // 2 triangles
-      case 3: slice2tri(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),delta); break;
-      case 5: slice2tri(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),delta); break;
-      case 6: slice2tri(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),delta); break;
-      case 9: slice2tri(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),delta); break;
-      case 10: slice2tri(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),delta); break;
-      case 12: slice2tri(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),delta); break;
+      case 3: slice2tri(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),delta); break;
+      case 5: slice2tri(v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),delta); break;
+      case 6: slice2tri(v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),delta); break;
+      case 9: slice2tri(v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),delta); break;
+      case 10: slice2tri(v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),delta); break;
+      case 12: slice2tri(v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),delta); break;
       }
    }
 
@@ -887,8 +887,8 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
                         const double delta)
    {
    double d1,d2,d3,d4;
-   double dmin,dmax;
-   double dsnap;
+   double mind,maxd;
+   double snapd;
 
    if (PLANEMODE)
       {
@@ -897,10 +897,10 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
       d3=(v3-PLANEPNT)*PLANENRM;
       d4=(v4-PLANEPNT)*PLANENRM;
 
-      dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-      dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
+      mind=dmin(dmin(d1,d2),dmin(d3,d4));
+      maxd=dmax(dmax(d1,d2),dmax(d3,d4));
 
-      if (dmin<=0.0 && dmax>=0.0) slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
+      if (mind<=0.0 && maxd>=0.0) slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
       }
    else
       {
@@ -909,17 +909,17 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
       d3=(v3-eye)*dir;
       d4=(v4-eye)*dir;
 
-      dmin=FMIN(FMIN(d1,d2),FMIN(d3,d4));
-      dmax=FMAX(FMAX(d1,d2),FMAX(d3,d4));
+      mind=dmin(dmin(d1,d2),dmin(d3,d4));
+      maxd=dmax(dmax(d1,d2),dmax(d3,d4));
 
-      dsnap=(floor((dmax-nearp)/delta)+0.5)*delta+nearp;
+      snapd=(floor((maxd-nearp)/delta)+0.5)*delta+nearp;
 
-      d1-=dsnap;
-      d2-=dsnap;
-      d3-=dsnap;
-      d4-=dsnap;
+      d1-=snapd;
+      d2-=snapd;
+      d3-=snapd;
+      d4-=snapd;
 
-      while (dsnap>=dmin && dsnap>nearp)
+      while (snapd>=mind && snapd>nearp)
          {
          slicetri(v1,c1,a1,d1,v2,c2,a2,d2,v3,c3,a3,d3,v4,c4,a4,d4,delta);
 
@@ -928,7 +928,7 @@ void miniproj::slicetet(const miniv3d &v1,const double c1,const dynacoord &a1,
          d3+=delta;
          d4+=delta;
 
-         dsnap-=delta;
+         snapd-=delta;
          }
       }
    }
@@ -1106,24 +1106,24 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp); break;
 
       // one corner needs to be clipped (leaving a prism)
-      case 1: clip1A(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 2: clip1A(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 4: clip1A(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 8: clip1A(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
+      case 1: clip1A(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 2: clip1A(v2,c2,a2,dabs(d2),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 4: clip1A(v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 8: clip1A(v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp); break;
 
       // three corners need to be clipped (leaving a tetrahedron)
-      case 14: clip1B(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 13: clip1B(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 11: clip1B(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 7: clip1B(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
+      case 14: clip1B(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 13: clip1B(v2,c2,a2,dabs(d2),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 11: clip1B(v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 7: clip1B(v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp); break;
 
       // two corners need to be clipped (leaving a prism)
-      case 3: clip2(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 5: clip2(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 6: clip2(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp); break;
-      case 9: clip2(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
-      case 10: clip2(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp); break;
-      case 12: clip2(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp); break;
+      case 3: clip2(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 5: clip2(v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 6: clip2(v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp); break;
+      case 9: clip2(v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp); break;
+      case 10: clip2(v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp); break;
+      case 12: clip2(v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),clipn,col,eye,dir,nearp); break;
       }
    }
 
@@ -1299,24 +1299,24 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       case 0: proj(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp); break;
 
       // one corner needs to be clipped (leaving a prism)
-      case 1: clip1As(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 2: clip1As(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 4: clip1As(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 8: clip1As(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 1: clip1As(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 2: clip1As(v2,c2,a2,dabs(d2),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 4: clip1As(v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 8: clip1As(v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
 
       // three corners need to be clipped (leaving a tetrahedron)
-      case 14: clip1Bs(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 13: clip1Bs(v2,c2,a2,FABS(d2),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 11: clip1Bs(v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 7: clip1Bs(v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 14: clip1Bs(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 13: clip1Bs(v2,c2,a2,dabs(d2),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 11: clip1Bs(v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 7: clip1Bs(v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
 
       // two corners need to be clipped (leaving a prism)
-      case 3: clip2s(v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 5: clip2s(v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 6: clip2s(v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),clipn,col,eye,dir,nearp,slot); break;
-      case 9: clip2s(v1,c1,a1,FABS(d1),v4,c4,a4,FABS(d4),v2,c2,a2,FABS(d2),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
-      case 10: clip2s(v2,c2,a2,FABS(d2),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v3,c3,a3,FABS(d3),clipn,col,eye,dir,nearp,slot); break;
-      case 12: clip2s(v3,c3,a3,FABS(d3),v4,c4,a4,FABS(d4),v1,c1,a1,FABS(d1),v2,c2,a2,FABS(d2),clipn,col,eye,dir,nearp,slot); break;
+      case 3: clip2s(v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 5: clip2s(v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 6: clip2s(v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),clipn,col,eye,dir,nearp,slot); break;
+      case 9: clip2s(v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 10: clip2s(v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
+      case 12: clip2s(v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),clipn,col,eye,dir,nearp,slot); break;
       }
    }
 

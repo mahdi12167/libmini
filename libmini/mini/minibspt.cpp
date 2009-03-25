@@ -196,7 +196,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d3=TREE[idx].plane.getdistance(v3);
 
       // check if the dividing plane is already existing
-      if (FABS(d1)>delta || FABS(d2)>delta || FABS(d3)>delta)
+      if (dabs(d1)>delta || dabs(d2)>delta || dabs(d3)>delta)
          {
          // check if the tetrahedral face intrudes into the left half space
          if (d1>delta || d2>delta || d3>delta)

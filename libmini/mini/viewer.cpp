@@ -969,10 +969,10 @@ void render()
 
    // check for eye movement:
 
-   if (FABS(speed)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(angle-turn)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
-   if (FABS(dez)>VIEWER_MINDIFF) wakeup=1;
+   if (dabs(speed)>VIEWER_MINDIFF) wakeup=1;
+   if (dabs(angle-turn)>VIEWER_MINDIFF) wakeup=1;
+   if (dabs(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
+   if (dabs(dez)>VIEWER_MINDIFF) wakeup=1;
 
    // check for nearest waypoint:
 

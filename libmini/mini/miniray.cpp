@@ -533,13 +533,13 @@ void miniray::calcbound(TRIANGLEREF *ref)
 
    ref->b=0.5*(vmin+vmax);
 
-   ref->r=miniv3d(0.5*FABS(vmax.x-vmin.x),
-                  0.5*FABS(vmax.y-vmin.y),
-                  0.5*FABS(vmax.z-vmin.z));
+   ref->r=miniv3d(0.5*dabs(vmax.x-vmin.x),
+                  0.5*dabs(vmax.y-vmin.y),
+                  0.5*dabs(vmax.z-vmin.z));
 
-   ref->r2=0.75*(FSQR(vmax.x-vmin.x)+
-                 FSQR(vmax.y-vmin.y)+
-                 FSQR(vmax.z-vmin.z));
+   ref->r2=0.75*(dsqr(vmax.x-vmin.x)+
+                 dsqr(vmax.y-vmin.y)+
+                 dsqr(vmax.z-vmin.z));
 
    ref->hasbound=1;
    }
@@ -1067,7 +1067,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<=r.y && FABS(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
          }
       else if (d.x>0.0) return(0);
 
@@ -1075,7 +1075,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.y-b.y)<=r.y && FABS(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
          }
       else if (d.x<0.0) return(0);
       }
@@ -1086,7 +1086,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<=r.x && FABS(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
          }
       else if (d.y>0.0) return(0);
 
@@ -1094,7 +1094,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<=r.x && FABS(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
          }
       else if (d.y<0.0) return(0);
       }
@@ -1105,7 +1105,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<=r.x && FABS(h.y-b.y)<=r.y) return(1);
+         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
          }
       else if (d.z>0.0) return(0);
 
@@ -1113,7 +1113,7 @@ int miniray::checkbbox(const miniv3d &o,const miniv3d &d,
       if (l>0.0)
          {
          h=o+d*l;
-         if (FABS(h.x-b.x)<=r.x && FABS(h.y-b.y)<=r.y) return(1);
+         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
          }
       else if (d.z<0.0) return(0);
       }

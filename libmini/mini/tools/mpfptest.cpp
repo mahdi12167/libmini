@@ -40,7 +40,7 @@ int main(int argc,char *argv[])
 
          test1.add(test2,test3);
 
-         error1=FABS(test3.get()-0.1*i-0.1*j);
+         error1=dabs(test3.get()-0.1*i-0.1*j);
 
          if (error1>1E-3) printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
@@ -64,7 +64,7 @@ int main(int argc,char *argv[])
 
          test1.mul(test2,test3);
 
-         error2=FABS(test3.get()-0.1*i*0.1*j);
+         error2=dabs(test3.get()-0.1*i*0.1*j);
 
          if (error2>1E-3) printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
@@ -89,7 +89,7 @@ int main(int argc,char *argv[])
 
             test1.div(test2,test3);
 
-            error3=FABS(test3.get()-(double)i/j);
+            error3=dabs(test3.get()-(double)i/j);
 
             if (error3>1E-3) printf("%g/%g!=%g\n",0.1*i,0.1*j,test3.get());
             }
@@ -110,7 +110,7 @@ int main(int argc,char *argv[])
 
       test2=test1.sqroot();
 
-      error4=FABS(test2.get()-sqrt(0.1*i));
+      error4=dabs(test2.get()-sqrt(0.1*i));
 
       if (error4>1E-3) printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
       }
@@ -131,7 +131,7 @@ int main(int argc,char *argv[])
 
       test2=test1.invsqroot();
 
-      error5=FABS(test2.get()-1.0/sqrt(0.1*i));
+      error5=dabs(test2.get()-1.0/sqrt(0.1*i));
 
       if (error5>1E-3) printf("1/sqrt(%g)!=%g\n",0.1*i,test2.get());
       }

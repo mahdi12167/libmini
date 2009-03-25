@@ -193,8 +193,8 @@ void datagrid::clip(const unsigned int id,
 
       SPEC[id]=FALSE;
 
-      crd1=miniv3d(FMIN(FMAX(we1,0.0),1.0),FMIN(FMAX(sn1,0.0),1.0),FMIN(FMAX(bt1,0.0),1.0));
-      crd2=miniv3d(FMIN(FMAX(we2,0.0),1.0),FMIN(FMAX(sn2,0.0),1.0),FMIN(FMAX(bt2,0.0),1.0));
+      crd1=miniv3d(dmin(dmax(we1,0.0),1.0),dmin(dmax(sn1,0.0),1.0),dmin(dmax(bt1,0.0),1.0));
+      crd2=miniv3d(dmin(dmax(we2,0.0),1.0),dmin(dmax(sn2,0.0),1.0),dmin(dmax(bt2,0.0),1.0));
 
       if (crd1!=CRD1[id] || crd2!=CRD2[id]) INVALID=TRUE;
 

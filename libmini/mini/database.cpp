@@ -578,7 +578,7 @@ int databuf::readparami(const char *tag,int *v,FILE *file)
 
    if (readparam(tag,&value,file)==0) return(0);
 
-   *v=FTRC(value+0.5);
+   *v=dtrc(value+0.5);
 
    return(1);
    }
@@ -590,7 +590,7 @@ int databuf::readparamu(const char *tag,unsigned int *v,FILE *file)
 
    if (readparam(tag,&value,file)==0) return(0);
 
-   *v=FTRC(FABS(value)+0.5);
+   *v=dtrc(dabs(value)+0.5);
 
    return(1);
    }

@@ -76,29 +76,29 @@ inline void minierrormsg(const char *file,int line,int fatal=0)
 #endif
 
 #define ftrc(x) (int)ffloor(x)
-#define FTRC(x) (int)floor(x)
+#define dtrc(x) (int)floor(x)
 
-inline float fABS(const float x) {return((x<0.0)?-x:x);}
-inline double FABS(const double x) {return((x<0.0)?-x:x);}
-#define fabs(x) fABS(x)
+inline float FABS(const float x) {return((x<0.0)?-x:x);}
+inline double dabs(const double x) {return((x<0.0)?-x:x);}
+#define fabs(x) FABS(x)
 
 #ifndef min
 inline int min(const int a,const int b) {return((a<b)?a:b);}
 #endif
-inline float fMIN(const float a,const float b) {return((a<b)?a:b);}
-inline double FMIN(const double a,const double b) {return((a<b)?a:b);}
-#define fmin(a,b) fMIN(a,b)
+inline float FMIN(const float a,const float b) {return((a<b)?a:b);}
+inline double dmin(const double a,const double b) {return((a<b)?a:b);}
+#define fmin(a,b) FMIN(a,b)
 
 #ifndef max
 inline int max(const int a,const int b) {return((a>b)?a:b);}
 #endif
-inline float fMAX(const float a,const float b) {return((a>b)?a:b);}
-inline double FMAX(const double a,const double b) {return((a>b)?a:b);}
-#define fmax(a,b) fMAX(a,b)
+inline float FMAX(const float a,const float b) {return((a>b)?a:b);}
+inline double dmax(const double a,const double b) {return((a>b)?a:b);}
+#define fmax(a,b) FMAX(a,b)
 
 inline int sqr(const int x) {return(x*x);}
 inline float fsqr(const float x) {return(x*x);}
-inline double FSQR(const double x) {return(x*x);}
+inline double dsqr(const double x) {return(x*x);}
 
 #ifdef __APPLE__
 #   define fsqrt(x) sqrtf(x)
