@@ -16,7 +16,6 @@ class minigeom_base
    protected:
 
    static const double delta;
-   static const double delta2;
 
    static const double alpha;
    static const double sinalpha;
