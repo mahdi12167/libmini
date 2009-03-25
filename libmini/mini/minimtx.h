@@ -9,18 +9,26 @@
 #include "minidyna.h"
 
 //! templated dynamic matrix
-template <class Item,const unsigned int Minsize=0>
-class minimtx: public minidyna<Item,Minsize*Minsize>
+template <class Scalar,const unsigned int Minsize=0>
+class minimtx: public minidyna<Scalar,Minsize*Minsize>
    {
    public:
 
    //! default constructor
-   minimtx(unsigned int cols,unsigned int rows,const Item &val=0)
+   minimtx(unsigned int cols,unsigned int rows,const Scalar &val=0)
       {
+      unsigned int i;
+
       COLS=cols;
       ROWS=rows;
 
-      minidyna<Item,Minsize*Minsize>::setsize(cols*rows,val);
+      minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows,0);
+
+      if (val!=0)
+         if (cols<rows)
+            for (i=0; i<cols; i++) set(i,i,val);
+         else
+            for (i=0; i<rows; i++) set(i,i,val);
       }
 
    //! destructor
@@ -31,40 +39,30 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
 
    // accessors:
 
-   void set(const Item &val=0) {minidyna<Item,Minsize*Minsize>::set(val);}
+   void set(const Scalar &val=0) {minidyna<Scalar,Minsize*Minsize>::set(val);}
 
-   void set(unsigned int x,unsigned int y,const Item &val)
+   void set(unsigned int x,unsigned int y,const Scalar &val)
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      minidyna<Item,Minsize*Minsize>::set(x+y*COLS,val);
+      minidyna<Scalar,Minsize*Minsize>::set(x+y*COLS,val);
       }
 
-   Item get(unsigned int x,unsigned int y) const
+   Scalar get(unsigned int x,unsigned int y) const
       {
       if (x>=COLS || y>=ROWS) WARNMSG();
-      return(minidyna<Item,Minsize*Minsize>::get(x+y*COLS));
+      return(minidyna<Scalar,Minsize*Minsize>::get(x+y*COLS));
       }
-
-   void diag(const Item &val=1)
-      {
-      unsigned int i;
-
-      if (getcols()<getrows())
-         for (i=0; i<getcols(); i++) set(i,i,val);
-      else
-         for (i=0; i<getrows(); i++) set(i,i,val);
-     }
 
    //! Gaussian elimination with back-substitution
    //! solves linear system of equations defined by square matrix
    //! working matrix has to be in the augmented form (N+1)xN
    //! right-hand-side vector is right-most column of working matrix
    //! returns true if the linear system has a solution
-   BOOLINT solve(minimtx<Item,Minsize> &sol)
+   BOOLINT solve(minimtx<Scalar,Minsize> &sol)
       {
       unsigned int i,j,k,l;
 
-      Item item,factor,sum;
+      Scalar item,factor,sum;
 
       minimtx<unsigned int,Minsize> row(1,getrows());
 
@@ -127,12 +125,12 @@ class minimtx: public minidyna<Item,Minsize*Minsize>
    };
 
 //! add operator
-template <class Item,const unsigned int Minsize>
-inline minimtx<Item,Minsize> operator + (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
+template <class Scalar,const unsigned int Minsize>
+inline minimtx<Scalar,Minsize> operator + (const minimtx<Scalar,Minsize> &a,const minimtx<Scalar,Minsize> &b)
    {
    unsigned int i,j;
 
-   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+   minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
    for (i=0; i<b.getcols(); i++)
       for (j=0; j<a.getrows(); j++) mtx.set(i,j,a.get(i,j)+b.get(i,j));
@@ -141,12 +139,12 @@ inline minimtx<Item,Minsize> operator + (const minimtx<Item,Minsize> &a,const mi
    }
 
 //! sub operator
-template <class Item,const unsigned int Minsize>
-inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
+template <class Scalar,const unsigned int Minsize>
+inline minimtx<Scalar,Minsize> operator - (const minimtx<Scalar,Minsize> &a,const minimtx<Scalar,Minsize> &b)
    {
    unsigned int i,j;
 
-   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+   minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
    for (i=0; i<b.getcols(); i++)
       for (j=0; j<a.getrows(); j++) mtx.set(i,j,a.get(i,j)-b.get(i,j));
@@ -155,12 +153,12 @@ inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &a,const mi
    }
 
 //! neg operator
-template <class Item,const unsigned int Minsize>
-inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &v)
+template <class Scalar,const unsigned int Minsize>
+inline minimtx<Scalar,Minsize> operator - (const minimtx<Scalar,Minsize> &v)
    {
    unsigned int i,j;
 
-   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+   minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
    for (i=0; i<b.getcols(); i++)
       for (j=0; j<a.getrows(); j++) mtx.set(i,j,-v.get(i,j));
@@ -169,14 +167,14 @@ inline minimtx<Item,Minsize> operator - (const minimtx<Item,Minsize> &v)
    }
 
 //! mul operator
-template <class Item,const unsigned int Minsize>
-inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const minimtx<Item,Minsize> &b)
+template <class Scalar,const unsigned int Minsize>
+inline minimtx<Scalar,Minsize> operator * (const minimtx<Scalar,Minsize> &a,const minimtx<Scalar,Minsize> &b)
    {
    unsigned int i,j,k;
 
-   Item val;
+   Scalar val;
 
-   minimtx<Item,Minsize> mtx(b.getcols(),a.getrows());
+   minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
    for (i=0; i<b.getcols(); i++)
       for (j=0; j<a.getrows(); j++)
@@ -190,8 +188,8 @@ inline minimtx<Item,Minsize> operator * (const minimtx<Item,Minsize> &a,const mi
    }
 
 //! stream output
-template <class Item,const unsigned int Minsize>
-inline std::ostream& operator << (std::ostream &out,const minimtx<Item,Minsize> &a)
+template <class Scalar,const unsigned int Minsize>
+inline std::ostream& operator << (std::ostream &out,const minimtx<Scalar,Minsize> &a)
    {
    unsigned int i,j;
 
