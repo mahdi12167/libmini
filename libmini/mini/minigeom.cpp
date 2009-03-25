@@ -3,10 +3,7 @@
 #include "minigeom.h"
 
 const double minigeom_base::delta=1E-3;
-
 const double minigeom_base::alpha=1E-5;
-const double minigeom_base::sinalpha=sin(alpha*PI/2.0);
-const double minigeom_base::cosalpha=cos(alpha*PI/2.0);
 
 // intersect with half space
 BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
@@ -24,7 +21,7 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
    lambda=(pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
 
    // check if line and plane are parallel
-   if (FABS(dot)>sinalpha)
+   if (FABS(dot)>alpha)
       {
       // project minimum distance into segment space
       if (FABS(halfspace.minlambda)!=MAXFLOAT) lambda1=(halfspace.minlambda-lambda)/dot;
@@ -81,7 +78,7 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
-   if (FABS(dot)>sinalpha)
+   if (FABS(dot)>alpha)
       {
       orig1=pnt+minlambda*vec; // plane origin
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin

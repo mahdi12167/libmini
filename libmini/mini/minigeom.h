@@ -16,10 +16,7 @@ class minigeom_base
    protected:
 
    static const double delta;
-
    static const double alpha;
-   static const double sinalpha;
-   static const double cosalpha;
 
    public:
 
@@ -111,7 +108,7 @@ class minigeom_base
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if (vec*b.vec>cosalpha)
+      else if (vec*b.vec>1.0-alpha)
          {
          d=(b.pnt-pnt)*vec;
 
