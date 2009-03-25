@@ -957,4 +957,7 @@ inline minimf sqr(const minimf &v)
 inline minimf sqrt(const minimf &v)
    {return(v.sqroot());}
 
+inline double round2(const minimf &v)
+   {return(round2(v.get()));}
+
 #endif

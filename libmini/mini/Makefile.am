@@ -2,7 +2,7 @@ METASOURCES = AUTO
 
 SUBDIRS = . tools
 
-HDRS	= minibase minidyna minimtx minisort
+HDRS	= minibase minivec minimtx minidyna minisort
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\

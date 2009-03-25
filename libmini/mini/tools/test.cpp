@@ -15,6 +15,7 @@
 #endif
 
 #ifdef MESHTEST
+#include <mini/minivec.h>
 #include <mini/minicoord.h>
 #include <mini/minimesh.h>
 #include <mini/minibspt.h>
@@ -177,11 +178,17 @@ int main(int argc,char *argv[])
 
 #else
 
+   minivecmf a,b,c;
+   a=miniv3d(1.0);
+   b=miniv3d(2.0);
+   c=a+b;
+   std::cout << c << std::endl;
+
    minimesh mesh;
    double gfnx=-157.0*3600;
    double gfny=21.0*3600;
    double gfnh=1000.0;
-   double brick=100.0/30;
+   double brick=1000.0/30;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
    addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,1.0)*brick,miniv3d(1.0,0.0,2.0)*brick,crd,TRUE,1,1,&mesh);
