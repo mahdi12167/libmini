@@ -27,97 +27,27 @@ void minimesh::append(const minihedron &h)
 void minimesh::append(const minimesh &m)
    {minidyna<minihedron>::append(m);}
 
-// polygonize a set of line segments
-minigon minimesh::polygonize(minigeom_segments<double> segments) const
-   {
-   unsigned int i,j;
-
-   miniv3d a,b,c,d;
-
-   unsigned int idx;
-   double dist,d1,d2;
-
-   minigeom_segment<double> tmp;
-
-   minigon gon;
-
-   if (segments.getsize()<3) return(gon);
-
-   for (i=0; i<segments.getsize(); i++)
-      {
-      a=segments[i].getminpoint();
-      b=segments[i].getmaxpoint();
-
-      gon.append(a);
-
-      idx=i;
-      dist=MAXFLOAT;
-
-      for (j=i+1; j<segments.getsize(); j++)
-         {
-         c=segments[j].getminpoint();
-         d=segments[j].getmaxpoint();
-
-         d1=(c-b).getlength2();
-         d2=(d-b).getlength2();
-
-         if (d1<dist)
-            {
-            idx=j;
-            dist=d1;
-            }
-
-         if (d2<dist)
-            {
-            idx=j;
-            dist=d2;
-
-            segments[j].swap();
-            }
-         }
-
-      if (i+2<segments.getsize())
-         {
-         tmp=segments[i+1];
-         segments[i+1]=segments[idx];
-         segments[idx]=tmp;
-         }
-      }
-
-   return(gon);
-   }
-
 // tetrahedralize a convex polyhedron
 minimesh minimesh::tetrahedralize(const minigeom_polyhedron<double> &poly) const
    {
    unsigned int i,j;
 
-   minigon gon;
-
-   miniv3d anchor,v1,v2,v3;
+   minigeom_polygon<double> anchor,gon;
 
    minimesh mesh;
 
    if (poly.getnumhalfspace()<4) return(mesh);
 
-   gon=polygonize(poly.getface(0));
-   if (gon.getsize()==0) return(mesh);
-
-   anchor=gon[0];
+   anchor=poly.getface(0).polygonize();
+   if (anchor.getsize()==0) return(mesh);
 
    for (i=1; i<poly.getnumhalfspace(); i++)
       {
-      gon=polygonize(poly.getface(i));
+      gon=poly.getface(i).polygonize();
 
       for (j=0; j+2<gon.getsize(); j++)
-         {
-         v1=gon[0];
-         v2=gon[j+1];
-         v3=gon[j+2];
-
-         if (dabs(minigeom_plane<double>(v1,v2,v3).getdistance(anchor))>delta)
-            mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
-         }
+         if (dabs(minigeom_plane<double>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]))>delta)
+            mesh.append(minihedron(anchor[0],gon[0],gon[j+1],gon[j+2],minivals()));
       }
 
    mesh.reject();

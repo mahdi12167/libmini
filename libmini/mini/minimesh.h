@@ -13,9 +13,6 @@
 #include "minidyna.h"
 #include "minigeom.h"
 
-//! polygon base class
-typedef minidyna<miniv3d,10> minigon;
-
 //! value base class
 class minival
    {
@@ -294,7 +291,6 @@ class minimesh: public minidyna<minihedron>
    static double CONFIGURE_DEGENERATE_SIZE;
    static double CONFIGURE_DEGENERATE_ASPECT;
 
-   minigon polygonize(minigeom_segments<double> segments) const;
    minimesh tetrahedralize(const minigeom_polyhedron<double> &poly) const;
 
    void reject();

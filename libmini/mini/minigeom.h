@@ -230,9 +230,21 @@ class minigeom_line: public minigeom_segment<Scalar>
    ~minigeom_line() {}
    };
 
+//! dynamic polygon array
+template <class Scalar>
+class minigeom_polygon: public minidyna<minivec<Scalar>,10> {};
+
 //! dynamic segment array
 template <class Scalar>
-class minigeom_segments: public minidyna<minigeom_segment<Scalar>,10> {};
+class minigeom_segments: public minidyna<minigeom_segment<Scalar>,10>
+   {
+   public:
+
+   typedef minidyna<minigeom_segment<Scalar>,10> B;
+   typedef minivec<Scalar> Vector;
+
+   minigeom_polygon<Scalar> polygonize();
+   };
 
 //! forward declaration
 template <class Scalar>
@@ -464,6 +476,67 @@ minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfs
       }
 
    return(line);
+   }
+
+// polygonize a set of line segments
+template <class Scalar>
+minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
+   {
+   unsigned int i,j;
+
+   Vector a,b,c,d;
+
+   unsigned int idx;
+   Scalar dist,d1,d2;
+
+   minigeom_polygon<Scalar> gon;
+
+   minigeom_segment<Scalar> tmp;
+
+   if (B::getsize()<3) return(gon);
+
+   for (i=0; i<B::getsize(); i++)
+      {
+      a=B::get(i).getminpoint();
+      b=B::get(i).getmaxpoint();
+
+      gon.append(a);
+
+      idx=i;
+      dist=MAXFLOAT;
+
+      for (j=i+1; j<B::getsize(); j++)
+         {
+         c=B::get(j).getminpoint();
+         d=B::get(j).getmaxpoint();
+
+         d1=(c-b).getlength2();
+         d2=(d-b).getlength2();
+
+         if (d1<dist)
+            {
+            idx=j;
+            dist=d1;
+            }
+
+         if (d2<dist)
+            {
+            idx=j;
+            dist=d2;
+
+            B::ref(j).swap();
+            }
+         }
+
+      if (i+2<B::getsize())
+         {
+         tmp=B::get(i+1);
+         B::ref(i+1)=B::get(idx);
+         B::ref(idx)=tmp;
+         }
+      }
+
+   return(gon);
    }
 
 // default constructor
