@@ -25,6 +25,9 @@ class minimpfp_base
    minimpfp_base(const double v)
       {set(v);}
 
+   //! conversion operator
+   operator double() {return(get());}
+
    //! destructor
    ~minimpfp_base() {}
 
@@ -948,16 +951,16 @@ inline int operator >= (const minimf &a,const double b)
 inline std::ostream& operator << (std::ostream &out,const minimf &mf)
    {return(out << mf.get());}
 
-inline minimf abs(const minimf &v)
+inline minimf dabs(const minimf &v)
    {return(v.abs());}
 
-inline minimf min(const minimf &a,const minimf &b)
+inline minimf dmin(const minimf &a,const minimf &b)
    {return((a<b)?a:b);}
 
-inline minimf max(const minimf &a,const minimf &b)
+inline minimf dmax(const minimf &a,const minimf &b)
    {return((a>b)?a:b);}
 
-inline minimf sqr(const minimf &v)
+inline minimf dsqr(const minimf &v)
    {return(v*v);}
 
 inline minimf sqrt(const minimf &v)

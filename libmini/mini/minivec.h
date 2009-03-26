@@ -36,6 +36,9 @@ class minivec
    minivec(const miniv4d &v) {x=v.x; y=v.y; z=v.z;}
    minivec(const miniv4f &v) {x=v.x; y=v.y; z=v.z;}
 
+   //! conversion operator
+   operator miniv3d() {return(miniv3d(x,y,z));}
+
    //! destructor
    ~minivec() {}
 
