@@ -7,16 +7,23 @@
 
 #include "minibase.h"
 
-#include "miniv3d.h"
+#include "minivec.h"
 #include "minidyna.h"
 
-//! geometry base class
+//! templated geometry base class
+template <class Scalar>
 class minigeom_base
    {
+   public:
+
+   typedef minivec<Scalar> Vector;
+
    protected:
 
    static const double delta;
+
    static const double alpha;
+   static const double beta;
 
    public:
 
@@ -24,7 +31,7 @@ class minigeom_base
    minigeom_base() {setnull();}
 
    //! conversion constructor
-   minigeom_base(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
       {
       pnt=p;
       vec=v;
@@ -36,7 +43,7 @@ class minigeom_base
       }
 
    //! conversion constructor
-   minigeom_base(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
       {
       pnt=p;
       vec=(v1-p)/(v2-p);
@@ -48,7 +55,7 @@ class minigeom_base
       }
 
    //! conversion constructor
-   minigeom_base(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &h,const double minl=0.0,const double maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
       {
       pnt=p;
       vec=(v1-p)/(v2-p);
@@ -64,16 +71,16 @@ class minigeom_base
    //! destructor
    ~minigeom_base() {}
 
-   miniv3d getpoint() const {return(pnt);}
-   miniv3d getvector() const {return(vec);}
+   Vector getpoint() const {return(pnt);}
+   Vector getvector() const {return(vec);}
 
-   miniv3d getpoint(const double lambda) const {return(pnt+lambda*vec);}
+   Vector getpoint(const Scalar lambda) const {return(pnt+lambda*vec);}
 
-   miniv3d getminpoint() const {return(pnt+minlambda*vec);}
-   miniv3d getmaxpoint() const {return(pnt+maxlambda*vec);}
+   Vector getminpoint() const {return(pnt+minlambda*vec);}
+   Vector getmaxpoint() const {return(pnt+maxlambda*vec);}
 
-   double getminlambda() const {return(minlambda);}
-   double getmaxlambda() const {return(maxlambda);}
+   Scalar getminlambda() const {return(minlambda);}
+   Scalar getmaxlambda() const {return(maxlambda);}
 
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
@@ -81,13 +88,13 @@ class minigeom_base
    BOOLINT isfull() const {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
 
    void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
-   void setzero() {minlambda=0.0; maxlambda=0.0;}
-   void sethalf() {minlambda=0.0; maxlambda=MAXFLOAT;}
+   void setzero() {minlambda=0; maxlambda=0;}
+   void sethalf() {minlambda=0; maxlambda=MAXFLOAT;}
    void setfull() {minlambda=-MAXFLOAT; maxlambda=MAXFLOAT;}
 
-   BOOLINT isincl(const miniv3d &p) const
+   BOOLINT isincl(const Vector &p) const
       {
-      double d;
+      Scalar d;
 
       if (isnull()) return(FALSE);
       else if (isfull()) return(TRUE);
@@ -104,11 +111,11 @@ class minigeom_base
 
    BOOLINT isequal(const minigeom_base &b) const
       {
-      double d;
+      Scalar d;
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if (vec*b.vec>1.0-alpha)
+      else if (vec*b.vec>beta)
          {
          d=(b.pnt-pnt)*vec;
 
@@ -121,7 +128,7 @@ class minigeom_base
 
    void swap()
       {
-      double tmp;
+      Scalar tmp;
 
       vec=-vec;
       tmp=-minlambda;
@@ -129,7 +136,7 @@ class minigeom_base
       maxlambda=tmp;
       }
 
-   void flip(const miniv3d &h)
+   void flip(const Vector &h)
       {
       if (ishalf())
          if (!isincl(h))
@@ -152,12 +159,13 @@ class minigeom_base
 
    protected:
 
-   miniv3d pnt,vec;
-   double minlambda,maxlambda;
+   Vector pnt,vec;
+   Scalar minlambda,maxlambda;
    };
 
 //! stream output
-inline std::ostream& operator << (std::ostream &out,const minigeom_base &g)
+template <class Scalar>
+inline std::ostream& operator << (std::ostream &out,const minigeom_base<Scalar> &g)
    {
    out << "minigeom( point=" << g.getpoint() << ", vector=" << g.getvector();
    if (!g.ishalf()) out << ", minlambda=" << g.getminlambda() << ", maxlambda=" << g.getmaxlambda();
@@ -166,81 +174,138 @@ inline std::ostream& operator << (std::ostream &out,const minigeom_base &g)
    return(out);
    }
 
+//! forward declaration
+template <class Scalar>
 class minigeom_segment;
+
+//! forward declaration
+template <class Scalar>
 class minigeom_halfspace;
 
 //! line segment
-class minigeom_segment: public minigeom_base
+template <class Scalar>
+class minigeom_segment: public minigeom_base<Scalar>
    {
    public:
 
+   typedef minigeom_base<Scalar> B;
+   typedef minivec<Scalar> Vector;
+
    //! default constructor
-   minigeom_segment(): minigeom_base() {}
+   minigeom_segment(): B() {}
 
    //! conversion constructor
-   minigeom_segment(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_segment(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_segment(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &h,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,h,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
 
    //! destructor
    ~minigeom_segment() {}
 
    //! get point distance
-   double getdistance(const miniv3d &p) const {return((p-((p-pnt)*vec)*vec-pnt).getlength());}
+   Scalar getdistance(const Vector &p) const {return((B::p-((B::p-B::pnt)*B::vec)*B::vec-B::pnt).getlength());}
 
    //! intersect with half space
-   BOOLINT intersect(const minigeom_halfspace &halfspace);
+   BOOLINT intersect(const minigeom_halfspace<Scalar> &halfspace);
    };
 
-typedef minigeom_segment minigeom_line;
-typedef minidyna<minigeom_segment,10> minigeom_segments;
-
-//! half space
-class minigeom_halfspace: public minigeom_base
+//! clone declaration
+template <class Scalar>
+class minigeom_line: public minigeom_segment<Scalar>
    {
    public:
 
+   typedef minigeom_segment<Scalar> B;
+   typedef minivec<Scalar> Vector;
+
+   minigeom_line(): B() {}
+   minigeom_line(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
+   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
+   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+
+   ~minigeom_line() {}
+   };
+
+//! dynamic segment array
+template <class Scalar>
+class minigeom_segments: public minidyna<minigeom_segment<Scalar>,10> {};
+
+//! forward declaration
+template <class Scalar>
+class minigeom_polyhedron;
+
+//! half space
+template <class Scalar>
+class minigeom_halfspace: public minigeom_base<Scalar>
+   {
+   public:
+
+   typedef minigeom_base<Scalar> B;
+   typedef minivec<Scalar> Vector;
+
    //! default constructor
-   minigeom_halfspace(): minigeom_base() {}
+   minigeom_halfspace(): B() {}
 
    //! conversion constructor
-   minigeom_halfspace(const miniv3d &p,const miniv3d &v,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_halfspace(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_halfspace(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &h,const double minl=0.0,const double maxl=MAXFLOAT): minigeom_base(p,v1,v2,h,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
 
    //! destructor
    ~minigeom_halfspace() {}
 
    //! get point distance
-   double getdistance(const miniv3d &p) const {return((p-pnt)*vec-minlambda);}
+   Scalar getdistance(const Vector &p) const
+      {return((p-B::pnt)*B::vec-B::minlambda);}
 
    //! intersect with half space
-   minigeom_line intersect(const minigeom_halfspace &halfspace) const;
+   minigeom_line<Scalar> intersect(const minigeom_halfspace<Scalar> &halfspace) const;
 
    private:
 
-   friend class minigeom_segment;
-   friend class minigeom_polyhedron;
+   friend class minigeom_segment<Scalar>;
+   friend class minigeom_polyhedron<Scalar>;
    };
 
-typedef minigeom_halfspace minigeom_plane;
-typedef minidyna<minigeom_halfspace,6> minigeom_halfspaces;
+//! clone declaration
+template <class Scalar>
+class minigeom_plane: public minigeom_halfspace<Scalar>
+   {
+   public:
+
+   typedef minigeom_halfspace<Scalar> B;
+   typedef minivec<Scalar> Vector;
+
+   minigeom_plane(): B() {}
+   minigeom_plane(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
+   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
+   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+
+   ~minigeom_plane() {}
+   };
+
+//! dynamic halfspace array
+template <class Scalar>
+class minigeom_halfspaces: public minidyna<minigeom_halfspace<Scalar>,6> {};
 
 //! convex polyhedron
+template <class Scalar>
 class minigeom_polyhedron
    {
    public:
 
+   typedef minivec<Scalar> Vector;
+
    //! default constructor
-   minigeom_polyhedron(const double range=1.0E9);
+   minigeom_polyhedron(const Scalar range=1.0E9);
 
    //! destructor
    ~minigeom_polyhedron();
@@ -249,31 +314,32 @@ class minigeom_polyhedron
    unsigned int getnumhalfspace() const {return(half.getsize());}
 
    //! get defining half space
-   minigeom_halfspace gethalfspace(const unsigned int h) const {return(half[h]);}
+   minigeom_halfspace<Scalar> gethalfspace(const unsigned int h) const {return(half[h]);}
 
    //! intersect with half space
-   void intersect(const minigeom_halfspace &halfspace);
+   void intersect(const minigeom_halfspace<Scalar> &halfspace);
 
    //! clear half spaces
    void clear();
 
    //! get face segments of corresponding half space
-   minigeom_segments getface(const unsigned int h) const;
+   minigeom_segments<Scalar> getface(const unsigned int h) const;
 
    protected:
 
-   minigeom_halfspaces half;
+   minigeom_halfspaces<Scalar> half;
 
    private:
 
    void remove(const unsigned int h);
 
-   BOOLINT check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0) const;
+   BOOLINT check4intersection(const minigeom_halfspace<Scalar> &halfspace,const BOOLINT omit=FALSE,const unsigned int h=0) const;
    BOOLINT check4redundancy(const unsigned int h) const;
    };
 
 //! stream output
-inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron &poly)
+template <class Scalar>
+inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron<Scalar> &poly)
    {
    unsigned int i;
 
@@ -291,6 +357,9 @@ inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron &p
    }
 
 //! dynamic polyhedron array
-typedef minidyna<minigeom_polyhedron,10> minigeom_polyhedra;
+template <class Scalar>
+class minigeom_polyhedra: public minidyna<minigeom_polyhedron<Scalar>,10> {};
+
+#include "minigeom.cpp"
 
 #endif

@@ -29,7 +29,7 @@ SET(MINI_SRCS
    minicache.cpp minishader.cpp miniray.cpp
    ministrip.cpp minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
    minitree.cpp minibrick.cpp minilod.cpp
-   minigeom.cpp minimesh.cpp minibspt.cpp miniproj.cpp
+   minimesh.cpp minibspt.cpp miniproj.cpp
    pnmbase.cpp pnmsample.cpp
    database.cpp datafill.cpp
    datacloud.cpp datacache.cpp datagrid.cpp

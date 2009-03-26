@@ -1,31 +1,35 @@
 // (c) by Stefan Roettger
 
-#include "minigeom.h"
+template <class Scalar>
+const double minigeom_base<Scalar>::delta=1E-3;
 
-const double minigeom_base::delta=1E-3;
-const double minigeom_base::alpha=1E-7;
+template <class Scalar>
+const double minigeom_base<Scalar>::alpha=1E-7;
+template <class Scalar>
+const double minigeom_base<Scalar>::beta=1.0-alpha;
 
 // intersect with half space
-BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
+template <class Scalar>
+BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &halfspace)
    {
    BOOLINT cut;
 
-   double dot,lambda;
-   double lambda1,lambda2;
+   Scalar dot,lambda;
+   Scalar lambda1,lambda2;
 
-   if (isnull()) return(FALSE);
+   if (B::isnull()) return(FALSE);
 
    cut=FALSE;
 
-   dot=vec*halfspace.vec; // dot product between line direction and plane normal
-   lambda=(pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
+   dot=B::vec*halfspace.vec; // dot product between line direction and plane normal
+   lambda=(B::pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
 
    // check if line and plane are parallel
-   if (dabs(dot)>alpha)
+   if (dabs(dot)>B::alpha)
       {
       // project minimum distance into segment space
       if (dabs(halfspace.minlambda)!=MAXFLOAT) lambda1=(halfspace.minlambda-lambda)/dot;
-      else if (dot<0.0) lambda1=-halfspace.minlambda;
+      else if (dot<0) lambda1=-halfspace.minlambda;
       else lambda1=halfspace.minlambda;
 
       // clamp minimum distance
@@ -42,45 +46,46 @@ BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
       else if (lambda2>MAXFLOAT) lambda2=MAXFLOAT;
 
       // intersect half space range with segment range
-      if (dot<0.0)
+      if (dot<0)
          {
-         if (lambda1<maxlambda-delta) {maxlambda=lambda1; cut=TRUE;}
-         if (lambda2>minlambda+delta) {minlambda=lambda2; cut=TRUE;}
+         if (lambda1<B::maxlambda-B::delta) {B::maxlambda=lambda1; cut=TRUE;}
+         if (lambda2>B::minlambda+B::delta) {B::minlambda=lambda2; cut=TRUE;}
          }
       else
          {
-         if (lambda1>minlambda+delta) {minlambda=lambda1; cut=TRUE;}
-         if (lambda2<maxlambda-delta) {maxlambda=lambda2; cut=TRUE;}
+         if (lambda1>B::minlambda+B::delta) {B::minlambda=lambda1; cut=TRUE;}
+         if (lambda2<B::maxlambda-B::delta) {B::maxlambda=lambda2; cut=TRUE;}
          }
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda-delta || lambda>halfspace.maxlambda+delta) {setnull(); cut=TRUE;}
+      if (lambda<halfspace.minlambda-B::delta || lambda>halfspace.maxlambda+B::delta) {B::setnull(); cut=TRUE;}
 
    return(cut);
    }
 
 // intersect with half space
-minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace) const
+template <class Scalar>
+minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfspace<Scalar> &halfspace) const
    {
-   miniv3d cross,dir;
-   double dot,lambda;
-   miniv3d orig1,orig2;
-   miniv3d orig;
+   Vector cross,dir;
+   Scalar dot,lambda;
+   Vector orig1,orig2;
+   Vector orig;
 
-   minigeom_line line;
+   minigeom_line<Scalar> line;
 
-   if (!iszero() && !ishalf()) return(line);
+   if (!B::iszero() && !B::ishalf()) return(line);
    if (!halfspace.iszero() && !halfspace.ishalf()) return(line);
 
-   cross=vec/halfspace.vec; // cross product of plane normals
-   dir=cross/vec; // direction from plane origin towards line origin
+   cross=B::vec/halfspace.vec; // cross product of plane normals
+   dir=cross/B::vec; // direction from plane origin towards line origin
    dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
-   if (dabs(dot)>alpha)
+   if (dabs(dot)>B::alpha)
       {
-      orig1=pnt+minlambda*vec; // plane origin
+      orig1=B::pnt+B::minlambda*B::vec; // plane origin
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin
 
       lambda=(orig1-orig2)*halfspace.vec; // distance of plane origin to intersecting plane
@@ -93,7 +98,7 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
       orig=orig1+lambda*dir; // line origin
 
       // create intersection line
-      line=minigeom_line(orig,cross);
+      line=minigeom_line<Scalar>(orig,cross);
       line.setfull();
       }
 
@@ -101,22 +106,25 @@ minigeom_line minigeom_halfspace::intersect(const minigeom_halfspace &halfspace)
    }
 
 // default constructor
-minigeom_polyhedron::minigeom_polyhedron(const double range)
+template <class Scalar>
+minigeom_polyhedron<Scalar>::minigeom_polyhedron(const Scalar range)
    {
    // pre-define a closed bounding box with maximum possible size
-   half.append(minigeom_halfspace(miniv3d(-range,0,0),miniv3d(1,0,0)));
-   half.append(minigeom_halfspace(miniv3d(range,0,0),miniv3d(-1,0,0)));
-   half.append(minigeom_halfspace(miniv3d(0,-range,0),miniv3d(0,1,0)));
-   half.append(minigeom_halfspace(miniv3d(0,range,0),miniv3d(0,-1,0)));
-   half.append(minigeom_halfspace(miniv3d(0,0,-range),miniv3d(0,0,1)));
-   half.append(minigeom_halfspace(miniv3d(0,0,range),miniv3d(0,0,-1)));
+   half.append(minigeom_halfspace<Scalar>(Vector(-range,0,0),Vector(1,0,0)));
+   half.append(minigeom_halfspace<Scalar>(Vector(range,0,0),Vector(-1,0,0)));
+   half.append(minigeom_halfspace<Scalar>(Vector(0,-range,0),Vector(0,1,0)));
+   half.append(minigeom_halfspace<Scalar>(Vector(0,range,0),Vector(0,-1,0)));
+   half.append(minigeom_halfspace<Scalar>(Vector(0,0,-range),Vector(0,0,1)));
+   half.append(minigeom_halfspace<Scalar>(Vector(0,0,range),Vector(0,0,-1)));
    }
 
 // destructor
-minigeom_polyhedron::~minigeom_polyhedron() {}
+template <class Scalar>
+minigeom_polyhedron<Scalar>::~minigeom_polyhedron() {}
 
 // intersect with half space
-void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
+template <class Scalar>
+void minigeom_polyhedron<Scalar>::intersect(const minigeom_halfspace<Scalar> &halfspace)
    {
    unsigned int i;
 
@@ -135,19 +143,22 @@ void minigeom_polyhedron::intersect(const minigeom_halfspace &halfspace)
    }
 
 // clear half spaces
-void minigeom_polyhedron::clear()
+template <class Scalar>
+void minigeom_polyhedron<Scalar>::clear()
    {half.setnull();}
 
 // remove half space
-void minigeom_polyhedron::remove(const unsigned int h)
+template <class Scalar>
+void minigeom_polyhedron<Scalar>::remove(const unsigned int h)
    {half.remove(h);}
 
 // check if a half space intersects with the polyhedron
-BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfspace,const BOOLINT omit,const unsigned int h) const
+template <class Scalar>
+BOOLINT minigeom_polyhedron<Scalar>::check4intersection(const minigeom_halfspace<Scalar> &halfspace,const BOOLINT omit,const unsigned int h) const
    {
    unsigned int i,j,k;
 
-   minigeom_segment segment;
+   minigeom_segment<Scalar> segment;
 
    // check for identical half space
    for (i=0; i<half.getsize(); i++)
@@ -178,16 +189,18 @@ BOOLINT minigeom_polyhedron::check4intersection(const minigeom_halfspace &halfsp
    }
 
 // check if a half space is redundant with respect to the other half spaces
-BOOLINT minigeom_polyhedron::check4redundancy(const unsigned int h) const
+template <class Scalar>
+BOOLINT minigeom_polyhedron<Scalar>::check4redundancy(const unsigned int h) const
    {return(!check4intersection(half[h],TRUE,h));}
 
 // get face segments of corresponding half space
-minigeom_segments minigeom_polyhedron::getface(const unsigned int h) const
+template <class Scalar>
+minigeom_segments<Scalar> minigeom_polyhedron<Scalar>::getface(const unsigned int h) const
    {
    unsigned int i,j;
 
-   minigeom_segment segment;
-   minigeom_segments segments;
+   minigeom_segment<Scalar> segment;
+   minigeom_segments<Scalar> segments;
 
    // create a segment for each half space
    for (i=0; i<half.getsize(); i++)

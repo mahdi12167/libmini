@@ -2,7 +2,9 @@ METASOURCES = AUTO
 
 SUBDIRS = . tools
 
-HDRS	= minibase minivec minimtx minidyna minisort
+HDRS	= minibase\
+	  minivec minimtx\
+	  minidyna minigeom minisort
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
@@ -13,7 +15,7 @@ MODS	= mini miniOGL\
 	  minicache minishader miniray\
 	  ministrip minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
-	  minigeom minimesh minibspt miniproj\
+	  minimesh minibspt miniproj\
 	  pnmbase pnmsample\
 	  database datafill\
 	  datacloud datacache datagrid\

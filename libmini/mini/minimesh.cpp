@@ -28,7 +28,7 @@ void minimesh::append(const minimesh &m)
    {minidyna<minihedron>::append(m);}
 
 // polygonize a set of line segments
-minigon minimesh::polygonize(minigeom_segments segments) const
+minigon minimesh::polygonize(minigeom_segments<double> segments) const
    {
    unsigned int i,j;
 
@@ -37,7 +37,7 @@ minigon minimesh::polygonize(minigeom_segments segments) const
    unsigned int idx;
    double dist,d1,d2;
 
-   minigeom_segment tmp;
+   minigeom_segment<double> tmp;
 
    minigon gon;
 
@@ -88,7 +88,7 @@ minigon minimesh::polygonize(minigeom_segments segments) const
    }
 
 // tetrahedralize a convex polyhedron
-minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
+minimesh minimesh::tetrahedralize(const minigeom_polyhedron<double> &poly) const
    {
    unsigned int i,j;
 
@@ -115,7 +115,7 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron &poly) const
          v2=gon[j+1];
          v3=gon[j+2];
 
-         if (dabs(minigeom_plane(v1,v2,v3).getdistance(anchor))>delta)
+         if (dabs(minigeom_plane<double>(v1,v2,v3).getdistance(anchor))>delta)
             mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
          }
       }
@@ -155,10 +155,10 @@ void minimesh::reject()
       v4=get(i).vtx4;
 
       // calculate distances of corners to opposing face
-      d1=minigeom_plane(v1,v2,v3,v4).getdistance(v4);
-      d2=minigeom_plane(v1,v4,v2,v3).getdistance(v3);
-      d3=minigeom_plane(v2,v4,v3,v1).getdistance(v1);
-      d4=minigeom_plane(v3,v4,v1,v2).getdistance(v2);
+      d1=minigeom_plane<double>(v1,v2,v3,v4).getdistance(v4);
+      d2=minigeom_plane<double>(v1,v4,v2,v3).getdistance(v3);
+      d3=minigeom_plane<double>(v2,v4,v3,v1).getdistance(v1);
+      d4=minigeom_plane<double>(v3,v4,v1,v2).getdistance(v2);
 
       // calculate squared corner distances
       e1=(v4-v1)*(v4-v1);
@@ -211,7 +211,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    {
    unsigned int i;
 
-   minigeom_plane plane;
+   minigeom_plane<double> plane;
 
    miniv3d p1,p2,p3,p4;
    miniv3d m1,m2,m3,m4;
@@ -220,7 +220,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    double dist,d;
 
    // calculate matching plane
-   plane=minigeom_plane(v1,v2,v3,h);
+   plane=minigeom_plane<double>(v1,v2,v3,h);
 
    idx=0;
    dist=-MAXFLOAT;
@@ -284,7 +284,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    }
 
 // append a polyhedron
-void minimesh::append(const minigeom_polyhedron &poly)
+void minimesh::append(const minigeom_polyhedron<double> &poly)
    {append(tetrahedralize(poly));}
 
 // set embedded data values
@@ -567,10 +567,10 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
 
       // calculate the back faces
       bf1=bf2=bf3=bf4=FALSE;
-      if (fd1!=0) bf1=minigeom_plane(v1,v2,v3,v4).isincl(eye);
-      if (fd2!=0) bf2=minigeom_plane(v1,v4,v2,v3).isincl(eye);
-      if (fd3!=0) bf3=minigeom_plane(v2,v4,v3,v1).isincl(eye);
-      if (fd4!=0) bf4=minigeom_plane(v3,v4,v1,v2).isincl(eye);
+      if (fd1!=0) bf1=minigeom_plane<double>(v1,v2,v3,v4).isincl(eye);
+      if (fd2!=0) bf2=minigeom_plane<double>(v1,v4,v2,v3).isincl(eye);
+      if (fd3!=0) bf3=minigeom_plane<double>(v2,v4,v3,v1).isincl(eye);
+      if (fd4!=0) bf4=minigeom_plane<double>(v3,v4,v1,v2).isincl(eye);
 
       // descend to the dependencies of the back faces
       if (fd1!=0) if (bf1) descend(fd1,eye);

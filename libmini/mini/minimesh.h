@@ -252,7 +252,7 @@ class minimesh: public minidyna<minihedron>
    void append(const minimesh &m);
 
    //! append a polyhedron
-   void append(const minigeom_polyhedron &poly);
+   void append(const minigeom_polyhedron<double> &poly);
 
    //! set embedded data values
    void setvals(const minivals &vals);
@@ -294,8 +294,8 @@ class minimesh: public minidyna<minihedron>
    static double CONFIGURE_DEGENERATE_SIZE;
    static double CONFIGURE_DEGENERATE_ASPECT;
 
-   minigon polygonize(minigeom_segments segments) const;
-   minimesh tetrahedralize(const minigeom_polyhedron &poly) const;
+   minigon polygonize(minigeom_segments<double> segments) const;
+   minimesh tetrahedralize(const minigeom_polyhedron<double> &poly) const;
 
    void reject();
    void connect();
