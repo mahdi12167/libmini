@@ -2,6 +2,8 @@
 
 // configuration section:
 
+#undef VIEWER_FREEZE
+
 #define VIEWER_WINWIDTH 1024
 #define VIEWER_WINHEIGHT 512
 
@@ -165,7 +167,7 @@ static double speed,topspeed;
 static const float sbase=VIEWER_SBASE;
 
 // wakeup flag
-static int wakeup=1;
+static BOOLINT wakeup=TRUE;
 
 // consumed time per frame
 static double accu_delta=0.0;
@@ -584,7 +586,7 @@ void reportpos(double lat,double lon,double elev)
    {
    static BOOLINT done=FALSE;
 
-   if (wakeup!=0) done=FALSE;
+   if (wakeup) done=FALSE;
    else if (!done)
       {
       printf("ARC\n%.1f\n%.1f\n%.1fm\n",lat,lon,elev);
@@ -969,10 +971,10 @@ void render()
 
    // check for eye movement:
 
-   if (dabs(speed)>VIEWER_MINDIFF) wakeup=1;
-   if (dabs(angle-turn)>VIEWER_MINDIFF) wakeup=1;
-   if (dabs(pitch-incline)>VIEWER_MINDIFF) wakeup=1;
-   if (dabs(dez)>VIEWER_MINDIFF) wakeup=1;
+   if (dabs(speed)>VIEWER_MINDIFF) wakeup=TRUE;
+   if (dabs(angle-turn)>VIEWER_MINDIFF) wakeup=TRUE;
+   if (dabs(pitch-incline)>VIEWER_MINDIFF) wakeup=TRUE;
+   if (dabs(dez)>VIEWER_MINDIFF) wakeup=TRUE;
 
    // check for nearest waypoint:
 
@@ -988,7 +990,7 @@ void render()
             if (nearvec.getlength()<3.0f*nearrad)
                {
                el.vec+=0.1*nearvec;
-               if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=1;
+               if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=TRUE;
                }
             }
 
@@ -1096,18 +1098,23 @@ void render()
 // GLUT display function
 void displayfunc()
    {
-   int pending;
+   BOOLINT stat;
 
    static int numidle=0;
 
-   pending=viewer->getearth()->getterrain()->getpending();
+   stat=viewer->getearth()->checkstatic();
 
-   if (pending!=0 || wakeup!=0) numidle=0;
+   if (!stat || wakeup) numidle=0;
    else if (numidle<VIEWER_MAXIDLE) numidle++;
 
-   wakeup=0;
+   wakeup=FALSE;
 
+#ifndef VIEWER_FREEZE
+   viewer->getearth()->makestatic(numidle>=VIEWER_MAXIDLE);
+#else
    viewer->getearth()->freeze(numidle>=VIEWER_MAXIDLE);
+#endif
+
    render();
    }
 
@@ -1116,7 +1123,7 @@ void reshapefunc(int width,int height)
    {
    initwindow(width,height);
 
-   wakeup=1;
+   wakeup=TRUE;
    }
 
 // GLUT keyboard function
@@ -1346,7 +1353,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          exit(0);
       }
 
-   wakeup=1;
+   wakeup=TRUE;
    }
 
 // initialize waypoint addons

@@ -148,6 +148,12 @@ class miniearth
    //! render scene
    void render();
 
+   //! check for static scene
+   BOOLINT checkstatic();
+
+   //! make scene static
+   void makestatic(BOOLINT flag);
+
    //! freeze scene
    void freeze(BOOLINT flag);
 
@@ -196,6 +202,8 @@ class miniearth
    BOOLINT LOADED;
 
    BOOLINT CLEAR;
+
+   BOOLINT STATIC;
 
    BOOLINT FREEZE;
    BOOLINT GRABBED;

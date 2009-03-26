@@ -98,6 +98,8 @@ miniearth::miniearth()
 
    CLEAR=FALSE;
 
+   STATIC=FALSE;
+
    FREEZE=FALSE;
    GRABBED=FALSE;
 
@@ -379,7 +381,10 @@ void miniearth::clear()
 
 // generate and cache scene for a particular eye point and time step
 void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect,double time)
-   {if (!FREEZE) TERRAIN->cache(e,d,u,aspect,time);}
+   {
+   if (!STATIC)
+      if (!FREEZE) TERRAIN->cache(e,d,u,aspect,time);
+   }
 
 // render cached scene
 void miniearth::rendercache()
@@ -601,6 +606,14 @@ void miniearth::renderdgrid()
          }
       }
    }
+
+// check for static scene
+BOOLINT miniearth::checkstatic()
+   {return(TERRAIN->getpending()==0);}
+
+// make scene static
+void miniearth::makestatic(BOOLINT flag)
+   {STATIC=flag;}
 
 // grab scene
 void miniearth::grabbuffers()
