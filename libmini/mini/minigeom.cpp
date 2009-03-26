@@ -3,7 +3,7 @@
 #include "minigeom.h"
 
 const double minigeom_base::delta=1E-3;
-const double minigeom_base::alpha=1E-5;
+const double minigeom_base::alpha=1E-7;
 
 // intersect with half space
 BOOLINT minigeom_segment::intersect(const minigeom_halfspace &halfspace)
