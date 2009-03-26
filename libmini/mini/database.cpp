@@ -2792,6 +2792,8 @@ unsigned int databuf::replacergb(const float value1[3],const float value2[3])
 
    if (type!=DATABUF_TYPE_RGB) return(0);
 
+   rgb[0]=rgb[1]=rgb[2]=0.0f;
+
    // search for rgb values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
@@ -2822,6 +2824,8 @@ unsigned int databuf::replacergba(const float value1[4],const float value2[4])
    count=0;
 
    if (type!=DATABUF_TYPE_RGBA) return(0);
+
+   rgba[0]=rgba[1]=rgba[2]=rgba[3]=0.0f;
 
    // search for rgb values
    for (t=0; t<tsteps; t++)
