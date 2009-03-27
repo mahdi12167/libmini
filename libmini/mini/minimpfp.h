@@ -25,9 +25,6 @@ class minimpfp_base
    minimpfp_base(const double v)
       {set(v);}
 
-   //! conversion operator
-   operator double() {return(get());}
-
    //! destructor
    ~minimpfp_base() {}
 

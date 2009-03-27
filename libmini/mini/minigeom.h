@@ -462,7 +462,7 @@ minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfs
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin
 
       lambda=(orig1-orig2)*halfspace.vec; // distance of plane origin to intersecting plane
-      lambda/=dot; // distance to line origin
+      lambda=lambda/dot; // distance to line origin
 
       // clamp distance
       if (lambda<-MAXFLOAT) lambda=-MAXFLOAT;

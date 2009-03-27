@@ -90,7 +90,7 @@ inline minivec<Scalar>& minivec<Scalar>::operator /= (const Scalar c)
    Scalar rc;
    if (c!=0) rc=1/c;
    else rc=1;
-   x*=rc; y*=rc; z*=rc;
+   x=x*rc; y=y*rc; z=z*rc;
    return(*this);
    }
 
