@@ -28,11 +28,11 @@ void minimesh::append(const minimesh &m)
    {minidyna<minihedron>::append(m);}
 
 // tetrahedralize a convex polyhedron
-minimesh minimesh::tetrahedralize(const minigeom_polyhedron<double> &poly) const
+minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
    {
    unsigned int i,j;
 
-   minigeom_polygon<double> anchor,gon;
+   minigeom_polygon<Scalar> anchor,gon;
 
    minimesh mesh;
 
@@ -46,7 +46,7 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<double> &poly) const
       gon=poly.getface(i).polygonize();
 
       for (j=0; j+2<gon.getsize(); j++)
-         if (dabs(minigeom_plane<double>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]))>delta)
+         if (dabs(minigeom_plane<Scalar>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]))>delta)
             mesh.append(minihedron(anchor[0],gon[0],gon[j+1],gon[j+2],minivals()));
       }
 
@@ -214,7 +214,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    }
 
 // append a polyhedron
-void minimesh::append(const minigeom_polyhedron<double> &poly)
+void minimesh::append(const minigeom_polyhedron<Scalar> &poly)
    {append(tetrahedralize(poly));}
 
 // set embedded data values
