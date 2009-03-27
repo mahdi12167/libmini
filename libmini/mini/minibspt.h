@@ -61,13 +61,15 @@ class minibsptree
 
    private:
 
+   typedef minimesh::Scalar Scalar;
+
    struct minibsptree_node
       {
-      minigeom_plane<double> plane;
+      minigeom_plane<Scalar> plane;
       unsigned int left,right;
 
       minivals leftvals,rightvals;
-      minigeom_polyhedron<double> poly;
+      minigeom_polyhedron<Scalar> poly;
       minimesh leftmesh,rightmesh;
       };
 
@@ -90,7 +92,7 @@ class minibsptree
    void insert2(unsigned int idx);
 
    void insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h);
-   inline void append(const minigeom_plane<double> &plane);
+   inline void append(const minigeom_plane<Scalar> &plane);
 
    void setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,const minivals &vals);
 

@@ -187,7 +187,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
    double d1,d2,d3;
 
    // check if the bsp tree is empty
-   if (TREE.isnull()) append(minigeom_plane<double>(v1,v2,v3,h));
+   if (TREE.isnull()) append(minigeom_plane<Scalar>(v1,v2,v3,h));
    else
       {
       // determine the distance of the tetrahedral face vertices from the actual dividing plane
@@ -203,7 +203,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
             if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h); // insert recursively
             else
                {
-               append(minigeom_plane<double>(v1,v2,v3,h)); // append node to bsp tree
+               append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
                TREE[idx].left=TREE.getsize()-1; // link left node from parent
                }
 
@@ -212,7 +212,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
             if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h); // insert recursively
             else
                {
-               append(minigeom_plane<double>(v1,v2,v3,h)); // append node to bsp tree
+               append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
                TREE[idx].right=TREE.getsize()-1; // link right node from parent
                }
          }
@@ -246,7 +246,7 @@ void minibsptree::setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,c
    }
 
 // append node to bsp tree
-void minibsptree::append(const minigeom_plane<double> &plane)
+void minibsptree::append(const minigeom_plane<Scalar> &plane)
    {
    minibsptree_node node;
 
@@ -259,8 +259,8 @@ void minibsptree::append(const minigeom_plane<double> &plane)
 // intersect one node of the bsp tree
 void minibsptree::intersect(unsigned int idx)
    {
-   minigeom_plane<double> plane;
-   minigeom_polyhedron<double> poly;
+   minigeom_plane<Scalar> plane;
+   minigeom_polyhedron<Scalar> poly;
 
    // intersect the left half space
    if (TREE[idx].left!=0)
