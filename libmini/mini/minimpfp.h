@@ -42,8 +42,8 @@ class minimpfp_base
    static const minimpfp_base zero() {return(minimpfp_base(0,0));}
    static const minimpfp_base one() {return(minimpfp_base(1,0));}
 
-   static const minimpfp_base min() {return(minimpfp_base(0,1));}
-   static const minimpfp_base max() {return(minimpfp_base(0xFFFFFFFF,0xFFFFFFFF));}
+   static const minimpfp_base getmin() {return(minimpfp_base(0,1));}
+   static const minimpfp_base getmax() {return(minimpfp_base(0xFFFFFFFF,0xFFFFFFFF));}
 
    unsigned int getmag() const {return(V>>32);}
    unsigned int getfrc() const {return(V);}
@@ -130,7 +130,7 @@ class minimpfp_base
    minimpfp_base inv2() const
       {
       unsigned long long int iv;
-      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; return(max());}
+      if (V==0) {MINIMPFP_DIVBYZERO=TRUE; return(getmax());}
       else iv=0xFFFFFFFFFFFFFFFFll/V;
       return(minimpfp_base(iv>>32,iv));
       }
@@ -210,13 +210,13 @@ class minimpfp
    static double getlimit() {return(N::getlimit()*N::getlimit());}
 
    static const minimpfp zero() {return(minimpfp(N::zero(),N::zero()));}
-   static const minimpfp one() {return(minimpfp(N::min(),N::zero()));}
+   static const minimpfp one() {return(minimpfp(N::getmin(),N::zero()));}
 
-   static const minimpfp min() {return(minimpfp(N::zero(),N::min()));}
-   static const minimpfp max() {return(minimpfp(N::max(),N::max()));}
+   static const minimpfp getmin() {return(minimpfp(N::zero(),N::getmin()));}
+   static const minimpfp getmax() {return(minimpfp(N::getmax(),N::getmax()));}
 
-   minimpfp minval() const {return(minimpfp(S,N::zero(),N::min()));}
-   minimpfp maxval() const {return(minimpfp(S,N::max(),N::max()));}
+   minimpfp minval() const {return(minimpfp(S,N::zero(),N::getmin()));}
+   minimpfp maxval() const {return(minimpfp(S,N::getmax(),N::getmax()));}
 
    BOOLINT getsgn() const {return(S);}
    N getmag() const {return(M);}
@@ -232,7 +232,7 @@ class minimpfp
       S=(v>=0.0);
       av=S?v:-v;
 
-      if (av>=limit) M=F=N::max();
+      if (av>=limit) M=F=N::getmax();
       else
          {
          M=N(floor(av)*(1.0/limit2));
@@ -350,8 +350,8 @@ class minimpfp
       {
       if (!S)
          {
-         add2(max(),*this);
-         add2(min(),*this);
+         add2(getmax(),*this);
+         add2(getmin(),*this);
          }
       }
 
@@ -383,7 +383,7 @@ class minimpfp
             overflow1=F.add2(value.getfrc(),result1);
             overflow2=M.add2(value.getmag(),result2);
 
-            if (overflow1) overflow1=result2.add2(N::min(),result2);
+            if (overflow1) overflow1=result2.add2(N::getmin(),result2);
 
             result=minimpfp(result2,result1);
             }
@@ -406,7 +406,7 @@ class minimpfp
             if (overflow2)
                {
                result2.nrm();
-               overflow2=result1.sub2(N::min(),result1);
+               overflow2=result1.sub2(N::getmin(),result1);
 
                if (overflow2)
                   {
@@ -439,7 +439,7 @@ class minimpfp
             if (overflow2)
                {
                result2.nrm();
-               overflow2=result1.sub2(N::min(),result1);
+               overflow2=result1.sub2(N::getmin(),result1);
 
                if (overflow2)
                   {
@@ -458,7 +458,7 @@ class minimpfp
             overflow1=value.getfrc().add2(F,result1);
             overflow2=value.getmag().add2(M,result2);
 
-            if (overflow1) overflow1=result2.add2(N::min(),result2);
+            if (overflow1) overflow1=result2.add2(N::getmin(),result2);
 
             result=minimpfp(FALSE,result2,result1);
             }
@@ -746,7 +746,7 @@ class minimpfp
       if (iszero()) return(zero());
 
       r.set(sqrt(get()));
-      e=max();
+      e=getmax();
 
       do
          {
@@ -775,7 +775,7 @@ class minimpfp
       if (iszero()) return(maxval());
 
       r.set(1.0/sqrt(get()));
-      e=max();
+      e=getmax();
 
       do
          {
