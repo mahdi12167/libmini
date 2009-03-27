@@ -228,9 +228,9 @@ unsigned int datafill::fillin(int radius)
                         dxnum=dynum=dznum=0;
 
                         // average partial derivatives
-                        for (m=-sizex/2; m<=sizex/2; m++)
-                           for (n=-sizey/2; n<=sizey/2; n++)
-                              for (o=-sizez/2; o<=sizez/2; o++)
+                        for (m=-1; m<=1; m++)
+                           for (n=-1; n<=1; n++)
+                              for (o=-1; o<=1; o++)
                                  if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
@@ -280,9 +280,9 @@ unsigned int datafill::fillin(int radius)
                         sum=0.0f;
 
                         // extrapolate partial derivatives
-                        for (m=-sizex/2; m<=sizex/2; m++)
-                           for (n=-sizey/2; n<=sizey/2; n++)
-                              for (o=-sizez/2; o<=sizez/2; o++)
+                        for (m=-1; m<=1; m++)
+                           for (n=-1; n<=1; n++)
+                              for (o=-1; o<=1; o++)
                                  if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
