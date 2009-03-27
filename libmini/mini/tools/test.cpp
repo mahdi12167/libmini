@@ -108,7 +108,7 @@ void addhex(miniv3d crd1,miniv3d crd2,
    vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
    vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
-   //!! for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
+   for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 
    if (!flip)
       {
@@ -183,7 +183,7 @@ int main(int argc,char *argv[])
    double gfnh=1000.0;
    double brick=1100000.0/30;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
-   /*
+#if 1
    addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,1.0)*brick,miniv3d(1.0,0.0,2.0)*brick,crd,TRUE,1,1,&mesh);
    addhex(miniv3d(-1.0,0.0,1.0)*brick,miniv3d(0.0,1.0,2.0)*brick,crd,TRUE,1,2,&mesh);
@@ -192,8 +192,9 @@ int main(int argc,char *argv[])
    addhex(miniv3d(0.0,-1.0,0.0)*brick,miniv3d(1.0,0.0,1.0)*brick,crd,FALSE,1,1,&mesh);
    addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,FALSE,1,2,&mesh);
    addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,TRUE,1,3,&mesh);
-   */
+#else
    addhex(miniv3d(-8964000.0,2559600.0,35.0),miniv3d(-6696000.0,4503600.0,4985.0),crd,TRUE,1,0,&mesh);
+#endif
 
    minibsptree bspt;
    minimesh unsorted;
