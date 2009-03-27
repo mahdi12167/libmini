@@ -535,9 +535,6 @@ class minimpfp
       return(FALSE);
       }
 
-   minimpfp min(const minimpfp &value) {return((sml(value))?*this:value);}
-   minimpfp max(const minimpfp &value) {return((grt(value))?*this:value);}
-
    void mul(const minimpfp &value,minimpfp &result) const
       {
       if (mul2(value,result).getmag().isnotzero())
