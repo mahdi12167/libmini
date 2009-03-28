@@ -200,6 +200,9 @@ class minimpfp
    //! constructor
    minimpfp(const double v) {set(v);}
 
+   //! conversion operator
+   operator double() {return(get());}
+
    //! destructor
    ~minimpfp() {}
 
@@ -826,38 +829,10 @@ inline minimf operator + (const minimf &a,const minimf &b)
    return(result);
    }
 
-inline minimf operator + (const double a,const minimf &b)
-   {
-   minimf result;
-   minimf(a).add(b,result);
-   return(result);
-   }
-
-inline minimf operator + (const minimf &a,const double b)
-   {
-   minimf result;
-   a.add(minimf(b),result);
-   return(result);
-   }
-
 inline minimf operator - (const minimf &a,const minimf &b)
    {
    minimf result;
    a.sub(b,result);
-   return(result);
-   }
-
-inline minimf operator - (const double a,const minimf &b)
-   {
-   minimf result;
-   minimf(a).sub(b,result);
-   return(result);
-   }
-
-inline minimf operator - (const minimf &a,const double b)
-   {
-   minimf result;
-   a.sub(minimf(b),result);
    return(result);
    }
 
@@ -871,20 +846,6 @@ inline minimf operator * (const minimf &a,const minimf &b)
    return(result);
    }
 
-inline minimf operator * (const double a,const minimf &b)
-   {
-   minimf result;
-   minimf(a).mul(b,result);
-   return(result);
-   }
-
-inline minimf operator * (const minimf &a,const double b)
-   {
-   minimf result;
-   a.mul(minimf(b),result);
-   return(result);
-   }
-
 inline minimf operator / (const minimf &a,const minimf &b)
    {
    minimf result;
@@ -892,55 +853,23 @@ inline minimf operator / (const minimf &a,const minimf &b)
    return(result);
    }
 
-inline minimf operator / (const double a,const minimf &b)
-   {
-   minimf result;
-   minimf(a).div(b,result);
-   return(result);
-   }
-
-inline minimf operator / (const minimf &a,const double b)
-   {
-   minimf result;
-   a.div(minimf(b),result);
-   return(result);
-   }
-
 inline int operator == (const minimf &a,const minimf &b)
    {return(a.isequal(b));}
-
-inline int operator == (const minimf &a,const double b)
-   {return(a.isequal(minimf(b)));}
 
 inline int operator != (const minimf &a,const minimf &b)
    {return(a.isnotequal(b));}
 
-inline int operator != (const minimf &a,const double b)
-   {return(a.isnotequal(minimf(b)));}
-
 inline int operator < (const minimf &a,const minimf &b)
    {return(a.sml(b));}
-
-inline int operator < (const minimf &a,const double b)
-   {return(a.sml(minimf(b)));}
 
 inline int operator > (const minimf &a,const minimf &b)
    {return(a.grt(b));}
 
-inline int operator > (const minimf &a,const double b)
-   {return(a.grt(minimf(b)));}
-
 inline int operator <= (const minimf &a,const minimf &b)
    {return(!a.grt(b));}
 
-inline int operator <= (const minimf &a,const double b)
-   {return(!a.grt(minimf(b)));}
-
 inline int operator >= (const minimf &a,const minimf &b)
    {return(!a.sml(b));}
-
-inline int operator >= (const minimf &a,const double b)
-   {return(!a.sml(minimf(b)));}
 
 inline std::ostream& operator << (std::ostream &out,const minimf &mf)
    {return(out << mf.get());}

@@ -145,17 +145,17 @@ int main(int argc,char *argv[])
    minimf c(271.3);
 
    minimf x=c*c*c*c;
-   minimf y=(x-1)*(x+1);
+   minimf y=(x-minimf(1))*(x+minimf(1));
    minimf z=x*x-y;
 
-   z=(z-1).abs();
+   z=(z-minimf(1)).abs();
 
    printf("precision test #1: %g(%d)\n",z.get(),z.getmsbit());
 
-   minimf inv=1/c;
+   minimf inv=minimf(1)/c;
    minimf mlt=inv*c;
 
-   mlt=(mlt-1).abs();
+   mlt=(mlt-minimf(1)).abs();
 
    printf("precision test #2: %g(%d)\n",mlt.get(),mlt.getmsbit());
 

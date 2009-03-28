@@ -411,7 +411,7 @@ BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &ha
 
       // project maximum distance into segment space
       if (dabs(halfspace.maxlambda)!=MAXFLOAT) lambda2=(halfspace.maxlambda-lambda)/dot;
-      else if (dot<0.0) lambda2=-halfspace.maxlambda;
+      else if (dot<0) lambda2=-halfspace.maxlambda;
       else lambda2=halfspace.maxlambda;
 
       // clamp maximum distance
