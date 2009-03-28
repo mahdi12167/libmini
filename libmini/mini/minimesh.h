@@ -244,7 +244,7 @@ class minimesh: public minidyna<minihedron>
    //! destructor
    ~minimesh();
 
-   //! append a tetrahdron
+   //! append a tetrahedron
    void append(const minihedron &h);
 
    //! append a tetrahedral mesh
