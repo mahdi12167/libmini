@@ -161,7 +161,7 @@ int main(int argc,char *argv[])
 
    // validity test:
 
-   printf("validity test: %d\n",!minimf::isvalid());
+   printf("validity test: %d\n",minimf::isvalid());
 
    return(0);
    }
