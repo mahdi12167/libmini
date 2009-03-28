@@ -18,12 +18,17 @@ class minigeom_base
 
    typedef minivec<Scalar> Vector;
 
+   static const Scalar zero() {static Scalar v(0); return(v);}
+   static const Scalar one() {static Scalar v(1); return(v);}
+
+   static const Scalar maxscalar() {static Scalar v(MAXFLOAT); return(v);}
+
    protected:
 
-   static const double delta;
+   static const Scalar delta() {static Scalar v(1E-3); return(v);}
 
-   static const double alpha;
-   static const double beta;
+   static const Scalar alpha() {static Scalar v(1E-7); return(v);}
+   static const Scalar beta() {static Scalar v=one()-alpha(); return(v);}
 
    public:
 
@@ -31,39 +36,39 @@ class minigeom_base
    minigeom_base() {setnull();}
 
    //! conversion constructor
-   minigeom_base(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v,const Scalar minl=zero(),const Scalar maxl=maxscalar())
       {
       pnt=p;
       vec=v;
 
       vec.normalize();
 
-      minlambda=dmax(minl,Scalar(-MAXFLOAT));
-      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
+      minlambda=dmax(minl,-maxscalar());
+      maxlambda=dmin(maxl,maxscalar());
       }
 
    //! conversion constructor
-   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=zero(),const Scalar maxl=maxscalar())
       {
       pnt=p;
       vec=(v1-p)/(v2-p);
 
       vec.normalize();
 
-      minlambda=dmax(minl,Scalar(-MAXFLOAT));
-      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
+      minlambda=dmax(minl,-maxscalar());
+      maxlambda=dmin(maxl,maxscalar());
       }
 
    //! conversion constructor
-   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT)
+   minigeom_base(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=zero(),const Scalar maxl=maxscalar())
       {
       pnt=p;
       vec=(v1-p)/(v2-p);
 
       vec.normalize();
 
-      minlambda=dmax(minl,Scalar(-MAXFLOAT));
-      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
+      minlambda=dmax(minl,-maxscalar());
+      maxlambda=dmin(maxl,maxscalar());
 
       flip(h);
       }
@@ -84,13 +89,13 @@ class minigeom_base
 
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
-   BOOLINT ishalf() const {return(minlambda>Scalar(-MAXFLOAT) && maxlambda==Scalar(MAXFLOAT));}
-   BOOLINT isfull() const {return(minlambda==Scalar(-MAXFLOAT) && maxlambda==Scalar(MAXFLOAT));}
+   BOOLINT ishalf() const {return(minlambda>-maxscalar() && maxlambda>=maxscalar());}
+   BOOLINT isfull() const {return(minlambda<=-maxscalar() && maxlambda>=maxscalar());}
 
-   void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
-   void setzero() {minlambda=0; maxlambda=0;}
-   void sethalf() {minlambda=0; maxlambda=MAXFLOAT;}
-   void setfull() {minlambda=-MAXFLOAT; maxlambda=MAXFLOAT;}
+   void setnull() {minlambda=maxscalar(); maxlambda=-maxscalar();}
+   void setzero() {minlambda=zero(); maxlambda=zero();}
+   void sethalf() {minlambda=zero(); maxlambda=maxscalar();}
+   void setfull() {minlambda=-maxscalar(); maxlambda=maxscalar();}
 
    BOOLINT isincl(const Vector &p) const
       {
@@ -102,8 +107,8 @@ class minigeom_base
          {
          d=(p-pnt)*vec;
 
-         if (ishalf()) return(d>minlambda-Scalar(delta));
-         else return(d>minlambda-Scalar(delta) && d<maxlambda+Scalar(delta));
+         if (ishalf()) return(d>minlambda-delta());
+         else return(d>minlambda-delta() && d<maxlambda+delta());
          }
 
       return(FALSE);
@@ -115,12 +120,12 @@ class minigeom_base
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if (vec*b.vec>Scalar(beta))
+      else if (vec*b.vec>beta())
          {
          d=(b.pnt-pnt)*vec;
 
-         if (ishalf() && b.ishalf()) return(dabs(d+b.minlambda-minlambda)<Scalar(delta));
-         else return(dabs(d+b.minlambda-minlambda)<Scalar(delta) && dabs(d+b.maxlambda-maxlambda)<Scalar(delta));
+         if (ishalf() && b.ishalf()) return(dabs(d+b.minlambda-minlambda)<delta());
+         else return(dabs(d+b.minlambda-minlambda)<delta() && dabs(d+b.maxlambda-maxlambda)<delta());
          }
 
       return(FALSE);
@@ -195,13 +200,13 @@ class minigeom_segment: public minigeom_base<Scalar>
    minigeom_segment(): B() {}
 
    //! conversion constructor
-   minigeom_segment(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+   minigeom_segment(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,h,minl,maxl) {}
 
    //! destructor
    ~minigeom_segment() {}
@@ -223,9 +228,9 @@ class minigeom_line: public minigeom_segment<Scalar>
    typedef minivec<Scalar> Vector;
 
    minigeom_line(): B() {}
-   minigeom_line(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
-   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
-   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+   minigeom_line(const Vector &p,const Vector &v,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v,minl,maxl) {}
+   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,minl,maxl) {}
+   minigeom_line(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,h,minl,maxl) {}
 
    ~minigeom_line() {}
    };
@@ -263,13 +268,13 @@ class minigeom_halfspace: public minigeom_base<Scalar>
    minigeom_halfspace(): B() {}
 
    //! conversion constructor
-   minigeom_halfspace(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,minl,maxl) {}
 
    //! conversion constructor
-   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+   minigeom_halfspace(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,h,minl,maxl) {}
 
    //! destructor
    ~minigeom_halfspace() {}
@@ -296,9 +301,9 @@ class minigeom_plane: public minigeom_halfspace<Scalar>
    typedef minivec<Scalar> Vector;
 
    minigeom_plane(): B() {}
-   minigeom_plane(const Vector &p,const Vector &v,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v,minl,maxl) {}
-   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,minl,maxl) {}
-   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=0,const Scalar maxl=MAXFLOAT): B(p,v1,v2,h,minl,maxl) {}
+   minigeom_plane(const Vector &p,const Vector &v,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v,minl,maxl) {}
+   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,minl,maxl) {}
+   minigeom_plane(const Vector &p,const Vector &v1,const Vector &v2,const Vector &h,const Scalar minl=B::zero(),const Scalar maxl=B::maxscalar()): B(p,v1,v2,h,minl,maxl) {}
 
    ~minigeom_plane() {}
    };
@@ -313,10 +318,17 @@ class minigeom_polyhedron
    {
    public:
 
+   typedef minigeom_halfspace<Scalar> B;
    typedef minivec<Scalar> Vector;
 
+   protected:
+
+   static const Scalar maxrange() {static Scalar v(1E+9); return(v);}
+
+   public:
+
    //! default constructor
-   minigeom_polyhedron(const Scalar range=1.0E9);
+   minigeom_polyhedron(const Scalar range=maxrange());
 
    //! destructor
    ~minigeom_polyhedron();
@@ -373,14 +385,6 @@ class minigeom_polyhedra: public minidyna<minigeom_polyhedron<Scalar>,10> {};
 
 // template body:
 
-template <class Scalar>
-const double minigeom_base<Scalar>::delta=1E-3;
-
-template <class Scalar>
-const double minigeom_base<Scalar>::alpha=1E-7;
-template <class Scalar>
-const double minigeom_base<Scalar>::beta=1.0-alpha;
-
 // intersect with half space
 template <class Scalar>
 BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &halfspace)
@@ -398,41 +402,33 @@ BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &ha
    lambda=(B::pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
 
    // check if line and plane are parallel
-   if (dabs(dot)>Scalar(B::alpha))
+   if (dabs(dot)>B::alpha())
       {
       // project minimum distance into segment space
-      if (dabs(halfspace.minlambda)!=Scalar(MAXFLOAT)) lambda1=(halfspace.minlambda-lambda)/dot;
-      else if (dot<Scalar(0)) lambda1=-halfspace.minlambda;
+      if (dabs(halfspace.minlambda)<B::maxscalar()) lambda1=(halfspace.minlambda-lambda)/dot;
+      else if (dot<B::zero()) lambda1=-halfspace.minlambda;
       else lambda1=halfspace.minlambda;
 
-      // clamp minimum distance
-      if (lambda1<Scalar(-MAXFLOAT)) lambda1=-MAXFLOAT;
-      else if (lambda1>Scalar(MAXFLOAT)) lambda1=MAXFLOAT;
-
       // project maximum distance into segment space
-      if (dabs(halfspace.maxlambda)!=Scalar(MAXFLOAT)) lambda2=(halfspace.maxlambda-lambda)/dot;
-      else if (dot<Scalar(0)) lambda2=-halfspace.maxlambda;
+      if (dabs(halfspace.maxlambda)<B::maxscalar()) lambda2=(halfspace.maxlambda-lambda)/dot;
+      else if (dot<B::zero()) lambda2=-halfspace.maxlambda;
       else lambda2=halfspace.maxlambda;
 
-      // clamp maximum distance
-      if (lambda2<Scalar(-MAXFLOAT)) lambda2=-MAXFLOAT;
-      else if (lambda2>Scalar(MAXFLOAT)) lambda2=MAXFLOAT;
-
       // intersect half space range with segment range
-      if (dot<Scalar(0))
+      if (dot<B::zero())
          {
-         if (lambda1<B::maxlambda-Scalar(B::delta)) {B::maxlambda=lambda1; cut=TRUE;}
-         if (lambda2>B::minlambda+Scalar(B::delta)) {B::minlambda=lambda2; cut=TRUE;}
+         if (lambda1<B::maxlambda-B::delta()) {B::maxlambda=lambda1; cut=TRUE;}
+         if (lambda2>B::minlambda+B::delta()) {B::minlambda=lambda2; cut=TRUE;}
          }
       else
          {
-         if (lambda1>B::minlambda+Scalar(B::delta)) {B::minlambda=lambda1; cut=TRUE;}
-         if (lambda2<B::maxlambda-Scalar(B::delta)) {B::maxlambda=lambda2; cut=TRUE;}
+         if (lambda1>B::minlambda+B::delta()) {B::minlambda=lambda1; cut=TRUE;}
+         if (lambda2<B::maxlambda-B::delta()) {B::maxlambda=lambda2; cut=TRUE;}
          }
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda-Scalar(B::delta) || lambda>halfspace.maxlambda+Scalar(B::delta)) {B::setnull(); cut=TRUE;}
+      if (lambda<halfspace.minlambda-B::delta() || lambda>halfspace.maxlambda+B::delta()) {B::setnull(); cut=TRUE;}
 
    return(cut);
    }
@@ -456,17 +452,13 @@ minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfs
    dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
-   if (dabs(dot)>Scalar(B::alpha))
+   if (dabs(dot)>B::alpha())
       {
       orig1=B::pnt+B::minlambda*B::vec; // plane origin
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin
 
       lambda=(orig1-orig2)*halfspace.vec; // distance of plane origin to intersecting plane
       lambda=lambda/dot; // distance to line origin
-
-      // clamp distance
-      if (lambda<Scalar(-MAXFLOAT)) lambda=-MAXFLOAT;
-      else if (lambda>Scalar(MAXFLOAT)) lambda=MAXFLOAT;
 
       orig=orig1+lambda*dir; // line origin
 
@@ -503,7 +495,7 @@ minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
       gon.append(a);
 
       idx=i;
-      dist=MAXFLOAT;
+      dist=minigeom_segment<Scalar>::maxscalar();
 
       for (j=i+1; j<B::getsize(); j++)
          {
@@ -544,12 +536,12 @@ template <class Scalar>
 minigeom_polyhedron<Scalar>::minigeom_polyhedron(const Scalar range)
    {
    // pre-define a closed bounding box with maximum possible size
-   half.append(minigeom_halfspace<Scalar>(Vector(-range,0,0),Vector(1,0,0)));
-   half.append(minigeom_halfspace<Scalar>(Vector(range,0,0),Vector(-1,0,0)));
-   half.append(minigeom_halfspace<Scalar>(Vector(0,-range,0),Vector(0,1,0)));
-   half.append(minigeom_halfspace<Scalar>(Vector(0,range,0),Vector(0,-1,0)));
-   half.append(minigeom_halfspace<Scalar>(Vector(0,0,-range),Vector(0,0,1)));
-   half.append(minigeom_halfspace<Scalar>(Vector(0,0,range),Vector(0,0,-1)));
+   half.append(minigeom_halfspace<Scalar>(Vector(-range,B::zero(),B::zero()),Vector(B::one(),B::zero(),B::zero())));
+   half.append(minigeom_halfspace<Scalar>(Vector(range,B::zero(),B::zero()),Vector(-B::one(),B::zero(),B::zero())));
+   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),-range,B::zero()),Vector(B::zero(),B::one(),B::zero())));
+   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),range,B::zero()),Vector(B::zero(),-B::one(),B::zero())));
+   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),B::zero(),-range),Vector(B::zero(),B::zero(),B::one())));
+   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),B::zero(),range),Vector(B::zero(),B::zero(),-B::one())));
    }
 
 // destructor

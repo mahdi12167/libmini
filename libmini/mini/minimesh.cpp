@@ -19,7 +19,7 @@ minimesh::minimesh(const minidyna<minihedron> &mesh): minidyna<minihedron>(mesh)
 // destructor
 minimesh::~minimesh() {}
 
-// append a tetrahdron
+// append a tetrahedron
 void minimesh::append(const minihedron &h)
    {if (!h.check()) minidyna<minihedron>::append(h);}
 
@@ -32,7 +32,8 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
    {
    unsigned int i,j;
 
-   minigeom_polygon<Scalar> anchor,gon;
+   minigeom_polygon<Scalar> gon;
+   minivec<Scalar> anchor,v1,v2,v3;
 
    minimesh mesh;
 
@@ -40,8 +41,10 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
 
    if (poly.getnumhalfspace()<4) return(mesh);
 
-   anchor=poly.getface(0).polygonize();
-   if (anchor.getsize()==0) return(mesh);
+   gon=poly.getface(0).polygonize();
+   if (gon.getsize()==0) return(mesh);
+
+   anchor=gon[0];
 
    for (i=1; i<poly.getnumhalfspace(); i++)
       {
@@ -49,10 +52,14 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
 
       for (j=0; j+2<gon.getsize(); j++)
          {
-         dist=minigeom_plane<Scalar>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]);
+         v1=gon[0];
+         v2=gon[j+1];
+         v3=gon[j+2];
+
+         dist=minigeom_plane<Scalar>(v1,v2,v3).getdistance(anchor);
 
          if (dabs(dist)>delta)
-            mesh.append(minihedron(anchor[0],gon[0],gon[j+1],gon[j+2],minivals()));
+            mesh.append(minihedron(anchor,v1,v2,v3,minivals()));
          }
       }
 
