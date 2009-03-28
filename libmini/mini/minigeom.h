@@ -38,8 +38,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=dmax(minl,-MAXFLOAT);
-      maxlambda=dmin(maxl,MAXFLOAT);
+      minlambda=dmax(minl,Scalar(-MAXFLOAT));
+      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
       }
 
    //! conversion constructor
@@ -50,8 +50,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=dmax(minl,-MAXFLOAT);
-      maxlambda=dmin(maxl,MAXFLOAT);
+      minlambda=dmax(minl,Scalar(-MAXFLOAT));
+      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
       }
 
    //! conversion constructor
@@ -62,8 +62,8 @@ class minigeom_base
 
       vec.normalize();
 
-      minlambda=dmax(minl,-MAXFLOAT);
-      maxlambda=dmin(maxl,MAXFLOAT);
+      minlambda=dmax(minl,Scalar(-MAXFLOAT));
+      maxlambda=dmin(maxl,Scalar(MAXFLOAT));
 
       flip(h);
       }
@@ -84,8 +84,8 @@ class minigeom_base
 
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
-   BOOLINT ishalf() const {return(minlambda>-MAXFLOAT && maxlambda==MAXFLOAT);}
-   BOOLINT isfull() const {return(minlambda==-MAXFLOAT && maxlambda==MAXFLOAT);}
+   BOOLINT ishalf() const {return(minlambda>Scalar(-MAXFLOAT) && maxlambda==Scalar(MAXFLOAT));}
+   BOOLINT isfull() const {return(minlambda==Scalar(-MAXFLOAT) && maxlambda==Scalar(MAXFLOAT));}
 
    void setnull() {minlambda=MAXFLOAT; maxlambda=-MAXFLOAT;}
    void setzero() {minlambda=0; maxlambda=0;}
@@ -102,8 +102,8 @@ class minigeom_base
          {
          d=(p-pnt)*vec;
 
-         if (ishalf()) return(d>minlambda-delta);
-         else return(d>minlambda-delta && d<maxlambda+delta);
+         if (ishalf()) return(d>minlambda-Scalar(delta));
+         else return(d>minlambda-Scalar(delta) && d<maxlambda+Scalar(delta));
          }
 
       return(FALSE);
@@ -115,12 +115,12 @@ class minigeom_base
 
       if (isnull() && b.isnull()) return(TRUE);
       else if (isfull() && b.isfull()) return(TRUE);
-      else if (vec*b.vec>beta)
+      else if (vec*b.vec>Scalar(beta))
          {
          d=(b.pnt-pnt)*vec;
 
-         if (ishalf() && b.ishalf()) return(dabs(d+b.minlambda-minlambda)<delta);
-         else return(dabs(d+b.minlambda-minlambda)<delta && dabs(d+b.maxlambda-maxlambda)<delta);
+         if (ishalf() && b.ishalf()) return(dabs(d+b.minlambda-minlambda)<Scalar(delta));
+         else return(dabs(d+b.minlambda-minlambda)<Scalar(delta) && dabs(d+b.maxlambda-maxlambda)<Scalar(delta));
          }
 
       return(FALSE);
@@ -398,41 +398,41 @@ BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &ha
    lambda=(B::pnt-halfspace.pnt)*halfspace.vec; // distance of line origin to plane
 
    // check if line and plane are parallel
-   if (dabs(dot)>B::alpha)
+   if (dabs(dot)>Scalar(B::alpha))
       {
       // project minimum distance into segment space
-      if (dabs(halfspace.minlambda)!=MAXFLOAT) lambda1=(halfspace.minlambda-lambda)/dot;
-      else if (dot<0) lambda1=-halfspace.minlambda;
+      if (dabs(halfspace.minlambda)!=Scalar(MAXFLOAT)) lambda1=(halfspace.minlambda-lambda)/dot;
+      else if (dot<Scalar(0)) lambda1=-halfspace.minlambda;
       else lambda1=halfspace.minlambda;
 
       // clamp minimum distance
-      if (lambda1<-MAXFLOAT) lambda1=-MAXFLOAT;
-      else if (lambda1>MAXFLOAT) lambda1=MAXFLOAT;
+      if (lambda1<Scalar(-MAXFLOAT)) lambda1=-MAXFLOAT;
+      else if (lambda1>Scalar(MAXFLOAT)) lambda1=MAXFLOAT;
 
       // project maximum distance into segment space
-      if (dabs(halfspace.maxlambda)!=MAXFLOAT) lambda2=(halfspace.maxlambda-lambda)/dot;
-      else if (dot<0) lambda2=-halfspace.maxlambda;
+      if (dabs(halfspace.maxlambda)!=Scalar(MAXFLOAT)) lambda2=(halfspace.maxlambda-lambda)/dot;
+      else if (dot<Scalar(0)) lambda2=-halfspace.maxlambda;
       else lambda2=halfspace.maxlambda;
 
       // clamp maximum distance
-      if (lambda2<-MAXFLOAT) lambda2=-MAXFLOAT;
-      else if (lambda2>MAXFLOAT) lambda2=MAXFLOAT;
+      if (lambda2<Scalar(-MAXFLOAT)) lambda2=-MAXFLOAT;
+      else if (lambda2>Scalar(MAXFLOAT)) lambda2=MAXFLOAT;
 
       // intersect half space range with segment range
-      if (dot<0)
+      if (dot<Scalar(0))
          {
-         if (lambda1<B::maxlambda-B::delta) {B::maxlambda=lambda1; cut=TRUE;}
-         if (lambda2>B::minlambda+B::delta) {B::minlambda=lambda2; cut=TRUE;}
+         if (lambda1<B::maxlambda-Scalar(B::delta)) {B::maxlambda=lambda1; cut=TRUE;}
+         if (lambda2>B::minlambda+Scalar(B::delta)) {B::minlambda=lambda2; cut=TRUE;}
          }
       else
          {
-         if (lambda1>B::minlambda+B::delta) {B::minlambda=lambda1; cut=TRUE;}
-         if (lambda2<B::maxlambda-B::delta) {B::maxlambda=lambda2; cut=TRUE;}
+         if (lambda1>B::minlambda+Scalar(B::delta)) {B::minlambda=lambda1; cut=TRUE;}
+         if (lambda2<B::maxlambda-Scalar(B::delta)) {B::maxlambda=lambda2; cut=TRUE;}
          }
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda-B::delta || lambda>halfspace.maxlambda+B::delta) {B::setnull(); cut=TRUE;}
+      if (lambda<halfspace.minlambda-Scalar(B::delta) || lambda>halfspace.maxlambda+Scalar(B::delta)) {B::setnull(); cut=TRUE;}
 
    return(cut);
    }
@@ -456,7 +456,7 @@ minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfs
    dot=-dir*halfspace.vec; // dot product with intersecting plane normal
 
    // check if planes are parallel
-   if (dabs(dot)>B::alpha)
+   if (dabs(dot)>Scalar(B::alpha))
       {
       orig1=B::pnt+B::minlambda*B::vec; // plane origin
       orig2=halfspace.pnt+halfspace.minlambda*halfspace.vec; // intersecting plane origin
@@ -465,8 +465,8 @@ minigeom_line<Scalar> minigeom_halfspace<Scalar>::intersect(const minigeom_halfs
       lambda=lambda/dot; // distance to line origin
 
       // clamp distance
-      if (lambda<-MAXFLOAT) lambda=-MAXFLOAT;
-      else if (lambda>MAXFLOAT) lambda=MAXFLOAT;
+      if (lambda<Scalar(-MAXFLOAT)) lambda=-MAXFLOAT;
+      else if (lambda>Scalar(MAXFLOAT)) lambda=MAXFLOAT;
 
       orig=orig1+lambda*dir; // line origin
 

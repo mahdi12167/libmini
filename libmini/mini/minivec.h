@@ -56,7 +56,7 @@ class minivec
    Scalar normalize()
       {
       Scalar length=getlength();
-      if (length>0) *this/=length;
+      if (length>Scalar(0)) *this/=length;
       return(length);
       }
 
@@ -88,7 +88,7 @@ template <class Scalar>
 inline minivec<Scalar>& minivec<Scalar>::operator /= (const Scalar c)
    {
    Scalar rc;
-   if (c!=0) rc=1/c;
+   if (c!=Scalar(0)) rc=Scalar(1)/c;
    else rc=1;
    x=x*rc; y=y*rc; z=z*rc;
    return(*this);

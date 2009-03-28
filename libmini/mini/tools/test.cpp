@@ -181,7 +181,7 @@ int main(int argc,char *argv[])
    double gfnx=-157.0*3600;
    double gfny=21.0*3600;
    double gfnh=1000.0;
-   double brick=1100000.0/30;
+   double brick=1000.0/30;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
 #if 1
    addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);

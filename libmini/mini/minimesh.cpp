@@ -36,6 +36,8 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
 
    minimesh mesh;
 
+   double dist;
+
    if (poly.getnumhalfspace()<4) return(mesh);
 
    anchor=poly.getface(0).polygonize();
@@ -46,8 +48,12 @@ minimesh minimesh::tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const
       gon=poly.getface(i).polygonize();
 
       for (j=0; j+2<gon.getsize(); j++)
-         if (dabs(minigeom_plane<Scalar>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]))>delta)
+         {
+         dist=minigeom_plane<Scalar>(gon[0],gon[j+1],gon[j+2]).getdistance(anchor[0]);
+
+         if (dabs(dist)>delta)
             mesh.append(minihedron(anchor[0],gon[0],gon[j+1],gon[j+2],minivals()));
+         }
       }
 
    mesh.reject();
