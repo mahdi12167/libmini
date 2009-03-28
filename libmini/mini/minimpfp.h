@@ -803,8 +803,21 @@ class minimpfp
 
    static BOOLINT isvalid()
       {
-      return(!minimpfp_base::MINIMPFP_OVERFLOW &&
-             !minimpfp_base::MINIMPFP_DIVBYZERO);
+      return(!(minimpfp_base::MINIMPFP_OVERFLOW ||
+               minimpfp_base::MINIMPFP_DIVBYZERO));
+      }
+
+   static BOOLINT geterror()
+      {
+      BOOLINT valid=TRUE;
+
+      if (minimpfp_base::MINIMPFP_OVERFLOW ||
+          minimpfp_base::MINIMPFP_DIVBYZERO) valid=FALSE;
+
+      minimpfp_base::MINIMPFP_OVERFLOW=FALSE;
+      minimpfp_base::MINIMPFP_DIVBYZERO=FALSE;
+
+      return(valid);
       }
 
    private:
