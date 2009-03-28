@@ -159,6 +159,20 @@ int main(int argc,char *argv[])
 
    printf("precision test #2: %g(%d)\n",mlt.get(),mlt.getmsbit());
 
+   minimf rx=minimf(7);
+   minimf ry=minimf(2);
+   minimf rz=minimf(2002);
+   minimf r2=rx*rx+ry*ry+rz*rz;
+   minimf r=r2.sqroot();
+   minimf rxr=rx/r;
+   minimf ryr=ry/r;
+   minimf rzr=rz/r;
+   minimf len=rxr*rxr+ryr*ryr+rzr*rzr;
+
+   len=(len-minimf(1)).abs();
+
+   printf("precision test #3: %g(%d)\n",len.get(),len.getmsbit());
+
    // validity test:
 
    printf("validity test: %d\n",minimf::isvalid());
