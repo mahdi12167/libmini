@@ -27,7 +27,7 @@ class minigeom_base
 
    static const Scalar delta() {static Scalar v(1E-3); return(v);}
 
-   static const Scalar alpha() {static Scalar v(1E-7); return(v);}
+   static const Scalar alpha() {static Scalar v(1E-9); return(v);}
    static const Scalar beta() {static Scalar v=one()-alpha(); return(v);}
 
    public:
