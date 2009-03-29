@@ -13,6 +13,8 @@
 #include "minidyna.h"
 #include "minigeom.h"
 
+#include "minimpfp.h"
+
 //! value base class
 class minival
    {
@@ -230,7 +232,7 @@ class minimesh: public minidyna<minihedron>
 
    public:
 
-   typedef double Scalar;
+   typedef minimf Scalar;
 
    //! default constructor
    minimesh();

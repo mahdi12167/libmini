@@ -487,9 +487,7 @@ class minimpfp
             if (!result.getsgn())
                if (result.isnotzero()) return(TRUE);
             }
-         else
-            if (isnotzero() || value.isnotzero()) return(FALSE);
-            else return(TRUE);
+         else return(FALSE);
       else
          if (value.getsgn())
             if (isnotzero() || value.isnotzero()) return(TRUE);
@@ -498,7 +496,7 @@ class minimpfp
             {
             sub2(value,result);
 
-            if (result.getsgn())
+            if (!result.getsgn())
                if (result.isnotzero()) return(TRUE);
             }
 
@@ -521,14 +519,12 @@ class minimpfp
             if (isnotzero() || value.isnotzero()) return(TRUE);
             else return(FALSE);
       else
-         if (value.getsgn())
-            if (isnotzero() || value.isnotzero()) return(FALSE);
-            else return(TRUE);
+         if (value.getsgn()) return(FALSE);
          else
             {
             sub2(value,result);
 
-            if (!result.getsgn())
+            if (result.getsgn())
                if (result.isnotzero()) return(TRUE);
             }
 
@@ -741,7 +737,7 @@ class minimpfp
 
       if (!S)
          {
-         minimpfp::MINIMPFP_NEGSQROOT=TRUE;
+         minimpfp_base::MINIMPFP_NEGSQROOT=TRUE;
          return(zero());
          }
 
@@ -775,13 +771,13 @@ class minimpfp
 
       if (!S)
          {
-         minimpfp::MINIMPFP_NEGSQROOT=TRUE;
+         minimpfp_base::MINIMPFP_NEGSQROOT=TRUE;
          return(zero());
          }
 
       if (iszero())
          {
-         minimpfp::MINIMPFP_DIVBYZERO=TRUE;
+         minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
          return(over());
          }
 
