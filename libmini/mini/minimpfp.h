@@ -30,8 +30,9 @@ class minimpfp_base
 
    unsigned long long int V;
 
-   static BOOLINT MINIMPFP_DIVBYZERO;
    static BOOLINT MINIMPFP_OVERFLOW;
+   static BOOLINT MINIMPFP_DIVBYZERO;
+   static BOOLINT MINIMPFP_NEGSQROOT;
 
    static unsigned int getbits() {return(64);}
    static double getlimit() {return((double)(1ll<<32));}
@@ -215,8 +216,7 @@ class minimpfp
    static const minimpfp getmin() {return(minimpfp(N::zero(),N::getmin()));}
    static const minimpfp getmax() {return(minimpfp(N::getmax(),N::getmax()));}
 
-   minimpfp minval() const {return(minimpfp(S,N::zero(),N::getmin()));}
-   minimpfp maxval() const {return(minimpfp(S,N::getmax(),N::getmax()));}
+   minimpfp over() const {return(minimpfp(S,N::getmax(),N::getmax()));}
 
    BOOLINT getsgn() const {return(S);}
    N getmag() const {return(M);}
@@ -363,7 +363,7 @@ class minimpfp
       else if (add2(value,result))
          {
          minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         result=result.maxval();
+         result=result.over();
          }
       }
 
@@ -540,7 +540,7 @@ class minimpfp
       if (mul2(value,result).getmag().isnotzero())
          {
          minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         result=result.maxval();
+         result=result.over();
          }
       }
 
@@ -663,7 +663,7 @@ class minimpfp
       if (div2(value,result).getmag().isnotzero())
          {
          minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         result=result.maxval();
+         result=result.over();
          }
       }
 
@@ -680,14 +680,14 @@ class minimpfp
       if (iszero())
          {
          minimpfp_base::MINIMPFP_DIVBYZERO=TRUE;
-         return(maxval());
+         return(over());
          }
 
       // check for overflow
       if (ismin())
          {
          minimpfp_base::MINIMPFP_OVERFLOW=TRUE;
-         return(maxval());
+         return(over());
          }
 
       // get most significant bit
@@ -739,7 +739,12 @@ class minimpfp
       {
       minimpfp r,r2,e,e2,e3;
 
-      if (!S) return(zero());
+      if (!S)
+         {
+         minimpfp::MINIMPFP_NEGSQROOT=TRUE;
+         return(zero());
+         }
+
       if (iszero()) return(zero());
 
       r.set(sqrt(get()));
@@ -768,8 +773,17 @@ class minimpfp
 
       minimpfp r,r2,e,e2,e3;
 
-      if (!S) return(zero());
-      if (iszero()) return(maxval());
+      if (!S)
+         {
+         minimpfp::MINIMPFP_NEGSQROOT=TRUE;
+         return(zero());
+         }
+
+      if (iszero())
+         {
+         minimpfp::MINIMPFP_DIVBYZERO=TRUE;
+         return(over());
+         }
 
       r.set(1.0/sqrt(get()));
       e=getmax();
@@ -804,7 +818,8 @@ class minimpfp
    static BOOLINT isvalid()
       {
       return(!(minimpfp_base::MINIMPFP_OVERFLOW ||
-               minimpfp_base::MINIMPFP_DIVBYZERO));
+               minimpfp_base::MINIMPFP_DIVBYZERO ||
+               minimpfp_base::MINIMPFP_NEGSQROOT));
       }
 
    static BOOLINT geterror()
@@ -812,10 +827,12 @@ class minimpfp
       BOOLINT valid=TRUE;
 
       if (minimpfp_base::MINIMPFP_OVERFLOW ||
-          minimpfp_base::MINIMPFP_DIVBYZERO) valid=FALSE;
+          minimpfp_base::MINIMPFP_DIVBYZERO||
+          minimpfp_base::MINIMPFP_NEGSQROOT) valid=FALSE;
 
       minimpfp_base::MINIMPFP_OVERFLOW=FALSE;
       minimpfp_base::MINIMPFP_DIVBYZERO=FALSE;
+      minimpfp_base::MINIMPFP_NEGSQROOT=FALSE;
 
       return(valid);
       }
