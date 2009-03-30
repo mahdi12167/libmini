@@ -144,7 +144,7 @@ int main(int argc,char *argv[])
 
    minimf c(271.3);
 
-   minimf x=c*c*c*c;
+   minimf x=c*c*c;
    minimf y=(x-minimf(1))*(x+minimf(1));
    minimf z=x*x-y;
 
