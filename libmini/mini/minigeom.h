@@ -348,6 +348,12 @@ class minigeom_polyhedron
    //! get face segments of corresponding half space
    minigeom_segments<Scalar> getface(const unsigned int h) const;
 
+   //! check if point is included within polyhedron
+   BOOLINT isincl(const Vector &p) const;
+
+   //! check if polyhedron includes another one
+   BOOLINT isincl(const minigeom_polyhedron<Scalar> poly) const;
+
    protected:
 
    minigeom_halfspaces<Scalar> half;
@@ -647,6 +653,37 @@ minigeom_segments<Scalar> minigeom_polyhedron<Scalar>::getface(const unsigned in
          }
 
    return(segments);
+   }
+
+// check if point is included within polyhedron
+template <class Scalar>
+BOOLINT minigeom_polyhedron<Scalar>::isincl(const Vector &p) const
+   {
+   unsigned int i;
+
+   for (i=0; i<half.getsize(); i++)
+      if (!half[i].isincl(p)) return(FALSE);
+
+   return(TRUE);
+   }
+
+// check if polyhedron includes another one
+template <class Scalar>
+BOOLINT minigeom_polyhedron<Scalar>::isincl(const minigeom_polyhedron<Scalar> poly) const
+   {
+   unsigned int i,j;
+
+   minigeom_polygon<Scalar> gon;
+
+   for (i=0; i<poly.getnumhalfspace(); i++)
+      {
+      gon=poly.getface(i).polygonize();
+
+      for (j=0; j<gon.getsize(); j++)
+         if (!isincl(gon[j])) return(FALSE);
+      }
+
+   return(TRUE);
    }
 
 #endif
