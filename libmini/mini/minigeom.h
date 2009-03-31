@@ -342,6 +342,9 @@ class minigeom_polyhedron
    //! intersect with half space
    void intersect(const minigeom_halfspace<Scalar> &halfspace);
 
+   //! intersect with polyhedron
+   void intersect(const minigeom_polyhedron<Scalar> &poly);
+
    //! clear half spaces
    void clear();
 
@@ -575,6 +578,15 @@ void minigeom_polyhedron<Scalar>::intersect(const minigeom_halfspace<Scalar> &ha
                i--; // account for reduced size
                }
          }
+   }
+
+// intersect with polyhedron
+template <class Scalar>
+void minigeom_polyhedron<Scalar>::intersect(const minigeom_polyhedron<Scalar> &poly)
+   {
+   unsigned int i;
+
+   for (i=0; i<poly.getnumhalfspace(); i++) intersect(poly.gethalfspace(i));
    }
 
 // clear half spaces
