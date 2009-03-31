@@ -354,6 +354,9 @@ class minigeom_polyhedron
    //! check if polyhedron includes another one
    BOOLINT isincl(const minigeom_polyhedron<Scalar> poly) const;
 
+   //! check if polyhedron excludes another one
+   BOOLINT isexcl(const minigeom_polyhedron<Scalar> poly) const;
+
    protected:
 
    minigeom_halfspaces<Scalar> half;
@@ -681,6 +684,25 @@ BOOLINT minigeom_polyhedron<Scalar>::isincl(const minigeom_polyhedron<Scalar> po
 
       for (j=0; j<gon.getsize(); j++)
          if (!isincl(gon[j])) return(FALSE);
+      }
+
+   return(TRUE);
+   }
+
+// check if polyhedron excludes another one
+template <class Scalar>
+BOOLINT minigeom_polyhedron<Scalar>::isexcl(const minigeom_polyhedron<Scalar> poly) const
+   {
+   unsigned int i,j;
+
+   minigeom_polygon<Scalar> gon;
+
+   for (i=0; i<poly.getnumhalfspace(); i++)
+      {
+      gon=poly.getface(i).polygonize();
+
+      for (j=0; j<gon.getsize(); j++)
+         if (isincl(gon[j])) return(FALSE);
       }
 
    return(TRUE);
