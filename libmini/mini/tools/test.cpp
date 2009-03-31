@@ -108,7 +108,7 @@ void addhex(miniv3d crd1,miniv3d crd2,
    vtx[6].vec+=miniv4d(crd2.x,crd2.y,crd2.z);
    vtx[7].vec+=miniv4d(crd2.x,crd1.y,crd2.z);
 
-#if 1
+#if 0
    for (i=0; i<8; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 #endif
 
@@ -159,7 +159,7 @@ void addpri(miniv3d crd1,miniv3d crd2,miniv3d crd3,double h,
    vtx[4].vec+=miniv4d(crd2.x,crd2.y,crd2.z+h);
    vtx[5].vec+=miniv4d(crd3.x,crd3.y,crd3.z+h);
 
-#if 1
+#if 0
    for (i=0; i<6; i++) vtx[i].convert2(minicoord::MINICOORD_ECEF);
 #endif
 
@@ -220,21 +220,21 @@ int main(int argc,char *argv[])
    double gfnx=-157.0*3600;
    double gfny=21.0*3600;
    double gfnh=1000.0;
-   double brick=10000.0/30;
+   double brick=10.0;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
-   addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);
-   addhex(miniv3d(0.0,-1.0,1.0)*brick,miniv3d(1.0,0.0,2.0)*brick,crd,TRUE,1,1,&mesh);
-   addhex(miniv3d(-1.0,0.0,1.0)*brick,miniv3d(0.0,1.0,2.0)*brick,crd,TRUE,1,2,&mesh);
-   addhex(miniv3d(0.0,0.0,1.0)*brick,miniv3d(1.0,1.0,2.0)*brick,crd,FALSE,1,3,&mesh);
-   addhex(miniv3d(-1.0,-1.0,0.0)*brick,miniv3d(0.0,0.0,1.0)*brick,crd,TRUE,1,0,&mesh);
+   //!!addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);
+   //!!addhex(miniv3d(0.0,-1.0,1.0)*brick,miniv3d(1.0,0.0,2.0)*brick,crd,TRUE,1,1,&mesh);
+   //!!addhex(miniv3d(-1.0,0.0,1.0)*brick,miniv3d(0.0,1.0,2.0)*brick,crd,TRUE,1,2,&mesh);
+   //!!addhex(miniv3d(0.0,0.0,1.0)*brick,miniv3d(1.0,1.0,2.0)*brick,crd,FALSE,1,3,&mesh);
+   //!!addhex(miniv3d(-1.0,-1.0,0.0)*brick,miniv3d(0.0,0.0,1.0)*brick,crd,TRUE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,0.0)*brick,miniv3d(1.0,0.0,1.0)*brick,crd,FALSE,1,1,&mesh);
-   addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,FALSE,1,2,&mesh);
-   addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,TRUE,1,3,&mesh);
+   //!!addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,FALSE,1,2,&mesh);
+   //!!addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,TRUE,1,3,&mesh);
 
    std::cout << "vol_in=" << mesh.getvolume() << std::endl;
 
-#if 0
-   addpri(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,0.0,0.0)*brick,miniv3d(1.0,-0.1,0.0)*brick,brick,crd,TRUE,1,0,&mesh);
+#if 1
+   addpri(miniv3d(0.0,0.0,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,brick,crd,FALSE,1,0,&mesh);
 #endif
 
    minibsptree bspt;
