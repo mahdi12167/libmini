@@ -234,7 +234,7 @@ int main(int argc,char *argv[])
    std::cout << "vol_in=" << mesh.getvolume() << std::endl;
 
 #if 1
-   addpri(miniv3d(0.0,0.0,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,brick,crd,FALSE,1,0,&mesh);
+   addpri(miniv3d(0.1,-0.1,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,brick,crd,FALSE,1,0,&mesh);
 #endif
 
    minibsptree bspt;
