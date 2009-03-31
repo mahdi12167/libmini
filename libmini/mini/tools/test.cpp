@@ -167,7 +167,7 @@ void addpri(miniv3d crd1,miniv3d crd2,miniv3d crd3,double h,
       {
       mesh->append(minihedron(vtx[0].vec,vtx[1].vec,vtx[2].vec,vtx[3].vec,slot,brickid));
       mesh->append(minihedron(vtx[1].vec,vtx[2].vec,vtx[3].vec,vtx[4].vec,slot,brickid));
-      mesh->append(minihedron(vtx[2].vec,vtx[3].vec,vtx[4].vec,vtx[5].vec,slot,brickid));
+      //!!mesh->append(minihedron(vtx[2].vec,vtx[3].vec,vtx[4].vec,vtx[5].vec,slot,brickid));
       }
    else
       {
@@ -234,7 +234,7 @@ int main(int argc,char *argv[])
    std::cout << "vol_in=" << mesh.getvolume() << std::endl;
 
 #if 1
-   addpri(miniv3d(0.1,-0.1,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,brick,crd,FALSE,1,0,&mesh);
+   addpri(miniv3d(0.0,0.0,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,brick,crd,FALSE,2,0,&mesh);
 #endif
 
    minibsptree bspt;
