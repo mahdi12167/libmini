@@ -155,9 +155,11 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    unsigned int i;
 
    minigeom_plane<double> plane;
+   miniv3d midpoint,normal;
 
    miniv3d p1,p2,p3,p4;
    miniv3d m1,m2,m3,m4;
+   miniv3d n1,n2,n3,n4;
 
    unsigned int idx;
    double dist,d;
@@ -165,8 +167,14 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    // calculate matching plane
    plane=minigeom_plane<double>(v1,v2,v3,h);
 
+   // calculate matching face midpoint
+   midpoint=(v1+v2+v3)/3.0;
+
+   // calculate matching face normal
+   normal=plane.getvector();
+
    idx=0;
-   dist=-MAXFLOAT;
+   dist=MAXFLOAT;
 
    // search all tetrahedra for a match
    for (i=0; i<getsize(); i++)
@@ -184,39 +192,45 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
          m3=(p2+p4+p3)/3.0;
          m4=(p3+p4+p1)/3.0;
 
+         // calculate face normals
+         n1=minigeom_plane<double>(p1,p2,p3,p4).getvector();
+         n2=minigeom_plane<double>(p1,p4,p2,p3).getvector();
+         n3=minigeom_plane<double>(p2,p4,p3,p1).getvector();
+         n4=minigeom_plane<double>(p3,p4,p1,p2).getvector();
+
          // check each face for a match:
 
-         d=plane.getdistance(m1);
+         d=(m1-midpoint).getlength2();
 
-         if (d<delta)
-            if (d>dist)
+         if (d<dist)
+            if (n1*normal<0.0)
                {
                idx=i;
                dist=d;
                }
 
-         d=plane.getdistance(m2);
+         d=(m2-midpoint).getlength2();
 
-         if (d<delta)
-            if (d>dist)
+         if (d<dist)
+            if (n2*normal<0.0)
                {
                idx=i;
                dist=d;
                }
 
-         d=plane.getdistance(m3);
+         d=(m3-midpoint).getlength2();
 
-         if (d<delta)
-            if (d>dist)
+         if (d<dist)
+            if (n3*normal<0.0)
                {
                idx=i;
                dist=d;
                }
 
-         d=plane.getdistance(m4);
+         d=(m4-midpoint).getlength2();
 
-         if (d<delta)
-            if (d>dist)
+         if (d<dist)
+            if (n4*normal<0.0)
                {
                idx=i;
                dist=d;
