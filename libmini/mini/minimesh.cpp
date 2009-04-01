@@ -43,7 +43,12 @@ void minimesh::append(const minigeom_tetrahedra<Scalar> &a)
 
 // append a polyhedron
 void minimesh::append(const minigeom_polyhedron<Scalar> &poly)
-   {append(poly.tetrahedralize());}
+   {
+   append(poly.tetrahedralize());
+
+   reject();
+   connect();
+   }
 
 // reject degenerate tetrahedra
 void minimesh::reject()
@@ -131,7 +136,7 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
    unsigned int i;
 
    minigeom_plane<double> plane;
-   miniv3d midpoint,normal;
+   miniv3d barycenter,midpoint,normal;
 
    miniv3d p1,p2,p3,p4;
    miniv3d m1,m2,m3,m4;
@@ -161,6 +166,12 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
          p2=get(i).vtx2;
          p3=get(i).vtx3;
          p4=get(i).vtx4;
+
+         // calculate barycenter
+         barycenter=(p1+p2+p3+p4)/4.0;
+
+         // check barycenter
+         if (plane.isincl(barycenter)) continue;
 
          // calculate face midpoints
          m1=(p1+p2+p3)/3.0;
