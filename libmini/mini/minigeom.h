@@ -881,7 +881,7 @@ Scalar minigeom_polyhedron<Scalar>::getvolume() const
 
    vol=0;
 
-   for (i=0; i<mesh.getsize(); i++) vol+=mesh[i].getvolume();
+   for (i=0; i<mesh.getsize(); i++) vol=vol+mesh[i].getvolume();
 
    return(vol);
    }
