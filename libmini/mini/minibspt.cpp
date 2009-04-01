@@ -195,27 +195,23 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
       d2=TREE[idx].plane.getdistance(v2);
       d3=TREE[idx].plane.getdistance(v3);
 
-      // check if the dividing plane is already existing
-      if (dabs(d1)>delta || dabs(d2)>delta || dabs(d3)>delta)
-         {
-         // check if the tetrahedral face intrudes into the left half space
-         if (d1>delta || d2>delta || d3>delta)
-            if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h); // insert recursively
-            else
-               {
-               append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
-               TREE[idx].left=TREE.getsize()-1; // link left node from parent
-               }
+      // check if the tetrahedral face intrudes into the left half space
+      if (d1>delta || d2>delta || d3>delta)
+         if (TREE[idx].left!=0) insert(TREE[idx].left,v1,v2,v3,h); // insert recursively
+         else
+            {
+            append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
+            TREE[idx].left=TREE.getsize()-1; // link left node from parent
+            }
 
-         // check if the tetrahedral face intrudes into the right half space
-         if (d1<-delta || d2<-delta || d3<-delta)
-            if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h); // insert recursively
-            else
-               {
-               append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
-               TREE[idx].right=TREE.getsize()-1; // link right node from parent
-               }
-         }
+      // check if the tetrahedral face intrudes into the right half space
+      if (d1<-delta || d2<-delta || d3<-delta)
+         if (TREE[idx].right!=0) insert(TREE[idx].right,v1,v2,v3,h); // insert recursively
+         else
+            {
+            append(minigeom_plane<Scalar>(v1,v2,v3,h)); // append node to bsp tree
+            TREE[idx].right=TREE.getsize()-1; // link right node from parent
+            }
       }
    }
 
