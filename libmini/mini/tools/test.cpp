@@ -220,7 +220,7 @@ int main(int argc,char *argv[])
    double gfnx=-157.0*3600;
    double gfny=21.0*3600;
    double gfnh=1000.0;
-   double brick=10000.0/30;
+   double brick=10.0;// /30;
    minicoord crd(gfnx,gfny,gfnh,minicoord::MINICOORD_LLH);
    addhex(miniv3d(-1.0,-1.0,1.0)*brick,miniv3d(0.0,0.0,2.0)*brick,crd,FALSE,1,0,&mesh);
    addhex(miniv3d(0.0,-1.0,1.0)*brick,miniv3d(1.0,0.0,2.0)*brick,crd,TRUE,1,1,&mesh);
@@ -231,6 +231,12 @@ int main(int argc,char *argv[])
    addhex(miniv3d(-1.0,0.0,0.0)*brick,miniv3d(0.0,1.0,1.0)*brick,crd,FALSE,1,2,&mesh);
    addhex(miniv3d(0.0,0.0,0.0)*brick,miniv3d(1.0,1.0,1.0)*brick,crd,TRUE,1,3,&mesh);
 
+   std::cout << "vol_in=" << mesh.getvolume() << std::endl;
+
+#if 1
+   addpri(miniv3d(0.1,-0.1,0.0)*brick,miniv3d(0.9,-0.1,0.0)*brick,miniv3d(0.9,-0.2,0.0)*brick,0.9*brick,crd,FALSE,2,0,&mesh);
+#endif
+
    minibsptree bspt;
    minimesh unsorted;
    bspt.insert(mesh);
@@ -239,6 +245,7 @@ int main(int argc,char *argv[])
    std::cout << "vol_in=" << mesh.getvolume() << std::endl;
    std::cout << "bspt=" << bspt.getnodes() << std::endl;
    std::cout << "in=" << mesh.getsize() << " out=" << unsorted.getsize() << std::endl;
+
    std::cout << "vol_out=" << unsorted.getvolume() << std::endl;
 
 #endif
