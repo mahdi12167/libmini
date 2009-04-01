@@ -312,6 +312,10 @@ class minigeom_plane: public minigeom_halfspace<Scalar>
 template <class Scalar>
 class minigeom_halfspaces: public minidyna<minigeom_halfspace<Scalar>,6> {};
 
+//! forward declaration
+template <class Scalar>
+class minigeom_tetrahedra;
+
 //! convex polyhedron
 template <class Scalar>
 class minigeom_polyhedron
@@ -360,6 +364,12 @@ class minigeom_polyhedron
    //! check if polyhedron excludes another one
    BOOLINT isexcl(const minigeom_polyhedron<Scalar> poly) const;
 
+   //! tetrahedralize a convex polyhedron
+   minigeom_tetrahedra<Scalar> tetrahedralize() const;
+
+   //! get volume
+   Scalar getvolume() const;
+
    protected:
 
    minigeom_halfspaces<Scalar> half;
@@ -394,6 +404,103 @@ inline std::ostream& operator << (std::ostream &out,const minigeom_polyhedron<Sc
 //! dynamic polyhedron array
 template <class Scalar>
 class minigeom_polyhedra: public minidyna<minigeom_polyhedron<Scalar>,10> {};
+
+//! tetrahedron
+template <class Scalar>
+class minigeom_tetrahedron
+   {
+   public:
+
+   typedef minigeom_halfspace<Scalar> B;
+   typedef minivec<Scalar> Vector;
+
+   public:
+
+   //! default constructor
+   minigeom_tetrahedron() {}
+
+   //! constructor
+   minigeom_tetrahedron(const Vector &p1,const Vector &p2,const Vector &p3,const Vector &p4)
+      {
+      corner[0]=p1;
+      corner[1]=p2;
+      corner[2]=p3;
+      corner[3]=p4;
+      }
+
+   //! conversion operator
+   operator minigeom_polyhedron<Scalar>()
+      {
+      minigeom_polyhedron<Scalar> poly;
+
+      poly.intersect(B(corner[0],corner[1],corner[2],corner[3]));
+      poly.intersect(B(corner[0],corner[3],corner[1],corner[2]));
+      poly.intersect(B(corner[1],corner[3],corner[2],corner[0]));
+      poly.intersect(B(corner[2],corner[3],corner[0],corner[1]));
+
+      return(poly);
+      }
+
+   //! destructor
+   ~minigeom_tetrahedron() {}
+
+   //! get corner point
+   Vector getcorner(const unsigned int c) const
+      {return(corner[c]);}
+
+   //! check if point is included within polyhedron
+   BOOLINT isincl(const Vector &p) const
+      {
+      if (!B(corner[0],corner[1],corner[2],corner[3]).isincl(p)) return(FALSE);
+      if (!B(corner[0],corner[3],corner[1],corner[2]).isincl(p)) return(FALSE);
+      if (!B(corner[1],corner[3],corner[2],corner[0]).isincl(p)) return(FALSE);
+      if (!B(corner[2],corner[3],corner[0],corner[1]).isincl(p)) return(FALSE);
+      }
+
+   //! get volume
+   Scalar getvolume() const
+      {
+      Vector mtx[3];
+      Scalar det;
+
+      mtx[0]=Vector(corner[0]-corner[3]);
+      mtx[1]=Vector(corner[1]-corner[3]);
+      mtx[2]=Vector(corner[2]-corner[3]);
+
+      det=mtx[0].x*(mtx[1].y*mtx[2].z-mtx[2].y*mtx[1].z)+
+          mtx[0].y*(mtx[2].x*mtx[1].z-mtx[1].x*mtx[2].z)+
+          mtx[0].z*(mtx[1].x*mtx[2].y-mtx[2].x*mtx[1].y);
+
+      return(dabs(det)/Scalar(6));
+      }
+
+   protected:
+
+   Vector corner[4];
+   };
+
+//! stream output
+template <class Scalar>
+inline std::ostream& operator << (std::ostream &out,const minigeom_tetrahedron<Scalar> &tet)
+   {
+   unsigned int i;
+
+   out << "minitet[ ";
+
+   for (i=0; i<4; i++)
+      {
+      out << tet.getcorner(i);
+      if (i<3) out << ", ";
+      }
+
+   out << " ]";
+
+   return(out);
+   }
+
+//! dynamic tetrahedron array
+template <class Scalar>
+class minigeom_tetrahedra: public minidyna<minigeom_tetrahedron<Scalar>,10> {};
 
 // template body:
 
@@ -548,12 +655,12 @@ template <class Scalar>
 minigeom_polyhedron<Scalar>::minigeom_polyhedron(const Scalar range)
    {
    // pre-define a closed bounding box with maximum possible size
-   half.append(minigeom_halfspace<Scalar>(Vector(-range,B::zero(),B::zero()),Vector(B::one(),B::zero(),B::zero())));
-   half.append(minigeom_halfspace<Scalar>(Vector(range,B::zero(),B::zero()),Vector(-B::one(),B::zero(),B::zero())));
-   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),-range,B::zero()),Vector(B::zero(),B::one(),B::zero())));
-   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),range,B::zero()),Vector(B::zero(),-B::one(),B::zero())));
-   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),B::zero(),-range),Vector(B::zero(),B::zero(),B::one())));
-   half.append(minigeom_halfspace<Scalar>(Vector(B::zero(),B::zero(),range),Vector(B::zero(),B::zero(),-B::one())));
+   half.append(B(Vector(-range,B::zero(),B::zero()),Vector(B::one(),B::zero(),B::zero())));
+   half.append(B(Vector(range,B::zero(),B::zero()),Vector(-B::one(),B::zero(),B::zero())));
+   half.append(B(Vector(B::zero(),-range,B::zero()),Vector(B::zero(),B::one(),B::zero())));
+   half.append(B(Vector(B::zero(),range,B::zero()),Vector(B::zero(),-B::one(),B::zero())));
+   half.append(B(Vector(B::zero(),B::zero(),-range),Vector(B::zero(),B::zero(),B::one())));
+   half.append(B(Vector(B::zero(),B::zero(),range),Vector(B::zero(),B::zero(),-B::one())));
    }
 
 // destructor
@@ -718,6 +825,65 @@ BOOLINT minigeom_polyhedron<Scalar>::isexcl(const minigeom_polyhedron<Scalar> po
       }
 
    return(TRUE);
+   }
+
+// tetrahedralize a convex polyhedron
+template <class Scalar>
+minigeom_tetrahedra<Scalar> minigeom_polyhedron<Scalar>::tetrahedralize() const
+   {
+   unsigned int i,j;
+
+   minigeom_polygon<Scalar> gon;
+   Vector anchor,v1,v2,v3;
+
+   minigeom_tetrahedra<Scalar> mesh;
+
+   Scalar dist;
+
+   if (getnumhalfspace()<4) return(mesh);
+
+   gon=getface(0).polygonize();
+   if (gon.getsize()==0) return(mesh);
+
+   anchor=gon[0];
+
+   for (i=1; i<getnumhalfspace(); i++)
+      {
+      gon=getface(i).polygonize();
+
+      for (j=0; j+2<gon.getsize(); j++)
+         {
+         v1=gon[0];
+         v2=gon[j+1];
+         v3=gon[j+2];
+
+         dist=minigeom_plane<Scalar>(v1,v2,v3).getdistance(anchor);
+
+         if (dabs(dist)>B::delta())
+            mesh.append(minigeom_tetrahedron<Scalar>(anchor,v1,v2,v3));
+         }
+      }
+
+   return(mesh);
+   }
+
+// get volume
+template <class Scalar>
+Scalar minigeom_polyhedron<Scalar>::getvolume() const
+   {
+   unsigned int i;
+
+   minigeom_tetrahedra<Scalar> mesh;
+
+   Scalar vol;
+
+   mesh=tetrahedralize();
+
+   vol=0;
+
+   for (i=0; i<mesh.getsize(); i++) vol+=mesh[i].getvolume();
+
+   return(vol);
    }
 
 #endif

@@ -252,6 +252,9 @@ class minimesh: public minidyna<minihedron>
    //! append a tetrahedral mesh
    void append(const minimesh &m);
 
+   //! append a tetrahedral array
+   void append(const minigeom_tetrahedra<Scalar> &a);
+
    //! append a polyhedron
    void append(const minigeom_polyhedron<Scalar> &poly);
 
@@ -294,8 +297,6 @@ class minimesh: public minidyna<minihedron>
 
    static double CONFIGURE_DEGENERATE_SIZE;
    static double CONFIGURE_DEGENERATE_ASPECT;
-
-   minimesh tetrahedralize(const minigeom_polyhedron<Scalar> &poly) const;
 
    void reject();
    void connect();
