@@ -26,7 +26,7 @@ void setparameters(MINI_CONVERSION_PARAMS *params)
    params->greyc_a=0.4f; // greycstoration anisotropy, useful range=[0.1-0.5]
 
    params->png_gamma=0.0f; // png gamma (0.0=default 1.0=neutral)
-   params->zlib_level=6; // zlib compression level (0=none 6=default 9=highest)
+   params->zlib_level=9; // zlib compression level (0=none 6=standard 9=highest)
    }
 
 // set conversion hook for external formats

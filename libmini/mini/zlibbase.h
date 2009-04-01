@@ -6,7 +6,7 @@
 namespace zlibbase {
 
 unsigned char *decompressZLIB(unsigned char *chunk,unsigned int chunklen,unsigned int *bytes);
-void compressZLIB(unsigned char *data,unsigned int bytes,unsigned char **chunk,unsigned int *chunklen,int level=6);
+void compressZLIB(unsigned char *data,unsigned int bytes,unsigned char **chunk,unsigned int *chunklen,int level=9);
 
 }
 

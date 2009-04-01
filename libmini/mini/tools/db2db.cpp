@@ -12,7 +12,7 @@ int main(int argc,char *argv[])
    databuf buf;
 
    float jpgquality=0.9f;
-   int pnglevel=6;
+   int pnglevel=9;
 
    if (argc!=3)
       {
