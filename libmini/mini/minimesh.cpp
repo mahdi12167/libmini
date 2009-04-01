@@ -27,6 +27,24 @@ void minimesh::append(const minihedron &h)
 void minimesh::append(const minimesh &m)
    {minidyna<minihedron>::append(m);}
 
+// append a tetrahedral array
+void minimesh::append(const minigeom_tetrahedra<Scalar> &a)
+   {
+   unsigned int i;
+
+   minigeom_tetrahedron<Scalar> tet;
+
+   for (i=0; i<a.getsize(); i++)
+      {
+      tet=a[i];
+      append(minihedron(tet.getcorner(0),tet.getcorner(1),tet.getcorner(2),tet.getcorner(3),minivals()));
+      }
+   }
+
+// append a polyhedron
+void minimesh::append(const minigeom_polyhedron<Scalar> &poly)
+   {append(poly.tetrahedralize());}
+
 // reject degenerate tetrahedra
 void minimesh::reject()
    {
@@ -197,24 +215,6 @@ unsigned int minimesh::getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d 
 
    return(idx);
    }
-
-// append a tetrahedral array
-void minimesh::append(const minigeom_tetrahedra<Scalar> &a)
-   {
-   unsigned int i;
-
-   minigeom_tetrahedron<Scalar> tet;
-
-   for (i=0; i<a.getsize(); i++)
-      {
-      tet=a[i];
-      append(minihedron(tet.getcorner(0),tet.getcorner(1),tet.getcorner(2),tet.getcorner(3),minivals()));
-      }
-   }
-
-// append a polyhedron
-void minimesh::append(const minigeom_polyhedron<Scalar> &poly)
-   {append(poly.tetrahedralize());}
 
 // set embedded data values
 void minimesh::setvals(const minivals &vals)
