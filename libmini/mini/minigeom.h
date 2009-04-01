@@ -452,6 +452,8 @@ class minigeom_tetrahedron
       if (!B(corner[0],corner[3],corner[1],corner[2]).isincl(p)) return(FALSE);
       if (!B(corner[1],corner[3],corner[2],corner[0]).isincl(p)) return(FALSE);
       if (!B(corner[2],corner[3],corner[0],corner[1]).isincl(p)) return(FALSE);
+
+      return(TRUE);
       }
 
    //! get volume
