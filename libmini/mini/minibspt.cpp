@@ -267,24 +267,6 @@ void minibsptree::intersect(unsigned int idx)
    plane.invert();
    right.intersect(plane);
 
-#ifndef LIBMINI_RELEASE
-
-   Scalar vol0,vol1,vol2;
-
-   vol0=TREE[idx].poly.getvolume();
-   vol1=left.getvolume();
-   vol2=right.getvolume();
-
-   if (vol1>vol0+Scalar(delta) || vol2>vol0+Scalar(delta))
-      {
-      WARNMSG(); //!!
-      std::cout << "volume0=" << vol0 << std::endl;
-      std::cout << "volume1=" << vol1 << std::endl;
-      std::cout << "volume2=" << vol2 << std::endl;
-      }
-
-#endif
-
    // clear the actual polyhedron
    TREE[idx].poly.clear();
 

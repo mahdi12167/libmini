@@ -87,6 +87,8 @@ class minigeom_base
    Scalar getminlambda() const {return(minlambda);}
    Scalar getmaxlambda() const {return(maxlambda);}
 
+   Scalar getdelta() const {return(maxlambda-minlambda);}
+
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
    BOOLINT ishalf() const {return(minlambda>-maxscalar() && maxlambda>=maxscalar());}
@@ -770,7 +772,8 @@ minigeom_segments<Scalar> minigeom_polyhedron<Scalar>::getface(const unsigned in
             if (j!=h && j!=i) segment.intersect(half[j]);
 
          // append one face segment
-         if (!segment.isnull()) segments.append(segment);
+         if (!segment.isnull())
+            if (segment.getdelta()>B::delta()) segments.append(segment);
          }
 
    return(segments);
