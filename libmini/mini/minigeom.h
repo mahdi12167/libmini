@@ -87,7 +87,7 @@ class minigeom_base
    Scalar getminlambda() const {return(minlambda);}
    Scalar getmaxlambda() const {return(maxlambda);}
 
-   Scalar getdelta() const {return(maxlambda-minlambda);}
+   Scalar getlength() const {return(maxlambda-minlambda);}
 
    BOOLINT isnull() const {return(minlambda>maxlambda);}
    BOOLINT iszero() const {return(minlambda==maxlambda);}
@@ -597,7 +597,7 @@ minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
    {
    unsigned int i,j;
 
-   Vector a,b,c,d;
+   Vector a,b,c,d,e;
 
    unsigned int idx;
    Scalar dist,d1,d2;
@@ -607,6 +607,8 @@ minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
    minigeom_segment<Scalar> tmp;
 
    if (B::getsize()<3) return(gon);
+
+   e=B::get(0).getminpoint();
 
    for (i=0; i<B::getsize(); i++)
       {
@@ -640,6 +642,8 @@ minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
             B::ref(j).swap();
             }
          }
+
+      if (dist>(b-e).getlength2()) break;
 
       if (i+2<B::getsize())
          {
@@ -773,8 +777,7 @@ minigeom_segments<Scalar> minigeom_polyhedron<Scalar>::getface(const unsigned in
             if (j!=h && j!=i) segment.intersect(half[j]);
 
          // append one face segment
-         if (segment.isnonzero())
-            if (segment.getdelta()>B::delta()) segments.append(segment);
+         if (segment.isnonzero()) segments.append(segment);
          }
 
    return(segments);
