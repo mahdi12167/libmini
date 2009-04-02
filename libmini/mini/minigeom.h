@@ -773,7 +773,8 @@ minigeom_segments<Scalar> minigeom_polyhedron<Scalar>::getface(const unsigned in
 
          // append one face segment
          if (!segment.isnull())
-            if (segment.getdelta()>B::delta()) segments.append(segment);
+            if (!segment.iszero())
+               if (segment.getdelta()>B::delta()) segments.append(segment);
          }
 
    return(segments);
