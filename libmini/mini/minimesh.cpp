@@ -2,8 +2,6 @@
 
 #include "minimesh.h"
 
-const double minimesh::delta=1E-3;
-
 double minimesh::CONFIGURE_DEGENERATE_SIZE=1E-5;
 double minimesh::CONFIGURE_DEGENERATE_ASPECT=1E-5;
 

@@ -226,10 +226,6 @@ inline std::ostream& operator << (std::ostream &out,const minihedron &h)
 //! dynamic tetrahedron array
 class minimesh: public minidyna<minihedron>
    {
-   protected:
-
-   static const double delta;
-
    public:
 
    typedef minimf Scalar;
