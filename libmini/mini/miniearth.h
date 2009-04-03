@@ -28,13 +28,14 @@ class miniearth
       {
       // configurable parameters:
 
-      int warpmode; // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      int warpmode;   // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+      BOOLINT nonlin; // use non-linear warp
 
-      float fps;    // frames per second (target frame rate)
+      float fps;      // frames per second (target frame rate)
 
-      float fovy;   //  field of view (degrees)
-      float nearp;  //  near plane (meters)
-      float farp;   //  far plane (meters)
+      float fovy;     //  field of view (degrees)
+      float nearp;    //  near plane (meters)
+      float farp;     //  far plane (meters)
 
       // feature switches:
 

@@ -1309,6 +1309,11 @@ void keyboardfunc(unsigned char key,int x,int y)
          else eparams->useflat=FALSE;
          viewer->propagate();
          break;
+      case '0':
+         if (!eparams->nonlin) eparams->nonlin=TRUE;
+         else eparams->nonlin=FALSE;
+         viewer->propagate();
+         break;
       case 'N':
          if (!eparams->usenprshader) eparams->usenprshader=TRUE;
          else eparams->usenprshader=FALSE;

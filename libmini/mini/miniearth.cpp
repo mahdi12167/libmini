@@ -17,6 +17,7 @@ miniearth::miniearth()
    // configurable parameters:
 
    EPARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   EPARAMS.nonlin=FALSE;  // non-linear warp mode
 
    EPARAMS.fps=25.0f;     // frames per second (target frame rate)
 
@@ -186,6 +187,8 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
       else if (EPARAMS.warpmode==3) tparams.warpmode=1;
       else tparams.warpmode=0;
    else tparams.warpmode=EPARAMS.warpmode;
+
+   tparams.nonlin=EPARAMS.nonlin;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
