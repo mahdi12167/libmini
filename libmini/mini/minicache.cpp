@@ -1032,7 +1032,8 @@ void minicache::attach(minitile *terrain,
       for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
       MAXTERRAIN*=2;
 
-      for (id=0; id<NUMTERRAIN; id++) TERRAIN[id].ray->clear();
+      for (id=0; id<NUMTERRAIN; id++)
+         if (TERRAIN[id].tile!=NULL) TERRAIN[id].ray->clear();
       }
 
    if (terrain!=NULL)
