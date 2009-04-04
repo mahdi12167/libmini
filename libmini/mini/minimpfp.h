@@ -823,7 +823,7 @@ class minimpfp
       BOOLINT valid=TRUE;
 
       if (minimpfp_base::MINIMPFP_OVERFLOW ||
-          minimpfp_base::MINIMPFP_DIVBYZERO||
+          minimpfp_base::MINIMPFP_DIVBYZERO ||
           minimpfp_base::MINIMPFP_NEGSQROOT) valid=FALSE;
 
       minimpfp_base::MINIMPFP_OVERFLOW=FALSE;
@@ -844,7 +844,7 @@ typedef minimpfp<minimpfp1> minimpfp2;     // 256 bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 512 bit precision
 typedef minimpfp<minimpfp4> minimpfp8;     // 1024 bit precision
 
-typedef minimpfp2 minimf;
+typedef minimpfp1 minimf;
 
 // multi-precision floating point operators:
 

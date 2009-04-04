@@ -110,8 +110,8 @@ class minigeom_base
          {
          d=(p-pnt)*vec;
 
-         if (ishalf()) return(d>minlambda-delta());
-         else return(d>minlambda-delta() && d<maxlambda+delta());
+         if (ishalf()) return(d+delta()>minlambda);
+         else return(d+delta()>minlambda && d-delta()<maxlambda);
          }
 
       return(FALSE);
@@ -549,7 +549,7 @@ BOOLINT minigeom_segment<Scalar>::intersect(const minigeom_halfspace<Scalar> &ha
       }
    else
       // check if segment lies outside of half space
-      if (lambda<halfspace.minlambda-B::delta() || lambda>halfspace.maxlambda+B::delta()) {B::setnull(); cut=TRUE;}
+      if (lambda+B::delta()<halfspace.minlambda || lambda-B::delta()>halfspace.maxlambda) {B::setnull(); cut=TRUE;}
 
    return(cut);
    }
