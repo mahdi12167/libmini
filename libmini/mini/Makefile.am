@@ -12,8 +12,9 @@ MODS	= mini miniOGL\
 	  ministub minitile miniload\
 	  minicoord miniwarp\
 	  minilayer miniterrain miniearth\
-	  minicache minishader miniray\
-	  ministrip minipoint minitext minisky miniglobe\
+	  minicache minishader\
+	  miniray minilist ministrip\
+	  minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
 	  pnmbase pnmsample\
@@ -46,14 +47,13 @@ libMiniSFX_la_SOURCES = $(VMODS:=.cpp)
 
 library_include_HEADERS = $(patsubst %,%.h,${HDRS}) $(patsubst %,%.h,${MODS}) $(patsubst %,%.h,${VMODS})
 
-EXTRA_DIST =\
-	miniP.h miniOGLP.h\
-	build.sh build.bat\
-	data/SkyDome.ppm data/EarthDay.db data/EarthNight.db data/Cone.db\
-	GL/glext.h GL/glut.h GL/freeglut.h GL/freeglut_std.h GL/freeglut_ext.h\
-	libMini.jpg libMini.ppm libMini.ico\
-	README.html libMini.css\
-	LICENSE.txt
+EXTRA_DIST = miniP.h miniOGLP.h\
+	     build.sh build.bat\
+	     data/SkyDome.ppm data/EarthDay.db data/EarthNight.db data/Cone.db\
+	     GL/glext.h GL/glut.h GL/freeglut.h GL/freeglut_std.h GL/freeglut_ext.h\
+	     libMini.jpg libMini.ppm libMini.ico\
+	     README.html libMini.css\
+	     LICENSE.txt
 
 example_SOURCES = example.cpp
 example_LDADD = -lMini $(MINI_LIBS)

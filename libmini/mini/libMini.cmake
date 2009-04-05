@@ -8,8 +8,9 @@ SET(MINI_HDRS
    ministub.h minitile.h miniload.h
    minicoord.h miniwarp.h
    minilayer.h miniterrain.h miniearth.h
-   minicache.h minishader.h miniray.h
-   ministrip.h minipoint.h minitext.h minisky.h miniglobe.h
+   minicache.h minishader.h
+   miniray.h minilist.h ministrip.h
+   minipoint.h minitext.h minisky.h miniglobe.h
    minitree.h minibrick.h minilod.h
    minigeom.h minimesh.h minibspt.h miniproj.h
    pnmbase.h pnmsample.h
@@ -26,8 +27,9 @@ SET(MINI_SRCS
    ministub.cpp minitile.cpp miniload.cpp
    minicoord.cpp miniwarp.cpp
    minilayer.cpp miniterrain.cpp miniearth.cpp
-   minicache.cpp minishader.cpp miniray.cpp
-   ministrip.cpp minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
+   minicache.cpp minishader.cpp
+   miniray.cpp minilist.cpp ministrip.cpp
+   minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
    minitree.cpp minibrick.cpp minilod.cpp
    minimesh.cpp minibspt.cpp miniproj.cpp
    pnmbase.cpp pnmsample.cpp

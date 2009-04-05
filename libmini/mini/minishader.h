@@ -46,8 +46,6 @@ class minishader
 
    static void unsetshaders(minicache *cache);
 
-   protected:
-
    private:
 
    static unsigned char *VISBATHYMAP;

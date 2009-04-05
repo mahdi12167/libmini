@@ -26,8 +26,6 @@ class minisky
 
    void drawskydome();
 
-   protected:
-
    private:
 
    ministrip *STRIP;

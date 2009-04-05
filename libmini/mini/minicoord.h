@@ -87,10 +87,6 @@ class minicoord
 
    int utm_zone; // actual UTM zone
    MINICOORD_DATUM utm_datum; // actual UTM datum
-
-   protected:
-
-   private:
    };
 
 // associated arithmetic operator +=

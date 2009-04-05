@@ -34,10 +34,6 @@ class mininorm
    ~mininorm() {}
 
    float x,y,z;
-
-   protected:
-
-   private:
    };
 
 inline mininorm operator + (const mininorm &a,const mininorm &b)

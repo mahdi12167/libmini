@@ -77,8 +77,6 @@ class miniray
    void configure_maxchunksize_triangles(int maxchunksize=100); // set maximum chunk size for triangle arrays
    void configure_maxchunksize_trianglefans(int maxchunksize=20); // set maximum chunk size for triangle fan arrays
 
-   protected:
-
    private:
 
    struct TRIANGLEREF
