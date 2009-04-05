@@ -215,7 +215,7 @@ UTM 04
 2353972
 35m
 
-Jose Andres, 41-945 Kalaniana'ole St., Waimanalo, Oahu
+Jose Andres, 41-945 Kalaniana'ole Hwy., Waimanalo, Oahu
 UTM 04
 0634669
 2360026
@@ -257,25 +257,25 @@ UTM 04
 2359265
 21m
 
-Pali Hwy Tunnel1 North
+Pali Hwy. Tunnel1 North
 UTM 04
 0625442
 2363417
 277m
 
-Pali Hwy Tunnel1 South
+Pali Hwy. Tunnel1 South
 UTM 04
 0625282
 2363354
 286m
 
-Pali Hwy Tunnel2 North
+Pali Hwy. Tunnel2 North
 UTM 04
 0625196
 2363311
 293m
 
-Pali Hwy Tunnel2 South
+Pali Hwy. Tunnel2 South
 UTM 04
 0624934
 2363123
@@ -449,7 +449,7 @@ UTM 05
 2219343
 769m
 
-Ben's Driveway, 46-4091 Old Mamalahoa Hwy; Taxmap 46009045
+Ben's Driveway, 46-4091 Old Mamalahoa Hwy.; Taxmap 46009045
 UTM 05
 0237573
 2219440
@@ -1470,13 +1470,13 @@ UTM 04
 2358182
 389m
 
-Best Avo Tree, Old Pali Hwy
+Best Avo Tree, Old Pali Hwy.
 UTM 04
 625597
 2363740
 207m
 
-Above Pali Hwy
+Above Pali Hwy.
 UTM 04
 625959
 2363492
@@ -2028,7 +2028,7 @@ UTM 04
 2357119
 231m
 
-Scenic Cliff, East Kalanianaole Hwy
+Scenic Cliff, East Kalanianaole Hwy.
 UTM 04
 636321
 2353255
