@@ -56,11 +56,15 @@ void minilist::addtrianglefans(float *array,int num,int stride)
 
       array+=stride;
 
+      if (i>0) glVertex3f(v2x,v2y,v2z);
+
       v2x=*array++;
       v2y=*array++;
       v2z=*array++;
 
       array+=stride;
+
+      if (i>0) glVertex3f(v2x,v2y,v2z);
 
       for (j=2; j<k; j++)
          {
@@ -74,14 +78,8 @@ void minilist::addtrianglefans(float *array,int num,int stride)
          v2y=*array++;
          v2z=*array++;
 
-         glVertex3f(v2x,v2y,v2z);
-
          array+=stride;
-         }
 
-      if (i<num-1)
-         {
-         glVertex3f(v2x,v2y,v2z);
          glVertex3f(v2x,v2y,v2z);
          }
       }
