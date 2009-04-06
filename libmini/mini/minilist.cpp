@@ -5,8 +5,7 @@
 #include "minilist.h"
 
 // default constructor
-minilist::minilist(unsigned int num)
-   {LIST.setsize(num,0);}
+minilist::minilist() {}
 
 // destructor
 minilist::~minilist()
@@ -17,15 +16,26 @@ minilist::~minilist()
       if (LIST[i]!=0) glDeleteLists(LIST[i],1);
    }
 
-// start compiling the display list
+// set number of display lists
+void minilist::setnum(unsigned int num)
+   {
+   unsigned int i;
+
+   for (i=num; i<LIST.getsize(); i++)
+      if (LIST[i]!=0) glDeleteLists(LIST[i],1);
+
+   LIST.growsize(num,0);
+   }
+
+// start compiling a display list
 void minilist::start(unsigned int n)
    {
    if (LIST[n]==0) LIST[n]=glGenLists(1);
    glNewList(LIST[n],GL_COMPILE);
    }
 
-// add triangle fans to display list
-void minilist::addtrianglefans(float *array,int index,int num,int stride)
+// add triangle fans to a display list
+void minilist::addtrianglefans(float *array,int num,int stride)
    {
    int i,j,k;
 
@@ -79,10 +89,10 @@ void minilist::addtrianglefans(float *array,int index,int num,int stride)
    glEnd();
    }
 
-// stop compiling the display list
+// stop compiling a display list
 void minilist::stop()
    {glEndList();}
 
-// render the display list
+// render a display list
 void minilist::render(unsigned int n)
-   {glCallList(LIST[n]);}
+   {if (LIST[n]!=0) glCallList(LIST[n]);}

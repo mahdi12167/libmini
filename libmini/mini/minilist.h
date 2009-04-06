@@ -13,21 +13,24 @@ class minilist
    public:
 
    //! default constructor
-   minilist(unsigned int num);
+   minilist();
 
    //! destructor
    ~minilist();
 
-   //! start compiling the display list
+   //! set number of display lists
+   void setnum(unsigned int n);
+
+   //! start compiling a display list
    void start(unsigned int n);
 
-   //! add triangle fans to the display list
-   void addtrianglefans(float *array,int index,int num,int stride=0);
+   //! add triangle fans to a display list
+   void addtrianglefans(float *array,int num,int stride=0);
 
-   //! stop compiling the display list
+   //! stop compiling a display list
    void stop();
 
-   //! render the display list
+   //! render a display list
    void render(unsigned int n);
 
    private:
