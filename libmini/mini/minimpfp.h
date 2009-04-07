@@ -844,7 +844,7 @@ typedef minimpfp<minimpfp1> minimpfp2;     // 256 bit precision
 typedef minimpfp<minimpfp2> minimpfp4;     // 512 bit precision
 typedef minimpfp<minimpfp4> minimpfp8;     // 1024 bit precision
 
-typedef minimpfp1 minimf;
+typedef minimpfp2 minimf;
 
 // multi-precision floating point operators:
 
