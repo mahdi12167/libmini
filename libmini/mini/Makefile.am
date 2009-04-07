@@ -13,7 +13,7 @@ MODS	= mini miniOGL\
 	  minicoord miniwarp\
 	  minilayer miniterrain miniearth\
 	  minicache minishader\
-	  miniray minilist ministrip\
+	  miniray ministrip\
 	  minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
