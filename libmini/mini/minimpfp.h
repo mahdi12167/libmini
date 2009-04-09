@@ -839,83 +839,301 @@ class minimpfp
    N M,F;
    };
 
-typedef minimpfp<minimpfp_base> minimpfp1; // 128 bit precision
-typedef minimpfp<minimpfp1> minimpfp2;     // 256 bit precision
-typedef minimpfp<minimpfp2> minimpfp4;     // 512 bit precision
-typedef minimpfp<minimpfp4> minimpfp8;     // 1024 bit precision
+typedef minimpfp<minimpfp_base> minimpfp128; // 128 bit precision
+typedef minimpfp<minimpfp128> minimpfp256;   // 256 bit precision
+typedef minimpfp<minimpfp256> minimpfp512;   // 512 bit precision
+typedef minimpfp<minimpfp512> minimpfp1024;  // 1024 bit precision
 
-typedef minimpfp2 minimf;
+// multi-precision fixed point operators for 128bit:
 
-// multi-precision floating point operators:
-
-inline minimf operator + (const minimf &a,const minimf &b)
+inline minimpfp128 operator + (const minimpfp128 &a,const minimpfp128 &b)
    {
-   minimf result;
+   minimpfp128 result;
    a.add(b,result);
    return(result);
    }
 
-inline minimf operator - (const minimf &a,const minimf &b)
+inline minimpfp128 operator - (const minimpfp128 &a,const minimpfp128 &b)
    {
-   minimf result;
+   minimpfp128 result;
    a.sub(b,result);
    return(result);
    }
 
-inline minimf operator - (const minimf &v)
+inline minimpfp128 operator - (const minimpfp128 &v)
    {return(v.neg());}
 
-inline minimf operator * (const minimf &a,const minimf &b)
+inline minimpfp128 operator * (const minimpfp128 &a,const minimpfp128 &b)
    {
-   minimf result;
+   minimpfp128 result;
    a.mul(b,result);
    return(result);
    }
 
-inline minimf operator / (const minimf &a,const minimf &b)
+inline minimpfp128 operator / (const minimpfp128 &a,const minimpfp128 &b)
    {
-   minimf result;
+   minimpfp128 result;
    a.div(b,result);
    return(result);
    }
 
-inline int operator == (const minimf &a,const minimf &b)
+inline int operator == (const minimpfp128 &a,const minimpfp128 &b)
    {return(a.isequal(b));}
 
-inline int operator != (const minimf &a,const minimf &b)
+inline int operator != (const minimpfp128 &a,const minimpfp128 &b)
    {return(a.isnotequal(b));}
 
-inline int operator < (const minimf &a,const minimf &b)
+inline int operator < (const minimpfp128 &a,const minimpfp128 &b)
    {return(a.sml(b));}
 
-inline int operator > (const minimf &a,const minimf &b)
+inline int operator > (const minimpfp128 &a,const minimpfp128 &b)
    {return(a.grt(b));}
 
-inline int operator <= (const minimf &a,const minimf &b)
+inline int operator <= (const minimpfp128 &a,const minimpfp128 &b)
    {return(!a.grt(b));}
 
-inline int operator >= (const minimf &a,const minimf &b)
+inline int operator >= (const minimpfp128 &a,const minimpfp128 &b)
    {return(!a.sml(b));}
 
-inline std::ostream& operator << (std::ostream &out,const minimf &mf)
+inline std::ostream& operator << (std::ostream &out,const minimpfp128 &mf)
    {return(out << mf.get());}
 
-inline minimf dabs(const minimf &v)
+inline minimpfp128 dabs(const minimpfp128 &v)
    {return(v.abs());}
 
-inline minimf dmin(const minimf &a,const minimf &b)
+inline minimpfp128 dmin(const minimpfp128 &a,const minimpfp128 &b)
    {return((a<b)?a:b);}
 
-inline minimf dmax(const minimf &a,const minimf &b)
+inline minimpfp128 dmax(const minimpfp128 &a,const minimpfp128 &b)
    {return((a>b)?a:b);}
 
-inline minimf dsqr(const minimf &v)
+inline minimpfp128 dsqr(const minimpfp128 &v)
    {return(v*v);}
 
-inline minimf sqrt(const minimf &v)
+inline minimpfp128 sqrt(const minimpfp128 &v)
    {return(v.sqroot());}
 
-inline double round2(const minimf &v,const unsigned int n=6)
+inline double round2(const minimpfp128 &v,const unsigned int n=6)
    {return(round2(v.get(),n));}
+
+// multi-precision fixed point operators for 256bit:
+
+inline minimpfp256 operator + (const minimpfp256 &a,const minimpfp256 &b)
+   {
+   minimpfp256 result;
+   a.add(b,result);
+   return(result);
+   }
+
+inline minimpfp256 operator - (const minimpfp256 &a,const minimpfp256 &b)
+   {
+   minimpfp256 result;
+   a.sub(b,result);
+   return(result);
+   }
+
+inline minimpfp256 operator - (const minimpfp256 &v)
+   {return(v.neg());}
+
+inline minimpfp256 operator * (const minimpfp256 &a,const minimpfp256 &b)
+   {
+   minimpfp256 result;
+   a.mul(b,result);
+   return(result);
+   }
+
+inline minimpfp256 operator / (const minimpfp256 &a,const minimpfp256 &b)
+   {
+   minimpfp256 result;
+   a.div(b,result);
+   return(result);
+   }
+
+inline int operator == (const minimpfp256 &a,const minimpfp256 &b)
+   {return(a.isequal(b));}
+
+inline int operator != (const minimpfp256 &a,const minimpfp256 &b)
+   {return(a.isnotequal(b));}
+
+inline int operator < (const minimpfp256 &a,const minimpfp256 &b)
+   {return(a.sml(b));}
+
+inline int operator > (const minimpfp256 &a,const minimpfp256 &b)
+   {return(a.grt(b));}
+
+inline int operator <= (const minimpfp256 &a,const minimpfp256 &b)
+   {return(!a.grt(b));}
+
+inline int operator >= (const minimpfp256 &a,const minimpfp256 &b)
+   {return(!a.sml(b));}
+
+inline std::ostream& operator << (std::ostream &out,const minimpfp256 &mf)
+   {return(out << mf.get());}
+
+inline minimpfp256 dabs(const minimpfp256 &v)
+   {return(v.abs());}
+
+inline minimpfp256 dmin(const minimpfp256 &a,const minimpfp256 &b)
+   {return((a<b)?a:b);}
+
+inline minimpfp256 dmax(const minimpfp256 &a,const minimpfp256 &b)
+   {return((a>b)?a:b);}
+
+inline minimpfp256 dsqr(const minimpfp256 &v)
+   {return(v*v);}
+
+inline minimpfp256 sqrt(const minimpfp256 &v)
+   {return(v.sqroot());}
+
+inline double round2(const minimpfp256 &v,const unsigned int n=6)
+   {return(round2(v.get(),n));}
+
+// multi-precision fixed point operators for 512bit:
+
+inline minimpfp512 operator + (const minimpfp512 &a,const minimpfp512 &b)
+   {
+   minimpfp512 result;
+   a.add(b,result);
+   return(result);
+   }
+
+inline minimpfp512 operator - (const minimpfp512 &a,const minimpfp512 &b)
+   {
+   minimpfp512 result;
+   a.sub(b,result);
+   return(result);
+   }
+
+inline minimpfp512 operator - (const minimpfp512 &v)
+   {return(v.neg());}
+
+inline minimpfp512 operator * (const minimpfp512 &a,const minimpfp512 &b)
+   {
+   minimpfp512 result;
+   a.mul(b,result);
+   return(result);
+   }
+
+inline minimpfp512 operator / (const minimpfp512 &a,const minimpfp512 &b)
+   {
+   minimpfp512 result;
+   a.div(b,result);
+   return(result);
+   }
+
+inline int operator == (const minimpfp512 &a,const minimpfp512 &b)
+   {return(a.isequal(b));}
+
+inline int operator != (const minimpfp512 &a,const minimpfp512 &b)
+   {return(a.isnotequal(b));}
+
+inline int operator < (const minimpfp512 &a,const minimpfp512 &b)
+   {return(a.sml(b));}
+
+inline int operator > (const minimpfp512 &a,const minimpfp512 &b)
+   {return(a.grt(b));}
+
+inline int operator <= (const minimpfp512 &a,const minimpfp512 &b)
+   {return(!a.grt(b));}
+
+inline int operator >= (const minimpfp512 &a,const minimpfp512 &b)
+   {return(!a.sml(b));}
+
+inline std::ostream& operator << (std::ostream &out,const minimpfp512 &mf)
+   {return(out << mf.get());}
+
+inline minimpfp512 dabs(const minimpfp512 &v)
+   {return(v.abs());}
+
+inline minimpfp512 dmin(const minimpfp512 &a,const minimpfp512 &b)
+   {return((a<b)?a:b);}
+
+inline minimpfp512 dmax(const minimpfp512 &a,const minimpfp512 &b)
+   {return((a>b)?a:b);}
+
+inline minimpfp512 dsqr(const minimpfp512 &v)
+   {return(v*v);}
+
+inline minimpfp512 sqrt(const minimpfp512 &v)
+   {return(v.sqroot());}
+
+inline double round2(const minimpfp512 &v,const unsigned int n=6)
+   {return(round2(v.get(),n));}
+
+// multi-precision fixed point operators for 1024bit:
+
+inline minimpfp1024 operator + (const minimpfp1024 &a,const minimpfp1024 &b)
+   {
+   minimpfp1024 result;
+   a.add(b,result);
+   return(result);
+   }
+
+inline minimpfp1024 operator - (const minimpfp1024 &a,const minimpfp1024 &b)
+   {
+   minimpfp1024 result;
+   a.sub(b,result);
+   return(result);
+   }
+
+inline minimpfp1024 operator - (const minimpfp1024 &v)
+   {return(v.neg());}
+
+inline minimpfp1024 operator * (const minimpfp1024 &a,const minimpfp1024 &b)
+   {
+   minimpfp1024 result;
+   a.mul(b,result);
+   return(result);
+   }
+
+inline minimpfp1024 operator / (const minimpfp1024 &a,const minimpfp1024 &b)
+   {
+   minimpfp1024 result;
+   a.div(b,result);
+   return(result);
+   }
+
+inline int operator == (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(a.isequal(b));}
+
+inline int operator != (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(a.isnotequal(b));}
+
+inline int operator < (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(a.sml(b));}
+
+inline int operator > (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(a.grt(b));}
+
+inline int operator <= (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(!a.grt(b));}
+
+inline int operator >= (const minimpfp1024 &a,const minimpfp1024 &b)
+   {return(!a.sml(b));}
+
+inline std::ostream& operator << (std::ostream &out,const minimpfp1024 &mf)
+   {return(out << mf.get());}
+
+inline minimpfp1024 dabs(const minimpfp1024 &v)
+   {return(v.abs());}
+
+inline minimpfp1024 dmin(const minimpfp1024 &a,const minimpfp1024 &b)
+   {return((a<b)?a:b);}
+
+inline minimpfp1024 dmax(const minimpfp1024 &a,const minimpfp1024 &b)
+   {return((a>b)?a:b);}
+
+inline minimpfp1024 dsqr(const minimpfp1024 &v)
+   {return(v*v);}
+
+inline minimpfp1024 sqrt(const minimpfp1024 &v)
+   {return(v.sqroot());}
+
+inline double round2(const minimpfp1024 &v,const unsigned int n=6)
+   {return(round2(v.get(),n));}
+
+// define default precision:
+
+typedef minimpfp256 minifixp;
 
 #endif
