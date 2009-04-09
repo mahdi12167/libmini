@@ -17,13 +17,13 @@ int main(int argc,char *argv[])
 
    long long int i,j;
 
-   minimf test1,test2,test3;
+   minifixp test1,test2,test3;
    double error1,error2,error3,error4,error5;
 
    // report constants:
 
-   printf("bits=%u\n",minimf::getbits());
-   printf("limit=%g\n",minimf::getlimit());
+   printf("bits=%u\n",minifixp::getbits());
+   printf("limit=%g\n",minifixp::getlimit());
 
    // add speed test:
 
@@ -35,8 +35,8 @@ int main(int argc,char *argv[])
    for (i=-addmax1-1; i<addmax1; i++)
       for (j=-addmax2-1; j<addmax2; j++)
          {
-         test1=minimf(0.1*i);
-         test2=minimf(0.1*j);
+         test1=minifixp(0.1*i);
+         test2=minifixp(0.1*j);
 
          test1.add(test2,test3);
 
@@ -59,8 +59,8 @@ int main(int argc,char *argv[])
    for (i=-mulmax1-1; i<mulmax1; i++)
       for (j=-mulmax2-1; j<mulmax2; j++)
          {
-         test1=minimf(0.1*i);
-         test2=minimf(0.1*j);
+         test1=minifixp(0.1*i);
+         test2=minifixp(0.1*j);
 
          test1.mul(test2,test3);
 
@@ -84,8 +84,8 @@ int main(int argc,char *argv[])
       for (j=-divmax2-1; j<divmax2+1; j++)
          if (j!=0)
             {
-            test1=minimf(0.1*i);
-            test2=minimf(0.1*j);
+            test1=minifixp(0.1*i);
+            test2=minifixp(0.1*j);
 
             test1.div(test2,test3);
 
@@ -106,7 +106,7 @@ int main(int argc,char *argv[])
 
    for (i=0; i<sqrtmax; i++)
       {
-      test1=minimf(0.1*i);
+      test1=minifixp(0.1*i);
 
       test2=test1.sqroot();
 
@@ -127,7 +127,7 @@ int main(int argc,char *argv[])
 
    for (i=1; i<invsqrtmax+1; i++)
       {
-      test1=minimf(0.1*i);
+      test1=minifixp(0.1*i);
 
       test2=test1.invsqroot();
 
@@ -142,40 +142,40 @@ int main(int argc,char *argv[])
 
    // precision test:
 
-   minimf c(271.3);
+   minifixp c(271.3);
 
-   minimf x=c*c*c;
-   minimf y=(x-minimf(1))*(x+minimf(1));
-   minimf z=x*x-y;
+   minifixp x=c*c*c;
+   minifixp y=(x-minifixp(1))*(x+minifixp(1));
+   minifixp z=x*x-y;
 
-   z=(z-minimf(1)).abs();
+   z=(z-minifixp(1)).abs();
 
    printf("precision test #1: %g(%d)\n",z.get(),z.getmsbit());
 
-   minimf inv=minimf(1)/c;
-   minimf mlt=inv*c;
+   minifixp inv=minifixp(1)/c;
+   minifixp mlt=inv*c;
 
-   mlt=(mlt-minimf(1)).abs();
+   mlt=(mlt-minifixp(1)).abs();
 
    printf("precision test #2: %g(%d)\n",mlt.get(),mlt.getmsbit());
 
-   minimf rx=minimf(7);
-   minimf ry=minimf(2);
-   minimf rz=minimf(2002);
-   minimf r2=rx*rx+ry*ry+rz*rz;
-   minimf r=r2.sqroot();
-   minimf rxr=rx/r;
-   minimf ryr=ry/r;
-   minimf rzr=rz/r;
-   minimf len=rxr*rxr+ryr*ryr+rzr*rzr;
+   minifixp rx=minifixp(7);
+   minifixp ry=minifixp(2);
+   minifixp rz=minifixp(2002);
+   minifixp r2=rx*rx+ry*ry+rz*rz;
+   minifixp r=r2.sqroot();
+   minifixp rxr=rx/r;
+   minifixp ryr=ry/r;
+   minifixp rzr=rz/r;
+   minifixp len=rxr*rxr+ryr*ryr+rzr*rzr;
 
-   len=(len-minimf(1)).abs();
+   len=(len-minifixp(1)).abs();
 
    printf("precision test #3: %g(%d)\n",len.get(),len.getmsbit());
 
    // validity test:
 
-   printf("validity test: %d\n",minimf::isvalid());
+   printf("validity test: %d\n",minifixp::isvalid());
 
    return(0);
    }

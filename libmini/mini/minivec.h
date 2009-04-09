@@ -194,6 +194,6 @@ inline std::ostream& operator << (std::ostream &out,const minivec<Scalar> &v)
 
 typedef minivec<float> minivecf;
 typedef minivec<double> minivecd;
-typedef minivec<minimf> minivecmf;
+typedef minivec<minifixp> minivecfixp;
 
 #endif
