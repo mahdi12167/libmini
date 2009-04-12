@@ -17,8 +17,8 @@ end
 
 # GREYCstoration
 cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
-cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.110 CImg/CImg.h
-cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.2 CImg/plugins/greycstoration.h
+cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.174 CImg/CImg.h
+cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.3 CImg/plugins/greycstoration.h
 foreach file (CImg.h plugins/greycstoration.h)
    cp -f CImg/$file greycstoration/$file
    ../mini/tabify.sh -u greycstoration/$file

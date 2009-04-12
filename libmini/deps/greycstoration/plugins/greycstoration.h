@@ -270,7 +270,7 @@ CImg& greycstoration_patch_run(const unsigned int patch_size=5, const float sigm
     bool *const stop_request = new bool;
     *stop_request = false;
 
-    for (unsigned int k=0; k<(nthreads?nthreads:1); k++) {
+    for (unsigned int k = 0; k<(nthreads?nthreads:1); k++) {
       greycstoration_params[k].patch_based = true;
       greycstoration_params[k].patch_size = patch_size;
       greycstoration_params[k].sigma_s = sigma_s;
@@ -390,9 +390,9 @@ static void* greycstoration_thread(void *arg) {
       const unsigned int b = p.tile_border;
       unsigned int ctile = 0;
       if (threed) {
-    for (unsigned int z=0; z<source.depth && !*(p.stop_request); z+=p.tile)
-      for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
-        for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
+    for (unsigned int z = 0; z<source.depth && !*(p.stop_request); z+=p.tile)
+      for (unsigned int y = 0; y<source.height && !*(p.stop_request); y+=p.tile)
+        for (unsigned int x = 0; x<source.width && !*(p.stop_request); x+=p.tile)
           if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
         const unsigned int
           x1 = x+p.tile-1,
@@ -412,8 +412,8 @@ static void* greycstoration_thread(void *arg) {
         temporary.draw_image(x,y,z,img.crop(b,b,b,img.width-b,img.height-b,img.depth-b));
           }
       } else {
-    for (unsigned int y=0; y<source.height && !*(p.stop_request); y+=p.tile)
-      for (unsigned int x=0; x<source.width && !*(p.stop_request); x+=p.tile)
+    for (unsigned int y = 0; y<source.height && !*(p.stop_request); y+=p.tile)
+      for (unsigned int x = 0; x<source.width && !*(p.stop_request); x+=p.tile)
         if (!p.nb_threads || ((ctile++)%p.nb_threads)==p.thread) {
           const unsigned int
         x1 = x+p.tile-1,
@@ -439,7 +439,7 @@ static void* greycstoration_thread(void *arg) {
     bool stopflag = true;
     do {
       stopflag = true;
-      for (unsigned int k=1; k<p.nb_threads; k++) if (source.greycstoration_params[k].is_running) stopflag = false;
+      for (unsigned int k = 1; k<p.nb_threads; k++) if (source.greycstoration_params[k].is_running) stopflag = false;
       if (!stopflag) cimg::wait(50);
     } while (!stopflag);
       }
@@ -469,7 +469,6 @@ static void* greycstoration_thread(void *arg) {
     }
     return 0;
   }
-
 
 #define cimg_plugin_greycstoration_count \
   if (!*(greycstoration_params->stop_request)) ++(*greycstoration_params->counter); else return *this;
