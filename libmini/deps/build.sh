@@ -6,7 +6,7 @@
 
 # curl
 cvs -d:pserver:anonymous:@cool.haxx.se:/cvsroot/curl login
-cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co -r curl-7_19_2 curl
+cvs -d:pserver:anonymous@cool.haxx.se:/cvsroot/curl co -r curl-7_19_4 curl
 
 # squish
 svn co -r 19 http://libsquish.googlecode.com/svn/trunk libsquish
