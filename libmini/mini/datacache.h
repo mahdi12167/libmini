@@ -136,7 +136,7 @@ class datacache
    float getelevini_maxelev() {return(ELEVINI_MAXELEV);}
    int getelevini_coordsys() {return(ELEVINI_COORDSYS);}
    int getelevini_coordsys_datum() {return(ELEVINI_COORDSYS_DATUM);}
-   int getelevini_coordsys_utmzone() {return(ELEVINI_COORDSYS_UTMZONE);}
+   int getelevini_coordsys_zone() {return(ELEVINI_COORDSYS_ZONE);}
 
    //! getters for vtb imag ini file
    BOOLINT hasimagini() {return(HAS_IMAGINI);}
@@ -155,7 +155,7 @@ class datacache
    int getimagini_maxtexsize() {return(IMAGINI_MAXTEXSIZE);}
    int getimagini_coordsys() {return(IMAGINI_COORDSYS);}
    int getimagini_coordsys_datum() {return(IMAGINI_COORDSYS_DATUM);}
-   int getimagini_coordsys_utmzone() {return(IMAGINI_COORDSYS_UTMZONE);}
+   int getimagini_coordsys_zone() {return(IMAGINI_COORDSYS_ZONE);}
 
    //! query total number of tiles in the cache
    int gettotal() {return(CLOUD->gettotal());}
@@ -261,7 +261,7 @@ class datacache
    float ELEVINI_MAXELEV;
    int ELEVINI_COORDSYS;
    int ELEVINI_COORDSYS_DATUM;
-   int ELEVINI_COORDSYS_UTMZONE;
+   int ELEVINI_COORDSYS_ZONE;
 
    BOOLINT HAS_IMAGINI;
    BOOLINT HAS_IMAGINI_GEO;
@@ -279,7 +279,7 @@ class datacache
    int IMAGINI_MAXTEXSIZE;
    int IMAGINI_COORDSYS;
    int IMAGINI_COORDSYS_DATUM;
-   int IMAGINI_COORDSYS_UTMZONE;
+   int IMAGINI_COORDSYS_ZONE;
 
    int CONFIGURE_DONTFREE;
    int CONFIGURE_LOCTHREADS;

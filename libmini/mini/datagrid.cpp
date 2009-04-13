@@ -542,7 +542,7 @@ void datagrid::trigger(const double time,
    if (ep.type!=minicoord::MINICOORD_LINEAR)
       if (CRS!=minicoord::MINICOORD_LINEAR)
          {
-         epd=ep+minicoord(scale*ed,ep.type,ep.utm_zone,ep.utm_datum);
+         epd=ep+minicoord(scale*ed,ep.type,ep.crs_zone,ep.crs_datum);
 
          ep.convert2(CRS);
          epd.convert2(CRS);

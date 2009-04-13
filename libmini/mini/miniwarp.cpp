@@ -123,8 +123,8 @@ miniwarp::miniwarp(): miniwarpbase()
 
    SYSDAT=minicoord::MINICOORD_NONE;
 
-   UTMZONE=0;
-   UTMDATUM=minicoord::MINICOORD_DATUM_NONE;
+   CRSZONE=0;
+   CRSDATUM=minicoord::MINICOORD_DATUM_NONE;
 
    CENTERGEO=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
    NORTHGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
@@ -189,16 +189,16 @@ void miniwarp::def_tileset(const minicoord::MINICOORD sysTLS)
 void miniwarp::def_data(const minicoord bboxDAT[2])
    {
    if (bboxDAT[0].type!=bboxDAT[1].type ||
-       bboxDAT[0].utm_zone!=bboxDAT[1].utm_zone ||
-       bboxDAT[0].utm_datum!=bboxDAT[1].utm_datum) ERRORMSG();
+       bboxDAT[0].crs_zone!=bboxDAT[1].crs_zone ||
+       bboxDAT[0].crs_datum!=bboxDAT[1].crs_datum) ERRORMSG();
 
    BBOXDAT[0]=bboxDAT[0];
    BBOXDAT[1]=bboxDAT[1];
 
    SYSDAT=BBOXDAT[0].type;
 
-   UTMZONE=BBOXDAT[0].utm_zone;
-   UTMDATUM=BBOXDAT[0].utm_datum;
+   CRSZONE=BBOXDAT[0].crs_zone;
+   CRSDATUM=BBOXDAT[0].crs_datum;
 
    HAS_DATA=TRUE;
 
@@ -280,13 +280,13 @@ minicoord miniwarp::getnorth()
 minicoord::MINICOORD miniwarp::getgeo()
    {return(SYSGEO);}
 
-// get utm zone of data
-int miniwarp::getutmzone()
-   {return(UTMZONE);}
+// get crs zone of data
+int miniwarp::getcrszone()
+   {return(CRSZONE);}
 
-// get utm datum of data
-int miniwarp::getutmdatum()
-   {return(UTMDATUM);}
+// get crs datum of data
+int miniwarp::getcrsdatum()
+   {return(CRSDATUM);}
 
 // get local down-scaling factor
 double miniwarp::getscaleloc()
@@ -318,7 +318,7 @@ void miniwarp::setcorners(const miniv3d p[8],const miniv3d n[8],double e)
 // perform warp of a point
 minicoord miniwarp::warp(const miniv4d &p)
    {
-   if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,UTMZONE,UTMDATUM)));
+   if (FROM==MINIWARP_DATA) return(warp(minicoord(p,SYSDAT,CRSZONE,CRSDATUM)));
    else return(warp(minicoord(p,minicoord::MINICOORD_LINEAR)));
    }
 
@@ -337,12 +337,12 @@ minicoord miniwarp::warp(const minicoord &p)
       else if (TO==MINIWARP_DATA)
          {
          p2=p;
-         p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
          {
          p1=p;
-         p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
@@ -357,28 +357,41 @@ minicoord miniwarp::warp(const minicoord &p)
          {
          p2=p;
          if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=SYSTLS;
-         p2.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
          {
          p1=p;
          if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
-         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,UTMZONE,UTMDATUM);
+         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
    else
       if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
-         {
-         v1=miniv4d(p.vec,1.0);
-         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,UTMZONE,UTMDATUM);
-         p2.convert2(SYSTLS);
-         }
+         if (NONLIN)
+            {
+            v1=miniv4d(p.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSTLS);
+            }
+         else
+            {
+            v1=miniv4d(p.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
+            p2.convert2(SYSTLS);
+            }
       else if (TO==MINIWARP_DATA)
-         {
-         v1=miniv4d(p.vec,1.0);
-         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,UTMZONE,UTMDATUM);
-         }
+         if (NONLIN)
+            {
+            v1=miniv4d(p.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSTLS);
+            p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
+            }
+         else
+            {
+            v1=miniv4d(p.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
+            }
       else
          {
          v1=miniv4d(p.vec,1.0);
@@ -403,7 +416,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
       }
 
    p1=warp(p);
-   p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.utm_zone,p.utm_datum));
+   p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.crs_zone,p.crs_datum));
    v1=p2.vec-p1.vec;
    v1.normalize();
 

@@ -389,9 +389,9 @@ class minipoint
    static minipointrndr *getrndr_brick(int passes) {return(&RNDR_BRICK[passes]);}
 
    //! configuring
-   void configure_srcdatum(int datum=3); // source UTM datum
-   void configure_dstzone(int zone=0); // dest UTM zone (LL=0)
-   void configure_dstdatum(int datum=3); // dest UTM datum
+   void configure_srcdatum(int datum=3); // source crs datum
+   void configure_dstzone(int zone=0); // dest crs zone (LL=0)
+   void configure_dstdatum(int datum=3); // dest crs datum
    void configure_automap(int automap=0); // take mapping from first waypoint
 
    //! configuring of signpost renderer

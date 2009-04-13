@@ -12,8 +12,8 @@ minicoord::minicoord()
    vec=miniv4d(0.0);
    type=MINICOORD_NONE;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 // copy constructor
@@ -22,8 +22,8 @@ minicoord::minicoord(const minicoord &c)
    vec=c.vec;
    type=c.type;
 
-   utm_zone=c.utm_zone;
-   utm_datum=c.utm_datum;
+   crs_zone=c.crs_zone;
+   crs_datum=c.crs_datum;
    }
 
 // constructors:
@@ -33,8 +33,8 @@ minicoord::minicoord(const miniv3d &v)
    vec=v;
    type=MINICOORD_LINEAR;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 minicoord::minicoord(const miniv3d &v,const MINICOORD t)
@@ -42,8 +42,8 @@ minicoord::minicoord(const miniv3d &v,const MINICOORD t)
    vec=v;
    type=t;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 minicoord::minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum)
@@ -51,8 +51,8 @@ minicoord::minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MIN
    vec=v;
    type=t;
 
-   utm_zone=zone;
-   utm_datum=datum;
+   crs_zone=zone;
+   crs_datum=datum;
    }
 
 minicoord::minicoord(const miniv4d &v)
@@ -60,8 +60,8 @@ minicoord::minicoord(const miniv4d &v)
    vec=v;
    type=MINICOORD_LINEAR;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 minicoord::minicoord(const miniv4d &v,const MINICOORD t)
@@ -69,8 +69,8 @@ minicoord::minicoord(const miniv4d &v,const MINICOORD t)
    vec=v;
    type=t;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 minicoord::minicoord(const miniv4d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum)
@@ -78,8 +78,8 @@ minicoord::minicoord(const miniv4d &v,const MINICOORD t,const int zone,const MIN
    vec=v;
    type=t;
 
-   utm_zone=zone;
-   utm_datum=datum;
+   crs_zone=zone;
+   crs_datum=datum;
    }
 
 minicoord::minicoord(const double cx,const double cy,const double cz,const MINICOORD t)
@@ -87,8 +87,8 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
    vec=miniv4d(cx,cy,cz);
    type=t;
 
-   utm_zone=0;
-   utm_datum=MINICOORD_DATUM_NONE;
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_NONE;
    }
 
 minicoord::minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const MINICOORD_DATUM datum)
@@ -96,8 +96,8 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
    vec=miniv4d(cx,cy,cz);
    type=t;
 
-   utm_zone=zone;
-   utm_datum=datum;
+   crs_zone=zone;
+   crs_datum=datum;
    }
 
 // destructor
@@ -118,21 +118,21 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_MERC:
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
-               utm_zone=zone;
-               utm_datum=datum;
+               crs_zone=zone;
+               crs_datum=datum;
                break;
             case MINICOORD_ECEF:
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();
@@ -144,23 +144,23 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_LLH:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
-               utm_zone=zone;
-               utm_datum=datum;
+               crs_zone=zone;
+               crs_datum=datum;
                break;
             case MINICOORD_ECEF:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();
@@ -170,25 +170,25 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
          switch (t)
             {
             case MINICOORD_LLH:
-               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_MERC:
-               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_ECEF:
-               minicrs::UTM2LL(vec.x,vec.y,utm_zone,utm_datum,&vec.y,&vec.x);
+               minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();
@@ -203,8 +203,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                xyz[2]=vec.z;
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_MERC:
                xyz[0]=vec.x;
@@ -213,8 +213,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
-               utm_zone=0;
-               utm_datum=MINICOORD_DATUM_NONE;
+               crs_zone=0;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
                xyz[0]=vec.x;
@@ -223,8 +223,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
-               utm_zone=zone;
-               utm_datum=datum;
+               crs_zone=zone;
+               crs_datum=datum;
                break;
             case MINICOORD_NONE:
             default: ERRORMSG();

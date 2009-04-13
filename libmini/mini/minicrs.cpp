@@ -13,8 +13,8 @@ const double minicrs::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity 
 const double minicrs::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
 const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
-int minicrs::act_datum=0; // actual configured datum
-int minicrs::act_zone=0; // actual configured UTM zone
+int minicrs::crs_datum=0; // actual configured crs datum
+int minicrs::crs_zone=0; // actual configured crs zone
 
 double minicrs::r_major=EARTH_radius,minicrs::r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
 double minicrs::o_dx=0.0,minicrs::o_dy=0.0,minicrs::o_dz=0.0; // origin shift of ellipsoid
@@ -114,7 +114,7 @@ void minicrs::choose_datum(int datum)
    {
    if (datum<1 || datum>14) datum=3; // fallback to WGS84
 
-   if (datum==act_datum) return;
+   if (datum==crs_datum) return;
 
    switch (datum)
       {
@@ -154,7 +154,7 @@ void minicrs::choose_datum(int datum)
       default: ERRORMSG();
       }
 
-   act_datum=datum;
+   crs_datum=datum;
    }
 
 // transform Lat/Lon to UTM
@@ -459,7 +459,7 @@ void minicrs::initUTM(int zone) // zone number
    {
    if (zone==0 || abs(zone)>60) ERRORMSG();
 
-   if (zone==act_zone) return;
+   if (zone==crs_zone) return;
 
    lon_center=(6*abs(zone)-183)*60*60;
 
@@ -476,7 +476,7 @@ void minicrs::initUTM(int zone) // zone number
 
    esp=es/(1.0-es);
 
-   act_zone=zone;
+   crs_zone=zone;
    }
 
 // calculate the UTM equations

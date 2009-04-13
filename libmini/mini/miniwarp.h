@@ -137,11 +137,11 @@ class miniwarp: public miniwarpbase
    //! get geo-graphic coordinate system
    minicoord::MINICOORD getgeo();
 
-   //! get utm zone of data
-   int getutmzone();
+   //! get crs zone of data
+   int getcrszone();
 
-   //! get utm datum of data
-   int getutmdatum();
+   //! get crs datum of data
+   int getcrsdatum();
 
    //! get local down-scaling factor
    double getscaleloc();
@@ -169,8 +169,8 @@ class miniwarp: public miniwarpbase
 
    minicoord::MINICOORD SYSDAT;
 
-   int UTMZONE;
-   minicoord::MINICOORD_DATUM UTMDATUM;
+   int CRSZONE;
+   minicoord::MINICOORD_DATUM CRSDATUM;
 
    minicoord CENTERGEO;
    minicoord NORTHGEO;

@@ -73,7 +73,7 @@ datacache::datacache(miniload *terrain)
    ELEVINI_MAXELEV=0.0f;
    ELEVINI_COORDSYS=0;
    ELEVINI_COORDSYS_DATUM=0;
-   ELEVINI_COORDSYS_UTMZONE=0;
+   ELEVINI_COORDSYS_ZONE=0;
 
    HAS_IMAGINI=HAS_IMAGINI_GEO=HAS_IMAGINI_COORDSYS=FALSE;
 
@@ -90,7 +90,7 @@ datacache::datacache(miniload *terrain)
    IMAGINI_MAXTEXSIZE=0;
    IMAGINI_COORDSYS=0;
    IMAGINI_COORDSYS_DATUM=0;
-   IMAGINI_COORDSYS_UTMZONE=0;
+   IMAGINI_COORDSYS_ZONE=0;
 
    CONFIGURE_DONTFREE=0;
    CONFIGURE_LOCTHREADS=1;
@@ -545,7 +545,7 @@ void datacache::loadvtbelevini()
             HAS_ELEVINI_COORDSYS=TRUE;
 
             // read coord sys info
-            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&ELEVINI_COORDSYS,&ELEVINI_COORDSYS_DATUM,&ELEVINI_COORDSYS_UTMZONE)!=3) HAS_ELEVINI_COORDSYS=FALSE;
+            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&ELEVINI_COORDSYS,&ELEVINI_COORDSYS_DATUM,&ELEVINI_COORDSYS_ZONE)!=3) HAS_ELEVINI_COORDSYS=FALSE;
             }
          }
 
@@ -681,7 +681,7 @@ void datacache::loadvtbimagini()
             HAS_IMAGINI_COORDSYS=TRUE;
 
             // read coord sys info
-            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&IMAGINI_COORDSYS,&IMAGINI_COORDSYS_DATUM,&IMAGINI_COORDSYS_UTMZONE)!=3) HAS_IMAGINI_COORDSYS=FALSE;
+            if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&IMAGINI_COORDSYS,&IMAGINI_COORDSYS_DATUM,&IMAGINI_COORDSYS_ZONE)!=3) HAS_IMAGINI_COORDSYS=FALSE;
             }
          }
 

@@ -442,7 +442,6 @@ void minipoint::load(const char *filename,
    if (TILE==NULL) ERRORMSG();
 
    if (TILE->getwarp()!=NULL)
-      {
       if (TILE->getwarp()->getdat()==minicoord::MINICOORD_LLH)
          {
          CONFIGURE_DSTZONE=0;
@@ -450,12 +449,11 @@ void minipoint::load(const char *filename,
          }
       else if (TILE->getwarp()->getdat()==minicoord::MINICOORD_UTM)
          {
-         CONFIGURE_DSTZONE=TILE->getwarp()->getutmzone();
-         CONFIGURE_DSTDATUM=TILE->getwarp()->getutmdatum();
+         CONFIGURE_DSTZONE=TILE->getwarp()->getcrszone();
+         CONFIGURE_DSTDATUM=TILE->getwarp()->getcrsdatum();
 
          TAKEN=TRUE;
          }
-      }
 
    wpname=getfile(filename,ALTPATH);
 

@@ -83,10 +83,10 @@ class minicoord
                 const miniv3d dst[8]); // 8 points in warp domain
 
    miniv4d vec; // geo-referenced coordinates (plus time)
-   MINICOORD type; // actual coordinate system type
+   MINICOORD type; // actual coordinate reference system type
 
-   int utm_zone; // actual UTM zone
-   MINICOORD_DATUM utm_datum; // actual UTM datum
+   int crs_zone; // actual crs zone
+   MINICOORD_DATUM crs_datum; // actual crs datum
    };
 
 // associated arithmetic operator +=
@@ -133,30 +133,30 @@ inline std::ostream& operator << (std::ostream &out,const minicoord &c);
 // implementation of inline operators:
 
 inline minicoord operator + (const minicoord &a,const minicoord &b)
-   {return(minicoord(a.vec+b.vec,a.type,a.utm_zone,a.utm_datum));}
+   {return(minicoord(a.vec+b.vec,a.type,a.crs_zone,a.crs_datum));}
 
 inline minicoord operator - (const minicoord &a,const minicoord &b)
-   {return(minicoord(a.vec-b.vec,a.type,a.utm_zone,a.utm_datum));}
+   {return(minicoord(a.vec-b.vec,a.type,a.crs_zone,a.crs_datum));}
 
 inline minicoord operator - (const minicoord &c)
-   {return(minicoord(-c.vec,c.type,c.utm_zone,c.utm_datum));}
+   {return(minicoord(-c.vec,c.type,c.crs_zone,c.crs_datum));}
 
 inline minicoord operator * (const double a,const minicoord &b)
-   {return(minicoord(a*b.vec,b.type,b.utm_zone,b.utm_datum));}
+   {return(minicoord(a*b.vec,b.type,b.crs_zone,b.crs_datum));}
 
 inline minicoord operator * (const minicoord &a,const double b)
-   {return(minicoord(a.vec*b,a.type,a.utm_zone,a.utm_datum));}
+   {return(minicoord(a.vec*b,a.type,a.crs_zone,a.crs_datum));}
 
 inline minicoord operator / (const minicoord &a,const double b)
-   {return(minicoord(a.vec/b,a.type,a.utm_zone,a.utm_datum));}
+   {return(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum));}
 
 inline int operator == (const minicoord &a,const minicoord &b)
-   {return(a.vec==b.vec && a.type==b.type && a.utm_zone==b.utm_zone && a.utm_datum==b.utm_datum);}
+   {return(a.vec==b.vec && a.type==b.type && a.crs_zone==b.crs_zone && a.crs_datum==b.crs_datum);}
 
 inline int operator != (const minicoord &a,const minicoord &b)
-   {return(a.vec!=b.vec || a.type!=b.type || a.utm_zone!=b.utm_zone || a.utm_datum!=b.utm_datum);}
+   {return(a.vec!=b.vec || a.type!=b.type || a.crs_zone!=b.crs_zone || a.crs_datum!=b.crs_datum);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
-   {return(out << '(' << c.vec << ',' << c.type << ',' << c.utm_zone << ',' << c.utm_datum << ')');}
+   {return(out << '(' << c.vec << ',' << c.type << ',' << c.crs_zone << ',' << c.crs_datum << ')');}
 
 #endif

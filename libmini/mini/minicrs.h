@@ -92,8 +92,8 @@ class minicrs
 
    private:
 
-   static int act_datum;
-   static int act_zone;
+   static int crs_datum;
+   static int crs_zone;
 
    static double r_major,r_minor;
    static double o_dx,o_dy,o_dz;
