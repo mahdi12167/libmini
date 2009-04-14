@@ -210,6 +210,9 @@ void initparams()
 
    viewer->getearth()->get(eprms);
 
+   eprms.warpmode=4;
+   eprms.nonlin=TRUE;
+
    eprms.usefog=TRUE;
    eprms.useshaders=TRUE;
    eprms.usediffuse=FALSE;
@@ -238,8 +241,6 @@ void initparams()
    tprms.res=VIEWER_RES;
    tprms.range=VIEWER_RANGE;
    tprms.sealevel=VIEWER_SEALEVEL;
-
-   tprms.nonlin=TRUE;
 
    tprms.genmipmaps=TRUE;
    tprms.automipmap=TRUE;
