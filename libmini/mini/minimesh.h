@@ -228,7 +228,7 @@ class minimesh: public minidyna<minihedron>
    {
    public:
 
-   typedef minifixp Scalar;
+   typedef minimpfp256 Scalar;
 
    //! default constructor
    minimesh();

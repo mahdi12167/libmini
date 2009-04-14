@@ -330,7 +330,7 @@ class minigeom_polyhedron
 
    protected:
 
-   static const Scalar maxrange() {static Scalar v(1E+9); return(v);}
+   static const Scalar maxrange() {static Scalar v(1E9); return(v);}
 
    public:
 
