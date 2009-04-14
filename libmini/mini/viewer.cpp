@@ -747,7 +747,6 @@ void renderhud()
    double dist;
    minicoord hit;
    minicoord hit_llh;
-   double hit_elev;
 
    char str[MAXSTR];
 
@@ -833,28 +832,23 @@ void renderhud()
 
             if (dist!=MAXFLOAT)
                {
-               hit=nst->map_g2l(eye);
-               hit+=nst->rot_g2l(dir,eye)*nst->len_g2l(dist);
-               hit=nst->map_l2g(hit);
+               hit=nst->map_g2t(eye+dist*dir);
+               if (hit.type!=minicoord::MINICOORD_LINEAR) hit.convert2(minicoord::MINICOORD_ECEF);
 
                hit_llh=hit;
-               hit_llh.type=minicoord::MINICOORD_ECEF;
-               hit_llh.convert2(minicoord::MINICOORD_LLH);
-
-               hit_elev=viewer->getearth()->getterrain()->getheight(hit);
-               if (hit_elev==-MAXFLOAT) hit_elev=0.0;
+               if (hit_llh.type!=minicoord::MINICOORD_LINEAR) hit_llh.convert2(minicoord::MINICOORD_LLH);
 
                if (dist<1000.0)
                   snprintf(str,MAXSTR,"dist=%3.3fm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
-                           dist,hit_elev,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+                           dist,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
                else
                   snprintf(str,MAXSTR,"dist=%3.3fkm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
-                           dist/1000.0,hit_elev,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+                           dist/1000.0,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
 
                glTranslatef(0.05f,-0.01f,0.0f);
                minitext::drawstring(0.5f,240.0f,1.0f,0.25f,1.0f,str);
 
-               reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_elev);
+               reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_llh.vec.z);
                }
             }
          }

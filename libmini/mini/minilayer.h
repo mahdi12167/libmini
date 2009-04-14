@@ -369,6 +369,7 @@ class minilayer
    miniwarp *WARP;
 
    int WARPMODE;
+   BOOLINT NONLIN;
    double SCALE;
 
    minilayer *REFERENCE;

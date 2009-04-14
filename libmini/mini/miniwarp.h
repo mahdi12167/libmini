@@ -161,6 +161,9 @@ class miniwarp: public miniwarpbase
    //! perform warp of a vector v at position p using the inverse transpose
    miniv3d invtra(const miniv3d &v,const minicoord &p);
 
+   //! enable non-linear warp
+   void usenonlin(BOOLINT on);
+
    protected:
 
    minicoord::MINICOORD SYSTLS;

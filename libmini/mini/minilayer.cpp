@@ -176,6 +176,7 @@ minilayer::minilayer(minicache *cache)
    WARP=NULL;
 
    WARPMODE=LPARAMS.warpmode;
+   NONLIN=LPARAMS.nonlin;
    SCALE=LPARAMS.scale;
 
    REFERENCE=NULL;
@@ -280,7 +281,9 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          TILECACHE->getcloud()->configure_timeslice(LPARAMS.timeslice);
          }
 
-      if (LPARAMS.warpmode!=WARPMODE || LPARAMS.scale!=SCALE)
+      if (LPARAMS.warpmode!=WARPMODE ||
+          LPARAMS.nonlin!=NONLIN ||
+          LPARAMS.scale!=SCALE)
          {
          createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
                     LPARAMS.centerGEO,LPARAMS.northGEO,
@@ -290,6 +293,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          updatecoords();
 
          WARPMODE=LPARAMS.warpmode;
+         NONLIN=LPARAMS.nonlin;
          SCALE=LPARAMS.scale;
          }
       }
@@ -921,9 +925,11 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    double radius,scale;
 
-   // define tileset coordinates:
+   // create warp object:
 
    if (WARP==NULL) WARP=new miniwarp();
+
+   // define tileset coordinates:
 
    WARP->def_tileset(minicoord::MINICOORD_ECEF);
 
@@ -1044,6 +1050,11 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       }
 
    WARP->def_2affine(mtxAFF);
+
+   // use non-linear warp:
+
+   if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4) WARP->usenonlin(LPARAMS.nonlin);
+   else WARP->usenonlin(FALSE);
 
    // define reference coordinates:
 

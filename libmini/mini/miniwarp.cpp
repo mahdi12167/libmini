@@ -441,6 +441,14 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    return(v1);
    }
 
+// enable non-linear warp
+void miniwarp::usenonlin(BOOLINT on)
+   {
+   NONLIN=on;
+
+   update_mtx();
+   }
+
 // update conversion matrices
 void miniwarp::update_mtx()
    {
@@ -548,8 +556,7 @@ void miniwarp::update_mtx()
 
       if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSTLS=minicoord::MINICOORD_LINEAR;
 
-      if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
-      else if (NONLIN) mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REF,INV_2AFF);
+      if (SYSTLS==minicoord::MINICOORD_LINEAR || NONLIN) cpy_mtx(MTX_2MET,MTX_ONE);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);
