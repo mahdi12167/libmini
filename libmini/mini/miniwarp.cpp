@@ -340,12 +340,20 @@ minicoord miniwarp::warp(const minicoord &p)
          p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
-         {
-         p1=p;
-         p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
-         v1=miniv4d(p1.vec,1.0);
-         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-         }
+         if (NONLIN)
+            {
+            p1=p;
+            p1.convert2(SYSTLS);
+            v1=miniv4d(p1.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+            }
+         else
+            {
+            p1=p;
+            p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+            v1=miniv4d(p1.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+            }
    else if (FROM==MINIWARP_TILESET)
       if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
@@ -360,13 +368,22 @@ minicoord miniwarp::warp(const minicoord &p)
          p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
-         {
-         p1=p;
-         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
-         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
-         v1=miniv4d(p1.vec,1.0);
-         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-         }
+         if (NONLIN)
+            {
+            p1=p;
+            if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
+            if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSTLS);
+            v1=miniv4d(p1.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+            }
+         else
+            {
+            p1=p;
+            if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
+            if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+            v1=miniv4d(p1.vec,1.0);
+            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+            }
    else
       if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          if (NONLIN)
@@ -410,10 +427,11 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    static const double scale=1000.0;
 
    if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSTLS==minicoord::MINICOORD_LINEAR)
-      {
-      v1=miniv4d(v,1.0);
-      return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
-      }
+      if (!NONLIN)
+         {
+         v1=miniv4d(v,1.0);
+         return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
+         }
 
    p1=warp(p);
    p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.crs_zone,p.crs_datum));
@@ -531,6 +549,7 @@ void miniwarp::update_mtx()
       if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSTLS=minicoord::MINICOORD_LINEAR;
 
       if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
+      else if (NONLIN) mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT,INV_2ORG,INV_2LOC,INV_2INT,INV_2REF,INV_2AFF);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);
