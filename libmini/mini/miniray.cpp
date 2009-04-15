@@ -56,20 +56,21 @@ void miniray::clearbuffer()
 void miniray::addtriangles(float **array,int index,int num,int stride,
                            miniv3d *scaling,miniv3d *offset,
                            int swapyz,miniwarpbase *warp,
+                           miniv3d *crdgen,
                            int calcbounds)
    {
    int n;
 
-   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLES) addtriangles_chunked(array,index,num,stride,scaling,offset,swapyz,warp,calcbounds);
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLES) addtriangles_chunked(array,index,num,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
    else
       {
       for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLES; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLES)
          {
-         addtriangles_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLES,stride,scaling,offset,swapyz,warp,calcbounds);
+         addtriangles_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLES,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
          index+=(3+stride)*CONFIGURE_MAXCHUNKSIZE_TRIANGLES;
          }
 
-      addtriangles_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,calcbounds);
+      addtriangles_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
       }
    }
 
@@ -77,6 +78,7 @@ void miniray::addtriangles(float **array,int index,int num,int stride,
 void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
                                    miniv3d *scaling,miniv3d *offset,
                                    int swapyz,miniwarpbase *warp,
+                                   miniv3d *crdgen,
                                    int calcbounds)
    {
    TRIANGLEREF *ref;
@@ -103,6 +105,9 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 
    ref->warp=warp;
 
+   if (crdgen!=NULL) ref->crdgen=*crdgen;
+   else ref->crdgen=miniv3d(0.0,0.0,0.0);
+
    if (calcbounds!=0) calcbound(ref);
    else ref->hasbound=0;
 
@@ -114,18 +119,19 @@ void miniray::addtriangles_chunked(float **array,int index,int num,int stride,
 void miniray::addtrianglefans(float **array,int index,int num,int stride,
                               miniv3d *scaling,miniv3d *offset,
                               int swapyz,miniwarpbase *warp,
+                              miniv3d *crdgen,
                               int calcbounds)
    {
    int n;
 
    int i,k;
 
-   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS) addtrianglefans_chunked(array,index,num,stride,scaling,offset,swapyz,warp,calcbounds);
+   if (num<=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS) addtrianglefans_chunked(array,index,num,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
    else
       {
       for (n=0; n<num-CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; n+=CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS)
          {
-         addtrianglefans_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS,stride,scaling,offset,swapyz,warp,calcbounds);
+         addtrianglefans_chunked(array,index,CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
 
          for (i=0; i<CONFIGURE_MAXCHUNKSIZE_TRIANGLEFANS; i++)
             {
@@ -134,7 +140,7 @@ void miniray::addtrianglefans(float **array,int index,int num,int stride,
             }
          }
 
-      addtrianglefans_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,calcbounds);
+      addtrianglefans_chunked(array,index,num-n,stride,scaling,offset,swapyz,warp,crdgen,calcbounds);
       }
    }
 
@@ -142,6 +148,7 @@ void miniray::addtrianglefans(float **array,int index,int num,int stride,
 void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride,
                                       miniv3d *scaling,miniv3d *offset,
                                       int swapyz,miniwarpbase *warp,
+                                      miniv3d *crdgen,
                                       int calcbounds)
    {
    TRIANGLEREF *ref;
@@ -167,6 +174,9 @@ void miniray::addtrianglefans_chunked(float **array,int index,int num,int stride
    ref->swapyz=swapyz;
 
    ref->warp=warp;
+
+   if (crdgen!=NULL) ref->crdgen=*crdgen;
+   else ref->crdgen=miniv3d(0.0,0.0,0.0);
 
    if (calcbounds!=0) calcbound(ref);
    else ref->hasbound=0;
@@ -362,7 +372,7 @@ void miniray::getbounds(miniv3d &bmin,miniv3d &bmax)
       {
       if (ref->hasbound==0) calcbound(ref);
 
-      p=calcpoint(ref->warp,ref->b);
+      p=calcpoint(ref->warp,ref->b,ref->crdgen);
       r=sqrt(ref->r2);
 
       if (p.x-r<b1.x) b1.x=p.x-r;
@@ -593,9 +603,9 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
-               v3=warp->triwarp(v3);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
+               v3=warp->triwarp(v3,ref->crdgen);
                }
             else
                {
@@ -639,9 +649,9 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
-               v3=warp->triwarp(v3);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
+               v3=warp->triwarp(v3,ref->crdgen);
                }
             else
                {
@@ -684,8 +694,8 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
                }
             else
                {
@@ -706,7 +716,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
-               if (warp!=NULL) v3=warp->triwarp(v3);
+               if (warp!=NULL) v3=warp->triwarp(v3,ref->crdgen);
                else
                   {
                   v3.x=v3.x*ref->scaling.x+ref->offset.x;
@@ -742,8 +752,8 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
                }
             else
                {
@@ -764,7 +774,7 @@ double miniray::calcdist(TRIANGLEREF *ref,
 
                array+=stride;
 
-               if (warp!=NULL) v3=warp->triwarp(v3);
+               if (warp!=NULL) v3=warp->triwarp(v3,ref->crdgen);
                else
                   {
                   v3.x=v3.x*ref->scaling.x+ref->offset.x;
@@ -828,9 +838,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
-               v3=warp->triwarp(v3);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
+               v3=warp->triwarp(v3,ref->crdgen);
                }
             else
                {
@@ -847,9 +857,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
                }
 
-            result.append(calcpoint(ref->warp,v1));
-            result.append(calcpoint(ref->warp,v2));
-            result.append(calcpoint(ref->warp,v3));
+            result.append(calcpoint(ref->warp,v1,ref->crdgen));
+            result.append(calcpoint(ref->warp,v2,ref->crdgen));
+            result.append(calcpoint(ref->warp,v3,ref->crdgen));
             }
       else
          for (i=0; i<num; i++)
@@ -874,9 +884,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
-               v3=warp->triwarp(v3);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
+               v3=warp->triwarp(v3,ref->crdgen);
                }
             else
                {
@@ -893,9 +903,9 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v3.z=v3.z*ref->scaling.z+ref->offset.z;
                }
 
-            result.append(calcpoint(ref->warp,v1));
-            result.append(calcpoint(ref->warp,v2));
-            result.append(calcpoint(ref->warp,v3));
+            result.append(calcpoint(ref->warp,v1,ref->crdgen));
+            result.append(calcpoint(ref->warp,v2,ref->crdgen));
+            result.append(calcpoint(ref->warp,v3,ref->crdgen));
             }
    else
       if (ref->swapyz==0)
@@ -919,8 +929,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
                }
             else
                {
@@ -933,8 +943,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v2.z=v2.z*ref->scaling.z+ref->offset.z;
                }
 
-            v1=calcpoint(ref->warp,v1);
-            v2=calcpoint(ref->warp,v2);
+            v1=calcpoint(ref->warp,v1,ref->crdgen);
+            v2=calcpoint(ref->warp,v2,ref->crdgen);
 
             for (j=2; j<k; j++)
                {
@@ -944,7 +954,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
-               if (warp!=NULL) v3=warp->triwarp(v3);
+               if (warp!=NULL) v3=warp->triwarp(v3,ref->crdgen);
                else
                   {
                   v3.x=v3.x*ref->scaling.x+ref->offset.x;
@@ -952,7 +962,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                   v3.z=v3.z*ref->scaling.z+ref->offset.z;
                   }
 
-               v3=calcpoint(ref->warp,v3);
+               v3=calcpoint(ref->warp,v3,ref->crdgen);
 
                result.append(v1);
                result.append(v2);
@@ -982,8 +992,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
             if (warp!=NULL)
                {
-               v1=warp->triwarp(v1);
-               v2=warp->triwarp(v2);
+               v1=warp->triwarp(v1,ref->crdgen);
+               v2=warp->triwarp(v2,ref->crdgen);
                }
             else
                {
@@ -996,8 +1006,8 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                v2.z=v2.z*ref->scaling.z+ref->offset.z;
                }
 
-            v1=calcpoint(ref->warp,v1);
-            v2=calcpoint(ref->warp,v2);
+            v1=calcpoint(ref->warp,v1,ref->crdgen);
+            v2=calcpoint(ref->warp,v2,ref->crdgen);
 
             for (j=2; j<k; j++)
                {
@@ -1007,7 +1017,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
 
                array+=stride;
 
-               if (warp!=NULL) v3=warp->triwarp(v3);
+               if (warp!=NULL) v3=warp->triwarp(v3,ref->crdgen);
                else
                   {
                   v3.x=v3.x*ref->scaling.x+ref->offset.x;
@@ -1015,7 +1025,7 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
                   v3.z=v3.z*ref->scaling.z+ref->offset.z;
                   }
 
-               v3=calcpoint(ref->warp,v3);
+               v3=calcpoint(ref->warp,v3,ref->crdgen);
 
                result.append(v1);
                result.append(v2);
@@ -1029,10 +1039,11 @@ minidyna<miniv3d> miniray::calcmesh(TRIANGLEREF *ref)
    }
 
 // calculate triangle mesh point
-miniv3d miniray::calcpoint(miniwarpbase *warp,miniv3d p)
+miniv3d miniray::calcpoint(miniwarpbase *warp,const miniv3d &crdgen,
+                           const miniv3d &p)
    {
    if (warp==NULL) return(p);
-   if (warp->getnonlin()) return(warp->triwarp(p));
+   if (warp->getnonlin()) return(warp->triwarp(p,crdgen));
    return(warp->linwarp(p));
    }
 

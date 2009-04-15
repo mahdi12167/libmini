@@ -41,7 +41,7 @@ class miniwarpbase
    miniv3d linwarp(const miniv3d &p) const;
 
    //! enable non-linear warp
-   void usenonlin(BOOLINT on,miniv3d crdgen);
+   void usenonlin(BOOLINT on);
 
    //! check for non-linear warp
    BOOLINT getnonlin() const;
@@ -50,7 +50,7 @@ class miniwarpbase
    double getcorners(miniv3d p[8],miniv3d n[8]=NULL) const;
 
    //! tri-linear warp
-   miniv3d triwarp(const miniv3d &c) const;
+   miniv3d triwarp(const miniv3d &c,const miniv3d &crdgen) const;
 
    protected:
 
@@ -60,7 +60,6 @@ class miniwarpbase
    float SCALE;
 
    BOOLINT NONLIN;
-   miniv3d CRDGEN;
    miniv3d CORNER[8];
    miniv3d NORMAL[8];
    double EXTENT;

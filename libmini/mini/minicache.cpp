@@ -262,13 +262,14 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
    float centerx,centery,centerz;
 
    miniv3d s,o;
+   miniv3d nl;
+
+   miniwarpbase *warp;
 
    TERRAIN_TYPE *t;
    CACHE_TYPE *c;
 
    float *ptr;
-
-   miniwarpbase *warp;
 
    t=&TERRAIN[CACHE_ID];
    c=&t->cache[t->cache_num];
@@ -318,17 +319,21 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
             o.y=centery;
             o.z=zdim*(t->first_row-(rows-1)/2.0f)+centerz+zdim/2.0f;
 
+            nl.x=1.0/(t->first_size-1);
+            nl.y=t->first_scale;
+            nl.z=1.0/(t->first_size-1);
+
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
                {
                if (NONLIN==0) warp=t->tile->getwarp();
                else
                   {
                   warp=t->tile->getwarp(t->first_col,t->first_row);
-                  warp->usenonlin(TRUE,miniv3d(1.0/(t->first_size-1),t->first_scale,1.0/(t->first_size-1)));
+                  warp->usenonlin(TRUE);
                   }
 
                t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,
-                                       0,&s,&o,0,warp,CONFIGURE_CALCBOUNDS);
+                                       0,&s,&o,0,warp,&nl,CONFIGURE_CALCBOUNDS);
                }
             }
 

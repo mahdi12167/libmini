@@ -16,7 +16,6 @@ miniwarpbase::miniwarpbase()
    SCALE=1.0;
 
    NONLIN=FALSE;
-   CRDGEN=miniv3d(1.0);
 
    CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
    CORNER[1]=miniv3d(0.5,-0.5,-0.5);
@@ -64,11 +63,8 @@ miniv3d miniwarpbase::linwarp(const miniv3d &p) const
    }
 
 // enable non-linear warp
-void miniwarpbase::usenonlin(BOOLINT on,miniv3d crdgen)
-   {
-   NONLIN=on;
-   CRDGEN=crdgen;
-   }
+void miniwarpbase::usenonlin(BOOLINT on)
+   {NONLIN=on;}
 
 // check for non-linear warp
 BOOLINT miniwarpbase::getnonlin() const
@@ -92,13 +88,13 @@ double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
    }
 
 // tri-linear warp
-miniv3d miniwarpbase::triwarp(const miniv3d &c) const
+miniv3d miniwarpbase::triwarp(const miniv3d &c,const miniv3d &crdgen) const
    {
    miniv3d w;
 
-   w.x=c.x*CRDGEN.x;
-   w.y=c.y*CRDGEN.y*EXT1+0.5;
-   w.z=c.z*CRDGEN.z;
+   w.x=c.x*crdgen.x;
+   w.y=c.y*crdgen.y*EXT1+0.5;
+   w.z=c.z*crdgen.z;
 
    return((1.0-w.y)*((1.0-w.z)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
                      w.z*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
