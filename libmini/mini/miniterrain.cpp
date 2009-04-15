@@ -841,6 +841,10 @@ void miniterrain::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,flo
 
    TPARAMS.time=time;
 
+   // update non-linear warp
+   CACHE->usenonlinear(TPARAMS.nonlin);
+
+   // update each layer
    for (n=0; n<LNUM; n++)
       LAYER[n]->cache(e,d,u,aspect,time);
    }
@@ -857,9 +861,6 @@ void miniterrain::render()
       // enable shaders
       if (TPARAMS.useshaders)
          {
-         // use non-linear warp
-         CACHE->usenonlinear(TPARAMS.nonlin);
-
          // set detail texture parameters
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())

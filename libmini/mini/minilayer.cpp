@@ -295,6 +295,8 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          WARPMODE=LPARAMS.warpmode;
          NONLIN=LPARAMS.nonlin;
          SCALE=LPARAMS.scale;
+
+         update();
          }
       }
    }
