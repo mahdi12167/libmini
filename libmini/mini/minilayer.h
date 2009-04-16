@@ -347,6 +347,9 @@ class minilayer
    miniwarp WARP_G2T;
    miniwarp WARP_T2G;
 
+   minicoord CENTER;
+   miniv3d NORMAL,NORTH,EAST;
+
    minicoord nonlin_map_g2t(const minicoord &p)
       {
       minicoord p2;

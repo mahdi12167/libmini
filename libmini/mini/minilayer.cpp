@@ -1115,6 +1115,14 @@ void minilayer::updatecoords()
    WARP_T2G=*WARP;
    WARP_T2G.setwarp(miniwarp::MINIWARP_TILESET,miniwarp::MINIWARP_METRIC);
 
+   // compute tileset center and axis:
+
+   CENTER=map_i2g(miniv3d(0.0,0.0,0.0));
+
+   NORMAL=rot_i2g(miniv3d(0.0,1.0,0.0),miniv3d(0.0,0.0,0.0));
+   NORTH=rot_i2g(miniv3d(0.0,0.0,-1.0),miniv3d(0.0,0.0,0.0));
+   EAST=rot_i2g(miniv3d(1.0,0.0,0.0),miniv3d(0.0,0.0,0.0));
+
    // copy warp object to encapsulated tileset
    if (TERRAIN!=NULL)
       {
@@ -1285,19 +1293,19 @@ miniv3d minilayer::getextent()
 
 // get center of tileset
 minicoord minilayer::getcenter()
-   {return(map_i2g(miniv3d(0.0,0.0,0.0)));}
+   {return(CENTER);}
 
 // get normal of tileset
 miniv3d minilayer::getnormal()
-   {return(rot_i2g(miniv3d(0.0,1.0,0.0),map_g2i(getcenter())));}
+   {return(NORMAL);}
 
 // get north vector of tileset
 miniv3d minilayer::getnorth()
-   {return(rot_i2g(miniv3d(0.0,0.0,-1.0),map_g2i(getcenter())));}
+   {return(NORTH);}
 
 // get east vector of tileset
 miniv3d minilayer::geteast()
-   {return(rot_i2g(miniv3d(1.0,0.0,0.0),map_g2i(getcenter())));}
+   {return(EAST);}
 
 // get the elevation at position (x,y,z)
 double minilayer::getheight(const minicoord &p,int approx)
