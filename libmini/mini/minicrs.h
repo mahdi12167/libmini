@@ -3,6 +3,8 @@
 #ifndef MINICRS_H
 #define MINICRS_H
 
+#include <math.h>
+
 class minicrs
    {
    public:
@@ -120,46 +122,44 @@ namespace minilon {
 // longitude arithmetic:
 
 //! add longitudes
-inline float LONADD(float a,float b=0.0f)
+inline double LONADD(double a,double b=0.0f)
    {
-   float lon=a+b;
-   while (lon<0) lon+=360*60*60;
-   while (lon>360*60*60) lon-=360*60*60;
-   return(lon);
+   double lon=a+b;
+   double lonprd=floor(lon/(360*60*60));
+   return(lon-lonprd*360*60*60);
    }
 
 //! subtract longitudes
-inline float LONSUB(float a,float b=0.0f)
+inline double LONSUB(double a,double b=0.0f)
    {
-   float diff=a-b;
-   while (diff<-180*60*60) diff+=360*60*60;
-   while (diff>180*60*60) diff-=360*60*60;
-   return(diff);
+   double diff=a-b+180*60*60;
+   double diffprd=floor(diff/(360*60*60));
+   return(diff-diffprd*360*60*60-180*60*60);
    }
 
 //! return leftmost longitude
-inline float LONLEFT(float a,float b)
+inline double LONLEFT(double a,double b)
    {
    if (LONSUB(a,b)<0.0f) return(a);
    else return(b);
    }
 
 //! return rightmost longitude
-inline float LONRIGHT(float a,float b)
+inline double LONRIGHT(double a,double b)
    {
    if (LONSUB(a,b)>0.0f) return(a);
    else return(b);
    }
 
 //! linear interpolation of longitudes
-inline float LONLERP(float a,float b,float lerp=0.5f)
+inline double LONLERP(double a,double b,double lerp=0.5f)
    {
-   float diff=LONADD(b,-a);
+   double diff=LONADD(b,-a);
    return(LONSUB(a,-lerp*diff));
    }
 
 //! average longitudes
-inline float LONMEAN(float a,float b,float weight=0.5f)
+inline double LONMEAN(double a,double b,double weight=0.5f)
    {
    if (LONSUB(a,b)<0.0f) return(LONLERP(a,b,weight));
    else return(LONLERP(b,a,1.0f-weight));

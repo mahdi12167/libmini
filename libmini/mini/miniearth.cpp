@@ -831,9 +831,11 @@ double miniearth::intersect_plane(miniv3d p,miniv3d d,
    {
    double c;
 
+   static const double epsilon=1E-10;
+
    c=d*n;
 
-   if (c>=0.0) return(MAXFLOAT);
+   if (c>=-epsilon) return(MAXFLOAT);
 
    return(n*(o-p)/c);
    }
