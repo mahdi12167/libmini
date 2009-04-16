@@ -310,7 +310,7 @@ class minilayer
    minicoord map_g2l(const minicoord &p) {return(WARP_G2L.warp(nonlin_map_t2g(p)));}
    minicoord map_l2g(const minicoord &p) {return(nonlin_map_g2t(WARP_L2G.warp(p)));}
    minicoord map_g2i(const minicoord &p) {return(WARP_G2I.warp(nonlin_map_t2g(p)));}
-   minicoord map_i2g(const minicoord &p) {return(nonlin_map_t2g(WARP_I2G.warp(p)));}
+   minicoord map_i2g(const minicoord &p) {return(nonlin_map_g2t(WARP_I2G.warp(p)));}
    minicoord map_g2o(const minicoord &p) {return(WARP_G2O.warp(p));}
    minicoord map_o2g(const minicoord &p) {return(WARP_O2G.warp(p));}
    minicoord map_g2t(const minicoord &p) {return(WARP_G2T.warp(nonlin_map_t2g(p)));}
@@ -318,13 +318,13 @@ class minilayer
 
    //! rotate vector
    miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(WARP_G2L.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
-   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_L2G.invtra(v,p),nonlin_map_g2t(p)));}
+   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_L2G.invtra(v,p),WARP_L2G.warp(p)));}
    miniv3d rot_g2i(const miniv3d &v,const minicoord &p) {return(WARP_G2I.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
-   miniv3d rot_i2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_I2G.invtra(v,p),nonlin_map_g2t(p)));}
+   miniv3d rot_i2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_I2G.invtra(v,p),WARP_I2G.warp(p)));}
    miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(WARP_G2O.invtra(v,p));}
    miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(WARP_O2G.invtra(v,p));}
    miniv3d rot_g2t(const miniv3d &v,const minicoord &p) {return(WARP_G2T.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
-   miniv3d rot_t2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_T2G.invtra(v,p),nonlin_map_g2t(p)));}
+   miniv3d rot_t2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_T2G.invtra(v,p),WARP_T2G.warp(p)));}
 
    //! map length
    double len_g2l(double l) {return(l*WARP_G2L.getscale());}
