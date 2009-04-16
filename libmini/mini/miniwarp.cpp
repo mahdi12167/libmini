@@ -15,8 +15,6 @@ miniwarpbase::miniwarpbase()
 
    SCALE=1.0;
 
-   NONLIN=FALSE;
-
    CORNER[0]=miniv3d(-0.5,-0.5,-0.5);
    CORNER[1]=miniv3d(0.5,-0.5,-0.5);
    CORNER[2]=miniv3d(-0.5,0.5,-0.5);
@@ -62,13 +60,20 @@ miniv3d miniwarpbase::linwarp(const miniv3d &p) const
    return(miniv3d(MTX[0]*p1,MTX[1]*p1,MTX[2]*p1));
    }
 
-// enable non-linear warp
-void miniwarpbase::usenonlin(BOOLINT on)
-   {NONLIN=on;}
+// tri-linear warp
+miniv3d miniwarpbase::triwarp(const miniv3d &c,const miniv3d &crdgen) const
+   {
+   miniv3d w;
 
-// check for non-linear warp
-BOOLINT miniwarpbase::getnonlin() const
-   {return(NONLIN);}
+   w.x=c.x*crdgen.x;
+   w.y=c.y*crdgen.y*EXT1+0.5;
+   w.z=c.z*crdgen.z;
+
+   return((1.0-w.y)*((1.0-w.z)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
+                     w.z*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
+          w.y*((1.0-w.z)*((1.0-w.x)*CORNER[4]+w.x*CORNER[5])+
+               w.z*((1.0-w.x)*CORNER[6]+w.x*CORNER[7])));
+   }
 
 // get corners of warp box
 double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
@@ -85,21 +90,6 @@ double miniwarpbase::getcorners(miniv3d p[8],miniv3d n[8]) const
          }
 
    return(EXTENT);
-   }
-
-// tri-linear warp
-miniv3d miniwarpbase::triwarp(const miniv3d &c,const miniv3d &crdgen) const
-   {
-   miniv3d w;
-
-   w.x=c.x*crdgen.x;
-   w.y=c.y*crdgen.y*EXT1+0.5;
-   w.z=c.z*crdgen.z;
-
-   return((1.0-w.y)*((1.0-w.z)*((1.0-w.x)*CORNER[0]+w.x*CORNER[1])+
-                     w.z*((1.0-w.x)*CORNER[2]+w.x*CORNER[3]))+
-          w.y*((1.0-w.z)*((1.0-w.x)*CORNER[4]+w.x*CORNER[5])+
-               w.z*((1.0-w.x)*CORNER[6]+w.x*CORNER[7])));
    }
 
 // default constructor
@@ -336,20 +326,12 @@ minicoord miniwarp::warp(const minicoord &p)
          p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
-         if (NONLIN)
-            {
-            p1=p;
-            p1.convert2(SYSTLS);
-            v1=miniv4d(p1.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-            }
-         else
-            {
-            p1=p;
-            p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
-            v1=miniv4d(p1.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-            }
+         {
+         p1=p;
+         p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+         v1=miniv4d(p1.vec,1.0);
+         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+         }
    else if (FROM==MINIWARP_TILESET)
       if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
          {
@@ -364,47 +346,25 @@ minicoord miniwarp::warp(const minicoord &p)
          p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
          }
       else
-         if (NONLIN)
-            {
-            p1=p;
-            if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
-            if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSTLS);
-            v1=miniv4d(p1.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-            }
-         else
-            {
-            p1=p;
-            if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
-            if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
-            v1=miniv4d(p1.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
-            }
+         {
+         p1=p;
+         if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
+         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+         v1=miniv4d(p1.vec,1.0);
+         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
+         }
    else
       if (TO==MINIWARP_TILESET && SYSTLS!=minicoord::MINICOORD_LINEAR)
-         if (NONLIN)
-            {
-            v1=miniv4d(p.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSTLS);
-            }
-         else
-            {
-            v1=miniv4d(p.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
-            p2.convert2(SYSTLS);
-            }
+         {
+         v1=miniv4d(p.vec,1.0);
+         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
+         p2.convert2(SYSTLS);
+         }
       else if (TO==MINIWARP_DATA)
-         if (NONLIN)
-            {
-            v1=miniv4d(p.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSTLS);
-            p2.convert2(SYSDAT,CRSZONE,CRSDATUM);
-            }
-         else
-            {
-            v1=miniv4d(p.vec,1.0);
-            p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
-            }
+         {
+         v1=miniv4d(p.vec,1.0);
+         p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),SYSDAT,CRSZONE,CRSDATUM);
+         }
       else
          {
          v1=miniv4d(p.vec,1.0);
@@ -423,11 +383,10 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    static const double scale=1000.0;
 
    if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSTLS==minicoord::MINICOORD_LINEAR)
-      if (!NONLIN)
-         {
-         v1=miniv4d(v,1.0);
-         return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
-         }
+      {
+      v1=miniv4d(v,1.0);
+      return(miniv3d(INVTRA[0]*v1*SCALE,INVTRA[1]*v1*SCALE,INVTRA[2]*v1*SCALE));
+      }
 
    p1=warp(p);
    p2=warp(minicoord(miniv3d(p.vec)+v*scale,p.type,p.crs_zone,p.crs_datum));
@@ -435,14 +394,6 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    v1.normalize();
 
    return(v1);
-   }
-
-// enable non-linear warp
-void miniwarp::usenonlin(BOOLINT on)
-   {
-   NONLIN=on;
-
-   update_mtx();
    }
 
 // update conversion matrices
@@ -552,7 +503,7 @@ void miniwarp::update_mtx()
 
       if (SYSDAT==minicoord::MINICOORD_LINEAR) SYSTLS=minicoord::MINICOORD_LINEAR;
 
-      if (SYSTLS==minicoord::MINICOORD_LINEAR || NONLIN) cpy_mtx(MTX_2MET,MTX_ONE);
+      if (SYSTLS==minicoord::MINICOORD_LINEAR) cpy_mtx(MTX_2MET,MTX_ONE);
       else mlt_mtx(MTX_2MET,INV_2PLN,INV_2CNT,INV_2DAT);
 
       inv_mtx(INV_2MET,MTX_2MET);

@@ -304,39 +304,33 @@ class minilayer
    //! get the nearest waypoint
    minipointdata *getnearestpoint(int type=minipointopts::OPTION_TYPE_ANY);
 
-   // coordinate conversions (g=global, l=local, o=opengl):
+   // coordinate conversions (g=global, l=local, i=internal, o=opengl, t=tileset):
 
    //! map coordinates
-   minicoord map_g2l(const minicoord &p) {return(WARP_G2L.warp(p));}
-   minicoord map_l2g(const minicoord &p) {return(WARP_L2G.warp(p));}
-   minicoord map_g2i(const minicoord &p) {return(WARP_G2I.warp(p));}
-   minicoord map_i2g(const minicoord &p) {return(WARP_I2G.warp(p));}
-   minicoord map_l2o(const minicoord &p) {return(WARP_L2O.warp(p));}
-   minicoord map_o2l(const minicoord &p) {return(WARP_O2L.warp(p));}
+   minicoord map_g2l(const minicoord &p) {return(WARP_G2L.warp(nonlin_map_t2g(p)));}
+   minicoord map_l2g(const minicoord &p) {return(nonlin_map_g2t(WARP_L2G.warp(p)));}
+   minicoord map_g2i(const minicoord &p) {return(WARP_G2I.warp(nonlin_map_t2g(p)));}
+   minicoord map_i2g(const minicoord &p) {return(nonlin_map_t2g(WARP_I2G.warp(p)));}
    minicoord map_g2o(const minicoord &p) {return(WARP_G2O.warp(p));}
    minicoord map_o2g(const minicoord &p) {return(WARP_O2G.warp(p));}
-   minicoord map_g2t(const minicoord &p) {return(WARP_G2T.warp(p));}
-   minicoord map_t2g(const minicoord &p) {return(WARP_T2G.warp(p));}
+   minicoord map_g2t(const minicoord &p) {return(WARP_G2T.warp(nonlin_map_t2g(p)));}
+   minicoord map_t2g(const minicoord &p) {return(nonlin_map_g2t(WARP_T2G.warp(p)));}
 
    //! rotate vector
-   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(WARP_G2L.invtra(v,p));}
-   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(WARP_L2G.invtra(v,p));}
-   miniv3d rot_g2i(const miniv3d &v,const minicoord &p) {return(WARP_G2I.invtra(v,p));}
-   miniv3d rot_i2g(const miniv3d &v,const minicoord &p) {return(WARP_I2G.invtra(v,p));}
-   miniv3d rot_l2o(const miniv3d &v,const minicoord &p) {return(WARP_L2O.invtra(v,p));}
-   miniv3d rot_o2l(const miniv3d &v,const minicoord &p) {return(WARP_O2L.invtra(v,p));}
+   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(WARP_G2L.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
+   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_L2G.invtra(v,p),nonlin_map_g2t(p)));}
+   miniv3d rot_g2i(const miniv3d &v,const minicoord &p) {return(WARP_G2I.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
+   miniv3d rot_i2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_I2G.invtra(v,p),nonlin_map_g2t(p)));}
    miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(WARP_G2O.invtra(v,p));}
    miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(WARP_O2G.invtra(v,p));}
-   miniv3d rot_g2t(const miniv3d &v,const minicoord &p) {return(WARP_G2T.invtra(v,p));}
-   miniv3d rot_t2g(const miniv3d &v,const minicoord &p) {return(WARP_T2G.invtra(v,p));}
+   miniv3d rot_g2t(const miniv3d &v,const minicoord &p) {return(WARP_G2T.invtra(nonlin_rot_t2g(v,p),nonlin_map_t2g(p)));}
+   miniv3d rot_t2g(const miniv3d &v,const minicoord &p) {return(nonlin_rot_g2t(WARP_T2G.invtra(v,p),nonlin_map_g2t(p)));}
 
    //! map length
    double len_g2l(double l) {return(l*WARP_G2L.getscale());}
    double len_l2g(double l) {return(l*WARP_L2G.getscale());}
    double len_g2i(double l) {return(l*WARP_G2I.getscale());}
    double len_i2g(double l) {return(l*WARP_I2G.getscale());}
-   double len_l2o(double l) {return(l*WARP_L2O.getscale());}
-   double len_o2l(double l) {return(l*WARP_O2L.getscale());}
    double len_g2o(double l) {return(l*WARP_G2O.getscale());}
    double len_o2g(double l) {return(l*WARP_O2G.getscale());}
    double len_g2t(double l) {return(l*WARP_G2T.getscale());}
@@ -350,12 +344,90 @@ class minilayer
    miniwarp WARP_L2G;
    miniwarp WARP_G2I;
    miniwarp WARP_I2G;
-   miniwarp WARP_L2O;
-   miniwarp WARP_O2L;
    miniwarp WARP_G2O;
    miniwarp WARP_O2G;
    miniwarp WARP_G2T;
    miniwarp WARP_T2G;
+
+   minicoord nonlin_map_g2t(const minicoord &p)
+      {
+      minicoord p2;
+
+      p2=p;
+
+      if (LPARAMS.nonlin)
+         {
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+
+         p2=WARP_G2T.warp(p2);
+
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+         }
+
+      return(p2);
+      }
+
+   minicoord nonlin_map_t2g(const minicoord &p)
+      {
+      minicoord p2;
+
+      p2=p;
+
+      if (LPARAMS.nonlin)
+         {
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+
+         p2=WARP_T2G.warp(p2);
+
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+         }
+
+      return(p2);
+      }
+
+   miniv3d nonlin_rot_g2t(const miniv3d &v,const minicoord &p)
+      {
+      miniv3d v2;
+      minicoord p2;
+
+      v2=v;
+
+      if (LPARAMS.nonlin)
+         {
+         p2=p;
+
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+
+         v2=WARP_G2T.invtra(v2,p2);
+         }
+
+      return(v2);
+      }
+
+   miniv3d nonlin_rot_t2g(const miniv3d &v,const minicoord &p)
+      {
+      miniv3d v2;
+      minicoord p2;
+
+      v2=v;
+
+      if (LPARAMS.nonlin)
+         {
+         p2=p;
+
+         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+
+         v2=WARP_T2G.invtra(v2,p2);
+         }
+
+      return(v2);
+      }
 
    private:
 
@@ -369,7 +441,6 @@ class minilayer
    miniwarp *WARP;
 
    int WARPMODE;
-   BOOLINT NONLIN;
    double SCALE;
 
    minilayer *REFERENCE;

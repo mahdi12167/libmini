@@ -326,14 +326,10 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
             if (t->cache_phase!=3 || CONFIGURE_OMITSEA==0)
                {
                if (NONLIN==0) warp=t->tile->getwarp();
-               else
-                  {
-                  warp=t->tile->getwarp(t->first_col,t->first_row);
-                  warp->usenonlin(TRUE);
-                  }
+               else warp=t->tile->getwarp(t->first_col,t->first_row);
 
                t->ray->addtrianglefans(&c->arg,3*t->first_beginfan,t->first_fancnt,
-                                       0,&s,&o,0,warp,&nl,CONFIGURE_CALCBOUNDS);
+                                       0,&s,&o,0,warp,NONLIN,&nl,CONFIGURE_CALCBOUNDS);
                }
             }
 

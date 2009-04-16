@@ -366,24 +366,18 @@ class miniterrain
    //! map coordinates
    minicoord map_g2l(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_g2l(p));}
    minicoord map_l2g(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_l2g(p));}
-   minicoord map_l2o(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_l2o(p));}
-   minicoord map_o2l(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_o2l(p));}
    minicoord map_g2o(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_g2o(p));}
    minicoord map_o2g(const minicoord &p) {return((REFERENCE==NULL)?minicoord():REFERENCE->map_o2g(p));}
 
    //! rotate vector
    miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_g2l(v,p));}
    miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_l2g(v,p));}
-   miniv3d rot_l2o(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_l2o(v,p));}
-   miniv3d rot_o2l(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_o2l(v,p));}
    miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_g2o(v,p));}
    miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?miniv3d(0.0):REFERENCE->rot_o2g(v,p));}
 
    //! map length
    double len_g2l(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_g2l(l));}
    double len_l2g(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_l2g(l));}
-   double len_l2o(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_l2o(l));}
-   double len_o2l(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_o2l(l));}
    double len_g2o(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_g2o(l));}
    double len_o2g(double l) {return((REFERENCE==NULL)?0.0:REFERENCE->len_o2g(l));}
 

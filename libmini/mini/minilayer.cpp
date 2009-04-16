@@ -176,7 +176,6 @@ minilayer::minilayer(minicache *cache)
    WARP=NULL;
 
    WARPMODE=LPARAMS.warpmode;
-   NONLIN=LPARAMS.nonlin;
    SCALE=LPARAMS.scale;
 
    REFERENCE=NULL;
@@ -282,7 +281,6 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          }
 
       if (LPARAMS.warpmode!=WARPMODE ||
-          LPARAMS.nonlin!=NONLIN ||
           LPARAMS.scale!=SCALE)
          {
          createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
@@ -293,7 +291,6 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          updatecoords();
 
          WARPMODE=LPARAMS.warpmode;
-         NONLIN=LPARAMS.nonlin;
          SCALE=LPARAMS.scale;
 
          update();
@@ -1053,11 +1050,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    WARP->def_2affine(mtxAFF);
 
-   // use non-linear warp:
-
-   if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4) WARP->usenonlin(LPARAMS.nonlin);
-   else WARP->usenonlin(FALSE);
-
    // define reference coordinates:
 
    setreference(REFERENCE);
@@ -1100,12 +1092,6 @@ void minilayer::updatecoords()
 
    WARP_I2G=*WARP;
    WARP_I2G.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_METRIC);
-
-   WARP_L2O=*WARP;
-   WARP_L2O.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_FINAL);
-
-   WARP_O2L=*WARP;
-   WARP_O2L.setwarp(miniwarp::MINIWARP_FINAL,miniwarp::MINIWARP_REFERENCE);
 
    WARP_G2O=*WARP;
    WARP_G2O.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);

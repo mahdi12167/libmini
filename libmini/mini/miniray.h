@@ -30,14 +30,14 @@ class miniray
    void addtriangles(float **array,int index,int num,int stride=0,
                      miniv3d *scaling=0,miniv3d *offset=0,
                      int swapyz=0,miniwarpbase *warp=0,
-                     miniv3d *crdgen=0,
+                     int nonlin=0,miniv3d *crdgen=0,
                      int calcbounds=0);
 
    //! add reference to triangle fans to the back buffer
    void addtrianglefans(float **array,int index,int num,int stride=0,
                         miniv3d *scaling=0,miniv3d *offset=0,
                         int swapyz=0,miniwarpbase *warp=0,
-                        miniv3d *crdgen=0,
+                        int nonlin=0,miniv3d *crdgen=0,
                         int calcbounds=0);
 
    //! swap front and back triangle reference buffer
@@ -98,6 +98,7 @@ class miniray
 
       miniwarpbase *warp;
 
+      int nonlin;
       miniv3d crdgen;
 
       int hasbound;
@@ -120,25 +121,24 @@ class miniray
    void addtriangles_chunked(float **array,int index,int num,int stride=0,
                              miniv3d *scaling=0,miniv3d *offset=0,
                              int swapyz=0,miniwarpbase *warp=0,
-                             miniv3d *crdgen=0,
+                             int nonlin=0,miniv3d *crdgen=0,
                              int calcbounds=0);
 
    void addtrianglefans_chunked(float **array,int index,int num,int stride=0,
                                 miniv3d *scaling=0,miniv3d *offset=0,
                                 int swapyz=0,miniwarpbase *warp=0,
-                                miniv3d *crdgen=0,
+                                int nonlin=0,miniv3d *crdgen=0,
                                 int calcbounds=0);
 
    void calcbound(TRIANGLEREF *ref);
 
-   double calcdist(TRIANGLEREF *ref,
+   double calcdist(const TRIANGLEREF *ref,
                    const miniv3d &o,const miniv3d &d,
                    double dist);
 
-   minidyna<miniv3d> calcmesh(TRIANGLEREF *ref);
+   minidyna<miniv3d> calcmesh(const TRIANGLEREF *ref);
 
-   inline miniv3d calcpoint(miniwarpbase *warp,const miniv3d &crdgen,
-                            const miniv3d &p);
+   inline miniv3d calcpoint(const TRIANGLEREF *ref,const miniv3d &p);
 
    inline int checkbound(const miniv3d &o,const miniv3d &d,
                          const miniv3d &b,const double r2);
