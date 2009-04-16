@@ -350,90 +350,6 @@ class minilayer
    minicoord CENTER;
    miniv3d NORMAL,NORTH,EAST;
 
-   minicoord nonlin_map_g2t(const minicoord &p)
-      {
-      minicoord p2;
-
-      p2=p;
-
-      if (LPARAMS.nonlin)
-         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
-            {
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-
-            p2=WARP_G2T.warp(p2);
-
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-            }
-
-      return(p2);
-      }
-
-   minicoord nonlin_map_t2g(const minicoord &p)
-      {
-      minicoord p2;
-
-      p2=p;
-
-      if (LPARAMS.nonlin)
-         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
-            {
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-
-            p2=WARP_T2G.warp(p2);
-
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-            }
-
-      return(p2);
-      }
-
-   miniv3d nonlin_rot_g2t(const miniv3d &v,const minicoord &p)
-      {
-      miniv3d v2;
-      minicoord p2;
-
-      v2=v;
-
-      if (LPARAMS.nonlin)
-         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
-            {
-            p2=p;
-
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-
-            v2=WARP_G2T.invtra(v2,p2);
-            }
-
-      return(v2);
-      }
-
-   miniv3d nonlin_rot_t2g(const miniv3d &v,const minicoord &p)
-      {
-      miniv3d v2;
-      minicoord p2;
-
-      v2=v;
-
-      if (LPARAMS.nonlin)
-         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
-            {
-            p2=p;
-
-            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-            p2.convert2(minicoord::MINICOORD_ECEF);
-
-            v2=WARP_T2G.invtra(v2,p2);
-            }
-
-      return(v2);
-      }
-
    private:
 
    minicache *CACHE;
@@ -471,6 +387,12 @@ class minilayer
    void createwarps(int cols,int rows,
                     minicoord offsetDAT,minicoord extentDAT,
                     double scaleLOC);
+
+   minicoord nonlin_map_g2t(const minicoord &p);
+   minicoord nonlin_map_t2g(const minicoord &p);
+
+   miniv3d nonlin_rot_g2t(const miniv3d &v,const minicoord &p);
+   miniv3d nonlin_rot_t2g(const miniv3d &v,const minicoord &p);
 
    int getthreadid();
 
