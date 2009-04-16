@@ -338,7 +338,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    el=nst->map_g2l(eye);
 
-   if (elev!=-MAXFLOAT) el.vec.z=fmax(el.vec.z,ref->len_g2l(elev+hover+dh));
+   if (elev!=-MAXFLOAT) el.vec.z=dmax(el.vec.z,ref->len_g2l(elev+hover+dh));
 
    eye=nst->map_l2g(el);
 
@@ -941,6 +941,7 @@ void render()
    // update eye movement:
 
    speed+=accel*(topspeed-speed);
+   if (dabs(speed)<0.01*maxspeed) speed=0.0;
 
    turn+=accel*(angle-turn);
    incline+=accel*(pitch-incline);
@@ -950,7 +951,7 @@ void render()
    else if (coef<-1.0) coef=-1.0;
 
    aez=-coef*gravity;
-   aez*=fmax(1.0-fabs(dez/maxspeed),0.0);
+   aez*=dmax(1.0-dabs(dez/maxspeed),0.0);
 
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);

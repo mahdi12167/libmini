@@ -380,7 +380,7 @@ miniv3d miniwarp::invtra(const miniv3d &v,const minicoord &p)
    miniv4d v1;
    minicoord p1,p2;
 
-   static const double scale=1000.0;
+   static const double scale=10000.0; // 10km
 
    if ((FROM!=MINIWARP_TILESET && TO!=MINIWARP_TILESET) || SYSTLS==minicoord::MINICOORD_LINEAR)
       {

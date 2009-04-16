@@ -355,16 +355,17 @@ class minilayer
 
       p2=p;
 
-      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
-         {
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+      if (LPARAMS.nonlin)
+         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+            {
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
 
-         p2=WARP_G2T.warp(p2);
+            p2=WARP_G2T.warp(p2);
 
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
-         }
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
+            }
 
       return(p2);
       }
@@ -375,16 +376,17 @@ class minilayer
 
       p2=p;
 
-      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
-         {
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+      if (LPARAMS.nonlin)
+         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+            {
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
 
-         p2=WARP_T2G.warp(p2);
+            p2=WARP_T2G.warp(p2);
 
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
-         }
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
+            }
 
       return(p2);
       }
@@ -396,15 +398,16 @@ class minilayer
 
       v2=v;
 
-      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
-         {
-         p2=p;
+      if (LPARAMS.nonlin)
+         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+            {
+            p2=p;
 
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
 
-         v2=WARP_G2T.invtra(v2,p2);
-         }
+            v2=WARP_G2T.invtra(v2,p2);
+            }
 
       return(v2);
       }
@@ -416,15 +419,16 @@ class minilayer
 
       v2=v;
 
-      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
-         {
-         p2=p;
+      if (LPARAMS.nonlin)
+         if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+            {
+            p2=p;
 
-         if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
-         if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
+            if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
+            p2.convert2(minicoord::MINICOORD_ECEF);
 
-         v2=WARP_T2G.invtra(v2,p2);
-         }
+            v2=WARP_T2G.invtra(v2,p2);
+            }
 
       return(v2);
       }
@@ -458,7 +462,7 @@ class minilayer
                    miniv3d offsetLOC,miniv3d scalingLOC,
                    double scaleLOC);
 
-   void pointwarp(minicoord &center,minicoord &north,minicoord &normal,
+   void pointwarp(const minicoord &center,const minicoord &north,const miniv3d &normal,
                   double scale,miniv4d mtx[3]);
 
    void updatecoords();

@@ -923,7 +923,10 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    miniv4d invFLT[3];
 
    minicoord center,north;
+   miniv3d normal;
+
    minicoord center0,north0;
+   miniv3d normal0;
 
    double radius,scale;
 
@@ -977,11 +980,14 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
             north0=REFERENCE->getwarp()->getnorth();
             north0.convert2(minicoord::MINICOORD_ECEF);
 
+            normal0=center0.vec;
+            normal0.z/=1.0-minicrs::WGS84_f;
+
             radius=center0.vec.getlength();
 
             if (radius>0.0)
                {
-               pointwarp(center0,north0,center0,1.0,mtxFLT);
+               pointwarp(center0,north0,normal0,1.0,mtxFLT);
                inv_mtx(invFLT,mtxFLT);
 
                center=WARP->getcenter();
@@ -1006,7 +1012,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                   if (REFERENCE==NULL) scale=1.0/scaleLOC;
                   else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-                  pointwarp(center,north,center0,scale,mtxAFF);
+                  pointwarp(center,north,normal0,scale,mtxAFF);
                   }
                else
                   {
@@ -1036,12 +1042,15 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       north=WARP->getnorth();
       north.convert2(minicoord::MINICOORD_ECEF);
 
+      normal=center.vec;
+      normal.z/=1.0-minicrs::WGS84_f;
+
       if (center.vec.getlength()>0.0)
          {
          if (REFERENCE==NULL) scale=1.0/scaleLOC;
          else scale=1.0/REFERENCE->getwarp()->getscaleloc();
 
-         pointwarp(center,north,center,scale,mtxAFF);
+         pointwarp(center,north,normal,scale,mtxAFF);
          }
       else
          {
@@ -1059,12 +1068,12 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
    }
 
 // construct a point warp matrix
-void minilayer::pointwarp(minicoord &center,minicoord &north,minicoord &normal,
+void minilayer::pointwarp(const minicoord &center,const minicoord &north,const miniv3d &normal,
                           double scale,miniv4d mtx[3])
    {
    miniv3d dir,up,right;
 
-   dir=normal.vec;
+   dir=normal;
    dir.normalize();
 
    up=north.vec-center.vec;
@@ -1161,14 +1170,8 @@ void minilayer::createwarps(int cols,int rows,
 
    if (mode==1 || mode==2)
       {
-      fcenter=REFERENCE->getwarp()->getcenter();
-      fcenter.convert2(minicoord::MINICOORD_ECEF);
-
-      if (fcenter.vec.getlength()>0.0)
-         {
-         fnormal=fcenter.vec;
-         fnormal.normalize();
-         }
+      fcenter=REFERENCE->getcenter();
+      fnormal=REFERENCE->getnormal();
       }
 
    for (i=0; i<cols; i++)
