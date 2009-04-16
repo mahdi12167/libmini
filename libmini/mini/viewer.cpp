@@ -25,7 +25,7 @@
 
 #define VIEWER_UPLIFT 0.1f
 
-#define VIEWER_MINSPEED 0.5f
+#define VIEWER_MINSPEED 0.05f
 #define VIEWER_MAXSPEED 50.0f
 
 #define VIEWER_GRAVITY 9.81f
