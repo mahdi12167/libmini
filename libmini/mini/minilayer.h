@@ -355,7 +355,7 @@ class minilayer
 
       p2=p;
 
-      if (LPARAMS.nonlin)
+      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
          {
          if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
@@ -375,7 +375,7 @@ class minilayer
 
       p2=p;
 
-      if (LPARAMS.nonlin)
+      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
          {
          if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          if (p2.type!=minicoord::MINICOORD_ECEF) p2.convert2(minicoord::MINICOORD_ECEF);
@@ -396,7 +396,7 @@ class minilayer
 
       v2=v;
 
-      if (LPARAMS.nonlin)
+      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
          {
          p2=p;
 
@@ -416,7 +416,7 @@ class minilayer
 
       v2=v;
 
-      if (LPARAMS.nonlin)
+      if (LPARAMS.nonlin && (LPARAMS.warpmode==3 || LPARAMS.warpmode==4))
          {
          p2=p;
 
@@ -441,6 +441,7 @@ class minilayer
    miniwarp *WARP;
 
    int WARPMODE;
+   BOOLINT NONLIN;
    double SCALE;
 
    minilayer *REFERENCE;

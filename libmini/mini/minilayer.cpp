@@ -176,6 +176,7 @@ minilayer::minilayer(minicache *cache)
    WARP=NULL;
 
    WARPMODE=LPARAMS.warpmode;
+   NONLIN=LPARAMS.nonlin;
    SCALE=LPARAMS.scale;
 
    REFERENCE=NULL;
@@ -281,6 +282,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          }
 
       if (LPARAMS.warpmode!=WARPMODE ||
+          LPARAMS.nonlin!=NONLIN ||
           LPARAMS.scale!=SCALE)
          {
          createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
@@ -291,6 +293,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
          updatecoords();
 
          WARPMODE=LPARAMS.warpmode;
+         NONLIN=LPARAMS.nonlin;
          SCALE=LPARAMS.scale;
 
          update();
