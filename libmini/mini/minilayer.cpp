@@ -105,8 +105,6 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
    LPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
 
-   LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
-
    LPARAMS.range=0.001f;           // texture paging range relative to far plane
    LPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
@@ -1451,21 +1449,27 @@ BOOLINT minilayer::isdisplayed()
 // check whether or not the layer is culled
 BOOLINT minilayer::isculled()
    {
-   double height;
+   double length;
+   double extent,height;
 
    minicoord eye,ctr;
    miniv3d nrm,dir;
+
+   length=minicrs::EARTH_radius*PI/2.0;
+
+   extent=dmax(LPARAMS.extent[0],LPARAMS.extent[1])/2.0;
+   height=LPARAMS.extent[2]/2.0;
 
    eye=map_g2o(LPARAMS.eye);
    ctr=map_g2o(getcenter());
 
    nrm=rot_g2o(getnormal(),getcenter());
+   ctr-=height*nrm;
+
    dir=eye.vec-ctr.vec;
+   dir.normalize();
 
-   height=-LPARAMS.extent[2]/2.0f;
-   height-=LPARAMS.cullslope*dir.getlength();
-
-   if (dir*nrm<height) return(TRUE);
+   if (dir*nrm<extent/length) return(TRUE);
 
    return(FALSE);
    }

@@ -109,8 +109,6 @@ class minilayer
       float reduction1;         //  reduction parameter #1 for invisible tiles
       float reduction2;         //  reduction parameter #2 for invisible tiles
 
-      float cullslope;          // slope under which the terrain is culled
-
       float range;              //* texture paging range relative to far plane
       float refres;             //* reference resolution for texture paging in meters
       float radius;             //* non-linear kick-in distance relative to texture range
