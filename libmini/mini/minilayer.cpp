@@ -560,7 +560,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
          LPARAMS.northGEO=minicoord(miniv3d(3600.0*TILECACHE->getelevini_northx_llwgs84(),3600.0*TILECACHE->getelevini_northy_llwgs84(),0.0),minicoord::MINICOORD_LLH);
 
          if (TILECACHE->haselevini_coordsys())
-            {
             if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_LLH)
                {
                if (TILECACHE->getelevini_coordsys_datum()!=databuf::DATABUF_DATUM_WGS84 && // WGS84 support only
@@ -590,7 +589,6 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_MERC);
                LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_MERC);
                }
-            }
          }
       else
          {
