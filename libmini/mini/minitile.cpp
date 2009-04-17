@@ -373,6 +373,9 @@ void minitile::checktiles(float ex,float ez,
    {
    float c,d;
 
+   int cols,rows;
+   int pcols,prows;
+
    // account for tilted views
    aspect=fmax(aspect,1.0f/aspect);
 
@@ -432,9 +435,15 @@ void minitile::checktiles(float ex,float ez,
    PBOTTOM=min(max(PBOTTOM,0),ROWS-1);
    PTOP=min(max(PTOP,0),ROWS-1);
 
+   // calculate size of rendering and preloading area
+   cols=RIGHT-LEFT+1;
+   rows=TOP-BOTTOM+1;
+   pcols=PRIGHT-PLEFT+1;
+   prows=PTOP-PBOTTOM+1;
+
    // calculate coprime swizzle parameters
-   for (SWIZZLE=3*(RIGHT-LEFT+1)+1; gcd((RIGHT-LEFT+1)*(TOP-BOTTOM+1),SWIZZLE)!=1; SWIZZLE+=2);
-   for (PSWIZZLE=3*(PRIGHT-PLEFT+1)+1; gcd((PRIGHT-PLEFT+1)*(PTOP-PBOTTOM+1),PSWIZZLE)!=1; PSWIZZLE+=2);
+   for (SWIZZLE=(cols%2==0)?3*cols+1:3*cols; gcd(cols*rows,SWIZZLE)!=1; SWIZZLE+=2);
+   for (PSWIZZLE=(pcols%2==0)?3*pcols+1:3*pcols; gcd(pcols*prows,PSWIZZLE)!=1; PSWIZZLE+=2);
    }
 
 // swizzle tile position
