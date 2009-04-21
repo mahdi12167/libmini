@@ -1308,8 +1308,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          viewer->propagate();
          break;
       case '0':
-         if (!eparams->nonlin) eparams->nonlin=TRUE;
-         else eparams->nonlin=FALSE;
+         if (!eparams->nonlin) eparams->nonlin=eparams->useshaders=TRUE;
+         else eparams->nonlin=eparams->useshaders=FALSE;
          viewer->propagate();
          break;
       case 'N':
