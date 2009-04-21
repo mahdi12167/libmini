@@ -66,7 +66,7 @@ stubtest: lib
 	$(COMPILER) $(OPTS) -I.. -o stubtest stubtest.cpp -L. -lMini -lm
 
 viewer:	lib libsfx
-	$(COMPILER) $(OPTS) -I.. -o viewer viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lm
+	$(COMPILER) $(OPTS) -I.. -o viewer viewer.cpp -L. -lMiniSFX -lMini $(LINK) -lGL -lGLU -lpthread -lcurl -ljpeg -lpng -lz -lm
 
 depend:
 	@-$(MAKEDEPEND) $(OPTS) -I.. $(SRCS) >$(MMFILE).d 2>/dev/null
