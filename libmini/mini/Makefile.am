@@ -39,7 +39,7 @@ library_includedir = $(prefix)/include/mini
 
 noinst_PROGRAMS = example stubtest viewer
 
-libMini_la_LIBADD = $(MINI_LIBS) -lMini
+libMini_la_LIBADD = $(MINI_LIBS)
 libMini_la_SOURCES = $(MODS:=.cpp)
 
 libMiniSFX_la_LIBADD = $(MINI_LIBS) -lMini

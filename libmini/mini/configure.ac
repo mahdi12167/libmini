@@ -3,7 +3,7 @@
 #########################################################################
 pushdef([PACKAGE_MAJOR_VERSION], [9])
 pushdef([PACKAGE_MINOR_VERSION], [0])
-pushdef([PACKAGE_MICRO_VERSION], [0])
+pushdef([PACKAGE_MICRO_VERSION], [1])
 pushdef([PKG_VERSION], PACKAGE_MAJOR_VERSION.PACKAGE_MINOR_VERSION.PACKAGE_MICRO_VERSION)
 
 AC_INIT([Mini], PKG_VERSION, [stefan@stereofx.org])
@@ -79,7 +79,7 @@ AC_ARG_WITH([squish],
             [AS_HELP_STRING([--with-squish],[Build with squish support @<:@default=yes@:>@])],
             [with_squish=no], [with_squish=yes])
 AS_IF([test "x${with_squish}" != xno],
-      [ AX_CXX_CHECK_LIB(squish,[squish::Compress],,AC_MSG_ERROR([Squish library not found]))
+      [ AC_CHECK_HEADER(squish.h,,AC_MSG_ERROR([Squish library not found]))
         PKGCONFIG_REQUIRES+=" squish"
       ],
       [ SQUISH_CFLAGS="-DNOSQUISH" ])
@@ -97,7 +97,6 @@ AS_IF([test "x${with_greyc}" != xno],
 AC_SUBST(PKGCONFIG_REQUIRES)
 AC_SUBST(SQUISH_CFLAGS)
 MINI_CFLAGS+=" $OPENTHREADS_CFLAGS $SQUISH_CFLAGS $GREYC_CFLAGS"
-#AC_SUBST(MINI_LIBS)
 AC_SUBST(MINI_CFLAGS)
 
 #########################################################################
@@ -108,6 +107,7 @@ AC_CHECK_LIB(GLU,gluLookAt,,[OpenGL Utility \(libGLU\) library not found])
 AC_CHECK_LIB(glut,glutInit,,[OpenGL Utility Toolkit \(libglut\) library not found])
 AC_CHECK_LIB(jpeg,jpeg_start_compress,,[jpeg \(libjpeg\) library not found])
 AC_CHECK_LIB(png,png_error,,[png \(libpng\) library not found])
+AC_CHECK_LIB(z,zlibVersion,,[z \(libz\) library not found])
 AC_CHECK_LIB(curl,curl_version,,[curl \(libcurl\) library not found])
 AC_CHECK_LIB(X11,XDisplayName,,[X11 \(libX11\) library not found])
 AC_CHECK_LIB(Xt,XtDestroyWidget,,[Xt \(libXt\) library not found])
