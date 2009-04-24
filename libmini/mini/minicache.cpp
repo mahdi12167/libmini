@@ -589,13 +589,12 @@ void minicache::rendertexmap(int m,int n,int S)
    int cols,rows;
    float xdim,zdim;
    float centerx,centery,centerz;
+   float xoff,zoff;
 
    miniwarpbase *warp;
 
    miniv4d mtx[3];
    double oglmtx[16];
-
-   float ox,oz;
 
    int texid,texw,texh,texmm;
 
@@ -606,17 +605,6 @@ void minicache::rendertexmap(int m,int n,int S)
    t=&TERRAIN[RENDER_ID];
 
    mtxpop();
-
-   cols=t->tile->getcols();
-   rows=t->tile->getrows();
-
-   xdim=t->tile->getcoldim();
-   zdim=t->tile->getrowdim();
-
-   centerx=t->tile->getcenterx();
-   centery=t->tile->getcentery();
-   centerz=t->tile->getcenterz();
-
    mtxpush();
 
    if (NONLIN==0 || USEVTXSHADER==0) warp=t->tile->getwarp();
@@ -656,10 +644,20 @@ void minicache::rendertexmap(int m,int n,int S)
 
    if (NONLIN==0 || USEVTXSHADER==0)
       {
-      ox=xdim*(m-(cols-1)/2.0f)+centerx;
-      oz=zdim*(n-(rows-1)/2.0f)+centerz;
+      cols=t->tile->getcols();
+      rows=t->tile->getrows();
 
-      mtxtranslate(ox-xdim/2.0f,centery,oz+zdim/2.0f);
+      xdim=t->tile->getcoldim();
+      zdim=t->tile->getrowdim();
+
+      centerx=t->tile->getcenterx();
+      centery=t->tile->getcentery();
+      centerz=t->tile->getcenterz();
+
+      xoff=xdim*(m-(cols-1)/2.0f)+centerx;
+      zoff=zdim*(n-(rows-1)/2.0f)+centerz;
+
+      mtxtranslate(xoff-xdim/2.0f,centery,zoff+zdim/2.0f);
 
       // avoid gaps between tiles (excluding the sea surface)
       if (t->render_phase==2)
@@ -676,7 +674,9 @@ void minicache::rendertexmap(int m,int n,int S)
       texh=t->tile->gettexh(m,n);
       texmm=t->tile->gettexmm(m,n);
 
-      if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0) bindtexmap(texid,texw,texh,S,texmm);
+      if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0)
+         if (USEVTXSHADER==0) bindtexmap(texid,texw,texh,S,texmm);
+         else bindtexmap(texid,texw,texh,0,texmm);
       else texid=0;
 
       if (USEVTXSHADER!=0)

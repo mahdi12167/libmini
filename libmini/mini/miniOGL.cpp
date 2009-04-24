@@ -926,6 +926,43 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          }
       }
 
+   // by default, enable mip-map filtering
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+
+   // by default, set texture wrap to clamp
+#if !defined(GL_CLAMP_TO_EDGE_SGIS) && !defined(GL_CLAMP_TO_EDGE_EXT)
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+#else
+   if (glext_tec)
+      {
+#ifdef GL_CLAMP_TO_EDGE_SGIS
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_SGIS);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_SGIS);
+#endif
+#ifdef GL_CLAMP_TO_EDGE_EXT
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_EXT);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_EXT);
+#endif
+      }
+   else
+      {
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+      }
+#endif
+
+   // by default, enable anisotropic texture filtering
+#ifdef GL_EXT_texture_filter_anisotropic
+   if (glext_tfa)
+      {
+      GLfloat maxaniso=1.0f;
+      glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,&maxaniso);
+      glTexParameterfv(GL_TEXTURE_2D,GL_TEXTURE_MAX_ANISOTROPY_EXT,&maxaniso);
+      }
+#endif
+
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&width2);
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&height2);
    glBindTexture(GL_TEXTURE_2D,0);
@@ -957,50 +994,17 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
       glBindTexture(GL_TEXTURE_2D,texid);
       glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 
-      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+      // optionally, disable mip-map filtering
+      if (mipmaps==0) glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 
-      if (mipmaps!=0) glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-      else glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-
-      if (size>0 || width>0 || height>0)
-         {
-#if !defined(GL_CLAMP_TO_EDGE_SGIS) && !defined(GL_CLAMP_TO_EDGE_EXT)
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
-#else
-         if (glext_tec)
-            {
-#ifdef GL_CLAMP_TO_EDGE_SGIS
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_SGIS);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_SGIS);
-#endif
-#ifdef GL_CLAMP_TO_EDGE_EXT
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE_EXT);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE_EXT);
-#endif
-            }
-         else
-            {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
-            }
-#endif
-         }
-      else
+      // optionally, change texture wrap from clamp to repeat
+      if (size==0 && width==0 && height==0)
          {
          glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
          glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
          }
 
-#ifdef GL_EXT_texture_filter_anisotropic
-      if (glext_tfa)
-         {
-         GLfloat maxaniso=1.0f;
-         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,&maxaniso);
-         glTexParameterfv(GL_TEXTURE_2D,GL_TEXTURE_MAX_ANISOTROPY_EXT,&maxaniso);
-         }
-#endif
-
+      // optionally, enable texture coordinate generation
       if (size>1 && width>1 && height>1)
          {
          v1[0]=1.0f/(size-1)*(width-1)/width;
@@ -1078,9 +1082,20 @@ int build3Dtexmap(unsigned char *volume,
       glTexImage3D(GL_TEXTURE_3D,0,GL_RGBA,*width,*height,*depth,0,
                    GL_RGBA,GL_UNSIGNED_BYTE,volume);
    else ERRORMSG();
+
+   // by default, set texture wrap to repeat
+   glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_R,GL_REPEAT);
+
+   // by default, disable mip-map filtering
+   glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
    glGetTexLevelParameteriv(GL_TEXTURE_3D,0,GL_TEXTURE_WIDTH,&width2);
    glGetTexLevelParameteriv(GL_TEXTURE_3D,0,GL_TEXTURE_HEIGHT,&height2);
    glGetTexLevelParameteriv(GL_TEXTURE_3D,0,GL_TEXTURE_DEPTH,&depth2);
+
    glBindTexture(GL_TEXTURE_3D,0);
 
    *width=width2;
@@ -1114,14 +1129,6 @@ void bind3Dtexmap(int texid)
       {
       glBindTexture(GL_TEXTURE_3D,texid);
       glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-
-      glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_R,GL_REPEAT);
-
-      glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-
       glEnable(GL_TEXTURE_3D);
       }
    else glDisable(GL_TEXTURE_3D);
