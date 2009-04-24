@@ -19,6 +19,7 @@
 # deps      -> make main dependencies
 # vdeps     -> make viewer dependencies
 # check     -> check integrity
+# stamp     -> stamp modified files
 # install   -> make install
 # clean     -> remove object files
 # tidy      -> clean up all temporary files
@@ -88,6 +89,10 @@ if ($rule == "vdeps") then
 endif
 
 if ($rule == "check") then
+   exec md5check.sh .
+endif
+
+if ($rule == "stamp") then
    exec md5check.sh -t .
 endif
 
