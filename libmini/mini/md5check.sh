@@ -34,7 +34,7 @@ if (! -e $md5) then
 else
    echo checking integrity
    if ($stamp) then
-      find $dir \( -type f -a \! -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn/\*  -a \! -path \*CVS/\* \) -exec egrep \{\}\$ $md5 \; > $tmp
+      find $dir \( -type f -a \! -newer $md5 -a \! -name \*.md5 -a \! -path \*.svn/\* -a \! -path \*CVS/\* \) -exec egrep \{\}\$ $md5 \; > $tmp
 
       md5sum --check --status $tmp
 

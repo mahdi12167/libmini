@@ -18,6 +18,7 @@
 # all       -> build everything
 # deps      -> make main dependencies
 # vdeps     -> make viewer dependencies
+# check     -> check integrity
 # install   -> make install
 # clean     -> remove object files
 # tidy      -> clean up all temporary files
@@ -84,6 +85,10 @@ set depend="depend"
 if ($rule == "vdeps") then
    set rule="deps"
    set depend="vdepend"
+endif
+
+if ($rule == "check") then
+   exec md5check.sh -t .
 endif
 
 if ($rule == "install") then
