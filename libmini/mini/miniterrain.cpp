@@ -61,6 +61,8 @@ miniterrain::miniterrain()
    TPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
    TPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
 
+   TPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
+
    TPARAMS.range=0.001f;           // texture paging range relative to far plane
    TPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
@@ -330,6 +332,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.reduction1=TPARAMS.reduction1;
          lparams.reduction2=TPARAMS.reduction2;
+
+         lparams.cullslope=TPARAMS.cullslope;
 
          lparams.range=TPARAMS.range;
          lparams.refres=TPARAMS.refres;
