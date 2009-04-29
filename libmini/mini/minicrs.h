@@ -64,6 +64,24 @@ class minicrs
    static void ECEF2LLH(float xyz[3],
                         float *lat,float *lon,float *h);
 
+   //! transform OG/H to ECEF
+   static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
+                        int zone, // oblique gnomonic zone of input coordinates
+                        double xyz[3]); // output ECEF coordinates
+
+   static void OGH2ECEF(double x,double y,double h,
+                        int zone,
+                        float xyz[3]);
+
+   //! transform ECEF to OG/H
+   static void ECEF2OGH(double xyz[3], // input ECEF coordinates
+                        double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
+                        int *zone); // oblique gnomonic zone of output coordinates
+
+   static void ECEF2OGH(float xyz[3],
+                        float *x,float *y,float *h,
+                        int *zone);
+
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m);
    static void arcsec2meter(double lat,float *as2m);

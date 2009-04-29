@@ -18,7 +18,8 @@ class minicoord
       MINICOORD_ECEF,   // Earth Centered Earth Fixed
       MINICOORD_LLH,    // Lat/Lon/H WGS84
       MINICOORD_MERC,   // Mercator WGS84
-      MINICOORD_UTM,    // Universal Transverse Mercator
+      MINICOORD_UTM,    // Universal Transverse Mercator (zones [+-] 1-60)
+      MINICOORD_OGH,    // Oblique Gnomonic (zones 1-6)
       MINICOORD_LINEAR, // linear coordinate space
       };
 
