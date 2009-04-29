@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "miniv3d.h"
+
 #include "minicrs.h"
 
 const double minicrs::EARTH_radius=6370997.0; // radius of the earth
@@ -357,9 +359,9 @@ void minicrs::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
 
 // transform OG/H to ECEF
 // input and output in meters
-static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
-                     int zone, // oblique gnomonic zone of input coordinates
-                     double xyz[3]) // output ECEF coordinates
+void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
+                       int zone, // oblique gnomonic zone of input coordinates
+                       double xyz[3]) // output ECEF coordinates
    {
    miniv3d pos;
    miniv3d right,up;
@@ -378,23 +380,23 @@ static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coord
       }
    }
 
-static void OGH2ECEF(double x,double y,double h,
-                     int zone,
-                     float xyz[3])
+void minicrs::OGH2ECEF(double x,double y,double h,
+                       int zone,
+                       float xyz[3])
    {
    }
 
 // transform ECEF to OG/H
 // input and output in meters
-static void ECEF2OGH(double xyz[3], // input ECEF coordinates
-                     double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
-                     int *zone) // oblique gnomonic zone of output coordinates
+void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
+                       double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
+                       int *zone) // oblique gnomonic zone of output coordinates
    {
    }
 
-static void ECEF2OGH(float xyz[3],
-                     float *x,float *y,float *h,
-                     int *zone)
+void minicrs::ECEF2OGH(float xyz[3],
+                       float *x,float *y,float *h,
+                       int *zone)
    {
    }
 
