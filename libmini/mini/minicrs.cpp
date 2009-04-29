@@ -355,6 +355,49 @@ void minicrs::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    *lon*=360*60*60/(2*PI);
    }
 
+// transform OG/H to ECEF
+// input and output in meters
+static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
+                     int zone, // oblique gnomonic zone of input coordinates
+                     double xyz[3]) // output ECEF coordinates
+   {
+   miniv3d pos;
+   miniv3d right,up;
+
+   if (zone<1) zone=1;
+   else if (zone>6) zone=6;
+
+   switch (zone)
+      {
+      case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,-1.0,0.0); break; // north pole
+      case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
+      case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // hawaii
+      case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
+      case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
+      case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,1.0,0.0); break; // south pole
+      }
+   }
+
+static void OGH2ECEF(double x,double y,double h,
+                     int zone,
+                     float xyz[3])
+   {
+   }
+
+// transform ECEF to OG/H
+// input and output in meters
+static void ECEF2OGH(double xyz[3], // input ECEF coordinates
+                     double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
+                     int *zone) // oblique gnomonic zone of output coordinates
+   {
+   }
+
+static void ECEF2OGH(float xyz[3],
+                     float *x,float *y,float *h,
+                     int *zone)
+   {
+   }
+
 // Molodensky transformation
 void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
