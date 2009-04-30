@@ -451,10 +451,10 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       pos1+=err;
       }
 
-   if (pos2.z>pos2.x)
-      if (pos2.z>pos2.y)
+   if (dabs(pos2.z)>dabs(pos2.x) && dabs(pos2.z)>dabs(pos2.y))
+      if (pos2.z>0.0)
          {
-         *zone=1;
+         *zone=1; // north pole
 
          dist=intersect_plane(pos2,pos2,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
          pos2+=dist*pos2;
@@ -465,8 +465,30 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
          }
       else
          {
-         //!!
+         *zone=6; // south pole
+
+         dist=intersect_plane(pos2,pos2,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         pos2+=dist*pos2;
+
+         *x=pos2.y;
+         *y=-pos2.x;
+         *h=dist;
          }
+
+   if (dabs(pos2.y)>dabs(pos2.x) && dabs(pos2.y)>dabs(pos2.z))
+      if (pos2.y>0.0)
+         {
+         *zone=4; // tokyo
+         }
+      else
+         {
+         *zone=5; // new york
+         }
+
+   if (dabs(pos2.x)>dabs(pos2.y) && dabs(pos2.x)>dabs(pos2.z))
+      {
+      //!!
+      }
    }
 
 void minicrs::ECEF2OGH(float xyz[3],

@@ -32,7 +32,8 @@ class databuf
       DATABUF_CRS_LINEAR=0,
       DATABUF_CRS_LLH=1,
       DATABUF_CRS_UTM=2,
-      DATABUF_CRS_MERC=3
+      DATABUF_CRS_MERC=3,
+      DATABUF_CRS_OGH=4
       };
 
    enum DATABUF_DATUM
