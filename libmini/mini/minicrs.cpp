@@ -363,7 +363,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
                        int zone, // oblique gnomonic zone of input coordinates
                        double xyz[3]) // output ECEF coordinates
    {
-   miniv3d pos;
+   miniv3d pos,nrm;
    miniv3d right,up;
 
    if (zone<1) zone=1;
@@ -371,13 +371,28 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    switch (zone)
       {
-      case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,-1.0,0.0); break; // north pole
+      case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
       case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
       case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // hawaii
-      case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
-      case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
-      case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,1.0,0.0); break; // south pole
+      case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
+      case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
+      case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
       }
+
+   pos=x*right+y*up;
+
+   /*
+
+   pos=nrm=intersect_ellipsoid(pos);
+   nrm.normalize();
+
+   pos+=nrm*h;
+
+   */
+
+   xyz[0]=pos.x;
+   xyz[1]=pos.y;
+   xyz[2]=pos.z;
    }
 
 void minicrs::OGH2ECEF(double x,double y,double h,
