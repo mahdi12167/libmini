@@ -385,7 +385,12 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    dist=intersect_ellipsoid(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
 
-   pos=nrm=pos-dist*pos;
+   pos-=dist*pos;
+
+   nrm.x=pos.x/WGS84_r_major;
+   nrm.y=pos.y/WGS84_r_major;
+   nrm.z=pos.z/WGS84_r_minor;
+
    nrm.normalize();
 
    pos+=nrm*h;
