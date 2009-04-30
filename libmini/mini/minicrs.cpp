@@ -467,11 +467,11 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
          {
          *zone=6; // south pole
 
-         dist=intersect_plane(pos2,pos2,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         dist=intersect_plane(pos2,pos2,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
          pos2+=dist*pos2;
 
          *x=pos2.y;
-         *y=-pos2.x;
+         *y=pos2.x;
          *h=dist;
          }
 
@@ -479,22 +479,67 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       if (pos2.y>0.0)
          {
          *zone=4; // tokyo
+
+         dist=intersect_plane(pos2,pos2,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
+         pos2+=dist*pos2;
+
+         *x=-pos2.x;
+         *y=pos2.z;
+         *h=dist;
          }
       else
          {
          *zone=5; // new york
+
+         dist=intersect_plane(pos2,pos2,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
+         pos2+=dist*pos2;
+
+         *x=pos2.x;
+         *y=pos2.z;
+         *h=dist;
          }
 
    if (dabs(pos2.x)>dabs(pos2.y) && dabs(pos2.x)>dabs(pos2.z))
-      {
-      //!!
-      }
+      if (pos2.x>0.0)
+         {
+         *zone=2; // greenwich
+
+         dist=intersect_plane(pos2,pos2,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
+         pos2+=dist*pos2;
+
+         *x=pos2.y;
+         *y=pos2.z;
+         *h=dist;
+         }
+      else
+         {
+         *zone=3; // honolulu
+
+         dist=intersect_plane(pos2,pos2,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
+         pos2+=dist*pos2;
+
+         *x=-pos2.y;
+         *y=pos2.z;
+         *h=dist;
+         }
    }
 
 void minicrs::ECEF2OGH(float xyz[3],
                        float *x,float *y,float *h,
                        int *zone)
    {
+   double txyz[3];
+   double tx,ty,th;
+
+   txyz[0]=xyz[0];
+   txyz[1]=xyz[1];
+   txyz[2]=xyz[2];
+
+   ECEF2OGH(txyz,&tx,&ty,&th,zone);
+
+   *x=tx;
+   *y=ty;
+   *h=th;
    }
 
 // Molodensky transformation
