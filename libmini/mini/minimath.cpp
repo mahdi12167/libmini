@@ -393,4 +393,66 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
       }
    }
 
+// ray/unitsphere intersection
+double intersect_unitsphere(miniv3d p,miniv3d d)
+   {
+   double a,b,c;
+   double s,r;
+
+   double t1,t2;
+
+   a=2*d*d;
+   b=2*p*d;
+   c=2*(p*p-1.0);
+
+   r=b*b-a*c;
+
+   if (r<0.0) return(MAXFLOAT);
+
+   s=sqrt(r);
+
+   t1=(-b+s)/a;
+   t2=(-b-s)/a;
+
+   if (t1<0.0)
+      if (t2<0.0) return(MAXFLOAT);
+      else return(t2);
+   else
+      if (t2<0.0) return(t1);
+      else if (t1<t2) return(t1);
+      else return(t2);
+   }
+
+// ray/ellipsoid intersection
+double intersect_ellipsoid(miniv3d p,miniv3d d,
+                           miniv3d o,double r1,double r2,double r3)
+   {
+   p-=o;
+
+   p.x/=r1;
+   p.y/=r2;
+   p.z/=r3;
+
+   d.x/=r1;
+   d.y/=r2;
+   d.z/=r3;
+
+   return(intersect_unitsphere(p,d));
+   }
+
+// ray/plane intersection
+double intersect_plane(miniv3d p,miniv3d d,
+                       miniv3d o,miniv3d n)
+   {
+   double c;
+
+   static const double epsilon=1E-10;
+
+   c=d*n;
+
+   if (c>=-epsilon) return(MAXFLOAT);
+
+   return(n*(o-p)/c);
+   }
+
 }

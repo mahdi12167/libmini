@@ -3,6 +3,7 @@
 #include "minibase.h"
 
 #include "miniv3d.h"
+#include "minimath.h"
 
 #include "minicrs.h"
 
@@ -365,6 +366,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
    {
    miniv3d pos,nrm;
    miniv3d right,up;
+   double dist;
 
    if (zone<1) zone=1;
    else if (zone>6) zone=6;
@@ -381,14 +383,12 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    pos=x*right+y*up;
 
-   /*
+   dist=intersect_ellipsoid(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
 
-   pos=nrm=intersect_ellipsoid(pos);
+   pos=nrm=pos-dist*pos;
    nrm.normalize();
 
    pos+=nrm*h;
-
-   */
 
    xyz[0]=pos.x;
    xyz[1]=pos.y;

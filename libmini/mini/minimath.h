@@ -58,6 +58,14 @@ void tra_mtx4(miniv4d tra[4],const miniv4d mtx[4]);
 
 void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
 
+double intersect_unitsphere(miniv3d p,miniv3d d);
+
+double intersect_ellipsoid(miniv3d p,miniv3d d,
+                           miniv3d o,double r1,double r2,double r3);
+
+double intersect_plane(miniv3d p,miniv3d d,
+                       miniv3d o,miniv3d n);
+
 }
 
 using namespace minimath;

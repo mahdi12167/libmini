@@ -227,14 +227,6 @@ class miniearth
    void grabbuffers();
    void drawbuffers();
    void freebuffers();
-
-   double intersect_unitsphere(miniv3d p,miniv3d d);
-
-   double intersect_ellipsoid(miniv3d p,miniv3d d,
-                              miniv3d o,double r1,double r2,double r3);
-
-   double intersect_plane(miniv3d p,miniv3d d,
-                          miniv3d o,miniv3d n);
    };
 
 #endif
