@@ -7,7 +7,7 @@
 
 #include "minicrs.h"
 
-const double minicrs::EARTH_radius=6370997.0; // radius of the earth
+const double minicrs::EARTH_radius=6370997.0; // mean earth radius
 
 const double minicrs::WGS84_r_major=6378137.0; // WGS84 semi-major axis
 const double minicrs::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
@@ -375,7 +375,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
       {
       case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
       case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
-      case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // hawaii
+      case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
       case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
       case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
       case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
@@ -404,6 +404,13 @@ void minicrs::OGH2ECEF(double x,double y,double h,
                        int zone,
                        float xyz[3])
    {
+   double txyz[3];
+
+   OGH2ECEF(x,y,h,zone,txyz);
+
+   xyz[0]=txyz[0];
+   xyz[1]=txyz[1];
+   xyz[2]=txyz[2];
    }
 
 // transform ECEF to OG/H
@@ -412,6 +419,41 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
                        double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
                        int *zone) // oblique gnomonic zone of output coordinates
    {
+   int i;
+
+   miniv3d pos,nrm;
+   miniv3d pos1,pos2,err;
+   double dist;
+
+   pos1=pos;
+
+   for (i=0; i<10; i++)
+      {
+      nrm.x=pos1.x/WGS84_r_major;
+      nrm.y=pos1.y/WGS84_r_major;
+      nrm.z=pos1.z/WGS84_r_minor;
+
+      nrm.normalize();
+
+      dist=intersect_ellipsoid(pos1,nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+
+      pos2=pos1+dist*nrm;
+
+      nrm.x=pos2.x/WGS84_r_major;
+      nrm.y=pos2.y/WGS84_r_major;
+      nrm.z=pos2.z/WGS84_r_minor;
+
+      nrm.normalize();
+
+      err=pos-pos2-dist*nrm;
+      pos1+=err;
+      }
+
+   *x=pos2.x;
+   *y=pos2.y;
+   *h=dist;
+
+   *zone=1; //!!
    }
 
 void minicrs::ECEF2OGH(float xyz[3],
