@@ -215,7 +215,7 @@ UTM 04
 2353972
 35m
 
-Jose Andres, 41-945 Kalaniana'ole Hwy., Waimanalo, Oahu
+41-945 Kalaniana'ole Hwy., Waimanalo, Oahu
 UTM 04
 0634669
 2360026
@@ -233,7 +233,7 @@ UTM 04
 2361225
 20m
 
-Jose's Beach, Waimanalo
+Waimanalo Beach
 UTM 04
 0634964
 2360342
@@ -845,7 +845,7 @@ UTM 04
 2355604
 330m
 
-Tie Fang, 1306 Wilhelmina Rise, 96816 Honolulu
+1306 Wilhelmina Rise, 96816 Honolulu
 LL
 21.284108
 -157.797341
