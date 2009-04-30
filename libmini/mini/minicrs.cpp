@@ -445,15 +445,28 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       nrm.normalize();
 
+      dist=(pos-pos2).getlength();
+
       err=pos-pos2-dist*nrm;
       pos1+=err;
       }
 
-   *x=pos2.x;
-   *y=pos2.y;
-   *h=dist;
+   if (pos2.z>pos2.x)
+      if (pos2.z>pos2.y)
+         {
+         *zone=1;
 
-   *zone=1; //!!
+         dist=intersect_plane(pos2,pos2,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         pos2+=dist*pos2;
+
+         *x=pos2.y;
+         *y=-pos2.x;
+         *h=dist;
+         }
+      else
+         {
+         //!!
+         }
    }
 
 void minicrs::ECEF2OGH(float xyz[3],
