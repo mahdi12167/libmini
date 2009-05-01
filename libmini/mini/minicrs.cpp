@@ -381,7 +381,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
       case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
       }
 
-   pos=x*right+y*up;
+   pos+=x*right+y*up;
 
    dist=intersect_ellipsoid(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
 
@@ -425,9 +425,12 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
    miniv3d pos1,pos2,err;
    double dist;
 
+   static const int maxiter=10;
+   static const double maxerror=1E-20;
+
    pos1=pos;
 
-   for (i=0; i<10; i++)
+   for (i=0; i<maxiter; i++)
       {
       nrm.x=pos1.x/WGS84_r_major;
       nrm.y=pos1.y/WGS84_r_major;
@@ -435,9 +438,9 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       nrm.normalize();
 
-      dist=intersect_ellipsoid(pos1,nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+      dist=intersect_ellipsoid(pos1,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
 
-      pos2=pos1+dist*nrm;
+      pos2=pos1-dist*nrm;
 
       nrm.x=pos2.x/WGS84_r_major;
       nrm.y=pos2.y/WGS84_r_major;
@@ -448,6 +451,9 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       dist=(pos-pos2).getlength();
 
       err=pos-pos2-dist*nrm;
+
+      if (err.getlength()<maxerror) break;
+
       pos1+=err;
       }
 
