@@ -423,12 +423,12 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
    miniv3d pos,nrm;
    miniv3d pos1,pos2,err;
-   double dist;
+   double dist,height;
 
    static const int maxiter=10;
    static const double maxerror=1E-20;
 
-   pos1=pos;
+   pos=pos1=miniv3d(xyz);
 
    for (i=0; i<maxiter; i++)
       {
@@ -448,16 +448,16 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       nrm.normalize();
 
-      dist=(pos-pos2).getlength();
+      height=(pos-pos2).getlength();
 
-      err=pos-pos2-dist*nrm;
+      err=pos-pos2-height*nrm;
 
       if (err.getlength()<maxerror) break;
 
       pos1+=err;
       }
 
-   if (dabs(pos2.z)>dabs(pos2.x) && dabs(pos2.z)>dabs(pos2.y))
+   if (dabs(pos2.z)>=dabs(pos2.x) && dabs(pos2.z)>=dabs(pos2.y))
       if (pos2.z>0.0)
          {
          *zone=1; // north pole
@@ -467,7 +467,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=pos2.y;
          *y=-pos2.x;
-         *h=dist;
+         *h=height;
          }
       else
          {
@@ -478,10 +478,10 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=pos2.y;
          *y=pos2.x;
-         *h=dist;
+         *h=height;
          }
 
-   if (dabs(pos2.y)>dabs(pos2.x) && dabs(pos2.y)>dabs(pos2.z))
+   if (dabs(pos2.y)>=dabs(pos2.x) && dabs(pos2.y)>=dabs(pos2.z))
       if (pos2.y>0.0)
          {
          *zone=4; // tokyo
@@ -491,7 +491,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=-pos2.x;
          *y=pos2.z;
-         *h=dist;
+         *h=height;
          }
       else
          {
@@ -502,10 +502,10 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=pos2.x;
          *y=pos2.z;
-         *h=dist;
+         *h=height;
          }
 
-   if (dabs(pos2.x)>dabs(pos2.y) && dabs(pos2.x)>dabs(pos2.z))
+   if (dabs(pos2.x)>=dabs(pos2.y) && dabs(pos2.x)>=dabs(pos2.z))
       if (pos2.x>0.0)
          {
          *zone=2; // greenwich
@@ -515,7 +515,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=pos2.y;
          *y=pos2.z;
-         *h=dist;
+         *h=height;
          }
       else
          {
@@ -526,7 +526,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          *x=-pos2.y;
          *y=pos2.z;
-         *h=dist;
+         *h=height;
          }
    }
 
