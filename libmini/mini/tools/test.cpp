@@ -5,8 +5,6 @@
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
 
-#include <mini/minicrs.h> //!!
-
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -110,18 +108,6 @@ int main(int argc,char *argv[])
 
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
-
-   //!!
-   double xyz[3];
-   minicrs::LLH2ECEF(49.5*3600,11.5*3600,1000.0,xyz);
-   printf("ecef: x=%g y=%g z=%g\n",xyz[0],xyz[1],xyz[2]);
-   double x,y,h;
-   int zone;
-   minicrs::ECEF2OGH(xyz,&x,&y,&h,&zone);
-   printf("ogh: x=%g y=%g h=%g zone=%d\n",x,y,h,zone);
-   minicrs::OGH2ECEF(x,y,h,zone,xyz);
-   minicrs::ECEF2LLH(xyz,&y,&x,&h);
-   printf("llh: lat=%g lon=%g h=%g\n",y/3600,x/3600,h);
 
    // end of test code
 
