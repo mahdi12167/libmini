@@ -440,6 +440,33 @@ double intersect_ellipsoid(miniv3d p,miniv3d d,
    return(intersect_unitsphere(p,d));
    }
 
+// line/ellipsoid intersection
+double intersect_ellipsoid_line(miniv3d p,miniv3d d,
+                                miniv3d o,double r1,double r2,double r3)
+   {
+   double dist;
+
+   p-=o;
+
+   p.x/=r1;
+   p.y/=r2;
+   p.z/=r3;
+
+   d.x/=r1;
+   d.y/=r2;
+   d.z/=r3;
+
+   dist=intersect_unitsphere(p,d);
+
+   if (dist==MAXFLOAT)
+      {
+      dist=intersect_unitsphere(p,-d);
+      if (dist!=MAXFLOAT) dist=-dist;
+      }
+
+   return(dist);
+   }
+
 // ray/plane intersection
 double intersect_plane(miniv3d p,miniv3d d,
                        miniv3d o,miniv3d n)
@@ -451,6 +478,21 @@ double intersect_plane(miniv3d p,miniv3d d,
    c=d*n;
 
    if (c>=-epsilon) return(MAXFLOAT);
+
+   return(n*(o-p)/c);
+   }
+
+// line/plane intersection
+double intersect_plane_line(miniv3d p,miniv3d d,
+                            miniv3d o,miniv3d n)
+   {
+   double c;
+
+   static const double epsilon=1E-10;
+
+   c=d*n;
+
+   if (dabs(c)<=epsilon) return(MAXFLOAT);
 
    return(n*(o-p)/c);
    }
