@@ -591,6 +591,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
                LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_MERC);
                LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_MERC);
                }
+            else if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_OGH)
+               {
+               // get original data coordinates as Gnomonic
+               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_OGH);
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_OGH);
+               }
          }
       else
          {
