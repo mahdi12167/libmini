@@ -259,8 +259,8 @@ necessary include files in /usr/local on your Unix machine type
 Optionally, you can
 use <a href="http://www.gnu.org/software/autoconf">autoconf</a>
 or <a href="http://www.cmake.org">CMake</a> to build libMini. For the
-former type "./configure && make" and for the latter type "./cmake
-. && make" in a Unix shell.
+former type "./configure && make" and for the latter type "cmake . &&
+make" in a Unix shell.
 
 The library also compiles on Windows by using CMake generated VC++
 project files. Simply specify the libMini directory as the source and
@@ -277,10 +277,10 @@ Studio. Alternatively, you can use cygwin in the following way:<p>
 
 Other than the specified operating systems are not officially
 supported, but there is a good chance that libMini will build via
-automake or CMake on other platforms.<p>
+automake or CMake.<p>
 
-As described in the following section, the distribution also contains
-a libMini application example . The example can be compiled by typing
+As described in the following section, the distribution contains a
+libMini application example. The example can be compiled by typing
 "./build.sh example" in a shell. It requires GLUT to be installed. On
 Windows it is recommended to use
 the <a href="http://freeglut.sourceforge.net">freeGLUT library</a> as
