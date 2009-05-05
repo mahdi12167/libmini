@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 9.0.2 as of 4.May.2009<br>
+Version 9.0.2 as of 5.May.2009<br>
 Copyright (c) 1995-2009 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -2049,7 +2049,17 @@ support ("./build.sh viewer nosquish") or with
 <a href="http://www.greyc.ensicaen.fr/~dtschump/greycstoration">GREYCstoration</a>
 support ("./build.sh viewer usegreyc").<p>
 
-See the following examples how to use the viewer from the command line:<p>
+The libMini Viewer can also be compiled with CMake. To do so, enable
+the option BUILD_APPS in the CMake configuration (via ccmake or the
+Windows CMake GUI). If some of the required or optional dependencies
+cannot be found, because they have not been installed at a standard
+location like /usr/local, you can specify the installation directory
+by overriding the variable LIBMINI_THIRDPARTY_DIR in the CMake
+configuration.<p>
+
+Once you managed to install the dependencies and compile the libMini
+Viewer, see the following examples how to use it from the command
+line:<p>
 
 <pre>
    local usage:
