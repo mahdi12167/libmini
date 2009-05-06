@@ -62,6 +62,8 @@ class ministring: public ministring_base
 
       for (i=0; i<l; i++) str[i]=get(i);
       str[l]='\0';
+
+      return(str);
       }
 
    };
