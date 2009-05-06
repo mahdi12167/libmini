@@ -52,7 +52,7 @@ class minidyna
       }
 
    //! copy constructor
-   minidyna(const minidyna &a)
+   minidyna(const minidyna<Item,Minsize> &a)
       {
       unsigned int i;
 
@@ -189,7 +189,7 @@ class minidyna
       }
 
    //! append array
-   void append(const minidyna &a)
+   void append(const minidyna<Item,Minsize> &a)
       {
       unsigned int i;
 
@@ -208,7 +208,7 @@ class minidyna
       }
 
    //! assignment operator
-   minidyna &operator = (const minidyna &a)
+   minidyna &operator = (const minidyna<Item,Minsize> &a)
       {
       unsigned int i;
 
@@ -397,7 +397,7 @@ inline std::ostream& operator << (std::ostream &out,const minidyna<Item,Minsize>
 
    for (i=0; i<a.getsize(); i++)
       {
-      out << a.get(i);
+      out << a[i];
       if (i+1<a.getsize()) out << ", ";
       }
 

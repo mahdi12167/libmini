@@ -4,7 +4,7 @@ SUBDIRS = . tools
 
 HDRS	= minibase\
 	  minivec minimtx\
-	  minidyna minigeom minisort
+	  minidyna minigeom minisort ministring
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
