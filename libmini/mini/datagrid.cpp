@@ -50,8 +50,8 @@ unsigned int datagrid::create(const unsigned int slot,
          DATA[i]=databuf();
 
          SPEC[i]=FALSE;
-         VTX[i]=minidyna<minicoord,8>(minicoord(miniv3d(0.0)));
-         VEC[i]=minidyna<miniv3d,8>(miniv3d(0.0));
+         VTX[i]=minidyna<minicoord,8>(minicoord(miniv3d(0.0)),8);
+         VEC[i]=minidyna<miniv3d,8>(miniv3d(0.0),8);
 
          return(i);
          }
@@ -66,8 +66,8 @@ unsigned int datagrid::create(const unsigned int slot,
    DATA.append(databuf());
 
    SPEC.append(FALSE);
-   VTX.append(minidyna<minicoord,8>(minicoord(miniv3d(0.0))));
-   VEC.append(minidyna<miniv3d,8>(miniv3d(0.0)));
+   VTX.append(minidyna<minicoord,8>(minicoord(miniv3d(0.0)),8));
+   VEC.append(minidyna<miniv3d,8>(miniv3d(0.0),8));
 
    return(FLAG.getsize()-1);
    }
