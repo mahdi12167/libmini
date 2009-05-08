@@ -141,20 +141,35 @@ class minidyna
       for (i=s; i<SIZE; i++) set(i,c);
       }
 
+   //! grow array size with expansion of existing part
+   void expandsize(unsigned int size)
+      {if (SIZE>0) growsize(size,get(SIZE-1));}
+
    //! set null!
    void setnull() {setsize(0);}
 
    //! is null?
    BOOLINT isnull() const {return(SIZE==0);}
 
-   //! set single value
+   //! check for existing item
+   BOOLINT has(const Item &v)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++)
+         if (get(i)==v) return(TRUE);
+
+      return(FALSE);
+      }
+
+   //! set to single item
    void set(const Item &v)
       {
       setsize(1);
       MINARRAY[0]=v;
       }
 
-   //! set single value
+   //! set item
    void set(const unsigned int idx,const Item &v)
       {
       ERRORCHK(idx>=SIZE);
@@ -163,7 +178,7 @@ class minidyna
       else ARRAY[idx-MINSIZE]=v;
       }
 
-   //! get single value
+   //! get item
    const Item &get(const unsigned int idx=0) const
       {
       ERRORCHK(idx>=SIZE);
@@ -172,7 +187,7 @@ class minidyna
       else return(ARRAY[idx-MINSIZE]);
       }
 
-   //! get reference to single value
+   //! get reference to item
    Item &ref(const unsigned int idx=0)
       {
       ERRORCHK(idx>=SIZE);
@@ -188,7 +203,7 @@ class minidyna
       set(SIZE-1,v);
       }
 
-   //! append array
+   //! append item array
    void append(const minidyna<Item,Minsize> &a)
       {
       unsigned int i;
