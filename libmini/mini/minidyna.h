@@ -30,25 +30,21 @@ class minidyna
    //! constructor
    minidyna(const Item &v)
       {
-      unsigned int i;
-
+      SIZE=MAXSIZE=1;
       MINSIZE=(Minsize==0)?1:Minsize;
-      SIZE=MAXSIZE=MINSIZE;
       ARRAY=NULL;
 
-      for (i=0; i<MINSIZE; i++) MINARRAY[i]=v;
+      MINARRAY[0]=v;
       }
 
    //! constructor
-   minidyna(const Item *v)
+   minidyna(const Item &v,unsigned int size)
       {
-      unsigned int i;
-
+      SIZE=MAXSIZE=0;
       MINSIZE=(Minsize==0)?1:Minsize;
-      SIZE=MAXSIZE=MINSIZE;
       ARRAY=NULL;
 
-      for (i=0; i<MINSIZE; i++) MINARRAY[i]=v[i];
+      setsize(size,v);
       }
 
    //! copy constructor
@@ -122,6 +118,16 @@ class minidyna
       setsize(size);
 
       for (i=0; i<SIZE; i++) set(i,c);
+      }
+
+   //! set array size and copy from array
+   void setarray(unsigned int size,const Item *c)
+      {
+      unsigned int i;
+
+      setsize(size);
+
+      for (i=0; i<SIZE; i++) set(i,c[i]);
       }
 
    //! grow array size

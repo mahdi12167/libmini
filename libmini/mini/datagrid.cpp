@@ -113,8 +113,11 @@ void datagrid::spec(const unsigned int id,
                     const minicoord vtx[8],
                     const miniv3d vec[8])
    {
-   minidyna<minicoord,8> mvtx(vtx);
-   minidyna<miniv3d,8> mvec(vec);
+   minidyna<minicoord,8> mvtx;
+   minidyna<miniv3d,8> mvec;
+
+   mvtx.setarray(8,vtx);
+   mvec.setarray(8,vec);
 
    if (FLAG[id])
       {
