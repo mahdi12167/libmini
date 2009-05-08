@@ -319,6 +319,40 @@ inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const 
    return(array);
    }
 
+//! add operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator + (const double a,const minidyna<Item,Minsize> &b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=b.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a+b[i];
+
+   return(array);
+   }
+
+//! add operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const double b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=a.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]+b;
+
+   return(array);
+   }
+
 //! sub operator
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
@@ -336,6 +370,40 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const 
    array.setsize(size);
 
    for (i=0; i<size; i++) array[i]=a[i]-b[i];
+
+   return(array);
+   }
+
+//! sub operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator - (const double a,const minidyna<Item,Minsize> &b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=b.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a-b[i];
+
+   return(array);
+   }
+
+//! sub operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const double b)
+   {
+   unsigned int i;
+
+   minidyna<Item,Minsize> array;
+   unsigned int size;
+
+   size=a.getsize();
+   array.setsize(size);
+
+   for (i=0; i<size; i++) array[i]=a[i]-b;
 
    return(array);
    }
