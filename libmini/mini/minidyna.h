@@ -260,6 +260,78 @@ class minidyna
       else return(ARRAY[idx-MINSIZE]);
       }
 
+   //! add operator
+   minidyna<Item,Minsize>& operator += (const minidyna<Item,Minsize> &a)
+      {
+      unsigned int i;
+
+      unsigned int size;
+
+      size=a.getsize();
+
+      setsize((SIZE<size)?SIZE:size);
+
+      for (i=0; i<SIZE; i++) ref(i)+=a[i];
+
+      return(*this);
+      }
+
+   //! add operator
+   minidyna<Item,Minsize>& operator += (double c)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++) ref(i)+=c;
+
+      return(*this);
+      }
+
+   //! sub operator
+   minidyna<Item,Minsize>& operator -= (const minidyna<Item,Minsize> &a)
+      {
+      unsigned int i;
+
+      unsigned int size;
+
+      size=a.getsize();
+
+      setsize((SIZE<size)?SIZE:size);
+
+      for (i=0; i<SIZE; i++) ref(i)-=a[i];
+
+      return(*this);
+      }
+
+   //! sub operator
+   minidyna<Item,Minsize>& operator -= (double c)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++) ref(i)-=c;
+
+      return(*this);
+      }
+
+   //! mul operator
+   minidyna<Item,Minsize>& operator *= (double c)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++) ref(i)*=c;
+
+      return(*this);
+      }
+
+   //! div operator
+   minidyna<Item,Minsize>& operator /= (double c)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++) ref(i)/=c;
+
+      return(*this);
+      }
+
    };
 
 //! cmp operator
