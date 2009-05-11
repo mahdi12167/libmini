@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 9.0.2 as of 10.May.2009<br>
+Version 9.0.2 as of 11.May.2009<br>
 Copyright (c) 1995-2009 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -1816,8 +1816,8 @@ Since the textures are now stored in JPEG format on disk, they need to
 be decoded and uploaded in raw format to the graphics memory. If S3TC
 compression is required to fit the textures into the graphics memory,
 we also need to recompress the textures on-the-fly. For this purpose
-the <a href="http://www.sjbrown.co.uk/?code=squish">squish library</a>
-of Simon Brown is highly recommended. See
+the <a href="http://libsquish.googlecode.com">squish library</a> of
+Simon Brown is highly recommended. See
 Section <a href="#AutoCompression">(M)</a> how to use this library.
 
 <a href="#" class="top">Back to top</a>
@@ -1922,8 +1922,8 @@ the auto-compression hook. Whenever libMini encounters an uncompressed
 texture and the auto-compression hook is set it automatically tries to
 run the texture data through the compression hook. Below is a
 reference implementation of the S3TC compression hook using
-the <a href="http://www.sjbrown.co.uk/?code=squish">squish library</a>
-of Simon Brown.<p>
+the <a href="http://libsquish.googlecode.com">squish library</a> of
+Simon Brown.<p>
 
 <pre>
    void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
@@ -2034,8 +2034,8 @@ Module Overview</a>.<p>
 To compile the viewer type "./build.sh viewer" on the command line. It
 requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
 <a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng</a>
-and <a href="http://www.sjbrown.co.uk/?code=squish">squish</a> to be
-installed. On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
+and <a href="http://libsquish.googlecode.com">squish</a> to be installed.
+On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
 library</a> must be installed additionally.<p>
 
 The libMini Viewer can be configured to
