@@ -6,7 +6,7 @@
 #include "minibase.h"
 #include "minidyna.h"
 
-typedef minidyna<char,1<<8> ministring_base;
+typedef minidyna<char,1<<4> ministring_base;
 
 //! dynamic string
 class ministring: public ministring_base
@@ -100,6 +100,17 @@ inline int operator != (const ministring &a,const ministring &b)
       if (a[i]!=b[i]) return(1);
 
    return(0);
+   }
+
+//! add operator (concatenate)
+inline ministring operator + (const ministring &a,const ministring &b)
+   {
+   ministring str;
+
+   str=a;
+   str.append(b);
+
+   return(str);
    }
 
 //! stream output
