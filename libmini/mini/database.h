@@ -14,9 +14,11 @@ class databuf
 
    enum DATABUF_TYPE
       {
+      // scalar types assume grid-centered layout
       DATABUF_TYPE_BYTE=0,
       DATABUF_TYPE_SHORT=1,
       DATABUF_TYPE_FLOAT=2,
+      // rgb[a] types assume cell-centered layout
       DATABUF_TYPE_RGB=3,
       DATABUF_TYPE_RGBA=4,
       DATABUF_TYPE_RGB_S3TC=5,
