@@ -6,7 +6,7 @@
 #include "minibase.h"
 #include "minidyna.h"
 
-typedef minidyna<char,1<<4> ministring_base;
+typedef minidyna<char,16> ministring_base;
 
 //! dynamic string
 class ministring: public ministring_base

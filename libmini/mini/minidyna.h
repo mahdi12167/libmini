@@ -168,6 +168,29 @@ class minidyna
       return(FALSE);
       }
 
+   //! check for existing item and return first occurring index
+   BOOLINT has(const Item &v,unsigned int &idx)
+      {
+      for (idx=0; idx<SIZE; idx++)
+         if (get(idx)==v) return(TRUE);
+
+      return(FALSE);
+      }
+
+   //! check for existing item in reverse order and return first occurring index
+   BOOLINT hasr(const Item &v,unsigned int &idx)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++)
+         {
+         idx=SIZE-1-i;
+         if (get(idx)==v) return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    //! set to single item
    void set(const Item &v)
       {
@@ -185,7 +208,7 @@ class minidyna
       }
 
    //! get item
-   const Item &get(const unsigned int idx=0) const
+   const Item &get(const unsigned int idx) const
       {
       ERRORCHK(idx>=SIZE);
 
@@ -194,12 +217,29 @@ class minidyna
       }
 
    //! get reference to item
-   Item &ref(const unsigned int idx=0)
+   Item &ref(const unsigned int idx)
       {
       ERRORCHK(idx>=SIZE);
 
       if (idx<MINSIZE) return(MINARRAY[idx]);
       else return(ARRAY[idx-MINSIZE]);
+      }
+
+   //! get first item
+   const Item &first() const
+      {
+      ERRORCHK(SIZE==0);
+
+      return(MINARRAY[0]);
+      }
+
+   //! get last item
+   const Item &last() const
+      {
+      ERRORCHK(SIZE==0);
+
+      if (SIZE<=MINSIZE) return(MINARRAY[SIZE-1]);
+      else return(ARRAY[SIZE-1-MINSIZE]);
       }
 
    //! append item to array
@@ -226,6 +266,23 @@ class minidyna
 
       ref(idx)=get(SIZE-1);
       setsize(SIZE-1);
+      }
+
+   //! replace item
+   unsigned int replace(const Item &v1,const Item &v2) const
+      {
+      unsigned int i,c;
+
+      c=0;
+
+      for (i=0; i<SIZE; i++)
+         if (get(i)==v1)
+            {
+            set(i,v2);
+            c++;
+            }
+
+      return(c);
       }
 
    //! assignment operator
