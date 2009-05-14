@@ -269,7 +269,7 @@ class minidyna
       }
 
    //! replace item
-   unsigned int replace(const Item &v1,const Item &v2) const
+   unsigned int replace(const Item &v1,const Item &v2)
       {
       unsigned int i,c;
 
