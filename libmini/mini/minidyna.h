@@ -67,17 +67,16 @@ class minidyna
    ~minidyna() {setsize(0);}
 
    //! conversion operator
-   operator double()
+   operator Item()
       {
       unsigned int i;
 
-      double sum;
+      Item sum;
 
-      if (SIZE==0) return(0.0);
+      if (SIZE==0) return(Item(0));
 
-      sum=0.0;
-
-      for (i=0; i<SIZE; i++) sum+=get(i);
+      sum=get(0);
+      for (i=1; i<SIZE; i++) sum+=get(i);
 
       return(sum/SIZE);
       }
