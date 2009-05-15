@@ -38,7 +38,7 @@ class minidyna
       }
 
    //! constructor
-   minidyna(const Item &v,unsigned int size=1)
+   minidyna(const Item &v,unsigned int size)
       {
       SIZE=MAXSIZE=0;
       MINSIZE=(Minsize==0)?1:Minsize;
