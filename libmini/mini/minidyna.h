@@ -158,7 +158,7 @@ class minidyna
    BOOLINT isnull() const {return(SIZE==0);}
 
    //! check for existing item
-   BOOLINT has(const Item &v)
+   BOOLINT has(const Item &v) const
       {
       unsigned int i;
 
@@ -169,7 +169,7 @@ class minidyna
       }
 
    //! check for existing item and return first occurring index
-   BOOLINT has(const Item &v,unsigned int &idx)
+   BOOLINT has(const Item &v,unsigned int &idx) const
       {
       for (idx=0; idx<SIZE; idx++)
          if (get(idx)==v) return(TRUE);
@@ -178,7 +178,7 @@ class minidyna
       }
 
    //! check for existing item in reverse order and return first occurring index
-   BOOLINT hasr(const Item &v,unsigned int &idx)
+   BOOLINT hasr(const Item &v,unsigned int &idx) const
       {
       unsigned int i;
 
