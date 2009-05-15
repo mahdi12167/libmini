@@ -237,7 +237,7 @@ unsigned int datafill::fillin(int radius)
 
                                     if (checkval(v1))
                                        {
-                                       if (i+m-1>=0 && m>-sizex/2)
+                                       if (i+m-1>=0 && m>-1)
                                           {
                                           v2=getval(i+m-1,j+n,k+o,t);
 
@@ -248,7 +248,7 @@ unsigned int datafill::fillin(int radius)
                                              }
                                           }
 
-                                       if (j+n-1>=0 && n>-sizey/2)
+                                       if (j+n-1>=0 && n>-1)
                                           {
                                           v2=getval(i+m,j+n-1,k+o,t);
 
@@ -259,7 +259,7 @@ unsigned int datafill::fillin(int radius)
                                              }
                                           }
 
-                                       if (k+o-1>=0 && o>-sizez/2)
+                                       if (k+o-1>=0 && o>-1)
                                           {
                                           v2=getval(i+m,j+n,k+o-1,t);
 
