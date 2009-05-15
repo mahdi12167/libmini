@@ -38,7 +38,7 @@ class minidyna
       }
 
    //! constructor
-   minidyna(const Item &v,unsigned int size)
+   minidyna(const Item &v,unsigned int size=1)
       {
       SIZE=MAXSIZE=0;
       MINSIZE=(Minsize==0)?1:Minsize;
@@ -65,6 +65,22 @@ class minidyna
 
    //! destructor
    ~minidyna() {setsize(0);}
+
+   //! conversion operator
+   operator double()
+      {
+      unsigned int i;
+
+      double sum;
+
+      if (SIZE==0) return(0.0);
+
+      sum=0.0;
+
+      for (i=0; i<SIZE; i++) sum+=get(i);
+
+      return(sum/SIZE);
+      }
 
    //! get array size
    unsigned int getsize() const {return(SIZE);}
