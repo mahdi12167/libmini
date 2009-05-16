@@ -373,6 +373,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    switch (zone)
       {
+      default:
       case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
       case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
       case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
