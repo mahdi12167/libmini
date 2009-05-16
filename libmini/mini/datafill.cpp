@@ -101,8 +101,8 @@ unsigned int datafill::fillin(int radius)
       buf.duplicate(this);
 
       // allocate counting buffer
-      cnt.alloc(xsize,ysize,zsize,tsteps,1,DATABUF_TYPE_BYTE);
-      tmp.alloc(xsize,ysize,zsize,tsteps,1,DATABUF_TYPE_BYTE);
+      cnt.alloc(xsize,ysize,zsize,tsteps,DATABUF_TYPE_BYTE);
+      tmp.alloc(xsize,ysize,zsize,tsteps,DATABUF_TYPE_BYTE);
 
       // calculate foot print size
       size=max(2*radius+1,1);
