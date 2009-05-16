@@ -80,6 +80,7 @@ unsigned int datafill::fillin(int radius)
 
    int size;
    int sizex,sizey,sizez;
+   int sizedx,sizedy,sizedz;
    int thres;
 
    int cells;
@@ -104,8 +105,7 @@ unsigned int datafill::fillin(int radius)
       tmp.alloc(xsize,ysize,zsize,tsteps,1);
 
       // calculate foot print size
-      size=2*radius+1;
-      if (size<1) size=1;
+      size=max(2*radius+1,1);
 
       // calculate foot print size in x/y/z-direction
       if (xsize<2)
@@ -132,6 +132,11 @@ unsigned int datafill::fillin(int radius)
          sizey=size;
          sizez=size;
          }
+
+      // calculate derivative foot print size
+      sizedx=max(sizex,3);
+      sizedy=max(sizey,3);
+      sizedz=max(sizez,3);
 
       // calculate growing threshold
       thres=(sizex*sizey*sizez+1)/2;
@@ -228,16 +233,16 @@ unsigned int datafill::fillin(int radius)
                         dxnum=dynum=dznum=0;
 
                         // average partial derivatives
-                        for (m=-1; m<=1; m++)
-                           for (n=-1; n<=1; n++)
-                              for (o=-1; o<=1; o++)
+                        for (m=-sizedx/2; m<=sizedx/2; m++)
+                           for (n=-sizedy/2; n<=sizedy/2; n++)
+                              for (o=-sizedz/2; o<=sizedz/2; o++)
                                  if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
 
                                     if (checkval(v1))
                                        {
-                                       if (i+m-1>=0 && m>-1)
+                                       if (i+m-1>=0 && m>-sizedx/2)
                                           {
                                           v2=getval(i+m-1,j+n,k+o,t);
 
@@ -248,7 +253,7 @@ unsigned int datafill::fillin(int radius)
                                              }
                                           }
 
-                                       if (j+n-1>=0 && n>-1)
+                                       if (j+n-1>=0 && n>-sizedy/2)
                                           {
                                           v2=getval(i+m,j+n-1,k+o,t);
 
@@ -259,7 +264,7 @@ unsigned int datafill::fillin(int radius)
                                              }
                                           }
 
-                                       if (k+o-1>=0 && o>-1)
+                                       if (k+o-1>=0 && o>-sizedz/2)
                                           {
                                           v2=getval(i+m,j+n,k+o-1,t);
 
@@ -280,9 +285,9 @@ unsigned int datafill::fillin(int radius)
                         sum=0.0f;
 
                         // extrapolate partial derivatives
-                        for (m=-1; m<=1; m++)
-                           for (n=-1; n<=1; n++)
-                              for (o=-1; o<=1; o++)
+                        for (m=-sizedx/2; m<=sizedx/2; m++)
+                           for (n=-sizedy/2; n<=sizedy/2; n++)
+                              for (o=-sizedz/2; o<=sizedz/2; o++)
                                  if (i+m>=0 && i+m<(int)xsize && j+n>=0 && j+n<(int)ysize && k+o>=0 && k+o<(int)zsize)
                                     {
                                     v1=getval(i+m,j+n,k+o,t);
@@ -303,11 +308,8 @@ unsigned int datafill::fillin(int radius)
                         // fill-in extrapolated value
                         if (sum>0.0f)
                            {
-                           val/=sum;
-                           if ((val-bias)/scaling==nodata) val+=scaling;
-
-                           buf.setval(i,j,k,t,val);
-                           count++;
+                           buf.setval(i,j,k,t,val/sum);
+                           if (!checknodata(getval(i,j,k,t))) count++;
                            }
                         }
 

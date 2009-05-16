@@ -2896,7 +2896,7 @@ unsigned int databuf::fillnodata(int radius)
 
    if (type==DATABUF_TYPE_RGB)
       if (nodata==-MAXFLOAT) return(0);
-      else convertdata(0);
+      else convertdata(DATABUF_TYPE_BYTE);
 
    if (type!=DATABUF_TYPE_BYTE && type!=DATABUF_TYPE_SHORT && type!=DATABUF_TYPE_FLOAT) return(0);
 
@@ -2907,8 +2907,8 @@ unsigned int databuf::fillnodata(int radius)
    buf=*this;
    count=buf.fillin_by_regiongrowing(radius);
 
-   if (oldtype==DATABUF_TYPE_BYTE || oldtype==DATABUF_TYPE_RGB) clamp(scaling*0.0f+bias,scaling*255.0f+bias);
-   if (oldtype==DATABUF_TYPE_SHORT) clamp(-scaling*32768.0f+bias,scaling*32767.0f+bias);
+   if (oldtype==DATABUF_TYPE_BYTE || oldtype==DATABUF_TYPE_RGB) clamp(bias,255*scaling+bias);
+   if (oldtype==DATABUF_TYPE_SHORT) clamp(-32768*scaling+bias,32767*scaling+bias);
 
    if (oldtype==DATABUF_TYPE_RGB) convertdata(DATABUF_TYPE_BYTE);
    convertdata(oldtype);
