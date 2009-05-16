@@ -102,8 +102,8 @@ class databuf
    float maxvalue;
 
    //! coordinate system indicator
-   int crs; // 0 = none, 1 = LL, 2 = UTM, 3 = Merc
-   int zone; // coordinate system zone
+   int crs;   // 0 = none, 1 = LL, 2 = UTM, 3 = Merc, 4 = OGH
+   int zone;  // coordinate system zone
    int datum; // coordinate system datum
 
    //! no-data indicator
@@ -123,15 +123,15 @@ class databuf
    int missing() const {return(data==NULL || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0);}
 
    //! allocate a new memory chunk (and initialize with zero)
-   void alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=0);
+   void alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! set data to memory chunk
    void set(void *chunk,unsigned int length,
-            unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=0);
+            unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from memory chunk
    void copy(void *chunk,unsigned int length,
-             unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=0);
+             unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from buffer
    void copy(databuf *buf);
@@ -176,7 +176,7 @@ class databuf
    void set_time(double time,double range);
 
    //! set coordinate system
-   void set_crs(int crs_type,int crs_zone=0,int crs_datum=0);
+   void set_crs(int crs_type,int crs_zone=0,int crs_datum=DATABUF_CRS_LINEAR);
 
    //! native input/output
    int savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
