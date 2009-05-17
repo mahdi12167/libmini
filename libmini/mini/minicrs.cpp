@@ -453,7 +453,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       err=pos-pos2-height*nrm;
 
-      if (err.getlength()<maxerror) break;
+      if (err.getlength2()<dsqr(maxerror)) break;
 
       pos1+=err;
       }
