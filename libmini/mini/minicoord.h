@@ -41,7 +41,7 @@ class minicoord
       MINICOORD_DATUM_Tokyo=10,
       MINICOORD_DATUM_OSGB1936=11,
       MINICOORD_DATUM_Australian1984=12,
-      MINICOORD_DATUM_Geodetic1949=13,
+      MINICOORD_DATUM_NewZealand1949=13,
       MINICOORD_DATUM_SouthAmerican1969=14
       };
 

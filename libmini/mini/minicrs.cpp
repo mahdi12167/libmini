@@ -148,7 +148,7 @@ void minicrs::choose_datum(int datum)
       case 11: choose_datum(15,375.0,-111.0,431.0); break;
       // 12=Australian1984 (Mean Australian Geodetic Datum of 1984)
       case 12: choose_datum(17,-133.0,-48.0,148.0); break;
-      // 13=Geodetic1949 (New Zealand Datum of 1949)
+      // 13=NewZealand1949 (New Zealand Datum of 1949)
       case 13: choose_datum(8,84.0,-22.0,209.0); break;
       // 14=SouthAmerican1969 (Mean South American Datum of 1969)
       case 14: choose_datum(19,-57.0,1.0,-41.0); break;

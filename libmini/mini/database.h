@@ -54,7 +54,7 @@ class databuf
       DATABUF_DATUM_Tokyo=10,
       DATABUF_DATUM_OSGB1936=11,
       DATABUF_DATUM_Australian1984=12,
-      DATABUF_DATUM_Geodetic1949=13,
+      DATABUF_DATUM_NewZealand1949=13,
       DATABUF_DATUM_SouthAmerican1969=14
       };
 
