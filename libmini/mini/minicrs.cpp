@@ -136,9 +136,9 @@ void minicrs::choose_datum(int datum)
       // local datums:
       // 6=ED50 (Mean European Datum of 1950, centered at the Munich Frauenkirche)
       case 6: choose_datum(8,-87.0,-98.0,-121.0); break;
-      // 7=ED79 (Mean European Datum of 1979)
+      // 7=ED87 (Mean European Datum of 1987)
       case 7: choose_datum(8,-86.0,-98.0,-119.0); break;
-      // 8=OldHawaiian (mean datum for Hawaii/Maui/Oahu/Kauai)
+      // 8=OldHawaiian (mean datum for Hawaii/Maui/Molokai/Oahu/Kauai)
       case 8: choose_datum(1,61.0,-285.0,-181.0); break;
       // 9=Luzon (Philippine Datum)
       case 9: choose_datum(1,-133.0,-77.0,-51.0); break;

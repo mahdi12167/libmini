@@ -48,7 +48,7 @@ class databuf
       // libMini datum codes
       DATABUF_DATUM_SPHERE=5,
       DATABUF_DATUM_ED50=6,
-      DATABUF_DATUM_ED79=7,
+      DATABUF_DATUM_ED87=7,
       DATABUF_DATUM_OldHawaiian=8,
       DATABUF_DATUM_Luzon=9,
       DATABUF_DATUM_Tokyo=10,

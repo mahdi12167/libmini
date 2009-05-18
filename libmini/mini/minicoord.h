@@ -35,7 +35,7 @@ class minicoord
       // libMini datum codes
       MINICOORD_DATUM_SPHERE=5,
       MINICOORD_DATUM_ED50=6,
-      MINICOORD_DATUM_ED79=7,
+      MINICOORD_DATUM_ED87=7,
       MINICOORD_DATUM_OldHawaiian=8,
       MINICOORD_DATUM_Luzon=9,
       MINICOORD_DATUM_Tokyo=10,
