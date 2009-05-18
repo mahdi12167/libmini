@@ -130,14 +130,14 @@ class databuf
             unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from memory chunk
-   void copy(void *chunk,unsigned int length,
+   void copy(const void *chunk,unsigned int length,
              unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from buffer
-   void copy(databuf *buf);
+   void copy(const databuf *buf);
 
    //! duplicate data from buffer (by allocating memory)
-   void duplicate(databuf *buf);
+   void duplicate(const databuf *buf);
 
    //! clear buffer
    void clear(float value=0.0f);

@@ -172,7 +172,7 @@ void databuf::set(void *chunk,unsigned int length,
    }
 
 // copy data from memory chunk
-void databuf::copy(void *chunk,unsigned int length,
+void databuf::copy(const void *chunk,unsigned int length,
                    unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
    {
    void *newdata;
@@ -190,11 +190,11 @@ void databuf::copy(void *chunk,unsigned int length,
    }
 
 // copy data from buffer
-void databuf::copy(databuf *buf)
+void databuf::copy(const databuf *buf)
    {copy(buf->data,buf->bytes,buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);}
 
 // duplicate data from buffer
-void databuf::duplicate(databuf *buf)
+void databuf::duplicate(const databuf *buf)
    {
    *this=*buf;
    alloc(buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);
