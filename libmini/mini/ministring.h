@@ -66,6 +66,50 @@ class ministring: public ministring_base
       return(str);
       }
 
+   //! substitute sub-string
+   void substitute(const ministring_base &sub,const ministring_base &with)
+      {
+      unsigned int i,j;
+      unsigned int l,s,w;
+
+      BOOLINT found;
+
+      l=getsize();
+
+      s=sub.getsize();
+      w=with.getsize();
+
+      if (s==0) return;
+
+      for (i=0; i<l; i++)
+         if (i+s<=l)
+            {
+            found=TRUE;
+
+            for (j=0; j<s; j++)
+               if (get(i+j)!=with[j])
+                  {
+                  found=FALSE;
+                  break;
+                  }
+
+            if (found)
+               {
+               setsize(l-s+w);
+
+               if (s>w)
+                  for (j=i+s; j<l; j++) ref(j-s+w)=get(j);
+
+               if (s<w)
+                  for (j=l-1; j>=i+s; j--) ref(j-s+w)=get(j);
+
+               for (j=0; j<w; j++) ref(i+j)=with[j];
+
+               l=getsize();
+               }
+            }
+      }
+
    };
 
 //! cmp operator
