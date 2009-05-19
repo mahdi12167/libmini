@@ -66,6 +66,16 @@ class ministring: public ministring_base
       return(str);
       }
 
+   //! append float value
+   void append(double v)
+      {
+      static const int len=32;
+      char str[len];
+
+      snprintf(str,len,"%g",v);
+      append(str);
+      }
+
    //! substitute sub-string
    void substitute(const ministring_base &sub,const ministring_base &with)
       {
