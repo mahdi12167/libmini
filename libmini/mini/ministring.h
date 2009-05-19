@@ -167,6 +167,17 @@ inline ministring operator + (const ministring &a,const ministring &b)
    return(str);
    }
 
+//! add operator (concatenate c-string)
+inline ministring operator + (const ministring &a,const char *b)
+   {
+   ministring str;
+
+   str=a;
+   str.append(b);
+
+   return(str);
+   }
+
 //! add operator (concatenate value)
 inline ministring operator + (const ministring &a,double b)
    {
