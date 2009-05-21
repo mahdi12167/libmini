@@ -17,15 +17,7 @@ class ministring: public ministring_base
    ministring(): ministring_base() {}
 
    //! copy constructor
-   ministring(const ministring_base &a): ministring_base()
-      {
-      unsigned int i,l;
-
-      l=a.getsize();
-
-      setsize(l);
-      for (i=0; i<l; i++) ref(i)=a[i];
-      }
+   ministring(const ministring_base &a): ministring_base(a) {}
 
    //! constructor with copy from c-string
    ministring(const char *str): ministring_base()
@@ -36,6 +28,17 @@ class ministring: public ministring_base
 
       setsize(l);
       for (i=0; i<l; i++) ref(i)=str[i];
+      }
+
+   //! constructor with initialization from floating-point value
+   ministring(double v): ministring_base()
+      {
+      static const int len=32;
+      char str[len];
+
+      snprintf(str,len,"%g",v);
+
+      *this=ministring(str);
       }
 
    //! destructor
@@ -66,15 +69,9 @@ class ministring: public ministring_base
       return(str);
       }
 
-   //! append float value
+   //! append floating-point value
    void append(double v)
-      {
-      static const int len=32;
-      char str[len];
-
-      snprintf(str,len,"%g",v);
-      append(str);
-      }
+      {append(ministring(v));}
 
    //! substitute sub-string
    void substitute(const ministring_base &sub,const ministring_base &with)
@@ -124,40 +121,36 @@ class ministring: public ministring_base
 
 //! cmp operator
 inline int operator == (const ministring &a,const ministring &b)
-   {
-   unsigned int i;
-
-   unsigned int size;
-
-   size=a.getsize();
-
-   if (b.getsize()!=size) return(0);
-
-   for (i=0; i<size; i++)
-      if (a[i]!=b[i]) return(0);
-
-   return(1);
-   }
+   {return(a==b);}
 
 //! neq operator
 inline int operator != (const ministring &a,const ministring &b)
-   {
-   unsigned int i;
-
-   unsigned int size;
-
-   size=a.getsize();
-
-   if (b.getsize()!=size) return(1);
-
-   for (i=0; i<size; i++)
-      if (a[i]!=b[i]) return(1);
-
-   return(0);
-   }
+   {return(a!=b);}
 
 //! add operator (concatenate strings)
 inline ministring operator + (const ministring &a,const ministring &b)
+   {
+   ministring str;
+
+   str=a;
+   str.append(b);
+
+   return(str);
+   }
+
+//! add operator (concatenate c-string)
+inline ministring operator + (const ministring &a,const char *b)
+   {
+   ministring str;
+
+   str=a;
+   str.append(b);
+
+   return(str);
+   }
+
+//! add operator (concatenate floating-point value)
+inline ministring operator + (const ministring &a,double b)
    {
    ministring str;
 

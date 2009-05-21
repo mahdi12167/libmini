@@ -28,16 +28,6 @@ class minidyna
       }
 
    //! constructor
-   minidyna(const Item &v)
-      {
-      SIZE=MAXSIZE=1;
-      MINSIZE=(Minsize==0)?1:Minsize;
-      ARRAY=NULL;
-
-      MINARRAY[0]=v;
-      }
-
-   //! constructor
    minidyna(const Item &v,unsigned int size)
       {
       SIZE=MAXSIZE=0;
