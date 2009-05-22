@@ -121,11 +121,11 @@ class ministring: public ministring_base
 
 //! cmp operator
 inline int operator == (const ministring &a,const ministring &b)
-   {return(a==b);}
+   {return(ministring_base(a)==ministring_base(b));}
 
 //! neq operator
 inline int operator != (const ministring &a,const ministring &b)
-   {return(a!=b);}
+   {return(ministring_base(a)!=ministring_base(b));}
 
 //! add operator (concatenate strings)
 inline ministring operator + (const ministring &a,const ministring &b)
@@ -165,9 +165,17 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
    {
    unsigned int i;
 
+   char c;
+
    out << "\"";
 
-   for (i=0; i<a.getsize(); i++) out << a[i];
+   for (i=0; i<a.getsize(); i++)
+      {
+      c=a[i];
+
+      if (c=='\n' || c=='\r' || c=='\t') out << ' ';
+      else out << c;
+      }
 
    out << "\"";
 
