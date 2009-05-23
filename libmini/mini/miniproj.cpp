@@ -1144,6 +1144,10 @@ BOOLINT miniproj::deact(const unsigned int slot,dynacoord &a)
    return(FALSE);
    }
 
+// reactivate coordinate slot
+void miniproj::react(const unsigned int slot,dynacoord &a)
+   {if (slot<a.getsize()) a[slot].active=TRUE;}
+
 // clipping subcase #1As
 void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
@@ -1159,6 +1163,7 @@ void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,con
    float pc1,pc2,pc3;
    dynacoord pa1,pa2,pa3;
 
+   miniv3d n;
    BOOLINT active;
 
    p1=(d2*v1+d1*v2)/(d1+d2);
@@ -1173,13 +1178,33 @@ void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,con
    pc3=(d4*c1+d1*c4)/(d1+d4);
    pa3=(d4*a1+d1*a4)/(d1+d4);
 
-   projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+   n=(p2-p1)/(p3-p1);
+   if (n*(v1-p1)<0.0) n=-n;
 
-   active=deact(slot,pa1);
-   active&=deact(slot,pa2);
-   active&=deact(slot,pa3);
+   if ((p1-eye)*n<0.0)
+      {
+      projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
 
-   if (active) proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+
+      if (active) proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      }
+   else
+      {
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+
+      if (active) proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+
+      react(slot,pa1);
+      react(slot,pa2);
+      react(slot,pa3);
+
+      projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      }
    }
 
 // clipping subcase #1Bs
@@ -1197,6 +1222,7 @@ void miniproj::clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,con
    float pc1,pc2,pc3;
    dynacoord pa1,pa2,pa3;
 
+   miniv3d n;
    BOOLINT active;
 
    p1=(d2*v1+d1*v2)/(d1+d2);
@@ -1211,13 +1237,33 @@ void miniproj::clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,con
    pc3=(d4*c1+d1*c4)/(d1+d4);
    pa3=(d4*a1+d1*a4)/(d1+d4);
 
-   proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+   n=(p2-p1)/(p3-p1);
+   if (n*(v1-p1)<0.0) n=-n;
 
-   active=deact(slot,pa1);
-   active&=deact(slot,pa2);
-   active&=deact(slot,pa3);
+   if ((p1-eye)*n>0.0)
+      {
+      proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
 
-   if (active) projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+
+      if (active) projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      }
+   else
+      {
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+
+      if (active) projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+
+      react(slot,pa1);
+      react(slot,pa2);
+      react(slot,pa3);
+
+      proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      }
    }
 
 // clipping subcase #2s
@@ -1235,6 +1281,7 @@ void miniproj::clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    float pc1,pc2,pc3,pc4;
    dynacoord pa1,pa2,pa3,pa4;
 
+   miniv3d n;
    BOOLINT active;
 
    p1=(d3*v1+d1*v3)/(d1+d3);
@@ -1253,14 +1300,36 @@ void miniproj::clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    pc4=(d4*c2+d2*c4)/(d2+d4);
    pa4=(d4*a2+d2*a4)/(d2+d4);
 
-   projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,clipn,col,eye,dir,nearp);
+   n=(p2-p1)/(p3-p1);
+   if (n*(v1-p1)<0.0) n=-n;
 
-   active=deact(slot,pa1);
-   active&=deact(slot,pa2);
-   active&=deact(slot,pa3);
-   active&=deact(slot,pa4);
+   if ((p1-eye)*n<0.0)
+      {
+      projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,clipn,col,eye,dir,nearp);
 
-   if (active) projpri(v2,c2,a2,p2,pc2,pa2,p4,pc4,pa4,v1,c1,a1,p1,pc1,pa1,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+      active&=deact(slot,pa4);
+
+      if (active) projpri(v2,c2,a2,p2,pc2,pa2,p4,pc4,pa4,v1,c1,a1,p1,pc1,pa1,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+      }
+   else
+      {
+      active=deact(slot,pa1);
+      active&=deact(slot,pa2);
+      active&=deact(slot,pa3);
+      active&=deact(slot,pa4);
+
+      if (active) projpri(v2,c2,a2,p2,pc2,pa2,p4,pc4,pa4,v1,c1,a1,p1,pc1,pa1,p3,pc3,pa3,clipn,col,eye,dir,nearp);
+
+      react(slot,pa1);
+      react(slot,pa2);
+      react(slot,pa3);
+      react(slot,pa4);
+
+      projpri(v3,c3,a3,p1,pc1,pa1,p2,pc2,pa2,v4,c4,a4,p3,pc3,pa3,p4,pc4,pa4,clipn,col,eye,dir,nearp);
+      }
    }
 
 // clip a particular slot of a tetrahedron
@@ -1511,7 +1580,7 @@ void miniproj::delclip(int num)
    }
 
 //! clear clipping planes
-void miniproj::clearclip()
+void miniproj::clrclip()
    {CLIP.setnull();}
 
 // vertex and fragment programs:
