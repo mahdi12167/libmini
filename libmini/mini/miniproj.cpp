@@ -980,7 +980,7 @@ void miniproj::projpri(const miniv3d &v1,const double c1,const dynacoord &a1,
       }
    }
 
-// clipping subcase #1A
+// clipping sub-case #1A
 void miniproj::clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1009,7 +1009,7 @@ void miniproj::clip1A(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    projpri(v2,c2,a2,v3,c3,a3,v4,c4,a4,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
-// clipping subcase #1B
+// clipping sub-case #1B
 void miniproj::clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1038,7 +1038,7 @@ void miniproj::clip1B(const miniv3d &v1,const double c1,const dynacoord &a1,cons
    proj(v1,c1,a1,p1,pc1,pa1,p2,pc2,pa2,p3,pc3,pa3,clipn,col,eye,dir,nearp);
    }
 
-// clipping subcase #2
+// clipping sub-case #2
 void miniproj::clip2(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                      const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                      const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1148,7 +1148,7 @@ BOOLINT miniproj::deact(const unsigned int slot,dynacoord &a)
 void miniproj::react(const unsigned int slot,dynacoord &a)
    {if (slot<a.getsize()) a[slot].active=TRUE;}
 
-// clipping subcase #1As
+// clipping sub-case #1As
 void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1207,7 +1207,7 @@ void miniproj::clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,con
       }
    }
 
-// clipping subcase #1Bs
+// clipping sub-case #1Bs
 void miniproj::clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                        const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                        const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1266,7 +1266,7 @@ void miniproj::clip1Bs(const miniv3d &v1,const double c1,const dynacoord &a1,con
       }
    }
 
-// clipping subcase #2s
+// clipping sub-case #2s
 void miniproj::clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                       const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
                       const miniv3d &v3,const double c3,const dynacoord &a3,const double d3,
@@ -1332,6 +1332,34 @@ void miniproj::clip2s(const miniv3d &v1,const double c1,const dynacoord &a1,cons
       }
    }
 
+// clipping sub-case #3s
+void miniproj::clip3s(const miniv3d &v1,const double c1,const dynacoord &a1,
+                      const miniv3d &v2,const double c2,const dynacoord &a2,
+                      const miniv3d &v3,const double c3,const dynacoord &a3,
+                      const miniv3d &v4,const double c4,const dynacoord &a4,
+                      const unsigned int clipn,
+                      const miniv3d &col,
+                      const miniv3d &eye,const miniv3d &dir,
+                      const double nearp,
+                      const unsigned int slot)
+   {
+   dynacoord pa1,pa2,pa3,pa4;
+
+   BOOLINT active;
+
+   pa1=a1;
+   pa2=a2;
+   pa3=a3;
+   pa4=a4;
+
+   active=deact(slot,pa1);
+   active&=deact(slot,pa2);
+   active&=deact(slot,pa3);
+   active&=deact(slot,pa4);
+
+   if (active) proj(v1,c1,pa1,v2,c2,pa2,v3,c3,pa3,v4,c4,pa4,clipn,col,eye,dir,nearp);
+   }
+
 // clip a particular slot of a tetrahedron
 void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
                     const miniv3d &v2,const double c2,const dynacoord &a2,
@@ -1386,6 +1414,9 @@ void miniproj::clip(const miniv3d &v1,const double c1,const dynacoord &a1,
       case 9: clip2s(v1,c1,a1,dabs(d1),v4,c4,a4,dabs(d4),v2,c2,a2,dabs(d2),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
       case 10: clip2s(v2,c2,a2,dabs(d2),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v3,c3,a3,dabs(d3),clipn,col,eye,dir,nearp,slot); break;
       case 12: clip2s(v3,c3,a3,dabs(d3),v4,c4,a4,dabs(d4),v1,c1,a1,dabs(d1),v2,c2,a2,dabs(d2),clipn,col,eye,dir,nearp,slot); break;
+
+      // entirely clipped
+      case 15: clip3s(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,clipn,col,eye,dir,nearp,slot); break;
       }
    }
 
