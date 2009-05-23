@@ -14,13 +14,12 @@ class minicoord
    //! supported coordinate systems
    enum MINICOORD
       {
-      MINICOORD_NONE,   // undefined
-      MINICOORD_ECEF,   // Earth Centered Earth Fixed
-      MINICOORD_LLH,    // Lat/Lon/H WGS84
-      MINICOORD_MERC,   // Mercator WGS84
-      MINICOORD_UTM,    // Universal Transverse Mercator (zones [+-] 1-60)
-      MINICOORD_OGH,    // Oblique Gnomonic (zones 1-6)
-      MINICOORD_LINEAR, // linear coordinate space
+      MINICOORD_LINEAR=0, // linear coordinate space
+      MINICOORD_LLH=1,    // Lat/Lon/H WGS84
+      MINICOORD_UTM=2,    // Universal Transverse Mercator (zones [+-] 1-60)
+      MINICOORD_MERC=3,   // Mercator WGS84
+      MINICOORD_OGH=4,    // Oblique Gnomonic (zones 1-6)
+      MINICOORD_ECEF=5    // Earth Centered Earth Fixed
       };
 
    //! supported coordinate datums

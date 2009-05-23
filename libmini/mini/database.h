@@ -40,6 +40,7 @@ class databuf
 
    enum DATABUF_DATUM
       {
+      DATABUF_DATUM_NONE=0,
       // USGS datum codes
       DATABUF_DATUM_NAD27=1,
       DATABUF_DATUM_WGS72=2,
