@@ -107,7 +107,7 @@ miniwarp::miniwarp(): miniwarpbase()
 
    BBOXDAT[0]=BBOXDAT[1]=minicoord();
 
-   SYSDAT=minicoord::MINICOORD_NONE;
+   SYSDAT=minicoord::MINICOORD_LINEAR;
 
    CRSZONE=0;
    CRSDATUM=minicoord::MINICOORD_DATUM_NONE;
