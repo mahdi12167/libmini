@@ -416,7 +416,6 @@ class miniproj
               const double nearp);
 
    inline BOOLINT deact(const unsigned int slot,dynacoord &a);
-   inline void react(const unsigned int slot,dynacoord &a);
 
    void clip1As(const miniv3d &v1,const double c1,const dynacoord &a1,const double d1,
                 const miniv3d &v2,const double c2,const dynacoord &a2,const double d2,
