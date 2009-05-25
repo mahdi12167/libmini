@@ -238,8 +238,14 @@ class miniproj
    //! get number of active slots
    unsigned int getactive(const unsigned int maxslots,const minimesh &mesh);
 
-   //! enable remapping of of active slots
+   //! enable remapping of active slots
    void setactive(const unsigned int active=0);
+
+   //! initialize static mapping
+   void initmap(const unsigned int maxslots,const minivals &vals,miniprojmapper &actmap);
+
+   //! update dynamic remapping
+   void remap(const unsigned int maxslots,const minivals &vals,miniprojmapper &actmap);
 
    //! enable z-clipping
    void setzclip(float nearp=0.0f,float farp=0.0f,int zcliptexid=0);
@@ -308,9 +314,6 @@ class miniproj
              const miniv3d &eye,const miniv3d &dir,
              const double nearp,
              const unsigned int slot);
-
-   void initmap(const unsigned int maxslots,const minivals &vals);
-   void remap(const minivals &vals);
 
    inline void map(const unsigned int which,
                    const unsigned int maxslots,const minivals &vals,

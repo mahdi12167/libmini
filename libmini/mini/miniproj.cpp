@@ -93,21 +93,21 @@ BOOLINT miniproj::brickid(const unsigned int slot,const minivals &vals,unsigned 
    }
 
 // init mapping from minivals to dynacoord
-void miniproj::initmap(const unsigned int maxslots,const minivals &vals)
+void miniproj::initmap(const unsigned int maxslots,const minivals &vals,miniprojmapper &actmap)
    {
    unsigned int i;
 
    unsigned int id=0;
 
-   MAP.setsize(maxslots);
+   actmap.setsize(maxslots);
 
    for (i=0; i<maxslots; i++)
-      if (brickid(i,vals,&id)) MAP[i]=miniprojmap(i,id);
-      else MAP[i]=miniprojmap(0,0,FALSE);
+      if (brickid(i,vals,&id)) actmap[i]=miniprojmap(i,id);
+      else actmap[i]=miniprojmap(0,0,FALSE);
    }
 
 // reorganize mapping from minivals to dynacoord
-void miniproj::remap(const minivals &vals)
+void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojmapper &actmap)
    {
    unsigned int i,j;
 
@@ -120,17 +120,17 @@ void miniproj::remap(const minivals &vals)
 
    size=vals.getsize();
 
-   map.setsize(ACTIVE,miniprojmap(0,0,FALSE));
+   map.setsize(maxslots,miniprojmap(0,0,FALSE));
 
    for (i=0; i<size; i++)
       {
       slot=vals[i].slot;
 
-      if (slot>=ACTIVE) continue;
+      if (slot>=maxslots) continue;
 
-      for (j=0; j<ACTIVE; j++)
-         if (MAP[j].active)
-            if (MAP[j].map2==slot)
+      for (j=0; j<maxslots; j++)
+         if (actmap[j].active)
+            if (actmap[j].map2==slot)
                {
                map[j].active=TRUE;
                map[j].map2=slot;
@@ -143,11 +143,11 @@ void miniproj::remap(const minivals &vals)
       slot=vals[i].slot;
       id=vals[i].brickid;
 
-      if (slot>=ACTIVE) continue;
+      if (slot>=maxslots) continue;
 
       found=FALSE;
 
-      for (j=0; j<ACTIVE; j++)
+      for (j=0; j<maxslots; j++)
          if (map[j].active)
             if (map[j].map2==slot)
                {
@@ -157,7 +157,7 @@ void miniproj::remap(const minivals &vals)
                }
 
       if (!found)
-         for (j=0; j<ACTIVE; j++)
+         for (j=0; j<maxslots; j++)
             if (!map[j].active)
                {
                map[j].active=TRUE;
@@ -167,13 +167,13 @@ void miniproj::remap(const minivals &vals)
                }
       }
 
-   for (i=0; i<ACTIVE; i++)
-      if (map[i].active!=MAP[i].active) dirty(i,map[i],MAP[i]);
+   for (i=0; i<maxslots; i++)
+      if (map[i].active!=actmap[i].active) dirty(i,map[i],actmap[i]);
       else if (map[i].active)
-         if (map[i].map2!=MAP[i].map2) dirty(i,map[i],MAP[i]);
-         else if (map[i].brickid!=MAP[i].brickid) dirty(i,map[i],MAP[i]);
+         if (map[i].map2!=actmap[i].map2) dirty(i,map[i],actmap[i]);
+         else if (map[i].brickid!=actmap[i].brickid) dirty(i,map[i],actmap[i]);
 
-   MAP=map;
+   actmap=map;
    }
 
 // map minivals to dynacoord
@@ -232,8 +232,8 @@ void miniproj::proj(const miniv3d &v1,const double c1,
    {
    dynacoord a1,a2,a3,a4;
 
-   if (ACTIVE==0) initmap(maxslots,vals);
-   else remap(vals);
+   if (ACTIVE==0) initmap(maxslots,vals,MAP);
+   else remap(ACTIVE,vals,MAP);
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
@@ -262,8 +262,8 @@ void miniproj::clip(const miniv3d &v1,const double c1,
    {
    dynacoord a1,a2,a3,a4;
 
-   if (ACTIVE==0) initmap(maxslots,vals);
-   else remap(vals);
+   if (ACTIVE==0) initmap(maxslots,vals,MAP);
+   else remap(ACTIVE,vals,MAP);
 
    map(1,maxslots,vals,a1);
    map(2,maxslots,vals,a2);
@@ -755,7 +755,7 @@ void miniproj::proj(const miniv3d &v1,const double c1,const dynacoord &a1,
 
    if (n<CLIP.getsize())
       if (CLIP[n].clipall) clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp);
-      else clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp,CLIP[n].slot);
+      else clip(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,n+1,CLIP[n].pos,CLIP[n].nrm,col,eye,dir,nearp,MAP[CLIP[n].slot].map2);
    else projtri(v1,c1,a1,v2,c2,a2,v3,c3,a3,v4,c4,a4,col,eye,dir,nearp);
    }
 
@@ -1523,7 +1523,7 @@ unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mes
    return(maxactive);
    }
 
-// enable remapping of of active slots
+// enable remapping of active slots
 void miniproj::setactive(const unsigned int active)
    {ACTIVE=active;}
 
