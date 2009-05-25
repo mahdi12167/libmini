@@ -1525,7 +1525,10 @@ unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mes
 
 // enable remapping of active slots
 void miniproj::setactive(const unsigned int active)
-   {ACTIVE=active;}
+   {
+   ACTIVE=active;
+   MAP=miniprojmapper();
+   }
 
 // enable cutting plane mode
 void miniproj::setplane(BOOLINT plane,
