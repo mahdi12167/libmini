@@ -102,13 +102,13 @@ class databuf
    float minvalue;
    float maxvalue;
 
-   //! coordinate system indicator
+   //! optional coordinate system indicator
    int crs;   // 0 = none, 1 = LL, 2 = UTM, 3 = Merc, 4 = OGH
    int zone;  // coordinate system zone
    int datum; // coordinate system datum
 
-   //! no-data indicator
-   float nodata;
+   //! optional no-data indicator
+   float nodata; // default=nan
 
    //! indicator for external format
    unsigned int extformat; // 0=plain, 1=JPEG, 2=PNG, 3=Z
@@ -170,6 +170,9 @@ class databuf
                            double nw_corner_x,double nw_corner_y,
                            double ne_corner_x,double ne_corner_y);
 
+   //! set value mapping
+   void set_mapping(float value_scaling,float value_bias);
+
    //! set height extent
    void set_height(double bottom,double height);
 
@@ -177,7 +180,10 @@ class databuf
    void set_time(double time,double range);
 
    //! set coordinate system
-   void set_crs(int crs_type,int crs_zone=0,int crs_datum=DATABUF_CRS_LINEAR);
+   void set_crs(int crs_type=DATABUF_CRS_LINEAR,int crs_zone=0,int crs_datum=DATABUF_DATUM_NONE);
+
+   //! set the no-data indicator
+   void set_nodata(float value);
 
    //! native input/output
    int savedata(const char *filename,unsigned int extfmt=DATABUF_EXTFMT_PLAIN); // data is saved in MSB byte order
@@ -274,9 +280,6 @@ class databuf
 
    //! resample data at a higher resolution
    void resampledata(unsigned int xs,unsigned int ys,unsigned int zs);
-
-   //! set the no-data indicator
-   void setnodata(float value);
 
    //! get the minimum and maximum scalar value
    void getminmax(float *minval=0,float *maxval=0);

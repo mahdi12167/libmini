@@ -76,7 +76,7 @@ databuf::databuf()
    crs=DATABUF_CRS_LINEAR;
    zone=datum=0;
 
-   nodata=-MAXFLOAT;
+   nodata=NAN;
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -338,6 +338,13 @@ void databuf::set_LLWGS84corners(double sw_corner_x,double sw_corner_y,
    LLWGS84_ney=ne_corner_y;
    }
 
+// set value mapping
+void databuf::set_mapping(float value_scaling,float value_bias)
+   {
+   scaling=value_scaling;
+   bias=value_bias;
+   }
+
 // set height extent
 void databuf::set_height(double bottom,double height)
    {
@@ -359,6 +366,10 @@ void databuf::set_crs(int crs_type,int crs_zone,int crs_datum)
    zone=crs_zone;
    datum=crs_datum;
    }
+
+// set the no-data indicator
+void databuf::set_nodata(float value)
+   {nodata=value;}
 
 // write one double parameter
 void databuf::writeparam(const char *tag,double v,FILE *file,int digits)
@@ -2675,10 +2686,6 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
       value[3]=ptr[3]*scaling+bias;
       }
    }
-
-// set the no-data indicator
-void databuf::setnodata(float value)
-   {nodata=value;}
 
 // get the minimum and maximum scalar value
 void databuf::getminmax(float *minval,float *maxval)
