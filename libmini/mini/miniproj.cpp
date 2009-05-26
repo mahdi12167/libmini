@@ -228,9 +228,16 @@ void miniproj::proj(const miniv3d &v1,const double c1,
                     const unsigned int maxslots,const minivals &vals,
                     const miniv3d &col,
                     const miniv3d &eye,const miniv3d &dir,
-                    const double nearp)
+                    const double nearp,
+                    const miniprojmapper *mapper)
    {
    dynacoord a1,a2,a3,a4;
+
+   if (mapper!=NULL)
+      {
+      ACTIVE=mapper->getsize();
+      MAP=*mapper;
+      }
 
    if (ACTIVE==0) initmap(maxslots,vals,MAP);
    else remap(ACTIVE,vals,MAP);
@@ -258,9 +265,16 @@ void miniproj::clip(const miniv3d &v1,const double c1,
                     const miniv3d &col,
                     const miniv3d &eye,const miniv3d &dir,
                     const double nearp,
-                    const double clipf)
+                    const double clipf,
+                    const miniprojmapper *mapper)
    {
    dynacoord a1,a2,a3,a4;
+
+   if (mapper!=NULL)
+      {
+      ACTIVE=mapper->getsize();
+      MAP=*mapper;
+      }
 
    if (ACTIVE==0) initmap(maxslots,vals,MAP);
    else remap(ACTIVE,vals,MAP);

@@ -206,7 +206,8 @@ class miniproj
              const unsigned int maxslots,const minivals &vals,
              const miniv3d &col,
              const miniv3d &eye,const miniv3d &dir,
-             const double nearp);
+             const double nearp,
+             const miniprojmapper *mapper=NULL);
 
    //! clip&project a tetrahedron (minivals version)
    void clip(const miniv3d &v1,const double c1,
@@ -217,7 +218,8 @@ class miniproj
              const miniv3d &col,
              const miniv3d &eye,const miniv3d &dir,
              const double nearp,
-             const double clipf=0.0);
+             const double clipf=0.0,
+             const miniprojmapper *mapper=NULL);
 
    //! map slot to brickid
    BOOLINT brickid(const unsigned int slot,const minivals &vals,unsigned int *id);
