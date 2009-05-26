@@ -170,8 +170,8 @@ class databuf
                            double nw_corner_x,double nw_corner_y,
                            double ne_corner_x,double ne_corner_y);
 
-   //! set value mapping
-   void set_mapping(float value_scaling,float value_bias);
+   //! set linear mapping
+   void set_mapping(float lin_scaling,float lin_bias);
 
    //! set height extent
    void set_height(double bottom,double height);

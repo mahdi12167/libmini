@@ -338,11 +338,11 @@ void databuf::set_LLWGS84corners(double sw_corner_x,double sw_corner_y,
    LLWGS84_ney=ne_corner_y;
    }
 
-// set value mapping
-void databuf::set_mapping(float value_scaling,float value_bias)
+// set linear mapping
+void databuf::set_mapping(float lin_scaling,float lin_bias)
    {
-   scaling=value_scaling;
-   bias=value_bias;
+   scaling=lin_scaling;
+   bias=lin_bias;
    }
 
 // set height extent
