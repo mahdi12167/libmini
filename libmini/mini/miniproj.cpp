@@ -121,6 +121,7 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
    size=vals.getsize();
 
    map.setsize(maxslots,miniprojmap(0,0,FALSE));
+   actmap.growsize(maxslots,miniprojmap(0,0,FALSE));
 
    for (i=0; i<size; i++)
       {
