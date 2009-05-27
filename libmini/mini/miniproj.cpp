@@ -19,7 +19,7 @@ miniproj::miniproj()
    PLANEPNT=PLANENRM=miniv3d(0.0);
 
    ACTIVE=0;
-   MAP=miniprojmapper();
+   MAP.clear();
 
    ZCLIP=FALSE;
    ZCLIPTEXID=0;
@@ -1575,7 +1575,7 @@ unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mes
 void miniproj::setactive(const unsigned int active)
    {
    ACTIVE=active;
-   MAP=miniprojmapper();
+   MAP.clear();
    }
 
 // enable cutting plane mode
@@ -1662,7 +1662,7 @@ void miniproj::delclip(int num)
 
 //! clear clipping planes
 void miniproj::clrclip()
-   {CLIP.setnull();}
+   {CLIP.clear();}
 
 // vertex and fragment programs:
 

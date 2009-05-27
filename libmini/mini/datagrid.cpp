@@ -330,7 +330,7 @@ BOOLINT datagrid::decompose()
             break;
          case 3:
             // phase #3: clean up
-            MESH.setnull();
+            MESH.clear();
 
             STEP=0;
             PHASE=0;

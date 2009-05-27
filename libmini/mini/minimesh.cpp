@@ -469,7 +469,7 @@ minimesh minimesh::sort(const miniv3d &eye,BOOLINT intersect)
       }
 
    // sort and append all tetrahedra to the output mesh
-   SORT.setnull();
+   SORT.clear();
    descend(0,eye);
 
    return(SORT);
@@ -483,7 +483,7 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    BOOLINT bf1,bf2,bf3,bf4;
 
    // check if the tetrahedral mesh is empty
-   if (!isnull())
+   if (!empty())
       {
       // check if the actual tetrahedron has been already visited
       if (get(idx).visit) return;

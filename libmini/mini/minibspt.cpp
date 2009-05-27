@@ -22,8 +22,8 @@ minibsptree::~minibsptree() {}
 // clear bsp tree
 void minibsptree::clear()
    {
-   TREE.setnull();
-   MESH.setnull();
+   TREE.clear();
+   MESH.clear();
 
    CONSTRUCTED=FALSE;
 
@@ -135,7 +135,7 @@ BOOLINT minibsptree::preprocess()
                break;
             case 3:
                // phase #3: clean up
-               MESH.setnull();
+               MESH.clear();
 
                CONSTRUCTED=TRUE;
 
@@ -187,7 +187,7 @@ void minibsptree::insert(unsigned int idx,const miniv3d &v1,const miniv3d &v2,co
    double d1,d2,d3;
 
    // check if the bsp tree is empty
-   if (TREE.isnull()) append(minigeom_plane<Scalar>(v1,v2,v3,h));
+   if (TREE.empty()) append(minigeom_plane<Scalar>(v1,v2,v3,h));
    else
       {
       // determine the distance of the tetrahedral face vertices from the actual dividing plane
@@ -221,7 +221,7 @@ void minibsptree::setvals(unsigned int idx,const miniv3d &v1,const miniv3d &v2,c
    double d1,d2,d3,d4;
 
    // check if the bsp tree is empty
-   if (!TREE.isnull())
+   if (!TREE.empty())
       {
       // determine the distance of the tetrahedral vertices from the actual dividing plane
       d1=TREE[idx].plane.getdistance(v1);
@@ -284,7 +284,7 @@ void minibsptree::intersect(unsigned int idx)
 
       // propagate the embedded data coordinates
       TREE[idx].leftmesh.setvals(TREE[idx].leftvals);
-      TREE[idx].leftvals.setnull();
+      TREE[idx].leftvals.clear();
       }
 
    // break the right polyhedron into a set of connected tetrahedra
@@ -295,7 +295,7 @@ void minibsptree::intersect(unsigned int idx)
 
       // propagate the embedded data coordinates
       TREE[idx].rightmesh.setvals(TREE[idx].rightvals);
-      TREE[idx].rightvals.setnull();
+      TREE[idx].rightvals.clear();
       }
    }
 
@@ -334,7 +334,7 @@ minimesh minibsptree::extract(const miniv3d &eye,const double minradius,const do
    GOTEYE=TRUE;
 
    // sort and append each tetrahedralized node to the output mesh
-   COLLECT.setnull();
+   COLLECT.clear();
    collect(0);
 
    return(COLLECT);
@@ -348,7 +348,7 @@ void minibsptree::collect(const unsigned int idx)
    double dist;
 
    // check if the bsp tree is empty
-   if (!TREE.isnull())
+   if (!TREE.empty())
       {
       // calculate the distance of the eye point to the dividing plane
       dist=TREE[idx].plane.getdistance(EYE);

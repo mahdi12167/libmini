@@ -141,11 +141,11 @@ class minidyna
    void expandsize(unsigned int size)
       {if (SIZE>0) growsize(size,get(SIZE-1));}
 
-   //! set null!
-   void setnull() {setsize(0);}
+   //! clear!
+   void clear() {setsize(0);}
 
-   //! is null?
-   BOOLINT isnull() const {return(SIZE==0);}
+   //! empty?
+   BOOLINT empty() const {return(SIZE==0);}
 
    //! check for existing item
    BOOLINT has(const Item &v) const

@@ -705,7 +705,7 @@ void minigeom_polyhedron<Scalar>::intersect(const minigeom_polyhedron<Scalar> &p
 // clear half spaces
 template <class Scalar>
 void minigeom_polyhedron<Scalar>::clear()
-   {half.setnull();}
+   {half.clear();}
 
 // remove half space
 template <class Scalar>
