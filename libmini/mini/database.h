@@ -180,7 +180,7 @@ class databuf
    void set_time(double time,double range);
 
    //! set coordinate system
-   void set_crs(int crs_type=DATABUF_CRS_LINEAR,int crs_zone=0,int crs_datum=DATABUF_DATUM_NONE);
+   void set_crs(int crs_type,int crs_zone=0,int crs_datum=DATABUF_DATUM_NONE);
 
    //! set the no-data indicator
    void set_nodata(float value);
