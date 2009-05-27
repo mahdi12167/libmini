@@ -1390,21 +1390,21 @@ void miniproj::clip3s(const miniv3d &v1,const double c1,const dynacoord &a1,
                       const double nearp,
                       const unsigned int slot)
    {
-   dynacoord pa1,pa2,pa3,pa4;
+   dynacoord va1,va2,va3,va4;
 
    BOOLINT active;
 
-   pa1=a1;
-   pa2=a2;
-   pa3=a3;
-   pa4=a4;
+   va1=a1;
+   va2=a2;
+   va3=a3;
+   va4=a4;
 
-   active=deact(slot,pa1);
-   active&=deact(slot,pa2);
-   active&=deact(slot,pa3);
-   active&=deact(slot,pa4);
+   active=deact(slot,va1);
+   active&=deact(slot,va2);
+   active&=deact(slot,va3);
+   active&=deact(slot,va4);
 
-   if (active) proj(v1,c1,pa1,v2,c2,pa2,v3,c3,pa3,v4,c4,pa4,clipn,col,eye,dir,nearp);
+   if (active) proj(v1,c1,va1,v2,c2,va2,v3,c3,va3,v4,c4,va4,clipn,col,eye,dir,nearp);
    }
 
 // clip a particular slot of a tetrahedron
