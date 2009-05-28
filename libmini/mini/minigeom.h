@@ -429,7 +429,7 @@ class minigeom_tetrahedron
       }
 
    //! conversion operator
-   operator minigeom_polyhedron<Scalar>()
+   operator minigeom_polyhedron<Scalar>() const
       {
       minigeom_polyhedron<Scalar> poly;
 

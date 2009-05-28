@@ -202,7 +202,7 @@ class minimpfp
    minimpfp(const double v) {set(v);}
 
    //! conversion operator
-   operator double() {return(get());}
+   operator double() const {return(get());}
 
    //! destructor
    ~minimpfp() {}
