@@ -56,23 +56,6 @@ class ministring: public ministring_base
    void append(double v)
       {append(ministring(v));}
 
-   //! replace characters
-   unsigned int replace(char c1,char c2)
-      {
-      unsigned int i,c;
-
-      c=0;
-
-      for (i=0; i<SIZE; i++)
-         if (get(i)==c1)
-            {
-            set(i,c2);
-            c++;
-            }
-
-      return(c);
-      }
-
    //! substitute sub-string
    void substitute(const ministring_base &sub,const ministring_base &with)
       {
@@ -116,6 +99,10 @@ class ministring: public ministring_base
                }
             }
       }
+
+   //! substitute c-string
+   void substitute(const char *sub,const char *with)
+      {substitute(ministring(sub),ministring(with));}
 
    //! copy to c-string
    char *cstr() const

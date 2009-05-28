@@ -257,6 +257,16 @@ class minidyna
       for (i=0; i<a.getsize(); i++) set(SIZE-i-1,a.get(a.getsize()-i-1));
       }
 
+   //! prepend item by shifting all items
+   void prepend(const Item &v)
+      {
+      unsigned int i;
+
+      growsize();
+      for (i=SIZE-1; i>0; i--) ref(i)=get(i-1);
+      ref(0)=v;
+      }
+
    //! remove item by moving the last item
    void remove(const unsigned int idx)
       {
@@ -264,6 +274,23 @@ class minidyna
 
       ref(idx)=get(SIZE-1);
       setsize(SIZE-1);
+      }
+
+   //! replace all occurrences of an item
+   unsigned int replace(const Item &v1,const Item &v2)
+      {
+      unsigned int i,c;
+
+      c=0;
+
+      for (i=0; i<SIZE; i++)
+         if (get(i)==v1)
+            {
+            set(i,v2);
+            c++;
+            }
+
+      return(c);
       }
 
    //! assignment operator
