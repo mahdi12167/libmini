@@ -470,14 +470,17 @@ minimesh minimesh::sort(const miniv3d &eye,BOOLINT intersect)
 
    // sort and append all tetrahedra to the output mesh
    SORT.clear();
-   descend(0,eye);
+   sort(eye);
 
    return(SORT);
    }
 
-// descend a tetrahedral mesh with respect to the eye point
-void minimesh::descend(const unsigned int idx,const miniv3d &eye)
+// sort a tetrahedral mesh with respect to the eye point
+void minimesh::sort(const miniv3d &eye)
    {
+   minidyna<unsigned int> queue;
+   BOOLINT modified;
+
    miniv3d v1,v2,v3,v4;
    unsigned int fd1,fd2,fd3,fd4;
    BOOLINT bf1,bf2,bf3,bf4;
@@ -485,45 +488,78 @@ void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    // check if the tetrahedral mesh is empty
    if (!empty())
       {
-      // check if the actual tetrahedron has been already visited
-      if (get(idx).visit) return;
+      // initialize queue
+      queue.set(0);
+      ref(0).visit=TRUE;
 
-      // mark as already visited
-      ref(idx).visit=TRUE;
+      // keep processing while the queue is not empty
+      while (!queue.empty())
+         {
+         modified=FALSE;
 
-      // get the vertices of the tetrahedron
-      v1=get(idx).vtx1;
-      v2=get(idx).vtx2;
-      v3=get(idx).vtx3;
-      v4=get(idx).vtx4;
+         // get the face dependencies
+         fd1=get(queue.last()).dep123;
+         fd2=get(queue.last()).dep142;
+         fd3=get(queue.last()).dep243;
+         fd4=get(queue.last()).dep341;
 
-      // get the face dependencies
-      fd1=get(idx).dep123;
-      fd2=get(idx).dep142;
-      fd3=get(idx).dep243;
-      fd4=get(idx).dep341;
+         // get the vertices of the actual tetrahedron
+         v1=get(queue.last()).vtx1;
+         v2=get(queue.last()).vtx2;
+         v3=get(queue.last()).vtx3;
+         v4=get(queue.last()).vtx4;
 
-      // calculate the back faces
-      bf1=bf2=bf3=bf4=FALSE;
-      if (fd1!=0) bf1=minigeom_plane<double>(v1,v2,v3,v4).isincl(eye);
-      if (fd2!=0) bf2=minigeom_plane<double>(v1,v4,v2,v3).isincl(eye);
-      if (fd3!=0) bf3=minigeom_plane<double>(v2,v4,v3,v1).isincl(eye);
-      if (fd4!=0) bf4=minigeom_plane<double>(v3,v4,v1,v2).isincl(eye);
+         // add missing dependency #1
+         if (!get(fd1).visit)
+            {
+            bf1=minigeom_plane<double>(v1,v2,v3,v4).isincl(eye);
 
-      // descend to the dependencies of the back faces
-      if (fd1!=0) if (bf1) descend(fd1,eye);
-      if (fd2!=0) if (bf2) descend(fd2,eye);
-      if (fd3!=0) if (bf3) descend(fd3,eye);
-      if (fd4!=0) if (bf4) descend(fd4,eye);
+            if (bf1) queue.append(fd1);
+            else queue.prepend(fd1);
 
-      // append the actual tetrahedron to the sorted mesh
-      SORT.append(get(idx));
+            ref(fd1).visit=modified=TRUE;
+            }
 
-      // descend to the dependencies of the front faces
-      if (fd1!=0) if (!bf1) descend(fd1,eye);
-      if (fd2!=0) if (!bf2) descend(fd2,eye);
-      if (fd3!=0) if (!bf3) descend(fd3,eye);
-      if (fd4!=0) if (!bf4) descend(fd4,eye);
+         // add missing dependency #2
+         if (!get(fd2).visit)
+            {
+            bf2=minigeom_plane<double>(v1,v4,v2,v3).isincl(eye);
+
+            if (bf2) queue.append(fd2);
+            else queue.prepend(fd2);
+
+            ref(fd2).visit=modified=TRUE;
+            }
+
+         // add missing dependency #3
+         if (!get(fd3).visit)
+            {
+            bf3=minigeom_plane<double>(v2,v4,v3,v1).isincl(eye);
+
+            if (bf3) queue.append(fd3);
+            else queue.prepend(fd3);
+
+            ref(fd3).visit=modified=TRUE;
+            }
+
+         // add missing dependency #4
+         if (!get(fd4).visit)
+            {
+            bf4=minigeom_plane<double>(v3,v4,v1,v2).isincl(eye);
+
+            if (bf4) queue.append(fd4);
+            else queue.prepend(fd4);
+
+            ref(fd4).visit=modified=TRUE;
+            }
+
+         // append the actual tetrahedron to the sorted mesh
+         if (!modified)
+            {
+            SORT.append(get(queue.last()));
+            queue.shrinksize();
+            }
+         }
       }
    }
 
