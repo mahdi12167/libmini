@@ -120,6 +120,14 @@ class minidyna
       for (i=0; i<SIZE; i++) set(i,c[i]);
       }
 
+   //! grow array size by one element
+   void growsize()
+      {setsize(SIZE+1);}
+
+   //! shrink array size by one element
+   void shrinksize()
+      {if (SIZE>0) setsize(SIZE-1);}
+
    //! grow array size
    void growsize(unsigned int size)
       {if (size>SIZE) setsize(size);}
@@ -249,30 +257,13 @@ class minidyna
       for (i=0; i<a.getsize(); i++) set(SIZE-i-1,a.get(a.getsize()-i-1));
       }
 
-   //! remove item
+   //! remove item by moving the last item
    void remove(const unsigned int idx)
       {
       ERRORCHK(idx>=SIZE);
 
       ref(idx)=get(SIZE-1);
       setsize(SIZE-1);
-      }
-
-   //! replace item
-   unsigned int replace(const Item &v1,const Item &v2)
-      {
-      unsigned int i,c;
-
-      c=0;
-
-      for (i=0; i<SIZE; i++)
-         if (get(i)==v1)
-            {
-            set(i,v2);
-            c++;
-            }
-
-      return(c);
       }
 
    //! assignment operator

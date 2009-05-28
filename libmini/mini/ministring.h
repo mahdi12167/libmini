@@ -52,23 +52,6 @@ class ministring: public ministring_base
    void append(const char *str)
       {ministring_base::append(ministring(str));}
 
-   //! copy to c-string
-   char *cstr() const
-      {
-      unsigned int i,l;
-
-      char *str;
-
-      l=getsize();
-
-      if ((str=(char *)malloc(l+1))==NULL) ERRORMSG();
-
-      for (i=0; i<l; i++) str[i]=get(i);
-      str[l]='\0';
-
-      return(str);
-      }
-
    //! append floating-point value
    void append(double v)
       {append(ministring(v));}
@@ -115,6 +98,23 @@ class ministring: public ministring_base
                l=getsize();
                }
             }
+      }
+
+   //! copy to c-string
+   char *cstr() const
+      {
+      unsigned int i,l;
+
+      char *str;
+
+      l=getsize();
+
+      if ((str=(char *)malloc(l+1))==NULL) ERRORMSG();
+
+      for (i=0; i<l; i++) str[i]=get(i);
+      str[l]='\0';
+
+      return(str);
       }
 
    };
