@@ -462,105 +462,60 @@ minimesh minimesh::sort(const miniv3d &eye,BOOLINT intersect)
    {
    unsigned int i;
 
-   for (i=0; i<getsize(); i++)
-      {
-      ref(i).intersect=intersect;
-      ref(i).visit=FALSE;
-      }
+   // mark all tetrahedra with intersect flag
+   for (i=0; i<getsize(); i++) ref(i).intersect=intersect;
+
+   // mark all tetrahedra as unvisited
+   for (i=0; i<getsize(); i++) ref(i).visit=FALSE;
+
+   // clear the output mesh
+   SORT.clear();
 
    // sort and append all tetrahedra to the output mesh
-   SORT.clear();
-   sort(eye);
+   for (i=0; i<getsize(); i++) descend(i,eye);
 
    return(SORT);
    }
 
-// sort a tetrahedral mesh with respect to the eye point
-void minimesh::sort(const miniv3d &eye)
+// descend a tetrahedral mesh with respect to the eye point
+void minimesh::descend(const unsigned int idx,const miniv3d &eye)
    {
-   minidyna<unsigned int> queue;
-   BOOLINT modified;
-
    miniv3d v1,v2,v3,v4;
    unsigned int fd1,fd2,fd3,fd4;
    BOOLINT bf1,bf2,bf3,bf4;
 
-   // check if the tetrahedral mesh is empty
-   if (!empty())
-      {
-      // initialize queue
-      queue.set(0);
-      ref(0).visit=TRUE;
+   // check if the actual tetrahedron has been already visited
+   if (get(idx).visit) return;
 
-      // keep processing while the queue is not empty
-      while (!queue.empty())
-         {
-         modified=FALSE;
+   // mark as already visited
+   ref(idx).visit=TRUE;
 
-         // get the face dependencies
-         fd1=get(queue.last()).dep123;
-         fd2=get(queue.last()).dep142;
-         fd3=get(queue.last()).dep243;
-         fd4=get(queue.last()).dep341;
+   // get the vertices of the actual tetrahedron
+   v1=get(idx).vtx1;
+   v2=get(idx).vtx2;
+   v3=get(idx).vtx3;
+   v4=get(idx).vtx4;
 
-         // get the vertices of the actual tetrahedron
-         v1=get(queue.last()).vtx1;
-         v2=get(queue.last()).vtx2;
-         v3=get(queue.last()).vtx3;
-         v4=get(queue.last()).vtx4;
+   // get the face dependencies
+   fd1=get(idx).dep123;
+   fd2=get(idx).dep142;
+   fd3=get(idx).dep243;
+   fd4=get(idx).dep341;
 
-         // add missing dependency #1
-         if (!get(fd1).visit)
-            {
-            bf1=minigeom_plane<double>(v1,v2,v3,v4).isincl(eye);
+   // calculate the back faces
+   bf1=minigeom_plane<double>(v1,v2,v3,v4).isincl(eye);
+   bf2=minigeom_plane<double>(v1,v4,v2,v3).isincl(eye);
+   bf3=minigeom_plane<double>(v2,v4,v3,v1).isincl(eye);
+   bf4=minigeom_plane<double>(v3,v4,v1,v2).isincl(eye);
 
-            if (bf1) queue.append(fd1);
-            else queue.prepend(fd1);
+   // descend to the dependencies of the back faces
+   if (bf1) descend(fd1,eye);
+   if (bf2) descend(fd2,eye);
+   if (bf3) descend(fd3,eye);
+   if (bf4) descend(fd4,eye);
 
-            ref(fd1).visit=modified=TRUE;
-            }
-
-         // add missing dependency #2
-         if (!get(fd2).visit)
-            {
-            bf2=minigeom_plane<double>(v1,v4,v2,v3).isincl(eye);
-
-            if (bf2) queue.append(fd2);
-            else queue.prepend(fd2);
-
-            ref(fd2).visit=modified=TRUE;
-            }
-
-         // add missing dependency #3
-         if (!get(fd3).visit)
-            {
-            bf3=minigeom_plane<double>(v2,v4,v3,v1).isincl(eye);
-
-            if (bf3) queue.append(fd3);
-            else queue.prepend(fd3);
-
-            ref(fd3).visit=modified=TRUE;
-            }
-
-         // add missing dependency #4
-         if (!get(fd4).visit)
-            {
-            bf4=minigeom_plane<double>(v3,v4,v1,v2).isincl(eye);
-
-            if (bf4) queue.append(fd4);
-            else queue.prepend(fd4);
-
-            ref(fd4).visit=modified=TRUE;
-            }
-
-         // append the actual tetrahedron to the sorted mesh
-         if (!modified)
-            {
-            SORT.append(get(queue.last()));
-            queue.shrinksize();
-            }
-         }
-      }
+   // append the actual tetrahedron to the sorted mesh
+   SORT.append(get(idx));
    }
 
 // get volume

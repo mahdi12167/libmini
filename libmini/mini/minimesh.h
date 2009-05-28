@@ -300,7 +300,7 @@ class minimesh: public minidyna<minihedron>
    unsigned int getdep(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &h,unsigned int omit) const;
    double getdet(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &p) const;
 
-   void sort(const miniv3d &eye);
+   void descend(const unsigned int idx,const miniv3d &eye);
 
    static void configure_degenerate_size(float size);
    static void configure_degenerate_aspect(float aspect);
