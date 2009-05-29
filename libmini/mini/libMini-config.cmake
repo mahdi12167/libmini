@@ -50,21 +50,20 @@ ENDIF (WIN32)
 # check environment variable for third party directory
 IF (NOT LIBMINI_THIRDPARTY_DIR)
    SET(LIBMINI_THIRDPARTY_DIR $ENV{LIBMINI_THIRDPARTY_DIR})
-   IF (NOT LIBMINI_THIRDPARTY_DIR)
-      FIND_PATH(LIBMINI_THIRDPARTY_DIR .)
-   ENDIF(NOT LIBMINI_THIRDPARTY_DIR)
 ENDIF(NOT LIBMINI_THIRDPARTY_DIR)
 
 MACRO(SET_MINI_PATH name subdir)
    SET(${name} ${LIBMINI_PATH}
                ${LIBMINI_PATH}/../deps/${subdir}
-               ${LIBMINI_PATH}/../WIN32/${subdir})
+               ${LIBMINI_PATH}/../WIN32/${subdir}
+               /usr/local/${subdir})
    IF (LIBMINI_THIRDPARTY_DIR)
       SET(${name} ${${name}}
                   ${LIBMINI_THIRDPARTY_DIR}
                   ${LIBMINI_THIRDPARTY_DIR}/${subdir}
                   ${LIBMINI_THIRDPARTY_DIR}/deps/${subdir}
-                  ${LIBMINI_THIRDPARTY_DIR}/WIN32/${subdir})
+                  ${LIBMINI_THIRDPARTY_DIR}/WIN32/${subdir}
+                  /usr/local/${subdir})
    ENDIF (LIBMINI_THIRDPARTY_DIR)
 ENDMACRO(SET_MINI_PATH)
 
