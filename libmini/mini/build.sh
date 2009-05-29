@@ -23,6 +23,7 @@
 # install   -> make install
 # clean     -> remove object files
 # tidy      -> clean up all temporary files
+# zip       -> make zip file
 
 # available options:
 # noviewer  -> build without viewer
