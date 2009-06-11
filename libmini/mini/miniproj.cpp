@@ -145,8 +145,10 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
 
    for (i=0; i<size; i++)
       {
-      slot=vals[i].slot;
-      id=vals[i].brickid;
+      j=size-1-i;
+
+      slot=vals[j].slot;
+      id=vals[j].brickid;
 
       if (slot>=maxslots) continue;
 
