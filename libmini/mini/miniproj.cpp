@@ -154,9 +154,12 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
          for (j=0; j<maxslots; j++)
             if (!slots[j])
                {
+               slots[j]=TRUE;
+
                map[slot].active=TRUE;
                map[slot].map2=j;
                map[slot].brickid=id;
+
                break;
                }
       }
