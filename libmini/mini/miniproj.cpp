@@ -114,7 +114,8 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
    unsigned int size;
 
    unsigned int slot,id;
-   BOOLINT found;
+
+   minidyna<BOOLINT,8> slots;
 
    miniprojmapper map;
 
@@ -123,20 +124,23 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
    map.setsize(maxslots,miniprojmap(0,0,FALSE));
    actmap.growsize(maxslots,miniprojmap(0,0,FALSE));
 
+   slots.setsize(maxslots,FALSE);
+
    for (i=0; i<size; i++)
       {
       slot=vals[i].slot;
+      id=vals[i].brickid;
 
       if (slot>=maxslots) continue;
 
-      for (j=0; j<maxslots; j++)
-         if (actmap[j].active)
-            if (actmap[j].map2==slot)
-               {
-               map[j].active=TRUE;
-               map[j].map2=slot;
-               break;
-               }
+      if (actmap[slot].active)
+         {
+         slots[actmap[slot].map2]=TRUE;
+
+         map[slot].active=TRUE;
+         map[slot].map2=actmap[slot].map2;
+         map[slot].brickid=id;
+         }
       }
 
    for (i=0; i<size; i++)
@@ -146,24 +150,13 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
 
       if (slot>=maxslots) continue;
 
-      found=FALSE;
-
-      for (j=0; j<maxslots; j++)
-         if (map[j].active)
-            if (map[j].map2==slot)
-               {
-               found=TRUE;
-               map[j].brickid=id;
-               break;
-               }
-
-      if (!found)
+      if (!map[slot].active)
          for (j=0; j<maxslots; j++)
-            if (!map[j].active)
+            if (!slots[j])
                {
-               map[j].active=TRUE;
-               map[j].map2=slot;
-               map[j].brickid=id;
+               map[slot].active=TRUE;
+               map[slot].map2=j;
+               map[slot].brickid=id;
                break;
                }
       }
@@ -1537,24 +1530,24 @@ unsigned int miniproj::getactive(const unsigned int maxslots,const minimesh &mes
    {
    unsigned int i,j;
 
-   unsigned int size,vals;
+   unsigned int tets,size;
 
    unsigned int slot;
    unsigned int active,maxactive;
 
    minidyna<BOOLINT,8> slots;
 
-   size=mesh.getsize();
+   tets=mesh.getsize();
 
    maxactive=0;
 
-   for (i=0; i<size; i++)
+   for (i=0; i<tets; i++)
       {
-      vals=mesh[i].vals.getsize();
+      size=mesh[i].vals.getsize();
 
       slots.setsize(maxslots,FALSE);
 
-      for (j=0; j<vals; j++)
+      for (j=0; j<size; j++)
          {
          slot=mesh[i].vals[j].slot;
          if (slot<maxslots) slots[slot]=TRUE;
