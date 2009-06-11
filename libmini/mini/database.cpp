@@ -199,6 +199,9 @@ void databuf::duplicate(const databuf *buf)
    *this=*buf;
    alloc(buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);
    copy(buf);
+
+   comment=NULL;
+   set_comment(buf->comment);
    }
 
 // clear buffer
@@ -266,7 +269,12 @@ void databuf::release()
 
 // set comment string
 void databuf::set_comment(char *str)
-   {comment=strdup(str);}
+   {
+   if (comment!=NULL) free(comment);
+   comment=NULL;
+
+   if (str!=NULL) comment=strdup(str);
+   }
 
 // set native extents
 void databuf::set_extents(double left,double right,double bottom,double top)
