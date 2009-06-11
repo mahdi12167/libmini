@@ -666,8 +666,8 @@ int databuf::readstring(const char *tag,char **str,FILE *file)
          {
          if ((*str=(char *)realloc(*str,strlen(*str)+2))==NULL) ERRORMSG();
 
-         (*str)[strlen(*str)]=ch;
          (*str)[strlen(*str)+1]='\0';
+         (*str)[strlen(*str)]=ch;
          }
 
       ch=getc(file);
@@ -842,8 +842,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
 
    // read comment
    if (m==MAGIC1 || m==MAGIC2 || m==MAGIC3 || m==MAGIC4 || m==MAGIC5) comment=NULL;
-   else
-      if (readstring("comment",&comment,file)==0) ERRORMSG();
+   else if (readstring("comment",&comment,file)==0) ERRORMSG();
 
    // read optional metadata
    if (readparam("swx",&swx,file)==0) ERRORMSG();
