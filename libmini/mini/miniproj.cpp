@@ -168,8 +168,8 @@ void miniproj::remap(const unsigned int maxslots,const minivals &vals,miniprojma
 
    for (i=0; i<maxslots; i++)
       if (map[i].active)
-         if (!actmap[i].active) dirty(map[i].map2,map[i].brickid);
-         else if (map[i].brickid!=actmap[i].brickid) dirty(map[i].map2,map[i].brickid);
+         if (!actmap[i].active) dirty(i,map[i].map2,map[i].brickid);
+         else if (map[i].brickid!=actmap[i].brickid) dirty(i,map[i].map2,map[i].brickid);
 
    actmap=map;
    }
@@ -216,7 +216,7 @@ void miniproj::map(const unsigned int which,
    }
 
 // flag remapped slot as dirty
-void miniproj::dirty(const unsigned int slot,const unsigned int brickid) {}
+void miniproj::dirty(const unsigned int slot,const unsigned int map2,const unsigned int brickid) {}
 
 // project a tetrahedron (minivals version)
 void miniproj::proj(const miniv3d &v1,const double c1,

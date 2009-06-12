@@ -321,7 +321,7 @@ class miniproj
                    const unsigned int maxslots,const minivals &vals,
                    dynacoord &a);
 
-   virtual void dirty(const unsigned int slot,const unsigned int brickid);
+   virtual void dirty(const unsigned int slot,const unsigned int map2,const unsigned int brickid);
 
    inline BOOLINT isfront(const miniv3d &p,const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &e) const;
    inline double intersect(const miniv3d &p,const miniv3d &d,const miniv3d &o,const miniv3d &d1,const miniv3d &d2,miniv3d &m) const;
