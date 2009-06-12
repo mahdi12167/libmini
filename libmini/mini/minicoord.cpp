@@ -108,13 +108,12 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
    {
    double xyz[3];
 
-   if (t==type) return;
-
    switch (type)
       {
       case MINICOORD_LLH:
          switch (t)
             {
+            case MINICOORD_LLH: break;
             case MINICOORD_MERC:
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
@@ -152,6 +151,7 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_zone=0;
                crs_datum=MINICOORD_DATUM_WGS84;
                break;
+            case MINICOORD_MERC: break;
             case MINICOORD_UTM:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
@@ -194,6 +194,7 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
+               if (zone==crs_zone && datum==crs_datum) break;
                minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                crs_zone=zone;
@@ -296,6 +297,7 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_zone=zone;
                crs_datum=datum;
                break;
+            case MINICOORD_ECEF: break;
             default: ERRORMSG();
             }
          break;
