@@ -14,15 +14,19 @@ class ministring: public ministring_base
    public:
 
    //! default constructor
-   ministring(): ministring_base() {}
+   ministring(): ministring_base()
+      {cstr=NULL;}
 
    //! copy constructor
-   ministring(const ministring_base &a): ministring_base(a) {}
+   ministring(const ministring_base &a): ministring_base(a)
+      {cstr=NULL;}
 
    //! constructor with copy from c-string
    ministring(const char *str): ministring_base()
       {
       unsigned int i,l;
+
+      cstr=NULL;
 
       l=strlen(str);
 
@@ -36,13 +40,16 @@ class ministring: public ministring_base
       static const int len=32;
       char str[len];
 
+      cstr=NULL;
+
       snprintf(str,len,"%g",v);
 
       *this=ministring(str);
       }
 
    //! destructor
-   ~ministring() {}
+   ~ministring()
+      {if (cstr!=NULL) free(cstr);}
 
    //! append
    void append(const ministring_base &a)
@@ -109,18 +116,28 @@ class ministring: public ministring_base
       {
       unsigned int i,l;
 
-      char *str;
+      if (cstr!=NULL) free(cstr);
 
       l=getsize();
 
-      if ((str=(char *)malloc(l+1))==NULL) ERRORMSG();
+      if ((cstr=(char *)malloc(l+1))==NULL) ERRORMSG();
 
-      for (i=0; i<l; i++) str[i]=get(i);
-      str[l]='\0';
+      for (i=0; i<l; i++) cstr[i]=get(i);
+      cstr[l]='\0';
 
-      return(str);
+      return(cstr);
       }
 
+   //! assignment operator
+   ministring& operator = (const ministring &a)
+      {
+      ministing_base::copy(a);
+      return(*this);
+      }
+
+   private:
+
+   char *cstr;
    };
 
 //! cmp operator

@@ -293,8 +293,8 @@ class minidyna
       return(c);
       }
 
-   //! assignment operator
-   minidyna &operator = (const minidyna<Item,Minsize> &a)
+   //! copy item array
+   void copy(const minidyna<Item,Minsize> &a)
       {
       unsigned int i;
 
@@ -303,12 +303,17 @@ class minidyna
       for (i=0; i<SIZE; i++)
          if (i<MINSIZE) MINARRAY[i]=a.get(i);
          else ARRAY[i-MINSIZE]=a.get(i);
+      }
 
+   //! assignment operator
+   minidyna<Item,Minsize>& operator = (const minidyna<Item,Minsize> &a)
+      {
+      copy(a);
       return(*this);
       }
 
    //! subscript operator for non-const objects returns modifiable lvalue
-   Item &operator [] (const unsigned int idx)
+   Item& operator [] (const unsigned int idx)
       {
       ERRORCHK(idx>=SIZE);
 
@@ -317,7 +322,7 @@ class minidyna
       }
 
    //! subscript operator for const objects returns rvalue
-   const Item &operator [] (const unsigned int idx) const
+   const Item& operator [] (const unsigned int idx) const
       {
       ERRORCHK(idx>=SIZE);
 
