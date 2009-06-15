@@ -112,7 +112,7 @@ class ministring: public ministring_base
       {substitute(ministring(sub),ministring(with));}
 
    //! copy to c-string
-   char *cstr() const
+   char *c_str()
       {
       unsigned int i,l;
 
@@ -131,7 +131,7 @@ class ministring: public ministring_base
    //! assignment operator
    ministring& operator = (const ministring &a)
       {
-      ministing_base::copy(a);
+      ministring_base::copy(a);
       return(*this);
       }
 
