@@ -265,7 +265,24 @@ void minicrs::MERC2LL(double x,double y,
 // 1 arc-second equals about 30 meters
 void minicrs::LLH2ECEF(double lat,double lon,double h,
                        double xyz[3])
-   {calcLLH2ECEF(lat,lon,h,xyz);}
+   {
+   double slat,clat,slon,clon; // sine and cosine values
+   double r;                   // radius in prime vertical
+
+   lat*=2*PI/(360*60*60);
+   lon*=2*PI/(360*60*60);
+
+   slat=sin(lat);
+   clat=cos(lat);
+   slon=sin(lon);
+   clon=cos(lon);
+
+   r=WGS84_r_major/sqrt(1.0-WGS84_e2*slat*slat);
+
+   xyz[0]=(r+h)*clat*clon;
+   xyz[1]=(r+h)*clat*slon;
+   xyz[2]=(r*(1.0-WGS84_e2)+h)*slat;
+   }
 
 void minicrs::LLH2ECEF(double lat,double lon,double h,
                        float xyz[3])
@@ -286,48 +303,6 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
 // 1 arc-second equals about 30 meters
 void minicrs::ECEF2LLH(double xyz[3],
                        double *lat,double *lon,double *h)
-   {calcECEF2LLH(xyz,lat,lon,h);}
-
-void minicrs::ECEF2LLH(float xyz[3],
-                       float *lat,float *lon,float *h)
-   {
-   double txyz[3];
-   double tlat,tlon,th;
-
-   txyz[0]=xyz[0];
-   txyz[1]=xyz[1];
-   txyz[2]=xyz[2];
-
-   ECEF2LLH(txyz,&tlat,&tlon,&th);
-
-   *lat=tlat;
-   *lon=tlon;
-   *h=th;
-   }
-
-// calculate the ECEF equations
-void minicrs::calcLLH2ECEF(double lat,double lon,double h,double xyz[3])
-   {
-   double slat,clat,slon,clon; // sine and cosine values
-   double r;                   // radius in prime vertical
-
-   lat*=2*PI/(360*60*60);
-   lon*=2*PI/(360*60*60);
-
-   slat=sin(lat);
-   clat=cos(lat);
-   slon=sin(lon);
-   clon=cos(lon);
-
-   r=WGS84_r_major/sqrt(1.0-WGS84_e2*slat*slat);
-
-   xyz[0]=(r+h)*clat*clon;
-   xyz[1]=(r+h)*clat*slon;
-   xyz[2]=(r*(1.0-WGS84_e2)+h)*slat;
-   }
-
-// calculate the inverse ECEF equations
-void minicrs::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    {
    double sth,cth,slat,clat; // sine and cosine values
    double p,th;              // temporary variables
@@ -358,6 +333,23 @@ void minicrs::calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h)
    *lon*=360*60*60/(2*PI);
    }
 
+void minicrs::ECEF2LLH(float xyz[3],
+                       float *lat,float *lon,float *h)
+   {
+   double txyz[3];
+   double tlat,tlon,th;
+
+   txyz[0]=xyz[0];
+   txyz[1]=xyz[1];
+   txyz[2]=xyz[2];
+
+   ECEF2LLH(txyz,&tlat,&tlon,&th);
+
+   *lat=tlat;
+   *lon=tlon;
+   *h=th;
+   }
+
 // transform OG/H to ECEF
 // input and output in meters
 void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
@@ -373,25 +365,21 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    switch (zone)
       {
-      default:
       case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
       case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
       case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
       case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
       case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
       case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
+      default: ERRORMSG();
       }
 
    pos+=x*right+y*up;
 
    dist=intersect_ellipsoid_line(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
-
    pos-=dist*pos;
 
-   nrm.x=pos.x/WGS84_r_major;
-   nrm.y=pos.y/WGS84_r_major;
-   nrm.z=pos.z/WGS84_r_minor;
-
+   nrm=pos;
    nrm.normalize();
 
    pos+=nrm*h;
@@ -433,8 +421,6 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
    switch (zone)
       {
-      default:
-
       case 1: // north pole
 
          dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
@@ -506,6 +492,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
          *h=height;
 
          break;
+
+      default: ERRORMSG();
       }
    }
 
@@ -531,9 +519,9 @@ void minicrs::ECEF2OGH(float xyz[3],
 int minicrs::ECEF2OGHZ(double xyz[3]) // input ECEF coordinates
    {
    double prj[3];
-   double alt;
+   double h;
 
-   ECEF2PRJ(xyz,prj,&alt);
+   ECEF2PRJ(xyz,prj,&h);
 
    if (dabs(prj[2])>=dabs(prj[0]) && dabs(prj[2])>=dabs(prj[1]))
       if (prj[2]>0.0) return(1); // north pole
@@ -551,51 +539,24 @@ int minicrs::ECEF2OGHZ(double xyz[3]) // input ECEF coordinates
 // project ECEF to ellipsoid
 void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
                        double prj[3], // output ECEF coordinates
-                       double *alt) // output altitude
+                       double *h) // output altitude
    {
-   int i;
-
    miniv3d pos,nrm;
-   miniv3d pos1,pos2,err;
-   double dist,height;
+   double dist;
 
-   static const int maxiter=10;
-   static const double maxerror=1E-20;
+   pos==miniv3d(xyz);
 
-   pos=pos1=miniv3d(xyz);
+   nrm=pos;
+   nrm.normalize();
 
-   for (i=0; i<maxiter; i++)
-      {
-      nrm.x=pos1.x/WGS84_r_major;
-      nrm.y=pos1.y/WGS84_r_major;
-      nrm.z=pos1.z/WGS84_r_minor;
+   dist=intersect_ellipsoid_line(pos,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   pos-=dist*nrm;
 
-      nrm.normalize();
+   prj[0]=pos.x;
+   prj[1]=pos.y;
+   prj[2]=pos.z;
 
-      dist=intersect_ellipsoid_line(pos1,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
-
-      pos2=pos1-dist*nrm;
-
-      nrm.x=pos2.x/WGS84_r_major;
-      nrm.y=pos2.y/WGS84_r_major;
-      nrm.z=pos2.z/WGS84_r_minor;
-
-      nrm.normalize();
-
-      height=(pos-pos2).getlength();
-
-      err=pos-pos2-height*nrm;
-
-      if (err.getlength2()<dsqr(maxerror)) break;
-
-      pos1+=err;
-      }
-
-   prj[0]=pos2.x;
-   prj[1]=pos2.y;
-   prj[2]=pos2.z;
-
-   *alt=height;
+   *h=dist;
    }
 
 // Molodensky transformation

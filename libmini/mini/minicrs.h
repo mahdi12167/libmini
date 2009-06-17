@@ -88,7 +88,7 @@ class minicrs
    //! project ECEF to ellipsoid
    static void ECEF2PRJ(double xyz[3], // input ECEF coordinates
                         double prj[3], // output ECEF coordinates
-                        double *alt); // output altitude
+                        double *h); // output altitude
 
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m);
@@ -104,10 +104,6 @@ class minicrs
    // Mercator conversion functions
    static void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
    static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
-
-   // ECEF conversion functions
-   static void calcLLH2ECEF(double lat,double lon,double h,double xyz[3]);
-   static void calcECEF2LLH(double xyz[3],double *lat,double *lon,double *h);
 
    // Molodensky transformation between two datums
    static void molodensky(int src,int dst,double *lat,double *lon);

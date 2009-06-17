@@ -8,7 +8,6 @@
 #include "datacache.h"
 
 #include "miniOGL.h"
-#include "minicrs.h"
 
 #include "minilayer.h"
 
@@ -986,7 +985,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
             north0.convert2(minicoord::MINICOORD_ECEF);
 
             normal0=center0.vec;
-            normal0.z/=1.0-minicrs::WGS84_f;
 
             radius=center0.vec.getlength();
 
@@ -1048,7 +1046,6 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       north.convert2(minicoord::MINICOORD_ECEF);
 
       normal=center.vec;
-      normal.z/=1.0-minicrs::WGS84_f;
 
       if (center.vec.getlength()>0.0)
          {
@@ -1258,9 +1255,6 @@ void minilayer::createwarps(int cols,int rows,
                p.convert2(minicoord::MINICOORD_ECEF);
 
                n=p.vec;
-               n.x/=minicrs::WGS84_r_major;
-               n.y/=minicrs::WGS84_r_major;
-               n.z/=minicrs::WGS84_r_minor;
                n.normalize();
 
                p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
@@ -1273,9 +1267,6 @@ void minilayer::createwarps(int cols,int rows,
                p.convert2(minicoord::MINICOORD_ECEF);
 
                n=p.vec;
-               n.x/=minicrs::WGS84_r_major;
-               n.y/=minicrs::WGS84_r_major;
-               n.z/=minicrs::WGS84_r_minor;
                n.normalize();
                }
 
