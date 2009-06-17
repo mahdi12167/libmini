@@ -438,6 +438,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       case 1: // north pole
 
          dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
          *x=pos.y;
@@ -446,42 +447,10 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
          break;
 
-      case 6: // south pole
-
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
-         pos+=dist*pos;
-
-         *x=pos.y;
-         *y=pos.x;
-         *h=height;
-
-         break;
-
-      case 4: // tokyo
-
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
-         pos+=dist*pos;
-
-         *x=-pos.x;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
-      case 5: // new york
-
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
-         pos+=dist*pos;
-
-         *x=pos.x;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
       case 2: // greenwich
 
          dist=intersect_plane_line(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
+         if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
          *x=pos.y;
@@ -493,10 +462,47 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       case 3: // honolulu
 
          dist=intersect_plane_line(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
+         if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
          *x=-pos.y;
          *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 4: // tokyo
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
+         if (dist<0.0) dist=MAXFLOAT;
+         pos+=dist*pos;
+
+         *x=-pos.x;
+         *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 5: // new york
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
+         if (dist<0.0) dist=MAXFLOAT;
+         pos+=dist*pos;
+
+         *x=pos.x;
+         *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 6: // south pole
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
+         if (dist<0.0) dist=MAXFLOAT;
+         pos+=dist*pos;
+
+         *x=pos.y;
+         *y=pos.x;
          *h=height;
 
          break;
