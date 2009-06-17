@@ -8,6 +8,7 @@
 #include "datacache.h"
 
 #include "miniOGL.h"
+#include "minicrs.h"
 
 #include "minilayer.h"
 
@@ -1257,6 +1258,9 @@ void minilayer::createwarps(int cols,int rows,
                p.convert2(minicoord::MINICOORD_ECEF);
 
                n=p.vec;
+               n.x/=minicrs::WGS84_r_major;
+               n.y/=minicrs::WGS84_r_major;
+               n.z/=minicrs::WGS84_r_minor;
                n.normalize();
 
                p.vec+=(miniv3d(fcenter.vec-p.vec)*fnormal)*fnormal;
@@ -1269,6 +1273,9 @@ void minilayer::createwarps(int cols,int rows,
                p.convert2(minicoord::MINICOORD_ECEF);
 
                n=p.vec;
+               n.x/=minicrs::WGS84_r_major;
+               n.y/=minicrs::WGS84_r_major;
+               n.z/=minicrs::WGS84_r_minor;
                n.normalize();
                }
 
