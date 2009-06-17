@@ -128,7 +128,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                break;
             case MINICOORD_OGH:
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,&crs_zone);
+               crs_zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
                type=t;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
@@ -162,7 +163,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_OGH:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,&crs_zone);
+               crs_zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
                type=t;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
@@ -203,7 +205,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_OGH:
                minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,&crs_zone);
+               crs_zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
                type=t;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
@@ -245,7 +248,10 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_datum=datum;
                break;
             case MINICOORD_OGH:
-               if (zone!=crs_zone) ERRORMSG();
+               if (zone==crs_zone) break;
+               minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
+               crs_zone=zone;
                break;
             case MINICOORD_ECEF:
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz);
@@ -283,7 +289,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,&crs_zone);
+               crs_zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
                type=t;
                crs_datum=MINICOORD_DATUM_NONE;
                break;

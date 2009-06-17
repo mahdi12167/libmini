@@ -418,7 +418,134 @@ void minicrs::OGH2ECEF(double x,double y,double h,
 // input and output in meters
 void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
                        double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
-                       int *zone) // oblique gnomonic zone of output coordinates
+                       int zone) // oblique gnomonic zone of output coordinates
+   {
+   double prj[3];
+
+   miniv3d pos;
+   double dist,height;
+
+   ECEF2PRJ(xyz,prj,&height);
+   pos=miniv3d(prj);
+
+   if (zone<1) zone=1;
+   else if (zone>6) zone=6;
+
+   switch (zone)
+      {
+      default:
+
+      case 1: // north pole
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         pos+=dist*pos;
+
+         *x=pos.y;
+         *y=-pos.x;
+         *h=height;
+
+         break;
+
+      case 6: // south pole
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
+         pos+=dist*pos;
+
+         *x=pos.y;
+         *y=pos.x;
+         *h=height;
+
+         break;
+
+      case 4: // tokyo
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
+         pos+=dist*pos;
+
+         *x=-pos.x;
+         *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 5: // new york
+
+         dist=intersect_plane_line(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
+         pos+=dist*pos;
+
+         *x=pos.x;
+         *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 2: // greenwich
+
+         dist=intersect_plane_line(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
+         pos+=dist*pos;
+
+         *x=pos.y;
+         *y=pos.z;
+         *h=height;
+
+         break;
+
+      case 3: // honolulu
+
+         dist=intersect_plane_line(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
+         pos+=dist*pos;
+
+         *x=-pos.y;
+         *y=pos.z;
+         *h=height;
+
+         break;
+      }
+   }
+
+void minicrs::ECEF2OGH(float xyz[3],
+                       float *x,float *y,float *h,
+                       int zone)
+   {
+   double txyz[3];
+   double tx,ty,th;
+
+   txyz[0]=xyz[0];
+   txyz[1]=xyz[1];
+   txyz[2]=xyz[2];
+
+   ECEF2OGH(txyz,&tx,&ty,&th,zone);
+
+   *x=tx;
+   *y=ty;
+   *h=th;
+   }
+
+// transform ECEF to OG/H zone
+int minicrs::ECEF2OGHZ(double xyz[3]) // input ECEF coordinates
+   {
+   double prj[3];
+   double alt;
+
+   ECEF2PRJ(xyz,prj,&alt);
+
+   if (dabs(prj[2])>=dabs(prj[0]) && dabs(prj[2])>=dabs(prj[1]))
+      if (prj[2]>0.0) return(1); // north pole
+      else return(6); // south pole
+   else if (dabs(prj[1])>=dabs(prj[0]) && dabs(prj[1])>=dabs(prj[2]))
+      if (prj[1]>0.0) return(4); // tokyo
+      else return(5); // new york
+   else if (dabs(prj[0])>=dabs(prj[1]) && dabs(prj[0])>=dabs(prj[2]))
+      if (prj[0]>0.0) return(2); // greenwich
+      else return(3); // honolulu
+
+   return(0);
+   }
+
+// project ECEF to ellipsoid
+void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
+                       double prj[3], // output ECEF coordinates
+                       double *alt) // output altitude
    {
    int i;
 
@@ -458,93 +585,11 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       pos1+=err;
       }
 
-   if (dabs(pos2.z)>=dabs(pos2.x) && dabs(pos2.z)>=dabs(pos2.y))
-      if (pos2.z>0.0)
-         {
-         *zone=1; // north pole
+   prj[0]=pos2.x;
+   prj[1]=pos2.y;
+   prj[2]=pos2.z;
 
-         dist=intersect_plane_line(pos2,pos2,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
-         pos2+=dist*pos2;
-
-         *x=pos2.y;
-         *y=-pos2.x;
-         *h=height;
-         }
-      else
-         {
-         *zone=6; // south pole
-
-         dist=intersect_plane_line(pos2,pos2,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
-         pos2+=dist*pos2;
-
-         *x=pos2.y;
-         *y=pos2.x;
-         *h=height;
-         }
-   else if (dabs(pos2.y)>=dabs(pos2.x) && dabs(pos2.y)>=dabs(pos2.z))
-      if (pos2.y>0.0)
-         {
-         *zone=4; // tokyo
-
-         dist=intersect_plane_line(pos2,pos2,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
-         pos2+=dist*pos2;
-
-         *x=-pos2.x;
-         *y=pos2.z;
-         *h=height;
-         }
-      else
-         {
-         *zone=5; // new york
-
-         dist=intersect_plane_line(pos2,pos2,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
-         pos2+=dist*pos2;
-
-         *x=pos2.x;
-         *y=pos2.z;
-         *h=height;
-         }
-   else if (dabs(pos2.x)>=dabs(pos2.y) && dabs(pos2.x)>=dabs(pos2.z))
-      if (pos2.x>0.0)
-         {
-         *zone=2; // greenwich
-
-         dist=intersect_plane_line(pos2,pos2,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
-         pos2+=dist*pos2;
-
-         *x=pos2.y;
-         *y=pos2.z;
-         *h=height;
-         }
-      else
-         {
-         *zone=3; // honolulu
-
-         dist=intersect_plane_line(pos2,pos2,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
-         pos2+=dist*pos2;
-
-         *x=-pos2.y;
-         *y=pos2.z;
-         *h=height;
-         }
-   }
-
-void minicrs::ECEF2OGH(float xyz[3],
-                       float *x,float *y,float *h,
-                       int *zone)
-   {
-   double txyz[3];
-   double tx,ty,th;
-
-   txyz[0]=xyz[0];
-   txyz[1]=xyz[1];
-   txyz[2]=xyz[2];
-
-   ECEF2OGH(txyz,&tx,&ty,&th,zone);
-
-   *x=tx;
-   *y=ty;
-   *h=th;
+   *alt=height;
    }
 
 // Molodensky transformation
