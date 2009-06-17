@@ -544,7 +544,7 @@ void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
    miniv3d pos,nrm;
    double dist;
 
-   pos==miniv3d(xyz);
+   pos=miniv3d(xyz);
 
    nrm=pos;
    nrm.normalize();
