@@ -147,7 +147,7 @@ class databuf
    void reset();
 
    //! release buffer
-   void release();
+   void release(int keep_comment=0);
 
    //! set comment string
    void set_comment(char *str);

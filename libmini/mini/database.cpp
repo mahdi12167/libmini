@@ -197,10 +197,11 @@ void databuf::copy(const databuf *buf)
 void databuf::duplicate(const databuf *buf)
    {
    *this=*buf;
+   comment=NULL;
+
    alloc(buf->xsize,buf->ysize,buf->zsize,buf->tsteps,buf->type);
    copy(buf);
 
-   comment=NULL;
    set_comment(buf->comment);
    }
 
@@ -256,15 +257,18 @@ void databuf::reset()
    }
 
 // release buffer
-void databuf::release()
+void databuf::release(int keep_comment)
    {
    if (data!=NULL) free(data);
 
    data=NULL;
    bytes=0;
 
-   if (comment!=NULL) free(comment);
-   comment=NULL;
+   if (keep_comment==0)
+      {
+      if (comment!=NULL) free(comment);
+      comment=NULL;
+      }
    }
 
 // set comment string
@@ -1003,7 +1007,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
       if (israw!=0) return;
       else ERRORMSG();
 
-   release();
+   release(1);
 
    data=newdata;
    bytes=newbytes;
@@ -1150,7 +1154,7 @@ void databuf::autocompress()
 
    if (s3tcdata!=NULL)
       {
-      release();
+      release(1);
 
       data=s3tcdata;
       bytes=s3tcbytes;
@@ -1250,7 +1254,7 @@ void databuf::autodecompress()
 
    if (rawdata!=NULL)
       {
-      release();
+      release(1);
 
       data=rawdata;
       bytes=rawbytes;
@@ -1289,7 +1293,7 @@ void databuf::interpretechunk(unsigned int implfmt)
 
    INTERPRETER_INIT(implfmt,(char *)data,bytes,this,INTERPRETER_DATA);
 
-   release();
+   release(1);
    alloc(xsize,ysize,zsize,tsteps,type);
 
    scaling=1.0f/255.0f;
