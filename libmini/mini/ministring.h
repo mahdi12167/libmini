@@ -42,7 +42,8 @@ class ministring: public ministring_base
 
       cstr=NULL;
 
-      snprintf(str,len,"%g",v);
+      if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
+      else snprintf(str,len,"%.7f",v);
 
       *this=ministring(str);
       }
