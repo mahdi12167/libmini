@@ -133,6 +133,10 @@ inline double round2(const double v,const unsigned int n=6) {return(floor(v*pow(
 
 inline int checknan(const double v) {return(v!=v);}
 
+#ifdef _WIN32
+#define drand48() ((double)rand()/RAND_MAX)
+#endif
+
 #ifdef _MSC_VER
 #define strdup _strdup
 #define snprintf _snprintf
