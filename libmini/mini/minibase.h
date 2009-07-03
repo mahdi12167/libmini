@@ -155,6 +155,11 @@ inline char *strcct(const char *str1,const char *str2)
    return(str);
    }
 
+#ifdef _MSC_VER
+#include <direct.h>
+#define mkdir(dir,perm) _mkdir(dir)
+#endif
+
 }
 
 using namespace minibase;
