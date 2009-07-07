@@ -36,7 +36,6 @@ BOOLINT glext_tr;
 BOOLINT glext_mt;
 BOOLINT glext_vp;
 BOOLINT glext_fp;
-BOOLINT glext_gpp;
 
 #ifdef _WIN32
 
@@ -65,10 +64,6 @@ PFNGLBINDPROGRAMARBPROC glBindProgramARB=NULL;
 PFNGLPROGRAMSTRINGARBPROC glProgramStringARB=NULL;
 PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB=NULL;
 PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB=NULL;
-#endif
-
-#ifdef GL_EXT_gpu_program_parameters
-PFNGLPROGRAMENVPARAMETERS4FVEXTPROC glProgramEnvParameters4fvEXT=NULL;
 #endif
 
 #endif
