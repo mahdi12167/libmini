@@ -311,8 +311,12 @@ void minilayer::request_callback(const char *file,int istexture,databuf *buf,voi
 
    if (!buf->missing())
       {
-      if (istexture==0 && (buf->type==3 || buf->type==4 || buf->type==5 || buf->type==6)) ERRORMSG();
-      if (istexture!=0 && (buf->type==0 || buf->type==1 || buf->type==2)) ERRORMSG();
+      if (istexture==0 && (buf->type==databuf::DATABUF_TYPE_RGB || buf->type==databuf::DATABUF_TYPE_RGBA)) ERRORMSG();
+      if (istexture==0 && (buf->type==databuf::DATABUF_TYPE_RGB_S3TC || buf->type==databuf::DATABUF_TYPE_RGBA_S3TC)) ERRORMSG();
+      if (istexture==0 && (buf->type==databuf::DATABUF_TYPE_RGB_MM || buf->type==databuf::DATABUF_TYPE_RGBA_MM)) ERRORMSG();
+      if (istexture==0 && (buf->type==databuf::DATABUF_TYPE_RGB_MM_S3TC || buf->type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)) ERRORMSG();
+
+      if (istexture!=0 && (buf->type==databuf::DATABUF_TYPE_BYTE || buf->type==databuf::DATABUF_TYPE_SHORT || buf->type==databuf::DATABUF_TYPE_FLOAT)) ERRORMSG();
       }
    }
 
