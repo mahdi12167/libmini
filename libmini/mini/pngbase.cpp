@@ -232,6 +232,7 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
    PNG_USER_WRITE_PARAMS png_user_write_params;
 
    *data=NULL;
+   *bytes=0;
 
    // create PNG write struct
    png_ptr=png_create_write_struct(PNG_LIBPNG_VER_STRING,png_voidp_NULL,png_error_ptr_NULL,png_error_ptr_NULL);
@@ -295,14 +296,6 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
 
    // ask PNG to pack separate bytes into multiple pixels
    png_set_packing(png_ptr);
-
-   // get PNG number of channels
-   image_channels=png_get_channels(png_ptr,info_ptr);
-   if (image_channels!=components)
-      {
-      png_destroy_write_struct(&png_ptr,&info_ptr);
-      return;
-      }
 
    // get PNG bytes per row
    row_bytes=png_get_rowbytes(png_ptr,info_ptr);

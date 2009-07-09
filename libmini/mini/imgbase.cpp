@@ -93,6 +93,9 @@ int imgbase::loadimg(databuf &buf,char *filename)
       {
       jpgdata=readfile(filename,&jpgbytes);
       rawdata=jpegbase::decompressJPEGimage(jpgdata,jpgbytes,&jpgwidth,&jpgheight,&jpgcomponents);
+      free(jpgdata);
+
+      if (rawdata==NULL) return(0);
 
       if (jpgcomponents==1) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,0);
       else if (jpgcomponents==3) buf.set(rawdata,jpgwidth*jpgheight*jpgcomponents,jpgwidth,jpgheight,1,1,3);
@@ -102,6 +105,9 @@ int imgbase::loadimg(databuf &buf,char *filename)
       {
       pngdata=readfile(filename,&pngbytes);
       rawdata=pngbase::decompressPNGimage(pngdata,pngbytes,&pngwidth,&pngheight,&pngcomponents);
+      free(pngdata);
+
+      if (rawdata==NULL) return(0);
 
       if (pngcomponents==1) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,0);
       else if (pngcomponents==2)
@@ -165,6 +171,8 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
       else if (buf.type==databuf::DATABUF_TYPE_RGBA || buf.type==databuf::DATABUF_TYPE_RGBA_MM) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
       else return(0);
 
+      if (jpgdata==NULL) return(0);
+
       writefile(filename,jpgdata,jpgbytes);
       }
    else if (type==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
@@ -178,6 +186,8 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
       else if (buf.type==databuf::DATABUF_TYPE_RGB || buf.type==databuf::DATABUF_TYPE_RGB_MM) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes,0.0f,pnglevel);
       else if (buf.type==databuf::DATABUF_TYPE_RGBA || buf.type==databuf::DATABUF_TYPE_RGBA_MM) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes,0.0f,pnglevel);
       else return(0);
+
+      if (pngdata==NULL) return(0);
 
       writefile(filename,pngdata,pngbytes);
       }

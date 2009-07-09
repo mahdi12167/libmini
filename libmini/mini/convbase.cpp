@@ -55,7 +55,6 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
             int width,height,components;
 
             *newdata=jpegbase::decompressJPEGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) return(0);
 
             if (*newdata==NULL) return(0); // return failure
 
@@ -103,7 +102,6 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
             int width,height,components;
 
             *newdata=pngbase::decompressPNGimage(srcdata,bytes,&width,&height,&components);
-            if ((unsigned int)width!=obj->xsize || (unsigned int)height!=obj->ysize) return(0);
 
             if (*newdata==NULL) return(0); // return failure
 
