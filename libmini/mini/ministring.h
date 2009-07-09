@@ -85,7 +85,7 @@ class ministring: public ministring_base
             found=TRUE;
 
             for (j=0; j<s; j++)
-               if (get(i+j)!=with[j])
+               if (get(i+j)!=sub[j])
                   {
                   found=FALSE;
                   break;
