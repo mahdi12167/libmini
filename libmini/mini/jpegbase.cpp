@@ -75,7 +75,8 @@ unsigned char *decompressJPEGimage(unsigned char *data,unsigned int bytes,int *w
    jpeg_create_decompress(&info);
    jpeg_mem_src(&info,data,bytes);
 
-   jpeg_read_header(&info,TRUE);
+   if (jpeg_read_header(&info,TRUE)!=JPEG_HEADER_OK) return(NULL);
+
    *width=info.image_width;
    *height=info.image_height;
    *components=info.num_components;
