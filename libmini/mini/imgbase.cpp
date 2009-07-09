@@ -160,23 +160,23 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
    else if (type==FILE_TYPE_PVM) buf.savePVMdata(filename);
    else if (type==FILE_TYPE_JPG && buf.zsize==1 && buf.tsteps==1)
       {
-      if (buf.type==0) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
-      else if (buf.type==3) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
-      else if (buf.type==4) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
+      if (buf.type==databuf::DATABUF_TYPE_BYTE) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==databuf::DATABUF_TYPE_RGB || buf.type==databuf::DATABUF_TYPE_RGB_MM) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,jpgquality,&jpgdata,&jpgbytes);
+      else if (buf.type==databuf::DATABUF_TYPE_RGBA || buf.type==databuf::DATABUF_TYPE_RGBA_MM) jpegbase::compressJPEGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,jpgquality,&jpgdata,&jpgbytes);
       else return(0);
 
       writefile(filename,jpgdata,jpgbytes);
       }
    else if (type==FILE_TYPE_PNG && buf.zsize==1 && buf.tsteps==1)
       {
-      if (buf.type==0) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes,0.0f,pnglevel);
-      else if (buf.type==1)
+      if (buf.type==databuf::DATABUF_TYPE_BYTE) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,1,&pngdata,&pngbytes,0.0f,pnglevel);
+      else if (buf.type==databuf::DATABUF_TYPE_SHORT)
          {
          buf.swap2();
          pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,2,&pngdata,&pngbytes,0.0f,pnglevel);
          }
-      else if (buf.type==3) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes,0.0f,pnglevel);
-      else if (buf.type==4) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes,0.0f,pnglevel);
+      else if (buf.type==databuf::DATABUF_TYPE_RGB || buf.type==databuf::DATABUF_TYPE_RGB_MM) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,3,&pngdata,&pngbytes,0.0f,pnglevel);
+      else if (buf.type==databuf::DATABUF_TYPE_RGBA || buf.type==databuf::DATABUF_TYPE_RGBA_MM) pngbase::compressPNGimage((unsigned char *)buf.data,buf.xsize,buf.ysize,4,&pngdata,&pngbytes,0.0f,pnglevel);
       else return(0);
 
       writefile(filename,pngdata,pngbytes);
