@@ -1113,7 +1113,7 @@ static struct _cimg_macosx_setcwd {
    _n1##x = (int)( \
    (I[0] = I[1] = (img)(0,_p1##y,z,v)), \
    (I[3] = I[4] = (img)(0,y,z,v)), \
-   (I[6] = I[7] = (img)(0,_n1##y,z,v)),	\
+   (I[6] = I[7] = (img)(0,_n1##y,z,v)),    \
    1>=(img).width?(int)((img).width)-1:1); \
    (_n1##x<(int)((img).width) && ( \
    (I[2] = (img)(_n1##x,_p1##y,z,v)), \
@@ -1140,7 +1140,7 @@ static struct _cimg_macosx_setcwd {
    (I[2] = (img)(_n1##x,_p1##y,z,v)), \
    (I[5] = (img)(_n1##x,y,z,v)), \
    (I[8] = (img)(_n1##x,_n1##y,z,v)),1)) || \
-   x==--_n1##x);	    \
+   x==--_n1##x);        \
    I[0] = I[1], I[1] = I[2], \
    I[3] = I[4], I[4] = I[5], \
    I[6] = I[7], I[7] = I[8], \
@@ -1216,7 +1216,7 @@ static struct _cimg_macosx_setcwd {
    (I[8] = (img)(_n1##x,_p1##y,z,v)), \
    (I[13] = (img)(_n1##x,y,z,v)), \
    (I[18] = (img)(_n1##x,_n1##y,z,v)), \
-   (I[23] = (img)(_n1##x,_n2##y,z,v)),	   \
+   (I[23] = (img)(_n1##x,_n2##y,z,v)),       \
    2>=(img).width?(int)((img).width)-1:2); \
    (_n2##x<(int)((img).width) && ( \
    (I[4] = (img)(_n2##x,_p2##y,z,v)), \
@@ -2378,10 +2378,10 @@ namespace cimg_library {
     struct CarbonInfo {
       MPCriticalRegionID windowListCR; // Protects access to the list of windows
       int windowCount;                 // Count of displays used on the screen
-      pthread_t event_thread;	       // The background event thread
-      MPSemaphoreID sync_event;	       // Event used to perform tasks synchronizations
+      pthread_t event_thread;           // The background event thread
+      MPSemaphoreID sync_event;           // Event used to perform tasks synchronizations
       MPSemaphoreID wait_event;        // Event used to notify that new events occured on the display
-      MPQueueID com_queue;	       // The message queue
+      MPQueueID com_queue;           // The message queue
       CarbonInfo(): windowCount(0),event_thread(0),sync_event(0),com_queue(0) {
         if (MPCreateCriticalRegion(&windowListCR) != noErr) // Create the critical region
           throw CImgDisplayException("MPCreateCriticalRegion failed.");
@@ -14183,7 +14183,7 @@ namespace cimg_library {
    _n1##x = (int)( \
    (I[1] = (img)(0,_p1##y,z,v)), \
    (I[3] = I[4] = (img)(0,y,z,v)), \
-   (I[7] = (img)(0,_n1##y,z,v)),	\
+   (I[7] = (img)(0,_n1##y,z,v)),    \
    1>=(img).width?(int)((img).width)-1:1); \
    (_n1##x<(int)((img).width) && ( \
    (I[2] = (img)(_n1##x,_p1##y,z,v)), \
@@ -14236,7 +14236,7 @@ namespace cimg_library {
    _n1##x = (int)( \
    (I[0] = I[1] = (img)(0,_p1##y,z,v)), \
    (I[3] = I[4] = (img)(0,y,z,v)), \
-   (I[6] = I[7] = (img)(0,_n1##y,z,v)),	\
+   (I[6] = I[7] = (img)(0,_n1##y,z,v)),    \
    1>=(img).width?(int)((img).width)-1:1); \
    (_n1##x<(int)((img).width) && ( \
    (I[2] = (img)(_n1##x,_p1##y,z,v)), \
@@ -19533,7 +19533,7 @@ namespace cimg_library {
                          const bool close_set=false, const float precision=4,
                          const unsigned int pattern=~0U, const bool init_hatch=true) {
       unsigned int H = ~0U;
-      cimglist_for(points,p) { const unsigned int s = points[p].size();	if (s<H) H = s; }
+      cimglist_for(points,p) { const unsigned int s = points[p].size();    if (s<H) H = s; }
       return _draw_spline(points,color,opacity,close_set,precision,pattern,init_hatch,points.size,H);
     }
 
