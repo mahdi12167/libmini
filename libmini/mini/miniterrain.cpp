@@ -475,29 +475,24 @@ BOOLINT miniterrain::load(const char *url,
    // search for last backslash
    lastbslash=strrchr(baseurl,'\\');
 
-   // give up if no slash or backslash was found
-   if (lastslash==NULL && lastbslash==NULL) success=FALSE;
-   else
+   // decompose url into baseurl and baseid
+   if (lastslash!=NULL)
       {
-      // decompose url into baseurl and baseid
-      if (lastslash!=NULL)
-         {
-         baseid=strcct(++lastslash,"/");
-         *lastslash='\0';
-         }
-      else
-         {
-         baseid=strcct(++lastbslash,"\\");
-         *lastbslash='\0';
-         }
-
-      // load tileset
-      success=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset);
-
-      free(baseid);
+      baseid=strcct(++lastslash,"/");
+      *lastslash='\0';
       }
+   else if (lastbslash!=NULL)
+      {
+      baseid=strcct(++lastbslash,"\\");
+      *lastbslash='\0';
+      }
+   else baseid=strdup("/");
+
+   // load tileset
+   success=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset);
 
    free(baseurl);
+   free(baseid);
 
    return(success);
    }
