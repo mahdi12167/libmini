@@ -51,6 +51,8 @@ class minicoord
    minicoord(const minicoord &c);
 
    //! constructors
+   //! if coordinate system is geographic (LatLon) then corners are given in arc-seconds
+   //! else corners are given in meters
    minicoord(const miniv3d &v);
    minicoord(const miniv3d &v,const MINICOORD t);
    minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
