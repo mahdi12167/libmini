@@ -158,13 +158,16 @@ class databuf
    //! set LLWGS84 extents
    void set_LLWGS84extents(double left,double right,double bottom,double top);
 
-   //! set native extents
+   //! set native corners
+   //! if coordinate system is LL then corners are given in degrees
+   //! else corners are given in meters
    void set_corners(double sw_corner_x,double sw_corner_y,
                     double se_corner_x,double se_corner_y,
                     double nw_corner_x,double nw_corner_y,
                     double ne_corner_x,double ne_corner_y);
 
    //! set LLWGS84 corners
+   //! corners are given in WGS84 degrees
    void set_LLWGS84corners(double sw_corner_x,double sw_corner_y,
                            double se_corner_x,double se_corner_y,
                            double nw_corner_x,double nw_corner_y,
