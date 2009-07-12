@@ -27,7 +27,7 @@ AC_PROG_LIBTOOL
 LIBTOOL_SO_VERSION=0:0:0
 LIBTOOL_SO_VERSION_MAJOR=0
 
-PKGCONFIG_REQUIRES="gl glu libcurl x11 xmu"
+PKGCONFIG_REQUIRES="gl glu libcurl"
 
 #########################################################################
 #  don't touch this
@@ -66,7 +66,7 @@ AC_HEADER_STDC
 # OpenThreads support checks
 AC_ARG_WITH([openthreads],
             [AS_HELP_STRING([--with-openthreads],[Build with OpenThreads support @<:@default=no@:>@])],
-            [with_openthreads=yes], [with_openthreads=no])
+            [], [with_openthreads=no])
 AS_IF([test "x${with_openthreads}" != xno],
       [ AC_CHECK_LIB(OpenThreads,OpenThreadsGetVersion,,AC_MSG_ERROR([OpenThreads library not found]))
         OPENTHREADS_CFLAGS="-DUSEOPENTH"
@@ -77,7 +77,7 @@ AS_IF([test "x${with_openthreads}" != xno],
 # squish support checks
 AC_ARG_WITH([squish],
             [AS_HELP_STRING([--with-squish],[Build with squish support @<:@default=yes@:>@])],
-            [with_squish=no], [with_squish=yes])
+            [], [with_squish=yes])
 AS_IF([test "x${with_squish}" != xno],
       [ AC_CHECK_HEADER(squish.h,,AC_MSG_ERROR([Squish library not found]))
         PKGCONFIG_REQUIRES+=" squish"
@@ -87,7 +87,7 @@ AS_IF([test "x${with_squish}" != xno],
 # GREYCStoration support checks
 AC_ARG_WITH([greyc],
             [AS_HELP_STRING([--with-greyc],[Build with greyc support @<:@default=no@:>@])],
-            [with_greyc=yes], [with_greyc=no])
+            [], [with_greyc=no])
 AS_IF([test "x${with_greyc}" != xno],
       [ GREYC_CFLAGS="-DUSEGREYC"
         AC_DEFINE([HAVE_GREYC],[],[Build with greyc support])
