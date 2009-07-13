@@ -1,5 +1,9 @@
 // (c) by Stefan Roettger
 
+#ifndef YUKON_DATA
+#define YUKON_DATA "data"
+#endif
+
 #include <mini/minibase.h>
 #include <mini/minitime.h>
 #include <mini/minitile.h>
@@ -138,9 +142,9 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 int main(int argc,char *argv[])
    {
-   const unsigned char hfield[]="data/Yukon.map.pgm";
-   const unsigned char texture[]="data/Yukon.texmap.ppm";
-   const unsigned char fogmap[]="data/Yukon.fogmap.pgm";
+   const unsigned char hfield[]=  YUKON_DATA "/Yukon.map.pgm";
+   const unsigned char texture[]= YUKON_DATA "/Yukon.texmap.ppm";
+   const unsigned char fogmap[]=  YUKON_DATA "/Yukon.fogmap.pgm";
 
    const unsigned char *hfields=hfield;
    const unsigned char *textures=texture;
@@ -164,8 +168,8 @@ int main(int argc,char *argv[])
    const float fogG=0.75f;
    const float fogB=1.0f;
 
-   const unsigned char layer1[]="data/Yukon.fogmap1.pgm";
-   const unsigned char layer2[]="data/Yukon.fogmap2.pgm";
+   const unsigned char layer1[]= YUKON_DATA "/Yukon.fogmap1.pgm";
+   const unsigned char layer2[]= YUKON_DATA "/Yukon.fogmap2.pgm";
 
    const unsigned char *layers1=layer1;
    const unsigned char *layers2=layer2;

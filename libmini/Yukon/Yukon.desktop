@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Yukon
+GenericName=Yukon
+Comment=Yukon demonstration of libMini terrain library
+Exec=Yukon %f
+Icon=mini-Yukon
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Graphics;Geology;3DGraphics;
