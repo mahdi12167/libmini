@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Stuttgart
+GenericName=Stuttgart
+Comment=Stuttgart demonstration of libMini terrain library
+Exec=Stuttgart %f
+Icon=mini-Stuttgart
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Graphics;Geology;3DGraphics;
