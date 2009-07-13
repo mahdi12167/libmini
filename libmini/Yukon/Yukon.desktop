@@ -1,10 +1,9 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Yukon
 GenericName=Yukon
 Comment=Yukon demonstration of libMini terrain library
 Exec=Yukon %f
-Icon=mini-Yukon
+Icon=Yukon
 Terminal=false
 Type=Application
 StartupNotify=true
