@@ -222,7 +222,6 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
 
    // declare PNG image parameters
    int color_type,sample_depth,interlace_type;
-   int image_channels;
 
    // declare PNG row pointers
    unsigned char **row_pointers;
