@@ -35,8 +35,9 @@ void normalize(int num, // number of heterogeneous grids
                int border=0); // generate normals at border
 
 // configuring
+void configure_treatblack(int treatblack=1); // treat black as transparent
 void configure_supersampling(int supersampling=1); // specify texture supersampling
-void configure_downsampling(int downsampling=3); // specify texture downsampling
+void configure_upsampling(int upsampling=3); // specify texture upsampling
 void configure_startupfile(int startupfile=0); // enable ouput of startup file
 void configure_tilesetpath(const char *tilesetpath); // define tile set path
 void configure_stdprefix(const char *stdprefix); // standard prefix of tileset file

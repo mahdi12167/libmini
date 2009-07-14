@@ -13,8 +13,9 @@ namespace pnmsample {
 
 const int MAX_STR=1024;
 
+int CONFIGURE_TREATBLACK=1;
 int CONFIGURE_SUPERSAMPLING=1;
-int CONFIGURE_DOWNSAMPLING=3;
+int CONFIGURE_UPSAMPLING=3;
 int CONFIGURE_STARTUPFILE=0;
 
 char CONFIGURE_TILESETPATH[MAX_STR]="";
@@ -845,7 +846,7 @@ void resample(int num,const char **grid,
                         else sn=max(CONFIGURE_SUPERSAMPLING,1);
 
                         // increase number of samples when sampling down textures
-                        if (comps[0]==3) sn*=(1<<min(m,CONFIGURE_DOWNSAMPLING));
+                        if (comps[0]==3) sn*=(1<<min(m,CONFIGURE_UPSAMPLING));
 
                         // foreach supersample
                         for (si=-0.5f+0.5f/sn; si<0.5f; si+=1.0f/sn)
@@ -890,7 +891,7 @@ void resample(int num,const char **grid,
                                  }
 
                               // check for missing RGB color
-                              if (rgb[0]>0.0f || rgb[1]>0.0f || rgb[2]>0.0f)
+                              if (rgb[0]>0.0f || rgb[1]>0.0f || rgb[2]>0.0f || CONFIGURE_TREATBLACK==0)
                                  {
                                  rgb0[0]+=rgb[0];
                                  rgb0[1]+=rgb[1];
@@ -1278,8 +1279,9 @@ void normalize(int num,
    }
 
 // configuring
+void configure_treatblack(int treatblack) {CONFIGURE_TREATBLACK=treatblack;}
 void configure_supersampling(int supersampling) {CONFIGURE_SUPERSAMPLING=supersampling;}
-void configure_downsampling(int downsampling) {CONFIGURE_DOWNSAMPLING=downsampling;}
+void configure_upsampling(int upsampling) {CONFIGURE_UPSAMPLING=upsampling;}
 void configure_startupfile(int startupfile) {CONFIGURE_STARTUPFILE=startupfile;}
 void configure_tilesetpath(const char *tilesetpath) {strncpy(CONFIGURE_TILESETPATH,tilesetpath,MAX_STR);}
 void configure_stdprefix(const char *stdprefix) {strncpy(CONFIGURE_STDPREFIX,stdprefix,MAX_STR);}
