@@ -81,6 +81,7 @@ class minidyna
          if (s!=MAXSIZE)
             {
             a=new Item[s-MINSIZE];
+            if (a==NULL) ERRORMSG();
 
             if (ARRAY!=NULL)
                {
