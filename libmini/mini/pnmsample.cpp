@@ -299,7 +299,7 @@ float resamplepoint(unsigned char *image,
 
       rgb[2]=(1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4);
 
-      if (black==0)
+      if (black==0 || CONFIGURE_TREATBLACK==0)
          {
          point[0]=rgb[0];
          point[1]=rgb[1];
