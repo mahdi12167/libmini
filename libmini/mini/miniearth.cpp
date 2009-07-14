@@ -191,6 +191,8 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
 
    tparams.nonlin=EPARAMS.nonlin;
 
+   if (EPARAMS.nonlin || EPARAMS.usediffuse) tparams.useshaders=TRUE;
+
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
    }

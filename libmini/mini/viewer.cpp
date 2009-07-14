@@ -216,7 +216,7 @@ void initparams()
    eprms.nonlin=TRUE;
 
    eprms.usefog=TRUE;
-   eprms.useshaders=TRUE;
+   eprms.useshaders=FALSE;
    eprms.usediffuse=FALSE;
    eprms.usevisshader=TRUE;
    eprms.usebathymap=FALSE;
@@ -1308,8 +1308,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          viewer->propagate();
          break;
       case '0':
-         if (!eparams->nonlin) eparams->nonlin=eparams->useshaders=TRUE;
-         else eparams->nonlin=eparams->useshaders=FALSE;
+         if (!eparams->nonlin) eparams->nonlin=TRUE;
+         else eparams->nonlin=FALSE;
          viewer->propagate();
          break;
       case 'N':
