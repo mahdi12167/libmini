@@ -24,7 +24,7 @@ int main(int argc,char *argv[])
    if (imgbase::loadimg(buf,argv[1])!=0)
       {
       // fill-in no-data values
-      buf.fillnodata(fillin_radius);
+      if (buf.type!=databuf::DATABUF_TYPE_RGB) buf.fillnodata(fillin_radius);
 
       // save buffer
       imgbase::saveimg(buf,argv[2],jpgquality,pnglevel);
