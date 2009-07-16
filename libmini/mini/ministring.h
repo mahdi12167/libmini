@@ -121,7 +121,7 @@ class ministring: public ministring_base
 
       l=getsize();
 
-      if ((cstr=(char *)malloc(l+1))==NULL) ERRORMSG();
+      if ((cstr=(char *)malloc(l+1))==NULL) MEMERROR();
 
       for (i=0; i<l; i++) cstr[i]=get(i);
       cstr[l]='\0';

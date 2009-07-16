@@ -108,7 +108,7 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
    cs=xs*ys*zs*ts;
    bs*=cs;
 
-   if ((data=malloc(bs))==NULL) ERRORMSG();
+   if ((data=malloc(bs))==NULL) MEMERROR();
 
    if (ty==DATABUF_TYPE_SHORT)
       for (shortptr=(short int *)data,count=0; count<cs; count++) *shortptr++=0;
@@ -183,7 +183,7 @@ void databuf::copy(const void *chunk,unsigned int length,
       newdata=data;
       }
    else
-      if ((newdata=malloc(length))==NULL) ERRORMSG();
+      if ((newdata=malloc(length))==NULL) MEMERROR();
 
    set(newdata,length,xs,ys,zs,ts,ty);
    memcpy(data,chunk,length);
@@ -661,14 +661,14 @@ int databuf::readstring(const char *tag,char **str,FILE *file)
       {
       if (*str==NULL)
          {
-         if ((*str=(char *)malloc(2))==NULL) ERRORMSG();
+         if ((*str=(char *)malloc(2))==NULL) MEMERROR();
 
          (*str)[0]=ch;
          (*str)[1]='\0';
          }
       else
          {
-         if ((*str=(char *)realloc(*str,strlen(*str)+2))==NULL) ERRORMSG();
+         if ((*str=(char *)realloc(*str,strlen(*str)+2))==NULL) MEMERROR();
 
          (*str)[strlen(*str)+1]='\0';
          (*str)[strlen(*str)]=ch;
@@ -687,7 +687,7 @@ void databuf::loadblock(FILE *file)
 
    unsigned int cnt;
 
-   if ((data=(unsigned char *)malloc(block))==NULL) ERRORMSG();
+   if ((data=(unsigned char *)malloc(block))==NULL) MEMERROR();
 
    do
       {
@@ -695,13 +695,13 @@ void databuf::loadblock(FILE *file)
       bytes+=cnt;
 
       if (cnt==block)
-         if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) ERRORMSG();
+         if ((data=(unsigned char *)realloc(data,bytes+block))==NULL) MEMERROR();
       }
    while (cnt==block);
 
-   if (bytes==0) ERRORMSG();
+   if (bytes==0) IOERROR();
 
-   if ((data=(unsigned char *)realloc(data,bytes))==NULL) ERRORMSG();
+   if ((data=(unsigned char *)realloc(data,bytes))==NULL) MEMERROR();
    }
 
 // data is saved in DB format
@@ -791,13 +791,13 @@ int databuf::savedata(const char *filename,
    // save data chunk
    if (*((unsigned char *)(&INTEL_CHECK))==0 || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0)
       {
-      if (fwrite(data,bytes,1,file)!=1) ERRORMSG();
+      if (fwrite(data,bytes,1,file)!=1) IOERROR();
       fclose(file);
       }
    else
       {
       swapbytes();
-      if (fwrite(data,bytes,1,file)!=1) ERRORMSG();
+      if (fwrite(data,bytes,1,file)!=1) IOERROR();
       swapbytes();
 
       fclose(file);
@@ -942,16 +942,16 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
             else if (type==DATABUF_TYPE_RGBA) tstep=4*tstep;
             else ERRORMSG();
 
-            if (fseek(file,tstart*tstep,SEEK_CUR)!=0) ERRORMSG();
+            if (fseek(file,tstart*tstep,SEEK_CUR)!=0) IOERROR();
 
             tsteps=tstop-tstart;
             bytes=tsteps*tstep;
             t0+=tstart*dt;
             }
 
-         if ((data=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
+         if ((data=(unsigned char *)malloc(bytes))==NULL) MEMERROR();
 
-         if (fread(data,bytes,1,file)!=1) ERRORMSG();
+         if (fread(data,bytes,1,file)!=1) IOERROR();
          fclose(file);
          }
 
@@ -1062,7 +1062,7 @@ void databuf::automipmap()
 
       bytes4=xsize2*ysize2*components;
 
-      if ((data=realloc(data,bytes+bytes4))==NULL) ERRORMSG();
+      if ((data=realloc(data,bytes+bytes4))==NULL) MEMERROR();
 
       ptr=(unsigned char *)data+bytes;
 
@@ -1201,7 +1201,7 @@ void databuf::autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsig
          }
       else
          {
-         if ((*s3tcdata=(unsigned char *)realloc(*s3tcdata,*s3tcbytes+s3tcbytesmm))==NULL) ERRORMSG();
+         if ((*s3tcdata=(unsigned char *)realloc(*s3tcdata,*s3tcbytes+s3tcbytesmm))==NULL) MEMERROR();
 
          memcpy(*s3tcdata+*s3tcbytes,s3tcmipmap,s3tcbytesmm);
          free(s3tcmipmap);
@@ -1641,7 +1641,7 @@ int databuf::loadPVMdata(const char *filename,
 
    bytes=xsize*ysize*zsize*tsteps;
 
-   if ((data=realloc(data,bytes))==NULL) ERRORMSG();
+   if ((data=realloc(data,bytes))==NULL) MEMERROR();
 
    for (i=t+1; i<t+n; i++)
       {
@@ -1767,10 +1767,10 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    bytes=xsize*ysize*zsize*tsteps*4;
 
-   if ((data=malloc(bytes))==NULL) ERRORMSG();
+   if ((data=malloc(bytes))==NULL) MEMERROR();
 
    // read float data
-   if (fread(data,bytes,1,file)!=1) ERRORMSG();
+   if (fread(data,bytes,1,file)!=1) IOERROR();
    fclose(file);
 
    // convert from MSB to native format
@@ -1922,7 +1922,7 @@ void databuf::convertdata(unsigned int newtype)
 
    if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_SHORT)
       {
-      if ((newdata=malloc(cells*2))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells*2))==NULL) MEMERROR();
 
       byteptr=(unsigned char *)data;
       shortptr=(short int *)newdata;
@@ -1938,7 +1938,7 @@ void databuf::convertdata(unsigned int newtype)
       }
    else if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_FLOAT)
       {
-      if ((newdata=malloc(cells*4))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells*4))==NULL) MEMERROR();
 
       byteptr=(unsigned char *)data;
       floatptr=(float *)newdata;
@@ -1973,7 +1973,7 @@ void databuf::convertdata(unsigned int newtype)
 
       if (minvalue==maxvalue) maxvalue++;
 
-      if ((newdata=malloc(cells))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells))==NULL) MEMERROR();
 
       shortptr=(short int *)data;
       byteptr=(unsigned char *)newdata;
@@ -2000,7 +2000,7 @@ void databuf::convertdata(unsigned int newtype)
       }
    else if (type==DATABUF_TYPE_SHORT && newtype==DATABUF_TYPE_FLOAT)
       {
-      if ((newdata=malloc(cells*4))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells*4))==NULL) MEMERROR();
 
       shortptr=(short int *)data;
       floatptr=(float *)newdata;
@@ -2037,7 +2037,7 @@ void databuf::convertdata(unsigned int newtype)
 
       if (minvalue==maxvalue) maxvalue++;
 
-      if ((newdata=malloc(cells))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells))==NULL) MEMERROR();
 
       floatptr=(float *)data;
       byteptr=(unsigned char *)newdata;
@@ -2082,7 +2082,7 @@ void databuf::convertdata(unsigned int newtype)
 
       if (minvalue==maxvalue) maxvalue++;
 
-      if ((newdata=malloc(cells*2))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells*2))==NULL) MEMERROR();
 
       floatptr=(float *)data;
       shortptr=(short int *)newdata;
@@ -2127,7 +2127,7 @@ void databuf::convertdata(unsigned int newtype)
       }
    else if (type==DATABUF_TYPE_RGB && newtype==DATABUF_TYPE_BYTE)
       {
-      if ((newdata=malloc(cells))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells))==NULL) MEMERROR();
 
       rgbptr=(unsigned char *)data;
       byteptr=(unsigned char *)newdata;
@@ -2150,7 +2150,7 @@ void databuf::convertdata(unsigned int newtype)
       }
    else if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_RGB)
       {
-      if ((newdata=malloc(cells*3))==NULL) ERRORMSG();
+      if ((newdata=malloc(cells*3))==NULL) MEMERROR();
 
       byteptr=(unsigned char *)data;
       rgbptr=(unsigned char *)newdata;
@@ -2192,7 +2192,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
    switch (type)
       {
       case DATABUF_TYPE_BYTE:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps))==NULL) ERRORMSG();
+         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2220,7 +2220,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_SHORT:
-         if ((shortptr=(short int *)malloc(xs*ys*zs*tsteps*2))==NULL) ERRORMSG();
+         if ((shortptr=(short int *)malloc(xs*ys*zs*tsteps*2))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2248,7 +2248,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_FLOAT:
-         if ((floatptr=(float *)malloc(xs*ys*zs*tsteps*4))==NULL) ERRORMSG();
+         if ((floatptr=(float *)malloc(xs*ys*zs*tsteps*4))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)

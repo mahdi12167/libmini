@@ -24,8 +24,8 @@ void writefile(const char *filename,unsigned char *data,unsigned int bytes)
 
    if (bytes<1) ERRORMSG();
 
-   if ((file=fopen(filename,"wb"))==NULL) ERRORMSG();
-   if (fwrite(data,1,bytes,file)!=bytes) ERRORMSG();
+   if ((file=fopen(filename,"wb"))==NULL) IOERROR();
+   if (fwrite(data,1,bytes,file)!=bytes) IOERROR();
 
    fclose(file);
    }
@@ -48,9 +48,9 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
    do
       {
       if (data==NULL)
-         {if ((data=(unsigned char *)malloc(BLOCKSIZE))==NULL) ERRORMSG();}
+         {if ((data=(unsigned char *)malloc(BLOCKSIZE))==NULL) MEMERROR();}
       else
-         if ((data=(unsigned char *)realloc(data,cnt+BLOCKSIZE))==NULL) ERRORMSG();
+         if ((data=(unsigned char *)realloc(data,cnt+BLOCKSIZE))==NULL) MEMERROR();
 
       blkcnt=fread(&data[cnt],1,BLOCKSIZE,file);
       cnt+=blkcnt;
@@ -63,7 +63,7 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
       return(NULL);
       }
 
-   if ((data=(unsigned char *)realloc(data,cnt))==NULL) ERRORMSG();
+   if ((data=(unsigned char *)realloc(data,cnt))==NULL) MEMERROR();
 
    fclose(file);
 
