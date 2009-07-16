@@ -25,16 +25,16 @@ minitree::minitree(minicache *cache,minitile *tile)
       TREECACHE[i].size=0;
       TREECACHE[i].maxsize=1;
 
-      if ((TREECACHE[i].buf=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE[i].crd=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((TREECACHE[i].buf=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) MEMERROR();
+      if ((TREECACHE[i].crd=(float *)malloc(TREECACHE[i].maxsize*3*sizeof(float)))==NULL) MEMERROR();
 
       TREECACHE[i].treecnt=0;
 
       TREECACHE[i].grass_size=0;
       TREECACHE[i].grass_maxsize=1;
 
-      if ((TREECACHE[i].grass_buf=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((TREECACHE[i].grass_crd=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((TREECACHE[i].grass_buf=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
+      if ((TREECACHE[i].grass_crd=(float *)malloc(TREECACHE[i].grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
       }
 
    TREECACHE_LAMBDA=0.0f;
@@ -483,16 +483,16 @@ void minitree::treecache(int phase,float scale,float ex,float ey,float ez)
             {
             c->maxsize/=2;
 
-            if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-            if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
+            if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
             }
 
          if (c->grass_size<c->grass_maxsize/4)
             {
             c->grass_maxsize/=2;
 
-            if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-            if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+            if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
+            if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
             }
 
          c->size=0;
@@ -800,8 +800,8 @@ void minitree::cachedata(float x,float y,float z)
       {
       c->maxsize*=2;
 
-      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
+      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
       }
 
    ptr=&c->buf[3*c->size++];
@@ -823,8 +823,8 @@ void minitree::cachedata(float x,float y,float z,float s,float t,float r)
       {
       c->maxsize*=2;
 
-      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->buf=(float *)realloc(c->buf,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
+      if ((c->crd=(float *)realloc(c->crd,c->maxsize*3*sizeof(float)))==NULL) MEMERROR();
       }
 
    ptr1=&c->buf[3*c->size];
@@ -851,8 +851,8 @@ void minitree::cachegrass(float x,float y,float z,float s,float t,float r)
       {
       c->grass_maxsize*=2;
 
-      if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
-      if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->grass_buf=(float *)realloc(c->grass_buf,c->grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
+      if ((c->grass_crd=(float *)realloc(c->grass_crd,c->grass_maxsize*3*sizeof(float)))==NULL) MEMERROR();
       }
 
    ptr1=&c->grass_buf[3*c->grass_size];
@@ -1718,7 +1718,7 @@ unsigned char *minitree::build3Dmipmap(unsigned char *volume,
 
    int width2,height2;
 
-   if ((texture=(unsigned char *)malloc(levels*width*height*depth*components))==NULL) ERRORMSG();
+   if ((texture=(unsigned char *)malloc(levels*width*height*depth*components))==NULL) MEMERROR();
 
    width2=width;
    height2=height;
@@ -1758,7 +1758,7 @@ unsigned char *minitree::shrink3Dtexture(unsigned char *volume,
    width2=width/2;
    height2=height/2;
 
-   if ((texture=(unsigned char *)malloc(width2*height2*depth*components))==NULL) ERRORMSG();
+   if ((texture=(unsigned char *)malloc(width2*height2*depth*components))==NULL) MEMERROR();
 
    for (i=0; i<width2; i++)
       for (j=0; j<height2; j++)
@@ -1935,10 +1935,10 @@ unsigned char *minitree::pn_perlin2D(int size,int start,float persist,float seed
    if ((size&(size-1))!=0 || size<2) ERRORMSG();
    if ((start&(start-1))!=0 || start<2 || start>size) ERRORMSG();
 
-   if ((noise=(float *)malloc(size*size*sizeof(float)))==NULL) ERRORMSG();
+   if ((noise=(float *)malloc(size*size*sizeof(float)))==NULL) MEMERROR();
    for (i=0; i<size*size; i++) noise[i]=0.0f;
 
-   if ((octave=(float *)malloc(size*size*sizeof(float)))==NULL) ERRORMSG();
+   if ((octave=(float *)malloc(size*size*sizeof(float)))==NULL) MEMERROR();
 
    pn_getrandom(seed);
 
@@ -1973,7 +1973,7 @@ unsigned char *minitree::pn_perlin2D(int size,int start,float persist,float seed
 
    for (i=0; i<size*size; i++) noise[i]=noise[i]/maxr+0.5f;
 
-   if ((image=(unsigned char *)malloc(size*size))==NULL) ERRORMSG();
+   if ((image=(unsigned char *)malloc(size*size))==NULL) MEMERROR();
 
    for (i=0; i<size*size; i++)
       image[i]=ftrc(255.0f*noise[i]+0.5f);

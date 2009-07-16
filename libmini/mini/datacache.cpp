@@ -362,7 +362,7 @@ void datacache::loadelevtilesetinfo()
       {
       HAS_ELEVINFO=TRUE;
 
-      if ((file=fopen(tilesetname,"rb"))==NULL) ERRORMSG();
+      if ((file=fopen(tilesetname,"rb"))==NULL) IOERROR();
 
       if (fscanf(file,"tilesx=%d\n",&ELEVINFO_TILESX)!=1) HAS_ELEVINFO=FALSE;
       if (fscanf(file,"tilesy=%d\n",&ELEVINFO_TILESY)!=1) HAS_ELEVINFO=FALSE;
@@ -394,7 +394,7 @@ void datacache::loadimagtilesetinfo()
       {
       HAS_IMAGINFO=TRUE;
 
-      if ((file=fopen(tilesetname,"rb"))==NULL) ERRORMSG();
+      if ((file=fopen(tilesetname,"rb"))==NULL) IOERROR();
 
       if (fscanf(file,"tilesx=%d\n",&IMAGINFO_TILESX)!=1) HAS_IMAGINFO=FALSE;
       if (fscanf(file,"tilesy=%d\n",&IMAGINFO_TILESY)!=1) HAS_IMAGINFO=FALSE;
@@ -440,7 +440,7 @@ void datacache::loadvtbelevini()
       {
       HAS_ELEVINI=TRUE;
 
-      if ((file=fopen(vtbininame,"rb"))==NULL) ERRORMSG();
+      if ((file=fopen(vtbininame,"rb"))==NULL) IOERROR();
 
       if (fscanf(file,"[TilesetDescription]\nColumns=%d\n",&ELEVINI_TILESX)!=1) HAS_ELEVINI=FALSE;
       if (fscanf(file,"Rows=%d\n",&ELEVINI_TILESY)!=1) HAS_ELEVINI=FALSE;
@@ -584,7 +584,7 @@ void datacache::loadvtbimagini()
       {
       HAS_IMAGINI=TRUE;
 
-      if ((file=fopen(vtbininame,"rb"))==NULL) ERRORMSG();
+      if ((file=fopen(vtbininame,"rb"))==NULL) IOERROR();
 
       if (fscanf(file,"[TilesetDescription]\nColumns=%d\n",&IMAGINI_TILESX)!=1) HAS_IMAGINI=FALSE;
       if (fscanf(file,"Rows=%d\n",&IMAGINI_TILESY)!=1) HAS_IMAGINI=FALSE;
@@ -768,7 +768,7 @@ void datacache::load(BOOLINT reset)
 
    strsize=1000;
 
-   if ((name=(char *)malloc(strsize))==NULL) ERRORMSG();
+   if ((name=(char *)malloc(strsize))==NULL) MEMERROR();
 
    ch=getc(file);
 
@@ -781,7 +781,7 @@ void datacache::load(BOOLINT reset)
          if (c>strsize-2)
             {
             strsize*=2;
-            if ((name=(char *)realloc(name,strsize))==NULL) ERRORMSG();
+            if ((name=(char *)realloc(name,strsize))==NULL) MEMERROR();
             }
 
          name[c++]=ch;

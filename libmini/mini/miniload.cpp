@@ -113,13 +113,13 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
    CENTERY=centery;
    CENTERZ=centerz;
 
-   if ((HFIELDS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((HFIELDS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       if (hfields[i]!=NULL) HFIELDS[i]=(unsigned char *)strdup((char *)hfields[i]);
       else HFIELDS[i]=NULL;
 
-   if ((TEXTURES=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((TEXTURES=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       if (textures[i]!=NULL) TEXTURES[i]=(unsigned char *)strdup((char *)textures[i]);
@@ -128,22 +128,22 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
    if (fogmaps==NULL) FOGMAPS=NULL;
    else
       {
-      if ((FOGMAPS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+      if ((FOGMAPS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
       for (i=0; i<COLS*ROWS; i++)
          if (fogmaps[i]!=NULL) FOGMAPS[i]=(unsigned char *)strdup((char *)fogmaps[i]);
          else FOGMAPS[i]=NULL;
       }
 
-   if ((MANDATORY=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MANDATORY=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++) MANDATORY[i]=1;
 
-   if ((LODS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((LODS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((ACTLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((NEWLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((ACTLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((NEWLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -151,12 +151,12 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
       MAXLOD[i]=-1;
       }
 
-   if ((TEXS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((TEXS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((ACTTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((NEWTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((MINTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((ACTTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((NEWTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((MINTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -164,9 +164,9 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
       MAXTEX[i]=-1;
       }
 
-   if ((FOGS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((FOGS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXFOG=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXFOG=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -176,7 +176,7 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
 
    TIME=0;
 
-   if ((LRU=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((LRU=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
    for (i=0; i<COLS*ROWS; i++) LRU[i]=TIME;
    }
 
@@ -268,7 +268,7 @@ unsigned char *miniload::concatenate(unsigned char *basename,int lod)
    if (lod==0) lodname=(unsigned char *)strdup((char *)basename);
    else
       {
-      if ((lodname=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+      if ((lodname=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
       snprintf((char *)lodname,MAX_STR,"%s%d",(char *)basename,lod);
       }
 
@@ -1121,11 +1121,11 @@ int miniload::load(int cols,int rows,
    COLS=cols;
    ROWS=rows;
 
-   if ((HFIELDS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
-   if ((TEXTURES=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((HFIELDS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
+   if ((TEXTURES=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
    if (basepath3==NULL) FOGMAPS=NULL;
-   else if ((FOGMAPS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   else if ((FOGMAPS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
    for (i=0; i<COLS; i++)
       for (j=0; j<ROWS; j++)
@@ -1133,13 +1133,13 @@ int miniload::load(int cols,int rows,
             if (CONFIGURE_USEZERONUMBERING==0)
                // .pnm format with numbering starting from 1
                {
-               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath1==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"tile.%d-%d.pgm",i+1,j+1);
                else if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.pgm",basepath1,i+1,j+1);
                else snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.pgm",CONFIGURE_TILESETPATH,basepath1,i+1,j+1);
 
-               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.ppm",i+1,j+1);
                else if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.ppm",basepath2,i+1,j+1);
@@ -1147,7 +1147,7 @@ int miniload::load(int cols,int rows,
 
                if (basepath3!=NULL)
                   {
-                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
                   if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.pgm",basepath3,i+1,j+1);
                   else snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.pgm",CONFIGURE_TILESETPATH,basepath3,i+1,j+1);
                   }
@@ -1155,13 +1155,13 @@ int miniload::load(int cols,int rows,
             else
                // .pnm format with numbering starting from 0
                {
-               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath1==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"tile.%d-%d.pgm",i,j);
                else if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.pgm",basepath1,i,j);
                else snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.pgm",CONFIGURE_TILESETPATH,basepath1,i,j);
 
-               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.ppm",i,j);
                else if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.ppm",basepath2,i,j);
@@ -1169,7 +1169,7 @@ int miniload::load(int cols,int rows,
 
                if (basepath3!=NULL)
                   {
-                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
                   if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.pgm",basepath3,i,j);
                   else snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.pgm",CONFIGURE_TILESETPATH,basepath3,i,j);
                   }
@@ -1178,13 +1178,13 @@ int miniload::load(int cols,int rows,
             if (CONFIGURE_USEZERONUMBERING==0)
                // .db format with numbering starting from 1
                {
-               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath1==NULL) ERRORMSG();
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath1,i+1,j+1);
                else snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath1,i+1,j+1);
 
-               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.db",i+1,j+1);
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath2,i+1,j+1);
@@ -1192,7 +1192,7 @@ int miniload::load(int cols,int rows,
 
                if (basepath3!=NULL)
                   {
-                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
                   if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath3,i+1,j+1);
                   else snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath3,i+1,j+1);
                   }
@@ -1200,13 +1200,13 @@ int miniload::load(int cols,int rows,
             else
                // .db format with numbering starting from 0
                {
-               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((HFIELDS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath1==NULL) ERRORMSG();
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath1,i,j);
                else snprintf((char *)HFIELDS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath1,i,j);
 
-               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+               if ((TEXTURES[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
 
                if (basepath2==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"tile.%d-%d.db",i,j);
                if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)TEXTURES[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath2,i,j);
@@ -1214,21 +1214,21 @@ int miniload::load(int cols,int rows,
 
                if (basepath3!=NULL)
                   {
-                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) ERRORMSG();
+                  if ((FOGMAPS[i+j*COLS]=(unsigned char *)malloc(MAX_STR))==NULL) MEMERROR();
                   if (CONFIGURE_TILESETPATH==NULL) snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s/tile.%d-%d.db",basepath3,i,j);
                   else snprintf((char *)FOGMAPS[i+j*COLS],MAX_STR,"%s%s/tile.%d-%d.db",CONFIGURE_TILESETPATH,basepath3,i,j);
                   }
                }
 
-   if ((MANDATORY=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MANDATORY=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++) MANDATORY[i]=1;
 
-   if ((LODS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((LODS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((ACTLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((NEWLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((ACTLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((NEWLOD=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -1236,12 +1236,12 @@ int miniload::load(int cols,int rows,
       MAXLOD[i]=-1;
       }
 
-   if ((TEXS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((TEXS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((ACTTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((NEWTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-   if ((MINTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((ACTTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((NEWTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+   if ((MINTEX=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -1249,9 +1249,9 @@ int miniload::load(int cols,int rows,
       MAXTEX[i]=-1;
       }
 
-   if ((FOGS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((FOGS=(unsigned char **)malloc(COLS*ROWS*sizeof(unsigned char *)))==NULL) MEMERROR();
 
-   if ((MAXFOG=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((MAXFOG=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
    for (i=0; i<COLS*ROWS; i++)
       {
@@ -1261,7 +1261,7 @@ int miniload::load(int cols,int rows,
 
    TIME=0;
 
-   if ((LRU=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+   if ((LRU=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
    for (i=0; i<COLS*ROWS; i++) LRU[i]=TIME;
 
    if (REQUEST_CALLBACK==NULL)

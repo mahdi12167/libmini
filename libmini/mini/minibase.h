@@ -163,7 +163,7 @@ inline char *strcct(const char *str1,const char *str2)
    if (str1==NULL) return(strdup(str2));
    if (str2==NULL) return(strdup(str1));
 
-   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) ERRORMSG();
+   if ((str=(char *)malloc(strlen(str1)+strlen(str2)+1))==NULL) MEMERROR();
 
    memcpy(str,str1,strlen(str1));
    memcpy(str+strlen(str1),str2,strlen(str2)+1);

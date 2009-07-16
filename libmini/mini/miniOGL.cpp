@@ -581,7 +581,7 @@ int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int
 
    c=(*width)*(*height);
 
-   if ((image=(unsigned char *)malloc(4*c))==NULL) ERRORMSG();
+   if ((image=(unsigned char *)malloc(4*c))==NULL) MEMERROR();
 
    for (i=0; i<c; i++)
       {
@@ -700,7 +700,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
             table[i]=ftrc(255.0f*intensity+0.5f);
             }
 
-         if ((image2=(unsigned char *)malloc(components*c))==NULL) ERRORMSG();
+         if ((image2=(unsigned char *)malloc(components*c))==NULL) MEMERROR();
 
          if (components==1)
             for (i=0; i<c; i++) image2[i]=table[image[i]];
@@ -756,7 +756,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
                {
                texsource=GL_LUMINANCE_ALPHA;
 
-               if ((image3=(unsigned char *)malloc(2*c))==NULL) ERRORMSG();
+               if ((image3=(unsigned char *)malloc(2*c))==NULL) MEMERROR();
 
                for (i=0; i<c; i++)
                   {
@@ -773,7 +773,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
                {
                texsource=GL_RGBA;
 
-               if ((image3=(unsigned char *)malloc(4*c))==NULL) ERRORMSG();
+               if ((image3=(unsigned char *)malloc(4*c))==NULL) MEMERROR();
 
                for (i=0; i<c; i++)
                   {
@@ -1169,7 +1169,7 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_COMPRESSED_IMAGE_SIZE_ARB,&size);
 
    // allocate new texture buffer
-   if ((texture=(unsigned char *)malloc(size))==NULL) ERRORMSG();
+   if ((texture=(unsigned char *)malloc(size))==NULL) MEMERROR();
 
    // get compressed image into buffer
    glGetCompressedTexImageARB(GL_TEXTURE_2D,0,texture);
@@ -1617,7 +1617,7 @@ unsigned char *readRGBpixels(int x,int y,int width,int height)
 
    glFinish();
 
-   if ((pixels=(unsigned char *)malloc(3*width*height))==NULL) ERRORMSG();
+   if ((pixels=(unsigned char *)malloc(3*width*height))==NULL) MEMERROR();
 
    glReadBuffer(GL_BACK);
    glReadPixels(x,y,width,height,GL_RGB,GL_UNSIGNED_BYTE,pixels);
@@ -1671,7 +1671,7 @@ float *readZpixels(int x,int y,int width,int height)
 
    glFinish();
 
-   if ((pixels=(float *)malloc(sizeof(float)*width*height))==NULL) ERRORMSG();
+   if ((pixels=(float *)malloc(sizeof(float)*width*height))==NULL) MEMERROR();
 
    glReadBuffer(GL_BACK);
 #ifdef GL_ARB_depth_texture

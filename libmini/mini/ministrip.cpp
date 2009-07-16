@@ -328,19 +328,19 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    MAXSIZE=1;
 
-   if ((VTXARRAY=(float *)malloc(3*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((VTXARRAY=(float *)malloc(3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    if (COLCOMPS==0) COLARRAY=NULL;
    else
-      if ((COLARRAY=(float *)malloc(COLCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((COLARRAY=(float *)malloc(COLCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    if (NRMCOMPS==0) NRMARRAY=NULL;
    else
-      if ((NRMARRAY=(float *)malloc(NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((NRMARRAY=(float *)malloc(NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    if (TEXCOMPS==0) TEXARRAY=NULL;
    else
-      if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    SIZE=0;
 
@@ -554,16 +554,16 @@ void ministrip::addvtx()
       {
       MAXSIZE*=2;
 
-      if ((VTXARRAY=(float *)realloc(VTXARRAY,3*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((VTXARRAY=(float *)realloc(VTXARRAY,3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
       if (COLARRAY!=NULL)
-         if ((COLARRAY=(float *)realloc(COLARRAY,COLCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((COLARRAY=(float *)realloc(COLARRAY,COLCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
       if (NRMARRAY!=NULL)
-         if ((NRMARRAY=(float *)realloc(NRMARRAY,NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((NRMARRAY=(float *)realloc(NRMARRAY,NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
       if (TEXARRAY!=NULL)
-         if ((TEXARRAY=(float *)realloc(TEXARRAY,TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+         if ((TEXARRAY=(float *)realloc(TEXARRAY,TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
       }
 
    ptr=&VTXARRAY[3*SIZE];

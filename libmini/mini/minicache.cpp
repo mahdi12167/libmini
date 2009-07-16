@@ -164,8 +164,8 @@ void minicache::initterrain(TERRAIN_TYPE *t)
       c->size=0;
       c->maxsize=1;
 
-      if ((c->op=(unsigned char *)malloc(c->maxsize))==NULL) ERRORMSG();
-      if ((c->arg=(float *)malloc(3*c->maxsize*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->op=(unsigned char *)malloc(c->maxsize))==NULL) MEMERROR();
+      if ((c->arg=(float *)malloc(3*c->maxsize*sizeof(float)))==NULL) MEMERROR();
 
       c->fancnt=0;
       c->vtxcnt=0;
@@ -173,7 +173,7 @@ void minicache::initterrain(TERRAIN_TYPE *t)
       c->prism_size=0;
       c->prism_maxsize=1;
 
-      if ((c->prism_buf=(float *)malloc(4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->prism_buf=(float *)malloc(4*c->prism_maxsize*sizeof(float)))==NULL) MEMERROR();
       }
 
    t->cache_phase=-1;
@@ -279,8 +279,8 @@ void minicache::cache(const int op,const float arg1,const float arg2,const float
       {
       c->maxsize*=2;
 
-      if ((c->op=(unsigned char *)realloc(c->op,c->maxsize))==NULL) ERRORMSG();
-      if ((c->arg=(float *)realloc(c->arg,3*c->maxsize*sizeof(float)))==NULL) ERRORMSG();
+      if ((c->op=(unsigned char *)realloc(c->op,c->maxsize))==NULL) MEMERROR();
+      if ((c->arg=(float *)realloc(c->arg,3*c->maxsize*sizeof(float)))==NULL) MEMERROR();
       }
 
    // update state
@@ -379,7 +379,7 @@ void minicache::cacheprismedge(const float x,const float y,const float yf,const 
          {
          c->prism_maxsize*=2;
 
-         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) MEMERROR();
          }
 
       // append prism cache
@@ -412,8 +412,8 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
          {
          c->maxsize/=2;
 
-         if ((c->op=(unsigned char *)realloc(c->op,c->maxsize))==NULL) ERRORMSG();
-         if ((c->arg=(float *)realloc(c->arg,3*c->maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((c->op=(unsigned char *)realloc(c->op,c->maxsize))==NULL) MEMERROR();
+         if ((c->arg=(float *)realloc(c->arg,3*c->maxsize*sizeof(float)))==NULL) MEMERROR();
          }
 
       // shrink back prism buffer
@@ -421,7 +421,7 @@ void minicache::cachetrigger(const int phase,const float scale,const float ex,co
          {
          c->prism_maxsize/=2;
 
-         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) ERRORMSG();
+         if ((c->prism_buf=(float *)realloc(c->prism_buf,4*c->prism_maxsize*sizeof(float)))==NULL) MEMERROR();
          }
 
       // reset size of back buffer
@@ -1025,13 +1025,13 @@ void minicache::attach(minitile *terrain,
    if (TERRAIN==NULL)
       {
       MAXTERRAIN=1;
-      if ((TERRAIN=(TERRAIN_TYPE *)malloc(MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
+      if ((TERRAIN=(TERRAIN_TYPE *)malloc(MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) MEMERROR();
       TERRAIN[0].tile=NULL;
       }
 
    if (NUMTERRAIN>=MAXTERRAIN)
       {
-      if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) ERRORMSG();
+      if ((TERRAIN=(TERRAIN_TYPE *)realloc(TERRAIN,2*MAXTERRAIN*sizeof(TERRAIN_TYPE)))==NULL) MEMERROR();
       for (id=NUMTERRAIN; id<2*MAXTERRAIN; id++) TERRAIN[id].tile=NULL;
       MAXTERRAIN*=2;
 

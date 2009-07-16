@@ -68,33 +68,33 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
    COLDIM=coldim;
    ROWDIM=rowdim;
 
-   if ((MAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
-   if ((D2MAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
-   if ((FOGMAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
+   if ((MAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
+   if ((D2MAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
+   if ((FOGMAP=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
 
-   if ((MAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
-   if ((D2MAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
-   if ((FOGMAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) ERRORMSG();
+   if ((MAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
+   if ((D2MAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
+   if ((FOGMAP2=(void **)malloc(cols*rows*sizeof(void *)))==NULL) MEMERROR();
 
-   if ((SIZE=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((DIM=(float *)malloc(cols*rows*sizeof(float)))==NULL) ERRORMSG();
+   if ((SIZE=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((DIM=(float *)malloc(cols*rows*sizeof(float)))==NULL) MEMERROR();
 
-   if ((SIZE2=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((DIM2=(float *)malloc(cols*rows*sizeof(float)))==NULL) ERRORMSG();
+   if ((SIZE2=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((DIM2=(float *)malloc(cols*rows*sizeof(float)))==NULL) MEMERROR();
 
-   if ((TEXID=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((TEXWIDTH=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((TEXHEIGHT=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((TEXMIPMAPS=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
+   if ((TEXID=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((TEXWIDTH=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((TEXHEIGHT=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((TEXMIPMAPS=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
 
-   if ((USEFLOAT=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((USEFLOAT2=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
+   if ((USEFLOAT=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((USEFLOAT2=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
 
-   if ((RELOADED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((UPDATED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
-   if ((MODIFIED=(int *)malloc(cols*rows*sizeof(int)))==NULL) ERRORMSG();
+   if ((RELOADED=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((UPDATED=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
+   if ((MODIFIED=(int *)malloc(cols*rows*sizeof(int)))==NULL) MEMERROR();
 
-   if ((WARPS=(miniwarpbase **)malloc(cols*rows*sizeof(miniwarpbase *)))==NULL) ERRORMSG();
+   if ((WARPS=(miniwarpbase **)malloc(cols*rows*sizeof(miniwarpbase *)))==NULL) MEMERROR();
 
    SCALE=scale;
    CELLASPECT=rowdim/coldim;
@@ -126,7 +126,7 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
             if ((image=readPNMimage(hfields[i+j*cols],&width,&height,&components,loaded))==NULL) ERRORMSG();
             if (width<2 || width!=height || (components!=1 && components!=2)) ERRORMSG();
 
-            if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) ERRORMSG();
+            if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) MEMERROR();
 
             if (components==1)
                for (k=0; k<width*height; k++) hfield[k]=image[k];
@@ -1343,7 +1343,7 @@ void minitile::reload(int col,int row,
    if ((image=readPNMimage(hmap,&width,&height,&components,loaded))==NULL) ERRORMSG();
    if (width<2 || width!=height || (components!=1 && components!=2)) ERRORMSG();
 
-   if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) ERRORMSG();
+   if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) MEMERROR();
 
    if (components==1)
       for (k=0; k<width*height; k++) hfield[k]=image[k];
@@ -1452,7 +1452,7 @@ void minitile::reload(int col,int row,
 
       if (hmap.type==databuf::DATABUF_TYPE_BYTE)
          {
-         if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) ERRORMSG();
+         if ((hfield=(short int *)malloc(width*height*sizeof(short int)))==NULL) MEMERROR();
          for (k=0; k<width*height; k++) hfield[k]=((unsigned char *)hmap.data)[k];
          }
       else if (hmap.type==databuf::DATABUF_TYPE_SHORT) hfield=(short int *)(hmap.data);
