@@ -43,13 +43,13 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
    void set(unsigned int x,unsigned int y,const Scalar &val)
       {
-      if (x>=COLS || y>=ROWS) WARNMSG();
+      ERRORCHK(x>=COLS || y>=ROWS);
       minidyna<Scalar,Minsize*Minsize>::set(x+y*COLS,val);
       }
 
    Scalar get(unsigned int x,unsigned int y) const
       {
-      if (x>=COLS || y>=ROWS) WARNMSG();
+      ERRORCHK(x>=COLS || y>=ROWS);
       return(minidyna<Scalar,Minsize*Minsize>::get(x+y*COLS));
       }
 

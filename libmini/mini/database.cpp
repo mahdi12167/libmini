@@ -721,8 +721,9 @@ int databuf::savedata(const char *filename,
    // open file for writing
    if ((file=fopen(filename,"wb"))==NULL)
       {
+#ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to save %s!\n",filename);
-      WARNMSG();
+#endif
       return(0);
       }
 
@@ -820,8 +821,9 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    // open file for reading
    if ((file=fopen(filename,"rb"))==NULL)
       {
+#ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to load %s!\n",filename);
-      WARNMSG();
+#endif
       return(0);
       }
 
@@ -1373,8 +1375,9 @@ int databuf::loadPNMdata(const char *filename)
 
    if ((data=readPNMfile(filename,&width,&height,&components,&comment))==NULL)
       {
+#ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to load %s!\n",filename);
-      WARNMSG();
+#endif
       return(0);
       }
 
@@ -1546,8 +1549,9 @@ int databuf::loadPVMdata(const char *filename,
 
    if ((data=readPVMvolume(filename,&width,&height,&depth,&components))==NULL)
       {
+#ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to load %s!\n",filename);
-      WARNMSG();
+#endif
       return(0);
       }
 
@@ -1615,8 +1619,9 @@ int databuf::loadPVMdata(const char *filename,
 
          if ((data=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
             {
+#ifdef LIBMINI_DEBUG
             fprintf(stderr,"unable to load %s!\n",filename);
-            WARNMSG();
+#endif
             return(0);
             }
          }
@@ -1699,8 +1704,9 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    if ((file=fopen(filename,"rb"))==NULL)
       {
+#ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to load %s!\n",filename);
-      WARNMSG();
+#endif
       return(0);
       }
 
