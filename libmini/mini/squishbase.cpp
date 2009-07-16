@@ -48,7 +48,7 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
       if (bytes!=(unsigned int)3*width*height) ERRORMSG();
 
       rgbadata=(unsigned char *)malloc(4*width*height);
-      if (rgbadata==NULL) ERRORMSG();
+      if (rgbadata==NULL) MEMERROR();
 
       for (i=0; i<width*height; i++)
          {
@@ -68,7 +68,7 @@ void compressS3TC(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
 
    *s3tcbytes=squish::GetStorageRequirements(width,height,mode);
    *s3tcdata=(unsigned char *)malloc(*s3tcbytes);
-   if (*s3tcdata==NULL) ERRORMSG();
+   if (*s3tcdata==NULL) MEMERROR();
 
    squish::CompressImage(rawdata,width,height,*s3tcdata,mode);
 
@@ -101,14 +101,14 @@ void decompressS3TC(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
 
    *rawbytes=4*width*height;
    *rawdata=(unsigned char *)malloc(*rawbytes);
-   if (*rawdata==NULL) ERRORMSG();
+   if (*rawdata==NULL) MEMERROR();
 
    squish::DecompressImage(*rawdata,width,height,s3tcdata,mode);
 
    if (isrgbadata==0)
       {
       rgbdata=(unsigned char *)malloc(3*width*height);
-      if (rgbdata==NULL) ERRORMSG();
+      if (rgbdata==NULL) MEMERROR();
 
       for (i=0; i<width*height; i++)
          {
