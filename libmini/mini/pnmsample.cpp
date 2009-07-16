@@ -689,7 +689,7 @@ void resample(int num,const char **grid,
       if (CONFIGURE_STARTUPFILE!=0)
          {
          snprintf(filename,MAX_STR,"%s%s",CONFIGURE_TILESETPATH,CONFIGURE_STARTUPNAME);
-         if ((startup=fopen(filename,"ab"))==NULL) ERRORMSG();
+         if ((startup=fopen(filename,"ab"))==NULL) IOERROR();
          }
 
       for (j=tilesy-1; j>=0; j--)
@@ -1074,7 +1074,7 @@ void resample(int num,const char **grid,
       // open tileset file
       if (comps[0]!=3) snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_STDPREFIX,CONFIGURE_TILESETNAME);
       else snprintf(filename,MAX_STR,"%s%s%s",CONFIGURE_TILESETPATH,CONFIGURE_RGBPREFIX,CONFIGURE_TILESETNAME);
-      if ((tileset=fopen(filename,"wb"))==NULL) ERRORMSG();
+      if ((tileset=fopen(filename,"wb"))==NULL) IOERROR();
 
       // output number of tiles, bounding box, and maximum texture size
       fprintf(tileset,"tilesx=%d\n",tilesx);
@@ -1337,8 +1337,8 @@ unsigned char *normalizemap(unsigned char *hfield,
 
    if (width<2 || height<2 || components==3) ERRORMSG();
 
-   if ((hmap=(short int *)malloc(width*height*sizeof(short int)))==NULL) ERRORMSG();
-   if ((nmap=(unsigned char *)malloc(3*width*height))==NULL) ERRORMSG();
+   if ((hmap=(short int *)malloc(width*height*sizeof(short int)))==NULL) MEMERROR();
+   if ((nmap=(unsigned char *)malloc(3*width*height))==NULL) MEMERROR();
 
    if (components==1)
       for (i=0; i<width*height; i++) hmap[i]=hfield[i];
@@ -1434,7 +1434,7 @@ unsigned char *normalmap(unsigned char *hfield,
 
    mini::initmap(NULL,&d2map,&size2,&extent,scaling,extentx/extenty,getelevation,&obj);
 
-   if ((nmap=(unsigned char *)malloc(3*width*height))==NULL) ERRORMSG();
+   if ((nmap=(unsigned char *)malloc(3*width*height))==NULL) MEMERROR();
 
    for (i=0; i<width; i++)
       for (j=0; j<height; j++)
@@ -1522,7 +1522,7 @@ void texturemap(const char *heightfile,
 
    free(image);
 
-   if ((tmap=(unsigned char *)malloc(3*twidth*theight))==NULL) ERRORMSG();
+   if ((tmap=(unsigned char *)malloc(3*twidth*theight))==NULL) MEMERROR();
 
    for (i=0; i<twidth*theight; i++)
       {

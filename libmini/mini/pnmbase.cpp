@@ -13,7 +13,7 @@ namespace pnmbase {
 PNMcomment::PNMcomment()
    {
    maxc=MAX_COM;
-   if ((com=(char *)malloc(maxc))==NULL) ERRORMSG();
+   if ((com=(char *)malloc(maxc))==NULL) MEMERROR();
    reset();
    }
 
@@ -34,7 +34,7 @@ char PNMcomment::addchar(char ch)
    if (c>=maxc-1)
       {
       maxc*=2;
-      if ((com=(char *)realloc(com,maxc))==NULL) ERRORMSG();
+      if ((com=(char *)realloc(com,maxc))==NULL) MEMERROR();
       }
 
    com[c++]=ch;
@@ -96,7 +96,7 @@ int writePNMimage(const char *pnmfilename,
    if (components==1 || components==3 || components==4) fprintf(file,"255\n");
    else fprintf(file,"32767\n");
 
-   if (fwrite(image,width*height*components,1,file)!=1) ERRORMSG();
+   if (fwrite(image,width*height*components,1,file)!=1) IOERROR();
    fclose(file);
 
    return(1);
@@ -144,9 +144,9 @@ unsigned char *readPNMimage(const unsigned char *pnmimage,
       else if (pnmtype==8 && maxval==255) *components=4;
       else ERRORMSG();
 
-      if ((image=(unsigned char *)malloc((*width)*(*height)*(*components)))==NULL) ERRORMSG();
+      if ((image=(unsigned char *)malloc((*width)*(*height)*(*components)))==NULL) MEMERROR();
 
-      if (fread(image,(*width)*(*height)*(*components),1,file)!=1) ERRORMSG();
+      if (fread(image,(*width)*(*height)*(*components),1,file)!=1) IOERROR();
       fclose(file);
       }
    else
@@ -252,7 +252,7 @@ int writePVMvolume(const char *filename,unsigned char *volume,
 
    fprintf(file,"PVM\n%d %d %d\n%d\n",width,height,depth,components);
 
-   if (fwrite(volume,width*height*depth*components,1,file)!=1) ERRORMSG();
+   if (fwrite(volume,width*height*depth*components,1,file)!=1) IOERROR();
    fclose(file);
 
    return(1);
@@ -284,9 +284,9 @@ unsigned char *readPVMvolume(const char *filename,
 
    if (*width<1 || *height<1 || *depth<1 || *components<1) ERRORMSG();
 
-   if ((volume=(unsigned char *)malloc((*width)*(*height)*(*depth)*(*components)))==NULL) ERRORMSG();
+   if ((volume=(unsigned char *)malloc((*width)*(*height)*(*depth)*(*components)))==NULL) MEMERROR();
 
-   if (fread(volume,(*width)*(*height)*(*depth)*(*components),1,file)!=1) ERRORMSG();
+   if (fread(volume,(*width)*(*height)*(*depth)*(*components),1,file)!=1) IOERROR();
    fclose(file);
 
    return(volume);
