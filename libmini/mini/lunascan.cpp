@@ -67,14 +67,14 @@ void lunascan::init()
    int i;
 
    if (CODE==NULL)
-      if ((CODE=(char **)malloc(CODESTACKMAX*sizeof(char *)))==NULL) ERRORMSG();
+      if ((CODE=(char **)malloc(CODESTACKMAX*sizeof(char *)))==NULL) MEMERROR();
 
    if (POINTER==NULL)
-      if ((POINTER=(int *)malloc(CODESTACKMAX*sizeof(int)))==NULL) ERRORMSG();
+      if ((POINTER=(int *)malloc(CODESTACKMAX*sizeof(int)))==NULL) MEMERROR();
 
    if (HASH==NULL)
       {
-      if ((HASH=(LUNA_HASH *)malloc(HASHSIZE*sizeof(LUNA_HASH)))==NULL) ERRORMSG();
+      if ((HASH=(LUNA_HASH *)malloc(HASHSIZE*sizeof(LUNA_HASH)))==NULL) MEMERROR();
 
       for (i=0; i<HASHSIZE; i++)
          {
@@ -85,13 +85,13 @@ void lunascan::init()
 
    if (STRING==NULL)
       {
-      if ((STRING=(char *)malloc(STRINGMAX*sizeof(char)))==NULL) ERRORMSG();
+      if ((STRING=(char *)malloc(STRINGMAX*sizeof(char)))==NULL) MEMERROR();
       STRINGSIZE=0;
       }
 
    if (SCOPESTACK==NULL)
       {
-      if ((SCOPESTACK=(int *)malloc(SCOPESTACKMAX*sizeof(int)))==NULL) ERRORMSG();
+      if ((SCOPESTACK=(int *)malloc(SCOPESTACKMAX*sizeof(int)))==NULL) MEMERROR();
       SCOPESTACKSIZE=0;
       }
    }
@@ -148,7 +148,7 @@ int lunascan::addstring(const char *string,unsigned int id)
       {
       POOLMAX=2;
 
-      if ((POOL=(LUNA_TOKEN *)malloc(POOLMAX*sizeof(LUNA_TOKEN)))==NULL) ERRORMSG();
+      if ((POOL=(LUNA_TOKEN *)malloc(POOLMAX*sizeof(LUNA_TOKEN)))==NULL) MEMERROR();
 
       for (i=0; i<POOLMAX; i++)
          {
@@ -161,7 +161,7 @@ int lunascan::addstring(const char *string,unsigned int id)
 
    if (POOLSIZE>=POOLMAX)
       {
-      if ((POOL=(LUNA_TOKEN *)realloc(POOL,2*POOLMAX*sizeof(LUNA_TOKEN)))==NULL) ERRORMSG();
+      if ((POOL=(LUNA_TOKEN *)realloc(POOL,2*POOLMAX*sizeof(LUNA_TOKEN)))==NULL) MEMERROR();
 
       for (i=POOLMAX; i<2*POOLMAX; i++)
          {
@@ -204,12 +204,12 @@ void lunascan::addhash(int serial)
    if (HASH[hash].num>=HASH[hash].maxnum)
       if (HASH[hash].serial==NULL)
          {
-         if ((HASH[hash].serial=(int *)malloc(2*sizeof(int)))==NULL) ERRORMSG();
+         if ((HASH[hash].serial=(int *)malloc(2*sizeof(int)))==NULL) MEMERROR();
          HASH[hash].maxnum=2;
          }
       else
          {
-         if ((HASH[hash].serial=(int *)realloc(HASH[hash].serial,2*HASH[hash].maxnum*sizeof(int)))==NULL) ERRORMSG();
+         if ((HASH[hash].serial=(int *)realloc(HASH[hash].serial,2*HASH[hash].maxnum*sizeof(int)))==NULL) MEMERROR();
          HASH[hash].maxnum*=2;
          }
 
@@ -229,7 +229,7 @@ void lunascan::setcode(const char *code,int bytes)
 
    if (CODESTACKSIZE>0) ERRORMSG();
 
-   if ((code0=(char *)malloc(bytes+1))==NULL) ERRORMSG();
+   if ((code0=(char *)malloc(bytes+1))==NULL) MEMERROR();
 
    memcpy(code0,code,bytes);
    code0[bytes]='\0';

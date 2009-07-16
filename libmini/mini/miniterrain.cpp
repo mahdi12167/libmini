@@ -253,14 +253,14 @@ int miniterrain::reserve()
    if (LAYER==NULL)
       {
       LMAX=1;
-      if ((LAYER=(minilayer **)malloc(LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
+      if ((LAYER=(minilayer **)malloc(LMAX*sizeof(minilayer *)))==NULL) MEMERROR();
       }
 
    // enlarge layer array
    if (LNUM>=LMAX)
       {
       LMAX*=2;
-      if ((LAYER=(minilayer **)realloc(LAYER,LMAX*sizeof(minilayer *)))==NULL) ERRORMSG();
+      if ((LAYER=(minilayer **)realloc(LAYER,LMAX*sizeof(minilayer *)))==NULL) MEMERROR();
       }
 
    LAYER[LNUM]=NULL;

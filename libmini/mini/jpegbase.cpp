@@ -81,8 +81,8 @@ unsigned char *decompressJPEGimage(unsigned char *data,unsigned int bytes,int *w
    *height=info.image_height;
    *components=info.num_components;
 
-   if ((image=(unsigned char *)malloc((*width)*(*height)*(*components)))==NULL) ERRORMSG();
-   if ((ptr=(unsigned char **)malloc((*height)*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((image=(unsigned char *)malloc((*width)*(*height)*(*components)))==NULL) MEMERROR();
+   if ((ptr=(unsigned char **)malloc((*height)*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<*height; i++) ptr[i]=&image[(*width)*i*(*components)];
 
    jpeg_start_decompress(&info);
@@ -120,7 +120,7 @@ void init_destination(j_compress_ptr cinfo)
    if (dest->size==0)
       {
       dest->size=basesize;
-      if ((*(dest->data)=(unsigned char *)malloc(dest->size))==NULL) ERRORMSG();
+      if ((*(dest->data)=(unsigned char *)malloc(dest->size))==NULL) MEMERROR();
       }
 
    dest->pub.next_output_byte=*(dest->data);
@@ -131,7 +131,7 @@ boolean empty_output_buffer(j_compress_ptr cinfo)
    {
    my_dest_ptr dest=(my_dest_ptr)cinfo->dest;
 
-   if ((*(dest->data)=(unsigned char *)realloc(*(dest->data),2*dest->size))==NULL) ERRORMSG();
+   if ((*(dest->data)=(unsigned char *)realloc(*(dest->data),2*dest->size))==NULL) MEMERROR();
 
    dest->pub.next_output_byte=(*(dest->data))+dest->size;
    dest->pub.free_in_buffer=dest->size;
@@ -146,7 +146,7 @@ void term_destination(j_compress_ptr cinfo)
    my_dest_ptr dest=(my_dest_ptr)cinfo->dest;
 
    *(dest->bytes)=dest->size-dest->pub.free_in_buffer;
-   if ((*(dest->data)=(unsigned char *)realloc(*(dest->data),*(dest->bytes)))==NULL) ERRORMSG();
+   if ((*(dest->data)=(unsigned char *)realloc(*(dest->data),*(dest->bytes)))==NULL) MEMERROR();
    }
 
 void jpeg_mem_dest(j_compress_ptr cinfo,unsigned char **data,unsigned int *bytes)
@@ -180,7 +180,7 @@ void compressJPEGimage(unsigned char *image,int width,int height,int components,
    jpeg_create_compress(&info);
    jpeg_mem_dest(&info,data,bytes);
 
-   if ((ptr=(unsigned char **)malloc(height*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((ptr=(unsigned char **)malloc(height*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<height; i++) ptr[i]=&image[width*i*components];
 
    info.image_width=width;

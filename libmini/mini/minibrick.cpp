@@ -12,7 +12,7 @@
 minivtxarray::minivtxarray()
    {
    MAXSIZE=1;
-   if ((ARRAY=(float *)malloc(6*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+   if ((ARRAY=(float *)malloc(6*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
    SIZE=0;
    }
 
@@ -26,7 +26,7 @@ void minivtxarray::shrink()
    if (MAXSIZE>1)
       {
       MAXSIZE=1;
-      if ((ARRAY=(float *)realloc(ARRAY,6*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((ARRAY=(float *)realloc(ARRAY,6*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
       }
 
    SIZE=0;
@@ -45,7 +45,7 @@ void minivtxarray::addvtx(const float x,const float y,const float z,
    if (SIZE>=MAXSIZE)
       {
       MAXSIZE*=2;
-      if ((ARRAY=(float *)realloc(ARRAY,6*MAXSIZE*sizeof(float)))==NULL) ERRORMSG();
+      if ((ARRAY=(float *)realloc(ARRAY,6*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
       }
 
    ptr=&ARRAY[6*SIZE++];

@@ -131,7 +131,7 @@ void lunaparse::parse_include()
       }
    else
       {
-      if ((code=(char *)realloc(code,bytes+1))==NULL) ERRORMSG();
+      if ((code=(char *)realloc(code,bytes+1))==NULL) MEMERROR();
       code[bytes]='\0';
 
       SCANNER.pushcode(code);

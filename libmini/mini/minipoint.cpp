@@ -189,9 +189,9 @@ void minipoint::registerrndr(minipointrndr *rndr)
       MAXRNUM=2*MAXRNUM+1;
 
       if (RNDRS==NULL)
-         {if ((RNDRS=(minipointrndr **)malloc(MAXRNUM*sizeof(minipointrndr *)))==NULL) ERRORMSG();}
+         {if ((RNDRS=(minipointrndr **)malloc(MAXRNUM*sizeof(minipointrndr *)))==NULL) MEMERROR();}
       else
-         {if ((RNDRS=(minipointrndr **)realloc(RNDRS,MAXRNUM*sizeof(minipointrndr *)))==NULL) ERRORMSG();}
+         {if ((RNDRS=(minipointrndr **)realloc(RNDRS,MAXRNUM*sizeof(minipointrndr *)))==NULL) MEMERROR();}
       }
 
    RNDRS[RNUM]=rndr;
@@ -214,10 +214,10 @@ BOOLINT minipoint::add(minipointdata *point)
       COLS=TILE->getcols();
       ROWS=TILE->getrows();
 
-      if ((POINTS=(minipointdata **)malloc(COLS*ROWS*sizeof(minipointdata *)))==NULL) ERRORMSG();
+      if ((POINTS=(minipointdata **)malloc(COLS*ROWS*sizeof(minipointdata *)))==NULL) MEMERROR();
 
-      if ((NUM=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
-      if ((MAXNUM=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) ERRORMSG();
+      if ((NUM=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
+      if ((MAXNUM=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
 
       for (i=0; i<COLS*ROWS; i++)
          {
@@ -242,9 +242,9 @@ BOOLINT minipoint::add(minipointdata *point)
       MAXNUM[col+row*COLS]=2*MAXNUM[col+row*COLS]+1;
 
       if (POINTS[col+row*COLS]==NULL)
-         {if ((POINTS[col+row*COLS]=(minipointdata *)malloc(MAXNUM[col+row*COLS]*sizeof(minipointdata)))==NULL) ERRORMSG();}
+         {if ((POINTS[col+row*COLS]=(minipointdata *)malloc(MAXNUM[col+row*COLS]*sizeof(minipointdata)))==NULL) MEMERROR();}
       else
-         {if ((POINTS[col+row*COLS]=(minipointdata *)realloc(POINTS[col+row*COLS],MAXNUM[col+row*COLS]*sizeof(minipointdata)))==NULL) ERRORMSG();}
+         {if ((POINTS[col+row*COLS]=(minipointdata *)realloc(POINTS[col+row*COLS],MAXNUM[col+row*COLS]*sizeof(minipointdata)))==NULL) MEMERROR();}
       }
 
    point->number=PNUM++;
@@ -267,12 +267,12 @@ char *minipoint::addch(char *str,char ch)
 
    if (str==NULL)
       {
-      if ((str2=(char *)malloc(space))==NULL) ERRORMSG();
+      if ((str2=(char *)malloc(space))==NULL) MEMERROR();
       str2[0]='\0';
       }
    else if (strlen(str)%space>=space-1)
       {
-      if ((str2=(char *)malloc(strlen(str)+1+space))==NULL) ERRORMSG();
+      if ((str2=(char *)malloc(strlen(str)+1+space))==NULL) MEMERROR();
       strcpy(str2,str);
       free(str);
       }
@@ -779,9 +779,9 @@ void minipoint::calcvdata()
                   MAXVNUM=2*MAXVNUM+1;
 
                   if (VPOINTS==NULL)
-                     {if ((VPOINTS=(minipointdata **)malloc(MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
+                     {if ((VPOINTS=(minipointdata **)malloc(MAXVNUM*sizeof(minipointdata *)))==NULL) MEMERROR();}
                   else
-                     {if ((VPOINTS=(minipointdata **)realloc(VPOINTS,MAXVNUM*sizeof(minipointdata *)))==NULL) ERRORMSG();}
+                     {if ((VPOINTS=(minipointdata **)realloc(VPOINTS,MAXVNUM*sizeof(minipointdata *)))==NULL) MEMERROR();}
                   }
 
                VPOINTS[VNUM]=point;

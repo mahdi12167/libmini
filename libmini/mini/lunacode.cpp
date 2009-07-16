@@ -7,7 +7,7 @@ lunacode::lunacode()
    {
    CODEMAX=2;
 
-   if ((CODE=(unsigned char *)malloc(CODEMAX*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((CODE=(unsigned char *)malloc(CODEMAX*sizeof(unsigned char *)))==NULL) MEMERROR();
 
    CODESIZE=0;
 
@@ -90,7 +90,7 @@ void lunacode::addbyte(int addr,int val)
       {
       CODEMAX*=2;
 
-      if ((CODE=(unsigned char *)realloc(CODE,CODEMAX*sizeof(unsigned char *)))==NULL) ERRORMSG();
+      if ((CODE=(unsigned char *)realloc(CODE,CODEMAX*sizeof(unsigned char *)))==NULL) MEMERROR();
       }
 
    CODE[addr]=val;
@@ -171,26 +171,26 @@ void lunacode::allocate_stacks()
 
    if (RETSTACK==NULL)
       {
-      if ((RETSTACK=(int *)malloc(RETSTACKMAX*sizeof(int)))==NULL) ERRORMSG();
+      if ((RETSTACK=(int *)malloc(RETSTACKMAX*sizeof(int)))==NULL) MEMERROR();
       for (i=0; i<RETSTACKMAX; i++) RETSTACK[i]=-1;
       }
 
    if (VALSTACK==NULL)
       {
-      if ((VALSTACK=(LUNA_ITEM *)malloc(VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((VALSTACK=(LUNA_ITEM *)malloc(VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=0; i<VALSTACKMAX; i++) VALSTACK[i].item=ITEM_NONE;
       }
 
    if (RETSTACKSIZE>=RETSTACKMAX)
       {
-      if ((RETSTACK=(int *)realloc(RETSTACK,2*RETSTACKMAX*sizeof(int)))==NULL) ERRORMSG();
+      if ((RETSTACK=(int *)realloc(RETSTACK,2*RETSTACKMAX*sizeof(int)))==NULL) MEMERROR();
       for (i=RETSTACKMAX; i<2*RETSTACKMAX; i++) RETSTACK[i]=-1;
       RETSTACKMAX*=2;
       }
 
    if (VALSTACKSIZE>=VALSTACKMAX)
       {
-      if ((VALSTACK=(LUNA_ITEM *)realloc(VALSTACK,2*VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((VALSTACK=(LUNA_ITEM *)realloc(VALSTACK,2*VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=VALSTACKMAX; i<2*VALSTACKMAX; i++) VALSTACK[i].item=ITEM_NONE;
       VALSTACKMAX*=2;
       }
@@ -202,27 +202,27 @@ void lunacode::allocate_vars()
 
    if (GLBVAR==NULL)
       {
-      if ((GLBVAR=(LUNA_ITEM *)malloc(GLBVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((GLBVAR=(LUNA_ITEM *)malloc(GLBVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=0; i<GLBVARMAX; i++) GLBVAR[i].item=ITEM_NONE;
       }
 
    if (LOCVAR==NULL)
       {
-      if ((LOCVAR=(LUNA_ITEM *)malloc(LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((LOCVAR=(LUNA_ITEM *)malloc(LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=0; i<LOCVARMAX; i++) LOCVAR[i].item=ITEM_NONE;
       for (i=0; i<LOCVARMAX; i++) LOCVAR[i].timeloc=0;
       }
 
    if (GLBVARSIZE>=GLBVARMAX)
       {
-      if ((GLBVAR=(LUNA_ITEM *)realloc(GLBVAR,2*GLBVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((GLBVAR=(LUNA_ITEM *)realloc(GLBVAR,2*GLBVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=GLBVARMAX; i<2*GLBVARMAX; i++) GLBVAR[i].item=ITEM_NONE;
       GLBVARMAX*=2;
       }
 
    if (LOCVARSIZE>=LOCVARMAX)
       {
-      if ((LOCVAR=(LUNA_ITEM *)realloc(LOCVAR,2*LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) ERRORMSG();
+      if ((LOCVAR=(LUNA_ITEM *)realloc(LOCVAR,2*LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
       for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].item=ITEM_NONE;
       for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].timeloc=0;
       LOCVARMAX*=2;

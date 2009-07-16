@@ -204,13 +204,13 @@ void curlbase::initmulticurl(int id)
    if (MAXMULTICURL==0)
       {
       MAXMULTICURL=id+1;
-      if ((MULTICURL=(MULTICURL_TYPE **)malloc(MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) ERRORMSG();
+      if ((MULTICURL=(MULTICURL_TYPE **)malloc(MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) MEMERROR();
       }
 
    if (id>=MAXMULTICURL)
       {
       MAXMULTICURL=id+1;
-      if ((MULTICURL=(MULTICURL_TYPE **)realloc(MULTICURL,MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) ERRORMSG();
+      if ((MULTICURL=(MULTICURL_TYPE **)realloc(MULTICURL,MAXMULTICURL*sizeof(MULTICURL_TYPE *)))==NULL) MEMERROR();
       }
 
    MULTICURL[id]=new MULTICURL_TYPE;
