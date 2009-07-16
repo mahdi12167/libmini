@@ -1134,8 +1134,8 @@ int main(int argc,char *argv[])
    // turn off supersampling
    configure_supersampling(0);
 
-   // turn on downsampling
-   configure_downsampling(1);
+   // turn on upsampling
+   configure_upsampling(1);
 
    // enable startup file
    configure_startupfile(1);
