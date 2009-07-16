@@ -250,9 +250,9 @@ void *initmap(short int *image,void **d2map,
 
    SCALE=scale;
 
-   if ((y=(short int **)malloc((S+1)*sizeof(short int *)))==NULL) ERRORMSG();
+   if ((y=(short int **)malloc((S+1)*sizeof(short int *)))==NULL) MEMERROR();
    for (i=0; i<=S; i++)
-      if ((y[i]=(short int *)malloc(S*sizeof(short int)))==NULL) ERRORMSG();
+      if ((y[i]=(short int *)malloc(S*sizeof(short int)))==NULL) MEMERROR();
 
    if (image!=NULL) scalemap(image,*size);
    else if (*size==S)
@@ -266,7 +266,7 @@ void *initmap(short int *image,void **d2map,
       {
       if (getelevation==NULL) ERRORMSG();
 
-      if ((image=(short int *)malloc((*size)*(*size)*sizeof(short int)))==NULL) ERRORMSG();
+      if ((image=(short int *)malloc((*size)*(*size)*sizeof(short int)))==NULL) MEMERROR();
 
       for (j=0; j<*size; j++)
          for (i=0; i<*size; i++) image[i+j*(*size)]=getelevation(i,j,*size,objref);
@@ -276,9 +276,9 @@ void *initmap(short int *image,void **d2map,
       free(image);
       }
 
-   if ((bc=(unsigned char **)malloc((S-1)*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((bc=(unsigned char **)malloc((S-1)*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<S-1; i++)
-      if ((bc[i]=(unsigned char *)malloc(S-1))==NULL) ERRORMSG();
+      if ((bc[i]=(unsigned char *)malloc(S-1))==NULL) MEMERROR();
 
    tid=0;
    yf=NULL;
@@ -464,9 +464,9 @@ void *initfogmap(unsigned char *image,int size,
    if (fogatt<0.0f) ERRORMSG();
 
    if (yf!=NULL) ERRORMSG();
-   if ((yf=(unsigned char **)malloc(S*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((yf=(unsigned char **)malloc(S*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<S; i++)
-      if ((yf[i]=(unsigned char *)malloc(S))==NULL) ERRORMSG();
+      if ((yf[i]=(unsigned char *)malloc(S))==NULL) MEMERROR();
 
    scalefog(image,size);
 
@@ -885,14 +885,14 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
       {
       if (PRISMCACHE==NULL)
          {
-         if ((PRISMCACHE=(float *)malloc(12*PRISMMAX*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISMCACHE=(float *)malloc(12*PRISMMAX*sizeof(float)))==NULL) MEMERROR();
          PRISMCNT=0;
          }
 
       if (PRISMCNT>=PRISMMAX)
          {
          PRISMMAX*=2;
-         if ((PRISMCACHE=(float *)realloc(PRISMCACHE,12*PRISMMAX*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISMCACHE=(float *)realloc(PRISMCACHE,12*PRISMMAX*sizeof(float)))==NULL) MEMERROR();
          }
 
       prismptr=&PRISMCACHE[12*PRISMCNT];
@@ -3588,9 +3588,9 @@ void *initmap(float *image,void **d2map,
 
    SCALE=scale;
 
-   if ((y=(float **)malloc((S+1)*sizeof(float *)))==NULL) ERRORMSG();
+   if ((y=(float **)malloc((S+1)*sizeof(float *)))==NULL) MEMERROR();
    for (i=0; i<=S; i++)
-      if ((y[i]=(float *)malloc(S*sizeof(float)))==NULL) ERRORMSG();
+      if ((y[i]=(float *)malloc(S*sizeof(float)))==NULL) MEMERROR();
 
    if (image!=NULL) scalemap(image,*size);
    else if (*size==S)
@@ -3604,7 +3604,7 @@ void *initmap(float *image,void **d2map,
       {
       if (getelevation==NULL) ERRORMSG();
 
-      if ((image=(float *)malloc((*size)*(*size)*sizeof(float)))==NULL) ERRORMSG();
+      if ((image=(float *)malloc((*size)*(*size)*sizeof(float)))==NULL) MEMERROR();
 
       for (j=0; j<*size; j++)
          for (i=0; i<*size; i++) image[i+j*(*size)]=getelevation(i,j,*size,objref);
@@ -3614,9 +3614,9 @@ void *initmap(float *image,void **d2map,
       free(image);
       }
 
-   if ((bc=(unsigned char **)malloc((S-1)*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((bc=(unsigned char **)malloc((S-1)*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<S-1; i++)
-      if ((bc[i]=(unsigned char *)malloc(S-1))==NULL) ERRORMSG();
+      if ((bc[i]=(unsigned char *)malloc(S-1))==NULL) MEMERROR();
 
    tid=0;
    yf=NULL;
@@ -3802,9 +3802,9 @@ void *initfogmap(unsigned char *image,int size,
    if (fogatt<0.0f) ERRORMSG();
 
    if (yf!=NULL) ERRORMSG();
-   if ((yf=(unsigned char **)malloc(S*sizeof(unsigned char *)))==NULL) ERRORMSG();
+   if ((yf=(unsigned char **)malloc(S*sizeof(unsigned char *)))==NULL) MEMERROR();
    for (i=0; i<S; i++)
-      if ((yf[i]=(unsigned char *)malloc(S))==NULL) ERRORMSG();
+      if ((yf[i]=(unsigned char *)malloc(S))==NULL) MEMERROR();
 
    scalefog(image,size);
 
@@ -4223,14 +4223,14 @@ inline void cacheprism(const int i0,const float y0,const float yf0,const int j0,
       {
       if (PRISMCACHE==NULL)
          {
-         if ((PRISMCACHE=(float *)malloc(12*PRISMMAX*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISMCACHE=(float *)malloc(12*PRISMMAX*sizeof(float)))==NULL) MEMERROR();
          PRISMCNT=0;
          }
 
       if (PRISMCNT>=PRISMMAX)
          {
          PRISMMAX*=2;
-         if ((PRISMCACHE=(float *)realloc(PRISMCACHE,12*PRISMMAX*sizeof(float)))==NULL) ERRORMSG();
+         if ((PRISMCACHE=(float *)realloc(PRISMCACHE,12*PRISMMAX*sizeof(float)))==NULL) MEMERROR();
          }
 
       prismptr=&PRISMCACHE[12*PRISMCNT];
