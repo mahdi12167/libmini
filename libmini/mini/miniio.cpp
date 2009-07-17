@@ -72,4 +72,40 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
    return(data);
    }
 
+// read a raw file and compute signature
+unsigned int signature(const char *filename)
+   {
+   unsigned int sig;
+
+   unsigned char *data;
+   unsigned int bytes;
+
+   sig=0;
+
+   if ((data=readfile(filename,&bytes))!=NULL)
+      {
+      sig=signature(data,bytes);
+      free(data);
+      }
+
+   return(sig);
+   }
+
+// compute a signature
+unsigned int signature(const unsigned char *data,unsigned int bytes)
+   {
+   unsigned int i;
+
+   unsigned int sig;
+
+   const unsigned char *ptr;
+
+   sig=0;
+   ptr=data;
+
+   for (i=0; i<bytes; i++) sig=((271*sig)^34+(*ptr++));
+
+   return(sig);
+   }
+
 }
