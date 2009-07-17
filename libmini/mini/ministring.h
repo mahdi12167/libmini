@@ -40,8 +40,6 @@ class ministring: public ministring_base
       static const int len=32;
       char str[len];
 
-      cstr=NULL;
-
       if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
       else snprintf(str,len,"%.7f",v);
 
@@ -133,6 +131,8 @@ class ministring: public ministring_base
    ministring& operator = (const ministring &a)
       {
       ministring_base::copy(a);
+      cstr=NULL;
+
       return(*this);
       }
 
