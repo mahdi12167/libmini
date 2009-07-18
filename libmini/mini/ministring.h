@@ -77,35 +77,34 @@ class ministring: public ministring_base
 
       if (s==0) return;
 
-      for (i=0; i<l;)
-         if (i+s<=l)
-            {
-            found=TRUE;
+      for (i=0; i+s<=l;)
+         {
+         found=TRUE;
 
-            for (j=0; j<s; j++)
-               if (get(i+j)!=sub[j])
-                  {
-                  found=FALSE;
-                  break;
-                  }
-
-            if (found)
+         for (j=0; j<s; j++)
+            if (get(i+j)!=sub[j])
                {
-               if (s>w)
-                  for (j=i+s; j<l; j++) ref(j-s+w)=get(j);
-
-               setsize(l-s+w);
-
-               if (s<w)
-                  for (j=l-1; j>=i+s; j--) ref(j-s+w)=get(j);
-
-               for (j=0; j<w; j++) ref(i+j)=with[j];
-
-               l=getsize();
-               i+=w;
+               found=FALSE;
+               break;
                }
-            else i++;
+
+         if (found)
+            {
+            if (s>w)
+               for (j=i+s; j<l; j++) ref(j-s+w)=get(j);
+
+            setsize(l-s+w);
+
+            if (s<w)
+               for (j=l-1; j>=i+s; j--) ref(j-s+w)=get(j);
+
+            for (j=0; j<w; j++) ref(i+j)=with[j];
+
+            l=getsize();
+            i+=w;
             }
+         else i++;
+         }
       }
 
    //! substitute c-string
