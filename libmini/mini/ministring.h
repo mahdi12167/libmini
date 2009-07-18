@@ -77,7 +77,7 @@ class ministring: public ministring_base
 
       if (s==0) return;
 
-      for (i=0; i<l; i++)
+      for (i=0; i<l;)
          if (i+s<=l)
             {
             found=TRUE;
@@ -91,10 +91,10 @@ class ministring: public ministring_base
 
             if (found)
                {
-               setsize(l-s+w);
-
                if (s>w)
                   for (j=i+s; j<l; j++) ref(j-s+w)=get(j);
+
+               setsize(l-s+w);
 
                if (s<w)
                   for (j=l-1; j>=i+s; j--) ref(j-s+w)=get(j);
@@ -102,7 +102,9 @@ class ministring: public ministring_base
                for (j=0; j<w; j++) ref(i+j)=with[j];
 
                l=getsize();
+               i+=w;
                }
+            else i++;
             }
       }
 
