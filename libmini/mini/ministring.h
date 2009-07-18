@@ -18,7 +18,7 @@ class ministring: public ministring_base
       {cstr=NULL;}
 
    //! copy constructor
-   ministring(const ministring_base &a): ministring_base(a)
+   ministring(const ministring &a): ministring_base(a)
       {cstr=NULL;}
 
    //! constructor with copy from c-string
@@ -42,6 +42,8 @@ class ministring: public ministring_base
 
       if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
       else snprintf(str,len,"%.7f",v);
+
+      cstr=NULL;
 
       *this=ministring(str);
       }
@@ -132,6 +134,8 @@ class ministring: public ministring_base
    ministring& operator = (const ministring &a)
       {
       ministring_base::copy(a);
+
+      if (cstr!=NULL) free(cstr);
       cstr=NULL;
 
       return(*this);
