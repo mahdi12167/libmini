@@ -23,8 +23,8 @@ void denoiseGREYCimage(unsigned char *image,int width,int height,int components,
 #ifdef USEGREYC
 
    const float amplitude   = 40.0f;
-   const float sharpness   = p; // -p option of greycstoration
-   const float anisotropy  = a; // -a option of greycstoration
+   const float sharpness   = p; // smoothing parameter
+   const float anisotropy  = a; // denoising parameter
    const float alpha       = 0.6f;
    const float sigma       = 1.1f;
    const float dl          = 0.8f;
