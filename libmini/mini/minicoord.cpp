@@ -197,6 +197,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                break;
             case MINICOORD_UTM:
                if (zone==crs_zone && datum==crs_datum) break;
+               if (zone==crs_zone && datum==MINICOORD_DATUM_WGS84 && crs_datum==MINICOORD_DATUM_NAD83) break;
+               if (zone==crs_zone && datum==MINICOORD_DATUM_NAD83 && crs_datum==MINICOORD_DATUM_WGS84) break;
                minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                crs_zone=zone;
