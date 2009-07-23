@@ -157,7 +157,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    }
 
 // calculate the d2-values
-void calcD2(int mins=2,float avgd2=0.1f)
+void calcD2(int mins=2,float avgd2=0.5f)
    {
    int i,j,s,s2;
 
@@ -3495,7 +3495,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    }
 
 // calculate the d2-values
-void calcD2(int mins=2,float avgd2=0.1f)
+void calcD2(int mins=2,float avgd2=0.5f)
    {
    int i,j,s,s2;
 

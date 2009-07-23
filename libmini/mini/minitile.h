@@ -199,7 +199,7 @@ class minitile
    void setpreload(float pfarp,int pupdate);
 
    //! set fast initialization
-   void setfastinit(int fast=1,float avgd2=0.1f);
+   void setfastinit(int fast=1,float avgd2=0.5f);
 
    //! modify the terrain at run time
    void setheight(float x,float z,float h);

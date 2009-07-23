@@ -75,7 +75,7 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.minres=9.0f;            // minimum resolution of triangulation
    LPARAMS.fastinit=2;             // fast initialization level
-   LPARAMS.avgd2value=0.1f;        // average d2value for fast initialization
+   LPARAMS.avgd2value=0.5f;        // average d2value for fast initialization
 
    LPARAMS.sead2=0.1f;             // influence of sea level on d2-values
    LPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
