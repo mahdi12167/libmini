@@ -5,6 +5,7 @@ if ("$1" == "" || "$2" == "") then
    echo "   output.tif receives the geotag of input.tif"
    echo "   white (ff,ff,ff) is replaced with black (0,0,0)"
    echo "   requires the libgeotiff and ImageMagick tools to be installed"
+   exit
 endif
 
 set in="$1"

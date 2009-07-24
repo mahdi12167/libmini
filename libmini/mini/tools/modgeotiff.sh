@@ -4,6 +4,7 @@ if ("$1" == "" || "$2" == "") then
    echo "usage: $0 input.tif output.tif"
    echo "   output.tif receives the geotag of input.tif"
    echo "   requires the libgeotiff tools to be installed"
+   exit
 endif
 
 set in="$1"
