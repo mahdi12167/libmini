@@ -408,7 +408,7 @@ void databuf::writeparam(const char *tag,double v,FILE *file,int digits)
       putc('a',file);
       putc('x',file);
       }
-   else if (checknan(value))
+   else if (isNAN(value))
       {
       putc('n',file);
       putc('a',file);
@@ -1831,7 +1831,7 @@ void databuf::savePNMdata(const char *filename)
                    (crs==DATABUF_CRS_LLH)?0:1,zone,datum,(crs==DATABUF_CRS_LLH)?4:2,
                    swx,swy,nwx,nwy,nex,ney,sex,sey,
                    fsqrt(fsqr(sex-swx)+fsqr(sey-swy))/xsize,fsqrt(fsqr(nwy-swy)+fsqr(nwx-swx))/ysize,
-                   2,scaling,(nodata==-MAXFLOAT || checknan(nodata))?-32678:ftrc(nodata+0.5f));
+                   2,scaling,(nodata==-MAXFLOAT || isNAN(nodata))?-32678:ftrc(nodata+0.5f));
 
       cptr=&comment;
       }
@@ -2021,14 +2021,14 @@ void databuf::convertdata(unsigned int newtype)
       {
       floatptr=(float *)data;
 
-      if (checknan(*floatptr)) ERRORMSG();
+      if (isNAN(*floatptr)) ERRORMSG();
       if (*floatptr==nodata) minvalue=maxvalue=*floatptr++;
       else minvalue=maxvalue=scaling*(*floatptr++)+bias;
 
       for (count=1; count<cells; count++)
          {
          value=*floatptr++;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value!=nodata) value=scaling*value+bias;
 
          if (value<minvalue) minvalue=value;
@@ -2066,14 +2066,14 @@ void databuf::convertdata(unsigned int newtype)
       {
       floatptr=(float *)data;
 
-      if (checknan(*floatptr)) ERRORMSG();
+      if (isNAN(*floatptr)) ERRORMSG();
       if (*floatptr==nodata) minvalue=maxvalue=*floatptr++;
       else minvalue=maxvalue=scaling*(*floatptr++)+bias;
 
       for (count=1; count<cells; count++)
          {
          value=*floatptr++;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value!=nodata) value=scaling*value+bias;
 
          if (value<minvalue) minvalue=value;
@@ -2289,13 +2289,13 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       {
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value==nodata) byteptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
          else byteptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value==nodata) shortptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
          else shortptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
@@ -2318,13 +2318,13 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       {
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value==nodata) byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
          else byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
-         if (checknan(value)) ERRORMSG();
+         if (isNAN(value)) ERRORMSG();
          if (value==nodata) shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
          else shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
@@ -2761,7 +2761,7 @@ void databuf::getminmax(float usefs,float usefg,
                   {
                   val=getval(i,j,k,t);
 
-                  if (!checknan(val))
+                  if (!isNAN(val))
                       if ((val<usefs || val>usefg) &&
                           (val>usefs || val<usefg))
                          {

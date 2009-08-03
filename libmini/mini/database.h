@@ -320,7 +320,7 @@ class databuf
    inline int checknodata(const float value)
       {
       if (value==nodata) return(1);
-      else if (checknan(value)) return(1);
+      else if (isNAN(value)) return(1);
       else return(0);
       }
 
@@ -328,7 +328,7 @@ class databuf
    inline int checkval(const float value)
       {
       if (value==nodata) return(0);
-      else if (checknan(value)) return(0);
+      else if (isNAN(value)) return(0);
       else return(1);
       }
 
