@@ -335,7 +335,7 @@ int lunascan::getserial()
    return(SERIAL);
    }
 
-float lunascan::getvalue()
+double lunascan::getvalue()
    {
    if (CODESTACKSIZE<1) ERRORMSG();
    return(VALUE);
@@ -492,7 +492,7 @@ void lunascan::scanminus()
    if (CH>='0' && CH<='9')
       {
       scanvalue();
-      VALUE*=-1.0f;
+      VALUE*=-1.0;
       }
    else
       {
@@ -650,7 +650,7 @@ void lunascan::clear()
    {
    TOKEN=LUNA_END;
    SERIAL=LUNA_UNKNOWN;
-   VALUE=0.0f;
+   VALUE=0.0;
 
    CHECKIDNT=CHECKSPCL=FALSE;
 

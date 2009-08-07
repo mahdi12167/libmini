@@ -39,7 +39,7 @@ class lunascan
 
    int gettoken();
    int getserial();
-   float getvalue();
+   double getvalue();
    char *getstring();
    int getinfo();
 
@@ -75,7 +75,7 @@ class lunascan
    int PPCOL,PPLINE;
 
    int TOKEN,SERIAL;
-   float VALUE;
+   double VALUE;
 
    BOOLINT CHECKIDNT,CHECKSPCL;
 
