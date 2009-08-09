@@ -696,8 +696,8 @@ coordinates as world coordinate system and the missing out-of-core
 support. The addition of these features would have blown up libMini
 significantly, so if one of these features is needed in a particular
 situation the tiles should be resampled with a more advanced GIS
-application such as VTBuilder from vterrain.org. The output of
-VTBuilder is compatible with libMini so you are free to import the
+application such as libGrid or VTBuilder from vterrain.org. The output
+of VTBuilder is compatible with libMini so you are free to import the
 data into your own libMini project or visualize it directly with the
 VTEnviro application which also builds on top of libMini. However, if
 the restrictions of the built-in resampler are not crucial, you can
@@ -2027,7 +2027,9 @@ of the modified area libMini offers the following options:<p>
 The libMini Viewer is a tool for viewing tile sets. It can load local
 and remote tile sets stored on a web server. The supported format is
 either PNM which is exported by the built-in libMini resampler or DB
-which is output by vtb (virtual terrain builder of vterrain.org).<p>
+which is output by the gridding core of
+<a href="http://libgrid.googlecode.com">libGrid</a> or VTB (virtual
+terrain builder of vterrain.org).<p>
 
 For conceptual information on the modules used by the viewer see
 the <a href="http://stereofx.org/download/libMini-Modules.pdf">libMini
@@ -2035,7 +2037,7 @@ Module Overview</a>.<p>
 
 To compile the viewer type "./build.sh viewer" on the command line. It
 requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
-<a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng</a>
+<a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng/z</a>
 and <a href="http://libsquish.googlecode.com">squish</a> to be installed.
 On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
 library</a> must be installed additionally.<p>
@@ -2078,7 +2080,7 @@ line:<p>
       viewer "http://server.inter.net/.../" tileset/ elevation imagery
 </pre>
 
-If the data is resampled with vtb make sure that a metric coordinate
+If the data is resampled with VTB make sure that a metric coordinate
 system like UTM is chosen. Also make sure that the two ini files for
 the elevation and the imagery are made available in the tile set path,
 because the viewer automatically retrieves necessary information from
@@ -2115,7 +2117,7 @@ view probably will not look adequate. To get a better visualization,
 you can adjust the following parameters interactively: the far
 clipping distance (farp), the triangle mesh resolution (res) and the
 texture detail level (range). To check these parameters press the h
-key. This turns on the head up display (HUD). The HUD also displays
+key. This turns on the head up display (HUD) which displays
 information about the available keyboard controls.<p>
 
 Optionally, you can view waypoints that were gathered with a GPS unit,
