@@ -21,7 +21,7 @@ Some notes about copyright and licensing:
 2) For convenience purposes, the deps folder contains external source code which libMini depends on.
    The source code of those dependencies is merely provided as a redistribution of the original code.
    Therefore, the original copyright and licensing terms of the dependencies remain unchanged.
-3) The libMini demos have there own licensing terms.
+3) The libMini demos have their own licensing terms.
 
 The original libMini dependencies are available here:
 
@@ -29,7 +29,7 @@ pthreads-win32: http://sourceware.org/pthreads-win32
 openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
 libcurl:        http://curl.haxx.se/libcurl
 libjpeg:        http://www.ijg.org
-libpng:         http://www.libpng.org
+libpng/z:       http://www.libpng.org
 squish:         http://libsquish.googlecode.com
 GREYCstoration: http://cimg.sourceforge.net/greycstoration
 freeglut:       http://freeglut.sourceforge.net
@@ -37,5 +37,5 @@ freeglut:       http://freeglut.sourceforge.net
 As of this writing, libMini did successfully build with the latest
 available versions of the above dependencies.
 
-Waimanalo, 9.Oct.2008
+Waimanalo, 9.Aug.2009
 Stefan Roettger
