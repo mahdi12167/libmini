@@ -495,8 +495,18 @@ distribution (see "example.cpp").<p>
    depending on the desired density of the generated mesh.<p>
 
 <div class="note">
-   <b>Hint:</b> fovy&lt;0 triggers the orthographic projection mode<br>
-                use glOrtho(fovy/2*aspect,-fovy/2*aspect,fovy/2,-fovy/2,near,far);
+   <b>Hint:</b> A zero field of view triggers the orthographic
+                projection mode. In that case use
+                glOrtho(fovy/2*aspect,-fovy/2*aspect,fovy/2,-fovy/2,near,far)
+                instead of the usual gluPerspective call to set up the
+                projection matrix.<br>
+</div><p>
+
+<div class="note">
+   <b>Side Note:</b> <br> You can also use the orthographic mode to
+                          perform a view-independent mesh
+                          decimation. Then the resolution parameter
+                          determines the mesh accuracy.
 </div><p>
 
 <h3>Step 6.5) Swap buffers:</h3>
