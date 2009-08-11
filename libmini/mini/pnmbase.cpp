@@ -46,7 +46,7 @@ char PNMcomment::addchar(char ch)
 void PNMcomment::addstring(const char *str)
    {while (*str!='\0') addchar(*str++);}
 
-void PNMcomment::addfloat(float v,int leading)
+void PNMcomment::addfloat(double v,int leading)
    {
    char str[MAX_STR];
    if (leading==0) snprintf(str,MAX_STR,"%g",v);
@@ -300,10 +300,10 @@ void putPNMparams(PNMcomment *comment,
                   int coord_zone,
                   int coord_datum,
                   int coord_units,
-                  float coord_SW_x,float coord_SW_y,
-                  float coord_NW_x,float coord_NW_y,
-                  float coord_NE_x,float coord_NE_y,
-                  float coord_SE_x,float coord_SE_y,
+                  double coord_SW_x,double coord_SW_y,
+                  double coord_NW_x,double coord_NW_y,
+                  double coord_NE_x,double coord_NE_y,
+                  double coord_SE_x,double coord_SE_y,
                   float cell_size_x,float cell_size_y,
                   int scaling_units,
                   float vertical_scaling,
@@ -318,16 +318,16 @@ void putPNMparams(PNMcomment *comment,
    if (coord_sys==0 && coord_units==3)
       {
       coord_SW_x=LONSUB(coord_SW_x);
-      if (fabs(coord_SW_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_SW_y)>90*60*60) ERRORMSG();
 
       coord_NW_x=LONSUB(coord_NW_x);
-      if (fabs(coord_NW_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_NW_y)>90*60*60) ERRORMSG();
 
       coord_NE_x=LONSUB(coord_NE_x);
-      if (fabs(coord_NE_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_NE_y)>90*60*60) ERRORMSG();
 
       coord_SE_x=LONSUB(coord_SE_x);
-      if (fabs(coord_SE_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
       }
@@ -409,7 +409,7 @@ void putPNMparams(PNMcomment *comment,
 // calculate the grid parameters in geographic coordinates
 // returns 1 if PNM comment contains a valid descriptor, 0 otherwise
 int getPNMparams(PNMcomment *comment,
-                 float *coord,
+                 double *coord,
                  float *cell_size,
                  float *vertical_scaling,
                  int *missing_value,
@@ -424,20 +424,20 @@ int getPNMparams(PNMcomment *comment,
 
    BOOLINT texflag=FALSE;
    int coord_sys=0,coord_zone=0,coord_datum=0;
-   float coord_SW_x=0.0f,coord_SW_y=0.0f;
-   float coord_NW_x=0.0f,coord_NW_y=0.0f;
-   float coord_NE_x=0.0f,coord_NE_y=0.0f;
-   float coord_SE_x=0.0f,coord_SE_y=0.0f;
+   double coord_SW_x=0.0,coord_SW_y=0.0;
+   double coord_NW_x=0.0,coord_NW_y=0.0;
+   double coord_NE_x=0.0,coord_NE_y=0.0;
+   double coord_SE_x=0.0,coord_SE_y=0.0;
    int coord_units=0;
    float cell_size_x=0.0f,cell_size_y=0.0f;
    float extent_x=0.0f,extent_y=0.0f;
    int scaling_units=0;
 
-   float dxxSW,dxySW,dyxSW,dyySW;
-   float dxxNW,dxyNW,dyxNW,dyyNW;
-   float dxxNE,dxyNE,dyxNE,dyyNE;
-   float dxxSE,dxySE,dyxSE,dyySE;
-   float length;
+   double dxxSW,dxySW,dyxSW,dyySW;
+   double dxxNW,dxyNW,dyxNW,dyyNW;
+   double dxxNE,dxyNE,dyxNE,dyyNE;
+   double dxxSE,dxySE,dyxSE,dyySE;
+   double length;
 
    BOOLINT check;
 
@@ -520,15 +520,15 @@ int getPNMparams(PNMcomment *comment,
 
             if (coord_units==1)
                {
-               coord_SW_x*=0.3048f;
-               coord_SW_y*=0.3048f;
+               coord_SW_x*=0.3048;
+               coord_SW_y*=0.3048;
                coord_units=2;
                }
 
             if (coord_units==3)
                {
-               coord_SW_x*=0.1f;
-               coord_SW_y*=0.1f;
+               coord_SW_x*=0.1;
+               coord_SW_y*=0.1;
                coord_units=2;
                }
 
@@ -555,15 +555,15 @@ int getPNMparams(PNMcomment *comment,
 
             if (coord_units==1)
                {
-               coord_NW_x*=0.3048f;
-               coord_NW_y*=0.3048f;
+               coord_NW_x*=0.3048;
+               coord_NW_y*=0.3048;
                coord_units=2;
                }
 
             if (coord_units==3)
                {
-               coord_NW_x*=0.1f;
-               coord_NW_y*=0.1f;
+               coord_NW_x*=0.1;
+               coord_NW_y*=0.1;
                coord_units=2;
                }
 
@@ -590,15 +590,15 @@ int getPNMparams(PNMcomment *comment,
 
             if (coord_units==1)
                {
-               coord_NE_x*=0.3048f;
-               coord_NE_y*=0.3048f;
+               coord_NE_x*=0.3048;
+               coord_NE_y*=0.3048;
                coord_units=2;
                }
 
             if (coord_units==3)
                {
-               coord_NE_x*=0.1f;
-               coord_NE_y*=0.1f;
+               coord_NE_x*=0.1;
+               coord_NE_y*=0.1;
                coord_units=2;
                }
 
@@ -625,15 +625,15 @@ int getPNMparams(PNMcomment *comment,
 
             if (coord_units==1)
                {
-               coord_SE_x*=0.3048f;
-               coord_SE_y*=0.3048f;
+               coord_SE_x*=0.3048;
+               coord_SE_y*=0.3048;
                coord_units=2;
                }
 
             if (coord_units==3)
                {
-               coord_SE_x*=0.1f;
-               coord_SE_y*=0.1f;
+               coord_SE_x*=0.1;
+               coord_SE_y*=0.1;
                coord_units=2;
                }
 
@@ -710,16 +710,16 @@ int getPNMparams(PNMcomment *comment,
    if (coord_sys==0)
       {
       coord_SW_x=LONSUB(coord_SW_x);
-      if (fabs(coord_SW_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_SW_y)>90*60*60) ERRORMSG();
 
       coord_NW_x=LONSUB(coord_NW_x);
-      if (fabs(coord_NW_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_NW_y)>90*60*60) ERRORMSG();
 
       coord_NE_x=LONSUB(coord_NE_x);
-      if (fabs(coord_NE_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_NE_y)>90*60*60) ERRORMSG();
 
       coord_SE_x=LONSUB(coord_SE_x);
-      if (fabs(coord_SE_y)>90*60*60) ERRORMSG();
+      if (dabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
 
@@ -743,15 +743,15 @@ int getPNMparams(PNMcomment *comment,
          {
          // calculate extent:
 
-         extent_x=fsqrt((coord_SE_x-coord_SW_x)*(coord_SE_x-coord_SW_x)+
-                        (coord_SE_y-coord_SW_y)*(coord_SE_y-coord_SW_y))+
-                  fsqrt((coord_NE_x-coord_NW_x)*(coord_NE_x-coord_NW_x)+
-                        (coord_NE_y-coord_NW_y)*(coord_NE_y-coord_NW_y));
+         extent_x=sqrt((coord_SE_x-coord_SW_x)*(coord_SE_x-coord_SW_x)+
+                       (coord_SE_y-coord_SW_y)*(coord_SE_y-coord_SW_y))+
+                  sqrt((coord_NE_x-coord_NW_x)*(coord_NE_x-coord_NW_x)+
+                       (coord_NE_y-coord_NW_y)*(coord_NE_y-coord_NW_y));
 
-         extent_y=fsqrt((coord_NW_x-coord_SW_x)*(coord_NW_x-coord_SW_x)+
-                        (coord_NW_y-coord_SW_y)*(coord_NW_y-coord_SW_y))+
-                  fsqrt((coord_NE_x-coord_SE_x)*(coord_NE_x-coord_SE_x)+
-                        (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y));
+         extent_y=sqrt((coord_NW_x-coord_SW_x)*(coord_NW_x-coord_SW_x)+
+                       (coord_NW_y-coord_SW_y)*(coord_NW_y-coord_SW_y))+
+                  sqrt((coord_NE_x-coord_SE_x)*(coord_NE_x-coord_SE_x)+
+                       (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y));
 
          // transform corners
          minicrs::UTM2LL(coord_SW_x,coord_SW_y,coord_zone,coord_datum,&coord_SW_y,&coord_SW_x);
@@ -761,15 +761,15 @@ int getPNMparams(PNMcomment *comment,
 
          // cell size changes approximately by the same factor as the extent changes:
 
-         cell_size_x*=(fsqrt(fsqr(LONADD(coord_SE_x,-coord_SW_x))+
-                             (coord_SE_y-coord_SW_y)*(coord_SE_y-coord_SW_y))+
-                       fsqrt(fsqr(LONADD(coord_NE_x,-coord_NW_x))+
-                             (coord_NE_y-coord_NW_y)*(coord_NE_y-coord_NW_y)))/extent_x;
+         cell_size_x*=(sqrt(dsqr(LONADD(coord_SE_x,-coord_SW_x))+
+                            (coord_SE_y-coord_SW_y)*(coord_SE_y-coord_SW_y))+
+                       sqrt(dsqr(LONADD(coord_NE_x,-coord_NW_x))+
+                            (coord_NE_y-coord_NW_y)*(coord_NE_y-coord_NW_y)))/extent_x;
 
-         cell_size_y*=(fsqrt(fsqr(LONSUB(coord_NW_x,coord_SW_x))+
-                             (coord_NW_y-coord_SW_y)*(coord_NW_y-coord_SW_y))+
-                       fsqrt(fsqr(LONSUB(coord_NE_x,coord_SE_x))+
-                             (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y)))/extent_y;
+         cell_size_y*=(sqrt(dsqr(LONSUB(coord_NW_x,coord_SW_x))+
+                            (coord_NW_y-coord_SW_y)*(coord_NW_y-coord_SW_y))+
+                       sqrt(dsqr(LONSUB(coord_NE_x,coord_SE_x))+
+                            (coord_NE_y-coord_SE_y)*(coord_NE_y-coord_SE_y)))/extent_y;
 
          coord_zone=coord_datum=0;
          coord_units=4;
@@ -788,14 +788,14 @@ int getPNMparams(PNMcomment *comment,
          dxxSW=coord_SE_x-coord_SW_x;
          dxySW=coord_SE_y-coord_SW_y;
 
-         if ((length=fsqrt(dxxSW*dxxSW+dxySW*dxySW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxSW*dxxSW+dxySW*dxySW))==0.0) ERRORMSG();
          dxxSW/=length;
          dxySW/=length;
 
          dyxSW=coord_NW_x-coord_SW_x;
          dyySW=coord_NW_y-coord_SW_y;
 
-         if ((length=fsqrt(dyxSW*dyxSW+dyySW*dyySW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxSW*dyxSW+dyySW*dyySW))==0.0) ERRORMSG();
          dyxSW/=length;
          dyySW/=length;
 
@@ -804,14 +804,14 @@ int getPNMparams(PNMcomment *comment,
          dxxNW=coord_NE_x-coord_NW_x;
          dxyNW=coord_NE_y-coord_NW_y;
 
-         if ((length=fsqrt(dxxNW*dxxNW+dxyNW*dxyNW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxNW*dxxNW+dxyNW*dxyNW))==0.0) ERRORMSG();
          dxxNW/=length;
          dxyNW/=length;
 
          dyxNW=coord_SW_x-coord_NW_x;
          dyyNW=coord_SW_y-coord_NW_y;
 
-         if ((length=fsqrt(dyxNW*dyxNW+dyyNW*dyyNW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxNW*dyxNW+dyyNW*dyyNW))==0.0) ERRORMSG();
          dyxNW/=length;
          dyyNW/=length;
 
@@ -820,14 +820,14 @@ int getPNMparams(PNMcomment *comment,
          dxxNE=coord_NW_x-coord_NE_x;
          dxyNE=coord_NW_y-coord_NE_y;
 
-         if ((length=fsqrt(dxxNE*dxxNE+dxyNE*dxyNE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxNE*dxxNE+dxyNE*dxyNE))==0.0) ERRORMSG();
          dxxNE/=length;
          dxyNE/=length;
 
          dyxNE=coord_SE_x-coord_NE_x;
          dyyNE=coord_SE_y-coord_NE_y;
 
-         if ((length=fsqrt(dyxNE*dyxNE+dyyNE*dyyNE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxNE*dyxNE+dyyNE*dyyNE))==0.0) ERRORMSG();
          dyxNE/=length;
          dyyNE/=length;
 
@@ -836,30 +836,30 @@ int getPNMparams(PNMcomment *comment,
          dxxSE=coord_SW_x-coord_SE_x;
          dxySE=coord_SW_y-coord_SE_y;
 
-         if ((length=fsqrt(dxxSE*dxxSE+dxySE*dxySE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxSE*dxxSE+dxySE*dxySE))==0.0) ERRORMSG();
          dxxSE/=length;
          dxySE/=length;
 
          dyxSE=coord_NE_x-coord_SE_x;
          dyySE=coord_NE_y-coord_SE_y;
 
-         if ((length=fsqrt(dyxSE*dyxSE+dyySE*dyySE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxSE*dyxSE+dyySE*dyySE))==0.0) ERRORMSG();
          dyxSE/=length;
          dyySE/=length;
 
          // shrink by 0.5 texel:
 
-         coord_SW_x+=0.5f*(cell_size_x*dxxSW+cell_size_y*dyxSW);
-         coord_SW_y+=0.5f*(cell_size_x*dxySW+cell_size_y*dyySW);
+         coord_SW_x+=0.5*(cell_size_x*dxxSW+cell_size_y*dyxSW);
+         coord_SW_y+=0.5*(cell_size_x*dxySW+cell_size_y*dyySW);
 
-         coord_NW_x+=0.5f*(cell_size_x*dxxNW+cell_size_y*dyxNW);
-         coord_NW_y+=0.5f*(cell_size_x*dxyNW+cell_size_y*dyyNW);
+         coord_NW_x+=0.5*(cell_size_x*dxxNW+cell_size_y*dyxNW);
+         coord_NW_y+=0.5*(cell_size_x*dxyNW+cell_size_y*dyyNW);
 
-         coord_NE_x+=0.5f*(cell_size_x*dxxNE+cell_size_y*dyxNE);
-         coord_NE_y+=0.5f*(cell_size_x*dxyNE+cell_size_y*dyyNE);
+         coord_NE_x+=0.5*(cell_size_x*dxxNE+cell_size_y*dyxNE);
+         coord_NE_y+=0.5*(cell_size_x*dxyNE+cell_size_y*dyyNE);
 
-         coord_SE_x+=0.5f*(cell_size_x*dxxSE+cell_size_y*dyxSE);
-         coord_SE_y+=0.5f*(cell_size_x*dxySE+cell_size_y*dyySE);
+         coord_SE_x+=0.5*(cell_size_x*dxxSE+cell_size_y*dyxSE);
+         coord_SE_y+=0.5*(cell_size_x*dxySE+cell_size_y*dyySE);
          }
       else
          {
@@ -868,14 +868,14 @@ int getPNMparams(PNMcomment *comment,
          dxxSW=LONADD(coord_SE_x,-coord_SW_x);
          dxySW=coord_SE_y-coord_SW_y;
 
-         if ((length=fsqrt(dxxSW*dxxSW+dxySW*dxySW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxSW*dxxSW+dxySW*dxySW))==0.0) ERRORMSG();
          dxxSW/=length;
          dxySW/=length;
 
          dyxSW=LONSUB(coord_NW_x,coord_SW_x);
          dyySW=coord_NW_y-coord_SW_y;
 
-         if ((length=fsqrt(dyxSW*dyxSW+dyySW*dyySW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxSW*dyxSW+dyySW*dyySW))==0.0) ERRORMSG();
          dyxSW/=length;
          dyySW/=length;
 
@@ -884,14 +884,14 @@ int getPNMparams(PNMcomment *comment,
          dxxNW=LONADD(coord_NE_x,-coord_NW_x);
          dxyNW=coord_NE_y-coord_NW_y;
 
-         if ((length=fsqrt(dxxNW*dxxNW+dxyNW*dxyNW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxNW*dxxNW+dxyNW*dxyNW))==0.0) ERRORMSG();
          dxxNW/=length;
          dxyNW/=length;
 
          dyxNW=LONSUB(coord_SW_x,coord_NW_x);
          dyyNW=coord_SW_y-coord_NW_y;
 
-         if ((length=fsqrt(dyxNW*dyxNW+dyyNW*dyyNW))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxNW*dyxNW+dyyNW*dyyNW))==0.0) ERRORMSG();
          dyxNW/=length;
          dyyNW/=length;
 
@@ -900,14 +900,14 @@ int getPNMparams(PNMcomment *comment,
          dxxNE=-LONADD(coord_NE_x,-coord_NW_x);
          dxyNE=coord_NW_y-coord_NE_y;
 
-         if ((length=fsqrt(dxxNE*dxxNE+dxyNE*dxyNE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxNE*dxxNE+dxyNE*dxyNE))==0.0) ERRORMSG();
          dxxNE/=length;
          dxyNE/=length;
 
          dyxNE=LONSUB(coord_SE_x,coord_NE_x);
          dyyNE=coord_SE_y-coord_NE_y;
 
-         if ((length=fsqrt(dyxNE*dyxNE+dyyNE*dyyNE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxNE*dyxNE+dyyNE*dyyNE))==0.0) ERRORMSG();
          dyxNE/=length;
          dyyNE/=length;
 
@@ -916,30 +916,30 @@ int getPNMparams(PNMcomment *comment,
          dxxSE=-LONADD(coord_SE_x,-coord_SW_x);
          dxySE=coord_SW_y-coord_SE_y;
 
-         if ((length=fsqrt(dxxSE*dxxSE+dxySE*dxySE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dxxSE*dxxSE+dxySE*dxySE))==0.0) ERRORMSG();
          dxxSE/=length;
          dxySE/=length;
 
          dyxSE=LONSUB(coord_NE_x,coord_SE_x);
          dyySE=coord_NE_y-coord_SE_y;
 
-         if ((length=fsqrt(dyxSE*dyxSE+dyySE*dyySE))==0.0f) ERRORMSG();
+         if ((length=sqrt(dyxSE*dyxSE+dyySE*dyySE))==0.0) ERRORMSG();
          dyxSE/=length;
          dyySE/=length;
 
          // shrink by 0.5 texel:
 
-         coord_SW_x=LONSUB(coord_SW_x,-0.5f*(cell_size_x*dxxSW+cell_size_y*dyxSW));
-         coord_SW_y+=0.5f*(cell_size_x*dxySW+cell_size_y*dyySW);
+         coord_SW_x=LONSUB(coord_SW_x,-0.5*(cell_size_x*dxxSW+cell_size_y*dyxSW));
+         coord_SW_y+=0.5*(cell_size_x*dxySW+cell_size_y*dyySW);
 
-         coord_NW_x=LONSUB(coord_NW_x,-0.5f*(cell_size_x*dxxNW+cell_size_y*dyxNW));
-         coord_NW_y+=0.5f*(cell_size_x*dxyNW+cell_size_y*dyyNW);
+         coord_NW_x=LONSUB(coord_NW_x,-0.5*(cell_size_x*dxxNW+cell_size_y*dyxNW));
+         coord_NW_y+=0.5*(cell_size_x*dxyNW+cell_size_y*dyyNW);
 
-         coord_NE_x=LONSUB(coord_NE_x,-0.5f*(cell_size_x*dxxNE+cell_size_y*dyxNE));
-         coord_NE_y+=0.5f*(cell_size_x*dxyNE+cell_size_y*dyyNE);
+         coord_NE_x=LONSUB(coord_NE_x,-0.5*(cell_size_x*dxxNE+cell_size_y*dyxNE));
+         coord_NE_y+=0.5*(cell_size_x*dxyNE+cell_size_y*dyyNE);
 
-         coord_SE_x=LONSUB(coord_SE_x,-0.5f*(cell_size_x*dxxSE+cell_size_y*dyxSE));
-         coord_SE_y+=0.5f*(cell_size_x*dxySE+cell_size_y*dyySE);
+         coord_SE_x=LONSUB(coord_SE_x,-0.5*(cell_size_x*dxxSE+cell_size_y*dyxSE));
+         coord_SE_y+=0.5*(cell_size_x*dxySE+cell_size_y*dyySE);
          }
 
    coord[0]=coord_SW_x;

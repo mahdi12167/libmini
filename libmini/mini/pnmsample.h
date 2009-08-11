@@ -14,8 +14,8 @@ void resample(int num, // number of heterogeneous grids
               int down=0, // number of downsampling levels
               int maxsize=4000, // maximum size of a tile
               const char *basepath=0, // base path to the generated files
-              float *centerx=0,float *centery=0, // positions of map centers
-              float *extentx=0,float *extenty=0, // map extents
+              double *centerx=0,double *centery=0, // positions of map centers
+              double *extentx=0,double *extenty=0, // map extents
               float *scaling=0, // vertical scaling of elevations
               int missing=-9999, // missing elevation value
               int *cols=0,int *rows=0, // output columns and rows
@@ -28,8 +28,8 @@ void resample(int num, // number of heterogeneous grids
 void normalize(int num, // number of heterogeneous grids
                const char **grid, // filenames of heterogeneous grids
                const char *basepath=0, // base path to the generated files
-               float *centerx=0,float *centery=0, // positions of map centers
-               float *extentx=0,float *extenty=0, // map extents
+               double *centerx=0,double *centery=0, // positions of map centers
+               double *extentx=0,double *extenty=0, // map extents
                float *scaling=0, // vertical scaling of elevations
                int missing=-9999, // missing elevation value
                int border=0); // generate normals at border

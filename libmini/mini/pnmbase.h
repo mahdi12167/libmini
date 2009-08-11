@@ -20,7 +20,7 @@ class PNMcomment
 
    char addchar(char ch);
    void addstring(const char *str);
-   void addfloat(float v,int leading=0);
+   void addfloat(double v,int leading=0);
    void addunits(int units);
 
    char *str() {return(com);}
@@ -63,10 +63,10 @@ void putPNMparams(PNMcomment *comment, // output PNM comment
                   int coord_zone=0, // UTM zone: +- 1-60 0=LL (negative zones on southern hemisphere)
                   int coord_datum=0, // UTM datum: 1=NAD27 2=WGS72 3=WGS84 4=GRS80 5=Sphere 0=LL
                   int coord_units=4, // coordinate units: 0=radians 1=feet 2=meters 3=decimeters 4=arc-seconds
-                  float coord_SW_x=-1800.0f,float coord_SW_y=-1800.0f, // SW corner in coordinate units
-                  float coord_NW_x=-1800.0f,float coord_NW_y=1800.0f, // NW corner in coordinate units
-                  float coord_NE_x=1800.0f,float coord_NE_y=1800.0f, // NE corner in coordinate units
-                  float coord_SE_x=1800.0f,float coord_SE_y=-1800.0f, // SE corner in coordinate units
+                  double coord_SW_x=-1800.0,double coord_SW_y=-1800.0, // SW corner in coordinate units
+                  double coord_NW_x=-1800.0,double coord_NW_y=1800.0, // NW corner in coordinate units
+                  double coord_NE_x=1800.0,double coord_NE_y=1800.0, // NE corner in coordinate units
+                  double coord_SE_x=1800.0,double coord_SE_y=-1800.0, // SE corner in coordinate units
                   float cell_size_x=3.0f,float cell_size_y=3.0f, // cell size in coordinate units
                   int scaling_units=2, // elevation units: 1=feet 2=meters 3=decimeters
                   float vertical_scaling=1.0f, // elevation scaling factor
@@ -74,7 +74,7 @@ void putPNMparams(PNMcomment *comment, // output PNM comment
 
 //! calculate the grid parameters in geographic coordinates
 int getPNMparams(PNMcomment *comment, // input PNM comment
-                 float *coord, // output corners in arc-seconds
+                 double *coord, // output corners in arc-seconds
                  float *cell_size, // output cell size in arc-seconds (mean approximate value)
                  float *vertical_scaling, // output elevation scaling factor (to yield meters)
                  int *missing_value, // output missing data value

@@ -25,22 +25,22 @@ char CONFIGURE_TILESETNAME[MAX_STR]="tileset.sav";
 char CONFIGURE_STARTUPNAME[MAX_STR]="startup.sav";
 
 // get distance of point (x,y) from line starting at (px,py) with direction (dx,dy)
-inline float getdistance(float x,float y,
-                         float px,float py,
-                         float dx,float dy)
+inline float getdistance(double x,double y,
+                         double px,double py,
+                         double dx,double dy)
    {
-   static const float e=1.0E-5f;
+   static const double e=1.0E-5;
 
-   if (fabs(dx)<e)
-      if (dy>0.0f) return(x-px);
-      else if (dy<0.0f) return(px-x);
+   if (dabs(dx)<e)
+      if (dy>0.0) return(x-px);
+      else if (dy<0.0) return(px-x);
 
-   if (fabs(dy)<e)
-      if (dx>0.0f) return(py-y);
-      else if (dx<0.0f) return(y-py);
+   if (dabs(dy)<e)
+      if (dx>0.0) return(py-y);
+      else if (dx<0.0) return(y-py);
 
-   float d=fsqrt(dx*dx+dy*dy);
-   if (d>0.0f) return(((x-px)*dy-(y-py)*dx)/d);
+   double d=sqrt(dx*dx+dy*dy);
+   if (d>0.0) return(((x-px)*dy-(y-py)*dx)/d);
    return(MAXFLOAT);
    }
 
@@ -74,16 +74,16 @@ float getpoint(unsigned char *image,
 // bilinear resampling at point position (x,y)
 float resamplepoint(unsigned char *image,
                     int width,int height,int components,
-                    float centerx,float centery,
-                    float extentx,float extenty,
+                    double centerx,double centery,
+                    double extentx,double extenty,
                     float scaling,int missing,
-                    float x,float y,
+                    double x,double y,
                     float *point)
    {
-   float cx,cy;
+   double cx,cy;
 
    int pi,pj;
-   float rx,ry;
+   double rx,ry;
 
    int s1,s2,s3,s4;
    int mcount;
@@ -91,40 +91,40 @@ float resamplepoint(unsigned char *image,
    float rgb[3];
    int black;
 
-   cx=(x-centerx)/extentx+0.5f;
-   cy=(centery-y)/extenty+0.5f;
+   cx=(x-centerx)/extentx+0.5;
+   cy=(centery-y)/extenty+0.5;
 
-   if (cx<-0.5f/(width-1) || cx>1.0f+0.5f/(width-1) ||
-       cy<-0.5f/(height-1) || cy>1.0f+0.5f/(height-1)) return(missing);
+   if (cx<-0.5/(width-1) || cx>1.0+0.5/(width-1) ||
+       cy<-0.5/(height-1) || cy>1.0+0.5/(height-1)) return(missing);
 
-   pi=ftrc(cx*(width-1));
+   pi=dtrc(cx*(width-1));
    rx=cx*(width-1)-pi;
 
-   pj=ftrc(cy*(height-1));
+   pj=dtrc(cy*(height-1));
    ry=cy*(height-1)-pj;
 
-   if (cx<0.0f)
+   if (cx<0.0)
       {
       pi=0;
-      rx=0.0f;
+      rx=0.0;
       }
 
-   if (cy<0.0f)
+   if (cy<0.0)
       {
       pj=0;
-      ry=0.0f;
+      ry=0.0;
       }
 
    if (pi>=width-1)
       {
       pi=width-2;
-      rx=1.0f;
+      rx=1.0;
       }
 
    if (pj>=height-1)
       {
       pj=height-2;
-      ry=1.0f;
+      ry=1.0;
       }
 
    if (components==1)
@@ -144,53 +144,53 @@ float resamplepoint(unsigned char *image,
 
       if (mcount==1)
          if (s1==missing)
-            if (rx>0.5f || ry>0.5f) s1=(s2+s3+1)/2;
+            if (rx>0.5 || ry>0.5) s1=(s2+s3+1)/2;
             else return(missing);
          else if (s2==missing)
-            if (rx<0.5f || ry>0.5f) s2=(s1+s4+1)/2;
+            if (rx<0.5 || ry>0.5) s2=(s1+s4+1)/2;
             else return(missing);
          else if (s3==missing)
-            if (rx>0.5f || ry<0.5f) s3=(s1+s4+1)/2;
+            if (rx>0.5 || ry<0.5) s3=(s1+s4+1)/2;
             else return(missing);
          else if (s4==missing)
-            if (rx<0.5f || ry<0.5f) s4=(s2+s3+1)/2;
+            if (rx<0.5 || ry<0.5) s4=(s2+s3+1)/2;
             else return(missing);
 
       if (mcount==2)
          if (s1==missing && s2==missing)
-            if (ry>0.5f) {s1=s3; s2=s4;}
+            if (ry>0.5) {s1=s3; s2=s4;}
             else return(missing);
          else if (s3==missing && s4==missing)
-            if (ry<0.5f) {s3=s1; s4=s2;}
+            if (ry<0.5) {s3=s1; s4=s2;}
             else return(missing);
          else if (s1==missing && s3==missing)
-            if (rx>0.5f) {s1=s2; s3=s4;}
+            if (rx>0.5) {s1=s2; s3=s4;}
             else return(missing);
          else if (s2==missing && s4==missing)
-            if (rx<0.5f) {s2=s1; s4=s3;}
+            if (rx<0.5) {s2=s1; s4=s3;}
             else return(missing);
          else if (s1==missing && s4==missing)
-            if ((rx>0.5f || ry>0.5f) && (rx<0.5f || ry<0.5f)) s1=s4=(s2+s3+1)/2;
+            if ((rx>0.5 || ry>0.5) && (rx<0.5 || ry<0.5)) s1=s4=(s2+s3+1)/2;
             else return(missing);
          else if (s2==missing && s3==missing)
-            if ((rx<0.5f || ry>0.5f) && (rx>0.5f || ry<0.5f)) s2=s3=(s1+s4+1)/2;
+            if ((rx<0.5 || ry>0.5) && (rx>0.5 || ry<0.5)) s2=s3=(s1+s4+1)/2;
             else return(missing);
 
       if (mcount==3)
          if (s1!=missing)
-            if (rx<0.5f && ry<0.5f) s2=s3=s4=s1;
+            if (rx<0.5 && ry<0.5) s2=s3=s4=s1;
             else return(missing);
          else if (s2!=missing)
-            if (rx>0.5f && ry<0.5f) s1=s3=s4=s2;
+            if (rx>0.5 && ry<0.5) s1=s3=s4=s2;
             else return(missing);
          else if (s3!=missing)
-            if (rx<0.5f && ry>0.5f) s1=s2=s4=s3;
+            if (rx<0.5 && ry>0.5) s1=s2=s4=s3;
             else return(missing);
          else if (s4!=missing)
-            if (rx>0.5f && ry>0.5f) s1=s2=s3=s4;
+            if (rx>0.5 && ry>0.5) s1=s2=s3=s4;
             else return(missing);
 
-      return(scaling*((1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4)));
+      return(scaling*((1.0-ry)*((1.0-rx)*s1+rx*s2)+ry*((1.0-rx)*s3+rx*s4)));
       }
    else if (components==2)
       {
@@ -209,53 +209,53 @@ float resamplepoint(unsigned char *image,
 
       if (mcount==1)
          if (s1==missing)
-            if (rx>0.5f || ry>0.5f) s1=(s2+s3+1)/2;
+            if (rx>0.5 || ry>0.5) s1=(s2+s3+1)/2;
             else return(missing);
          else if (s2==missing)
-            if (rx<0.5f || ry>0.5f) s2=(s1+s4+1)/2;
+            if (rx<0.5 || ry>0.5) s2=(s1+s4+1)/2;
             else return(missing);
          else if (s3==missing)
-            if (rx>0.5f || ry<0.5f) s3=(s1+s4+1)/2;
+            if (rx>0.5 || ry<0.5) s3=(s1+s4+1)/2;
             else return(missing);
          else if (s4==missing)
-            if (rx<0.5f || ry<0.5f) s4=(s2+s3+1)/2;
+            if (rx<0.5 || ry<0.5) s4=(s2+s3+1)/2;
             else return(missing);
 
       if (mcount==2)
          if (s1==missing && s2==missing)
-            if (ry>0.5f) {s1=s3; s2=s4;}
+            if (ry>0.5) {s1=s3; s2=s4;}
             else return(missing);
          else if (s3==missing && s4==missing)
-            if (ry<0.5f) {s3=s1; s4=s2;}
+            if (ry<0.5) {s3=s1; s4=s2;}
             else return(missing);
          else if (s1==missing && s3==missing)
-            if (rx>0.5f) {s1=s2; s3=s4;}
+            if (rx>0.5) {s1=s2; s3=s4;}
             else return(missing);
          else if (s2==missing && s4==missing)
-            if (rx<0.5f) {s2=s1; s4=s3;}
+            if (rx<0.5) {s2=s1; s4=s3;}
             else return(missing);
          else if (s1==missing && s4==missing)
-            if ((rx>0.5f || ry>0.5f) && (rx<0.5f || ry<0.5f)) s1=s4=(s2+s3+1)/2;
+            if ((rx>0.5 || ry>0.5) && (rx<0.5 || ry<0.5)) s1=s4=(s2+s3+1)/2;
             else return(missing);
          else if (s2==missing && s3==missing)
-            if ((rx<0.5f || ry>0.5f) && (rx>0.5f || ry<0.5f)) s2=s3=(s1+s4+1)/2;
+            if ((rx<0.5 || ry>0.5) && (rx>0.5 || ry<0.5)) s2=s3=(s1+s4+1)/2;
             else return(missing);
 
       if (mcount==3)
          if (s1!=missing)
-            if (rx<0.5f && ry<0.5f) s2=s3=s4=s1;
+            if (rx<0.5 && ry<0.5) s2=s3=s4=s1;
             else return(missing);
          else if (s2!=missing)
-            if (rx>0.5f && ry<0.5f) s1=s3=s4=s2;
+            if (rx>0.5 && ry<0.5) s1=s3=s4=s2;
             else return(missing);
          else if (s3!=missing)
-            if (rx<0.5f && ry>0.5f) s1=s2=s4=s3;
+            if (rx<0.5 && ry>0.5) s1=s2=s4=s3;
             else return(missing);
          else if (s4!=missing)
-            if (rx>0.5f && ry>0.5f) s1=s2=s3=s4;
+            if (rx>0.5 && ry>0.5) s1=s2=s3=s4;
             else return(missing);
 
-      return(scaling*((1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4)));
+      return(scaling*((1.0-ry)*((1.0-rx)*s1+rx*s2)+ry*((1.0-rx)*s3+rx*s4)));
       }
    else if (components==3)
       {
@@ -273,7 +273,7 @@ float resamplepoint(unsigned char *image,
       if (s3!=0) black&=15-4;
       if (s4!=0) black&=15-8;
 
-      rgb[0]=(1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4);
+      rgb[0]=(1.0-ry)*((1.0-rx)*s1+rx*s2)+ry*((1.0-rx)*s3+rx*s4);
 
       s1=image[3*(pi+width*pj)+1];
       s2=image[3*(pi+1+width*pj)+1];
@@ -285,7 +285,7 @@ float resamplepoint(unsigned char *image,
       if (s3!=0) black&=15-4;
       if (s4!=0) black&=15-8;
 
-      rgb[1]=(1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4);
+      rgb[1]=(1.0-ry)*((1.0-rx)*s1+rx*s2)+ry*((1.0-rx)*s3+rx*s4);
 
       s1=image[3*(pi+width*pj)+2];
       s2=image[3*(pi+1+width*pj)+2];
@@ -297,7 +297,7 @@ float resamplepoint(unsigned char *image,
       if (s3!=0) black&=15-4;
       if (s4!=0) black&=15-8;
 
-      rgb[2]=(1.0f-ry)*((1.0f-rx)*s1+rx*s2)+ry*((1.0f-rx)*s3+rx*s4);
+      rgb[2]=(1.0-ry)*((1.0-rx)*s1+rx*s2)+ry*((1.0-rx)*s3+rx*s4);
 
       if (black==0 || CONFIGURE_TREATBLACK==0)
          {
@@ -314,20 +314,20 @@ float resamplepoint(unsigned char *image,
 // barycentric coordinate transformation
 float transformpoint(unsigned char *image,
                      int width,int height,int components,
-                     float centerx,float centery,
-                     float extentx,float extenty,
-                     float *coord,float *utm_coord,int utm_zone,int utm_datum,
+                     double centerx,double centery,
+                     double extentx,double extenty,
+                     double *coord,double *utm_coord,int utm_zone,int utm_datum,
                      float scaling,int missing,
-                     float x,float y,
+                     double x,double y,
                      float *point)
    {
-   float dx,dy;
-   float s1,s2,t1,t2;
+   double dx,dy;
+   double s1,s2,t1,t2;
 
    dx=LONSUB(x,centerx);
    dy=y-centery;
 
-   if (fabs(dx)>extentx/2.0f || fabs(dy)>extenty/2.0f) return(missing);
+   if (dabs(dx)>extentx/2.0 || dabs(dy)>extenty/2.0) return(missing);
 
    x=centerx+dx;
 
@@ -352,8 +352,8 @@ float transformpoint(unsigned char *image,
 
    return(resamplepoint(image,
                         width,height,components,
-                        0.5f,0.5f,
-                        1.0f,1.0f,
+                        0.5,0.5,
+                        1.0,1.0,
                         scaling,missing,
                         s1/(s1+s2),t1/(t1+t2),
                         point));
@@ -363,8 +363,8 @@ float transformpoint(unsigned char *image,
 void resample(int num,const char **grid,
               int tiles,int down,int maxsize,
               const char *basepath,
-              float *centerx,float *centery,
-              float *extentx,float *extenty,
+              double *centerx,double *centery,
+              double *extentx,double *extenty,
               float *scaling,int missing,
               int *cols,int *rows,
               float *outparams,
@@ -392,16 +392,16 @@ void resample(int num,const char **grid,
 
    PNMcomment *comms=new PNMcomment[num];
 
-   float *centersx=new float[num];
-   float *centersy=new float[num];
+   double *centersx=new double[num];
+   double *centersy=new double[num];
 
-   float *extentsx=new float[num];
-   float *extentsy=new float[num];
+   double *extentsx=new double[num];
+   double *extentsy=new double[num];
 
-   float *coords=new float[8*num];
+   double *coords=new double[8*num];
    float *cellsizes=new float[2*num];
 
-   float *utm_coords=new float[8*num];
+   double *utm_coords=new double[8*num];
    int *utm_zones=new int[num];
    int *utm_datums=new int[num];
 
@@ -470,25 +470,25 @@ void resample(int num,const char **grid,
 
          if (utm_zones[n]!=0)
             {
-            float *coord_SW=&coords[8*n];
-            float *coord_NW=&coords[8*n+2];
-            float *coord_NE=&coords[8*n+4];
-            float *coord_SE=&coords[8*n+6];
+            double *coord_SW=&coords[8*n];
+            double *coord_NW=&coords[8*n+2];
+            double *coord_NE=&coords[8*n+4];
+            double *coord_SE=&coords[8*n+6];
 
-            float extent_x,extent_y;
+            double extent_x,extent_y;
 
             for (i=0; i<8; i++) utm_coords[8*n+i]=coords[8*n+i];
 
             // calculate original extent:
 
-            extent_x=fsqrt((coord_SE[0]-coord_SW[0])*(coord_SE[0]-coord_SW[0])+
-                           (coord_SE[1]-coord_SW[1])*(coord_SE[1]-coord_SW[1]))+
-                     fsqrt((coord_NE[0]-coord_NW[0])*(coord_NE[0]-coord_NW[0])+
-                           (coord_NE[1]-coord_NW[1])*(coord_NE[1]-coord_NW[1]));
+            extent_x=sqrt((coord_SE[0]-coord_SW[0])*(coord_SE[0]-coord_SW[0])+
+                          (coord_SE[1]-coord_SW[1])*(coord_SE[1]-coord_SW[1]))+
+                     sqrt((coord_NE[0]-coord_NW[0])*(coord_NE[0]-coord_NW[0])+
+                          (coord_NE[1]-coord_NW[1])*(coord_NE[1]-coord_NW[1]));
 
-            extent_y=fsqrt((coord_NW[0]-coord_SW[0])*(coord_NW[0]-coord_SW[0])+
-                           (coord_NW[1]-coord_SW[1])*(coord_NW[1]-coord_SW[1]))+
-                     fsqrt((coord_NE[0]-coord_SE[0])*(coord_NE[0]-coord_SE[0])+
+            extent_y=sqrt((coord_NW[0]-coord_SW[0])*(coord_NW[0]-coord_SW[0])+
+                          (coord_NW[1]-coord_SW[1])*(coord_NW[1]-coord_SW[1]))+
+                     sqrt((coord_NE[0]-coord_SE[0])*(coord_NE[0]-coord_SE[0])+
                            (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1]));
 
             // transform corners
@@ -499,27 +499,27 @@ void resample(int num,const char **grid,
 
             // cell size changes approximately by the same factor as the extent changes:
 
-            cellsizes[2*n]*=(fsqrt(fsqr(LONADD(coord_SE[0],-coord_SW[0]))+
-                                   (coord_SE[1]-coord_SW[1])*(coord_SE[1]-coord_SW[1]))+
-                             fsqrt(fsqr(LONADD(coord_NE[0],-coord_NW[0]))+
-                                   (coord_NE[1]-coord_NW[1])*(coord_NE[1]-coord_NW[1])))/extent_x;
+            cellsizes[2*n]*=(sqrt(dsqr(LONADD(coord_SE[0],-coord_SW[0]))+
+                                  (coord_SE[1]-coord_SW[1])*(coord_SE[1]-coord_SW[1]))+
+                             sqrt(dsqr(LONADD(coord_NE[0],-coord_NW[0]))+
+                                  (coord_NE[1]-coord_NW[1])*(coord_NE[1]-coord_NW[1])))/extent_x;
 
-            cellsizes[2*n+1]*=(fsqrt(fsqr(LONSUB(coord_NW[0],coord_SW[0]))+
-                                     (coord_NW[1]-coord_SW[1])*(coord_NW[1]-coord_SW[1]))+
-                               fsqrt(fsqr(LONSUB(coord_NE[0],coord_SE[0]))+
-                                     (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1])))/extent_y;
+            cellsizes[2*n+1]*=(sqrt(dsqr(LONSUB(coord_NW[0],coord_SW[0]))+
+                                    (coord_NW[1]-coord_SW[1])*(coord_NW[1]-coord_SW[1]))+
+                               sqrt(dsqr(LONSUB(coord_NE[0],coord_SE[0]))+
+                                    (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1])))/extent_y;
             }
 
          centersx[n]=LONLERP(LONMEAN(coords[8*n],coords[8*n+2]),LONMEAN(coords[8*n+4],coords[8*n+6]));
-         centersy[n]=(coords[8*n+1]+coords[8*n+3]+coords[8*n+5]+coords[8*n+7])/4.0f;
+         centersy[n]=(coords[8*n+1]+coords[8*n+3]+coords[8*n+5]+coords[8*n+7])/4.0;
 
          extentsx[n]=LONADD(LONRIGHT(coords[8*n+4],coords[8*n+6]),-LONLEFT(coords[8*n],coords[8*n+2]));
-         extentsy[n]=fmax(coords[8*n+3],coords[8*n+5])-fmin(coords[8*n+1],coords[8*n+7]);
+         extentsy[n]=dmax(coords[8*n+3],coords[8*n+5])-fmin(coords[8*n+1],coords[8*n+7]);
 
          if (widths[n]>1 && heights[n]>1)
             {
-            cellsizes[2*n]=fmin(cellsizes[2*n],extentsx[n]/(widths[n]-1));
-            cellsizes[2*n+1]=fmin(cellsizes[2*n+1],extentsy[n]/(heights[n]-1));
+            cellsizes[2*n]=dmin(cellsizes[2*n],extentsx[n]/(widths[n]-1));
+            cellsizes[2*n+1]=dmin(cellsizes[2*n+1],extentsy[n]/(heights[n]-1));
             }
          }
       else
@@ -534,17 +534,17 @@ void resample(int num,const char **grid,
          extentsx[n]=extentx[n];
          extentsy[n]=extenty[n];
 
-         coords[8*n]=LONSUB(centersx[n],extentsx[n]/2.0f);
-         coords[8*n+1]=centersy[n]-extentsy[n]/2.0f;
+         coords[8*n]=LONSUB(centersx[n],extentsx[n]/2.0);
+         coords[8*n+1]=centersy[n]-extentsy[n]/2.0;
 
-         coords[8*n+2]=LONSUB(centersx[n],extentsx[n]/2.0f);
-         coords[8*n+3]=centersy[n]+extentsy[n]/2.0f;
+         coords[8*n+2]=LONSUB(centersx[n],extentsx[n]/2.0);
+         coords[8*n+3]=centersy[n]+extentsy[n]/2.0;
 
-         coords[8*n+4]=LONSUB(centersx[n],-extentsx[n]/2.0f);
-         coords[8*n+5]=centersy[n]+extentsy[n]/2.0f;
+         coords[8*n+4]=LONSUB(centersx[n],-extentsx[n]/2.0);
+         coords[8*n+5]=centersy[n]+extentsy[n]/2.0;
 
-         coords[8*n+6]=LONSUB(centersx[n],-extentsx[n]/2.0f);
-         coords[8*n+7]=centersy[n]-extentsy[n]/2.0f;
+         coords[8*n+6]=LONSUB(centersx[n],-extentsx[n]/2.0);
+         coords[8*n+7]=centersy[n]-extentsy[n]/2.0;
 
          cellsizes[2*n]=extentsx[n]/(widths[n]-1);
          cellsizes[2*n+1]=extentsy[n]/(heights[n]-1);
@@ -633,14 +633,14 @@ void resample(int num,const char **grid,
 
    minicrs::arcsec2meter(centersy[0],as2m);
 
-   float sizex=extentsx[0];
-   float sizey=extentsy[0];
+   double sizex=extentsx[0];
+   double sizey=extentsy[0];
 
    int tilesx=tiles;
    int tilesy=tiles;
 
-   float tilesizex;
-   float tilesizey;
+   double tilesizex;
+   double tilesizey;
 
    int realmaxsize=0;
 
@@ -648,27 +648,27 @@ void resample(int num,const char **grid,
    if (sizex*as2m[0]>sizey*as2m[1])
       {
       tilesizex=sizex/tilesx;
-      tilesy=max(ftrc(sizey/tilesizex*as2m[1]/as2m[0]+0.5f),1);
+      tilesy=max(dtrc(sizey/tilesizex*as2m[1]/as2m[0]+0.5),1);
       tilesizey=sizey/tilesy;
       }
    else
       {
       tilesizey=sizey/tilesy;
-      tilesx=max(ftrc(sizex/tilesizey*as2m[0]/as2m[1]+0.5f),1);
+      tilesx=max(dtrc(sizex/tilesizey*as2m[0]/as2m[1]+0.5),1);
       tilesizex=sizex/tilesx;
       }
 
-   float tileposx,tileposy;
+   double tileposx,tileposy;
    int width,height;
    BOOLINT smaller;
 
    int k,l,m;
 
    int sn;
-   float si,sj;
+   double si,sj;
 
-   float posx0,posy0;
-   float posx,posy;
+   double posx0,posy0;
+   double posx,posy;
 
    float sample0;
    float rgb0[3];
@@ -696,8 +696,8 @@ void resample(int num,const char **grid,
          for (i=0; i<tilesx; i++)
             {
             // calculate tile position
-            tileposx=LONSUB(centersx[0],sizex/2.0f-i*tilesizex);
-            tileposy=centersy[0]-sizey/2.0f+j*tilesizey;
+            tileposx=LONSUB(centersx[0],sizex/2.0-i*tilesizex);
+            tileposy=centersy[0]-sizey/2.0+j*tilesizey;
 
             width=2;
             height=2;
@@ -713,13 +713,13 @@ void resample(int num,const char **grid,
                smaller=FALSE;
 
                for (n=0; n<num; n++)
-                  if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0f &&
-                      LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
-                      tileposy<centersy[n]+extentsy[n]/2.0f &&
-                      tileposy+tilesizey>centersy[n]-extentsy[n]/2.0f)
-                     if (tilesizex/(width-1)>1.5f*(1<<down)*cellsizes[2*n] ||
-                         tilesizey/(height-1)>1.5f*(1<<down)*cellsizes[2*n+1])
-                        if (1.5f*width<maxsize && 1.5f*height<maxsize)
+                  if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0 &&
+                      LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0 &&
+                      tileposy<centersy[n]+extentsy[n]/2.0 &&
+                      tileposy+tilesizey>centersy[n]-extentsy[n]/2.0)
+                     if (tilesizex/(width-1)>1.5*(1<<down)*cellsizes[2*n] ||
+                         tilesizey/(height-1)>1.5*(1<<down)*cellsizes[2*n+1])
+                        if (1.5*width<maxsize && 1.5*height<maxsize)
                            {
                            smaller=TRUE;
                            break;
@@ -749,10 +749,10 @@ void resample(int num,const char **grid,
 
             // gather relevant grids
             for (n=0; n<num; n++)
-               if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0f &&
-                   LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0f &&
-                   tileposy<centersy[n]+extentsy[n]/2.0f &&
-                   tileposy+tilesizey>centersy[n]-extentsy[n]/2.0f)
+               if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0 &&
+                   LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0 &&
+                   tileposy<centersy[n]+extentsy[n]/2.0 &&
+                   tileposy+tilesizey>centersy[n]-extentsy[n]/2.0)
                   if (widths[n]>1 && heights[n]>1) valid[vnum++]=n;
                   else ERRORMSG();
 
@@ -849,13 +849,13 @@ void resample(int num,const char **grid,
                         if (comps[0]==3) sn*=(1<<min(m,CONFIGURE_UPSAMPLING));
 
                         // foreach supersample
-                        for (si=-0.5f+0.5f/sn; si<0.5f; si+=1.0f/sn)
-                           for (sj=-0.5f+0.5f/sn; sj<0.5f; sj+=1.0f/sn)
+                        for (si=-0.5+0.5/sn; si<0.5; si+=1.0/sn)
+                           for (sj=-0.5+0.5/sn; sj<0.5; sj+=1.0/sn)
                               {
                               posx=LONSUB(posx0,-si*tilesizex/(width-1));
                               posy=posy0+sj*tilesizey/(height-1);
 
-                              if (fabs(posy)>90*60*60) continue;
+                              if (dabs(posy)>90*60*60) continue;
 
                               sample=missings[0];
                               rgb[0]=rgb[1]=rgb[2]=0.0f;
@@ -1145,8 +1145,8 @@ void resample(int num,const char **grid,
 void normalize(int num,
                const char **grid,
                const char *basepath,
-               float *centerx,float *centery,
-               float *extentx,float *extenty,
+               double *centerx,double *centery,
+               double *extentx,double *extenty,
                float *scaling,
                int missing,
                int border)
@@ -1162,13 +1162,14 @@ void normalize(int num,
    int width,height,components;
    PNMcomment comment;
 
-   float coord[8],cellsize[2];
+   double coord[8];
+   float cellsize[2];
 
-   float utm_coord[8];
+   double utm_coord[8];
    int utm_zone,utm_datum;
 
-   float centerx0,centery0;
-   float extentx0,extenty0;
+   double centerx0,centery0;
+   double extentx0,extenty0;
    float scaling0;
    int missing0;
 
@@ -1220,17 +1221,17 @@ void normalize(int num,
                }
 
             centerx0=LONLERP(LONMEAN(coord[0],coord[2]),LONMEAN(coord[4],coord[6]));
-            centery0=(coord[1]+coord[3]+coord[5]+coord[7])/4.0f;
+            centery0=(coord[1]+coord[3]+coord[5]+coord[7])/4.0;
 
-            extentx0=(fsqrt(fsqr(LONADD(coord[6],-coord[0]))+
-                            (coord[7]-coord[1])*(coord[7]-coord[1]))+
-                      fsqrt(fsqr(LONADD(coord[4],-coord[2]))+
-                            (coord[5]-coord[3])*(coord[5]-coord[3])))/2.0f;
+            extentx0=(sqrt(dsqr(LONADD(coord[6],-coord[0]))+
+                           (coord[7]-coord[1])*(coord[7]-coord[1]))+
+                      sqrt(dsqr(LONADD(coord[4],-coord[2]))+
+                           (coord[5]-coord[3])*(coord[5]-coord[3])))/2.0;
 
-            extenty0=(fsqrt(fsqr(LONSUB(coord[2],coord[0]))+
-                            (coord[3]-coord[1])*(coord[3]-coord[1]))+
-                      fsqrt(fsqr(LONSUB(coord[4],coord[6]))+
-                            (coord[5]-coord[7])*(coord[5]-coord[7])))/2.0f;
+            extenty0=(sqrt(dsqr(LONSUB(coord[2],coord[0]))+
+                           (coord[3]-coord[1])*(coord[3]-coord[1]))+
+                      sqrt(dsqr(LONSUB(coord[4],coord[6]))+
+                           (coord[5]-coord[7])*(coord[5]-coord[7])))/2.0;
             }
          else
             {
@@ -1467,7 +1468,8 @@ void texturemap(const char *heightfile,
    int width,height,components;
    PNMcomment comment;
 
-   float coord[8],cellsize[2],scaling;
+   double coord[8];
+   float cellsize[2],scaling;
    int utm_zone,utm_datum,missing;
 
    float xdim,zdim;
@@ -1501,10 +1503,10 @@ void texturemap(const char *heightfile,
 
    if (utm_zone==0)
       {
-      xdim=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-      zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
+      xdim=sqrt(dsqr(LONADD(coord[6],-coord[0]))+dsqr(coord[7]-coord[1]));
+      zdim=sqrt(dsqr(coord[3]-coord[1])+dsqr(LONSUB(coord[2],coord[0])));
 
-      centerz=(coord[1]+coord[3]+coord[5]+coord[7])/4.0f;
+      centerz=(coord[1]+coord[3]+coord[5]+coord[7])/4.0;
       minicrs::arcsec2meter(centerz,as2m);
 
       xdim*=as2m[0];
@@ -1512,8 +1514,8 @@ void texturemap(const char *heightfile,
       }
    else
       {
-      xdim=fsqrt(fsqr(coord[6]-coord[0])+fsqr(coord[7]-coord[1]));
-      zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(coord[2]-coord[0]));
+      xdim=sqrt(dsqr(coord[6]-coord[0])+dsqr(coord[7]-coord[1]));
+      zdim=sqrt(dsqr(coord[3]-coord[1])+dsqr(coord[2]-coord[0]));
       }
 
    nmap=normalmap(image,width,components,twidth,theight,

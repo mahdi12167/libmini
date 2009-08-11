@@ -1103,7 +1103,8 @@ int miniload::load(int cols,int rows,
    databuf hfield,texture,fogmap;
    float minvalue,maxvalue;
 
-   float coord[8],cellsize[2],scaling;
+   double coord[8];
+   float cellsize[2],scaling;
    int utm_zone,utm_datum,missing;
 
    float as2m[2];
@@ -1441,12 +1442,12 @@ int miniload::load(int cols,int rows,
          if (coord[7]<-90*60*60 || coord[7]>90*60*60) ERRORMSG();
          }
 
-      COLDIM=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-      ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
+      COLDIM=sqrt(dsqr(LONADD(coord[6],-coord[0]))+dsqr(coord[7]-coord[1]));
+      ROWDIM=sqrt(dsqr(coord[3]-coord[1])+dsqr(LONSUB(coord[2],coord[0])));
 
-      CENTERX=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
+      CENTERX=LONSUB(coord[2],-cols/2.0*LONADD(coord[6],-coord[0])+rows/2.0*LONSUB(coord[2],coord[0]));
       CENTERY=offseth;
-      CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
+      CENTERZ=coord[3]-rows/2.0*(coord[3]-coord[1])+cols/2.0*(coord[7]-coord[1]);
 
       minicrs::arcsec2meter(CENTERZ,as2m);
 
@@ -1473,12 +1474,12 @@ int miniload::load(int cols,int rows,
          coord[7]+=offsety;
          }
 
-      COLDIM=fsqrt(fsqr(coord[6]-coord[0])+fsqr(coord[7]-coord[1]));
-      ROWDIM=fsqrt(fsqr(coord[3]-coord[1])+fsqr(coord[2]-coord[0]));
+      COLDIM=sqrt(dsqr(coord[6]-coord[0])+dsqr(coord[7]-coord[1]));
+      ROWDIM=sqrt(dsqr(coord[3]-coord[1])+dsqr(coord[2]-coord[0]));
 
-      CENTERX=coord[2]+cols/2.0f*(coord[6]-coord[0])+rows/2.0f*(coord[2]-coord[0]);
+      CENTERX=coord[2]+cols/2.0*(coord[6]-coord[0])+rows/2.0*(coord[2]-coord[0]);
       CENTERY=offseth;
-      CENTERZ=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
+      CENTERZ=coord[3]-rows/2.0*(coord[3]-coord[1])+cols/2.0*(coord[7]-coord[1]);
       }
 
    COLDIM*=stretchx/scale;

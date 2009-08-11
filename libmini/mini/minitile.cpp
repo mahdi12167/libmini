@@ -858,7 +858,8 @@ minitile *minitile::load(int cols,int rows,
    int width,height,components;
    PNMcomment comment;
 
-   float coord[8],cellsize[2],scaling;
+   double coord[8];
+   float cellsize[2],scaling;
    int utm_zone,utm_datum,missing;
 
    float xdim,zdim;
@@ -974,11 +975,11 @@ minitile *minitile::load(int cols,int rows,
    scaling*=exaggeration;
    lambda*=exaggeration;
 
-   xdim=fsqrt(fsqr(LONADD(coord[6],-coord[0]))+fsqr(coord[7]-coord[1]));
-   zdim=fsqrt(fsqr(coord[3]-coord[1])+fsqr(LONSUB(coord[2],coord[0])));
+   xdim=sqrt(dsqr(LONADD(coord[6],-coord[0]))+dsqr(coord[7]-coord[1]));
+   zdim=sqrt(dsqr(coord[3]-coord[1])+dsqr(LONSUB(coord[2],coord[0])));
 
-   centerx=LONSUB(coord[2],-cols/2.0f*LONADD(coord[6],-coord[0])+rows/2.0f*LONSUB(coord[2],coord[0]));
-   centerz=coord[3]-rows/2.0f*(coord[3]-coord[1])+cols/2.0f*(coord[7]-coord[1]);
+   centerx=LONSUB(coord[2],-cols/2.0*LONADD(coord[6],-coord[0])+rows/2.0*LONSUB(coord[2],coord[0]));
+   centerz=coord[3]-rows/2.0*(coord[3]-coord[1])+cols/2.0*(coord[7]-coord[1]);
 
    minicrs::arcsec2meter(centerz,as2m);
 

@@ -1370,7 +1370,8 @@ int databuf::loadPNMdata(const char *filename)
    int width,height,components;
    PNMcomment comment;
 
-   float coord[8],cellsize[2],vscale;
+   double coord[8];
+   float cellsize[2],vscale;
    int utm_zone,utm_datum,missing;
 
    if ((data=readPNMfile(filename,&width,&height,&components,&comment))==NULL)
