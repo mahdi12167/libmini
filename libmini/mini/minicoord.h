@@ -30,7 +30,7 @@ class minicoord
       MINICOORD_DATUM_NAD27=1,
       MINICOORD_DATUM_WGS72=2,
       MINICOORD_DATUM_WGS84=3,
-      MINICOORD_DATUM_NAD83=4,
+      MINICOORD_DATUM_NAD83=4, // utilizes the GRS80 ellipsoid
       // libMini datum codes
       MINICOORD_DATUM_SPHERE=5,
       MINICOORD_DATUM_ED50=6,
