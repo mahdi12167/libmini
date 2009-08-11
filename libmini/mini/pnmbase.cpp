@@ -501,7 +501,7 @@ int getPNMparams(PNMcomment *comment,
             if (coord_sys==0 && coord_datum!=0) check=FALSE;
             break;
          case 6: // SW corner
-            if (sscanf(com.str(),"SW corner=%g/%g %s",
+            if (sscanf(com.str(),"SW corner=%lg/%lg %s",
                        &coord_SW_x,&coord_SW_y,str)!=3) {check=FALSE; break;}
 
             if (strcmp(str,"radians")==0) coord_units=0;
@@ -536,7 +536,7 @@ int getPNMparams(PNMcomment *comment,
             if (coord_sys==1 && coord_units!=2) check=FALSE;
             break;
          case 7: // NW corner
-            if (sscanf(com.str(),"NW corner=%g/%g %s",
+            if (sscanf(com.str(),"NW corner=%lg/%lg %s",
                        &coord_NW_x,&coord_NW_y,str)!=3) {check=FALSE; break;}
 
             if (strcmp(str,"radians")==0) coord_units=0;
@@ -571,7 +571,7 @@ int getPNMparams(PNMcomment *comment,
             if (coord_sys==1 && coord_units!=2) check=FALSE;
             break;
          case 8: // NE corner
-            if (sscanf(com.str(),"NE corner=%g/%g %s",
+            if (sscanf(com.str(),"NE corner=%lg/%lg %s",
                        &coord_NE_x,&coord_NE_y,str)!=3) {check=FALSE; break;}
 
             if (strcmp(str,"radians")==0) coord_units=0;
@@ -606,7 +606,7 @@ int getPNMparams(PNMcomment *comment,
             if (coord_sys==1 && coord_units!=2) check=FALSE;
             break;
          case 9: // SE corner
-            if (sscanf(com.str(),"SE corner=%g/%g %s",
+            if (sscanf(com.str(),"SE corner=%lg/%lg %s",
                        &coord_SE_x,&coord_SE_y,str)!=3) {check=FALSE; break;}
 
             if (strcmp(str,"radians")==0) coord_units=0;
