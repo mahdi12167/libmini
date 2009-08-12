@@ -2,6 +2,8 @@
 
 #include "datacache.h"
 
+#include "minimath.h"
+
 #include "miniOGL.h"
 #include "minishader.h"
 
@@ -858,6 +860,9 @@ void miniterrain::render()
 
    float detailalpha;
 
+   double mvmtx[16];
+   miniv4d invmtx[4];
+
    miniv3d lgl;
 
    if (LNUM>0)
@@ -865,6 +870,20 @@ void miniterrain::render()
       // enable shaders
       if (TPARAMS.useshaders)
          {
+         // compute inverse transpose modelview to transform into eye linear coordinates
+         if (TPARAMS.detailtexmode!=0)
+            {
+            mtxgetmodel(mvmtx);
+
+            invmtx[0]=miniv4d(mvmtx[0],mvmtx[4],mvmtx[8],mvmtx[12]);
+            invmtx[1]=miniv4d(mvmtx[1],mvmtx[5],mvmtx[9],mvmtx[13]);
+            invmtx[2]=miniv4d(mvmtx[2],mvmtx[6],mvmtx[10],mvmtx[14]);
+            invmtx[3]=miniv4d(mvmtx[3],mvmtx[7],mvmtx[11],mvmtx[15]);
+
+            inv_mtx4(invmtx,invmtx);
+            tra_mtx4(invmtx,invmtx);
+            }
+
          // set detail texture parameters
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())
@@ -888,6 +907,9 @@ void miniterrain::render()
 
                   detailu=LAYER[n]->get()->detailu;
                   detailv=LAYER[n]->get()->detailv;
+
+                  detailu=miniv4d(detailu*invmtx[0],detailu*invmtx[1],detailu*invmtx[2],detailu*invmtx[3]);
+                  detailv=miniv4d(detailv*invmtx[0],detailv*invmtx[1],detailv*invmtx[2],detailv*invmtx[3]);
 
                   detailalpha=LAYER[n]->get()->detailalpha;
                   }
