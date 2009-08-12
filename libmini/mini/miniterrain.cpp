@@ -896,11 +896,11 @@ void miniterrain::render()
                                          detailu.x,detailu.y,detailu.z,detailu.w,
                                          detailv.x,detailv.y,detailv.z,detailv.w);
 
-               CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),
-                                           detailalpha);
-
                CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),
                                               detailtexid,detailwidth,detailheight,detailmipmaps);
+
+               CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),
+                                           detailalpha);
                }
 
          // set detail texture mode
