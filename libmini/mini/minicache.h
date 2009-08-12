@@ -88,11 +88,11 @@ class minicache
    void setpixshadertexRGB(unsigned char *image,int width,int height);
    void setpixshadertexRGBA(unsigned char *image,int width,int height);
    void setpixshadertexgen(minitile *terrain,float s1,float s2,float s3,float s4,float t1,float t2,float t3,float t4);
-   void setpixshadertexalpha(minitile *terrain,float alpha);
    void setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components=3,int mipmaps=1);
    void setpixshaderdetailtexRGB(minitile *terrain,unsigned char *image,int width,int height,int mipmaps=1);
    void setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height,int mipmaps=1);
    void setpixshaderdetailtexid(minitile *terrain,int texid,int width,int height,int mipmaps);
+   void setpixshadertexalpha(minitile *terrain,float alpha);
    void usepixshader(int on=1);
 
    //! define optional sea shader

@@ -1616,16 +1616,6 @@ void minicache::setpixshadertexgen(minitile *terrain,float s1,float s2,float s3,
    t->t4=t4;
    }
 
-// define detail texture opacity parameter per tileset
-void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
-   {
-   TERRAIN_TYPE *t;
-
-   t=&TERRAIN[terrain->getid()];
-
-   t->detail_alpha=alpha;
-   }
-
 // define RGB[A] detail texture per tileset
 void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int width,int height,int components,int mipmaps)
    {
@@ -1656,6 +1646,16 @@ void minicache::setpixshaderdetailtex(minitile *terrain,unsigned char *image,int
 
       t->detail_nofree=0;
       }
+   }
+
+// define detail texture opacity parameter per tileset
+void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
+   {
+   TERRAIN_TYPE *t;
+
+   t=&TERRAIN[terrain->getid()];
+
+   t->detail_alpha=alpha;
    }
 
 // define RGB detail texture per tileset
