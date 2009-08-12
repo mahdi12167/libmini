@@ -849,6 +849,15 @@ void miniterrain::render()
    {
    int n;
 
+   int detailtexid;
+   int detailwidth,detailheight;
+   int detailmipmaps;
+
+   miniv4d detailu;
+   miniv4d detailv;
+
+   float detailalpha;
+
    miniv3d lgl;
 
    if (LNUM>0)
@@ -859,15 +868,40 @@ void miniterrain::render()
          // set detail texture parameters
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())
+               {
                if (TPARAMS.detailtexmode==0)
                   {
-                  CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
-                                            0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+                  detailtexid=0;
+                  detailwidth=detailheight=0;
+                  detailmipmaps=0;
 
-                  CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),0.0f);
+                  detailu=detailv=miniv4d(0.0);
 
-                  CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),0,0,0,0);
+                  detailalpha=0.0f;
                   }
+               else
+                  {
+                  detailtexid=LAYER[n]->get()->detailtexid;
+                  detailwidth=LAYER[n]->get()->detailwidth;
+                  detailheight=LAYER[n]->get()->detailheight;
+                  detailmipmaps=LAYER[n]->get()->detailmipmaps;
+
+                  detailu=LAYER[n]->get()->detailu;
+                  detailv=LAYER[n]->get()->detailv;
+
+                  detailalpha=LAYER[n]->get()->detailalpha;
+                  }
+
+               CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
+                                         detailu.x,detailu.y,detailu.z,detailu.w,
+                                         detailv.x,detailv.y,detailv.z,detailv.w);
+
+               CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),
+                                           detailalpha);
+
+               CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),
+                                              detailtexid,detailwidth,detailheight,detailmipmaps);
+               }
 
          // set detail texture mode
          minishader::setdetailtexmode(TPARAMS.detailtexmode,TPARAMS.detailtexalpha,TPARAMS.detailtexmask);
@@ -1286,17 +1320,20 @@ double miniterrain::getcachemem()
    }
 
 // add detail texture
-void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,miniv4d &u,miniv4d &v,float alpha)
+void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,const miniv4d &u,const miniv4d &v,float alpha)
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
          {
-         CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
-                                   u.x,u.y,u.z,u.w,v.x,v.y,v.z,v.w);
+         LAYER[n]->get()->detailtexid=texid;
+         LAYER[n]->get()->detailwidth=width;
+         LAYER[n]->get()->detailheight=height;
+         LAYER[n]->get()->detailmipmaps=mipmaps;
 
-         CACHE->setpixshadertexalpha(LAYER[n]->getterrain()->getminitile(),alpha);
+         LAYER[n]->get()->detailu=u;
+         LAYER[n]->get()->detailv=v;
 
-         CACHE->setpixshaderdetailtexid(LAYER[n]->getterrain()->getminitile(),texid,width,height,mipmaps);
+         LAYER[n]->get()->detailalpha=alpha;
          }
    }
 

@@ -147,6 +147,18 @@ class minilayer
       BOOLINT usewaypoints;
       BOOLINT usebricks;
 
+      // optional detail textures:
+
+      int detailtexid;
+      int detailwidth;
+      int detailheight;
+      int detailmipmaps;
+
+      miniv4d detailu;
+      miniv4d detailv;
+
+      float detailalpha;
+
       // optional way-points:
 
       const char *waypoints;

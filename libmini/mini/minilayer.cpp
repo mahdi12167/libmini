@@ -146,6 +146,18 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.usewaypoints=FALSE;
    LPARAMS.usebricks=FALSE;
 
+   // optional detail textures:
+
+   LPARAMS.detailtexid=0;
+   LPARAMS.detailwidth=0;
+   LPARAMS.detailheight=0;
+   LPARAMS.detailmipmaps=0;
+
+   LPARAMS.detailu=miniv4d(0.0);
+   LPARAMS.detailv=miniv4d(0.0);
+
+   LPARAMS.detailalpha=0.0f;
+
    // optional way-points:
 
    LPARAMS.waypoints="Waypoints.txt"; // waypoint file
