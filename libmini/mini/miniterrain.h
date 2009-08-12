@@ -356,7 +356,16 @@ class miniterrain
    double getcachemem();
 
    //! add detail texture
-   void adddetailtex(int n,int texid,int width,int height,int mipmaps,const miniv4d &u,const miniv4d &v,float alpha);
+   void adddetailtex(int n,
+                     int texid,int width,int height,int mipmaps,
+                     const miniv4d &u,const miniv4d &v,
+                     float alpha=1.0f);
+
+   //! attach detail texture
+   void attachdetailtex(int n,
+                        int texid,int width,int height,int mipmaps,
+                        minicoord center,minicoord west,minicoord north,
+                        float alpha=1.0f);
 
    //! register waypoint renderer
    void registerrndr(minipointrndr *rndr);

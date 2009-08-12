@@ -871,7 +871,7 @@ void miniterrain::render()
       if (TPARAMS.useshaders)
          {
          // compute inverse transpose modelview to transform into eye linear coordinates
-         if (TPARAMS.detailtexmode!=0)
+         if (TPARAMS.detailtexmode!=0 && TPARAMS.detailtexalpha!=0.0f)
             {
             mtxgetmodel(mvmtx);
 
@@ -884,11 +884,11 @@ void miniterrain::render()
             tra_mtx4(invmtx,invmtx);
             }
 
-         // set detail texture parameters
+         // set detail texture parameters in eye linear coordinates
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())
                {
-               if (TPARAMS.detailtexmode==0)
+               if (TPARAMS.detailtexmode==0 || TPARAMS.detailtexalpha==0.0f)
                   {
                   detailtexid=0;
                   detailwidth=detailheight=0;
@@ -1357,6 +1357,38 @@ void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,
 
          LAYER[n]->get()->detailalpha=alpha;
          }
+   }
+
+// attach detail texture
+void miniterrain::attachdetailtex(int n,
+                                  int texid,int width,int height,int mipmaps,
+                                  minicoord center,minicoord west,minicoord north,
+                                  float alpha)
+   {
+   minicoord position,right,front;
+   miniv3d pos,vecu,vecv;
+
+   miniv4d planeu,planev;
+
+   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
+   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
+   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
+
+   position=map_g2o(center);
+   right=map_g2o(west);
+   front=map_g2o(north);
+
+   pos=position.vec;
+   vecu=(right-position).vec;
+   vecv=(front-position).vec;
+
+   vecu/=vecu.getlength2();
+   vecv/=vecv.getlength2();
+
+   planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
+   planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
+
+   adddetailtex(n,texid,width,height,mipmaps,planeu,planev,alpha);
    }
 
 // register waypoint renderer
