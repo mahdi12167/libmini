@@ -682,7 +682,7 @@ void minicache::rendertexmap(int m,int n,int S)
 
             setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
                                -1.0f/(S-1)*(texh-1)/texh,
-                               0.5f/texh,
+                               0.5f/texw,
                                1.0f-0.5f/texh,
                                t->scale);
             }
@@ -1460,13 +1460,15 @@ void minicache::setvtxshadertexgen()
    setvtxprogpar(2,t->s1,t->s2,t->s3,t->s4); // detail texgen s-coordinate
    setvtxprogpar(3,t->t1,t->t2,t->t3,t->t4); // detail texgen t-coordinate
 
-   setvtxprogpar(4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and bias
+   setvtxprogpar(4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and offset
    }
 
 // bind vertex shader detail texture
 void minicache::bindvtxshaderdetailtex()
    {
    TERRAIN_TYPE *t;
+
+   float s1,o1,s2,o2;
 
    t=&TERRAIN[RENDER_ID];
 
@@ -1476,9 +1478,19 @@ void minicache::bindvtxshaderdetailtex()
       bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,t->detail_mipmaps);
       texunit(0);
 
-      setvtxprogpar(4,
-                    0.5f/t->detail_width,(t->detail_width-1)/t->detail_width, // detail texgen scale and bias for s-coordinate
-                    0.5f/t->detail_height,(t->detail_height-1)/t->detail_height); // detail texgen scale and bias for t-coordinate
+      // detail texgen scale and offset for s-coordinate
+      s1=(float)(t->detail_width-1)/t->detail_width;
+      o1=0.5f/t->detail_width;
+
+      // detail texgen scale and offset for t-coordinate
+      s2=(float)(t->detail_height-1)/t->detail_height;
+      o2=0.5f/t->detail_height;
+
+      // detail texgen center shift
+      o1+=0.5*s1;
+      o2+=0.5*s2;
+
+      setvtxprogpar(4,s1,o1,s2,o2);
       }
    }
 
@@ -1794,8 +1806,8 @@ void minicache::enablepixshader()
          texunit(0);
 
          setfrgprogpar(1,
-                       (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                       (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+                       (float)(PIXSHADERTEXWIDTH-1)/PIXSHADERTEXWIDTH,0.5f/PIXSHADERTEXWIDTH, // texture scale and offset for s-coordinate
+                       (float)(PIXSHADERTEXHEIGHT-1)/PIXSHADERTEXHEIGHT,0.5f/PIXSHADERTEXHEIGHT); // texture scale and offset for t-coordinate
          }
 
       for (i=0; i<8; i++)
@@ -1861,8 +1873,8 @@ void minicache::enableseashader()
          texunit(0);
 
          setfrgprogpar(1,
-                       (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and bias for s-coordinate
-                       (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and bias for t-coordinate
+                       (float)(SEASHADERTEXWIDTH-1)/SEASHADERTEXWIDTH,0.5f/SEASHADERTEXWIDTH, // texture scale and offset for s-coordinate
+                       (float)(SEASHADERTEXHEIGHT-1)/SEASHADERTEXHEIGHT,0.5f/SEASHADERTEXHEIGHT); // texture scale and offset for t-coordinate
          }
 
       for (i=0; i<8; i++)
