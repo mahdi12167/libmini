@@ -1674,7 +1674,32 @@ void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLI
 void minilayer::loaddetailtex(const char *detailname,
                               float alpha)
    {
-   //!!
+   char *dtname;
+
+   databuf buf;
+
+   int texid;
+   int width,height;
+   int mipmaps;
+
+   dtname=TILECACHE->getfile(detailname,LPARAMS.altpath);
+
+   if (dtname!=NULL)
+      {
+      if (buf.loaddata(dtname))
+         {
+         mipmaps=0;
+         texid=db2texid(&buf,&width,&height,&mipmaps);
+         buf.release();
+
+         attachdetailtex(texid,width,height,mipmaps,TRUE,
+                         minicoord(miniv3d(-157.9698150*3600,21.5026476*3600,0.0),minicoord::MINICOORD_LLH), //!!
+                         minicoord(miniv3d(-157.9698150*3600+1000,21.5026476*3600,0.0),minicoord::MINICOORD_LLH), //!!
+                         minicoord(miniv3d(-157.9698150*3600,21.5026476*3600+1000,0.0),minicoord::MINICOORD_LLH)); //!!
+         }
+
+      free(dtname);
+      }
    }
 
 // get detail texture

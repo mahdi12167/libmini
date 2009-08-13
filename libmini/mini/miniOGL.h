@@ -3,6 +3,8 @@
 #ifndef MINIOGL_H
 #define MINIOGL_H
 
+#include "database.h"
+
 // OpenGL dependent functions:
 
 namespace miniOGL {
@@ -63,6 +65,8 @@ void deletetexmap(int texid);
 
 int compressRGBtexmap(unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes);
+
+int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
 
 void texunit(int unit);
 void texclientunit(int unit);

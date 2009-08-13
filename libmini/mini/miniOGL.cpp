@@ -1186,6 +1186,33 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
    return(0);
    }
 
+// convert databuffer to texture id
+int db2texid(databuf *buf,int *width,int *height,int *mipmaps)
+   {
+   int texid;
+
+   if (buf->missing()) ERRORMSG();
+
+   if (buf->xsize<2 || buf->ysize<2 ||
+       buf->zsize>1 || buf->tsteps>1) ERRORMSG();
+
+   *width=buf->xsize;
+   *height=buf->ysize;
+
+   if (buf->type==databuf::DATABUF_TYPE_BYTE) texid=buildLtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_S3TC) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=0,1,buf->bytes);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_S3TC) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=0,1,buf->bytes);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_MM) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,0,0,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,0,0,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB_MM_S3TC) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM_S3TC) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
+   else ERRORMSG();
+
+   return(texid);
+   }
+
 void texunit(int unit)
    {
 #ifndef NOOGL

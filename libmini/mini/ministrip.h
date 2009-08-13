@@ -28,8 +28,6 @@
 #define MINI_SNIPPET_FRG_FOOTER "snippet_frg_footer"
 #define MINI_SNIPPET_FRG_END "snippet_frg_end"
 
-#include "database.h"
-
 #include "miniOGL.h"
 
 //! container class for triangle strips
@@ -149,9 +147,6 @@ class ministrip
 
    //! get pixel shader
    char *getpixshader(int num);
-
-   //! convert databuffer to texture id
-   static int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
 
    protected:
 

@@ -209,7 +209,7 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
                   free(filename);
 
                   vpoint->opts->datatexmipmaps=1;
-                  vpoint->opts->datatexid=ministrip::db2texid(&buf,&vpoint->opts->datatexwidth,&vpoint->opts->datatexheight,&vpoint->opts->datatexmipmaps);
+                  vpoint->opts->datatexid=db2texid(&buf,&vpoint->opts->datatexwidth,&vpoint->opts->datatexheight,&vpoint->opts->datatexmipmaps);
                   buf.release();
                   }
 
