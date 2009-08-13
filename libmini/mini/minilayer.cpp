@@ -148,11 +148,6 @@ minilayer::minilayer(minicache *cache)
 
    // optional detail textures:
 
-   LPARAMS.detailtexid=0;
-   LPARAMS.detailwidth=0;
-   LPARAMS.detailheight=0;
-   LPARAMS.detailmipmaps=0;
-
    LPARAMS.detailu=miniv4d(0.0);
    LPARAMS.detailv=miniv4d(0.0);
 
@@ -193,6 +188,13 @@ minilayer::minilayer(minicache *cache)
 
    REFERENCE=NULL;
    MTXREF[0]=MTXREF[1]=MTXREF[2]=miniv4d(0.0);
+
+   DETAILTEXID=0;
+   DETAILWIDTH=0;
+   DETAILHEIGHT=0;
+   DETAILMIPMAPS=0;
+
+   DETAILOWNER=FALSE;
 
    POINTS=NULL;
 
@@ -241,6 +243,10 @@ minilayer::~minilayer()
 
          // delete the terrain
          delete TERRAIN;
+
+         // delete detail texture
+         if (DETAILOWNER)
+            if (DETAILTEXID!=0) deletetexmap(DETAILTEXID);
 
          // delete the waypoints
          if (POINTS!=NULL) delete POINTS;
@@ -1610,6 +1616,29 @@ int minilayer::getcacheid()
    if (!LOADED || TERRAIN==NULL) return(-1);
    else if (TERRAIN->getminitile()==NULL) return(-1);
    return(TERRAIN->getminitile()->getid());
+   }
+
+// add detail texture
+void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner)
+   {
+   if (DETAILOWNER)
+      if (DETAILTEXID!=0) deletetexmap(DETAILTEXID);
+
+   DETAILTEXID=texid;
+   DETAILWIDTH=width;
+   DETAILHEIGHT=height;
+   DETAILMIPMAPS=mipmaps;
+
+   DETAILOWNER=owner;
+   }
+
+// get detail texture
+void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps)
+   {
+   texid=DETAILTEXID;
+   width=DETAILWIDTH;
+   height=DETAILHEIGHT;
+   mipmaps=DETAILMIPMAPS;
    }
 
 // render waypoints

@@ -900,10 +900,7 @@ void miniterrain::render()
                   }
                else
                   {
-                  detailtexid=LAYER[n]->get()->detailtexid;
-                  detailwidth=LAYER[n]->get()->detailwidth;
-                  detailheight=LAYER[n]->get()->detailheight;
-                  detailmipmaps=LAYER[n]->get()->detailmipmaps;
+                  LAYER[n]->getdetailtex(detailtexid,detailwidth,detailheight,detailmipmaps);
 
                   detailu=LAYER[n]->get()->detailu;
                   detailv=LAYER[n]->get()->detailv;
@@ -1342,15 +1339,15 @@ double miniterrain::getcachemem()
    }
 
 // add detail texture
-void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,const miniv4d &u,const miniv4d &v,float alpha)
+void miniterrain::adddetailtex(int n,
+                               int texid,int width,int height,int mipmaps,BOOLINT owner,
+                               const miniv4d &u,const miniv4d &v,
+                               float alpha)
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
          {
-         LAYER[n]->get()->detailtexid=texid;
-         LAYER[n]->get()->detailwidth=width;
-         LAYER[n]->get()->detailheight=height;
-         LAYER[n]->get()->detailmipmaps=mipmaps;
+         LAYER[n]->adddetailtex(texid,width,height,mipmaps,owner);
 
          LAYER[n]->get()->detailu=u;
          LAYER[n]->get()->detailv=v;
@@ -1361,7 +1358,7 @@ void miniterrain::adddetailtex(int n,int texid,int width,int height,int mipmaps,
 
 // attach detail texture
 void miniterrain::attachdetailtex(int n,
-                                  int texid,int width,int height,int mipmaps,
+                                  int texid,int width,int height,int mipmaps,BOOLINT owner,
                                   minicoord center,minicoord west,minicoord north,
                                   float alpha)
    {
@@ -1388,7 +1385,7 @@ void miniterrain::attachdetailtex(int n,
    planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
    planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
 
-   adddetailtex(n,texid,width,height,mipmaps,planeu,planev,alpha);
+   adddetailtex(n,texid,width,height,mipmaps,owner,planeu,planev,alpha);
    }
 
 // register waypoint renderer

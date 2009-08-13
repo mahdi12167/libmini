@@ -357,13 +357,13 @@ class miniterrain
 
    //! add detail texture
    void adddetailtex(int n,
-                     int texid,int width,int height,int mipmaps,
+                     int texid,int width,int height,int mipmaps,BOOLINT owner,
                      const miniv4d &u,const miniv4d &v,
                      float alpha=1.0f);
 
    //! attach detail texture
    void attachdetailtex(int n,
-                        int texid,int width,int height,int mipmaps,
+                        int texid,int width,int height,int mipmaps,BOOLINT owner,
                         minicoord center,minicoord west,minicoord north,
                         float alpha=1.0f);
 

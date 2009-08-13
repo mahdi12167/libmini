@@ -149,11 +149,6 @@ class minilayer
 
       // optional detail textures:
 
-      int detailtexid;
-      int detailwidth;
-      int detailheight;
-      int detailmipmaps;
-
       miniv4d detailu;
       miniv4d detailv;
 
@@ -310,6 +305,12 @@ class minilayer
    //! get the internal cache id (-1 = no tileset)
    int getcacheid();
 
+   //! add detail texture
+   void adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner);
+
+   //! get detail texture
+   void getdetailtex(int &texid,int &width,int &height,int &mipmaps);
+
    //! render waypoints
    void renderpoints();
 
@@ -370,6 +371,13 @@ class minilayer
 
    miniload *TERRAIN;
    datacache *TILECACHE;
+
+   int DETAILTEXID;
+   int DETAILWIDTH;
+   int DETAILHEIGHT;
+   int DETAILMIPMAPS;
+
+   BOOLINT DETAILOWNER;
 
    minipoint *POINTS;
 
