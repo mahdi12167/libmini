@@ -52,6 +52,10 @@ class ministring: public ministring_base
    ~ministring()
       {if (cstr!=NULL) free(cstr);}
 
+   //! append
+   void append(const ministring_base &a)
+      {ministring_base::append(a);}
+
    //! append from c-string
    void append(const char *str)
       {ministring_base::append(ministring(str));}
