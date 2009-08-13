@@ -1661,8 +1661,8 @@ void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLI
    vecu=(right-position).vec;
    vecv=(front-position).vec;
 
-   vecu/=vecu.getlength2();
-   vecv/=vecv.getlength2();
+   vecu/=2.0*vecu.getlength2();
+   vecv/=-2.0*vecv.getlength2();
 
    planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
    planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
@@ -1682,6 +1682,8 @@ void minilayer::loaddetailtex(const char *detailname,
    int width,height;
    int mipmaps;
 
+   miniv3d sw,nw,ne,se;
+
    dtname=TILECACHE->getfile(detailname,LPARAMS.altpath);
 
    if (dtname!=NULL)
@@ -1692,10 +1694,15 @@ void minilayer::loaddetailtex(const char *detailname,
          texid=db2texid(&buf,&width,&height,&mipmaps);
          buf.release();
 
+         sw=miniv3d(buf.LLWGS84_swx*3600.0,buf.LLWGS84_swy*3600.0,0.0);
+         nw=miniv3d(buf.LLWGS84_nwx*3600.0,buf.LLWGS84_nwy*3600.0,0.0);
+         ne=miniv3d(buf.LLWGS84_nex*3600.0,buf.LLWGS84_ney*3600.0,0.0);
+         se=miniv3d(buf.LLWGS84_sex*3600.0,buf.LLWGS84_sey*3600.0,0.0);
+
          attachdetailtex(texid,width,height,mipmaps,TRUE,
-                         minicoord(miniv3d(-157.9698150*3600,21.5026476*3600,0.0),minicoord::MINICOORD_LLH), //!!
-                         minicoord(miniv3d(-157.9698150*3600+1000,21.5026476*3600,0.0),minicoord::MINICOORD_LLH), //!!
-                         minicoord(miniv3d(-157.9698150*3600,21.5026476*3600+1000,0.0),minicoord::MINICOORD_LLH)); //!!
+                         minicoord(0.25*(sw+nw+ne+se),minicoord::MINICOORD_LLH),
+                         minicoord(0.5*(se+ne),minicoord::MINICOORD_LLH),
+                         minicoord(0.5*(nw+ne),minicoord::MINICOORD_LLH));
          }
 
       free(dtname);
