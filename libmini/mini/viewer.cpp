@@ -1489,6 +1489,10 @@ int main(int argc,char *argv[])
    // load settings
    loadsettings();
 
+   //!!
+   viewer->getearth()->getterrain()->loaddetailtex(viewer->getearth()->getterrain()->getreference(),"manana.db");
+   viewer->getearth()->getterrain()->get()->detailtexmode=1;
+
    // initialize waypoint addons
    initaddons();
 

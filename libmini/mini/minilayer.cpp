@@ -153,6 +153,8 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.detailalpha=0.0f;
 
+   LPARAMS.maxdetailsize=2048;
+
    // optional way-points:
 
    LPARAMS.waypoints="Waypoints.txt"; // waypoint file
@@ -1699,7 +1701,7 @@ void minilayer::loaddetailtex(const char *detailname,
       if (buf.loaddata(dtname))
          {
          // resample to next power of 2
-         buf.resample2();
+         buf.resample2(LPARAMS.maxdetailsize);
 
          // convert db data into texture map
          mipmaps=0;

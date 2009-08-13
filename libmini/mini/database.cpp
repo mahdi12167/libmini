@@ -2278,7 +2278,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_RGB:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*3*tsteps))==NULL) MEMERROR();
+         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps*3))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2302,11 +2302,11 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
          ysize=ys;
          zsize=zs;
 
-         bytes=xsize*ysize*zsize*3*tsteps;
+         bytes=xsize*ysize*zsize*tsteps*3;
 
          break;
       case DATABUF_TYPE_RGBA:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*4*tsteps))==NULL) MEMERROR();
+         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps*4))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2331,7 +2331,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
          ysize=ys;
          zsize=zs;
 
-         bytes=xsize*ysize*zsize*4*tsteps;
+         bytes=xsize*ysize*zsize*tsteps*4;
 
          break;
       }
@@ -2495,8 +2495,11 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    float val1,val2,val3,val4;
    float val5,val6,val7,val8;
 
-   ERRORCHK(x<0.0f || x>1.0f);
-   ERRORCHK(y<0.0f || y>1.0f);
+   if (x<0.0f) x=0.0f;
+   else if (x>1.0f) x=1.0f;
+
+   if (y<0.0f) y=0.0f;
+   else if (y>1.0f) y=1.0f;
 
    x*=xsize-1;
    y*=ysize-1;
@@ -2510,19 +2513,19 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    y-=j;
    z-=k;
 
-   if (i==xsize-1)
+   if (i==xsize-1 && xsize>1)
       {
       i=xsize-2;
       x=1.0f;
       }
 
-   if (j==ysize-1)
+   if (j==ysize-1 && ysize>1)
       {
       j=ysize-2;
       y=1.0f;
       }
 
-   if (k==zsize-1)
+   if (k==zsize-1 && zsize>1)
       {
       k=zsize-2;
       z=1.0f;
@@ -2800,13 +2803,16 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
 
    unsigned char *ptr;
 
-   unsigned int slice;
-
    float val1,val2,val3,val4;
    float val5,val6,val7,val8;
 
-   ERRORCHK(x<0.0f || x>1.0f);
-   ERRORCHK(y<0.0f || y>1.0f);
+   if (x<0.0f) x=0.0f;
+   else if (x>1.0f) x=1.0f;
+
+   if (y<0.0f) y=0.0f;
+   else if (y>1.0f) y=1.0f;
+
+   color[0]=color[1]=color[2]=color[3]=0.0f;
 
    if (type==DATABUF_TYPE_RGB) channels=3;
    else if (type==DATABUF_TYPE_RGBA) channels=4;
@@ -2824,25 +2830,23 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
    y-=j;
    z-=k;
 
-   if (i==xsize-1)
+   if (i==xsize-1 && xsize>1)
       {
       i=xsize-2;
       x=1.0f;
       }
 
-   if (j==ysize-1)
+   if (j==ysize-1 && ysize>1)
       {
       j=ysize-2;
       y=1.0f;
       }
 
-   if (k==zsize-1)
+   if (k==zsize-1 && zsize>1)
       {
       k=zsize-2;
       z=1.0f;
       }
-
-   slice=channels*xsize*ysize;
 
    for (channel=0; channel<channels; channel++)
       {
@@ -2868,10 +2872,10 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
                                        y*((1.0f-x)*val3+x*val4))+bias;
             else
                {
-               val5=ptr[channels*slice];
-               val6=ptr[channels*(slice+1)];
-               val7=ptr[channels*(slice+xsize)];
-               val8=ptr[channels*(slice+xsize+1)];
+               val5=ptr[channels*xsize*ysize];
+               val6=ptr[channels*(xsize*ysize+1)];
+               val7=ptr[channels*(xsize*(ysize+1))];
+               val8=ptr[channels*(xsize*(ysize+1)+1)];
 
                color[channel]=scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
                                                  y*((1.0f-x)*val3+x*val4))+
