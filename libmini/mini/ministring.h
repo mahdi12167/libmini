@@ -75,6 +75,8 @@ class ministring: public ministring_base
 
       s=sub.getsize();
 
+      idx=0;
+
       if (s==0) return(FALSE);
 
       for (idx=0; idx+s<=SIZE; idx++)
@@ -109,6 +111,8 @@ class ministring: public ministring_base
 
       s=sub.getsize();
 
+      idx=0;
+
       if (s==0) return(FALSE);
 
       for (i=0; i<SIZE; i++)
@@ -135,7 +139,7 @@ class ministring: public ministring_base
       {return(findr(ministring(sub),idx));}
 
    //! check for existing sub-string and return remaining tail
-   ministring_base tail(const ministring_base &sub) const
+   ministring tail(const ministring_base &sub) const
       {
       unsigned int i;
 
@@ -144,18 +148,18 @@ class ministring: public ministring_base
       ministring rem;
 
       if (!find(sub,idx)) return(*this);
-      else
-         for (i=idx+sub.getsize(); i<SIZE; i++) rem.append(get(i));
+
+      for (i=idx+sub.getsize(); i<SIZE; i++) rem.append(get(i));
 
       return(rem);
       }
 
    //! check for existing sub-c-string and return remaining tail
-   ministring_base tail(const char *sub) const
+   ministring tail(const char *sub) const
       {return(tail(ministring(sub)));}
 
    //! check for existing sub-string in reverse order and return remaining head
-   ministring_base head(const ministring_base &sub) const
+   ministring head(const ministring_base &sub) const
       {
       unsigned int i;
 
@@ -164,14 +168,14 @@ class ministring: public ministring_base
       ministring rem;
 
       if (!findr(sub,idx)) return(*this);
-      else
-         for (i=0; i<idx; i++) rem.append(get(i));
+
+      for (i=0; i<idx; i++) rem.append(get(i));
 
       return(rem);
       }
 
    //! check for existing sub-c-string in reverse order and return remaining head
-   ministring_base head(const char *sub) const
+   ministring head(const char *sub) const
       {return(head(ministring(sub)));}
 
    //! substitute sub-strings
