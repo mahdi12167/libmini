@@ -154,6 +154,8 @@ class minilayer
 
       float detailalpha;
 
+      int maxdetailsize;
+
       // optional way-points:
 
       const char *waypoints;
