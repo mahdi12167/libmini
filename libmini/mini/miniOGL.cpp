@@ -1196,6 +1196,8 @@ int db2texid(databuf *buf,int *width,int *height,int *mipmaps)
    if (buf->xsize<2 || buf->ysize<2 ||
        buf->zsize>1 || buf->tsteps>1) ERRORMSG();
 
+   texid=0;
+
    *width=buf->xsize;
    *height=buf->ysize;
 
@@ -1208,7 +1210,6 @@ int db2texid(databuf *buf,int *width,int *height,int *mipmaps)
    else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,0,0,1);
    else if (buf->type==databuf::DATABUF_TYPE_RGB_MM_S3TC) texid=buildRGBtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
    else if (buf->type==databuf::DATABUF_TYPE_RGBA_MM_S3TC) texid=buildRGBAtexmap((unsigned char *)buf->data,width,height,*mipmaps=1,1,buf->bytes,1);
-   else ERRORMSG();
 
    return(texid);
    }
