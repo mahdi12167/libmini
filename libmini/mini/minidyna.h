@@ -182,10 +182,7 @@ class minidyna
       unsigned int i;
 
       for (i=0; i<SIZE; i++)
-         {
-         idx=SIZE-1-i;
-         if (get(idx)==v) return(TRUE);
-         }
+         if (get(idx=SIZE-1-i)==v) return(TRUE);
 
       return(FALSE);
       }

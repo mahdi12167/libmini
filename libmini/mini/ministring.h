@@ -52,10 +52,6 @@ class ministring: public ministring_base
    ~ministring()
       {if (cstr!=NULL) free(cstr);}
 
-   //! append
-   void append(const ministring_base &a)
-      {ministring_base::append(a);}
-
    //! append from c-string
    void append(const char *str)
       {ministring_base::append(ministring(str));}
@@ -64,7 +60,69 @@ class ministring: public ministring_base
    void append(double v)
       {append(ministring(v));}
 
-   //! substitute sub-string
+   //! check for existing sub-string and return first occurring index
+   BOOLINT find(const ministring_base &sub,unsigned int &idx) const
+      {
+      unsigned int i;
+
+      unsigned int s;
+
+      BOOLINT found;
+
+      s=sub.getsize();
+
+      if (s==0) return(FALSE);
+
+      for (idx=0; idx+s<=SIZE; idx++)
+         {
+         found=TRUE;
+
+         for (i=0; i<s; i++)
+            if (get(idx+i)!=a[i])
+               {
+               found=FALSE;
+               break;
+               }
+
+         if (found) return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   //! check for existing sub-string in reverse order and return first occurring index
+   BOOLINT findr(const ministring_base &sub,unsigned int &idx) const
+      {
+      unsigned int i,j;
+
+      unsigned int s;
+
+      BOOLINT found;
+
+      s=sub.getsize();
+
+      if (s==0) return(FALSE);
+
+      for (i=0; i<SIZE; i++)
+         {
+         idx=SIZE-1-i;
+
+         found=TRUE;
+
+         for (j=0; j<s; j++)
+            if (get(idx+j)!=a[j])
+               {
+               found=FALSE;
+               break;
+               }
+
+         if (found) return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   //! substitute sub-strings
    void substitute(const ministring_base &sub,const ministring_base &with)
       {
       unsigned int i,j;
@@ -109,7 +167,7 @@ class ministring: public ministring_base
          }
       }
 
-   //! substitute c-string
+   //! substitute c-strings
    void substitute(const char *sub,const char *with)
       {substitute(ministring(sub),ministring(with));}
 
