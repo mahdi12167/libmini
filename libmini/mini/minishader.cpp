@@ -136,7 +136,7 @@ void minishader::setVISshader(minicache *cache,
       ## blend in detail texture \n\
       MUL opa.a,colt.a,o.a; \n\
       MUL opa.a,opa.a,c3.a; \n\
-      LRP col,opa.a,colt,col; \n";
+      LRP col.rgb,opa.a,colt,col; \n";
 
    // fragment program for the terrain (main snippet #6, modulate mode)
    static const char *frgprog1_s6m="\
@@ -145,7 +145,7 @@ void minishader::setVISshader(minicache *cache,
       MUL opa.a,opa.a,c3.a; \n\
       SUB opa.x,c4.a,opa.a; \n\
       MAD colt,colt,opa.a,opa.x; \n\
-      MUL col,col,colt; \n";
+      MUL col.rgb,col,colt; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
    static const char *frgprog_t1="\
