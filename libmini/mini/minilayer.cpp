@@ -1644,25 +1644,33 @@ void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLI
                                 minicoord center,minicoord west,minicoord north,
                                 float alpha)
    {
-   minicoord position,right,front;
+   minicoord east,south;
+   minicoord position,right,left,front,back;
    miniv3d pos,vecu,vecv;
 
    miniv4d planeu,planev;
 
+   east=center-(west-center);
+   south=center-(north-center);
+
    if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
    if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
    if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
+   if (east.type!=minicoord::MINICOORD_LINEAR) east.convert2(minicoord::MINICOORD_ECEF);
+   if (south.type!=minicoord::MINICOORD_LINEAR) south.convert2(minicoord::MINICOORD_ECEF);
 
    position=map_g2o(center);
    right=map_g2o(west);
    front=map_g2o(north);
+   left=map_g2o(east);
+   back=map_g2o(south);
 
    pos=position.vec;
-   vecu=(right-position).vec;
-   vecv=(front-position).vec;
+   vecu=(right-left).vec;
+   vecv=(front-back).vec;
 
-   vecu/=2.0*vecu.getlength2();
-   vecv/=-2.0*vecv.getlength2();
+   vecu/=vecu.getlength2();
+   vecv/=-vecv.getlength2();
 
    planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
    planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
@@ -1690,15 +1698,21 @@ void minilayer::loaddetailtex(const char *detailname,
       {
       if (buf.loaddata(dtname))
          {
+         // resample to next power of 2
+         buf.resample2();
+
+         // convert db data into texture map
          mipmaps=0;
          texid=db2texid(&buf,&width,&height,&mipmaps);
          buf.release();
 
+         // extract corners
          sw=miniv3d(buf.LLWGS84_swx*3600.0,buf.LLWGS84_swy*3600.0,0.0);
          nw=miniv3d(buf.LLWGS84_nwx*3600.0,buf.LLWGS84_nwy*3600.0,0.0);
          ne=miniv3d(buf.LLWGS84_nex*3600.0,buf.LLWGS84_ney*3600.0,0.0);
          se=miniv3d(buf.LLWGS84_sex*3600.0,buf.LLWGS84_sey*3600.0,0.0);
 
+         // attach texture at center
          attachdetailtex(texid,width,height,mipmaps,TRUE,
                          minicoord(0.25*(sw+nw+ne+se),minicoord::MINICOORD_LLH),
                          minicoord(0.5*(se+ne),minicoord::MINICOORD_LLH),
