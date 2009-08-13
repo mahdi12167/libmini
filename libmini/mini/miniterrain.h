@@ -367,6 +367,11 @@ class miniterrain
                         minicoord center,minicoord west,minicoord north,
                         float alpha=1.0f);
 
+   //! load detail texture
+   void loaddetailtex(int n,
+                      const char *detailname,
+                      float alpha=1.0f);
+
    //! register waypoint renderer
    void registerrndr(minipointrndr *rndr);
 

@@ -178,8 +178,8 @@ miniterrain::miniterrain()
    // optional detail textures:
 
    TPARAMS.detailtexmode=0;     // detail texture mode (0=off 1=overlay 2=modulate)
-   TPARAMS.detailtexalpha=0.0f; // detail texture opacity
-   TPARAMS.detailtexmask=0;     // detail texture mask (0=off 1=on)
+   TPARAMS.detailtexalpha=1.0f; // detail texture opacity
+   TPARAMS.detailtexmask=1;     // detail texture mask (0=off 1=on)
 
    // optional way-points:
 
@@ -900,15 +900,12 @@ void miniterrain::render()
                   }
                else
                   {
-                  LAYER[n]->getdetailtex(detailtexid,detailwidth,detailheight,detailmipmaps);
-
-                  detailu=LAYER[n]->get()->detailu;
-                  detailv=LAYER[n]->get()->detailv;
+                  LAYER[n]->getdetailtex(detailtexid,detailwidth,detailheight,detailmipmaps,
+                                         detailu,detailv,
+                                         detailalpha);
 
                   detailu=miniv4d(detailu*invmtx[0],detailu*invmtx[1],detailu*invmtx[2],detailu*invmtx[3]);
                   detailv=miniv4d(detailv*invmtx[0],detailv*invmtx[1],detailv*invmtx[2],detailv*invmtx[3]);
-
-                  detailalpha=LAYER[n]->get()->detailalpha;
                   }
 
                CACHE->setpixshadertexgen(LAYER[n]->getterrain()->getminitile(),
@@ -1346,14 +1343,7 @@ void miniterrain::adddetailtex(int n,
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
-         {
-         LAYER[n]->adddetailtex(texid,width,height,mipmaps,owner);
-
-         LAYER[n]->get()->detailu=u;
-         LAYER[n]->get()->detailv=v;
-
-         LAYER[n]->get()->detailalpha=alpha;
-         }
+         LAYER[n]->adddetailtex(texid,width,height,mipmaps,owner,u,v,alpha);
    }
 
 // attach detail texture
@@ -1362,30 +1352,19 @@ void miniterrain::attachdetailtex(int n,
                                   minicoord center,minicoord west,minicoord north,
                                   float alpha)
    {
-   minicoord position,right,front;
-   miniv3d pos,vecu,vecv;
+   if (n>=0 && n<LNUM)
+      if (LAYER[n]->istileset())
+         LAYER[n]->attachdetailtex(texid,width,height,mipmaps,owner,center,west,north,alpha);
+   }
 
-   miniv4d planeu,planev;
-
-   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
-   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
-   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
-
-   position=map_g2o(center);
-   right=map_g2o(west);
-   front=map_g2o(north);
-
-   pos=position.vec;
-   vecu=(right-position).vec;
-   vecv=(front-position).vec;
-
-   vecu/=vecu.getlength2();
-   vecv/=vecv.getlength2();
-
-   planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
-   planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
-
-   adddetailtex(n,texid,width,height,mipmaps,owner,planeu,planev,alpha);
+// load detail texture
+void miniterrain::loaddetailtex(int n,
+                                const char *detailname,
+                                float alpha)
+   {
+   if (n>=0 && n<LNUM)
+      if (LAYER[n]->istileset())
+         LAYER[n]->loaddetailtex(detailname,alpha);
    }
 
 // register waypoint renderer

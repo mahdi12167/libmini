@@ -1619,7 +1619,9 @@ int minilayer::getcacheid()
    }
 
 // add detail texture
-void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner)
+void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
+                             const miniv4d &u,const miniv4d &v,
+                             float alpha)
    {
    if (DETAILOWNER)
       if (DETAILTEXID!=0) deletetexmap(DETAILTEXID);
@@ -1630,15 +1632,65 @@ void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT 
    DETAILMIPMAPS=mipmaps;
 
    DETAILOWNER=owner;
+
+   LPARAMS.detailu=u;
+   LPARAMS.detailv=v;
+
+   LPARAMS.detailalpha=alpha;
+   }
+
+// attach detail texture
+void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
+                                minicoord center,minicoord west,minicoord north,
+                                float alpha)
+   {
+   minicoord position,right,front;
+   miniv3d pos,vecu,vecv;
+
+   miniv4d planeu,planev;
+
+   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
+   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
+   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
+
+   position=map_g2o(center);
+   right=map_g2o(west);
+   front=map_g2o(north);
+
+   pos=position.vec;
+   vecu=(right-position).vec;
+   vecv=(front-position).vec;
+
+   vecu/=vecu.getlength2();
+   vecv/=vecv.getlength2();
+
+   planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
+   planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
+
+   adddetailtex(texid,width,height,mipmaps,owner,planeu,planev,alpha);
+   }
+
+// load detail texture
+void minilayer::loaddetailtex(const char *detailname,
+                              float alpha)
+   {
+   //!!
    }
 
 // get detail texture
-void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps)
+void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps,
+                             miniv4d &u,miniv4d &v,
+                             float &alpha)
    {
    texid=DETAILTEXID;
    width=DETAILWIDTH;
    height=DETAILHEIGHT;
    mipmaps=DETAILMIPMAPS;
+
+   u=LPARAMS.detailu;
+   v=LPARAMS.detailv;
+
+   alpha=LPARAMS.detailalpha;
    }
 
 // render waypoints

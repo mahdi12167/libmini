@@ -306,10 +306,23 @@ class minilayer
    int getcacheid();
 
    //! add detail texture
-   void adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner);
+   void adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
+                     const miniv4d &u,const miniv4d &v,
+                     float alpha=1.0f);
+
+   //! attach detail texture
+   void attachdetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
+                        minicoord center,minicoord west,minicoord north,
+                        float alpha=1.0f);
+
+   //! load detail texture
+   void loaddetailtex(const char *detailname,
+                      float alpha=1.0f);
 
    //! get detail texture
-   void getdetailtex(int &texid,int &width,int &height,int &mipmaps);
+   void getdetailtex(int &texid,int &width,int &height,int &mipmaps,
+                     miniv4d &u,miniv4d &v,
+                     float &alpha);
 
    //! render waypoints
    void renderpoints();
