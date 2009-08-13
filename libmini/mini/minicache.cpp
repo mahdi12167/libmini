@@ -1460,15 +1460,13 @@ void minicache::setvtxshadertexgen()
    setvtxprogpar(2,t->s1,t->s2,t->s3,t->s4); // detail texgen s-coordinate
    setvtxprogpar(3,t->t1,t->t2,t->t3,t->t4); // detail texgen t-coordinate
 
-   setvtxprogpar(4,1.0f,0.0f,1.0f,0.0f); // detail texgen scale and offset
+   setvtxprogpar(4,1.0f,0.5f,1.0f,0.5f); // detail texgen scale and offset
    }
 
 // bind vertex shader detail texture
 void minicache::bindvtxshaderdetailtex()
    {
    TERRAIN_TYPE *t;
-
-   float s1,o1,s2,o2;
 
    t=&TERRAIN[RENDER_ID];
 
@@ -1477,20 +1475,6 @@ void minicache::bindvtxshaderdetailtex()
       texunit(2);
       bindtexmap(t->detail_texid,t->detail_width,t->detail_height,0,t->detail_mipmaps);
       texunit(0);
-
-      // detail texgen scale and offset for s-coordinate
-      s1=(float)(t->detail_width-1)/t->detail_width;
-      o1=0.5f/t->detail_width;
-
-      // detail texgen scale and offset for t-coordinate
-      s2=(float)(t->detail_height-1)/t->detail_height;
-      o2=0.5f/t->detail_height;
-
-      // detail texgen center shift
-      o1+=0.5*s1;
-      o2+=0.5*s2;
-
-      setvtxprogpar(4,s1,o1,s2,o2);
       }
    }
 
