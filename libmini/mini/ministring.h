@@ -82,7 +82,7 @@ class ministring: public ministring_base
          found=TRUE;
 
          for (i=0; i<s; i++)
-            if (get(idx+i)!=a[i])
+            if (get(idx+i)!=sub[i])
                {
                found=FALSE;
                break;
@@ -114,7 +114,7 @@ class ministring: public ministring_base
          found=TRUE;
 
          for (j=0; j<s; j++)
-            if (get(idx+j)!=a[j])
+            if (get(idx+j)!=sub[j])
                {
                found=FALSE;
                break;
