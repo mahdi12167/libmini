@@ -284,6 +284,9 @@ class databuf
    //! resample data at a higher resolution
    void resampledata(unsigned int xs,unsigned int ys,unsigned int zs);
 
+   //! resample data to next power of 2
+   void resample2(unsigned int maxsize=0);
+
    //! get the minimum and maximum scalar value
    void getminmax(float *minval=0,float *maxval=0);
 
@@ -354,6 +357,9 @@ class databuf
    void getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[3]);
    void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,float value[4]);
    void getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[4]);
+
+   //! get an interpolated rgba color
+   void getrgbacolor(float x,float y,float z,unsigned int t,float color[4]);
 
    //! print values
    void print();

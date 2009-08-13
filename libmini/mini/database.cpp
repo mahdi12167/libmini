@@ -2184,6 +2184,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
    float *floatptr;
 
    float value;
+   float color[4];
 
    if (xs<2 && ys<2 && zs<2) ERRORMSG();
    if (xsize<2 && ysize<2 && zsize<2) ERRORMSG();
@@ -2276,7 +2277,88 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
          bytes=xsize*ysize*zsize*tsteps*4;
 
          break;
+      case DATABUF_TYPE_RGB:
+         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*3*tsteps))==NULL) MEMERROR();
+
+         for (t=0; t<tsteps; t++)
+            for (i=0; i<xs; i++)
+               for (j=0; j<ys; j++)
+                  for (k=0; k<zs; k++)
+                     {
+                     if (xs<2) getrgbacolor(0.0f,0.0f,0.0f,t,color);
+                     else if (ys<2) getrgbacolor((float)i/(xs-1),0.0f,0.0f,t,color);
+                     else if (zs<2) getrgbacolor((float)i/(xs-1),(float)j/(ys-1),0.0f,t,color);
+                     else getrgbacolor((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t,color);
+
+                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)]=ftrc((color[0]-bias)/scaling+0.5f);
+                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)+1]=ftrc((color[1]-bias)/scaling+0.5f);
+                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)+2]=ftrc((color[2]-bias)/scaling+0.5f);
+                     }
+
+         free(data);
+         data=byteptr;
+
+         xsize=xs;
+         ysize=ys;
+         zsize=zs;
+
+         bytes=xsize*ysize*zsize*3*tsteps;
+
+         break;
+      case DATABUF_TYPE_RGBA:
+         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*4*tsteps))==NULL) MEMERROR();
+
+         for (t=0; t<tsteps; t++)
+            for (i=0; i<xs; i++)
+               for (j=0; j<ys; j++)
+                  for (k=0; k<zs; k++)
+                     {
+                     if (xs<2) getrgbacolor(0.0f,0.0f,0.0f,t,color);
+                     else if (ys<2) getrgbacolor((float)i/(xs-1),0.0f,0.0f,t,color);
+                     else if (zs<2) getrgbacolor((float)i/(xs-1),(float)j/(ys-1),0.0f,t,color);
+                     else getrgbacolor((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t,color);
+
+                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)]=ftrc((color[0]-bias)/scaling+0.5f);
+                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+1]=ftrc((color[1]-bias)/scaling+0.5f);
+                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+2]=ftrc((color[2]-bias)/scaling+0.5f);
+                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+3]=ftrc((color[3]-bias)/scaling+0.5f);
+                     }
+
+         free(data);
+         data=byteptr;
+
+         xsize=xs;
+         ysize=ys;
+         zsize=zs;
+
+         bytes=xsize*ysize*zsize*4*tsteps;
+
+         break;
       }
+   }
+
+// resample data to next power of 2
+void databuf::resample2(unsigned int maxsize)
+   {
+   unsigned int xs,ys,zs;
+   unsigned int xs2,ys2,zs2;
+
+   xs=xsize;
+   ys=ysize;
+   zs=zsize;
+
+   if (maxsize>0)
+      {
+      if (xs>maxsize) xs=maxsize;
+      if (ys>maxsize) ys=maxsize;
+      if (zs>maxsize) zs=maxsize;
+      }
+
+   for (xs2=1; xs2<xs; xs2*=2);
+   for (ys2=1; ys2<ys; ys2*=2);
+   for (zs2=1; zs2<zs; zs2*=2);
+
+   resampledata(xs2,ys2,zs2);
    }
 
 // set a single scalar value
@@ -2412,6 +2494,9 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
 
    float val1,val2,val3,val4;
    float val5,val6,val7,val8;
+
+   ERRORCHK(x<0.0f || x>1.0f);
+   ERRORCHK(y<0.0f || y>1.0f);
 
    x*=xsize-1;
    y*=ysize-1;
@@ -2703,6 +2788,101 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
       value[2]=ptr[2]*scaling+bias;
       value[3]=ptr[3]*scaling+bias;
       }
+   }
+
+// get an interpolated rgb color
+void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4])
+   {
+   int channel;
+   int channels;
+
+   unsigned int i,j,k;
+
+   unsigned char *ptr;
+
+   unsigned int slice;
+
+   float val1,val2,val3,val4;
+   float val5,val6,val7,val8;
+
+   ERRORCHK(x<0.0f || x>1.0f);
+   ERRORCHK(y<0.0f || y>1.0f);
+
+   if (type==DATABUF_TYPE_RGB) channels=3;
+   else if (type==DATABUF_TYPE_RGBA) channels=4;
+   else return;
+
+   x*=xsize-1;
+   y*=ysize-1;
+   z*=zsize-1;
+
+   i=ftrc(x);
+   j=ftrc(y);
+   k=ftrc(z);
+
+   x-=i;
+   y-=j;
+   z-=k;
+
+   if (i==xsize-1)
+      {
+      i=xsize-2;
+      x=1.0f;
+      }
+
+   if (j==ysize-1)
+      {
+      j=ysize-2;
+      y=1.0f;
+      }
+
+   if (k==zsize-1)
+      {
+      k=zsize-2;
+      z=1.0f;
+      }
+
+   slice=channels*xsize*ysize;
+
+   for (channel=0; channel<channels; channel++)
+      {
+      ptr=&((unsigned char *)data)[channels*(i+(j+(k+t*zsize)*ysize)*xsize)+channel];
+
+      val1=ptr[0];
+
+      if (xsize<2)
+         color[channel]=scaling*val1+bias;
+      else
+         {
+         val2=ptr[channels];
+
+         if (ysize<2)
+            color[channel]=scaling*((1.0f-x)*val1+x*val2)+bias;
+         else
+            {
+            val3=ptr[channels*xsize];
+            val4=ptr[channels*(xsize+1)];
+
+            if (zsize<2)
+               color[channel]=scaling*((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                                       y*((1.0f-x)*val3+x*val4))+bias;
+            else
+               {
+               val5=ptr[channels*slice];
+               val6=ptr[channels*(slice+1)];
+               val7=ptr[channels*(slice+xsize)];
+               val8=ptr[channels*(slice+xsize+1)];
+
+               color[channel]=scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
+                                                 y*((1.0f-x)*val3+x*val4))+
+                                       z*((1.0f-y)*((1.0f-x)*val5+x*val6)+
+                                          y*((1.0f-x)*val7+x*val8)))+bias;
+               }
+            }
+         }
+      }
+
+   if (channels==3) color[3]=scaling*255.0f+bias;
    }
 
 // get the minimum and maximum scalar value
