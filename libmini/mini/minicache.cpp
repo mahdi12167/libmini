@@ -1651,7 +1651,8 @@ void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
 
    t=&TERRAIN[terrain->getid()];
 
-   t->detail_alpha=alpha;
+   if (t->detail_texid!=0) t->detail_alpha=alpha;
+   else t->detail_alpha=0.0f;
    }
 
 // define RGB detail texture per tileset
@@ -1684,7 +1685,8 @@ void minicache::setpixshaderdetailtexid(minitile *terrain,int texid,int width,in
 
    t->detail_mipmaps=mipmaps;
 
-   t->detail_alpha=1.0f;
+   if (t->detail_texid!=0) t->detail_alpha=1.0f;
+   else t->detail_alpha=0.0f;
 
    t->detail_nofree=1;
    }
