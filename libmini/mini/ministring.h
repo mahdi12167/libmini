@@ -94,6 +94,10 @@ class ministring: public ministring_base
       return(FALSE);
       }
 
+   //! check for existing sub-c-string and return first occurring index
+   BOOLINT find(const char *sub,unsigned int &idx) const
+      {return(find(ministring(sub),idx));}
+
    //! check for existing sub-string in reverse order and return first occurring index
    BOOLINT findr(const ministring_base &sub,unsigned int &idx) const
       {
@@ -126,6 +130,10 @@ class ministring: public ministring_base
       return(FALSE);
       }
 
+   //! check for existing sub-c-string in reverse order and return first occurring index
+   BOOLINT findr(const char *sub,unsigned int &idx) const
+      {return(findr(ministring(sub),idx));}
+
    //! check for existing sub-string and return remaining tail
    ministring_base tail(const ministring_base &sub) const
       {
@@ -142,6 +150,10 @@ class ministring: public ministring_base
       return(rem);
       }
 
+   //! check for existing sub-c-string and return remaining tail
+   ministring_base tail(const char *sub) const
+      {return(tail(ministring(sub)));}
+
    //! check for existing sub-string in reverse order and return remaining head
    ministring_base head(const ministring_base &sub) const
       {
@@ -157,6 +169,10 @@ class ministring: public ministring_base
 
       return(rem);
       }
+
+   //! check for existing sub-c-string in reverse order and return remaining head
+   ministring_base head(const char *sub) const
+      {return(head(ministring(sub)));}
 
    //! substitute sub-strings
    void substitute(const ministring_base &sub,const ministring_base &with)
