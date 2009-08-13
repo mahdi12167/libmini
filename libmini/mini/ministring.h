@@ -122,6 +122,38 @@ class ministring: public ministring_base
       return(FALSE);
       }
 
+   //! check for existing sub-string and return remaining tail
+   ministring_base tail(const ministring_base &sub) const
+      {
+      unsigned int i;
+
+      unsigned int idx;
+
+      ministring rem;
+
+      if (!find(sub,idx)) return(*this);
+      else
+         for (i=idx+sub.getsize(); i<SIZE; i++) rem.append(get(i));
+
+      return(rem);
+      }
+
+   //! check for existing sub-string in reverse order and return remaining head
+   ministring_base head(const ministring_base &sub) const
+      {
+      unsigned int i;
+
+      unsigned int idx;
+
+      ministring rem;
+
+      if (!findr(sub,idx)) return(*this);
+      else
+         for (i=0; i<idx; i++) rem.append(get(i));
+
+      return(rem);
+      }
+
    //! substitute sub-strings
    void substitute(const ministring_base &sub,const ministring_base &with)
       {
