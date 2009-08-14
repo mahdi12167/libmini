@@ -1703,6 +1703,9 @@ void minilayer::loaddetailtex(const char *detailname,
          // resample to next power of 2
          buf.resample2(LPARAMS.maxdetailsize);
 
+         // automatically create mipmaps
+         buf.automipmap();
+
          // convert db data into texture map
          mipmaps=0;
          texid=db2texid(&buf,&width,&height,&mipmaps);
