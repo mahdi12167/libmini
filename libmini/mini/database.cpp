@@ -2537,8 +2537,6 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
       z=1.0f;
       }
 
-   slice=xsize*ysize;
-
    switch (type)
       {
       case DATABUF_TYPE_BYTE:
@@ -2570,6 +2568,8 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
                           y*((1.0f-x)*val3+x*val4))*scaling+bias);
                else
                   {
+                  slice=xsize*ysize;
+
                   val5=byteptr[slice];
                   val6=byteptr[slice+1];
                   val7=byteptr[slice+xsize];
@@ -2613,6 +2613,8 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
                           y*((1.0f-x)*val3+x*val4))*scaling+bias);
                else
                   {
+                  slice=xsize*ysize;
+
                   val5=shortptr[slice];
                   val6=shortptr[slice+1];
                   val7=shortptr[slice+xsize];
@@ -2656,6 +2658,8 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
                           y*((1.0f-x)*val3+x*val4))*scaling+bias);
                else
                   {
+                  slice=xsize*ysize;
+
                   val5=floatptr[slice];
                   val6=floatptr[slice+1];
                   val7=floatptr[slice+xsize];
@@ -2809,6 +2813,8 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
 
    unsigned char *ptr;
 
+   unsigned int slice;
+
    float val1,val2,val3,val4;
    float val5,val6,val7,val8;
 
@@ -2878,10 +2884,12 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
                                        y*((1.0f-x)*val3+x*val4))+bias;
             else
                {
-               val5=ptr[channels*xsize*ysize];
-               val6=ptr[channels*(xsize*ysize+1)];
-               val7=ptr[channels*(xsize*(ysize+1))];
-               val8=ptr[channels*(xsize*(ysize+1)+1)];
+               slice=channels*xsize*ysize;
+
+               val5=ptr[slice];
+               val6=ptr[slice+channels];
+               val7=ptr[slice+channels*xsize];
+               val8=ptr[slice+channels*(xsize+1)];
 
                color[channel]=scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
                                                  y*((1.0f-x)*val3+x*val4))+
@@ -2944,7 +2952,7 @@ void databuf::getminmax(float usefs,float usefg,
       minvalue=MAXFLOAT;
       maxvalue=-MAXFLOAT;
 
-      // check all scalar values except the "no data" values
+      // check all scalar values except the no-data values
       for (t=0; t<tsteps; t++)
          for (i=0; i<xsize; i++)
             for (j=0; j<ysize; j++)
@@ -3142,7 +3150,7 @@ unsigned int databuf::replaceinvalid(float usefs,float usefg,float useful)
 
    count=0;
 
-   // search for "no data" values
+   // search for no-data values
    for (t=0; t<tsteps; t++)
       for (i=0; i<xsize; i++)
          for (j=0; j<ysize; j++)
