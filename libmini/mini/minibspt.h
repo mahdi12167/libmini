@@ -111,7 +111,7 @@ inline std::ostream& operator << (std::ostream &out,const minibsptree &tree)
 
    out << "minibsptree[" << std::endl;
 
-   for (i=0; i<tree.TREE.getsize(); i++) out << i << ": " << tree.TREE.get(i) << std::endl;
+   for (i=0; i<tree.TREE.getsize(); i++) out << i << ": " << tree.TREE[i] << std::endl;
 
    out << "]" << std::endl;
 

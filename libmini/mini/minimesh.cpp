@@ -251,7 +251,7 @@ void minimesh::setvals(const minivals &vals)
       for (j=0; j<vals.getsize(); j++)
          {
          // get the embedded data value
-         val=get(i).vals.get(j);
+         val=get(i).vals[j];
 
          // calculate the determinant of reference tetrahedron
          b0=getdet(val.ref1,val.ref2,val.ref3,val.ref4);

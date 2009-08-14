@@ -648,8 +648,8 @@ minigeom_polygon<Scalar> minigeom_segments<Scalar>::polygonize()
       if (i+2<B::getsize())
          {
          tmp=B::get(i+1);
-         B::ref(i+1)=B::get(idx);
-         B::ref(idx)=tmp;
+         B::set(i+1,B::get(idx));
+         B::set(idx,tmp);
          }
       }
 

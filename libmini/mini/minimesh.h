@@ -313,7 +313,7 @@ inline std::ostream& operator << (std::ostream &out,const minimesh &mesh)
 
    out << "minimesh[" << std::endl;
 
-   for (i=0; i<mesh.getsize(); i++) out << mesh.get(i) << std::endl;
+   for (i=0; i<mesh.getsize(); i++) out << mesh[i] << std::endl;
 
    out << "]" << std::endl;
 

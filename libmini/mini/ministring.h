@@ -31,7 +31,7 @@ class ministring: public ministring_base
       l=strlen(str);
 
       setsize(l);
-      for (i=0; i<l; i++) ref(i)=str[i];
+      for (i=0; i<l; i++) set(i,str[i]);
       }
 
    //! constructor with initialization from floating-point value
@@ -211,14 +211,14 @@ class ministring: public ministring_base
          if (found)
             {
             if (s>w)
-               for (j=i+s; j<l; j++) ref(j-s+w)=get(j);
+               for (j=i+s; j<l; j++) set(j-s+w,get(j));
 
             setsize(l-s+w);
 
             if (s<w)
-               for (j=l-1; j>=i+s; j--) ref(j-s+w)=get(j);
+               for (j=l-1; j>=i+s; j--) set(j-s+w,get(j));
 
-            for (j=0; j<w; j++) ref(i+j)=with[j];
+            for (j=0; j<w; j++) set(i+j,with[j]);
 
             l=getsize();
             i+=w;
