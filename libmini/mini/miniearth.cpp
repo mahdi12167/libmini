@@ -31,6 +31,7 @@ miniearth::miniearth()
    EPARAMS.usefog=FALSE;
    EPARAMS.useshaders=FALSE;
    EPARAMS.usediffuse=FALSE;
+   EPARAMS.usedetail=FALSE;
    EPARAMS.usevisshader=FALSE;
    EPARAMS.usebathymap=FALSE;
    EPARAMS.usecontours=FALSE;
@@ -164,6 +165,7 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    tparams.usefog=EPARAMS.usefog;
    tparams.useshaders=EPARAMS.useshaders;
    tparams.usediffuse=EPARAMS.usediffuse;
+   tparams.usedetail=EPARAMS.usedetail;
    tparams.usevisshader=EPARAMS.usevisshader;
    tparams.usebathymap=EPARAMS.usebathymap;
    tparams.usecontours=EPARAMS.usecontours;
@@ -191,7 +193,7 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
 
    tparams.nonlin=EPARAMS.nonlin;
 
-   if (EPARAMS.nonlin || EPARAMS.usediffuse) tparams.useshaders=TRUE;
+   if (EPARAMS.nonlin || EPARAMS.usediffuse || EPARAMS.usedetail) tparams.useshaders=TRUE;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
@@ -236,7 +238,12 @@ BOOLINT miniearth::load(const char *baseurl,const char *baseid,const char *basep
 // load detail texture (db format)
 void miniearth::loaddetail(const char *path,
                            float alpha)
-   {TERRAIN->loaddetailtex(TERRAIN->getlnum()-1,path,alpha);}
+   {
+   TERRAIN->loaddetailtex(TERRAIN->getlnum()-1,path,alpha);
+
+   EPARAMS.usedetail=TRUE;
+   propagate();
+   }
 
 // load optional features
 void miniearth::loadopts()

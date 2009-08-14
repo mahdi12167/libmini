@@ -218,6 +218,7 @@ void initparams()
    eprms.usefog=TRUE;
    eprms.useshaders=FALSE;
    eprms.usediffuse=FALSE;
+   eprms.usedetail=FALSE;
    eprms.usevisshader=TRUE;
    eprms.usebathymap=FALSE;
    eprms.usecontours=FALSE;

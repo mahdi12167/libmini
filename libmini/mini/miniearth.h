@@ -42,6 +42,7 @@ class miniearth
       BOOLINT usefog;
       BOOLINT useshaders;
       BOOLINT usediffuse;
+      BOOLINT usedetail;
       BOOLINT usevisshader;
       BOOLINT usebathymap;
       BOOLINT usecontours;

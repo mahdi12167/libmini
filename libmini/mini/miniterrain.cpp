@@ -103,6 +103,7 @@ miniterrain::miniterrain()
    TPARAMS.useshaders=FALSE;
    TPARAMS.usediffuse=FALSE;
    TPARAMS.usedimming=FALSE;
+   TPARAMS.usedetail=FALSE;
    TPARAMS.usevisshader=FALSE;
    TPARAMS.usebathymap=FALSE;
    TPARAMS.usecontours=FALSE;
@@ -177,7 +178,7 @@ miniterrain::miniterrain()
 
    // optional detail textures:
 
-   TPARAMS.detailtexmode=0;     // detail texture mode (0=off 1=overlay 2=modulate)
+   TPARAMS.detailtexmode=1;     // detail texture mode (0=off 1=overlay 2=modulate)
    TPARAMS.detailtexalpha=1.0f; // detail texture opacity
    TPARAMS.detailtexmask=1;     // detail texture mask (0=off 1=on)
 
@@ -871,7 +872,7 @@ void miniterrain::render()
       if (TPARAMS.useshaders)
          {
          // compute inverse transpose modelview to transform into eye linear coordinates
-         if (TPARAMS.detailtexmode!=0 && TPARAMS.detailtexalpha!=0.0f)
+         if (TPARAMS.usedetail && TPARAMS.detailtexmode!=0 && TPARAMS.detailtexalpha!=0.0f)
             {
             mtxgetmodel(mvmtx);
 
@@ -888,7 +889,7 @@ void miniterrain::render()
          for (n=0; n<LNUM; n++)
             if (LAYER[n]->istileset())
                {
-               if (TPARAMS.detailtexmode==0 || TPARAMS.detailtexalpha==0.0f)
+               if (!TPARAMS.usedetail || TPARAMS.detailtexmode==0 || TPARAMS.detailtexalpha==0.0f)
                   {
                   detailtexid=0;
                   detailwidth=detailheight=0;
@@ -1364,10 +1365,7 @@ void miniterrain::loaddetailtex(int n,
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
-         {
          LAYER[n]->loaddetailtex(detailname,alpha);
-         TPARAMS.detailtexmode=1;
-         }
    }
 
 // register waypoint renderer

@@ -108,6 +108,7 @@ class miniterrain
       BOOLINT useshaders;
       BOOLINT usediffuse;
       BOOLINT usedimming;
+      BOOLINT usedetail;
       BOOLINT usevisshader;
       BOOLINT usebathymap;
       BOOLINT usecontours;
