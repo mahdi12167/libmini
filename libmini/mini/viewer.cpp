@@ -1375,6 +1375,9 @@ int main(int argc,char *argv[])
 
    int argc_regular;
 
+   int argv_type;
+   char *argv_ext;
+
    // count regular arguments
    for (argc_regular=0,i=1; i<argc; i++)
       if (*argv[i]!='-') argc_regular++;
@@ -1396,7 +1399,7 @@ int main(int argc,char *argv[])
       {
       printf("short usage: %s <url> {<options>}\n",argv[0]);
       printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {<options>}\n",argv[0]);
-      printf("multi usage: %s -m {<url>} {<options>}\n",argv[0]);
+      printf("multi usage: %s -m {<url> [<detail.db>]} {<options>}\n",argv[0]);
       printf("options: -s=stereo -a=anaglyph -f=full-screen -r=reset-cache -c=auto-s3tc\n");
       exit(1);
       }
@@ -1471,11 +1474,26 @@ int main(int argc,char *argv[])
    if (sw_multi!=0)
       for (i=1; i<argc; i++)
          if (*argv[i]!='-')
-            if (!viewer->getearth()->load(argv[i],TRUE,sw_reset))
-               {
-               printf("unable to load tileset at url=%s\n",argv[i]);
-               exit(1);
-               }
+            {
+            argv_type=0;
+            argv_ext=strrchr(argv[i],'.');
+
+            if (argv_ext!=NULL)
+               if (strlen(argv_ext)<=4)
+                  if (strcmp(argv_ext,".db")==0) argv_type=1;
+
+            // identified tileset
+            if (argv_type==0)
+               if (!viewer->getearth()->load(argv[i],TRUE,sw_reset))
+                  {
+                  printf("unable to load tileset at url=%s\n",argv[i]);
+                  exit(1);
+                  }
+
+            // identified detail
+            if (argv_type==1)
+               viewer->getearth()->loaddetail(argv[i]);
+            }
 
    // load optional features
    viewer->getearth()->loadopts();

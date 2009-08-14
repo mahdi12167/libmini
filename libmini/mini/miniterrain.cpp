@@ -1357,14 +1357,17 @@ void miniterrain::attachdetailtex(int n,
          LAYER[n]->attachdetailtex(texid,width,height,mipmaps,owner,center,west,north,alpha);
    }
 
-// load detail texture
+// load detail texture (db format)
 void miniterrain::loaddetailtex(int n,
                                 const char *detailname,
                                 float alpha)
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
+         {
          LAYER[n]->loaddetailtex(detailname,alpha);
+         TPARAMS.detailtexmode=1;
+         }
    }
 
 // register waypoint renderer

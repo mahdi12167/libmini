@@ -317,7 +317,7 @@ class minilayer
                         minicoord center,minicoord west,minicoord north,
                         float alpha=1.0f);
 
-   //! load detail texture
+   //! load detail texture (db format)
    void loaddetailtex(const char *detailname,
                       float alpha=1.0f);
 

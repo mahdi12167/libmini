@@ -367,7 +367,7 @@ class miniterrain
                         minicoord center,minicoord west,minicoord north,
                         float alpha=1.0f);
 
-   //! load detail texture
+   //! load detail texture (db format)
    void loaddetailtex(int n,
                       const char *detailname,
                       float alpha=1.0f);

@@ -233,6 +233,11 @@ BOOLINT miniearth::load(const char *baseurl,const char *baseid,const char *basep
    return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
    }
 
+// load detail texture (db format)
+void miniearth::loaddetail(const char *path,
+                           float alpha)
+   {TERRAIN->loaddetailtex(TERRAIN->getlnum()-1,path,alpha);}
+
 // load optional features
 void miniearth::loadopts()
    {

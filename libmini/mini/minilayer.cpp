@@ -1680,7 +1680,7 @@ void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLI
    adddetailtex(texid,width,height,mipmaps,owner,planeu,planev,alpha);
    }
 
-// load detail texture
+// load detail texture (db format)
 void minilayer::loaddetailtex(const char *detailname,
                               float alpha)
    {

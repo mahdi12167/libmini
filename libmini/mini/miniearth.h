@@ -131,6 +131,10 @@ class miniearth
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                 BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
 
+   //! load detail texture (db format)
+   void loaddetail(const char *path,
+                   float alpha=1.0f);
+
    //! load optional features
    void loadopts();
 
