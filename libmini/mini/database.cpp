@@ -2186,6 +2186,8 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
    float value;
    float color[4];
 
+   unsigned int offset;
+
    if (xs<2 && ys<2 && zs<2) ERRORMSG();
    if (xsize<2 && ysize<2 && zsize<2) ERRORMSG();
 
@@ -2290,9 +2292,11 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
                      else if (zs<2) getrgbacolor((float)i/(xs-1),(float)j/(ys-1),0.0f,t,color);
                      else getrgbacolor((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t,color);
 
-                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)]=ftrc((color[0]-bias)/scaling+0.5f);
-                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)+1]=ftrc((color[1]-bias)/scaling+0.5f);
-                     byteptr[3*(i+(j+(k+t*zs)*ys)*xs)+2]=ftrc((color[2]-bias)/scaling+0.5f);
+                     offset=3*(i+(j+(k+t*zs)*ys)*xs);
+
+                     byteptr[offset]=ftrc((color[0]-bias)/scaling+0.5f);
+                     byteptr[offset+1]=ftrc((color[1]-bias)/scaling+0.5f);
+                     byteptr[offset+2]=ftrc((color[2]-bias)/scaling+0.5f);
                      }
 
          free(data);
@@ -2318,10 +2322,12 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
                      else if (zs<2) getrgbacolor((float)i/(xs-1),(float)j/(ys-1),0.0f,t,color);
                      else getrgbacolor((float)i/(xs-1),(float)j/(ys-1),(float)k/(zs-1),t,color);
 
-                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)]=ftrc((color[0]-bias)/scaling+0.5f);
-                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+1]=ftrc((color[1]-bias)/scaling+0.5f);
-                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+2]=ftrc((color[2]-bias)/scaling+0.5f);
-                     byteptr[4*(i+(j+(k+t*zs)*ys)*xs)+3]=ftrc((color[3]-bias)/scaling+0.5f);
+                     offset=4*(i+(j+(k+t*zs)*ys)*xs);
+
+                     byteptr[offset]=ftrc((color[0]-bias)/scaling+0.5f);
+                     byteptr[offset+1]=ftrc((color[1]-bias)/scaling+0.5f);
+                     byteptr[offset+2]=ftrc((color[2]-bias)/scaling+0.5f);
+                     byteptr[offset+3]=ftrc((color[3]-bias)/scaling+0.5f);
                      }
 
          free(data);
