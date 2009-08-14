@@ -62,24 +62,26 @@ class minidyna
    //! set array size
    void setsize(unsigned int size)
       {
-      unsigned int i;
+      unsigned int i,s;
 
-      unsigned int s;
       Item *a;
 
       if (size<=MINSIZE)
          {
-         if (ARRAY!=NULL) delete[] ARRAY;
+         if (ARRAY!=NULL)
+            {
+            delete[] ARRAY;
+            ARRAY=NULL;
+            }
 
          SIZE=MAXSIZE=size;
-         ARRAY=NULL;
          }
       else
          {
-         for (s=1; s<size; s*=2);
-
-         if (s!=MAXSIZE)
+         if (size<=MAXSIZE/2 || size>MAXSIZE)
             {
+            for (s=2; s<size; s*=2);
+
             a=new Item[s-MINSIZE];
             if (a==NULL) MEMERROR();
 
@@ -108,7 +110,9 @@ class minidyna
 
       setsize(size);
 
-      for (i=0; i<SIZE; i++) set(i,c);
+      for (i=0; i<SIZE; i++)
+         if (i<MINSIZE) MINARRAY[i]=c;
+         else ARRAY[i-MINSIZE]=c;
       }
 
    //! set array size and copy from array
@@ -118,7 +122,9 @@ class minidyna
 
       setsize(size);
 
-      for (i=0; i<SIZE; i++) set(i,c[i]);
+      for (i=0; i<SIZE; i++)
+         if (i<MINSIZE) MINARRAY[i]=c[i];
+         else ARRAY[i-MINSIZE]=c[i];
       }
 
    //! grow array size by one element
@@ -136,14 +142,14 @@ class minidyna
    //! grow array size with initialization of grown part
    void growsize(unsigned int size,const Item &c)
       {
-      unsigned int i;
-
-      unsigned int s;
+      unsigned int i,s;
 
       s=SIZE;
       growsize(size);
 
-      for (i=s; i<SIZE; i++) set(i,c);
+      for (i=s; i<SIZE; i++)
+         if (i<MINSIZE) MINARRAY[i]=c;
+         else ARRAY[i-MINSIZE]=c;
       }
 
    //! grow array size with expansion of existing part
@@ -241,18 +247,24 @@ class minidyna
    //! append item to array
    void append(const Item &v)
       {
+      unsigned int s;
+
+      s=SIZE;
       setsize(SIZE+1);
-      set(SIZE-1,v);
+
+      if (s<MINSIZE) MINARRAY[s]=v;
+      else ARRAY[s-MINSIZE]=v;
       }
 
    //! append item array
    void append(const minidyna<Item,Minsize> &a)
       {
-      unsigned int i;
+      unsigned int i,s;
 
-      setsize(SIZE+a.getsize());
+      s=a.getsize();
+      setsize(SIZE+s);
 
-      for (i=0; i<a.getsize(); i++) set(SIZE-i-1,a.get(a.getsize()-i-1));
+      for (i=1; i<=s; i++) set(SIZE-i,a.get(s-i));
       }
 
    //! prepend item by shifting all items
@@ -260,9 +272,10 @@ class minidyna
       {
       unsigned int i;
 
-      growsize();
-      for (i=SIZE-1; i>0; i--) ref(i)=get(i-1);
-      ref(0)=v;
+      setsize(SIZE+1);
+
+      for (i=SIZE-1; i>0; i--) set(i,get(i-1));
+      set(0,v);
       }
 
    //! remove item by moving the last item
@@ -270,7 +283,7 @@ class minidyna
       {
       ERRORCHK(idx>=SIZE);
 
-      ref(idx)=get(SIZE-1);
+      set(idx,get(SIZE-1));
       setsize(SIZE-1);
       }
 
@@ -331,13 +344,10 @@ class minidyna
    //! add operator
    minidyna<Item,Minsize>& operator += (const minidyna<Item,Minsize> &a)
       {
-      unsigned int i;
+      unsigned int i,s;
 
-      unsigned int size;
-
-      size=a.getsize();
-
-      setsize((SIZE<size)?SIZE:size);
+      s=a.getsize();
+      setsize((SIZE<s)?SIZE:s);
 
       for (i=0; i<SIZE; i++) ref(i)+=a[i];
 
@@ -347,13 +357,10 @@ class minidyna
    //! sub operator
    minidyna<Item,Minsize>& operator -= (const minidyna<Item,Minsize> &a)
       {
-      unsigned int i;
+      unsigned int i,s;
 
-      unsigned int size;
-
-      size=a.getsize();
-
-      setsize((SIZE<size)?SIZE:size);
+      s=a.getsize();
+      setsize((SIZE<s)?SIZE:s);
 
       for (i=0; i<SIZE; i++) ref(i)-=a[i];
 
@@ -386,15 +393,13 @@ class minidyna
 template <class Item,const unsigned int Minsize>
 inline int operator == (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
-   unsigned int i;
+   unsigned int i,s;
 
-   unsigned int size;
+   s=a.getsize();
 
-   size=a.getsize();
+   if (b.getsize()!=s) return(0);
 
-   if (b.getsize()!=size) return(0);
-
-   for (i=0; i<size; i++)
+   for (i=0; i<s; i++)
       if (a[i]!=b[i]) return(0);
 
    return(1);
@@ -404,15 +409,13 @@ inline int operator == (const minidyna<Item,Minsize> &a,const minidyna<Item,Mins
 template <class Item,const unsigned int Minsize>
 inline int operator != (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
-   unsigned int i;
+   unsigned int i,s;
 
-   unsigned int size;
+   s=a.getsize();
 
-   size=a.getsize();
+   if (b.getsize()!=s) return(1);
 
-   if (b.getsize()!=size) return(1);
-
-   for (i=0; i<size; i++)
+   for (i=0; i<s; i++)
       if (a[i]!=b[i]) return(1);
 
    return(0);
@@ -423,18 +426,18 @@ template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
    unsigned int i;
+   unsigned int sa,sb,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int sizea,sizeb,size;
 
-   sizea=a.getsize();
-   sizeb=b.getsize();
+   sa=a.getsize();
+   sb=b.getsize();
 
-   size=(sizea<sizeb)?sizea:sizeb;
+   s=(sa<sb)?sa:sb;
 
-   array.setsize(size);
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=a[i]+b[i];
+   for (i=0; i<s; i++) array[i]=a[i]+b[i];
 
    return(array);
    }
@@ -444,18 +447,18 @@ template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const minidyna<Item,Minsize> &b)
    {
    unsigned int i;
+   unsigned int sa,sb,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int sizea,sizeb,size;
 
-   sizea=a.getsize();
-   sizeb=b.getsize();
+   sa=a.getsize();
+   sb=b.getsize();
 
-   size=(sizea<sizeb)?sizea:sizeb;
+   s=(sa<sb)?sa:sb;
 
-   array.setsize(size);
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=a[i]-b[i];
+   for (i=0; i<s; i++) array[i]=a[i]-b[i];
 
    return(array);
    }
@@ -464,15 +467,14 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &a,const 
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &v)
    {
-   unsigned int i;
+   unsigned int i,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int size;
 
-   size=v.getsize();
-   array.setsize(size);
+   s=v.getsize();
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=-v[i];
+   for (i=0; i<s; i++) array[i]=-v[i];
 
    return(array);
    }
@@ -481,15 +483,14 @@ inline minidyna<Item,Minsize> operator - (const minidyna<Item,Minsize> &v)
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator * (const double a,const minidyna<Item,Minsize> &b)
    {
-   unsigned int i;
+   unsigned int i,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int size;
 
-   size=b.getsize();
-   array.setsize(size);
+   s=b.getsize();
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=a*b[i];
+   for (i=0; i<s; i++) array[i]=a*b[i];
 
    return(array);
    }
@@ -498,15 +499,14 @@ inline minidyna<Item,Minsize> operator * (const double a,const minidyna<Item,Min
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator * (const minidyna<Item,Minsize> &a,const double b)
    {
-   unsigned int i;
+   unsigned int i,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int size;
 
-   size=a.getsize();
-   array.setsize(size);
+   s=a.getsize();
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=a[i]*b;
+   for (i=0; i<s; i++) array[i]=a[i]*b;
 
    return(array);
    }
@@ -515,15 +515,14 @@ inline minidyna<Item,Minsize> operator * (const minidyna<Item,Minsize> &a,const 
 template <class Item,const unsigned int Minsize>
 inline minidyna<Item,Minsize> operator / (const minidyna<Item,Minsize> &a,const double b)
    {
-   unsigned int i;
+   unsigned int i,s;
 
    minidyna<Item,Minsize> array;
-   unsigned int size;
 
-   size=a.getsize();
-   array.setsize(size);
+   s=a.getsize();
+   array.setsize(s);
 
-   for (i=0; i<size; i++) array[i]=a[i]/b;
+   for (i=0; i<s; i++) array[i]=a[i]/b;
 
    return(array);
    }
