@@ -839,6 +839,9 @@ void miniterrain::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,flo
 
    TPARAMS.time=time;
 
+   // make vertex cache current
+   CACHE->makecurrent();
+
    // update non-linear warp
    CACHE->usenonlinear(TPARAMS.nonlin);
 
@@ -868,6 +871,9 @@ void miniterrain::render()
 
    if (LNUM>0)
       {
+      // make vertex cache current
+      CACHE->makecurrent();
+
       // enable shaders
       if (TPARAMS.useshaders)
          {
