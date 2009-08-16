@@ -149,8 +149,9 @@ class minilayer
 
       // optional detail textures:
 
-      miniv4d detailu;
-      miniv4d detailv;
+      minicoord detailcenter;
+      minicoord detailwest;
+      minicoord detailnorth;
 
       float detailalpha;
 
@@ -307,11 +308,6 @@ class minilayer
    //! get the internal cache id (-1 = no tileset)
    int getcacheid();
 
-   //! add detail texture
-   void adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
-                     const miniv4d &u,const miniv4d &v,
-                     float alpha=1.0f);
-
    //! attach detail texture
    void attachdetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
                         minicoord center,minicoord west,minicoord north,
@@ -323,7 +319,7 @@ class minilayer
 
    //! get detail texture
    void getdetailtex(int &texid,int &width,int &height,int &mipmaps,
-                     miniv4d &u,miniv4d &v,
+                     miniv4d &planeu,miniv4d &planev,
                      float &alpha);
 
    //! render waypoints

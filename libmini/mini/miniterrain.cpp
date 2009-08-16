@@ -1342,17 +1342,6 @@ double miniterrain::getcachemem()
    return(cachemem);
    }
 
-// add detail texture
-void miniterrain::adddetailtex(int n,
-                               int texid,int width,int height,int mipmaps,BOOLINT owner,
-                               const miniv4d &u,const miniv4d &v,
-                               float alpha)
-   {
-   if (n>=0 && n<LNUM)
-      if (LAYER[n]->istileset())
-         LAYER[n]->adddetailtex(texid,width,height,mipmaps,owner,u,v,alpha);
-   }
-
 // attach detail texture
 void miniterrain::attachdetailtex(int n,
                                   int texid,int width,int height,int mipmaps,BOOLINT owner,

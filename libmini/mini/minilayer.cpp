@@ -148,8 +148,9 @@ minilayer::minilayer(minicache *cache)
 
    // optional detail textures:
 
-   LPARAMS.detailu=miniv4d(0.0);
-   LPARAMS.detailv=miniv4d(0.0);
+   LPARAMS.detailcenter=minicoord();
+   LPARAMS.detailwest=minicoord();
+   LPARAMS.detailnorth=minicoord();
 
    LPARAMS.detailalpha=0.0f;
 
@@ -1620,10 +1621,10 @@ int minilayer::getcacheid()
    return(TERRAIN->getminitile()->getid());
    }
 
-// add detail texture
-void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
-                             const miniv4d &u,const miniv4d &v,
-                             float alpha)
+// attach detail texture
+void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
+                                minicoord center,minicoord west,minicoord north,
+                                float alpha)
    {
    if (DETAILOWNER)
       if (DETAILTEXID!=0) deletetexmap(DETAILTEXID);
@@ -1635,49 +1636,11 @@ void minilayer::adddetailtex(int texid,int width,int height,int mipmaps,BOOLINT 
 
    DETAILOWNER=owner;
 
-   LPARAMS.detailu=u;
-   LPARAMS.detailv=v;
+   LPARAMS.detailcenter=center;
+   LPARAMS.detailwest=west;
+   LPARAMS.detailnorth=north;
 
    LPARAMS.detailalpha=alpha;
-   }
-
-// attach detail texture
-void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLINT owner,
-                                minicoord center,minicoord west,minicoord north,
-                                float alpha)
-   {
-   minicoord east,south;
-   minicoord position,right,left,front,back;
-   miniv3d pos,vecu,vecv;
-
-   miniv4d planeu,planev;
-
-   east=center-(west-center);
-   south=center-(north-center);
-
-   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
-   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
-   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
-   if (east.type!=minicoord::MINICOORD_LINEAR) east.convert2(minicoord::MINICOORD_ECEF);
-   if (south.type!=minicoord::MINICOORD_LINEAR) south.convert2(minicoord::MINICOORD_ECEF);
-
-   position=map_g2o(center);
-   right=map_g2o(west);
-   front=map_g2o(north);
-   left=map_g2o(east);
-   back=map_g2o(south);
-
-   pos=position.vec;
-   vecu=(right-left).vec;
-   vecv=(front-back).vec;
-
-   vecu/=vecu.getlength2();
-   vecv/=-vecv.getlength2();
-
-   planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
-   planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
-
-   adddetailtex(texid,width,height,mipmaps,owner,planeu,planev,alpha);
    }
 
 // load detail texture (db format)
@@ -1730,16 +1693,48 @@ void minilayer::loaddetailtex(const char *detailname,
 
 // get detail texture
 void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps,
-                             miniv4d &u,miniv4d &v,
+                             miniv4d &planeu,miniv4d &planev,
                              float &alpha)
    {
+   minicoord center;
+   minicoord west,north;
+   minicoord east,south;
+   minicoord position,right,left,front,back;
+   miniv3d pos,vecu,vecv;
+
+   center=LPARAMS.detailcenter;
+   west=LPARAMS.detailwest;
+   north=LPARAMS.detailnorth;
+
+   east=center-(west-center);
+   south=center-(north-center);
+
+   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
+   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
+   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
+   if (east.type!=minicoord::MINICOORD_LINEAR) east.convert2(minicoord::MINICOORD_ECEF);
+   if (south.type!=minicoord::MINICOORD_LINEAR) south.convert2(minicoord::MINICOORD_ECEF);
+
+   position=map_g2o(center);
+   right=map_g2o(west);
+   front=map_g2o(north);
+   left=map_g2o(east);
+   back=map_g2o(south);
+
+   pos=position.vec;
+   vecu=(right-left).vec;
+   vecv=(front-back).vec;
+
+   vecu/=vecu.getlength2();
+   vecv/=-vecv.getlength2();
+
    texid=DETAILTEXID;
    width=DETAILWIDTH;
    height=DETAILHEIGHT;
    mipmaps=DETAILMIPMAPS;
 
-   u=LPARAMS.detailu;
-   v=LPARAMS.detailv;
+   planeu=miniv4d(vecu.x,vecu.y,vecu.z,-pos*vecu);
+   planev=miniv4d(vecv.x,vecv.y,vecv.z,-pos*vecv);
 
    alpha=LPARAMS.detailalpha;
    }
