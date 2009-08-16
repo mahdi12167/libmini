@@ -27,12 +27,14 @@ static void initglexts()
       glrndr_sgi=FALSE;
       glrndr_nvidia=FALSE;
       glrndr_ati=FALSE;
+      glrndr_intel=FALSE;
 
       if ((GL_RNDR=(char *)glGetString(GL_VENDOR))==NULL) ERRORMSG();
 
       if (strstr(GL_RNDR,"SGI")!=NULL) glrndr_sgi=TRUE;
-      if (strstr(GL_RNDR,"NVIDIA")!=NULL) glrndr_nvidia=TRUE;
-      if (strstr(GL_RNDR,"ATI")!=NULL) glrndr_ati=TRUE;
+      else if (strstr(GL_RNDR,"NVIDIA")!=NULL) glrndr_nvidia=TRUE;
+      else if (strstr(GL_RNDR,"ATI")!=NULL) glrndr_ati=TRUE;
+      else if (strstr(GL_RNDR,"Intel")!=NULL) glrndr_intel=TRUE;
 
       // figure out its OpenGL extensions:
 
@@ -194,7 +196,8 @@ void print_graphics_info()
    if (glrndr_sgi) printf("SGI\n");
    else if (glrndr_nvidia) printf("NVIDIA\n");
    else if (glrndr_ati) printf("ATI\n");
-   else printf("UNKNOWN\n");
+   else if (glrndr_intel) printf("Intel\n");
+   else printf("unknown\n");
 
    printf("maxtexsize=%d\n",getmaxtexsize());
    printf("max3Dtexsize=%d\n",getmax3Dtexsize());
@@ -274,8 +277,12 @@ void exitstate()
 void clearbuffer(float r,float g,float b,float a)
    {
 #ifndef NOOGL
+   GLboolean mask[4];
+   glGetBooleanv(GL_COLOR_WRITEMASK,mask);
+   glColorMask(TRUE,TRUE,TRUE,TRUE);
    glClearColor(r,g,b,a);
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+   glColorMask(mask[0],mask[1],mask[2],mask[3]);
 #endif
    }
 

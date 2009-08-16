@@ -22,6 +22,7 @@ BOOLINT maxblendeq;
 BOOLINT glrndr_sgi;
 BOOLINT glrndr_nvidia;
 BOOLINT glrndr_ati;
+BOOLINT glrndr_intel;
 
 BOOLINT glext_mm;
 BOOLINT glext_tec;
