@@ -2803,7 +2803,7 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
       }
    }
 
-// get an interpolated rgb color
+// get an interpolated rgba color
 void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4])
    {
    int channel;
@@ -2860,11 +2860,14 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
       z=1.0f;
       }
 
-   for (channel=0; channel<channels; channel++)
+   for (channel=channels-1; channel>=0; channel--)
       {
       ptr=&((unsigned char *)data)[channels*(i+(j+(k+t*zsize)*ysize)*xsize)+channel];
 
       val1=ptr[0];
+
+      if (channel==3)
+         if (val1==0.0f) return;
 
       if (xsize<2)
          color[channel]=scaling*val1+bias;
@@ -2872,12 +2875,18 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
          {
          val2=ptr[channels];
 
+         if (channel==3)
+            if (val2==0.0f) return;
+
          if (ysize<2)
             color[channel]=scaling*((1.0f-x)*val1+x*val2)+bias;
          else
             {
             val3=ptr[channels*xsize];
             val4=ptr[channels*(xsize+1)];
+
+            if (channel==3)
+               if (val3==0.0f || val4==0.0f) return;
 
             if (zsize<2)
                color[channel]=scaling*((1.0f-y)*((1.0f-x)*val1+x*val2)+
@@ -2890,6 +2899,9 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
                val6=ptr[slice+channels];
                val7=ptr[slice+channels*xsize];
                val8=ptr[slice+channels*(xsize+1)];
+
+               if (channel==3)
+                  if (val5==0.0f || val6==0.0f || val7==0.0f || val8==0.0f) return;
 
                color[channel]=scaling*((1.0f-z)*((1.0f-y)*((1.0f-x)*val1+x*val2)+
                                                  y*((1.0f-x)*val3+x*val4))+
@@ -2960,7 +2972,7 @@ void databuf::getminmax(float usefs,float usefg,
                   {
                   val=getval(i,j,k,t);
 
-                  if (!isNAN(val))
+                  if (checkval(val))
                       if ((val<usefs || val>usefg) &&
                           (val>usefs || val<usefg))
                          {
@@ -3158,12 +3170,13 @@ unsigned int databuf::replaceinvalid(float usefs,float usefg,float useful)
                {
                val=getval(i,j,k,t);
 
-               if ((val<usefs || val>usefg) &&
-                   (val>usefs || val<usefg))
-                  {
-                  setval(i,j,k,t,useful);
-                  count++;
-                  }
+               if (checkval(val))
+                  if ((val<usefs || val>usefg) &&
+                      (val>usefs || val<usefg))
+                     {
+                     setval(i,j,k,t,useful);
+                     count++;
+                     }
                }
 
    return(count);
@@ -3188,13 +3201,14 @@ unsigned int databuf::clamp(float usefs,float usefg)
                {
                val=getval(i,j,k,t);
 
-               if ((val<usefs || val>usefg) &&
-                   (val>usefs || val<usefg))
-                  {
-                  if (fabs(val-usefs)<fabs(val-usefg)) setval(i,j,k,t,usefs);
-                  else setval(i,j,k,t,usefg);
-                  count++;
-                  }
+               if (checkval(val))
+                  if ((val<usefs || val>usefg) &&
+                      (val>usefs || val<usefg))
+                     {
+                     if (fabs(val-usefs)<fabs(val-usefg)) setval(i,j,k,t,usefs);
+                     else setval(i,j,k,t,usefg);
+                     count++;
+                     }
                }
 
    return(count);

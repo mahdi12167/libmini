@@ -117,12 +117,16 @@ void minishader::setVISshader(minicache *cache,
    // fragment program for the terrain (main snippet #5, load detail)
    static const char *frgprog1_s5l="\
       ## load detail texture \n\
-      TEX colt,fragment.texcoord[2],texture[2],2D; \n";
+      TEX colt,fragment.texcoord[2],texture[2],2D; \n\
+      SUB colt.a,colt.a,1.0; \n\
+      CMP colt.a,colt.a,0.0,1.0; \n";
 
    // fragment program for the terrain (main snippet #5, load+mask detail)
    static const char *frgprog1_s5lm="\
       ## load detail texture \n\
       TEX colt,fragment.texcoord[2],texture[2],2D; \n\
+      SUB colt.a,colt.a,1.0; \n\
+      CMP colt.a,colt.a,0.0,1.0; \n\
       ### check coordinate range \n\
       MOV crd,fragment.texcoord[2]; \n\
       CMP colt.a,crd.x,0.0,colt.a; \n\
