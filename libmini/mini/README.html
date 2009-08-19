@@ -495,8 +495,9 @@ distribution (see "example.cpp").<p>
    depending on the desired density of the generated mesh.<p>
 
 <div class="note">
-   <b>Hint:</b> A zero field of view triggers the orthographic
-                projection mode. In that case use
+   <b>Hint:</b> A zero field of view disables the view frustum
+                culling, whereas a negative field of view triggers the
+                orthographic projection mode. In the latter case, use
                 glOrtho(fovy/2*aspect,-fovy/2*aspect,fovy/2,-fovy/2,near,far)
                 instead of the usual gluPerspective call to set up the
                 projection matrix.<br>
