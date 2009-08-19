@@ -871,9 +871,6 @@ void miniterrain::render()
 
    if (LNUM>0)
       {
-      // make vertex cache current
-      CACHE->makecurrent();
-
       // enable shaders
       if (TPARAMS.useshaders)
          {
