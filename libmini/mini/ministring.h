@@ -248,6 +248,16 @@ class ministring: public ministring_base
       return(cstr);
       }
 
+   //! conversion to double value
+   double value()
+      {
+      double v;
+
+      if (sscanf(c_str(),"%lg",&v)!=1) v=NAN;
+
+      return(v);
+      }
+
    //! assignment operator
    ministring& operator = (const ministring &a)
       {
