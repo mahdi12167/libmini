@@ -16,10 +16,10 @@
 
 #define VIEWER_FOVY 60.0f
 #define VIEWER_NEARP 10.0f
-#define VIEWER_FARP 10000.0f
+#define VIEWER_FARP 30000.0f
 
-#define VIEWER_RES 1.0E3f
-#define VIEWER_RANGE 0.001f
+#define VIEWER_RES 1.0E4f
+#define VIEWER_RANGE 0.01f
 
 #define VIEWER_SEALEVEL -MAXFLOAT
 
