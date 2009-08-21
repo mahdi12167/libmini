@@ -8,8 +8,8 @@ void setminierrorhandler(void (*handler)(const char *file,int line,int fatal)=0)
 namespace mini {
 
 void setparams(float minr=9.0f,
-               float maxd=100.0f,
-               float sead=0.1f,
+               float maxd2=100.0f,
+               float sead2=0.5f,
                float mino=0.1f,
                int maxc=8);
 
@@ -100,8 +100,8 @@ inline float getZ(const float j)
 namespace Mini {
 
 void setparams(float minr=9.0f,
-               float maxd=100.0f,
-               float sead=0.1f,
+               float maxd2=100.0f,
+               float sead2=0.5f,
                float mino=0.1f,
                int maxc=8);
 

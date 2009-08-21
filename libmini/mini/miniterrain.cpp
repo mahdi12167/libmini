@@ -35,7 +35,7 @@ miniterrain::miniterrain()
    TPARAMS.fastinit=1;             // fast initialization level
    TPARAMS.avgd2value=0.5f;        // average d2value for fast initialization
 
-   TPARAMS.sead2=0.1f;             // influence of sea level on d2-values
+   TPARAMS.sead2=0.5f;             // influence of sea level on d2-values
    TPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
    TPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
 

@@ -10,16 +10,16 @@ namespace mini {
 
 // set fine tuning parameters
 void setparams(float minr,
-               float maxd,
-               float sead,
+               float maxd2,
+               float sead2,
                float mino,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || sead<0.0f || mino<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd2<=0.0f || sead2<0.0f || mino<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
-   maxd2=maxd;
-   sead2=sead;
+   maxd2v=maxd2;
+   sead2v=sead2;
    minoff=mino;
    maxcull=maxc;
    }
@@ -151,7 +151,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    d2=fabs(a+b-2.0f*m);
    dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2*s*D);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2v*s*D);
 
    return(d2);
    }
@@ -167,7 +167,7 @@ void calcD2(int mins=2,float avgd2=0.5f)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2*fmax(SCALE,1.0f));
+   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2v*fmax(SCALE,1.0f));
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -199,7 +199,7 @@ void calcD2(int mins=2,float avgd2=0.5f)
                }
 
             // store the local d2-value
-            increase(fc/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
+            increase(fc/(s*D*maxd2v*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -416,7 +416,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fc*fogatt/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
+            increase(fc*fogatt/(s*D*maxd2v*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -2471,7 +2471,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
+   c=fsqrt(fmax(res,0.0f))*maxd2v*fmax(SCALE,1.0f);
 
    EX=ex-OX;
    EY=ey-OY;
@@ -3167,7 +3167,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
+   c=fsqrt(fmax(res,0.0f))*maxd2v*fmax(SCALE,1.0f);
 
    ORTHO=fovy<0.0f;
 
@@ -3348,16 +3348,16 @@ namespace Mini {
 
 // set fine tuning parameters
 void setparams(float minr,
-               float maxd,
-               float sead,
+               float maxd2,
+               float sead2,
                float mino,
                int maxc)
    {
-   if (minr<1.0f || maxd<=0.0f || sead<0.0f || mino<0.0f || maxc<0) ERRORMSG();
+   if (minr<1.0f || maxd2<=0.0f || sead2<0.0f || mino<0.0f || maxc<0) ERRORMSG();
 
    minres=minr;
-   maxd2=maxd;
-   sead2=sead;
+   maxd2v=maxd2;
+   sead2v=sead2;
    minoff=mino;
    maxcull=maxc;
    }
@@ -3489,7 +3489,7 @@ inline float d2value(const float a,const float b,const float m,const int s)
    d2=fabs(a+b-2.0f*m);
    dh=fmax(fabs(m-a),fabs(m-b));
 
-   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2*s*D);
+   if (m-dh<SEALEVELMAX && m+dh>SEALEVELMIN) d2=fmax(d2,sead2v*s*D);
 
    return(d2);
    }
@@ -3505,7 +3505,7 @@ void calcD2(int mins=2,float avgd2=0.5f)
    for (i=0; i<S-1; i++) memset(bc[i],0,S-1);
 
    // compute an approximate d2-value
-   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2*fmax(SCALE,1.0f));
+   fc=avgd2*DH[S-1]*SCALE/((S-1)*D*maxd2v*fmax(SCALE,1.0f));
 
    // approximate the least-significant d2-values
    if (mins>2)
@@ -3537,7 +3537,7 @@ void calcD2(int mins=2,float avgd2=0.5f)
                }
 
             // store the local d2-value
-            increase(fc/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
+            increase(fc/(s*D*maxd2v*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -3754,7 +3754,7 @@ void recalcD2(float fogatt,int mins=2)
                }
 
             // store the local d2-value
-            increase(fc*fogatt/(s*D*maxd2*fmax(SCALE,1.0f)),i,j,s2);
+            increase(fc*fogatt/(s*D*maxd2v*fmax(SCALE,1.0f)),i,j,s2);
 
             // propagate the local d2-value
             if (s<S-1)
@@ -5809,7 +5809,7 @@ void drawlandscape(float res,
    dy/=length;
    dz/=length;
 
-   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
+   c=fsqrt(fmax(res,0.0f))*maxd2v*fmax(SCALE,1.0f);
 
    EX=ex-OX;
    EY=ey-OY;
@@ -6505,7 +6505,7 @@ int getmaxsize(float res,float fx,float fy,float fz,float fovy)
 
    if (S==0) ERRORMSG();
 
-   c=fsqrt(fmax(res,0.0f))*maxd2*fmax(SCALE,1.0f);
+   c=fsqrt(fmax(res,0.0f))*maxd2v*fmax(SCALE,1.0f);
 
    ORTHO=fovy<0.0f;
 
