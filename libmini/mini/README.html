@@ -233,7 +233,7 @@ Builder)from <a href="http://www.vterrain.org">vterrain.org</a>.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Introduction"></a>
-<h2>(A) Introduction:</h2>
+<h2>(A) Introduction</h2>
 
 The Mini Library applies a view-dependent mesh simplification scheme
 to render large-scale terrain data at real-time. For this purpose, a
@@ -255,7 +255,7 @@ a rather positive sense.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Compilation"></a>
-<h2>(B) Compilation:</h2>
+<h2>(B) Compilation</h2>
 
 The build.sh shell script compiles the library on Irix, Linux and
 MacOS X. Simply type "./build.sh" in your Unix
@@ -299,7 +299,7 @@ prebuilt static freeGLUT library.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="TerrainRenderingAPI"></a>
-<h2>(C) Terrain Rendering API:</h2>
+<h2>(C) Terrain Rendering API</h2>
 
 In this section the low level API of the Mini Library is described.
 Convenient high level methods for the most commonly encountered
@@ -544,7 +544,7 @@ distribution (see "example.cpp").<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="AdditionalComments"></a>
-<h2>(D) Additional Comments:</h2>
+<h2>(D) Additional Comments</h2>
 
 The size of the small height field in the above example surely is too
 small for realistic terrain rendering. For convenience, a real data
@@ -579,7 +579,7 @@ Mini Library.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="TiledTerrain"></a>
-<h2>(E) Tiled Terrain (Tile Sets):</h2>
+<h2>(E) Tiled Terrain (Tile Sets)</h2>
 
 In the case that a terrain data set does not consist of a single
 height field but rather of several tiled patches, each of the tiles is
@@ -640,7 +640,7 @@ to a significantly improved cache coherency and performance.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Frontends"></a>
-<h2>(F) Minitile And Miniload Frontend:</h2>
+<h2>(F) Minitile And Miniload Frontend</h2>
 
 As mentioned above, a tiled terrain can be used to save memory and
 gain speed. In such a case the minitile class provides a starting
@@ -989,7 +989,7 @@ The other arguments of miniload::setloader have the following meaning:<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="LibraryStub"></a>
-<h2>(G) Library Stub:</h2>
+<h2>(G) Library Stub</h2>
 
 In some cases the built-in texture mapping setup or the explicit
 dependency on OpenGL may be too restrictive. In order to gain more
@@ -1192,7 +1192,7 @@ For comparison, the text output of the stub test is:<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="RealTerrain"></a>
-<h2>(H) Real Terrain Maps And Textures:</h2>
+<h2>(H) Real Terrain Maps And Textures</h2>
 
 A good starting point for real world terrain data is<p>
 
@@ -1300,7 +1300,7 @@ appended after the header. 16-bit data is stored in MSB format.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Performance"></a>
-<h2>(I) High Performance Rendering Using The Minicache Backend:</h2>
+<h2>(I) High Performance Rendering Using The Minicache Backend</h2>
 
 The minicache backend improves the rendering performance of the
 libMini core by exploiting the frame to frame coherency of a scene.<p>
@@ -1354,7 +1354,7 @@ geomorphed vertices per second.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="ShaderPlugins"></a>
-<h2>(J) Using The libMini Shader Plugins:</h2>
+<h2>(J) Using The libMini Shader Plugins</h2>
 
 The standard behaviour of the minicache which basically only drapes
 textures on the height fields can be extended easily by supplying
@@ -1581,7 +1581,7 @@ can be changed interactively.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="AsyncPaging"></a>
-<h2>(K) Asynchronous Paging:</h2>
+<h2>(K) Asynchronous Paging</h2>
 
 Many high-resolution terrain data sets do not fit into main memory. In
 such a case out-of-core methods are needed which operate on tile
@@ -1842,7 +1842,7 @@ Section <a href="#AutoCompression">(M)</a> how to use this library.
 <a href="#" class="top">Back to top</a>
 
 <a name="RemotePaging"></a>
-<h2>(L) Remote Paging:</h2>
+<h2>(L) Remote Paging</h2>
 
 Those who have been reading until this point, can be truly called
 libMini experts. In the following we are approaching the next level:
@@ -1926,7 +1926,7 @@ href="#MiniViewer">(O)</a>) how this can be done in detail.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="AutoCompression"></a>
-<h2>(M) Automatic S3TC Compression:</h2>
+<h2>(M) Automatic S3TC Compression</h2>
 
 For high-resolution imagery, texture compression is crucial. For that
 reason, the resampled tiles are typically stored in S3TC format (see
@@ -2008,7 +2008,7 @@ reason why we need to utilize a library like squish.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="DynamicTerrain"></a>
-<h2>(N) Dynamic Terrain:</h2>
+<h2>(N) Dynamic Terrain</h2>
 
 For certain applications such as utility or telegraph pole placement it is
 necessary to modify the terrain at run time. Depending on the extent
@@ -2039,7 +2039,7 @@ of the modified area libMini offers the following options:<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="MiniViewer"></a>
-<h2>(O) The libMini Viewer:</h2>
+<h2>(O) The libMini Viewer</h2>
 
 The libMini Viewer is a tool for viewing tile sets. It can load local
 and remote tile sets stored on a web server. The supported format is
@@ -2188,7 +2188,7 @@ command line options start the viewer without arguments.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="ErrorHandling"></a>
-<h2>(P) Error Handling:</h2>
+<h2>(P) Error Handling</h2>
 
 Normally, libMini will run silently doing just what it is ought to do.
 However, if it encounters insufficient resources (either insufficient
@@ -2203,7 +2203,7 @@ renderer without shutting down the main application).<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Acknowledgements"></a>
-<h2>(Q) FINAL ACKNOWLEDGEMENTS:</h2>
+<h2>(Q) Final Acknowledgements</h2>
 
 In particular, I would like to thank Ben Discoe of vterrain.org for
 his suggestions and valuable feedback on the terrain rendering API
