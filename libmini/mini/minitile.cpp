@@ -17,7 +17,7 @@ const int minitile::MAX_STR=1024;
 
 float minitile::CONFIGURE_MINRES=9.0f;
 float minitile::CONFIGURE_MAXD2=100.0f;
-float minitile::CONFIGURE_SEAD2=0.1f;
+float minitile::CONFIGURE_SEAD2=0.5f;
 float minitile::CONFIGURE_MINOFF=0.1f;
 int minitile::CONFIGURE_MAXCULL=8;
 
@@ -1908,7 +1908,7 @@ void minitile::configure_maxd2(float maxd2)
 
 void minitile::configure_sead2(float sead2)
    {
-   if (sead2<0.0f) sead2=0.1f;
+   if (sead2<0.0f) sead2=0.5f;
    CONFIGURE_SEAD2=sead2;
    }
 
