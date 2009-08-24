@@ -15,15 +15,40 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    public:
 
    //! default constructor
+   minimtx() {setdim(0,0);}
+
+   //! constructor
    minimtx(unsigned int cols,unsigned int rows,const Scalar &val=0)
       {
-      unsigned int i;
+      setdim(cols,rows);
+      set(val);
+      }
 
+   //! destructor
+   ~minimtx() {}
+
+   //! get dimensions
+   unsigned int getcols() const {return(COLS);}
+   unsigned int getrows() const {return(ROWS);}
+
+   //! set dimensions
+   void setdim(unsigned int cols,unsigned int rows)
+      {
       COLS=cols;
       ROWS=rows;
 
-      minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows,0);
+      minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows);
+      }
 
+   //! set diagonal
+   void set(const Scalar &val=0)
+      {
+      unsigned int i;
+
+      // initialize with zero
+      minidyna<Scalar,Minsize*Minsize>::set(0);
+
+      // initialize diagonal
       if (val!=0)
          if (cols<rows)
             for (i=0; i<cols; i++) set(i,i,val);
@@ -31,22 +56,14 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
             for (i=0; i<rows; i++) set(i,i,val);
       }
 
-   //! destructor
-   ~minimtx() {}
-
-   unsigned int getcols() const {return(COLS);}
-   unsigned int getrows() const {return(ROWS);}
-
-   // accessors:
-
-   void set(const Scalar &val=0) {minidyna<Scalar,Minsize*Minsize>::set(val);}
-
+   //! accessor/setter
    void set(unsigned int x,unsigned int y,const Scalar &val)
       {
       ERRORCHK(x>=COLS || y>=ROWS);
       minidyna<Scalar,Minsize*Minsize>::set(x+y*COLS,val);
       }
 
+   //! accessor/getter
    Scalar get(unsigned int x,unsigned int y) const
       {
       ERRORCHK(x>=COLS || y>=ROWS);
@@ -69,6 +86,9 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       // check dimensions
       if (getrows()<1) return(FALSE);
       if (getcols()!=getrows()+1) return(FALSE);
+
+      // set dimensions of solution
+      sol.setdim(1,getrows());
 
       // initialize solution vector
       for (i=0; i<getrows(); i++)
@@ -107,14 +127,17 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
                   }
 
       // back-substitution
-      for (i=getrows()-1; i+1>0; i--)
-         if (get(i,i)!=0)
+      for (i=getrows(); i>0; i--)
+         {
+         k=i-1;
+         if (get(k,k)!=0)
             {
-            sum=get(getrows(),i);
-            for (j=i+1; j<getrows(); j++) sum-=get(j,i)*sol.get(0,row.get(0,j));
-            if (get(i,i)!=0) sol.set(0,row.get(0,i),sum/get(i,i));
+            sum=get(getrows(),k);
+            for (j=i; j<getrows(); j++) sum-=get(j,k)*sol.get(0,row.get(0,j));
+            if (get(k,k)!=0) sol.set(0,row.get(0,k),sum/get(k,k));
             else if (sum!=0) return(FALSE);
             }
+         }
 
       return(TRUE);
       }
