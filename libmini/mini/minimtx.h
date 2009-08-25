@@ -43,17 +43,10 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //! set diagonal
    void set(const Scalar &val=0)
       {
-      unsigned int i;
+      unsigned int i,j;
 
-      // initialize with zero
-      minidyna<Scalar,Minsize*Minsize>::set(0);
-
-      // initialize diagonal
-      if (val!=0)
-         if (cols<rows)
-            for (i=0; i<cols; i++) set(i,i,val);
-         else
-            for (i=0; i<rows; i++) set(i,i,val);
+      for (i=0; i<COLS; i++)
+         for (j=0; j<ROWS; j++) set(i,j,(i==j)?val:0);
       }
 
    //! accessor/setter
@@ -77,49 +70,34 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //! returns true if the linear system has a solution
    BOOLINT solve(minimtx<Scalar,Minsize> &sol)
       {
-      unsigned int i,j,k,l;
+      unsigned int i,j,k;
 
       Scalar item,factor,sum;
-
-      minimtx<unsigned int,Minsize> row(1,getrows());
 
       // check dimensions
       if (getrows()<1) return(FALSE);
       if (getcols()!=getrows()+1) return(FALSE);
 
-      // set dimensions of solution
+      // set dimensions of solution vector
       sol.setdim(1,getrows());
-
-      // initialize solution vector
-      for (i=0; i<getrows(); i++)
-         {
-         sol.set(0,i,0);
-         row.set(0,i,i);
-         }
 
       // reorder rows to have non-zero elements on the diagonal
       for (i=0; i<getrows()-1; i++)
          if (get(i,i)==0)
             for (j=i+1; j<getrows(); j++)
                if (get(i,j)!=0)
-                  {
-                  l=row.get(0,i);
-                  row.set(0,i,row.get(0,j));
-                  row.set(0,j,l);
-
                   for (k=0; k<getcols(); k++)
                      {
                      item=get(k,i);
                      set(k,i,get(k,j));
                      set(k,j,item);
                      }
-                  }
 
       // compute upper triangular form
       for (i=0; i<getrows()-1; i++)
-         for (j=getrows()-1; j>i; j--)
-            if (get(i,j)!=0)
-               if (get(i,i)!=0)
+         if (get(i,i)!=0)
+            for (j=getrows()-1; j>i; j--)
+               if (get(i,j)!=0)
                   {
                   factor=get(i,j)/get(i,i);
                   for (k=i+1; k<getcols(); k++) set(k,j,get(k,j)-factor*get(k,i));
@@ -127,17 +105,91 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
                   }
 
       // back-substitution
-      for (i=getrows(); i>0; i--)
+      for (i=0; i<getrows(); i++)
          {
-         k=i-1;
-         if (get(k,k)!=0)
-            {
-            sum=get(getrows(),k);
-            for (j=i; j<getrows(); j++) sum-=get(j,k)*sol.get(0,row.get(0,j));
-            if (get(k,k)!=0) sol.set(0,row.get(0,k),sum/get(k,k));
-            else if (sum!=0) return(FALSE);
-            }
+         k=getrows()-1-i;
+
+         sum=get(getrows(),k);
+         for (j=k+1; j<getrows(); j++) sum-=get(j,k)*sol.get(0,j);
+
+         if (get(k,k)!=0) sol.set(0,k,sum/get(k,k));
+         else if (sum==0) sol.set(0,k,0);
+         else return(FALSE);
          }
+
+      return(TRUE);
+      }
+
+   //! Gaussian elimination
+   //! invertes linear system of equations defined by square matrix
+   BOOLINT invert(minimtx<Scalar,Minsize> &inv)
+      {
+      unsigned int i,j,k,l;
+
+      minimtx<Scalar,Minsize> mtx;
+
+      Scalar item,factor;
+
+      // check dimensions
+      if (getrows()<1) return(FALSE);
+      if (getcols()!=getrows()) return(FALSE);
+
+      // set dimensions of inverse matrix
+      inv.setdim(getcols(),getrows());
+
+      // set dimensions of augmented matrix
+      mtx.setdim(2*getcols(),getrows());
+
+      // augment matrix
+      for (i=0; i<getcols(); i++)
+         for (j=0; j<getrows(); j++)
+            {
+            mtx.set(i,j,get(i,j));
+            mtx.set(i+getrows(),j,(i==j)?1:0);
+            }
+
+      // reorder rows to have non-zero elements on the diagonal
+      for (i=0; i<mtx.getrows()-1; i++)
+         if (mtx.get(i,i)==0)
+            for (j=i+1; j<mtx.getrows(); j++)
+               if (mtx.get(i,j)!=0)
+                  for (k=0; k<mtx.getcols(); k++)
+                     {
+                     item=mtx.get(k,i);
+                     mtx.set(k,i,mtx.get(k,j));
+                     mtx.set(k,j,item);
+                     }
+
+      // compute upper triangular form
+      for (i=0; i<mtx.getrows()-1; i++)
+         if (mtx.get(i,i)!=0)
+            for (j=mtx.getrows()-1; j>i; j--)
+               if (mtx.get(i,j)!=0)
+                  {
+                  factor=mtx.get(i,j)/mtx.get(i,i);
+                  for (k=i+1; k<mtx.getcols(); k++) mtx.set(k,j,mtx.get(k,j)-factor*mtx.get(k,i));
+                  mtx.set(i,j,0);
+                  }
+
+      // compute diagonal form
+      for (i=0; i<mtx.getrows(); i++)
+         {
+         k=mtx.getrows()-1-i;
+
+         if (mtx.get(k,k)==0) return(FALSE);
+
+         for (j=0; j<k; j++)
+            if (mtx.get(k,j)!=0)
+               {
+               factor=mtx.get(k,j)/mtx.get(k,k);
+               for (l=i+1; l<mtx.getcols(); l++) mtx.set(l,j,mtx.get(l,j)-factor*mtx.get(l,k));
+               mtx.set(k,j,0);
+               }
+         }
+
+      // copy to inverse matrix
+      for (i=0; i<getrows(); i++)
+         for (j=0; j<getrows(); j++) inv.set(i,j,mtx.get(i+getrows(),j)/mtx.get(j,j));
 
       return(TRUE);
       }
@@ -153,6 +205,8 @@ inline minimtx<Scalar,Minsize> operator + (const minimtx<Scalar,Minsize> &a,cons
    {
    unsigned int i,j;
 
+   ERRORCHK(a.getcols()!=b.getcols() || a.getrows()!=b.getrows());
+
    minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
    for (i=0; i<b.getcols(); i++)
@@ -166,6 +220,8 @@ template <class Scalar,const unsigned int Minsize>
 inline minimtx<Scalar,Minsize> operator - (const minimtx<Scalar,Minsize> &a,const minimtx<Scalar,Minsize> &b)
    {
    unsigned int i,j;
+
+   ERRORCHK(a.getcols()!=b.getcols() || a.getrows()!=b.getrows());
 
    minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
@@ -181,10 +237,10 @@ inline minimtx<Scalar,Minsize> operator - (const minimtx<Scalar,Minsize> &v)
    {
    unsigned int i,j;
 
-   minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
+   minimtx<Scalar,Minsize> mtx(v.getcols(),v.getrows());
 
-   for (i=0; i<b.getcols(); i++)
-      for (j=0; j<a.getrows(); j++) mtx.set(i,j,-v.get(i,j));
+   for (i=0; i<v.getcols(); i++)
+      for (j=0; j<v.getrows(); j++) mtx.set(i,j,-v.get(i,j));
 
    return(mtx);
    }
@@ -196,6 +252,8 @@ inline minimtx<Scalar,Minsize> operator * (const minimtx<Scalar,Minsize> &a,cons
    unsigned int i,j,k;
 
    Scalar val;
+
+   ERRORCHK(a.getcols()!=b.getrows() || a.getrows()!=b.getcols());
 
    minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
