@@ -63,6 +63,47 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       return(minidyna<Scalar,Minsize*Minsize>::get(x+y*COLS));
       }
 
+   //! augment matrix with right hand side
+   void augment(const minimtx<Scalar,Minsize> &rhs)
+      {
+      unsigned int i,j;
+
+      ERRORCHK(getrows()!=rhs.getrows());
+
+      minimtx<Scalar,Minsize> mtx(getcols()+rhs.getcols(),getrows());
+
+      for (i=0; i<getcols(); i++)
+         for (j=0; j<getrows(); j++) mtx.set(i,j,get(i,j));
+
+      for (i=0; i<rhs.getcols(); i++)
+         for (j=0; j<rhs.getrows(); j++) mtx.set(i+getcols(),j,rhs.get(i,j));
+
+      *this=mtx;
+      }
+
+   //! solves linear system of equations defined by square matrix and right hand side vector
+   BOOLINT solve(const minimtx<Scalar,Minsize> &rhs,minimtx<Scalar,Minsize> &sol)
+      {
+      minimtx<Scalar,Minsize> mtx(*this);
+
+      mtx.augment(rhs);
+      return(mtx.solve(sol));
+      }
+
+   //! invertes linear system of equations defined by square matrix
+   BOOLINT invert(minimtx<Scalar,Minsize> &inv)
+      {
+      minimtx<Scalar,Minsize> mtx(*this);
+      minimtx<Scalar,Minsize> one(getcols(),getrows(),1);
+
+      mtx.augment(one);
+      return(mtx.gauss(inv));
+      }
+
+   protected:
+
+   unsigned int COLS,ROWS;
+
    //! Gaussian elimination with back-substitution
    //! solves linear system of equations defined by square matrix
    //! working matrix has to be in the augmented form (N+1)xN
@@ -122,81 +163,66 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
    //! Gaussian elimination
    //! invertes linear system of equations defined by square matrix
-   BOOLINT invert(minimtx<Scalar,Minsize> &inv)
+   //! working matrix has to be in the augmented form (2*N)xN
+   //! returns true if the linear system is invertable
+   BOOLINT gauss(minimtx<Scalar,Minsize> &inv)
       {
       unsigned int i,j,k,l;
-
-      minimtx<Scalar,Minsize> mtx;
 
       Scalar item,factor;
 
       // check dimensions
       if (getrows()<1) return(FALSE);
-      if (getcols()!=getrows()) return(FALSE);
+      if (getcols()!=2*getrows()) return(FALSE);
 
       // set dimensions of inverse matrix
-      inv.setdim(getcols(),getrows());
-
-      // set dimensions of augmented matrix
-      mtx.setdim(2*getcols(),getrows());
-
-      // augment matrix
-      for (i=0; i<getcols(); i++)
-         for (j=0; j<getrows(); j++)
-            {
-            mtx.set(i,j,get(i,j));
-            mtx.set(i+getrows(),j,(i==j)?1:0);
-            }
+      inv.setdim(getrows(),getrows());
 
       // reorder rows to have non-zero elements on the diagonal
-      for (i=0; i<mtx.getrows()-1; i++)
-         if (mtx.get(i,i)==0)
-            for (j=i+1; j<mtx.getrows(); j++)
-               if (mtx.get(i,j)!=0)
-                  for (k=0; k<mtx.getcols(); k++)
+      for (i=0; i<getrows()-1; i++)
+         if (get(i,i)==0)
+            for (j=i+1; j<getrows(); j++)
+               if (get(i,j)!=0)
+                  for (k=0; k<getcols(); k++)
                      {
-                     item=mtx.get(k,i);
-                     mtx.set(k,i,mtx.get(k,j));
-                     mtx.set(k,j,item);
+                     item=get(k,i);
+                     set(k,i,get(k,j));
+                     set(k,j,item);
                      }
 
       // compute upper triangular form
-      for (i=0; i<mtx.getrows()-1; i++)
-         if (mtx.get(i,i)!=0)
-            for (j=mtx.getrows()-1; j>i; j--)
-               if (mtx.get(i,j)!=0)
+      for (i=0; i<getrows()-1; i++)
+         if (get(i,i)!=0)
+            for (j=getrows()-1; j>i; j--)
+               if (get(i,j)!=0)
                   {
-                  factor=mtx.get(i,j)/mtx.get(i,i);
-                  for (k=i+1; k<mtx.getcols(); k++) mtx.set(k,j,mtx.get(k,j)-factor*mtx.get(k,i));
-                  mtx.set(i,j,0);
+                  factor=get(i,j)/get(i,i);
+                  for (k=i+1; k<getcols(); k++) set(k,j,get(k,j)-factor*get(k,i));
+                  set(i,j,0);
                   }
 
       // compute diagonal form
-      for (i=0; i<mtx.getrows(); i++)
+      for (i=0; i<getrows(); i++)
          {
-         k=mtx.getrows()-1-i;
+         k=getrows()-1-i;
 
-         if (mtx.get(k,k)==0) return(FALSE);
+         if (get(k,k)==0) return(FALSE);
 
          for (j=0; j<k; j++)
-            if (mtx.get(k,j)!=0)
+            if (get(k,j)!=0)
                {
-               factor=mtx.get(k,j)/mtx.get(k,k);
-               for (l=i+1; l<mtx.getcols(); l++) mtx.set(l,j,mtx.get(l,j)-factor*mtx.get(l,k));
-               mtx.set(k,j,0);
+               factor=get(k,j)/get(k,k);
+               for (l=i+1; l<getcols(); l++) set(l,j,get(l,j)-factor*get(l,k));
+               set(k,j,0);
                }
          }
 
       // copy to inverse matrix
       for (i=0; i<getrows(); i++)
-         for (j=0; j<getrows(); j++) inv.set(i,j,mtx.get(i+getrows(),j)/mtx.get(j,j));
+         for (j=0; j<getrows(); j++) inv.set(i,j,get(i+getrows(),j)/get(j,j));
 
       return(TRUE);
       }
-
-   protected:
-
-   unsigned int COLS,ROWS;
    };
 
 //! add operator
