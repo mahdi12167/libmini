@@ -107,7 +107,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       tra.setdim(getrows(),getcols());
 
       for (i=0; i<getcols(); i++)
-         for (j=0; j<getrows(); j++) tra.set(i,j,get(j,i));
+         for (j=0; j<getrows(); j++) tra.set(j,i,get(i,j));
       }
 
    protected:
@@ -230,7 +230,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
                }
          }
 
-      // copy to inverse matrix
+      // copy inverse matrix
       for (i=0; i<getrows(); i++)
          for (j=0; j<getrows(); j++) inv.set(i,j,get(i+getrows(),j)/get(j,j));
 
