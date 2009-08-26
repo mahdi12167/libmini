@@ -90,7 +90,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       return(mtx.solve(sol));
       }
 
-   //! invertes linear system of equations defined by square matrix
+   //! invert square matrix
    BOOLINT invert(minimtx<Scalar,Minsize> &inv)
       {
       minimtx<Scalar,Minsize> mtx(*this);
@@ -98,6 +98,17 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
       mtx.augment(one);
       return(mtx.gauss(inv));
+      }
+
+   //! transpose matrix
+   void transpose(minimtx<Scalar,Minsize> &tra)
+      {
+      unsigned int i,j;
+
+      tra.setdim(getrows(),getcols());
+
+      for (i=0; i<getcols(); i++)
+         for (j=0; j<getrows(); j++) tra.set(i,j,get(j,i));
       }
 
    protected:
@@ -162,7 +173,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       }
 
    //! Gaussian elimination
-   //! invertes linear system of equations defined by square matrix
+   //! inverts linear system of equations defined by square matrix
    //! working matrix has to be in the augmented form (2*N)xN
    //! returns true if the linear system is invertable
    BOOLINT gauss(minimtx<Scalar,Minsize> &inv)
@@ -192,14 +203,17 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
       // compute upper triangular form
       for (i=0; i<getrows()-1; i++)
-         if (get(i,i)!=0)
-            for (j=getrows()-1; j>i; j--)
-               if (get(i,j)!=0)
-                  {
-                  factor=get(i,j)/get(i,i);
-                  for (k=i+1; k<getcols(); k++) set(k,j,get(k,j)-factor*get(k,i));
-                  set(i,j,0);
-                  }
+         {
+         if (get(i,i)==0) return(FALSE);
+
+         for (j=getrows()-1; j>i; j--)
+            if (get(i,j)!=0)
+               {
+               factor=get(i,j)/get(i,i);
+               for (k=i+1; k<getcols(); k++) set(k,j,get(k,j)-factor*get(k,i));
+               set(i,j,0);
+               }
+         }
 
       // compute diagonal form
       for (i=0; i<getrows(); i++)
