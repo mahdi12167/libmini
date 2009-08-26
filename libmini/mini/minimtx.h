@@ -19,10 +19,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
    //! constructor
    minimtx(unsigned int cols,unsigned int rows,const Scalar &val=0)
-      {
-      setdim(cols,rows);
-      set(val);
-      }
+      {setdim(cols,rows,val);}
 
    //! destructor
    ~minimtx() {}
@@ -32,12 +29,14 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    unsigned int getrows() const {return(ROWS);}
 
    //! set dimensions
-   void setdim(unsigned int cols,unsigned int rows)
+   void setdim(unsigned int cols,unsigned int rows,const Scalar &val=0)
       {
       COLS=cols;
       ROWS=rows;
 
-      minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows);
+      minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows,0);
+
+      if (val!=0) set(val);
       }
 
    //! set diagonal
@@ -82,7 +81,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       }
 
    //! solves linear system of equations defined by square matrix and right hand side vector
-   BOOLINT solve(const minimtx<Scalar,Minsize> &rhs,minimtx<Scalar,Minsize> &sol)
+   BOOLINT solve(const minimtx<Scalar,Minsize> &rhs,minimtx<Scalar,Minsize> &sol) const
       {
       minimtx<Scalar,Minsize> mtx(*this);
 
@@ -91,7 +90,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       }
 
    //! invert square matrix
-   BOOLINT invert(minimtx<Scalar,Minsize> &inv)
+   BOOLINT invert(minimtx<Scalar,Minsize> &inv) const
       {
       minimtx<Scalar,Minsize> mtx(*this);
       minimtx<Scalar,Minsize> one(getcols(),getrows(),1);
@@ -101,7 +100,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       }
 
    //! transpose matrix
-   void transpose(minimtx<Scalar,Minsize> &tra)
+   void transpose(minimtx<Scalar,Minsize> &tra) const
       {
       unsigned int i,j;
 
