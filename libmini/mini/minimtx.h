@@ -36,16 +36,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
       minidyna<Scalar,Minsize*Minsize>::setsize(cols*rows,0);
 
-      if (val!=0) set(val);
-      }
-
-   //! set diagonal
-   void set(const Scalar &val=0)
-      {
-      unsigned int i,j;
-
-      for (i=0; i<COLS; i++)
-         for (j=0; j<ROWS; j++) set(i,j,(i==j)?val:0);
+      if (val!=0) diag(val);
       }
 
    //! accessor/setter
@@ -60,6 +51,15 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       {
       ERRORCHK(x>=COLS || y>=ROWS);
       return(minidyna<Scalar,Minsize*Minsize>::get(x+y*COLS));
+      }
+
+   //! set diagonal
+   void diag(const Scalar &val=0)
+      {
+      unsigned int i,j;
+
+      for (i=0; i<COLS; i++)
+         for (j=0; j<ROWS; j++) set(i,j,(i==j)?val:0);
       }
 
    //! augment matrix with right hand side
@@ -108,6 +108,43 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
       for (i=0; i<getcols(); i++)
          for (j=0; j<getrows(); j++) tra.set(j,i,get(i,j));
+      }
+
+   //! multiple regression
+   //! correlates sample vectors x_i = (x_i1, x_i2, ..., x_ip) for i=1..n
+   //! with linearly dependent samples y_i for i=1..n
+   //! so that y_i = b_0 + b_1*x_i1 + b_2*x_i2 + ... + b_p*x_ip + e_i
+   //! with the sum of e_i squared being minimal for the corresponding solution vector b
+   //! the solution vector b is computed as follows:
+   //!  Y = X*b + e
+   //!  with Y = (y_1, y_2, ..., y_i)T
+   //!  and X = (1, x_11, x_12, ..., x_1p
+   //!           1, x_21, x_22, ..., x_2p
+   //!           ...
+   //!           1, x_n1, x_n2, ..., x_np)
+   //!  then b = ( (X)T * X )^-1 * ( (X)T * Y )
+   void mulreg(const minimtx<Scalar,Minsize> &x,const minimtx<Scalar,Minsize> &y,
+               minimtx<Scalar,Minsize> &b) const
+      {
+      minimtx<Scalar,Minsize> X,XT;
+      minimtx<Scalar,Minsize> XTX,XTY;
+
+      b.setdim(0,0);
+
+      // check dimensions
+      if (x.getrows()!=y.getrows() || y.getcols()!=1) return;
+
+      // augment sample vectors
+      X.setdim(1,x.getrows());
+      X.clear(1);
+      X.augment(x);
+
+      // compute solution vector
+      X.transpose(XT);
+      XTX=XT*X;
+      XTY=XT*y;
+      XTX.invert(XTX);
+      b=XTX*XTY;
       }
 
    protected:
