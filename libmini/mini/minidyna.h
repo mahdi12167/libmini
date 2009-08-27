@@ -156,6 +156,16 @@ class minidyna
    void expandsize(unsigned int size)
       {if (SIZE>0) growsize(size,get(SIZE-1));}
 
+   //! clear with value
+   void clear(const Item &c)
+      {
+      unsigned int i;
+
+      for (i=0; i<SIZE; i++)
+         if (i<MINSIZE) MINARRAY[i]=c;
+         else ARRAY[i-MINSIZE]=c;
+      }
+
    //! clear!
    void clear() {setsize(0);}
 
