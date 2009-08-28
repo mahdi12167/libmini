@@ -123,7 +123,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //!           ...
    //!           1, x_n1, x_n2, ..., x_np)
    //!  then b = ( (X)T * X )^-1 * ( (X)T * Y )
-   void mulreg(const minimtx<Scalar,Minsize> &x,const minimtx<Scalar,Minsize> &y,
+   void mulreg(const minimtx<Scalar,Minsize> &y,
                minimtx<Scalar,Minsize> &b) const
       {
       minimtx<Scalar,Minsize> X,XT;
@@ -132,12 +132,12 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       b.setdim(0,0);
 
       // check dimensions
-      if (x.getrows()!=y.getrows() || y.getcols()!=1) return;
+      if (getrows()!=y.getrows() || y.getcols()!=1) return;
 
       // augment sample vectors
-      X.setdim(1,x.getrows());
+      X.setdim(1,getrows());
       X.clear(1);
-      X.augment(x);
+      X.augment(*this);
 
       // compute solution vector
       X.transpose(XT);
@@ -329,7 +329,7 @@ inline minimtx<Scalar,Minsize> operator * (const minimtx<Scalar,Minsize> &a,cons
 
    Scalar val;
 
-   ERRORCHK(a.getcols()!=b.getrows() || a.getrows()!=b.getcols());
+   ERRORCHK(a.getcols()!=b.getrows());
 
    minimtx<Scalar,Minsize> mtx(b.getcols(),a.getrows());
 
@@ -337,7 +337,7 @@ inline minimtx<Scalar,Minsize> operator * (const minimtx<Scalar,Minsize> &a,cons
       for (j=0; j<a.getrows(); j++)
          {
          val=0;
-         for (k=0; k<b.getcols(); k++) val+=a.get(k,j)*b.get(i,k);
+         for (k=0; k<a.getcols(); k++) val+=a.get(k,j)*b.get(i,k);
          mtx.set(i,j,val);
          }
 
