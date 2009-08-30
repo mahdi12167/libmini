@@ -52,7 +52,7 @@ class minicoord
 
    //! constructors
    //! if coordinate system is geographic (LatLon) then corners are given in arc-seconds
-   //! else corners are given in meters
+   //! else corners are given in meters (1 degree equals 3600 arc-seconds or roughly 111 km on the equator)
    minicoord(const miniv3d &v);
    minicoord(const miniv3d &v,const MINICOORD t);
    minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
