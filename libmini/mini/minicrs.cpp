@@ -218,6 +218,14 @@ void minicrs::UTM2LL(double x,double y,
    *lon=(float)tlon;
    }
 
+// transform LL to UTM zone
+int minicrs::LL2UTMZ(double lat,double lon)
+   {
+   int zone;
+   zone=dtrc(LONSUB(lon)/(6*60*60))+31;
+   return((lat<0.0)?-zone:zone);
+   }
+
 // transform Lat/Lon to Mercator
 // input in arc-seconds, output in meters
 void minicrs::LL2MERC(double lat,double lon,

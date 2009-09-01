@@ -36,6 +36,9 @@ class minicrs
                       int zone,int datum,
                       float *lat,float *lon);
 
+   //! transform LL to UTM zone
+   static int LL2UTMZ(double lat,double lon);
+
    //! transform Lat/Lon to Mercator
    static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
                        double *x,double *y); // output Mercator coordinates (WGS84 datum)
@@ -147,16 +150,16 @@ namespace minilon {
 inline double LONADD(double a,double b=0.0f)
    {
    double lon=a+b;
-   double lonprd=floor(lon/(360*60*60));
-   return(lon-lonprd*360*60*60);
+   double lonmul=floor(lon/(360*60*60));
+   return(lon-lonmul*360*60*60);
    }
 
 //! subtract longitudes
 inline double LONSUB(double a,double b=0.0f)
    {
    double diff=a-b+180*60*60;
-   double diffprd=floor(diff/(360*60*60));
-   return(diff-diffprd*360*60*60-180*60*60);
+   double diffmul=floor(diff/(360*60*60));
+   return(diff-diffmul*360*60*60-180*60*60);
    }
 
 //! return leftmost longitude
