@@ -129,7 +129,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       minimtx<Scalar,Minsize> X,XT;
       minimtx<Scalar,Minsize> XTX,XTY;
 
-      b.setdim(0,0);
+      b.setdim(0,getcols()+1);
 
       // check dimensions
       if (getrows()!=y.getrows() || y.getcols()!=1) return;
@@ -143,7 +143,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       X.transpose(XT);
       XTX=XT*X;
       XTY=XT*y;
-      XTX.invert(XTX);
+      if (!XTX.invert(XTX)) return;
       b=XTX*XTY;
       }
 
