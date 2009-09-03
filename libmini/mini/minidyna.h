@@ -156,6 +156,10 @@ class minidyna
    void expandsize(unsigned int size)
       {if (SIZE>0) growsize(size,get(SIZE-1));}
 
+   //! grow array size with initialization or expansion of existing part
+   void expandsize(unsigned int size,const Item &c)
+      {growsize(size,(SIZE>0)?get(SIZE-1):c);}
+
    //! clear with value
    void clear(const Item &c)
       {
