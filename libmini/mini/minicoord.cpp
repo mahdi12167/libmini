@@ -372,3 +372,50 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 
    type=MINICOORD_LINEAR;
    }
+
+// get crs type description from object
+const char *minicoord::getcrs() const
+   {return(getcrs(this->type));}
+
+// get crs type description
+const char *minicoord::getcrs(const MINICOORD &t)
+   {
+   switch (t)
+      {
+      case MINICOORD_LINEAR: return("Linear");
+      case MINICOORD_LLH: return("LLH");
+      case MINICOORD_UTM: return("UTM");
+      case MINICOORD_MERC: return("Mercator");
+      case MINICOORD_OGH: return("OGH");
+      case MINICOORD_ECEF: return("ECEF");
+      default: return("Unkown");
+      }
+   }
+
+// get crs datum description from object
+const char *minicoord::getdatum() const
+   {return(getdatum(this->crs_datum));}
+
+// get crs datum description
+const char *minicoord::getdatum(const MINICOORD_DATUM &d)
+   {
+   switch (d)
+      {
+      case MINICOORD_DATUM_NONE: return("None");
+      case MINICOORD_DATUM_NAD27: return("NAD27");
+      case MINICOORD_DATUM_WGS72: return("WGS72");
+      case MINICOORD_DATUM_WGS84: return("WGS84");
+      case MINICOORD_DATUM_NAD83: return("NAD83");
+      case MINICOORD_DATUM_SPHERE: return("Sphere");
+      case MINICOORD_DATUM_ED50: return("ED50");
+      case MINICOORD_DATUM_ED87: return("ED87");
+      case MINICOORD_DATUM_OldHawaiian: return("OldHawaiian");
+      case MINICOORD_DATUM_Luzon: return("Luzon");
+      case MINICOORD_DATUM_Tokyo: return("Tokyo");
+      case MINICOORD_DATUM_OSGB1936: return("OSGB1936");
+      case MINICOORD_DATUM_Australian1984: return("Australian1984");
+      case MINICOORD_DATUM_NewZealand1949: return("NewZealand1949");
+      case MINICOORD_DATUM_SouthAmerican1969: return("SouthAmerican1969");
+      default: return("Unknown");
+      }
+   }

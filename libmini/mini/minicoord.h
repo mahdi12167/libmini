@@ -84,6 +84,14 @@ class minicoord
    void convert(const miniv3d src[2], // bounding box in original domain
                 const miniv3d dst[8]); // 8 points in warp domain
 
+   //! get crs type description
+   const char *getcrs() const;
+   static const char *getcrs(const MINICOORD &t);
+
+   //! get crs datum description
+   const char *getdatum() const;
+   static const char *getdatum(const MINICOORD_DATUM &d);
+
    miniv4d vec; // geo-referenced coordinates (plus time)
    MINICOORD type; // actual coordinate reference system type
 
@@ -161,43 +169,12 @@ inline int operator != (const minicoord &a,const minicoord &b)
    {return(a.vec!=b.vec || a.type!=b.type || a.crs_zone!=b.crs_zone || a.crs_datum!=b.crs_datum);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
-   {return(out << '(' << c.vec << ',' << c.type << ',' << c.crs_zone << ',' << c.crs_datum << ')');}
+   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << (*c.getcrs()) << " zone=" << c.crs_zone << " datum=" << (*c.getdatum()) << " ]");}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD &t)
-   {
-   switch (t)
-      {
-      case minicoord::MINICOORD_LINEAR: return(out << "Linear");
-      case minicoord::MINICOORD_LLH: return(out << "LLH");
-      case minicoord::MINICOORD_UTM: return(out << "UTM");
-      case minicoord::MINICOORD_MERC: return(out << "Merc");
-      case minicoord::MINICOORD_OGH: return(out << "OGH");
-      case minicoord::MINICOORD_ECEF: return(out << "ECEF");
-      default: return(out << "Unkown");
-      }
-   }
+   {return(out << (*minicoord::getcrs(t)));}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD_DATUM &d)
-   {
-   switch (d)
-      {
-      case minicoord::MINICOORD_DATUM_NONE: return(out << "None");
-      case minicoord::MINICOORD_DATUM_NAD27: return(out << "NAD27");
-      case minicoord::MINICOORD_DATUM_WGS72: return(out << "WGS72");
-      case minicoord::MINICOORD_DATUM_WGS84: return(out << "WGS84");
-      case minicoord::MINICOORD_DATUM_NAD83: return(out << "NAD83");
-      case minicoord::MINICOORD_DATUM_SPHERE: return(out << "Sphere");
-      case minicoord::MINICOORD_DATUM_ED50: return(out << "ED50");
-      case minicoord::MINICOORD_DATUM_ED87: return(out << "ED87");
-      case minicoord::MINICOORD_DATUM_OldHawaiian: return(out << "OldHawaiian");
-      case minicoord::MINICOORD_DATUM_Luzon: return(out << "Luzon");
-      case minicoord::MINICOORD_DATUM_Tokyo: return(out << "Tokyo");
-      case minicoord::MINICOORD_DATUM_OSGB1936: return(out << "OSGB1936");
-      case minicoord::MINICOORD_DATUM_Australian1984: return(out << "Australian1984");
-      case minicoord::MINICOORD_DATUM_NewZealand1949: return(out << "NewZealand1949");
-      case minicoord::MINICOORD_DATUM_SouthAmerican1969: return(out << "SouthAmerican1969");
-      default: return(out << "Unknown");
-      }
-   }
+   {return(out << (*minicoord::getdatum(d)));}
 
 #endif
