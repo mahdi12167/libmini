@@ -169,7 +169,7 @@ inline int operator != (const minicoord &a,const minicoord &b)
    {return(a.vec!=b.vec || a.type!=b.type || a.crs_zone!=b.crs_zone || a.crs_datum!=b.crs_datum);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
-   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << (*c.getcrs()) << " zone=" << c.crs_zone << " datum=" << (*c.getdatum()) << " ]");}
+   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " zone=" << c.crs_zone << " datum=" << c.getdatum() << " ]");}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD &t)
    {return(out << (*minicoord::getcrs(t)));}
