@@ -1269,7 +1269,8 @@ location into the comment of the PNM header. This is achieved by
 specifying the four corners of the image in either the geographic
 world coordinate system (also known as Lat/Lon) or in Universal
 Transverse Mercator coordinates (UTM). The built-in resampler of the
-library exclusively uses this extended PNM format. An example of a
+library exclusively uses this extended PNM format (for more details
+see <a href="#PNMdoc">Appendix (6A)</a>). An example of a
 georeferenced header is shown below:<p>
 
 <pre>
@@ -1331,15 +1332,13 @@ cached to the minicache:<p>
 <pre>
    minitile *tileset=new minitile(hfields,textures,cols,rows,...);
    minicache *cache=new minicache;
-
    cache->attach(tileset);
 </pre>
 
 Then, for each frame, we trigger a partial update of the scene with:
 
-<p>
+<pre>
    int update=5; // number of frames per update
-
    tileset->draw(...,update); // nothing is rendered yet
    cache->rendercache(); // render the cached vertex buffer
 </pre>
