@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 9.4 as of 14.September.2009<br>
+Version 9.4.1 as of 14.September.2009<br>
 Copyright (c) 1995-2009 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -761,8 +761,8 @@ appropriate LODs automatically.<p>
 
 By default, the tiles are rendered directly using the built-in OpenGL
 graphics engine. Alternatively, a render cache (e.g. the minicache
-described in Section <a href="#Performance">(I)) can be attached to
-the miniload class. Then the tiles are displayed indirectly by
+described in Section <a href="#Performance">(I)</a>) can be attached
+to the miniload class. Then the tiles are displayed indirectly by
 rendering the contents of the cache. However, we do not attach the
 cache to the miniload object but rather to the minitile object
 encapsulated in it (use terrain->getminitile() to get it).<p>
