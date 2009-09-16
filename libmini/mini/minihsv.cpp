@@ -93,4 +93,167 @@ void hsv2rgb(float hue,float sat,float val,float rgb[3])
         }
    }
 
+// rgb to ycbcr conversion
+void rgb2ycbcr(float r,float g,float b,float ycbcr[3],float gamma)
+   {
+   // apply gamma correction
+   r=fpow(r,gamma);
+   g=fpow(g,gamma);
+   b=fpow(b,gamma);
+
+   // apply conversion matrix
+   ycbcr[0] =     0.299f*r +     0.587f*g +     0.114f*b;
+   ycbcr[1] = -0.168736f*r + -0.331264f*g +       0.5f*b;
+   ycbcr[2] =       0.5f*r + -0.418688f*g + -0.081312f*b;
+   }
+
+// ycbcr to rgb conversion
+void ycbcr2rgb(float y,float cb,float cr,float rgb[3],float gamma)
+   {
+   float r,g,b;
+
+   // apply conversion matrix
+   r = y + 1.402f*cr;
+   g = y - 0.714f*cr - 0.344f*cb;
+   b = y + 1.772f*cb;
+
+   // apply inverse gamma correction
+   rgb[0]=fpow(r,1.0f/gamma);
+   rgb[1]=fpow(g,1.0f/gamma);
+   rgb[2]=fpow(b,1.0f/gamma);
+   }
+
+// rgb to xyz conversion
+void rgb2xyz(float r,float g,float b,float xyz[3],float gamma)
+   {
+   // apply gamma correction
+   r=fpow(r,gamma);
+   g=fpow(g,gamma);
+   b=fpow(b,gamma);
+
+   // assume sRGB
+   xyz[0] = 0.4124564f*r + 0.3575761f*g + 0.1804375f*b;
+   xyz[1] = 0.2126729f*r + 0.7151522f*g + 0.0721750f*b;
+   xyz[2] = 0.0193339f*r + 0.1191920f*g + 0.9503041f*b;
+   }
+
+// xyz to rgb conversion
+void xyz2rgb(float x,float y,float z,float rgb[3],float gamma)
+   {
+   float r,g,b;
+
+   // assume sRGB
+   r =  3.2404542f*x + -1.5371385f*y + -0.4985314f*z;
+   g = -0.9692660f*x +  1.8760108f*y +  0.0415560f*z;
+   b =  0.0556434f*x + -0.2040259f*y +  1.0572252f*z;
+
+   // apply inverse gamma correction
+   rgb[0]=fpow(r,1.0f/gamma);
+   rgb[1]=fpow(g,1.0f/gamma);
+   rgb[2]=fpow(b,1.0f/gamma);
+   }
+
+// xyz to lab conversion
+void xyz2lab(float x,float y,float z,float lab[3])
+   {
+   float white[3];
+
+   float xr,yr,zr;
+   float xn,yn,zn;
+
+   // choose white point
+   k2white(6500.0f,white); //assume sRGB
+
+   // unnormalize white point
+   xr=white[0]/white[1];
+   yr=1.0f;
+   zr=white[2]/white[1];
+
+   // normalize xyz components
+   xn=x/xr;
+   yn=y/yr;
+   zn=z/zr;
+
+   // equalize xyz components
+   if (xn>216.0f/24389.0f) xn=fpow(xn,1.0f/3); else xn=(24389.0f/27.0f*xn+16.0f)/116.0f;
+   if (yn>216.0f/24389.0f) yn=fpow(yn,1.0f/3); else yn=(24389.0f/27.0f*yn+16.0f)/116.0f;
+   if (zn>216.0f/24389.0f) zn=fpow(zn,1.0f/3); else zn=(24389.0f/27.0f*zn+16.0f)/116.0f;
+
+   // compute lab components
+   lab[0]=1.16f*yn-0.16f; // brightness range=0..1
+   lab[1]=5.0f*(xn-yn); // a<0=green -> red=a>0
+   lab[2]=2.0f*(yn-zn); // b<0=blue -> yellow=b>0
+   }
+
+// lab to xyz conversion
+void lab2xyz(float l,float a,float b,float xyz[3])
+   {
+   float white[3];
+
+   float xr,yr,zr;
+   float xn,yn,zn;
+
+   // choose reference white point
+   k2white(6500.0f,white); //assume sRGB
+
+   // unnormalize white point
+   xr=white[0]/white[1];
+   yr=1.0f;
+   zr=white[2]/white[1];
+
+   // compute xyz components
+   yn=(l+0.16f)/1.16f;
+   xn=a/5.0f+yn;
+   zn=yn-b/2.0f;
+
+   // deequalize xyz components
+   if (xn*xn*xn>216.0f/24389.0f) xn*=xn*xn; else xn=(116.0f*xn-16.0f)*(27.0f/24389.0f);
+   if (yn*yn*yn>216.0f/24389.0f) yn*=yn*yn; else yn=(116.0f*yn-16.0f)*(27.0f/24389.0f);
+   if (zn*zn*zn>216.0f/24389.0f) zn*=zn*zn; else zn=(116.0f*zn-16.0f)*(27.0f/24389.0f);
+
+   // denormalize xyz components
+   xyz[0]=xn*xr;
+   xyz[1]=yn*yr;
+   xyz[2]=zn*zr;
+   }
+
+// convert kelvin to white point
+void k2white(float kelvin,float white[3])
+   {
+   double c;
+   float xr,yr;
+
+   // white point at 5000K/D50 (wide-gamut RGB)
+   static const float xr5000K=0.3457f;
+   static const float yr5000K=0.3585;
+
+   // day light at 5500K/D55
+   static const float xr5500K=0.3324f;
+   static const float yr5500K=0.3474f;
+
+   // white point at 6500K/D65 (sRGB)
+   static const float xr6500K=0.312713f;
+   static const float yr6500K=0.329016f;
+
+   if (kelvin<5000.0f) kelvin=5000.0f;
+   if (kelvin>6500.0f) kelvin=6500.0f;
+
+   if (kelvin<5500.0f)
+      {
+      c=(kelvin-5000.0f)/500.0f;
+      xr=xr5000K+c*(xr5500K-xr5000K);
+      yr=yr5000K+c*(yr5500K-yr5000K);
+      }
+   else
+      {
+      c=(kelvin-5500.0f)/1000.0f;
+      xr=xr5500K+c*(xr6500K-xr5500K);
+      yr=yr5500K+c*(yr6500K-yr5500K);
+      }
+
+   white[0]=xr;
+   white[1]=yr;
+   white[2]=1.0f-xr-yr;
+   }
+
 }
