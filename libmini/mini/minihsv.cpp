@@ -97,9 +97,12 @@ void hsv2rgb(float hue,float sat,float val,float rgb[3])
 void rgb2ycbcr(float r,float g,float b,float ycbcr[3],float gamma)
    {
    // apply gamma correction
-   r=fpow(r,gamma);
-   g=fpow(g,gamma);
-   b=fpow(b,gamma);
+   if (gamma!=1.0)
+      {
+      r=fpow(r,gamma);
+      g=fpow(g,gamma);
+      b=fpow(b,gamma);
+      }
 
    // apply conversion matrix
    ycbcr[0] =     0.299f*r +     0.587f*g +     0.114f*b;
@@ -118,18 +121,30 @@ void ycbcr2rgb(float y,float cb,float cr,float rgb[3],float gamma)
    b = y + 1.772f*cb;
 
    // apply inverse gamma correction
-   rgb[0]=fpow(r,1.0f/gamma);
-   rgb[1]=fpow(g,1.0f/gamma);
-   rgb[2]=fpow(b,1.0f/gamma);
+   if (gamma!=1.0)
+      {
+      rgb[0]=fpow(r,1.0f/gamma);
+      rgb[1]=fpow(g,1.0f/gamma);
+      rgb[2]=fpow(b,1.0f/gamma);
+      }
+   else
+      {
+      rgb[0]=r;
+      rgb[1]=g;
+      rgb[2]=b;
+      }
    }
 
 // rgb to xyz conversion
 void rgb2xyz(float r,float g,float b,float xyz[3],float gamma)
    {
    // apply gamma correction
-   r=fpow(r,gamma);
-   g=fpow(g,gamma);
-   b=fpow(b,gamma);
+   if (gamma!=1.0)
+      {
+      r=fpow(r,gamma);
+      g=fpow(g,gamma);
+      b=fpow(b,gamma);
+      }
 
    // assume sRGB
    xyz[0] = 0.4124564f*r + 0.3575761f*g + 0.1804375f*b;
@@ -148,9 +163,18 @@ void xyz2rgb(float x,float y,float z,float rgb[3],float gamma)
    b =  0.0556434f*x + -0.2040259f*y +  1.0572252f*z;
 
    // apply inverse gamma correction
-   rgb[0]=fpow(r,1.0f/gamma);
-   rgb[1]=fpow(g,1.0f/gamma);
-   rgb[2]=fpow(b,1.0f/gamma);
+   if (gamma!=1.0)
+      {
+      rgb[0]=fpow(r,1.0f/gamma);
+      rgb[1]=fpow(g,1.0f/gamma);
+      rgb[2]=fpow(b,1.0f/gamma);
+      }
+   else
+      {
+      rgb[0]=r;
+      rgb[1]=g;
+      rgb[2]=b;
+      }
    }
 
 // xyz to lab conversion
