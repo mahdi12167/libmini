@@ -13,7 +13,7 @@ void hsv2rgb(float hue,float sat,float val,float rgb[3]);
 void rgb2ycbcr(float r,float g,float b,float ycbcr[3],float gamma=2.2f);
 void ycbcr2rgb(float y,float cb,float cr,float rgb[3],float gamma=2.2f);
 
-// XYZ (scaled to 0..1, assumes sRGB)
+//! XYZ (scaled to 0..1, assumes sRGB)
 void rgb2xyz(float r,float g,float b,float xyz[3],float gamma=1.0f);
 void xyz2rgb(float x,float y,float z,float rgb[3],float gamma=1.0f);
 
@@ -24,7 +24,7 @@ void lab2xyz(float l,float a,float b,float xyz[3]);
 //! chromatic adaption
 void xyz2xyz(float kin,float kout,float x,float y,float z,float xyz[3]);
 
-// white point (normalized vector)
+//! white point (normalized vector)
 void k2white(float kelvin,float white[3]);
 
 }

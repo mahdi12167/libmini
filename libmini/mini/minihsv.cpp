@@ -194,7 +194,7 @@ void xyz2lab(float x,float y,float z,float lab[3])
    // choose white point
    k2white(6500.0f,white); //assume sRGB
 
-   // unnormalize white point
+   // denormalize white point
    xr=white[0]/white[1];
    yr=1.0f;
    zr=white[2]/white[1];
@@ -226,7 +226,7 @@ void lab2xyz(float l,float a,float b,float xyz[3])
    // choose white point
    k2white(6500.0f,white); //assume sRGB
 
-   // unnormalize white point
+   // denormalize white point
    xr=white[0]/white[1];
    yr=1.0f;
    zr=white[2]/white[1];
@@ -258,7 +258,7 @@ void xyz2xyz(float kin,float kout,float x,float y,float z,float xyz[3])
    k2white(kin,white1);
    k2white(kout,white2);
 
-   // unnormalize white points
+   // denormalize white points
    white1[0]/=white1[1];
    white1[2]/=white1[1];
    white1[1]=1.0f;
