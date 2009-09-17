@@ -223,7 +223,7 @@ void lab2xyz(float l,float a,float b,float xyz[3])
    float xr,yr,zr;
    float xn,yn,zn;
 
-   // choose reference white point
+   // choose white point
    k2white(6500.0f,white); //assume sRGB
 
    // unnormalize white point
@@ -245,6 +245,41 @@ void lab2xyz(float l,float a,float b,float xyz[3])
    xyz[0]=xn*xr;
    xyz[1]=yn*yr;
    xyz[2]=zn*zr;
+   }
+
+// chromatic adaption
+void xyz2xyz(float kin,float kout,float x,float y,float z,float xyz[3])
+   {
+   float white1[3],white2[3];
+
+   float xt,yt,zt;
+
+   // choose white points
+   k2white(kin,white1);
+   k2white(kout,white2);
+
+   // unnormalize white points
+   white1[0]/=white1[1];
+   white1[2]/=white1[1];
+   white1[1]=1.0f;
+   white2[0]/=white2[1];
+   white2[2]/=white2[1];
+   white2[1]=1.0f;
+
+   // transform forward (Bradford)
+   xt =  0.8951f*x +  0.2664f*y + -0.1614f*z;
+   yt = -0.7502f*x +  1.7135f*y +  0.0367f*z;
+   zt =  0.0389f*x + -0.0685f*y +  1.0296f*z;
+
+   // adapt chroma
+   xt*=white2[0]/white1[0];
+   yt*=white2[1]/white1[1];
+   zt*=white2[2]/white1[2];
+
+   // transform backward
+   xyz[0] =  0.986993f*xt + -0.147054f*yt + 0.159963f*zt;
+   xyz[1] =  0.432305f*xt +  0.518360f*yt + 0.049291f*zt;
+   xyz[2] = -0.008529f*xt +  0.040043f*yt + 0.968487f*zt;
    }
 
 // convert kelvin to white point
