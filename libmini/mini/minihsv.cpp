@@ -145,6 +145,12 @@ void rgb2xyz(float r,float g,float b,float xyz[3],float gamma)
       g=fpow(g,gamma);
       b=fpow(b,gamma);
       }
+   else
+      {
+      if (r>0.04045f) r=fpow((r+0.055f)/1.055f,2.4f); else r/=12.92f;
+      if (g>0.04045f) g=fpow((g+0.055f)/1.055f,2.4f); else g/=12.92f;
+      if (b>0.04045f) b=fpow((b+0.055f)/1.055f,2.4f); else b/=12.92f;
+      }
 
    // assume sRGB
    xyz[0] = 0.4124564f*r + 0.3575761f*g + 0.1804375f*b;
@@ -171,9 +177,9 @@ void xyz2rgb(float x,float y,float z,float rgb[3],float gamma)
       }
    else
       {
-      rgb[0]=r;
-      rgb[1]=g;
-      rgb[2]=b;
+      if (r>0.0031308f) rgb[0]=1.055f*fpow(r,1.0f/2.4f)-0.055f; else rgb[0]=12.92f*r;
+      if (g>0.0031308f) rgb[1]=1.055f*fpow(g,1.0f/2.4f)-0.055f; else rgb[1]=12.92f*g;
+      if (b>0.0031308f) rgb[2]=1.055f*fpow(b,1.0f/2.4f)-0.055f; else rgb[2]=12.92f*b;
       }
    }
 
