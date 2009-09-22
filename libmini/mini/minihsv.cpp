@@ -300,8 +300,12 @@ void k2white(float kelvin,float white[3])
    static const float xr6500K=0.312713f;
    static const float yr6500K=0.329016f;
 
+   // white point at 7500K/D75 (neon)
+   static const float xr7500K=0.2990f;
+   static const float yr7500K=0.3149f;
+
    if (kelvin<5000.0f) kelvin=5000.0f;
-   if (kelvin>6500.0f) kelvin=6500.0f;
+   if (kelvin>7500.0f) kelvin=7500.0f;
 
    if (kelvin<5500.0f)
       {
@@ -309,11 +313,17 @@ void k2white(float kelvin,float white[3])
       xr=xr5000K+c*(xr5500K-xr5000K);
       yr=yr5000K+c*(yr5500K-yr5000K);
       }
-   else
+   else if (kelvin<6500.0f)
       {
       c=(kelvin-5500.0f)/1000.0f;
       xr=xr5500K+c*(xr6500K-xr5500K);
       yr=yr5500K+c*(yr6500K-yr5500K);
+      }
+   else
+      {
+      c=(kelvin-6500.0f)/1000.0f;
+      xr=xr6500K+c*(xr7500K-xr6500K);
+      yr=yr6500K+c*(yr7500K-yr6500K);
       }
 
    white[0]=xr;
