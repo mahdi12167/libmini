@@ -292,7 +292,7 @@ void k2white(float kelvin,float white[3])
    static const float xr5000K=0.3457f;
    static const float yr5000K=0.3585;
 
-   // day light at 5500K/D55
+   // day light at 5500K/D55 (sunny)
    static const float xr5500K=0.3324f;
    static const float yr5500K=0.3474f;
 
@@ -300,7 +300,7 @@ void k2white(float kelvin,float white[3])
    static const float xr6500K=0.312713f;
    static const float yr6500K=0.329016f;
 
-   // white point at 7500K/D75 (neon)
+   // day light at 7500K/D75 (cloudy)
    static const float xr7500K=0.2990f;
    static const float yr7500K=0.3149f;
 
