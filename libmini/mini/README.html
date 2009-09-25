@@ -1266,7 +1266,7 @@ which prevents the array from being copied twice:<p>
    free(data);
 </pre>
 
-The same callback mechanism is also implemented in the libMini core.<p>
+The same callback mechanism is implemented in the libMini core.<p>
 
 In order to georeference a PNM image, we have to put its geographic
 location into the comment of the PNM header. This is achieved by
@@ -2005,7 +2005,8 @@ we use datacloud::configure_automipmap(1).<p>
 Please note that the auto-compression hook is triggered from the
 background thread. Therefore it cannot use OpenGL functionality,
 because the background thread has no OpenGL context. This is the
-reason why we need to utilize a library like squish.<p>
+reason why we need to utilize a compression library like squish
+instead of the OpenGL driver.<p>
 
 <a href="#" class="top">Back to top</a>
 
