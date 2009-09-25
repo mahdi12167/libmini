@@ -40,9 +40,10 @@ Copyright (c) 1995-2009 by Stefan Roettger<p>
    <li><a href="#RemotePaging">(L) Remote Paging</a></li>
    <li><a href="#AutoCompression">(M) Automatic S3TC Compression</a></li>
    <li><a href="#DynamicTerrain">(N) Dynamic Terrain</a></li>
-   <li><a href="#MiniViewer">(O) The libMini Viewer</a></li>
-   <li><a href="#ErrorHandling">(P) Error Handling</a></li>
-   <li><a href="#Acknowledgements">(Q) Final Acknowledgements</a>
+   <li><a href="#ViewerAPI">(O) The libMini Viewer API</a></li>
+   <li><a href="#MiniViewer">(P) The libMini Viewer</a></li>
+   <li><a href="#ErrorHandling">(Q) Error Handling</a></li>
+   <li><a href="#Acknowledgements">(R) Final Acknowledgements</a>
 </ul>
 
 <ul>
@@ -224,11 +225,13 @@ here (please follow the usage instructions in the README):<p>
    <a href="http://stereofx.org/download/Fraenkische.zip">http://stereofx.org/download/Fraenkische.zip</a><p>
 
 The libMini package also contains the libMini Viewer (see
-Section <a href="#MiniViewer">(O)</a>). This application is a generic
+Section <a href="#MiniViewer">(P)</a>). This application is a generic
 viewing utility for terrain data and tile sets. For example, it can be
-used to display the demo data mentioned above or to stream terrain
-data over the internet that has been produced with the Virtual Terrain
-Builder)from <a href="http://www.vterrain.org">vterrain.org</a>.<p>
+used to display the demo data mentioned above, load tilesets generated
+with the <a href="http://libgrid.googlecode.com">libGrid</a> library
+or stream terrain data over the internet that has been produced with
+the Virtual Terrain Builder
+from <a href="http://www.vterrain.org">vterrain.org</a>.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -302,17 +305,17 @@ prebuilt static freeGLUT library.<p>
 <h2>(C) Terrain Rendering API</h2>
 
 In this section the low level API of the Mini Library is described.
-Convenient high level methods for the most commonly encountered
-terrain rendering scenarios (as implemented in the minitile/miniload,
-ministub, minicache and datacloud classes) are described in
-Section <a href="#Frontends">(F)</a>, <a href="#LibraryStub">(G)</a>,
-<a href="#Performance">(I)</a>
-and <a href="#AsyncPaging">(I)</a>. Please first check out whether or
-not the high level APIs suffice your needs before you dive into the
-low level API. The recommended starting point for experienced graphics
-programmers is to have a look at the reference implementation of the
-libMini tile set viewer which is described in
-Section <a href="#MiniViewer">(O)</a>.<p>
+Convenient high level methods for a variety of commonly encountered
+terrain rendering scenarios are described in
+Sections <a href="#Frontends">(F)</a>, <a href="#LibraryStub">(G)</a>,
+<a href="#Performance">(I)</a>, <a href="#AsyncPaging">(K)</a>
+and <a href="#ViewerAPI">(O)</a>. The recommended starting point for
+experienced graphics programmers is to have a look at
+the <a href="#ViewerAPI">libMini Viewer API</a> and its reference
+implementation, the libMini tile set viewer, which is described in
+Section <a href="#MiniViewer">(P)</a>. Please check out whether or not
+the high level APIs suffice your needs before you dive into the low
+level API:<p>
 
 The main include file is "mini.h" which contains the definition of the
 low level terrain rendering API (the libMini core). In order to port
@@ -1335,7 +1338,7 @@ cached to the minicache:<p>
    cache->attach(tileset);
 </pre>
 
-Then, for each frame, we trigger a partial update of the scene with:
+Then, for each frame, we trigger a partial scene update with:<p>
 
 <pre>
    int update=5; // number of frames per update
@@ -1344,7 +1347,7 @@ Then, for each frame, we trigger a partial update of the scene with:
 </pre>
 
 This is illustrated in the Hawaii Demo and in the libMini Viewer (see
-Section <a href="#MiniViewer">(O)</a>).<p>
+Section <a href="#MiniViewer">(P)</a>).<p>
 
 The raw performance on a Linux box with an AMD Athlon 2.2 GHz CPU and
 an NVIDIA GeForce FX 5800 graphics accelerator is about 20 million
@@ -1920,7 +1923,7 @@ The callbacks used by the transfer module are slightly different:<p>
 
 The geturl and checkurl functions use libcurl to negotiate and
 transfer data over the net. Please see the libMini Viewer (Section <a
-href="#MiniViewer">(O)</a>) how this can be done in detail.<p>
+href="#MiniViewer">(P)</a>) how this can be done in detail.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -2037,13 +2040,55 @@ of the modified area libMini offers the following options:<p>
 
 <a href="#" class="top">Back to top</a>
 
-<a name="MiniViewer"></a>
-<h2>(O) The libMini Viewer</h2>
+<a name="ViewerAPI"></a>
+<h2>(O) The libMini Viewer API</h2>
 
-The libMini Viewer is a tool for viewing tile sets. It can load local
-and remote tile sets stored on a web server. The supported format is
-either PNM which is exported by the built-in libMini resampler or DB
-which is output by the gridding core of
+Given that an OpenGL rendering window has been setup with an
+appropriate viewing matrix, the task of rendering a tileset with the
+Mini Viewer API is as simple as follows:<p>
+
+<pre>
+   #include &lt;mini/viewerbase.h&gt;
+
+   viewerbase *viewer=new viewerbase;
+
+   viewer->getearth()->load("url");
+
+   minicoord eye(miniv3d(ex,ey,ez)); // eye point in ECEF
+   miniv3d dir(dx,dy,dz); // viewing direction
+   miniv3d dir(ux,uy,uz); // up vector
+
+   float aspect=width/height; // aspect ratio of viewing window
+
+   viewer->get()->nearp=10.0; // near clipping plane
+   viewer->get()->farp=10000.0; // far clipping plane
+
+   viewer->clear();
+   viewer->initeyepoint(eye);
+
+   viewer->cache(eye,dir,up,aspect);
+   viewer->render();
+
+   delete viewerbase;
+</pre>
+
+The coordinates eye/dir/up specify the camera coordinate system in
+OpenGL notation. The camera coordinates are interpreted as
+geo-referenced ECEF coordinates.<p>
+
+The tileset to be displayed can be generated with libGrid or VTB. For
+a more detailed example see the following Section about the libMini
+Viewer.<p>
+
+<a href="#" class="top">Back to top</a>
+
+<a name="MiniViewer"></a>
+<h2>(P) The libMini Viewer</h2>
+
+The libMini Viewer is an application for viewing tile sets. It can
+load local and remote tile sets stored on a web server. The supported
+format is either PNM which is exported by the built-in libMini
+resampler or DB which is output by the gridding core of
 <a href="http://libgrid.googlecode.com">libGrid</a> or VTB (virtual
 terrain builder of vterrain.org).<p>
 
@@ -2065,8 +2110,8 @@ Windows, however, the default is to use OpenThreads instead of a
 pthread implementation such as
 <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>.<p>
 
-Optionally, the libMini Viewer can also be built without squish
-support ("./build.sh viewer nosquish") or with
+Optionally, the libMini Viewer can be built without squish support
+("./build.sh viewer nosquish") or with
 <a href="http://www.greyc.ensicaen.fr/~dtschump/greycstoration">GREYCstoration</a>
 support ("./build.sh viewer usegreyc").<p>
 
@@ -2102,9 +2147,9 @@ the elevation and the imagery are made available in the tile set path,
 because the viewer automatically retrieves necessary information from
 the ini files. The libMini Viewer tries to guess their names by adding
 the .ini suffix to the respective subpath. The default setting for the
-vtp subpaths is "elev" and "imag". If you used this naming convention
-when generating the elevation and imagery tile sets with vtp, you can
-start the libMini Viewer with just one argument:
+vtp subpaths is "elev" and "imag". If you stick to that naming
+convention, when generating the elevation and imagery tile sets with
+vtp, you can start the libMini Viewer with just one argument:<p>
 
 <pre>
    short usage:
@@ -2112,8 +2157,7 @@ start the libMini Viewer with just one argument:
 </pre>
 
 This is equivalent to the multi-argument usage of "viewer url/ path/
-elev imag", so that the corresponding directory layout for the short
-use case must be as follows:
+elev imag", so that the directory layout has to be as follows:<p>
 
 <pre>
    url/
@@ -2128,55 +2172,29 @@ use case must be as follows:
             imag.ini
 </pre>
 
-The initial viewing settings are very conservative, so that the first
-view probably will not look adequate. To get a better visualization,
-you can adjust the following parameters interactively: the far
-clipping distance (farp), the triangle mesh resolution (res) and the
-texture detail level (range). To check these parameters press the h
-key. This turns on the head up display (HUD) which displays
-information about the available keyboard controls.<p>
-
-Optionally, you can view waypoints that were gathered with a GPS unit,
-for example. The waypoints must be contained in a definition file
-named "Waypoints.txt" in the base directory of the tile set. Each 5
-consecutive lines separated by a single empty line define one
-waypoint. Here is an example:<p>
+For multiple tilesets we use the following command line:<p>
 
 <pre>
-   Hubertusklause, Deckersberg
-   LL
-   49.470846
-   11.440757
-   542m
-
-   Manana Island
-   ARC
-   76781.9
-   -567560.3
-   110.2m
-
-   Pali Lookout, Oahu
-   UTM 04
-   0625143
-   2363262
-   379m
+   multi usage:
+      viewer -m { &lt;url/path&gt; [ &lt;detailtex.db&gt; ] }
 </pre>
 
-The general layout of the data fields of each waypoint is the following:<p>
+There is no limit on the maximum number of displayable tilesets. All
+tilesets will be shown at their corresponding geo-referenced place on
+earth. But keep in mind that the performance is mainly limited by the
+number of visible tiles, so that the total number of visible tilesets
+and tiles should be kept as low as possible. As an option, the Mini
+Viewer supports one geo-referenced detail texture per
+tileset. Currently, only the DB format is supported for the detail
+textures.<p>
 
-<pre>
-   waypoint description ; meta-information
-   ; comment lines
-   coordinate system (LL, ARC or UTM)
-   position (lat/lon or x/y on two separate lines)
-   elevation (m_eter or f_eet)
-</pre>
-
-The coordinate system of the first waypoint in the definition file
-must match the coordinate system of the tile set. Then the waypoints
-will be displayed as signposts at the corresponding position in the
-tile set. The first waypoint also determines the initial point of view
-when starting the libMini Viewer.<p>
+The initial viewing settings favor rendering performance over
+quality. To increase the visualization quality, you can adjust the
+following parameters interactively: the far clipping distance (farp),
+the triangle mesh resolution (res) and the texture detail level
+(range). To check these parameters press the h key. This turns on the
+head up display (HUD) which displays information about the available
+keyboard controls.<p>
 
 Optionally, you can run the libMini Viewer in anaglyph stereo mode by
 appending "-s -a" to the command line. You need to put on red/cyan
@@ -2187,7 +2205,7 @@ command line options start the viewer without arguments.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="ErrorHandling"></a>
-<h2>(P) Error Handling</h2>
+<h2>(Q) Error Handling</h2>
 
 Normally, libMini will run silently doing just what it is ought to do.
 However, if it encounters insufficient resources (either insufficient
@@ -2202,7 +2220,7 @@ renderer without shutting down the main application).<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Acknowledgements"></a>
-<h2>(Q) Final Acknowledgements</h2>
+<h2>(R) Final Acknowledgements</h2>
 
 In particular, I would like to thank Ben Discoe of vterrain.org for
 his suggestions and valuable feedback on the terrain rendering API
@@ -2231,7 +2249,7 @@ Stefan<p>
 
 This class implements a sky dome which is textured by a 2D texture
 parametrized with polar coordinates. For an example please see the
-libMini Viewer (Section <a href="#MiniViewer">(O)</a>).<p>
+libMini Viewer (Section <a href="#MiniViewer">(P)</a>).<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -2257,7 +2275,7 @@ Each way point has the following attributes:<p>
 </ul>
 
 For an example how to load and display the way points please check out
-the libMini Viewer (see Section <a href="#MiniViewer">(O)</a>). Press
+the libMini Viewer (see Section <a href="#MiniViewer">(P)</a>). Press
 'p' in the viewer to toggle the way points on or off. The Hawaii Demo
 data contains a small collection of geocache locations on Oahu, so you
 need to visit this island with the libMini Viewer to see the way
@@ -2274,7 +2292,7 @@ characters used by the C programming language are supported. The
 minitext is mainly intended for prototyping purposes where
 fully-fledged anti-aliased text would be sort of an overkill. For
 example, it is used in the libMini Viewer (see
-Section <a href="#MiniViewer">(O)</a>) to render the text of the way
+Section <a href="#MiniViewer">(P)</a>) to render the text of the way
 points and the HUD.<p>
 
 <a href="#" class="top">Back to top</a>
@@ -2515,7 +2533,7 @@ difference then please remember not to fire cannons at chickadees.<p>
 <h2>(6B) PVM Volume Format Description</h2>
 
 Similar to the PNM image format, the PVM volume format defines
-volumetric data in an easily readable fashion:
+volumetric data in an easily readable fashion:<p>
 
 <pre>
    &lt;MAGIC&gt;\n
@@ -2553,7 +2571,7 @@ databuf class. It can contain 1D, 2D, 3D and 4D data. The class has
 methods to load and save its content in its native DB format but it is
 able to load from PNM files, too. The file extension of the native
 format is .db. Similar to PNM, the header is human readable consisting
-of the following fields:
+of the following fields:<p>
 
 <pre>
    MAGIC=13048  ::: magic number
@@ -2593,7 +2611,7 @@ format. The hook can be set via databuf::setconversion. As an example,
 extformat=1 in the header of a DB file means that the appended data
 chunk is encoded as a JPEG image. For more information on this issue,
 please have a look at the libMini Viewer (as described in
-Section <a href="#MiniViewer">(O)</a>) which demonstrates how to use
+Section <a href="#MiniViewer">(P)</a>) which demonstrates how to use
 the conversion hook mechanism in order to decode JPEG images. If the
 extfmt parameter of databuf::savedata is set, the conversion hook is
 also triggered to convert the raw data into the external format.<p>
