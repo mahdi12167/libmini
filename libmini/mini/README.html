@@ -2043,9 +2043,14 @@ of the modified area libMini offers the following options:<p>
 <a name="ViewerAPI"></a>
 <h2>(O) The libMini Viewer API</h2>
 
+The libMini Viewer API incorporates the previously descibed techniques
+into a single package: the rendering core, the vertex buffer and the
+asynchronous pager are hidden under the hood of the API. This provides
+convenient access to the core capabilities of libMini.<p>
+
 Given that an OpenGL rendering window has been setup with an
 appropriate viewing matrix, the task of rendering a tileset with the
-Mini Viewer API is as simple as follows:<p>
+libMini Viewer API is as simple as follows:<p>
 
 <pre>
    #include &lt;mini/viewerbase.h&gt;
@@ -2063,11 +2068,11 @@ Mini Viewer API is as simple as follows:<p>
    viewer->get()->nearp=10.0; // near clipping plane
    viewer->get()->farp=10000.0; // far clipping plane
 
-   viewer->clear();
-   viewer->initeyepoint(eye);
+   viewer->clear(); // clear frame buffer
+   viewer->initeyepoint(eye); // prefetch data
 
-   viewer->cache(eye,dir,up,aspect);
-   viewer->render();
+   viewer->cache(eye,dir,up,aspect); // fill vertex cache
+   viewer->render(); // render vertex cache
 
    delete viewerbase;
 </pre>
@@ -2077,17 +2082,18 @@ OpenGL notation. The camera coordinates are interpreted as
 geo-referenced ECEF coordinates.<p>
 
 The tileset to be displayed can be generated with libGrid or VTB. For
-more details, see the following Section about the libMini Viewer.<p>
+more details, see the following section.<p>
 
 <a href="#" class="top">Back to top</a>
 
 <a name="MiniViewer"></a>
 <h2>(P) The libMini Viewer</h2>
 
-The libMini Viewer is an application for viewing tile sets. It can
-load local and remote tile sets stored on a web server. The supported
-format is either PNM which is exported by the built-in libMini
-resampler or DB which is output by the gridding core of
+The libMini Viewer is an application for viewing tile sets based on
+the <a href="#ViewerAPI">libMini Viewer API</a>. It can load local and
+remote tile sets stored on a web server. The supported format is
+either PNM which is exported by the built-in libMini resampler or DB
+which is output by the gridding core of
 <a href="http://libgrid.googlecode.com">libGrid</a> or VTB (virtual
 terrain builder of vterrain.org).<p>
 
@@ -2101,18 +2107,6 @@ requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
 and <a href="http://libsquish.googlecode.com">squish</a> to be installed.
 On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
 library</a> must be installed additionally.<p>
-
-The libMini Viewer can be configured to
-use <ahref="http://www.openscenegraph.org/svn/osg/OpenThreads">OpenThreads</a>
-instead of pthreads by typing "./build.sh viewer useopenth". On
-Windows, however, the default is to use OpenThreads instead of a
-pthread implementation such as
-<a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>.<p>
-
-Optionally, the libMini Viewer can be built without squish support
-("./build.sh viewer nosquish") or with
-<a href="http://www.greyc.ensicaen.fr/~dtschump/greycstoration">GREYCstoration</a>
-support ("./build.sh viewer usegreyc").<p>
 
 The libMini Viewer can also be compiled with CMake. To do so, enable
 the option BUILD_APPS in the CMake configuration (via ccmake or the
@@ -2182,24 +2176,40 @@ There is no limit on the maximum number of displayable tilesets. All
 tilesets will be shown at their corresponding geo-referenced place on
 earth. But keep in mind that the performance is mainly limited by the
 number of visible tiles, so that the total number of visible tilesets
-and tiles should be kept as low as possible. As an option, the Mini
-Viewer supports one geo-referenced detail texture per
-tileset. Currently, only the DB format is supported for the detail
-textures.<p>
+and tiles should be kept as low as possible.<p>
+
+As an option, the Mini Viewer supports one geo-referenced detail
+texture per tileset. Currently, the only supported file format for the
+detail textures is libMini's internal DB format.<p>
 
 The initial viewing settings favor rendering performance over
-quality. To increase the visualization quality, you can adjust the
-following parameters interactively: the far clipping distance (farp),
-the triangle mesh resolution (res) and the texture detail level
-(range). To check these parameters press the h key. This turns on the
-head up display (HUD) which displays information about the available
-keyboard controls.<p>
+quality. To increase the visualization quality, you can increase the
+following quality parameters interactively: the far clipping distance
+(farp), the triangle mesh resolution (res) and the texture detail
+level (range). To check these parameters press the h key. This turns
+on the head up display (HUD) which displays information about the
+available keyboard controls.<p>
 
 Optionally, you can run the libMini Viewer in anaglyph stereo mode by
 appending "-s -a" to the command line. You need to put on red/cyan
 glasses to get the stereo effect. To start the viewer in full-screen
 mode use the -f option. For full usage information on all available
 command line options start the viewer without arguments.<p>
+
+On a side note, the libMini Viewer can be configured to
+use <ahref="http://www.openscenegraph.org/svn/osg/OpenThreads">OpenThreads</a>
+instead of pthreads by typing "./build.sh viewer useopenth". On
+Windows, the libMini Viewer uses OpenThreads by default but can be
+configured to use a pthread implementation such
+as <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a>.<p>
+
+There is also the option to disable squish support ("./build.sh viewer
+nosquish") which provides S3TC compression on the fly.
+
+Another option is to enable
+<a href="http://cimg.sourceforge.net/greycstoration">GREYCstoration</a>
+support ("./build.sh viewer usegreyc") to denoise uncompressed imagery
+on the fly.<p>
 
 <a href="#" class="top">Back to top</a>
 
