@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 9.4.1 as of 22.September.2009<br>
+Version 9.4.1 as of 25.September.2009<br>
 Copyright (c) 1995-2009 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -44,20 +44,21 @@ Copyright (c) 1995-2009 by Stefan Roettger<p>
    <li><a href="#MiniViewer">(P) The libMini Viewer</a></li>
    <li><a href="#ErrorHandling">(Q) Error Handling</a></li>
    <li><a href="#Acknowledgements">(R) Final Acknowledgements</a>
-</ul>
-
-<ul>
-   <li><a href="#Minisky">Appendix (1): Minisky</a></li>
-   <li><a href="#Minipoint">Appendix (2): Minipoint</a></li>
-   <li><a href="#Minitext">Appendix (3): Minitext</a></li>
-   <li><a href="#Minitree">Appendix (4): Minitree</a></li>
-   <li><a href="#Minibrick">Appendix (5): Minibrick</a></li>
-</ul>
-
-<ul>
-   <li><a href="#PNMdoc">Appendix (6A): PNM Image Format Description</a></li>
-   <li><a href="#PVMdoc">Appendix (6B): PVM Volume Format Description</a></li>
-   <li><a href="#DBdoc">Appendix (6C): DB Data Format Description</a></li>
+   <p>
+   <li><a href="#Appendix">Appendix of Optional Modules</a></li>
+   <ul>
+      <li><a href="#Minisky">Appendix (1): Minisky</a></li>
+      <li><a href="#Minitext">Appendix (2): Minitext</a></li>
+      <li><a href="#Minitree">Appendix (3): Minitree</a></li>
+      <li><a href="#Minibrick">Appendix (4): Minibrick</a></li>
+   </ul>
+   <p>
+   <li><a href="#Formats">Appendix of File Formats</a></li>
+   <ul>
+      <li><a href="#PNMdoc">Appendix (A): PNM Image Format Description</a></li>
+      <li><a href="#PVMdoc">Appendix (B): PVM Volume Format Description</a></li>
+      <li><a href="#DBdoc">Appendix (C): DB Data Format Description</a></li>
+   </ul>
 </ul>
 
 <a name="TermsOfUsage"></a>
@@ -686,7 +687,7 @@ at <a
 href="http://netpbm.sourceforge.net">netpbm.sourceforge.net</a>. The
 netpbm library, however, is not required for linking, since libMini
 has built-in support for the PNM format (see
-Section <a href="#PNMdoc">Appendix (6A)</a>).<p>
+Section <a href="#PNMdoc">Appendix (A)</a>).<p>
 
 The LODs are identified by adding the number of the corresponding LOD
 to the base file name which has LOD 0 by definition. As an example,
@@ -831,11 +832,11 @@ byte, short int, float and even pre-compressed texture data with an
 optional alpha channel (as opposed to the PNM format which only
 supports plain RGB images and only 8- or 16-bit height fields). The
 databuf class has methods to load and store data in its native DB file
-format (see Section <a href="#DBdoc">Appendix (6C)</a>). The extension
+format (see Section <a href="#DBdoc">Appendix (C)</a>). The extension
 for the native format is ".db". The databuf class also has convenience
 functions for reading PNM images and PVM volumes which are the
 standard format for the minibrick module (see
-Section <a href="#Minibrick">Appendix (5)</a>). Pre-compressed texture
+Section <a href="#Minibrick">Appendix (4)</a>). Pre-compressed texture
 maps are preferred over uncompressed textures, because loading
 is <b>much</b> faster. This is due to the fact that neither the
 texture data has to be compressed nor a mipmap pyramid has to be
@@ -1273,8 +1274,8 @@ specifying the four corners of the image in either the geographic
 world coordinate system (also known as Lat/Lon) or in Universal
 Transverse Mercator coordinates (UTM). The built-in resampler of the
 library exclusively uses this extended PNM format (for more details
-see <a href="#PNMdoc">Appendix (6A)</a>). An example of a
-georeferenced header is shown below:<p>
+see <a href="#PNMdoc">Appendix (A)</a>). An example of a georeferenced
+header is shown below:<p>
 
 <pre>
    P6
@@ -1612,8 +1613,7 @@ thread.<p>
 
 We first assume that the tile set is defined via a miniload
 object. The tile set should contain S3TC compressed textures for best
-paging performance or uncompressed and denoised textures for best
-image quality:<p>
+paging performance or uncompressed textures for best image quality:<p>
 
 <pre>
    miniload *tileset=new miniload;
@@ -1831,7 +1831,7 @@ beyond this compression ratio, the tiles need to be stored in JPEG
 format, for example. This is not a native format of libMini so that
 the conversion hook of the databuf object must be registered with a
 function that is able to to export and reimport that data (see
-Appendix <a href="#DBdoc">(6C)</a>).<p>
+Appendix <a href="#DBdoc">(C)</a>).<p>
 
 Since the textures are now stored in JPEG format on disk, they need to
 be decoded and uploaded in raw format to the graphics memory. If S3TC
@@ -2077,8 +2077,7 @@ OpenGL notation. The camera coordinates are interpreted as
 geo-referenced ECEF coordinates.<p>
 
 The tileset to be displayed can be generated with libGrid or VTB. For
-a more detailed example see the following Section about the libMini
-Viewer.<p>
+more details, see the following Section about the libMini Viewer.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -2245,7 +2244,7 @@ Stefan<p>
 <h1>Appendix Of Optional Modules</h1>
 
 <a name="Minisky"></a>
-<h2>(1) Minisky</h2>
+<h2>Appendix (1) Minisky</h2>
 
 This class implements a sky dome which is textured by a 2D texture
 parametrized with polar coordinates. For an example please see the
@@ -2253,38 +2252,8 @@ libMini Viewer (Section <a href="#MiniViewer">(P)</a>).<p>
 
 <a href="#" class="top">Back to top</a>
 
-<a name="Minipoint"></a>
-<h2>(2) Minipoint</h2>
-
-This class organizes a collection of way points. The points could have
-been collected with a GPS receiver, for example, or just exported from
-a GIS software.
-
-Each way point has the following attributes:<p>
-
-<ul>
-   <li><b>desc</b>: the point description</li>
-   <li><b>meta</b>: the meta-information (separated from the description by a semicolon)</li>
-   <li><b>comment</b>: the comment section (indicated by lines that begin with a semicolon)</li>
-   <li><b>x</b>, <b>y</b>: the actual (transformed) point coordinates</li>
-   <li><b>longitude</b>, <b>latitude</b>: the measured point coordinates</li>
-   <li><b>height</b>: the actual height of the terrain at the point in meters</li>
-   <li><b>elevation</b>: the measured elevation of the point in meters</li>
-   <li><b>zone</b>: the UTM zone of the measured coordinates (equals 0 for Lat/Lon)</li>
-   <li><b>datum</b>: the UTM datum of the measured coordinates (assuming WGS84 datum for Lat/Lon)</li>
-</ul>
-
-For an example how to load and display the way points please check out
-the libMini Viewer (see Section <a href="#MiniViewer">(P)</a>). Press
-'p' in the viewer to toggle the way points on or off. The Hawaii Demo
-data contains a small collection of geocache locations on Oahu, so you
-need to visit this island with the libMini Viewer to see the way
-points.<p>
-
-<a href="#" class="top">Back to top</a>
-
 <a name="Minitext"></a>
-<h2>(3) Minitext</h2>
+<h2>Appendix (2) Minitext</h2>
 
 This module implements a 3D OpenGL text renderer which uses a
 minimalistic vector representation of the ASCII character set. All
@@ -2292,13 +2261,12 @@ characters used by the C programming language are supported. The
 minitext is mainly intended for prototyping purposes where
 fully-fledged anti-aliased text would be sort of an overkill. For
 example, it is used in the libMini Viewer (see
-Section <a href="#MiniViewer">(P)</a>) to render the text of the way
-points and the HUD.<p>
+Section <a href="#MiniViewer">(P)</a>) to render the HUD.<p>
 
 <a href="#" class="top">Back to top</a>
 
 <a name="Minitree"></a>
-<h2>(4) Vegetation Rendering</h2>
+<h2>Appendix (3) Vegetation Rendering</h2>
 
 The Mini Library also supports vegetation rendering. The height of the
 vegetation layer is defined by an additional height field. Now for all
@@ -2317,7 +2285,7 @@ the described approach.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="Minibrick"></a>
-<h2>(5) Volume Rendering With The Minibrick</h2>
+<h2>Appendix (4) Volume Rendering With The Minibrick</h2>
 
 The minibrick class implements volume rendering of regular
 time-dependent data by displaying multiple shaded semi-transparent iso
@@ -2411,8 +2379,11 @@ one opaque and two semi-transparent iso-surfaces.<p>
 
 <a href="#" class="top">Back to top</a>
 
+<a name="Formats"></a>
+<h1>Appendix Of File Formats</h1>
+
 <a name="PNMdoc"></a>
-<h2>(6A) PNM Image Format Description</h2>
+<h2>Appendix (A) PNM Image Format Description</h2>
 
 The Mini Library supports the PNM image format (PNM = Portable
 aNy-Map) to read tile sets from disk. Color images have the file
@@ -2509,7 +2480,7 @@ with<p>
    &lt;MISSING_VAL&gt; = %d
 </pre>
 
-The libMini core only understands the BOX georeferencing type meaning
+The libMini core only supports the BOX georeferencing type meaning
 that the contained data is enclosed exactly within the bounding box
 spanned by the four corner points. The built-in resampler also
 distinguishes between the two following types: DEM means that the
@@ -2530,7 +2501,7 @@ difference then please remember not to fire cannons at chickadees.<p>
 <a href="#" class="top">Back to top</a>
 
 <a name="PVMdoc"></a>
-<h2>(6B) PVM Volume Format Description</h2>
+<h2>Appendix (B) PVM Volume Format Description</h2>
 
 Similar to the PNM image format, the PVM volume format defines
 volumetric data in an easily readable fashion:<p>
@@ -2557,7 +2528,7 @@ for RGB movies it is 3.
 <a href="#" class="top">Back to top</a>
 
 <a name="DBdoc"></a>
-<h2>(6C) DB Data Format Description</h2>
+<h2>Appendix (C) DB Data Format Description</h2>
 
 While the built-in image format for tile sets is PNM, it is clear that
 libMini needs to support other file formats as well. This is achieved
