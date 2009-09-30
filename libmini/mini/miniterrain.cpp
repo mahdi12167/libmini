@@ -481,12 +481,12 @@ BOOLINT miniterrain::load(const char *url,
    // decompose url into baseurl and baseid
    if (lastslash!=NULL)
       {
-      baseid=strcct(++lastslash,"/");
+      baseid=strdup2(++lastslash,"/");
       *lastslash='\0';
       }
    else if (lastbslash!=NULL)
       {
-      baseid=strcct(++lastbslash,"\\");
+      baseid=strdup2(++lastbslash,"\\");
       *lastbslash='\0';
       }
    else baseid=strdup("/");

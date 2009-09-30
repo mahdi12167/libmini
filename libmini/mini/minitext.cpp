@@ -2,7 +2,7 @@
 
 #include "minibase.h"
 
-#include "minihsv.h"
+#include "minirgb.h"
 #include "miniOGL.h"
 
 #include "minitext.h"

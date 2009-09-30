@@ -92,7 +92,7 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 #include <mini/miniv3f.h>
 #include <mini/miniv3d.h>
 
-#include <mini/minihsv.h>
+#include <mini/minirgb.h>
 
 #include <mini/miniOGL.h>
 
@@ -202,6 +202,9 @@ void initparams()
 
    viewer->get(prms);
 
+   prms.winwidth=VIEWER_WINWIDTH;
+   prms.winheight=VIEWER_WINHEIGHT;
+
    prms.fps=VIEWER_FPS;
 
    prms.fovy=VIEWER_FOVY;
@@ -289,6 +292,8 @@ void initwindow(int width,int height)
    {
    viewerbase::VIEWER_PARAMS prms;
 
+   viewer->get(prms);
+
    if (sw_full==0)
       {
       winwidth=width;
@@ -296,8 +301,6 @@ void initwindow(int width,int height)
       }
    else
       {
-      viewer->get(prms);
-
       winwidth=glutGameModeGet(GLUT_GAME_MODE_WIDTH);
       winheight=glutGameModeGet(GLUT_GAME_MODE_HEIGHT);
 
@@ -310,12 +313,15 @@ void initwindow(int width,int height)
 
          prms.fps=VIEWER_FPS;
          }
-
-      viewer->set(prms);
       }
 
    if (winwidth<1) winwidth=1;
    if (winheight<1) winheight=1;
+
+   prms.winwidth=winwidth;
+   prms.winheight=winheight;
+
+   viewer->set(prms);
 
    glViewport(0,0,winwidth,winheight);
    }

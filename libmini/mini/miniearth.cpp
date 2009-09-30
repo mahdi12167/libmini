@@ -376,7 +376,7 @@ char *miniearth::getfile(const char *src_file,const char *altpath)
 
    if (checkfile(src_file)) return(strdup(src_file));
 
-   file=strcct(altpath,src_file);
+   file=strdup2(altpath,src_file);
 
    if (file!=NULL)
       if (checkfile(file)) return(file);

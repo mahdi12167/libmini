@@ -6,6 +6,7 @@
 #include "minibase.h"
 #include "minidyna.h"
 
+//! string base class
 typedef minidyna<char,16> ministring_base;
 
 //! dynamic string

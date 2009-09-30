@@ -28,11 +28,14 @@ class viewerbase
       {
       // configurable parameters:
 
-      float fps;    // frames per second (target frame rate)
+      int winwidth;  // window width
+      int winheight; // window height
 
-      float fovy;   //  field of view (degrees)
-      float nearp;  //  near plane (meters)
-      float farp;   //  far plane (meters)
+      float fps;     // frames per second (target frame rate)
+
+      float fovy;    //  field of view (degrees)
+      float nearp;   //  near plane (meters)
+      float farp;    //  far plane (meters)
 
       // feature switches:
 
@@ -96,12 +99,16 @@ class viewerbase
    //! start timer
    void starttimer();
 
-   //! measure timer
+   //! read out timer
    double gettimer();
 
    //! idle for the remainder of the frame
    //! dt is the time spent for rendering the last frame
-   void idle(double dt=0.0);
+   void idle(double dt);
+
+   //! adapt quality parameters
+   //! dt is the time spent for rendering the last frame
+   void adapt(double dt);
 
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d);

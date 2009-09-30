@@ -2,9 +2,9 @@
 
 #include "minibase.h"
 
-#include "minihsv.h"
+#include "minirgb.h"
 
-namespace minihsv {
+namespace minirgb {
 
 // rgb to hsv conversion
 void rgb2hsv(float r,float g,float b,float hsv[3])

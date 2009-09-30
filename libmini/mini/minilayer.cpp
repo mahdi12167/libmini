@@ -463,12 +463,12 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN=new miniload;
 
    // concatenate tileset info file names
-   elevtilesetfile=strcct(LPARAMS.elevprefix,LPARAMS.tilesetfile);
-   imagtilesetfile=strcct(LPARAMS.imagprefix,LPARAMS.tilesetfile);
+   elevtilesetfile=strdup2(LPARAMS.elevprefix,LPARAMS.tilesetfile);
+   imagtilesetfile=strdup2(LPARAMS.imagprefix,LPARAMS.tilesetfile);
 
    // concatenate vtb ini file names
-   vtbelevinifile=strcct(basepath1,LPARAMS.vtbinisuffix);
-   vtbimaginifile=strcct(basepath2,LPARAMS.vtbinisuffix);
+   vtbelevinifile=strdup2(basepath1,LPARAMS.vtbinisuffix);
+   vtbimaginifile=strdup2(basepath2,LPARAMS.vtbinisuffix);
 
    // attach the tile cache
    TILECACHE=new datacache(TERRAIN);

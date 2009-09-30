@@ -1364,22 +1364,22 @@ char *minicache::concatprog(const char *s1,
    {
    char *prog1,*prog2;
 
-   prog1=strcct(s1,s2);
-   prog2=strcct(prog1,s3);
+   prog1=strdup2(s1,s2);
+   prog2=strdup2(prog1,s3);
    free(prog1);
-   prog1=strcct(prog2,s4);
+   prog1=strdup2(prog2,s4);
    free(prog2);
-   prog2=strcct(prog1,s5);
+   prog2=strdup2(prog1,s5);
    free(prog1);
-   prog1=strcct(prog2,s6);
+   prog1=strdup2(prog2,s6);
    free(prog2);
-   prog2=strcct(prog1,s7);
+   prog2=strdup2(prog1,s7);
    free(prog1);
-   prog1=strcct(prog2,s8);
+   prog1=strdup2(prog2,s8);
    free(prog2);
-   prog2=strcct(prog1,s9);
+   prog2=strdup2(prog1,s9);
    free(prog1);
-   prog1=strcct(prog2,s10);
+   prog1=strdup2(prog2,s10);
    free(prog2);
 
    return(prog1);

@@ -154,7 +154,7 @@ inline int isNAN(const double v) {return(v!=v);}
 #define snprintf _snprintf
 #endif
 
-inline char *strcct(const char *str1,const char *str2)
+inline char *strdup2(const char *str1,const char *str2)
    {
    char *str;
 

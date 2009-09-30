@@ -131,14 +131,15 @@ void curlbase::curlexit_safe(int id)
 
 void curlbase::getURL_safe(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id)
    {
-   char *url;
+   char *str,*url;
 
    struct MemoryStruct chunk;
 
    chunk.memory=NULL;
    chunk.size=0;
 
-   url=strcct(src_url,strcct(src_id,src_file));
+   str=strdup2(src_id,src_file);
+   url=strdup2(src_url,str);
 
    // pass the chunk struct to the callback function
    curl_easy_setopt(MULTICURL[id]->curl_handle[background],CURLOPT_WRITEDATA,(void *)&chunk);
@@ -161,23 +162,26 @@ void curlbase::getURL_safe(const char *src_url,const char *src_id,const char *sr
       free(chunk.memory);
       }
 
+   free(str);
    free(url);
    }
 
 int curlbase::checkURL_safe(const char *src_url,const char *src_id,const char *src_file,int id)
    {
-   char *url;
+   char *str,*url;
+
    int threads;
    long response;
 
    struct MemoryStruct chunk;
 
+   str=strdup2(src_id,src_file);
+   url=strdup2(src_url,str);
+
    chunk.memory=NULL;
    chunk.size=0;
 
    threads=MULTICURL[id]->numthreads;
-
-   url=strcct(src_url,strcct(src_id,src_file));
 
    // pass the chunk struct to the callback function
    curl_easy_setopt(MULTICURL[id]->curl_handle[threads+1],CURLOPT_WRITEDATA,(void *)&chunk);
@@ -194,6 +198,7 @@ int curlbase::checkURL_safe(const char *src_url,const char *src_id,const char *s
    // free memory chunk
    if (chunk.memory) free(chunk.memory);
 
+   free(str);
    free(url);
 
    return(response==200);

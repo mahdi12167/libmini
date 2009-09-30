@@ -104,12 +104,6 @@ class miniload
    //! set callback for query of texture map base size
    void setquery(int (*query)(int col,int row,const unsigned char *texfile,int tlod,void *data,int *tsizex,int *tsizey),void *data);
 
-   //! compute texture paging range from screen space error
-   float calcrange(float dim, // size of one texel in meters
-                   int height, // height of the view port in pixels
-                   float fovy, // vertical field of view in degrees
-                   float thres=1.5f); // screen space error in pixels
-
    //! set preloading
    void setpreload(float pfarp,int pupdate);
 
@@ -149,6 +143,12 @@ class miniload
 
    //! return wrapped minitile object
    minitile *getminitile() {return(TILE);}
+
+   //! compute texture paging range from screen space error
+   static float calcrange(float dim, // size of one texel in meters
+                          int height, // height of the view port in pixels
+                          float fovy, // vertical field of view in degrees
+                          float thres=1.5f); // screen space error in pixels
 
    //! get texture paging range
    float getrange() {return(PRANGE0);}

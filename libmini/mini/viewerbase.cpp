@@ -17,6 +17,9 @@ viewerbase::viewerbase()
    {
    // configurable parameters:
 
+   PARAMS.winwidth=1024; // window width
+   PARAMS.winheight=512; // window height
+
    PARAMS.fps=25.0f;     // frames per second (target frame rate)
 
    PARAMS.fovy=60.0f;    // field of view (degrees)
@@ -154,13 +157,23 @@ double viewerbase::gettime()
 void viewerbase::starttimer()
    {TIMER=minigettime()-START;}
 
-// measure timer
+// read out timer
 double viewerbase::gettimer()
    {return(minigettime()-START-TIMER);}
 
 // idle for the remainder of the frame
 void viewerbase::idle(double dt)
    {miniwaitfor(1.0/PARAMS.fps-dt);}
+
+// adapt quality parameters
+void viewerbase::adapt(double dt)
+   {
+   miniterrain::MINITERRAIN_PARAMS tparams;
+
+   getearth()->getterrain()->get(tparams);
+   tparams.range=miniload::calcrange(tparams.refres/tparams.scale,PARAMS.winheight,PARAMS.fovy);
+   getearth()->getterrain()->set(tparams);
+   }
 
 // shoot a ray at the scene
 double viewerbase::shoot(const minicoord &o,const miniv3d &d)

@@ -1591,13 +1591,6 @@ void miniload::setquery(int (*query)(int col,int row,const unsigned char *texfil
    QUERY_DATA=data;
    }
 
-// compute texture paging range from screen space error
-float miniload::calcrange(float dim,int height,float fovy,float thres)
-   {
-   if (fovy>0.0f) return(dim*height/(thres*tan(PI/360.0f*fovy)));
-   else return(0.0f); // disable texture paging
-   }
-
 // set preloading
 void miniload::setpreload(float pfarp,int pupdate)
    {
@@ -1790,6 +1783,13 @@ void miniload::updateall()
    updateroi(1.0,
              ex,ey,ez,ex,ez,
              MAXFLOAT,0.0f);
+   }
+
+// compute texture paging range from screen space error
+float miniload::calcrange(float dim,int height,float fovy,float thres)
+   {
+   if (fovy>0.0f) return(dim*height/(thres*tan(PI/360.0f*fovy)));
+   else return(0.0f); // disable texture paging
    }
 
 // configure core parameters:
