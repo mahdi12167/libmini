@@ -112,6 +112,7 @@ class minilayer
       float cullslope;          // slope under which the terrain is culled
 
       float range;              //* texture paging range relative to far plane
+      float relrange;           //* relative adjustment factor for texture paging range
       float refres;             //* reference resolution for texture paging in meters
       float radius;             //* non-linear kick-in distance relative to texture range
       float dropoff;            //* non-linear lod dropoff at kick-in distance

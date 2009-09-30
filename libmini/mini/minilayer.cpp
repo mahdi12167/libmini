@@ -108,6 +108,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
 
    LPARAMS.range=0.001f;           // texture paging range relative to far plane
+   LPARAMS.relrange=1.0f;          // relative adjustment factor for texture paging range
    LPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
@@ -290,8 +291,8 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
                range*=fmax(texres/LPARAMS.refres,1.0f);
                }
 
-         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.farp/LPARAMS.scale);
-         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
          TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 
@@ -482,8 +483,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setvtbelevpath(basepath1);
    TILECACHE->setvtbimagpath(basepath2);
    TILECACHE->setstartupfile(LPARAMS.startupfile);
-   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
-   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
    TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
