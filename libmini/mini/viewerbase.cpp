@@ -38,7 +38,7 @@ viewerbase::viewerbase()
 
    EARTH=new miniearth();
 
-   START=minigettime();
+   START=gettime();
    TIMER=0.0;
 
    THREADBASE=new threadbase();
@@ -151,19 +151,19 @@ void viewerbase::render()
 
 // get time
 double viewerbase::gettime()
-   {return(minigettime()-START);}
+   {return(gettime()-START);}
 
 // start timer
 void viewerbase::starttimer()
-   {TIMER=minigettime()-START;}
+   {TIMER=gettime()-START;}
 
 // read out timer
 double viewerbase::gettimer()
-   {return(minigettime()-START-TIMER);}
+   {return(gettime()-START-TIMER);}
 
 // idle for the remainder of the frame
 void viewerbase::idle(double dt)
-   {miniwaitfor(1.0/PARAMS.fps-dt);}
+   {waitfor(1.0/PARAMS.fps-dt);}
 
 // adapt quality parameters
 void viewerbase::adapt(double dt)

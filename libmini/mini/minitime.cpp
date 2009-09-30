@@ -13,7 +13,7 @@
 
 namespace minitime {
 
-double minigettime()
+double gettime()
    {
 #ifndef _WIN32
    struct timeval t;
@@ -27,7 +27,7 @@ double minigettime()
 #endif
    }
 
-void miniwaitfor(double secs)
+void waitfor(double secs)
    {
    if (secs<=0.0) return;
 #ifndef _WIN32
@@ -36,8 +36,8 @@ void miniwaitfor(double secs)
    dt.tv_nsec=(int)floor(1.0E9*(secs-floor(secs)));
    while (nanosleep(&dt,&rt)!=0) dt=rt;
 #else
-   double time=minigettime()+secs;
-   while (minigettime()<time) Sleep(1);
+   double time=gettime()+secs;
+   while (gettime()<time) Sleep(1);
 #endif
    }
 

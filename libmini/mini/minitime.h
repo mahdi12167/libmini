@@ -5,8 +5,8 @@
 
 namespace minitime {
 
-double minigettime();
-void miniwaitfor(double secs);
+double gettime();
+void waitfor(double secs);
 
 }
 

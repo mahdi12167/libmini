@@ -552,7 +552,7 @@ void datacloud::insertjob(int col,int row,const unsigned char *mapfile,int hlod,
    // reset access time
    if (oldjob!=NULL)
       {
-      time=minigettime();
+      time=gettime();
 
       if (mapfile!=NULL) oldjob->hfield->access=time;
       if (texfile!=NULL) oldjob->texture->access=time;
@@ -801,7 +801,7 @@ tilecacheelem *datacloud::inserttile(const unsigned char *tileid,int col,int row
       }
 
    // reset access time
-   newtile->access=minigettime();
+   newtile->access=gettime();
    newtile->isdelayed=FALSE;
 
    // unlock critical section
@@ -977,7 +977,7 @@ void datacloud::loadtile(tilecacheelem *tile,int background)
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
    // set access time
-   tile->access=minigettime();
+   tile->access=gettime();
 
    // signal availability
    tile->isloading=FALSE;
@@ -996,7 +996,7 @@ BOOLINT datacloud::loadpendingtile(int background)
    // lock critical section
    if (ISNOTREADY) LOCK_CALLBACK(START_DATA);
 
-   time=minigettime();
+   time=gettime();
 
    prio=0.0f;
 
@@ -1070,7 +1070,7 @@ void datacloud::deleteexpiredtiles()
 
    if (EXPIRE==0.0) return;
 
-   time=minigettime();
+   time=gettime();
 
    tile=TILECACHE;
 
@@ -1208,7 +1208,7 @@ void datacloud::deliverdata(databuf *hfield,databuf *texture,databuf *fogmap,BOO
    if (!immediate)
       if (DELIVERED)
          // stop deferred data delivery if time is up
-         if (minigettime()-DELIVERYSTART>TIMESLOT)
+         if (gettime()-DELIVERYSTART>TIMESLOT)
             {
             DELIVERED=FALSE;
             return;
@@ -1274,7 +1274,7 @@ void datacloud::deliverdata(databuf *hfield,databuf *texture,databuf *fogmap,BOO
       else if (!DELIVERED)
          {
          DELIVERED=TRUE;
-         DELIVERYSTART=minigettime();
+         DELIVERYSTART=gettime();
          }
 
       // remove finished job from queue
@@ -1331,10 +1331,10 @@ void datacloud::pager(int background)
    // cycle until time runs out
    if (START_CALLBACK!=NULL)
       {
-      time=minigettime();
-      while (!SHOULDSTOP[background] && minigettime()-time<CONFIGURE_KEEPALIVE)
-         if (!loadpendingtile(background)) miniwaitfor(CONFIGURE_TIMESLICE); // time runs out
-         else time=minigettime(); // keep thread alive
+      time=gettime();
+      while (!SHOULDSTOP[background] && gettime()-time<CONFIGURE_KEEPALIVE)
+         if (!loadpendingtile(background)) waitfor(CONFIGURE_TIMESLICE); // time runs out
+         else time=gettime(); // keep thread alive
       }
 
    ISRUNNING[background]=FALSE;

@@ -1750,7 +1750,7 @@ consistent 25 fps on my Apple Powerbook Pro with 1.5 GB of main
 memory, 1.83GHz Core Duo and ATI X1600 with 128MB VRAM.<p>
 
 An application that is using the asynchronous tile cache should update
-the scene each time the view point changes. Additionally, it should
+the scene each time the view point is changed. Additionally, it should
 update the scene until there are no pending tiles left to be paged
 in. This can be achieved in the following way:<p>
 
@@ -2369,17 +2369,17 @@ parameter rad. Within this radius around the view point the maximum
 level of detail is enabled. Outside the radius the resolution
 gradually decreases. The library interpolates smoothly between the
 level of details so that the popping effect is suppressed efficiently.
-Since this involves heavy floating point math the user should use the
-multi-threading support of the library to decouple the update of the
-iso surface geometry from rendering. This means that one thread
-continuously updates the geometry if the view point has changed while
-the other thread is busy rendering the latest cached geometry. This
-approach has the advantage that the frame rate only depends on the
-speed of the graphics hardware and is not limited by the update time
-that is needed to interpolate and extract the iso surfaces.
-Multi-threading is enabled by passing appropriate callbacks to the
-minibrick::setthread method as illustrated in the Hawaii Demo (see
-Section <a href="#Performance">(I)</a>).<p>
+Since this involves a good deal of floating point arithmetic the user
+should use the multi-threading support of the library to decouple the
+update of the iso surface geometry from rendering. This means that one
+thread continuously updates the geometry (if the view point has
+changed) while the other thread is busy rendering the latest cached
+geometry. This approach has the advantage that the frame rate only
+depends on the speed of the graphics hardware and is not limited by
+the update time that is needed to interpolate and extract the iso
+surfaces.  Multi-threading is enabled by passing appropriate callbacks
+to the minibrick::setthread method as illustrated in the Hawaii Demo
+(see Section <a href="#Performance">(I)</a>).<p>
 
 In order to get a better understanding of the capabilities of the
 minibrick module please check out the Hawaii Demo. Start it with the
@@ -2504,10 +2504,8 @@ representation). The missing value field is used by DEM formats to
 identify cells with unknown or unspecified elevation. A typical value
 is -9999. The no-data value for imagery assumed by the built-in
 resampler is absolute black (0,0,0). This is a safe assumption since
-real world imagery may indeed contain some really dark colors but
-hardly ever real black. In case it does though, the black pixels can
-be substituted easily with (0,0,1). If you think this makes a visual
-difference then please remember not to fire cannons at chickadees.<p>
+real world imagery hardly contains true black. In case does though,
+the black pixels can be easily substituted with (0,0,1).<p>
 
 <a href="#" class="top">Back to top</a>
 
