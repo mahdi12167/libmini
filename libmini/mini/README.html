@@ -2082,8 +2082,18 @@ The coordinates eye/dir/up specify the camera coordinate system in
 OpenGL notation. The camera coordinates are interpreted as
 geo-referenced ECEF coordinates.<p>
 
-The tileset to be displayed can be generated with libGrid or VTB. For
-more details, see the following section.<p>
+The terrain geometry can be queried by shooting rays at the displayed
+scene. The rays are specified by a geo-referenced starting point (in
+ECEF coordinates) and a shooting direction:<p>
+
+<pre>
+   double dist=viewer->shoot(eye,dir); // shoot ray from eye point
+   if (dist==MAXFLOAT) dist=0.0; // nothing hit
+   minicoord hitpoint=eye+dist*dir; // calculate hit point in ECEF
+</pre>
+
+Displayable tilesets can be generated with libGrid or VTB. For more
+details, see the following section.<p>
 
 <a href="#" class="top">Back to top</a>
 
