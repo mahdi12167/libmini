@@ -97,6 +97,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.spu=0.5f;               // update period for render buffer in seconds
 
    LPARAMS.res=1.0E3f;             // global resolution of triangulation
+   LPARAMS.relres=1.0f;            // relative adjustment factor for global resolution
 
    LPARAMS.fovy=60.0f;             // field of view (degrees)
    LPARAMS.nearp=10.0f;            // near plane (meters)
@@ -288,7 +289,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
             if (LPARAMS.cols>0 && LPARAMS.rows>0 && LPARAMS.basesize>0)
                {
                texres=(LPARAMS.extent[0]/LPARAMS.cols+LPARAMS.extent[1]/LPARAMS.rows)/2.0f/LPARAMS.basesize*LPARAMS.scale;
-               range*=fmax(texres/LPARAMS.refres,1.0f);
+               range*=texres/LPARAMS.refres;
                }
 
          TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale);
@@ -1481,7 +1482,7 @@ void minilayer::initeyepoint(const minicoord &e)
    TERRAIN->restrictroi(ei.vec.x,ei.vec.z,LPARAMS.load*len_g2i(LPARAMS.farp));
 
    // load smallest LODs
-   TERRAIN->updateroi(LPARAMS.res,
+   TERRAIN->updateroi(LPARAMS.res*LPARAMS.relres,
                       ei.vec.x,ei.vec.y+1000*len_g2i(LPARAMS.farp),ei.vec.z,
                       ei.vec.x,ei.vec.z,len_g2i(LPARAMS.farp));
 
@@ -1540,7 +1541,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
 
    // update vertex arrays
-   TERRAIN->draw(LPARAMS.res,
+   TERRAIN->draw(LPARAMS.res*LPARAMS.relres,
                  ei.vec.x,ei.vec.y,ei.vec.z,
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,

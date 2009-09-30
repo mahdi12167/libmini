@@ -19,7 +19,9 @@
 #define VIEWER_FARP 30000.0f
 
 #define VIEWER_RES 1.0E4f
+#define VIEWER_RELRES 0.5f
 #define VIEWER_RANGE 0.01f
+#define VIEWER_RELRANGE 0.25f
 
 #define VIEWER_SEALEVEL -MAXFLOAT
 
@@ -245,7 +247,9 @@ void initparams()
    tprms.scale=VIEWER_SCALE;
    tprms.exaggeration=VIEWER_EXAGGER;
    tprms.res=VIEWER_RES;
+   tprms.relres=VIEWER_RELRES;
    tprms.range=VIEWER_RANGE;
+   tprms.relrange=VIEWER_RELRANGE;
    tprms.sealevel=VIEWER_SEALEVEL;
 
    tprms.genmipmaps=TRUE;
@@ -406,8 +410,8 @@ void loadsettings()
       if (fscanf(file,"pitch=%f\n",&p)!=1) ERRORMSG();
 
       if (fscanf(file,"farp=%f\n",&prms.farp)!=1) ERRORMSG();
-      if (fscanf(file,"res=%f\n",&tprms.res)!=1) ERRORMSG();
-      if (fscanf(file,"range=%f\n",&tprms.range)!=1) ERRORMSG();
+      if (fscanf(file,"relres=%f\n",&tprms.relres)!=1) ERRORMSG();
+      if (fscanf(file,"relrange=%f\n",&tprms.relrange)!=1) ERRORMSG();
 
       if (fscanf(file,"fovy=%f\n",&prms.fovy)!=1) ERRORMSG();
 
@@ -481,8 +485,8 @@ void savesettings()
    fprintf(file,"pitch=%f\n",pitch);
 
    fprintf(file,"farp=%f\n",params->farp);
-   fprintf(file,"res=%f\n",tparams->res);
-   fprintf(file,"range=%f\n",tparams->range);
+   fprintf(file,"relres=%f\n",tparams->relres);
+   fprintf(file,"relrange=%f\n",tparams->relrange);
 
    fprintf(file,"fovy=%f\n",params->fovy);
 
@@ -800,7 +804,7 @@ void renderhud()
 
       snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res=   %.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
                eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,turn,incline, // position/elevation and direction
-               params->farp,tparams->res,tparams->range*params->farp,sea,gravity); // adjustable parameters
+               params->farp,tparams->res*tparams->relres,tparams->range*tparams->relrange*params->farp,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
@@ -1219,23 +1223,23 @@ void keyboardfunc(unsigned char key,int x,int y)
          else gravity=0.0;
          break;
       case 't':
-         tparams->res/=1.1f;
-         if (tparams->res<1.0f) tparams->res=1.0f;
+         tparams->relres/=1.1f;
+         if (tparams->relres<1.0E-3f) tparams->relres=1.0E-3f;
          viewer->propagate();
          break;
       case 'T':
-         tparams->res*=1.1f;
-         if (tparams->res>1.0E10f) tparams->res=1.0E10f;
+         tparams->relres*=1.1f;
+         if (tparams->relres>1.0E6f) tparams->relres=1.0E6f;
          viewer->propagate();
          break;
       case 'r':
-         tparams->range/=1.1f;
-         if (tparams->range<1.0E-5f) tparams->range=1.0E-5f;
+         tparams->relrange/=1.1f;
+         if (tparams->relrange<1.0E-3f) tparams->relrange=1.0E-3f;
          viewer->propagate();
          break;
       case 'R':
-         tparams->range*=1.1f;
-         if (tparams->range>1.0f) tparams->range=1.0f;
+         tparams->relrange*=1.1f;
+         if (tparams->relrange>1.0E3f) tparams->relrange=1.0E3f;
          viewer->propagate();
          break;
       case 'f':

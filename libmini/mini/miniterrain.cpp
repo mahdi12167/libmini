@@ -55,6 +55,7 @@ miniterrain::miniterrain()
    TPARAMS.spu=0.5f;               // update period for render buffer in seconds
 
    TPARAMS.res=1.0E3f;             // global resolution of triangulation
+   TPARAMS.relres=1.0f;            // relative adjustment factor for global resolution
 
    TPARAMS.fovy=60.0f;             // field of view (degrees)
    TPARAMS.nearp=10.0f;            // near plane (meters)
@@ -329,6 +330,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.spu=TPARAMS.spu;
 
          lparams.res=TPARAMS.res;
+         lparams.relres=TPARAMS.relres;
 
          lparams.fovy=TPARAMS.fovy;
          lparams.nearp=TPARAMS.nearp;

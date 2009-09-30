@@ -64,6 +64,7 @@ class miniterrain
       float spu;                //* update period for render buffer in seconds
 
       float res;                //  global resolution of triangulation
+      float relres;             //  relative adjustment factor for global resolution
 
       float fovy;               //  field of view (degrees)
       float nearp;              //  near plane (meters)
