@@ -1085,6 +1085,9 @@ void render()
    // idle for the remainder of the frame
    viewer->idle(delta);
 
+   // update quality parameters
+   viewer->adapt(delta);
+
    // update statistics:
 
    accu_delta+=delta;
