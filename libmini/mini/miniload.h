@@ -144,6 +144,11 @@ class miniload
    //! return wrapped minitile object
    minitile *getminitile() {return(TILE);}
 
+   //! compute global resolution from screen space error
+   static float calcres(int height, // height of the view port in pixels
+                        float fovy, // vertical field of view in degrees
+                        float thres=1.5f); // screen space error in pixels
+
    //! compute texture paging range from screen space error
    static float calcrange(float dim, // size of one texel in meters
                           int height, // height of the view port in pixels

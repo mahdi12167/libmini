@@ -1785,6 +1785,15 @@ void miniload::updateall()
              MAXFLOAT,0.0f);
    }
 
+// compute global resolution from screen space error
+float miniload::calcres(int height,float fovy,float thres)
+   {
+   static const float c0=0.25f; // empirical coefficient
+
+   if (fovy>0.0f) return(fsqr(c0*height/(thres*tan(PI/360.0f*fovy))));
+   else return(fsqr(c0*height/thres)); // ortho mode
+   }
+
 // compute texture paging range from screen space error
 float miniload::calcrange(float dim,int height,float fovy,float thres)
    {

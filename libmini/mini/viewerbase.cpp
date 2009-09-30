@@ -171,7 +171,10 @@ void viewerbase::adapt(double dt)
    miniterrain::MINITERRAIN_PARAMS tparams;
 
    getearth()->getterrain()->get(tparams);
+
+   tparams.res=miniload::calcres(PARAMS.winheight,PARAMS.fovy);
    tparams.range=miniload::calcrange(tparams.refres,PARAMS.winheight,PARAMS.fovy)/PARAMS.farp;
+
    getearth()->getterrain()->set(tparams);
    }
 

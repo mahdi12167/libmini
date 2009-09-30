@@ -910,11 +910,9 @@ The other arguments of miniload::setloader have the following meaning:<p>
       <li>let d be the minimum euclidean distance to a given tile
           then for d in [0,prange] LOD 0 is enabled
           and for d in [2^(n-1)*prange,2^n*prange] LOD n>0 is enabled</li>
-      <li>the range can be calculated easily from a given screen space
-          error threshold using the miniload::calcrange method</li>
       <li>the range should not be much smaller than the tile size
           but smaller than the distance to the far clipping plane</li>
-      <li>example: 0.1f*farp (or roughly equal to the tile size)</li>
+      <li>example: 0.1f*farp</li>
    </ul>
    </li>
 
@@ -926,9 +924,6 @@ The other arguments of miniload::setloader have the following meaning:<p>
       <li>for non-zero values LOD 0 is redefined to be the level
           with the specified base texture size so that larger
           textures have negative LOD and are not paged in</li>
-      <li>the dimension of a texel from LOD 0 can be fed into
-          the calcrange method in order to control texture paging
-          by using a screen space error instead of an enabling range</li>
       <li>the base size should be set to the size of the largest
           texture tile so that the maximum texture detail is shown
           but the base size should not exceed the maximum texture
@@ -982,11 +977,9 @@ The other arguments of miniload::setloader have the following meaning:<p>
    <b>Note:</b> A possible reason for slow rendering performance is
                 the limited amount of available texture RAM. If the
                 prange parameter is too large most of the texture
-                tiles will be loaded at the highest resolution. Thus,
+                tiles will be loaded at the highest resolution. Then
                 the textures may not fit completely into texture
-                memory. In such a case, the prange parameter should be
-                decreased until the rendering performance is
-                sufficient again. We have to remember that halving the
+                memory leading to excessive bus traffic. Halving the
                 prange results in 25% of texture memory usage!
 </div><p>
 
@@ -1018,8 +1011,6 @@ Otherwise the library must be linked against "-lGL -lGLU -lm" to
 resolve the OpenGL dependencies.<p>
 
 <pre>
-   #include &lt;OpenGL headers&gt;
-
    #include &lt;mini/ministub.h&gt;
 
    // height field is a float array

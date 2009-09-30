@@ -19,7 +19,7 @@
 #define VIEWER_FARP 30000.0f
 
 #define VIEWER_RES 1.0E4f
-#define VIEWER_RELRES 0.5f
+#define VIEWER_RELRES 0.25f
 #define VIEWER_RANGE 0.01f
 #define VIEWER_RELRANGE 0.25f
 
