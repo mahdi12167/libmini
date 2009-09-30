@@ -1033,7 +1033,7 @@ void render()
    // update earth lighting
    if (eparams->usediffuse)
       {
-      lightdir=2*PI*VIEWER_ROTATION*viewer->gettime();
+      lightdir=2*PI*VIEWER_ROTATION*viewer->time();
       light=miniv3d(sin(lightdir),cos(lightdir),0.0);
       eparams->lightdir=light;
       viewer->propagate();

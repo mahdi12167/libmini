@@ -94,7 +94,7 @@ class viewerbase
    void render();
 
    //! get time
-   double gettime();
+   double time();
 
    //! start timer
    void starttimer();

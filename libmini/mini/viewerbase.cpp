@@ -134,7 +134,7 @@ void viewerbase::disablefocus()
 
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
-   {EARTH->cache(e,d,u,aspect,gettime());}
+   {EARTH->cache(e,d,u,aspect,time());}
 
 // render cached scene
 void viewerbase::render()
@@ -150,7 +150,7 @@ void viewerbase::render()
    }
 
 // get time
-double viewerbase::gettime()
+double viewerbase::time()
    {return(gettime()-START);}
 
 // start timer
