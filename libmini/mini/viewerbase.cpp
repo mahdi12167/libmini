@@ -168,12 +168,27 @@ void viewerbase::idle(double dt)
 // adapt quality parameters
 void viewerbase::adapt(double dt)
    {
+   static const double tgt=0.5;
+   static const double secs=1.0;
+
+   double load;
+
    miniterrain::MINITERRAIN_PARAMS tparams;
 
    getearth()->getterrain()->get(tparams);
 
    tparams.res=miniload::calcres(PARAMS.winheight,PARAMS.fovy);
    tparams.range=miniload::calcrange(tparams.refres,PARAMS.winheight,PARAMS.fovy)/PARAMS.farp;
+
+   load=dt*PARAMS.fps/tgt;
+
+   if (!getearth()->isstatic() && !getearth()->isfrozen())
+      {
+      tparams.relres*=pow(load,-1.0/(PARAMS.fps*secs));
+
+      if (tparams.relres<1E-3) tparams.relres=1E-3;
+      if (tparams.relres>1E3) tparams.relres=1E3;
+      }
 
    getearth()->getterrain()->set(tparams);
    }

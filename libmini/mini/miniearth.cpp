@@ -625,13 +625,17 @@ void miniearth::renderdgrid()
       }
    }
 
-// check for static scene
-BOOLINT miniearth::checkstatic()
+// check for pending scene update
+BOOLINT miniearth::checkpending()
    {return(TERRAIN->getpending()==0);}
 
 // make scene static
 void miniearth::makestatic(BOOLINT flag)
    {STATIC=flag;}
+
+// check whether the scene is static or not
+BOOLINT miniearth::isstatic()
+   {return(STATIC);}
 
 // grab scene
 void miniearth::grabbuffers()
@@ -726,6 +730,10 @@ void miniearth::render()
 // freeze scene
 void miniearth::freeze(BOOLINT flag)
    {FREEZE=flag;}
+
+// check whether the scene is frozen or not
+BOOLINT miniearth::isfrozen()
+   {return(FREEZE);}
 
 // get the relative elevation above sea level at position (x,y,z)
 double miniearth::getrelheight(const minicoord &p)

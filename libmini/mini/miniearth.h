@@ -155,13 +155,19 @@ class miniearth
    void render();
 
    //! check for static scene
-   BOOLINT checkstatic();
+   BOOLINT checkpending();
 
    //! make scene static
    void makestatic(BOOLINT flag);
 
+   //! check whether the scene is static or not
+   BOOLINT isstatic();
+
    //! freeze scene
    void freeze(BOOLINT flag);
+
+   //! check whether the scene is frozen or not
+   BOOLINT isfrozen();
 
    //! get the relative elevation above sea level at position (x,y,z)
    double getrelheight(const minicoord &p);

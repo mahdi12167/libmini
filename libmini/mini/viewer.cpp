@@ -1114,7 +1114,7 @@ void displayfunc()
 
    static int numidle=0;
 
-   stat=viewer->getearth()->checkstatic();
+   stat=viewer->getearth()->checkpending();
 
    if (!stat || wakeup) numidle=0;
    else if (numidle<VIEWER_MAXIDLE) numidle++;
