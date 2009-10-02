@@ -27,7 +27,7 @@ int main(int argc,char *argv[])
 
    // add speed test:
 
-   time=minigettime();
+   time=gettime();
 
    const long long int addmax1=100;
    const long long int addmax2=100;
@@ -45,13 +45,13 @@ int main(int argc,char *argv[])
          if (error1>1E-3) printf("%g+%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
-   time=minigettime()-time;
+   time=gettime()-time;
 
    printf("%gk adds/s\n",(double)4*addmax1*addmax2/time/1E3);
 
    // mul speed test:
 
-   time=minigettime();
+   time=gettime();
 
    const long long int mulmax1=100;
    const long long int mulmax2=100;
@@ -69,13 +69,13 @@ int main(int argc,char *argv[])
          if (error2>1E-3) printf("%g*%g!=%g\n",0.1*i,0.1*j,test3.get());
          }
 
-   time=minigettime()-time;
+   time=gettime()-time;
 
    printf("%gk muls/s\n",(double)4*mulmax1*mulmax2/time/1E3);
 
    // div speed test:
 
-   time=minigettime();
+   time=gettime();
 
    const long long int divmax1=100;
    const long long int divmax2=100;
@@ -94,13 +94,13 @@ int main(int argc,char *argv[])
             if (error3>1E-3) printf("%g/%g!=%g\n",0.1*i,0.1*j,test3.get());
             }
 
-   time=minigettime()-time;
+   time=gettime()-time;
 
    printf("%gk divs/s\n",(double)4*divmax1*divmax2/time/1E3);
 
    // sqrt speed test:
 
-   time=minigettime();
+   time=gettime();
 
    const long long int sqrtmax=10000;
 
@@ -115,13 +115,13 @@ int main(int argc,char *argv[])
       if (error4>1E-3) printf("sqrt(%g)!=%g\n",0.1*i,test2.get());
       }
 
-   time=minigettime()-time;
+   time=gettime()-time;
 
    printf("%gk sqrts/s\n",(double)sqrtmax/time/1E3);
 
    // 1/sqrt speed test:
 
-   time=minigettime();
+   time=gettime();
 
    const long long int invsqrtmax=10000;
 
@@ -136,7 +136,7 @@ int main(int argc,char *argv[])
       if (error5>1E-3) printf("1/sqrt(%g)!=%g\n",0.1*i,test2.get());
       }
 
-   time=minigettime()-time;
+   time=gettime()-time;
 
    printf("%gk invsqrts/s\n",(double)invsqrtmax/time/1E3);
 
