@@ -97,7 +97,8 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.spu=0.5f;               // update period for render buffer in seconds
 
    LPARAMS.res=1.0E3f;             // global resolution of triangulation
-   LPARAMS.relres=1.0f;            // relative adjustment factor for global resolution
+   LPARAMS.relres1=1.0f;           // relative adjustment factor #1 for global resolution
+   LPARAMS.relres2=1.0f;           // relative adjustment factor #2 for global resolution
 
    LPARAMS.fovy=60.0f;             // field of view (degrees)
    LPARAMS.nearp=10.0f;            // near plane (meters)
@@ -109,7 +110,8 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
 
    LPARAMS.range=0.001f;           // texture paging range relative to far plane
-   LPARAMS.relrange=1.0f;          // relative adjustment factor for texture paging range
+   LPARAMS.relrange1=1.0f;         // relative adjustment factor #1 for texture paging range
+   LPARAMS.relrange2=1.0f;         // relative adjustment factor #2 for texture paging range
    LPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
@@ -292,8 +294,8 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
                range*=texres/LPARAMS.refres;
                }
 
-         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale);
-         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
          TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 
@@ -484,8 +486,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setvtbelevpath(basepath1);
    TILECACHE->setvtbimagpath(basepath2);
    TILECACHE->setstartupfile(LPARAMS.startupfile);
-   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
-   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.relrange*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
+   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
    TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
@@ -1482,7 +1484,7 @@ void minilayer::initeyepoint(const minicoord &e)
    TERRAIN->restrictroi(ei.vec.x,ei.vec.z,LPARAMS.load*len_g2i(LPARAMS.farp));
 
    // load smallest LODs
-   TERRAIN->updateroi(LPARAMS.res*LPARAMS.relres,
+   TERRAIN->updateroi(LPARAMS.res*LPARAMS.relres1*LPARAMS.relres2,
                       ei.vec.x,ei.vec.y+1000*len_g2i(LPARAMS.farp),ei.vec.z,
                       ei.vec.x,ei.vec.z,len_g2i(LPARAMS.farp));
 
@@ -1541,7 +1543,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
    TERRAIN->setreduction(LPARAMS.reduction1,LPARAMS.reduction2);
 
    // update vertex arrays
-   TERRAIN->draw(LPARAMS.res*LPARAMS.relres,
+   TERRAIN->draw(LPARAMS.res*LPARAMS.relres1*LPARAMS.relres2,
                  ei.vec.x,ei.vec.y,ei.vec.z,
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,

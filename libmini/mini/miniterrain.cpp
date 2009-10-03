@@ -55,7 +55,8 @@ miniterrain::miniterrain()
    TPARAMS.spu=0.5f;               // update period for render buffer in seconds
 
    TPARAMS.res=1.0E3f;             // global resolution of triangulation
-   TPARAMS.relres=1.0f;            // relative adjustment factor for global resolution
+   TPARAMS.relres1=1.0f;           // relative adjustment factor #1 for global resolution
+   TPARAMS.relres2=1.0f;           // relative adjustment factor #2 for global resolution
 
    TPARAMS.fovy=60.0f;             // field of view (degrees)
    TPARAMS.nearp=10.0f;            // near plane (meters)
@@ -67,7 +68,8 @@ miniterrain::miniterrain()
    TPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
 
    TPARAMS.range=0.001f;           // texture paging range relative to far plane
-   TPARAMS.relrange=1.0f;          // relative adjustment factor for texture paging range
+   TPARAMS.relrange1=1.0f;         // relative adjustment factor #1 for texture paging range
+   TPARAMS.relrange2=1.0f;         // relative adjustment factor #2 for texture paging range
    TPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
    TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
    TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
@@ -330,7 +332,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.spu=TPARAMS.spu;
 
          lparams.res=TPARAMS.res;
-         lparams.relres=TPARAMS.relres;
+         lparams.relres1=TPARAMS.relres1;
+         lparams.relres2=TPARAMS.relres2;
 
          lparams.fovy=TPARAMS.fovy;
          lparams.nearp=TPARAMS.nearp;
@@ -342,7 +345,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.cullslope=TPARAMS.cullslope;
 
          lparams.range=TPARAMS.range;
-         lparams.relrange=TPARAMS.relrange;
+         lparams.relrange1=TPARAMS.relrange1;
+         lparams.relrange2=TPARAMS.relrange2;
          lparams.refres=TPARAMS.refres;
          lparams.radius=TPARAMS.radius;
          lparams.dropoff=TPARAMS.dropoff;

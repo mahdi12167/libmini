@@ -101,7 +101,8 @@ class minilayer
       float spu;                //* update period for render buffer in seconds
 
       float res;                //  global resolution of triangulation
-      float relres;             //  relative adjustment factor for global resolution
+      float relres1;            //  relative adjustment factor #1 for global resolution
+      float relres2;            //  relative adjustment factor #2 for global resolution
 
       float fovy;               //  field of view (degrees)
       float nearp;              //  near plane (meters)
@@ -113,7 +114,8 @@ class minilayer
       float cullslope;          // slope under which the terrain is culled
 
       float range;              //* texture paging range relative to far plane
-      float relrange;           //* relative adjustment factor for texture paging range
+      float relrange1;          //* relative adjustment factor #1 for texture paging range
+      float relrange2;          //* relative adjustment factor #2 for texture paging range
       float refres;             //* reference resolution for texture paging in meters
       float radius;             //* non-linear kick-in distance relative to texture range
       float dropoff;            //* non-linear lod dropoff at kick-in distance

@@ -26,6 +26,12 @@ viewerbase::viewerbase()
    PARAMS.nearp=10.0f;   // near plane (meters)
    PARAMS.farp=10000.0f; // far plane (meters)
 
+   // auto-adaption:
+
+   PARAMS.autoadapt=TRUE;  // auto-adaption switch
+   PARAMS.autotarget=60.0; // targeted cpu load (percent)
+   PARAMS.autoseconds=1.0; // adaption period (seconds)
+
    // feature switches:
 
    PARAMS.usewireframe=FALSE;
@@ -168,9 +174,6 @@ void viewerbase::idle(double dt)
 // adapt quality parameters
 void viewerbase::adapt(double dt)
    {
-   static const double tgt=0.5;
-   static const double secs=1.0;
-
    double load;
 
    miniterrain::MINITERRAIN_PARAMS tparams;
@@ -180,15 +183,16 @@ void viewerbase::adapt(double dt)
    tparams.res=miniload::calcres(PARAMS.winheight,PARAMS.fovy);
    tparams.range=miniload::calcrange(tparams.refres,PARAMS.winheight,PARAMS.fovy)/PARAMS.farp;
 
-   load=dt*PARAMS.fps/tgt;
+   if (PARAMS.autoadapt)
+      if (!getearth()->isstatic() && !getearth()->isfrozen())
+         {
+         load=dt*PARAMS.fps/PARAMS.autotarget*100.0;
 
-   if (!getearth()->isstatic() && !getearth()->isfrozen())
-      {
-      tparams.relres*=pow(load,-1.0/(PARAMS.fps*secs));
+         tparams.relres2*=pow(load,-0.5/(PARAMS.fps*PARAMS.autoseconds));
 
-      if (tparams.relres<1E-3) tparams.relres=1E-3;
-      if (tparams.relres>1E3) tparams.relres=1E3;
-      }
+         if (tparams.relres2<1.0) tparams.relres2=1.0;
+         if (tparams.relres2>1E3) tparams.relres2=1E3;
+         }
 
    getearth()->getterrain()->set(tparams);
    }

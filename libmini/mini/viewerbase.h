@@ -37,6 +37,12 @@ class viewerbase
       float nearp;   //  near plane (meters)
       float farp;    //  far plane (meters)
 
+      // auto-adaption:
+
+      BOOLINT autoadapt;  // auto-adaption switch
+      double autotarget;  // targeted cpu load (percent)
+      double autoseconds; // adaption period (seconds)
+
       // feature switches:
 
       BOOLINT usewireframe;
