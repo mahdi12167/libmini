@@ -1332,6 +1332,10 @@ void keyboardfunc(unsigned char key,int x,int y)
          eparams->usevisshader=!eparams->usenprshader;
          viewer->propagate();
          break;
+      case '~':
+         if (!params->autoadapt) params->autoadapt=TRUE;
+         else params->autoadapt=FALSE;
+         break;
       case 'l':
          if (!params->usewireframe) params->usewireframe=TRUE;
          else params->usewireframe=FALSE;
