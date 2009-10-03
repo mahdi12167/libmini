@@ -33,15 +33,18 @@ class viewerbase
 
       float fps;     // frames per second (target frame rate)
 
-      float fovy;    //  field of view (degrees)
-      float nearp;   //  near plane (meters)
-      float farp;    //  far plane (meters)
+      float fovy;    // field of view (degrees)
+      float nearp;   // near plane (meters)
+      float farp;    // far plane (meters)
 
       // auto-adaption:
 
-      BOOLINT autoadapt;  // auto-adaption switch
-      double autotarget;  // targeted cpu load (percent)
-      double autoseconds; // adaption period (seconds)
+      BOOLINT autoadapt; // auto-adaption switch
+      BOOLINT autores;   // adapt global resolution
+      BOOLINT autorange; // adapt texture paging range
+      float autotarget;  // targeted cpu load (percent)
+      float automemory;  // targeted texture memory (mb)
+      float autoseconds; // adaption period (seconds)
 
       // feature switches:
 

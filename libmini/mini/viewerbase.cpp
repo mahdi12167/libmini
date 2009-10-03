@@ -28,9 +28,12 @@ viewerbase::viewerbase()
 
    // auto-adaption:
 
-   PARAMS.autoadapt=TRUE;  // auto-adaption switch
-   PARAMS.autotarget=60.0; // targeted cpu load (percent)
-   PARAMS.autoseconds=1.0; // adaption period (seconds)
+   PARAMS.autoadapt=TRUE;   // auto-adaption switch
+   PARAMS.autores=TRUE;     // adapt global resolution
+   PARAMS.autorange=TRUE;   // adapt texture paging range
+   PARAMS.autotarget=60.0f; // targeted cpu load (percent)
+   PARAMS.automemory=32.0f; // targeted texture memory (mb)
+   PARAMS.autoseconds=1.0f; // adaption period (seconds)
 
    // feature switches:
 
@@ -174,7 +177,7 @@ void viewerbase::idle(double dt)
 // adapt quality parameters
 void viewerbase::adapt(double dt)
    {
-   double load;
+   float load;
 
    miniterrain::MINITERRAIN_PARAMS tparams;
 
@@ -186,12 +189,25 @@ void viewerbase::adapt(double dt)
    if (PARAMS.autoadapt)
       if (!getearth()->isstatic() && !getearth()->isfrozen())
          {
-         load=dt*PARAMS.fps/PARAMS.autotarget*100.0;
+         if (PARAMS.autores)
+            {
+            load=dt*PARAMS.fps/PARAMS.autotarget*100.0f;
 
-         tparams.relres2*=pow(load,-0.5/(PARAMS.fps*PARAMS.autoseconds));
+            tparams.relres2*=fpow(load,-0.5f/(PARAMS.fps*PARAMS.autoseconds));
 
-         if (tparams.relres2<1.0) tparams.relres2=1.0;
-         if (tparams.relres2>1E3) tparams.relres2=1E3;
+            if (tparams.relres2<1.0f) tparams.relres2=1.0f;
+            if (tparams.relres2>1E3f) tparams.relres2=1E3f;
+            }
+
+         if (PARAMS.autorange)
+            {
+            load=getearth()->getterrain()->gettexmem()/PARAMS.automemory;
+
+            tparams.relrange2*=fpow(load,-0.5f/(PARAMS.fps*PARAMS.autoseconds));
+
+            if (tparams.relrange2<1.0f) tparams.relrange2=1.0f;
+            if (tparams.relrange2>1E2f) tparams.relrange2=1E2f;
+            }
          }
 
    getearth()->getterrain()->set(tparams);

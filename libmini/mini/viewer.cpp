@@ -802,9 +802,9 @@ void renderhud()
       eye_llh=nst->map_g2t(eye);
       if (eye_llh.type!=minicoord::MINICOORD_LINEAR) eye_llh.convert2(minicoord::MINICOORD_LLH);
 
-      snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res= %.1f*%.1f (t/T)\n range= %.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
+      snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res= %.1f*%.1f (t/T)\n range= %.1f*%.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
                eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,turn,incline, // position/elevation and direction
-               params->farp,tparams->res*tparams->relres1,tparams->relres2,tparams->range*tparams->relrange1*params->farp,sea,gravity); // adjustable parameters
+               params->farp,tparams->res*tparams->relres1,tparams->relres2,tparams->range*tparams->relrange1*params->farp,tparams->relrange2,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 

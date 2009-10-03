@@ -33,9 +33,9 @@ class miniearth
 
       float fps;      // frames per second (target frame rate)
 
-      float fovy;     //  field of view (degrees)
-      float nearp;    //  near plane (meters)
-      float farp;     //  far plane (meters)
+      float fovy;     // field of view (degrees)
+      float nearp;    // near plane (meters)
+      float farp;     // far plane (meters)
 
       // feature switches:
 
