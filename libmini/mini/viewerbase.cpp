@@ -196,7 +196,7 @@ void viewerbase::adapt(double dt)
             tparams.relres2*=fpow(load,-0.5f/(PARAMS.fps*PARAMS.autoseconds));
 
             if (tparams.relres2<1.0f) tparams.relres2=1.0f;
-            if (tparams.relres2>1E3f) tparams.relres2=1E3f;
+            if (tparams.relres2>1E2f) tparams.relres2=1E2f;
             }
 
          if (PARAMS.autorange)
