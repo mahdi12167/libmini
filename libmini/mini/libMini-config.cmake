@@ -56,6 +56,7 @@ MACRO(SET_MINI_PATH name subdir)
    SET(${name} ${LIBMINI_PATH}
                ${LIBMINI_PATH}/../deps/${subdir}
                ${LIBMINI_PATH}/../WIN32/${subdir}
+               ${LIBMINI_PATH}/../../${subdir}
                /usr/local/${subdir})
    IF (LIBMINI_THIRDPARTY_DIR)
       SET(${name} ${${name}}
