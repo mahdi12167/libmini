@@ -764,7 +764,7 @@ void displayfunc()
    int vtx;
    float perf;
 
-   time=minigettime();
+   time=gettime();
 
    sina=sin(2.0f*PI/360.0f*turn);
    cosa=cos(2.0f*PI/360.0f*turn);
@@ -920,7 +920,7 @@ void displayfunc()
              terrain.getmem(),terrain.gettexmem(),
              cache.getfancnt(),cache.getvtxcnt());
 
-   delta=minigettime()-time;
+   delta=gettime()-time;
 
    if (delta>0.0)
       {
@@ -935,7 +935,7 @@ void displayfunc()
       }
 
    idle=1.0f/fps-delta;
-   if (idle>0.0) miniwaitfor(idle);
+   if (idle>0.0) waitfor(idle);
 
    if (stopmotion==0) tsteps++;
    }

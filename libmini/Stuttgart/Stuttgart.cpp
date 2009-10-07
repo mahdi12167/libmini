@@ -38,7 +38,7 @@ void displayfunc()
 
    const float fps=15.0f;
 
-   time=minigettime();
+   time=gettime();
 
    if (freeze==0 || getonce++==0)
       if (fscanf(flyfile,"%gs: res=%g ex=%g ey=%g ez=%g dx=%g dy=%g dz=%g ux=%g uy=%g uz=%g\n",
@@ -64,7 +64,7 @@ void displayfunc()
 
    glutSwapBuffers();
 
-   while (minigettime()-time<1.0f/fps);
+   while (gettime()-time<1.0f/fps);
    }
 
 void reshapefunc(int width,int height)

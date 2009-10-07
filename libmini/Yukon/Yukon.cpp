@@ -47,7 +47,7 @@ void displayfunc()
    if (posmode==0) {ex=ex1; ey=ey1; ez=ez1;}
    else {ex=ex2; ey=ey2; ez=ez2;}
 
-   time=minigettime();
+   time=gettime();
 
    sinr=sin(2.0f*rps*ttime*PI);
    cosr=cos(2.0f*rps*ttime*PI);
@@ -84,8 +84,8 @@ void displayfunc()
 
    glutSwapBuffers();
 
-   while (minigettime()-time<1.0f/fps);
-   if (rotmode==0) ttime+=minigettime()-time;
+   while (gettime()-time<1.0f/fps);
+   if (rotmode==0) ttime+=gettime()-time;
    }
 
 void reshapefunc(int width,int height)

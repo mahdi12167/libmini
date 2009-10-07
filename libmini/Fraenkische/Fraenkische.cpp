@@ -579,7 +579,7 @@ void displayfunc()
 
    actframe++;
 
-   time=minigettime();
+   time=gettime();
 
    sina=sin(2.0f*PI/360.0f*turn);
    cosa=cos(2.0f*PI/360.0f*turn);
@@ -721,7 +721,7 @@ void displayfunc()
                 trees->gettrees(),0.5f*fsqr(2.0f*farp/50.0f)/1E6f);
       }
 
-   delta=minigettime()-time;
+   delta=gettime()-time;
 
    if (delta>0.0)
       {
@@ -736,7 +736,7 @@ void displayfunc()
       }
 
    idle=1.0f/winfps-delta;
-   if (idle>0.0) miniwaitfor(idle);
+   if (idle>0.0) waitfor(idle);
    }
 
 int main(int argc,char *argv[])
