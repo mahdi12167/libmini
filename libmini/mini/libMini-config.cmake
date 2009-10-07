@@ -1,7 +1,7 @@
 # cmake build configuration for libMini
 # (c) by Stefan Roettger
 
-OPTION(BUILD_STUB "Build stub library." OFF)
+OPTION(BUILD_MINI_STUB "Build stub library." OFF)
 
 OPTION(BUILD_WITHOUT_SQUISH "Build without squish." OFF)
 OPTION(BUILD_WITH_OPENTHREADS "Build with openthreads." OFF)
@@ -207,10 +207,10 @@ IF (MINI_BUILD_TYPE MATCHES RELEASE)
 ENDIF (MINI_BUILD_TYPE MATCHES RELEASE)
 
 # check for stub build
-IF (BUILD_STUB)
+IF (BUILD_MINI_STUB)
    ADD_DEFINITIONS(-DNOOGL)
    SET(OPENGL_LIBRARIES "")
-ENDIF (BUILD_STUB)
+ENDIF (BUILD_MINI_STUB)
 
 # check for squish build
 IF (BUILD_WITHOUT_SQUISH)
