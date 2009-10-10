@@ -99,8 +99,8 @@ MACRO(FIND_MINI_LIBRARY name file path)
 ENDMACRO(FIND_MINI_LIBRARY)
 
 MACRO(FIND_MINI_LIBRARY2 name file path1 path2)
-   FIND_MINI_LIBRARY(name file path1)
-   FIND_MINI_LIBRARY(name file path2)
+   FIND_MINI_LIBRARY(${name} ${file} "${path1}")
+   FIND_MINI_LIBRARY(${name} ${file} "${path2}")
 ENDMACRO(FIND_MINI_LIBRARY2)
 
 MACRO(FIND_MINI_PATH name file path)
@@ -110,8 +110,8 @@ MACRO(FIND_MINI_PATH name file path)
 ENDMACRO(FIND_MINI_PATH)
 
 MACRO(FIND_MINI_PATH2 name file path1 path2)
-   FIND_MINI_PATH(name file path1)
-   FIND_MINI_PATH(name file path2)
+   FIND_MINI_PATH(${name} ${file} "${path1}")
+   FIND_MINI_PATH(${name} ${file} "${path2}")
 ENDMACRO(FIND_MINI_PATH2)
 
 IF (NOT BUILD_MINI_STUB)
