@@ -82,7 +82,7 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 #define VIEWER_NPRCONTOURS 100.0f
 
-#define VIEWER_SBASE 0.5f
+#define VIEWER_SBASE 0.1f
 
 #define VIEWER_MAXIDLE 10
 #define VIEWER_MINDIFF 0.001f
@@ -168,7 +168,7 @@ static double oneturn=5.0,oneincline=5.0;
 static double speed,topspeed;
 
 // stereo base
-static const float sbase=VIEWER_SBASE;
+static const double sbase=VIEWER_SBASE;
 
 // wakeup flag
 static BOOLINT wakeup=TRUE;
@@ -943,8 +943,8 @@ void render()
    up.y=cosa*sinp;
    up.z=cosp;
 
-   right.x=cosa*sbase;
-   right.y=sina*sbase;
+   right.x=cosa;
+   right.y=-sina;
    right.z=0.0;
 
    dir=nst->rot_l2g(dir,el);
@@ -1010,7 +1010,7 @@ void render()
    egl=nst->map_g2o(eye);
    dgl=nst->rot_g2o(dir,eye);
    ugl=nst->rot_g2o(up,eye);
-   rgl=nst->rot_g2o(right,eye);
+   rgl=nst->rot_g2o(right,eye)*sbase;
 
    // change orientation of signposts:
 
