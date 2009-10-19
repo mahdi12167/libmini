@@ -702,6 +702,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // update warp objects for each exposed coordinate transformation
    updatecoords();
 
+   // set relative scale to neutralize exaggeration
+   TERRAIN->setrelscale(1.0f/LPARAMS.exaggeration);
+
    // set minimum resolution
    TERRAIN->configure_minres(LPARAMS.minres);
 

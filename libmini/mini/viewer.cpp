@@ -12,7 +12,7 @@
 #define VIEWER_FPS 25.0f
 
 #define VIEWER_SCALE 100.0f
-#define VIEWER_EXAGGER 1.0f
+#define VIEWER_EXAGGER 3.0f
 
 #define VIEWER_FOVY 60.0f
 #define VIEWER_NEARP 10.0f
@@ -1292,22 +1292,22 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (eparams->fogdensity>10.0f) eparams->fogdensity=10.0f;
          viewer->propagate();
          break;
-      case '1':
+      case '9':
          if (!eparams->usefog) eparams->usefog=TRUE;
          else eparams->usefog=FALSE;
          viewer->propagate();
          break;
-      case '2':
+      case '8':
          if (!eparams->usebathymap) eparams->usebathymap=TRUE;
          else eparams->usebathymap=FALSE;
          viewer->propagate();
          break;
-      case '3':
+      case '7':
          if (!eparams->usecontours) eparams->usecontours=TRUE;
          else eparams->usecontours=FALSE;
          viewer->propagate();
          break;
-      case '4':
+      case '6':
          if (!eparams->useskydome) eparams->useskydome=TRUE;
          else eparams->useskydome=FALSE;
          break;
@@ -1324,6 +1324,18 @@ void keyboardfunc(unsigned char key,int x,int y)
       case '0':
          if (!eparams->nonlin) eparams->nonlin=TRUE;
          else eparams->nonlin=FALSE;
+         viewer->propagate();
+         break;
+      case '1':
+         viewer->getearth()->getterrain()->flatten(1.0f/VIEWER_EXAGGER);
+         viewer->propagate();
+         break;
+      case '2':
+         viewer->getearth()->getterrain()->flatten(2.0f/VIEWER_EXAGGER);
+         viewer->propagate();
+         break;
+      case '3':
+         viewer->getearth()->getterrain()->flatten(1.0f);
          viewer->propagate();
          break;
       case 'N':
