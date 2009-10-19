@@ -1311,6 +1311,10 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (!eparams->useskydome) eparams->useskydome=TRUE;
          else eparams->useskydome=FALSE;
          break;
+      case '5':
+         if (!eparams->useearth) eparams->useearth=TRUE;
+         else eparams->useearth=FALSE;
+         break;
       case 'p':
          if (!eparams->usewaypoints) eparams->usewaypoints=TRUE;
          else eparams->usewaypoints=FALSE;
