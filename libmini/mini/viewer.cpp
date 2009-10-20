@@ -1342,6 +1342,9 @@ void keyboardfunc(unsigned char key,int x,int y)
          viewer->getearth()->getterrain()->flatten(1.0f);
          viewer->propagate();
          break;
+      case '-':
+         tparams->seatrans=1.0f-tparams->seatrans;
+         break;
       case 'N':
          if (!eparams->usenprshader) eparams->usenprshader=TRUE;
          else eparams->usenprshader=FALSE;
