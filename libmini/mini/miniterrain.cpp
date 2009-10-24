@@ -1011,6 +1011,9 @@ void miniterrain::render()
          {
          // set primary sea color
          CACHE->setseacolor(TPARAMS.seacolor[0],TPARAMS.seacolor[1],TPARAMS.seacolor[2],TPARAMS.seatrans);
+
+         // disable sea texturing
+         CACHE->configure_seaenabletex(0);
          }
 
       // render vertex arrays
