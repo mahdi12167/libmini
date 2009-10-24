@@ -1007,6 +1007,11 @@ void miniterrain::render()
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
                                      0.0f,0.0f,0.0f,0.0f,1.0f);
          }
+      else
+         {
+         // set primary sea color
+         CACHE->setseacolor(TPARAMS.seacolor[0],TPARAMS.seacolor[1],TPARAMS.seacolor[2],TPARAMS.seatrans);
+         }
 
       // render vertex arrays
       CACHE->rendercache();
