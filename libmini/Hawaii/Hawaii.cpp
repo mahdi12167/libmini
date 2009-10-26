@@ -7,7 +7,7 @@
 #include <mini/miniOGL.h>
 #include <mini/minitime.h>
 #include <mini/miniio.h>
-#include <mini/minihsv.h>
+#include <mini/minirgb.h>
 #include <mini/minicrs.h>
 #include <mini/miniload.h>
 #include <mini/minicache.h>
