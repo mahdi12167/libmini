@@ -1,0 +1,16 @@
+P5
+# BOX
+# description=BBox
+# coordinate system=LL
+# coordinate zone=0
+# coordinate datum=0
+# SW corner=-592200/55800 arc-seconds
+# NW corner=-592200/91800 arc-seconds
+# NE corner=-541800/91800 arc-seconds
+# SE corner=-541800/55800 arc-seconds
+# cell size=50400/36000 arc-seconds
+# vertical scaling=7000 meters
+# missing value=-9999
+2 2
+32767
+ÿÿÿÿÿÿÿÿ
