@@ -324,10 +324,12 @@ float transformpoint(unsigned char *image,
    double dx,dy;
    double s1,s2,t1,t2;
 
+   static const double safety=1.1;
+
    dx=LONSUB(x,centerx);
    dy=y-centery;
 
-   if (dabs(dx)>extentx/2.0 || dabs(dy)>extenty/2.0) return(missing);
+   if (dabs(dx)>extentx*safety/2.0 || dabs(dy)>extenty*safety/2.0) return(missing);
 
    x=centerx+dx;
 
@@ -682,6 +684,8 @@ void resample(int num,const char **grid,
    FILE *tileset=NULL;
    FILE *startup=NULL;
 
+   static const double safety=1.1;
+
    // for all tiles
    if (!done)
       {
@@ -749,10 +753,10 @@ void resample(int num,const char **grid,
 
             // gather relevant grids
             for (n=0; n<num; n++)
-               if (LONSUB(tileposx,centersx[n])<extentsx[n]/2.0 &&
-                   LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]/2.0 &&
-                   tileposy<centersy[n]+extentsy[n]/2.0 &&
-                   tileposy+tilesizey>centersy[n]-extentsy[n]/2.0)
+               if (LONSUB(tileposx,centersx[n])<extentsx[n]*safety/2.0 &&
+                   LONSUB(tileposx+tilesizex,centersx[n])>-extentsx[n]*safety/2.0 &&
+                   tileposy<centersy[n]+extentsy[n]*safety/2.0 &&
+                   tileposy+tilesizey>centersy[n]-extentsy[n]*safety/2.0)
                   if (widths[n]>1 && heights[n]>1) valid[vnum++]=n;
                   else ERRORMSG();
 
