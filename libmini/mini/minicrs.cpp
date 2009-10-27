@@ -18,6 +18,7 @@ const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
 int minicrs::crs_datum=0; // actual configured crs datum
 int minicrs::crs_zone=0; // actual configured crs zone
+double minicrs::crs_ratio=0.0; // actual configured axis ratio
 
 double minicrs::r_major=EARTH_radius,minicrs::r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
 double minicrs::o_dx=0.0,minicrs::o_dy=0.0,minicrs::o_dz=0.0; // origin shift of ellipsoid
@@ -173,7 +174,7 @@ void minicrs::LL2UTM(double lat,double lon,
 
    choose_datum(datum);
 
-   initUTM(zone);
+   initUTM(zone,r_minor/r_major);
    calcLL2UTM(lat,lon,x,y);
    }
 
@@ -200,7 +201,7 @@ void minicrs::UTM2LL(double x,double y,
    {
    choose_datum(datum);
 
-   initUTM(zone);
+   initUTM(zone,r_minor/r_major);
    calcUTM2LL(x,y,lat,lon);
 
    molodensky(datum,3,lat,lon);
@@ -667,18 +668,20 @@ double minicrs::false_northing; // y offset in meters
 double minicrs::false_easting; // x offset in meters
 
 // initialize the Universal Transverse Mercator (UTM) projection
-void minicrs::initUTM(int zone) // zone number
+void minicrs::initUTM(int zone, // zone number
+                      double ratio) // axis ratio = 1-flattening
    {
    if (zone==0 || abs(zone)>60) ERRORMSG();
+   if (ratio<=0.0 || ratio>1.0) ERRORMSG();
 
-   if (zone==crs_zone) return;
+   if (zone==crs_zone && ratio==crs_ratio) return;
 
    lon_center=(6*abs(zone)-183)*60*60;
 
    false_easting=500000.0;
    false_northing=(zone<0)?10000000.0:0.0;
 
-   es=1.0-dsqr(r_minor/r_major);
+   es=1.0-dsqr(ratio);
    e=sqrt(es);
 
    e0=1.0-0.25*es*(1.0+0.0625*es*(3.0+1.25*es));
@@ -689,6 +692,7 @@ void minicrs::initUTM(int zone) // zone number
    esp=es/(1.0-es);
 
    crs_zone=zone;
+   crs_ratio=ratio;
    }
 
 // calculate the UTM equations

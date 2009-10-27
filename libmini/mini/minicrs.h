@@ -100,7 +100,7 @@ class minicrs
    protected:
 
    // UTM conversion functions
-   static void initUTM(int zone);
+   static void initUTM(int zone,double ratio);
    static void calcLL2UTM(double lat,double lon,double *x,double *y);
    static void calcUTM2LL(double x,double y,double *lat,double *lon);
 
@@ -121,6 +121,7 @@ class minicrs
 
    static int crs_datum;
    static int crs_zone;
+   static double crs_ratio;
 
    static double r_major,r_minor;
    static double o_dx,o_dy,o_dz;
