@@ -54,6 +54,8 @@ ENDIF(NOT LIBMINI_THIRDPARTY_DIR)
 
 MACRO(SET_MINI_PATH name subdir)
    SET(${name} ${LIBMINI_PATH}
+               ${LIBMINI_PATH}/${subdir}
+               ${LIBMINI_PATH}/../${subdir}
                ${LIBMINI_PATH}/../deps/${subdir}
                ${LIBMINI_PATH}/../WIN32/${subdir}
                ${LIBMINI_PATH}/../../${subdir}
