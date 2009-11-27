@@ -272,7 +272,7 @@ void databuf::release(int keep_comment)
    }
 
 // set comment string
-void databuf::set_comment(char *str)
+void databuf::set_comment(const char *str)
    {
    if (comment!=NULL) free(comment);
    comment=NULL;

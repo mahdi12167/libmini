@@ -150,7 +150,7 @@ class databuf
    void release(int keep_comment=0);
 
    //! set comment string
-   void set_comment(char *str);
+   void set_comment(const char *str);
 
    //! set native extents
    void set_extents(double left,double right,double bottom,double top);
