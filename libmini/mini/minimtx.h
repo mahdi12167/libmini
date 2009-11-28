@@ -112,6 +112,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
 
    //! multiple regression
    //! correlates sample vectors x_i = (x_i1, x_i2, ..., x_ip) for i=1..n
+   //! that are stored in the matrix X = (x_i) for i=1..n
    //! with linearly dependent samples y_i for i=1..n
    //! so that y_i = b_0 + b_1*x_i1 + b_2*x_i2 + ... + b_p*x_ip + e_i
    //! with the sum of e_i squared being minimal for the corresponding solution vector b
@@ -123,8 +124,9 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //!           ...
    //!           1, x_n1, x_n2, ..., x_np)
    //!  then b = ( (X)T * X )^-1 * ( (X)T * Y )
-   void mulreg(const minimtx<Scalar,Minsize> &y,
-               minimtx<Scalar,Minsize> &b) const
+   //! returns true if a solution vector exists
+   BOOLINT mulreg(const minimtx<Scalar,Minsize> &y,
+                  minimtx<Scalar,Minsize> &b) const
       {
       minimtx<Scalar,Minsize> X,XT;
       minimtx<Scalar,Minsize> XTX,XTY;
@@ -132,7 +134,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       b.setdim(0,getcols()+1);
 
       // check dimensions
-      if (getrows()!=y.getrows() || y.getcols()!=1) return;
+      if (getrows()!=y.getrows() || y.getcols()!=1) return(FALSE);
 
       // augment sample vectors
       X.setdim(1,getrows());
@@ -143,8 +145,10 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       X.transpose(XT);
       XTX=XT*X;
       XTY=XT*y;
-      if (!XTX.invert(XTX)) return;
+      if (!XTX.invert(XTX)) return(FALSE);
       b=XTX*XTY;
+
+      return(TRUE);
       }
 
    protected:
