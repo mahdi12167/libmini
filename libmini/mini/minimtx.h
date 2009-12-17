@@ -90,7 +90,8 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       }
 
    //! invert square matrix
-   BOOLINT invert(minimtx<Scalar,Minsize> &inv) const
+   //! returns inverse determinant if the matrix is invertable, zero otherwise
+   Scalar invert(minimtx<Scalar,Minsize> &inv) const
       {
       minimtx<Scalar,Minsize> mtx(*this);
       minimtx<Scalar,Minsize> one(getcols(),getrows(),1);
@@ -124,10 +125,12 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //!           ...
    //!           1, x_n1, x_n2, ..., x_np)
    //!  then b = ( (X)T * X )^-1 * ( (X)T * Y )
-   //! returns true if a solution vector exists
-   BOOLINT mulreg(const minimtx<Scalar,Minsize> &y,
-                  minimtx<Scalar,Minsize> &b) const
+   //! returns inverse determinant if a solution vector exists, zero otherwise
+   Scalar mulreg(const minimtx<Scalar,Minsize> &y,
+                 minimtx<Scalar,Minsize> &b) const
       {
+      Scalar invdet;
+
       minimtx<Scalar,Minsize> X,XT;
       minimtx<Scalar,Minsize> XTX,XTY;
 
@@ -144,10 +147,11 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       X.transpose(XT);
       XTX=XT*X;
       XTY=XT*y;
-      if (!XTX.invert(XTX)) return(FALSE);
+      invdet=XTX.invert(XTX);
+      if (invdet==0) return(0);
       b=XTX*XTY;
 
-      return(TRUE);
+      return(invdet);
       }
 
    protected:
@@ -214,16 +218,17 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
    //! Gaussian elimination
    //! inverts linear system of equations defined by square matrix
    //! working matrix has to be in the augmented form (2*N)xN
-   //! returns true if the linear system is invertable
-   BOOLINT gauss(minimtx<Scalar,Minsize> &inv)
+   //! returns the inverse determinant if the linear system is invertable, zero otherwise
+   Scalar gauss(minimtx<Scalar,Minsize> &inv)
       {
       unsigned int i,j,k,l;
 
       Scalar item,factor;
+      Scalar invdet;
 
       // check dimensions
-      if (getrows()<1) return(FALSE);
-      if (getcols()!=2*getrows()) return(FALSE);
+      if (getrows()<1) return(0);
+      if (getcols()!=2*getrows()) return(0);
 
       // set dimensions of inverse matrix
       inv.setdim(getrows(),getrows());
@@ -243,7 +248,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       // compute upper triangular form
       for (i=0; i<getrows()-1; i++)
          {
-         if (get(i,i)==0) return(FALSE);
+         if (get(i,i)==0) return(0);
 
          for (j=getrows()-1; j>i; j--)
             if (get(i,j)!=0)
@@ -259,7 +264,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
          {
          k=getrows()-1-i;
 
-         if (get(k,k)==0) return(FALSE);
+         if (get(k,k)==0) return(0);
 
          for (j=0; j<k; j++)
             if (get(k,j)!=0)
@@ -270,11 +275,15 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
                }
          }
 
+      // compute inverse determinant
+      invdet=0;
+      for (i=0; i<getrows(); i++) invdet*=get(i,i);
+
       // copy inverse matrix
       for (i=0; i<getrows(); i++)
          for (j=0; j<getrows(); j++) inv.set(i,j,get(i+getrows(),j)/get(j,j));
 
-      return(TRUE);
+      return(invdet);
       }
    };
 
