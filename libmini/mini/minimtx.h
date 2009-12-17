@@ -135,8 +135,8 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
       minimtx<Scalar,Minsize> XTX,XTY;
 
       // check dimensions
-      if (getcols()<1 || y.getcols()!=1) return(FALSE);
-      if (getrows()<1 || getrows()!=y.getrows()) return(FALSE);
+      if (getcols()<1 || y.getcols()!=1) return(0);
+      if (getrows()<1 || getrows()!=y.getrows()) return(0);
 
       // augment sample vectors
       X.setdim(1,getrows());
