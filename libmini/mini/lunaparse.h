@@ -37,6 +37,48 @@ alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
                 "sin" | "cos" | "tan" | "atan" | "atan2"
 
+The simplest LUNA program possible is:
+
+   main()
+      {
+      return(0);
+      }
+
+The following LUNA program calculates the nth fibonacci number (iteratively):
+
+   main(par fibo)
+      {
+      var i;
+
+      var a;
+      var b;
+      var c;
+
+      a=1;
+      b=1;
+
+      for (i=1, (< i fibo), i++)
+         {
+         c=(+ a b);
+         a=b;
+         b=c;
+         }
+
+      return(b);
+      }
+
+The following LUNA program calculates the nth fibonacci number (recursively):
+
+   func fibonacci(par n)
+      {
+      if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
+      else return(1);
+      }
+
+   main(par fibo)
+      {
+      return(fibonacci(fibo));
+      }
 */
 
 #ifndef LUNAPARSE_H
