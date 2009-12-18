@@ -1,0 +1,12 @@
+# calculates the nth fibonacci number (recursively)
+
+func fibonacci(par n)
+   {
+   if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
+   else return(1);
+   }
+
+main(par fibo)
+   {
+   return(fibonacci(fibo));
+   }
