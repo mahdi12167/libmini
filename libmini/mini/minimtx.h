@@ -276,7 +276,7 @@ class minimtx: public minidyna<Scalar,Minsize*Minsize>
          }
 
       // compute inverse determinant
-      invdet=0;
+      invdet=1;
       for (i=0; i<getrows(); i++) invdet*=get(i,i);
 
       // copy inverse matrix
