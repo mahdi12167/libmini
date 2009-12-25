@@ -1422,7 +1422,7 @@ void minitile::reload(int col,int row,
 
    int width,height;
 
-   short int *hfield;
+   short int *hfield=NULL;
 
    if (col<0 || col>=COLS || row<0 || row>=ROWS) ERRORMSG();
 
