@@ -46,7 +46,7 @@ inline void minierrormsg(const char *file,int line,int fatal)
       fprintf(stderr," in <%s> at line %d!\n",file,line);
       }
    else minierrorhandler(file,line,fatal);
-   if (fatal!=MINI_ERROR_NONFATAL) exit(EXIT_FAILURE);
+   if (fatal!=MINI_ERROR_NONFATAL) exit(1);
    }
 
 #ifndef NULL

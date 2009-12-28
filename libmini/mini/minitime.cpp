@@ -21,7 +21,7 @@ double gettime()
    return(t.tv_sec+t.tv_usec/1.0E6);
 #else
    LARGE_INTEGER freq,count;
-   if (QueryPerformanceFrequency(&freq)==0) exit(EXIT_FAILURE);
+   if (QueryPerformanceFrequency(&freq)==0) ERRORMSG();
    QueryPerformanceCounter(&count);
    return((double)count.QuadPart/freq.QuadPart);
 #endif
