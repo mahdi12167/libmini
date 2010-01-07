@@ -1,0 +1,30 @@
+**************************************************
+*   G R A P H I K - P R A K T I K U M  SS 1995   *
+**************************************************
+* (C)omputer (A)ided (R)acing by Stefan Roettger *
+**************************************************
+
+CAR ist ein Fahrsimulator, mit dem man ueber eine Insel
+brausen kann. Damit die Grafik auch einigermassen flott
+ist, wird die Insel adaptiv trianguliert.
+
+Programmaufruf:
+---------------
+
+Wenn man sich die adaptive Triangulation genauer
+anschauen will, kann man die Option -X verwenden.
+
+Bedienung:
+----------
+
+Menueleiste:
+   Flip : wechsle die Perspektive
+   Warp : waehle zwischen Erde, Venus, Mars und Mond
+   Quit : Programmende
+
+Maus:
+   linke Maustaste    : lenken
+   mittlere Maustaste : beschleunigen
+   rechte Maustaste   : bremsen
+
+Viel Spass dabei!

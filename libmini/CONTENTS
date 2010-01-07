@@ -7,6 +7,7 @@ deps: source code of selected libMini dependencies
 data: hires data as a replacement for the lores data in mini/data
 WIN32: prebuilt static Windows dependencies
 WIN32.exe: prebuilt Windows executables
+CAR: old libMini as of 1995
 
 For building libMini, OpenGL needs to be installed. See the libMini README for instructions.
 For building the libMini viewer on *nix, it is assumed that pthreads libjpeg libpng and libcurl are installed.
