@@ -1,6 +1,12 @@
 #ifndef DEFS_H
 #define DEFS_H
 
+#define ERROR()\
+   {\
+   fprintf(stderr,"fatal error in %s at line %d!\n",__FILE__,__LINE__);\
+   exit(EXIT_FAILURE);\
+   }
+
 #define min(a,b) (((a)<(b))?(a):(b))
 #define fmin(a,b) (((a)<(b))?(a):(b))
 
