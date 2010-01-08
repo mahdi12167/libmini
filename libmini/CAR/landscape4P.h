@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <values.h>
+#include "defs.h"
 #include "driver.h"
 #include "map.h"
 #include "landscape.h"
@@ -25,10 +26,6 @@
 
 #define Y(i,j) (y[i][j])
 #define h(y)   (y)
-
-#define ftrc(x) ((int)ftrunc(x))
-
-#define max(a,b) (((a)>(b))?(a):(b))
 
 #define cpr(x)  (((x)>=1.0f)?255:ftrc((x)*255.0f))
 #define dcpr(x) ((x)/255.0f)
@@ -72,12 +69,6 @@ float nx1,ny1,nz1,
       k41,k42;
 
 /* modul-lokale Funktions-Deklarationen */
-int min(int a,int b)
-   {return((a<b)?a:b);}
-
-float fmax(float a,float b)
-   {return((a>b)?a:b);}
-
 void calcmap(int i,int j,int s);
 void drawmap(int i,int j,int s,float m0,float e1,float e2,float e3,float e4);
 

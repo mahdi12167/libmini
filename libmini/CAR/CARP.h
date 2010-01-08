@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <sys/time.h>
+#include "defs.h"
 #include "driver.h"
 #include "landscape.h"
 #include "data.h"

@@ -16,6 +16,7 @@
 #include <Xm/PushB.h>
 #include <Xm/Frame.h>
 #include <Xm/Label.h>
+#include "defs.h"
 #include "driver.h"
 #include "menu.h"
 #include "XWin.h"

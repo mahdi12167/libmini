@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "defs.h"
 #include "driver.h"
 #include "map.h"
 #include "landscape.h"
@@ -22,9 +23,6 @@
 #else
 #define O (0.0)
 #endif
-
-#define repeat      do {
-#define until(expr) } while (!(expr))
 
 /* modul-lokale Typ-Deklarationen */
 
@@ -52,9 +50,6 @@ float *fb[S];
 char  *flag[S];
 
 /* modul-lokale Funktions-Deklarationen */
-float fsqr(float x)
-   {return(x*x);}
-
 double crd(double rx,double rz,double sx,double sz,double tx,double tz)
    {return(rx*(sz-tz)+sx*(tz-rz)+tx*(rz-sz));}
 
