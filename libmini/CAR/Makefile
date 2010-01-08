@@ -30,10 +30,8 @@ pack:	clean
 	@rm -f landscape.c map.h
 	@zip -q -m -r jpeglib.zip jpeg
 	@zip -q -m $(MAP).zip $(MAP).*
-	@gzip *.c *.h
 
 unpack:
-	@gunzip -q *.c.gz *.h.gz
 	@unzip jpeglib.zip >/dev/null
 	@unzip $(MAP).zip >/dev/null
 	@rm -f jpeglib.zip $(MAP).zip
