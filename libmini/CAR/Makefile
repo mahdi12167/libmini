@@ -10,7 +10,7 @@ MODS	= XWin OGL menu jpeg driver landscape data
 
 SRCS	= $(MAIN).c $(MODS:=.c)
 OBJS	= $(MAIN).o $(MODS:=.o)
-LIBS	= -lm -lX11 -lXm -lXt -lGL -lGLU -Ljpeg -ljpeg
+LIBS	= -lm -lX11 -lXm -lXt -lGL -lGLU -ljpeg
 
 .c.o:
 	cc $(CFLAGS) -c $*.c
@@ -28,13 +28,10 @@ clean:
 
 pack:	clean
 	@rm -f landscape.c map.h
-	@zip -q -m -r jpeglib.zip jpeg
 	@zip -q -m $(MAP).zip $(MAP).*
 
 unpack:
-	@unzip jpeglib.zip >/dev/null
 	@unzip $(MAP).zip >/dev/null
-	@rm -f jpeglib.zip $(MAP).zip
 	@ln -s landscape$(ALG).c landscape.c
 	@ln -s $(MAP).h map.h
 

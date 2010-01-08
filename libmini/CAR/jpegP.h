@@ -1,7 +1,7 @@
 /* Includes */
 #include <stdio.h>
 #include <stdlib.h>
-#include "jpeg/jpeglib.h"
+#include "jpeglib.h"
 #include "jpeg.h"
 
 /* modul-lokale Makro-Definitionen */
