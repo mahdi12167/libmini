@@ -8,6 +8,12 @@ CAR ist ein Fahrsimulator, mit dem man ueber eine Insel
 brausen kann. Damit die Grafik auch einigermassen flott
 ist, wird die Insel adaptiv trianguliert.
 
+Kompilation auf Linux:
+----------------------
+
+make unpack
+make
+
 Programmaufruf:
 ---------------
 
