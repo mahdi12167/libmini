@@ -13,12 +13,10 @@
 #define max(a,b) (((a)>(b))?(a):(b))
 #define fmax(a,b) (((a)>(b))?(a):(b))
 
-#define ftrunc(x) (trunc(x))
 #define ftrc(x) ((int)trunc(x))
 
 #define fsqr(x) ((x)*(x))
 #define fsqrt(x) sqrt(x)
-#define fpow(x) pow(x)
 
 #define fsin(x) sin(x)
 #define fcos(x) cos(x)

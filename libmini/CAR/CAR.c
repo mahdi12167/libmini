@@ -125,15 +125,15 @@ void initscene()
 /* draw the scene */
 void drawscene()
    {
-   float t,dt,
-         si,co,
-         dy1,dy2,
-         dy,y,c,l,
-         lh,ldh,ls,
-         slowdown,ice,dd,
-         dx1,dz1,dx2,dz2,
-         y11,y21,y12,y22,
-         ex,ey,ez;
+   double t,dt,
+          si,co,
+          dy1,dy2,
+          dy,y,c,l,
+          lh,ldh,ls,
+          slowdown,ice,dd,
+          dx1,dz1,dx2,dz2,
+          y11,y21,y12,y22,
+          ex,ey,ez;
 
    struct timeval t1,t2;
 
@@ -149,8 +149,8 @@ void drawscene()
    clearwindow();
    perspective(FOVY,ASPECT,NEAR,FAR);
 
-   si=fsin(dir/180.0*PI);
-   co=-fcos(dir/180.0*PI);
+   si=sin(dir/180.0*PI);
+   co=-cos(dir/180.0*PI);
 
    dy1=(dy11+dy22)/2.0;
    dy2=(dy21+dy12)/2.0;
@@ -183,8 +183,8 @@ void drawscene()
       }
    else if (toggle2)
       {
-      float dx,dy,dz,
-            ex,ey,ez;
+      double dx,dy,dz,
+             ex,ey,ez;
 
       dx=-CAR_W/4.0;
       dy=CAR_R+1.1;
@@ -211,8 +211,8 @@ void drawscene()
       }
    else
       {
-      si=fsin(front/180.0*PI);
-      co=-fcos(front/180.0*PI);
+      si=sin(front/180.0*PI);
+      co=-cos(front/180.0*PI);
 
       ex=x0-si*BOFFSET;
       ey=y+YOFFSET;
@@ -299,7 +299,7 @@ void drawscene()
    if (res<1.0) res=1.0;
    else if (res>MAX_RES) res=MAX_RES;
 
-   dt=t/ftrunc(t*STEPRATE+1.0);
+   dt=t/trunc(t*STEPRATE+1.0);
    while (t>dt/2.0)
       {
       if (FOLLOW*dt>=1.0 || (!toggle1 && toggle2))
@@ -319,10 +319,10 @@ void drawscene()
          if (py<y) py=y;
          }
 
-      si=fsin(dir/180.0*PI);
-      co=-fcos(dir/180.0*PI);
+      si=sin(dir/180.0*PI);
+      co=-cos(dir/180.0*PI);
 
-      c=fsqrt(1.0-fy*fy);
+      c=sqrt(1.0-fy*fy);
 
       x0+=c*speed*si*dt;
       z0+=c*speed*co*dt;
@@ -330,7 +330,7 @@ void drawscene()
       ldh=dh;
       dh*=dt;
       if (h>0.0) dh+=g*dt*dt/2.0;
-      else dh+=SINK*dt;
+      else dh=SINK*dt;
 
       lh=h;
       h+=dh;
@@ -397,25 +397,25 @@ void drawscene()
                else dir=front;
          normalize(dir);
 
-         c=fcos((front-dir)/180.0*PI);
+         c=cos((front-dir)/180.0*PI);
          df+=(1.0-ice)*(c*speed*turn/MAX_TURN*TURN-df)*DRIFT*dt;
 
          if (c<0.0) c=0.0;
-         speed+=((1.0-wreck)*fsqrt(1.0-fy*fy)*(1.0-ice)*c*accel+fy*g)*dt;
+         speed+=((1.0-wreck)*sqrt(1.0-fy*fy)*(1.0-ice)*c*accel+fy*g)*dt;
 
          rpm+=c*ls*dt/CAR_R/PI*180.0;
          normalize(rpm);
 
          if (speed>0.0)
             {
-            speed+=fsqrt(1.0-fy*fy)*(1.0-ice)*
-                   ((1.0-wreck)*c*brake+fsqrt(1.0-c*c)/SLICK*BRAKE)*dt;
+            speed+=sqrt(1.0-fy*fy)*(1.0-ice)*
+                   ((1.0-wreck)*c*brake+sqrt(1.0-c*c)/SLICK*BRAKE)*dt;
             if (speed<0.0) speed=0.0;
             }
          else
             {
-            speed-=fsqrt(1.0-fy*fy)*(1.0-ice)*
-                   ((1.0-wreck)*c*brake+fsqrt(1.0-c*c)/SLICK*BRAKE)*dt;
+            speed-=sqrt(1.0-fy*fy)*(1.0-ice)*
+                   ((1.0-wreck)*c*brake+sqrt(1.0-c*c)/SLICK*BRAKE)*dt;
             if (speed>0.0) speed=0.0;
             }
          }
@@ -426,16 +426,16 @@ void drawscene()
       front+=df*dt;
       normalize(front);
 
-      si=fsin(front/180.0*PI);
-      co=-fcos(front/180.0*PI);
+      si=sin(front/180.0*PI);
+      co=-cos(front/180.0*PI);
 
-      c=fsqrt(1.0-ry*ry)*CAR_W/2.0;
+      c=sqrt(1.0-ry*ry)*CAR_W/2.0;
       dx1=-c*co;
       dz1=c*si;
       dx2=c*co;
       dz2=-c*si;
 
-      c=fsqrt(1.0-fy*fy)*CAR_L/2.0;
+      c=sqrt(1.0-fy*fy)*CAR_L/2.0;
       dx1+=c*si;
       dz1+=c*co;
       dx2+=c*si;
@@ -489,7 +489,7 @@ void drawscene()
       rx=dx1-dx2;
       ry=(dy22+dy21-dy12-dy11)/2.0;
       rz=dz1-dz2;
-      if ((l=fsqrt(rx*rx+ry*ry+rz*rz))==0.0) ERROR();
+      if ((l=sqrt(rx*rx+ry*ry+rz*rz))==0.0) ERROR();
       rx/=l;
       ry/=l;
       rz/=l;
@@ -497,7 +497,7 @@ void drawscene()
       fx=dx1+dx2;
       fy=(dy12+dy22-dy11-dy21)/2.0;
       fz=dz1+dz2;
-      if ((l=fsqrt(fx*fx+fy*fy+fz*fz))==0.0) ERROR();
+      if ((l=sqrt(fx*fx+fy*fy+fz*fz))==0.0) ERROR();
       fx/=l;
       fy/=l;
       fz/=l;
@@ -505,7 +505,7 @@ void drawscene()
       ux=ry*fz-fy*rz;
       uy=rz*fx-fz*rx;
       uz=rx*fy-fx*ry;
-      if ((l=fsqrt(ux*ux+uy*uy+uz*uz))==0.0) ERROR();
+      if ((l=sqrt(ux*ux+uy*uy+uz*uz))==0.0) ERROR();
       ux/=l;
       uy/=l;
       uz/=l;
