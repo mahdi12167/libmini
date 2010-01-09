@@ -11,14 +11,18 @@ ist, wird die Insel adaptiv trianguliert.
 Kompilation auf Linux:
 ----------------------
 
-make unpack
-make
+> make unpack
+> make
 
 Programmaufruf:
 ---------------
 
+> CAR
+
 Wenn man sich die adaptive Triangulation genauer
 anschauen will, kann man die Option -X verwenden.
+
+> CAR -X
 
 Bedienung:
 ----------
