@@ -77,5 +77,8 @@ void drawmap(int i,int j,int s,float m0,float e1,float e2,float e3,float e4);
 short int *map,**tab;
 float H;
 
+unsigned short int INTEL_CHECK=1;
+
 void loadmap(void);
+void swapmap(void);
 void convertmap(void);

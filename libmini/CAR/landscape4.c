@@ -392,10 +392,28 @@ void loadmap()
    if (fread(map,MAP_S*MAP_S*2,1,infile)!=1) ERROR();
    fclose(infile);
 
+   if (*((unsigned char *)(&INTEL_CHECK))!=0) swapmap();
+
    convertmap();
 
    free(tab);
    free(map);
+   }
+
+void swapmap()
+   {
+   int i;
+
+   unsigned char *ptr,c;
+
+   ptr=(unsigned char *)map;
+
+   for (i=0; i<MAP_S*MAP_S; i++)
+      {
+      c=*ptr;
+      *ptr++=*(ptr+1);
+      *ptr++=c;
+      }
    }
 
 void convertmap()

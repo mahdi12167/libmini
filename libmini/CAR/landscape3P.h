@@ -68,6 +68,9 @@ void drawisland(float c,
 short int map[MAP_S][MAP_S];
 float H;
 
+unsigned short int INTEL_CHECK=1;
+
 void loadmap(void);
+void swapmap(void);
 void convertmap(void);
 void scalemap(void);
