@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 #include <limits.h>
-#include <malloc.h>
 #include <Xm/Xm.h>
 #include <Xm/MainW.h>
 #include <Xm/Form.h>
