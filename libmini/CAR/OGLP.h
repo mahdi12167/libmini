@@ -23,6 +23,15 @@
 
 #define NONE (-1)
 
+/* the SGI Impact was the only machine to have texture mapping back in 1995
+   it was only available as an extension at that time */
+#ifndef glBindTextureEXT
+#define glBindTextureEXT glBindTexture
+#endif
+#ifndef glGenTexturesEXT
+#define glGenTexturesEXT glGenTextures
+#endif
+
 #ifndef IMPACT
 #define usetexture(tex){}
 #else

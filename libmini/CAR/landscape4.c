@@ -392,7 +392,7 @@ void loadmap()
    if (fread(map,MAP_S*MAP_S*2,1,infile)!=1) ERROR();
    fclose(infile);
 
-   if (*((unsigned char *)(&INTEL_CHECK))!=0) swapmap();
+   if (*((unsigned char *)(&LSB_CHECK))!=0) swapmap();
 
    convertmap();
 

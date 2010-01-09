@@ -475,7 +475,7 @@ void loadmap()
    if (fread(&map,sizeof(map),1,infile)!=1) ERROR();
    fclose(infile);
 
-   if (*((unsigned char *)(&INTEL_CHECK))!=0) swapmap();
+   if (*((unsigned char *)(&LSB_CHECK))!=0) swapmap();
 
    convertmap();
    scalemap();
