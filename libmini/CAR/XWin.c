@@ -131,6 +131,7 @@ void menuhandler(Widget button,XtPointer clientdata,XtPointer whydata)
       case MEN_RETURN : drawmenu(item->upper->upper);
                         gotoeventhandler(item->id,-1,-1,-1);
                         break;
+      default: break;
       }
    }
 

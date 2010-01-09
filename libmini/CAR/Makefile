@@ -3,7 +3,7 @@ MAP	= Yukon
 
 CDBGS	= #-DVERBOSE
 CDEFS	= -DIMPACT -DLOWFOG
-CFLAGS	= $(CDEFS) $(CDBGS) -O3
+CFLAGS	= $(CDEFS) $(CDBGS) -Wall -Wno-parentheses -O3
 
 MAIN	= CAR
 MODS	= XWin OGL menu jpeg driver landscape data

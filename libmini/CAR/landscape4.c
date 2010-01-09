@@ -404,15 +404,16 @@ void swapmap()
    {
    int i;
 
-   unsigned char *ptr,c;
+   unsigned char *ptr,c1,c2;
 
    ptr=(unsigned char *)map;
 
    for (i=0; i<MAP_S*MAP_S; i++)
       {
-      c=*ptr;
-      *ptr++=*(ptr+1);
-      *ptr++=c;
+      c1=*ptr;
+      c2=*(ptr+1);
+      *ptr++=c2;
+      *ptr++=c1;
       }
    }
 
