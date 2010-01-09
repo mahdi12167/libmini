@@ -294,6 +294,7 @@ void drawisland(float c,
          case 1 : y1=(y[i-s][j]+y[i+s][j])/2.0; break;
          case 2 : y1=(y[i+s][j-s]+y[i-s][j+s])/2.0; break;
          case 3 : y1=(y[i][j+s]+y[i][j-s])/2.0; break;
+         default: ERROR();
          }
 
       switch (flag[i+s][j])
@@ -302,6 +303,7 @@ void drawisland(float c,
          case 1 : y2=(y[i][j]+y[i+s+s][j])/2.0; break;
          case 2 : y2=(y[i+s+s][j-s]+y[i][j+s])/2.0; break;
          case 3 : y2=(y[i+s][j+s]+y[i+s][j-s])/2.0; break;
+         default: ERROR();
          }
 
       switch (flag[i][j+s])
@@ -310,6 +312,7 @@ void drawisland(float c,
          case 1 : y3=(y[i-s][j+s]+y[i+s][j+s])/2.0; break;
          case 2 : y3=(y[i+s][j]+y[i-s][j+s+s])/2.0; break;
          case 3 : y3=(y[i][j+s+s]+y[i][j])/2.0; break;
+         default: ERROR();
          }
 
 #ifndef IMPACT
@@ -512,8 +515,8 @@ void convertmap()
          pi=(MAP_S-1)*MAP_D/2.0+x[i][j];
          pj=(MAP_S-1)*MAP_D*(0.5+FSQRT3/12.0)+z[i][j];
 
-         mi=(int)ftrunc(pi/MAP_D);
-         mj=(int)ftrunc(pj/MAP_D);
+         mi=ftrc(pi/MAP_D);
+         mj=ftrc(pj/MAP_D);
 
          ri=pi/MAP_D-mi;
          rj=pj/MAP_D-mj;

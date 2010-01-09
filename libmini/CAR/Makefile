@@ -28,7 +28,7 @@ clean:
 
 pack:	clean
 	@rm -f landscape.c map.h
-	@zip -q -m $(MAP).zip $(MAP).*
+	@zip -q9 -m $(MAP).zip $(MAP).*
 
 unpack:
 	@unzip $(MAP).zip >/dev/null
