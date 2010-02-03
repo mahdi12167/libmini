@@ -1017,10 +1017,7 @@ void render()
    tparams->signpostturn=turn;
    tparams->signpostincline=-incline;
 
-   if (eparams->usewaypoints &&
-       (dabs(pitch-incline)>VIEWER_MINDIFF ||
-        dabs(angle-turn)>VIEWER_MINDIFF))
-      viewer->getearth()->getterrain()->propagate();
+   if (eparams->usewaypoints) viewer->getearth()->getterrain()->propagate();
 
    // setup OpenGL state:
 
