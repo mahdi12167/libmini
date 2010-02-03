@@ -223,9 +223,6 @@ class miniterrain
    //! propagate parameters
    void propagate();
 
-   //! propagate waypoint parameters
-   void propagate_wp();
-
    //! get the encapsulated render buffer
    minicache *getbuffer() {return(CACHE);}
 

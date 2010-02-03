@@ -367,12 +367,32 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.altpath=TPARAMS.altpath;
          lparams.instpath=TPARAMS.instpath;
 
+         // update the waypoint state:
+
+         lparams.usewaypoints=TPARAMS.usewaypoints;
+         lparams.usebricks=TPARAMS.usebricks;
+
+         lparams.waypoints=TPARAMS.waypoints;
+         lparams.extrawps=TPARAMS.extrawps;
+
+         lparams.signpostheight=TPARAMS.signpostheight;
+         lparams.signpostrange=TPARAMS.signpostrange;
+
+         lparams.signpostturn=TPARAMS.signpostturn;
+         lparams.signpostincline=TPARAMS.signpostincline;
+
+         lparams.brick=TPARAMS.brick;
+
+         lparams.bricksize=TPARAMS.bricksize;
+         lparams.brickradius=TPARAMS.brickradius;
+
+         lparams.brickpasses=TPARAMS.brickpasses;
+         lparams.brickceiling=TPARAMS.brickceiling;
+         lparams.brickscroll=TPARAMS.brickscroll;
+
          // finally pass the updated layer state
          LAYER[n]->set(lparams);
          }
-
-   // propagate waypoint parameters
-   propagate_wp();
 
    // update color maps
    minishader::setVISbathymap(TPARAMS.bathymap,TPARAMS.bathywidth,TPARAMS.bathyheight,TPARAMS.bathycomps);
@@ -385,45 +405,6 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 // propagate parameters
 void miniterrain::propagate()
    {set(TPARAMS);}
-
-// propagate waypoint parameters
-void miniterrain::propagate_wp()
-   {
-   int n;
-
-   minilayer::MINILAYER_PARAMS *lparams;
-
-   // propagate waypoint parameters
-   if (LAYER!=NULL)
-      for (n=0; n<LNUM; n++)
-         {
-         // get a reference to the actual layer state
-         lparams=LAYER[n]->get();
-
-         // update the waypoint state:
-
-         lparams->usewaypoints=TPARAMS.usewaypoints;
-         lparams->usebricks=TPARAMS.usebricks;
-
-         lparams->waypoints=TPARAMS.waypoints;
-         lparams->extrawps=TPARAMS.extrawps;
-
-         lparams->signpostheight=TPARAMS.signpostheight;
-         lparams->signpostrange=TPARAMS.signpostrange;
-
-         lparams->signpostturn=TPARAMS.signpostturn;
-         lparams->signpostincline=TPARAMS.signpostincline;
-
-         lparams->brick=TPARAMS.brick;
-
-         lparams->bricksize=TPARAMS.bricksize;
-         lparams->brickradius=TPARAMS.brickradius;
-
-         lparams->brickpasses=TPARAMS.brickpasses;
-         lparams->brickceiling=TPARAMS.brickceiling;
-         lparams->brickscroll=TPARAMS.brickscroll;
-         }
-   }
 
 // set internal callbacks
 void miniterrain::setcallbacks(void *threaddata,

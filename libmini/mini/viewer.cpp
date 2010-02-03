@@ -980,10 +980,10 @@ void render()
 
    // check for eye movement:
 
-   if (dabs(speed)>VIEWER_MINDIFF) wakeup=TRUE;
-   if (dabs(angle-turn)>VIEWER_MINDIFF) wakeup=TRUE;
-   if (dabs(pitch-incline)>VIEWER_MINDIFF) wakeup=TRUE;
-   if (dabs(dez)>VIEWER_MINDIFF) wakeup=TRUE;
+   if (dabs(speed)>VIEWER_MINDIFF ||
+       dabs(angle-turn)>VIEWER_MINDIFF ||
+       dabs(pitch-incline)>VIEWER_MINDIFF ||
+       dabs(dez)>VIEWER_MINDIFF) wakeup=TRUE;
 
    // check for nearest waypoint:
 
@@ -1017,7 +1017,10 @@ void render()
    tparams->signpostturn=turn;
    tparams->signpostincline=-incline;
 
-   viewer->getearth()->getterrain()->propagate_wp();
+   if (eparams->usewaypoints &&
+       (dabs(pitch-incline)>VIEWER_MINDIFF ||
+        dabs(angle-turn)>VIEWER_MINDIFF))
+      viewer->getearth()->getterrain()->propagate();
 
    // setup OpenGL state:
 
