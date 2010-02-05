@@ -15,6 +15,12 @@ static float winr,wing,winb;
 static int winwidth,winheight,winid;
 static void (*renderfunc)(double time);
 
+double mygettime()
+   {
+   static double time0=gettime();
+   return(gettime()-time0);
+   }
+
 void displayfunc()
    {
    float aspect;
@@ -56,7 +62,7 @@ void displayfunc()
 
    color(1.0f,1.0f,1.0f);
 
-   renderfunc(gettime());
+   renderfunc(mygettime());
 
    disablelinesmooth();
 
@@ -112,7 +118,7 @@ void plot_openwindow(int *argc,char *argv[],
    glutMotionFunc(NULL);
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
-   glutIdleFunc(NULL);
+   glutIdleFunc(displayfunc);
 
    glutMainLoop();
    }
