@@ -47,7 +47,8 @@ int main(int argc,char *argv[])
    plot_openwindow(&argc,argv,
                    512,512,
                    0.0f,0.0f,0.0f,
-                   render);
+                   render,
+                   TRUE);
 
    return(0);
    }

@@ -1,3 +1,5 @@
+#include <mini/minibase.h>
+
 #include <plotter/plot.h>
 
 void render(double time)
@@ -14,7 +16,8 @@ int main(int argc,char *argv[])
    plot_openwindow(&argc,argv,
                    512,512,
                    0.0f,0.0f,0.0f,
-                   render);
+                   render,
+                   FALSE);
 
    return(0);
    }

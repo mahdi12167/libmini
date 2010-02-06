@@ -7,7 +7,8 @@
 void plot_openwindow(int *argc,char *argv[], // main arguments
                      int width,int height, // window size
                      float r,float g,float b, // background color
-                     void (*render)(double time)); // render function
+                     void (*render)(double time), // render function
+                     BOOLINT continuous); // render continuously
 
 // set plot line attributes such as color and line width
 void plot_color(const float r,const float g,const float b);

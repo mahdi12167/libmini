@@ -98,7 +98,8 @@ void keyboardfunc(unsigned char key,int x,int y)
 void plot_openwindow(int *argc,char *argv[],
                      int width,int height,
                      float r,float g,float b,
-                     void (*render)(double time))
+                     void (*render)(double time),
+                     BOOLINT continuous)
    {
    winwidth=width;
    winheight=height;
@@ -120,7 +121,7 @@ void plot_openwindow(int *argc,char *argv[],
    glutMotionFunc(NULL);
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
-   glutIdleFunc(displayfunc);
+   glutIdleFunc(continuous?displayfunc:NULL);
 
    glutMainLoop();
    }
