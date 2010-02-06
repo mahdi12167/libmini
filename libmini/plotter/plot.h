@@ -28,4 +28,7 @@ void plot_to(const float x,const float y);
 // plot line to last position plus delta
 void plot_delta(const float dx,const float dy);
 
+// plot point
+void plot_point(const float x,const float y);
+
 #endif

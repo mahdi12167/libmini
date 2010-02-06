@@ -154,3 +154,15 @@ void plot_to(const float x,const float y)
 // plot line to last position plus delta
 void plot_delta(const float dx,const float dy)
    {plot_line(px,py,px+dx,py+dy);}
+
+// plot point
+void plot_point(const float x,const float y)
+   {
+   float dx,dy;
+
+   dx=0.25f/winwidth;
+   dy=0.25f/winheight;
+
+   plot_line(x-dx,y,x+dx,y);
+   plot_line(x,y-dy,x,y+dy);
+   }
