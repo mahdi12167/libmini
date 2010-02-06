@@ -18,4 +18,13 @@ void plot_linewidth(const int w);
 void plot_line(const float x1,const float y1,
                const float x2,const float y2);
 
+// plot line from actual position (x,y)
+void plot_from(const float x,const float y);
+
+// plot line from last position to (x,y)
+void plot_to(const float x,const float y);
+
+// plot line to last position plus delta
+void plot_delta(const float dx,const float dy);
+
 #endif

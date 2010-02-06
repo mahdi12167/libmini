@@ -15,6 +15,8 @@ static float winr,wing,winb;
 static int winwidth,winheight,winid;
 static void (*renderfunc)(double time);
 
+static float px=0.0f,py=0.0f;
+
 double mygettime()
    {
    static double time0=gettime();
@@ -130,4 +132,24 @@ void plot_linewidth(const int w)
    {linewidth(w);}
 
 void plot_line(const float x1,const float y1,const float x2,const float y2)
-   {renderline(x1,y1,0.0,x2,y2,0.0);}
+   {
+   renderline(x1,y1,0.0,x2,y2,0.0);
+
+   px=x2;
+   py=y2;
+   }
+
+// plot line from actual position (x,y)
+void plot_from(const float x,const float y)
+   {
+   px=x;
+   py=y;
+   }
+
+// plot line from last position to (x,y)
+void plot_to(const float x,const float y)
+   {plot_line(px,py,x,y);}
+
+// plot line to last position plus delta
+void plot_delta(const float dx,const float dy)
+   {plot_line(px,py,px+dx,py+dy);}
