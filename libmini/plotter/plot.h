@@ -10,6 +10,10 @@ void plot_openwindow(int *argc,char *argv[], // main arguments
                      void (*render)(double time), // render function
                      BOOLINT continuous); // render continuously
 
+// get window dimensions
+int get_winwidth();
+int get_winheight();
+
 // set plot line attributes such as color and line width
 void plot_color(const float r,const float g,const float b);
 void plot_linewidth(const int w);

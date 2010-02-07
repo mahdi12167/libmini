@@ -64,7 +64,7 @@ void displayfunc()
 
    enablelinesmooth();
 
-   color(1.0f,1.0f,1.0f);
+   color(0.0f,0.0f,0.0f);
 
    renderfunc(mygettime());
 
@@ -99,6 +99,7 @@ void keyboardfunc(unsigned char key,int x,int y)
       }
    }
 
+// open a window for 2D plotting
 void plot_openwindow(int *argc,char *argv[],
                      int width,int height,
                      float r,float g,float b,
@@ -130,12 +131,23 @@ void plot_openwindow(int *argc,char *argv[],
    glutMainLoop();
    }
 
+// get window width
+int get_winwidth()
+   {return(winwidth);}
+
+// get window height
+int get_winheight()
+   {return(winheight);}
+
+// set plot line color
 void plot_color(const float r,const float g,const float b)
    {color(r,g,b);}
 
+// set plot line width
 void plot_linewidth(const int w)
    {linewidth(w);}
 
+// plot line from (x1,y1) to (x2,y2)
 void plot_line(const float x1,const float y1,const float x2,const float y2)
    {
    renderline(x1,y1,0.0f,x2,y2,0.0f);
