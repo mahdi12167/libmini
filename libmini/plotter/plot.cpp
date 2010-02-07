@@ -53,6 +53,8 @@ void displayfunc()
 
    clearbuffer(winr,wing,winb);
 
+   initstate();
+
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
    gluOrtho2D(x1+dx,x2+dx,y1+dy,y2+dy);
@@ -67,6 +69,8 @@ void displayfunc()
    renderfunc(mygettime());
 
    disablelinesmooth();
+
+   exitstate();
 
    glutSwapBuffers();
    }
@@ -134,7 +138,7 @@ void plot_linewidth(const int w)
 
 void plot_line(const float x1,const float y1,const float x2,const float y2)
    {
-   renderline(x1,y1,0.0,x2,y2,0.0);
+   renderline(x1,y1,0.0f,x2,y2,0.0f);
 
    px=x2;
    py=y2;
@@ -158,11 +162,5 @@ void plot_delta(const float dx,const float dy)
 // plot point
 void plot_point(const float x,const float y)
    {
-   float dx,dy;
-
-   dx=0.25f/winwidth;
-   dy=0.25f/winheight;
-
-   plot_line(x-dx,y,x+dx,y);
-   plot_line(x,y-dy,x,y+dy);
+   renderpoint(x,y,0.0f);
    }

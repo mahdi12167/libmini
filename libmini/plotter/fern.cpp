@@ -75,13 +75,13 @@ void fern(int n)
    }
 
 void render(double time)
-   {fern(50000);}
+   {fern(200000);}
 
 int main(int argc,char *argv[])
    {
    plot_openwindow(&argc,argv,
                    512,512,
-                   0.0f,0.0f,0.0f,
+                   1.0f,1.0f,1.0f,
                    render,
                    FALSE);
 

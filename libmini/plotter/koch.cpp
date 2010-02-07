@@ -33,7 +33,7 @@ void render(double time)
 
    n=((int)time)%6;
 
-   plot_color(1.0f,1.0f,1.0f);
+   plot_color(0.0f,0.0f,0.0f);
 
    plot_from(0.8f,0.333f);
 
@@ -46,7 +46,7 @@ int main(int argc,char *argv[])
    {
    plot_openwindow(&argc,argv,
                    512,512,
-                   0.0f,0.0f,0.0f,
+                   1.0f,1.0f,1.0f,
                    render,
                    TRUE);
 
