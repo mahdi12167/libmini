@@ -2,8 +2,11 @@
 
 #include <plotter/plot.h>
 
-static const int max_count=100;
+static const int max_count=500;
 static const int cycle_count=10;
+
+double julia_reC=-0.158513;
+double julia_imC=0.659491;
 
 int julia_index(double reZ,double imZ,
                 double reC,double imC)
@@ -57,7 +60,22 @@ void julia(double reC,double imC)
    }
 
 void render(double time)
-   {julia(0.0,1.0);}
+   {julia(julia_reC,julia_imC);}
+
+BOOLINT keypress(unsigned char key,float x,float y)
+   {
+   if (key=' ')
+      {
+      julia_reC=2.0*x-1.0;
+      julia_imC=-2.0*y+1.0;
+
+      printf("actual julia parameter: (%g,%g)\n",julia_reC,julia_imC);
+
+      return(TRUE);
+      }
+
+   return(FALSE);
+   }
 
 int main(int argc,char *argv[])
    {
@@ -65,6 +83,7 @@ int main(int argc,char *argv[])
                    512,512,
                    1.0f,1.0f,1.0f,
                    render,
+                   keypress,
                    FALSE);
 
    return(0);

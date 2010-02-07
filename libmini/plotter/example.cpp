@@ -17,6 +17,7 @@ int main(int argc,char *argv[])
                    512,512,
                    1.0f,1.0f,1.0f,
                    render,
+                   NULL,
                    FALSE);
 
    return(0);

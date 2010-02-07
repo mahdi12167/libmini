@@ -13,7 +13,9 @@
 
 static float winr,wing,winb;
 static int winwidth,winheight,winid;
+
 static void (*renderfunc)(double time);
+static BOOLINT (*keyfunc)(unsigned char key,float x,float y);
 
 static float px=0.0f,py=0.0f;
 
@@ -97,6 +99,9 @@ void keyboardfunc(unsigned char key,int x,int y)
       glutDestroyWindow(winid);
       exit(0);
       }
+
+   if (keyfunc!=NULL)
+      if (keyfunc(key,mousex,mousey)) displayfunc();
    }
 
 // open a window for 2D plotting
@@ -104,6 +109,7 @@ void plot_openwindow(int *argc,char *argv[],
                      int width,int height,
                      float r,float g,float b,
                      void (*render)(double time),
+                     BOOLINT (*keypress)(unsigned char key,float x,float y),
                      BOOLINT continuous)
    {
    winwidth=width;
@@ -114,6 +120,7 @@ void plot_openwindow(int *argc,char *argv[],
    winb=b;
 
    renderfunc=render;
+   keyfunc=keypress;
 
    glutInit(argc,argv);
    glutInitWindowSize(winwidth,winheight);
