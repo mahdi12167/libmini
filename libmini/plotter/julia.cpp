@@ -2,17 +2,38 @@
 
 #include <plotter/plot.h>
 
-void julia_color(double x,double y)
+static const int max_count=100;
+static const int cycle_count=10;
+
+int julia_index(double reZ,double imZ,
+                double reC,double imC)
    {
-   plot_color(x,0.0,y);
+   int i;
+
+   double reZn,imZn;
+
+   for (i=1; i<=max_count; i++)
+      {
+      reZn=reZ*reZ-imZ*imZ+reC;
+      imZn=2*reZ*imZ+imC;
+
+      reZ=reZn;
+      imZ=imZn;
+
+      if (reZ*reZ+imZ*imZ>4) return(i);
+      }
+
+   return(0);
    }
 
-void julia()
+void julia(double reC,double imC)
    {
    int i,j;
 
    int width,height;
-   float x,y;
+   double x,y,jx,jy;
+
+   double index;
 
    width=get_winwidth();
    height=get_winheight();
@@ -20,16 +41,23 @@ void julia()
    for (i=0; i<width; i++)
       for (j=0; j<height; j++)
          {
-         x=(float)i/width;
-         y=(float)j/height;
+         x=(double)i/width;
+         y=(double)j/height;
 
-         julia_color(x,y);
+         jx=4.0*x-2.0;
+         jy=4.0*y-2.0;
+
+         index=(double)(julia_index(jx,jy,reC,imC)%cycle_count)/(cycle_count-1);
+
+         if (index==0) plot_color(0.0f,0.0f,0.0f);
+         else plot_color(index,0.0f,1.0-index);
+
          plot_point(x,y);
          }
    }
 
 void render(double time)
-   {julia();}
+   {julia(0.0,1.0);}
 
 int main(int argc,char *argv[])
    {
