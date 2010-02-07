@@ -2,7 +2,9 @@
 
 #include <plotter/plot.h>
 
-static const int max_count=500;
+BOOLINT animation=TRUE;
+
+static const int max_count=100;
 static const int cycle_count=10;
 
 double julia_reC=-0.158513;
@@ -60,11 +62,25 @@ void julia(double reC,double imC)
    }
 
 void render(double time)
-   {julia(julia_reC,julia_imC);}
+   {
+   julia(julia_reC,julia_imC);
+
+   if (animation)
+      {
+      double l1,l2;
+
+      l1=0.2*sin(time)+0.25*sin(time/2)+dsqr(sin(time/5));
+      l2=0.1*sin(2*time)+0.25*sin(time)+dsqr(sin(time/3));
+
+      julia_reC=l1*sin(time/10)+l2*sin(time/3);
+      julia_imC=l1*cos(time/10)+l2*cos(time/3);
+      }
+   }
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
-   if (key=' ')
+   if (key=='a') animation=!animation;
+   else if (key=' ')
       {
       julia_reC=2.0*x-1.0;
       julia_imC=-2.0*y+1.0;
@@ -84,7 +100,7 @@ int main(int argc,char *argv[])
                    1.0f,1.0f,1.0f,
                    render,
                    keypress,
-                   FALSE);
+                   TRUE);
 
    return(0);
    }
