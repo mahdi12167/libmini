@@ -1441,7 +1441,7 @@ int getvtxcnt()
 #endif
    }
 
-void linewidth(const int w)
+void linewidth(const float w)
    {
 #ifndef NOOGL
    glLineWidth(w);
@@ -1459,6 +1459,27 @@ void disablelinesmooth()
    {
 #ifndef NOOGL
    glDisable(GL_LINE_SMOOTH);
+#endif
+   }
+
+void pointsize(const float s)
+   {
+#ifndef NOOGL
+   glPointSize(s);
+#endif
+   }
+
+void enablepointsmooth()
+   {
+#ifndef NOOGL
+   glEnable(GL_POINT_SMOOTH);
+#endif
+   }
+
+void disablepointsmooth()
+   {
+#ifndef NOOGL
+   glDisable(GL_POINT_SMOOTH);
 #endif
    }
 

@@ -114,11 +114,17 @@ void multitexcoord(const unsigned int unit,const float s,const float t,const flo
 int getfancnt();
 int getvtxcnt();
 
-void linewidth(const int w);
+void linewidth(const float w);
 void enablelinesmooth();
 void disablelinesmooth();
 
 inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
+
+void pointsize(const float w);
+void enablepointsmooth();
+void disablepointsmooth();
+
+inline void renderpoint(const float x,const float y,const float z);
 
 void vertexarray(float *array,int comps=3);
 void colorarray(float *array,int comps=3);
@@ -396,6 +402,15 @@ inline void renderline(const float x1,const float y1,const float z1,const float 
    glBegin(GL_LINES);
    glVertex3f(x1,y1,z1);
    glVertex3f(x2,y2,z2);
+   glEnd();
+#endif
+   }
+
+inline void renderpoint(const float x,const float y,const float z)
+   {
+#ifndef NOOGL
+   glBegin(GL_POINTS);
+   glVertex3f(x,y,z);
    glEnd();
 #endif
    }
