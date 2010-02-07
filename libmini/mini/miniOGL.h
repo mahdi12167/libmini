@@ -120,7 +120,7 @@ void disablelinesmooth();
 
 inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
-void pointsize(const float w);
+void pointsize(const float s);
 void enablepointsmooth();
 void disablepointsmooth();
 
