@@ -2,20 +2,30 @@
 
 #include <plotter/plot.h>
 
+void julia_color(double x,double y)
+   {
+   plot_color(x,0.0,y);
+   }
+
 void julia()
    {
    int i,j;
 
    int width,height;
+   float x,y;
 
    width=get_winwidth();
    height=get_winheight();
 
    for (i=0; i<width; i++)
-      plot_point((float)i/width,0.5);
+      for (j=0; j<height; j++)
+         {
+         x=(float)i/width;
+         y=(float)j/height;
 
-   for (j=0; j<height; j++)
-      plot_point(0.5,(float)j/height);
+         julia_color(x,y);
+         plot_point(x,y);
+         }
    }
 
 void render(double time)
