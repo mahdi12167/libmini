@@ -1,11 +1,31 @@
 #include <mini/minibase.h>
+#include <mini/minitime.h>
 
 #include <plotter/plot.h>
 
-BOOLINT animation=TRUE;
+static const int julia_max_count=100;
+static const int julia_cycle_count=10;
 
-static const int max_count=100;
-static const int cycle_count=10;
+static const float julia_r=0.0f;
+static const float julia_g=0.0f;
+static const float julia_b=0.0f;
+
+static const int lava_max_count=5;
+static const int lava_cycle_count=6;
+
+static const float lava_r=0.9f;
+static const float lava_g=0.0f;
+static const float lava_b=0.25f;
+
+int max_count=julia_max_count;
+int cycle_count=julia_cycle_count;
+
+float solid_r=julia_r;
+float solid_g=julia_g;
+float solid_b=julia_b;
+
+BOOLINT animation=TRUE;
+BOOLINT lava=FALSE;
 
 double julia_reC=-0.158513;
 double julia_imC=0.659491;
@@ -52,9 +72,16 @@ void julia(double reC,double imC)
          jx=4.0*x-2.0;
          jy=4.0*y-2.0;
 
+         if (lava)
+            {
+            jy+=1.0;
+            jy/=1.5;
+            jx*=pow(dabs(0.667+jy),0.2);
+            }
+
          index=(double)(julia_index(jx,jy,reC,imC)%cycle_count)/(cycle_count-1);
 
-         if (index==0) plot_color(0.0f,0.0f,0.0f);
+         if (index<=0.0) plot_color(solid_r,solid_g,solid_b);
          else plot_color(index,0.0f,1.0-index);
 
          plot_point(x,y);
@@ -63,7 +90,15 @@ void julia(double reC,double imC)
 
 void render(double time)
    {
+   double t;
+
+   t=gettime();
+
    julia(julia_reC,julia_imC);
+
+   t=gettime()-t;
+
+   waitfor(1.0/25-t);
 
    if (animation)
       {
@@ -80,6 +115,29 @@ void render(double time)
 BOOLINT keypress(unsigned char key,float x,float y)
    {
    if (key=='a') animation=!animation;
+   else if (key=='l')
+      {
+      lava=!lava;
+
+      if (lava)
+         {
+         max_count=lava_max_count;
+         cycle_count=lava_cycle_count;
+
+         solid_r=lava_r;
+         solid_g=lava_g;
+         solid_b=lava_b;
+         }
+      else
+         {
+         max_count=julia_max_count;
+         cycle_count=julia_cycle_count;
+
+         solid_r=julia_r;
+         solid_g=julia_g;
+         solid_b=julia_b;
+         }
+      }
    else if (key=' ')
       {
       julia_reC=2.0*x-1.0;
