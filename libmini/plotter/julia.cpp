@@ -13,9 +13,9 @@ static const float julia_b=0.0f;
 static const int lava_max_count=5;
 static const int lava_cycle_count=6;
 
-static const float lava_r=0.9f;
-static const float lava_g=0.0f;
-static const float lava_b=0.25f;
+static const float lava_r=1.0f;
+static const float lava_g=0.25f;
+static const float lava_b=0.0f;
 
 int max_count=julia_max_count;
 int cycle_count=julia_cycle_count;
