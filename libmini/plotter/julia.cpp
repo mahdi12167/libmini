@@ -1,7 +1,10 @@
 #include <mini/minibase.h>
+#include <mini/minicomplex.h>
 #include <mini/minitime.h>
 
 #include <plotter/plot.h>
+
+static const float fps=25.0f;
 
 static const int julia_max_count=100;
 static const int julia_cycle_count=10;
@@ -30,37 +33,33 @@ BOOLINT lava=FALSE;
 double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
-int julia_index(double reZ,double imZ,
-                double reC,double imC,
+int julia_index(minicomplex z,
+                minicomplex c,
                 int max_count)
    {
    int i;
 
-   double reZn,imZn;
-
    for (i=1; i<=max_count; i++)
       {
-      reZn=reZ*reZ-imZ*imZ+reC;
-      imZn=2*reZ*imZ+imC;
+      z=z*z+c;
 
-      reZ=reZn;
-      imZ=imZn;
-
-      if (reZ*reZ+imZ*imZ>4) return(i);
+      if (z.norm()>4) return(i);
       }
 
    return(0);
    }
 
-void julia(double reC,double imC,
+void julia(minicomplex c,
            int max_count,
-           void (*warp)(double *x,double *y),
+           minicomplex (*warp)(minicomplex z),
            void (*color)(int index,int max_count,float *r,float *g,float*b))
    {
    int i,j;
 
    int width,height;
-   double x,y,jx,jy;
+
+   double x,y;
+   minicomplex z;
 
    int index;
    float r,g,b;
@@ -74,12 +73,11 @@ void julia(double reC,double imC,
          x=(i+0.5)/width;
          y=(j+0.5)/height;
 
-         jx=4.0*x-2.0;
-         jy=4.0*y-2.0;
+         z=minicomplex(4.0*x-2.0,4.0*y-2.0);
 
-         if (warp!=NULL) warp(&jx,&jy);
+         if (warp!=NULL) z=warp(z);
 
-         index=julia_index(jx,jy,reC,imC,max_count);
+         index=julia_index(z,c,max_count);
          color(index,max_count,&r,&g,&b);
 
          plot_color(r,g,b);
@@ -108,11 +106,13 @@ void julia_color(int index,int max_count,
       }
    }
 
-void lava_warp(double *x,double *y)
+minicomplex lava_warp(minicomplex z)
    {
-   *y+=1.0;
-   *y/=1.5;
-   *x*=pow(dabs(0.667+*y),0.2);
+   z.y+=1.0;
+   z.y/=1.5;
+   z.x*=pow(dabs(0.667+z.y),0.2);
+
+   return(z);
    }
 
 void render(double time)
@@ -121,13 +121,14 @@ void render(double time)
 
    t=gettime();
 
-   julia(julia_reC,julia_imC,max_count,
+   julia(minicomplex(julia_reC,julia_imC),
+         max_count,
          (lava)?lava_warp:NULL,
          julia_color);
 
    t=gettime()-t;
 
-   waitfor(1.0/25-t);
+   waitfor(1.0/fps-t);
 
    if (animation)
       {
