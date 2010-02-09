@@ -31,7 +31,8 @@ double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
 int julia_index(double reZ,double imZ,
-                double reC,double imC)
+                double reC,double imC,
+                int max_count)
    {
    int i;
 
@@ -51,14 +52,18 @@ int julia_index(double reZ,double imZ,
    return(0);
    }
 
-void julia(double reC,double imC)
+void julia(double reC,double imC,
+           int max_count,
+           void (*trans)(double *x,double *y),
+           void (*color)(int index,int max_count,float *r,float *g,float*b))
    {
    int i,j;
 
    int width,height;
    double x,y,jx,jy;
 
-   double index;
+   int index;
+   float r,g,b;
 
    width=get_winwidth();
    height=get_winheight();
@@ -66,26 +71,48 @@ void julia(double reC,double imC)
    for (i=0; i<width; i++)
       for (j=0; j<height; j++)
          {
-         x=(double)i/width;
-         y=(double)j/height;
+         x=(i+0.5)/width;
+         y=(j+0.5)/height;
 
          jx=4.0*x-2.0;
          jy=4.0*y-2.0;
 
-         if (lava)
-            {
-            jy+=1.0;
-            jy/=1.5;
-            jx*=pow(dabs(0.667+jy),0.2);
-            }
+         if (trans!=NULL) trans(&jx,&jy);
 
-         index=(double)(julia_index(jx,jy,reC,imC)%cycle_count)/(cycle_count-1);
+         index=julia_index(jx,jy,reC,imC,max_count);
+         color(index,max_count,&r,&g,&b);
 
-         if (index<=0.0) plot_color(solid_r,solid_g,solid_b);
-         else plot_color(index,0.0f,1.0-index);
-
+         plot_color(r,g,b);
          plot_point(x,y);
          }
+   }
+
+void julia_color(int index,int max_count,
+                 float *r,float *g,float *b)
+   {
+   double w;
+
+   w=(double)(index%cycle_count)/(cycle_count-1);
+
+   if (w<=0.0)
+      {
+      *r=solid_r;
+      *g=solid_g;
+      *b=solid_b;
+      }
+   else
+      {
+      *r=w;
+      *g=0.0;
+      *b=1.0-w;
+      }
+   }
+
+void lava_trans(double *x,double *y)
+   {
+   *y+=1.0;
+   *y/=1.5;
+   *x*=pow(dabs(0.667+*y),0.2);
    }
 
 void render(double time)
@@ -94,7 +121,9 @@ void render(double time)
 
    t=gettime();
 
-   julia(julia_reC,julia_imC);
+   julia(julia_reC,julia_imC,max_count,
+         (lava)?lava_trans:NULL,
+         julia_color);
 
    t=gettime()-t;
 
