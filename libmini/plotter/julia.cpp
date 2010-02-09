@@ -168,7 +168,7 @@ BOOLINT keypress(unsigned char key,float x,float y)
          solid_b=julia_b;
          }
       }
-   else if (key=' ')
+   else if (key==' ')
       {
       julia_reC=2.0*x-1.0;
       julia_imC=-2.0*y+1.0;
