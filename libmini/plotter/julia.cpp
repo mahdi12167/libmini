@@ -54,7 +54,7 @@ int julia_index(double reZ,double imZ,
 
 void julia(double reC,double imC,
            int max_count,
-           void (*trans)(double *x,double *y),
+           void (*warp)(double *x,double *y),
            void (*color)(int index,int max_count,float *r,float *g,float*b))
    {
    int i,j;
@@ -77,7 +77,7 @@ void julia(double reC,double imC,
          jx=4.0*x-2.0;
          jy=4.0*y-2.0;
 
-         if (trans!=NULL) trans(&jx,&jy);
+         if (warp!=NULL) warp(&jx,&jy);
 
          index=julia_index(jx,jy,reC,imC,max_count);
          color(index,max_count,&r,&g,&b);
@@ -108,7 +108,7 @@ void julia_color(int index,int max_count,
       }
    }
 
-void lava_trans(double *x,double *y)
+void lava_warp(double *x,double *y)
    {
    *y+=1.0;
    *y/=1.5;
@@ -122,7 +122,7 @@ void render(double time)
    t=gettime();
 
    julia(julia_reC,julia_imC,max_count,
-         (lava)?lava_trans:NULL,
+         (lava)?lava_warp:NULL,
          julia_color);
 
    t=gettime()-t;
