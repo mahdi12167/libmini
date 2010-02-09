@@ -4,7 +4,8 @@ SET(MINI_HDRS
    mini.h miniOGL.h
    minibase.h minivec.h minimtx.h minidyna.h minisort.h ministring.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
-   minimath.h minimpfp.h minitime.h miniio.h minirgb.h minicrs.h
+   minimath.h minicomplex minimpfp.h
+   minitime.h miniio.h minirgb.h minicrs.h
    ministub.h minitile.h miniload.h
    minicoord.h miniwarp.h
    minilayer.h miniterrain.h miniearth.h
@@ -23,7 +24,8 @@ SET(MINI_HDRS
 SET(MINI_SRCS
    mini.cpp miniOGL.cpp
    miniv3f.cpp miniv3d.cpp miniv4f.cpp miniv4d.cpp
-   minimath.cpp minimpfp.cpp minitime.cpp miniio.cpp minirgb.cpp minicrs.cpp
+   minimath.cpp minimpfp.cpp
+   minitime.cpp miniio.cpp minirgb.cpp minicrs.cpp
    ministub.cpp minitile.cpp miniload.cpp
    minicoord.cpp miniwarp.cpp
    minilayer.cpp miniterrain.cpp miniearth.cpp
