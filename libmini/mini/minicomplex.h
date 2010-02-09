@@ -25,6 +25,8 @@ class minicomplex
    //! destructor
    ~minicomplex() {}
 
+   double norm() {return(x*x+y*y);}
+
    double x,y;
    };
 
