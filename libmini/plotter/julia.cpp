@@ -34,6 +34,8 @@ BOOLINT lava=FALSE;
 double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
+double julia_time=0.0;
+
 static const int julia_fmax=4;
 double julia_fnum=0.0;
 
@@ -92,7 +94,7 @@ void julia(minicomplex c,
 minicomplex julia_fn(int num,
                      minicomplex z,minicomplex c)
    {
-   switch (num)
+   switch (num%julia_fmax)
       {
       default:
       case 0: return(z*z+c);
@@ -111,8 +113,8 @@ minicomplex interpolate_fn(double num,
    n=ftrc(num);
    w=num-n;
 
-   return((1.0-w)*julia_fn(n%julia_fmax,z,c)+
-          w*julia_fn((n+1)%julia_fmax,z,c));
+   if (w==0.0) return(julia_fn(n,z,c));
+   else return((1.0-w)*julia_fn(n,z,c)+w*julia_fn(n+1,z,c));
    }
 
 minicomplex julia_f(minicomplex z,minicomplex c)
@@ -168,12 +170,13 @@ void render(double time)
       {
       double l1,l2;
 
-      l1=0.2*sin(time)+0.25*sin(time/2)+dsqr(sin(time/5));
-      l2=0.1*sin(2*time)+0.25*sin(time)+dsqr(sin(time/3));
+      l1=0.2*sin(julia_time)+0.25*sin(julia_time/2)+dsqr(sin(julia_time/5));
+      l2=0.1*sin(2*julia_time)+0.25*sin(julia_time)+dsqr(sin(julia_time/3));
 
-      julia_reC=l1*sin(time/10)+l2*sin(time/3);
-      julia_imC=l1*cos(time/10)+l2*cos(time/3);
+      julia_reC=l1*sin(julia_time/10)+l2*sin(julia_time/3);
+      julia_imC=l1*cos(julia_time/10)+l2*cos(julia_time/3);
 
+      julia_time+=1.0/fps;
       if (transition) julia_fnum+=1.0/fps/180;
       }
    }
