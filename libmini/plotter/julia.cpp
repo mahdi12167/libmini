@@ -33,6 +33,9 @@ BOOLINT lava=FALSE;
 double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
+static const int julia_fmax=4;
+int julia_fnum=0;
+
 int julia_index(minicomplex z,minicomplex c,
                 minicomplex (*f)(minicomplex z,minicomplex c),
                 int max_count)
@@ -87,14 +90,12 @@ void julia(minicomplex c,
 
 minicomplex julia_f(minicomplex z,minicomplex c)
    {
-   static const int n=0;
-
-   switch (n)
+   switch (julia_fnum)
       {
       default:
       case 0: return(z*z+c);
       case 1: return(0.5*z*z*z*z+z+c);
-      case 2: return((z*z*z*z*z-z*z)/(z*z*z+c));
+      case 2: return(2.0*(z*z*z*z*z-z*z)/(z*z*z+c));
       case 3: return((z*z*z*z*z*z*(z+1)-c)/(z*z*z*z*(z+1)+c));
       }
    }
@@ -159,38 +160,45 @@ void render(double time)
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
-   if (key=='a') animation=!animation;
-   else if (key=='l')
+   switch (key)
       {
-      lava=!lava;
+      case 'a': animation=!animation; break;
+      case 'l':
+         lava=!lava;
 
-      if (lava)
-         {
-         max_count=lava_max_count;
-         cycle_count=lava_cycle_count;
+         if (lava)
+            {
+            max_count=lava_max_count;
+            cycle_count=lava_cycle_count;
 
-         solid_r=lava_r;
-         solid_g=lava_g;
-         solid_b=lava_b;
-         }
-      else
-         {
-         max_count=julia_max_count;
-         cycle_count=julia_cycle_count;
+            solid_r=lava_r;
+            solid_g=lava_g;
+            solid_b=lava_b;
+            }
+         else
+            {
+            max_count=julia_max_count;
+            cycle_count=julia_cycle_count;
 
-         solid_r=julia_r;
-         solid_g=julia_g;
-         solid_b=julia_b;
-         }
-      }
-   else if (key==' ')
-      {
-      julia_reC=2.0*x-1.0;
-      julia_imC=-2.0*y+1.0;
+            solid_r=julia_r;
+            solid_g=julia_g;
+            solid_b=julia_b;
+            }
 
-      printf("actual julia parameter: (%g,%g)\n",julia_reC,julia_imC);
+         break;
+      case '>': julia_fnum=(julia_fnum+1)%julia_fmax; break;
+      case '<': julia_fnum=(julia_fnum+julia_fmax-1)%julia_fmax; break;
+      case ' ':
+         animation=FALSE;
 
-      return(TRUE);
+         julia_reC=2.0*x-1.0;
+         julia_imC=-2.0*y+1.0;
+
+         printf("actual julia parameter: (%g,%g)\n",julia_reC,julia_imC);
+
+         return(TRUE);
+
+      default: break;
       }
 
    return(FALSE);
