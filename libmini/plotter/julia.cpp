@@ -33,16 +33,15 @@ BOOLINT lava=FALSE;
 double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
-int julia_index(minicomplex z,
-                minicomplex c,
+int julia_index(minicomplex z,minicomplex c,
+                minicomplex (*f)(minicomplex z,minicomplex c),
                 int max_count)
    {
    int i;
 
    for (i=1; i<=max_count; i++)
       {
-      z=z*z+c;
-
+      z=f(z,c);
       if (z.norm()>4) return(i);
       }
 
@@ -51,6 +50,7 @@ int julia_index(minicomplex z,
 
 void julia(minicomplex c,
            int max_count,
+           minicomplex (*f)(minicomplex z,minicomplex c),
            minicomplex (*warp)(minicomplex z),
            void (*color)(int index,int max_count,float *r,float *g,float*b))
    {
@@ -77,12 +77,26 @@ void julia(minicomplex c,
 
          if (warp!=NULL) z=warp(z);
 
-         index=julia_index(z,c,max_count);
+         index=julia_index(z,c,f,max_count);
          color(index,max_count,&r,&g,&b);
 
          plot_color(r,g,b);
          plot_point(x,y);
          }
+   }
+
+minicomplex julia_f(minicomplex z,minicomplex c)
+   {
+   static const int n=0;
+
+   switch (n)
+      {
+      default:
+      case 0: return(z*z+c);
+      case 1: return(0.5*z*z*z*z+z+c);
+      case 2: return((z*z*z*z*z-z*z)/(z*z*z+c));
+      case 3: return((z*z*z*z*z*z*(z+1)-c)/(z*z*z*z*(z+1)+c));
+      }
    }
 
 void julia_color(int index,int max_count,
@@ -123,6 +137,7 @@ void render(double time)
 
    julia(minicomplex(julia_reC,julia_imC),
          max_count,
+         julia_f,
          (lava)?lava_warp:NULL,
          julia_color);
 
