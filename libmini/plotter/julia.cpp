@@ -28,6 +28,7 @@ float solid_g=julia_g;
 float solid_b=julia_b;
 
 BOOLINT animation=TRUE;
+BOOLINT transition=FALSE;
 BOOLINT lava=FALSE;
 
 double julia_reC=-0.158513;
@@ -173,7 +174,7 @@ void render(double time)
       julia_reC=l1*sin(time/10)+l2*sin(time/3);
       julia_imC=l1*cos(time/10)+l2*cos(time/3);
 
-      julia_fnum=time/180;
+      if (transition) julia_fnum+=1.0/fps/180;
       }
    }
 
@@ -182,6 +183,7 @@ BOOLINT keypress(unsigned char key,float x,float y)
    switch (key)
       {
       case 'a': animation=!animation; break;
+      case 't': transition=!transition; break;
       case 'l':
          lava=!lava;
 
@@ -208,10 +210,10 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
          break;
       case '>':
-         julia_fnum=ftrc(julia_fnum+1)%julia_fmax;
+         julia_fnum=dtrc(julia_fnum+1)%julia_fmax;
          return(TRUE);
       case '<':
-         julia_fnum=ftrc(julia_fnum+julia_fmax-1)%julia_fmax;
+         julia_fnum=dtrc(julia_fnum+julia_fmax-1)%julia_fmax;
          return(TRUE);
       case ' ':
          animation=FALSE;
