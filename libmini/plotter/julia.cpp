@@ -6,7 +6,7 @@
 
 static const float fps=25.0f;
 
-static const int julia_max_count=100;
+static const int julia_max_count=50;
 static const int julia_cycle_count=10;
 
 static const float julia_r=0.0f;
@@ -34,7 +34,7 @@ double julia_reC=-0.158513;
 double julia_imC=0.659491;
 
 static const int julia_fmax=4;
-int julia_fnum=0;
+double julia_fnum=0.0;
 
 int julia_index(minicomplex z,minicomplex c,
                 minicomplex (*f)(minicomplex z,minicomplex c),
@@ -88,9 +88,10 @@ void julia(minicomplex c,
          }
    }
 
-minicomplex julia_f(minicomplex z,minicomplex c)
+minicomplex julia_fn(int num,
+                     minicomplex z,minicomplex c)
    {
-   switch (julia_fnum)
+   switch (num)
       {
       default:
       case 0: return(z*z+c);
@@ -99,6 +100,22 @@ minicomplex julia_f(minicomplex z,minicomplex c)
       case 3: return((z*z*z*z*z*z*(z+1)-c)/(z*z*z*z*(z+1)+c));
       }
    }
+
+minicomplex interpolate_fn(double num,
+                           minicomplex z,minicomplex c)
+   {
+   int n;
+   double w;
+
+   n=ftrc(num);
+   w=num-n;
+
+   return((1.0-w)*julia_fn(n%julia_fmax,z,c)+
+          w*julia_fn((n+1)%julia_fmax,z,c));
+   }
+
+minicomplex julia_f(minicomplex z,minicomplex c)
+   {return(interpolate_fn(julia_fnum,z,c));}
 
 void julia_color(int index,int max_count,
                  float *r,float *g,float *b)
@@ -155,6 +172,8 @@ void render(double time)
 
       julia_reC=l1*sin(time/10)+l2*sin(time/3);
       julia_imC=l1*cos(time/10)+l2*cos(time/3);
+
+      julia_fnum=time/180;
       }
    }
 
@@ -168,6 +187,8 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
          if (lava)
             {
+            animation=TRUE;
+
             max_count=lava_max_count;
             cycle_count=lava_cycle_count;
 
@@ -186,8 +207,12 @@ BOOLINT keypress(unsigned char key,float x,float y)
             }
 
          break;
-      case '>': julia_fnum=(julia_fnum+1)%julia_fmax; break;
-      case '<': julia_fnum=(julia_fnum+julia_fmax-1)%julia_fmax; break;
+      case '>':
+         julia_fnum=ftrc(julia_fnum+1)%julia_fmax;
+         return(TRUE);
+      case '<':
+         julia_fnum=ftrc(julia_fnum+julia_fmax-1)%julia_fmax;
+         return(TRUE);
       case ' ':
          animation=FALSE;
 
@@ -207,7 +232,7 @@ BOOLINT keypress(unsigned char key,float x,float y)
 int main(int argc,char *argv[])
    {
    plot_openwindow(&argc,argv,
-                   512,512,
+                   256,256,
                    1.0f,1.0f,1.0f,
                    render,
                    keypress,
