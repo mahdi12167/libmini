@@ -25,8 +25,6 @@ class minicomplex
    //! destructor
    ~minicomplex() {}
 
-   double norm() {return(x*x+y*y);}
-
    double x,y;
    };
 
@@ -36,9 +34,8 @@ inline minicomplex operator + (const minicomplex &a,const minicomplex &b)
 inline minicomplex operator - (const minicomplex &a,const minicomplex &b)
    {return(minicomplex(a.x-b.x,a.y-b.y));}
 
-// conjugate
 inline minicomplex operator - (const minicomplex &z)
-   {return(minicomplex(z.x,-z.y));}
+   {return(minicomplex(-z.x,-z.y));}
 
 inline minicomplex operator * (const minicomplex &a,const minicomplex &b)
    {return(minicomplex(a.x*b.x-a.y*b.y,a.y*b.x+a.x*b.y));}
@@ -54,5 +51,19 @@ inline int operator != (const minicomplex &a,const minicomplex &b)
 
 inline std::ostream& operator << (std::ostream &out,const minicomplex &z)
    {return(out << '(' << round2(z.x) << ',' << round2(z.y) << ')');}
+
+typedef minicomplex Z;
+
+// euclidean norm
+inline double norm(Z z)
+   {return(z.x*z.x+z.y*z.y);}
+
+// conjugate complex
+inline Z con(Z z)
+   {return(Z(z.x,-z.y));}
+
+// complex exponent
+inline Z exp(Z z)
+   {return(exp(z.x)*Z(cos(z.y),sin(z.y)));}
 
 #endif
