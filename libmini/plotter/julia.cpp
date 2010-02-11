@@ -48,7 +48,7 @@ int julia_index(minicomplex z,minicomplex c,
    for (i=1; i<=max_count; i++)
       {
       z=f(z,c);
-      if (z.norm()>4) return(i);
+      if (norm(z)>4) return(i);
       }
 
    return(0);
@@ -91,8 +91,8 @@ void julia(minicomplex c,
          }
    }
 
-minicomplex julia_fn(int num,
-                     minicomplex z,minicomplex c)
+inline minicomplex julia_fn(int num,
+                            minicomplex z,minicomplex c)
    {
    switch (num%julia_fmax)
       {
@@ -104,8 +104,8 @@ minicomplex julia_fn(int num,
       }
    }
 
-minicomplex interpolate_fn(double num,
-                           minicomplex z,minicomplex c)
+inline minicomplex interpolate_fn(double num,
+                                  minicomplex z,minicomplex c)
    {
    int n;
    double w;
