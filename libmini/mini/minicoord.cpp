@@ -121,7 +121,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
-               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.z);
+               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.x);
                if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
                minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
