@@ -104,7 +104,7 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
 minicoord::~minicoord() {}
 
 // convert from 1 coordinate system 2 another
-void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM datum)
+void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
    {
    double xyz[3];
 
@@ -121,18 +121,19 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::LL2UTMZ(vec.y,vec.z);
-               minicrs::LL2UTM(vec.y,vec.x,crs_zone,datum,&vec.x,&vec.y);
+               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.z);
+               if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
+               crs_zone=zone;
                crs_datum=datum;
                break;
             case MINICOORD_OGH:
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::ECEF2OGHZ(xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
                type=t;
+               crs_zone=zone;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_ECEF:
@@ -157,19 +158,20 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_MERC: break;
             case MINICOORD_UTM:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::LL2UTMZ(vec.y,vec.x);
-               minicrs::LL2UTM(vec.y,vec.x,crs_zone,datum,&vec.x,&vec.y);
+               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.x);
+               if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
+               crs_zone=zone;
                crs_datum=datum;
                break;
             case MINICOORD_OGH:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::ECEF2OGHZ(xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
                type=t;
+               crs_zone=zone;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_ECEF:
@@ -200,7 +202,8 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_UTM:
-               if (zone==0) break;
+               if (zone==0) zone=crs_zone;
+               if (datum==MINICOORD_DATUM_NONE) datum=crs_datum;
                if (zone==crs_zone && datum==crs_datum) break;
                if (zone==crs_zone && datum==MINICOORD_DATUM_WGS84 && crs_datum==MINICOORD_DATUM_NAD83) {crs_datum=datum; break;}
                if (zone==crs_zone && datum==MINICOORD_DATUM_NAD83 && crs_datum==MINICOORD_DATUM_WGS84) {crs_datum=datum; break;}
@@ -212,10 +215,10 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_OGH:
                minicrs::UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::ECEF2OGHZ(xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
                type=t;
+               crs_zone=zone;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_ECEF:
@@ -250,10 +253,11 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
             case MINICOORD_UTM:
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz);
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::LL2UTMZ(vec.y,vec.x);
-               minicrs::LL2UTM(vec.y,vec.x,crs_zone,datum,&vec.x,&vec.y);
+               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.x);
+               if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
+               crs_zone=zone;
                crs_datum=datum;
                break;
             case MINICOORD_OGH:
@@ -295,26 +299,27 @@ void minicoord::convert2(const MINICOORD t,const int zone,const MINICOORD_DATUM 
                crs_zone=0;
                crs_datum=MINICOORD_DATUM_NONE;
                break;
-            case MINICOORD_OGH:
-               xyz[0]=vec.x;
-               xyz[1]=vec.y;
-               xyz[2]=vec.z;
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::ECEF2OGHZ(xyz);
-               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,crs_zone);
-               type=t;
-               crs_datum=MINICOORD_DATUM_NONE;
-               break;
             case MINICOORD_UTM:
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z);
-               crs_zone=zone;
-               if (crs_zone==0) crs_zone=minicrs::LL2UTMZ(vec.y,vec.x);
-               minicrs::LL2UTM(vec.y,vec.x,crs_zone,datum,&vec.x,&vec.y);
+               if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.x);
+               if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
+               minicrs::LL2UTM(vec.y,vec.x,zone,datum,&vec.x,&vec.y);
                type=t;
+               crs_zone=zone;
                crs_datum=datum;
+               break;
+            case MINICOORD_OGH:
+               xyz[0]=vec.x;
+               xyz[1]=vec.y;
+               xyz[2]=vec.z;
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
+               type=t;
+               crs_zone=zone;
+               crs_datum=MINICOORD_DATUM_NONE;
                break;
             case MINICOORD_ECEF: break;
             default: ERRORMSG();

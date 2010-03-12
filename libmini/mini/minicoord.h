@@ -72,7 +72,7 @@ class minicoord
    inline minicoord& operator /= (const double c);
 
    //! convert from 1 coordinate system 2 another
-   void convert2(const MINICOORD t,const int zone=0,const MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
+   void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
 
    //! linear conversion defined by 3x3 matrix and offset
    void convert(const miniv3d mtx[3],const miniv3d offset);
