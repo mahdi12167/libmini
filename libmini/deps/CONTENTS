@@ -5,6 +5,7 @@ Therefore, the original copyright and licensing terms of the dependencies remain
 The original libMini dependencies are available here:
 
 openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
+libcurl:        http://curl.haxx.se
 squish:         http://libsquish.googlecode.com
 GREYCstoration: http://cimg.sourceforge.net/greycstoration
 freeglut:       http://freeglut.sourceforge.net
