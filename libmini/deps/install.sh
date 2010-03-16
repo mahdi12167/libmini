@@ -13,4 +13,4 @@ set prefix=$cwd/../..
 (cd squish; cmake .; make)
 
 # freeglut
-(cd freeglut; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make; make install)
+(cd freeglut; autoreconf --force --install; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make; make install)
