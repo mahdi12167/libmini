@@ -461,9 +461,9 @@ void savesettings()
    FILE *file;
 
    minilayer *ref=viewer->getearth()->getreference();
-   char *savname=ref->getcache()->getfile(VIEWER_SAVFILE);
+   char *savname=ref->getcache()->putfile(VIEWER_SAVFILE);
 
-   if (savname==NULL) savname=strdup(VIEWER_SAVFILE);
+   if (savname==NULL) return;
 
    if ((file=fopen(savname,"wb"))==NULL)
       {

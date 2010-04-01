@@ -284,6 +284,22 @@ char *datacache::getfile(const char *src_file,const char *altpath)
    return(NULL);
    }
 
+// put file (locally)
+char *datacache::putfile(const char *dst_file)
+   {
+   char *filename;
+   char *localname;
+
+   filename=sourcefilename(RID,dst_file);
+
+   insertfilename(filename,TRUE,TRUE,FALSE,FALSE);
+
+   localname=localfilename(filename);
+   free(filename);
+
+   return(localname);
+   }
+
 // set name of elev tileset file
 void datacache::setelevtilesetfile(const char *filename)
    {

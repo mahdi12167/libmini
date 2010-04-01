@@ -69,6 +69,9 @@ class datacache
    //! get file
    char *getfile(const char *src_file,const char *altpath=NULL);
 
+   //! put file (locally)
+   char *putfile(const char *dst_file);
+
    //! set name of elev tileset file
    void setelevtilesetfile(const char *filename);
 
