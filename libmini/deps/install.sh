@@ -14,5 +14,5 @@ set prefix=$cwd/../..
 
 # freeglut
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
-   (cd freeglut; autoreconf --force --install; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make -j 2; make install)
+   (cd freeglut; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make -j 2; make install)
 endif
