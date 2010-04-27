@@ -10,7 +10,7 @@ if (! -e curl) then
 endif
 (cd curl; git checkout curl-7_20_1)
 
-# squish 1.10
+# squish 1.10 /w cmake
 svn co -r 26 http://libsquish.googlecode.com/svn/trunk libsquish
 foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
    cp -f $file $file:s/libsquish/squish/
@@ -28,5 +28,5 @@ end
 # openthreads
 svn up openthreads
 
-# freeglut
-svn up freeglut
+# freeglut 2.7.0
+svn up freeglut -r 855
