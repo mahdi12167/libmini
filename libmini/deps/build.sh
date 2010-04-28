@@ -2,5 +2,4 @@
 
 # this script pulls and installs the libMini dependencies
 
-./pull.sh
-./install.sh
+./pull.sh && ./install.sh
