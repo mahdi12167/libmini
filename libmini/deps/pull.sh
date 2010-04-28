@@ -21,19 +21,23 @@ endif
 (cd curl; git checkout curl-7_20_1)
 
 # squish 1.10 /w cmake
-svn co -r 26 http://libsquish.googlecode.com/svn/trunk libsquish
-foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
-   cp -f $file $file:s/libsquish/squish/
-   ../mini/tabify.sh -x $file:s/libsquish/squish/
-end
+if (-X ../mini/tabify.sh) then
+   svn co -r 26 http://libsquish.googlecode.com/svn/trunk libsquish
+   foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
+      cp -f $file $file:s/libsquish/squish/
+      ../mini/tabify.sh -x $file:s/libsquish/squish/
+   end
+endif
 
 # GREYCstoration 1.3.4
-cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
-cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.627 CImg/CImg.h
-foreach file (CImg.h)
-   cp -f CImg/$file greycstoration/$file
-   ../mini/tabify.sh -x greycstoration/$file
-end
+if (-X ../mini/tabify.sh) then
+   cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
+   cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.627 CImg/CImg.h
+   foreach file (CImg.h)
+      cp -f CImg/$file greycstoration/$file
+      ../mini/tabify.sh -x greycstoration/$file
+   end
+endif
 
 # openthreads 2.3.0
 svn up openthreads
