@@ -18,4 +18,4 @@ endif
 # other libraries to install:
 
 # gdal
-(cd gdal; ./configure --prefix=$prefix/gdal; make -j 2; make install)
+(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal; make -j 2; make install)
