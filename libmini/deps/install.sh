@@ -4,8 +4,6 @@
 
 set prefix=$cwd/../..
 
-./build.sh
-
 # curl
 (cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl; make -j 2; make install)
 
@@ -16,3 +14,8 @@ set prefix=$cwd/../..
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
    (cd freeglut; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make -j 2; make install)
 endif
+
+# other libraries to install:
+
+# gdal
+(cd gdal; ./configure --prefix=$prefix/gdal; make -j 2; make install)
