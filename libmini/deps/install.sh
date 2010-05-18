@@ -1,8 +1,15 @@
 #!/bin/tcsh -f
 
 # this script installs the libMini dependencies locally
+# the installation path can be supplied as an optional argument (default is ../..)
 
-set prefix=$cwd/../..
+set arg=$1
+
+if ($arg != "") then
+   set prefix=$arg
+else
+   set prefix=$cwd/../..
+endif
 
 # curl
 (cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl; make -j 2; make install)

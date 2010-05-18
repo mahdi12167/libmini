@@ -94,7 +94,7 @@ void keyboardfunc(unsigned char key,int x,int y)
    mousex=(float)x/(winwidth-1);
    mousey=(float)y/(winwidth-1);
 
-   if (key=='q' || key==27)
+   if (tolower(key)=='q' || key==27)
       {
       glutDestroyWindow(winid);
       exit(0);
