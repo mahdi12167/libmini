@@ -113,6 +113,8 @@ class lunaparse
 
    void parse_include();
 
+   void PARSERMSG(const char *msg,BOOLINT after=FALSE);
+
    protected:
 
    enum
@@ -201,7 +203,6 @@ class lunaparse
    void parse_statement(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx);
    void parse_expression(BOOLINT comma=FALSE);
    void parse_expression(int push,int push_idx);
-   void PARSERMSG(const char *msg,BOOLINT after=FALSE);
    };
 
 #endif

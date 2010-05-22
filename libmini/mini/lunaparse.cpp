@@ -532,7 +532,7 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
 
       parse_statement(VAR_LOC_NUM,RET_ADDR);
 
-      if (SCANNER.gettoken()!=LUNA_UNTIL) PARSERMSG("expected matching UNTIL");
+      if (SCANNER.gettoken()!=LUNA_UNTIL) PARSERMSG("expected until after repeat");
       SCANNER.next();
 
       if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
