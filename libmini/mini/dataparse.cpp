@@ -18,7 +18,7 @@ void dataparse::setcode(char *code,int bytes)
    if (parser!=NULL) delete parser;
    parser=new lunaparse;
 
-   parser->setLUNAcode(code,bytes);
+   parser->setcode(code,bytes);
    parser->parseLUNA();
 
    parser->getcode()->init();

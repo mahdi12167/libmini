@@ -99,8 +99,9 @@ class lunaparse
    //! destructor
    ~lunaparse();
 
-   void setLUNAcode(const char *code) {SCANNER.setcode(code);}
-   void setLUNAcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
+   void setcode(const char *code) {SCANNER.setcode(code);}
+   void setcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
+
    void parseLUNA();
 
    void print();
