@@ -6,11 +6,7 @@
 
 // default constructor
 lunaparse::lunaparse()
-   {
-   addLUNAtokens();
-
-   VAR_NUM=0;
-   }
+   {VAR_NUM=0;}
 
 // destructor
 lunaparse::~lunaparse() {}
@@ -78,7 +74,15 @@ void lunaparse::addLUNAtokens()
 
 void lunaparse::parseLUNA()
    {
+   static BOOLINT tokens=FALSE;
+
    int addr;
+
+   if (!tokens)
+      {
+      addLUNAtokens();
+      tokens=TRUE;
+      }
 
    MAIN=-1;
 
