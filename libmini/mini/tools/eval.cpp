@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
 
    printf("parsing code:\n----\n%s\n----\n",code);
 
-   parser.setLUNAcode(code);
+   parser.setcode(code);
    parser.parseLUNA();
 
    if (sw_debug)
