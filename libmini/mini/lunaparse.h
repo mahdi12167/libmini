@@ -158,7 +158,8 @@ class lunaparse
       LUNA_ARRAY_LOC,
       LUNA_REF_GLB,
       LUNA_REF_LOC,
-      LUNA_FUNCTION
+      LUNA_FUNCTION,
+      LUNA_UNUSED_TOKENS // unused token space
       };
 
    //! default constructor
