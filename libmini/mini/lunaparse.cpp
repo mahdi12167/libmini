@@ -110,7 +110,7 @@ void lunaparse::parseLUNA()
    SCANNER.freecode();
    }
 
-void lunaparse::parse_include(const char *path)
+void lunaparse::parse_include(const char *path,const char *altpath)
    {
    char *filename;
    char *code;
@@ -125,14 +125,20 @@ void lunaparse::parse_include(const char *path)
 
    if (code==NULL)
       {
-      PARSERMSG("unable to open file");
-      SCANNER.next();
+      filename=strdup2(altpath,SCANNER.getstring());
+      code=readstring(filename);
+      free(filename);
+
+      if (code==NULL)
+         {
+         PARSERMSG("unable to open file");
+         SCANNER.next();
+         return;
+         }
       }
-   else
-      {
-      SCANNER.pushcode(code);
-      free(code);
-      }
+
+   SCANNER.pushcode(code);
+   free(code);
    }
 
 int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,BOOLINT stat,int *VAR_LOC_NUM)

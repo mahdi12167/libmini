@@ -180,7 +180,7 @@ class lunaparse
    lunascan *getscanner() {return(&SCANNER);}
    lunacode *getcode() {return(&CODE);}
 
-   void parse_include(const char *path=NULL);
+   void parse_include(const char *path=NULL,const char *altpath=NULL);
 
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
