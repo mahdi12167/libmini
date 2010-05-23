@@ -115,8 +115,6 @@ class lunaparse
 
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
-   protected:
-
    enum
       {
       LUNA_INCLUDE=0,
@@ -184,6 +182,8 @@ class lunaparse
       LUNA_REF_LOC,
       LUNA_FUNCTION
       };
+
+   protected:
 
    lunascan SCANNER;
    lunacode CODE;
