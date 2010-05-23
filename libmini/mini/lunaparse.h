@@ -93,28 +93,6 @@ class lunaparse
    {
    public:
 
-   //! default constructor
-   lunaparse();
-
-   //! destructor
-   ~lunaparse();
-
-   void setcode(const char *code) {SCANNER.setcode(code);}
-   void setcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
-
-   void parseLUNA();
-
-   void print();
-   void printtokens();
-   void printtoken();
-
-   lunascan *getscanner() {return(&SCANNER);}
-   lunacode *getcode() {return(&CODE);}
-
-   void parse_include();
-
-   void PARSERMSG(const char *msg,BOOLINT after=FALSE);
-
    enum
       {
       LUNA_INCLUDE=0,
@@ -182,6 +160,28 @@ class lunaparse
       LUNA_REF_LOC,
       LUNA_FUNCTION
       };
+
+   //! default constructor
+   lunaparse();
+
+   //! destructor
+   ~lunaparse();
+
+   void setcode(const char *code) {SCANNER.setcode(code);}
+   void setcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
+
+   void parseLUNA();
+
+   void print();
+   void printtokens();
+   void printtoken();
+
+   lunascan *getscanner() {return(&SCANNER);}
+   lunacode *getcode() {return(&CODE);}
+
+   void parse_include();
+
+   void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
    protected:
 
