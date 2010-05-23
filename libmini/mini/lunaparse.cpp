@@ -110,7 +110,7 @@ void lunaparse::parseLUNA()
    SCANNER.freecode();
    }
 
-void lunaparse::parse_include()
+void lunaparse::parse_include(const char *path)
    {
    char *filename;
    char *code;
@@ -119,8 +119,9 @@ void lunaparse::parse_include()
 
    if (SCANNER.gettoken()!=lunascan::LUNA_STRING) PARSERMSG("expected string");
 
-   filename=SCANNER.getstring();
+   filename=strdup2(path,SCANNER.getstring());
    code=readstring(filename);
+   free(filename);
 
    if (code==NULL)
       {
