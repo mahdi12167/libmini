@@ -7,7 +7,7 @@
 
 int main(int argc,char *argv[])
    {
-   unsigned char *code;
+   char *code;
    unsigned int bytes;
 
    lunaparse parser;
@@ -21,16 +21,11 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-   code=readfile(argv[1],&bytes);
+   code=readstring(argv[1]);
 
-   if (bytes>0)
-      {
-      code[bytes-1]='\0';
-
-      while (--bytes>0)
-         if (code[bytes-1]=='\n' || code[bytes-1]=='\r') code[bytes-1]='\0';
-         else break;
-      }
+   for (bytes=strlen(code); bytes>0; bytes--)
+      if (code[bytes-1]=='\n' || code[bytes-1]=='\r') code[bytes-1]='\0';
+      else break;
 
    value=0.0f;
 
@@ -44,7 +39,7 @@ int main(int argc,char *argv[])
 
    printf("parsing code:\n----\n%s\n----\n",code);
 
-   parser.setLUNAcode((char *)code,bytes);
+   parser.setLUNAcode(code);
    parser.parseLUNA();
 
    if (sw_debug)

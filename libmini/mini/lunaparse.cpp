@@ -113,27 +113,22 @@ void lunaparse::parseLUNA()
 void lunaparse::parse_include()
    {
    char *filename;
-
    char *code;
-   unsigned int bytes;
 
    SCANNER.next();
 
    if (SCANNER.gettoken()!=lunascan::LUNA_STRING) PARSERMSG("expected string");
 
    filename=SCANNER.getstring();
-   code=(char *)readfile(filename,&bytes);
+   code=readstring(filename);
 
    if (code==NULL)
       {
-      PARSERMSG("file not found");
+      PARSERMSG("unable to open file");
       SCANNER.next();
       }
    else
       {
-      if ((code=(char *)realloc(code,bytes+1))==NULL) MEMERROR();
-      code[bytes]='\0';
-
       SCANNER.pushcode(code);
       free(code);
       }

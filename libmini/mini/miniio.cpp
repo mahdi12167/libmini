@@ -72,6 +72,22 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
    return(data);
    }
 
+// read a raw file as string
+char *readstring(const char *filename)
+   {
+   char *data;
+   unsigned int bytes;
+
+   data=(char *)readfile(filename,&bytes);
+
+   if (data==NULL) return(NULL);
+
+   if ((data=(char *)realloc(data,bytes+1))==NULL) MEMERROR();
+   data[bytes]='\0';
+
+   return(data);
+   }
+
 // read a raw file and compute signature
 unsigned int signature(const char *filename)
    {

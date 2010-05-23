@@ -14,6 +14,9 @@ void writefile(const char *filename,unsigned char *data,unsigned int bytes);
 //! read a RAW file
 unsigned char *readfile(const char *filename,unsigned int *bytes);
 
+// read a raw file as string
+char *readstring(const char *filename);
+
 // read a RAW file and compute signature
 unsigned int signature(const char *filename);
 
