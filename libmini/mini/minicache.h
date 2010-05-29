@@ -104,16 +104,7 @@ class minicache
    void useseashader(int on=0);
 
    //! concatenate shader program from snippets
-   static char *concatprog(const char *s1,
-                           const char *s2=0,
-                           const char *s3=0,
-                           const char *s4=0,
-                           const char *s5=0,
-                           const char *s6=0,
-                           const char *s7=0,
-                           const char *s8=0,
-                           const char *s9=0,
-                           const char *s10=0);
+   static char *concatprog(int n,const char *s, ...);
 
    //! define optional sea callbacks
    void setseacb(void (*preseacb)(void *data)=0,

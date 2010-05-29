@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include <stdarg.h>
+
 #include "minibase.h"
 
 #include "minimath.h"
@@ -1338,49 +1340,39 @@ void minicache::initshader()
       END \n";
 
    if (VTXPROG_STD_L==NULL)
-      VTXPROG_STD_L=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_L=concatprog(8,vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
 
    if (VTXPROG_STD_NL==NULL)
-      VTXPROG_STD_NL=concatprog(vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_NL=concatprog(8,vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
-      FRGPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
+      FRGPROG_STD=concatprog(4,frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
 
    if (SEAPROG_STD==NULL)
-      SEAPROG_STD=concatprog(frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
+      SEAPROG_STD=concatprog(4,frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
    }
 
 // concatenate shader program from snippets
-char *minicache::concatprog(const char *s1,
-                            const char *s2,
-                            const char *s3,
-                            const char *s4,
-                            const char *s5,
-                            const char *s6,
-                            const char *s7,
-                            const char *s8,
-                            const char *s9,
-                            const char *s10)
+char *minicache::concatprog(int n,const char *s, ...)
    {
+   int i;
+
+   va_list arg_ptr;
+
    char *prog1,*prog2;
 
-   prog1=strdup2(s1,s2);
-   prog2=strdup2(prog1,s3);
-   free(prog1);
-   prog1=strdup2(prog2,s4);
-   free(prog2);
-   prog2=strdup2(prog1,s5);
-   free(prog1);
-   prog1=strdup2(prog2,s6);
-   free(prog2);
-   prog2=strdup2(prog1,s7);
-   free(prog1);
-   prog1=strdup2(prog2,s8);
-   free(prog2);
-   prog2=strdup2(prog1,s9);
-   free(prog1);
-   prog1=strdup2(prog2,s10);
-   free(prog2);
+   va_start(arg_ptr,s);
+
+   prog1=strdup(s);
+
+   for (i=1; i<n; i++)
+      {
+      prog2=strdup2(prog1,va_arg(arg_ptr,const char *));
+      free(prog1);
+      prog1=prog2;
+      }
+
+   va_end(arg_ptr);
 
    return(prog1);
    }
