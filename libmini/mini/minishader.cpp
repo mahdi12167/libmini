@@ -201,7 +201,9 @@ void minishader::setVISshader(minicache *cache,
       PARAM c2=program.env[7]; \n\
       PARAM c3=program.env[8]; \n\
       PARAM c4=program.env[9]; \n\
-      TEMP col,colt,nrm,len,fog,pos; \n\
+      PARAM c5=program.env[10]; \n\
+      PARAM c6=program.env[11]; \n\
+      TEMP col,colt,nrm,len,fog,fade,pos; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
 
