@@ -43,6 +43,7 @@ class minishader
    static void setcontourmode(int mode);
    static void setdetailtexmode(int mode,float alpha=1.0f,int mask=0);
    static void setseamode(int mode);
+   static void setfademode(int mode,float fadestart,float fadeend);
 
    static void unsetshaders(minicache *cache);
 
@@ -63,6 +64,10 @@ class minishader
    static int DETAILTEXMASK;
 
    static int SEAMODE;
+
+   static int FADEMODE;
+   static float FADESTART;
+   static float FADEEND;
    };
 
 #endif

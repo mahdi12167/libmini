@@ -20,6 +20,10 @@ int minishader::DETAILTEXMASK=0;
 
 int minishader::SEAMODE=0;
 
+int minishader::FADEMODE=0;
+float minishader::FADESTART=0.0f;
+float minishader::FADEEND=0.0f;
+
 // enable vertex and pixel shader for VIS purposes
 void minishader::setVISshader(minicache *cache,
                               float scale,float exaggeration,
@@ -42,6 +46,7 @@ void minishader::setVISshader(minicache *cache,
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float sea_a,sea_b;
+   float fade_a,fade_b;
 
    // fragment program for the terrain (initializer snippet, load color)
    static const char *frgprog1_i="!!ARBfp1.0 \n\
@@ -56,7 +61,8 @@ void minishader::setVISshader(minicache *cache,
       PARAM c3=program.env[8]; \n\
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
-      TEMP col,colt,colb,nrm,vtx,len,crd,opa,fog; \n\
+      PARAM c6=program.env[11]; \n\
+      TEMP col,colt,colb,nrm,vtx,len,crd,opa,fog,fade; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
 
@@ -154,9 +160,9 @@ void minishader::setVISshader(minicache *cache,
    // fragment program for the terrain (alpha snippet, spherical fade)
    static const char *frgprog_a="\
       ### spherical fade out \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c5.x,c5.y; \n\
-      LRP col.a,fog.x,0.0,col.a; \n";
+      MOV fade.x,fragment.fogcoord.x; \n\
+      MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
+      LRP col.a,fade.x,0.0,col.a; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
    static const char *frgprog_t1="\
@@ -237,7 +243,7 @@ void minishader::setVISshader(minicache *cache,
    usemap=(exaggeration*(bathystart-bathyend)!=0.0f && VISBATHYMAP!=NULL);
    usecnt=(exaggeration*contours!=0.0f);
    usesea=(sealevel!=-MAXFLOAT && exaggeration*seabottom!=0.0f);
-   usefade=FALSE;
+   usefade=(FADEMODE!=0 && FADESTART<FADEEND);
 
    // calculate the fog parameters
    if (usefog)
@@ -295,6 +301,18 @@ void minishader::setVISshader(minicache *cache,
       sea_b=0.0f;
       }
 
+   // calculate the fade parameters
+   if (usefade)
+      {
+      fade_a=fsqr(scale)/(fsqr(FADESTART)-fsqr(FADEEND));
+      fade_b=fsqr(FADEEND)/(fsqr(FADEEND)-fsqr(FADESTART));
+      }
+   else
+      {
+      fade_a=0.0f;
+      fade_b=0.0f;
+      }
+
    // concatenate pixel shader
    if (!usemap)
       if (DETAILTEXMODE==1) frgprog=minicache::concatprog(11,frgprog1_i,frgprog1_s1,NULL,usesea?frgprog1_s3:NULL,usecnt?(CONTOURMODE==0)?frgprog1_s4:frgprog1_s4b:NULL,(DETAILTEXMASK==0)?frgprog1_s5l:frgprog1_s5lm,frgprog1_s6o,usefade?frgprog_a:NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3); // without color mapping, with detail texture overlay
@@ -317,6 +335,7 @@ void minishader::setVISshader(minicache *cache,
    cache->setpixshaderparams(fog_a,fog_b,fog_c,DETAILTEXALPHA,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
    cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
+   cache->setpixshaderparams(fade_a,fade_b,0.0f,0.0f,6);
    cache->usepixshader(1);
    free(frgprog);
 
@@ -328,6 +347,7 @@ void minishader::setVISshader(minicache *cache,
    cache->setseashaderparams(seamodulate,0.0f,0.0f,0.0f);
    cache->setseashaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setseashaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
+   cache->setseashaderparams(fade_a,fade_b,0.0f,0.0f,6);
    cache->useseashader(1);
    free(frgprog);
 
@@ -694,6 +714,14 @@ void minishader::setdetailtexmode(int mode,float alpha,int mask)
 // set sea surface mode (0=normal 1=stipple)
 void minishader::setseamode(int mode)
    {SEAMODE=mode;}
+
+// set fade mode (0=off 1=on)
+void minishader::setfademode(int mode,float fadestart,float fadeend)
+   {
+   FADEMODE=mode;
+   FADESTART=fadestart;
+   FADEEND=fadeend;
+   }
 
 // disable vertex and pixel shaders
 void minishader::unsetshaders(minicache *cache)
