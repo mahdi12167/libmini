@@ -9,6 +9,7 @@ all:
 	c++ faceofmars.o -L$(MINI) -lMini -L$(IRRLIB) -lIrrlicht -lGL -lGLU -lm -o faceofmars
 
 clean:
+tidy:
 	@-rm -f *~ *.o faceofmars
 
 demo:   clean

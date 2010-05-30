@@ -24,6 +24,7 @@ depend:
 	@rm -f Makefile.bak
 
 clean:
+tidy:
 	@rm -f $(MAIN) $(OBJS) core
 
 pack:	clean
