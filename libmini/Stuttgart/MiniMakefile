@@ -4,6 +4,7 @@ all:
 	$(COMPILER) $(OPTS) -I.. -I$(INSTALL_INC) -Wall -o Stuttgart Stuttgart.cpp -L$(INSTALL_LIB) -lMini $(LINK) -lGL -lGLU -lm
 
 clean:
+tidy:
 	@-rm -f *~ ii_files Debug* Release* *.ncb *.opt *.plg Stuttgart Stuttgart.zip
 
 demo:	clean
