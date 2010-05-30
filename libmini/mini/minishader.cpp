@@ -160,7 +160,7 @@ void minishader::setVISshader(minicache *cache,
    // fragment program for the terrain (alpha snippet, spherical fade)
    static const char *frgprog_a="\
       ### spherical fade out \n\
-      MOV fade.x,fragment.fogcoord.x; \n\
+      POW fade.x,fragment.fogcoord.x,0.5; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
       LRP col.a,fade.x,0.0,col.a; \n";
 
@@ -178,8 +178,7 @@ void minishader::setVISshader(minicache *cache,
    // fragment program for the terrain (terminator snippet #2, spherical fog)
    static const char *frgprog_t2="\
       ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
+      MAD_SAT fog.x,fragment.fogcoord.x,c3.x,c3.y; \n\
       POW fog.x,fog.x,c3.z; \n\
       LRP col.xyz,fog.x,c4,col; \n";
 
@@ -306,8 +305,8 @@ void minishader::setVISshader(minicache *cache,
    // calculate the fade parameters
    if (usefade)
       {
-      fade_a=fsqr(scale)/(fsqr(FADESTART)-fsqr(FADEEND));
-      fade_b=fsqr(FADEEND)/(fsqr(FADEEND)-fsqr(FADESTART));
+      fade_a=scale/(FADESTART-FADEEND);
+      fade_b=FADEEND/(FADEEND-FADESTART);
       }
    else
       {
@@ -509,7 +508,7 @@ void minishader::setNPRshader(minicache *cache,
    // fragment program for the terrain (alpha snippet, spherical fade)
    static const char *frgprog_a="\
       ### spherical fade out \n\
-      MOV fade.x,fragment.fogcoord.x; \n\
+      POW fade.x,fragment.fogcoord.x,0.5; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
       LRP col.a,fade.x,0.0,col.a; \n";
 
@@ -527,8 +526,7 @@ void minishader::setNPRshader(minicache *cache,
    // fragment program for the terrain (terminator snippet #2, spherical fog)
    static const char *frgprog_t2="\
       ### modulate with spherical fog \n\
-      MOV fog.x,fragment.fogcoord.x; \n\
-      MAD_SAT fog.x,fog.x,c3.x,c3.y; \n\
+      MAD_SAT fog.x,fragment.fogcoord.x,c3.x,c3.y; \n\
       POW fog.x,fog.x,c3.z; \n\
       LRP col.xyz,fog.x,c4,col; \n";
 
@@ -658,8 +656,8 @@ void minishader::setNPRshader(minicache *cache,
    // calculate the fade parameters
    if (usefade)
       {
-      fade_a=fsqr(scale)/(fsqr(FADESTART)-fsqr(FADEEND));
-      fade_b=fsqr(FADEEND)/(fsqr(FADEEND)-fsqr(FADESTART));
+      fade_a=scale/(FADESTART-FADEEND);
+      fade_b=FADEEND/(FADEEND-FADESTART);
       }
    else
       {
