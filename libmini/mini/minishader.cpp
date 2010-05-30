@@ -162,7 +162,7 @@ void minishader::setVISshader(minicache *cache,
       ### spherical fade out \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
-      LRP col.a,fade.x,0.0,col.a; \n";
+      LRP col.a,fade.x,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
    static const char *frgprog_t1="\
@@ -510,7 +510,7 @@ void minishader::setNPRshader(minicache *cache,
       ### spherical fade out \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
-      LRP col.a,fade.x,0.0,col.a; \n";
+      LRP col.a,fade.x,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
    static const char *frgprog_t1="\
