@@ -37,9 +37,9 @@ void render(double time)
 
          l=fsqr(x-0.5)+fsqr(y-0.5);
 
-         r=sin(100*l+alpha-PI);
-         g=sin(100*l+beta);
-         b=sin(100*l+gamma+PI);
+         r=sin(300*l+alpha-PI);
+         g=sin(300*l+beta);
+         b=sin(300*l+gamma+PI);
 
          plot_color(r,g,b);
          plot_point(x,y);
@@ -56,7 +56,7 @@ void render(double time)
 int main(int argc,char *argv[])
    {
    plot_openwindow(&argc,argv,
-                   256,256,
+                   512,512,
                    1.0f,1.0f,1.0f,
                    render,
                    keypress,
