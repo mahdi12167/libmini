@@ -152,19 +152,11 @@ minicomplex lava_warp(minicomplex z)
 
 void render(double time)
    {
-   double t;
-
-   t=gettime();
-
    julia(minicomplex(julia_reC,julia_imC),
          max_count,
          julia_f,
          (lava)?lava_warp:NULL,
          julia_color);
-
-   t=gettime()-t;
-
-   waitfor(1.0/fps-t);
 
    if (animation)
       {
@@ -241,7 +233,8 @@ int main(int argc,char *argv[])
                    1.0f,1.0f,1.0f,
                    render,
                    keypress,
-                   TRUE);
+                   TRUE,
+                   fps);
 
    return(0);
    }

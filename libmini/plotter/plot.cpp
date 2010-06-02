@@ -13,6 +13,7 @@
 
 static float winr,wing,winb;
 static int winwidth,winheight,winid;
+static float winfps;
 
 static void (*renderfunc)(double time);
 static BOOLINT (*keyfunc)(unsigned char key,float x,float y);
@@ -29,6 +30,8 @@ void displayfunc()
    {
    float aspect;
    float x1,y1,x2,y2,dx,dy;
+
+   double t;
 
    aspect=(float)winwidth/winheight;
 
@@ -53,6 +56,8 @@ void displayfunc()
       dy=(1.0f-1.0f/aspect)/2.0f;
       }
 
+   t=gettime();
+
    clearbuffer(winr,wing,winb);
 
    initstate();
@@ -75,6 +80,10 @@ void displayfunc()
    exitstate();
 
    glutSwapBuffers();
+
+   t=gettime()-t;
+
+   waitfor(1.0/winfps-t);
    }
 
 void reshapefunc(int width,int height)
@@ -110,7 +119,8 @@ void plot_openwindow(int *argc,char *argv[],
                      float r,float g,float b,
                      void (*render)(double time),
                      BOOLINT (*keypress)(unsigned char key,float x,float y),
-                     BOOLINT continuous)
+                     BOOLINT continuous,
+                     float fps)
    {
    winwidth=width;
    winheight=height;
@@ -118,6 +128,8 @@ void plot_openwindow(int *argc,char *argv[],
    winr=r;
    wing=g;
    winb=b;
+
+   winfps=fps;
 
    renderfunc=render;
    keyfunc=keypress;
@@ -180,6 +192,18 @@ void plot_delta(const float dx,const float dy)
 
 // plot point
 void plot_point(const float x,const float y)
+   {renderpoint(x,y,0.0f);}
+
+// plot circle
+void plot_circle(float x,float y,float r)
    {
-   renderpoint(x,y,0.0f);
+   int i;
+
+   static const int segments=30;
+
+   plot_from(x,y+r);
+
+   for (i=1; i<=30; i++)
+      plot_to(x+r*sin(i*2*PI/segments),
+              y+r*cos(i*2*PI/segments));
    }

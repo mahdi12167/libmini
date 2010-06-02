@@ -47,9 +47,9 @@ void render(double time)
 
    if (scroll)
       {
-      alpha+=0.05;
-      beta+=0.1;
-      gamma+=0.2;
+      alpha+=0.15;
+      beta+=0.3;
+      gamma+=0.6;
       }
    }
 

@@ -9,7 +9,8 @@ void plot_openwindow(int *argc,char *argv[], // main arguments
                      float r,float g,float b, // background color
                      void (*render)(double time), // render function
                      BOOLINT (*keypress)(unsigned char key,float x,float y), // keypress function
-                     BOOLINT continuous); // render continuously
+                     BOOLINT continuous, // render continuously
+                     float fps=50.0f); // target frame rate
 
 // get window dimensions
 int get_winwidth();
@@ -35,5 +36,8 @@ void plot_delta(const float dx,const float dy);
 
 // plot point
 void plot_point(const float x,const float y);
+
+// plot circle
+void plot_circle(float x,float y,float r);
 
 #endif
