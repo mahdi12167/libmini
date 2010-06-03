@@ -15,6 +15,8 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
 void render(double time)
    {
+   int i;
+
    static double px=0.5;
    static double py=0.75;
 
@@ -27,10 +29,32 @@ void render(double time)
    static const double radius=0.02;
    static const double delta=0.02;
 
-   plot_linewidth(3);
-   plot_color(0,0,1);
+   static const int trail=101;
+   static const int step=10;
 
-   plot_circle(px,py,radius);
+   static double tpx[trail];
+   static double tpy[trail];
+
+   static BOOLINT init=FALSE;
+
+   if (!init)
+      {
+      for (i=0; i<trail; i++)
+         {
+         tpx[i]=px;
+         tpy[i]=py;
+         }
+
+      init=TRUE;
+      }
+
+   plot_linewidth(3);
+
+   for (i=trail-1; i>=0; i-=step)
+      {
+      plot_color((double)i/trail,(double)i/trail,1);
+      plot_circle(tpx[i],tpy[i],radius);
+      }
 
    if (bounce)
       {
@@ -43,6 +67,15 @@ void render(double time)
       if (px<radius || px>1-radius) vx=-vx;
       if (py<radius || py>1-radius) vy=-vy;
       }
+
+   for (i=trail-1; i>=0; i--)
+      {
+      tpx[i]=tpx[i-1];
+      tpy[i]=tpy[i-1];
+      }
+
+   tpx[0]=px;
+   tpy[0]=py;
    }
 
 int main(int argc,char *argv[])
