@@ -29,7 +29,7 @@ void render(double time)
    static const double radius=0.02;
    static const double delta=0.02;
 
-   static const int trail=101;
+   static const int trail=201;
    static const int step=10;
 
    static double tpx[trail];
