@@ -455,7 +455,8 @@ void minilayer::setcallbacks(void *threaddata,
 
 // load tileset
 BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                        BOOLINT reset,int level)
+                        BOOLINT reset,
+                        int level)
    {
    int success;
 

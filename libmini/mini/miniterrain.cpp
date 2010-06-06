@@ -443,7 +443,8 @@ void miniterrain::setcallbacks(void *threaddata,
 
 // load tileset (short version)
 BOOLINT miniterrain::load(const char *url,
-                          BOOLINT loadopts,BOOLINT reset)
+                          BOOLINT loadopts,BOOLINT reset,
+                          int level)
    {
    char *baseurl;
    char *lastslash,*lastbslash;
@@ -481,7 +482,7 @@ BOOLINT miniterrain::load(const char *url,
    else baseid=strdup("/");
 
    // load tileset
-   success=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset);
+   success=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset,level);
 
    free(baseurl);
    free(baseid);
@@ -491,7 +492,8 @@ BOOLINT miniterrain::load(const char *url,
 
 // load tileset (long version)
 BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                          BOOLINT loadopts,BOOLINT reset)
+                          BOOLINT loadopts,BOOLINT reset,
+                          int level)
    {
    int n;
 
@@ -518,7 +520,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
                           GETURL,CHECKURL);
 
    // load the tileset layer
-   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset))
+   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset,level))
       {
       remove(n);
       return(FALSE);
@@ -553,6 +555,37 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    update();
 
    // success
+   return(TRUE);
+   }
+
+// load layered tileset
+BOOLINT miniterrain::loadLTS(const char *url,
+                             BOOLINT loadopts,BOOLINT reset,
+                             int levels)
+   {
+   int i;
+
+   BOOLINT success;
+
+   char *layerurl;
+   char layerlevel[10];
+
+   for (i=0; i<levels; i++)
+      {
+      if (i==0) layerurl=strdup(url);
+      else
+         {
+         snprintf(layerlevel,10,"%d",i);
+         layerurl=strdup2(url,layerlevel);
+         }
+
+      success=load(layerurl,loadopts,reset,i);
+
+      free(layerurl);
+
+      if (!success) return(i!=0);
+      }
+
    return(TRUE);
    }
 

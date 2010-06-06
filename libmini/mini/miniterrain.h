@@ -242,11 +242,18 @@ class miniterrain
 
    //! load tileset (short version)
    BOOLINT load(const char *url,
-                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                int level=0);
 
    //! load tileset (long version)
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE);
+                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                int level=0);
+
+   //! load layered tileset
+   BOOLINT loadLTS(const char *url,
+                   BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                   int levels=1);
 
    //! create empty layer
    minilayer *create(minicoord &center,minicoord &north);
