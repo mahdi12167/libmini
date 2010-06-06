@@ -59,6 +59,7 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    LPARAMS.nonlin=FALSE;           // use non-linear warp
+   LPARAMS.fade=FALSE;             // use spherical fade
 
    LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
 
@@ -117,6 +118,8 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
 
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+
+   LPARAMS.level=0;                // layer level affects farp and fade radius
 
    LPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
    LPARAMS.automipmap=FALSE;       // auto mip-map raw textures
@@ -449,7 +452,8 @@ void minilayer::setcallbacks(void *threaddata,
    }
 
 // load tileset
-BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,BOOLINT reset)
+BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
+                        BOOLINT reset,int level)
    {
    int success;
 
@@ -678,6 +682,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       delete TILECACHE;
       return(FALSE);
       }
+
+   // set layer level
+   LPARAMS.level=level;
 
    // set extent of tileset
    LPARAMS.extent[0]=LPARAMS.cols*outparams[0];

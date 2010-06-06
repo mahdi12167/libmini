@@ -65,6 +65,7 @@ class minilayer
 
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
+      BOOLINT fade;             //* spherical fade out
 
       float vicinity;           //+ projected vicinity of flat warp mode relative to earth radius
 
@@ -121,6 +122,8 @@ class minilayer
       float dropoff;            //* non-linear lod dropoff at kick-in distance
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
+
+      int level;                //* layer level affects farp and fade radius
 
       BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps
       BOOLINT automipmap;       //+ auto mip-map raw textures
@@ -229,7 +232,8 @@ class minilayer
                      int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data));
 
    //! load tileset
-   BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,BOOLINT reset=FALSE);
+   BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
+                BOOLINT reset=FALSE,int level=0);
 
    //! load optional features
    void loadopts();
