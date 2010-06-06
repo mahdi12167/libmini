@@ -65,7 +65,7 @@ class minilayer
 
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
-      BOOLINT fade;             //* spherical fade out
+      BOOLINT fade;             //* use spherical fade
 
       float vicinity;           //+ projected vicinity of flat warp mode relative to earth radius
 
