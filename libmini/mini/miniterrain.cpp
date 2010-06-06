@@ -501,39 +501,37 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    {
    int n;
 
-   minilayer *layer;
-
    // reserve space in layer array
    n=reserve();
 
    // create the tileset layer
-   LAYER[n]=layer=new minilayer(CACHE);
+   LAYER[n]=new minilayer(CACHE);
 
    // propagate parameters
    propagate();
 
    // set reference coordinate system
-   layer->setreference(LAYER[getreference()]);
+   LAYER[n]->setreference(LAYER[getreference()]);
 
    // register callbacks
-   layer->setcallbacks(THREADDATA,
-                       THREADINIT,THREADEXIT,
-                       STARTTHREAD,JOINTHREAD,
-                       LOCK_CS,UNLOCK_CS,
-                       LOCK_IO,UNLOCK_IO,
-                       CURLDATA,
-                       CURLINIT,CURLEXIT,
-                       GETURL,CHECKURL);
+   LAYER[n]->setcallbacks(THREADDATA,
+                          THREADINIT,THREADEXIT,
+                          STARTTHREAD,JOINTHREAD,
+                          LOCK_CS,UNLOCK_CS,
+                          LOCK_IO,UNLOCK_IO,
+                          CURLDATA,
+                          CURLINIT,CURLEXIT,
+                          GETURL,CHECKURL);
 
    // load the tileset layer
-   if (!layer->load(baseurl,baseid,basepath1,basepath2,reset,level))
+   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset,level))
       {
       remove(n);
       return(NULL);
       }
 
    // load optional features
-   if (loadopts) layer->loadopts();
+   if (loadopts) LAYER[n]->loadopts();
 
    // propagate parameters
    propagate();
@@ -561,7 +559,7 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    update();
 
    // success
-   return(layer);
+   return(LAYER[n]);
    }
 
 // load layered tileset
