@@ -317,6 +317,9 @@ class miniterrain
    //! check whether or not a layer is a tileset
    BOOLINT istileset(int n);
 
+   //! check whether or not a layer is a sub tileset
+   BOOLINT issubtileset(int n);
+
    //! determine whether or not a layer is displayed
    void display(int n,BOOLINT visible=TRUE);
 

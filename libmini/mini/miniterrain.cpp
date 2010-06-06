@@ -1106,6 +1106,13 @@ BOOLINT miniterrain::istileset(int n)
    return(FALSE);
    }
 
+// check whether or not a layer is a sub tileset
+BOOLINT miniterrain::issubtileset(int n)
+   {
+   if (n>=0 && n<LNUM) return(LAYER[n]->issubtileset());
+   return(FALSE);
+   }
+
 // determine whether or not a layer is displayed
 void miniterrain::display(int n,BOOLINT visible)
    {
