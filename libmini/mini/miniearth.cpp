@@ -18,7 +18,8 @@ miniearth::miniearth()
    // configurable parameters:
 
    EPARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
-   EPARAMS.nonlin=FALSE;  // non-linear warp mode
+   EPARAMS.nonlin=FALSE;  // use non-linear warp
+   EPARAMS.fade=FALSE;    // use spherical fade
 
    EPARAMS.fps=25.0f;     // frames per second (target frame rate)
 
@@ -192,8 +193,12 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    else tparams.warpmode=EPARAMS.warpmode;
 
    tparams.nonlin=EPARAMS.nonlin;
+   tparams.fade=EPARAMS.fade;
 
-   if (EPARAMS.nonlin || EPARAMS.usediffuse || EPARAMS.usedetail) tparams.useshaders=TRUE;
+   if (EPARAMS.nonlin ||
+       EPARAMS.fade ||
+       EPARAMS.usediffuse ||
+       EPARAMS.usedetail) tparams.useshaders=TRUE;
 
    // finally pass the updated terrain state
    TERRAIN->set(tparams);
@@ -214,25 +219,39 @@ void miniearth::initOGL()
    }
 
 // load tileset (short version)
-BOOLINT miniearth::load(const char *url,
-                         BOOLINT loadopts,BOOLINT reset)
+minilayer *miniearth::load(const char *url,
+                           BOOLINT loadopts,BOOLINT reset,
+                           int level)
    {
    // propagate the parameters
    propagate();
 
    // load the tileset layer
-   return(TERRAIN->load(url,loadopts,reset));
+   return(TERRAIN->load(url,loadopts,reset,level));
    }
 
 // load tileset (long version)
-BOOLINT miniearth::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                         BOOLINT loadopts,BOOLINT reset)
+minilayer *miniearth::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
+                           BOOLINT loadopts,BOOLINT reset,
+                           int level)
    {
    // propagate the parameters
    propagate();
 
    // load the tileset layer
-   return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset));
+   return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset,level));
+   }
+
+// load layered tileset
+BOOLINT miniearth::loadLTS(const char *url,
+                           BOOLINT loadopts,BOOLINT reset,
+                           int levels)
+   {
+   // propagate the parameters
+   propagate();
+
+   // load the tileset layer
+   return(TERRAIN->loadLTS(url,loadopts,reset,levels));
    }
 
 // load detail texture (db format)

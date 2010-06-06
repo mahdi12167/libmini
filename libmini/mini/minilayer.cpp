@@ -1578,10 +1578,6 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 BOOLINT minilayer::istileset()
    {return(TERRAIN!=NULL);}
 
-// check whether or not the layer is a sub tileset
-BOOLINT minilayer::issubtileset()
-   {return(TERRAIN!=NULL && LPARAMS.level!=0);}
-
 // determine whether or not the layer is displayed
 void minilayer::display(BOOLINT visible)
    {

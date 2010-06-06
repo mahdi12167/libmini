@@ -23,6 +23,7 @@ miniterrain::miniterrain()
 
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    TPARAMS.nonlin=FALSE;           // use non-linear warp
+   TPARAMS.fade=FALSE;             // use spherical fade
 
    TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
@@ -77,6 +78,8 @@ miniterrain::miniterrain()
    TPARAMS.overlap=0.001f;         // tile overlap in texels
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+
+   TPARAMS.alphathres=254.0/255;   // alpha test threshold
 
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
@@ -300,6 +303,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.warpmode=TPARAMS.warpmode;
          lparams.nonlin=TPARAMS.nonlin;
+         lparams.fade=TPARAMS.fade;
 
          lparams.scale=TPARAMS.scale;
          lparams.exaggeration=TPARAMS.exaggeration;
@@ -442,15 +446,15 @@ void miniterrain::setcallbacks(void *threaddata,
    }
 
 // load tileset (short version)
-BOOLINT miniterrain::load(const char *url,
-                          BOOLINT loadopts,BOOLINT reset,
-                          int level)
+minilayer *miniterrain::load(const char *url,
+                             BOOLINT loadopts,BOOLINT reset,
+                             int level)
    {
    char *baseurl;
    char *lastslash,*lastbslash;
    char *baseid;
 
-   BOOLINT success;
+   minilayer *layer;
 
    baseurl=strdup(url);
 
@@ -482,52 +486,54 @@ BOOLINT miniterrain::load(const char *url,
    else baseid=strdup("/");
 
    // load tileset
-   success=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset,level);
+   layer=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset,level);
 
    free(baseurl);
    free(baseid);
 
-   return(success);
+   return(layer);
    }
 
 // load tileset (long version)
-BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                          BOOLINT loadopts,BOOLINT reset,
-                          int level)
+minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
+                             BOOLINT loadopts,BOOLINT reset,
+                             int level)
    {
    int n;
+
+   minilayer *layer;
 
    // reserve space in layer array
    n=reserve();
 
    // create the tileset layer
-   LAYER[n]=new minilayer(CACHE);
+   LAYER[n]=layer=new minilayer(CACHE);
 
    // propagate parameters
    propagate();
 
    // set reference coordinate system
-   LAYER[n]->setreference(LAYER[getreference()]);
+   layer->setreference(LAYER[getreference()]);
 
    // register callbacks
-   LAYER[n]->setcallbacks(THREADDATA,
-                          THREADINIT,THREADEXIT,
-                          STARTTHREAD,JOINTHREAD,
-                          LOCK_CS,UNLOCK_CS,
-                          LOCK_IO,UNLOCK_IO,
-                          CURLDATA,
-                          CURLINIT,CURLEXIT,
-                          GETURL,CHECKURL);
+   layer->setcallbacks(THREADDATA,
+                       THREADINIT,THREADEXIT,
+                       STARTTHREAD,JOINTHREAD,
+                       LOCK_CS,UNLOCK_CS,
+                       LOCK_IO,UNLOCK_IO,
+                       CURLDATA,
+                       CURLINIT,CURLEXIT,
+                       GETURL,CHECKURL);
 
    // load the tileset layer
-   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset,level))
+   if (!layer->load(baseurl,baseid,basepath1,basepath2,reset,level))
       {
       remove(n);
-      return(FALSE);
+      return(NULL);
       }
 
    // load optional features
-   if (loadopts) LAYER[n]->loadopts();
+   if (loadopts) layer->loadopts();
 
    // propagate parameters
    propagate();
@@ -539,7 +545,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    CACHE->setseacb(preseacb,postseacb,this);
 
    // enable alpha test
-   CACHE->setalphatest((float)254/255);
+   CACHE->setalphatest(TPARAMS.alphathres);
 
    // turn on ray object
    CACHE->setshooting(1);
@@ -555,7 +561,7 @@ BOOLINT miniterrain::load(const char *baseurl,const char *baseid,const char *bas
    update();
 
    // success
-   return(TRUE);
+   return(layer);
    }
 
 // load layered tileset
@@ -563,30 +569,30 @@ BOOLINT miniterrain::loadLTS(const char *url,
                              BOOLINT loadopts,BOOLINT reset,
                              int levels)
    {
-   int i;
-
-   BOOLINT success;
+   int l;
 
    char *layerurl;
    char layerlevel[10];
 
-   for (i=0; i<levels; i++)
+   minilayer *layer;
+
+   for (l=0; l<levels; l++)
       {
-      if (i==0) layerurl=strdup(url);
+      if (l==0) layerurl=strdup(url);
       else
          {
-         snprintf(layerlevel,10,"%d",i);
+         snprintf(layerlevel,10,"%d",l);
          layerurl=strdup2(url,layerlevel);
          }
 
-      success=load(layerurl,loadopts,reset,i);
+      layer=load(layerurl,loadopts,reset,l-levels+1);
 
       free(layerurl);
 
-      if (!success) return(i!=0);
+      if (!layer) break;
       }
 
-   return(TRUE);
+   return(l>0);
    }
 
 // set null layer
@@ -1136,13 +1142,6 @@ void miniterrain::render_postsea()
 BOOLINT miniterrain::istileset(int n)
    {
    if (n>=0 && n<LNUM) return(LAYER[n]->istileset());
-   return(FALSE);
-   }
-
-// check whether or not a layer is a sub tileset
-BOOLINT miniterrain::issubtileset(int n)
-   {
-   if (n>=0 && n<LNUM) return(LAYER[n]->issubtileset());
    return(FALSE);
    }
 

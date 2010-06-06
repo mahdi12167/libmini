@@ -32,6 +32,7 @@ class miniterrain
 
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
+      BOOLINT fade;             //* use spherical fade
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
@@ -86,6 +87,8 @@ class miniterrain
       float overlap;            //* tile overlap in texels
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
+
+      float alphathres;         //+ alpha test threshold
 
       BOOLINT omitsea;          //+ omit sea level when shooting rays
 
@@ -241,14 +244,14 @@ class miniterrain
                      int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data));
 
    //! load tileset (short version)
-   BOOLINT load(const char *url,
-                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                int level=0);
+   minilayer *load(const char *url,
+                   BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                   int level=0);
 
    //! load tileset (long version)
-   BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                int level=0);
+   minilayer *load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
+                   BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                   int level=0);
 
    //! load layered tileset
    BOOLINT loadLTS(const char *url,
@@ -323,9 +326,6 @@ class miniterrain
 
    //! check whether or not a layer is a tileset
    BOOLINT istileset(int n);
-
-   //! check whether or not a layer is a sub tileset
-   BOOLINT issubtileset(int n);
 
    //! determine whether or not a layer is displayed
    void display(int n,BOOLINT visible=TRUE);
