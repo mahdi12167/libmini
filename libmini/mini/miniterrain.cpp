@@ -79,7 +79,7 @@ miniterrain::miniterrain()
 
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
-   TPARAMS.alphathres=254.0/255;   // alpha test threshold
+   TPARAMS.alphathres=254.0f/255;  // alpha test threshold
 
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
@@ -574,8 +574,13 @@ BOOLINT miniterrain::loadLTS(const char *url,
 
    minilayer *layer;
 
+   // set alpha test threshold to total transparency
+   TPARAMS.alphathres=0.0f;
+
+   // load tileset levels
    for (l=0; l<levels; l++)
       {
+      // append layer level to url
       if (l==0) layerurl=strdup(url);
       else
          {
@@ -583,8 +588,10 @@ BOOLINT miniterrain::loadLTS(const char *url,
          layerurl=strdup2(url,layerlevel);
          }
 
+      // load layer with negative levels
       layer=load(layerurl,loadopts,reset,l-levels+1);
 
+      // free layer url
       free(layerurl);
 
       if (!layer) break;
