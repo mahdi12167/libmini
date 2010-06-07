@@ -336,7 +336,7 @@ class minicache
    void disablevtxshader();
 
    void enablepixshader();
-   void setpixshaderprogpar(float s,float o,float lx=0.0f,float ly=0.0f,float lz=0.0f,float ls=0.0f,float lo=1.0f,float a=0.0f,int l=0,int l0=0);
+   void setpixshaderprogpar(float s,float o,int l=0,int l0=0,float lx=0.0f,float ly=0.0f,float lz=0.0f,float ls=0.0f,float lo=1.0f,float a=0.0f);
    void disablepixshader();
 
    void enableseashader();

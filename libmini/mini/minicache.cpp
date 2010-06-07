@@ -699,8 +699,16 @@ void minicache::rendertexmap(int m,int n,int S)
          light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
          light.normalize();
 
-         if (texid==0) setpixshaderprogpar(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level,t->layer_baselevel); // make unspecified texture white
-         else setpixshaderprogpar(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level,t->layer_baselevel);
+         if (texid==0)
+            setpixshaderprogpar(0.0f,1.0f, // make unspecified texture white
+                                t->layer_level,t->layer_baselevel,
+                                light.x,light.y,light.z,t->ls,t->lo,
+                                t->detail_alpha);
+         else
+            setpixshaderprogpar(1.0f,0.0f,
+                                t->layer_level,t->layer_baselevel,
+                                light.x,light.y,light.z,t->ls,t->lo,
+                                t->detail_alpha);
          }
       }
    }
@@ -1811,10 +1819,10 @@ void minicache::enablepixshader()
 
 // set pixel shader program parameters
 void minicache::setpixshaderprogpar(float s,float o,
+                                    int l,int l0,
                                     float lx,float ly,float lz,
                                     float ls,float lo,
-                                    float a,
-                                    int l,int l0)
+                                    float a)
    {
    float l1,l2;
 

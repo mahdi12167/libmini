@@ -232,8 +232,7 @@ class minilayer
                      int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data));
 
    //! load tileset
-   BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
-                BOOLINT reset=FALSE,
+   BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,BOOLINT reset=FALSE,
                 int level=0,int baselevel=0);
 
    //! load optional features
