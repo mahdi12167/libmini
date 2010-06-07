@@ -725,7 +725,6 @@ int minicache::rendertrigger(int phase)
       if (CULLMODE==0) disableculling();
 
       if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
-      if (ALPHATEST==0.0f) enableblending();
 
       if (OPACITY<1.0f)
          {
@@ -752,7 +751,6 @@ int minicache::rendertrigger(int phase)
       if (CULLMODE==0) enableBFculling();
 
       if (ALPHATEST<1.0f) disableAtest();
-      if (ALPHATEST==0.0f) disableblending();
 
       if (OPACITY<1.0f)
          {

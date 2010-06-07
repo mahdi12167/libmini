@@ -25,6 +25,8 @@
 
 #define VIEWER_SEALEVEL -MAXFLOAT
 
+#define VIEWER_LEVELS 5
+
 #define VIEWER_UPLIFT 0.1f
 
 #define VIEWER_MINSPEED 0.05f
@@ -1521,7 +1523,7 @@ int main(int argc,char *argv[])
 
             // identified tileset
             if (argv_type==0)
-               if (!viewer->getearth()->load(argv[i],TRUE,sw_reset))
+               if (!viewer->getearth()->loadLTS(argv[i],TRUE,sw_reset,VIEWER_LEVELS))
                   {
                   printf("unable to load tileset at url=%s\n",argv[i]);
                   exit(1);

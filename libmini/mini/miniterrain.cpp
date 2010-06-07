@@ -581,8 +581,8 @@ int miniterrain::loadLTS(const char *url,
       // enable fade
       TPARAMS.fade=TRUE;
 
-      // set alpha test threshold to full transparency
-      TPARAMS.alphathres=0.0f;
+      // set alpha test threshold to half transparency
+      TPARAMS.alphathres=0.5f;
       }
 
    // load tileset levels
