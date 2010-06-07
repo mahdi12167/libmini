@@ -19,7 +19,6 @@ miniearth::miniearth()
 
    EPARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    EPARAMS.nonlin=FALSE;  // use non-linear warp
-   EPARAMS.fade=FALSE;    // use spherical fade
 
    EPARAMS.fps=25.0f;     // frames per second (target frame rate)
 
@@ -193,10 +192,8 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    else tparams.warpmode=EPARAMS.warpmode;
 
    tparams.nonlin=EPARAMS.nonlin;
-   tparams.fade=EPARAMS.fade;
 
    if (EPARAMS.nonlin ||
-       EPARAMS.fade ||
        EPARAMS.usediffuse ||
        EPARAMS.usedetail) tparams.useshaders=TRUE;
 
@@ -243,9 +240,9 @@ minilayer *miniearth::load(const char *baseurl,const char *baseid,const char *ba
    }
 
 // load layered tileset
-BOOLINT miniearth::loadLTS(const char *url,
-                           BOOLINT loadopts,BOOLINT reset,
-                           int levels)
+int miniearth::loadLTS(const char *url,
+                       BOOLINT loadopts,BOOLINT reset,
+                       int levels)
    {
    // propagate the parameters
    propagate();
