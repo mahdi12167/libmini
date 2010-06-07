@@ -25,7 +25,7 @@ miniterrain::miniterrain()
    TPARAMS.nonlin=FALSE;           // use non-linear warp
 
    TPARAMS.fade=FALSE;             // use spherical fade
-   TPARAMS.fadeout=0.05f;          // fadout out distance relative to far plane
+   TPARAMS.fadeout=0.01f;          // fadeout out distance relative to far plane
 
    TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
