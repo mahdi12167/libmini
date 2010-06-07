@@ -65,7 +65,6 @@ class minilayer
 
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
-      BOOLINT fade;             //* use spherical fade
 
       float vicinity;           //+ projected vicinity of flat warp mode relative to earth radius
 
@@ -307,6 +306,9 @@ class minilayer
 
    //! check whether or not the layer is culled
    BOOLINT isculled();
+
+   //! get the layer level
+   int getlevel();
 
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);

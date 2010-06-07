@@ -61,7 +61,6 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    LPARAMS.nonlin=FALSE;           // use non-linear warp
-   LPARAMS.fade=FALSE;             // use spherical fade
 
    LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
 
@@ -121,7 +120,7 @@ minilayer::minilayer(minicache *cache)
 
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
-   LPARAMS.level=0;                // layer level affects farp and fade radius
+   LPARAMS.level=0;                // layer level affects farp (2^level*farp)
 
    LPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
    LPARAMS.automipmap=FALSE;       // auto mip-map raw textures
@@ -1617,6 +1616,13 @@ BOOLINT minilayer::isculled()
    if (dir*nrm<-extent/length-LPARAMS.cullslope) return(TRUE);
 
    return(FALSE);
+   }
+
+// get the layer level
+int minilayer::getlevel()
+   {
+   if (!LOADED || TERRAIN==NULL) return(0);
+   return(LPARAMS.level);
    }
 
 // flatten the terrain by a relative scaling factor (in the range [0-1])
