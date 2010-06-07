@@ -971,7 +971,7 @@ void miniterrain::render()
          minishader::setseamode(TPARAMS.seamode);
 
          // set fade mode
-         minishader::setfademode(TPARAMS.fade,(1.0-TPARAMS.fadeout)*TPARAMS.farp/TPARAMS.scale,TPARAMS.farp/TPARAMS.scale);
+         minishader::setfademode(TPARAMS.fade,(1.0-TPARAMS.fadeout)*TPARAMS.farp,TPARAMS.farp);
 
          // choose shader
          if (TPARAMS.usevisshader)
