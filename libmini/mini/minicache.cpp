@@ -1826,7 +1826,7 @@ void minicache::setpixshaderprogpar(float s,float o,
 
    if (FRGPROGID!=0 || SEAPROGID!=0)
       {
-      l1=fpow(2.0f,l);
+      l1=fpow(2.0f,-l);
       l2=(l==l0)?MAXFLOAT:2.0f;
 
       setfrgprogpar(0,s,o,l1,l2); // color scale/offset and layer level
