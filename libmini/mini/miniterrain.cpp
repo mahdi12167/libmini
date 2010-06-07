@@ -23,7 +23,9 @@ miniterrain::miniterrain()
 
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    TPARAMS.nonlin=FALSE;           // use non-linear warp
+
    TPARAMS.fade=FALSE;             // use spherical fade
+   TPARAMS.fadeout=0.05f;          // fadout out distance relative to far plane
 
    TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
@@ -303,7 +305,6 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.warpmode=TPARAMS.warpmode;
          lparams.nonlin=TPARAMS.nonlin;
-         lparams.fade=TPARAMS.fade;
 
          lparams.scale=TPARAMS.scale;
          lparams.exaggeration=TPARAMS.exaggeration;
@@ -448,7 +449,7 @@ void miniterrain::setcallbacks(void *threaddata,
 // load tileset (short version)
 minilayer *miniterrain::load(const char *url,
                              BOOLINT loadopts,BOOLINT reset,
-                             int level)
+                             int level,int baselevel)
    {
    char *baseurl;
    char *lastslash,*lastbslash;
@@ -486,7 +487,7 @@ minilayer *miniterrain::load(const char *url,
    else baseid=strdup("/");
 
    // load tileset
-   layer=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset,level);
+   layer=load(baseurl,baseid,TPARAMS.elevdir,TPARAMS.imagdir,loadopts,reset,level,baselevel);
 
    free(baseurl);
    free(baseid);
@@ -497,7 +498,7 @@ minilayer *miniterrain::load(const char *url,
 // load tileset (long version)
 minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                              BOOLINT loadopts,BOOLINT reset,
-                             int level)
+                             int level,int baselevel)
    {
    int n;
 
@@ -524,7 +525,7 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
                           GETURL,CHECKURL);
 
    // load the tileset layer
-   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset,level))
+   if (!LAYER[n]->load(baseurl,baseid,basepath1,basepath2,reset,level,baselevel))
       {
       remove(n);
       return(NULL);
@@ -563,9 +564,9 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    }
 
 // load layered tileset
-BOOLINT miniterrain::loadLTS(const char *url,
-                             BOOLINT loadopts,BOOLINT reset,
-                             int levels)
+int miniterrain::loadLTS(const char *url,
+                         BOOLINT loadopts,BOOLINT reset,
+                         int levels)
    {
    int l;
 
@@ -574,8 +575,15 @@ BOOLINT miniterrain::loadLTS(const char *url,
 
    minilayer *layer;
 
-   // set alpha test threshold to total transparency
-   TPARAMS.alphathres=0.0f;
+   // enable fade for multiple levels
+   if (levels>1)
+      {
+      // enable fade
+      TPARAMS.fade=TRUE;
+
+      // set alpha test threshold to full transparency
+      TPARAMS.alphathres=0.0f;
+      }
 
    // load tileset levels
    for (l=0; l<levels; l++)
@@ -589,7 +597,7 @@ BOOLINT miniterrain::loadLTS(const char *url,
          }
 
       // load layer with negative levels
-      layer=load(layerurl,loadopts,reset,l-levels+1);
+      layer=load(layerurl,loadopts,reset,l-levels+1,-levels+1);
 
       // free layer url
       free(layerurl);
@@ -597,7 +605,7 @@ BOOLINT miniterrain::loadLTS(const char *url,
       if (!layer) break;
       }
 
-   return(l>0);
+   return(l);
    }
 
 // set null layer
@@ -962,6 +970,10 @@ void miniterrain::render()
          // set sea surface mode
          minishader::setseamode(TPARAMS.seamode);
 
+         // set fade mode
+         minishader::setfademode(TPARAMS.fade,(1.0-TPARAMS.fadeout)*TPARAMS.farp/TPARAMS.scale,TPARAMS.farp/TPARAMS.scale);
+
+         // choose shader
          if (TPARAMS.usevisshader)
             {
             // set contour line mode
@@ -1031,6 +1043,12 @@ void miniterrain::render()
                   else
                      CACHE->setlight(LAYER[n]->getterrain()->getminitile(),
                                      0.0f,0.0f,0.0f,0.0f,1.0f);
+
+         // set level parameters
+         for (n=0; n<LNUM; n++)
+            if (LAYER[n]->istileset())
+               CACHE->setpixshaderlayerlevel(LAYER[n]->getterrain()->getminitile(),
+                                             LAYER[n]->getlevel(),LAYER[n]->getbaselevel());
          }
       else
          {
@@ -1078,11 +1096,13 @@ int miniterrain::checkpatch(int n)
    ext2=LAYER[n]->getextent().getlength2();
    midp=LAYER[n]->getcenter();
 
-   for (i=0; i<LNUM; i++)
-      if (i!=n)
-         if (LAYER[i]->isdisplayed())
-            if (LAYER[i]->getextent().getlength2()>ext2)
-               if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
+   if (LAYER[n]->getlevel()==LAYER[n]->getbaselevel())
+      for (i=0; i<LNUM; i++)
+         if (i!=n)
+            if (LAYER[i]->isdisplayed())
+               if (LAYER[i]->getlevel()==LAYER[i]->getbaselevel())
+                  if (LAYER[i]->getextent().getlength2()>ext2)
+                     if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
 
    return(0);
    }

@@ -32,7 +32,9 @@ class miniterrain
 
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
+
       BOOLINT fade;             //* use spherical fade
+      float fadeout;            //* fadout out distance relative to far plane
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
@@ -246,17 +248,17 @@ class miniterrain
    //! load tileset (short version)
    minilayer *load(const char *url,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                   int level=0);
+                   int level=0,int baselevel=0);
 
    //! load tileset (long version)
    minilayer *load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                   int level=0);
+                   int level=0,int baselevel=0);
 
    //! load layered tileset
-   BOOLINT loadLTS(const char *url,
-                   BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                   int levels=1);
+   int loadLTS(const char *url,
+               BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+               int levels=1);
 
    //! create empty layer
    minilayer *create(minicoord &center,minicoord &north);
