@@ -218,25 +218,25 @@ void miniearth::initOGL()
 // load tileset (short version)
 minilayer *miniearth::load(const char *url,
                            BOOLINT loadopts,BOOLINT reset,
-                           int level)
+                           int level,int baselevel)
    {
    // propagate the parameters
    propagate();
 
    // load the tileset layer
-   return(TERRAIN->load(url,loadopts,reset,level));
+   return(TERRAIN->load(url,loadopts,reset,level,baselevel));
    }
 
 // load tileset (long version)
 minilayer *miniearth::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                            BOOLINT loadopts,BOOLINT reset,
-                           int level)
+                           int level,int baselevel)
    {
    // propagate the parameters
    propagate();
 
    // load the tileset layer
-   return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset,level));
+   return(TERRAIN->load(baseurl,baseid,basepath1,basepath2,loadopts,reset,level,baselevel));
    }
 
 // load layered tileset

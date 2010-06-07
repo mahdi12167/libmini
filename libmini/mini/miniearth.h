@@ -127,12 +127,12 @@ class miniearth
    //! load tileset (short version)
    minilayer *load(const char *url,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                   int level=0);
+                   int level=0,int baselevel=0);
 
    //! load tileset (long version)
    minilayer *load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-                   int level=0);
+                   int level=0,int baselevel=0);
 
    //! load layered tileset
    int loadLTS(const char *url,

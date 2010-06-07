@@ -46,7 +46,7 @@ void minishader::setVISshader(minicache *cache,
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float sea_a,sea_b;
-   float fade_a,fade_b;
+   float fade_a,fade_b,fade_c,fade_d;
 
    // fragment program for the terrain (initializer snippet, load color)
    static const char *frgprog1_i="!!ARBfp1.0 \n\
@@ -162,8 +162,11 @@ void minishader::setVISshader(minicache *cache,
    static const char *frgprog_a="\
       ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
-      MUL fade.x,fade.x,a.w; \n\
+      MUL fade.x,fade.x,a.z; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
+      LRP col.a,fade.x,col.a,0.0; \n\
+      MUL fade.x,fade.x,a.w; \n\
+      MAD_SAT fade.x,fade.x,c6.z,c6.w; \n\
       LRP col.a,fade.x,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
@@ -310,11 +313,15 @@ void minishader::setVISshader(minicache *cache,
       {
       fade_a=scale/(FADESTART-FADEEND);
       fade_b=FADEEND/(FADEEND-FADESTART);
+      fade_c=scale/(FADEEND-FADESTART);
+      fade_d=FADESTART/(FADESTART-FADEEND)+1.0f;
       }
    else
       {
       fade_a=0.0f;
       fade_b=0.0f;
+      fade_c=0.0f;
+      fade_d=0.0f;
       }
 
    // concatenate pixel shader
@@ -339,7 +346,7 @@ void minishader::setVISshader(minicache *cache,
    cache->setpixshaderparams(fog_a,fog_b,fog_c,DETAILTEXALPHA,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
    cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
-   cache->setpixshaderparams(fade_a,fade_b,0.0f,0.0f,6);
+   cache->setpixshaderparams(fade_a,fade_b,fade_c,fade_d,6);
    cache->usepixshader(1);
    free(frgprog);
 
@@ -351,7 +358,7 @@ void minishader::setVISshader(minicache *cache,
    cache->setseashaderparams(seamodulate,0.0f,0.0f,0.0f);
    cache->setseashaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setseashaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
-   cache->setseashaderparams(fade_a,fade_b,0.0f,0.0f,6);
+   cache->setseashaderparams(fade_a,fade_b,fade_c,fade_d,6);
    cache->useseashader(1);
    free(frgprog);
 
@@ -403,7 +410,7 @@ void minishader::setNPRshader(minicache *cache,
    float bathy_a,bathy_b,bathy_c;
    float cnt_a,cnt_b,cnt_c,cnt_d;
    float npr_a,npr_b,npr_c,npr_d;
-   float fade_a,fade_b;
+   float fade_a,fade_b,fade_c,fade_d;
 
    // fragment program for the terrain (initializer snippet, load color)
    static const char *frgprog1_i="!!ARBfp1.0 \n\
@@ -513,8 +520,11 @@ void minishader::setNPRshader(minicache *cache,
    static const char *frgprog_a="\
       ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
-      MUL fade.x,fade.x,a.w; \n\
+      MUL fade.x,fade.x,a.z; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
+      LRP col.a,fade.x,col.a,0.0; \n\
+      MUL fade.x,fade.x,a.w; \n\
+      MAD_SAT fade.x,fade.x,c6.z,c6.w; \n\
       LRP col.a,fade.x,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
@@ -664,11 +674,15 @@ void minishader::setNPRshader(minicache *cache,
       {
       fade_a=scale/(FADESTART-FADEEND);
       fade_b=FADEEND/(FADEEND-FADESTART);
+      fade_c=scale/(FADEEND-FADESTART);
+      fade_d=FADESTART/(FADESTART-FADEEND)+1.0f;
       }
    else
       {
       fade_a=0.0f;
       fade_b=0.0f;
+      fade_c=0.0f;
+      fade_d=0.0f;
       }
 
    // concatenate pixel shader
@@ -689,7 +703,7 @@ void minishader::setNPRshader(minicache *cache,
    cache->setpixshaderparams(fog_a,fog_b,fog_c,DETAILTEXALPHA,3);
    cache->setpixshaderparams(fogcolor[0],fogcolor[1],fogcolor[2],1.0f,4);
    cache->setpixshaderparams(bathy_a,bathy_b,bathy_c,1.0f,5);
-   cache->setpixshaderparams(fade_a,fade_b,0.0f,0.0f,6);
+   cache->setpixshaderparams(fade_a,fade_b,fade_c,fade_d,6);
    cache->usepixshader(1);
    free(frgprog);
 
@@ -701,7 +715,7 @@ void minishader::setNPRshader(minicache *cache,
    cache->setseashaderparams(0.0f,0.0f,0.0f,0.0f);
    cache->setseashaderparams(fog_a,fog_b,fog_c,0.0f,3);
    cache->setseashaderparams(fogcolor[0],fogcolor[1],fogcolor[2],0.0f,4);
-   cache->setseashaderparams(fade_a,fade_b,0.0f,0.0f,6);
+   cache->setseashaderparams(fade_a,fade_b,fade_c,fade_d,6);
    cache->useseashader(1);
    free(frgprog);
 

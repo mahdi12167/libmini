@@ -121,6 +121,7 @@ minilayer::minilayer(minicache *cache)
    LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
    LPARAMS.level=0;                // layer level affects farp (2^level*farp)
+   LPARAMS.baselevel=0;            // base layer level
 
    LPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
    LPARAMS.automipmap=FALSE;       // auto mip-map raw textures
@@ -455,7 +456,7 @@ void minilayer::setcallbacks(void *threaddata,
 // load tileset
 BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                         BOOLINT reset,
-                        int level)
+                        int level,int baselevel)
    {
    int success;
 
@@ -687,6 +688,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
 
    // set layer level
    LPARAMS.level=level;
+   LPARAMS.baselevel=baselevel;
 
    // set extent of tileset
    LPARAMS.extent[0]=LPARAMS.cols*outparams[0];
@@ -742,7 +744,7 @@ void minilayer::loadopts()
    {
    if (!LOADED || TILECACHE==NULL) return;
 
-   if (LPARAMS.level!=0) return;
+   if (LPARAMS.level!=LPARAMS.baselevel) return;
 
    // load waypoints:
 
@@ -1625,6 +1627,13 @@ int minilayer::getlevel()
    return(LPARAMS.level);
    }
 
+// get the base layer level
+int minilayer::getbaselevel()
+   {
+   if (!LOADED || TERRAIN==NULL) return(0);
+   return(LPARAMS.baselevel);
+   }
+
 // flatten the terrain by a relative scaling factor (in the range [0-1])
 void minilayer::flatten(float relscale)
    {
@@ -1778,7 +1787,7 @@ void minilayer::renderpoints()
 
    if (!LOADED || POINTS==NULL || !VISIBLE) return;
 
-   if (LPARAMS.level!=0) return;
+   if (LPARAMS.level!=LPARAMS.baselevel) return;
 
    if (LPARAMS.usewaypoints)
       {

@@ -122,7 +122,8 @@ class minilayer
 
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
 
-      int level;                //* layer level affects farp and fade radius
+      int level;                //* layer level affects farp
+      int baselevel;            //* base layer level
 
       BOOLINT genmipmaps;       //+ enable on-the-fly generation of mipmaps
       BOOLINT automipmap;       //+ auto mip-map raw textures
@@ -233,7 +234,7 @@ class minilayer
    //! load tileset
    BOOLINT load(const char *baseurl,const char *baseid,const char *basepath1,const char *basepath2,
                 BOOLINT reset=FALSE,
-                int level=0);
+                int level=0,int baselevel=0);
 
    //! load optional features
    void loadopts();
@@ -309,6 +310,9 @@ class minilayer
 
    //! get the layer level
    int getlevel();
+
+   //! get the base layer level
+   int getbaselevel();
 
    //! flatten the terrain by a relative scaling factor (in the range [0-1])
    void flatten(float relscale);

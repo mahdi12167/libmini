@@ -212,6 +212,7 @@ void minicache::initterrain(TERRAIN_TYPE *t)
    t->detail_nofree=0;
 
    t->layer_level=0;
+   t->layer_baselevel=0;
    }
 
 // free terrain
@@ -698,8 +699,8 @@ void minicache::rendertexmap(int m,int n,int S)
          light=miniv3d(MVINVTRA[0]*light,MVINVTRA[1]*light,MVINVTRA[2]*light);
          light.normalize();
 
-         if (texid==0) setpixshaderprogpar(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level); // make unspecified texture white
-         else setpixshaderprogpar(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level);
+         if (texid==0) setpixshaderprogpar(0.0f,1.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level,t->layer_baselevel); // make unspecified texture white
+         else setpixshaderprogpar(1.0f,0.0f,light.x,light.y,light.z,t->ls,t->lo,t->detail_alpha,t->layer_level,t->layer_baselevel);
          }
       }
    }
@@ -1650,13 +1651,14 @@ void minicache::setpixshadertexalpha(minitile *terrain,float alpha)
    }
 
 // define layer level
-void minicache::setpixshaderlayerlevel(minitile *terrain,int level)
+void minicache::setpixshaderlayerlevel(minitile *terrain,int level,int baselevel)
    {
    TERRAIN_TYPE *t;
 
    t=&TERRAIN[terrain->getid()];
 
    t->layer_level=level;
+   t->layer_baselevel=baselevel;
    }
 
 // define RGB detail texture per tileset
@@ -1810,11 +1812,16 @@ void minicache::setpixshaderprogpar(float s,float o,
                                     float lx,float ly,float lz,
                                     float ls,float lo,
                                     float a,
-                                    int l)
+                                    int l,int l0)
    {
+   float l1,l2;
+
    if (FRGPROGID!=0 || SEAPROGID!=0)
       {
-      setfrgprogpar(0,s,o,0.0f,fpow(2.0,l)); // color scale/offset and layer level
+      l1=fpow(2.0f,l);
+      l2=(l==l0)?MAXFLOAT:2.0f;
+
+      setfrgprogpar(0,s,o,l1,l2); // color scale/offset and layer level
 
       setfrgprogpar(2,lx,ly,lz,0.0f); // light direction
       setfrgprogpar(3,ls,lo,0.0f,0.0f); // light scale and offset

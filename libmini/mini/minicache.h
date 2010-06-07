@@ -93,7 +93,7 @@ class minicache
    void setpixshaderdetailtexRGBA(minitile *terrain,unsigned char *image,int width,int height,int mipmaps=1);
    void setpixshaderdetailtexid(minitile *terrain,int texid,int width,int height,int mipmaps);
    void setpixshadertexalpha(minitile *terrain,float alpha);
-   void setpixshaderlayerlevel(minitile *terrain,int level);
+   void setpixshaderlayerlevel(minitile *terrain,int level,int baselevel);
    void usepixshader(int on=1);
 
    //! define optional sea shader
@@ -197,6 +197,7 @@ class minicache
       int detail_nofree;
 
       int layer_level;
+      int layer_baselevel;
       };
 
    typedef TERRAIN_STRUCT TERRAIN_TYPE;
@@ -335,7 +336,7 @@ class minicache
    void disablevtxshader();
 
    void enablepixshader();
-   void setpixshaderprogpar(float s,float o,float lx=0.0f,float ly=0.0f,float lz=0.0f,float ls=0.0f,float lo=1.0f,float a=0.0f,int l=0);
+   void setpixshaderprogpar(float s,float o,float lx=0.0f,float ly=0.0f,float lz=0.0f,float ls=0.0f,float lo=1.0f,float a=0.0f,int l=0,int l0=0);
    void disablepixshader();
 
    void enableseashader();
