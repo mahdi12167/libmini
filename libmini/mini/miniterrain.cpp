@@ -32,7 +32,7 @@ miniterrain::miniterrain()
    TPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
 
    TPARAMS.load=1E-9f;             // initially loaded area relative to far plane
-   TPARAMS.preload=1.25f;          // continuously preloaded area relative to far plane
+   TPARAMS.preload=1.5f;           // continuously preloaded area relative to far plane
 
    TPARAMS.minres=9.0f;            // minimum resolution of triangulation
    TPARAMS.fastinit=1;             // fast initialization level
@@ -581,8 +581,8 @@ int miniterrain::loadLTS(const char *url,
       // enable fade
       TPARAMS.fade=TRUE;
 
-      // set alpha test threshold to half transparency
-      TPARAMS.alphathres=0.5f;
+      // set alpha test threshold to full transparency
+      TPARAMS.alphathres=0.0f;
       }
 
    // load tileset levels
