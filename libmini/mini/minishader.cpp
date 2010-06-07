@@ -62,6 +62,7 @@ void minishader::setVISshader(minicache *cache,
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,colt,colb,nrm,vtx,len,crd,opa,fog,fade; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
@@ -159,8 +160,9 @@ void minishader::setVISshader(minicache *cache,
 
    // fragment program for the terrain (alpha snippet, spherical fade)
    static const char *frgprog_a="\
-      ### spherical fade out \n\
+      ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
+      MUL fade.x,fade.x,a.w; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
       LRP col.a,fade.x,col.a,0.0; \n";
 
@@ -202,6 +204,7 @@ void minishader::setVISshader(minicache *cache,
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,colt,nrm,len,fog,fade,pos; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
@@ -416,6 +419,7 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,colt,nrm,vtx,len,crd,opa,fog,fade; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
@@ -507,8 +511,9 @@ void minishader::setNPRshader(minicache *cache,
 
    // fragment program for the terrain (alpha snippet, spherical fade)
    static const char *frgprog_a="\
-      ### spherical fade out \n\
+      ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
+      MUL fade.x,fade.x,a.w; \n\
       MAD_SAT fade.x,fade.x,c6.x,c6.y; \n\
       LRP col.a,fade.x,col.a,0.0; \n";
 
@@ -550,6 +555,7 @@ void minishader::setNPRshader(minicache *cache,
       PARAM c4=program.env[9]; \n\
       PARAM c5=program.env[10]; \n\
       PARAM c6=program.env[11]; \n\
+      PARAM c7=program.env[12]; \n\
       TEMP col,colt,nrm,len,fog,fade,pos; \n\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n";
