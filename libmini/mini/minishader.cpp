@@ -162,11 +162,11 @@ void minishader::setVISshader(minicache *cache,
    static const char *frgprog_a="\
       ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
-      MUL fade.x,fade.x,a.z; \n\
-      MAD_SAT fade.w,fade.x,c6.x,c6.y; \n\
+      MUL fade.w,fade.x,a.z; \n\
+      MAD_SAT fade.w,fade.w,c6.x,c6.y; \n\
       LRP col.a,fade.w,col.a,0.0; \n\
-      MUL fade.x,fade.x,a.w; \n\
-      MAD_SAT fade.w,fade.x,c6.z,c6.w; \n\
+      MUL fade.w,fade.x,a.w; \n\
+      MAD_SAT fade.w,fade.w,c6.z,c6.w; \n\
       LRP col.a,fade.w,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
@@ -520,11 +520,11 @@ void minishader::setNPRshader(minicache *cache,
    static const char *frgprog_a="\
       ### spherical fade \n\
       POW fade.x,fragment.fogcoord.x,0.5; \n\
-      MUL fade.x,fade.x,a.z; \n\
-      MAD_SAT fade.w,fade.x,c6.x,c6.y; \n\
+      MUL fade.w,fade.x,a.z; \n\
+      MAD_SAT fade.w,fade.w,c6.x,c6.y; \n\
       LRP col.a,fade.w,col.a,0.0; \n\
-      MUL fade.x,fade.x,a.w; \n\
-      MAD_SAT fade.w,fade.x,c6.z,c6.w; \n\
+      MUL fade.w,fade.x,a.w; \n\
+      MAD_SAT fade.w,fade.w,c6.z,c6.w; \n\
       LRP col.a,fade.w,col.a,0.0; \n";
 
    // fragment program for the terrain (terminator snippet #1, directional shading)
