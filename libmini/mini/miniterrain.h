@@ -33,8 +33,8 @@ class miniterrain
       int warpmode;             //* warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
       BOOLINT nonlin;           //* use non-linear warp
 
-      BOOLINT fade;             //* use spherical fade
-      float fadeout;            //* fadout out distance relative to far plane
+      int fademode;             //* spherical fade mode: off=0 single=1 double=2
+      float fadeout;            //* fadeout out distance relative to far plane
 
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations

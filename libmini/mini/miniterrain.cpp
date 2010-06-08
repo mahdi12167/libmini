@@ -24,7 +24,7 @@ miniterrain::miniterrain()
    TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
    TPARAMS.nonlin=FALSE;           // use non-linear warp
 
-   TPARAMS.fade=FALSE;             // use spherical fade
+   TPARAMS.fademode=0;             // spherical fade mode: off=0 single=1 double=2
    TPARAMS.fadeout=0.01f;          // fadeout out distance relative to far plane
 
    TPARAMS.scale=1.0f;             // scaling of scene
@@ -579,7 +579,7 @@ int miniterrain::loadLTS(const char *url,
    if (levels>1)
       {
       // enable fade
-      TPARAMS.fade=TRUE;
+      TPARAMS.fademode=2;
 
       // set alpha test threshold to full transparency
       TPARAMS.alphathres=0.0f;
@@ -971,7 +971,7 @@ void miniterrain::render()
          minishader::setseamode(TPARAMS.seamode);
 
          // set fade mode
-         minishader::setfademode(TPARAMS.fade,(1.0-TPARAMS.fadeout)*TPARAMS.farp,TPARAMS.farp);
+         minishader::setfademode(TPARAMS.fademode,(1.0-TPARAMS.fadeout)*TPARAMS.farp,TPARAMS.farp);
 
          // choose shader
          if (TPARAMS.usevisshader)
