@@ -1301,6 +1301,7 @@ void minicache::initshader()
       POW dist.x,dist.x,0.5; \n\
       ### subduct vertex along normal \n\
       MUL dist.y,e.z,e.x; \n\
+      MUL dist.y,dist.y,e.w; \n\
       MAD dist.x,dist.x,-e.w,dist.y; \n\
       MAX dist.x,dist.x,0.0; \n\
       MAD vtx.xyz,-nrm,dist.x,vtx; \n";
