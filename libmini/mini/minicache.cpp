@@ -1296,8 +1296,14 @@ void minicache::initshader()
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
       DP4 pos.z,matrix[2],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
       ### calculate spherical distance \n\
       DP3 dist.x,pos,pos; \n\
+      DP3 dist.y,pos,vec; \n\
+      SUB dist.x,dist.x,dist.y; \n\
       POW dist.x,dist.x,0.5; \n\
       ### subduct vertex along normal \n\
       MUL dist.y,e.z,e.x; \n\
