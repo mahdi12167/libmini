@@ -1435,9 +1435,31 @@ void miniterrain::loaddetailtex(int n,
                                 const char *detailname,
                                 float alpha)
    {
+   int texid,width,height,mipmaps;
+   BOOLINT owner;
+   minicoord center,west,north;
+
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
+         {
          LAYER[n]->loaddetailtex(detailname,alpha);
+
+         LAYER[n]->getdetailtex(texid,width,height,mipmaps,owner,
+                                center,west,north,
+                                alpha);
+
+         while (LAYER[n]->getlevel()!=LAYER[n]->getbaselevel())
+            {
+            n--;
+
+            if (n<0 || n>=LNUM) break;
+            if (!LAYER[n]->istileset()) break;
+
+            LAYER[n]->attachdetailtex(texid,width,height,mipmaps,FALSE,
+                                      center,west,north,
+                                      alpha);
+            }
+         }
    }
 
 // register waypoint renderer
