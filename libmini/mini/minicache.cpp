@@ -688,19 +688,17 @@ void minicache::rendertexmap(int m,int n,int S)
 
       if (t->render_phase==2 || CONFIGURE_SEAENABLETEX!=0)
          if (USEVTXSHADER==0) bindtexmap(texid,texw,texh,S,texmm);
-         else
-            {
-            bindtexmap(texid,texw,texh,0,texmm);
-
-            setvtxshaderprogpar(1.0f/(S-1)*(texw-1)/texw,
-                                -1.0f/(S-1)*(texh-1)/texh,
-                                0.5f/texw,
-                                1.0f-0.5f/texh,
-                                t->layer_level,t->layer_baselevel,
-                                SUBDUCT_D,SUBDUCT_F,
-                                t->scale);
-            }
+         else bindtexmap(texid,texw,texh,0,texmm);
       else texid=0;
+
+      if (USEVTXSHADER!=0)
+         setvtxshaderprogpar(1.0f/(S-1)*(texw-1)/texw,
+                             -1.0f/(S-1)*(texh-1)/texh,
+                             0.5f/texw,
+                             1.0f-0.5f/texh,
+                             t->layer_level,t->layer_baselevel,
+                             SUBDUCT_D,SUBDUCT_F,
+                             t->scale);
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
          {
