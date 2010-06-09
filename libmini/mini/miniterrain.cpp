@@ -85,6 +85,7 @@ miniterrain::miniterrain()
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
    TPARAMS.alphathres=254.0f/255;  // alpha test threshold
+   TPARAMS.seaalphathres=1.0f;     // sea alpha test threshold
 
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
@@ -551,6 +552,9 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    // enable alpha test
    CACHE->setalphatest(TPARAMS.alphathres);
 
+   // enable sea alpha test
+   CACHE->setseaalphatest(TPARAMS.seaalphathres);
+
    // turn on ray object
    CACHE->setshooting(1);
    CACHE->configure_omitsea(TPARAMS.omitsea);
@@ -591,6 +595,9 @@ minilayer *miniterrain::loadLTS(const char *url,
 
       // set alpha test threshold to full transparency
       TPARAMS.alphathres=0.0f;
+
+      // set sea alpha test threshold to sea opacity
+      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
 
       // enable spherical subduction
       TPARAMS.submode=1;

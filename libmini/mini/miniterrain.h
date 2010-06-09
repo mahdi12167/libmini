@@ -94,6 +94,7 @@ class miniterrain
       float sealevel;           //* sea-level height in meters (off=-MAXFLOAT)
 
       float alphathres;         //+ alpha test threshold
+      float seaalphathres;      //+ sea alpha test threshold
 
       BOOLINT omitsea;          //+ omit sea level when shooting rays
 

@@ -37,6 +37,8 @@ minicache::minicache()
    SEA_B=1.0f;
    SEA_A=1.0f;
 
+   SEAALPHATEST=1.0f;
+
    PRISM_R=PRISM_G=PRISM_B=1.0f;
    PRISM_A=0.9f;
 
@@ -759,6 +761,8 @@ int minicache::rendertrigger(int phase)
 
       if (ALPHATEST<1.0f) disableAtest();
 
+      if (SEAALPHATEST<1.0f) enableAtest(SEAALPHATEST);
+
       if (OPACITY<1.0f)
          {
          if (OPACITY<=0.0f) enableRGBAwriting();
@@ -808,6 +812,8 @@ int minicache::rendertrigger(int phase)
    else if (phase==4)
       {
       if (CONFIGURE_SEATWOSIDED!=0) enableBFculling();
+
+      if (SEAALPHATEST<1.0f) disableAtest();
 
       if (SEA_A!=1.0f) disableblending();
 
@@ -1163,6 +1169,10 @@ void minicache::setseacolor(float r,float g,float b,float a)
    SEA_B=b;
    SEA_A=a;
    }
+
+// define sea alpha test threshold
+void minicache::setseaalphatest(float alpha)
+   {SEAALPHATEST=alpha;}
 
 // define rendering color of prism boundary
 void minicache::setprismcolor(float prismR,float prismG,float prismB,float prismA)
