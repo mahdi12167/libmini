@@ -1726,6 +1726,25 @@ void minilayer::loaddetailtex(const char *detailname,
    }
 
 // get detail texture
+void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps,BOOLINT &owner,
+                             minicoord &center,minicoord &west,minicoord &north,
+                             float &alpha)
+   {
+   texid=DETAILTEXID;
+   width=DETAILWIDTH;
+   height=DETAILHEIGHT;
+   mipmaps=DETAILMIPMAPS;
+
+   owner=DETAILOWNER;
+
+   center=LPARAMS.detailcenter;
+   west=LPARAMS.detailwest;
+   north=LPARAMS.detailnorth;
+
+   alpha=LPARAMS.detailalpha;
+   }
+
+// get detail texture in planar representation
 void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps,
                              miniv4d &planeu,miniv4d &planev,
                              float &alpha)

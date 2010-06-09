@@ -332,6 +332,11 @@ class minilayer
                       float alpha=1.0f);
 
    //! get detail texture
+   void getdetailtex(int &texid,int &width,int &height,int &mipmaps,BOOLINT &owner,
+                     minicoord &center,minicoord &west,minicoord &north,
+                     float &alpha);
+
+   //! get detail texture in planar representation
    void getdetailtex(int &texid,int &width,int &height,int &mipmaps,
                      miniv4d &planeu,miniv4d &planev,
                      float &alpha);
