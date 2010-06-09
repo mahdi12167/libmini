@@ -569,9 +569,9 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    }
 
 // load layered tileset
-int miniterrain::loadLTS(const char *url,
-                         BOOLINT loadopts,BOOLINT reset,
-                         int levels)
+minilayer *miniterrain::loadLTS(const char *url,
+                                BOOLINT loadopts,BOOLINT reset,
+                                int levels)
    {
    int l;
 
@@ -579,6 +579,9 @@ int miniterrain::loadLTS(const char *url,
    char layerlevel[10];
 
    minilayer *layer;
+   minilayer *toplevel;
+
+   toplevel=NULL;
 
    // enable fade for multiple levels
    if (levels>1)
@@ -614,9 +617,11 @@ int miniterrain::loadLTS(const char *url,
       free(layerurl);
 
       if (!layer) break;
+
+      if (l==0) toplevel=layer;
       }
 
-   return(l);
+   return(toplevel);
    }
 
 // set null layer

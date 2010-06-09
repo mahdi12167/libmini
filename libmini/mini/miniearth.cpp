@@ -240,9 +240,9 @@ minilayer *miniearth::load(const char *baseurl,const char *baseid,const char *ba
    }
 
 // load layered tileset
-int miniearth::loadLTS(const char *url,
-                       BOOLINT loadopts,BOOLINT reset,
-                       int levels)
+minilayer *miniearth::loadLTS(const char *url,
+                              BOOLINT loadopts,BOOLINT reset,
+                              int levels)
    {
    // propagate the parameters
    propagate();
@@ -252,8 +252,8 @@ int miniearth::loadLTS(const char *url,
    }
 
 // load detail texture (db format)
-void miniearth::loaddetail(const char *path,
-                           float alpha)
+void miniearth::loaddetailtex(const char *path,
+                              float alpha)
    {
    TERRAIN->loaddetailtex(TERRAIN->getlnum()-1,path,alpha);
 

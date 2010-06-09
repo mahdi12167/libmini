@@ -1531,7 +1531,7 @@ int main(int argc,char *argv[])
 
             // identified detail
             if (argv_type==1)
-               viewer->getearth()->loaddetail(argv[i]);
+               viewer->getearth()->loaddetailtex(argv[i]);
             }
 
    // load optional features

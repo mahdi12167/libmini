@@ -259,9 +259,9 @@ class miniterrain
                    int level=0,int baselevel=0);
 
    //! load layered tileset
-   int loadLTS(const char *url,
-               BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-               int levels=5);
+   minilayer *loadLTS(const char *url,
+                      BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                      int levels=5);
 
    //! create empty layer
    minilayer *create(minicoord &center,minicoord &north);

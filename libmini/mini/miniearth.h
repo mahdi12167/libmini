@@ -135,13 +135,13 @@ class miniearth
                    int level=0,int baselevel=0);
 
    //! load layered tileset
-   int loadLTS(const char *url,
-               BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
-               int levels=5);
+   minilayer *loadLTS(const char *url,
+                      BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                      int levels=5);
 
    //! load detail texture (db format)
-   void loaddetail(const char *path,
-                   float alpha=1.0f);
+   void loaddetailtex(const char *path,
+                      float alpha=1.0f);
 
    //! load optional features
    void loadopts();
