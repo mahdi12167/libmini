@@ -36,6 +36,9 @@ class miniterrain
       int fademode;             //* spherical fade mode: off=0 single=1 double=2
       float fadeout;            //* fadeout out distance relative to far plane
 
+      int submode;              //* spherical subduction mode: off=0 on=1
+      float subfactor;          //* spherical subduction factor relative to distance
+
       float scale;              //+ scaling of scene
       float exaggeration;       //+ exaggeration of elevations
       float maxelev;            //+ absolute maximum of expected elevations

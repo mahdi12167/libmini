@@ -42,6 +42,9 @@ minicache::minicache()
 
    NONLIN=0;
 
+   SUBDUCT=0;
+   SUBDUCT_D=SUBDUCT_F=0.0f;
+
    PRISMEDGE_CALLBACK=NULL;
    PRISMCACHE_CALLBACK=NULL;
    PRISMRENDER_CALLBACK=NULL;
@@ -51,6 +54,8 @@ minicache::minicache()
 
    VTXPROG_STD_L=NULL;
    VTXPROG_STD_NL=NULL;
+   VTXPROG_STD_L_S=NULL;
+   VTXPROG_STD_NL_S=NULL;
    FRGPROG_STD=NULL;
    SEAPROG_STD=NULL;
 
@@ -132,6 +137,8 @@ minicache::~minicache()
 
    if (VTXPROG_STD_L!=NULL) free(VTXPROG_STD_L);
    if (VTXPROG_STD_NL!=NULL) free(VTXPROG_STD_NL);
+   if (VTXPROG_STD_L_S!=NULL) free(VTXPROG_STD_L_S);
+   if (VTXPROG_STD_NL_S!=NULL) free(VTXPROG_STD_NL_S);
    if (FRGPROG_STD!=NULL) free(FRGPROG_STD);
    if (SEAPROG_STD!=NULL) free(SEAPROG_STD);
 
@@ -685,11 +692,13 @@ void minicache::rendertexmap(int m,int n,int S)
             {
             bindtexmap(texid,texw,texh,0,texmm);
 
-            setvtxshadertexprm(1.0f/(S-1)*(texw-1)/texw,
-                               -1.0f/(S-1)*(texh-1)/texh,
-                               0.5f/texw,
-                               1.0f-0.5f/texh,
-                               t->scale);
+            setvtxshaderprogpar(1.0f/(S-1)*(texw-1)/texw,
+                                -1.0f/(S-1)*(texh-1)/texh,
+                                0.5f/texw,
+                                1.0f-0.5f/texh,
+                                t->layer_level,t->layer_baselevel,
+                                SUBDUCT_D,SUBDUCT_F,
+                                t->scale);
             }
       else texid=0;
 
@@ -1174,6 +1183,19 @@ void minicache::usenonlinear(int on)
 int minicache::getnonlinear()
    {return(NONLIN);}
 
+// enable spherical subduction
+void minicache::usesubduction(int on,float dist,float factor)
+   {
+   SUBDUCT=on;
+
+   SUBDUCT_D=dist;
+   SUBDUCT_F=factor;
+   }
+
+// check for spherical subduction
+int minicache::getsubduction()
+   {return(SUBDUCT);}
+
 // initialize shader programs from snippets
 void minicache::initshader()
    {
@@ -1267,8 +1289,24 @@ void minicache::initshader()
       MUL nrm,pos.y,vec6; \n\
       MAD nrm,gen.y,vec5,nrm; \n";
 
-   // default vertex shader (main snippet #4, linear transformation)
+   // default vertex shader (main snippet #4, vertex subduction)
    static const char *vtxprog_s4="\
+      TEMP dist; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      ### calculate spherical distance \n\
+      DP3 dist.x,pos,pos; \n\
+      POW dist.x,dist.x,0.5; \n\
+      ### subduct vertex along normal \n\
+      MUL dist.y,e.z,e.x; \n\
+      MAD dist.x,dist.x,-e.w,dist.y; \n\
+      MAX dist.x,dist.x,0.0; \n\
+      MAD vtx.xyz,-nrm,dist.x,vtx; \n";
+
+   // default vertex shader (main snippet #5, linear transformation)
+   static const char *vtxprog_s5="\
       ### transform vertex with combined modelview \n\
       DP4 pos.x,mat[0],vtx; \n\
       DP4 pos.y,mat[1],vtx; \n\
@@ -1280,16 +1318,16 @@ void minicache::initshader()
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n";
 
-   // default vertex shader (main snippet #5, write vertex)
-   static const char *vtxprog_s5="\
+   // default vertex shader (main snippet #6, write vertex)
+   static const char *vtxprog_s6="\
       ### write resulting vertex \n\
       MOV result.position,pos; \n\
       MOV result.color,col; \n\
       ### pass normal as tex coords \n\
       MOV result.texcoord[1],vec; \n";
 
-   // default vertex shader (main snippet #6, eye linear coords)
-   static const char *vtxprog_s6="\
+   // default vertex shader (main snippet #7, eye linear coords)
+   static const char *vtxprog_s7="\
       ### calculate eye linear coordinates \n\
       DP4 pos.x,matrix[0],vtx; \n\
       DP4 pos.y,matrix[1],vtx; \n\
@@ -1351,10 +1389,16 @@ void minicache::initshader()
       END \n";
 
    if (VTXPROG_STD_L==NULL)
-      VTXPROG_STD_L=concatprog(8,vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_L=concatprog(9,vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,NULL,vtxprog_s5,vtxprog_s6,vtxprog_s7,vtxprog_t);
 
    if (VTXPROG_STD_NL==NULL)
-      VTXPROG_STD_NL=concatprog(8,vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_t);
+      VTXPROG_STD_NL=concatprog(9,vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,NULL,vtxprog_s5,vtxprog_s6,vtxprog_s7,vtxprog_t);
+
+   if (VTXPROG_STD_L_S==NULL)
+      VTXPROG_STD_L_S=concatprog(9,vtxprog_i,vtxprog_s1,vtxprog_s2,NULL,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_s7,vtxprog_t);
+
+   if (VTXPROG_STD_NL_S==NULL)
+      VTXPROG_STD_NL_S=concatprog(9,vtxprog_i,vtxprog_s1,vtxprog_s2,vtxprog_s3,vtxprog_s4,vtxprog_s5,vtxprog_s6,vtxprog_s7,vtxprog_t);
 
    if (FRGPROG_STD==NULL)
       FRGPROG_STD=concatprog(4,frgprog_i,frgprog_s1,frgprog_s2,frgprog_t);
@@ -1394,8 +1438,12 @@ void minicache::setvtxshader(const char *vp)
    initshader();
 
    if (vp==NULL)
-      if (NONLIN==0) vp=VTXPROG_STD_L;
-      else vp=VTXPROG_STD_NL;
+      if (NONLIN==0)
+         if (SUBDUCT==0) vp=VTXPROG_STD_L;
+         else vp=VTXPROG_STD_L_S;
+      else
+         if (SUBDUCT==0) vp=VTXPROG_STD_NL;
+         else vp=VTXPROG_STD_NL_S;
 
    if (VTXPROG!=NULL)
       {
@@ -1443,13 +1491,18 @@ void minicache::enablevtxshader()
       }
    }
 
-// set vertex shader texture mapping parameters
-void minicache::setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale)
+// set vertex shader program parameters
+void minicache::setvtxshaderprogpar(float s1,float s2,float o1,float o2,int l,int l0,float d,float f,float scale)
    {
+   float l1,l2;
+
    if (VTXPROGID!=0)
       {
+      l1=fpow(2.0f,l);
+      l2=(l==l0)?0.0f:0.5f*l1;
+
       setvtxprogpar(0,s1,s2,o1,o2); // texgen scale and offset
-      setvtxprogpar(1,0.0f,scale,0.0f,0.0f); // elevation scale
+      setvtxprogpar(1,l2,scale,d,f); // elevation scale and layer level
       }
    }
 

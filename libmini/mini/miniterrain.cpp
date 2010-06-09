@@ -27,6 +27,9 @@ miniterrain::miniterrain()
    TPARAMS.fademode=0;             // spherical fade mode: off=0 single=1 double=2
    TPARAMS.fadeout=0.01f;          // fadeout out distance relative to far plane
 
+   TPARAMS.submode=0;              // spherical subduction mode: off=0 on=1
+   TPARAMS.subfactor=0.1f;         // spherical subduction factor relative to distance
+
    TPARAMS.scale=1.0f;             // scaling of scene
    TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
    TPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
@@ -578,11 +581,14 @@ int miniterrain::loadLTS(const char *url,
    // enable fade for multiple levels
    if (levels>1)
       {
-      // enable fade
-      TPARAMS.fademode=2;
+      // enable spherical fade
+      TPARAMS.fademode=1;
 
       // set alpha test threshold to full transparency
       TPARAMS.alphathres=0.0f;
+
+      // enable spherical subduction
+      TPARAMS.submode=1;
       }
 
    // load tileset levels
@@ -1049,6 +1055,9 @@ void miniterrain::render()
             if (LAYER[n]->istileset())
                CACHE->setpixshaderlayerlevel(LAYER[n]->getterrain()->getminitile(),
                                              LAYER[n]->getlevel(),LAYER[n]->getbaselevel());
+
+         // set subduction parameters
+         CACHE->usesubduction(TPARAMS.submode,TPARAMS.farp/TPARAMS.scale,TPARAMS.subfactor);
          }
       else
          {

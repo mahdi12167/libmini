@@ -76,6 +76,12 @@ class minicache
    //! check for non-linear warp
    int getnonlinear();
 
+   //! enable spherical subduction
+   void usesubduction(int on=0,float dist=0.0f,float factor=0.0f);
+
+   //! check for spherical subduction
+   int getsubduction();
+
    //! define optional vertex shader
    void setvtxshader(const char *vtxprog=0);
    void setvtxshaderparams(float p1=0.0f,float p2=0.0f,float p3=0.0f,float p4=0.0f,int n=0);
@@ -242,8 +248,13 @@ class minicache
 
    int NONLIN;
 
+   int SUBDUCT;
+   float SUBDUCT_D,SUBDUCT_F;
+
    char *VTXPROG_STD_L;
    char *VTXPROG_STD_NL;
+   char *VTXPROG_STD_L_S;
+   char *VTXPROG_STD_NL_S;
    char *FRGPROG_STD;
    char *SEAPROG_STD;
 
@@ -328,7 +339,7 @@ class minicache
 
    void initshader();
    void enablevtxshader();
-   void setvtxshadertexprm(float s1,float s2,float o1,float o2,float scale);
+   void setvtxshaderprogpar(float s1,float s2,float o1,float o2,int l=0,int l0=0,float d=0.0f,float f=0.0f,float scale=1.0f);
    void setvtxshadertexgen();
    void bindvtxshaderdetailtex();
    void unbindvtxshaderdetailtex();
