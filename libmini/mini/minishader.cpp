@@ -359,7 +359,7 @@ void minishader::setVISshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=minicache::concatprog(11,frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,usefade?(FADEMODE==1?frgprog_a1:frgprog_a2):NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=minicache::concatprog(11,frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,usefade?frgprog_a2:NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
@@ -724,7 +724,7 @@ void minishader::setNPRshader(minicache *cache,
    free(frgprog);
 
    // concatenate sea shader
-   frgprog=minicache::concatprog(11,frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,usefade?(FADEMODE==1?frgprog_a1:frgprog_a2):NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
+   frgprog=minicache::concatprog(11,frgprog2_i,(SEAMODE==0)?NULL:frgprog2_s1,frgprog2_s2,NULL,NULL,NULL,NULL,usefade?frgprog_a2:NULL,frgprog_t1,usefog?frgprog_t2:NULL,frgprog_t3);
 
    // use sea shader plugin
    cache->setseashader(frgprog);
