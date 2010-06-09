@@ -352,7 +352,9 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.cullslope=TPARAMS.cullslope;
 
-         lparams.range=TPARAMS.range;
+         if (TPARAMS.fademode==0) lparams.range=TPARAMS.range;
+         else lparams.range=0.5f*TPARAMS.farp*fpow(2.0f,LAYER[n]->getlevel());
+
          lparams.relrange1=TPARAMS.relrange1;
          lparams.relrange2=TPARAMS.relrange2;
          lparams.refres=TPARAMS.refres;
@@ -589,6 +591,9 @@ int miniterrain::loadLTS(const char *url,
 
       // enable spherical subduction
       TPARAMS.submode=1;
+
+      // disable reference resolution
+      TPARAMS.refres=0.0f;
       }
 
    // load tileset levels
