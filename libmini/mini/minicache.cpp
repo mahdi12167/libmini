@@ -612,6 +612,8 @@ void minicache::rendertexmap(int m,int n,int S)
 
    int texid,texw,texh,texmm;
 
+   float dist,factor;
+
    miniv3d light;
 
    TERRAIN_TYPE *t;
@@ -694,13 +696,21 @@ void minicache::rendertexmap(int m,int n,int S)
       else texid=0;
 
       if (USEVTXSHADER!=0)
+         {
+         dist=SUBDUCT_D;
+         factor=SUBDUCT_F;
+
+         // disable subduction for sea level
+         if (t->render_phase==3) dist=factor=0.0f;
+
          setvtxshaderprogpar(1.0f/(S-1)*(texw-1)/texw,
                              -1.0f/(S-1)*(texh-1)/texh,
                              0.5f/texw,
                              1.0f-0.5f/texh,
                              t->layer_level,t->layer_baselevel,
-                             SUBDUCT_D,SUBDUCT_F,
+                             dist,factor,
                              t->scale);
+         }
 
       if (USEPIXSHADER!=0 || USESEASHADER!=0)
          {

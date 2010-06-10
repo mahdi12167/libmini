@@ -852,7 +852,7 @@ int miniterrain::getnearest(const minicoord &e)
    mindist=MAXFLOAT;
 
    for (n=0; n<LNUM; n++)
-      if (isdisplayed(n))
+      if (isdisplayed(n) && !issubtileset(n))
          {
          offset=LAYER[n]->getcenter()-e;
          extent=LAYER[n]->getextent();
@@ -1122,11 +1122,11 @@ int miniterrain::checkpatch(int n)
    ext2=LAYER[n]->getextent().getlength2();
    midp=LAYER[n]->getcenter();
 
-   if (LAYER[n]->getlevel()==LAYER[n]->getbaselevel())
+   if (!LAYER[n]->issubtileset())
       for (i=0; i<LNUM; i++)
          if (i!=n)
             if (LAYER[i]->isdisplayed())
-               if (LAYER[i]->getlevel()==LAYER[i]->getbaselevel())
+               if (!LAYER[i]->issubtileset())
                   if (LAYER[i]->getextent().getlength2()>ext2)
                      if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
 
@@ -1193,6 +1193,13 @@ void miniterrain::render_postsea()
 BOOLINT miniterrain::istileset(int n)
    {
    if (n>=0 && n<LNUM) return(LAYER[n]->istileset());
+   return(FALSE);
+   }
+
+// check whether or not a layer is a sub-tileset
+BOOLINT miniterrain::issubtileset(int n)
+   {
+   if (n>=0 && n<LNUM) return(LAYER[n]->issubtileset());
    return(FALSE);
    }
 
@@ -1352,7 +1359,7 @@ minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,doubl
       pgl=LAYER[ref]->map_g2o(p);
       vgl=LAYER[ref]->rot_g2o(v,p);
 
-      // gather [possibly] intersecting triangles
+      // gather [potentially] intersecting triangles
       for (n=0; n<LNUM; n++)
          if (isdisplayed(n) && !isculled(n))
             result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
@@ -1434,7 +1441,23 @@ void miniterrain::attachdetailtex(int n,
    {
    if (n>=0 && n<LNUM)
       if (LAYER[n]->istileset())
-         LAYER[n]->attachdetailtex(texid,width,height,mipmaps,owner,center,west,north,alpha);
+         {
+         LAYER[n]->attachdetailtex(texid,width,height,mipmaps,owner,
+                                   center,west,north,
+                                   alpha);
+
+         while (LAYER[n]->issubtileset())
+            {
+            n--;
+
+            if (n<0 || n>=LNUM) break;
+            if (!LAYER[n]->istileset()) break;
+
+            LAYER[n]->attachdetailtex(texid,width,height,mipmaps,FALSE,
+                                      center,west,north,
+                                      alpha);
+            }
+         }
    }
 
 // load detail texture (db format)
@@ -1455,7 +1478,7 @@ void miniterrain::loaddetailtex(int n,
                                 center,west,north,
                                 alpha);
 
-         while (LAYER[n]->getlevel()!=LAYER[n]->getbaselevel())
+         while (LAYER[n]->issubtileset())
             {
             n--;
 
