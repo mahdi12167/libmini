@@ -740,10 +740,10 @@ void minitile::draw(float res,
             }
          }
 
+   if (SYNC_CALLBACK!=NULL) SYNC_CALLBACK(ID);
+
    if (VISIBLE!=0)
       {
-      if (SYNC_CALLBACK!=NULL) SYNC_CALLBACK(ID);
-
       width=RIGHT-LEFT+1;
       height=TOP-BOTTOM+1;
 
