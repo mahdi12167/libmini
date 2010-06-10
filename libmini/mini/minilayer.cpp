@@ -1516,6 +1516,8 @@ void minilayer::enablefocus(const minicoord &f)
    {
    minicoord fi;
 
+   if (!LOADED || TERRAIN==NULL) return;
+
    // transform focus point
    fi=map_g2i(f);
 
@@ -1525,7 +1527,10 @@ void minilayer::enablefocus(const minicoord &f)
 
 // disable the focus point
 void minilayer::disablefocus()
-   {TERRAIN->setfocus(0);}
+   {
+   if (!LOADED || TERRAIN==NULL) return;
+   TERRAIN->setfocus(0);
+   }
 
 // trigger complete render buffer update at next frame
 void minilayer::update()
@@ -1604,6 +1609,8 @@ BOOLINT minilayer::isculled()
    minicoord eye,ctr;
    miniv3d nrm,dir;
 
+   if (!LOADED || TERRAIN==NULL) return(FALSE);
+
    length=minicrs::EARTH_radius*PI/2.0;
 
    extent=dmax(LPARAMS.extent[0],LPARAMS.extent[1])/2.0;
@@ -1621,6 +1628,13 @@ BOOLINT minilayer::isculled()
    if (dir*nrm<-extent/length-LPARAMS.cullslope) return(TRUE);
 
    return(FALSE);
+   }
+
+// set the layer level
+void minilayer::setlevel(int level,int baselevel)
+   {
+   LPARAMS.level=level;
+   LPARAMS.baselevel=baselevel;
    }
 
 // get the layer level

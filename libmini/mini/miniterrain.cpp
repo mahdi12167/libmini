@@ -630,6 +630,7 @@ minilayer *miniterrain::loadLTS(const char *url,
       // propagate parameters
       propagate();
       }
+   else toplevel->setlevel(0,0);
 
    return(toplevel);
    }

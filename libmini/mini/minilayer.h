@@ -310,6 +310,9 @@ class minilayer
    //! check whether or not the layer is culled
    BOOLINT isculled();
 
+   //! set the layer level
+   void setlevel(int level=0,int baselevel=0);
+
    //! get the layer level
    int getlevel();
 
