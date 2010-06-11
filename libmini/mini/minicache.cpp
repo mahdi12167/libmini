@@ -519,8 +519,6 @@ int minicache::rendercache()
                         mtxmodel();
                         }
 
-                  if (phase==3) enablestenciling(0);
-
                   vtx+=rendercache(id,phase);
 
                   if (phase==2)
@@ -530,8 +528,6 @@ int minicache::rendercache()
                         mtxpop();
                         mtxmodel();
                         }
-
-                  if (phase==3) disablestenciling();
                   }
          }
       }
@@ -763,8 +759,6 @@ int minicache::rendertrigger(int phase)
 
       if (ALPHATEST<1.0f) disableAtest();
 
-      if (SEAALPHATEST<1.0f) enableAtest(SEAALPHATEST);
-
       if (OPACITY<1.0f)
          {
          if (OPACITY<=0.0f) enableRGBAwriting();
@@ -796,7 +790,11 @@ int minicache::rendertrigger(int phase)
 
       if (CONFIGURE_SEATWOSIDED!=0) disableculling();
 
+      if (SEAALPHATEST<1.0f) enableAtest(SEAALPHATEST);
+
       if (SEA_A!=1.0f) enableblending();
+
+      enablestenciling(0);
 
       color(SEA_R,SEA_G,SEA_B,SEA_A);
       normal(0.0f,1.0f,0.0f);
@@ -818,6 +816,8 @@ int minicache::rendertrigger(int phase)
       if (SEAALPHATEST<1.0f) disableAtest();
 
       if (SEA_A!=1.0f) disableblending();
+
+      disablestenciling();
 
       if (USESEASHADER!=0) disableseashader();
       if (USEVTXSHADER!=0) disablevtxshader();
