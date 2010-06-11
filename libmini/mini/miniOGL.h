@@ -41,7 +41,7 @@ void enablePRJblending();
 void enableMIPblending();
 void disableblending();
 
-void enablestenciling(int pass);
+void enablestenciling(int pass=0);
 void disablestenciling();
 
 void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
@@ -68,8 +68,8 @@ int compressRGBtexmap(unsigned char *image,int width,int height,
 
 int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
 
-void texunit(int unit);
-void texclientunit(int unit);
+void texunit(int unit=0);
+void texclientunit(int unit=0);
 
 int buildvtxprog(const char *prog);
 void bindvtxprog(int progid);
@@ -114,13 +114,13 @@ void multitexcoord(const unsigned int unit,const float s,const float t,const flo
 int getfancnt();
 int getvtxcnt();
 
-void linewidth(const float w);
+void linewidth(const float w=1.0f);
 void enablelinesmooth();
 void disablelinesmooth();
 
 inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
 
-void pointsize(const float s);
+void pointsize(const float s=1.0f);
 void enablepointsmooth();
 void disablepointsmooth();
 
@@ -160,7 +160,7 @@ void deletetexrect(int texid);
 
 void paintbuffer();
 
-void polygonmode(int wire);
+void polygonmode(int wire=0);
 
 // configuring
 void configure_generatemm(int generatemm=0); // enable hw-accelerated mipmap generation

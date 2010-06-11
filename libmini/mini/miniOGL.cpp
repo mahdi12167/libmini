@@ -464,7 +464,15 @@ void enablestenciling(int pass)
    {
 #ifndef NOOGL
 
-   if (pass==1)
+   if (pass==0)
+      {
+      glStencilFunc(GL_EQUAL,0,1);
+
+      glStencilOp(GL_KEEP, // fail
+                  GL_KEEP, // zfail
+                  GL_INCR); // zpass
+      }
+   else if (pass==1)
       {
       glStencilFunc(GL_ALWAYS,1,1);
 
