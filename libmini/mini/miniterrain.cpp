@@ -85,7 +85,7 @@ miniterrain::miniterrain()
    TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
 
    TPARAMS.alphathres=254.0f/255;  // alpha test threshold
-   TPARAMS.seaalphathres=1.0f;     // sea alpha test threshold
+   TPARAMS.seaalphathres=0.0f;     // sea alpha test threshold
 
    TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
 
@@ -587,6 +587,16 @@ minilayer *miniterrain::loadLTS(const char *url,
 
    toplevel=NULL;
 
+   // enable alpha test for multiple levels
+   if (levels>1)
+      {
+      // set alpha test threshold to full transparency
+      TPARAMS.alphathres=0.0f;
+
+      // set sea alpha test threshold to sea opacity
+      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
+      }
+
    // load tileset levels
    for (l=0; l<levels; l++)
       {
@@ -615,20 +625,8 @@ minilayer *miniterrain::loadLTS(const char *url,
       // enable spherical fade
       TPARAMS.fademode=1;
 
-      // set alpha test threshold to full transparency
-      TPARAMS.alphathres=0.0f;
-
-      // set sea alpha test threshold to sea opacity
-      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
-
       // enable spherical subduction
       TPARAMS.submode=1;
-
-      // disable reference resolution
-      TPARAMS.refres=0.0f;
-
-      // propagate parameters
-      propagate();
       }
    else toplevel->setlevel(0,0);
 
