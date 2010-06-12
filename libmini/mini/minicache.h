@@ -64,6 +64,9 @@ class minicache
    //! define alpha test threshold
    void setalphatest(float alpha=0.0f);
 
+   //! set sea mode
+   void setseamode(int on=1);
+
    //! define color of semi-transparent sea
    void setseacolor(float r=0.0f,float g=0.5f,float b=1.0f,float a=1.0f);
 
@@ -245,7 +248,11 @@ class minicache
    int RAYMODE;
 
    float OPACITY,ALPHATEST;
-   float SEA_R,SEA_G,SEA_B,SEA_A,SEAALPHATEST;
+
+   int SEAMODE;
+
+   float SEA_R,SEA_G,SEA_B,SEA_A;
+   float SEAALPHATEST;
 
    float PRISM_R,PRISM_G,PRISM_B,PRISM_A;
 

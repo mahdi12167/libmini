@@ -32,6 +32,8 @@ minicache::minicache()
    OPACITY=1.0f;
    ALPHATEST=1.0f;
 
+   SEAMODE=1;
+
    SEA_R=0.0f;
    SEA_G=0.5f;
    SEA_B=1.0f;
@@ -794,7 +796,7 @@ int minicache::rendertrigger(int phase)
 
       if (SEA_A!=1.0f) enableblending();
 
-      enablestenciling(0);
+      if (SEAMODE!=0) enablestenciling(0);
 
       color(SEA_R,SEA_G,SEA_B,SEA_A);
       normal(0.0f,1.0f,0.0f);
@@ -817,7 +819,7 @@ int minicache::rendertrigger(int phase)
 
       if (SEA_A!=1.0f) disableblending();
 
-      disablestenciling();
+      if (SEAMODE!=0) disablestenciling();
 
       if (USESEASHADER!=0) disableseashader();
       if (USEVTXSHADER!=0) disablevtxshader();
@@ -1162,6 +1164,10 @@ void minicache::setopacity(float alpha)
 // define alpha test threshold
 void minicache::setalphatest(float alpha)
    {ALPHATEST=alpha;}
+
+// set sea mode
+void minicache::setseamode(int on)
+   {SEAMODE=on;}
 
 // define color of semi-transparent sea
 void minicache::setseacolor(float r,float g,float b,float a)
