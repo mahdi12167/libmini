@@ -64,8 +64,17 @@ void render(double time)
       px+=vx*delta;
       py+=vy*delta;
 
-      if (px<radius || px>1-radius) vx=-vx;
-      if (py<radius || py>1-radius) vy=-vy;
+      if (px<radius || px>1-radius)
+         {
+         vx=-vx;
+         px+=vx*delta;
+         }
+
+      if (py<radius || py>1-radius)
+         {
+         vy=-vy;
+         py+=vy*delta;
+         }
       }
 
    for (i=trail-1; i>=0; i--)
