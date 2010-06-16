@@ -64,16 +64,28 @@ void render(double time)
       px+=vx*delta;
       py+=vy*delta;
 
-      if (px<radius || px>1-radius)
+      if (px<radius)
          {
          vx=-vx;
-         px+=vx*delta;
+         px=2*radius-px;
          }
 
-      if (py<radius || py>1-radius)
+      if (px>1-radius)
+         {
+         vx=-vx;
+         px=2*(1-radius)-px;
+         }
+
+      if (py<radius)
          {
          vy=-vy;
-         py+=vy*delta;
+         py=2*radius-py;
+         }
+
+      if (py>1-radius)
+         {
+         vy=-vy;
+         py=2*(1-radius)-py;
          }
       }
 
