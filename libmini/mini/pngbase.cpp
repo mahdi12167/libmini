@@ -7,6 +7,15 @@ extern "C"
    #include <png.h>
    }
 
+// compatibility with libpng 1.4
+#if ((PNG_LIBPNG_VER_MAJOR==1 && PNG_LIBPNG_VER_MINOR>=4) || PNG_LIBPNG_VER_MAJOR>1)
+#define int_p_NULL NULL
+#define png_voidp_NULL NULL
+#define png_infopp_NULL NULL
+#define png_error_ptr_NULL NULL
+#define png_set_gray_1_2_4_to_8 png_set_expand_gray_1_2_4_to_8
+#endif
+
 #include <mini/minibase.h>
 
 #include "pngbase.h"
