@@ -33,6 +33,13 @@
 #endif
 
 /*
+ * Additional GLUT Key definitions for the Special key function
+ */
+#define GLUT_KEY_NUM_LOCK           0x006D
+#define GLUT_KEY_BEGIN              0x006E
+#define GLUT_KEY_DELETE             0x006F
+
+/*
  * GLUT API Extension macro definitions -- behaviour when the user clicks on an "x" to close a window
  */
 #define GLUT_ACTION_EXIT                         0
@@ -68,6 +75,8 @@
 #define  GLUT_RENDERING_CONTEXT             0x01FD
 #define  GLUT_DIRECT_RENDERING              0x01FE
 
+#define  GLUT_FULL_SCREEN                   0x01FF
+
 /*
  * New tokens for glutInitDisplayMode.
  * Only one GLUT_AUXn bit may be used at a time.
@@ -80,6 +89,26 @@
 #define  GLUT_AUX3                          0x4000
 #define  GLUT_AUX4                          0x8000
 
+/*
+ * Context-related flags, see freeglut_state.c
+ */
+#define  GLUT_INIT_MAJOR_VERSION            0x0200
+#define  GLUT_INIT_MINOR_VERSION            0x0201
+#define  GLUT_INIT_FLAGS                    0x0202
+#define  GLUT_INIT_PROFILE                  0x0203
+
+/*
+ * Flags for glutInitContextFlags, see freeglut_init.c
+ */
+#define  GLUT_DEBUG                         0x0001
+#define  GLUT_FORWARD_COMPATIBLE            0x0002
+
+
+/*
+ * Flags for glutInitContextProfile, see freeglut_init.c
+ */
+#define GLUT_CORE_PROFILE                   0x0001
+#define	GLUT_COMPATIBILITY_PROFILE          0x0002
 
 /*
  * Process loop function, see freeglut_main.c
@@ -87,6 +116,11 @@
 FGAPI void    FGAPIENTRY glutMainLoopEvent( void );
 FGAPI void    FGAPIENTRY glutLeaveMainLoop( void );
 FGAPI void    FGAPIENTRY glutExit         ( void );
+
+/*
+ * Window management functions, see freeglut_window.c
+ */
+FGAPI void    FGAPIENTRY glutFullScreenToggle( void );
 
 /*
  * Window-specific callback functions, see freeglut_callbacks.c
@@ -154,6 +188,20 @@ void    glutJoystickSetCenter( int ident, float *axes );
 void    glutJoystickGetMinRange( int ident, float *axes );
 void    glutJoystickGetMaxRange( int ident, float *axes );
 void    glutJoystickGetCenter( int ident, float *axes );
+
+/*
+ * Initialization functions, see freeglut_init.c
+ */
+FGAPI void    FGAPIENTRY glutInitContextVersion( int majorVersion, int minorVersion );
+FGAPI void    FGAPIENTRY glutInitContextFlags( int flags );
+FGAPI void    FGAPIENTRY glutInitContextProfile( int profile );
+
+/*
+ * GLUT API macro definitions -- the display mode definitions
+ */
+#define  GLUT_CAPTIONLESS                   0x0400
+#define  GLUT_BORDERLESS                    0x0800
+#define  GLUT_SRGB                          0x1000
 
 #ifdef __cplusplus
     }

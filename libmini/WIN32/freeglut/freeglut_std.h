@@ -54,7 +54,9 @@
 #       endif
 #   endif
 
-#   define WIN32_LEAN_AND_MEAN
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN 1
+#  endif
 #   define NOMINMAX
 #   include <Windows.h>
 
@@ -169,8 +171,6 @@
 #define  GLUT_MULTISAMPLE                   0x0080
 #define  GLUT_STEREO                        0x0100
 #define  GLUT_LUMINANCE                     0x0200
-#define  GLUT_CAPTIONLESS                   0x0400
-#define  GLUT_BORDERLESS                    0x0800
 
 /*
  * GLUT API macro definitions -- windows and menu related definitions
@@ -571,6 +571,50 @@ FGAPI void    FGAPIENTRY glutForceJoystickFunc( void );
  */
 FGAPI int     FGAPIENTRY glutExtensionSupported( const char* extension );
 FGAPI void    FGAPIENTRY glutReportErrors( void );
+
+/* Comment from glut.h of classic GLUT:
+
+   Win32 has an annoying issue where there are multiple C run-time
+   libraries (CRTs).  If the executable is linked with a different CRT
+   from the GLUT DLL, the GLUT DLL will not share the same CRT static
+   data seen by the executable.  In particular, atexit callbacks registered
+   in the executable will not be called if GLUT calls its (different)
+   exit routine).  GLUT is typically built with the
+   "/MD" option (the CRT with multithreading DLL support), but the Visual
+   C++ linker default is "/ML" (the single threaded CRT).
+
+   One workaround to this issue is requiring users to always link with
+   the same CRT as GLUT is compiled with.  That requires users supply a
+   non-standard option.  GLUT 3.7 has its own built-in workaround where
+   the executable's "exit" function pointer is covertly passed to GLUT.
+   GLUT then calls the executable's exit function pointer to ensure that
+   any "atexit" calls registered by the application are called if GLUT
+   needs to exit.
+
+   Note that the __glut*WithExit routines should NEVER be called directly.
+   To avoid the atexit workaround, #define GLUT_DISABLE_ATEXIT_HACK. */
+
+/* to get the prototype for exit() */
+#include <stdlib.h>
+
+#if defined(_WIN32) && !defined(GLUT_DISABLE_ATEXIT_HACK) && !defined(__WATCOMC__)
+FGAPI void FGAPIENTRY __glutInitWithExit(int *argcp, char **argv, void (__cdecl *exitfunc)(int));
+FGAPI int FGAPIENTRY __glutCreateWindowWithExit(const char *title, void (__cdecl *exitfunc)(int));
+FGAPI int FGAPIENTRY __glutCreateMenuWithExit(void (* func)(int), void (__cdecl *exitfunc)(int));
+#ifndef FREEGLUT_BUILDING_LIB
+#if defined(__GNUC__)
+#define FGUNUSED __attribute__((unused))
+#else
+#define FGUNUSED
+#endif
+static void FGAPIENTRY FGUNUSED glutInit_ATEXIT_HACK(int *argcp, char **argv) { __glutInitWithExit(argcp, argv, exit); }
+#define glutInit glutInit_ATEXIT_HACK
+static int FGAPIENTRY FGUNUSED glutCreateWindow_ATEXIT_HACK(const char *title) { return __glutCreateWindowWithExit(title, exit); }
+#define glutCreateWindow glutCreateWindow_ATEXIT_HACK
+static int FGAPIENTRY FGUNUSED glutCreateMenu_ATEXIT_HACK(void (* func)(int)) { return __glutCreateMenuWithExit(func, exit); }
+#define glutCreateMenu glutCreateMenu_ATEXIT_HACK
+#endif
+#endif
 
 #ifdef __cplusplus
     }
