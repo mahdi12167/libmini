@@ -90,7 +90,7 @@ const char *nextfile()
       dhandle=FindFirstFile(path2,&fdata);
       free(path2);
 
-      if (dhandle==INVALD_HANDLE_VALUE)
+      if (dhandle==INVALID_HANDLE_VALUE)
          {
          searchstate=0;
          return(NULL);

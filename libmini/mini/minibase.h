@@ -173,6 +173,28 @@ inline char *strdup2(const char *str1,const char *str2)
    }
 
 #ifdef _MSC_VER
+inline char *strcasestr(const char *str1,const char *str2)
+   {
+   unsigned int i,j;
+
+   unsigned int len1,len2;
+
+   len1=strlen(str1);
+   len2=strlen(str2);
+
+   for (i=0; i+len2<=len1; i++)
+      {
+      for (j=0; j<len2; j++)
+         if (tolower(str2[j])!=tolower(str1[i+j])) break;
+
+      if (j==len2) return((char *)&str1[i]);
+      }
+
+   return(NULL);
+   }
+#endif
+
+#ifdef _MSC_VER
 #include <direct.h>
 #define mkdir(dir,perm) _mkdir(dir)
 #endif
