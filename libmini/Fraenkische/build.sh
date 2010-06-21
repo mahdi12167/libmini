@@ -9,7 +9,7 @@ if ($rule == "") set rule="app"
 set mmfile=MiniMakefile
 set make="make -f $mmfile"
 
-if ($HOSTTYPE == "iris4d") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84" LINK="-lglut -lX11 -lXm -lXt -lXmu" $rule
+if ($HOSTTYPE == "iris4d") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0" LINK="-Wl,-woff84 -lglut -lX11 -lXm -lXt -lXmu" $rule
 if ($HOSTTYPE == "i386") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
 if ($HOSTTYPE == "i386-linux") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
 if ($HOSTTYPE == "i386-cygwin") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule

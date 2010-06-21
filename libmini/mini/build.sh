@@ -176,7 +176,7 @@ if ($rule == "deps") then
    if ($HOSTTYPE == "powermac") $make MAKEDEPEND="c++ -M$incl$stub$defs" $depend
    if ($HOSTTYPE == "intel-pc") $make MAKEDEPEND="c++ -M$incl$stub$defs" $depend
 else
-   if ($HOSTTYPE == "iris4d") $make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0 -Wl,-woff84$incl$stub$defs" LINK="-lglut -lX11 -lXm -lXt -lXmu$link" $rule
+   if ($HOSTTYPE == "iris4d") $make COMPILER="CC" OPTS="-O3 -mips3 -OPT:Olimit=0$incl$stub$defs" LINK="-Wl,-woff84 -lglut -lX11 -lXm -lXt -lXmu$link" $rule
    if ($HOSTTYPE == "i386") $make $jobs COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
    if ($HOSTTYPE == "i386-linux") $make $jobs COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
    if ($HOSTTYPE == "i386-cygwin") $make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
