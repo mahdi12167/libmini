@@ -41,8 +41,13 @@ void filesearch(const char *spec)
       if (pattern!=NULL) *pattern++='\0';
       else
          {
-         pattern=copy;
-         path=defaultpath;
+         pattern=strchr(copy,'\\');
+         if (pattern!=NULL) *pattern++='\0';
+         else
+            {
+            pattern=copy;
+            path=defaultpath;
+            }
          }
       }
 
