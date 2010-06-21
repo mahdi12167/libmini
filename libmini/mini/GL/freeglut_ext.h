@@ -108,7 +108,7 @@
  * Flags for glutInitContextProfile, see freeglut_init.c
  */
 #define GLUT_CORE_PROFILE                   0x0001
-#define	GLUT_COMPATIBILITY_PROFILE          0x0002
+#define GLUT_COMPATIBILITY_PROFILE          0x0002
 
 /*
  * Process loop function, see freeglut_main.c
