@@ -18,6 +18,7 @@ unsigned int searchstate=0;
 char searchpath[STRING_MAX];
 char searchpattern[STRING_MAX];
 char *searchpre,*searchpost;
+char foundfile[STRING_MAX];
 
 // specify file search path and pattern (with '*' as single wildcard)
 void filesearch(const char *spec)
@@ -117,14 +118,13 @@ const char *findfile()
    const char *file;
 
    while ((file=nextfile())!=NULL)
-      {
       if (strcasestr(file,searchpre)==file)
-         if (searchpost==NULL)
-            return(file);
-         else
-            if (strcasestr(file,searchpost)+strlen(searchpost)==file+strlen(file))
-               return(file);
-      }
+         if (searchpost==NULL ||
+             strcasestr(file,searchpost)+strlen(searchpost)==file+strlen(file))
+            {
+            snprintf(foundfile,STRING_MAX,"%s/%s",searchpath,file);
+            return(foundfile);
+            }
 
    return(NULL);
    }
