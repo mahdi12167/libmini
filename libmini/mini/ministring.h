@@ -228,6 +228,10 @@ class ministring: public ministring_base
          }
       }
 
+   //! substitute c-string
+   void substitute(const ministring_base &sub,const char *with)
+      {substitute(sub,ministring(with));}
+
    //! substitute c-strings
    void substitute(const char *sub,const char *with)
       {substitute(ministring(sub),ministring(with));}
