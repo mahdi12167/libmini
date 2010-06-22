@@ -190,4 +190,5 @@ else
    if ($HOSTTYPE == "powerpc") $make COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include$incl$stub$defs" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11$link" $rule
    if ($HOSTTYPE == "powermac") $make COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework OpenGL -framework GLUT -lobjc$link" $rule
    if ($HOSTTYPE == "intel-pc") $make $jobs COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework OpenGL -framework GLUT -lobjc$link" $rule
+   if ($HOSTTYPE == "intel-mac") $make $jobs COMPILER="c++" OPTS="-O3$incl$stub$defs" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework OpenGL -framework GLUT -lobjc$link" $rule
 endif

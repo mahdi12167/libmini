@@ -22,3 +22,4 @@ if ($HOSTTYPE == "i686-linux") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$IN
 if ($HOSTTYPE == "powerpc") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3 -I/usr/X11R6/include" LINK="-lglut -lGLU -L/usr/X11R6/lib -lX11" $rule
 if ($HOSTTYPE == "powermac") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc" $rule
 if ($HOSTTYPE == "intel-pc") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc" $rule
+if ($HOSTTYPE == "intel-mac") $make INSTALL_INC="$INSTALL_INC" INSTALL_LIB="$INSTALL_LIB" COMPILER="c++" OPTS="-O3" LINK="-Wl,-w -L/System/Library/Frameworks/OpenGL.framework/Libraries -framework GLUT -lobjc" $rule
