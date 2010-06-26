@@ -62,28 +62,28 @@ class threadbase
    static void lock_cs(int id,void *data);
    static void unlock_cs(int id,void *data);
 
-   static void lock_io(int id,void *data);
-   static void unlock_io(int id,void *data);
+   static void lock_io(void *data);
+   static void unlock_io(void *data);
 
    private:
 
 #ifndef USEOPENTH
-   typedef pthread_t *PTHREADPTR;
+   typedef pthread_t *THREADPTR;
+   typedef pthread_mutex_t MUTEX;
 #else
-   typedef MyThread *MTHREADPTR;
+   typedef MyThread *THREADPTR;
+   typedef OpenThreads::Mutex MUTEX;
 #endif
 
    struct MULTITHREAD_STRUCT
       {
       int numthreads;
 
+      THREADPTR thread;
+      MUTEX mutex;
+
 #ifndef USEOPENTH
-      PTHREADPTR pthread;
-      pthread_mutex_t mutex,iomutex;
       pthread_attr_t attr;
-#else
-      MTHREADPTR mthread;
-      OpenThreads::Mutex mutex,iomutex;
 #endif
       };
 
@@ -94,6 +94,8 @@ class threadbase
 
    static int INSTANCES;
 
+   static MUTEX iomutex;
+
    void threadinit_safe(int threads,int id);
    void threadexit_safe(int id);
 
@@ -103,8 +105,8 @@ class threadbase
    void lock_cs_safe(int id);
    void unlock_cs_safe(int id);
 
-   void lock_io_safe(int id);
-   void unlock_io_safe(int id);
+   void lock_io_safe();
+   void unlock_io_safe();
 
    void initmultithread(int id);
    void exitmultithread(int id);

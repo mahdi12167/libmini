@@ -391,13 +391,13 @@ void minilayer::unlock_cs(void *data)
 void minilayer::lock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->LOCK_IO(obj->getthreadid(),obj->THREADDATA);
+   obj->LOCK_IO(obj->THREADDATA);
    }
 
 void minilayer::unlock_io(void *data)
    {
    minilayer *obj=(minilayer *)data;
-   obj->UNLOCK_IO(obj->getthreadid(),obj->THREADDATA);
+   obj->UNLOCK_IO(obj->THREADDATA);
    }
 
 void minilayer::curlinit(int threads,int id,const char *proxyname,const char *proxyport)
@@ -425,7 +425,7 @@ void minilayer::setcallbacks(void *threaddata,
                              void (*startthread)(void *(*thread)(void *background),backarrayelem *background,int id,void *data),
                              void (*jointhread)(backarrayelem *background,int id,void *data),
                              void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
-                             void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
+                             void (*lock_io)(void *data),void (*unlock_io)(void *data),
                              void *curldata,
                              void (*curlinit)(int threads,int id,const char *proxyname,const char *proxyport,void *data),
                              void (*curlexit)(int id,void *data),

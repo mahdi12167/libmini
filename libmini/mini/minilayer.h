@@ -224,7 +224,7 @@ class minilayer
                      void (*startthread)(void *(*thread)(void *background),backarrayelem *background,int id,void *data),
                      void (*jointhread)(backarrayelem *background,int id,void *data),
                      void (*lock_cs)(int id,void *data),void (*unlock_cs)(int id,void *data),
-                     void (*lock_io)(int id,void *data),void (*unlock_io)(int id,void *data),
+                     void (*lock_io)(void *data),void (*unlock_io)(void *data),
                      void *curldata,
                      void (*curlinit)(int threads,int id,const char *proxyname,const char *proxyport,void *data),
                      void (*curlexit)(int id,void *data),
@@ -461,8 +461,8 @@ class minilayer
    void (*JOINTHREAD)(backarrayelem *background,int id,void *data);
    void (*LOCK_CS)(int id,void *data);
    void (*UNLOCK_CS)(int id,void *data);
-   void (*LOCK_IO)(int id,void *data);
-   void (*UNLOCK_IO)(int id,void *data);
+   void (*LOCK_IO)(void *data);
+   void (*UNLOCK_IO)(void *data);
 
    void *CURLDATA;
    void (*CURLINIT)(int threads,int id,const char *proxyname,const char *proxyport,void *data);
