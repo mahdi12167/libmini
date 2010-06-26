@@ -730,6 +730,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    // attach tileset to render cache
    CACHE->attach(TERRAIN->getminitile());
 
+   // lock io to make pnm loader threadsafe
+   TILECACHE->configure_autolockio(LPARAMS.usepnm);
+
    // initialize pthreads and libcurl
    threadinit(LPARAMS.numthreads,getthreadid());
    curlinit(LPARAMS.numthreads,getthreadid(),LPARAMS.proxyname,LPARAMS.proxyport);
