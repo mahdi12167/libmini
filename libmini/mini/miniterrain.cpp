@@ -628,7 +628,8 @@ minilayer *miniterrain::loadLTS(const char *url,
       // enable spherical subduction
       TPARAMS.submode=1;
       }
-   else toplevel->setlevel(0,0);
+   else
+      if (toplevel!=NULL) toplevel->setlevel(0,0);
 
    return(toplevel);
    }
