@@ -318,16 +318,9 @@ void putPNMparams(PNMcomment *comment,
    if (coord_sys==0 && coord_units==3)
       {
       coord_SW_x=LONSUB(coord_SW_x);
-      if (dabs(coord_SW_y)>90*60*60) ERRORMSG();
-
       coord_NW_x=LONSUB(coord_NW_x);
-      if (dabs(coord_NW_y)>90*60*60) ERRORMSG();
-
       coord_NE_x=LONSUB(coord_NE_x);
-      if (dabs(coord_NE_y)>90*60*60) ERRORMSG();
-
       coord_SE_x=LONSUB(coord_SE_x);
-      if (dabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
       }
@@ -710,16 +703,9 @@ int getPNMparams(PNMcomment *comment,
    if (coord_sys==0)
       {
       coord_SW_x=LONSUB(coord_SW_x);
-      if (dabs(coord_SW_y)>90*60*60) ERRORMSG();
-
       coord_NW_x=LONSUB(coord_NW_x);
-      if (dabs(coord_NW_y)>90*60*60) ERRORMSG();
-
       coord_NE_x=LONSUB(coord_NE_x);
-      if (dabs(coord_NE_y)>90*60*60) ERRORMSG();
-
       coord_SE_x=LONSUB(coord_SE_x);
-      if (dabs(coord_SE_y)>90*60*60) ERRORMSG();
 
       if (coord_SW_y>=coord_NW_y || coord_SE_y>=coord_NE_y) ERRORMSG();
 
