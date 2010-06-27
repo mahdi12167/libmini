@@ -151,8 +151,14 @@ inline int isNAN(const double v) {return(v!=v);}
 #endif
 
 #ifdef _MSC_VER
-#define strdup _strdup
-#define snprintf _snprintf
+inline char *strdup(char *str)
+   {
+   unsigned int len;
+   char *dup;
+   if ((dup=(char *)malloc(len=strlen(str)+1))==NULL) MEMERROR();
+   memcpy(dup,str,len);
+   return(dup);
+   }
 #endif
 
 inline char *strdup2(const char *str1,const char *str2)
@@ -173,6 +179,14 @@ inline char *strdup2(const char *str1,const char *str2)
    }
 
 #ifdef _MSC_VER
+
+inline int strcasecmp(char *str1,char *str2)
+   {
+   char *ptr1,*ptr2;
+   for (ptr1=str1,ptr2=str2; tolower(*ptr1)==tolower(*ptr2) && *ptr1!='\0' && *ptr2!='\0'; ptr1++,ptr2++);
+   return(*ptr2-*ptr1);
+   }
+
 inline char *strcasestr(const char *str1,const char *str2)
    {
    unsigned int i,j;
@@ -192,6 +206,11 @@ inline char *strcasestr(const char *str1,const char *str2)
 
    return(NULL);
    }
+
+#endif
+
+#ifdef _MSC_VER
+#define snprintf _snprintf
 #endif
 
 #ifdef _MSC_VER
