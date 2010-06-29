@@ -9,4 +9,4 @@ if (! -X cmake) then
    tar zxf $cmake.tar.gz
 
    (cd $cmake; ./configure --prefix=$HOME; make; make install)
-end
+endif

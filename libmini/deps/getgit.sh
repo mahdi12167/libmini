@@ -9,4 +9,4 @@ if (! -X git) then
    tar zxf $git.tar.gz
 
    (cd $git; ./configure --prefix=$HOME --without-iconv; make; make install)
-end
+endif
