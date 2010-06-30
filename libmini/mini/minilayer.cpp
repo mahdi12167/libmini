@@ -1710,7 +1710,7 @@ void minilayer::loaddetailtex(const char *detailname,
    int width,height;
    int mipmaps;
 
-   miniv3d sw,nw,ne,se;
+   minicoord sw,nw,ne,se;
 
    dtname=TILECACHE->getfile(detailname,LPARAMS.altpath);
 
@@ -1730,16 +1730,29 @@ void minilayer::loaddetailtex(const char *detailname,
          buf.release();
 
          // extract corners
-         sw=miniv3d(buf.LLWGS84_swx*3600.0,buf.LLWGS84_swy*3600.0,0.0);
-         nw=miniv3d(buf.LLWGS84_nwx*3600.0,buf.LLWGS84_nwy*3600.0,0.0);
-         ne=miniv3d(buf.LLWGS84_nex*3600.0,buf.LLWGS84_ney*3600.0,0.0);
-         se=miniv3d(buf.LLWGS84_sex*3600.0,buf.LLWGS84_sey*3600.0,0.0);
+         if (buf.crs!=databuf::DATABUF_CRS_LINEAR)
+            {
+            sw=minicoord(miniv3d(buf.LLWGS84_swx*3600.0,buf.LLWGS84_swy*3600.0,0.0),minicoord::MINICOORD_LLH);
+            nw=minicoord(miniv3d(buf.LLWGS84_nwx*3600.0,buf.LLWGS84_nwy*3600.0,0.0),minicoord::MINICOORD_LLH);
+            ne=minicoord(miniv3d(buf.LLWGS84_nex*3600.0,buf.LLWGS84_ney*3600.0,0.0),minicoord::MINICOORD_LLH);
+            se=minicoord(miniv3d(buf.LLWGS84_sex*3600.0,buf.LLWGS84_sey*3600.0,0.0),minicoord::MINICOORD_LLH);
+
+            sw.convert2(minicoord::MINICOORD_ECEF);
+            nw.convert2(minicoord::MINICOORD_ECEF);
+            ne.convert2(minicoord::MINICOORD_ECEF);
+            se.convert2(minicoord::MINICOORD_ECEF);
+            }
+         else
+            {
+            sw=minicoord(miniv3d(buf.swx,buf.swy,0.0),minicoord::MINICOORD_LINEAR);
+            nw=minicoord(miniv3d(buf.nwx,buf.nwy,0.0),minicoord::MINICOORD_LINEAR);
+            ne=minicoord(miniv3d(buf.nex,buf.ney,0.0),minicoord::MINICOORD_LINEAR);
+            se=minicoord(miniv3d(buf.sex,buf.sey,0.0),minicoord::MINICOORD_LINEAR);
+            }
 
          // attach texture at center
          attachdetailtex(texid,width,height,mipmaps,TRUE,
-                         minicoord(0.25*(sw+nw+ne+se),minicoord::MINICOORD_LLH),
-                         minicoord(0.5*(se+ne),minicoord::MINICOORD_LLH),
-                         minicoord(0.5*(nw+ne),minicoord::MINICOORD_LLH));
+                         0.25*(sw+nw+ne+se),0.5*(se+ne),0.5*(nw+ne));
          }
 
       free(dtname);

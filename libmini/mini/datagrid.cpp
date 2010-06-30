@@ -28,7 +28,12 @@ datagrid::~datagrid()
 
 // set coordinate system
 void datagrid::setcrs(const minicoord::MINICOORD crs)
-   {CRS=crs;}
+   {
+   if (crs==minicoord::MINICOORD_LLH ||
+       crs==minicoord::MINICOORD_MERC) ERRORMSG();
+
+   CRS=crs;
+   }
 
 // create data brick id
 unsigned int datagrid::create(const unsigned int slot,
