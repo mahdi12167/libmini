@@ -84,6 +84,9 @@ class minicoord
    void convert(const miniv3d src[2], // bounding box in original domain
                 const miniv3d dst[8]); // 8 points in warp domain
 
+   //! normalize wraparound coordinates
+   void normalize(BOOLINT symmetric=FALSE);
+
    //! get crs type description
    const char *getcrs() const;
    static const char *getcrs(const MINICOORD &t);

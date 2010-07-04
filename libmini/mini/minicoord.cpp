@@ -378,6 +378,32 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
    type=MINICOORD_LINEAR;
    }
 
+// normalize wraparound coordinates
+void minicoord::normalize(BOOLINT symmetric)
+   {
+   double wrap;
+
+   switch (type)
+      {
+      case MINICOORD_LLH:
+         wrap=vec.x/(360*60*60);
+         if (symmetric)
+            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
+         else
+            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
+         break;
+      case MINICOORD_MERC:
+         wrap=vec.x/(2*minicrs::WGS84_r_major);
+         if (symmetric)
+            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
+         else
+            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
+         break;
+      default:
+         break;
+      }
+   }
+
 // get crs type description from object
 const char *minicoord::getcrs() const
    {return(getcrs(this->type));}

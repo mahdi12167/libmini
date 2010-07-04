@@ -812,7 +812,9 @@ void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
    co=e*sin(phi);
    co=pow(((1.0-co)/(1.0+co)),eh);
 
-   m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
+   if (phi_center==0.0) m1=1.0;
+   else m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
+
    ts=tan(0.5*(0.5*PI-phi))/co;
 
    *x=r_major*m1*LONSUB(lon,lon_center)*2*PI/(360*60*60);
@@ -844,7 +846,9 @@ void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_c
 
    phi_center=lat_center*2*PI/(360*60*60);
 
-   m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
+   if (phi_center==0.0) m1=1.0;
+   else m1=cos(phi_center)/sqrt(1.0-dsqr(e*sin(phi_center)));
+
    ts=exp(-y/(r_major*m1));
 
    phi=0.5*PI-2*atan(ts);
