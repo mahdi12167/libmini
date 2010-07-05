@@ -404,8 +404,32 @@ void minicoord::normalize(BOOLINT symmetric)
       }
    }
 
-// get shortest distance on orthodrome
+// get euclidean distance
 double minicoord::getdist(const minicoord &v) const
+   {
+   double dist;
+
+   minicoord p1,p2;
+
+   if (type==MINICOORD_LINEAR &&
+       v.type==MINICOORD_LINEAR)
+      dist=(vec-v.vec).getlength();
+   else
+      {
+      p1=*this;
+      p2=v;
+
+      p1.convert2(MINICOORD_ECEF);
+      p2.convert2(MINICOORD_ECEF);
+
+      dist=(p1.vec-p2.vec).getlength();
+      }
+
+   return(dist);
+   }
+
+// get distance on orthodrome
+double minicoord::getorthodist(const minicoord &v) const
    {
    double dist;
 

@@ -848,8 +848,6 @@ int miniterrain::getnearest(const minicoord &e)
 
    int nst;
    double dist,mindist;
-   minicoord offset;
-   miniv3d extent;
 
    nst=-1;
    mindist=MAXFLOAT;
@@ -857,10 +855,8 @@ int miniterrain::getnearest(const minicoord &e)
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !issubtileset(n))
          {
-         offset=LAYER[n]->getcenter()-e;
-         extent=LAYER[n]->getextent();
-
-         dist=offset.vec.getlength()-extent.getlength()/2.0;
+         dist=LAYER[n]->getcenter().getdist(e);
+         dist-=LAYER[n]->getextent().getlength()/2.0;
 
          if (dist<mindist)
             {

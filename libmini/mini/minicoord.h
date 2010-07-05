@@ -87,8 +87,11 @@ class minicoord
    //! normalize wraparound coordinates
    void normalize(BOOLINT symmetric=FALSE);
 
-   //! get shortest distance on orthodrome
+   //! get euclidean distance
    double getdist(const minicoord &v) const;
+
+   //! get distance on orthodrome
+   double getorthodist(const minicoord &v) const;
 
    //! get crs type description
    const char *getcrs() const;
