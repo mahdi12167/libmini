@@ -404,6 +404,82 @@ void minicoord::normalize(BOOLINT symmetric)
       }
    }
 
+// get shortest distance on orthodrome
+double minicoord::getdist(const minicoord &v) const
+   {
+   double dist;
+
+   minicoord p1,p2;
+   double h1,h2;
+
+   minicoord p;
+   double len,tmp;
+
+   static const double maxdist=100000.0;
+
+   if (type==MINICOORD_LINEAR &&
+       v.type==MINICOORD_LINEAR)
+      dist=(vec-v.vec).getlength();
+   else
+      {
+      p1=*this;
+      p2=v;
+
+      p1.convert2(MINICOORD_LLH);
+      p2.convert2(MINICOORD_LLH);
+
+      h1=p1.vec.z;
+      h2=p2.vec.z;
+
+      p1.convert2(MINICOORD_ECEF);
+      p2.convert2(MINICOORD_ECEF);
+
+      dist=(p1.vec-p2.vec).getlength();
+
+      if (dist>maxdist)
+         {
+         p=0.5*(p1+p2);
+         len=p.vec.getlength();
+
+         if (len>0.0) p*=minicrs::EARTH_radius/len;
+         else
+            if (p.vec.x>p.vec.y)
+               if (p.vec.x>p.vec.z)
+                  {
+                  tmp=p.vec.x;
+                  p.vec.x=-p.vec.z;
+                  p.vec.z=tmp;
+                  }
+               else
+                  {
+                  tmp=p.vec.z;
+                  p.vec.z=-p.vec.x;
+                  p.vec.x=tmp;
+                  }
+            else
+               if (p.vec.y>p.vec.z)
+                  {
+                  tmp=p.vec.y;
+                  p.vec.y=-p.vec.z;
+                  p.vec.z=tmp;
+                  }
+               else
+                  {
+                  tmp=p.vec.z;
+                  p.vec.z=-p.vec.y;
+                  p.vec.y=tmp;
+                  }
+
+         p.convert2(MINICOORD_LLH);
+         p.vec.z=0.5*(h1+h2);
+
+         dist=p1.getdist(p)+p2.getdist(p);
+         }
+      }
+
+   return(dist);
+   }
+
 // get crs type description from object
 const char *minicoord::getcrs() const
    {return(getcrs(this->type));}

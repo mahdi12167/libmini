@@ -318,6 +318,8 @@ void minicrs::ECEF2LLH(double xyz[3],
    double r;                 // radius in prime vertical
 
    p=sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]);
+   if (p==0.0) p=1.0;
+
    th=atan(xyz[2]*WGS84_r_major/(p*WGS84_r_minor));
 
    sth=sin(th);
