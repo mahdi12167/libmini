@@ -497,7 +497,7 @@ double minicoord::getorthodist(const minicoord &v) const
          p.convert2(MINICOORD_LLH);
          p.vec.z=0.5*(h1+h2);
 
-         dist=p1.getdist(p)+p2.getdist(p);
+         dist=p1.getorthodist(p)+p2.getorthodist(p);
          }
       }
 
