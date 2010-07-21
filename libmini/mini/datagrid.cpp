@@ -35,6 +35,19 @@ void datagrid::setcrs(const minicoord::MINICOORD crs)
    CRS=crs;
    }
 
+// get coordinate system
+minicoord::MINICOORD datagrid::getcrs(unsigned int idx)
+   {
+   minicoord::MINICOORD crs;
+
+   crs=minicoord::MINICOORD_LINEAR;
+   if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
+   else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
+   else if (DATA[idx].crs==databuf::DATABUF_CRS_MERC) crs=minicoord::MINICOORD_MERC;
+
+   return(crs);
+   }
+
 // create data brick id
 unsigned int datagrid::create(const unsigned int slot,
                               const BOOLINT flip,
@@ -369,11 +382,8 @@ minimesh datagrid::decompose(unsigned int idx)
       {
       if (!SPEC[idx])
          {
-         // check coordinate system of actual databuf object
-         crs=minicoord::MINICOORD_LINEAR;
-         if (DATA[idx].crs==databuf::DATABUF_CRS_LLH) crs=minicoord::MINICOORD_LLH;
-         else if (DATA[idx].crs==databuf::DATABUF_CRS_UTM) crs=minicoord::MINICOORD_UTM;
-         else if (DATA[idx].crs==databuf::DATABUF_CRS_MERC) crs=minicoord::MINICOORD_MERC;
+         // get coordinate system of actual databuf object
+         crs=getcrs(idx);
 
          // determine clipped data coordinates of actual object:
 
@@ -389,15 +399,15 @@ minimesh datagrid::decompose(unsigned int idx)
 
          // determine clipped corner vertices of actual object:
 
-         vtx[0]=minicoord(interpolate(idx,crd[0]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[1]=minicoord(interpolate(idx,crd[1]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[2]=minicoord(interpolate(idx,crd[2]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[3]=minicoord(interpolate(idx,crd[3]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[0]=interpolate(idx,crd[0]);
+         vtx[1]=interpolate(idx,crd[1]);
+         vtx[2]=interpolate(idx,crd[2]);
+         vtx[3]=interpolate(idx,crd[3]);
 
-         vtx[4]=minicoord(interpolate(idx,crd[4]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[5]=minicoord(interpolate(idx,crd[5]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[6]=minicoord(interpolate(idx,crd[6]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
-         vtx[7]=minicoord(interpolate(idx,crd[7]),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+         vtx[4]=interpolate(idx,crd[4]);
+         vtx[5]=interpolate(idx,crd[5]);
+         vtx[6]=interpolate(idx,crd[6]);
+         vtx[7]=interpolate(idx,crd[7]);
          }
       else
          {
@@ -482,25 +492,40 @@ minimesh datagrid::decompose(unsigned int idx)
    }
 
 // interpolate data brick corners tri-linearily
-miniv3d datagrid::interpolate(unsigned int idx,
-                              miniv3d crd)
+minicoord datagrid::interpolate(unsigned int idx,
+                                const miniv3d &crd)
    {
-   miniv3d vtx[8];
+   minicoord vtx[8];
 
-   vtx[0]=miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0);
-   vtx[1]=miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0);
-   vtx[2]=miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0);
-   vtx[3]=miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0);
+   minicoord::MINICOORD crs;
 
-   vtx[4]=miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh);
-   vtx[5]=miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh);
-   vtx[6]=miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh);
-   vtx[7]=miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh);
+   crs=getcrs(idx);
 
-   return((1.0-crd.z)*((1.0-crd.y)*((1.0-crd.x)*vtx[0]+crd.x*vtx[3])+
-                       crd.y*((1.0-crd.x)*vtx[1]+crd.x*vtx[2]))+
-          crd.z*((1.0-crd.y)*((1.0-crd.x)*vtx[4]+crd.x*vtx[7])+
-                 crd.y*((1.0-crd.x)*vtx[5]+crd.x*vtx[6])));
+   vtx[0]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[1]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[2]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[3]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+
+   vtx[4]=minicoord(miniv3d(DATA[idx].swx,DATA[idx].swy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[5]=minicoord(miniv3d(DATA[idx].nwx,DATA[idx].nwy,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[6]=minicoord(miniv3d(DATA[idx].nex,DATA[idx].ney,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+   vtx[7]=minicoord(miniv3d(DATA[idx].sex,DATA[idx].sey,DATA[idx].h0+DATA[idx].dh),crs,DATA[idx].zone,(minicoord::MINICOORD_DATUM)DATA[idx].datum);
+
+   return(minicoord::lerp(crd.z,
+                          minicoord::lerp(crd.y,
+                                          minicoord::lerp(crd.x,
+                                                          vtx[0],vtx[3],
+                                                          FALSE),
+                                          minicoord::lerp(crd.x,
+                                                          vtx[1],vtx[2],
+                                                          FALSE)),
+                          minicoord::lerp(crd.y,
+                                          minicoord::lerp(crd.x,
+                                                          vtx[4],vtx[7],
+                                                          FALSE),
+                                          minicoord::lerp(crd.x,
+                                                          vtx[5],vtx[6],
+                                                          FALSE))));
    }
 
 // check if the constructed tetrahedral mesh is empty
@@ -555,7 +580,7 @@ void datagrid::trigger(const double time,
          ep.convert2(CRS);
          epd.convert2(CRS);
 
-         ed=(epd-ep).vec;
+         ed=epd.vec-ep.vec;
          ed.normalize();
          }
 

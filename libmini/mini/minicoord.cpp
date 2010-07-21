@@ -110,6 +110,9 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
 
    switch (type)
       {
+      case MINICOORD_LINEAR:
+         if (t!=MINICOORD_LINEAR) ERRORMSG();
+         break;
       case MINICOORD_LLH:
          switch (t)
             {
@@ -379,29 +382,28 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
    }
 
 // normalize wraparound coordinates
-void minicoord::normalize(BOOLINT symmetric)
+minicoord &minicoord::normalize(BOOLINT symmetric)
    {
    double wrap;
 
-   switch (type)
+   if (type==MINICOORD_LLH)
       {
-      case MINICOORD_LLH:
-         wrap=vec.x/(360*60*60);
-         if (symmetric)
-            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
-         else
-            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
-         break;
-      case MINICOORD_MERC:
-         wrap=vec.x/(2*minicrs::WGS84_r_major);
-         if (symmetric)
-            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
-         else
-            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
-         break;
-      default:
-         break;
+      wrap=vec.x/(360*60*60);
+      if (symmetric)
+         {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
+      else
+         {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
       }
+   else if (type==MINICOORD_MERC)
+      {
+      wrap=vec.x/(2*minicrs::WGS84_r_major);
+      if (symmetric)
+         {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
+      else
+         {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
+      }
+
+   return(*this);
    }
 
 // get euclidean distance
@@ -503,6 +505,30 @@ double minicoord::getorthodist(const minicoord &v) const
 
    return(dist);
    }
+
+// left-of comparison
+BOOLINT minicoord::leftof(const minicoord &v) const
+   {return((*this-v).symm().vec.x<0.0);}
+
+// right-of comparison
+BOOLINT minicoord::rightof(const minicoord &v) const
+   {return((*this-v).symm().vec.x>0.0);}
+
+// bottom-of comparison
+BOOLINT minicoord::bottomof(const minicoord &v) const
+   {return(vec.y<v.vec.y);}
+
+// top-of comparison
+BOOLINT minicoord::topof(const minicoord &v) const
+   {return(vec.y>v.vec.y);}
+
+// interpolate coordinates linearily
+minicoord minicoord::lerp(double w,const minicoord &a,const minicoord &b,BOOLINT symmetric)
+   {return(a+w*(b-a).normalize(symmetric));}
+
+// mean of two coordinates
+minicoord minicoord::mean(const minicoord &a,const minicoord &b,BOOLINT symmetric)
+   {return(lerp(0.5,a,b,symmetric));}
 
 // get crs type description from object
 const char *minicoord::getcrs() const

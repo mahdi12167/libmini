@@ -162,11 +162,13 @@ class datagrid
 
    minimesh UNSORTED;
 
+   minicoord::MINICOORD getcrs(unsigned int idx);
+
    BOOLINT decompose();
    minimesh decompose(unsigned int idx);
 
-   miniv3d interpolate(unsigned int idx,
-                       miniv3d crd);
+   minicoord interpolate(unsigned int idx,
+                         const miniv3d &crd);
 
    void push_post(const minimesh &mesh,
                   const double time);

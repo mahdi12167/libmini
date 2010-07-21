@@ -1681,6 +1681,10 @@ void minilayer::attachdetailtex(int texid,int width,int height,int mipmaps,BOOLI
                                 minicoord center,minicoord west,minicoord north,
                                 float alpha)
    {
+   if (center.type!=minicoord::MINICOORD_LINEAR) center.convert2(minicoord::MINICOORD_ECEF);
+   if (west.type!=minicoord::MINICOORD_LINEAR) west.convert2(minicoord::MINICOORD_ECEF);
+   if (north.type!=minicoord::MINICOORD_LINEAR) north.convert2(minicoord::MINICOORD_ECEF);
+
    if (DETAILOWNER)
       if (DETAILTEXID!=0) deletetexmap(DETAILTEXID);
 
@@ -1809,8 +1813,8 @@ void minilayer::getdetailtex(int &texid,int &width,int &height,int &mipmaps,
    back=map_g2o(south);
 
    pos=position.vec;
-   vecu=(right-left).vec;
-   vecv=(front-back).vec;
+   vecu=right.vec-left.vec;
+   vecv=front.vec-back.vec;
 
    vecu/=vecu.getlength2();
    vecv/=-vecv.getlength2();

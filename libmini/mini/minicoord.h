@@ -85,13 +85,37 @@ class minicoord
                 const miniv3d dst[8]); // 8 points in warp domain
 
    //! normalize wraparound coordinates
-   void normalize(BOOLINT symmetric=FALSE);
+   minicoord &normalize(BOOLINT symmetric=TRUE);
+
+   //! normalize coordinates symmetrically
+   minicoord &symm() {return(this->normalize(TRUE));}
+
+   //! normalize coordinates asymmetrically
+   minicoord &asymm() {return(this->normalize(FALSE));}
 
    //! get euclidean distance
    double getdist(const minicoord &v) const;
 
    //! get distance on orthodrome
    double getorthodist(const minicoord &v) const;
+
+   //! left-of comparison
+   BOOLINT leftof(const minicoord &v) const;
+
+   //! right-of comparison
+   BOOLINT rightof(const minicoord &v) const;
+
+   //! bottom-of comparison
+   BOOLINT bottomof(const minicoord &v) const;
+
+   //! top-of comparison
+   BOOLINT topof(const minicoord &v) const;
+
+   //! interpolate coordinates linearily
+   static minicoord lerp(double w,const minicoord &a,const minicoord &b,BOOLINT symmetric=TRUE);
+
+   //! mean of two coordinates
+   static minicoord mean(const minicoord &a,const minicoord &b,BOOLINT symmetric=TRUE);
 
    //! get crs type description
    const char *getcrs() const;

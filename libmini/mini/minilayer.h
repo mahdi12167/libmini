@@ -156,6 +156,7 @@ class minilayer
 
       // optional detail textures:
 
+      // LINEAR or ECEF
       minicoord detailcenter;
       minicoord detailwest;
       minicoord detailnorth;

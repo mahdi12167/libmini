@@ -152,7 +152,8 @@ inline double LONADD(double a,double b=0.0f)
    {
    double lon=a+b;
    double lonmul=floor(lon/(360*60*60));
-   return(lon-lonmul*360*60*60);
+   if (lonmul<0.0 || lonmul>1.0) lon-=lonmul*360*60*60;
+   return(lon);
    }
 
 //! subtract longitudes
@@ -160,35 +161,36 @@ inline double LONSUB(double a,double b=0.0f)
    {
    double diff=a-b+180*60*60;
    double diffmul=floor(diff/(360*60*60));
-   return(diff-diffmul*360*60*60-180*60*60);
+   if (diffmul<0.0 || diffmul>1.0) diff-=diffmul*360*60*60;
+   return(diff-180*60*60);
    }
 
 //! return leftmost longitude
 inline double LONLEFT(double a,double b)
    {
-   if (LONSUB(a,b)<0.0f) return(a);
+   if (LONSUB(a,b)<0.0) return(a);
    else return(b);
    }
 
 //! return rightmost longitude
 inline double LONRIGHT(double a,double b)
    {
-   if (LONSUB(a,b)>0.0f) return(a);
+   if (LONSUB(a,b)>0.0) return(a);
    else return(b);
    }
 
 //! linear interpolation of longitudes
-inline double LONLERP(double a,double b,double lerp=0.5f)
+inline double LONLERP(double a,double b,double lerp=0.5)
    {
    double diff=LONADD(b,-a);
    return(LONSUB(a,-lerp*diff));
    }
 
 //! average longitudes
-inline double LONMEAN(double a,double b,double weight=0.5f)
+inline double LONMEAN(double a,double b,double weight=0.5)
    {
-   if (LONSUB(a,b)<0.0f) return(LONLERP(a,b,weight));
-   else return(LONLERP(b,a,1.0f-weight));
+   if (LONSUB(a,b)<0.0) return(LONLERP(a,b,weight));
+   else return(LONLERP(b,a,1.0-weight));
    }
 
 }
