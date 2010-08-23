@@ -421,8 +421,8 @@ double minicoord::getdist(const minicoord &v) const
       p1=*this;
       p2=v;
 
-      p1.convert2(MINICOORD_ECEF);
-      p2.convert2(MINICOORD_ECEF);
+      if (p1.type!=MINICOORD_LINEAR) p1.convert2(MINICOORD_ECEF);
+      if (p2.type!=MINICOORD_LINEAR) p2.convert2(MINICOORD_ECEF);
 
       dist=(p1.vec-p2.vec).getlength();
       }
