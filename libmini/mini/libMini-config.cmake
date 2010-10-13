@@ -22,7 +22,7 @@ ENDIF (WIN32)
 IF (NOT LIBMINI_PATH)
    SET(LIBMINI_PATH $ENV{LIBMINI_PATH})
    IF (NOT LIBMINI_PATH)
-      FIND_PATH(LIBMINI_PATH mini.h ${CMAKE_CURRENT_SOURCE_DIR}/../mini ${CMAKE_CURRENT_SOURCE_DIR}/../../libmini/mini)
+      FIND_PATH(LIBMINI_PATH mini.h ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../mini ${CMAKE_CURRENT_SOURCE_DIR}/../../libmini/mini)
    ENDIF(NOT LIBMINI_PATH)
 ENDIF(NOT LIBMINI_PATH)
 
@@ -54,6 +54,7 @@ ENDIF(NOT LIBMINI_THIRDPARTY_DIR)
 
 MACRO(SET_MINI_PATH name subdir)
    SET(${name} ${LIBMINI_PATH}
+               ${LIBMINI_PATH}/..
                ${LIBMINI_PATH}/${subdir}
                ${LIBMINI_PATH}/../${subdir}
                ${LIBMINI_PATH}/../deps/${subdir}
