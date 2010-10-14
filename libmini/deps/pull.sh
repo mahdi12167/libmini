@@ -13,12 +13,18 @@ end
 # the pthreads, libjpeg and libpng/libz libraries are assumed to be installed
 # then the remaining dependencies to pull are:
 
-# curl 7.20.1
+# curl 7.21.2
 if (-X git) then
    if (! -e curl) then
       git clone git://curl.haxx.se/curl
    endif
-   (cd curl; git checkout curl-7_20_1)
+   (cd curl; git checkout curl-7_21_2)
+else
+   if (! -e curl) then
+      wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
+      tar zxf curl-7.21.2.tar.gz
+      mv curl-7.21.2 curl
+   endif
 endif
 
 # squish 1.10 /w cmake
