@@ -44,7 +44,7 @@ INSTALL(
 
 IF (BUILD_PLOTTER_APPS)
    INSTALL(
-      TARGETS example koch fern julia
+      TARGETS example spiral scroll bounce koch fern julia
       RUNTIME DESTINATION bin
       )
 ENDIF (BUILD_PLOTTER_APPS)
