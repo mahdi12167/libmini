@@ -15,6 +15,7 @@ int main(int argc,char *argv[])
    if (argc!=3)
       {
       printf("usage: %s <input.db> <output.db>\n",argv[0]);
+      printf("compresses/decompresses db files with zlib.\n");
       exit(1);
       }
 

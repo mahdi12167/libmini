@@ -16,7 +16,8 @@ int main(int argc,char *argv[])
 
    if (argc!=3)
       {
-      printf("usage: %s <input.db> <output.db>\n",argv[0]);
+      printf("usage: %s <input.ext> <output.ext>\n",argv[0]);
+      printf("converts images with ext = db, pnm, pvm, jpg, png.\n");
       exit(1);
       }
 

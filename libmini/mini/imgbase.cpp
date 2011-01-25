@@ -68,7 +68,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
    type=FILE_TYPE_ETC;
 
    if (ext!=NULL)
-      if (strcmp(ext,".db")==0) type=FILE_TYPE_DB;
+      if (strstr(ext,".db")!=0) type=FILE_TYPE_DB;
       else if (strcmp(ext,".pgm")==0) type=FILE_TYPE_PNM;
       else if (strcmp(ext,".ppm")==0) type=FILE_TYPE_PNM;
       else if (strcmp(ext,".pvm")==0) type=FILE_TYPE_PVM;
@@ -140,7 +140,7 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
    type=FILE_TYPE_ETC;
 
    if (ext!=NULL)
-      if (strcmp(ext,".db")==0) type=FILE_TYPE_DB;
+      if (strstr(ext,".db")!=0) type=FILE_TYPE_DB;
       else if (strcmp(ext,".pgm")==0) type=FILE_TYPE_PNM;
       else if (strcmp(ext,".ppm")==0) type=FILE_TYPE_PNM;
       else if (strcmp(ext,".pvm")==0) type=FILE_TYPE_PVM;
