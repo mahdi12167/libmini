@@ -1129,6 +1129,31 @@ int databuf::check_mipmap()
    return(0);
    }
 
+// drop mip-mapping
+void databuf::drop_mipmap()
+   {
+   if (type==DATABUF_TYPE_RGB_MM)
+      {
+      type=DATABUF_TYPE_RGB;
+      bytes=3*xsize*ysize; // 3 bytes per pixel
+      }
+   else if (type==DATABUF_TYPE_RGBA_MM)
+      {
+      type=DATABUF_TYPE_RGBA;
+      bytes=4*xsize*ysize; // 4 bytes per pixel
+      }
+   else if (type==DATABUF_TYPE_RGB_MM_S3TC)
+      {
+      type=DATABUF_TYPE_RGB_S3TC;
+      bytes=8*((xsize+3)/4)*((ysize+3)/4); // 8 bytes per 4x4 s3tc/dxt1 rgba block
+      }
+   else if (type==DATABUF_TYPE_RGBA_MM_S3TC)
+      {
+      type=DATABUF_TYPE_RGBA_S3TC;
+      bytes=8*((xsize+3)/4)*((ysize+3)/4); // 8 bytes per 4x4 s3tc/dxt1 rgba block
+      }
+   }
+
 // set hook for automatic s3tc compression
 void databuf::setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data)
    {

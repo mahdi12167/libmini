@@ -156,6 +156,9 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
    // register auto-decompression hook
    if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
 
+   // drop mipmaps
+   if (type!=FILE_TYPE_DB) buf.drop_mipmap();
+
    // compress to or decompress from s3tc
    if (type==FILE_TYPE_DB) buf.autocompress();
    else buf.autodecompress();

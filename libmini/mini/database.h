@@ -213,6 +213,9 @@ class databuf
    //! check mip-mapping
    int check_mipmap();
 
+   //! drop mip-mapping
+   void drop_mipmap();
+
    //! set hook for automatic s3tc compression
    static void setautocompress(void (*autocompress)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data),void *data=NULL);
 
