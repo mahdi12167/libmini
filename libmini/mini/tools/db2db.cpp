@@ -17,7 +17,7 @@ int main(int argc,char *argv[])
    if (argc!=3)
       {
       printf("usage: %s <input.ext> <output.ext>\n",argv[0]);
-      printf("converts images with ext = db, pnm, pvm, jpg, png.\n");
+      printf(" convert images with ext = db/pnm/pvm/jpg/png.\n");
       exit(1);
       }
 
@@ -28,11 +28,12 @@ int main(int argc,char *argv[])
       if (buf.type!=databuf::DATABUF_TYPE_RGB) buf.fillnodata(fillin_radius);
 
       // save buffer
-      imgbase::saveimg(buf,argv[2],jpgquality,pnglevel);
+      if (imgbase::saveimg(buf,argv[2],jpgquality,pnglevel)==0) fprintf(stderr,"write error\n");
 
       // release buffer
       buf.release();
       }
+   else fprintf(stderr,"read error\n");
 
    return(0);
    }

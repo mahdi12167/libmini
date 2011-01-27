@@ -9,13 +9,14 @@ int main(int argc,char *argv[])
    {
    databuf buf;
    BOOLINT extfmt_z;
+   int success;
 
    convbase::MINI_CONVERSION_PARAMS conversion_params;
 
    if (argc!=3)
       {
       printf("usage: %s <input.db> <output.db>\n",argv[0]);
-      printf("compresses/decompresses db files with zlib.\n");
+      printf(" compress/decompress db files with zlib.\n");
       exit(1);
       }
 
@@ -32,13 +33,16 @@ int main(int argc,char *argv[])
       if (buf.loaddata(argv[1])!=0)
          {
          // save buffer
-         if (extfmt_z) buf.savedata(argv[2]);
-         else buf.savedata(argv[2],databuf::DATABUF_EXTFMT_Z);
+         if (extfmt_z) success=buf.savedata(argv[2]);
+         else success=buf.savedata(argv[2],databuf::DATABUF_EXTFMT_Z);
+         if (success==0) fprintf(stderr,"write error\n");
 
          // release buffer
          buf.release();
          }
+      else fprintf(stderr,"read error\n");
       }
+   else fprintf(stderr,"read error\n");
 
    return(0);
    }
