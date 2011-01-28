@@ -249,6 +249,11 @@ class miniterrain
                      void (*geturl)(const char *src_url,const char *src_id,const char *src_file,const char *dst_file,int background,int id,void *data),
                      int (*checkurl)(const char *src_url,const char *src_id,const char *src_file,int id,void *data));
 
+   //! load tileset (regular version)
+   minilayer *load(const char *elev_ini,const char *imag_ini,
+                   BOOLINT loadopts,BOOLINT reset,
+                   int level,int baselevel);
+
    //! load tileset (short version)
    minilayer *load(const char *url,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,

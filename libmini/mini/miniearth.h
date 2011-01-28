@@ -124,6 +124,11 @@ class miniearth
    //! get the encapsulated terrain object
    miniterrain *getterrain() {return(TERRAIN);}
 
+   //! load tileset (regular version)
+   minilayer *load(const char *elev,const char *imag,
+                   BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,
+                   int level=0,int baselevel=0);
+
    //! load tileset (short version)
    minilayer *load(const char *url,
                    BOOLINT loadopts=FALSE,BOOLINT reset=FALSE,

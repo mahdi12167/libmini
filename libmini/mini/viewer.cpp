@@ -124,6 +124,10 @@ static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 // short usage: url to the tiles and textures
 static char shorturl[MAXSTR]="";
 
+// regular usage: url to the elev and imag ini files
+static char elev[MAXSTR]="";
+static char imag[MAXSTR]="";
+
 // long usage: base url and id-path to the tiles and textures
 static char baseurl[MAXSTR]="";
 static char baseid[MAXSTR]="";
@@ -1433,10 +1437,11 @@ int main(int argc,char *argv[])
       else if (strcmp(argv[i],"-B")==0) sw_bricks=sw_mpass=1;
 
    // check arguments
-   if ((sw_multi==0 && argc_regular!=1 && argc_regular!=4) ||
+   if ((sw_multi==0 && argc_regular!=1 && argc_regular!=2 && argc_regular!=4) ||
        (sw_multi!=0 && argc_regular<1))
       {
       printf("short usage: %s <url> {<options>}\n",argv[0]);
+      printf("regular usage: %s <elev.ini> <imag.ini> {<options>}\n",argv[0]);
       printf("long usage: %s <url> <tileset.path> <elevation.subpath> <imagery.subpath> {<options>}\n",argv[0]);
       printf("multi usage: %s -m {<url> [<detail.db>]} {<options>}\n",argv[0]);
       printf("options: -s=stereo -a=anaglyph -f=full-screen -r=reset-cache -c=auto-s3tc\n");
@@ -1445,12 +1450,17 @@ int main(int argc,char *argv[])
 
    // path setup for elevation and imagery
    if (sw_multi==0)
-      if (argc_regular!=1)
+      if (argc_regular==4)
          {
          if (*argv[1]=='-' || sscanf(argv[1],"%s",baseurl)!=1) exit(1);
          if (*argv[2]=='-' || sscanf(argv[2],"%s",baseid)!=1) exit(1);
          if (*argv[3]=='-' || sscanf(argv[3],"%s",basepath1)!=1) exit(1);
          if (*argv[4]=='-' || sscanf(argv[4],"%s",basepath2)!=1) exit(1);
+         }
+      else if (argc_regular==2)
+         {
+         if (*argv[1]=='-' || sscanf(argv[1],"%s",elev)!=1) exit(1);
+         if (*argv[2]=='-' || sscanf(argv[2],"%s",imag)!=1) exit(1);
          }
       else
          if (*argv[1]=='-' || sscanf(argv[1],"%s",shorturl)!=1) exit(1);
@@ -1501,8 +1511,16 @@ int main(int argc,char *argv[])
          exit(1);
          }
 
+   // load tileset (regular version)
+   if (sw_multi==0 && argc_regular==2)
+      if (!viewer->getearth()->load(elev,imag,TRUE,sw_reset))
+         {
+         printf("unable to load tileset from %s (resp. %s)\n",elev,imag);
+         exit(1);
+         }
+
    // load tileset (long version)
-   if (sw_multi==0 && argc_regular!=1)
+   if (sw_multi==0 && argc_regular==4)
       if (!viewer->getearth()->load(baseurl,baseid,basepath1,basepath2,TRUE,sw_reset))
          {
          printf("unable to load tileset at url=%s%s%s (resp. %s)\n",baseurl,baseid,basepath1,basepath2);

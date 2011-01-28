@@ -215,6 +215,18 @@ void miniearth::initOGL()
    miniOGL::configure_compression(0);
    }
 
+// load tileset (regular version)
+minilayer *miniearth::load(const char *elev,const char *imag,
+                           BOOLINT loadopts,BOOLINT reset,
+                           int level,int baselevel)
+   {
+   // propagate the parameters
+   propagate();
+
+   // load the tileset layer
+   return(TERRAIN->load(elev,imag,loadopts,reset,level,baselevel));
+   }
+
 // load tileset (short version)
 minilayer *miniearth::load(const char *url,
                            BOOLINT loadopts,BOOLINT reset,

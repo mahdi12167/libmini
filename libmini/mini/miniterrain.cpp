@@ -452,6 +452,45 @@ void miniterrain::setcallbacks(void *threaddata,
    CHECKURL=checkurl;
    }
 
+// load tileset (regular version)
+minilayer *miniterrain::load(const char *elev_ini,const char *imag_ini,
+                             BOOLINT loadopts,BOOLINT reset,
+                             int level,int baselevel)
+   {
+   char *elev,*imag;
+
+   minilayer *layer;
+
+   elev=strdup(elev_ini);
+   imag=strdup(imag_ini);
+
+   // remove trailing .ini
+   if (strlen(elev)>4)
+      if (strstr(elev,".ini")==&elev[strlen(elev)-4]) elev[strlen(elev)-4]='\0';
+   if (strlen(imag)>4)
+      if (strstr(imag,".ini")==&imag[strlen(imag)-4]) imag[strlen(imag)-4]='\0';
+
+   // remove trailing slash
+   if (strlen(elev)>1)
+      if (elev[strlen(elev)-1]=='/') elev[strlen(elev)-1]='\0';
+   if (strlen(imag)>1)
+      if (imag[strlen(imag)-1]=='/') imag[strlen(imag)-1]='\0';
+
+   // remove trailing backslash
+   if (strlen(elev)>1)
+      if (elev[strlen(elev)-1]=='\\') elev[strlen(elev)-1]='\0';
+   if (strlen(imag)>1)
+      if (imag[strlen(imag)-1]=='\\') imag[strlen(imag)-1]='\0';
+
+   // load tileset
+   layer=load("","",elev,imag,loadopts,reset,level,baselevel);
+
+   free(elev);
+   free(imag);
+
+   return(layer);
+   }
+
 // load tileset (short version)
 minilayer *miniterrain::load(const char *url,
                              BOOLINT loadopts,BOOLINT reset,
@@ -464,6 +503,10 @@ minilayer *miniterrain::load(const char *url,
    minilayer *layer;
 
    baseurl=strdup(url);
+
+   // remove trailing .ini
+   if (strlen(baseurl)>4)
+      if (strstr(baseurl,".ini")==&baseurl[strlen(baseurl)-4]) baseurl[strlen(baseurl)-4]='\0';
 
    // remove trailing slash
    if (strlen(baseurl)>1)
