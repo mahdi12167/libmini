@@ -130,6 +130,9 @@ class miniload
    void restrictroi(float rx,float rz, // roi center
                     float rrad); // roi radius
 
+   //! update roi on following render call
+   void updateroi(float rrad);
+
    //! update roi so that missing tiles are requested immediately
    void updateroi(float res, // resolution
                   float ex,float ey,float ez, // eye point
@@ -213,6 +216,8 @@ class miniload
    int *MAXFOG;
 
    int *LRU,TIME;
+
+   float UPDATE_RRAD;
 
    protected:
 

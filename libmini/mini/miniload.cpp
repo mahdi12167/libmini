@@ -178,6 +178,8 @@ miniload::miniload(const unsigned char **hfields,const unsigned char **textures,
 
    if ((LRU=(int *)malloc(COLS*ROWS*sizeof(int)))==NULL) MEMERROR();
    for (i=0; i<COLS*ROWS; i++) LRU[i]=TIME;
+
+   UPDATE_RRAD=0.0f;
    }
 
 // cleanup
@@ -873,6 +875,18 @@ void miniload::draw(float res,
                     int update)
    {
    if (TILE==NULL) ERRORMSG();
+
+   if (UPDATE_RRAD>0.0f)
+      {
+      updateroi(res,
+                ex,ey,ez,
+                ex,ez,
+                UPDATE_RRAD,
+                farp,
+                fovy,aspect);
+
+      UPDATE_RRAD=0.0f;
+      }
 
    minitile::configure_minres(CONFIGURE_MINRES);
    minitile::configure_maxd2(CONFIGURE_MAXD2);
@@ -1686,6 +1700,10 @@ void miniload::restrictroi(float rx,float rz,
    for (i=left; i<=right; i++)
       for (j=bottom; j<=top; j++) MANDATORY[i+j*COLS]=1;
    }
+
+// update roi on following render call
+void miniload::updateroi(float rrad)
+   {UPDATE_RRAD=rrad;}
 
 // update roi so that missing tiles are requested immediately
 void miniload::updateroi(float res,
