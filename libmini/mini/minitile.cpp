@@ -292,6 +292,8 @@ minitile::~minitile()
       for (j=0; j<ROWS; j++)
          if (WARPS[i+j*COLS]!=NULL) delete WARPS[i+j*COLS];
 
+   free(WARPS);
+
    if (WARP!=NULL) delete WARP;
    }
 
