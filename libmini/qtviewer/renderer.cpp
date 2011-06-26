@@ -884,7 +884,7 @@ void Renderer::attachTexture(int textureId)
     // check FBO status
     GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
     if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-        printf("Binding textuer error. Error Code: %d\n", (int)status);
+        printf("Binding texture error. Error Code: %d\n", (int)status);
 }
 
 void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
