@@ -23,7 +23,7 @@ Command-line Parameters
 Same as the basic libmini viewer.
 
 Usage: landscape <baseurl> <baseid> <basepath1> <basepath2>
-Example: landscape Landscape/Oahu/ data/Tileset/ elev imag
+Example: landscape Hawaii/data HawaiiTileset/ tiles landsat
 
 Camera Controls
 ===============

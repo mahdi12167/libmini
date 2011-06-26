@@ -16,6 +16,7 @@ HEADERS += mainwindow.h \
            renderer.h \
            viewerconst.h
 
+
 INCLUDEPATH += $$PWD/..
 INCLUDEPATH += $$PWD/../deps
 INCLUDEPATH += $$PWD/../deps/squish
