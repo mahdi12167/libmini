@@ -16,14 +16,17 @@ HEADERS += mainwindow.h \
            renderer.h \
            viewerconst.h
 
-INCLUDEPATH = $$PWD/.. $$PWD/../deps
+INCLUDEPATH += $$PWD/..
+INCLUDEPATH += $$PWD/../deps
+INCLUDEPATH += $$PWD/../deps/squish
+INCLUDEPATH += $$PWD/../deps/curl/include
 
-LIBS += -L$$PWD/../mini -lMini
-LIBS += -L$$PWD/../mini -lMiniSFX
-LIBS += -L$$PWD/../libs/libcurl/lib -lcurl
-LIBS += -L$$PWD/../libs/squish -lsquish
-LIBS += -L$$PWD/../libs/libjpeg -ljpeg
-LIBS += -L$$PWD/../libs/libpng -lpng
-LIBS += -L$$PWD/../libs/zlib -lz
+LIBS += -L$$PWD/../mini
+LIBS += -L$$PWD/../deps
+LIBS += -L$$PWD/../deps/squish
+LIBS += -L$$PWD/../deps/curl/lib
+
+LIBS += -lMini -lMiniSFX
+LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
 RESOURCES += landscape.qrc
