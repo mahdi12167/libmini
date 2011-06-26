@@ -1,7 +1,28 @@
-
 Libmini Integration in QT Application
 =====================================
-This is an example for integrating libmini into QT application. This sample application primarily uses mini viewer functions but provides additional camera control. 
+This is an example for integrating libmini into QT application. This
+sample application primarily uses mini viewer functions but provides
+additional camera control.
+
+Prerequisites
+=============
+Needs installation of:
+ qt/qmake
+ libmini
+ libcurl
+ libjpg
+ libpng > 1.4.0
+ zlib
+
+Compilation
+===========
+Type "./build.sh" on the unix console.
+
+Command-line Parameters
+=======================
+Same as the basic libmini viewer.
+Usage: qtviewer <baseurl> <baseid> <basepath1> <basepath2>
+Example: qtviewer Landscape/Oahu/ data/Tileset/ elev imag
 
 Camera Controls
 ===============
@@ -11,26 +32,3 @@ Hold middle mouse button & move up/down - Camera orbiting around focus point ver
 Left + Right mouse button click - Reset map orientation to north up
 Space - Move focus point to where mouse is pointing
 R - Move focus point to where mouse is pointing and reset camera to north up and look straight down
-
-Command-line Parameters
-========================
-Usage: landscape <baseurl> <baseid> <basepath1> <basepath2>
-Example: landscape Landscape/Oahu/ data/Tileset/ elev imag
-
-Directory Structure
-===================
-landscape - QT project
-libs - supporting libs and libmini
-  |
-  +- mini - libmini
-  +- libpng - upgraded to 1.4.0 in order to match libpng used in QT 4
-  +- libjpeg
-  +- libcurl
-  +- squish
-  +- zlib
-
-All libs come with precompiled .a file for 32bits OS
-
-
-
-
