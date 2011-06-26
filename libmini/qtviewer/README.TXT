@@ -21,8 +21,9 @@ Type "./build.sh" on the unix console.
 Command-line Parameters
 =======================
 Same as the basic libmini viewer.
-Usage: qtviewer <baseurl> <baseid> <basepath1> <basepath2>
-Example: qtviewer Landscape/Oahu/ data/Tileset/ elev imag
+
+Usage: landscape <baseurl> <baseid> <basepath1> <basepath2>
+Example: landscape Landscape/Oahu/ data/Tileset/ elev imag
 
 Camera Controls
 ===============
