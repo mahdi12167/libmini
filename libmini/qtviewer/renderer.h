@@ -139,7 +139,7 @@ protected:
     void    initFBO();
     void    bindFBO();
     void    unbindFBO();
-    void    attachTexture(int textureId);
+    void    attachTexture(int textureId, int depthId = -1);
     void    loadTextureFromResource(const char* respath, GLuint& texId);
 
     void    setupMatrix();

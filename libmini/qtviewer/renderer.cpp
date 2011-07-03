@@ -1,5 +1,3 @@
-#define DEBUG_FBO //!!
-
 #define GL_GLEXT_PROTOTYPES
 
 #include <QtGui>
@@ -224,10 +222,8 @@ void Renderer::initParameters()
 // initialize the view point
 void Renderer::initView()
 {
-#ifndef DEBUG_FBO
-   initFBO();
-#endif
    resizeViewport();
+   initFBO();
 
    viewer->initeyepoint(m_Camera.pos);
 
@@ -290,9 +286,7 @@ void Renderer::resizeViewport()
 
    glViewport(0, 0, winWidth, winWidth);
 
-#ifndef DEBUG_FBO
    resizeTextures(winWidth, winHeight);
-#endif
 
    m_Camera.doupdate = true;
 }
@@ -744,7 +738,7 @@ void Renderer::renderTerrain()
       float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
       viewer->cache(m_Camera.pos, m_Camera.forward, m_Camera.up, fAspectRatio);
 
-      attachTexture(m_TerrainTextureId);
+      //!! attachTexture(m_TerrainTextureId, m_DepthBufferId); //!! incomplete
       glClearColor(0, 0, 0, 0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -791,7 +785,7 @@ void Renderer::renderComposition()
 
 void Renderer::renderOverlay()
 {
-   attachTexture(m_OverlayTextureId);
+   attachTexture(m_OverlayTextureId, m_DepthBufferId);
    glClearColor(0, 0, 0, 0);
    glClear(GL_COLOR_BUFFER_BIT);
    glDepthMask(GL_FALSE);
@@ -808,14 +802,14 @@ void Renderer::renderLandscape()
    updateCamera();
 
    // bind FBO to render into texture
-#ifndef DEBUG_FBO
+#ifdef DEBUG_FBO
    bindFBO();
 #endif
    setupMatrix();
    updateVisibility();
 
    renderTerrain();
-#ifndef DEBUG_FBO
+#ifdef DEBUG_FBO
    renderOverlay();
    unbindFBO();
 
@@ -827,12 +821,12 @@ void Renderer::renderLandscape()
 
 void Renderer::initFBO()
 {
-   // create a framebuffer object, you need to delete them when program exits.
+   // create a framebuffer object
    glGenFramebuffersEXT(1, &m_FBOId);
    bindFBO();
 
-   attachTexture(m_TerrainTextureId);
-   attachTexture(m_OverlayTextureId);
+   attachTexture(m_TerrainTextureId, m_DepthBufferId);
+   attachTexture(m_OverlayTextureId, m_DepthBufferId);
 
    unbindFBO();
 }
@@ -847,13 +841,15 @@ void Renderer::unbindFBO()
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 
-//!! status signals GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT on MacOS X
-void Renderer::attachTexture(int textureId)
+void Renderer::attachTexture(int textureId, int depthId)
 {
+   if (textureId<0) return;
+
    // attach a texture to FBO color attachment point
    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, textureId, 0);
    // attach a renderbuffer to depth attachment point
-   glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_DepthBufferId);
+   if (depthId>=0)
+      glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthId);
 
    // check FBO status
    GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
