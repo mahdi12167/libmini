@@ -7,6 +7,8 @@
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
 
+#define MAX_BASE_URL_LEN 255
+
 typedef enum tagCameraTransitionMode
 {
     TRANSITION_NONE,
@@ -26,16 +28,16 @@ struct Camera
     int         viewportwidth;
     int         viewportheight;
 
-    //global coordinate
+    // global coordinate
     miniv3d     forward;
     miniv3d     side;
     miniv3d     up;
 
-    //camera ray hit ground
+    // camera ray hit ground
     minicoord   posGroundHit;
     double      distToGroundHit;
 
-    //opengl coordinate (world coordinate)
+    // opengl coordinate (world coordinate)
     minicoord   posGL;
     miniv3d     forwardGL;
     miniv3d     sideGL;
@@ -44,7 +46,7 @@ struct Camera
     miniv3d     frustumPointsGL[8];
     miniv4d     frustumPlanesGL[6];
 
-    //libmini layers
+    // libmini layers
     minilayer*  refLayer;
     minilayer*  nearestLayer;
 
@@ -56,9 +58,10 @@ struct Camera
 class Ray
 {
 public:
-  Ray() { }
+  Ray() {}
 
-  Ray(miniv3d o, miniv3d d) {
+  Ray(miniv3d o, miniv3d d)
+  {
     origin = o;
     direction = d;
     inv_direction = miniv3d(1/d.x, 1/d.y, 1/d.z);
@@ -67,7 +70,8 @@ public:
     sign[2] = (inv_direction.z < 0);
   }
 
-  Ray(const Ray &r) {
+  Ray(const Ray &r)
+  {
     origin = r.origin;
     direction = r.direction;
     inv_direction = r.inv_direction;
@@ -85,9 +89,6 @@ struct BoundingBox
     miniv3d minPoint;
     miniv3d maxPoint;
 };
-
-
-#define MAX_BASE_URL_LEN    255
 
 class Renderer
 {
@@ -153,8 +154,7 @@ protected:
     void    updateFrustum();
     void    updateVisibility();
 
-
-    //helper functions
+    // helper functions
     static void CalculateFrustumPlanes(miniv3d* points, miniv4d* planes);
     static void FindMinMax(const miniv4d& pos, float& minX, float& minY, float& minZ, float& maxX, float& maxY, float& maxZ);
     static miniv3d vec3cross(const miniv3d& v0, const miniv3d& v1);
@@ -184,10 +184,11 @@ protected:
     QGLWidget*  window;
 
     bool        m_bIsInited;
-    bool        m_bdrawBoundignBox;
+    bool        m_bdrawBoundingBox;
 
     Camera      m_Camera;
-    //for debug camera
+
+    // for debug camera
     Camera      m_DebugCamera;
     Camera      m_CameraSave;
 
@@ -213,42 +214,40 @@ protected:
     bool     m_bRenderTerrain;
     bool     m_bFreeCamera;
 
-
-    //camera transition animation
+    // camera transition animation
     bool     m_bInCameraTransition;
     int      m_MapTransitionTimerId;
     QTime    m_Timer;
 
-    //disable cursor move when move camera forward
+    // disable cursor move when move camera forward
     int      m_DisableCursorMoveTimerId;
     bool     m_bDisableCursorMoveEvent;
 
     CameraTransitionMode  m_CameraTransitionMode;
 
-    //reset map orientation
+    // reset map orientation
     int      m_HeadingRotateDirection;
 
-    //focus on target
+    // focus on target
     bool     m_bSetupFocusingOnTarget;
     minicoord m_TargetCameraPos;
     minicoord m_TransitingCameraPos;
 
-    //reset map
+    // reset map
     bool    m_bSetupResetMap;
 
     QPoint      m_CursorScreenPos;
     minicoord   m_CursorGlobalPos;
     bool        m_CursorValid;
 
-    //offscreen rendering
+    // offscreen rendering
     GLuint     m_FBOId;
     GLuint     m_DepthBufferId;
     GLuint     m_TerrainTextureId;
     GLuint     m_OverlayTextureId;
 
-    //texture ids for track data points and crosshair
+    // texture ids for track data points and crosshair
     GLuint     m_CrosshairTextureId;
-
 };
 
 #endif // RENDERER_H

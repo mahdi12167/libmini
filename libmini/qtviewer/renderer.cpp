@@ -1,3 +1,5 @@
+#define DEBUG_FBO
+
 #define GL_GLEXT_PROTOTYPES
 
 #include <QtGui>
@@ -11,6 +13,9 @@
 
 #include "viewerconst.h"
 #include "renderer.h"
+
+static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
+static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 
 Renderer::Renderer(QGLWidget* window)
@@ -30,9 +35,7 @@ Renderer::~Renderer()
    SAFE_DELETE_STRING(m_strBaseID);
    SAFE_DELETE_STRING(m_strBasePath1);
    SAFE_DELETE_STRING(m_strBasePath2);
-   m_bIsInited = false;
 }
-
 
 bool Renderer::setMapURL(const char* baseurl, const char* baseid, const char* basepath1, const char* basepath2)
 {
@@ -43,9 +46,9 @@ bool Renderer::setMapURL(const char* baseurl, const char* baseid, const char* ba
     strncpy(m_strBaseID, baseid, MAX_BASE_URL_LEN);
     strncpy(m_strBasePath1, basepath1, MAX_BASE_URL_LEN);
     strncpy(m_strBasePath2, basepath2, MAX_BASE_URL_LEN);
+
     return true;
 }
-
 
 void Renderer::initCamera(float latitude, float longitude, float altitude, float heading, float pitch, float fov, float nearplane, float farplane)
 {
@@ -68,15 +71,13 @@ void Renderer::initCamera(float latitude, float longitude, float altitude, float
     m_Camera.dooverride = false;
 }
 
-
 void Renderer::init()
 {
     if (m_bIsInited) return;
 
-    //set viewport size into camera again since this init will change viewport size;
+    // set viewport size into camera again since this init will change viewport size;
     m_Camera.viewportwidth = window->width();
     m_Camera.viewportheight = window->height();
-
 
     // print unsupported OpenGL extensions
     miniOGL::print_unsupported_glexts();
@@ -103,9 +104,6 @@ void Renderer::init()
     // initialize NPR bathy map
     initNPRbathymap();
 
-    //initial camera position to viewer's default initial point
-    //mCamera.pos = viewer->getinitial();
-
     initView();
     initDiscVertices();
 
@@ -120,7 +118,6 @@ void Renderer::init()
     m_bInCameraTransition = false;
     m_CameraTransitionMode = TRANSITION_NONE;
 
-
     m_DisableCursorMoveTimerId = -1;
     m_bDisableCursorMoveEvent = false;
 
@@ -133,23 +130,18 @@ void Renderer::init()
     m_bRenderTerrain = true;
     m_bFreeCamera = false;
 
-
-    //offscreen rendering
+    // offscreen rendering
     m_FBOId = -1;
     m_DepthBufferId = -1;
     m_TerrainTextureId = -1;
 
-
-    //load textures
+    // load textures
     loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
 
-    m_bdrawBoundignBox = false;
+    m_bdrawBoundingBox = false;
+
     m_bIsInited = true;
-
 }
-
-static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
-static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 void Renderer::initParameters()
 {
@@ -161,18 +153,17 @@ void Renderer::initParameters()
    viewerParams.winheight = m_Camera.viewportheight;
 
    viewerParams.fps = VIEWER_FPS;
-   viewerParams.fovy = m_Camera.fov; ///VIEWER_FOVY;
-   viewerParams.nearp = m_Camera.nearplane; ///VIEWER_NEARP;
-   viewerParams.farp = m_Camera.farplane; ///VIEWER_FARP;
+   viewerParams.fovy = m_Camera.fov;
+   viewerParams.nearp = m_Camera.nearplane;
+   viewerParams.farp = m_Camera.farplane;
    viewer->set(viewerParams);
    m_pViewerParams = viewer->get();
-
 
    // the earth parameters
    miniearth::MINIEARTH_PARAMS earthParams;
    viewer->getearth()->get(earthParams);
    earthParams.warpmode = 4;
-   earthParams.nonlin = TRUE;  //###viewer default is TRUE
+   earthParams.nonlin = TRUE;
    earthParams.usefog = TRUE;
    earthParams.useshaders = FALSE;
    earthParams.usediffuse = FALSE;
@@ -188,10 +179,6 @@ void Renderer::initParameters()
    earthParams.useflat = FALSE;
    earthParams.fogstart = VIEWER_FOGSTART;
    earthParams.fogdensity = VIEWER_FOGDENSITY;
-//   earthParams.fogcolor[0]=1.0f;
-//   earthParams.fogcolor[1]=0.0f;
-//   earthParams.fogcolor[2]=0.0f;
-
    earthParams.voidstart = VIEWER_VOIDSTART;
    earthParams.abyssstart = VIEWER_ABYSSSTART;
    viewer->getearth()->set(earthParams);
@@ -237,23 +224,23 @@ void Renderer::initParameters()
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
 
-
 // initialize the view point
 void Renderer::initView()
 {
+#ifndef DEBUG_FBO
    initFBO();
+#endif
    resizeViewport();
-
 
    viewer->initeyepoint(m_Camera.pos);
 
-   //setting up mini layers in camera
+   // setting up mini layers in camera
    m_Camera.refLayer = viewer->getearth()->getreference();
    m_Camera.nearestLayer = viewer->getearth()->getnearest(m_Camera.pos);
 
    minilayer* nst = m_Camera.nearestLayer;
 
-   //test if the initial camera pos is underneath the ground, if yes, move it up
+   // initial camera pos
    minicoord cameraPos = m_Camera.pos;
    cameraPos.convert2(minicoord::MINICOORD_LLH);
    float fAltitude = cameraPos.vec.z;
@@ -267,26 +254,28 @@ void Renderer::initView()
    double dist = viewer->shoot(cameraPos, vDown);
    if (dist != MAXFLOAT)
    {
-        cameraPos = cameraPos + vDown * dist;
-        cameraPos.convert2(minicoord::MINICOORD_LLH);
-        if (cameraPos.vec.z > fAltitude)
-        {
-            cameraPos.convert2(minicoord::MINICOORD_ECEF);
-            m_Camera.pos = cameraPos;
-        }
+      cameraPos = cameraPos + vDown * dist;
+      cameraPos.convert2(minicoord::MINICOORD_LLH);
+
+      // test if the camera pos is underneath the ground, if yes, move it up:
+      if (cameraPos.vec.z > fAltitude)
+      {
+         cameraPos.convert2(minicoord::MINICOORD_ECEF);
+         m_Camera.pos = cameraPos;
+      }
    }
 
-   m_Camera.distToGroundHit = MAXFLOAT;
+   m_Camera.distToGroundHit = MAXFLOAT; // clear the dist to trigger recalculation
    viewer->initeyepoint(m_Camera.pos);
 }
 
 void Renderer::resize(int width, int height)
 {
-    m_Camera.viewportwidth = width;
-    m_Camera.viewportheight = height;
-    resizeViewport();
+   m_Camera.viewportwidth = width;
+   m_Camera.viewportheight = height;
+   resizeViewport();
 
-    window->updateGL();
+   window->updateGL();
 }
 
 // initialize the render window
@@ -302,50 +291,46 @@ void Renderer::resizeViewport()
    m_pViewerParams->winheight=winWidth;
    viewer->set(m_pViewerParams);
 
-   glViewport( 0, 0, winWidth, winWidth);
+   glViewport(0, 0, winWidth, winWidth);
 
+#ifndef DEBUG_FBO
    resizeTextures(winWidth, winHeight);
+#endif
 
    m_Camera.doupdate = true;
 }
 
 void Renderer::resizeTextures(int width, int height)
 {
-   //create texture object
+   // create terrain texture object
    if (m_TerrainTextureId > 0)
-       glDeleteTextures(1, &m_TerrainTextureId);
+      glDeleteTextures(1, &m_TerrainTextureId);
 
    glGenTextures(1, &m_TerrainTextureId);
    glBindTexture(GL_TEXTURE_2D, m_TerrainTextureId);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
    glBindTexture(GL_TEXTURE_2D, 0);
 
-
-   //create texture object
+   // create overlay texture object
    if (m_OverlayTextureId > 0)
-       glDeleteTextures(1, &m_OverlayTextureId);
+      glDeleteTextures(1, &m_OverlayTextureId);
 
    glGenTextures(1, &m_OverlayTextureId);
    glBindTexture(GL_TEXTURE_2D, m_OverlayTextureId);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
    glBindTexture(GL_TEXTURE_2D, 0);
 
-
-   //create the depth render buffer
+   // create the depth render buffer
    if (m_DepthBufferId > 0)
-       glDeleteRenderbuffersEXT(1, &m_DepthBufferId);
+      glDeleteRenderbuffersEXT(1, &m_DepthBufferId);
 
    glGenRenderbuffersEXT(1, &m_DepthBufferId);
    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_DepthBufferId);
@@ -368,14 +353,13 @@ void Renderer::updateCamera()
 
     m_Camera.updated = false;
 
-    //minilayer* refLayer = m_Camera.refLayer;
     minilayer* nearestLayer = m_Camera.nearestLayer;
 
-    //manage transition, for focusing on target.
-    //we have to put it here since we have to have matrix setting up beforehand so we could use ray cast
+    // manage transition, for focusing on target.
+    // we have to put it here since we have to have matrix setting up beforehand so we could use ray cast
     if (m_bSetupFocusingOnTarget || m_bSetupResetMap)
     {
-        //calculate the ray, starting from the camera pos and passing through where mouse pointer is
+        // calculate the ray, starting from the camera pos and passing through where mouse pointer is
         double x, y, z;
         GLdouble modelMatrix[16];
         GLdouble projMatrix[16];
@@ -391,7 +375,7 @@ void Renderer::updateCamera()
         miniv3d rayVec = miniv3d(x,y,z) - miniv3d(m_Camera.posGL.vec);
         rayVec.normalize();
 
-        //trace to find teh distance to current focus point
+        // trace to find the distance to current focus point
         m_Camera.distToGroundHit = viewer->shoot(m_Camera.pos, m_Camera.forward);
         if (m_Camera.distToGroundHit != MAXFLOAT)
         {
@@ -402,21 +386,21 @@ void Renderer::updateCamera()
             double distToTargetHit = viewer->shoot(m_Camera.pos, targetRay);
             if (distToTargetHit != MAXFLOAT)
             {
-                //we have a target hit too, calculate the target camera pos and start the transition
+                // we have a target hit too, calculate the target camera pos and start the transition
                 minicoord targetHitPos = m_Camera.pos + distToTargetHit * targetRay;
 
                 if (m_bSetupFocusingOnTarget)
                 {
-                    //find out the target position of camera transition
+                    // find out the target position of camera transition
                     minicoord cameraTargetPos = targetHitPos - m_Camera.distToGroundHit * m_Camera.forward;
 
-                    //convert into opengl space and limit the camera height within ceiling
+                    // convert into opengl space and limit the camera height within ceiling
                     minicoord cameraTargetPosGL = m_Camera.nearestLayer->map_g2o(cameraTargetPos);
                     double cameraHeightCeiling = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_CEILING);
 
+                    // camera is over ceiling, fix it
                     if (cameraTargetPosGL.vec.y > cameraHeightCeiling)
                     {
-                        //camera is over ceiling, fix it
                         double t = (cameraTargetPosGL.vec.y - cameraHeightCeiling) / rayVec.z;
                         cameraTargetPosGL -= t * rayVec;
                     }
@@ -428,7 +412,7 @@ void Renderer::updateCamera()
                 }
                 else if (m_bSetupResetMap)
                 {
-                    //straight looking down at the target pos
+                    // straight looking down at the target pos
                     float targetCameraHeight = m_Camera.distToGroundHit > CAMERA_HEIGHT_CEILING ? CAMERA_HEIGHT_CEILING : m_Camera.distToGroundHit;
                     targetHitPos.convert2(minicoord::MINICOORD_LLH);
                     targetHitPos.vec.z = targetCameraHeight;
@@ -440,12 +424,11 @@ void Renderer::updateCamera()
             }
         }
 
-
         m_bSetupFocusingOnTarget = false;
         m_bSetupResetMap = false;
     }
 
-    //update camera
+    // update camera
     if (m_Camera.doupdate || m_fMoveCameraForward != 0.0f || m_bCameraPanning)
     {
         minicoord cameraPos = m_Camera.pos;
@@ -473,7 +456,7 @@ void Renderer::updateCamera()
         rightLocal.y = -sindir;
         rightLocal.z = 0.0f;
 
-        //update camera movement
+        // update camera movement
         if (!m_Camera.dooverride)
         {
             if (m_bCameraPanning)
@@ -498,7 +481,7 @@ void Renderer::updateCamera()
                 m_fMoveCameraX = 0.0f;
                 m_fMoveCameraY = 0.0f;
 
-                //clear the dist so it will be detected again next time do rotating
+                // clear the dist so it will be detected again next time do rotating
                 m_Camera.distToGroundHit = MAXFLOAT;
             }
             else
@@ -533,7 +516,7 @@ void Renderer::updateCamera()
                             cameraPosLocal = posLookAtLocal - newDist * dirLocal;
                         }
 
-                        //if we process camera rotation, we stop process mouse wheels since we use middle button for rotation
+                        // if we process camera rotation, we stop process mouse wheels since we use middle button for rotation
                         m_fMoveCameraForward = 0.0f;
 
                     }
@@ -573,7 +556,7 @@ void Renderer::updateCamera()
 
                     m_fMoveCameraForward = 0.0f;
 
-                    //clear the dist so it will be detected again next time do rotating
+                    // clear the dist so it will be detected again next time do rotating
                     m_Camera.distToGroundHit = MAXFLOAT;
                 }
 
@@ -587,7 +570,6 @@ void Renderer::updateCamera()
             m_Camera.side = right;
             m_Camera.up = up;
 
-
             // remap eye coordinates:
             cameraPos = nearestLayer->map_l2g(cameraPosLocal);
             m_Camera.pos = cameraPos;
@@ -599,7 +581,7 @@ void Renderer::updateCamera()
         }
         else
         {
-            //camear movement has been overridden
+            // camera movement has been overridden
             if (m_CameraTransitionMode == TRANSITION_FOCUS_ON_TARGET)
             {
                 miniv3d cameraForwardLocal = nearestLayer->rot_g2l(m_Camera.forward, m_Camera.pos);
@@ -645,18 +627,14 @@ void Renderer::updateCamera()
             m_Camera.dooverride = false;
         }
 
-
-
-
         m_Camera.nearestLayer = viewer->getearth()->getnearest(m_Camera.pos);
-
 
         updateFrustum();
 
         m_Camera.updated = true;
     }
 
-    //clear the do update flag
+    // clear the do update flag
     m_Camera.doupdate = false;
 
     if (m_bFreeCamera)
@@ -668,7 +646,7 @@ void Renderer::updateCamera()
 
 void Renderer::updateFrustum()
 {
-    //build frustum in local(camera) coordinate
+    // build frustum in local (camera) coordinate
     float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
     double nearpGL = m_Camera.refLayer->len_g2o(m_Camera.nearplane);
     double farpGL = m_Camera.refLayer->len_g2o(m_Camera.farplane);
@@ -695,7 +673,7 @@ void Renderer::updateFrustum()
         miniv3d(farrightGL, farbottomGL, -farpGL)
     };
 
-    //transform into global(opengl) coordinate
+    // transform into global (opengl) coordinate
     miniv3d vx = m_Camera.sideGL;
     miniv3d vy = m_Camera.upGL;
     miniv3d vz = -m_Camera.forwardGL;
@@ -716,7 +694,7 @@ void Renderer::updateFrustum()
         m_Camera.frustumPointsGL[i].z = cameraToWorldMtx[2] * p;
     }
 
-    //construct frumstum planes
+    // construct frustum planes
     CalculateFrustumPlanes(m_Camera.frustumPointsGL, m_Camera.frustumPlanesGL);
 }
 
@@ -779,13 +757,13 @@ void Renderer::renderTerrain()
 
         viewer->render();
 
-
         // get time spent
         double delta=viewer->gettimer();
 
         // update quality parameters
         viewer->adapt(delta);
     }
+
     if (m_bFreeCamera)
     {
         m_Camera = m_CameraSave;
@@ -803,11 +781,11 @@ void Renderer::renderComposition()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    //draw terrain
+    // draw terrain
     glBindTexture(GL_TEXTURE_2D, m_TerrainTextureId);
     drawFullscreenTexQuad();
 
-    //draw overlay
+    // draw overlay
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0);
     glEnable(GL_BLEND);
@@ -815,7 +793,6 @@ void Renderer::renderComposition()
     glBindTexture(GL_TEXTURE_2D, m_OverlayTextureId);
     drawFullscreenTexQuad();
     glDisable(GL_BLEND);
-
 }
 
 void Renderer::renderOverlay()
@@ -828,7 +805,6 @@ void Renderer::renderOverlay()
     if (m_bFreeCamera)
         drawCameraFrustum();
 
-
     glDepthMask(GL_TRUE);
 }
 
@@ -837,19 +813,22 @@ void Renderer::renderLandscape()
     setupMatrix();
     updateCamera();
 
-    //bind FBO to render into texture
+    // bind FBO to render into texture
+#ifndef DEBUG_FBO
     bindFBO();
+#endif
     setupMatrix();
     updateVisibility();
 
     renderTerrain();
+#ifndef DEBUG_FBO
     renderOverlay();
     unbindFBO();
 
     renderComposition();
+#endif
 
     renderHUD();
-
 }
 
 void Renderer::initFBO()
@@ -874,9 +853,10 @@ void Renderer::unbindFBO()
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 
+//!! status signals GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT on MacOS X
 void Renderer::attachTexture(int textureId)
 {
-    // attach a texture to FBO color attachement point
+    // attach a texture to FBO color attachment point
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, textureId, 0);
     // attach a renderbuffer to depth attachment point
     glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_DepthBufferId);
@@ -1021,29 +1001,16 @@ void Renderer::initNPRbathymap()
     }
 }
 
-
 void Renderer::CalculateFrustumPlanes(miniv3d* points, miniv4d* planes)
 {
-    //all planes pointing inward. three points in clockwise order when normal pointing to you.
-
-    //far plane
-    planes[0] = points2plane(points[4], points[5], points[6]);
-
-    //top
-    planes[1] = points2plane(points[2], points[6], points[5]);
-
-    //bottom
-    planes[2] = points2plane(points[0], points[4], points[7]);
-
-    //left
-    planes[3] = points2plane(points[1], points[5], points[4]);
-
-    //right
-    planes[4] = points2plane(points[7], points[6], points[2]);
-
-    //near plane
-    planes[5] = points2plane(points[2], points[1], points[0]);
-
+    // all planes pointing inward
+    // three points in clockwise order when normal pointing to you
+    planes[0] = points2plane(points[4], points[5], points[6]); // far plane
+    planes[1] = points2plane(points[2], points[6], points[5]); // top
+    planes[2] = points2plane(points[0], points[4], points[7]); // bottom
+    planes[3] = points2plane(points[1], points[5], points[4]); // left
+    planes[4] = points2plane(points[7], points[6], points[2]); // right
+    planes[5] = points2plane(points[2], points[1], points[0]); // near plane
 }
 
 void Renderer::FindMinMax(const miniv4d& pos, float& minX, float& minY, float& minZ, float& maxX, float& maxY, float& maxZ)
@@ -1056,12 +1023,13 @@ void Renderer::FindMinMax(const miniv4d& pos, float& minX, float& minY, float& m
     if (pos.z > maxZ) maxZ = pos.z;
 }
 
-miniv3d Renderer::vec3cross(const miniv3d& v0, const miniv3d& v1)
+miniv3d Renderer::vec3cross(const miniv3d& a, const miniv3d& b)
 {
-    //(a2b3 − a3b2, a3b1 − a1b3, a1b2 − a2b1).
-    double x = v0.y*v1.z - v0.z * v1.y;
-    double y = v0.z*v1.x - v0.x * v1.z;
-    double z = v0.x*v1.y - v0.y * v1.x;
+    // cross product = (a2b3 − a3b2, a3b1 − a1b3, a1b2 − a2b1)
+    double x = a.y*b.z - a.z * b.y;
+    double y = a.z*b.x - a.x * b.z;
+    double z = a.x*b.y - a.y * b.x;
+
     return miniv3d(x,y,z);
 }
 
@@ -1079,19 +1047,19 @@ miniv4d Renderer::points2plane(const miniv3d& v0, const miniv3d& v1, const miniv
 
 minicoord Renderer::trace2ground(minicoord point, double& dist)
 {
-    //down vector
+    // down vector
     minilayer *nst = viewer->getearth()->getnearest(point);
     miniv3d vDown(0, 0, -1.0f);
     minicoord posLocal = nst->map_g2l(point);
     vDown = nst->rot_l2g(vDown, posLocal);
 
-    //ray casting to ground
+    // ray casting to ground
     point.convert2(minicoord::MINICOORD_LLH);
     minicoord rayCastSrc(point.vec.x, point.vec.y, 20000, minicoord::MINICOORD_LLH);
     rayCastSrc.convert2(minicoord::MINICOORD_ECEF);
     dist=viewer->shoot(rayCastSrc, vDown);
 
-    //if we have a hit, we have a proj position on ground, or we use pos
+    // if we have a hit, we have a proj position on ground, or we use pos
     minicoord posProj = point;
     if (dist != MAXFLOAT)
     {
