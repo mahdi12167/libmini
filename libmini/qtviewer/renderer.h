@@ -157,7 +157,6 @@ protected:
     // helper functions
     static void CalculateFrustumPlanes(miniv3d* points, miniv4d* planes);
     static void FindMinMax(const miniv4d& pos, float& minX, float& minY, float& minZ, float& maxX, float& maxY, float& maxZ);
-    static miniv3d vec3cross(const miniv3d& v0, const miniv3d& v1);
     static miniv4d points2plane(const miniv3d& v0, const miniv3d& v1, const miniv3d& v2);
     minicoord trace2ground(minicoord point, double& dist);
 
@@ -184,7 +183,6 @@ protected:
     QGLWidget*  window;
 
     bool        m_bIsInited;
-    bool        m_bdrawBoundingBox;
 
     Camera      m_Camera;
 
@@ -212,6 +210,7 @@ protected:
     bool     m_bCameraRotating;
 
     bool     m_bRenderTerrain;
+    bool     m_bdrawBoundingBox;
     bool     m_bFreeCamera;
 
     // camera transition animation
