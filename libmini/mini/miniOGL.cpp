@@ -208,6 +208,19 @@ void print_graphics_info()
 #endif
    }
 
+void checkOGLerror()
+   {
+#ifndef NOOGL
+   GLenum error;
+
+   if ((error=glGetError()))
+      if (error==GL_INVALID_ENUM) fprintf(stderr, "invalid GL enum\n");
+      else if (error==GL_INVALID_VALUE) fprintf(stderr, "invalid GL value\n");
+      else if (error==GL_INVALID_OPERATION) fprintf(stderr, "invalid GL operation\n");
+      else WARNMSG();
+#endif
+   }
+
 void initstate()
    {
 #ifndef NOOGL
@@ -253,8 +266,6 @@ void exitstate()
    {
 #ifndef NOOGL
 
-   GLenum error;
-
    if (depth_func!=GL_LEQUAL) glDepthFunc(depth_func);
    if (!depth_test) glDisable(GL_DEPTH_TEST);
 
@@ -271,11 +282,7 @@ void exitstate()
       glEnable(GL_BLEND);
       }
 
-   if ((error=glGetError()))
-     if (error==GL_INVALID_ENUM) fprintf(stderr, "invalid GL enum\n");
-     else if (error==GL_INVALID_VALUE) fprintf(stderr, "invalid GL value\n");
-     else if (error==GL_INVALID_OPERATION) fprintf(stderr, "invalid GL operation\n");
-     else WARNMSG();
+   checkOGLerror();
 
 #endif
    }

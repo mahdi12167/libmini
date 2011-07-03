@@ -9,6 +9,8 @@
 
 namespace miniOGL {
 
+void checkOGLerror();
+
 void initstate();
 void exitstate();
 
