@@ -7,36 +7,33 @@ class Renderer;
 
 class ViewerWindow : public QGLWidget
 {
-    Q_OBJECT;
+   Q_OBJECT;
 
 public:
-    ViewerWindow(QWidget* parent = 0);
-    virtual ~ViewerWindow();
+   ViewerWindow(QWidget* parent = 0);
+   virtual ~ViewerWindow();
 
 protected:
-    void    initializeGL();
-    void    resizeGL(int width, int height);
-    void    paintGL();
-    void    mousePressEvent(QMouseEvent *event);
-    void    mouseReleaseEvent(QMouseEvent* event);
-    void    mouseMoveEvent(QMouseEvent *event);
-    void    mouseDoubleClickEvent(QMouseEvent *);
-    void    keyPressEvent(QKeyEvent* event);
-    void    keyReleaseEvent(QKeyEvent* event);
+   void    initializeGL();
+   void    resizeGL(int width, int height);
+   void    paintGL();
+   void    mousePressEvent(QMouseEvent *event);
+   void    mouseReleaseEvent(QMouseEvent* event);
+   void    mouseMoveEvent(QMouseEvent *event);
+   void    mouseDoubleClickEvent(QMouseEvent *);
+   void    keyPressEvent(QKeyEvent* event);
+   void    keyReleaseEvent(QKeyEvent* event);
 
-    void    wheelEvent(QWheelEvent *event);
+   void    wheelEvent(QWheelEvent *event);
 
-    void    timerEvent(QTimerEvent *);
+   void    timerEvent(QTimerEvent *);
 
 private:
+   Renderer*   renderer;
 
-    Renderer*   renderer;
-
-    QPoint  lastPos;
-    bool    bLeftButtonDown;
-    bool    bRightButtonDown;
-
+   QPoint  lastPos;
+   bool    bLeftButtonDown;
+   bool    bRightButtonDown;
 };
 
-
-#endif // VIEWERWINDOW_H
+#endif

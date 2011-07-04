@@ -9,9 +9,8 @@
 
 #include <mini/viewerbase.h>
 
-#include "viewerconst.h"
-
 #include "landscape.h"
+#include "viewerconst.h"
 #include "renderer.h"
 
 static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
@@ -802,7 +801,6 @@ void Renderer::renderLandscape()
    // bind FBO to render into texture
    bindFBO();
    setupMatrix();
-   updateVisibility();
    renderTerrain();
    renderOverlay();
    unbindFBO();
