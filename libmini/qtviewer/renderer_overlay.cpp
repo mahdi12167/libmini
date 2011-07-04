@@ -56,17 +56,17 @@ bool Renderer::isBoundingBoxVisible(const BoundingBox& bb)
       bool bPointInside = false;
       for (int j = 0; j < 8; j++)
       {
-	 miniv4d p(points[j].x, points[j].y, points[j].z, -1.0f);
-	 if (p * m_Camera.frustumPlanesGL[i] > 0)
+         miniv4d p(points[j].x, points[j].y, points[j].z, -1.0f);
+         if (p * m_Camera.frustumPlanesGL[i] > 0)
          {
-	    bPointInside = true;
-	    break;
-	 }
+            bPointInside = true;
+            break;
+         }
       }
       if (!bPointInside)
       {
-	 bVisible = false;
-	 break;
+         bVisible = false;
+         break;
       }
    }
 
@@ -357,8 +357,8 @@ void Renderer::drawCylinder(const miniv3d& pos, float scale, float height, const
    {
       if (i == 1)
       {
-	 glVertex3f(discVertices[i].x, 0, discVertices[i].z);
-	 glVertex3f(discVertices[i].x, height, discVertices[i].z);
+         glVertex3f(discVertices[i].x, 0, discVertices[i].z);
+         glVertex3f(discVertices[i].x, height, discVertices[i].z);
       }
       glVertex3f(discVertices[i+1].x, 0, discVertices[i+1].z);
       glVertex3f(discVertices[i+1].x, height, discVertices[i+1].z);

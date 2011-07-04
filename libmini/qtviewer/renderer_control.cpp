@@ -156,16 +156,16 @@ bool Renderer::processResetMapOrientation(int deltaT)
    {
       if (newheading > 360)
       {
-	 newheading = 0;
-	 bFinished = true;
+         newheading = 0;
+         bFinished = true;
       }
    }
    else
    {
       if (newheading < 0)
       {
-	 newheading  = 0;
-	 bFinished = true;
+         newheading  = 0;
+         bFinished = true;
       }
    }
 
@@ -229,21 +229,21 @@ void Renderer::timerEvent(int timerId)
       switch(m_CameraTransitionMode)
       {
       case TRANSITION_RESET_HEADING:
-	 bTransitionFinished = processResetMapOrientation(deltaT);
-	 break;
+         bTransitionFinished = processResetMapOrientation(deltaT);
+         break;
       case TRANSITION_RESET_MAP:
-	 bTransitionFinished = processResetMap(deltaT);
-	 break;
+         bTransitionFinished = processResetMap(deltaT);
+         break;
       case TRANSITION_FOCUS_ON_TARGET:
-	 bTransitionFinished = processFocusOnTarget(deltaT);
-	 break;
+         bTransitionFinished = processFocusOnTarget(deltaT);
+         break;
       default:
-	 break;
+         break;
       }
 
       if (bTransitionFinished)
       {
-	 stopTransition();
+         stopTransition();
       }
    }
    else if (m_DisableCursorMoveTimerId == timerId)

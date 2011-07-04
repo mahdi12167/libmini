@@ -85,7 +85,7 @@ void Renderer::init()
    {
       QString message;
       message.sprintf("Unable to load map data from url=%s%s%s (resp. %s)\n",
-		      m_strBaseURL,m_strBaseID,m_strBasePath1,m_strBasePath2);
+                      m_strBaseURL,m_strBaseID,m_strBasePath1,m_strBasePath2);
       QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
       m_bIsInited = false;
       return;
@@ -367,49 +367,49 @@ void Renderer::updateCamera()
       m_Camera.distToGroundHit = viewer->shoot(m_Camera.pos, m_Camera.forward);
       if (m_Camera.distToGroundHit != MAXFLOAT)
       {
-	 m_Camera.posGroundHit = m_Camera.pos + m_Camera.distToGroundHit * m_Camera.forward;
+         m_Camera.posGroundHit = m_Camera.pos + m_Camera.distToGroundHit * m_Camera.forward;
 
-	 miniv3d targetRay = m_Camera.nearestLayer->rot_o2g(rayVec, m_Camera.pos);
+         miniv3d targetRay = m_Camera.nearestLayer->rot_o2g(rayVec, m_Camera.pos);
 
-	 double distToTargetHit = viewer->shoot(m_Camera.pos, targetRay);
-	 if (distToTargetHit != MAXFLOAT)
+         double distToTargetHit = viewer->shoot(m_Camera.pos, targetRay);
+         if (distToTargetHit != MAXFLOAT)
          {
-	    // we have a target hit too, calculate the target camera pos and start the transition
-	    minicoord targetHitPos = m_Camera.pos + distToTargetHit * targetRay;
+            // we have a target hit too, calculate the target camera pos and start the transition
+            minicoord targetHitPos = m_Camera.pos + distToTargetHit * targetRay;
 
-	    if (m_bSetupFocusingOnTarget)
-	    {
-	       // find out the target position of camera transition
-	       minicoord cameraTargetPos = targetHitPos - m_Camera.distToGroundHit * m_Camera.forward;
+            if (m_bSetupFocusingOnTarget)
+            {
+               // find out the target position of camera transition
+               minicoord cameraTargetPos = targetHitPos - m_Camera.distToGroundHit * m_Camera.forward;
 
-	       // convert into opengl space and limit the camera height within ceiling
-	       minicoord cameraTargetPosGL = m_Camera.nearestLayer->map_g2o(cameraTargetPos);
-	       double cameraHeightCeiling = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_CEILING);
+               // convert into opengl space and limit the camera height within ceiling
+               minicoord cameraTargetPosGL = m_Camera.nearestLayer->map_g2o(cameraTargetPos);
+               double cameraHeightCeiling = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_CEILING);
 
-	       // camera is over ceiling, fix it
-	       if (cameraTargetPosGL.vec.y > cameraHeightCeiling)
-	       {
-		  double t = (cameraTargetPosGL.vec.y - cameraHeightCeiling) / rayVec.z;
-		  cameraTargetPosGL -= t * rayVec;
-	       }
+               // camera is over ceiling, fix it
+               if (cameraTargetPosGL.vec.y > cameraHeightCeiling)
+               {
+                  double t = (cameraTargetPosGL.vec.y - cameraHeightCeiling) / rayVec.z;
+                  cameraTargetPosGL -= t * rayVec;
+               }
 
-	       m_TargetCameraPos = m_Camera.nearestLayer->map_o2g(cameraTargetPosGL);
-	       m_TargetCameraPos.type = minicoord::MINICOORD_ECEF;
+               m_TargetCameraPos = m_Camera.nearestLayer->map_o2g(cameraTargetPosGL);
+               m_TargetCameraPos.type = minicoord::MINICOORD_ECEF;
 
-	       startTransition(TRANSITION_FOCUS_ON_TARGET);
-	    }
-	    else if (m_bSetupResetMap)
-	    {
-	       // straight looking down at the target pos
-	       float targetCameraHeight = m_Camera.distToGroundHit > CAMERA_HEIGHT_CEILING ? CAMERA_HEIGHT_CEILING : m_Camera.distToGroundHit;
-	       targetHitPos.convert2(minicoord::MINICOORD_LLH);
-	       targetHitPos.vec.z = targetCameraHeight;
-	       targetHitPos.convert2(minicoord::MINICOORD_ECEF);
-	       m_TargetCameraPos = targetHitPos;
-	       m_TargetCameraPos.type = minicoord::MINICOORD_ECEF;
-	       startTransition(TRANSITION_RESET_MAP);
-	    }
-	 }
+               startTransition(TRANSITION_FOCUS_ON_TARGET);
+            }
+            else if (m_bSetupResetMap)
+            {
+               // straight looking down at the target pos
+               float targetCameraHeight = m_Camera.distToGroundHit > CAMERA_HEIGHT_CEILING ? CAMERA_HEIGHT_CEILING : m_Camera.distToGroundHit;
+               targetHitPos.convert2(minicoord::MINICOORD_LLH);
+               targetHitPos.vec.z = targetCameraHeight;
+               targetHitPos.convert2(minicoord::MINICOORD_ECEF);
+               m_TargetCameraPos = targetHitPos;
+               m_TargetCameraPos.type = minicoord::MINICOORD_ECEF;
+               startTransition(TRANSITION_RESET_MAP);
+            }
+         }
       }
 
       m_bSetupFocusingOnTarget = false;
@@ -447,169 +447,169 @@ void Renderer::updateCamera()
       // update camera movement
       if (!m_Camera.dooverride)
       {
-	 if (m_bCameraPanning)
+         if (m_bCameraPanning)
          {
-	    double speed = 20.0f;
-	    if (m_bFastCameraMove)
-	       speed *= 10.0f;
+            double speed = 20.0f;
+            if (m_bFastCameraMove)
+               speed *= 10.0f;
 
-	    m_bCameraPanning = false;
-	    cameraPosLocal.vec.x += rightLocal.x * m_fMoveCameraX * speed;
-	    cameraPosLocal.vec.y += rightLocal.y * m_fMoveCameraX * speed;
-	    cameraPosLocal.vec.z += rightLocal.z * m_fMoveCameraX * speed;
+            m_bCameraPanning = false;
+            cameraPosLocal.vec.x += rightLocal.x * m_fMoveCameraX * speed;
+            cameraPosLocal.vec.y += rightLocal.y * m_fMoveCameraX * speed;
+            cameraPosLocal.vec.z += rightLocal.z * m_fMoveCameraX * speed;
 
-	    miniv3d flatUp = upLocal;
-	    flatUp.z = 0.0f;
-	    flatUp.normalize();
+            miniv3d flatUp = upLocal;
+            flatUp.z = 0.0f;
+            flatUp.normalize();
 
-	    cameraPosLocal.vec.x += flatUp.x * m_fMoveCameraY * speed;
-	    cameraPosLocal.vec.y += flatUp.y * m_fMoveCameraY * speed;
-	    cameraPosLocal.vec.z += flatUp.z * m_fMoveCameraY * speed;
+            cameraPosLocal.vec.x += flatUp.x * m_fMoveCameraY * speed;
+            cameraPosLocal.vec.y += flatUp.y * m_fMoveCameraY * speed;
+            cameraPosLocal.vec.z += flatUp.z * m_fMoveCameraY * speed;
 
-	    m_fMoveCameraX = 0.0f;
-	    m_fMoveCameraY = 0.0f;
+            m_fMoveCameraX = 0.0f;
+            m_fMoveCameraY = 0.0f;
 
-	    // clear the dist so it will be detected again next time do rotating
-	    m_Camera.distToGroundHit = MAXFLOAT;
-	 }
-	 else
-	 {
-	    double cameraHeightCeiling = nearestLayer->len_g2l(CAMERA_HEIGHT_CEILING);
+            // clear the dist so it will be detected again next time do rotating
+            m_Camera.distToGroundHit = MAXFLOAT;
+         }
+         else
+         {
+            double cameraHeightCeiling = nearestLayer->len_g2l(CAMERA_HEIGHT_CEILING);
 
-	    if (m_bCameraRotating)
-	    {
-	       m_bCameraRotating = false;
-	       if (m_Camera.distToGroundHit == MAXFLOAT)
-	       {
-		  m_Camera.distToGroundHit = viewer->shoot(m_Camera.pos, m_Camera.forward);
-		  if (m_Camera.distToGroundHit != MAXFLOAT)
-		  {
-		     m_Camera.posGroundHit = m_Camera.pos + m_Camera.distToGroundHit * m_Camera.forward;
-		  }
-		  else
-		  {
-		     m_Camera.posGroundHit = m_Camera.pos;
-		  }
-	       }
-	       if (m_Camera.distToGroundHit != MAXFLOAT)
-	       {
-		  minicoord posLookAtLocal = nearestLayer->map_g2l(m_Camera.posGroundHit);
-		  double distToLookAtLocal = nearestLayer->len_g2l(m_Camera.distToGroundHit);
+            if (m_bCameraRotating)
+            {
+               m_bCameraRotating = false;
+               if (m_Camera.distToGroundHit == MAXFLOAT)
+               {
+                  m_Camera.distToGroundHit = viewer->shoot(m_Camera.pos, m_Camera.forward);
+                  if (m_Camera.distToGroundHit != MAXFLOAT)
+                  {
+                     m_Camera.posGroundHit = m_Camera.pos + m_Camera.distToGroundHit * m_Camera.forward;
+                  }
+                  else
+                  {
+                     m_Camera.posGroundHit = m_Camera.pos;
+                  }
+               }
+               if (m_Camera.distToGroundHit != MAXFLOAT)
+               {
+                  minicoord posLookAtLocal = nearestLayer->map_g2l(m_Camera.posGroundHit);
+                  double distToLookAtLocal = nearestLayer->len_g2l(m_Camera.distToGroundHit);
 
-		  cameraPosLocal = posLookAtLocal - distToLookAtLocal * dirLocal;
+                  cameraPosLocal = posLookAtLocal - distToLookAtLocal * dirLocal;
 
-		  if (cameraPosLocal.vec.z > cameraHeightCeiling)
-		  {
-		     double newDist = -(cameraHeightCeiling - posLookAtLocal.vec.z)/dirLocal.z;
-		     cameraPosLocal = posLookAtLocal - newDist * dirLocal;
-		  }
+                  if (cameraPosLocal.vec.z > cameraHeightCeiling)
+                  {
+                     double newDist = -(cameraHeightCeiling - posLookAtLocal.vec.z)/dirLocal.z;
+                     cameraPosLocal = posLookAtLocal - newDist * dirLocal;
+                  }
 
-		  // if we process camera rotation, we stop process mouse wheels since we use middle button for rotation
-		  m_fMoveCameraForward = 0.0f;
-	       }
-	    }
+                  // if we process camera rotation, we stop process mouse wheels since we use middle button for rotation
+                  m_fMoveCameraForward = 0.0f;
+               }
+            }
 
-	    if (m_fMoveCameraForward != 0.0f)
-	    {
-	       double speed = 2.0;
-	       if (m_bFastCameraMove)
-		  speed *= 10.0f;
+            if (m_fMoveCameraForward != 0.0f)
+            {
+               double speed = 2.0;
+               if (m_bFastCameraMove)
+                  speed *= 10.0f;
 
-	       double delta = speed * m_fMoveCameraForward;
-	       cameraPosLocal.vec.x += dirLocal.x * delta;
-	       cameraPosLocal.vec.y += dirLocal.y * delta;
-	       cameraPosLocal.vec.z += dirLocal.z * delta;
+               double delta = speed * m_fMoveCameraForward;
+               cameraPosLocal.vec.x += dirLocal.x * delta;
+               cameraPosLocal.vec.y += dirLocal.y * delta;
+               cameraPosLocal.vec.z += dirLocal.z * delta;
 
-	       double cameraHeightFloor = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_FLOOR);
+               double cameraHeightFloor = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_FLOOR);
 
-	       if (cameraPosLocal.vec.z > cameraHeightCeiling)
-	       {
-		  double overHeight = cameraPosLocal.vec.z - cameraHeightCeiling;
-		  double adjustRatio = overHeight / (dirLocal.z * delta);
-		  cameraPosLocal.vec.x -= dirLocal.x * delta * adjustRatio;
-		  cameraPosLocal.vec.y -= dirLocal.y * delta * adjustRatio;
-		  cameraPosLocal.vec.z -= dirLocal.z * delta * adjustRatio;
-	       }
+               if (cameraPosLocal.vec.z > cameraHeightCeiling)
+               {
+                  double overHeight = cameraPosLocal.vec.z - cameraHeightCeiling;
+                  double adjustRatio = overHeight / (dirLocal.z * delta);
+                  cameraPosLocal.vec.x -= dirLocal.x * delta * adjustRatio;
+                  cameraPosLocal.vec.y -= dirLocal.y * delta * adjustRatio;
+                  cameraPosLocal.vec.z -= dirLocal.z * delta * adjustRatio;
+               }
 
-	       if (cameraPosLocal.vec.z < cameraHeightFloor)
-	       {
-		  double overHeight =  cameraPosLocal.vec.z - cameraHeightFloor;
-		  double adjustRatio = overHeight / (dirLocal.z * delta);
-		  cameraPosLocal.vec.x -= dirLocal.x * delta * adjustRatio;
-		  cameraPosLocal.vec.y -= dirLocal.y * delta * adjustRatio;
-		  cameraPosLocal.vec.z -= dirLocal.z * delta * adjustRatio;
-	       }
+               if (cameraPosLocal.vec.z < cameraHeightFloor)
+               {
+                  double overHeight =  cameraPosLocal.vec.z - cameraHeightFloor;
+                  double adjustRatio = overHeight / (dirLocal.z * delta);
+                  cameraPosLocal.vec.x -= dirLocal.x * delta * adjustRatio;
+                  cameraPosLocal.vec.y -= dirLocal.y * delta * adjustRatio;
+                  cameraPosLocal.vec.z -= dirLocal.z * delta * adjustRatio;
+               }
 
-	       m_fMoveCameraForward = 0.0f;
+               m_fMoveCameraForward = 0.0f;
 
-	       // clear the dist so it will be detected again next time do rotating
-	       m_Camera.distToGroundHit = MAXFLOAT;
-	    }
-	 }
+               // clear the dist so it will be detected again next time do rotating
+               m_Camera.distToGroundHit = MAXFLOAT;
+            }
+         }
 
-	 miniv3d dir = nearestLayer->rot_l2g(dirLocal, cameraPosLocal);
-	 miniv3d up = nearestLayer->rot_l2g(upLocal, cameraPosLocal);
-	 miniv3d right = nearestLayer->rot_l2g(rightLocal, cameraPosLocal);
+         miniv3d dir = nearestLayer->rot_l2g(dirLocal, cameraPosLocal);
+         miniv3d up = nearestLayer->rot_l2g(upLocal, cameraPosLocal);
+         miniv3d right = nearestLayer->rot_l2g(rightLocal, cameraPosLocal);
 
-	 m_Camera.forward = dir;
-	 m_Camera.side = right;
-	 m_Camera.up = up;
+         m_Camera.forward = dir;
+         m_Camera.side = right;
+         m_Camera.up = up;
 
-	 // remap eye coordinates
-	 cameraPos = nearestLayer->map_l2g(cameraPosLocal);
-	 m_Camera.pos = cameraPos;
+         // remap eye coordinates
+         cameraPos = nearestLayer->map_l2g(cameraPosLocal);
+         m_Camera.pos = cameraPos;
 
-	 m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
-	 m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
-	 m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
-	 m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
+         m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
+         m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
+         m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
+         m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
       }
       else
       {
-	 // camera movement has been overridden
-	 if (m_CameraTransitionMode == TRANSITION_FOCUS_ON_TARGET)
+         // camera movement has been overridden
+         if (m_CameraTransitionMode == TRANSITION_FOCUS_ON_TARGET)
          {
-	    miniv3d cameraForwardLocal = nearestLayer->rot_g2l(m_Camera.forward, m_Camera.pos);
-	    miniv3d cameraSideLocal = nearestLayer->rot_g2l(m_Camera.side, m_Camera.pos);
-	    miniv3d cameraUpLocal = nearestLayer->rot_g2l(m_Camera.up, m_Camera.pos);
+            miniv3d cameraForwardLocal = nearestLayer->rot_g2l(m_Camera.forward, m_Camera.pos);
+            miniv3d cameraSideLocal = nearestLayer->rot_g2l(m_Camera.side, m_Camera.pos);
+            miniv3d cameraUpLocal = nearestLayer->rot_g2l(m_Camera.up, m_Camera.pos);
 
-	    m_Camera.pos = m_TransitingCameraPos;
+            m_Camera.pos = m_TransitingCameraPos;
 
-	    minicoord cameraPosLocal = nearestLayer->map_g2l(m_Camera.pos);
+            minicoord cameraPosLocal = nearestLayer->map_g2l(m_Camera.pos);
 
-	    m_Camera.forward = nearestLayer->rot_l2g(cameraForwardLocal, cameraPosLocal);
-	    m_Camera.side = nearestLayer->rot_l2g(cameraSideLocal, cameraPosLocal);
-	    m_Camera.up = nearestLayer->rot_l2g(cameraUpLocal, cameraPosLocal);
+            m_Camera.forward = nearestLayer->rot_l2g(cameraForwardLocal, cameraPosLocal);
+            m_Camera.side = nearestLayer->rot_l2g(cameraSideLocal, cameraPosLocal);
+            m_Camera.up = nearestLayer->rot_l2g(cameraUpLocal, cameraPosLocal);
 
-	    m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
-	    m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
-	    m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
-	    m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
-	 }
-	 else if (m_CameraTransitionMode == TRANSITION_RESET_MAP)
+            m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
+            m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
+            m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
+            m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
+         }
+         else if (m_CameraTransitionMode == TRANSITION_RESET_MAP)
          {
-	    miniv3d cameraForwardLocal(0.0f, 0.0f, -1.0f);
-	    miniv3d cameraSideLocal(1.0f, 0.0f, 0.0f);
-	    miniv3d cameraUpLocal(0.0f, 1.0f, 0.0f);
+            miniv3d cameraForwardLocal(0.0f, 0.0f, -1.0f);
+            miniv3d cameraSideLocal(1.0f, 0.0f, 0.0f);
+            miniv3d cameraUpLocal(0.0f, 1.0f, 0.0f);
 
-	    m_Camera.heading = 0.0f;
-	    m_Camera.pitch = 90.0f;
+            m_Camera.heading = 0.0f;
+            m_Camera.pitch = 90.0f;
 
-	    m_Camera.pos = m_TargetCameraPos;
+            m_Camera.pos = m_TargetCameraPos;
 
-	    minicoord cameraPosLocal = nearestLayer->map_g2l(m_Camera.pos);
+            minicoord cameraPosLocal = nearestLayer->map_g2l(m_Camera.pos);
 
-	    m_Camera.forward = nearestLayer->rot_l2g(cameraForwardLocal, cameraPosLocal);
-	    m_Camera.side = nearestLayer->rot_l2g(cameraSideLocal, cameraPosLocal);
-	    m_Camera.up = nearestLayer->rot_l2g(cameraUpLocal, cameraPosLocal);
+            m_Camera.forward = nearestLayer->rot_l2g(cameraForwardLocal, cameraPosLocal);
+            m_Camera.side = nearestLayer->rot_l2g(cameraSideLocal, cameraPosLocal);
+            m_Camera.up = nearestLayer->rot_l2g(cameraUpLocal, cameraPosLocal);
 
-	    m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
-	    m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
-	    m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
-	    m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
-	 }
+            m_Camera.posGL = nearestLayer->map_g2o(m_Camera.pos);
+            m_Camera.forwardGL = nearestLayer->rot_g2o(m_Camera.forward, m_Camera.pos);
+            m_Camera.upGL = nearestLayer->rot_g2o(m_Camera.up, m_Camera.pos);
+            m_Camera.sideGL = nearestLayer->rot_g2o(m_Camera.side, m_Camera.pos);
+         }
 
-	 m_Camera.dooverride = false;
+         m_Camera.dooverride = false;
       }
 
       m_Camera.nearestLayer = viewer->getearth()->getnearest(m_Camera.pos);
@@ -704,8 +704,8 @@ void Renderer::setupMatrix()
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    gluLookAt(m_Camera.posGL.vec.x, m_Camera.posGL.vec.y, m_Camera.posGL.vec.z,
-	     m_Camera.posGL.vec.x+m_Camera.forwardGL.x, m_Camera.posGL.vec.y+m_Camera.forwardGL.y, m_Camera.posGL.vec.z+m_Camera.forwardGL.z,
-	     m_Camera.upGL.x,m_Camera.upGL.y,m_Camera.upGL.z);
+             m_Camera.posGL.vec.x+m_Camera.forwardGL.x, m_Camera.posGL.vec.y+m_Camera.forwardGL.y, m_Camera.posGL.vec.z+m_Camera.forwardGL.z,
+             m_Camera.upGL.x,m_Camera.upGL.y,m_Camera.upGL.z);
 
    if (m_bFreeCamera)
    {

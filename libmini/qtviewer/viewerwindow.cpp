@@ -19,8 +19,6 @@ static QString mapDataUrl[] =
    baseurl, baseid, basepath1, basepath2
 };
 
-static QString dataFilePath;
-
 ViewerWindow::ViewerWindow(QWidget* )
    : renderer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
 {
@@ -37,7 +35,6 @@ ViewerWindow::ViewerWindow(QWidget* )
 
    // init renderer
    renderer = new Renderer(this);
-   // renderer->setMapURL(baseurl, baseid, basepath1, basepath2);
    renderer->setMapURL(mapDataUrl[0].toAscii().constData(), mapDataUrl[1].toAscii().constData(), mapDataUrl[2].toAscii().constData(), mapDataUrl[3].toAscii().constData());
 
    // init camera
@@ -54,7 +51,7 @@ ViewerWindow::~ViewerWindow()
 
 void ViewerWindow::initializeGL()
 {
-   // initialize render here as render need GL context to init
+   // initialize renderer here as renderer needs GL context to init
    if (!renderer->isInited())
       renderer->init();
 
@@ -97,19 +94,19 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
    {
       if (bLeftButtonDown && bRightButtonDown)
       {
-	 // a left-right button click
-	 renderer->resetMapOrientation();
+         // a left-right button click
+         renderer->resetMapOrientation();
       }
       else if (bLeftButtonDown)
       {
-	 // a left button click
+         // a left button click
       }
       else if (bRightButtonDown)
       {
-	 // a right button click
+         // a right button click
       }
       else
-	 event->ignore();
+         event->ignore();
    }
    else
       event->ignore();
