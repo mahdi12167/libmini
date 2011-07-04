@@ -1,5 +1,3 @@
-#define GL_GLEXT_PROTOTYPES
-
 #include <QtGui>
 #include <QtOpenGL/qgl.h>
 
@@ -738,7 +736,7 @@ void Renderer::renderTerrain()
       float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
       viewer->cache(m_Camera.pos, m_Camera.forward, m_Camera.up, fAspectRatio);
 
-      //!! attachTexture(m_TerrainTextureId, m_DepthBufferId); //!! incomplete
+      attachTexture(m_TerrainTextureId, m_DepthBufferId);
       glClearColor(0, 0, 0, 0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -802,20 +800,14 @@ void Renderer::renderLandscape()
    updateCamera();
 
    // bind FBO to render into texture
-#ifdef DEBUG_FBO
    bindFBO();
-#endif
    setupMatrix();
    updateVisibility();
-
    renderTerrain();
-#ifdef DEBUG_FBO
    renderOverlay();
    unbindFBO();
 
    renderComposition();
-#endif
-
    renderHUD();
 }
 

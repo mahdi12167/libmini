@@ -249,4 +249,4 @@ protected:
     GLuint     m_CrosshairTextureId;
 };
 
-#endif // RENDERER_H
+#endif

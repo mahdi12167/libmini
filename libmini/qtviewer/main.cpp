@@ -4,6 +4,9 @@
 
 #include "mainwindow.h"
 
+#define width 1024
+#define height 768
+
 int main(int argc, char *argv[])
 {
    QApplication a(argc, argv);
@@ -23,7 +26,7 @@ int main(int argc, char *argv[])
 
    MainWindow w;
    w.show();
-   w.resize(1024, 1024);
+   w.resize(width, height);
 
    return a.exec();
 }
