@@ -113,10 +113,10 @@ unsigned char *readPNMimage(const unsigned char *pnmimage,
    int pnmtype,maxval;
    unsigned char *image;
 
-   char ch;
-   int val;
-
+   int ch;
    PNMcomment com;
+
+   int val;
 
    if (loaded==0)
       {
@@ -129,7 +129,8 @@ unsigned char *readPNMimage(const unsigned char *pnmimage,
          }
 
       while ((ch=fgetc(file))=='#')
-         while (com.addchar(fgetc(file))!='\n');
+         while (com.addchar(ch=fgetc(file))!='\n')
+            if (ch==EOF) ERRORMSG();
       ungetc(ch,file);
 
       if (fscanf(file,"%d %d\n",width,height)!=2) ERRORMSG();
@@ -242,15 +243,29 @@ unsigned char *readPNMfile(const char *pnmfilename,
 
 // write a PVM volume
 int writePVMvolume(const char *filename,unsigned char *volume,
-                   int width,int height,int depth,int components)
+                   int width,int height,int depth,int components,
+                   PNMcomment *comment)
    {
    FILE *file;
+
+   char *com;
 
    if (width<1 || height<1 || depth<1 || components<1) ERRORMSG();
 
    if ((file=fopen(filename,"wb"))==NULL) return(0);
 
-   fprintf(file,"PVM\n%d %d %d\n%d\n",width,height,depth,components);
+   fprintf(file,"PVM");
+
+   if (comment!=NULL)
+      {
+      com=comment->str();
+      fprintf(file,"\n#");
+      while (*com!='\0')
+         if (*com!='\n') fputc(*com++,file);
+         else if (*++com!='\0') fprintf(file,"\n#");
+      }
+
+   fprintf(file,"\n%d %d %d\n%d\n",width,height,depth,components);
 
    if (fwrite(volume,width*height*depth*components,1,file)!=1) IOERROR();
    fclose(file);
@@ -260,11 +275,15 @@ int writePVMvolume(const char *filename,unsigned char *volume,
 
 // read a PVM volume
 unsigned char *readPVMvolume(const char *filename,
-                             int *width,int *height,int *depth,int *components)
+                             int *width,int *height,int *depth,int *components,
+                             PNMcomment *comment)
    {
    FILE *file;
 
    unsigned char header[5],*volume;
+
+   int ch;
+   PNMcomment com;
 
    if ((file=fopen(filename,"rb"))==NULL) return(NULL);
 
@@ -278,6 +297,11 @@ unsigned char *readPVMvolume(const char *filename,
       return(NULL);
       }
 
+   while ((ch=fgetc(file))=='#')
+      while (com.addchar(ch=fgetc(file))!='\n')
+         if (ch==EOF) ERRORMSG();
+   ungetc(ch,file);
+
    if (fscanf(file,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
    if (fscanf(file,"%d",components)!=1) ERRORMSG();
    if (fgetc(file)!='\n') ERRORMSG();
@@ -288,6 +312,12 @@ unsigned char *readPVMvolume(const char *filename,
 
    if (fread(volume,(*width)*(*height)*(*depth)*(*components),1,file)!=1) IOERROR();
    fclose(file);
+
+   if (comment!=NULL)
+      {
+      comment->reset();
+      comment->addstring(com.str());
+      }
 
    return(volume);
    }
