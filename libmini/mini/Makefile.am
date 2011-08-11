@@ -51,7 +51,7 @@ library_include_HEADERS = $(patsubst %,%.h,${HDRS}) $(patsubst %,%.h,${MODS}) $(
 EXTRA_DIST = miniP.h miniOGLP.h\
 	     build.sh build.bat\
 	     data/SkyDome.ppm data/EarthDay.db data/EarthNight.db data/Cone.db\
-	     GL/glext.h GL/glut.h GL/freeglut.h GL/freeglut_std.h GL/freeglut_ext.h\
+	     GL/glext.h\
 	     libMini.jpg libMini.ppm libMini.ico\
 	     README.html libMini.css\
 	     LICENSE.txt

@@ -1,9 +1,9 @@
 SHELL	= sh
 
 PRGS	= eval\
-	  db2db dbgzip\
-	  mpfptest\
-	  test
+	  db2db dbgzip dbdump\
+	  test\
+	  mpfptest
 
 SRCS	= $(PRGS:=.cpp)
 OBJS	= $(PRGS:=.o)
