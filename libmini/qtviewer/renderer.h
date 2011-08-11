@@ -118,10 +118,6 @@ public:
     void    resetMap();
     bool    processResetMap(int deltaT);
 
-    void    toggleLinearMode();
-    void    toggleTerrainRender();
-    void    toggleFreeCamera();
-
     bool    isInited() { return m_bIsInited; }
 
     void    timerEvent(int timerId);
@@ -208,10 +204,6 @@ protected:
     float    m_fMoveCameraY;
 
     bool     m_bCameraRotating;
-
-    bool     m_bRenderTerrain;
-    bool     m_bdrawBoundingBox;
-    bool     m_bFreeCamera;
 
     // camera transition animation
     bool     m_bInCameraTransition;

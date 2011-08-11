@@ -7,9 +7,7 @@ TEMPLATE = app
 SOURCES += main.cpp \
            mainwindow.cpp \
            viewerwindow.cpp \
-           renderer.cpp \
-           renderer_control.cpp \
-           renderer_overlay.cpp
+           renderer.cpp
 
 HEADERS += mainwindow.h \
            viewerwindow.h \

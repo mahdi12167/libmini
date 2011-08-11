@@ -101,7 +101,6 @@ void Renderer::init()
    initNPRbathymap();
 
    initView();
-   initDiscVertices();
 
    m_fMoveCameraForward = 0.0f;
    m_bFastCameraMove = false;
@@ -122,10 +121,6 @@ void Renderer::init()
 
    m_CursorGlobalPos = m_Camera.pos;
    m_CursorValid = false;
-
-   m_bRenderTerrain = true;
-   m_bdrawBoundingBox = false;
-   m_bFreeCamera = false;
 
    // offscreen rendering
    m_FBOId = -1;
@@ -333,12 +328,6 @@ void Renderer::draw()
 
 void Renderer::updateCamera()
 {
-   if (m_bFreeCamera)
-   {
-      m_CameraSave = m_Camera;
-      m_Camera = m_DebugCamera;
-   }
-
    m_Camera.updated = false;
 
    minilayer* nearestLayer = m_Camera.nearestLayer;
@@ -621,12 +610,6 @@ void Renderer::updateCamera()
 
    // clear the do update flag
    m_Camera.doupdate = false;
-
-   if (m_bFreeCamera)
-   {
-      m_DebugCamera = m_Camera;
-      m_Camera = m_CameraSave;
-   }
 }
 
 void Renderer::updateFrustum()
@@ -685,12 +668,6 @@ void Renderer::updateFrustum()
 
 void Renderer::setupMatrix()
 {
-   if (m_bFreeCamera)
-   {
-      m_CameraSave = m_Camera;
-      m_Camera = m_DebugCamera;
-   }
-
    glViewport(0.0f, 0.0f, m_Camera.viewportwidth, m_Camera.viewportheight);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
@@ -706,25 +683,14 @@ void Renderer::setupMatrix()
    gluLookAt(m_Camera.posGL.vec.x, m_Camera.posGL.vec.y, m_Camera.posGL.vec.z,
              m_Camera.posGL.vec.x+m_Camera.forwardGL.x, m_Camera.posGL.vec.y+m_Camera.forwardGL.y, m_Camera.posGL.vec.z+m_Camera.forwardGL.z,
              m_Camera.upGL.x,m_Camera.upGL.y,m_Camera.upGL.z);
-
-   if (m_bFreeCamera)
-   {
-      m_Camera = m_CameraSave;
-   }
 }
 
 void Renderer::renderTerrain()
 {
-   if (m_bFreeCamera)
-   {
-      m_CameraSave = m_Camera;
-      m_Camera = m_DebugCamera;
-   }
-
    minilayer* nearestLayer = m_Camera.nearestLayer;
 
    // render scene
-   if (m_bRenderTerrain && m_Camera.updated)
+   if (m_Camera.updated)
    {
       // start timer
       viewer->starttimer();
@@ -747,11 +713,6 @@ void Renderer::renderTerrain()
 
       // update quality parameters
       viewer->adapt(delta);
-   }
-
-   if (m_bFreeCamera)
-   {
-      m_Camera = m_CameraSave;
    }
 }
 
@@ -786,9 +747,6 @@ void Renderer::renderOverlay()
    glClearColor(0, 0, 0, 0);
    glClear(GL_COLOR_BUFFER_BIT);
    glDepthMask(GL_FALSE);
-
-   if (m_bFreeCamera)
-      drawCameraFrustum();
 
    glDepthMask(GL_TRUE);
 }
@@ -1040,4 +998,443 @@ minicoord Renderer::trace2ground(minicoord point, double& dist)
    }
 
    return posProj;
+}
+
+/*
+#include <list>
+#include <vector>
+#include <QtGui>
+#include <QtOpenGL/qgl.h>
+
+#include <mini/minibase.h>
+#include <mini/miniOGL.h>
+#include <mini/miniearth.h>
+#include <mini/miniterrain.h>
+#include <mini/minirgb.h>
+#include <mini/viewerbase.h>
+
+#include "landscape.h"
+#include "viewerconst.h"
+#include "renderer.h"
+*/
+
+using namespace std;
+
+bool Renderer::isBoundingBoxVisible(const BoundingBox& bb)
+{
+   miniv3d points[8] =
+   {
+      bb.minPoint,
+      miniv3d(bb.maxPoint.x, bb.minPoint.y, bb.minPoint.z),
+      miniv3d(bb.maxPoint.x, bb.minPoint.y, bb.maxPoint.z),
+      miniv3d(bb.minPoint.x, bb.minPoint.y, bb.maxPoint.z),
+      miniv3d(bb.minPoint.x, bb.maxPoint.y, bb.minPoint.z),
+      miniv3d(bb.maxPoint.x, bb.maxPoint.y, bb.minPoint.z),
+      bb.maxPoint,
+      miniv3d(bb.minPoint.x, bb.maxPoint.y, bb.maxPoint.z)
+   };
+
+   bool bVisible = true;
+   for (int i = 0; i < 6; i++)
+   {
+      bool bPointInside = false;
+      for (int j = 0; j < 8; j++)
+      {
+         miniv4d p(points[j].x, points[j].y, points[j].z, -1.0f);
+         if (p * m_Camera.frustumPlanesGL[i] > 0)
+         {
+            bPointInside = true;
+            break;
+         }
+      }
+      if (!bPointInside)
+      {
+         bVisible = false;
+         break;
+      }
+   }
+
+   return bVisible;
+}
+
+bool Renderer::RayBoundingBoxIntersect(const BoundingBox& bb, const Ray& r)
+{
+   miniv3d parameters[2];
+   parameters[0] = bb.minPoint;
+   parameters[1] = bb.maxPoint;
+
+   float t0 = 0.0f, t1 = MAXFLOAT;
+   float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+   tmin = (parameters[r.sign[0]].x - r.origin.x) * r.inv_direction.x;
+   tmax = (parameters[1-r.sign[0]].x - r.origin.x) * r.inv_direction.x;
+   tymin = (parameters[r.sign[1]].y - r.origin.y) * r.inv_direction.y;
+   tymax = (parameters[1-r.sign[1]].y - r.origin.y) * r.inv_direction.y;
+
+   if ( (tmin > tymax) || (tymin > tmax) )
+      return false;
+
+   if (tymin > tmin)
+      tmin = tymin;
+   if (tymax < tmax)
+      tmax = tymax;
+
+   tzmin = (parameters[r.sign[2]].z - r.origin.z) * r.inv_direction.z;
+   tzmax = (parameters[1-r.sign[2]].z - r.origin.z) * r.inv_direction.z;
+
+   if ( (tmin > tzmax) || (tzmin > tmax) )
+      return false;
+
+   if (tzmin > tmin)
+      tmin = tzmin;
+   if (tzmax < tmax)
+      tmax = tzmax;
+
+   return ( (tmin < t1) && (tmax > t0) );
+}
+
+void Renderer::renderHUD()
+{
+   minilayer *nst=viewer->getearth()->getnearest(m_Camera.pos);
+
+   double cameraElev=viewer->getearth()->getterrain()->getheight(m_Camera.pos);
+   if (cameraElev==-MAXFLOAT) cameraElev=0.0f;
+
+   minicoord cameraPosLLH = nst->map_g2t(m_Camera.pos);
+   if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR) cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
+
+   // draw crosshair
+   {
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix();
+      glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+      glLoadIdentity();
+      glDisable(GL_DEPTH_TEST);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glBindTexture(GL_TEXTURE_2D, m_CrosshairTextureId);
+      glEnable(GL_TEXTURE_2D);
+      glDisable(GL_CULL_FACE);
+
+      float lx = 60.0f/(window->width());
+      float ly = 60.0f/(window->height());
+
+      glColor4f(1.0f,1.0f,1.0f, 1.0f);
+
+      glBegin(GL_QUADS);
+      glTexCoord2f(0.0f,  0.0f); glVertex2f(-lx, ly); // P0
+      glTexCoord2f(1.0f,  0.0f); glVertex2f(lx, ly); // P1
+      glTexCoord2f(1.0f,  1.0f); glVertex2f(lx, -ly); // P2
+      glTexCoord2f(0.0f,  1.0f);  glVertex2f(-lx, -ly); // P3
+      glEnd();
+
+      glEnable(GL_DEPTH_TEST);
+      glPopMatrix();
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix();
+      glBindTexture(GL_TEXTURE_2D, 0);
+      glDisable(GL_TEXTURE_2D);
+      glEnable(GL_CULL_FACE);
+   }
+
+   QString str;
+   const QColor colorRed(255, 255, 255);
+   window->qglColor(colorRed);
+   int x = 10;
+   int y = window->height() - 20;
+   int line_space = -16;
+   int second_column_offset = 90;
+
+   str.sprintf("Camera Data");
+   drawText(x, y, str);
+   y+=line_space;
+
+   str.sprintf("=============");
+   drawText(x, y, str);
+   y+=line_space;
+
+   str.sprintf("Latitude:");
+   drawText(x, y, str);
+   str.sprintf("%-6.2f", cameraPosLLH.vec.x/3600.0);
+   drawText(x+second_column_offset, y, str);
+   y+=line_space;
+
+   str.sprintf("Longitude:");
+   drawText(x, y, str);
+   str.sprintf("%-6.2f", cameraPosLLH.vec.y/3600.0);
+   drawText(x+second_column_offset, y, str);
+   y+=line_space;
+
+   str.sprintf("Altitude:");
+   drawText(x, y, str);
+   str.sprintf("%-6.2f m", cameraPosLLH.vec.z);
+   drawText(x+second_column_offset, y, str);
+   y+=line_space;
+
+   str.sprintf("Heading:");
+   drawText(x, y, str);
+   str.sprintf("%03d", (int)m_Camera.heading);
+   drawText(x+second_column_offset, y, str);
+   y+=line_space;
+
+   str.sprintf("Pitch:");
+   drawText(x, y, str);
+   str.sprintf("%-6.0f", m_Camera.pitch);
+   drawText(x+second_column_offset, y, str);
+   y+=line_space;
+}
+
+void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
+{
+   int sx = x;
+   int sy = window->height() - y;
+
+   if (!bIsDoublePrint)
+   {
+      window->qglColor(color);
+      window->renderText(sx, sy, str);
+   }
+   else
+   {
+      window->qglColor(QColor(0, 0, 0, 255));
+      window->renderText(sx+2, sy+2, str);
+      window->qglColor(color);
+      window->renderText(sx, sy, str);
+   }
+}
+
+// user input handlers
+void Renderer::rotateCamera(float dx, float dy)
+{
+   m_Camera.heading += 180 * dx;
+   if (m_Camera.heading >= 360)
+      m_Camera.heading -= 360;
+   if (m_Camera.heading < 0)
+      m_Camera.heading += 360;
+
+   m_Camera.pitch += 180 * dy;
+   if (m_Camera.pitch < 5) m_Camera.pitch = 5;
+   if (m_Camera.pitch > 90) m_Camera.pitch = 90;
+
+   m_bCameraRotating = true;
+   m_Camera.doupdate = true;
+
+   window->updateGL();
+}
+
+void Renderer::moveCamera(float dx, float dy)
+{
+   minicoord tempCamPos = m_Camera.pos;
+   tempCamPos.convert2(minicoord::MINICOORD_LLH);
+
+   float speedAdj = fmax(1.0f, (tempCamPos.vec.z / 45000.0) * 10.0f);
+
+   m_bCameraPanning = true;
+   m_fMoveCameraX += dx * speedAdj;
+   m_fMoveCameraY += dy * speedAdj;
+   m_Camera.doupdate = true;
+
+   window->updateGL();
+}
+
+void Renderer::setCameraFastMoveForward(bool bEnable)
+{
+   m_bFastCameraMove = bEnable;
+}
+
+void Renderer::moveCameraForward(float delta)
+{
+   m_fMoveCameraForward += delta;
+   m_Camera.doupdate = true;
+
+   // we alreday have the timer running
+   if (m_DisableCursorMoveTimerId != -1)
+   {
+      // kill timer and restart it
+      window->killTimer(m_DisableCursorMoveTimerId);
+      //restart timer
+      m_DisableCursorMoveTimerId = window->startTimer(500); // half a second
+   }
+   else
+   {
+      // start timer
+      m_DisableCursorMoveTimerId = window->startTimer(500); // half a second
+      m_bDisableCursorMoveEvent = true;
+   }
+
+   window->updateGL();
+}
+
+void Renderer::resetMap()
+{
+   if (m_CameraTransitionMode == TRANSITION_NONE)
+   {
+      m_bSetupResetMap = true;
+      window->updateGL();
+   }
+}
+
+bool Renderer::processResetMap(int )
+{
+   if (m_Camera.pos == m_TargetCameraPos)
+   {
+      // clear the dist so it will be detected again next time do rotating
+      m_Camera.distToGroundHit = MAXFLOAT;
+      return true;
+   }
+
+   m_Camera.doupdate = true;
+   m_Camera.dooverride = true;
+   window->updateGL();
+
+   return false;
+}
+
+void Renderer::resetMapOrientation()
+{
+   if (m_CameraTransitionMode == TRANSITION_NONE)
+   {
+      m_HeadingRotateDirection = (m_Camera.heading > 180)? 1 : -1;
+      startTransition(TRANSITION_RESET_HEADING);
+   }
+}
+
+bool Renderer::processResetMapOrientation(int deltaT)
+{
+   const float speed = 360.0f / 0.5f; // speed is 0.5s for a whole round
+   float deltaAngle = ((float)deltaT) / 1000.0f * speed;
+
+   float newheading = m_Camera.heading + deltaAngle * m_HeadingRotateDirection;
+
+   bool bFinished = false;
+   if (m_HeadingRotateDirection > 0)
+   {
+      if (newheading > 360)
+      {
+         newheading = 0;
+         bFinished = true;
+      }
+   }
+   else
+   {
+      if (newheading < 0)
+      {
+         newheading  = 0;
+         bFinished = true;
+      }
+   }
+
+   m_Camera.heading = newheading;
+   m_bCameraRotating = true;
+   m_Camera.doupdate = true;
+
+   window->updateGL();
+
+   return bFinished;
+}
+
+void Renderer::focusOnTarget()
+{
+   if (m_CameraTransitionMode == TRANSITION_NONE)
+   {
+      m_bSetupFocusingOnTarget = true;
+      window->updateGL();
+   }
+}
+
+bool Renderer::processFocusOnTarget(int deltaT)
+{
+   const double speed = 100000.0f; // speed is 100km/second
+   double dt = ((float)deltaT) / 1000.0f;
+
+   // we delay one update in order to make sure the last step is moved properly
+   if (m_TransitingCameraPos == m_TargetCameraPos)
+   {
+      // clear the dist so it will be detected again next time do rotating
+      m_Camera.distToGroundHit = MAXFLOAT;
+      return true;
+   }
+
+   miniv3d dirVec = m_TargetCameraPos.vec - m_Camera.pos.vec;
+   if (dirVec.getlength() > speed * dt)
+   {
+      dirVec.normalize();
+      m_TransitingCameraPos = m_Camera.pos + dirVec * speed * dt;
+   }
+   else
+   {
+      m_TransitingCameraPos = m_TargetCameraPos;
+   }
+
+   m_Camera.doupdate = true;
+   m_Camera.dooverride = true;
+
+   window->updateGL();
+
+   return false;
+}
+
+void Renderer::timerEvent(int timerId)
+{
+   if (m_MapTransitionTimerId == timerId && m_bInCameraTransition)
+   {
+      int deltaT = m_Timer.restart();
+
+      bool bTransitionFinished = false;
+      switch(m_CameraTransitionMode)
+      {
+      case TRANSITION_RESET_HEADING:
+         bTransitionFinished = processResetMapOrientation(deltaT);
+         break;
+      case TRANSITION_RESET_MAP:
+         bTransitionFinished = processResetMap(deltaT);
+         break;
+      case TRANSITION_FOCUS_ON_TARGET:
+         bTransitionFinished = processFocusOnTarget(deltaT);
+         break;
+      default:
+         break;
+      }
+
+      if (bTransitionFinished)
+      {
+         stopTransition();
+      }
+   }
+   else if (m_DisableCursorMoveTimerId == timerId)
+   {
+      // kill timer
+      window->killTimer(m_DisableCursorMoveTimerId);
+      m_DisableCursorMoveTimerId = -1;
+      m_bDisableCursorMoveEvent = false;
+      window->updateGL();
+   }
+}
+
+void Renderer::startTransition(CameraTransitionMode mode)
+{
+   m_bInCameraTransition = true;
+   m_CameraTransitionMode = mode;
+   m_MapTransitionTimerId = window->startTimer(0);
+   m_Timer.start();
+}
+
+void Renderer::stopTransition()
+{
+   if (m_CameraTransitionMode != TRANSITION_NONE)
+   {
+      window->killTimer(m_MapTransitionTimerId);
+      m_CameraTransitionMode = TRANSITION_NONE;
+      m_bInCameraTransition = false;
+   }
+}
+
+void Renderer::moveCursor(const QPoint& pos)
+{
+   m_CursorScreenPos = pos;
+
+   if (!m_bDisableCursorMoveEvent)
+      window->updateGL();
 }

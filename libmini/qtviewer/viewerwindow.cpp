@@ -142,22 +142,6 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
    {
       renderer->setCameraFastMoveForward(true);
    }
-   else if (event->key() == Qt::Key_Control)
-   {}
-   else if (event->key() == Qt::Key_0)
-   {
-      renderer->toggleLinearMode();
-   }
-   else if (event->key() == Qt::Key_T)
-   {
-      renderer->toggleTerrainRender();
-   }
-   else if (event->key() == Qt::Key_Control)
-   {}
-   else if (event->key() == Qt::Key_P)
-   {
-      renderer->toggleFreeCamera();
-   }
    else if (event->key() == Qt::Key_W)
    {
       renderer->moveCamera(0, MapScrollSpeedY);
@@ -200,8 +184,6 @@ void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
    {
       renderer->setCameraFastMoveForward(false);
    }
-   else if (event->key() == Qt::Key_Control)
-   {}
    else
       QGLWidget::keyReleaseEvent(event);
 }
