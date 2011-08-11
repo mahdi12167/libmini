@@ -7,7 +7,7 @@
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
 
-#define MAX_BASE_URL_LEN 1023
+#define MAX_URL_LEN 1023
 
 typedef enum tagCameraTransitionMode
 {
@@ -96,7 +96,7 @@ public:
     Renderer(QGLWidget* window);
     ~Renderer();
 
-    bool    setMapURL(const char* baseurl, const char* baseid, const char* basepath1, const char* basepath2);
+    bool    setMapURL(const char* url);
 
     void    initCamera(float latitude, float longitude, float altitude, float heading, float pitch, float fov, float nearplane, float farplane);
 
@@ -186,10 +186,7 @@ protected:
     Camera      m_DebugCamera;
     Camera      m_CameraSave;
 
-    char*       m_strBaseURL;
-    char*       m_strBaseID;
-    char*       m_strBasePath1;
-    char*       m_strBasePath2;
+    char*       m_strURL;
 
     viewerbase* viewer;
     viewerbase::VIEWER_PARAMS* m_pViewerParams;   // the viewing parameters

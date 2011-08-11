@@ -1,6 +1,6 @@
 QT += core gui opengl
 
-TARGET = landscape
+TARGET = qtviewer
 TEMPLATE = app
 
 
@@ -10,9 +10,10 @@ SOURCES += main.cpp \
            renderer.cpp
 
 HEADERS += mainwindow.h \
+           mainconst.h \
            viewerwindow.h \
-           renderer.h \
-           viewerconst.h
+           viewerconst.h \
+           renderer.h
 
 
 INCLUDEPATH += $$PWD/..
@@ -28,4 +29,4 @@ LIBS += -L$$PWD/../deps/curl/lib
 LIBS += -lMini -lMiniSFX
 LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
-RESOURCES += landscape.qrc
+RESOURCES += qtviewer.qrc

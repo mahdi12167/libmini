@@ -9,7 +9,6 @@
 
 #include <mini/viewerbase.h>
 
-#include "landscape.h"
 #include "viewerconst.h"
 #include "renderer.h"
 
@@ -21,29 +20,20 @@ Renderer::Renderer(QGLWidget* window)
    this->window = window;
    m_bIsInited = false;
 
-   SAFE_DECLARE_STRING(m_strBaseURL, MAX_BASE_URL_LEN);
-   SAFE_DECLARE_STRING(m_strBaseID, MAX_BASE_URL_LEN);
-   SAFE_DECLARE_STRING(m_strBasePath1, MAX_BASE_URL_LEN);
-   SAFE_DECLARE_STRING(m_strBasePath2, MAX_BASE_URL_LEN);
+   m_strURL=new char[MAX_URL_LEN];
 }
 
 Renderer::~Renderer()
 {
-   SAFE_DELETE_STRING(m_strBaseURL);
-   SAFE_DELETE_STRING(m_strBaseID);
-   SAFE_DELETE_STRING(m_strBasePath1);
-   SAFE_DELETE_STRING(m_strBasePath2);
+   delete[] m_strURL;
 }
 
-bool Renderer::setMapURL(const char* baseurl, const char* baseid, const char* basepath1, const char* basepath2)
+bool Renderer::setMapURL(const char* url)
 {
-   if (baseurl == NULL || baseid == NULL || basepath1 == NULL || basepath2 == NULL)
+   if (url == NULL)
       return false;
 
-   strncpy(m_strBaseURL, baseurl, MAX_BASE_URL_LEN);
-   strncpy(m_strBaseID, baseid, MAX_BASE_URL_LEN);
-   strncpy(m_strBasePath1, basepath1, MAX_BASE_URL_LEN);
-   strncpy(m_strBasePath2, basepath2, MAX_BASE_URL_LEN);
+   strncpy(m_strURL, url, MAX_URL_LEN);
 
    return true;
 }
@@ -81,11 +71,10 @@ void Renderer::init()
    viewer=new viewerbase();
    initParameters();
 
-   if (!viewer->getearth()->load(m_strBaseURL, m_strBaseID, m_strBasePath1, m_strBasePath2, TRUE, FALSE))
+   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
    {
       QString message;
-      message.sprintf("Unable to load map data from url=%s%s%s (resp. %s)\n",
-                      m_strBaseURL,m_strBaseID,m_strBasePath1,m_strBasePath2);
+      message.sprintf("Unable to load map data from url=%s\n", m_strURL);
       QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
       m_bIsInited = false;
       return;
@@ -201,12 +190,6 @@ void Renderer::initParameters()
    terrainParams.nprbathyheight = VIEWER_NPRBATHYHEIGHT;
    terrainParams.nprbathycomps = VIEWER_NPRBATHYCOMPS;
    terrainParams.nprcontours = VIEWER_NPRCONTOURS;
-   terrainParams.signpostheight = VIEWER_SIGNPOSTHEIGHT;
-   terrainParams.signpostrange = VIEWER_SIGNPOSTRANGE;
-   terrainParams.bricksize = VIEWER_BRICKSIZE;
-   terrainParams.brickradius = VIEWER_BRICKRADIUS;
-   terrainParams.brickpasses = 1;
-   terrainParams.brickscroll = VIEWER_BRICKSCROLL;
    viewer->getearth()->getterrain()->set(terrainParams);
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
@@ -703,7 +686,7 @@ void Renderer::renderTerrain()
 
       attachTexture(m_TerrainTextureId, m_DepthBufferId);
       glClearColor(0, 0, 0, 0);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       viewer->clear();
       viewer->render();
@@ -725,7 +708,7 @@ void Renderer::renderComposition()
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    // draw terrain
    glBindTexture(GL_TEXTURE_2D, m_TerrainTextureId);
