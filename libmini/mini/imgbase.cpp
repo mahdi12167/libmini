@@ -71,9 +71,10 @@ int imgbase::loadimg(databuf &buf,char *filename)
 
    if (ext!=NULL)
       if (strstr(ext,".db")!=0) type=FILE_TYPE_DB;
-      else if (strcmp(ext,".pgm")==0) type=FILE_TYPE_PNM;
-      else if (strcmp(ext,".ppm")==0) type=FILE_TYPE_PNM;
-      else if (strcmp(ext,".pvm")==0) type=FILE_TYPE_PVM;
+      else if (strstr(ext,".pnm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".pgm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".ppm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".pvm")!=0) type=FILE_TYPE_PVM;
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
@@ -144,9 +145,10 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
 
    if (ext!=NULL)
       if (strstr(ext,".db")!=0) type=FILE_TYPE_DB;
-      else if (strcmp(ext,".pgm")==0) type=FILE_TYPE_PNM;
-      else if (strcmp(ext,".ppm")==0) type=FILE_TYPE_PNM;
-      else if (strcmp(ext,".pvm")==0) type=FILE_TYPE_PVM;
+      else if (strstr(ext,".pnm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".pgm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".ppm")!=0) type=FILE_TYPE_PNM;
+      else if (strstr(ext,".pvm")!=0) type=FILE_TYPE_PVM;
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
