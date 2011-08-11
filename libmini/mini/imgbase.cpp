@@ -78,6 +78,12 @@ int imgbase::loadimg(databuf &buf,char *filename)
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
+   // register auto-compression hook
+   if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
+
+   // register auto-decompression hook
+   if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
+
    // register libMini conversion hook
    if (convbase::check_conversion()==0)
       {
@@ -152,14 +158,14 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
       else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
       else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
-   // automatic mip-mapping
-   if (type==FILE_TYPE_DB) buf.automipmap();
-
    // register auto-compression hook
    if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
 
    // register auto-decompression hook
    if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
+
+   // automatic mip-mapping
+   if (type==FILE_TYPE_DB) buf.automipmap();
 
    // drop mipmaps
    if (type!=FILE_TYPE_DB) buf.drop_mipmap();
