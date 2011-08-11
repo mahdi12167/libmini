@@ -36,10 +36,10 @@ if (-X ../mini/tabify.sh && -X svn) then
    end
 endif
 
-# GREYCstoration 1.3.4
+# GREYCstoration 1.5.0
 if (-X ../mini/tabify.sh && -X cvs) then
    cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
-   cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.627 CImg/CImg.h
+   cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.996 CImg/CImg.h
    foreach file (CImg.h)
       cp -f CImg/$file greycstoration/$file
       ../mini/tabify.sh -x greycstoration/$file
@@ -58,7 +58,7 @@ endif
 
 # other libraries to pull:
 
-# gdal 1.7.1
+# gdal 1.8.1
 if (-X svn) then
    svn up gdal
 endif
