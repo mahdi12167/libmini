@@ -3259,19 +3259,60 @@ void databuf::computeabsolute()
                }
    }
 
+// print information
+void databuf::print_info()
+   {
+   float minval,maxval;
+
+   printf("type=");
+   if (type==DATABUF_TYPE_BYTE) printf("byte");
+   else if (type==DATABUF_TYPE_SHORT) printf("short");
+   else if (type==DATABUF_TYPE_FLOAT) printf("float");
+   else if (type==DATABUF_TYPE_RGB ||
+            type==DATABUF_TYPE_RGB_MM ||
+            type==DATABUF_TYPE_RGB_S3TC ||
+            type==DATABUF_TYPE_RGB_MM_S3TC) printf("rgb");
+   else if (type==DATABUF_TYPE_RGBA ||
+            type==DATABUF_TYPE_RGBA_MM ||
+            type==DATABUF_TYPE_RGBA_S3TC ||
+            type==DATABUF_TYPE_RGBA_MM_S3TC) printf("rgba");
+   if (type==DATABUF_TYPE_RGB_S3TC ||
+       type==DATABUF_TYPE_RGBA_S3TC ||
+       type==DATABUF_TYPE_RGB_MM_S3TC ||
+       type==DATABUF_TYPE_RGBA_MM_S3TC) printf("/s3tc");
+   if (type==DATABUF_TYPE_RGB_MM ||
+       type==DATABUF_TYPE_RGBA_MM ||
+       type==DATABUF_TYPE_RGB_MM_S3TC ||
+       type==DATABUF_TYPE_RGBA_MM_S3TC) printf("/mipmap");
+   printf(" bytes=%u\n",bytes);
+   if (zsize==1 && tsteps==1) printf("xsize=%d ysize=%d\n",xsize,ysize);
+   else if (zsize!=1 && tsteps==1) printf("xsize=%d ysize=%d zsize=%d\n",xsize,ysize,zsize);
+   else printf("xsize=%d ysize=%d zsize=%d tsteps=%d\n",xsize,ysize,zsize,tsteps);
+   if (type==DATABUF_TYPE_BYTE ||
+       type==DATABUF_TYPE_SHORT ||
+       type==DATABUF_TYPE_FLOAT)
+      {
+      if (isNAN(nodata)) printf("nodata=nan");
+      else if (nodata==-MAXFLOAT) printf("nodata=-MAXFLOAT");
+      else printf("nodata=%g",nodata);
+      printf(" hasnodata=%s\n",checknodata()?"yes":"no");
+      getminmax(&minval,&maxval);
+      printf("minval=%g maxval=%g\n",minval,maxval);
+      }
+   }
+
 // print values
-void databuf::print()
+void databuf::print_values()
    {
    unsigned int i,j,k,t;
 
    float val;
+   float value[4]={0.0};
 
    if (missing()) printf("empty\n");
    else
-      {
-      printf("xsize=%d ysize=%d zsize=%d tsteps=%d bytes=%u\n",xsize,ysize,zsize,tsteps,bytes);
-
-      if (type==DATABUF_TYPE_BYTE || type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT)
+      if (type==DATABUF_TYPE_BYTE || type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT ||
+          type==DATABUF_TYPE_RGB || type==DATABUF_TYPE_RGBA)
          for (t=0; t<tsteps; t++)
             {
             for (k=0; k<zsize; k++)
@@ -3279,12 +3320,23 @@ void databuf::print()
                for (j=0; j<ysize; j++)
                   {
                   for (i=0; i<xsize; i++)
-                     {
-                     val=getval(i,j,k,t);
+                     if (type==DATABUF_TYPE_BYTE || type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT)
+                        {
+                        val=getval(i,j,k,t);
 
-                     if (checkval(val)) printf("%g ",val);
-                     else printf("none ");
-                     }
+                        if (checkval(val)) printf("%g ",val);
+                        else printf("none ");
+                        }
+                     else if (type==DATABUF_TYPE_RGB)
+                        {
+                        getrgb(i,j,k,t,value);
+                        printf("(%g,%g,%g) ",value[0],value[1],value[2]);
+                        }
+                     else
+                        {
+                        getrgba(i,j,k,t,value);
+                        printf("(%g,%g,%g,%g) ",value[0],value[1],value[2],value[3]);
+                        }
 
                   printf("\n");
                   }
@@ -3294,7 +3346,7 @@ void databuf::print()
 
             if (t<tsteps-1) printf("\n");
             }
-      }
+      else printf("unprintable\n");
    }
 
 // swap byte ordering between MSB and LSB

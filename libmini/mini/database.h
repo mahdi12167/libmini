@@ -364,8 +364,11 @@ class databuf
    //! get an interpolated rgba color
    void getrgbacolor(float x,float y,float z,unsigned int t,float color[4]);
 
+   //! print information
+   void print_info();
+
    //! print values
-   void print();
+   void print_values();
 
    protected:
 

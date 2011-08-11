@@ -14,21 +14,27 @@ int main(int argc,char *argv[])
    float jpgquality=0.9f;
    int pnglevel=9;
 
-   if (argc!=3)
+   if (argc!=2 && argc!=3)
       {
-      printf("usage: %s <input.ext> <output.ext>\n",argv[0]);
-      printf(" convert images with ext = db/pnm/pvm/jpg/png.\n");
+      printf("usage: %s <input.ext> [<output.ext>]\n",argv[0]);
+      printf(" convert images with ext = db/pnm/pvm/jpg/png\n");
+      printf(" or output information about image.\n");
       exit(1);
       }
 
    // load buffer
    if (imgbase::loadimg(buf,argv[1])!=0)
       {
-      // fill-in no-data values
-      if (buf.type!=databuf::DATABUF_TYPE_RGB) buf.fillnodata(fillin_radius);
+      // just output image info
+      if (argc==2) buf.print_info();
+      else
+         {
+         // fill-in no-data values
+         if (buf.type!=databuf::DATABUF_TYPE_RGB) buf.fillnodata(fillin_radius);
 
-      // save buffer
-      if (imgbase::saveimg(buf,argv[2],jpgquality,pnglevel)==0) fprintf(stderr,"write error\n");
+         // save buffer
+         if (imgbase::saveimg(buf,argv[2],jpgquality,pnglevel)==0) fprintf(stderr,"write error\n");
+         }
 
       // release buffer
       buf.release();

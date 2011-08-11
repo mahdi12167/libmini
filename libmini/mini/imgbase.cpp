@@ -47,6 +47,8 @@ int imgbase::loadimg(databuf &buf,char *filename)
    FILE_TYPE type;
    char *ext;
 
+   BOOLINT succeed;
+
    unsigned char *jpgdata;
    unsigned int jpgbytes;
 
@@ -86,9 +88,10 @@ int imgbase::loadimg(databuf &buf,char *filename)
    if (databuf::check_interpreter()==0) CALC.doregister();
 
    // load buffer
-   if (type==FILE_TYPE_DB) buf.loaddata(filename);
-   else if (type==FILE_TYPE_PNM) buf.loadPNMdata(filename);
-   else if (type==FILE_TYPE_PVM) buf.loadPVMdata(filename);
+   succeed=1;
+   if (type==FILE_TYPE_DB) succeed=buf.loaddata(filename);
+   else if (type==FILE_TYPE_PNM) succeed=buf.loadPNMdata(filename);
+   else if (type==FILE_TYPE_PVM) succeed=buf.loadPVMdata(filename);
    else if (type==FILE_TYPE_JPG)
       {
       jpgdata=readfile(filename,&jpgbytes);
@@ -118,9 +121,9 @@ int imgbase::loadimg(databuf &buf,char *filename)
       else if (pngcomponents==3) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,3);
       else if (pngcomponents==4) buf.set(rawdata,pngwidth*pngheight*pngcomponents,pngwidth,pngheight,1,1,4);
       }
-   else return(0);
+   else succeed=0;
 
-   return(1);
+   return(succeed);
    }
 
 // save image based on extension
