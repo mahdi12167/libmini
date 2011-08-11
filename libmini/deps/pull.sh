@@ -36,7 +36,7 @@ if (-X ../mini/tabify.sh && -X svn) then
    end
 endif
 
-# GREYCstoration 1.5.0
+# CImg/GREYCstoration 1.5.0
 if (-X ../mini/tabify.sh && -X cvs) then
    cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
    cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.996 CImg/CImg.h

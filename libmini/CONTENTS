@@ -27,14 +27,14 @@ Some notes about copyright and licensing:
 
 The original libMini dependencies are available here:
 
-pthreads-win32: http://sourceware.org/pthreads-win32
-openthreads:    http://www.openscenegraph.org/svn/osg/OpenThreads
-libcurl:        http://curl.haxx.se/libcurl
-libjpeg:        http://www.ijg.org
-libpng/z:       http://www.libpng.org
-squish:         http://libsquish.googlecode.com
-GREYCstoration: http://cimg.sourceforge.net/greycstoration
-freeglut:       http://freeglut.sourceforge.net
+pthreads-win32:      http://sourceware.org/pthreads-win32
+openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
+libcurl:             http://curl.haxx.se
+libjpeg:             http://www.ijg.org
+libpng/z:            http://www.libpng.org
+squish:              http://libsquish.googlecode.com
+CImg/GREYCstoration: http://cimg.sourceforge.net
+freeglut:            http://freeglut.sourceforge.net
 
 As of this writing, libMini did successfully build with the latest
 available versions of the above dependencies.
