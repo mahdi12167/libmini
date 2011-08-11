@@ -1,6 +1,8 @@
 #include <QtGui>
 
+#include "mainconst.h"
 #include "mainwindow.h"
+
 #include "viewerwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -11,30 +13,31 @@ MainWindow::MainWindow(QWidget *parent)
 
    createActions();
    createMenus();
-   createStatusBar();
+
+   setWindowTitle(tr(VIEWER_NAME));
+   resize(VIEWER_WIDTH, VIEWER_HEIGHT);
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::createActions()
 {
-   openAction = new QAction(tr("&Open"), this);
-   openAction->setIcon(QIcon(":/images/open.png"));
-   openAction->setShortcut(tr("Ctrl+O"));
-   openAction->setStatusTip(tr("Open an existing file"));
-   connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
-
    aboutAction = new QAction(tr("&About"), this);
    aboutAction->setIcon(QIcon(":/images/about.png"));
    aboutAction->setShortcut(tr("Ctrl+A"));
-   aboutAction->setStatusTip(tr("About information"));
-   connect(openAction, SIGNAL(triggered()), this, SLOT(about()));
+   aboutAction->setStatusTip(tr("About this program"));
+   connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+
+   quitAction = new QAction(tr("Q&uit"), this);
+   quitAction->setShortcuts(QKeySequence::Quit);
+   quitAction->setStatusTip(tr("Quit the application"));
+   connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 void MainWindow::createMenus()
 {
    fileMenu = menuBar()->addMenu(tr("&File"));
-   fileMenu->addAction(openAction);
+   fileMenu->addAction(quitAction);
 
    menuBar()->addSeparator();
 
@@ -42,22 +45,8 @@ void MainWindow::createMenus()
    helpMenu->addAction(aboutAction);
 }
 
-void MainWindow::createStatusBar()
+void MainWindow::about()
 {
-   locationLabel = new QLabel("");
-   locationLabel->setAlignment(Qt::AlignHCenter);
-   locationLabel->setMinimumSize(locationLabel->sizeHint());
-
-   messageLabel = new QLabel();
-   messageLabel->setIndent(3);
-
-   statusBar()->addWidget(locationLabel);
-   statusBar()->addWidget(messageLabel, 1);
+   QMessageBox::about(this, tr("About this program"),
+                      tr(VIEWER_NAME VIEWER_VERSION));
 }
-
-void MainWindow::open()
-{
-   QMessageBox::information(this, tr("Open file"), tr("Open existing file"), QMessageBox::Yes | QMessageBox::Default, QMessageBox::No);
-}
-
-void MainWindow::about() {}

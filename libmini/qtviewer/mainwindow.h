@@ -16,21 +16,17 @@ public:
    ~MainWindow();
 
 private slots:
-   void open();
    void about();
 
 private:
    void createActions();
    void createMenus();
-   void createStatusBar();
 
-   QLabel* locationLabel;
-   QLabel* messageLabel;
    QMenu* fileMenu;
    QMenu* helpMenu;
 
-   QAction* openAction;
    QAction* aboutAction;
+   QAction* quitAction;
 
    ViewerWindow* viewerWindow;
 };

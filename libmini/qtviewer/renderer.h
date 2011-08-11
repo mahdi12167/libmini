@@ -7,7 +7,7 @@
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
 
-#define MAX_BASE_URL_LEN 255
+#define MAX_BASE_URL_LEN 1023
 
 typedef enum tagCameraTransitionMode
 {
