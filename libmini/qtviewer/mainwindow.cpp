@@ -48,5 +48,5 @@ void MainWindow::createMenus()
 void MainWindow::about()
 {
    QMessageBox::about(this, tr("About this program"),
-                      tr(VIEWER_NAME VIEWER_VERSION));
+                      tr(VIEWER_NAME" "VIEWER_VERSION));
 }

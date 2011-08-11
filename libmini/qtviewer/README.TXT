@@ -26,4 +26,3 @@ Camera Controls
 ===============
 WSAD - Move map up/down/left/right in screen space orientation.
 Space - Move focus point to where mouse is pointing.
-Q - Quit
