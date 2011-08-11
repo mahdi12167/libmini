@@ -244,9 +244,12 @@ unsigned char *readPNMfile(const char *pnmfilename,
 // write a PVM volume
 int writePVMvolume(const char *filename,unsigned char *volume,
                    int width,int height,int depth,int components,
+                   float scalex,float scaley,float scalez,
                    PNMcomment *comment)
    {
    FILE *file;
+
+   int version=1;
 
    char *com;
 
@@ -254,7 +257,9 @@ int writePVMvolume(const char *filename,unsigned char *volume,
 
    if ((file=fopen(filename,"wb"))==NULL) return(0);
 
-   fprintf(file,"PVM");
+   if (scalex==1.0f && scaley==1.0f && scalez==1.0f) version=2;
+
+   fprintf(file,"PVM%s",(version==1)?"":"2");
 
    if (comment!=NULL)
       {
@@ -265,7 +270,9 @@ int writePVMvolume(const char *filename,unsigned char *volume,
          else if (*++com!='\0') fprintf(file,"\n#");
       }
 
-   fprintf(file,"\n%d %d %d\n%d\n",width,height,depth,components);
+   fprintf(file,"\n%d %d %d\n",width,height,depth);
+   if (version==2) fprintf(file,"%g %g %g\n",scalex,scaley,scalez);
+   fprintf(file,"%d\n",components);
 
    if (fwrite(volume,width*height*depth*components,1,file)!=1) IOERROR();
    fclose(file);
@@ -276,22 +283,34 @@ int writePVMvolume(const char *filename,unsigned char *volume,
 // read a PVM volume
 unsigned char *readPVMvolume(const char *filename,
                              int *width,int *height,int *depth,int *components,
+                             float *scalex,float *scaley,float *scalez,
                              PNMcomment *comment)
    {
    FILE *file;
 
-   unsigned char header[5],*volume;
+   int version=1;
 
    int ch;
    PNMcomment com;
 
+   unsigned char *volume;
+
+   float sx=1.0f,sy=1.0f,sz=1.0f;
+
    if ((file=fopen(filename,"rb"))==NULL) return(NULL);
 
-   if (fread(header,1,4,file)!=4) return(NULL);
+   if (fgetc(file)!='P') version=0;
+   if (fgetc(file)!='V') version=0;
+   if (fgetc(file)!='M') version=0;
+   if ((ch=fgetc(file))!='\n')
+      if (ch>='1' && ch<='9')
+         {
+         version=ch-'0';
+         if (fgetc(file)!='\n') version=0;
+         }
+      else version=0;
 
-   header[4]='\0';
-
-   if (strcmp((char *)header,"PVM\n")!=0)
+   if (version==0)
       {
       fclose(file);
       return(NULL);
@@ -303,6 +322,8 @@ unsigned char *readPVMvolume(const char *filename,
    ungetc(ch,file);
 
    if (fscanf(file,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
+   if (version>1)
+      if (fscanf(file,"%g %g %g\n",&sx,&sy,&sy)!=3) ERRORMSG();
    if (fscanf(file,"%d",components)!=1) ERRORMSG();
    if (fgetc(file)!='\n') ERRORMSG();
 
@@ -312,6 +333,13 @@ unsigned char *readPVMvolume(const char *filename,
 
    if (fread(volume,(*width)*(*height)*(*depth)*(*components),1,file)!=1) IOERROR();
    fclose(file);
+
+   if (scalex!=NULL && scaley!=NULL && scalez!=NULL)
+      {
+      *scalex=sx;
+      *scaley=sy;
+      *scalez=sz;
+      }
 
    if (comment!=NULL)
       {

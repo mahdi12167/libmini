@@ -51,11 +51,13 @@ unsigned char *readPNMfile(const char *pnmfilename,
 //! write a PVM volume
 int writePVMvolume(const char *filename,unsigned char *volume,
                    int width,int height,int depth,int components,
+                   float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
                    PNMcomment *comment=0);
 
 //! read a PVM volume
 unsigned char *readPVMvolume(const char *filename,
                              int *width,int *height,int *depth,int *components,
+                             float *scalex=0,float *scaley=0,float *scalez=0,
                              PNMcomment *comment=0);
 
 //! put a geographic grid descriptor into a PNM comment
