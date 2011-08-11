@@ -1000,24 +1000,6 @@ minicoord Renderer::trace2ground(minicoord point, double& dist)
    return posProj;
 }
 
-/*
-#include <list>
-#include <vector>
-#include <QtGui>
-#include <QtOpenGL/qgl.h>
-
-#include <mini/minibase.h>
-#include <mini/miniOGL.h>
-#include <mini/miniearth.h>
-#include <mini/miniterrain.h>
-#include <mini/minirgb.h>
-#include <mini/viewerbase.h>
-
-#include "landscape.h"
-#include "viewerconst.h"
-#include "renderer.h"
-*/
-
 using namespace std;
 
 bool Renderer::isBoundingBoxVisible(const BoundingBox& bb)
