@@ -75,8 +75,8 @@ int imgbase::loadimg(databuf &buf,char *filename)
       else if (strstr(ext,".pgm")!=0) type=FILE_TYPE_PNM;
       else if (strstr(ext,".ppm")!=0) type=FILE_TYPE_PNM;
       else if (strstr(ext,".pvm")!=0) type=FILE_TYPE_PVM;
-      else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
-      else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
+      else if (strcasecmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
+      else if (strcasecmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
    // register auto-compression hook
    if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
@@ -155,8 +155,8 @@ int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
       else if (strstr(ext,".pgm")!=0) type=FILE_TYPE_PNM;
       else if (strstr(ext,".ppm")!=0) type=FILE_TYPE_PNM;
       else if (strstr(ext,".pvm")!=0) type=FILE_TYPE_PVM;
-      else if (strcmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
-      else if (strcmp(ext,".png")==0) type=FILE_TYPE_PNG;
+      else if (strcasecmp(ext,".jpg")==0) type=FILE_TYPE_JPG;
+      else if (strcasecmp(ext,".png")==0) type=FILE_TYPE_PNG;
 
    // register auto-compression hook
    if (databuf::check_autocompress()==0) databuf::setautocompress(autocompress,NULL);
