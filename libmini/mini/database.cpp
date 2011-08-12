@@ -789,7 +789,7 @@ int databuf::savedata(const char *filename,
    putc('\0',file);
 
    // save data chunk
-   if (*((unsigned char *)(&INTEL_CHECK))==0 || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0)
+   if (!intel_check() || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0)
       {
       if (fwrite(data,bytes,1,file)!=1) IOERROR();
       fclose(file);
@@ -956,7 +956,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
          }
 
       // check for LSB->MSB conversion
-      if (*((unsigned char *)(&INTEL_CHECK))!=0 && extformat==DATABUF_EXTFMT_PLAIN && implformat==0) swapbytes();
+      if (intel_check() && extformat==DATABUF_EXTFMT_PLAIN && implformat==0) swapbytes();
 
       // convert from external format
       if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
@@ -973,7 +973,7 @@ void databuf::swap2(int msb)
    {
    if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
 
-   if (*((unsigned char *)(&INTEL_CHECK))==0)
+   if (!intel_check())
       if (msb!=0) return;
       else swapbytes();
    else
@@ -1001,7 +1001,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
       else ERRORMSG();
 
    if (israw!=0)
-      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
+      if (intel_check()) swapbytes();
 
    success=CONVERSION_HOOK(israw,(unsigned char *)data,bytes,extfmt,&newdata,&newbytes,this,CONVERSION_DATA);
 
@@ -1015,7 +1015,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    bytes=newbytes;
 
    if (israw==0)
-      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
+      if (intel_check()) swapbytes();
 
    if (israw==0) extformat=DATABUF_EXTFMT_PLAIN;
    else extformat=extfmt;
@@ -1427,7 +1427,7 @@ int databuf::loadPNMdata(const char *filename)
    else if (type==DATABUF_TYPE_RGBA) bytes*=4;
 
    if (type==DATABUF_TYPE_SHORT)
-      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
+      if (intel_check()) swapbytes();
 
    if (getPNMparams(&comment,
                     coord,cellsize,
@@ -1572,8 +1572,11 @@ int databuf::loadPVMdata(const char *filename,
                          double dx,double dy,double dz)
    {
    int width,height,depth,components;
+   float scalex,scaley,scalez;
 
-   if ((data=readPVMvolume(filename,&width,&height,&depth,&components))==NULL)
+   if ((data=readPVMvolume(filename,
+                           &width,&height,&depth,&components,
+                           &scalex,&scaley,&scalez))==NULL)
       {
 #ifdef LIBMINI_DEBUG
       fprintf(stderr,"unable to load %s!\n",filename);
@@ -1595,17 +1598,17 @@ int databuf::loadPVMdata(const char *filename,
 
    bytes=xsize*ysize*zsize;
 
-   swx=midx-dx/2.0;
-   swy=midy-dy/2.0;
-   nwx=midx-dx/2.0;
-   nwy=midy+dy/2.0;
-   nex=midx+dx/2.0;
-   ney=midy+dy/2.0;
-   sex=midx+dx/2.0;
-   sey=midy-dy/2.0;
+   swx=midx-dx*scalex/2.0;
+   swy=midy-dy*scaley/2.0;
+   nwx=midx-dx*scalex/2.0;
+   nwy=midy+dy*scaley/2.0;
+   nex=midx+dx*scalex/2.0;
+   ney=midy+dy*scaley/2.0;
+   sex=midx+dx*scalex/2.0;
+   sey=midy-dy*scaley/2.0;
 
-   h0=basez;
-   dh=dz;
+   h0=basez*scalez;
+   dh=dz*scalez;
 
    t0=dt=0.0;
 
@@ -1630,20 +1633,27 @@ int databuf::loadPVMdata(const char *filename,
 
    unsigned char *moredata;
    int width,height,depth,components;
+   float scalex,scaley,scalez;
 
    if (n==0) ERRORMSG();
 
    snprintf(str,maxstr,"%s-t%d",filename,t);
 
-   if ((data=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
+   if ((data=readPVMvolume(str,
+                           &width,&height,&depth,&components,
+                           &scalex,&scaley,&scalez))==NULL)
       {
       snprintf(str,maxstr,"%s-t0%d",filename,t);
 
-      if ((data=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
+      if ((data=readPVMvolume(str,
+                              &width,&height,&depth,&components,
+                              &scalex,&scaley,&scalez))==NULL)
          {
          snprintf(str,maxstr,"%s-t00%d",filename,t);
 
-         if ((data=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
+         if ((data=readPVMvolume(str,
+                                 &width,&height,&depth,&components,
+                                 &scalex,&scaley,&scalez))==NULL)
             {
 #ifdef LIBMINI_DEBUG
             fprintf(stderr,"unable to load %s!\n",filename);
@@ -1691,17 +1701,17 @@ int databuf::loadPVMdata(const char *filename,
       free(moredata);
       }
 
-   swx=midx-dx/2.0;
-   swy=midy-dy/2.0;
-   nwx=midx-dx/2.0;
-   nwy=midy+dy/2.0;
-   nex=midx+dx/2.0;
-   ney=midy+dy/2.0;
-   sex=midx+dx/2.0;
-   sey=midy-dy/2.0;
+   swx=midx-dx*scalex/2.0;
+   swy=midy-dy*scaley/2.0;
+   nwx=midx-dx*scalex/2.0;
+   nwy=midy+dy*scaley/2.0;
+   nex=midx+dx*scalex/2.0;
+   ney=midy+dy*scaley/2.0;
+   sex=midx+dx*scalex/2.0;
+   sey=midy-dy*scaley/2.0;
 
-   h0=basez;
-   dh=dz;
+   h0=basez*scalez;
+   dh=dz*scalez;
 
    t0=timestart;
    dt=timestep;
@@ -1801,11 +1811,11 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    // convert from MSB to native format
    if (msb!=0)
-      if (*((unsigned char *)(&INTEL_CHECK))!=0) swapbytes();
+      if (intel_check()) swapbytes();
 
    // convert from LSB to native format
    if (msb==0)
-      if (*((unsigned char *)(&INTEL_CHECK))==0) swapbytes();
+      if (!intel_check()) swapbytes();
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -1865,7 +1875,7 @@ void databuf::savePNMdata(const char *filename)
 
    if (type==DATABUF_TYPE_BYTE) writePNMimage(filename,(unsigned char *)data,xsize,ysize,1,cptr);
    else if (type==DATABUF_TYPE_SHORT)
-      if (*((unsigned char *)(&INTEL_CHECK))==0) writePNMimage(filename,(unsigned char *)data,xsize,ysize,2,cptr);
+      if (!intel_check()) writePNMimage(filename,(unsigned char *)data,xsize,ysize,2,cptr);
       else
          {
          swapbytes();

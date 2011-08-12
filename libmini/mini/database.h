@@ -364,6 +364,9 @@ class databuf
    //! get an interpolated rgba color
    void getrgbacolor(float x,float y,float z,unsigned int t,float color[4]);
 
+   //! check for lsb (intel) or msb storage layout
+   static int intel_check() {return(*((unsigned char *)(&INTEL_CHECK))!=0);}
+
    //! print information
    void print_info();
 
