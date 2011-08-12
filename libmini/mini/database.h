@@ -193,7 +193,10 @@ class databuf
    int loaddata(const char *filename,int stub=0,unsigned int tstart=0,unsigned int tstop=0); // data is converted from MSB to native byte order
 
    //! convert byte order
-   void swap2(int msb=1);
+   void swap2(int is_msb=1);
+
+   //! convert to signed short
+   void convert2(int is_ushort=0);
 
    //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data=NULL);
@@ -364,9 +367,6 @@ class databuf
    //! get an interpolated rgba color
    void getrgbacolor(float x,float y,float z,unsigned int t,float color[4]);
 
-   //! check for lsb (intel) or msb storage layout
-   static int intel_check() {return(*((unsigned char *)(&INTEL_CHECK))!=0);}
-
    //! print information
    void print_info();
 
@@ -375,12 +375,16 @@ class databuf
 
    protected:
 
+   //! magic numbers for increasing versions
    static unsigned int MAGIC1;
    static unsigned int MAGIC2;
    static unsigned int MAGIC3;
    static unsigned int MAGIC4;
    static unsigned int MAGIC5;
    static unsigned int MAGIC6;
+
+   //! check for lsb (intel) or msb storage layout
+   static int intel_check() {return(*((unsigned char *)(&INTEL_CHECK))!=0);}
 
    private:
 

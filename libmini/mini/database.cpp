@@ -969,16 +969,41 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    }
 
 // convert byte order
-void databuf::swap2(int msb)
+void databuf::swap2(int is_msb)
    {
    if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
 
    if (!intel_check())
-      if (msb!=0) return;
+      if (is_msb!=0) return;
       else swapbytes();
    else
-      if (msb!=0) swapbytes();
+      if (is_msb!=0) swapbytes();
       else return;
+   }
+
+// convert to signed short
+void databuf::convert2(int is_ushort)
+   {
+   unsigned int i;
+
+   unsigned short int maxval,*ptr;
+
+   if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
+
+   if (is_ushort==0) return;
+
+   maxval=0;
+   ptr=(unsigned short int *)data;
+   for (i=0; i<bytes; i+=2,ptr++)
+      if (*ptr>maxval) maxval=*ptr;
+
+   if (maxval<32768) return;
+
+   ptr=(unsigned short int *)data;
+   for (i=0; i<bytes; i+=2)
+      *ptr++>>=1;
+
+   scaling*=2.0f;
    }
 
 // set conversion hook for external formats
