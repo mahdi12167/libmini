@@ -63,6 +63,25 @@ void PNMcomment::addunits(int units)
    else if (units==4) addstring("arc-seconds");
    }
 
+// convert unsigned short data to signed short data (the default)
+void ushort2short(unsigned char *data,unsigned int bytes)
+   {
+   unsigned int i;
+
+   unsigned short int maxval,*ptr;
+
+   maxval=0;
+   ptr=(unsigned short int *)data;
+   for (i=0; i<bytes; i+=2,ptr++)
+      if (*ptr>maxval) maxval=*ptr;
+
+   if (maxval<32768) return;
+
+   ptr=(unsigned short int *)data;
+   for (i=0; i<bytes; i+=2)
+      *ptr++>>=1;
+   }
+
 // write a PNM image
 int writePNMimage(const char *pnmfilename,
                   unsigned char *image,
@@ -222,6 +241,9 @@ unsigned char *readPNMimage(const unsigned char *pnmimage,
       if (ptr!=NULL) *ptr=image+(*width)*(*height)*(*components);
       }
 
+   if (maxval==65535)
+      ushort2short(image,(*width)*(*height)*2);
+
    if (comment!=NULL)
       {
       comment->reset();
@@ -293,6 +315,8 @@ unsigned char *readPVMvolume(const char *filename,
    int ch;
    PNMcomment com;
 
+   int maxval;
+
    unsigned char *volume;
 
    float sx=1.0f,sy=1.0f,sz=1.0f;
@@ -324,15 +348,24 @@ unsigned char *readPVMvolume(const char *filename,
    if (fscanf(file,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
    if (version>1)
       if (fscanf(file,"%g %g %g\n",&sx,&sy,&sy)!=3) ERRORMSG();
-   if (fscanf(file,"%d",components)!=1) ERRORMSG();
+   if (fscanf(file,"%d",&maxval)!=1) ERRORMSG();
    if (fgetc(file)!='\n') ERRORMSG();
 
-   if (*width<1 || *height<1 || *depth<1 || *components<1) ERRORMSG();
+   if (*width<1 || *height<1 || *depth<1) ERRORMSG();
+
+   if (maxval==1 || maxval==255) *components=1;
+   else if (maxval==2 || maxval==32767 || maxval==65535) *components=2;
+   else if (maxval==3) *components=3;
+   else if (maxval==4) *components=4;
+   else ERRORMSG();
 
    if ((volume=(unsigned char *)malloc((*width)*(*height)*(*depth)*(*components)))==NULL) MEMERROR();
 
    if (fread(volume,(*width)*(*height)*(*depth)*(*components),1,file)!=1) IOERROR();
    fclose(file);
+
+   if (maxval==65535)
+      ushort2short(volume,(*width)*(*height)*(*depth)*2);
 
    if (scalex!=NULL && scaley!=NULL && scalez!=NULL)
       {

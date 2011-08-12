@@ -15,8 +15,8 @@ class databuf
    enum DATABUF_TYPE
       {
       // scalar types assume grid-centered layout
-      DATABUF_TYPE_BYTE=0,
-      DATABUF_TYPE_SHORT=1,
+      DATABUF_TYPE_BYTE=0, // unsigned
+      DATABUF_TYPE_SHORT=1, // signed
       DATABUF_TYPE_FLOAT=2,
       // rgb[a] types assume cell-centered layout
       DATABUF_TYPE_RGB=3,
@@ -195,7 +195,7 @@ class databuf
    //! convert byte order
    void swap2(int is_msb=1);
 
-   //! convert to signed short
+   //! convert to signed short (the default)
    void convert2(int is_ushort=0);
 
    //! set conversion hook for external formats

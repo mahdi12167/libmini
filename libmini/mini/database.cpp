@@ -981,7 +981,7 @@ void databuf::swap2(int is_msb)
       else return;
    }
 
-// convert to signed short
+// convert to signed short (the default)
 void databuf::convert2(int is_ushort)
    {
    unsigned int i;
@@ -1002,8 +1002,6 @@ void databuf::convert2(int is_ushort)
    ptr=(unsigned short int *)data;
    for (i=0; i<bytes; i+=2)
       *ptr++>>=1;
-
-   scaling*=2.0f;
    }
 
 // set conversion hook for external formats
