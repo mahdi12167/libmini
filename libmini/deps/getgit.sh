@@ -2,7 +2,7 @@
 
 # this script pulls and installs git
 
-set git=git-1.7.1
+set git=git-1.7.6
 
 if (! -X git) then
    wget http://kernel.org/pub/software/scm/git/$git.tar.gz
