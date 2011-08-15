@@ -1,8 +1,8 @@
-For convenience purposes, this folder contains external source code which libMini depends on.
+For convenience, this folder contains external source code which libMini depends on.
 The source code of those dependencies is merely provided as a redistribution of the original code.
 Therefore, the original copyright and licensing terms of the dependencies remain unchanged.
 
-The original libMini dependencies are available here:
+The original source code of the libMini dependencies is available here:
 
 openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
 libcurl:             http://curl.haxx.se

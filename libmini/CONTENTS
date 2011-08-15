@@ -6,13 +6,14 @@ tags: major tagged libMini versions
 deps: source code of selected libMini dependencies
 data: hires data as a replacement for the lores data in mini/data
 WIN32: prebuilt static Windows dependencies
-WIN32.exe: prebuilt Windows executables
-CAR: old libMini as of 1995
+CAR: predecessor of libMini as of 1995
 plotter: OpenGL 2D plotter
 
-For building libMini, OpenGL needs to be installed. See the libMini README for instructions.
-For building the libMini viewer on *nix, it is assumed that pthreads libjpeg libpng and libcurl are installed.
-Then the libMini viewer additionally requires the dependencies GLUT/freeGLUT squish and GREYCstoration (optional).
+For building libMini, OpenGL needs to be installed.
+See the libMini README for instructions.
+
+For building the libMini viewer on *nix, it is assumed that pthreads libjpeg and libpng are installed.
+Then the libMini viewer additionally requires the dependencies libpng freeGLUT squish and GREYCstoration (optional).
 These dependencies can be built from the respective source code package in the deps folder.
 For Windows, prebuilt static libaries are available in the WIN32 folder.
 
@@ -20,12 +21,12 @@ Some notes about copyright and licensing:
 
 1) The libMini library in the mini folder is copyright by Stefan Roettger.
    It is licensed under the terms of the LGPL as stated in the corresponding README.
-2) For convenience purposes, the deps folder contains external source code which libMini depends on.
+2) For convenience, the deps folder contains external source code which libMini depends on.
    The source code of those dependencies is merely provided as a redistribution of the original code.
    Therefore, the original copyright and licensing terms of the dependencies remain unchanged.
 3) The libMini demos have their own licensing terms.
 
-The original libMini dependencies are available here:
+The original source code of the libMini dependencies is available here:
 
 pthreads-win32:      http://sourceware.org/pthreads-win32
 openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
