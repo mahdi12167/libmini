@@ -742,8 +742,8 @@ void Renderer::renderLandscape()
    // bind FBO to render into texture
    bindFBO();
    setupMatrix();
-   renderTerrain();
-   renderOverlay();
+   renderTerrain(); //!! do render while queue not empty
+   renderOverlay(); //!! broken with layered tilesets
    unbindFBO();
 
    renderComposition();

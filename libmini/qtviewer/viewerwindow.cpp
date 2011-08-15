@@ -25,8 +25,9 @@ ViewerWindow::ViewerWindow(QWidget* )
       renderer->setMapURL(dataPathList[i].toAscii().constData());
 
    // init camera
-   //!! get initial eye point from map[0]
-   renderer->initCamera(-157.974908, 21.344997, 45000, 0, 90, VIEWER_FOVY, VIEWER_NEARP, VIEWER_FARP);
+   renderer->initCamera(-157.974908, 21.344997, //!! get initial eye point from map[0]
+                        45000, 0, 90,
+                        VIEWER_FOVY, VIEWER_NEARP, VIEWER_FARP);
 }
 
 ViewerWindow::~ViewerWindow()
