@@ -10,7 +10,7 @@ foreach app (cvs svn git)
    endif
 end
 
-# the pthreads, libjpeg and libpng/libz libraries are assumed to be installed
+# the pthreads, libjpeg and libpng/zlib libraries are assumed to be installed
 # then the remaining dependencies to pull are:
 
 # curl 7.21.2
