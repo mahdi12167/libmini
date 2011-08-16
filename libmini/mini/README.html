@@ -273,7 +273,7 @@ machine type "./build.sh install" as a super-user.<p>
 Optionally, you can
 use <a href="http://www.gnu.org/software/autoconf">autoconf</a>
 or <a href="http://www.cmake.org">CMake</a> to build libMini. For the
-former type "./configure && make" and for the latter type "cmake . &&
+former, type "./configure && make" and for the latter type "cmake . &&
 make" in a Unix shell.
 
 The library also compiles on Windows by using CMake. Simply specify
@@ -2106,19 +2106,34 @@ the <a href="http://stereofx.org/download/libMini-Modules.pdf">libMini
 Module Overview</a>.<p>
 
 To compile the viewer type "./build.sh viewer" on the command line. It
-requires POSIX threads (pthreads), <a href="http://curl.haxx.se">libcurl</a>,
-<a href="http://www.ijg.org">libjpeg</a>, <a href="http://www.libpng.org">libpng/z</a>
-and <a href="http://libsquish.googlecode.com">squish</a> to be installed.
+requires POSIX threads (pthreads),
+ <a href="http://www.ijg.org">libjpeg</a>,
+ <a href="http://www.libpng.org">libpng/z</a>,
+ <a href="http://curl.haxx.se">libcurl</a> and
+ <a href="http://libsquish.googlecode.com">squish</a>
+to be installed.<p>
+
 On Windows the <a href="http://freeglut.sourceforge.net">freeGLUT
-library</a> must be installed additionally.<p>
+library</a> must be installed, as well. On MacOS X and Linux it comes
+with the default OpenGL installation. As a substitute for POSIX
+threads it is recommended to
+use either
+ <a href="http://sourceware.org/pthreads-win32">pthreads-win32</a> or
+ <a href="http://www.openscenegraph.org/svn/osg/OpenThreads">openthreads</a>
+from the OpenSceneGraph repository.<p>
 
 The libMini Viewer can also be compiled with CMake. To do so, enable
 the option BUILD_MINI_APPS in the CMake configuration (via ccmake or
-the Windows CMake GUI). If some of the required or optional
-dependencies cannot be found, because they have not been installed at
-a standard location like /usr/local, you can specify the installation
-directory by overriding the variable LIBMINI_THIRDPARTY_DIR in the
-CMake configuration.<p>
+the Windows CMake GUI). The cmake configuration has the additional
+options BUILD_MINI_WITHOUT_SQUISH, BUILD_MINI_WITH_GREYC and
+BUILD_MINI_WITH_OPENTHREADS to compile without squish, with
+CIMG/GREYCstoration or with openthreads, respectively.<p>
+
+If some of the required or optional dependencies cannot be found,
+because they have not been installed at a standard location like
+/usr/local, you can specify each directory separately or override the
+standard installation directory with the variable
+LIBMINI_THIRDPARTY_DIR in the CMake configuration.<p>
 
 Once you managed to install the dependencies and compile the libMini
 Viewer, see the following examples how to use it from the command
