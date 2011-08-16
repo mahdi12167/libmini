@@ -3,7 +3,9 @@
 # the script requires two images as arguments
 # the images are assumed to be day and night earth textures
 # both need to be in LatLon coordinate layout
-# such as the BlueMarble collection of images
+# such as the following BlueMarble images from visibleearth.nasa.gov:
+#  day: land_ocean_ice_8192.tif or land_shallow_topo_8192.tif
+#  night: land_ocean_ice_lights_8192.tif
 if ($1 == "" || $2 == "") exit
 
 set day=$1
@@ -26,4 +28,5 @@ convert $ngt -geometry 8192x4096! EarthNight-8K.png
 # convert into db format /w s3tc and mipmap
 foreach image (Earth*.png)
    ../mini/tools/db2db $image $image:r.db
+   rm -f $image
 end
