@@ -729,6 +729,7 @@ int minicache::rendertrigger(int phase)
    if (phase==2)
       {
       initstate();
+      texunit(0);
       mtxpush();
 
       if (CULLMODE==0) disableculling();
