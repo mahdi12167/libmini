@@ -126,8 +126,6 @@ public:
 protected:
     void    initParameters();
     void    initVISbathymap();
-    void    initNPRbathymap();
-    void    initDiscVertices();
 
     void    resizeViewport();
     void    initView();

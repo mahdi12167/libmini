@@ -13,7 +13,6 @@
 #include "renderer.h"
 
 static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
-static unsigned char VIEWER_NPRBATHYMAP[VIEWER_NPRBATHYWIDTH*4*2];
 
 Renderer::Renderer(QGLWidget* window)
 {
@@ -90,9 +89,6 @@ void Renderer::init()
    // initialize VIS bathy map
    initVISbathymap();
 
-   // initialize NPR bathy map
-   initNPRbathymap();
-
    initView();
 
    m_fMoveCameraForward = 0.0f;
@@ -150,11 +146,11 @@ void Renderer::initParameters()
    earthParams.usediffuse = FALSE;
    earthParams.usedetail = FALSE;
    earthParams.usevisshader = TRUE;
-   earthParams.usebathymap = FALSE;
+   earthParams.usebathymap = TRUE;
    earthParams.usecontours = FALSE;
    earthParams.usenprshader = FALSE;
    earthParams.useskydome = TRUE;
-   earthParams.usewaypoints = TRUE;
+   earthParams.usewaypoints = FALSE;
    earthParams.usebricks = FALSE;
    earthParams.useearth = TRUE;
    earthParams.useflat = FALSE;
@@ -187,13 +183,6 @@ void Renderer::initParameters()
    terrainParams.bathywidth = VIEWER_BATHYWIDTH;
    terrainParams.bathyheight = VIEWER_BATHYHEIGHT;
    terrainParams.bathycomps = VIEWER_BATHYCOMPS;
-   terrainParams.nprbathystart = VIEWER_NPRBATHYSTART;
-   terrainParams.nprbathyend = VIEWER_NPRBATHYEND;
-   terrainParams.nprbathymap = VIEWER_NPRBATHYMAP;
-   terrainParams.nprbathywidth = VIEWER_NPRBATHYWIDTH;
-   terrainParams.nprbathyheight = VIEWER_NPRBATHYHEIGHT;
-   terrainParams.nprbathycomps = VIEWER_NPRBATHYCOMPS;
-   terrainParams.nprcontours = VIEWER_NPRCONTOURS;
    viewer->getearth()->getterrain()->set(terrainParams);
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
@@ -848,38 +837,6 @@ void Renderer::initVISbathymap()
       VIEWER_BATHYMAP[4*i+1]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
       VIEWER_BATHYMAP[4*i+2]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
       VIEWER_BATHYMAP[4*i+3]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
-   }
-}
-
-void Renderer::initNPRbathymap()
-{
-   float rgba[4];
-
-   static const float hue1=120.0f;
-   static const float hue2=60.0f;
-
-   static const float hue_ctr=60.0f;
-   static const float sat_ctr=0.75f;
-   static const float val_ctr=0.25f;
-
-   for (int i=0; i<VIEWER_NPRBATHYWIDTH; i++)
-   {
-      float t=(float)i/(VIEWER_NPRBATHYWIDTH-1);
-
-      float alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS;
-      alpha=alpha-ftrc(alpha);
-
-      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,t,1.0f,rgba);
-      else hsv2rgb(hue1+(hue2-hue1)*t,1.0f-t,1.0f,rgba);
-
-      rgba[3]=0.5f;
-
-      if (alpha>0.9f) hsv2rgb(hue_ctr,sat_ctr,val_ctr,rgba);
-
-      VIEWER_NPRBATHYMAP[4*i]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+1]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+2]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+3]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
    }
 }
 
