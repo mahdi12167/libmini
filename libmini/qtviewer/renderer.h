@@ -4,13 +4,11 @@
 #include <QTime>
 #include <QtOpenGL/qgl.h>
 
-#include <mini/viewerbase.h>
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
 
+#include <mini/viewerbase.h>
 #include "viewerconst.h"
-
-#define MAX_URL_LEN 1023
 
 typedef enum tagCameraTransitionMode
 {
@@ -25,7 +23,7 @@ struct Camera
     minicoord   pos;
     double      heading;
     double      pitch;
-    double      fov;
+    double      fovy;
     double      nearplane;
     double      farplane;
     int         viewportwidth;
@@ -46,9 +44,6 @@ struct Camera
     miniv3d     sideGL;
     miniv3d     upGL;
 
-    miniv3d     frustumPointsGL[8];
-    miniv4d     frustumPlanesGL[6];
-
     // libmini layers
     minilayer*  refLayer;
     minilayer*  nearestLayer;
@@ -64,9 +59,9 @@ public:
     Renderer(QGLWidget* window);
     ~Renderer();
 
-    bool    setMapURL(const char* url);
+    void    setMapURL(const char* url);
 
-    void    initCamera(float fov, float nearplane, float farplane);
+    void    initCamera(float fovy, float nearplane, float farplane);
     void    setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
 
     void    init();
@@ -86,8 +81,6 @@ public:
     void    resetMap();
     bool    processResetMap(int deltaT);
 
-    bool    isInited() { return m_bIsInited; }
-
     void    timerEvent(int timerId);
 
 protected:
@@ -96,6 +89,7 @@ protected:
 
     void    resizeViewport();
     void    initView();
+    void    initTransition();
 
     void    resizeTextures(int width, int height);
     void    initFBO();
@@ -106,20 +100,13 @@ protected:
 
     void    setupMatrix();
 
-    void    renderLandscape();
-    void    renderTerrain();
+    void    renderLandscape(bool force=false);
+    void    renderTerrain(bool force=false);
     void    renderOverlay();
     void    renderComposition();
     void    renderHUD();
 
     void    updateCamera();
-    void    updateFrustum();
-
-    // helper functions
-    static void CalculateFrustumPlanes(miniv3d* points, miniv4d* planes);
-    static void FindMinMax(const miniv4d& pos, float& minX, float& minY, float& minZ, float& maxX, float& maxY, float& maxZ);
-    static miniv4d points2plane(const miniv3d& v0, const miniv3d& v1, const miniv3d& v2);
-    minicoord trace2ground(minicoord point, double& dist);
 
     void    startTransition(CameraTransitionMode mode);
     void    stopTransition();
@@ -151,13 +138,10 @@ protected:
     bool     m_bCameraRotating;
 
     // camera transition animation
+    int      m_MapPagingTimerId;
     bool     m_bInCameraTransition;
     int      m_MapTransitionTimerId;
     QTime    m_Timer;
-
-    // disable cursor move when move camera forward
-    int      m_DisableCursorMoveTimerId;
-    bool     m_bDisableCursorMoveEvent;
 
     CameraTransitionMode  m_CameraTransitionMode;
 
@@ -182,7 +166,7 @@ protected:
     GLuint     m_TerrainTextureId;
     GLuint     m_OverlayTextureId;
 
-    // texture ids for track data points and crosshair
+    // texture ids
     GLuint     m_CrosshairTextureId;
 
     unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];

@@ -5,9 +5,6 @@
 #include "viewerwindow.h"
 #include "renderer.h"
 
-const float MapScrollSpeedX = 0.25;
-const float MapScrollSpeedY = 0.25;
-
 ViewerWindow::ViewerWindow(QWidget* )
    : renderer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
 {
@@ -20,9 +17,9 @@ ViewerWindow::ViewerWindow(QWidget* )
    // init renderer
    renderer = new Renderer(this);
 
-   // init maps
-   for (int i=1; i<dataPathList.size(); i++)
-      renderer->setMapURL(dataPathList[i].toAscii().constData());
+   // init map
+   if (dataPathList.size()>1)
+      renderer->setMapURL(dataPathList[1].toAscii().constData());
 
    // init camera
    renderer->initCamera(VIEWER_FOVY, VIEWER_NEARP, VIEWER_FARP);
@@ -37,8 +34,7 @@ ViewerWindow::~ViewerWindow()
 void ViewerWindow::initializeGL()
 {
    // initialize renderer here as it needs GL context to init
-   if (!renderer->isInited())
-      renderer->init();
+   renderer->init();
 
    qglClearColor(Qt::black);
    glEnable(GL_DEPTH_TEST);
@@ -78,13 +74,14 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
    {
       // a left-right button click
       if (bLeftButtonDown && bRightButtonDown)
-         renderer->resetMapOrientation();
+      {}
       // a left button click
       else if (bLeftButtonDown)
       {}
       // a right button click
       else if (bRightButtonDown)
-      {} else
+      {}
+      else
          event->ignore();
    }
    else
@@ -99,9 +96,9 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    float dx = ((float)(event->x()-lastPos.x()))/width();
    float dy = ((float)(event->y()-lastPos.y()))/height();
 
-   if (event->buttons() & Qt::MiddleButton)
+   if (event->buttons() & Qt::LeftButton)
       renderer->rotateCamera(dx, dy);
-   else if (event->buttons() & Qt::LeftButton)
+   else if (event->buttons() & Qt::MiddleButton)
    {}
    else if (event->buttons() & Qt::RightButton)
    {}
@@ -111,22 +108,23 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    lastPos = event->pos();
 }
 
-void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *) {}
+void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
+{
+   renderer->focusOnTarget();
+}
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_W)
-      renderer->moveCamera(0, MapScrollSpeedY);
+      renderer->moveCamera(0, 1.0);
    else if (event->key() == Qt::Key_A)
-      renderer->moveCamera(-MapScrollSpeedX, 0);
+      renderer->moveCamera(-1.0, 0);
    else if (event->key() == Qt::Key_S)
-      renderer->moveCamera(0, -MapScrollSpeedY);
+      renderer->moveCamera(0, -1.0);
    else if (event->key() == Qt::Key_D)
-      renderer->moveCamera(MapScrollSpeedX, 0);
+      renderer->moveCamera(1.0, 0);
    else if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
-   else if (event->key() == Qt::Key_R)
-      renderer->resetMap();
    else if (event->key() == Qt::Key_Q)
       renderer->moveCameraForward(1.0f);
    else if (event->key() == Qt::Key_E)
@@ -145,10 +143,8 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
    int numDegrees = event->delta() / 8;
    int numSteps = numDegrees / 15;
 
-   float fDelta = (float)numSteps/5.0f;
-
    if (event->orientation() == Qt::Vertical)
-      renderer->moveCameraForward(fDelta);
+      renderer->moveCameraForward(numSteps/5.0);
 
    event->accept();
 }

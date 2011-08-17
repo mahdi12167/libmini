@@ -20,9 +20,4 @@ Type "./build.sh" on the unix console.
 
 Command-line Parameters
 =======================
-Usage: qtviewer { <tileset url> }
-
-Camera Controls
-===============
-WSAD - Move map up/down/left/right in screen space orientation.
-Space - Move focus point to where mouse is pointing.
+Usage: qtviewer <tileset url>
