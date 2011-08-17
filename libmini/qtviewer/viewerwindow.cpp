@@ -115,9 +115,7 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *) {}
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_Shift)
-      renderer->setCameraFastMoveForward(true);
-   else if (event->key() == Qt::Key_W)
+   if (event->key() == Qt::Key_W)
       renderer->moveCamera(0, MapScrollSpeedY);
    else if (event->key() == Qt::Key_A)
       renderer->moveCamera(-MapScrollSpeedX, 0);
@@ -139,10 +137,7 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 
 void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_Shift)
-      renderer->setCameraFastMoveForward(false);
-   else
-      QGLWidget::keyReleaseEvent(event);
+   QGLWidget::keyReleaseEvent(event);
 }
 
 void ViewerWindow::wheelEvent(QWheelEvent *event)

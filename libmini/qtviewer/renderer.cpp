@@ -9,10 +9,7 @@
 
 #include <mini/viewerbase.h>
 
-#include "viewerconst.h"
 #include "renderer.h"
-
-static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 
 Renderer::Renderer(QGLWidget* window)
 {
@@ -60,6 +57,9 @@ void Renderer::setCamera(float latitude, float longitude, float altitude, float 
 
    m_Camera.heading = heading;
    m_Camera.pitch = pitch;
+
+   m_Camera.doupdate = true;
+   m_Camera.dooverride = false;
 }
 
 void Renderer::init()
@@ -83,16 +83,12 @@ void Renderer::init()
       return;
    }
 
-   // load optional features
-   viewer->getearth()->loadopts();
-
    // initialize VIS bathy map
    initVISbathymap();
 
    initView();
 
    m_fMoveCameraForward = 0.0f;
-   m_bFastCameraMove = false;
 
    m_bCameraPanning = false;
    m_fMoveCameraX = 0.0f;
@@ -354,7 +350,7 @@ void Renderer::updateCamera()
 
                // convert into opengl space and limit the camera height within ceiling
                minicoord cameraTargetPosGL = m_Camera.nearestLayer->map_g2o(cameraTargetPos);
-               double cameraHeightCeiling = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_CEILING);
+               double cameraHeightCeiling = CAMERA_HEIGHT_CEILING;
 
                // camera is over ceiling, fix it
                if (cameraTargetPosGL.vec.y > cameraHeightCeiling)
@@ -420,8 +416,6 @@ void Renderer::updateCamera()
          if (m_bCameraPanning)
          {
             double speed = 20.0f;
-            if (m_bFastCameraMove)
-               speed *= 10.0f;
 
             m_bCameraPanning = false;
             cameraPosLocal.vec.x += rightLocal.x * m_fMoveCameraX * speed;
@@ -444,7 +438,7 @@ void Renderer::updateCamera()
          }
          else
          {
-            double cameraHeightCeiling = nearestLayer->len_g2l(CAMERA_HEIGHT_CEILING);
+            double cameraHeightCeiling = CAMERA_HEIGHT_CEILING;
 
             if (m_bCameraRotating)
             {
@@ -464,7 +458,7 @@ void Renderer::updateCamera()
                if (m_Camera.distToGroundHit != MAXFLOAT)
                {
                   minicoord posLookAtLocal = nearestLayer->map_g2l(m_Camera.posGroundHit);
-                  double distToLookAtLocal = nearestLayer->len_g2l(m_Camera.distToGroundHit);
+                  double distToLookAtLocal = m_Camera.distToGroundHit;
 
                   cameraPosLocal = posLookAtLocal - distToLookAtLocal * dirLocal;
 
@@ -482,15 +476,13 @@ void Renderer::updateCamera()
             if (m_fMoveCameraForward != 0.0f)
             {
                double speed = 2.0;
-               if (m_bFastCameraMove)
-                  speed *= 10.0f;
 
                double delta = speed * m_fMoveCameraForward;
                cameraPosLocal.vec.x += dirLocal.x * delta;
                cameraPosLocal.vec.y += dirLocal.y * delta;
                cameraPosLocal.vec.z += dirLocal.z * delta;
 
-               double cameraHeightFloor = m_Camera.nearestLayer->len_g2o(CAMERA_HEIGHT_FLOOR);
+               double cameraHeightFloor = CAMERA_HEIGHT_FLOOR;
 
                if (cameraPosLocal.vec.z > cameraHeightCeiling)
                {
@@ -597,8 +589,8 @@ void Renderer::updateFrustum()
 {
    // build frustum in local (camera) coordinate
    float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
-   double nearpGL = m_Camera.refLayer->len_g2o(m_Camera.nearplane);
-   double farpGL = m_Camera.refLayer->len_g2o(m_Camera.farplane);
+   double nearpGL = m_Camera.nearplane;
+   double farpGL = m_Camera.farplane;
 
    double neartopGL = tan((m_Camera.fov / 2.0) * (PI/180.0f)) * nearpGL;
    double nearrightGL = fAspectRatio * neartopGL;
@@ -654,8 +646,8 @@ void Renderer::setupMatrix()
    glLoadIdentity();
 
    float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
-   double nearpGL = m_Camera.refLayer->len_g2o(m_pViewerParams->nearp);
-   double farpGL = m_Camera.refLayer->len_g2o(m_pViewerParams->farp);
+   double nearpGL = m_pViewerParams->nearp;
+   double farpGL = m_pViewerParams->farp;
 
    gluPerspective(m_pViewerParams->fovy, fAspectRatio, nearpGL, farpGL);
 
@@ -899,81 +891,6 @@ minicoord Renderer::trace2ground(minicoord point, double& dist)
    return posProj;
 }
 
-using namespace std;
-
-bool Renderer::isBoundingBoxVisible(const BoundingBox& bb)
-{
-   miniv3d points[8] =
-   {
-      bb.minPoint,
-      miniv3d(bb.maxPoint.x, bb.minPoint.y, bb.minPoint.z),
-      miniv3d(bb.maxPoint.x, bb.minPoint.y, bb.maxPoint.z),
-      miniv3d(bb.minPoint.x, bb.minPoint.y, bb.maxPoint.z),
-      miniv3d(bb.minPoint.x, bb.maxPoint.y, bb.minPoint.z),
-      miniv3d(bb.maxPoint.x, bb.maxPoint.y, bb.minPoint.z),
-      bb.maxPoint,
-      miniv3d(bb.minPoint.x, bb.maxPoint.y, bb.maxPoint.z)
-   };
-
-   bool bVisible = true;
-   for (int i = 0; i < 6; i++)
-   {
-      bool bPointInside = false;
-      for (int j = 0; j < 8; j++)
-      {
-         miniv4d p(points[j].x, points[j].y, points[j].z, -1.0f);
-         if (p * m_Camera.frustumPlanesGL[i] > 0)
-         {
-            bPointInside = true;
-            break;
-         }
-      }
-      if (!bPointInside)
-      {
-         bVisible = false;
-         break;
-      }
-   }
-
-   return bVisible;
-}
-
-bool Renderer::RayBoundingBoxIntersect(const BoundingBox& bb, const Ray& r)
-{
-   miniv3d parameters[2];
-   parameters[0] = bb.minPoint;
-   parameters[1] = bb.maxPoint;
-
-   float t0 = 0.0f, t1 = MAXFLOAT;
-   float tmin, tmax, tymin, tymax, tzmin, tzmax;
-
-   tmin = (parameters[r.sign[0]].x - r.origin.x) * r.inv_direction.x;
-   tmax = (parameters[1-r.sign[0]].x - r.origin.x) * r.inv_direction.x;
-   tymin = (parameters[r.sign[1]].y - r.origin.y) * r.inv_direction.y;
-   tymax = (parameters[1-r.sign[1]].y - r.origin.y) * r.inv_direction.y;
-
-   if ( (tmin > tymax) || (tymin > tmax) )
-      return false;
-
-   if (tymin > tmin)
-      tmin = tymin;
-   if (tymax < tmax)
-      tmax = tymax;
-
-   tzmin = (parameters[r.sign[2]].z - r.origin.z) * r.inv_direction.z;
-   tzmax = (parameters[1-r.sign[2]].z - r.origin.z) * r.inv_direction.z;
-
-   if ( (tmin > tzmax) || (tzmin > tmax) )
-      return false;
-
-   if (tzmin > tmin)
-      tmin = tzmin;
-   if (tzmax < tmax)
-      tmax = tzmax;
-
-   return ( (tmin < t1) && (tmax > t0) );
-}
-
 void Renderer::renderHUD()
 {
    minilayer *nst=viewer->getearth()->getnearest(m_Camera.pos);
@@ -1118,11 +1035,6 @@ void Renderer::moveCamera(float dx, float dy)
    m_Camera.doupdate = true;
 
    window->updateGL();
-}
-
-void Renderer::setCameraFastMoveForward(bool bEnable)
-{
-   m_bFastCameraMove = bEnable;
 }
 
 void Renderer::moveCameraForward(float delta)

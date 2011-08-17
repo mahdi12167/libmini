@@ -3,9 +3,12 @@
 
 #include <QTime>
 #include <QtOpenGL/qgl.h>
+
 #include <mini/viewerbase.h>
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
+
+#include "viewerconst.h"
 
 #define MAX_URL_LEN 1023
 
@@ -55,41 +58,6 @@ struct Camera
     bool        updated;
 };
 
-class Ray
-{
-public:
-  Ray() {}
-
-  Ray(miniv3d o, miniv3d d)
-  {
-    origin = o;
-    direction = d;
-    inv_direction = miniv3d(1/d.x, 1/d.y, 1/d.z);
-    sign[0] = (inv_direction.x < 0);
-    sign[1] = (inv_direction.y < 0);
-    sign[2] = (inv_direction.z < 0);
-  }
-
-  Ray(const Ray &r)
-  {
-    origin = r.origin;
-    direction = r.direction;
-    inv_direction = r.inv_direction;
-    sign[0] = r.sign[0]; sign[1] = r.sign[1]; sign[2] = r.sign[2];
-  }
-
-  miniv3d origin;
-  miniv3d direction;
-  miniv3d inv_direction;
-  int sign[3];
-};
-
-struct BoundingBox
-{
-    miniv3d minPoint;
-    miniv3d maxPoint;
-};
-
 class Renderer
 {
 public:
@@ -109,7 +77,6 @@ public:
     void    moveCamera(float dx, float dy);
 
     void    moveCameraForward(float delta);
-    void    setCameraFastMoveForward(bool bEnable);
     void    moveCursor(const QPoint& pos);
 
     void    resetMapOrientation();
@@ -147,16 +114,12 @@ protected:
 
     void    updateCamera();
     void    updateFrustum();
-    void    updateVisibility();
 
     // helper functions
     static void CalculateFrustumPlanes(miniv3d* points, miniv4d* planes);
     static void FindMinMax(const miniv4d& pos, float& minX, float& minY, float& minZ, float& maxX, float& maxY, float& maxZ);
     static miniv4d points2plane(const miniv3d& v0, const miniv3d& v1, const miniv3d& v2);
     minicoord trace2ground(minicoord point, double& dist);
-
-    bool    isBoundingBoxVisible(const BoundingBox& bb);
-    bool    RayBoundingBoxIntersect(const BoundingBox& bb, const Ray& ray);
 
     void    startTransition(CameraTransitionMode mode);
     void    stopTransition();
@@ -172,10 +135,6 @@ protected:
 
     Camera      m_Camera;
 
-    // for debug camera
-    Camera      m_DebugCamera;
-    Camera      m_CameraSave;
-
     char*       m_strURL;
 
     viewerbase* viewer;
@@ -184,7 +143,6 @@ protected:
     miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams;  // the terrain parameters
 
     float    m_fMoveCameraForward;
-    bool     m_bFastCameraMove;
 
     bool     m_bCameraPanning;
     float    m_fMoveCameraX;
@@ -226,6 +184,8 @@ protected:
 
     // texture ids for track data points and crosshair
     GLuint     m_CrosshairTextureId;
+
+    unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 };
 
 #endif
