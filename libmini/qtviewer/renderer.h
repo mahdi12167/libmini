@@ -164,16 +164,7 @@ protected:
     void    stopTransition();
 
 private:
-    void    drawRefFrame(miniv3d pos);
-    void    drawLine(miniv3d pos1, miniv3d pos2, int width = 1);
     void    drawFullscreenTexQuad();
-    void    drawCameraFrustum();
-    void    drawScreenAlignedDisc(const miniv3d& pos, float scale = 1.0f, const miniv4d& color = miniv4d(1.0f, 1.0f, 1.0f, 1.0f));
-    void    drawScreenAlignedQuadWithTex(const miniv3d& pos,  float scale = 1.0f, const miniv4d& color = miniv4d(1.0f, 1.0f, 1.0f, 1.0f), GLuint texId = 0);
-    void    drawDiscNoRotation(const miniv3d& pos, float scale = 1.0f, const miniv4d& color = miniv4d(1.0f, 1.0f, 1.0f, 1.0f));
-    void    drawQuadWithTexNoRotation(const miniv3d& pos, float scale = 1.0f, const miniv4d& color = miniv4d(1.0f, 1.0f, 1.0f, 1.0f), GLuint texId = 0);
-    void    drawCylinder(const miniv3d& pos, float scale = 1.0f, float height = 1.0f, const miniv4d& color = miniv4d(1.0f, 1.0f, 1.0f, 1.0f));
-    void    drawBoundingBox(const BoundingBox& bb, miniv3d color);
     void    drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
 
 protected:

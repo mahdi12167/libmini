@@ -168,7 +168,7 @@ void Renderer::initParameters()
    // the terrain parameters
    miniterrain::MINITERRAIN_PARAMS terrainParams;
    viewer->getearth()->getterrain()->get(terrainParams);
-   terrainParams.scale = VIEWER_SCALE;
+   terrainParams.scale = 1.0f;
    terrainParams.exaggeration = VIEWER_EXAGGER;
    terrainParams.res = VIEWER_RES;
    terrainParams.relres1 = VIEWER_RELRES;
@@ -232,7 +232,7 @@ void Renderer::initView()
    {
       cameraPos = cameraPos + vDown * dist;
       cameraPos.convert2(minicoord::MINICOORD_LLH);
-      cameraPos.vec.z+=5000;
+      cameraPos.vec.z+=CAMERA_HOVER;
 
       // test if the camera pos is underneath the ground, if yes, move it up:
       if (cameraPos.vec.z > fAltitude)
@@ -810,56 +810,6 @@ void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
    glTexImage2D( GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits() );
    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-}
-
-void Renderer::drawRefFrame(miniv3d pos)
-{
-   glPushMatrix();
-   glTranslatef(pos.x, pos.y, pos.z);
-
-   glScalef(20.0,20.0f,20.0f);
-   glDisable(GL_DEPTH_TEST);
-   glLineWidth(1);
-
-   glColor3f(1.0f,0.0f,0.0f);
-   glBegin(GL_LINES);
-   glVertex3f(0.0f, 0.0f, 0.0f);
-   glVertex3f(1.0f, 0.0f, 0.0f);
-   glEnd();
-
-   glColor3f(0.0f,1.0f,0.0f);
-   glBegin(GL_LINES);
-   glVertex3f(0.0f, 0.0f, 0.0f);
-   glVertex3f(0.0f,0.0f, -1.0f);
-   glEnd();
-
-   glColor3f(0.0f,0.0f,1.0f);
-   glBegin(GL_LINES);
-   glVertex3f(0.0f, 0.0f, 0.0f);
-   glVertex3f(0.0f,1.0f, 0.0f);
-   glEnd();
-
-   glEnable(GL_DEPTH_TEST);
-   glPopMatrix();
-}
-
-void Renderer::drawLine(miniv3d pos1, miniv3d pos2, int width)
-{
-   miniv3d delta = pos2 - pos1;
-
-   glPushMatrix();
-   glTranslatef(pos1.x, pos1.y, pos1.z);
-   glDisable(GL_DEPTH_TEST);
-   glLineWidth(width);
-
-   glBegin(GL_LINES);
-   glVertex3f(0.0f, 0.0f, 0.0f);
-   glVertex3f(delta.x, delta.y, delta.z);
-   glEnd();
-
-   glLineWidth(1);
-   glEnable(GL_DEPTH_TEST);
-   glPopMatrix();
 }
 
 void Renderer::drawFullscreenTexQuad()
