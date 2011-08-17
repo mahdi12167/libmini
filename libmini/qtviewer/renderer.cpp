@@ -1052,7 +1052,8 @@ void Renderer::timerEvent(int timerId)
 {
    if (m_MapPagingTimerId == timerId)
    {
-      renderLandscape(true);
+      if (!m_bInCameraTransition)
+         renderLandscape(true);
 
       bool bPagingFinished = viewer->getearth()->getterrain()->getpending()==0;
 
