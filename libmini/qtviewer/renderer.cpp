@@ -708,10 +708,7 @@ void Renderer::renderLandscape(bool force)
    renderHUD();
 
    if (m_MapPagingTimerId == -1)
-      {
-      m_MapPagingTimerId = window->startTimer(0);
-      m_Timer.start();
-      }
+      m_MapPagingTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
 }
 
 void Renderer::initFBO()
@@ -1053,13 +1050,14 @@ void Renderer::timerEvent(int timerId)
    if (m_MapPagingTimerId == timerId)
    {
       if (!m_bInCameraTransition)
+         {
          renderLandscape(true);
+         window->updateGL();
+         }
 
       bool bPagingFinished = viewer->getearth()->getterrain()->getpending()==0;
 
-      if (!bPagingFinished)
-         m_Timer.restart();
-      else
+      if (bPagingFinished)
       {
          window->killTimer(m_MapPagingTimerId);
          m_MapPagingTimerId=-1;
@@ -1096,7 +1094,7 @@ void Renderer::startTransition(CameraTransitionMode mode)
    {
       m_bInCameraTransition = true;
       m_CameraTransitionMode = mode;
-      m_MapTransitionTimerId = window->startTimer(0);
+      m_MapTransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
       m_Timer.start();
    }
 }
