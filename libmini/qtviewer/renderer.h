@@ -98,7 +98,8 @@ public:
 
     bool    setMapURL(const char* url);
 
-    void    initCamera(float latitude, float longitude, float altitude, float heading, float pitch, float fov, float nearplane, float farplane);
+    void    initCamera(float fov, float nearplane, float farplane);
+    void    setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
 
     void    init();
     void    resize(int width, int height);

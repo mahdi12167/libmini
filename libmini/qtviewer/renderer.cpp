@@ -38,16 +38,8 @@ bool Renderer::setMapURL(const char* url)
    return true;
 }
 
-void Renderer::initCamera(float latitude, float longitude, float altitude, float heading, float pitch, float fov, float nearplane, float farplane)
+void Renderer::initCamera(float fov, float nearplane, float farplane)
 {
-   m_Camera.pos.vec.x = latitude * 3600.0f;
-   m_Camera.pos.vec.y = longitude * 3600.0f;
-   m_Camera.pos.vec.z = altitude;
-   m_Camera.pos.type = minicoord::MINICOORD_LLH;
-   m_Camera.pos.convert2(minicoord::MINICOORD_ECEF);
-
-   m_Camera.heading = heading;
-   m_Camera.pitch = pitch;
    m_Camera.fov = fov;
    m_Camera.nearplane = nearplane;
    m_Camera.farplane = farplane;
@@ -57,6 +49,18 @@ void Renderer::initCamera(float latitude, float longitude, float altitude, float
 
    m_Camera.doupdate = true;
    m_Camera.dooverride = false;
+}
+
+void Renderer::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
+{
+   m_Camera.pos.vec.x = latitude * 3600.0f;
+   m_Camera.pos.vec.y = longitude * 3600.0f;
+   m_Camera.pos.vec.z = altitude;
+   m_Camera.pos.type = minicoord::MINICOORD_LLH;
+   m_Camera.pos.convert2(minicoord::MINICOORD_ECEF);
+
+   m_Camera.heading = heading;
+   m_Camera.pitch = pitch;
 }
 
 void Renderer::init()
@@ -200,6 +204,10 @@ void Renderer::initView()
    resizeViewport();
    initFBO();
 
+   m_Camera.pos=viewer->getinitial();
+   m_Camera.heading = 0;
+   m_Camera.pitch = 90;
+
    viewer->initeyepoint(m_Camera.pos);
 
    // setting up mini layers in camera
@@ -221,9 +229,10 @@ void Renderer::initView()
 
    double dist = viewer->shoot(cameraPos, vDown);
    if (dist != MAXFLOAT)
-      {
+   {
       cameraPos = cameraPos + vDown * dist;
       cameraPos.convert2(minicoord::MINICOORD_LLH);
+      cameraPos.vec.z+=5000;
 
       // test if the camera pos is underneath the ground, if yes, move it up:
       if (cameraPos.vec.z > fAltitude)
