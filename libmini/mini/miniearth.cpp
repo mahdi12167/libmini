@@ -455,156 +455,155 @@ void miniearth::rendercache()
 
    ref=getreference();
 
-   if (ref!=NULL)
+   if (ref==NULL) return;
+
+   lparams=ref->get();
+
+   egl=ref->map_g2o(lparams->eye);
+
+   // compute altitude
+   alt=getrelheight(lparams->eye);
+
+   // calculate void display factor
+   if (EPARAMS.voidstart<=0.0f) altf=0.0;
+   else
       {
-      lparams=ref->get();
+      altf=alt/EPARAMS.voidstart;
 
-      egl=ref->map_g2o(lparams->eye);
+      if (altf<0.0) altf=0.0;
+      else if (altf>1.0) altf=1.0;
 
-      // compute altitude
-      alt=getrelheight(lparams->eye);
-
-      // calculate void display factor
-      if (EPARAMS.voidstart<=0.0f) altf=0.0;
-      else
-         {
-         altf=alt/EPARAMS.voidstart;
-
-         if (altf<0.0) altf=0.0;
-         else if (altf>1.0) altf=1.0;
-
-         altf=altf*altf;
-         }
-
-      // calculate abyss display factor
-      if (EPARAMS.abyssstart>=0.0f) seaf=0.0;
-      else
-         {
-         seaf=alt/EPARAMS.abyssstart;
-
-         if (seaf<0.0) seaf=0.0;
-         else if (seaf>1.0) seaf=1.0;
-         }
-
-      // clear back buffer
-      if (CLEAR)
-         {
-         if (altf>0.0f)
-            clearbuffer((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
-                        (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
-                        (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
-         else if (seaf>0.0f)
-            clearbuffer((1.0-seaf)*EPARAMS.fogcolor[0]+seaf*EPARAMS.abysscolor[0],
-                        (1.0-seaf)*EPARAMS.fogcolor[1]+seaf*EPARAMS.abysscolor[1],
-                        (1.0-seaf)*EPARAMS.fogcolor[2]+seaf*EPARAMS.abysscolor[2]);
-         else
-            clearbuffer(EPARAMS.fogcolor[0],
-                        EPARAMS.fogcolor[1],
-                        EPARAMS.fogcolor[2]);
-
-         CLEAR=FALSE;
-         }
-
-      // enable fog
-      if (EPARAMS.usefog)
-         {
-         fogf=(1.0-altf)*EPARAMS.fogstart+altf;
-
-         enablefog(fogf*ref->len_g2o(EPARAMS.farp),
-                   ref->len_g2o(EPARAMS.farp),
-                   EPARAMS.fogcolor[0],
-                   EPARAMS.fogcolor[1],
-                   EPARAMS.fogcolor[2]);
-         }
-
-      // draw skydome
-      if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
-         if (lparams->warpmode==0 || lparams->warpmode==2)
-            {
-            SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                            1.9*ref->len_g2o(EPARAMS.farp));
-
-            SKYDOME->drawskydome();
-            }
-
-      // render earth globe
-      if (EPARAMS.useearth)
-         if (lparams->warpmode!=0)
-            {
-            EARTH->setscale(ref->len_o2g(1.0));
-            EARTH->setdynscale(1.0);
-
-            warp=*getearth()->getwarp();
-            warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
-            warp.getwarp(mtx);
-
-            oglmtx[0]=mtx[0].x;
-            oglmtx[1]=mtx[1].x;
-            oglmtx[2]=mtx[2].x;
-            oglmtx[3]=0.0;
-
-            oglmtx[4]=mtx[0].y;
-            oglmtx[5]=mtx[1].y;
-            oglmtx[6]=mtx[2].y;
-            oglmtx[7]=0.0;
-
-            oglmtx[8]=mtx[0].z;
-            oglmtx[9]=mtx[1].z;
-            oglmtx[10]=mtx[2].z;
-            oglmtx[11]=0.0;
-
-            oglmtx[12]=mtx[0].w;
-            oglmtx[13]=mtx[1].w;
-            oglmtx[14]=mtx[2].w;
-            oglmtx[15]=1.0;
-
-            EARTH->setmatrix(oglmtx);
-
-            lgl=getnull()->rot_g2i(EPARAMS.lightdir,getnull()->getcenter());
-
-            light[0]=lgl.x;
-            light[1]=lgl.y;
-            light[2]=lgl.z;
-
-            if (EPARAMS.usediffuse)
-               {
-               EARTH->setshadedirectparams(light,EPARAMS.lightbias,EPARAMS.lightoffset);
-               EARTH->settexturedirectparams(light,EPARAMS.transbias,EPARAMS.transbias*EPARAMS.transoffset);
-               }
-            else
-               {
-               EARTH->setshadedirectparams(light,0.0f,1.0f);
-               EARTH->settexturedirectparams(light,0.0f,1.0f);
-               }
-
-            fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
-
-            EARTH->setfogparams((EPARAMS.usefog)?fogf*ref->len_g2o(EPARAMS.farp):0.0f,
-                                (EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
-                                EPARAMS.fogdensity,
-                                EPARAMS.fogcolor);
-
-            disableZwriting();
-            EARTH->render();
-            enableZwriting();
-            }
-
-      // check data grid for underwater volumes
-      if (DATAGRID!=NULL)
-         {
-         tparams=TERRAIN->get();
-
-         // use stippling if there are underwater volumes
-         if (DATAGRID->isbelowsealevel()) tparams->seamode=1;
-         else tparams->seamode=0;
-         }
-
-      // render terrain
-      TERRAIN->render();
-
-      // disable fog
-      if (EPARAMS.usefog) disablefog();
+      altf=altf*altf;
       }
+
+   // calculate abyss display factor
+   if (EPARAMS.abyssstart>=0.0f) seaf=0.0;
+   else
+      {
+      seaf=alt/EPARAMS.abyssstart;
+
+      if (seaf<0.0) seaf=0.0;
+      else if (seaf>1.0) seaf=1.0;
+      }
+
+   // clear back buffer
+   if (CLEAR)
+      {
+      if (altf>0.0f)
+         clearbuffer((1.0-altf)*EPARAMS.fogcolor[0]+altf*EPARAMS.voidcolor[0],
+                     (1.0-altf)*EPARAMS.fogcolor[1]+altf*EPARAMS.voidcolor[1],
+                     (1.0-altf)*EPARAMS.fogcolor[2]+altf*EPARAMS.voidcolor[2]);
+      else if (seaf>0.0f)
+         clearbuffer((1.0-seaf)*EPARAMS.fogcolor[0]+seaf*EPARAMS.abysscolor[0],
+                     (1.0-seaf)*EPARAMS.fogcolor[1]+seaf*EPARAMS.abysscolor[1],
+                     (1.0-seaf)*EPARAMS.fogcolor[2]+seaf*EPARAMS.abysscolor[2]);
+      else
+         clearbuffer(EPARAMS.fogcolor[0],
+                     EPARAMS.fogcolor[1],
+                     EPARAMS.fogcolor[2]);
+
+      CLEAR=FALSE;
+      }
+
+   // enable fog
+   if (EPARAMS.usefog)
+      {
+      fogf=(1.0-altf)*EPARAMS.fogstart+altf;
+
+      enablefog(fogf*ref->len_g2o(EPARAMS.farp),
+                ref->len_g2o(EPARAMS.farp),
+                EPARAMS.fogcolor[0],
+                EPARAMS.fogcolor[1],
+                EPARAMS.fogcolor[2]);
+      }
+
+   // draw skydome
+   if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
+      if (lparams->warpmode==0 || lparams->warpmode==2)
+         {
+         SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                         1.9*ref->len_g2o(EPARAMS.farp));
+
+         SKYDOME->drawskydome();
+         }
+
+   // render earth globe
+   if (EPARAMS.useearth)
+      if (lparams->warpmode!=0)
+         {
+         EARTH->setscale(ref->len_o2g(1.0));
+         EARTH->setdynscale(1.0);
+
+         warp=*getearth()->getwarp();
+         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
+         warp.getwarp(mtx);
+
+         oglmtx[0]=mtx[0].x;
+         oglmtx[1]=mtx[1].x;
+         oglmtx[2]=mtx[2].x;
+         oglmtx[3]=0.0;
+
+         oglmtx[4]=mtx[0].y;
+         oglmtx[5]=mtx[1].y;
+         oglmtx[6]=mtx[2].y;
+         oglmtx[7]=0.0;
+
+         oglmtx[8]=mtx[0].z;
+         oglmtx[9]=mtx[1].z;
+         oglmtx[10]=mtx[2].z;
+         oglmtx[11]=0.0;
+
+         oglmtx[12]=mtx[0].w;
+         oglmtx[13]=mtx[1].w;
+         oglmtx[14]=mtx[2].w;
+         oglmtx[15]=1.0;
+
+         EARTH->setmatrix(oglmtx);
+
+         lgl=getnull()->rot_g2i(EPARAMS.lightdir,getnull()->getcenter());
+
+         light[0]=lgl.x;
+         light[1]=lgl.y;
+         light[2]=lgl.z;
+
+         if (EPARAMS.usediffuse)
+            {
+            EARTH->setshadedirectparams(light,EPARAMS.lightbias,EPARAMS.lightoffset);
+            EARTH->settexturedirectparams(light,EPARAMS.transbias,EPARAMS.transbias*EPARAMS.transoffset);
+            }
+         else
+            {
+            EARTH->setshadedirectparams(light,0.0f,1.0f);
+            EARTH->settexturedirectparams(light,0.0f,1.0f);
+            }
+
+         fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
+
+         EARTH->setfogparams((EPARAMS.usefog)?fogf*ref->len_g2o(EPARAMS.farp):0.0f,
+                             (EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
+                             EPARAMS.fogdensity,
+                             EPARAMS.fogcolor);
+
+         disableZwriting();
+         EARTH->render();
+         enableZwriting();
+         }
+
+   // check data grid for underwater volumes
+   if (DATAGRID!=NULL)
+      {
+      tparams=TERRAIN->get();
+
+      // use stippling if there are underwater volumes
+      if (DATAGRID->isbelowsealevel()) tparams->seamode=1;
+      else tparams->seamode=0;
+      }
+
+   // render terrain
+   TERRAIN->render();
+
+   // disable fog
+   if (EPARAMS.usefog) disablefog();
    }
 
 // render data grid
@@ -618,44 +617,43 @@ void miniearth::renderdgrid()
 
    ref=getreference();
 
-   if (ref!=NULL)
+   if (ref==NULL) return;
+
+   lparams=ref->get();
+
+   // trigger data grid
+   if (DATAGRID!=NULL)
       {
-      lparams=ref->get();
+      // construct mesh
+      DATAGRID->construct();
 
-      // trigger data grid
-      if (DATAGRID!=NULL)
+      // check if constructed mesh is empty
+      if (!DATAGRID->isempty())
          {
-         // construct mesh
-         DATAGRID->construct();
+         DATAGRID->usemtxpost(FALSE);
 
-         // check if constructed mesh is empty
-         if (!DATAGRID->isempty())
-            {
-            DATAGRID->usemtxpost(FALSE);
+         // set post matrix (world to rendering coordinates)
+         if (ref->istileset())
+            if (ref->getwarp()!=NULL)
+               {
+               warp=*ref->getwarp();
+               warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+               warp.getwarp(mtx);
 
-            // set post matrix (world to rendering coordinates)
-            if (ref->istileset())
-               if (ref->getwarp()!=NULL)
-                  {
-                  warp=*ref->getwarp();
-                  warp.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
-                  warp.getwarp(mtx);
+               DATAGRID->specmtxpost(mtx);
+               DATAGRID->usemtxpost(TRUE);
+               }
 
-                  DATAGRID->specmtxpost(mtx);
-                  DATAGRID->usemtxpost(TRUE);
-                  }
-
-            // push either sorted or unsorted mesh
-            if (!SORT) DATAGRID->trigger(lparams->time);
-            else DATAGRID->trigger(lparams->time,lparams->eye.vec,lparams->dir,lparams->nearp,lparams->farp,lparams->fovy,lparams->aspect,MAXFLOAT,ZTEXID);
-            }
+         // push either sorted or unsorted mesh
+         if (!SORT) DATAGRID->trigger(lparams->time);
+         else DATAGRID->trigger(lparams->time,lparams->eye.vec,lparams->dir,lparams->nearp,lparams->farp,lparams->fovy,lparams->aspect,MAXFLOAT,ZTEXID);
          }
       }
    }
 
 // check for pending scene update
 BOOLINT miniearth::checkpending()
-   {return(TERRAIN->getpending()==0);}
+   {return(TERRAIN->getpending()!=0);}
 
 // make scene static
 void miniearth::makestatic(BOOLINT flag)
@@ -769,30 +767,30 @@ double miniearth::getrelheight(const minicoord &p)
    minilayer *ref;
    minilayer::MINILAYER_PARAMS *lparams;
 
+   double relh;
    minicoord pos;
 
    ref=getreference();
 
-   if (ref!=NULL)
+   if (ref==NULL) return(0.0);
+
+   lparams=ref->get();
+
+   if (lparams->warpmode==1 || lparams->warpmode==2)
+      relh=miniv3d((p-ref->getcenter()).vec)*ref->getnormal();
+   else
       {
-      lparams=ref->get();
+      pos=p;
 
-      if (lparams->warpmode==1 || lparams->warpmode==2)
-         return(miniv3d((p-ref->getcenter()).vec)*ref->getnormal());
-      else
-         {
-         pos=p;
+      if (lparams->warpmode!=0)
+         if (pos.type==minicoord::MINICOORD_LINEAR) pos.type=minicoord::MINICOORD_ECEF;
 
-         if (lparams->warpmode!=0)
-            if (pos.type==minicoord::MINICOORD_LINEAR) pos.type=minicoord::MINICOORD_ECEF;
+      if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
 
-         if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
-
-         return(pos.vec.z);
-         }
+      relh=pos.vec.z;
       }
 
-   return(0.0);
+   return(relh);
    }
 
 // shoot a ray at the scene
@@ -805,28 +803,25 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
 
    ref=getreference();
 
-   if (ref!=NULL)
-      {
-      lparams=ref->get();
+   if (ref==NULL) return(MAXFLOAT);
 
-      // check for hit with terrain
-      t=TERRAIN->shoot(o,d,hitdist);
+   lparams=ref->get();
 
-      // check for hit with earth ellipsoid
-      if (t==MAXFLOAT)
-         if (EPARAMS.useearth)
-            if (lparams->warpmode!=0)
-               if (lparams->warpmode!=1 && lparams->warpmode!=2)
-                  t=intersect_ellipsoid(miniv3d(o.vec),d,
-                                        miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
-               else
-                  t=intersect_plane(miniv3d(o.vec),d,
-                                    miniv3d(ref->getcenter().vec),ref->getnormal());
+   // check for hit with terrain
+   t=TERRAIN->shoot(o,d,hitdist);
 
-      return(t);
-      }
+   // check for hit with earth ellipsoid
+   if (t==MAXFLOAT)
+      if (EPARAMS.useearth)
+         if (lparams->warpmode!=0)
+            if (lparams->warpmode!=1 && lparams->warpmode!=2)
+               t=intersect_ellipsoid(miniv3d(o.vec),d,
+                                     miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
+            else
+               t=intersect_plane(miniv3d(o.vec),d,
+                                 miniv3d(ref->getcenter().vec),ref->getnormal());
 
-   return(MAXFLOAT);
+   return(t);
    }
 
 // extract triangles that [possibly] intersect a plane
