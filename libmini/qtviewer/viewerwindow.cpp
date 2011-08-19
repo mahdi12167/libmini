@@ -115,20 +115,8 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_W)
-      renderer->moveCamera(0, 1.0);
-   else if (event->key() == Qt::Key_A)
-      renderer->moveCamera(-1.0, 0);
-   else if (event->key() == Qt::Key_S)
-      renderer->moveCamera(0, -1.0);
-   else if (event->key() == Qt::Key_D)
-      renderer->moveCamera(1.0, 0);
-   else if (event->key() == Qt::Key_Space)
+   if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
-   else if (event->key() == Qt::Key_Q)
-      renderer->moveCameraForward(1.0f);
-   else if (event->key() == Qt::Key_E)
-      renderer->moveCameraForward(-1.0f);
    else
       QGLWidget::keyPressEvent(event);
 }
