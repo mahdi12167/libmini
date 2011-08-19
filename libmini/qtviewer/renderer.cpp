@@ -78,6 +78,9 @@ void Renderer::init()
       return;
    }
 
+   // load optional features
+   viewer->getearth()->loadopts();
+
    // initialize VIS bathy map
    initVISbathymap();
 
@@ -636,15 +639,13 @@ void Renderer::renderTerrain(bool force)
       // start timer
       viewer->starttimer();
 
-      viewer->getearth()->getterrain()->setreference(viewer->getearth()->getterrain()->getnum(nearestLayer));
+      viewer->getearth()->setreference(nearestLayer);
 
       // update scene
       float fAspectRatio = ((float)m_Camera.viewportwidth)/((float) m_Camera.viewportheight);
       viewer->cache(m_Camera.pos, m_Camera.forward, m_Camera.up, fAspectRatio);
 
       attachTexture(m_TerrainTextureId, m_DepthBufferId);
-      glClearColor(0, 0, 0, 0);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       viewer->clear();
       viewer->render();
@@ -786,7 +787,7 @@ void Renderer::renderHUD()
 {
    minilayer *nst=viewer->getearth()->getnearest(m_Camera.pos);
 
-   double cameraElev=viewer->getearth()->getterrain()->getheight(m_Camera.pos);
+   double cameraElev=viewer->getearth()->getheight(m_Camera.pos);
    if (cameraElev==-MAXFLOAT) cameraElev=0.0f;
 
    minicoord cameraPosLLH = nst->map_g2t(m_Camera.pos);
@@ -829,8 +830,8 @@ void Renderer::renderHUD()
    }
 
    QString str;
-   const QColor colorRed(255, 255, 255);
-   window->qglColor(colorRed);
+   const QColor color(255, 255, 255);
+   window->qglColor(color);
    int x = 10;
    int y = window->height() - 20;
    int line_space = -16;
@@ -1055,7 +1056,7 @@ void Renderer::timerEvent(int timerId)
          window->updateGL();
          }
 
-      bool bPagingFinished = viewer->getearth()->getterrain()->getpending()==0;
+      bool bPagingFinished = !viewer->getearth()->checkpending();
 
       if (bPagingFinished)
       {
