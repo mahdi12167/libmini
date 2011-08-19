@@ -37,6 +37,11 @@ class miniearth
       float nearp;    // near plane (meters)
       float farp;     // far plane (meters)
 
+      // data paths:
+
+      const char *stdpath;
+      const char *instpath;
+
       // feature switches:
 
       BOOLINT usefog;

@@ -26,6 +26,11 @@ miniearth::miniearth()
    EPARAMS.nearp=10.0f;   // near plane (meters)
    EPARAMS.farp=10000.0f; // far plane (meters)
 
+   // data paths:
+
+   EPARAMS.stdpath="data/";             // standard data path
+   EPARAMS.instpath="/usr/share/mini/"; // installation data path
+
    // feature switches:
 
    EPARAMS.usefog=FALSE;
@@ -186,11 +191,17 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    tparams.fogdensity=EPARAMS.fogdensity;
 
    if (EPARAMS.useflat)
-      if (EPARAMS.warpmode==4) tparams.warpmode=2;
-      else if (EPARAMS.warpmode==3) tparams.warpmode=1;
-      else tparams.warpmode=0;
-   else tparams.warpmode=EPARAMS.warpmode;
+      {
+      if (EPARAMS.warpmode==4) EPARAMS.warpmode=2;
+      else if (EPARAMS.warpmode==3) EPARAMS.warpmode=1;
+      }
+   else
+      {
+      if (EPARAMS.warpmode==2) EPARAMS.warpmode=4;
+      else if (EPARAMS.warpmode==1) EPARAMS.warpmode=3;
+      }
 
+   tparams.warpmode=EPARAMS.warpmode;
    tparams.nonlin=EPARAMS.nonlin;
 
    if (EPARAMS.nonlin ||
@@ -277,25 +288,20 @@ void miniearth::loaddetailtex(const char *path,
 void miniearth::loadopts()
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS *lparams;
 
    if (LOADED) return;
 
    ref=getreference();
 
-   if (ref==NULL) return;
-
-   lparams=ref->get();
-
    // load skydome:
 
    char *skyname=NULL;
 
-   if (ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,lparams->altpath);
+   if (ref!=NULL && ref->getcache()!=NULL) skyname=ref->getcache()->getfile(EPARAMS.skydome,EPARAMS.stdpath);
    else
       {
-      skyname=getfile(EPARAMS.skydome,lparams->altpath);
-      if (skyname==NULL) skyname=getfile(EPARAMS.skydome,lparams->instpath);
+      skyname=getfile(EPARAMS.skydome,EPARAMS.stdpath);
+      if (skyname==NULL) skyname=getfile(EPARAMS.skydome,EPARAMS.instpath);
       }
 
    if (skyname!=NULL)
@@ -308,11 +314,11 @@ void miniearth::loadopts()
 
    char *ename1=NULL;
 
-   if (ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,lparams->altpath);
+   if (ref!=NULL && ref->getcache()!=NULL) ename1=ref->getcache()->getfile(EPARAMS.frontname,EPARAMS.stdpath);
    else
       {
-      ename1=getfile(EPARAMS.frontname,lparams->altpath);
-      if (ename1==NULL) ename1=getfile(EPARAMS.frontname,lparams->instpath);
+      ename1=getfile(EPARAMS.frontname,EPARAMS.stdpath);
+      if (ename1==NULL) ename1=getfile(EPARAMS.frontname,EPARAMS.instpath);
       }
 
    if (ename1!=NULL)
@@ -323,11 +329,11 @@ void miniearth::loadopts()
 
    char *ename2=NULL;
 
-   if (ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,lparams->altpath);
+   if (ref!=NULL && ref->getcache()!=NULL) ename2=ref->getcache()->getfile(EPARAMS.backname,EPARAMS.stdpath);
    else
       {
-      ename2=getfile(EPARAMS.backname,lparams->altpath);
-      if (ename2==NULL) ename2=getfile(EPARAMS.backname,lparams->instpath);
+      ename2=getfile(EPARAMS.backname,EPARAMS.stdpath);
+      if (ename2==NULL) ename2=getfile(EPARAMS.backname,EPARAMS.instpath);
       }
 
    if (ename2!=NULL)
@@ -344,11 +350,11 @@ void miniearth::loadopts()
 
    if (EPARAMS.frontbuf==NULL)
       {
-      if (ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,lparams->altpath);
+      if (ref!=NULL && ref->getcache()!=NULL) ebname1=ref->getcache()->getfile(EPARAMS.frontbufname,EPARAMS.stdpath);
       else
          {
-         ebname1=getfile(EPARAMS.frontbufname,lparams->altpath);
-         if (ebname1==NULL) ebname1=getfile(EPARAMS.frontbufname,lparams->instpath);
+         ebname1=getfile(EPARAMS.frontbufname,EPARAMS.stdpath);
+         if (ebname1==NULL) ebname1=getfile(EPARAMS.frontbufname,EPARAMS.instpath);
          }
 
       if (ebname1!=NULL)
@@ -371,11 +377,11 @@ void miniearth::loadopts()
 
    if (EPARAMS.backbuf==NULL)
       {
-      if (ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,lparams->altpath);
+      if (ref!=NULL && ref->getcache()!=NULL) ebname2=ref->getcache()->getfile(EPARAMS.backbufname,EPARAMS.stdpath);
       else
          {
-         ebname2=getfile(EPARAMS.backbufname,lparams->altpath);
-         if (ebname2==NULL) ebname2=getfile(EPARAMS.backbufname,lparams->instpath);
+         ebname2=getfile(EPARAMS.backbufname,EPARAMS.stdpath);
+         if (ebname2==NULL) ebname2=getfile(EPARAMS.backbufname,EPARAMS.instpath);
          }
 
       if (ebname2!=NULL)
@@ -455,12 +461,13 @@ void miniearth::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 void miniearth::rendercache()
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS *lparams;
-
-   minicoord egl;
 
    double alt;
    double altf,seaf,fogf;
+
+   minicoord egl;
+
+   float scale;
 
    miniwarp warp;
 
@@ -470,39 +477,37 @@ void miniearth::rendercache()
    miniv3d lgl;
    float light[3];
 
-   miniterrain::MINITERRAIN_PARAMS *tparams;
+   float fogend;
 
    ref=getreference();
 
-   if (ref==NULL) return;
-
-   lparams=ref->get();
-
-   egl=ref->map_g2o(lparams->eye);
-
-   // compute altitude
-   alt=getrelheight(lparams->eye);
-
-   // calculate void display factor
-   if (EPARAMS.voidstart<=0.0f) altf=0.0;
+   if (ref==NULL) altf=seaf=1.0;
    else
       {
-      altf=alt/EPARAMS.voidstart;
+      // compute altitude
+      alt=getrelheight(ref->get()->eye);
 
-      if (altf<0.0) altf=0.0;
-      else if (altf>1.0) altf=1.0;
+      // calculate void display factor
+      if (EPARAMS.voidstart<=0.0f) altf=0.0;
+      else
+         {
+         altf=alt/EPARAMS.voidstart;
 
-      altf=altf*altf;
-      }
+         if (altf<0.0) altf=0.0;
+         else if (altf>1.0) altf=1.0;
 
-   // calculate abyss display factor
-   if (EPARAMS.abyssstart>=0.0f) seaf=0.0;
-   else
-      {
-      seaf=alt/EPARAMS.abyssstart;
+         altf=altf*altf;
+         }
 
-      if (seaf<0.0) seaf=0.0;
-      else if (seaf>1.0) seaf=1.0;
+      // calculate abyss display factor
+      if (EPARAMS.abyssstart>=0.0f) seaf=0.0;
+      else
+         {
+         seaf=alt/EPARAMS.abyssstart;
+
+         if (seaf<0.0) seaf=0.0;
+         else if (seaf>1.0) seaf=1.0;
+         }
       }
 
    // clear back buffer
@@ -526,31 +531,38 @@ void miniearth::rendercache()
 
    // enable fog
    if (EPARAMS.usefog)
-      {
-      fogf=(1.0-altf)*EPARAMS.fogstart+altf;
+      if (ref!=NULL)
+         {
+         fogf=(1.0-altf)*EPARAMS.fogstart+altf;
 
-      enablefog(fogf*ref->len_g2o(EPARAMS.farp),
-                ref->len_g2o(EPARAMS.farp),
-                EPARAMS.fogcolor[0],
-                EPARAMS.fogcolor[1],
-                EPARAMS.fogcolor[2]);
-      }
+         enablefog(fogf*ref->len_g2o(EPARAMS.farp),
+                   ref->len_g2o(EPARAMS.farp),
+                   EPARAMS.fogcolor[0],
+                   EPARAMS.fogcolor[1],
+                   EPARAMS.fogcolor[2]);
+         }
 
    // draw skydome
    if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
-      if (lparams->warpmode==0 || lparams->warpmode==2)
-         {
-         SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                         1.9*ref->len_g2o(EPARAMS.farp));
+      if (ref!=NULL)
+         if (EPARAMS.warpmode==0 || EPARAMS.warpmode==2)
+            {
+            egl=ref->map_g2o(ref->get()->eye);
 
-         SKYDOME->drawskydome();
-         }
+            SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
+                            1.9*ref->len_g2o(EPARAMS.farp));
+
+            SKYDOME->drawskydome();
+            }
 
    // render earth globe
    if (EPARAMS.useearth)
-      if (lparams->warpmode!=0)
+      if (EPARAMS.warpmode!=0)
          {
-         EARTH->setscale(ref->len_o2g(1.0));
+         scale=1.0f;
+         if (ref!=NULL) scale=ref->len_o2g(1.0);
+
+         EARTH->setscale(scale);
          EARTH->setdynscale(1.0);
 
          warp=*getearth()->getwarp();
@@ -596,27 +608,23 @@ void miniearth::rendercache()
             EARTH->settexturedirectparams(light,0.0f,1.0f);
             }
 
+         fogend=0.0f;
          fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
 
-         EARTH->setfogparams((EPARAMS.usefog)?fogf*ref->len_g2o(EPARAMS.farp):0.0f,
-                             (EPARAMS.usefog)?ref->len_g2o(EPARAMS.farp):0.0f,
-                             EPARAMS.fogdensity,
-                             EPARAMS.fogcolor);
+         if (EPARAMS.usefog)
+            if (ref!=NULL) fogend=ref->len_g2o(EPARAMS.farp);
+
+         EARTH->setfogparams(fogf*fogend,fogend,EPARAMS.fogdensity,EPARAMS.fogcolor);
 
          disableZwriting();
          EARTH->render();
          enableZwriting();
          }
 
-   // check data grid for underwater volumes
+   // use stippling if there are underwater volumes
    if (DATAGRID!=NULL)
-      {
-      tparams=TERRAIN->get();
-
-      // use stippling if there are underwater volumes
-      if (DATAGRID->isbelowsealevel()) tparams->seamode=1;
-      else tparams->seamode=0;
-      }
+      if (DATAGRID->isbelowsealevel()) TERRAIN->get()->seamode=1;
+      else TERRAIN->get()->seamode=0;
 
    // render terrain
    TERRAIN->render();
@@ -784,24 +792,20 @@ BOOLINT miniearth::isfrozen()
 double miniearth::getrelheight(const minicoord &p)
    {
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS *lparams;
 
    double relh;
    minicoord pos;
 
    ref=getreference();
 
-   if (ref==NULL) return(0.0);
-
-   lparams=ref->get();
-
-   if (lparams->warpmode==1 || lparams->warpmode==2)
-      relh=miniv3d((p-ref->getcenter()).vec)*ref->getnormal();
+   if (EPARAMS.warpmode==1 || EPARAMS.warpmode==2)
+      if (ref!=NULL) relh=miniv3d((p-ref->getcenter()).vec)*ref->getnormal();
+      else relh=0.0;
    else
       {
       pos=p;
 
-      if (lparams->warpmode!=0)
+      if (EPARAMS.warpmode!=0)
          if (pos.type==minicoord::MINICOORD_LINEAR) pos.type=minicoord::MINICOORD_ECEF;
 
       if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
@@ -818,13 +822,8 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    double t;
 
    minilayer *ref;
-   minilayer::MINILAYER_PARAMS *lparams;
 
    ref=getreference();
-
-   if (ref==NULL) return(MAXFLOAT);
-
-   lparams=ref->get();
 
    // check for hit with terrain
    t=TERRAIN->shoot(o,d,hitdist);
@@ -832,13 +831,14 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
-         if (lparams->warpmode!=0)
-            if (lparams->warpmode!=1 && lparams->warpmode!=2)
+         if (EPARAMS.warpmode!=0)
+            if (EPARAMS.warpmode!=1 && EPARAMS.warpmode!=2)
                t=intersect_ellipsoid(miniv3d(o.vec),d,
                                      miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
             else
-               t=intersect_plane(miniv3d(o.vec),d,
-                                 miniv3d(ref->getcenter().vec),ref->getnormal());
+               if (ref!=NULL)
+                  t=intersect_plane(miniv3d(o.vec),d,
+                                    miniv3d(ref->getcenter().vec),ref->getnormal());
 
    return(t);
    }
