@@ -413,6 +413,25 @@ char *miniearth::getfile(const char *src_file,const char *altpath)
    return(NULL);
    }
 
+// set reference layer
+void miniearth::setreference(minilayer *layer)
+   {
+   int ref;
+
+   if (layer==NULL) return;
+
+   ref=TERRAIN->getnum(layer);
+   TERRAIN->setreference(ref);
+   }
+
+// get the elevation at position (x,y,z)
+double miniearth::getheight(const minicoord &p)
+   {return(TERRAIN->getheight(p));}
+
+// get the normal at position (x,y,z)
+miniv3d miniearth::getnormal(const minicoord &p)
+   {return(TERRAIN->getnormal(p));}
+
 // get initial view point
 minicoord miniearth::getinitial()
    {return(TERRAIN->getinitial());}

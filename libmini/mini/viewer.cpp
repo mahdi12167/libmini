@@ -277,16 +277,19 @@ void initview(minicoord e,double a,double p,double dh=0.0)
 
    viewer->initeyepoint(eye);
 
-   elev=viewer->getearth()->getterrain()->getheight(eye);
+   elev=viewer->getearth()->getheight(eye);
 
    ref=viewer->getearth()->getreference();
    nst=viewer->getearth()->getnearest(eye);
 
-   el=nst->map_g2l(eye);
+   if (nst!=NULL)
+      {
+      el=nst->map_g2l(eye);
 
-   if (elev!=-MAXFLOAT) el.vec.z=dmax(el.vec.z,ref->len_g2l(elev+hover+dh));
+      if (elev!=-MAXFLOAT) el.vec.z=dmax(el.vec.z,ref->len_g2l(elev+hover+dh));
 
-   eye=nst->map_l2g(el);
+      eye=nst->map_l2g(el);
+      }
 
    viewer->initeyepoint(eye);
 
@@ -614,75 +617,81 @@ void renderinfo()
    const float size=0.3f;
    const float alpha=0.5f;
 
-   minilayer *nst=viewer->getearth()->getnearest(eye);
-   minitile *mt=nst->getterrain()->getminitile();
+   minilayer *nst=NULL;
+   minitile *mt=NULL;
 
-   int vcol=mt->getvisibleleft();
-   int vrow=mt->getvisiblebottom();
+   nst=viewer->getearth()->getnearest(eye);
+   if (nst!=NULL) mt=nst->getterrain()->getminitile();
 
-   int vcols=mt->getvisibleright()-mt->getvisibleleft()+1;
-   int vrows=mt->getvisibletop()-mt->getvisiblebottom()+1;
+   if (mt!=NULL)
+      {
+      int vcol=mt->getvisibleleft();
+      int vrow=mt->getvisiblebottom();
 
-   int pcol=mt->getpreloadedleft();
-   int prow=mt->getpreloadedbottom();
+      int vcols=mt->getvisibleright()-mt->getvisibleleft()+1;
+      int vrows=mt->getvisibletop()-mt->getvisiblebottom()+1;
 
-   int pcols=mt->getpreloadedright()-mt->getpreloadedleft()+1;
-   int prows=mt->getpreloadedtop()-mt->getpreloadedbottom()+1;
+      int pcol=mt->getpreloadedleft();
+      int prow=mt->getpreloadedbottom();
 
-   glLoadIdentity();
-   glTranslatef(sx,sy+yr,0.0f);
-   glScalef(xr/pcols,-yr/prows,0.0f);
-   glTranslatef(0.5f,0.5f,0.0f);
+      int pcols=mt->getpreloadedright()-mt->getpreloadedleft()+1;
+      int prows=mt->getpreloadedtop()-mt->getpreloadedbottom()+1;
 
-   glColor4f(1.0f,1.0f,1.0f,0.25f);
+      glLoadIdentity();
+      glTranslatef(sx,sy+yr,0.0f);
+      glScalef(xr/pcols,-yr/prows,0.0f);
+      glTranslatef(0.5f,0.5f,0.0f);
 
-   glBegin(GL_QUADS);
-   glVertex2f(-size,-size);
-   glVertex2f(pcols-1+size,-size);
-   glVertex2f(pcols-1+size,prows-1+size);
-   glVertex2f(-size,prows-1+size);
-   glEnd();
+      glColor4f(1.0f,1.0f,1.0f,0.25f);
 
-   glColor4f(1.0f,1.0f,1.0f,0.75f);
+      glBegin(GL_QUADS);
+      glVertex2f(-size,-size);
+      glVertex2f(pcols-1+size,-size);
+      glVertex2f(pcols-1+size,prows-1+size);
+      glVertex2f(-size,prows-1+size);
+      glEnd();
 
-   glBegin(GL_QUADS);
-   glVertex2f(vcol-pcol-size,vrow-prow-size);
-   glVertex2f(vcol-pcol+vcols-1+size,vrow-prow-size);
-   glVertex2f(vcol-pcol+vcols-1+size,vrow-prow+vrows-1+size);
-   glVertex2f(vcol-pcol-size,vrow-prow+vrows-1+size);
-   glEnd();
+      glColor4f(1.0f,1.0f,1.0f,0.75f);
 
-   glBegin(GL_QUADS);
+      glBegin(GL_QUADS);
+      glVertex2f(vcol-pcol-size,vrow-prow-size);
+      glVertex2f(vcol-pcol+vcols-1+size,vrow-prow-size);
+      glVertex2f(vcol-pcol+vcols-1+size,vrow-prow+vrows-1+size);
+      glVertex2f(vcol-pcol-size,vrow-prow+vrows-1+size);
+      glEnd();
 
-   for (i=0; i<pcols; i++)
-      for (j=0; j<prows; j++)
-         {
-         t=mt->gettexw(pcol+i,prow+j);
+      glBegin(GL_QUADS);
 
-         switch (t)
+      for (i=0; i<pcols; i++)
+         for (j=0; j<prows; j++)
             {
-            case 0: glColor4f(0.0f,0.0f,0.0f,alpha); break;
-            case 2: glColor4f(0.1f,0.1f,0.1f,alpha); break;
-            case 4: glColor4f(0.25f,0.25f,0.25f,alpha); break;
-            case 8: glColor4f(0.5f,0.5f,0.5f,alpha); break;
-            case 16: glColor4f(0.75f,0.75f,0.75f,alpha); break;
-            case 32: glColor4f(1.0f,1.0f,1.0f,alpha); break;
-            case 64: glColor4f(0.0f,0.0f,1.0f,alpha); break;
-            case 128: glColor4f(0.0f,0.5f,1.0f,alpha); break;
-            case 256: glColor4f(0.0f,1.0f,0.0f,alpha); break;
-            case 512: glColor4f(0.5f,1.0f,0.0f,alpha); break;
-            case 1024: glColor4f(1.0f,1.0f,0.0f,alpha); break;
-            case 2048: glColor4f(1.0f,0.5f,0.0f,alpha); break;
-            default: glColor4f(1.0f,0.0f,0.0f,alpha); break;
+            t=mt->gettexw(pcol+i,prow+j);
+
+            switch (t)
+               {
+               case 0: glColor4f(0.0f,0.0f,0.0f,alpha); break;
+               case 2: glColor4f(0.1f,0.1f,0.1f,alpha); break;
+               case 4: glColor4f(0.25f,0.25f,0.25f,alpha); break;
+               case 8: glColor4f(0.5f,0.5f,0.5f,alpha); break;
+               case 16: glColor4f(0.75f,0.75f,0.75f,alpha); break;
+               case 32: glColor4f(1.0f,1.0f,1.0f,alpha); break;
+               case 64: glColor4f(0.0f,0.0f,1.0f,alpha); break;
+               case 128: glColor4f(0.0f,0.5f,1.0f,alpha); break;
+               case 256: glColor4f(0.0f,1.0f,0.0f,alpha); break;
+               case 512: glColor4f(0.5f,1.0f,0.0f,alpha); break;
+               case 1024: glColor4f(1.0f,1.0f,0.0f,alpha); break;
+               case 2048: glColor4f(1.0f,0.5f,0.0f,alpha); break;
+               default: glColor4f(1.0f,0.0f,0.0f,alpha); break;
+               }
+
+            glVertex2f(i-size,j-size);
+            glVertex2f(i+size,j-size);
+            glVertex2f(i+size,j+size);
+            glVertex2f(i-size,j+size);
             }
 
-         glVertex2f(i-size,j-size);
-         glVertex2f(i+size,j-size);
-         glVertex2f(i+size,j+size);
-         glVertex2f(i-size,j+size);
-         }
-
-   glEnd();
+      glEnd();
+      }
    }
 
 // render head-up display
@@ -697,8 +706,11 @@ void renderhud()
 
    char str[MAXSTR];
 
-   minilayer *nst=viewer->getearth()->getnearest(eye);
-   minitile *mt=nst->getterrain()->getminitile();
+   minilayer *nst=NULL;
+   minitile *mt=NULL;
+
+   nst=viewer->getearth()->getnearest(eye);
+   if (nst!=NULL) mt=nst->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
 
@@ -726,16 +738,20 @@ void renderhud()
 
       glTranslatef(0.033f,0.0f,0.0f);
 
-      elev=viewer->getearth()->getterrain()->getheight(eye);
+      elev=viewer->getearth()->getheight(eye);
       if (elev==-MAXFLOAT) elev=0.0f;
 
       sea=tparams->sealevel;
       if (sea==-MAXFLOAT) sea=0.0f;
 
-      eye_llh=nst->map_g2t(eye);
+      if (nst!=NULL) eye_llh=nst->map_g2t(eye);
       if (eye_llh.type!=minicoord::MINICOORD_LINEAR) eye_llh.convert2(minicoord::MINICOORD_LLH);
 
-      snprintf(str,MAXSTR,"Position:                \n\n x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\nSettings:\n\n farp= %.1fm (f/F)\n\n res= %.1f*%.1f (t/T)\n range= %.1f*%.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
+      snprintf(str,MAXSTR,
+               "Position:                \n\n"
+               " x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\n"
+               "Settings:\n\n"
+               " farp= %.1fm (f/F)\n\n res= %.1f*%.1f (t/T)\n range= %.1f*%.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
                eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,turn,incline, // position/elevation and direction
                params->farp,tparams->res*tparams->relres1,tparams->relres2,tparams->range*tparams->relrange1*params->farp,tparams->relrange2,sea,gravity); // adjustable parameters
 
@@ -743,8 +759,13 @@ void renderhud()
 
       glTranslatef(0.3f,0.0f,0.0f);
 
-      snprintf(str,MAXSTR,"Tile Set:                \n\n vis area= [%d-%d]x[%d-%d]\n\n fps= %.1fHz (%.1f%%)\n\n mem= %.1fMB\n tex= %.1fMB\n\nStreaming:\n\n pending= %d\n\n cache= %.1fMB\n\nGeometry:\n\n fans=     %d\n vertices= %d\n",
-               mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop(), // visible area of nearest tileset
+      snprintf(str,MAXSTR,
+               "Load:                \n\n"
+               " fps= %.1fHz (%.1f%%)\n\n mem= %.1fMB\n tex= %.1fMB\n\n"
+               "Streaming:\n\n"
+               " pending= %d\n\n cache= %.1fMB\n\n"
+               "Geometry:\n\n"
+               " fans=     %d\n vertices= %d\n",
                1.0/(avg_delta+avg_idle),100*(1.0-avg_idle*params->fps), // actual frame rate and load
                viewer->getearth()->getterrain()->getmem(),viewer->getearth()->getterrain()->gettexmem(), // memory consumed by tilesets
                viewer->getearth()->getterrain()->getpending(), // number of pending tiles
@@ -752,11 +773,21 @@ void renderhud()
                viewer->getearth()->getterrain()->getbuffer()->getfancnt(), // rendered triangles fans
                viewer->getearth()->getterrain()->getbuffer()->getvtxcnt()); // rendered vertices
 
+      if (mt!=NULL)
+         snprintf(str+strlen(str),MAXSTR-strlen(str),
+                  " vis area= [%d-%d]x[%d-%d]\n\n",
+                  mt->getvisibleleft(),mt->getvisibleright(),mt->getvisiblebottom(),mt->getvisibletop()); // visible area of nearest tileset
+
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
       glTranslatef(0.3f,0.0f,0.0f);
 
-      snprintf(str,MAXSTR,"Controls:                \n\n left=       a\n right=      d\n accelerate= w\n decelerate= s\n\n stop=      spc\n jump=      j\n look down= <\n look up=   >\n\n hud/hide=  h/H\n crosshair= c\n waypoints= p\n wireframe= l\n\n load/save= o/O\n quit=      Q esc\n");
+      snprintf(str,MAXSTR,
+               "Controls:                \n\n"
+               " left=       a\n right=      d\n accelerate= w\n decelerate= s\n\n"
+               " stop=      spc\n jump=      j\n look down= <\n look up=   >\n\n"
+               " hud/hide=  h/H\n crosshair= c\n waypoints= p\n wireframe= l\n\n"
+               " load/save= o/O\n quit=      Q esc\n");
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
@@ -779,7 +810,8 @@ void renderhud()
 
             if (dist!=MAXFLOAT)
                {
-               hit=nst->map_g2t(eye+dist*dir);
+               hit=eye+dist*dir;
+               if (nst!=NULL) hit=nst->map_g2t(hit);
                if (hit.type!=minicoord::MINICOORD_LINEAR) hit.convert2(minicoord::MINICOORD_ECEF);
 
                hit_llh=hit;
@@ -829,7 +861,8 @@ void render()
    minicoord ep,el,egl;
    miniv3d dgl,ugl,rgl;
 
-   minilayer *ref,*nst;
+   minilayer *ref=NULL;
+   minilayer *nst=NULL;
 
    minipointdata *nearest;
 
@@ -849,9 +882,10 @@ void render()
    ref=viewer->getearth()->getreference();
    nst=viewer->getearth()->getnearest(eye);
 
-   viewer->getearth()->getterrain()->setreference(viewer->getearth()->getterrain()->getnum(nst));
+   viewer->getearth()->setreference(nst);
 
-   el=nst->map_g2l(eye);
+   if (nst!=NULL) el=nst->map_g2l(eye);
+   else el=eye;
 
    sina=sin(2.0*PI/360.0*turn);
    cosa=cos(2.0*PI/360.0*turn);
@@ -862,9 +896,10 @@ void render()
    el.vec.x+=sina*speed/params->fps;
    el.vec.y+=cosa*speed/params->fps;
 
-   ep=nst->map_l2g(el);
+   if (nst!=NULL) ep=nst->map_l2g(el);
+   else ep=el;
 
-   elev=ref->len_g2l(viewer->getearth()->getterrain()->getheight(ep));
+   elev=ref->len_g2l(viewer->getearth()->getheight(ep));
 
    // update eye coordinate system:
 
@@ -880,9 +915,12 @@ void render()
    right.y=-sina;
    right.z=0.0;
 
-   dir=nst->rot_l2g(dir,el);
-   up=nst->rot_l2g(up,el);
-   right=nst->rot_l2g(right,el);
+   if (nst!=NULL)
+      {
+      dir=nst->rot_l2g(dir,el);
+      up=nst->rot_l2g(up,el);
+      right=nst->rot_l2g(right,el);
+      }
 
    // update eye movement:
 
@@ -918,9 +956,18 @@ void render()
        dabs(pitch-incline)>VIEWER_MINDIFF ||
        dabs(dez)>VIEWER_MINDIFF) wakeup=TRUE;
 
+   // remap eye coordinates:
+
+   if (nst!=NULL) eye=nst->map_l2g(el);
+
+   egl=ref->map_g2o(eye);
+   dgl=ref->rot_g2o(dir,eye);
+   ugl=ref->rot_g2o(up,eye);
+   rgl=ref->rot_g2o(right,eye)*sbase;
+
    // check for nearest waypoint:
 
-   nearest=viewer->getearth()->getterrain()->getnearestpoint(minipointopts::OPTION_TYPE_FREE);
+   nearest=viewer->getearth()->getterrain()->getnearestpoint(eye,minipointopts::OPTION_TYPE_FREE);
 
    if (nearest!=NULL)
       if (nearest->opts!=NULL)
@@ -935,15 +982,6 @@ void render()
                if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=TRUE;
                }
             }
-
-   // remap eye coordinates:
-
-   eye=nst->map_l2g(el);
-
-   egl=nst->map_g2o(eye);
-   dgl=nst->rot_g2o(dir,eye);
-   ugl=nst->rot_g2o(up,eye);
-   rgl=nst->rot_g2o(right,eye)*sbase;
 
    // change orientation of signposts:
 
@@ -1049,7 +1087,7 @@ void displayfunc()
 
    stat=viewer->getearth()->checkpending();
 
-   if (!stat || wakeup) numidle=0;
+   if (stat || wakeup) numidle=0;
    else if (numidle<VIEWER_MAXIDLE) numidle++;
 
    wakeup=FALSE;
