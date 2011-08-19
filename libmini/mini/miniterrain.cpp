@@ -561,7 +561,7 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    propagate();
 
    // set reference coordinate system
-   LAYER[n]->setreference(LAYER[getreference()]);
+   LAYER[n]->setreference(getlayer(getreference()));
 
    // register callbacks
    LAYER[n]->setcallbacks(THREADDATA,
@@ -749,17 +749,16 @@ void miniterrain::setreference(int ref)
    LREF=ref;
 
    // set new reference layer for default coordinate conversions
-   if (LNUM>0) REFERENCE=LAYER[getreference()];
-   else REFERENCE=NULL;
+   REFERENCE=getlayer(LREF);
 
    // propagate new reference coordinate system
    for (n=0; n<LNUM; n++)
-      LAYER[n]->setreference(LAYER[getreference()]);
+      LAYER[n]->setreference(REFERENCE);
    }
 
 // get reference layer
 int miniterrain::getreference()
-   {return(min(LREF,LNUM-1));}
+   {return(LREF);}
 
 // get the nth terrain layer
 minilayer *miniterrain::getlayer(int n)
@@ -822,7 +821,7 @@ double miniterrain::getheight(const minicoord &p,int approx)
       if (isdisplayed(nst) && !isculled(nst))
          {
          elev=LAYER[nst]->getheight(p,approx);
-         if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[nst]->len_g2l(elev)));
+         if (elev!=-MAXFLOAT) return(len_l2g(LAYER[nst]->len_g2l(elev)));
          }
 
       for (n=LNUM-1; n>=0; n--)
@@ -830,7 +829,7 @@ double miniterrain::getheight(const minicoord &p,int approx)
             if (isdisplayed(n) && !isculled(n))
                {
                elev=LAYER[n]->getheight(p,approx);
-               if (elev!=-MAXFLOAT) return(LAYER[getreference()]->len_l2g(LAYER[n]->len_g2l(elev)));
+               if (elev!=-MAXFLOAT) return(len_l2g(LAYER[n]->len_g2l(elev)));
                }
       }
 
@@ -871,8 +870,8 @@ miniv3d miniterrain::getnormal(const minicoord &p,int approx)
 // get initial view point
 minicoord miniterrain::getinitial()
    {
-   if (LNUM<1) return(minicoord());
-   else return(LAYER[getreference()]->getinitial());
+   if (REFERENCE==NULL) return(minicoord());
+   else return(REFERENCE->getinitial());
    }
 
 // set initial eye point
@@ -890,7 +889,7 @@ int miniterrain::getnearest(const minicoord &e)
    int n;
 
    int nst;
-   double dist,mindist;
+   double rad,dist,mindist;
 
    nst=-1;
    mindist=MAXFLOAT;
@@ -898,14 +897,17 @@ int miniterrain::getnearest(const minicoord &e)
    for (n=0; n<LNUM; n++)
       if (isdisplayed(n) && !issubtileset(n))
          {
-         dist=LAYER[n]->getcenter().getdist(e);
-         dist-=LAYER[n]->getextent().getlength()/2.0;
+         rad=LAYER[n]->getextent().getlength()/2.0;
 
-         if (dist<mindist)
-            {
-            mindist=dist;
-            nst=n;
-            }
+         dist=LAYER[n]->getcenter().getdist(e);
+         dist-=rad;
+
+         if (dist<rad)
+            if (dist<mindist)
+               {
+               mindist=dist;
+               nst=n;
+               }
          }
 
    return(nst);
@@ -1046,7 +1048,7 @@ void miniterrain::render()
 
             // use standard VIS shader
             minishader::setVISshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
+                                     len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -1065,7 +1067,7 @@ void miniterrain::render()
 
             // use alternative NPR shader
             minishader::setNPRshader(CACHE,
-                                     LAYER[getreference()]->len_o2g(1.0),TPARAMS.exaggeration,
+                                     len_o2g(1.0),TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
@@ -1282,27 +1284,23 @@ void miniterrain::flatten(float relscale)
 // get the flattening factor
 float miniterrain::getflattening()
    {
-   if (LNUM>0) return(LAYER[getreference()]->getflattening());
+   if (REFERENCE!=NULL) return(REFERENCE->getflattening());
    else return(1.0f);
    }
 
 // get the nearest waypoint
-minipointdata *miniterrain::getnearestpoint(int type)
+minipointdata *miniterrain::getnearestpoint(minicoord &e,int type)
    {
    int nst;
 
    minipointdata *nearest;
 
-   minilayer::MINILAYER_PARAMS *lparams;
-
    nearest=NULL;
 
    if (LNUM>0)
       {
-      lparams=LAYER[getreference()]->get();
-
       // get nearest layer
-      nst=getnearest(lparams->eye);
+      nst=getnearest(e);
 
       // get nearest waypoint from nearest layer
       if (isdisplayed(nst) && !isculled(nst)) nearest=LAYER[nst]->getnearestpoint(type);
@@ -1316,7 +1314,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
    {
    int n;
 
-   int ref,nst;
+   int nst;
 
    double dist;
    double dn;
@@ -1331,12 +1329,9 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
 
    if (LNUM>0)
       {
-      // get reference layer
-      ref=getreference();
-
       // transform coordinates
-      ogl=LAYER[ref]->map_g2o(o);
-      dgl=LAYER[ref]->rot_g2o(d,o);
+      ogl=map_g2o(o);
+      dgl=rot_g2o(d,o);
 
       // get nearest layer
       nst=getnearest(o);
@@ -1349,7 +1344,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
       // check for valid hit
       if (dist!=MAXFLOAT)
          {
-         dist=LAYER[ref]->len_o2g(dist);
+         dist=len_o2g(dist);
          id_hit=nst;
          }
       else
@@ -1361,7 +1356,7 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
                   dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
 
                   // check for valid hit
-                  if (dn!=MAXFLOAT) dn=LAYER[ref]->len_o2g(dn);
+                  if (dn!=MAXFLOAT) dn=len_o2g(dn);
 
                   // remember nearest hit
                   if (dn<dist)
@@ -1385,8 +1380,6 @@ minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,doubl
    {
    int n;
 
-   int ref;
-
    minidyna<miniv3d> result;
 
    minicoord pgl;
@@ -1394,12 +1387,9 @@ minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,doubl
 
    if (LNUM>0)
       {
-      // get reference layer
-      ref=getreference();
-
       // transform coordinates
-      pgl=LAYER[ref]->map_g2o(p);
-      vgl=LAYER[ref]->rot_g2o(v,p);
+      pgl=map_g2o(p);
+      vgl=rot_g2o(v,p);
 
       // gather [potentially] intersecting triangles
       for (n=0; n<LNUM; n++)
