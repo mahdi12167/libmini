@@ -1220,7 +1220,7 @@ void minilayer::createwarps(int cols,int rows,
    if (mode==1 || mode==2)
       {
       if (REFERENCE==NULL) mode=0;
-      if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) mode=0;
+      else if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) mode=0;
       }
 
    fcenter=minicoord(miniv3d(0.0),minicoord::MINICOORD_LINEAR);
