@@ -27,14 +27,13 @@ void minicam::set_eye(const minicoord &e)
    if (miniv3d(eye.vec)==miniv3d(0.0)) eye=eye_default;
 
    move_above(eye);
-
    get_local_base(eye,eye_dir,eye_right,eye_up);
    }
 
 minicoord minicam::get_hit()
    {
-   minicoord hit;
    double dist;
+   minicoord hit;
 
    if (hit_dist==MAXFLOAT)
       hit_dist=EARTH->shoot(eye,eye_dir);
@@ -42,8 +41,7 @@ minicoord minicam::get_hit()
    if (hit_dist==MAXFLOAT) dist=EARTH->get()->farp;
    else dist=hit_dist;
 
-   hit=minicoord(miniv3d(eye.vec)+dist*eye_dir,minicoord::MINICOORD_ECEF);
-
+   hit=eye+dist*eye_dir;
    move_above(hit);
 
    return(hit);
@@ -116,11 +114,11 @@ void minicam::move_above(minicoord &pos,double mindist)
       {
       dist=EARTH->shoot(pos,up);
       if (dist!=MAXFLOAT)
-         pos.vec+=up*(mindist+dist);
+         pos+=up*(mindist+dist);
       }
    else
       if (dist<mindist)
-         pos.vec+=up*(mindist-dist);
+         pos+=up*(mindist-dist);
 
    elev=EARTH->getheight(pos);
 
