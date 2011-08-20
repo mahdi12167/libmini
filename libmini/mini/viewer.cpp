@@ -798,10 +798,11 @@ void renderhud()
          glScalef((float)winheight/winwidth,1.0f,1.0f);
          glColor3f(0.0f,0.0f,0.0f);
          glBegin(GL_LINES);
-         glVertex2f(-0.025,-0.025f);
-         glVertex2f(0.025,0.025f);
-         glVertex2f(-0.025,0.025f);
-         glVertex2f(0.025,-0.025f);
+         glScalef(0.025f,0.025f,1.0f);
+         glVertex2f(-1.0,-1.0f);
+         glVertex2f(1.0,1.0f);
+         glVertex2f(-1.0,1.0f);
+         glVertex2f(1.0,-1.0f);
          glEnd();
 
          if (sw_cross!=0)
