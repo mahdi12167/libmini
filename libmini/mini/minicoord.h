@@ -67,7 +67,11 @@ class minicoord
 
    //! associated operators
    inline minicoord& operator += (const minicoord &v);
+   inline minicoord& operator += (const miniv4d &v);
+   inline minicoord& operator += (const miniv3d &v);
    inline minicoord& operator -= (const minicoord &v);
+   inline minicoord& operator -= (const miniv4d &v);
+   inline minicoord& operator -= (const miniv3d &v);
    inline minicoord& operator *= (const double c);
    inline minicoord& operator /= (const double c);
 
@@ -139,10 +143,38 @@ inline minicoord& minicoord::operator += (const minicoord &v)
    return(*this);
    }
 
+// associated arithmetic operator +=
+inline minicoord& minicoord::operator += (const miniv4d &v)
+   {
+   vec+=v;
+   return(*this);
+   }
+
+// associated arithmetic operator +=
+inline minicoord& minicoord::operator += (const miniv3d &v)
+   {
+   vec+=v;
+   return(*this);
+   }
+
 // associated arithmetic operator -=
 inline minicoord& minicoord::operator -= (const minicoord &v)
    {
    vec-=v.vec;
+   return(*this);
+   }
+
+// associated arithmetic operator -=
+inline minicoord& minicoord::operator -= (const miniv4d &v)
+   {
+   vec-=v;
+   return(*this);
+   }
+
+// associated arithmetic operator -=
+inline minicoord& minicoord::operator -= (const miniv3d &v)
+   {
+   vec-=v;
    return(*this);
    }
 
@@ -162,7 +194,11 @@ inline minicoord& minicoord::operator /= (const double c)
 
 // arithmetic inline operators
 inline minicoord operator + (const minicoord &a,const minicoord &b);
+inline minicoord operator + (const minicoord &a,const miniv4d &b);
+inline minicoord operator + (const minicoord &a,const miniv3d &b);
 inline minicoord operator - (const minicoord &a,const minicoord &b);
+inline minicoord operator - (const minicoord &a,const miniv4d &b);
+inline minicoord operator - (const minicoord &a,const miniv3d &b);
 inline minicoord operator - (const minicoord &c);
 inline minicoord operator * (const double a,const minicoord &b);
 inline minicoord operator * (const minicoord &a,const double b);
@@ -180,8 +216,20 @@ inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD_D
 inline minicoord operator + (const minicoord &a,const minicoord &b)
    {return(minicoord(a.vec+b.vec,a.type,a.crs_zone,a.crs_datum));}
 
+inline minicoord operator + (const minicoord &a,const miniv4d &b)
+   {return(minicoord(a.vec+b,a.type,a.crs_zone,a.crs_datum));}
+
+inline minicoord operator + (const minicoord &a,const miniv3d &b)
+   {return(minicoord(a.vec+miniv4d(b),a.type,a.crs_zone,a.crs_datum));}
+
 inline minicoord operator - (const minicoord &a,const minicoord &b)
    {return(minicoord(a.vec-b.vec,a.type,a.crs_zone,a.crs_datum));}
+
+inline minicoord operator - (const minicoord &a,const miniv4d &b)
+   {return(minicoord(a.vec-b,a.type,a.crs_zone,a.crs_datum));}
+
+inline minicoord operator - (const minicoord &a,const miniv3d &b)
+   {return(minicoord(a.vec-miniv4d(b),a.type,a.crs_zone,a.crs_datum));}
 
 inline minicoord operator - (const minicoord &c)
    {return(minicoord(-c.vec,c.type,c.crs_zone,c.crs_datum));}
