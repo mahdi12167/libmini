@@ -82,10 +82,7 @@ double minicam::get_pitch()
 
    get_local_base(eye,dir,right,up);
 
-   if (dir*eye_dir<0.0) pitch=M_PI-asin(up*eye_dir);
-   else pitch=asin(up*eye_dir);
-
-   if (pitch>M_PI) pitch-=2.0*M_PI;
+   pitch=asin(up*eye_dir);
 
    return(pitch*180.0/M_PI);
    }
@@ -131,10 +128,11 @@ void minicam::rotate(double delta,const miniv3d &axis)
 
    double s=sin(delta/180.0*M_PI);
    double c=cos(delta/180.0*M_PI);
+   double c1=1.0-c;
 
-   miniv3d rotx(x*x*(1-c)+c, x*y*(1-c)-z*s, x*z*(1-c)+y*s);
-   miniv3d roty(y*x*(1-c)+z*s, y*y*(1-c)+c, y*z*(1-c)-x*s);
-   miniv3d rotz(x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z*(1-c)+c);
+   miniv3d rotx(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
+   miniv3d roty(y*x*c1+z*s, y*y*c1+c,   y*z*c1-x*s);
+   miniv3d rotz(z*x*c1-y*s, z*y*c1+x*s, z*z*c1+c);
 
    eye_dir=miniv3d(rotx*eye_dir, roty*eye_dir, rotz*eye_dir);
    eye_right=miniv3d(rotx*eye_right, roty*eye_right, rotz*eye_right);
