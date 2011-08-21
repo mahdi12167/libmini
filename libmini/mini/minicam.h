@@ -14,17 +14,11 @@ class minicam
    public:
 
    //! default constructor
-   minicam(miniearth *earth);
+   minicam(miniearth *earth,
+           double lat=21.39,double lon=-157.72,double height=30000.0);
 
    //! destructor
    ~minicam();
-
-   void move_forward(double delta);
-   void move_right(double delta);
-   void move_up(double delta);
-
-   void rotate_right(double delta);
-   void rotate_up(double delta);
 
    void set_eye(const minicoord &e);
 
@@ -33,6 +27,15 @@ class minicam
    miniv3d get_right() {return(eye_right);}
    miniv3d get_up() {return(eye_up);}
    minicoord get_hit();
+   double get_pitch();
+
+   void move(const miniv3d &delta);
+   void move_forward(double delta);
+   void move_right(double delta);
+   void move_up(double delta);
+
+   void rotate_right(double delta);
+   void rotate_up(double delta);
 
    protected:
 
