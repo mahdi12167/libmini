@@ -21,7 +21,7 @@ minicam::minicam(miniearth *earth,
 // destructor
 minicam::~minicam() {}
 
-void minicam::set_eye(const minicoord &e)
+void minicam::set_eye(const minicoord &e,double angle,double pitch)
    {
    eye=e;
 
@@ -32,6 +32,8 @@ void minicam::set_eye(const minicoord &e)
 
    move_above(eye);
    get_local_base(eye,eye_dir,eye_right,eye_up);
+   rotate_right(angle);
+   rotate_up(pitch);
 
    hit_dist=MAXFLOAT;
    }

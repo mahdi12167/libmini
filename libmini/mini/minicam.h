@@ -20,7 +20,7 @@ class minicam
    //! destructor
    ~minicam();
 
-   void set_eye(const minicoord &e);
+   void set_eye(const minicoord &e,double angle=0.0,double pitch=-90.0);
 
    minicoord get_eye() {return(eye);}
    miniv3d get_dir() {return(eye_dir);}
