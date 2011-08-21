@@ -27,6 +27,7 @@ class minicam
    miniv3d get_right() {return(eye_right);}
    miniv3d get_up() {return(eye_up);}
    minicoord get_hit();
+   double get_angle();
    double get_pitch();
 
    void move(const miniv3d &delta);
@@ -34,8 +35,10 @@ class minicam
    void move_right(double delta);
    void move_up(double delta);
 
+   void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
    void rotate_up(double delta);
+   void tilt(double delta);
 
    protected:
 
