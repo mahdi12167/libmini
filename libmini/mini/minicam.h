@@ -38,7 +38,6 @@ class minicam
    void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
    void rotate_up(double delta);
-   void tilt(double delta);
 
    protected:
 

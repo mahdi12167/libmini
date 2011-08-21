@@ -145,9 +145,6 @@ void minicam::rotate_right(double delta)
 void minicam::rotate_up(double delta)
    {rotate(delta,eye_right);}
 
-void minicam::tilt(double delta)
-   {rotate(delta,eye_dir);}
-
 // get base vectors of local coordinate system
 void minicam::get_local_base(const minicoord &pos,
                              miniv3d &dir,miniv3d &right,miniv3d &up)
