@@ -163,7 +163,7 @@ void minicam::get_local_base(const minicoord &pos,
    minilayer *nst;
    int mode;
 
-   minicoord posl;
+   minicoord poso;
 
    if (pos!=pos0)
       {
@@ -177,11 +177,11 @@ void minicam::get_local_base(const minicoord &pos,
 
       if (nst!=NULL)
          {
-         posl=nst->map_g2l(pos0);
+         poso=nst->map_g2o(pos0);
 
-         dir0=nst->rot_l2g(miniv3d(0,0,-1),posl);
-         right0=nst->rot_l2g(miniv3d(1,0,0),posl);
-         up0=nst->rot_l2g(miniv3d(0,1,0),posl);
+         dir0=nst->rot_o2g(miniv3d(0,0,-1),poso);
+         right0=nst->rot_o2g(miniv3d(1,0,0),poso);
+         up0=nst->rot_o2g(miniv3d(0,1,0),poso);
          }
       else
          if (mode==0 || mode==1 || mode==2)

@@ -36,6 +36,7 @@ static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 #include <mini/pnmbase.h>
 
 #include <mini/viewerbase.h>
+#include <mini/minicam.h>
 
 #include <mini/panorndr.h>
 
@@ -68,6 +69,9 @@ static int winwidth,winheight,winid;
 
 // the viewer object
 static viewerbase *viewer=NULL;
+
+// the camera object
+static minicam *cam=NULL;
 
 // the viewing parameters
 static viewerbase::VIEWER_PARAMS *params=NULL;
@@ -1359,6 +1363,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case 'Q':
       case 27:
+         delete cam;
          delete viewer;
          if (sw_full==0) glutDestroyWindow(winid);
          else glutLeaveGameMode();
@@ -1526,6 +1531,9 @@ int main(int argc,char *argv[])
 
    // initialize NPR bathy map
    initNPRbathymap();
+
+   // initialize camera
+   cam=new minicam(viewer->getearth());
 
    // load settings
    loadsettings();
