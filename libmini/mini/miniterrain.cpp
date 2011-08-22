@@ -229,6 +229,8 @@ miniterrain::miniterrain()
    DEFAULT_LAYER=LNUM;
    setreference(DEFAULT_LAYER);
 
+   NULLL=getlayer(NULL_LAYER);
+
    THREADDATA=NULL;
    THREADINIT=NULL;
    THREADEXIT=NULL;
@@ -1289,7 +1291,7 @@ float miniterrain::getflattening()
    }
 
 // get the nearest waypoint
-minipointdata *miniterrain::getnearestpoint(minicoord &e,int type)
+minipointdata *miniterrain::getnearestpoint(const minicoord &e,int type)
    {
    int nst;
 
@@ -1328,48 +1330,47 @@ double miniterrain::shoot(const minicoord &o,const miniv3d &d,double hitdist,int
    id_hit=-1;
 
    if (LNUM>0)
-      if (REFERENCE!=NULL)
+      {
+      // transform coordinates
+      ogl=map_g2o(o);
+      dgl=rot_g2o(d,o);
+
+      // get nearest layer
+      nst=getnearest(o);
+
+      // shoot a ray at the nearest layer
+      if (isdisplayed(nst) && !isculled(nst))
+         dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
+      else dist=MAXFLOAT;
+
+      // check for valid hit
+      if (dist!=MAXFLOAT)
          {
-         // transform coordinates
-         ogl=map_g2o(o);
-         dgl=rot_g2o(d,o);
-
-         // get nearest layer
-         nst=getnearest(o);
-
-         // shoot a ray at the nearest layer
-         if (isdisplayed(nst) && !isculled(nst))
-            dist=CACHE->getray(LAYER[nst]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
-         else dist=MAXFLOAT;
-
-         // check for valid hit
-         if (dist!=MAXFLOAT)
-            {
-            dist=len_o2g(dist);
-            id_hit=nst;
-            }
-         else
-            for (n=LNUM-1; n>=0; n--)
-               if (n!=nst)
-                  if (isdisplayed(n) && !isculled(n))
-                     {
-                     // shoot a ray and get the traveled distance
-                     dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
-
-                     // check for valid hit
-                     if (dn!=MAXFLOAT) dn=len_o2g(dn);
-
-                     // remember nearest hit
-                     if (dn<dist)
-                        {
-                        dist=dn;
-                        id_hit=n;
-                        }
-
-                     // stop if actual distance is already lower than required hitdist
-                     if (dist<hitdist) break;
-                     }
+         dist=len_o2g(dist);
+         id_hit=nst;
          }
+      else
+         for (n=LNUM-1; n>=0; n--)
+            if (n!=nst)
+               if (isdisplayed(n) && !isculled(n))
+                  {
+                  // shoot a ray and get the traveled distance
+                  dn=CACHE->getray(LAYER[n]->getcacheid())->shoot(ogl.vec,dgl,hitdist);
+
+                  // check for valid hit
+                  if (dn!=MAXFLOAT) dn=len_o2g(dn);
+
+                  // remember nearest hit
+                  if (dn<dist)
+                     {
+                     dist=dn;
+                     id_hit=n;
+                     }
+
+                  // stop if actual distance is already lower than required hitdist
+                  if (dist<hitdist) break;
+                  }
+      }
 
    if (id!=NULL) *id=id_hit;
 
@@ -1387,17 +1388,16 @@ minidyna<miniv3d> miniterrain::extract(const minicoord &p,const miniv3d &v,doubl
    miniv3d vgl;
 
    if (LNUM>0)
-      if (REFERENCE!=NULL)
-         {
-         // transform coordinates
-         pgl=map_g2o(p);
-         vgl=rot_g2o(v,p);
+      {
+      // transform coordinates
+      pgl=map_g2o(p);
+      vgl=rot_g2o(v,p);
 
-         // gather [potentially] intersecting triangles
-         for (n=0; n<LNUM; n++)
-            if (isdisplayed(n) && !isculled(n))
-               result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
-         }
+      // gather [potentially] intersecting triangles
+      for (n=0; n<LNUM; n++)
+         if (isdisplayed(n) && !isculled(n))
+            result.append(CACHE->getray(LAYER[n]->getcacheid())->extract(pgl.vec,vgl,radius));
+      }
 
    return(result);
    }

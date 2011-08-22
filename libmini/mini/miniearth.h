@@ -156,6 +156,9 @@ class miniearth
    //! load optional features
    void loadopts();
 
+   //! get file
+   char *getfile(const char *src_file,const char *altpath=NULL);
+
    //! set reference layer
    void setreference(minilayer *layer);
 
@@ -226,6 +229,24 @@ class miniearth
    //! get texture id of z-buffer rectangle
    int getztexid() {return(ZTEXID);}
 
+   //! map coordinates
+   minicoord map_g2l(const minicoord &p) {return(TERRAIN->map_g2l(p));}
+   minicoord map_l2g(const minicoord &p) {return(TERRAIN->map_l2g(p));}
+   minicoord map_g2o(const minicoord &p) {return(TERRAIN->map_g2o(p));}
+   minicoord map_o2g(const minicoord &p) {return(TERRAIN->map_o2g(p));}
+
+   //! rotate vector
+   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(TERRAIN->rot_g2l(v,p));}
+   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(TERRAIN->rot_l2g(v,p));}
+   miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(TERRAIN->rot_g2o(v,p));}
+   miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(TERRAIN->rot_o2g(v,p));}
+
+   //! map length
+   double len_g2l(double l) {return(TERRAIN->len_g2l(l));}
+   double len_l2g(double l) {return(TERRAIN->len_l2g(l));}
+   double len_g2o(double l) {return(TERRAIN->len_g2o(l));}
+   double len_o2g(double l) {return(TERRAIN->len_o2g(l));}
+
    protected:
 
    MINIEARTH_PARAMS EPARAMS;
@@ -255,8 +276,6 @@ class miniearth
    BOOLINT SORT;
 
    void initOGL();
-
-   char *getfile(const char *src_file,const char *altpath=NULL);
 
    void rendercache();
    void renderdgrid();

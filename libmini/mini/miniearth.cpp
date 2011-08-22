@@ -557,7 +557,8 @@ void miniearth::rendercache()
 
    // render earth globe
    if (EPARAMS.useearth)
-      if (EPARAMS.warpmode!=0)
+      if (EPARAMS.warpmode!=0 &&
+          ((EPARAMS.warpmode!=1 && EPARAMS.warpmode!=2) || ref!=NULL))
          {
          scale=1.0f;
          if (ref!=NULL) scale=ref->len_o2g(1.0);

@@ -819,15 +819,15 @@ void minilayer::setnull()
    LPARAMS.offset[2]=0.0f;
 
    // set scaling factor
-   LPARAMS.scaling[0]=1.0f/LPARAMS.scale;
-   LPARAMS.scaling[1]=1.0f/LPARAMS.scale;
-   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[0]=1.0f;
+   LPARAMS.scaling[1]=1.0f;
+   LPARAMS.scaling[2]=1.0f;
 
    // create the warp
    createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
               LPARAMS.centerGEO,LPARAMS.northGEO,
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
-              LPARAMS.scale);
+              1.0);
 
    // update warp objects for each exposed coordinate transformation
    updatecoords();
@@ -862,15 +862,15 @@ void minilayer::setearth()
    LPARAMS.offset[2]=0.0f;
 
    // set scaling factor
-   LPARAMS.scaling[0]=1.0f/LPARAMS.scale;
-   LPARAMS.scaling[1]=1.0f/LPARAMS.scale;
-   LPARAMS.scaling[2]=1.0f/LPARAMS.scale;
+   LPARAMS.scaling[0]=1.0f;
+   LPARAMS.scaling[1]=1.0f;
+   LPARAMS.scaling[2]=1.0f;
 
    // create the warp
    createwarp(LPARAMS.offsetDAT,LPARAMS.extentDAT,
               LPARAMS.centerGEO,LPARAMS.northGEO,
               miniv3d(LPARAMS.offset),miniv3d(LPARAMS.scaling),
-              LPARAMS.scale);
+              1.0);
 
    // update warp objects for each exposed coordinate transformation
    updatecoords();
@@ -1227,10 +1227,11 @@ void minilayer::createwarps(int cols,int rows,
    fnormal=miniv3d(0.0,0.0,1.0);
 
    if (mode==1 || mode==2)
-      {
-      fcenter=REFERENCE->getcenter();
-      fnormal=REFERENCE->getnormal();
-      }
+      if (REFERENCE!=NULL)
+         {
+         fcenter=REFERENCE->getcenter();
+         fnormal=REFERENCE->getnormal();
+         }
 
    for (i=0; i<cols; i++)
       for (j=0; j<rows; j++)

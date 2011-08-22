@@ -357,7 +357,7 @@ class miniterrain
    float getflattening();
 
    //! get the nearest waypoint
-   minipointdata *getnearestpoint(minicoord &e,int type=minipointopts::OPTION_TYPE_ANY);
+   minipointdata *getnearestpoint(const minicoord &e,int type=minipointopts::OPTION_TYPE_ANY);
 
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);
@@ -398,22 +398,22 @@ class miniterrain
    // default coordinate conversions (g=global, l=local, o=opengl):
 
    //! map coordinates
-   minicoord map_g2l(const minicoord &p) {return((REFERENCE==NULL)?p:REFERENCE->map_g2l(p));}
-   minicoord map_l2g(const minicoord &p) {return((REFERENCE==NULL)?p:REFERENCE->map_l2g(p));}
-   minicoord map_g2o(const minicoord &p) {return((REFERENCE==NULL)?p:REFERENCE->map_g2o(p));}
-   minicoord map_o2g(const minicoord &p) {return((REFERENCE==NULL)?p:REFERENCE->map_o2g(p));}
+   minicoord map_g2l(const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->map_g2l(p));}
+   minicoord map_l2g(const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->map_l2g(p));}
+   minicoord map_g2o(const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->map_g2o(p));}
+   minicoord map_o2g(const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->map_o2g(p));}
 
    //! rotate vector
-   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?v:REFERENCE->rot_g2l(v,p));}
-   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?v:REFERENCE->rot_l2g(v,p));}
-   miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?v:REFERENCE->rot_g2o(v,p));}
-   miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return((REFERENCE==NULL)?v:REFERENCE->rot_o2g(v,p));}
+   miniv3d rot_g2l(const miniv3d &v,const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->rot_g2l(v,p));}
+   miniv3d rot_l2g(const miniv3d &v,const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->rot_l2g(v,p));}
+   miniv3d rot_g2o(const miniv3d &v,const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->rot_g2o(v,p));}
+   miniv3d rot_o2g(const miniv3d &v,const minicoord &p) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->rot_o2g(v,p));}
 
    //! map length
-   double len_g2l(double l) {return((REFERENCE==NULL)?l:REFERENCE->len_g2l(l));}
-   double len_l2g(double l) {return((REFERENCE==NULL)?l:REFERENCE->len_l2g(l));}
-   double len_g2o(double l) {return((REFERENCE==NULL)?l:REFERENCE->len_g2o(l));}
-   double len_o2g(double l) {return((REFERENCE==NULL)?l:REFERENCE->len_o2g(l));}
+   double len_g2l(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_g2l(l));}
+   double len_l2g(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_l2g(l));}
+   double len_g2o(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_g2o(l));}
+   double len_o2g(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_o2g(l));}
 
    protected:
 
@@ -432,6 +432,7 @@ class miniterrain
 
    int LREF;
    minilayer *REFERENCE;
+   minilayer *NULLL;
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);
