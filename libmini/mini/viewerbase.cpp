@@ -46,6 +46,7 @@ viewerbase::viewerbase()
    // initialize state:
 
    EARTH=new miniearth();
+   TERRAIN=EARTH->getterrain();
 
    START=gettime();
    TIMER=0.0;
@@ -100,14 +101,14 @@ void viewerbase::propagate()
 void viewerbase::inithooks()
    {
    // register callbacks
-   EARTH->getterrain()->setcallbacks(THREADBASE,
-                                     threadbase::threadinit,threadbase::threadexit,
-                                     threadbase::startthread,threadbase::jointhread,
-                                     threadbase::lock_cs,threadbase::unlock_cs,
-                                     threadbase::lock_io,threadbase::unlock_io,
-                                     CURLBASE,
-                                     curlbase::curlinit,curlbase::curlexit,
-                                     curlbase::getURL,curlbase::checkURL);
+   TERRAIN->setcallbacks(THREADBASE,
+                         threadbase::threadinit,threadbase::threadexit,
+                         threadbase::startthread,threadbase::jointhread,
+                         threadbase::lock_cs,threadbase::unlock_cs,
+                         threadbase::lock_io,threadbase::unlock_io,
+                         CURLBASE,
+                         curlbase::curlinit,curlbase::curlexit,
+                         curlbase::getURL,curlbase::checkURL);
 
    // register libMini conversion hook (JPEG/PNG/Z)
    convbase::setconversion(&PARAMS.conversion_params);
@@ -116,18 +117,18 @@ void viewerbase::inithooks()
    databuf::setautocompress(squishbase::autocompress,NULL);
 
    // turn on auto-mipmapping and auto-compression
-   EARTH->getterrain()->get()->automipmap=TRUE;
-   EARTH->getterrain()->get()->autocompress=TRUE;
+   TERRAIN->get()->automipmap=TRUE;
+   TERRAIN->get()->autocompress=TRUE;
    propagate();
    }
 
 // get initial view point
 minicoord viewerbase::getinitial()
-   {return(EARTH->getterrain()->getinitial());}
+   {return(TERRAIN->getinitial());}
 
 // set initial eye point
 void viewerbase::initeyepoint(const minicoord &e)
-   {EARTH->getterrain()->initeyepoint(e);}
+   {TERRAIN->initeyepoint(e);}
 
 // clear scene
 void viewerbase::clear()
@@ -135,11 +136,11 @@ void viewerbase::clear()
 
 // enable a specific focus point
 void viewerbase::enablefocus(const minicoord &f)
-   {EARTH->getterrain()->enablefocus(f);}
+   {TERRAIN->enablefocus(f);}
 
 // disable the focus point
 void viewerbase::disablefocus()
-   {EARTH->getterrain()->disablefocus();}
+   {TERRAIN->disablefocus();}
 
 // generate and cache scene for a particular eye point
 void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
@@ -181,13 +182,13 @@ void viewerbase::adapt(double dt)
 
    miniterrain::MINITERRAIN_PARAMS tparams;
 
-   getearth()->getterrain()->get(tparams);
+   TERRAIN->get(tparams);
 
    tparams.res=miniload::calcres(PARAMS.winheight,PARAMS.fovy);
    tparams.range=miniload::calcrange(tparams.refres,PARAMS.winheight,PARAMS.fovy)/PARAMS.farp;
 
    if (PARAMS.autoadapt)
-      if (!getearth()->isstatic() && !getearth()->isfrozen())
+      if (!EARTH->isstatic() && !EARTH->isfrozen())
          {
          if (PARAMS.autores)
             {
@@ -201,7 +202,7 @@ void viewerbase::adapt(double dt)
 
          if (PARAMS.autorange)
             {
-            load=getearth()->getterrain()->gettexmem()/PARAMS.automemory;
+            load=TERRAIN->gettexmem()/PARAMS.automemory;
 
             tparams.relrange2*=fpow(load,-0.5f/(PARAMS.fps*PARAMS.autoseconds));
 
@@ -210,7 +211,7 @@ void viewerbase::adapt(double dt)
             }
          }
 
-   getearth()->getterrain()->set(tparams);
+   TERRAIN->set(tparams);
    }
 
 // shoot a ray at the scene
