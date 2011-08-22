@@ -23,9 +23,15 @@ class minicam
    void set_eye(const minicoord &e,double angle=0.0,double pitch=-90.0);
 
    minicoord get_eye() {return(eye);}
+   miniv3d get_eye_opengl();
    miniv3d get_dir() {return(eye_dir);}
+   miniv3d get_dir_opengl();
    miniv3d get_right() {return(eye_right);}
+   miniv3d get_right_opengl();
    miniv3d get_up() {return(eye_up);}
+   miniv3d get_up_opengl();
+   double get_elev();
+   double get_dist();
    minicoord get_hit();
    double get_angle();
    double get_pitch();
@@ -34,10 +40,16 @@ class minicam
    void move_forward(double delta);
    void move_right(double delta);
    void move_up(double delta);
+   void move_down(double delta);
+   void move_above(double mindist=0.0);
 
    void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
    void rotate_up(double delta);
+
+   double get_elev(const minicoord &pos);
+   double get_dist(const minicoord &pos);
+   minicoord get_hit(const minicoord &pos,const miniv3d &dir);
 
    protected:
 
@@ -47,14 +59,13 @@ class minicam
    private:
 
    miniearth *EARTH;
-   double hit_dist;
 
    minicoord eye_default;
 
    void get_local_base(const minicoord &pos,
                        miniv3d &dir,miniv3d &right,miniv3d &up);
 
-   void move_above(minicoord &pos,double mindist=0.0);
+   void move_above(minicoord pos,double mindist=0.0);
    };
 
 #endif

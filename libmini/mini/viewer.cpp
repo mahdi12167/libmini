@@ -82,15 +82,11 @@ static miniearth::MINIEARTH_PARAMS *eparams=NULL;
 // the terrain parameters
 static miniterrain::MINITERRAIN_PARAMS *tparams=NULL;
 
-// eye point
-static minicoord eye;
+// eye point deltas
 static double dez,aez;
 
-// viewing angles
-static double angle,turn,pitch,incline;
-
-// viewing direction
-static miniv3d dir,up,right;
+// viewing angle deltas
+static double turn,incline;
 
 // gliding parameters
 static double minspeed=VIEWER_MINSPEED,maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER/VIEWER_SCALE;
@@ -270,44 +266,24 @@ void initwindow(int width,int height)
 // initialize the view point
 void initview(minicoord e,double a,double p,double dh=0.0)
    {
-   minicoord el;
-   float elev;
-
-   minilayer *ref,*nst;
-
    initwindow(winwidth,winheight);
 
-   eye=e;
+   cam->set_eye(e,a,p);
+   cam->move_above(dh);
 
-   viewer->initeyepoint(eye);
-
-   elev=viewer->getearth()->getheight(eye);
-
-   ref=viewer->getearth()->getreference();
-   nst=viewer->getearth()->getnearest(eye);
-
-   if (nst!=NULL)
-      {
-      el=nst->map_g2l(eye);
-
-      if (elev!=-MAXFLOAT) el.vec.z=dmax(el.vec.z,ref->len_g2l(elev+hover+dh));
-
-      eye=nst->map_l2g(el);
-      }
-
-   viewer->initeyepoint(eye);
+   viewer->initeyepoint(cam->get_eye());
 
    dez=aez=0.0;
-
-   angle=turn=a;
-   pitch=incline=p;
-
+   turn=incline=0.0;
    speed=topspeed=0.0;
    }
 
 // load settings
 void loadsettings()
    {
+   minilayer *ref;
+   char *savname;
+
    FILE *file;
 
    miniv3f e;
@@ -321,8 +297,9 @@ void loadsettings()
 
    int flag;
 
-   minilayer *ref=viewer->getearth()->getreference();
-   char *savname=ref->getcache()->getfile(VIEWER_SAVFILE);
+   ref=viewer->getearth()->getreference();
+   if (ref!=NULL) savname=ref->getcache()->getfile(VIEWER_SAVFILE);
+   else savname=strdup(VIEWER_SAVFILE);
 
    if (savname!=NULL)
       {
@@ -389,19 +366,20 @@ void loadsettings()
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
    else
-      {
-      eye=viewer->getinitial();
-      initview(eye,0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
-      }
+      initview(cam->get_eye(),0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
    }
 
 // save settings
 void savesettings()
    {
+   minilayer *ref;
+   char *savname;
+
    FILE *file;
 
-   minilayer *ref=viewer->getearth()->getreference();
-   char *savname=ref->getcache()->putfile(VIEWER_SAVFILE);
+   ref=viewer->getearth()->getreference();
+   if (ref!=NULL) savname=ref->getcache()->putfile(VIEWER_SAVFILE);
+   else savname=strdup(VIEWER_SAVFILE);
 
    if (savname==NULL) return;
 
@@ -415,14 +393,14 @@ void savesettings()
 
    // save essential parameters:
 
-   fprintf(file,"ex=%f\n",eye.vec.x);
-   fprintf(file,"ey=%f\n",eye.vec.y);
-   fprintf(file,"ez=%f\n",eye.vec.z);
+   fprintf(file,"ex=%f\n",cam->get_eye().vec.x);
+   fprintf(file,"ey=%f\n",cam->get_eye().vec.y);
+   fprintf(file,"ez=%f\n",cam->get_eye().vec.z);
 
-   fprintf(file,"type=%d\n",eye.type);
+   fprintf(file,"type=%d\n",cam->get_eye().type);
 
-   fprintf(file,"angle=%f\n",angle);
-   fprintf(file,"pitch=%f\n",pitch);
+   fprintf(file,"angle=%f\n",cam->get_angle());
+   fprintf(file,"pitch=%f\n",cam->get_pitch());
 
    fprintf(file,"farp=%f\n",params->farp);
    fprintf(file,"relres=%f\n",tparams->relres1);
@@ -564,7 +542,7 @@ void rendercompass()
    glScalef(xr,yr,0.0f);
    glScalef((float)winheight/winwidth,1.0f,0.0f);
    glTranslatef(0.5f,0.5f,0.0f);
-   glRotatef(turn,0.0f,0.0f,1.0f);
+   glRotatef(cam->get_angle(),0.0f,0.0f,1.0f);
 
    glColor4f(0.5f,0.75f,1.0f,alpha);
 
@@ -624,7 +602,7 @@ void renderinfo()
    minilayer *nst=NULL;
    minitile *mt=NULL;
 
-   nst=viewer->getearth()->getnearest(eye);
+   nst=viewer->getearth()->getnearest(cam->get_eye());
    if (nst!=NULL) mt=nst->getterrain()->getminitile();
 
    if (mt!=NULL)
@@ -704,16 +682,16 @@ void renderhud()
    double elev,sea;
    minicoord eye_llh;
 
-   double dist;
    minicoord hit;
    minicoord hit_llh;
+   double dist;
 
    char str[MAXSTR];
 
    minilayer *nst=NULL;
    minitile *mt=NULL;
 
-   nst=viewer->getearth()->getnearest(eye);
+   nst=viewer->getearth()->getnearest(cam->get_eye());
    if (nst!=NULL) mt=nst->getterrain()->getminitile();
 
    minitext::configure_zfight(1.0f);
@@ -742,13 +720,13 @@ void renderhud()
 
       glTranslatef(0.033f,0.0f,0.0f);
 
-      elev=viewer->getearth()->getheight(eye);
+      elev=viewer->getearth()->getheight(cam->get_eye());
       if (elev==-MAXFLOAT) elev=0.0f;
 
       sea=tparams->sealevel;
       if (sea==-MAXFLOAT) sea=0.0f;
 
-      if (nst!=NULL) eye_llh=nst->map_g2t(eye);
+      if (nst!=NULL) eye_llh=nst->map_g2t(cam->get_eye());
       if (eye_llh.type!=minicoord::MINICOORD_LINEAR) eye_llh.convert2(minicoord::MINICOORD_LLH);
 
       snprintf(str,MAXSTR,
@@ -811,16 +789,18 @@ void renderhud()
 
          if (sw_cross!=0)
             {
-            dist=viewer->shoot(eye,dir);
-
-            if (dist!=MAXFLOAT)
+            hit=cam->get_hit();
+            if (hit!=cam->get_eye())
                {
-               hit=eye+dist*dir;
+               nst=viewer->getearth()->getnearest(hit);
+
                if (nst!=NULL) hit=nst->map_g2t(hit);
                if (hit.type!=minicoord::MINICOORD_LINEAR) hit.convert2(minicoord::MINICOORD_ECEF);
 
                hit_llh=hit;
                if (hit_llh.type!=minicoord::MINICOORD_LINEAR) hit_llh.convert2(minicoord::MINICOORD_LLH);
+
+               dist=(hit-cam->get_eye()).vec.getlength();
 
                if (dist<1000.0)
                   snprintf(str,MAXSTR,"dist=%3.3fm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
@@ -858,21 +838,13 @@ void render()
    {
    double delta,idle;
 
-   double sina,cosa;
-   double sinp,cosp;
+   minilayer *nst;
 
-   double elev,coef;
+   double elev,dist;
 
-   minicoord ep,el,egl;
-   miniv3d dgl,ugl,rgl;
+   double coef;
 
-   minilayer *ref=NULL;
-   minilayer *nst=NULL;
-
-   minipointdata *nearest;
-
-   float nearrad;
-   miniv3d nearvec;
+   miniv3d egl,dgl,ugl,rgl;
 
    double lightdir;
    miniv3d light;
@@ -882,60 +854,29 @@ void render()
    // start timer
    viewer->starttimer();
 
-   // update eye point:
-
-   ref=viewer->getearth()->getreference();
-   nst=viewer->getearth()->getnearest(eye);
-
+   // set reference tileset
+   nst=viewer->getearth()->getnearest(cam->get_eye());
    viewer->getearth()->setreference(nst);
 
-   if (nst!=NULL) el=nst->map_g2l(eye);
-   else el=eye;
+   // update eye point:
 
-   sina=sin(2.0*PI/360.0*turn);
-   cosa=cos(2.0*PI/360.0*turn);
+   cam->move_forward(speed/params->fps);
 
-   sinp=sin(2.0*PI/360.0*incline);
-   cosp=cos(2.0*PI/360.0*incline);
-
-   el.vec.x+=sina*speed/params->fps;
-   el.vec.y+=cosa*speed/params->fps;
-
-   if (nst!=NULL) ep=nst->map_l2g(el);
-   else ep=el;
-
-   elev=ref->len_g2l(viewer->getearth()->getheight(ep));
-
-   // update eye coordinate system:
-
-   dir.x=sina*cosp;
-   dir.y=cosa*cosp;
-   dir.z=-sinp;
-
-   up.x=sina*sinp;
-   up.y=cosa*sinp;
-   up.z=cosp;
-
-   right.x=cosa;
-   right.y=-sina;
-   right.z=0.0;
-
-   if (nst!=NULL)
-      {
-      dir=nst->rot_l2g(dir,el);
-      up=nst->rot_l2g(up,el);
-      right=nst->rot_l2g(right,el);
-      }
+   elev=cam->get_elev();
+   dist=cam->get_dist();
 
    // update eye movement:
 
    speed+=accel*(topspeed-speed);
    if (dabs(speed)<minspeed) speed=0.0;
 
-   turn+=accel*(angle-turn);
-   incline+=accel*(pitch-incline);
+   cam->rotate_right(turn);
+   turn*=accel;
 
-   coef=(el.vec.z-elev)/hover-1.0;
+   cam->rotate_up(-incline);
+   incline*=accel;
+
+   coef=dist/hover-1.0;
    if (coef>1.0) coef=1.0;
    else if (coef<-1.0) coef=-1.0;
 
@@ -945,55 +886,38 @@ void render()
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);
 
-   el.vec.z+=dez/params->fps;
+   cam->move_down(-dez/params->fps);
 
-   if (el.vec.z<elev+hover)
+   dist=cam->get_dist();
+
+   if (dist<hover)
       {
       dez=-dez;
       dez*=1.0/(1.0+bounce);
-      el.vec.z=elev+hover;
+
+      cam->move_down(dist-hover);
       }
 
    // check for eye movement:
 
    if (dabs(speed)>VIEWER_MINDIFF ||
-       dabs(angle-turn)>VIEWER_MINDIFF ||
-       dabs(pitch-incline)>VIEWER_MINDIFF ||
+       dabs(turn)>VIEWER_MINDIFF ||
+       dabs(incline)>VIEWER_MINDIFF ||
        dabs(dez)>VIEWER_MINDIFF) wakeup=TRUE;
-
-   // remap eye coordinates:
-
-   if (nst!=NULL) eye=nst->map_l2g(el);
-
-   egl=ref->map_g2o(eye);
-   dgl=ref->rot_g2o(dir,eye);
-   ugl=ref->rot_g2o(up,eye);
-   rgl=ref->rot_g2o(right,eye)*sbase;
-
-   // check for nearest waypoint:
-
-   nearest=viewer->getearth()->getterrain()->getnearestpoint(eye,minipointopts::OPTION_TYPE_FREE);
-
-   if (nearest!=NULL)
-      if (nearest->opts!=NULL)
-         if (nearest->opts->dataswitch==0)
-            {
-            nearrad=nearest->size/2.0f;
-            nearvec=miniv3d(nearest->x,nearest->y,nearest->height+nearest->offset)-miniv3d(el.vec);
-
-            if (nearvec.getlength()<3.0f*nearrad)
-               {
-               el.vec+=0.1*nearvec;
-               if (nearvec.getlength()>VIEWER_MINDIFF) wakeup=TRUE;
-               }
-            }
 
    // change orientation of signposts:
 
-   tparams->signpostturn=turn;
-   tparams->signpostincline=-incline;
+   tparams->signpostturn=cam->get_angle();
+   tparams->signpostincline=cam->get_pitch();
 
    if (eparams->usewaypoints) viewer->getearth()->getterrain()->propagate();
+
+   // get OpenGL camera:
+
+   egl=cam->get_eye_opengl();
+   dgl=cam->get_dir_opengl();
+   ugl=cam->get_up_opengl();
+   rgl=cam->get_right_opengl()*sbase;
 
    // setup OpenGL state:
 
@@ -1001,14 +925,14 @@ void render()
 
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   gluPerspective(params->fovy,(float)winwidth/winheight,ref->len_g2o(params->nearp),ref->len_g2o(params->farp));
+   gluPerspective(params->fovy,(float)winwidth/winheight,viewer->len_g2o(params->nearp),viewer->len_g2o(params->farp));
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-   gluLookAt(egl.vec.x,egl.vec.y,egl.vec.z,egl.vec.x+dgl.x,egl.vec.y+dgl.y,egl.vec.z+dgl.z,ugl.x,ugl.y,ugl.z);
+   gluLookAt(egl.x,egl.y,egl.z,egl.x+dgl.x,egl.y+dgl.y,egl.z+dgl.z,ugl.x,ugl.y,ugl.z);
 
    // update scene
-   viewer->cache(eye,dir,up,(float)winwidth/winheight);
+   viewer->cache(cam->get_eye(),cam->get_dir(),cam->get_up(),(float)winwidth/winheight);
 
    // update earth lighting
    if (eparams->usediffuse)
@@ -1027,7 +951,7 @@ void render()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(egl.vec.x-rgl.x,egl.vec.y-rgl.y,egl.vec.z-rgl.z,egl.vec.x+dgl.x-rgl.x,egl.vec.y+dgl.y-rgl.y,egl.vec.z+dgl.z-rgl.z,ugl.x,ugl.y,ugl.z);
+      gluLookAt(egl.x-rgl.x,egl.y-rgl.y,egl.z-rgl.z,egl.x+dgl.x-rgl.x,egl.y+dgl.y-rgl.y,egl.z+dgl.z-rgl.z,ugl.x,ugl.y,ugl.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -1040,7 +964,7 @@ void render()
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
-      gluLookAt(egl.vec.x+rgl.x,egl.vec.y+rgl.y,egl.vec.z+rgl.z,egl.vec.x+dgl.x+rgl.x,egl.vec.y+dgl.y+rgl.y,egl.vec.z+dgl.z+rgl.z,ugl.x,ugl.y,ugl.z);
+      gluLookAt(egl.x+rgl.x,egl.y+rgl.y,egl.z+rgl.z,egl.x+dgl.x+rgl.x,egl.y+dgl.y+rgl.y,egl.z+dgl.z+rgl.z,ugl.x,ugl.y,ugl.z);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
@@ -1137,36 +1061,16 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (topspeed>maxspeed*boost) topspeed=maxspeed*boost;
          break;
       case 'a':
-         angle-=oneturn;
-         if (angle<0.0)
-            {
-            angle+=360.0;
-            turn+=360.0;
-            }
+         turn=-oneturn;
          break;
       case 'A':
-         angle-=oneturn/slow;
-         if (angle<0.0)
-            {
-            angle+=360.0;
-            turn+=360.0;
-            }
+         turn=-oneturn/slow;
          break;
       case 'd':
-         angle+=oneturn;
-         if (angle>360.0)
-            {
-            angle-=360.0;
-            turn-=360.0;
-            }
+         turn=oneturn;
          break;
       case 'D':
-         angle+=oneturn/slow;
-         if (angle>360.0)
-            {
-            angle-=360.0;
-            turn-=360.0;
-            }
+         turn=oneturn/slow;
          break;
       case 's':
          topspeed-=speedinc*maxspeed;
@@ -1177,12 +1081,10 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (topspeed<-maxspeed*boost) topspeed=-maxspeed*boost;
          break;
       case '<':
-         pitch+=oneincline;
-         if (pitch>90.0) pitch=90.0;
+         incline=oneincline;
          break;
       case '>':
-         pitch-=oneincline;
-         if (pitch<-90.0) pitch=-90.0;
+         incline=-oneincline;
          break;
       case 'j':
          dez=jump;

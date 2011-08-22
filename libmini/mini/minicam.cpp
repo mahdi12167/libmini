@@ -14,8 +14,6 @@ minicam::minicam(miniearth *earth,
    eye_default.convert2(minicoord::MINICOORD_ECEF);
 
    set_eye(EARTH->getinitial());
-
-   hit_dist=MAXFLOAT;
    }
 
 // destructor
@@ -34,28 +32,28 @@ void minicam::set_eye(const minicoord &e,double angle,double pitch)
    get_local_base(eye,eye_dir,eye_right,eye_up);
    rotate_right(angle);
    rotate_up(pitch);
-
-   hit_dist=MAXFLOAT;
    }
+
+miniv3d minicam::get_eye_opengl()
+   {return(EARTH->map_g2o(eye).vec);}
+
+miniv3d minicam::get_dir_opengl()
+   {return(EARTH->rot_g2o(eye_dir,eye));}
+
+miniv3d minicam::get_right_opengl()
+   {return(EARTH->rot_g2o(eye_right,eye));}
+
+miniv3d minicam::get_up_opengl()
+   {return(EARTH->rot_g2o(eye_up,eye));}
+
+double minicam::get_elev()
+   {return(get_elev(eye));}
+
+double minicam::get_dist()
+   {return(get_dist(eye));}
 
 minicoord minicam::get_hit()
-   {
-   double dist;
-   minicoord hit;
-
-   if (hit_dist==MAXFLOAT)
-      {
-      hit_dist=EARTH->shoot(eye,eye_dir);
-
-      if (hit_dist==MAXFLOAT) dist=EARTH->get()->farp;
-      else dist=hit_dist;
-
-      hit=eye+dist*eye_dir;
-      move_above(hit);
-      }
-
-   return(hit);
-   }
+   {return(get_hit(eye,eye_dir));}
 
 double minicam::get_angle()
    {
@@ -84,7 +82,10 @@ double minicam::get_pitch()
 
    get_local_base(eye,dir,right,up);
 
-   pitch=asin(up*eye_dir);
+   if (up*eye_up<0.0) pitch=M_PI-asin(up*eye_dir);
+   else pitch=asin(up*eye_dir);
+
+   if (pitch>M_PI) pitch-=2.0*M_PI;
 
    return(pitch*180.0/M_PI);
    }
@@ -109,8 +110,6 @@ void minicam::move(const miniv3d &delta)
    eye_up=up;
 
    rotate_up(pitch);
-
-   hit_dist=MAXFLOAT;
    }
 
 void minicam::move_forward(double delta)
@@ -121,6 +120,18 @@ void minicam::move_right(double delta)
 
 void minicam::move_up(double delta)
    {move(delta*eye_up);}
+
+void minicam::move_down(double delta)
+   {
+   miniv3d dir,right,up;
+
+   get_local_base(eye,dir,right,up);
+
+   move(-delta*up);
+   }
+
+void minicam::move_above(double mindist)
+   {move_above(eye,mindist);}
 
 void minicam::rotate(double delta,const miniv3d &axis)
    {
@@ -146,6 +157,78 @@ void minicam::rotate_right(double delta)
 
 void minicam::rotate_up(double delta)
    {rotate(delta,eye_right);}
+
+double minicam::get_elev(const minicoord &pos)
+   {
+   static minicoord pos0=minicoord();
+
+   static double elev=-MAXFLOAT;
+
+   if (pos!=pos0)
+      {
+      pos0=pos;
+
+      if (pos0.type!=minicoord::MINICOORD_LINEAR)
+         pos0.convert2(minicoord::MINICOORD_ECEF);
+
+      elev=EARTH->getheight(pos0);
+      }
+
+   return(elev);
+   }
+
+double minicam::get_dist(const minicoord &pos)
+   {
+   static minicoord pos0=minicoord();
+
+   static double dist=MAXFLOAT;
+
+   miniv3d dir,right,up;
+
+   if (pos!=pos0)
+      {
+      pos0=pos;
+
+      if (pos0.type!=minicoord::MINICOORD_LINEAR)
+         pos0.convert2(minicoord::MINICOORD_ECEF);
+
+      get_local_base(pos0,dir,right,up);
+
+      dist=EARTH->shoot(pos0,-up);
+
+      if (dist==MAXFLOAT)
+         dist=-EARTH->shoot(pos0,up);
+      }
+
+   return(dist);
+   }
+
+minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
+   {
+   static minicoord pos0=minicoord();
+   static miniv3d dir0=miniv3d(0.0);
+
+   static minicoord hit=minicoord();
+
+   double dist;
+
+   if (pos!=pos0 && dir!=dir0)
+      {
+      pos0=pos;
+      dir0=dir;
+
+      if (pos0.type!=minicoord::MINICOORD_LINEAR)
+         pos0.convert2(minicoord::MINICOORD_ECEF);
+
+      dist=EARTH->shoot(pos0,dir0);
+      if (dist==MAXFLOAT) dist=0.0;
+
+      hit=pos0+dist*dir0;
+      move_above(hit);
+      }
+
+   return(hit);
+   }
 
 // get base vectors of local coordinate system
 void minicam::get_local_base(const minicoord &pos,
@@ -210,7 +293,7 @@ void minicam::get_local_base(const minicoord &pos,
    }
 
 // move eye up so that it is above ground
-void minicam::move_above(minicoord &pos,double mindist)
+void minicam::move_above(minicoord pos,double mindist)
    {
    double dist;
    double elev;
@@ -249,6 +332,4 @@ void minicam::move_above(minicoord &pos,double mindist)
          pos=nst->map_l2g(posl);
          }
       }
-
-   hit_dist=MAXFLOAT;
    }
