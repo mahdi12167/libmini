@@ -2,8 +2,6 @@
 
 // configuration section:
 
-#undef VIEWER_FREEZE
-
 #define VIEWER_WINWIDTH 1024
 #define VIEWER_WINHEIGHT 512
 
@@ -1021,7 +1019,7 @@ void displayfunc()
 
    wakeup=FALSE;
 
-#ifndef VIEWER_FREEZE
+#ifndef VIEWER_MAKESTATIC
    viewer->getearth()->makestatic(numidle>=VIEWER_MAXIDLE);
 #else
    viewer->getearth()->freeze(numidle>=VIEWER_MAXIDLE);

@@ -186,13 +186,13 @@ class miniearth
    //! check for static scene
    BOOLINT checkpending();
 
-   //! make scene static
+   //! make scene static (render triangle cache, but do not update it)
    void makestatic(BOOLINT flag);
 
    //! check whether the scene is static or not
    BOOLINT isstatic();
 
-   //! freeze scene
+   //! freeze scene (do not render triangle cache, but grab frame buffer)
    void freeze(BOOLINT flag);
 
    //! check whether the scene is frozen or not
