@@ -266,8 +266,10 @@ void initview(minicoord e,double a,double p,double dh=0.0)
    {
    initwindow(winwidth,winheight);
 
-   cam->set_eye(e,a,p);
-   cam->move_above(dh);
+   cam->set_eye(e,a,p,3.0*VIEWER_NEARP);
+
+   cam->move_down(-dh);
+   cam->move_above();
 
    viewer->initeyepoint(cam->get_eye());
 

@@ -15,12 +15,15 @@ class minicam
 
    //! default constructor
    minicam(miniearth *earth,
-           double lat=21.39,double lon=-157.72,double height=30000.0);
+           double lat=21.39,double lon=-157.72,double height=30000.0,
+           double mindist=10.0);
 
    //! destructor
    ~minicam();
 
-   void set_eye(const minicoord &e,double angle=0.0,double pitch=-90.0);
+   void set_eye(const minicoord &e,
+                double angle=0.0,double pitch=-90.0,
+                double minidist=10.0);
 
    minicoord get_eye() {return(eye);}
    miniv3d get_eye_opengl();
@@ -43,7 +46,7 @@ class minicam
    void move_left(double delta);
    void move_up(double delta);
    void move_down(double delta);
-   void move_above(double mindist=0.0);
+   void move_above();
 
    void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
@@ -63,11 +66,12 @@ class minicam
    miniearth *EARTH;
 
    minicoord eye_default;
+   double eye_mindist;
 
    void get_local_base(const minicoord &pos,
                        miniv3d &dir,miniv3d &right,miniv3d &up);
 
-   void move_above(minicoord pos,double mindist);
+   void move_above(minicoord &pos,double mindist=0.0);
    };
 
 #endif

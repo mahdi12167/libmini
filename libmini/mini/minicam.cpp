@@ -6,20 +6,23 @@
 
 // default constructor
 minicam::minicam(miniearth *earth,
-                 double lat,double lon,double height)
+                 double lat,double lon,double height,
+                 double mindist)
    {
    EARTH=earth;
 
    eye_default=minicoord(miniv3d(lat,lon,height),minicoord::MINICOORD_LLH);
    eye_default.convert2(minicoord::MINICOORD_ECEF);
 
-   set_eye(EARTH->getinitial());
+   set_eye(EARTH->getinitial(),0.0,-90.0,mindist);
    }
 
 // destructor
 minicam::~minicam() {}
 
-void minicam::set_eye(const minicoord &e,double angle,double pitch)
+void minicam::set_eye(const minicoord &e,
+                      double angle,double pitch,
+                      double mindist)
    {
    eye=e;
 
@@ -27,6 +30,8 @@ void minicam::set_eye(const minicoord &e,double angle,double pitch)
       eye.convert2(minicoord::MINICOORD_ECEF);
 
    if (eye.vec.getlength2()==0.0) eye=eye_default;
+
+   eye_mindist=mindist;
 
    get_local_base(eye,eye_dir,eye_right,eye_up);
 
@@ -124,6 +129,8 @@ void minicam::move(const miniv3d &delta)
    eye_up=up;
 
    rotate_up(pitch);
+
+   move_above();
    }
 
 void minicam::move_forward(double delta)
@@ -159,8 +166,8 @@ void minicam::move_down(double delta)
    move(-delta*up);
    }
 
-void minicam::move_above(double mindist)
-   {move_above(eye,mindist);}
+void minicam::move_above()
+   {move_above(eye,eye_mindist);}
 
 // rotate counter-clockwise
 void minicam::rotate(double delta,const miniv3d &axis)
@@ -259,7 +266,7 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
 
    double dist;
 
-   if (pos!=pos0 && dir!=dir0)
+   if (pos!=pos0 || dir!=dir0)
       {
       pos0=pos;
       dir0=dir;
@@ -271,7 +278,7 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
       if (dist==MAXFLOAT) dist=0.0;
 
       hit=pos0+dist*dir0;
-      move_above(hit,0.0);
+      move_above(hit);
       }
 
    return(hit);
@@ -342,7 +349,7 @@ void minicam::get_local_base(const minicoord &pos,
    }
 
 // move eye up so that it is above ground
-void minicam::move_above(minicoord pos,double mindist)
+void minicam::move_above(minicoord &pos,double mindist)
    {
    double dist;
    double elev;

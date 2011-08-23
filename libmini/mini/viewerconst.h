@@ -20,16 +20,16 @@
 #define VIEWER_UPLIFT 0.1f
 
 #define VIEWER_MINSPEED 5.0f
-#define VIEWER_MAXSPEED 5000.0f
+#define VIEWER_MAXSPEED 1000.0f
 
 #define VIEWER_GRAVITY 9.81f
 #define VIEWER_HOVER 10.0f
 
-#define VIEWER_JUMP 2000.0f
-#define VIEWER_DAMP 10.0f
+#define VIEWER_JUMP 200.0f
+#define VIEWER_DAMP 0.5f
 #define VIEWER_BOUNCE 5.0f
 
-#define VIEWER_BOOST 50.0f
+#define VIEWER_BOOST 5.0f
 #define VIEWER_SLOW 10.0f
 
 #define VIEWER_ROTATION 0.1f
