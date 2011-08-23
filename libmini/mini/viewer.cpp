@@ -87,7 +87,7 @@ static double dez,aez;
 static double turn,incline;
 
 // gliding parameters
-static double minspeed=VIEWER_MINSPEED,maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER/VIEWER_SCALE;
+static double minspeed=VIEWER_MINSPEED,maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
 
 // jumping parameters
 static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
@@ -364,7 +364,7 @@ void loadsettings()
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
    else
-      initview(cam->get_eye(),0.0,params->fovy/2,VIEWER_UPLIFT*params->farp);
+      initview(cam->get_eye(),0.0,-params->fovy/3,VIEWER_UPLIFT*params->farp);
    }
 
 // save settings
@@ -771,12 +771,13 @@ void renderhud()
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
-      if (sw_cross!=0 || dabs(cam->get_pitch()+90.0)<oneincline)
+      if (sw_cross!=0)
          {
          glLoadIdentity();
          glTranslatef(0.5f,0.5f,0.0f);
          glScalef((float)winheight/winwidth,1.0f,1.0f);
          glColor3f(0.0f,0.0f,0.0f);
+         glPushMatrix();
          glScalef(0.025f,0.025f,1.0f);
          glBegin(GL_LINES);
          glVertex2f(-1.0,-1.0f);
@@ -784,6 +785,7 @@ void renderhud()
          glVertex2f(-1.0,1.0f);
          glVertex2f(1.0,-1.0f);
          glEnd();
+         glPopMatrix();
 
          if (sw_cross!=0)
             {
@@ -858,7 +860,7 @@ void render()
 
    // update eye point:
 
-   cam->move_forward(speed/params->fps);
+   cam->move_back(-speed/params->fps);
 
    elev=cam->get_elev();
    dist=cam->get_dist();
@@ -1019,7 +1021,7 @@ void displayfunc()
 
    wakeup=FALSE;
 
-#ifndef VIEWER_MAKESTATIC
+#ifdef VIEWER_MAKESTATIC
    viewer->getearth()->makestatic(numidle>=VIEWER_MAXIDLE);
 #else
    viewer->getearth()->freeze(numidle>=VIEWER_MAXIDLE);

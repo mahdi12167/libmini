@@ -28,10 +28,12 @@ void minicam::set_eye(const minicoord &e,double angle,double pitch)
 
    if (eye.vec.getlength2()==0.0) eye=eye_default;
 
-   move_above(eye);
    get_local_base(eye,eye_dir,eye_right,eye_up);
+
    rotate_right(angle);
    rotate_up(pitch);
+
+   move_above();
    }
 
 miniv3d minicam::get_eye_opengl()
@@ -59,16 +61,21 @@ double minicam::get_angle()
    {
    double angle,pitch;
    miniv3d dir,right,up;
+   double s;
 
    pitch=get_pitch();
    rotate_up(-pitch);
 
    get_local_base(eye,dir,right,up);
 
-   if (dir*eye_dir<0.0) angle=M_PI-asin(right*eye_dir);
-   else angle=asin(right*eye_dir);
+   s=right*eye_dir;
+   if (s<-1.0) s=-1.0;
+   else if (s>1.0) s=1.0;
 
-   if (angle>M_PI) angle-=2.0*M_PI;
+   if (dir*eye_dir<0.0) angle=M_PI-asin(s);
+   else angle=asin(s);
+
+   if (angle<0.0) angle+=2.0*M_PI;
 
    rotate_up(pitch);
 
@@ -79,11 +86,16 @@ double minicam::get_pitch()
    {
    double pitch;
    miniv3d dir,right,up;
+   double s;
 
    get_local_base(eye,dir,right,up);
 
-   if (up*eye_up<0.0) pitch=-M_PI-asin(up*eye_dir);
-   else pitch=asin(up*eye_dir);
+   s=up*eye_dir;
+   if (s<-1.0) s=-1.0;
+   else if (s>1.0) s=1.0;
+
+   if (up*eye_up<0.0) pitch=-M_PI-asin(s);
+   else pitch=asin(s);
 
    if (pitch<-M_PI) pitch+=2.0*M_PI;
 
@@ -102,9 +114,9 @@ void minicam::move(const miniv3d &delta)
 
    get_local_base(eye,dir,right,up);
 
-   right=up/eye_dir;
+   right=eye_dir/up;
    right.normalize();
-   dir=right/up;
+   dir=up/right;
    dir.normalize();
 
    eye_dir=dir;
@@ -150,28 +162,32 @@ void minicam::move_down(double delta)
 void minicam::move_above(double mindist)
    {move_above(eye,mindist);}
 
-// rotate in clockwise direction
+// rotate counter-clockwise
 void minicam::rotate(double delta,const miniv3d &axis)
    {
    double x=axis.x;
    double y=axis.y;
    double z=axis.z;
 
-   double s=sin(-delta/180.0*M_PI);
-   double c=cos(-delta/180.0*M_PI);
+   double s=sin(delta/180.0*M_PI);
+   double c=cos(delta/180.0*M_PI);
    double c1=1.0-c;
 
    miniv3d rotx(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
    miniv3d roty(y*x*c1+z*s, y*y*c1+c,   y*z*c1-x*s);
    miniv3d rotz(z*x*c1-y*s, z*y*c1+x*s, z*z*c1+c);
 
-   eye_dir=miniv3d(rotx*eye_dir, roty*eye_dir, rotz*eye_dir);
-   eye_right=miniv3d(rotx*eye_right, roty*eye_right, rotz*eye_right);
-   eye_up=miniv3d(rotx*eye_up, roty*eye_up, rotz*eye_up);
+   miniv3d dir(rotx*eye_dir, roty*eye_dir, rotz*eye_dir);
+   miniv3d right(rotx*eye_right, roty*eye_right, rotz*eye_right);
+   miniv3d up(rotx*eye_up, roty*eye_up, rotz*eye_up);
 
-   eye_dir.normalize();
-   eye_right.normalize();
-   eye_up.normalize();
+   dir.normalize();
+   right.normalize();
+   up.normalize();
+
+   eye_dir=dir;
+   eye_right=right;
+   eye_up=up;
    }
 
 void minicam::rotate_right(double delta)
@@ -181,7 +197,7 @@ void minicam::rotate_right(double delta)
    pitch=get_pitch();
    rotate_up(-pitch);
 
-   rotate(delta,eye_up);
+   rotate(-delta,eye_up);
 
    rotate_up(pitch);
    }
@@ -255,7 +271,7 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
       if (dist==MAXFLOAT) dist=0.0;
 
       hit=pos0+dist*dir0;
-      move_above(hit);
+      move_above(hit,0.0);
       }
 
    return(hit);
@@ -304,6 +320,8 @@ void minicam::get_local_base(const minicoord &pos,
             }
          else
             // ECEF:
+            // earth-centered earth-fixed
+            // right-handed coordinate system
             // z axis is earth axis
             // x axis hits prime meridian (lon=0)
             // y axis hits lon=90 meridian

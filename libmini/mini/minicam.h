@@ -67,7 +67,7 @@ class minicam
    void get_local_base(const minicoord &pos,
                        miniv3d &dir,miniv3d &right,miniv3d &up);
 
-   void move_above(minicoord pos,double mindist=0.0);
+   void move_above(minicoord pos,double mindist);
    };
 
 #endif
