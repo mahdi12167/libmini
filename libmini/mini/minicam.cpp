@@ -117,8 +117,23 @@ void minicam::move(const miniv3d &delta)
 void minicam::move_forward(double delta)
    {move(delta*eye_dir);}
 
+void minicam::move_back(double delta)
+   {
+   double pitch;
+
+   pitch=get_pitch();
+   rotate_up(-pitch);
+
+   move(-delta*eye_dir);
+
+   rotate_up(pitch);
+   }
+
 void minicam::move_right(double delta)
    {move(delta*eye_right);}
+
+void minicam::move_left(double delta)
+   {move(-delta*eye_right);}
 
 void minicam::move_up(double delta)
    {move(delta*eye_up);}

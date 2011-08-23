@@ -38,7 +38,9 @@ class minicam
 
    void move(const miniv3d &delta);
    void move_forward(double delta);
+   void move_back(double delta);
    void move_right(double delta);
+   void move_left(double delta);
    void move_up(double delta);
    void move_down(double delta);
    void move_above(double mindist=0.0);
