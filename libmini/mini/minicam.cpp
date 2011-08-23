@@ -82,10 +82,10 @@ double minicam::get_pitch()
 
    get_local_base(eye,dir,right,up);
 
-   if (up*eye_up<0.0) pitch=M_PI-asin(up*eye_dir);
+   if (up*eye_up<0.0) pitch=-M_PI-asin(up*eye_dir);
    else pitch=asin(up*eye_dir);
 
-   if (pitch>M_PI) pitch-=2.0*M_PI;
+   if (pitch<-M_PI) pitch+=2.0*M_PI;
 
    return(pitch*180.0/M_PI);
    }
@@ -103,7 +103,9 @@ void minicam::move(const miniv3d &delta)
    get_local_base(eye,dir,right,up);
 
    right=up/eye_dir;
+   right.normalize();
    dir=right/up;
+   dir.normalize();
 
    eye_dir=dir;
    eye_right=right;
@@ -133,14 +135,15 @@ void minicam::move_down(double delta)
 void minicam::move_above(double mindist)
    {move_above(eye,mindist);}
 
+// rotate in clockwise direction
 void minicam::rotate(double delta,const miniv3d &axis)
    {
    double x=axis.x;
    double y=axis.y;
    double z=axis.z;
 
-   double s=sin(delta/180.0*M_PI);
-   double c=cos(delta/180.0*M_PI);
+   double s=sin(-delta/180.0*M_PI);
+   double c=cos(-delta/180.0*M_PI);
    double c1=1.0-c;
 
    miniv3d rotx(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
@@ -150,10 +153,23 @@ void minicam::rotate(double delta,const miniv3d &axis)
    eye_dir=miniv3d(rotx*eye_dir, roty*eye_dir, rotz*eye_dir);
    eye_right=miniv3d(rotx*eye_right, roty*eye_right, rotz*eye_right);
    eye_up=miniv3d(rotx*eye_up, roty*eye_up, rotz*eye_up);
+
+   eye_dir.normalize();
+   eye_right.normalize();
+   eye_up.normalize();
    }
 
 void minicam::rotate_right(double delta)
-   {rotate(delta,eye_up);}
+   {
+   double pitch;
+
+   pitch=get_pitch();
+   rotate_up(-pitch);
+
+   rotate(delta,eye_up);
+
+   rotate_up(pitch);
+   }
 
 void minicam::rotate_up(double delta)
    {rotate(delta,eye_right);}
