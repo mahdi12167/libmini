@@ -297,6 +297,8 @@ void loadsettings()
 
    int flag;
 
+   initview(cam->get_eye(),0.0,-params->fovy/3,VIEWER_UPLIFT*params->farp);
+
    ref=viewer->getearth()->getreference();
    if (ref!=NULL) savname=ref->getcache()->getfile(VIEWER_SAVFILE);
    else savname=strdup(VIEWER_SAVFILE);
@@ -365,8 +367,6 @@ void loadsettings()
 
       initview(minicoord(miniv4d(e),(minicoord::MINICOORD)type),a,p);
       }
-   else
-      initview(cam->get_eye(),0.0,-params->fovy/3,VIEWER_UPLIFT*params->farp);
    }
 
 // save settings
