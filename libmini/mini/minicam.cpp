@@ -289,27 +289,30 @@ void minicam::get_local_base(const minicoord &pos,
                              miniv3d &dir,miniv3d &right,miniv3d &up)
    {
    static minicoord pos0=minicoord();
+   static int mode0=WARPMODE_LINEAR;
 
    static miniv3d dir0=miniv3d(0.0),
                   right0=miniv3d(0.0),
                   up0=miniv3d(0.0);
 
-   minilayer *ref,*nst;
    int mode;
+
+   minilayer *ref,*nst;
 
    minicoord poso;
 
-   if (pos!=pos0)
+   mode=EARTH->get()->warpmode;
+
+   if (pos!=pos0 || mode!=mode0)
       {
       pos0=pos;
+      mode0=mode;
 
       if (pos0.type!=minicoord::MINICOORD_LINEAR)
          pos0.convert2(minicoord::MINICOORD_ECEF);
 
       ref=EARTH->getreference();
       nst=EARTH->getnearest(pos0);
-
-      mode=EARTH->get()->warpmode;
 
       if (nst!=NULL)
          {
@@ -348,7 +351,7 @@ void minicam::get_local_base(const minicoord &pos,
 
             dir0=miniv3d(0,0,1);
             right0=up0/dir0;
-            right.normalize();
+            right0.normalize();
             if (right0.getlength2()==0.0) right0=miniv3d(0,1,0);
             dir0=right0/up0;
             dir0.normalize();
