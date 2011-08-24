@@ -499,8 +499,8 @@ void initNPRbathymap()
       alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS;
       alpha=alpha-ftrc(alpha);
 
-      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,t,1.0f,rgba);
-      else hsv2rgb(hue1+(hue2-hue1)*t,1.0f-t,1.0f,rgba);
+      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,2.0f*t,1.0f,rgba);
+      else hsv2rgb(hue1+(hue2-hue1)*t,2.0f*(1.0f-t),1.0f,rgba);
 
       rgba[3]=0.5f;
 

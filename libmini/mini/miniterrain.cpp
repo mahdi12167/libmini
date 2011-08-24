@@ -179,7 +179,7 @@ miniterrain::miniterrain()
    TPARAMS.nprbathyheight=0;     // height of colormap
    TPARAMS.nprbathycomps=0;      // components of colormap (either 3 or 4)
 
-   TPARAMS.nprcontours=100.0f;   // NPR contour distance in meters
+   TPARAMS.nprcontours=50.0f;    // NPR contour distance in meters
    TPARAMS.nprcontourmode=1;     // contour line mode (0=full 1=bathy)
 
    TPARAMS.nprseacolor[0]=0.5f;  // NPR color of sea surface
