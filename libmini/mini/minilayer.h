@@ -18,6 +18,15 @@
 #include "minicoord.h"
 #include "miniwarp.h"
 
+enum
+   {
+   WARPMODE_LINEAR=0, // linear mode for cartesian coordinates
+   WARPMODE_FLAT=1, // flat mode for warping the globe to a disc
+   WARPMODE_FLAT_REF=2, // flat mode with referenced local coordinates
+   WARPMODE_AFFINE=3, // affine mode for warping a layer onto the globe
+   WARPMODE_AFFINE_REF=4 // affine mode with referenced local coordinates
+   };
+
 //! aggregate class for rendering a layer
 class minilayer
    {

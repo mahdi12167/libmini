@@ -148,7 +148,7 @@ void initparams()
 
    viewer->getearth()->get(eprms);
 
-   eprms.warpmode=4;
+   eprms.warpmode=WARPMODE_AFFINE_REF;
    eprms.nonlin=TRUE;
 
    eprms.usefog=TRUE;
@@ -943,6 +943,7 @@ void render()
       light=miniv3d(sin(lightdir),cos(lightdir),0.0);
       eparams->lightdir=light;
       viewer->propagate();
+      wakeup=TRUE;
       }
 
    // render scene

@@ -8,7 +8,13 @@
 #include "minicoord.h"
 #include "miniearth.h"
 
-//! geo-referenced camera
+//! geo-referenced camera in ECEF coordinates
+//! ECEF:
+//! earth-centered earth-fixed
+//! right-handed coordinate system
+//! z axis is earth axis
+//! x axis hits prime meridian (lon=0)
+//! y axis hits lon=90 meridian
 class minicam
    {
    public:

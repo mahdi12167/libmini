@@ -294,7 +294,7 @@ void minicam::get_local_base(const minicoord &pos,
                   right0=miniv3d(0.0),
                   up0=miniv3d(0.0);
 
-   minilayer *nst;
+   minilayer *ref,*nst;
    int mode;
 
    minicoord poso;
@@ -306,7 +306,9 @@ void minicam::get_local_base(const minicoord &pos,
       if (pos0.type!=minicoord::MINICOORD_LINEAR)
          pos0.convert2(minicoord::MINICOORD_ECEF);
 
+      ref=EARTH->getreference();
       nst=EARTH->getnearest(pos0);
+
       mode=EARTH->get()->warpmode;
 
       if (nst!=NULL)
@@ -318,28 +320,38 @@ void minicam::get_local_base(const minicoord &pos,
          up0=nst->rot_o2g(miniv3d(0,1,0),poso);
          }
       else
-         if (mode==0 || mode==1 || mode==2)
-            // linear modes
+         if (mode==WARPMODE_LINEAR ||
+             mode==WARPMODE_FLAT ||
+             (mode==WARPMODE_FLAT_REF && ref==NULL))
+            // linear mode
             {
             dir0=miniv3d(0,1,0);
             right0=miniv3d(1,0,0);
             up0=miniv3d(0,0,1);
             }
+         else if (mode==WARPMODE_FLAT_REF && ref!=NULL)
+            // flat mode
+            {
+            up0=ref->getnormal();
+            dir0=(ref->getnorth()-ref->getcenter()).vec;
+            dir0.normalize();
+            right0=dir0/up0;
+            right.normalize();
+            dir0=up0/right0;
+            dir0.normalize();
+            }
          else
-            // ECEF:
-            // earth-centered earth-fixed
-            // right-handed coordinate system
-            // z axis is earth axis
-            // x axis hits prime meridian (lon=0)
-            // y axis hits lon=90 meridian
+            // ECEF mode
             {
             up0=pos0.vec;
             up0.normalize();
 
             dir0=miniv3d(0,0,1);
             right0=up0/dir0;
+            right.normalize();
             if (right0.getlength2()==0.0) right0=miniv3d(0,1,0);
             dir0=right0/up0;
+            dir0.normalize();
             }
       }
 

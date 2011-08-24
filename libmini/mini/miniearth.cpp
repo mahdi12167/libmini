@@ -17,14 +17,14 @@ miniearth::miniearth()
    {
    // configurable parameters:
 
-   EPARAMS.warpmode=4;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
-   EPARAMS.nonlin=FALSE;  // use non-linear warp
+   EPARAMS.warpmode=WARPMODE_AFFINE_REF; // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   EPARAMS.nonlin=FALSE;                 // use non-linear warp
 
-   EPARAMS.fps=25.0f;     // frames per second (target frame rate)
+   EPARAMS.fps=25.0f;                    // frames per second (target frame rate)
 
-   EPARAMS.fovy=60.0f;    // field of view (degrees)
-   EPARAMS.nearp=10.0f;   // near plane (meters)
-   EPARAMS.farp=10000.0f; // far plane (meters)
+   EPARAMS.fovy=60.0f;                   // field of view (degrees)
+   EPARAMS.nearp=10.0f;                  // near plane (meters)
+   EPARAMS.farp=10000.0f;                // far plane (meters)
 
    // data paths:
 
@@ -192,13 +192,13 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
 
    if (EPARAMS.useflat)
       {
-      if (EPARAMS.warpmode==4) EPARAMS.warpmode=2;
-      else if (EPARAMS.warpmode==3) EPARAMS.warpmode=1;
+      if (EPARAMS.warpmode==WARPMODE_AFFINE_REF) EPARAMS.warpmode=WARPMODE_FLAT_REF;
+      else if (EPARAMS.warpmode==WARPMODE_AFFINE) EPARAMS.warpmode=WARPMODE_FLAT;
       }
    else
       {
-      if (EPARAMS.warpmode==2) EPARAMS.warpmode=4;
-      else if (EPARAMS.warpmode==1) EPARAMS.warpmode=3;
+      if (EPARAMS.warpmode==WARPMODE_FLAT_REF) EPARAMS.warpmode=WARPMODE_AFFINE_REF;
+      else if (EPARAMS.warpmode==WARPMODE_FLAT) EPARAMS.warpmode=WARPMODE_AFFINE;
       }
 
    tparams.warpmode=EPARAMS.warpmode;
@@ -467,8 +467,6 @@ void miniearth::rendercache()
 
    minicoord egl;
 
-   float scale;
-
    miniwarp warp;
 
    miniv4d mtx[3];
@@ -531,39 +529,37 @@ void miniearth::rendercache()
 
    // enable fog
    if (EPARAMS.usefog)
-      if (ref!=NULL)
-         {
-         fogf=(1.0-altf)*EPARAMS.fogstart+altf;
+      {
+      fogf=(1.0-altf)*EPARAMS.fogstart+altf;
 
-         enablefog(fogf*ref->len_g2o(EPARAMS.farp),
-                   ref->len_g2o(EPARAMS.farp),
-                   EPARAMS.fogcolor[0],
-                   EPARAMS.fogcolor[1],
-                   EPARAMS.fogcolor[2]);
-         }
+      enablefog(fogf*len_g2o(EPARAMS.farp),
+                len_g2o(EPARAMS.farp),
+                EPARAMS.fogcolor[0],
+                EPARAMS.fogcolor[1],
+                EPARAMS.fogcolor[2]);
+      }
 
    // draw skydome
    if (EPARAMS.useskydome || EPARAMS.voidstart==0.0f)
-      if (ref!=NULL)
-         if (EPARAMS.warpmode==0 || EPARAMS.warpmode==2)
+      if (EPARAMS.warpmode==WARPMODE_LINEAR ||
+          EPARAMS.warpmode==WARPMODE_FLAT)
+         if (ref!=NULL)
             {
-            egl=ref->map_g2o(ref->get()->eye);
+            egl=map_g2o(ref->get()->eye);
 
             SKYDOME->setpos(egl.vec.x,egl.vec.y,egl.vec.z,
-                            1.9*ref->len_g2o(EPARAMS.farp));
+                            1.9*len_g2o(EPARAMS.farp));
 
             SKYDOME->drawskydome();
             }
 
    // render earth globe
    if (EPARAMS.useearth)
-      if (EPARAMS.warpmode!=0 &&
-          ((EPARAMS.warpmode!=1 && EPARAMS.warpmode!=2) || ref!=NULL))
+      if (EPARAMS.warpmode!=WARPMODE_LINEAR &&
+          EPARAMS.warpmode!=WARPMODE_FLAT &&
+          (EPARAMS.warpmode!=WARPMODE_FLAT_REF || ref!=NULL))
          {
-         scale=1.0f;
-         if (ref!=NULL) scale=ref->len_o2g(1.0);
-
-         EARTH->setscale(scale);
+         EARTH->setscale(len_o2g(1.0));
          EARTH->setdynscale(1.0);
 
          warp=*getearth()->getwarp();
@@ -613,7 +609,7 @@ void miniearth::rendercache()
          fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
 
          if (EPARAMS.usefog)
-            if (ref!=NULL) fogend=ref->len_g2o(EPARAMS.farp);
+            fogend=len_g2o(EPARAMS.farp);
 
          EARTH->setfogparams(fogf*fogend,fogend,EPARAMS.fogdensity,EPARAMS.fogcolor);
 
@@ -799,14 +795,15 @@ double miniearth::getrelheight(const minicoord &p)
 
    ref=getreference();
 
-   if (EPARAMS.warpmode==1 || EPARAMS.warpmode==2)
-      if (ref!=NULL) relh=miniv3d((p-ref->getcenter()).vec)*ref->getnormal();
-      else relh=0.0;
+   if (EPARAMS.warpmode==WARPMODE_FLAT) relh=pos.vec.z;
+   else if (EPARAMS.warpmode==WARPMODE_FLAT_REF)
+      if (ref==NULL) relh=pos.vec.z;
+      else relh=miniv3d((p-ref->getcenter()).vec)*ref->getnormal();
    else
       {
       pos=p;
 
-      if (EPARAMS.warpmode!=0)
+      if (EPARAMS.warpmode!=WARPMODE_LINEAR)
          if (pos.type==minicoord::MINICOORD_LINEAR) pos.type=minicoord::MINICOORD_ECEF;
 
       if (pos.type!=minicoord::MINICOORD_LINEAR) pos.convert2(minicoord::MINICOORD_LLH);
@@ -832,12 +829,12 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
-         if (EPARAMS.warpmode!=0)
-            if (EPARAMS.warpmode!=1 && EPARAMS.warpmode!=2)
+         if (EPARAMS.warpmode!=WARPMODE_LINEAR)
+            if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
                t=intersect_ellipsoid(miniv3d(o.vec),d,
                                      miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
             else
-               if (ref!=NULL)
+               if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
                   t=intersect_plane(miniv3d(o.vec),d,
                                     miniv3d(ref->getcenter().vec),ref->getnormal());
 

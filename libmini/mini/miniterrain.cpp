@@ -21,85 +21,85 @@ miniterrain::miniterrain()
 
    // configurable parameters:
 
-   TPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
-   TPARAMS.nonlin=FALSE;           // use non-linear warp
+   TPARAMS.warpmode=WARPMODE_LINEAR;    // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   TPARAMS.nonlin=FALSE;                // use non-linear warp
 
-   TPARAMS.fademode=0;             // spherical fade mode: off=0 single=1 double=2
-   TPARAMS.fadeout=0.01f;          // fadeout out distance relative to far plane
+   TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
+   TPARAMS.fadeout=0.01f;               // fadeout out distance relative to far plane
 
-   TPARAMS.submode=0;              // spherical subduction mode: off=0 on=1
-   TPARAMS.subfactor=0.1f;         // spherical subduction factor relative to distance
+   TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
+   TPARAMS.subfactor=0.1f;              // spherical subduction factor relative to distance
 
-   TPARAMS.scale=1.0f;             // scaling of scene
-   TPARAMS.exaggeration=1.0f;      // exaggeration of elevations
-   TPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
+   TPARAMS.scale=1.0f;                  // scaling of scene
+   TPARAMS.exaggeration=1.0f;           // exaggeration of elevations
+   TPARAMS.maxelev=15000.0f;            // absolute maximum of expected elevations
 
-   TPARAMS.load=1E-9f;             // initially loaded area relative to far plane
-   TPARAMS.preload=1.5f;           // continuously preloaded area relative to far plane
+   TPARAMS.load=1E-9f;                  // initially loaded area relative to far plane
+   TPARAMS.preload=1.5f;                // continuously preloaded area relative to far plane
 
-   TPARAMS.minres=9.0f;            // minimum resolution of triangulation
-   TPARAMS.fastinit=1;             // fast initialization level
-   TPARAMS.avgd2value=0.5f;        // average d2value for fast initialization
+   TPARAMS.minres=9.0f;                 // minimum resolution of triangulation
+   TPARAMS.fastinit=1;                  // fast initialization level
+   TPARAMS.avgd2value=0.5f;             // average d2value for fast initialization
 
-   TPARAMS.sead2=0.5f;             // influence of sea level on d2-values
-   TPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
-   TPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
+   TPARAMS.sead2=0.5f;                  // influence of sea level on d2-values
+   TPARAMS.seamin=-1.0f;                // lower boundary of sea level influence range
+   TPARAMS.seamax=1.0f;                 // upper boundary of sea level influence range
 
-   TPARAMS.lazyness=1;             // lazyness of tileset paging
-   TPARAMS.update=1.0f;            // update period for tileset paging in seconds
-   TPARAMS.expire=60.0f;           // tile expiration time in seconds
+   TPARAMS.lazyness=1;                  // lazyness of tileset paging
+   TPARAMS.update=1.0f;                 // update period for tileset paging in seconds
+   TPARAMS.expire=60.0f;                // tile expiration time in seconds
 
-   TPARAMS.upload=0.25f;           // tile upload time per frame relative to 1/fps
-   TPARAMS.keep=0.25f;             // time to keep tiles in the cache in minutes
-   TPARAMS.maxdelay=1.0f;          // time after which tiles are regarded as delayed relative to update time
-   TPARAMS.cache=128.0f;           // memory footprint of the cache in mega bytes
+   TPARAMS.upload=0.25f;                // tile upload time per frame relative to 1/fps
+   TPARAMS.keep=0.25f;                  // time to keep tiles in the cache in minutes
+   TPARAMS.maxdelay=1.0f;               // time after which tiles are regarded as delayed relative to update time
+   TPARAMS.cache=128.0f;                // memory footprint of the cache in mega bytes
 
-   TPARAMS.keepalive=10.0f;        // time for which idling threads are kept alive in seconds
-   TPARAMS.timeslice=0.001f;       // time for which idling threads sleep in seconds
+   TPARAMS.keepalive=10.0f;             // time for which idling threads are kept alive in seconds
+   TPARAMS.timeslice=0.001f;            // time for which idling threads sleep in seconds
 
-   TPARAMS.fps=25.0f;              // frames per second (target frame rate)
-   TPARAMS.spu=0.5f;               // update period for render buffer in seconds
+   TPARAMS.fps=25.0f;                   // frames per second (target frame rate)
+   TPARAMS.spu=0.5f;                    // update period for render buffer in seconds
 
-   TPARAMS.res=1.0E3f;             // global resolution of triangulation
-   TPARAMS.relres1=1.0f;           // relative adjustment factor #1 for global resolution
-   TPARAMS.relres2=1.0f;           // relative adjustment factor #2 for global resolution
+   TPARAMS.res=1.0E3f;                  // global resolution of triangulation
+   TPARAMS.relres1=1.0f;                // relative adjustment factor #1 for global resolution
+   TPARAMS.relres2=1.0f;                // relative adjustment factor #2 for global resolution
 
-   TPARAMS.fovy=60.0f;             // field of view (degrees)
-   TPARAMS.nearp=10.0f;            // near plane (meters)
-   TPARAMS.farp=10000.0f;          // far plane (meters)
+   TPARAMS.fovy=60.0f;                  // field of view (degrees)
+   TPARAMS.nearp=10.0f;                 // near plane (meters)
+   TPARAMS.farp=10000.0f;               // far plane (meters)
 
-   TPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
-   TPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
+   TPARAMS.reduction1=2.0f;             // reduction parameter #1 for invisible tiles
+   TPARAMS.reduction2=3.0f;             // reduction parameter #2 for invisible tiles
 
-   TPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
+   TPARAMS.cullslope=0.05f;             // slope under which the terrain is culled
 
-   TPARAMS.range=0.001f;           // texture paging range relative to far plane
-   TPARAMS.relrange1=1.0f;         // relative adjustment factor #1 for texture paging range
-   TPARAMS.relrange2=1.0f;         // relative adjustment factor #2 for texture paging range
-   TPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
-   TPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
-   TPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
+   TPARAMS.range=0.001f;                // texture paging range relative to far plane
+   TPARAMS.relrange1=1.0f;              // relative adjustment factor #1 for texture paging range
+   TPARAMS.relrange2=1.0f;              // relative adjustment factor #2 for texture paging range
+   TPARAMS.refres=1.0f;                 // reference resolution for texture paging in meters
+   TPARAMS.radius=3.0f;                 // non-linear kick-in distance relative to texture range
+   TPARAMS.dropoff=1.0f;                // non-linear lod dropoff at kick-in distance
 
-   TPARAMS.overlap=0.001f;         // tile overlap in texels
+   TPARAMS.overlap=0.001f;              // tile overlap in texels
 
-   TPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+   TPARAMS.sealevel=-MAXFLOAT;          // sea-level height in meters (off=-MAXFLOAT)
 
-   TPARAMS.alphathres=254.0f/255;  // alpha test threshold
-   TPARAMS.seaalphathres=0.0f;     // sea alpha test threshold
+   TPARAMS.alphathres=254.0f/255;       // alpha test threshold
+   TPARAMS.seaalphathres=0.0f;          // sea alpha test threshold
 
-   TPARAMS.omitsea=FALSE;          // omit sea level when shooting rays
+   TPARAMS.omitsea=FALSE;               // omit sea level when shooting rays
 
-   TPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
-   TPARAMS.automipmap=FALSE;       // auto mip-map raw textures
+   TPARAMS.genmipmaps=FALSE;            // enable on-the-fly generation of mipmaps
+   TPARAMS.automipmap=FALSE;            // auto mip-map raw textures
 
-   TPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
-   TPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
+   TPARAMS.autocompress=FALSE;          // auto-compress raw textures with S3TC
+   TPARAMS.lod0uncompressed=FALSE;      // keep LOD0 textures uncompressed
 
-   TPARAMS.elevdir="elev";         // default elev directory
-   TPARAMS.imagdir="imag";         // default imag directory
+   TPARAMS.elevdir="elev";              // default elev directory
+   TPARAMS.imagdir="imag";              // default imag directory
 
-   TPARAMS.proxyname=NULL;         // proxy server name
-   TPARAMS.proxyport=NULL;         // proxy server port
+   TPARAMS.proxyname=NULL;              // proxy server name
+   TPARAMS.proxyport=NULL;              // proxy server port
 
 #ifndef _WIN32
    TPARAMS.localpath="/var/tmp/";           // local directory

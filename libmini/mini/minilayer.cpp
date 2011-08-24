@@ -59,81 +59,81 @@ minilayer::minilayer(minicache *cache)
 
    // configurable parameters:
 
-   LPARAMS.warpmode=0;             // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
-   LPARAMS.nonlin=FALSE;           // use non-linear warp
+   LPARAMS.warpmode=WARPMODE_LINEAR;  // warp mode: linear=0 flat=1 flat_ref=2 affine=3 affine_ref=4
+   LPARAMS.nonlin=FALSE;              // use non-linear warp
 
-   LPARAMS.vicinity=0.5f;          // projected vicinity of flat warp mode relative to earth radius
+   LPARAMS.vicinity=0.5f;             // projected vicinity of flat warp mode relative to earth radius
 
-   LPARAMS.shift[0]=0.0f;          // manual scene x-shift (lon)
-   LPARAMS.shift[1]=0.0f;          // manual scene y-shift (lat)
-   LPARAMS.shift[2]=0.0f;          // manual scene z-shift (alt)
+   LPARAMS.shift[0]=0.0f;             // manual scene x-shift (lon)
+   LPARAMS.shift[1]=0.0f;             // manual scene y-shift (lat)
+   LPARAMS.shift[2]=0.0f;             // manual scene z-shift (alt)
 
-   LPARAMS.scale=100.0f;           // scaling of scene
-   LPARAMS.exaggeration=1.0f;      // exaggeration of elevations
-   LPARAMS.maxelev=15000.0f;       // absolute maximum of expected elevations
+   LPARAMS.scale=100.0f;              // scaling of scene
+   LPARAMS.exaggeration=1.0f;         // exaggeration of elevations
+   LPARAMS.maxelev=15000.0f;          // absolute maximum of expected elevations
 
-   LPARAMS.load=1E-9f;             // initially loaded area relative to far plane
-   LPARAMS.preload=1.5f;           // continuously preloaded area relative to far plane
+   LPARAMS.load=1E-9f;                // initially loaded area relative to far plane
+   LPARAMS.preload=1.5f;              // continuously preloaded area relative to far plane
 
-   LPARAMS.minres=9.0f;            // minimum resolution of triangulation
-   LPARAMS.fastinit=2;             // fast initialization level
-   LPARAMS.avgd2value=0.5f;        // average d2value for fast initialization
+   LPARAMS.minres=9.0f;               // minimum resolution of triangulation
+   LPARAMS.fastinit=2;                // fast initialization level
+   LPARAMS.avgd2value=0.5f;           // average d2value for fast initialization
 
-   LPARAMS.sead2=0.5f;             // influence of sea level on d2-values
-   LPARAMS.seamin=-1.0f;           // lower boundary of sea level influence range
-   LPARAMS.seamax=1.0f;            // upper boundary of sea level influence range
+   LPARAMS.sead2=0.5f;                // influence of sea level on d2-values
+   LPARAMS.seamin=-1.0f;              // lower boundary of sea level influence range
+   LPARAMS.seamax=1.0f;               // upper boundary of sea level influence range
 
-   LPARAMS.lazyness=1;             // lazyness of tileset paging
-   LPARAMS.update=1.0f;            // update period for tileset paging in seconds
-   LPARAMS.expire=60.0f;           // tile expiration time in seconds
+   LPARAMS.lazyness=1;                // lazyness of tileset paging
+   LPARAMS.update=1.0f;               // update period for tileset paging in seconds
+   LPARAMS.expire=60.0f;              // tile expiration time in seconds
 
-   LPARAMS.upload=0.25f;           // tile upload time per frame relative to 1/fps
-   LPARAMS.keep=0.25f;             // time to keep tiles in the cache in minutes
-   LPARAMS.maxdelay=1.0f;          // time after which tiles are regarded as delayed relative to update time
-   LPARAMS.cache=128.0f;           // memory footprint of the cache in mega bytes
+   LPARAMS.upload=0.25f;              // tile upload time per frame relative to 1/fps
+   LPARAMS.keep=0.25f;                // time to keep tiles in the cache in minutes
+   LPARAMS.maxdelay=1.0f;             // time after which tiles are regarded as delayed relative to update time
+   LPARAMS.cache=128.0f;              // memory footprint of the cache in mega bytes
 
-   LPARAMS.keepalive=10.0f;        // time for which idling threads are kept alive in seconds
-   LPARAMS.timeslice=0.001f;       // time for which idling threads sleep in seconds
+   LPARAMS.keepalive=10.0f;           // time for which idling threads are kept alive in seconds
+   LPARAMS.timeslice=0.001f;          // time for which idling threads sleep in seconds
 
-   LPARAMS.fps=25.0f;              // frames per second (target frame rate)
-   LPARAMS.spu=0.5f;               // update period for render buffer in seconds
+   LPARAMS.fps=25.0f;                 // frames per second (target frame rate)
+   LPARAMS.spu=0.5f;                  // update period for render buffer in seconds
 
-   LPARAMS.res=1.0E3f;             // global resolution of triangulation
-   LPARAMS.relres1=1.0f;           // relative adjustment factor #1 for global resolution
-   LPARAMS.relres2=1.0f;           // relative adjustment factor #2 for global resolution
+   LPARAMS.res=1.0E3f;                // global resolution of triangulation
+   LPARAMS.relres1=1.0f;              // relative adjustment factor #1 for global resolution
+   LPARAMS.relres2=1.0f;              // relative adjustment factor #2 for global resolution
 
-   LPARAMS.fovy=60.0f;             // field of view (degrees)
-   LPARAMS.nearp=10.0f;            // near plane (meters)
-   LPARAMS.farp=10000.0f;          // far plane (meters)
+   LPARAMS.fovy=60.0f;                // field of view (degrees)
+   LPARAMS.nearp=10.0f;               // near plane (meters)
+   LPARAMS.farp=10000.0f;             // far plane (meters)
 
-   LPARAMS.reduction1=2.0f;        // reduction parameter #1 for invisible tiles
-   LPARAMS.reduction2=3.0f;        // reduction parameter #2 for invisible tiles
+   LPARAMS.reduction1=2.0f;           // reduction parameter #1 for invisible tiles
+   LPARAMS.reduction2=3.0f;           // reduction parameter #2 for invisible tiles
 
-   LPARAMS.cullslope=0.05f;        // slope under which the terrain is culled
+   LPARAMS.cullslope=0.05f;           // slope under which the terrain is culled
 
-   LPARAMS.range=0.001f;           // texture paging range relative to far plane
-   LPARAMS.relrange1=1.0f;         // relative adjustment factor #1 for texture paging range
-   LPARAMS.relrange2=1.0f;         // relative adjustment factor #2 for texture paging range
-   LPARAMS.refres=1.0f;            // reference resolution for texture paging in meters
-   LPARAMS.radius=3.0f;            // non-linear kick-in distance relative to texture range
-   LPARAMS.dropoff=1.0f;           // non-linear lod dropoff at kick-in distance
+   LPARAMS.range=0.001f;              // texture paging range relative to far plane
+   LPARAMS.relrange1=1.0f;            // relative adjustment factor #1 for texture paging range
+   LPARAMS.relrange2=1.0f;            // relative adjustment factor #2 for texture paging range
+   LPARAMS.refres=1.0f;               // reference resolution for texture paging in meters
+   LPARAMS.radius=3.0f;               // non-linear kick-in distance relative to texture range
+   LPARAMS.dropoff=1.0f;              // non-linear lod dropoff at kick-in distance
 
-   LPARAMS.sealevel=-MAXFLOAT;     // sea-level height in meters (off=-MAXFLOAT)
+   LPARAMS.sealevel=-MAXFLOAT;        // sea-level height in meters (off=-MAXFLOAT)
 
-   LPARAMS.level=0;                // layer level affects farp (2^level*farp)
-   LPARAMS.baselevel=0;            // base layer level
+   LPARAMS.level=0;                   // layer level affects farp (2^level*farp)
+   LPARAMS.baselevel=0;               // base layer level
 
-   LPARAMS.genmipmaps=FALSE;       // enable on-the-fly generation of mipmaps
-   LPARAMS.automipmap=FALSE;       // auto mip-map raw textures
+   LPARAMS.genmipmaps=FALSE;          // enable on-the-fly generation of mipmaps
+   LPARAMS.automipmap=FALSE;          // auto mip-map raw textures
 
-   LPARAMS.autocompress=FALSE;     // auto-compress raw textures with S3TC
-   LPARAMS.lod0uncompressed=FALSE; // keep LOD0 textures uncompressed
+   LPARAMS.autocompress=FALSE;        // auto-compress raw textures with S3TC
+   LPARAMS.lod0uncompressed=FALSE;    // keep LOD0 textures uncompressed
 
-   LPARAMS.locthreads=2;           // number of local threads
-   LPARAMS.numthreads=10;          // number of net threads
+   LPARAMS.locthreads=2;              // number of local threads
+   LPARAMS.numthreads=10;             // number of net threads
 
-   LPARAMS.proxyname=NULL;         // proxy server name
-   LPARAMS.proxyport=NULL;         // proxy server port
+   LPARAMS.proxyname=NULL;            // proxy server name
+   LPARAMS.proxyport=NULL;            // proxy server port
 
    LPARAMS.elevprefix="elev.";        // elev tileset prefix
    LPARAMS.imagprefix="imag.";        // imag tileset prefix
@@ -939,9 +939,9 @@ void minilayer::setreference(minilayer *ref)
       mtxREF[1]=miniv4d(0.0,1.0,0.0);
       mtxREF[2]=miniv4d(0.0,0.0,1.0);
 
-      if (LPARAMS.warpmode==0 ||
+      if (LPARAMS.warpmode==WARPMODE_LINEAR ||
           WARP->getgeo()==minicoord::MINICOORD_LINEAR ||
-          LPARAMS.warpmode==2 || LPARAMS.warpmode==4)
+          LPARAMS.warpmode==WARPMODE_FLAT_REF || LPARAMS.warpmode==WARPMODE_AFFINE_REF)
          if (REFERENCE!=NULL)
             if (REFERENCE->getwarp()!=NULL)
                REFERENCE->getwarp()->get_invaff(mtxREF);
@@ -1007,7 +1007,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
 
    // define affine coordinates:
 
-   if (LPARAMS.warpmode==0 || // linear warp mode
+   if (LPARAMS.warpmode==WARPMODE_LINEAR || // linear warp mode
        WARP->getgeo()==minicoord::MINICOORD_LINEAR)
       {
       if (REFERENCE==NULL) scale=1.0;
@@ -1017,7 +1017,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
       mtxAFF[1]=miniv4d(0.0,1.0,0.0,offsetLOC.y*scalingLOC.y*scale);
       mtxAFF[2]=miniv4d(0.0,0.0,1.0,offsetLOC.z*scalingLOC.z*scale);
       }
-   else if (LPARAMS.warpmode==1 || LPARAMS.warpmode==2) // flat warp mode
+   else if (LPARAMS.warpmode==WARPMODE_FLAT || LPARAMS.warpmode==WARPMODE_FLAT_REF) // flat warp modes
       {
       mtxAFF[0]=miniv4d(1.0,0.0,0.0);
       mtxAFF[1]=miniv4d(0.0,1.0,0.0);
@@ -1085,7 +1085,7 @@ void minilayer::createwarp(minicoord offsetDAT,minicoord extentDAT,
                }
             }
       }
-   else if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4) // non-flat warp modes
+   else if (LPARAMS.warpmode==WARPMODE_AFFINE || LPARAMS.warpmode==WARPMODE_AFFINE_REF) // non-flat warp modes
       {
       center=WARP->getcenter();
       center.convert2(minicoord::MINICOORD_ECEF);
@@ -1215,18 +1215,18 @@ void minilayer::createwarps(int cols,int rows,
 
    mode=LPARAMS.warpmode;
 
-   if (WARP->gettls()==minicoord::MINICOORD_LINEAR) mode=0;
+   if (WARP->gettls()==minicoord::MINICOORD_LINEAR) mode=WARPMODE_LINEAR;
 
-   if (mode==1 || mode==2)
+   if (mode==WARPMODE_FLAT || mode==WARPMODE_FLAT_REF)
       {
-      if (REFERENCE==NULL) mode=0;
-      else if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) mode=0;
+      if (REFERENCE==NULL) mode=WARPMODE_LINEAR;
+      else if (REFERENCE->getwarp()->getgeo()==minicoord::MINICOORD_LINEAR) mode=WARPMODE_LINEAR;
       }
 
    fcenter=minicoord(miniv3d(0.0),minicoord::MINICOORD_LINEAR);
    fnormal=miniv3d(0.0,0.0,1.0);
 
-   if (mode==1 || mode==2)
+   if (mode==WARPMODE_FLAT || mode==WARPMODE_FLAT_REF)
       if (REFERENCE!=NULL)
          {
          fcenter=REFERENCE->getcenter();
@@ -1287,7 +1287,7 @@ void minilayer::createwarps(int cols,int rows,
                   break;
                }
 
-            if (mode==0)
+            if (mode==WARPMODE_LINEAR)
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
@@ -1297,7 +1297,7 @@ void minilayer::createwarps(int cols,int rows,
                crnr[k]=map_t2g(p).vec;
                nrml[k]=rot_t2g(n,p);
                }
-            else if (mode==1 || mode==2)
+            else if (mode==WARPMODE_FLAT || mode==WARPMODE_FLAT_REF)
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,0.0);
@@ -1340,7 +1340,7 @@ minicoord minilayer::nonlin_map_g2t(const minicoord &p)
    p2=p;
 
    if (LPARAMS.nonlin)
-      if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+      if (LPARAMS.warpmode==WARPMODE_AFFINE || LPARAMS.warpmode==WARPMODE_AFFINE_REF)
          {
          if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          p2.convert2(minicoord::MINICOORD_ECEF);
@@ -1362,7 +1362,7 @@ minicoord minilayer::nonlin_map_t2g(const minicoord &p)
    p2=p;
 
    if (LPARAMS.nonlin)
-      if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+      if (LPARAMS.warpmode==WARPMODE_AFFINE || LPARAMS.warpmode==WARPMODE_AFFINE_REF)
          {
          if (p2.type==minicoord::MINICOORD_LINEAR) p2.type=minicoord::MINICOORD_ECEF;
          p2.convert2(minicoord::MINICOORD_ECEF);
@@ -1385,7 +1385,7 @@ miniv3d minilayer::nonlin_rot_g2t(const miniv3d &v,const minicoord &p)
    v2=v;
 
    if (LPARAMS.nonlin)
-      if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+      if (LPARAMS.warpmode==WARPMODE_AFFINE || LPARAMS.warpmode==WARPMODE_AFFINE_REF)
          {
          p2=p;
 
@@ -1407,7 +1407,7 @@ miniv3d minilayer::nonlin_rot_t2g(const miniv3d &v,const minicoord &p)
    v2=v;
 
    if (LPARAMS.nonlin)
-      if (LPARAMS.warpmode==3 || LPARAMS.warpmode==4)
+      if (LPARAMS.warpmode==WARPMODE_AFFINE || LPARAMS.warpmode==WARPMODE_AFFINE_REF)
          {
          p2=p;
 
