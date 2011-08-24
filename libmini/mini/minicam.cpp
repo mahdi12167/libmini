@@ -350,10 +350,10 @@ void minicam::get_local_base(const minicoord &pos,
             up0.normalize();
 
             dir0=miniv3d(0,0,1);
-            right0=up0/dir0;
+            right0=dir0/up0;
             right0.normalize();
             if (right0.getlength2()==0.0) right0=miniv3d(0,1,0);
-            dir0=right0/up0;
+            dir0=up0/right0;
             dir0.normalize();
             }
       }
