@@ -354,37 +354,21 @@ void minicam::get_local_base(const minicoord &pos,
 // move eye up so that it is above ground
 void minicam::move_above(minicoord &pos,double mindist)
    {
-   double dist;
+   minilayer *nst;
+
    double elev;
-
-   miniv3d dir,right,up;
-
    minicoord posl;
 
    if (pos.type!=minicoord::MINICOORD_LINEAR)
       pos.convert2(minicoord::MINICOORD_ECEF);
 
-   get_local_base(pos,dir,right,up);
+   nst=EARTH->getnearest(pos);
 
-   dist=EARTH->shoot(pos,-up);
-
-   if (dist==MAXFLOAT)
+   if (nst!=NULL)
       {
-      dist=EARTH->shoot(pos,up);
-      if (dist!=MAXFLOAT)
-         pos+=up*(mindist+dist);
-      }
-   else
-      if (dist<mindist)
-         pos+=up*(mindist-dist);
+      elev=EARTH->getheight(pos);
 
-   elev=EARTH->getheight(pos);
-
-   if (elev!=-MAXFLOAT)
-      {
-      minilayer *nst=EARTH->getnearest(pos);
-
-      if (nst!=NULL)
+      if (elev!=-MAXFLOAT)
          {
          posl=nst->map_g2l(pos);
          posl.vec.z=dmax(posl.vec.z,nst->len_g2l(elev+mindist));
