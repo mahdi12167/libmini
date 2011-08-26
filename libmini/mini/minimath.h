@@ -56,6 +56,7 @@ void tra_mtx(miniv4d tra[3],const miniv4d mtx[3]);
 
 void tra_mtx4(miniv4d tra[4],const miniv4d mtx[4]);
 
+void rot_mtx(miniv3d rot[3],double delta,const miniv3d &axis);
 void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
 
 double intersect_unitsphere(miniv3d p,miniv3d d);

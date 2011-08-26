@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "minimath.h"
+
 #include "minicam.h"
 
 // default constructor
@@ -172,21 +174,13 @@ void minicam::move_above()
 // rotate counter-clockwise
 void minicam::rotate(double delta,const miniv3d &axis)
    {
-   double x=axis.x;
-   double y=axis.y;
-   double z=axis.z;
+   miniv3d rot[3];
 
-   double s=sin(delta/180.0*M_PI);
-   double c=cos(delta/180.0*M_PI);
-   double c1=1.0-c;
+   rot_mtx(rot,delta,axis);
 
-   miniv3d rotx(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
-   miniv3d roty(y*x*c1+z*s, y*y*c1+c,   y*z*c1-x*s);
-   miniv3d rotz(z*x*c1-y*s, z*y*c1+x*s, z*z*c1+c);
-
-   miniv3d dir(rotx*eye_dir, roty*eye_dir, rotz*eye_dir);
-   miniv3d right(rotx*eye_right, roty*eye_right, rotz*eye_right);
-   miniv3d up(rotx*eye_up, roty*eye_up, rotz*eye_up);
+   miniv3d dir(rot[0]*eye_dir, rot[1]*eye_dir, rot[2]*eye_dir);
+   miniv3d right(rot[0]*eye_right, rot[1]*eye_right, rot[2]*eye_right);
+   miniv3d up(rot[0]*eye_up, rot[1]*eye_up, rot[2]*eye_up);
 
    dir.normalize();
    right.normalize();
@@ -351,7 +345,7 @@ void minicam::get_local_base(const minicoord &pos,
    up=up0;
    }
 
-// move eye up so that it is above ground
+// move point up so that it is above ground
 void minicam::move_above(minicoord &pos,double mindist)
    {
    double elev;

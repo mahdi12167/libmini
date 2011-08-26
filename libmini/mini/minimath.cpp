@@ -343,6 +343,22 @@ void tra_mtx4(miniv4d tra[4],const miniv4d mtx[4])
    cpy_mtx4(tra,m);
    }
 
+// rotate counter-clockwise in right-handed coordinate system
+void rot_mtx(miniv3d rot[3],double delta,const miniv3d &axis)
+   {
+   double x=axis.x;
+   double y=axis.y;
+   double z=axis.z;
+
+   double s=sin(delta/180.0*M_PI);
+   double c=cos(delta/180.0*M_PI);
+   double c1=1.0-c;
+
+   rot[0]=miniv3d(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
+   rot[1]=miniv3d(y*x*c1+z*s, y*y*c1+c,   y*z*c1-x*s);
+   rot[2]=miniv3d(z*x*c1-y*s, z*y*c1+x*s, z*z*c1+c);
+   }
+
 // calculate a rotation matrix
 void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
    {
@@ -387,9 +403,9 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
       ay2=a.y*a.y;
       az2=a.z*a.z;
 
-      rot[0]=miniv3d(ax2+(1.0-ax2)*c,a.x*a.y*(1.0-c)-a.z*s,a.x*a.z*(1.0-c)+a.y*s);
-      rot[1]=miniv3d(a.x*a.y*(1.0-c)+a.z*s,ay2+(1.0-ay2)*c,a.y*a.z*(1.0-c)-a.x*s);
-      rot[2]=miniv3d(a.x*a.z*(1.0-c)-a.y*s,a.y*a.z*(1.0-c)+a.x*s,az2+(1.0-az2)*c);
+      rot[0]=miniv3d(ax2+(1.0-ax2)*c,       a.x*a.y*(1.0-c)-a.z*s, a.x*a.z*(1.0-c)+a.y*s);
+      rot[1]=miniv3d(a.x*a.y*(1.0-c)+a.z*s, ay2+(1.0-ay2)*c,       a.y*a.z*(1.0-c)-a.x*s);
+      rot[2]=miniv3d(a.x*a.z*(1.0-c)-a.y*s, a.y*a.z*(1.0-c)+a.x*s, az2+(1.0-az2)*c);
       }
    }
 
