@@ -410,7 +410,7 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
    }
 
 // ray/unitsphere intersection
-double intersect_unitsphere(miniv3d p,miniv3d d)
+double intersect_ray_unitsphere(miniv3d p,miniv3d d)
    {
    double a,b,c;
    double s,r;
@@ -440,8 +440,8 @@ double intersect_unitsphere(miniv3d p,miniv3d d)
    }
 
 // ray/ellipsoid intersection
-double intersect_ellipsoid(miniv3d p,miniv3d d,
-                           miniv3d o,double r1,double r2,double r3)
+double intersect_ray_ellipsoid(miniv3d p,miniv3d d,
+                               miniv3d o,double r1,double r2,double r3)
    {
    p-=o;
 
@@ -453,11 +453,11 @@ double intersect_ellipsoid(miniv3d p,miniv3d d,
    d.y/=r2;
    d.z/=r3;
 
-   return(intersect_unitsphere(p,d));
+   return(intersect_ray_unitsphere(p,d));
    }
 
 // line/ellipsoid intersection
-double intersect_ellipsoid_line(miniv3d p,miniv3d d,
+double intersect_line_ellipsoid(miniv3d p,miniv3d d,
                                 miniv3d o,double r1,double r2,double r3)
    {
    double dist;
@@ -472,11 +472,11 @@ double intersect_ellipsoid_line(miniv3d p,miniv3d d,
    d.y/=r2;
    d.z/=r3;
 
-   dist=intersect_unitsphere(p,d);
+   dist=intersect_ray_unitsphere(p,d);
 
    if (dist==MAXFLOAT)
       {
-      dist=intersect_unitsphere(p,-d);
+      dist=intersect_ray_unitsphere(p,-d);
       if (dist!=MAXFLOAT) dist=-dist;
       }
 
@@ -484,8 +484,8 @@ double intersect_ellipsoid_line(miniv3d p,miniv3d d,
    }
 
 // ray/plane intersection
-double intersect_plane(miniv3d p,miniv3d d,
-                       miniv3d o,miniv3d n)
+double intersect_ray_plane(miniv3d p,miniv3d d,
+                           miniv3d o,miniv3d n)
    {
    double c;
 
@@ -499,7 +499,7 @@ double intersect_plane(miniv3d p,miniv3d d,
    }
 
 // line/plane intersection
-double intersect_plane_line(miniv3d p,miniv3d d,
+double intersect_line_plane(miniv3d p,miniv3d d,
                             miniv3d o,miniv3d n)
    {
    double c;
@@ -511,6 +511,166 @@ double intersect_plane_line(miniv3d p,miniv3d d,
    if (dabs(c)<=epsilon) return(MAXFLOAT);
 
    return(n*(o-p)/c);
+   }
+
+// Moeller-Trumbore ray/triangle intersection
+int intersect_ray_triangle(const miniv3d &o,const miniv3d &d,
+                           const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
+                           miniv3d *tuv)
+   {
+   static const double epsilon=1E-5;
+
+   double t,u,v;
+   miniv3d edge1,edge2,tvec,pvec,qvec;
+   double det,inv_det;
+
+   // find vectors for two edges sharing v0
+   edge1=v1-v0;
+   edge2=v2-v0;
+
+   // begin calculating determinant - also used to calculate U parameter
+   pvec=d/edge2;
+
+   // if determinant is near zero, ray lies in plane of triangle
+   det=edge1*pvec;
+
+   // cull triangles with determinant near zero
+   if (fabs(det)<epsilon) return(0);
+
+   // calculate inverse determinant
+   inv_det=1.0/det;
+
+   // calculate distance from v0 to ray origin
+   tvec=o-v0;
+
+   // calculate U parameter and test bounds
+   u=(tvec*pvec)*inv_det;
+   if (u<0.0 || u>1.0) return(0);
+
+   // prepare to test V parameter
+   qvec=tvec/edge1;
+
+   // calculate V parameter and test bounds
+   v=(d*qvec)*inv_det;
+   if (v<0.0 || u+v>1.0) return(0);
+
+   // calculate t, ray intersects triangle
+   t=(edge2*qvec)*inv_det;
+
+   *tuv=miniv3d(t,u,v);
+
+   return(1);
+   }
+
+// calculate hit distance on ray to triangle
+double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
+                         const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
+   {
+   miniv3d tuv;
+
+   if (intersect_ray_triangle(o,d,v1,v2,v3,&tuv)==0) return(MAXFLOAT);
+   else return(tuv.x);
+   }
+
+// geometric ray/sphere intersection test
+int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
+                     const miniv3d &b,const double r2)
+   {
+   miniv3d bmo;
+   double bmo2,bmod;
+
+   bmo=b-o;
+   bmo2=bmo*bmo;
+   if (bmo2<r2) return(1);
+
+   bmod=bmo*d;
+   if (bmod<0.0) return(0);
+   if (r2+bmod*bmod>bmo2) return(1);
+
+   return(0);
+   }
+
+// geometric ray/bbox intersection test
+int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
+                   const miniv3d &b,const miniv3d &r)
+   {
+   double l;
+   miniv3d h;
+
+   if (d.x!=0.0)
+      {
+      l=(b.x+r.x-o.x)/d.x;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
+         }
+      else if (d.x>0.0) return(0);
+
+      l=(b.x-r.x-o.x)/d.x;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
+         }
+      else if (d.x<0.0) return(0);
+      }
+
+   if (d.y!=0.0)
+      {
+      l=(b.y+r.y-o.y)/d.y;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
+         }
+      else if (d.y>0.0) return(0);
+
+      l=(b.y-r.y-o.y)/d.y;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
+         }
+      else if (d.y<0.0) return(0);
+      }
+
+   if (d.z!=0.0)
+      {
+      l=(b.z+r.z-o.z)/d.z;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
+         }
+      else if (d.z>0.0) return(0);
+
+      l=(b.z-r.z-o.z)/d.z;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
+         }
+      else if (d.z<0.0) return(0);
+      }
+
+   return(0);
+   }
+
+// geometric plane/sphere intersection test
+int itest_plane_sphere(const miniv3d &o,const miniv3d &n,const double radius,
+                       const miniv3d &b,const double r2)
+   {
+   miniv3d h;
+   double l;
+
+   h=b-o;
+   l=h*n;
+
+   if (l*l>r2) return(0); // no intersection
+   if (h*h>2.0*(radius*radius+r2)) return(0); // no inclusion (approximate)
+
+   return(1);
    }
 
 }

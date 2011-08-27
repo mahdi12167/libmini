@@ -59,19 +59,41 @@ void tra_mtx4(miniv4d tra[4],const miniv4d mtx[4]);
 void rot_mtx(miniv3d rot[3],double delta,const miniv3d &axis);
 void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
 
-double intersect_unitsphere(miniv3d p,miniv3d d);
+// geometric operations:
 
-double intersect_ellipsoid(miniv3d p,miniv3d d,
-                           miniv3d o,double r1,double r2,double r3);
+double intersect_ray_unitsphere(miniv3d p,miniv3d d);
 
-double intersect_ellipsoid_line(miniv3d p,miniv3d d,
+double intersect_ray_ellipsoid(miniv3d p,miniv3d d,
+                               miniv3d o,double r1,double r2,double r3);
+
+double intersect_line_ellipsoid(miniv3d p,miniv3d d,
                                 miniv3d o,double r1,double r2,double r3);
 
-double intersect_plane(miniv3d p,miniv3d d,
-                       miniv3d o,miniv3d n);
+double intersect_ray_plane(miniv3d p,miniv3d d,
+                           miniv3d o,miniv3d n);
 
-double intersect_plane_line(miniv3d p,miniv3d d,
+double intersect_line_plane(miniv3d p,miniv3d d,
                             miniv3d o,miniv3d n);
+
+// Moeller-Trumbore ray/triangle intersection:
+
+int intersect_ray_triangle(const miniv3d &o,const miniv3d &d,
+                           const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
+                           miniv3d *tuv);
+
+double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
+                         const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
+
+// geometric tests:
+
+int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
+                     const miniv3d &b,const double r2);
+
+int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
+                   const miniv3d &b,const miniv3d &r);
+
+int itest_plane_sphere(const miniv3d &o,const miniv3d &n,const double radius,
+                       const miniv3d &b,const double r2);
 
 }
 

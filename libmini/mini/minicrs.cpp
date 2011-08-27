@@ -387,7 +387,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    pos+=x*right+y*up;
 
-   dist=intersect_ellipsoid_line(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   dist=intersect_line_ellipsoid(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
    pos-=dist*pos;
 
    nrm=pos;
@@ -434,7 +434,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       {
       case 1: // north pole
 
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         dist=intersect_line_plane(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -446,7 +446,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 2: // greenwich
 
-         dist=intersect_plane_line(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
+         dist=intersect_line_plane(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -458,7 +458,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 3: // honolulu
 
-         dist=intersect_plane_line(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
+         dist=intersect_line_plane(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -470,7 +470,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 4: // tokyo
 
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
+         dist=intersect_line_plane(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -482,7 +482,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 5: // new york
 
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
+         dist=intersect_line_plane(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -494,7 +494,7 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 6: // south pole
 
-         dist=intersect_plane_line(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
+         dist=intersect_line_plane(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
          if (dist<0.0) dist=MAXFLOAT;
          pos+=dist*pos;
 
@@ -560,7 +560,7 @@ void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
    nrm=pos;
    nrm.normalize();
 
-   dist=intersect_ellipsoid_line(pos,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   dist=intersect_line_ellipsoid(pos,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
    pos-=dist*nrm;
 
    prj[0]=pos.x;

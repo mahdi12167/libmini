@@ -139,23 +139,6 @@ class miniray
    minidyna<miniv3d> calcmesh(const TRIANGLEREF *ref);
 
    inline miniv3d calcpoint(const TRIANGLEREF *ref,const miniv3d &p);
-
-   inline int checkbound(const miniv3d &o,const miniv3d &d,
-                         const miniv3d &b,const double r2);
-
-   inline int checkbbox(const miniv3d &o,const miniv3d &d,
-                        const miniv3d &b,const miniv3d r);
-
-   inline int checkplane(const miniv3d &o,const miniv3d &n,const double radius,
-                         const miniv3d &b,const double r2);
-
-   inline double checkdist(const miniv3d &o,const miniv3d &d,
-                           const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
-
-   // Moeller-Trumbore ray/triangle intersection
-   inline int intersect(const miniv3d &o,const miniv3d &d,
-                        const miniv3d &v0,const miniv3d &v1,const miniv3d &v2,
-                        miniv3d *tuv);
    };
 
 #endif
