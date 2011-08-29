@@ -1,7 +1,7 @@
 #ifndef VIEWERCONST_H
 #define VIEWERCONST_H
 
-#define VIEWER_FPS 25.0f
+#define VIEWER_FPS 50.0f
 
 #define VIEWER_FOVY 60.0f
 #define VIEWER_NEARP 50.0f

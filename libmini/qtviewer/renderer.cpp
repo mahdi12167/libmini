@@ -282,21 +282,6 @@ void Renderer::renderTerrain()
    viewer->adapt(delta);
 }
 
-void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
-{
-   QImage tex, buf;
-   bool bLoaded = buf.load(respath);
-
-   if (bLoaded)
-      tex = QGLWidget::convertToGLFormat(buf);
-
-   glGenTextures(1, &texId);
-   glBindTexture(GL_TEXTURE_2D, texId);
-   glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
 void Renderer::renderHUD()
 {
    // draw crosshair:
@@ -381,6 +366,21 @@ void Renderer::renderHUD()
    y+=line_space;
 }
 
+void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
+{
+   QImage tex, buf;
+   bool bLoaded = buf.load(respath);
+
+   if (bLoaded)
+      tex = QGLWidget::convertToGLFormat(buf);
+
+   glGenTextures(1, &texId);
+   glBindTexture(GL_TEXTURE_2D, texId);
+   glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
 void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
 {
    int sx = x;
@@ -404,28 +404,28 @@ void Renderer::rotateCamera(float dx, float dy)
 {
    stopTransition();
 
-   camera->rotate_right(180 *dx);
-   camera->rotate_up(-180 * dy);
+   camera->rotate_right(360 *dx);
+   camera->rotate_up(180 * dy);
 
-   //!!window->updateGL();
+   startIdling();
 }
 
 void Renderer::moveCameraForward(float delta)
 {
    stopTransition();
 
-   camera->move_forward(1000 * delta);
+   camera->move_forward(10000 * delta);
 
-   //!!window->updateGL();
+   startIdling();
 }
 
 void Renderer::moveCameraSideward(float delta)
 {
    stopTransition();
 
-   camera->move_right(-1000 * delta);
+   camera->move_right(-500 * delta);
 
-   //!!window->updateGL();
+   startIdling();
 }
 
 void Renderer::focusOnTarget()
@@ -467,8 +467,6 @@ void Renderer::focusOnTarget()
          startTransition(cameraTargetPos);
       }
    }
-
-   //!! window->updateGL();
 }
 
 void Renderer::processTransition(int deltaT)
@@ -496,16 +494,13 @@ void Renderer::timerEvent(int timerId)
 {
    if (timerId == m_IdlingTimerId)
    {
-      //!!if (!m_bInCameraTransition)
-      {
-         draw();
+      if (!m_bInCameraTransition)
          window->updateGL();
-      }
 
       bool bPagingFinished = !viewer->getearth()->checkpending();
 
-      //!!if (bPagingFinished)
-         //!!stopIdling();
+      if (bPagingFinished) //!! wait until full redraw
+         stopIdling();
    }
    else if (timerId == m_TransitionTimerId)
    {
