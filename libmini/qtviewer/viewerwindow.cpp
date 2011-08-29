@@ -20,9 +20,6 @@ ViewerWindow::ViewerWindow(QWidget* )
    // init map
    if (dataPathList.size()>1)
       renderer->setMapURL(dataPathList[1].toAscii().constData());
-
-   // init camera
-   renderer->initCamera(VIEWER_FOVY, VIEWER_NEARP, VIEWER_FARP);
 }
 
 ViewerWindow::~ViewerWindow()
@@ -43,7 +40,7 @@ void ViewerWindow::initializeGL()
 
 void ViewerWindow::resizeGL(int width, int height)
 {
-   renderer->resize(width, height);
+   renderer->resizeWindow(width, height);
 }
 
 void ViewerWindow::paintGL()
@@ -128,10 +125,12 @@ void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
 
 void ViewerWindow::wheelEvent(QWheelEvent *event)
 {
-   double numDegrees = event->delta() / 8;
+   double numDegrees = event->delta()/8.0;
 
    if (event->orientation() == Qt::Vertical)
-      renderer->moveCameraForward(numDegrees);
+      renderer->moveCameraForward(numDegrees/360.0);
+   else
+      renderer->moveCameraSideward(numDegrees/360.0);
 
    event->accept();
 }
