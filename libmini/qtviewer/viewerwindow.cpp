@@ -128,11 +128,10 @@ void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
 
 void ViewerWindow::wheelEvent(QWheelEvent *event)
 {
-   int numDegrees = event->delta() / 8;
-   int numSteps = numDegrees / 15;
+   double numDegrees = event->delta() / 8;
 
    if (event->orientation() == Qt::Vertical)
-      renderer->moveCameraForward(numSteps/5.0);
+      renderer->moveCameraForward(numDegrees);
 
    event->accept();
 }

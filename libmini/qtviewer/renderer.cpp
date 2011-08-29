@@ -502,7 +502,7 @@ void Renderer::updateCamera()
 
             if (m_fMoveCameraForward != 0.0f)
             {
-               double speed = 2.0;
+               double speed = 20.0;
 
                double delta = speed * m_fMoveCameraForward;
                cameraPosLocal.vec.x += dirLocal.x * delta;
