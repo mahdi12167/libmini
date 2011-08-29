@@ -56,7 +56,7 @@ void Renderer::init()
    initParameters();
 
    // load layered tileset
-   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
+   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS)) //!! LTS broken
    {
       QString message;
       message.sprintf("Unable to load map data from url=%s\n", m_strURL);

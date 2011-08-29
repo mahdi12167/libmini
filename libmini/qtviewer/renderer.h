@@ -88,7 +88,6 @@ protected:
 
     // camera transition animation
     minicoord m_TargetCameraPos;
-    minicoord m_TransitingCameraPos;
     bool      m_bInCameraTransition;
     int       m_TransitionTimerId;
     QTime     m_Timer;
