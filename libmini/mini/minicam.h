@@ -22,14 +22,14 @@ class minicam
    //! default constructor
    minicam(miniearth *earth,
            double lat=21.39,double lon=-157.72,double height=30000.0,
-           double mindist=10.0);
+           double mindist=0.0);
 
    //! destructor
    ~minicam();
 
    void set_eye(const minicoord &e,
                 double angle=0.0,double pitch=-90.0,
-                double minidist=10.0);
+                double minidist=0.0);
 
    minicoord get_eye() {return(eye);}
    miniv3d get_eye_opengl();

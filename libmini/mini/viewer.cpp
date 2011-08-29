@@ -99,7 +99,7 @@ static double oneturn=5.0,oneincline=5.0;
 static double speed,topspeed;
 
 // stereo base
-static const double sbase=VIEWER_SBASE;
+static const double sbase=VIEWER_SBASE/VIEWER_SCALE;
 
 // wakeup flag
 static BOOLINT wakeup=TRUE;
@@ -266,7 +266,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
    {
    initwindow(winwidth,winheight);
 
-   cam->set_eye(e,a,p,3.0*VIEWER_NEARP);
+   cam->set_eye(e,a,p);
 
    cam->move_down(-dh);
    cam->move_above();
@@ -297,7 +297,7 @@ void loadsettings()
 
    int flag;
 
-   initview(cam->get_eye(),0.0,-params->fovy/3,VIEWER_UPLIFT*params->farp);
+   initview(cam->get_eye(),0.0,-VIEWER_FOVY/3,VIEWER_UPLIFT);
 
    ref=viewer->getearth()->getreference();
    if (ref!=NULL) savname=ref->getcache()->getfile(VIEWER_SAVFILE);
