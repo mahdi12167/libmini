@@ -407,7 +407,7 @@ void Renderer::rotateCamera(float dx, float dy)
    camera->rotate_right(180 *dx);
    camera->rotate_up(-180 * dy);
 
-   window->updateGL();
+   //!!window->updateGL();
 }
 
 void Renderer::moveCameraForward(float delta)
@@ -416,7 +416,7 @@ void Renderer::moveCameraForward(float delta)
 
    camera->move_forward(1000 * delta);
 
-   window->updateGL();
+   //!!window->updateGL();
 }
 
 void Renderer::moveCameraSideward(float delta)
@@ -425,7 +425,7 @@ void Renderer::moveCameraSideward(float delta)
 
    camera->move_right(-1000 * delta);
 
-   window->updateGL();
+   //!!window->updateGL();
 }
 
 void Renderer::focusOnTarget()
@@ -444,9 +444,10 @@ void Renderer::focusOnTarget()
    glGetIntegerv(GL_VIEWPORT, viewport);
 
    // calculate the ray, starting from the opengl camera pos and passing through where mouse pointer is
-   miniv3d pointerScreenPos(m_CursorScreenPos.x(), window->height()-m_CursorScreenPos.y(), 0.0f);
-   gluUnProject((GLdouble)pointerScreenPos.x, (GLdouble)pointerScreenPos.y, 0.0f, modelMatrix, projMatrix, viewport, &x, &y, &z);
-   miniv3d dir = viewer->rot_o2g(miniv3d(x,y,z), camera->get_eye());
+   miniv3d pointerScreenPos(m_CursorScreenPos.x(), viewportheight-m_CursorScreenPos.y(), 0.0);
+   gluUnProject(pointerScreenPos.x, pointerScreenPos.y, 0.0, modelMatrix, projMatrix, viewport, &x, &y, &z);
+   miniv3d dir = miniv3d(x,y,z) - camera->get_eye_opengl();
+   dir = viewer->rot_o2g(dir, camera->get_eye_opengl());
    dir.normalize();
 
    // trace to find the hit point under current focus
@@ -467,7 +468,7 @@ void Renderer::focusOnTarget()
       }
    }
 
-   window->updateGL();
+   //!! window->updateGL();
 }
 
 void Renderer::processTransition(int deltaT)
@@ -495,7 +496,7 @@ void Renderer::timerEvent(int timerId)
 {
    if (timerId == m_IdlingTimerId)
    {
-      if (!m_bInCameraTransition)
+      //!!if (!m_bInCameraTransition)
       {
          draw();
          window->updateGL();
@@ -503,8 +504,8 @@ void Renderer::timerEvent(int timerId)
 
       bool bPagingFinished = !viewer->getearth()->checkpending();
 
-      if (bPagingFinished)
-         stopIdling();
+      //!!if (bPagingFinished)
+         //!!stopIdling();
    }
    else if (timerId == m_TransitionTimerId)
    {
