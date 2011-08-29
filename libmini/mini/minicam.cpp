@@ -33,14 +33,12 @@ void minicam::set_eye(const minicoord &e,
 
    if (eye.vec.getlength2()==0.0) eye=eye_default;
 
-   eye_mindist=mindist;
-
    get_local_base(eye,eye_dir,eye_right,eye_up);
 
    rotate_right(angle);
    rotate_up(pitch);
 
-   move_above();
+   move_above(mindist);
    }
 
 miniv3d minicam::get_eye_opengl()
@@ -131,8 +129,6 @@ void minicam::move(const miniv3d &delta)
    eye_up=up;
 
    rotate_up(pitch);
-
-   move_above();
    }
 
 void minicam::move_forward(double delta)
@@ -168,8 +164,8 @@ void minicam::move_down(double delta)
    move(-delta*up);
    }
 
-void minicam::move_above()
-   {move_above(eye,eye_mindist);}
+void minicam::move_above(double mindist)
+   {move_above(eye,mindist);}
 
 // rotate counter-clockwise
 void minicam::rotate(double delta,const miniv3d &axis)

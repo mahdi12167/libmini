@@ -269,7 +269,7 @@ void initview(minicoord e,double a,double p,double dh=0.0)
    cam->set_eye(e,a,p);
 
    cam->move_down(-dh);
-   cam->move_above();
+   cam->move_above(hover);
 
    viewer->initeyepoint(cam->get_eye());
 
