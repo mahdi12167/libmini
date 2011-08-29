@@ -914,6 +914,29 @@ void render()
 
    if (eparams->usewaypoints) viewer->getearth()->getterrain()->propagate();
 
+   // move eye point into projection center of panoramic waypoint:
+
+   minipointdata *nearest=viewer->getearth()->getterrain()->getnearestpoint(cam->get_eye(),minipointopts::OPTION_TYPE_FREE);
+
+   if (nearest!=NULL)
+      if (nearest->opts!=NULL)
+         if (nearest->opts->dataswitch==0)
+            {
+            miniv3d nearpoint(nearest->x,nearest->y,nearest->height+nearest->offset);
+            minicoord nearcoord=viewer->map_l2g(minicoord(nearpoint));
+            miniv3d nearvec=(nearcoord-cam->get_eye()).vec;
+
+            double neardist=nearvec.normalize();
+            double nearrad=3.0*viewer->len_l2g(nearest->size/2.0f);
+            double nearspeed=0.1*neardist;
+
+            if (neardist<nearrad)
+               {
+               cam->move(nearspeed*nearvec);
+               if (nearspeed>VIEWER_MINDIFF) wakeup=TRUE;
+               }
+            }
+
    // get OpenGL camera:
 
    egl=cam->get_eye_opengl();
