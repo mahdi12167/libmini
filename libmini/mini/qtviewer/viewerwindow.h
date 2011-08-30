@@ -32,6 +32,7 @@ private:
    Renderer*   renderer;
 
    QPoint  lastPos;
+   QPoint  movedPos;
    bool    bLeftButtonDown;
    bool    bRightButtonDown;
 };

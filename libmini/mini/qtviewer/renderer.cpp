@@ -322,13 +322,12 @@ void Renderer::renderHUD()
    // render text:
 
    minicoord cameraPosLLH = camera->get_eye();
-   if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR) cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
-
-   double cameraElev=camera->get_elev();
-   if (cameraElev==-MAXFLOAT) cameraElev=0.0f;
+   if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR)
+      cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
 
    double cameraAngle=camera->get_angle();
 
+   minicoord cameraHit=camera->get_hit();
    double cameraHitDist=camera->get_hitdist();
 
    QString str;
@@ -373,14 +372,23 @@ void Renderer::renderHUD()
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
-   if (cameraHitDist>0.001)
+   if (cameraHitDist>0.0)
    {
-      str.sprintf("Focus:");
+      str.sprintf("Distance:");
       drawText(x, y, str);
       if (cameraHitDist>1000.0)
          str.sprintf("%-6.2f km", cameraHitDist/1000.0);
       else
          str.sprintf("%-6.2f m", cameraHitDist);
+      drawText(x+second_column_offset, y, str);
+      y+=line_space;
+
+      double hitElev=camera->get_elev(cameraHit);
+      if (hitElev==-MAXFLOAT) hitElev=0.0;
+
+      str.sprintf("Elevation:");
+      drawText(x, y, str);
+      str.sprintf("%-6.2f m", hitElev);
       drawText(x+second_column_offset, y, str);
       y+=line_space;
    }
@@ -437,6 +445,7 @@ void Renderer::moveCameraForward(float delta)
    stopTransition();
 
    double dist = camera->get_hitdist();
+   if (dist == 0.0) dist = camera->get_dist();
    if (dist < mindist) dist = mindist;
 
    camera->move_forward(dist * delta);
@@ -452,6 +461,7 @@ void Renderer::moveCameraSideward(float delta)
    stopTransition();
 
    double dist = camera->get_hitdist();
+   if (dist == 0.0) dist = camera->get_dist();
    if (dist < mindist) dist = mindist;
 
    camera->move_right(-dist * delta);
@@ -491,8 +501,10 @@ void Renderer::focusOnTarget()
       if (target != camera->get_eye())
       {
          // find out the target position of camera transition
-         minicoord cameraTargetPos = target - hit + camera->get_eye();
-
+         double elev1 = camera->get_eye().vec.getlength();
+         double elev2 = target.vec.getlength();
+         double scale = elev1 / elev2;
+         minicoord cameraTargetPos = camera->get_eye() + scale * (target - hit);
          startTransition(cameraTargetPos);
       }
    }

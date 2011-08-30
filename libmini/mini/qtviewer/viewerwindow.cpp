@@ -58,7 +58,7 @@ void ViewerWindow::mousePressEvent(QMouseEvent *event)
    else
       event->ignore();
 
-   lastPos = event->pos();
+   lastPos = movedPos = event->pos();
 }
 
 void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
@@ -74,7 +74,7 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
       {}
       // a left button click
       else if (bLeftButtonDown)
-      {}
+         renderer->focusOnTarget();
       // a right button click
       else if (bRightButtonDown)
       {}
@@ -90,8 +90,8 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
 
 void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 {
-   float dx = ((float)(event->x()-lastPos.x()))/width();
-   float dy = ((float)(event->y()-lastPos.y()))/height();
+   float dx = (float)(event->x()-movedPos.x())/width();
+   float dy = (float)(event->y()-movedPos.y())/height();
 
    if (event->buttons() & Qt::LeftButton)
       renderer->rotateCamera(dx, dy);
@@ -102,7 +102,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    else
       renderer->moveCursor(event->pos());
 
-   lastPos = event->pos();
+   movedPos = event->pos();
 }
 
 void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
