@@ -428,6 +428,55 @@ void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDo
    }
 }
 
+miniv3d Renderer::unprojectMouse()
+{
+   double x, y, z;
+   GLdouble modelMatrix[16];
+   GLdouble projMatrix[16];
+   int viewport[4];
+
+   if (!m_CursorValid)
+      return(camera->get_dir());
+
+   setupMatrix();
+
+   glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+   glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+   glGetIntegerv(GL_VIEWPORT, viewport);
+
+   // calculate the ray, starting from the opengl camera pos and passing through where mouse pointer is
+   miniv3d pointerScreenPos(m_CursorScreenPos.x(), viewportheight-m_CursorScreenPos.y(), 0.0);
+   gluUnProject(pointerScreenPos.x, pointerScreenPos.y, 0.0, modelMatrix, projMatrix, viewport, &x, &y, &z);
+   miniv3d dir = miniv3d(x,y,z) - camera->get_eye_opengl();
+   dir = viewer->rot_o2g(dir, camera->get_eye_opengl());
+   dir.normalize();
+
+   return(dir);
+}
+
+miniv3d Renderer::targetVector()
+{
+   miniv3d cameraTargetVec(0.0);
+
+   // trace to find the hit point under current focus
+   minicoord hit = camera->get_hit();
+   if (hit != camera->get_eye())
+   {
+      // trace to find the hit point under current cursor
+      minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
+      if (target != camera->get_eye())
+      {
+         // find out the target vector from focus to cursor
+         double elev1 = camera->get_eye().vec.getlength();
+         double elev2 = target.vec.getlength();
+         double scale = elev1 / elev2;
+         cameraTargetVec = scale * (target.vec - hit.vec);
+      }
+   }
+
+   return(cameraTargetVec);
+}
+
 void Renderer::rotateCamera(float dx, float dy)
 {
    stopTransition();
@@ -444,11 +493,16 @@ void Renderer::moveCameraForward(float delta)
 
    stopTransition();
 
+   delta *= 3.0;
+   if (delta > 1.0) delta = 1.0;
+   else if (delta < -1.0) delta = -1.0;
+
    double dist = camera->get_hitdist();
    if (dist == 0.0) dist = camera->get_dist();
    if (dist < mindist) dist = mindist;
 
    camera->move_forward(dist * delta);
+   camera->move((double)delta * targetVector());
    camera->move_above(CAMERA_HEIGHT_FLOOR);
 
    startIdling();
@@ -459,6 +513,10 @@ void Renderer::moveCameraSideward(float delta)
    const double mindist = 1000.0; // minimum travel distance
 
    stopTransition();
+
+   delta *= 3.0;
+   if (delta > 1.0) delta = 1.0;
+   else if (delta < -1.0) delta = -1.0;
 
    double dist = camera->get_hitdist();
    if (dist == 0.0) dist = camera->get_dist();
@@ -472,42 +530,7 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget()
 {
-   if (!m_CursorValid) return;
-
-   stopTransition();
-
-   double x, y, z;
-   GLdouble modelMatrix[16];
-   GLdouble projMatrix[16];
-   int viewport[4];
-
-   glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-   glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
-   glGetIntegerv(GL_VIEWPORT, viewport);
-
-   // calculate the ray, starting from the opengl camera pos and passing through where mouse pointer is
-   miniv3d pointerScreenPos(m_CursorScreenPos.x(), viewportheight-m_CursorScreenPos.y(), 0.0);
-   gluUnProject(pointerScreenPos.x, pointerScreenPos.y, 0.0, modelMatrix, projMatrix, viewport, &x, &y, &z);
-   miniv3d dir = miniv3d(x,y,z) - camera->get_eye_opengl();
-   dir = viewer->rot_o2g(dir, camera->get_eye_opengl());
-   dir.normalize();
-
-   // trace to find the hit point under current focus
-   minicoord hit = camera->get_hit();
-   if (hit != camera->get_eye())
-   {
-      // trace to find the hit point under current cursor
-      minicoord target = camera->get_hit(camera->get_eye(), dir);
-      if (target != camera->get_eye())
-      {
-         // find out the target position of camera transition
-         double elev1 = camera->get_eye().vec.getlength();
-         double elev2 = target.vec.getlength();
-         double scale = elev1 / elev2;
-         minicoord cameraTargetPos = camera->get_eye() + scale * (target - hit);
-         startTransition(cameraTargetPos);
-      }
-   }
+   startTransition(camera->get_eye() + targetVector());
 }
 
 void Renderer::processTransition(double dt)

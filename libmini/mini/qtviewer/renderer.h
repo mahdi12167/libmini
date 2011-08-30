@@ -59,6 +59,9 @@ protected:
 
     void     processTransition(double dt);
 
+    miniv3d unprojectMouse();
+    miniv3d targetVector();
+
 private:
     void     loadTextureFromResource(const char* respath, GLuint& texId);
     void     drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
