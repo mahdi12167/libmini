@@ -501,8 +501,7 @@ void Renderer::moveCameraForward(float delta)
    if (dist == 0.0) dist = camera->get_dist();
    if (dist < mindist) dist = mindist;
 
-   camera->move_forward(dist * delta);
-   camera->move((double)delta * targetVector());
+   camera->move(delta * dist * unprojectMouse());
    camera->move_above(CAMERA_HEIGHT_FLOOR);
 
    startIdling();
@@ -522,7 +521,7 @@ void Renderer::moveCameraSideward(float delta)
    if (dist == 0.0) dist = camera->get_dist();
    if (dist < mindist) dist = mindist;
 
-   camera->move_right(-dist * delta);
+   camera->move_right(-delta * dist);
    camera->move_above(CAMERA_HEIGHT_FLOOR);
 
    startIdling();
