@@ -268,10 +268,13 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
          pos0.convert2(minicoord::MINICOORD_ECEF);
 
       dist=EARTH->shoot(pos0,dir0);
-      if (dist==MAXFLOAT) dist=0.0;
 
-      hit=pos0+dist*dir0;
-      move_above(hit);
+      if (dist==MAXFLOAT) hit=pos0;
+      else
+         {
+         hit=pos0+dist*dir0;
+         move_above(hit);
+         }
       }
 
    return(hit);
