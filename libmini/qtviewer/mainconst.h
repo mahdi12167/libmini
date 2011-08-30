@@ -2,7 +2,7 @@
 #define MAINCONST_H
 
 #define VIEWER_NAME "libMini qtviewer"
-#define VIEWER_VERSION "v0.9 as of 17.Aug.2011"
+#define VIEWER_VERSION "v1.0 as of 30.Aug.2011"
 
 #define VIEWER_WIDTH 1024
 #define VIEWER_HEIGHT 768
