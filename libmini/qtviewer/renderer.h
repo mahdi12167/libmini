@@ -36,6 +36,8 @@ public:
     void     focusOnTarget();
     void     timerEvent(int timerId);
 
+    void     toggle_wireframe();
+
 protected:
     void     initParameters();
     void     initVISbathymap();
@@ -55,7 +57,7 @@ protected:
     void     startTransition(minicoord target);
     void     stopTransition();
 
-    void     processTransition(int deltaT);
+    void     processTransition(double dt);
 
 private:
     void     loadTextureFromResource(const char* respath, GLuint& texId);
@@ -84,12 +86,13 @@ protected:
 
     // camera idling timer
     int       m_IdlingTimerId;
+    QTime     m_IdlingTimer;
 
     // camera transition animation
     minicoord m_TargetCameraPos;
     bool      m_bInCameraTransition;
     int       m_TransitionTimerId;
-    QTime     m_Timer;
+    QTime     m_TransitionTimer;
 
     // cursor position
     QPoint    m_CursorScreenPos;

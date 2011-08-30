@@ -56,7 +56,7 @@ void Renderer::init()
    initParameters();
 
    // load layered tileset
-   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS)) //!! LTS broken
+   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
    {
       QString message;
       message.sprintf("Unable to load map data from url=%s\n", m_strURL);
@@ -268,8 +268,8 @@ void Renderer::renderTerrain()
    viewer->getearth()->setreference(nst);
 
    // update scene
-   float fAspectRatio = (float)viewportwidth/viewportheight;
-   viewer->cache(camera->get_eye(), camera->get_dir(), camera->get_up(), fAspectRatio);
+   float aspectRatio = (float)viewportwidth/viewportheight;
+   viewer->cache(camera->get_eye(), camera->get_dir(), camera->get_up(), aspectRatio);
 
    // render scene
    viewer->clear();
@@ -327,6 +327,10 @@ void Renderer::renderHUD()
    double cameraElev=camera->get_elev();
    if (cameraElev==-MAXFLOAT) cameraElev=0.0f;
 
+   double cameraAngle=camera->get_angle();
+
+   double cameraHitDist=camera->get_hitdist();
+
    QString str;
    const QColor color(255, 255, 255);
    window->qglColor(color);
@@ -349,21 +353,37 @@ void Renderer::renderHUD()
 
    str.sprintf("Altitude:");
    drawText(x, y, str);
-   str.sprintf("%-6.2f m", cameraPosLLH.vec.z);
+      if (cameraPosLLH.vec.z<-1000.0 || cameraPosLLH.vec.z>1000.0)
+         str.sprintf("%-6.2f km", cameraPosLLH.vec.z/1000.0);
+      else
+         str.sprintf("%-6.2f m", cameraPosLLH.vec.z);
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
    str.sprintf("Heading:");
    drawText(x, y, str);
-   str.sprintf("%-6.0f", camera->get_angle());
+   if (cameraAngle<=45.0 || cameraAngle>315.0)
+      str.sprintf("%-6.0f North", cameraAngle);
+   else if (cameraAngle>45.0 && cameraAngle<=135.0)
+      str.sprintf("%-6.0f West", cameraAngle);
+   else if (cameraAngle>135.0 && cameraAngle<=225.0)
+      str.sprintf("%-6.0f South", cameraAngle);
+   else if (cameraAngle>225.0 && cameraAngle<=315.0)
+      str.sprintf("%-6.0f East", cameraAngle);
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
-   str.sprintf("Pitch:");
-   drawText(x, y, str);
-   str.sprintf("%-6.0f", camera->get_pitch());
-   drawText(x+second_column_offset, y, str);
-   y+=line_space;
+   if (cameraHitDist>0.001)
+   {
+      str.sprintf("Focus:");
+      drawText(x, y, str);
+      if (cameraHitDist>1000.0)
+         str.sprintf("%-6.2f km", cameraHitDist/1000.0);
+      else
+         str.sprintf("%-6.2f m", cameraHitDist);
+      drawText(x+second_column_offset, y, str);
+      y+=line_space;
+   }
 }
 
 void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
@@ -412,18 +432,30 @@ void Renderer::rotateCamera(float dx, float dy)
 
 void Renderer::moveCameraForward(float delta)
 {
+   const double mindist = 1000.0; // minimum travel distance
+
    stopTransition();
 
-   camera->move_forward(10000 * delta);
+   double dist = camera->get_hitdist();
+   if (dist < mindist) dist = mindist;
+
+   camera->move_forward(dist * delta);
+   camera->move_above(CAMERA_HEIGHT_FLOOR);
 
    startIdling();
 }
 
 void Renderer::moveCameraSideward(float delta)
 {
+   const double mindist = 1000.0; // minimum travel distance
+
    stopTransition();
 
-   camera->move_right(-500 * delta);
+   double dist = camera->get_hitdist();
+   if (dist < mindist) dist = mindist;
+
+   camera->move_right(-dist * delta);
+   camera->move_above(CAMERA_HEIGHT_FLOOR);
 
    startIdling();
 }
@@ -454,13 +486,10 @@ void Renderer::focusOnTarget()
    minicoord hit = camera->get_hit();
    if (hit != camera->get_eye())
    {
-      // trace to find the hit distance under current cursor
-      double dist = viewer->shoot(camera->get_eye(), dir);
-      if (dist != MAXFLOAT)
+      // trace to find the hit point under current cursor
+      minicoord target = camera->get_hit(camera->get_eye(), dir);
+      if (target != camera->get_eye())
       {
-         // find out the hit point under current cursor
-         minicoord target = camera->get_eye() + dist * dir;
-
          // find out the target position of camera transition
          minicoord cameraTargetPos = target - hit + camera->get_eye();
 
@@ -469,21 +498,27 @@ void Renderer::focusOnTarget()
    }
 }
 
-void Renderer::processTransition(int deltaT)
+void Renderer::processTransition(double dt)
 {
-   const double speed = 10000.0f; // speed is 10km/second
+   const double maxtime = 0.5; // maximum transition time interval (s)
+   const double minspeed = 3000.0; // minimum speed (m/second)
 
-   double dt = deltaT / 1000.0f;
    miniv3d dir = m_TargetCameraPos.vec - camera->get_eye().vec;
+   double speed = dir.getlength() / maxtime;
+
+   if (speed < minspeed) speed = minspeed;
 
    if (dir.getlength() > speed * dt)
    {
       dir.normalize();
       camera->move(dir * speed * dt);
+      camera->move_above(CAMERA_HEIGHT_FLOOR);
    }
    else
    {
       camera->move(dir);
+      camera->move_above(CAMERA_HEIGHT_FLOOR);
+
       stopTransition();
    }
 
@@ -492,6 +527,8 @@ void Renderer::processTransition(int deltaT)
 
 void Renderer::timerEvent(int timerId)
 {
+   const double minIdle = 2.0; // minimum idle time interval (s)
+
    if (timerId == m_IdlingTimerId)
    {
       if (!m_bInCameraTransition)
@@ -499,14 +536,23 @@ void Renderer::timerEvent(int timerId)
 
       bool bPagingFinished = !viewer->getearth()->checkpending();
 
-      if (bPagingFinished) //!! wait until full redraw
-         stopIdling();
+      if (!bPagingFinished)
+         m_IdlingTimer.start();
+      else
+      {
+         int deltaT = m_IdlingTimer.elapsed();
+         double dt = deltaT / 1000.0f;
+
+         if (dt>minIdle)
+            stopIdling();
+      }
    }
    else if (timerId == m_TransitionTimerId)
    {
-      int deltaT = m_Timer.restart();
+      int deltaT = m_TransitionTimer.restart();
+      double dt = deltaT / 1000.0f;
 
-      processTransition(deltaT);
+      processTransition(dt);
    }
 }
 
@@ -532,7 +578,7 @@ void Renderer::startTransition(minicoord target)
    m_TransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
    m_TargetCameraPos = target;
    m_bInCameraTransition = true;
-   m_Timer.start();
+   m_TransitionTimer.start();
 }
 
 void Renderer::stopTransition()
@@ -549,4 +595,11 @@ void Renderer::moveCursor(const QPoint& pos)
 {
    m_CursorScreenPos = pos;
    m_CursorValid = true;
+}
+
+void Renderer::toggle_wireframe()
+{
+   m_pViewerParams->usewireframe = !m_pViewerParams->usewireframe;
+
+   startIdling();
 }

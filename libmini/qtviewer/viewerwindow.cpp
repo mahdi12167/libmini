@@ -114,6 +114,8 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
+   else if (event->key() == Qt::Key_W)
+      renderer->toggle_wireframe();
    else
       QGLWidget::keyPressEvent(event);
 }
