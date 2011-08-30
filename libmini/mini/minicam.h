@@ -42,6 +42,7 @@ class minicam
    double get_elev();
    double get_dist();
    minicoord get_hit();
+   double get_hitdist();
    double get_angle();
    double get_pitch();
 
@@ -61,6 +62,7 @@ class minicam
    double get_elev(const minicoord &pos);
    double get_dist(const minicoord &pos);
    minicoord get_hit(const minicoord &pos,const miniv3d &dir);
+   double get_hitdist(const minicoord &pos,const miniv3d &dir);
 
    protected:
 

@@ -62,6 +62,9 @@ double minicam::get_dist()
 minicoord minicam::get_hit()
    {return(get_hit(eye,eye_dir));}
 
+double minicam::get_hitdist()
+   {return(get_hitdist(eye,eye_dir));}
+
 double minicam::get_angle()
    {
    double angle,pitch;
@@ -273,6 +276,9 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
 
    return(hit);
    }
+
+double minicam::get_hitdist(const minicoord &pos,const miniv3d &dir)
+   {return((get_hit(pos,dir).vec-pos.vec).getlength());}
 
 // get base vectors of local coordinate system
 void minicam::get_local_base(const minicoord &pos,
