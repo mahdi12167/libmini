@@ -297,7 +297,7 @@ void loadsettings()
 
    int flag;
 
-   initview(cam->get_eye(),0.0,-VIEWER_FOVY/3,VIEWER_UPLIFT);
+   initview(viewer->getinitial(),0.0,-VIEWER_FOVY/3,VIEWER_UPLIFT);
 
    ref=viewer->getearth()->getreference();
    if (ref!=NULL) savname=ref->getcache()->getfile(VIEWER_SAVFILE);

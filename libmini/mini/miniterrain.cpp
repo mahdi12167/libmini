@@ -25,9 +25,11 @@ miniterrain::miniterrain()
    TPARAMS.nonlin=FALSE;                // use non-linear warp
 
    TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
-   TPARAMS.fadeout=0.01f;               // fadeout out distance relative to far plane
+   TPARAMS.fadedist=500000.0f;          // spherical fade out distance
+   TPARAMS.fadeout=0.01f;               // spherical fade out range relative to distance
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
+   TPARAMS.subdist=1.0f;                // spherical subduction distance relative to fade out distance
    TPARAMS.subfactor=0.1f;              // spherical subduction factor relative to distance
 
    TPARAMS.scale=1.0f;                  // scaling of scene
@@ -348,7 +350,10 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.fovy=TPARAMS.fovy;
          lparams.nearp=TPARAMS.nearp;
-         lparams.farp=TPARAMS.farp;
+
+         if (TPARAMS.fademode==0) lparams.farp=TPARAMS.farp;
+         else if (LAYER[n]->getlevel()==0) lparams.farp=TPARAMS.farp;
+         else lparams.farp=2.0f*TPARAMS.fadedist*fpow(2.0f,LAYER[n]->getlevel()+1);
 
          lparams.reduction1=TPARAMS.reduction1;
          lparams.reduction2=TPARAMS.reduction2;
@@ -356,7 +361,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
          lparams.cullslope=TPARAMS.cullslope;
 
          if (TPARAMS.fademode==0) lparams.range=TPARAMS.range;
-         else lparams.range=0.5f*TPARAMS.farp*fpow(2.0f,LAYER[n]->getlevel());
+         else if (LAYER[n]->getlevel()==0) lparams.range=TPARAMS.fadedist/TPARAMS.farp;
+         else lparams.range=1.0f;
 
          lparams.relrange1=TPARAMS.relrange1;
          lparams.relrange2=TPARAMS.relrange2;
@@ -1040,7 +1046,7 @@ void miniterrain::render()
          minishader::setseamode(TPARAMS.seamode);
 
          // set fade mode
-         minishader::setfademode(TPARAMS.fademode,(1.0-TPARAMS.fadeout)*TPARAMS.farp,TPARAMS.farp);
+         minishader::setfademode(TPARAMS.fademode,(1.0-TPARAMS.fadeout)*TPARAMS.fadedist,TPARAMS.fadedist);
 
          // choose shader
          if (TPARAMS.usevisshader)
@@ -1120,7 +1126,7 @@ void miniterrain::render()
                                              LAYER[n]->getlevel(),LAYER[n]->getbaselevel());
 
          // set subduction parameters
-         CACHE->usesubduction(TPARAMS.submode,TPARAMS.farp/TPARAMS.scale,TPARAMS.subfactor);
+         CACHE->usesubduction(TPARAMS.submode,TPARAMS.subdist*TPARAMS.fadedist/TPARAMS.scale,TPARAMS.subfactor);
          }
       else
          {

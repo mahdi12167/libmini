@@ -34,9 +34,11 @@ class miniterrain
       BOOLINT nonlin;           //* use non-linear warp
 
       int fademode;             //* spherical fade mode: off=0 single=1 double=2
-      float fadeout;            //* fadeout out distance relative to far plane
+      float fadedist;           //* spherical fade out distance
+      float fadeout;            //* spherical fade out range relative to distance
 
       int submode;              //* spherical subduction mode: off=0 on=1
+      float subdist;            //* spherical subduction distance relative to fade out distance
       float subfactor;          //* spherical subduction factor relative to distance
 
       float scale;              //+ scaling of scene
