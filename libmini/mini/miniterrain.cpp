@@ -30,7 +30,7 @@ miniterrain::miniterrain()
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
    TPARAMS.subdist=1.0f;                // spherical subduction distance relative to fade out distance
-   TPARAMS.subfactor=0.1f;              // spherical subduction factor relative to distance
+   TPARAMS.subfactor=0.001f;            // spherical subduction factor relative to distance
 
    TPARAMS.scale=1.0f;                  // scaling of scene
    TPARAMS.exaggeration=1.0f;           // exaggeration of elevations
@@ -353,7 +353,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          if (TPARAMS.fademode==0) lparams.farp=TPARAMS.farp;
          else if (LAYER[n]->getlevel()==0) lparams.farp=TPARAMS.farp;
-         else lparams.farp=2.0f*TPARAMS.fadedist*fpow(2.0f,LAYER[n]->getlevel()+1);
+         else lparams.farp=4.0f*TPARAMS.fadedist*fpow(2.0f,LAYER[n]->getlevel()+1);
 
          lparams.reduction1=TPARAMS.reduction1;
          lparams.reduction2=TPARAMS.reduction2;
