@@ -773,52 +773,6 @@ void renderhud()
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
 
-      if (sw_cross!=0)
-         {
-         glLoadIdentity();
-         glTranslatef(0.5f,0.5f,0.0f);
-         glScalef((float)winheight/winwidth,1.0f,1.0f);
-         glColor3f(0.0f,0.0f,0.0f);
-         glPushMatrix();
-         glScalef(0.025f,0.025f,1.0f);
-         glBegin(GL_LINES);
-         glVertex2f(-1.0,-1.0f);
-         glVertex2f(1.0,1.0f);
-         glVertex2f(-1.0,1.0f);
-         glVertex2f(1.0,-1.0f);
-         glEnd();
-         glPopMatrix();
-
-         if (sw_cross!=0)
-            {
-            hit=cam->get_hit();
-            if (hit!=cam->get_eye())
-               {
-               nst=viewer->getearth()->getnearest(hit);
-
-               if (nst!=NULL) hit=nst->map_g2t(hit);
-               if (hit.type!=minicoord::MINICOORD_LINEAR) hit.convert2(minicoord::MINICOORD_ECEF);
-
-               hit_llh=hit;
-               if (hit_llh.type!=minicoord::MINICOORD_LINEAR) hit_llh.convert2(minicoord::MINICOORD_LLH);
-
-               dist=(hit-cam->get_eye()).vec.getlength();
-
-               if (dist<1000.0)
-                  snprintf(str,MAXSTR,"dist=%3.3fm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
-                           dist,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
-               else
-                  snprintf(str,MAXSTR,"dist=%3.3fkm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
-                           dist/1000.0,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
-
-               glTranslatef(0.05f,-0.01f,0.0f);
-               minitext::drawstring(0.5f,240.0f,1.0f,0.25f,1.0f,str);
-
-               reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_llh.vec.z);
-               }
-            }
-         }
-
       rendercompass();
       renderinfo();
       }
@@ -831,6 +785,49 @@ void renderhud()
          glLoadIdentity();
          rendercompass();
          }
+
+   if (sw_cross!=0 || cam->get_pitch()<-89.9)
+      {
+      glLoadIdentity();
+      glTranslatef(0.5f,0.5f,0.0f);
+      glScalef((float)winheight/winwidth,1.0f,1.0f);
+      glColor3f(0.0f,0.0f,0.0f);
+      glPushMatrix();
+      glScalef(0.025f,0.025f,1.0f);
+      glBegin(GL_LINES);
+      glVertex2f(-1.0,-1.0f);
+      glVertex2f(1.0,1.0f);
+      glVertex2f(-1.0,1.0f);
+      glVertex2f(1.0,-1.0f);
+      glEnd();
+      glPopMatrix();
+
+      hit=cam->get_hit();
+      if (hit!=cam->get_eye())
+         {
+         nst=viewer->getearth()->getnearest(hit);
+
+         if (nst!=NULL) hit=nst->map_g2t(hit);
+         if (hit.type!=minicoord::MINICOORD_LINEAR) hit.convert2(minicoord::MINICOORD_ECEF);
+
+         hit_llh=hit;
+         if (hit_llh.type!=minicoord::MINICOORD_LINEAR) hit_llh.convert2(minicoord::MINICOORD_LLH);
+
+         dist=(hit-cam->get_eye()).vec.getlength();
+
+         if (dist<1000.0)
+            snprintf(str,MAXSTR,"dist=%3.3fm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
+                     dist,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+         else
+            snprintf(str,MAXSTR,"dist=%3.3fkm elev=%3.3fm\nlat=%3.6f lon=%3.6f",
+                     dist/1000.0,hit_llh.vec.z,hit_llh.vec.y/3600.0,hit_llh.vec.x/3600.0);
+
+         glTranslatef(0.05f,-0.01f,0.0f);
+         minitext::drawstring(0.5f,240.0f,1.0f,0.25f,1.0f,str);
+
+         reportpos(hit_llh.vec.y,hit_llh.vec.x,hit_llh.vec.z);
+         }
+      }
 
    glDisable(GL_BLEND);
    }
@@ -877,6 +874,8 @@ void render()
 
    cam->rotate_up(-accel*incline);
    incline*=(1.0-accel);
+
+   cam->rotate_limit(90.0);
 
    coef=dist/hover-1.0;
    if (coef>1.0) coef=1.0;

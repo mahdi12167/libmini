@@ -484,6 +484,8 @@ void Renderer::rotateCamera(float dx, float dy)
    camera->rotate_right(360 *dx);
    camera->rotate_up(180 * dy);
 
+   camera->rotate_limit(90.0);
+
    startIdling();
 }
 

@@ -205,6 +205,16 @@ void minicam::rotate_right(double delta)
 void minicam::rotate_up(double delta)
    {rotate(delta,eye_right);}
 
+void minicam::rotate_limit(double limit)
+   {
+   double pitch;
+
+   pitch=get_pitch();
+
+   if (pitch<-limit) rotate_up(-pitch-limit);
+   else if (pitch>limit) rotate_up(-pitch+limit);
+   }
+
 double minicam::get_elev(const minicoord &pos)
    {
    static minicoord pos0=minicoord();

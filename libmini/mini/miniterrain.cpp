@@ -26,6 +26,7 @@ miniterrain::miniterrain()
 
    TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
    TPARAMS.fadedist=500000.0f;          // spherical fade out distance
+   TPARAMS.fademult=4.0f;               // spherical fade out distance multiplier to yield farp
    TPARAMS.fadeout=0.01f;               // spherical fade out range relative to distance
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
@@ -353,7 +354,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          if (TPARAMS.fademode==0) lparams.farp=TPARAMS.farp;
          else if (LAYER[n]->getlevel()==0) lparams.farp=TPARAMS.farp;
-         else lparams.farp=4.0f*TPARAMS.fadedist*fpow(2.0f,LAYER[n]->getlevel()+1);
+         else lparams.farp=TPARAMS.fademult*TPARAMS.fadedist*fpow(2.0f,LAYER[n]->getlevel()+1);
 
          lparams.reduction1=TPARAMS.reduction1;
          lparams.reduction2=TPARAMS.reduction2;
@@ -362,7 +363,7 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          if (TPARAMS.fademode==0) lparams.range=TPARAMS.range;
          else if (LAYER[n]->getlevel()==0) lparams.range=TPARAMS.fadedist/TPARAMS.farp;
-         else lparams.range=1.0f;
+         else lparams.range=1.0f/TPARAMS.fademult;
 
          lparams.relrange1=TPARAMS.relrange1;
          lparams.relrange2=TPARAMS.relrange2;

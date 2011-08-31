@@ -58,6 +58,7 @@ class minicam
    void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
    void rotate_up(double delta);
+   void rotate_limit(double limit=90.0);
 
    double get_elev(const minicoord &pos);
    double get_dist(const minicoord &pos);
