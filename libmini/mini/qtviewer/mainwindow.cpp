@@ -1,4 +1,7 @@
+#include <string>
+
 #include <QtGui>
+#include <QFileDialog>
 
 #include "mainconst.h"
 #include "mainwindow.h"
@@ -28,6 +31,12 @@ void MainWindow::createActions()
    aboutAction->setStatusTip(tr("About this program"));
    connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 
+   openAction = new QAction(tr("O&pen"), this);
+   openAction->setIcon(QIcon(":/images/open.png"));
+   openAction->setShortcuts(QKeySequence::Open);
+   openAction->setStatusTip(tr("Open location"));
+   connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
+
    quitAction = new QAction(tr("Q&uit"), this);
    quitAction->setShortcuts(QKeySequence::Quit);
    quitAction->setStatusTip(tr("Quit the application"));
@@ -37,6 +46,7 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
    fileMenu = menuBar()->addMenu(tr("&File"));
+   fileMenu->addAction(openAction);
    fileMenu->addAction(quitAction);
 
    menuBar()->addSeparator();
@@ -49,4 +59,24 @@ void MainWindow::about()
 {
    QMessageBox::about(this, tr("About this program"),
                       tr(VIEWER_NAME" "VIEWER_VERSION));
+}
+
+void MainWindow::open()
+{
+   QFileDialog* fd = new QFileDialog(this, "Open Location");
+   fd->setFileMode(QFileDialog::AnyFile);
+   fd->setViewMode(QFileDialog::List);
+   fd->setFilter("Ini Files (*.ini)");
+
+   QString fileName;
+   if (fd->exec() == QDialog::Accepted)
+      fileName = fd->selectedFiles().at(0);
+
+   if (!fileName.isNull())
+   {
+      if (fileName.endsWith(".ini", Qt::CaseInsensitive))
+         fileName.truncate(fileName.lastIndexOf("/"));
+
+      viewerWindow->loadMapURL(fileName.toStdString().c_str());
+   }
 }

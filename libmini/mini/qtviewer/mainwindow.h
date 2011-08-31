@@ -17,6 +17,7 @@ public:
 
 private slots:
    void about();
+   void open();
 
 private:
    void createActions();
@@ -26,6 +27,7 @@ private:
    QMenu* helpMenu;
 
    QAction* aboutAction;
+   QAction* openAction;
    QAction* quitAction;
 
    ViewerWindow* viewerWindow;

@@ -42,6 +42,19 @@ void Renderer::setMapURL(const char* url)
    m_strURL=strdup(url);
 }
 
+void Renderer::loadMapURL(const char* url)
+{
+   if (m_bIsInited)
+      if (m_strURL!=NULL)
+         if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
+         {
+            QString message;
+            message.sprintf("Unable to load map data from url=%s\n", m_strURL);
+            QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
+            return;
+         }
+}
+
 void Renderer::init()
 {
    if (m_bIsInited) return;
@@ -60,13 +73,14 @@ void Renderer::init()
    initParameters();
 
    // load layered tileset
-   if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
-   {
-      QString message;
-      message.sprintf("Unable to load map data from url=%s\n", m_strURL);
-      QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
-      return;
-   }
+   if (m_strURL!=NULL)
+      if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
+      {
+         QString message;
+         message.sprintf("Unable to load map data from url=%s\n", m_strURL);
+         QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
+         return;
+      }
 
    // load optional features
    viewer->getearth()->loadopts();

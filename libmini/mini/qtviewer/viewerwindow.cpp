@@ -154,3 +154,8 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 {
    renderer->timerEvent(event->timerId());
 }
+
+void ViewerWindow::loadMapURL(const char* url)
+{
+   renderer->loadMapURL(url);
+}

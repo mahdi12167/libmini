@@ -20,28 +20,32 @@ public:
    ViewerWindow(QWidget* parent = 0);
    virtual ~ViewerWindow();
 
+   void loadMapURL(const char* url);
+
 protected:
-   void    initializeGL();
-   void    resizeGL(int width, int height);
-   void    paintGL();
-   void    mousePressEvent(QMouseEvent *event);
-   void    mouseReleaseEvent(QMouseEvent* event);
-   void    mouseMoveEvent(QMouseEvent *event);
-   void    mouseDoubleClickEvent(QMouseEvent *);
-   void    keyPressEvent(QKeyEvent* event);
-   void    keyReleaseEvent(QKeyEvent* event);
+   void initializeGL();
+   void resizeGL(int width, int height);
+   void paintGL();
 
-   void    wheelEvent(QWheelEvent *event);
+   void mousePressEvent(QMouseEvent *event);
+   void mouseReleaseEvent(QMouseEvent* event);
+   void mouseMoveEvent(QMouseEvent *event);
+   void mouseDoubleClickEvent(QMouseEvent *);
 
-   void    timerEvent(QTimerEvent *);
+   void keyPressEvent(QKeyEvent* event);
+   void keyReleaseEvent(QKeyEvent* event);
+
+   void wheelEvent(QWheelEvent *event);
+
+   void timerEvent(QTimerEvent *);
 
 private:
-   Renderer*   renderer;
+   Renderer* renderer;
 
-   QPoint  lastPos;
-   QPoint  movedPos;
-   bool    bLeftButtonDown;
-   bool    bRightButtonDown;
+   QPoint    lastPos;
+   QPoint    movedPos;
+   bool      bLeftButtonDown;
+   bool      bRightButtonDown;
 };
 
 #endif
