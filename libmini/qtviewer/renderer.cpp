@@ -695,3 +695,14 @@ void Renderer::toggleWireframe()
 
    startIdling();
 }
+
+void Renderer::toggleSeaSurface()
+{
+   if (m_pTerrainParams->sealevel==-MAXFLOAT) m_pTerrainParams->sealevel=0.0f;
+   else m_pTerrainParams->sealevel=-MAXFLOAT;
+
+   viewer->propagate();
+   viewer->getearth()->getterrain()->update();
+
+   startIdling();
+}

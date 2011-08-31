@@ -39,7 +39,9 @@ public:
    void     timerEvent(int timerId);
 
    void     modifierKey(modifierKeys modifier, bool pressed);
+
    void     toggleWireframe();
+   void     toggleSeaSurface();
 
 protected:
    void     initParameters();

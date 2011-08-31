@@ -122,6 +122,8 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
       renderer->focusOnTarget();
    else if (event->key() == Qt::Key_W)
       renderer->toggleWireframe();
+   else if (event->key() == Qt::Key_S)
+      renderer->toggleSeaSurface();
    else
       QGLWidget::keyPressEvent(event);
 }
