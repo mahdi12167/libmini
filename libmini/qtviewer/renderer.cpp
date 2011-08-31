@@ -49,7 +49,7 @@ void Renderer::loadMapURL(const char* url)
          if (!viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
          {
             QString message;
-            message.sprintf("Unable to load map data from url=%s\n", m_strURL);
+            message.sprintf("Unable to load map data from url=%s\n", url);
             QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
             return;
          }

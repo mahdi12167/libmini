@@ -1,6 +1,7 @@
 libMini SVN repository contents:
 
 mini: the libMini library plus the libMini viewer
+qtviewer: the libMini QT Viewer
 Yukon|Stuttgart|Hawaii|Fraenkische|FaceOfMars: libMini demos
 tags: major tagged libMini versions
 deps: source code of selected libMini dependencies
