@@ -243,10 +243,18 @@ void Renderer::resizeViewport()
 
 void Renderer::draw()
 {
+   minilayer *nst;
+
+   // set reference layer
+   nst=viewer->getearth()->getnearest(camera->get_eye());
+   viewer->getearth()->setreference(nst);
+
+   // render scene
    setupMatrix();
    renderTerrain();
    renderHUD();
 
+   // wait for static scene
    startIdling();
 }
 
@@ -276,14 +284,8 @@ void Renderer::setupMatrix()
 
 void Renderer::renderTerrain()
 {
-   minilayer *nst;
-
    // start timer
    viewer->starttimer();
-
-   // set reference layer
-   nst=viewer->getearth()->getnearest(camera->get_eye());
-   viewer->getearth()->setreference(nst);
 
    // update scene
    float aspectRatio = (float)viewportwidth/viewportheight;
