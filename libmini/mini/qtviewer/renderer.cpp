@@ -45,8 +45,8 @@ void Renderer::setMapURL(const char* url)
 void Renderer::loadMapURL(const char* url)
 {
    if (m_bIsInited)
-      if (m_strURL!=NULL)
-         if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
+      if (url!=NULL)
+         if (!viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
          {
             QString message;
             message.sprintf("Unable to load map data from url=%s\n", m_strURL);
