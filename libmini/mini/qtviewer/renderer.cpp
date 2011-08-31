@@ -16,6 +16,10 @@ Renderer::Renderer(QGLWidget* window)
 
    viewer=NULL;
    camera=NULL;
+
+   m_Shift=false;
+   m_Control=false;
+   m_Meta=false;
 }
 
 Renderer::~Renderer()
@@ -456,7 +460,19 @@ miniv3d Renderer::unprojectMouse()
 
 miniv3d Renderer::targetVector()
 {
-   miniv3d cameraTargetVec(0.0);
+   miniv3d targetVec(0.0);
+
+   // trace to find the hit point under current cursor
+   minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
+   if (target != camera->get_eye())
+      targetVec = target.vec - camera->get_eye().vec;
+
+   return(targetVec);
+}
+
+miniv3d Renderer::cursorVector()
+{
+   miniv3d cursorVec(0.0);
 
    // trace to find the hit point under current focus
    minicoord hit = camera->get_hit();
@@ -470,21 +486,37 @@ miniv3d Renderer::targetVector()
          double elev1 = camera->get_eye().vec.getlength();
          double elev2 = target.vec.getlength();
          double scale = elev1 / elev2;
-         cameraTargetVec = scale * (target.vec - hit.vec);
+         cursorVec = scale * (target.vec - hit.vec);
       }
    }
 
-   return(cameraTargetVec);
+   return(cursorVec);
 }
 
 void Renderer::rotateCamera(float dx, float dy)
 {
    stopTransition();
 
-   camera->rotate_right(360 *dx);
-   camera->rotate_up(180 * dy);
+   if (m_Shift)
+   {
+      camera->rotate_right(360 *dx);
+      camera->rotate_up(180 * dy);
 
-   camera->rotate_limit(90.0);
+      camera->rotate_limit(-90.0,90.0);
+   }
+   else
+   {
+      double dist = camera->get_hitdist();
+
+      camera->move_forward_plain(dist);
+
+      camera->rotate_right(360 *dx);
+      camera->rotate_up(180 * dy);
+
+      camera->rotate_limit(-90.0,0.0);
+
+      camera->move_forward_plain(-dist);
+   }
 
    startIdling();
 }
@@ -531,7 +563,7 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget()
 {
-   startTransition(camera->get_eye() + targetVector());
+   startTransition(camera->get_eye() + cursorVector());
 }
 
 void Renderer::processTransition(double dt)
@@ -633,7 +665,17 @@ void Renderer::moveCursor(const QPoint& pos)
    m_CursorValid = true;
 }
 
-void Renderer::toggle_wireframe()
+void Renderer::modifierKey(modifierKeys modifier, bool pressed)
+{
+   if (modifier==ModifierShift)
+      m_Shift=pressed;
+   else if (modifier==ModifierControl)
+      m_Control=pressed;
+   else if (modifier==ModifierMeta)
+      m_Meta=pressed;
+}
+
+void Renderer::toggleWireframe()
 {
    m_pViewerParams->usewireframe = !m_pViewerParams->usewireframe;
 

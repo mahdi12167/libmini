@@ -134,8 +134,14 @@ void minicam::move(const miniv3d &delta)
    rotate_up(pitch);
    }
 
+void minicam::move_plain(const miniv3d &delta)
+   {eye+=delta;}
+
 void minicam::move_forward(double delta)
    {move(delta*eye_dir);}
+
+void minicam::move_forward_plain(double delta)
+   {move_plain(delta*eye_dir);}
 
 void minicam::move_back(double delta)
    {
@@ -205,14 +211,14 @@ void minicam::rotate_right(double delta)
 void minicam::rotate_up(double delta)
    {rotate(delta,eye_right);}
 
-void minicam::rotate_limit(double limit)
+void minicam::rotate_limit(double llimit,double ulimit)
    {
    double pitch;
 
    pitch=get_pitch();
 
-   if (pitch<-limit) rotate_up(-pitch-limit);
-   else if (pitch>limit) rotate_up(-pitch+limit);
+   if (pitch<llimit) rotate_up(llimit-pitch);
+   else if (pitch>ulimit) rotate_up(ulimit-pitch);
    }
 
 double minicam::get_elev(const minicoord &pos)

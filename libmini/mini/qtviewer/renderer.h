@@ -6,11 +6,12 @@
 
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
+#include <mini/minicam.h>
 
 #include <mini/viewerbase.h>
 #include "viewerconst.h"
 
-#include <mini/minicam.h>
+#include "viewerwindow.h"
 
 class Renderer
 {
@@ -36,7 +37,8 @@ public:
     void     focusOnTarget();
     void     timerEvent(int timerId);
 
-    void     toggle_wireframe();
+    void     modifierKey(modifierKeys modifier, bool pressed);
+    void     toggleWireframe();
 
 protected:
     void     initParameters();
@@ -59,8 +61,9 @@ protected:
 
     void     processTransition(double dt);
 
-    miniv3d unprojectMouse();
-    miniv3d targetVector();
+    miniv3d  unprojectMouse();
+    miniv3d  targetVector();
+    miniv3d  cursorVector();
 
 private:
     void     loadTextureFromResource(const char* respath, GLuint& texId);
@@ -100,6 +103,9 @@ protected:
     // cursor position
     QPoint    m_CursorScreenPos;
     bool      m_CursorValid;
+
+    // modifier keys
+    bool      m_Shift, m_Control, m_Meta;
 
     // texture ids
     GLuint m_CrosshairTextureId;

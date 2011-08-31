@@ -5,6 +5,13 @@
 
 class Renderer;
 
+enum modifierKeys
+{
+   ModifierShift,
+   ModifierControl,
+   ModifierMeta
+};
+
 class ViewerWindow : public QGLWidget
 {
    Q_OBJECT;

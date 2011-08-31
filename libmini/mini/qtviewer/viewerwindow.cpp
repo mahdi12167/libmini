@@ -112,17 +112,30 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_Space)
+   if (event->key() == Qt::Key_Shift)
+      renderer->modifierKey(ModifierShift, true);
+   else if (event->key() == Qt::Key_Control)
+      renderer->modifierKey(ModifierControl, true);
+   else if (event->key() == Qt::Key_Meta)
+      renderer->modifierKey(ModifierMeta, true);
+   else if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
    else if (event->key() == Qt::Key_W)
-      renderer->toggle_wireframe();
+      renderer->toggleWireframe();
    else
       QGLWidget::keyPressEvent(event);
 }
 
 void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
 {
-   QGLWidget::keyReleaseEvent(event);
+   if (event->key() == Qt::Key_Shift)
+      renderer->modifierKey(ModifierShift, false);
+   else if (event->key() == Qt::Key_Control)
+      renderer->modifierKey(ModifierControl, false);
+   else if (event->key() == Qt::Key_Meta)
+      renderer->modifierKey(ModifierMeta, false);
+   else
+      QGLWidget::keyReleaseEvent(event);
 }
 
 void ViewerWindow::wheelEvent(QWheelEvent *event)

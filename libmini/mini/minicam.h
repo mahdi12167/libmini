@@ -47,7 +47,9 @@ class minicam
    double get_pitch();
 
    void move(const miniv3d &delta);
+   void move_plain(const miniv3d &delta);
    void move_forward(double delta);
+   void move_forward_plain(double delta);
    void move_back(double delta);
    void move_right(double delta);
    void move_left(double delta);
@@ -58,7 +60,7 @@ class minicam
    void rotate(double delta,const miniv3d &axis);
    void rotate_right(double delta);
    void rotate_up(double delta);
-   void rotate_limit(double limit=90.0);
+   void rotate_limit(double llimit=-90.0,double ulimit=90.0);
 
    double get_elev(const minicoord &pos);
    double get_dist(const minicoord &pos);

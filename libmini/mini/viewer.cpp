@@ -875,7 +875,7 @@ void render()
    cam->rotate_up(-accel*incline);
    incline*=(1.0-accel);
 
-   cam->rotate_limit(90.0);
+   cam->rotate_limit(-90.0,90.0);
 
    coef=dist/hover-1.0;
    if (coef>1.0) coef=1.0;
