@@ -13,7 +13,7 @@ minicam::minicam(miniearth *earth,
    {
    EARTH=earth;
 
-   eye_default=minicoord(miniv3d(lat,lon,height),minicoord::MINICOORD_LLH);
+   eye_default=minicoord(miniv3d(3600*lon,3600*lat,height),minicoord::MINICOORD_LLH);
    eye_default.convert2(minicoord::MINICOORD_ECEF);
 
    set_eye(EARTH->getinitial(),0.0,-90.0,mindist);
