@@ -4,7 +4,7 @@
 
 # check for installation of version control systems used for pulling:
 
-foreach app (cvs svn git cmake)
+foreach app (cvs svn git wget cmake)
    if (! -X $app) then
       echo warning: $app is not installed!
       if ($app == "git") echo "solution: install git with the getgit.sh script"
@@ -23,9 +23,11 @@ if (-X git) then
    (cd curl; git checkout curl-7_21_2)
 else
    if (! -e curl) then
-      wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
-      tar zxf curl-7.21.2.tar.gz
-      mv curl-7.21.2 curl
+      if (-X wget) then
+         wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
+         tar zxf curl-7.21.2.tar.gz
+         mv curl-7.21.2 curl
+      endif
    endif
 endif
 
