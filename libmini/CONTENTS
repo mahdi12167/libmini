@@ -18,6 +18,8 @@ Then the libMini viewer additionally requires the dependencies libpng freeGLUT s
 These dependencies can be built from the respective source code package in the deps folder.
 For Windows, prebuilt static libaries are available in the WIN32 folder.
 
+For building the libMini QT viewer, the QT library and qmake need to be installed.
+
 Some notes about copyright and licensing:
 
 1) The libMini library in the mini folder is copyright by Stefan Roettger.
