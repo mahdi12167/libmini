@@ -173,14 +173,15 @@ inline char *strdup2(const char *str1,const char *str2)
    }
 
 #ifdef _MSC_VER
-
 inline int strcasecmp(const char *str1,const char *str2)
    {
    const char *ptr1,*ptr2;
    for (ptr1=str1,ptr2=str2; tolower(*ptr1)==tolower(*ptr2) && *ptr1!='\0' && *ptr2!='\0'; ptr1++,ptr2++);
    return(*ptr2-*ptr1);
    }
+#endif
 
+#if defined(_MSC_VER) or defined(__MINGW32__)
 inline char *strcasestr(const char *str1,const char *str2)
    {
    unsigned int i,j;
@@ -200,7 +201,6 @@ inline char *strcasestr(const char *str1,const char *str2)
 
    return(NULL);
    }
-
 #endif
 
 #ifdef _MSC_VER
