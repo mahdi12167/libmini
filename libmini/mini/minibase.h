@@ -181,7 +181,7 @@ inline int strcasecmp(const char *str1,const char *str2)
    }
 #endif
 
-#if defined(_MSC_VER) or defined(__MINGW32__)
+#if defined(_MSC_VER) || defined(__MINGW32__)
 inline char *strcasestr(const char *str1,const char *str2)
    {
    unsigned int i,j;

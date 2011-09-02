@@ -80,14 +80,14 @@ double minicam::get_angle()
    if (s<-1.0) s=-1.0;
    else if (s>1.0) s=1.0;
 
-   if (dir*eye_dir<0.0) angle=M_PI-asin(s);
+   if (dir*eye_dir<0.0) angle=PI-asin(s);
    else angle=asin(s);
 
-   if (angle<0.0) angle+=2.0*M_PI;
+   if (angle<0.0) angle+=2.0*PI;
 
    rotate_up(pitch);
 
-   return(angle*180.0/M_PI);
+   return(angle*180.0/PI);
    }
 
 double minicam::get_pitch()
@@ -102,12 +102,12 @@ double minicam::get_pitch()
    if (s<-1.0) s=-1.0;
    else if (s>1.0) s=1.0;
 
-   if (up*eye_up<0.0) pitch=-M_PI-asin(s);
+   if (up*eye_up<0.0) pitch=-PI-asin(s);
    else pitch=asin(s);
 
-   if (pitch<-M_PI) pitch+=2.0*M_PI;
+   if (pitch<-PI) pitch+=2.0*PI;
 
-   return(pitch*180.0/M_PI);
+   return(pitch*180.0/PI);
    }
 
 void minicam::move(const miniv3d &delta)

@@ -350,8 +350,8 @@ void rot_mtx(miniv3d rot[3],double delta,const miniv3d &axis)
    double y=axis.y;
    double z=axis.z;
 
-   double s=sin(delta/180.0*M_PI);
-   double c=cos(delta/180.0*M_PI);
+   double s=sin(delta/180.0*PI);
+   double c=cos(delta/180.0*PI);
    double c1=1.0-c;
 
    rot[0]=miniv3d(x*x*c1+c,   x*y*c1-z*s, x*z*c1+y*s);
