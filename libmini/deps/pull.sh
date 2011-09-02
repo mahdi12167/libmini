@@ -4,9 +4,11 @@
 
 # check for installation of version control systems used for pulling:
 
-foreach app (cvs svn git)
+foreach app (cvs svn git cmake)
    if (! -X $app) then
       echo warning: $app is not installed!
+      if ($app == "git") echo "solution: install git with the getgit.sh script"
+      if ($app == "cmake") echo "solution: install cmake with the getcmake.sh script"
    endif
 end
 
@@ -29,7 +31,7 @@ endif
 
 # squish 1.10 /w cmake
 if (-X ../mini/tabify.sh && -X svn) then
-   svn co -r 26 http://libsquish.googlecode.com/svn/trunk libsquish
+   svn co -r 29 http://libsquish.googlecode.com/svn/trunk libsquish
    foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
       cp -f $file $file:s/libsquish/squish/
       ../mini/tabify.sh -x $file:s/libsquish/squish/
