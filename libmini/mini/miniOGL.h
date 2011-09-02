@@ -184,7 +184,9 @@ void print_graphics_info(); // print useful OpenGL information
 
 #ifdef _WIN32
 #   ifndef APIENTRY
-#      define NOMINMAX
+#      ifndef NOMINMAX
+#         define NOMINMAX
+#      endif
 #      include <windows.h>
 #   endif
 #endif
