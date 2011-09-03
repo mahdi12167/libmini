@@ -1,12 +1,13 @@
 #include <string>
 
-#include <QtGui>
-#include <QFileDialog>
+#include <QtGui/QMenuBar>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
+
+#include "viewerwindow.h"
 
 #include "mainconst.h"
 #include "mainwindow.h"
-
-#include "viewerwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)

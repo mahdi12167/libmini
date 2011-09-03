@@ -1,9 +1,9 @@
-#include <QtGui>
-#include <QtOpenGL/qgl.h>
+#include <QtGui/QApplication>
+
+#include "renderer.h"
 
 #include "viewerconst.h"
 #include "viewerwindow.h"
-#include "renderer.h"
 
 ViewerWindow::ViewerWindow(QWidget* )
    : renderer(NULL), bLeftButtonDown(false), bRightButtonDown(false)

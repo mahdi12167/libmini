@@ -3,14 +3,11 @@
 
 #include <QtOpenGL/qgl.h>
 
-class Renderer;
+#include <QtCore/QTime>
+#include <QtCore/QPoint>
+#include <QtGui/QMouseEvent>
 
-enum modifierKeys
-{
-   ModifierShift,
-   ModifierControl,
-   ModifierMeta
-};
+class Renderer;
 
 class ViewerWindow : public QGLWidget
 {

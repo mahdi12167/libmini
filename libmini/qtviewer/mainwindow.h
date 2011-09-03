@@ -3,8 +3,9 @@
 
 #include <QtGui/QMainWindow>
 
-class QAction;
-class QLabel;
+#include <QtGui/QMenu>
+#include <QtGui/QAction>
+
 class ViewerWindow;
 
 class MainWindow : public QMainWindow

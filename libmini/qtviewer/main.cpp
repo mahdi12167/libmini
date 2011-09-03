@@ -1,6 +1,7 @@
-#include <QtGui>
 #include <QtGui/QApplication>
 #include <QtOpenGL/qgl.h>
+
+#include <QtGui/QMessageBox>
 
 #include "mainwindow.h"
 

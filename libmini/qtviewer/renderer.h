@@ -1,8 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <QTime>
 #include <QtOpenGL/qgl.h>
+
+#include <QtCore/QTime>
+#include <QtCore/QPoint>
 
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
@@ -11,7 +13,12 @@
 #include <mini/viewerbase.h>
 #include "viewerconst.h"
 
-#include "viewerwindow.h"
+enum modifierKeys
+{
+   ModifierShift,
+   ModifierControl,
+   ModifierMeta
+};
 
 class Renderer
 {

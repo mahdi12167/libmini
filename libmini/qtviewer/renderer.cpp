@@ -1,5 +1,6 @@
-#include <QtGui>
 #include <QtOpenGL/qgl.h>
+
+#include <QtGui/QMessageBox>
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
