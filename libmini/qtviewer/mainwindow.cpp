@@ -76,7 +76,17 @@ void MainWindow::open()
    if (!fileName.isNull())
    {
       if (fileName.endsWith(".ini", Qt::CaseInsensitive))
-         fileName.truncate(fileName.lastIndexOf("/"));
+         {
+         int lio1=fileName.lastIndexOf("/");
+         int lio2=fileName.lastIndexOf("\\");
+
+         if (lio1>0 && lio2>0)
+            fileName.truncate((lio1>lio2)?lio1:lio2);
+         else if (lio1>0)
+            fileName.truncate(lio1);
+         else if (lio2>0)
+            fileName.truncate(lio2);
+         }
 
       viewerWindow->loadMapURL(fileName.toStdString().c_str());
    }

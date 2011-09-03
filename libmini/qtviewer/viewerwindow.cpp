@@ -20,6 +20,9 @@ ViewerWindow::ViewerWindow(QWidget* )
    // init map
    if (dataPathList.size()>1)
       renderer->setMapURL(dataPathList[1].toAscii().constData());
+
+   // accept drag and drop
+   setAcceptDrops(true);
 }
 
 ViewerWindow::~ViewerWindow()
