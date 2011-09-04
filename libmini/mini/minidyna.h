@@ -80,7 +80,7 @@ class minidyna
          {
          if (size<=MAXSIZE/2 || size>MAXSIZE)
             {
-            for (s=2; s<size; s*=2) ;
+            for (s=2; s<size;) s*=2;
 
             a=new Item[s-MINSIZE];
             if (a==NULL) MEMERROR();

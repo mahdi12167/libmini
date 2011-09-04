@@ -370,24 +370,23 @@ void minicam::get_local_base(const minicoord &pos,
 void minicam::move_above(minicoord &pos,double mindist)
    {
    double elev;
+   double dist;
 
    minilayer *nst;
    minicoord posl;
 
-   if (pos.type!=minicoord::MINICOORD_LINEAR)
-      pos.convert2(minicoord::MINICOORD_ECEF);
+   elev=get_elev(pos);
+   nst=EARTH->getnearest(pos);
 
-   elev=EARTH->getheight(pos);
-
-   if (elev!=-MAXFLOAT)
+   if (elev!=-MAXFLOAT && nst!=NULL)
       {
-      nst=EARTH->getnearest(pos);
-
-      if (nst!=NULL)
-         {
-         posl=nst->map_g2l(pos);
-         posl.vec.z=dmax(posl.vec.z,nst->len_g2l(elev+mindist));
-         pos=nst->map_l2g(posl);
-         }
+      posl=nst->map_g2l(pos);
+      posl.vec.z=dmax(posl.vec.z,nst->len_g2l(elev+mindist));
+      pos=nst->map_l2g(posl);
+      }
+   else
+      {
+      dist=get_dist(pos);
+      if (dist<mindist) move_down(dist-mindist);
       }
    }
