@@ -172,12 +172,16 @@ void Renderer::initParameters()
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
 
+float mapt(float t)
+   {return((fcos((1.0f-t)*PI)+1.0f)/2.0f);}
+
 // initialize VIS bathy map
 void Renderer::initVISbathymap()
 {
    float rgba[4];
-   static const float hue1=0.0f;
+   static const float hue1=200.0f;
    static const float hue2=240.0f;
+   static const float thresh=0.05f;
 
    for (int i=0; i<VIEWER_BATHYWIDTH; i++)
    {
@@ -185,7 +189,8 @@ void Renderer::initVISbathymap()
 
       hsv2rgb(hue1+(hue2-hue1)*t,1.0f,1.0f,rgba);
 
-      rgba[3]=fpow(1.0f-fabs(2.0f*(t-0.5f)),1.0f/3);
+      if (t<thresh) rgba[3]=mapt(t/thresh);
+      else rgba[3]=mapt(1.0f-1.0f/(1.0f-thresh)*(t-thresh));
 
       m_BathyMap[4*i]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
       m_BathyMap[4*i+1]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
