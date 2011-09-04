@@ -179,7 +179,7 @@ float mapt(float t)
 void Renderer::initVISbathymap()
 {
    float rgba[4];
-   static const float hue1=200.0f;
+   static const float hue1=190.0f;
    static const float hue2=240.0f;
    static const float thresh=0.05f;
 
