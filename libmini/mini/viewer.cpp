@@ -21,12 +21,11 @@ static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 #include <mini/miniv3f.h>
 #include <mini/miniv3d.h>
 
-#include <mini/minirgb.h>
-
 #include <mini/miniOGL.h>
 
 #include <mini/minilayer.h>
 #include <mini/miniterrain.h>
+#include <mini/minishader.h>
 
 #include <mini/minitile.h>
 #include <mini/minitext.h>
@@ -451,40 +450,25 @@ void screenshot()
 // initialize VIS bathy map
 void initVISbathymap()
    {
-   int i;
-
-   float t;
-
-   float rgba[4];
-
    static const float hue1=0.0f;
    static const float hue2=240.0f;
 
-   for (i=0; i<VIEWER_BATHYWIDTH; i++)
-      {
-      t=(float)i/(VIEWER_BATHYWIDTH-1);
+   static const float sat1=1.0f;
+   static const float sat2=1.0f;
 
-      hsv2rgb(hue1+(hue2-hue1)*t,1.0f,1.0f,rgba);
+   static const float val1=1.0f;
+   static const float val2=1.0f;
 
-      rgba[3]=fpow(1.0f-fabs(2.0f*(t-0.5f)),1.0f/3);
-
-      VIEWER_BATHYMAP[4*i]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
-      VIEWER_BATHYMAP[4*i+1]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
-      VIEWER_BATHYMAP[4*i+2]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
-      VIEWER_BATHYMAP[4*i+3]=VIEWER_BATHYMAP[4*(i+VIEWER_BATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
-      }
+   minishader::initbathymap_linear(VIEWER_BATHYMAP,VIEWER_BATHYWIDTH,
+                                   hue1,hue2,
+                                   sat1,sat2,
+                                   val1,val2,
+                                   VIEWER_BATHYMID);
    }
 
 // initialize NPR bathy map
 void initNPRbathymap()
    {
-   int i;
-
-   float t;
-   float alpha;
-
-   float rgba[4];
-
    static const float hue1=120.0f;
    static const float hue2=60.0f;
 
@@ -492,25 +476,10 @@ void initNPRbathymap()
    static const float sat_ctr=0.75f;
    static const float val_ctr=0.25f;
 
-   for (i=0; i<VIEWER_NPRBATHYWIDTH; i++)
-      {
-      t=(float)i/(VIEWER_NPRBATHYWIDTH-1);
-
-      alpha=t*fabs(VIEWER_NPRBATHYEND-VIEWER_NPRBATHYSTART)/VIEWER_CONTOURS;
-      alpha=alpha-ftrc(alpha);
-
-      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,2.0f*t,1.0f,rgba);
-      else hsv2rgb(hue1+(hue2-hue1)*t,2.0f*(1.0f-t),1.0f,rgba);
-
-      rgba[3]=0.5f;
-
-      if (alpha>0.9f) hsv2rgb(hue_ctr,sat_ctr,val_ctr,rgba);
-
-      VIEWER_NPRBATHYMAP[4*i]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+1]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+2]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
-      VIEWER_NPRBATHYMAP[4*i+3]=VIEWER_NPRBATHYMAP[4*(i+VIEWER_NPRBATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
-      }
+   minishader::initbathymap_contour(VIEWER_NPRBATHYMAP,VIEWER_NPRBATHYWIDTH,
+                                    hue1,hue2,0.5f,
+                                    VIEWER_NPRBATHYSTART,VIEWER_NPRBATHYEND,VIEWER_NPRCONTOURS,
+                                    hue_ctr,sat_ctr,val_ctr);
    }
 
 // report actual position

@@ -796,10 +796,10 @@ void minishader::unsetshaders(minicache *cache)
    }
 
 // helper function
-float mapt(float t)
+float minishader::mapt(float t)
    {return(fsqr(fsin(PI/2.0f*t)));}
 
-// initialize bathy map (linear hue mapping)
+// initialize bathy map (with linear hue mapping)
 void minishader::initbathymap_linear(unsigned char *map,int width,
                                      float hue1,float hue2,
                                      float sat1,float sat2,
