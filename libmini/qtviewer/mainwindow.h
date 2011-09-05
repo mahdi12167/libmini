@@ -7,11 +7,11 @@ class ViewerWindow;
 
 class QMenu;
 class QAction;
+class QGroupBox;
 class QVBoxLayout;
 class QTableWidget;
 class QDialogButtonBox;
 class QPushButton;
-class QMimeData;
 
 class MainWindow : public QMainWindow
 {
@@ -22,16 +22,17 @@ public:
    ~MainWindow();
 
 public slots:
-   void clear();
-   void updateTable(const QMimeData *mimeData);
+   void updateTable(const QString url);
 
 private slots:
    void about();
    void open();
+   void clear();
 
 private:
    void createActions();
    void createMenus();
+   void createWidgets();
 
    QMenu* fileMenu;
    QMenu* helpMenu;
@@ -40,6 +41,7 @@ private:
    QAction* openAction;
    QAction* quitAction;
 
+   QGroupBox *mainGroup;
    QVBoxLayout *mainLayout;
 
    ViewerWindow* viewerWindow;

@@ -118,7 +118,7 @@ protected:
    bool      m_Shift, m_Control, m_Meta;
 
    // texture ids
-   GLuint m_CrosshairTextureId;
+   GLuint    m_CrosshairTextureId;
 };
 
 #endif

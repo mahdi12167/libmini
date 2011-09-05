@@ -1,7 +1,5 @@
 #include <string>
 
-#include <QtCore/QMimeData>
-
 #include <QtGui>
 
 #include "viewerwindow.h"
@@ -12,44 +10,12 @@
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)
 {
-   mainLayout = new QVBoxLayout;
-
-   viewerWindow = new ViewerWindow();
-   viewerTable = new QTableWidget;
-   buttonBox = new QDialogButtonBox;
-
-   connect(viewerWindow, SIGNAL(changed(const QMimeData*)),
-           this, SLOT(updateTable(const QMimeData*)));
-
-   QStringList labels;
-   labels << tr("Layer") << tr("URL");
-
-   viewerTable->setColumnCount(2);
-   viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-   viewerTable->setHorizontalHeaderLabels(labels);
-   viewerTable->horizontalHeader()->setStretchLastSection(true);
-
-   clearButton = new QPushButton(tr("Clear"));
-   quitButton = new QPushButton(tr("Quit"));
-
-   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
-   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
-
-   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
-   connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
-
-   mainLayout->addWidget(viewerWindow);
-   mainLayout->addWidget(viewerTable);
-   mainLayout->addWidget(buttonBox);
-
-   //!!setLayout(mainLayout);
-   setCentralWidget(viewerWindow);
-
    createActions();
    createMenus();
+   createWidgets();
 
+   setCentralWidget(mainGroup);
    setWindowTitle(tr(VIEWER_NAME));
-   resize(VIEWER_WIDTH, VIEWER_HEIGHT);
 }
 
 MainWindow::~MainWindow() {}
@@ -84,6 +50,42 @@ void MainWindow::createMenus()
 
    helpMenu = menuBar()->addMenu(tr("&Help"));
    helpMenu->addAction(aboutAction);
+}
+
+void MainWindow::createWidgets()
+{
+   mainGroup = new QGroupBox;
+   mainLayout = new QVBoxLayout;
+
+   viewerWindow = new ViewerWindow();
+   viewerTable = new QTableWidget;
+   buttonBox = new QDialogButtonBox;
+
+   connect(viewerWindow, SIGNAL(changed(const QString)),
+           this, SLOT(updateTable(const QString)));
+
+   QStringList labels;
+   labels << tr("URL");
+
+   viewerTable->setColumnCount(1);
+   viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   viewerTable->setHorizontalHeaderLabels(labels);
+   viewerTable->horizontalHeader()->setStretchLastSection(true);
+
+   clearButton = new QPushButton(tr("Clear"));
+   quitButton = new QPushButton(tr("Quit"));
+
+   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
+   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
+
+   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
+   connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
+
+   mainLayout->addWidget(viewerWindow);
+   mainLayout->addWidget(viewerTable);
+   mainLayout->addWidget(buttonBox);
+
+   mainGroup->setLayout(mainLayout);
 }
 
 void MainWindow::about()
@@ -124,8 +126,13 @@ void MainWindow::open()
 
 void MainWindow::clear()
 {
+   viewerWindow->clearMaps();
 }
 
-void MainWindow::updateTable(const QMimeData *mimeData)
+void MainWindow::updateTable(const QString url)
 {
+   int rows = viewerTable->rowCount();
+
+   viewerTable->insertRow(rows);
+   viewerTable->setItem(rows, 0, new QTableWidgetItem(url));
 }

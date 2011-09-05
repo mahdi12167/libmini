@@ -20,11 +20,14 @@ public:
    ViewerWindow(QWidget* parent = 0);
    virtual ~ViewerWindow();
 
-   void clearURL();
+   QSize minimumSizeHint() const;
+   QSize sizeHint() const;
+
+   void clearMaps();
    void loadMapURL(const char* url);
 
 signals:
-   void changed(const QMimeData *mimeData = 0);
+   void changed(const QString url);
 
 protected:
    void initializeGL();
@@ -42,6 +45,11 @@ protected:
    void wheelEvent(QWheelEvent *event);
 
    void timerEvent(QTimerEvent *);
+
+   void dragEnterEvent(QDragEnterEvent *event);
+   void dragMoveEvent(QDragMoveEvent *event);
+   void dropEvent(QDropEvent *event);
+   void dragLeaveEvent(QDragLeaveEvent *event);
 
 private:
    Renderer* renderer;

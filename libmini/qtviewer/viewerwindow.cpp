@@ -1,5 +1,7 @@
 #include <QtGui/QApplication>
 
+#include <QtCore/QUrl>
+
 #include "renderer.h"
 
 #include "viewerconst.h"
@@ -10,6 +12,7 @@ ViewerWindow::ViewerWindow(QWidget* )
 {
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
+
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
 
    QStringList dataPathList = QCoreApplication::arguments();
@@ -19,7 +22,7 @@ ViewerWindow::ViewerWindow(QWidget* )
 
    // init map
    if (dataPathList.size()>1)
-      renderer->setMapURL(dataPathList[1].toAscii().constData());
+      renderer->setMapURL(dataPathList[1].toAscii().constData()); //!! emit changed();
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -29,6 +32,16 @@ ViewerWindow::~ViewerWindow()
 {
    if (renderer!=NULL)
       delete renderer;
+}
+
+QSize ViewerWindow::minimumSizeHint() const
+{
+   return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/VIEWER_ASPECT));
+}
+
+QSize ViewerWindow::sizeHint() const
+{
+   return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/VIEWER_ASPECT));
 }
 
 void ViewerWindow::initializeGL()
@@ -160,7 +173,58 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    renderer->timerEvent(event->timerId());
 }
 
+void ViewerWindow::clearMaps()
+{
+   //!! renderer->clear();
+   //!! emit changed();
+}
+
 void ViewerWindow::loadMapURL(const char* url)
 {
    renderer->loadMapURL(url);
+   emit changed(QString(url));
+}
+
+void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+   event->acceptProposedAction();
+}
+
+void ViewerWindow::dragMoveEvent(QDragMoveEvent *event)
+{
+   event->acceptProposedAction();
+}
+
+void ViewerWindow::dropEvent(QDropEvent *event)
+{
+   const QMimeData *mimeData = event->mimeData();
+
+   if (mimeData->hasUrls())
+   {
+      QList<QUrl> urlList = mimeData->urls();
+      QString url = urlList.at(0).path();
+
+      if (url.endsWith(".ini", Qt::CaseInsensitive))
+         {
+         int lio1=url.lastIndexOf("/");
+         int lio2=url.lastIndexOf("\\");
+
+         if (lio1>0 && lio2>0)
+            url.truncate((lio1>lio2)?lio1:lio2);
+         else if (lio1>0)
+            url.truncate(lio1);
+         else if (lio2>0)
+            url.truncate(lio2);
+         }
+
+      event->acceptProposedAction();
+
+      renderer->loadMapURL(url.toStdString().c_str());
+      emit changed(url);
+   }
+}
+
+void ViewerWindow::dragLeaveEvent(QDragLeaveEvent *event)
+{
+   event->accept();
 }

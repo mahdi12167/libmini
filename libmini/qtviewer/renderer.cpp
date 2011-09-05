@@ -199,8 +199,8 @@ void Renderer::initView()
 {
    resizeViewport();
 
-   camera->move_down(-CAMERA_HEIGHT_START);
-   camera->move_above(CAMERA_HEIGHT_FLOOR);
+   camera->move_down(-VIEWER_HEIGHT_START);
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    viewer->initeyepoint(camera->get_eye());
 }
@@ -553,7 +553,7 @@ void Renderer::moveCameraForward(float delta)
    if (dist < mindist) dist = mindist;
 
    camera->move(delta * dist * unprojectMouse());
-   camera->move_above(CAMERA_HEIGHT_FLOOR);
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    startIdling();
 }
@@ -573,7 +573,7 @@ void Renderer::moveCameraSideward(float delta)
    if (dist < mindist) dist = mindist;
 
    camera->move_right(-delta * dist);
-   camera->move_above(CAMERA_HEIGHT_FLOOR);
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    startIdling();
 }
@@ -597,12 +597,12 @@ void Renderer::processTransition(double dt)
    {
       dir.normalize();
       camera->move(dir * speed * dt);
-      camera->move_above(CAMERA_HEIGHT_FLOOR);
+      camera->move_above(VIEWER_HEIGHT_FLOOR);
    }
    else
    {
       camera->move(dir);
-      camera->move_above(CAMERA_HEIGHT_FLOOR);
+      camera->move_above(VIEWER_HEIGHT_FLOOR);
 
       stopTransition();
    }
