@@ -90,7 +90,9 @@ bool Renderer::loadMap(const char* url)
 // remove map layers
 void Renderer::clearMaps()
 {
-   //!!
+   printf("check1\n"); //!!
+   viewer->getearth()->getterrain()->remove(); //!! crash boom bang
+   printf("check2\n"); //!!
 }
 
 // initialize libMini parameters
@@ -173,6 +175,7 @@ void Renderer::initBathyMap()
                                    VIEWER_BATHYMID);
 }
 
+// set camera position and direction
 void Renderer::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
 {
    if (camera==NULL) return;
@@ -231,6 +234,7 @@ void Renderer::resizeViewport()
    glViewport(0, 0, winWidth, winHeight);
 }
 
+// draw scene
 void Renderer::draw()
 {
    minilayer *nst;
@@ -248,6 +252,7 @@ void Renderer::draw()
    startIdling();
 }
 
+// setup OpenGL modelview and projection matrices
 void Renderer::setupMatrix()
 {
    glViewport(0.0f, 0.0f, viewportwidth, viewportheight);
@@ -272,6 +277,7 @@ void Renderer::setupMatrix()
              upGL.x,upGL.y,upGL.z);
 }
 
+// render terrain
 void Renderer::renderTerrain()
 {
    // start timer
@@ -292,6 +298,7 @@ void Renderer::renderTerrain()
    viewer->adapt(delta);
 }
 
+// render head-up display
 void Renderer::renderHUD()
 {
    // draw crosshair:

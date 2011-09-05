@@ -1,3 +1,5 @@
+#include <string>
+
 #include <QtGui/QApplication>
 
 #include <QtCore/QUrl>
@@ -48,8 +50,7 @@ void ViewerWindow::initializeGL()
       // init map from arguments
       QStringList dataPathList = QCoreApplication::arguments();
       for (int i=1; i<dataPathList.size(); i++)
-         if (renderer->loadMap(dataPathList[i].toAscii().constData())) //!! trailing .ini
-            emit changed(dataPathList[i]);
+         loadMap(dataPathList[i]);
    }
 
    qglClearColor(Qt::black);
@@ -176,10 +177,23 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    renderer->timerEvent(event->timerId());
 }
 
-void ViewerWindow::loadMap(const char* url)
+void ViewerWindow::loadMap(QString url)
 {
-   if (renderer->loadMap(url))
-      emit changed(QString(url));
+   if (url.endsWith(".ini", Qt::CaseInsensitive))
+   {
+      int lio1=url.lastIndexOf("/");
+      int lio2=url.lastIndexOf("\\");
+
+      if (lio1>0 && lio2>0)
+         url.truncate((lio1>lio2)?lio1:lio2);
+      else if (lio1>0)
+         url.truncate(lio1);
+      else if (lio2>0)
+         url.truncate(lio2);
+   }
+
+   if (renderer->loadMap(url.toStdString().c_str()))
+      emit changed(url);
 }
 
 void ViewerWindow::clearMaps()
@@ -211,22 +225,7 @@ void ViewerWindow::dropEvent(QDropEvent *event)
       for (int i=0; i<urlList.size(); i++)
       {
          QString url = urlList.at(i).path();
-
-         if (url.endsWith(".ini", Qt::CaseInsensitive))
-         {
-            int lio1=url.lastIndexOf("/");
-            int lio2=url.lastIndexOf("\\");
-
-            if (lio1>0 && lio2>0)
-               url.truncate((lio1>lio2)?lio1:lio2);
-            else if (lio1>0)
-               url.truncate(lio1);
-            else if (lio2>0)
-               url.truncate(lio2);
-         }
-
-         if (renderer->loadMap(url.toStdString().c_str()))
-            emit changed(url);
+         loadMap(url);
       }
    }
 }

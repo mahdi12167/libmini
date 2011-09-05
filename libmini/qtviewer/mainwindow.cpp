@@ -1,5 +1,3 @@
-#include <string>
-
 #include <QtGui>
 
 #include "viewerwindow.h"
@@ -106,22 +104,7 @@ void MainWindow::open()
       fileName = fd->selectedFiles().at(0);
 
    if (!fileName.isNull())
-   {
-      if (fileName.endsWith(".ini", Qt::CaseInsensitive))
-         {
-         int lio1=fileName.lastIndexOf("/");
-         int lio2=fileName.lastIndexOf("\\");
-
-         if (lio1>0 && lio2>0)
-            fileName.truncate((lio1>lio2)?lio1:lio2);
-         else if (lio1>0)
-            fileName.truncate(lio1);
-         else if (lio2>0)
-            fileName.truncate(lio2);
-         }
-
-      viewerWindow->loadMap(fileName.toStdString().c_str());
-   }
+      viewerWindow->loadMap(fileName);
 }
 
 void MainWindow::clear()
