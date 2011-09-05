@@ -196,16 +196,16 @@ void initparams()
 
    tprms.bathymap=VIEWER_BATHYMAP;
    tprms.bathywidth=VIEWER_BATHYWIDTH;
-   tprms.bathyheight=VIEWER_BATHYHEIGHT;
-   tprms.bathycomps=VIEWER_BATHYCOMPS;
+   tprms.bathyheight=2;
+   tprms.bathycomps=4;
 
    tprms.nprbathystart=VIEWER_NPRBATHYSTART;
    tprms.nprbathyend=VIEWER_NPRBATHYEND;
 
    tprms.nprbathymap=VIEWER_NPRBATHYMAP;
    tprms.nprbathywidth=VIEWER_NPRBATHYWIDTH;
-   tprms.nprbathyheight=VIEWER_NPRBATHYHEIGHT;
-   tprms.nprbathycomps=VIEWER_NPRBATHYCOMPS;
+   tprms.nprbathyheight=2;
+   tprms.nprbathycomps=4;
 
    tprms.nprcontours=VIEWER_NPRCONTOURS;
 
