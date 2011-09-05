@@ -54,6 +54,8 @@ void Renderer::loadMapURL(const char* url)
             QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
             return;
          }
+         else
+            viewer->getearth()->defineroi(0.0);
 }
 
 void Renderer::init()
