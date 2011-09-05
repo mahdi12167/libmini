@@ -792,6 +792,8 @@ void miniterrain::remove(int n)
    {
    if (n<0 || n>=LNUM) return;
 
+   if (!LAYER[n]->istileset()) return;
+
    delete LAYER[n];
 
    if (n<LNUM-1) LAYER[n]=LAYER[--LNUM];
