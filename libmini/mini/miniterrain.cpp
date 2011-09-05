@@ -26,7 +26,7 @@ miniterrain::miniterrain()
 
    TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
    TPARAMS.fadedist=500000.0f;          // spherical fade out distance
-   TPARAMS.fademult=4.0f;               // spherical fade out distance multiplier to yield farp
+   TPARAMS.fademult=2.0f;               // spherical fade out distance multiplier to yield farp
    TPARAMS.fadeout=0.01f;               // spherical fade out range relative to distance
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
