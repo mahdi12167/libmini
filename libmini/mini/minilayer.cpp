@@ -11,8 +11,6 @@
 
 #include "minilayer.h"
 
-#define FARP (LPARAMS.farp*pow(2.0,LPARAMS.level))
-
 // default constructor
 minilayer::minilayer(minicache *cache)
    {
@@ -286,7 +284,7 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
       {
       if (TILECACHE!=NULL)
          {
-         TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*FARP/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
+         TILECACHE->getcloud()->getterrain()->setpreload(LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,ftrc(fceil(LPARAMS.update*LPARAMS.fps)));
          TILECACHE->getcloud()->getterrain()->setexpire(ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
 
          range=LPARAMS.range;
@@ -299,8 +297,8 @@ void minilayer::set(MINILAYER_PARAMS &lparams)
                range*=texres/LPARAMS.refres;
                }
 
-         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange1*LPARAMS.relrange2*FARP/LPARAMS.scale);
-         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.relrange1*LPARAMS.relrange2*FARP/LPARAMS.scale,LPARAMS.dropoff);
+         TILECACHE->getcloud()->getterrain()->setrange(range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale);
+         TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
 
          TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
 
@@ -492,8 +490,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TILECACHE->setvtbelevpath(basepath1);
    TILECACHE->setvtbimagpath(basepath2);
    TILECACHE->setstartupfile(LPARAMS.startupfile);
-   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*FARP/LPARAMS.scale,LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*FARP/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
-   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*FARP/LPARAMS.scale,LPARAMS.dropoff);
+   TILECACHE->setloader(minilayer::request_callback,this,1,LPARAMS.preload*LPARAMS.farp/LPARAMS.scale,LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.basesize,LPARAMS.lazyness,ftrc(fceil(LPARAMS.update*LPARAMS.fps)),ftrc(fceil(LPARAMS.expire*LPARAMS.fps)));
+   TILECACHE->getcloud()->getterrain()->setradius(LPARAMS.radius*LPARAMS.range*LPARAMS.relrange1*LPARAMS.relrange2*LPARAMS.farp/LPARAMS.scale,LPARAMS.dropoff);
    TILECACHE->getcloud()->getterrain()->setsealevel((LPARAMS.sealevel==-MAXFLOAT)?LPARAMS.sealevel:LPARAMS.sealevel*LPARAMS.exaggeration/LPARAMS.scale);
    TILECACHE->getcloud()->setschedule(LPARAMS.upload/LPARAMS.fps,LPARAMS.keep,LPARAMS.maxdelay*LPARAMS.update);
    TILECACHE->getcloud()->setmaxsize(LPARAMS.cache);
@@ -1501,12 +1499,12 @@ void minilayer::initeyepoint(const minicoord &e)
    ei=map_g2i(e);
 
    // restrict loaded area
-   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,LPARAMS.load*len_g2i(FARP));
+   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,LPARAMS.load*len_g2i(LPARAMS.farp));
 
    // load smallest LODs
    TERRAIN->updateroi(LPARAMS.res*LPARAMS.relres1*LPARAMS.relres2,
-                      ei.vec.x,ei.vec.y+1000*len_g2i(FARP),ei.vec.z,
-                      ei.vec.x,ei.vec.z,len_g2i(FARP));
+                      ei.vec.x,ei.vec.y+1000*len_g2i(LPARAMS.farp),ei.vec.z,
+                      ei.vec.x,ei.vec.z,len_g2i(LPARAMS.farp));
 
    // unmark loaded area
    TERRAIN->restrictroi(ei.vec.x,ei.vec.z,0.0f);
@@ -1586,7 +1584,7 @@ void minilayer::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
                  di.x,di.y,di.z,
                  ui.x,ui.y,ui.z,
                  LPARAMS.fovy,aspect,
-                 len_g2i(LPARAMS.nearp),len_g2i(FARP),
+                 len_g2i(LPARAMS.nearp),len_g2i(LPARAMS.farp),
                  UPD);
 
    // revert to normal render buffer update
