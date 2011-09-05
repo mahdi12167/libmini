@@ -3,10 +3,15 @@
 
 #include <QtGui/QMainWindow>
 
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
-
 class ViewerWindow;
+
+class QMenu;
+class QAction;
+class QVBoxLayout;
+class QTableWidget;
+class QDialogButtonBox;
+class QPushButton;
+class QMimeData;
 
 class MainWindow : public QMainWindow
 {
@@ -15,6 +20,10 @@ class MainWindow : public QMainWindow
 public:
    MainWindow(QWidget *parent = 0);
    ~MainWindow();
+
+public slots:
+   void clear();
+   void updateTable(const QMimeData *mimeData);
 
 private slots:
    void about();
@@ -31,7 +40,14 @@ private:
    QAction* openAction;
    QAction* quitAction;
 
+   QVBoxLayout *mainLayout;
+
    ViewerWindow* viewerWindow;
+   QTableWidget *viewerTable;
+   QDialogButtonBox *buttonBox;
+
+   QPushButton *clearButton;
+   QPushButton *quitButton;
 };
 
 #endif

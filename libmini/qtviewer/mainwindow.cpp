@@ -1,8 +1,8 @@
 #include <string>
 
-#include <QtGui/QMenuBar>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtCore/QMimeData>
+
+#include <QtGui>
 
 #include "viewerwindow.h"
 
@@ -12,7 +12,37 @@
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)
 {
+   mainLayout = new QVBoxLayout;
+
    viewerWindow = new ViewerWindow();
+   viewerTable = new QTableWidget;
+   buttonBox = new QDialogButtonBox;
+
+   connect(viewerWindow, SIGNAL(changed(const QMimeData*)),
+           this, SLOT(updateTable(const QMimeData*)));
+
+   QStringList labels;
+   labels << tr("Layer") << tr("URL");
+
+   viewerTable->setColumnCount(2);
+   viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   viewerTable->setHorizontalHeaderLabels(labels);
+   viewerTable->horizontalHeader()->setStretchLastSection(true);
+
+   clearButton = new QPushButton(tr("Clear"));
+   quitButton = new QPushButton(tr("Quit"));
+
+   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
+   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
+
+   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
+   connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
+
+   mainLayout->addWidget(viewerWindow);
+   mainLayout->addWidget(viewerTable);
+   mainLayout->addWidget(buttonBox);
+
+   //!!setLayout(mainLayout);
    setCentralWidget(viewerWindow);
 
    createActions();
@@ -90,4 +120,12 @@ void MainWindow::open()
 
       viewerWindow->loadMapURL(fileName.toStdString().c_str());
    }
+}
+
+void MainWindow::clear()
+{
+}
+
+void MainWindow::updateTable(const QMimeData *mimeData)
+{
 }

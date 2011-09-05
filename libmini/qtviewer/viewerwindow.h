@@ -5,9 +5,12 @@
 
 #include <QtCore/QTime>
 #include <QtCore/QPoint>
+
 #include <QtGui/QMouseEvent>
 
 class Renderer;
+
+class QMimeData;
 
 class ViewerWindow : public QGLWidget
 {
@@ -17,7 +20,11 @@ public:
    ViewerWindow(QWidget* parent = 0);
    virtual ~ViewerWindow();
 
+   void clearURL();
    void loadMapURL(const char* url);
+
+signals:
+   void changed(const QMimeData *mimeData = 0);
 
 protected:
    void initializeGL();
