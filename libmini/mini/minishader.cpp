@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "minirgb.h"
+
 #include "minishader.h"
 
 unsigned char *minishader::VISBATHYMAP=NULL;
@@ -791,4 +793,67 @@ void minishader::unsetshaders(minicache *cache)
    cache->usevtxshader(0);
    cache->usepixshader(0);
    cache->useseashader(0);
+   }
+
+// helper function
+float mapt(float t)
+   {return(fsqr(fsin(PI/2.0f*t)));}
+
+// initialize bathy map (linear hue mapping)
+void minishader::initbathymap_linear(unsigned char *map,int width,
+                                     float hue1,float hue2,
+                                     float sat1,float sat2,
+                                     float val1,float val2,
+                                     float mid)
+   {
+   float rgba[4];
+
+   for (int i=0; i<width; i++)
+      {
+      float t=(float)i/(width-1);
+
+      hsv2rgb(hue1+(hue2-hue1)*t,
+              sat1+(sat2-sat1)*t,
+              val1+(val2-val1)*t,rgba);
+
+      if (t<mid) rgba[3]=mapt(t/mid);
+      else rgba[3]=mapt(1.0f-1.0f/(1.0f-mid)*(t-mid));
+
+      map[4*i]=map[4*(i+width)]=ftrc(255.0f*rgba[0]+0.5f);
+      map[4*i+1]=map[4*(i+width)+1]=ftrc(255.0f*rgba[1]+0.5f);
+      map[4*i+2]=map[4*(i+width)+2]=ftrc(255.0f*rgba[2]+0.5f);
+      map[4*i+3]=map[4*(i+width)+3]=ftrc(255.0f*rgba[3]+0.5f);
+      }
+   }
+
+// initialize bathy map (with contours)
+void minishader::initbathymap_contour(unsigned char *map,int width,
+                                      float hue1,float hue2,float alpha,
+                                      float start,float end,float contours,
+                                      float hue,float sat,float val)
+   {
+   float t;
+   float ctr;
+
+   float rgba[4];
+
+   for (int i=0; i<width; i++)
+      {
+      t=(float)i/(width-1);
+
+      ctr=t*fabs(end-start)/contours;
+      ctr=ctr-ftrc(ctr);
+
+      if (t<0.5f) hsv2rgb(hue1+(hue2-hue1)*t,2.0f*t,1.0f,rgba);
+      else hsv2rgb(hue1+(hue2-hue1)*t,2.0f*(1.0f-t),1.0f,rgba);
+
+      rgba[3]=alpha;
+
+      if (ctr>0.9f) hsv2rgb(hue,sat,val,rgba);
+
+      map[4*i]=map[4*(i+width)]=ftrc(255.0f*rgba[0]+0.5f);
+      map[4*i+1]=map[4*(i+width)+1]=ftrc(255.0f*rgba[1]+0.5f);
+      map[4*i+2]=map[4*(i+width)+2]=ftrc(255.0f*rgba[2]+0.5f);
+      map[4*i+3]=map[4*(i+width)+3]=ftrc(255.0f*rgba[3]+0.5f);
+      }
    }

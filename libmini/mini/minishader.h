@@ -47,6 +47,17 @@ class minishader
 
    static void unsetshaders(minicache *cache);
 
+   static void initbathymap_linear(unsigned char *map,int width,
+                                   float hue1,float hue2,
+                                   float sat1,float sat2,
+                                   float val1,float val2,
+                                   float mid);
+
+   static void initbathymap_contour(unsigned char *map,int width,
+                                    float hue1,float hue2,float alpha,
+                                    float start,float end,float contours,
+                                    float hue,float sat,float val);
+
    private:
 
    static unsigned char *VISBATHYMAP;
@@ -68,6 +79,8 @@ class minishader
    static int FADEMODE;
    static float FADESTART;
    static float FADEEND;
+
+   static float mapt(float t);
    };
 
 #endif
