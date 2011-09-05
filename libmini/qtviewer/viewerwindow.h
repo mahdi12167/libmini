@@ -23,8 +23,8 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
+   void loadMap(const char* url);
    void clearMaps();
-   void loadMapURL(const char* url);
 
 signals:
    void changed(const QString url);

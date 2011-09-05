@@ -15,14 +15,8 @@ ViewerWindow::ViewerWindow(QWidget* )
 
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
 
-   QStringList dataPathList = QCoreApplication::arguments();
-
    // init renderer
    renderer = new Renderer(this);
-
-   // init map
-   if (dataPathList.size()>1)
-      renderer->setMapURL(dataPathList[1].toAscii().constData()); //!! emit changed();
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -46,8 +40,17 @@ QSize ViewerWindow::sizeHint() const
 
 void ViewerWindow::initializeGL()
 {
-   // initialize renderer here as it needs GL context to init
-   renderer->init();
+   if (!renderer->isInited())
+   {
+      // initialize renderer here as it needs GL context to init
+      renderer->init();
+
+      // init map from arguments
+      QStringList dataPathList = QCoreApplication::arguments();
+      for (int i=1; i<dataPathList.size(); i++)
+         if (renderer->loadMap(dataPathList[i].toAscii().constData())) //!! trailing .ini
+            emit changed(dataPathList[i]);
+   }
 
    qglClearColor(Qt::black);
    glEnable(GL_DEPTH_TEST);
@@ -173,16 +176,16 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    renderer->timerEvent(event->timerId());
 }
 
-void ViewerWindow::clearMaps()
+void ViewerWindow::loadMap(const char* url)
 {
-   //!! renderer->clear();
-   //!! emit changed();
+   if (renderer->loadMap(url))
+      emit changed(QString(url));
 }
 
-void ViewerWindow::loadMapURL(const char* url)
+void ViewerWindow::clearMaps()
 {
-   renderer->loadMapURL(url);
-   emit changed(QString(url));
+   renderer->clearMaps();
+   //!! emit changed();
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -201,26 +204,30 @@ void ViewerWindow::dropEvent(QDropEvent *event)
 
    if (mimeData->hasUrls())
    {
-      QList<QUrl> urlList = mimeData->urls();
-      QString url = urlList.at(0).path();
-
-      if (url.endsWith(".ini", Qt::CaseInsensitive))
-         {
-         int lio1=url.lastIndexOf("/");
-         int lio2=url.lastIndexOf("\\");
-
-         if (lio1>0 && lio2>0)
-            url.truncate((lio1>lio2)?lio1:lio2);
-         else if (lio1>0)
-            url.truncate(lio1);
-         else if (lio2>0)
-            url.truncate(lio2);
-         }
-
       event->acceptProposedAction();
 
-      renderer->loadMapURL(url.toStdString().c_str());
-      emit changed(url);
+      QList<QUrl> urlList = mimeData->urls();
+
+      for (int i=0; i<urlList.size(); i++)
+      {
+         QString url = urlList.at(i).path();
+
+         if (url.endsWith(".ini", Qt::CaseInsensitive))
+         {
+            int lio1=url.lastIndexOf("/");
+            int lio2=url.lastIndexOf("\\");
+
+            if (lio1>0 && lio2>0)
+               url.truncate((lio1>lio2)?lio1:lio2);
+            else if (lio1>0)
+               url.truncate(lio1);
+            else if (lio2>0)
+               url.truncate(lio2);
+         }
+
+         if (renderer->loadMap(url.toStdString().c_str()))
+            emit changed(url);
+      }
    }
 }
 

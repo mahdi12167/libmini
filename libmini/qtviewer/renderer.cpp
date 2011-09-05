@@ -14,8 +14,6 @@ Renderer::Renderer(QGLWidget* window)
    this->window = window;
    m_bIsInited = false;
 
-   m_strURL=NULL;
-
    viewer=NULL;
    camera=NULL;
 
@@ -26,9 +24,6 @@ Renderer::Renderer(QGLWidget* window)
 
 Renderer::~Renderer()
 {
-   if (m_strURL!=NULL)
-      free(m_strURL);
-
    if (viewer!=NULL)
       delete viewer;
 
@@ -36,29 +31,7 @@ Renderer::~Renderer()
       delete camera;
 }
 
-void Renderer::setMapURL(const char* url)
-{
-   if (m_strURL!=NULL)
-      free(m_strURL);
-
-   m_strURL=strdup(url);
-}
-
-void Renderer::loadMapURL(const char* url)
-{
-   if (m_bIsInited)
-      if (url!=NULL)
-         if (!viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
-         {
-            QString message;
-            message.sprintf("Unable to load map data from url=%s\n", url);
-            QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
-            return;
-         }
-         else
-            viewer->getearth()->defineroi(0.0);
-}
-
+// gl init
 void Renderer::init()
 {
    if (m_bIsInited) return;
@@ -75,16 +48,6 @@ void Renderer::init()
 
    // init libMini parameters
    initParameters();
-
-   // load layered tileset
-   if (m_strURL!=NULL)
-      if (!viewer->getearth()->loadLTS(m_strURL, TRUE, TRUE, VIEWER_LEVELS))
-      {
-         QString message;
-         message.sprintf("Unable to load map data from url=%s\n", m_strURL);
-         QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
-         return;
-      }
 
    // load optional features
    viewer->getearth()->loadopts();
@@ -104,14 +67,30 @@ void Renderer::init()
    m_bIsInited = true;
 }
 
-void Renderer::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
+// load map layer from url
+bool Renderer::loadMap(const char* url)
 {
-   if (camera==NULL) return;
+   if (m_bIsInited)
+      if (url!=NULL)
+         if (viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
+         {
+            viewer->getearth()->defineroi(0.0);
+            return(true);
+         }
+         else
+         {
+            QString message;
+            message.sprintf("Unable to load map data from url=%s\n", url);
+            QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
+         }
 
-   minicoord eye(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
-                 minicoord::MINICOORD_LLH);
+   return(false);
+}
 
-   camera->set_eye(eye,heading,pitch);
+// remove map layers
+void Renderer::clearMaps()
+{
+   //!!
 }
 
 // initialize libMini parameters
@@ -169,8 +148,8 @@ void Renderer::initParameters()
    terrainParams.bathyend = VIEWER_BATHYEND;
    terrainParams.bathymap = m_BathyMap;
    terrainParams.bathywidth = VIEWER_BATHYWIDTH;
-   terrainParams.bathyheight = VIEWER_BATHYHEIGHT;
-   terrainParams.bathycomps = VIEWER_BATHYCOMPS;
+   terrainParams.bathyheight = 2;
+   terrainParams.bathycomps = 4;
    viewer->getearth()->getterrain()->set(terrainParams);
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
@@ -192,6 +171,16 @@ void Renderer::initBathyMap()
                                    sat1,sat2,
                                    val1,val2,
                                    VIEWER_BATHYMID);
+}
+
+void Renderer::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
+{
+   if (camera==NULL) return;
+
+   minicoord eye(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
+                 minicoord::MINICOORD_LLH);
+
+   camera->set_eye(eye,heading,pitch);
 }
 
 // initialize the view point

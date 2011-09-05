@@ -20,4 +20,4 @@ Type "./build.sh" on the unix console.
 
 Command-line Parameters
 =======================
-Usage: qtviewer [ <tileset url> ]
+Usage: qtviewer { <tileset url> }

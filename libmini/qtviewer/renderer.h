@@ -26,11 +26,12 @@ public:
    Renderer(QGLWidget* window);
    ~Renderer();
 
-   void     setMapURL(const char* url);
-   void     loadMapURL(const char* url);
-
    void     init();
+   bool     isInited() {return(m_bIsInited);}
    void     resizeWindow(int width, int height);
+   bool     loadMap(const char* url);
+   void     clearMaps();
+
    void     draw();
 
    void     setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
@@ -40,11 +41,11 @@ public:
 
    void     moveCameraForward(float delta);
    void     moveCameraSideward(float delta);
-   void     moveCursor(const QPoint& pos);
 
    void     focusOnTarget();
-   void     timerEvent(int timerId);
 
+   void     timerEvent(int timerId);
+   void     moveCursor(const QPoint& pos);
    void     modifierKey(modifierKeys modifier, bool pressed);
 
    void     toggleWireframe();
@@ -87,14 +88,11 @@ protected:
 
    bool m_bIsInited;
 
-   // tileset url
-   char* m_strURL;
-
    // viewer
    viewerbase* viewer;
-   viewerbase::VIEWER_PARAMS* m_pViewerParams;   // the viewing parameters
-   miniearth::MINIEARTH_PARAMS* m_pEarthParams;   // the earth parameters
-   miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams;  // the terrain parameters
+   viewerbase::VIEWER_PARAMS* m_pViewerParams; // the viewing parameters
+   miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
+   miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
    // camera

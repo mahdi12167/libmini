@@ -120,7 +120,7 @@ void MainWindow::open()
             fileName.truncate(lio2);
          }
 
-      viewerWindow->loadMapURL(fileName.toStdString().c_str());
+      viewerWindow->loadMap(fileName.toStdString().c_str());
    }
 }
 
