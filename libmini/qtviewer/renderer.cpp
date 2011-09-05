@@ -3,8 +3,9 @@
 #include <QtGui/QMessageBox>
 
 #include <mini/minibase.h>
+
 #include <mini/miniOGL.h>
-#include <mini/minirgb.h>
+#include <mini/minishader.h>
 
 #include "renderer.h"
 
@@ -70,7 +71,7 @@ void Renderer::init()
    viewer=new viewerbase();
 
    // initialize VIS bathy map
-   initVISbathymap();
+   initBathyMap();
 
    // init libMini parameters
    initParameters();
@@ -174,31 +175,23 @@ void Renderer::initParameters()
    m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
 }
 
-float mapt(float t)
-   {return((fcos((1.0f-t)*PI)+1.0f)/2.0f);}
-
-// initialize VIS bathy map
-void Renderer::initVISbathymap()
+// initialize bathymetry map
+void Renderer::initBathyMap()
 {
-   float rgba[4];
    static const float hue1=190.0f;
    static const float hue2=240.0f;
-   static const float thresh=0.05f;
 
-   for (int i=0; i<VIEWER_BATHYWIDTH; i++)
-   {
-      float t=(float)i/(VIEWER_BATHYWIDTH-1);
+   static const float sat1=0.75f;
+   static const float sat2=0.5f;
 
-      hsv2rgb(hue1+(hue2-hue1)*t,1.0f,1.0f,rgba);
+   static const float val1=1.0f;
+   static const float val2=0.5f;
 
-      if (t<thresh) rgba[3]=mapt(t/thresh);
-      else rgba[3]=mapt(1.0f-1.0f/(1.0f-thresh)*(t-thresh));
-
-      m_BathyMap[4*i]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)]=ftrc(255.0f*rgba[0]+0.5f);
-      m_BathyMap[4*i+1]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)+1]=ftrc(255.0f*rgba[1]+0.5f);
-      m_BathyMap[4*i+2]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)+2]=ftrc(255.0f*rgba[2]+0.5f);
-      m_BathyMap[4*i+3]=m_BathyMap[4*(i+VIEWER_BATHYWIDTH)+3]=ftrc(255.0f*rgba[3]+0.5f);
-   }
+   minishader::initbathymap_linear(m_BathyMap,VIEWER_BATHYWIDTH,
+                                   hue1,hue2,
+                                   sat1,sat2,
+                                   val1,val2,
+                                   VIEWER_BATHYMID);
 }
 
 // initialize the view point

@@ -52,7 +52,7 @@ public:
 
 protected:
    void     initParameters();
-   void     initVISbathymap();
+   void     initBathyMap();
 
    void     resizeViewport();
 
