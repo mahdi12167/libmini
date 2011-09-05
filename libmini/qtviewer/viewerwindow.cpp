@@ -199,7 +199,6 @@ void ViewerWindow::loadMap(QString url)
 void ViewerWindow::clearMaps()
 {
    renderer->clearMaps();
-   //!! emit changed();
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)

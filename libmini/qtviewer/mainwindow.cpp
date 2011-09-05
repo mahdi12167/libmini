@@ -110,6 +110,7 @@ void MainWindow::open()
 void MainWindow::clear()
 {
    viewerWindow->clearMaps();
+   viewerTable->setRowCount(0);
 }
 
 void MainWindow::updateTable(const QString url)

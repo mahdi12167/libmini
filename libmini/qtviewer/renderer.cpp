@@ -75,6 +75,8 @@ bool Renderer::loadMap(const char* url)
          if (viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
          {
             viewer->getearth()->defineroi(0.0);
+            startIdling();
+
             return(true);
          }
          else
@@ -90,9 +92,9 @@ bool Renderer::loadMap(const char* url)
 // remove map layers
 void Renderer::clearMaps()
 {
-   printf("check1\n"); //!!
-   viewer->getearth()->getterrain()->remove(); //!! crash boom bang
-   printf("check2\n"); //!!
+   viewer->getearth()->getterrain()->remove();
+
+   window->updateGL();
 }
 
 // initialize libMini parameters
