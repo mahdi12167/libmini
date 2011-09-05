@@ -800,6 +800,14 @@ void miniterrain::remove(int n)
    if (n==LREF) setreference(getdefault());
    }
 
+// remove all terrain layers
+void miniterrain::remove()
+   {
+   int n;
+
+   for (n=LNUM-1; n>=0; n--) remove(n);
+   }
+
 // get extent of a tileset
 miniv3d miniterrain::getextent(int n)
    {

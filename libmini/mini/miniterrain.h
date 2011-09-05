@@ -302,6 +302,9 @@ class miniterrain
    //! remove the nth terrain layer
    void remove(int n);
 
+   //! remove all terrain layers
+   void remove();
+
    //! get extent of a tileset
    miniv3d getextent(int n);
 
