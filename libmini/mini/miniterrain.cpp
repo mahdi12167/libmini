@@ -892,6 +892,15 @@ void miniterrain::initeyepoint(const minicoord &e)
       LAYER[n]->initeyepoint(e);
    }
 
+// define region of interest
+void miniterrain::defineroi(double radius)
+   {
+   int n;
+
+   for (n=0; n<LNUM; n++)
+      LAYER[n]->defineroi(radius);
+   }
+
 // get nearest layer
 int miniterrain::getnearest(const minicoord &e)
    {

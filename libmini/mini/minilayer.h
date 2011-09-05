@@ -293,6 +293,9 @@ class minilayer
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! define region of interest
+   void defineroi(double radius);
+
    //! enable a specific focus point other than the eye point
    void enablefocus(const minicoord &f);
 

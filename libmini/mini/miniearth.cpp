@@ -446,6 +446,10 @@ minicoord miniearth::getinitial()
 void miniearth::initeyepoint(const minicoord &e)
    {TERRAIN->initeyepoint(e);}
 
+// define region of interest
+void miniearth::defineroi(double radius)
+   {TERRAIN->defineroi(radius);}
+
 // clear scene
 void miniearth::clear()
    {CLEAR=TRUE;}

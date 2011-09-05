@@ -320,6 +320,9 @@ class miniterrain
    //! set initial eye point
    void initeyepoint(const minicoord &e);
 
+   //! define region of interest
+   void defineroi(double radius);
+
    //! get nearest layer
    int getnearest(const minicoord &e);
 

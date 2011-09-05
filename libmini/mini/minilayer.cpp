@@ -1515,6 +1515,19 @@ void minilayer::initeyepoint(const minicoord &e)
    update();
    }
 
+// define region of interest
+void minilayer::defineroi(double radius)
+   {
+   minicoord ei;
+
+   if (!LOADED || TERRAIN==NULL || !VISIBLE) return;
+
+   ei=map_g2i(LPARAMS.eye);
+
+   // restrict loaded area
+   TERRAIN->restrictroi(ei.vec.x,ei.vec.z,len_g2i(radius));
+   }
+
 // enable a specific focus point
 void minilayer::enablefocus(const minicoord &f)
    {
