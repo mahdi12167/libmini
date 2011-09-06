@@ -509,14 +509,15 @@ miniv3d Renderer::cursorVector(double zoom)
       minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
       if (target != camera->get_eye())
       {
-         // find out the target vector from focus to cursor
          double elev1 = camera->get_eye().vec.getlength();
          double elev2 = target.vec.getlength();
-         double scale = pow(elev1 / elev2, 1.0-zoom);
-         cursorVec = scale * (target.vec - hit.vec);
+         double scale = elev1 / elev2;
+
+         // find out the target vector from focus to cursor
+         cursorVec = (1.0 - zoom) * scale * (target.vec - hit.vec);
 
          // find out the zoom vector from eye to focus
-         cursorVec += zoom * (hit.vec - camera->get_eye().vec);
+         cursorVec += zoom * (target.vec - camera->get_eye().vec);
       }
    }
 
