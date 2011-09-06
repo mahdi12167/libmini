@@ -165,6 +165,7 @@ class miniwarp: public miniwarpbase
    minicoord::MINICOORD_DATUM CRSDATUM;
 
    minicoord CENTERGEO;
+   minicoord CENTERGEO_LLH;
    minicoord NORTHGEO;
 
    minicoord::MINICOORD SYSGEO;

@@ -159,10 +159,8 @@ inline double LONADD(double a,double b=0.0f)
 //! subtract longitudes
 inline double LONSUB(double a,double b=0.0f)
    {
-   double diff=a-b+180*60*60;
-   double diffmul=floor(diff/(360*60*60));
-   if (diffmul<0.0 || diffmul>1.0) diff-=diffmul*360*60*60;
-   return(diff-180*60*60);
+   double diff=LONADD(a,-b);
+   return(diff>180*60*60?diff-360*60*60:diff);
    }
 
 //! return leftmost longitude

@@ -199,6 +199,9 @@ void miniwarp::def_geo(const minicoord centerGEO,const minicoord northGEO)
    CENTERGEO=centerGEO;
    NORTHGEO=northGEO;
 
+   CENTERGEO_LLH=centerGEO;
+   if (CENTERGEO_LLH.type!=minicoord::MINICOORD_LINEAR) CENTERGEO_LLH.convert2(minicoord::MINICOORD_LLH);
+
    SYSGEO=centerGEO.type;
    }
 
@@ -349,7 +352,13 @@ minicoord miniwarp::warp(const minicoord &p)
          {
          p1=p;
          if (p1.type==minicoord::MINICOORD_LINEAR) p1.type=SYSTLS;
-         if (SYSTLS!=minicoord::MINICOORD_LINEAR) p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+         if (SYSTLS!=minicoord::MINICOORD_LINEAR)
+            {
+            p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
+            if (SYSDAT==minicoord::MINICOORD_LLH)
+               if (p1.vec.x-CENTERGEO_LLH.vec.x>180.0*3600.0) p1.vec.x-=180.0*3600.0;
+               else if (p1.vec.x-CENTERGEO_LLH.vec.x<-180.0*3600.0) p1.vec.x+=180.0*3600.0;
+            }
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
          }
