@@ -588,9 +588,9 @@ void Renderer::moveCameraSideward(float delta)
    startIdling();
 }
 
-void Renderer::focusOnTarget()
+void Renderer::focusOnTarget(double zoom)
 {
-   startTransition(camera->get_eye() + cursorVector());
+   startTransition(camera->get_eye() + cursorVector() + zoom * targetVector());
 }
 
 void Renderer::processTransition(double dt)

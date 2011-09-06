@@ -42,7 +42,7 @@ public:
    void     moveCameraForward(float delta);
    void     moveCameraSideward(float delta);
 
-   void     focusOnTarget();
+   void     focusOnTarget(double zoom=0.0);
 
    void     timerEvent(int timerId);
    void     moveCursor(const QPoint& pos);
