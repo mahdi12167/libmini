@@ -73,6 +73,8 @@ protected:
    void     processTransition(double dt);
 
    miniv3d  unprojectMouse();
+
+   miniv3d  hitVector();
    miniv3d  targetVector();
    miniv3d  cursorVector();
 

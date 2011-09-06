@@ -475,14 +475,24 @@ miniv3d Renderer::unprojectMouse()
    return(dir);
 }
 
+miniv3d Renderer::hitVector()
+{
+   miniv3d hitVec;
+
+   // trace to find the hit point under current focus
+   minicoord hit = camera->get_hit();
+   hitVec = hit.vec - camera->get_eye().vec;
+
+   return(hitVec);
+}
+
 miniv3d Renderer::targetVector()
 {
-   miniv3d targetVec(0.0);
+   miniv3d targetVec;
 
    // trace to find the hit point under current cursor
    minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
-   if (target != camera->get_eye())
-      targetVec = target.vec - camera->get_eye().vec;
+   targetVec = target.vec - camera->get_eye().vec;
 
    return(targetVec);
 }
@@ -590,7 +600,7 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget(double zoom)
 {
-   startTransition(camera->get_eye() + cursorVector() + zoom * targetVector());
+   startTransition(camera->get_eye() + cursorVector() + zoom * hitVector());
 }
 
 void Renderer::processTransition(double dt)
