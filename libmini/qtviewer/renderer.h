@@ -76,7 +76,7 @@ protected:
 
    miniv3d  hitVector();
    miniv3d  targetVector();
-   miniv3d  cursorVector();
+   miniv3d  cursorVector(double zoom=0.0);
 
 private:
    void     loadTextureFromResource(const char* respath, GLuint& texId);

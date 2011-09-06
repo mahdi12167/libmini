@@ -497,7 +497,7 @@ miniv3d Renderer::targetVector()
    return(targetVec);
 }
 
-miniv3d Renderer::cursorVector()
+miniv3d Renderer::cursorVector(double zoom)
 {
    miniv3d cursorVec(0.0);
 
@@ -512,8 +512,11 @@ miniv3d Renderer::cursorVector()
          // find out the target vector from focus to cursor
          double elev1 = camera->get_eye().vec.getlength();
          double elev2 = target.vec.getlength();
-         double scale = elev1 / elev2;
+         double scale = pow(elev1 / elev2, 1.0-zoom);
          cursorVec = scale * (target.vec - hit.vec);
+
+         // find out the zoom vector from eye to focus
+         cursorVec += zoom * (hit.vec - camera->get_eye().vec);
       }
    }
 
@@ -600,7 +603,7 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget(double zoom)
 {
-   startTransition(camera->get_eye() + cursorVector() + zoom * hitVector());
+   startTransition(camera->get_eye() + cursorVector(zoom));
 }
 
 void Renderer::processTransition(double dt)
