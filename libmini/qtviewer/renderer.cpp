@@ -7,6 +7,8 @@
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
 
+#include <mini/minicrs.h>
+
 #include "renderer.h"
 
 Renderer::Renderer(QGLWidget* window)
@@ -171,9 +173,9 @@ void Renderer::initBathyMap()
    static const float val2=0.5f;
 
    minishader::initbathymap_linear(m_BathyMap,VIEWER_BATHYWIDTH,
-                                   hue1,hue2,
-                                   sat1,sat2,
-                                   val1,val2,
+                                   hue1, hue2,
+                                   sat1, sat2,
+                                   val1, val2,
                                    VIEWER_BATHYMID);
 }
 
@@ -185,7 +187,7 @@ void Renderer::setCamera(float latitude, float longitude, float altitude, float 
    minicoord eye(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
                  minicoord::MINICOORD_LLH);
 
-   camera->set_eye(eye,heading,pitch);
+   camera->set_eye(eye, heading, pitch);
 }
 
 // initialize the view point
@@ -321,13 +323,13 @@ void Renderer::renderHUD()
    float lx = 60.0f/viewportwidth;
    float ly = 60.0f/viewportheight;
 
-   glColor4f(1.0f,1.0f,1.0f, 1.0f);
+   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
    glBegin(GL_QUADS);
-   glTexCoord2f(0.0f,  0.0f); glVertex2f(-lx, ly); // P0
-   glTexCoord2f(1.0f,  0.0f); glVertex2f(lx, ly); // P1
-   glTexCoord2f(1.0f,  1.0f); glVertex2f(lx, -ly); // P2
-   glTexCoord2f(0.0f,  1.0f);  glVertex2f(-lx, -ly); // P3
+   glTexCoord2f(0.0f, 0.0f); glVertex2f(-lx, ly); // P0
+   glTexCoord2f(1.0f, 0.0f); glVertex2f(lx, ly); // P1
+   glTexCoord2f(1.0f, 1.0f); glVertex2f(lx, -ly); // P2
+   glTexCoord2f(0.0f, 1.0f); glVertex2f(-lx, -ly); // P3
    glEnd();
 
    glEnable(GL_DEPTH_TEST);
@@ -517,7 +519,7 @@ void Renderer::rotateCamera(float dx, float dy)
       camera->rotate_right(360 *dx);
       camera->rotate_up(180 * dy);
 
-      camera->rotate_limit(-90.0,90.0);
+      camera->rotate_limit(-90.0, 90.0);
    }
    else
    {
@@ -528,10 +530,12 @@ void Renderer::rotateCamera(float dx, float dy)
       camera->rotate_right(360 *dx);
       camera->rotate_up(180 * dy);
 
-      camera->rotate_limit(-90.0,0.0);
+      camera->rotate_limit(-90.0, 0.0);
 
       camera->move_forward_plain(-dist);
    }
+
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    startIdling();
 }
@@ -546,8 +550,12 @@ void Renderer::moveCameraForward(float delta)
    if (delta > 1.0) delta = 1.0;
    else if (delta < -1.0) delta = -1.0;
 
+   miniv3d dir = unprojectMouse();
    double dist = camera->get_hitdist();
-   if (dist == 0.0) dist = camera->get_dist();
+   double dist0 = camera->get_hitdist(camera->get_eye(), dir);
+
+   if (dist0 < dist) dist = dist0;
+   if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
    camera->move(delta * dist * unprojectMouse());
@@ -566,8 +574,12 @@ void Renderer::moveCameraSideward(float delta)
    if (delta > 1.0) delta = 1.0;
    else if (delta < -1.0) delta = -1.0;
 
+   miniv3d dir = unprojectMouse();
    double dist = camera->get_hitdist();
-   if (dist == 0.0) dist = camera->get_dist();
+   double dist0 = camera->get_hitdist(camera->get_eye(), dir);
+
+   if (dist0 < dist) dist = dist0;
+   if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
    camera->move_right(-delta * dist);
@@ -595,15 +607,14 @@ void Renderer::processTransition(double dt)
    {
       dir.normalize();
       camera->move(dir * speed * dt);
-      camera->move_above(VIEWER_HEIGHT_FLOOR);
    }
    else
    {
       camera->move(dir);
-      camera->move_above(VIEWER_HEIGHT_FLOOR);
-
       stopTransition();
    }
+
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    window->updateGL();
 }
