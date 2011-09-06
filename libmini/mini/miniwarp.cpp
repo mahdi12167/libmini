@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger
 
 #include "minimath.h"
+#include "minicrs.h"
 
 #include "miniwarp.h"
 
@@ -356,8 +357,7 @@ minicoord miniwarp::warp(const minicoord &p)
             {
             p1.convert2(SYSDAT,CRSZONE,CRSDATUM);
             if (SYSDAT==minicoord::MINICOORD_LLH)
-               if (p1.vec.x-CENTERGEO_LLH.vec.x>180.0*3600.0) p1.vec.x-=180.0*3600.0;
-               else if (p1.vec.x-CENTERGEO_LLH.vec.x<-180.0*3600.0) p1.vec.x+=180.0*3600.0;
+               p1.vec.x=minilon::LONSUB(p1.vec.x,CENTERGEO_LLH.vec.x)+CENTERGEO_LLH.vec.x;
             }
          v1=miniv4d(p1.vec,1.0);
          p2=minicoord(miniv4d(MTX[0]*v1,MTX[1]*v1,MTX[2]*v1,p.vec.w),minicoord::MINICOORD_LINEAR);
