@@ -4,9 +4,7 @@
 
 set git=git-1.7.6
 
-if (! -X git) then
-   wget http://kernel.org/pub/software/scm/git/$git.tar.gz
-   tar zxf $git.tar.gz
+wget http://kernel.org/pub/software/scm/git/$git.tar.gz
+tar zxf $git.tar.gz
 
-   (cd $git; ./configure --prefix=$HOME --without-iconv; make; make install)
-endif
+(cd $git; ./configure --prefix=$HOME --without-iconv; make; make install)

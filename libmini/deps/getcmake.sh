@@ -4,9 +4,7 @@
 
 set cmake=cmake-2.8.5
 
-if (! -X cmake) then
-   wget http://www.cmake.org/files/v2.8/$cmake.tar.gz
-   tar zxf $cmake.tar.gz
+wget http://www.cmake.org/files/v2.8/$cmake.tar.gz
+tar zxf $cmake.tar.gz
 
-   (cd $cmake; ./configure --prefix=$HOME; make; make install)
-endif
+(cd $cmake; ./configure --prefix=$HOME; make; make install)
