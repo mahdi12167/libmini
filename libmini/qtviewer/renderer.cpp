@@ -653,7 +653,10 @@ void Renderer::timerEvent(int timerId)
 void Renderer::startIdling()
 {
    if (m_IdlingTimerId == -1)
+   {
+      m_IdlingTimer.start();
       m_IdlingTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
+   }
 }
 
 void Renderer::stopIdling()
@@ -669,10 +672,10 @@ void Renderer::startTransition(minicoord target)
 {
    stopTransition();
 
-   m_TransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
    m_TargetCameraPos = target;
    m_bInCameraTransition = true;
    m_TransitionTimer.start();
+   m_TransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
 }
 
 void Renderer::stopTransition()
