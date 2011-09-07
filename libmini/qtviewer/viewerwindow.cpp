@@ -201,6 +201,11 @@ void ViewerWindow::clearMaps()
    renderer->clearMaps();
 }
 
+void ViewerWindow::gotoMap(int n)
+{
+   renderer->focusOnMap(n);
+}
+
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)
 {
    event->acceptProposedAction();

@@ -70,6 +70,8 @@ void MainWindow::createWidgets()
    viewerTable->setHorizontalHeaderLabels(labels);
    viewerTable->horizontalHeader()->setStretchLastSection(true);
 
+   connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
+
    clearButton = new QPushButton(tr("Clear"));
    quitButton = new QPushButton(tr("Quit"));
 
@@ -105,6 +107,14 @@ void MainWindow::open()
 
    if (!fileName.isNull())
       viewerWindow->loadMap(fileName);
+}
+
+void MainWindow::click(int row, int col)
+{
+   QTableWidgetItem *item = viewerTable->item(row, col);
+   QString text = item->text();
+
+   viewerWindow->gotoMap(row);
 }
 
 void MainWindow::clear()

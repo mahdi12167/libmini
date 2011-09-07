@@ -27,6 +27,7 @@ public slots:
 private slots:
    void about();
    void open();
+   void click(int, int);
    void clear();
 
 private:

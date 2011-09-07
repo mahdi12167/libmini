@@ -26,6 +26,8 @@ public:
    void loadMap(QString url);
    void clearMaps();
 
+   void gotoMap(int n);
+
 signals:
    void changed(const QString url);
 

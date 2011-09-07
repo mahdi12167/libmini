@@ -616,7 +616,25 @@ void Renderer::focusOnTarget(double zoom)
    else
       target += cursorVector(zoom);
 
-   anim.append_sector(camera->get_eye(), target, 10);
+   anim.append_sector(camera->get_eye(), target, 50);
+   startTransition(anim);
+}
+
+void Renderer::focusOnMap(int n)
+{
+   minianim anim(camera);
+
+   int d = viewer->getearth()->getterrain()->getdefault();
+   minilayer *layer = viewer->getearth()->getterrain()->getlayer(d+n);
+
+   if (layer==NULL) return;
+
+   minicoord target = layer->getcenter();
+   miniv3d extent = layer->getextent();
+
+   camera->move_above(target, (extent.x+extent.y)/2.0);
+
+   anim.append_sector(camera->get_eye(), target, 50);
    startTransition(anim);
 }
 
