@@ -4,19 +4,7 @@
 
 #include "minianim.h"
 
-minianim::minianim()
-   : minidyna<minicoord>()
-   {cam=NULL;}
-
-minianim::minianim(minicam *c)
-   : minidyna<minicoord>()
-   {cam=c;}
-
-minianim::minianim(minicam *c,const minicoord &v)
-  : minidyna<minicoord>(v)
-   {cam=c;}
-
-void minianim::append_sector(const minicoord &p1,const minicoord &p2,unsigned int n)
+void minianim::append_sector(const minicoord &p1,const minicoord &p2,int n)
    {
    minicoord a=p1;
    minicoord b=p2;
@@ -24,28 +12,39 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,unsigned in
    if (a.type!=minicoord::MINICOORD_LINEAR) a.convert2(minicoord::MINICOORD_ECEF);
    if (b.type!=minicoord::MINICOORD_LINEAR) b.convert2(minicoord::MINICOORD_ECEF);
 
-   double ha=cam->get_dist(a);
-   double hb=cam->get_dist(b);
-
    append(a);
+   bisect(a,b,ceil(log(n)/log(2)));
+   }
 
-   for (unsigned int i=1; i<n-1; i++)
+void minianim::bisect(const minicoord &p1,const minicoord &p2,int level)
+   {
+   minicoord a=p1;
+   minicoord b=p2;
+
+   if (a.type!=minicoord::MINICOORD_LINEAR) a.convert2(minicoord::MINICOORD_LLH);
+   if (b.type!=minicoord::MINICOORD_LINEAR) b.convert2(minicoord::MINICOORD_LLH);
+
+   double h1=a.vec.z;
+   double h2=b.vec.z;
+
+   minicoord p12=(p1+p2)/2.0;
+   double h12=(h1+h2)/2.0;
+
+   if (p12.type!=minicoord::MINICOORD_LINEAR)
       {
-      double t=(double)i/n;
-
-      minicoord ab=(1.0-t)*a+t*b;
-      double hab=(1.0-t)*ha+t*hb;
-
-      if (cam!=NULL)
-         {
-         cam->move_above(ab);
-         double h=cam->get_dist(ab);
-         miniv3d up=-cam->get_down();
-         ab+=up*(hab-h);
-         }
-
-      append(ab);
+      p12.convert2(minicoord::MINICOORD_LLH);
+      p12.vec.z=h12;
+      p12.convert2(minicoord::MINICOORD_ECEF);
       }
 
-   append(b);
+   if (level>0)
+      {
+      bisect(p1,p12,level-1);
+      bisect(p12,p2,level-1);
+      }
+   else
+      {
+      append(p12);
+      append(p2);
+      }
    }

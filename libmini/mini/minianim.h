@@ -5,21 +5,18 @@
 
 #include "minidyna.h"
 #include "minicoord.h"
-#include "minicam.h"
 
 class minianim : public minidyna<minicoord>
    {
    public:
 
-   minianim();
-   minianim(minicam *c);
-   minianim(minicam *c,const minicoord &v);
+   minianim() {}
 
-   void append_sector(const minicoord &p1,const minicoord &p2,unsigned int n);
+   void append_sector(const minicoord &p1,const minicoord &p2,int n);
 
    private:
 
-   minicam *cam;
+   void bisect(const minicoord &p1,const minicoord &p2,int level);
    };
 
 #endif
