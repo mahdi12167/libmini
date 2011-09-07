@@ -572,10 +572,10 @@ void Renderer::moveCameraForward(float delta)
    if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
-   if (m_Shift || m_Control || m_Meta)
-      camera->move(delta * dist * unprojectMouse());
-   else
+   if (m_Shift)
       camera->move_back(-delta * dist);
+   else
+      camera->move(delta * dist * unprojectMouse());
 
    camera->move_above(VIEWER_HEIGHT_FLOOR);
 
@@ -606,19 +606,29 @@ void Renderer::moveCameraSideward(float delta)
    startIdling();
 }
 
+double Renderer::delta(double a, double b)
+   {
+   double d = a - b;
+
+   if (d > 180.0) d -= 360.0;
+   else if (d < -180.0) d += 360.0;
+
+   return(d);
+   }
+
 void Renderer::focusOnTarget(double zoom)
 {
    minianim anim;
 
    minicoord target = camera->get_eye();
 
-   if (m_Shift || m_Control || m_Meta)
+   if (m_Shift)
       target -= cursorVector(zoom);
    else
       target += cursorVector(zoom);
 
    anim.append_sector(camera->get_eye(), target, 20);
-   startTransition(anim, camera->get_angle(), camera->get_pitch(), 0.5, 0.25);
+   startTransition(anim, 0.0, 0.0, 0.5, 0.25);
 }
 
 void Renderer::focusOnMap(int n)
@@ -637,14 +647,18 @@ void Renderer::focusOnMap(int n)
    target += (extent.x+extent.y)/2.0 * normal;
 
    anim.append_sector(camera->get_eye(), target, 20);
-   startTransition(anim, 0.0, -90.0, 2.0, 0.0);
+
+   if (m_Shift)
+      startTransition(anim, delta(0.0, camera->get_angle()), delta(-90, camera->get_pitch()), 2.0, 0.0);
+   else
+      startTransition(anim, 0.0, delta(-90, camera->get_pitch()), 2.0, 0.0);
 }
 
 void Renderer::processTransition(double t, double dt)
 {
    const double minspeed = 3000.0; // minimum speed (m/second)
 
-   t /= m_TargetCameraTime;
+   t /= m_TargetDeltaTime;
 
    miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - camera->get_eye().vec;
    double speed = dir.getlength();
@@ -667,24 +681,11 @@ void Renderer::processTransition(double t, double dt)
 
    camera->move_above(VIEWER_HEIGHT_FLOOR);
 
-   double w = pow(t, 10.0);
+   double w = dt / m_TargetDeltaTime;
    if (w > 1.0) w = 1.0;
 
-   double angle = camera->get_angle();
-   double dangle = m_TargetCameraAngle - angle;
-
-   if (dangle > 180.0) dangle -= 360.0;
-   else if (dangle < -180.0) dangle += 360.0;
-
-   camera->rotate_right(w * dangle);
-
-   double pitch = camera->get_pitch();
-   double dpitch = m_TargetCameraPitch - pitch;
-
-   if (dpitch > 180.0) dpitch -= 360.0;
-   else if (dpitch < -180.0) dpitch += 360.0;
-
-   camera->rotate_up(w * dpitch);
+   camera->rotate_right(w * m_TargetDeltaAngle);
+   camera->rotate_up(w * m_TargetDeltaPitch);
 
    window->updateGL();
 }
@@ -741,14 +742,14 @@ void Renderer::stopIdling()
    }
 }
 
-void Renderer::startTransition(minianim target, double angle, double pitch, double time, double follow)
+void Renderer::startTransition(minianim target, double dangle, double dpitch, double dtime, double follow)
 {
    stopTransition();
 
    m_TargetCameraAnim = target;
-   m_TargetCameraAngle = angle;
-   m_TargetCameraPitch = pitch;
-   m_TargetCameraTime = time;
+   m_TargetDeltaAngle = dangle;
+   m_TargetDeltaPitch = dpitch;
+   m_TargetDeltaTime = dtime;
    m_TargetCameraFollow = follow;
    m_bInCameraTransition = true;
    m_TransitionStart = m_TransitionTimer;

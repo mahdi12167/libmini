@@ -70,7 +70,7 @@ protected:
    void     startIdling();
    void     stopIdling();
 
-   void     startTransition(minianim target, double angle, double pitch, double time, double follow);
+   void     startTransition(minianim target, double dangle, double dpitch, double dtime, double follow);
    void     stopTransition();
 
    void     processTransition(double t, double dt);
@@ -103,21 +103,23 @@ protected:
    // camera
    minicam*  camera;
 
+private:
    // camera idling timer
    int       m_IdlingTimerId;
    QTime     m_IdlingTimer;
 
    // camera transition animation
    minianim  m_TargetCameraAnim;
-   double    m_TargetCameraAngle;
-   double    m_TargetCameraPitch;
-   double    m_TargetCameraTime;
+   double    m_TargetDeltaAngle;
+   double    m_TargetDeltaPitch;
+   double    m_TargetDeltaTime;
    double    m_TargetCameraFollow;
    bool      m_bInCameraTransition;
    int       m_TransitionTimerId;
    QTime     m_TransitionTimer;
    QTime     m_TransitionStart;
 
+protected:
    // cursor position
    QPoint    m_CursorScreenPos;
    bool      m_CursorValid;
@@ -125,8 +127,11 @@ protected:
    // modifier keys
    bool      m_Shift, m_Control, m_Meta;
 
+private:
    // texture ids
    GLuint    m_CrosshairTextureId;
+
+   double    delta(double a, double b);
 };
 
 #endif

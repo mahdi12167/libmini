@@ -8,6 +8,7 @@ additional camera control.
 =================
 Needs installation of:
  qt/qmake
+ cmake/svn
  libjpg
  libpng
  zlib
@@ -53,10 +54,10 @@ Navigation is self-explanatory via mouse or touch pad gestures:
  single click/drag          - rotate about focus
  double click               - focus and zoom on target
  mouse wheel scroll         - pan forward/backward
- touch pad scroll           - pan left/right and forward/backward
+ touch pad scroll           - pan left/right and zoom in/out
  shift & single click drag  - heading and pitch
  shift & double click       - zoom out
- shift & touch pad scroll   - pan left/right and zoom in/out
+ shift & touch pad scroll   - pan left/right and forward/backward
 
 (7) Retire
 ==========
