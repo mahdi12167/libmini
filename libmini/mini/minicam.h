@@ -67,6 +67,11 @@ class minicam
    minicoord get_hit(const minicoord &pos,const miniv3d &dir);
    double get_hitdist(const minicoord &pos,const miniv3d &dir);
 
+   void move_above(minicoord &pos,double mindist=0.0);
+
+   void get_local_base(const minicoord &pos,
+                       miniv3d &dir,miniv3d &right,miniv3d &up);
+
    protected:
 
    minicoord eye;
@@ -77,11 +82,6 @@ class minicam
    miniearth *EARTH;
 
    minicoord eye_default;
-
-   void get_local_base(const minicoord &pos,
-                       miniv3d &dir,miniv3d &right,miniv3d &up);
-
-   void move_above(minicoord &pos,double mindist=0.0);
    };
 
 #endif

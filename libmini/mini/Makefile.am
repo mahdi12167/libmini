@@ -11,7 +11,7 @@ MODS	= mini miniOGL\
 	  minimath minimpfp\
 	  minitime miniio minidir minirgb minicrs\
 	  ministub minitile miniload\
-	  minicoord miniwarp minicam\
+	  minicoord miniwarp minicam minianim\
 	  minilayer miniterrain miniearth\
 	  minicache minishader\
 	  miniray ministrip\
