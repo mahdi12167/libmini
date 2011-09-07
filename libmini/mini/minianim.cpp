@@ -24,8 +24,8 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,unsigned in
    if (a.type!=minicoord::MINICOORD_LINEAR) a.convert2(minicoord::MINICOORD_ECEF);
    if (b.type!=minicoord::MINICOORD_LINEAR) b.convert2(minicoord::MINICOORD_ECEF);
 
-   double ha=cam->get_elev(a);
-   double hb=cam->get_elev(b);
+   double ha=cam->get_dist(a);
+   double hb=cam->get_dist(b);
 
    append(a);
 
@@ -39,8 +39,9 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,unsigned in
       if (cam!=NULL)
          {
          cam->move_above(ab);
-         double h=cam->get_elev(ab);
-         cam->move_down(h-hab);
+         double h=cam->get_dist(ab);
+         miniv3d up=-cam->get_down();
+         ab+=up*(hab-h);
          }
 
       append(ab);

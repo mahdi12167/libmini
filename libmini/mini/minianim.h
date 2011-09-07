@@ -16,7 +16,6 @@ class minianim : public minidyna<minicoord>
    minianim(minicam *c,const minicoord &v);
 
    void append_sector(const minicoord &p1,const minicoord &p2,unsigned int n);
-   minicoord interpolate(double t);
 
    private:
 

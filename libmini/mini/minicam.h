@@ -39,6 +39,7 @@ class minicam
    miniv3d get_right_opengl();
    miniv3d get_up() {return(eye_up);}
    miniv3d get_up_opengl();
+   miniv3d get_down();
    double get_elev();
    double get_dist();
    minicoord get_hit();
@@ -62,6 +63,7 @@ class minicam
    void rotate_up(double delta);
    void rotate_limit(double llimit=-90.0,double ulimit=90.0);
 
+   miniv3d get_down(const minicoord &pos);
    double get_elev(const minicoord &pos);
    double get_dist(const minicoord &pos);
    minicoord get_hit(const minicoord &pos,const miniv3d &dir);

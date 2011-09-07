@@ -53,6 +53,9 @@ miniv3d minicam::get_right_opengl()
 miniv3d minicam::get_up_opengl()
    {return(EARTH->rot_g2o(eye_up,eye));}
 
+miniv3d minicam::get_down()
+   {return(get_down(eye));}
+
 double minicam::get_elev()
    {return(get_elev(eye));}
 
@@ -219,6 +222,15 @@ void minicam::rotate_limit(double llimit,double ulimit)
 
    if (pitch<llimit) rotate_up(llimit-pitch);
    else if (pitch>ulimit) rotate_up(ulimit-pitch);
+   }
+
+miniv3d minicam::get_down(const minicoord &pos)
+   {
+   miniv3d dir,right,up;
+
+   get_local_base(pos,dir,right,up);
+
+   return(-up);
    }
 
 double minicam::get_elev(const minicoord &pos)
