@@ -8,7 +8,9 @@
 
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
+
 #include <mini/minicam.h>
+#include <mini/minianim.h>
 
 #include <mini/viewerbase.h>
 #include "viewerconst.h"
@@ -67,10 +69,10 @@ protected:
    void     startIdling();
    void     stopIdling();
 
-   void     startTransition(minicoord target);
+   void     startTransition(minianim target);
    void     stopTransition();
 
-   void     processTransition(double dt);
+   void     processTransition(double t, double dt);
 
    miniv3d  unprojectMouse();
 
@@ -105,10 +107,11 @@ protected:
    QTime     m_IdlingTimer;
 
    // camera transition animation
-   minicoord m_TargetCameraPos;
+   minianim  m_TargetCameraAnim;
    bool      m_bInCameraTransition;
    int       m_TransitionTimerId;
    QTime     m_TransitionTimer;
+   QTime     m_TransitionStart;
 
    // cursor position
    QPoint    m_CursorScreenPos;

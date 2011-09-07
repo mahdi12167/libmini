@@ -604,16 +604,24 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget(double zoom)
 {
-   startTransition(camera->get_eye() + cursorVector(zoom));
+   minicoord target = camera->get_eye() + cursorVector(zoom);
+
+   minianim anim(camera);
+
+   anim.append(camera->get_eye());
+   anim.append(target);
+
+   startTransition(anim);
 }
 
-void Renderer::processTransition(double dt)
+void Renderer::processTransition(double t, double dt)
 {
    const double maxtime = 0.5; // maximum transition time interval (s)
+   const double followtime = 0.25; // maximum transition time interval (s)
    const double minspeed = 3000.0; // minimum speed (m/second)
 
-   miniv3d dir = m_TargetCameraPos.vec - camera->get_eye().vec;
-   double speed = dir.getlength() / maxtime;
+   miniv3d dir = m_TargetCameraAnim.interpolate(t/maxtime).vec - camera->get_eye().vec;
+   double speed = dir.getlength() / followtime;
 
    if (speed < minspeed) speed = minspeed;
 
@@ -649,7 +657,7 @@ void Renderer::timerEvent(int timerId)
       else
       {
          int deltaT = m_IdlingTimer.elapsed();
-         double dt = deltaT / 1000.0f;
+         double dt = deltaT / 1000.0;
 
          if (dt>minIdle)
             stopIdling();
@@ -657,10 +665,13 @@ void Renderer::timerEvent(int timerId)
    }
    else if (timerId == m_TransitionTimerId)
    {
-      int deltaT = m_TransitionTimer.restart();
-      double dt = deltaT / 1000.0f;
+      int timeT = m_TransitionStart.elapsed();
+      double t = timeT / 1000.0;
 
-      processTransition(dt);
+      int deltaT = m_TransitionTimer.restart();
+      double dt = deltaT / 1000.0;
+
+      processTransition(t, dt);
    }
 }
 
@@ -682,13 +693,15 @@ void Renderer::stopIdling()
    }
 }
 
-void Renderer::startTransition(minicoord target)
+void Renderer::startTransition(minianim target)
 {
    stopTransition();
 
-   m_TargetCameraPos = target;
+   m_TargetCameraAnim = target;
    m_bInCameraTransition = true;
+   m_TransitionStart = m_TransitionTimer;
    m_TransitionTimer.start();
+   m_TransitionStart = m_TransitionTimer;
    m_TransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
 }
 

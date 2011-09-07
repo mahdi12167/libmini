@@ -127,7 +127,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
 void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 {
-   renderer->focusOnTarget(0.5);
+   renderer->focusOnTarget(0.75);
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
