@@ -572,7 +572,11 @@ void Renderer::moveCameraForward(float delta)
    if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
-   camera->move(delta * dist * unprojectMouse());
+   if (m_Shift)
+      camera->move(delta * dist * unprojectMouse());
+   else
+      camera->move_back(-delta * dist);
+
    camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    startIdling();
@@ -605,7 +609,12 @@ void Renderer::moveCameraSideward(float delta)
 void Renderer::focusOnTarget(double zoom)
 {
    minianim anim(camera);
-   minicoord target = camera->get_eye() + cursorVector(zoom);
+   minicoord target = camera->get_eye();
+
+   if (m_Shift)
+      target -= cursorVector(zoom);
+   else
+      target += cursorVector(zoom);
 
    anim.append_sector(camera->get_eye(), target, 10);
    startTransition(anim);
