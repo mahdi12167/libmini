@@ -604,13 +604,10 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget(double zoom)
 {
+   minianim anim(camera);
    minicoord target = camera->get_eye() + cursorVector(zoom);
 
-   minianim anim(camera);
-
-   anim.append(camera->get_eye());
-   anim.append(target);
-
+   anim.append_sector(camera->get_eye(), target, 10);
    startTransition(anim);
 }
 
