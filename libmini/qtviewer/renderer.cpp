@@ -618,7 +618,7 @@ void Renderer::focusOnTarget(double zoom)
       target += cursorVector(zoom);
 
    anim.append_sector(camera->get_eye(), target, 20);
-   startTransition(anim, 0.5, 0.25);
+   startTransition(anim, camera->get_angle(), camera->get_pitch(), 0.5, 0.25);
 }
 
 void Renderer::focusOnMap(int n)
@@ -637,7 +637,7 @@ void Renderer::focusOnMap(int n)
    target += (extent.x+extent.y)/2.0 * normal;
 
    anim.append_sector(camera->get_eye(), target, 20);
-   startTransition(anim, 2.0, 0.0);
+   startTransition(anim, 0.0, -90.0, 2.0, 0.0);
 }
 
 void Renderer::processTransition(double t, double dt)
@@ -662,10 +662,29 @@ void Renderer::processTransition(double t, double dt)
    else
    {
       camera->move(dir);
-      if (t>=1.0) stopTransition();
+      if (t >= 1.0) stopTransition();
    }
 
    camera->move_above(VIEWER_HEIGHT_FLOOR);
+
+   double w = pow(t, 10.0);
+   if (w > 1.0) w = 1.0;
+
+   double angle = camera->get_angle();
+   double dangle = m_TargetCameraAngle - angle;
+
+   if (dangle > 180.0) dangle -= 360.0;
+   else if (dangle < -180.0) dangle += 360.0;
+
+   camera->rotate_right(w * dangle);
+
+   double pitch = camera->get_pitch();
+   double dpitch = m_TargetCameraPitch - pitch;
+
+   if (dpitch > 180.0) dpitch -= 360.0;
+   else if (dpitch < -180.0) dpitch += 360.0;
+
+   camera->rotate_up(w * dpitch);
 
    window->updateGL();
 }
@@ -722,11 +741,13 @@ void Renderer::stopIdling()
    }
 }
 
-void Renderer::startTransition(minianim target, double time, double follow)
+void Renderer::startTransition(minianim target, double angle, double pitch, double time, double follow)
 {
    stopTransition();
 
    m_TargetCameraAnim = target;
+   m_TargetCameraAngle = angle;
+   m_TargetCameraPitch = pitch;
    m_TargetCameraTime = time;
    m_TargetCameraFollow = follow;
    m_bInCameraTransition = true;
