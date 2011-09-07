@@ -644,7 +644,9 @@ void Renderer::processTransition(double t, double dt)
    const double followtime = 0.25; // maximum transition time interval (s)
    const double minspeed = 3000.0; // minimum speed (m/second)
 
-   miniv3d dir = m_TargetCameraAnim.interpolate(t/maxtime).vec - camera->get_eye().vec;
+   t /= maxtime;
+
+   miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - camera->get_eye().vec;
    double speed = dir.getlength() / followtime;
 
    if (speed < minspeed) speed = minspeed;
@@ -657,7 +659,7 @@ void Renderer::processTransition(double t, double dt)
    else
    {
       camera->move(dir);
-      stopTransition();
+      if (t>=1.0) stopTransition();
    }
 
    camera->move_above(VIEWER_HEIGHT_FLOOR);
