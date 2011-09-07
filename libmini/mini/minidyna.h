@@ -318,6 +318,24 @@ class minidyna
       return(c);
       }
 
+   //! interpolate item array
+   Item interpolate(double t)
+      {
+      unsigned int i;
+
+      if (SIZE==0) return(Item());
+      if (SIZE==1) return(get(0));
+
+      if (t<=0.0) return(get(0));
+      if (t>=1.0) return(get(SIZE-1));
+
+      t=t*(SIZE-1);
+      i=floor(t);
+      t=t-i;
+
+      return((1.0-t)*get(i)+t*get(i+1));
+      }
+
    //! copy item array
    void copy(const minidyna<Item,Minsize> &a)
       {

@@ -48,22 +48,3 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,unsigned in
 
    append(b);
    }
-
-minicoord minianim::interpolate(double t)
-   {
-   unsigned int i;
-
-   unsigned int n=getsize();
-
-   if (n==0) return(minicoord());
-
-   if (n==1) return(get(0));
-   if (t<=0.0) return(get(0));
-   if (t>=1.0) return(get(n-1));
-
-   t=t*(n-1);
-   i=floor(t);
-   t=t-i;
-
-   return((1.0-t)*get(i)+t*get(i+1));
-   }
