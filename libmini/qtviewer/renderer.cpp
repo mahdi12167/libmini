@@ -572,7 +572,7 @@ void Renderer::moveCameraForward(float delta)
    if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
-   if (m_Shift)
+   if (m_Shift || m_Control || m_Meta)
       camera->move(delta * dist * unprojectMouse());
    else
       camera->move_back(-delta * dist);
@@ -608,21 +608,22 @@ void Renderer::moveCameraSideward(float delta)
 
 void Renderer::focusOnTarget(double zoom)
 {
-   minianim anim(camera);
+   minianim anim;
+
    minicoord target = camera->get_eye();
 
-   if (m_Shift)
+   if (m_Shift || m_Control || m_Meta)
       target -= cursorVector(zoom);
    else
       target += cursorVector(zoom);
 
-   anim.append_sector(camera->get_eye(), target, 50);
-   startTransition(anim);
+   anim.append_sector(camera->get_eye(), target, 20);
+   startTransition(anim, 0.5, 0.25);
 }
 
 void Renderer::focusOnMap(int n)
 {
-   minianim anim(camera);
+   minianim anim;
 
    int d = viewer->getearth()->getterrain()->getdefault();
    minilayer *layer = viewer->getearth()->getterrain()->getlayer(d+n);
@@ -630,24 +631,26 @@ void Renderer::focusOnMap(int n)
    if (layer==NULL) return;
 
    minicoord target = layer->getcenter();
+   miniv3d normal = layer->getnormal();
    miniv3d extent = layer->getextent();
 
-   camera->move_above(target, (extent.x+extent.y)/2.0);
+   target += (extent.x+extent.y)/2.0 * normal;
 
-   anim.append_sector(camera->get_eye(), target, 50);
-   startTransition(anim);
+   anim.append_sector(camera->get_eye(), target, 20);
+   startTransition(anim, 2.0, 0.0);
 }
 
 void Renderer::processTransition(double t, double dt)
 {
-   const double maxtime = 0.5; // maximum transition time interval (s)
-   const double followtime = 0.25; // maximum transition time interval (s)
    const double minspeed = 3000.0; // minimum speed (m/second)
 
-   t /= maxtime;
+   t /= m_TargetCameraTime;
 
    miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - camera->get_eye().vec;
-   double speed = dir.getlength() / followtime;
+   double speed = dir.getlength();
+
+   if (m_TargetCameraFollow>0.0) speed /= m_TargetCameraFollow;
+   else speed = MAXFLOAT;
 
    if (speed < minspeed) speed = minspeed;
 
@@ -719,11 +722,13 @@ void Renderer::stopIdling()
    }
 }
 
-void Renderer::startTransition(minianim target)
+void Renderer::startTransition(minianim target, double time, double follow)
 {
    stopTransition();
 
    m_TargetCameraAnim = target;
+   m_TargetCameraTime = time;
+   m_TargetCameraFollow = follow;
    m_bInCameraTransition = true;
    m_TransitionStart = m_TransitionTimer;
    m_TransitionTimer.start();

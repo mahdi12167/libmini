@@ -70,7 +70,7 @@ protected:
    void     startIdling();
    void     stopIdling();
 
-   void     startTransition(minianim target);
+   void     startTransition(minianim target, double time, double follow);
    void     stopTransition();
 
    void     processTransition(double t, double dt);
@@ -109,6 +109,8 @@ protected:
 
    // camera transition animation
    minianim  m_TargetCameraAnim;
+   double    m_TargetCameraTime;
+   double    m_TargetCameraFollow;
    bool      m_bInCameraTransition;
    int       m_TransitionTimerId;
    QTime     m_TransitionTimer;
