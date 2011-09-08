@@ -55,7 +55,7 @@ void MainWindow::createWidgets()
    mainGroup = new QGroupBox;
    mainLayout = new QVBoxLayout;
 
-   viewerWindow = new ViewerWindow();
+   viewerWindow = new ViewerWindow;
    viewerTable = new QTableWidget;
    sliderBox = new QGroupBox;
    sliderLayout = new QHBoxLayout;
@@ -83,10 +83,23 @@ void MainWindow::createWidgets()
 
    connect(fogDensitySlider, SIGNAL(valueChanged(int)), this, SLOT(setFogDensity(int)));
 
+   QGroupBox *fogGroup = new QGroupBox;
+   QVBoxLayout *fogLayout = new QVBoxLayout;
+
+   fogLayout->addWidget(fogCheck);
+   fogLayout->addWidget(fogDensitySlider);
+   fogGroup->setLayout(fogLayout);
+
    contourCheck = new QCheckBox(tr("Contours"));
    contourCheck->setChecked(false);
 
    connect(contourCheck, SIGNAL(stateChanged(int)), this, SLOT(checkContours(int)));
+
+   QGroupBox *contourGroup = new QGroupBox;
+   QVBoxLayout *contourLayout = new QVBoxLayout;
+
+   contourLayout->addWidget(contourCheck);
+   contourGroup->setLayout(contourLayout);
 
    seaLevelCheck = new QCheckBox(tr("Sea Level"));
    seaLevelCheck->setChecked(false);
@@ -97,11 +110,16 @@ void MainWindow::createWidgets()
 
    connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
 
-   sliderLayout->addWidget(fogCheck);
-   sliderLayout->addWidget(fogDensitySlider);
-   sliderLayout->addWidget(contourCheck);
-   sliderLayout->addWidget(seaLevelCheck);
-   sliderLayout->addWidget(seaLevelSlider);
+   QGroupBox *seaGroup = new QGroupBox;
+   QVBoxLayout *seaLayout = new QVBoxLayout;
+
+   seaLayout->addWidget(seaLevelCheck);
+   seaLayout->addWidget(seaLevelSlider);
+   seaGroup->setLayout(seaLayout);
+
+   sliderLayout->addWidget(fogGroup);
+   sliderLayout->addWidget(contourGroup);
+   sliderLayout->addWidget(seaGroup);
    sliderBox->setLayout(sliderLayout);
 
    clearButton = new QPushButton(tr("Clear"));
