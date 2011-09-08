@@ -37,6 +37,7 @@ public:
    void checkContours(bool on);
    void checkSeaLevel(bool on);
    void setSeaLevel(double level);
+   void toggleWireFrame(bool on);
 
 signals:
    void changed(const QString url, minilayer *layer);

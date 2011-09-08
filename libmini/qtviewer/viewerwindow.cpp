@@ -154,8 +154,6 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
-   else if (event->key() == Qt::Key_W)
-      renderer->toggleWireframe();
    else
       QGLWidget::keyPressEvent(event);
 
@@ -164,14 +162,7 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 
 void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_Shift)
-      renderer->modifierKey(ModifierShift, false);
-   else if (event->key() == Qt::Key_Control)
-      renderer->modifierKey(ModifierControl, false);
-   else if (event->key() == Qt::Key_Meta)
-      renderer->modifierKey(ModifierMeta, false);
-   else
-      QGLWidget::keyReleaseEvent(event);
+   QGLWidget::keyReleaseEvent(event);
 
    reportModifiers();
 }
@@ -253,6 +244,11 @@ void ViewerWindow::checkSeaLevel(bool on)
 void ViewerWindow::setSeaLevel(double level)
 {
    renderer->setSeaLevel(level);
+}
+
+void ViewerWindow::toggleWireFrame(bool on)
+{
+   renderer->toggleWireFrame(on);
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)

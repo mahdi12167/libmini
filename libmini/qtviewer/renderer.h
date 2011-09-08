@@ -55,7 +55,7 @@ public:
    void       moveCursor(const QPoint& pos);
    void       modifierKey(modifierKeys modifier, bool pressed);
 
-   void       toggleWireframe();
+   void       toggleWireFrame(bool on);
 
    void       checkFog(bool on);
    void       setFogDensity(double density);

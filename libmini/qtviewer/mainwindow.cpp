@@ -119,9 +119,21 @@ void MainWindow::createWidgets()
    seaLayout->addWidget(seaLevelSlider);
    seaGroup->setLayout(seaLayout);
 
+   wireFrameCheck = new QCheckBox(tr("Wire Frame"));
+   wireFrameCheck->setChecked(false);
+
+   connect(wireFrameCheck, SIGNAL(stateChanged(int)), this, SLOT(checkWireFrame(int)));
+
+   QGroupBox *wireGroup = new QGroupBox;
+   QHBoxLayout *wireLayout = new QHBoxLayout;
+
+   wireLayout->addWidget(wireFrameCheck);
+   wireGroup->setLayout(wireLayout);
+
    sliderLayout->addWidget(fogGroup);
    sliderLayout->addWidget(contourGroup);
    sliderLayout->addWidget(seaGroup);
+   sliderLayout->addWidget(wireGroup);
    sliderBox->setLayout(sliderLayout);
 
    clearButton = new QPushButton(tr("Clear"));
@@ -224,4 +236,9 @@ void MainWindow::setSeaLevel(int tick)
 {
    double level = tick / 16.0;
    viewerWindow->setSeaLevel(level);
+}
+
+void MainWindow::checkWireFrame(int on)
+{
+   viewerWindow->toggleWireFrame(on);
 }

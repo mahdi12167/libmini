@@ -796,9 +796,9 @@ void Renderer::modifierKey(modifierKeys modifier, bool pressed)
       m_Meta=pressed;
 }
 
-void Renderer::toggleWireframe()
+void Renderer::toggleWireFrame(bool on)
 {
-   m_pViewerParams->usewireframe = !m_pViewerParams->usewireframe;
+   m_pViewerParams->usewireframe = on;
 
    startIdling();
 }
