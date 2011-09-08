@@ -132,7 +132,7 @@ void Renderer::initParameters()
    viewer->getearth()->get(earthParams);
    earthParams.warpmode = WARPMODE_AFFINE_REF;
    earthParams.nonlin = TRUE;
-   earthParams.usefog = FALSE;
+   earthParams.usefog = TRUE;
    earthParams.useshaders = TRUE;
    earthParams.usediffuse = FALSE;
    earthParams.usevisshader = TRUE;

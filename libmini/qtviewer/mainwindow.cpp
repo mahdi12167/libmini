@@ -77,7 +77,7 @@ void MainWindow::createWidgets()
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
 
    fogCheck = new QCheckBox(tr("Fog Density"));
-   fogCheck->setChecked(false);
+   fogCheck->setChecked(true);
 
    connect(fogCheck, SIGNAL(stateChanged(int)), this, SLOT(checkFog(int)));
 
