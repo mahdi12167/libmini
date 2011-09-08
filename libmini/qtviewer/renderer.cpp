@@ -654,11 +654,12 @@ void Renderer::focusOnMap(minilayer *layer)
    miniv3d normal = layer->getnormal();
    miniv3d extent = layer->getextent();
 
-   target += (extent.x+extent.y)/2.0 * normal;
+   double size = (extent.x+extent.y) / 2.0;
+   target += size * normal;
 
    anim.append_sector(camera->get_eye(), target, 20);
 
-   if (m_Shift)
+   if ((camera->get_eye().vec - target.vec).getlength() < size/4.0)
       startTransition(anim, delta(0.0, camera->get_angle()), delta(-90, camera->get_pitch()), 2.0, 0.0);
    else
       startTransition(anim, 0.0, delta(-90, camera->get_pitch()), 2.0, 0.0);
