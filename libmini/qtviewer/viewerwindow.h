@@ -60,6 +60,8 @@ private:
    QPoint    movedPos;
    bool      bLeftButtonDown;
    bool      bRightButtonDown;
+
+   void      reportModifiers();
 };
 
 #endif

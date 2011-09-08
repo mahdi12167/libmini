@@ -71,6 +71,8 @@ void ViewerWindow::paintGL()
 
 void ViewerWindow::mousePressEvent(QMouseEvent *event)
 {
+   reportModifiers();
+
    if (event->buttons() & Qt::LeftButton)
       bLeftButtonDown = true;
    else if (event->buttons() & Qt::RightButton)
@@ -85,6 +87,8 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
 {
    int dx = event->x()-lastPos.x();
    int dy = event->y()-lastPos.y();
+
+   reportModifiers();
 
    // if mouse did not move and we have buttons down, it is a click
    if (abs(dx)<3 && abs(dy)<3)
@@ -113,6 +117,8 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    float dx = (float)(event->x()-movedPos.x())/width();
    float dy = (float)(event->y()-movedPos.y())/height();
 
+   reportModifiers();
+
    if (event->buttons() & Qt::LeftButton)
       renderer->rotateCamera(dx, dy);
    else if (event->buttons() & Qt::MiddleButton)
@@ -127,18 +133,24 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
 void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 {
+   reportModifiers();
+
    renderer->focusOnTarget(0.75);
+}
+
+void ViewerWindow::reportModifiers()
+{
+   Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
+
+   renderer->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
+   renderer->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
+   renderer->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
+   renderer->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
-   if (event->key() == Qt::Key_Shift)
-      renderer->modifierKey(ModifierShift, true);
-   else if (event->key() == Qt::Key_Control)
-      renderer->modifierKey(ModifierControl, true);
-   else if (event->key() == Qt::Key_Meta)
-      renderer->modifierKey(ModifierMeta, true);
-   else if (event->key() == Qt::Key_Space)
+   if (event->key() == Qt::Key_Space)
       renderer->focusOnTarget();
    else if (event->key() == Qt::Key_W)
       renderer->toggleWireframe();
@@ -146,6 +158,8 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
       renderer->toggleSeaSurface();
    else
       QGLWidget::keyPressEvent(event);
+
+   reportModifiers();
 }
 
 void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
@@ -158,11 +172,15 @@ void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
       renderer->modifierKey(ModifierMeta, false);
    else
       QGLWidget::keyReleaseEvent(event);
+
+   reportModifiers();
 }
 
 void ViewerWindow::wheelEvent(QWheelEvent *event)
 {
    double numDegrees = event->delta()/8.0;
+
+   reportModifiers();
 
    if (event->orientation() == Qt::Vertical)
       renderer->moveCameraForward(numDegrees/360.0);
@@ -174,6 +192,8 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
 
 void ViewerWindow::timerEvent(QTimerEvent *event)
 {
+   reportModifiers();
+
    renderer->timerEvent(event->timerId());
 }
 

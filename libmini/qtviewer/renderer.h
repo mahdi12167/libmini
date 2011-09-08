@@ -19,6 +19,7 @@ enum modifierKeys
 {
    ModifierShift,
    ModifierControl,
+   ModifierAlt,
    ModifierMeta
 };
 

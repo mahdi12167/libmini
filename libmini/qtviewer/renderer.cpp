@@ -682,7 +682,6 @@ void Renderer::processTransition(double t, double dt)
    camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    double w = dt / m_TargetDeltaTime;
-   if (w > 1.0) w = 1.0;
 
    camera->rotate_right(w * m_TargetDeltaAngle);
    camera->rotate_up(w * m_TargetDeltaPitch);
