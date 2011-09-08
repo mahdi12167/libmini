@@ -132,6 +132,7 @@ void Renderer::initParameters()
    earthParams.usecontours = FALSE;
    earthParams.useearth = TRUE;
    earthParams.fogstart = VIEWER_FOGSTART;
+   earthParams.fogend = VIEWER_FOGEND;
    earthParams.fogdensity = VIEWER_FOGDENSITY;
    earthParams.voidstart = VIEWER_VOIDSTART;
    earthParams.abyssstart = VIEWER_ABYSSSTART;
