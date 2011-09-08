@@ -165,6 +165,7 @@ void initparams()
    eprms.useflat=FALSE;
 
    eprms.fogstart=VIEWER_FOGSTART;
+   eprms.fogend=VIEWER_FOGEND;
    eprms.fogdensity=VIEWER_FOGDENSITY;
 
    eprms.voidstart=VIEWER_VOIDSTART;

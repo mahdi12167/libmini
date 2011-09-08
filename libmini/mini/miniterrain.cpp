@@ -141,6 +141,7 @@ miniterrain::miniterrain()
    TPARAMS.fogcolor[2]=0.7f;
 
    TPARAMS.fogstart=0.5f;   // start of fog relative to far plane
+   TPARAMS.fogend=1.0f;     // end of fog relative to far plane
    TPARAMS.fogdensity=0.5f; // relative fog density
 
    // optional color mapping:
@@ -1077,7 +1078,7 @@ void miniterrain::render()
             // use standard VIS shader
             minishader::setVISshader(CACHE,
                                      len_o2g(1.0),TPARAMS.exaggeration,
-                                     (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
+                                     (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.fogend*TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
                                      (TPARAMS.usebathymap)?TPARAMS.bathystart:TPARAMS.bathyend,TPARAMS.bathyend,
@@ -1096,7 +1097,7 @@ void miniterrain::render()
             // use alternative NPR shader
             minishader::setNPRshader(CACHE,
                                      len_o2g(1.0),TPARAMS.exaggeration,
-                                     (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.farp:0.0f,
+                                     (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.fogend*TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
                                      TPARAMS.nprbathystart,TPARAMS.nprbathyend,

@@ -144,6 +144,7 @@ class miniterrain
       float fogcolor[3];
 
       float fogstart;
+      float fogend;
       float fogdensity;
 
       // optional color mapping:

@@ -54,6 +54,7 @@ miniearth::miniearth()
    EPARAMS.fogcolor[2]=0.7f;
 
    EPARAMS.fogstart=0.5f;   // start of fog relative to far plane
+   EPARAMS.fogend=1.0f;     // end of fog relative to far plane
    EPARAMS.fogdensity=0.5f; // relative fog density
 
    // optional void display:
@@ -188,6 +189,7 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    tparams.fogcolor[2]=EPARAMS.fogcolor[2];
 
    tparams.fogstart=EPARAMS.fogstart;
+   tparams.fogend=EPARAMS.fogend;
    tparams.fogdensity=EPARAMS.fogdensity;
 
    if (EPARAMS.useflat)
@@ -536,8 +538,8 @@ void miniearth::rendercache()
       {
       fogf=EPARAMS.fogstart;
 
-      enablefog(fogf*len_g2o(EPARAMS.farp),
-                len_g2o(EPARAMS.farp),
+      enablefog(fogf*EPARAMS.fogend*len_g2o(EPARAMS.farp),
+                EPARAMS.fogend*len_g2o(EPARAMS.farp),
                 EPARAMS.fogcolor[0],
                 EPARAMS.fogcolor[1],
                 EPARAMS.fogcolor[2]);
@@ -613,7 +615,7 @@ void miniearth::rendercache()
          fogf=EPARAMS.fogstart/2.0f;
 
          if (EPARAMS.usefog)
-            fogend=len_g2o(EPARAMS.farp);
+            fogend=EPARAMS.fogend*len_g2o(EPARAMS.farp);
 
          EARTH->setfogparams(fogf*fogend,fogend,EPARAMS.fogdensity,EPARAMS.fogcolor);
 

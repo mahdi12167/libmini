@@ -64,6 +64,7 @@ class miniearth
       float fogcolor[3];
 
       float fogstart;
+      float fogend;
       float fogdensity;
 
       // optional void display:
