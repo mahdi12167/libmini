@@ -74,6 +74,15 @@ void MainWindow::createWidgets()
 
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
 
+   fogCheck = new QCheckBox(tr("Fog Density"));
+   fogCheck->setChecked(false);
+
+   connect(fogCheck, SIGNAL(stateChanged(int)), this, SLOT(checkFog(int)));
+
+   fogDensitySlider = createSlider(0, 100, 0);
+
+   connect(fogDensitySlider, SIGNAL(valueChanged(int)), this, SLOT(setFogDensity(int)));
+
    contourCheck = new QCheckBox(tr("Contours"));
    contourCheck->setChecked(false);
 
@@ -86,21 +95,23 @@ void MainWindow::createWidgets()
 
    seaLevelSlider = createSlider(-100, 100, 0);
 
+   connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
+
+   sliderLayout->addWidget(fogCheck);
+   sliderLayout->addWidget(fogDensitySlider);
    sliderLayout->addWidget(contourCheck);
    sliderLayout->addWidget(seaLevelCheck);
    sliderLayout->addWidget(seaLevelSlider);
    sliderBox->setLayout(sliderLayout);
 
-   connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
-
    clearButton = new QPushButton(tr("Clear"));
    quitButton = new QPushButton(tr("Quit"));
 
-   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
-   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
-
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
+
+   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
+   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
    mainLayout->addWidget(viewerWindow);
    mainLayout->addWidget(viewerTable);
@@ -163,6 +174,17 @@ void MainWindow::click(int row, int col)
    QString text = item->text();
 
    viewerWindow->gotoMap(row);
+}
+
+void MainWindow::checkFog(int on)
+{
+   viewerWindow->checkFog(on);
+}
+
+void MainWindow::setFogDensity(int tick)
+{
+   double density = tick / 16.0 / 100.0;
+   viewerWindow->setFogDensity(density);
 }
 
 void MainWindow::checkContours(int on)

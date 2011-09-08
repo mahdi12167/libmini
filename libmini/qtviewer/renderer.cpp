@@ -24,6 +24,7 @@ Renderer::Renderer(QGLWidget* window)
    m_Alt=false;
    m_Meta=false;
 
+   m_FogDensity=0.0;
    m_SeaLevel=0.0;
 }
 
@@ -791,6 +792,24 @@ void Renderer::modifierKey(modifierKeys modifier, bool pressed)
 void Renderer::toggleWireframe()
 {
    m_pViewerParams->usewireframe = !m_pViewerParams->usewireframe;
+
+   startIdling();
+}
+
+void Renderer::checkFog(bool on)
+{
+   m_pEarthParams->usefog=on;
+   viewer->propagate();
+
+   startIdling();
+}
+
+void Renderer::setFogDensity(double density)
+{
+   m_FogDensity=density;
+
+   m_pEarthParams->fogdensity=m_FogDensity;
+   viewer->propagate();
 
    startIdling();
 }

@@ -28,6 +28,8 @@ public:
 
    void gotoMap(int n);
 
+   void checkFog(bool on);
+   void setFogDensity(double density);
    void checkContours(bool on);
    void checkSeaLevel(bool on);
    void setSeaLevel(double level);

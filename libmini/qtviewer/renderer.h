@@ -54,6 +54,8 @@ public:
 
    void     toggleWireframe();
 
+   void     checkFog(bool on);
+   void     setFogDensity(double density);
    void     checkContours(bool on);
    void     checkSeaLevel(bool on);
    void     setSeaLevel(double level);
@@ -135,6 +137,7 @@ private:
    // texture ids
    GLuint    m_CrosshairTextureId;
 
+   double    m_FogDensity;
    double    m_SeaLevel;
 
    double    delta(double a, double b);

@@ -33,6 +33,8 @@ private slots:
    void clear();
 
    void click(int, int);
+   void checkFog(int);
+   void setFogDensity(int);
    void checkContours(int);
    void checkSeaLevel(int);
    void setSeaLevel(int);
@@ -59,6 +61,9 @@ private:
    QGroupBox *sliderBox;
    QHBoxLayout *sliderLayout;
    QDialogButtonBox *buttonBox;
+
+   QCheckBox *fogCheck;
+   QSlider *fogDensitySlider;
 
    QCheckBox *contourCheck;
 

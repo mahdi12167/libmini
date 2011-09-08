@@ -224,6 +224,16 @@ void ViewerWindow::gotoMap(int n)
    renderer->focusOnMap(n);
 }
 
+void ViewerWindow::checkFog(bool on)
+{
+   renderer->checkFog(on);
+}
+
+void ViewerWindow::setFogDensity(double density)
+{
+   renderer->setFogDensity(density);
+}
+
 void ViewerWindow::checkContours(bool on)
 {
    renderer->checkContours(on);
