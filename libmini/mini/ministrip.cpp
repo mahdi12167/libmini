@@ -955,7 +955,7 @@ void ministrip::setfogparams(int num,
    float fog_a,fog_b,fog_c;
 
    // calculate the fog parameters
-   if (fogstart<fogend || fogdensity<=0.0f)
+   if (fogstart<fogend && fogdensity>0.0f)
       {
       fog_a=fsqr(1.0f/fogend);
       fog_b=0.0f;

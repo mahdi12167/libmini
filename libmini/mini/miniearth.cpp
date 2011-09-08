@@ -469,7 +469,7 @@ void miniearth::rendercache()
    minilayer *ref;
 
    double alt;
-   double altf,seaf,fogf;
+   double altf,seaf;
 
    minicoord egl;
 
@@ -481,6 +481,7 @@ void miniearth::rendercache()
    miniv3d lgl;
    float light[3];
 
+   float fogstart;
    float fogend;
 
    ref=getreference();
@@ -536,13 +537,11 @@ void miniearth::rendercache()
    // enable fog
    if (EPARAMS.usefog)
       {
-      fogf=EPARAMS.fogstart;
+      fogstart=EPARAMS.fogstart*len_g2o(EPARAMS.farp);
+      fogend=EPARAMS.fogend*len_g2o(EPARAMS.farp);
 
-      enablefog(fogf*EPARAMS.fogend*len_g2o(EPARAMS.farp),
-                EPARAMS.fogend*len_g2o(EPARAMS.farp),
-                EPARAMS.fogcolor[0],
-                EPARAMS.fogcolor[1],
-                EPARAMS.fogcolor[2]);
+      enablefog(fogstart,fogend,
+                EPARAMS.fogcolor[0],EPARAMS.fogcolor[1],EPARAMS.fogcolor[2]);
       }
 
    // draw skydome
@@ -611,13 +610,13 @@ void miniearth::rendercache()
             EARTH->settexturedirectparams(light,0.0f,1.0f);
             }
 
-         fogend=0.0f;
-         fogf=EPARAMS.fogstart/2.0f;
+         fogstart=EPARAMS.fogstart/2.0f*len_g2o(EPARAMS.farp);
+         fogend=EPARAMS.fogend*len_g2o(EPARAMS.farp);
 
-         if (EPARAMS.usefog)
-            fogend=EPARAMS.fogend*len_g2o(EPARAMS.farp);
+         if (!EPARAMS.usefog) fogend=0.0f;
 
-         EARTH->setfogparams(fogf*fogend,fogend,EPARAMS.fogdensity,EPARAMS.fogcolor);
+         EARTH->setfogparams(fogstart,fogend,
+                             EPARAMS.fogdensity,EPARAMS.fogcolor);
 
          disableZwriting();
          EARTH->render();

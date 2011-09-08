@@ -256,14 +256,14 @@ void minishader::setVISshader(minicache *cache,
    cache->usevtxshader(1);
 
    // check parameters
-   usefog=(fogstart<fogend);
+   usefog=(fogstart<fogend && fogdensity>0.0f);
    usemap=(exaggeration*(bathystart-bathyend)!=0.0f && VISBATHYMAP!=NULL);
    usecnt=(exaggeration*contours!=0.0f);
    usesea=(sealevel!=-MAXFLOAT && exaggeration*seabottom!=0.0f);
    usefade=(FADEMODE!=0 && FADESTART<FADEEND);
 
    // calculate the fog parameters
-   if (usefog || fogdensity<=0.0f)
+   if (usefog)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
@@ -622,13 +622,13 @@ void minishader::setNPRshader(minicache *cache,
    cache->usevtxshader(1);
 
    // check parameters
-   usefog=(fogstart<fogend);
+   usefog=(fogstart<fogend && fogdensity>0.0f);
    usemap=(exaggeration*(bathystart-bathyend)!=0.0f && NPRBATHYMAP!=NULL);
    usecnt=(exaggeration*contours!=0.0f);
    usefade=(FADEMODE!=0 && FADESTART<FADEEND);
 
    // calculate the fog parameters
-   if (usefog || fogdensity<=0.0f)
+   if (usefog)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
