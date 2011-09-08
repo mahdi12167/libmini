@@ -84,7 +84,7 @@ void MainWindow::createWidgets()
    connect(fogDensitySlider, SIGNAL(valueChanged(int)), this, SLOT(setFogDensity(int)));
 
    QGroupBox *fogGroup = new QGroupBox;
-   QVBoxLayout *fogLayout = new QVBoxLayout;
+   QHBoxLayout *fogLayout = new QHBoxLayout;
 
    fogLayout->addWidget(fogCheck);
    fogLayout->addWidget(fogDensitySlider);
@@ -96,7 +96,7 @@ void MainWindow::createWidgets()
    connect(contourCheck, SIGNAL(stateChanged(int)), this, SLOT(checkContours(int)));
 
    QGroupBox *contourGroup = new QGroupBox;
-   QVBoxLayout *contourLayout = new QVBoxLayout;
+   QHBoxLayout *contourLayout = new QHBoxLayout;
 
    contourLayout->addWidget(contourCheck);
    contourGroup->setLayout(contourLayout);
@@ -111,7 +111,7 @@ void MainWindow::createWidgets()
    connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
 
    QGroupBox *seaGroup = new QGroupBox;
-   QVBoxLayout *seaLayout = new QVBoxLayout;
+   QHBoxLayout *seaLayout = new QHBoxLayout;
 
    seaLayout->addWidget(seaLevelCheck);
    seaLayout->addWidget(seaLevelSlider);
@@ -141,12 +141,12 @@ void MainWindow::createWidgets()
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
 {
-   QSlider *slider = new QSlider(Qt::Vertical);
+   QSlider *slider = new QSlider(Qt::Horizontal);
    slider->setRange(minimum * 16, maximum * 16);
    slider->setSingleStep(16);
    slider->setPageStep((maximum - minimum) / 10 * 16);
    slider->setTickInterval((maximum - minimum) / 10 * 16);
-   slider->setTickPosition(QSlider::TicksRight);
+   slider->setTickPosition(QSlider::TicksBelow);
    slider->setValue(value * 16);
    return(slider);
 }
