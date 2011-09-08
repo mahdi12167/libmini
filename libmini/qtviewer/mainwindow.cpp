@@ -57,6 +57,8 @@ void MainWindow::createWidgets()
 
    viewerWindow = new ViewerWindow();
    viewerTable = new QTableWidget;
+   sliderBox = new QGroupBox;
+   sliderLayout = new QHBoxLayout;
    buttonBox = new QDialogButtonBox;
 
    connect(viewerWindow, SIGNAL(changed(const QString)),
@@ -72,6 +74,19 @@ void MainWindow::createWidgets()
 
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
 
+   seaLevelCheck = new QCheckBox(tr("Sea Level"));
+   seaLevelCheck->setChecked(false);
+
+   connect(seaLevelCheck, SIGNAL(stateChanged(int)), this, SLOT(checkSeaLevel(int)));
+
+   seaLevelSlider = createSlider(-100, 100, 0);
+
+   sliderLayout->addWidget(seaLevelCheck);
+   sliderLayout->addWidget(seaLevelSlider);
+   sliderBox->setLayout(sliderLayout);
+
+   connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
+
    clearButton = new QPushButton(tr("Clear"));
    quitButton = new QPushButton(tr("Quit"));
 
@@ -83,9 +98,22 @@ void MainWindow::createWidgets()
 
    mainLayout->addWidget(viewerWindow);
    mainLayout->addWidget(viewerTable);
+   mainLayout->addWidget(sliderBox);
    mainLayout->addWidget(buttonBox);
 
    mainGroup->setLayout(mainLayout);
+}
+
+QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
+{
+   QSlider *slider = new QSlider(Qt::Vertical);
+   slider->setRange(minimum * 16, maximum * 16);
+   slider->setSingleStep(16);
+   slider->setPageStep((maximum - minimum) / 10 * 16);
+   slider->setTickInterval((maximum - minimum) / 10 * 16);
+   slider->setTickPosition(QSlider::TicksRight);
+   slider->setValue(value * 16);
+   return(slider);
 }
 
 void MainWindow::about()
@@ -109,14 +137,6 @@ void MainWindow::open()
       viewerWindow->loadMap(fileName);
 }
 
-void MainWindow::click(int row, int col)
-{
-   QTableWidgetItem *item = viewerTable->item(row, col);
-   QString text = item->text();
-
-   viewerWindow->gotoMap(row);
-}
-
 void MainWindow::clear()
 {
    viewerWindow->clearMaps();
@@ -129,4 +149,23 @@ void MainWindow::updateTable(const QString url)
 
    viewerTable->insertRow(rows);
    viewerTable->setItem(rows, 0, new QTableWidgetItem(url));
+}
+
+void MainWindow::click(int row, int col)
+{
+   QTableWidgetItem *item = viewerTable->item(row, col);
+   QString text = item->text();
+
+   viewerWindow->gotoMap(row);
+}
+
+void MainWindow::checkSeaLevel(int on)
+{
+   viewerWindow->checkSeaLevel(on);
+}
+
+void MainWindow::setSeaLevel(int tick)
+{
+   double level = tick / 16.0;
+   viewerWindow->setSeaLevel(level);
 }

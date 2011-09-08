@@ -28,6 +28,9 @@ public:
 
    void gotoMap(int n);
 
+   void checkSeaLevel(bool on);
+   void setSeaLevel(double level);
+
 signals:
    void changed(const QString url);
 

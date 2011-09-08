@@ -154,8 +154,6 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
       renderer->focusOnTarget();
    else if (event->key() == Qt::Key_W)
       renderer->toggleWireframe();
-   else if (event->key() == Qt::Key_S)
-      renderer->toggleSeaSurface();
    else
       QGLWidget::keyPressEvent(event);
 
@@ -224,6 +222,16 @@ void ViewerWindow::clearMaps()
 void ViewerWindow::gotoMap(int n)
 {
    renderer->focusOnMap(n);
+}
+
+void ViewerWindow::checkSeaLevel(bool on)
+{
+   renderer->checkSeaLevel(on);
+}
+
+void ViewerWindow::setSeaLevel(double level)
+{
+   renderer->setSeaLevel(level);
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)

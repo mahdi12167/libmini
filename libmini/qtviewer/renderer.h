@@ -53,7 +53,9 @@ public:
    void     modifierKey(modifierKeys modifier, bool pressed);
 
    void     toggleWireframe();
-   void     toggleSeaSurface();
+
+   void     checkSeaLevel(bool on);
+   void     setSeaLevel(double level);
 
 protected:
    void     initParameters();
@@ -126,11 +128,13 @@ protected:
    bool      m_CursorValid;
 
    // modifier keys
-   bool      m_Shift, m_Control, m_Meta;
+   bool      m_Shift, m_Control, m_Alt, m_Meta;
 
 private:
    // texture ids
    GLuint    m_CrosshairTextureId;
+
+   double    m_SeaLevel;
 
    double    delta(double a, double b);
 };

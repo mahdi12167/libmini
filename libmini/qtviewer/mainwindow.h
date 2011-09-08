@@ -10,6 +10,9 @@ class QAction;
 class QGroupBox;
 class QVBoxLayout;
 class QTableWidget;
+class QHBoxLayout;
+class QCheckBox;
+class QSlider;
 class QDialogButtonBox;
 class QPushButton;
 
@@ -27,13 +30,18 @@ public slots:
 private slots:
    void about();
    void open();
-   void click(int, int);
    void clear();
+
+   void click(int, int);
+   void checkSeaLevel(int);
+   void setSeaLevel(int);
 
 private:
    void createActions();
    void createMenus();
    void createWidgets();
+
+   QSlider *createSlider(int minimum, int maximum, int value);
 
    QMenu* fileMenu;
    QMenu* helpMenu;
@@ -47,7 +55,12 @@ private:
 
    ViewerWindow* viewerWindow;
    QTableWidget *viewerTable;
+   QGroupBox *sliderBox;
+   QHBoxLayout *sliderLayout;
    QDialogButtonBox *buttonBox;
+
+   QCheckBox *seaLevelCheck;
+   QSlider *seaLevelSlider;
 
    QPushButton *clearButton;
    QPushButton *quitButton;

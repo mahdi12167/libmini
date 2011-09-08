@@ -21,7 +21,10 @@ Renderer::Renderer(QGLWidget* window)
 
    m_Shift=false;
    m_Control=false;
+   m_Alt=false;
    m_Meta=false;
+
+   m_SeaLevel=0.0;
 }
 
 Renderer::~Renderer()
@@ -779,6 +782,8 @@ void Renderer::modifierKey(modifierKeys modifier, bool pressed)
       m_Shift=pressed;
    else if (modifier==ModifierControl)
       m_Control=pressed;
+   else if (modifier==ModifierAlt)
+      m_Alt=pressed;
    else if (modifier==ModifierMeta)
       m_Meta=pressed;
 }
@@ -790,13 +795,28 @@ void Renderer::toggleWireframe()
    startIdling();
 }
 
-void Renderer::toggleSeaSurface()
+void Renderer::checkSeaLevel(bool on)
 {
-   if (m_pTerrainParams->sealevel==-MAXFLOAT) m_pTerrainParams->sealevel=0.0f;
+   if (on) m_pTerrainParams->sealevel=m_SeaLevel;
    else m_pTerrainParams->sealevel=-MAXFLOAT;
 
    viewer->propagate();
    viewer->getearth()->getterrain()->update();
 
    startIdling();
+}
+
+void Renderer::setSeaLevel(double level)
+{
+   m_SeaLevel=level;
+
+   if (m_pTerrainParams->sealevel!=-MAXFLOAT)
+   {
+      m_pTerrainParams->sealevel=m_SeaLevel;
+
+      viewer->propagate();
+      viewer->getearth()->getterrain()->update();
+
+      startIdling();
+   }
 }
