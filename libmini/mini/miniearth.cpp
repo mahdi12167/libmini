@@ -534,7 +534,7 @@ void miniearth::rendercache()
    // enable fog
    if (EPARAMS.usefog)
       {
-      fogf=(1.0-altf)*EPARAMS.fogstart+altf;
+      fogf=EPARAMS.fogstart;
 
       enablefog(fogf*len_g2o(EPARAMS.farp),
                 len_g2o(EPARAMS.farp),
@@ -610,7 +610,7 @@ void miniearth::rendercache()
             }
 
          fogend=0.0f;
-         fogf=(1.0-altf)*EPARAMS.fogstart/2.0f+altf;
+         fogf=EPARAMS.fogstart/2.0f;
 
          if (EPARAMS.usefog)
             fogend=len_g2o(EPARAMS.farp);
