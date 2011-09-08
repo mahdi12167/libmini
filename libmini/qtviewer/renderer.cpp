@@ -812,9 +812,11 @@ void Renderer::checkFog(bool on)
 
 void Renderer::setFogDensity(double density)
 {
-   m_FogDensity=2.0*pow(density,1.0/10);
+   m_FogDensity=pow(density,1.0/10);
 
-   m_pEarthParams->fogdensity=m_FogDensity;
+   m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+m_FogDensity);
+   m_pEarthParams->fogstart=(1.0-m_FogDensity)*VIEWER_FOGSTART;
+   m_pEarthParams->fogend=(1.0-m_FogDensity)*VIEWER_FOGEND+m_FogDensity*VIEWER_NEARP/VIEWER_FARP;
    viewer->propagate();
 
    startIdling();
