@@ -263,7 +263,7 @@ void minishader::setVISshader(minicache *cache,
    usefade=(FADEMODE!=0 && FADESTART<FADEEND);
 
    // calculate the fog parameters
-   if (usefog)
+   if (usefog || fogdensity<=0.0f)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;
@@ -628,7 +628,7 @@ void minishader::setNPRshader(minicache *cache,
    usefade=(FADEMODE!=0 && FADESTART<FADEEND);
 
    // calculate the fog parameters
-   if (usefog)
+   if (usefog || fogdensity<=0.0f)
       {
       fog_a=fsqr(scale/fogend);
       fog_b=0.0f;

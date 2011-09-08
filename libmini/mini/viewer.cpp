@@ -1161,7 +1161,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          break;
       case 'M':
          eparams->fogdensity*=1.1f;
-         if (eparams->fogdensity>10.0f) eparams->fogdensity=10.0f;
+         if (eparams->fogdensity>2.0f) eparams->fogdensity=2.0f;
          viewer->propagate();
          break;
       case '9':
