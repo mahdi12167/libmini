@@ -806,7 +806,7 @@ void Renderer::checkFog(bool on)
 
 void Renderer::setFogDensity(double density)
 {
-   m_FogDensity=density;
+   m_FogDensity=2.0*pow(density,1.0/10);
 
    m_pEarthParams->fogdensity=m_FogDensity;
    viewer->propagate();
