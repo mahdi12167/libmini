@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include <string>
 
 #include <QtGui/QApplication>
@@ -197,6 +199,8 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 
 void ViewerWindow::loadMap(QString url)
 {
+   minilayer *layer;
+
    if (url.endsWith(".ini", Qt::CaseInsensitive))
    {
       int lio1=url.lastIndexOf("/");
@@ -210,8 +214,10 @@ void ViewerWindow::loadMap(QString url)
          url.truncate(lio2);
    }
 
-   if (renderer->loadMap(url.toStdString().c_str()))
-      emit changed(url);
+   layer=renderer->loadMap(url.toStdString().c_str());
+
+   if (layer!=NULL)
+      emit changed(url, layer);
 }
 
 void ViewerWindow::clearMaps()
@@ -219,9 +225,9 @@ void ViewerWindow::clearMaps()
    renderer->clearMaps();
 }
 
-void ViewerWindow::gotoMap(int n)
+void ViewerWindow::gotoMap(minilayer *layer)
 {
-   renderer->focusOnMap(n);
+   renderer->focusOnMap(layer);
 }
 
 void ViewerWindow::checkFog(bool on)

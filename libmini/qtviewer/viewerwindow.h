@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #ifndef VIEWERWINDOW_H
 #define VIEWERWINDOW_H
 
@@ -7,6 +9,8 @@
 #include <QtCore/QPoint>
 
 #include <QtGui/QMouseEvent>
+
+#include <mini/minilayer.h>
 
 class Renderer;
 
@@ -26,7 +30,7 @@ public:
    void loadMap(QString url);
    void clearMaps();
 
-   void gotoMap(int n);
+   void gotoMap(minilayer *layer);
 
    void checkFog(bool on);
    void setFogDensity(double density);
@@ -35,7 +39,7 @@ public:
    void setSeaLevel(double level);
 
 signals:
-   void changed(const QString url);
+   void changed(const QString url, minilayer *layer);
 
 protected:
    void initializeGL();

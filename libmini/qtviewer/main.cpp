@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include <QtGui/QApplication>
 #include <QtOpenGL/qgl.h>
 

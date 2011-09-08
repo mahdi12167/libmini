@@ -1,7 +1,12 @@
+// (c) by Stefan Roettger
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+
+#include <mini/minidyna.h>
+#include <mini/minilayer.h>
 
 class ViewerWindow;
 
@@ -25,7 +30,7 @@ public:
    ~MainWindow();
 
 public slots:
-   void updateTable(const QString url);
+   void updateTable(const QString url, minilayer *layer);
 
 private slots:
    void about();
@@ -72,6 +77,8 @@ private:
 
    QPushButton *clearButton;
    QPushButton *quitButton;
+
+   minidyna<minilayer *> m_Layer;
 };
 
 #endif

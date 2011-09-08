@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include <QtGui>
 
 #include "viewerwindow.h"
@@ -61,8 +63,8 @@ void MainWindow::createWidgets()
    sliderLayout = new QHBoxLayout;
    buttonBox = new QDialogButtonBox;
 
-   connect(viewerWindow, SIGNAL(changed(const QString)),
-           this, SLOT(updateTable(const QString)));
+   connect(viewerWindow, SIGNAL(changed(const QString, minilayer*)),
+           this, SLOT(updateTable(const QString, minilayer*)));
 
    QStringList labels;
    labels << tr("URL");
@@ -178,12 +180,15 @@ void MainWindow::clear()
    viewerTable->setRowCount(0);
 }
 
-void MainWindow::updateTable(const QString url)
+void MainWindow::updateTable(const QString url, minilayer *layer)
 {
    int rows = viewerTable->rowCount();
 
    viewerTable->insertRow(rows);
    viewerTable->setItem(rows, 0, new QTableWidgetItem(url));
+
+   m_Layer.growsize(rows+1);
+   m_Layer[rows]=layer;
 }
 
 void MainWindow::click(int row, int col)
@@ -191,7 +196,7 @@ void MainWindow::click(int row, int col)
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
 
-   viewerWindow->gotoMap(row);
+   viewerWindow->gotoMap(m_Layer[row]);
 }
 
 void MainWindow::checkFog(int on)

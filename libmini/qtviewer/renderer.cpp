@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #include <QtOpenGL/qgl.h>
 
 #include <QtGui/QMessageBox>
@@ -74,16 +76,21 @@ void Renderer::init()
 }
 
 // load map layer from url
-bool Renderer::loadMap(const char* url)
+minilayer* Renderer::loadMap(const char* url)
 {
+   minilayer *layer;
+
    if (m_bIsInited)
       if (url!=NULL)
-         if (viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS))
+      {
+         layer=viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
+
+         if (layer!=NULL)
          {
             viewer->getearth()->defineroi(0.0);
             startIdling();
 
-            return(true);
+            return(layer);
          }
          else
          {
@@ -91,8 +98,9 @@ bool Renderer::loadMap(const char* url)
             message.sprintf("Unable to load map data from url=%s\n", url);
             QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
          }
+      }
 
-   return(false);
+   return(NULL);
 }
 
 // remove map layers
@@ -636,12 +644,9 @@ void Renderer::focusOnTarget(double zoom)
    startTransition(anim, 0.0, 0.0, 0.5, 0.25);
 }
 
-void Renderer::focusOnMap(int n)
+void Renderer::focusOnMap(minilayer *layer)
 {
    minianim anim;
-
-   int d = viewer->getearth()->getterrain()->getdefault();
-   minilayer *layer = viewer->getearth()->getterrain()->getlayer(d+n);
 
    if (layer==NULL) return;
 

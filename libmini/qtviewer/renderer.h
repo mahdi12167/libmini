@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger
+
 #ifndef RENDERER_H
 #define RENDERER_H
 
@@ -8,6 +10,7 @@
 
 #include <mini/miniearth.h>
 #include <mini/miniterrain.h>
+#include <mini/minilayer.h>
 
 #include <mini/minicam.h>
 #include <mini/minianim.h>
@@ -29,67 +32,67 @@ public:
    Renderer(QGLWidget* window);
    ~Renderer();
 
-   void     init();
-   bool     isInited() {return(m_bIsInited);}
-   void     resizeWindow(int width, int height);
-   bool     loadMap(const char* url);
-   void     clearMaps();
+   void       init();
+   bool       isInited() {return(m_bIsInited);}
+   void       resizeWindow(int width, int height);
+   minilayer* loadMap(const char* url);
+   void       clearMaps();
 
-   void     draw();
+   void       draw();
 
-   void     setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
-   minicam* getCamera() {return(camera);}
+   void       setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
+   minicam*   getCamera() {return(camera);}
 
-   void     rotateCamera(float dx, float dy);
+   void       rotateCamera(float dx, float dy);
 
-   void     moveCameraForward(float delta);
-   void     moveCameraSideward(float delta);
+   void       moveCameraForward(float delta);
+   void       moveCameraSideward(float delta);
 
-   void     focusOnTarget(double zoom=0.0); // zoom in factor 0.0=none 1.0=full
-   void     focusOnMap(int n);
+   void       focusOnTarget(double zoom=0.0); // zoom in factor 0.0=none 1.0=full
+   void       focusOnMap(minilayer *layer);
 
-   void     timerEvent(int timerId);
-   void     moveCursor(const QPoint& pos);
-   void     modifierKey(modifierKeys modifier, bool pressed);
+   void       timerEvent(int timerId);
+   void       moveCursor(const QPoint& pos);
+   void       modifierKey(modifierKeys modifier, bool pressed);
 
-   void     toggleWireframe();
+   void       toggleWireframe();
 
-   void     checkFog(bool on);
-   void     setFogDensity(double density);
-   void     checkContours(bool on);
-   void     checkSeaLevel(bool on);
-   void     setSeaLevel(double level);
+   void       checkFog(bool on);
+   void       setFogDensity(double density);
+   void       checkContours(bool on);
+   void       checkSeaLevel(bool on);
+   void       setSeaLevel(double level);
 
 protected:
-   void     initParameters();
-   void     initBathyMap();
+   void       initParameters();
+   void       initBathyMap();
 
-   void     resizeViewport();
+   void       resizeViewport();
 
-   void     initView();
-   void     initTransition();
+   void       initView();
+   void       initTransition();
 
-   void     setupMatrix();
-   void     renderTerrain();
-   void     renderHUD();
+   void       setupMatrix();
+   void       renderTerrain();
+   void       renderHUD();
 
-   void     startIdling();
-   void     stopIdling();
+   void       startIdling();
+   void       stopIdling();
 
-   void     startTransition(minianim target, double dangle, double dpitch, double dtime, double follow);
-   void     stopTransition();
+   void       startTransition(minianim target, double dangle, double dpitch, double dtime, double follow);
+   void       stopTransition();
 
-   void     processTransition(double t, double dt);
+   void       processTransition(double t, double dt);
 
-   miniv3d  unprojectMouse();
+   miniv3d    unprojectMouse();
 
-   miniv3d  hitVector();
-   miniv3d  targetVector();
-   miniv3d  cursorVector(double zoom=0.0);
+   miniv3d    hitVector();
+   miniv3d    targetVector();
+   miniv3d    cursorVector(double zoom=0.0);
 
 private:
-   void     loadTextureFromResource(const char* respath, GLuint& texId);
-   void     drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
+   void       loadTextureFromResource(const char* respath, GLuint& texId);
+   void       drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
 
 protected:
    QGLWidget* window;
