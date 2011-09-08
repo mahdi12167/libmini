@@ -28,6 +28,7 @@ public:
 
    void gotoMap(int n);
 
+   void checkContours(bool on);
    void checkSeaLevel(bool on);
    void setSeaLevel(double level);
 

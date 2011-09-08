@@ -224,6 +224,11 @@ void ViewerWindow::gotoMap(int n)
    renderer->focusOnMap(n);
 }
 
+void ViewerWindow::checkContours(bool on)
+{
+   renderer->checkContours(on);
+}
+
 void ViewerWindow::checkSeaLevel(bool on)
 {
    renderer->checkSeaLevel(on);

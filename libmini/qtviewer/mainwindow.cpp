@@ -74,6 +74,11 @@ void MainWindow::createWidgets()
 
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
 
+   contourCheck = new QCheckBox(tr("Contours"));
+   contourCheck->setChecked(false);
+
+   connect(contourCheck, SIGNAL(stateChanged(int)), this, SLOT(checkContours(int)));
+
    seaLevelCheck = new QCheckBox(tr("Sea Level"));
    seaLevelCheck->setChecked(false);
 
@@ -81,6 +86,7 @@ void MainWindow::createWidgets()
 
    seaLevelSlider = createSlider(-100, 100, 0);
 
+   sliderLayout->addWidget(contourCheck);
    sliderLayout->addWidget(seaLevelCheck);
    sliderLayout->addWidget(seaLevelSlider);
    sliderBox->setLayout(sliderLayout);
@@ -157,6 +163,11 @@ void MainWindow::click(int row, int col)
    QString text = item->text();
 
    viewerWindow->gotoMap(row);
+}
+
+void MainWindow::checkContours(int on)
+{
+   viewerWindow->checkContours(on);
 }
 
 void MainWindow::checkSeaLevel(int on)

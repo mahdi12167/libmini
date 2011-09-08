@@ -795,6 +795,14 @@ void Renderer::toggleWireframe()
    startIdling();
 }
 
+void Renderer::checkContours(bool on)
+{
+   m_pEarthParams->usecontours=on;
+   viewer->propagate();
+
+   startIdling();
+}
+
 void Renderer::checkSeaLevel(bool on)
 {
    if (on) m_pTerrainParams->sealevel=m_SeaLevel;
