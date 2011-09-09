@@ -47,7 +47,15 @@ The tileset directory layout of each tileset (uri or url) has to be:
 ==================
 The Qt viewer supports drag and drop of tileset urls.
 
-(6) Navigation
+(6) Example Data
+================
+For example, you can drag&drop the tileset directory of a libMini demo
+into the viewer window. Download the Hawaii or Fraenkische demo from
+stereofx.org/download and drag&drop the data/HawaiiTileset or
+data/FrankischeTileset directory. Double-clicking on the layer url
+brings the respective tileset into view.
+
+(7) Navigation
 ==============
 Navigation is self-explanatory via mouse or touch pad gestures:
  single click               - focus on target
@@ -59,9 +67,9 @@ Navigation is self-explanatory via mouse or touch pad gestures:
  shift & double click       - zoom out
  shift & touch pad scroll   - pan left/right and forward/backward
 
-(7) Retire
+(8) Retire
 ==========
-If you found the software useful, please send postcard to
+If you found the software useful, please send a postcard to
  Prof. Dr. Stefan Roettger
  Hochstr. 33
  90429 Nuernberg
