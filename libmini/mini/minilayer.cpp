@@ -1142,10 +1142,10 @@ void minilayer::updatecoords()
    // create warp object for each exposed coordinate transformation:
 
    WARP_G2L=*WARP;
-   WARP_G2L.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_REFERENCE);
+   WARP_G2L.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_LOCAL);
 
    WARP_L2G=*WARP;
-   WARP_L2G.setwarp(miniwarp::MINIWARP_REFERENCE,miniwarp::MINIWARP_METRIC);
+   WARP_L2G.setwarp(miniwarp::MINIWARP_LOCAL,miniwarp::MINIWARP_METRIC);
 
    WARP_G2I=*WARP;
    WARP_G2I.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_INTERNAL);
