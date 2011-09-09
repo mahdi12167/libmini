@@ -242,3 +242,22 @@ void MainWindow::checkWireFrame(int on)
 {
    viewerWindow->toggleWireFrame(on);
 }
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+   if (event->key() == Qt::Key_F)
+      fogCheck->setChecked(!fogCheck->isChecked());
+   else if (event->key() == Qt::Key_C)
+      contourCheck->setChecked(!contourCheck->isChecked());
+   else if (event->key() == Qt::Key_S)
+      seaLevelCheck->setChecked(!seaLevelCheck->isChecked());
+   else if (event->key() == Qt::Key_W)
+      wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
+   else
+      QWidget::keyPressEvent(event);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent* event)
+{
+   QWidget::keyReleaseEvent(event);
+}

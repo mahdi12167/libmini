@@ -81,7 +81,12 @@ private:
    QPushButton *clearButton;
    QPushButton *quitButton;
 
+   protected:
+
    minidyna<minilayer *> m_Layer;
+
+   void keyPressEvent(QKeyEvent* event);
+   void keyReleaseEvent(QKeyEvent* event);
 };
 
 #endif
