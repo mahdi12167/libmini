@@ -2,7 +2,7 @@ Libmini Integration in QT Application
 =====================================
 This is an example for integrating libmini into a QT application. This
 sample application primarily uses mini viewer functions but provides
-additional camera control.
+additional camera control. It is free software licensed under the GPL.
 
 (0) Prerequisites
 =================
