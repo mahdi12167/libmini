@@ -640,7 +640,7 @@ void Renderer::focusOnTarget(double zoom)
    else
       target += cursorVector(zoom);
 
-   anim.append_sector(camera->get_eye(), target, 20);
+   anim.append_sector(camera->get_eye(), target, 100);
    startTransition(anim, 0.0, 0.0, 0.5, 0.25);
 }
 
@@ -657,7 +657,7 @@ void Renderer::focusOnMap(minilayer *layer)
    double size = (extent.x+extent.y) / 2.0;
    target += size * normal;
 
-   anim.append_sector(camera->get_eye(), target, 20);
+   anim.append_sector(camera->get_eye(), target, 100);
 
    if ((camera->get_eye().vec - target.vec).getlength() < size/4.0)
       startTransition(anim, delta(0.0, camera->get_angle()), delta(-90, camera->get_pitch()), 2.0, 0.0);
