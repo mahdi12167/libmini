@@ -34,6 +34,12 @@ void MainWindow::createActions()
    openAction->setStatusTip(tr("Open location"));
    connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
 
+   clearAction = new QAction(tr("C&lear"), this);
+   clearAction->setIcon(QIcon(":/images/close.png"));
+   clearAction->setShortcuts(QKeySequence::Close);
+   clearAction->setStatusTip(tr("Clear locations"));
+   connect(clearAction, SIGNAL(triggered()), this, SLOT(clear()));
+
    quitAction = new QAction(tr("Q&uit"), this);
    quitAction->setShortcuts(QKeySequence::Quit);
    quitAction->setStatusTip(tr("Quit the application"));
@@ -44,6 +50,7 @@ void MainWindow::createMenus()
 {
    fileMenu = menuBar()->addMenu(tr("&File"));
    fileMenu->addAction(openAction);
+   fileMenu->addAction(clearAction);
    fileMenu->addAction(quitAction);
 
    menuBar()->addSeparator();

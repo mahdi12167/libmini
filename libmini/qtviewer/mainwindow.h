@@ -57,6 +57,7 @@ private:
 
    QAction* aboutAction;
    QAction* openAction;
+   QAction* clearAction;
    QAction* quitAction;
 
    QGroupBox *mainGroup;
