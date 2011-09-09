@@ -108,7 +108,7 @@ void unlock_cs2(void *data)
 static int winwidth,winheight,winid;
 
 // USGS 1:250,000 and 1:24,000 DEM quads
-static const char *usgsmaps[]={"data/HawaiiTileset/tiles/USGS-DEM-BBox.pgm",
+static const char *usgsmaps[]={"data/HawaiiTileset/elev/USGS-DEM-BBox.pgm",
                                // lores bathymetry
                                "Bathymetry-DEM/bathymetry.pgm",
                                // lores coverage
@@ -227,7 +227,7 @@ static const char *usgsmaps[]={"data/HawaiiTileset/tiles/USGS-DEM-BBox.pgm",
                                "USGS-DEM-24000/WAIPAHU.pgm"};
 
 // LandSat ETM orthophotos
-static const char *landmaps[]={"data/HawaiiTileset/landsat/LandSat-ETM-BBox.ppm",
+static const char *landmaps[]={"data/HawaiiTileset/imag/LandSat-ETM-BBox.ppm",
                                "LandSat-ETM/hawaii.ppm",
                                "LandSat-ETM/kahoolawe.ppm",
                                "LandSat-ETM/kauai.ppm",
@@ -364,14 +364,14 @@ static const char *normaps[]={"data/HawaiiTileset/normalized/Normalization-BBox.
                               "data/HawaiiTileset/normalized/normalized.WAIPAHU.pgm"};
 
 // relative base path to the generated tiles and textures
-static const char rbasepath1[]="tiles";
-static const char rbasepath2[]="landsat";
+static const char rbasepath1[]="elev";
+static const char rbasepath2[]="imag";
 static const char rbasepath3[]="bathymetry";
 static const char rbasepath4[]="normalized";
 
 // absolute base path to the generated tiles and textures
-static const char abasepath1[]="data/HawaiiTileset/tiles";
-static const char abasepath2[]="data/HawaiiTileset/landsat";
+static const char abasepath1[]="data/HawaiiTileset/elev";
+static const char abasepath2[]="data/HawaiiTileset/imag";
 static const char abasepath3[]="data/HawaiiTileset/bathymetry";
 static const char abasepath4[]="data/HawaiiTileset/normalized";
 

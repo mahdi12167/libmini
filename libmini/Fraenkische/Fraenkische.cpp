@@ -76,7 +76,7 @@ void unlock_cs(void *data)
 static int winwidth,winheight,winid;
 
 // SRTM
-static const char *srtmmaps[]={"data/FraenkischeTileset/tiles/SRTM-DEM-BBox.demo.pgm",
+static const char *srtmmaps[]={"data/FraenkischeTileset/elev/SRTM-DEM-BBox.demo.pgm",
                                "GTOPO30/World.W020N90.map.pgm", // fill SRTM holes
                                "SRTM/N47E010.pgm",
                                "SRTM/N47E011.pgm",
@@ -96,7 +96,7 @@ static const char *srtmmaps[]={"data/FraenkischeTileset/tiles/SRTM-DEM-BBox.demo
                                "SRTM/N50E013.pgm"};
 
 // LandSat ETM and MSS orthophotos
-static const char *landmaps[]={"data/FraenkischeTileset/landsat/LandSat-ETM-BBox.demo.ppm",
+static const char *landmaps[]={"data/FraenkischeTileset/imag/LandSat-ETM-BBox.demo.ppm",
                                "LandSat-ETM/p193r025.ppm",
                                "LandSat-ETM/p193r026.ppm",
                                "LandSat-ETM/p194r025.ppm", // cloudy -> poor quality
@@ -112,8 +112,8 @@ static const char *treemaps[]={"data/FraenkischeTileset/trees/LandSat-NDVI-BBox.
                                "LandSat-NDVI/p193r026-trees.pgm"};
 
 // base path to the generated tiles and textures
-static const char basepath1[]="tiles";
-static const char basepath2[]="landsat";
+static const char basepath1[]="elev";
+static const char basepath2[]="imag";
 static const char basepath3[]="trees";
 
 // number of tiles
