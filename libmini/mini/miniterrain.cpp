@@ -228,12 +228,12 @@ miniterrain::miniterrain()
    LNUM=LMAX=0;
 
    NULL_LAYER=setnull();
+   NULLL=getlayer(NULL_LAYER);
+
    EARTH_LAYER=setearth();
 
    DEFAULT_LAYER=LNUM;
    setreference(DEFAULT_LAYER);
-
-   NULLL=getlayer(NULL_LAYER);
 
    THREADDATA=NULL;
    THREADINIT=NULL;
