@@ -425,6 +425,10 @@ class miniterrain
    double len_g2o(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_g2o(l));}
    double len_o2g(double l) {return(((REFERENCE==NULL)?NULLL:REFERENCE)->len_o2g(l));}
 
+   //! get transformation matrix from ecef to opengl
+   void get_ecef_matrix(miniv4d matrix[3])
+      {ECEFWARP.getwarp(matrix);}
+
    protected:
 
    MINITERRAIN_PARAMS TPARAMS;
@@ -443,6 +447,8 @@ class miniterrain
    int LREF;
    minilayer *REFERENCE;
    minilayer *NULLL;
+
+   miniwarp ECEFWARP;
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);

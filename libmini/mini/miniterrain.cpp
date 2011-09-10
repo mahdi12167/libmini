@@ -764,6 +764,10 @@ void miniterrain::setreference(int ref)
    // propagate new reference coordinate system
    for (n=0; n<LNUM; n++)
       LAYER[n]->setreference(REFERENCE);
+
+   // construct warp matrix from ecef to opengl
+   ECEFWARP=*NULLL->getwarp();
+   ECEFWARP.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
    }
 
 // get reference layer

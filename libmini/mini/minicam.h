@@ -74,6 +74,9 @@ class minicam
    void get_local_base(const minicoord &pos,
                        miniv3d &dir,miniv3d &right,miniv3d &up);
 
+   void get_ecef_matrix(miniv4d matrix[3])
+      {EARTH->get_ecef_matrix(matrix);}
+
    protected:
 
    minicoord eye;

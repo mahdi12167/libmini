@@ -311,6 +311,31 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
 double minicam::get_hitdist(const minicoord &pos,const miniv3d &dir)
    {return((get_hit(pos,dir).vec-pos.vec).getlength());}
 
+// move point up so that it is above ground
+void minicam::move_above(minicoord &pos,double mindist)
+   {
+   double elev;
+   double dist;
+
+   minilayer *nst;
+   minicoord posl;
+
+   elev=get_elev(pos);
+   nst=EARTH->getnearest(pos);
+
+   if (elev!=-MAXFLOAT && nst!=NULL)
+      {
+      posl=nst->map_g2l(pos);
+      posl.vec.z=dmax(posl.vec.z,nst->len_g2l(elev+mindist));
+      pos=nst->map_l2g(posl);
+      }
+   else
+      {
+      dist=get_dist(pos);
+      if (dist<mindist) move_down(dist-mindist);
+      }
+   }
+
 // get base vectors of local coordinate system
 void minicam::get_local_base(const minicoord &pos,
                              miniv3d &dir,miniv3d &right,miniv3d &up)
@@ -376,29 +401,4 @@ void minicam::get_local_base(const minicoord &pos,
    dir=dir0;
    right=right0;
    up=up0;
-   }
-
-// move point up so that it is above ground
-void minicam::move_above(minicoord &pos,double mindist)
-   {
-   double elev;
-   double dist;
-
-   minilayer *nst;
-   minicoord posl;
-
-   elev=get_elev(pos);
-   nst=EARTH->getnearest(pos);
-
-   if (elev!=-MAXFLOAT && nst!=NULL)
-      {
-      posl=nst->map_g2l(pos);
-      posl.vec.z=dmax(posl.vec.z,nst->len_g2l(elev+mindist));
-      pos=nst->map_l2g(posl);
-      }
-   else
-      {
-      dist=get_dist(pos);
-      if (dist<mindist) move_down(dist-mindist);
-      }
    }

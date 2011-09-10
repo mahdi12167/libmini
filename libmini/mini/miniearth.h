@@ -251,6 +251,10 @@ class miniearth
    double len_g2o(double l) {return(TERRAIN->len_g2o(l));}
    double len_o2g(double l) {return(TERRAIN->len_o2g(l));}
 
+   //! get transformation matrix from ecef to opengl
+   void get_ecef_matrix(miniv4d matrix[3])
+      {TERRAIN->get_ecef_matrix(matrix);}
+
    protected:
 
    MINIEARTH_PARAMS EPARAMS;
