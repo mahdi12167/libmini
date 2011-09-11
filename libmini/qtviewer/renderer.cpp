@@ -208,7 +208,6 @@ void Renderer::initView()
 {
    resizeViewport();
 
-   camera->move_down(-VIEWER_HEIGHT_START);
    camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    viewer->initeyepoint(camera->get_eye());
