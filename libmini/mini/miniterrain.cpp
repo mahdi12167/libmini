@@ -231,6 +231,7 @@ miniterrain::miniterrain()
    NULLL=getlayer(NULL_LAYER);
 
    EARTH_LAYER=setearth();
+   EARTHL=getlayer(EARTH_LAYER);
 
    DEFAULT_LAYER=LNUM;
    setreference(DEFAULT_LAYER);
@@ -765,9 +766,13 @@ void miniterrain::setreference(int ref)
    for (n=0; n<LNUM; n++)
       LAYER[n]->setreference(REFERENCE);
 
-   // construct warp matrix from ecef to opengl
+   // construct null warp matrix from ecef to opengl
    ECEFWARP=*NULLL->getwarp();
    ECEFWARP.setwarp(miniwarp::MINIWARP_METRIC,miniwarp::MINIWARP_FINAL);
+
+   // construct earth warp matrix from internal to opengl
+   EARTHWARP=*EARTHL->getwarp();
+   EARTHWARP.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
    }
 
 // get reference layer

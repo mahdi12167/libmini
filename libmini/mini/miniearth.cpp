@@ -567,9 +567,7 @@ void miniearth::rendercache()
          EARTH->setscale(len_o2g(1.0));
          EARTH->setdynscale(1.0);
 
-         warp=*getearth()->getwarp();
-         warp.setwarp(miniwarp::MINIWARP_INTERNAL,miniwarp::MINIWARP_FINAL);
-         warp.getwarp(mtx);
+         TERRAIN->get_earth_matrix(mtx);
 
          oglmtx[0]=mtx[0].x;
          oglmtx[1]=mtx[1].x;

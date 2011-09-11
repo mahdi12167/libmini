@@ -429,6 +429,10 @@ class miniterrain
    void get_ecef_matrix(miniv4d matrix[3])
       {ECEFWARP.getwarp(matrix);}
 
+   //! get internal transformation matrix from earth layer to opengl
+   void get_earth_matrix(miniv4d matrix[3])
+      {EARTHWARP.getwarp(matrix);}
+
    protected:
 
    MINITERRAIN_PARAMS TPARAMS;
@@ -446,9 +450,10 @@ class miniterrain
 
    int LREF;
    minilayer *REFERENCE;
-   minilayer *NULLL;
+   minilayer *NULLL,*EARTHL;
 
    miniwarp ECEFWARP;
+   miniwarp EARTHWARP;
 
    void *THREADDATA;
    void (*THREADINIT)(int threads,int id,void *data);
