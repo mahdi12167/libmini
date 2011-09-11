@@ -103,7 +103,7 @@ inline void mtxscale(const miniv3d &s);
 inline void mtxtranslate(const float tx,const float ty,const float tz);
 inline void mtxtranslate(const miniv3d &t);
 inline void mtxrotate(const float angle,const float ax,const float ay,const float az);
-inline void mtxrotate(const float angle,const miniv3d &n);
+inline void mtxrotate(const float angle,const miniv3d &a);
 
 inline void mtxmult(const float mtx[16]);
 inline void mtxmult(const double mtx[16]);
@@ -338,6 +338,13 @@ void mtxscale(const float sx,const float sy,const float sz)
 #endif
    }
 
+void mtxscale(const miniv3d &s)
+   {
+#ifndef NOOGL
+   glScaled(s.x,s.y,s.z);
+#endif
+   }
+
 void mtxtranslate(const float tx,const float ty,const float tz)
    {
 #ifndef NOOGL
@@ -345,10 +352,24 @@ void mtxtranslate(const float tx,const float ty,const float tz)
 #endif
    }
 
+void mtxtranslate(const miniv3d &t)
+   {
+#ifndef NOOGL
+   glTranslated(t.x,t.y,t.z);
+#endif
+   }
+
 void mtxrotate(const float angle,const float ax,const float ay,const float az)
    {
 #ifndef NOOGL
    glRotatef(angle,ax,ay,az);
+#endif
+   }
+
+void mtxrotate(const float angle,const miniv3d &a)
+   {
+#ifndef NOOGL
+   glRotated(angle,a.x,a.y,a.z);
 #endif
    }
 
@@ -456,11 +477,30 @@ inline void renderline(const float x1,const float y1,const float z1,const float 
 #endif
    }
 
+inline void renderline(const miniv3d &v1,const miniv3d &v2)
+   {
+#ifndef NOOGL
+   glBegin(GL_LINES);
+   glVertex3d(v1.x,v1.y,v1.z);
+   glVertex3d(v2.x,v2.y,v2.z);
+   glEnd();
+#endif
+   }
+
 inline void renderpoint(const float x,const float y,const float z)
    {
 #ifndef NOOGL
    glBegin(GL_POINTS);
    glVertex3f(x,y,z);
+   glEnd();
+#endif
+   }
+
+inline void renderpoint(const miniv3d &v)
+   {
+#ifndef NOOGL
+   glBegin(GL_POINTS);
+   glVertex3f(v.x,v.y,v.z);
    glEnd();
 #endif
    }

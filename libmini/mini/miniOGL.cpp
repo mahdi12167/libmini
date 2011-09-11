@@ -299,6 +299,9 @@ void clearbuffer(float r,float g,float b,float a)
 #endif
    }
 
+void clearbuffer(const miniv4d &c)
+   {clearbuffer(c.x,c.y,c.z,c.w);}
+
 void disableculling()
    {
 #ifndef NOOGL
@@ -543,6 +546,9 @@ void enablefog(float fogstart,float fogend,float r,float g,float b,float a)
 
 #endif
    }
+
+void enablefog(float fogstart,float fogend,const miniv4d &c)
+   {enablefog(fogstart,fogend,c.x,c.y,c.z,c.w);}
 
 void disablefog()
    {
@@ -1466,6 +1472,9 @@ void multitexcoord(const unsigned int unit,const float s,const float t,const flo
 #endif
 #endif
    }
+
+void multitexcoord(const unsigned int unit,const miniv3d &t)
+   {multitexcoord(unit,t.x,t.y,t.z);}
 
 int getfancnt()
    {
