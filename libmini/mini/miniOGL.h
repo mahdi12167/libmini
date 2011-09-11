@@ -136,12 +136,14 @@ void enablelinesmooth();
 void disablelinesmooth();
 
 inline void renderline(const float x1,const float y1,const float z1,const float x2,const float y2,const float z2);
+inline void renderline(const miniv3d &v1,const miniv3d &v2);
 
 void pointsize(const float s=1.0f);
 void enablepointsmooth();
 void disablepointsmooth();
 
 inline void renderpoint(const float x,const float y,const float z);
+inline void renderpoint(const miniv3d &v);
 
 void vertexarray(float *array,int comps=3);
 void colorarray(float *array,int comps=3);
@@ -386,10 +388,24 @@ inline void color(const float r,const float g,const float b,const float a)
 #endif
    }
 
+inline void color(const miniv4d &c)
+   {
+#ifndef NOOGL
+   glColor4d(c.x,c.y,c.z,c.w);
+#endif
+   }
+
 inline void normal(const float dx,const float dy,const float dz)
    {
 #ifndef NOOGL
    glNormal3f(dx,dy,dz);
+#endif
+   }
+
+inline void normal(const miniv3d &n)
+   {
+#ifndef NOOGL
+   glNormal3d(n.x,n.y,n.z);
 #endif
    }
 
@@ -400,10 +416,25 @@ inline void texcoord(const float s,const float t,const float r)
 #endif
    }
 
+inline void texcoord(const miniv3d &t)
+   {
+#ifndef NOOGL
+   glTexCoord3d(t.x,t.y,t.z);
+#endif
+   }
+
 inline void fanvertex(const float x,const float y,const float z)
    {
 #ifndef NOOGL
    glVertex3f(x,y,z);
+   vtxcnt++;
+#endif
+   }
+
+inline void fanvertex(const miniv3d &v)
+   {
+#ifndef NOOGL
+   glVertex3d(v.x,v.y,v.z);
    vtxcnt++;
 #endif
    }
