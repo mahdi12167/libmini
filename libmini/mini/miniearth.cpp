@@ -568,27 +568,7 @@ void miniearth::rendercache()
          EARTH->setdynscale(1.0);
 
          TERRAIN->get_earth_matrix(mtx);
-
-         oglmtx[0]=mtx[0].x;
-         oglmtx[1]=mtx[1].x;
-         oglmtx[2]=mtx[2].x;
-         oglmtx[3]=0.0;
-
-         oglmtx[4]=mtx[0].y;
-         oglmtx[5]=mtx[1].y;
-         oglmtx[6]=mtx[2].y;
-         oglmtx[7]=0.0;
-
-         oglmtx[8]=mtx[0].z;
-         oglmtx[9]=mtx[1].z;
-         oglmtx[10]=mtx[2].z;
-         oglmtx[11]=0.0;
-
-         oglmtx[12]=mtx[0].w;
-         oglmtx[13]=mtx[1].w;
-         oglmtx[14]=mtx[2].w;
-         oglmtx[15]=1.0;
-
+         mtxget(mtx,oglmtx);
          EARTH->setmatrix(oglmtx);
 
          lgl=getnull()->rot_g2i(EPARAMS.lightdir,getnull()->getcenter());

@@ -3,6 +3,9 @@
 #ifndef MINIOGL_H
 #define MINIOGL_H
 
+#include "miniv3d.h"
+#include "miniv4d.h"
+
 #include "database.h"
 
 // OpenGL dependent functions:
@@ -15,6 +18,7 @@ void initstate();
 void exitstate();
 
 void clearbuffer(float r,float g,float b,float a=1.0f);
+void clearbuffer(const miniv4d &c);
 
 void disableculling();
 void enableBFculling();
@@ -47,6 +51,7 @@ void enablestenciling(int pass=0);
 void disablestenciling();
 
 void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
+void enablefog(float fogstart,float fogend,const miniv4d &c);
 void disablefog();
 
 void getfog(float *start,float *end);
@@ -94,11 +99,16 @@ inline void mtxpop();
 
 inline void mtxid();
 inline void mtxscale(const float sx,const float sy,const float sz);
+inline void mtxscale(const miniv3d &s);
 inline void mtxtranslate(const float tx,const float ty,const float tz);
+inline void mtxtranslate(const miniv3d &t);
 inline void mtxrotate(const float angle,const float ax,const float ay,const float az);
+inline void mtxrotate(const float angle,const miniv3d &n);
 
 inline void mtxmult(const float mtx[16]);
 inline void mtxmult(const double mtx[16]);
+
+void mtxget(const miniv4d mtx[3],double oglmtx[16]);
 
 void mtxgetmodel(float mtx[16]);
 void mtxgetmodel(double mtx[16]);
@@ -106,12 +116,17 @@ void mtxgetmodel(double mtx[16]);
 inline void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
+inline void color(const miniv4d &c);
 inline void normal(const float dx,const float dy,const float dz);
+inline void normal(const miniv3d &n);
 inline void texcoord(const float s,const float t,const float r=0.0f);
+inline void texcoord(const miniv3d &t);
 inline void fanvertex(const float x,const float y,const float z);
+inline void fanvertex(const miniv3d &v);
 inline void endfans();
 
 void multitexcoord(const unsigned int unit,const float s,const float t,const float r=0.0f);
+void multitexcoord(const unsigned int unit,const miniv3d &t);
 
 int getfancnt();
 int getvtxcnt();
