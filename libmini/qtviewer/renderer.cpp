@@ -88,6 +88,8 @@ minilayer* Renderer::loadMap(const char* url)
          if (layer!=NULL)
          {
             viewer->getearth()->defineroi(0.0);
+
+            focusOnMap(layer);
             startIdling();
 
             return(layer);
