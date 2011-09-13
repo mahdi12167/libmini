@@ -671,6 +671,7 @@ void Renderer::processTransition(double t, double dt)
    const double minspeed = 3000.0; // minimum speed (m/second)
 
    t /= m_TargetDeltaTime;
+   if (t < 1.0) t = 1.0 - pow(1.0 - t, 2.0);
 
    miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - camera->get_eye().vec;
    double speed = dir.getlength();
