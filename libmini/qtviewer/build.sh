@@ -14,7 +14,7 @@ if (! -X qmake) then
 endif
 
 if (-d ../mini) then
-   (cd ../mini; cmake BUILD_MINI_SFX=ON .; make)
+   (cd ../mini; cmake -DBUILD_MINI_SFX=ON .; make)
 endif
 
 set options=""
