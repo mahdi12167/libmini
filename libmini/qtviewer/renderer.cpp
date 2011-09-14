@@ -871,15 +871,20 @@ void Renderer::setLight(double hour)
 
 void Viewer::render_ecef_geometry()
    {
+   // render globe for z-values:
+
    static miniglobe globe;
 
-   globe.setdynscale(0.99);
+   globe.setdynscale(0.999);
    disableRGBAwriting();
    globe.render();
    enableRGBAwriting();
 
+   // render ecef coordinate axis:
+
    linewidth(2);
    enablelinesmooth();
+
 #if 0
    color(miniv3d(0.5,0.0,0.0));
    renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
@@ -900,5 +905,31 @@ void Viewer::render_ecef_geometry()
    color(miniv3d(0.0,0.0,1.0));
    renderline(miniv3d(0.0,0.0,0.0),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+
+   // render equator:
+
+   linewidth(1);
+   disableZwriting();
+
+   mtxproj();
+   mtxpush();
+   mtxscale(0.95,0.95,0.95); // prevent Z-fighting
+
+   color(0.25,0.25,0.25);
+   for (int i=0; i<100; i++)
+      {
+      minicoord c1(miniv3d(i/100.0*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
+      c1.convert2(minicoord::MINICOORD_ECEF);
+
+      minicoord c2(miniv3d((i+1)/100.0*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
+      c2.convert2(minicoord::MINICOORD_ECEF);
+
+      renderline(c1.vec,c2.vec);
+      }
+   mtxpop();
+   mtxmodel();
+
+   enableZwriting();
+
    disablelinesmooth();
    }
