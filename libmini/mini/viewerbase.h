@@ -130,9 +130,6 @@ class viewerbase
    static void setraycallbacks(void (*lock)(void *data),void *data,
                                void (*unlock)(void *data));
 
-   //! render ecef geometry
-   virtual void render_ecef_geometry();
-
    //! map coordinates
    minicoord map_g2l(const minicoord &p) {return(TERRAIN->map_g2l(p));}
    minicoord map_l2g(const minicoord &p) {return(TERRAIN->map_l2g(p));}
@@ -154,6 +151,8 @@ class viewerbase
    protected:
 
    VIEWER_PARAMS PARAMS;
+
+   virtual void render_ecef_geometry();
 
    private:
 

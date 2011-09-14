@@ -3,6 +3,8 @@
 #ifndef MINIREF_H
 #define MINIREF_H
 
+#include "minibase.h"
+
 //! templated ref-count item
 template <class Item>
 class miniitem
@@ -34,8 +36,12 @@ class miniref
    //! default constructor
    miniref(const Item *i=NULL)
       {
-      ref=new miniitem<Item>(i);
-      if (ref!=NULL) ref->refcount++;
+      if (i==NULL) ref=NULL;
+      else
+         {
+         ref=new miniitem<Item>(i);
+         ref->refcount++;
+         }
       }
 
    //! copy constructor
@@ -55,10 +61,56 @@ class miniref
          }
       }
 
+   //! assignment operator
+   miniref<Item>& operator =(const miniref<Item> &r)
+      {
+      if (ref!=NULL)
+         {
+         ref->refcount--;
+         if (ref->refcount==0) delete ref;
+         }
+
+      ref=r.ref;
+      if (ref!=NULL) ref->refcount++;
+
+      return(*this);
+      }
+
+   //! assignment operator
+   miniref<Item>& operator =(const Item *r)
+      {
+      if (ref!=NULL)
+         {
+         ref->refcount--;
+         if (ref->refcount==0) delete ref;
+         }
+
+      if (r==NULL) ref=NULL;
+      else
+         {
+         ref=new miniitem<Item>(r);
+         ref->refcount++;
+         }
+
+      return(*this);
+      }
+
+   //! comparison operator
+   bool operator ==(const miniref<Item> &r) const
+      {return(ref==r.ref);}
+
+   //! comparison operator
+   bool operator ==(const Item *r) const
+      {
+      if (ref==NULL && r==NULL) return(true);
+      if (ref==NULL) return(false);
+      return(&ref->item==r);
+      }
+
    //! item accessor
    Item& operator *()
       {
-      if (ref==NULL) ERRORMSG();
+      ERRORCHK(ref==NULL);
       return(ref->item);
       }
    };
