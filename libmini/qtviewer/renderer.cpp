@@ -866,6 +866,8 @@ void Viewer::render_ecef_geometry()
    globe.render();
    enableRGBAwriting();
 
+   linewidth(2);
+   enablelinesmooth();
    color(miniv3d(0.5,0.0,0.0));
    renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
               miniv3d(0.0,0.0,0.0));
@@ -884,4 +886,5 @@ void Viewer::render_ecef_geometry()
    color(miniv3d(0.0,0.0,1.0));
    renderline(miniv3d(0.0,0.0,0.0),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+   disablelinesmooth();
    }
