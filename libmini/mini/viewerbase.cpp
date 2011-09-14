@@ -149,11 +149,22 @@ void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,floa
 // render cached scene
 void viewerbase::render()
    {
+   miniv4d mtx[3];
+   double oglmtx[16];
+
    // enable wireframe mode
    if (PARAMS.usewireframe) polygonmode(1);
 
    // render earth
    EARTH->render();
+
+   // render ecef geometry
+   EARTH->get_ecef_matrix(mtx);
+   mtxget(mtx,oglmtx);
+   mtxpush();
+   mtxmult(oglmtx);
+   render_ecef_geometry();
+   mtxpop();
 
    // disable wireframe mode
    if (PARAMS.usewireframe) polygonmode(0);
@@ -226,5 +237,26 @@ minidyna<miniv3d> viewerbase::extract(const minicoord &p,const miniv3d &v,double
 void viewerbase::setraycallbacks(void (*lock)(void *data),void *data,
                                  void (*unlock)(void *data))
    {miniray::setcallbacks(lock,data,unlock);}
+
+// render ecef geometry
+void viewerbase::render_ecef_geometry()
+   {
+   // overwrite in derived class and add opengl calls
+   // to render additional geometry defined in ecef coordinates here:
+   // ...
+
+   // for example 3 colored lines along the ecef coordinate axis:
+#if 0
+   color(miniv3d(1.0,0.0,0.0));
+   renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
+              miniv3d(1.1*miniearth::EARTH_radius,0.0,0.0));
+   color(miniv3d(0.0,1.0,0.0));
+   renderline(miniv3d(0.0,-1.1*miniearth::EARTH_radius,0.0),
+              miniv3d(0.0,1.1*miniearth::EARTH_radius,0.0));
+   color(miniv3d(0.0,0.0,1.0));
+   renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
+              miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+#endif
+   }
 
 #endif

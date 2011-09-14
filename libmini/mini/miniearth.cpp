@@ -12,6 +12,8 @@
 
 #include "miniearth.h"
 
+const double miniearth::EARTH_radius=6370997.0; // mean earth radius
+
 // default constructor
 miniearth::miniearth()
    {

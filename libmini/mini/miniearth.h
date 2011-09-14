@@ -24,6 +24,8 @@ class miniearth
    {
    public:
 
+   static const double EARTH_radius; // radius of the earth
+
    struct MINIEARTH_PARAMS_STRUCT
       {
       // configurable parameters:

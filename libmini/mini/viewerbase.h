@@ -62,7 +62,7 @@ class viewerbase
    viewerbase();
 
    //! destructor
-   ~viewerbase();
+   virtual ~viewerbase();
 
    //! get parameters
    void get(VIEWER_PARAMS &params);
@@ -129,6 +129,9 @@ class viewerbase
    //! set locking callbacks for ray shooting (and plane extraction)
    static void setraycallbacks(void (*lock)(void *data),void *data,
                                void (*unlock)(void *data));
+
+   //! render ecef geometry
+   virtual void render_ecef_geometry();
 
    //! map coordinates
    minicoord map_g2l(const minicoord &p) {return(TERRAIN->map_g2l(p));}

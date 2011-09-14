@@ -12,6 +12,8 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,int n)
    if (a.type!=minicoord::MINICOORD_LINEAR) a.convert2(minicoord::MINICOORD_ECEF);
    if (b.type!=minicoord::MINICOORD_LINEAR) b.convert2(minicoord::MINICOORD_ECEF);
 
+   if (n<1) n=1;
+
    append(a);
    bisect(a,b,ceil(log((double)n)/log(2.0)));
    }
