@@ -815,8 +815,8 @@ void render()
 
    miniv3d egl,dgl,ugl,rgl;
 
-   double lightdir;
-   miniv3d light;
+   double light;
+   miniv3d lightdir;
 
    if (winwidth<=0 || winheight<=0) return;
 
@@ -931,9 +931,9 @@ void render()
    // update earth lighting
    if (eparams->usediffuse)
       {
-      lightdir=2*PI*VIEWER_ROTATION*viewer->time();
-      light=miniv3d(sin(lightdir),cos(lightdir),0.0);
-      eparams->lightdir=light;
+      light=2*PI*VIEWER_ROTATION*viewer->time();
+      lightdir=miniv3d(-cos(light),sin(light),0.0);
+      eparams->lightdir=lightdir;
       viewer->propagate();
       wakeup=TRUE;
       }
