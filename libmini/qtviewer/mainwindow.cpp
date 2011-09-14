@@ -286,6 +286,8 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       contourCheck->setChecked(!contourCheck->isChecked());
    else if (event->key() == Qt::Key_S)
       seaLevelCheck->setChecked(!seaLevelCheck->isChecked());
+   else if (event->key() == Qt::Key_N)
+      lightCheck->setChecked(!lightCheck->isChecked());
    else if (event->key() == Qt::Key_W)
       wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
    else
