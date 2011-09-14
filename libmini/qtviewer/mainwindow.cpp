@@ -126,12 +126,12 @@ void MainWindow::createWidgets()
    seaLayout->addWidget(seaLevelSlider);
    seaGroup->setLayout(seaLayout);
 
-   lightCheck = new QCheckBox(tr("Greenwich Time"));
+   lightCheck = new QCheckBox(tr("UTC Night"));
    lightCheck->setChecked(false);
 
    connect(lightCheck, SIGNAL(stateChanged(int)), this, SLOT(checkLight(int)));
 
-   lightSlider = createSlider(0, 24, 0);
+   lightSlider = createSlider(-12, 12, 0);
 
    connect(lightSlider, SIGNAL(valueChanged(int)), this, SLOT(setLight(int)));
 

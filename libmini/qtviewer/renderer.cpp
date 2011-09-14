@@ -4,6 +4,8 @@
 
 #include <QtGui/QMessageBox>
 
+#include <QDateTime>
+
 #include <mini/minibase.h>
 
 #include <mini/miniOGL.h>
@@ -861,7 +863,10 @@ void Renderer::setLight(double hour)
 {
    m_DayHour=hour;
 
-   double light=2*PI*m_DayHour/24.0;
+   QTime time_utc = QDateTime::currentDateTimeUtc().time();
+   double hour_utc = time_utc.hour()+time_utc.minute()/60.0+time_utc.second()/3600.0;
+
+   double light=2*PI*(hour_utc+m_DayHour)/24.0;
    miniv3d lightdir(-cos(light),sin(light),0.0);
    m_pEarthParams->lightdir=lightdir;
    viewer->propagate();
