@@ -26,6 +26,11 @@ enum modifierKeys
    ModifierMeta
 };
 
+class Viewer : public viewerbase
+{
+   void render_ecef_geometry();
+};
+
 class Renderer
 {
 public:
@@ -103,7 +108,7 @@ protected:
    bool m_bIsInited;
 
    // viewer
-   viewerbase* viewer;
+   Viewer* viewer;
    viewerbase::VIEWER_PARAMS* m_pViewerParams; // the viewing parameters
    miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters

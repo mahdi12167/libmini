@@ -9,8 +9,6 @@
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
 
-#include <mini/minicrs.h>
-
 #include "renderer.h"
 
 Renderer::Renderer(QGLWidget* window)
@@ -49,7 +47,7 @@ void Renderer::init()
    viewportheight=window->height();
 
    // create the viewer object
-   viewer=new viewerbase();
+   viewer=new Viewer();
 
    // initialize VIS bathy map
    initBathyMap();
@@ -583,7 +581,7 @@ void Renderer::moveCameraForward(float delta)
    double dist0 = camera->get_hitdist(camera->get_eye(), dir);
 
    if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
+   if (dist == 0.0) dist = sqrt(pow(miniearth::EARTH_radius+camera->get_dist(), 2.0)-pow(miniearth::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
    if (m_Shift)
@@ -611,7 +609,7 @@ void Renderer::moveCameraSideward(float delta)
    double dist0 = camera->get_hitdist(camera->get_eye(), dir);
 
    if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(minicrs::EARTH_radius+camera->get_dist(), 2.0)-pow(minicrs::EARTH_radius, 2.0));
+   if (dist == 0.0) dist = sqrt(pow(miniearth::EARTH_radius+camera->get_dist(), 2.0)-pow(miniearth::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
    camera->move_right(-delta * dist);
@@ -858,3 +856,32 @@ void Renderer::setSeaLevel(double level)
       startIdling();
    }
 }
+
+void Viewer::render_ecef_geometry()
+   {
+   static miniglobe globe;
+
+   globe.setdynscale(0.99);
+   disableRGBAwriting();
+   globe.render();
+   enableRGBAwriting();
+
+   color(miniv3d(0.5,0.0,0.0));
+   renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
+              miniv3d(0.0,0.0,0.0));
+   color(miniv3d(1.0,0.0,0.0));
+   renderline(miniv3d(0.0,0.0,0.0),
+              miniv3d(1.1*miniearth::EARTH_radius,0.0,0.0));
+   color(miniv3d(0.0,0.5,0.0));
+   renderline(miniv3d(0.0,-1.1*miniearth::EARTH_radius,0.0),
+              miniv3d(0.0,0.0,0.0));
+   color(miniv3d(0.0,1.0,0.0));
+   renderline(miniv3d(0.0,0.0,0.0),
+              miniv3d(0.0,1.1*miniearth::EARTH_radius,0.0));
+   color(miniv3d(0.0,0.0,0.5));
+   renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
+              miniv3d(0.0,0.0,0.0));
+   color(miniv3d(0.0,0.0,1.0));
+   renderline(miniv3d(0.0,0.0,0.0),
+              miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+   }
