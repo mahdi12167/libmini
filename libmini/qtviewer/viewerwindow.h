@@ -37,6 +37,8 @@ public:
    void checkContours(bool on);
    void checkSeaLevel(bool on);
    void setSeaLevel(double level);
+   void checkLight(bool on);
+   void setLight(double hour);
    void toggleWireFrame(bool on);
 
 signals:

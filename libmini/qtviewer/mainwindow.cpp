@@ -126,6 +126,22 @@ void MainWindow::createWidgets()
    seaLayout->addWidget(seaLevelSlider);
    seaGroup->setLayout(seaLayout);
 
+   lightCheck = new QCheckBox(tr("Greenwich Time"));
+   lightCheck->setChecked(false);
+
+   connect(lightCheck, SIGNAL(stateChanged(int)), this, SLOT(checkLight(int)));
+
+   lightSlider = createSlider(0, 24, 0);
+
+   connect(lightSlider, SIGNAL(valueChanged(int)), this, SLOT(setLight(int)));
+
+   QGroupBox *lightGroup = new QGroupBox;
+   QHBoxLayout *lightLayout = new QHBoxLayout;
+
+   lightLayout->addWidget(lightCheck);
+   lightLayout->addWidget(lightSlider);
+   lightGroup->setLayout(lightLayout);
+
    wireFrameCheck = new QCheckBox(tr("Wire Frame"));
    wireFrameCheck->setChecked(false);
 
@@ -140,6 +156,7 @@ void MainWindow::createWidgets()
    sliderLayout->addWidget(fogGroup);
    sliderLayout->addWidget(contourGroup);
    sliderLayout->addWidget(seaGroup);
+   sliderLayout->addWidget(lightGroup);
    sliderLayout->addWidget(wireGroup);
    sliderBox->setLayout(sliderLayout);
 
@@ -243,6 +260,17 @@ void MainWindow::setSeaLevel(int tick)
 {
    double level = tick / 16.0;
    viewerWindow->setSeaLevel(level);
+}
+
+void MainWindow::checkLight(int on)
+{
+   viewerWindow->checkLight(on);
+}
+
+void MainWindow::setLight(int tick)
+{
+   double hour = tick / 16.0;
+   viewerWindow->setLight(hour);
 }
 
 void MainWindow::checkWireFrame(int on)

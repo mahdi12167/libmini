@@ -246,6 +246,16 @@ void ViewerWindow::setSeaLevel(double level)
    renderer->setSeaLevel(level);
 }
 
+void ViewerWindow::checkLight(bool on)
+{
+   renderer->checkLight(on);
+}
+
+void ViewerWindow::setLight(double hour)
+{
+   renderer->setLight(hour);
+}
+
 void ViewerWindow::toggleWireFrame(bool on)
 {
    renderer->toggleWireFrame(on);

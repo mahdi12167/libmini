@@ -67,6 +67,8 @@ public:
    void       checkContours(bool on);
    void       checkSeaLevel(bool on);
    void       setSeaLevel(double level);
+   void       checkLight(bool on);
+   void       setLight(double hour);
 
 protected:
    void       initParameters();
@@ -147,6 +149,7 @@ private:
 
    double    m_FogDensity;
    double    m_SeaLevel;
+   double    m_DayHour;
 
    double    delta(double a, double b);
 };

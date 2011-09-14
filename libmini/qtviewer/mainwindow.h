@@ -43,6 +43,8 @@ private slots:
    void checkContours(int);
    void checkSeaLevel(int);
    void setSeaLevel(int);
+   void checkLight(int);
+   void setLight(int);
    void checkWireFrame(int);
 
 private:
@@ -76,6 +78,9 @@ private:
 
    QCheckBox *seaLevelCheck;
    QSlider *seaLevelSlider;
+
+   QCheckBox *lightCheck;
+   QSlider *lightSlider;
 
    QCheckBox *wireFrameCheck;
 

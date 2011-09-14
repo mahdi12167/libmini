@@ -26,6 +26,7 @@ Renderer::Renderer(QGLWidget* window)
 
    m_FogDensity=0.0;
    m_SeaLevel=0.0;
+   m_DayHour=0.0;
 }
 
 Renderer::~Renderer()
@@ -806,18 +807,17 @@ void Renderer::toggleWireFrame(bool on)
 void Renderer::checkFog(bool on)
 {
    m_pEarthParams->usefog=on;
-   viewer->propagate();
-
-   startIdling();
+   setFogDensity(m_FogDensity);
 }
 
 void Renderer::setFogDensity(double density)
 {
-   m_FogDensity=pow(density,1.0/10);
+   m_FogDensity=density;
 
-   m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+m_FogDensity);
-   m_pEarthParams->fogstart=(1.0-m_FogDensity)*VIEWER_FOGSTART;
-   m_pEarthParams->fogend=(1.0-m_FogDensity)*VIEWER_FOGEND+m_FogDensity*VIEWER_NEARP/VIEWER_FARP;
+   density=pow(density,1.0/10);
+   m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+density);
+   m_pEarthParams->fogstart=(1.0-density)*VIEWER_FOGSTART;
+   m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*VIEWER_NEARP/VIEWER_FARP;
    viewer->propagate();
 
    startIdling();
@@ -836,25 +836,37 @@ void Renderer::checkSeaLevel(bool on)
    if (on) m_pTerrainParams->sealevel=m_SeaLevel;
    else m_pTerrainParams->sealevel=-MAXFLOAT;
 
-   viewer->propagate();
-   viewer->getearth()->getterrain()->update();
-
-   startIdling();
+   setSeaLevel(m_SeaLevel);
 }
 
 void Renderer::setSeaLevel(double level)
 {
    m_SeaLevel=level;
 
-   if (m_pTerrainParams->sealevel!=-MAXFLOAT)
-   {
-      m_pTerrainParams->sealevel=m_SeaLevel;
+   if (m_pTerrainParams->sealevel!=-MAXFLOAT) m_pTerrainParams->sealevel=level;
 
-      viewer->propagate();
-      viewer->getearth()->getterrain()->update();
+   viewer->propagate();
+   viewer->getearth()->getterrain()->update();
 
-      startIdling();
-   }
+   startIdling();
+}
+
+void Renderer::checkLight(bool on)
+{
+   m_pEarthParams->usediffuse=on;
+   setLight(m_DayHour);
+}
+
+void Renderer::setLight(double hour)
+{
+   m_DayHour=hour;
+
+   double light=2*PI*m_DayHour/24.0;
+   miniv3d lightdir(-cos(light),sin(light),0.0);
+   m_pEarthParams->lightdir=lightdir;
+   viewer->propagate();
+
+   startIdling();
 }
 
 void Viewer::render_ecef_geometry()
@@ -868,6 +880,7 @@ void Viewer::render_ecef_geometry()
 
    linewidth(2);
    enablelinesmooth();
+#if 0
    color(miniv3d(0.5,0.0,0.0));
    renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
               miniv3d(0.0,0.0,0.0));
@@ -880,6 +893,7 @@ void Viewer::render_ecef_geometry()
    color(miniv3d(0.0,1.0,0.0));
    renderline(miniv3d(0.0,0.0,0.0),
               miniv3d(0.0,1.1*miniearth::EARTH_radius,0.0));
+#endif
    color(miniv3d(0.0,0.0,0.5));
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
               miniv3d(0.0,0.0,0.0));
