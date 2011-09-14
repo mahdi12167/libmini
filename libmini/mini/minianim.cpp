@@ -13,7 +13,7 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,int n)
    if (b.type!=minicoord::MINICOORD_LINEAR) b.convert2(minicoord::MINICOORD_ECEF);
 
    append(a);
-   bisect(a,b,ceil(log(n)/log(2)));
+   bisect(a,b,ceil(log((double)n)/log(2.0)));
    }
 
 void minianim::bisect(const minicoord &p1,const minicoord &p2,int level)
