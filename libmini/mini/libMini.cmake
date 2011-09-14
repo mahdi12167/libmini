@@ -2,7 +2,7 @@
 
 SET(MINI_HDRS
    mini.h miniOGL.h
-   minibase.h minivec.h minimtx.h minidyna.h minisort.h ministring.h
+   minibase.h minivec.h minimtx.h minidyna.h minisort.h ministring.h miniref.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
    minimath.h minicomplex.h minimpfp.h
    minitime.h miniio.h minidir.h minirgb.h minicrs.h
