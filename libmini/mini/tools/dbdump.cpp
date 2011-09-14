@@ -17,7 +17,7 @@ int winsize=512;
 float fps=25.0f;
 
 unsigned int frame=0;
-BOOLINT pause=TRUE;
+BOOLINT pausing=TRUE;
 
 databuf buf;
 
@@ -115,11 +115,11 @@ void displayfunc()
    glutSwapBuffers();
    waitfor(1.0/fps);
 
-   if (!pause)
+   if (!pausing)
       if (frame<depth-1) frame++;
       else frame=0;
 
-   if (frame==depth-1) pause=TRUE;
+   if (frame==depth-1) pausing=TRUE;
    }
 
 void reshapefunc(int width,int height)
@@ -142,27 +142,27 @@ void keyboardfunc(unsigned char key,int x,int y)
    switch (key)
       {
       case ' ':
-         pause=!pause;
+         pausing=!pausing;
          break;
       case 'b':
-         pause=TRUE;
+         pausing=TRUE;
          frame=0;
          break;
       case 'e':
-         pause=TRUE;
+         pausing=TRUE;
          frame=depth-1;
          break;
       case '-':
       case '<':
       case '1':
-         pause=TRUE;
+         pausing=TRUE;
          if (frame>0) frame--;
          break;
       case '+':
       case '=':
       case '>':
       case '2':
-         pause=TRUE;
+         pausing=TRUE;
          if (frame<depth-1) frame++;
          break;
       case '\033':
