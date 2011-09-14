@@ -299,6 +299,9 @@ void clearbuffer(float r,float g,float b,float a)
 #endif
    }
 
+void clearbuffer(const miniv3d &c)
+   {clearbuffer(c.x,c.y,c.z,1.0);}
+
 void clearbuffer(const miniv4d &c)
    {clearbuffer(c.x,c.y,c.z,c.w);}
 
@@ -546,6 +549,9 @@ void enablefog(float fogstart,float fogend,float r,float g,float b,float a)
 
 #endif
    }
+
+void enablefog(float fogstart,float fogend,const miniv3d &c)
+   {enablefog(fogstart,fogend,c.x,c.y,c.z,1.0);}
 
 void enablefog(float fogstart,float fogend,const miniv4d &c)
    {enablefog(fogstart,fogend,c.x,c.y,c.z,c.w);}

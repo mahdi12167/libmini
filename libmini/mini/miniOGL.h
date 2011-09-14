@@ -18,6 +18,7 @@ void initstate();
 void exitstate();
 
 void clearbuffer(float r,float g,float b,float a=1.0f);
+void clearbuffer(const miniv3d &c);
 void clearbuffer(const miniv4d &c);
 
 void disableculling();
@@ -51,6 +52,7 @@ void enablestenciling(int pass=0);
 void disablestenciling();
 
 void enablefog(float fogstart,float fogend,float r,float g,float b,float a=1.0f);
+void enablefog(float fogstart,float fogend,const miniv3d &c);
 void enablefog(float fogstart,float fogend,const miniv4d &c);
 void disablefog();
 
@@ -116,6 +118,7 @@ void mtxgetmodel(double mtx[16]);
 inline void beginfans();
 inline void beginfan();
 inline void color(const float r,const float g,const float b,const float a=1.0f);
+inline void color(const miniv3d &c);
 inline void color(const miniv4d &c);
 inline void normal(const float dx,const float dy,const float dz);
 inline void normal(const miniv3d &n);
@@ -406,6 +409,13 @@ inline void color(const float r,const float g,const float b,const float a)
    {
 #ifndef NOOGL
    glColor4f(r,g,b,a);
+#endif
+   }
+
+inline void color(const miniv3d &c)
+   {
+#ifndef NOOGL
+   glColor3d(c.x,c.y,c.z);
 #endif
    }
 
