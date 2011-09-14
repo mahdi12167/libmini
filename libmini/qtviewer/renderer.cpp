@@ -871,11 +871,13 @@ void Renderer::setLight(double hour)
 
 void Viewer::render_ecef_geometry()
    {
-   // render globe for z-values:
+   // render plain globe for z-values:
 
    static miniglobe globe;
 
-   globe.setdynscale(0.999);
+   globe.settess(32);
+   globe.setscale(0.999);
+
    disableRGBAwriting();
    globe.render();
    enableRGBAwriting();
@@ -915,17 +917,21 @@ void Viewer::render_ecef_geometry()
    mtxpush();
    mtxscale(0.95,0.95,0.95); // prevent Z-fighting
 
+   static const int eqlines=100;
+   static const miniv3d eqcolor(0.25,0.25,0.25);
+
    color(0.25,0.25,0.25);
-   for (int i=0; i<100; i++)
+   for (int i=0; i<=eqlines; i++)
       {
-      minicoord c1(miniv3d(i/100.0*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
-      c1.convert2(minicoord::MINICOORD_ECEF);
+      minicoord c(miniv3d((double)i/eqlines*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
+      c.convert2(minicoord::MINICOORD_ECEF);
 
-      minicoord c2(miniv3d((i+1)/100.0*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
-      c2.convert2(minicoord::MINICOORD_ECEF);
+      static minicoord c0;
 
-      renderline(c1.vec,c2.vec);
+      if (i>0) renderline(c0.vec,c.vec);
+      c0=c;
       }
+
    mtxpop();
    mtxmodel();
 
