@@ -245,15 +245,9 @@ void viewerbase::render_ecef_geometry()
    // to render additional geometry defined in ecef coordinates here:
    // ...
 
-   // for example 3 colored lines along the ecef coordinate axis:
+   // for example a line along the ecef z-axis:
    /*
-   color(miniv3d(1.0,0.0,0.0));
-   renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
-              miniv3d(1.1*miniearth::EARTH_radius,0.0,0.0));
-   color(miniv3d(0.0,1.0,0.0));
-   renderline(miniv3d(0.0,-1.1*miniearth::EARTH_radius,0.0),
-              miniv3d(0.0,1.1*miniearth::EARTH_radius,0.0));
-   color(miniv3d(0.0,0.0,1.0));
+   color(miniv3d(0.5,0.5,0.5));
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
    */
