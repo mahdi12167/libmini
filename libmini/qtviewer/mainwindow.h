@@ -37,6 +37,8 @@ private slots:
    void open();
    void clear();
 
+   void toggleWireFrame(int);
+
    void click(int, int);
    void checkFog(int);
    void setFogDensity(int);
@@ -45,7 +47,8 @@ private slots:
    void setSeaLevel(int);
    void checkLight(int);
    void setLight(int);
-   void checkWireFrame(int);
+   void checkExagger(int);
+   void setExagger(int);
 
 private:
    void createActions();
@@ -81,6 +84,9 @@ private:
 
    QCheckBox *lightCheck;
    QSlider *lightSlider;
+
+   QCheckBox *exaggerCheck;
+   QSlider *exaggerSlider;
 
    QCheckBox *wireFrameCheck;
 

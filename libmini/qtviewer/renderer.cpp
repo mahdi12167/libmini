@@ -28,7 +28,9 @@ Renderer::Renderer(QGLWidget* window)
 
    m_FogDensity=0.0;
    m_SeaLevel=0.0;
-   m_DayHour=0.0;
+   m_DayHourDelta=0.0;
+   m_ExaggerOn=false;
+   m_ExaggerScale=1.0/VIEWER_EXAGGER;
 }
 
 Renderer::~Renderer()
@@ -801,7 +803,7 @@ void Renderer::modifierKey(modifierKeys modifier, bool pressed)
 
 void Renderer::toggleWireFrame(bool on)
 {
-   m_pViewerParams->usewireframe = on;
+   m_pViewerParams->usewireframe=on;
 
    startIdling();
 }
@@ -856,19 +858,37 @@ void Renderer::setSeaLevel(double level)
 void Renderer::checkLight(bool on)
 {
    m_pEarthParams->usediffuse=on;
-   setLight(m_DayHour);
+   setLight(m_DayHourDelta);
 }
 
 void Renderer::setLight(double hour)
 {
-   m_DayHour=hour;
+   m_DayHourDelta=hour;
 
    QTime time_utc = QDateTime::currentDateTimeUtc().time();
    double hour_utc = time_utc.hour()+time_utc.minute()/60.0+time_utc.second()/3600.0;
 
-   double light=2*PI*(hour_utc+m_DayHour)/24.0;
+   double light=2*PI*(hour_utc+m_DayHourDelta)/24.0;
    miniv3d lightdir(-cos(light),sin(light),0.0);
    m_pEarthParams->lightdir=lightdir;
+   viewer->propagate();
+
+   startIdling();
+}
+
+void Renderer::checkExagger(bool on)
+{
+   m_ExaggerOn=on;
+   setExagger(m_ExaggerScale);
+}
+
+void Renderer::setExagger(double scale)
+{
+   m_ExaggerScale=scale;
+
+   viewer->getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
+
+   viewer->getearth()->getterrain()->update();
    viewer->propagate();
 
    startIdling();

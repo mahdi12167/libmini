@@ -69,6 +69,8 @@ public:
    void       setSeaLevel(double level);
    void       checkLight(bool on);
    void       setLight(double hour);
+   void       checkExagger(bool on);
+   void       setExagger(double scale);
 
 protected:
    void       initParameters();
@@ -149,7 +151,9 @@ private:
 
    double    m_FogDensity;
    double    m_SeaLevel;
-   double    m_DayHour;
+   double    m_DayHourDelta;
+   bool      m_ExaggerOn;
+   double    m_ExaggerScale;
 
    double    delta(double a, double b);
 };

@@ -221,6 +221,11 @@ void ViewerWindow::gotoMap(minilayer *layer)
    renderer->focusOnMap(layer);
 }
 
+void ViewerWindow::toggleWireFrame(bool on)
+{
+   renderer->toggleWireFrame(on);
+}
+
 void ViewerWindow::checkFog(bool on)
 {
    renderer->checkFog(on);
@@ -256,9 +261,14 @@ void ViewerWindow::setLight(double hour)
    renderer->setLight(hour);
 }
 
-void ViewerWindow::toggleWireFrame(bool on)
+void ViewerWindow::checkExagger(bool on)
 {
-   renderer->toggleWireFrame(on);
+   renderer->checkExagger(on);
+}
+
+void ViewerWindow::setExagger(double scale)
+{
+   renderer->setExagger(scale);
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)

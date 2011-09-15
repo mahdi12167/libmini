@@ -32,6 +32,8 @@ public:
 
    void gotoMap(minilayer *layer);
 
+   void toggleWireFrame(bool on);
+
    void checkFog(bool on);
    void setFogDensity(double density);
    void checkContours(bool on);
@@ -39,7 +41,8 @@ public:
    void setSeaLevel(double level);
    void checkLight(bool on);
    void setLight(double hour);
-   void toggleWireFrame(bool on);
+   void checkExagger(bool on);
+   void setExagger(double scale);
 
 signals:
    void changed(const QString url, minilayer *layer);

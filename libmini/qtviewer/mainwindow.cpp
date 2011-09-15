@@ -3,6 +3,7 @@
 #include <QtGui>
 
 #include "viewerwindow.h"
+#include "viewerconst.h"
 
 #include "mainconst.h"
 #include "mainwindow.h"
@@ -70,8 +71,12 @@ void MainWindow::createWidgets()
    sliderLayout = new QHBoxLayout;
    buttonBox = new QDialogButtonBox;
 
+   // drag and drop:
+
    connect(viewerWindow, SIGNAL(changed(const QString, minilayer*)),
            this, SLOT(updateTable(const QString, minilayer*)));
+
+   // url table:
 
    QStringList labels;
    labels << tr("URL");
@@ -82,6 +87,8 @@ void MainWindow::createWidgets()
    viewerTable->horizontalHeader()->setStretchLastSection(true);
 
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
+
+   // fog check:
 
    fogCheck = new QCheckBox(tr("Fog Density"));
    fogCheck->setChecked(true);
@@ -99,6 +106,8 @@ void MainWindow::createWidgets()
    fogLayout->addWidget(fogDensitySlider);
    fogGroup->setLayout(fogLayout);
 
+   // contour check:
+
    contourCheck = new QCheckBox(tr("Contours"));
    contourCheck->setChecked(false);
 
@@ -109,6 +118,8 @@ void MainWindow::createWidgets()
 
    contourLayout->addWidget(contourCheck);
    contourGroup->setLayout(contourLayout);
+
+   // sea level check:
 
    seaLevelCheck = new QCheckBox(tr("Sea Level"));
    seaLevelCheck->setChecked(false);
@@ -126,6 +137,8 @@ void MainWindow::createWidgets()
    seaLayout->addWidget(seaLevelSlider);
    seaGroup->setLayout(seaLayout);
 
+   // light check:
+
    lightCheck = new QCheckBox(tr("UTC Night"));
    lightCheck->setChecked(false);
 
@@ -142,10 +155,30 @@ void MainWindow::createWidgets()
    lightLayout->addWidget(lightSlider);
    lightGroup->setLayout(lightLayout);
 
+   // exaggeration check:
+
+   exaggerCheck = new QCheckBox(tr("Exaggeration"));
+   exaggerCheck->setChecked(false);
+
+   connect(exaggerCheck, SIGNAL(stateChanged(int)), this, SLOT(checkExagger(int)));
+
+   exaggerSlider = createSlider(0, 100, 100/VIEWER_EXAGGER);
+
+   connect(exaggerSlider, SIGNAL(valueChanged(int)), this, SLOT(setExagger(int)));
+
+   QGroupBox *exaggerGroup = new QGroupBox;
+   QHBoxLayout *exaggerLayout = new QHBoxLayout;
+
+   exaggerLayout->addWidget(exaggerCheck);
+   exaggerLayout->addWidget(exaggerSlider);
+   exaggerGroup->setLayout(exaggerLayout);
+
+   // wire frame check:
+
    wireFrameCheck = new QCheckBox(tr("Wire Frame"));
    wireFrameCheck->setChecked(false);
 
-   connect(wireFrameCheck, SIGNAL(stateChanged(int)), this, SLOT(checkWireFrame(int)));
+   connect(wireFrameCheck, SIGNAL(stateChanged(int)), this, SLOT(toggleWireFrame(int)));
 
    QGroupBox *wireGroup = new QGroupBox;
    QHBoxLayout *wireLayout = new QHBoxLayout;
@@ -153,12 +186,17 @@ void MainWindow::createWidgets()
    wireLayout->addWidget(wireFrameCheck);
    wireGroup->setLayout(wireLayout);
 
+   // slider group:
+
    sliderLayout->addWidget(fogGroup);
    sliderLayout->addWidget(contourGroup);
    sliderLayout->addWidget(seaGroup);
    sliderLayout->addWidget(lightGroup);
+   sliderLayout->addWidget(exaggerGroup);
    sliderLayout->addWidget(wireGroup);
    sliderBox->setLayout(sliderLayout);
+
+   // button group:
 
    clearButton = new QPushButton(tr("Clear"));
    quitButton = new QPushButton(tr("Quit"));
@@ -168,6 +206,8 @@ void MainWindow::createWidgets()
 
    buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
    buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
+
+   // main group:
 
    mainLayout->addWidget(viewerWindow);
    mainLayout->addWidget(viewerTable);
@@ -235,6 +275,11 @@ void MainWindow::click(int row, int col)
    viewerWindow->gotoMap(m_Layer[row]);
 }
 
+void MainWindow::toggleWireFrame(int on)
+{
+   viewerWindow->toggleWireFrame(on);
+}
+
 void MainWindow::checkFog(int on)
 {
    viewerWindow->checkFog(on);
@@ -273,9 +318,15 @@ void MainWindow::setLight(int tick)
    viewerWindow->setLight(hour);
 }
 
-void MainWindow::checkWireFrame(int on)
+void MainWindow::checkExagger(int on)
 {
-   viewerWindow->toggleWireFrame(on);
+   viewerWindow->checkExagger(on);
+}
+
+void MainWindow::setExagger(int tick)
+{
+   double scale = tick / 16.0 / 100.0;
+   viewerWindow->setExagger(scale);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
@@ -288,6 +339,8 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       seaLevelCheck->setChecked(!seaLevelCheck->isChecked());
    else if (event->key() == Qt::Key_N)
       lightCheck->setChecked(!lightCheck->isChecked());
+   else if (event->key() == Qt::Key_E)
+      exaggerCheck->setChecked(!exaggerCheck->isChecked());
    else if (event->key() == Qt::Key_W)
       wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
    else
