@@ -912,13 +912,11 @@ void Viewer::render_ecef_geometry()
    globe.render();
    enableRGBAwriting();
 
-   // render ecef coordinate axis:
+   // render ecef z-axis:
 
    linewidth(2);
    enablelinesmooth();
 
-   static const miniv3d xacolor(1.0,0.0,0.0);
-   static const miniv3d yacolor(0.0,1.0,0.0);
    static const miniv3d zacolor(0.0,0.0,1.0);
 
    color(0.5*zacolor);

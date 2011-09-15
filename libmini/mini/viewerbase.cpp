@@ -246,7 +246,7 @@ void viewerbase::render_ecef_geometry()
    // ...
 
    // for example 3 colored lines along the ecef coordinate axis:
-#if 0
+   /*
    color(miniv3d(1.0,0.0,0.0));
    renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
               miniv3d(1.1*miniearth::EARTH_radius,0.0,0.0));
@@ -256,7 +256,7 @@ void viewerbase::render_ecef_geometry()
    color(miniv3d(0.0,0.0,1.0));
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
-#endif
+   */
    }
 
 #endif
