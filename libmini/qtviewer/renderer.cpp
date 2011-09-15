@@ -921,25 +921,11 @@ void Viewer::render_ecef_geometry()
    static const miniv3d yacolor(0.0,1.0,0.0);
    static const miniv3d zacolor(0.0,0.0,1.0);
 
-#if 0
-   color(0.5*xacolor);
-   renderline(miniv3d(-1.1*miniearth::EARTH_radius,0.0,0.0),
-              miniv3d(0.0,0.0,0.0));
-   color(xacolor);
-   renderline(miniv3d(0.0,0.0,0.0),
-              miniv3d(1.1*miniearth::EARTH_radius,0.0,0.0));
-   color(0.5*yacolor);
-   renderline(miniv3d(0.0,-1.1*miniearth::EARTH_radius,0.0),
-              miniv3d(0.0,0.0,0.0));
-   color(yacolor);
-   renderline(miniv3d(0.0,0.0,0.0),
-              miniv3d(0.0,1.1*miniearth::EARTH_radius,0.0));
-#endif
    color(0.5*zacolor);
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
-              miniv3d(0.0,0.0,0.0));
+              miniv3d(0.0,0.0,-miniearth::EARTH_radius));
    color(zacolor);
-   renderline(miniv3d(0.0,0.0,0.0),
+   renderline(miniv3d(0.0,0.0,miniearth::EARTH_radius),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
 
    // render equator:
