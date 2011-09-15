@@ -3,7 +3,6 @@
 #include <QtGui>
 
 #include "viewerwindow.h"
-#include "viewerconst.h"
 
 #include "mainconst.h"
 #include "mainwindow.h"
@@ -162,7 +161,7 @@ void MainWindow::createWidgets()
 
    connect(exaggerCheck, SIGNAL(stateChanged(int)), this, SLOT(checkExagger(int)));
 
-   exaggerSlider = createSlider(0, 100, 100/VIEWER_EXAGGER);
+   exaggerSlider = createSlider(0, 100, 100);
 
    connect(exaggerSlider, SIGNAL(valueChanged(int)), this, SLOT(setExagger(int)));
 

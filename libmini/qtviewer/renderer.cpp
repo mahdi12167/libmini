@@ -30,7 +30,7 @@ Renderer::Renderer(QGLWidget* window)
    m_SeaLevel=0.0;
    m_DayHourDelta=0.0;
    m_ExaggerOn=false;
-   m_ExaggerScale=1.0/VIEWER_EXAGGER;
+   m_ExaggerScale=1.0;
 }
 
 Renderer::~Renderer()
@@ -887,6 +887,8 @@ void Renderer::setExagger(double scale)
    m_ExaggerScale=scale;
 
    viewer->getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
+
+   camera->move_above(VIEWER_HEIGHT_FLOOR);
 
    viewer->getearth()->getterrain()->update();
    viewer->propagate();
