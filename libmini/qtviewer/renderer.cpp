@@ -911,12 +911,11 @@ void Viewer::render_ecef_geometry()
    linewidth(2);
    enablelinesmooth();
 
-   static const miniv3d zacolor(0.0,0.0,1.0);
+   static const miniv3d zacolor(0.25,0.25,0.5);
 
-   color(0.5*zacolor);
+   color(zacolor);
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
               miniv3d(0.0,0.0,-miniearth::EARTH_radius));
-   color(zacolor);
    renderline(miniv3d(0.0,0.0,miniearth::EARTH_radius),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
 
