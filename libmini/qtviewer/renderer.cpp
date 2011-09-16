@@ -468,25 +468,19 @@ void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDo
 
 miniv3d Renderer::unprojectMouse()
 {
-   double x, y, z;
-   GLdouble modelMatrix[16];
-   GLdouble projMatrix[16];
-   int viewport[4];
+   float fovy = m_pViewerParams->fovy;
+   float aspectRatio = (float)viewportwidth/viewportheight;
 
-   if (!m_CursorValid)
-      return(camera->get_dir());
+   double mx = (double)m_CursorScreenPos.x() / (viewportwidth-1) - 0.5;
+   double my = 0.5 - (double)m_CursorScreenPos.y() / (viewportheight-1);
 
-   setupMatrix();
+   double wy = tan(fovy*PI/360);
+   double wx = aspectRatio * wy;
 
-   glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-   glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
-   glGetIntegerv(GL_VIEWPORT, viewport);
+   miniv3d dir = camera->get_dir() +
+                 camera->get_right() * 2.0 * wx * mx +
+                 camera->get_up() * 2.0 * wy * my;
 
-   // calculate the ray, starting from the opengl camera pos and passing through where mouse pointer is
-   miniv3d pointerScreenPos(m_CursorScreenPos.x(), viewportheight-m_CursorScreenPos.y(), 0.0);
-   gluUnProject(pointerScreenPos.x, pointerScreenPos.y, 0.0, modelMatrix, projMatrix, viewport, &x, &y, &z);
-   miniv3d dir = miniv3d(x,y,z) - camera->get_eye_opengl();
-   dir = viewer->rot_o2g(dir, camera->get_eye_opengl());
    dir.normalize();
 
    return(dir);
