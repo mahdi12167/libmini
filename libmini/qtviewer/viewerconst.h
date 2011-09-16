@@ -1,8 +1,6 @@
 #ifndef VIEWERCONST_H
 #define VIEWERCONST_H
 
-#define VIEWER_FPS 30.0f
-
 #define VIEWER_WIDTH 1024
 #define VIEWER_MINWIDTH 20
 #define VIEWER_ASPECT 2.0f
@@ -32,7 +30,5 @@
 #define VIEWER_BATHYEND -1000.0f
 #define VIEWER_BATHYMID 0.001f
 #define VIEWER_BATHYWIDTH 256
-
-#define VIEWER_HEIGHT_FLOOR 50.0f
 
 #endif

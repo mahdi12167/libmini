@@ -7,13 +7,15 @@ TEMPLATE = app
 SOURCES += main.cpp \
            mainwindow.cpp \
            viewerwindow.cpp \
-           renderer.cpp
+           renderer.cpp \
+           camera.cpp
 
 HEADERS += mainwindow.h \
            mainconst.h \
            viewerwindow.h \
            viewerconst.h \
-           renderer.h
+           renderer.h \
+           camera.h
 
 
 INCLUDEPATH += $$PWD/..

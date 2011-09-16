@@ -13,6 +13,10 @@
 
 #include "renderer.h"
 
+//!! to be removed:
+#define VIEWER_FPS 30.0f
+#define VIEWER_HEIGHT_FLOOR 50.0f
+
 Renderer::Renderer(QGLWidget* window)
 {
    this->window = window;
