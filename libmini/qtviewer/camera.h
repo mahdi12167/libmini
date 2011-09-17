@@ -30,9 +30,6 @@ public:
 
    ~Camera();
 
-   int     getViewportWidth();
-   int     getViewportHeight();
-
    void    setLens(float fovy);
    void    setPosition(float latitude, float longitude, float altitude, float heading, float pitch);
 

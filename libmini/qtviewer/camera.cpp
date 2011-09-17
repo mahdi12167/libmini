@@ -32,12 +32,6 @@ Camera::Camera(QGLWidget *window, miniearth *earth,
 Camera::~Camera()
 {}
 
-int Camera::getViewportWidth()
-   {return(m_window->width());}
-
-int Camera::getViewportHeight()
-   {return(m_window->height());}
-
 // set camera field of view
 void Camera::setLens(float fovy)
 {

@@ -2,11 +2,11 @@
 
 #include <mini/miniOGL.h>
 #include <mini/miniearth.h>
+#include <mini/minicam.h>
 
-#include "camera.h"
 #include "viewer.h"
 
-Viewer::Viewer(Camera *camera)
+Viewer::Viewer(minicam *camera)
    : viewerbase()
 {
    m_camera = camera;
@@ -36,7 +36,7 @@ void Viewer::setup_matrix()
    glLoadIdentity();
 
    float fovy = get()->fovy;
-   float aspect = (float)m_camera->getViewportWidth()/m_camera->getViewportHeight();
+   float aspect = (float)get()->winwidth/get()->winheight;
    double nearp = get()->nearp;
    double farp = get()->farp;
 
@@ -60,7 +60,7 @@ void Viewer::render_terrain_geometry()
    starttimer();
 
    // update scene
-   float aspect = (float)m_camera->getViewportWidth()/m_camera->getViewportHeight();
+   float aspect = (float)get()->winwidth/get()->winheight;
    cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
 
    // render scene

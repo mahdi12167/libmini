@@ -5,12 +5,12 @@
 
 #include <mini/viewerbase.h>
 
-class Camera;
+class minicam;
 
 class Viewer : public viewerbase
 {
 public:
-   Viewer(Camera *camera);
+   Viewer(minicam *camera);
    ~Viewer();
 
    void render_geometry();
@@ -20,7 +20,7 @@ protected:
    void render_terrain_geometry();
    void render_ecef_geometry();
 
-   Camera *m_camera;
+   minicam *m_camera;
 };
 
 #endif
