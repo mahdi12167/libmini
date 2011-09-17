@@ -32,17 +32,29 @@ Camera::Camera(QGLWidget *window, miniearth *earth,
 Camera::~Camera()
 {}
 
+int Camera::getViewportWidth()
+   {return(m_window->width());}
+
+int Camera::getViewportHeight()
+   {return(m_window->height());}
+
 // set camera field of view
-void Camera::setCamera(float fovy)
+void Camera::setLens(float fovy)
 {
    m_fovy = fovy;
 }
 
 // set camera position and direction
-void Camera::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
+void Camera::setPosition(float latitude, float longitude, float altitude, float heading, float pitch)
 {
    set_eye(minicoord(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
                      minicoord::MINICOORD_LLH), heading, pitch);
+}
+
+// move camera above ground
+void Camera::moveAbove()
+{
+   move_above(CAMERA_HEIGHT_FLOOR);
 }
 
 // initialize the view point
@@ -160,7 +172,7 @@ void Camera::rotateCamera(float dx, float dy)
       move_forward_plain(-dist);
    }
 
-   move_above(CAMERA_HEIGHT_FLOOR);
+   moveAbove();
 
    startIdling();
 }
@@ -188,7 +200,7 @@ void Camera::moveCameraForward(float delta)
    else
       move(delta * dist * unprojectMouse());
 
-   move_above(CAMERA_HEIGHT_FLOOR);
+   moveAbove();
 
    startIdling();
 }
@@ -212,7 +224,7 @@ void Camera::moveCameraSideward(float delta)
    if (dist < mindist) dist = mindist;
 
    move_right(-delta * dist);
-   move_above(CAMERA_HEIGHT_FLOOR);
+   moveAbove();
 
    startIdling();
 }
@@ -289,7 +301,7 @@ void Camera::processTransition(double t, double dt)
       if (t >= 1.0) stopTransition();
    }
 
-   move_above(CAMERA_HEIGHT_FLOOR);
+   moveAbove();
 
    double w = dt / m_TargetDeltaTime;
 

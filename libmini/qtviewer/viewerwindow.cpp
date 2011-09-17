@@ -60,9 +60,9 @@ void ViewerWindow::initializeGL()
    glEnable(GL_CULL_FACE);
 }
 
-void ViewerWindow::resizeGL(int width, int height)
+void ViewerWindow::resizeGL(int, int)
 {
-   renderer->resizeWindow(width, height);
+   renderer->resizeWindow();
 }
 
 void ViewerWindow::paintGL()
@@ -100,7 +100,7 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
       {}
       // a left button click
       else if (bLeftButtonDown)
-         renderer->focusOnTarget();
+         renderer->getCamera()->focusOnTarget();
       // a right button click
       else if (bRightButtonDown)
       {}
@@ -122,13 +122,13 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    reportModifiers();
 
    if (event->buttons() & Qt::LeftButton)
-      renderer->rotateCamera(dx, dy);
+      renderer->getCamera()->rotateCamera(dx, dy);
    else if (event->buttons() & Qt::MiddleButton)
    {}
    else if (event->buttons() & Qt::RightButton)
    {}
    else
-      renderer->moveCursor(event->pos());
+      renderer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
    movedPos = event->pos();
 }
@@ -137,23 +137,23 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 {
    reportModifiers();
 
-   renderer->focusOnTarget(0.75);
+   renderer->getCamera()->focusOnTarget(0.75);
 }
 
 void ViewerWindow::reportModifiers()
 {
    Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
 
-   renderer->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
-   renderer->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
-   renderer->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
-   renderer->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
+   renderer->getCamera()->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
+   renderer->getCamera()->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
+   renderer->getCamera()->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
+   renderer->getCamera()->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_Space)
-      renderer->focusOnTarget();
+      renderer->getCamera()->focusOnTarget();
    else
       QGLWidget::keyPressEvent(event);
 
@@ -174,9 +174,9 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
    reportModifiers();
 
    if (event->orientation() == Qt::Vertical)
-      renderer->moveCameraForward(numDegrees/360.0);
+      renderer->getCamera()->moveCameraForward(numDegrees/360.0);
    else
-      renderer->moveCameraSideward(numDegrees/360.0);
+      renderer->getCamera()->moveCameraSideward(numDegrees/360.0);
 
    event->accept();
 }
@@ -185,7 +185,7 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 {
    reportModifiers();
 
-   renderer->timerEvent(event->timerId());
+   renderer->getCamera()->timerEvent(event->timerId());
 }
 
 void ViewerWindow::loadMap(QString url)
@@ -218,7 +218,7 @@ void ViewerWindow::clearMaps()
 
 void ViewerWindow::gotoMap(minilayer *layer)
 {
-   renderer->focusOnMap(layer);
+   renderer->getCamera()->focusOnMap(layer);
 }
 
 void ViewerWindow::toggleWireFrame(bool on)

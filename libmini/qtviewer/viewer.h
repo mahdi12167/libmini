@@ -4,11 +4,23 @@
 #define VIEWER_H
 
 #include <mini/viewerbase.h>
-#include "viewerconst.h"
+
+class Camera;
 
 class Viewer : public viewerbase
 {
+public:
+   Viewer(Camera *camera);
+   ~Viewer();
+
+   void render_geometry();
+
+protected:
+   void setup_matrix();
+   void render_terrain_geometry();
    void render_ecef_geometry();
+
+   Camera *m_camera;
 };
 
 #endif

@@ -30,8 +30,13 @@ public:
 
    ~Camera();
 
-   void    setCamera(float fovy);
-   void    setCamera(float latitude, float longitude, float altitude, float heading, float pitch);
+   int     getViewportWidth();
+   int     getViewportHeight();
+
+   void    setLens(float fovy);
+   void    setPosition(float latitude, float longitude, float altitude, float heading, float pitch);
+
+   void    moveAbove();
 
    void    rotateCamera(float dx, float dy);
 
@@ -45,15 +50,15 @@ public:
    void    moveCursor(int mx, int my);
    void    modifierKey(modifierKeys modifier, bool pressed);
 
-protected:
-   void    initView();
-   void    initTransition();
-
    void    startIdling();
    void    stopIdling();
 
    void    startTransition(minianim target, double dangle, double dpitch, double dtime, double follow);
    void    stopTransition();
+
+protected:
+   void    initView();
+   void    initTransition();
 
    void    processTransition(double t, double dt);
 

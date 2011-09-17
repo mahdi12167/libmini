@@ -1,49 +1,36 @@
 // (c) by Stefan Roettger
 
-#include <QtOpenGL/qgl.h>
-
-#include <QtGui/QMessageBox>
+#include <QtGui/QMessageBox> //!! move out of renderer
 
 #include <QDateTime>
-
-#include <mini/minibase.h>
 
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
 
 #include "renderer.h"
 
-//!! to be removed:
-#define VIEWER_FPS 30.0f
-#define VIEWER_HEIGHT_FLOOR 50.0f
-
 Renderer::Renderer(QGLWidget* window)
 {
-   this->window = window;
+   m_window = window;
    m_bIsInited = false;
 
-   viewer=NULL;
-   camera=NULL;
+   m_viewer = NULL;
+   m_camera = NULL;
 
-   m_Shift=false;
-   m_Control=false;
-   m_Alt=false;
-   m_Meta=false;
-
-   m_FogDensity=0.0;
-   m_SeaLevel=0.0;
-   m_DayHourDelta=0.0;
-   m_ExaggerOn=false;
-   m_ExaggerScale=1.0;
+   m_FogDensity = 0.0;
+   m_SeaLevel = 0.0;
+   m_DayHourDelta = 0.0;
+   m_ExaggerOn = false;
+   m_ExaggerScale = 1.0;
 }
 
 Renderer::~Renderer()
 {
-   if (viewer!=NULL)
-      delete viewer;
+   if (m_viewer!=NULL)
+      delete m_viewer;
 
-   if (camera!=NULL)
-      delete camera;
+   if (m_camera!=NULL)
+      delete m_camera;
 }
 
 // gl init
@@ -51,12 +38,8 @@ void Renderer::init()
 {
    if (m_bIsInited) return;
 
-   // viewport size
-   viewportwidth=window->width();
-   viewportheight=window->height();
-
    // create the viewer object
-   viewer=new Viewer();
+   m_viewer=new Viewer();
 
    // initialize VIS bathy map
    initBathyMap();
@@ -65,19 +48,19 @@ void Renderer::init()
    initParameters();
 
    // load optional features
-   viewer->getearth()->loadopts();
+   m_viewer->getearth()->loadopts();
 
    // create the camera object
-   camera=new minicam(viewer->getearth());
+   m_camera=new Camera(m_window, m_viewer->getearth());
 
-   // initialize the view
-   initView();
-
-   // initialize the camera transition
-   initTransition();
+   // tell camera lens fovy
+   m_camera->setLens(VIEWER_FOVY);
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
+
+   // init viewport
+   resizeViewport();
 
    m_bIsInited = true;
 }
@@ -90,22 +73,23 @@ minilayer* Renderer::loadMap(const char* url)
    if (m_bIsInited)
       if (url!=NULL)
       {
-         layer=viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
+         layer=m_viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
 
          if (layer!=NULL)
          {
-            viewer->getearth()->defineroi(0.0);
+            m_viewer->getearth()->defineroi(0.0);
 
-            focusOnMap(layer);
-            startIdling();
+            m_camera->focusOnMap(layer);
+            m_camera->startIdling();
 
             return(layer);
          }
          else
          {
+            //!! move out of renderer
             QString message;
             message.sprintf("Unable to load map data from url=%s\n", url);
-            QMessageBox::warning(window, "Error", message, QMessageBox::Ok);
+            QMessageBox::warning(m_window, "Error", message, QMessageBox::Ok);
          }
       }
 
@@ -115,9 +99,9 @@ minilayer* Renderer::loadMap(const char* url)
 // remove map layers
 void Renderer::clearMaps()
 {
-   viewer->getearth()->getterrain()->remove();
+   m_viewer->getearth()->getterrain()->remove();
 
-   window->updateGL();
+   m_camera->startIdling();
 }
 
 // initialize libMini parameters
@@ -125,20 +109,20 @@ void Renderer::initParameters()
 {
    // the viewing parameters
    viewerbase::VIEWER_PARAMS viewerParams;
-   viewer->get(viewerParams);
-   viewerParams.winwidth = viewportwidth;
-   viewerParams.winheight = viewportheight;
-   viewerParams.fps = VIEWER_FPS;
+   m_viewer->get(viewerParams);
+   viewerParams.winwidth = m_window->width();
+   viewerParams.winheight = m_window->height();
+   viewerParams.fps = CAMERA_FPS;
    viewerParams.fovy = VIEWER_FOVY;
    viewerParams.nearp = VIEWER_NEARP;
    viewerParams.farp = VIEWER_FARP;
    viewerParams.usewireframe = FALSE;
-   viewer->set(viewerParams);
-   m_pViewerParams = viewer->get();
+   m_viewer->set(viewerParams);
+   m_pViewerParams = m_viewer->get();
 
    // the earth parameters
    miniearth::MINIEARTH_PARAMS earthParams;
-   viewer->getearth()->get(earthParams);
+   m_viewer->getearth()->get(earthParams);
    earthParams.warpmode = WARPMODE_AFFINE_REF;
    earthParams.nonlin = TRUE;
    earthParams.usefog = TRUE;
@@ -153,12 +137,12 @@ void Renderer::initParameters()
    earthParams.fogdensity = VIEWER_FOGDENSITY;
    earthParams.voidstart = VIEWER_VOIDSTART;
    earthParams.abyssstart = VIEWER_ABYSSSTART;
-   viewer->getearth()->set(earthParams);
-   m_pEarthParams = viewer->getearth()->get();
+   m_viewer->getearth()->set(earthParams);
+   m_pEarthParams = m_viewer->getearth()->get();
 
    // the terrain parameters
    miniterrain::MINITERRAIN_PARAMS terrainParams;
-   viewer->getearth()->getterrain()->get(terrainParams);
+   m_viewer->getearth()->getterrain()->get(terrainParams);
    terrainParams.scale = 1.0f;
    terrainParams.exaggeration = VIEWER_EXAGGER;
    terrainParams.res = VIEWER_RES;
@@ -178,8 +162,8 @@ void Renderer::initParameters()
    terrainParams.bathywidth = VIEWER_BATHYWIDTH;
    terrainParams.bathyheight = 2;
    terrainParams.bathycomps = 4;
-   viewer->getearth()->getterrain()->set(terrainParams);
-   m_pTerrainParams  =  viewer->getearth()->getterrain()->get();
+   m_viewer->getearth()->getterrain()->set(terrainParams);
+   m_pTerrainParams = m_viewer->getearth()->getterrain()->get();
 }
 
 // initialize bathymetry map
@@ -201,60 +185,26 @@ void Renderer::initBathyMap()
                                    VIEWER_BATHYMID);
 }
 
-// set camera position and direction
-void Renderer::setCamera(float latitude, float longitude, float altitude, float heading, float pitch)
-{
-   if (camera==NULL) return;
-
-   minicoord eye(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
-                 minicoord::MINICOORD_LLH);
-
-   camera->set_eye(eye, heading, pitch);
-}
-
-// initialize the view point
-void Renderer::initView()
-{
-   resizeViewport();
-
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
-
-   viewer->initeyepoint(camera->get_eye());
-}
-
-// initialize the camera transition
-void Renderer::initTransition()
-{
-   m_TransitionTimerId = -1;
-   m_IdlingTimerId = -1;
-
-   m_bInCameraTransition = false;
-
-   m_CursorValid = false;
-}
-
 // resize window
-void Renderer::resizeWindow(int width, int height)
+void Renderer::resizeWindow()
 {
-   viewportwidth = width;
-   viewportheight = height;
    resizeViewport();
 
-   window->updateGL();
+   m_camera->startIdling();
 }
 
 // initialize the render window
 void Renderer::resizeViewport()
 {
-   int winWidth = viewportwidth;
-   int winHeight = viewportheight;
+   int winWidth = m_window->width();
+   int winHeight = m_window->height();
 
    if (winWidth<1) winWidth=1;
    if (winHeight<1) winHeight=1;
 
    m_pViewerParams->winwidth=winWidth;
    m_pViewerParams->winheight=winHeight;
-   viewer->set(m_pViewerParams);
+   m_viewer->set(m_pViewerParams);
 
    glViewport(0, 0, winWidth, winHeight);
 }
@@ -262,65 +212,10 @@ void Renderer::resizeViewport()
 // draw scene
 void Renderer::draw()
 {
-   minilayer *nst;
-
-   // set reference layer
-   nst=viewer->getearth()->getnearest(camera->get_eye());
-   viewer->getearth()->setreference(nst);
-
-   // render scene
-   setupMatrix();
-   renderTerrain();
+   m_viewer->render_geometry();
    renderHUD();
 
-   // wait for static scene
-   startIdling();
-}
-
-// setup OpenGL modelview and projection matrices
-void Renderer::setupMatrix()
-{
-   glViewport(0.0f, 0.0f, viewportwidth, viewportheight);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-
-   float fovy = m_pViewerParams->fovy;
-   float aspectRatio = (float)viewportwidth/viewportheight;
-   double nearpGL = m_pViewerParams->nearp;
-   double farpGL = m_pViewerParams->farp;
-
-   gluPerspective(fovy, aspectRatio, nearpGL, farpGL);
-
-   minicoord eyeGL = camera->get_eye_opengl();
-   miniv3d dirGL = camera->get_dir_opengl();
-   miniv3d upGL = camera->get_up_opengl();
-
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   gluLookAt(eyeGL.vec.x, eyeGL.vec.y, eyeGL.vec.z,
-             eyeGL.vec.x+dirGL.x, eyeGL.vec.y+dirGL.y, eyeGL.vec.z+dirGL.z,
-             upGL.x,upGL.y,upGL.z);
-}
-
-// render terrain
-void Renderer::renderTerrain()
-{
-   // start timer
-   viewer->starttimer();
-
-   // update scene
-   float aspectRatio = (float)viewportwidth/viewportheight;
-   viewer->cache(camera->get_eye(), camera->get_dir(), camera->get_up(), aspectRatio);
-
-   // render scene
-   viewer->clear();
-   viewer->render();
-
-   // get time spent
-   double delta=viewer->gettimer();
-
-   // update quality parameters
-   viewer->adapt(delta);
+   m_camera->startIdling();
 }
 
 // render head-up display
@@ -341,8 +236,8 @@ void Renderer::renderHUD()
    glEnable(GL_TEXTURE_2D);
    glDisable(GL_CULL_FACE);
 
-   float lx = 60.0f/viewportwidth;
-   float ly = 60.0f/viewportheight;
+   float lx = 60.0f/m_window->width();
+   float ly = 60.0f/m_window->height();
 
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -363,20 +258,20 @@ void Renderer::renderHUD()
 
    // render text:
 
-   minicoord cameraPosLLH = camera->get_eye();
+   minicoord cameraPosLLH = m_camera->get_eye();
    if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR)
       cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
 
-   double cameraAngle=camera->get_angle();
+   double cameraAngle=m_camera->get_angle();
 
-   minicoord cameraHit=camera->get_hit();
-   double cameraHitDist=camera->get_hitdist();
+   minicoord cameraHit=m_camera->get_hit();
+   double cameraHitDist=m_camera->get_hitdist();
 
    QString str;
    const QColor color(255, 255, 255);
-   window->qglColor(color);
+   m_window->qglColor(color);
    int x = 10;
-   int y = window->height() - 20;
+   int y = m_window->height() - 20;
    int line_space = -16;
    int second_column_offset = 90;
 
@@ -425,7 +320,7 @@ void Renderer::renderHUD()
       drawText(x+second_column_offset, y, str);
       y+=line_space;
 
-      double hitElev=camera->get_elev(cameraHit);
+      double hitElev=m_camera->get_elev(cameraHit);
       if (hitElev==-MAXFLOAT) hitElev=0.0;
 
       str.sprintf("Elevation:");
@@ -454,356 +349,27 @@ void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
 void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
 {
    int sx = x;
-   int sy = window->height() - y;
+   int sy = m_window->height() - y;
 
    if (!bIsDoublePrint)
    {
-      window->qglColor(color);
-      window->renderText(sx, sy, str);
+      m_window->qglColor(color);
+      m_window->renderText(sx, sy, str);
    }
    else
    {
-      window->qglColor(QColor(0, 0, 0, 255));
-      window->renderText(sx+2, sy+2, str);
-      window->qglColor(color);
-      window->renderText(sx, sy, str);
+      m_window->qglColor(QColor(0, 0, 0, 255));
+      m_window->renderText(sx+2, sy+2, str);
+      m_window->qglColor(color);
+      m_window->renderText(sx, sy, str);
    }
-}
-
-miniv3d Renderer::unprojectMouse()
-{
-   float fovy = m_pViewerParams->fovy;
-   float aspectRatio = (float)viewportwidth/viewportheight;
-
-   double mx = (double)m_CursorScreenPos.x() / (viewportwidth-1) - 0.5;
-   double my = 0.5 - (double)m_CursorScreenPos.y() / (viewportheight-1);
-
-   double wy = tan(fovy*PI/360);
-   double wx = aspectRatio * wy;
-
-   miniv3d dir = camera->get_dir() +
-                 camera->get_right() * 2.0 * wx * mx +
-                 camera->get_up() * 2.0 * wy * my;
-
-   dir.normalize();
-
-   return(dir);
-}
-
-miniv3d Renderer::hitVector()
-{
-   miniv3d hitVec;
-
-   // trace to find the hit point under current focus
-   minicoord hit = camera->get_hit();
-   hitVec = hit.vec - camera->get_eye().vec;
-
-   return(hitVec);
-}
-
-miniv3d Renderer::targetVector()
-{
-   miniv3d targetVec;
-
-   // trace to find the hit point under current cursor
-   minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
-   targetVec = target.vec - camera->get_eye().vec;
-
-   return(targetVec);
-}
-
-miniv3d Renderer::cursorVector(double zoom)
-{
-   miniv3d cursorVec(0.0);
-
-   // trace to find the hit point under current focus
-   minicoord hit = camera->get_hit();
-   if (hit != camera->get_eye())
-   {
-      // trace to find the hit point under current cursor
-      minicoord target = camera->get_hit(camera->get_eye(), unprojectMouse());
-      if (target != camera->get_eye())
-      {
-         double elev1 = camera->get_eye().vec.getlength();
-         double elev2 = target.vec.getlength();
-         double scale = elev1 / elev2;
-
-         // find out the target vector from focus to cursor
-         cursorVec = (1.0 - zoom) * scale * (target.vec - hit.vec);
-
-         // find out the zoom vector from eye to focus
-         cursorVec += zoom * (target.vec - camera->get_eye().vec);
-      }
-   }
-
-   return(cursorVec);
-}
-
-void Renderer::rotateCamera(float dx, float dy)
-{
-   stopTransition();
-
-   if (m_Shift)
-   {
-      camera->rotate_right(360 *dx);
-      camera->rotate_up(180 * dy);
-
-      camera->rotate_limit(-90.0, 90.0);
-   }
-   else
-   {
-      double dist = camera->get_hitdist();
-
-      camera->move_forward_plain(dist);
-
-      camera->rotate_right(360 *dx);
-      camera->rotate_up(180 * dy);
-
-      camera->rotate_limit(-90.0, 0.0);
-
-      camera->move_forward_plain(-dist);
-   }
-
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
-
-   startIdling();
-}
-
-void Renderer::moveCameraForward(float delta)
-{
-   const double mindist = 1000.0; // minimum travel distance
-
-   stopTransition();
-
-   delta *= 3.0;
-   if (delta > 1.0) delta = 1.0;
-   else if (delta < -1.0) delta = -1.0;
-
-   miniv3d dir = unprojectMouse();
-   double dist = camera->get_hitdist();
-   double dist0 = camera->get_hitdist(camera->get_eye(), dir);
-
-   if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(miniearth::EARTH_radius+camera->get_dist(), 2.0)-pow(miniearth::EARTH_radius, 2.0));
-   if (dist < mindist) dist = mindist;
-
-   if (m_Shift)
-      camera->move_back(-delta * dist);
-   else
-      camera->move(delta * dist * unprojectMouse());
-
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
-
-   startIdling();
-}
-
-void Renderer::moveCameraSideward(float delta)
-{
-   const double mindist = 1000.0; // minimum travel distance
-
-   stopTransition();
-
-   delta *= 3.0;
-   if (delta > 1.0) delta = 1.0;
-   else if (delta < -1.0) delta = -1.0;
-
-   miniv3d dir = unprojectMouse();
-   double dist = camera->get_hitdist();
-   double dist0 = camera->get_hitdist(camera->get_eye(), dir);
-
-   if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(miniearth::EARTH_radius+camera->get_dist(), 2.0)-pow(miniearth::EARTH_radius, 2.0));
-   if (dist < mindist) dist = mindist;
-
-   camera->move_right(-delta * dist);
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
-
-   startIdling();
-}
-
-double Renderer::delta(double a, double b)
-   {
-   double d = a - b;
-
-   if (d > 180.0) d -= 360.0;
-   else if (d < -180.0) d += 360.0;
-
-   return(d);
-   }
-
-void Renderer::focusOnTarget(double zoom)
-{
-   minianim anim;
-
-   minicoord target = camera->get_eye();
-
-   if (m_Shift)
-      target -= cursorVector(zoom);
-   else
-      target += cursorVector(zoom);
-
-   anim.append_sector(camera->get_eye(), target, 100);
-   startTransition(anim, 0.0, 0.0, 0.5, 0.25);
-}
-
-void Renderer::focusOnMap(minilayer *layer)
-{
-   minianim anim;
-
-   if (layer==NULL) return;
-
-   minicoord target = layer->getcenter();
-   miniv3d normal = layer->getnormal();
-   miniv3d extent = layer->getextent();
-
-   double size = (extent.x+extent.y) / 2.0;
-   target += size * normal;
-
-   anim.append_sector(camera->get_eye(), target, 100);
-
-   if ((camera->get_eye().vec - target.vec).getlength() < size/4.0)
-      startTransition(anim, delta(0.0, camera->get_angle()), delta(-90, camera->get_pitch()), 2.0, 0.0);
-   else
-      startTransition(anim, 0.0, delta(-90, camera->get_pitch()), 2.0, 0.0);
-}
-
-void Renderer::processTransition(double t, double dt)
-{
-   const double minspeed = 3000.0; // minimum speed (m/second)
-
-   t /= m_TargetDeltaTime;
-   if (t < 1.0) t = 1.0 - pow(1.0 - t, 2.0);
-
-   miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - camera->get_eye().vec;
-   double speed = dir.getlength();
-
-   if (m_TargetCameraFollow>0.0) speed /= m_TargetCameraFollow;
-   else speed = MAXFLOAT;
-
-   if (speed < minspeed) speed = minspeed;
-
-   if (dir.getlength() > speed * dt)
-   {
-      dir.normalize();
-      camera->move(dir * speed * dt);
-   }
-   else
-   {
-      camera->move(dir);
-      if (t >= 1.0) stopTransition();
-   }
-
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
-
-   double w = dt / m_TargetDeltaTime;
-
-   camera->rotate_right(w * m_TargetDeltaAngle);
-   camera->rotate_up(w * m_TargetDeltaPitch);
-
-   window->updateGL();
-}
-
-void Renderer::timerEvent(int timerId)
-{
-   const double minIdle = 2.0; // minimum idle time interval (s)
-
-   if (timerId == m_IdlingTimerId)
-   {
-      if (!m_bInCameraTransition)
-         window->updateGL();
-
-      bool bPagingFinished = !viewer->getearth()->checkpending();
-
-      if (!bPagingFinished)
-         m_IdlingTimer.start();
-      else
-      {
-         int deltaT = m_IdlingTimer.elapsed();
-         double dt = deltaT / 1000.0;
-
-         if (dt>minIdle)
-            stopIdling();
-      }
-   }
-   else if (timerId == m_TransitionTimerId)
-   {
-      int timeT = m_TransitionStart.elapsed();
-      double t = timeT / 1000.0;
-
-      int deltaT = m_TransitionTimer.restart();
-      double dt = deltaT / 1000.0;
-
-      processTransition(t, dt);
-   }
-}
-
-void Renderer::startIdling()
-{
-   if (m_IdlingTimerId == -1)
-   {
-      m_IdlingTimer.start();
-      m_IdlingTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
-   }
-}
-
-void Renderer::stopIdling()
-{
-   if (m_IdlingTimerId != -1)
-   {
-      window->killTimer(m_IdlingTimerId);
-      m_IdlingTimerId=-1;
-   }
-}
-
-void Renderer::startTransition(minianim target, double dangle, double dpitch, double dtime, double follow)
-{
-   stopTransition();
-
-   m_TargetCameraAnim = target;
-   m_TargetDeltaAngle = dangle;
-   m_TargetDeltaPitch = dpitch;
-   m_TargetDeltaTime = dtime;
-   m_TargetCameraFollow = follow;
-   m_bInCameraTransition = true;
-   m_TransitionStart = m_TransitionTimer;
-   m_TransitionTimer.start();
-   m_TransitionStart = m_TransitionTimer;
-   m_TransitionTimerId = window->startTimer((int)(1000.0/VIEWER_FPS));
-}
-
-void Renderer::stopTransition()
-{
-   if (m_TransitionTimerId != -1)
-   {
-      window->killTimer(m_TransitionTimerId);
-      m_TransitionTimerId = -1;
-      m_bInCameraTransition = false;
-   }
-}
-
-void Renderer::moveCursor(const QPoint& pos)
-{
-   m_CursorScreenPos = pos;
-   m_CursorValid = true;
-}
-
-void Renderer::modifierKey(modifierKeys modifier, bool pressed)
-{
-   if (modifier==ModifierShift)
-      m_Shift=pressed;
-   else if (modifier==ModifierControl)
-      m_Control=pressed;
-   else if (modifier==ModifierAlt)
-      m_Alt=pressed;
-   else if (modifier==ModifierMeta)
-      m_Meta=pressed;
 }
 
 void Renderer::toggleWireFrame(bool on)
 {
    m_pViewerParams->usewireframe=on;
 
-   startIdling();
+   m_camera->startIdling();
 }
 
 void Renderer::checkFog(bool on)
@@ -820,17 +386,17 @@ void Renderer::setFogDensity(double density)
    m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+density);
    m_pEarthParams->fogstart=(1.0-density)*VIEWER_FOGSTART;
    m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*VIEWER_NEARP/VIEWER_FARP;
-   viewer->propagate();
+   m_viewer->propagate();
 
-   startIdling();
+   m_camera->startIdling();
 }
 
 void Renderer::checkContours(bool on)
 {
    m_pEarthParams->usecontours=on;
-   viewer->propagate();
+   m_viewer->propagate();
 
-   startIdling();
+   m_camera->startIdling();
 }
 
 void Renderer::checkSeaLevel(bool on)
@@ -847,10 +413,10 @@ void Renderer::setSeaLevel(double level)
 
    if (m_pTerrainParams->sealevel!=-MAXFLOAT) m_pTerrainParams->sealevel=level;
 
-   viewer->propagate();
-   viewer->getearth()->getterrain()->update();
+   m_viewer->propagate();
+   m_viewer->getearth()->getterrain()->update();
 
-   startIdling();
+   m_camera->startIdling();
 }
 
 void Renderer::checkLight(bool on)
@@ -869,9 +435,9 @@ void Renderer::setLight(double hour)
    double light=2*PI*(hour_utc+m_DayHourDelta)/24.0;
    miniv3d lightdir(-cos(light),sin(light),0.0);
    m_pEarthParams->lightdir=lightdir;
-   viewer->propagate();
+   m_viewer->propagate();
 
-   startIdling();
+   m_camera->startIdling();
 }
 
 void Renderer::checkExagger(bool on)
@@ -884,12 +450,12 @@ void Renderer::setExagger(double scale)
 {
    m_ExaggerScale=scale;
 
-   viewer->getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
+   m_viewer->getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
 
-   camera->move_above(VIEWER_HEIGHT_FLOOR);
+   m_camera->moveAbove();
 
-   viewer->getearth()->getterrain()->update();
-   viewer->propagate();
+   m_viewer->getearth()->getterrain()->update();
+   m_viewer->propagate();
 
-   startIdling();
+   m_camera->startIdling();
 }

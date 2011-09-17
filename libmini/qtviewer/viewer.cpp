@@ -1,7 +1,80 @@
 // (c) by Stefan Roettger
 
+#include <mini/miniOGL.h>
+#include <mini/miniearth.h>
+
+#include "camera.h"
 #include "viewer.h"
 
+Viewer::Viewer(Camera *camera)
+   : viewerbase()
+{
+   m_camera = camera;
+}
+
+Viewer::~Viewer()
+{}
+
+// render earth and terrain geometry
+void Viewer::render_geometry()
+{
+   minilayer *nst;
+
+   // set reference layer
+   nst=getearth()->getnearest(m_camera->get_eye());
+   getearth()->setreference(nst);
+
+   // render scene
+   setup_matrix();
+   render_terrain_geometry();
+}
+
+// setup OpenGL modelview and projection matrices
+void Viewer::setup_matrix()
+{
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+
+   float fovy = get()->fovy;
+   float aspect = (float)m_camera->getViewportWidth()/m_camera->getViewportHeight();
+   double nearp = get()->nearp;
+   double farp = get()->farp;
+
+   gluPerspective(fovy, aspect, nearp, farp);
+
+   minicoord eye = m_camera->get_eye_opengl();
+   miniv3d dir = m_camera->get_dir_opengl();
+   miniv3d up = m_camera->get_up_opengl();
+
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   gluLookAt(eye.vec.x, eye.vec.y, eye.vec.z,
+             eye.vec.x+dir.x, eye.vec.y+dir.y, eye.vec.z+dir.z,
+             up.x,up.y,up.z);
+}
+
+// render terrain geometry
+void Viewer::render_terrain_geometry()
+{
+   // start timer
+   starttimer();
+
+   // update scene
+   float aspect = (float)m_camera->getViewportWidth()/m_camera->getViewportHeight();
+   cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
+
+   // render scene
+   clear();
+   render();
+
+   // get time spent
+   double delta=gettimer();
+
+   // update quality parameters
+   adapt(delta);
+}
+
+// render ecef geometry
 void Viewer::render_ecef_geometry()
    {
    // render plain globe for z-values:
