@@ -24,8 +24,7 @@ enum modifierKeys
 class Camera : public minicam
 {
 public:
-   Camera(QGLWidget *window,
-          miniearth *earth,
+   Camera(QGLWidget *window, miniearth *earth,
           double lat=21.39,double lon=-157.72,double height=7E6,
           double mindist=0.0);
 

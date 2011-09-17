@@ -15,8 +15,7 @@
 #include <mini/minicam.h>
 #include <mini/minianim.h>
 
-#include <mini/viewerbase.h>
-#include "viewerconst.h"
+#include "viewer.h"
 
 enum modifierKeys
 {
@@ -24,11 +23,6 @@ enum modifierKeys
    ModifierControl,
    ModifierAlt,
    ModifierMeta
-};
-
-class Viewer : public viewerbase
-{
-   void render_ecef_geometry();
 };
 
 class Renderer

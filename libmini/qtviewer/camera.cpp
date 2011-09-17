@@ -2,13 +2,10 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include <mini/minibase.h>
-
 #include "camera.h"
 #include "cameraconst.h"
 
-Camera::Camera(QGLWidget *window,
-               miniearth *earth,
+Camera::Camera(QGLWidget *window, miniearth *earth,
                double lat,double lon,double height,
                double mindist)
    : minicam(earth, lat, lon, height, mindist)
