@@ -6,19 +6,27 @@
 
 #include "viewer.h"
 
-Viewer::Viewer(minicam *camera)
+Viewer::Viewer()
    : viewerbase()
 {
-   m_camera = camera;
+   m_camera = NULL;
 }
 
 Viewer::~Viewer()
 {}
 
+// tell actual camera
+void Viewer::set_camera(minicam *cam)
+{
+   m_camera = cam;
+}
+
 // render earth and terrain geometry
 void Viewer::render_geometry()
 {
    minilayer *nst;
+
+   if (m_camera == NULL) return;
 
    // set reference layer
    nst=getearth()->getnearest(m_camera->get_eye());

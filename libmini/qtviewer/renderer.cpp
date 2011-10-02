@@ -56,6 +56,9 @@ void Renderer::init()
    // tell camera lens fovy
    m_camera->setLens(VIEWER_FOVY);
 
+   // tell camera
+   m_viewer->set_camera(m_camera);
+
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
 

@@ -10,9 +10,10 @@ class minicam;
 class Viewer : public viewerbase
 {
 public:
-   Viewer(minicam *camera);
+   Viewer();
    ~Viewer();
 
+   void set_camera(minicam *cam);
    void render_geometry();
 
 protected:
