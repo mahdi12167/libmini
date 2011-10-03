@@ -6,12 +6,12 @@
 void setminierrorhandler(void (*handler)(const char *file,int line,int fatal)=0);
 
 namespace mini {
-#include "core.h"
+#include "minicore.h"
 }
 
 #define MINIFLOAT
 namespace Mini {
-#include "core.h"
+#include "minicore.h"
 }
 
 #endif

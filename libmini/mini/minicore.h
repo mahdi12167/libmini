@@ -1,8 +1,8 @@
 // terrain rendering core
 // (c) by Stefan Roettger
 
-#ifndef CORE_H
-#define CORE_H
+#ifndef MINICORE_H
+#define MINICORE_H
 
 #ifndef MINIFLOAT
 #define MINIDATA short int

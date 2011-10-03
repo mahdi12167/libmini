@@ -1,7 +1,7 @@
 // terrain rendering core
 // (c) by Stefan Roettger
 
-#include "coreP.h"
+#include "minicoreP.h"
 
 // set fine tuning parameters
 void setparams(float minr,

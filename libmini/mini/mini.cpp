@@ -11,11 +11,11 @@ void setminierrorhandler(void (*handler)(const char *file,int line,int fatal))
 
 // the mini namespace for 16bit data
 namespace mini {
-#include "core.cpp"
+#include "minicore.cpp"
 }
 
 // the mini namespace for 32bit data
 #define MINIFLOAT
 namespace Mini {
-#include "core.cpp"
+#include "minicore.cpp"
 }

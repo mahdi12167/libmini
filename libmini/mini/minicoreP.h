@@ -4,7 +4,7 @@
 #include "minibase.h"
 #include "miniOGL.h"
 
-#include "core.h"
+#include "minicore.h"
 
 #define SINGLEPHASE (0)
 #define CALCMAPPHASE (1)
