@@ -5,6 +5,6 @@
 
 #include "minipoint.h"
 #include "minitree.h"
-#include "panorndr.h"
+#include "minipano.h"
 
 #endif

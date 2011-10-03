@@ -11,7 +11,7 @@
 #include "zlibbase.h"
 #include "squishbase.h"
 #include "greycbase.h"
-#include "convbase.h"
-#include "imgbase.h"
+#include "dataconv.h"
+#include "miniimg.h"
 
 #endif

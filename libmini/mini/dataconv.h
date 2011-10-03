@@ -1,13 +1,13 @@
 // (c) by Stefan Roettger
 
-#ifndef MINICONV_H
-#define MINICONV_H
+#ifndef DATACONV_H
+#define DATACONV_H
 
 #include <mini/minibase.h>
 
 #include <mini/database.h>
 
-namespace miniconv {
+namespace dataconv {
 
 //! parameters for converting external formats
 struct MINI_CONVERSION_HOOK_STRUCT

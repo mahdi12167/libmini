@@ -8,9 +8,9 @@
 #include <mini/greycbase.h>
 #endif
 
-#include "miniconv.h"
+#include "dataconv.h"
 
-namespace miniconv {
+namespace dataconv {
 
 // set default conversion parameters for external formats
 void setparameters(MINI_CONVERSION_PARAMS *params)

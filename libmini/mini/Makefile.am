@@ -27,7 +27,7 @@ MODS	= mini miniOGL\
 VMODS	= viewerbase\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
-	  miniconv miniimg\
+	  dataconv miniimg\
 	  minipano
 
 INCLUDES = -I$(top_builddir)/.. $(MINI_CFLAGS)

@@ -12,7 +12,7 @@
 #include <mini/jpegbase.h>
 #include <mini/pngbase.h>
 
-#include <mini/miniconv.h>
+#include <mini/dataconv.h>
 
 #include "miniimg.h"
 
@@ -61,7 +61,7 @@ int miniimg::loadimg(databuf &buf,char *filename)
 
    unsigned char *rawdata;
 
-   miniconv::MINI_CONVERSION_PARAMS conversion_params;
+   dataconv::MINI_CONVERSION_PARAMS conversion_params;
 
    if (checkfile(filename)==0) return(0);
 
@@ -85,10 +85,10 @@ int miniimg::loadimg(databuf &buf,char *filename)
    if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
 
    // register libMini conversion hook
-   if (miniconv::check_conversion()==0)
+   if (dataconv::check_conversion()==0)
       {
-      miniconv::setparameters(&conversion_params);
-      miniconv::setconversion(&conversion_params);
+      dataconv::setparameters(&conversion_params);
+      dataconv::setconversion(&conversion_params);
       }
 
    // register implicit calculator
