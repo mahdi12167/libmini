@@ -6,5 +6,6 @@
 #include "mini.h"
 #include "minibase.h"
 #include "miniOGL.h"
+#include "ministub.h"
 
 #endif
