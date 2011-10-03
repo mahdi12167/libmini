@@ -3,7 +3,7 @@ MAKE	= make -f $(MMFILE)
 
 SHELL	= sh
 
-HDRS	= minibase\
+HDRS	= minicore minibase\
 	  minicomplex minivec minimtx\
 	  minidyna minigeom minisort ministring miniref
 

@@ -2,7 +2,7 @@ METASOURCES = AUTO
 
 SUBDIRS = . tools
 
-HDRS	= minibase\
+HDRS	= minicore minibase\
 	  minicomplex minivec minimtx\
 	  minidyna minigeom minisort ministring miniref
 
@@ -48,7 +48,8 @@ libMiniSFX_la_SOURCES = $(VMODS:=.cpp)
 
 library_include_HEADERS = $(patsubst %,%.h,${HDRS}) $(patsubst %,%.h,${MODS}) $(patsubst %,%.h,${VMODS})
 
-EXTRA_DIST = miniP.h miniOGLP.h\
+EXTRA_DIST = minicore.cpp\
+	     minicoreP.h miniOGLP.h\
 	     build.sh build.bat\
 	     data/SkyDome.ppm data/EarthDay.db data/EarthNight.db data/Cone.db\
 	     GL/glext.h\
