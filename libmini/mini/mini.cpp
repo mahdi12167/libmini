@@ -10,12 +10,12 @@ void (*minibase::minierrorhandler)(const char *file,int line,int fatal)=NULL;
 void setminierrorhandler(void (*handler)(const char *file,int line,int fatal))
    {minibase::minierrorhandler=handler;}
 
-// the mini namespace for 16bit data
+// the mini namespace for 16bit elevation data
 namespace mini {
 #include "minicore.cpp"
 }
 
-// the mini namespace for 32bit data
+// the Mini namespace for 32bit elevation data
 #define MINIFLOAT
 namespace Mini {
 #include "minicore.cpp"

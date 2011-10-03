@@ -77,7 +77,7 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
    if (maxs==0) maxs=S-1;
 
    DH=y[S];
-   for (i=0; i<S; i++) DH[i]=(MINIDATA)MINIDATAMAX2;
+   for (i=0; i<S; i++) DH[i]=(MINIDATA)MINIDATA2MAX;
 
    for (s=maxs; s>mins; s/=2)
       {
@@ -88,11 +88,11 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
             if (ds<s)
                for (m=-s/2; m<=s/2; m+=ds)
                   for (n=-s/2; n<=s/2; n+=ds)
-                     DH[s]=max((MINIDATA2)DH[s],MINIDATAABS(y[i+m][j+n]-y[i][j]));
+                     DH[s]=max((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
             else
                for (m=-s/2; m<=s/2; m++)
                   for (n=-s/2; n<=s/2; n++)
-                     DH[s]=max((MINIDATA2)DH[s],MINIDATAABS(y[i+m][j+n]-y[i][j]));
+                     DH[s]=max((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
       }
    }
 
@@ -378,12 +378,8 @@ void recalcDH(float lambda,
    for (s=maxs; s>mins; s/=2)
       {
       h=(MINIDATA2)DH[s]+lambda/SCALE;
-      if (h>MINIDATAMAX2) h=MINIDATAMAX2;
-#ifndef MINIFLOAT
-      DH[s]=ftrc(fceil(h));
-#else
-      DH[s]=h;
-#endif
+      if (h>MINIDATA2MAX) h=MINIDATA2MAX;
+      DH[s]=MINICEIL(h);
       }
    }
 
@@ -3211,14 +3207,10 @@ void setheight(int i,int j,float h)
 
    if (i<0 || i>=S || j<0 || j>=S) ERRORMSG();
 
-#ifndef MINIFLOAT
-   if (h<-32768.0f) h=-32768.0f;
-   else if (h>32767.0f) h=32767.0f;
+   if (h<MINIDATAMIN) h=MINIDATAMIN;
+   else if (h>MINIDATAMAX) h=MINIDATAMAX;
 
-   y[i][j]=ftrc(h+0.5f);
-#else
-   y[i][j]=h;
-#endif
+   y[i][j]=MINITRUNC(h);
    }
 
 // set the elevation at position (x,z)

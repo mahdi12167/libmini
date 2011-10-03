@@ -1,21 +1,36 @@
 // terrain rendering core
 // (c) by Stefan Roettger
 
-#ifndef MINICORE_H
-#define MINICORE_H
+#undef MINIDATA
+#undef MINIDATAMIN
+#undef MINIDATAMAX
+#undef MINIDATA2
+#undef MINIDATA2MAX
+#undef MINIABS
+#undef MINICEIL
+#undef MINITRUNC
+#undef MINIMAX
 
 #ifndef MINIFLOAT
 #define MINIDATA short int
-#define MINIDATAABS(x) abs(x)
-#define MINIDATAMAX(a,b) max(a,b)
+#define MINIDATAMIN -32768
+#define MINIDATAMAX 32767
 #define MINIDATA2 unsigned short int
-#define MINIDATAMAX2 65535
+#define MINIDATA2MAX 65535
+#define MINIABS(x) abs(x)
+#define MINICEIL(x) ftrc(fceil(x))
+#define MINITRUNC(x) ftrc(ffloor(x+0.5f))
+#define MINIMAX(a,b) max(a,b)
 #else
 #define MINIDATA float
-#define MINIDATAABS(x) fabs(x)
-#define MINIDATAMAX(a,b) fmax(a,b)
+#define MINIDATAMIN -MAXFLOAT
+#define MINIDATAMAX MAXFLOAT
 #define MINIDATA2 float
-#define MINIDATAMAX2 MAXFLOAT
+#define MINIDATA2MAX MAXFLOAT
+#define MINIABS(x) fabs(x)
+#define MINICEIL(x) x
+#define MINITRUNC(x) x
+#define MINIMAX(a,b) fmax(a,b)
 #endif
 
 void setparams(float minr=9.0f,
@@ -105,5 +120,3 @@ inline float getY(const float y)
    {return(y*SCALE+OY);}
 inline float getZ(const float j)
    {return((S/2-j)*Dz+OZ);}
-
-#endif
