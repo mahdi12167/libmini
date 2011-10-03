@@ -3,10 +3,10 @@
 #include <mini/miniOGL.h>
 #include <mini/database.h>
 
-#include "panorndr.h"
+#include "minipano.h"
 
 // default constructor
-minipointrndr_panorndr::minipointrndr_panorndr():
+minipointrndr_pano::minipointrndr_pano():
    minipointrndr(minipointopts::OPTION_TYPE_FREE,1)
    {
    STRIP=new ministrip(0,3,2);
@@ -35,13 +35,13 @@ minipointrndr_panorndr::minipointrndr_panorndr():
    }
 
 // destructor
-minipointrndr_panorndr::~minipointrndr_panorndr()
+minipointrndr_pano::~minipointrndr_pano()
    {delete STRIP;}
 
 // create a sphere with constant radius and color
-void minipointrndr_panorndr::create_sphere(float radius,
-                                           const float r,const float g,const float b,const float a,
-                                           int stripes)
+void minipointrndr_pano::create_sphere(float radius,
+                                       const float r,const float g,const float b,const float a,
+                                       int stripes)
    {
    int i,j;
 
@@ -94,12 +94,12 @@ void minipointrndr_panorndr::create_sphere(float radius,
    }
 
 // init method
-BOOLINT minipointrndr_panorndr::init(minipoint *points,
-                                     float ex,float ey,float ez,
-                                     float dx,float dy,float dz,
-                                     float nearp,float farp,float fovy,float aspect,
-                                     double time,minipointopts *global,
-                                     BOOLINT usewarp)
+BOOLINT minipointrndr_pano::init(minipoint *points,
+                                 float ex,float ey,float ez,
+                                 float dx,float dy,float dz,
+                                 float nearp,float farp,float fovy,float aspect,
+                                 double time,minipointopts *global,
+                                 BOOLINT usewarp)
    {
    if (points==NULL ||
        dx==MAXFLOAT || dy==MAXFLOAT || dz==MAXFLOAT ||
@@ -127,11 +127,11 @@ BOOLINT minipointrndr_panorndr::init(minipoint *points,
    }
 
 // pre-render method
-void minipointrndr_panorndr::pre(int pass)
+void minipointrndr_pano::pre(int pass)
    {if (pass!=1) ERRORMSG();}
 
 // rendering method
-void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
+void minipointrndr_pano::render(minipointdata *vpoint,int pass)
    {
    float range;
    float size;
@@ -280,11 +280,11 @@ void minipointrndr_panorndr::render(minipointdata *vpoint,int pass)
    }
 
 // post-render method
-void minipointrndr_panorndr::post(int pass)
+void minipointrndr_pano::post(int pass)
    {if (pass!=1) ERRORMSG();}
 
 // exit method
-void minipointrndr_panorndr::exit()
+void minipointrndr_pano::exit()
    {
    disableAtest();
    disableblending();

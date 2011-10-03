@@ -28,7 +28,7 @@ VMODS	= viewerbase\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
 	  convbase imgbase\
-	  panorndr
+	  minipano
 
 INCLUDES = -I$(top_builddir)/.. $(MINI_CFLAGS)
 

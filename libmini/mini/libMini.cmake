@@ -46,7 +46,7 @@ SET(MINISFX_HDRS
    threadbase.h curlbase.h
    jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h
    convbase.h imgbase.h
-   panorndr.h
+   minipano.h
    )
 
 SET(MINISFX_SRCS
@@ -54,7 +54,7 @@ SET(MINISFX_SRCS
    threadbase.cpp curlbase.cpp
    jpegbase.cpp pngbase.cpp zlibbase.cpp squishbase.cpp greycbase.cpp
    convbase.cpp imgbase.cpp
-   panorndr.cpp
+   minipano.cpp
    )
 
 IF (MINI_BUILD_TYPE MATCHES RELEASE)

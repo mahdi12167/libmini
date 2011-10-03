@@ -1,21 +1,21 @@
 // (c) by Stefan Roettger
 
-#ifndef PANORNDR_H
-#define PANORNDR_H
+#ifndef MINIPANO_H
+#define MINIPANO_H
 
 #include <mini/minipoint.h>
 #include <mini/ministrip.h>
 
-// test grid renderer
-class minipointrndr_panorndr: public minipointrndr
+// panoramic addon for the minipoint renderer
+class minipointrndr_pano: public minipointrndr
    {
    public:
 
    //! default constructor
-   minipointrndr_panorndr();
+   minipointrndr_pano();
 
    //! destructor
-   ~minipointrndr_panorndr();
+   ~minipointrndr_pano();
 
    BOOLINT init(minipoint *points,
                 float ex,float ey,float ez,

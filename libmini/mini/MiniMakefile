@@ -29,7 +29,7 @@ VMODS	= viewerbase\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
 	  convbase imgbase\
-	  panorndr
+	  minipano
 
 SRCS	= $(MODS:=.cpp)
 OBJS	= $(MODS:=.o)

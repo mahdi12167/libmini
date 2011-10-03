@@ -35,7 +35,7 @@ static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 #include <mini/viewerbase.h>
 #include <mini/minicam.h>
 
-#include <mini/panorndr.h>
+#include <mini/minipano.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -1273,7 +1273,7 @@ void keyboardfunc(unsigned char key,int x,int y)
 // initialize waypoint addons
 void initaddons()
    {
-   static minipointrndr_panorndr pano;
+   static minipointrndr_pano pano;
 
    // register waypoint renderer
    viewer->getearth()->getterrain()->registerrndr(&pano);
