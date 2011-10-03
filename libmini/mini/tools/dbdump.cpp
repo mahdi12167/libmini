@@ -5,7 +5,7 @@
 #include <mini/miniOGL.h>
 
 #include <mini/database.h>
-#include <mini/imgbase.h>
+#include <mini/miniimg.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -183,7 +183,7 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-   if (imgbase::loadimg(buf,argv[1])!=0)
+   if (miniimg::loadimg(buf,argv[1])!=0)
       {
       buf.drop_mipmap();
       buf.autodecompress();

@@ -7,7 +7,7 @@
 
 #include <mini/minibase.h>
 
-#include <mini/convbase.h>
+#include <mini/miniconv.h>
 
 #include <mini/miniv3d.h>
 #include <mini/miniv4d.h>
@@ -53,7 +53,7 @@ class viewerbase
 
       // image conversion parameters:
 
-      convbase::MINI_CONVERSION_PARAMS conversion_params;
+      miniconv::MINI_CONVERSION_PARAMS conversion_params;
       };
 
    typedef VIEWER_PARAMS_STRUCT VIEWER_PARAMS;

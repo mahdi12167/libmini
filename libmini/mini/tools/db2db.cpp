@@ -3,7 +3,7 @@
 #include <mini/minibase.h>
 
 #include <mini/database.h>
-#include <mini/imgbase.h>
+#include <mini/miniimg.h>
 
 static const int fillin_radius=5;
 
@@ -23,7 +23,7 @@ int main(int argc,char *argv[])
       }
 
    // load buffer
-   if (imgbase::loadimg(buf,argv[1])!=0)
+   if (miniimg::loadimg(buf,argv[1])!=0)
       {
       // just output image info
       if (argc==2) buf.print_info();
@@ -33,7 +33,7 @@ int main(int argc,char *argv[])
          if (buf.type!=databuf::DATABUF_TYPE_RGB) buf.fillnodata(fillin_radius);
 
          // save buffer
-         if (imgbase::saveimg(buf,argv[2],jpgquality,pnglevel)==0) fprintf(stderr,"write error\n");
+         if (miniimg::saveimg(buf,argv[2],jpgquality,pnglevel)==0) fprintf(stderr,"write error\n");
          }
 
       // release buffer

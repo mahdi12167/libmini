@@ -28,7 +28,7 @@ MODS	= mini miniOGL\
 VMODS	= viewerbase\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
-	  convbase imgbase\
+	  miniconv miniimg\
 	  minipano
 
 SRCS	= $(MODS:=.cpp)

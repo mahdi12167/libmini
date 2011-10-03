@@ -1,12 +1,12 @@
 // (c) by Stefan Roettger
 
-#ifndef IMGBASE_H
-#define IMGBASE_H
+#ifndef MINIIMG_H
+#define MINIIMG_H
 
 #include <mini/database.h>
 #include <mini/datacalc.h>
 
-class imgbase
+class miniimg
    {
    public:
 

@@ -12,14 +12,14 @@
 #include <mini/jpegbase.h>
 #include <mini/pngbase.h>
 
-#include <mini/convbase.h>
+#include <mini/miniconv.h>
 
-#include "imgbase.h"
+#include "miniimg.h"
 
-datacalc imgbase::CALC;
+datacalc miniimg::CALC;
 
 // S3TC auto-compression hook
-void imgbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
+void miniimg::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,
                            unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,
                            void *data)
    {
@@ -31,7 +31,7 @@ void imgbase::autocompress(int isrgbadata,unsigned char *rawdata,unsigned int by
    }
 
 // S3TC auto-decompression hook
-void imgbase::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
+void miniimg::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,
                              unsigned char **rawdata,unsigned int *rawbytes,int width,int height,
                              void *data)
    {
@@ -42,7 +42,7 @@ void imgbase::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int
    }
 
 // load image based on extension
-int imgbase::loadimg(databuf &buf,char *filename)
+int miniimg::loadimg(databuf &buf,char *filename)
    {
    FILE_TYPE type;
    char *ext;
@@ -61,7 +61,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
 
    unsigned char *rawdata;
 
-   convbase::MINI_CONVERSION_PARAMS conversion_params;
+   miniconv::MINI_CONVERSION_PARAMS conversion_params;
 
    if (checkfile(filename)==0) return(0);
 
@@ -85,10 +85,10 @@ int imgbase::loadimg(databuf &buf,char *filename)
    if (databuf::check_autodecompress()==0) databuf::setautodecompress(autodecompress,NULL);
 
    // register libMini conversion hook
-   if (convbase::check_conversion()==0)
+   if (miniconv::check_conversion()==0)
       {
-      convbase::setparameters(&conversion_params);
-      convbase::setconversion(&conversion_params);
+      miniconv::setparameters(&conversion_params);
+      miniconv::setconversion(&conversion_params);
       }
 
    // register implicit calculator
@@ -134,7 +134,7 @@ int imgbase::loadimg(databuf &buf,char *filename)
    }
 
 // save image based on extension
-int imgbase::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
+int miniimg::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
    {
    FILE_TYPE type;
    char *ext;

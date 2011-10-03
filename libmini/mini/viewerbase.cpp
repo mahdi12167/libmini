@@ -41,7 +41,7 @@ viewerbase::viewerbase()
 
    // image conversion parameters:
 
-   convbase::setparameters(&PARAMS.conversion_params);
+   miniconv::setparameters(&PARAMS.conversion_params);
 
    // initialize state:
 
@@ -111,7 +111,7 @@ void viewerbase::inithooks()
                          curlbase::getURL,curlbase::checkURL);
 
    // register libMini conversion hook (JPEG/PNG/Z)
-   convbase::setconversion(&PARAMS.conversion_params);
+   miniconv::setconversion(&PARAMS.conversion_params);
 
    // register auto-compression hook
    databuf::setautocompress(squishbase::autocompress,NULL);
