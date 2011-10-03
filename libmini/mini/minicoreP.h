@@ -1,9 +1,6 @@
 // terrain rendering core
 // (c) by Stefan Roettger
 
-#include "minibase.h"
-#include "miniOGL.h"
-
 #include "minicore.h"
 
 #define SINGLEPHASE (0)

@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger
 
 #include "minibase.h"
+#include "miniOGL.h"
 
 // the global error handler for the mini library
 void (*minibase::minierrorhandler)(const char *file,int line,int fatal)=NULL;
