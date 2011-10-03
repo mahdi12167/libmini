@@ -1,6 +1,8 @@
 // terrain rendering core
 // (c) by Stefan Roettger
 
+#include "coreP.h"
+
 // set fine tuning parameters
 void setparams(float minr,
                float maxd2,
@@ -18,11 +20,7 @@ void setparams(float minr,
    }
 
 // scale the height field
-#ifndef MINIFLOAT
-void scalemap(short int *image,int size)
-#else
-void scalemap(float *image,int size)
-#endif
+void scalemap(MINIDATA *image,int size)
    {
    int i,j,
        mi,mj;
@@ -30,11 +28,7 @@ void scalemap(float *image,int size)
    float pi,pj,
          ri,rj;
 
-#ifndef MINIFLOAT
-   short int *ptr1,*ptr2;
-#else
-   float *ptr1,*ptr2;
-#endif
+   MINIDATA *ptr1,*ptr2;
 
    if (size==S)
       for (i=0; i<S; i++)
@@ -83,11 +77,7 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
    if (maxs==0) maxs=S-1;
 
    DH=y[S];
-#ifndef MINIFLOAT
-   for (i=0; i<S; i++) DH[i]=(short int)65535;
-#else
-   for (i=0; i<S; i++) DH[i]=MAXFLOAT;
-#endif
+   for (i=0; i<S; i++) DH[i]=(MINIDATA)MINIDATAMAX2;
 
    for (s=maxs; s>mins; s/=2)
       {
@@ -98,19 +88,11 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
             if (ds<s)
                for (m=-s/2; m<=s/2; m+=ds)
                   for (n=-s/2; n<=s/2; n+=ds)
-#ifndef MINIFLOAT
-                     DH[s]=max((unsigned short int)DH[s],abs(y[i+m][j+n]-y[i][j]));
-#else
-                     DH[s]=fmax(DH[s],fabs(y[i+m][j+n]-y[i][j]));
-#endif
-      else
+                     DH[s]=max((MINIDATA2)DH[s],MINIDATAABS(y[i+m][j+n]-y[i][j]));
+            else
                for (m=-s/2; m<=s/2; m++)
                   for (n=-s/2; n<=s/2; n++)
-#ifndef MINIFLOAT
-                     DH[s]=max((unsigned short int)DH[s],abs(y[i+m][j+n]-y[i][j]));
-#else
-                     DH[s]=fmax(DH[s],fabs(y[i+m][j+n]-y[i][j]));
-#endif
+                     DH[s]=max((MINIDATA2)DH[s],MINIDATAABS(y[i+m][j+n]-y[i][j]));
       }
    }
 
@@ -244,18 +226,10 @@ void calcD2(int mins=2,float avgd2=0.5f)
    }
 
 // preprocess the height field
-#ifndef MINIFLOAT
-void *initmap(short int *image,void **d2map,
-#else
-void *initmap(float *image,void **d2map,
-#endif
+void *initmap(MINIDATA *image,void **d2map,
               int *size,float *dim,float scale,
               float cellaspect,
-#ifndef MINIFLOAT
-              short int (*getelevation)(int i,int j,int S,void *data),
-#else
-              float (*getelevation)(int i,int j,int S,void *data),
-#endif
+              MINIDATA (*getelevation)(int i,int j,int S,void *data),
               void *objref,
               int fast,float avgd2)
    {
@@ -271,17 +245,9 @@ void *initmap(float *image,void **d2map,
 
    SCALE=scale;
 
-#ifndef MINIFLOAT
-   if ((y=(short int **)malloc((S+1)*sizeof(short int *)))==NULL) MEMERROR();
-#else
-   if ((y=(float **)malloc((S+1)*sizeof(float *)))==NULL) MEMERROR();
-#endif
+   if ((y=(MINIDATA **)malloc((S+1)*sizeof(short int *)))==NULL) MEMERROR();
    for (i=0; i<=S; i++)
-#ifndef MINIFLOAT
-      if ((y[i]=(short int *)malloc(S*sizeof(short int)))==NULL) MEMERROR();
-#else
-      if ((y[i]=(float *)malloc(S*sizeof(float)))==NULL) MEMERROR();
-#endif
+      if ((y[i]=(MINIDATA *)malloc(S*sizeof(short int)))==NULL) MEMERROR();
 
    if (image!=NULL) scalemap(image,*size);
    else if (*size==S)
@@ -295,11 +261,7 @@ void *initmap(float *image,void **d2map,
       {
       if (getelevation==NULL) ERRORMSG();
 
-#ifndef MINIFLOAT
-      if ((image=(short int *)malloc((*size)*(*size)*sizeof(short int)))==NULL) MEMERROR();
-#else
-      if ((image=(float *)malloc((*size)*(*size)*sizeof(float)))==NULL) MEMERROR();
-#endif
+      if ((image=(MINIDATA *)malloc((*size)*(*size)*sizeof(short int)))==NULL) MEMERROR();
 
       for (j=0; j<*size; j++)
          for (i=0; i<*size; i++) image[i+j*(*size)]=getelevation(i,j,*size,objref);
@@ -415,13 +377,11 @@ void recalcDH(float lambda,
 
    for (s=maxs; s>mins; s/=2)
       {
+      h=(MINIDATA2)DH[s]+lambda/SCALE;
+      if (h>MINIDATAMAX2) h=MINIDATAMAX2;
 #ifndef MINIFLOAT
-      h=(unsigned short int)DH[s]+lambda/SCALE;
-      if (h>65535.0f) h=65535.0f;
       DH[s]=ftrc(fceil(h));
 #else
-      h=DH[s]+lambda/SCALE;
-      if (h>MAXFLOAT) h=MAXFLOAT;
       DH[s]=h;
 #endif
       }
@@ -543,11 +503,7 @@ void setmaps(void *map,void *d2map,
 
    SCALE=scale;
 
-#ifndef MINIFLOAT
-   y=(short int **)map;
-#else
-   y=(float **)map;
-#endif
+   y=(MINIDATA **)map;
    DH=y[S];
 
    bc=(unsigned char **)d2map;
@@ -655,11 +611,7 @@ void calcmap(const int i,const int j,const int s)
             dy+=FY-EY;
             dz+=FZ-EZ;
 
-#ifndef MINIFLOAT
-            dh=(unsigned short int)DH[s];
-#else
-            dh=DH[s];
-#endif
+            dh=(MINIDATA2)DH[s];
 
             l=DX*dx+DY*dy+DZ*dz;
             d=3.0f*(k1*s2+k2*dh);
@@ -761,11 +713,7 @@ void drawmap(const int i,const int j,const int s,
       dy=m0*SCALE-EY;
       dz=Z(j)-EZ;
 
-#ifndef MINIFLOAT
-      dh=(unsigned short int)DH[s];
-#else
-      dh=DH[s];
-#endif
+      dh=(MINIDATA2)DH[s];
 
       l=DX*dx+DY*dy+DZ*dz;
       d=k1*s2+k2*dh;
@@ -1554,11 +1502,7 @@ void drawmap(const int i,const int j,const int s,
       dy=m0*SCALE-EY;
       dz=Z(j)-EZ;
 
-#ifndef MINIFLOAT
-      dh=(unsigned short int)DH[s];
-#else
-      dh=DH[s];
-#endif
+      dh=(MINIDATA2)DH[s];
 
       l=DX*dx+DY*dy+DZ*dz;
       d=k1*s2+k2*dh;
@@ -1722,11 +1666,7 @@ void pipemap(const int i,const int j,const int s,
       dy=m0*SCALE-EY;
       dz=Z(j)-EZ;
 
-#ifndef MINIFLOAT
-      dh=(unsigned short int)DH[s];
-#else
-      dh=DH[s];
-#endif
+      dh=(MINIDATA2)DH[s];
 
       l=DX*dx+DY*dy+DZ*dz;
       d=k1*s2+k2*dh;
@@ -2024,11 +1964,7 @@ void pipesea(const int i,const int j,const int s,
       }
    else bc1=bc2=bc3=bc4=0;
 
-#ifndef MINIFLOAT
-   dh=(unsigned short int)DH[s];
-#else
-   dh=DH[s];
-#endif
+   dh=(MINIDATA2)DH[s];
 
    below=above=FALSE;
 
@@ -2350,11 +2286,7 @@ void pipemap(const int i,const int j,const int s,
       dy=m0*SCALE-EY;
       dz=Z(j)-EZ;
 
-#ifndef MINIFLOAT
-      dh=(unsigned short int)DH[s];
-#else
-      dh=DH[s];
-#endif
+      dh=(MINIDATA2)DH[s];
 
       l=DX*dx+DY*dy+DZ*dz;
       d=k1*s2+k2*dh;
@@ -2888,11 +2820,7 @@ int checklandscape(float ex,float ey,float ez,
    dy=Y(S/2,S/2)-EY;
    dz=Z(S/2)-EZ;
 
-#ifndef MINIFLOAT
-   dh=(unsigned short int)DH[S-1];
-#else
-   dh=DH[S-1];
-#endif
+   dh=(MINIDATA2)DH[S-1];
 
    if (SEALEVEL!=-MAXFLOAT)
       if (Y(S/2,S/2)-SEALEVEL>dh) dh=Y(S/2,S/2)-SEALEVEL;
