@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 10.0.1 as of 2.October.2011<br>
+Version 10.0.1 as of 3.October.2011<br>
 Copyright (c) 1995-2011 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -134,8 +134,9 @@ Within the libMini package the following files are contained:<p>
    <tr><td>libMini.css:          </td><td>the README style sheet</td></tr>
    <tr><td>libMini.ppm/.jpg:     </td><td>the libMini logo</td></tr>
    <tr><td>libMini.ico:          </td><td>the libMini icon</td></tr>
+   <tr><td>mini.cpp/.h:          </td><td>contains the interface to the terrain rendering core</td></tr>
+   <tr><td>minicore.cpp/P.h/.h:  </td><td>contains the core of the terrain renderer</td></tr>
    <tr><td>minibase.h:           </td><td>contains basic declarations</td></tr>
-   <tr><td>mini.cpp/P.h/.h:      </td><td>contains the core of the terrain renderer</td></tr>
    <tr><td>miniOGL.cpp/P.h/.h:   </td><td>contains OpenGL dependent stuff</td></tr>
    <tr><td>miniv??.cpp/.h:       </td><td>contains vector class definitions</td></tr>
    <tr><td>minivec.h:            </td><td>contains templated vector class definition</td></tr>
@@ -310,18 +311,18 @@ prebuilt static freeGLUT library.<p>
 <a name="TerrainRenderingAPI"></a>
 <h2>(C) Terrain Rendering API</h2>
 
-In this section the low level API of the Mini Library is described.
-Convenient high level methods for a variety of commonly encountered
-terrain rendering scenarios are described in
+In this section the low level API of the Mini Library (the libMini
+core) is described. Convenient high level methods for a variety of
+commonly encountered terrain rendering scenarios are described in
 Sections <a href="#Frontends">(F)</a>, <a href="#LibraryStub">(G)</a>,
 <a href="#Performance">(I)</a>, <a href="#AsyncPaging">(K)</a>
 and <a href="#ViewerAPI">(O)</a>. The recommended starting point for
-experienced graphics programmers is to have a look at
-the <a href="#ViewerAPI">libMini Viewer API</a> and its reference
-implementation, the libMini tile set viewer, which is described in
+experienced graphics programmers is the <a href="#ViewerAPI">libMini
+Viewer API</a> and its reference implementation, the libMini tile set
+viewer, which is described in
 Section <a href="#MiniViewer">(P)</a>. Please check out whether or not
-the high level APIs suffice your needs before you dive into the low
-level API:<p>
+the high level scenarios suffice your needs before you dive into the
+low level API:<p>
 
 The main include file is "mini.h" which contains the definition of the
 low level terrain rendering API (the libMini core). In order to port
