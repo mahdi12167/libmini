@@ -3,7 +3,8 @@ MAKE	= make -f $(MMFILE)
 
 SHELL	= sh
 
-HDRS	= minicore minibase\
+HDRS	= minibase minicore\
+	  minicoreP.h miniOGLP.h\
 	  minicomplex minivec minimtx\
 	  minidyna minigeom minisort ministring miniref
 
@@ -13,7 +14,7 @@ MODS	= mini miniOGL\
 	  minitime miniio minidir minirgb minicrs\
 	  ministub minitile miniload\
 	  minicoord miniwarp minicam minianim\
-	  minilayer miniterrain miniearth\
+	  minilayer miniterrain miniearth miniscene\
 	  minicache minishader\
 	  miniray ministrip\
 	  minipoint minitext minisky miniglobe\
@@ -25,7 +26,7 @@ MODS	= mini miniOGL\
 	  datacalc dataparse\
 	  lunascan lunaparse lunacode
 
-VMODS	= viewerbase\
+VMODS	= miniview\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
 	  dataconv miniimg\

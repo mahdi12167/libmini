@@ -10,10 +10,10 @@
 
 #include <mini/miniOGL.h>
 
-#include "viewerbase.h"
+#include "miniscene.h"
 
 // default constructor
-viewerbase::viewerbase()
+miniscene::miniscene()
    {
    // configurable parameters:
 
@@ -58,7 +58,7 @@ viewerbase::viewerbase()
    }
 
 // destructor
-viewerbase::~viewerbase()
+miniscene::~miniscene()
    {
    delete EARTH;
 
@@ -67,11 +67,11 @@ viewerbase::~viewerbase()
    }
 
 // get parameters
-void viewerbase::get(VIEWER_PARAMS &params)
+void miniscene::get(VIEWER_PARAMS &params)
    {params=PARAMS;}
 
 // set parameters
-void viewerbase::set(VIEWER_PARAMS &params)
+void miniscene::set(VIEWER_PARAMS &params)
    {
    miniearth::MINIEARTH_PARAMS eparams;
 
@@ -94,11 +94,11 @@ void viewerbase::set(VIEWER_PARAMS &params)
    }
 
 // propagate parameters
-void viewerbase::propagate()
+void miniscene::propagate()
    {set(PARAMS);}
 
 // initialize the terrain hooks
-void viewerbase::inithooks()
+void miniscene::inithooks()
    {
    // register callbacks
    TERRAIN->setcallbacks(THREADBASE,
@@ -123,31 +123,31 @@ void viewerbase::inithooks()
    }
 
 // get initial view point
-minicoord viewerbase::getinitial()
+minicoord miniscene::getinitial()
    {return(TERRAIN->getinitial());}
 
 // set initial eye point
-void viewerbase::initeyepoint(const minicoord &e)
+void miniscene::initeyepoint(const minicoord &e)
    {TERRAIN->initeyepoint(e);}
 
 // clear scene
-void viewerbase::clear()
+void miniscene::clear()
    {EARTH->clear();}
 
 // enable a specific focus point
-void viewerbase::enablefocus(const minicoord &f)
+void miniscene::enablefocus(const minicoord &f)
    {TERRAIN->enablefocus(f);}
 
 // disable the focus point
-void viewerbase::disablefocus()
+void miniscene::disablefocus()
    {TERRAIN->disablefocus();}
 
 // generate and cache scene for a particular eye point
-void viewerbase::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
+void miniscene::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float aspect)
    {EARTH->cache(e,d,u,aspect,time());}
 
 // render cached scene
-void viewerbase::render()
+void miniscene::render()
    {
    miniv4d mtx[3];
    double oglmtx[16];
@@ -171,23 +171,23 @@ void viewerbase::render()
    }
 
 // get time
-double viewerbase::time()
+double miniscene::time()
    {return(gettime()-START);}
 
 // start timer
-void viewerbase::starttimer()
+void miniscene::starttimer()
    {TIMER=gettime()-START;}
 
 // read out timer
-double viewerbase::gettimer()
+double miniscene::gettimer()
    {return(gettime()-START-TIMER);}
 
 // idle for the remainder of the frame
-void viewerbase::idle(double dt)
+void miniscene::idle(double dt)
    {waitfor(1.0/PARAMS.fps-dt);}
 
 // adapt quality parameters
-void viewerbase::adapt(double dt)
+void miniscene::adapt(double dt)
    {
    float load;
 
@@ -226,20 +226,20 @@ void viewerbase::adapt(double dt)
    }
 
 // shoot a ray at the scene
-double viewerbase::shoot(const minicoord &o,const miniv3d &d)
+double miniscene::shoot(const minicoord &o,const miniv3d &d)
    {return(EARTH->shoot(o,d));}
 
 // extract triangles that [possibly] intersect a plane
-minidyna<miniv3d> viewerbase::extract(const minicoord &p,const miniv3d &v,double radius)
+minidyna<miniv3d> miniscene::extract(const minicoord &p,const miniv3d &v,double radius)
    {return(EARTH->extract(p,v,radius));}
 
 // set locking callbacks
-void viewerbase::setraycallbacks(void (*lock)(void *data),void *data,
-                                 void (*unlock)(void *data))
+void miniscene::setraycallbacks(void (*lock)(void *data),void *data,
+                                void (*unlock)(void *data))
    {miniray::setcallbacks(lock,data,unlock);}
 
 // render ecef geometry
-void viewerbase::render_ecef_geometry()
+void miniscene::render_ecef_geometry()
    {
    // overwrite in derived class and add opengl calls
    // to render additional geometry defined in ecef coordinates here:

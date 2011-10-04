@@ -110,6 +110,10 @@ inline void mtxrotate(const float angle,const miniv3d &a);
 inline void mtxmult(const float mtx[16]);
 inline void mtxmult(const double mtx[16]);
 
+inline void mtxperspective(float fovy,float aspect,float nearp,float farp);
+inline void mtxlookat(float ex,float ey,float ez,float ax,float ay,float az,float ux,float uy,float uz);
+inline void mtxlookat(const miniv3d &eye,const miniv3d &at,const miniv3d &up);
+
 void mtxget(const miniv4d mtx[3],double oglmtx[16]);
 
 void mtxgetmodel(float mtx[16]);
@@ -387,6 +391,31 @@ void mtxmult(const double mtx[16])
    {
 #ifndef NOOGL
    glMultMatrixd(mtx);
+#endif
+   }
+
+void mtxperspective(float fovy,float aspect,float nearp,float farp)
+   {
+#ifndef NOOGL
+   gluPerspective(fovy, aspect, nearp, farp);
+#endif
+   }
+
+void mtxlookat(float ex,float ey,float ez,float ax,float ay,float az,float ux,float uy,float uz)
+   {
+#ifndef NOOGL
+   gluLookAt(ex,ey,ez,
+             ax,ay,az,
+             ux,uy,uz);
+#endif
+   }
+
+void mtxlookat(const miniv3d &eye,const miniv3d &at,const miniv3d &up)
+   {
+#ifndef NOOGL
+   gluLookAt(eye.x,eye.y,eye.z,
+             at.x,at.y,at.z,
+             up.x,up.y,up.z);
 #endif
    }
 

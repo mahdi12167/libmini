@@ -1,7 +1,7 @@
 // (c) by Stefan Roettger
 
-#ifndef VIEWERBASE_H
-#define VIEWERBASE_H
+#ifndef MINISCENE_H
+#define MINISCENE_H
 
 #ifndef NOVIEWER
 
@@ -21,7 +21,7 @@
 #include <mini/curlbase.h>
 
 //! base class for viewing tilesets
-class viewerbase
+class miniscene
    {
    public:
 
@@ -59,10 +59,10 @@ class viewerbase
    typedef VIEWER_PARAMS_STRUCT VIEWER_PARAMS;
 
    //! default constructor
-   viewerbase();
+   miniscene();
 
    //! destructor
-   virtual ~viewerbase();
+   virtual ~miniscene();
 
    //! get parameters
    void get(VIEWER_PARAMS &params);

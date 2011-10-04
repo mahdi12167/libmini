@@ -3,7 +3,7 @@
 #ifndef MINI_SFX_H
 #define MINI_SFX_H
 
-#include "viewerbase.h"
+#include "miniview.h"
 #include "threadbase.h"
 #include "curlbase.h"
 #include "jpegbase.h"

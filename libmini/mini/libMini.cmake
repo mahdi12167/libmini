@@ -1,14 +1,16 @@
 # libMini header and module list
 
 SET(MINI_HDRS
-   mini.h minicore.h minibase.h miniOGL.h
+   mini.h minibase.h
+   minicore.h minicoreP.h
+   miniOGL.h miniOGLP.h
    minivec.h minimtx.h minidyna.h minisort.h ministring.h miniref.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
    minimath.h minicomplex.h minimpfp.h
    minitime.h miniio.h minidir.h minirgb.h minicrs.h
    ministub.h minitile.h miniload.h
    minicoord.h miniwarp.h minicam.h minianim.h
-   minilayer.h miniterrain.h miniearth.h
+   minilayer.h miniterrain.h miniearth.h miniscene.h
    minicache.h minishader.h
    miniray.h ministrip.h
    minipoint.h minitext.h minisky.h miniglobe.h
@@ -28,7 +30,7 @@ SET(MINI_SRCS
    minitime.cpp miniio.cpp minidir.cpp minirgb.cpp minicrs.cpp
    ministub.cpp minitile.cpp miniload.cpp
    minicoord.cpp miniwarp.cpp minicam.cpp minianim.cpp
-   minilayer.cpp miniterrain.cpp miniearth.cpp
+   minilayer.cpp miniterrain.cpp miniearth.cpp miniscene.cpp
    minicache.cpp minishader.cpp
    miniray.cpp ministrip.cpp
    minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
@@ -42,7 +44,7 @@ SET(MINI_SRCS
    )
 
 SET(MINISFX_HDRS
-   viewerbase.h
+   miniview.h
    threadbase.h curlbase.h
    jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h
    dataconv.h miniimg.h
@@ -50,7 +52,7 @@ SET(MINISFX_HDRS
    )
 
 SET(MINISFX_SRCS
-   viewerbase.cpp
+   miniview.cpp
    threadbase.cpp curlbase.cpp
    jpegbase.cpp pngbase.cpp zlibbase.cpp squishbase.cpp greycbase.cpp
    dataconv.cpp miniimg.cpp

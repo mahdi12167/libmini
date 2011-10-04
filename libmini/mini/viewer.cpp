@@ -32,7 +32,7 @@ static unsigned char VIEWER_BATHYMAP[VIEWER_BATHYWIDTH*4*2];
 
 #include <mini/pnmbase.h>
 
-#include <mini/viewerbase.h>
+#include <mini/miniview.h>
 #include <mini/minicam.h>
 
 #include <mini/minipano.h>
@@ -65,13 +65,13 @@ static char basepath2[MAXSTR]=""; // imagery
 static int winwidth,winheight,winid;
 
 // the viewer object
-static viewerbase *viewer=NULL;
+static miniview *viewer=NULL;
 
 // the camera object
 static minicam *cam=NULL;
 
 // the viewing parameters
-static viewerbase::VIEWER_PARAMS *params=NULL;
+static miniview::VIEWER_PARAMS *params=NULL;
 
 // the earth parameters
 static miniearth::MINIEARTH_PARAMS *eparams=NULL;
@@ -128,7 +128,7 @@ static int sw_cross=0;
 // initialize the viewing parameters
 void initparams()
    {
-   viewerbase::VIEWER_PARAMS prms;
+   miniview::VIEWER_PARAMS prms;
    miniearth::MINIEARTH_PARAMS eprms;
    miniterrain::MINITERRAIN_PARAMS tprms;
 
@@ -225,7 +225,7 @@ void initparams()
 // initialize the render window
 void initwindow(int width,int height)
    {
-   viewerbase::VIEWER_PARAMS prms;
+   miniview::VIEWER_PARAMS prms;
 
    viewer->get(prms);
 
@@ -291,7 +291,7 @@ void loadsettings()
 
    float a,p;
 
-   viewerbase::VIEWER_PARAMS prms;
+   miniview::VIEWER_PARAMS prms;
    miniearth::MINIEARTH_PARAMS eprms;
    miniterrain::MINITERRAIN_PARAMS tprms;
 
@@ -1357,7 +1357,7 @@ int main(int argc,char *argv[])
    miniOGL::print_unsupported_glexts();
 
    // create the viewer object
-   viewer=new viewerbase;
+   viewer=new miniview;
 
    // initialize the viewing parameters
    initparams();
