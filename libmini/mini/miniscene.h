@@ -25,7 +25,7 @@ class miniscene
    {
    public:
 
-   struct VIEWER_PARAMS_STRUCT
+   struct MINISCENE_PARAMS_STRUCT
       {
       // configurable parameters:
 
@@ -56,7 +56,7 @@ class miniscene
       dataconv::MINI_CONVERSION_PARAMS conversion_params;
       };
 
-   typedef VIEWER_PARAMS_STRUCT VIEWER_PARAMS;
+   typedef MINISCENE_PARAMS_STRUCT MINISCENE_PARAMS;
 
    //! default constructor
    miniscene();
@@ -65,16 +65,16 @@ class miniscene
    virtual ~miniscene();
 
    //! get parameters
-   void get(VIEWER_PARAMS &params);
+   void get(MINISCENE_PARAMS &params);
 
    //! set parameters
-   void set(VIEWER_PARAMS &params);
+   void set(MINISCENE_PARAMS &params);
 
    //! get parameters
-   VIEWER_PARAMS *get() {return(&PARAMS);}
+   MINISCENE_PARAMS *get() {return(&PARAMS);}
 
    //! set parameters
-   void set(VIEWER_PARAMS *params) {set(*params);}
+   void set(MINISCENE_PARAMS *params) {set(*params);}
 
    // propagate parameters
    void propagate();
@@ -150,7 +150,7 @@ class miniscene
 
    protected:
 
-   VIEWER_PARAMS PARAMS;
+   MINISCENE_PARAMS PARAMS;
 
    virtual void render_ecef_geometry();
 

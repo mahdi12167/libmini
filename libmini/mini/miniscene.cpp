@@ -67,11 +67,11 @@ miniscene::~miniscene()
    }
 
 // get parameters
-void miniscene::get(VIEWER_PARAMS &params)
+void miniscene::get(MINISCENE_PARAMS &params)
    {params=PARAMS;}
 
 // set parameters
-void miniscene::set(VIEWER_PARAMS &params)
+void miniscene::set(MINISCENE_PARAMS &params)
    {
    miniearth::MINIEARTH_PARAMS eparams;
 

@@ -71,7 +71,7 @@ static miniview *viewer=NULL;
 static minicam *cam=NULL;
 
 // the viewing parameters
-static miniview::VIEWER_PARAMS *params=NULL;
+static miniscene::MINISCENE_PARAMS *params=NULL;
 
 // the earth parameters
 static miniearth::MINIEARTH_PARAMS *eparams=NULL;
@@ -128,7 +128,7 @@ static int sw_cross=0;
 // initialize the viewing parameters
 void initparams()
    {
-   miniview::VIEWER_PARAMS prms;
+   miniscene::MINISCENE_PARAMS prms;
    miniearth::MINIEARTH_PARAMS eprms;
    miniterrain::MINITERRAIN_PARAMS tprms;
 
@@ -225,7 +225,7 @@ void initparams()
 // initialize the render window
 void initwindow(int width,int height)
    {
-   miniview::VIEWER_PARAMS prms;
+   miniscene::MINISCENE_PARAMS prms;
 
    viewer->get(prms);
 
@@ -291,7 +291,7 @@ void loadsettings()
 
    float a,p;
 
-   miniview::VIEWER_PARAMS prms;
+   miniscene::MINISCENE_PARAMS prms;
    miniearth::MINIEARTH_PARAMS eprms;
    miniterrain::MINITERRAIN_PARAMS tprms;
 

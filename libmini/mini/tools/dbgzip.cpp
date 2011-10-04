@@ -3,7 +3,7 @@
 #include <mini/minibase.h>
 
 #include <mini/database.h>
-#include <mini/miniconv.h>
+#include <mini/dataconv.h>
 
 int main(int argc,char *argv[])
    {
@@ -11,7 +11,7 @@ int main(int argc,char *argv[])
    BOOLINT extfmt_z;
    int success;
 
-   miniconv::MINI_CONVERSION_PARAMS conversion_params;
+   dataconv::MINI_CONVERSION_PARAMS conversion_params;
 
    if (argc!=3)
       {
@@ -21,8 +21,8 @@ int main(int argc,char *argv[])
       }
 
    // register libMini conversion hook
-   miniconv::setparameters(&conversion_params);
-   miniconv::setconversion(&conversion_params);
+   dataconv::setparameters(&conversion_params);
+   dataconv::setconversion(&conversion_params);
 
    // load stub
    if (buf.loaddata(argv[1],1)!=0)
