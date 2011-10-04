@@ -159,6 +159,7 @@ void miniscene::render()
    EARTH->render();
 
    // render ecef geometry
+   //!! check render mode before doing so
    EARTH->get_ecef_matrix(mtx);
    mtxget(mtx,oglmtx);
    mtxpush();
