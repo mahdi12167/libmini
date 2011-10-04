@@ -39,7 +39,7 @@ void Renderer::init()
    if (m_bIsInited) return;
 
    // create the viewer object
-   m_viewer=new Viewer();
+   m_viewer=new miniview();
 
    // initialize VIS bathy map
    initBathyMap();
@@ -110,18 +110,18 @@ void Renderer::clearMaps()
 // initialize libMini parameters
 void Renderer::initParameters()
 {
-   // the viewing parameters
-   viewerbase::VIEWER_PARAMS viewerParams;
-   m_viewer->get(viewerParams);
-   viewerParams.winwidth = m_window->width();
-   viewerParams.winheight = m_window->height();
-   viewerParams.fps = CAMERA_FPS;
-   viewerParams.fovy = VIEWER_FOVY;
-   viewerParams.nearp = VIEWER_NEARP;
-   viewerParams.farp = VIEWER_FARP;
-   viewerParams.usewireframe = FALSE;
-   m_viewer->set(viewerParams);
-   m_pViewerParams = m_viewer->get();
+   // the scene parameters
+   miniscene::MINISCENE_PARAMS sceneParams;
+   m_viewer->get(sceneParams);
+   sceneParams.winwidth = m_window->width();
+   sceneParams.winheight = m_window->height();
+   sceneParams.fps = CAMERA_FPS;
+   sceneParams.fovy = VIEWER_FOVY;
+   sceneParams.nearp = VIEWER_NEARP;
+   sceneParams.farp = VIEWER_FARP;
+   sceneParams.usewireframe = FALSE;
+   m_viewer->set(sceneParams);
+   m_pSceneParams = m_viewer->get();
 
    // the earth parameters
    miniearth::MINIEARTH_PARAMS earthParams;
@@ -205,9 +205,9 @@ void Renderer::resizeViewport()
    if (winWidth<1) winWidth=1;
    if (winHeight<1) winHeight=1;
 
-   m_pViewerParams->winwidth=winWidth;
-   m_pViewerParams->winheight=winHeight;
-   m_viewer->set(m_pViewerParams);
+   m_pSceneParams->winwidth=winWidth;
+   m_pSceneParams->winheight=winHeight;
+   m_viewer->set(m_pSceneParams);
 
    glViewport(0, 0, winWidth, winHeight);
 }
@@ -370,7 +370,7 @@ void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDo
 
 void Renderer::toggleWireFrame(bool on)
 {
-   m_pViewerParams->usewireframe=on;
+   m_pSceneParams->usewireframe=on;
 
    m_camera->startIdling();
 }

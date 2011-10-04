@@ -5,11 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include <mini/miniearth.h>
-#include <mini/miniterrain.h>
-#include <mini/minilayer.h>
-
-#include "viewer.h"
+#include <mini/miniview.h>
 #include "viewerconst.h"
 
 #include "camera.h"
@@ -29,7 +25,7 @@ public:
    void       resizeWindow();
    void       draw();
 
-   Viewer*    getViewer() {return(m_viewer);}
+   miniview*  getViewer() {return(m_viewer);}
    Camera*    getCamera() {return(m_camera);}
 
    void       toggleWireFrame(bool on);
@@ -65,8 +61,8 @@ protected:
    Camera* m_camera;
 
    // viewer
-   Viewer* m_viewer;
-   viewerbase::VIEWER_PARAMS* m_pViewerParams; // the viewing parameters
+   miniview* m_viewer;
+   miniscene::MINISCENE_PARAMS* m_pSceneParams; // the scene parameters
    miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map

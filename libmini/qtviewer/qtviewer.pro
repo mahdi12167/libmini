@@ -8,7 +8,6 @@ SOURCES += main.cpp \
            mainwindow.cpp \
            viewerwindow.cpp \
            renderer.cpp \
-           viewer.cpp \
            camera.cpp
 
 HEADERS += mainwindow.h \
