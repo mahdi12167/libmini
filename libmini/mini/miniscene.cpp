@@ -159,13 +159,17 @@ void miniscene::render()
    EARTH->render();
 
    // render ecef geometry
-   //!! check render mode before doing so
-   EARTH->get_ecef_matrix(mtx);
-   mtxget(mtx,oglmtx);
-   mtxpush();
-   mtxmult(oglmtx);
-   render_ecef_geometry();
-   mtxpop();
+   if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
+        EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
+       EARTH->get()->nonlin)
+      {
+      EARTH->get_ecef_matrix(mtx);
+      mtxget(mtx,oglmtx);
+      mtxpush();
+      mtxmult(oglmtx);
+      render_ecef_geometry();
+      mtxpop();
+      }
 
    // disable wireframe mode
    if (PARAMS.usewireframe) polygonmode(0);
