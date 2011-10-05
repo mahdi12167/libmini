@@ -88,11 +88,11 @@ void calcDH(int mins=1,int maxs=0,int ds=1)
             if (ds<s)
                for (m=-s/2; m<=s/2; m+=ds)
                   for (n=-s/2; n<=s/2; n+=ds)
-                     DH[s]=max((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
+                     DH[s]=MINIMAX((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
             else
                for (m=-s/2; m<=s/2; m++)
                   for (n=-s/2; n<=s/2; n++)
-                     DH[s]=max((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
+                     DH[s]=MINIMAX((MINIDATA2)DH[s],MINIABS(y[i+m][j+n]-y[i][j]));
       }
    }
 
@@ -245,9 +245,9 @@ void *initmap(MINIDATA *image,void **d2map,
 
    SCALE=scale;
 
-   if ((y=(MINIDATA **)malloc((S+1)*sizeof(short int *)))==NULL) MEMERROR();
+   if ((y=(MINIDATA **)malloc((S+1)*sizeof(MINIDATA *)))==NULL) MEMERROR();
    for (i=0; i<=S; i++)
-      if ((y[i]=(MINIDATA *)malloc(S*sizeof(short int)))==NULL) MEMERROR();
+      if ((y[i]=(MINIDATA *)malloc(S*sizeof(MINIDATA)))==NULL) MEMERROR();
 
    if (image!=NULL) scalemap(image,*size);
    else if (*size==S)
@@ -261,7 +261,7 @@ void *initmap(MINIDATA *image,void **d2map,
       {
       if (getelevation==NULL) ERRORMSG();
 
-      if ((image=(MINIDATA *)malloc((*size)*(*size)*sizeof(short int)))==NULL) MEMERROR();
+      if ((image=(MINIDATA *)malloc((*size)*(*size)*sizeof(MINIDATA)))==NULL) MEMERROR();
 
       for (j=0; j<*size; j++)
          for (i=0; i<*size; i++) image[i+j*(*size)]=getelevation(i,j,*size,objref);

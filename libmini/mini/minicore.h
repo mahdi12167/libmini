@@ -19,7 +19,7 @@
 #define MINIDATA2MAX 65535
 #define MINIABS(x) abs(x)
 #define MINICEIL(x) ftrc(fceil(x))
-#define MINITRUNC(x) ftrc(ffloor(x+0.5f))
+#define MINITRUNC(x) ftrc((x)+0.5f)
 #define MINIMAX(a,b) max(a,b)
 #else
 #define MINIDATA float
@@ -28,8 +28,8 @@
 #define MINIDATA2 float
 #define MINIDATA2MAX MAXFLOAT
 #define MINIABS(x) fabs(x)
-#define MINICEIL(x) x
-#define MINITRUNC(x) x
+#define MINICEIL(x) (x)
+#define MINITRUNC(x) (x)
 #define MINIMAX(a,b) fmax(a,b)
 #endif
 
