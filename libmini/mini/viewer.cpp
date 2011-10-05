@@ -650,6 +650,7 @@ void renderinfo()
 void renderhud()
    {
    double elev,sea;
+   double flattening;
    minicoord eye_llh;
 
    minicoord hit;
@@ -693,6 +694,9 @@ void renderhud()
       elev=viewer->getearth()->getheight(cam->get_eye());
       if (elev==-MAXFLOAT) elev=0.0f;
 
+      flattening=viewer->getearth()->getterrain()->getflattening()*tparams->exaggeration;
+      if (flattening!=0.0) elev/=flattening;
+
       sea=tparams->sealevel;
       if (sea==-MAXFLOAT) sea=0.0f;
 
@@ -704,7 +708,7 @@ void renderhud()
                " x= %11.1f\n y= %11.1f\n z= %11.1fm (%.1fm)\n\n dir= %.1f\n yon= %.1f\n\n"
                "Settings:\n\n"
                " farp= %.1fm (f/F)\n\n res= %.1f*%.1f (t/T)\n range= %.1f*%.1fm (r/R)\n\n sea= %.1f (u/U)\n\n gravity= %.1f (g)\n",
-               eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev/tparams->exaggeration,cam->get_angle(),cam->get_pitch(), // position/elevation and direction
+               eye_llh.vec.x,eye_llh.vec.y,eye_llh.vec.z,elev,cam->get_angle(),cam->get_pitch(), // position/elevation and direction
                params->farp,tparams->res*tparams->relres1,tparams->relres2,tparams->range*tparams->relrange1*params->farp,tparams->relrange2,sea,gravity); // adjustable parameters
 
       minitext::drawstring(0.3f,240.0f,1.0f,0.25f,1.0f,str);
