@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include <QtGui/QMessageBox> //!! move out of renderer
-
 #include <QDateTime>
 
 #include <mini/miniOGL.h>
@@ -86,13 +84,6 @@ minilayer* Renderer::loadMap(const char* url)
             m_camera->startIdling();
 
             return(layer);
-         }
-         else
-         {
-            //!! move out of renderer
-            QString message;
-            message.sprintf("Unable to load map data from url=%s\n", url);
-            QMessageBox::warning(m_window, "Error", message, QMessageBox::Ok);
          }
       }
 

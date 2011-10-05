@@ -3,6 +3,7 @@
 #include <string>
 
 #include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
 
 #include <QtCore/QUrl>
 
@@ -209,6 +210,10 @@ void ViewerWindow::loadMap(QString url)
 
    if (layer!=NULL)
       emit changed(url, layer);
+   else
+      QMessageBox::warning(this, "Error",
+                           "Unable to load map data from url="+url,
+                           QMessageBox::Ok);
 }
 
 void ViewerWindow::clearMaps()
