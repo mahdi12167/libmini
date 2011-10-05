@@ -799,12 +799,12 @@ void minilayer::setnull()
    if (LOADED) return;
 
    // set original data coordinates
-   LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_LINEAR);
-   LPARAMS.extentDAT=minicoord(miniv3d(1.0,1.0,1.0),minicoord::MINICOORD_LINEAR);
+   LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_ECEF);
+   LPARAMS.extentDAT=minicoord(miniv3d(1.0,1.0,1.0),minicoord::MINICOORD_ECEF);
 
    // set geo-referenced coordinates
    LPARAMS.centerGEO=LPARAMS.offsetDAT;
-   LPARAMS.northGEO=minicoord(miniv3d(0.0,1.0,0.0),minicoord::MINICOORD_LINEAR);
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,1.0),minicoord::MINICOORD_ECEF);
 
    // set extent
    LPARAMS.extent[0]=1.0f;
