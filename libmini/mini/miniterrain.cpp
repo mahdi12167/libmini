@@ -1086,7 +1086,7 @@ void miniterrain::render()
 
             // use standard VIS shader
             minishader::setVISshader(CACHE,
-                                     len_o2g(1.0),TPARAMS.exaggeration,
+                                     len_o2g(1.0),getflattening()*TPARAMS.exaggeration,
                                      (TPARAMS.usefog)?TPARAMS.fogstart/2.0f*TPARAMS.farp:0.0f,(TPARAMS.usefog)?TPARAMS.fogend*TPARAMS.farp:0.0f,
                                      TPARAMS.fogdensity,
                                      TPARAMS.fogcolor,
