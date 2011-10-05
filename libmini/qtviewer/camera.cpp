@@ -72,24 +72,8 @@ miniv3d Camera::unprojectMouse()
    if (!m_CursorValid)
       return(get_dir());
 
-   int viewportwidth = m_window->width();
-   int viewportheight = m_window->height();
-
-   float aspect = (float)viewportwidth/viewportheight;
-
-   double mx = (double)m_CursorPosX / (viewportwidth-1) - 0.5;
-   double my = 0.5 - (double)m_CursorPosY / (viewportheight-1);
-
-   double wy = tan(m_fovy*PI/360);
-   double wx = aspect * wy;
-
-   miniv3d dir = get_dir() +
-                 get_right() * 2.0 * wx * mx +
-                 get_up() * 2.0 * wy * my;
-
-   dir.normalize();
-
-   return(dir);
+   return(unproject_viewport(m_CursorPosX, m_CursorPosY,
+                             m_window->width(), m_window->height()));
 }
 
 miniv3d Camera::hitVector()
