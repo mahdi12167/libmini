@@ -402,3 +402,25 @@ void minicam::get_local_base(const minicoord &pos,
    right=right0;
    up=up0;
    }
+
+// unproject viewport coordinate
+miniv3d minicam::unproject_viewport(int vx,int vy,
+                                    int vwidth,int vheight)
+   {
+   float fovy=EARTH->get()->fovy;
+   float aspect=(float)vwidth/vheight;
+
+   double mx=(double)vx/(vwidth-1)-0.5;
+   double my=0.5-(double)vy/(vheight-1);
+
+   double wy=tan(fovy*PI/360.0);
+   double wx=aspect*wy;
+
+   miniv3d dir=get_dir()+
+               get_right()*2.0*wx*mx+
+               get_up()*2.0*wy*my;
+
+   dir.normalize();
+
+   return(dir);
+   }
