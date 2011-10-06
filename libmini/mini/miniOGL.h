@@ -40,6 +40,8 @@ void disableZwriting();
 void enableZwriting();
 
 void enableAwriting();
+void enableRwriting();
+void enableGBwriting();
 void enableRGBwriting();
 void enableRGBAwriting();
 void disableRGBAwriting();

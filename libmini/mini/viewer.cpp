@@ -953,7 +953,7 @@ void render()
       mtxlookat(egl-rgl,egl+dgl,ugl);
 
       if (sw_anaglyph==0) writeleftbuffer();
-      else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
+      else enableRwriting();
 
       viewer->render();
 
@@ -966,12 +966,12 @@ void render()
       mtxlookat(egl+rgl,egl+dgl,ugl);
 
       if (sw_anaglyph==0) writerightbuffer();
-      else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
+      else enableGBwriting();
 
       viewer->render();
 
       if (sw_anaglyph==0) writebackbuffer();
-      else glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_FALSE);
+      else enableRGBwriting();
       }
 
    // render the head-up display

@@ -407,6 +407,20 @@ void enableAwriting()
 #endif
    }
 
+void enableRwriting()
+   {
+#ifndef NOOGL
+   glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
+#endif
+   }
+
+void enableGBwriting()
+   {
+#ifndef NOOGL
+   glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
+#endif
+   }
+
 void enableRGBwriting()
    {
 #ifndef NOOGL
