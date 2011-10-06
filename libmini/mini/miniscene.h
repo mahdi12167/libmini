@@ -154,10 +154,10 @@ class miniscene
 
    virtual void render_ecef_geometry();
 
-   private:
-
    miniearth *EARTH;
    miniterrain *TERRAIN;
+
+   private:
 
    double START,TIMER;
 

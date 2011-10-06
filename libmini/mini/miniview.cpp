@@ -20,23 +20,55 @@ void miniview::set_camera(minicam *cam)
    {m_camera = cam;}
 
 // render earth and terrain geometry
-void miniview::render_geometry()
+void miniview::render_geometry(double sbase,BOOLINT anaglyph)
    {
    minilayer *nst;
 
    if (m_camera==NULL) return;
 
+   // start timer
+   starttimer();
+
    // set reference layer
    nst=getearth()->getnearest(m_camera->get_eye());
    getearth()->setreference(nst);
 
+   // clear scene
+   clear();
+
    // render scene
-   setup_matrix();
-   render_terrain_geometry();
+   if (sbase==0.0)
+      {
+      setup_matrix();
+      render_terrain_geometry();
+      }
+   else
+      {
+      // left stereo channel
+      setup_matrix(-sbase);
+      if (anaglyph) enableRwriting();
+      else writeleftbuffer();
+      render_terrain_geometry();
+
+      // right stereo channel
+      setup_matrix(sbase);
+      cleardepthbuffer();
+      if (anaglyph) enableGBwriting();
+      else writerightbuffer();
+      render_terrain_geometry();
+      if (anaglyph) enableRGBwriting();
+      else writebackbuffer();
+      }
+
+   // get time spent
+   double delta=gettimer();
+
+   // update quality parameters
+   adapt(delta);
    }
 
 // setup OpenGL modelview and projection matrices
-void miniview::setup_matrix()
+void miniview::setup_matrix(double sbase)
    {
    mtxproj();
    mtxid();
@@ -48,34 +80,25 @@ void miniview::setup_matrix()
 
    mtxperspective(fovy, aspect, nearp, farp);
 
-   minicoord eye = m_camera->get_eye_opengl();
-   miniv3d dir = m_camera->get_dir_opengl();
-   miniv3d up = m_camera->get_up_opengl();
+   minicoord egl = m_camera->get_eye_opengl();
+   miniv3d dgl = m_camera->get_dir_opengl();
+   miniv3d ugl = m_camera->get_up_opengl();
+   miniv3d rgl = m_camera->get_right_opengl()*(sbase/TERRAIN->get()->scale);
 
    mtxmodel();
    mtxid();
-   mtxlookat(miniv3d(eye.vec), miniv3d(eye.vec)+dir, up);
+   mtxlookat(miniv3d(egl.vec)+rgl, miniv3d(egl.vec)+rgl+dgl, ugl);
    }
 
 // render terrain geometry
 void miniview::render_terrain_geometry()
    {
-   // start timer
-   starttimer();
-
    // update scene
    float aspect = (float)get()->winwidth/get()->winheight;
    cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
 
    // render scene
-   clear();
    render();
-
-   // get time spent
-   double delta=gettimer();
-
-   // update quality parameters
-   adapt(delta);
    }
 
 // render ecef geometry

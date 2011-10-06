@@ -98,7 +98,7 @@ static double oneturn=5.0,oneincline=5.0;
 static double speed,topspeed;
 
 // stereo base
-static const double sbase=VIEWER_SBASE/VIEWER_SCALE;
+static const double sbase=VIEWER_SBASE;
 
 // wakeup flag
 static BOOLINT wakeup=TRUE;
@@ -811,25 +811,14 @@ void render()
    {
    double delta,idle;
 
-   minilayer *nst;
-
    double elev,dist;
 
    double coef;
-
-   miniv3d egl,dgl,ugl,rgl;
 
    double light;
    miniv3d lightdir;
 
    if (winwidth<=0 || winheight<=0) return;
-
-   // start timer
-   viewer->starttimer();
-
-   // set reference tileset
-   nst=viewer->getearth()->getnearest(cam->get_eye());
-   viewer->getearth()->setreference(nst);
 
    // update eye point:
 
@@ -910,28 +899,6 @@ void render()
                }
             }
 
-   // get OpenGL camera:
-
-   egl=cam->get_eye_opengl();
-   dgl=cam->get_dir_opengl();
-   ugl=cam->get_up_opengl();
-   rgl=cam->get_right_opengl()*sbase;
-
-   // setup OpenGL state:
-
-   viewer->clear();
-
-   mtxproj();
-   mtxid();
-   mtxperspective(params->fovy,(float)winwidth/winheight,viewer->len_g2o(params->nearp),viewer->len_g2o(params->farp));
-
-   mtxmodel();
-   mtxid();
-   mtxlookat(egl,egl+dgl,ugl);
-
-   // update scene
-   viewer->cache(cam->get_eye(),cam->get_dir(),cam->get_up(),(float)winwidth/winheight);
-
    // update earth lighting
    if (eparams->usediffuse)
       {
@@ -942,37 +909,12 @@ void render()
       wakeup=TRUE;
       }
 
+   // tell actual camera
+   viewer->set_camera(cam);
+
    // render scene
-   if (sw_stereo==0) viewer->render();
-   else
-      {
-      // left channel:
-
-      mtxmodel();
-      mtxid();
-      mtxlookat(egl-rgl,egl+dgl,ugl);
-
-      if (sw_anaglyph==0) writeleftbuffer();
-      else enableRwriting();
-
-      viewer->render();
-
-      // right channel:
-
-      cleardepthbuffer();
-
-      mtxmodel();
-      mtxid();
-      mtxlookat(egl+rgl,egl+dgl,ugl);
-
-      if (sw_anaglyph==0) writerightbuffer();
-      else enableGBwriting();
-
-      viewer->render();
-
-      if (sw_anaglyph==0) writebackbuffer();
-      else enableRGBwriting();
-      }
+   if (sw_stereo==0) viewer->render_geometry();
+   else viewer->render_geometry(sbase,sw_anaglyph);
 
    // render the head-up display
    renderhud();
