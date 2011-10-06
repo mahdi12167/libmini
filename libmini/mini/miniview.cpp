@@ -24,7 +24,7 @@ void miniview::render_geometry()
    {
    minilayer *nst;
 
-   if (m_camera == NULL) return;
+   if (m_camera==NULL) return;
 
    // set reference layer
    nst=getearth()->getnearest(m_camera->get_eye());
@@ -54,7 +54,7 @@ void miniview::setup_matrix()
 
    mtxmodel();
    mtxid();
-   mtxlookat(miniv3d(eye.vec), miniv3d(eye.vec) + dir, up);
+   mtxlookat(miniv3d(eye.vec), miniv3d(eye.vec)+dir, up);
    }
 
 // render terrain geometry

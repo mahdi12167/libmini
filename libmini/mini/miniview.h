@@ -14,7 +14,7 @@ class miniview : public miniscene
    public:
 
    miniview();
-   ~miniview();
+   virtual ~miniview();
 
    void set_camera(minicam *cam);
    void render_geometry();
@@ -23,7 +23,7 @@ class miniview : public miniscene
 
    void setup_matrix();
    void render_terrain_geometry();
-   void render_ecef_geometry();
+   virtual void render_ecef_geometry();
 
    minicam *m_camera;
    };

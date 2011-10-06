@@ -921,13 +921,13 @@ void render()
 
    viewer->clear();
 
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   gluPerspective(params->fovy,(float)winwidth/winheight,viewer->len_g2o(params->nearp),viewer->len_g2o(params->farp));
+   mtxproj();
+   mtxid();
+   mtxperspective(params->fovy,(float)winwidth/winheight,viewer->len_g2o(params->nearp),viewer->len_g2o(params->farp));
 
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   gluLookAt(egl.x,egl.y,egl.z,egl.x+dgl.x,egl.y+dgl.y,egl.z+dgl.z,ugl.x,ugl.y,ugl.z);
+   mtxmodel();
+   mtxid();
+   mtxlookat(egl,egl+dgl,ugl);
 
    // update scene
    viewer->cache(cam->get_eye(),cam->get_dir(),cam->get_up(),(float)winwidth/winheight);
@@ -948,9 +948,9 @@ void render()
       {
       // left channel:
 
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      gluLookAt(egl.x-rgl.x,egl.y-rgl.y,egl.z-rgl.z,egl.x+dgl.x-rgl.x,egl.y+dgl.y-rgl.y,egl.z+dgl.z-rgl.z,ugl.x,ugl.y,ugl.z);
+      mtxmodel();
+      mtxid();
+      mtxlookat(egl-rgl,egl+dgl,ugl);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -961,9 +961,9 @@ void render()
 
       glClear(GL_DEPTH_BUFFER_BIT);
 
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      gluLookAt(egl.x+rgl.x,egl.y+rgl.y,egl.z+rgl.z,egl.x+dgl.x+rgl.x,egl.y+dgl.y+rgl.y,egl.z+dgl.z+rgl.z,ugl.x,ugl.y,ugl.z);
+      mtxmodel();
+      mtxid();
+      mtxlookat(egl+rgl,egl+dgl,ugl);
 
       if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
