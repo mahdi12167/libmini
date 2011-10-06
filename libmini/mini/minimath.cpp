@@ -597,64 +597,79 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
    double l;
    miniv3d h;
 
-   if (d.x!=0.0)
+   if (d.x>0.0)
+      {
+      l=(b.x-r.x-o.x)/d.x;
+      if (l>0.0)
+         {
+         h=o+d*l;
+         if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
+         else return(1);
+         }
+      }
+   else if (b.x-o.x>r.x) return(0);
+
+   if (d.x<0.0)
       {
       l=(b.x+r.x-o.x)/d.x;
       if (l>0.0)
          {
          h=o+d*l;
-         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
+         else return(1);
          }
-      else if (d.x>0.0) return(0);
+      }
+   else if (o.x-b.x>r.x) return(0);
 
-      l=(b.x-r.x-o.x)/d.x;
+   if (d.y>0.0)
+      {
+      l=(b.y-r.y-o.y)/d.y;
       if (l>0.0)
          {
          h=o+d*l;
-         if (dabs(h.y-b.y)<=r.y && dabs(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
+         else return(1);
          }
-      else if (d.x<0.0) return(0);
       }
+   else if (b.y-o.y>r.y) return(0);
 
-   if (d.y!=0.0)
+   if (d.y<0.0)
       {
       l=(b.y+r.y-o.y)/d.y;
       if (l>0.0)
          {
          h=o+d*l;
-         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
+         else return(1);
          }
-      else if (d.y>0.0) return(0);
+      }
+   else if (o.y-b.y>r.y) return(0);
 
-      l=(b.y-r.y-o.y)/d.y;
+   if (d.z>0.0)
+      {
+      l=(b.z-r.z-o.z)/d.z;
       if (l>0.0)
          {
          h=o+d*l;
-         if (dabs(h.x-b.x)<=r.x && dabs(h.z-b.z)<=r.z) return(1);
+         if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
+         else return(1);
          }
-      else if (d.y<0.0) return(0);
       }
+   else if (b.z-o.z>r.z) return(0);
 
-   if (d.z!=0.0)
+   if (d.z<0.0)
       {
       l=(b.z+r.z-o.z)/d.z;
       if (l>0.0)
          {
          h=o+d*l;
-         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
+         if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
+         else return(1);
          }
-      else if (d.z>0.0) return(0);
-
-      l=(b.z-r.z-o.z)/d.z;
-      if (l>0.0)
-         {
-         h=o+d*l;
-         if (dabs(h.x-b.x)<=r.x && dabs(h.y-b.y)<=r.y) return(1);
-         }
-      else if (d.z<0.0) return(0);
       }
+   else if (o.z-b.z>r.z) return(0);
 
-   return(0);
+   return(1);
    }
 
 // geometric plane/sphere intersection test
