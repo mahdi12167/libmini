@@ -305,6 +305,13 @@ void clearbuffer(const miniv3d &c)
 void clearbuffer(const miniv4d &c)
    {clearbuffer(c.x,c.y,c.z,c.w);}
 
+void cleardepthbuffer()
+   {
+#ifndef NOOGL
+   glClear(GL_DEPTH_BUFFER_BIT);
+#endif
+   }
+
 void disableculling()
    {
 #ifndef NOOGL

@@ -20,6 +20,7 @@ void exitstate();
 void clearbuffer(float r,float g,float b,float a=1.0f);
 void clearbuffer(const miniv3d &c);
 void clearbuffer(const miniv4d &c);
+void cleardepthbuffer();
 
 void disableculling();
 void enableBFculling();

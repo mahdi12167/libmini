@@ -959,7 +959,7 @@ void render()
 
       // right channel:
 
-      glClear(GL_DEPTH_BUFFER_BIT);
+      cleardepthbuffer();
 
       mtxmodel();
       mtxid();
