@@ -312,6 +312,27 @@ void cleardepthbuffer()
 #endif
    }
 
+void writeleftbuffer()
+   {
+#ifndef NOOGL
+   glDrawBuffer(GL_BACK_LEFT);
+#endif
+   }
+
+void writerightbuffer()
+   {
+#ifndef NOOGL
+   glDrawBuffer(GL_BACK_RIGHT);
+#endif
+   }
+
+void writebackbuffer()
+   {
+#ifndef NOOGL
+   glDrawBuffer(GL_BACK);
+#endif
+   }
+
 void disableculling()
    {
 #ifndef NOOGL

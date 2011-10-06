@@ -952,7 +952,7 @@ void render()
       mtxid();
       mtxlookat(egl-rgl,egl+dgl,ugl);
 
-      if (sw_anaglyph==0) glDrawBuffer(GL_BACK_LEFT);
+      if (sw_anaglyph==0) writeleftbuffer();
       else glColorMask(GL_TRUE,GL_FALSE,GL_FALSE,GL_FALSE);
 
       viewer->render();
@@ -965,12 +965,12 @@ void render()
       mtxid();
       mtxlookat(egl+rgl,egl+dgl,ugl);
 
-      if (sw_anaglyph==0) glDrawBuffer(GL_BACK_RIGHT);
+      if (sw_anaglyph==0) writerightbuffer();
       else glColorMask(GL_FALSE,GL_TRUE,GL_TRUE,GL_FALSE);
 
       viewer->render();
 
-      if (sw_anaglyph==0) glDrawBuffer(GL_BACK);
+      if (sw_anaglyph==0) writebackbuffer();
       else glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_FALSE);
       }
 

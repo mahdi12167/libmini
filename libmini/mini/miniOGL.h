@@ -22,6 +22,10 @@ void clearbuffer(const miniv3d &c);
 void clearbuffer(const miniv4d &c);
 void cleardepthbuffer();
 
+void writeleftbuffer();
+void writerightbuffer();
+void writebackbuffer();
+
 void disableculling();
 void enableBFculling();
 void enableFFculling();
