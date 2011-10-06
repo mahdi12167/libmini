@@ -553,7 +553,7 @@ void miniray::calcbound(TRIANGLEREF *ref)
                   0.5*dabs(vmax.y-vmin.y),
                   0.5*dabs(vmax.z-vmin.z));
 
-   ref->r2=0.75*(dsqr(vmax.x-vmin.x)+
+   ref->r2=0.25*(dsqr(vmax.x-vmin.x)+
                  dsqr(vmax.y-vmin.y)+
                  dsqr(vmax.z-vmin.z));
 
