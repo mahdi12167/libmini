@@ -50,14 +50,14 @@ public:
    void    startIdling();
    void    stopIdling();
 
-   void    startTransition(minianim target, double dangle, double dpitch, double dtime, double follow);
+   void    startTransition(minianim target, double dangle, double dpitch, double dtime);
    void    stopTransition();
 
 protected:
    void    initView();
    void    initTransition();
 
-   void    processTransition(double t, double dt);
+   void    processTransition(double w, double dw);
 
    miniv3d unprojectMouse();
 
@@ -75,7 +75,7 @@ private:
    double   m_TargetDeltaAngle;
    double   m_TargetDeltaPitch;
    double   m_TargetDeltaTime;
-   double   m_TargetCameraFollow;
+   double   m_TargetCameraFinished;
    bool     m_bInCameraTransition;
    int      m_TransitionTimerId;
    QTime    m_TransitionTimer;

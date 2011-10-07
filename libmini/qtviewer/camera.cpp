@@ -229,7 +229,7 @@ void Camera::focusOnTarget(double zoom)
       target += cursorVector(zoom);
 
    anim.append_sector(get_eye(), target, 100);
-   startTransition(anim, 0.0, 0.0, 0.5, 0.25);
+   startTransition(anim, 0.0, 0.0, 0.5);
 }
 
 void Camera::focusOnMap(minilayer *layer)
@@ -248,43 +248,23 @@ void Camera::focusOnMap(minilayer *layer)
    anim.append_sector(get_eye(), target, 100);
 
    if ((get_eye().vec - target.vec).getlength() < size/4.0)
-      startTransition(anim, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 2.0, 0.0);
+      startTransition(anim, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
-      startTransition(anim, 0.0, delta_angle(-90, get_pitch()), 1.0, 0.0);
+      startTransition(anim, 0.0, delta_angle(-90, get_pitch()), 2.0);
 }
 
-void Camera::processTransition(double t, double dt)
+void Camera::processTransition(double w, double dw)
 {
-   const double minspeed = 3000.0; // minimum speed (m/second)
+   w = 1.0 - pow(1.0 - w, 2.0);
 
-   t /= m_TargetDeltaTime;
-   if (t < 1.0) t = 1.0 - pow(1.0 - t, 2.0);
-
-   miniv3d dir = m_TargetCameraAnim.interpolate(t).vec - get_eye().vec;
-   double speed = dir.getlength();
-
-   if (m_TargetCameraFollow>0.0) speed /= m_TargetCameraFollow;
-   else speed = MAXFLOAT;
-
-   if (speed < minspeed) speed = minspeed;
-
-   if (dir.getlength() > speed * dt)
-   {
-      dir.normalize();
-      move(dir * speed * dt);
-   }
-   else
-   {
-      move(dir);
-      if (t >= 1.0) stopTransition();
-   }
+   move(m_TargetCameraAnim.interpolate(w).vec - get_eye().vec);
 
    moveAbove();
 
-   double w = dt / m_TargetDeltaTime;
+   rotate_right(dw * m_TargetDeltaAngle);
+   rotate_up(dw * m_TargetDeltaPitch);
 
-   rotate_right(w * m_TargetDeltaAngle);
-   rotate_up(w * m_TargetDeltaPitch);
+   if (w >= 1.0) stopTransition();
 
    m_window->updateGL();
 }
@@ -319,14 +299,22 @@ void Camera::timerEvent(int timerId)
       int deltaT = m_TransitionTimer.restart();
       double dt0 = deltaT / 1000.0;
 
-      double t = t0 - dt0, dt;
+      double t = t0 - dt0, dt, dw;
 
       while (t<t0 && dt0>0.0)
          {
          dt = 1.0/CAMERA_FPS;
          if (dt0 < dt) dt = dt0;
 
-         processTransition(t, dt);
+         dw = dt / m_TargetDeltaTime;
+
+         if (m_TargetCameraFinished + dw > 1.0)
+            if (m_TargetCameraFinished < 1.0) dw = 1.0 - m_TargetCameraFinished;
+            else dw = 0.0;
+
+         m_TargetCameraFinished += dw;
+
+         processTransition(m_TargetCameraFinished, dw);
 
          t += dt;
          dt0 -= dt;
@@ -352,7 +340,7 @@ void Camera::stopIdling()
    }
 }
 
-void Camera::startTransition(minianim target, double dangle, double dpitch, double dtime, double follow)
+void Camera::startTransition(minianim target, double dangle, double dpitch, double dtime)
 {
    stopTransition();
 
@@ -360,7 +348,7 @@ void Camera::startTransition(minianim target, double dangle, double dpitch, doub
    m_TargetDeltaAngle = dangle;
    m_TargetDeltaPitch = dpitch;
    m_TargetDeltaTime = dtime;
-   m_TargetCameraFollow = follow;
+   m_TargetCameraFinished = 0.0;
    m_bInCameraTransition = true;
    m_TransitionStart = m_TransitionTimer;
    m_TransitionTimer.start();
