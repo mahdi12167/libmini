@@ -24,9 +24,6 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    {
    minilayer *nst;
 
-   // clear scene
-   clear();
-
    if (m_camera==NULL) return;
 
    // start timer
@@ -39,6 +36,9 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    // update scene
    float aspect = (float)get()->winwidth/get()->winheight;
    cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
+
+   // clear scene
+   clear();
 
    // render scene
    if (sbase==0.0f)
@@ -105,7 +105,8 @@ void miniview::render_ecef_geometry()
    static const double glfactor=0.999;
 
    globe.settess(gltess);
-   globe.setscale(glfactor);
+   globe.setscale(1.0);
+   globe.setdynscale(glfactor);
 
    disableRGBAwriting();
    globe.render();
@@ -129,10 +130,6 @@ void miniview::render_ecef_geometry()
    linewidth(1);
    disableZwriting();
 
-   mtxproj();
-   mtxpush();
-   mtxscale(0.95,0.95,0.95); // prevent Z-fighting
-
    static const int eqlines=100;
    static const miniv3d eqcolor(0.25,0.25,0.25);
 
@@ -148,11 +145,7 @@ void miniview::render_ecef_geometry()
       c0=c;
       }
 
-   mtxpop();
-   mtxmodel();
-
    enableZwriting();
-
    disablelinesmooth();
    }
 
