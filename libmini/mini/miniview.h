@@ -23,7 +23,6 @@ class miniview : public miniscene
 
    void setup_matrix(double sbase=0.0);
 
-   void render_terrain_geometry();
    virtual void render_ecef_geometry();
 
    minicam *m_camera;

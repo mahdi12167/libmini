@@ -24,6 +24,9 @@ void miniview::render_geometry(double sbase,BOOLINT anaglyph)
    {
    minilayer *nst;
 
+   // clear scene
+   clear();
+
    if (m_camera==NULL) return;
 
    // start timer
@@ -33,14 +36,15 @@ void miniview::render_geometry(double sbase,BOOLINT anaglyph)
    nst=getearth()->getnearest(m_camera->get_eye());
    getearth()->setreference(nst);
 
-   // clear scene
-   clear();
+   // update scene
+   float aspect = (float)get()->winwidth/get()->winheight;
+   cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
 
    // render scene
    if (sbase==0.0)
       {
       setup_matrix();
-      render_terrain_geometry();
+      render();
       }
    else
       {
@@ -48,14 +52,14 @@ void miniview::render_geometry(double sbase,BOOLINT anaglyph)
       setup_matrix(-sbase);
       if (anaglyph) enableRwriting();
       else writeleftbuffer();
-      render_terrain_geometry();
+      render();
 
       // right stereo channel
       setup_matrix(sbase);
       cleardepthbuffer();
       if (anaglyph) enableGBwriting();
       else writerightbuffer();
-      render_terrain_geometry();
+      render();
       if (anaglyph) enableRGBwriting();
       else writebackbuffer();
       }
@@ -88,17 +92,6 @@ void miniview::setup_matrix(double sbase)
    mtxmodel();
    mtxid();
    mtxlookat(miniv3d(egl.vec)+rgl, miniv3d(egl.vec)+rgl+dgl, ugl);
-   }
-
-// render terrain geometry
-void miniview::render_terrain_geometry()
-   {
-   // update scene
-   float aspect = (float)get()->winwidth/get()->winheight;
-   cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
-
-   // render scene
-   render();
    }
 
 // render ecef geometry

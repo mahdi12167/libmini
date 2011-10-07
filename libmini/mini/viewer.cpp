@@ -909,9 +909,6 @@ void render()
       wakeup=TRUE;
       }
 
-   // tell actual camera
-   viewer->set_camera(cam);
-
    // render scene
    if (sw_stereo==0) viewer->render_geometry();
    else viewer->render_geometry(sbase,sw_anaglyph);
@@ -1377,6 +1374,9 @@ int main(int argc,char *argv[])
 
    // initialize camera
    cam=new minicam(viewer->getearth());
+
+   // tell actual camera
+   viewer->set_camera(cam);
 
    // load settings
    loadsettings();
