@@ -15,6 +15,7 @@ Renderer::Renderer(QGLWidget* window)
    m_viewer = NULL;
    m_camera = NULL;
 
+   m_StereoBase = 0.0;
    m_FogDensity = 0.0;
    m_SeaLevel = 0.0;
    m_DayHourDelta = 0.0;
@@ -206,7 +207,7 @@ void Renderer::resizeViewport()
 // draw scene
 void Renderer::draw()
 {
-   m_viewer->render_geometry();
+   m_viewer->render_geometry(m_StereoBase);
    renderHUD();
 
    m_camera->startIdling();
@@ -357,6 +358,14 @@ void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDo
       m_window->qglColor(color);
       m_window->renderText(sx, sy, str);
    }
+}
+
+void Renderer::toggleStereo(bool on)
+{
+   if (on) m_StereoBase=VIEWER_SBASE;
+   else m_StereoBase=0.0;
+
+   m_camera->startIdling();
 }
 
 void Renderer::toggleWireFrame(bool on)

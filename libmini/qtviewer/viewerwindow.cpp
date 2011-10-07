@@ -155,8 +155,9 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_Space)
       renderer->getCamera()->focusOnTarget();
-   else
-      QGLWidget::keyPressEvent(event);
+   else if (event->key() == Qt::Key_S)
+      renderer->toggleStereo(true);
+   QGLWidget::keyPressEvent(event);
 
    reportModifiers();
 }

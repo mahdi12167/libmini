@@ -31,4 +31,6 @@
 #define VIEWER_BATHYMID 0.001f
 #define VIEWER_BATHYWIDTH 256
 
+#define VIEWER_SBASE 1000.0f
+
 #endif

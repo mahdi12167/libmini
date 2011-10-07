@@ -20,7 +20,7 @@ void miniview::set_camera(minicam *cam)
    {m_camera = cam;}
 
 // render earth and terrain geometry
-void miniview::render_geometry(double sbase,BOOLINT anaglyph)
+void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    {
    minilayer *nst;
 
@@ -41,7 +41,7 @@ void miniview::render_geometry(double sbase,BOOLINT anaglyph)
    cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
 
    // render scene
-   if (sbase==0.0)
+   if (sbase==0.0f)
       {
       setup_matrix();
       render();
@@ -72,7 +72,7 @@ void miniview::render_geometry(double sbase,BOOLINT anaglyph)
    }
 
 // setup OpenGL modelview and projection matrices
-void miniview::setup_matrix(double sbase)
+void miniview::setup_matrix(float sbase)
    {
    mtxproj();
    mtxid();
@@ -87,7 +87,7 @@ void miniview::setup_matrix(double sbase)
    minicoord egl = m_camera->get_eye_opengl();
    miniv3d dgl = m_camera->get_dir_opengl();
    miniv3d ugl = m_camera->get_up_opengl();
-   miniv3d rgl = m_camera->get_right_opengl()*(sbase/TERRAIN->get()->scale);
+   miniv3d rgl = m_camera->get_right_opengl()*(double)(sbase/TERRAIN->get()->scale);
 
    mtxmodel();
    mtxid();

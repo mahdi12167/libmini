@@ -17,11 +17,11 @@ class miniview : public miniscene
    virtual ~miniview();
 
    void set_camera(minicam *cam);
-   void render_geometry(double sbase=0.0,BOOLINT anaglyph=TRUE);
+   void render_geometry(float sbase=0.0f,BOOLINT anaglyph=TRUE);
 
    protected:
 
-   void setup_matrix(double sbase=0.0);
+   void setup_matrix(float sbase=0.0f);
 
    virtual void render_ecef_geometry();
 

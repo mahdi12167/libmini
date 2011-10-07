@@ -28,6 +28,7 @@ public:
    miniview*  getViewer() {return(m_viewer);}
    Camera*    getCamera() {return(m_camera);}
 
+   void       toggleStereo(bool on);
    void       toggleWireFrame(bool on);
 
    void       checkFog(bool on);
@@ -71,6 +72,7 @@ private:
    // texture ids
    GLuint    m_CrosshairTextureId;
 
+   double    m_StereoBase;
    double    m_FogDensity;
    double    m_SeaLevel;
    double    m_DayHourDelta;
