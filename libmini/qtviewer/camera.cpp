@@ -250,7 +250,7 @@ void Camera::focusOnMap(minilayer *layer)
    if ((get_eye().vec - target.vec).getlength() < size/4.0)
       startTransition(anim, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 2.0, 0.0);
    else
-      startTransition(anim, 0.0, delta_angle(-90, get_pitch()), 2.0, 0.0);
+      startTransition(anim, 0.0, delta_angle(-90, get_pitch()), 1.0, 0.0);
 }
 
 void Camera::processTransition(double t, double dt)
