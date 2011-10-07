@@ -5,9 +5,9 @@
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
 
-#include "renderer.h"
+#include "viewer.h"
 
-Renderer::Renderer(QGLWidget* window)
+Viewer::Viewer(QGLWidget* window)
 {
    m_window = window;
    m_bIsInited = false;
@@ -22,14 +22,14 @@ Renderer::Renderer(QGLWidget* window)
    m_ExaggerScale = 1.0;
 }
 
-Renderer::~Renderer()
+Viewer::~Viewer()
 {
    if (m_camera!=NULL)
       delete m_camera;
 }
 
 // gl init
-void Renderer::init()
+void Viewer::init()
 {
    if (m_bIsInited) return;
 
@@ -61,7 +61,7 @@ void Renderer::init()
 }
 
 // load map layer from url
-minilayer* Renderer::loadMap(const char* url)
+minilayer* Viewer::loadMap(const char* url)
 {
    minilayer *layer;
 
@@ -85,7 +85,7 @@ minilayer* Renderer::loadMap(const char* url)
 }
 
 // remove map layers
-void Renderer::clearMaps()
+void Viewer::clearMaps()
 {
    getearth()->getterrain()->remove();
 
@@ -93,7 +93,7 @@ void Renderer::clearMaps()
 }
 
 // initialize libMini parameters
-void Renderer::initParameters()
+void Viewer::initParameters()
 {
    // the scene parameters
    miniscene::MINISCENE_PARAMS sceneParams;
@@ -155,7 +155,7 @@ void Renderer::initParameters()
 }
 
 // initialize bathymetry map
-void Renderer::initBathyMap()
+void Viewer::initBathyMap()
 {
    static const float hue1=190.0f;
    static const float hue2=240.0f;
@@ -174,7 +174,7 @@ void Renderer::initBathyMap()
 }
 
 // resize window
-void Renderer::resizeWindow()
+void Viewer::resizeWindow()
 {
    resizeViewport();
 
@@ -182,7 +182,7 @@ void Renderer::resizeWindow()
 }
 
 // initialize the render window
-void Renderer::resizeViewport()
+void Viewer::resizeViewport()
 {
    int winWidth = m_window->width();
    int winHeight = m_window->height();
@@ -198,7 +198,7 @@ void Renderer::resizeViewport()
 }
 
 // draw scene
-void Renderer::draw()
+void Viewer::draw()
 {
    render_geometry(m_StereoBase);
    renderHUD();
@@ -207,7 +207,7 @@ void Renderer::draw()
 }
 
 // render head-up display
-void Renderer::renderHUD()
+void Viewer::renderHUD()
 {
    // draw crosshair:
 
@@ -319,7 +319,7 @@ void Renderer::renderHUD()
    }
 }
 
-void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
+void Viewer::loadTextureFromResource(const char* respath, GLuint& texId)
 {
    QImage tex, buf;
    bool bLoaded = buf.load(respath);
@@ -334,7 +334,7 @@ void Renderer::loadTextureFromResource(const char* respath, GLuint& texId)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
+void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
 {
    int sx = x;
    int sy = m_window->height() - y;
@@ -353,7 +353,7 @@ void Renderer::drawText(float x, float y, QString& str, QColor color, bool bIsDo
    }
 }
 
-void Renderer::toggleStereo(bool on)
+void Viewer::toggleStereo(bool on)
 {
    if (on) m_StereoBase=VIEWER_SBASE;
    else m_StereoBase=0.0;
@@ -361,20 +361,20 @@ void Renderer::toggleStereo(bool on)
    m_camera->startIdling();
 }
 
-void Renderer::toggleWireFrame(bool on)
+void Viewer::toggleWireFrame(bool on)
 {
    m_pSceneParams->usewireframe=on;
 
    m_camera->startIdling();
 }
 
-void Renderer::checkFog(bool on)
+void Viewer::checkFog(bool on)
 {
    m_pEarthParams->usefog=on;
    setFogDensity(m_FogDensity);
 }
 
-void Renderer::setFogDensity(double density)
+void Viewer::setFogDensity(double density)
 {
    m_FogDensity=density;
 
@@ -387,7 +387,7 @@ void Renderer::setFogDensity(double density)
    m_camera->startIdling();
 }
 
-void Renderer::checkContours(bool on)
+void Viewer::checkContours(bool on)
 {
    m_pEarthParams->usecontours=on;
    propagate();
@@ -395,7 +395,7 @@ void Renderer::checkContours(bool on)
    m_camera->startIdling();
 }
 
-void Renderer::checkSeaLevel(bool on)
+void Viewer::checkSeaLevel(bool on)
 {
    if (on) m_pTerrainParams->sealevel=m_SeaLevel;
    else m_pTerrainParams->sealevel=-MAXFLOAT;
@@ -403,7 +403,7 @@ void Renderer::checkSeaLevel(bool on)
    setSeaLevel(m_SeaLevel);
 }
 
-void Renderer::setSeaLevel(double level)
+void Viewer::setSeaLevel(double level)
 {
    m_SeaLevel=level;
 
@@ -415,13 +415,13 @@ void Renderer::setSeaLevel(double level)
    m_camera->startIdling();
 }
 
-void Renderer::checkLight(bool on)
+void Viewer::checkLight(bool on)
 {
    m_pEarthParams->usediffuse=on;
    setLight(m_DayHourDelta);
 }
 
-void Renderer::setLight(double hour)
+void Viewer::setLight(double hour)
 {
    m_DayHourDelta=hour;
 
@@ -436,13 +436,13 @@ void Renderer::setLight(double hour)
    m_camera->startIdling();
 }
 
-void Renderer::checkExagger(bool on)
+void Viewer::checkExagger(bool on)
 {
    m_ExaggerOn=on;
    setExagger(m_ExaggerScale);
 }
 
-void Renderer::setExagger(double scale)
+void Viewer::setExagger(double scale)
 {
    m_ExaggerScale=scale;
 

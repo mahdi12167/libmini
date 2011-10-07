@@ -12,7 +12,7 @@
 
 #include <mini/minilayer.h>
 
-class Renderer;
+class Viewer;
 
 class QMimeData;
 
@@ -21,7 +21,7 @@ class ViewerWindow : public QGLWidget
    Q_OBJECT;
 
 public:
-   ViewerWindow(QWidget* parent = 0);
+   ViewerWindow(QWidget *parent = 0);
    virtual ~ViewerWindow();
 
    QSize minimumSizeHint() const;
@@ -54,12 +54,12 @@ protected:
    void paintGL();
 
    void mousePressEvent(QMouseEvent *event);
-   void mouseReleaseEvent(QMouseEvent* event);
+   void mouseReleaseEvent(QMouseEvent *event);
    void mouseMoveEvent(QMouseEvent *event);
    void mouseDoubleClickEvent(QMouseEvent *);
 
-   void keyPressEvent(QKeyEvent* event);
-   void keyReleaseEvent(QKeyEvent* event);
+   void keyPressEvent(QKeyEvent *event);
+   void keyReleaseEvent(QKeyEvent *event);
 
    void wheelEvent(QWheelEvent *event);
 
@@ -71,14 +71,14 @@ protected:
    void dragLeaveEvent(QDragLeaveEvent *event);
 
 private:
-   Renderer* renderer;
+   Viewer *viewer;
 
-   QPoint    lastPos;
-   QPoint    movedPos;
-   bool      bLeftButtonDown;
-   bool      bRightButtonDown;
+   QPoint lastPos;
+   QPoint movedPos;
+   bool   bLeftButtonDown;
+   bool   bRightButtonDown;
 
-   void      reportModifiers();
+   void   reportModifiers();
 };
 
 #endif

@@ -7,21 +7,21 @@
 
 #include <QtCore/QUrl>
 
-#include "renderer.h"
+#include "viewer.h"
 
 #include "viewerconst.h"
 #include "viewerwindow.h"
 
-ViewerWindow::ViewerWindow(QWidget* )
-   : renderer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
+ViewerWindow::ViewerWindow(QWidget *parent)
+   : viewer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
 {
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
 
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
 
-   // init renderer
-   renderer = new Renderer(this);
+   // init viewer
+   viewer = new Viewer(this);
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -29,8 +29,8 @@ ViewerWindow::ViewerWindow(QWidget* )
 
 ViewerWindow::~ViewerWindow()
 {
-   if (renderer!=NULL)
-      delete renderer;
+   if (viewer!=NULL)
+      delete viewer;
 }
 
 QSize ViewerWindow::minimumSizeHint() const
@@ -45,10 +45,10 @@ QSize ViewerWindow::sizeHint() const
 
 void ViewerWindow::initializeGL()
 {
-   if (!renderer->isInited())
+   if (!viewer->isInited())
    {
-      // initialize renderer here as it needs GL context to init
-      renderer->init();
+      // initialize viewer here as it needs GL context to init
+      viewer->init();
 
       // init map from arguments
       QStringList dataPathList = QCoreApplication::arguments();
@@ -63,13 +63,13 @@ void ViewerWindow::initializeGL()
 
 void ViewerWindow::resizeGL(int, int)
 {
-   renderer->resizeWindow();
+   viewer->resizeWindow();
 }
 
 void ViewerWindow::paintGL()
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   renderer->draw();
+   viewer->draw();
 }
 
 void ViewerWindow::mousePressEvent(QMouseEvent *event)
@@ -86,7 +86,7 @@ void ViewerWindow::mousePressEvent(QMouseEvent *event)
    lastPos = movedPos = event->pos();
 }
 
-void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
+void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
 {
    int dx = event->x()-lastPos.x();
    int dy = event->y()-lastPos.y();
@@ -101,7 +101,7 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent* event)
       {}
       // a left button click
       else if (bLeftButtonDown)
-         renderer->getCamera()->focusOnTarget();
+         viewer->getCamera()->focusOnTarget();
       // a right button click
       else if (bRightButtonDown)
       {}
@@ -123,13 +123,13 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    reportModifiers();
 
    if (event->buttons() & Qt::LeftButton)
-      renderer->getCamera()->rotateCamera(dx, dy);
+      viewer->getCamera()->rotateCamera(dx, dy);
    else if (event->buttons() & Qt::MiddleButton)
    {}
    else if (event->buttons() & Qt::RightButton)
    {}
    else
-      renderer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
+      viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
    movedPos = event->pos();
 }
@@ -138,30 +138,30 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
 {
    reportModifiers();
 
-   renderer->getCamera()->focusOnTarget(0.75);
+   viewer->getCamera()->focusOnTarget(0.75);
 }
 
 void ViewerWindow::reportModifiers()
 {
    Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
 
-   renderer->getCamera()->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
-   renderer->getCamera()->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
-   renderer->getCamera()->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
-   renderer->getCamera()->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
+   viewer->getCamera()->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
+   viewer->getCamera()->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
+   viewer->getCamera()->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
+   viewer->getCamera()->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
 }
 
-void ViewerWindow::keyPressEvent(QKeyEvent* event)
+void ViewerWindow::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() == Qt::Key_Space)
-      renderer->getCamera()->focusOnTarget();
+      viewer->getCamera()->focusOnTarget();
 
    QGLWidget::keyPressEvent(event);
 
    reportModifiers();
 }
 
-void ViewerWindow::keyReleaseEvent(QKeyEvent* event)
+void ViewerWindow::keyReleaseEvent(QKeyEvent *event)
 {
    QGLWidget::keyReleaseEvent(event);
 
@@ -175,9 +175,9 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
    reportModifiers();
 
    if (event->orientation() == Qt::Vertical)
-      renderer->getCamera()->moveCameraForward(numDegrees/360.0);
+      viewer->getCamera()->moveCameraForward(numDegrees/360.0);
    else
-      renderer->getCamera()->moveCameraSideward(numDegrees/360.0);
+      viewer->getCamera()->moveCameraSideward(numDegrees/360.0);
 
    event->accept();
 }
@@ -186,7 +186,7 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 {
    reportModifiers();
 
-   renderer->getCamera()->timerEvent(event->timerId());
+   viewer->getCamera()->timerEvent(event->timerId());
 }
 
 void ViewerWindow::loadMap(QString url)
@@ -206,7 +206,7 @@ void ViewerWindow::loadMap(QString url)
          url.truncate(lio2);
    }
 
-   layer=renderer->loadMap(url.toStdString().c_str());
+   layer=viewer->loadMap(url.toStdString().c_str());
 
    if (layer!=NULL)
       emit changed(url, layer);
@@ -218,67 +218,67 @@ void ViewerWindow::loadMap(QString url)
 
 void ViewerWindow::clearMaps()
 {
-   renderer->clearMaps();
+   viewer->clearMaps();
 }
 
 void ViewerWindow::gotoMap(minilayer *layer)
 {
-   renderer->getCamera()->focusOnMap(layer);
+   viewer->getCamera()->focusOnMap(layer);
 }
 
 void ViewerWindow::toggleStereo(bool on)
 {
-   renderer->toggleStereo(on);
+   viewer->toggleStereo(on);
 }
 
 void ViewerWindow::toggleWireFrame(bool on)
 {
-   renderer->toggleWireFrame(on);
+   viewer->toggleWireFrame(on);
 }
 
 void ViewerWindow::checkFog(bool on)
 {
-   renderer->checkFog(on);
+   viewer->checkFog(on);
 }
 
 void ViewerWindow::setFogDensity(double density)
 {
-   renderer->setFogDensity(density);
+   viewer->setFogDensity(density);
 }
 
 void ViewerWindow::checkContours(bool on)
 {
-   renderer->checkContours(on);
+   viewer->checkContours(on);
 }
 
 void ViewerWindow::checkSeaLevel(bool on)
 {
-   renderer->checkSeaLevel(on);
+   viewer->checkSeaLevel(on);
 }
 
 void ViewerWindow::setSeaLevel(double level)
 {
-   renderer->setSeaLevel(level);
+   viewer->setSeaLevel(level);
 }
 
 void ViewerWindow::checkLight(bool on)
 {
-   renderer->checkLight(on);
+   viewer->checkLight(on);
 }
 
 void ViewerWindow::setLight(double hour)
 {
-   renderer->setLight(hour);
+   viewer->setLight(hour);
 }
 
 void ViewerWindow::checkExagger(bool on)
 {
-   renderer->checkExagger(on);
+   viewer->checkExagger(on);
 }
 
 void ViewerWindow::setExagger(double scale)
 {
-   renderer->setExagger(scale);
+   viewer->setExagger(scale);
 }
 
 void ViewerWindow::dragEnterEvent(QDragEnterEvent *event)
