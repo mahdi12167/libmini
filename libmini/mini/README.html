@@ -2055,26 +2055,24 @@ libMini Viewer API is as simple as follows:<p>
 <pre>
    #include &lt;mini/miniview.h&gt;
 
-   viewerbase *viewer=new miniview;
+   miniview *viewer=new miniview;
 
    viewer->getearth()->load("url");
 
    minicoord eye(miniv3d(ex,ey,ez)); // eye point in ECEF
    miniv3d dir(dx,dy,dz); // viewing direction
-   miniv3d dir(ux,uy,uz); // up vector
+   miniv3d up(ux,uy,uz); // up vector
 
    float aspect=width/height; // aspect ratio of viewing window
 
    viewer->get()->nearp=10.0; // near clipping plane
    viewer->get()->farp=10000.0; // far clipping plane
 
-   viewer->clear(); // clear frame buffer
    viewer->initeyepoint(eye); // prefetch data
 
+   viewer->clear(); // clear frame buffer
    viewer->cache(eye,dir,up,aspect); // fill vertex cache
    viewer->render(); // render vertex cache
-
-   delete viewer;
 </pre>
 
 The coordinates eye/dir/up specify the camera coordinate system in

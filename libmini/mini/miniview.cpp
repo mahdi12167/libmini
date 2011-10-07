@@ -10,32 +10,32 @@
 #include "miniview.h"
 
 miniview::miniview() : miniscene()
-   {m_camera = NULL;}
+   {m_cam = NULL;}
 
 miniview::~miniview()
    {}
 
 // tell actual camera
 void miniview::set_camera(minicam *cam)
-   {m_camera = cam;}
+   {m_cam = cam;}
 
 // render earth and terrain geometry
 void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    {
    minilayer *nst;
 
-   if (m_camera==NULL) return;
+   if (m_cam==NULL) return;
 
    // start timer
    starttimer();
 
    // set reference layer
-   nst=getearth()->getnearest(m_camera->get_eye());
+   nst=getearth()->getnearest(m_cam->get_eye());
    getearth()->setreference(nst);
 
    // update scene
    float aspect = (float)get()->winwidth/get()->winheight;
-   cache(m_camera->get_eye(), m_camera->get_dir(), m_camera->get_up(), aspect);
+   cache(m_cam->get_eye(), m_cam->get_dir(), m_cam->get_up(), aspect);
 
    // clear scene
    clear();
@@ -84,10 +84,10 @@ void miniview::setup_matrix(float sbase)
 
    mtxperspective(fovy, aspect, len_g2o(nearp), len_g2o(farp));
 
-   minicoord egl = m_camera->get_eye_opengl();
-   miniv3d dgl = m_camera->get_dir_opengl();
-   miniv3d ugl = m_camera->get_up_opengl();
-   miniv3d rgl = m_camera->get_right_opengl()*len_g2o(sbase);
+   minicoord egl = m_cam->get_eye_opengl();
+   miniv3d dgl = m_cam->get_dir_opengl();
+   miniv3d ugl = m_cam->get_up_opengl();
+   miniv3d rgl = m_cam->get_right_opengl()*len_g2o(sbase);
 
    mtxmodel();
    mtxid();

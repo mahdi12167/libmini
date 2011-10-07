@@ -11,7 +11,7 @@
 #include "camera.h"
 #include "cameraconst.h"
 
-class Renderer
+class Renderer: public miniview
 {
 public:
    Renderer(QGLWidget* window);
@@ -25,7 +25,6 @@ public:
    void       resizeWindow();
    void       draw();
 
-   miniview*  getViewer() {return(m_viewer);}
    Camera*    getCamera() {return(m_camera);}
 
    void       toggleStereo(bool on);
@@ -61,15 +60,13 @@ protected:
    // camera
    Camera* m_camera;
 
-   // viewer
-   miniview* m_viewer;
+   // parameters
    miniscene::MINISCENE_PARAMS* m_pSceneParams; // the scene parameters
    miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
 private:
-   // texture ids
    GLuint    m_CrosshairTextureId;
 
    double    m_StereoBase;

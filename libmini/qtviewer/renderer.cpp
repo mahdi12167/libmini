@@ -12,7 +12,6 @@ Renderer::Renderer(QGLWidget* window)
    m_window = window;
    m_bIsInited = false;
 
-   m_viewer = NULL;
    m_camera = NULL;
 
    m_StereoBase = 0.0;
@@ -25,9 +24,6 @@ Renderer::Renderer(QGLWidget* window)
 
 Renderer::~Renderer()
 {
-   if (m_viewer!=NULL)
-      delete m_viewer;
-
    if (m_camera!=NULL)
       delete m_camera;
 }
@@ -37,9 +33,6 @@ void Renderer::init()
 {
    if (m_bIsInited) return;
 
-   // create the viewer object
-   m_viewer=new miniview();
-
    // initialize VIS bathy map
    initBathyMap();
 
@@ -47,16 +40,16 @@ void Renderer::init()
    initParameters();
 
    // load optional features
-   m_viewer->getearth()->loadopts();
+   getearth()->loadopts();
 
    // create the camera object
-   m_camera=new Camera(m_window, m_viewer->getearth());
+   m_camera=new Camera(m_window, getearth());
 
    // tell camera lens fovy
    m_camera->setLens(VIEWER_FOVY);
 
    // tell camera
-   m_viewer->set_camera(m_camera);
+   set_camera(m_camera);
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -75,11 +68,11 @@ minilayer* Renderer::loadMap(const char* url)
    if (m_bIsInited)
       if (url!=NULL)
       {
-         layer=m_viewer->getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
+         layer=getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
 
          if (layer!=NULL)
          {
-            m_viewer->getearth()->defineroi(0.0);
+            getearth()->defineroi(0.0);
 
             m_camera->focusOnMap(layer);
             m_camera->startIdling();
@@ -94,7 +87,7 @@ minilayer* Renderer::loadMap(const char* url)
 // remove map layers
 void Renderer::clearMaps()
 {
-   m_viewer->getearth()->getterrain()->remove();
+   getearth()->getterrain()->remove();
 
    m_camera->startIdling();
 }
@@ -104,7 +97,7 @@ void Renderer::initParameters()
 {
    // the scene parameters
    miniscene::MINISCENE_PARAMS sceneParams;
-   m_viewer->get(sceneParams);
+   get(sceneParams);
    sceneParams.winwidth = m_window->width();
    sceneParams.winheight = m_window->height();
    sceneParams.fps = CAMERA_FPS;
@@ -112,12 +105,12 @@ void Renderer::initParameters()
    sceneParams.nearp = VIEWER_NEARP;
    sceneParams.farp = VIEWER_FARP;
    sceneParams.usewireframe = FALSE;
-   m_viewer->set(sceneParams);
-   m_pSceneParams = m_viewer->get();
+   set(sceneParams);
+   m_pSceneParams = get();
 
    // the earth parameters
    miniearth::MINIEARTH_PARAMS earthParams;
-   m_viewer->getearth()->get(earthParams);
+   getearth()->get(earthParams);
    earthParams.warpmode = WARPMODE_AFFINE_REF;
    earthParams.nonlin = TRUE;
    earthParams.usefog = TRUE;
@@ -132,12 +125,12 @@ void Renderer::initParameters()
    earthParams.fogdensity = VIEWER_FOGDENSITY;
    earthParams.voidstart = VIEWER_VOIDSTART;
    earthParams.abyssstart = VIEWER_ABYSSSTART;
-   m_viewer->getearth()->set(earthParams);
-   m_pEarthParams = m_viewer->getearth()->get();
+   getearth()->set(earthParams);
+   m_pEarthParams = getearth()->get();
 
    // the terrain parameters
    miniterrain::MINITERRAIN_PARAMS terrainParams;
-   m_viewer->getearth()->getterrain()->get(terrainParams);
+   getearth()->getterrain()->get(terrainParams);
    terrainParams.scale = 1.0f;
    terrainParams.exaggeration = VIEWER_EXAGGER;
    terrainParams.res = VIEWER_RES;
@@ -157,8 +150,8 @@ void Renderer::initParameters()
    terrainParams.bathywidth = VIEWER_BATHYWIDTH;
    terrainParams.bathyheight = 2;
    terrainParams.bathycomps = 4;
-   m_viewer->getearth()->getterrain()->set(terrainParams);
-   m_pTerrainParams = m_viewer->getearth()->getterrain()->get();
+   getearth()->getterrain()->set(terrainParams);
+   m_pTerrainParams = getearth()->getterrain()->get();
 }
 
 // initialize bathymetry map
@@ -199,7 +192,7 @@ void Renderer::resizeViewport()
 
    m_pSceneParams->winwidth=winWidth;
    m_pSceneParams->winheight=winHeight;
-   m_viewer->set(m_pSceneParams);
+   set(m_pSceneParams);
 
    glViewport(0, 0, winWidth, winHeight);
 }
@@ -207,7 +200,7 @@ void Renderer::resizeViewport()
 // draw scene
 void Renderer::draw()
 {
-   m_viewer->render_geometry(m_StereoBase);
+   render_geometry(m_StereoBase);
    renderHUD();
 
    m_camera->startIdling();
@@ -389,7 +382,7 @@ void Renderer::setFogDensity(double density)
    m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+density);
    m_pEarthParams->fogstart=(1.0-density)*VIEWER_FOGSTART;
    m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*VIEWER_NEARP/VIEWER_FARP;
-   m_viewer->propagate();
+   propagate();
 
    m_camera->startIdling();
 }
@@ -397,7 +390,7 @@ void Renderer::setFogDensity(double density)
 void Renderer::checkContours(bool on)
 {
    m_pEarthParams->usecontours=on;
-   m_viewer->propagate();
+   propagate();
 
    m_camera->startIdling();
 }
@@ -416,8 +409,8 @@ void Renderer::setSeaLevel(double level)
 
    if (m_pTerrainParams->sealevel!=-MAXFLOAT) m_pTerrainParams->sealevel=level;
 
-   m_viewer->propagate();
-   m_viewer->getearth()->getterrain()->update();
+   propagate();
+   getearth()->getterrain()->update();
 
    m_camera->startIdling();
 }
@@ -438,7 +431,7 @@ void Renderer::setLight(double hour)
    double light=2*PI*(hour_utc+m_DayHourDelta)/24.0;
    miniv3d lightdir(-cos(light),sin(light),0.0);
    m_pEarthParams->lightdir=lightdir;
-   m_viewer->propagate();
+   propagate();
 
    m_camera->startIdling();
 }
@@ -453,12 +446,12 @@ void Renderer::setExagger(double scale)
 {
    m_ExaggerScale=scale;
 
-   m_viewer->getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
+   getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
 
    m_camera->moveAbove();
 
-   m_viewer->getearth()->getterrain()->update();
-   m_viewer->propagate();
+   getearth()->getterrain()->update();
+   propagate();
 
    m_camera->startIdling();
 }

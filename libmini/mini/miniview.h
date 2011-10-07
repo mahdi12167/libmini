@@ -25,7 +25,7 @@ class miniview : public miniscene
 
    virtual void render_ecef_geometry();
 
-   minicam *m_camera;
+   minicam *m_cam;
    };
 
 #endif
