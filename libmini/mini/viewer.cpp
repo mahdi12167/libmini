@@ -89,7 +89,7 @@ static double turn,incline;
 static double minspeed=VIEWER_MINSPEED,maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
 
 // jumping parameters
-static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
+static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,fast=VIEWER_FAST,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
 
 // steering parameters
 static double oneturn=5.0,oneincline=5.0;
@@ -995,8 +995,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (topspeed>maxspeed) topspeed=maxspeed;
          break;
       case 'W':
-         topspeed+=speedinc*maxspeed*boost;
-         if (topspeed>maxspeed*boost) topspeed=maxspeed*boost;
+         topspeed+=speedinc*maxspeed*fast;
+         if (topspeed>maxspeed*fast) topspeed=maxspeed*fast;
          break;
       case 'a':
          turn-=oneturn;
@@ -1015,8 +1015,8 @@ void keyboardfunc(unsigned char key,int x,int y)
          if (topspeed<-maxspeed) topspeed=-maxspeed;
          break;
       case 'S':
-         topspeed-=speedinc*maxspeed*boost;
-         if (topspeed<-maxspeed*boost) topspeed=-maxspeed*boost;
+         topspeed-=speedinc*maxspeed*fast;
+         if (topspeed<-maxspeed*fast) topspeed=-maxspeed*fast;
          break;
       case '<':
          incline+=oneincline;
@@ -1028,7 +1028,7 @@ void keyboardfunc(unsigned char key,int x,int y)
          dez=jump;
          break;
       case 'J':
-         dez=jump*boost;
+         dez=jump*fast;
          break;
       case 'g':
          if (gravity==0.0) gravity=earthg;

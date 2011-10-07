@@ -270,9 +270,6 @@ double minicam::get_dist(const minicoord &pos)
       get_local_base(pos0,dir,right,up);
 
       dist=EARTH->shoot(pos0,-up);
-
-      if (dist==MAXFLOAT)
-         dist=-EARTH->shoot(pos0,up);
       }
 
    return(dist);

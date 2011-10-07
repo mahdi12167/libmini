@@ -44,6 +44,9 @@ class miniglobe
    //! set dynamic scaling of globe
    void setdynscale(float scale);
 
+   //! set Z-scaling of globe
+   void setZscale(float scale);
+
    //! set tesselation of globe
    void settess(int stripes);
 

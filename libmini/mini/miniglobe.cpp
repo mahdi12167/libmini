@@ -54,6 +54,10 @@ void miniglobe::setscale(float scale)
 void miniglobe::setdynscale(float scale)
    {STRIP->setscale(scale);}
 
+// set Z-scaling of globe
+void miniglobe::setZscale(float scale)
+   {STRIP->setZscale(scale);}
+
 // set tesselation of globe
 void miniglobe::settess(int stripes)
    {STRIPES=stripes;}

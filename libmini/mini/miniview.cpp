@@ -82,12 +82,12 @@ void miniview::setup_matrix(float sbase)
    double nearp = get()->nearp;
    double farp = get()->farp;
 
-   mtxperspective(fovy, aspect, nearp, farp);
+   mtxperspective(fovy, aspect, len_g2o(nearp), len_g2o(farp));
 
    minicoord egl = m_camera->get_eye_opengl();
    miniv3d dgl = m_camera->get_dir_opengl();
    miniv3d ugl = m_camera->get_up_opengl();
-   miniv3d rgl = m_camera->get_right_opengl()*(double)(sbase/TERRAIN->get()->scale);
+   miniv3d rgl = m_camera->get_right_opengl()*len_g2o(sbase);
 
    mtxmodel();
    mtxid();
@@ -102,11 +102,13 @@ void miniview::render_ecef_geometry()
    static miniglobe globe;
 
    static const int gltess=32;
-   static const double glfactor=0.999;
+   static const double glscale=0.999;
+   static const double glzscale=1.01;
 
    globe.settess(gltess);
    globe.setscale(1.0);
-   globe.setdynscale(glfactor);
+   globe.setdynscale(glscale);
+   globe.setZscale(glzscale);
 
    disableRGBAwriting();
    globe.render();

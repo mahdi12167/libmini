@@ -66,9 +66,6 @@ double intersect_ray_unitsphere(miniv3d p,miniv3d d);
 double intersect_ray_ellipsoid(miniv3d p,miniv3d d,
                                miniv3d o,double r1,double r2,double r3);
 
-double intersect_line_ellipsoid(miniv3d p,miniv3d d,
-                                miniv3d o,double r1,double r2,double r3);
-
 double intersect_ray_plane(miniv3d p,miniv3d d,
                            miniv3d o,miniv3d n);
 

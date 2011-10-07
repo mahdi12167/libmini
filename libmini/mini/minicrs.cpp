@@ -387,8 +387,8 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
    pos+=x*right+y*up;
 
-   dist=intersect_line_ellipsoid(pos,-pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
-   pos-=dist*pos;
+   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   pos*=dist;
 
    nrm=pos;
    nrm.normalize();
@@ -552,22 +552,22 @@ void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
                        double prj[3], // output ECEF coordinates
                        double *h) // output altitude
    {
-   miniv3d pos,nrm;
+   miniv3d pos0,pos,nrm;
    double dist;
 
-   pos=miniv3d(xyz);
+   pos0=miniv3d(xyz);
 
-   nrm=pos;
-   nrm.normalize();
-
-   dist=intersect_line_ellipsoid(pos,-nrm,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
-   pos-=dist*nrm;
+   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos0,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   pos=pos0*dist;
 
    prj[0]=pos.x;
    prj[1]=pos.y;
    prj[2]=pos.z;
 
-   *h=dist;
+   nrm=pos;
+   nrm.normalize();
+
+   *h=(pos0-pos)*nrm;
    }
 
 // Molodensky transformation
