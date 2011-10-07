@@ -547,7 +547,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       LPARAMS.usepnm=TRUE;
 
       // update maximum elevation
-      LPARAMS.maxelev=fmax(fmin(TILECACHE->getelevinfo_maxelev()*LPARAMS.exaggeration,LPARAMS.maxelev),1.0f);
+      LPARAMS.maxelev=fmax(fmin(TILECACHE->getelevinfo_maxelev(),LPARAMS.maxelev)*LPARAMS.exaggeration,1.0f);
 
       // get original data coordinates
       LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevinfo_centerx(),TILECACHE->getelevinfo_centery(),0.0),minicoord::MINICOORD_LLH);
@@ -582,7 +582,7 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
       LPARAMS.usepnm=FALSE;
 
       // update maximum elevation
-      LPARAMS.maxelev=fmax(fmin(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev())*LPARAMS.exaggeration,LPARAMS.maxelev),1.0f);
+      LPARAMS.maxelev=fmax(fmin(fmax(TILECACHE->getelevini_maxelev(),-TILECACHE->getelevini_minelev()),LPARAMS.maxelev)*LPARAMS.exaggeration,1.0f);
 
       // get original data coordinates
       LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_LINEAR);
