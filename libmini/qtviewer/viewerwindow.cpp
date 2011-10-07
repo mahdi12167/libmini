@@ -155,8 +155,7 @@ void ViewerWindow::keyPressEvent(QKeyEvent* event)
 {
    if (event->key() == Qt::Key_Space)
       renderer->getCamera()->focusOnTarget();
-   else if (event->key() == Qt::Key_S)
-      renderer->toggleStereo(true);
+
    QGLWidget::keyPressEvent(event);
 
    reportModifiers();
@@ -225,6 +224,11 @@ void ViewerWindow::clearMaps()
 void ViewerWindow::gotoMap(minilayer *layer)
 {
    renderer->getCamera()->focusOnMap(layer);
+}
+
+void ViewerWindow::toggleStereo(bool on)
+{
+   renderer->toggleStereo(on);
 }
 
 void ViewerWindow::toggleWireFrame(bool on)

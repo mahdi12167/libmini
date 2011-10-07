@@ -172,6 +172,19 @@ void MainWindow::createWidgets()
    exaggerLayout->addWidget(exaggerSlider);
    exaggerGroup->setLayout(exaggerLayout);
 
+   // stereo check:
+
+   stereoCheck = new QCheckBox(tr("Stereo"));
+   stereoCheck->setChecked(false);
+
+   connect(stereoCheck, SIGNAL(stateChanged(int)), this, SLOT(toggleStereo(int)));
+
+   QGroupBox *stereoGroup = new QGroupBox;
+   QHBoxLayout *stereoLayout = new QHBoxLayout;
+
+   stereoLayout->addWidget(stereoCheck);
+   stereoGroup->setLayout(stereoLayout);
+
    // wire frame check:
 
    wireFrameCheck = new QCheckBox(tr("Wire Frame"));
@@ -192,6 +205,7 @@ void MainWindow::createWidgets()
    sliderLayout->addWidget(seaGroup);
    sliderLayout->addWidget(lightGroup);
    sliderLayout->addWidget(exaggerGroup);
+   sliderLayout->addWidget(stereoGroup);
    sliderLayout->addWidget(wireGroup);
    sliderBox->setLayout(sliderLayout);
 
@@ -274,6 +288,11 @@ void MainWindow::click(int row, int col)
    viewerWindow->gotoMap(m_Layer[row]);
 }
 
+void MainWindow::toggleStereo(int on)
+{
+   viewerWindow->toggleStereo(on);
+}
+
 void MainWindow::toggleWireFrame(int on)
 {
    viewerWindow->toggleWireFrame(on);
@@ -340,6 +359,8 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       lightCheck->setChecked(!lightCheck->isChecked());
    else if (event->key() == Qt::Key_E)
       exaggerCheck->setChecked(!exaggerCheck->isChecked());
+   else if (event->key() == Qt::Key_S)
+      stereoCheck->setChecked(!stereoCheck->isChecked());
    else if (event->key() == Qt::Key_W)
       wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
    else

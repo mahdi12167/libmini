@@ -32,6 +32,7 @@ public:
 
    void gotoMap(minilayer *layer);
 
+   void toggleStereo(bool on);
    void toggleWireFrame(bool on);
 
    void checkFog(bool on);

@@ -37,6 +37,7 @@ private slots:
    void open();
    void clear();
 
+   void toggleStereo(int);
    void toggleWireFrame(int);
 
    void click(int, int);
@@ -88,6 +89,7 @@ private:
    QCheckBox *exaggerCheck;
    QSlider *exaggerSlider;
 
+   QCheckBox *stereoCheck;
    QCheckBox *wireFrameCheck;
 
    QPushButton *clearButton;
