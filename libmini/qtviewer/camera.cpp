@@ -314,12 +314,23 @@ void Camera::timerEvent(int timerId)
    else if (timerId == m_TransitionTimerId)
    {
       int timeT = m_TransitionStart.elapsed();
-      double t = timeT / 1000.0;
+      double t0 = timeT / 1000.0;
 
       int deltaT = m_TransitionTimer.restart();
-      double dt = deltaT / 1000.0;
+      double dt0 = deltaT / 1000.0;
 
-      processTransition(t, dt);
+      double t = t0 - dt0, dt;
+
+      while (t<t0 && dt0>0.0)
+         {
+         dt = 1.0/CAMERA_FPS;
+         if (dt0 < dt) dt = dt0;
+
+         processTransition(t, dt);
+
+         t += dt;
+         dt0 -= dt;
+         }
    }
 }
 
