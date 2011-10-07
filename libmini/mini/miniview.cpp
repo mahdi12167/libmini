@@ -103,7 +103,7 @@ void miniview::render_ecef_geometry()
 
    static const int gltess=32;
    static const double glscale=0.999;
-   static const double glzscale=1.01;
+   static const double glzscale=1.05;
 
    globe.settess(gltess);
    globe.setscale(1.0);
