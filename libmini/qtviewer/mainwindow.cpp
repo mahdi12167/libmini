@@ -120,7 +120,7 @@ void MainWindow::createWidgets()
 
    // sea level check:
 
-   seaLevelCheck = new QCheckBox(tr("Sea Level"));
+   seaLevelCheck = new QCheckBox(tr("Ocean Sea Level"));
    seaLevelCheck->setChecked(false);
 
    connect(seaLevelCheck, SIGNAL(stateChanged(int)), this, SLOT(checkSeaLevel(int)));
@@ -334,7 +334,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       fogCheck->setChecked(!fogCheck->isChecked());
    else if (event->key() == Qt::Key_C)
       contourCheck->setChecked(!contourCheck->isChecked());
-   else if (event->key() == Qt::Key_S)
+   else if (event->key() == Qt::Key_O)
       seaLevelCheck->setChecked(!seaLevelCheck->isChecked());
    else if (event->key() == Qt::Key_N)
       lightCheck->setChecked(!lightCheck->isChecked());
