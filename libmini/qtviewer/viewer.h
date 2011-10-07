@@ -1,7 +1,7 @@
 // (c) by Stefan Roettger
 
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef VIEWER_H
+#define VIEWER_H
 
 #include <QtOpenGL/qgl.h>
 
@@ -11,11 +11,11 @@
 #include "camera.h"
 #include "cameraconst.h"
 
-class Renderer: public miniview
+class Viewer: public miniview
 {
 public:
-   Renderer(QGLWidget* window);
-   ~Renderer();
+   Viewer(QGLWidget* window);
+   ~Viewer();
 
    void       init();
    bool       isInited() {return(m_bIsInited);}
