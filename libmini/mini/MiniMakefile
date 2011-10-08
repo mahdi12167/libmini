@@ -6,12 +6,14 @@ SHELL	= sh
 HDRS	= minibase minicore\
 	  minicoreP.h miniOGLP.h\
 	  minicomplex minivec minimtx\
-	  minidyna minigeom minisort ministring miniref
+	  minidyna minigeom minisort ministring\
+	  miniref mininode
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
 	  minimath minimpfp\
-	  minitime miniio minidir minirgb minicrs\
+	  minitime miniio minidir\
+	  minirgb minicrs\
 	  ministub minitile miniload\
 	  minicoord miniwarp minicam minianim\
 	  minilayer miniterrain miniearth miniscene\

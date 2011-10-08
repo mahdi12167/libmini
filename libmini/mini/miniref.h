@@ -113,6 +113,20 @@ class miniref
       ERRORCHK(ref==NULL);
       return(ref->item);
       }
+
+   //! item member accessor
+   Item* operator ->()
+      {
+      ERRORCHK(ref==NULL);
+      return(&ref->item);
+      }
+
+   //! cast to regular pointer
+   operator Item*() const
+      {
+      ERRORCHK(ref==NULL);
+      return(&ref->item);
+      }
    };
 
 #endif
