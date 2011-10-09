@@ -16,12 +16,15 @@ class mininode: public minidyna< miniref<mininode> >
    public:
 
    //! default constructor
-   mininode()
-      {}
+   mininode(unsigned int id=0)
+      {m_id=id;}
 
    //! destructor
    virtual ~mininode()
       {}
+
+   virtual unsigned int get_id()
+      {return(m_id);}
 
    virtual void traverse()
       {
@@ -36,7 +39,24 @@ class mininode: public minidyna< miniref<mininode> >
          }
       }
 
+   virtual minidyna< miniref<mininode> > serialize(unsigned int id=0)
+      {
+      minidyna< miniref<mininode> > list;
+
+      if (get_id()==id) list.append(this);
+
+      for (unsigned int i=0; i<getsize(); i++)
+         {
+         mininode *child=get(i);
+         list.append(child->serialize(id));
+         }
+
+      return(list);
+      }
+
    protected:
+
+   unsigned int m_id;
 
    virtual void traverse_pre() {}
    virtual void traverse_action() {}
@@ -44,5 +64,6 @@ class mininode: public minidyna< miniref<mininode> >
    };
 
 typedef miniref<mininode> mininoderef;
+typedef minidyna< miniref<mininode> > mininodelist;
 
 #endif
