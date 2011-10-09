@@ -5,6 +5,7 @@
 
 #include <QtCore/QTime>
 
+#include <mini/mininode.h>
 #include <mini/minicam.h>
 #include <mini/minianim.h>
 
@@ -21,7 +22,7 @@ enum modifierKeys
    ModifierMeta
 };
 
-class Camera : public minicam
+class Camera : public miniode, minicam
 {
 public:
    Camera(QGLWidget *window, miniearth *earth,
