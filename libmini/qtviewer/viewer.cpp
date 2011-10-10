@@ -47,7 +47,6 @@ void Viewer::init()
 
    // link camera
    m_root = camera;
-   set_camera(getCamera()); //!! redo
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -200,7 +199,13 @@ void Viewer::resizeViewport()
 // draw scene
 void Viewer::draw()
 {
+   // tell camera
+   set_camera(getCamera());
+
+   // render scene
    render_geometry(m_StereoBase);
+
+   // render head-up display
    renderHUD();
 
    getCamera()->startIdling();
