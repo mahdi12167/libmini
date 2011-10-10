@@ -20,7 +20,9 @@ class minicam: public mininode
    {
    public:
 
-   virtual unsigned int get_id() {return(1);}
+   static const unsigned int ID=1;
+
+   virtual unsigned int get_id() {return(ID);}
 
    //! default constructor
    minicam(miniearth *earth,
