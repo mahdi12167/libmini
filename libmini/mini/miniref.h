@@ -81,7 +81,7 @@ class miniref
       }
 
    //! assignment operator
-   miniref<Item>& operator =(Item *r)
+   miniref<Item>& operator =(Item *i)
       {
       if (ref!=NULL)
          {
@@ -89,10 +89,10 @@ class miniref
          if (ref->refcount==0) delete ref;
          }
 
-      if (r==NULL) ref=NULL;
+      if (i==NULL) ref=NULL;
       else
          {
-         ref=new miniitem<Item>(r);
+         ref=new miniitem<Item>(i);
          ref->refcount++;
          }
 
@@ -104,11 +104,11 @@ class miniref
       {return(ref==r.ref);}
 
    //! comparison operator
-   bool operator ==(const Item *r) const
+   bool operator ==(const Item *i) const
       {
-      if (ref==NULL && r==NULL) return(true);
+      if (ref==NULL && i==NULL) return(true);
       if (ref==NULL) return(false);
-      return(ref->item==r);
+      return(ref->item==i);
       }
 
    //! item accessor

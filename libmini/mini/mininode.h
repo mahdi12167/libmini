@@ -26,6 +26,7 @@ class mininode: public minidyna< miniref<mininode> >
    virtual unsigned int get_id()
       {return(m_id);}
 
+   //! traverse [cycle-free] graph
    virtual void traverse()
       {
       traverse_action();
@@ -39,9 +40,10 @@ class mininode: public minidyna< miniref<mininode> >
          }
       }
 
-   virtual minidyna< miniref<mininode> > serialize(unsigned int id=0)
+   //! traverse graph and serialize nodes with specific id
+   virtual minidyna<mininode*> serialize(unsigned int id=0)
       {
-      minidyna< miniref<mininode> > list;
+      minidyna<mininode*> list;
 
       if (get_id()==id) list.append(this);
 
@@ -64,6 +66,5 @@ class mininode: public minidyna< miniref<mininode> >
    };
 
 typedef miniref<mininode> mininoderef;
-typedef minidyna< miniref<mininode> > mininodelist;
 
 #endif
