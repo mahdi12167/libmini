@@ -5,6 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 
+#include <mini/mininode.h>
 #include <mini/miniview.h>
 #include "viewerconst.h"
 
@@ -25,7 +26,7 @@ public:
    void       resizeWindow();
    void       draw();
 
-   Camera*    getCamera() {return(m_camera);}
+   Camera*    getCamera() {return((Camera *)((mininode *)(m_root->serialize(minicam::ID).get(0))));}
 
    void       toggleStereo(bool on);
    void       toggleWireFrame(bool on);
@@ -53,14 +54,16 @@ private:
    void       drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
 
 protected:
+   // parent window reference
    QGLWidget* m_window;
 
+   // root node reference
+   mininoderef m_root;
+
+   // initialization flag
    bool m_bIsInited;
 
-   // camera
-   Camera* m_camera;
-
-   // parameters
+   // parameter pointers
    miniscene::MINISCENE_PARAMS* m_pSceneParams; // the scene parameters
    miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters

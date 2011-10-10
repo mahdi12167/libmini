@@ -21,7 +21,7 @@ class ViewerWindow : public QGLWidget
    Q_OBJECT;
 
 public:
-   ViewerWindow(QWidget *parent = 0);
+   ViewerWindow();
    virtual ~ViewerWindow();
 
    QSize minimumSizeHint() const;

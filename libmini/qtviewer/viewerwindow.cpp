@@ -12,7 +12,7 @@
 #include "viewerconst.h"
 #include "viewerwindow.h"
 
-ViewerWindow::ViewerWindow(QWidget *parent)
+ViewerWindow::ViewerWindow()
    : viewer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
 {
    setFocusPolicy(Qt::WheelFocus);

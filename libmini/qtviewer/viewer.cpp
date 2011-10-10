@@ -12,8 +12,6 @@ Viewer::Viewer(QGLWidget* window)
    m_window = window;
    m_bIsInited = false;
 
-   m_camera = NULL;
-
    m_StereoBase = 0.0;
    m_FogDensity = 0.0;
    m_SeaLevel = 0.0;
@@ -23,14 +21,13 @@ Viewer::Viewer(QGLWidget* window)
 }
 
 Viewer::~Viewer()
-{
-   if (m_camera!=NULL)
-      delete m_camera;
-}
+{}
 
 // gl init
 void Viewer::init()
 {
+   Camera *camera;
+
    if (m_bIsInited) return;
 
    // initialize VIS bathy map
@@ -43,13 +40,14 @@ void Viewer::init()
    getearth()->loadopts();
 
    // create the camera object
-   m_camera=new Camera(m_window, getearth());
+   camera = new Camera(m_window, getearth());
 
    // tell camera lens fovy
-   m_camera->setLens(VIEWER_FOVY);
+   camera->setLens(VIEWER_FOVY);
 
-   // tell camera
-   set_camera(m_camera);
+   // link camera
+   m_root = camera;
+   set_camera(getCamera()); //!! redo
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -65,6 +63,8 @@ minilayer* Viewer::loadMap(const char* url)
 {
    minilayer *layer;
 
+   Camera *camera=getCamera();
+
    if (m_bIsInited)
       if (url!=NULL)
       {
@@ -74,8 +74,8 @@ minilayer* Viewer::loadMap(const char* url)
          {
             getearth()->defineroi(0.0);
 
-            m_camera->focusOnMap(layer);
-            m_camera->startIdling();
+            camera->focusOnMap(layer);
+            camera->startIdling();
 
             return(layer);
          }
@@ -89,7 +89,7 @@ void Viewer::clearMaps()
 {
    getearth()->getterrain()->remove();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 // initialize libMini parameters
@@ -178,7 +178,7 @@ void Viewer::resizeWindow()
 {
    resizeViewport();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 // initialize the render window
@@ -203,12 +203,14 @@ void Viewer::draw()
    render_geometry(m_StereoBase);
    renderHUD();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 // render head-up display
 void Viewer::renderHUD()
 {
+   Camera *camera=getCamera();
+
    // draw crosshair:
 
    glMatrixMode(GL_PROJECTION);
@@ -246,14 +248,14 @@ void Viewer::renderHUD()
 
    // render text:
 
-   minicoord cameraPosLLH = m_camera->get_eye();
+   minicoord cameraPosLLH = camera->get_eye();
    if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR)
       cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
 
-   double cameraAngle=m_camera->get_angle();
+   double cameraAngle=camera->get_angle();
 
-   minicoord cameraHit=m_camera->get_hit();
-   double cameraHitDist=m_camera->get_hitdist();
+   minicoord cameraHit=camera->get_hit();
+   double cameraHitDist=camera->get_hitdist();
 
    QString str;
    const QColor color(255, 255, 255);
@@ -308,7 +310,7 @@ void Viewer::renderHUD()
       drawText(x+second_column_offset, y, str);
       y+=line_space;
 
-      double hitElev=m_camera->get_elev(cameraHit);
+      double hitElev=camera->get_elev(cameraHit);
       if (hitElev==-MAXFLOAT) hitElev=0.0;
 
       str.sprintf("Elevation:");
@@ -358,14 +360,14 @@ void Viewer::toggleStereo(bool on)
    if (on) m_StereoBase=VIEWER_SBASE;
    else m_StereoBase=0.0;
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::toggleWireFrame(bool on)
 {
    m_pSceneParams->usewireframe=on;
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::checkFog(bool on)
@@ -384,7 +386,7 @@ void Viewer::setFogDensity(double density)
    m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*VIEWER_NEARP/VIEWER_FARP;
    propagate();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::checkContours(bool on)
@@ -392,7 +394,7 @@ void Viewer::checkContours(bool on)
    m_pEarthParams->usecontours=on;
    propagate();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::checkSeaLevel(bool on)
@@ -412,7 +414,7 @@ void Viewer::setSeaLevel(double level)
    propagate();
    getearth()->getterrain()->update();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::checkLight(bool on)
@@ -433,7 +435,7 @@ void Viewer::setLight(double hour)
    m_pEarthParams->lightdir=lightdir;
    propagate();
 
-   m_camera->startIdling();
+   getCamera()->startIdling();
 }
 
 void Viewer::checkExagger(bool on)
@@ -444,14 +446,16 @@ void Viewer::checkExagger(bool on)
 
 void Viewer::setExagger(double scale)
 {
+   Camera *camera=getCamera();
+
    m_ExaggerScale=scale;
 
    getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
 
-   m_camera->moveAbove();
+   camera->moveAbove();
 
    getearth()->getterrain()->update();
    propagate();
 
-   m_camera->startIdling();
+   camera->startIdling();
 }

@@ -22,7 +22,7 @@ enum modifierKeys
    ModifierMeta
 };
 
-class Camera : public miniode, minicam
+class Camera : public minicam
 {
 public:
    Camera(QGLWidget *window, miniearth *earth,
