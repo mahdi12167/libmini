@@ -11,16 +11,20 @@ class miniitem
    {
    public:
 
-   Item item;
+   Item *item;
    unsigned int refcount;
 
-   miniitem(const Item *i=NULL)
+   miniitem(Item *i=NULL)
       {
-      if (i!=NULL) item=*i;
+      item=i;
       refcount=0;
       }
 
-   ~miniitem() {}
+   ~miniitem()
+      {
+      if (item!=NULL)
+         delete item;
+      }
    };
 
 //! templated ref-count pointer
@@ -34,7 +38,7 @@ class miniref
    public:
 
    //! default constructor
-   miniref(const Item *i=NULL)
+   miniref(Item *i=NULL)
       {
       if (i==NULL) ref=NULL;
       else
@@ -77,7 +81,7 @@ class miniref
       }
 
    //! assignment operator
-   miniref<Item>& operator =(const Item *r)
+   miniref<Item>& operator =(Item *r)
       {
       if (ref!=NULL)
          {
@@ -104,28 +108,28 @@ class miniref
       {
       if (ref==NULL && r==NULL) return(true);
       if (ref==NULL) return(false);
-      return(&ref->item==r);
+      return(ref->item==r);
       }
 
    //! item accessor
-   Item& operator *()
+   Item& operator *() const
       {
       ERRORCHK(ref==NULL);
-      return(ref->item);
+      return(*(ref->item));
       }
 
    //! item member accessor
-   Item* operator ->()
+   Item* operator ->() const
       {
       ERRORCHK(ref==NULL);
-      return(&ref->item);
+      return(ref->item);
       }
 
    //! cast to regular pointer
    operator Item*() const
       {
       ERRORCHK(ref==NULL);
-      return(&ref->item);
+      return(ref->item);
       }
    };
 

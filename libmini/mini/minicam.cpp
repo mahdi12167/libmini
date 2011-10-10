@@ -10,6 +10,7 @@
 minicam::minicam(miniearth *earth,
                  double lat,double lon,double height,
                  double mindist)
+   : mininode(1)
    {
    EARTH=earth;
 

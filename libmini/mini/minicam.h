@@ -7,6 +7,7 @@
 #include "miniv4d.h"
 #include "minicoord.h"
 #include "miniearth.h"
+#include "mininode.h"
 
 //! geo-referenced camera in ECEF coordinates
 //! ECEF:
@@ -15,9 +16,11 @@
 //! z axis is earth axis
 //! x axis hits prime meridian (lon=0)
 //! y axis hits lon=90 meridian
-class minicam
+class minicam: public mininode
    {
    public:
+
+   virtual unsigned int get_id() {return(1);}
 
    //! default constructor
    minicam(miniearth *earth,
@@ -25,7 +28,7 @@ class minicam
            double mindist=0.0);
 
    //! destructor
-   ~minicam();
+   virtual ~minicam();
 
    void set_eye(const minicoord &e,
                 double angle=0.0,double pitch=-90.0,
