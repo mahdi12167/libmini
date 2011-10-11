@@ -56,6 +56,12 @@ class mininode: public minidyna< miniref<mininode> >
       return(list);
       }
 
+   virtual mininode *get_first(unsigned int id=0)
+      {return(serialize(id).first());}
+
+   virtual mininode *get_last(unsigned int id=0)
+      {return(serialize(id).last());}
+
    protected:
 
    unsigned int m_id;
