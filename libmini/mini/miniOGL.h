@@ -121,6 +121,7 @@ inline void mtxperspective(float fovy,float aspect,float nearp,float farp);
 inline void mtxlookat(float ex,float ey,float ez,float ax,float ay,float az,float ux,float uy,float uz);
 inline void mtxlookat(const miniv3d &eye,const miniv3d &at,const miniv3d &up);
 
+void mtxget(const miniv3d mtx[3],double oglmtx[16]);
 void mtxget(const miniv4d mtx[3],double oglmtx[16]);
 
 void mtxgetmodel(float mtx[16]);

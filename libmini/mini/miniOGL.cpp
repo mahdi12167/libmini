@@ -1483,6 +1483,29 @@ void mtxgetmodel(double mtx[16])
 #endif
    }
 
+void mtxget(const miniv3d mtx[3],double oglmtx[16])
+   {
+   oglmtx[0]=mtx[0].x;
+   oglmtx[1]=mtx[1].x;
+   oglmtx[2]=mtx[2].x;
+   oglmtx[3]=0.0;
+
+   oglmtx[4]=mtx[0].y;
+   oglmtx[5]=mtx[1].y;
+   oglmtx[6]=mtx[2].y;
+   oglmtx[7]=0.0;
+
+   oglmtx[8]=mtx[0].z;
+   oglmtx[9]=mtx[1].z;
+   oglmtx[10]=mtx[2].z;
+   oglmtx[11]=0.0;
+
+   oglmtx[12]=0.0;
+   oglmtx[13]=0.0;
+   oglmtx[14]=0.0;
+   oglmtx[15]=1.0;
+   }
+
 void mtxget(const miniv4d mtx[3],double oglmtx[16])
    {
    oglmtx[0]=mtx[0].x;

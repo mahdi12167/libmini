@@ -7,6 +7,7 @@
 
 #include "minibase.h"
 
+#include "minimath.h"
 #include "mininode.h"
 
 #include "miniOGL.h"
@@ -39,9 +40,9 @@ class mininode_transform: public mininode
    static const unsigned int ID=2;
 
    //! default constructor
-   mininode_transform(const miniv4d mtx[3])
+   mininode_transform(const miniv4d mtx[3]=NULL)
       : mininode(ID)
-      {mtxget(mtx,oglmtx);}
+      {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
    virtual ~mininode_transform()
@@ -56,6 +57,49 @@ class mininode_transform: public mininode
 
    virtual void traverse_post()
       {mtxpop();}
+   };
+
+//! translation node
+class mininode_translate: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_translate(const miniv3d &v)
+      : mininode_transform()
+      {
+      miniv4d mtx[3]={miniv4d(1,0,0,v.x),miniv4d(0,1,0,v.y),miniv4d(0,0,1,v.z)};
+      mtxget(mtx,oglmtx);
+      }
+   };
+
+//! rotation node
+class mininode_rotate: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_rotate(double d,const miniv3d &a)
+      : mininode_transform()
+      {
+      miniv3d rot[3];
+      rot_mtx(rot,d,a);
+      mtxget(rot,oglmtx);
+      }
+   };
+
+//! scale node
+class mininode_scale: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_scale(double s)
+      : mininode_transform()
+      {
+      miniv3d mtx[3]={miniv3d(s,0,0),miniv3d(0,s,0),miniv3d(0,0,s)};
+      mtxget(mtx,oglmtx);
+      }
    };
 
 //! geometry node
