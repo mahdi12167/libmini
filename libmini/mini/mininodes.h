@@ -8,6 +8,7 @@
 #include "minibase.h"
 
 #include "minimath.h"
+#include "minicoord.h"
 #include "mininode.h"
 
 #include "miniOGL.h"
@@ -98,6 +99,33 @@ class mininode_scale: public mininode_transform
       : mininode_transform()
       {
       miniv3d mtx[3]={miniv3d(s,0,0),miniv3d(0,s,0),miniv3d(0,0,s)};
+      mtxget(mtx,oglmtx);
+      }
+   };
+
+//! coordinate node
+class mininode_coord: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_coord(const minicoord &c)
+      : mininode_transform()
+      {
+      minicoord ecef=c;
+      if (ecef.type!=minicoord::MINICOORD_LINEAR) ecef.convert2(minicoord::MINICOORD_ECEF);
+
+      miniv3d p=ecef.vec;
+      miniv3d u=p;
+      u.normalize();
+      miniv3d d=miniv3d(0,0,1);
+      miniv3d r=d/u;
+      r.normalize();
+      if (r.getlength2()==0.0) r=miniv3d(0,1,0);
+      d=u/r;
+      d.normalize();
+
+      miniv4d mtx[3]={miniv4d(r.x,u.x,d.x,p.x),miniv4d(r.y,u.y,d.y,p.y),miniv4d(r.z,u.z,d.z,p.z)};
       mtxget(mtx,oglmtx);
       }
    };
