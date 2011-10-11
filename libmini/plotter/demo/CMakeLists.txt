@@ -1,4 +1,4 @@
-# cmake build file for plotter demos
+# cmake build file for libMini plotter demos
 # (c) by Stefan Roettger
 
 PROJECT(${PROJECT_NAME}_demos)
