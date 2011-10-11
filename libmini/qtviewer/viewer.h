@@ -26,7 +26,7 @@ public:
    void       resizeWindow();
    void       draw();
 
-   Camera*    getCamera() {return((Camera *)((mininode *)(m_root->serialize(minicam::ID).get(0))));}
+   Camera*    getCamera();
 
    void       toggleStereo(bool on);
    void       toggleWireFrame(bool on);

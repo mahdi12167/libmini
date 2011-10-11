@@ -4,6 +4,7 @@
 
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
+#include <mini/mininodes.h>
 
 #include "viewer.h"
 
@@ -195,6 +196,10 @@ void Viewer::resizeViewport()
 
    glViewport(0, 0, winWidth, winHeight);
 }
+
+// get actual camera
+Camera *Viewer::getCamera()
+   {return((Camera *)m_root->get_first(mininode_cam::ID));}
 
 // draw scene
 void Viewer::draw()

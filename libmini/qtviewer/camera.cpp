@@ -8,7 +8,7 @@
 Camera::Camera(QGLWidget *window, miniearth *earth,
                double lat,double lon,double height,
                double mindist)
-   : minicam(earth, lat, lon, height, mindist)
+   : mininode_cam(earth, lat, lon, height, mindist)
 {
    m_window = window;
    m_earth = earth;
