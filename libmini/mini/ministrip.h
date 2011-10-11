@@ -174,7 +174,9 @@ class ministrip
    float SCALE;
 
    double MTX[16];
+   BOOLINT MTXSET;
    double TEXMTX[16];
+   BOOLINT TEXMTXSET;
 
    float ZSCALE;
 

@@ -364,9 +364,11 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    for (i=0; i<16; i++) MTX[i]=0.0;
    for (i=0; i<4; i++) MTX[i+4*i]=1.0;
+   MTXSET=FALSE;
 
    for (i=0; i<16; i++) TEXMTX[i]=0.0;
    for (i=0; i<4; i++) TEXMTX[i+4*i]=1.0;
+   TEXMTXSET=FALSE;
 
    ZSCALE=1.0f;
 
@@ -616,6 +618,7 @@ void ministrip::setmatrix(double mtx[16])
    int i;
 
    for (i=0; i<16; i++) MTX[i]=mtx[i];
+   MTXSET=TRUE;
    }
 
 // set texture matrix
@@ -624,6 +627,7 @@ void ministrip::settexmatrix(double texmtx[16])
    int i;
 
    for (i=0; i<16; i++) TEXMTX[i]=texmtx[i];
+   TEXMTXSET=TRUE;
    }
 
 // set Z-scaling
@@ -987,9 +991,12 @@ void ministrip::render()
    if (COLARRAY==NULL) color(COLR,COLG,COLB,COLA);
    if (NRMARRAY==NULL) normal(NRMX,NRMY,NRMZ);
 
-   mtxpush();
-   mtxmult(MTX);
-   mtxscale(SCALE,SCALE,SCALE);
+   if (MTXSET || SCALE!=1.0f)
+      {
+      mtxpush();
+      mtxmult(MTX);
+      mtxscale(SCALE,SCALE,SCALE);
+      }
 
    if (ZSCALE!=1.0f)
       {
@@ -1011,10 +1018,13 @@ void ministrip::render()
 
    if (TEXARRAY!=NULL)
       {
-      mtxtex();
-      mtxpush();
-      mtxmult(TEXMTX);
-      mtxmodel();
+      if (TEXMTXSET)
+         {
+         mtxtex();
+         mtxpush();
+         mtxmult(TEXMTX);
+         mtxmodel();
+         }
 
       texclientunit(0);
       texcoordarray(TEXARRAY,TEXCOMPS);
@@ -1031,9 +1041,12 @@ void ministrip::render()
       {
       texcoordarray(NULL);
 
-      mtxtex();
-      mtxpop();
-      mtxmodel();
+      if (TEXMTXSET)
+         {
+         mtxtex();
+         mtxpop();
+         mtxmodel();
+         }
       }
 
    if (USESHADER>=0)
@@ -1049,7 +1062,7 @@ void ministrip::render()
       mtxmodel();
       }
 
-   mtxpop();
+   if (MTXSET || SCALE!=1.0f) mtxpop();
    }
 
 // render triangle strips with multi-pass method for unordered semi-transparent geometry
