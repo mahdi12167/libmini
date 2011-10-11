@@ -7,6 +7,5 @@
 #include "minisort.h"
 #include "ministring.h"
 #include "miniref.h"
-#include "mininode.h"
 
 #endif
