@@ -29,15 +29,19 @@ class mininode: public minidyna< miniref<mininode> >
    //! traverse [cycle-free] graph
    virtual void traverse()
       {
-      traverse_action();
+      unsigned int s=getsize();
 
-      for (unsigned int i=0; i<getsize(); i++)
+      traverse_pre();
+
+      for (unsigned int i=0; i<s; i++)
          {
          mininode *child=get(i);
-         child->traverse_pre();
          child->traverse();
-         child->traverse_post();
+
+         if (i+1<s) traverse_past();
          }
+
+      traverse_post();
       }
 
    //! traverse graph and serialize nodes with specific id
@@ -67,7 +71,7 @@ class mininode: public minidyna< miniref<mininode> >
    unsigned int m_id;
 
    virtual void traverse_pre() {}
-   virtual void traverse_action() {}
+   virtual void traverse_past() {}
    virtual void traverse_post() {}
    };
 

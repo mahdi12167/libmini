@@ -301,6 +301,22 @@ class minidyna
       setsize(SIZE-1);
       }
 
+   //! push item on stack
+   void push(const Item &v)
+      {append(v);}
+
+   //! peek at top of stack
+   const Item &peek()
+      {return(last());}
+
+   //! pop item from stack
+   Item pop()
+      {
+      Item v=last();
+      shrinksize();
+      return(v);
+      }
+
    //! replace all occurrences of an item
    unsigned int replace(const Item &v1,const Item &v2)
       {

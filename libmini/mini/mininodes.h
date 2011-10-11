@@ -76,8 +76,35 @@ class mininode_geometry: public mininode, public ministrip
 
    protected:
 
-   virtual void traverse_action()
+   virtual void traverse_pre()
       {render();}
+   };
+
+//! color node
+class mininode_color: public mininode
+   {
+   public:
+
+   static const unsigned int ID=4;
+
+   //! default constructor
+   mininode_color(const miniv4d &c)
+      : mininode(ID)
+      {rgba=c;}
+
+   //! destructor
+   virtual ~mininode_color()
+      {}
+
+   protected:
+
+   miniv4d rgba;
+
+   virtual void traverse_pre()
+      {color(rgba);}
+
+   virtual void traverse_past()
+      {color(rgba);}
    };
 
 #endif
