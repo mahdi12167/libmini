@@ -58,4 +58,26 @@ class mininode_transform: public mininode
       {mtxpop();}
    };
 
+//! geometry node
+class mininode_geometry: public mininode, public ministrip
+   {
+   public:
+
+   static const unsigned int ID=3;
+
+   //! default constructor
+   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
+      : mininode(ID), ministrip(colcomps,nrmcomps,texcomps)
+      {}
+
+   //! destructor
+   virtual ~mininode_geometry()
+      {}
+
+   protected:
+
+   virtual void traverse_action()
+      {render();}
+   };
+
 #endif
