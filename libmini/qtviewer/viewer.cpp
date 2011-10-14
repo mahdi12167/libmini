@@ -24,7 +24,7 @@ Viewer::Viewer(QGLWidget* window)
 Viewer::~Viewer()
 {}
 
-// gl init
+// init when gl context is available
 void Viewer::init()
 {
    Camera *camera;
@@ -47,7 +47,10 @@ void Viewer::init()
    camera->setLens(VIEWER_FOVY);
 
    // link camera
-   m_root = camera;
+   m_root.append(camera);
+
+   // link ecef geometry
+   m_root.append(buildECEFGeometry());
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -199,7 +202,7 @@ void Viewer::resizeViewport()
 
 // get actual camera
 Camera *Viewer::getCamera()
-   {return((Camera *)m_root->get_first(mininode_cam::ID));}
+   {return((Camera *)m_root.get_first(mininode_cam::ID));}
 
 // draw scene
 void Viewer::draw()
@@ -468,4 +471,41 @@ void Viewer::setExagger(double scale)
    propagate();
 
    camera->startIdling();
+}
+
+mininode *Viewer::buildECEFGeometry()
+{
+   // define ecef z-axis:
+
+   mininode *node=new mininode_color(miniv3d(0,0,0.5));
+
+   node->append(new mininode_translate(miniv3d(0,0,-miniearth::EARTH_radius)));
+   node->append_right(new mininode_geometry_tube(100000,-1000000));
+   node->append(new mininode_translate(miniv3d(0,0,miniearth::EARTH_radius)));
+   node->append_right(new mininode_geometry_tube(100000,1000000));
+
+   return(node);
+}
+
+void Viewer::render_ecef_geometry()
+{
+   // render plain globe for z-values:
+
+   static miniglobe globe;
+
+   static const int gltess=32;
+   static const double glscale=0.999;
+   static const double glzscale=1.05;
+
+   globe.settess(gltess);
+   globe.setscale(1.0);
+   globe.setdynscale(glscale);
+   globe.setZscale(glzscale);
+
+   disableRGBAwriting();
+   //!! globe.render();
+   enableRGBAwriting();
+
+   // render ecef geometry by traversing scene graph
+   m_root.traverse();
 }

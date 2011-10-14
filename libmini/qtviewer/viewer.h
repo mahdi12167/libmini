@@ -45,8 +45,9 @@ protected:
    void       initParameters();
    void       initBathyMap();
 
-   void       resizeViewport();
+   mininode   *buildECEFGeometry();
 
+   void       resizeViewport();
    void       renderHUD();
 
 private:
@@ -57,8 +58,8 @@ protected:
    // parent window reference
    QGLWidget* m_window;
 
-   // root node reference
-   mininoderef m_root;
+   // root node
+   mininode m_root;
 
    // initialization flag
    bool m_bIsInited;
@@ -68,6 +69,8 @@ protected:
    miniearth::MINIEARTH_PARAMS* m_pEarthParams; // the earth parameters
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
+
+   virtual void render_ecef_geometry();
 
 private:
    GLuint    m_CrosshairTextureId;
