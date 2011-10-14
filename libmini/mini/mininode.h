@@ -90,6 +90,4 @@ class mininode: public minidyna< miniref<mininode> >
    virtual void traverse_post() {}
    };
 
-typedef miniref<mininode> mininoderef;
-
 #endif
