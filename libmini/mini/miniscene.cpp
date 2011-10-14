@@ -164,12 +164,14 @@ void miniscene::render()
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
          {
+         initstate();
          EARTH->get_ecef_matrix(mtx);
          mtxget(mtx,oglmtx);
          mtxpush();
          mtxmult(oglmtx);
          render_ecef_geometry();
          mtxpop();
+         exitstate();
          }
 
    // disable wireframe mode

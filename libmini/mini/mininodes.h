@@ -177,7 +177,7 @@ class mininode_geometry: public mininode, public ministrip
    protected:
 
    virtual void traverse_pre()
-      {render();}
+      {render(1);}
    };
 
 //! tube geometry node
@@ -195,6 +195,7 @@ class mininode_geometry_tube: public mininode_geometry
          double x=sin(w)*radius;
          double y=cos(w)*radius;
 
+         setnrm(miniv3d(x,y,0.0));
          addvtx(miniv3d(x,y,0.0));
          addvtx(miniv3d(x,y,height));
          }
@@ -218,6 +219,7 @@ class mininode_geometry_tube: public mininode_geometry
 
       for (int i=0; i<=tessel; i++)
          {
+         setnrm(right);
          addvtx(p1+right);
          addvtx(p2+right);
 

@@ -1004,10 +1004,13 @@ int ministrip::getshader()
    {return(USESHADER);}
 
 // render triangle strips
-void ministrip::render()
+void ministrip::render(int wocolor,int wonrm,int wotex)
    {
-   if (COLARRAY==NULL) color(COLR,COLG,COLB,COLA);
-   if (NRMARRAY==NULL) normal(NRMX,NRMY,NRMZ);
+   if (wocolor==0)
+      if (COLARRAY==NULL) color(COLR,COLG,COLB,COLA);
+
+   if (wonrm==0)
+      if (NRMARRAY==NULL) normal(NRMX,NRMY,NRMZ);
 
    if (MTXSET || SCALE!=1.0f)
       {
@@ -1031,41 +1034,43 @@ void ministrip::render()
       }
 
    vertexarray(VTXARRAY);
-   colorarray(COLARRAY,COLCOMPS);
-   normalarray(NRMARRAY);
+   if (wocolor==0) colorarray(COLARRAY,COLCOMPS);
+   if (wonrm==0) normalarray(NRMARRAY);
 
-   if (TEXARRAY!=NULL)
-      {
-      if (TEXMTXSET)
+   if (wotex==0)
+      if (TEXARRAY!=NULL)
          {
-         mtxtex();
-         mtxpush();
-         mtxmult(TEXMTX);
-         mtxmodel();
-         }
+         if (TEXMTXSET)
+            {
+            mtxtex();
+            mtxpush();
+            mtxmult(TEXMTX);
+            mtxmodel();
+            }
 
-      texclientunit(0);
-      texcoordarray(TEXARRAY,TEXCOMPS);
-      }
-   else texcoordarray(NULL);
+         texclientunit(0);
+         texcoordarray(TEXARRAY,TEXCOMPS);
+         }
+      else texcoordarray(NULL);
 
    renderstrip(0,SIZE);
 
    vertexarray(NULL);
-   colorarray(NULL);
-   normalarray(NULL);
+   if (wocolor==0) colorarray(NULL);
+   if (wonrm==0) normalarray(NULL);
 
-   if (TEXARRAY!=NULL)
-      {
-      texcoordarray(NULL);
-
-      if (TEXMTXSET)
+   if (wotex==0)
+      if (TEXARRAY!=NULL)
          {
-         mtxtex();
-         mtxpop();
-         mtxmodel();
+         texcoordarray(NULL);
+
+         if (TEXMTXSET)
+            {
+            mtxtex();
+            mtxpop();
+            mtxmodel();
+            }
          }
-      }
 
    if (USESHADER>=0)
       {

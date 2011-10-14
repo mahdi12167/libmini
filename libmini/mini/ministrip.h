@@ -130,7 +130,7 @@ class ministrip
    int getshader();
 
    //! render triangle strips
-   void render();
+   void render(int wocolor=0,int wonrm=0,int wotex=0);
 
    //! render triangle strips with multi-pass method for unordered semi-transparent geometry
    void rendermulti(int passes=4,
