@@ -29,6 +29,8 @@
 #define MINI_SNIPPET_FRG_END "snippet_frg_end"
 
 #include "miniOGL.h"
+#include "miniv3d.h"
+#include "miniv4d.h"
 
 //! container class for triangle strips
 class ministrip
@@ -56,15 +58,21 @@ class ministrip
 
    //! set color of next vertex
    void setcol(const float r,const float g,const float b,float a=1.0f);
+   void setcol(const miniv3d &rgb);
+   void setcol(const miniv4d &rgba);
 
    //! set normal of next vertex
    void setnrm(const float nx,const float ny,const float nz);
+   void setnrm(const miniv3d &n);
 
    //! set tex coords of next vertex
    void settex(const float tx,const float ty=0.0f,const float tz=0.0f,float tw=1.0f);
+   void settex(const miniv3d &t);
+   void settex(const miniv4d &t);
 
    //! add one vertex
    void addvtx(const float x,const float y,const float z);
+   void addvtx(const miniv3d &v);
 
    //! set scale
    void setscale(float scale);

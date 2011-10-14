@@ -514,6 +514,12 @@ void ministrip::setcol(const float r,const float g,const float b,float a)
    COLA=a;
    }
 
+void ministrip::setcol(const miniv3d &rgb)
+   {setcol(rgb.x,rgb.y,rgb.z,1.0);}
+
+void ministrip::setcol(const miniv4d &rgba)
+   {setcol(rgba.x,rgba.y,rgba.z,rgba.w);}
+
 // set normal of next vertex
 void ministrip::setnrm(const float nx,const float ny,const float nz)
    {
@@ -521,6 +527,9 @@ void ministrip::setnrm(const float nx,const float ny,const float nz)
    NRMY=ny;
    NRMZ=nz;
    }
+
+void ministrip::setnrm(const miniv3d &n)
+   {setnrm(n.x,n.y,n.z);}
 
 // set tex coords of next vertex
 void ministrip::settex(const float tx,const float ty,const float tz,float tw)
@@ -530,6 +539,12 @@ void ministrip::settex(const float tx,const float ty,const float tz,float tw)
    TEXZ=tz;
    TEXW=tw;
    }
+
+void ministrip::settex(const miniv3d &t)
+   {settex(t.x,t.y,t.z);}
+
+void ministrip::settex(const miniv4d &t)
+   {settex(t.x,t.y,t.z,t.w);}
 
 // add one vertex
 void ministrip::addvtx(const float x,const float y,const float z)
@@ -546,6 +561,9 @@ void ministrip::addvtx(const float x,const float y,const float z)
       COPYVTX=0;
       }
    }
+
+void ministrip::addvtx(const miniv3d &v)
+   {addvtx(v.x,v.y,v.z);}
 
 // add one vertex
 void ministrip::addvtx()

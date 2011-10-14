@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "minibase.h"
+#include "minimath.h"
 
 #include "minimath.h"
 #include "minicoord.h"
@@ -130,34 +131,12 @@ class mininode_coord: public mininode_transform
       }
    };
 
-//! geometry node
-class mininode_geometry: public mininode, public ministrip
-   {
-   public:
-
-   static const unsigned int ID=3;
-
-   //! default constructor
-   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
-      : mininode(ID), ministrip(colcomps,nrmcomps,texcomps)
-      {}
-
-   //! destructor
-   virtual ~mininode_geometry()
-      {}
-
-   protected:
-
-   virtual void traverse_pre()
-      {render();}
-   };
-
 //! color node
 class mininode_color: public mininode
    {
    public:
 
-   static const unsigned int ID=4;
+   static const unsigned int ID=3;
 
    //! default constructor
    mininode_color(const miniv4d &c)
@@ -177,6 +156,75 @@ class mininode_color: public mininode
 
    virtual void traverse_past()
       {color(rgba);}
+   };
+
+//! geometry node
+class mininode_geometry: public mininode, public ministrip
+   {
+   public:
+
+   static const unsigned int ID=4;
+
+   //! default constructor
+   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
+      : mininode(ID), ministrip(colcomps,nrmcomps,texcomps)
+      {}
+
+   //! destructor
+   virtual ~mininode_geometry()
+      {}
+
+   protected:
+
+   virtual void traverse_pre()
+      {render();}
+   };
+
+//! tube geometry node
+class mininode_geometry_tube: public mininode_geometry
+   {
+   public:
+
+   //! default constructor
+   mininode_geometry_tube(double radius,double height,int tessel=16)
+      : mininode_geometry(0,3,0)
+      {
+      for (int i=0; i<=tessel; i++)
+         {
+         double w=2*PI*i/tessel;
+         double x=sin(w)*radius;
+         double y=cos(w)*radius;
+
+         addvtx(miniv3d(x,y,0.0));
+         addvtx(miniv3d(x,y,height));
+         }
+      }
+
+   mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel=16)
+      : mininode_geometry(0,3,0)
+      {
+      miniv3d dir=p2-p1;
+      miniv3d right,up;
+      if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
+      else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
+      else right=miniv3d(dir.z,0,0);
+      up=right/dir;
+      right=dir/up;
+      right.normalize();
+      right*=radius;
+
+      miniv3d rot[3];
+      rot_mtx(rot,360.0/tessel,dir);
+
+      for (int i=0; i<=tessel; i++)
+         {
+         addvtx(p1+right);
+         addvtx(p2+right);
+
+         right=mlt_vec(rot,right);
+         }
+      }
+
    };
 
 #endif

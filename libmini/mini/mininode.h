@@ -23,8 +23,23 @@ class mininode: public minidyna< miniref<mininode> >
    virtual ~mininode()
       {}
 
+   //! get unique node id
    virtual unsigned int get_id()
       {return(m_id);}
+
+   //! append as leave at leftmost edge
+   virtual void append_left(mininode *node)
+      {
+      if (empty()) append(node);
+      else (*first()).append_left(node);
+      }
+
+   //! append as leave at rightmost edge
+   virtual void append_right(mininode *node)
+      {
+      if (empty()) append(node);
+      else (*last()).append_right(node);
+      }
 
    //! traverse [cycle-free] graph
    virtual void traverse()

@@ -249,6 +249,10 @@ class minidyna
       return(MINARRAY[0]);
       }
 
+   //! get first item
+   const Item &head() const
+      {return(first());}
+
    //! get last item
    const Item &last() const
       {
@@ -257,6 +261,10 @@ class minidyna
       if (SIZE<=MINSIZE) return(MINARRAY[SIZE-1]);
       else return(ARRAY[SIZE-1-MINSIZE]);
       }
+
+   //! get last item
+   const Item &tail() const
+      {return(last());}
 
    //! append item to array
    void append(const Item &v)

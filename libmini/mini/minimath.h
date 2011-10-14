@@ -27,6 +27,15 @@ void cpy_mtx(miniv3d cpy[3],const miniv4d mtx[3]);
 
 void cpy_mtx4(miniv4d cpy[4],const miniv4d mtx[4]);
 
+inline miniv3d mlt_vec(const miniv3d mtx[3],const miniv3d &vec)
+   {return(miniv3d(mtx[0]*vec,mtx[1]*vec,mtx[2]*vec));}
+
+inline miniv3d mlt_vec(const miniv4d mtx[3],const miniv4d &vec)
+   {return(miniv3d(mtx[0]*vec,mtx[1]*vec,mtx[2]*vec));}
+
+inline miniv3d mlt_vec(const miniv4d mtx[3],const miniv3d &vec)
+   {return(mlt_vec(mtx,miniv4d(vec,1)));}
+
 void mlt_mtx(miniv3d mtx[3],const miniv3d mtx1[3],const miniv3d mtx2[3]);
 void mlt_mtx(miniv4d mtx[3],const miniv4d mtx1[3],const miniv4d mtx2[3]);
 
