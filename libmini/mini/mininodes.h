@@ -143,6 +143,10 @@ class mininode_color: public mininode
       : mininode(ID)
       {rgba=c;}
 
+   mininode_color(const miniv3d &c)
+      : mininode(ID)
+      {rgba=miniv4d(c,1);}
+
    //! destructor
    virtual ~mininode_color()
       {}

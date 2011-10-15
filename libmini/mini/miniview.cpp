@@ -114,6 +114,8 @@ void miniview::render_ecef_geometry()
    globe.render();
    enableRGBAwriting();
 
+   initstate();
+
    // render ecef z-axis:
 
    linewidth(2);
@@ -149,6 +151,8 @@ void miniview::render_ecef_geometry()
 
    enableZwriting();
    disablelinesmooth();
+
+   exitstate();
    }
 
 #endif

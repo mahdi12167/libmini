@@ -164,14 +164,12 @@ void miniscene::render()
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
          {
-         initstate();
          EARTH->get_ecef_matrix(mtx);
          mtxget(mtx,oglmtx);
          mtxpush();
          mtxmult(oglmtx);
          render_ecef_geometry();
          mtxpop();
-         exitstate();
          }
 
    // disable wireframe mode
@@ -255,9 +253,11 @@ void miniscene::render_ecef_geometry()
 
    // for example a line along the ecef z-axis:
    /*
+   initstate();
    color(miniv3d(0.5,0.5,0.5));
    renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
               miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+   exitstate();
    */
    }
 
