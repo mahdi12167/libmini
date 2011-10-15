@@ -203,6 +203,32 @@ class mininode_geometry_tube: public mininode_geometry
          addvtx(miniv3d(x,y,0.0));
          addvtx(miniv3d(x,y,height));
          }
+
+      beginstrip();
+      setnrm(miniv3d(0.0,0.0,1.0));
+
+      for (int i=0; i<=tessel; i++)
+         {
+         double w=2*PI*i/tessel;
+         double x=sin(w)*radius;
+         double y=cos(w)*radius;
+
+         addvtx(miniv3d(x,y,0.0));
+         addvtx(miniv3d(0.0,0.0,0.0));
+         }
+
+      beginstrip();
+      setnrm(miniv3d(0.0,0.0,-1.0));
+
+      for (int i=0; i<=tessel; i++)
+         {
+         double w=2*PI*i/tessel;
+         double x=sin(w)*radius;
+         double y=cos(w)*radius;
+
+         addvtx(miniv3d(x,y,height));
+         addvtx(miniv3d(0.0,0.0,height));
+         }
       }
 
    mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel=16)
