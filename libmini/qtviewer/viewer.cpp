@@ -478,17 +478,21 @@ mininode *Viewer::buildECEFGeometry()
 {
    // define ecef z-axis:
 
+   mininoderef geom=mininoderef(new mininode_geometry_tube(10000,1000000));
+
+   mininode *color1=new mininode_color(miniv3d(0,0,0.25));
+   color1->append(geom);
+   mininode *coord1=new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH));
+   coord1->append(color1);
+
+   mininode *color2=new mininode_color(miniv3d(0,0,0.5));
+   color2->append(geom);
+   mininode *coord2=new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH));
+   coord2->append(color2);
+
    mininode *node=new mininode;
-   mininode *geom=new mininode_geometry_tube(10000,1000000);
-   mininoderef geomref=mininoderef(geom);
-
-   node->append(new mininode_color(miniv3d(0,0,0.25)));
-   node->last()->append(new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH)));
-   node->last()->last()->append(geomref);
-
-   node->append(new mininode_color(miniv3d(0,0,0.25)));
-   node->last()->append(new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH)));
-   node->last()->last()->append(geomref);
+   node->append(coord1);
+   node->append(coord2);
 
    return(node);
 }
