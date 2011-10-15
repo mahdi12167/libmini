@@ -126,7 +126,7 @@ class mininode_coord: public mininode_transform
       d=u/r;
       d.normalize();
 
-      miniv4d mtx[3]={miniv4d(r.x,u.x,d.x,p.x),miniv4d(r.y,u.y,d.y,p.y),miniv4d(r.z,u.z,d.z,p.z)};
+      miniv4d mtx[3]={miniv4d(r.x,d.x,u.x,p.x),miniv4d(r.y,d.y,u.y,p.y),miniv4d(r.z,d.z,u.z,p.z)};
       mtxget(mtx,oglmtx);
       }
    };
