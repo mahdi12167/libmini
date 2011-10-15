@@ -4,6 +4,7 @@
 
 #include <mini/miniOGL.h>
 #include <mini/minishader.h>
+#include <mini/miniglobe.h>
 #include <mini/mininodes.h>
 
 #include "viewer.h"
@@ -503,9 +504,11 @@ void Viewer::render_ecef_geometry()
    globe.setZscale(glzscale);
 
    disableRGBAwriting();
-   //!! globe.render();
+   globe.render();
    enableRGBAwriting();
 
    // render ecef geometry by traversing scene graph
+   initstate();
    m_root.traverse();
+   exitstate();
 }
