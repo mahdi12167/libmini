@@ -267,7 +267,7 @@ class minidyna
       {return(last());}
 
    //! append item to array
-   Item *append(const Item &v)
+   Item &append(const Item &v)
       {
       unsigned int s;
 
@@ -277,8 +277,8 @@ class minidyna
       if (s<MINSIZE) MINARRAY[s]=v;
       else ARRAY[s-MINSIZE]=v;
 
-      if (SIZE<=MINSIZE) return(&MINARRAY[SIZE-1]);
-      else return(&ARRAY[SIZE-1-MINSIZE]);
+      if (SIZE<=MINSIZE) return(MINARRAY[SIZE-1]);
+      else return(ARRAY[SIZE-1-MINSIZE]);
       }
 
    //! append item array
@@ -293,7 +293,7 @@ class minidyna
       }
 
    //! prepend item by shifting all items
-   Item *prepend(const Item &v)
+   Item &prepend(const Item &v)
       {
       unsigned int i;
 
@@ -302,7 +302,7 @@ class minidyna
       for (i=SIZE-1; i>0; i--) set(i,get(i-1));
       set(0,v);
 
-      return(&ref(0));
+      return(ref(0));
       }
 
    //! remove item by moving the last item
