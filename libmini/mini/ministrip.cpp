@@ -8,6 +8,8 @@
 
 int ministrip::INSTANCES=0;
 
+int ministrip::USEGLOBALSHADER=-1;
+
 ministrip::SHADER_TYPE ministrip::SHADER[SHADERMAX];
 
 ministrip::SNIPPET_TYPE ministrip::SNIPPET[SNIPPETMAX];
@@ -1024,6 +1026,14 @@ void ministrip::setfogparams(int num,
    setpixshaderparams(num,fogcolor[0],fogcolor[1],fogcolor[2],0.0f,7);
    }
 
+// set global shader
+void ministrip::useglobalshader(int num)
+   {USEGLOBALSHADER=num;}
+
+// get global shader
+int ministrip::getglobalshader()
+   {return(USEGLOBALSHADER);}
+
 // set actual shader
 void ministrip::useshader(int num)
    {USESHADER=num;}
@@ -1035,6 +1045,11 @@ int ministrip::getshader()
 // render triangle strips
 void ministrip::render(int wocolor,int wonrm,int wotex)
    {
+   int shader;
+
+   shader=USESHADER;
+   if (shader<0) shader=USEGLOBALSHADER;
+
    if (wocolor==0)
       if (COLARRAY==NULL) color(COLR,COLG,COLB,COLA);
 
@@ -1056,10 +1071,10 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
       mtxmodel();
       }
 
-   if (USESHADER>=0)
+   if (shader>=0)
       {
-      enablevtxshader(USESHADER);
-      enablepixshader(USESHADER);
+      enablevtxshader(shader);
+      enablepixshader(shader);
       }
 
    vertexarray(VTXARRAY);
@@ -1101,10 +1116,10 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
             }
          }
 
-   if (USESHADER>=0)
+   if (shader>=0)
       {
-      disablevtxshader(USESHADER);
-      disablepixshader(USESHADER);
+      disablevtxshader(shader);
+      disablepixshader(shader);
       }
 
    if (ZSCALE!=1.0f)
@@ -1130,13 +1145,15 @@ void ministrip::rendermulti(int passes,
 
    static minisurf surf;
 
-   int shader;
+   int globalshader,shader;
 
    int dorender;
 
    if (passes<1 || passes>4) ERRORMSG();
 
    // disable regular shader
+   globalshader=getglobalshader();
+   useglobalshader(-1);
    shader=getshader();
    useshader(-1);
 
@@ -1166,6 +1183,7 @@ void ministrip::rendermulti(int passes,
       }
 
    // enable previous shader
+   useglobalshader(globalshader);
    useshader(shader);
    }
 

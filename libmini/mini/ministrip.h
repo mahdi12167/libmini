@@ -126,6 +126,12 @@ class ministrip
    //! get default shader
    static int getdefaultshader() {return(0);}
 
+   //! set global shader
+   static void useglobalshader(int num=0);
+
+   //! get global shader
+   static int getglobalshader();
+
    //! set actual shader
    void useshader(int num=0);
 
@@ -263,6 +269,7 @@ class ministrip
    static SNIPPET_TYPE SNIPPET[SNIPPETMAX];
    static int SNIPPETS;
 
+   static int USEGLOBALSHADER;
    int USESHADER;
    };
 

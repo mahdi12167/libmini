@@ -172,7 +172,7 @@ class mininode_geometry: public mininode, public ministrip
    //! default constructor
    mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
       : mininode(ID), ministrip(colcomps,nrmcomps,texcomps)
-      {useshader();}
+      {useglobalshader();}
 
    //! destructor
    virtual ~mininode_geometry()
