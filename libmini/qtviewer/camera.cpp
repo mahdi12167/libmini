@@ -325,10 +325,9 @@ void Camera::timerEvent(int timerId)
 void Camera::startIdling()
 {
    if (m_IdlingTimerId == -1)
-   {
-      m_IdlingTimer.start();
       m_IdlingTimerId = m_window->startTimer((int)(1000.0/CAMERA_FPS));
-   }
+
+   m_IdlingTimer.start();
 }
 
 void Camera::stopIdling()

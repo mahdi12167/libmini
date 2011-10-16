@@ -211,13 +211,14 @@ void Viewer::draw()
    // tell camera
    set_camera(getCamera());
 
+   // tell lighting
+   if (m_pEarthParams->usediffuse) setLight(m_DayHourDelta);
+
    // render scene
    render_geometry(m_StereoBase);
 
    // render head-up display
    renderHUD();
-
-   getCamera()->startIdling();
 }
 
 // render head-up display
