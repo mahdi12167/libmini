@@ -512,6 +512,24 @@ void Viewer::render_ecef_geometry()
    globe.render();
    enableRGBAwriting();
 
+   // setup shading params
+   if (m_pEarthParams->usediffuse)
+   {
+      int slot=0; //!! use slot with shade_direct
+      ministrip::useglobalshader(slot);
+      miniv3d lgl=getearth()->getnull()->rot_g2o(getearth()->get()->lightdir,getearth()->getnull()->getcenter());
+      float lightdir[3]={lgl.x,lgl.x,lgl.x};
+      ministrip::setshadedirectparams(slot,lightdir,0.5f,0.5f);
+   }
+   else ministrip::useglobalshader(ministrip::getdefaultshader());
+
+   // setup fogging params:
+   float fogstart=MAXFLOAT/2;
+   float fogend=MAXFLOAT;
+   float fogdensity=0.1f; //!! use matching density
+   float fogcolor[3]={1,1,1};
+   ministrip::setfogparams(ministrip::getdefaultshader(),fogstart,fogend,fogdensity,fogcolor);
+
    // render ecef geometry by traversing scene graph
    initstate();
    m_root.traverse();
