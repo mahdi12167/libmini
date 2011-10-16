@@ -108,20 +108,23 @@ class ministrip
    static void setpixshadertexbuf(int num,databuf *buf,int clamp=1,int mipmaps=1,int n=0);
 
    //! set direct shading parameters
-   void setshadedirectparams(int num,
-                             float lightdir[3],
-                             float lightbias=0.5f,float lightoffset=0.5f);
+   static void setshadedirectparams(int num,
+                                    float lightdir[3],
+                                    float lightbias=0.5f,float lightoffset=0.5f);
 
    //! set direct texturing parameters
-   void settexturedirectparams(int num,
-                               float lightdir[3],
-                               float transbias=4.0f,float transoffset=0.0f);
+   static void settexturedirectparams(int num,
+                                      float lightdir[3],
+                                      float transbias=4.0f,float transoffset=0.0f);
 
    //! set fog parameters
-   void setfogparams(int num,
-                     float fogstart,float fogend,
-                     float fogdensity,
-                     float fogcolor[3]);
+   static void setfogparams(int num,
+                            float fogstart,float fogend,
+                            float fogdensity,
+                            float fogcolor[3]);
+
+   //! get default shader
+   static int getdefaultshader() {return(0);}
 
    //! set actual shader
    void useshader(int num=0);
@@ -151,10 +154,10 @@ class ministrip
    float **getvtxref() {return(&VTXARRAY);}
 
    //! get vertex shader
-   char *getvtxshader(int num);
+   static char *getvtxshader(int num);
 
    //! get pixel shader
-   char *getpixshader(int num);
+   static char *getpixshader(int num);
 
    //! get bounding box
    void getbbox(float *minx,float *maxx,
