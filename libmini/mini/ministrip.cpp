@@ -344,6 +344,15 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    SIZE=0;
 
+   BBOXMINX=MAXFLOAT;
+   BBOXMAXX=-MAXFLOAT;
+
+   BBOXMINY=MAXFLOAT;
+   BBOXMAXY=-MAXFLOAT;
+
+   BBOXMINZ=MAXFLOAT;
+   BBOXMAXZ=-MAXFLOAT;
+
    COLR=1.0f;
    COLG=1.0f;
    COLB=1.0f;
@@ -493,7 +502,18 @@ ministrip::~ministrip()
 
 // clear strip
 void ministrip::clear()
-   {SIZE=0;}
+   {
+   SIZE=0;
+
+   BBOXMINX=MAXFLOAT;
+   BBOXMAXX=-MAXFLOAT;
+
+   BBOXMINY=MAXFLOAT;
+   BBOXMAXY=-MAXFLOAT;
+
+   BBOXMINZ=MAXFLOAT;
+   BBOXMAXZ=-MAXFLOAT;
+   }
 
 // begin next triangle strip
 void ministrip::beginstrip()
@@ -585,6 +605,15 @@ void ministrip::addvtx()
       if (TEXARRAY!=NULL)
          if ((TEXARRAY=(float *)realloc(TEXARRAY,TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
       }
+
+   if (VTXX<BBOXMINX) BBOXMINX=VTXX;
+   if (VTXX>BBOXMAXX) BBOXMAXX=VTXX;
+
+   if (VTXY<BBOXMINY) BBOXMINY=VTXY;
+   if (VTXY>BBOXMAXY) BBOXMAXY=VTXY;
+
+   if (VTXZ<BBOXMINZ) BBOXMINZ=VTXZ;
+   if (VTXZ>BBOXMAXZ) BBOXMAXZ=VTXZ;
 
    ptr=&VTXARRAY[3*SIZE];
 
@@ -1154,4 +1183,19 @@ char *ministrip::getpixshader(int num)
    if (num<0 || num>=SHADERMAX) ERRORMSG();
 
    return(SHADER[num].frgprog);
+   }
+
+// get bounding box
+void ministrip::getbbox(float *minx,float *maxx,
+                        float *miny,float *maxy,
+                        float *minz,float *maxz)
+   {
+   *minx=BBOXMINX;
+   *maxx=BBOXMAXX;
+
+   *miny=BBOXMINY;
+   *maxy=BBOXMAXY;
+
+   *minz=BBOXMINZ;
+   *maxz=BBOXMAXZ;
    }
