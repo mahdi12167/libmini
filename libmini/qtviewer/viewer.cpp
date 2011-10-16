@@ -479,7 +479,7 @@ mininode *Viewer::buildECEFGeometry()
    // define ecef z-axis:
 
    mininode *axis=new mininode;
-   mininoderef pole=mininoderef(new mininode_geometry_tube(10000,1000000));
+   mininoderef pole=mininoderef(new mininode_geometry_tube(20000,1000000));
 
    axis->append(new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH)))->
       append(new mininode_color(miniv3d(0,0,0.25)))->
