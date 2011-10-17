@@ -11,11 +11,15 @@
 
 void errormsg(const char *file,int line,int fatal)
 {
-   if (fatal==MINI_ERROR_NONFATAL) fprintf(stderr,"warning");
-   else if (fatal==MINI_ERROR_MEM) fprintf(stderr,"insufficient memory");
-   else if (fatal==MINI_ERROR_IO) fprintf(stderr,"io error");
-   else fprintf(stderr,"fatal error");
-   fprintf(stderr," in <%s> at line %d!\n",file,line);
+   QString msg;
+
+   if (fatal==MINI_ERROR_NONFATAL) msg = "warning";
+   else if (fatal==MINI_ERROR_MEM) msg = "insufficient memory";
+   else if (fatal==MINI_ERROR_IO) msg = "io error";
+   else msg = "fatal error";
+   msg += " in <" + QString(file) + "> at line " + QString::number(line) + "!";
+
+   QMessageBox::warning(0, "error", msg, QMessageBox::Ok);
 }
 
 int main(int argc, char *argv[])
