@@ -480,14 +480,14 @@ mininode *Viewer::buildECEFGeometry()
    // define ecef z-axis:
 
    mininode *axis=new mininode;
-   mininoderef pole=mininoderef(new mininode_geometry_tube(20000,1000000));
+   mininoderef pole=mininoderef(new mininode_geometry_tube(10000,500000));
 
    axis->append(new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH)))->
-      append(new mininode_color(miniv3d(0,0,0.25)))->
+      append(new mininode_color(miniv3d(0,0,0.5)))->
       append(pole);
 
    axis->append(new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH)))->
-      append(new mininode_color(miniv3d(0,0,0.5)))->
+      append(new mininode_color(miniv3d(0,0,1.0)))->
       append(pole);
 
    return(axis);
@@ -512,23 +512,73 @@ void Viewer::render_ecef_geometry()
    globe.render();
    enableRGBAwriting();
 
+   // setup shader programs:
+
+   static bool shader_setup=false;
+   static int shader_slot1,shader_slot2;
+
+   if (!shader_setup)
+   {
+      shader_slot1=ministrip::getfreeslot();
+
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BEGIN);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_HEADER);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BASIC);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_VIEWPOS);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_NORMAL);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOG);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOOTER);
+      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_END);
+
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BEGIN);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_HEADER);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BASIC);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_SHADE);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOG);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOOTER);
+      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_END);
+
+      shader_slot2=ministrip::getfreeslot();
+
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BEGIN);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_HEADER);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BASIC);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_VIEWPOS);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL_DIRECT);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOG);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOOTER);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_END);
+
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BEGIN);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_HEADER);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BASIC);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_SHADE_DIRECT);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOG);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOOTER);
+      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_END);
+
+      shader_setup=true;
+   }
+
+   int slot=shader_slot1;
+
    // setup shading params
    if (m_pEarthParams->usediffuse)
    {
-      int slot=0; //!! use slot with shade_direct
-      ministrip::useglobalshader(slot);
-      miniv3d lgl=getearth()->getnull()->rot_g2o(getearth()->get()->lightdir,getearth()->getnull()->getcenter());
-      float lightdir[3]={lgl.x,lgl.x,lgl.x};
+      slot=shader_slot2;
+      miniv3d lgl=getnull()->rot_g2o(getearth()->get()->lightdir,getnull()->getcenter());
+      float lightdir[3]={lgl.x,lgl.y,lgl.z};
       ministrip::setshadedirectparams(slot,lightdir,0.5f,0.5f);
    }
-   else ministrip::useglobalshader(ministrip::getdefaultshader());
 
-   // setup fogging params:
-   float fogstart=MAXFLOAT/2;
-   float fogend=MAXFLOAT;
-   float fogdensity=0.1f; //!! use matching density
-   float fogcolor[3]={1,1,1};
-   ministrip::setfogparams(ministrip::getdefaultshader(),fogstart,fogend,fogdensity,fogcolor);
+   // setup fogging params
+   float fogstart=getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
+   float fogend=getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
+   if (!getearth()->get()->usefog) fogend=0.0f;
+
+   // pass shader params
+   ministrip::useglobalshader(slot);
+   ministrip::setfogparams(slot,fogstart,fogend,getearth()->get()->fogdensity,getearth()->get()->fogcolor);
 
    // render ecef geometry by traversing scene graph
    initstate();

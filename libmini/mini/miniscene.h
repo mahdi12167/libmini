@@ -82,6 +82,9 @@ class miniscene
    //! get the encapsulated earth object
    miniearth *getearth() {return(EARTH);}
 
+   //! get the encapsulated null layer
+   minilayer *getnull() {return(EARTH->getnull());}
+
    //! get initial view point
    minicoord getinitial();
 
