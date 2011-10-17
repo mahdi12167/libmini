@@ -1469,17 +1469,17 @@ void setfrgprogpar(int n,float p1,float p2,float p3,float p4) {setprogpar(n,p1,p
 void setfrgprogpars(int n,int count,const float *params) {setprogpars(n,count,params,FALSE);}
 void deletefrgprog(int progid) {deleteprog(progid);}
 
-void mtxgetmodel(float mtx[16])
+void mtxgetmodel(float oglmtx[16])
    {
 #ifndef NOOGL
-   glGetFloatv(GL_MODELVIEW_MATRIX,mtx);
+   glGetFloatv(GL_MODELVIEW_MATRIX,oglmtx);
 #endif
    }
 
-void mtxgetmodel(double mtx[16])
+void mtxgetmodel(double oglmtx[16])
    {
 #ifndef NOOGL
-   glGetDoublev(GL_MODELVIEW_MATRIX,mtx);
+   glGetDoublev(GL_MODELVIEW_MATRIX,oglmtx);
 #endif
    }
 
@@ -1527,6 +1527,20 @@ void mtxget(const miniv4d mtx[3],double oglmtx[16])
    oglmtx[13]=mtx[1].w;
    oglmtx[14]=mtx[2].w;
    oglmtx[15]=1.0;
+   }
+
+void mtxget(const double oglmtx[16],miniv3d mtx[3])
+   {
+   mtx[0]=miniv3d(oglmtx[0],oglmtx[4],oglmtx[8]);
+   mtx[1]=miniv3d(oglmtx[1],oglmtx[5],oglmtx[9]);
+   mtx[2]=miniv3d(oglmtx[2],oglmtx[6],oglmtx[10]);
+   }
+
+void mtxget(const double oglmtx[16],miniv4d mtx[3])
+   {
+   mtx[0]=miniv4d(oglmtx[0],oglmtx[4],oglmtx[8],oglmtx[12]);
+   mtx[1]=miniv4d(oglmtx[1],oglmtx[5],oglmtx[9],oglmtx[13]);
+   mtx[2]=miniv4d(oglmtx[2],oglmtx[6],oglmtx[10],oglmtx[14]);
    }
 
 void multitexcoord(const unsigned int unit,const float s,const float t,const float r)
