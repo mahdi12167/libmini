@@ -3,6 +3,58 @@
 #include "mininodes.h"
 
 double mininode_color::brightness=1.0;
+miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
+BOOLINT mininode_coord::lightdirset=FALSE;
+
+mininode_coord::mininode_coord(const minicoord &c)
+   : mininode_transform()
+   {
+   minicoord ecef=c;
+   if (ecef.type!=minicoord::MINICOORD_LINEAR) ecef.convert2(minicoord::MINICOORD_ECEF);
+
+   miniv3d p=ecef.vec;
+   miniv3d u=p;
+   u.normalize();
+   miniv3d d=miniv3d(0,0,1);
+   miniv3d r=d/u;
+   r.normalize();
+   if (r.getlength2()==0.0) r=miniv3d(0,1,0);
+   d=u/r;
+   d.normalize();
+
+   miniv4d mtx[3]={miniv4d(r.x,d.x,u.x,p.x),miniv4d(r.y,d.y,u.y,p.y),miniv4d(r.z,d.z,u.z,p.z)};
+   mtxget(mtx,oglmtx);
+
+   up=u;
+   }
+
+void mininode_coord::set_lightdir(const miniv3d &d)
+   {
+   lightdir=d;
+   lightdirset=(d.getlength2()>0.0);
+   }
+
+void mininode_coord::traverse_pre()
+   {
+   if (lightdirset)
+      {
+      double l=up*lightdir;
+      if (l<0.0) l=0.0;
+      l=1.0-pow(1.0-l,10.0);
+
+      mininode_color::set_brightness(0.5*l+0.5);
+      }
+
+   mininode_transform::traverse_pre();
+   }
+
+void mininode_coord::traverse_post()
+   {
+   if (lightdirset)
+      mininode_color::set_brightness(1.0);
+
+   mininode_transform::traverse_post();
+   }
 
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)

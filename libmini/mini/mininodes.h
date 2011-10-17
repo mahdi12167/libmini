@@ -34,12 +34,48 @@ class mininode_cam: public mininode, public minicam
       {}
    };
 
+//! color node
+class mininode_color: public mininode
+   {
+   public:
+
+   static const unsigned int ID=2;
+
+   //! default constructor
+   mininode_color(const miniv4d &c)
+      : mininode(ID)
+      {rgba=c;}
+
+   mininode_color(const miniv3d &c)
+      : mininode(ID)
+      {rgba=miniv4d(c,1);}
+
+   //! destructor
+   virtual ~mininode_color()
+      {}
+
+   static void set_brightness(double b=1.0)
+      {brightness=b;}
+
+   protected:
+
+   miniv4d rgba;
+
+   static double brightness;
+
+   virtual void traverse_pre()
+      {color(rgba*brightness);}
+
+   virtual void traverse_past()
+      {color(rgba*brightness);}
+   };
+
 //! transformation node
 class mininode_transform: public mininode
    {
    public:
 
-   static const unsigned int ID=2;
+   static const unsigned int ID=3;
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
@@ -110,60 +146,19 @@ class mininode_coord: public mininode_transform
    public:
 
    //! default constructor
-   mininode_coord(const minicoord &c)
-      : mininode_transform()
-      {
-      minicoord ecef=c;
-      if (ecef.type!=minicoord::MINICOORD_LINEAR) ecef.convert2(minicoord::MINICOORD_ECEF);
+   mininode_coord(const minicoord &c);
 
-      miniv3d p=ecef.vec;
-      miniv3d u=p;
-      u.normalize();
-      miniv3d d=miniv3d(0,0,1);
-      miniv3d r=d/u;
-      r.normalize();
-      if (r.getlength2()==0.0) r=miniv3d(0,1,0);
-      d=u/r;
-      d.normalize();
-
-      miniv4d mtx[3]={miniv4d(r.x,d.x,u.x,p.x),miniv4d(r.y,d.y,u.y,p.y),miniv4d(r.z,d.z,u.z,p.z)};
-      mtxget(mtx,oglmtx);
-      }
-   };
-
-//! color node
-class mininode_color: public mininode
-   {
-   public:
-
-   static const unsigned int ID=3;
-
-   //! default constructor
-   mininode_color(const miniv4d &c)
-      : mininode(ID)
-      {rgba=c;}
-
-   mininode_color(const miniv3d &c)
-      : mininode(ID)
-      {rgba=miniv4d(c,1);}
-
-   //! destructor
-   virtual ~mininode_color()
-      {}
-
-   static void set_brightness(double c=1.0);
+   static void set_lightdir(const miniv3d &d);
 
    protected:
 
-   miniv4d rgba;
+   miniv3d up;
 
-   static double brightness;
+   static miniv3d lightdir;
+   static BOOLINT lightdirset;
 
-   virtual void traverse_pre()
-      {color(rgba*brightness);}
-
-   virtual void traverse_past()
-      {color(rgba*brightness);}
+   virtual void traverse_pre();
+   virtual void traverse_post();
    };
 
 //! geometry node
