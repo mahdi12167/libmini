@@ -544,7 +544,7 @@ void Viewer::render_ecef_geometry()
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_HEADER);
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BASIC);
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_VIEWPOS);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL_DIRECT);
+      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL);
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOG);
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOOTER);
       ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_END);
@@ -562,11 +562,26 @@ void Viewer::render_ecef_geometry()
 
    int slot=shader_slot1;
 
+   mininode_coord::set_lightdir(miniv3d(0,0,0));
+
    // setup shading params
    if (m_pEarthParams->usediffuse)
    {
       slot=shader_slot2;
-      miniv3d lgl=getnull()->rot_g2o(getearth()->get()->lightdir,getnull()->getcenter());
+
+      miniv3d l=getearth()->get()->lightdir;
+      mininode_coord::set_lightdir(l);
+
+      double oglmtx[16];
+      mtxgetmodel(oglmtx);
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+      miniv3d invtra[3];
+      inv_mtx(invtra,mtx);
+      tra_mtx(invtra,invtra);
+
+      miniv3d lgl;
+      lgl=mlt_vec(invtra,l);
       float lightdir[3]={lgl.x,lgl.y,lgl.z};
       ministrip::setshadedirectparams(slot,lightdir,0.5f,0.5f);
    }
@@ -575,13 +590,11 @@ void Viewer::render_ecef_geometry()
    float fogstart=getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
    float fogend=getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
    if (!getearth()->get()->usefog) fogend=0.0f;
-
-   // pass shader params
-   ministrip::useglobalshader(slot);
    ministrip::setfogparams(slot,fogstart,fogend,getearth()->get()->fogdensity,getearth()->get()->fogcolor);
 
    // render ecef geometry by traversing scene graph
    initstate();
+   ministrip::useglobalshader(slot);
    m_root.traverse();
    exitstate();
 }
