@@ -123,13 +123,15 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
    miniv3d rot[3];
    rot_mtx(rot,-360.0/tessel,dir);
 
+   beginstrip();
+
    for (int i=0; i<=tessel; i++)
       {
       setnrm(right);
       addvtx(project(start+right,dir,start,start_dir));
       addvtx(project(end+right,dir,end,end_dir));
 
-      right=mlt_vec(rot,right);
+      if (i<tessel) right=mlt_vec(rot,right);
       }
 
    if (start_cap)
@@ -142,7 +144,7 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
          addvtx(start);
          addvtx(project(start+right,dir,start,start_dir));
 
-         right=mlt_vec(rot,right);
+         if (i<tessel) right=mlt_vec(rot,right);
          }
       }
 
@@ -156,11 +158,11 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
          addvtx(project(end+right,dir,end,end_dir));
          addvtx(end);
 
-         right=mlt_vec(rot,right);
+         if (i<tessel) right=mlt_vec(rot,right);
          }
       }
 
-   return(right);
+   return(project(end+right,dir,end,end_dir)-end);
    }
 
 miniv3d mininode_geometry_tube::project(const miniv3d &p,const miniv3d &d,
