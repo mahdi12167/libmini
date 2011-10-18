@@ -59,55 +59,42 @@ void mininode_coord::traverse_post()
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
    {
-   for (int i=0; i<=tessel; i++)
-      {
-      double w=2*PI*i/tessel;
-      double x=sin(w)*radius;
-      double y=cos(w)*radius;
-
-      setnrm(miniv3d(x,y,0));
-      addvtx(miniv3d(x,y,0));
-      addvtx(miniv3d(x,y,height));
-      }
-
-   beginstrip();
-   setnrm(miniv3d(0,0,-1));
-
-   for (int i=0; i<=tessel; i++)
-      {
-      double w=2*PI*i/tessel;
-      double x=sin(w)*radius;
-      double y=cos(w)*radius;
-
-      addvtx(miniv3d(0,0,0));
-      addvtx(miniv3d(x,y,0));
-      }
-
-   beginstrip();
-   setnrm(miniv3d(0,0,1));
-
-   for (int i=0; i<=tessel; i++)
-      {
-      double w=2*PI*i/tessel;
-      double x=sin(w)*radius;
-      double y=cos(w)*radius;
-
-      addvtx(miniv3d(x,y,height));
-      addvtx(miniv3d(0,0,height));
-      }
+   create_tube(miniv3d(0,0,0),miniv3d(0,0,height),
+               miniv3d(0,0,1),miniv3d(0,0,1),
+               miniv3d(1,0,0),
+               radius,
+               TRUE,TRUE,
+               tessel);
    }
 
 mininode_geometry_tube::mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel)
    : mininode_geometry(0,3,0)
    {
-   miniv3d dir=p2-p1;
-   dir.normalize();
-
-   miniv3d right,up;
+   miniv3d dir=p2-p1,right;
    if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
    else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
    else right=miniv3d(dir.z,0,0);
-   up=right/dir;
+
+   create_tube(p1,p2,
+               dir,dir,
+               right,
+               radius,
+               TRUE,TRUE,
+               tessel);
+   }
+
+miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &end,
+                                            const miniv3d &start_dir,const miniv3d &end_dir,
+                                            const miniv3d &start_right,
+                                            double radius,
+                                            BOOLINT start_cap,BOOLINT end_cap,
+                                            int tessel)
+   {
+   miniv3d dir=end-start;
+   dir.normalize();
+
+   miniv3d right,up;
+   up=start_right/dir;
    right=dir/up;
    right.normalize();
    right*=radius;
@@ -118,31 +105,56 @@ mininode_geometry_tube::mininode_geometry_tube(const miniv3d &p1,const miniv3d &
    for (int i=0; i<=tessel; i++)
       {
       setnrm(right);
-      addvtx(p1+right);
-      addvtx(p2+right);
+      addvtx(project(start+right,dir,start,start_dir));
+      addvtx(project(end+right,dir,end,end_dir));
 
       right=mlt_vec(rot,right);
       }
 
-   beginstrip();
-   setnrm(miniv3d(0,0,-1));
-
-   for (int i=0; i<=tessel; i++)
+   if (start_cap)
       {
-      addvtx(p1);
-      addvtx(p1+right);
+      beginstrip();
+      setnrm(-start_dir);
 
-      right=mlt_vec(rot,right);
+      for (int i=0; i<=tessel; i++)
+         {
+         addvtx(start);
+         addvtx(project(start+right,dir,start,start_dir));
+
+         right=mlt_vec(rot,right);
+         }
       }
 
-   beginstrip();
-   setnrm(miniv3d(0,0,1));
-
-   for (int i=0; i<=tessel; i++)
+   if (end_cap)
       {
-      addvtx(p2+right);
-      addvtx(p2);
+      beginstrip();
+      setnrm(end_dir);
 
-      right=mlt_vec(rot,right);
+      for (int i=0; i<=tessel; i++)
+         {
+         addvtx(project(end+right,dir,end,end_dir));
+         addvtx(end);
+
+         right=mlt_vec(rot,right);
+         }
       }
+
+   return(right);
+   }
+
+miniv3d mininode_geometry_tube::project(const miniv3d &p,const miniv3d &d,
+                                        const miniv3d &o,const miniv3d &n) const
+   {
+   miniv3d nrm=n;
+   nrm.normalize();
+
+   miniv3d dir=d;
+   dir.normalize();
+
+   double l=(p-o)*n;
+   double c=n*d;
+
+   if (c!=0.0) l/=-c;
+
+   return(p+l*d);
    }

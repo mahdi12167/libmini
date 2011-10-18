@@ -177,6 +177,12 @@ class mininode_geometry: public mininode, public ministrip
    virtual ~mininode_geometry()
       {}
 
+   void addcoord(minicoord c)
+      {
+      if (c.type!=minicoord::MINICOORD_LINEAR) c.convert2(minicoord::MINICOORD_ECEF);
+      addvtx(c.vec);
+      }
+
    protected:
 
    virtual void traverse_pre()
@@ -191,6 +197,18 @@ class mininode_geometry_tube: public mininode_geometry
    //! default constructor
    mininode_geometry_tube(double radius,double height,int tessel=16);
    mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel=16);
+
+   protected:
+
+   miniv3d create_tube(const miniv3d &start,const miniv3d &end,
+                       const miniv3d &start_dir,const miniv3d &end_dir,
+                       const miniv3d &start_right,
+                       double radius,
+                       BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
+                       int tessel=16);
+
+   miniv3d project(const miniv3d &p,const miniv3d &d,
+                   const miniv3d &o,const miniv3d &n) const;
    };
 
 #endif
