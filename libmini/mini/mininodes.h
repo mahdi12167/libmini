@@ -187,6 +187,12 @@ class mininode_geometry: public mininode, public ministrip
 
    virtual void traverse_pre()
       {render(1);}
+
+   static miniv3d project(const miniv3d &pos,const miniv3d &dir,
+                          const miniv3d &org,const miniv3d &nrm);
+
+   static miniv3d get_halfdir(const miniv3d &dir1,const miniv3d &dir2);
+   static miniv3d get_right(const miniv3d &dir);
    };
 
 //! tube geometry node
@@ -195,11 +201,12 @@ class mininode_geometry_tube: public mininode_geometry
    public:
 
    //! default constructors
+   mininode_geometry_tube() : mininode_geometry(0,3,0) {}
    mininode_geometry_tube(double radius,double height,int tessel=16);
-   mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel=16);
+   mininode_geometry_tube(const miniv3d &pos1,const miniv3d &pos2,double radius,int tessel=16);
 
    //! multi-tube constructor
-   mininode_geometry_tube(const minidyna<miniv3d> &p,double radius,
+   mininode_geometry_tube(const minidyna<miniv3d> &pos,double radius,
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
 
@@ -211,9 +218,16 @@ class mininode_geometry_tube: public mininode_geometry
                        double radius,
                        BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                        int tessel=16);
+   };
 
-   miniv3d project(const miniv3d &p,const miniv3d &d,
-                   const miniv3d &o,const miniv3d &n) const;
+//! torus geometry node
+class mininode_geometry_torus: public mininode_geometry_tube
+   {
+   public:
+
+   //! default constructor
+   mininode_geometry_torus(const minidyna<miniv3d> &pos,double radius,
+                           int tessel=16);
    };
 
 #endif

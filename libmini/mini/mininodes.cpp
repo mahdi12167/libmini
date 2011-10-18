@@ -56,6 +56,48 @@ void mininode_coord::traverse_post()
    mininode_transform::traverse_post();
    }
 
+miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
+                                   const miniv3d &o,const miniv3d &n)
+   {
+   miniv3d nrm=n;
+   nrm.normalize();
+
+   miniv3d dir=d;
+   dir.normalize();
+
+   double l=(p-o)*n;
+   double c=n*d;
+
+   if (c!=0.0) l/=-c;
+
+   return(p+l*d);
+   }
+
+miniv3d mininode_geometry::get_halfdir(const miniv3d &dir1,const miniv3d &dir2)
+   {
+   miniv3d d1=dir1,d2=dir2;
+
+   d1.normalize();
+   d2.normalize();
+
+   return(d1+d2);
+   }
+
+miniv3d mininode_geometry::get_right(const miniv3d &dir)
+   {
+   miniv3d right;
+   if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
+   else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
+   else right=miniv3d(dir.z,0,0);
+
+   miniv3d up;
+   up=right/dir;
+   right=dir/up;
+   right.normalize();
+
+   return(right);
+   }
+
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
    {
@@ -67,15 +109,13 @@ mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int t
                tessel);
    }
 
-mininode_geometry_tube::mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel)
+mininode_geometry_tube::mininode_geometry_tube(const miniv3d &pos1,const miniv3d &pos2,double radius,int tessel)
    : mininode_geometry(0,3,0)
    {
-   miniv3d dir=p2-p1,right;
-   if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
-   else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
-   else right=miniv3d(dir.z,0,0);
+   miniv3d dir=pos2-pos1;
+   miniv3d right=get_right(dir);
 
-   create_tube(p1,p2,
+   create_tube(pos1,pos2,
                dir,dir,
                right,
                radius,
@@ -83,24 +123,23 @@ mininode_geometry_tube::mininode_geometry_tube(const miniv3d &p1,const miniv3d &
                tessel);
    }
 
-mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &p,double radius,
+mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,double radius,
                                                BOOLINT start_cap,BOOLINT end_cap,
                                                int tessel)
    : mininode_geometry(0,3,0)
    {
-   if (p.getsize()<2) return;
+   if (pos.getsize()<2) return;
 
-   miniv3d dir=p[1]-p[0],right;
-   if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
-   else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
-   else right=miniv3d(dir.z,0,0);
+   miniv3d dir=pos[1]-pos[0];
+   miniv3d right=get_right(dir);
 
-   for (unsigned int i=0; i<p.getsize()-1; i++)
-      right=create_tube(p[i],p[i+1],
-                        (i==0)?p[i+1]-p[i]:p[i+1]-p[i-1],(i==p.getsize()-2)?p[i+1]-p[i]:p[i+2]-p[i],
+   for (unsigned int i=0; i<pos.getsize()-1; i++)
+      right=create_tube(pos[i],pos[i+1],
+                        (i==0)?pos[i+1]-pos[i]:get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]),
+                        (i==pos.getsize()-2)?pos[i+1]-pos[i]:get_halfdir(pos[i+1]-pos[i],pos[i+2]-pos[i+1]),
                         right,
                         radius,
-                        (i==0)?start_cap:FALSE,(i==p.getsize()-2)?end_cap:FALSE,
+                        (i==0)?start_cap:FALSE,(i==pos.getsize()-2)?end_cap:FALSE,
                         tessel);
    }
 
@@ -165,19 +204,34 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
    return(project(end+right,dir,end,end_dir)-end);
    }
 
-miniv3d mininode_geometry_tube::project(const miniv3d &p,const miniv3d &d,
-                                        const miniv3d &o,const miniv3d &n) const
+mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,double radius,
+                                                 int tessel)
+   : mininode_geometry_tube()
    {
-   miniv3d nrm=n;
-   nrm.normalize();
+   if (pos.getsize()<4) return;
 
-   miniv3d dir=d;
-   dir.normalize();
+   miniv3d dir=pos[1]-pos[0];
+   miniv3d right=get_right(dir);
 
-   double l=(p-o)*n;
-   double c=n*d;
+   for (unsigned int i=0; i<pos.getsize(); i++)
+      {
+      unsigned int il1,ir1,ir2;
 
-   if (c!=0.0) l/=-c;
+      if (i>0) il1=i-1;
+      else il1=pos.getsize()-1;
 
-   return(p+l*d);
+      if (i<pos.getsize()-1) ir1=i+1;
+      else ir1=0;
+
+      if (ir1<pos.getsize()-1) ir2=ir1+1;
+      else ir2=0;
+
+      right=create_tube(pos[i],pos[ir1],
+                        get_halfdir(pos[i]-pos[il1],pos[ir1]-pos[i]),
+                        get_halfdir(pos[ir1]-pos[i],pos[ir2]-pos[ir1]),
+                        right,
+                        radius,
+                        FALSE,FALSE,
+                        tessel);
+      }
    }

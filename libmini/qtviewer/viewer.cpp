@@ -282,13 +282,13 @@ void Viewer::renderHUD()
 
    str.sprintf("Latitude:");
    drawText(x, y, str);
-   str.sprintf("%-6.2f", cameraPosLLH.vec.x/3600.0);
+   str.sprintf("%-6.2f", cameraPosLLH.vec.y/3600.0);
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
    str.sprintf("Longitude:");
    drawText(x, y, str);
-   str.sprintf("%-6.2f", cameraPosLLH.vec.y/3600.0);
+   str.sprintf("%-6.2f", cameraPosLLH.vec.x/3600.0);
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
@@ -477,6 +477,8 @@ void Viewer::setExagger(double scale)
 
 mininode *Viewer::buildECEFGeometry()
 {
+   mininode *group=new mininode;
+
    // define ecef z-axis:
 
    mininode *axis=new mininode;
@@ -490,18 +492,24 @@ mininode *Viewer::buildECEFGeometry()
       append(new mininode_color(miniv3d(0,0,1.0)))->
       append(pole);
 
-   //!! test geometry
-   minidyna<miniv3d> p;
-   p.append(miniv3d(0,0,0));
-   p.append(miniv3d(0,0,100000));
-   p.append(miniv3d(100000,0,200000));
-   p.append(miniv3d(200000,0,50000));
-   mininode *tube=new mininode_geometry_tube(p,20000);
-   axis->append(new mininode_coord(minicoord(miniv3d(11*3600,49*3600,0),minicoord::MINICOORD_LLH)))->
-      append(new mininode_color(miniv3d(1,1,1)))->
-      append(tube);
+   group->append(axis);
 
-   return(axis);
+   // define equator:
+
+   minidyna<miniv3d> pos;
+   static const int eqlines=100;
+
+   for (int i=0; i<eqlines; i++)
+      {
+      minicoord c(miniv3d((double)i/eqlines*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
+      c.convert2(minicoord::MINICOORD_ECEF);
+      pos.append(c.vec);
+      }
+
+   group->append(new mininode_color(miniv3d(0.5,0.5,0.5)))->
+      append(new mininode_geometry_torus(pos,5000));
+
+   return(group);
 }
 
 void Viewer::render_ecef_geometry()
