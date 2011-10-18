@@ -490,6 +490,17 @@ mininode *Viewer::buildECEFGeometry()
       append(new mininode_color(miniv3d(0,0,1.0)))->
       append(pole);
 
+   //!! test geometry
+   minidyna<miniv3d> p;
+   p.append(miniv3d(0,0,0));
+   p.append(miniv3d(0,0,100000));
+   p.append(miniv3d(100000,0,200000));
+   p.append(miniv3d(200000,0,50000));
+   mininode *tube=new mininode_geometry_tube(p,20000);
+   axis->append(new mininode_coord(minicoord(miniv3d(11*3600,49*3600,0),minicoord::MINICOORD_LLH)))->
+      append(new mininode_color(miniv3d(1,1,1)))->
+      append(tube);
+
    return(axis);
 }
 
