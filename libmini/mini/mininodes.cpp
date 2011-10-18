@@ -83,6 +83,27 @@ mininode_geometry_tube::mininode_geometry_tube(const miniv3d &p1,const miniv3d &
                tessel);
    }
 
+mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &p,double radius,
+                                               BOOLINT start_cap,BOOLINT end_cap,
+                                               int tessel)
+   : mininode_geometry(0,3,0)
+   {
+   if (p.getsize()<2) return;
+
+   miniv3d dir=p[1]-p[0],right;
+   if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
+   else if (dabs(dir.y)>dabs(dir.x) && dabs(dir.y)>dabs(dir.z)) right=miniv3d(0,0,dir.y);
+   else right=miniv3d(dir.z,0,0);
+
+   for (unsigned int i=0; i<p.getsize()-1; i++)
+      right=create_tube(p[i],p[i+1],
+                        (i==0)?p[i+1]-p[i]:p[i+1]-p[i-1],(i==p.getsize()-2)?p[i+1]-p[i]:p[i+2]-p[i],
+                        right,
+                        radius,
+                        (i==0)?start_cap:FALSE,(i==p.getsize()-2)?end_cap:FALSE,
+                        tessel);
+   }
+
 miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &end,
                                             const miniv3d &start_dir,const miniv3d &end_dir,
                                             const miniv3d &start_right,

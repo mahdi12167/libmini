@@ -194,9 +194,14 @@ class mininode_geometry_tube: public mininode_geometry
    {
    public:
 
-   //! default constructor
+   //! default constructors
    mininode_geometry_tube(double radius,double height,int tessel=16);
    mininode_geometry_tube(const miniv3d &p1,const miniv3d &p2,double radius,int tessel=16);
+
+   //! multi-tube constructor
+   mininode_geometry_tube(const minidyna<miniv3d> &p,double radius,
+                          BOOLINT start_cap,BOOLINT end_cap,
+                          int tessel=16);
 
    protected:
 
