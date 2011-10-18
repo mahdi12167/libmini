@@ -166,9 +166,13 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
 
    for (int i=0; i<=tessel; i++)
       {
-      setnrm(right);
-      addvtx(project(start+right,dir,start,start_dir));
-      addvtx(project(end+right,dir,end,end_dir));
+      miniv3d vtx1=project(start+right,dir,start,start_dir);
+      miniv3d vtx2=project(end+right,dir,end,end_dir);
+
+      setnrm(vtx1-start);
+      addvtx(vtx1);
+      setnrm(vtx2-end);
+      addvtx(vtx2);
 
       if (i<tessel) right=mlt_vec(rot,right);
       }
