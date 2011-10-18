@@ -234,7 +234,11 @@ void print_graphics_info(); // print useful OpenGL information
 #   ifndef __sgi
        extern "C"
           {
-          #include <GL/glext.h>
+#      ifndef _WIN32
+#         include <GL/glext.h>
+#      else
+#         include "GL/glext.h"
+#      endif
           }
 #   endif
 #else
