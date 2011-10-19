@@ -51,7 +51,7 @@ void Viewer::init()
    m_root.append(camera);
 
    // link ecef geometry
-   m_root.append(buildECEFGeometry());
+   m_root.append(build_ecef_geometry());
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -475,7 +475,7 @@ void Viewer::setExagger(double scale)
    camera->startIdling();
 }
 
-mininode *Viewer::buildECEFGeometry()
+mininode *Viewer::build_ecef_geometry()
 {
    mininode *group=new mininode;
 

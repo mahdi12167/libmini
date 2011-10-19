@@ -45,8 +45,6 @@ protected:
    void       initParameters();
    void       initBathyMap();
 
-   mininode   *buildECEFGeometry();
-
    void       resizeViewport();
    void       renderHUD();
 
@@ -70,6 +68,7 @@ protected:
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
+   virtual mininode *build_ecef_geometry();
    virtual void render_ecef_geometry();
 
 private:
