@@ -203,7 +203,7 @@ void Viewer::resizeViewport()
 
 // get actual camera
 Camera *Viewer::getCamera()
-   {return((Camera *)m_root.get_first(mininode_cam::ID));}
+   {return((Camera *)m_root.get_first(MININODE_CAM));}
 
 // draw scene
 void Viewer::draw()

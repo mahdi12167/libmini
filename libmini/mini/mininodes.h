@@ -15,18 +15,26 @@
 #include "miniOGL.h"
 #include "minicam.h"
 
+enum
+   {
+   MININODE=0,
+   MININODE_CAM,
+   MININODE_COLOR,
+   MININODE_SWITCH,
+   MININODE_TRANSFORM,
+   MININODE_GEOMETRY
+   };
+
 //! camera node
 class mininode_cam: public mininode, public minicam
    {
    public:
 
-   static const unsigned int ID=1;
-
    //! default constructor
    mininode_cam(miniearth *earth,
                 double lat=21.39,double lon=-157.72,double height=7E6,
                 double mindist=0.0)
-      : mininode(ID), minicam(earth,lat,lon,height,mindist)
+      : mininode(MININODE_CAM), minicam(earth,lat,lon,height,mindist)
       {}
 
    //! destructor
@@ -39,15 +47,13 @@ class mininode_color: public mininode
    {
    public:
 
-   static const unsigned int ID=2;
-
    //! default constructor
    mininode_color(const miniv4d &c)
-      : mininode(ID)
+      : mininode(MININODE_COLOR)
       {rgba=c;}
 
    mininode_color(const miniv3d &c)
-      : mininode(ID)
+      : mininode(MININODE_COLOR)
       {rgba=miniv4d(c,1);}
 
    //! destructor
@@ -70,16 +76,38 @@ class mininode_color: public mininode
       {color(rgba*brightness);}
    };
 
+//! switch node
+class mininode_switch: public mininode
+   {
+   public:
+
+   //! default constructor
+   mininode_switch()
+      : mininode(MININODE_SWITCH)
+      {ison=TRUE;}
+
+   //! destructor
+   virtual ~mininode_switch()
+      {}
+
+   virtual mininode *get_child(unsigned int i) const
+      {return(ison?get(i):NULL);}
+
+   void toggle(BOOLINT on=TRUE) {ison=on;}
+
+   protected:
+
+   BOOLINT ison;
+   };
+
 //! transformation node
 class mininode_transform: public mininode
    {
    public:
 
-   static const unsigned int ID=3;
-
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode(ID)
+      : mininode(MININODE_TRANSFORM)
       {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
@@ -166,11 +194,9 @@ class mininode_geometry: public mininode, public ministrip
    {
    public:
 
-   static const unsigned int ID=4;
-
    //! default constructor
    mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
-      : mininode(ID), ministrip(colcomps,nrmcomps,texcomps)
+      : mininode(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
       {}
 
    //! destructor
