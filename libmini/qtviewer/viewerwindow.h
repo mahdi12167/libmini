@@ -12,7 +12,7 @@
 
 #include <mini/minilayer.h>
 
-class Viewer;
+class Renderer;
 
 class QMimeData;
 
@@ -71,7 +71,7 @@ protected:
    void dragLeaveEvent(QDragLeaveEvent *event);
 
 private:
-   Viewer *viewer;
+   Renderer *viewer;
 
    QPoint lastPos;
    QPoint movedPos;

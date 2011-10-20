@@ -7,7 +7,7 @@
 
 #include <QtCore/QUrl>
 
-#include "viewer.h"
+#include "renderer.h"
 
 #include "viewerconst.h"
 #include "viewerwindow.h"
@@ -21,7 +21,7 @@ ViewerWindow::ViewerWindow()
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
 
    // init viewer
-   viewer = new Viewer(this);
+   viewer = new Renderer(this);
 
    // accept drag and drop
    setAcceptDrops(true);
