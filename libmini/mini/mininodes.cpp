@@ -8,22 +8,22 @@ BOOLINT mininode_coord::lightdirset=FALSE;
 
 void mininode_transform::optimize()
    {
-   if (get_children()==1)
-      if (get_child()->get_id()==MININODE_TRANSFORM)
-         {
-         // get child transformation
-         mininode_transform *transform=(mininode_transform *)get_child();
+   while (get_children()==1 &&
+          get_child()->get_id()==MININODE_TRANSFORM)
+      {
+      // get child transformation
+      mininode_transform *transform=(mininode_transform *)get_child();
 
-         // multiply with child's transformation matrix
-         miniv4d mtx[3],mtx1[3],mtx2[3];
-         mtxget(oglmtx,mtx1);
-         mtxget(transform->oglmtx,mtx2);
-         mlt_mtx(mtx,mtx2,mtx1);
-         mtxget(mtx,oglmtx);
+      // multiply with child's transformation matrix
+      miniv4d mtx[3],mtx1[3],mtx2[3];
+      mtxget(oglmtx,mtx1);
+      mtxget(transform->oglmtx,mtx2);
+      mlt_mtx(mtx,mtx2,mtx1);
+      mtxget(mtx,oglmtx);
 
-         // remove child
-         remove_child();
-         }
+      // remove child
+      remove_child();
+      }
 
    mininode::optimize();
    }
