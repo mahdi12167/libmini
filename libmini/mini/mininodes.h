@@ -90,7 +90,7 @@ class mininode_switch: public mininode
    virtual ~mininode_switch()
       {}
 
-   virtual mininode *get_child(unsigned int i) const
+   virtual mininode *get_child(unsigned int i=0) const
       {return(ison?get(i):NULL);}
 
    void toggle(BOOLINT on=TRUE) {ison=on;}
@@ -123,6 +123,8 @@ class mininode_transform: public mininode
 
    virtual void traverse_post()
       {mtxpop();}
+
+   virtual void optimize();
    };
 
 //! translation node
