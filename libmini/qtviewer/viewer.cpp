@@ -52,6 +52,7 @@ void Viewer::init()
 
    // link ecef geometry
    m_root.append(build_ecef_geometry());
+   m_root.optimize();
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
