@@ -92,6 +92,12 @@ class mininode: public minidyna< miniref<mininode> >
    virtual mininode *get_last(unsigned int id=0)
       {return(serialize(id).last());}
 
+   virtual void optimize()
+      {
+      for (unsigned int i=0; i<get_children(); i++)
+         get_child(i)->optimize();
+      }
+
    protected:
 
    unsigned int m_id;
@@ -99,8 +105,6 @@ class mininode: public minidyna< miniref<mininode> >
    virtual void traverse_pre() {}
    virtual void traverse_past() {}
    virtual void traverse_post() {}
-
-   virtual void optimize() {}
    };
 
 typedef miniref<mininode> mininoderef;

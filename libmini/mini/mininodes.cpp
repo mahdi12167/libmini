@@ -24,6 +24,8 @@ void mininode_transform::optimize()
          // remove child
          remove_child();
          }
+
+   mininode::optimize();
    }
 
 mininode_coord::mininode_coord(const minicoord &c)

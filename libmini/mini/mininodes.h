@@ -114,6 +114,8 @@ class mininode_transform: public mininode
    virtual ~mininode_transform()
       {}
 
+   virtual void optimize();
+
    protected:
 
    double oglmtx[16];
@@ -123,8 +125,6 @@ class mininode_transform: public mininode
 
    virtual void traverse_post()
       {mtxpop();}
-
-   virtual void optimize();
    };
 
 //! translation node
