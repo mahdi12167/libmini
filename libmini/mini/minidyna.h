@@ -293,25 +293,30 @@ class minidyna
       }
 
    //! prepend item by shifting all items
-   Item &prepend(const Item &v)
+   Item &prepend(const Item &v,const unsigned int idx=0)
       {
       unsigned int i;
 
       setsize(SIZE+1);
 
-      for (i=SIZE-1; i>0; i--) set(i,get(i-1));
-      set(0,v);
+      for (i=SIZE-1; i>idx; i--) set(i,get(i-1));
+      set(idx,v);
 
-      return(ref(0));
+      return(ref(idx));
       }
 
    //! remove item by moving the last item
-   void remove(const unsigned int idx)
+   Item remove(const unsigned int idx)
       {
+      Item v;
+
       ERRORCHK(idx>=SIZE);
 
+      v=get(idx);
       set(idx,get(SIZE-1));
       setsize(SIZE-1);
+
+      return(v);
       }
 
    //! push item on stack
@@ -324,11 +329,7 @@ class minidyna
 
    //! pop item from stack
    Item pop()
-      {
-      Item v=last();
-      shrinksize();
-      return(v);
-      }
+      {return(remove(SIZE-1));}
 
    //! replace all occurrences of an item
    unsigned int replace(const Item &v1,const Item &v2)
