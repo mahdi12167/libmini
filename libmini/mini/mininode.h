@@ -27,14 +27,33 @@ class mininode: public minidyna< miniref<mininode> >
    virtual unsigned int get_id() const
       {return(m_id);}
 
+   //! get # of children
+   unsigned int get_children() const
+      {return(getsize());}
+
    //! get child #i
-   virtual mininode *get_child(unsigned int i) const
+   virtual mininode *get_child(unsigned int i=0) const
       {return(get(i));}
+
+   //! get reference to child #i
+   miniref<mininode> get_childref(unsigned int i=0)
+      {return(ref(i));}
+
+   //! remove child #i
+   miniref<mininode> remove_child(unsigned int i=0)
+      {
+      miniref<mininode> child=remove(i);
+
+      for (unsigned int i=0; i<child->get_children(); i++)
+         append(child->get_childref(i));
+
+      return(child);
+      }
 
    //! traverse [cycle-free] graph
    virtual void traverse()
       {
-      unsigned int s=getsize();
+      unsigned int s=get_children();
 
       traverse_pre();
 
@@ -52,11 +71,13 @@ class mininode: public minidyna< miniref<mininode> >
    //! traverse graph and serialize nodes with specific id
    virtual minidyna<mininode*> serialize(unsigned int id=0)
       {
+      unsigned int s=get_children();
+
       minidyna<mininode*> list;
 
       if (get_id()==id) list.append(this);
 
-      for (unsigned int i=0; i<getsize(); i++)
+      for (unsigned int i=0; i<s; i++)
          {
          mininode *child=get_child(i);
          if (child!=NULL) list.append(child->serialize(id));
@@ -78,6 +99,8 @@ class mininode: public minidyna< miniref<mininode> >
    virtual void traverse_pre() {}
    virtual void traverse_past() {}
    virtual void traverse_post() {}
+
+   virtual void optimize() {}
    };
 
 typedef miniref<mininode> mininoderef;
