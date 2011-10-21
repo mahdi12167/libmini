@@ -68,6 +68,8 @@ class miniref
    //! assignment operator
    miniref<Item>& operator =(const miniref<Item> &r)
       {
+      if (&r==this) return(*this);
+
       if (ref!=NULL)
          {
          ref->refcount--;
