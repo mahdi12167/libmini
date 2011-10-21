@@ -292,8 +292,8 @@ class minidyna
       for (i=1; i<=s; i++) set(SIZE-i,a.get(s-i));
       }
 
-   //! prepend item by shifting all items
-   Item &prepend(const Item &v,const unsigned int idx=0)
+   //! insert item by shifting all items
+   Item &insert(const Item &v,const unsigned int idx)
       {
       unsigned int i;
 
@@ -305,6 +305,10 @@ class minidyna
       return(ref(idx));
       }
 
+   //! prepend item to array
+   Item &prepend(const Item &v)
+      {insert(v,0);}
+
    //! remove item by moving the last item
    Item remove(const unsigned int idx)
       {
@@ -313,7 +317,7 @@ class minidyna
       ERRORCHK(idx>=SIZE);
 
       v=get(idx);
-      set(idx,get(SIZE-1));
+      if (idx!=SIZE-1) set(idx,get(SIZE-1));
       setsize(SIZE-1);
 
       return(v);
