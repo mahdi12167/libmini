@@ -281,9 +281,13 @@ void MainWindow::clear()
 void MainWindow::updateTable(const QString url, minilayer *layer)
 {
    int rows = viewerTable->rowCount();
+   QString name=url;
+
+   if (name.endsWith("/")) name.truncate(name.size()-1);
+   if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
 
    viewerTable->insertRow(rows);
-   viewerTable->setItem(rows, 0, new QTableWidgetItem(url));
+   viewerTable->setItem(rows, 0, new QTableWidgetItem(name));
 
    m_Layer.growsize(rows+1);
    m_Layer[rows]=layer;
