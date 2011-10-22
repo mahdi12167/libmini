@@ -177,7 +177,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
-      miniv3d right=nrm[i]/dir;
+      miniv3d right=dir/nrm[i];
       right.normalize();
 
       setnrm(nrm[i]);
