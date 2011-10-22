@@ -223,6 +223,16 @@ class mininode_geometry: public mininode, public ministrip
    static miniv3d get_right(const miniv3d &dir);
    };
 
+//! sphere geometry node
+class mininode_geometry_sphere: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_sphere() : mininode_geometry(0,3,2) {}
+   mininode_geometry_sphere(double radius,int tessel=16);
+   };
+
 //! tube geometry node
 class mininode_geometry_tube: public mininode_geometry
    {

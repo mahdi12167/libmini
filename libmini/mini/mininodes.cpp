@@ -120,6 +120,48 @@ miniv3d mininode_geometry::get_right(const miniv3d &dir)
    return(right);
    }
 
+mininode_geometry_sphere::mininode_geometry_sphere(double radius,int tessel)
+   : mininode_geometry(0,3,2)
+   {
+   int i,j;
+
+   double u,v;
+   double alpha,beta;
+   miniv3d pos;
+
+   int alpha_steps=4*tessel;
+   int beta_steps=tessel;
+
+   for (j=-beta_steps; j<beta_steps; j++)
+      for (i=0; i<=alpha_steps; i++)
+         {
+         u=(double)i/alpha_steps;
+         v=(double)j/beta_steps;
+
+         alpha=u*2*PI;
+         beta=v*PI/2;
+
+         pos=miniv3d(sin(alpha)*cos(beta),
+                     cos(alpha)*cos(beta),
+                     sin(beta))*radius;
+
+         setnrm(pos);
+         settex(u,0.5-v/2);
+         addvtx(pos);
+
+         v=(double)(j+1)/beta_steps;
+         beta=v*PI/2;
+
+         pos=miniv3d(sin(alpha)*cos(beta),
+                     cos(alpha)*cos(beta),
+                     sin(beta))*radius;
+
+         setnrm(pos);
+         settex(u,0.5-v/2);
+         addvtx(pos);
+         }
+   }
+
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
    {
