@@ -241,6 +241,7 @@ class mininode_geometry_band: public mininode_geometry
    //! default constructors
    mininode_geometry_band() : mininode_geometry(0,3,0) {}
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
    };
 
 //! tube geometry node

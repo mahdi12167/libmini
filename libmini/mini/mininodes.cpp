@@ -186,6 +186,31 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
+mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width)
+   : mininode_geometry(0,3,0)
+   {
+   if (pos.getsize()<2) return;
+   if (pos.getsize()!=nrm.getsize()) return;
+   if (pos.getsize()!=width.getsize()) return;
+
+   for (unsigned int i=0; i<pos.getsize(); i++)
+      {
+      miniv3d dir;
+
+      if (i==0) dir=pos[i+1]-pos[i];
+      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      dir.normalize();
+
+      miniv3d right=dir/nrm[i];
+      right.normalize();
+
+      setnrm(nrm[i]);
+      addvtx(pos[i]-right*width[i]/2);
+      addvtx(pos[i]+right*width[i]/2);
+      }
+   }
+
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
    {
