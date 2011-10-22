@@ -254,8 +254,11 @@ class mininode_geometry_tube: public mininode_geometry
    mininode_geometry_tube(double radius,double height,int tessel=16);
    mininode_geometry_tube(const miniv3d &pos1,const miniv3d &pos2,double radius,int tessel=16);
 
-   //! multi-tube constructor
+   //! multi-tube constructors
    mininode_geometry_tube(const minidyna<miniv3d> &pos,double radius,
+                          BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
+                          int tessel=16);
+   mininode_geometry_tube(const minidyna<miniv3d> &pos,const minidyna<double> &radius,
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
 
@@ -264,7 +267,7 @@ class mininode_geometry_tube: public mininode_geometry
    miniv3d create_tube(const miniv3d &start,const miniv3d &end,
                        const miniv3d &start_dir,const miniv3d &end_dir,
                        const miniv3d &start_right,
-                       double radius,
+                       double start_radius,double end_radius,
                        BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                        int tessel=16);
    };

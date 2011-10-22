@@ -217,7 +217,7 @@ mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int t
    create_tube(miniv3d(0,0,0),miniv3d(0,0,height),
                miniv3d(0,0,1),miniv3d(0,0,1),
                miniv3d(1,0,0),
-               radius,
+               radius,radius,
                TRUE,TRUE,
                tessel);
    }
@@ -231,7 +231,7 @@ mininode_geometry_tube::mininode_geometry_tube(const miniv3d &pos1,const miniv3d
    create_tube(pos1,pos2,
                dir,dir,
                right,
-               radius,
+               radius,radius,
                TRUE,TRUE,
                tessel);
    }
@@ -251,7 +251,27 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,doub
                         (i==0)?pos[i+1]-pos[i]:get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]),
                         (i==pos.getsize()-2)?pos[i+1]-pos[i]:get_halfdir(pos[i+1]-pos[i],pos[i+2]-pos[i+1]),
                         right,
-                        radius,
+                        radius,radius,
+                        (i==0)?start_cap:FALSE,(i==pos.getsize()-2)?end_cap:FALSE,
+                        tessel);
+   }
+
+mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,const minidyna<double> &radius,
+                                               BOOLINT start_cap,BOOLINT end_cap,
+                                               int tessel)
+   : mininode_geometry(0,3,0)
+   {
+   if (pos.getsize()<2) return;
+
+   miniv3d dir=pos[1]-pos[0];
+   miniv3d right=get_right(dir);
+
+   for (unsigned int i=0; i<pos.getsize()-1; i++)
+      right=create_tube(pos[i],pos[i+1],
+                        (i==0)?pos[i+1]-pos[i]:get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]),
+                        (i==pos.getsize()-2)?pos[i+1]-pos[i]:get_halfdir(pos[i+1]-pos[i],pos[i+2]-pos[i+1]),
+                        right,
+                        radius[i],radius[i+1],
                         (i==0)?start_cap:FALSE,(i==pos.getsize()-2)?end_cap:FALSE,
                         tessel);
    }
@@ -259,7 +279,7 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,doub
 miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &end,
                                             const miniv3d &start_dir,const miniv3d &end_dir,
                                             const miniv3d &start_right,
-                                            double radius,
+                                            double start_radius,double end_radius,
                                             BOOLINT start_cap,BOOLINT end_cap,
                                             int tessel)
    {
@@ -270,7 +290,6 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
    up=start_right/dir;
    right=dir/up;
    right.normalize();
-   right*=radius;
 
    miniv3d rot[3];
    rot_mtx(rot,-360.0/tessel,dir);
@@ -279,8 +298,8 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
 
    for (int i=0; i<=tessel; i++)
       {
-      miniv3d vtx1=project(start+right,dir,start,start_dir);
-      miniv3d vtx2=project(end+right,dir,end,end_dir);
+      miniv3d vtx1=project(start+right*start_radius,dir,start,start_dir);
+      miniv3d vtx2=project(end+right*end_radius,dir,end,end_dir);
 
       setnrm(vtx1-start);
       addvtx(vtx1);
@@ -298,7 +317,7 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
       for (int i=0; i<=tessel; i++)
          {
          addvtx(start);
-         addvtx(project(start+right,dir,start,start_dir));
+         addvtx(project(start+right*start_radius,dir,start,start_dir));
 
          if (i<tessel) right=mlt_vec(rot,right);
          }
@@ -311,14 +330,14 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
 
       for (int i=0; i<=tessel; i++)
          {
-         addvtx(project(end+right,dir,end,end_dir));
+         addvtx(project(end+right*end_radius,dir,end,end_dir));
          addvtx(end);
 
          if (i<tessel) right=mlt_vec(rot,right);
          }
       }
 
-   return(project(end+right,dir,end,end_dir)-end);
+   return(project(end+right*end_radius,dir,end,end_dir)-end);
    }
 
 mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,double radius,
