@@ -41,7 +41,7 @@ mininode *Renderer::build_ecef_geometry()
       }
 
    group->append(new mininode_color(miniv3d(0.5,0.5,0.5)))->
-      append(new mininode_geometry_torus(pos,5000));
+      append(new mininode_geometry_band(pos,pos,5000));
 
    return(group);
 }

@@ -233,6 +233,25 @@ class mininode_geometry_sphere: public mininode_geometry
    mininode_geometry_sphere(double radius,int tessel=16);
    };
 
+//! band geometry node
+class mininode_geometry_band: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_band() : mininode_geometry(0,3,0) {}
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
+
+   protected:
+
+   virtual void traverse_pre()
+      {
+      disableculling();
+      render(1);
+      enableBFculling();
+      }
+   };
+
 //! tube geometry node
 class mininode_geometry_tube: public mininode_geometry
    {
