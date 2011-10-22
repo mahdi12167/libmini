@@ -65,9 +65,12 @@ void MainWindow::createWidgets()
    mainLayout = new QVBoxLayout;
 
    viewerWindow = new ViewerWindow;
+   viewerLayout = new QHBoxLayout;
    viewerTable = new QTableWidget;
    sliderBox = new QGroupBox;
-   sliderLayout = new QHBoxLayout;
+   sliderLayout = new QVBoxLayout;
+   sliderLayout1 = new QHBoxLayout;
+   sliderLayout2 = new QHBoxLayout;
    buttonBox = new QDialogButtonBox;
 
    // drag and drop:
@@ -200,13 +203,15 @@ void MainWindow::createWidgets()
 
    // slider group:
 
-   sliderLayout->addWidget(fogGroup);
-   sliderLayout->addWidget(contourGroup);
-   sliderLayout->addWidget(seaGroup);
-   sliderLayout->addWidget(lightGroup);
-   sliderLayout->addWidget(exaggerGroup);
-   sliderLayout->addWidget(stereoGroup);
-   sliderLayout->addWidget(wireGroup);
+   sliderLayout1->addWidget(fogGroup);
+   sliderLayout1->addWidget(contourGroup);
+   sliderLayout1->addWidget(seaGroup);
+   sliderLayout2->addWidget(lightGroup);
+   sliderLayout2->addWidget(exaggerGroup);
+   sliderLayout2->addWidget(stereoGroup);
+   sliderLayout2->addWidget(wireGroup);
+   sliderLayout->addLayout(sliderLayout1);
+   sliderLayout->addLayout(sliderLayout2);
    sliderBox->setLayout(sliderLayout);
 
    // button group:
@@ -220,11 +225,15 @@ void MainWindow::createWidgets()
    buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
    buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
+   // viewer group:
+
+   viewerLayout->addWidget(viewerTable);
+   viewerLayout->addWidget(sliderBox);
+
    // main group:
 
    mainLayout->addWidget(viewerWindow);
-   mainLayout->addWidget(viewerTable);
-   mainLayout->addWidget(sliderBox);
+   mainLayout->addLayout(viewerLayout);
    mainLayout->addWidget(buttonBox);
 
    mainGroup->setLayout(mainLayout);

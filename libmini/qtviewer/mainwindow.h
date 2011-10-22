@@ -70,9 +70,12 @@ private:
    QVBoxLayout *mainLayout;
 
    ViewerWindow* viewerWindow;
+   QHBoxLayout *viewerLayout;
    QTableWidget *viewerTable;
    QGroupBox *sliderBox;
-   QHBoxLayout *sliderLayout;
+   QVBoxLayout *sliderLayout;
+   QHBoxLayout *sliderLayout1;
+   QHBoxLayout *sliderLayout2;
    QDialogButtonBox *buttonBox;
 
    QCheckBox *fogCheck;
