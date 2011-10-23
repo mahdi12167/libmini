@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#include <mini/mini.h>
+#include <mini/mini_core.h>
 
 #include <QtGui/QApplication>
 #include <QtOpenGL/qgl.h>

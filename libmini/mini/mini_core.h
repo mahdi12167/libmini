@@ -3,9 +3,9 @@
 #ifndef MINI_CORE_H
 #define MINI_CORE_H
 
-#include "mini.h"
-#include "minibase.h"
-#include "miniOGL.h"
-#include "ministub.h"
+#include <mini/mini.h>
+#include <mini/minibase.h>
+#include <mini/miniOGL.h>
+#include <mini/ministub.h>
 
 #endif

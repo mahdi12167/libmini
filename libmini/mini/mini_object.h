@@ -3,13 +3,14 @@
 #ifndef MINI_OBJECT_H
 #define MINI_OBJECT_H
 
-#include "minilayer.h"
-#include "miniterrain.h"
-#include "miniearth.h"
+#include <mini/minilayer.h>
+#include <mini/miniterrain.h>
+#include <mini/miniearth.h>
 
-#include "minicam.h"
-#include "minianim.h"
-#include "mininode.h"
-#include "mininodes.h"
+#include <mini/minicam.h>
+#include <mini/minianim.h>
+
+#include <mini/mininode.h>
+#include <mini/mininodes.h>
 
 #endif

@@ -2,10 +2,7 @@
 
 #include <QDateTime>
 
-#include <mini/miniOGL.h>
-#include <mini/minishader.h>
-#include <mini/miniglobe.h>
-#include <mini/mininodes.h>
+#include <mini/mini_gfx.h>
 
 #include "viewer.h"
 

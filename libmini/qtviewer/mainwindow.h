@@ -5,8 +5,8 @@
 
 #include <QtGui/QMainWindow>
 
-#include <mini/minidyna.h>
-#include <mini/minilayer.h>
+#include <mini/mini_generic.h>
+#include <mini/mini_object.h>
 
 class ViewerWindow;
 

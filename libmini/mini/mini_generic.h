@@ -3,9 +3,9 @@
 #ifndef MINI_GENERIC_H
 #define MINI_GENERIC_H
 
-#include "minidyna.h"
-#include "minisort.h"
-#include "ministring.h"
-#include "miniref.h"
+#include <mini/minidyna.h>
+#include <mini/minisort.h>
+#include <mini/ministring.h>
+#include <mini/miniref.h>
 
 #endif

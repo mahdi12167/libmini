@@ -3,11 +3,12 @@
 #ifndef MINI_TILESET_H
 #define MINI_TILESET_H
 
-#include "minitile.h"
-#include "miniload.h"
-#include "minicache.h"
-#include "minishader.h"
-#include "miniray.h"
-#include "miniwarp.h"
+#include <mini/minitile.h>
+#include <mini/miniload.h>
+
+#include <mini/minicache.h>
+#include <mini/minishader.h>
+#include <mini/miniray.h>
+#include <mini/miniwarp.h>
 
 #endif

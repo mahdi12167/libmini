@@ -3,11 +3,12 @@
 #ifndef MINI_VOLUME_H
 #define MINI_VOLUME_H
 
-#include "minibrick.h"
-#include "minilod.h"
-#include "minigeom.h"
-#include "minimesh.h"
-#include "minibspt.h"
-#include "miniproj.h"
+#include <mini/minibrick.h>
+#include <mini/minilod.h>
+
+#include <mini/minigeom.h>
+#include <mini/minimesh.h>
+#include <mini/minibspt.h>
+#include <mini/miniproj.h>
 
 #endif

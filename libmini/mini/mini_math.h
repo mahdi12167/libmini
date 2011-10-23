@@ -3,16 +3,16 @@
 #ifndef MINI_MATH_H
 #define MINI_MATH_H
 
-#include "minimath.h"
-#include "minicomplex.h"
-#include "miniv3f.h"
-#include "miniv3d.h"
-#include "miniv4f.h"
-#include "miniv4d.h"
-#include "minicrs.h"
-#include "minicoord.h"
-#include "minivec.h"
-#include "minimtx.h"
-#include "minimpfp.h"
+#include <mini/minimath.h>
+#include <mini/minicomplex.h>
+#include <mini/miniv3f.h>
+#include <mini/miniv3d.h>
+#include <mini/miniv4f.h>
+#include <mini/miniv4d.h>
+#include <mini/minicrs.h>
+#include <mini/minicoord.h>
+#include <mini/minivec.h>
+#include <mini/minimtx.h>
+#include <mini/minimpfp.h>
 
 #endif

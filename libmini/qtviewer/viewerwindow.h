@@ -10,7 +10,7 @@
 
 #include <QtGui/QMouseEvent>
 
-#include <mini/minilayer.h>
+#include <mini/mini_object.h>
 
 class Renderer;
 

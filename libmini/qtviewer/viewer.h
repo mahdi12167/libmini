@@ -5,8 +5,9 @@
 
 #include <QtOpenGL/qgl.h>
 
-#include <mini/mininode.h>
-#include <mini/miniview.h>
+#include <mini/mini_tileset.h>
+#include <mini/mini_object.h>
+#include <mini/mini_sfx.h>
 #include "viewerconst.h"
 
 #include "camera.h"

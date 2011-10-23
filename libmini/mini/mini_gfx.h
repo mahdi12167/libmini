@@ -3,9 +3,9 @@
 #ifndef MINI_GFX_H
 #define MINI_GFX_H
 
-#include "ministrip"
-#include "minitext"
-#include "miniglobe"
-#include "minisky"
+#include <mini/ministrip.h>
+#include <mini/minitext.h>
+#include <mini/miniglobe.h>
+#include <mini/minisky.h>
 
 #endif

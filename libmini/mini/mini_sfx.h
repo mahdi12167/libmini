@@ -3,16 +3,18 @@
 #ifndef MINI_SFX_H
 #define MINI_SFX_H
 
-#include "miniscene.h"
-#include "miniview.h"
-#include "threadbase.h"
-#include "curlbase.h"
-#include "jpegbase.h"
-#include "pngbase.h"
-#include "zlibbase.h"
-#include "squishbase.h"
-#include "greycbase.h"
-#include "dataconv.h"
-#include "miniimg.h"
+#include <mini/miniscene.h>
+#include <mini/miniview.h>
+
+#include <mini/threadbase.h>
+#include <mini/curlbase.h>
+#include <mini/jpegbase.h>
+#include <mini/pngbase.h>
+#include <mini/zlibbase.h>
+#include <mini/squishbase.h>
+#include <mini/greycbase.h>
+
+#include <mini/dataconv.h>
+#include <mini/miniimg.h>
 
 #endif

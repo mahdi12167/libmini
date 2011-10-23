@@ -3,9 +3,9 @@
 #ifndef MINI_UTIL_H
 #define MINI_UTIL_H
 
-#include "minitime.h"
-#include "miniio.h"
-#include "minidir.h"
-#include "minirgb.h"
+#include <mini/minitime.h>
+#include <mini/miniio.h>
+#include <mini/minidir.h>
+#include <mini/minirgb.h>
 
 #endif
