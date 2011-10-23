@@ -307,7 +307,7 @@ class minidyna
 
    //! prepend item to array
    Item &prepend(const Item &v)
-      {insert(v,0);}
+      {return(insert(v,0));}
 
    //! remove item by moving the last item
    Item remove(const unsigned int idx)
