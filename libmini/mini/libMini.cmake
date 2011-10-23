@@ -12,7 +12,7 @@ SET(MINI_HDRS
    minitime.h miniio.h minidir.h minirgb.h minicrs.h
    ministub.h minitile.h miniload.h
    minicoord.h miniwarp.h minicam.h minianim.h
-   minilayer.h miniterrain.h miniearth.h miniscene.h
+   minilayer.h miniterrain.h miniearth.h
    minicache.h minishader.h
    miniray.h ministrip.h
    minipoint.h minitext.h minisky.h miniglobe.h
@@ -33,7 +33,7 @@ SET(MINI_SRCS
    minirgb.cpp minicrs.cpp
    ministub.cpp minitile.cpp miniload.cpp
    minicoord.cpp miniwarp.cpp minicam.cpp minianim.cpp
-   minilayer.cpp miniterrain.cpp miniearth.cpp miniscene.cpp
+   minilayer.cpp miniterrain.cpp miniearth.cpp
    minicache.cpp minishader.cpp
    miniray.cpp ministrip.cpp
    minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
@@ -48,7 +48,7 @@ SET(MINI_SRCS
    )
 
 SET(MINISFX_HDRS
-   miniview.h
+   miniscene.h miniview.h
    threadbase.h curlbase.h
    jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h
    dataconv.h miniimg.h
@@ -56,7 +56,7 @@ SET(MINISFX_HDRS
    )
 
 SET(MINISFX_SRCS
-   miniview.cpp
+   miniscene.cpp miniview.cpp
    threadbase.cpp curlbase.cpp
    jpegbase.cpp pngbase.cpp zlibbase.cpp squishbase.cpp greycbase.cpp
    dataconv.cpp miniimg.cpp

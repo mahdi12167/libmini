@@ -16,7 +16,7 @@ MODS	= mini miniOGL\
 	  minirgb minicrs\
 	  ministub minitile miniload\
 	  minicoord miniwarp minicam minianim\
-	  minilayer miniterrain miniearth miniscene\
+	  minilayer miniterrain miniearth\
 	  minicache minishader\
 	  miniray ministrip\
 	  minipoint minitext minisky miniglobe\
@@ -29,7 +29,7 @@ MODS	= mini miniOGL\
 	  datacalc dataparse\
 	  lunascan lunaparse lunacode
 
-VMODS	= miniview\
+VMODS	= miniscene miniview\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
 	  dataconv miniimg\
