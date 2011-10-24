@@ -40,3 +40,7 @@ RESOURCES += qtviewer.qrc
 mac {
 ICON = qtviewer.icns
 }
+
+win32 {
+RC_FILE = ../mini/libMini.rc
+}
