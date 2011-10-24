@@ -36,3 +36,7 @@ LIBS += -lMini -lMiniSFX
 LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
 RESOURCES += qtviewer.qrc
+
+mac {
+ICON = qtviewer.icns
+}
