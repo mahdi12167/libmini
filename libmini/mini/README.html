@@ -2107,6 +2107,20 @@ which is output by the gridding core of
 <a href="http://libgrid.googlecode.com">libGrid</a> or VTB (virtual
 terrain builder of vterrain.org).<p>
 
+The libMini viewer also comes as a QT based version with intuitive
+mouse steering and navigation around the earth globe. For the QT based
+version the viewer usage guide lines apply in an analog way, except
+that it needs to be compiled with QT's qmake. For more details see the
+QTViewer README. To get the whole package, checkout the entire libMini
+svn repository with:<p>
+
+<pre>
+   svn co http://libmini.googlecode.com/svn/libmini libmini
+</pre>
+
+Then the libMini QTViewer is located in the "qtviewer" directory and
+the libMini libraries in the "mini" directory.<p>
+
 For conceptual information on the modules used by the viewer see
 the <a href="http://stereofx.org/download/libMini-Modules.pdf">libMini
 Module Overview</a>.<p>
@@ -2223,7 +2237,7 @@ mode use the -f option. For full usage information on all available
 command line options start the viewer without arguments.<p>
 
 On a side note, the libMini Viewer can be configured to
-use <ahref="http://www.openscenegraph.org/svn/osg/OpenThreads">OpenThreads</a>
+use <a href="http://www.openscenegraph.org/svn/osg/OpenThreads">OpenThreads</a>
 instead of pthreads by typing "./build.sh viewer useopenth". On
 Windows, the libMini Viewer uses OpenThreads by default but can be
 configured to use a pthread implementation such
