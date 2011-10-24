@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#ifndef NOVIEWER
-
 #include "miniOGL.h"
 #include "miniglobe.h"
 #include "miniearth.h"
@@ -154,5 +152,3 @@ void miniview::render_ecef_geometry()
 
    exitstate();
    }
-
-#endif

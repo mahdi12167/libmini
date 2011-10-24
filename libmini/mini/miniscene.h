@@ -3,8 +3,6 @@
 #ifndef MINISCENE_H
 #define MINISCENE_H
 
-#ifndef NOVIEWER
-
 #include <mini/minibase.h>
 
 #include <mini/dataconv.h>
@@ -174,7 +172,5 @@ class miniscene
 
    static void autocompress(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data);
    };
-
-#endif
 
 #endif

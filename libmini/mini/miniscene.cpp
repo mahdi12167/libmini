@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#ifndef NOVIEWER
-
 #include <mini/minitime.h>
 
 #include <mini/database.h>
@@ -260,5 +258,3 @@ void miniscene::render_ecef_geometry()
    exitstate();
    */
    }
-
-#endif

@@ -3,8 +3,6 @@
 #ifndef MINIVIEW_H
 #define MINIVIEW_H
 
-#ifndef NOVIEWER
-
 #include "miniscene.h"
 
 class minicam;
@@ -27,7 +25,5 @@ class miniview : public miniscene
 
    minicam *m_cam;
    };
-
-#endif
 
 #endif
