@@ -26,6 +26,11 @@ linux-g++ {
 QMAKE_CXXFLAGS_WARN_OFF += -Wno-parentheses
 }
 
+win32 {
+DEFINES += _CRT_SECURE_NO_DEPRECATE
+QMAKE_CXXFLAGS_WARN_OFF += /wd4244 /wd4305
+}
+
 mac {
 ICON = qtviewer.icns
 }
