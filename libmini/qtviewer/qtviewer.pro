@@ -3,22 +3,7 @@ QT += core gui opengl
 TARGET = qtviewer
 TEMPLATE = app
 
-
-SOURCES += main.cpp \
-           mainwindow.cpp \
-           viewerwindow.cpp \
-           renderer.cpp \
-           viewer.cpp \
-           camera.cpp
-
-HEADERS += mainwindow.h \
-           mainconst.h \
-           viewerwindow.h \
-           viewerconst.h \
-           renderer.h \
-           viewer.h \
-           camera.h
-
+include(sources.pro)
 
 INCLUDEPATH += $$PWD/..
 INCLUDEPATH += $$PWD/../..
@@ -36,6 +21,10 @@ LIBS += -lMini -lMiniSFX
 LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
 RESOURCES += qtviewer.qrc
+
+linux-g++ {
+QMAKE_CXXFLAGS_WARN_OFF += -Wno-parentheses
+}
 
 mac {
 ICON = qtviewer.icns
