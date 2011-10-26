@@ -39,7 +39,7 @@ unix:LIBS += -lMini -lMiniSFX
 unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
 win32:LIBS += -llibMini -llibMiniSFX
-win32:LIBS += -lsquish -lcurllib_static -llibjpeg -llibpng -lzlib
+win32:LIBS += -lsquish -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
 win32:LIBS += -lws2_32
 
 RESOURCES += qtviewer.qrc
