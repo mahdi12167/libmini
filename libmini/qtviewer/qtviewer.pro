@@ -21,12 +21,12 @@ win32:INCLUDEPATH += $$PWD/../WIN32/zlib
 
 LIBS += -L$$PWD/..
 LIBS += -L$$PWD/../mini
-LIBS += -L$$PWD/../mini/debug
-LIBS += -L$$PWD/../mini/release
 LIBS += -L$$PWD/../deps
 LIBS += -L$$PWD/../deps/squish
 LIBS += -L$$PWD/../deps/curl/lib
 
+win32:LIBS += -L$$PWD/../mini/debug
+win32:LIBS += -L$$PWD/../mini/release
 win32:LIBS += -L$$PWD/../WIN32
 win32:LIBS += -L$$PWD/../WIN32/pthreads-win32
 win32:LIBS += -L$$PWD/../WIN32/libcurl
@@ -44,8 +44,8 @@ win32:LIBS += -lws2_32 -lwinmm
 
 RESOURCES += qtviewer.qrc
 
-linux-g++:QMAKE_CXXFLAGS += -O2
-linux-g++:QMAKE_CXXFLAGS_WARN_ON += -Wno-parentheses
+unix:QMAKE_CXXFLAGS += -O
+unix:QMAKE_CXXFLAGS_WARN_ON += -w -Wall -Wno-parentheses
 
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
 win32:DEFINES += PTW32_STATIC_LIB
