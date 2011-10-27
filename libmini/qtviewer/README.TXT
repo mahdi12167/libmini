@@ -13,8 +13,13 @@ Needs installation of:
  libpng
  zlib
 
-(1) Libmini Dependencies
-========================
+It is highly recommended to build and install qt and cmake from source!
+For example grab the source tar balls from:
+ ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.zip
+ http://www.cmake.org/files/v2.8/cmake-2.8.6.zip
+
+(1) Libmini Dependencies (Unix)
+===============================
 The following additional dependencies are required by libMini:
  libcurl
  libsquish
@@ -22,13 +27,30 @@ Type on the unix console in your project directory (e.g. ~/Projects):
  svn co http://libmini.googlecode.com/svn/libmini/deps deps
  (cd deps; ./build.sh)
 
-(2) Checkout and Compilation
-============================
+(2A) Checkout and Compilation (Unix/Mac)
+========================================
+Type on the unix console in your qt source directory:
+ ./configure && make && sudo make install
 Type on the unix console in your project directory:
  svn co http://libmini.googlecode.com/svn/libmini/mini mini
- (cd mini; cmake -DBUILD_MINI_SFX . && make)
  svn co http://libmini.googlecode.com/svn/libmini/qtviewer qtviewer
  (cd qtviewer; ./build.sh)
+
+(2B) Checkout and Compilation (Windows)
+=======================================
+Get the following subversion repositories via Tortoise SVN:
+ http://libmini.googlecode.com/svn/libmini/mini
+ http://libmini.googlecode.com/svn/libmini/qtviewer
+Open a MSVC command prompt via
+ Programs -> MSVC -> Tools -> MSVC Command Prompt
+Navigate to the qt source directory and type
+ configure -platform win32-msvc2005
+ nmake
+Navigate to the mini source directory and type
+ cmake -G NMake Makefiles .
+ nmake
+Navigate to the qtviewer source directory and type
+ build.bat
 
 (3) Command-line Parameters
 ===========================
