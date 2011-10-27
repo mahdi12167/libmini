@@ -56,6 +56,8 @@ ENDIF (NOT PLOTTER_THIRDPARTY_DIR)
 
 MACRO(SET_PLOTTER_PATH name subdir)
    SET(${name} ${PLOTTER_PATH}
+               ${PLOTTER_PATH}/..
+               ${PLOTTER_PATH}/../..
                ${PLOTTER_PATH}/${subdir}
                ${PLOTTER_PATH}/../${subdir}
                ${PLOTTER_PATH}/../deps/${subdir}
