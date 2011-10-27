@@ -47,7 +47,7 @@ Navigate to the qt source directory and type
  configure -platform win32-msvc2005
  nmake
 Navigate to the mini source directory and type
- cmake -G NMake Makefiles .
+ cmake -G "NMake Makefiles" .
  nmake
 Navigate to the qtviewer source directory and type
  build.bat
