@@ -47,7 +47,7 @@ Navigate to the qt source directory and type
  configure -platform win32-msvc2005
  nmake
 Navigate to the mini source directory and type
- cmake -G "NMake Makefiles" .
+ cmake -G "NMake Makefiles" -DBUILD_MINI_SFX=ON -DCMAKE_BUILD_TYPE=RELEASE
  nmake
 Navigate to the qtviewer source directory and type
  build.bat
