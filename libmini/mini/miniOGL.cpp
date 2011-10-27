@@ -748,16 +748,14 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
       case 3:
          if (s3tc==0) texsource=GL_RGB;
 #ifdef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
-         else if (glext_ts3) texsource=GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+         else texsource=GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 #endif
-         else ERRORMSG();
          break;
       case 4:
          if (s3tc==0) texsource=GL_RGBA;
 #ifdef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
-         else if (glext_ts3) texsource=GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+         else texsource=GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 #endif
-         else ERRORMSG();
          break;
       default: ERRORMSG();
       }
@@ -880,7 +878,11 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 
-   if (s3tc!=0 && !glext_ts3) ERRORMSG();
+   if (s3tc!=0 && !glext_ts3)
+      {
+      WARNMSG();
+      return(0);
+      }
 #ifdef GL_ARB_texture_compression
    else if (s3tc!=0)
       if (mipmapped==0)
