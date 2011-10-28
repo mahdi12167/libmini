@@ -1,9 +1,9 @@
-# windows build batch file
+; windows build batch file
 
 if exist ..\mini (
-   cd ..\mini
+   pushd ..\mini
    build.bat
-   cd -
+   popd
 )
 
 qmake
