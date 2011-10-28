@@ -1,5 +1,10 @@
 # windows build batch file
 
-if exist ..\mini ..\mini\build.bat
+if exist ..\mini (
+   cd ..\mini
+   build.bat
+   cd -
+)
+
 qmake
 nmake release
