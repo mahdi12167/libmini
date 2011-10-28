@@ -9,7 +9,9 @@ if ($1 == "zip") then
 endif
 
 if (! -X qmake) then
-   echo qmake not installed!
+   echo qmake is not installed!
+   echo suggest: add your qmake binary path to your search path
+   echo for example using tcsh: setenv PATH $PATH":/usr/local/Trolltech/Qt-4.7.4/bin"
    exit 1
 endif
 
