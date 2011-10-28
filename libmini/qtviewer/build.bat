@@ -1,5 +1,3 @@
-; windows build batch file
-
 if exist ..\mini (
    pushd ..\mini
    build.bat
