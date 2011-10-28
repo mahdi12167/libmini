@@ -30,15 +30,17 @@ Some notes about copyright and licensing:
 3) The libMini demos have their own licensing terms.
 
 The original source code of the libMini dependencies is available here:
+ pthreads-win32:      http://sourceware.org/pthreads-win32
+ openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
+ libcurl:             http://curl.haxx.se
+ libjpeg:             http://www.ijg.org
+ libpng/zlib:         http://www.libpng.org / http://www.zlib.net
+ squish:              http://libsquish.googlecode.com
+ CImg/GREYCstoration: http://cimg.sourceforge.net
+ freeglut:            http://freeglut.sourceforge.net
 
-pthreads-win32:      http://sourceware.org/pthreads-win32
-openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
-libcurl:             http://curl.haxx.se
-libjpeg:             http://www.ijg.org
-libpng/zlib:         http://www.libpng.org / http://www.zlib.net
-squish:              http://libsquish.googlecode.com
-CImg/GREYCstoration: http://cimg.sourceforge.net
-freeglut:            http://freeglut.sourceforge.net
+Related source code also provided in the deps folder for convenience
+ gdal:                http://www.gdal.org
 
 As of this writing, libMini did successfully build with the latest
 available versions of the above dependencies.

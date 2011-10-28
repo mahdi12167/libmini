@@ -87,6 +87,17 @@ miniv3d Camera::hitVector()
    return(hitVec);
 }
 
+miniv3d Camera::nearVector()
+{
+   miniv3d nearVec;
+
+   // trace to find the nearest hit point
+   minicoord hit = get_hit(get_eye(), -get_eye().vec);
+   nearVec = hit.vec - get_eye().vec;
+
+   return(nearVec);
+}
+
 miniv3d Camera::targetVector()
 {
    miniv3d targetVec;
@@ -104,9 +115,14 @@ miniv3d Camera::cursorVector(double zoom)
 
    // trace to find the hit point under current focus
    minicoord hit = get_hit();
+
+   // trace to nearest hit point as fallback
+   if (hit == get_eye())
+      hit = get_hit(get_eye(), -get_eye().vec);
+
+   // trace to find the hit point under current cursor
    if (hit != get_eye())
    {
-      // trace to find the hit point under current cursor
       minicoord target = get_hit(get_eye(), unprojectMouse());
       if (target != get_eye())
       {
@@ -135,6 +151,10 @@ void Camera::rotateCamera(float dx, float dy)
       rotate_up(180 * dy);
 
       rotate_limit(-90.0, 90.0);
+   }
+   else if (m_Control)
+   {
+      rotate_right(360 *dx);
    }
    else
    {
@@ -173,7 +193,7 @@ void Camera::moveCameraForward(float delta)
    if (dist == 0.0) dist = sqrt(pow(miniearth::EARTH_radius+get_dist(), 2.0)-pow(miniearth::EARTH_radius, 2.0));
    if (dist < mindist) dist = mindist;
 
-   if (m_Shift)
+   if (m_Shift || m_Control)
       move_back(-delta * dist);
    else
       move(delta * dist * unprojectMouse());
@@ -223,7 +243,7 @@ void Camera::focusOnTarget(double zoom)
 
    minicoord target = get_eye();
 
-   if (m_Shift)
+   if (m_Shift || m_Control)
       target -= cursorVector(zoom);
    else
       target += cursorVector(zoom);

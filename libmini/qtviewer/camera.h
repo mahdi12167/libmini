@@ -64,6 +64,7 @@ protected:
    miniv3d unprojectMouse();
 
    miniv3d hitVector();
+   miniv3d nearVector();
    miniv3d targetVector();
    miniv3d cursorVector(double zoom=0.0);
 

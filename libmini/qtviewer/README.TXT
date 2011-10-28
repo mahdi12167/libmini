@@ -1,32 +1,32 @@
 Libmini Integration in QT Application
 =====================================
-This is an example for integrating libmini into a QT application. This
-sample application primarily uses mini viewer functions but provides
-additional camera control. It is free software licensed under the GPL.
+This is a sample application for integrating libmini into QT. This
+example primarily uses mini viewer functions but provides additional
+camera control. It is free software licensed under the GPL.
 
 (0) Prerequisites
 =================
-Needs installation of:
+Requires installation of:
  qt/qmake
  cmake/svn
  libjpg
  libpng
  zlib
 
-It is highly recommended to build and install qt from source!
-For example grab the source tar balls from:
+It is highly recommended to build and install QT from source!
+For example grab the source tar ball from:
  ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
 
 (1A) Installation (Unix/Mac)
 ============================
-Type on the unix console in your qt source directory:
+Type on the unix console in your QT source directory:
  ./configure && make sub-tools && sudo make install
 
 (1B) Installation (Windows):
 ============================
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
-Navigate to the qt source directory and type
+Navigate to the QT source directory and type
  configure -platform win32-msvc2005
  nmake sub-tools
 
@@ -60,11 +60,6 @@ Get the following subversion repositories via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/qtviewer
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
-Navigate to the qt source directory and type
- configure -platform win32-msvc2005
- nmake
-Navigate to the mini source directory and type
- build.bat
 Navigate to the qtviewer source directory and type
  build.bat
 
@@ -90,8 +85,8 @@ The Qt viewer supports drag and drop of tileset urls.
 For example, you can drag&drop the tileset directory of a libMini demo
 into the viewer window. Download the Hawaii or Fraenkische demo from
 stereofx.org/download and drag&drop the data/HawaiiTileset or
-data/FrankischeTileset directory. Double-clicking on the layer url
-brings the respective tileset into view.
+data/FrankischeTileset directory. Double-clicking on the layer brings
+the respective tileset into view.
 
 (8) Navigation
 ==============

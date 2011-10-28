@@ -78,10 +78,10 @@ void MainWindow::createWidgets()
    connect(viewerWindow, SIGNAL(changed(const QString, minilayer*)),
            this, SLOT(updateTable(const QString, minilayer*)));
 
-   // url table:
+   // layer table:
 
    QStringList labels;
-   labels << tr("URL");
+   labels << tr("Layer");
 
    viewerTable->setColumnCount(1);
    viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
