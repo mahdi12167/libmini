@@ -120,7 +120,6 @@ static void initwglprocs()
             WARNMSG();
             glext_mt=FALSE;
             }
-         }
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
