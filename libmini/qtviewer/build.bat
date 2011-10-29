@@ -1,6 +1,6 @@
 if exist ..\mini (
    pushd ..\mini
-   build.bat
+   call build.bat
    popd
 )
 
