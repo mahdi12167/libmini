@@ -893,7 +893,7 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int clamp,int mipmaps,in
    if (num<0 || num>=SHADERMAX) ERRORMSG();
    if (n<0 || n>=SHADERFRGTEXMAX) ERRORMSG();
 
-   if (buf->missing()) ERRORMSG();
+   if (buf->missing()) return;
 
    if (buf->xsize<2 || buf->ysize<2 ||
        buf->zsize>1 || buf->tsteps>1) ERRORMSG();
