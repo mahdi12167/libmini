@@ -5,4 +5,6 @@ if exist ..\mini (
 )
 
 qmake
+qmake -tp vc
+
 nmake release
