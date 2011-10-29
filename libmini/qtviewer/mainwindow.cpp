@@ -284,7 +284,10 @@ void MainWindow::updateTable(const QString url, minilayer *layer)
    QString name=url;
 
    if (name.endsWith("/")) name.truncate(name.size()-1);
+   if (name.endsWith("\\")) name.truncate(name.size()-1);
+
    if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
+   if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
 
    viewerTable->insertRow(rows);
    viewerTable->setItem(rows, 0, new QTableWidgetItem(name));
