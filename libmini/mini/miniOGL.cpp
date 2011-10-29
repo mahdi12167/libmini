@@ -85,40 +85,55 @@ static void initwglprocs()
       {
 #ifdef GL_EXT_blend_minmax
       if (glext_mm)
-         if ((glBlendEquation=(PFNGLBLENDEQUATIONEXTPROC)wglGetProcAddress("glBlendEquationEXT"))==NULL) ERRORMSG();
+         if ((glBlendEquation=(PFNGLBLENDEQUATIONEXTPROC)wglGetProcAddress("glBlendEquationEXT"))==NULL)
+            {
+            WARNMSG();
+            glext_mm=FALSE;
+            }
 #endif
 
 #ifdef GL_EXT_texture3D
       if (glext_t3D)
-         if ((glTexImage3D=(PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT"))==NULL) ERRORMSG();
+         if ((glTexImage3D=(PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT"))==NULL)
+            {
+            WARNMSG();
+            glext_t3D=FALSE;
+            }
 #endif
 
 #ifdef GL_ARB_texture_compression
       if (glext_tc)
-         {
-         if ((glCompressedTexImage2DARB=(PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)wglGetProcAddress("glCompressedTexImage2DARB"))==NULL) ERRORMSG();
-         if ((glGetCompressedTexImageARB=(PFNGLGETCOMPRESSEDTEXIMAGEARBPROC)wglGetProcAddress("glGetCompressedTexImageARB"))==NULL) ERRORMSG();
-         }
+         if ((glCompressedTexImage2DARB=(PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)wglGetProcAddress("glCompressedTexImage2DARB"))==NULL ||
+             (glGetCompressedTexImageARB=(PFNGLGETCOMPRESSEDTEXIMAGEARBPROC)wglGetProcAddress("glGetCompressedTexImageARB"))==NULL)
+            {
+            WARNMSG();
+            glext_tc=FALSE;
+            }
 #endif
 
 #ifdef GL_ARB_multitexture
       if (glext_mt)
-         {
-         glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB");
-         glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB");
-         glMultiTexCoord3fARB=(PFNGLMULTITEXCOORD3FARBPROC)wglGetProcAddress("glMultiTexCoord3fARB");
+         if ((glActiveTextureARB=(PFNGLACTIVETEXTUREARBPROC)wglGetProcAddress("glActiveTextureARB"))==NULL ||
+             (glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB"))==NULL ||
+             (glMultiTexCoord3fARB=(PFNGLMULTITEXCOORD3FARBPROC)wglGetProcAddress("glMultiTexCoord3fARB"))==NULL)
+            {
+            WARNMSG();
+            glext_mt=FALSE;
+            }
          }
 #endif
 
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
       if (glext_vp && glext_fp)
-         {
-         glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB");
-         glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB");
-         glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB");
-         glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB");
-         glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB");
-         }
+         if ((glGenProgramsARB=(PFNGLGENPROGRAMSARBPROC)wglGetProcAddress("glGenProgramsARB"))==NULL ||
+             (glBindProgramARB=(PFNGLBINDPROGRAMARBPROC)wglGetProcAddress("glBindProgramARB"))==NULL ||
+             (glProgramStringARB=(PFNGLPROGRAMSTRINGARBPROC)wglGetProcAddress("glProgramStringARB"))==NULL ||
+             (glProgramEnvParameter4fARB=(PFNGLPROGRAMENVPARAMETER4FARBPROC)wglGetProcAddress("glProgramEnvParameter4fARB"))==NULL ||
+             (glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB"))==NULL)
+            {
+            WARNMSG();
+            glext_vp=glext_fp=FALSE;
+            }
 #endif
 
       done=TRUE;
@@ -873,18 +888,19 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          break;
       }
 
-   glGenTextures(1,&texid);
-   glBindTexture(GL_TEXTURE_2D,texid);
-
-   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-
    if (s3tc!=0 && !glext_ts3)
       {
       WARNMSG();
       return(0);
       }
+
+   glGenTextures(1,&texid);
+   glBindTexture(GL_TEXTURE_2D,texid);
+
+   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
 #ifdef GL_ARB_texture_compression
-   else if (s3tc!=0)
+   if (s3tc!=0)
       if (mipmapped==0)
          {
          if (!glext_np2)
