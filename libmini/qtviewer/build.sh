@@ -15,4 +15,7 @@ if (! -X qmake) then
    exit 1
 endif
 
-qmake && make -j2
+set options=""
+if ($HOSTTYPE == "intel-pc") set options="-spec macx-g++"
+
+qmake $options && make -j2

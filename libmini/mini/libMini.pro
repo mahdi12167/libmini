@@ -6,8 +6,6 @@ include(sources.pro)
 QT += opengl
 QT -= gui
 
-mac:QMAKESPEC = macx-g++
-
 CONFIG += staticlib thread
 CONFIG += debug_and_release build_all
 

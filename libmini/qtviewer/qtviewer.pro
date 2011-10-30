@@ -10,8 +10,6 @@ include(sources.pro)
 DEPENDPATH += ../mini
 
 QT += core gui opengl
-
-mac:QMAKESPEC = macx-g++
 CONFIG += debug_and_release build_all
 
 UI_DIR = uics
