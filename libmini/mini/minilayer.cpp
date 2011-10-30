@@ -1768,7 +1768,8 @@ void minilayer::loaddetailtex(const char *detailname,
 
          // attach texture at center
          attachdetailtex(texid,width,height,mipmaps,TRUE,
-                         0.25*(sw+nw+ne+se),0.5*(se+ne),0.5*(nw+ne));
+                         0.25*(sw+nw+ne+se),0.5*(se+ne),0.5*(nw+ne),
+                         alpha);
          }
 
       free(dtname);
