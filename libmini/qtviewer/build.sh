@@ -15,11 +15,4 @@ if (! -X qmake) then
    exit 1
 endif
 
-if (-d ../mini) then
-   (cd ../mini; cmake -DBUILD_MINI_SFX=ON .; make -j2)
-endif
-
-set options=""
-if ($HOSTTYPE == "intel-pc") set options="-spec macx-g++"
-
-qmake $options && make -j2
+qmake && make -j2

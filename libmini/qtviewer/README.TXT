@@ -32,9 +32,7 @@ Navigate to the QT source directory and type
 
 (2A) Libmini Dependencies (Unix/Mac)
 ====================================
-The following additional dependencies are required by libMini:
- libcurl
- libsquish
+Get the libMini dependencies from the libMini subversion repository.
 Type on the unix console in your project directory (e.g. ~/Projects):
  svn co http://libmini.googlecode.com/svn/libmini/deps deps
  (cd deps; ./build.sh)

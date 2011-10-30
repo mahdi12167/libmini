@@ -1,39 +1,53 @@
-QT += core gui opengl
-
 TARGET = qtviewer
 TEMPLATE = app
 
 include(sources.pro)
 
-INCLUDEPATH += $$PWD/..
-INCLUDEPATH += $$PWD/../..
-INCLUDEPATH += $$PWD/../deps
-INCLUDEPATH += $$PWD/../deps/squish
-INCLUDEPATH += $$PWD/../deps/curl/include
+!include(../mini/libMini.pro) {
+   error("couldn't find libMini!")
+}
 
-win32:INCLUDEPATH += $$PWD/../WIN32
-win32:INCLUDEPATH += $$PWD/../WIN32/pthreads-win32
-win32:INCLUDEPATH += $$PWD/../WIN32/libcurl
-win32:INCLUDEPATH += $$PWD/../WIN32/squish
-win32:INCLUDEPATH += $$PWD/../WIN32/libjpeg
-win32:INCLUDEPATH += $$PWD/../WIN32/libpng
-win32:INCLUDEPATH += $$PWD/../WIN32/zlib
+DEPENDPATH += ../mini
 
-LIBS += -L$$PWD/..
-LIBS += -L$$PWD/../mini
-LIBS += -L$$PWD/../deps
-LIBS += -L$$PWD/../deps/squish
-LIBS += -L$$PWD/../deps/curl/lib
+QT += core gui opengl
 
-win32:LIBS += -L$$PWD/../mini/debug
-win32:LIBS += -L$$PWD/../mini/release
-win32:LIBS += -L$$PWD/../WIN32
-win32:LIBS += -L$$PWD/../WIN32/pthreads-win32
-win32:LIBS += -L$$PWD/../WIN32/libcurl
-win32:LIBS += -L$$PWD/../WIN32/squish
-win32:LIBS += -L$$PWD/../WIN32/libjpeg
-win32:LIBS += -L$$PWD/../WIN32/libpng
-win32:LIBS += -L$$PWD/../WIN32/zlib
+mac:QMAKESPEC = macx-g++
+CONFIG += debug_and_release build_all
+
+UI_DIR = uics
+MOC_DIR = mocs
+OBJECTS_DIR = objs
+
+INCLUDEPATH += .
+INCLUDEPATH += ..
+INCLUDEPATH += ../deps
+INCLUDEPATH += ../deps/squish
+INCLUDEPATH += ../deps/curl/include
+
+win32:INCLUDEPATH += ../WIN32
+win32:INCLUDEPATH += ../WIN32/pthreads-win32
+win32:INCLUDEPATH += ../WIN32/libcurl
+win32:INCLUDEPATH += ../WIN32/squish
+win32:INCLUDEPATH += ../WIN32/libjpeg
+win32:INCLUDEPATH += ../WIN32/libpng
+win32:INCLUDEPATH += ../WIN32/zlib
+
+LIBS += -L.
+LIBS += -L..
+LIBS += -L../mini
+LIBS += -L../deps
+LIBS += -L../deps/squish
+LIBS += -L../deps/curl/lib
+
+win32:LIBS += -L../mini/debug
+win32:LIBS += -L../mini/release
+win32:LIBS += -L../WIN32
+win32:LIBS += -L../WIN32/pthreads-win32
+win32:LIBS += -L../WIN32/libcurl
+win32:LIBS += -L../WIN32/squish
+win32:LIBS += -L../WIN32/libjpeg
+win32:LIBS += -L../WIN32/libpng
+win32:LIBS += -L../WIN32/zlib
 
 unix:LIBS += -lMini -lMiniSFX
 unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
