@@ -3,8 +3,8 @@ TEMPLATE = app
 
 include(sources.pro)
 
-!include(../mini/libMini.pro) {
-   error("couldn't find libMini!")
+!include(../mini/sources.pro) {
+   error("couldn't find libMini sources!")
 }
 
 DEPENDPATH += ../mini
@@ -32,13 +32,10 @@ win32:INCLUDEPATH += ../WIN32/zlib
 
 LIBS += -L.
 LIBS += -L..
-LIBS += -L../mini
 LIBS += -L../deps
 LIBS += -L../deps/squish
 LIBS += -L../deps/curl/lib
 
-win32:LIBS += -L../mini/debug
-win32:LIBS += -L../mini/release
 win32:LIBS += -L../WIN32
 win32:LIBS += -L../WIN32/pthreads-win32
 win32:LIBS += -L../WIN32/libcurl
@@ -47,10 +44,8 @@ win32:LIBS += -L../WIN32/libjpeg
 win32:LIBS += -L../WIN32/libpng
 win32:LIBS += -L../WIN32/zlib
 
-unix:LIBS += -lMini -lMiniSFX
 unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 
-win32:LIBS += -llibMini -llibMiniSFX
 win32:LIBS += -lsquish -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
 win32:LIBS += -lws2_32 -lwinmm
 
