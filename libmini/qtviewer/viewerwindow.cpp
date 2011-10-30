@@ -303,8 +303,8 @@ void ViewerWindow::dropEvent(QDropEvent *event)
 
       for (int i=0; i<urlList.size(); i++)
       {
-         QString url = urlList.at(i).path();
-         loadMap(url);
+         QUrl url = urlList.at(i);
+         loadMap(url.toString());
       }
    }
 }
