@@ -7,6 +7,7 @@
 #ifndef _WIN32
 #include <dirent.h>
 #else
+#undef UNICODE
 #include <windows.h>
 #endif
 
