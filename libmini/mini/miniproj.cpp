@@ -216,7 +216,7 @@ void miniproj::map(const unsigned int which,
    }
 
 // flag remapped slot as dirty
-void miniproj::dirty(const unsigned int slot,const unsigned int map2,const unsigned int brickid) {}
+void miniproj::dirty(const unsigned int,const unsigned int,const unsigned int ) {}
 
 // project a tetrahedron (minivals version)
 void miniproj::proj(const miniv3d &v1,const double c1,
@@ -320,12 +320,12 @@ inline double miniproj::intersect(const miniv3d &p,const miniv3d &d,const miniv3
    }
 
 // pass parameters down to the shader
-void miniproj::pass(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
-                    const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4) {}
+void miniproj::pass(const miniv3d &,const miniv3d &,const miniv3d &,const miniv3d &,
+                    const dynacoord &,const dynacoord &,const dynacoord &,const dynacoord &) {}
 
 // pass parameters down to the shader when in slicing mode
-void miniproj::passSLI(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3,const miniv3d &v4,
-                       const dynacoord &a1,const dynacoord &a2,const dynacoord &a3,const dynacoord &a4) {}
+void miniproj::passSLI(const miniv3d &,const miniv3d &,const miniv3d &,const miniv3d &,
+                       const dynacoord &,const dynacoord &,const dynacoord &,const dynacoord &) {}
 
 // pass parameters down to the shader when in projection mode
 void miniproj::passPRJ(const int,const miniv3d &,const dynacoord &) {}
