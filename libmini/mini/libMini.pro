@@ -14,9 +14,9 @@ CONFIG(debug, debug|release) {
    win32:TARGET = $$join(TARGET,,d)
 }
 
-UI_DIR = uics
 MOC_DIR = mocs
 OBJECTS_DIR = objs
+UI_DIR = uics
 
 INCLUDEPATH += . ..
 

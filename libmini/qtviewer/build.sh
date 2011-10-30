@@ -3,6 +3,12 @@
 # unix build script
 # (c) by Stefan Roettger
 
+if ($1 == "clean") then
+   make clean
+   rm -rf qtviewer qtviewer.app mocs objs uics
+   exit
+endif
+
 if ($1 == "zip") then
    (cd ..; zip -qr9 qtviewer/QTVIEWER.zip qtviewer -x \*/.\?\?\* -x \*CVS/\*)
    exit

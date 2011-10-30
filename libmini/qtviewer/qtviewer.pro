@@ -12,9 +12,9 @@ DEPENDPATH += ../mini
 QT += core gui opengl
 CONFIG += debug_and_release build_all
 
-UI_DIR = uics
 MOC_DIR = mocs
 OBJECTS_DIR = objs
+UI_DIR = uics
 
 INCLUDEPATH += .
 INCLUDEPATH += ..
