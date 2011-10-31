@@ -163,9 +163,21 @@ void datacache::setremoteurl(const char *url)
    {
    if (RURL!=NULL) free(RURL);
 
+   // remove url prefix "file://" for local file names like "file://..."
    if (url==NULL) RURL=NULL;
    else if (strstr(url,"file://")!=NULL) RURL=strdup(url+7);
    else RURL=strdup(url);
+
+   // remove url prefix "file:///" for windows file names like "file:///C:/..."
+   if (strlen(RURL)>3)
+      if (RURL[0]=='/' &&
+          isalpha(RURL[1]) &&
+          RURL[2]==':' &&
+          RURL[3]=='/')
+         {
+         free(RURL);
+         RURL=strdup(url+8);
+         }
 
    LOCAL=TRUE;
 
