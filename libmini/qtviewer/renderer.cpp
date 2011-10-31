@@ -33,7 +33,7 @@ mininode *Renderer::build_ecef_geometry()
    minidyna<miniv3d> pos;
    static const int eqlines=500;
 
-   for (int i=0; i<eqlines; i++)
+   for (int i=0; i<=eqlines; i++)
       {
       minicoord c(miniv3d((double)i/eqlines*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
       c.convert2(minicoord::MINICOORD_ECEF);
