@@ -304,12 +304,7 @@ void ViewerWindow::dropEvent(QDropEvent *event)
       for (int i=0; i<urlList.size(); i++)
       {
          QUrl url = urlList.at(i);
-         QString path = url.toString();
-
-         if (path.startsWith("file:"))
-            path = url.toLocalFile();
-
-         loadMap(path);
+         loadMap(url.toString());
       }
    }
 }
