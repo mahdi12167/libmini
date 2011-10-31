@@ -67,7 +67,7 @@ Usage: qtviewer { <tileset url> }
 
 (5) Tileset URLs
 ================
-URLs can point to a regular libGrid or VTBuilder (vtterain.org) tileset.
+URLs can point to a regular libGrid or VTBuilder (vterrain.org) tileset.
 The tileset directory layout of each tileset (uri or url) has to be:
  elev/    - directory of elevation tiles
  elev.ini - ini file for elevation directory
