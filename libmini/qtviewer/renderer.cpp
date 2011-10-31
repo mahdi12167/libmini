@@ -31,7 +31,7 @@ mininode *Renderer::build_ecef_geometry()
    // define equator:
 
    minidyna<miniv3d> pos;
-   static const int eqlines=100;
+   static const int eqlines=500;
 
    for (int i=0; i<eqlines; i++)
       {
@@ -41,7 +41,7 @@ mininode *Renderer::build_ecef_geometry()
       }
 
    group->append(new mininode_color(miniv3d(0.5,0.5,0.5)))->
-      append(new mininode_geometry_band(pos,pos,5000));
+      append(new mininode_geometry_band(pos,pos,20000));
 
    return(group);
 }
