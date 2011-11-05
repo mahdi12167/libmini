@@ -8,7 +8,6 @@
 #include "minibase.h"
 #include "minimath.h"
 
-#include "minimath.h"
 #include "minicoord.h"
 #include "mininode.h"
 
