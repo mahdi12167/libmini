@@ -57,7 +57,7 @@ protected:
    // parent window reference
    QGLWidget* m_window;
 
-   // root node
+   // scene graph root node
    mininode m_root;
 
    // initialization flag
@@ -70,7 +70,7 @@ protected:
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
    virtual mininode *build_ecef_geometry()=0;
-   virtual void render_ecef_geometry();
+   virtual void render_ecef_geometry(double t);
 
 private:
    GLuint    m_CrosshairTextureId;

@@ -44,12 +44,11 @@ void Viewer::init()
    // tell camera lens fovy
    camera->setLens(VIEWER_FOVY);
 
-   // link camera
+   // link camera to scene graph
    m_root.append(camera);
 
-   // link ecef geometry
+   // link ecef geometry to scene graph
    m_root.append(build_ecef_geometry());
-   m_root.optimize();
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -473,7 +472,7 @@ void Viewer::setExagger(double scale)
    camera->startIdling();
 }
 
-void Viewer::render_ecef_geometry()
+void Viewer::render_ecef_geometry(double t)
 {
    // render plain globe for z-values:
 
@@ -499,52 +498,52 @@ void Viewer::render_ecef_geometry()
 
    if (!shader_setup)
    {
-      shader_slot1=ministrip::getfreeslot();
+      shader_slot1=mininode_geometry::getfreeslot();
 
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BEGIN);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_HEADER);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BASIC);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_VIEWPOS);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_NORMAL);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOG);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOOTER);
-      ministrip::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_END);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BEGIN);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_HEADER);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BASIC);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_VIEWPOS);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_NORMAL);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOG);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOOTER);
+      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_END);
 
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BEGIN);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_HEADER);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BASIC);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_SHADE);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOG);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOOTER);
-      ministrip::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_END);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BEGIN);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_HEADER);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BASIC);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_SHADE);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOG);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOOTER);
+      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_END);
 
-      shader_slot2=ministrip::getfreeslot();
+      shader_slot2=mininode_geometry::getfreeslot();
 
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BEGIN);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_HEADER);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BASIC);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_VIEWPOS);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOG);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOOTER);
-      ministrip::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_END);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BEGIN);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_HEADER);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BASIC);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_VIEWPOS);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOG);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOOTER);
+      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_END);
 
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BEGIN);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_HEADER);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BASIC);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_SHADE_DIRECT);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOG);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOOTER);
-      ministrip::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_END);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BEGIN);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_HEADER);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BASIC);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_SHADE_DIRECT);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOG);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOOTER);
+      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_END);
 
       shader_setup=true;
    }
 
-   int slot=shader_slot1;
+   // setup shading params:
 
+   int slot=shader_slot1;
    mininode_coord::set_lightdir(miniv3d(0,0,0));
 
-   // setup shading params
    if (m_pEarthParams->usediffuse)
    {
       slot=shader_slot2;
@@ -563,18 +562,27 @@ void Viewer::render_ecef_geometry()
       miniv3d lgl;
       lgl=mlt_vec(invtra,l);
       float lightdir[3]={lgl.x,lgl.y,lgl.z};
-      ministrip::setshadedirectparams(slot,lightdir,0.5f,0.5f);
+      mininode_geometry::setshadedirectparams(slot,lightdir,0.5f,0.5f);
    }
 
    // setup fogging params
    float fogstart=getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
    float fogend=getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
    if (!getearth()->get()->usefog) fogend=0.0f;
-   ministrip::setfogparams(slot,fogstart,fogend,getearth()->get()->fogdensity,getearth()->get()->fogcolor);
+   mininode_geometry::setfogparams(slot,fogstart,fogend,getearth()->get()->fogdensity,getearth()->get()->fogcolor);
+
+   // setup render state
+   initstate();
+   mininode_geometry::useglobalshader(slot);
+   mininode_animation::set_time(t);
+
+   // update scene graph
+   m_root.clear_dirty();
 
    // render ecef geometry by traversing scene graph
-   initstate();
-   ministrip::useglobalshader(slot);
-   m_root.traverse();
+   if (m_root.traverse())
+      getCamera()->startIdling();
+
+   // cleanup render state
    exitstate();
 }
