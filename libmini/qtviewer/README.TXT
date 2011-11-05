@@ -106,12 +106,12 @@ a Renderer class from QTViewer's Viewer class. In that class, we
 overload the build_ecef_geometry() method, which constructs a scene
 graph using libMini's mininode class as a basis.
 
-For example, we can add a cylinder as a axis at the north pole by
-specifying its georeferenced position (mininode_coord), color
-(mininode_color) and geometry (mininode_geometry_tube) and linking
-those node components together as a simple scene graph. The so defined
-scene graph is rendered on top of the earth and on top of any loaded
-libGrid or VTBuilder tilesets:
+For example, we can add a cylinder as the north pole by specifying its
+georeferenced position (mininode_coord), color (mininode_color) and
+geometry (mininode_geometry_tube) and linking those node components
+together as a simple scene graph. The so defined scene graph is
+rendered on top of the earth and on top of any loaded libGrid or
+VTBuilder tilesets:
 
 class Renderer: public Viewer
 {
