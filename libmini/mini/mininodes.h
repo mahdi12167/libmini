@@ -25,6 +25,33 @@ enum
    MININODE_GEOMETRY
    };
 
+//! dynamic time-dependent node
+class mininode_dynamic: public mininode
+   {
+   public:
+
+   //! default constructor
+   mininode_dynamic(unsigned int id=0)
+      : mininode(id)
+      {}
+
+   //! destructor
+   virtual ~mininode_dynamic()
+      {}
+
+   //! set global time
+   static void set_time(double t)
+      {m_time=t;}
+
+   //! get global time
+   static double get_time()
+      {return(m_time);}
+
+   protected:
+
+   static double m_time;
+   };
+
 //! camera node
 class mininode_cam: public mininode, public minicam
    {
@@ -93,7 +120,11 @@ class mininode_switch: public mininode
    virtual mininode *get_child(unsigned int i=0) const
       {return(ison?get(i):NULL);}
 
-   void toggle(BOOLINT on=TRUE) {ison=on;}
+   void toggle(BOOLINT on=TRUE)
+      {
+      if (ison!=on) set_dirty();
+      ison=on;
+      }
 
    protected:
 
@@ -101,20 +132,20 @@ class mininode_switch: public mininode
    };
 
 //! transformation node
-class mininode_transform: public mininode
+class mininode_transform: public mininode_dynamic
    {
    public:
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode(MININODE_TRANSFORM)
+      : mininode_dynamic(MININODE_TRANSFORM)
       {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
    virtual ~mininode_transform()
       {}
 
-   virtual void optimize();
+   virtual void update();
 
    protected:
 
@@ -189,6 +220,48 @@ class mininode_coord: public mininode_transform
 
    virtual void traverse_pre();
    virtual void traverse_post();
+   };
+
+//! animation node
+class mininode_animation: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_animation()
+      : mininode_transform()
+      {}
+
+   protected:
+
+   virtual void traverse_post()
+      {
+      mininode_transform::traverse_post();
+      set_dirty();
+      }
+   };
+
+//! rotate animation node
+class mininode_rotate_animation: public mininode_animation
+   {
+   public:
+
+   //! default constructor
+   mininode_rotate_animation(double w,const miniv3d &a)
+      : mininode_animation()
+      {m_w=w; m_a=a;}
+
+   protected:
+
+   double m_w;
+   miniv3d m_a;
+
+   virtual void update()
+      {
+      miniv3d rot[3];
+      rot_mtx(rot,get_time()*m_w,m_a);
+      mtxget(rot,oglmtx);
+      }
    };
 
 //! geometry node

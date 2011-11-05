@@ -2,14 +2,16 @@
 
 #include "mininodes.h"
 
+double mininode_dynamic::m_time=0.0;
 double mininode_color::brightness=1.0;
 miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
 BOOLINT mininode_coord::lightdirset=FALSE;
 
-void mininode_transform::optimize()
+void mininode_transform::update()
    {
-   while (get_children()==1 &&
-          get_child()->get_id()==MININODE_TRANSFORM)
+   // merge two consecutive transform nodes
+   if (get_children()==1 &&
+       get_child()->get_id()==MININODE_TRANSFORM)
       {
       // get child transformation
       mininode_transform *transform=(mininode_transform *)get_child();
@@ -24,8 +26,6 @@ void mininode_transform::optimize()
       // remove child
       remove_child();
       }
-
-   mininode::optimize();
    }
 
 mininode_coord::mininode_coord(const minicoord &c)

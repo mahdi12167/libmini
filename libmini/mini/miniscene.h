@@ -153,7 +153,7 @@ class miniscene
 
    MINISCENE_PARAMS PARAMS;
 
-   virtual void render_ecef_geometry();
+   virtual void render_ecef_geometry(double t);
 
    miniearth *EARTH;
    miniterrain *TERRAIN;

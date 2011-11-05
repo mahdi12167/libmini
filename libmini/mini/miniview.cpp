@@ -93,7 +93,7 @@ void miniview::setup_matrix(float sbase)
    }
 
 // render ecef geometry
-void miniview::render_ecef_geometry()
+void miniview::render_ecef_geometry(double t)
    {
    // render plain globe for z-values:
 

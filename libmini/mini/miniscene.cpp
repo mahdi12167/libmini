@@ -166,7 +166,7 @@ void miniscene::render()
          mtxget(mtx,oglmtx);
          mtxpush();
          mtxmult(oglmtx);
-         render_ecef_geometry();
+         render_ecef_geometry(time());
          mtxpop();
          }
 
@@ -243,7 +243,7 @@ void miniscene::setraycallbacks(void (*lock)(void *data),void *data,
    {miniray::setcallbacks(lock,data,unlock);}
 
 // render ecef geometry
-void miniscene::render_ecef_geometry()
+void miniscene::render_ecef_geometry(double t)
    {
    // overwrite in derived class and add opengl calls
    // to render additional geometry defined in ecef coordinates here:
