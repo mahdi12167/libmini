@@ -22,6 +22,7 @@ enum
    MININODE_COLOR,
    MININODE_SWITCH,
    MININODE_TRANSFORM,
+   MININODE_ANIMATION,
    MININODE_GEOMETRY
    };
 
@@ -132,20 +133,18 @@ class mininode_switch: public mininode
    };
 
 //! transformation node
-class mininode_transform: public mininode_dynamic
+class mininode_transform: public mininode
    {
    public:
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode_dynamic(MININODE_TRANSFORM)
+      : mininode(MININODE_TRANSFORM)
       {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
    virtual ~mininode_transform()
       {}
-
-   virtual void update();
 
    protected:
 
@@ -156,6 +155,8 @@ class mininode_transform: public mininode_dynamic
 
    virtual void traverse_post()
       {mtxpop();}
+
+   virtual void update();
    };
 
 //! translation node
@@ -223,43 +224,53 @@ class mininode_coord: public mininode_transform
    };
 
 //! animation node
-class mininode_animation: public mininode_transform
+class mininode_animation: public mininode_dynamic
    {
    public:
 
    //! default constructor
    mininode_animation()
-      : mininode_transform()
+      : mininode_dynamic(MININODE_ANIMATION)
+      {
+      miniv3d mtx[3];
+      set_mtx(mtx);
+      mtxget(mtx,oglmtx);
+      }
+
+   //! destructor
+   virtual ~mininode_animation()
       {}
 
    protected:
 
+   double oglmtx[16];
+
+   virtual void traverse_pre()
+      {mtxpush(); mtxmult(oglmtx);}
+
    virtual void traverse_post()
-      {
-      mininode_transform::traverse_post();
-      set_dirty();
-      }
+      {mtxpop(); set_dirty();}
    };
 
 //! rotate animation node
-class mininode_rotate_animation: public mininode_animation
+class mininode_animation_rotate: public mininode_animation
    {
    public:
 
    //! default constructor
-   mininode_rotate_animation(double w,const miniv3d &a)
+   mininode_animation_rotate(double w,const miniv3d &a)
       : mininode_animation()
-      {m_w=w; m_a=a;}
+      {m_omega=w; m_axis=a;}
 
    protected:
 
-   double m_w;
-   miniv3d m_a;
+   double m_omega;
+   miniv3d m_axis;
 
    virtual void update()
       {
       miniv3d rot[3];
-      rot_mtx(rot,get_time()*m_w,m_a);
+      rot_mtx(rot,get_time()*m_omega,m_axis);
       mtxget(rot,oglmtx);
       }
    };

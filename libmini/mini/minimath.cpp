@@ -25,6 +25,10 @@ unsigned int gcd(unsigned int a,unsigned int b)
 unsigned int lcm(unsigned int a,unsigned int b)
    {return(a*b/gcd(a,b));}
 
+// matrix initialization to identity
+void set_mtx(miniv3d mtx[3]) {mtx[0]=miniv3d(1,0,0); mtx[1]=miniv3d(0,1,0); mtx[2]=miniv3d(0,0,1);}
+void set_mtx(miniv4d mtx[3]) {mtx[0]=miniv4d(1,0,0,0); mtx[1]=miniv4d(0,1,0,0); mtx[2]=miniv4d(0,0,1,0);}
+
 // matrix copying:
 
 void cpy_mtx(miniv3d cpy[3],miniv3d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2];}

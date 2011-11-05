@@ -61,7 +61,7 @@ class mininode: public minidyna< miniref<mininode> >
    //! traverse [cycle-free] graph
    virtual BOOLINT traverse()
       {
-      BOOLINT dirty=m_dirty;
+      BOOLINT dirty=FALSE;
 
       unsigned int s=get_children();
 
@@ -78,7 +78,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       traverse_post();
 
-      return(dirty);
+      return(m_dirty || dirty);
       }
 
    //! traverse graph and serialize nodes with specific id
@@ -111,20 +111,21 @@ class mininode: public minidyna< miniref<mininode> >
    BOOLINT is_dirty()
       {return(m_dirty);}
 
-   void clear_dirty()
+   BOOLINT clear_dirty()
       {
       for (unsigned int i=0; i<get_children(); i++)
-         if (get_child(i)->is_dirty())
-            {
+         if (get_child(i)->clear_dirty())
             set_dirty();
-            get_child(i)->clear_dirty();
-            }
 
       if (is_dirty())
          {
          update();
          m_dirty=FALSE;
+
+         return(TRUE);
          }
+
+      return(FALSE);
       }
 
    protected:
@@ -136,6 +137,8 @@ class mininode: public minidyna< miniref<mininode> >
    virtual void traverse_post() {}
 
    virtual void update() {}
+
+   private:
 
    BOOLINT m_dirty;
    };
