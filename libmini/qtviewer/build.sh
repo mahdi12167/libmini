@@ -5,7 +5,7 @@
 
 if ($1 == "clean") then
    make clean
-   rm -rf qtviewer qtviewer.app mocs objs uics
+   rm -rf Makefile* qtviewer qtviewer_debug qtviewer*.app mocs* objs* rccs* uics*
    exit
 endif
 
@@ -24,4 +24,4 @@ endif
 set options=""
 if ($HOSTTYPE == "intel-pc") set options="-spec macx-g++"
 
-qmake $options && make -j2
+qmake $options && make -j4
