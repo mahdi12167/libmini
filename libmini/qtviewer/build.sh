@@ -24,4 +24,4 @@ endif
 set options=""
 if ($HOSTTYPE == "intel-pc") set options="-spec macx-g++"
 
-qmake $options && make -j4
+qmake $options && make "$1" -j4
