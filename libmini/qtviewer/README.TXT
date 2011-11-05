@@ -98,9 +98,41 @@ Navigation is self-explanatory via mouse or touch pad gestures:
  shift & double click       - zoom out
  shift & touch pad scroll   - pan left/right and forward/backward
 
-(9) Retire
-==========
-If you found the software useful, please send a postcard to
+(9) Extension
+=============
+The QTViewer can be extended to display additional geometry (such as
+buildings, GPS paths etc.) in a georeferenced ECEF context by deriving
+a Renderer class from QTViewer's Viewer class. In that class, we
+overload the build_ecef_geometry() method, which constructs a scene
+graph using libMini's mininode class as a basis.
+
+For example, we can add a cylinder as a axis at the north pole by
+specifying its georeferenced position (mininode_coord), color
+(mininode_color) and geometry (mininode_geometry_tube) and linking
+those node components together as a simple scene graph. The so defined
+scene graph is rendered on top of the earth and on top of any loaded
+libGrid or VTBuilder tilesets:
+
+class Renderer: public Viewer
+{
+   protected:
+
+   mininode *Renderer::build_ecef_geometry()
+   {
+      mininode *scene =
+         new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH))->
+            append_child(new mininode_color(miniv3d(0.0,0.0,1.0)))->
+            append_child(new mininode_geometry_tube(10000,500000));
+
+      return(scene);
+   }
+};
+
+More information about libMini's node classes can be found in the mininodes.h header.
+
+(10) Retire
+===========
+If you found the software useful, please send a vacation postcard to
  Prof. Dr. Stefan Roettger
  Hochstr. 33
  90429 Nuernberg
