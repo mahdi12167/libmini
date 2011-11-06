@@ -166,9 +166,7 @@ class ministrip
    static char *getpixshader(int num);
 
    //! get bounding box
-   void getbbox(float *minx,float *maxx,
-                float *miny,float *maxy,
-                float *minz,float *maxz);
+   void getbbox(miniv3d *bboxmin,miniv3d *bboxmax);
 
    protected:
 
@@ -187,9 +185,8 @@ class ministrip
    int TEXCOMPS;
 
    float VTXX,VTXY,VTXZ;
-   float BBOXMINX,BBOXMAXX;
-   float BBOXMINY,BBOXMAXY;
-   float BBOXMINZ,BBOXMAXZ;
+   miniv3d BBOXMIN,BBOXMAX;
+
    float COLR,COLG,COLB,COLA;
    float NRMX,NRMY,NRMZ;
    float TEXX,TEXY,TEXZ,TEXW;

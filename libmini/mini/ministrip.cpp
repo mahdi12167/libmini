@@ -346,14 +346,8 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 
    SIZE=0;
 
-   BBOXMINX=MAXFLOAT;
-   BBOXMAXX=-MAXFLOAT;
-
-   BBOXMINY=MAXFLOAT;
-   BBOXMAXY=-MAXFLOAT;
-
-   BBOXMINZ=MAXFLOAT;
-   BBOXMAXZ=-MAXFLOAT;
+   BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+   BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
    COLR=1.0f;
    COLG=1.0f;
@@ -507,14 +501,10 @@ void ministrip::clear()
    {
    SIZE=0;
 
-   BBOXMINX=MAXFLOAT;
-   BBOXMAXX=-MAXFLOAT;
+   BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+   BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
-   BBOXMINY=MAXFLOAT;
-   BBOXMAXY=-MAXFLOAT;
-
-   BBOXMINZ=MAXFLOAT;
-   BBOXMAXZ=-MAXFLOAT;
+   COPYVTX=0;
    }
 
 // begin next triangle strip
@@ -608,14 +598,14 @@ void ministrip::addvtx()
          if ((TEXARRAY=(float *)realloc(TEXARRAY,TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
       }
 
-   if (VTXX<BBOXMINX) BBOXMINX=VTXX;
-   if (VTXX>BBOXMAXX) BBOXMAXX=VTXX;
+   if (VTXX<BBOXMIN.x) BBOXMIN.x=VTXX;
+   if (VTXX>BBOXMAX.x) BBOXMAX.x=VTXX;
 
-   if (VTXY<BBOXMINY) BBOXMINY=VTXY;
-   if (VTXY>BBOXMAXY) BBOXMAXY=VTXY;
+   if (VTXY<BBOXMIN.y) BBOXMIN.y=VTXY;
+   if (VTXY>BBOXMAX.y) BBOXMAX.y=VTXY;
 
-   if (VTXZ<BBOXMINZ) BBOXMINZ=VTXZ;
-   if (VTXZ>BBOXMAXZ) BBOXMAXZ=VTXZ;
+   if (VTXZ<BBOXMIN.z) BBOXMIN.z=VTXZ;
+   if (VTXZ>BBOXMAX.z) BBOXMAX.z=VTXZ;
 
    ptr=&VTXARRAY[3*SIZE];
 
@@ -1208,16 +1198,8 @@ char *ministrip::getpixshader(int num)
    }
 
 // get bounding box
-void ministrip::getbbox(float *minx,float *maxx,
-                        float *miny,float *maxy,
-                        float *minz,float *maxz)
+void ministrip::getbbox(miniv3d *bboxmin,miniv3d *bboxmax)
    {
-   *minx=BBOXMINX;
-   *maxx=BBOXMAXX;
-
-   *miny=BBOXMINY;
-   *maxy=BBOXMAXY;
-
-   *minz=BBOXMINZ;
-   *maxz=BBOXMAXZ;
+   *bboxmin=BBOXMIN;
+   *bboxmax=BBOXMAX;
    }
