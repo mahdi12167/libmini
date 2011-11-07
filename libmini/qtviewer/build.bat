@@ -1,3 +1,3 @@
 qmake
 qmake -tp vc
-nmake
+nmake release

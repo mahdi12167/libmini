@@ -25,7 +25,11 @@ set qoptions=""
 if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
 
 set moptions=""
-if ($1 != "") set moptions="$1"
+if ($1 != "") then
+   set moptions="$1"
+else
+   set moptions="release"
+endif
 
 set qoptions=""
 if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
