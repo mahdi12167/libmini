@@ -22,15 +22,14 @@ if (! -X qmake) then
 endif
 
 set qoptions=""
-if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
+if ($HOSTTYPE == "intel-pc") set qoptions="$qoptions -spec macx-g++"
 
 set moptions=""
 if ($1 != "") then
-   set moptions="$1"
+   set moptions="$moptions $1"
 else
-   set moptions="release"
+   set moptions="$moptions release"
 endif
+set moptions="$moptions -j4"
 
-set qoptions=""
-if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
-qmake $qoptions && make $moptions -j4
+qmake $qoptions && make $moptions
