@@ -21,7 +21,10 @@ if (! -X qmake) then
    exit 1
 endif
 
-set options=""
-if ($HOSTTYPE == "intel-pc") set options="-spec macx-g++"
+set qoptions=""
+if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
 
-qmake $options && make "$1" -j4
+set moptions=""
+if ($1 == "") set moptions="$1"
+
+qmake $qoptions && make $moptions -j4
