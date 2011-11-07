@@ -25,6 +25,8 @@ set qoptions=""
 if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
 
 set moptions=""
-if ($1 == "") set moptions="$1"
+if ($1 != "") set moptions="$1"
 
+set qoptions=""
+if ($HOSTTYPE == "intel-pc") set qoptions="-spec macx-g++"
 qmake $qoptions && make $moptions -j4
