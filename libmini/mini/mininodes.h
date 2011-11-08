@@ -26,13 +26,36 @@ enum
    };
 
 //! dynamic time-dependent node
-class mininode_dynamic: public mininode
+class mininode_group: public mininode
+   {
+   public:
+
+   //! default constructor
+   mininode_group(unsigned int id=0)
+      : mininode(id)
+      {}
+
+   //! destructor
+   virtual ~mininode_group()
+      {}
+
+   protected:
+
+   virtual void traverse_pre() {}
+   virtual void traverse_past() {}
+   virtual void traverse_post() {}
+
+   virtual void update() {}
+   };
+
+//! dynamic time-dependent node
+class mininode_dynamic: public mininode_group
    {
    public:
 
    //! default constructor
    mininode_dynamic(unsigned int id=0)
-      : mininode(id)
+      : mininode_group(id)
       {}
 
    //! destructor
@@ -53,7 +76,7 @@ class mininode_dynamic: public mininode
    };
 
 //! camera node
-class mininode_cam: public mininode, public minicam
+class mininode_cam: public mininode_dynamic, public minicam
    {
    public:
 
@@ -61,7 +84,7 @@ class mininode_cam: public mininode, public minicam
    mininode_cam(miniearth *earth,
                 double lat=21.39,double lon=-157.72,double height=7E6,
                 double mindist=0.0)
-      : mininode(MININODE_CAM), minicam(earth,lat,lon,height,mindist)
+      : mininode_dynamic(MININODE_CAM), minicam(earth,lat,lon,height,mindist)
       {}
 
    //! destructor
@@ -70,17 +93,17 @@ class mininode_cam: public mininode, public minicam
    };
 
 //! color node
-class mininode_color: public mininode
+class mininode_color: public mininode_group
    {
    public:
 
    //! default constructor
    mininode_color(const miniv4d &c)
-      : mininode(MININODE_COLOR)
+      : mininode_group(MININODE_COLOR)
       {rgba=c;}
 
    mininode_color(const miniv3d &c)
-      : mininode(MININODE_COLOR)
+      : mininode_group(MININODE_COLOR)
       {rgba=miniv4d(c,1);}
 
    //! destructor
@@ -104,13 +127,13 @@ class mininode_color: public mininode
    };
 
 //! switch node
-class mininode_switch: public mininode
+class mininode_switch: public mininode_group
    {
    public:
 
    //! default constructor
    mininode_switch()
-      : mininode(MININODE_SWITCH)
+      : mininode_group(MININODE_SWITCH)
       {ison=TRUE;}
 
    //! destructor
@@ -132,13 +155,13 @@ class mininode_switch: public mininode
    };
 
 //! transformation node
-class mininode_transform: public mininode
+class mininode_transform: public mininode_group
    {
    public:
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode(MININODE_TRANSFORM)
+      : mininode_group(MININODE_TRANSFORM)
       {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
@@ -275,13 +298,13 @@ class mininode_animation_rotate: public mininode_animation
    };
 
 //! geometry node
-class mininode_geometry: public mininode, public ministrip
+class mininode_geometry: public mininode_group, public ministrip
    {
    public:
 
    //! default constructor
    mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
-      : mininode(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
+      : mininode_group(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
       {}
 
    //! destructor

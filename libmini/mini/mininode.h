@@ -161,11 +161,11 @@ class mininode: public minidyna< miniref<mininode> >
 
    unsigned int m_id;
 
-   virtual void traverse_pre() {}
-   virtual void traverse_past() {}
-   virtual void traverse_post() {}
+   virtual void traverse_pre() = 0;
+   virtual void traverse_past() = 0;
+   virtual void traverse_post() = 0;
 
-   virtual void update() {}
+   virtual void update() = 0;
 
    private:
 

@@ -11,11 +11,11 @@ Renderer::~Renderer()
 
 mininode *Renderer::build_ecef_geometry()
 {
-   mininode *group=new mininode;
+   mininode_group *group=new mininode_group;
 
    // define ecef z-axis:
 
-   mininode *axis=new mininode;
+   mininode *axis=new mininode_group;
    mininoderef pole=mininoderef(new mininode_geometry_tube(10000,500000));
 
    axis->append_child(new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH)))->

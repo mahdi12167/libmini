@@ -45,10 +45,10 @@ void Viewer::init()
    camera->setLens(VIEWER_FOVY);
 
    // link camera as first element to scene graph
-   m_root.append(camera);
+   m_root->append(camera);
 
    // link ecef geometry to scene graph
-   m_root.append(build_ecef_geometry());
+   m_root->append(build_ecef_geometry());
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
@@ -200,7 +200,7 @@ void Viewer::resizeViewport()
 
 // get actual camera
 Camera *Viewer::getCamera()
-   {return((Camera *)m_root.get_first(MININODE_CAM));}
+   {return((Camera *)m_root->get_first(MININODE_CAM));}
 
 // draw scene
 void Viewer::draw()
@@ -577,10 +577,10 @@ void Viewer::render_ecef_geometry(double t)
    mininode_animation::set_time(t);
 
    // update scene graph
-   m_root.clear_dirty();
+   m_root->clear_dirty();
 
    // render ecef geometry by traversing scene graph
-   if (m_root.traverse())
+   if (m_root->traverse())
       getCamera()->startIdling();
 
    // cleanup render state

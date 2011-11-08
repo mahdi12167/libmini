@@ -119,7 +119,7 @@ class Renderer: public Viewer
 
    mininode *Renderer::build_ecef_geometry()
    {
-      mininode *scene =
+      mininode_group *scene =
          new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH))->
             append_child(new mininode_color(miniv3d(0.0,0.0,1.0)))->
             append_child(new mininode_geometry_tube(10000,500000));
