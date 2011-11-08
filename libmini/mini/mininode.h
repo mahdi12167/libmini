@@ -78,7 +78,9 @@ class mininode: public minidyna< miniref<mininode> >
 
       traverse_post();
 
-      return(m_dirty || dirty);
+      if (dirty) set_dirty();
+
+      return(is_dirty());
       }
 
    //! traverse graph and serialize nodes with specific id
@@ -100,10 +102,42 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    virtual mininode *get_first(unsigned int id=0)
-      {return(serialize(id).first());}
+      {
+      unsigned int s=get_children();
+
+      if (get_id()==id) return(this);
+
+      for (unsigned int i=0; i<s; i++)
+         {
+         mininode *child=get_child(i);
+         if (child!=NULL)
+            {
+            mininode *first=child->get_first(id);
+            if (first!=NULL) return(first);
+            }
+         }
+
+      return(NULL);
+      }
 
    virtual mininode *get_last(unsigned int id=0)
-      {return(serialize(id).last());}
+      {
+      unsigned int s=get_children();
+
+      if (get_id()==id) return(this);
+
+      for (unsigned int i=0; i<s; i++)
+         {
+         mininode *child=get_child(s-1-i);
+         if (child!=NULL)
+            {
+            mininode *first=child->get_first(id);
+            if (first!=NULL) return(first);
+            }
+         }
+
+      return(NULL);
+      }
 
    void set_dirty()
       {m_dirty=TRUE;}
@@ -111,21 +145,16 @@ class mininode: public minidyna< miniref<mininode> >
    BOOLINT is_dirty()
       {return(m_dirty);}
 
-   BOOLINT clear_dirty()
+   void clear_dirty()
       {
       for (unsigned int i=0; i<get_children(); i++)
-         if (get_child(i)->clear_dirty())
-            set_dirty();
+         if (get_child(i)->is_dirty()) get_child(i)->clear_dirty();
 
       if (is_dirty())
          {
          update();
          m_dirty=FALSE;
-
-         return(TRUE);
          }
-
-      return(FALSE);
       }
 
    protected:

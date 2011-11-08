@@ -44,7 +44,7 @@ void Viewer::init()
    // tell camera lens fovy
    camera->setLens(VIEWER_FOVY);
 
-   // link camera to scene graph
+   // link camera as first element to scene graph
    m_root.append(camera);
 
    // link ecef geometry to scene graph
