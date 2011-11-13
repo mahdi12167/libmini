@@ -457,6 +457,7 @@ void datacache::loadvtbelevini()
 
    static const int maxstr=1024;
    char *pathname,filename[maxstr],*fullname;
+   char formatname[maxstr];
 
    HAS_ELEVINI=HAS_ELEVINI_GEO=FALSE;
 
@@ -574,6 +575,10 @@ void datacache::loadvtbelevini()
 
             // read coord sys info
             if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&ELEVINI_COORDSYS,&ELEVINI_COORDSYS_DATUM,&ELEVINI_COORDSYS_ZONE)!=3) HAS_ELEVINI_COORDSYS=FALSE;
+
+            // read [optional] format spec
+            if (fscanf(file,"Format=%s\n",formatname)==1)
+               if (strcmp(formatname,"DB")!=0) HAS_ELEVINI=FALSE;
             }
          }
 
@@ -601,6 +606,7 @@ void datacache::loadvtbimagini()
 
    static const int maxstr=1024;
    char *pathname,filename[maxstr],*fullname;
+   char formatname[maxstr];
 
    HAS_IMAGINI=HAS_IMAGINI_GEO=FALSE;
 
@@ -710,6 +716,10 @@ void datacache::loadvtbimagini()
 
             // read coord sys info
             if (fscanf(file,"CoordSys=(%d,%d,%d)\n",&IMAGINI_COORDSYS,&IMAGINI_COORDSYS_DATUM,&IMAGINI_COORDSYS_ZONE)!=3) HAS_IMAGINI_COORDSYS=FALSE;
+
+            // read [optional] format spec
+            if (fscanf(file,"Format=%s\n",formatname)==1)
+               if (strcmp(formatname,"DB")!=0) HAS_IMAGINI=FALSE;
             }
          }
 
