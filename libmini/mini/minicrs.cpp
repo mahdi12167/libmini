@@ -219,12 +219,20 @@ void minicrs::UTM2LL(double x,double y,
    *lon=(float)tlon;
    }
 
-// transform LL to UTM zone
+// transform Lat/Lon to UTM zone
 int minicrs::LL2UTMZ(double lat,double lon)
    {
    int zone;
    zone=dtrc(LONSUB(lon)/(6*60*60))+31;
    return((lat<0.0)?-zone:zone);
+   }
+
+// transform UTM zone to Lon
+double minicrs::UTMZ2L(int zone)
+   {
+   double lon;
+   lon=6*(abs(zone)-1+0.5)-180;
+   return(LONSUB(lon));
    }
 
 // transform Lat/Lon to Mercator

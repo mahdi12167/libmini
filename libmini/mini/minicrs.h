@@ -36,8 +36,11 @@ class minicrs
                       int zone,int datum,
                       float *lat,float *lon);
 
-   //! transform LL to UTM zone
+   //! transform Lat/Lon to UTM zone
    static int LL2UTMZ(double lat,double lon);
+
+   //! transform UTM zone to Lon
+   static double UTMZ2L(int zone);
 
    //! transform Lat/Lon to Mercator
    static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
