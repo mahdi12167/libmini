@@ -31,10 +31,10 @@ else
    endif
 endif
 
-# squish 1.10 /w cmake
+# squish 1.11 /w cmake
 if (-X ../mini/tabify.sh && -X svn) then
-   svn co -r 33 http://libsquish.googlecode.com/svn/trunk libsquish
-   foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt)
+   svn co -r 37 http://libsquish.googlecode.com/svn/trunk libsquish
+   foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt libsquish/*.pro)
       cp -f $file $file:s/libsquish/squish/
       ../mini/tabify.sh -x $file:s/libsquish/squish/
    end
