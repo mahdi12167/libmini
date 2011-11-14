@@ -20,7 +20,7 @@ void mininode_transform::update()
       miniv4d mtx[3],mtx1[3],mtx2[3];
       mtxget(oglmtx,mtx1);
       mtxget(transform->oglmtx,mtx2);
-      mlt_mtx(mtx,mtx2,mtx1);
+      mlt_mtx(mtx,mtx1,mtx2);
       mtxget(mtx,oglmtx);
 
       // remove child
@@ -118,6 +118,89 @@ miniv3d mininode_geometry::get_right(const miniv3d &dir)
    right.normalize();
 
    return(right);
+   }
+
+mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
+   {
+   sizex/=2.0;
+   sizey/=2.0;
+   sizez/=2.0;
+
+   // sides
+   setnrm(miniv3d(0,-1,0));
+   addvtx(miniv3d(-sizex,-sizey,-sizez));
+   addvtx(miniv3d(-sizex,-sizey,sizez));
+   addvtx(miniv3d(sizex,-sizey,-sizez));
+   addvtx(miniv3d(sizex,-sizey,sizez));
+   setnrm(miniv3d(1,0,0));
+   addvtx(miniv3d(sizex,-sizey,-sizez));
+   addvtx(miniv3d(sizex,-sizey,sizez));
+   addvtx(miniv3d(sizex,sizey,-sizez));
+   addvtx(miniv3d(sizex,sizey,sizez));
+   setnrm(miniv3d(0,1,0));
+   addvtx(miniv3d(sizex,sizey,-sizez));
+   addvtx(miniv3d(sizex,sizey,sizez));
+   addvtx(miniv3d(-sizex,sizey,-sizez));
+   addvtx(miniv3d(-sizex,sizey,sizez));
+   setnrm(miniv3d(-1,0,0));
+   addvtx(miniv3d(-sizex,sizey,-sizez));
+   addvtx(miniv3d(-sizex,sizey,sizez));
+   addvtx(miniv3d(-sizex,-sizey,-sizez));
+   addvtx(miniv3d(-sizex,-sizey,sizez));
+
+   // bottom
+   beginstrip();
+   setnrm(miniv3d(0,0,-1));
+   addvtx(miniv3d(-sizex,-sizey,-sizez));
+   addvtx(miniv3d(sizex,-sizey,-sizez));
+   addvtx(miniv3d(-sizex,sizey,-sizez));
+   addvtx(miniv3d(sizex,sizey,-sizez));
+
+   // top
+   beginstrip();
+   setnrm(miniv3d(0,0,1));
+   addvtx(miniv3d(-sizex,-sizey,sizez));
+   addvtx(miniv3d(sizex,-sizey,sizez));
+   addvtx(miniv3d(-sizex,sizey,sizez));
+   addvtx(miniv3d(sizex,sizey,sizez));
+   }
+
+mininode_geometry_prism::mininode_geometry_prism(double sizex,double sizey,double sizez)
+   {
+   sizex/=2.0;
+   sizey/=2.0;
+
+   // bottom
+   beginstrip();
+   setnrm(miniv3d(0,0,-1));
+   addvtx(miniv3d(-sizex,-sizey,0));
+   addvtx(miniv3d(sizex,-sizey,0));
+   addvtx(miniv3d(-sizex,sizey,0));
+   addvtx(miniv3d(sizex,sizey,0));
+
+   // top
+   setnrm(miniv3d(0,1,1));
+   addvtx(miniv3d(-sizex,0,sizez));
+   addvtx(miniv3d(sizex,0,sizez));
+   addvtx(miniv3d(-sizex,sizey,0));
+   addvtx(miniv3d(sizex,sizey,0));
+   setnrm(miniv3d(0,-1,1));
+   addvtx(miniv3d(-sizex,0,sizez));
+   addvtx(miniv3d(sizex,0,sizez));
+   addvtx(miniv3d(-sizex,-sizey,0));
+   addvtx(miniv3d(sizex,-sizey,0));
+
+   // sides
+   beginstrip();
+   setnrm(miniv3d(-1,0,0));
+   addvtx(miniv3d(-sizex,-sizey,0));
+   addvtx(miniv3d(-sizex,sizey,0));
+   addvtx(miniv3d(-sizex,0,sizez));
+   beginstrip();
+   setnrm(miniv3d(1,0,0));
+   addvtx(miniv3d(sizex,-sizey,0));
+   addvtx(miniv3d(sizex,sizey,0));
+   addvtx(miniv3d(sizex,0,sizez));
    }
 
 mininode_geometry_sphere::mininode_geometry_sphere(double radius,int tessel)
