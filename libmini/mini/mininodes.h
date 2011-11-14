@@ -222,6 +222,14 @@ class mininode_scale: public mininode_transform
       miniv3d mtx[3]={miniv3d(s,0,0),miniv3d(0,s,0),miniv3d(0,0,s)};
       mtxget(mtx,oglmtx);
       }
+
+   //! constructor
+   mininode_scale(double sx,double sy,double sz)
+      : mininode_transform()
+      {
+      miniv3d mtx[3]={miniv3d(sx,0,0),miniv3d(0,sy,0),miniv3d(0,0,sz)};
+      mtxget(mtx,oglmtx);
+      }
    };
 
 //! coordinate node
@@ -327,6 +335,26 @@ class mininode_geometry: public mininode_group, public ministrip
 
    static miniv3d get_halfdir(const miniv3d &dir1,const miniv3d &dir2);
    static miniv3d get_right(const miniv3d &dir);
+   };
+
+//! cube geometry node
+class mininode_geometry_cube: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_cube() : mininode_geometry(0,3,0) {}
+   mininode_geometry_cube(double sizex,double sizey,double sizez);
+   };
+
+//! prism geometry node
+class mininode_geometry_prism: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_prism() : mininode_geometry(0,3,0) {}
+   mininode_geometry_prism(double sizex,double sizey,double sizez);
    };
 
 //! sphere geometry node
