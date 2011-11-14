@@ -43,5 +43,21 @@ mininode *Renderer::build_ecef_geometry()
    group->append_child(new mininode_color(miniv3d(0.5,0.5,0.5)))->
       append_child(new mininode_geometry_band(pos,pos,20000));
 
+#if 0 //!!
+
+   // define house:
+
+   mininode *house=new mininode_coord(minicoord(miniv3d(11*3600,49*3600,0),minicoord::MINICOORD_LLH));
+   mininode *scale=house->append_child(new mininode_scale(10000));
+   scale->append_child(new mininode_color(miniv3d(1.0,1.0,1.0)))->
+      append_child(new mininode_translate(miniv3d(0,0,2.5)))->
+      append_child(new mininode_geometry_cube(10,10,5));
+   scale->append_child(new mininode_color(miniv3d(0.5,0.5,0.5)))->
+      append_child(new mininode_translate(miniv3d(0,0,5)))->
+      append_child(new mininode_geometry_prism(10,10,2.5));
+   group->append_child(house);
+
+#endif
+
    return(group);
 }
