@@ -121,31 +121,28 @@ miniv3d mininode_geometry::get_right(const miniv3d &dir)
    }
 
 mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
+   : mininode_geometry(0,3,0)
    {
    sizex/=2.0;
    sizey/=2.0;
    sizez/=2.0;
 
    // sides
-   beginstrip();
    setnrm(miniv3d(0,-1,0));
    addvtx(miniv3d(-sizex,-sizey,sizez));
    addvtx(miniv3d(-sizex,-sizey,-sizez));
    addvtx(miniv3d(sizex,-sizey,sizez));
    addvtx(miniv3d(sizex,-sizey,-sizez));
-   beginstrip();
    setnrm(miniv3d(1,0,0));
    addvtx(miniv3d(sizex,-sizey,sizez));
    addvtx(miniv3d(sizex,-sizey,-sizez));
    addvtx(miniv3d(sizex,sizey,sizez));
    addvtx(miniv3d(sizex,sizey,-sizez));
-   beginstrip();
    setnrm(miniv3d(0,1,0));
    addvtx(miniv3d(sizex,sizey,sizez));
    addvtx(miniv3d(sizex,sizey,-sizez));
    addvtx(miniv3d(-sizex,sizey,sizez));
    addvtx(miniv3d(-sizex,sizey,-sizez));
-   beginstrip();
    setnrm(miniv3d(-1,0,0));
    addvtx(miniv3d(-sizex,sizey,sizez));
    addvtx(miniv3d(-sizex,sizey,-sizez));
@@ -170,42 +167,40 @@ mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double 
    }
 
 mininode_geometry_prism::mininode_geometry_prism(double sizex,double sizey,double sizez)
+   : mininode_geometry(0,3,0)
    {
    sizex/=2.0;
    sizey/=2.0;
 
    // bottom
-   beginstrip();
    setnrm(miniv3d(0,0,-1));
-   addvtx(miniv3d(-sizex,-sizey,0));
    addvtx(miniv3d(-sizex,sizey,0));
-   addvtx(miniv3d(sizex,-sizey,0));
    addvtx(miniv3d(sizex,sizey,0));
+   addvtx(miniv3d(-sizex,-sizey,0));
+   addvtx(miniv3d(sizex,-sizey,0));
 
    // top
-   beginstrip();
-   setnrm(miniv3d(0,1,1));
+   setnrm(miniv3d(0,-sizez,sizey));
+   addvtx(miniv3d(-sizex,-sizey,0));
+   addvtx(miniv3d(sizex,-sizey,0));
+   addvtx(miniv3d(-sizex,0,sizez));
+   addvtx(miniv3d(sizex,0,sizez));
+   setnrm(miniv3d(0,sizez,sizey));
    addvtx(miniv3d(-sizex,0,sizez));
    addvtx(miniv3d(sizex,0,sizez));
    addvtx(miniv3d(-sizex,sizey,0));
    addvtx(miniv3d(sizex,sizey,0));
-   beginstrip();
-   setnrm(miniv3d(0,-1,1));
-   addvtx(miniv3d(-sizex,0,sizez));
-   addvtx(miniv3d(sizex,0,sizez));
-   addvtx(miniv3d(-sizex,-sizey,0));
-   addvtx(miniv3d(sizex,-sizey,0));
 
    // sides
    beginstrip();
    setnrm(miniv3d(-1,0,0));
-   addvtx(miniv3d(-sizex,-sizey,0));
    addvtx(miniv3d(-sizex,sizey,0));
+   addvtx(miniv3d(-sizex,-sizey,0));
    addvtx(miniv3d(-sizex,0,sizez));
    beginstrip();
    setnrm(miniv3d(1,0,0));
-   addvtx(miniv3d(sizex,-sizey,0));
    addvtx(miniv3d(sizex,sizey,0));
+   addvtx(miniv3d(sizex,-sizey,0));
    addvtx(miniv3d(sizex,0,sizez));
    }
 
