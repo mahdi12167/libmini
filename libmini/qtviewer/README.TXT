@@ -1,8 +1,8 @@
 ! Libmini Integration in QT Application
 
 Libmini is free software that displays geographic terrain data at
-real-time. This is an example application of integrating libmini
-functionality in the QT user interface, the libMini QTViewer. It
+real-time. This is an example application of integrating libmini in
+the QT user interface. The application, the libMini QTViewer,
 primarily uses libmini viewer functions but provides additional camera
 control. It is free software licensed under the GPL.
 
@@ -143,7 +143,7 @@ VTBuilder tilesets:
 More information about libMini's node classes can be found in the
 mininodes.h header.
 
-!! Retire :)
+!! Postcard
 
 If you found the software useful, please send a vacation postcard to:
 
@@ -151,3 +151,5 @@ If you found the software useful, please send a vacation postcard to:
  Hochstr. 33
  90429 Nuernberg
  Germany
+
+Thanks!
