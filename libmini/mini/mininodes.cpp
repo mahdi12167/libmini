@@ -128,12 +128,12 @@ mininode_geometry_tet::mininode_geometry_tet(double size)
    miniv3d p1(-size/2,-size*sqrt13/2,0);
    miniv3d p2(size/2,-size*sqrt13/2,0);
    miniv3d p3(0,size*sqrt13,0);
-   miniv3d p4(0,0,1.5*sqrt13);
+   miniv3d p4(0,0,1.5*size*sqrt13);
 
    // bottom
    setnrm(miniv3d(0,0,-1));
-   addvtx(p2);
    addvtx(p3);
+   addvtx(p2);
    addvtx(p1);
 
    // sides
@@ -141,10 +141,10 @@ mininode_geometry_tet::mininode_geometry_tet(double size)
    addvtx(p1);
    addvtx(p2);
    addvtx(p4);
-   setnrm(p4,p2,p3);
-   addvtx(p4);
+   setnrm(p2,p3,p4);
    addvtx(p2);
    addvtx(p3);
+   addvtx(p4);
    setnrm(p3,p1,p4);
    addvtx(p3);
    addvtx(p1);
