@@ -65,6 +65,9 @@ class ministrip
    void setnrm(const float nx,const float ny,const float nz);
    void setnrm(const miniv3d &n);
 
+   //! set normal from three points
+   void setnrm(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
+
    //! set tex coords of next vertex
    void settex(const float tx,const float ty=0.0f,const float tz=0.0f,float tw=1.0f);
    void settex(const miniv3d &t);

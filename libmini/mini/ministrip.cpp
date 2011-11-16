@@ -543,6 +543,10 @@ void ministrip::setnrm(const float nx,const float ny,const float nz)
 void ministrip::setnrm(const miniv3d &n)
    {setnrm(n.x,n.y,n.z);}
 
+// set normal from three points
+void ministrip::setnrm(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
+   {setnrm((v2-v1)/(v3-v1));}
+
 // set tex coords of next vertex
 void ministrip::settex(const float tx,const float ty,const float tz,float tw)
    {

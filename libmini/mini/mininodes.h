@@ -337,6 +337,16 @@ class mininode_geometry: public mininode_group, public ministrip
    static miniv3d get_right(const miniv3d &dir);
    };
 
+//! tetrahedron geometry node
+class mininode_geometry_tet: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_tet() : mininode_geometry(0,3,0) {}
+   mininode_geometry_tet(double size);
+   };
+
 //! cube geometry node
 class mininode_geometry_cube: public mininode_geometry
    {

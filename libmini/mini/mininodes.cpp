@@ -120,6 +120,37 @@ miniv3d mininode_geometry::get_right(const miniv3d &dir)
    return(right);
    }
 
+mininode_geometry_tet::mininode_geometry_tet(double size)
+   : mininode_geometry(0,3,0)
+   {
+   static const double sqrt13=sqrt(1.0/3);
+
+   miniv3d p1(-size/2,-size*sqrt13/2,0);
+   miniv3d p2(size/2,-size*sqrt13/2,0);
+   miniv3d p3(0,size*sqrt13,0);
+   miniv3d p4(0,0,1.5*sqrt13);
+
+   // bottom
+   setnrm(miniv3d(0,0,-1));
+   addvtx(p2);
+   addvtx(p3);
+   addvtx(p1);
+
+   // sides
+   setnrm(p1,p2,p4);
+   addvtx(p1);
+   addvtx(p2);
+   addvtx(p4);
+   setnrm(p4,p2,p3);
+   addvtx(p4);
+   addvtx(p2);
+   addvtx(p3);
+   setnrm(p3,p1,p4);
+   addvtx(p3);
+   addvtx(p1);
+   addvtx(p4);
+   }
+
 mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
    : mininode_geometry(0,3,0)
    {
