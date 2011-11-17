@@ -151,6 +151,41 @@ mininode_geometry_tet::mininode_geometry_tet(double size)
    addvtx(p1);
    }
 
+mininode_geometry_pyramid::mininode_geometry_pyramid(double sizex,double sizey,double sizez)
+   : mininode_geometry(0,3,0)
+   {
+   miniv3d p1(-sizex/2,-sizey/2,0);
+   miniv3d p2(sizex/2,-sizey/2,0);
+   miniv3d p3(-sizex/2,sizey/2,0);
+   miniv3d p4(sizex/2,sizey/2,0);
+   miniv3d p5(0,0,sizez);
+
+   // sides
+   setnrm(p1,p2,p5);
+   addvtx(p5);
+   addvtx(p1);
+   addvtx(p2);
+   setnrm(p2,p4,p5);
+   addvtx(p2);
+   addvtx(p5);
+   addvtx(p4);
+   setnrm(p4,p3,p5);
+   addvtx(p4);
+   addvtx(p3);
+   addvtx(p5);
+   setnrm(p3,p1,p5);
+   addvtx(p5);
+   addvtx(p1);
+   addvtx(p3);
+
+   // bottom
+   setnrm(miniv3d(0,0,-1));
+   addvtx(p3);
+   addvtx(p4);
+   addvtx(p1);
+   addvtx(p2);
+   }
+
 mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
    : mininode_geometry(0,3,0)
    {

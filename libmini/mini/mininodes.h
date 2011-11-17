@@ -347,6 +347,16 @@ class mininode_geometry_tet: public mininode_geometry
    mininode_geometry_tet(double size);
    };
 
+//! pyramid geometry node
+class mininode_geometry_pyramid: public mininode_geometry
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_pyramid() : mininode_geometry(0,3,0) {}
+   mininode_geometry_pyramid(double sizex,double sizey,double sizez);
+   };
+
 //! cube geometry node
 class mininode_geometry_cube: public mininode_geometry
    {
