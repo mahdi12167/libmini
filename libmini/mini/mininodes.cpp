@@ -132,23 +132,23 @@ mininode_geometry_tet::mininode_geometry_tet(double size)
 
    // bottom
    setnrm(miniv3d(0,0,-1));
+   addvtx(p1);
    addvtx(p3);
    addvtx(p2);
-   addvtx(p1);
 
    // sides
    setnrm(p1,p2,p4);
-   addvtx(p1);
    addvtx(p2);
+   addvtx(p1);
    addvtx(p4);
    setnrm(p2,p3,p4);
+   addvtx(p4);
    addvtx(p2);
    addvtx(p3);
-   addvtx(p4);
    setnrm(p3,p1,p4);
    addvtx(p3);
-   addvtx(p1);
    addvtx(p4);
+   addvtx(p1);
    }
 
 mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
