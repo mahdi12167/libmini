@@ -16,6 +16,9 @@ class Renderer;
 
 class QMimeData;
 
+//! qt viewer window that
+//! forwards mouse events to the camera and
+//! forwards user events to the renderer
 class ViewerWindow : public QGLWidget
 {
    Q_OBJECT;

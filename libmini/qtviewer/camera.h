@@ -23,6 +23,7 @@ enum modifierKeys
    ModifierMeta
 };
 
+//! qt viewer camera node
 class Camera : public mininode_cam
 {
 public:

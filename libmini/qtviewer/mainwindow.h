@@ -21,6 +21,9 @@ class QSlider;
 class QDialogButtonBox;
 class QPushButton;
 
+//! qt viewer main window that
+//! contains the viewer window with the opengl rendering context and
+//! contains the qt gui elements that interact with the renderer
 class MainWindow : public QMainWindow
 {
    Q_OBJECT

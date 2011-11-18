@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "cameraconst.h"
 
+//! qt viewer class for viewing tilesets
 class Viewer: public miniview
 {
 public:

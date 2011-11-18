@@ -5,6 +5,7 @@
 
 #include "viewer.h"
 
+//! qt viewer class for viewing tilesets plus ecef geometry
 class Renderer: public Viewer
 {
 public:
