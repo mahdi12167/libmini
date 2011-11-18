@@ -122,14 +122,14 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
    reportModifiers();
 
+   viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
+
    if (event->buttons() & Qt::LeftButton)
       viewer->getCamera()->rotateCamera(dx, dy);
    else if (event->buttons() & Qt::MiddleButton)
    {}
    else if (event->buttons() & Qt::RightButton)
    {}
-   else
-      viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
    movedPos = event->pos();
 }
@@ -173,6 +173,8 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
    double numDegrees = event->delta()/8.0;
 
    reportModifiers();
+
+   viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
    if (event->orientation() == Qt::Vertical)
       viewer->getCamera()->moveCameraForward(numDegrees/360.0);
