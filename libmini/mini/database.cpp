@@ -2815,7 +2815,7 @@ void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned in
    }
 
 // get rgb color
-void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[4])
+void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[3])
    {
    unsigned char *ptr;
 
@@ -2846,7 +2846,7 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
    }
 
 // get rgba color
-void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float *value)
+void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,float value[4])
    {
    unsigned char *ptr;
 
