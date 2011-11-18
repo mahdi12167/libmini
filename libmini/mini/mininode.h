@@ -27,15 +27,15 @@ class mininode: public minidyna< miniref<mininode> >
    virtual unsigned int get_id() const
       {return(m_id);}
 
-   //! get # of children
+   //! get number of children
    unsigned int get_children() const
       {return(getsize());}
 
-   //! get child #i
+   //! get child number i
    virtual mininode *get_child(unsigned int i=0) const
       {return(get(i));}
 
-   //! get reference to child #i
+   //! get reference to child number i
    miniref<mininode> get_childref(unsigned int i=0)
       {return(ref(i));}
 
@@ -46,7 +46,7 @@ class mininode: public minidyna< miniref<mininode> >
       return(append(v));
       }
 
-   //! remove child #i
+   //! remove child number i
    miniref<mininode> remove_child(unsigned int i=0)
       {
       miniref<mininode> child=remove(i);
