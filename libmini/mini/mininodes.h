@@ -33,11 +33,21 @@ class mininode_group: public mininode
    //! default constructor
    mininode_group(unsigned int id=0)
       : mininode(id)
-      {}
+      {
+      bound_center=miniv3d(0,0,0);
+      bound_radius=0.0;
+      }
 
    //! destructor
    virtual ~mininode_group()
       {}
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      center=bound_center;
+      radius=bound_radius;
+      }
 
    protected:
 
@@ -45,7 +55,10 @@ class mininode_group: public mininode
    virtual void traverse_past() {}
    virtual void traverse_post() {}
 
-   virtual void update() {}
+   virtual void update();
+
+   miniv3d bound_center;
+   double bound_radius;
    };
 
 //! dynamic time-dependent node
@@ -168,6 +181,20 @@ class mininode_transform: public mininode_group
    virtual ~mininode_transform()
       {}
 
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv4d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      double max_scale=mtx[0].x;
+      if (mtx[1].y>max_scale) max_scale=mtx[1].y;
+      if (mtx[2].z>max_scale) max_scale=mtx[2].z;
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius*max_scale;
+      }
+
    protected:
 
    double oglmtx[16];
@@ -271,6 +298,20 @@ class mininode_animation: public mininode_dynamic
    virtual ~mininode_animation()
       {}
 
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv4d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      double max_scale=mtx[0].x;
+      if (mtx[1].y>max_scale) max_scale=mtx[1].y;
+      if (mtx[2].z>max_scale) max_scale=mtx[2].z;
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius*max_scale;
+      }
+
    protected:
 
    double oglmtx[16];
@@ -319,10 +360,19 @@ class mininode_geometry: public mininode_group, public ministrip
    virtual ~mininode_geometry()
       {}
 
+   //! add geo-referenced point
    void addcoord(minicoord c)
       {
       if (c.type!=minicoord::MINICOORD_LINEAR) c.convert2(minicoord::MINICOORD_ECEF);
       addvtx(c.vec);
+      }
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      double radius2;
+      getbsphere(center,radius2);
+      radius=sqrt(radius2);
       }
 
    protected:

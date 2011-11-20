@@ -7,10 +7,54 @@ double mininode_color::brightness=1.0;
 miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
 BOOLINT mininode_coord::lightdirset=FALSE;
 
+void mininode_group::update()
+   {
+   miniv3d center(0,0,0);
+   double radius=0.0;
+
+   unsigned int s=get_children();
+
+   // merge bounding spheres
+   for (unsigned int i=0; i<s; i++)
+      {
+      mininode_group *child=(mininode_group *)get_child(i);
+      if (child!=NULL)
+         {
+         miniv3d child_center;
+         double child_radius;
+
+         child->get_bsphere(child_center,child_radius);
+
+         if (child_radius>0.0)
+            if (radius>0.0)
+               {
+               miniv3d d=child_center-center;
+               double r=d.normalize();
+               if (r+child_radius>radius)
+                  {
+                  miniv3d a=child_center+d*child_radius;
+                  miniv3d b=center-d*radius;
+                  center=(a+b)/2.0;
+                  radius=(a-b).getlength()/2.0;
+                  }
+               }
+            else
+               {
+               center=child_center;
+               radius=child_radius;
+               }
+         }
+      }
+
+   bound_center=center;
+   bound_radius=radius;
+   }
+
 void mininode_transform::update()
    {
    // merge two consecutive transform nodes
    if (get_children()==1 &&
+       get_child()!=NULL &&
        get_child()->get_id()==MININODE_TRANSFORM)
       {
       // get child transformation
@@ -26,6 +70,8 @@ void mininode_transform::update()
       // remove child
       remove_child();
       }
+
+   mininode_group::update();
    }
 
 mininode_coord::mininode_coord(const minicoord &c)
