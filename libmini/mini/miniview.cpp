@@ -92,6 +92,14 @@ void miniview::setup_matrix(float sbase)
    mtxlookat(miniv3d(egl.vec)+rgl, miniv3d(egl.vec)+rgl+dgl, ugl);
    }
 
+// check ecef geometry
+void miniview::check_ecef_geometry(miniv3d &center,double &radius)
+   {
+   // specify bounding sphere
+   center=miniv3d(0,0,0);
+   radius=1.1*miniearth::EARTH_radius;
+   }
+
 // render ecef geometry
 void miniview::render_ecef_geometry(double t)
    {

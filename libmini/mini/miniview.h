@@ -22,6 +22,7 @@ class miniview : public miniscene
 
    void setup_matrix(float sbase=0.0f);
 
+   virtual void check_ecef_geometry(miniv3d &center,double &radius);
    virtual void render_ecef_geometry(double t);
 
    minicam *m_cam;

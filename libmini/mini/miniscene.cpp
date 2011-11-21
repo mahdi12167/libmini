@@ -147,11 +147,43 @@ void miniscene::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 // render cached scene
 void miniscene::render()
    {
+   miniv3d center;
+   double radius;
+
+   miniv3d eye,dir;
+   double nearp0,farp0;
+   double nearp,farp;
+
    miniv4d mtx[3];
    double oglmtx[16];
 
+   nearp0=PARAMS.nearp;
+   farp0=PARAMS.farp;
+
    // enable wireframe mode
    if (PARAMS.usewireframe) polygonmode(1);
+
+   // check bounding sphere of ecef geometry
+   if (PARAMS.farp>miniearth::EARTH_radius)
+      if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
+           EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
+          EARTH->get()->nonlin)
+         {
+         check_ecef_geometry(center,radius);
+
+         eye=EARTH->getnull()->get()->eye.vec;
+         dir=EARTH->getnull()->get()->dir;
+
+         nearp=dir*(center-eye)-radius;
+         farp=dir*(center-eye)+radius;
+
+         PARAMS.nearp=dmax(nearp0,nearp);
+         PARAMS.farp=dmax(farp0,farp);
+
+         printf("nearp=%g farp=%g\n",PARAMS.nearp,PARAMS.farp); //!!
+
+         propagate();
+         }
 
    // render earth
    EARTH->render();
@@ -168,6 +200,11 @@ void miniscene::render()
          mtxmult(oglmtx);
          render_ecef_geometry(time());
          mtxpop();
+
+         PARAMS.nearp=nearp0;
+         PARAMS.farp=farp0;
+
+         propagate();
          }
 
    // disable wireframe mode
@@ -242,6 +279,25 @@ void miniscene::setraycallbacks(void (*lock)(void *data),void *data,
                                 void (*unlock)(void *data))
    {miniray::setcallbacks(lock,data,unlock);}
 
+// check ecef geometry
+void miniscene::check_ecef_geometry(miniv3d &center,double &radius)
+   {
+   // specify empty bounding sphere with radius zero
+   center=miniv3d(0,0,0);
+   radius=0.0;
+
+   // overwrite in derived class and return bounding sphere of
+   // additional geometry defined in ecef coordinates here:
+   // ...
+
+   // for example a bounding sphere
+   // with a size of 110% of the diameter of the earth:
+   /*
+   center=miniv3d(0,0,0);
+   radius=1.1*miniearth::EARTH_radius;
+   */
+   }
+
 // render ecef geometry
 void miniscene::render_ecef_geometry(double t)
    {
@@ -249,7 +305,8 @@ void miniscene::render_ecef_geometry(double t)
    // to render additional geometry defined in ecef coordinates here:
    // ...
 
-   // for example a line along the ecef z-axis:
+   // for example a line along the ecef z-axis
+   // with a size of 110% of the diameter of the earth:
    /*
    initstate();
    color(miniv3d(0.5,0.5,0.5));

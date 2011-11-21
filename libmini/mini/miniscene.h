@@ -153,6 +153,7 @@ class miniscene
 
    MINISCENE_PARAMS PARAMS;
 
+   virtual void check_ecef_geometry(miniv3d &center,double &radius);
    virtual void render_ecef_geometry(double t);
 
    miniearth *EARTH;
