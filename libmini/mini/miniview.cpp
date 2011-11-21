@@ -83,26 +83,25 @@ void miniview::setup_matrix(float sbase)
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
          {
-         static const double safety=0.9;
-
          miniv3d center;
          double radius;
 
-         miniv3d eye,dir;
-         double nearp_ecef,farp_ecef;
-
          check_ecef_geometry(center,radius);
 
-         eye=m_cam->get_eye().vec;
-         dir=m_cam->get_dir();
+         if (radius>0.0)
+            {
+            miniv3d eye,dir;
+            double farp_ecef;
 
-         nearp_ecef=dir*(center-eye)-radius;
-         farp_ecef=dir*(center-eye)+radius;
-
-         nearp=dmax(nearp,safety*nearp_ecef);
-         farp=dmax(farp,farp_ecef/safety);
+            eye=m_cam->get_eye().vec;
+            dir=m_cam->get_dir();
+         
+            farp_ecef=dir*(center-eye)+radius;
+            farp=dmax(farp,farp_ecef);
+            }
          }
 
+   // opengl perspective
    mtxproj();
    mtxid();
    mtxperspective(fovy, aspect, len_g2o(nearp), len_g2o(farp));
@@ -112,6 +111,7 @@ void miniview::setup_matrix(float sbase)
    miniv3d ugl = m_cam->get_up_opengl();
    miniv3d rgl = m_cam->get_right_opengl()*len_g2o(sbase);
 
+   // opengl lookat
    mtxmodel();
    mtxid();
    mtxlookat(miniv3d(egl.vec)+rgl, miniv3d(egl.vec)+rgl+dgl, ugl);
