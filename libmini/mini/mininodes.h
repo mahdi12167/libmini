@@ -8,6 +8,7 @@
 #include "minibase.h"
 #include "minimath.h"
 
+#include "minicrs.h"
 #include "minicoord.h"
 #include "mininode.h"
 
@@ -103,6 +104,13 @@ class mininode_cam: public mininode_dynamic, public minicam
    //! destructor
    virtual ~mininode_cam()
       {}
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      center=miniv3d(0,0,0);
+      radius=minicrs::EARTH_radius;
+      }
    };
 
 //! color node
