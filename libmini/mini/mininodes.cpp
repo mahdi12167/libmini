@@ -24,23 +24,30 @@ void mininode_group::update()
    // merge bounding sphere with children
    for (unsigned int i=0; i<s; i++)
       {
-      mininode_group *child=(mininode_group *)get_child(i);
+      mininode *child=get_child(i);
       if (child!=NULL)
          {
-         miniv3d child_center;
-         double child_radius;
+         // get child group
+         mininode_group *child_group=dynamic_cast<mininode_group *>(child);
 
-         child->get_bsphere(child_center,child_radius);
+         if (child_group)
+            {
+            miniv3d child_center;
+            double child_radius;
 
-         if (child_radius>0.0)
-            if (radius>0.0)
-               merge_spheres(center,radius,
-                             child_center,child_radius);
-            else
-               {
-               center=child_center;
-               radius=child_radius;
-               }
+            child_group->get_bsphere(child_center,child_radius);
+
+            // merge with child bounding sphere
+            if (child_radius>0.0)
+               if (radius>0.0)
+                  merge_spheres(center,radius,
+                                child_center,child_radius);
+               else
+                  {
+                  center=child_center;
+                  radius=child_radius;
+                  }
+            }
          }
       }
 
@@ -51,22 +58,27 @@ void mininode_group::update()
 void mininode_transform::update()
    {
    // merge two consecutive transform nodes
-   if (get_children()==1 &&
-       get_child()!=NULL &&
-       get_child()->get_id()==MININODE_TRANSFORM)
+   if (get_children()==1)
       {
-      // get child transformation
-      mininode_transform *transform=(mininode_transform *)get_child();
+      mininode *child=get_child();
+      if (child!=NULL)
+         {
+         // get child transformation
+         mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
 
-      // multiply with child's transformation matrix
-      miniv4d mtx[3],mtx1[3],mtx2[3];
-      mtxget(oglmtx,mtx1);
-      mtxget(transform->oglmtx,mtx2);
-      mlt_mtx(mtx,mtx1,mtx2);
-      mtxget(mtx,oglmtx);
+         if (child_transform)
+            {
+            // multiply with child's transformation matrix
+            miniv4d mtx[3],mtx1[3],mtx2[3];
+            mtxget(oglmtx,mtx1);
+            mtxget(child_transform->oglmtx,mtx2);
+            mlt_mtx(mtx,mtx1,mtx2);
+            mtxget(mtx,oglmtx);
 
-      // remove child
-      remove_child();
+            // remove child
+            remove_child();
+            }
+         }
       }
 
    mininode_group::update();
