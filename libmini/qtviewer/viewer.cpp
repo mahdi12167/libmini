@@ -48,7 +48,7 @@ void Viewer::init()
    m_root=camera;
 
    // link ecef geometry to scene graph
-   m_root->append(build_ecef_geometry());
+   m_root->append_child(build_ecef_geometry());
 
    // load textures
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
