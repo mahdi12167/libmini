@@ -72,14 +72,39 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
 // setup OpenGL modelview and projection matrices
 void miniview::setup_matrix(float sbase)
    {
-   mtxproj();
-   mtxid();
-
    float fovy = get()->fovy;
    float aspect = (float)get()->winwidth/get()->winheight;
    double nearp = get()->nearp;
    double farp = get()->farp;
 
+   // check bounding sphere of ecef geometry
+   if (farp>miniearth::EARTH_radius)
+      if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
+           EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
+          EARTH->get()->nonlin)
+         {
+         static const double safety=0.9;
+
+         miniv3d center;
+         double radius;
+
+         miniv3d eye,dir;
+         double nearp_ecef,farp_ecef;
+
+         check_ecef_geometry(center,radius);
+
+         eye=m_cam->get_eye().vec;
+         dir=m_cam->get_dir();
+
+         nearp_ecef=dir*(center-eye)-radius;
+         farp_ecef=dir*(center-eye)+radius;
+
+         nearp=dmax(nearp,safety*nearp_ecef);
+         farp=dmax(farp,farp_ecef/safety);
+         }
+
+   mtxproj();
+   mtxid();
    mtxperspective(fovy, aspect, len_g2o(nearp), len_g2o(farp));
 
    minicoord egl = m_cam->get_eye_opengl();

@@ -147,43 +147,11 @@ void miniscene::cache(const minicoord &e,const miniv3d &d,const miniv3d &u,float
 // render cached scene
 void miniscene::render()
    {
-   miniv3d center;
-   double radius;
-
-   miniv3d eye,dir;
-   double nearp0,farp0;
-   double nearp,farp;
-
    miniv4d mtx[3];
    double oglmtx[16];
 
-   nearp0=PARAMS.nearp;
-   farp0=PARAMS.farp;
-
    // enable wireframe mode
    if (PARAMS.usewireframe) polygonmode(1);
-
-   // check bounding sphere of ecef geometry
-   if (PARAMS.farp>miniearth::EARTH_radius)
-      if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
-           EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
-          EARTH->get()->nonlin)
-         {
-         check_ecef_geometry(center,radius);
-
-         eye=EARTH->getnull()->get()->eye.vec;
-         dir=EARTH->getnull()->get()->dir;
-
-         nearp=dir*(center-eye)-radius;
-         farp=dir*(center-eye)+radius;
-
-         PARAMS.nearp=dmax(nearp0,nearp);
-         PARAMS.farp=dmax(farp0,farp);
-
-         printf("nearp=%g farp=%g\n",PARAMS.nearp,PARAMS.farp); //!!
-
-         propagate();
-         }
 
    // render earth
    EARTH->render();
@@ -200,11 +168,6 @@ void miniscene::render()
          mtxmult(oglmtx);
          render_ecef_geometry(time());
          mtxpop();
-
-         PARAMS.nearp=nearp0;
-         PARAMS.farp=farp0;
-
-         propagate();
          }
 
    // disable wireframe mode
