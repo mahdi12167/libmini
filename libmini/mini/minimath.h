@@ -73,6 +73,9 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
 
 // geometric operations:
 
+void merge_spheres(miniv3d &center0,double &radius0,
+                   const miniv3d &center1,const double radius1);
+
 double intersect_ray_unitsphere(miniv3d p,miniv3d d);
 
 double intersect_ray_ellipsoid(miniv3d p,miniv3d d,

@@ -1212,5 +1212,5 @@ void ministrip::getbbox(miniv3d &bboxmin,miniv3d &bboxmax)
 void ministrip::getbsphere(miniv3d &center,double &radius2)
    {
    center=0.5*(BBOXMIN+BBOXMAX);
-   radius2=0.5*(BBOXMAX-BBOXMIN).getlength2();
+   radius2=(0.5*(BBOXMAX-BBOXMIN)).getlength2();
    }

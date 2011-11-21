@@ -413,6 +413,28 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
       }
    }
 
+// merge two spheres
+void merge_spheres(miniv3d &center0,double &radius0,
+                   const miniv3d &center1,const double radius1)
+   {
+   miniv3d d=center1-center0;
+   double r=d.normalize();
+
+   if (radius1>radius0+r)
+      {
+      center0=center1;
+      radius0=radius1;
+      }
+   else if (radius1+r>radius0)
+      {
+      miniv3d a=center1+d*radius1;
+      miniv3d b=center0-d*radius0;
+
+      center0=(a+b)/2.0;
+      radius0=(a-b).getlength()/2.0;
+      }
+   }
+
 // ray/unitsphere intersection
 double intersect_ray_unitsphere(miniv3d p,miniv3d d)
    {

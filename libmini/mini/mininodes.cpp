@@ -34,17 +34,8 @@ void mininode_group::update()
 
          if (child_radius>0.0)
             if (radius>0.0)
-               {
-               miniv3d d=child_center-center;
-               double r=d.normalize();
-               if (r+child_radius>radius)
-                  {
-                  miniv3d a=child_center+d*child_radius;
-                  miniv3d b=center-d*radius;
-                  center=(a+b)/2.0;
-                  radius=(a-b).getlength()/2.0;
-                  }
-               }
+               merge_spheres(center,radius,
+                             child_center,child_radius);
             else
                {
                center=child_center;
