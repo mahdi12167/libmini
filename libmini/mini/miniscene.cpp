@@ -157,7 +157,7 @@ void miniscene::render()
    EARTH->render();
 
    // render ecef geometry
-   if (PARAMS.farp>miniearth::EARTH_radius)
+   if (PARAMS.farp>=miniearth::EARTH_radius)
       if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)

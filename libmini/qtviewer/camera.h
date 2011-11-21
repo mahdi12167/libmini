@@ -10,6 +10,8 @@
 
 #include <mini/mininodes.h>
 
+#include "cameraconst.h"
+
 class QGLWidget;
 
 class miniearth;
@@ -28,7 +30,7 @@ class Camera : public mininode_cam
 {
 public:
    Camera(QGLWidget *window, miniearth *earth,
-          double lat=21.39,double lon=-157.72,double height=7E6,
+          double lat, double lon, double height,
           double mindist=0.0);
 
    ~Camera();

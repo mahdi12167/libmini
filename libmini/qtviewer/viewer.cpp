@@ -39,10 +39,11 @@ void Viewer::init()
    getearth()->loadopts();
 
    // create the camera object
-   camera = new Camera(m_window, getearth());
+   camera = new Camera(m_window, getearth(),
+                       CAMERA_LAT, CAMERA_LON, CAMERA_HEIGHT);
 
    // tell camera lens fovy
-   camera->setLens(VIEWER_FOVY);
+   camera->setLens(CAMERA_FOVY);
 
    // add camera as first element of scene graph
    m_root=camera;
@@ -102,9 +103,9 @@ void Viewer::initParameters()
    sceneParams.winwidth = m_window->width();
    sceneParams.winheight = m_window->height();
    sceneParams.fps = CAMERA_FPS;
-   sceneParams.fovy = VIEWER_FOVY;
-   sceneParams.nearp = VIEWER_NEARP;
-   sceneParams.farp = VIEWER_FARP;
+   sceneParams.fovy = CAMERA_FOVY;
+   sceneParams.nearp = CAMERA_NEARP;
+   sceneParams.farp = CAMERA_FARP;
    sceneParams.usewireframe = FALSE;
    set(sceneParams);
    m_pSceneParams = get();
@@ -369,7 +370,7 @@ void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoub
 
 void Viewer::toggleStereo(bool on)
 {
-   if (on) m_StereoBase=VIEWER_SBASE;
+   if (on) m_StereoBase=CAMERA_SBASE;
    else m_StereoBase=0.0;
 
    getCamera()->startIdling();
@@ -395,7 +396,7 @@ void Viewer::setFogDensity(double density)
    density=pow(density,1.0/10);
    m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+density);
    m_pEarthParams->fogstart=(1.0-density)*VIEWER_FOGSTART;
-   m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*VIEWER_NEARP/VIEWER_FARP;
+   m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*CAMERA_NEARP/CAMERA_FARP;
    propagate();
 
    getCamera()->startIdling();

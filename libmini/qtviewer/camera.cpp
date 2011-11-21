@@ -6,7 +6,7 @@
 #include "cameraconst.h"
 
 Camera::Camera(QGLWidget *window, miniearth *earth,
-               double lat,double lon,double height,
+               double lat, double lon, double height,
                double mindist)
    : mininode_cam(earth, lat, lon, height, mindist)
 {

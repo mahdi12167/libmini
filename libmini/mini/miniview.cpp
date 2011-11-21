@@ -78,7 +78,7 @@ void miniview::setup_matrix(float sbase)
    double farp = get()->farp;
 
    // check bounding sphere of ecef geometry
-   if (farp>miniearth::EARTH_radius)
+   if (farp>=miniearth::EARTH_radius)
       if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
