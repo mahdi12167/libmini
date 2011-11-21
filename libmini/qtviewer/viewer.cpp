@@ -472,6 +472,22 @@ void Viewer::setExagger(double scale)
    camera->startIdling();
 }
 
+// check ecef geometry
+void Viewer::check_ecef_geometry(miniv3d &center,double &radius)
+   {
+   // specify empty bounding sphere
+   center=miniv3d(0,0,0);
+   radius=0.0;
+
+   // update scene graph
+   m_root->clear_dirty();
+
+   // specify bounding sphere
+   mininode *root=m_root;
+   mininode_group *group=dynamic_cast<mininode_group *>(root);
+   if (group) group->get_bsphere(center,radius);
+   }
+
 void Viewer::render_ecef_geometry(double t)
 {
    // render plain globe for z-values:
@@ -575,9 +591,6 @@ void Viewer::render_ecef_geometry(double t)
    initstate();
    mininode_geometry::useglobalshader(slot);
    mininode_animation::set_time(t);
-
-   // update scene graph
-   m_root->clear_dirty();
 
    // render ecef geometry by traversing scene graph
    if (m_root->traverse())

@@ -71,6 +71,8 @@ protected:
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
    virtual mininode *build_ecef_geometry()=0;
+
+   virtual void check_ecef_geometry(miniv3d &center,double &radius);
    virtual void render_ecef_geometry(double t);
 
 private:
