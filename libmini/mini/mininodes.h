@@ -187,9 +187,9 @@ class mininode_transform: public mininode_group
       miniv4d mtx[3];
       mtxget(oglmtx,mtx);
 
-      double max_scale=mtx[0].x;
-      if (mtx[1].y>max_scale) max_scale=mtx[1].y;
-      if (mtx[2].z>max_scale) max_scale=mtx[2].z;
+      double max_scale=dabs(mtx[0].x);
+      if (dabs(mtx[1].y)>max_scale) max_scale=dabs(mtx[1].y);
+      if (dabs(mtx[2].z)>max_scale) max_scale=dabs(mtx[2].z);
 
       center=mlt_vec(mtx,bound_center);
       radius=bound_radius*max_scale;

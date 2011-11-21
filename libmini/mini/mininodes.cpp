@@ -9,12 +9,19 @@ BOOLINT mininode_coord::lightdirset=FALSE;
 
 void mininode_group::update()
    {
-   miniv3d center(0,0,0);
-   double radius=0.0;
+   miniv3d center;
+   double radius;
 
    unsigned int s=get_children();
 
-   // merge bounding spheres
+   // clear bounding sphere
+   bound_center=miniv3d(0,0,0);
+   bound_radius=0.0;
+
+   // get bounding sphere
+   get_bsphere(center,radius);
+
+   // merge bounding sphere with children
    for (unsigned int i=0; i<s; i++)
       {
       mininode_group *child=(mininode_group *)get_child(i);
