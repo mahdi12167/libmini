@@ -67,11 +67,19 @@ Navigate to the qtviewer source directory and type
 
 !! Command-line Parameters
 
-The application accepts a list of urls as parameters.
+The application can be started without command line parameters:
+
+ ./qtviewer
+
+Then the application will show the entire earth on startup.
+
+The application also accepts a list of urls as parameters.
 Each url needs to point to a tileset directory.
 
 Usage on the unix terminal:
  ./qtviewer { <tileset url> }
+
+Then the application will zoom into the first specified tileset.
 
 !! Tileset URLs
 
