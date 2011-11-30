@@ -242,11 +242,13 @@ class mininode_transform: public mininode_group
 
    double oglmtx[16];
 
+   static unsigned int level;
+
    virtual void traverse_pre()
-      {mtxpush(); mtxmult(oglmtx);}
+      {mtxpush(); mtxmult(oglmtx); level++;}
 
    virtual void traverse_post()
-      {mtxpop();}
+      {mtxpop(); level--;}
 
    virtual void update();
    };
