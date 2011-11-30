@@ -28,7 +28,7 @@ class mininode: public minidyna< miniref<mininode> >
       {return(m_id);}
 
    //! get number of children
-   unsigned int get_children() const
+   virtual unsigned int get_children() const
       {return(getsize());}
 
    //! get child number i

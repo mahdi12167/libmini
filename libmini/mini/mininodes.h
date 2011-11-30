@@ -21,6 +21,7 @@ enum
    MININODE_CAM,
    MININODE_COLOR,
    MININODE_SWITCH,
+   MININODE_SELECTOR,
    MININODE_TRANSFORM,
    MININODE_ANIMATION,
    MININODE_GEOMETRY
@@ -161,6 +162,9 @@ class mininode_switch: public mininode_group
    virtual ~mininode_switch()
       {}
 
+   virtual unsigned int get_children() const
+      {return(ison?getsize():0);}
+
    virtual mininode *get_child(unsigned int i=0) const
       {return(ison?get(i):NULL);}
 
@@ -173,6 +177,37 @@ class mininode_switch: public mininode_group
    protected:
 
    BOOLINT ison;
+   };
+
+//! selector node
+class mininode_selector: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_selector()
+      : mininode_group(MININODE_SELECTOR)
+      {index=0;}
+
+   //! destructor
+   virtual ~mininode_selector()
+      {}
+
+   virtual unsigned int get_children() const
+      {return(1);}
+
+   virtual mininode *get_child(unsigned int i=0) const
+      {return(get(index));}
+
+   void select(unsigned int i=0)
+      {
+      if (i!=index) set_dirty();
+      index=i;
+      }
+
+   protected:
+
+   unsigned int index;
    };
 
 //! transformation node
