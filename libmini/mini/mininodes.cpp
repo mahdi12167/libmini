@@ -128,17 +128,19 @@ void mininode_coord::traverse_pre()
 
       mininode_transform::traverse_pre();
       }
+   else level++;
    }
 
 void mininode_coord::traverse_post()
    {
-   if (level==0)
+   if (level==1)
       {
       if (lightdirset)
          mininode_color::set_brightness(1.0);
 
       mininode_transform::traverse_post();
       }
+   else level--;
    }
 
 miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
