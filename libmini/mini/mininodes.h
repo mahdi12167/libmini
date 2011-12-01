@@ -53,9 +53,11 @@ class mininode_group: public mininode
 
    protected:
 
+   virtual void traverse_init() {}
    virtual void traverse_pre() {}
    virtual void traverse_past() {}
    virtual void traverse_post() {}
+   virtual void traverse_exit() {}
 
    virtual void update();
 
@@ -242,13 +244,16 @@ class mininode_transform: public mininode_group
 
    double oglmtx[16];
 
-   static unsigned int level;
+   static unsigned int transform_level;
+
+   virtual void traverse_init()
+      {transform_level=0;}
 
    virtual void traverse_pre()
-      {mtxpush(); mtxmult(oglmtx); level++;}
+      {mtxpush(); mtxmult(oglmtx); transform_level++;}
 
    virtual void traverse_post()
-      {mtxpop(); level--;}
+      {mtxpop(); transform_level--;}
 
    virtual void update();
    };

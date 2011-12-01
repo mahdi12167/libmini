@@ -59,11 +59,13 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! traverse [cycle-free] graph
-   virtual BOOLINT traverse()
+   virtual BOOLINT traverse(unsigned int level=0)
       {
       BOOLINT dirty=FALSE;
 
       unsigned int s=get_children();
+
+      if (level==0) traverse_init();
 
       traverse_pre();
 
@@ -71,12 +73,14 @@ class mininode: public minidyna< miniref<mininode> >
          {
          mininode *child=get_child(i);
          if (child!=NULL)
-            if (child->traverse()) dirty=TRUE;
+            if (child->traverse(level+1)) dirty=TRUE;
 
          if (i+1<s) traverse_past();
          }
 
       traverse_post();
+
+      if (level==0) traverse_exit();
 
       if (dirty) set_dirty();
 
@@ -165,9 +169,11 @@ class mininode: public minidyna< miniref<mininode> >
 
    unsigned int m_id;
 
+   virtual void traverse_init() = 0;
    virtual void traverse_pre() = 0;
    virtual void traverse_past() = 0;
    virtual void traverse_post() = 0;
+   virtual void traverse_exit() = 0;
 
    virtual void update() = 0;
 

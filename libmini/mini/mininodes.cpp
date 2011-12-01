@@ -4,7 +4,7 @@
 
 double mininode_dynamic::m_time=0.0;
 double mininode_color::brightness=1.0;
-unsigned int mininode_transform::level=0;
+unsigned int mininode_transform::transform_level=0;
 miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
 BOOLINT mininode_coord::lightdirset=FALSE;
 
@@ -115,7 +115,7 @@ void mininode_coord::set_lightdir(const miniv3d &d)
 
 void mininode_coord::traverse_pre()
    {
-   if (level==0)
+   if (transform_level==0)
       {
       if (lightdirset)
          {
@@ -128,19 +128,19 @@ void mininode_coord::traverse_pre()
 
       mininode_transform::traverse_pre();
       }
-   else level++;
+   else transform_level++;
    }
 
 void mininode_coord::traverse_post()
    {
-   if (level==1)
+   if (transform_level==1)
       {
       if (lightdirset)
          mininode_color::set_brightness(1.0);
 
       mininode_transform::traverse_post();
       }
-   else level--;
+   else transform_level--;
    }
 
 miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
