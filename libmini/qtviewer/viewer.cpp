@@ -201,7 +201,7 @@ void Viewer::resizeViewport()
 
 // get actual camera
 Camera *Viewer::getCamera()
-   {return((Camera *)m_root->get_first(MININODE_CAM));}
+   {return((Camera *)m_root->get_camera());}
 
 // draw scene
 void Viewer::draw()
@@ -484,9 +484,7 @@ void Viewer::check_ecef_geometry(miniv3d &center,double &radius)
    m_root->clear_dirty();
 
    // specify bounding sphere
-   mininode *root=m_root;
-   mininode_group *group=dynamic_cast<mininode_group *>(root);
-   if (group) group->get_bsphere(center,radius);
+   m_root->get_bsphere(center,radius);
    }
 
 void Viewer::render_ecef_geometry(double t)

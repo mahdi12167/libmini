@@ -137,7 +137,7 @@ VTBuilder tilesets:
  {
     protected:
 
-    mininode *Renderer::build_ecef_geometry()
+    mininode_group *Renderer::build_ecef_geometry()
     {
        mininode_group *scene =
           new mininode_coord(minicoord(miniv3d(0,90*3600,0),minicoord::MINICOORD_LLH))->

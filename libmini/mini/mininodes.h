@@ -27,6 +27,8 @@ enum
    MININODE_GEOMETRY
    };
 
+class mininode_cam;
+
 //! dynamic time-dependent node
 class mininode_group: public mininode
    {
@@ -43,6 +45,10 @@ class mininode_group: public mininode
    //! destructor
    virtual ~mininode_group()
       {}
+
+   //! get first enabled camera
+   virtual mininode_cam *get_camera()
+      {return((mininode_cam *)get_first(MININODE_CAM));}
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius)
@@ -64,6 +70,8 @@ class mininode_group: public mininode
    miniv3d bound_center;
    double bound_radius;
    };
+
+typedef miniref<mininode_group> mininode_groupref;
 
 //! dynamic time-dependent node
 class mininode_dynamic: public mininode_group
@@ -90,6 +98,31 @@ class mininode_dynamic: public mininode_group
    protected:
 
    static double m_time;
+   };
+
+//! culling node
+class mininode_culling: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_culling(unsigned int id=0)
+      : mininode_group(id)
+      {}
+
+   //! destructor
+   virtual ~mininode_culling()
+      {}
+
+   protected:
+
+   mininode_cam *camera;
+
+   virtual void traverse_init()
+      {camera=get_camera();}
+
+   virtual void traverse_exit()
+      {camera=NULL;}
    };
 
 //! camera node

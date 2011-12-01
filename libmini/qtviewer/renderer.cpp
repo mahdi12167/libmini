@@ -9,7 +9,7 @@ Renderer::Renderer(QGLWidget* window)
 Renderer::~Renderer()
 {}
 
-mininode *Renderer::build_ecef_geometry()
+mininode_group *Renderer::build_ecef_geometry()
 {
    mininode_group *group=new mininode_group;
 

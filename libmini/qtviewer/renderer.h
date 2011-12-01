@@ -13,7 +13,7 @@ public:
    ~Renderer();
 
 protected:
-   virtual mininode *build_ecef_geometry();
+   virtual mininode_group *build_ecef_geometry();
 };
 
 #endif

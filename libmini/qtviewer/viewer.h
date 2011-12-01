@@ -59,7 +59,7 @@ protected:
    QGLWidget* m_window;
 
    // scene graph root node
-   mininoderef m_root;
+   mininode_groupref m_root;
 
    // initialization flag
    bool m_bIsInited;
@@ -70,7 +70,7 @@ protected:
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
    unsigned char m_BathyMap[VIEWER_BATHYWIDTH*4*2]; // bathy color map
 
-   virtual mininode *build_ecef_geometry()=0;
+   virtual mininode_group *build_ecef_geometry()=0;
 
    virtual void check_ecef_geometry(miniv3d &center,double &radius);
    virtual void render_ecef_geometry(double t);
