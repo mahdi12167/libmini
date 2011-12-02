@@ -35,9 +35,6 @@ public:
 
    ~Camera();
 
-   void    setLens(float fovy);
-   void    setPosition(float latitude, float longitude, float altitude, float heading, float pitch);
-
    void    moveAbove();
 
    void    rotateCamera(float dx, float dy);
@@ -93,9 +90,6 @@ protected:
 
    // earth reference
    miniearth *m_earth;
-
-   // field of view
-   float    m_fovy;
 
    // cursor position
    float    m_CursorPosX;

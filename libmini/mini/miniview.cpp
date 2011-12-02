@@ -27,13 +27,19 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    // start timer
    starttimer();
 
+   // update camera lens
+   float fovy = get()->fovy;
+   float aspect = (float)get()->winwidth/get()->winheight;
+   double nearp = get()->nearp;
+   double farp = get()->farp;
+   m_cam->set_lens(fovy, aspect, nearp, farp);
+
    // set reference layer
    nst=getearth()->getnearest(m_cam->get_eye());
    getearth()->setreference(nst);
 
    // update scene
-   float aspect = (float)get()->winwidth/get()->winheight;
-   cache(m_cam->get_eye(), m_cam->get_dir(), m_cam->get_up(), aspect);
+   cache(m_cam->get_eye(), m_cam->get_dir(), m_cam->get_up(), m_cam->get_aspect());
 
    // clear scene
    clear();
@@ -72,10 +78,10 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
 // setup OpenGL modelview and projection matrices
 void miniview::setup_matrix(float sbase)
    {
-   float fovy = get()->fovy;
-   float aspect = (float)get()->winwidth/get()->winheight;
-   double nearp = get()->nearp;
-   double farp = get()->farp;
+   float fovy = m_cam->get_fovy();
+   float aspect = m_cam->get_aspect();
+   double nearp = m_cam->get_nearp();
+   double farp = m_cam->get_farp();
 
    // check bounding sphere of ecef geometry
    if (farp>=miniearth::EARTH_radius)

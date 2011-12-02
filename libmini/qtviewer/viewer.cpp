@@ -42,9 +42,6 @@ void Viewer::init()
    camera = new Camera(m_window, getearth(),
                        CAMERA_LAT, CAMERA_LON, CAMERA_HEIGHT);
 
-   // tell camera lens fovy
-   camera->setLens(CAMERA_FOVY);
-
    // add camera as first element of scene graph
    m_root=camera;
 
@@ -58,6 +55,34 @@ void Viewer::init()
    resizeViewport();
 
    m_bIsInited = true;
+}
+
+// get actual camera
+Camera *Viewer::getCamera()
+   {return((Camera *)m_root->get_camera());}
+
+// resize window
+void Viewer::resizeWindow()
+{
+   resizeViewport();
+
+   getCamera()->startIdling();
+}
+
+// initialize the render window
+void Viewer::resizeViewport()
+{
+   int winWidth = m_window->width();
+   int winHeight = m_window->height();
+
+   if (winWidth<1) winWidth=1;
+   if (winHeight<1) winHeight=1;
+
+   m_pSceneParams->winwidth=winWidth;
+   m_pSceneParams->winheight=winHeight;
+   set(m_pSceneParams);
+
+   glViewport(0, 0, winWidth, winHeight);
 }
 
 // load map layer from url
@@ -175,34 +200,6 @@ void Viewer::initBathyMap()
                                    VIEWER_BATHYMID);
 }
 
-// resize window
-void Viewer::resizeWindow()
-{
-   resizeViewport();
-
-   getCamera()->startIdling();
-}
-
-// initialize the render window
-void Viewer::resizeViewport()
-{
-   int winWidth = m_window->width();
-   int winHeight = m_window->height();
-
-   if (winWidth<1) winWidth=1;
-   if (winHeight<1) winHeight=1;
-
-   m_pSceneParams->winwidth=winWidth;
-   m_pSceneParams->winheight=winHeight;
-   set(m_pSceneParams);
-
-   glViewport(0, 0, winWidth, winHeight);
-}
-
-// get actual camera
-Camera *Viewer::getCamera()
-   {return((Camera *)m_root->get_camera());}
-
 // draw scene
 void Viewer::draw()
 {
@@ -245,10 +242,10 @@ void Viewer::renderHUD()
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
    glBegin(GL_QUADS);
-   glTexCoord2f(0.0f, 0.0f); glVertex2f(-lx, ly); // P0
-   glTexCoord2f(1.0f, 0.0f); glVertex2f(lx, ly); // P1
-   glTexCoord2f(1.0f, 1.0f); glVertex2f(lx, -ly); // P2
-   glTexCoord2f(0.0f, 1.0f); glVertex2f(-lx, -ly); // P3
+   glTexCoord2f(0.0f, 0.0f); glVertex2f(-lx, ly);
+   glTexCoord2f(1.0f, 0.0f); glVertex2f(lx, ly);
+   glTexCoord2f(1.0f, 1.0f); glVertex2f(lx, -ly);
+   glTexCoord2f(0.0f, 1.0f); glVertex2f(-lx, -ly);
    glEnd();
 
    glEnable(GL_DEPTH_TEST);

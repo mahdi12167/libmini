@@ -22,13 +22,14 @@ public:
 
    void       init();
    bool       isInited() {return(m_bIsInited);}
+
+   Camera*    getCamera();
+   void       resizeWindow();
+
    minilayer* loadMap(const char* url);
    void       clearMaps();
 
-   void       resizeWindow();
    void       draw();
-
-   Camera*    getCamera();
 
    void       toggleStereo(bool on);
    void       toggleWireFrame(bool on);

@@ -31,6 +31,10 @@ class minicam
                 double angle=0.0,double pitch=-90.0,
                 double mindist=0.0);
 
+   void set_eye(double latitude,double longitude,double altitude,
+                double heading,double pitch,
+                double mindist=0.0);
+
    minicoord get_eye() {return(eye);}
    miniv3d get_eye_opengl();
    miniv3d get_dir() {return(eye_dir);}
@@ -46,6 +50,15 @@ class minicam
    double get_hitdist();
    double get_angle();
    double get_pitch();
+
+   void set_lens(float fovy,float aspect,
+                 double nearp,double farp);
+
+   float get_fovy();
+   float get_aspect();
+   double get_nearp();
+   double get_farp();
+   double get_cone();
 
    void move(const miniv3d &delta);
    void move_plain(const miniv3d &delta);
@@ -84,6 +97,9 @@ class minicam
 
    minicoord eye;
    miniv3d eye_dir,eye_right,eye_up;
+
+   float fovy,aspect;
+   double nearp,farp;
 
    private:
 

@@ -41,6 +41,15 @@ void minicam::set_eye(const minicoord &e,
    move_above(mindist);
    }
 
+void minicam::set_eye(double latitude,double longitude,double altitude,
+                      double heading,double pitch,
+                      double mindist)
+   {
+   set_eye(minicoord(miniv3d(latitude*3600.0,
+                             longitude*3600.0,
+                             altitude),minicoord::MINICOORD_LLH),heading,pitch,mindist);
+   }
+
 miniv3d minicam::get_eye_opengl()
    {return(EARTH->map_g2o(eye).vec);}
 
@@ -111,6 +120,34 @@ double minicam::get_pitch()
    if (pitch<-PI) pitch+=2.0*PI;
 
    return(pitch*180.0/PI);
+   }
+
+void minicam::set_lens(float fovy,float aspect,
+                       double nearp,double farp)
+   {
+   this->fovy=fovy;
+   this->aspect=aspect;
+   this->nearp=nearp;
+   this->farp=farp;
+   }
+
+float minicam::get_fovy()
+   {return(fovy);}
+
+float minicam::get_aspect()
+   {return(aspect);}
+
+double minicam::get_nearp()
+   {return(nearp);}
+
+double minicam::get_farp()
+   {return(farp);}
+
+double minicam::get_cone()
+   {
+   double h=tan(0.5*fovy*PI/180);
+   double w=aspect*h;
+   return(sqrt(w*w+h*h));
    }
 
 void minicam::move(const miniv3d &delta)
@@ -404,9 +441,6 @@ void minicam::get_local_base(const minicoord &pos,
 miniv3d minicam::unproject_viewport(int vx,int vy,
                                     int vwidth,int vheight)
    {
-   float fovy=EARTH->get()->fovy;
-   float aspect=(float)vwidth/vheight;
-
    double mx=(double)vx/(vwidth-1)-0.5;
    double my=0.5-(double)vy/(vheight-1);
 

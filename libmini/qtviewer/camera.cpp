@@ -32,19 +32,6 @@ Camera::Camera(QGLWidget *window, miniearth *earth,
 Camera::~Camera()
 {}
 
-// set camera field of view
-void Camera::setLens(float fovy)
-{
-   m_fovy = fovy;
-}
-
-// set camera position and direction
-void Camera::setPosition(float latitude, float longitude, float altitude, float heading, float pitch)
-{
-   set_eye(minicoord(miniv3d(latitude * 3600.0, longitude * 3600.0, altitude),
-                     minicoord::MINICOORD_LLH), heading, pitch);
-}
-
 // move camera above ground
 void Camera::moveAbove()
 {
