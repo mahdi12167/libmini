@@ -9,7 +9,9 @@
 // default constructor
 minicam::minicam(miniearth *earth,
                  double lat,double lon,double height,
-                 double mindist)
+                 double mindist,
+                 float fovy,float aspect,
+                 double nearp,double farp)
    {
    EARTH=earth;
 
@@ -17,6 +19,7 @@ minicam::minicam(miniearth *earth,
    eye_default.convert2(minicoord::MINICOORD_ECEF);
 
    set_eye(EARTH->getinitial(),0.0,-90.0,mindist);
+   set_lens(fovy,aspect,nearp,farp);
    }
 
 // destructor
@@ -132,21 +135,33 @@ void minicam::set_lens(float fovy,float aspect,
    }
 
 float minicam::get_fovy()
-   {return(fovy);}
+   {
+   if (fovy<=0.0f) fovy=EARTH->get()->fovy;
+   return(fovy);
+   }
 
 float minicam::get_aspect()
-   {return(aspect);}
+   {
+   if (aspect<=0.0f) aspect=1.0f;
+   return(aspect);
+   }
 
 double minicam::get_nearp()
-   {return(nearp);}
+   {
+   if (nearp<=0.0) nearp=EARTH->get()->nearp;
+   return(nearp);
+   }
 
 double minicam::get_farp()
-   {return(farp);}
+   {
+   if (farp<=0.0) farp=EARTH->get()->farp;
+   return(farp);
+   }
 
 double minicam::get_cone()
    {
-   double h=tan(0.5*fovy*PI/180);
-   double w=aspect*h;
+   double h=tan(0.5*get_fovy()*PI/180);
+   double w=get_aspect()*h;
    return(sqrt(w*w+h*h));
    }
 

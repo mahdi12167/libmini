@@ -7,8 +7,11 @@
 
 Camera::Camera(QGLWidget *window, miniearth *earth,
                double lat, double lon, double height,
-               double mindist)
-   : mininode_cam(earth, lat, lon, height, mindist)
+               double mindist,
+               float fovy,float aspect,
+               double nearp,double farp)
+   : mininode_cam(earth, lat, lon, height, mindist,
+                  fovy, aspect, nearp, farp)
 {
    m_window = window;
    m_earth = earth;

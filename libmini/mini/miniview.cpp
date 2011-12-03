@@ -27,11 +27,13 @@ void miniview::render_geometry(float sbase,BOOLINT anaglyph)
    // start timer
    starttimer();
 
-   // update camera lens
-   float fovy = get()->fovy;
+   // get camera lens
+   float fovy = m_cam->get_fovy();
    float aspect = (float)get()->winwidth/get()->winheight;
-   double nearp = get()->nearp;
-   double farp = get()->farp;
+   double nearp = m_cam->get_nearp();
+   double farp = m_cam->get_farp();
+
+   // update camera lens
    m_cam->set_lens(fovy, aspect, nearp, farp);
 
    // set reference layer

@@ -22,7 +22,9 @@ class minicam
    //! default constructor
    minicam(miniearth *earth,
            double lat=21.39,double lon=-157.72,double height=7E6,
-           double mindist=0.0);
+           double mindist=0.0,
+           float fovy=0.0f,float aspect=0.0f,
+           double nearp=0.0,double farp=0.0);
 
    //! destructor
    ~minicam();

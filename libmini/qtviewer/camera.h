@@ -31,7 +31,9 @@ class Camera : public mininode_cam
 public:
    Camera(QGLWidget *window, miniearth *earth,
           double lat, double lon, double height,
-          double mindist=0.0);
+          double mindist=0.0,
+          float fovy=0.0f,float aspect=0.0f,
+          double nearp=0.0f,double farp=0.0f);
 
    ~Camera();
 

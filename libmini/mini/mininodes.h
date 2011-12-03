@@ -133,8 +133,12 @@ class mininode_cam: public mininode_dynamic, public minicam
    //! default constructor
    mininode_cam(miniearth *earth,
                 double lat=21.39,double lon=-157.72,double height=7E6,
-                double mindist=0.0)
-      : mininode_dynamic(MININODE_CAM), minicam(earth,lat,lon,height,mindist)
+                double mindist=0.0,
+                float fovy=0.0f,float aspect=0.0f,
+                double nearp=0.0,double farp=0.0)
+      : mininode_dynamic(MININODE_CAM),
+        minicam(earth,lat,lon,height,mindist,
+                fovy,aspect,nearp,farp)
       {}
 
    //! destructor
@@ -246,13 +250,13 @@ class mininode_selector: public mininode_group
    };
 
 //! transformation node
-class mininode_transform: public mininode_group
+class mininode_transform: public mininode_culling
    {
    public:
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode_group(MININODE_TRANSFORM)
+      : mininode_culling(MININODE_TRANSFORM)
       {if (mtx!=NULL) mtxget(mtx,oglmtx);}
 
    //! destructor
