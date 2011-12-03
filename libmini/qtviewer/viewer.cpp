@@ -43,7 +43,7 @@ void Viewer::init()
                        CAMERA_LAT, CAMERA_LON, CAMERA_HEIGHT);
 
    // set camera lens
-   camera->set_lens(CAMERA_FOVY, 0.0f, CAMERA_NEARP, CAMERA_FARP); //!! separate aspect
+   camera->set_lens(CAMERA_FOVY, 0.0f, CAMERA_NEARP, CAMERA_FARP);
 
    // add camera as first element of scene graph
    m_root=camera;
