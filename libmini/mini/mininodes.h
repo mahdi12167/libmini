@@ -108,7 +108,7 @@ class mininode_culling: public mininode_group
    //! default constructor
    mininode_culling(unsigned int id=0)
       : mininode_group(id)
-      {}
+      {eye=dir=miniv3d(0.0);}
 
    //! destructor
    virtual ~mininode_culling()
@@ -117,6 +117,9 @@ class mininode_culling: public mininode_group
    protected:
 
    static mininode_cam *camera;
+   static double cone;
+
+   miniv3d eye,dir;
 
    virtual void traverse_init();
    virtual void traverse_exit();

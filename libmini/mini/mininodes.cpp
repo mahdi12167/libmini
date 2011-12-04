@@ -2,12 +2,7 @@
 
 #include "mininodes.h"
 
-double mininode_dynamic::m_time=0.0;
-mininode_cam *mininode_culling::camera=NULL;
-double mininode_color::brightness=1.0;
-unsigned int mininode_transform::transform_level=0;
-miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
-BOOLINT mininode_coord::lightdirset=FALSE;
+// mininode_group:
 
 void mininode_group::update()
    {
@@ -57,6 +52,35 @@ void mininode_group::update()
    bound_radius=radius;
    }
 
+// mininode_dynamic:
+
+double mininode_dynamic::m_time=0.0;
+
+// mininode_culling:
+
+mininode_cam *mininode_culling::camera=NULL;
+double mininode_culling::cone=0.0;
+
+void mininode_culling::traverse_init()
+   {
+   camera=get_camera();
+   cone=camera->get_cone();
+   }
+
+void mininode_culling::traverse_exit()
+   {
+   camera=NULL;
+   cone=0.0;
+   }
+
+// mininode_color:
+
+double mininode_color::brightness=1.0;
+
+// mininode_transform:
+
+unsigned int mininode_transform::transform_level=0;
+
 void mininode_transform::update()
    {
    // merge two consecutive transform nodes
@@ -86,11 +110,10 @@ void mininode_transform::update()
    mininode_group::update();
    }
 
-void mininode_culling::traverse_init()
-   {camera=get_camera();}
+// mininode_coord:
 
-void mininode_culling::traverse_exit()
-   {camera=NULL;}
+miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
+BOOLINT mininode_coord::lightdirset=FALSE;
 
 mininode_coord::mininode_coord(const minicoord &c)
    : mininode_transform()
@@ -149,6 +172,8 @@ void mininode_coord::traverse_post()
       }
    else transform_level--;
    }
+
+// mininode_geometry:
 
 miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
                                    const miniv3d &o,const miniv3d &n)

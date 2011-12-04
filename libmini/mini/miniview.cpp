@@ -103,7 +103,7 @@ void miniview::setup_matrix(float sbase)
 
             eye=m_cam->get_eye().vec;
             dir=m_cam->get_dir();
-         
+
             farp_ecef=dir*(center-eye)+radius;
             farp=dmax(farp,farp_ecef);
             }
