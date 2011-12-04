@@ -116,13 +116,10 @@ class mininode_culling: public mininode_group
 
    protected:
 
-   mininode_cam *camera;
+   static mininode_cam *camera;
 
-   virtual void traverse_init()
-      {camera=get_camera();}
-
-   virtual void traverse_exit()
-      {camera=NULL;}
+   virtual void traverse_init();
+   virtual void traverse_exit();
    };
 
 //! camera node

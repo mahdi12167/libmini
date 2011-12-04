@@ -3,6 +3,7 @@
 #include "mininodes.h"
 
 double mininode_dynamic::m_time=0.0;
+mininode_cam *mininode_culling::camera=NULL;
 double mininode_color::brightness=1.0;
 unsigned int mininode_transform::transform_level=0;
 miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
@@ -84,6 +85,12 @@ void mininode_transform::update()
 
    mininode_group::update();
    }
+
+void mininode_culling::traverse_init()
+   {camera=get_camera();}
+
+void mininode_culling::traverse_exit()
+   {camera=NULL;}
 
 mininode_coord::mininode_coord(const minicoord &c)
    : mininode_transform()
