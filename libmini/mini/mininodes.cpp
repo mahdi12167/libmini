@@ -75,9 +75,9 @@ void mininode_culling::traverse_pre()
    is_visible=TRUE;
 
    // remember camera cone
-   eye0=eye;
-   dir0=dir;
-   cone0=cone;
+   eye0=eye1=eye;
+   dir0=dir1=dir;
+   cone0=cone1=cone;
 
    // intersect camera cone with bounding sphere
    if (has_bsphere())
@@ -85,6 +85,11 @@ void mininode_culling::traverse_pre()
          {
          // get transformed camera cone
          transform_cone(eye,dir,cone);
+
+         // remember transformed camera cone
+         eye1=eye;
+         dir1=dir;
+         cone1=cone;
 
          // intersect with original bounding sphere
          if (cone>0.0)
@@ -95,10 +100,10 @@ void mininode_culling::traverse_pre()
 
 void mininode_culling::traverse_past()
    {
-   // restore camera cone
-   eye=eye0;
-   dir=dir0;
-   cone=cone0;
+   // restore transformed camera cone
+   eye=eye1;
+   dir=dir1;
+   cone=cone1;
    }
 
 void mininode_culling::traverse_post()

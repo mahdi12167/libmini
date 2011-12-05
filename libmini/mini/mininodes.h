@@ -111,6 +111,9 @@ class mininode_culling: public mininode_group
 
    miniv3d eye0,dir0;
    double cone0;
+
+   miniv3d eye1,dir1;
+   double cone1;
    };
 
 //! dynamic time-dependent node
@@ -208,6 +211,9 @@ class mininode_color: public mininode_group
 
    virtual void traverse_past()
       {color(rgba*brightness);}
+
+   virtual void traverse_post()
+      {color(1,1,1);}
    };
 
 //! switch node
