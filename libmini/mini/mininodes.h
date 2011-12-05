@@ -50,11 +50,11 @@ class mininode_group: public mininode
       {return((mininode_cam *)get_first(MININODE_CAM));}
 
    //! check bounding sphere
-   virtual BOOLINT has_bsphere()
+   virtual BOOLINT has_bsphere() const
       {return(bound_radius>0.0);}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       center=bound_center;
       radius=bound_radius;
@@ -101,10 +101,11 @@ class mininode_culling: public mininode_group
 
    virtual void traverse_init();
    virtual void traverse_pre();
+   virtual void traverse_past();
    virtual void traverse_post();
    virtual void traverse_exit();
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) {}
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const {}
 
    private:
 
@@ -166,7 +167,7 @@ class mininode_cam: public mininode_dynamic, public minicam
       {return(this);}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       center=miniv3d(0,0,0);
       radius=minicrs::EARTH_radius;
@@ -235,7 +236,7 @@ class mininode_switch: public mininode_group
       is_on=on;
       }
 
-   BOOLINT is_toggled()
+   BOOLINT is_toggled() const
       {return(is_on);}
 
    protected:
@@ -269,11 +270,8 @@ class mininode_selector: public mininode_group
       index=i;
       }
 
-   unsigned int get_selection()
+   unsigned int get_selection() const
       {return(index);}
-
-   unsigned int get_selections()
-      {return(getsize());}
 
    protected:
 
@@ -303,7 +301,7 @@ class mininode_transform: public mininode_dynamic
       {}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) = 0;
+   virtual void get_bsphere(miniv3d &center,double &radius) const = 0;
 
    protected:
 
@@ -321,7 +319,7 @@ class mininode_transform: public mininode_dynamic
       mininode_culling::traverse_post();
       }
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) = 0;
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const = 0;
 
    virtual void update_dirty();
    };
@@ -340,7 +338,7 @@ class mininode_translate: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       miniv3d vec;
       mtxget(oglmtx,vec);
@@ -351,7 +349,7 @@ class mininode_translate: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
       {
       miniv3d vec;
       mtxget(oglmtx,vec);
@@ -375,7 +373,7 @@ class mininode_rotate: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -386,7 +384,7 @@ class mininode_rotate: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -421,7 +419,7 @@ class mininode_scale: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       miniv4d mtx[3];
       mtxget(oglmtx,mtx);
@@ -436,7 +434,7 @@ class mininode_scale: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
       {cone=0.0;}
    };
 
@@ -452,7 +450,7 @@ class mininode_coord: public mininode_transform
    static void set_lightdir(const miniv3d &d);
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       miniv4d mtx[3];
       mtxget(oglmtx,mtx);
@@ -471,7 +469,7 @@ class mininode_coord: public mininode_transform
    virtual void traverse_pre();
    virtual void traverse_post();
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
       {
       miniv3d mtx[3],vec;
       mtxget(oglmtx,mtx);
@@ -503,7 +501,7 @@ class mininode_animation: public mininode_transform
       set_dirty();
       }
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
       {cone=0.0;}
    };
 
@@ -518,7 +516,7 @@ class mininode_animation_rotate: public mininode_animation
       {m_omega=w; m_axis=a;}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -562,7 +560,7 @@ class mininode_geometry: public mininode_group, public ministrip
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
+   virtual void get_bsphere(miniv3d &center,double &radius) const
       {
       double radius2;
       getbsphere(center,radius2);

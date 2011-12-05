@@ -27,7 +27,11 @@ class mininode: public minidyna< miniref<mininode> >
    virtual unsigned int get_id() const
       {return(m_id);}
 
-   //! get number of children
+   //! get number of all linked nodes
+   unsigned int get_links() const
+      {return(getsize());}
+
+   //! get number of visible children
    virtual unsigned int get_children() const
       {return(getsize());}
 
@@ -63,11 +67,11 @@ class mininode: public minidyna< miniref<mininode> >
       {
       BOOLINT dirty=FALSE;
 
-      unsigned int s=get_children();
-
       if (level==0) traverse_init();
 
       traverse_pre();
+
+      unsigned int s=get_children();
 
       for (unsigned int i=0; i<s; i++)
          {
@@ -90,11 +94,11 @@ class mininode: public minidyna< miniref<mininode> >
    //! traverse graph and serialize nodes with specific id
    virtual minidyna<mininode*> serialize(unsigned int id=0)
       {
-      unsigned int s=get_children();
-
       minidyna<mininode*> list;
 
       if (get_id()==id) list.append(this);
+
+      unsigned int s=get_children();
 
       for (unsigned int i=0; i<s; i++)
          {
@@ -105,11 +109,12 @@ class mininode: public minidyna< miniref<mininode> >
       return(list);
       }
 
+   //! get first node with specific id
    virtual mininode *get_first(unsigned int id=0)
       {
-      unsigned int s=get_children();
-
       if (get_id()==id) return(this);
+
+      unsigned int s=get_children();
 
       for (unsigned int i=0; i<s; i++)
          {
@@ -124,11 +129,12 @@ class mininode: public minidyna< miniref<mininode> >
       return(NULL);
       }
 
+   //! get last node with specific id
    virtual mininode *get_last(unsigned int id=0)
       {
-      unsigned int s=get_children();
-
       if (get_id()==id) return(this);
+
+      unsigned int s=get_children();
 
       for (unsigned int i=0; i<s; i++)
          {
@@ -143,12 +149,15 @@ class mininode: public minidyna< miniref<mininode> >
       return(NULL);
       }
 
+   //! flag as dirty
    void set_dirty()
       {m_dirty=TRUE;}
 
-   BOOLINT is_dirty()
+   //! check dirty flag
+   BOOLINT is_dirty() const
       {return(m_dirty);}
 
+   // clear dirty flag via recursive update
    void clear_dirty()
       {
       unsigned int s=get_children();

@@ -87,9 +87,18 @@ void mininode_culling::traverse_pre()
          transform_cone(eye,dir,cone);
 
          // intersect with original bounding sphere
-         is_visible=itest_cone_sphere(eye,dir,cone,
-                                      bound_center,bound_radius);
+         if (cone>0.0)
+            is_visible=itest_cone_sphere(eye,dir,cone,
+                                         bound_center,bound_radius);
          }
+   }
+
+void mininode_culling::traverse_past()
+   {
+   // restore camera cone
+   eye=eye0;
+   dir=dir0;
+   cone=cone0;
    }
 
 void mininode_culling::traverse_post()
@@ -116,7 +125,7 @@ double mininode_color::brightness=1.0;
 void mininode_transform::update_dirty()
    {
    // merge two consecutive transform nodes
-   if (getsize()==1)
+   if (get_links()==1)
       {
       mininode *child=get_child();
       if (child!=NULL)

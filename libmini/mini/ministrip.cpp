@@ -1202,14 +1202,14 @@ char *ministrip::getpixshader(int num)
    }
 
 // get bounding box
-void ministrip::getbbox(miniv3d &bboxmin,miniv3d &bboxmax)
+void ministrip::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    {
    bboxmin=BBOXMIN;
    bboxmax=BBOXMAX;
    }
 
 // get bounding sphere
-void ministrip::getbsphere(miniv3d &center,double &radius2)
+void ministrip::getbsphere(miniv3d &center,double &radius2) const
    {
    center=0.5*(BBOXMIN+BBOXMAX);
    radius2=(0.5*(BBOXMAX-BBOXMIN)).getlength2();
