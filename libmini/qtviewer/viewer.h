@@ -60,7 +60,7 @@ protected:
    QGLWidget* m_window;
 
    // scene graph root node
-   mininode_groupref m_root;
+   mininode_rootref m_root;
 
    // initialization flag
    bool m_bIsInited;

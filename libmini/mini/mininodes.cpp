@@ -72,23 +72,24 @@ void mininode_culling::traverse_pre()
    miniv3d center;
    double radius;
 
-   // get bounding sphere
-   get_bsphere(center,radius);
+   is_visible=TRUE;
 
    // remember camera cone
    eye0=eye;
    dir0=dir;
    cone0=cone;
 
-   // transform camera cone and intersect with bounding sphere
-   if (radius>0.0)
+   // intersect camera cone with bounding sphere
+   if (has_bsphere())
       if (cone>0.0)
          {
+         // get transformed camera cone
          transform_cone(eye,dir,cone);
-         isvisible=itest_cone_sphere(eye,dir,cone,center,radius);
+
+         // intersect with original bounding sphere
+         is_visible=itest_cone_sphere(eye,dir,cone,
+                                      bound_center,bound_radius);
          }
-      else isvisible=TRUE;
-   else isvisible=FALSE;
    }
 
 void mininode_culling::traverse_post()
@@ -112,12 +113,10 @@ double mininode_color::brightness=1.0;
 
 // mininode_transform:
 
-unsigned int mininode_transform::transform_level=0;
-
 void mininode_transform::update_dirty()
    {
    // merge two consecutive transform nodes
-   if (get_children()==1)
+   if (getsize()==1)
       {
       mininode *child=get_child();
       if (child!=NULL)
@@ -125,15 +124,19 @@ void mininode_transform::update_dirty()
          // get child transformation
          mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
          mininode_animation *child_animation=dynamic_cast<mininode_animation *>(child);
+         mininode_coord *child_coord=dynamic_cast<mininode_coord *>(child);
 
          if (child_transform && !child_animation)
             {
-            // multiply with child's transformation matrix
-            miniv4d mtx[3],mtx1[3],mtx2[3];
-            mtxget(oglmtx,mtx1);
-            mtxget(child_transform->oglmtx,mtx2);
-            mlt_mtx(mtx,mtx1,mtx2);
-            mtxget(mtx,oglmtx);
+            if (!child_coord)
+               {
+               // multiply with child's transformation matrix
+               miniv4d mtx[3],mtx1[3],mtx2[3];
+               mtxget(oglmtx,mtx1);
+               mtxget(child_transform->oglmtx,mtx2);
+               mlt_mtx(mtx,mtx1,mtx2);
+               mtxget(mtx,oglmtx);
+               }
 
             // remove child
             remove_child();
@@ -179,32 +182,24 @@ void mininode_coord::set_lightdir(const miniv3d &d)
 
 void mininode_coord::traverse_pre()
    {
-   if (transform_level==0)
+   if (lightdirset)
       {
-      if (lightdirset)
-         {
-         double l=up*lightdir;
-         if (l<0.0) l=0.0;
-         l=1.0-pow(1.0-l,10.0);
+      double l=up*lightdir;
+      if (l<0.0) l=0.0;
+      l=1.0-pow(1.0-l,10.0);
 
-         mininode_color::set_brightness(0.5*l+0.5);
-         }
-
-      mininode_transform::traverse_pre();
+      mininode_color::set_brightness(0.5*l+0.5);
       }
-   else transform_level++;
+
+   mininode_transform::traverse_pre();
    }
 
 void mininode_coord::traverse_post()
    {
-   if (transform_level==1)
-      {
-      if (lightdirset)
-         mininode_color::set_brightness(1.0);
+   if (lightdirset)
+      mininode_color::set_brightness(1.0);
 
-      mininode_transform::traverse_post();
-      }
-   else transform_level--;
+   mininode_transform::traverse_post();
    }
 
 // mininode_geometry:

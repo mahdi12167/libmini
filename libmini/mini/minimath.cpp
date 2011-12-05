@@ -597,8 +597,6 @@ int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
    double l0,l;
    miniv3d p;
 
-   return(1); //!!
-
    d0=d;
    d0.normalize();
 

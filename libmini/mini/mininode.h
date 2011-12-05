@@ -151,7 +151,9 @@ class mininode: public minidyna< miniref<mininode> >
 
    void clear_dirty()
       {
-      for (unsigned int i=0; i<get_children(); i++)
+      unsigned int s=get_children();
+
+      for (unsigned int i=0; i<s; i++)
          {
          mininode *child=get_child(i);
          if (child!=NULL)

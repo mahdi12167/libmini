@@ -49,6 +49,10 @@ class mininode_group: public mininode
    virtual mininode_cam *get_camera()
       {return((mininode_cam *)get_first(MININODE_CAM));}
 
+   //! check bounding sphere
+   virtual BOOLINT has_bsphere()
+      {return(bound_radius>0.0);}
+
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius)
       {
@@ -78,7 +82,7 @@ class mininode_culling: public mininode_group
    //! default constructor
    mininode_culling(unsigned int id=0)
       : mininode_group(id)
-      {isvisible=TRUE;}
+      {is_visible=TRUE;}
 
    //! destructor
    virtual ~mininode_culling()
@@ -86,14 +90,14 @@ class mininode_culling: public mininode_group
 
    //! get number of children
    virtual unsigned int get_children() const
-      {return(isvisible?getsize():0);}
+      {return(is_visible?getsize():0);}
 
    protected:
 
    static miniv3d eye,dir;
    static double cone;
 
-   BOOLINT isvisible;
+   BOOLINT is_visible;
 
    virtual void traverse_init();
    virtual void traverse_pre();
@@ -135,7 +139,7 @@ class mininode_dynamic: public mininode_culling
    static double m_time;
    };
 
-typedef miniref<mininode_dynamic> mininode_groupref;
+typedef miniref<mininode_dynamic> mininode_rootref;
 
 //! camera node
 class mininode_cam: public mininode_dynamic, public minicam
@@ -179,6 +183,7 @@ class mininode_color: public mininode_group
       : mininode_group(MININODE_COLOR)
       {rgba=c;}
 
+   //! constructor
    mininode_color(const miniv3d &c)
       : mininode_group(MININODE_COLOR)
       {rgba=miniv4d(c,1);}
@@ -187,6 +192,7 @@ class mininode_color: public mininode_group
    virtual ~mininode_color()
       {}
 
+   //! set local brightness
    static void set_brightness(double b=1.0)
       {brightness=b;}
 
@@ -211,27 +217,30 @@ class mininode_switch: public mininode_group
    //! default constructor
    mininode_switch()
       : mininode_group(MININODE_SWITCH)
-      {ison=TRUE;}
+      {is_on=TRUE;}
 
    //! destructor
    virtual ~mininode_switch()
       {}
 
    virtual unsigned int get_children() const
-      {return(ison?getsize():0);}
+      {return(is_on?getsize():0);}
 
    virtual mininode *get_child(unsigned int i=0) const
-      {return(ison?get(i):NULL);}
+      {return(is_on?get(i):NULL);}
 
    void toggle(BOOLINT on=TRUE)
       {
-      if (ison!=on) set_dirty();
-      ison=on;
+      if (is_on!=on) set_dirty();
+      is_on=on;
       }
+
+   BOOLINT is_toggled()
+      {return(is_on);}
 
    protected:
 
-   BOOLINT ison;
+   BOOLINT is_on;
    };
 
 //! selector node
@@ -259,6 +268,12 @@ class mininode_selector: public mininode_group
       if (i!=index) set_dirty();
       index=i;
       }
+
+   unsigned int get_selection()
+      {return(index);}
+
+   unsigned int get_selections()
+      {return(getsize());}
 
    protected:
 
@@ -294,17 +309,15 @@ class mininode_transform: public mininode_dynamic
 
    double oglmtx[16];
 
-   static unsigned int transform_level;
-
    virtual void traverse_pre()
       {
       mininode_culling::traverse_pre();
-      mtxpush(); mtxmult(oglmtx); transform_level++;
+      mtxpush(); mtxmult(oglmtx);
       }
 
    virtual void traverse_post()
       {
-      mtxpop(); transform_level--;
+      mtxpop();
       mininode_culling::traverse_post();
       }
 
