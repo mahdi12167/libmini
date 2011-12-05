@@ -1560,6 +1560,21 @@ void mtxget(const double oglmtx[16],miniv4d mtx[3])
    mtx[2]=miniv4d(oglmtx[2],oglmtx[6],oglmtx[10],oglmtx[14]);
    }
 
+void mtxget(const double oglmtx[16],miniv3d &vec)
+   {
+   vec.x=oglmtx[12];
+   vec.y=oglmtx[13];
+   vec.z=oglmtx[14];
+   }
+
+void mtxget(const double oglmtx[16],miniv4d &vec)
+   {
+   vec.x=oglmtx[12];
+   vec.y=oglmtx[13];
+   vec.z=oglmtx[14];
+   vec.w=oglmtx[15];
+   }
+
 void multitexcoord(const unsigned int unit,const float s,const float t,const float r)
    {
 #ifndef NOOGL

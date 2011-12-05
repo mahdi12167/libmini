@@ -4,7 +4,7 @@
 
 // mininode_group:
 
-void mininode_group::update()
+void mininode_group::update_dirty()
    {
    miniv3d center;
    double radius;
@@ -52,26 +52,59 @@ void mininode_group::update()
    bound_radius=radius;
    }
 
-// mininode_dynamic:
-
-double mininode_dynamic::m_time=0.0;
-
 // mininode_culling:
 
-mininode_cam *mininode_culling::camera=NULL;
+miniv3d mininode_culling::eye(0,0,0);
+miniv3d mininode_culling::dir(0,0,0);
 double mininode_culling::cone=0.0;
 
 void mininode_culling::traverse_init()
    {
-   camera=get_camera();
+   mininode_cam *camera=get_camera();
+
+   eye=camera->get_eye().vec;
+   dir=camera->get_dir();
    cone=camera->get_cone();
    }
 
-void mininode_culling::traverse_exit()
+void mininode_culling::traverse_pre()
    {
-   camera=NULL;
-   cone=0.0;
+   miniv3d center;
+   double radius;
+
+   // get bounding sphere
+   get_bsphere(center,radius);
+
+   // remember camera cone
+   eye0=eye;
+   dir0=dir;
+   cone0=cone;
+
+   // transform camera cone and intersect with bounding sphere
+   if (radius>0.0)
+      if (cone>0.0)
+         {
+         transform_cone(eye,dir,cone);
+         isvisible=itest_cone_sphere(eye,dir,cone,center,radius);
+         }
+      else isvisible=TRUE;
+   else isvisible=FALSE;
    }
+
+void mininode_culling::traverse_post()
+   {
+   // restore camera cone
+   eye=eye0;
+   dir=dir0;
+   cone=cone0;
+   }
+
+void mininode_culling::traverse_exit()
+   {cone=0.0;}
+
+// mininode_dynamic:
+
+double mininode_dynamic::m_time=0.0;
 
 // mininode_color:
 
@@ -81,7 +114,7 @@ double mininode_color::brightness=1.0;
 
 unsigned int mininode_transform::transform_level=0;
 
-void mininode_transform::update()
+void mininode_transform::update_dirty()
    {
    // merge two consecutive transform nodes
    if (get_children()==1)
@@ -91,8 +124,9 @@ void mininode_transform::update()
          {
          // get child transformation
          mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
+         mininode_animation *child_animation=dynamic_cast<mininode_animation *>(child);
 
-         if (child_transform)
+         if (child_transform && !child_animation)
             {
             // multiply with child's transformation matrix
             miniv4d mtx[3],mtx1[3],mtx2[3];
@@ -107,7 +141,7 @@ void mininode_transform::update()
          }
       }
 
-   mininode_group::update();
+   mininode_group::update_dirty();
    }
 
 // mininode_coord:

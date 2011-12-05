@@ -589,6 +589,29 @@ int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
    return(0);
    }
 
+// geometric cone/sphere intersection test
+int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
+                      const miniv3d &b,const double r)
+   {
+   miniv3d d0;
+   double l0,l;
+   miniv3d p;
+
+   return(1); //!!
+
+   d0=d;
+   d0.normalize();
+
+   l0=d0*(b-o);
+   if (l0<r) return(0);
+
+   p=o+l0*d0;
+
+   l=(b-p).getlength()-r*sqrt(1.0+cone*cone);
+
+   return(l<cone*l0);
+   }
+
 // geometric ray/bbox intersection test
 int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
                    const miniv3d &b,const miniv3d &r)

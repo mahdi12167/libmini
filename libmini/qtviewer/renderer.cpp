@@ -16,7 +16,7 @@ mininode_group *Renderer::build_ecef_geometry()
    // define ecef z-axis:
 
    mininode *axis=new mininode_group;
-   mininoderef pole=mininoderef(new mininode_geometry_tube(10000,500000));
+   mininode_ref pole(new mininode_geometry_tube(10000,500000));
 
    axis->append_child(new mininode_coord(minicoord(miniv3d(0,-90*3600,0),minicoord::MINICOORD_LLH)))->
       append_child(new mininode_color(miniv3d(0.0,0.0,0.5)))->

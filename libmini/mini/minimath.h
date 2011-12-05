@@ -101,6 +101,9 @@ double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
 int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
                      const miniv3d &b,const double r2);
 
+int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
+                      const miniv3d &center,const double r);
+
 int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
                    const miniv3d &b,const miniv3d &r);
 

@@ -160,7 +160,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (is_dirty())
          {
-         update();
+         update_dirty();
          m_dirty=FALSE;
          }
       }
@@ -175,13 +175,13 @@ class mininode: public minidyna< miniref<mininode> >
    virtual void traverse_post() = 0;
    virtual void traverse_exit() = 0;
 
-   virtual void update() = 0;
+   virtual void update_dirty() = 0;
 
    private:
 
    BOOLINT m_dirty;
    };
 
-typedef miniref<mininode> mininoderef;
+typedef miniref<mininode> mininode_ref;
 
 #endif

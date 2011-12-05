@@ -23,13 +23,12 @@ enum
    MININODE_SWITCH,
    MININODE_SELECTOR,
    MININODE_TRANSFORM,
-   MININODE_ANIMATION,
    MININODE_GEOMETRY
    };
 
 class mininode_cam;
 
-//! dynamic time-dependent node
+//! group node
 class mininode_group: public mininode
    {
    public:
@@ -65,22 +64,58 @@ class mininode_group: public mininode
    virtual void traverse_post() {}
    virtual void traverse_exit() {}
 
-   virtual void update();
+   virtual void update_dirty();
 
    miniv3d bound_center;
    double bound_radius;
    };
 
-typedef miniref<mininode_group> mininode_groupref;
+//! culling node
+class mininode_culling: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_culling(unsigned int id=0)
+      : mininode_group(id)
+      {isvisible=TRUE;}
+
+   //! destructor
+   virtual ~mininode_culling()
+      {}
+
+   //! get number of children
+   virtual unsigned int get_children() const
+      {return(isvisible?getsize():0);}
+
+   protected:
+
+   static miniv3d eye,dir;
+   static double cone;
+
+   BOOLINT isvisible;
+
+   virtual void traverse_init();
+   virtual void traverse_pre();
+   virtual void traverse_post();
+   virtual void traverse_exit();
+
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) {}
+
+   private:
+
+   miniv3d eye0,dir0;
+   double cone0;
+   };
 
 //! dynamic time-dependent node
-class mininode_dynamic: public mininode_group
+class mininode_dynamic: public mininode_culling
    {
    public:
 
    //! default constructor
    mininode_dynamic(unsigned int id=0)
-      : mininode_group(id)
+      : mininode_culling(id)
       {}
 
    //! destructor
@@ -100,30 +135,7 @@ class mininode_dynamic: public mininode_group
    static double m_time;
    };
 
-//! culling node
-class mininode_culling: public mininode_group
-   {
-   public:
-
-   //! default constructor
-   mininode_culling(unsigned int id=0)
-      : mininode_group(id)
-      {eye=dir=miniv3d(0.0);}
-
-   //! destructor
-   virtual ~mininode_culling()
-      {}
-
-   protected:
-
-   static mininode_cam *camera;
-   static double cone;
-
-   miniv3d eye,dir;
-
-   virtual void traverse_init();
-   virtual void traverse_exit();
-   };
+typedef miniref<mininode_dynamic> mininode_groupref;
 
 //! camera node
 class mininode_cam: public mininode_dynamic, public minicam
@@ -144,6 +156,10 @@ class mininode_cam: public mininode_dynamic, public minicam
    //! destructor
    virtual ~mininode_cam()
       {}
+
+   //! get this camera
+   virtual mininode_cam *get_camera()
+      {return(this);}
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius)
@@ -250,32 +266,29 @@ class mininode_selector: public mininode_group
    };
 
 //! transformation node
-class mininode_transform: public mininode_culling
+class mininode_transform: public mininode_dynamic
    {
    public:
 
    //! default constructor
    mininode_transform(const miniv4d mtx[3]=NULL)
-      : mininode_culling(MININODE_TRANSFORM)
-      {if (mtx!=NULL) mtxget(mtx,oglmtx);}
+      : mininode_dynamic(MININODE_TRANSFORM)
+      {
+      if (mtx!=NULL) mtxget(mtx,oglmtx);
+      else
+         {
+         miniv3d mtx[3];
+         set_mtx(mtx);
+         mtxget(mtx,oglmtx);
+         }
+      }
 
    //! destructor
    virtual ~mininode_transform()
       {}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius)
-      {
-      miniv4d mtx[3];
-      mtxget(oglmtx,mtx);
-
-      double max_scale=dabs(mtx[0].x);
-      if (dabs(mtx[1].y)>max_scale) max_scale=dabs(mtx[1].y);
-      if (dabs(mtx[2].z)>max_scale) max_scale=dabs(mtx[2].z);
-
-      center=mlt_vec(mtx,bound_center);
-      radius=bound_radius*max_scale;
-      }
+   virtual void get_bsphere(miniv3d &center,double &radius) = 0;
 
    protected:
 
@@ -283,16 +296,21 @@ class mininode_transform: public mininode_culling
 
    static unsigned int transform_level;
 
-   virtual void traverse_init()
-      {transform_level=0;}
-
    virtual void traverse_pre()
-      {mtxpush(); mtxmult(oglmtx); transform_level++;}
+      {
+      mininode_culling::traverse_pre();
+      mtxpush(); mtxmult(oglmtx); transform_level++;
+      }
 
    virtual void traverse_post()
-      {mtxpop(); transform_level--;}
+      {
+      mtxpop(); transform_level--;
+      mininode_culling::traverse_post();
+      }
 
-   virtual void update();
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) = 0;
+
+   virtual void update_dirty();
    };
 
 //! translation node
@@ -306,6 +324,26 @@ class mininode_translate: public mininode_transform
       {
       miniv4d mtx[3]={miniv4d(1,0,0,v.x),miniv4d(0,1,0,v.y),miniv4d(0,0,1,v.z)};
       mtxget(mtx,oglmtx);
+      }
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv3d vec;
+      mtxget(oglmtx,vec);
+
+      center=bound_center+vec;
+      radius=bound_radius;
+      }
+
+   protected:
+
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+      {
+      miniv3d vec;
+      mtxget(oglmtx,vec);
+
+      eye-=vec;
       }
    };
 
@@ -321,6 +359,30 @@ class mininode_rotate: public mininode_transform
       miniv3d rot[3];
       rot_mtx(rot,d,a);
       mtxget(rot,oglmtx);
+      }
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius;
+      }
+
+   protected:
+
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+      {
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      miniv3d tra[3];
+      tra_mtx(tra,mtx);
+
+      eye=mlt_vec(tra,eye);
+      dir=mlt_vec(tra,dir);
       }
    };
 
@@ -344,46 +406,6 @@ class mininode_scale: public mininode_transform
       miniv3d mtx[3]={miniv3d(sx,0,0),miniv3d(0,sy,0),miniv3d(0,0,sz)};
       mtxget(mtx,oglmtx);
       }
-   };
-
-//! coordinate node
-class mininode_coord: public mininode_transform
-   {
-   public:
-
-   //! default constructor
-   mininode_coord(const minicoord &c);
-
-   static void set_lightdir(const miniv3d &d);
-
-   protected:
-
-   miniv3d up;
-
-   static miniv3d lightdir;
-   static BOOLINT lightdirset;
-
-   virtual void traverse_pre();
-   virtual void traverse_post();
-   };
-
-//! animation node
-class mininode_animation: public mininode_dynamic
-   {
-   public:
-
-   //! default constructor
-   mininode_animation()
-      : mininode_dynamic(MININODE_ANIMATION)
-      {
-      miniv3d mtx[3];
-      set_mtx(mtx);
-      mtxget(mtx,oglmtx);
-      }
-
-   //! destructor
-   virtual ~mininode_animation()
-      {}
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius)
@@ -395,19 +417,81 @@ class mininode_animation: public mininode_dynamic
       if (dabs(mtx[1].y)>max_scale) max_scale=dabs(mtx[1].y);
       if (dabs(mtx[2].z)>max_scale) max_scale=dabs(mtx[2].z);
 
-      center=mlt_vec(mtx,bound_center);
+      center=miniv3d(bound_center.x*mtx[0].x,bound_center.y*mtx[1].y,bound_center.z*mtx[2].z);
       radius=bound_radius*max_scale;
       }
 
    protected:
 
-   double oglmtx[16];
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+      {cone=0.0;}
+   };
 
-   virtual void traverse_pre()
-      {mtxpush(); mtxmult(oglmtx);}
+//! coordinate node
+class mininode_coord: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_coord(const minicoord &c);
+
+   // set global light direction
+   static void set_lightdir(const miniv3d &d);
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv4d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius;
+      }
+
+   protected:
+
+   miniv3d up;
+
+   static miniv3d lightdir;
+   static BOOLINT lightdirset;
+
+   virtual void traverse_pre();
+   virtual void traverse_post();
+
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+      {
+      miniv3d mtx[3],vec;
+      mtxget(oglmtx,mtx);
+      mtxget(oglmtx,vec);
+
+      miniv3d tra[3];
+      tra_mtx(tra,mtx);
+
+      eye=mlt_vec(tra,eye-vec);
+      dir=mlt_vec(tra,dir);
+      }
+   };
+
+//! animation node
+class mininode_animation: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_animation()
+      : mininode_transform()
+      {}
+
+   protected:
 
    virtual void traverse_post()
-      {mtxpop(); set_dirty();}
+      {
+      mininode_transform::traverse_post();
+      set_dirty();
+      }
+
+   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone)
+      {cone=0.0;}
    };
 
 //! rotate animation node
@@ -420,12 +504,22 @@ class mininode_animation_rotate: public mininode_animation
       : mininode_animation()
       {m_omega=w; m_axis=a;}
 
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius)
+      {
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius;
+      }
+
    protected:
 
    double m_omega;
    miniv3d m_axis;
 
-   virtual void update()
+   virtual void update_dirty()
       {
       miniv3d rot[3];
       rot_mtx(rot,get_time()*m_omega,m_axis);

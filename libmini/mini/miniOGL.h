@@ -128,6 +128,8 @@ void mtxget(const miniv3d mtx[3],double oglmtx[16]);
 void mtxget(const miniv4d mtx[3],double oglmtx[16]);
 void mtxget(const double oglmtx[16],miniv3d mtx[3]);
 void mtxget(const double oglmtx[16],miniv4d mtx[3]);
+void mtxget(const double oglmtx[16],miniv3d &vec);
+void mtxget(const double oglmtx[16],miniv4d &vec);
 
 inline void beginfans();
 inline void beginfan();
