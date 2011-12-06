@@ -104,6 +104,9 @@ double mininode_dynamic::m_time=0.0;
 
 double mininode_color::brightness=1.0;
 
+minidyna<miniv4d> mininode_color::rgba_stack;
+miniv4d mininode_color::glcolor(1,1,1,1);
+
 // mininode_transform:
 
 void mininode_transform::update_dirty()

@@ -209,14 +209,47 @@ class mininode_color: public mininode_group
 
    static double brightness;
 
+   static minidyna<miniv4d> rgba_stack;
+   static miniv4d glcolor;
+
    virtual void traverse_pre()
-      {color(rgba*brightness);}
+      {
+      miniv4d c;
+
+      // init color state
+      if (rgba_stack.empty()) glcolor=miniv4d(0,0,0,-1);
+
+      // compute actual node color
+      c=rgba*brightness;
+
+      // push actual color
+      rgba_stack.push(c);
+
+      // lazy color state change
+      if (c!=glcolor)
+         {
+         glcolor=c;
+         color(c);
+         }
+      }
 
    virtual void traverse_past()
-      {color(rgba*brightness);}
+      {
+      miniv4d c;
+
+      // peek actual color
+      c=rgba_stack.peek();
+
+      // lazy color state change
+      if (c!=glcolor)
+         {
+         glcolor=c;
+         color(c);
+         }
+      }
 
    virtual void traverse_post()
-      {color(1,1,1);}
+      {rgba_stack.pop();}
    };
 
 //! switch node
