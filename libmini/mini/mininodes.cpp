@@ -206,6 +206,13 @@ void mininode_coord::traverse_pre()
       }
 
    mininode_transform::traverse_pre();
+
+   // cull on backside of earth
+   if (intersect_ray_ellipsoid(eye1,bound_center-eye1,
+                               miniv3d(0.0,0.0,-minicrs::EARTH_radius),
+                               minicrs::EARTH_radius-bound_radius,
+                               minicrs::EARTH_radius-bound_radius,
+                               minicrs::EARTH_radius-bound_radius)<1.0) is_visible=FALSE;
    }
 
 void mininode_coord::traverse_post()

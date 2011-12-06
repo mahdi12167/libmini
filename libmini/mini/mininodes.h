@@ -97,6 +97,12 @@ class mininode_culling: public mininode_group
    static miniv3d eye,dir;
    static double cone;
 
+   miniv3d eye0,dir0;
+   double cone0;
+
+   miniv3d eye1,dir1;
+   double cone1;
+
    BOOLINT is_visible;
 
    virtual void traverse_init();
@@ -106,14 +112,6 @@ class mininode_culling: public mininode_group
    virtual void traverse_exit();
 
    virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const {}
-
-   private:
-
-   miniv3d eye0,dir0;
-   double cone0;
-
-   miniv3d eye1,dir1;
-   double cone1;
    };
 
 //! dynamic time-dependent node
