@@ -327,6 +327,10 @@ class minidyna
    void push(const Item &v)
       {append(v);}
 
+   //! duplicate item on stack
+   void dup()
+      {append(last());}
+
    //! peek at top of stack
    const Item &peek()
       {return(last());}

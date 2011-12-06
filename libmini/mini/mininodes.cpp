@@ -54,68 +54,47 @@ void mininode_group::update_dirty()
 
 // mininode_culling:
 
-miniv3d mininode_culling::eye(0,0,0);
-miniv3d mininode_culling::dir(0,0,0);
-double mininode_culling::cone=0.0;
+minidyna<minicone> mininode_culling::cone_stack;
 
 void mininode_culling::traverse_init()
    {
    mininode_cam *camera=get_camera();
 
-   eye=camera->get_eye().vec;
-   dir=camera->get_dir();
-   cone=camera->get_cone();
+   miniv3d eye=camera->get_eye().vec;
+   miniv3d dir=camera->get_dir();
+   double cone=camera->get_cone();
+
+   cone_stack.push(minicone(eye,dir,cone));
    }
 
 void mininode_culling::traverse_pre()
    {
-   miniv3d center;
-   double radius;
+   minicone cone;
 
    is_visible=TRUE;
 
-   // remember camera cone
-   eye0=eye1=eye;
-   dir0=dir1=dir;
-   cone0=cone1=cone;
-
    // intersect camera cone with bounding sphere
    if (has_bsphere())
-      if (cone>0.0)
-         {
-         // get transformed camera cone
-         transform_cone(eye,dir,cone);
+      {
+      // get transformed camera cone
+      cone=cone_stack.peek();
+      if (cone.cone>0.0) transform_cone(cone);
 
-         // remember transformed camera cone
-         eye1=eye;
-         dir1=dir;
-         cone1=cone;
+      // remember transformed camera cone
+      cone_stack.push(cone);
 
-         // intersect with original bounding sphere
-         if (cone>0.0)
-            is_visible=itest_cone_sphere(eye,dir,cone,
-                                         bound_center,bound_radius);
-         }
-   }
-
-void mininode_culling::traverse_past()
-   {
-   // restore transformed camera cone
-   eye=eye1;
-   dir=dir1;
-   cone=cone1;
+      // intersect with original bounding sphere
+      if (cone.cone>0.0)
+         is_visible=itest_cone_sphere(cone.eye,cone.dir,cone.cone,
+                                      bound_center,bound_radius);
+      }
    }
 
 void mininode_culling::traverse_post()
-   {
-   // restore camera cone
-   eye=eye0;
-   dir=dir0;
-   cone=cone0;
-   }
+   {if (has_bsphere()) cone_stack.pop();}
 
 void mininode_culling::traverse_exit()
-   {cone=0.0;}
+   {cone_stack.pop();}
 
 // mininode_dynamic:
 
@@ -208,7 +187,8 @@ void mininode_coord::traverse_pre()
    mininode_transform::traverse_pre();
 
    // cull on backside of earth
-   if (intersect_ray_ellipsoid(eye1,bound_center-eye1,
+   minicone cone=cone_stack.peek();
+   if (intersect_ray_ellipsoid(cone.eye,bound_center-cone.eye,
                                miniv3d(0.0,0.0,-minicrs::EARTH_radius),
                                minicrs::EARTH_radius-bound_radius,
                                minicrs::EARTH_radius-bound_radius,

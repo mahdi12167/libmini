@@ -74,6 +74,19 @@ class mininode_group: public mininode
    double bound_radius;
    };
 
+// helper class
+class minicone
+   {
+   public:
+
+   minicone() {}
+   minicone(const miniv3d &e,const miniv3d &d,double c)
+      {eye=e; dir=d; cone=c;}
+
+   miniv3d eye,dir;
+   double cone;
+   };
+
 //! culling node
 class mininode_culling: public mininode_group
    {
@@ -94,24 +107,16 @@ class mininode_culling: public mininode_group
 
    protected:
 
-   static miniv3d eye,dir;
-   static double cone;
-
-   miniv3d eye0,dir0;
-   double cone0;
-
-   miniv3d eye1,dir1;
-   double cone1;
+   static minidyna<minicone> cone_stack;
 
    BOOLINT is_visible;
 
    virtual void traverse_init();
    virtual void traverse_pre();
-   virtual void traverse_past();
    virtual void traverse_post();
    virtual void traverse_exit();
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const {}
+   virtual void transform_cone(minicone &cone) const {}
    };
 
 //! dynamic time-dependent node
@@ -323,7 +328,7 @@ class mininode_transform: public mininode_dynamic
       mininode_culling::traverse_post();
       }
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const = 0;
+   virtual void transform_cone(minicone &cone) const = 0;
 
    virtual void update_dirty();
    };
@@ -353,12 +358,12 @@ class mininode_translate: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
+   virtual void transform_cone(minicone &cone) const
       {
       miniv3d vec;
       mtxget(oglmtx,vec);
 
-      eye-=vec;
+      cone.eye-=vec;
       }
    };
 
@@ -388,7 +393,7 @@ class mininode_rotate: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
+   virtual void transform_cone(minicone &cone) const
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -396,8 +401,8 @@ class mininode_rotate: public mininode_transform
       miniv3d tra[3];
       tra_mtx(tra,mtx);
 
-      eye=mlt_vec(tra,eye);
-      dir=mlt_vec(tra,dir);
+      cone.eye=mlt_vec(tra,cone.eye);
+      cone.dir=mlt_vec(tra,cone.dir);
       }
    };
 
@@ -438,8 +443,8 @@ class mininode_scale: public mininode_transform
 
    protected:
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
-      {cone=0.0;}
+   virtual void transform_cone(minicone &cone) const
+      {cone.cone=0.0;}
    };
 
 //! coordinate node
@@ -473,7 +478,7 @@ class mininode_coord: public mininode_transform
    virtual void traverse_pre();
    virtual void traverse_post();
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
+   virtual void transform_cone(minicone &cone) const
       {
       miniv3d mtx[3],vec;
       mtxget(oglmtx,mtx);
@@ -482,8 +487,8 @@ class mininode_coord: public mininode_transform
       miniv3d tra[3];
       tra_mtx(tra,mtx);
 
-      eye=mlt_vec(tra,eye-vec);
-      dir=mlt_vec(tra,dir);
+      cone.eye=mlt_vec(tra,cone.eye-vec);
+      cone.dir=mlt_vec(tra,cone.dir);
       }
    };
 
@@ -505,8 +510,8 @@ class mininode_animation: public mininode_transform
       set_dirty();
       }
 
-   virtual void transform_cone(miniv3d &eye,miniv3d &dir,double &cone) const
-      {cone=0.0;}
+   virtual void transform_cone(minicone &cone) const
+      {cone.cone=0.0;}
    };
 
 //! rotate animation node
