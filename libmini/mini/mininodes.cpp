@@ -119,14 +119,19 @@ void mininode_transform::update_dirty()
       mininode *child=get_child();
       if (child!=NULL)
          {
-         // get child transformation
+         // get child transform
          mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
-         mininode_animation *child_animation=dynamic_cast<mininode_animation *>(child);
-         mininode_coord *child_coord=dynamic_cast<mininode_coord *>(child);
 
-         if (child_transform && !child_animation)
+         // check child/parent match
+         BOOLINT match_translate=dynamic_cast<mininode_translate *>(child) && dynamic_cast<mininode_translate *>(this);
+         BOOLINT match_rotate=dynamic_cast<mininode_rotate *>(child) && dynamic_cast<mininode_rotate *>(this);
+         BOOLINT match_scale=dynamic_cast<mininode_scale *>(child) && dynamic_cast<mininode_scale *>(this);
+         BOOLINT match_coord=dynamic_cast<mininode_coord *>(child) && dynamic_cast<mininode_coord *>(this);
+         BOOLINT match=match_translate || match_rotate || match_scale || match_coord;
+
+         if (match)
             {
-            if (!child_coord)
+            if (!match_coord)
                {
                // multiply with child's transformation matrix
                miniv4d mtx[3],mtx1[3],mtx2[3];
