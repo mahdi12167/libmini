@@ -119,7 +119,7 @@ void mininode_transform::update_dirty()
       mininode *child=get_child();
       if (child!=NULL)
          {
-         // get child transform
+         // get child transformation
          mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
 
          // check child/parent match
