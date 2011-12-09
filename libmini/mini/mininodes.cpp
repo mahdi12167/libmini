@@ -76,8 +76,10 @@ void mininode_culling::traverse_pre()
    // intersect camera cone with bounding sphere
    if (has_bsphere())
       {
-      // get transformed camera cone
+      // get camera cone
       cone=cone_stack.peek();
+
+      // get transformed camera cone
       if (cone.cone>0.0) transform_cone(cone);
 
       // remember transformed camera cone
@@ -191,11 +193,13 @@ void mininode_coord::traverse_pre()
 
    // cull on backside of earth
    minicone cone=cone_stack.peek();
-   if (intersect_ray_ellipsoid(cone.eye,bound_center-cone.eye,
-                               miniv3d(0.0,0.0,-minicrs::EARTH_radius),
-                               minicrs::EARTH_radius-bound_radius,
-                               minicrs::EARTH_radius-bound_radius,
-                               minicrs::EARTH_radius-bound_radius)<1.0) is_visible=FALSE;
+   if (has_bsphere())
+      if (cone.cone>0.0)
+         if (intersect_ray_ellipsoid(cone.eye,bound_center-cone.eye,
+                                     miniv3d(0.0,0.0,-minicrs::EARTH_radius),
+                                     minicrs::EARTH_radius-bound_radius,
+                                     minicrs::EARTH_radius-bound_radius,
+                                     minicrs::EARTH_radius-bound_radius)<1.0) is_visible=FALSE;
    }
 
 void mininode_coord::traverse_post()

@@ -217,7 +217,7 @@ class mininode_color: public mininode_group
       miniv4d c;
 
       // init color state
-      if (rgba_stack.empty()) glcolor=miniv4d(0,0,0,-1);
+      if (rgba_stack.empty()) glcolor=miniv4d(-1);
 
       // compute actual node color
       c=rgba*brightness;
