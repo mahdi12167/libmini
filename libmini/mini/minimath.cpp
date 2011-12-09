@@ -43,6 +43,13 @@ void cpy_mtx(miniv3d cpy[3],const miniv4d mtx[3]) {cpy[0]=mtx[0]; cpy[1]=mtx[1];
 
 void cpy_mtx4(miniv4d cpy[4],const miniv4d mtx[4]) {cpy[0]=mtx[0]; cpy[1]=mtx[1]; cpy[2]=mtx[2]; cpy[3]=mtx[3];}
 
+void cpy_mtx(miniv4d cpy[3],const miniv3d mtx[3],const miniv3d &vec)
+   {
+   cpy[0]=miniv4d(mtx[0],vec.x);
+   cpy[1]=miniv4d(mtx[1],vec.y);
+   cpy[2]=miniv4d(mtx[2],vec.z);
+   }
+
 // multiply two 3x3 matrices
 void mlt_mtx(miniv3d mtx[3],const miniv3d mtx1[3],const miniv3d mtx2[3])
    {

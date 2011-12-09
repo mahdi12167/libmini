@@ -153,7 +153,7 @@ class mininode_cam: public mininode_dynamic, public minicam
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_cam(miniearth *earth,
                 double lat=21.39,double lon=-157.72,double height=7E6,
                 double mindist=0.0,
@@ -185,12 +185,12 @@ class mininode_color: public mininode_group
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_color(const miniv4d &c)
       : mininode_group(MININODE_COLOR)
       {rgba=c;}
 
-   //! constructor
+   //! custom constructor
    mininode_color(const miniv3d &c)
       : mininode_group(MININODE_COLOR)
       {rgba=miniv4d(c,1);}
@@ -371,7 +371,7 @@ class mininode_translate: public mininode_transform
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_translate(const miniv3d &v)
       : mininode_transform()
       {
@@ -405,7 +405,7 @@ class mininode_rotate: public mininode_transform
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_rotate(double d,const miniv3d &a)
       : mininode_transform()
       {
@@ -439,12 +439,69 @@ class mininode_rotate: public mininode_transform
       }
    };
 
+//! affine transform node
+class mininode_affine: public mininode_transform
+   {
+   public:
+
+   //! default constructor
+   mininode_affine()
+      : mininode_transform()
+      {}
+
+   //! copy constructor
+   mininode_affine(const mininode_translate &translate)
+      : mininode_transform(translate)
+      {}
+
+   //! copy constructor
+   mininode_affine(const mininode_rotate &rotate)
+      : mininode_transform(rotate)
+      {}
+
+   //! custom constructor
+   mininode_affine(double d,const miniv3d &a,const miniv3d &v)
+      : mininode_transform()
+      {
+      miniv3d rot[3];
+      miniv4d mtx[3];
+      rot_mtx(rot,d,a);
+      cpy_mtx(mtx,rot,v);
+      mtxget(rot,oglmtx);
+      }
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius) const
+      {
+      miniv4d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      center=mlt_vec(mtx,bound_center);
+      radius=bound_radius;
+      }
+
+   protected:
+
+   virtual void transform_cone(minicone &cone) const
+      {
+      miniv3d mtx[3],vec;
+      mtxget(oglmtx,mtx);
+      mtxget(oglmtx,vec);
+
+      miniv3d tra[3];
+      tra_mtx(tra,mtx);
+
+      cone.eye=mlt_vec(tra,cone.eye-vec);
+      cone.dir=mlt_vec(tra,cone.dir);
+      }
+   };
+
 //! scale node
 class mininode_scale: public mininode_transform
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_scale(double s)
       : mininode_transform()
       {
@@ -452,7 +509,7 @@ class mininode_scale: public mininode_transform
       mtxget(mtx,oglmtx);
       }
 
-   //! constructor
+   //! custom constructor
    mininode_scale(double sx,double sy,double sz)
       : mininode_transform()
       {
@@ -495,25 +552,15 @@ class mininode_scale: public mininode_transform
    };
 
 //! coordinate node
-class mininode_coord: public mininode_transform
+class mininode_coord: public mininode_affine
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_coord(const minicoord &c);
 
    // set global light direction
    static void set_lightdir(const miniv3d &d);
-
-   //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
-      {
-      miniv4d mtx[3];
-      mtxget(oglmtx,mtx);
-
-      center=mlt_vec(mtx,bound_center);
-      radius=bound_radius;
-      }
 
    protected:
 
@@ -524,19 +571,6 @@ class mininode_coord: public mininode_transform
 
    virtual void traverse_pre();
    virtual void traverse_post();
-
-   virtual void transform_cone(minicone &cone) const
-      {
-      miniv3d mtx[3],vec;
-      mtxget(oglmtx,mtx);
-      mtxget(oglmtx,vec);
-
-      miniv3d tra[3];
-      tra_mtx(tra,mtx);
-
-      cone.eye=mlt_vec(tra,cone.eye-vec);
-      cone.dir=mlt_vec(tra,cone.dir);
-      }
    };
 
 //! animation node
@@ -566,7 +600,7 @@ class mininode_animation_rotate: public mininode_animation
    {
    public:
 
-   //! default constructor
+   //! custom constructor
    mininode_animation_rotate(double w,const miniv3d &a)
       : mininode_animation()
       {m_omega=w; m_axis=a;}
