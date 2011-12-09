@@ -477,7 +477,21 @@ class mininode_scale: public mininode_transform
    protected:
 
    virtual void transform_cone(minicone &cone) const
-      {cone.cone=0.0;}
+      {
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      double s1=mtx[0].x;
+      double s2=mtx[1].y;
+      double s3=mtx[2].z;
+
+      if (s1!=0.0 && s1==s2 && s2==s3)
+         {
+         cone.eye/=s1;
+         cone.dir/=s1;
+         }
+      else cone.cone=0.0;
+      }
    };
 
 //! coordinate node
