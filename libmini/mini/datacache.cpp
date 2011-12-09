@@ -768,6 +768,7 @@ void datacache::load(BOOLINT reset)
       }
 
    if (STARTUPFILE==NULL || reset) return;
+   if (HAS_ELEVINI && HAS_IMAGINI) return;
 
    filename=sourcefilename(RID,STARTUPFILE);
    localname=localfilename(filename);
@@ -860,6 +861,7 @@ void datacache::save()
    char *localname;
 
    if (STARTUPFILE==NULL) return;
+   if (HAS_ELEVINI && HAS_IMAGINI) return;
 
    if (HASHTABLE==NULL) return;
 
