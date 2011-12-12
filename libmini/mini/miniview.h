@@ -16,6 +16,8 @@ class miniview : public miniscene
    virtual ~miniview();
 
    void set_camera(minicam *cam);
+   void propagate();
+
    void render_geometry(float sbase=0.0f, BOOLINT anaglyph=TRUE);
 
    protected:

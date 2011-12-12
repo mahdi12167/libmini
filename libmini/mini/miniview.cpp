@@ -17,6 +17,20 @@ miniview::~miniview()
 void miniview::set_camera(minicam *cam)
    {m_cam = cam;}
 
+// propagate view parameters
+void miniview::propagate()
+   {
+   // get view parameters
+   float fovy = PARAMS.fovy;
+   float aspect = (float)get()->winwidth/get()->winheight;
+   double nearp = PARAMS.nearp;
+   double farp = PARAMS.farp;
+
+   if (m_cam!=NULL) m_cam->set_lens(fovy, aspect, nearp, farp);
+
+   miniscene::propagate();
+   }
+
 // render earth and terrain geometry
 void miniview::render_geometry(float sbase, BOOLINT anaglyph)
    {
@@ -36,8 +50,14 @@ void miniview::render_geometry(float sbase, BOOLINT anaglyph)
    // update camera lens
    m_cam->set_lens(fovy, aspect, nearp, farp);
 
+   // propagate camera lens
+   PARAMS.fovy = fovy;
+   PARAMS.nearp = nearp;
+   PARAMS.farp = farp;
+   miniscene::propagate();
+
    // set reference layer
-   nst=getearth()->getnearest(m_cam->get_eye());
+   nst = getearth()->getnearest(m_cam->get_eye());
    getearth()->setreference(nst);
 
    // update scene
@@ -71,7 +91,7 @@ void miniview::render_geometry(float sbase, BOOLINT anaglyph)
       }
 
    // get time spent
-   double delta=gettimer();
+   double delta = gettimer();
 
    // update quality parameters
    adapt(delta);
@@ -129,8 +149,8 @@ void miniview::setup_matrix(float sbase)
 void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    {
    // specify bounding sphere
-   center=miniv3d(0,0,0);
-   radius=1.1*miniearth::EARTH_radius;
+   center = miniv3d(0,0,0);
+   radius = 1.1*miniearth::EARTH_radius;
    }
 
 // render ecef geometry
