@@ -323,6 +323,14 @@ class mininode_texture2D: public mininode_texture
       // push actual texture
       texid_stack.push(t);
 
+      // push texture stack
+      mtxtex();
+      mtxpush();
+      mtxid();
+      mtxtranslate(0.5/width,0.5/height,0.0);
+      mtxscale((double)width/(width-1),(double)height/(height-1),0.0);
+      mtxmodel();
+
       // lazy texture state change
       if (t!=tid && is_on)
          {
@@ -350,7 +358,14 @@ class mininode_texture2D: public mininode_texture
 
    virtual void traverse_post()
       {
+      // pop actual texture
       texid_stack.pop();
+
+      // pop texture stack
+      mtxtex();
+      mtxpop();
+      mtxmodel();
+
       mininode_texture::traverse_post();
       }
    };
@@ -392,6 +407,14 @@ class mininode_texture3D: public mininode_texture
       // push actual texture
       texid_stack.push(t);
 
+      // push texture stack
+      mtxtex();
+      mtxpush();
+      mtxid();
+      mtxtranslate(0.5/width,0.5/height,0.5/depth);
+      mtxscale((double)width/(width-1),(double)height/(height-1),(double)depth/(depth-1));
+      mtxmodel();
+
       // lazy texture state change
       if (t!=tid && is_on)
          {
@@ -419,7 +442,14 @@ class mininode_texture3D: public mininode_texture
 
    virtual void traverse_post()
       {
+      // pop actual texture
       texid_stack.pop();
+
+      // pop texture stack
+      mtxtex();
+      mtxpop();
+      mtxmodel();
+
       mininode_texture::traverse_post();
       }
    };
