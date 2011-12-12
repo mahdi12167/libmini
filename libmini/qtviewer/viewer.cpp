@@ -78,11 +78,11 @@ void Viewer::resizeViewport()
    int winWidth = m_window->width();
    int winHeight = m_window->height();
 
-   if (winWidth<1) winWidth=1;
-   if (winHeight<1) winHeight=1;
+   if (winWidth<1) winWidth = 1;
+   if (winHeight<1) winHeight = 1;
 
-   m_pSceneParams->winwidth=winWidth;
-   m_pSceneParams->winheight=winHeight;
+   m_pSceneParams->winwidth = winWidth;
+   m_pSceneParams->winheight = winHeight;
    set(m_pSceneParams);
 
    glViewport(0, 0, winWidth, winHeight);
@@ -93,7 +93,7 @@ minilayer* Viewer::loadMap(const char* url)
 {
    minilayer *layer;
 
-   Camera *camera=getCamera();
+   Camera *camera = getCamera();
 
    if (m_bIsInited)
       if (url!=NULL)
@@ -187,16 +187,16 @@ void Viewer::initParameters()
 // initialize bathymetry map
 void Viewer::initBathyMap()
 {
-   static const float hue1=190.0f;
-   static const float hue2=240.0f;
+   static const float hue1 = 190.0f;
+   static const float hue2 = 240.0f;
 
-   static const float sat1=0.75f;
-   static const float sat2=0.5f;
+   static const float sat1 = 0.75f;
+   static const float sat2 = 0.5f;
 
-   static const float val1=1.0f;
-   static const float val2=0.5f;
+   static const float val1 = 1.0f;
+   static const float val2 = 0.5f;
 
-   minishader::initbathymap_linear(m_BathyMap,VIEWER_BATHYWIDTH,
+   minishader::initbathymap_linear(m_BathyMap, VIEWER_BATHYWIDTH,
                                    hue1, hue2,
                                    sat1, sat2,
                                    val1, val2,
@@ -222,7 +222,7 @@ void Viewer::draw()
 // render head-up display
 void Viewer::renderHUD()
 {
-   Camera *camera=getCamera();
+   Camera *camera = getCamera();
 
    // draw crosshair:
 
@@ -265,16 +265,16 @@ void Viewer::renderHUD()
    if (cameraPosLLH.type!=minicoord::MINICOORD_LINEAR)
       cameraPosLLH.convert2(minicoord::MINICOORD_LLH);
 
-   double cameraAngle=camera->get_angle();
+   double cameraAngle = camera->get_angle();
 
-   minicoord cameraHit=camera->get_hit();
-   double cameraHitDist=camera->get_hitdist();
+   minicoord cameraHit = camera->get_hit();
+   double cameraHitDist = camera->get_hitdist();
 
    QString str;
    const QColor color(255, 255, 255);
    m_window->qglColor(color);
    int x = 10;
-   int y = m_window->height() - 20;
+   int y = m_window->height()-20;
    int line_space = -16;
    int second_column_offset = 90;
 
@@ -352,7 +352,7 @@ void Viewer::loadTextureFromResource(const char* respath, GLuint& texId)
 void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
 {
    int sx = x;
-   int sy = m_window->height() - y;
+   int sy = m_window->height()-y;
 
    if (!bIsDoublePrint)
    {
@@ -370,33 +370,33 @@ void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoub
 
 void Viewer::toggleStereo(bool on)
 {
-   if (on) m_StereoBase=CAMERA_SBASE;
-   else m_StereoBase=0.0;
+   if (on) m_StereoBase = CAMERA_SBASE;
+   else m_StereoBase = 0.0;
 
    getCamera()->startIdling();
 }
 
 void Viewer::toggleWireFrame(bool on)
 {
-   m_pSceneParams->usewireframe=on;
+   m_pSceneParams->usewireframe = on;
 
    getCamera()->startIdling();
 }
 
 void Viewer::checkFog(bool on)
 {
-   m_pEarthParams->usefog=on;
+   m_pEarthParams->usefog = on;
    setFogDensity(m_FogDensity);
 }
 
 void Viewer::setFogDensity(double density)
 {
-   m_FogDensity=density;
+   m_FogDensity = density;
 
-   density=pow(density,1.0/10);
-   m_pEarthParams->fogdensity=VIEWER_FOGDENSITY*(1.0+density);
-   m_pEarthParams->fogstart=(1.0-density)*VIEWER_FOGSTART;
-   m_pEarthParams->fogend=(1.0-density)*VIEWER_FOGEND+density*CAMERA_NEARP/CAMERA_FARP;
+   density=pow(density, 1.0/10);
+   m_pEarthParams->fogdensity = VIEWER_FOGDENSITY*(1.0+density);
+   m_pEarthParams->fogstart = (1.0-density)*VIEWER_FOGSTART;
+   m_pEarthParams->fogend = (1.0-density)*VIEWER_FOGEND+density*CAMERA_NEARP/CAMERA_FARP;
    propagate();
 
    getCamera()->startIdling();
@@ -404,7 +404,7 @@ void Viewer::setFogDensity(double density)
 
 void Viewer::checkContours(bool on)
 {
-   m_pEarthParams->usecontours=on;
+   m_pEarthParams->usecontours = on;
    propagate();
 
    getCamera()->startIdling();
@@ -412,8 +412,8 @@ void Viewer::checkContours(bool on)
 
 void Viewer::checkSeaLevel(bool on)
 {
-   if (on) m_pTerrainParams->sealevel=m_SeaLevel;
-   else m_pTerrainParams->sealevel=-MAXFLOAT;
+   if (on) m_pTerrainParams->sealevel = m_SeaLevel;
+   else m_pTerrainParams->sealevel = -MAXFLOAT;
 
    setSeaLevel(m_SeaLevel);
 }
@@ -422,7 +422,7 @@ void Viewer::setSeaLevel(double level)
 {
    m_SeaLevel=level;
 
-   if (m_pTerrainParams->sealevel!=-MAXFLOAT) m_pTerrainParams->sealevel=level;
+   if (m_pTerrainParams->sealevel!=-MAXFLOAT) m_pTerrainParams->sealevel = level;
 
    propagate();
    getearth()->getterrain()->update();
@@ -432,20 +432,20 @@ void Viewer::setSeaLevel(double level)
 
 void Viewer::checkLight(bool on)
 {
-   m_pEarthParams->usediffuse=on;
+   m_pEarthParams->usediffuse = on;
    setLight(m_DayHourDelta);
 }
 
 void Viewer::setLight(double hour)
 {
-   m_DayHourDelta=hour;
+   m_DayHourDelta = hour;
 
    QTime time_utc = QDateTime::currentDateTimeUtc().time();
    double hour_utc = time_utc.hour()+time_utc.minute()/60.0+time_utc.second()/3600.0;
 
-   double light=2*PI*(hour_utc+m_DayHourDelta)/24.0;
-   miniv3d lightdir(-cos(light),sin(light),0.0);
-   m_pEarthParams->lightdir=lightdir;
+   double light = 2*PI*(hour_utc+m_DayHourDelta)/24.0;
+   miniv3d lightdir(-cos(light), sin(light), 0.0);
+   m_pEarthParams->lightdir = lightdir;
    propagate();
 
    getCamera()->startIdling();
@@ -453,15 +453,15 @@ void Viewer::setLight(double hour)
 
 void Viewer::checkExagger(bool on)
 {
-   m_ExaggerOn=on;
+   m_ExaggerOn = on;
    setExagger(m_ExaggerScale);
 }
 
 void Viewer::setExagger(double scale)
 {
-   Camera *camera=getCamera();
+   Camera *camera = getCamera();
 
-   m_ExaggerScale=scale;
+   m_ExaggerScale = scale;
 
    getearth()->getterrain()->flatten(m_ExaggerOn?scale:1.0/VIEWER_EXAGGER);
 
@@ -474,7 +474,7 @@ void Viewer::setExagger(double scale)
 }
 
 // check ecef geometry
-void Viewer::check_ecef_geometry(miniv3d &center,double &radius)
+void Viewer::check_ecef_geometry(miniv3d &center, double &radius)
    {
    // specify empty bounding sphere
    center=miniv3d(0,0,0);
@@ -493,9 +493,9 @@ void Viewer::render_ecef_geometry(double t)
 
    static miniglobe globe;
 
-   static const int gltess=32;
-   static const double glscale=0.999;
-   static const double glzscale=1.05;
+   static const int gltess = 32;
+   static const double glscale = 0.999;
+   static const double glzscale = 1.05;
 
    globe.settess(gltess);
    globe.setscale(1.0);
@@ -508,62 +508,62 @@ void Viewer::render_ecef_geometry(double t)
 
    // setup shader programs:
 
-   static bool shader_setup=false;
-   static int shader_slot1,shader_slot2;
+   static bool shader_setup = false;
+   static int shader_slot1, shader_slot2;
 
    if (!shader_setup)
    {
-      shader_slot1=mininode_geometry::getfreeslot();
+      shader_slot1 = mininode_geometry::getfreeslot();
 
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BEGIN);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_HEADER);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_BASIC);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_VIEWPOS);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_NORMAL);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOG);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_FOOTER);
-      mininode_geometry::concatvtxshader(shader_slot1,MINI_SNIPPET_VTX_END);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_BEGIN);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_HEADER);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_BASIC);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_VIEWPOS);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_NORMAL);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_FOG);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_FOOTER);
+      mininode_geometry::concatvtxshader(shader_slot1, MINI_SNIPPET_VTX_END);
 
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BEGIN);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_HEADER);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_BASIC);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_SHADE);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOG);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_FOOTER);
-      mininode_geometry::concatpixshader(shader_slot1,MINI_SNIPPET_FRG_END);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_BEGIN);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_HEADER);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_BASIC);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_SHADE);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_FOG);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_FOOTER);
+      mininode_geometry::concatpixshader(shader_slot1, MINI_SNIPPET_FRG_END);
 
-      shader_slot2=mininode_geometry::getfreeslot();
+      shader_slot2 = mininode_geometry::getfreeslot();
 
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BEGIN);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_HEADER);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_BASIC);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_VIEWPOS);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_NORMAL);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOG);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_FOOTER);
-      mininode_geometry::concatvtxshader(shader_slot2,MINI_SNIPPET_VTX_END);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_BEGIN);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_HEADER);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_BASIC);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_VIEWPOS);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_NORMAL);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_FOG);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_FOOTER);
+      mininode_geometry::concatvtxshader(shader_slot2, MINI_SNIPPET_VTX_END);
 
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BEGIN);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_HEADER);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_BASIC);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_SHADE_DIRECT);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOG);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_FOOTER);
-      mininode_geometry::concatpixshader(shader_slot2,MINI_SNIPPET_FRG_END);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_BEGIN);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_HEADER);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_BASIC);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_SHADE_DIRECT);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_FOG);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_FOOTER);
+      mininode_geometry::concatpixshader(shader_slot2, MINI_SNIPPET_FRG_END);
 
-      shader_setup=true;
+      shader_setup = true;
    }
 
    // setup shading params:
 
-   int slot=shader_slot1;
+   int slot = shader_slot1;
    mininode_coord::set_lightdir(miniv3d(0,0,0));
 
    if (m_pEarthParams->usediffuse)
    {
-      slot=shader_slot2;
+      slot = shader_slot2;
 
-      miniv3d l=getearth()->get()->lightdir;
+      miniv3d l = getearth()->get()->lightdir;
       mininode_coord::set_lightdir(l);
 
       double oglmtx[16];
@@ -575,16 +575,16 @@ void Viewer::render_ecef_geometry(double t)
       tra_mtx(invtra,invtra);
 
       miniv3d lgl;
-      lgl=mlt_vec(invtra,l);
-      float lightdir[3]={lgl.x,lgl.y,lgl.z};
-      mininode_geometry::setshadedirectparams(slot,lightdir,0.5f,0.5f);
+      lgl = mlt_vec(invtra, l);
+      float lightdir[3] = {lgl.x, lgl.y, lgl.z};
+      mininode_geometry::setshadedirectparams(slot, lightdir, 0.5f, 0.5f);
    }
 
    // setup fogging params
-   float fogstart=getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
-   float fogend=getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
-   if (!getearth()->get()->usefog) fogend=0.0f;
-   mininode_geometry::setfogparams(slot,fogstart,fogend,getearth()->get()->fogdensity,getearth()->get()->fogcolor);
+   float fogstart = getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
+   float fogend = getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
+   if (!getearth()->get()->usefog) fogend = 0.0f;
+   mininode_geometry::setfogparams(slot, fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
 
    // setup render state
    initstate();

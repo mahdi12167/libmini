@@ -73,7 +73,7 @@ protected:
 
    virtual mininode_group *build_ecef_geometry()=0;
 
-   virtual void check_ecef_geometry(miniv3d &center,double &radius);
+   virtual void check_ecef_geometry(miniv3d &center, double &radius);
    virtual void render_ecef_geometry(double t);
 
 private:

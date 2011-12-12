@@ -16,13 +16,13 @@ class miniview : public miniscene
    virtual ~miniview();
 
    void set_camera(minicam *cam);
-   void render_geometry(float sbase=0.0f,BOOLINT anaglyph=TRUE);
+   void render_geometry(float sbase=0.0f, BOOLINT anaglyph=TRUE);
 
    protected:
 
    void setup_matrix(float sbase=0.0f);
 
-   virtual void check_ecef_geometry(miniv3d &center,double &radius);
+   virtual void check_ecef_geometry(miniv3d &center, double &radius);
    virtual void render_ecef_geometry(double t);
 
    minicam *m_cam;

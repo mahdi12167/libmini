@@ -18,7 +18,7 @@ void miniview::set_camera(minicam *cam)
    {m_cam = cam;}
 
 // render earth and terrain geometry
-void miniview::render_geometry(float sbase,BOOLINT anaglyph)
+void miniview::render_geometry(float sbase, BOOLINT anaglyph)
    {
    minilayer *nst;
 
@@ -94,18 +94,18 @@ void miniview::setup_matrix(float sbase)
          miniv3d center;
          double radius;
 
-         check_ecef_geometry(center,radius);
+         check_ecef_geometry(center, radius);
 
          if (radius>0.0)
             {
-            miniv3d eye,dir;
+            miniv3d eye, dir;
             double farp_ecef;
 
-            eye=m_cam->get_eye().vec;
-            dir=m_cam->get_dir();
+            eye = m_cam->get_eye().vec;
+            dir = m_cam->get_dir();
 
-            farp_ecef=dir*(center-eye)+radius;
-            farp=dmax(farp,farp_ecef);
+            farp_ecef = dir*(center-eye)+radius;
+            farp = dmax(farp, farp_ecef);
             }
          }
 
@@ -126,7 +126,7 @@ void miniview::setup_matrix(float sbase)
    }
 
 // check ecef geometry
-void miniview::check_ecef_geometry(miniv3d &center,double &radius)
+void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    {
    // specify bounding sphere
    center=miniv3d(0,0,0);
@@ -140,9 +140,9 @@ void miniview::render_ecef_geometry(double t)
 
    static miniglobe globe;
 
-   static const int gltess=32;
-   static const double glscale=0.999;
-   static const double glzscale=1.05;
+   static const int gltess = 32;
+   static const double glscale = 0.999;
+   static const double glzscale = 1.05;
 
    globe.settess(gltess);
    globe.setscale(1.0);
@@ -160,32 +160,32 @@ void miniview::render_ecef_geometry(double t)
    linewidth(2);
    enablelinesmooth();
 
-   static const miniv3d zacolor(0.25,0.25,0.5);
+   static const miniv3d zacolor(0.25, 0.25, 0.5);
 
    color(zacolor);
-   renderline(miniv3d(0.0,0.0,-1.1*miniearth::EARTH_radius),
-              miniv3d(0.0,0.0,-miniearth::EARTH_radius));
-   renderline(miniv3d(0.0,0.0,miniearth::EARTH_radius),
-              miniv3d(0.0,0.0,1.1*miniearth::EARTH_radius));
+   renderline(miniv3d(0.0, 0.0, -1.1*miniearth::EARTH_radius),
+              miniv3d(0.0, 0.0, -miniearth::EARTH_radius));
+   renderline(miniv3d(0.0, 0.0, miniearth::EARTH_radius),
+              miniv3d(0.0, 0.0, 1.1*miniearth::EARTH_radius));
 
    // render equator:
 
    linewidth(1);
    disableZwriting();
 
-   static const int eqlines=100;
-   static const miniv3d eqcolor(0.25,0.25,0.25);
+   static const int eqlines = 100;
+   static const miniv3d eqcolor(0.25, 0.25, 0.25);
 
    color(eqcolor);
    for (int i=0; i<=eqlines; i++)
       {
-      minicoord c(miniv3d((double)i/eqlines*360*3600,0.0,0.0),minicoord::MINICOORD_LLH);
+      minicoord c(miniv3d((double)i/eqlines*360*3600, 0.0, 0.0),minicoord::MINICOORD_LLH);
       c.convert2(minicoord::MINICOORD_ECEF);
 
       static minicoord c0;
 
-      if (i>0) renderline(c0.vec,c.vec);
-      c0=c;
+      if (i>0) renderline(c0.vec, c.vec);
+      c0 = c;
       }
 
    enableZwriting();
