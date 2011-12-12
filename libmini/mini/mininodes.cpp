@@ -107,7 +107,21 @@ double mininode_dynamic::m_time=0.0;
 double mininode_color::brightness=1.0;
 
 minidyna<miniv4d> mininode_color::rgba_stack;
-miniv4d mininode_color::glcolor(1,1,1,1);
+miniv4d mininode_color::glcolor(-1);
+
+// mininode_texture:
+
+unsigned int mininode_texture::texture_level=0;
+
+// mininode_texture2D:
+
+minidyna<unsigned int> mininode_texture2D::texid_stack;
+unsigned int mininode_texture2D::tid=0;
+
+// mininode_texture3D:
+
+minidyna<unsigned int> mininode_texture3D::texid_stack;
+unsigned int mininode_texture3D::tid=0;
 
 // mininode_transform:
 

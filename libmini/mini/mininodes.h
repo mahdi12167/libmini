@@ -20,6 +20,7 @@ enum
    MININODE=0,
    MININODE_CAM,
    MININODE_COLOR,
+   MININODE_TEXTURE,
    MININODE_SWITCH,
    MININODE_SELECTOR,
    MININODE_TRANSFORM,
@@ -250,6 +251,177 @@ class mininode_color: public mininode_group
 
    virtual void traverse_post()
       {rgba_stack.pop();}
+   };
+
+//! texture node
+class mininode_texture: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_texture()
+      : mininode_group(MININODE_TEXTURE)
+      {
+      is_on=TRUE;
+      texid=0;
+      }
+
+   //! destructor
+   virtual ~mininode_texture()
+      {deletetexmap(texid);}
+
+   protected:
+
+   BOOLINT is_on;
+
+   unsigned int texid;
+
+   static unsigned int texture_level;
+
+   virtual void traverse_pre()
+      {if (is_on) texture_level++;}
+
+   virtual void traverse_post()
+      {if (is_on) texture_level--;}
+   };
+
+//! texture2D node
+class mininode_texture2D: public mininode_texture
+   {
+   public:
+
+   //! custom constructor
+   mininode_texture2D(unsigned char *image,int width,int height,int components,
+                      int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
+      : mininode_texture()
+      {
+      texid=buildtexmap(image,&width,&height,components,
+                        24,mipmaps,s3tc,bytes,mipmapped);
+
+      this->width=width;
+      this->height=height;
+      }
+
+   protected:
+
+   int width,height;
+
+   static minidyna<unsigned int> texid_stack;
+   static unsigned int tid;
+
+   virtual void traverse_pre()
+      {
+      unsigned int t=texid;
+
+      // init texture state
+      if (texid_stack.empty())
+         {
+         tid=0;
+         is_on=(texture_level>0);
+         }
+
+      // push actual texture
+      texid_stack.push(t);
+
+      // lazy texture state change
+      if (t!=tid && is_on)
+         {
+         tid=t;
+         bindtexmap(t);
+         }
+
+      mininode_texture::traverse_pre();
+      }
+
+   virtual void traverse_past()
+      {
+      unsigned int t;
+
+      // peek actual color
+      t=texid_stack.peek();
+
+      // lazy texture state change
+      if (t!=tid && is_on)
+         {
+         tid=t;
+         bindtexmap(t);
+         }
+      }
+
+   virtual void traverse_post()
+      {
+      texid_stack.pop();
+      mininode_texture::traverse_post();
+      }
+   };
+
+//! texture3D node
+class mininode_texture3D: public mininode_texture
+   {
+   public:
+
+   //! custom constructor
+   mininode_texture3D(unsigned char *volume,int width,int height,int depth,int components)
+      : mininode_texture()
+      {
+      texid=build3Dtexmap(volume,&width,&height,&depth,components);
+
+      this->width=width;
+      this->height=height;
+      this->depth=depth;
+      }
+
+   protected:
+
+   int width,height,depth;
+
+   static minidyna<unsigned int> texid_stack;
+   static unsigned int tid;
+
+   virtual void traverse_pre()
+      {
+      unsigned int t=texid;
+
+      // init texture state
+      if (texid_stack.empty())
+         {
+         tid=0;
+         is_on=(texture_level>0);
+         }
+
+      // push actual texture
+      texid_stack.push(t);
+
+      // lazy texture state change
+      if (t!=tid && is_on)
+         {
+         tid=t;
+         bind3Dtexmap(t);
+         }
+
+      mininode_texture::traverse_pre();
+      }
+
+   virtual void traverse_past()
+      {
+      unsigned int t;
+
+      // peek actual color
+      t=texid_stack.peek();
+
+      // lazy texture state change
+      if (t!=tid && is_on)
+         {
+         tid=t;
+         bindtexmap(t);
+         }
+      }
+
+   virtual void traverse_post()
+      {
+      texid_stack.pop();
+      mininode_texture::traverse_post();
+      }
    };
 
 //! switch node
