@@ -30,6 +30,9 @@ enum
 class mininode_cam;
 
 //! group node
+//!  groups arbitrary number of children links
+//!  has merged bounding sphere of its children
+//!  provides first enabled camera
 class mininode_group: public mininode
    {
    public:
@@ -75,7 +78,7 @@ class mininode_group: public mininode
    double bound_radius;
    };
 
-// helper class
+//! helper class that defines a view cone
 class minicone
    {
    public:
@@ -88,7 +91,9 @@ class minicone
    double cone;
    };
 
-//! culling node
+//! culling node (base class)
+//!  culls bounding sphere with camera cone
+//!  transforms camera cone with inverse of local transform
 class mininode_culling: public mininode_group
    {
    public:
@@ -120,7 +125,8 @@ class mininode_culling: public mininode_group
    virtual void transform_cone(minicone &cone) const {}
    };
 
-//! dynamic time-dependent node
+//! dynamic time-dependent node (base class)
+//!  has global time setter and getter
 class mininode_dynamic: public mininode_culling
    {
    public:
@@ -150,6 +156,8 @@ class mininode_dynamic: public mininode_culling
 typedef miniref<mininode_dynamic> mininode_rootref;
 
 //! camera node
+//!  provides camera lookat, direction, fovy and cone
+//!  has bounding sphere of entire earth
 class mininode_cam: public mininode_dynamic, public minicam
    {
    public:
@@ -182,6 +190,7 @@ class mininode_cam: public mininode_dynamic, public minicam
    };
 
 //! color node
+//!  attributes children with color
 class mininode_color: public mininode_group
    {
    public:
@@ -253,7 +262,9 @@ class mininode_color: public mininode_group
       {rgba_stack.pop();}
    };
 
-//! texture node
+//! texture node (base class)
+//!  has texture object id
+//!  auto-deletes texture object
 class mininode_texture: public mininode_group
    {
    public:
@@ -286,6 +297,8 @@ class mininode_texture: public mininode_group
    };
 
 //! texture2D node
+//!  2D texture object
+//!  has texture matrix for fitting normalized 2D texture coordinates
 class mininode_texture2D: public mininode_texture
    {
    public:
@@ -371,6 +384,8 @@ class mininode_texture2D: public mininode_texture
    };
 
 //! texture3D node
+//!  3D texture object
+//!  has texture matrix for fitting normalized 3D texture coordinates
 class mininode_texture3D: public mininode_texture
    {
    public:
@@ -452,6 +467,41 @@ class mininode_texture3D: public mininode_texture
 
       mininode_texture::traverse_post();
       }
+   };
+
+//! texgen node
+//!  enables object space texture coordinate generation
+//!  treats first child transforms as texture transforms
+class mininode_texgen: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_texgen()
+      : mininode_group(MININODE_TEXTURE)
+      {}
+
+   //! destructor
+   virtual ~mininode_texgen()
+      {}
+
+   protected:
+
+   static unsigned int texgen_level;
+
+   virtual void traverse_pre()
+      {
+      texgen_level++;
+      //!! if (texgen_level==1) mininode_transform::set_texgen(TRUE);
+      }
+
+   virtual void traverse_past()
+      {
+      //!! if (texgen_level==1) mininode_transform::set_texgen(FALSE);
+      }
+
+   virtual void traverse_post()
+      {texgen_level--;}
    };
 
 //! switch node
