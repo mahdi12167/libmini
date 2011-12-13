@@ -1313,6 +1313,32 @@ int db2texid(databuf *buf,int *width,int *height,int *mipmaps)
    return(texid);
    }
 
+void enabletexgen()
+   {
+   GLfloat v1[]={1.0f,0.0f,0.0f,0.0f},
+           v2[]={0.0f,1.0f,0.0f,0.0f},
+           v3[]={0.0f,0.0f,1.0f,0.0f};
+
+   glTexGeni(GL_S,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+   glTexGeni(GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+   glTexGeni(GL_R,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+
+   glTexGenfv(GL_S,GL_OBJECT_PLANE,v1);
+   glTexGenfv(GL_T,GL_OBJECT_PLANE,v2);
+   glTexGenfv(GL_R,GL_OBJECT_PLANE,v3);
+
+   glEnable(GL_TEXTURE_GEN_S);
+   glEnable(GL_TEXTURE_GEN_T);
+   glEnable(GL_TEXTURE_GEN_R);
+   }
+
+void disabletexgen()
+   {
+   glDisable(GL_TEXTURE_GEN_S);
+   glDisable(GL_TEXTURE_GEN_T);
+   glDisable(GL_TEXTURE_GEN_R);
+   }
+
 void texunit(int unit)
    {
 #ifndef NOOGL

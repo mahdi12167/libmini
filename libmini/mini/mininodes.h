@@ -858,13 +858,9 @@ class mininode_animation_rotate: public mininode_animation
       }
    };
 
-//!!
-void enabletexgen() {}
-void disabletexgen() {}
-
 //! texgen node
 //!  enables object space texture coordinate generation
-//!  has texture transform
+//!  provides texture coordinate transform
 class mininode_texgen: public mininode_transform
    {
    protected:
@@ -878,7 +874,7 @@ class mininode_texgen: public mininode_transform
       mtxtex();
       mtxpush();
       mtxmodel();
-      
+
       texgen_level++;
       }
 
