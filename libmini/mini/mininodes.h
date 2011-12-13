@@ -469,42 +469,8 @@ class mininode_texture3D: public mininode_texture
       }
    };
 
-//! texgen node
-//!  enables object space texture coordinate generation
-//!  treats first child transforms as texture transforms
-class mininode_texgen: public mininode_group
-   {
-   public:
-
-   //! default constructor
-   mininode_texgen()
-      : mininode_group(MININODE_TEXTURE)
-      {}
-
-   //! destructor
-   virtual ~mininode_texgen()
-      {}
-
-   protected:
-
-   static unsigned int texgen_level;
-
-   virtual void traverse_pre()
-      {
-      texgen_level++;
-      //!! if (texgen_level==1) mininode_transform::set_texgen(TRUE);
-      }
-
-   virtual void traverse_past()
-      {
-      //!! if (texgen_level==1) mininode_transform::set_texgen(FALSE);
-      }
-
-   virtual void traverse_post()
-      {texgen_level--;}
-   };
-
 //! switch node
+//!  turns render traversal on or off
 class mininode_switch: public mininode_group
    {
    public:
@@ -539,6 +505,7 @@ class mininode_switch: public mininode_group
    };
 
 //! selector node
+//!  turns render traversal on for one indexed child
 class mininode_selector: public mininode_group
    {
    public:
@@ -572,7 +539,11 @@ class mininode_selector: public mininode_group
    unsigned int index;
    };
 
-//! transformation node
+//! transformation node (base class)
+//!  provides linear local modelling transfrom
+//!  pushes and pops transform before and after render traversal
+//!  transforms bounding sphere with local transform
+//!  transforms camera cone with inverse local transform
 class mininode_transform: public mininode_dynamic
    {
    public:
@@ -601,6 +572,11 @@ class mininode_transform: public mininode_dynamic
 
    double oglmtx[16];
 
+   virtual void set_texmode(BOOLINT on)
+      {
+      //!! texmode=on;
+      }
+
    virtual void traverse_pre()
       {
       mininode_culling::traverse_pre();
@@ -619,6 +595,7 @@ class mininode_transform: public mininode_dynamic
    };
 
 //! translation node
+//!  provides translation transform
 class mininode_translate: public mininode_transform
    {
    public:
@@ -653,6 +630,7 @@ class mininode_translate: public mininode_transform
    };
 
 //! rotation node
+//!  provides rotation transform
 class mininode_rotate: public mininode_transform
    {
    public:
@@ -692,6 +670,7 @@ class mininode_rotate: public mininode_transform
    };
 
 //! affine transform node
+//!  provides affine transform
 class mininode_affine: public mininode_transform
    {
    public:
@@ -749,6 +728,7 @@ class mininode_affine: public mininode_transform
    };
 
 //! scale node
+//!  provides scale transform
 class mininode_scale: public mininode_transform
    {
    public:
@@ -804,6 +784,7 @@ class mininode_scale: public mininode_transform
    };
 
 //! coordinate node
+//!  provides affine transform into a local geo-referenced coordinate system
 class mininode_coord: public mininode_affine
    {
    public:
@@ -826,6 +807,7 @@ class mininode_coord: public mininode_affine
    };
 
 //! animation node
+//!  provides dynamic time-dependent transform (base class)
 class mininode_animation: public mininode_transform
    {
    public:
@@ -848,6 +830,7 @@ class mininode_animation: public mininode_transform
    };
 
 //! rotate animation node
+//!  provides time-dependent rotation
 class mininode_animation_rotate: public mininode_animation
    {
    public:
@@ -880,7 +863,31 @@ class mininode_animation_rotate: public mininode_animation
       }
    };
 
-//! geometry node
+//! texgen node
+//!  enables object space texture coordinate generation
+//!  treats first child transforms as texture transforms
+class mininode_texgen: public mininode_transform
+   {
+   protected:
+
+   static unsigned int texgen_level;
+
+   virtual void traverse_pre()
+      {
+      if (texgen_level==0) set_texmode(TRUE);
+      texgen_level++;
+      }
+
+   virtual void traverse_past()
+      {
+      texgen_level--;
+      if (texgen_level==0) set_texmode(FALSE);
+      }
+   };
+
+//! geometry node (base class)
+//!  provides triangle-stripped geometry
+//!  has optional per-vertex color, normals and texture coordinates
 class mininode_geometry: public mininode_group, public ministrip
    {
    public:
@@ -922,6 +929,8 @@ class mininode_geometry: public mininode_group, public ministrip
    };
 
 //! tetrahedron geometry node
+//!  provides triangle-stripped tetrahedron
+//!  has normals
 class mininode_geometry_tet: public mininode_geometry
    {
    public:
@@ -932,6 +941,8 @@ class mininode_geometry_tet: public mininode_geometry
    };
 
 //! pyramid geometry node
+//!  provides triangle-stripped pyramid
+//!  has normals
 class mininode_geometry_pyramid: public mininode_geometry
    {
    public:
@@ -942,6 +953,8 @@ class mininode_geometry_pyramid: public mininode_geometry
    };
 
 //! cube geometry node
+//!  provides triangle-stripped cube
+//!  has normals
 class mininode_geometry_cube: public mininode_geometry
    {
    public:
@@ -952,6 +965,8 @@ class mininode_geometry_cube: public mininode_geometry
    };
 
 //! prism geometry node
+//!  provides triangle-stripped prism
+//!  has normals
 class mininode_geometry_prism: public mininode_geometry
    {
    public:
@@ -962,6 +977,9 @@ class mininode_geometry_prism: public mininode_geometry
    };
 
 //! sphere geometry node
+//!  provides triangle-stripped sphere
+//!  has normals
+//!  has texture coordinates from polar coordinates
 class mininode_geometry_sphere: public mininode_geometry
    {
    public:
@@ -972,6 +990,8 @@ class mininode_geometry_sphere: public mininode_geometry
    };
 
 //! band geometry node
+//!  provides triangle-stripped band
+//!  has normals
 class mininode_geometry_band: public mininode_geometry
    {
    public:
@@ -983,6 +1003,8 @@ class mininode_geometry_band: public mininode_geometry
    };
 
 //! tube geometry node
+//!  provides triangle-stripped tube
+//!  has normals
 class mininode_geometry_tube: public mininode_geometry
    {
    public:
@@ -1011,6 +1033,8 @@ class mininode_geometry_tube: public mininode_geometry
    };
 
 //! torus geometry node
+//!  provides triangle-stripped torus
+//!  has normals
 class mininode_geometry_torus: public mininode_geometry_tube
    {
    public:
