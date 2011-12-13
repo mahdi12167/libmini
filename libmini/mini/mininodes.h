@@ -572,11 +572,6 @@ class mininode_transform: public mininode_dynamic
 
    double oglmtx[16];
 
-   virtual void set_texmode(BOOLINT on)
-      {
-      //!! texmode=on;
-      }
-
    virtual void traverse_pre()
       {
       mininode_culling::traverse_pre();
@@ -863,9 +858,13 @@ class mininode_animation_rotate: public mininode_animation
       }
    };
 
+//!!
+void enabletexgen() {}
+void disabletexgen() {}
+
 //! texgen node
 //!  enables object space texture coordinate generation
-//!  treats first child transforms as texture transforms
+//!  has texture transform
 class mininode_texgen: public mininode_transform
    {
    protected:
@@ -874,14 +873,24 @@ class mininode_texgen: public mininode_transform
 
    virtual void traverse_pre()
       {
-      if (texgen_level==0) set_texmode(TRUE);
+      if (texgen_level==0) enabletexgen();
+
+      mtxtex();
+      mtxpush();
+      mtxmodel();
+      
       texgen_level++;
       }
 
-   virtual void traverse_past()
+   virtual void traverse_post()
       {
       texgen_level--;
-      if (texgen_level==0) set_texmode(FALSE);
+
+      mtxtex();
+      mtxpop();
+      mtxmodel();
+
+      if (texgen_level==0) disabletexgen();
       }
    };
 
