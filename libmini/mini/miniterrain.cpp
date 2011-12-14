@@ -515,10 +515,6 @@ minilayer *miniterrain::load(const char *url,
 
    baseurl=strdup(url);
 
-   // remove trailing .ini
-   if (strlen(baseurl)>4)
-      if (strstr(baseurl,".ini")==&baseurl[strlen(baseurl)-4]) baseurl[strlen(baseurl)-4]='\0';
-
    // remove trailing slash
    if (strlen(baseurl)>1)
       if (baseurl[strlen(baseurl)-1]=='/') baseurl[strlen(baseurl)-1]='\0';
@@ -633,7 +629,7 @@ minilayer *miniterrain::loadLTS(const char *url,
    {
    int l;
 
-   char *layerurl;
+   char *layerurl,*levelurl;
    char layerlevel[10];
 
    minilayer *layer;
@@ -654,19 +650,27 @@ minilayer *miniterrain::loadLTS(const char *url,
    // load tileset levels
    for (l=0; l<levels; l++)
       {
+      layerurl=strdup(url);
+
+      // remove trailing slash
+      if (strlen(layerurl)>1)
+         if (layerurl[strlen(layerurl)-1]=='/') layerurl[strlen(layerurl)-1]='\0';
+
+      // remove trailing backslash
+      if (strlen(layerurl)>1)
+         if (layerurl[strlen(layerurl)-1]=='\\') layerurl[strlen(layerurl)-1]='\0';
+
       // append layer level to url
-      if (l==0) layerurl=strdup(url);
-      else
-         {
-         snprintf(layerlevel,10,"%d",l);
-         layerurl=strdup2(url,layerlevel);
-         }
+      if (l==0) snprintf(layerlevel,10,"/",l);
+      else snprintf(layerlevel,10,"%d/",l);
+      levelurl=strdup2(layerurl,layerlevel);
 
       // load layer with negative levels
-      layer=load(layerurl,loadopts,reset,l-levels+1,-levels+1);
+      layer=load(levelurl,loadopts,reset,l-levels+1,-levels+1);
 
-      // free layer url
+      // free urls
       free(layerurl);
+      free(levelurl);
 
       if (!layer) break;
 
