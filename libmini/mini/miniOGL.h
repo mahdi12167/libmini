@@ -86,6 +86,7 @@ int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
 
 void enabletexgen();
 void disabletexgen();
+int gettexgen();
 
 void texunit(int unit=0);
 void texclientunit(int unit=0);

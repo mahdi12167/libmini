@@ -17,7 +17,7 @@ float CONFIGURE_LEVEL=0.0f;
 GLboolean depth_test,cull_face,color_writemask[4],depth_writemask,blending;
 GLint depth_func,front_face,cull_face_mode,blend_src,blend_dst;
 
-BOOLINT maxblendeq;
+BOOLINT texgen,maxblendeq;
 
 BOOLINT glrndr_sgi;
 BOOLINT glrndr_nvidia;

@@ -77,6 +77,15 @@ class ministrip
    void addvtx(const float x,const float y,const float z);
    void addvtx(const miniv3d &v);
 
+   //! check color array
+   BOOLINT hascolor() {return(COLCOMPS>0);}
+
+   //! check normal array
+   BOOLINT hasnormal() {return(NRMCOMPS>0);}
+
+   //! check tex coord array
+   BOOLINT hastex() {return(TEXCOMPS>0);}
+
    //! set scale
    void setscale(float scale);
 

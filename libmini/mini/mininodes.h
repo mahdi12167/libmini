@@ -924,7 +924,12 @@ class mininode_geometry: public mininode_group, public ministrip
    protected:
 
    virtual void traverse_pre()
-      {render(1);}
+      {
+      int texgen=gettexgen(); // get texgen setting
+      if (hastex()) disabletexgen(); // override texgen with tex coords
+      render(1); // render triangle strip
+      if (texgen) enabletexgen(); // restore texgen setting
+      }
 
    static miniv3d project(const miniv3d &pos,const miniv3d &dir,
                           const miniv3d &org,const miniv3d &nrm);

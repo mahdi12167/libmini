@@ -269,6 +269,7 @@ void initstate()
 
    glColor3f(1.0f,1.0f,1.0f);
 
+   texgen=FALSE;
    maxblendeq=FALSE;
 
    fancnt=vtxcnt=0;
@@ -1315,6 +1316,10 @@ int db2texid(databuf *buf,int *width,int *height,int *mipmaps)
 
 void enabletexgen()
    {
+#ifndef NOOGL
+
+   if (texgen) return;
+
    GLfloat v1[]={1.0f,0.0f,0.0f,0.0f},
            v2[]={0.0f,1.0f,0.0f,0.0f},
            v3[]={0.0f,0.0f,1.0f,0.0f};
@@ -1330,13 +1335,34 @@ void enabletexgen()
    glEnable(GL_TEXTURE_GEN_S);
    glEnable(GL_TEXTURE_GEN_T);
    glEnable(GL_TEXTURE_GEN_R);
+
+   texgen=TRUE;
+
+#endif
    }
 
 void disabletexgen()
    {
+#ifndef NOOGL
+
+   if (!texgen) return;
+
    glDisable(GL_TEXTURE_GEN_S);
    glDisable(GL_TEXTURE_GEN_T);
    glDisable(GL_TEXTURE_GEN_R);
+
+   texgen=FALSE;
+
+#endif
+   }
+
+int gettexgen()
+   {
+#ifndef NOOGL
+   return(texgen);
+#else
+   return(FALSE);
+#endif
    }
 
 void texunit(int unit)
