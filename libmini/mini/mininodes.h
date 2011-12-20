@@ -156,40 +156,6 @@ class mininode_dynamic: public mininode_culling
    static double m_time;
    };
 
-//! camera node
-//!  provides camera lookat, direction, fovy and cone
-//!  has bounding sphere of entire earth
-class mininode_cam: public mininode_dynamic, public minicam
-   {
-   public:
-
-   //! custom constructor
-   mininode_cam(miniearth *earth,
-                double lat=21.39,double lon=-157.72,double height=7E6,
-                double mindist=0.0,
-                float fovy=0.0f,float aspect=0.0f,
-                double nearp=0.0,double farp=0.0)
-      : mininode_dynamic(MININODE_CAM),
-        minicam(earth,lat,lon,height,mindist,
-                fovy,aspect,nearp,farp)
-      {}
-
-   //! destructor
-   virtual ~mininode_cam()
-      {}
-
-   //! get this camera
-   virtual mininode_cam *get_camera()
-      {return(this);}
-
-   //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
-      {
-      center=miniv3d(0,0,0);
-      radius=minicrs::EARTH_radius;
-      }
-   };
-
 //! color node
 //!  attributes children with color
 class mininode_color: public mininode_group
@@ -687,7 +653,11 @@ class mininode_transform: public mininode_dynamic
       {}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const = 0;
+   virtual void get_bsphere(miniv3d &center,double &radius) const
+      {
+      center=bound_center;
+      radius=bound_radius;
+      }
 
    protected:
 
@@ -711,7 +681,7 @@ class mininode_transform: public mininode_dynamic
       mininode_culling::traverse_post();
       }
 
-   virtual void transform_cone(minicone &cone) const = 0;
+   virtual void transform_cone(minicone &cone) const {}
 
    virtual void update_dirty();
    };
@@ -999,13 +969,6 @@ class mininode_texgen: public mininode_transform
       : mininode_transform()
       {}
 
-   //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
-      {
-      center=bound_center;
-      radius=bound_radius;
-      }
-
    protected:
 
    static unsigned int texgen_level;
@@ -1028,8 +991,6 @@ class mininode_texgen: public mininode_transform
       mtxpop();
       mtxmodel();
       }
-
-   virtual void transform_cone(minicone &cone) const {}
    };
 
 //! translate texgen node
@@ -1083,6 +1044,40 @@ class mininode_texgen_scale: public mininode_texgen
       {
       miniv3d mtx[3]={miniv3d(sx,0,0),miniv3d(0,sy,0),miniv3d(0,0,sz)};
       mtxget(mtx,oglmtx);
+      }
+   };
+
+//! camera node
+//!  provides camera lookat, direction, fovy and cone
+//!  has bounding sphere of entire earth
+class mininode_cam: public mininode_transform, public minicam
+   {
+   public:
+
+   //! custom constructor
+   mininode_cam(miniearth *earth,
+                double lat=21.39,double lon=-157.72,double height=7E6,
+                double mindist=0.0,
+                float fovy=0.0f,float aspect=0.0f,
+                double nearp=0.0,double farp=0.0)
+      : mininode_transform(),
+        minicam(earth,lat,lon,height,mindist,
+                fovy,aspect,nearp,farp)
+      {set_id(MININODE_CAM);}
+
+   //! destructor
+   virtual ~mininode_cam()
+      {}
+
+   //! get this camera
+   virtual mininode_cam *get_camera()
+      {return(this);}
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius) const
+      {
+      center=miniv3d(0,0,0);
+      radius=minicrs::EARTH_radius;
       }
    };
 
