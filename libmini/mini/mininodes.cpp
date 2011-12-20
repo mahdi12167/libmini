@@ -254,6 +254,10 @@ void mininode_coord::traverse_post()
    mininode_transform::traverse_post();
    }
 
+// mininode_texgen:
+
+unsigned int mininode_texgen::texgen_level=0;
+
 // mininode_geometry:
 
 miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,

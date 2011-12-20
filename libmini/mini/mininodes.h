@@ -995,6 +995,13 @@ class mininode_texgen: public mininode_transform
       : mininode_transform()
       {}
 
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius) const
+      {
+      center=bound_center;
+      radius=bound_radius;
+      }
+
    protected:
 
    static unsigned int texgen_level;
@@ -1017,6 +1024,8 @@ class mininode_texgen: public mininode_transform
       mtxpop();
       mtxmodel();
       }
+
+   virtual void transform_cone(minicone &cone) const {}
    };
 
 //! translate texgen node
