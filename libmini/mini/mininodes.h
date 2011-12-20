@@ -988,30 +988,88 @@ class mininode_animation_rotate: public mininode_animation
 //!  provides texture coordinate transform
 class mininode_texgen: public mininode_transform
    {
+   public:
+
+   //! default constructor
+   mininode_texgen()
+      : mininode_transform()
+      {}
+
    protected:
 
    static unsigned int texgen_level;
 
    virtual void traverse_pre()
       {
-      if (texgen_level==0) enabletexgen();
+      if (texgen_level++==0) enabletexgen();
 
       mtxtex();
       mtxpush();
+      mtxmult(oglmtx);
       mtxmodel();
-
-      texgen_level++;
       }
 
    virtual void traverse_post()
       {
-      texgen_level--;
+      if (--texgen_level==0) disabletexgen();
 
       mtxtex();
       mtxpop();
       mtxmodel();
+      }
+   };
 
-      if (texgen_level==0) disabletexgen();
+//! translate texgen node
+//!  provides texture coordinate translation
+class mininode_texgen_translate: public mininode_texgen
+   {
+   public:
+
+   //! custom constructor
+   mininode_texgen_translate(const miniv3d &v)
+      : mininode_texgen()
+      {
+      miniv4d mtx[3]={miniv4d(1,0,0,v.x),miniv4d(0,1,0,v.y),miniv4d(0,0,1,v.z)};
+      mtxget(mtx,oglmtx);
+      }
+   };
+
+//! rotate texgen node
+//!  provides texture coordinate rotation
+class mininode_texgen_rotate: public mininode_texgen
+   {
+   public:
+
+   //! custom constructor
+   mininode_texgen_rotate(double d,const miniv3d &a)
+      : mininode_texgen()
+      {
+      miniv3d rot[3];
+      rot_mtx(rot,d,a);
+      mtxget(rot,oglmtx);
+      }
+   };
+
+//! scale texgen node
+//!  provides texture coordinate scaling
+class mininode_texgen_scale: public mininode_texgen
+   {
+   public:
+
+   //! custom constructor
+   mininode_texgen_scale(double s)
+      : mininode_texgen()
+      {
+      miniv3d mtx[3]={miniv3d(s,0,0),miniv3d(0,s,0),miniv3d(0,0,s)};
+      mtxget(mtx,oglmtx);
+      }
+
+   //! custom constructor
+   mininode_texgen_scale(double sx,double sy,double sz)
+      : mininode_texgen()
+      {
+      miniv3d mtx[3]={miniv3d(sx,0,0),miniv3d(0,sy,0),miniv3d(0,0,sz)};
+      mtxget(mtx,oglmtx);
       }
    };
 
