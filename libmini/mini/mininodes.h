@@ -156,8 +156,6 @@ class mininode_dynamic: public mininode_culling
    static double m_time;
    };
 
-typedef miniref<mininode_dynamic> mininode_rootref;
-
 //! camera node
 //!  provides camera lookat, direction, fovy and cone
 //!  has bounding sphere of entire earth
@@ -368,7 +366,6 @@ class mininode_texture2D: public mininode_texture
       // push texture stack
       mtxtex();
       mtxpush();
-      mtxid();
       mtxtranslate(0.5/width,0.5/height,0.0);
       mtxscale((double)width/(width-1),(double)height/(height-1),0.0);
       mtxmodel();
@@ -477,7 +474,6 @@ class mininode_texture3D: public mininode_texture
       // push texture stack
       mtxtex();
       mtxpush();
-      mtxid();
       mtxtranslate(0.5/width,0.5/height,0.5/depth);
       mtxscale((double)width/(width-1),(double)height/(height-1),(double)depth/(depth-1));
       mtxmodel();
@@ -697,6 +693,12 @@ class mininode_transform: public mininode_dynamic
 
    double oglmtx[16];
 
+   virtual void traverse_init()
+      {
+      mininode_culling::traverse_init();
+      mtxtex(); mtxid(); mtxmodel();
+      }
+
    virtual void traverse_pre()
       {
       mininode_culling::traverse_pre();
@@ -713,6 +715,8 @@ class mininode_transform: public mininode_dynamic
 
    virtual void update_dirty();
    };
+
+typedef miniref<mininode_transform> mininode_rootref;
 
 //! translation node
 //!  provides translation transform
