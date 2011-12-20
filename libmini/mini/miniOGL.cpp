@@ -1112,6 +1112,8 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
 
          glEnable(GL_TEXTURE_GEN_S);
          glEnable(GL_TEXTURE_GEN_T);
+
+         texgen=TRUE;
          }
 
       glEnable(GL_TEXTURE_2D);
@@ -1123,6 +1125,8 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
 
       glDisable(GL_TEXTURE_GEN_S);
       glDisable(GL_TEXTURE_GEN_T);
+
+      texgen=FALSE;
       }
 
 #endif
