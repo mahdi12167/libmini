@@ -12,6 +12,9 @@
 #include "minicoord.h"
 #include "mininode.h"
 
+#include "ministring.h"
+#include "miniimg.h"
+
 #include "miniOGL.h"
 #include "minicam.h"
 
@@ -273,13 +276,19 @@ class mininode_texture: public mininode_group
    mininode_texture()
       : mininode_group(MININODE_TEXTURE)
       {
-      is_on=TRUE;
+      is_on=FALSE;
       texid=0;
       }
 
    //! destructor
    virtual ~mininode_texture()
       {deletetexmap(texid);}
+
+   BOOLINT is_active() const
+      {return(is_on && texid!=0);}
+
+   void set_active(BOOLINT on)
+      {is_on=on;}
 
    protected:
 
@@ -290,10 +299,10 @@ class mininode_texture: public mininode_group
    static unsigned int texture_level;
 
    virtual void traverse_pre()
-      {if (is_on) texture_level++;}
+      {if (is_active()) texture_level++;}
 
    virtual void traverse_post()
-      {if (is_on) texture_level--;}
+      {if (is_active()) texture_level--;}
    };
 
 //! texture2D node
@@ -303,11 +312,17 @@ class mininode_texture2D: public mininode_texture
    {
    public:
 
-   //! custom constructor
-   mininode_texture2D(unsigned char *image,int width,int height,int components,
-                      int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
+   //! default constructor
+   mininode_texture2D()
       : mininode_texture()
+      {}
+
+   //! texture loader
+   void load(unsigned char *image,int width,int height,int components,
+             int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
       {
+      deletetexmap(texid);
+
       texid=buildtexmap(image,&width,&height,components,
                         24,mipmaps,s3tc,bytes,mipmapped);
 
@@ -330,8 +345,12 @@ class mininode_texture2D: public mininode_texture
       if (texid_stack.empty())
          {
          tid=0;
-         is_on=(texture_level>0);
+         set_active(texture_level==0);
          }
+      else set_active(TRUE);
+
+      // check activity
+      if (!is_active()) return;
 
       // push actual texture
       texid_stack.push(t);
@@ -345,7 +364,7 @@ class mininode_texture2D: public mininode_texture
       mtxmodel();
 
       // lazy texture state change
-      if (t!=tid && is_on)
+      if (t!=tid)
          {
          tid=t;
          bindtexmap(t);
@@ -358,11 +377,14 @@ class mininode_texture2D: public mininode_texture
       {
       unsigned int t;
 
+      // check activity
+      if (!is_active()) return;
+
       // peek actual color
       t=texid_stack.peek();
 
       // lazy texture state change
-      if (t!=tid && is_on)
+      if (t!=tid)
          {
          tid=t;
          bindtexmap(t);
@@ -371,6 +393,9 @@ class mininode_texture2D: public mininode_texture
 
    virtual void traverse_post()
       {
+      // check activity
+      if (!is_active()) return;
+
       // pop actual texture
       texid_stack.pop();
 
@@ -390,10 +415,16 @@ class mininode_texture3D: public mininode_texture
    {
    public:
 
-   //! custom constructor
-   mininode_texture3D(unsigned char *volume,int width,int height,int depth,int components)
+   //! default constructor
+   mininode_texture3D()
       : mininode_texture()
+      {}
+
+   //! texture loader
+   void load(unsigned char *volume,int width,int height,int depth,int components)
       {
+      deletetexmap(texid);
+
       texid=build3Dtexmap(volume,&width,&height,&depth,components);
 
       this->width=width;
@@ -416,8 +447,12 @@ class mininode_texture3D: public mininode_texture
       if (texid_stack.empty())
          {
          tid=0;
-         is_on=(texture_level>0);
+         set_active(texture_level==0);
          }
+      else set_active(TRUE);
+
+      // check activity
+      if (!is_active()) return;
 
       // push actual texture
       texid_stack.push(t);
@@ -431,7 +466,7 @@ class mininode_texture3D: public mininode_texture
       mtxmodel();
 
       // lazy texture state change
-      if (t!=tid && is_on)
+      if (t!=tid)
          {
          tid=t;
          bind3Dtexmap(t);
@@ -444,11 +479,14 @@ class mininode_texture3D: public mininode_texture
       {
       unsigned int t;
 
+      // check activity
+      if (!is_active()) return;
+
       // peek actual color
       t=texid_stack.peek();
 
       // lazy texture state change
-      if (t!=tid && is_on)
+      if (t!=tid)
          {
          tid=t;
          bindtexmap(t);
@@ -457,6 +495,9 @@ class mininode_texture3D: public mininode_texture
 
    virtual void traverse_post()
       {
+      // check activity
+      if (!is_active()) return;
+
       // pop actual texture
       texid_stack.pop();
 
@@ -466,6 +507,58 @@ class mininode_texture3D: public mininode_texture
       mtxmodel();
 
       mininode_texture::traverse_post();
+      }
+   };
+
+//! image node
+//!  has 2D texture object
+class mininode_image: public mininode_texture2D
+   {
+   public:
+
+   //! custom constructor
+   mininode_image(ministring filename)
+      : mininode_texture2D()
+      {
+      databuf buf;
+      if (miniimg::loadimg(buf,filename.c_str()))
+         {
+         int components=0;
+
+         if (buf.type==databuf::DATABUF_TYPE_BYTE) components=1;
+         else if (buf.type==databuf::DATABUF_TYPE_RGB) components=3;
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA) components=4;
+
+         if (components!=0) load((unsigned char *)buf.data,buf.xsize,buf.ysize,components);
+
+         buf.release();
+         }
+      }
+   };
+
+//! volume node
+//!  has 3D texture object
+class mininode_volume: public mininode_texture3D
+   {
+   public:
+
+   //! custom constructor
+   mininode_volume(ministring filename)
+      : mininode_texture3D()
+      {
+      databuf buf;
+      if (buf.loaddata(filename.c_str()))
+         {
+         int components=0;
+
+         if (buf.type==databuf::DATABUF_TYPE_BYTE) components=1;
+         else if (buf.type==databuf::DATABUF_TYPE_RGB) components=3;
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA) components=4;
+
+         if (components!=0) load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,components);
+
+         buf.release();
+         }
       }
    };
 
