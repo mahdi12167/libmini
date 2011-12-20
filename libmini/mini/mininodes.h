@@ -284,9 +284,19 @@ class mininode_texture: public mininode_group
    virtual ~mininode_texture()
       {deletetexmap(texid);}
 
+   //! clear texture
+   void clear()
+      {
+      is_on=FALSE;
+      deletetexmap(texid);
+      texid=0;
+      }
+
+   //! get active texture status
    BOOLINT is_active() const
       {return(is_on && texid!=0);}
 
+   //! set active texture status
    void set_active(BOOLINT on)
       {is_on=on;}
 
@@ -319,9 +329,9 @@ class mininode_texture2D: public mininode_texture
 
    //! texture loader
    void load(unsigned char *image,int width,int height,int components,
-             int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
+             int bits=24,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
       {
-      deletetexmap(texid);
+      clear();
 
       texid=buildtexmap(image,&width,&height,components,
                         24,mipmaps,s3tc,bytes,mipmapped);
@@ -380,7 +390,7 @@ class mininode_texture2D: public mininode_texture
       // check activity
       if (!is_active()) return;
 
-      // peek actual color
+      // peek actual texture
       t=texid_stack.peek();
 
       // lazy texture state change
@@ -404,6 +414,13 @@ class mininode_texture2D: public mininode_texture
       mtxpop();
       mtxmodel();
 
+      // lazy texture state change
+      if (tid!=0)
+         {
+         tid=0;
+         bindtexmap(0);
+         }
+
       mininode_texture::traverse_post();
       }
    };
@@ -423,7 +440,7 @@ class mininode_texture3D: public mininode_texture
    //! texture loader
    void load(unsigned char *volume,int width,int height,int depth,int components)
       {
-      deletetexmap(texid);
+      clear();
 
       texid=build3Dtexmap(volume,&width,&height,&depth,components);
 
@@ -482,7 +499,7 @@ class mininode_texture3D: public mininode_texture
       // check activity
       if (!is_active()) return;
 
-      // peek actual color
+      // peek actual texture
       t=texid_stack.peek();
 
       // lazy texture state change
@@ -506,6 +523,13 @@ class mininode_texture3D: public mininode_texture
       mtxpop();
       mtxmodel();
 
+      // lazy texture state change
+      if (tid!=0)
+         {
+         tid=0;
+         bindtexmap(0);
+         }
+
       mininode_texture::traverse_post();
       }
    };
@@ -523,13 +547,22 @@ class mininode_image: public mininode_texture2D
       databuf buf;
       if (miniimg::loadimg(buf,filename.c_str()))
          {
-         int components=0;
-
-         if (buf.type==databuf::DATABUF_TYPE_BYTE) components=1;
-         else if (buf.type==databuf::DATABUF_TYPE_RGB) components=3;
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA) components=4;
-
-         if (components!=0) load((unsigned char *)buf.data,buf.xsize,buf.ysize,components);
+         if (buf.type==databuf::DATABUF_TYPE_BYTE)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
+         else if (buf.type==databuf::DATABUF_TYPE_SHORT)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,16);
+         else if (buf.type==databuf::DATABUF_TYPE_RGB)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8);
+         else if (buf.type==databuf::DATABUF_TYPE_RGB_S3TC)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,0,1,buf.bytes);
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA_S3TC)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,0,1,buf.bytes);
+         else if (buf.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,1,1,buf.bytes,1);
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,1,1,buf.bytes,1);
 
          buf.release();
          }
@@ -549,13 +582,12 @@ class mininode_volume: public mininode_texture3D
       databuf buf;
       if (buf.loaddata(filename.c_str()))
          {
-         int components=0;
-
-         if (buf.type==databuf::DATABUF_TYPE_BYTE) components=1;
-         else if (buf.type==databuf::DATABUF_TYPE_RGB) components=3;
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA) components=4;
-
-         if (components!=0) load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,components);
+         if (buf.type==databuf::DATABUF_TYPE_BYTE)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
+         else if (buf.type==databuf::DATABUF_TYPE_RGB)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,3);
+         else if (buf.type==databuf::DATABUF_TYPE_RGBA)
+            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,4);
 
          buf.release();
          }
