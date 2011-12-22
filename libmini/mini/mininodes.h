@@ -1087,9 +1087,14 @@ class mininode_geometry: public mininode_group, public ministrip
    public:
 
    //! default constructor
-   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,int wotex=0)
+   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,
+                     int wocol=1,int wonrm=0,int wotex=0)
       : mininode_group(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
-      {this->wotex=wotex;}
+      {
+      this->wocol=wocol;
+      this->wonrm=wonrm;
+      this->wotex=wotex;
+      }
 
    //! destructor
    virtual ~mininode_geometry()
@@ -1102,6 +1107,15 @@ class mininode_geometry: public mininode_group, public ministrip
       addvtx(c.vec);
       }
 
+   //! check color array
+   BOOLINT has_color() {return(hascolor() && wocol==0);}
+
+   //! check normal array
+   BOOLINT has_normal() {return(hasnormal() && wonrm==0);}
+
+   //! check tex coord array
+   BOOLINT has_tex() {return(hastex() && wotex==0);}
+
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius) const
       {
@@ -1112,13 +1126,13 @@ class mininode_geometry: public mininode_group, public ministrip
 
    protected:
 
-   int wotex;
+   int wocol,wonrm,wotex;
 
    virtual void traverse_pre()
       {
       int texgen=gettexgen(); // get texgen setting
-      if (hastex()) disabletexgen(); // override texgen with tex coords
-      render(1,0,wotex); // render triangle strip
+      if (has_tex()) disabletexgen(); // override texgen with tex coords
+      render(wocol,wonrm,wotex); // render triangle strip
       if (texgen) enabletexgen(); // restore texgen setting
       }
 
