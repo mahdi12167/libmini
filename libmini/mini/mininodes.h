@@ -69,11 +69,11 @@ class mininode_group: public mininode
 
    protected:
 
-   virtual void traverse_init() {}
+   virtual void traverse_init();
    virtual void traverse_pre() {}
    virtual void traverse_past() {}
    virtual void traverse_post() {}
-   virtual void traverse_exit() {}
+   virtual void traverse_exit();
 
    virtual void update_dirty();
 
@@ -663,11 +663,7 @@ class mininode_transform: public mininode_dynamic
 
    double oglmtx[16];
 
-   virtual void traverse_init()
-      {
-      mininode_culling::traverse_init();
-      mtxtex(); mtxid(); mtxmodel();
-      }
+   virtual void traverse_init();
 
    virtual void traverse_pre()
       {
@@ -680,6 +676,8 @@ class mininode_transform: public mininode_dynamic
       mtxpop();
       mininode_culling::traverse_post();
       }
+
+   virtual void traverse_exit();
 
    virtual void transform_cone(minicone &cone) const {}
 

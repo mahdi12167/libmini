@@ -4,6 +4,19 @@
 
 // mininode_group:
 
+void mininode_group::traverse_init()
+   {
+   // state initialization
+   color(1,1,1);
+   enableAtest(0.0f);
+   }
+
+void mininode_group::traverse_exit()
+   {
+   // state restoration
+   disableAtest();
+   }
+
 void mininode_group::update_dirty()
    {
    miniv3d center;
@@ -58,6 +71,9 @@ minidyna<minicone> mininode_culling::cone_stack;
 
 void mininode_culling::traverse_init()
    {
+   // state initialization
+   mininode_group::traverse_init();
+
    mininode_cam *camera=get_camera();
 
    miniv3d eye=camera->get_eye().vec;
@@ -96,7 +112,12 @@ void mininode_culling::traverse_post()
    {if (has_bsphere()) cone_stack.pop();}
 
 void mininode_culling::traverse_exit()
-   {cone_stack.pop();}
+   {
+   cone_stack.pop();
+
+   // state restoration
+   mininode_group::traverse_exit();
+   }
 
 // mininode_dynamic:
 
@@ -124,6 +145,27 @@ minidyna<unsigned int> mininode_texture3D::texid_stack;
 unsigned int mininode_texture3D::tid=0;
 
 // mininode_transform:
+
+void mininode_transform::traverse_init()
+   {
+   // state initialization
+   mininode_culling::traverse_init();
+
+   mtxtex();
+   mtxpush();
+   mtxid();
+   mtxmodel();
+   }
+
+void mininode_transform::traverse_exit()
+   {
+   mtxtex();
+   mtxpop();
+   mtxmodel();
+
+   // state restoration
+   mininode_culling::traverse_exit();
+   }
 
 void mininode_transform::update_dirty()
    {
