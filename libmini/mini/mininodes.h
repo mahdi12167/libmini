@@ -1087,16 +1087,16 @@ class mininode_geometry: public mininode_group, public ministrip
    public:
 
    //! default constructor
-   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0)
+   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,int wotex=0)
       : mininode_group(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
-      {}
+      {this->wotex=wotex;}
 
    //! destructor
    virtual ~mininode_geometry()
       {}
 
    //! add geo-referenced point
-   void addcoord(minicoord c)
+   void add_coord(minicoord c)
       {
       if (c.type!=minicoord::MINICOORD_LINEAR) c.convert2(minicoord::MINICOORD_ECEF);
       addvtx(c.vec);
@@ -1112,11 +1112,13 @@ class mininode_geometry: public mininode_group, public ministrip
 
    protected:
 
+   int wotex;
+
    virtual void traverse_pre()
       {
       int texgen=gettexgen(); // get texgen setting
       if (hastex()) disabletexgen(); // override texgen with tex coords
-      render(1); // render triangle strip
+      render(1,0,wotex); // render triangle strip
       if (texgen) enabletexgen(); // restore texgen setting
       }
 
@@ -1185,7 +1187,7 @@ class mininode_geometry_sphere: public mininode_geometry
 
    //! default constructors
    mininode_geometry_sphere() : mininode_geometry(0,3,2) {}
-   mininode_geometry_sphere(double radius,int tessel=16);
+   mininode_geometry_sphere(double radius,int wotex=0,int tessel=16);
    };
 
 //! band geometry node

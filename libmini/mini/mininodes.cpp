@@ -494,8 +494,8 @@ mininode_geometry_prism::mininode_geometry_prism(double sizex,double sizey,doubl
    addvtx(miniv3d(sizex,0,sizez));
    }
 
-mininode_geometry_sphere::mininode_geometry_sphere(double radius,int tessel)
-   : mininode_geometry(0,3,2)
+mininode_geometry_sphere::mininode_geometry_sphere(double radius,int wotex,int tessel)
+   : mininode_geometry(0,3,2,wotex)
    {
    int i,j;
 
