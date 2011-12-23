@@ -85,6 +85,10 @@ private:
    double    m_DayHourDelta;
    bool      m_ExaggerOn;
    double    m_ExaggerScale;
+
+   int create_shader(bool texgen,
+                     bool shade_direct,
+                     bool tex,bool tex3);
 };
 
 #endif
