@@ -24,7 +24,7 @@ class mininode: public minidyna< miniref<mininode> >
       {}
 
    //! set unique node id
-   virtual unsigned int set_id(unsigned int id=0)
+   virtual void set_id(unsigned int id=0)
       {m_id=id;}
 
    //! get unique node id

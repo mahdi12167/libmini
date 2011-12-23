@@ -661,7 +661,7 @@ minilayer *miniterrain::loadLTS(const char *url,
          if (layerurl[strlen(layerurl)-1]=='\\') layerurl[strlen(layerurl)-1]='\0';
 
       // append layer level to url
-      if (l==0) snprintf(layerlevel,10,"/",l);
+      if (l==0) snprintf(layerlevel,10,"/");
       else snprintf(layerlevel,10,"%d/",l);
       levelurl=strdup2(layerurl,layerlevel);
 

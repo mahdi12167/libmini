@@ -88,6 +88,16 @@ void ministrip::initsnippets()
       ### write resulting tex coords \n\
       MOV result.texcoord[0],crd; \n");
 
+   addsnippet(MINI_SNIPPET_VTX_TEXGEN,"\
+      ### generate tex coords from vertex position \n\
+      TEMP crd; \n\
+      DP4 crd.x,texmat[0],vtx; \n\
+      DP4 crd.y,texmat[1],vtx; \n\
+      DP4 crd.z,texmat[2],vtx; \n\
+      DP4 crd.w,texmat[3],vtx; \n\
+      ### write resulting tex coords \n\
+      MOV result.texcoord[0],crd; \n");
+
    addsnippet(MINI_SNIPPET_VTX_FOG,"\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n");
@@ -121,6 +131,13 @@ void ministrip::initsnippets()
       ### fetch actual texel \n\
       TEMP tex; \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n");
+
+   addsnippet(MINI_SNIPPET_FRG_TEX3,"\
+      ### fetch actual voxel \n\
+      TEMP tex; \n\
+      TEX tex,fragment.texcoord[0],texture[0],3D; \n\
       ### modulate with texture color \n\
       MUL col,col,tex; \n");
 
