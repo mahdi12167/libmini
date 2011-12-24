@@ -140,14 +140,18 @@ class ministrip
    //! get default shader
    static int getdefaultshader() {return(0);}
 
+   //! set global shader
+   static void useglobalshader(int num=0);
+
    //! create basic shader
    static int createshader(BOOLINT texgen,
-                           BOOLINT shade_direct,
+                           BOOLINT shade,BOOLINT shade_direct,
                            BOOLINT tex,BOOLINT tex3,
                            BOOLINT fog);
 
-   //! set global shader
-   static void useglobalshader(int num=0);
+   //! enable basic shader
+   static int useglobalshader(BOOLINT shade,BOOLINT shade_direct,
+                              BOOLINT tex,BOOLINT tex3);
 
    //! get global shader
    static int getglobalshader();
@@ -291,6 +295,17 @@ class ministrip
 
    static int USEGLOBALSHADER;
    int USESHADER;
+
+   static int shader_default;
+
+   static int shader_shade;
+   static int shader_shade_direct;
+
+   static int shader_shade_tex;
+   static int shader_shade_direct_tex;
+
+   static int shader_shade_tex3;
+   static int shader_shade_direct_tex3;
    };
 
 #endif

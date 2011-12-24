@@ -15,6 +15,17 @@ ministrip::SHADER_TYPE ministrip::SHADER[SHADERMAX];
 ministrip::SNIPPET_TYPE ministrip::SNIPPET[SNIPPETMAX];
 int ministrip::SNIPPETS=0;
 
+int ministrip::shader_default=-1;
+
+int ministrip::shader_shade=-1;
+int ministrip::shader_shade_direct=-1;
+
+int ministrip::shader_shade_tex=-1;
+int ministrip::shader_shade_direct_tex=-1;
+
+int ministrip::shader_shade_tex3=-1;
+int ministrip::shader_shade_direct_tex3=-1;
+
 // initialize shader snippets
 void ministrip::initsnippets()
    {
@@ -311,11 +322,22 @@ int ministrip::getfreeslot()
 
 // initialize default shader
 void ministrip::initshader()
-   {createshader(FALSE,FALSE,FALSE,FALSE,FALSE);}
+   {
+   shader_default=createshader(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
+
+   shader_shade=createshader(TRUE,TRUE,FALSE,FALSE,FALSE,TRUE);
+   shader_shade_direct=createshader(TRUE,FALSE,TRUE,FALSE,FALSE,TRUE);
+
+   shader_shade_tex=createshader(TRUE,TRUE,FALSE,TRUE,FALSE,TRUE);
+   shader_shade_direct_tex=createshader(TRUE,FALSE,TRUE,TRUE,FALSE,TRUE);
+
+   shader_shade_tex3=createshader(TRUE,TRUE,FALSE,FALSE,TRUE,TRUE);
+   shader_shade_direct_tex3=createshader(TRUE,FALSE,TRUE,FALSE,TRUE,TRUE);
+   }
 
 // create basic shader
 int ministrip::createshader(BOOLINT texgen,
-                            BOOLINT shade_direct,
+                            BOOLINT shade,BOOLINT shade_direct,
                             BOOLINT tex,BOOLINT tex3,
                             BOOLINT fog)
    {
@@ -343,10 +365,10 @@ int ministrip::createshader(BOOLINT texgen,
       concatpixshader(slot,MINI_SNIPPET_FRG_TEX);
    else if (tex3)
       concatpixshader(slot,MINI_SNIPPET_FRG_TEX3);
-   if (shade_direct)
-      concatpixshader(slot,MINI_SNIPPET_FRG_SHADE_DIRECT);
-   else
+   if (shade)
       concatpixshader(slot,MINI_SNIPPET_FRG_SHADE);
+   else if (shade_direct)
+      concatpixshader(slot,MINI_SNIPPET_FRG_SHADE_DIRECT);
    if (fog)
       concatpixshader(slot,MINI_SNIPPET_FRG_FOG);
    concatpixshader(slot,MINI_SNIPPET_FRG_FOOTER);
@@ -354,6 +376,21 @@ int ministrip::createshader(BOOLINT texgen,
 
    return(slot);
 }
+
+// enable basic shader
+int ministrip::useglobalshader(BOOLINT shade,BOOLINT shade_direct,
+                               BOOLINT tex,BOOLINT tex3)
+   {
+   if (shade)
+      if (tex) useglobalshader(shader_shade_tex);
+      else if (tex3) useglobalshader(shader_shade_tex3);
+      else useglobalshader(shader_shade);
+   else if (shade_direct)
+      if (tex) useglobalshader(shader_shade_direct_tex);
+      else if (tex3) useglobalshader(shader_shade_direct_tex3);
+      else useglobalshader(shader_shade_direct);
+   else useglobalshader(shader_default);
+   }
 
 // default constructor
 ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
