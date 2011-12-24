@@ -551,8 +551,8 @@ void Viewer::render_ecef_geometry(double t)
 
    if (!shader_setup)
    {
-      shader_slot1 = create_shader(false,false,false,false);
-      shader_slot2 = create_shader(false,true,false,false);
+      shader_slot1 = create_shader(true,false,false,false);
+      shader_slot2 = create_shader(true,true,false,false);
 
       shader_setup = true;
    }
