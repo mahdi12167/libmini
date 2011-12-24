@@ -506,27 +506,14 @@ void Viewer::render_ecef_geometry(double t)
    globe.render();
    enableRGBAwriting();
 
-   // setup shader programs:
+   // setup shaders:
 
-   static bool shader_setup = false;
-   static int shader_slot1, shader_slot2;
-
-   if (!shader_setup)
-   {
-      shader_slot1 = ministrip::createshader(TRUE,FALSE,FALSE,FALSE,TRUE);
-      shader_slot2 = ministrip::createshader(TRUE,TRUE,FALSE,FALSE,TRUE);
-
-      shader_setup = true;
-   }
-
-   // setup shading params:
-
-   int slot = shader_slot1;
+   ministrip::useglobalshader(TRUE,FALSE,FALSE,FALSE);
    mininode_coord::set_lightdir(miniv3d(0,0,0));
 
    if (m_pEarthParams->usediffuse)
    {
-      slot = shader_slot2;
+      ministrip::useglobalshader(FALSE,TRUE,FALSE,FALSE);
 
       miniv3d l = getearth()->get()->lightdir;
       mininode_coord::set_lightdir(l);
@@ -542,19 +529,20 @@ void Viewer::render_ecef_geometry(double t)
       miniv3d lgl;
       lgl = mlt_vec(invtra, l);
       float lightdir[3] = {lgl.x, lgl.y, lgl.z};
-      mininode_geometry::setshadedirectparams(slot, lightdir, 0.5f, 0.5f);
+      mininode_geometry::setshadedirectparams(ministrip::getglobalshader(), lightdir, 0.5f, 0.5f);
    }
 
    // setup fogging params
    float fogstart = getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
    float fogend = getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
    if (!getearth()->get()->usefog) fogend = 0.0f;
-   mininode_geometry::setfogparams(slot, fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
+   mininode_geometry::setfogparams(ministrip::getglobalshader(), fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
+
+   // set animation time
+   mininode_animation::set_time(t);
 
    // setup render state
    initstate();
-   mininode_geometry::useglobalshader(slot);
-   mininode_animation::set_time(t);
 
    // render ecef geometry by traversing scene graph
    if (m_root->traverse())
