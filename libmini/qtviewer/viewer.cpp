@@ -473,44 +473,6 @@ void Viewer::setExagger(double scale)
    camera->startIdling();
 }
 
-int Viewer::create_shader(bool texgen,
-                          bool shade_direct,
-                          bool tex,bool tex3)
-   {
-   int slot = mininode_geometry::getfreeslot();
-
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_BEGIN);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_HEADER);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_BASIC);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_VIEWPOS);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_NORMAL);
-   if (tex || tex3)
-      if (texgen)
-         mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_TEXGEN);
-      else
-         mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_TEX);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_FOG);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_FOOTER);
-   mininode_geometry::concatvtxshader(slot, MINI_SNIPPET_VTX_END);
-
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_BEGIN);
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_HEADER);
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_BASIC);
-   if (tex)
-      mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_TEX);
-   else if (tex3)
-      mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_TEX3);
-   if (shade_direct)
-      mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_SHADE_DIRECT);
-   else
-      mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_SHADE);
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_FOG);
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_FOOTER);
-   mininode_geometry::concatpixshader(slot, MINI_SNIPPET_FRG_END);
-
-   return(slot);
-}
-
 // check ecef geometry
 void Viewer::check_ecef_geometry(miniv3d &center, double &radius)
    {
@@ -551,8 +513,8 @@ void Viewer::render_ecef_geometry(double t)
 
    if (!shader_setup)
    {
-      shader_slot1 = create_shader(true,false,false,false);
-      shader_slot2 = create_shader(true,true,false,false);
+      shader_slot1 = ministrip::createshader(TRUE,FALSE,FALSE,FALSE,TRUE);
+      shader_slot2 = ministrip::createshader(TRUE,TRUE,FALSE,FALSE,TRUE);
 
       shader_setup = true;
    }

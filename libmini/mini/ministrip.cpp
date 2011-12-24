@@ -311,26 +311,49 @@ int ministrip::getfreeslot()
 
 // initialize default shader
 void ministrip::initshader()
-   {
-   int slot;
+   {createshader(FALSE,FALSE,FALSE,FALSE,FALSE);}
 
-   slot=getfreeslot();
+// create basic shader
+int ministrip::createshader(BOOLINT texgen,
+                            BOOLINT shade_direct,
+                            BOOLINT tex,BOOLINT tex3,
+                            BOOLINT fog)
+   {
+   int slot=getfreeslot();
 
    concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN);
    concatvtxshader(slot,MINI_SNIPPET_VTX_HEADER);
    concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
    concatvtxshader(slot,MINI_SNIPPET_VTX_VIEWPOS);
    concatvtxshader(slot,MINI_SNIPPET_VTX_NORMAL);
+   if (tex || tex3)
+      if (texgen)
+         concatvtxshader(slot,MINI_SNIPPET_VTX_TEXGEN);
+      else
+         concatvtxshader(slot,MINI_SNIPPET_VTX_TEX);
+   if (fog)
+      concatvtxshader(slot,MINI_SNIPPET_VTX_FOG);
    concatvtxshader(slot,MINI_SNIPPET_VTX_FOOTER);
    concatvtxshader(slot,MINI_SNIPPET_VTX_END);
 
    concatpixshader(slot,MINI_SNIPPET_FRG_BEGIN);
    concatpixshader(slot,MINI_SNIPPET_FRG_HEADER);
    concatpixshader(slot,MINI_SNIPPET_FRG_BASIC);
-   concatpixshader(slot,MINI_SNIPPET_FRG_SHADE);
+   if (tex)
+      concatpixshader(slot,MINI_SNIPPET_FRG_TEX);
+   else if (tex3)
+      concatpixshader(slot,MINI_SNIPPET_FRG_TEX3);
+   if (shade_direct)
+      concatpixshader(slot,MINI_SNIPPET_FRG_SHADE_DIRECT);
+   else
+      concatpixshader(slot,MINI_SNIPPET_FRG_SHADE);
+   if (fog)
+      concatpixshader(slot,MINI_SNIPPET_FRG_FOG);
    concatpixshader(slot,MINI_SNIPPET_FRG_FOOTER);
    concatpixshader(slot,MINI_SNIPPET_FRG_END);
-   }
+
+   return(slot);
+}
 
 // default constructor
 ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)

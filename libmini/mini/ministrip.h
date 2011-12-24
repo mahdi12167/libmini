@@ -140,6 +140,12 @@ class ministrip
    //! get default shader
    static int getdefaultshader() {return(0);}
 
+   //! create basic shader
+   static int createshader(BOOLINT texgen,
+                           BOOLINT shade_direct,
+                           BOOLINT tex,BOOLINT tex3,
+                           BOOLINT fog);
+
    //! set global shader
    static void useglobalshader(int num=0);
 
