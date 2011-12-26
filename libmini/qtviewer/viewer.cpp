@@ -508,12 +508,14 @@ void Viewer::render_ecef_geometry(double t)
 
    // setup shaders:
 
-   ministrip::useglobalshader(TRUE,FALSE,FALSE,FALSE);
+   ministrip::setglobal_texgen(TRUE);
+   ministrip::setglobal_shade(TRUE);
+   ministrip::setglobal_fog(TRUE);
    mininode_coord::set_lightdir(miniv3d(0,0,0));
 
    if (m_pEarthParams->usediffuse)
    {
-      ministrip::useglobalshader(FALSE,TRUE,FALSE,FALSE);
+      ministrip::setglobal_shade_direct(TRUE);
 
       miniv3d l = getearth()->get()->lightdir;
       mininode_coord::set_lightdir(l);
@@ -529,14 +531,14 @@ void Viewer::render_ecef_geometry(double t)
       miniv3d lgl;
       lgl = mlt_vec(invtra, l);
       float lightdir[3] = {lgl.x, lgl.y, lgl.z};
-      mininode_geometry::setshadedirectparams(ministrip::getglobalshader(), lightdir, 0.5f, 0.5f);
+      mininode_geometry::setglobalshadedirectparams(lightdir, 0.5f, 0.5f);
    }
 
    // setup fogging params
    float fogstart = getearth()->get()->fogstart/2.0f*len_g2o(getearth()->get()->farp);
    float fogend = getearth()->get()->fogend*len_g2o(getearth()->get()->farp);
    if (!getearth()->get()->usefog) fogend = 0.0f;
-   mininode_geometry::setfogparams(ministrip::getglobalshader(), fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
+   mininode_geometry::setglobalfogparams(fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
 
    // set animation time
    mininode_animation::set_time(t);
