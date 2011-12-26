@@ -1086,6 +1086,18 @@ void ministrip::setshadedirectparams(int num,
    setpixshaderparams(num,lightbias,lightoffset,0.0f,0.0f,4);
    }
 
+// set global direct shading parameters
+void ministrip::setglobalshadedirectparams(float lightdir[3],
+                                           float lightbias,float lightoffset)
+   {
+   global_lightdir[0]=lightdir[0];
+   global_lightdir[1]=lightdir[1];
+   global_lightdir[2]=lightdir[2];
+
+   global_lightbias=lightbias;
+   global_lightoffset=lightoffset;
+   }
+
 // set direct texturing parameters
 void ministrip::settexturedirectparams(int num,
                                        float lightdir[3],
@@ -1095,11 +1107,23 @@ void ministrip::settexturedirectparams(int num,
    setpixshaderparams(num,transbias,transoffset,0.0f,0.5f,4);
    }
 
+// set global direct texturing parameters
+void ministrip::setglobaltexturedirectparams(float lightdir[3],
+                                             float transbias,float transoffset)
+   {
+   global_lightdir[0]=lightdir[0];
+   global_lightdir[1]=lightdir[1];
+   global_lightdir[2]=lightdir[2];
+
+   global_transbias=transbias;
+   global_transoffset=transoffset;
+   }
+
 // set fog parameters
 void ministrip::setfogparams(int num,
                              float fogstart,float fogend,
                              float fogdensity,
-                             float *fogcolor)
+                             float fogcolor[3])
    {
    float fog_a,fog_b,fog_c;
 
@@ -1120,6 +1144,21 @@ void ministrip::setfogparams(int num,
    // pass the fog parameters
    setpixshaderparams(num,fog_a,fog_b,fog_c,0.0f,6);
    setpixshaderparams(num,fogcolor[0],fogcolor[1],fogcolor[2],0.0f,7);
+   }
+
+// set global fog parameters
+void ministrip::setglobalfogparams(float fogstart,float fogend,
+                                   float fogdensity,
+                                   float fogcolor[3])
+   {
+   global_fogstart=fogstart;
+   global_fogend=fogend;
+
+   global_fogdensity=fogdensity;
+
+   global_fogcolor[0]=fogcolor[0];
+   global_fogcolor[1]=fogcolor[1];
+   global_fogcolor[2]=fogcolor[2];
    }
 
 // set global shader
