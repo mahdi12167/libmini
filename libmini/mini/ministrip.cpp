@@ -15,16 +15,19 @@ ministrip::SHADER_TYPE ministrip::SHADER[SHADERMAX];
 ministrip::SNIPPET_TYPE ministrip::SNIPPET[SNIPPETMAX];
 int ministrip::SNIPPETS=0;
 
-int ministrip::shader_default=-1;
+int ministrip::global_shader[64]={-1};
 
-int ministrip::shader_shade=-1;
-int ministrip::shader_shade_direct=-1;
+BOOLINT ministrip::global_texgen=FALSE;
+BOOLINT ministrip::global_shade=FALSE,ministrip::global_shade_direct=FALSE;
+BOOLINT ministrip::global_tex=FALSE,ministrip::global_tex3=FALSE;
+BOOLINT ministrip::global_fog=FALSE;
 
-int ministrip::shader_shade_tex=-1;
-int ministrip::shader_shade_direct_tex=-1;
+float ministrip::global_fogstart=0.0f,ministrip::global_fogend=0.0f;
+float ministrip::global_fogdensity=0.0f,ministrip::global_fogcolor[3]={0,0,0};
 
-int ministrip::shader_shade_tex3=-1;
-int ministrip::shader_shade_direct_tex3=-1;
+float ministrip::global_lightdir[3]={0,0,0};
+float ministrip::global_lightbias=0.5f,ministrip::global_lightoffset=0.5f;
+float ministrip::global_transbias=4.0f,ministrip::global_transoffset=0.0f;
 
 // initialize shader snippets
 void ministrip::initsnippets()
@@ -323,16 +326,13 @@ int ministrip::getfreeslot()
 // initialize default shader
 void ministrip::initshader()
    {
-   shader_default=createshader(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
+   int slot;
 
-   shader_shade=createshader(TRUE,TRUE,FALSE,FALSE,FALSE,TRUE);
-   shader_shade_direct=createshader(TRUE,FALSE,TRUE,FALSE,FALSE,TRUE);
-
-   shader_shade_tex=createshader(TRUE,TRUE,FALSE,TRUE,FALSE,TRUE);
-   shader_shade_direct_tex=createshader(TRUE,FALSE,TRUE,TRUE,FALSE,TRUE);
-
-   shader_shade_tex3=createshader(TRUE,TRUE,FALSE,FALSE,TRUE,TRUE);
-   shader_shade_direct_tex3=createshader(TRUE,FALSE,TRUE,FALSE,TRUE,TRUE);
+   for (slot=0; slot<64; slot++)
+      global_shader[slot]=createshader(slot&1,
+                                       slot&2,slot&4,
+                                       slot&8,slot&16,
+                                       slot&32);
    }
 
 // create basic shader
@@ -375,21 +375,42 @@ int ministrip::createshader(BOOLINT texgen,
    concatpixshader(slot,MINI_SNIPPET_FRG_END);
 
    return(slot);
-}
+   }
 
-// enable basic shader
-int ministrip::useglobalshader(BOOLINT shade,BOOLINT shade_direct,
-                               BOOLINT tex,BOOLINT tex3)
+// enable global shader
+void ministrip::enableglobalshader(BOOLINT texgen,
+                                   BOOLINT shade,BOOLINT shade_direct,
+                                   BOOLINT tex,BOOLINT tex3,
+                                   BOOLINT fog)
    {
-   if (shade)
-      if (tex) useglobalshader(shader_shade_tex);
-      else if (tex3) useglobalshader(shader_shade_tex3);
-      else useglobalshader(shader_shade);
-   else if (shade_direct)
-      if (tex) useglobalshader(shader_shade_direct_tex);
-      else if (tex3) useglobalshader(shader_shade_direct_tex3);
-      else useglobalshader(shader_shade_direct);
-   else useglobalshader(shader_default);
+   useglobalshader(global_shader[texgen+
+                                 2*shade+
+                                 4*shade_direct+
+                                 8*tex+
+                                 16*tex3+
+                                 32*fog]);
+   }
+
+// enable global shader
+void ministrip::enableglobalshader()
+   {
+   enableglobalshader(global_texgen,
+                      global_shade,global_shade_direct,
+                      global_tex,global_tex3,
+                      global_fog);
+
+   settexturedirectparams(getglobalshader(),
+                          global_lightdir,
+                          global_transbias,global_transoffset);
+
+   setshadedirectparams(getglobalshader(),
+                        global_lightdir,
+                        global_lightbias,global_lightoffset);
+
+   setfogparams(getglobalshader(),
+                global_fogstart,global_fogend,
+                global_fogdensity,
+                global_fogcolor);
    }
 
 // default constructor

@@ -80,13 +80,13 @@ class ministrip
    void addvtx(const miniv3d &v);
 
    //! check color array
-   BOOLINT hascolor() {return(COLCOMPS>0);}
+   BOOLINT hascolor() const {return(COLCOMPS>0);}
 
    //! check normal array
-   BOOLINT hasnormal() {return(NRMCOMPS>0);}
+   BOOLINT hasnormal() const {return(NRMCOMPS>0);}
 
    //! check tex coord array
-   BOOLINT hastex() {return(TEXCOMPS>0);}
+   BOOLINT hastex() const {return(TEXCOMPS>0);}
 
    //! set scale
    void setscale(float scale);
@@ -126,10 +126,18 @@ class ministrip
                                     float lightdir[3],
                                     float lightbias=0.5f,float lightoffset=0.5f);
 
+   //! set global direct shading parameters
+   static void setglobalshadedirectparams(float lightdir[3],
+                                          float lightbias=0.5f,float lightoffset=0.5f);
+
    //! set direct texturing parameters
    static void settexturedirectparams(int num,
                                       float lightdir[3],
                                       float transbias=4.0f,float transoffset=0.0f);
+
+   //! set global direct texturing parameters
+   static void setglobaltexturedirectparams(float lightdir[3],
+                                            float transbias=4.0f,float transoffset=0.0f);
 
    //! set fog parameters
    static void setfogparams(int num,
@@ -137,21 +145,34 @@ class ministrip
                             float fogdensity,
                             float fogcolor[3]);
 
+   //! set global fog parameters
+   static void setglobalfogparams(float fogstart,float fogend,
+                                  float fogdensity,
+                                  float fogcolor[3]);
+
    //! get default shader
    static int getdefaultshader() {return(0);}
 
    //! set global shader
    static void useglobalshader(int num=0);
 
-   //! create basic shader
-   static int createshader(BOOLINT texgen,
-                           BOOLINT shade,BOOLINT shade_direct,
-                           BOOLINT tex,BOOLINT tex3,
-                           BOOLINT fog);
+   //! enable/disable global texture coordinate generation
+   static void setglobal_texgen(BOOLINT on) {global_texgen=on; enableglobalshader();}
 
-   //! enable basic shader
-   static int useglobalshader(BOOLINT shade,BOOLINT shade_direct,
-                              BOOLINT tex,BOOLINT tex3);
+   //! enable/disable global shading
+   static void setglobal_shade(BOOLINT on) {global_shade=on; enableglobalshader();}
+
+   //! enable/disable global direct shading
+   static void setglobal_shade_direct(BOOLINT on) {global_shade_direct=on; enableglobalshader();}
+
+   //! enable/disable global texturing (2D)
+   static void setglobal_tex(BOOLINT on) {global_tex=on; enableglobalshader();}
+
+   //! enable/disable global texturing (3D)
+   static void setglobal_tex3(BOOLINT on) {global_tex3=on; enableglobalshader();}
+
+   //! enable/disable global fogging
+   static void setglobal_fog(BOOLINT on) {global_fog=on; enableglobalshader();}
 
    //! get global shader
    static int getglobalshader();
@@ -296,16 +317,33 @@ class ministrip
    static int USEGLOBALSHADER;
    int USESHADER;
 
-   static int shader_default;
+   // global shader settings:
 
-   static int shader_shade;
-   static int shader_shade_direct;
+   static int global_shader[64];
 
-   static int shader_shade_tex;
-   static int shader_shade_direct_tex;
+   static BOOLINT global_texgen;
+   static BOOLINT global_shade,global_shade_direct;
+   static BOOLINT global_tex,global_tex3;
+   static BOOLINT global_fog;
 
-   static int shader_shade_tex3;
-   static int shader_shade_direct_tex3;
+   static float global_fogstart,global_fogend;
+   static float global_fogdensity,global_fogcolor[3];
+
+   static float global_lightdir[3];
+   static float global_lightbias,global_lightoffset;
+   static float global_transbias,global_transoffset;
+
+   static int createshader(BOOLINT texgen,
+                           BOOLINT shade,BOOLINT shade_direct,
+                           BOOLINT tex,BOOLINT tex3,
+                           BOOLINT fog);
+
+   static void enableglobalshader(BOOLINT texgen,
+                                  BOOLINT shade,BOOLINT shade_direct,
+                                  BOOLINT tex,BOOLINT tex3,
+                                  BOOLINT fog);
+
+   static void enableglobalshader();
    };
 
 #endif

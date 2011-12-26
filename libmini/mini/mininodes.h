@@ -1108,13 +1108,13 @@ class mininode_geometry: public mininode_group, public ministrip
       }
 
    //! check color array
-   BOOLINT has_color() {return(hascolor() && wocol==0);}
+   BOOLINT has_color() const {return(hascolor() && wocol==0);}
 
    //! check normal array
-   BOOLINT has_normal() {return(hasnormal() && wonrm==0);}
+   BOOLINT has_normal() const {return(hasnormal() && wonrm==0);}
 
    //! check tex coord array
-   BOOLINT has_tex() {return(hastex() && wotex==0);}
+   BOOLINT has_tex() const {return(hastex() && wotex==0);}
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius) const
