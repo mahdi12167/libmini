@@ -9,7 +9,11 @@ void mininode_group::traverse_init()
    // state initialization
    color(1,1,1);
    enableAtest(0.0f);
+
+   // texture state initialization
    bindtexmap(0);
+   bind3Dtexmap(0);
+   ministrip::setglobal_texgen(FALSE);
    }
 
 void mininode_group::traverse_exit()

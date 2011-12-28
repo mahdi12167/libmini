@@ -474,7 +474,7 @@ class mininode_texture3D: public mininode_texture
       if (t!=tid)
          {
          tid=t;
-         bindtexmap(t);
+         bind3Dtexmap(t);
          ministrip::setglobal_tex3(TRUE);
          }
 
@@ -498,7 +498,7 @@ class mininode_texture3D: public mininode_texture
       if (tid!=0)
          {
          tid=0;
-         bindtexmap(0);
+         bind3Dtexmap(0);
          ministrip::setglobal_tex3(FALSE);
          }
 
@@ -552,7 +552,16 @@ class mininode_volume: public mininode_texture3D
       : mininode_texture3D()
       {
       databuf buf;
-      if (buf.loaddata(filename.c_str()))
+      const char *name=filename.c_str();
+      const char *ext=strrchr(name,'.');
+      BOOLINT loaded=FALSE;
+
+      if (ext!=NULL)
+         if (strstr(ext,".pvm")!=0) loaded=buf.loadPVMdata(name);
+
+      if (!loaded) loaded=buf.loaddata(name);
+
+      if (loaded)
          {
          if (buf.type==databuf::DATABUF_TYPE_BYTE)
             load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
@@ -1141,9 +1150,9 @@ class mininode_geometry: public mininode_group, public ministrip
    virtual void traverse_pre()
       {
       BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
-      if (has_tex()) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
+      if (has_tex() && texgen) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
       render(wocol,wonrm,wotex); // render triangle strip
-      if (texgen) ministrip::setglobal_texgen(TRUE); // restore texgen state
+      if (hastex() && texgen) ministrip::setglobal_texgen(TRUE); // restore texgen state
       }
 
    static miniv3d project(const miniv3d &pos,const miniv3d &dir,
