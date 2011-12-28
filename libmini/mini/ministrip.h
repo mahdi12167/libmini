@@ -160,25 +160,43 @@ class ministrip
    static void setglobal_texgen(BOOLINT on)
       {global_texgen=on; enableglobalshader();}
 
+   //! get global texture coordinate generation state
+   static BOOLINT getglobal_texgen() {return(global_texgen);}
+
    //! enable/disable global shading
    static void setglobal_shade(BOOLINT on)
       {global_shade=on; if (on) global_shade_direct=FALSE; enableglobalshader();}
+
+   //! get global shading state
+   static BOOLINT getglobal_shade() {return(global_shade);}
 
    //! enable/disable global direct shading
    static void setglobal_shade_direct(BOOLINT on)
       {global_shade_direct=on; if (on) global_shade=FALSE; enableglobalshader();}
 
+   //! get global direct shading state
+   static BOOLINT getglobal_shade_direct() {return(global_shade_direct);}
+
    //! enable/disable global texturing (2D)
    static void setglobal_tex(BOOLINT on)
       {global_tex=on; if (on) global_tex3=FALSE; enableglobalshader();}
+
+   //! get global texturing state (2D)
+   static BOOLINT getglobal_tex() {return(global_tex);}
 
    //! enable/disable global texturing (3D)
    static void setglobal_tex3(BOOLINT on)
       {global_tex3=on; if (on) global_tex=FALSE; enableglobalshader();}
 
+   //! get global texturing state (3D)
+   static BOOLINT getglobal_tex3() {return(global_tex3);}
+
    //! enable/disable global fogging
    static void setglobal_fog(BOOLINT on)
       {global_fog=on; enableglobalshader();}
+
+   //! get global fogging
+   static BOOLINT getglobal_fog() {return(global_fog);}
 
    //! get global shader
    static int getglobalshader();

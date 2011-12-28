@@ -341,6 +341,7 @@ class mininode_texture2D: public mininode_texture
          {
          tid=t;
          bindtexmap(t);
+         ministrip::setglobal_tex(TRUE);
          }
 
       mininode_texture::traverse_pre();
@@ -361,6 +362,7 @@ class mininode_texture2D: public mininode_texture
          {
          tid=t;
          bindtexmap(t);
+         ministrip::setglobal_tex(TRUE);
          }
 
       mininode_texture::traverse_past();
@@ -384,6 +386,7 @@ class mininode_texture2D: public mininode_texture
          {
          tid=0;
          bindtexmap(0);
+         ministrip::setglobal_tex(FALSE);
          }
 
       mininode_texture::traverse_post();
@@ -451,6 +454,7 @@ class mininode_texture3D: public mininode_texture
          {
          tid=t;
          bind3Dtexmap(t);
+         ministrip::setglobal_tex3(TRUE);
          }
 
       mininode_texture::traverse_pre();
@@ -471,6 +475,7 @@ class mininode_texture3D: public mininode_texture
          {
          tid=t;
          bindtexmap(t);
+         ministrip::setglobal_tex3(TRUE);
          }
 
       mininode_texture::traverse_past();
@@ -494,6 +499,7 @@ class mininode_texture3D: public mininode_texture
          {
          tid=0;
          bindtexmap(0);
+         ministrip::setglobal_tex3(FALSE);
          }
 
       mininode_texture::traverse_post();
@@ -977,7 +983,7 @@ class mininode_texgen: public mininode_transform
 
    virtual void traverse_pre()
       {
-      if (texgen_level++==0) enabletexgen();
+      if (texgen_level++==0) ministrip::setglobal_texgen(TRUE);
 
       mtxtex();
       mtxpush();
@@ -987,7 +993,7 @@ class mininode_texgen: public mininode_transform
 
    virtual void traverse_post()
       {
-      if (--texgen_level==0) disabletexgen();
+      if (--texgen_level==0) ministrip::setglobal_texgen(FALSE);
 
       mtxtex();
       mtxpop();
@@ -1134,10 +1140,10 @@ class mininode_geometry: public mininode_group, public ministrip
 
    virtual void traverse_pre()
       {
-      int texgen=gettexgen(); // get texgen setting
-      if (has_tex()) disabletexgen(); // override texgen with tex coords
+      BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
+      if (has_tex()) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
       render(wocol,wonrm,wotex); // render triangle strip
-      if (texgen) enabletexgen(); // restore texgen setting
+      if (texgen) ministrip::setglobal_texgen(TRUE); // restore texgen state
       }
 
    static miniv3d project(const miniv3d &pos,const miniv3d &dir,
