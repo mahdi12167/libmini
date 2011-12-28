@@ -362,6 +362,8 @@ class mininode_texture2D: public mininode_texture
          tid=t;
          bindtexmap(t);
          }
+
+      mininode_texture::traverse_past();
       }
 
    virtual void traverse_post()
@@ -470,6 +472,8 @@ class mininode_texture3D: public mininode_texture
          tid=t;
          bindtexmap(t);
          }
+
+      mininode_texture::traverse_past();
       }
 
    virtual void traverse_post()

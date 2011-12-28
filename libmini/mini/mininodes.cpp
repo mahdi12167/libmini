@@ -9,6 +9,7 @@ void mininode_group::traverse_init()
    // state initialization
    color(1,1,1);
    enableAtest(0.0f);
+   bindtexmap(0);
    }
 
 void mininode_group::traverse_exit()
