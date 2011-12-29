@@ -10,7 +10,7 @@ HDRS	= minibase minicore\
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
-	  minimath minimpfp\
+	  minimath mininoise minimpfp\
 	  minitime miniio minidir\
 	  minirgb minicrs\
 	  ministub minitile miniload\
