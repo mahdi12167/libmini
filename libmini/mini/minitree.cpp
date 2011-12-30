@@ -1835,7 +1835,7 @@ void minitree::put3Dcolor(unsigned char *color,int components,
 float minitree::pn_getrandom(float seed)
    {
    static const long maxbits=20;
-   static const long maxnum=1<<20;
+   static const long maxnum=1<<maxbits;
 
    static long number=0;
 
@@ -1843,7 +1843,7 @@ float minitree::pn_getrandom(float seed)
 
    number=271*(number+331);
    number=(number<<(maxbits/3))+(number>>(2*maxbits/3));
-   number%=maxnum;
+   number&=maxnum-1;
 
    return((float)number/(maxnum-1));
    }

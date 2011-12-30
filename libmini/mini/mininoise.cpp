@@ -4,7 +4,40 @@
 
 #include "mininoise.h"
 
-float noise_interpolate(float v0,float v1,float v2,float v3,float x)
+inline float noise_get(const float *octave,
+                       int sx,int sy,int sz,
+                       int x,int y,int z)
+   {return(octave[x+(y+z*sy)*sx]);}
+
+inline void noise_set(float *octave,
+                      int sx,int sy,int sz,
+                      int x,int y,int z,
+                      float v)
+   {octave[x+(y+z*sy)*sx]=v;}
+
+inline void noise_add(float *octave,
+                      int sx,int sy,int sz,
+                      int x,int y,int z,
+                      float v)
+   {octave[x+(y+z*sy)*sx]+=v;}
+
+inline float noise_getrandom(float seed=-1.0f)
+   {
+   static const long long maxbits=50;
+   static const long long maxnum=1ull<<maxbits;
+
+   static long long number=0;
+
+   if (seed>=0.0f && seed<=1.0f) number=ftrc(seed*(maxnum-1)+0.5f);
+
+   number=271*(number+331);
+   number=(number<<(maxbits/3))+(number>>(2*maxbits/3));
+   number&=maxnum-1;
+
+   return((float)number/(maxnum-1));
+   }
+
+inline float noise_interpolate(float v0,float v1,float v2,float v3,float x)
    {
    float p,q,r;
 
@@ -15,7 +48,8 @@ float noise_interpolate(float v0,float v1,float v2,float v3,float x)
    return(((p*x+q)*x+r)*x+v1);
    }
 
-float noise_interpolate(float *octave,int sx,int sy,int sz,
+float noise_interpolate(float *octave,
+                        int sx,int sy,int sz,
                         float c1,float c2,float c3)
    {
    int k1,k2,k3;
@@ -178,9 +212,11 @@ float noise_interpolate(float *octave,int sx,int sy,int sz,
    }
 
 float *noise(int sx,int sy,int sz,
-             float persist)
+             int start,float persist,
+             float seed)
    {
-   int i,j,k,l;
+   int i;
+   int x,y,z;
 
    int size;
    int dx,dy,dz;
@@ -189,40 +225,69 @@ float *noise(int sx,int sy,int sz,
 
    float *noise,*octave;
 
+   float v,minv,maxv;
+
    if ((sx&(sx-1))!=0 || sx<2) ERRORMSG();
    if ((sy&(sy-1))!=0 || sy<2) ERRORMSG();
    if ((sz&(sz-1))!=0 || sz<2) ERRORMSG();
 
    if ((noise=(float *)malloc(sx*sy*sz*sizeof(float)))==NULL) ERRORMSG();
-   for (i=0; i<sx*sy*sz; i++) noise[i]=0.0f;
+
+   for (x=0; x<sx; x++)
+      for (y=0; y<sy; y++)
+         for (z=0; z<sz; z++) noise_set(noise,sx,sy,sz,x,y,z,0.0f);
 
    if ((octave=(float *)malloc(sx*sy*sz*sizeof(float)))==NULL) ERRORMSG();
 
    size=max(sx,max(sy,sz));
 
+   noise_getrandom(seed);
+
    scaling=1.0f;
 
-   for (i=4; i<=size; i*=2)
+   for (i=start; i<=size; i*=2)
       {
       dx=max(i*sx/size,1);
       dy=max(i*sy/size,1);
       dz=max(i*sz/size,1);
 
-      for (j=0; j<dx*dy*dz; j++)
-         octave[j]=drand48()*scaling;
+      for (x=0; x<dx; x++)
+         for (y=0; y<dy; y++)
+            for (z=0; z<dz; z++)
+               noise_set(octave,dx,dy,dz,x,y,z,
+                         noise_getrandom()*scaling);
 
-      for (j=0; j<sx; j++)
-         for (k=0; k<sy; k++)
-            for (l=0; l<sz; l++)
-               noise[j+(k+l*sy)*sx]+=noise_interpolate(octave,dx,dy,dz,
-                                                       (float)j/(sx-1),
-                                                       (float)k/(sy-1),
-                                                       (float)l/(sz-1));
+      for (x=0; x<sx; x++)
+         for (y=0; y<sy; y++)
+            for (z=0; z<sz; z++)
+               noise_add(noise,sx,sy,sz,x,y,z,
+                         noise_interpolate(octave,dx,dy,dz,
+                                           (float)x/(sx-1),(float)y/(sy-1),(float)z/(sz-1)));
 
       scaling*=persist;
       }
 
    free(octave);
+
+   minv=MAXFLOAT;
+   maxv=-MAXFLOAT;
+
+   for (x=0; x<sx; x++)
+      for (y=0; y<sy; y++)
+         for (z=0; z<sz; z++)
+            {
+            v=noise_get(noise,sx,sy,sz,x,y,z);
+            if (v<minv) minv=v;
+            if (v>maxv) maxv=v;
+            }
+
+   if (minv==maxv) maxv++;
+
+   for (x=0; x<sx; x++)
+      for (y=0; y<sy; y++)
+         for (z=0; z<sz; z++)
+            noise_set(noise,sx,sy,sz,x,y,z,
+                      (noise_get(noise,sx,sy,sz,x,y,z)-minv)/(maxv-minv));
 
    return(noise);
    }
