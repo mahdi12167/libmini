@@ -4,22 +4,22 @@
 
 #include "mininoise.h"
 
-inline float noise_get(const float *octave,
+inline float noise_get(const float *data,
                        int sx,int sy,int sz,
                        int x,int y,int z)
-   {return(octave[x+(y+z*sy)*sx]);}
+   {return(data[x+(y+z*sy)*sx]);}
 
-inline void noise_set(float *octave,
+inline void noise_set(float *data,
                       int sx,int sy,int sz,
                       int x,int y,int z,
                       float v)
-   {octave[x+(y+z*sy)*sx]=v;}
+   {data[x+(y+z*sy)*sx]=v;}
 
-inline void noise_add(float *octave,
+inline void noise_add(float *data,
                       int sx,int sy,int sz,
                       int x,int y,int z,
                       float v)
-   {octave[x+(y+z*sy)*sx]+=v;}
+   {data[x+(y+z*sy)*sx]+=v;}
 
 inline float noise_getrandom(float seed=-1.0f)
    {
@@ -48,7 +48,7 @@ inline float noise_interpolate(float v0,float v1,float v2,float v3,float x)
    return(((p*x+q)*x+r)*x+v1);
    }
 
-float noise_interpolate(float *octave,
+float noise_interpolate(float *data,
                         int sx,int sy,int sz,
                         float c1,float c2,float c3)
    {
@@ -105,66 +105,66 @@ float noise_interpolate(float *octave,
       w3=1.0f;
       }
 
-   v1=noise_interpolate((k1>0)?octave[k1-1+(k2+k3*sy)*sx]:octave[k1+(k2+k3*sy)*sx],
-                        octave[k1+(k2+k3*sy)*sx],octave[k1+1+(k2+k3*sy)*sx],
-                        (k1<sx-2)?octave[k1+2+(k2+k3*sy)*sx]:octave[k1+1+(k2+k3*sy)*sx],w1);
+   v1=noise_interpolate((k1>0)?data[k1-1+(k2+k3*sy)*sx]:data[k1+(k2+k3*sy)*sx],
+                        data[k1+(k2+k3*sy)*sx],data[k1+1+(k2+k3*sy)*sx],
+                        (k1<sx-2)?data[k1+2+(k2+k3*sy)*sx]:data[k1+1+(k2+k3*sy)*sx],w1);
 
    if (k2>0)
-      v0=noise_interpolate((k1>0)?octave[k1-1+(k2-1+k3*sy)*sx]:octave[k1+(k2-1+k3*sy)*sx],
-                           octave[k1+(k2-1+k3*sy)*sx],octave[k1+1+(k2-1+k3*sy)*sx],
-                           (k1<sx-2)?octave[k1+2+(k2-1+k3*sy)*sx]:octave[k1+1+(k2-1+k3*sy)*sx],w1);
+      v0=noise_interpolate((k1>0)?data[k1-1+(k2-1+k3*sy)*sx]:data[k1+(k2-1+k3*sy)*sx],
+                           data[k1+(k2-1+k3*sy)*sx],data[k1+1+(k2-1+k3*sy)*sx],
+                           (k1<sx-2)?data[k1+2+(k2-1+k3*sy)*sx]:data[k1+1+(k2-1+k3*sy)*sx],w1);
    else v0=v1;
 
-   v2=noise_interpolate((k1>0)?octave[k1-1+(k2+1+k3*sy)*sx]:octave[k1+(k2+1+k3*sy)*sx],
-                        octave[k1+(k2+1+k3*sy)*sx],octave[k1+1+(k2+1+k3*sy)*sx],
-                        (k1<sx-2)?octave[k1+2+(k2+1+k3*sy)*sx]:octave[k1+1+(k2+1+k3*sy)*sx],w1);
+   v2=noise_interpolate((k1>0)?data[k1-1+(k2+1+k3*sy)*sx]:data[k1+(k2+1+k3*sy)*sx],
+                        data[k1+(k2+1+k3*sy)*sx],data[k1+1+(k2+1+k3*sy)*sx],
+                        (k1<sx-2)?data[k1+2+(k2+1+k3*sy)*sx]:data[k1+1+(k2+1+k3*sy)*sx],w1);
 
    if (k2<sy-2)
-      v3=noise_interpolate((k1>0)?octave[k1-1+(k2+2+k3*sy)*sx]:octave[k1+(k2+2+k3*sy)*sx],
-                           octave[k1+(k2+2+k3*sy)*sx],octave[k1+1+(k2+2+k3*sy)*sx],
-                           (k1<sx-2)?octave[k1+2+(k2+2+k3*sy)*sx]:octave[k1+1+(k2+2+k3*sy)*sx],w1);
+      v3=noise_interpolate((k1>0)?data[k1-1+(k2+2+k3*sy)*sx]:data[k1+(k2+2+k3*sy)*sx],
+                           data[k1+(k2+2+k3*sy)*sx],data[k1+1+(k2+2+k3*sy)*sx],
+                           (k1<sx-2)?data[k1+2+(k2+2+k3*sy)*sx]:data[k1+1+(k2+2+k3*sy)*sx],w1);
    else v3=v2;
 
-   v5=noise_interpolate((k1>0)?octave[k1-1+(k2+(k3+1)*sy)*sx]:octave[k1+(k2+(k3+1)*sy)*sx],
-                        octave[k1+(k2+(k3+1)*sy)*sx],octave[k1+1+(k2+(k3+1)*sy)*sx],
-                        (k1<sx-2)?octave[k1+2+(k2+(k3+1)*sy)*sx]:octave[k1+1+(k2+(k3+1)*sy)*sx],w1);
+   v5=noise_interpolate((k1>0)?data[k1-1+(k2+(k3+1)*sy)*sx]:data[k1+(k2+(k3+1)*sy)*sx],
+                        data[k1+(k2+(k3+1)*sy)*sx],data[k1+1+(k2+(k3+1)*sy)*sx],
+                        (k1<sx-2)?data[k1+2+(k2+(k3+1)*sy)*sx]:data[k1+1+(k2+(k3+1)*sy)*sx],w1);
 
    if (k2>0)
-      v4=noise_interpolate((k1>0)?octave[k1-1+(k2-1+(k3+1)*sy)*sx]:octave[k1+(k2-1+(k3+1)*sy)*sx],
-                           octave[k1+(k2-1+(k3+1)*sy)*sx],octave[k1+1+(k2-1+(k3+1)*sy)*sx],
-                           (k1<sx-2)?octave[k1+2+(k2-1+(k3+1)*sy)*sx]:octave[k1+1+(k2-1+(k3+1)*sy)*sx],w1);
+      v4=noise_interpolate((k1>0)?data[k1-1+(k2-1+(k3+1)*sy)*sx]:data[k1+(k2-1+(k3+1)*sy)*sx],
+                           data[k1+(k2-1+(k3+1)*sy)*sx],data[k1+1+(k2-1+(k3+1)*sy)*sx],
+                           (k1<sx-2)?data[k1+2+(k2-1+(k3+1)*sy)*sx]:data[k1+1+(k2-1+(k3+1)*sy)*sx],w1);
    else v4=v5;
 
-   v6=noise_interpolate((k1>0)?octave[k1-1+(k2+1+(k3+1)*sy)*sx]:octave[k1+(k2+1+(k3+1)*sy)*sx],
-                        octave[k1+(k2+1+(k3+1)*sy)*sx],octave[k1+1+(k2+1+(k3+1)*sy)*sx],
-                        (k1<sx-2)?octave[k1+2+(k2+1+(k3+1)*sy)*sx]:octave[k1+1+(k2+1+(k3+1)*sy)*sx],w1);
+   v6=noise_interpolate((k1>0)?data[k1-1+(k2+1+(k3+1)*sy)*sx]:data[k1+(k2+1+(k3+1)*sy)*sx],
+                        data[k1+(k2+1+(k3+1)*sy)*sx],data[k1+1+(k2+1+(k3+1)*sy)*sx],
+                        (k1<sx-2)?data[k1+2+(k2+1+(k3+1)*sy)*sx]:data[k1+1+(k2+1+(k3+1)*sy)*sx],w1);
 
    if (k2<sy-2)
-      v7=noise_interpolate((k1>0)?octave[k1-1+(k2+2+(k3+1)*sy)*sx]:octave[k1+(k2+2+(k3+1)*sy)*sx],
-                           octave[k1+(k2+2+(k3+1)*sy)*sx],octave[k1+1+(k2+2+(k3+1)*sy)*sx],
-                           (k1<sx-2)?octave[k1+2+(k2+2+(k3+1)*sy)*sx]:octave[k1+1+(k2+2+(k3+1)*sy)*sx],w1);
+      v7=noise_interpolate((k1>0)?data[k1-1+(k2+2+(k3+1)*sy)*sx]:data[k1+(k2+2+(k3+1)*sy)*sx],
+                           data[k1+(k2+2+(k3+1)*sy)*sx],data[k1+1+(k2+2+(k3+1)*sy)*sx],
+                           (k1<sx-2)?data[k1+2+(k2+2+(k3+1)*sy)*sx]:data[k1+1+(k2+2+(k3+1)*sy)*sx],w1);
    else v7=v6;
 
    if (k3>0)
       {
-      v9=noise_interpolate((k1>0)?octave[k1-1+(k2+(k3-1)*sy)*sx]:octave[k1+(k2+(k3-1)*sy)*sx],
-                           octave[k1+(k2+(k3-1)*sy)*sx],octave[k1+1+(k2+(k3-1)*sy)*sx],
-                           (k1<sx-2)?octave[k1+2+(k2+(k3-1)*sy)*sx]:octave[k1+1+(k2+(k3-1)*sy)*sx],w1);
+      v9=noise_interpolate((k1>0)?data[k1-1+(k2+(k3-1)*sy)*sx]:data[k1+(k2+(k3-1)*sy)*sx],
+                           data[k1+(k2+(k3-1)*sy)*sx],data[k1+1+(k2+(k3-1)*sy)*sx],
+                           (k1<sx-2)?data[k1+2+(k2+(k3-1)*sy)*sx]:data[k1+1+(k2+(k3-1)*sy)*sx],w1);
 
       if (k2>0)
-         v8=noise_interpolate((k1>0)?octave[k1-1+(k2-1+(k3-1)*sy)*sx]:octave[k1+(k2-1+(k3-1)*sy)*sx],
-                              octave[k1+(k2-1+(k3-1)*sy)*sx],octave[k1+1+(k2-1+(k3-1)*sy)*sx],
-                              (k1<sx-2)?octave[k1+2+(k2-1+(k3-1)*sy)*sx]:octave[k1+1+(k2-1+(k3-1)*sy)*sx],w1);
+         v8=noise_interpolate((k1>0)?data[k1-1+(k2-1+(k3-1)*sy)*sx]:data[k1+(k2-1+(k3-1)*sy)*sx],
+                              data[k1+(k2-1+(k3-1)*sy)*sx],data[k1+1+(k2-1+(k3-1)*sy)*sx],
+                              (k1<sx-2)?data[k1+2+(k2-1+(k3-1)*sy)*sx]:data[k1+1+(k2-1+(k3-1)*sy)*sx],w1);
       else v8=v9;
 
-      v10=noise_interpolate((k1>0)?octave[k1-1+(k2+1+(k3-1)*sy)*sx]:octave[k1+(k2+1+(k3-1)*sy)*sx],
-                            octave[k1+(k2+1+(k3-1)*sy)*sx],octave[k1+1+(k2+1+(k3-1)*sy)*sx],
-                            (k1<sx-2)?octave[k1+2+(k2+1+(k3-1)*sy)*sx]:octave[k1+1+(k2+1+(k3-1)*sy)*sx],w1);
+      v10=noise_interpolate((k1>0)?data[k1-1+(k2+1+(k3-1)*sy)*sx]:data[k1+(k2+1+(k3-1)*sy)*sx],
+                            data[k1+(k2+1+(k3-1)*sy)*sx],data[k1+1+(k2+1+(k3-1)*sy)*sx],
+                            (k1<sx-2)?data[k1+2+(k2+1+(k3-1)*sy)*sx]:data[k1+1+(k2+1+(k3-1)*sy)*sx],w1);
 
       if (k2<sy-2)
-         v11=noise_interpolate((k1>0)?octave[k1-1+(k2+2+(k3-1)*sy)*sx]:octave[k1+(k2+2+(k3-1)*sy)*sx],
-                               octave[k1+(k2+2+(k3-1)*sy)*sx],octave[k1+1+(k2+2+(k3-1)*sy)*sx],
-                               (k1<sx-2)?octave[k1+2+(k2+2+(k3-1)*sy)*sx]:octave[k1+1+(k2+2+(k3-1)*sy)*sx],w1);
+         v11=noise_interpolate((k1>0)?data[k1-1+(k2+2+(k3-1)*sy)*sx]:data[k1+(k2+2+(k3-1)*sy)*sx],
+                               data[k1+(k2+2+(k3-1)*sy)*sx],data[k1+1+(k2+2+(k3-1)*sy)*sx],
+                               (k1<sx-2)?data[k1+2+(k2+2+(k3-1)*sy)*sx]:data[k1+1+(k2+2+(k3-1)*sy)*sx],w1);
       else v11=v10;
       }
    else
@@ -177,24 +177,24 @@ float noise_interpolate(float *octave,
 
    if (k3<sz-2)
       {
-      v13=noise_interpolate((k1>0)?octave[k1-1+(k2+(k3+2)*sy)*sx]:octave[k1+(k2+(k3+2)*sy)*sx],
-                            octave[k1+(k2+(k3+2)*sy)*sx],octave[k1+1+(k2+(k3+2)*sy)*sx],
-                            (k1<sx-2)?octave[k1+2+(k2+(k3+2)*sy)*sx]:octave[k1+1+(k2+(k3+2)*sy)*sx],w1);
+      v13=noise_interpolate((k1>0)?data[k1-1+(k2+(k3+2)*sy)*sx]:data[k1+(k2+(k3+2)*sy)*sx],
+                            data[k1+(k2+(k3+2)*sy)*sx],data[k1+1+(k2+(k3+2)*sy)*sx],
+                            (k1<sx-2)?data[k1+2+(k2+(k3+2)*sy)*sx]:data[k1+1+(k2+(k3+2)*sy)*sx],w1);
 
       if (k2>0)
-         v12=noise_interpolate((k1>0)?octave[k1-1+(k2-1+(k3+2)*sy)*sx]:octave[k1+(k2-1+(k3+2)*sy)*sx],
-                               octave[k1+(k2-1+(k3+2)*sy)*sx],octave[k1+1+(k2-1+(k3+2)*sy)*sx],
-                               (k1<sx-2)?octave[k1+2+(k2-1+(k3+2)*sy)*sx]:octave[k1+1+(k2-1+(k3+2)*sy)*sx],w1);
+         v12=noise_interpolate((k1>0)?data[k1-1+(k2-1+(k3+2)*sy)*sx]:data[k1+(k2-1+(k3+2)*sy)*sx],
+                               data[k1+(k2-1+(k3+2)*sy)*sx],data[k1+1+(k2-1+(k3+2)*sy)*sx],
+                               (k1<sx-2)?data[k1+2+(k2-1+(k3+2)*sy)*sx]:data[k1+1+(k2-1+(k3+2)*sy)*sx],w1);
       else v12=v13;
 
-      v14=noise_interpolate((k1>0)?octave[k1-1+(k2+1+(k3+2)*sy)*sx]:octave[k1+(k2+1+(k3+2)*sy)*sx],
-                            octave[k1+(k2+1+(k3+2)*sy)*sx],octave[k1+1+(k2+1+(k3+2)*sy)*sx],
-                            (k1<sx-2)?octave[k1+2+(k2+1+(k3+2)*sy)*sx]:octave[k1+1+(k2+1+(k3+2)*sy)*sx],w1);
+      v14=noise_interpolate((k1>0)?data[k1-1+(k2+1+(k3+2)*sy)*sx]:data[k1+(k2+1+(k3+2)*sy)*sx],
+                            data[k1+(k2+1+(k3+2)*sy)*sx],data[k1+1+(k2+1+(k3+2)*sy)*sx],
+                            (k1<sx-2)?data[k1+2+(k2+1+(k3+2)*sy)*sx]:data[k1+1+(k2+1+(k3+2)*sy)*sx],w1);
 
       if (k2<sy-2)
-         v15=noise_interpolate((k1>0)?octave[k1-1+(k2+2+(k3+2)*sy)*sx]:octave[k1+(k2+2+(k3+2)*sy)*sx],
-                               octave[k1+(k2+2+(k3+2)*sy)*sx],octave[k1+1+(k2+2+(k3+2)*sy)*sx],
-                               (k1<sx-2)?octave[k1+2+(k2+2+(k3+2)*sy)*sx]:octave[k1+1+(k2+2+(k3+2)*sy)*sx],w1);
+         v15=noise_interpolate((k1>0)?data[k1-1+(k2+2+(k3+2)*sy)*sx]:data[k1+(k2+2+(k3+2)*sy)*sx],
+                               data[k1+(k2+2+(k3+2)*sy)*sx],data[k1+1+(k2+2+(k3+2)*sy)*sx],
+                               (k1<sx-2)?data[k1+2+(k2+2+(k3+2)*sy)*sx]:data[k1+1+(k2+2+(k3+2)*sy)*sx],w1);
       else v15=v14;
       }
    else
@@ -209,6 +209,28 @@ float noise_interpolate(float *octave,
                             noise_interpolate(v0,v1,v2,v3,w2),
                             noise_interpolate(v4,v5,v6,v7,w2),
                             noise_interpolate(v12,v13,v14,v15,w2),w3));
+   }
+
+void noise_average(float *data,
+                   int sx,int sy,int sz,
+                   int x1,int y1,int z1,
+                   int x2,int y2,int z2,
+                   int dx,int dy,int dz)
+   {
+   int x,y,z;
+
+   float v,v1,v2;
+
+   for (x=0; x<dx; x++)
+      for (y=0; y<dy; y++)
+         for (z=0; z<dz; z++)
+            {
+            v1=noise_get(data,sx,sy,sz,x1+x,y1+y,z1+z);
+            v2=noise_get(data,sx,sy,sz,x2+x,y2+y,z2+z);
+            v=(v1+v2)/2.0f;
+            noise_set(data,sx,sy,sz,x1+x,y1+y,z1+z,v);
+            noise_set(data,sx,sy,sz,x2+x,y2+y,z2+z,v);
+            }
    }
 
 float *noise(int sx,int sy,int sz,
@@ -257,6 +279,11 @@ float *noise(int sx,int sy,int sz,
                noise_set(octave,dx,dy,dz,x,y,z,
                          noise_getrandom()*scaling);
 
+      // seamless noise via octave averaging
+      noise_average(octave,dx,dy,dz,0,0,0,dx-1,0,0,1,dy,dz);
+      noise_average(octave,dx,dy,dz,0,0,0,0,dy-1,0,dx,1,dz);
+      noise_average(octave,dx,dy,dz,0,0,0,0,0,dz-1,dx,dy,1);
+
       for (x=0; x<sx; x++)
          for (y=0; y<sy; y++)
             for (z=0; z<sz; z++)
@@ -283,6 +310,7 @@ float *noise(int sx,int sy,int sz,
 
    if (minv==maxv) maxv++;
 
+   // normalization
    for (x=0; x<sx; x++)
       for (y=0; y<sy; y++)
          for (z=0; z<sz; z++)
