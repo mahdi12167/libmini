@@ -279,7 +279,7 @@ float *noise(int sx,int sy,int sz,
                noise_set(octave,dx,dy,dz,x,y,z,
                          noise_getrandom()*scaling);
 
-      // seamless noise via octave averaging
+      // seamless noise via octave face averaging
       noise_average(octave,dx,dy,dz,0,0,0,dx-1,0,0,1,dy,dz);
       noise_average(octave,dx,dy,dz,0,0,0,0,dy-1,0,dx,1,dz);
       noise_average(octave,dx,dy,dz,0,0,0,0,0,dz-1,dx,dy,1);
