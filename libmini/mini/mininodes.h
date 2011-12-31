@@ -519,22 +519,23 @@ class mininode_image: public mininode_texture2D
       databuf buf;
       if (miniimg::loadimg(buf,filename.c_str()))
          {
-         if (buf.type==databuf::DATABUF_TYPE_BYTE)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
-         else if (buf.type==databuf::DATABUF_TYPE_SHORT)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,16);
-         else if (buf.type==databuf::DATABUF_TYPE_RGB)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8);
-         else if (buf.type==databuf::DATABUF_TYPE_RGB_S3TC)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,0,1,buf.bytes);
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA_S3TC)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,0,1,buf.bytes);
-         else if (buf.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,1,1,buf.bytes,1);
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,1,1,buf.bytes,1);
+         if (buf.xsize>=2 && buf.ysize>=2)
+            if (buf.type==databuf::DATABUF_TYPE_BYTE)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
+            else if (buf.type==databuf::DATABUF_TYPE_SHORT)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,16);
+            else if (buf.type==databuf::DATABUF_TYPE_RGB)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
+            else if (buf.type==databuf::DATABUF_TYPE_RGBA)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8);
+            else if (buf.type==databuf::DATABUF_TYPE_RGB_S3TC)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,0,1,buf.bytes);
+            else if (buf.type==databuf::DATABUF_TYPE_RGBA_S3TC)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,0,1,buf.bytes);
+            else if (buf.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,1,1,buf.bytes,1);
+            else if (buf.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,1,1,buf.bytes,1);
 
          buf.release();
          }
@@ -552,23 +553,15 @@ class mininode_volume: public mininode_texture3D
       : mininode_texture3D()
       {
       databuf buf;
-      const char *name=filename.c_str();
-      const char *ext=strrchr(name,'.');
-      BOOLINT loaded=FALSE;
-
-      if (ext!=NULL)
-         if (strstr(ext,".pvm")!=0) loaded=buf.loadPVMdata(name);
-
-      if (!loaded) loaded=buf.loaddata(name);
-
-      if (loaded)
+      if (miniimg::loadimg(buf,filename.c_str()))
          {
-         if (buf.type==databuf::DATABUF_TYPE_BYTE)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
-         else if (buf.type==databuf::DATABUF_TYPE_RGB)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,3);
-         else if (buf.type==databuf::DATABUF_TYPE_RGBA)
-            load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,4);
+         if (buf.xsize>=2 && buf.ysize>=2 && buf.zsize>=2)
+            if (buf.type==databuf::DATABUF_TYPE_BYTE)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
+            else if (buf.type==databuf::DATABUF_TYPE_RGB)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,3);
+            else if (buf.type==databuf::DATABUF_TYPE_RGBA)
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,4);
 
          buf.release();
          }
