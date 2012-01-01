@@ -4,26 +4,15 @@
 
 #include "mininoise.h"
 
-namespace mininoise {
+mininoise::mininoise(int sx,int sy,int sz,
+                     int start,float persist,
+                     float seed)
+   {}
 
-inline float get(const float *data,
-                 int sx,int sy,int sz,
-                 int x,int y,int z)
-   {return(data[x+(y+z*sy)*sx]);}
+mininoise::~mininoise()
+   {}
 
-inline void set(float *data,
-                int sx,int sy,int sz,
-                int x,int y,int z,
-                float v)
-   {data[x+(y+z*sy)*sx]=v;}
-
-inline void add(float *data,
-                int sx,int sy,int sz,
-                int x,int y,int z,
-                float v)
-   {data[x+(y+z*sy)*sx]+=v;}
-
-inline float getrandom(float seed=-1.0f)
+float mininoise::getrandom(float seed)
    {
    static const long long maxbits=50;
    static const long long maxnum=1ull<<maxbits;
@@ -39,7 +28,7 @@ inline float getrandom(float seed=-1.0f)
    return((float)number/(maxnum-1));
    }
 
-inline float interpolate(float v0,float v1,float v2,float v3,float x)
+float mininoise::interpolate(float v0,float v1,float v2,float v3,float x)
    {
    float p,q,r;
 
@@ -50,9 +39,9 @@ inline float interpolate(float v0,float v1,float v2,float v3,float x)
    return(((p*x+q)*x+r)*x+v1);
    }
 
-float interpolate(float *data,
-                  int sx,int sy,int sz,
-                  float c1,float c2,float c3)
+float mininoise::interpolate(float *data,
+                             int sx,int sy,int sz,
+                             float c1,float c2,float c3)
    {
    int k1,k2,k3;
    float w1,w2,w3;
@@ -213,11 +202,11 @@ float interpolate(float *data,
                       interpolate(v12,v13,v14,v15,w2),w3));
    }
 
-void average(float *data,
-             int sx,int sy,int sz,
-             int x1,int y1,int z1,
-             int x2,int y2,int z2,
-             int dx,int dy,int dz)
+void mininoise::average(float *data,
+                        int sx,int sy,int sz,
+                        int x1,int y1,int z1,
+                        int x2,int y2,int z2,
+                        int dx,int dy,int dz)
    {
    int x,y,z;
 
@@ -235,9 +224,9 @@ void average(float *data,
             }
    }
 
-float *noise(int sx,int sy,int sz,
-             int start,float persist,
-             float seed)
+float *mininoise::noise(int sx,int sy,int sz,
+                        int start,float persist,
+                        float seed)
    {
    int i;
    int x,y,z;
@@ -321,5 +310,3 @@ float *noise(int sx,int sy,int sz,
 
    return(noise);
    }
-
-}
