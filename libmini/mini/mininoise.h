@@ -16,8 +16,7 @@ class mininoise
    ~mininoise();
 
    //! cubic interpolation of perlin noise
-   float interpolate(float c1,float c2=0.0f,float c3=0.0f)
-      {return(interpolate(data,sizex,sizey,sizez,c1,c2,c3));}
+   float interpolate(float c1,float c2=0.0f,float c3=0.0f);
 
    private:
 

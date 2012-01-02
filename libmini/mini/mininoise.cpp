@@ -18,6 +18,18 @@ mininoise::mininoise(int sx,int sy,int sz,
 mininoise::~mininoise()
    {free(data);}
 
+float mininoise::interpolate(float c1,float c2,float c3)
+   {
+   float v;
+
+   v=interpolate(data,sizex,sizey,sizez,c1,c2,c3);
+
+   if (v<0.0f) v=0.0f;
+   else if (v>1.0f) v=1.0f;
+
+   return(v);
+   }
+
 float mininoise::interpolate(float v0,float v1,float v2,float v3,float x)
    {
    float p,q,r;
@@ -170,6 +182,8 @@ float *mininoise::noise(int sx,int sy,int sz,
    if ((sx&(sx-1))!=0 || sx<1) ERRORMSG();
    if ((sy&(sy-1))!=0 || sy<1) ERRORMSG();
    if ((sz&(sz-1))!=0 || sz<1) ERRORMSG();
+
+   if ((start&(start-1))!=0 || start<1) ERRORMSG();
 
    if ((noise=(float *)malloc(sx*sy*sz*sizeof(float)))==NULL) ERRORMSG();
 

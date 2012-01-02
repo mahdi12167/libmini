@@ -4,6 +4,7 @@
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
+
 #include <mini/mininoise.h> //!!
 
 #ifndef __APPLE__
@@ -108,9 +109,13 @@ int main(int argc,char *argv[])
    // ...
 
    //!!
-   mininoise noise(64,64,1);
-   for (int i=0; i<=50; i++)
-      printf("%g\n",noise.interpolate(i/50.0f,0.5f,0.5f));
+   mininoise noise(512,512,1,16,0.75f);
+   databuf buf;
+   buf.alloc(501,501,1);
+   for (int i=0; i<=500; i++)
+      for (int j=0; j<=500; j++)
+         buf.setval(i,j,0,255*noise.interpolate(i/500.0f,j/500.0f,0.5f));
+   buf.savePNMdata("test.pgm");
 
 #ifdef OPENGLTEST
    miniOGL::print_unsupported_glexts();
