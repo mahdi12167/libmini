@@ -84,11 +84,47 @@ float mininoise::interpolate(const float *data,
    k1=ftrc(c1*(sx-1));
    w1=c1*(sx-1)-k1;
 
+   if (k1<0)
+      {
+      k1=0;
+      w1=0.0f;
+      }
+
+   if (k1>sx-1)
+      {
+      k1=sx-1;
+      w1=1.0f;
+      }
+
    k2=ftrc(c2*(sy-1));
    w2=c2*(sy-1)-k2;
 
+   if (k2<0)
+      {
+      k2=0;
+      w2=0.0f;
+      }
+
+   if (k2>sy-1)
+      {
+      k2=sy-1;
+      w2=1.0f;
+      }
+
    k3=ftrc(c3*(sz-1));
    w3=c3*(sz-1)-k3;
+
+   if (k3<0)
+      {
+      k3=0;
+      w3=0.0f;
+      }
+
+   if (k3>sz-1)
+      {
+      k3=sz-1;
+      w3=1.0f;
+      }
 
    return(interpolatez(data,sx,sy,sz,k1,k2,k3,w1,w2,w3));
    }
