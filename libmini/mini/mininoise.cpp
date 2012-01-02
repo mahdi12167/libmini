@@ -38,7 +38,7 @@ float mininoise::interpolatex(const float *data,
 
    v1=get(data,sx,sy,sz,k1,k2,k3);
    v0=(k1>0)?get(data,sx,sy,sz,k1-1,k2,k3):v1;
-   v2=get(data,sx,sy,sz,k1+1,k2,k3);
+   v2=(k1<sx-1)?get(data,sx,sy,sz,k1+1,k2,k3):v1;
    v3=(k1<sx-2)?get(data,sx,sy,sz,k1+2,k2,k3):v2;
 
    return(interpolate(v0,v1,v2,v3,wx));
@@ -52,14 +52,9 @@ float mininoise::interpolatey(const float *data,
    float v0,v1,v2,v3;
 
    v1=interpolatex(data,sx,sy,sz,k1,k2,k3,wx);
-
-   if (k2>0) v0=interpolatex(data,sx,sy,sz,k1,k2-1,k3,wx);
-   else v0=v1;
-
-   v2=interpolatex(data,sx,sy,sz,k1,k2+1,k3,wx);
-
-   if (k2<sy-2) v3=interpolatex(data,sx,sy,sz,k1,k2+2,k3,wx);
-   else v3=v2;
+   v0=(k2>0)?interpolatex(data,sx,sy,sz,k1,k2-1,k3,wx):v1;
+   v2=(k2<sy-1)?interpolatex(data,sx,sy,sz,k1,k2+1,k3,wx):v1;
+   v3=(k2<sy-2)?interpolatex(data,sx,sy,sz,k1,k2+2,k3,wx):v2;
 
    return(interpolate(v0,v1,v2,v3,wy));
    }
@@ -72,14 +67,9 @@ float mininoise::interpolatez(const float *data,
    float v0,v1,v2,v3;
 
    v1=interpolatey(data,sx,sy,sz,k1,k2,k3,wx,wy);
-
-   if (k3>0) v0=interpolatey(data,sx,sy,sz,k1,k2,k3-1,wx,wy);
-   else v0=v1;
-
-   v2=interpolatey(data,sx,sy,sz,k1,k2,k3+1,wx,wy);
-
-   if (k3<sz-2) v3=interpolatey(data,sx,sy,sz,k1,k2,k3+2,wx,wy);
-   else v3=v2;
+   v0=(k3>0)?interpolatey(data,sx,sy,sz,k1,k2,k3-1,wx,wy):v1;
+   v2=(k3<sz-1)?interpolatey(data,sx,sy,sz,k1,k2,k3+1,wx,wy):v1;
+   v3=(k3<sz-2)?interpolatey(data,sx,sy,sz,k1,k2,k3+2,wx,wy):v2;
 
    return(interpolate(v0,v1,v2,v3,wz));
    }
@@ -94,47 +84,11 @@ float mininoise::interpolate(const float *data,
    k1=ftrc(c1*(sx-1));
    w1=c1*(sx-1)-k1;
 
-   if (k1<0)
-      {
-      k1=0;
-      w1=0.0f;
-      }
-
-   if (k1>sx-2)
-      {
-      k1=sx-2;
-      w1=1.0f;
-      }
-
    k2=ftrc(c2*(sy-1));
    w2=c2*(sy-1)-k2;
 
-   if (k2<0)
-      {
-      k2=0;
-      w2=0.0f;
-      }
-
-   if (k2>sy-2)
-      {
-      k2=sy-2;
-      w2=1.0f;
-      }
-
    k3=ftrc(c3*(sz-1));
    w3=c3*(sz-1)-k3;
-
-   if (k3<0)
-      {
-      k3=0;
-      w3=0.0f;
-      }
-
-   if (k3>sz-2)
-      {
-      k3=sz-2;
-      w3=1.0f;
-      }
 
    return(interpolatez(data,sx,sy,sz,k1,k2,k3,w1,w2,w3));
    }
