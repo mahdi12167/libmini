@@ -7,17 +7,22 @@ class mininoise
    {
    public:
 
+   //! default constructor
    mininoise(int sx=64,int sy=64,int sz=64,
              int start=4,float persist=0.5f,
              float seed=0.0f);
 
+   //! default constructor
    ~mininoise();
 
-   protected:
+   //! cubic interpolation of perlin noise
+   float interpolate(float c1,float c2,float c3)
+      {return(interpolate(data,sizex,sizey,sizez,c1,c2,c3));}
 
-   static float *noise(int sx=64,int sy=64,int sz=64,
-                       int start=4,float persist=0.5f,
-                       float seed=0.0f);
+   private:
+
+   int sizex,sizey,sizez;
+   float *data;
 
    inline static float get(const float *data,
                            int sx,int sy,int sz,
@@ -36,8 +41,6 @@ class mininoise
                           float v)
       {data[x+(y+z*sy)*sx]+=v;}
 
-   static float getrandom(float seed=-1.0f);
-
    inline static float interpolate(float v0,float v1,float v2,float v3,float x);
 
    static float interpolate(float *data,
@@ -49,6 +52,12 @@ class mininoise
                        int x1,int y1,int z1,
                        int x2,int y2,int z2,
                        int dx,int dy,int dz);
+
+   static float *noise(int sx=64,int sy=64,int sz=64,
+                       int start=4,float persist=0.5f,
+                       float seed=0.0f);
+
+   static float getrandom(float seed=-1.0f);
    };
 
 #endif

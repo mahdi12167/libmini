@@ -7,26 +7,16 @@
 mininoise::mininoise(int sx,int sy,int sz,
                      int start,float persist,
                      float seed)
-   {}
+   {
+   sizex=sz;
+   sizey=sy;
+   sizez=sz;
+
+   data=noise(sx,sy,sz,start,persist,seed);
+   }
 
 mininoise::~mininoise()
-   {}
-
-float mininoise::getrandom(float seed)
-   {
-   static const long long maxbits=50;
-   static const long long maxnum=1ull<<maxbits;
-
-   static long long number=0;
-
-   if (seed>=0.0f && seed<=1.0f) number=ftrc(seed*(maxnum-1)+0.5f);
-
-   number=271*(number+331);
-   number=(number<<(maxbits/3))+(number>>(2*maxbits/3));
-   number&=maxnum-1;
-
-   return((float)number/(maxnum-1));
-   }
+   {free(data);}
 
 float mininoise::interpolate(float v0,float v1,float v2,float v3,float x)
    {
@@ -309,4 +299,20 @@ float *mininoise::noise(int sx,int sy,int sz,
                 (get(noise,sx,sy,sz,x,y,z)-minv)/(maxv-minv));
 
    return(noise);
+   }
+
+float mininoise::getrandom(float seed)
+   {
+   static const long long maxbits=50;
+   static const long long maxnum=1ull<<maxbits;
+
+   static long long number=0;
+
+   if (seed>=0.0f && seed<=1.0f) number=ftrc(seed*(maxnum-1)+0.5f);
+
+   number=271*(number+331);
+   number=(number<<(maxbits/3))+(number>>(2*maxbits/3));
+   number&=maxnum-1;
+
+   return((float)number/(maxnum-1));
    }
