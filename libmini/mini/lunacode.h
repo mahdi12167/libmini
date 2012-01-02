@@ -39,6 +39,7 @@ class lunacode
       CODE_TAN,
       CODE_ATAN,
       CODE_ATAN2,
+      CODE_NOISE,
       CODE_PUSH,
       CODE_RESERVE_VAR,
       CODE_RESERVE_VAR_LOC,
@@ -184,9 +185,13 @@ class lunacode
 
    private:
 
+   int NOISESIZE;
+   int NOISESTART;
+
    BOOLINT LUNADEBUG;
 
    inline double mod(double a,double b);
+   inline double noise(double x,double y,double z);
 
    void CODEMSG(const char *msg);
    };

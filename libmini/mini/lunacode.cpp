@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "mininoise.h"
+
 #include "lunacode.h"
 
 // default constructor
@@ -22,6 +24,9 @@ lunacode::lunacode()
 
    GLBVARMAX=1000;
    LOCVARMAX=10000;
+
+   NOISESIZE=128;
+   NOISESTART=16;
 
    LUNADEBUG=FALSE;
    }
@@ -375,6 +380,12 @@ void lunacode::checkarrayloc(int refloc,unsigned int idx)
 double lunacode::mod(double a,double b)
    {return(a-floor(a/b)*b);}
 
+double lunacode::noise(double x,double y,double z)
+   {
+   static mininoise noise(NOISESIZE,NOISESIZE,NOISESIZE,NOISESTART);
+   return(noise.interpolate(x,y,z));
+   }
+
 void lunacode::execmd(int code,int ival,float fval)
    {
    int ref,refloc;
@@ -529,6 +540,11 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else {VALSTACK[VALSTACKSIZE-2].val=atan2(VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE--;}
+         break;
+      case CODE_NOISE:
+         if (VALSTACKSIZE<3) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-3].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else {VALSTACK[VALSTACKSIZE-3].val=noise(VALSTACK[VALSTACKSIZE-3].val,VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE-=2;}
          break;
       case CODE_PUSH:
          VALSTACKSIZE++;
