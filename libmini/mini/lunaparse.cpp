@@ -74,6 +74,7 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("tan",LUNA_TAN);
    SCANNER.addtoken("atan",LUNA_ATAN);
    SCANNER.addtoken("atan2",LUNA_ATAN2);
+   SCANNER.addtoken("noise",LUNA_NOISE);
    }
 
 void lunaparse::parseLUNA()
@@ -824,6 +825,7 @@ void lunaparse::parse_expression(BOOLINT comma)
          case LUNA_TAN: op=lunacode::CODE_TAN; break;
          case LUNA_ATAN: op=lunacode::CODE_ATAN; break;
          case LUNA_ATAN2: op=lunacode::CODE_ATAN2; break;
+         case LUNA_NOISE: op=lunacode::CODE_NOISE; break;
          }
 
       if (op!=lunacode::CODE_NOP)
