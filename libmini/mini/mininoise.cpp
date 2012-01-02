@@ -230,9 +230,9 @@ float *mininoise::noise(int sx,int sy,int sz,
 
    float v,minv,maxv;
 
-   if ((sx&(sx-1))!=0 || sx<2) ERRORMSG();
-   if ((sy&(sy-1))!=0 || sy<2) ERRORMSG();
-   if ((sz&(sz-1))!=0 || sz<2) ERRORMSG();
+   if ((sx&(sx-1))!=0 || sx<1) ERRORMSG();
+   if ((sy&(sy-1))!=0 || sy<1) ERRORMSG();
+   if ((sz&(sz-1))!=0 || sz<1) ERRORMSG();
 
    if ((noise=(float *)malloc(sx*sy*sz*sizeof(float)))==NULL) ERRORMSG();
 
@@ -261,16 +261,18 @@ float *mininoise::noise(int sx,int sy,int sz,
                    getrandom()*scaling);
 
       // seamless noise via octave face averaging
-      average(octave,dx,dy,dz,0,0,0,dx-1,0,0,1,dy,dz);
-      average(octave,dx,dy,dz,0,0,0,0,dy-1,0,dx,1,dz);
-      average(octave,dx,dy,dz,0,0,0,0,0,dz-1,dx,dy,1);
+      if (dx>1) average(octave,dx,dy,dz,0,0,0,dx-1,0,0,1,dy,dz);
+      if (dy>1) average(octave,dx,dy,dz,0,0,0,0,dy-1,0,dx,1,dz);
+      if (dz>1) average(octave,dx,dy,dz,0,0,0,0,0,dz-1,dx,dy,1);
 
       for (x=0; x<sx; x++)
          for (y=0; y<sy; y++)
             for (z=0; z<sz; z++)
                add(noise,sx,sy,sz,x,y,z,
                    interpolate(octave,dx,dy,dz,
-                               (float)x/(sx-1),(float)y/(sy-1),(float)z/(sz-1)));
+                               (sx>1)?(float)x/(sx-1):0.0f,
+                               (sy>1)?(float)y/(sy-1):0.0f,
+                               (sz>1)?(float)z/(sz-1):0.0f));
 
       scaling*=persist;
       }

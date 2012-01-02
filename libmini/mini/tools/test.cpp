@@ -4,6 +4,7 @@
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
+#include <mini/mininoise.h> //!!
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -84,6 +85,7 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
+#ifdef OPENGLTEST
    winwidth=winheight=512;
 
    glutInit(&argc,argv);
@@ -91,7 +93,6 @@ int main(int argc,char *argv[])
    glutInitDisplayMode(GLUT_RGB|GLUT_ALPHA|GLUT_DEPTH|GLUT_DOUBLE);
    winid=glutCreateWindow("libMini Test");
 
-#ifdef OPENGLTEST
    glutDisplayFunc(displayfunc);
    glutReshapeFunc(reshapefunc);
    glutMouseFunc(NULL);
@@ -106,8 +107,15 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
+   //!!
+   mininoise noise(16,1,1);
+   for (int i=0; i<=50; i++)
+      printf("%g\n",noise.interpolate(i/50.0));
+
+#ifdef OPENGLTEST
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
+#endif
 
    // end of test code
 
