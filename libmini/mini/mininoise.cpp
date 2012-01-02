@@ -8,7 +8,7 @@ mininoise::mininoise(int sx,int sy,int sz,
                      int start,float persist,
                      float seed)
    {
-   sizex=sz;
+   sizex=sx;
    sizey=sy;
    sizez=sz;
 
