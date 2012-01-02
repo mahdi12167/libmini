@@ -108,9 +108,9 @@ int main(int argc,char *argv[])
    // ...
 
    //!!
-   mininoise noise(16,1,1);
+   mininoise noise(64,64,64);
    for (int i=0; i<=50; i++)
-      printf("%g\n",noise.interpolate(i/50.0));
+      printf("%g\n",noise.interpolate(i/50.0f,0.5f,0.5f));
 
 #ifdef OPENGLTEST
    miniOGL::print_unsupported_glexts();

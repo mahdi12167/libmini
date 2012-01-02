@@ -29,17 +29,67 @@ float mininoise::interpolate(float v0,float v1,float v2,float v3,float x)
    return(((p*x+q)*x+r)*x+v1);
    }
 
-float mininoise::interpolate(float *data,
+float mininoise::interpolatex(const float *data,
+                              int sx,int sy,int sz,
+                              int k1,int k2,int k3,
+                              float wx)
+   {
+   float v0,v1,v2,v3;
+
+   v1=get(data,sx,sy,sz,k1,k2,k3);
+   v0=(k1>0)?get(data,sx,sy,sz,k1-1,k2,k3):v1;
+   v2=get(data,sx,sy,sz,k1+1,k2,k3);
+   v3=(k1<sx-2)?get(data,sx,sy,sz,k1+2,k2,k3):v2;
+
+   return(interpolate(v0,v1,v2,v3,wx));
+   }
+
+float mininoise::interpolatey(const float *data,
+                              int sx,int sy,int sz,
+                              int k1,int k2,int k3,
+                              float wx,float wy)
+   {
+   float v0,v1,v2,v3;
+
+   v1=interpolatex(data,sx,sy,sz,k1,k2,k3,wx);
+
+   if (k2>0) v0=interpolatex(data,sx,sy,sz,k1,k2-1,k3,wx);
+   else v0=v1;
+
+   v2=interpolatex(data,sx,sy,sz,k1,k2+1,k3,wx);
+
+   if (k2<sy-2) v3=interpolatex(data,sx,sy,sz,k1,k2+2,k3,wx);
+   else v3=v2;
+
+   return(interpolate(v0,v1,v2,v3,wy));
+   }
+
+float mininoise::interpolatez(const float *data,
+                              int sx,int sy,int sz,
+                              int k1,int k2,int k3,
+                              float wx,float wy,float wz)
+   {
+   float v0,v1,v2,v3;
+
+   v1=interpolatey(data,sx,sy,sz,k1,k2,k3,wx,wy);
+
+   if (k3>0) v0=interpolatey(data,sx,sy,sz,k1,k2,k3-1,wx,wy);
+   else v0=v1;
+
+   v2=interpolatey(data,sx,sy,sz,k1,k2,k3+1,wx,wy);
+
+   if (k3<sz-2) v3=interpolatey(data,sx,sy,sz,k1,k2,k3+2,wx,wy);
+   else v3=v2;
+
+   return(interpolate(v0,v1,v2,v3,wz));
+   }
+
+float mininoise::interpolate(const float *data,
                              int sx,int sy,int sz,
                              float c1,float c2,float c3)
    {
    int k1,k2,k3;
    float w1,w2,w3;
-
-   float v0,v1,v2,v3,
-         v4,v5,v6,v7,
-         v8,v9,v10,v11,
-         v12,v13,v14,v15;
 
    k1=ftrc(c1*(sx-1));
    w1=c1*(sx-1)-k1;
@@ -86,110 +136,7 @@ float mininoise::interpolate(float *data,
       w3=1.0f;
       }
 
-   v1=interpolate((k1>0)?data[k1-1+(k2+k3*sy)*sx]:data[k1+(k2+k3*sy)*sx],
-                  data[k1+(k2+k3*sy)*sx],data[k1+1+(k2+k3*sy)*sx],
-                  (k1<sx-2)?data[k1+2+(k2+k3*sy)*sx]:data[k1+1+(k2+k3*sy)*sx],w1);
-
-   if (k2>0)
-      v0=interpolate((k1>0)?data[k1-1+(k2-1+k3*sy)*sx]:data[k1+(k2-1+k3*sy)*sx],
-                     data[k1+(k2-1+k3*sy)*sx],data[k1+1+(k2-1+k3*sy)*sx],
-                     (k1<sx-2)?data[k1+2+(k2-1+k3*sy)*sx]:data[k1+1+(k2-1+k3*sy)*sx],w1);
-   else v0=v1;
-
-   v2=interpolate((k1>0)?data[k1-1+(k2+1+k3*sy)*sx]:data[k1+(k2+1+k3*sy)*sx],
-                  data[k1+(k2+1+k3*sy)*sx],data[k1+1+(k2+1+k3*sy)*sx],
-                  (k1<sx-2)?data[k1+2+(k2+1+k3*sy)*sx]:data[k1+1+(k2+1+k3*sy)*sx],w1);
-
-   if (k2<sy-2)
-      v3=interpolate((k1>0)?data[k1-1+(k2+2+k3*sy)*sx]:data[k1+(k2+2+k3*sy)*sx],
-                     data[k1+(k2+2+k3*sy)*sx],data[k1+1+(k2+2+k3*sy)*sx],
-                     (k1<sx-2)?data[k1+2+(k2+2+k3*sy)*sx]:data[k1+1+(k2+2+k3*sy)*sx],w1);
-   else v3=v2;
-
-   v5=interpolate((k1>0)?data[k1-1+(k2+(k3+1)*sy)*sx]:data[k1+(k2+(k3+1)*sy)*sx],
-                  data[k1+(k2+(k3+1)*sy)*sx],data[k1+1+(k2+(k3+1)*sy)*sx],
-                  (k1<sx-2)?data[k1+2+(k2+(k3+1)*sy)*sx]:data[k1+1+(k2+(k3+1)*sy)*sx],w1);
-
-   if (k2>0)
-      v4=interpolate((k1>0)?data[k1-1+(k2-1+(k3+1)*sy)*sx]:data[k1+(k2-1+(k3+1)*sy)*sx],
-                     data[k1+(k2-1+(k3+1)*sy)*sx],data[k1+1+(k2-1+(k3+1)*sy)*sx],
-                     (k1<sx-2)?data[k1+2+(k2-1+(k3+1)*sy)*sx]:data[k1+1+(k2-1+(k3+1)*sy)*sx],w1);
-   else v4=v5;
-
-   v6=interpolate((k1>0)?data[k1-1+(k2+1+(k3+1)*sy)*sx]:data[k1+(k2+1+(k3+1)*sy)*sx],
-                  data[k1+(k2+1+(k3+1)*sy)*sx],data[k1+1+(k2+1+(k3+1)*sy)*sx],
-                  (k1<sx-2)?data[k1+2+(k2+1+(k3+1)*sy)*sx]:data[k1+1+(k2+1+(k3+1)*sy)*sx],w1);
-
-   if (k2<sy-2)
-      v7=interpolate((k1>0)?data[k1-1+(k2+2+(k3+1)*sy)*sx]:data[k1+(k2+2+(k3+1)*sy)*sx],
-                     data[k1+(k2+2+(k3+1)*sy)*sx],data[k1+1+(k2+2+(k3+1)*sy)*sx],
-                     (k1<sx-2)?data[k1+2+(k2+2+(k3+1)*sy)*sx]:data[k1+1+(k2+2+(k3+1)*sy)*sx],w1);
-   else v7=v6;
-
-   if (k3>0)
-      {
-      v9=interpolate((k1>0)?data[k1-1+(k2+(k3-1)*sy)*sx]:data[k1+(k2+(k3-1)*sy)*sx],
-                     data[k1+(k2+(k3-1)*sy)*sx],data[k1+1+(k2+(k3-1)*sy)*sx],
-                     (k1<sx-2)?data[k1+2+(k2+(k3-1)*sy)*sx]:data[k1+1+(k2+(k3-1)*sy)*sx],w1);
-
-      if (k2>0)
-         v8=interpolate((k1>0)?data[k1-1+(k2-1+(k3-1)*sy)*sx]:data[k1+(k2-1+(k3-1)*sy)*sx],
-                        data[k1+(k2-1+(k3-1)*sy)*sx],data[k1+1+(k2-1+(k3-1)*sy)*sx],
-                        (k1<sx-2)?data[k1+2+(k2-1+(k3-1)*sy)*sx]:data[k1+1+(k2-1+(k3-1)*sy)*sx],w1);
-      else v8=v9;
-
-      v10=interpolate((k1>0)?data[k1-1+(k2+1+(k3-1)*sy)*sx]:data[k1+(k2+1+(k3-1)*sy)*sx],
-                      data[k1+(k2+1+(k3-1)*sy)*sx],data[k1+1+(k2+1+(k3-1)*sy)*sx],
-                      (k1<sx-2)?data[k1+2+(k2+1+(k3-1)*sy)*sx]:data[k1+1+(k2+1+(k3-1)*sy)*sx],w1);
-
-      if (k2<sy-2)
-         v11=interpolate((k1>0)?data[k1-1+(k2+2+(k3-1)*sy)*sx]:data[k1+(k2+2+(k3-1)*sy)*sx],
-                         data[k1+(k2+2+(k3-1)*sy)*sx],data[k1+1+(k2+2+(k3-1)*sy)*sx],
-                         (k1<sx-2)?data[k1+2+(k2+2+(k3-1)*sy)*sx]:data[k1+1+(k2+2+(k3-1)*sy)*sx],w1);
-      else v11=v10;
-      }
-   else
-      {
-      v8=v0;
-      v9=v1;
-      v10=v2;
-      v11=v3;
-      }
-
-   if (k3<sz-2)
-      {
-      v13=interpolate((k1>0)?data[k1-1+(k2+(k3+2)*sy)*sx]:data[k1+(k2+(k3+2)*sy)*sx],
-                      data[k1+(k2+(k3+2)*sy)*sx],data[k1+1+(k2+(k3+2)*sy)*sx],
-                      (k1<sx-2)?data[k1+2+(k2+(k3+2)*sy)*sx]:data[k1+1+(k2+(k3+2)*sy)*sx],w1);
-
-      if (k2>0)
-         v12=interpolate((k1>0)?data[k1-1+(k2-1+(k3+2)*sy)*sx]:data[k1+(k2-1+(k3+2)*sy)*sx],
-                         data[k1+(k2-1+(k3+2)*sy)*sx],data[k1+1+(k2-1+(k3+2)*sy)*sx],
-                         (k1<sx-2)?data[k1+2+(k2-1+(k3+2)*sy)*sx]:data[k1+1+(k2-1+(k3+2)*sy)*sx],w1);
-      else v12=v13;
-
-      v14=interpolate((k1>0)?data[k1-1+(k2+1+(k3+2)*sy)*sx]:data[k1+(k2+1+(k3+2)*sy)*sx],
-                      data[k1+(k2+1+(k3+2)*sy)*sx],data[k1+1+(k2+1+(k3+2)*sy)*sx],
-                      (k1<sx-2)?data[k1+2+(k2+1+(k3+2)*sy)*sx]:data[k1+1+(k2+1+(k3+2)*sy)*sx],w1);
-
-      if (k2<sy-2)
-         v15=interpolate((k1>0)?data[k1-1+(k2+2+(k3+2)*sy)*sx]:data[k1+(k2+2+(k3+2)*sy)*sx],
-                         data[k1+(k2+2+(k3+2)*sy)*sx],data[k1+1+(k2+2+(k3+2)*sy)*sx],
-                         (k1<sx-2)?data[k1+2+(k2+2+(k3+2)*sy)*sx]:data[k1+1+(k2+2+(k3+2)*sy)*sx],w1);
-      else v15=v14;
-      }
-   else
-      {
-      v12=v4;
-      v13=v5;
-      v14=v6;
-      v15=v7;
-      }
-
-   return(interpolate(interpolate(v8,v9,v10,v11,w2),
-                      interpolate(v0,v1,v2,v3,w2),
-                      interpolate(v4,v5,v6,v7,w2),
-                      interpolate(v12,v13,v14,v15,w2),w3));
+   return(interpolatez(data,sx,sy,sz,k1,k2,k3,w1,w2,w3));
    }
 
 void mininoise::average(float *data,

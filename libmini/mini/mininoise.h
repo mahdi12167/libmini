@@ -43,7 +43,22 @@ class mininoise
 
    inline static float interpolate(float v0,float v1,float v2,float v3,float x);
 
-   static float interpolate(float *data,
+   inline static float interpolatex(const float *data,
+                                    int sx,int sy,int sz,
+                                    int k1,int k2,int k3,
+                                    float wx);
+
+   inline static float interpolatey(const float *data,
+                                    int sx,int sy,int sz,
+                                    int k1,int k2,int k3,
+                                    float wx,float wy);
+
+   inline static float interpolatez(const float *data,
+                                    int sx,int sy,int sz,
+                                    int k1,int k2,int k3,
+                                    float wx,float wy,float wz);
+
+   static float interpolate(const float *data,
                             int sx,int sy,int sz,
                             float c1,float c2,float c3);
 
