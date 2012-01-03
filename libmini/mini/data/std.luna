@@ -1,30 +1,64 @@
-# standard header for luna
+# standard luna header
 
 var pi=3.14159265358979323846;
 
+# fibonacci number
+func fib(par n)
+   {
+   var i;
+
+   var a;
+   var b;
+   var c;
+
+   a=1;
+   b=1;
+
+   for (i=1, (< i n), i++)
+      {
+      c=(+ a b);
+      a=b;
+      b=c;
+      }
+
+   return(b);
+   }
+
+# fat fibonacci number
+func fibonacci(par n)
+   {
+   if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
+   else return(1);
+   }
+
+# implicit sphere function
 func sphere(par x, par y, par z)
    {
    return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
    }
 
+# implicit half sphere function
 func half_sphere(par x, par y, par z)
    {
    if (< z 0) return(1);
    else return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
    }
 
+# implicit cone function
 func cone(par x, par y, par z)
    {
    if (> z 0.25) return(1);
    else return(+ (- sqrt(+ sqr(x) sqr(y)) (/ z 2)) 0.25);
    }
 
+# implicit cylinder function
 func cylinder(par x, par y, par z)
    {
    if (| (< z -0.4) (> z 0.4)) return(1);
    return(+ sqrt(+ sqr(x) sqr(y)) 0.4);
    }
 
+# procedural marble noise
 func marble(par x, par y, par z)
    {
    var t;
