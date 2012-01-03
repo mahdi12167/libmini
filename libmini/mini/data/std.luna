@@ -1,0 +1,39 @@
+# standard header for luna
+
+var pi=3.14159265358979323846;
+
+func sphere(par x, par y, par z)
+   {
+   return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
+   }
+
+func half_sphere(par x, par y, par z)
+   {
+   if (< z 0) return(1);
+   else return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
+   }
+
+func cone(par x, par y, par z)
+   {
+   if (> z 0.25) return(1);
+   else return(+ (- sqrt(+ sqr(x) sqr(y)) (/ z 2)) 0.25);
+   }
+
+func cylinder(par x, par y, par z)
+   {
+   if (| (< z -0.4) (> z 0.4)) return(1);
+   return(+ sqrt(+ sqr(x) sqr(y)) 0.4);
+   }
+
+func marble(par x, par y, par z)
+   {
+   var t;
+   var n;
+   var m;
+
+   t = (* x (* 4 pi));
+   n = (* (- pow(noise(x,y,z) 2) 0.5) 8);
+   m = pow(sin(+ t n) 3);
+
+   return(m);
+   }

@@ -1,7 +1,7 @@
 MAGIC=13091
-xsize=17
-ysize=17
-zsize=17
+xsize=128
+ysize=128
+zsize=128
 tsteps=1
 type=0
 swx=0
@@ -22,9 +22,9 @@ extformat=0
 implformat=1
 bytes=0
 
-# implicit cone function
+# procedural marble noise
 
 include "std.luna"
 
 main(par x, par y, par z, par t)
-   {return(cone(x,y,z));}
+   {return(marble(x,y,z));}
