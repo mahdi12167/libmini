@@ -383,7 +383,7 @@ double lunacode::mod(double a,double b)
 double lunacode::noise(double x,double y,double z)
    {
    static mininoise noise(NOISESIZE,NOISESIZE,NOISESIZE,NOISESTART);
-   return(noise.interpolate(x,y,z));
+   return(noise.interpolate(x+0.5f,y+0.5f,z+0.5f));
    }
 
 void lunacode::execmd(int code,int ival,float fval)
