@@ -67,7 +67,7 @@ mininode_group *Renderer::build_ecef_geometry()
    // origin of the cube is its barycenter
    // translate up 2.5 meters
    scale->append_child(new mininode_color(miniv3d(1.0, 1.0, 1.0)))->
-      append_child(new mininode_texgen_rotate(10,miniv3d(1,1,1)))->
+      append_child(new mininode_texgen_rotate(80,miniv3d(1,1,1)))->
       append_child(new mininode_texgen_translate(miniv3d(0.0,0.0,0.5)))->
       append_child(new mininode_texgen_scale(0.7))->
       append_child(new mininode_texgen_scale(0.1,0.1,0.2))->
