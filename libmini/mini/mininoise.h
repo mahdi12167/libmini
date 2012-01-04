@@ -12,7 +12,7 @@ class mininoise
              int start=4,float persist=0.5f,
              float seed=0.0f);
 
-   //! default constructor
+   //! default destructor
    ~mininoise();
 
    //! cubic interpolation of perlin noise
