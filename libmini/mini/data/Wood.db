@@ -1,7 +1,7 @@
 MAGIC=13091
-xsize=128
-ysize=128
-zsize=128
+xsize=256
+ysize=256
+zsize=256
 tsteps=1
 type=3
 swx=0
@@ -22,9 +22,9 @@ extformat=0
 implformat=1
 bytes=0
 
-# procedural marble
+# procedural wood
 
 include "std.luna"
 
 main(par x, par y, par z, par t)
-   {return(marble(x,y,z));}
+   {return(wood(x,y,z));}

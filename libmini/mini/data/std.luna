@@ -1,6 +1,6 @@
 # standard luna header
 
-var pi=3.14159265358979323846;
+var PI=3.14159265358979323846;
 
 # fibonacci number
 func fib(par n)
@@ -22,7 +22,7 @@ func fib(par n)
    return(b);
    }
 
-# fat fibonacci number
+# fibonacci number (fat recursion)
 func fibonacci(par n)
    {
    if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
@@ -56,12 +56,12 @@ func cylinder(par x, par y, par z)
    return(+ sqrt(+ sqr(x) sqr(y)) 0.4);
    }
 
-# procedural marble noise
+# procedural marble
 func marble(par x, par y, par z)
    {
    var t,n,m;
 
-   t = (* x (* 4 pi));
+   t = (* x (* 4 PI));
    n = (* (- pow(noise(x,y,z) 2) 0.5) 8);
    m = pow(sin(+ t n) 3);
 
@@ -71,5 +71,26 @@ func marble(par x, par y, par z)
    if (< m 0) m=0;
    v = (* 0.2 noise2(x,y,z,1));
 
-   return((+ m v) (+ m v) (+ m (* 0.75 v)));
+   return((+ m v) (+ m v) (+ m (* 0.5 v)));
+   }
+
+# procedural wood
+func wood(par x, par y, par z)
+   {
+   var t,n,w;
+
+   t = (* 200 sqrt(+ (* x x) (* y y)));
+   n = (* (- sqr(noise(x,y,(* 0.3 z))) 0.5) 10);
+   w = (+ sin(+ t n) (* (* t noise2(x,y,z,1) 0.01)));
+
+   var r=0.4,g=0.2,b=0.1;
+
+   if (> w 0)
+      {
+      r = (+ r (* w 0.5));
+      g = (+ g (* w 0.5));
+      b = (+ b (* w 0.4));
+      }
+
+   return(r g b);
    }

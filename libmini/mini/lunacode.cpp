@@ -393,7 +393,8 @@ double lunacode::noise(double x,double y,double z,unsigned int n)
    if (n>=NOISEMAXNUM) return(0.0);
 
    if (NOISE[n]==NULL)
-      NOISE[n]=new mininoise(NOISESIZE,NOISESIZE,NOISESIZE,NOISESTART);
+      NOISE[n]=new mininoise(NOISESIZE,NOISESIZE,NOISESIZE,
+                             NOISESTART,0.5f,(float)n/(NOISEMAXNUM-1));
 
    return(NOISE[n]->interpolate(x+0.5f,y+0.5f,z+0.5f));
    }
@@ -561,7 +562,7 @@ void lunacode::execmd(int code,int ival,float fval)
       case CODE_NOISE2:
          if (VALSTACKSIZE<4) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-3].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-4].item!=ITEM_FLOAT) CODEMSG("invalid operation");
-         else {VALSTACK[VALSTACKSIZE-4].val=noise(VALSTACK[VALSTACKSIZE-4].val,VALSTACK[VALSTACKSIZE-3].val,VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE-=3;}
+         else {VALSTACK[VALSTACKSIZE-4].val=noise(VALSTACK[VALSTACKSIZE-4].val,VALSTACK[VALSTACKSIZE-3].val,VALSTACK[VALSTACKSIZE-2].val,(unsigned int)floor(VALSTACK[VALSTACKSIZE-1].val+0.5)); VALSTACKSIZE-=3;}
          break;
       case CODE_PUSH:
          VALSTACKSIZE++;

@@ -229,7 +229,7 @@ float mininoise::getrandom(float seed)
 
    static long long number=0;
 
-   if (seed>=0.0f && seed<=1.0f) number=ftrc(seed*(maxnum-1)+0.5f);
+   if (seed>=0.0f && seed<=1.0f) number=seed*(maxnum-1);
 
    number=271*(number+331);
    number=(number<<(maxbits/3))+(number>>(2*maxbits/3));
