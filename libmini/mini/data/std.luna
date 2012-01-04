@@ -65,5 +65,11 @@ func marble(par x, par y, par z)
    n = (* (- pow(noise(x,y,z) 2) 0.5) 8);
    m = pow(sin(+ t n) 3);
 
-   return(m (* 0.5 m) (* 0.75 m));
+   var v;
+
+   m = (- m 0.2);
+   if (< m 0) m=0;
+   v = (* 0.2 noise((* 4 x),(* 4 y),(* 4 z)))
+
+   return((+ m v) (+ m v) (+ m (* 0.75 v)));
    }
