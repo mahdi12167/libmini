@@ -36,7 +36,8 @@ operator    ::= "+" | "-" | "*" | "/" | "%" |
                 "&" | "|" | "!"
 alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
-                "sin" | "cos" | "tan" | "atan" | "atan2" | "noise"
+                "sin" | "cos" | "tan" | "atan" | "atan2" |
+                "noise" | "noise2"
 
 The simplest LUNA program possible is:
 
@@ -152,6 +153,7 @@ class lunaparse
       LUNA_ATAN,
       LUNA_ATAN2,
       LUNA_NOISE,
+      LUNA_NOISE2,
       LUNA_VAR_GLB,
       LUNA_VAR_LOC,
       LUNA_ARRAY_GLB,

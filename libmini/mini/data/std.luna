@@ -69,7 +69,7 @@ func marble(par x, par y, par z)
 
    m = (- m 0.2);
    if (< m 0) m=0;
-   v = (* 0.2 noise((* 4 x),(* 4 y),(* 4 z)))
+   v = (* 0.2 noise2(x,y,z,1));
 
    return((+ m v) (+ m v) (+ m (* 0.75 v)));
    }

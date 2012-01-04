@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "mininoise.h"
-
 #include "lunacode.h"
 
 // default constructor
@@ -25,6 +23,11 @@ lunacode::lunacode()
    GLBVARMAX=1000;
    LOCVARMAX=10000;
 
+   NOISEMAXNUM=16;
+   NOISE=new mininoise*[NOISEMAXNUM];
+
+   for (unsigned int i=0; i<NOISEMAXNUM; i++) NOISE[i]=NULL;
+
    NOISESIZE=64;
    NOISESTART=8;
 
@@ -41,6 +44,11 @@ lunacode::~lunacode()
 
    if (GLBVAR!=NULL) free(GLBVAR);
    if (LOCVAR!=NULL) free(LOCVAR);
+
+   for (unsigned int i=0; i<NOISEMAXNUM; i++)
+      if (NOISE[i]!=NULL) delete NOISE[i];
+
+   delete[] NOISE;
    }
 
 void lunacode::addcode(int code,int mode,int ival,float fval)
@@ -380,10 +388,14 @@ void lunacode::checkarrayloc(int refloc,unsigned int idx)
 double lunacode::mod(double a,double b)
    {return(a-floor(a/b)*b);}
 
-double lunacode::noise(double x,double y,double z)
+double lunacode::noise(double x,double y,double z,unsigned int n)
    {
-   static mininoise noise(NOISESIZE,NOISESIZE,NOISESIZE,NOISESTART);
-   return(noise.interpolate(x+0.5f,y+0.5f,z+0.5f));
+   if (n>=NOISEMAXNUM) return(0.0);
+
+   if (NOISE[n]==NULL)
+      NOISE[n]=new mininoise(NOISESIZE,NOISESIZE,NOISESIZE,NOISESTART);
+
+   return(NOISE[n]->interpolate(x+0.5f,y+0.5f,z+0.5f));
    }
 
 void lunacode::execmd(int code,int ival,float fval)
@@ -545,6 +557,11 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<3) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-3].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else {VALSTACK[VALSTACKSIZE-3].val=noise(VALSTACK[VALSTACKSIZE-3].val,VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE-=2;}
+         break;
+      case CODE_NOISE2:
+         if (VALSTACKSIZE<4) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-3].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-4].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else {VALSTACK[VALSTACKSIZE-4].val=noise(VALSTACK[VALSTACKSIZE-4].val,VALSTACK[VALSTACKSIZE-3].val,VALSTACK[VALSTACKSIZE-2].val,VALSTACK[VALSTACKSIZE-1].val); VALSTACKSIZE-=3;}
          break;
       case CODE_PUSH:
          VALSTACKSIZE++;

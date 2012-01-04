@@ -5,6 +5,8 @@
 
 #include "minibase.h"
 
+#include "mininoise.h"
+
 class lunacode
    {
    public:
@@ -40,6 +42,7 @@ class lunacode
       CODE_ATAN,
       CODE_ATAN2,
       CODE_NOISE,
+      CODE_NOISE2,
       CODE_PUSH,
       CODE_RESERVE_VAR,
       CODE_RESERVE_VAR_LOC,
@@ -185,13 +188,16 @@ class lunacode
 
    private:
 
+   unsigned int NOISEMAXNUM;
+   mininoise **NOISE;
+
    int NOISESIZE;
    int NOISESTART;
 
    BOOLINT LUNADEBUG;
 
    inline double mod(double a,double b);
-   inline double noise(double x,double y,double z);
+   inline double noise(double x,double y,double z,unsigned int n=0);
 
    void CODEMSG(const char *msg);
    };
