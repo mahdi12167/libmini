@@ -6,13 +6,14 @@ This module parses the RPN-style language LUNA according to the following EBNF g
 
 LUNA        ::= { include | declaration }
 include     ::= "include" <string>
-declaration ::= var_decl | array_decl | ref_decl | func_decl [ ";" ]
+declaration ::= vars_decl | array_decl | ref_decl | func_decl [ ";" ]
 var_decl    ::= "var" <var-id> [ "=" | ":=" expression ]
 par_decl    ::= "par" <var-id>
 array_decl  ::= "array" [ "byte" ] <array-id> [ "[" expression "]" ]
 ref_decl    ::= "ref" [ "byte" ] <ref-id>
-list_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
-func_decl   ::= "main" | ( "func" <func-id> ) "(" [ list_decl ] ")" "{" { statement } "}"
+vars_decl   ::= var_decl { "," var_decl }
+pars_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
+func_decl   ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")" "{" { statement } "}"
 statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <func-id> "(" [ expression { [ "," ] expression } ] ")" ) |
@@ -50,9 +51,7 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       {
       var i;
 
-      var a;
-      var b;
-      var c;
+      var a,b,c;
 
       a=1;
       b=1;
@@ -67,7 +66,7 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       return(b);
       }
 
-The following LUNA program calculates the nth fibonacci number (recursively):
+The following LUNA program calculates the nth fibonacci number (fat recursion):
 
    func fibonacci(par n)
       {

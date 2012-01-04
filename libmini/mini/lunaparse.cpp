@@ -90,7 +90,12 @@ void lunaparse::parseLUNA()
       if (SCANNER.gettoken()==LUNA_INCLUDE) parse_include();
       else
          {
-         if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+         if (SCANNER.gettoken()==LUNA_VAR)
+            {
+            parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+            while (SCANNER.gettoken()==LUNA_COMMA)
+               parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+            }
          else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(FALSE,FALSE,TRUE,FALSE,FALSE);
          else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(FALSE,FALSE,FALSE,TRUE,FALSE);
          else if (SCANNER.gettoken()==LUNA_MAIN) parse_func_decl(TRUE);
@@ -369,7 +374,12 @@ void lunaparse::parse_func_decl(BOOLINT main)
          break;
          }
 
-      if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,&VAR_LOC_NUM);
+      if (SCANNER.gettoken()==LUNA_VAR)
+         {
+         parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,&VAR_LOC_NUM);
+         while (SCANNER.gettoken()==LUNA_COMMA)
+            parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,&VAR_LOC_NUM);
+         }
       else if (SCANNER.gettoken()==LUNA_ARRAY) parse_var_decl(TRUE,FALSE,TRUE,FALSE,FALSE,&VAR_LOC_NUM);
       else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,&VAR_LOC_NUM);
       else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
@@ -461,7 +471,12 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
             break;
             }
 
-         if (SCANNER.gettoken()==LUNA_VAR) parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+         if (SCANNER.gettoken()==LUNA_VAR)
+            {
+            parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+            while (SCANNER.gettoken()==LUNA_COMMA)
+               parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+            }
          else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
          else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
          else parse_statement(VAR_LOC_NUM,RET_ADDR);

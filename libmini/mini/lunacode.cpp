@@ -1816,6 +1816,7 @@ void lunacode::printcode(int code)
       case CODE_TAN: printf("TAN"); break;
       case CODE_ATAN: printf("ATAN"); break;
       case CODE_ATAN2: printf("ATAN2"); break;
+      case CODE_NOISE: printf("NOISE"); break;
       case CODE_PUSH: printf("PUSH"); break;
       case CODE_RESERVE_VAR: printf("RESERVE_VAR"); break;
       case CODE_RESERVE_VAR_LOC: printf("RESERVE_VAR_LOC"); break;

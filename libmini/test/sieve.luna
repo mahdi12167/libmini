@@ -2,8 +2,7 @@
 
 main(par sieve)
    {
-   var i;
-   var j;
+   var i,j;
 
    var maxprime;
 

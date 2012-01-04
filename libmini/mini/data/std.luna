@@ -7,9 +7,7 @@ func fib(par n)
    {
    var i;
 
-   var a;
-   var b;
-   var c;
+   var a,b,c;
 
    a=1;
    b=1;
@@ -61,13 +59,11 @@ func cylinder(par x, par y, par z)
 # procedural marble noise
 func marble(par x, par y, par z)
    {
-   var t;
-   var n;
-   var m;
+   var t,n,m;
 
    t = (* x (* 4 pi));
    n = (* (- pow(noise(x,y,z) 2) 0.5) 8);
    m = pow(sin(+ t n) 3);
 
-   return(m);
+   return(m (* 0.5 m) (* 0.75 m));
    }

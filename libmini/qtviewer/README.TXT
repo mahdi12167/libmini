@@ -8,7 +8,7 @@ control. It is free software licensed under the GPL.
 
 !! Prerequisites
 
-The libMini QTViewer Requires the prior installation of:
+The libMini QTViewer Requires the installation of:
 
  qt/qmake
  cmake/svn
