@@ -1607,7 +1607,8 @@ int databuf::loadPVMdata(const char *filename,
       return(0);
       }
 
-   if (width<2 || height<2 || depth<2 || components!=1) ERRORMSG();
+   if (width<2 || height<2 || depth<2) ERRORMSG();
+   if (components!=1 && components!=3 && components!=4) ERRORMSG();
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -1617,9 +1618,11 @@ int databuf::loadPVMdata(const char *filename,
    zsize=depth;
    tsteps=1;
 
-   type=DATABUF_TYPE_BYTE;
+   if (components==1) type=DATABUF_TYPE_BYTE;
+   else if (components==3) type=DATABUF_TYPE_RGB;
+   else type=DATABUF_TYPE_RGBA;
 
-   bytes=xsize*ysize*zsize;
+   bytes=xsize*ysize*zsize*components;
 
    swx=midx-dx*scalex/2.0;
    swy=midy-dy*scaley/2.0;
@@ -1686,7 +1689,8 @@ int databuf::loadPVMdata(const char *filename,
          }
       }
 
-   if (width<2 || height<2 || depth<2 || components!=1) ERRORMSG();
+   if (width<2 || height<2 || depth<2) ERRORMSG();
+   if (components!=1 && components!=3 && components!=4) ERRORMSG();
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -1696,9 +1700,11 @@ int databuf::loadPVMdata(const char *filename,
    zsize=depth;
    tsteps=n;
 
-   type=DATABUF_TYPE_BYTE;
+   if (components==1) type=DATABUF_TYPE_BYTE;
+   else if (components==3) type=DATABUF_TYPE_RGB;
+   else type=DATABUF_TYPE_RGBA;
 
-   bytes=xsize*ysize*zsize*tsteps;
+   bytes=xsize*ysize*zsize*components*tsteps;
 
    if ((data=realloc(data,bytes))==NULL) MEMERROR();
 
@@ -1718,9 +1724,13 @@ int databuf::loadPVMdata(const char *filename,
             }
          }
 
-      if ((unsigned int)width!=xsize || (unsigned int)height!=ysize || (unsigned int)depth!=zsize || components!=1) ERRORMSG();
+      if ((unsigned int)width!=xsize || (unsigned int)height!=ysize || (unsigned int)depth!=zsize) ERRORMSG();
 
-      memcpy(&((unsigned char *)data)[(i-1)*xsize*ysize*zsize],moredata,xsize*ysize*zsize);
+      if (components==1 && type!=DATABUF_TYPE_BYTE) ERRORMSG();
+      else if (components==3 && type!=DATABUF_TYPE_RGB) ERRORMSG();
+      else if (components==4 && type!=DATABUF_TYPE_RGBA) ERRORMSG();
+
+      memcpy(&((unsigned char *)data)[(i-1)*xsize*ysize*zsize*components],moredata,xsize*ysize*zsize*components);
       free(moredata);
       }
 
