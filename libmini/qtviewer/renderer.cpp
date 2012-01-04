@@ -49,6 +49,8 @@ mininode_group *Renderer::build_ecef_geometry()
 
    group->append_child(new mininode_coord(minicoord(miniv3d(-159*3600, 21*3600, 0), minicoord::MINICOORD_LLH)))->
       append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
+      append_child(new mininode_texgen_scale(0.1))->
+      append_child(new mininode_volume("/Users/roettger/Projects/libmini/qtviewer/data/textures/Marble.pvm"))->
       append_child(new mininode_scale(10000))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_tet(10));
@@ -65,8 +67,11 @@ mininode_group *Renderer::build_ecef_geometry()
    // origin of the cube is its barycenter
    // translate up 2.5 meters
    scale->append_child(new mininode_color(miniv3d(1.0, 1.0, 1.0)))->
+      append_child(new mininode_texgen_rotate(10,miniv3d(1,1,1)))->
+      append_child(new mininode_texgen_translate(miniv3d(0.0,0.0,0.5)))->
+      append_child(new mininode_texgen_scale(0.7))->
       append_child(new mininode_texgen_scale(0.1,0.1,0.2))->
-      append_child(new mininode_volume("/Users/roettger/Projects/libmini/qtviewer/data/textures/noise.pvm"))->
+      append_child(new mininode_volume("/Users/roettger/Projects/libmini/qtviewer/data/textures/Wood.pvm"))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 2.5)))->
       append_child(new mininode_geometry_cube(10.0, 10.0, 5.0));
 
