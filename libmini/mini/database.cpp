@@ -967,6 +967,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
          {
          path=strdup(filename);
          if (strrchr(path,'/')!=NULL) *strrchr(path,'/')='\0';
+         else if (strrchr(path,'\\')!=NULL) *strrchr(path,'\\')='\0';
          interpretechunk(implformat,path);
          free(path);
          }
