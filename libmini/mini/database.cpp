@@ -813,6 +813,7 @@ int databuf::savedata(const char *filename,
 int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned int tstop)
    {
    FILE *file;
+   char *path;
 
    unsigned int m;
 
@@ -962,7 +963,13 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
 
       // convert from implicit format
-      if (implformat!=0) interpretechunk(implformat);
+      if (implformat!=0)
+         {
+         path=strdup(filename);
+         if (strrchr(path,'/')!=NULL) *strrchr(path,'/')='\0';
+         interpretechunk(implformat,path);
+         free(path);
+         }
       }
 
    return(1);
@@ -1324,7 +1331,7 @@ void databuf::setinterpreter(void (*parser)(unsigned int implformat,char *code,i
    }
 
 // convert from implicit format
-void databuf::interpretechunk(unsigned int implfmt)
+void databuf::interpretechunk(unsigned int implfmt,const char *path)
    {
    int i;
    unsigned int x,y,z,t;
@@ -1341,7 +1348,7 @@ void databuf::interpretechunk(unsigned int implfmt)
    else if (type==DATABUF_TYPE_RGBA) comps=4;
    else comps=1;
 
-   INTERPRETER_INIT(implfmt,(char *)data,bytes,this,INTERPRETER_DATA);
+   INTERPRETER_INIT(implfmt,(char *)data,bytes,this,INTERPRETER_DATA); //!! pass path
 
    release(1);
    alloc(xsize,ysize,zsize,tsteps,type);
