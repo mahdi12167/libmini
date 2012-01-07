@@ -13,12 +13,14 @@ dataparse::~dataparse()
    {if (parser!=NULL) delete parser;}
 
 // set the program to be parsed and executed
-void dataparse::setcode(char *code,int bytes)
+void dataparse::setcode(const char *code,int bytes,
+                        const char *path,const char *altpath)
    {
    if (parser!=NULL) delete parser;
    parser=new lunaparse;
 
    parser->setcode(code,bytes);
+   parser->setpath(path,altpath);
    parser->parseLUNA();
 
    parser->getcode()->init();

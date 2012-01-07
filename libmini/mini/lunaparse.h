@@ -170,8 +170,12 @@ class lunaparse
    //! destructor
    ~lunaparse();
 
+   //! set the code to be parsed
    void setcode(const char *code) {SCANNER.setcode(code);}
    void setcode(const char *code,int bytes) {SCANNER.setcode(code,bytes);}
+
+   //! set the paths to be searched when including code
+   void setpath(const char *path,const char *altpath=NULL);
 
    void parseLUNA();
 
@@ -187,6 +191,9 @@ class lunaparse
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
    protected:
+
+   char *PATH;
+   char *ALTPATH;
 
    lunascan SCANNER;
    lunacode CODE;

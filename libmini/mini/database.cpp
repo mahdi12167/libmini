@@ -41,7 +41,7 @@ void (*databuf::AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsi
 void *databuf::AUTODECOMPRESS_DATA=NULL;
 
 // static hooks for conversion from an implicit format
-void (*databuf::INTERPRETER_INIT)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data)=NULL;
+void (*databuf::INTERPRETER_INIT)(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data)=NULL;
 void (*databuf::INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data)=NULL;
 void *databuf::INTERPRETER_DATA=NULL;
 
@@ -813,7 +813,6 @@ int databuf::savedata(const char *filename,
 int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned int tstop)
    {
    FILE *file;
-   char *path;
 
    unsigned int m;
 
@@ -963,14 +962,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       if (extformat!=DATABUF_EXTFMT_PLAIN) convertchunk(0,extformat);
 
       // convert from implicit format
-      if (implformat!=0)
-         {
-         path=strdup(filename);
-         if (strrchr(path,'/')!=NULL) *strrchr(path,'/')='\0';
-         else if (strrchr(path,'\\')!=NULL) *strrchr(path,'\\')='\0';
-         interpretechunk(implformat,path);
-         free(path);
-         }
+      if (implformat!=0) interpretechunk(implformat,filename);
       }
 
    return(1);
@@ -1323,7 +1315,7 @@ void databuf::autodecompress()
    }
 
 // set interpreter hook for implicit format
-void databuf::setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
+void databuf::setinterpreter(void (*parser)(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data),void *data,
                              void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data))
    {
    INTERPRETER_INIT=parser;
@@ -1349,7 +1341,7 @@ void databuf::interpretechunk(unsigned int implfmt,const char *path)
    else if (type==DATABUF_TYPE_RGBA) comps=4;
    else comps=1;
 
-   INTERPRETER_INIT(implfmt,(char *)data,bytes,this,INTERPRETER_DATA); //!! pass path
+   INTERPRETER_INIT(implfmt,(char *)data,bytes,path,this,INTERPRETER_DATA);
 
    release(1);
    alloc(xsize,ysize,zsize,tsteps,type);

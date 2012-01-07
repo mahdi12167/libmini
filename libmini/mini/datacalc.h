@@ -28,12 +28,12 @@ class datacalc
 
    dataparse parser;
 
-   void myparser(unsigned int implformat,char *code,int bytes,databuf *obj);
+   void myparser(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj);
    void myinterpreter(float *value,int comps,float x,float y,float z,float t,databuf *obj);
 
    private:
 
-   static void mystaticparser(unsigned int implformat,char *code,int bytes,databuf *obj,void *data);
+   static void mystaticparser(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data);
    static void mystaticinterpreter(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    };
 

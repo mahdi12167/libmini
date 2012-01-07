@@ -16,7 +16,8 @@ class dataparse
    ~dataparse();
 
    //! set the code to be parsed and executed
-   void setcode(char *code,int bytes);
+   void setcode(const char *code,int bytes,
+                const char *path=NULL,const char *altpath=NULL);
 
    //! push one value onto the computation stack
    void pushvalue(float v);

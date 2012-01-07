@@ -241,7 +241,7 @@ class databuf
    void autodecompress();
 
    //! set interpreter hook for implicit format
-   static void setinterpreter(void (*parser)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data),void *data,
+   static void setinterpreter(void (*parser)(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data),void *data,
                               void (*interpreter)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data));
 
    //! check interpreter hook
@@ -401,7 +401,7 @@ class databuf
    static void (*AUTODECOMPRESS_HOOK)(int isrgbadata,unsigned char *s3tcdata,unsigned int bytes,unsigned char **rawdata,unsigned int *rawbytes,int width,int height,void *data);
    static void *AUTODECOMPRESS_DATA;
 
-   static void (*INTERPRETER_INIT)(unsigned int implformat,char *code,int bytes,databuf *obj,void *data);
+   static void (*INTERPRETER_INIT)(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data);
    static void (*INTERPRETER_HOOK)(float *value,int comps,float x,float y,float z,float t,databuf *obj,void *data);
    static void *INTERPRETER_DATA;
 

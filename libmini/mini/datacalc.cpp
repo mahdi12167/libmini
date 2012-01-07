@@ -24,14 +24,14 @@ void datacalc::deregister()
    {databuf::setinterpreter(NULL,NULL,NULL);}
 
 // parser hook
-void datacalc::myparser(unsigned int implformat,char *code,int bytes,databuf *obj)
+void datacalc::myparser(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj)
    {
    if (obj==NULL) ERRORMSG();
 
    if (implformat>0)
       {
       MODE=implformat;
-      if (implformat==1) parser.setcode(code,bytes);
+      if (implformat==1) parser.setcode(code,bytes,path);
       }
    }
 
@@ -83,10 +83,10 @@ void datacalc::myinterpreter(float *value,int comps,float x,float y,float z,floa
    }
 
 // static parser hook
-void datacalc::mystaticparser(unsigned int implformat,char *code,int bytes,databuf *obj,void *data)
+void datacalc::mystaticparser(unsigned int implformat,const char *code,int bytes,const char *path,databuf *obj,void *data)
    {
    datacalc *calc=(datacalc *)data;
-   calc->myparser(implformat,code,bytes,obj);
+   calc->myparser(implformat,code,bytes,path,obj);
    }
 
 // static interpreter hook

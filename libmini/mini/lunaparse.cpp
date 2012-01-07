@@ -7,13 +7,58 @@
 // default constructor
 lunaparse::lunaparse()
    {
+   PATH=NULL;
+   ALTPATH=NULL;
+
    VAR_NUM=0;
 
    addLUNAtokens();
    }
 
 // destructor
-lunaparse::~lunaparse() {}
+lunaparse::~lunaparse()
+   {
+   if (PATH!=NULL) free(PATH);
+   if (ALTPATH!=NULL) free(ALTPATH);
+   }
+
+// set the path to be searched when including code
+void lunaparse::setpath(const char *path,const char *altpath)
+   {
+   if (PATH!=NULL) free(PATH);
+   if (ALTPATH!=NULL) free(ALTPATH);
+
+   PATH=NULL;
+   ALTPATH=NULL;
+
+   if (path!=NULL)
+      {
+      if (strrchr(PATH,'/')!=NULL)
+         {
+         PATH=strdup(path);
+         *(strrchr(PATH,'/')+1)='\0';
+         }
+      else if (strrchr(PATH,'\\')!=NULL)
+         {
+         PATH=strdup(path);
+         *(strrchr(PATH,'\\')+1)='\0';
+         }
+      }
+
+   if (altpath!=NULL)
+      {
+      if (strrchr(ALTPATH,'/')!=NULL)
+         {
+         ALTPATH=strdup(altpath);
+         *(strrchr(ALTPATH,'/')+1)='\0';
+         }
+      else if (strrchr(ALTPATH,'\\')!=NULL)
+         {
+         ALTPATH=strdup(altpath);
+         *(strrchr(ALTPATH,'\\')+1)='\0';
+         }
+      }
+   }
 
 void lunaparse::addLUNAtokens()
    {
@@ -121,6 +166,9 @@ void lunaparse::parse_include(const char *path,const char *altpath)
    {
    char *filename;
    char *code;
+
+   if (path==NULL) path=PATH;
+   if (altpath==NULL) altpath=ALTPATH;
 
    SCANNER.next();
 
