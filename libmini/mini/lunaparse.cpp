@@ -33,12 +33,12 @@ void lunaparse::setpath(const char *path,const char *altpath)
 
    if (path!=NULL)
       {
-      if (strrchr(PATH,'/')!=NULL)
+      if (strrchr(path,'/')!=NULL)
          {
          PATH=strdup(path);
          *(strrchr(PATH,'/')+1)='\0';
          }
-      else if (strrchr(PATH,'\\')!=NULL)
+      else if (strrchr(path,'\\')!=NULL)
          {
          PATH=strdup(path);
          *(strrchr(PATH,'\\')+1)='\0';
@@ -47,12 +47,12 @@ void lunaparse::setpath(const char *path,const char *altpath)
 
    if (altpath!=NULL)
       {
-      if (strrchr(ALTPATH,'/')!=NULL)
+      if (strrchr(altpath,'/')!=NULL)
          {
          ALTPATH=strdup(altpath);
          *(strrchr(ALTPATH,'/')+1)='\0';
          }
-      else if (strrchr(ALTPATH,'\\')!=NULL)
+      else if (strrchr(altpath,'\\')!=NULL)
          {
          ALTPATH=strdup(altpath);
          *(strrchr(ALTPATH,'\\')+1)='\0';
