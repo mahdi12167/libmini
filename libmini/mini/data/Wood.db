@@ -1,7 +1,7 @@
 MAGIC=13091
-xsize=256
-ysize=256
-zsize=256
+xsize=128
+ysize=128
+zsize=128
 tsteps=1
 type=3
 swx=0
