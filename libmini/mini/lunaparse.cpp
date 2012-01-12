@@ -105,6 +105,7 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken(">=",LUNA_GE);
    SCANNER.addtoken("&",LUNA_AND);
    SCANNER.addtoken("|",LUNA_OR);
+   SCANNER.addtoken("^",LUNA_XOR);
    SCANNER.addtoken("!",LUNA_NOT);
    SCANNER.addtoken("min",LUNA_MIN);
    SCANNER.addtoken("max",LUNA_MAX);
@@ -807,6 +808,7 @@ void lunaparse::parse_expression(BOOLINT comma)
          case LUNA_GE: op=lunacode::CODE_GE; break;
          case LUNA_AND: op=lunacode::CODE_AND; break;
          case LUNA_OR: op=lunacode::CODE_OR; break;
+         case LUNA_XOR: op=lunacode::CODE_XOR; break;
          case LUNA_NOT: op=lunacode::CODE_NOT; break;
          }
 

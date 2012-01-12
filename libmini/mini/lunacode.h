@@ -27,6 +27,7 @@ class lunacode
       CODE_GE,
       CODE_AND,
       CODE_OR,
+      CODE_XOR,
       CODE_NOT,
       CODE_MIN,
       CODE_MAX,

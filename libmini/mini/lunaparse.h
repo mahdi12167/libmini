@@ -33,7 +33,7 @@ expression  ::= ( ["-"]<float-val> ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
                 "=" | "<>" | "<" | ">" | "<=" | ">=" |
-                "&" | "|" | "!"
+                "&" | "|" | "^" | "!"
 alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
                 "sin" | "cos" | "tan" | "atan" | "atan2" |
@@ -138,6 +138,7 @@ class lunaparse
       LUNA_GE,
       LUNA_AND,
       LUNA_OR,
+      LUNA_XOR,
       LUNA_NOT,
       LUNA_MIN,
       LUNA_MAX,
