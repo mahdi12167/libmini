@@ -523,7 +523,10 @@ class mininode_image: public mininode_texture2D
             if (buf.type==databuf::DATABUF_TYPE_BYTE)
                load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
             else if (buf.type==databuf::DATABUF_TYPE_SHORT)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,16);
+               {
+               buf.convertdata(databuf::DATABUF_TYPE_BYTE);
+               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
+               }
             else if (buf.type==databuf::DATABUF_TYPE_RGB)
                load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
             else if (buf.type==databuf::DATABUF_TYPE_RGBA)
