@@ -637,16 +637,6 @@ minilayer *miniterrain::loadLTS(const char *url,
 
    toplevel=NULL;
 
-   // enable alpha test for multiple levels
-   if (levels>1)
-      {
-      // set alpha test threshold to full transparency
-      TPARAMS.alphathres=0.0f;
-
-      // set sea alpha test threshold to sea opacity
-      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
-      }
-
    // load tileset levels
    for (l=0; l<levels; l++)
       {
@@ -677,9 +667,15 @@ minilayer *miniterrain::loadLTS(const char *url,
       if (l==0) toplevel=layer;
       }
 
-   // enable fade for multiple levels
+   // enable alpha test and fade for multiple levels
    if (l>1)
       {
+      // set alpha test threshold to full transparency
+      TPARAMS.alphathres=0.0f;
+
+      // set sea alpha test threshold to sea opacity
+      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
+
       // enable spherical fade
       TPARAMS.fademode=1;
 
