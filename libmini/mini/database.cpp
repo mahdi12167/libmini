@@ -2228,9 +2228,9 @@ void databuf::convertdata(unsigned int newtype)
          {
          value=*byteptr++;
 
-         *rgbptr++=ftrc(value+0.5f);
-         *rgbptr++=ftrc(value+0.5f);
-         *rgbptr++=ftrc(value+0.5f);
+         *rgbptr++=value;
+         *rgbptr++=value;
+         *rgbptr++=value;
          }
 
       free(data);
@@ -2238,7 +2238,51 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps;
+      bytes=xsize*ysize*zsize*tsteps*3;
+      }
+   else if (type==DATABUF_TYPE_RGB && newtype==DATABUF_TYPE_RGBA)
+      {
+      if ((newdata=malloc(cells*4))==NULL) MEMERROR();
+
+      byteptr=(unsigned char *)data;
+      rgbptr=(unsigned char *)newdata;
+
+      for (count=0; count<cells; count++)
+         {
+         *rgbptr++=*byteptr++;
+         *rgbptr++=*byteptr++;
+         *rgbptr++=*byteptr++;
+         *rgbptr++=255;
+         }
+
+      free(data);
+      data=newdata;
+
+      type=newtype;
+
+      bytes=xsize*ysize*zsize*tsteps*4;
+      }
+   else if (type==DATABUF_TYPE_RGBA && newtype==DATABUF_TYPE_RGB)
+      {
+      if ((newdata=malloc(cells*3))==NULL) MEMERROR();
+
+      byteptr=(unsigned char *)data;
+      rgbptr=(unsigned char *)newdata;
+
+      for (count=0; count<cells; count++)
+         {
+         *rgbptr++=*byteptr++;
+         *rgbptr++=*byteptr++;
+         *rgbptr++=*byteptr++;
+         byteptr++;
+         }
+
+      free(data);
+      data=newdata;
+
+      type=newtype;
+
+      bytes=xsize*ysize*zsize*tsteps*3;
       }
    }
 

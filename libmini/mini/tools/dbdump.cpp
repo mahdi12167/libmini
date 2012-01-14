@@ -194,6 +194,9 @@ int main(int argc,char *argv[])
       if (buf.type==databuf::DATABUF_TYPE_BYTE)
          buf.convertdata(databuf::DATABUF_TYPE_RGB);
 
+      if (buf.type==databuf::DATABUF_TYPE_RGBA)
+         buf.convertdata(databuf::DATABUF_TYPE_RGB);
+
       volume=(unsigned char *)buf.data;
       width=buf.xsize;
       height=buf.ysize;
