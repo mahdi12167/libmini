@@ -36,7 +36,7 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
 Navigate to the QT source directory and type
  configure -platform %PLATFORM%
- nmake sub-tools
+ nmake
 
 !! Libmini Dependencies (Unix/Mac)
 
