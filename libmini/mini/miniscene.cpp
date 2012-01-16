@@ -262,7 +262,7 @@ void miniscene::check_ecef_geometry(miniv3d &center,double &radius)
    }
 
 // render ecef geometry
-void miniscene::render_ecef_geometry(double t)
+void miniscene::render_ecef_geometry(double)
    {
    // overwrite in derived class and add opengl calls
    // to render additional geometry defined in ecef coordinates here:
