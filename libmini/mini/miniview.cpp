@@ -154,7 +154,7 @@ void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    }
 
 // render ecef geometry
-void miniview::render_ecef_geometry(double t)
+void miniview::render_ecef_geometry(double)
    {
    // render plain globe for z-values:
 
