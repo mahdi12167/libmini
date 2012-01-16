@@ -30,8 +30,12 @@ Type on the unix console in your QT source directory:
 
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
+Choose an appropriate platform to describe the version of MSVC:
+ MSVC 8.0 -> SET PLATFORM=win32-msvc2005
+ MSVC 9.0 -> SET PLATFORM=win32-msvc2008
+ MSVC 10.0 -> SET PLATFORM=win32-msvc2010
 Navigate to the QT source directory and type
- configure -platform win32-msvc2005
+ configure -platform %PLATFORM%
  nmake sub-tools
 
 !! Libmini Dependencies (Unix/Mac)
