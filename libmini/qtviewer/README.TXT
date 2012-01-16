@@ -64,6 +64,8 @@ Type on the unix console in your project directory:
 Get the following subversion repositories via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/mini
  http://libmini.googlecode.com/svn/libmini/qtviewer
+Or just get the entire subversion repository via Tortoise SVN:
+ http://libmini.googlecode.com/svn/libmini
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the qtviewer source directory and type
