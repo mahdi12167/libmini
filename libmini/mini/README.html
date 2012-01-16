@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 10.2.3 as of 12.January.2012<br>
+Version 10.2.3 as of 16.January.2012<br>
 Copyright (c) 1995-2012 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -275,6 +275,15 @@ a rather positive sense.<p>
 <a name="Compilation"></a>
 <h2>(B) Compilation</h2>
 
+It is assumed that the libMini zip package has been downloaded and
+uncompressed to a "mini" folder. On a Unix system, the preferred
+download option is to check out the entire libMini source repository
+with subversion:
+
+<pre>
+   svn co http://libmini.googlecode.com/svn/libmini libmini
+</pre>
+
 The build.sh shell script compiles the library on Irix, Linux and
 MacOS X. Simply type "./build.sh" in your Unix shell (requires the
 tcsh to be installed). <a href="http://www.opengl.org">OpenGL</a> is
@@ -286,20 +295,38 @@ Optionally, you can
 use <a href="http://www.gnu.org/software/autoconf">autoconf</a>
 or <a href="http://www.cmake.org">CMake</a> to build libMini. For the
 former, type "./configure && make" and for the latter type "cmake . &&
-make" in a Unix shell.
+make" in a Unix shell.<p>
 
-The library also compiles on Windows by using CMake. Simply specify
-the libMini directory as the source and binary directory in the CMake
-GUI and click the generator button. Then open the generated VC++
-project and compile with Visual Studio. You can also run the build on
-the MSVC Command prompt via the "build.bat" batch file. Alternatively,
-you can use cygwin in the following way:<p>
+The library also compiles on Windows by using CMake. For Windows it is
+recommended to check out the whole libMini package with Tortoise SVN
+from "libmini.googlecode.com/svn/libmini".<p>
+
+To compile, simply specify the "mini" directory as the source and
+binary directory in the CMake GUI and click the generator button. Then
+open the generated VC++ project and compile with Visual Studio. You
+can also run the build on the MSVC Command prompt via the "build.bat"
+batch file.<p>
+
+Alternatively, you can use cygwin in the following way:<p>
 
 <ul>
    <li>Run the <a href="http://cygwin.com">cygwin</a> setup program</li>
    <li>Make sure to install "Devel" and "Shells" from the packages list</li>
    <li>Double-click the cygwin icon to get a bash session</li>
    <li>In bash, type: "cd mini" and "./build.sh"</li>
+</ul>
+
+As another option, you can use MinGW in the following way:<p>
+
+<ul>
+   <li>Run the <a href="http://mingw.org">MinGW</a> installer "mingw-get-inst.exe"</li>
+   <li>Make sure to install "g++" and "MSYS" from the packages list</li>
+   <li>Add "C:\MinGW\bin;" to your PATH environment variable</li>
+   <li>The environment variables are located in Settings->System->Advanced</li>
+   <li>Install CMake from the <a href="http://www.cmake.org/cmake/resources/software.html">exe installer</a></li>
+   <li>Start the MinGW shell to get a bash session</li>
+   <li>In bash, type: "cd mini" and 'cmake -G "MinGW Makefiles" .'</li>
+   <li>Then compile as usual with "make"</li>
 </ul>
 
 Other than the specified operating systems are not officially
