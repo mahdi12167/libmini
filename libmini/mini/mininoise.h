@@ -27,7 +27,7 @@ class mininoise
                            int sx,int sy,int sz,
                            int x,int y,int z)
       {
-      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      if (x<0 || x>=sx || y<0 || y>=sy || z<0 || z>=sz) ERRORMSG();
       return(data[x+(y+z*sy)*sx]);
       }
 
@@ -36,7 +36,7 @@ class mininoise
                           int x,int y,int z,
                           float v)
       {
-      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      if (x<0 || x>=sx || y<0 || y>=sy || z<0 || z>=sz) ERRORMSG();
       data[x+(y+z*sy)*sx]=v;
       }
 
@@ -45,7 +45,7 @@ class mininoise
                           int x,int y,int z,
                           float v)
       {
-      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      if (x<0 || x>=sx || y<0 || y>=sy || z<0 || z>=sz) ERRORMSG();
       data[x+(y+z*sy)*sx]+=v;
       }
 
