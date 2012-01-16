@@ -26,19 +26,28 @@ class mininoise
    inline static float get(const float *data,
                            int sx,int sy,int sz,
                            int x,int y,int z)
-      {return(data[x+(y+z*sy)*sx]);}
+      {
+      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      return(data[x+(y+z*sy)*sx]);
+      }
 
    inline static void set(float *data,
                           int sx,int sy,int sz,
                           int x,int y,int z,
                           float v)
-      {data[x+(y+z*sy)*sx]=v;}
+      {
+      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      data[x+(y+z*sy)*sx]=v;
+      }
 
    inline static void add(float *data,
                           int sx,int sy,int sz,
                           int x,int y,int z,
                           float v)
-      {data[x+(y+z*sy)*sx]+=v;}
+      {
+      ERRORCHK(x>=0 && x<sx && y>=0 && y<sy && z>=0 && z<sz);
+      data[x+(y+z*sy)*sx]+=v;
+      }
 
    inline static float interpolate(float v0,float v1,float v2,float v3,float x);
 
