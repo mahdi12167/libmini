@@ -125,7 +125,7 @@ class mininode_culling: public mininode_group
    virtual void traverse_post();
    virtual void traverse_exit();
 
-   virtual void transform_cone(minicone &cone) const {}
+   virtual void transform_cone(minicone &) const {}
    };
 
 //! dynamic time-dependent node (base class)
@@ -298,7 +298,7 @@ class mininode_texture2D: public mininode_texture
       clear();
 
       texid=buildtexmap(image,&width,&height,components,
-                        24,mipmaps,s3tc,bytes,mipmapped);
+                        bits,mipmaps,s3tc,bytes,mipmapped);
 
       this->width=width;
       this->height=height;
@@ -624,7 +624,7 @@ class mininode_selector: public mininode_group
    virtual unsigned int get_children() const
       {return(1);}
 
-   virtual mininode *get_child(unsigned int i=0) const
+   virtual mininode *get_child(unsigned int=0) const
       {return(get(index));}
 
    void select(unsigned int i=0)
@@ -694,7 +694,7 @@ class mininode_transform: public mininode_dynamic
 
    virtual void traverse_exit();
 
-   virtual void transform_cone(minicone &cone) const {}
+   virtual void transform_cone(minicone &) const {}
 
    virtual void update_dirty();
    };
