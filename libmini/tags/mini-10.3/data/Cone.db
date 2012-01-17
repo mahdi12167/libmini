@@ -1,0 +1,30 @@
+MAGIC=13091
+xsize=17
+ysize=17
+zsize=17
+tsteps=1
+type=0
+swx=0
+swy=0
+nwx=0
+nwy=0
+nex=0
+ney=0
+sex=0
+sey=0
+h0=0
+dh=0
+t0=0
+dt=0
+scaling=1
+bias=0
+extformat=0
+implformat=1
+bytes=0
+
+# implicit cone function
+
+include "std.luna"
+
+main(par x, par y, par z, par t)
+   {return(cone(x,y,z));}
