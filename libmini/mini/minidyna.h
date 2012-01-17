@@ -266,6 +266,31 @@ class minidyna
    const Item &tail() const
       {return(last());}
 
+   //! set first item
+   void setfirst(const Item &v)
+      {
+      ERRORCHK(SIZE==0);
+
+      MINARRAY[0]=v;
+      }
+
+   //! set first item
+   void sethead(const Item &v)
+      {setfirst(v);}
+
+   //! set last item
+   void setlast(const Item &v)
+      {
+      ERRORCHK(SIZE==0);
+
+      if (SIZE<=MINSIZE) MINARRAY[SIZE-1]=v;
+      else ARRAY[SIZE-1-MINSIZE]=v;
+      }
+
+   //! set last item
+   void settail(const Item &v)
+      {setlast(v);}
+
    //! append item to array
    Item &append(const Item &v)
       {
