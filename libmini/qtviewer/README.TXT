@@ -39,6 +39,8 @@ Navigate to the QT source directory and type
  nmake
 Add the "bin" directory in your QT directory to your path:
  set PATH=%cd%\bin;%PATH%
+Or add the "bin" directory to your PATH environment variable:
+ System -> Advanced -> Environment Variables -> PATH
 
 !! Libmini Dependencies (Unix/Mac)
 
