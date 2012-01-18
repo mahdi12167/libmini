@@ -1404,6 +1404,8 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
 #if defined(GL_ARB_vertex_program) && defined(GL_ARB_fragment_program)
    if (glext_vp && glext_fp)
       {
+      GLint errorPos,isNative;
+
       glGenProgramsARB(1,&progid);
 
       if (vtxorfrg)
@@ -1415,6 +1417,16 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
          {
          glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB,progid);
          glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_FORMAT_ASCII_ARB,strlen(prog),prog);
+         }
+
+      glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB,&errorPos);
+      glGetProgramivARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,&isNative);
+
+      if (errorPos==0) WARNMSG();
+      else
+         {
+         if (errorPos!=-1) ERRORMSG();
+         if (isNative!=1) WARNMSG();
          }
       }
 #endif
