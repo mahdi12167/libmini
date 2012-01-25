@@ -3430,6 +3430,93 @@ void databuf::computeabsolute()
                }
    }
 
+// quantize 16 bit data to 8 bit using a non-linear mapping
+void databuf::quantize(unsigned char *data,
+                       unsigned int width,unsigned int height,unsigned int depth,
+                       BOOLINT linear,BOOLINT nofree)
+   {
+   unsigned int i,j,k;
+
+   unsigned char *data2;
+   unsigned short int *data3;
+
+   int v,vmin,vmax;
+
+   double *err,eint;
+
+   BOOLINT done;
+
+   if ((data3=(unsigned short int*)malloc(width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
+
+   vmin=65535;
+   vmax=0;
+
+   for (k=0; k<depth; k++)
+      for (j=0; j<height; j++)
+         for (i=0; i<width; i++)
+            {
+            v=256*data[2*(i+(j+k*height)*width)]+data[2*(i+(j+k*height)*width)+1];
+            data3[i+(j+k*height)*width]=v;
+
+            if (v<vmin) vmin=v;
+            if (v>vmax) vmax=v;
+            }
+
+   if (!nofree) free(data);
+
+   err=new double[65536];
+
+   if (linear)
+      for (i=0; i<65536; i++) err[i]=255*(double)i/vmax;
+   else
+      {
+      for (i=0; i<65536; i++) err[i]=0.0;
+
+      for (k=0; k<depth; k++)
+         for (j=0; j<height; j++)
+            for (i=0; i<width; i++)
+               err[get_ushort(data3,width,height,depth,i,j,k)]+=sqrt(get_ushort_grad(data3,width,height,depth,i,j,k));
+
+      for (i=0; i<65536; i++) err[i]=pow(err[i],1.0/3);
+
+      err[vmin]=err[vmax]=0.0;
+
+      for (k=0; k<256; k++)
+         {
+         for (eint=0.0,i=0; i<65536; i++) eint+=err[i];
+
+         done=TRUE;
+
+         for (i=0; i<65536; i++)
+            if (err[i]>eint/256)
+               {
+               err[i]=eint/256;
+               done=FALSE;
+               }
+
+         if (done) break;
+         }
+
+      for (i=1; i<65536; i++) err[i]+=err[i-1];
+
+      if (err[65535]>0.0f)
+         for (i=0; i<65536; i++) err[i]*=255.0f/err[65535];
+      }
+
+   if ((data2=(unsigned char *)malloc(width*height*depth))==NULL) MEMERROR();
+
+   for (k=0; k<depth; k++)
+      for (j=0; j<height; j++)
+         for (i=0; i<width; i++)
+            data2[i+(j+k*height)*width]=(int)(err[get_ushort(data3,width,height,depth,i,j,k)]+0.5);
+
+   delete err;
+   free(data3);
+
+   set(data2,width*height*depth,width,height,depth);
+   set_mapping(1.0f/255,0.0f);
+   }
+
 // print information
 void databuf::print_info()
    {
@@ -3518,6 +3605,43 @@ void databuf::print_values()
             if (t<tsteps-1) printf("\n");
             }
       else printf("unprintable\n");
+   }
+
+// unsigned short int evaluator
+int databuf::get_ushort(unsigned short int *data,
+                        unsigned int width,unsigned int height,unsigned int depth,
+                        unsigned int i,unsigned int j,unsigned int k)
+   {return(data[i+(j+k*height)*width]);}
+
+// unsigned short int gradient magnitude
+double databuf::get_ushort_grad(unsigned short int *data,
+                                unsigned int width,unsigned int height,unsigned int depth,
+                                unsigned int i,unsigned int j,unsigned int k)
+   {
+   double gx,gy,gz;
+
+   if (i>0)
+      if (i<width-1) gx=(get_ushort(data,width,height,depth,i+1,j,k)-get_ushort(data,width,height,depth,i-1,j,k))/2.0;
+      else gx=get_ushort(data,width,height,depth,i,j,k)-get_ushort(data,width,height,depth,i-1,j,k);
+   else
+      if (i<width-1) gx=get_ushort(data,width,height,depth,i+1,j,k)-get_ushort(data,width,height,depth,i,j,k);
+      else gx=0.0;
+
+   if (j>0)
+      if (j<height-1) gy=(get_ushort(data,width,height,depth,i,j+1,k)-get_ushort(data,width,height,depth,i,j-1,k))/2.0;
+      else gy=get_ushort(data,width,height,depth,i,j,k)-get_ushort(data,width,height,depth,i,j-1,k);
+   else
+      if (j<height-1) gy=get_ushort(data,width,height,depth,i,j+1,k)-get_ushort(data,width,height,depth,i,j,k);
+      else gy=0.0;
+
+   if (k>0)
+      if (k<depth-1) gz=(get_ushort(data,width,height,depth,i,j,k+1)-get_ushort(data,width,height,depth,i,j,k-1))/2.0;
+      else gz=get_ushort(data,width,height,depth,i,j,k)-get_ushort(data,width,height,depth,i,j,k-1);
+   else
+      if (k<depth-1) gz=get_ushort(data,width,height,depth,i,j,k+1)-get_ushort(data,width,height,depth,i,j,k);
+      else gz=0.0;
+
+   return(sqrt(gx*gx+gy*gy+gz*gz));
    }
 
 // swap byte ordering between MSB and LSB

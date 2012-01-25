@@ -325,6 +325,11 @@ class databuf
    //! compute absolute values
    void computeabsolute();
 
+   //! quantize 16 bit data to 8 bit using a non-linear mapping
+   void quantize(unsigned char *data,
+                 unsigned int width,unsigned int height,unsigned int depth,
+                 BOOLINT linear,BOOLINT nofree);
+
    //! check for invalid value (and nan)
    inline int checknodata(const float value)
       {
@@ -426,6 +431,14 @@ class databuf
    void interpretechunk(unsigned int implfmt,const char *path);
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
+
+   inline int get_ushort(unsigned short int *data,
+                         unsigned int width,unsigned int height,unsigned int depth,
+                         unsigned int i,unsigned int j,unsigned int k);
+
+   inline double get_ushort_grad(unsigned short int *data,
+                                 unsigned int width,unsigned int height,unsigned int depth,
+                                 unsigned int i,unsigned int j,unsigned int k);
 
    void swapbytes();
    };
