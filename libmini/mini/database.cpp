@@ -3430,7 +3430,47 @@ void databuf::computeabsolute()
                }
    }
 
-// quantize 16 bit data to 8 bit using a non-linear mapping
+// quantize 16 bit unsigned data to 16 bit signed data
+void databuf::quantize(unsigned char *data,
+                       unsigned int width,unsigned int height,unsigned int depth,
+                       BOOLINT nofree)
+   {
+   unsigned int i,j,k;
+
+   unsigned short int *data2;
+
+   int v,vmin,vmax;
+
+   if ((data2=(unsigned short int*)malloc(width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
+
+   vmin=65535;
+   vmax=0;
+
+   for (k=0; k<depth; k++)
+      for (j=0; j<height; j++)
+         for (i=0; i<width; i++)
+            {
+            v=256*data[2*(i+(j+k*height)*width)]+data[2*(i+(j+k*height)*width)+1];
+            data2[i+(j+k*height)*width]=v;
+
+            if (v<vmin) vmin=v;
+            if (v>vmax) vmax=v;
+            }
+
+   if (!nofree) free(data);
+
+   if (vmin==vmax) vmax=vmin+1;
+
+   for (k=0; k<depth; k++)
+      for (j=0; j<height; j++)
+         for (i=0; i<width; i++)
+            data2[i+(j+k*height)*width]=(int)(32767.0*get_ushort(data2,width,height,depth,i,j,k)/(vmax-vmin)+0.5);
+
+   set(data2,width*height*depth,width,height,depth,1,DATABUF_TYPE_SHORT);
+   set_mapping(1.0f/32767,0.0f);
+   }
+
+// quantize 16 bit unsigned data to 8 bit using a non-linear mapping
 void databuf::quantize(unsigned char *data,
                        unsigned int width,unsigned int height,unsigned int depth,
                        BOOLINT linear,BOOLINT nofree)
