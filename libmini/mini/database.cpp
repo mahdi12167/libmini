@@ -2791,6 +2791,90 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    return(nodata);
    }
 
+// get a gradient magnitude value
+float databuf::getgrad(const unsigned int i,const unsigned int j,const unsigned int k)
+   {
+   float v1,v2;
+   float gx,gy,gz;
+
+   if (i>0)
+      if (i<xsize-1)
+         {
+         v1=getval(i+1,j,k);
+         v2=getval(i-1,j,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gx=0.5f*(v1-v2);
+         }
+      else
+         {
+         v1=getval(i,j,k);
+         v2=getval(i-1,j,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gx=0.5f*(v1-v2);
+         }
+   else
+      if (i<xsize-1)
+         {
+         v1=getval(i+1,j,k);
+         v2=getval(i,j,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gx=0.5f*(v1-v2);
+         }
+      else gx=0.0f;
+
+   if (j>0)
+      if (j<ysize-1)
+         {
+         v1=getval(i,j+1,k);
+         v2=getval(i,j-1,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gy=0.5f*(v1-v2);
+         }
+      else
+         {
+         v1=getval(i,j,k);
+         v2=getval(i,j-1,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gy=0.5f*(v1-v2);
+         }
+   else
+      if (j<ysize-1)
+         {
+         v1=getval(i,j+1,k);
+         v2=getval(i,j,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gy=0.5f*(v1-v2);
+         }
+      else gy=0.0f;
+
+   if (k>0)
+      if (k<zsize-1)
+         {
+         v1=getval(i,j,k+1);
+         v2=getval(i,j,k-1);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gz=0.5f*(v1-v2);
+         }
+      else
+         {
+         v1=getval(i,j,k);
+         v2=getval(i,j,k-1);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gz=0.5f*(v1-v2);
+         }
+   else
+      if (k<zsize-1)
+         {
+         v1=getval(i,j,k+1);
+         v2=getval(i,j,k);
+         if (checknodata(v1) || checknodata(v2)) return(nodata);
+         gz=0.5f*(v1-v2);
+         }
+      else gz=0.0f;
+
+   return(fsqrt(gx*gx+gy*gy+gz*gz));
+   }
+
 // set rgb color
 void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float value[3])
    {

@@ -352,6 +352,9 @@ class databuf
    //! get an interpolated scalar value
    float getvalue(float x,float y,float z,unsigned int t);
 
+   //! get a gradient magnitude value
+   float getgrad(const unsigned int i,const unsigned int j,const unsigned int k);
+
    //! set rgb[a] color
    void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const float value[3]);
    void setrgb(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int t,const float value[3]);
