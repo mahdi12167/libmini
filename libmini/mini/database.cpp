@@ -982,7 +982,7 @@ void databuf::swap2(int is_msb)
    }
 
 // convert to signed short (the default)
-void databuf::convert2(int is_ushort)
+void databuf::convert2(int is_ushort,int to_ushort)
    {
    unsigned int i;
 
@@ -990,18 +990,26 @@ void databuf::convert2(int is_ushort)
 
    if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
 
-   if (is_ushort==0) return;
+   if (is_ushort!=0 && to_ushort==0)
+      {
+      maxval=0;
+      ptr=(unsigned short int *)data;
+      for (i=0; i<bytes; i+=2,ptr++)
+         if (*ptr>maxval) maxval=*ptr;
 
-   maxval=0;
-   ptr=(unsigned short int *)data;
-   for (i=0; i<bytes; i+=2,ptr++)
-      if (*ptr>maxval) maxval=*ptr;
+      if (maxval<32768) return;
 
-   if (maxval<32768) return;
-
-   ptr=(unsigned short int *)data;
-   for (i=0; i<bytes; i+=2)
-      *ptr++>>=1;
+      ptr=(unsigned short int *)data;
+      for (i=0; i<bytes; i+=2)
+         *ptr++>>=1;
+      }
+   else if (is_ushort==0 && to_ushort!=0)
+      {
+      ptr=(unsigned short int *)data;
+      for (i=0; i<bytes; i+=2,ptr++)
+         if (*ptr>32767) *ptr++=0;
+         else *ptr++<<=1;
+      }
    }
 
 // set conversion hook for external formats

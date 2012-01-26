@@ -196,7 +196,7 @@ class databuf
    void swap2(int is_msb=1);
 
    //! convert to signed short (the default)
-   void convert2(int is_ushort=0);
+   void convert2(int is_ushort=0,int to_ushort=0);
 
    //! set conversion hook for external formats
    static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data=NULL);
