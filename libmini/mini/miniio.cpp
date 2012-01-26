@@ -17,7 +17,7 @@ int checkfile(const char *filename)
    return(1);
    }
 
-// write a raw file
+// write a RAW file
 void writefile(const char *filename,unsigned char *data,unsigned int bytes)
    {
    FILE *file;
@@ -30,17 +30,29 @@ void writefile(const char *filename,unsigned char *data,unsigned int bytes)
    fclose(file);
    }
 
-// read a raw file
+// read a RAW file
 unsigned char *readfile(const char *filename,unsigned int *bytes)
    {
-   const unsigned int BLOCKSIZE=1<<20;
-
    FILE *file;
 
    unsigned char *data;
-   unsigned int cnt,blkcnt;
 
    if ((file=fopen(filename,"rb"))==NULL) return(NULL);
+
+   data=readfiled(file,bytes);
+
+   fclose(file);
+
+   return(data);
+   }
+
+// read from a RAW file
+unsigned char *readfiled(FILE *file,unsigned int *bytes)
+   {
+   const unsigned int BLOCKSIZE=1<<20;
+
+   unsigned char *data;
+   unsigned int cnt,blkcnt;
 
    data=NULL;
    cnt=0;
@@ -65,14 +77,12 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
 
    if ((data=(unsigned char *)realloc(data,cnt))==NULL) MEMERROR();
 
-   fclose(file);
-
    *bytes=cnt;
 
    return(data);
    }
 
-// read a raw file as string
+// read a RAW file as string
 char *readstring(const char *filename)
    {
    char *data;
@@ -88,7 +98,7 @@ char *readstring(const char *filename)
    return(data);
    }
 
-// read a raw file and compute signature
+// read a RAW file and compute signature
 unsigned int signature(const char *filename)
    {
    unsigned int sig;

@@ -7,7 +7,8 @@ HEADERS += \
    miniref.h mininode.h mininodes.h \
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
    minimath.h minicomplex.h mininoise.h minimpfp.h \
-   minitime.h miniio.h minidir.h minirgb.h minicrs.h \
+   minitime.h minirgb.h minicrs.h \
+   miniio.h minidir.h minidds.h \
    ministub.h minitile.h miniload.h \
    minicoord.h miniwarp.h minicam.h minianim.h \
    minilayer.h miniterrain.h miniearth.h \
@@ -26,8 +27,8 @@ SOURCES += \
    mini.cpp miniOGL.cpp \
    miniv3f.cpp miniv3d.cpp miniv4f.cpp miniv4d.cpp \
    minimath.cpp mininoise.cpp minimpfp.cpp \
-   minitime.cpp miniio.cpp minidir.cpp \
-   minirgb.cpp minicrs.cpp \
+   minitime.cpp minirgb.cpp minicrs.cpp \
+   miniio.cpp minidir.cpp minidds.cpp \
    ministub.cpp minitile.cpp miniload.cpp \
    minicoord.cpp miniwarp.cpp minicam.cpp minianim.cpp \
    minilayer.cpp miniterrain.cpp miniearth.cpp \
