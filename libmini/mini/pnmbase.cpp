@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "miniio.h"
+#include "minidds.h"
 #include "minicrs.h"
 
 #include "pnmbase.h"
@@ -379,6 +381,163 @@ unsigned char *readPVMvolume(const char *filename,
       comment->reset();
       comment->addstring(com.str());
       }
+
+   return(volume);
+   }
+
+// write a compressed DDS volume
+void writeDDSvolume(const char *filename,unsigned char *volume,
+                    unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
+                    float scalex,float scaley,float scalez,
+                    unsigned char *description,
+                    unsigned char *courtesy,
+                    unsigned char *parameter,
+                    unsigned char *comment)
+   {
+   static const int MAXSTR=256;
+
+   char str[MAXSTR];
+
+   unsigned char *data;
+
+   unsigned int len1=1,len2=1,len3=1,len4=1;
+
+   if (width<1 || height<1 || depth<1 || components<1) ERRORMSG();
+
+   if (description==NULL && courtesy==NULL && parameter==NULL && comment==NULL)
+      if (scalex==1.0f && scaley==1.0f && scalez==1.0f)
+         snprintf(str,MAXSTR,"PVM\n%d %d %d\n%d\n",width,height,depth,components);
+      else
+         snprintf(str,MAXSTR,"PVM2\n%d %d %d\n%g %g %g\n%d\n",width,height,depth,scalex,scaley,scalez,components);
+   else
+      snprintf(str,MAXSTR,"PVM3\n%d %d %d\n%g %g %g\n%d\n",width,height,depth,scalex,scaley,scalez,components);
+
+   if (description==NULL && courtesy==NULL && parameter==NULL && comment==NULL)
+      {
+      if ((data=(unsigned char *)malloc(strlen(str)+width*height*depth*components))==NULL) MEMERROR();
+
+      memcpy(data,str,strlen(str));
+      memcpy(data+strlen(str),volume,width*height*depth*components);
+
+      writeDDSfile(filename,data,strlen(str)+width*height*depth*components,components,width);
+      }
+   else
+      {
+      if (description!=NULL) len1=strlen((char *)description)+1;
+      if (courtesy!=NULL) len2=strlen((char *)courtesy)+1;
+      if (parameter!=NULL) len3=strlen((char *)parameter)+1;
+      if (comment!=NULL) len4=strlen((char *)comment)+1;
+
+      if ((data=(unsigned char *)malloc(strlen(str)+width*height*depth*components+len1+len2+len3+len4))==NULL) MEMERROR();
+
+      memcpy(data,str,strlen(str));
+      memcpy(data+strlen(str),volume,width*height*depth*components);
+
+      if (description==NULL) *(data+strlen(str)+width*height*depth*components)='\0';
+      else memcpy(data+strlen(str)+width*height*depth*components,description,len1);
+
+      if (courtesy==NULL) *(data+strlen(str)+width*height*depth*components+len1)='\0';
+      else memcpy(data+strlen(str)+width*height*depth*components+len1,courtesy,len2);
+
+      if (parameter==NULL) *(data+strlen(str)+width*height*depth*components+len1+len2)='\0';
+      else memcpy(data+strlen(str)+width*height*depth*components+len1+len2,parameter,len3);
+
+      if (comment==NULL) *(data+strlen(str)+width*height*depth*components+len1+len2+len3)='\0';
+      else memcpy(data+strlen(str)+width*height*depth*components+len1+len2+len3,comment,len4);
+
+      writeDDSfile(filename,data,strlen(str)+width*height*depth*components+len1+len2+len3+len4,components,width);
+      }
+   }
+
+// read a compressed DDS volume
+unsigned char *readDDSvolume(const char *filename,
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components,
+                             float *scalex,float *scaley,float *scalez,
+                             unsigned char **description,
+                             unsigned char **courtesy,
+                             unsigned char **parameter,
+                             unsigned char **comment)
+   {
+   unsigned char *data,*ptr;
+   unsigned int bytes,numc;
+
+   int version=1;
+
+   unsigned char *volume;
+
+   float sx=1.0f,sy=1.0f,sz=1.0f;
+
+   unsigned int len1=0,len2=0,len3=0,len4=0;
+
+   if ((data=readDDSfile(filename,&bytes))==NULL)
+      if ((data=readfile(filename,&bytes))==NULL) return(NULL);
+
+   if (bytes<5) return(NULL);
+
+   if ((data=(unsigned char *)realloc(data,bytes+1))==NULL) MEMERROR();
+   data[bytes]='\0';
+
+   if (strncmp((char *)data,"PVM\n",4)!=0)
+      {
+      if (strncmp((char *)data,"PVM2\n",5)==0) version=2;
+      else if (strncmp((char *)data,"PVM3\n",5)==0) version=3;
+      else return(NULL);
+
+      ptr=&data[5];
+      if (sscanf((char *)ptr,"%d %d %d\n%g %g %g\n",width,height,depth,&sx,&sy,&sz)!=6) ERRORMSG();
+      if (*width<1 || *height<1 || *depth<1 || sx<=0.0f || sy<=0.0f || sz<=0.0f) ERRORMSG();
+      ptr=(unsigned char *)strchr((char *)ptr,'\n')+1;
+      }
+   else
+      {
+      ptr=&data[4];
+      while (*ptr=='#')
+         while (*ptr++!='\n');
+
+      if (sscanf((char *)ptr,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
+      if (*width<1 || *height<1 || *depth<1) ERRORMSG();
+      }
+
+   if (scalex!=NULL && scaley!=NULL && scalez!=NULL)
+      {
+      *scalex=sx;
+      *scaley=sy;
+      *scalez=sz;
+      }
+
+   ptr=(unsigned char *)strchr((char *)ptr,'\n')+1;
+   if (sscanf((char *)ptr,"%d\n",&numc)!=1) ERRORMSG();
+   if (numc<1) ERRORMSG();
+
+   if (components!=NULL) *components=numc;
+   else if (numc!=1) ERRORMSG();
+
+   ptr=(unsigned char *)strchr((char *)ptr,'\n')+1;
+   if (version==3) len1=strlen((char *)(ptr+(*width)*(*height)*(*depth)*numc))+1;
+   if (version==3) len2=strlen((char *)(ptr+(*width)*(*height)*(*depth)*numc+len1))+1;
+   if (version==3) len3=strlen((char *)(ptr+(*width)*(*height)*(*depth)*numc+len1+len2))+1;
+   if (version==3) len4=strlen((char *)(ptr+(*width)*(*height)*(*depth)*numc+len1+len2+len3))+1;
+   if ((volume=(unsigned char *)malloc((*width)*(*height)*(*depth)*numc+len1+len2+len3+len4))==NULL) MEMERROR();
+   if (data+bytes!=ptr+(*width)*(*height)*(*depth)*numc+len1+len2+len3+len4) ERRORMSG();
+
+   memcpy(volume,ptr,(*width)*(*height)*(*depth)*numc+len1+len2+len3+len4);
+   free(data);
+
+   if (description!=NULL)
+      if (len1>1) *description=volume+(*width)*(*height)*(*depth)*numc;
+      else *description=NULL;
+
+   if (courtesy!=NULL)
+      if (len2>1) *courtesy=volume+(*width)*(*height)*(*depth)*numc+len1;
+      else *courtesy=NULL;
+
+   if (parameter!=NULL)
+      if (len3>1) *parameter=volume+(*width)*(*height)*(*depth)*numc+len1+len2;
+      else *parameter=NULL;
+
+   if (comment!=NULL)
+      if (len4>1) *comment=volume+(*width)*(*height)*(*depth)*numc+len1+len2+len3;
+      else *comment=NULL;
 
    return(volume);
    }

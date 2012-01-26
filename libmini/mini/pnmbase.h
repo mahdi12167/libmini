@@ -60,6 +60,24 @@ unsigned char *readPVMvolume(const char *filename,
                              float *scalex=0,float *scaley=0,float *scalez=0,
                              PNMcomment *comment=0);
 
+//! write a compressed DDS volume
+void writeDDSvolume(const char *filename,unsigned char *volume,
+                    unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
+                    float scalex,float scaley,float scalez,
+                    unsigned char *description,
+                    unsigned char *courtesy,
+                    unsigned char *parameter,
+                    unsigned char *comment);
+
+//! read a compressed DDS volume
+unsigned char *readDDSvolume(const char *filename,
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components,
+                             float *scalex,float *scaley,float *scalez,
+                             unsigned char **description,
+                             unsigned char **courtesy,
+                             unsigned char **parameter,
+                             unsigned char **comment);
+
 //! put a geographic grid descriptor into a PNM comment
 void putPNMparams(PNMcomment *comment, // output PNM comment
                   const char *pnm_description=0, // data description
