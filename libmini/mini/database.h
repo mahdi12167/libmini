@@ -259,7 +259,8 @@ class databuf
    //! data is loaded from PVM file
    int loadPVMdata(const char *filename,
                    double midx=0.0,double midy=0.0,double basez=0.0,
-                   double dx=1.0,double dy=1.0,double dz=1.0);
+                   double dx=1.0,double dy=1.0,double dz=1.0,
+                   BOOLINT tobyte=TRUE);
 
    //! data is loaded from PVM time series
    //! the actual time step n is appended to the file name, e.g. filename.pvm-t01

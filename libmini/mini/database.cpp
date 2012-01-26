@@ -1592,7 +1592,8 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
 // data is loaded from PVM file
 int databuf::loadPVMdata(const char *filename,
                          double midx,double midy,double basez,
-                         double dx,double dy,double dz)
+                         double dx,double dy,double dz,
+                         BOOLINT tobyte)
    {
    unsigned int width,height,depth,components;
    float scalex,scaley,scalez;
@@ -1627,7 +1628,8 @@ int databuf::loadPVMdata(const char *filename,
       bytes=xsize*ysize*zsize*components;
       }
    else
-      quantize16to8((unsigned char *)data,width,height,depth);
+      if (tobyte) quantize16to8((unsigned char *)data,width,height,depth);
+      else quantize16to16((unsigned char *)data,width,height,depth);
 
    swx=midx-dx*scalex/2.0;
    swy=midy-dy*scaley/2.0;
