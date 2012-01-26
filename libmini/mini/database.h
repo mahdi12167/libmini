@@ -326,14 +326,14 @@ class databuf
    void computeabsolute();
 
    //! quantize 16 bit unsigned data to 16 bit signed data
-   void quantize(unsigned char *data,
-                 unsigned int width,unsigned int height,unsigned int depth,
-                 BOOLINT nofree=FALSE);
+   void quantize16to16(unsigned char *data,
+                       unsigned int width,unsigned int height,unsigned int depth,
+                       BOOLINT nofree=FALSE);
 
    //! quantize 16 bit unsigned data to 8 bit using a non-linear mapping
-   void quantize(unsigned char *data,
-                 unsigned int width,unsigned int height,unsigned int depth,
-                 BOOLINT linear=FALSE,BOOLINT nofree=FALSE);
+   void quantize16to8(unsigned char *data,
+                      unsigned int width,unsigned int height,unsigned int depth,
+                      BOOLINT linear=FALSE,BOOLINT nofree=FALSE);
 
    //! check for invalid value (and nan)
    inline int checknodata(const float value)

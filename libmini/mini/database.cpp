@@ -1608,21 +1608,26 @@ int databuf::loadPVMdata(const char *filename,
       }
 
    if (width<2 || height<2 || depth<2) ERRORMSG();
-   if (components!=1 && components!=3 && components!=4) ERRORMSG();
+   if (components<1 || components>4) ERRORMSG();
 
-   extformat=DATABUF_EXTFMT_PLAIN;
-   implformat=0;
+   if (components!=2)
+      {
+      extformat=DATABUF_EXTFMT_PLAIN;
+      implformat=0;
 
-   xsize=width;
-   ysize=height;
-   zsize=depth;
-   tsteps=1;
+      xsize=width;
+      ysize=height;
+      zsize=depth;
+      tsteps=1;
 
-   if (components==1) type=DATABUF_TYPE_BYTE;
-   else if (components==3) type=DATABUF_TYPE_RGB;
-   else type=DATABUF_TYPE_RGBA;
+      if (components==1) type=DATABUF_TYPE_BYTE;
+      else if (components==3) type=DATABUF_TYPE_RGB;
+      else type=DATABUF_TYPE_RGBA;
 
-   bytes=xsize*ysize*zsize*components;
+      bytes=xsize*ysize*zsize*components;
+      }
+   else
+      quantize16to8((unsigned char *)data,width,height,depth);
 
    swx=midx-dx*scalex/2.0;
    swy=midy-dy*scaley/2.0;
@@ -3440,9 +3445,9 @@ void databuf::computeabsolute()
    }
 
 // quantize 16 bit unsigned data to 16 bit signed data
-void databuf::quantize(unsigned char *data,
-                       unsigned int width,unsigned int height,unsigned int depth,
-                       BOOLINT nofree)
+void databuf::quantize16to16(unsigned char *data,
+                             unsigned int width,unsigned int height,unsigned int depth,
+                             BOOLINT nofree)
    {
    unsigned int i,j,k;
 
@@ -3480,9 +3485,9 @@ void databuf::quantize(unsigned char *data,
    }
 
 // quantize 16 bit unsigned data to 8 bit using a non-linear mapping
-void databuf::quantize(unsigned char *data,
-                       unsigned int width,unsigned int height,unsigned int depth,
-                       BOOLINT linear,BOOLINT nofree)
+void databuf::quantize16to8(unsigned char *data,
+                            unsigned int width,unsigned int height,unsigned int depth,
+                            BOOLINT linear,BOOLINT nofree)
    {
    unsigned int i,j,k;
 
