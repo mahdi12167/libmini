@@ -50,33 +50,33 @@ unsigned char *readPNMfile(const char *pnmfilename,
 
 //! write a PVM volume
 int writePVMvolume(const char *filename,unsigned char *volume,
-                   int width,int height,int depth,int components,
+                   unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
                    float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
                    PNMcomment *comment=0);
 
 //! read a PVM volume
 unsigned char *readPVMvolume(const char *filename,
-                             int *width,int *height,int *depth,int *components,
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components,
                              float *scalex=0,float *scaley=0,float *scalez=0,
                              PNMcomment *comment=0);
 
 //! write a compressed DDS volume
 void writeDDSvolume(const char *filename,unsigned char *volume,
-                    unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
-                    float scalex,float scaley,float scalez,
-                    unsigned char *description,
-                    unsigned char *courtesy,
-                    unsigned char *parameter,
-                    unsigned char *comment);
+                    unsigned int width,unsigned int height,unsigned int depth,unsigned int components=1,
+                    float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
+                    unsigned char *description=NULL,
+                    unsigned char *courtesy=NULL,
+                    unsigned char *parameter=NULL,
+                    unsigned char *comment=NULL);
 
 //! read a compressed DDS volume
 unsigned char *readDDSvolume(const char *filename,
-                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components,
-                             float *scalex,float *scaley,float *scalez,
-                             unsigned char **description,
-                             unsigned char **courtesy,
-                             unsigned char **parameter,
-                             unsigned char **comment);
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components=NULL,
+                             float *scalex=NULL,float *scaley=NULL,float *scalez=NULL,
+                             unsigned char **description=NULL,
+                             unsigned char **courtesy=NULL,
+                             unsigned char **parameter=NULL,
+                             unsigned char **comment=NULL);
 
 //! put a geographic grid descriptor into a PNM comment
 void putPNMparams(PNMcomment *comment, // output PNM comment

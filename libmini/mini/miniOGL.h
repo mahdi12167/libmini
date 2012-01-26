@@ -75,7 +75,7 @@ int buildRGBAtexmap(unsigned char *image,int *width,int *height,int mipmaps=1,in
 int buildRGBAtexmap(unsigned char *imageRGB,unsigned char *imageA,int *width,int *height);
 int buildtexmap(unsigned char *image,int *width,int *height,int components,int depth,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0);
 void bindtexmap(int texid,int width=0,int height=0,int size=0,int mipmaps=1);
-int build3Dtexmap(unsigned char *volume,int *width,int *height,int *depth,int components);
+int build3Dtexmap(unsigned char *volume,unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int components);
 void bind3Dtexmap(int texid);
 void deletetexmap(int texid);
 
@@ -181,7 +181,7 @@ void renderstrip(int start,int size);
 void renderfan(int start,int size);
 
 int getmaxtexsize();
-int getmax3Dtexsize();
+unsigned int getmax3Dtexsize();
 
 int getmaxtexunits();
 int getmaxtexcoords();

@@ -214,7 +214,7 @@ void print_graphics_info()
    else printf("unknown\n");
 
    printf("maxtexsize=%d\n",getmaxtexsize());
-   printf("max3Dtexsize=%d\n",getmax3Dtexsize());
+   printf("max3Dtexsize=%ud\n",getmax3Dtexsize());
    printf("maxtexunits=%d\n",getmaxtexunits());
    printf("maxtexcoords=%d\n",getmaxtexcoords());
    printf("maxteximageunits=%d\n",getmaxteximageunits());
@@ -1133,8 +1133,8 @@ void bindtexmap(int texid,int width,int height,int size,int mipmaps)
    }
 
 int build3Dtexmap(unsigned char *volume,
-                  int *width,int *height,int *depth,
-                  int components)
+                  unsigned int *width,unsigned int *height,unsigned int *depth,
+                  unsigned int components)
    {
    if (volume==NULL) ERRORMSG();
 
@@ -1150,7 +1150,7 @@ int build3Dtexmap(unsigned char *volume,
 
    GLint width2,height2,depth2;
 
-   int max3Dtexsize;
+   unsigned int max3Dtexsize;
 
    initglexts();
 
@@ -1833,7 +1833,7 @@ int getmaxtexsize()
 #endif
    }
 
-int getmax3Dtexsize()
+unsigned int getmax3Dtexsize()
    {
 #ifndef NOOGL
    GLint param=0;

@@ -276,7 +276,7 @@ class databuf
    void savePNMdata(const char *filename);
 
    //! data is saved as PVM volume
-   void savePVMdata(const char *filename);
+   void savePVMdata(const char *filename,BOOLINT dds=FALSE);
 
    //! data is generated from plane equation
    void generateplane(int size, // grid size

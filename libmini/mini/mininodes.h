@@ -406,7 +406,7 @@ class mininode_texture3D: public mininode_texture
       {}
 
    //! texture loader
-   void load(unsigned char *volume,int width,int height,int depth,int components)
+   void load(unsigned char *volume,unsigned int width,unsigned int height,unsigned int depth,unsigned int components)
       {
       clear();
 

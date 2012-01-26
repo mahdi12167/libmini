@@ -1361,7 +1361,7 @@ int minitree::rendergrass(float *cache,float *coords,int cnt,miniwarpbase *warp)
    double oglmtx[16];
 
    unsigned char *volume;
-   int width,height,depth,components;
+   unsigned int width,height,depth,components;
 
    unsigned char *perturbation;
    int psize,pwidth,pheight;

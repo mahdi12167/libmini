@@ -1594,10 +1594,10 @@ int databuf::loadPVMdata(const char *filename,
                          double midx,double midy,double basez,
                          double dx,double dy,double dz)
    {
-   int width,height,depth,components;
+   unsigned int width,height,depth,components;
    float scalex,scaley,scalez;
 
-   if ((data=readPVMvolume(filename,
+   if ((data=readDDSvolume(filename,
                            &width,&height,&depth,&components,
                            &scalex,&scaley,&scalez))==NULL)
       {
@@ -1658,26 +1658,26 @@ int databuf::loadPVMdata(const char *filename,
    char str[maxstr];
 
    unsigned char *moredata;
-   int width,height,depth,components;
+   unsigned int width,height,depth,components;
    float scalex,scaley,scalez;
 
    if (n==0) ERRORMSG();
 
    snprintf(str,maxstr,"%s-t%d",filename,t);
 
-   if ((data=readPVMvolume(str,
+   if ((data=readDDSvolume(str,
                            &width,&height,&depth,&components,
                            &scalex,&scaley,&scalez))==NULL)
       {
       snprintf(str,maxstr,"%s-t0%d",filename,t);
 
-      if ((data=readPVMvolume(str,
+      if ((data=readDDSvolume(str,
                               &width,&height,&depth,&components,
                               &scalex,&scaley,&scalez))==NULL)
          {
          snprintf(str,maxstr,"%s-t00%d",filename,t);
 
-         if ((data=readPVMvolume(str,
+         if ((data=readDDSvolume(str,
                                  &width,&height,&depth,&components,
                                  &scalex,&scaley,&scalez))==NULL)
             {
@@ -1712,15 +1712,15 @@ int databuf::loadPVMdata(const char *filename,
       {
       snprintf(str,maxstr,"%s-t%d",filename,i);
 
-      if ((moredata=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
+      if ((moredata=readDDSvolume(str,&width,&height,&depth,&components))==NULL)
          {
          snprintf(str,maxstr,"%s-t0%d",filename,i);
 
-         if ((moredata=readPVMvolume(str,&width,&height,&depth,&components))==NULL)
+         if ((moredata=readDDSvolume(str,&width,&height,&depth,&components))==NULL)
             {
             snprintf(str,maxstr,"%s-t00%d",filename,i);
 
-            if ((moredata=readPVMvolume(str,&width,&height,&depth,&components))==NULL) ERRORMSG();
+            if ((moredata=readDDSvolume(str,&width,&height,&depth,&components))==NULL) ERRORMSG();
             }
          }
 
@@ -1920,14 +1920,23 @@ void databuf::savePNMdata(const char *filename)
    }
 
 // data is saved as PVM volume
-void databuf::savePVMdata(const char *filename)
+void databuf::savePVMdata(const char *filename,BOOLINT dds)
    {
    if (extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0) return;
    if (tsteps>1) return;
 
-   if (type==DATABUF_TYPE_BYTE) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
-   else if (type==DATABUF_TYPE_RGB) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
-   else if (type==DATABUF_TYPE_RGBA) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
+   if (dds)
+      {
+      if (type==DATABUF_TYPE_BYTE) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
+      else if (type==DATABUF_TYPE_RGB) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
+      else if (type==DATABUF_TYPE_RGBA) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
+      }
+   else
+      {
+      if (type==DATABUF_TYPE_BYTE) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
+      else if (type==DATABUF_TYPE_RGB) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
+      else if (type==DATABUF_TYPE_RGBA) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
+      }
    }
 
 // data is generated from plane equation

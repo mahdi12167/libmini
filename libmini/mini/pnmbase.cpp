@@ -267,7 +267,7 @@ unsigned char *readPNMfile(const char *pnmfilename,
 
 // write a PVM volume
 int writePVMvolume(const char *filename,unsigned char *volume,
-                   int width,int height,int depth,int components,
+                   unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
                    float scalex,float scaley,float scalez,
                    PNMcomment *comment)
    {
@@ -294,9 +294,9 @@ int writePVMvolume(const char *filename,unsigned char *volume,
          else if (*++com!='\0') fprintf(file,"\n#");
       }
 
-   fprintf(file,"\n%d %d %d\n",width,height,depth);
+   fprintf(file,"\n%ud %ud %ud\n",width,height,depth);
    if (version==2) fprintf(file,"%g %g %g\n",scalex,scaley,scalez);
-   fprintf(file,"%d\n",components);
+   fprintf(file,"%ud\n",components);
 
    if (fwrite(volume,width*height*depth*components,1,file)!=1) IOERROR();
    fclose(file);
@@ -306,7 +306,7 @@ int writePVMvolume(const char *filename,unsigned char *volume,
 
 // read a PVM volume
 unsigned char *readPVMvolume(const char *filename,
-                             int *width,int *height,int *depth,int *components,
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components,
                              float *scalex,float *scaley,float *scalez,
                              PNMcomment *comment)
    {
@@ -347,7 +347,7 @@ unsigned char *readPVMvolume(const char *filename,
          if (ch==EOF) ERRORMSG();
    ungetc(ch,file);
 
-   if (fscanf(file,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
+   if (fscanf(file,"%ud %ud %ud\n",width,height,depth)!=3) ERRORMSG();
    if (version>1)
       if (fscanf(file,"%g %g %g\n",&sx,&sy,&sy)!=3) ERRORMSG();
    if (fscanf(file,"%d",&maxval)!=1) ERRORMSG();
