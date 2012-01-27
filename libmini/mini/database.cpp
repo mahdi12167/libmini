@@ -1601,7 +1601,7 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
 int databuf::loadPVMdata(const char *filename,
                          double midx,double midy,double basez,
                          double dx,double dy,double dz,
-                         BOOLINT tobyte)
+                         BOOLINT quantize,BOOLINT tobyte)
    {
    unsigned int width,height,depth,components;
    float scalex,scaley,scalez;
@@ -1619,7 +1619,7 @@ int databuf::loadPVMdata(const char *filename,
    if (width<2 || height<2 || depth<2) ERRORMSG();
    if (components<1 || components>4) ERRORMSG();
 
-   if (components!=2)
+   if (components!=2 || !quantize)
       {
       extformat=DATABUF_EXTFMT_PLAIN;
       implformat=0;
@@ -1630,10 +1630,17 @@ int databuf::loadPVMdata(const char *filename,
       tsteps=1;
 
       if (components==1) type=DATABUF_TYPE_BYTE;
+      else if (components==2) type=DATABUF_TYPE_SHORT;
       else if (components==3) type=DATABUF_TYPE_RGB;
       else type=DATABUF_TYPE_RGBA;
 
       bytes=xsize*ysize*zsize*components;
+
+      if (type==DATABUF_TYPE_SHORT)
+         {
+         if (intel_check()) swapbytes();
+         convert2(1,0);
+         }
       }
    else
       if (tobyte) quantize16to8((unsigned char *)data,width,height,depth);
@@ -1705,7 +1712,7 @@ int databuf::loadPVMdata(const char *filename,
       }
 
    if (width<2 || height<2 || depth<2) ERRORMSG();
-   if (components!=1 && components!=3 && components!=4) ERRORMSG();
+   if (components<1 || components>4) ERRORMSG();
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -1716,6 +1723,7 @@ int databuf::loadPVMdata(const char *filename,
    tsteps=n;
 
    if (components==1) type=DATABUF_TYPE_BYTE;
+   else if (components==2) type=DATABUF_TYPE_SHORT;
    else if (components==3) type=DATABUF_TYPE_RGB;
    else type=DATABUF_TYPE_RGBA;
 
@@ -1742,11 +1750,18 @@ int databuf::loadPVMdata(const char *filename,
       if ((unsigned int)width!=xsize || (unsigned int)height!=ysize || (unsigned int)depth!=zsize) ERRORMSG();
 
       if (components==1 && type!=DATABUF_TYPE_BYTE) ERRORMSG();
+      else if (components==2 && type!=DATABUF_TYPE_SHORT) ERRORMSG();
       else if (components==3 && type!=DATABUF_TYPE_RGB) ERRORMSG();
       else if (components==4 && type!=DATABUF_TYPE_RGBA) ERRORMSG();
 
       memcpy(&((unsigned char *)data)[(i-1)*xsize*ysize*zsize*components],moredata,xsize*ysize*zsize*components);
       free(moredata);
+      }
+
+   if (type==DATABUF_TYPE_SHORT)
+      {
+      if (intel_check()) swapbytes();
+      convert2(1,0);
       }
 
    swx=midx-dx*scalex/2.0;
@@ -1943,12 +1958,28 @@ void databuf::savePVMdata(const char *filename,BOOLINT dds)
    if (dds)
       {
       if (type==DATABUF_TYPE_BYTE) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
+      else if (type==DATABUF_TYPE_SHORT)
+         {
+         convert2(0,1);
+         if (intel_check()) swapbytes();
+         writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,2);
+         if (intel_check()) swapbytes();
+         convert2(1,0);
+         }
       else if (type==DATABUF_TYPE_RGB) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
       else if (type==DATABUF_TYPE_RGBA) writeDDSvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
       }
    else
       {
       if (type==DATABUF_TYPE_BYTE) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,1);
+      else if (type==DATABUF_TYPE_SHORT)
+         {
+         convert2(0,1);
+         if (intel_check()) swapbytes();
+         writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,2);
+         if (intel_check()) swapbytes();
+         convert2(1,0);
+         }
       else if (type==DATABUF_TYPE_RGB) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,3);
       else if (type==DATABUF_TYPE_RGBA) writePVMvolume(filename,(unsigned char *)data,xsize,ysize,zsize,4);
       }
