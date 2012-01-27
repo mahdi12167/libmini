@@ -214,7 +214,7 @@ void print_graphics_info()
    else printf("unknown\n");
 
    printf("maxtexsize=%d\n",getmaxtexsize());
-   printf("max3Dtexsize=%ud\n",getmax3Dtexsize());
+   printf("max3Dtexsize=%u\n",getmax3Dtexsize());
    printf("maxtexunits=%d\n",getmaxtexunits());
    printf("maxtexcoords=%d\n",getmaxtexcoords());
    printf("maxteximageunits=%d\n",getmaxteximageunits());

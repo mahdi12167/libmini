@@ -294,9 +294,9 @@ int writePVMvolume(const char *filename,unsigned char *volume,
          else if (*++com!='\0') fprintf(file,"\n#");
       }
 
-   fprintf(file,"\n%ud %ud %ud\n",width,height,depth);
+   fprintf(file,"\n%u %u %u\n",width,height,depth);
    if (version==2) fprintf(file,"%g %g %g\n",scalex,scaley,scalez);
-   fprintf(file,"%ud\n",components);
+   fprintf(file,"%u\n",components);
 
    if (fwrite(volume,width*height*depth*components,1,file)!=1) IOERROR();
    fclose(file);
@@ -347,7 +347,7 @@ unsigned char *readPVMvolume(const char *filename,
          if (ch==EOF) ERRORMSG();
    ungetc(ch,file);
 
-   if (fscanf(file,"%ud %ud %ud\n",width,height,depth)!=3) ERRORMSG();
+   if (fscanf(file,"%u %u %u\n",width,height,depth)!=3) ERRORMSG();
    if (version>1)
       if (fscanf(file,"%g %g %g\n",&sx,&sy,&sy)!=3) ERRORMSG();
    if (fscanf(file,"%d",&maxval)!=1) ERRORMSG();
