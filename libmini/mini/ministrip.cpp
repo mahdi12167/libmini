@@ -1364,34 +1364,35 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit)
    double dist;
    double mindist=MAXFLOAT;
 
-   if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
-      {
-      ptr=VTXARRAY;
-
-      for (i=0; i<SIZE; i++)
+   if (!MTXSET)
+      if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
          {
-         v1.x=*ptr++;
-         v1.y=*ptr++;
-         v1.z=*ptr++;
+         ptr=VTXARRAY;
 
-         if (i>=2)
+         for (i=0; i<SIZE; i++)
             {
-            dist=ray_triangle_dist(o,d,v1,v2,v3);
-            if (dist!=MAXFLOAT)
-               if (dist>=firsthit)
-                  if (dist<mindist) mindist=dist;
+            v1.x=*ptr++;
+            v1.y=*ptr++;
+            v1.z=*ptr++;
 
-            v3=v2;
-            v2=v1;
+            if (i>=2)
+               {
+               dist=ray_triangle_dist(o,d,v1,v2,v3);
+               if (dist!=MAXFLOAT)
+                  if (dist>=firsthit)
+                     if (dist<mindist) mindist=dist;
+
+               v3=v2;
+               v2=v1;
+               }
+            else if (i>=1)
+               {
+               v3=v2;
+               v2=v1;
+               }
+            else v2=v1;
             }
-         else if (i>=1)
-            {
-            v3=v2;
-            v2=v1;
-            }
-         else v2=v1;
          }
-      }
 
    return(mindist);
    }
