@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger
 
 #include "minibase.h"
+#include "minimath.h"
 
 #include "minibrick.h"
 
@@ -1350,4 +1351,47 @@ void ministrip::getbsphere(miniv3d &center,double &radius2) const
    {
    center=0.5*(BBOXMIN+BBOXMAX);
    radius2=(0.5*(BBOXMAX-BBOXMIN)).getlength2();
+   }
+
+// shoot a ray and return the distance to the closest triangle
+double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit)
+   {
+   int i;
+
+   float *ptr;
+   miniv3f v1,v2,v3;
+
+   double dist;
+   double mindist=MAXFLOAT;
+
+   if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
+      {
+      ptr=VTXARRAY;
+
+      for (i=0; i<SIZE; i++)
+         {
+         v1.x=*ptr++;
+         v1.y=*ptr++;
+         v1.z=*ptr++;
+
+         if (i>=2)
+            {
+            dist=ray_triangle_dist(o,d,v1,v2,v3);
+            if (dist!=MAXFLOAT)
+               if (dist>=firsthit)
+                  if (dist<mindist) mindist=dist;
+
+            v3=v2;
+            v2=v1;
+            }
+         else if (i>=1)
+            {
+            v3=v2;
+            v2=v1;
+            }
+         else v2=v1;
+         }
+      }
+
+   return(mindist);
    }

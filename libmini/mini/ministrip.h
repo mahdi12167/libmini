@@ -31,6 +31,7 @@
 #define MINI_SNIPPET_FRG_END "snippet_frg_end"
 
 #include "miniOGL.h"
+#include "miniv3f.h"
 #include "miniv3d.h"
 #include "miniv4d.h"
 
@@ -239,6 +240,13 @@ class ministrip
 
    //! get bounding sphere
    void getbsphere(miniv3d &center,double &radius2) const;
+
+   //! shoot a ray and return the distance to the closest triangle
+   //! only the triangles with a positive distance are considered
+   //! o is the origin of the ray, d is the ray direction
+   //! a return value of MAXFLOAT indicates that there was no hit
+   //! the first hit with a smaller distance than hitdist will be returned
+   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
 
    protected:
 
