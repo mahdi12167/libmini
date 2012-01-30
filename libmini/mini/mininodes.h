@@ -128,7 +128,7 @@ class mininode_culling: public mininode_group
       {return(is_visible?getsize():0);}
 
    //! shoot a ray and return the distance to the closest object
-   double shoot(const miniv3d &o,const miniv3d &d,double firsthit) const;
+   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
 
    protected:
 
