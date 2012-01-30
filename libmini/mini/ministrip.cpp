@@ -1354,7 +1354,7 @@ void ministrip::getbsphere(miniv3d &center,double &radius2) const
    }
 
 // shoot a ray and return the distance to the closest triangle
-double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit)
+double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
    {
    int i;
 

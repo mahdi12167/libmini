@@ -246,7 +246,7 @@ class ministrip
    //! o is the origin of the ray, d is the ray direction
    //! a return value of MAXFLOAT indicates that there was no hit
    //! the first hit with a smaller distance than hitdist will be returned
-   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
+   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
 
    protected:
 

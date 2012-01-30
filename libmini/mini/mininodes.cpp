@@ -4,6 +4,36 @@
 
 // mininode_group:
 
+// shoot a ray and return the distance to the closest object
+double mininode_group::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
+   {
+   double mindist,dist;
+
+   unsigned int s=get_children();
+
+   mindist=MAXFLOAT;
+
+   if (has_bsphere())
+      if (itest_ray_sphere(o,d,bound_center,bound_radius))
+         for (unsigned int i=0; i<s; i++)
+            {
+            mininode *child=get_child(i);
+            if (child)
+               {
+               // get child group
+               mininode_group *child_group=dynamic_cast<mininode_group *>(child);
+
+               if (child_group)
+                  {
+                  dist=child_group->shoot(o,d,firsthit);
+                  if (dist<mindist) mindist=dist;
+                  }
+               }
+            }
+
+   return(mindist);
+   }
+
 void mininode_group::traverse_init()
    {
    // state initialization
@@ -40,7 +70,7 @@ void mininode_group::update_dirty()
    for (unsigned int i=0; i<s; i++)
       {
       mininode *child=get_child(i);
-      if (child!=NULL)
+      if (child)
          {
          // get child group
          mininode_group *child_group=dynamic_cast<mininode_group *>(child);
@@ -74,6 +104,24 @@ void mininode_group::update_dirty()
 
 minidyna<minicone> mininode_culling::cone_stack;
 
+// shoot a ray and return the distance to the closest object
+double mininode_culling::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
+   {
+   minicone cone;
+
+   // get shooting cone
+   cone=minicone(o,d,0.0);
+
+   // get transformed shooting cone
+   transform_cone(cone);
+
+   // shoot with transformed cone
+   if (cone.valid)
+      return(mininode_group::shoot(cone.pos,cone.dir,firsthit));
+
+   return(MAXFLOAT);
+   }
+
 void mininode_culling::traverse_init()
    {
    // state initialization
@@ -101,14 +149,14 @@ void mininode_culling::traverse_pre()
       cone=cone_stack.peek();
 
       // get transformed camera cone
-      if (cone.cone>0.0) transform_cone(cone);
+      if (cone.valid) transform_cone(cone);
 
       // remember transformed camera cone
       cone_stack.push(cone);
 
       // intersect with original bounding sphere
-      if (cone.cone>0.0)
-         is_visible=itest_cone_sphere(cone.eye,cone.dir,cone.cone,
+      if (cone.valid)
+         is_visible=itest_cone_sphere(cone.pos,cone.dir,cone.cone,
                                       bound_center,bound_radius);
       }
    }
@@ -178,7 +226,7 @@ void mininode_transform::update_dirty()
    if (get_links()==1)
       {
       mininode *child=get_child();
-      if (child!=NULL)
+      if (child)
          {
          // get child transformation
          mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
@@ -285,8 +333,8 @@ void mininode_coord::traverse_pre()
    // cull on backside of earth
    minicone cone=cone_stack.peek();
    if (has_bsphere())
-      if (cone.cone>0.0)
-         if (intersect_ray_ellipsoid(cone.eye,bound_center-cone.eye,
+      if (cone.valid)
+         if (intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
                                      miniv3d(0.0,0.0,-minicrs::EARTH_radius),
                                      minicrs::EARTH_radius-bound_radius,
                                      minicrs::EARTH_radius-bound_radius,

@@ -67,6 +67,12 @@ class mininode_group: public mininode
       radius=bound_radius;
       }
 
+   //! shoot a ray and return the distance to the closest object
+   //! o is the origin of the ray, d is the ray direction
+   //! a return value of MAXFLOAT indicates that there was no hit
+   //! the first hit with a smaller distance than hitdist will be returned
+   virtual double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
+
    protected:
 
    virtual void traverse_init();
@@ -86,11 +92,18 @@ class minicone
    {
    public:
 
-   minicone() {}
-   minicone(const miniv3d &e,const miniv3d &d,double c)
-      {eye=e; dir=d; cone=c;}
+   minicone()
+      {valid=FALSE;}
 
-   miniv3d eye,dir;
+   minicone(const miniv3d &p,const miniv3d &d,double c)
+      {
+      valid=TRUE;
+      pos=p; dir=d; cone=c;
+      }
+
+   BOOLINT valid;
+
+   miniv3d pos,dir;
    double cone;
    };
 
@@ -113,6 +126,9 @@ class mininode_culling: public mininode_group
    //! get number of children
    virtual unsigned int get_children() const
       {return(is_visible?getsize():0);}
+
+   //! shoot a ray and return the distance to the closest object
+   double shoot(const miniv3d &o,const miniv3d &d,double firsthit) const;
 
    protected:
 
@@ -732,7 +748,7 @@ class mininode_translate: public mininode_transform
       miniv3d vec;
       mtxget(oglmtx,vec);
 
-      cone.eye-=vec;
+      cone.pos-=vec;
       }
    };
 
@@ -771,7 +787,7 @@ class mininode_rotate: public mininode_transform
       miniv3d tra[3];
       tra_mtx(tra,mtx);
 
-      cone.eye=mlt_vec(tra,cone.eye);
+      cone.pos=mlt_vec(tra,cone.pos);
       cone.dir=mlt_vec(tra,cone.dir);
       }
    };
@@ -829,7 +845,7 @@ class mininode_affine: public mininode_transform
       miniv3d tra[3];
       tra_mtx(tra,mtx);
 
-      cone.eye=mlt_vec(tra,cone.eye-vec);
+      cone.pos=mlt_vec(tra,cone.pos-vec);
       cone.dir=mlt_vec(tra,cone.dir);
       }
    };
@@ -883,10 +899,10 @@ class mininode_scale: public mininode_transform
 
       if (s1!=0.0 && s1==s2 && s2==s3)
          {
-         cone.eye/=s1;
+         cone.pos/=s1;
          cone.dir/=s1;
          }
-      else cone.cone=0.0;
+      else cone.valid=FALSE;
       }
    };
 
@@ -933,7 +949,7 @@ class mininode_animation: public mininode_transform
       }
 
    virtual void transform_cone(minicone &cone) const
-      {cone.cone=0.0;}
+      {cone.valid=FALSE;}
    };
 
 //! rotate animation node
