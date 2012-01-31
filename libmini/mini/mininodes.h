@@ -141,7 +141,9 @@ class mininode_culling: public mininode_group
    virtual void traverse_post();
    virtual void traverse_exit();
 
-   virtual void transform_cone(minicone &) const {}
+   virtual void transform_cone(minicone &cone) const
+      {cone.valid=FALSE;}
+
    };
 
 //! dynamic time-dependent node (base class)
@@ -243,6 +245,7 @@ class mininode_color: public mininode_group
 
    virtual void traverse_post()
       {rgba_stack.pop();}
+
    };
 
 //! texture node (base class)
@@ -293,6 +296,7 @@ class mininode_texture: public mininode_group
 
    virtual void traverse_post()
       {if (is_active()) texture_level--;}
+
    };
 
 //! texture2D node
@@ -407,6 +411,7 @@ class mininode_texture2D: public mininode_texture
 
       mininode_texture::traverse_post();
       }
+
    };
 
 //! texture3D node
@@ -520,6 +525,7 @@ class mininode_texture3D: public mininode_texture
 
       mininode_texture::traverse_post();
       }
+
    };
 
 //! image node
@@ -559,6 +565,7 @@ class mininode_image: public mininode_texture2D
          buf.release();
          }
       }
+
    };
 
 //! volume node
@@ -585,6 +592,7 @@ class mininode_volume: public mininode_texture3D
          buf.release();
          }
       }
+
    };
 
 //! switch node
@@ -710,7 +718,24 @@ class mininode_transform: public mininode_dynamic
 
    virtual void traverse_exit();
 
-   virtual void transform_cone(minicone &) const {}
+   virtual void transform_cone(minicone &cone) const
+      {
+      if (cone.cone==0.0)
+         {
+         miniv3d mtx[3],vec;
+         mtxget(oglmtx,mtx);
+         mtxget(oglmtx,vec);
+
+         miniv3d inv[3];
+         inv_mtx(inv,mtx);
+         miniv3d tra[3];
+         tra_mtx(tra,inv);
+
+         cone.pos=mlt_vec(inv,cone.pos-vec);
+         cone.dir=mlt_vec(tra,cone.dir);
+         }
+      else cone.valid=FALSE;
+      }
 
    virtual void update_dirty();
    };
@@ -750,6 +775,7 @@ class mininode_translate: public mininode_transform
 
       cone.pos-=vec;
       }
+
    };
 
 //! rotation node
@@ -790,6 +816,7 @@ class mininode_rotate: public mininode_transform
       cone.pos=mlt_vec(tra,cone.pos);
       cone.dir=mlt_vec(tra,cone.dir);
       }
+
    };
 
 //! affine transform node
@@ -848,6 +875,7 @@ class mininode_affine: public mininode_transform
       cone.pos=mlt_vec(tra,cone.pos-vec);
       cone.dir=mlt_vec(tra,cone.dir);
       }
+
    };
 
 //! scale node
@@ -897,13 +925,26 @@ class mininode_scale: public mininode_transform
       double s2=mtx[1].y;
       double s3=mtx[2].z;
 
-      if (s1!=0.0 && s1==s2 && s2==s3)
-         {
-         cone.pos/=s1;
-         cone.dir/=s1;
-         }
+      if (s1!=0.0 && s2!=0.0 && s3!=0.0)
+         if (s1==s2 && s2==s3)
+            {
+            cone.pos/=s1;
+            cone.dir/=s1;
+            }
+         else if (cone.cone==0.0)
+            {
+            cone.pos.x/=s1;
+            cone.pos.y/=s2;
+            cone.pos.z/=s3;
+
+            cone.dir.x/=s1;
+            cone.dir.y/=s2;
+            cone.dir.z/=s3;
+            }
+         else cone.valid=FALSE;
       else cone.valid=FALSE;
       }
+
    };
 
 //! coordinate node
@@ -948,8 +989,6 @@ class mininode_animation: public mininode_transform
       set_dirty();
       }
 
-   virtual void transform_cone(minicone &cone) const
-      {cone.valid=FALSE;}
    };
 
 //! rotate animation node
@@ -984,6 +1023,7 @@ class mininode_animation_rotate: public mininode_animation
       rot_mtx(rot,get_time()*m_omega,m_axis);
       mtxget(rot,oglmtx);
       }
+
    };
 
 //! texgen node
@@ -1020,6 +1060,7 @@ class mininode_texgen: public mininode_transform
       mtxpop();
       mtxmodel();
       }
+
    };
 
 //! translate texgen node
@@ -1051,6 +1092,7 @@ class mininode_texgen_rotate: public mininode_texgen
       rot_mtx(rot,d,a);
       mtxget(rot,oglmtx);
       }
+
    };
 
 //! scale texgen node
@@ -1074,6 +1116,7 @@ class mininode_texgen_scale: public mininode_texgen
       miniv3d mtx[3]={miniv3d(sx,0,0),miniv3d(0,sy,0),miniv3d(0,0,sz)};
       mtxget(mtx,oglmtx);
       }
+
    };
 
 //! camera node
@@ -1108,6 +1151,7 @@ class mininode_cam: public mininode_transform, public minicam
       center=miniv3d(0,0,0);
       radius=minicrs::EARTH_radius;
       }
+
    };
 
 //! geometry node (base class)
@@ -1276,6 +1320,7 @@ class mininode_geometry_tube: public mininode_geometry
                        double start_radius,double end_radius,
                        BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                        int tessel=16);
+
    };
 
 //! torus geometry node
@@ -1288,6 +1333,7 @@ class mininode_geometry_torus: public mininode_geometry_tube
    //! default constructor
    mininode_geometry_torus(const minidyna<miniv3d> &pos,double radius,
                            int tessel=16);
+
    };
 
 #endif
