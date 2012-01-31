@@ -13,6 +13,8 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
 
    mindist=MAXFLOAT;
 
+   std::cout << "l1: shooting from " << o << " to " << d << std::endl; //!!
+
    if (has_bsphere())
       if (itest_ray_sphere(o,d,bound_center,bound_radius))
          for (unsigned int i=0; i<s; i++)
@@ -25,7 +27,9 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
 
                if (child_group)
                   {
+                  printf("check1\n"); //!!
                   dist=child_group->shoot(o,d);
+                  printf("check2 %g\n",dist); //!!
                   if (dist<mindist) mindist=dist;
                   }
                }
