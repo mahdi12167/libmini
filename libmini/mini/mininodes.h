@@ -737,6 +737,7 @@ class mininode_transform: public mininode_dynamic
          {
          miniv3d mtx[3];
          mtxget(oglmtx,mtx);
+
          if (!chk_mtx(mtx)) cone.valid=FALSE;
          }
       }
