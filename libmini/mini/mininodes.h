@@ -733,7 +733,12 @@ class mininode_transform: public mininode_dynamic
          cone.pos=mlt_vec(inv,cone.pos-vec);
          cone.dir=mlt_vec(tra,cone.dir);
          }
-      else cone.valid=FALSE;
+      else
+         {
+         miniv3d mtx[3];
+         mtxget(oglmtx,mtx);
+         if (!chk_mtx(mtx)) cone.valid=FALSE;
+         }
       }
 
    virtual void update_dirty();

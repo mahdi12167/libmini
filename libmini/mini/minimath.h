@@ -15,6 +15,9 @@ unsigned int lcm(unsigned int a,unsigned int b); // lowest common multiple
 
 // matrix operations:
 
+int chk_mtx(const miniv3d mtx[3]);
+int chk_mtx(const miniv4d mtx[3]);
+
 void set_mtx(miniv3d mtx[3]);
 void set_mtx(miniv4d mtx[3]);
 

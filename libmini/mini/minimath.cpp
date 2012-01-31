@@ -25,6 +25,12 @@ unsigned int gcd(unsigned int a,unsigned int b)
 unsigned int lcm(unsigned int a,unsigned int b)
    {return(a*b/gcd(a,b));}
 
+// matrix identity check
+int chk_mtx(const miniv3d mtx[3])
+   {return(mtx[0]==miniv3d(1,0,0) && mtx[1]==miniv3d(0,1,0) && mtx[2]==miniv3d(0,0,1));}
+int chk_mtx(const miniv4d mtx[3])
+   {return(mtx[0]==miniv4d(1,0,0,0) && mtx[1]==miniv4d(0,1,0,0) && mtx[2]==miniv4d(0,0,1,0));}
+
 // matrix initialization to identity
 void set_mtx(miniv3d mtx[3]) {mtx[0]=miniv3d(1,0,0); mtx[1]=miniv3d(0,1,0); mtx[2]=miniv3d(0,0,1);}
 void set_mtx(miniv4d mtx[3]) {mtx[0]=miniv4d(1,0,0,0); mtx[1]=miniv4d(0,1,0,0); mtx[2]=miniv4d(0,0,1,0);}
