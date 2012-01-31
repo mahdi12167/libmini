@@ -70,8 +70,7 @@ class mininode_group: public mininode
    //! shoot a ray and return the distance to the closest object
    //! o is the origin of the ray, d is the ray direction
    //! a return value of MAXFLOAT indicates that there was no hit
-   //! the first hit with a smaller distance than hitdist will be returned
-   virtual double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
+   virtual double shoot(const miniv3d &o,const miniv3d &d) const;
 
    protected:
 
@@ -128,7 +127,7 @@ class mininode_culling: public mininode_group
       {return(is_visible?getsize():0);}
 
    //! shoot a ray and return the distance to the closest object
-   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
+   double shoot(const miniv3d &o,const miniv3d &d) const;
 
    protected:
 
@@ -1022,6 +1021,18 @@ class mininode_animation_rotate: public mininode_animation
       miniv3d rot[3];
       rot_mtx(rot,get_time()*m_omega,m_axis);
       mtxget(rot,oglmtx);
+      }
+
+   virtual void transform_cone(minicone &cone) const
+      {
+      miniv3d mtx[3];
+      mtxget(oglmtx,mtx);
+
+      miniv3d tra[3];
+      tra_mtx(tra,mtx);
+
+      cone.pos=mlt_vec(tra,cone.pos);
+      cone.dir=mlt_vec(tra,cone.dir);
       }
 
    };

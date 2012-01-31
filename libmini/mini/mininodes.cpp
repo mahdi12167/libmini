@@ -5,7 +5,7 @@
 // mininode_group:
 
 // shoot a ray and return the distance to the closest object
-double mininode_group::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
+double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
    {
    double mindist,dist;
 
@@ -25,7 +25,7 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d,double firsthit) 
 
                if (child_group)
                   {
-                  dist=child_group->shoot(o,d,firsthit);
+                  dist=child_group->shoot(o,d);
                   if (dist<mindist) mindist=dist;
                   }
                }
@@ -105,19 +105,33 @@ void mininode_group::update_dirty()
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
-double mininode_culling::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
+double mininode_culling::shoot(const miniv3d &o,const miniv3d &d) const
    {
+   miniv3d dir;
    minicone cone;
 
+   double dist;
+   miniv3d hit;
+
+   dir=d;
+   dir.normalize();
+
    // get shooting cone
-   cone=minicone(o,d,0.0);
+   cone=minicone(o,dir,0.0);
 
    // get transformed shooting cone
    transform_cone(cone);
 
    // shoot with transformed cone
    if (cone.valid)
-      return(mininode_group::shoot(cone.pos,cone.dir,firsthit));
+      {
+      dist=mininode_group::shoot(cone.pos,cone.dir);
+      if (dist!=MAXFLOAT)
+         {
+         hit=cone.pos+dist*cone.dir;
+         return(dir*(hit-o));
+         }
+      }
 
    return(MAXFLOAT);
    }
