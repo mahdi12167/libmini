@@ -14,7 +14,12 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
    mindist=MAXFLOAT;
 
    if (has_bsphere())
-      if (itest_ray_sphere(o,d,bound_center,bound_radius))
+      if (itest_ray_sphere(o,d,bound_center,bound_radius*bound_radius))
+         {
+         //!!
+         std::cout << "succeeding itest: shooting from " << o << " to " << d << std::endl; //!!
+         std::cout << " c=" << bound_center << " r=" << bound_radius << std::endl; //!!
+
          for (unsigned int i=0; i<s; i++)
             {
             mininode *child=get_child(i);
@@ -30,9 +35,10 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
                   }
                }
             }
-      //!!
+         }
       else
          {
+         //!!
          std::cout << "failing itest: shooting from " << o << " to " << d << std::endl; //!!
          std::cout << " c=" << bound_center << " r=" << bound_radius << std::endl; //!!
          }

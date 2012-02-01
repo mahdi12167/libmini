@@ -556,7 +556,7 @@ void Viewer::render_ecef_geometry(double t)
    miniv3d dir=getCamera()->get_dir();
    std::cout << "viewer: shooting from " << eye << " to " << dir << std::endl; //!!
    double dist=m_root->shoot(eye,dir);
-   printf(" shooting dist=%g\n",dist==MAXFLOAT?0.0:dist);
+   printf(" shooting dist=%g\n\n",dist==MAXFLOAT?0.0:dist);
 #endif
 
    // cleanup render state
