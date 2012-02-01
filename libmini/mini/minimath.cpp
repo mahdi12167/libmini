@@ -588,14 +588,18 @@ double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
 int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
                      const miniv3d &b,const double r2)
    {
+   miniv3d d0;
    miniv3d bmo;
    double bmo2,bmod;
+
+   d0=d;
+   d0.normalize();
 
    bmo=b-o;
    bmo2=bmo*bmo;
    if (bmo2<r2) return(1);
 
-   bmod=bmo*d;
+   bmod=bmo*d0;
    if (bmod<0.0) return(0);
    if (r2+bmod*bmod>bmo2) return(1);
 
