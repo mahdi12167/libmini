@@ -552,10 +552,11 @@ void Viewer::render_ecef_geometry(double t)
 
 #if 1
    //!!
-   std::cout << "l0: shooting from " << getCamera()->get_eye().vec << " to " << getCamera()->get_dir() << std::endl; //!!
-   double dist=m_root->shoot(getCamera()->get_eye().vec,getCamera()->get_dir());
-   if (dist==MAXFLOAT) printf("dist=MAX\n");
-   else printf("dist=%g\n");
+   miniv3d eye=getCamera()->get_eye().vec;
+   miniv3d dir=getCamera()->get_dir();
+   std::cout << "viewer: shooting from " << eye << " to " << dir << std::endl; //!!
+   double dist=m_root->shoot(eye,dir);
+   printf(" shooting dist=%g\n",dist==MAXFLOAT?0.0:dist);
 #endif
 
    // cleanup render state
