@@ -132,7 +132,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
          hit=cone.pos+dist*cone.dir;
          untransform_point(hit);
 
-         return(d*(hit-o));
+         return(d*(hit-o)/d.getlength2());
          }
       }
 
