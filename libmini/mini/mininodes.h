@@ -140,9 +140,8 @@ class mininode_culling: public mininode_group
    virtual void traverse_post();
    virtual void traverse_exit();
 
-   virtual void transform_cone(minicone &cone) const
-      {cone.valid=FALSE;}
-
+   virtual void transform_cone(minicone &) const {}
+   virtual void untransform_point(miniv3d &) const {}
    };
 
 //! dynamic time-dependent node (base class)
@@ -740,6 +739,15 @@ class mininode_transform: public mininode_dynamic
 
          if (!chk_mtx(mtx)) cone.valid=FALSE;
          }
+      }
+
+   virtual void untransform_point(miniv3d &point) const
+      {
+      miniv3d mtx[3],vec;
+      mtxget(oglmtx,mtx);
+      mtxget(oglmtx,vec);
+
+      point=mlt_vec(mtx,point)+vec;
       }
 
    virtual void update_dirty();
