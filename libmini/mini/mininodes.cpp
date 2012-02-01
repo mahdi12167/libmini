@@ -5,7 +5,7 @@
 // mininode_group:
 
 // shoot a ray and return the distance to the closest object
-double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
+double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d) const
    {
    double mindist,dist;
 
@@ -15,11 +15,6 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
 
    if (has_bsphere())
       if (itest_ray_sphere(o,d,bound_center,bound_radius*bound_radius))
-         {
-         //!!
-         std::cout << "succeeding itest: shooting from " << o << " to " << d << std::endl; //!!
-         std::cout << " c=" << bound_center << " r=" << bound_radius << std::endl; //!!
-
          for (unsigned int i=0; i<s; i++)
             {
             mininode *child=get_child(i);
@@ -30,18 +25,16 @@ double mininode_group::shoot(const miniv3d &o,const miniv3d &d) const
 
                if (child_group)
                   {
-                  dist=child_group->shoot(o,d);
+                  // get child geometry
+                  mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
+
+                  if (child_geo) dist=child_geo->shoot(o,d,0.0);
+                  else dist=child_group->shoot_ray(o,d);
+                                    
                   if (dist<mindist) mindist=dist;
                   }
                }
             }
-         }
-      else
-         {
-         //!!
-         std::cout << "failing itest: shooting from " << o << " to " << d << std::endl; //!!
-         std::cout << " c=" << bound_center << " r=" << bound_radius << std::endl; //!!
-         }
 
    return(mindist);
    }
@@ -117,7 +110,7 @@ void mininode_group::update_dirty()
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
-double mininode_culling::shoot(const miniv3d &o,const miniv3d &d) const
+double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
    {
    miniv3d dir;
    minicone cone;
@@ -137,7 +130,7 @@ double mininode_culling::shoot(const miniv3d &o,const miniv3d &d) const
    // shoot with transformed cone
    if (cone.valid)
       {
-      dist=mininode_group::shoot(cone.pos,cone.dir);
+      dist=mininode_group::shoot_ray(cone.pos,cone.dir);
       if (dist!=MAXFLOAT)
          {
          hit=cone.pos+dist*cone.dir;

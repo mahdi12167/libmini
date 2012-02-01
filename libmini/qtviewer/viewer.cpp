@@ -554,8 +554,7 @@ void Viewer::render_ecef_geometry(double t)
    //!!
    miniv3d eye=getCamera()->get_eye().vec;
    miniv3d dir=getCamera()->get_dir();
-   std::cout << "viewer: shooting from " << eye << " to " << dir << std::endl; //!!
-   double dist=m_root->shoot(eye,dir);
+   double dist=m_root->shoot_ray(eye,dir);
    printf(" shooting dist=%g\n\n",dist==MAXFLOAT?0.0:dist);
 #endif
 

@@ -70,7 +70,7 @@ class mininode_group: public mininode
    //! shoot a ray and return the distance to the closest object
    //! o is the origin of the ray, d is the ray direction
    //! a return value of MAXFLOAT indicates that there was no hit
-   virtual double shoot(const miniv3d &o,const miniv3d &d) const;
+   virtual double shoot_ray(const miniv3d &o,const miniv3d &d) const;
 
    protected:
 
@@ -127,7 +127,7 @@ class mininode_culling: public mininode_group
       {return(is_visible?getsize():0);}
 
    //! shoot a ray and return the distance to the closest object
-   double shoot(const miniv3d &o,const miniv3d &d) const;
+   double shoot_ray(const miniv3d &o,const miniv3d &d) const;
 
    protected:
 
