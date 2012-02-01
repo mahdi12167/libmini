@@ -589,6 +589,7 @@ int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
                      const miniv3d &b,const double r2)
    {
    miniv3d d0;
+
    miniv3d bmo;
    double bmo2,bmod;
 
@@ -611,6 +612,7 @@ int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
                       const miniv3d &b,const double r)
    {
    miniv3d d0;
+
    double l0,l;
    miniv3d p;
 
@@ -631,12 +633,17 @@ int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
 int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
                    const miniv3d &b,const miniv3d &r)
    {
+   miniv3d d0;
+
    double l;
    miniv3d h;
 
-   if (d.x>0.0)
+   d0=d;
+   d0.normalize();
+
+   if (d0.x>0.0)
       {
-      l=(b.x-r.x-o.x)/d.x;
+      l=(b.x-r.x-o.x)/d0.x;
       if (l>0.0)
          {
          h=o+d*l;
@@ -646,9 +653,9 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       }
    else if (b.x-o.x>r.x) return(0);
 
-   if (d.x<0.0)
+   if (d0.x<0.0)
       {
-      l=(b.x+r.x-o.x)/d.x;
+      l=(b.x+r.x-o.x)/d0.x;
       if (l>0.0)
          {
          h=o+d*l;
@@ -658,9 +665,9 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       }
    else if (o.x-b.x>r.x) return(0);
 
-   if (d.y>0.0)
+   if (d0.y>0.0)
       {
-      l=(b.y-r.y-o.y)/d.y;
+      l=(b.y-r.y-o.y)/d0.y;
       if (l>0.0)
          {
          h=o+d*l;
@@ -670,9 +677,9 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       }
    else if (b.y-o.y>r.y) return(0);
 
-   if (d.y<0.0)
+   if (d0.y<0.0)
       {
-      l=(b.y+r.y-o.y)/d.y;
+      l=(b.y+r.y-o.y)/d0.y;
       if (l>0.0)
          {
          h=o+d*l;
@@ -682,9 +689,9 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       }
    else if (o.y-b.y>r.y) return(0);
 
-   if (d.z>0.0)
+   if (d0.z>0.0)
       {
-      l=(b.z-r.z-o.z)/d.z;
+      l=(b.z-r.z-o.z)/d0.z;
       if (l>0.0)
          {
          h=o+d*l;
@@ -694,9 +701,9 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       }
    else if (b.z-o.z>r.z) return(0);
 
-   if (d.z<0.0)
+   if (d0.z<0.0)
       {
-      l=(b.z+r.z-o.z)/d.z;
+      l=(b.z+r.z-o.z)/d0.z;
       if (l>0.0)
          {
          h=o+d*l;

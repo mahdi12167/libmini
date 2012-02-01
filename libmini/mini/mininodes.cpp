@@ -20,19 +20,27 @@ double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d) const
             mininode *child=get_child(i);
             if (child)
                {
-               // get child group
-               mininode_group *child_group=dynamic_cast<mininode_group *>(child);
+               // get child geometry
+               mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
 
-               if (child_group)
+               if (child_geo) dist=child_geo->shoot(o,d);
+               else
                   {
-                  // get child geometry
-                  mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
+                  // get child culling
+                  mininode_culling *child_cull=dynamic_cast<mininode_culling *>(child);
 
-                  if (child_geo) dist=child_geo->shoot(o,d,0.0);
-                  else dist=child_group->shoot_ray(o,d);
-                                    
-                  if (dist<mindist) mindist=dist;
+                  if (child_cull) dist=child_cull->shoot_ray(o,d);
+                  else
+                     {
+                     // get child group
+                     mininode_group *child_group=dynamic_cast<mininode_group *>(child);
+
+                     if (child_group) dist=child_group->shoot_ray(o,d);
+                     else dist=MAXFLOAT;
+                     }
                   }
+                                    
+               if (dist<mindist) mindist=dist;
                }
             }
 
@@ -112,17 +120,13 @@ minidyna<minicone> mininode_culling::cone_stack;
 // shoot a ray and return the distance to the closest object
 double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
    {
-   miniv3d dir;
    minicone cone;
 
    double dist;
    miniv3d hit;
 
-   dir=d;
-   dir.normalize();
-
    // get shooting cone
-   cone=minicone(o,dir,0.0);
+   cone=minicone(o,d,0.0);
 
    // get transformed shooting cone
    transform_cone(cone);
@@ -134,7 +138,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
       if (dist!=MAXFLOAT)
          {
          hit=cone.pos+dist*cone.dir;
-         return(dir*(hit-o));
+         return(d*(hit-o));
          }
       }
 
