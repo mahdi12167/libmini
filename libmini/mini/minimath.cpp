@@ -646,7 +646,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.x-r.x-o.x)/d0.x;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
          else return(1);
          }
@@ -658,7 +658,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.x+r.x-o.x)/d0.x;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
          else return(1);
          }
@@ -670,7 +670,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.y-r.y-o.y)/d0.y;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
          else return(1);
          }
@@ -682,7 +682,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.y+r.y-o.y)/d0.y;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
          else return(1);
          }
@@ -694,7 +694,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.z-r.z-o.z)/d0.z;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
          else return(1);
          }
@@ -706,7 +706,7 @@ int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
       l=(b.z+r.z-o.z)/d0.z;
       if (l>0.0)
          {
-         h=o+d*l;
+         h=o+d0*l;
          if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
          else return(1);
          }
