@@ -26,9 +26,7 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_color(miniv3d(0.0, 0.0, 1.0)))->
       append_child(pole);
 
-#if 0 //!!
    group->append_child(axis);
-#endif //!!
 
    // define equator:
 
@@ -42,10 +40,8 @@ mininode_group *Renderer::build_ecef_geometry()
       pos.append(c.vec);
       }
 
-#if 0 //!!
    group->append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
       append_child(new mininode_geometry_band(pos, pos, 20000));
-#endif //!!
 
 #ifndef TEST //!!
 
@@ -53,15 +49,13 @@ mininode_group *Renderer::build_ecef_geometry()
 
    group->append_child(new mininode_coord(minicoord(miniv3d(-159*3600, 21*3600, 0), minicoord::MINICOORD_LLH)))->
       append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
-      //!! append_child(new mininode_texgen_scale(0.1))->
-      //!! append_child(new mininode_image("data/textures/Checker.db"))->
-      //!! append_child(new mininode_scale(10000))->
-      append_child(new mininode_translate(miniv3d(0.0, 0.0, 50000.0)))->
-      append_child(new mininode_geometry_tet(100000));
+      append_child(new mininode_texgen_scale(0.1))->
+      append_child(new mininode_image("data/textures/Checker.db"))->
+      append_child(new mininode_scale(10000))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
+      append_child(new mininode_geometry_tet(10));
 
    // tetrahedron /w procedural 3D texture:
-
-#if 0 //!!
 
    group->append_child(new mininode_coord(minicoord(miniv3d(-159*3600, 23*3600, 0), minicoord::MINICOORD_LLH)))->
       append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
@@ -102,8 +96,6 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_geometry_prism(10.0, 10.0, 2.5));
 
    group->append_child(house);
-
-#endif //!!
 
 #endif
 

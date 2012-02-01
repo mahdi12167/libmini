@@ -141,7 +141,7 @@ class mininode_culling: public mininode_group
    virtual void traverse_exit();
 
    virtual void transform_cone(minicone &) const {}
-   virtual void untransform_point(miniv3d &) const {}
+   virtual void transform_point(miniv3d &) const {}
    };
 
 //! dynamic time-dependent node (base class)
@@ -741,7 +741,7 @@ class mininode_transform: public mininode_dynamic
          }
       }
 
-   virtual void untransform_point(miniv3d &point) const
+   virtual void transform_point(miniv3d &point) const
       {
       miniv3d mtx[3],vec;
       mtxget(oglmtx,mtx);
@@ -1086,6 +1086,8 @@ class mininode_texgen: public mininode_transform
       mtxmodel();
       }
 
+   virtual void transform_cone(minicone &cone) const {}
+   virtual void transform_point(miniv3d &point) const {}
    };
 
 //! translate texgen node

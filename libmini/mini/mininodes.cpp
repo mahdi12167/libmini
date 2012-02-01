@@ -130,7 +130,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
       if (dist!=MAXFLOAT)
          {
          hit=cone.pos+dist*cone.dir;
-         untransform_point(hit);
+         transform_point(hit);
 
          return(d*(hit-o)/d.getlength2());
          }
