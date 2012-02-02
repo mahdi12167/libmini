@@ -2,10 +2,13 @@
 
 #include <QtOpenGL/qgl.h>
 
+#include "viewerwindow.h"
+#include "renderer.h"
+
 #include "camera.h"
 #include "cameraconst.h"
 
-Camera::Camera(QGLWidget *window, miniearth *earth,
+Camera::Camera(ViewerWindow *window, miniearth *earth,
                double lat, double lon, double height,
                double mindist,
                float fovy,float aspect,
@@ -392,4 +395,9 @@ void Camera::modifierKey(modifierKeys modifier, bool pressed)
       m_Alt=pressed;
    else if (modifier==ModifierMeta)
       m_Meta=pressed;
+}
+
+double Camera::shoot(const minicoord &o,const miniv3d &d)
+{
+   return(m_window->getViewer()->shoot(o,d));
 }

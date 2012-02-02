@@ -5,11 +5,13 @@
 
 #include "viewer.h"
 
+class ViewerWindow;
+
 //! qt viewer class for viewing tilesets plus ecef geometry
 class Renderer: public Viewer
 {
 public:
-   Renderer(QGLWidget* window);
+   Renderer(ViewerWindow* window);
    ~Renderer();
 
 protected:

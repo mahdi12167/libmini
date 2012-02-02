@@ -12,7 +12,7 @@
 
 #include "cameraconst.h"
 
-class QGLWidget;
+class ViewerWindow;
 
 class miniearth;
 class minilayer;
@@ -29,7 +29,7 @@ enum modifierKeys
 class Camera : public mininode_cam
 {
 public:
-   Camera(QGLWidget *window, miniearth *earth,
+   Camera(ViewerWindow *window, miniearth *earth,
           double lat, double lon, double height,
           double mindist=0.0,
           float fovy=0.0f,float aspect=0.0f,
@@ -88,7 +88,7 @@ private:
 
 protected:
    // window reference
-   QGLWidget *m_window;
+   ViewerWindow *m_window;
 
    // earth reference
    miniearth *m_earth;
@@ -100,6 +100,9 @@ protected:
 
    // modifier keys
    bool     m_Shift, m_Control, m_Alt, m_Meta;
+
+   // ray shooting
+   virtual double shoot(const minicoord &o,const miniv3d &d);
 
 private:
    double   delta_angle(double a, double b);

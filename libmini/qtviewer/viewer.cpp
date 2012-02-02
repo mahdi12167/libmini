@@ -6,7 +6,7 @@
 
 #include "viewer.h"
 
-Viewer::Viewer(QGLWidget* window)
+Viewer::Viewer(ViewerWindow* window)
 {
    m_window = window;
    m_bIsInited = false;

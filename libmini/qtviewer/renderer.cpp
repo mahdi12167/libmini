@@ -2,7 +2,7 @@
 
 #include "renderer.h"
 
-Renderer::Renderer(QGLWidget* window)
+Renderer::Renderer(ViewerWindow* window)
    : Viewer(window)
 {}
 

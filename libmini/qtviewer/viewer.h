@@ -8,6 +8,8 @@
 #include <mini/mini_tileset.h>
 #include <mini/mini_object.h>
 #include <mini/mini_sfx.h>
+
+#include "viewerwindow.h"
 #include "viewerconst.h"
 
 #include "camera.h"
@@ -17,7 +19,7 @@
 class Viewer: public miniview
 {
 public:
-   Viewer(QGLWidget* window);
+   Viewer(ViewerWindow* window);
    ~Viewer();
 
    void       init();
@@ -57,7 +59,7 @@ private:
 
 protected:
    // parent window reference
-   QGLWidget* m_window;
+   ViewerWindow* m_window;
 
    // scene graph root node
    mininode_rootref m_root;

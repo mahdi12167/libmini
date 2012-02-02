@@ -27,6 +27,8 @@ public:
    ViewerWindow();
    virtual ~ViewerWindow();
 
+   Renderer *getViewer();
+
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 

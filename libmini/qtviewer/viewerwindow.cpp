@@ -33,6 +33,11 @@ ViewerWindow::~ViewerWindow()
       delete viewer;
 }
 
+Renderer *ViewerWindow::getViewer()
+{
+   return(viewer);
+}
+
 QSize ViewerWindow::minimumSizeHint() const
 {
    return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/VIEWER_ASPECT));
