@@ -1323,6 +1323,23 @@ void ministrip::rendermulti(int passes,
    useshader(shader);
    }
 
+// render bbox
+void ministrip::renderbbox()
+   {
+   renderline(miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMIN.z),miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMIN.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMIN.z),miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMIN.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMAX.z),miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMAX.z),miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMIN.z),miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMIN.z));
+   renderline(miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMIN.z),miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMIN.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMAX.z),miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMAX.z),miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMIN.z),miniv3d(BBOXMIN.x,BBOXMIN.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMIN.z),miniv3d(BBOXMAX.x,BBOXMIN.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMIN.z),miniv3d(BBOXMIN.x,BBOXMAX.y,BBOXMAX.z));
+   renderline(miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMIN.z),miniv3d(BBOXMAX.x,BBOXMAX.y,BBOXMAX.z));
+   }
+
 // get vertex shader
 char *ministrip::getvtxshader(int num)
    {
@@ -1365,7 +1382,7 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
    double mindist=MAXFLOAT;
 
    if (!MTXSET)
-      //!! if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
+      if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN))) //!!
          {
          ptr=VTXARRAY;
 

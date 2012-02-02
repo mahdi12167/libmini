@@ -220,6 +220,9 @@ class ministrip
                     float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
                     int correctz=0);
 
+   //! render bbox
+   void renderbbox();
+
    //! get array size (number of vertices)
    int getsize() {return(SIZE);}
 

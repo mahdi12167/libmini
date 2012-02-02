@@ -1235,6 +1235,9 @@ class mininode_geometry: public mininode_group, public ministrip
       BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
       if (has_tex() && texgen) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
       render(wocol,wonrm,wotex); // render triangle strip
+#ifdef MININODES_RENDERBBOX
+      renderbbox();
+#endif
       if (hastex() && texgen) ministrip::setglobal_texgen(TRUE); // restore texgen state
       }
 
