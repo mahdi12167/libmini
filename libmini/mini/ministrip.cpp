@@ -1382,7 +1382,7 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
    double mindist=MAXFLOAT;
 
    if (!MTXSET)
-      if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN))) //!!
+      if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
          {
          ptr=VTXARRAY;
 

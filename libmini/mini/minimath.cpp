@@ -633,85 +633,60 @@ int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
 int itest_ray_bbox(const miniv3d &o,const miniv3d &d,
                    const miniv3d &b,const miniv3d &r)
    {
-   miniv3d d0;
-
    double l;
    miniv3d h;
 
-   d0=d;
-   d0.normalize();
+   if (d.x<0.0 && o.x<b.x-r.x) return(0);
+   if (d.x>0.0 && o.x>b.x+r.x) return(0);
+   if (d.y<0.0 && o.y<b.y-r.y) return(0);
+   if (d.y>0.0 && o.y>b.y+r.y) return(0);
+   if (d.z<0.0 && o.z<b.z-r.z) return(0);
+   if (d.z>0.0 && o.z>b.z+r.z) return(0);
 
-   if (d0.x>0.0)
+   if (d.x!=0.0)
       {
-      l=(b.x-r.x-o.x)/d0.x;
+      if (d.x>0.0) l=(b.x-r.x-o.x)/d.x;
+      else l=(b.x+r.x-o.x)/d.x;
+
       if (l>0.0)
          {
-         h=o+d0*l;
-         if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
-         else return(1);
+         h=o+d*l;
+         if (h.y<b.y-r.y && o.y>b.y-r.y) return(0);
+         if (h.y>b.y+r.y && o.y<b.y+r.y) return(0);
+         if (h.z<b.z-r.z && o.z>b.z-r.z) return(0);
+         if (h.z>b.z+r.z && o.z<b.z+r.z) return(0);
          }
       }
-   else if (b.x-o.x>r.x) return(0);
 
-   if (d0.x<0.0)
+   if (d.y!=0.0)
       {
-      l=(b.x+r.x-o.x)/d0.x;
+      if (d.y>0.0) l=(b.y-r.y-o.y)/d.y;
+      else l=(b.y+r.y-o.y)/d.y;
+
       if (l>0.0)
          {
-         h=o+d0*l;
-         if (dabs(h.y-b.y)>r.y || dabs(h.z-b.z)>r.z) return(0);
-         else return(1);
+         h=o+d*l;
+         if (h.x<b.x-r.x && o.x>b.x-r.x) return(0);
+         if (h.x>b.x+r.x && o.x<b.x+r.x) return(0);
+         if (h.z<b.z-r.z && o.z>b.z-r.z) return(0);
+         if (h.z>b.z+r.z && o.z<b.z+r.z) return(0);
          }
       }
-   else if (o.x-b.x>r.x) return(0);
 
-   if (d0.y>0.0)
+   if (d.z!=0.0)
       {
-      l=(b.y-r.y-o.y)/d0.y;
+      if (d.z>0.0) l=(b.z-r.z-o.z)/d.z;
+      else l=(b.z+r.z-o.z)/d.z;
+
       if (l>0.0)
          {
-         h=o+d0*l;
-         if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
-         else return(1);
+         h=o+d*l;
+         if (h.x<b.x-r.x && o.x>b.x-r.x) return(0);
+         if (h.x>b.x+r.x && o.x<b.x+r.x) return(0);
+         if (h.y<b.y-r.y && o.y>b.y-r.y) return(0);
+         if (h.y>b.y+r.y && o.y<b.y+r.y) return(0);
          }
       }
-   else if (b.y-o.y>r.y) return(0);
-
-   if (d0.y<0.0)
-      {
-      l=(b.y+r.y-o.y)/d0.y;
-      if (l>0.0)
-         {
-         h=o+d0*l;
-         if (dabs(h.x-b.x)>r.x || dabs(h.z-b.z)>r.z) return(0);
-         else return(1);
-         }
-      }
-   else if (o.y-b.y>r.y) return(0);
-
-   if (d0.z>0.0)
-      {
-      l=(b.z-r.z-o.z)/d0.z;
-      if (l>0.0)
-         {
-         h=o+d0*l;
-         if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
-         else return(1);
-         }
-      }
-   else if (b.z-o.z>r.z) return(0);
-
-   if (d0.z<0.0)
-      {
-      l=(b.z+r.z-o.z)/d0.z;
-      if (l>0.0)
-         {
-         h=o+d0*l;
-         if (dabs(h.x-b.x)>r.x || dabs(h.y-b.y)>r.y) return(0);
-         else return(1);
-         }
-      }
-   else if (o.z-b.z>r.z) return(0);
 
    return(1);
    }
