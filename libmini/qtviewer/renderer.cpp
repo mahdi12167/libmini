@@ -34,11 +34,11 @@ mininode_group *Renderer::build_ecef_geometry()
    static const int eqlines = 500;
 
    for (int i=0; i<=eqlines; i++)
-      {
+   {
       minicoord c(miniv3d((double)i/eqlines*360*3600, 0.0, 0.0), minicoord::MINICOORD_LLH);
       c.convert2(minicoord::MINICOORD_ECEF);
       pos.append(c.vec);
-      }
+   }
 
    group->append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
       append_child(new mininode_geometry_band(pos, pos, 20000));

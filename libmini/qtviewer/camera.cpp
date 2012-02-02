@@ -312,7 +312,7 @@ void Camera::timerEvent(int timerId)
       double t = t0 - dt0, dt, dw;
 
       while (t<t0 && dt0>0.0)
-         {
+      {
          dt = 1.0/CAMERA_FPS;
          if (dt0 < dt) dt = dt0;
 
@@ -328,7 +328,7 @@ void Camera::timerEvent(int timerId)
 
          t += dt;
          dt0 -= dt;
-         }
+      }
    }
 }
 

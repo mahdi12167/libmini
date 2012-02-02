@@ -62,7 +62,9 @@ void Viewer::init()
 
 // get actual camera
 Camera *Viewer::getCamera()
-   {return((Camera *)m_root->get_camera());}
+{
+   return((Camera *)m_root->get_camera());
+}
 
 // resize window
 void Viewer::resizeWindow()
@@ -292,10 +294,10 @@ void Viewer::renderHUD()
 
    str.sprintf("Altitude:");
    drawText(x, y, str);
-      if (cameraPosLLH.vec.z<-1000.0 || cameraPosLLH.vec.z>1000.0)
-         str.sprintf("%-6.2f km", cameraPosLLH.vec.z/1000.0);
-      else
-         str.sprintf("%-6.2f m", cameraPosLLH.vec.z);
+   if (cameraPosLLH.vec.z<-1000.0 || cameraPosLLH.vec.z>1000.0)
+      str.sprintf("%-6.2f km", cameraPosLLH.vec.z/1000.0);
+   else
+      str.sprintf("%-6.2f m", cameraPosLLH.vec.z);
    drawText(x+second_column_offset, y, str);
    y+=line_space;
 
@@ -475,7 +477,7 @@ void Viewer::setExagger(double scale)
 
 // check ecef geometry
 void Viewer::check_ecef_geometry(miniv3d &center, double &radius)
-   {
+{
    // specify empty bounding sphere
    center=miniv3d(0,0,0);
    radius=0.0;
@@ -485,7 +487,7 @@ void Viewer::check_ecef_geometry(miniv3d &center, double &radius)
 
    // specify bounding sphere
    m_root->get_bsphere(center,radius);
-   }
+}
 
 // render ecef geometry
 void Viewer::render_ecef_geometry(double t)
@@ -557,9 +559,9 @@ void Viewer::render_ecef_geometry(double t)
 
 // shoot a ray at the ecef geometry
 double Viewer::shoot_ecef_geometry(const minicoord &o,const miniv3d &d)
-   {
+{
    miniv3d eye=getCamera()->get_eye().vec;
    miniv3d dir=getCamera()->get_dir();
 
    return(m_root->shoot_ray(eye,dir));
-   }
+}
