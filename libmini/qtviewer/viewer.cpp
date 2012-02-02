@@ -487,6 +487,7 @@ void Viewer::check_ecef_geometry(miniv3d &center, double &radius)
    m_root->get_bsphere(center,radius);
    }
 
+// render ecef geometry
 void Viewer::render_ecef_geometry(double t)
 {
    // render plain globe for z-values:
@@ -550,14 +551,15 @@ void Viewer::render_ecef_geometry(double t)
    if (m_root->traverse())
       getCamera()->startIdling();
 
-#if 1
-   //!!
-   miniv3d eye=getCamera()->get_eye().vec;
-   miniv3d dir=getCamera()->get_dir();
-   double dist=m_root->shoot_ray(eye,dir);
-   if (dist!=MAXFLOAT) printf(" shooting dist=%g\n",dist);
-#endif
-
    // cleanup render state
    exitstate();
 }
+
+// shoot a ray at the ecef geometry
+double Viewer::shoot_ecef_geometry(const minicoord &o,const miniv3d &d)
+   {
+   miniv3d eye=getCamera()->get_eye().vec;
+   miniv3d dir=getCamera()->get_dir();
+
+   return(m_root->shoot_ray(eye,dir));
+   }

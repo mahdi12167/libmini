@@ -145,6 +145,15 @@ void miniview::setup_matrix(float sbase)
    mtxlookat(miniv3d(egl.vec)+rgl, miniv3d(egl.vec)+rgl+dgl, ugl);
    }
 
+// shoot a ray at the scene
+double miniview::shoot(const minicoord &o,const miniv3d &d)
+   {
+   double dist1=miniscene::shoot(o,d);
+   double dist2=shoot_ecef_geometry(o,d);
+
+   return(dist1<dist2?dist1:dist2);
+   }
+
 // check ecef geometry
 void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    {
@@ -213,3 +222,7 @@ void miniview::render_ecef_geometry(double)
 
    exitstate();
    }
+
+// shoot a ray at the ecef geometry
+double miniview::shoot_ecef_geometry(const minicoord &o,const miniv3d &d)
+   {return(MAXFLOAT);}

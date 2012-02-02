@@ -20,12 +20,15 @@ class miniview : public miniscene
 
    void render_geometry(float sbase=0.0f, BOOLINT anaglyph=TRUE);
 
+   double shoot(const minicoord &o,const miniv3d &d);
+
    protected:
 
    void setup_matrix(float sbase=0.0f);
 
    virtual void check_ecef_geometry(miniv3d &center, double &radius);
    virtual void render_ecef_geometry(double t);
+   virtual double shoot_ecef_geometry(const minicoord &o,const miniv3d &d);
 
    minicam *m_cam;
    };
