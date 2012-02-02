@@ -30,9 +30,9 @@ double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d) const
 
                   if (child_geo) dist=child_geo->shoot(o,d);
                   else dist=child_group->shoot_ray(o,d);
-                  }
 
-               if (dist<mindist) mindist=dist;
+                  if (dist<mindist) mindist=dist;
+                  }
                }
             }
 
