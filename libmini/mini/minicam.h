@@ -27,7 +27,7 @@ class minicam
            double nearp=0.0,double farp=0.0);
 
    //! destructor
-   ~minicam();
+   virtual ~minicam();
 
    void set_eye(const minicoord &e,
                 double angle=0.0,double pitch=-90.0,
@@ -102,6 +102,8 @@ class minicam
 
    float fovy,aspect;
    double nearp,farp;
+
+   virtual double shoot(const minicoord &o,const miniv3d &d);
 
    private:
 
