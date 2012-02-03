@@ -77,7 +77,7 @@ protected:
 
    virtual void check_ecef_geometry(miniv3d &center, double &radius);
    virtual void render_ecef_geometry(double t);
-   virtual double shoot_ecef_geometry(const minicoord &o,const miniv3d &d);
+   virtual double shoot_ecef_geometry(const miniv3d &o,const miniv3d &d);
 
 private:
    GLuint    m_CrosshairTextureId;

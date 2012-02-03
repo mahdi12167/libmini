@@ -332,6 +332,10 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
       }
    }
 
+// convert 2 ecef
+void minicoord::convert2ecef()
+   {if (type!=MINICOORD_LINEAR) convert2(MINICOORD_ECEF);}
+
 // linear conversion defined by 3x3 matrix and offset
 void minicoord::convert(const miniv3d mtx[3],const miniv3d offset)
    {

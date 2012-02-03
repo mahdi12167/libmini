@@ -78,6 +78,9 @@ class minicoord
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
 
+   //! convert 2 ecef
+   void convert2ecef();
+
    //! linear conversion defined by 3x3 matrix and offset
    void convert(const miniv3d mtx[3],const miniv3d offset);
 

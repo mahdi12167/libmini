@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#define TEST //!!
+
 #include "renderer.h"
 
 Renderer::Renderer(ViewerWindow* window)
