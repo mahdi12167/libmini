@@ -321,7 +321,7 @@ double minicam::get_dist(const minicoord &pos)
 
       get_local_base(pos0,dir,right,up);
 
-      dist=shoot(pos0,-up);
+      dist=shoot(pos0,-up,-miniearth::EARTH_radius);
       }
 
    return(dist);
@@ -472,5 +472,5 @@ miniv3d minicam::unproject_viewport(int vx,int vy,
    }
 
 // shoot a ray at the scene
-double minicam::shoot(const minicoord &o,const miniv3d &d)
-   {return(EARTH->shoot(o,d));}
+double minicam::shoot(const minicoord &o,const miniv3d &d,double hitdist)
+   {return(EARTH->shoot(o,d,hitdist));}

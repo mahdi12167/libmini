@@ -146,13 +146,13 @@ void miniview::setup_matrix(float sbase)
    }
 
 // shoot a ray at the scene
-double miniview::shoot(const minicoord &o,const miniv3d &d)
+double miniview::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    {
    minicoord o0=o;
    o0.convert2ecef();
 
-   double dist1=miniscene::shoot(o0,d);
-   double dist2=shoot_ecef_geometry(o0.vec,d);
+   double dist1=miniscene::shoot(o0,d,hitdist);
+   double dist2=shoot_ecef_geometry(o0.vec,d,hitdist);
 
    return(dist1<dist2?dist1:dist2);
    }
@@ -227,5 +227,5 @@ void miniview::render_ecef_geometry(double)
    }
 
 // shoot a ray at the ecef geometry
-double miniview::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d)
+double miniview::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double hitdist)
    {return(MAXFLOAT);}

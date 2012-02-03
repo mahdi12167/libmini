@@ -230,8 +230,8 @@ void miniscene::adapt(double dt)
    }
 
 // shoot a ray at the scene
-double miniscene::shoot(const minicoord &o,const miniv3d &d)
-   {return(EARTH->shoot(o,d));}
+double miniscene::shoot(const minicoord &o,const miniv3d &d,double hitdist)
+   {return(EARTH->shoot(o,d,hitdist));}
 
 // extract triangles that [possibly] intersect a plane
 minidyna<miniv3d> miniscene::extract(const minicoord &p,const miniv3d &v,double radius)

@@ -5,7 +5,7 @@
 // mininode_group:
 
 // shoot a ray and return the distance to the closest object
-double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d) const
+double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,double hitdist) const
    {
    double mindist,dist;
 
@@ -28,8 +28,8 @@ double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d) const
                   // get child geometry
                   mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
 
-                  if (child_geo) dist=child_geo->shoot(o,d);
-                  else dist=child_group->shoot_ray(o,d);
+                  if (child_geo) dist=child_geo->shoot(o,d,hitdist);
+                  else dist=child_group->shoot_ray(o,d,hitdist);
 
                   if (dist<mindist) mindist=dist;
                   }
@@ -110,7 +110,7 @@ void mininode_group::update_dirty()
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
-double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
+double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d,double hitdist) const
    {
    minicone cone;
 
@@ -126,7 +126,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d) const
    // shoot with transformed cone
    if (cone.valid)
       {
-      dist=mininode_group::shoot_ray(cone.pos,cone.dir);
+      dist=mininode_group::shoot_ray(cone.pos,cone.dir,hitdist);
       if (dist!=MAXFLOAT)
          {
          hit=cone.pos+dist*cone.dir;
@@ -351,11 +351,15 @@ void mininode_coord::traverse_pre()
    minicone cone=cone_stack.peek();
    if (has_bsphere())
       if (cone.valid)
-         if (intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
-                                     miniv3d(0.0,0.0,-minicrs::EARTH_radius),
-                                     minicrs::EARTH_radius-bound_radius,
-                                     minicrs::EARTH_radius-bound_radius,
-                                     minicrs::EARTH_radius-bound_radius)<1.0) is_visible=FALSE;
+         {
+         double t=intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
+                                          miniv3d(0.0,0.0,-minicrs::EARTH_radius),
+                                          minicrs::EARTH_radius-bound_radius,
+                                          minicrs::EARTH_radius-bound_radius,
+                                          minicrs::EARTH_radius-bound_radius);
+
+         if (t>0.0 && t<1.0) is_visible=FALSE;
+         }
    }
 
 void mininode_coord::traverse_post()

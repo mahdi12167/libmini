@@ -158,7 +158,7 @@ void Camera::rotateCamera(float dx, float dy)
       rotate_right(360 *dx);
       rotate_up(180 * dy);
 
-      rotate_limit(-90.0, 0.0);
+      rotate_limit(-90.0, 90.0);
 
       move_forward_plain(-dist);
    }
@@ -397,7 +397,7 @@ void Camera::modifierKey(modifierKeys modifier, bool pressed)
       m_Meta=pressed;
 }
 
-double Camera::shoot(const minicoord &o,const miniv3d &d)
+double Camera::shoot(const minicoord &o,const miniv3d &d,double hitdist)
 {
-   return(m_window->getViewer()->shoot(o,d));
+   return(m_window->getViewer()->shoot(o,d,hitdist));
 }

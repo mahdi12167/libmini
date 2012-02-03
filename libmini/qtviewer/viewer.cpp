@@ -558,7 +558,7 @@ void Viewer::render_ecef_geometry(double t)
 }
 
 // shoot a ray at the ecef geometry
-double Viewer::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d)
+double Viewer::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double hitdist)
 {
-   return(m_root->shoot_ray(o,d));
+   return(m_root->shoot_ray(o,d,hitdist));
 }

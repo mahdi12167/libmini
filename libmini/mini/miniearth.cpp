@@ -815,6 +815,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
          if (EPARAMS.warpmode!=WARPMODE_LINEAR)
+            {
             if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
                t=intersect_ray_ellipsoid(miniv3d(o.vec),d,
                                          miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
@@ -822,6 +823,9 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
                if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
                   t=intersect_ray_plane(miniv3d(o.vec),d,
                                         miniv3d(ref->getcenter().vec),ref->getnormal());
+
+            if (t<hitdist) t=MAXFLOAT;
+            }
 
    return(t);
    }

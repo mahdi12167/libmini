@@ -122,7 +122,7 @@ class miniscene
    void adapt(double dt);
 
    //! shoot a ray at the scene
-   double shoot(const minicoord &o,const miniv3d &d);
+   double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
 
    //! extract triangles that [possibly] intersect a plane
    minidyna<miniv3d> extract(const minicoord &p,const miniv3d &v,double radius);

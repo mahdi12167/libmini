@@ -396,6 +396,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
    pos+=x*right+y*up;
 
    dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   if (dist==MAXFLOAT) ERRORMSG();
    pos*=dist;
 
    nrm=pos;
@@ -442,8 +443,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
       {
       case 1: // north pole
 
-         dist=intersect_line_plane(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=pos.y;
@@ -454,8 +455,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 2: // greenwich
 
-         dist=intersect_line_plane(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=pos.y;
@@ -466,8 +467,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 3: // honolulu
 
-         dist=intersect_line_plane(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=-pos.y;
@@ -478,8 +479,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 4: // tokyo
 
-         dist=intersect_line_plane(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=-pos.x;
@@ -490,8 +491,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 5: // new york
 
-         dist=intersect_line_plane(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=pos.x;
@@ -502,8 +503,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
       case 6: // south pole
 
-         dist=intersect_line_plane(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
-         if (dist<0.0) dist=MAXFLOAT;
+         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
+         if (dist==MAXFLOAT) ERRORMSG();
          pos+=dist*pos;
 
          *x=pos.y;

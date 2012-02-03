@@ -89,9 +89,6 @@ double intersect_ray_ellipsoid(miniv3d p,miniv3d d,
 double intersect_ray_plane(miniv3d p,miniv3d d,
                            miniv3d o,miniv3d n);
 
-double intersect_line_plane(miniv3d p,miniv3d d,
-                            miniv3d o,miniv3d n);
-
 // Moeller-Trumbore ray/triangle intersection:
 
 int intersect_ray_triangle(const miniv3d &o,const miniv3d &d,
