@@ -29,8 +29,9 @@ minicache::minicache()
    CULLMODE=1;
    RAYMODE=0;
 
-   OPACITY=1.0f;
+   BLENDING=0;
    ALPHATEST=1.0f;
+   OPACITY=1.0f;
 
    SEAMODE=1;
 
@@ -508,7 +509,7 @@ int minicache::rendercache()
          {
          rendertrigger(phase);
 
-         for (id=0; id<MAXTERRAIN; id++)
+         for (id=MAXTERRAIN-1; id>=0; id--)
             if (TERRAIN[id].tile!=NULL)
                if (TERRAIN[id].isvisible!=0)
                   {
@@ -734,6 +735,8 @@ int minicache::rendertrigger(int phase)
 
       if (CULLMODE==0) disableculling();
 
+      if (BLENDING!=0) enableblending();
+
       if (ALPHATEST<1.0f) enableAtest(ALPHATEST);
 
       if (OPACITY<1.0f)
@@ -759,6 +762,8 @@ int minicache::rendertrigger(int phase)
    else if (phase==3)
       {
       if (CULLMODE==0) enableBFculling();
+
+      if (BLENDING!=0) disableblending();
 
       if (ALPHATEST<1.0f) disableAtest();
 
@@ -1161,6 +1166,10 @@ void minicache::setshooting(int on)
 // define triangle mesh opacity
 void minicache::setopacity(float alpha)
    {OPACITY=alpha;}
+
+// set blending mode
+void minicache::setblending(int on)
+   {BLENDING=on;}
 
 // define alpha test threshold
 void minicache::setalphatest(float alpha)

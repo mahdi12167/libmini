@@ -58,11 +58,14 @@ class minicache
    //! set ray shooting mode
    void setshooting(int on=1);
 
-   //! define triangle mesh opacity
-   void setopacity(float alpha=1.0f);
+   //! set blending mode
+   void setblending(int on=0);
 
    //! define alpha test threshold
    void setalphatest(float alpha=0.0f);
+
+   //! define triangle mesh opacity
+   void setopacity(float alpha=1.0f);
 
    //! set sea mode
    void setseamode(int on=1);
@@ -247,7 +250,9 @@ class minicache
    int CULLMODE;
    int RAYMODE;
 
-   float OPACITY,ALPHATEST;
+   int BLENDING;
+   float ALPHATEST;
+   float OPACITY;
 
    int SEAMODE;
 

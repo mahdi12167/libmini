@@ -25,13 +25,13 @@ miniterrain::miniterrain()
    TPARAMS.nonlin=FALSE;                // use non-linear warp
 
    TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
-   TPARAMS.fadedist=500000.0f;          // spherical fade out distance
+   TPARAMS.fadedist=100000.0f;          // spherical fade out distance
    TPARAMS.fademult=2.0f;               // spherical fade out distance multiplier to yield farp
-   TPARAMS.fadeout=0.01f;               // spherical fade out range relative to distance
+   TPARAMS.fadeout=0.1f;                // spherical fade out range relative to distance
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
    TPARAMS.subdist=1.0f;                // spherical subduction distance relative to fade out distance
-   TPARAMS.subfactor=0.001f;            // spherical subduction factor relative to distance
+   TPARAMS.subfactor=0.05f;             // spherical subduction factor relative to distance
 
    TPARAMS.scale=1.0f;                  // scaling of scene
    TPARAMS.exaggeration=1.0f;           // exaggeration of elevations
@@ -599,12 +599,6 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    // set pre and post sea surface render callbacks
    CACHE->setseacb(preseacb,postseacb,this);
 
-   // enable alpha test
-   CACHE->setalphatest(TPARAMS.alphathres);
-
-   // enable sea alpha test
-   CACHE->setseaalphatest(TPARAMS.seaalphathres);
-
    // turn on ray object
    CACHE->setshooting(1);
    CACHE->configure_omitsea(TPARAMS.omitsea);
@@ -1020,6 +1014,12 @@ void miniterrain::render()
       // enable shaders
       if (TPARAMS.useshaders)
          {
+         // set blending mode
+         CACHE->setblending(TPARAMS.fademode);
+
+         // enable alpha test
+         CACHE->setalphatest(TPARAMS.alphathres);
+
          // compute inverse transpose modelview to transform into eye linear coordinates
          if (TPARAMS.usedetail && TPARAMS.detailtexmode!=0 && TPARAMS.detailtexalpha!=0.0f)
             {
@@ -1074,6 +1074,9 @@ void miniterrain::render()
 
          // set sea surface mode
          minishader::setseamode(TPARAMS.seamode);
+
+         // enable sea alpha test
+         CACHE->setseaalphatest(TPARAMS.seaalphathres);
 
          // set fade mode
          minishader::setfademode(TPARAMS.fademode,(1.0-TPARAMS.fadeout)*TPARAMS.fadedist,TPARAMS.fadedist);
