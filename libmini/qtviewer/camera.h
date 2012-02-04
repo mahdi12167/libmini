@@ -102,7 +102,7 @@ protected:
    bool     m_Shift, m_Control, m_Alt, m_Meta;
 
    // ray shooting
-   virtual double shoot(const minicoord &o,const miniv3d &d,double histdist=0.0);
+   virtual double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
 private:
    double   delta_angle(double a, double b);

@@ -397,7 +397,7 @@ void Camera::modifierKey(modifierKeys modifier, bool pressed)
       m_Meta=pressed;
 }
 
-double Camera::shoot(const minicoord &o,const miniv3d &d,double hitdist)
+double Camera::shoot(const minicoord &o,const miniv3d &d,double mindist)
 {
-   return(m_window->getViewer()->shoot(o,d,hitdist));
+   return(m_window->getViewer()->shoot(o,d,mindist));
 }
