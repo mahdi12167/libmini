@@ -626,13 +626,19 @@ minilayer *miniterrain::loadLTS(const char *url,
    char *layerurl,*levelurl;
    char layerlevel[10];
 
+   int lnum;
+   int lbase;
+
    minilayer *layer;
    minilayer *toplevel;
+
+   lnum=0;
+   lbase=levels-1;
 
    toplevel=NULL;
 
    // load tileset levels
-   for (l=0; l<levels; l++)
+   for (l=levels-1; l>=0; l--)
       {
       layerurl=strdup(url);
 
@@ -650,34 +656,39 @@ minilayer *miniterrain::loadLTS(const char *url,
       levelurl=strdup2(layerurl,layerlevel);
 
       // load layer with negative levels
-      layer=load(levelurl,loadopts,reset,l-levels+1,-levels+1);
+      layer=load(levelurl,loadopts,reset,-lnum,-lbase);
 
       // free urls
       free(layerurl);
       free(levelurl);
 
-      if (!layer) break;
-
-      if (l==0) toplevel=layer;
+      // check presence of layer
+      if (layer)
+         {
+         lnum++;
+         if (l==0) toplevel=layer;
+         }
+      else
+         if (lnum==0) lbase--;
+         else lnum++;
       }
 
    // enable alpha test and fade for multiple levels
-   if (l>1)
-      {
-      // set alpha test threshold to full transparency
-      TPARAMS.alphathres=0.0f;
+   if (toplevel!=NULL)
+      if (lnum>1)
+         {
+         // set alpha test threshold to full transparency
+         TPARAMS.alphathres=0.0f;
 
-      // set sea alpha test threshold to sea opacity
-      TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
+         // set sea alpha test threshold to sea opacity
+         TPARAMS.seaalphathres=ftrc(255.0f*(TPARAMS.usevisshader?TPARAMS.seatrans:TPARAMS.nprseatrans)-1)/255.0f;
 
-      // enable spherical fade
-      TPARAMS.fademode=1;
+         // enable spherical fade
+         TPARAMS.fademode=1;
 
-      // enable spherical subduction
-      TPARAMS.submode=1;
-      }
-   else
-      if (toplevel!=NULL) toplevel->setlevel(0,0);
+         // enable spherical subduction
+         TPARAMS.submode=1;
+         }
 
    return(toplevel);
    }
