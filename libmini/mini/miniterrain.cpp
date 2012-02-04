@@ -31,7 +31,7 @@ miniterrain::miniterrain()
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
    TPARAMS.subdist=1.0f;                // spherical subduction distance relative to fade out distance
-   TPARAMS.subfactor=0.05f;             // spherical subduction factor relative to distance
+   TPARAMS.subfactor=0.01f;             // spherical subduction factor relative to distance
 
    TPARAMS.scale=1.0f;                  // scaling of scene
    TPARAMS.exaggeration=1.0f;           // exaggeration of elevations
