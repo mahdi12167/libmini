@@ -50,9 +50,9 @@ class miniray
    //! only the triangles referenced in the front buffer are considered
    //! only the triangles with a positive distance are considered
    //! o is the origin of the ray, d is the ray direction
+   //! a valid hit distance to be returned has to be no less than mindist
    //! a return value of MAXFLOAT indicates that there was no hit
-   //! the first hit with a smaller distance than hitdist will be returned
-   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0);
+   double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0);
 
    //! extract triangles that [possibly] intersect a plane
    //! o is the origin of the plane
@@ -134,7 +134,7 @@ class miniray
 
    double calcdist(const TRIANGLEREF *ref,
                    const miniv3d &o,const miniv3d &d,
-                   double dist);
+                   double dist,double mindist);
 
    minidyna<miniv3d> calcmesh(const TRIANGLEREF *ref);
 

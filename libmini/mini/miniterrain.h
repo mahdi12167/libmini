@@ -370,7 +370,7 @@ class miniterrain
    minipointdata *getnearestpoint(const minicoord &e,int type=minipointopts::OPTION_TYPE_ANY);
 
    //! shoot a ray at the scene
-   double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0,int *id=NULL);
+   double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0,int *id=NULL);
 
    //! extract triangles that [possibly] intersect a plane
    minidyna<miniv3d> extract(const minicoord &p,const miniv3d &v,double radius);

@@ -247,9 +247,9 @@ class ministrip
    //! shoot a ray and return the distance to the closest triangle
    //! only the triangles with a positive distance are considered
    //! o is the origin of the ray, d is the ray direction
+   //! a valid hit distance to be returned has to be no less than mindist
    //! a return value of MAXFLOAT indicates that there was no hit
-   //! the first hit with a smaller distance than hitdist will be returned
-   double shoot(const miniv3d &o,const miniv3d &d,double firsthit=0.0) const;
+   double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
 
    protected:
 

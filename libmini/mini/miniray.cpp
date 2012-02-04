@@ -213,7 +213,7 @@ void miniray::swapandclear()
    }
 
 // shoot a ray and return the distance to the closest triangle
-double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
+double miniray::shoot(const miniv3d &o,const miniv3d &d,double mindist)
    {
    double result;
 
@@ -275,10 +275,7 @@ double miniray::shoot(const miniv3d &o,const miniv3d &d,double hitdist)
 
       if (itest_ray_sphere(oi,di,ref->b,ref->r2)!=0)
          if (itest_ray_bbox(oi,di,ref->b,ref->r)!=0)
-            {
-            result=calcdist(ref,oi,di,result);
-            if (result<hitdist) break;
-            }
+            result=calcdist(ref,oi,di,result,mindist);
 
       ref=ref->next;
       }
@@ -563,7 +560,7 @@ void miniray::calcbound(TRIANGLEREF *ref)
 // calculate smallest hit distance
 double miniray::calcdist(const TRIANGLEREF *ref,
                          const miniv3d &o,const miniv3d &d,
-                         double dist)
+                         double dist,double mindist)
    {
    int i,j,k;
 
@@ -630,7 +627,7 @@ double miniray::calcdist(const TRIANGLEREF *ref,
 
             dist=ray_triangle_dist(o,d,v1,v2,v3);
 
-            if (dist>0.0f) result=fmin(result,dist);
+            if (dist>=mindist) result=dmin(result,dist);
             }
       else
          for (i=0; i<num; i++)
@@ -676,7 +673,7 @@ double miniray::calcdist(const TRIANGLEREF *ref,
 
             dist=ray_triangle_dist(o,d,v1,v2,v3);
 
-            if (dist>0.0f) result=fmin(result,dist);
+            if (dist>=mindist) result=dmin(result,dist);
             }
    else
       if (ref->swapyz==0)
@@ -732,7 +729,7 @@ double miniray::calcdist(const TRIANGLEREF *ref,
 
                dist=ray_triangle_dist(o,d,v1,v2,v3);
 
-               if (dist>0.0f) result=fmin(result,dist);
+               if (dist>=mindist) result=dmin(result,dist);
 
                v2=v3;
                }
@@ -790,7 +787,7 @@ double miniray::calcdist(const TRIANGLEREF *ref,
 
                dist=ray_triangle_dist(o,d,v1,v2,v3);
 
-               if (dist>0.0f) result=fmin(result,dist);
+               if (dist>=mindist) result=dmin(result,dist);
 
                v2=v3;
                }

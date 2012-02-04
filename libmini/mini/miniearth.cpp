@@ -800,31 +800,35 @@ double miniearth::getrelheight(const minicoord &p)
    }
 
 // shoot a ray at the scene
-double miniearth::shoot(const minicoord &o,const miniv3d &d,double hitdist)
+double miniearth::shoot(const minicoord &o,const miniv3d &d,double mindist)
    {
    double t;
+   miniv3d dn;
 
    minilayer *ref;
 
    ref=getreference();
 
    // check for hit with terrain
-   t=TERRAIN->shoot(o,d,hitdist);
+   t=TERRAIN->shoot(o,d,mindist);
 
    // check for hit with earth ellipsoid
    if (t==MAXFLOAT)
       if (EPARAMS.useearth)
          if (EPARAMS.warpmode!=WARPMODE_LINEAR)
             {
+            dn=d;
+            dn.normalize();
+
             if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
-               t=intersect_ray_ellipsoid(miniv3d(o.vec),d,
+               t=intersect_ray_ellipsoid(miniv3d(o.vec),dn,
                                          miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
             else
                if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
-                  t=intersect_ray_plane(miniv3d(o.vec),d,
+                  t=intersect_ray_plane(miniv3d(o.vec),dn,
                                         miniv3d(ref->getcenter().vec),ref->getnormal());
 
-            if (t<hitdist) t=MAXFLOAT;
+            if (t<mindist) t=MAXFLOAT;
             }
 
    return(t);

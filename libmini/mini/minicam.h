@@ -103,7 +103,7 @@ class minicam
    float fovy,aspect;
    double nearp,farp;
 
-   virtual double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
+   virtual double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
    private:
 

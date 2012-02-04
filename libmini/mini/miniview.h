@@ -20,7 +20,7 @@ class miniview : public miniscene
 
    void render_geometry(float sbase=0.0f, BOOLINT anaglyph=TRUE);
 
-   double shoot(const minicoord &o,const miniv3d &d,double hitdist=0.0);
+   double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
    protected:
 
@@ -28,7 +28,7 @@ class miniview : public miniscene
 
    virtual void check_ecef_geometry(miniv3d &center, double &radius);
    virtual void render_ecef_geometry(double t);
-   virtual double shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double hitdist=0.0);
+   virtual double shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double mindist=0.0);
 
    minicam *m_cam;
    };

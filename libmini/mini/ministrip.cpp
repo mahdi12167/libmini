@@ -1371,15 +1371,21 @@ void ministrip::getbsphere(miniv3d &center,double &radius2) const
    }
 
 // shoot a ray and return the distance to the closest triangle
-double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
+double ministrip::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
    {
    int i;
+
+   miniv3d dn;
 
    float *ptr;
    miniv3f v1,v2,v3;
 
-   double dist;
-   double mindist=MAXFLOAT;
+   double dist,result;
+
+   dn=d;
+   dn.normalize();
+
+   result=MAXFLOAT;
 
    if (!MTXSET)
       if (itest_ray_bbox(o,d,0.5*(BBOXMIN+BBOXMAX),0.5*(BBOXMAX-BBOXMIN)))
@@ -1394,10 +1400,10 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
 
             if (i>=2)
                {
-               dist=ray_triangle_dist(o,d,v1,v2,v3);
+               dist=ray_triangle_dist(o,dn,v1,v2,v3);
                if (dist!=MAXFLOAT)
-                  if (dist>=firsthit)
-                     if (dist<mindist) mindist=dist;
+                  if (dist>=mindist)
+                     if (dist<result) result=dist;
 
                v3=v2;
                v2=v1;
@@ -1411,5 +1417,5 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double firsthit) const
             }
          }
 
-   return(mindist);
+   return(result);
    }

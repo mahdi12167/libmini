@@ -583,19 +583,19 @@ double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
 int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
                      const miniv3d &b,const double r2)
    {
-   miniv3d d0;
+   miniv3d dn;
 
    miniv3d bmo;
    double bmo2,bmod;
 
-   d0=d;
-   d0.normalize();
+   dn=d;
+   dn.normalize();
 
    bmo=b-o;
    bmo2=bmo*bmo;
    if (bmo2<r2) return(1);
 
-   bmod=bmo*d0;
+   bmod=bmo*dn;
    if (bmod<0.0) return(0);
    if (r2+bmod*bmod>bmo2) return(1);
 
@@ -606,18 +606,18 @@ int itest_ray_sphere(const miniv3d &o,const miniv3d &d,
 int itest_cone_sphere(const miniv3d &o,const miniv3d &d,double cone,
                       const miniv3d &b,const double r)
    {
-   miniv3d d0;
+   miniv3d dn;
 
    double l0,l;
    miniv3d p;
 
-   d0=d;
-   d0.normalize();
+   dn=d;
+   dn.normalize();
 
-   l0=d0*(b-o);
+   l0=dn*(b-o);
    if (l0<-r) return(0);
 
-   p=o+l0*d0;
+   p=o+l0*dn;
 
    l=(b-p).getlength()-r*sqrt(1.0+cone*cone);
 
