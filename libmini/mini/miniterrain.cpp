@@ -25,9 +25,10 @@ miniterrain::miniterrain()
    TPARAMS.nonlin=FALSE;                // use non-linear warp
 
    TPARAMS.fademode=0;                  // spherical fade mode: off=0 single=1 double=2
-   TPARAMS.fadedist=50000.0f;           // spherical fade out distance
+   TPARAMS.fadedist=100000.0f;          // spherical fade out distance
    TPARAMS.fademult=1.25f;              // spherical fade out distance multiplier to yield farp
    TPARAMS.fadeout=0.1f;                // spherical fade out range relative to distance
+   TPARAMS.fadestep=2;                  // spherical fade out level step
 
    TPARAMS.submode=0;                   // spherical subduction mode: off=0 on=1
    TPARAMS.subdist=1.0f;                // spherical subduction distance relative to fade out distance
@@ -640,27 +641,31 @@ minilayer *miniterrain::loadLTS(const char *url,
    // load tileset levels
    for (l=levels-1; l>=0; l--)
       {
-      layerurl=strdup(url);
+      if (l==0 || l==levels-1 || l%TPARAMS.fadestep==0)
+         {
+         layerurl=strdup(url);
 
-      // remove trailing slash
-      if (strlen(layerurl)>1)
-         if (layerurl[strlen(layerurl)-1]=='/') layerurl[strlen(layerurl)-1]='\0';
+         // remove trailing slash
+         if (strlen(layerurl)>1)
+            if (layerurl[strlen(layerurl)-1]=='/') layerurl[strlen(layerurl)-1]='\0';
 
-      // remove trailing backslash
-      if (strlen(layerurl)>1)
-         if (layerurl[strlen(layerurl)-1]=='\\') layerurl[strlen(layerurl)-1]='\0';
+         // remove trailing backslash
+         if (strlen(layerurl)>1)
+            if (layerurl[strlen(layerurl)-1]=='\\') layerurl[strlen(layerurl)-1]='\0';
 
-      // append layer level to url
-      if (l==0) snprintf(layerlevel,10,"/");
-      else snprintf(layerlevel,10,"%d/",l);
-      levelurl=strdup2(layerurl,layerlevel);
+         // append layer level to url
+         if (l==0) snprintf(layerlevel,10,"/");
+         else snprintf(layerlevel,10,"%d/",l);
+         levelurl=strdup2(layerurl,layerlevel);
 
-      // load layer with negative levels
-      layer=load(levelurl,loadopts,reset,-lnum,-lbase);
+         // load layer with negative levels
+         layer=load(levelurl,loadopts,reset,-lnum,-lbase);
 
-      // free urls
-      free(layerurl);
-      free(levelurl);
+         // free urls
+         free(layerurl);
+         free(levelurl);
+         }
+      else layer=NULL;
 
       // check presence of layer
       if (layer)

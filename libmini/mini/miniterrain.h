@@ -37,6 +37,7 @@ class miniterrain
       float fadedist;           //* spherical fade out distance
       float fademult;           //* spherical fade out distance multiplier to yield farp
       float fadeout;            //* spherical fade out range relative to distance
+      int fadestep;             //* spherical fade out level step
 
       int submode;              //* spherical subduction mode: off=0 on=1
       float subdist;            //* spherical subduction distance relative to fade out distance
