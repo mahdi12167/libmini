@@ -72,7 +72,7 @@ void writeDDSvolume(const char *filename,unsigned char *volume,
 //! read a compressed DDS volume
 unsigned char *readDDSvolume(const char *filename,
                              unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components=0,
-                             float *scalex=NULL,float *scaley=NULL,float *scalez=0,
+                             float *scalex=0,float *scaley=0,float *scalez=0,
                              unsigned char **description=0,
                              unsigned char **courtesy=0,
                              unsigned char **parameter=0,
