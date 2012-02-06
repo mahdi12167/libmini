@@ -64,19 +64,19 @@ unsigned char *readPVMvolume(const char *filename,
 void writeDDSvolume(const char *filename,unsigned char *volume,
                     unsigned int width,unsigned int height,unsigned int depth,unsigned int components=1,
                     float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
-                    unsigned char *description=NULL,
-                    unsigned char *courtesy=NULL,
-                    unsigned char *parameter=NULL,
-                    unsigned char *comment=NULL);
+                    unsigned char *description=0,
+                    unsigned char *courtesy=0,
+                    unsigned char *parameter=0,
+                    unsigned char *comment=0);
 
 //! read a compressed DDS volume
 unsigned char *readDDSvolume(const char *filename,
-                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components=NULL,
-                             float *scalex=NULL,float *scaley=NULL,float *scalez=NULL,
-                             unsigned char **description=NULL,
-                             unsigned char **courtesy=NULL,
-                             unsigned char **parameter=NULL,
-                             unsigned char **comment=NULL);
+                             unsigned int *width,unsigned int *height,unsigned int *depth,unsigned int *components=0,
+                             float *scalex=NULL,float *scaley=NULL,float *scalez=0,
+                             unsigned char **description=0,
+                             unsigned char **courtesy=0,
+                             unsigned char **parameter=0,
+                             unsigned char **comment=0);
 
 //! put a geographic grid descriptor into a PNM comment
 void putPNMparams(PNMcomment *comment, // output PNM comment
