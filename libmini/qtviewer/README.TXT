@@ -24,7 +24,7 @@ For example grab the source tar ball from:
 !! Installation (Unix/Mac)
 
 Type on the unix console in your QT source directory:
- ./configure && make sub-tools && sudo make install
+ ./configure && make && sudo make install
 
 !! Installation (Windows):
 
