@@ -12,26 +12,26 @@ else
 endif
 
 # libjpeg
-(cd libjpeg; ./configure --prefix=$prefix/libjpeg; make -j 2; make install)
+(cd libjpeg; ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared; make -j 2; make install)
 
 # libpng
-(cd libpng; ./configure --prefix=$prefix/libpng; make -j 2; make install)
+(cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
 
 # zlib
-(cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+(cd zlib; ./configure --prefix=$prefix/zlib --enable-static --disable-shared; make -j 2; make install)
 
 # curl
-(cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl; make -j 2; make install)
+(cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl --enable-static --disable-shared; make -j 2; make install)
 
 # squish
 (cd squish; cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish; make -j 2; make install)
 
 # freeglut
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
-   (cd freeglut; ./autogen.sh; ./autogen.sh; ./configure --prefix=$prefix/freeglut; make -j 2; make install)
+   (cd freeglut; ./autogen.sh; ./autogen.sh; ./configure --prefix=$prefix/freeglut --enable-static --disable-shared; make -j 2; make install)
 endif
 
 # other libraries to install:
 
 # gdal
-(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal; make -j 2; make install)
+(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --enable-static --disable-shared; make -j 2; make install)
