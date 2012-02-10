@@ -11,6 +11,9 @@ else
    set prefix=$cwd/../..
 endif
 
+# libjpeg
+(cd libjpeg; ./configure --prefix=$prefix/libjpeg; make -j 2; make install)
+
 # curl
 (cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl; make -j 2; make install)
 

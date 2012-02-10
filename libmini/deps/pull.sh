@@ -21,7 +21,7 @@ if (-X wget) then
    if (! -e libjpeg) then
       wget http://www.ijg.org/files/jpegsrc.v8d.tar.gz
       tar zxf jpegsrc.v8d.tar.gz
-      mv jpegsrc.v8d libjpeg
+      mv jpeg-8d libjpeg
    endif
 endif
 
