@@ -34,10 +34,12 @@ CONFIG(debug, debug|release) {
 
 INCLUDEPATH += .
 INCLUDEPATH += ..
-INCLUDEPATH += ../deps
-INCLUDEPATH += ../deps/curl/include
-INCLUDEPATH += ../deps/squish
-INCLUDEPATH += ../deps/libjpeg
+INCLUDEPATH += ../..
+INCLUDEPATH += ../../libcurl/include
+INCLUDEPATH += ../../squish/include
+INCLUDEPATH += ../../libjpeg/include
+INCLUDEPATH += ../../libpng/include
+INCLUDEPATH += ../../zlib/include
 
 win32:INCLUDEPATH += ../WIN32
 win32:INCLUDEPATH += ../WIN32/pthreads-win32
@@ -49,9 +51,12 @@ win32:INCLUDEPATH += ../WIN32/zlib
 
 LIBS += -L.
 LIBS += -L..
-LIBS += -L../deps
-LIBS += -L../deps/squish
-LIBS += -L../deps/curl/lib
+LIBS += -L../..
+LIBS += -L../../libcurl/lib
+LIBS += -L../../squish/lib
+LIBS += -L../../libjpeg/lib
+LIBS += -L../../libpng/lib
+LIBS += -L../../zlib/lib
 
 win32:LIBS += -L../WIN32
 win32:LIBS += -L../WIN32/pthreads-win32
