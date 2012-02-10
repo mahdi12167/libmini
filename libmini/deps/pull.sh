@@ -8,12 +8,22 @@ foreach app (cvs svn git wget cmake)
    if (! -X $app) then
       echo warning: $app is not installed!
       if ($app == "git") echo "solution: install git with the getgit.sh script"
+      if ($app == "wget") echo "solution: install cmake with the getwget.sh script"
       if ($app == "cmake") echo "solution: install cmake with the getcmake.sh script"
    endif
 end
 
-# the pthreads, libjpeg and libpng/zlib libraries are assumed to be installed
+# the pthreads and libpng/zlib libraries are assumed to be installed
 # then the remaining dependencies to pull are:
+
+# libjpeg v8d
+if (-X wget) then
+   if (! -e libjpeg) then
+      wget http://www.ijg.org/files/jpegsrc.v8d.tar.gz
+      tar zxf jpegsrc.v8d.tar.gz
+      mv jpegsrc.v8d libjpeg
+   endif
+endif
 
 # curl 7.21.2
 if (-X git) then
@@ -22,8 +32,8 @@ if (-X git) then
    endif
    (cd curl; git checkout curl-7_21_2)
 else
-   if (! -e curl) then
-      if (-X wget) then
+   if (-X wget) then
+      if (! -e curl) then
          wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
          tar zxf curl-7.21.2.tar.gz
          mv curl-7.21.2 curl
