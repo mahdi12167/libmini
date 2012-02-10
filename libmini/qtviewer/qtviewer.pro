@@ -35,8 +35,9 @@ CONFIG(debug, debug|release) {
 INCLUDEPATH += .
 INCLUDEPATH += ..
 INCLUDEPATH += ../deps
-INCLUDEPATH += ../deps/squish
 INCLUDEPATH += ../deps/curl/include
+INCLUDEPATH += ../deps/squish
+INCLUDEPATH += ../deps/libjpeg
 
 win32:INCLUDEPATH += ../WIN32
 win32:INCLUDEPATH += ../WIN32/pthreads-win32
