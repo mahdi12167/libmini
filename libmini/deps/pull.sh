@@ -25,10 +25,26 @@ if (-X wget) then
    endif
 endif
 
+# libpng 1.5.8
+if (-X git) then
+   if (! -e libpng) then
+      git clone git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+   endif
+   (cd libpng; git checkout 4a011b2b7730ba26b9d28dacff348bcd94e428d7)
+endif
+
+# zlib 1.2.6
+if (-X git) then
+   if (! -e zlib) then
+      git clone git://github.com/madler/zlib
+   endif
+   (cd zlib; git checkout e75de023b6cd7177c8e44ef1c72b74f5efde5418)
+endif
+
 # curl 7.21.2
 if (-X git) then
    if (! -e curl) then
-      git clone git://curl.haxx.se/curl
+      git clone git://github.com/bagder/curl
    endif
    (cd curl; git checkout curl-7_21_2)
 else

@@ -14,6 +14,12 @@ endif
 # libjpeg
 (cd libjpeg; ./configure --prefix=$prefix/libjpeg; make -j 2; make install)
 
+# libpng
+(cd libpng; ./configure --prefix=$prefix/libpng; make -j 2; make install)
+
+# zlib
+(cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+
 # curl
 (cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl; make -j 2; make install)
 
