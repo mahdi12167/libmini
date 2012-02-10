@@ -14,13 +14,11 @@ if ($1 == "zip") then
    exit
 endif
 
-set QTPATH=`echo /usr/local/Trolltech/Qt-*/bin`
-if (-d $QTPATH) then
+set QTPATH=`echo /usr/local/Trolltech/Qt-*/bin >& /dev/null`
+if (-d "$QTPATH") then
    setenv PATH $PATH":"$QTPATH
    rehash
 endif
-
-echo $PATH
 
 if (! -X qmake) then
    echo error: qmake is not installed!
