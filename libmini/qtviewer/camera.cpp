@@ -270,7 +270,7 @@ void Camera::processTransition(double w, double dw)
 {
    w = 1.0 - pow(1.0 - w, 2.0);
 
-   move(m_TargetCameraCurve.interpolate(w).vec - get_eye().vec);
+   move(m_TargetCameraCurve.interpolate_cubic(w).vec - get_eye().vec);
 
    moveAbove();
 
