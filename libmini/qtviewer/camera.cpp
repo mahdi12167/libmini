@@ -232,7 +232,7 @@ double Camera::delta_angle(double a, double b)
 
 void Camera::focusOnTarget(double zoom)
 {
-   minianim anim;
+   minicurve curve;
 
    minicoord target = get_eye();
 
@@ -241,13 +241,13 @@ void Camera::focusOnTarget(double zoom)
    else
       target += cursorVector(zoom);
 
-   anim.append_sector(get_eye(), target, 100);
-   startTransition(anim, 0.0, 0.0, 0.5);
+   curve.append_sector(get_eye(), target, 100);
+   startTransition(curve, 0.0, 0.0, 0.5);
 }
 
 void Camera::focusOnMap(minilayer *layer)
 {
-   minianim anim;
+   minicurve curve;
 
    if (layer==NULL) return;
 
@@ -258,19 +258,19 @@ void Camera::focusOnMap(minilayer *layer)
    double size = (extent.x+extent.y) / 2.0;
    target += size * normal;
 
-   anim.append_sector(get_eye(), target, 100);
+   curve.append_sector(get_eye(), target, 100);
 
    if ((get_eye().vec - target.vec).getlength() < size/4.0)
-      startTransition(anim, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
+      startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
-      startTransition(anim, 0.0, delta_angle(-90, get_pitch()), 2.0);
+      startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
 }
 
 void Camera::processTransition(double w, double dw)
 {
    w = 1.0 - pow(1.0 - w, 2.0);
 
-   move(m_TargetCameraAnim.interpolate(w).vec - get_eye().vec);
+   move(m_TargetCameraCurve.interpolate(w).vec - get_eye().vec);
 
    moveAbove();
 
@@ -352,11 +352,11 @@ void Camera::stopIdling()
    }
 }
 
-void Camera::startTransition(minianim target, double dangle, double dpitch, double dtime)
+void Camera::startTransition(minicurve target, double dangle, double dpitch, double dtime)
 {
    stopTransition();
 
-   m_TargetCameraAnim = target;
+   m_TargetCameraCurve = target;
    m_TargetDeltaAngle = dangle;
    m_TargetDeltaPitch = dpitch;
    m_TargetDeltaTime = dtime;

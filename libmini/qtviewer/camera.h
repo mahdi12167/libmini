@@ -6,7 +6,7 @@
 #include <QtCore/QTime>
 
 #include <mini/minicam.h>
-#include <mini/minianim.h>
+#include <mini/minicurve.h>
 
 #include <mini/mininodes.h>
 
@@ -54,7 +54,7 @@ public:
    void    startIdling();
    void    stopIdling();
 
-   void    startTransition(minianim target, double dangle, double dpitch, double dtime);
+   void    startTransition(minicurve target, double dangle, double dpitch, double dtime);
    void    stopTransition();
 
 protected:
@@ -72,19 +72,19 @@ protected:
 
 private:
    // camera idling timer
-   int      m_IdlingTimerId;
-   QTime    m_IdlingTimer;
+   int       m_IdlingTimerId;
+   QTime     m_IdlingTimer;
 
    // camera transition animation
-   minianim m_TargetCameraAnim;
-   double   m_TargetDeltaAngle;
-   double   m_TargetDeltaPitch;
-   double   m_TargetDeltaTime;
-   double   m_TargetCameraFinished;
-   bool     m_bInCameraTransition;
-   int      m_TransitionTimerId;
-   QTime    m_TransitionTimer;
-   QTime    m_TransitionStart;
+   minicurve m_TargetCameraCurve;
+   double    m_TargetDeltaAngle;
+   double    m_TargetDeltaPitch;
+   double    m_TargetDeltaTime;
+   double    m_TargetCameraFinished;
+   bool      m_bInCameraTransition;
+   int       m_TransitionTimerId;
+   QTime     m_TransitionTimer;
+   QTime     m_TransitionStart;
 
 protected:
    // window reference
