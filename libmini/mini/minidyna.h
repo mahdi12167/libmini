@@ -422,7 +422,7 @@ class minidyna
 
       v1=get(i);
       v2=get(i+1);
-      
+
       if (i<SIZE-2) v3=get(i+2);
       else v3=get(i+1);
 
