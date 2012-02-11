@@ -11,6 +11,7 @@
 #include <mini/miniv4d.h>
 #include <mini/minicrs.h>
 #include <mini/minicoord.h>
+#include <mini/minicurve.h>
 #include <mini/minivec.h>
 #include <mini/minimtx.h>
 #include <mini/minimpfp.h>

@@ -5,6 +5,7 @@
 
 #include <mini/minitime.h>
 #include <mini/miniio.h>
+#include <mini/minidds.h>
 #include <mini/minidir.h>
 #include <mini/minirgb.h>
 

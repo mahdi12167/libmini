@@ -8,8 +8,6 @@
 #include <mini/miniearth.h>
 
 #include <mini/minicam.h>
-#include <mini/minianim.h>
-
 #include <mini/mininode.h>
 #include <mini/mininodes.h>
 

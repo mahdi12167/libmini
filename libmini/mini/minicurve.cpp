@@ -2,9 +2,9 @@
 
 #include "minimath.h"
 
-#include "minianim.h"
+#include "minicurve.h"
 
-void minianim::append_sector(const minicoord &p1,const minicoord &p2,int n)
+void minicurve::append_sector(const minicoord &p1,const minicoord &p2,int n)
    {
    minicoord a=p1;
    minicoord b=p2;
@@ -18,7 +18,7 @@ void minianim::append_sector(const minicoord &p1,const minicoord &p2,int n)
    bisect(a,b,ceil(log((double)n)/log(2.0)));
    }
 
-void minianim::bisect(const minicoord &p1,const minicoord &p2,int level)
+void minicurve::bisect(const minicoord &p1,const minicoord &p2,int level)
    {
    minicoord a=p1;
    minicoord b=p2;

@@ -1,16 +1,16 @@
 // (c) by Stefan Roettger
 
-#ifndef MINIANIM_H
-#define MINIANIM_H
+#ifndef MINICURVE_H
+#define MINICURVE_H
 
 #include "minidyna.h"
 #include "minicoord.h"
 
-class minianim : public minidyna<minicoord>
+class minicurve : public minidyna<minicoord>
    {
    public:
 
-   minianim() {}
+   minicurve() {}
 
    void append_sector(const minicoord &p1,const minicoord &p2,int n);
 
