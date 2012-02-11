@@ -399,6 +399,40 @@ class minidyna
       return((1.0-t)*get(i)+t*get(i+1));
       }
 
+   //! interpolate item array cubically
+   Item interpolate_cubic(double t)
+      {
+      unsigned int i;
+
+      Item v0,v1,v2,v3;
+      Item p,q,r;
+
+      if (SIZE==0) return(Item());
+      if (SIZE==1) return(get(0));
+
+      if (t<=0.0) return(get(0));
+      if (t>=1.0) return(get(SIZE-1));
+
+      t=t*(SIZE-1);
+      i=floor(t);
+      t=t-i;
+
+      if (i>0) v0=get(i-1);
+      else v0=get(i);
+
+      v1=get(i);
+      v2=get(i+1);
+      
+      if (i<SIZE-2) v3=get(i+2);
+      else v3=get(i+1);
+
+      p=v3-v2+v1-v0;
+      q=v0-v1-p;
+      r=v2-v0;
+
+      return(((p*t+q)*t+r)*t+v1);
+      }
+
    //! copy item array
    void copy(const minidyna<Item,Minsize> &a)
       {
