@@ -45,6 +45,7 @@ INCLUDEPATH += ../../squish/include
 INCLUDEPATH += ../../libjpeg/include
 INCLUDEPATH += ../../libpng/include
 INCLUDEPATH += ../../zlib/include
+INCLUDEPATH += ../../gdal/include
 
 win32:INCLUDEPATH += ../WIN32
 win32:INCLUDEPATH += ../WIN32/pthreads-win32
@@ -53,6 +54,7 @@ win32:INCLUDEPATH += ../WIN32/squish
 win32:INCLUDEPATH += ../WIN32/libjpeg
 win32:INCLUDEPATH += ../WIN32/libpng
 win32:INCLUDEPATH += ../WIN32/zlib
+win32:INCLUDEPATH += ../../gdal
 
 LIBS += -L.
 LIBS += -L..
@@ -62,6 +64,7 @@ LIBS += -L../../squish/lib
 LIBS += -L../../libjpeg/lib
 LIBS += -L../../libpng/lib
 LIBS += -L../../zlib/lib
+LIBS += -L../../gdal/lib
 
 win32:LIBS += -L../WIN32
 win32:LIBS += -L../WIN32/pthreads-win32
@@ -70,6 +73,7 @@ win32:LIBS += -L../WIN32/squish
 win32:LIBS += -L../WIN32/libjpeg
 win32:LIBS += -L../WIN32/libpng
 win32:LIBS += -L../WIN32/zlib
+win32:LIBS += -L../../gdal
 
 unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 unix:LIBS += -lgdal
