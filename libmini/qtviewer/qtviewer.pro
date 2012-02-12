@@ -3,11 +3,16 @@ TEMPLATE = app
 
 include(sources.pro)
 
-!include(../mini/sources.pro) {
+!include(mini/sources.pro) {
    error("couldn't find libMini sources!")
 }
 
-DEPENDPATH += ../mini
+!include(grid/sources.pro) {
+   error("couldn't find libGrid sources!")
+}
+
+DEPENDPATH += mini
+DEPENDPATH += grid
 
 QT += core gui opengl
 CONFIG += debug_and_release
@@ -82,4 +87,4 @@ win32:DEFINES += CURL_STATICLIB
 win32:QMAKE_CXXFLAGS_WARN_ON += /wd4244 /wd4305
 
 mac:ICON = qtviewer.icns
-win32:RC_FILE = ../mini/libMini.rc
+win32:RC_FILE = mini/libMini.rc
