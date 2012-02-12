@@ -16,7 +16,7 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
    if (n<1) n=1;
 
    bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
-   smooth(maxc);
+   //!! smooth(maxc);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
@@ -25,8 +25,8 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    minicoord a=p1;
    minicoord b=p2;
 
-   a.convert2ecef();
-   b.convert2ecef();
+   a.convert2llh();
+   b.convert2llh();
 
    double h1=a.vec.z;
    double h2=b.vec.z;
@@ -34,12 +34,9 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    minicoord p12=(p1+p2)/2.0;
    double h12=(h1+h2)/2.0;
 
-   if (p12.type!=minicoord::MINICOORD_LINEAR)
-      {
-      p12.convert2(minicoord::MINICOORD_LLH);
-      p12.vec.z=h12;
-      p12.convert2(minicoord::MINICOORD_ECEF);
-      }
+   p12.convert2llh();
+   p12.vec.z=h12;
+   p12.convert2ecef();
 
    if (level==0) append(p1);
    if (level<maxlevel) bisect(p1,p12,level+1,maxlevel);
