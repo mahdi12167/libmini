@@ -12,16 +12,15 @@ class minicurve : public minidyna<minicoord>
 
    minicurve() {}
 
-   void append_sector(const minicoord &p1,const minicoord &p2,int n,
-                      double maxl=0.0,double maxc=0.0);
+   void append_sector(const minicoord &p1,const minicoord &p2,
+                      int n=0,double maxl=0.0);
 
-   void smooth(double maxc=0.0);
+   void limit(double maxl=0.0);
 
    private:
 
    void bisect(const minicoord &p1,const minicoord &p2,
-               int level,int maxlevel,
-               double maxl=0.0);
+               int level,int maxlevel);
    };
 
 #endif

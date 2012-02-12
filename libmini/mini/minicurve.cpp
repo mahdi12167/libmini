@@ -4,8 +4,8 @@
 
 #include "minicurve.h"
 
-void minicurve::append_sector(const minicoord &p1,const minicoord &p2,int n,
-                              double maxl,double maxc)
+void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
+                              int n,double maxl)
    {
    minicoord a=p1;
    minicoord b=p2;
@@ -13,20 +13,15 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,int n,
    a.convert2ecef();
    b.convert2ecef();
 
-   if (n<1) n=1;
+   if (n<2) n=2;
 
-   bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1,maxl);
-   smooth(maxc);
+   bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
+   limit(maxl);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
-                       int level,int maxlevel,
-                       double maxl)
+                       int level,int maxlevel)
    {
-   double l;
-
-   l=(p2-p1).vec.getlength2();
-
    minicoord a=p1;
    minicoord b=p2;
 
@@ -44,59 +39,37 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    p12.convert2ecef();
 
    if (level==0) append(p1);
-   if (level<maxlevel || (l>maxl*maxl && maxl>0.0))
+   if (level<maxlevel)
       {
-      bisect(p1,p12,level+1,maxlevel,maxl);
+      bisect(p1,p12,level+1,maxlevel);
       append(p12);
-      bisect(p12,p2,level+1,maxlevel,maxl);
+      bisect(p12,p2,level+1,maxlevel);
       }
    if (level==0) append(p2);
    }
 
-void minicurve::smooth(double maxc)
+void minicurve::limit(double maxl)
    {
-   double t;
-   double ts0,ts;
+   unsigned int i;
+
+   double l;
 
    minicurve curve;
+   unsigned int n;
 
-   if (SIZE<2 || maxc<=0.0) return;
+   if (SIZE<2 || maxl<=0.0) return;
 
-   t=0.0;
-   ts0=ts=1.0/(SIZE-1);
+   l=0.0;
 
-   curve.append(interpolate_cubic(0.0));
+   for (i=0; i<getsize()-1; i++)
+      l+=(get(i+1)-get(i)).vec.getlength();
 
-   while (t<1.0+0.5*ts)
-      {
-      minicoord x1=interpolate_cubic(t);
-      minicoord x2=interpolate_cubic(t+2.0*ts);
+   n=ceil(l/maxl)+1;
 
-      minicoord x12=0.5*(x1+x2);
-      minicoord x12c=interpolate_cubic(t+ts);
+   if (n<=getsize()) return;
 
-      double dx2=(x2-x1).vec.getlength2();
-      double dy2=(x12c-x12).vec.getlength2();
-
-      while (dy2>maxc*maxc*dx2)
-         {
-         ts*=0.5;
-         continue;
-         }
-
-      curve.append(x12c);
-      t+=ts;
-
-      while (dy2<0.25*maxc*maxc*dx2)
-         {
-         ts*=2.0;
-         dy2*=4.0;
-         }
-
-      if (ts>ts0) ts=ts0;
-      }
-
-   curve.append(interpolate_cubic(1.0));
+   for (i=0; i<n; i++)
+      curve.append(interpolate_cubic((double)i/(n-1)));
 
    *this=curve;
    }
