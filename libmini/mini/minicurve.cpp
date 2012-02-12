@@ -38,13 +38,17 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    p12.vec.z=h12;
    p12.convert2ecef();
 
-   if (level==0) append(p1);
+   if (level==0)
+      if (getsize()==0) append(p1);
+      else if (p1!=last()) append(p1);
+
    if (level<maxlevel)
       {
       bisect(p1,p12,level+1,maxlevel);
       append(p12);
       bisect(p12,p2,level+1,maxlevel);
       }
+
    if (level==0) append(p2);
    }
 
@@ -52,19 +56,25 @@ void minicurve::limit(double maxl)
    {
    unsigned int i;
 
-   double l;
-
    minicurve curve;
    unsigned int n;
 
+   double l;
+   double dt;
+
    if (SIZE<2 || maxl<=0.0) return;
 
-   l=0.0;
+   dt=1.0;
 
    for (i=0; i<getsize()-1; i++)
-      l+=(get(i+1)-get(i)).vec.getlength();
+      {
+      l=(get(i+1)-get(i)).vec.getlength();
+      l=maxl/l;
 
-   n=ceil(l/maxl)+1;
+      if (l<dt) dt=l;
+      }
+
+   n=ceil((getsize()-1)/dt)+1;
 
    if (n<=getsize()) return;
 
