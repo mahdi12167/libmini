@@ -4,8 +4,8 @@
 
 #include "minicurve.h"
 
-void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
-                              int n,double maxc)
+void minicurve::append_sector(const minicoord &p1,const minicoord &p2,int n,
+                              double maxl,double maxc)
    {
    minicoord a=p1;
    minicoord b=p2;
@@ -15,13 +15,18 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
 
    if (n<1) n=1;
 
-   bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
-   //!! smooth(maxc);
+   bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1,maxl);
+   smooth(maxc);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
-                       int level,int maxlevel)
+                       int level,int maxlevel,
+                       double maxl)
    {
+   double l;
+
+   l=(p2-p1).vec.getlength2();
+
    minicoord a=p1;
    minicoord b=p2;
 
@@ -39,9 +44,12 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    p12.convert2ecef();
 
    if (level==0) append(p1);
-   if (level<maxlevel) bisect(p1,p12,level+1,maxlevel);
-   append(p12);
-   if (level<maxlevel) bisect(p12,p2,level+1,maxlevel);
+   if (level<maxlevel || (l>maxl*maxl && maxl>0.0))
+      {
+      bisect(p1,p12,level+1,maxlevel,maxl);
+      append(p12);
+      bisect(p12,p2,level+1,maxlevel,maxl);
+      }
    if (level==0) append(p2);
    }
 
