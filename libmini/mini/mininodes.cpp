@@ -310,7 +310,7 @@ mininode_coord::mininode_coord(const minicoord &c)
    : mininode_affine()
    {
    minicoord ecef=c;
-   if (ecef.type!=minicoord::MINICOORD_LINEAR) ecef.convert2(minicoord::MINICOORD_ECEF);
+   ecef.convert2ecef();
 
    miniv3d p=ecef.vec;
    miniv3d u=p;
@@ -722,6 +722,23 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,cons
                         radius[i],radius[i+1],
                         (i==0)?start_cap:FALSE,(i==pos.getsize()-2)?end_cap:FALSE,
                         tessel);
+   }
+
+mininode_geometry_tube::mininode_geometry_tube(const minicurve &curve,double radius,
+                                               BOOLINT start_cap,BOOLINT end_cap,
+                                               int tessel)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   for (unsigned int i=0; i<curve.getsize()-1; i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+      }
+
+   *this=mininode_geometry_tube(pos,radius,start_cap,end_cap,tessel);
    }
 
 miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &end,

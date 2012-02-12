@@ -10,6 +10,7 @@
 
 #include "minicrs.h"
 #include "minicoord.h"
+#include "minicurve.h"
 #include "mininode.h"
 
 #include "ministring.h"
@@ -1339,6 +1340,9 @@ class mininode_geometry_tube: public mininode_geometry
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
    mininode_geometry_tube(const minidyna<miniv3d> &pos,const minidyna<double> &radius,
+                          BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
+                          int tessel=16);
+   mininode_geometry_tube(const minicurve &curve,double radius,
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
 
