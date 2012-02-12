@@ -16,7 +16,7 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
    if (n<2) n=2;
 
    bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
-   limit(maxl);
+   sample(maxl);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
@@ -52,7 +52,7 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    if (level==0) append(p2);
    }
 
-void minicurve::limit(double maxl)
+void minicurve::sample(double maxl)
    {
    unsigned int i;
 
