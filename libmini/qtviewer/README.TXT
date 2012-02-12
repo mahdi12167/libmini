@@ -9,9 +9,9 @@ control. It is free software licensed under the GPL.
 !! Prerequisites
 
 The libMini QTViewer Requires the installation of:
-
+ gnu/c++ or MSVC compiler
+ svn/subversion tools
  qt/qmake
- cmake/svn
 
 It is highly recommended to build and install QT from source!
 
