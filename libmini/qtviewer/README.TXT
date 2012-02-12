@@ -12,9 +12,6 @@ The libMini QTViewer Requires the installation of:
 
  qt/qmake
  cmake/svn
- libjpg
- libpng
- zlib
 
 It is highly recommended to build and install QT from source!
 
@@ -55,6 +52,11 @@ Precompiled static libraries for Windows MSVC 2005 are provided in the
 libMini WIN32 directory. In your project directory get the following
 sub-directory via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/WIN32
+
+Additionally we need gdal to be installed. In your project directory
+get gdal via Tortoise SVN:
+ http://svn.osgeo.org/gdal/tags/1.8.1/gdal
+Open the appropriate MSVC solution file in the gdal directory and compile.
 
 !! Checkout and Compilation (Unix/Mac)
 
