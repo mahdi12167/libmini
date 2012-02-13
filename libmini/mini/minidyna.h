@@ -399,13 +399,19 @@ class minidyna
       return((1.0-t)*get(i)+t*get(i+1));
       }
 
-   //! interpolate item array cubically
+   //! interpolate item array using cubic bezier curve
    Item interpolate_cubic(double t)
       {
+      static const double c=4.0/3*(sqrt(2.0)-1.0);
+
       unsigned int i;
 
       Item v0,v1,v2,v3;
-      Item p,q,r;
+
+      Item h1,h2;
+      Item hh1,hh2,hh3;
+      Item hhh1,hhh2;
+      Item hhhh;
 
       if (SIZE==0) return(Item());
       if (SIZE==1) return(get(0));
@@ -417,20 +423,35 @@ class minidyna
       i=floor(t);
       t=t-i;
 
+      // left continuation
       if (i>0) v0=get(i-1);
-      else v0=get(i);
+      else v0=2.0*get(i)-get(i+1);
 
+      // evaluation domain
       v1=get(i);
       v2=get(i+1);
 
+      // right continuation
       if (i<SIZE-2) v3=get(i+2);
-      else v3=get(i+1);
+      else v3=2.0*get(i+1)-get(i);
 
-      p=v3-v2+v1-v0;
-      q=v0-v1-p;
-      r=v2-v0;
+      // control points
+      h1=0.5*(v2-v0)*c+v1;
+      h2=0.5*(v1-v3)*c+v2;
 
-      return(((p*t+q)*t+r)*t+v1);
+      // de Casteljau step 1
+      hh1=(1.0-t)*v1+t*h1;
+      hh2=(1.0-t)*h1+t*h2;
+      hh3=(1.0-t)*h2+t*v2;
+
+      // de Casteljau step 2
+      hhh1=(1.0-t)*hh1+t*hh2;
+      hhh2=(1.0-t)*hh2+t*hh3;
+
+      // de Casteljau step 3
+      hhhh=(1.0-t)*hhh1+t*hhh2;
+
+      return(hhhh);
       }
 
    //! copy item array
