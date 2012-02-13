@@ -418,13 +418,13 @@ class minidyna
       t=t-i;
 
       if (i>0) v0=get(i-1);
-      else v0=2.0*get(i)-get(i+1);
+      else v0=get(i);
 
       v1=get(i);
       v2=get(i+1);
 
       if (i<SIZE-2) v3=get(i+2);
-      else v3=2.0*get(i+1)-get(i);
+      else v3=get(i+1);
 
       p=v3-v2+v1-v0;
       q=v0-v1-p;

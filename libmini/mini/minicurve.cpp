@@ -66,7 +66,7 @@ void minicurve::sample(double maxl)
    double l;
    double r,minr;
 
-   if (SIZE<2 || maxl<=0.0) return;
+   if (getsize()<2 || maxl<=0.0) return;
 
    minr=1.0;
 
