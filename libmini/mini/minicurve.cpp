@@ -75,7 +75,7 @@ void minicurve::sample(double maxl)
       l=(get(i+1)-get(i)).vec.getlength();
 
       r=maxl/l;
-      if (r<minr) r=minr;
+      if (r<minr) minr=r;
       }
 
    n=ceil((getsize()-1)/minr)+1;
