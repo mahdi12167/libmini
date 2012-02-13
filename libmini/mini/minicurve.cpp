@@ -64,26 +64,27 @@ void minicurve::sample(double maxl)
    unsigned int n;
 
    double l;
-   double dt;
+   double r,minr;
 
    if (SIZE<2 || maxl<=0.0) return;
 
-   dt=1.0;
+   minr=1.0;
 
    for (i=0; i<getsize()-1; i++)
       {
       l=(get(i+1)-get(i)).vec.getlength();
-      l=maxl/l;
 
-      if (l<dt) dt=l;
+      r=maxl/l;
+      if (r<minr) r=minr;
       }
 
-   n=ceil((getsize()-1)/dt)+1;
+   n=ceil((getsize()-1)/minr)+1;
 
-   if (n<=getsize()) return;
+   if (n>getsize())
+      {
+      for (i=0; i<n; i++)
+         curve.append(interpolate_cubic((double)i/(n-1)));
 
-   for (i=0; i<n; i++)
-      curve.append(interpolate_cubic((double)i/(n-1)));
-
-   *this=curve;
+      *this=curve;
+      }
    }
