@@ -14,8 +14,8 @@ if ($1 == "zip") then
    exit
 endif
 
-set QTPATH=`echo /usr/local/Trolltech/Qt-*/bin >& /dev/null`
-if (-d "$QTPATH") then
+set QTPATH=/usr/local/Trolltech/Qt-4.7.4/bin
+if (-d $QTPATH) then
    setenv PATH $PATH":"$QTPATH
    rehash
 endif
