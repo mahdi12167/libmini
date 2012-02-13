@@ -211,6 +211,7 @@ inline minicoord operator * (const minicoord &a,const double b);
 inline minicoord operator / (const minicoord &a,const double b);
 inline int operator == (const minicoord &a,const minicoord &b);
 inline int operator != (const minicoord &a,const minicoord &b);
+inline int operator < (const minicoord &a,const minicoord &b);
 
 // output stream operators
 inline std::ostream& operator << (std::ostream &out,const minicoord &c);
@@ -254,6 +255,9 @@ inline int operator == (const minicoord &a,const minicoord &b)
 
 inline int operator != (const minicoord &a,const minicoord &b)
    {return(a.vec!=b.vec || a.type!=b.type || a.crs_zone!=b.crs_zone || a.crs_datum!=b.crs_datum);}
+
+inline int operator < (const minicoord &a,const minicoord &b)
+   {return(a.vec.w<b.vec.w);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
    {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " zone=" << c.crs_zone << " datum=" << c.getdatum() << " ]");}

@@ -1,6 +1,7 @@
 #include "minibase.h"
 
 #include "minimath.h"
+#include "minisort.h"
 
 #include "minicurve.h"
 
@@ -51,6 +52,9 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
 
    if (level==0) append(p2);
    }
+
+void minicurve::sort()
+   {shellsort<minicoord>(*this);}
 
 void minicurve::sample(double maxl)
    {
