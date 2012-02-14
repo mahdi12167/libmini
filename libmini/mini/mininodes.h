@@ -1321,6 +1321,10 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band() : mininode_geometry(0,3,0) {}
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
+
+   //! constructors from curve
+   mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width);
+   mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
    };
 
 //! tube geometry node
@@ -1342,7 +1346,12 @@ class mininode_geometry_tube: public mininode_geometry
    mininode_geometry_tube(const minidyna<miniv3d> &pos,const minidyna<double> &radius,
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
+
+   //! constructors from curve
    mininode_geometry_tube(const minicurve &curve,double radius,
+                          BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
+                          int tessel=16);
+   mininode_geometry_tube(const minicurve &curve,const minidyna<double> &radius,
                           BOOLINT start_cap=TRUE,BOOLINT end_cap=TRUE,
                           int tessel=16);
 

@@ -659,6 +659,36 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
+mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   for (unsigned int i=0; i<curve.getsize()-1; i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+      }
+
+   *this=mininode_geometry_band(pos,nrm,width);
+   }
+
+mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   for (unsigned int i=0; i<curve.getsize()-1; i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+      }
+
+   *this=mininode_geometry_band(pos,nrm,width);
+   }
+
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
    {
@@ -725,6 +755,23 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,cons
    }
 
 mininode_geometry_tube::mininode_geometry_tube(const minicurve &curve,double radius,
+                                               BOOLINT start_cap,BOOLINT end_cap,
+                                               int tessel)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   for (unsigned int i=0; i<curve.getsize()-1; i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+      }
+
+   *this=mininode_geometry_tube(pos,radius,start_cap,end_cap,tessel);
+   }
+
+mininode_geometry_tube::mininode_geometry_tube(const minicurve &curve,const minidyna<double> &radius,
                                                BOOLINT start_cap,BOOLINT end_cap,
                                                int tessel)
    {
