@@ -6,7 +6,7 @@
 #include "minicurve.h"
 
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
-                              int n,double maxl)
+                              int n)
    {
    minicoord a=p1;
    minicoord b=p2;
@@ -17,7 +17,6 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
    if (n<2) n=2;
 
    bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
-   sample(maxl);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
@@ -56,35 +55,42 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
 void minicurve::sort()
    {shellsort<minicoord>(*this);}
 
-void minicurve::sample(double maxl)
+/*
+void minicurve::resample(double dt)
    {
-   unsigned int i;
+   double t,rt;
+   double t0,t1;
+
+   unsigned int idx;
+   double ta,tb;
 
    minicurve curve;
-   unsigned int n;
 
-   double l;
-   double r,minr;
+   if (getsize()<2 || dt<=0.0) return;
 
-   if (getsize()<2 || maxl<=0.0) return;
+   sort();
 
-   minr=1.0;
+   t0=get_start_time();
+   t1=get_end_time();
 
-   for (i=0; i<getsize()-1; i++)
+   t=t0;
+   idx=1;
+
+   while (t<=t1)
       {
-      l=(get(i+1)-get(i)).vec.getlength();
+      ta=get(idx-1).vec.w;
+      tb=get(idx).vec.w;
 
-      r=maxl/l;
-      if (r<minr) minr=r;
+      rt=(idx-1+(t-ta)/(tb-ta))/(getsize()-1);
+
+      curve.append(interpolate_cubic(rt));
+
+      t+=dt;
+      if (t>t1) t=t1;
+
+      while (get(idx).vec.w<t) idx++;
       }
 
-   n=ceil((getsize()-1)/minr)+1;
-
-   if (n>getsize())
-      {
-      for (i=0; i<n; i++)
-         curve.append(interpolate_cubic((double)i/(n-1)));
-
-      *this=curve;
-      }
+   *this=curve;
    }
+*/
