@@ -6,8 +6,10 @@
 #include "minicurve.h"
 
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
-                              int n)
+                              unsigned int n)
    {
+   int maxlevel;
+
    minicoord a=p1;
    minicoord b=p2;
 
@@ -16,7 +18,8 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
 
    if (n<2) n=2;
 
-   bisect(a,b,0,ceil(log((double)n)/log(2.0)-0.5)-1);
+   maxlevel=ceil(log((double)n)/log(2.0)-0.5);
+   bisect(a,b,0,maxlevel-1);
    }
 
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
