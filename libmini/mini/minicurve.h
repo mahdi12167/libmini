@@ -13,7 +13,7 @@ class minicurve : public minidyna<minicoord>
    minicurve() {}
 
    void append_sector(const minicoord &p1,const minicoord &p2,
-                      int n=0);
+                      unsigned int n=0);
 
    void sort();
 
