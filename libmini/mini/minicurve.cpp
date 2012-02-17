@@ -58,7 +58,81 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
 void minicurve::sort()
    {shellsort<minicoord>(*this);}
 
-/*
+void minicurve::validate()
+   {
+   unsigned int i;
+
+   sort();
+
+   if (get_time_step_max()==0.0)
+      for (i=0; i<getsize(); i++)
+         ref(i).vec.w=(double)i/(getsize()-1);
+   else
+      for (i=0; i<getsize()-1; i++)
+         if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+   }
+
+double minicurve::get_time_start() {return(first().vec.w);}
+double minicurve::get_time_start() {return(last().vec.w);}
+double minicurve::get_time_period() {return(last().vec.w-first().vec.w);}
+
+double minicurve::get_time_step_min()
+   {
+   unsigned int i;
+
+   double dt,mdt;
+
+   if (getsize()<2) return(0.0);
+
+   mdt=get(1).vec.w-get(0).vec.w;
+
+   for (i=1; i<getsize()-1; i++)
+      {
+      dt=get(i+1).vec.w-get(i).vec.w;
+      if (dt<mdt) mdt=dt;
+      }
+
+   return(mdt);
+   }
+
+double minicurve::get_time_step_max()
+   {
+   unsigned int i;
+
+   double dt,mdt;
+
+   if (getsize()<2) return(0.0);
+
+   mdt=get(1).vec.w-get(0).vec.w;
+
+   for (i=1; i<getsize()-1; i++)
+      {
+      dt=get(i+1).vec.w-get(i).vec.w;
+      if (dt>mdt) mdt=dt;
+      }
+
+   return(mdt);
+   }
+
+double minicurve::get_time_step_avg()
+   {
+   unsigned int i;
+
+   double dt,sdt;
+
+   if (getsize()<2) return(0.0);
+
+   sdt=get(1).vec.w-get(0).vec.w;
+
+   for (i=1; i<getsize()-1; i++)
+      {
+      dt=get(i+1).vec.w-get(i).vec.w;
+      sdt+=dt;
+      }
+
+   return(sdt/(getsize()-1));
+   }
+
 void minicurve::resample(double dt)
    {
    double t,rt;
@@ -71,10 +145,10 @@ void minicurve::resample(double dt)
 
    if (getsize()<2 || dt<=0.0) return;
 
-   sort();
+   validate();
 
-   t0=get_start_time();
-   t1=get_end_time();
+   t0=get_time_start();
+   t1=get_time_end();
 
    t=t0;
    idx=1;
@@ -96,4 +170,3 @@ void minicurve::resample(double dt)
 
    *this=curve;
    }
-*/
