@@ -287,6 +287,24 @@ inline int operator == (const ministring &a,const ministring &b)
 inline int operator != (const ministring &a,const ministring &b)
    {return(ministring_base(a)!=ministring_base(b));}
 
+//! less than operator
+inline int operator < (const ministring &a,const ministring &b)
+   {
+   unsigned int i;
+
+   unsigned int s;
+
+   s=a.getsize();
+
+   if (s<b.getsize()) return(1);
+   if (s>b.getsize()) return(0);
+
+   for (i=0; i<s-1; i++)
+      if (b[i]<a[i]) return(0);
+
+   return(a[i]<b[i]);
+   }
+
 //! add operator (concatenate strings)
 inline ministring operator + (const ministring &a,const ministring &b)
    {

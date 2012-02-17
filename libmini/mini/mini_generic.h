@@ -6,6 +6,7 @@
 #include <mini/minidyna.h>
 #include <mini/minisort.h>
 #include <mini/ministring.h>
+#include <mini/minikeyval.h>
 #include <mini/miniref.h>
 
 #endif
