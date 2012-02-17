@@ -19,12 +19,14 @@ class minicurve : public minidyna<minicoord>
    void validate();
 
    double get_time_start();
-   double get_time_start();
+   double get_time_stop();
    double get_time_period();
 
    double get_time_step_min();
    double get_time_step_max();
    double get_time_step_avg();
+
+   void resample(double dt);
 
    private:
 

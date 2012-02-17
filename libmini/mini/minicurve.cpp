@@ -73,7 +73,7 @@ void minicurve::validate()
    }
 
 double minicurve::get_time_start() {return(first().vec.w);}
-double minicurve::get_time_start() {return(last().vec.w);}
+double minicurve::get_time_stop() {return(last().vec.w);}
 double minicurve::get_time_period() {return(last().vec.w-first().vec.w);}
 
 double minicurve::get_time_step_min()
@@ -148,7 +148,7 @@ void minicurve::resample(double dt)
    validate();
 
    t0=get_time_start();
-   t1=get_time_end();
+   t1=get_time_stop();
 
    t=t0;
    idx=1;

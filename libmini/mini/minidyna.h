@@ -349,7 +349,7 @@ class minidyna
       }
 
    //! dispose indexed item by shifting all trailing items
-   Item &dispose(const unsigned int idx)
+   Item dispose(const unsigned int idx)
       {
       unsigned int i;
 
