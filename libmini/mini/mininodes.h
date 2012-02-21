@@ -970,7 +970,10 @@ class mininode_coord: public mininode_affine
    //! custom constructor
    mininode_coord(const minicoord &c);
 
-   // set global light direction
+   //! set coord position
+   void set_coord(const minicoord &c);
+
+   //! set global light direction
    static void set_lightdir(const miniv3d &d);
 
    protected:
@@ -982,6 +985,35 @@ class mininode_coord: public mininode_affine
 
    virtual void traverse_pre();
    virtual void traverse_post();
+   };
+
+//! animated coordinate node
+//!  provides animated affine transform into a local geo-referenced coordinate system
+class mininode_coord_animation: public mininode_coord
+   {
+   public:
+
+   //! custom constructor
+   mininode_coord_animation(const minicurve &c,
+                            double start,double stop);
+
+   protected:
+
+   minicurve curve;
+   double curve_start;
+   double curve_stop;
+
+   virtual void traverse_post()
+      {
+      mininode_coord::traverse_post();
+      set_dirty();
+      }
+
+   virtual void update_dirty();
+
+   private:
+
+   double map_time(double start,double stop) const;
    };
 
 //! animation node
@@ -1031,13 +1063,6 @@ class mininode_animation_rotate: public mininode_animation
    double m_omega;
    miniv3d m_axis;
 
-   virtual void update_dirty()
-      {
-      miniv3d rot[3];
-      rot_mtx(rot,get_time()*m_omega,m_axis);
-      mtxget(rot,oglmtx);
-      }
-
    virtual void transform_cone(minicone &cone) const
       {
       miniv3d mtx[3];
@@ -1050,6 +1075,7 @@ class mininode_animation_rotate: public mininode_animation
       cone.dir=mlt_vec(tra,cone.dir);
       }
 
+   virtual void update_dirty();
    };
 
 //! texgen node

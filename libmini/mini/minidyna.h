@@ -398,7 +398,7 @@ class minidyna
       }
 
    //! interpolate item array
-   Item interpolate(double t)
+   Item interpolate(double t) const
       {
       unsigned int i;
 
@@ -416,7 +416,7 @@ class minidyna
       }
 
    //! interpolate item array using cubic bezier curve
-   Item interpolate_cubic(double t)
+   Item interpolate_cubic(double t) const
       {
       static const double c=4.0/3*(sqrt(2.0)-1.0);
 

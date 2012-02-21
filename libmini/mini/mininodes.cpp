@@ -308,6 +308,9 @@ BOOLINT mininode_coord::lightdirset=FALSE;
 
 mininode_coord::mininode_coord(const minicoord &c)
    : mininode_affine()
+   {set_coord(c);}
+
+void mininode_coord::set_coord(const minicoord &c)
    {
    minicoord ecef=c;
    ecef.convert2ecef();
@@ -368,6 +371,39 @@ void mininode_coord::traverse_post()
       mininode_color::set_brightness(1.0);
 
    mininode_transform::traverse_post();
+   }
+
+// mininode_coord_animation:
+
+mininode_coord_animation::mininode_coord_animation(const minicurve &c,
+                                                   double start,double stop)
+   : mininode_coord(c.interpolate_cubic(map_time(start,stop)))
+   {
+   curve=c;
+   curve_start=start;
+   curve_stop=stop;
+   }
+
+void mininode_coord_animation::update_dirty()
+   {set_coord(curve.interpolate_cubic(map_time(curve_start,curve_stop)));}
+
+double mininode_coord_animation::map_time(double start,double stop) const
+   {
+   double t;
+
+   t=get_time();
+   t=(t-start)/(stop-start);
+
+   return(t);
+   }
+
+// mininode_animation_rotate:
+
+void mininode_animation_rotate::update_dirty()
+   {
+   miniv3d rot[3];
+   rot_mtx(rot,get_time()*m_omega,m_axis);
+   mtxget(rot,oglmtx);
    }
 
 // mininode_texgen:
