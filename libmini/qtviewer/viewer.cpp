@@ -544,6 +544,12 @@ void Viewer::render_ecef_geometry(double t)
    mininode_geometry::setglobalfogparams(fogstart, fogend, getearth()->get()->fogdensity, getearth()->get()->fogcolor);
 
    // set animation time
+   static BOOLINT firstcall=TRUE;
+   if (firstcall)
+      {
+      mininode_animation::set_time_start(t);
+      firstcall=FALSE;
+      }
    mininode_animation::set_time(t);
 
    // setup render state

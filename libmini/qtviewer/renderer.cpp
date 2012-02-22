@@ -59,7 +59,7 @@ mininode_group *Renderer::build_ecef_geometry()
 
    // tetrahedron /w procedural 3D texture:
 
-   minicurve curve;
+   minicurve curve(3,20);
 
    minicoord c1(miniv3d(-159*3600, 23*3600, 0), minicoord::MINICOORD_LLH);
    minicoord c2(miniv3d(-158*3600, 24*3600, 0), minicoord::MINICOORD_LLH);
@@ -71,8 +71,7 @@ mininode_group *Renderer::build_ecef_geometry()
    curve.append_sector(c3,c4);
    curve.append_sector(c4,c1);
 
-   //!! animation does not start at 0 but roughtly 20 seconds due to long texture setup
-   group->append_child(new mininode_coord_animation(curve,20,40))->
+   group->append_child(new mininode_coord_animation(curve))->
       append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
       append_child(new mininode_texgen_scale(0.1))->
       append_child(new mininode_volume("data/textures/Marble.db"))->
