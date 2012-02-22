@@ -191,6 +191,7 @@ void mininode_culling::traverse_exit()
 
 // mininode_dynamic:
 
+double mininode_dynamic::m_time_start=0.0;
 double mininode_dynamic::m_time=0.0;
 
 // mininode_color:
@@ -375,27 +376,12 @@ void mininode_coord::traverse_post()
 
 // mininode_coord_animation:
 
-mininode_coord_animation::mininode_coord_animation(const minicurve &c,
-                                                   double start,double stop)
-   : mininode_coord(c.interpolate_cubic(map_time(start,stop)))
-   {
-   curve=c;
-   curve_start=start;
-   curve_stop=stop;
-   }
+mininode_coord_animation::mininode_coord_animation(minicurve &c)
+   : mininode_coord(c.interpolate_cubic(get_time()))
+   {curve=c;}
 
 void mininode_coord_animation::update_dirty()
-   {set_coord(curve.interpolate_cubic(map_time(curve_start,curve_stop)));}
-
-double mininode_coord_animation::map_time(double start,double stop) const
-   {
-   double t;
-
-   t=get_time();
-   t=(t-start)/(stop-start);
-
-   return(t);
-   }
+   {set_coord(curve.interpolate_cubic(get_time()));}
 
 // mininode_animation_rotate:
 

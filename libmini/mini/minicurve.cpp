@@ -1,9 +1,21 @@
+// (c) by Stefan Roettger
+
 #include "minibase.h"
 
 #include "minimath.h"
 #include "minisort.h"
 
 #include "minicurve.h"
+
+void minicurve::append(const minicoord &p)
+   {
+   minicoord c=p;
+
+   c.convert2ecef();
+   minidyna<minicoord>::append(c);
+
+   valid=FALSE;
+   }
 
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
                               unsigned int n)
@@ -62,25 +74,82 @@ void minicurve::validate()
    {
    unsigned int i;
 
-   sort();
+   double t;
 
-   if (get_time_step_max()==0.0)
-      for (i=0; i<getsize(); i++)
-         ref(i).vec.w=(double)i/(getsize()-1);
-   else
-      for (i=0; i<getsize()-1; i++)
-         if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+   if (!valid)
+      {
+      sort();
+
+      if (get_time_step_max()==0.0)
+         for (i=0; i<getsize(); i++)
+            {
+            t=(double)i/(getsize()-1);
+            t=curve_start+t*(curve_stop-curve_start);
+            ref(i).vec.w=t;
+            }
+      else
+         for (i=0; i<getsize()-1; i++)
+            if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+
+      valid=TRUE;
+      }
    }
 
-double minicurve::get_time_start() {return(first().vec.w);}
-double minicurve::get_time_stop() {return(last().vec.w);}
-double minicurve::get_time_period() {return(last().vec.w-first().vec.w);}
+minicoord minicurve::interpolate(double t)
+   {
+   double tt;
+
+   if (!valid)
+      {
+      validate();
+      resample(get_time_step_min());
+      }
+
+   tt=(t-get_time_start())/(get_time_stop()-get_time_start());
+
+   return(minidyna<minicoord>::interpolate(tt));
+   }
+
+minicoord minicurve::interpolate_cubic(double t)
+   {
+   double tt;
+
+   if (!valid)
+      {
+      validate();
+      resample(get_time_step_avg());
+      }
+
+   tt=(t-get_time_start())/(get_time_stop()-get_time_start());
+
+   return(minidyna<minicoord>::interpolate_cubic(tt));
+   }
+
+double minicurve::get_time_start()
+   {
+   validate();
+   return(first().vec.w);
+   }
+
+double minicurve::get_time_stop()
+   {
+   validate();
+   return(last().vec.w);
+   }
+
+double minicurve::get_time_period()
+   {
+   validate();
+   return(last().vec.w-first().vec.w);
+   }
 
 double minicurve::get_time_step_min()
    {
    unsigned int i;
 
    double dt,mdt;
+
+   validate();
 
    if (getsize()<2) return(0.0);
 
@@ -101,6 +170,8 @@ double minicurve::get_time_step_max()
 
    double dt,mdt;
 
+   validate();
+
    if (getsize()<2) return(0.0);
 
    mdt=get(1).vec.w-get(0).vec.w;
@@ -119,6 +190,8 @@ double minicurve::get_time_step_avg()
    unsigned int i;
 
    double dt,sdt;
+
+   validate();
 
    if (getsize()<2) return(0.0);
 
@@ -143,9 +216,9 @@ void minicurve::resample(double dt)
 
    minicurve curve;
 
-   if (getsize()<2 || dt<=0.0) return;
-
    validate();
+
+   if (getsize()<2 || dt<=0.0) return;
 
    t0=get_time_start();
    t1=get_time_stop();
@@ -160,7 +233,7 @@ void minicurve::resample(double dt)
 
       rt=(idx-1+(t-ta)/(tb-ta))/(getsize()-1);
 
-      curve.append(interpolate_cubic(rt));
+      curve.append(minidyna<minicoord>::interpolate_cubic(rt));
 
       t+=dt;
       if (t>t1) t=t1;
@@ -169,4 +242,6 @@ void minicurve::resample(double dt)
       }
 
    *this=curve;
+
+   valid=TRUE;
    }

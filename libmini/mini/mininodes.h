@@ -160,9 +160,13 @@ class mininode_dynamic: public mininode_culling
    virtual ~mininode_dynamic()
       {}
 
+   //! set global time start
+   static void set_time_start(double t)
+      {m_time_start=t;}
+
    //! set global time
    static void set_time(double t)
-      {m_time=t;}
+      {m_time=t-m_time_start;}
 
    //! get global time
    static double get_time()
@@ -170,6 +174,7 @@ class mininode_dynamic: public mininode_culling
 
    protected:
 
+   static double m_time_start;
    static double m_time;
    };
 
@@ -994,14 +999,11 @@ class mininode_coord_animation: public mininode_coord
    public:
 
    //! custom constructor
-   mininode_coord_animation(const minicurve &c,
-                            double start,double stop);
+   mininode_coord_animation(minicurve &c);
 
    protected:
 
    minicurve curve;
-   double curve_start;
-   double curve_stop;
 
    virtual void traverse_post()
       {
@@ -1010,10 +1012,6 @@ class mininode_coord_animation: public mininode_coord
       }
 
    virtual void update_dirty();
-
-   private:
-
-   double map_time(double start,double stop) const;
    };
 
 //! animation node
