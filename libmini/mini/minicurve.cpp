@@ -243,8 +243,6 @@ void minicurve::resample(double dt)
       }
    while (t<t1-0.5*dt);
 
-   curve.append(minidyna<minicoord>::interpolate_cubic(1.0));
-
    *this=curve;
 
    valid=TRUE;
