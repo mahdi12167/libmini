@@ -225,20 +225,25 @@ void minicurve::resample(double dt)
    t=t0;
    idx=1;
 
-   while (t<=t1)
+   curve.append(minidyna<minicoord>::interpolate_cubic(0.0));
+
+   do
       {
+      t+=dt;
+      if (t>t1) t=t1;
+
+      while (get(idx).vec.w<t) idx++;
+
       ta=get(idx-1).vec.w;
       tb=get(idx).vec.w;
 
       rt=(idx-1+(t-ta)/(tb-ta))/(getsize()-1);
 
       curve.append(minidyna<minicoord>::interpolate_cubic(rt));
-
-      t+=dt;
-      if (t>t1) t=t1;
-
-      while (get(idx).vec.w<t) idx++;
       }
+   while (t<t1-0.5*dt);
+
+   curve.append(minidyna<minicoord>::interpolate_cubic(1.0));
 
    *this=curve;
 
