@@ -79,6 +79,7 @@ void minicurve::validate()
    if (!valid)
       {
       sort();
+      valid=TRUE;
 
       if (get_time_step_max()==0.0)
          for (i=0; i<getsize(); i++)
@@ -90,8 +91,6 @@ void minicurve::validate()
       else
          for (i=0; i<getsize()-1; i++)
             if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
-
-      valid=TRUE;
       }
    }
 
@@ -117,7 +116,7 @@ minicoord minicurve::interpolate_cubic(double t)
    if (!valid)
       {
       validate();
-      resample(get_time_step_avg());
+      resample(get_time_step_min());
       }
 
    tt=(t-get_time_start())/(get_time_stop()-get_time_start());
