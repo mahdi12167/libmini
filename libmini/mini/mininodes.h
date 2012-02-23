@@ -105,11 +105,10 @@ class minicone
 
    miniv3d pos,dir;
    double cone;
-
-   std::ostream& operator << (std::ostream &out)
-      {return(out << '(' << pos << ',' << dir << ',' << cone << ')');}
-
    };
+
+std::ostream& operator << (std::ostream &out,const minicone &c)
+   {return(out << '(' << c.pos << ',' << c.dir << ',' << c.cone << ')');}
 
 //! culling node (base class)
 //!  culls bounding sphere with camera cone
