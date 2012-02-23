@@ -166,8 +166,8 @@ mininodes.h header.
 If you found the software useful, please send a vacation postcard to:
 
  Prof. Dr. Stefan Roettger
- Hochstr. 33
- 90429 Nuernberg
+ Wassertorstr. 10
+ 90489 Nuernberg
  Germany
 
 Thanks!
