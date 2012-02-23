@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#undef TEST
+#define TEST //!!
 
 #include "renderer.h"
 
@@ -47,38 +47,6 @@ mininode_group *Renderer::build_ecef_geometry()
 
 #ifdef TEST
 
-   // tetrahedron /w procedural 2D texture:
-
-   group->append_child(new mininode_coord(minicoord(miniv3d(-159*3600, 21*3600, 0), minicoord::MINICOORD_LLH)))->
-      append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
-      append_child(new mininode_texgen_scale(0.1))->
-      append_child(new mininode_image("data/textures/Checker.db"))->
-      append_child(new mininode_scale(10000))->
-      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
-      append_child(new mininode_geometry_tet(10));
-
-   // tetrahedron /w procedural 3D texture:
-
-   minicurve curve(10,20);
-
-   minicoord c1(miniv3d(-159*3600, 23*3600, 0), minicoord::MINICOORD_LLH);
-   minicoord c2(miniv3d(-158*3600, 24*3600, 0), minicoord::MINICOORD_LLH);
-   minicoord c3(miniv3d(-159*3600, 25*3600, 0), minicoord::MINICOORD_LLH);
-   minicoord c4(miniv3d(-160*3600, 24*3600, 0), minicoord::MINICOORD_LLH);
-
-   curve.append_sector(c1,c2);
-   curve.append_sector(c2,c3);
-   curve.append_sector(c3,c4);
-   curve.append_sector(c4,c1);
-
-   group->append_child(new mininode_coord_animation(curve))->
-      append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
-      append_child(new mininode_texgen_scale(0.1))->
-      append_child(new mininode_volume("data/textures/Marble.db"))->
-      append_child(new mininode_scale(10000))->
-      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
-      append_child(new mininode_geometry_tet(10));
-
    // house:
 
    // define local coordinate system at Lat/Lon=49/11
@@ -110,6 +78,43 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_geometry_prism(10.0, 10.0, 2.5));
 
    group->append_child(house);
+
+   // tetrahedron /w procedural 2D texture:
+
+   minicoord c0(miniv4d(-159*3600, 21*3600, 0), minicoord::MINICOORD_LLH);
+   minicoord c1(miniv4d(-158*3600, 22*3600, 0), minicoord::MINICOORD_LLH);
+   minicoord c2(miniv4d(-159*3600, 23*3600, 0), minicoord::MINICOORD_LLH);
+   minicoord c3(miniv4d(-160*3600, 22*3600, 0), minicoord::MINICOORD_LLH);
+
+   minicurve curve;
+
+   curve.append_point(c3,-5);
+   curve.append_point(c0,0);
+   curve.append_point(c1,5);
+   curve.append_point(c2,10);
+   curve.append_point(c3,15);
+   curve.append_point(c0,20);
+   curve.append_point(c1,25);
+
+   curve.set_time_repeat(0,20);
+
+   group->append_child(new mininode_coord_animation(curve))->
+      append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
+      append_child(new mininode_texgen_scale(0.1))->
+      append_child(new mininode_image("data/textures/Checker.db"))->
+      append_child(new mininode_scale(10000))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
+      append_child(new mininode_geometry_tet(10));
+
+   // tetrahedron /w procedural 3D texture:
+
+   group->append_child(new mininode_coord(minicoord(miniv4d(-159*3600, 24*3600, 0, 0), minicoord::MINICOORD_LLH)))->
+      append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
+      append_child(new mininode_texgen_scale(0.1))->
+      append_child(new mininode_volume("data/textures/Marble.db"))->
+      append_child(new mininode_scale(10000))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
+      append_child(new mininode_geometry_tet(10));
 
 #endif
 
