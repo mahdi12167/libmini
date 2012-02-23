@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#define TEST //!!
+#undef TEST
 
 #include "renderer.h"
 
