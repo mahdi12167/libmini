@@ -34,6 +34,22 @@ void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
    bisect(a,b,0,maxlevel-1);
    }
 
+void minicurve::append_sector(const minicoord &p,
+                              unsigned int n)
+   {
+   if (empty()) append(p);
+   else append_sector(last(),p,n);
+   }
+
+void minicurve::append_point(const minicoord &p,double t,
+                             unsigned int n)
+   {
+   minicoord p0=p;
+
+   p0.vec.w=t;
+   append_sector(p0,n);
+   }
+
 void minicurve::bisect(const minicoord &p1,const minicoord &p2,
                        int level,int maxlevel)
    {

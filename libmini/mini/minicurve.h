@@ -27,6 +27,12 @@ class minicurve : public minidyna<minicoord>
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
 
+   void append_sector(const minicoord &p,
+                      unsigned int n=0);
+
+   void append_point(const minicoord &p,double t,
+                     unsigned int n=0);
+
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
 
