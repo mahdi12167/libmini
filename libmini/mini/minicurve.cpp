@@ -94,29 +94,38 @@ void minicurve::validate()
       }
    }
 
-minicoord minicurve::interpolate(double t)
+void minicurve::set_time_mapping(double map_start,double map_stop)
    {
-   double tt;
-
-   if (!valid)
-      {
-      validate();
-      resample(get_time_step_min());
-      }
-
-   tt=(t-get_time_start())/(get_time_stop()-get_time_start());
-
-   return(minidyna<minicoord>::interpolate(tt));
+   curve_map_start=map_start;
+   curve_map_stop=map_stop;
    }
+
+void minicurve::set_time_repeat(double repeat_start,double repeat_stop)
+   {
+   curve_repeat_start=repeat_start;
+   curve_repeat_stop=repeat_stop;
+   }
+
+minicoord minicurve::interpolate(double t)
+   {return(interpolate_cubic(t));}
 
 minicoord minicurve::interpolate_cubic(double t)
    {
    double tt;
 
-   if (!valid)
+   validate();
+
+   if (curve_repeat_start<curve_repeat_stop)
       {
-      validate();
-      resample(get_time_step_min());
+      tt=(t-curve_repeat_start)/(curve_repeat_stop-curve_repeat_start);
+      tt-=floor(tt);
+      tt=curve_repeat_start+tt*(curve_repeat_stop-curve_repeat_start);
+      }
+
+   if (curve_map_start<curve_map_stop)
+      {
+      if (t<curve_map_start) t=curve_map_start;
+      if (t>curve_map_stop) t=curve_map_stop;
       }
 
    tt=(t-get_time_start())/(get_time_stop()-get_time_start());

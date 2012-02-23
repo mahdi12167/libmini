@@ -15,6 +15,10 @@ class minicurve : public minidyna<minicoord>
       {
       curve_start=start;
       curve_stop=stop;
+
+      curve_map_start=curve_map_stop=0.0;
+      curve_repeat_start=curve_repeat_stop=0.0;
+
       valid=FALSE;
       }
 
@@ -22,6 +26,9 @@ class minicurve : public minidyna<minicoord>
 
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
+
+   void set_time_mapping(double map_start,double map_stop);
+   void set_time_repeat(double repeat_start,double repeat_stop);
 
    minicoord interpolate(double t);
    minicoord interpolate_cubic(double t);
@@ -40,8 +47,9 @@ class minicurve : public minidyna<minicoord>
 
    BOOLINT valid;
 
-   double curve_start;
-   double curve_stop;
+   double curve_start,curve_stop;
+   double curve_map_start,curve_map_stop;
+   double curve_repeat_start,curve_repeat_stop;
 
    void bisect(const minicoord &p1,const minicoord &p2,
                int level,int maxlevel);
