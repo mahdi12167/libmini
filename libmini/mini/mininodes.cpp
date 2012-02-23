@@ -371,7 +371,7 @@ void mininode_coord::traverse_post()
 // mininode_coord_animation:
 
 mininode_coord_animation::mininode_coord_animation(minicurve &c)
-   : mininode_coord(c.interpolate_cubic(get_time()))
+   : mininode_coord(c.interpolate_cubic(0.0))
    {curve=c;}
 
 void mininode_coord_animation::update_dirty()

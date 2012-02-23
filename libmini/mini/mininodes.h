@@ -105,6 +105,10 @@ class minicone
 
    miniv3d pos,dir;
    double cone;
+
+   std::ostream& operator << (std::ostream &out)
+      {return(out << '(' << pos << ',' << dir << ',' << cone << ')');}
+
    };
 
 //! culling node (base class)
