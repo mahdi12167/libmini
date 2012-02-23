@@ -375,7 +375,10 @@ mininode_coord_animation::mininode_coord_animation(minicurve &c)
    {curve=c;}
 
 void mininode_coord_animation::update_dirty()
-   {set_coord(curve.interpolate_cubic(get_time()));}
+   {
+   set_coord(curve.interpolate_cubic(get_time()));
+   mininode_coord::update_dirty();
+   }
 
 // mininode_animation_rotate:
 
