@@ -133,9 +133,9 @@ minicoord minicurve::interpolate_cubic(double t)
 
    if (curve_repeat_start<curve_repeat_stop)
       {
-      tt=(t-curve_repeat_start)/(curve_repeat_stop-curve_repeat_start);
-      tt-=floor(tt);
-      tt=curve_repeat_start+tt*(curve_repeat_stop-curve_repeat_start);
+      t=(t-curve_repeat_start)/(curve_repeat_stop-curve_repeat_start);
+      t-=floor(t);
+      t=curve_repeat_start+t*(curve_repeat_stop-curve_repeat_start);
       }
 
    if (curve_map_start<curve_map_stop)
