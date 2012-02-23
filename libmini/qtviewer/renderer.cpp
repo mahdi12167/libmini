@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger
 
-#define TEST //!!
+#undef TEST
 
 #include "renderer.h"
 
@@ -59,7 +59,7 @@ mininode_group *Renderer::build_ecef_geometry()
 
    // tetrahedron /w procedural 3D texture:
 
-   minicurve curve(3,20);
+   minicurve curve(10,20);
 
    minicoord c1(miniv3d(-159*3600, 23*3600, 0), minicoord::MINICOORD_LLH);
    minicoord c2(miniv3d(-158*3600, 24*3600, 0), minicoord::MINICOORD_LLH);
