@@ -387,6 +387,7 @@ void mininode_animation_rotate::update_dirty()
    miniv3d rot[3];
    rot_mtx(rot,get_time()*m_omega,m_axis);
    mtxget(rot,oglmtx);
+   mininode_animation::update_dirty();
    }
 
 // mininode_texgen:
