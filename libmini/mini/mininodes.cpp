@@ -127,13 +127,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d,double mind
    if (cone.valid)
       {
       dist=mininode_group::shoot_ray(cone.pos,cone.dir,mindist);
-      if (dist!=MAXFLOAT)
-         {
-         hit=cone.pos+dist*cone.dir;
-         transform_point(hit);
-
-         return(d*(hit-o)/d.getlength2());
-         }
+      if (dist!=MAXFLOAT) return(dist);
       }
 
    return(MAXFLOAT);

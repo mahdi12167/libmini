@@ -1375,15 +1375,10 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
    {
    int i;
 
-   miniv3d dn;
-
    float *ptr;
    miniv3f v1,v2,v3;
 
    double dist,result;
-
-   dn=d;
-   dn.normalize();
 
    result=MAXFLOAT;
 
@@ -1400,7 +1395,7 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
 
             if (i>=2)
                {
-               dist=ray_triangle_dist(o,dn,v1,v2,v3);
+               dist=ray_triangle_dist(o,d,v1,v2,v3);
                if (dist!=MAXFLOAT)
                   if (dist>=mindist)
                      if (dist<result) result=dist;
