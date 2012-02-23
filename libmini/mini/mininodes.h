@@ -107,7 +107,7 @@ class minicone
    double cone;
    };
 
-std::ostream& operator << (std::ostream &out,const minicone &c)
+inline std::ostream& operator << (std::ostream &out,const minicone &c)
    {return(out << '(' << c.pos << ',' << c.dir << ',' << c.cone << ')');}
 
 //! culling node (base class)
