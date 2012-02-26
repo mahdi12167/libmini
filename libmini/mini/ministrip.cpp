@@ -1332,7 +1332,7 @@ void ministrip::rendermulti(int passes,
                       bordercontrol,centercontrol,colorcontrol,
                       bordercontrol2,centercontrol2,colorcontrol2,
                       stripewidth,stripeoffset,
-                      stripedx,stripedy,stripedy,
+                      stripedx,stripedy,stripedz,
                       correctz);
 
    // enable previous shader
