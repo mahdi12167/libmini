@@ -58,9 +58,9 @@ get gdal via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
 In the GDAL source directory we have to tweak some variables in the nmake.opt file:
  MSVC_VER -> use 1600 to identify MSVC 10.0 for example, other versions accordingly
- GDAL_HOME -> point it to the directory below the qtviewer source package
-  Supposed we have a projects directory with the complete libmini source tree
-  then we point GDAL_HOME to that projects directory
+ GDAL_HOME -> point it to a directory below the qtviewer source package
+  Usually this means that we point it to our project directory
+  Or point it to a "gdal" subdirectory in that project directory
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the GDAL source directory and type
