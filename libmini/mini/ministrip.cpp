@@ -1269,6 +1269,44 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
    }
 
 // render triangle strips with multi-pass method for unordered semi-transparent geometry
+void ministrip::rendermultipass(int pass,
+                                int passes,
+                                float ambient,
+                                float bordercontrol,float centercontrol,float colorcontrol,
+                                float bordercontrol2,float centercontrol2,float colorcontrol2,
+                                float stripewidth,float stripeoffset,
+                                float stripedx,float stripedy,float stripedz,
+                                int correctz)
+   {
+   static minisurf surf;
+
+   int dorender;
+
+   if (passes<1 || passes>4) ERRORMSG();
+
+   // enable external multi-pass shader
+   dorender=surf.setextstate(1,
+                             pass,passes,
+                             ambient,
+                             bordercontrol,centercontrol,colorcontrol,
+                             bordercontrol2,centercontrol2,colorcontrol2,
+                             stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                             correctz);
+
+   // render strips with external multi-pass shader
+   if (dorender!=0) render();
+
+   // disable external multi-pass shader
+   surf.setextstate(0,
+                    pass,passes,
+                    ambient,
+                    bordercontrol,centercontrol,colorcontrol,
+                    bordercontrol2,centercontrol2,colorcontrol2,
+                    stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                    correctz);
+   }
+
+// render triangle strip with multi-pass method
 void ministrip::rendermulti(int passes,
                             float ambient,
                             float bordercontrol,float centercontrol,float colorcontrol,
@@ -1279,13 +1317,7 @@ void ministrip::rendermulti(int passes,
    {
    int i;
 
-   static minisurf surf;
-
    int globalshader,shader;
-
-   int dorender;
-
-   if (passes<1 || passes>4) ERRORMSG();
 
    // disable regular shader
    globalshader=getglobalshader();
@@ -1295,28 +1327,13 @@ void ministrip::rendermulti(int passes,
 
    // multi-pass rendering
    for (i=minisurf::FIRST_RENDER_PHASE; i<=minisurf::LAST_RENDER_PHASE; i++)
-      {
-      // enable external multi-pass shader
-      dorender=surf.setextstate(1,
-                                i,passes,
-                                ambient,
-                                bordercontrol,centercontrol,colorcontrol,
-                                bordercontrol2,centercontrol2,colorcontrol2,
-                                stripewidth,stripeoffset,stripedx,stripedy,stripedz,
-                                correctz);
-
-      // render strips with external multi-pass shader
-      if (dorender!=0) render();
-
-      // disable external multi-pass shader
-      surf.setextstate(0,
-                       i,passes,
-                       ambient,
-                       bordercontrol,centercontrol,colorcontrol,
-                       bordercontrol2,centercontrol2,colorcontrol2,
-                       stripewidth,stripeoffset,stripedx,stripedy,stripedz,
-                       correctz);
-      }
+      rendermultipass(i,passes,
+                      ambient,
+                      bordercontrol,centercontrol,colorcontrol,
+                      bordercontrol2,centercontrol2,colorcontrol2,
+                      stripewidth,stripeoffset,
+                      stripedx,stripedy,stripedy,
+                      correctz);
 
    // enable previous shader
    useglobalshader(globalshader);
