@@ -227,5 +227,5 @@ void miniview::render_ecef_geometry(double)
    }
 
 // shoot a ray at the ecef geometry
-double miniview::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double mindist)
+double miniview::shoot_ecef_geometry(const miniv3d &,const miniv3d &,double)
    {return(MAXFLOAT);}

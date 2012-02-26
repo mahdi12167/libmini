@@ -3710,7 +3710,10 @@ void databuf::print_values()
 int databuf::get_ushort(unsigned short int *data,
                         unsigned int width,unsigned int height,unsigned int depth,
                         unsigned int i,unsigned int j,unsigned int k)
-   {return(data[i+(j+k*height)*width]);}
+   {
+   if (i>=width || j>=height || k>=depth) ERRORMSG();
+   return(data[i+(j+k*height)*width]);
+   }
 
 // unsigned short int gradient magnitude
 double databuf::get_ushort_grad(unsigned short int *data,

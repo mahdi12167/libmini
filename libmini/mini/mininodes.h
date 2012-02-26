@@ -1114,8 +1114,8 @@ class mininode_texgen: public mininode_transform
       mtxmodel();
       }
 
-   virtual void transform_cone(minicone &cone) const {}
-   virtual void transform_point(miniv3d &point) const {}
+   virtual void transform_cone(minicone &) const {}
+   virtual void transform_point(miniv3d &) const {}
    };
 
 //! translate texgen node
