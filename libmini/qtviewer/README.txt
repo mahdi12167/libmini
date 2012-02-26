@@ -53,10 +53,19 @@ libMini WIN32 directory. In your project directory get the following
 sub-directory via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/WIN32
 
-Additionally we need gdal to be installed. In your project directory
+Additionally we need GDAL to be installed. In your project directory
 get gdal via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
-Open the appropriate MSVC solution file in the gdal directory and compile.
+In the GDAL source directory we have to tweak some variables in the nmake.opt file:
+ MSVC_VER -> use 1600 to identify MSVC 10.0 for example, other versions accordingly
+ GDAL_HOME -> point it to the directory below the qtviewer source package
+  Supposed we have a projects directory with the complete libmini source tree
+  then we point GDAL_HOME to that projects directory
+Open a MSVC command prompt via
+ Programs -> MSVC -> Tools -> MSVC Command Prompt
+Navigate to the GDAL source directory and type
+ nmake /f makefile.vc
+ nmake /f makefile.vc devinstall
 
 !! Checkout and Compilation (Unix/Mac)
 
