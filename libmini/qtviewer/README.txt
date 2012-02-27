@@ -63,8 +63,9 @@ In the GDAL source directory we have to tweak some variables in the nmake.opt fi
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the GDAL source directory and type
- nmake /f makefile.vc
- nmake /f makefile.vc devinstall
+ nmake /f makefile.vc staticlib
+ include nmake.opt
+ copy gdal.lib port\*.h gcore\*.h ogr\*.h %GDAL_HOME%
 
 !! Checkout and Compilation (Unix/Mac)
 
