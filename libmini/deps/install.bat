@@ -17,8 +17,8 @@
 nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST%
 nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST% install
 nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST% staticlib
-copy gdal.lib %GDAL_DEST%
-copy port\*.h %GDAL_DEST%
-copy gcore\*.h %GDAL_DEST%
-copy ogr\*.h %GDAL_DEST%
+copy gdal.lib %GDAL_DEST%\lib
+copy port\*.h %GDAL_DEST%\include
+copy gcore\*.h %GDAL_DEST%\include
+copy ogr\*.h %GDAL_DEST%\include
 @cd ..
