@@ -56,19 +56,19 @@ sub-directory via Tortoise SVN:
 Additionally we need GDAL to be installed. In your project directory
 get GDAL via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
-In the GDAL source directory we have to tweak some variables in the nmake.opt file:
- MSVC_VER -> use 1600 to identify MSVC 10.0 for example, other versions accordingly
- GDAL_HOME -> point it to a directory below the qtviewer source package
+To build GDAL we have to define some options (in the name.opt file):
+ MSVC_VER -> use 1600 to identify MSVC 10.0, 1500 for MSVC 9.0, etc.
+ GDAL_HOME -> needs to point to the GDAL installation directory
   Usually this means that we point it to our project directory
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the GDAL source directory and type
- nmake /f makefile.vc staticlib
- set GDAL_HOME="same path as in nmake.opt"
- copy gdal.lib %GDAL_HOME%
- copy port\*.h %GDAL_HOME%
- copy gcore\*.h %GDAL_HOME%
- copy ogr\*.h %GDAL_HOME%
+ set DEST="project directory"
+ nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% staticlib
+ copy gdal.lib %DEST%
+ copy port\*.h %DEST%
+ copy gcore\*.h %DEST%
+ copy ogr\*.h %DEST%
 
 !! Checkout and Compilation (Unix/Mac)
 
