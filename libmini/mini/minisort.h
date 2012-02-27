@@ -34,7 +34,7 @@ void shellsort(Item a[],const unsigned int n)
             a[j]=a[j-h];
             j-=h;
             }
-         a[j]=v;
+         if (j!=i) a[j]=v;
          }
       h/=3;
       }
@@ -63,7 +63,7 @@ void shellsort(Item *a[],const unsigned int n)
             a[j]=a[j-h];
             j-=h;
             }
-         a[j]=v;
+         if (j!=i) a[j]=v;
          }
       h/=3;
       }
@@ -96,7 +96,7 @@ void shellsort(minidyna<Item> &a)
             a[j]=a[j-h];
             j-=h;
             }
-         a[j]=v;
+         if (j!=i) a[j]=v;
          }
       h/=3;
       }
@@ -129,7 +129,7 @@ void shellsort(minidyna<Item *> &a)
             a[j]=a[j-h];
             j-=h;
             }
-         a[j]=v;
+         if (j!=i) a[j]=v;
          }
       h/=3;
       }
