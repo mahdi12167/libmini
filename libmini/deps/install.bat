@@ -11,6 +11,7 @@
 @if exist %vcbat% call %vcbat%
 
 @set GDAL_DEST=%CD%\..\..\gdal
+@if not exist %GDAL_DEST% mkdir %GDAL_DEST%
 
 @cd gdal
 nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST%
