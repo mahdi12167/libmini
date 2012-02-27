@@ -40,6 +40,8 @@ CONFIG(debug, debug|release) {
 INCLUDEPATH += .
 INCLUDEPATH += ..
 INCLUDEPATH += ../..
+INCLUDEPATH += ../include
+INCLUDEPATH += ../../include
 INCLUDEPATH += ../../libcurl/include
 INCLUDEPATH += ../../squish/include
 !mac:INCLUDEPATH += ../../libjpeg/include
@@ -54,11 +56,12 @@ win32:INCLUDEPATH += ../WIN32/squish
 win32:INCLUDEPATH += ../WIN32/libjpeg
 win32:INCLUDEPATH += ../WIN32/libpng
 win32:INCLUDEPATH += ../WIN32/zlib
-win32:INCLUDEPATH += ../../gdal
 
 LIBS += -L.
 LIBS += -L..
 LIBS += -L../..
+LIBS += -L../lib
+LIBS += -L../../lib
 LIBS += -L../../libcurl/lib
 LIBS += -L../../squish/lib
 !mac:LIBS += -L../../libjpeg/lib
@@ -73,13 +76,12 @@ win32:LIBS += -L../WIN32/squish
 win32:LIBS += -L../WIN32/libjpeg
 win32:LIBS += -L../WIN32/libpng
 win32:LIBS += -L../WIN32/zlib
-win32:LIBS += -L../../gdal
 
 unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 unix:LIBS += -lgdal
 
 win32:LIBS += -lsquish -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
-win32:LIBS += -lgdal
+win32:LIBS += -lgdal_i
 win32:LIBS += -lws2_32 -lwinmm
 
 RESOURCES += qtviewer.qrc
