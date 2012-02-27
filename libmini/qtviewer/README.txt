@@ -65,7 +65,10 @@ Open a MSVC command prompt via
 Navigate to the GDAL source directory and type
  nmake /f makefile.vc staticlib
  set GDAL_HOME="same path as in nmake.opt"
- copy gdal.lib port\*.h gcore\*.h ogr\*.h %GDAL_HOME%
+ copy gdal.lib %GDAL_HOME%
+ copy port\*.h %GDAL_HOME%
+ copy gcore\*.h %GDAL_HOME%
+ copy ogr\*.h %GDAL_HOME%
 
 !! Checkout and Compilation (Unix/Mac)
 
