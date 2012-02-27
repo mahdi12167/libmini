@@ -64,6 +64,7 @@ Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the GDAL source directory and type
  set DEST="project directory"
+ nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST%
  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% staticlib
  copy gdal.lib %DEST%
  copy port\*.h %DEST%

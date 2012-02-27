@@ -10,12 +10,13 @@
 @set vcbat="%vsdir%\VC\bin\vcvars32.bat"
 @if exist %vcbat% call %vcbat%
 
-set GDAL_DEST=%CD%\..\..\gdal
+@set GDAL_DEST=%CD%\..\..\gdal
 
-cd gdal
+@cd gdal
+nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST%
 nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%GDAL_DEST% staticlib
 copy gdal.lib %GDAL_DEST%
 copy port\*.h %GDAL_DEST%
 copy gcore\*.h %GDAL_DEST%
 copy ogr\*.h %GDAL_DEST%
-cd ..
+@cd ..
