@@ -54,13 +54,12 @@ sub-directory via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/WIN32
 
 Additionally we need GDAL to be installed. In your project directory
-get gdal via Tortoise SVN:
+get GDAL via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
 In the GDAL source directory we have to tweak some variables in the nmake.opt file:
  MSVC_VER -> use 1600 to identify MSVC 10.0 for example, other versions accordingly
  GDAL_HOME -> point it to a directory below the qtviewer source package
   Usually this means that we point it to our project directory
-  Or point it to a "gdal" subdirectory in that project directory
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
 Navigate to the GDAL source directory and type
