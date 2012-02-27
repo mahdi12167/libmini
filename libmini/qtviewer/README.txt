@@ -65,11 +65,12 @@ Open a MSVC command prompt via
 Navigate to the GDAL source directory and type
  set DEST="project directory"
  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST%
+ nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% devinstall
  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% staticlib
- copy gdal.lib %DEST%
- copy port\*.h %DEST%
- copy gcore\*.h %DEST%
- copy ogr\*.h %DEST%
+ copy gdal.lib %DEST%\lib
+ copy port\*.h %DEST%\include
+ copy gcore\*.h %DEST%\include
+ copy ogr\*.h %DEST%\include
 
 !! Checkout and Compilation (Unix/Mac)
 
