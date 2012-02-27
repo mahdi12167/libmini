@@ -81,7 +81,7 @@ unix:LIBS += -lsquish -lcurl -ljpeg -lpng -lz
 unix:LIBS += -lgdal
 
 win32:LIBS += -lsquish -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
-win32:LIBS += -lgdal_i
+win32:LIBS += -lgdal # -lgdal_i for dll stub
 win32:LIBS += -lws2_32 -lwinmm
 
 RESOURCES += qtviewer.qrc
