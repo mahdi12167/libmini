@@ -394,10 +394,10 @@ void mininode_animation_rotate::update_dirty()
 
 unsigned int mininode_texgen::texgen_level=0;
 
-// mininode_geometry:
+// mininode_geometry_base:
 
-miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
-                                   const miniv3d &o,const miniv3d &n)
+miniv3d mininode_geometry_base::project(const miniv3d &p,const miniv3d &d,
+                                        const miniv3d &o,const miniv3d &n)
    {
    miniv3d nrm=n;
    nrm.normalize();
@@ -413,7 +413,7 @@ miniv3d mininode_geometry::project(const miniv3d &p,const miniv3d &d,
    return(p+l*d);
    }
 
-miniv3d mininode_geometry::get_halfdir(const miniv3d &dir1,const miniv3d &dir2)
+miniv3d mininode_geometry_base::get_halfdir(const miniv3d &dir1,const miniv3d &dir2)
    {
    miniv3d d1=dir1,d2=dir2;
 
@@ -423,7 +423,7 @@ miniv3d mininode_geometry::get_halfdir(const miniv3d &dir1,const miniv3d &dir2)
    return(d1+d2);
    }
 
-miniv3d mininode_geometry::get_right(const miniv3d &dir)
+miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
    {
    miniv3d right;
    if (dabs(dir.x)>dabs(dir.y) && dabs(dir.x)>dabs(dir.z)) right=miniv3d(0,0,dir.x);
@@ -437,6 +437,11 @@ miniv3d mininode_geometry::get_right(const miniv3d &dir)
 
    return(right);
    }
+
+// mininode_geometry:
+
+BOOLINT mininode_geometry::deferred=FALSE;
+minidyna<mininode_geometry_base *> mininode_geometry::geometry;
 
 mininode_geometry_tet::mininode_geometry_tet(double size)
    : mininode_geometry(0,3,0)
@@ -903,3 +908,7 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
                         tessel);
       }
    }
+
+// mininode_deferred:
+
+unsigned int mininode_deferred::deferred_level=0;

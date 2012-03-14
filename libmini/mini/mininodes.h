@@ -50,8 +50,7 @@ class mininode_group: public mininode
       }
 
    //! destructor
-   virtual ~mininode_group()
-      {}
+   virtual ~mininode_group() {}
 
    //! get first enabled camera
    virtual mininode_cam *get_camera()
@@ -123,8 +122,7 @@ class mininode_culling: public mininode_group
       {is_visible=TRUE;}
 
    //! destructor
-   virtual ~mininode_culling()
-      {}
+   virtual ~mininode_culling() {}
 
    //! get number of children
    virtual unsigned int get_children() const
@@ -160,8 +158,7 @@ class mininode_dynamic: public mininode_culling
       {}
 
    //! destructor
-   virtual ~mininode_dynamic()
-      {}
+   virtual ~mininode_dynamic() {}
 
    //! set global time start
    static void set_time_start(double t)
@@ -198,8 +195,7 @@ class mininode_color: public mininode_group
       {rgba=miniv4d(c,1);}
 
    //! destructor
-   virtual ~mininode_color()
-      {}
+   virtual ~mininode_color() {}
 
    //! set local brightness
    static void set_brightness(double b=1.0)
@@ -614,8 +610,7 @@ class mininode_switch: public mininode_group
       {is_on=TRUE;}
 
    //! destructor
-   virtual ~mininode_switch()
-      {}
+   virtual ~mininode_switch() {}
 
    virtual unsigned int get_children() const
       {return(is_on?getsize():0);}
@@ -649,8 +644,7 @@ class mininode_selector: public mininode_group
       {index=0;}
 
    //! destructor
-   virtual ~mininode_selector()
-      {}
+   virtual ~mininode_selector() {}
 
    virtual unsigned int get_children() const
       {return(1);}
@@ -695,8 +689,7 @@ class mininode_transform: public mininode_dynamic
       }
 
    //! destructor
-   virtual ~mininode_transform()
-      {}
+   virtual ~mininode_transform() {}
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius) const
@@ -761,8 +754,6 @@ class mininode_transform: public mininode_dynamic
 
    virtual void update_dirty();
    };
-
-typedef miniref<mininode_transform> mininode_rootref;
 
 //! translation node
 //!  provides translation transform
@@ -1193,8 +1184,7 @@ class mininode_cam: public mininode_transform, public minicam
       {set_id(MININODE_CAM);}
 
    //! destructor
-   virtual ~mininode_cam()
-      {}
+   virtual ~mininode_cam() {}
 
    //! get this camera
    virtual mininode_cam *get_camera()
@@ -1212,13 +1202,13 @@ class mininode_cam: public mininode_transform, public minicam
 //! geometry node (base class)
 //!  provides triangle-stripped geometry
 //!  has optional per-vertex color, normals and texture coordinates
-class mininode_geometry: public mininode_group, public ministrip
+class mininode_geometry_base: public mininode_group, public ministrip
    {
    public:
 
    //! default constructor
-   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,
-                     int wocol=1,int wonrm=0,int wotex=0)
+   mininode_geometry_base(int colcomps=0,int nrmcomps=0,int texcomps=0,
+                          int wocol=1,int wonrm=0,int wotex=0)
       : mininode_group(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
       {
       this->wocol=wocol;
@@ -1227,8 +1217,7 @@ class mininode_geometry: public mininode_group, public ministrip
       }
 
    //! destructor
-   virtual ~mininode_geometry()
-      {}
+   virtual ~mininode_geometry_base() {}
 
    //! add geo-referenced point
    void add_coord(minicoord c)
@@ -1246,6 +1235,10 @@ class mininode_geometry: public mininode_group, public ministrip
    //! check tex coord array
    BOOLINT has_tex() const {return(hastex() && wotex==0);}
 
+   //! render geometry
+   void render()
+      {ministrip::render(wocol,wonrm,wotex);}
+
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius) const
       {
@@ -1262,7 +1255,7 @@ class mininode_geometry: public mininode_group, public ministrip
       {
       BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
       if (has_tex() && texgen) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
-      render(wocol,wonrm,wotex); // render triangle strip
+      ministrip::render(wocol,wonrm,wotex); // render triangle strip
 #ifdef MININODES_RENDERBBOX
       renderbbox();
 #endif
@@ -1274,6 +1267,46 @@ class mininode_geometry: public mininode_group, public ministrip
 
    static miniv3d get_halfdir(const miniv3d &dir1,const miniv3d &dir2);
    static miniv3d get_right(const miniv3d &dir);
+   };
+
+//! deferred geometry node
+//!  provides deferred rendering after graph traversal
+class mininode_geometry: public mininode_geometry_base
+   {
+   public:
+
+   //! default constructor
+   mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,
+                     int wocol=1,int wonrm=0,int wotex=0)
+      : mininode_geometry_base(colcomps,nrmcomps,texcomps,
+                               wocol,wonrm,wotex)
+      {}
+
+   //! destructor
+   virtual ~mininode_geometry() {}
+
+   static void enable_deferred(BOOLINT on)
+      {deferred=on;}
+
+   static void clear_deferred()
+      {geometry.clear();}
+
+   static void render_deferred()
+      {
+      unsigned int s=geometry.getsize();
+      for (unsigned int i=0; i<s; i++) geometry[i]->render();
+      }
+
+   protected:
+
+   static BOOLINT deferred;
+   static minidyna<mininode_geometry_base *> geometry;
+
+   virtual void traverse_pre()
+      {
+      if (!deferred) mininode_geometry_base::traverse_pre();
+      else geometry.append(this);
+      }
    };
 
 //! tetrahedron geometry node
@@ -1405,5 +1438,65 @@ class mininode_geometry_torus: public mininode_geometry_tube
                            int tessel=16);
 
    };
+
+//! deferred transform node
+//!  enables deferred rendering after graph traversal
+class mininode_deferred: public mininode_transform
+   {
+   public:
+
+   //! custom constructor
+   mininode_deferred(unsigned int pass_start,unsigned int pass_stop)
+      : mininode_transform()
+      {
+      geo_pass_start=pass_start;
+      geo_pass_stop=pass_stop;
+      }
+
+   //! destructor
+   virtual ~mininode_deferred()
+      {}
+
+   protected:
+
+   virtual void traverse_init()
+      {
+      mininode_transform::traverse_init();
+
+      mininode_geometry::clear_deferred();
+      }
+
+   virtual void traverse_pre()
+      {
+      if (deferred_level==0) mininode_geometry::enable_deferred(TRUE);
+      deferred_level++;
+
+      mininode_transform::traverse_pre();
+      }
+
+   virtual void traverse_post()
+      {
+      deferred_level--;
+      if (deferred_level==0) mininode_geometry::enable_deferred(FALSE);
+
+      mininode_transform::traverse_post();
+      }
+
+   virtual void traverse_exit()
+      {
+      mininode_transform::traverse_exit();
+
+      mininode_geometry::render_deferred();
+      mininode_geometry::clear_deferred();
+      }
+
+   private:
+
+   unsigned int geo_pass_start,geo_pass_stop;
+
+   static unsigned int deferred_level;
+   };
+
+typedef miniref<mininode_deferred> mininode_rootref;
 
 #endif
