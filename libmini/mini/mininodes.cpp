@@ -441,7 +441,7 @@ miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
 // mininode_geometry:
 
 BOOLINT mininode_geometry::deferred=FALSE;
-minidyna<mininode_geometry_base *> mininode_geometry::geometry;
+minidyna<mininode_geometry::geometry_deferred_type> mininode_geometry::geometry;
 
 mininode_geometry_tet::mininode_geometry_tet(double size)
    : mininode_geometry(0,3,0)

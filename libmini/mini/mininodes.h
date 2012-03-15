@@ -201,6 +201,10 @@ class mininode_color: public mininode_group
    static void set_brightness(double b=1.0)
       {brightness=b;}
 
+   //! get actual color
+   static miniv4d get_color()
+      {return(glcolor);}
+
    protected:
 
    miniv4d rgba;
@@ -1293,19 +1297,50 @@ class mininode_geometry: public mininode_geometry_base
 
    static void render_deferred()
       {
+      mtxpush();
+
       unsigned int s=geometry.getsize();
-      for (unsigned int i=0; i<s; i++) geometry[i]->render();
+
+      for (unsigned int i=0; i<s; i++)
+         {
+         geometry_deferred_type *geo=&geometry[i];
+
+         mtxid();
+         mtxmult(geo->matrix);
+         color(geo->color);
+         geo->node->render();
+         }
+
+      mtxpop();
       }
 
    protected:
 
+   struct geometry_deferred_struct
+      {
+      mininode_geometry_base *node;
+      double matrix[16];
+      miniv4d color;
+      };
+
+   typedef struct geometry_deferred_struct geometry_deferred_type;
+
    static BOOLINT deferred;
-   static minidyna<mininode_geometry_base *> geometry;
+   static minidyna<geometry_deferred_type> geometry;
 
    virtual void traverse_pre()
       {
       if (!deferred) mininode_geometry_base::traverse_pre();
-      else geometry.append(this);
+      else
+         {
+         geometry_deferred_type geo;
+
+         geo.node=this;
+         mtxgetmodel(geo.matrix);
+         geo.color=mininode_color::get_color();
+
+         geometry.append(geo);
+         }
       }
    };
 
