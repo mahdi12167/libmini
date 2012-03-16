@@ -452,6 +452,9 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
    COLG=1.0f;
    COLB=1.0f;
    COLA=1.0f;
+   
+   COLAMIN=1.0f;
+   COLAMAX=0.0f;
 
    NRMX=0.0f;
    NRMY=1.0f;
@@ -603,6 +606,9 @@ void ministrip::clear()
    BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
    BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
+   COLAMIN=1.0f;
+   COLAMAX=0.0f;
+
    COPYVTX=0;
    }
 
@@ -623,6 +629,9 @@ void ministrip::setcol(const float r,const float g,const float b,float a)
    COLG=g;
    COLB=b;
    COLA=a;
+   
+   if (a<COLAMIN) COLAMIN=a;
+   if (a>COLAMAX) COLAMAX=a;
    }
 
 void ministrip::setcol(const miniv3d &rgb)
@@ -1177,6 +1186,17 @@ void ministrip::useshader(int num)
 // get actual shader
 int ministrip::getshader()
    {return(USESHADER);}
+
+// check whether or not the geometry is fully opaque
+BOOLINT ministrip::isopaque()
+   {
+   if (COLARRAY==NULL)
+      if (COLAMIN>=1.0f) return(TRUE);
+
+   if (COLCOMPS<4) return(TRUE);
+
+   return(COLAMIN>=1.0f);
+   }
 
 // render triangle strips
 void ministrip::render(int wocolor,int wonrm,int wotex)
