@@ -208,6 +208,9 @@ class ministrip
    //! get actual shader
    int getshader();
 
+   //! check whether or not the geometry is fully opaque
+   BOOLINT isopaque();
+
    //! render triangle strips
    void render(int wocolor=0,int wonrm=0,int wotex=0);
 
@@ -281,6 +284,8 @@ class ministrip
    miniv3d BBOXMIN,BBOXMAX;
 
    float COLR,COLG,COLB,COLA;
+   float COLAMIN,COLAMAX;
+
    float NRMX,NRMY,NRMZ;
    float TEXX,TEXY,TEXZ,TEXW;
 
