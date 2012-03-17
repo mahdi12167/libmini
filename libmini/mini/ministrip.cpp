@@ -1190,9 +1190,6 @@ int ministrip::getshader()
 // check whether or not the geometry is fully opaque
 BOOLINT ministrip::isopaque()
    {
-   if (COLARRAY==NULL)
-      if (COLAMIN>=1.0f) return(TRUE);
-
    if (COLCOMPS<4) return(TRUE);
 
    return(COLAMIN>=1.0f);
