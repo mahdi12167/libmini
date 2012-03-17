@@ -1292,26 +1292,46 @@ class mininode_geometry: public mininode_geometry_base
    static void enable_deferred(BOOLINT on)
       {deferred=on;}
 
+   static void set_pass_frame(unsigned int first,unsigned int last)
+      {
+      pass_first=first;
+      pass_last=last;
+      }
+
    static void clear_deferred()
       {geometry.clear();}
 
-   static void render_deferred()
+   static void render_deferred(unsigned int first,unsigned int last)
       {
+      deferred_init();
+
       mtxpush();
 
       unsigned int s=geometry.getsize();
 
-      for (unsigned int i=0; i<s; i++)
+      for (unsigned int pass=first; pass<=last; pass++)
          {
-         geometry_deferred_type *geo=&geometry[i];
+         deferred_pre(pass);
 
-         mtxid();
-         mtxmult(geo->matrix);
-         color(geo->color);
-         geo->node->render();
+         for (unsigned int i=0; i<s; i++)
+            {
+            geometry_deferred_type *geo=&geometry[i];
+
+            if (pass>=geo->pass_first && pass<=geo->pass_last)
+               {
+               mtxid();
+               mtxmult(geo->matrix);
+               color(geo->color);
+               geo->node->render();
+               }
+            }
+
+         deferred_post(pass);
          }
 
       mtxpop();
+
+      deferred_exit();
       }
 
    protected:
@@ -1319,6 +1339,7 @@ class mininode_geometry: public mininode_geometry_base
    struct geometry_deferred_struct
       {
       mininode_geometry_base *node;
+      unsigned int pass_first,pass_last;
       double matrix[16];
       miniv4d color;
       };
@@ -1326,6 +1347,7 @@ class mininode_geometry: public mininode_geometry_base
    typedef struct geometry_deferred_struct geometry_deferred_type;
 
    static BOOLINT deferred;
+   static unsigned int pass_first,pass_last;
    static minidyna<geometry_deferred_type> geometry;
 
    virtual void traverse_pre()
@@ -1336,12 +1358,19 @@ class mininode_geometry: public mininode_geometry_base
          geometry_deferred_type geo;
 
          geo.node=this;
+         geo.pass_first=pass_first;
+         geo.pass_last=pass_last;
          mtxgetmodel(geo.matrix);
          geo.color=mininode_color::get_color();
 
          geometry.append(geo);
          }
       }
+
+   static void deferred_init() {}
+   static void deferred_pre(unsigned int pass) {}
+   static void deferred_post(unsigned int pass) {}
+   static void deferred_exit() {}
    };
 
 //! tetrahedron geometry node
@@ -1481,11 +1510,11 @@ class mininode_deferred: public mininode_transform
    public:
 
    //! custom constructor
-   mininode_deferred(unsigned int pass_start,unsigned int pass_stop)
+   mininode_deferred(unsigned int first,unsigned int last)
       : mininode_transform()
       {
-      geo_pass_start=pass_start;
-      geo_pass_stop=pass_stop;
+      pass_first=first;
+      pass_last=last;
       }
 
    //! destructor
@@ -1499,6 +1528,9 @@ class mininode_deferred: public mininode_transform
       mininode_transform::traverse_init();
 
       mininode_geometry::clear_deferred();
+
+      deferred_first=1;
+      deferred_last=0;
       }
 
    virtual void traverse_pre()
@@ -1506,7 +1538,27 @@ class mininode_deferred: public mininode_transform
       if (deferred_level==0) mininode_geometry::enable_deferred(TRUE);
       deferred_level++;
 
+      mininode_geometry::set_pass_frame(pass_first,pass_last);
+
+      if (deferred_first>deferred_last)
+         {
+         deferred_first=pass_first;
+         deferred_last=pass_last;
+         }
+      else
+         {
+         if (pass_first<deferred_first) deferred_first=pass_first;
+         if (pass_last>deferred_last) deferred_last=pass_last;
+         }
+
       mininode_transform::traverse_pre();
+      }
+
+   virtual void traverse_past()
+      {
+      mininode_geometry::set_pass_frame(pass_first,pass_last);
+
+      mininode_transform::traverse_past();
       }
 
    virtual void traverse_post()
@@ -1521,15 +1573,17 @@ class mininode_deferred: public mininode_transform
       {
       mininode_transform::traverse_exit();
 
-      mininode_geometry::render_deferred();
+      mininode_geometry::render_deferred(deferred_first,deferred_last);
       mininode_geometry::clear_deferred();
       }
 
    private:
 
-   unsigned int geo_pass_start,geo_pass_stop;
+   unsigned int pass_first,pass_last;
 
    static unsigned int deferred_level;
+
+   static unsigned int deferred_first,deferred_last;
    };
 
 typedef miniref<mininode_deferred> mininode_rootref;

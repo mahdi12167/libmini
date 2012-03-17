@@ -452,7 +452,7 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
    COLG=1.0f;
    COLB=1.0f;
    COLA=1.0f;
-   
+
    COLAMIN=1.0f;
    COLAMAX=0.0f;
 
@@ -629,7 +629,7 @@ void ministrip::setcol(const float r,const float g,const float b,float a)
    COLG=g;
    COLB=b;
    COLA=a;
-   
+
    if (a<COLAMIN) COLAMIN=a;
    if (a>COLAMAX) COLAMAX=a;
    }
