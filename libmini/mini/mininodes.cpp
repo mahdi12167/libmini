@@ -441,6 +441,7 @@ miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
 // mininode_geometry:
 
 BOOLINT mininode_geometry::deferred=FALSE;
+unsigned int mininode_geometry::pass_first=0,mininode_geometry::pass_last=0;
 minidyna<mininode_geometry::geometry_deferred_type> mininode_geometry::geometry;
 
 mininode_geometry_tet::mininode_geometry_tet(double size)
@@ -912,3 +913,4 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
 // mininode_deferred:
 
 unsigned int mininode_deferred::deferred_level=0;
+unsigned int mininode_deferred::deferred_first=0,mininode_deferred::deferred_last=0;
