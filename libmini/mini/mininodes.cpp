@@ -914,3 +914,15 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
 
 unsigned int mininode_deferred::deferred_level=0;
 unsigned int mininode_deferred::deferred_first=0,mininode_deferred::deferred_last=0;
+
+// mininode_deferred_semitransparent:
+
+void mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
+   {
+   //!!
+   }
+
+void mininode_deferred_semitransparent::deferred_post(unsigned int pass)
+   {
+   //!!
+   }

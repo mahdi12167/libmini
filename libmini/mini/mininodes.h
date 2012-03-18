@@ -1269,37 +1269,26 @@ class mininode_geometry: public mininode_geometry_base
    static void clear_deferred()
       {geometry.clear();}
 
-   static void render_deferred(unsigned int first,unsigned int last)
+   static void render_deferred(unsigned int pass)
       {
-      deferred_init();
-
       mtxpush();
 
       unsigned int s=geometry.getsize();
 
-      for (unsigned int pass=first; pass<=last; pass++)
+      for (unsigned int i=0; i<s; i++)
          {
-         deferred_pre(pass);
+         geometry_deferred_type *geo=&geometry[i];
 
-         for (unsigned int i=0; i<s; i++)
+         if (pass>=geo->pass_first && pass<=geo->pass_last)
             {
-            geometry_deferred_type *geo=&geometry[i];
-
-            if (pass>=geo->pass_first && pass<=geo->pass_last)
-               {
-               mtxid();
-               mtxmult(geo->matrix);
-               color(geo->color);
-               geo->node->render();
-               }
+            mtxid();
+            mtxmult(geo->matrix);
+            color(geo->color);
+            geo->node->render();
             }
-
-         deferred_post(pass);
          }
 
       mtxpop();
-
-      deferred_exit();
       }
 
    protected:
@@ -1335,10 +1324,6 @@ class mininode_geometry: public mininode_geometry_base
          }
       }
 
-   static void deferred_init() {}
-   static void deferred_pre(unsigned int pass) {}
-   static void deferred_post(unsigned int pass) {}
-   static void deferred_exit() {}
    };
 
 //! tetrahedron geometry node
@@ -1541,20 +1526,36 @@ class mininode_deferred: public mininode_transform
       {
       mininode_transform::traverse_exit();
 
-      mininode_geometry::render_deferred(deferred_first,deferred_last);
+      deferred_init();
+
+      for (unsigned int pass=deferred_first; pass<=deferred_last; pass++)
+         {
+         deferred_pre(pass); //!!
+         mininode_geometry::render_deferred(pass); //!!
+         deferred_post(pass); //!!
+         }
+
+      deferred_exit();
+
       mininode_geometry::clear_deferred();
       }
+
+   protected:
+
+   virtual void deferred_init()=0;
+   virtual void deferred_pre(unsigned int pass)=0;
+   virtual void deferred_post(unsigned int pass)=0;
+   virtual void deferred_exit()=0;
 
    private:
 
    unsigned int pass_first,pass_last;
 
    static unsigned int deferred_level;
-
    static unsigned int deferred_first,deferred_last;
    };
 
-//! deferred transform node
+//! deferred semi-transparent node
 //!  enables deferred rendering of semi-transparent geometry
 class mininode_deferred_semitransparent: public mininode_deferred
    {
@@ -1569,7 +1570,13 @@ class mininode_deferred_semitransparent: public mininode_deferred
    virtual ~mininode_deferred_semitransparent()
       {}
 
+   virtual void deferred_init() {}
+   virtual void deferred_pre(unsigned int pass);
+   virtual void deferred_post(unsigned int pass);
+   virtual void deferred_exit() {}
    };
+
+typedef miniref<mininode_deferred_semitransparent> mininode_rootref;
 
 //! camera node
 //!  provides camera lookat, direction, fovy and cone
@@ -1604,7 +1611,5 @@ class mininode_cam: public mininode_deferred_semitransparent, public minicam
       }
 
    };
-
-typedef miniref<mininode_deferred_semitransparent> mininode_rootref;
 
 #endif
