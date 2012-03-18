@@ -1584,7 +1584,7 @@ class mininode_cam: public mininode_deferred_semitransparent, public minicam
                 double mindist=0.0,
                 float fovy=0.0f,float aspect=0.0f,
                 double nearp=0.0,double farp=0.0)
-      : mininode_transform(),
+      : mininode_deferred_semitransparent(),
         minicam(earth,lat,lon,height,mindist,
                 fovy,aspect,nearp,farp)
       {set_id(MININODE_CAM);}
