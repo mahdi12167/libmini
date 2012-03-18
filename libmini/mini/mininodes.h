@@ -17,6 +17,8 @@
 #include "miniimg.h"
 
 #include "miniOGL.h"
+#include "ministrip.h"
+#include "minibrick.h"
 #include "minicam.h"
 
 enum
@@ -1586,6 +1588,23 @@ class mininode_deferred: public mininode_transform
    static unsigned int deferred_first,deferred_last;
    };
 
-typedef miniref<mininode_deferred> mininode_rootref;
+//! deferred transform node
+//!  enables deferred rendering for semi-transparent geometry
+class mininode_deferred_semitransparent: public mininode_deferred
+   {
+   public:
+
+   //! default constructor
+   mininode_deferred_semitransparent()
+      : mininode_deferred(minisurf::FIRST_RENDER_PHASE,minisurf::LAST_RENDER_PHASE)
+      {}
+
+   //! destructor
+   virtual ~mininode_deferred_semitransparent()
+      {}
+
+   };
+
+typedef miniref<mininode_deferred_semitransparent> mininode_rootref;
 
 #endif
