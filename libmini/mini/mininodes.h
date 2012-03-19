@@ -1271,6 +1271,9 @@ class mininode_geometry: public mininode_geometry_base
    static void enable_deferred(BOOLINT on)
       {deferred=on;}
 
+   static void enable_deferred_semitransparen(BOOLINT on)
+      {deferred_semitransparent=on;}
+
    static void set_pass_frame(unsigned int first,unsigned int last)
       {
       pass_first=first;
@@ -1286,12 +1289,21 @@ class mininode_geometry: public mininode_geometry_base
    protected:
 
    static BOOLINT deferred;
+   static BOOLINT deferred_semitransparent;
    static unsigned int pass_first,pass_last;
    static geometry_deferred_list list;
 
    virtual void traverse_pre()
       {
-      if (!deferred) mininode_geometry_base::traverse_pre();
+      BOOLINT dfrd=FALSE;
+
+      if (deferred) dfrd=TRUE;
+
+      if (deferred_semitransparent)
+         if (!isopaque()) dfrd=TRUE;
+         else if (!hascolor() && mininode_color::get_color().w<1.0) dfrd=TRUE;
+
+      if (!dfrd) mininode_geometry_base::traverse_pre();
       else
          {
          geometry_deferred_type geo;
@@ -1572,7 +1584,7 @@ class mininode_deferred_semitransparent: public mininode_deferred
 
    virtual void traverse_pre()
       {
-      if (deferred_level==0) mininode_geometry::enable_deferred(TRUE);
+      if (deferred_level==0) mininode_geometry::enable_deferred_semitransparen(TRUE);
 
       mininode_deferred::traverse_pre();
       }
@@ -1581,7 +1593,7 @@ class mininode_deferred_semitransparent: public mininode_deferred
       {
       mininode_deferred::traverse_post();
 
-      if (deferred_level==0) mininode_geometry::enable_deferred(FALSE);
+      if (deferred_level==0) mininode_geometry::enable_deferred_semitransparen(FALSE);
       }
 
    virtual void deferred_init() {}
