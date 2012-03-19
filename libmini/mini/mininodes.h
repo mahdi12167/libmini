@@ -1457,7 +1457,7 @@ class mininode_deferred: public mininode_transform
    public:
 
    //! custom constructor
-   mininode_deferred(unsigned int first,unsigned int last)
+   mininode_deferred(unsigned int first=0,unsigned int last=0)
       : mininode_transform()
       {
       pass_first=first;
@@ -1557,13 +1557,50 @@ class mininode_deferred: public mininode_transform
          }
       }
 
-   virtual void deferred_init()=0;
-   virtual int deferred_pre(unsigned int pass)=0;
-   virtual void deferred_post(unsigned int pass)=0;
-   virtual void deferred_exit()=0;
+   virtual void deferred_init() {}
+   virtual int deferred_pre(unsigned int pass) {return(FALSE);}
+   virtual void deferred_post(unsigned int pass) {}
+   virtual void deferred_exit() {}
 
    static unsigned int deferred_level;
    static unsigned int deferred_first,deferred_last;
+   };
+
+typedef mininode_deferred mininode_root;
+typedef miniref<mininode_root> mininode_rootref;
+
+//! camera node
+//!  provides camera lookat, direction, fovy and cone
+//!  has bounding sphere of entire earth
+class mininode_cam: public mininode_root, public minicam
+   {
+   public:
+
+   //! custom constructor
+   mininode_cam(miniearth *earth,
+                double lat=21.39,double lon=-157.72,double height=7E6,
+                double mindist=0.0,
+                float fovy=0.0f,float aspect=0.0f,
+                double nearp=0.0,double farp=0.0)
+      : mininode_root(),
+        minicam(earth,lat,lon,height,mindist,
+                fovy,aspect,nearp,farp)
+      {set_id(MININODE_CAM);}
+
+   //! destructor
+   virtual ~mininode_cam() {}
+
+   //! get this camera
+   virtual mininode_cam *get_camera()
+      {return(this);}
+
+   //! get bounding sphere
+   virtual void get_bsphere(miniv3d &center,double &radius) const
+      {
+      center=miniv3d(0,0,0);
+      radius=minicrs::EARTH_radius;
+      }
+
    };
 
 //! deferred semi-transparent node
@@ -1596,46 +1633,8 @@ class mininode_deferred_semitransparent: public mininode_deferred
       if (deferred_level==0) mininode_geometry::enable_deferred_semitransparen(FALSE);
       }
 
-   virtual void deferred_init() {}
    virtual int deferred_pre(unsigned int pass);
    virtual void deferred_post(unsigned int pass);
-   virtual void deferred_exit() {}
-   };
-
-typedef miniref<mininode_deferred_semitransparent> mininode_rootref;
-
-//! camera node
-//!  provides camera lookat, direction, fovy and cone
-//!  has bounding sphere of entire earth
-class mininode_cam: public mininode_deferred_semitransparent, public minicam
-   {
-   public:
-
-   //! custom constructor
-   mininode_cam(miniearth *earth,
-                double lat=21.39,double lon=-157.72,double height=7E6,
-                double mindist=0.0,
-                float fovy=0.0f,float aspect=0.0f,
-                double nearp=0.0,double farp=0.0)
-      : mininode_deferred_semitransparent(),
-        minicam(earth,lat,lon,height,mindist,
-                fovy,aspect,nearp,farp)
-      {set_id(MININODE_CAM);}
-
-   //! destructor
-   virtual ~mininode_cam() {}
-
-   //! get this camera
-   virtual mininode_cam *get_camera()
-      {return(this);}
-
-   //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
-      {
-      center=miniv3d(0,0,0);
-      radius=minicrs::EARTH_radius;
-      }
-
    };
 
 #endif
