@@ -42,6 +42,7 @@ CONFIG(debug, debug|release) {
    win32:UI_DIR = $$join(UI_DIR,,,d)
 }
 
+mac:INCLUDEPATH += /usr/include
 INCLUDEPATH += .
 INCLUDEPATH += squish
 INCLUDEPATH += ..
@@ -61,6 +62,7 @@ win32:INCLUDEPATH += ../WIN32/libjpeg
 win32:INCLUDEPATH += ../WIN32/libpng
 win32:INCLUDEPATH += ../WIN32/zlib
 
+mac:LIBS += -L/usr/lib
 LIBS += -L.
 LIBS += -L..
 LIBS += -L../..
