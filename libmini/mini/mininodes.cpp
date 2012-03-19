@@ -442,7 +442,9 @@ miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
 
 BOOLINT mininode_geometry::deferred=FALSE;
 unsigned int mininode_geometry::pass_first=0,mininode_geometry::pass_last=0;
-minidyna<mininode_geometry::geometry_deferred_type> mininode_geometry::geometry;
+mininode_geometry::geometry_deferred_list mininode_geometry::list;
+
+// mininode_geometry_tet:
 
 mininode_geometry_tet::mininode_geometry_tet(double size)
    : mininode_geometry(0,3,0)
@@ -474,6 +476,8 @@ mininode_geometry_tet::mininode_geometry_tet(double size)
    addvtx(p4);
    addvtx(p1);
    }
+
+// mininode_geometry_pyramid:
 
 mininode_geometry_pyramid::mininode_geometry_pyramid(double sizex,double sizey,double sizez)
    : mininode_geometry(0,3,0)
@@ -509,6 +513,8 @@ mininode_geometry_pyramid::mininode_geometry_pyramid(double sizex,double sizey,d
    addvtx(p1);
    addvtx(p2);
    }
+
+// mininode_geometry_cube:
 
 mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double sizez)
    : mininode_geometry(0,3,0)
@@ -556,6 +562,8 @@ mininode_geometry_cube::mininode_geometry_cube(double sizex,double sizey,double 
    addvtx(miniv3d(sizex,sizey,sizez));
    }
 
+// mininode_geometry_prism:
+
 mininode_geometry_prism::mininode_geometry_prism(double sizex,double sizey,double sizez)
    : mininode_geometry(0,3,0)
    {
@@ -593,6 +601,8 @@ mininode_geometry_prism::mininode_geometry_prism(double sizex,double sizey,doubl
    addvtx(miniv3d(sizex,-sizey,0));
    addvtx(miniv3d(sizex,0,sizez));
    }
+
+// mininode_geometry_sphere:
 
 mininode_geometry_sphere::mininode_geometry_sphere(double radius,int wotex,int tessel)
    : mininode_geometry(0,3,2,1,0,wotex)
@@ -635,6 +645,8 @@ mininode_geometry_sphere::mininode_geometry_sphere(double radius,int wotex,int t
          addvtx(pos);
          }
    }
+
+// mininode_geometry_band:
 
 mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width)
    : mininode_geometry(0,3,0)
@@ -714,6 +726,8 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
 
    *this=mininode_geometry_band(pos,nrm,width);
    }
+
+// mininode_geometry_tube:
 
 mininode_geometry_tube::mininode_geometry_tube(double radius,double height,int tessel)
    : mininode_geometry(0,3,0)
@@ -878,6 +892,8 @@ miniv3d mininode_geometry_tube::create_tube(const miniv3d &start,const miniv3d &
    return(project(end+right*end_radius,dir,end,end_dir)-end);
    }
 
+// mininode_geometry_torus:
+
 mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,double radius,
                                                  int tessel)
    : mininode_geometry_tube()
@@ -917,12 +933,20 @@ unsigned int mininode_deferred::deferred_first=0,mininode_deferred::deferred_las
 
 // mininode_deferred_semitransparent:
 
-void mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
+int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    {
-   //!!
+   static minisurf surf;
+
+   int dorender;
+
+   dorender=surf.setextstate(1,pass,4);
+
+   return(dorender);
    }
 
 void mininode_deferred_semitransparent::deferred_post(unsigned int pass)
    {
-   //!!
+   static minisurf surf;
+
+   surf.setextstate(0,pass,4);
    }

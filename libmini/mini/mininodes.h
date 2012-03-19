@@ -1242,10 +1242,21 @@ class mininode_geometry_base: public mininode_group, public ministrip
    };
 
 //! deferred geometry node
-//!  provides deferred rendering after graph traversal
+//!  provides deferred geometry as list
 class mininode_geometry: public mininode_geometry_base
    {
    public:
+
+   struct geometry_deferred_struct
+      {
+      mininode_geometry_base *node;
+      unsigned int pass_first,pass_last;
+      double matrix[16];
+      miniv4d color;
+      };
+
+   typedef struct geometry_deferred_struct geometry_deferred_type;
+   typedef minidyna<geometry_deferred_type> geometry_deferred_list;
 
    //! default constructor
    mininode_geometry(int colcomps=0,int nrmcomps=0,int texcomps=0,
@@ -1267,45 +1278,16 @@ class mininode_geometry: public mininode_geometry_base
       }
 
    static void clear_deferred()
-      {geometry.clear();}
+      {list.clear();}
 
-   static void render_deferred(unsigned int pass)
-      {
-      mtxpush();
-
-      unsigned int s=geometry.getsize();
-
-      for (unsigned int i=0; i<s; i++)
-         {
-         geometry_deferred_type *geo=&geometry[i];
-
-         if (pass>=geo->pass_first && pass<=geo->pass_last)
-            {
-            mtxid();
-            mtxmult(geo->matrix);
-            color(geo->color);
-            geo->node->render();
-            }
-         }
-
-      mtxpop();
-      }
+   static const geometry_deferred_list *get_deferred()
+      {return(&list);}
 
    protected:
 
-   struct geometry_deferred_struct
-      {
-      mininode_geometry_base *node;
-      unsigned int pass_first,pass_last;
-      double matrix[16];
-      miniv4d color;
-      };
-
-   typedef struct geometry_deferred_struct geometry_deferred_type;
-
    static BOOLINT deferred;
    static unsigned int pass_first,pass_last;
-   static minidyna<geometry_deferred_type> geometry;
+   static geometry_deferred_list list;
 
    virtual void traverse_pre()
       {
@@ -1320,7 +1302,7 @@ class mininode_geometry: public mininode_geometry_base
          mtxgetmodel(geo.matrix);
          geo.color=mininode_color::get_color();
 
-         geometry.append(geo);
+         list.append(geo);
          }
       }
 
@@ -1471,8 +1453,7 @@ class mininode_deferred: public mininode_transform
       }
 
    //! destructor
-   virtual ~mininode_deferred()
-      {}
+   virtual ~mininode_deferred() {}
 
    protected:
 
@@ -1524,26 +1505,45 @@ class mininode_deferred: public mininode_transform
 
    virtual void traverse_exit()
       {
+      const mininode_geometry::geometry_deferred_list *list=mininode_geometry::get_deferred();
+      unsigned int s=list->getsize();
+
       mininode_transform::traverse_exit();
+
+      mtxpush();
 
       deferred_init();
 
       for (unsigned int pass=deferred_first; pass<=deferred_last; pass++)
          {
-         deferred_pre(pass); //!!
-         mininode_geometry::render_deferred(pass); //!!
-         deferred_post(pass); //!!
+         int dorender=deferred_pre(pass);
+
+         if (dorender)
+            for (unsigned int i=0; i<s; i++)
+               {
+               const mininode_geometry::geometry_deferred_type *geo=&(list->get(i));
+
+               if (pass>=geo->pass_first && pass<=geo->pass_last)
+                  {
+                  mtxid();
+                  mtxmult(geo->matrix);
+                  color(geo->color);
+                  geo->node->render();
+                  }
+               }
+
+         deferred_post(pass);
          }
 
       deferred_exit();
 
       mininode_geometry::clear_deferred();
+
+      mtxpop();
       }
 
-   protected:
-
    virtual void deferred_init()=0;
-   virtual void deferred_pre(unsigned int pass)=0;
+   virtual int deferred_pre(unsigned int pass)=0;
    virtual void deferred_post(unsigned int pass)=0;
    virtual void deferred_exit()=0;
 
@@ -1567,11 +1567,12 @@ class mininode_deferred_semitransparent: public mininode_deferred
       {}
 
    //! destructor
-   virtual ~mininode_deferred_semitransparent()
-      {}
+   virtual ~mininode_deferred_semitransparent() {}
+
+   protected:
 
    virtual void deferred_init() {}
-   virtual void deferred_pre(unsigned int pass);
+   virtual int deferred_pre(unsigned int pass);
    virtual void deferred_post(unsigned int pass);
    virtual void deferred_exit() {}
    };
