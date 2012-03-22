@@ -17,7 +17,7 @@ void errormsg(const char *file,int line,int fatal)
    else if (fatal==MINI_ERROR_MEM) msg = "insufficient memory";
    else if (fatal==MINI_ERROR_IO) msg = "io error";
    else msg = "fatal error";
-   msg += " in <" + QString(file) + "> at line " + QString::number(line) + "!";
+   msg += " in <" + QString(file) + "> at line " + QString::number(line) + "!\n";
 
    fprintf(stderr, msg.toStdString().c_str());
 
