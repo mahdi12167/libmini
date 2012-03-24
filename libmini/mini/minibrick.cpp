@@ -976,6 +976,7 @@ void minisurf::setstate(int enable,
          if (enable!=0)
             {
             enableEMIblending();
+            enableBFculling();
             disableZwriting();
 
             enabletorch(FOURTH_RENDER_PHASE,ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2);
@@ -985,6 +986,7 @@ void minisurf::setstate(int enable,
             disabletorch();
 
             enableZwriting();
+            disableculling();
             disableblending();
             }
 
