@@ -34,4 +34,4 @@ endif
 # other libraries to install:
 
 # gdal
-(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --without-sqlite3 --enable-static --disable-shared; make -j 2; make install)
+(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --without-sqlite3 --without-pg --enable-static --disable-shared; make -j 2; make install)
