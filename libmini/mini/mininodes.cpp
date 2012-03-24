@@ -944,8 +944,6 @@ int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
 
    dorender=surf.setextstate(1,pass,4);
 
-   printf("pass %d: dorender=%d\n",pass,dorender); //!!
-
    return(dorender);
    }
 
