@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#define TEST
+#undef TEST
 
 #include "renderer.h"
 
