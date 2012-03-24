@@ -117,8 +117,9 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_geometry_tet(10));
 
    // semi-transparent sphere
-   group->append_child(new mininode_coord(minicoord(miniv4d(0, 0, 0), minicoord::MINICOORD_LLH)))->
-      append_child(new mininode_color(miniv4d(1.0, 0.5, 0.5, 0.5)))-> //!!
+   group->append_child(new mininode_deferred_semitransparent())->
+      append_child(new mininode_color(miniv4d(1.0, 0.5, 0.5, 0.5)))->
+      append_child(new mininode_coord(minicoord(miniv4d(0, 0, 0), minicoord::MINICOORD_LLH)))->
       append_child(new mininode_scale(10000))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_sphere(10.0));
