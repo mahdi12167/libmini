@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#undef TEST
+#define TEST
 
 #include "renderer.h"
 
@@ -108,13 +108,20 @@ mininode_group *Renderer::build_ecef_geometry()
 
    // tetrahedron /w procedural 3D texture:
 
-   group->append_child(new mininode_coord(minicoord(miniv4d(-159*3600, 24*3600, 0, 0), minicoord::MINICOORD_LLH)))->
+   group->append_child(new mininode_coord(minicoord(miniv4d(-159*3600, 24*3600, 0), minicoord::MINICOORD_LLH)))->
       append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
       append_child(new mininode_texgen_scale(0.1))->
       append_child(new mininode_volume("data/textures/Marble.db"))->
       append_child(new mininode_scale(10000))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_tet(10));
+
+   // semi-transparent sphere
+   group->append_child(new mininode_coord(minicoord(miniv4d(0, 0, 0), minicoord::MINICOORD_LLH)))->
+      append_child(new mininode_color(miniv4d(1.0, 0.5, 0.5, 0.5)))-> //!!
+      append_child(new mininode_scale(10000))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
+      append_child(new mininode_geometry_sphere(10.0));
 
 #endif
 

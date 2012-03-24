@@ -42,7 +42,6 @@ CONFIG(debug, debug|release) {
    win32:UI_DIR = $$join(UI_DIR,,,d)
 }
 
-mac:INCLUDEPATH += /usr/include
 INCLUDEPATH += .
 INCLUDEPATH += squish
 INCLUDEPATH += ..
@@ -50,7 +49,7 @@ INCLUDEPATH += ../..
 INCLUDEPATH += ../include
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../libcurl/include
-INCLUDEPATH += ../../libjpeg/include
+!mac:INCLUDEPATH += ../../libjpeg/include
 INCLUDEPATH += ../../libpng/include
 INCLUDEPATH += ../../zlib/include
 INCLUDEPATH += ../../gdal/include
@@ -62,14 +61,13 @@ win32:INCLUDEPATH += ../WIN32/libjpeg
 win32:INCLUDEPATH += ../WIN32/libpng
 win32:INCLUDEPATH += ../WIN32/zlib
 
-mac:LIBS += -L/usr/lib
 LIBS += -L.
 LIBS += -L..
 LIBS += -L../..
 exists(../lib): LIBS += -L../lib
 exists(../../lib): LIBS += -L../../lib
 LIBS += -L../../libcurl/lib
-LIBS += -L../../libjpeg/lib
+!mac:LIBS += -L../../libjpeg/lib
 LIBS += -L../../libpng/lib
 LIBS += -L../../zlib/lib
 LIBS += -L../../gdal/lib
