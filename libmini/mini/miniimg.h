@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger
+// (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #ifndef MINIIMG_H
 #define MINIIMG_H

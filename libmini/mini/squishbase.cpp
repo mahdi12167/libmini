@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger
+// (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #ifndef NOSQUISH
 #include <squish.h> // HINT: do not install the header in /usr/include on MacOS X with gcc 3.x

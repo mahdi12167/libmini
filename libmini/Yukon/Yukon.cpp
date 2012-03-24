@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger
+// (c) by Stefan Roettger, licensed under GPL 2+
 
 #ifndef YUKON_DATA
 #define YUKON_DATA "data"

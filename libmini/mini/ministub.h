@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger
+// (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #ifndef MINISTUB_H
 #define MINISTUB_H

@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under GPL 2+
+
 #include <mini/minibase.h>
 #include <mini/minicomplex.h>
 #include <mini/minitime.h>

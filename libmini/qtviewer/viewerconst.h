@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under GPL 2+
+
 #ifndef VIEWERCONST_H
 #define VIEWERCONST_H
 
