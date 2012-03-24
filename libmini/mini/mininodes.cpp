@@ -929,10 +929,12 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
 
 // mininode_deferred:
 
-unsigned int mininode_deferred::deferred_level=0;
-unsigned int mininode_deferred::deferred_first=0,mininode_deferred::deferred_last=0;
+unsigned int mininode_deferred::deferred_first=0;
+unsigned int mininode_deferred::deferred_last=0;
 
 // mininode_deferred_semitransparent:
+
+unsigned int mininode_deferred_semitransparent::deferred_level=0;
 
 int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    {
@@ -941,6 +943,8 @@ int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    int dorender;
 
    dorender=surf.setextstate(1,pass,4);
+
+   printf("pass %d: dorender=%d\n",pass,dorender); //!!
 
    return(dorender);
    }

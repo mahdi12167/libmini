@@ -1483,8 +1483,6 @@ class mininode_deferred: public mininode_transform
 
    virtual void traverse_pre()
       {
-      deferred_level++;
-
       mininode_geometry::set_pass_frame(pass_first,pass_last);
 
       if (deferred_first>deferred_last)
@@ -1508,13 +1506,6 @@ class mininode_deferred: public mininode_transform
       mininode_transform::traverse_past();
       }
 
-   virtual void traverse_post()
-      {
-      deferred_level--;
-
-      mininode_transform::traverse_post();
-      }
-
    virtual void traverse_exit()
       {
       const mininode_geometry::geometry_deferred_list *list=mininode_geometry::get_deferred();
@@ -1526,11 +1517,13 @@ class mininode_deferred: public mininode_transform
          {
          mtxpush();
 
-         deferred_init();
+         this->deferred_init();
 
          for (unsigned int pass=deferred_first; pass<=deferred_last; pass++)
             {
-            int dorender=deferred_pre(pass);
+            int dorender=this->deferred_pre(pass);
+
+            printf("deferred pass %d: dorender=%d\n",pass,dorender); //!!
 
             if (dorender)
                for (unsigned int i=0; i<s; i++)
@@ -1546,10 +1539,10 @@ class mininode_deferred: public mininode_transform
                      }
                   }
 
-            deferred_post(pass);
+            this->deferred_post(pass);
             }
 
-         deferred_exit();
+         this->deferred_exit();
 
          mininode_geometry::clear_deferred();
 
@@ -1562,8 +1555,8 @@ class mininode_deferred: public mininode_transform
    virtual void deferred_post(unsigned int pass) {}
    virtual void deferred_exit() {}
 
-   static unsigned int deferred_level;
-   static unsigned int deferred_first,deferred_last;
+   static unsigned int deferred_first;
+   static unsigned int deferred_last;
    };
 
 typedef mininode_deferred mininode_root;
@@ -1621,20 +1614,22 @@ class mininode_deferred_semitransparent: public mininode_deferred
 
    virtual void traverse_pre()
       {
-      if (deferred_level==0) mininode_geometry::enable_deferred_semitransparen(TRUE);
+      if (deferred_level++==0) mininode_geometry::enable_deferred_semitransparen(TRUE);
 
       mininode_deferred::traverse_pre();
       }
 
    virtual void traverse_post()
       {
-      mininode_deferred::traverse_post();
+      if (--deferred_level==0) mininode_geometry::enable_deferred_semitransparen(FALSE);
 
-      if (deferred_level==0) mininode_geometry::enable_deferred_semitransparen(FALSE);
+      mininode_deferred::traverse_post();
       }
 
    virtual int deferred_pre(unsigned int pass);
    virtual void deferred_post(unsigned int pass);
+
+   static unsigned int deferred_level;
    };
 
 #endif
