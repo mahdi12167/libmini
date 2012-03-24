@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#define TEST
+#undef TEST
 
 #include "renderer.h"
 
@@ -130,6 +130,7 @@ mininode_group *Renderer::build_ecef_geometry()
    spheres->append_child(new mininode_translate(miniv3d(-9.0, 0.0, 10.0)))->
       append_child(new mininode_color(miniv4d(1.0, 0.5, 0.5, 0.5)))->
       append_child(sphere);
+
    spheres->append_child(new mininode_translate(miniv3d(9.0, 0.0, 10.0)))->
       append_child(new mininode_color(miniv4d(0.5, 0.5, 1.0, 0.5)))->
       append_child(sphere);
