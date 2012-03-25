@@ -935,7 +935,6 @@ unsigned int mininode_deferred::deferred_last=0;
 // mininode_deferred_semitransparent:
 
 unsigned int mininode_deferred_semitransparent::deferred_level=0;
-unsigned int mininode_deferred_semitransparent::deferred_passes=4;
 
 int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    {
