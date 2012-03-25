@@ -1566,7 +1566,7 @@ class mininode_deferred_semitransparent: public mininode_deferred
    //! default constructor
    mininode_deferred_semitransparent()
       : mininode_deferred(minisurf::FIRST_RENDER_PHASE,minisurf::LAST_RENDER_PHASE)
-      {}
+      {deferred_passes=4;}
 
    //! destructor
    virtual ~mininode_deferred_semitransparent() {}
