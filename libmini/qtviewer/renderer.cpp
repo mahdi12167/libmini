@@ -120,7 +120,7 @@ mininode_group *Renderer::build_ecef_geometry()
 
    mininode_ref sphere = new mininode_geometry_sphere(10.0);
    mininode *spheres = group->append_child(new mininode_deferred_semitransparent())->
-                       append_child(new mininode_coord(minicoord(miniv4d(0, 0, 0), minicoord::MINICOORD_LLH)))->
+                       append_child(new mininode_coord(minicoord(miniv4d(-180*3600, 0, 0), minicoord::MINICOORD_LLH)))->
                        append_child(new mininode_scale(10000));
 
    spheres->append_child(new mininode_translate(miniv3d(0.0, 0.0, 10.0)))->
