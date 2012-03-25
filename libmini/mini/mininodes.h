@@ -1571,7 +1571,16 @@ class mininode_deferred_semitransparent: public mininode_deferred
    //! destructor
    virtual ~mininode_deferred_semitransparent() {}
 
+   //! set number of rendering passes for semi-transparent geometry
+   //! 2 = over-operator: fast but with artifacts for non-uniform colors
+   //! 3 = additive blending: compromise between performance and depth perception
+   //! 4 = z-limited additive blending: slow but with good depth perception
+   void set_passes(unsigned int passes)
+      {deferred_passes=passes;}
+
    protected:
+
+   unsigned int deferred_passes;
 
    virtual void traverse_pre()
       {
@@ -1591,7 +1600,6 @@ class mininode_deferred_semitransparent: public mininode_deferred
    virtual void deferred_post(unsigned int pass);
 
    static unsigned int deferred_level;
-   static unsigned int deferred_passes;
    };
 
 typedef mininode_deferred_semitransparent mininode_root;
