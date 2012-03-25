@@ -1591,6 +1591,7 @@ class mininode_deferred_semitransparent: public mininode_deferred
    virtual void deferred_post(unsigned int pass);
 
    static unsigned int deferred_level;
+   static unsigned int deferred_passes;
    };
 
 typedef mininode_deferred_semitransparent mininode_root;

@@ -935,6 +935,7 @@ unsigned int mininode_deferred::deferred_last=0;
 // mininode_deferred_semitransparent:
 
 unsigned int mininode_deferred_semitransparent::deferred_level=0;
+unsigned int mininode_deferred_semitransparent::deferred_passes=4;
 
 int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    {
@@ -942,7 +943,7 @@ int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
 
    int dorender;
 
-   dorender=surf.setextstate(1,pass,4);
+   dorender=surf.setextstate(1,pass,deferred_passes);
 
    return(dorender);
    }
@@ -951,5 +952,5 @@ void mininode_deferred_semitransparent::deferred_post(unsigned int pass)
    {
    static minisurf surf;
 
-   surf.setextstate(0,pass,4);
+   surf.setextstate(0,pass,deferred_passes);
    }

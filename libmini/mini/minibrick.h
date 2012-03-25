@@ -230,7 +230,6 @@ class minisurf
 
    //! initialize state for each phase
    //! for rendering additional external geometry
-   //! use only if you exactly know what you are doing (this is not for wimps :)
    int setextstate(int enable,
                    int phase,
                    int passes,
