@@ -1450,6 +1450,23 @@ class mininode_geometry_torus: public mininode_geometry_tube
 
    };
 
+//! geometry evaluator node
+//!  provides implicit triangle-stripped triangle mesh
+class mininode_geometry_evaluator: public mininode_geometry
+   {
+   public:
+
+   //! default constructor
+   mininode_geometry_evaluator();
+
+   //! construct mesh by evaluating each mesh vertex
+   void construct(int tesselx=64,int tessely=64);
+
+   protected:
+
+   virtual miniv3d evaluate(double x,double y) = 0;
+   };
+
 //! deferred transform node (base class)
 //!  enables deferred rendering after graph traversal
 class mininode_deferred: public mininode_transform
@@ -1517,11 +1534,11 @@ class mininode_deferred: public mininode_transform
          {
          mtxpush();
 
-         this->deferred_init();
+         deferred_init();
 
          for (unsigned int pass=deferred_first; pass<=deferred_last; pass++)
             {
-            int dorender=this->deferred_pre(pass);
+            int dorender=deferred_pre(pass);
 
             if (dorender)
                for (unsigned int i=0; i<s; i++)
@@ -1537,10 +1554,10 @@ class mininode_deferred: public mininode_transform
                      }
                   }
 
-            this->deferred_post(pass);
+            deferred_post(pass);
             }
 
-         this->deferred_exit();
+         deferred_exit();
 
          mininode_geometry::clear_deferred();
 
@@ -1548,10 +1565,10 @@ class mininode_deferred: public mininode_transform
          }
       }
 
-   virtual void deferred_init() {}
-   virtual int deferred_pre(unsigned int pass) {return(FALSE);}
-   virtual void deferred_post(unsigned int pass) {}
-   virtual void deferred_exit() {}
+   virtual void deferred_init() = 0;
+   virtual int deferred_pre(unsigned int pass) = 0;
+   virtual void deferred_post(unsigned int pass) = 0;
+   virtual void deferred_exit() = 0;
 
    static unsigned int deferred_first;
    static unsigned int deferred_last;
@@ -1596,8 +1613,10 @@ class mininode_deferred_semitransparent: public mininode_deferred
       mininode_deferred::traverse_post();
       }
 
+   virtual void deferred_init() {}
    virtual int deferred_pre(unsigned int pass);
    virtual void deferred_post(unsigned int pass);
+   virtual void deferred_exit() {}
 
    static unsigned int deferred_level;
    };

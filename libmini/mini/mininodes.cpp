@@ -927,6 +927,35 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
       }
    }
 
+// mininode_geometry_evaluator:
+
+mininode_geometry_evaluator::mininode_geometry_evaluator()
+   : mininode_geometry(0,3,0)
+   {}
+
+void mininode_geometry_evaluator::construct(int tesselx,int tessely)
+   {
+   for (int i=0; i<tesselx; i++)
+      {
+      beginstrip();
+
+      for (int j=0; j<=tessely; j++)
+         {
+         double x1=(double)i/tesselx;
+         double x2=(double)(i+1)/tesselx;
+         double y=(double)j/tesselx;
+
+         miniv3d pos1=evaluate(x1,y);
+         miniv3d pos2=evaluate(x2,y);
+
+         //!! setnormal();
+         addvtx(pos1);
+         //!! setnormal();
+         addvtx(pos2);
+         }
+      }
+   }
+
 // mininode_deferred:
 
 unsigned int mininode_deferred::deferred_first=0;
