@@ -933,6 +933,20 @@ mininode_geometry_evaluator::mininode_geometry_evaluator()
    : mininode_geometry(0,3,0)
    {}
 
+void mininode_geometry_evaluator::construct_vtx(double x,double y,double s)
+   {
+   double d=0.1*s;
+
+   miniv3d pos=evaluate(x,y);
+   miniv3d left=evaluate(x-d,y);
+   miniv3d right=evaluate(x+d,y);
+   miniv3d bottom=evaluate(x,y-d);
+   miniv3d top=evaluate(x,y+d);
+
+   setnrm((right-left)/(2*d),(top-bottom)/(2*d),1.0);
+   addvtx(pos);
+   }
+
 void mininode_geometry_evaluator::construct(int tesselx,int tessely)
    {
    for (int i=0; i<tesselx; i++)
@@ -943,15 +957,10 @@ void mininode_geometry_evaluator::construct(int tesselx,int tessely)
          {
          double x1=(double)i/tesselx;
          double x2=(double)(i+1)/tesselx;
-         double y=(double)j/tesselx;
+         double y=(double)j/tessely;
 
-         miniv3d pos1=evaluate(x1,y);
-         miniv3d pos2=evaluate(x2,y);
-
-         //!! setnormal();
-         addvtx(pos1);
-         //!! setnormal();
-         addvtx(pos2);
+         construct_vtx(x1,y,1.0/(max(tesselx,tessely)-1));
+         construct_vtx(x2,y,1.0/(max(tesselx,tessely)-1));
          }
       }
    }

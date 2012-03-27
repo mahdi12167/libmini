@@ -1465,6 +1465,10 @@ class mininode_geometry_evaluator: public mininode_geometry
    protected:
 
    virtual miniv3d evaluate(double x,double y) = 0;
+
+   private:
+
+   void construct_vtx(double x,double y,double s);
    };
 
 //! deferred transform node (base class)
