@@ -930,7 +930,7 @@ mininode_geometry_torus::mininode_geometry_torus(const minidyna<miniv3d> &pos,do
 // mininode_geometry_evaluator:
 
 mininode_geometry_evaluator::mininode_geometry_evaluator()
-   : mininode_geometry(0,3,0)
+   : mininode_geometry(0,3,2)
    {}
 
 void mininode_geometry_evaluator::construct_vtx(double x,double y,double s)
@@ -959,6 +959,7 @@ void mininode_geometry_evaluator::construct_vtx(double x,double y,double s)
    nrm.normalize();
 
    setnrm(nrm);
+   settex(x,y);
    addvtx(vtx);
    }
 
