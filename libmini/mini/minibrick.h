@@ -119,7 +119,7 @@ class minispect
    void setcullmapsize(int size=256);
 
    //! get actual size of cullmap
-   int getcullmapsize() {return(CSIZE);}
+   int getcullmapsize() {return(CULLSIZE);}
 
    //! get cull map
    unsigned char *getcullmap();
