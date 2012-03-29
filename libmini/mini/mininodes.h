@@ -1452,6 +1452,8 @@ class mininode_geometry_torus: public mininode_geometry_tube
 
 //! geometry evaluator node
 //!  provides implicit triangle-stripped triangle mesh
+//!  has normals
+//!  has texture coordinates from evaluation domain
 class mininode_geometry_evaluator: public mininode_geometry
    {
    public:
