@@ -78,7 +78,7 @@ minispect::minispect()
    VTX1=new minivtxarray[NMAX];
    VTX2=new minivtxarray[NMAX];
 
-   CSIZE=256;
+   CULLSIZE=256;
    CULLMAP=NULL;
 
    UPDATED=0;
@@ -291,9 +291,9 @@ void minispect::setcullmapsize(int size)
    {
    if (size<2) ERRORMSG();
 
-   if (size==CSIZE) return;
+   if (size==CULLSIZE) return;
 
-   CSIZE=size;
+   CULLSIZE=size;
 
    UPDATED=1;
    }
@@ -309,31 +309,31 @@ unsigned char *minispect::getcullmap()
       {
       if (CULLMAP!=NULL) delete[] CULLMAP;
 
-      CULLMAP=new unsigned char[CSIZE*CSIZE];
+      CULLMAP=new unsigned char[CULLSIZE*CULLSIZE];
 
-      for (i=0; i<CSIZE; i++)
-         for (j=0; j<CSIZE; j++)
+      for (i=0; i<CULLSIZE; i++)
+         for (j=0; j<CULLSIZE; j++)
             {
             if (i<=j)
                {
-               imin=(float)i/(CSIZE-1);
-               imax=(float)j/(CSIZE-1);
+               imin=(float)i/(CULLSIZE-1);
+               imax=(float)j/(CULLSIZE-1);
                }
             else
                {
-               imin=(float)j/(CSIZE-1);
-               imax=(float)i/(CSIZE-1);
+               imin=(float)j/(CULLSIZE-1);
+               imax=(float)i/(CULLSIZE-1);
                }
 
             imin=MINVAL+imin*(MAXVAL-MINVAL);
             imax=MINVAL+imax*(MAXVAL-MINVAL);
 
-            CULLMAP[i+j*CSIZE]=1;
+            CULLMAP[i+j*CULLSIZE]=1;
 
             for (k=0; k<N; k++)
                if (ISO[k]>=imin && ISO[k]<=imax)
                   {
-                  CULLMAP[i+j*CSIZE]=0;
+                  CULLMAP[i+j*CULLSIZE]=0;
                   break;
                   }
             }
@@ -356,19 +356,19 @@ int minispect::isvisible(float minval,float maxval)
    minval=(minval-MINVAL)/(MAXVAL-MINVAL);
    maxval=(maxval-MINVAL)/(MAXVAL-MINVAL);
 
-   i=ftrc(ffloor((CSIZE-1)*minval));
-   j=ftrc(fceil((CSIZE-1)*maxval));
+   i=ftrc(ffloor((CULLSIZE-1)*minval));
+   j=ftrc(fceil((CULLSIZE-1)*maxval));
 
    if (i<0 && j<0) return(0);
-   if (i>CSIZE-1 && j>CSIZE-1) return(0);
+   if (i>CULLSIZE-1 && j>CULLSIZE-1) return(0);
 
    if (i<0) i=0;
-   else if (i>CSIZE-1) i=CSIZE-1;
+   else if (i>CULLSIZE-1) i=CULLSIZE-1;
 
    if (j<0) j=0;
-   else if (j>CSIZE-1) j=CSIZE-1;
+   else if (j>CULLSIZE-1) j=CULLSIZE-1;
 
-   if (cullmap[i+j*CSIZE]!=0) return(0);
+   if (cullmap[i+j*CULLSIZE]!=0) return(0);
 
    return(1);
    }
