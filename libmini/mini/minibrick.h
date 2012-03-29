@@ -170,7 +170,7 @@ class minispect
 
    private:
 
-   int CSIZE;
+   int CULLSIZE;
    unsigned char *CULLMAP;
 
    int UPDATED;
