@@ -3,7 +3,8 @@ SOURCES += main.cpp \
            viewerwindow.cpp \
            renderer.cpp \
            viewer.cpp \
-           camera.cpp
+           camera.cpp \
+           nodes.cpp
 
 HEADERS += mainwindow.h \
            mainconst.h \
@@ -11,4 +12,5 @@ HEADERS += mainwindow.h \
            viewerconst.h \
            renderer.h \
            viewer.h \
-           camera.h
+           camera.h \
+           nodes.h
