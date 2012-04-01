@@ -14,15 +14,22 @@ class node_grid_extent: public mininode_geometry_evaluator, public grid_extent
    //! default constructor
    node_grid_extent();
 
+   //! copy constructor
+   node_grid_extent(const grid_extent &ext);
+
    //! custom constructor
    node_grid_extent(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop);
 
    //! default destructor
    virtual ~node_grid_extent() {}
 
+   //! set extent via 4 corner points
+   void set(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,
+            double maxsize=1000.0);
+
    protected:
 
-   void construct();
+   void construct(double maxsize=1000.0);
 
    virtual miniv3d evaluate(double x,double y);
    };
