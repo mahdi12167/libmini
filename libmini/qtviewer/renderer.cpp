@@ -1,7 +1,8 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#undef TEST
+#define TEST
 
+#include "nodes.h"
 #include "renderer.h"
 
 Renderer::Renderer(ViewerWindow* window)
@@ -134,6 +135,15 @@ mininode_group *Renderer::build_ecef_geometry()
    spheres->append_child(new mininode_translate(miniv3d(9.0, 0.0, 10.0)))->
       append_child(new mininode_color(miniv4d(0.5, 0.5, 1.0, 0.5)))->
       append_child(sphere);
+
+   // semi-transparent grid_extent:
+
+   grid_extent ext;
+   ext.set(minicoord(miniv4d(-180*3600, 0, 0), minicoord::MINICOORD_LLH), 3*3600,3*3600);
+
+   group->append_child(new mininode_deferred_semitransparent())->
+      append_child(new mininode_color(miniv4d(0.5, 0.5, 1.0, 0.5)))->
+      append_child(new node_grid_extent(ext));
 
 #endif
 
