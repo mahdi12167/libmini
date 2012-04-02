@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#define TEST
+#undef TEST
 
 #include "nodes.h"
 #include "renderer.h"
@@ -139,7 +139,7 @@ mininode_group *Renderer::build_ecef_geometry()
    // semi-transparent grid_extent:
 
    grid_extent ext;
-   ext.set(minicoord(miniv4d(-180*3600, 0, 0), minicoord::MINICOORD_LLH), 3*3600,3*3600);
+   ext.set(minicoord(miniv4d(-180*3600, 0, 0), minicoord::MINICOORD_LLH), 10*3600,10*3600);
 
    group->append_child(new mininode_deferred_semitransparent())->
       append_child(new mininode_color(miniv4d(0.5, 0.5, 1.0, 0.5)))->

@@ -25,11 +25,11 @@ class node_grid_extent: public mininode_geometry_evaluator, public grid_extent
 
    //! set extent via 4 corner points
    void set(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,
-            double maxsize=1000.0);
+            double maxsize=100000.0);
 
    protected:
 
-   void construct(double maxsize=1000.0);
+   void construct(double maxsize=100000.0);
 
    virtual miniv3d evaluate(double x,double y);
    };
