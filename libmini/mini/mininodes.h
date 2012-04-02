@@ -1188,6 +1188,25 @@ class mininode_geometry_base: public mininode_group, public ministrip
       this->wotex=wotex;
       }
 
+   //! copy constructor
+   mininode_geometry_base(const ministrip &strip,
+                          int wocol=1,int wonrm=0,int wotex=0)
+      : mininode_group(MININODE_GEOMETRY), ministrip(strip)
+      {
+      this->wocol=wocol;
+      this->wonrm=wonrm;
+      this->wotex=wotex;
+      }
+
+   //! copy constructor
+   mininode_geometry_base(const mininode_geometry_base &geo)
+      : mininode_group(MININODE_GEOMETRY), ministrip(geo)
+      {
+      this->wocol=geo.wocol;
+      this->wonrm=geo.wonrm;
+      this->wotex=geo.wotex;
+      }
+
    //! destructor
    virtual ~mininode_geometry_base() {}
 
