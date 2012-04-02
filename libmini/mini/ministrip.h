@@ -50,6 +50,9 @@ class ministrip
    //! default constructor
    ministrip(int colcomps=0,int nrmcomps=0,int texcomps=0);
 
+   //! copy constructor
+   ministrip(const ministrip &strip);
+
    //! destructor
    ~ministrip();
 
@@ -314,6 +317,8 @@ class ministrip
    static void initshader();
 
    private:
+
+   void init(int colcomps,int nrmcomps,int texcomps,int maxsize=1);
 
    struct SHADER_STRUCT
       {

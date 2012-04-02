@@ -419,67 +419,7 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
    {
    int i,j;
 
-   if (colcomps!=0 && colcomps!=3 && colcomps!=4) ERRORMSG();
-   if (nrmcomps!=0 && nrmcomps!=3) ERRORMSG();
-   if (texcomps<0 || texcomps>4) ERRORMSG();
-
-   COLCOMPS=colcomps;
-   NRMCOMPS=nrmcomps;
-   TEXCOMPS=texcomps;
-
-   MAXSIZE=1;
-
-   if ((VTXARRAY=(float *)malloc(3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
-
-   if (COLCOMPS==0) COLARRAY=NULL;
-   else
-      if ((COLARRAY=(float *)malloc(COLCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
-
-   if (NRMCOMPS==0) NRMARRAY=NULL;
-   else
-      if ((NRMARRAY=(float *)malloc(NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
-
-   if (TEXCOMPS==0) TEXARRAY=NULL;
-   else
-      if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
-
-   SIZE=0;
-
-   BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
-   BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
-
-   COLR=1.0f;
-   COLG=1.0f;
-   COLB=1.0f;
-   COLA=1.0f;
-
-   COLAMIN=1.0f;
-   COLAMAX=0.0f;
-
-   NRMX=0.0f;
-   NRMY=1.0f;
-   NRMZ=0.0f;
-
-   TEXX=0.0f;
-   TEXY=0.0f;
-   TEXZ=0.0f;
-   TEXW=1.0f;
-
-   COPYVTX=0;
-
-   SCALE=1.0f;
-
-   for (i=0; i<16; i++) MTX[i]=0.0;
-   for (i=0; i<4; i++) MTX[i+4*i]=1.0;
-   MTXSET=FALSE;
-
-   for (i=0; i<16; i++) TEXMTX[i]=0.0;
-   for (i=0; i<4; i++) TEXMTX[i+4*i]=1.0;
-   TEXMTXSET=FALSE;
-
-   ZSCALE=1.0f;
-
-   USESHADER=-1;
+   init(colcomps,nrmcomps,texcomps);
 
    if (INSTANCES==0)
       {
@@ -525,6 +465,33 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
       initsnippets();
       initshader();
       }
+
+   INSTANCES++;
+   }
+
+// copy constructor
+ministrip::ministrip(const ministrip &strip)
+   {
+   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
+
+   SIZE=strip.SIZE;
+
+   memcpy(VTXARRAY,strip.VTXARRAY,3*SIZE*sizeof(float));
+
+   if (COLARRAY!=NULL)
+      memcpy(COLARRAY,strip.COLARRAY,COLCOMPS*SIZE*sizeof(float));
+
+   if (NRMARRAY!=NULL)
+      memcpy(NRMARRAY,strip.NRMARRAY,NRMCOMPS*SIZE*sizeof(float));
+
+   if (TEXARRAY!=NULL)
+      memcpy(TEXARRAY,strip.TEXARRAY,TEXCOMPS*SIZE*sizeof(float));
+
+   BBOXMIN=strip.BBOXMIN;
+   BBOXMAX=strip.BBOXMAX;
+
+   COLAMIN=strip.COLAMIN;
+   COLAMAX=strip.COLAMAX;
 
    INSTANCES++;
    }
@@ -596,6 +563,74 @@ ministrip::~ministrip()
 
       freesnippets();
       }
+   }
+
+// init strip
+void ministrip::init(int colcomps,int nrmcomps,int texcomps,int maxsize)
+   {
+   int i;
+
+   if (colcomps!=0 && colcomps!=3 && colcomps!=4) ERRORMSG();
+   if (nrmcomps!=0 && nrmcomps!=3) ERRORMSG();
+   if (texcomps<0 || texcomps>4) ERRORMSG();
+
+   COLCOMPS=colcomps;
+   NRMCOMPS=nrmcomps;
+   TEXCOMPS=texcomps;
+
+   MAXSIZE=maxsize;
+
+   if ((VTXARRAY=(float *)malloc(3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
+
+   if (COLCOMPS==0) COLARRAY=NULL;
+   else
+      if ((COLARRAY=(float *)malloc(COLCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
+
+   if (NRMCOMPS==0) NRMARRAY=NULL;
+   else
+      if ((NRMARRAY=(float *)malloc(NRMCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
+
+   if (TEXCOMPS==0) TEXARRAY=NULL;
+   else
+      if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
+
+   SIZE=0;
+
+   BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+   BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
+
+   COLR=1.0f;
+   COLG=1.0f;
+   COLB=1.0f;
+   COLA=1.0f;
+
+   COLAMIN=1.0f;
+   COLAMAX=0.0f;
+
+   NRMX=0.0f;
+   NRMY=1.0f;
+   NRMZ=0.0f;
+
+   TEXX=0.0f;
+   TEXY=0.0f;
+   TEXZ=0.0f;
+   TEXW=1.0f;
+
+   COPYVTX=0;
+
+   SCALE=1.0f;
+
+   for (i=0; i<16; i++) MTX[i]=0.0;
+   for (i=0; i<4; i++) MTX[i+4*i]=1.0;
+   MTXSET=FALSE;
+
+   for (i=0; i<16; i++) TEXMTX[i]=0.0;
+   for (i=0; i<4; i++) TEXMTX[i+4*i]=1.0;
+   TEXMTXSET=FALSE;
+
+   ZSCALE=1.0f;
+
+   USESHADER=-1;
    }
 
 // clear strip
