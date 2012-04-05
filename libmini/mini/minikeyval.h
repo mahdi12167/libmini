@@ -14,10 +14,18 @@ template <class Item>
 class minikeyval_pair
    {
    public:
+
+   // constructors
    minikeyval_pair() {key=""; val=Item();}
    minikeyval_pair(const ministring &k,const Item &v) {key=k; val=v;}
+   minikeyval_pair(const ministring &k,const Item &v,const minidyna<ministring> &t) {key=k; val=v; tags=t;}
+
+   // key-value pair
    ministring key;
    Item val;
+
+   // optional pair tags
+   minidyna<ministring> tags;
    };
 
 //! templated key-value pair comparison
@@ -49,8 +57,25 @@ class minikeyval
       sorted=FALSE;
       }
 
+   //! add key-value pair with tags
+   void add(const ministring &key,const Item &val,const minidyna<ministring> &tags)
+      {
+      pairs.append(minikeyval_pair<Item>(key,val,tags));
+      sorted=FALSE;
+      }
+
    //! get value reference from key
    Item *get(const ministring &key)
+      {return(&get_pair(key)->val);}
+
+   //! get tag reference from key
+   minidyna<ministring> &get_tags(const ministring &key)
+      {return(get_pair(key)->tags);}
+
+   protected:
+
+   //! get pair reference from key
+   minikeyval_pair<Item> *get_pair(const ministring &key)
       {
       unsigned int size;
       unsigned int left,right,mid;
@@ -75,8 +100,9 @@ class minikeyval
          else left=mid;
          }
 
-      return(&pairs[mid].val);
+      return(&pairs[mid]);
       }
+
    };
 
 #endif
