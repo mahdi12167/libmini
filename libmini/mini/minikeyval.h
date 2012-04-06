@@ -80,7 +80,10 @@ class minikeyval
       for (unsigned int i=0; i<pairs.getsize(); i++)
          for (unsigned int j=0; j<pairs[i].tags.getsize(); j++)
             if (pairs[i].tags[j]==tag)
+               {
                list.append(&pairs[i].val);
+               break;
+               }
 
       return(list);
       }
