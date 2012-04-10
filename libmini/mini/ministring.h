@@ -376,7 +376,8 @@ inline int operator == (const ministrings &a,const ministrings &b)
    return(TRUE);
    }
 
-//! add operator (merge string lists)
+//! add operator (union of string lists)
+//!  elements of left hand operand are assumed to be unique
 inline ministrings operator + (const ministrings &a,const ministrings &b)
    {
    unsigned int i,j;
@@ -405,6 +406,7 @@ inline ministrings operator + (const ministrings &a,const ministrings &b)
    }
 
 //! sub operator (remove union of string lists)
+//!  elements of left hand operand are assumed to be unique
 inline ministrings operator - (const ministrings &a,const ministrings &b)
    {
    unsigned int i,j;
