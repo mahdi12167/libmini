@@ -376,6 +376,30 @@ inline int operator == (const ministrings &a,const ministrings &b)
    return(TRUE);
    }
 
+//! less than operator (inclusion of string lists)
+inline int operator < (const ministrings &a,const ministrings &b)
+   {
+   unsigned int i,j;
+
+   BOOLINT inclusion;
+
+   for (i=0; i<a.getsize(); i++)
+      {
+      inclusion=FALSE;
+
+      for (j=0; j<b.getsize(); j++)
+         if (a[i]==b[j])
+            {
+            inclusion=TRUE;
+            break;
+            }
+
+      if (!inclusion) return(FALSE);
+      }
+
+   return(TRUE);
+   }
+
 //! add operator (union of string lists)
 //!  elements of left hand operand are assumed to be unique
 inline ministrings operator + (const ministrings &a,const ministrings &b)
