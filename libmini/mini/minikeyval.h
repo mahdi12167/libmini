@@ -88,6 +88,18 @@ class minikeyval
       return(list);
       }
 
+   //! get list of tagged items
+   minidyna<Item *> get_tagged_items(const ministrings &tags)
+      {
+      minidyna<Item *> list;
+
+      for (unsigned int i=0; i<pairs.getsize(); i++)
+         if (tags<pairs[i].tags)
+            list.append(&pairs[i].val);
+
+      return(list);
+      }
+
    protected:
 
    //! get pair reference from key
