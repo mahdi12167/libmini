@@ -14,30 +14,39 @@ class object
    {
    public:
 
-   object(const ministring &name="",const minicoord &crd=minicoord());
+   object(const ministring &name="",const ministring &repo="");
+   virtual ~object();
 
-   ~object();
-
-   ministring repo; // data repository
+   ministring repository; // data repository
    ministring filename; // data file in repository
 
-   minicoord coord; // barycenter
+   BOOLINT is_valid();
+
+   void load();
+   void clear();
+
+   minicoord get_coord() {return(coord);}
+   double get_radius() {return(radius);}
 
    protected:
 
-   void *data; // data chunk
-   unsigned int bytes; // data chunk length
+   BOOLINT valid;
+
+   minicoord coord; // object barycenter
+   double radius; // object radius
 
    mininode *node; // node reference
 
-   void load();
+   virtual BOOLINT load_header(minicoord &c,double &radius) {return(FALSE);}
+   virtual BOOLINT load_file() {}
+   virtual void clear_file() {}
    };
 
 //! object list
-typedef minidyna<object *> object_list;
+typedef minidyna<object **> object_list;
 
 //! object container
-class objects: public minikeyval<object>
+class objects: public minikeyval<object *>
    {
    public:
 
@@ -47,7 +56,7 @@ class objects: public minikeyval<object>
    //! default destructor
    ~objects();
 
-   void add(const ministring &key,const ministring &filename);
+   void add(object *obj);
    object_list list(const ministring &tag);
    };
 

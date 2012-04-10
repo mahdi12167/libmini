@@ -4,39 +4,39 @@
 
 #include "objects.h"
 
-object::object(const ministring &name,const minicoord &crd)
+object::object(const ministring &name,const ministring &repo)
    {
    filename=name;
-   coord=crd;
+   repository=repo;
 
-   data=NULL;
-   bytes=0;
+   valid=load_header(coord,radius);
 
    node=NULL;
    }
 
 object::~object()
-   {if (data!=NULL) free(data);}
+   {clear_file();}
 
 void object::load()
-   {
-   data=readfile((repo+filename).c_str(),&bytes);
-   if (data==NULL) ERRORMSG();
-   }
+   {valid=load_file();}
+
+void object::clear()
+   {clear_file();}
 
 objects::objects()
-   : minikeyval<object>()
+   : minikeyval<object *>()
    {}
 
 objects::~objects()
-   {}
-
-void objects::add(const ministring &key,const ministring &filename)
    {
-   //!!
+   unsigned int i;
+
+   for (i=0; i<get_pairs(); i++)
+      delete get(i);
    }
 
-object_list list(const ministring &tag)
-   {
-   //!!
-   }
+void objects::add(object *obj)
+   {minikeyval<object *>::add(obj->filename,obj);}
+
+object_list objects::list(const ministring &tag)
+   {return(minikeyval<object *>::get_tagged_items(tag));}
