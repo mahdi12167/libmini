@@ -70,7 +70,7 @@ class minikeyval
 
    //! get value reference from index
    Item *get(unsigned int i)
-      {return(&pairs[i]->val);}
+      {return(&pairs[i].val);}
 
    //! get value reference from key
    Item *get(const ministring &key)
