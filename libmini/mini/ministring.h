@@ -360,7 +360,69 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
    return(out);
    }
 
+//! string list
 typedef minidyna<ministring> ministrings;
+
+//! cmp operator (compare string lists)
+inline int operator == (const ministrings &a,const ministrings &b)
+   {
+   unsigned int i;
+
+   if (a.getsize()!=b.getsize()) return(FALSE);
+
+   for (i=0; i<a.getsize(); i++)
+      if (a[i]!=b[i]) return(FALSE);
+
+   return(TRUE);
+   }
+
+//! add operator (merge string lists)
+inline ministrings operator + (const ministrings &a,const ministrings &b)
+   {
+   unsigned int i,j;
+
+   ministrings strs;
+
+   BOOLINT duplicate;
+
+   strs=a;
+
+   for (j=0; j<b.getsize(); j++)
+      {
+      duplicate=FALSE;
+
+      for (i=0; i<strs.getsize(); i++)
+         if (strs[i]==b[j])
+            {
+            duplicate=TRUE;
+            continue;
+            }
+
+      if (!duplicate) strs.append(b[j]);
+      }
+
+   return(strs);
+   }
+
+//! sub operator (remove union of string lists)
+inline ministrings operator - (const ministrings &a,const ministrings &b)
+   {
+   unsigned int i,j;
+
+   ministrings strs;
+
+   strs=a;
+
+   for (j=0; j<b.getsize(); j++)
+      for (i=0; i<strs.getsize(); i++)
+         while (strs[i]==b[j])
+            {
+            strs.remove(i);
+            if (i+1>strs.getsize()) break;
+            }
+
+   return(strs);
+   }
 
 //! stream output
 inline std::ostream& operator << (std::ostream &out,const ministrings &a)
@@ -370,7 +432,7 @@ inline std::ostream& operator << (std::ostream &out,const ministrings &a)
    for (i=0; i<a.getsize(); i++)
       {
       out << a[i];
-      if (i<a.getsize()-1) out << " ";
+      if (i<a.getsize()-1) out << ";";
       }
 
    return(out);
