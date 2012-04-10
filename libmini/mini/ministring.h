@@ -360,6 +360,24 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
    return(out);
    }
 
+typedef minidyna<ministring> ministrings;
+
+//! stream output
+inline std::ostream& operator << (std::ostream &out,const ministrings &a)
+   {
+   unsigned int i;
+
+   for (i=0; i<a.getsize(); i++)
+      {
+      out << a[i];
+      if (i<a.getsize()-1) out << " ";
+      }
+
+   return(out);
+   }
+
+// logging:
+
 static BOOLINT minilog_switch=FALSE;
 
 inline void minilog_on()
