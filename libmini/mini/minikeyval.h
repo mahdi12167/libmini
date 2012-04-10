@@ -50,6 +50,10 @@ class minikeyval
    //! destructor
    ~minikeyval() {}
 
+   //! get number of pairs
+   unsigned int get_pairs() const
+      {return(pairs.getsize());}
+
    //! add key-value pair
    void add(const ministring &key,const Item &val)
       {
@@ -63,6 +67,10 @@ class minikeyval
       pairs.append(minikeyval_pair<Item>(key,val,tags));
       sorted=FALSE;
       }
+
+   //! get value reference from index
+   Item *get(unsigned int i)
+      {return(&pairs[i]->val);}
 
    //! get value reference from key
    Item *get(const ministring &key)
