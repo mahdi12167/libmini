@@ -4,7 +4,7 @@
 
 #include "objects.h"
 
-object::object(const ministring &name,const ministring &repo)
+Object::Object(const ministring &name,const ministring &repo)
    {
    filename=name;
    repository=repo;
@@ -14,20 +14,20 @@ object::object(const ministring &name,const ministring &repo)
    node=NULL;
    }
 
-object::~object()
+Object::~Object()
    {clear_file();}
 
-void object::load()
+void Object::load()
    {valid=load_file();}
 
-void object::clear()
+void Object::clear()
    {clear_file();}
 
-objects::objects()
-   : minikeyval<object *>()
+Objects::Objects()
+   : minikeyval<Object *>()
    {}
 
-objects::~objects()
+Objects::~Objects()
    {
    unsigned int i;
 
@@ -35,8 +35,17 @@ objects::~objects()
       delete get(i);
    }
 
-void objects::add(object *obj)
-   {minikeyval<object *>::add(obj->filename,obj);}
+void Objects::add(Object *obj)
+   {minikeyval<Object *>::add(obj->filename,obj);}
 
-object_list objects::list(const ministring &tag)
-   {return(minikeyval<object *>::get_tagged_items(tag));}
+void Objects::clear()
+   {minikeyval<Object *>::clear();}
+
+Object *Objects::get(const ministring &key)
+   {return(*(minikeyval<Object *>::get(key)));}
+
+Object_list Objects::list(const ministring &tag)
+   {return(minikeyval<Object *>::get_tagged_items(tag));}
+
+Object_list Objects::list(const ministrings &tags)
+   {return(minikeyval<Object *>::get_tagged_items(tags));}

@@ -10,12 +10,12 @@
 #include <mini/mininode.h>
 
 //! object
-class object
+class Object
    {
    public:
 
-   object(const ministring &name="",const ministring &repo="");
-   virtual ~object();
+   Object(const ministring &name="",const ministring &repo="");
+   virtual ~Object();
 
    ministring repository; // data repository
    ministring filename; // data file in repository
@@ -43,21 +43,25 @@ class object
    };
 
 //! object list
-typedef minidyna<object **> object_list;
+typedef minidyna<Object **> Object_list;
 
 //! object container
-class objects: public minikeyval<object *>
+class Objects: public minikeyval<Object *>
    {
    public:
 
    //! default constructor
-   objects();
+   Objects();
 
    //! default destructor
-   ~objects();
+   ~Objects();
 
-   void add(object *obj);
-   object_list list(const ministring &tag);
+   void add(Object *obj);
+   void clear();
+
+   Object *get(const ministring &key);
+   Object_list list(const ministring &tag);
+   Object_list list(const ministrings &tags);
    };
 
 #endif

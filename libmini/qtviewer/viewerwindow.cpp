@@ -223,14 +223,32 @@ void ViewerWindow::loadMap(QString url)
                            QMessageBox::Ok);
 }
 
+void ViewerWindow::gotoMap(minilayer *layer)
+{
+   viewer->getCamera()->focusOnMap(layer);
+}
+
 void ViewerWindow::clearMaps()
 {
    viewer->clearMaps();
 }
 
-void ViewerWindow::gotoMap(minilayer *layer)
+void ViewerWindow::loadObject(const ministring &url)
 {
-   viewer->getCamera()->focusOnMap(layer);
+   if (url.endswith(".tif"))
+      objects.add(new Object(url,""));
+}
+
+void ViewerWindow::gotoObject(const ministring &key)
+{
+   Object *obj;
+
+   obj=objects.get(key);
+}
+
+void ViewerWindow::clearObjects()
+{
+   objects.clear();
 }
 
 void ViewerWindow::toggleStereo(bool on)

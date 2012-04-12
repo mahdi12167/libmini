@@ -12,6 +12,8 @@
 
 #include <mini/mini_object.h>
 
+#include "objects.h"
+
 class Renderer;
 
 class QMimeData;
@@ -33,9 +35,12 @@ public:
    QSize sizeHint() const;
 
    void loadMap(QString url);
+   void gotoMap(minilayer *layer);
    void clearMaps();
 
-   void gotoMap(minilayer *layer);
+   void loadObject(const ministring &url);
+   void gotoObject(const ministring &key);
+   void clearObjects();
 
    void toggleStereo(bool on);
    void toggleWireFrame(bool on);
@@ -77,6 +82,8 @@ protected:
 
 private:
    Renderer *viewer;
+
+   Objects objects;
 
    QPoint lastPos;
    QPoint movedPos;
