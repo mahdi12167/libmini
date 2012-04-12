@@ -183,6 +183,28 @@ class ministring: public ministring_base
    ministring head(const char *sub) const
       {return(head(ministring(sub)));}
 
+   //! check for prefix
+   BOOLINT startswith(const ministring_base &prefix)
+      {
+      unsigned int idx;
+
+      if (find(prefix,idx))
+         if (idx==0) return(TRUE);
+
+      return(FALSE);
+      }
+
+   //! check for suffix
+   BOOLINT endswith(const ministring_base &suffix)
+      {
+      unsigned int idx;
+
+      if (findr(suffix,idx))
+         if (idx==getsize()-suffix.getsize()) return(TRUE);
+
+      return(FALSE);
+      }
+
    //! substitute sub-strings
    void substitute(const ministring_base &sub,const ministring_base &with)
       {
@@ -440,12 +462,8 @@ inline ministrings operator - (const ministrings &a,const ministrings &b)
    strs=a;
 
    for (j=0; j<b.getsize(); j++)
-      for (i=0; i<strs.getsize(); i++)
-         while (strs[i]==b[j])
-            {
-            strs.remove(i);
-            if (i+1>strs.getsize()) break;
-            }
+      for (i=strs.getsize(); i>0; i--)
+         if (strs[i-1]==b[j]) strs.remove(i-1);
 
    return(strs);
    }
