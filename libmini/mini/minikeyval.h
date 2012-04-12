@@ -75,6 +75,10 @@ class minikeyval
       sorted=FALSE;
       }
 
+   //! clear key-value pairs
+   void clear()
+      {pairs.clear();}
+
    //! get value reference from index
    Item *get(unsigned int i)
       {return(&pairs[i].val);}
