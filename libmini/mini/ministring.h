@@ -184,7 +184,7 @@ class ministring: public ministring_base
       {return(head(ministring(sub)));}
 
    //! check for prefix
-   BOOLINT startswith(const ministring_base &prefix)
+   BOOLINT startswith(const ministring_base &prefix) const
       {
       unsigned int idx;
 
@@ -195,11 +195,11 @@ class ministring: public ministring_base
       }
 
    //! check for prefix
-   BOOLINT startswith(const char *prefix)
+   BOOLINT startswith(const char *prefix) const
       {return(startswith(ministring(prefix)));}
 
    //! check for suffix
-   BOOLINT endswith(const ministring_base &suffix)
+   BOOLINT endswith(const ministring_base &suffix) const
       {
       unsigned int idx;
 
@@ -210,7 +210,7 @@ class ministring: public ministring_base
       }
 
    //! check for suffix
-   BOOLINT endswith(const char *suffix)
+   BOOLINT endswith(const char *suffix) const
       {return(endswith(ministring(suffix)));}
 
    //! substitute sub-strings
