@@ -194,6 +194,10 @@ class ministring: public ministring_base
       return(FALSE);
       }
 
+   //! check for prefix
+   BOOLINT startswith(const char *prefix)
+      {return(startswith(ministring(prefix)));}
+
    //! check for suffix
    BOOLINT endswith(const ministring_base &suffix)
       {
@@ -204,6 +208,10 @@ class ministring: public ministring_base
 
       return(FALSE);
       }
+
+   //! check for suffix
+   BOOLINT endswith(const char *suffix)
+      {return(endswith(ministring(suffix)));}
 
    //! substitute sub-strings
    void substitute(const ministring_base &sub,const ministring_base &with)
