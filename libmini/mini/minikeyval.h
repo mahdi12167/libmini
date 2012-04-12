@@ -61,6 +61,13 @@ class minikeyval
       sorted=FALSE;
       }
 
+   //! add key-value pair with tag
+   void add(const ministring &key,const Item &val,const ministring &tag)
+      {
+      pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
+      sorted=FALSE;
+      }
+
    //! add key-value pair with tags
    void add(const ministring &key,const Item &val,const ministrings &tags)
       {
