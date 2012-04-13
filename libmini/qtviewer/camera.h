@@ -5,10 +5,8 @@
 
 #include <QtCore/QTime>
 
-#include <mini/minicam.h>
-#include <mini/minicurve.h>
-
-#include <mini/mininodes.h>
+#include <mini/mini_math.h>
+#include <mini/mini_object.h>
 
 #include "cameraconst.h"
 
@@ -26,7 +24,7 @@ enum modifierKeys
 };
 
 //! qt viewer camera node
-class Camera : public mininode_cam
+class Camera: public mininode_cam
 {
 public:
    Camera(ViewerWindow *window, miniearth *earth,
