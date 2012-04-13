@@ -113,7 +113,7 @@ class minikeyval
       minidyna<Item *> list;
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
-         if (tags<pairs[i].tags)
+         if (tags/pairs[i].tags)
             list.append(&pairs[i].val);
 
       return(list);
