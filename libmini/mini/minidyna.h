@@ -160,6 +160,10 @@ class minidyna
    void expandsize(unsigned int size,const Item &c)
       {growsize(size,(SIZE>0)?get(SIZE-1):c);}
 
+   //! truncate array at index
+   void truncate(unsigned int idx)
+      {if (idx<SIZE) setsize(idx);}
+
    //! clear with value
    void clear(const Item &c)
       {
