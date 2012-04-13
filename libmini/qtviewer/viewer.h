@@ -5,6 +5,7 @@
 
 #include <QtOpenGL/qgl.h>
 
+#include <mini/mini_generic.h>
 #include <mini/mini_tileset.h>
 #include <mini/mini_object.h>
 #include <mini/mini_sfx.h>
@@ -28,7 +29,7 @@ public:
    Camera*    getCamera();
    void       resizeWindow();
 
-   minilayer* loadMap(const char* url);
+   minilayer* loadMap(ministring url);
    void       clearMaps();
 
    void       draw();

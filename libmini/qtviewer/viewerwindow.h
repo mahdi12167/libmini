@@ -34,12 +34,12 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
-   void loadMap(QString url);
+   void loadMap(ministring url);
    void gotoMap(minilayer *layer);
    void clearMaps();
 
-   void loadObject(const ministring &url);
-   void gotoObject(const ministring &key);
+   void loadObject(ministring url);
+   void gotoObject(ministring key);
    void clearObjects();
 
    void toggleStereo(bool on);

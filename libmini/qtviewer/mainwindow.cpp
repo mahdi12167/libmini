@@ -269,7 +269,7 @@ void MainWindow::open()
       fileName = fd->selectedFiles().at(0);
 
    if (!fileName.isNull())
-      viewerWindow->loadMap(fileName);
+      viewerWindow->loadMap(fileName.toStdString().c_str());
 }
 
 void MainWindow::clear()

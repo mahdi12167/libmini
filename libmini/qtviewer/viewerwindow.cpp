@@ -58,7 +58,7 @@ void ViewerWindow::initializeGL()
       // init map from arguments
       QStringList dataPathList = QCoreApplication::arguments();
       for (int i=1; i<dataPathList.size(); i++)
-         loadMap(dataPathList[i]);
+         loadMap(dataPathList[i].toStdString().c_str());
    }
 
    qglClearColor(Qt::black);
@@ -196,30 +196,29 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    viewer->getCamera()->timerEvent(event->timerId());
 }
 
-void ViewerWindow::loadMap(QString url)
+void ViewerWindow::loadMap(ministring url)
 {
    minilayer *layer;
 
-   if (url.endsWith(".ini", Qt::CaseInsensitive))
+   if (url.endswith(".ini"))
    {
-      int lio1=url.lastIndexOf("/");
-      int lio2=url.lastIndexOf("\\");
+      unsigned int lio,lio1,lio2;
 
-      if (lio1>0 && lio2>0)
-         url.truncate((lio1>lio2)?lio1:lio2);
-      else if (lio1>0)
-         url.truncate(lio1);
-      else if (lio2>0)
-         url.truncate(lio2);
+      lio=url.getsize();
+
+      if (url.findr("/",lio1)) lio=lio1;
+      else if (url.findr("\\",lio2)) lio=lio2;
+
+      url.truncate(lio);
    }
 
-   layer=viewer->loadMap(url.toStdString().c_str());
+   layer=viewer->loadMap(url);
 
    if (layer!=NULL)
-      emit changed(url, layer);
+      emit changed(url.c_str(), layer);
    else
       QMessageBox::warning(this, "Error",
-                           "Unable to load map data from url="+url,
+                           "Unable to load map data from url="+QString(url.c_str()),
                            QMessageBox::Ok);
 }
 
@@ -233,13 +232,13 @@ void ViewerWindow::clearMaps()
    viewer->clearMaps();
 }
 
-void ViewerWindow::loadObject(const ministring &url)
+void ViewerWindow::loadObject(ministring url)
 {
    if (url.endswith(".tif"))
       objects.add(new Object(url,""));
 }
 
-void ViewerWindow::gotoObject(const ministring &key)
+void ViewerWindow::gotoObject(ministring key)
 {
    Object *obj;
 
@@ -329,7 +328,7 @@ void ViewerWindow::dropEvent(QDropEvent *event)
       for (int i=0; i<urlList.size(); i++)
       {
          QUrl url = urlList.at(i);
-         loadMap(url.toString());
+         loadMap(url.toString().toStdString().c_str());
       }
    }
 }

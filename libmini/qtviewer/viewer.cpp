@@ -91,16 +91,16 @@ void Viewer::resizeViewport()
 }
 
 // load map layer from url
-minilayer* Viewer::loadMap(const char* url)
+minilayer* Viewer::loadMap(ministring url)
 {
    minilayer *layer;
 
    Camera *camera = getCamera();
 
    if (m_bIsInited)
-      if (url!=NULL)
+      if (!url.empty())
       {
-         layer=getearth()->loadLTS(url, TRUE, TRUE, VIEWER_LEVELS);
+         layer=getearth()->loadLTS(url.c_str(), TRUE, TRUE, VIEWER_LEVELS);
 
          if (layer!=NULL)
          {
