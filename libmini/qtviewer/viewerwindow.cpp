@@ -234,8 +234,8 @@ void ViewerWindow::clearMaps()
 
 void ViewerWindow::loadObject(ministring url)
 {
-   if (url.endswith(".tif"))
-      objects.add(new Object(url,""));
+   if (url.endswith(".ini"))
+      objects.add(new Object_tileset(url,"tileset",NULL));
 }
 
 void ViewerWindow::gotoObject(ministring key)
@@ -243,6 +243,8 @@ void ViewerWindow::gotoObject(ministring key)
    Object *obj;
 
    obj=objects.get(key);
+
+   //!! if tileset get layer* from object list
 }
 
 void ViewerWindow::clearObjects()

@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include <mini/miniio.h>
+#include <mini/mini_util.h>
 
 #include "objects.h"
 
@@ -9,19 +9,12 @@ Object::Object(const ministring &name,const ministring &repo)
    filename=name;
    repository=repo;
 
-   valid=load_header(coord,radius);
-
+   valid=FALSE;
    node=NULL;
    }
 
 Object::~Object()
-   {clear_file();}
-
-void Object::load()
-   {valid=load_file();}
-
-void Object::clear()
-   {clear_file();}
+   {if (node!=NULL) delete node;}
 
 Objects::Objects()
    : minikeyval<Object *>()

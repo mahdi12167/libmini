@@ -21,7 +21,7 @@ class QMimeData;
 //! qt viewer window that
 //! forwards mouse events to the camera and
 //! forwards user events to the renderer
-class ViewerWindow : public QGLWidget
+class ViewerWindow: public QGLWidget
 {
    Q_OBJECT;
 
@@ -35,7 +35,7 @@ public:
    QSize sizeHint() const;
 
    void loadMap(ministring url);
-   void gotoMap(minilayer *layer);
+   void gotoMap(minilayer *layer); //!! key
    void clearMaps();
 
    void loadObject(ministring url);

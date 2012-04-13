@@ -3,13 +3,11 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 
-#include <mini/minibase.h>
-#include <mini/ministring.h>
-#include <mini/minikeyval.h>
-#include <mini/minicoord.h>
-#include <mini/mininode.h>
+#include <mini/mini_generic.h>
+#include <mini/mini_tileset.h>
+#include <mini/mini_object.h>
 
-//! object
+//! object (base class)
 class Object
    {
    public:
@@ -22,9 +20,6 @@ class Object
 
    BOOLINT is_valid();
 
-   void load();
-   void clear();
-
    minicoord get_coord() {return(coord);}
    double get_radius() {return(radius);}
 
@@ -36,10 +31,23 @@ class Object
    double radius; // object radius
 
    mininode *node; // node reference
+   };
 
-   virtual BOOLINT load_header(minicoord &c,double &radius) {return(FALSE);}
-   virtual BOOLINT load_file() {}
-   virtual void clear_file() {}
+//! tileset object
+class Object_tileset: public Object
+   {
+   public:
+
+   Object_tileset(const ministring &name="",const ministring &repo="",
+                  minilayer *layer=NULL)
+      : Object(name,repo)
+      {tileset_layer=layer;}
+
+   virtual ~Object_tileset() {}
+
+   protected:
+
+   minilayer *tileset_layer;
    };
 
 //! object list

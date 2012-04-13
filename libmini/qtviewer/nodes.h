@@ -3,7 +3,7 @@
 #ifndef NODES_H
 #define NODES_H
 
-#include <mini/mininodes.h>
+#include <mini/mini_object.h>
 #include <grid/grid_extent.h>
 
 //! grid_extent evaluator node
