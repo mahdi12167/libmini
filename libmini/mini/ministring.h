@@ -5,6 +5,7 @@
 
 #include "minibase.h"
 #include "minidyna.h"
+#include "minisort.h"
 
 //! string base class
 typedef minidyna<char,16> ministring_base;
@@ -317,7 +318,7 @@ inline int operator == (const ministring &a,const ministring &b)
 inline int operator != (const ministring &a,const ministring &b)
    {return(ministring_base(a)!=ministring_base(b));}
 
-//! less than operator
+//! less than operator (alpha-numerical comparison)
 inline int operator < (const ministring &a,const ministring &b)
    {
    unsigned int i;
@@ -329,7 +330,7 @@ inline int operator < (const ministring &a,const ministring &b)
    if (s<b.getsize()) return(1);
    if (s>b.getsize()) return(0);
 
-   for (i=0; i<s-1; i++)
+   for (i=0; i+1<s; i++)
       if (b[i]<a[i]) return(0);
 
    return(a[i]<b[i]);
@@ -398,36 +399,34 @@ inline int operator == (const ministrings &a,const ministrings &b)
    {
    unsigned int i;
 
-   if (a.getsize()!=b.getsize()) return(FALSE);
+   if (a.getsize()!=b.getsize()) return(0);
 
    for (i=0; i<a.getsize(); i++)
-      if (a[i]!=b[i]) return(FALSE);
+      if (a[i]!=b[i]) return(0);
 
-   return(TRUE);
+   return(1);
    }
 
-//! less than operator (inclusion of string lists)
+//! less than operator (alpha-numerical comparison of string lists)
 inline int operator < (const ministrings &a,const ministrings &b)
    {
-   unsigned int i,j;
+   unsigned int i;
 
-   BOOLINT inclusion;
+   ministrings s1(a),s2(b);
+   unsigned int s;
 
-   for (i=0; i<a.getsize(); i++)
-      {
-      inclusion=FALSE;
+   shellsort<ministring>(s1);
+   shellsort<ministring>(s2);
 
-      for (j=0; j<b.getsize(); j++)
-         if (a[i]==b[j])
-            {
-            inclusion=TRUE;
-            break;
-            }
+   s=s1.getsize();
 
-      if (!inclusion) return(FALSE);
-      }
+   if (s<s2.getsize()) return(1);
+   if (s>s2.getsize()) return(0);
 
-   return(TRUE);
+   for (i=0; i+1<s; i++)
+      if (s2[i]<s1[i]) return(0);
+
+   return(s1[i]<s2[i]);
    }
 
 //! add operator (union of string lists)
@@ -474,6 +473,30 @@ inline ministrings operator - (const ministrings &a,const ministrings &b)
          if (strs[i-1]==b[j]) strs.remove(i-1);
 
    return(strs);
+   }
+
+//! div operator (inclusion of string lists)
+inline int operator / (const ministrings &a,const ministrings &b)
+   {
+   unsigned int i,j;
+
+   BOOLINT inclusion;
+
+   for (i=0; i<a.getsize(); i++)
+      {
+      inclusion=FALSE;
+
+      for (j=0; j<b.getsize(); j++)
+         if (a[i]==b[j])
+            {
+            inclusion=TRUE;
+            break;
+            }
+
+      if (!inclusion) return(0);
+      }
+
+   return(1);
    }
 
 //! stream output
