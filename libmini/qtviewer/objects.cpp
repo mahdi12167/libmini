@@ -14,7 +14,7 @@ Object::Object(const ministring &name,const ministring &repo)
    }
 
 Object::~Object()
-   {if (node!=NULL) delete node;}
+   {}
 
 Objects::Objects()
    : minikeyval<Object *>()
@@ -22,9 +22,7 @@ Objects::Objects()
 
 Objects::~Objects()
    {
-   unsigned int i;
-
-   for (i=0; i<get_pairs(); i++)
+   for (unsigned i=0; i<get_pairs(); i++)
       delete get(i);
    }
 
@@ -32,7 +30,12 @@ void Objects::add(Object *obj)
    {minikeyval<Object *>::add(obj->filename,obj);}
 
 void Objects::clear()
-   {minikeyval<Object *>::clear();}
+   {
+   for (unsigned i=0; i<get_pairs(); i++)
+      delete get(i);
+
+   minikeyval<Object *>::clear();
+   }
 
 Object *Objects::get(const ministring &key)
    {return(*(minikeyval<Object *>::get(key)));}
