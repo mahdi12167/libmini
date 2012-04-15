@@ -75,6 +75,15 @@ class minikeyval
       sorted=FALSE;
       }
 
+   //! remove key-value pair
+   void remove(const ministring &key)
+      {
+      unsigned int idx;
+
+      if (get_pair(key,idx))
+         pairs.dispose(idx);
+      }
+
    //! clear key-value pairs
    void clear()
       {pairs.clear();}
@@ -85,11 +94,34 @@ class minikeyval
 
    //! get value reference from key
    Item *get(const ministring &key)
-      {return(&get_pair(key)->val);}
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return(NULL);
+
+      return(&pairs[i].val);
+      }
 
    //! get tag reference from key
-   ministrings &get_tags(const ministring &key)
-      {return(get_pair(key)->tags);}
+   ministrings *get_tags(const ministring &key)
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return(NULL);
+
+      return(&pairs[i].tags);
+      }
+
+   //! get all item keys
+   ministrings get_items()
+      {
+      ministrings keys;
+
+      for (unsigned int i=0; i<pairs.getsize(); i++)
+         keys.append(pairs[i].key);
+
+      return(keys);
+      }
 
    //! get keys of tagged items
    ministrings get_tagged_items(const ministring &tag)
@@ -121,8 +153,8 @@ class minikeyval
 
    protected:
 
-   //! get pair reference from key
-   minikeyval_pair<Item> *get_pair(const ministring &key)
+   //! get pair index from key
+   BOOLINT get_pair(const ministring &key,unsigned int &idx)
       {
       unsigned int size;
       unsigned int left,right,mid;
@@ -135,7 +167,7 @@ class minikeyval
 
       size=pairs.getsize();
 
-      if (key<pairs[0].key || pairs[size-1].key<key) return(NULL);
+      if (key<pairs[0].key || pairs[size-1].key<key) return(FALSE);
 
       // binary search
       left=mid=0;
@@ -147,7 +179,9 @@ class minikeyval
          else left=mid;
          }
 
-      return(&pairs[mid]);
+      idx=mid;
+
+      return(TRUE);
       }
 
    };
