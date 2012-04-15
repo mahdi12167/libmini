@@ -91,32 +91,32 @@ class minikeyval
    ministrings &get_tags(const ministring &key)
       {return(get_pair(key)->tags);}
 
-   //! get list of tagged items
-   minidyna<Item *> get_tagged_items(const ministring &tag)
+   //! get keys of tagged items
+   ministrings get_tagged_items(const ministring &tag)
       {
-      minidyna<Item *> list;
+      ministrings keys;
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
          for (unsigned int j=0; j<pairs[i].tags.getsize(); j++)
             if (pairs[i].tags[j]==tag)
                {
-               list.append(&pairs[i].val);
+               keys.append(pairs[i].key);
                break;
                }
 
-      return(list);
+      return(keys);
       }
 
-   //! get list of tagged items
-   minidyna<Item *> get_tagged_items(const ministrings &tags)
+   //! get keys of tagged items
+   ministrings get_tagged_items(const ministrings &tags)
       {
-      minidyna<Item *> list;
+      ministrings keys;
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
          if (tags/pairs[i].tags)
-            list.append(&pairs[i].val);
+            keys.append(pairs[i].key);
 
-      return(list);
+      return(keys);
       }
 
    protected:
