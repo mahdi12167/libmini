@@ -99,7 +99,7 @@ class minikeyval
 
       if (!get_pair(key,idx)) return(NULL);
 
-      return(&pairs[i].val);
+      return(&pairs[idx].val);
       }
 
    //! get tag reference from key
@@ -109,7 +109,7 @@ class minikeyval
 
       if (!get_pair(key,idx)) return(NULL);
 
-      return(&pairs[i].tags);
+      return(&pairs[idx].tags);
       }
 
    //! get all item keys
