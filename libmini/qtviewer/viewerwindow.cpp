@@ -204,52 +204,84 @@ void ViewerWindow::loadMap(ministring url)
    {
       unsigned int lio,lio1,lio2;
 
-      lio=url.getsize();
+      lio = url.getsize();
 
-      if (url.findr("/",lio1)) lio=lio1;
-      else if (url.findr("\\",lio2)) lio=lio2;
+      if (url.findr("/",lio1)) lio = lio1;
+      else if (url.findr("\\",lio2)) lio = lio2;
 
       url.truncate(lio);
    }
 
-   layer=viewer->loadMap(url);
+   layer = viewer->loadMap(url);
 
    if (layer!=NULL)
-      emit changed(url.c_str(), layer);
+   {
+      Object_tileset *tileset = new Object_tileset(url, "", viewer, layer);
+      addObject(url, tileset, "tileset");
+   }
    else
       QMessageBox::warning(this, "Error",
                            "Unable to load map data from url="+QString(url.c_str()),
                            QMessageBox::Ok);
 }
 
-void ViewerWindow::gotoMap(minilayer *layer)
-{
-   viewer->getCamera()->focusOnMap(layer);
-}
-
 void ViewerWindow::clearMaps()
 {
-   viewer->clearMaps();
+   unsigned int i;
+
+   ministrings tilesets = listObjects("tileset");
+
+   for (i=0; i<tilesets.getsize(); i++)
+      removeObject(tilesets[i]);
 }
 
-void ViewerWindow::loadObject(ministring url)
+void ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
 {
-   if (url.endswith(".ini"))
-      objects.add(new Object_tileset(url,"tileset",NULL));
+   objects.add(key, obj, tag);
+   emit changed(key);
+}
+
+Object *ViewerWindow::getObject(ministring key)
+{
+   return(objects.get(key));
+}
+
+ministrings *ViewerWindow::getTags(ministring key)
+{
+   return(objects.get_tags(key));
+}
+
+ministrings ViewerWindow::listObjects()
+{
+   return(objects.get_items());
+}
+
+ministrings ViewerWindow::listObjects(ministring tag)
+{
+   return(objects.get_items(tag));
 }
 
 void ViewerWindow::gotoObject(ministring key)
 {
-   Object *obj;
+   Object *obj=objects.get(key);
 
-   obj=objects.get(key);
+   if (obj!=NULL) obj->focus();
+}
 
-   //!! if tileset get layer* from object list
+void ViewerWindow::removeObject(ministring key)
+{
+   objects.remove(key);
+   emit changed(key);
 }
 
 void ViewerWindow::clearObjects()
 {
-   objects.clear();
+   unsigned int i;
+
+   ministrings objs = objects.list();
+
+   for (i=0; i<objs.getsize(); i++)
+      removeObject(objs[i]);
 }
 
 void ViewerWindow::toggleStereo(bool on)

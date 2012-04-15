@@ -7,6 +7,8 @@
 #include <mini/mini_tileset.h>
 #include <mini/mini_object.h>
 
+class Viewer;
+
 //! object (base class)
 class Object
    {
@@ -22,6 +24,8 @@ class Object
 
    minicoord get_coord() {return(coord);}
    double get_radius() {return(radius);}
+
+   virtual void focus() {}
 
    protected:
 
@@ -39,19 +43,17 @@ class Object_tileset: public Object
    public:
 
    Object_tileset(const ministring &name="",const ministring &repo="",
-                  minilayer *layer=NULL)
-      : Object(name,repo)
-      {tileset_layer=layer;}
+                  Viewer *viewer=NULL,minilayer *layer=NULL);
 
-   virtual ~Object_tileset() {}
+   virtual ~Object_tileset();
+
+   virtual void focus();
 
    protected:
 
+   Viewer *tileset_viewer;
    minilayer *tileset_layer;
    };
-
-//! object list
-typedef minidyna<Object **> Object_list;
 
 //! object container
 class Objects: public minikeyval<Object *>
@@ -64,12 +66,14 @@ class Objects: public minikeyval<Object *>
    //! default destructor
    ~Objects();
 
-   void add(Object *obj);
-   void clear();
-
+   void add(const ministring &key,Object *obj,const ministring &tag);
+   void add(const ministring &key,Object *obj,const ministrings &tags);
    Object *get(const ministring &key);
-   Object_list list(const ministring &tag);
-   Object_list list(const ministrings &tags);
+   ministrings list();
+   ministrings list(const ministring &tag);
+   ministrings list(const ministrings &tags);
+   void remove(const ministring &key);
+   void clear();
    };
 
 #endif

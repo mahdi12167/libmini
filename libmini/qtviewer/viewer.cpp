@@ -116,6 +116,16 @@ minilayer* Viewer::loadMap(ministring url)
    return(NULL);
 }
 
+// remove map layer
+void Viewer::removeMap(minilayer *layer)
+{
+   int num=getearth()->getterrain()->getnum(layer);
+
+   getearth()->getterrain()->remove(num);
+
+   getCamera()->startIdling();
+}
+
 // remove map layers
 void Viewer::clearMaps()
 {

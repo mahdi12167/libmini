@@ -35,11 +35,15 @@ public:
    QSize sizeHint() const;
 
    void loadMap(ministring url);
-   void gotoMap(minilayer *layer); //!! key
    void clearMaps();
 
-   void loadObject(ministring url);
+   void addObject(ministring key, Object *obj, ministring tag);
+   Object *getObject(ministring key);
+   ministrings *getTags(ministring key);
+   ministrings listObjects();
+   ministrings listObjects(ministring tag);
    void gotoObject(ministring key);
+   void removeObject(ministring key);
    void clearObjects();
 
    void toggleStereo(bool on);
@@ -56,7 +60,7 @@ public:
    void setExagger(double scale);
 
 signals:
-   void changed(const QString url, minilayer *layer);
+   void changed(ministring key);
 
 protected:
    void initializeGL();
@@ -82,15 +86,14 @@ protected:
 
 private:
    Renderer *viewer;
-
    Objects objects;
 
    QPoint lastPos;
    QPoint movedPos;
-   bool   bLeftButtonDown;
-   bool   bRightButtonDown;
+   bool bLeftButtonDown;
+   bool bRightButtonDown;
 
-   void   reportModifiers();
+   void reportModifiers();
 };
 
 #endif

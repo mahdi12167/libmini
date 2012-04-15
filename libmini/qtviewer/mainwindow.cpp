@@ -75,8 +75,8 @@ void MainWindow::createWidgets()
 
    // drag and drop:
 
-   connect(viewerWindow, SIGNAL(changed(const QString, minilayer*)),
-           this, SLOT(updateTable(const QString, minilayer*)));
+   connect(viewerWindow, SIGNAL(changed(ministring)),
+           this, SLOT(updateTable(ministring)));
 
    // layer table:
 
@@ -278,22 +278,34 @@ void MainWindow::clear()
    viewerTable->setRowCount(0);
 }
 
-void MainWindow::updateTable(const QString url, minilayer *layer)
+void MainWindow::updateTable(ministring key)
 {
    int rows = viewerTable->rowCount();
-   QString name=url;
+   Object *obj=viewerWindow->getObject(key);
 
-   if (name.endsWith("/")) name.truncate(name.size()-1);
-   if (name.endsWith("\\")) name.truncate(name.size()-1);
+   if (obj!=NULL)
+   {
+      ministring url=obj->filename;
+      QString name=url.c_str();
 
-   if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
-   if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
+      if (name.endsWith("/")) name.truncate(name.size()-1);
+      if (name.endsWith("\\")) name.truncate(name.size()-1);
 
-   viewerTable->insertRow(rows);
-   viewerTable->setItem(rows, 0, new QTableWidgetItem(name));
+      if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
+      if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
 
-   m_Layer.growsize(rows+1);
-   m_Layer[rows]=layer;
+      viewerTable->insertRow(rows);
+      viewerTable->setItem(rows, 0, new QTableWidgetItem(name));
+
+      m_Keys.growsize(rows+1);
+      m_Keys[rows]=key;
+   }
+   else
+   {
+      for (unsigned int row=0; row<m_Keys.getsize(); row++)
+         if (m_Keys[row]==key)
+            viewerTable->removeRow(row);
+   }
 }
 
 void MainWindow::click(int row, int col)
@@ -301,7 +313,7 @@ void MainWindow::click(int row, int col)
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
 
-   viewerWindow->gotoMap(m_Layer[row]);
+   viewerWindow->gotoObject(m_Keys[row]);
 }
 
 void MainWindow::toggleStereo(int on)

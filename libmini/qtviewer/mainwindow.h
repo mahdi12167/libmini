@@ -33,7 +33,7 @@ public:
    ~MainWindow();
 
 public slots:
-   void updateTable(const QString url, minilayer *layer);
+   void updateTable(ministring key);
 
 private slots:
    void about();
@@ -103,7 +103,7 @@ private:
 
    protected:
 
-   minidyna<minilayer *> m_Layer;
+   ministrings m_Keys;
 
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);

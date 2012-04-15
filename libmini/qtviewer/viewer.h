@@ -30,6 +30,7 @@ public:
    void       resizeWindow();
 
    minilayer* loadMap(ministring url);
+   void       removeMap(minilayer *layer);
    void       clearMaps();
 
    void       draw();
