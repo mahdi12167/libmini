@@ -124,7 +124,7 @@ class minikeyval
       }
 
    //! get keys of tagged items
-   ministrings get_tagged_items(const ministring &tag)
+   ministrings get_items(const ministring &tag)
       {
       ministrings keys;
 
@@ -140,7 +140,7 @@ class minikeyval
       }
 
    //! get keys of tagged items
-   ministrings get_tagged_items(const ministrings &tags)
+   ministrings get_items(const ministrings &tags)
       {
       ministrings keys;
 
