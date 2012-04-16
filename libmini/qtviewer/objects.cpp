@@ -44,14 +44,20 @@ void Objects::add(const ministring &key,Object *obj,const ministring &tag)
 void Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {minikeyval<Object *>::add(key,obj,tags);}
 
-Object *Objects::get(const ministring &key)
-   {return(*(minikeyval<Object *>::get(key)));}
-
-Object *Objects::get(unsigned int i)
-   {return(*(minikeyval<Object *>::get(i)));}
-
 unsigned int Objects::get_num()
    {return(minikeyval<Object *>::get_pairs());}
+
+Object *Objects::get(unsigned int i)
+   {
+   Object **obj=minikeyval<Object *>::get(i);
+   return(obj?*obj:NULL);
+   }
+
+Object *Objects::get(const ministring &key)
+   {
+   Object **obj=minikeyval<Object *>::get(key);
+   return(obj?*obj:NULL);
+   }
 
 ministrings *Objects::get_tags(const ministring &key)
    {return(minikeyval<Object *>::get_tags(key));}
