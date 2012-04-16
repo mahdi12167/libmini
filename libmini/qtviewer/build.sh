@@ -2,6 +2,12 @@
 
 # unix build script
 # (c) by Stefan Roettger
+#
+# options:
+#  release: build in release mode
+#  debug: build in debug mode
+#  clean: remove all build files
+#  zip: make distribution
 
 if ($1 == "clean") then
    make clean
@@ -32,6 +38,10 @@ if ($HOSTTYPE == "intel-pc") set qoptions="$qoptions -spec macx-g++"
 
 set moptions=""
 if ($1 != "") then
+   if ($1 != "release" && $1 != "debug") then
+      echo error: bad usage!
+      exit 1
+   endif
    set moptions="$moptions $1"
 else
    set moptions="$moptions release"

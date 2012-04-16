@@ -29,12 +29,6 @@ Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
    tileset_layer=layer;
    }
 
-Object_tileset::~Object_tileset()
-   {
-   if (tileset_viewer!=NULL && tileset_layer!=NULL)
-      tileset_viewer->removeMap(tileset_layer);
-   }
-
 void Object_tileset::focus()
    {
    if (tileset_viewer!=NULL && tileset_layer!=NULL)
@@ -53,6 +47,12 @@ void Objects::add(const ministring &key,Object *obj,const ministrings &tags)
 Object *Objects::get(const ministring &key)
    {return(*(minikeyval<Object *>::get(key)));}
 
+Object *Objects::get(unsigned int i)
+   {return(*(minikeyval<Object *>::get(i)));}
+
+unsigned int Objects::get_num()
+   {return(minikeyval<Object *>::get_pairs());}
+
 ministrings *Objects::get_tags(const ministring &key)
    {return(minikeyval<Object *>::get_tags(key));}
 
@@ -66,13 +66,17 @@ ministrings Objects::list(const ministrings &tags)
    {return(minikeyval<Object *>::get_items(tags));}
 
 void Objects::remove(const ministring &key)
-   {minikeyval<Object *>::remove(key);}
+   {
+   delete get(key);
+
+   minikeyval<Object *>::remove(key);
+   }
 
 void Objects::clear()
    {
    unsigned int i;
 
-   for (i=0; i<get_pairs(); i++)
+   for (i=0; i<get_num(); i++)
       delete get(i);
 
    minikeyval<Object *>::clear();

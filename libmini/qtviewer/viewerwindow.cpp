@@ -233,6 +233,8 @@ void ViewerWindow::clearMaps()
 
    for (i=0; i<tilesets.getsize(); i++)
       removeObject(tilesets[i]);
+
+   viewer->clearMaps();
 }
 
 void ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
@@ -276,12 +278,7 @@ void ViewerWindow::removeObject(ministring key)
 
 void ViewerWindow::clearObjects()
 {
-   unsigned int i;
-
-   ministrings objs = objects.list();
-
-   for (i=0; i<objs.getsize(); i++)
-      removeObject(objs[i]);
+   objects.clear();
 }
 
 void ViewerWindow::toggleStereo(bool on)
