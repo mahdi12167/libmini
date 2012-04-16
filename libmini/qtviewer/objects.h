@@ -69,6 +69,7 @@ class Objects: public minikeyval<Object *>
    void add(const ministring &key,Object *obj,const ministring &tag);
    void add(const ministring &key,Object *obj,const ministrings &tags);
    Object *get(const ministring &key);
+   ministrings *get_tags(const ministring &key);
    ministrings list();
    ministrings list(const ministring &tag);
    ministrings list(const ministrings &tags);

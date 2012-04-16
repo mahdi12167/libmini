@@ -81,9 +81,9 @@ void MainWindow::createWidgets()
    // layer table:
 
    QStringList labels;
-   labels << tr("Layer");
+   labels << tr("Objects");
 
-   viewerTable->setColumnCount(1);
+   viewerTable->setColumnCount(2);
    viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
    viewerTable->setHorizontalHeaderLabels(labels);
    viewerTable->horizontalHeader()->setStretchLastSection(true);
@@ -282,9 +282,13 @@ void MainWindow::updateTable(ministring key)
 {
    int rows = viewerTable->rowCount();
    Object *obj=viewerWindow->getObject(key);
+   ministrings *tags=viewerWindow->getTags(key);
 
    if (obj!=NULL)
    {
+      ministring type=tags?tags->get(0):"";
+      QString info=type.c_str();
+
       ministring url=obj->filename;
       QString name=url.c_str();
 
@@ -295,7 +299,8 @@ void MainWindow::updateTable(ministring key)
       if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
 
       viewerTable->insertRow(rows);
-      viewerTable->setItem(rows, 0, new QTableWidgetItem(name));
+      viewerTable->setItem(rows, 0, new QTableWidgetItem(info));
+      viewerTable->setItem(rows, 1, new QTableWidgetItem(name));
 
       m_Keys.growsize(rows+1);
       m_Keys[rows]=key;
@@ -304,7 +309,10 @@ void MainWindow::updateTable(ministring key)
    {
       for (unsigned int row=0; row<m_Keys.getsize(); row++)
          if (m_Keys[row]==key)
+         {
             viewerTable->removeRow(row);
+            break;
+         }
    }
 }
 

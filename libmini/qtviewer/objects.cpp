@@ -53,6 +53,9 @@ void Objects::add(const ministring &key,Object *obj,const ministrings &tags)
 Object *Objects::get(const ministring &key)
    {return(*(minikeyval<Object *>::get(key)));}
 
+ministrings *Objects::get_tags(const ministring &key)
+   {return(minikeyval<Object *>::get_tags(key));}
+
 ministrings Objects::list()
    {return(minikeyval<Object *>::get_items());}
 
