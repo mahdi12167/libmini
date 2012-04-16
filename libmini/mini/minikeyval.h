@@ -172,14 +172,15 @@ class minikeyval
       // binary search
       left=mid=0;
       right=size-1;
-      while (left!=right)
+      while (left+1<right)
          {
          mid=(left+right)/2;
          if (key<pairs[mid].key) right=mid;
          else left=mid;
          }
 
-      idx=mid;
+      if (key==pairs[left].key) idx=left;
+      else idx=right;
 
       return(TRUE);
       }
