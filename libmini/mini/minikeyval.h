@@ -170,6 +170,7 @@ class minikeyval
          }
 
       size=pairs.getsize();
+      if (size==0) return(FALSE);
 
       if (key<pairs[0].key || pairs[size-1].key<key) return(FALSE);
 
