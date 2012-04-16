@@ -81,7 +81,7 @@ void MainWindow::createWidgets()
    // layer table:
 
    QStringList labels;
-   labels << tr("Objects");
+   labels << tr("Object") << tr("Name");
 
    viewerTable->setColumnCount(2);
    viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -286,7 +286,7 @@ void MainWindow::updateTable(ministring key)
 
    if (obj!=NULL)
    {
-      ministring type=tags?tags->get(0):"";
+      ministring type=tags?tags->get(0):"object";
       QString info=type.c_str();
 
       ministring url=obj->filename;
