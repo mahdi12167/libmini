@@ -822,6 +822,10 @@ void miniterrain::remove(int n)
    if (n==LREF) setreference(getdefault());
    }
 
+// remove a layer
+void miniterrain::remove(minilayer *layer)
+   {remove(getnum(layer));}
+
 // remove all terrain layers
 void miniterrain::remove()
    {
@@ -837,12 +841,20 @@ miniv3d miniterrain::getextent(int n)
    else return(LAYER[n]->getextent());
    }
 
+// get extent of a tileset
+miniv3d miniterrain::getextent(minilayer *layer)
+   {return(getextent(getnum(layer)));}
+
 // get center of a tileset
 minicoord miniterrain::getcenter(int n)
    {
    if (n<0 || n>=LNUM) return(minicoord());
    else return(LAYER[n]->getcenter());
    }
+
+// get center of a tileset
+minicoord miniterrain::getcenter(minilayer *layer)
+   {return(getcenter(getnum(layer)));}
 
 // get the elevation at position (x,y,z)
 double miniterrain::getheight(const minicoord &p,int approx)

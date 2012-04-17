@@ -434,6 +434,22 @@ void miniearth::setreference(minilayer *layer)
    TERRAIN->setreference(ref);
    }
 
+// remove a layer
+void miniearth::remove(minilayer *layer)
+   {TERRAIN->remove(layer);}
+
+// remove all terrain layers
+void miniearth::remove()
+   {TERRAIN->remove();}
+
+// get extent of a tileset
+miniv3d miniearth::getextent(minilayer *layer)
+   {return(TERRAIN->getextent(layer));}
+
+// get center of a tileset
+minicoord miniearth::getcenter(minilayer *layer)
+   {return(TERRAIN->getcenter(layer));}
+
 // get the elevation at position (x,y,z)
 double miniearth::getheight(const minicoord &p)
    {return(TERRAIN->getheight(p));}

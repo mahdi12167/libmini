@@ -165,6 +165,18 @@ class miniearth
    //! set reference layer
    void setreference(minilayer *layer);
 
+   //! remove a layer
+   void remove(minilayer *layer);
+
+   //! remove all terrain layers
+   void remove();
+
+   //! get extent of a tileset
+   miniv3d getextent(minilayer *layer);
+
+   //! get center of a tileset
+   minicoord getcenter(minilayer *layer);
+
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p);
 

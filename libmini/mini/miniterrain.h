@@ -304,14 +304,23 @@ class miniterrain
    //! remove the nth terrain layer
    void remove(int n);
 
+   //! remove a layer
+   void remove(minilayer *layer);
+
    //! remove all terrain layers
    void remove();
 
    //! get extent of a tileset
    miniv3d getextent(int n);
 
+   //! get extent of a tileset
+   miniv3d getextent(minilayer *layer);
+
    //! get center of a tileset
    minicoord getcenter(int n);
+
+   //! get center of a tileset
+   minicoord getcenter(minilayer *layer);
 
    //! get the elevation at position (x,y,z)
    double getheight(const minicoord &p,int approx=1);
