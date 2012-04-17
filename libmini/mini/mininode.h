@@ -66,6 +66,23 @@ class mininode: public minidyna< miniref<mininode> >
       return(child);
       }
 
+   //! remove first depth-first occurance of node
+   miniref<mininode> remove_node(mininode *node)
+      {
+      miniref<mininode> ref=NULL;
+
+      for (unsigned int i=0; i<get_children() && ref!=NULL; i++)
+         {
+         mininode *child=get_child(i);
+
+         if (child!=NULL)
+            if (child==node) ref=remove_child(i);
+            else ref=child->remove_node(node);
+         }
+
+      return(ref);
+      }
+
    //! traverse [cycle-free] graph
    virtual BOOLINT traverse(unsigned int level=0)
       {
