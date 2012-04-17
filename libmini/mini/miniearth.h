@@ -168,6 +168,9 @@ class miniearth
    //! remove a layer
    void remove(minilayer *layer);
 
+   //! remove a layer /w sub-layers
+   void removeLTS(minilayer *layer);
+
    //! remove all terrain layers
    void remove();
 

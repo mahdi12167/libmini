@@ -438,6 +438,10 @@ void miniearth::setreference(minilayer *layer)
 void miniearth::remove(minilayer *layer)
    {TERRAIN->remove(layer);}
 
+// remove a layer /w sub-layers
+void miniearth::removeLTS(minilayer *layer)
+   {TERRAIN->removeLTS(layer);}
+
 // remove all terrain layers
 void miniearth::remove()
    {TERRAIN->remove();}
