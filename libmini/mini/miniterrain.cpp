@@ -822,9 +822,25 @@ void miniterrain::remove(int n)
    if (n==LREF) setreference(getdefault());
    }
 
+// remove the nth terrain layer /w sub-layers
+void miniterrain::removeLTS(int n)
+   {
+   // remove base layer
+   remove(n);
+
+   // remove sub-layers
+   while (--n>=0)
+      if (issubtileset(n)) remove(n);
+      else break;
+   }
+
 // remove a layer
 void miniterrain::remove(minilayer *layer)
    {remove(getnum(layer));}
+
+// remove a layer /w sub-layers
+void miniterrain::removeLTS(minilayer *layer)
+   {removeLTS(getnum(layer));}
 
 // remove all terrain layers
 void miniterrain::remove()

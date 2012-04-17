@@ -304,8 +304,14 @@ class miniterrain
    //! remove the nth terrain layer
    void remove(int n);
 
+   //! remove the nth terrain layer /w sub-layers
+   void removeLTS(int n);
+
    //! remove a layer
    void remove(minilayer *layer);
+
+   //! remove a layer /w sub-layers
+   void removeLTS(minilayer *layer);
 
    //! remove all terrain layers
    void remove();
