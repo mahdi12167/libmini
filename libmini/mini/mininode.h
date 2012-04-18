@@ -71,7 +71,7 @@ class mininode: public minidyna< miniref<mininode> >
       {
       miniref<mininode> ref=NULL;
 
-      for (unsigned int i=0; i<get_children() && ref!=NULL; i++)
+      for (unsigned int i=0; i<get_children() && ref==NULL; i++)
          {
          mininode *child=get_child(i);
 
