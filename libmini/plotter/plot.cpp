@@ -136,7 +136,7 @@ void plot_openwindow(int *argc,char *argv[],
 
    glutInit(argc,argv);
    glutInitWindowSize(winwidth,winheight);
-   glutInitDisplayMode(GLUT_RGB|GLUT_ALPHA|GLUT_DEPTH|GLUT_DOUBLE);
+   glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
    winid=glutCreateWindow("Plotter");
 
    glutDisplayFunc(displayfunc);
