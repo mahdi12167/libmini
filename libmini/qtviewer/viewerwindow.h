@@ -37,7 +37,7 @@ public:
    void loadMap(ministring url);
    void clearMaps();
 
-   void addObject(ministring key, Object *obj, ministring tag);
+   BOOLINT addObject(ministring key, Object *obj, ministring tag);
    Object *getObject(ministring key);
    ministrings *getTags(ministring key);
    ministrings listObjects();

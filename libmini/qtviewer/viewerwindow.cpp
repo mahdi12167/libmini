@@ -18,7 +18,7 @@ ViewerWindow::ViewerWindow()
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
 
-   setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL:StencilBuffer));
+   setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::StencilBuffer));
 
    // init viewer
    viewer = new Renderer(this);
@@ -212,17 +212,16 @@ void ViewerWindow::loadMap(ministring url)
       url.truncate(lio);
    }
 
-   layer = viewer->loadMap(url);
+   Object_tileset *tileset = new Object_tileset(url, "", viewer);
 
-   if (layer!=NULL)
-   {
-      Object_tileset *tileset = new Object_tileset(url, "", viewer, layer);
-      addObject(url, tileset, "tileset");
-   }
-   else
+   if (!addObject(url, tileset, "tileset"))
+      {
+      delete tileset;
+
       QMessageBox::warning(this, "Error",
                            "Unable to load map data from url="+QString(url.c_str()),
                            QMessageBox::Ok);
+      }
 }
 
 void ViewerWindow::clearMaps()
@@ -233,14 +232,17 @@ void ViewerWindow::clearMaps()
 
    for (i=0; i<tilesets.getsize(); i++)
       removeObject(tilesets[i]);
-
-   viewer->clearMaps();
 }
 
-void ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
+BOOLINT ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
 {
-   objects.add(key, obj, tag);
-   emit changed(key);
+   if (objects.add(key, obj, tag))
+      {
+      emit changed(key);
+      return(TRUE);
+      }
+
+   return(FALSE);
 }
 
 Object *ViewerWindow::getObject(ministring key)

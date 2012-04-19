@@ -20,21 +20,18 @@ class Object
    ministring repository; // data repository
    ministring filename; // data file in repository
 
-   BOOLINT is_valid();
-
    minicoord get_coord() {return(coord);}
    double get_radius() {return(radius);}
+
+   virtual BOOLINT initGFX() = 0;
+   virtual void exitGFX() = 0;
 
    virtual void focus() {}
 
    protected:
 
-   BOOLINT valid;
-
    minicoord coord; // object barycenter
    double radius; // object radius
-
-   mininode *node; // node reference
    };
 
 //! tileset object
@@ -43,9 +40,12 @@ class Object_tileset: public Object
    public:
 
    Object_tileset(const ministring &name="",const ministring &repo="",
-                  Viewer *viewer=NULL,minilayer *layer=NULL);
+                  Viewer *viewer=NULL);
 
-   virtual ~Object_tileset() {}
+   virtual ~Object_tileset();
+
+   virtual BOOLINT initGFX();
+   virtual void exitGFX();
 
    virtual void focus();
 
@@ -66,8 +66,8 @@ class Objects: public minikeyval<Object *>
    //! default destructor
    ~Objects();
 
-   void add(const ministring &key,Object *obj,const ministring &tag);
-   void add(const ministring &key,Object *obj,const ministrings &tags);
+   BOOLINT add(const ministring &key,Object *obj,const ministring &tag);
+   BOOLINT add(const ministring &key,Object *obj,const ministrings &tags);
    unsigned int get_num();
    Object *get(unsigned int i);
    Object *get(const ministring &key);
