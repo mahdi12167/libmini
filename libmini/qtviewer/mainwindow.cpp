@@ -310,6 +310,7 @@ void MainWindow::updateTable(ministring key)
          if (m_Keys[row]==key)
          {
             viewerTable->removeRow(row);
+            m_Keys.dispose(row);
             break;
          }
    }
