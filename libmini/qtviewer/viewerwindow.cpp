@@ -18,7 +18,7 @@ ViewerWindow::ViewerWindow()
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
 
-   setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
+   setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL:StencilBuffer));
 
    // init viewer
    viewer = new Renderer(this);
