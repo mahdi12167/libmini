@@ -67,7 +67,7 @@ void Object_tileset::focus()
    }
 
 Objects::~Objects()
-   {clear();}
+   {}
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
