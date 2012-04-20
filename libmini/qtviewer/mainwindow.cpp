@@ -325,7 +325,7 @@ void MainWindow::click(int row, int col)
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
 
-   viewerTable->setCurrentRow(row);
+   viewerTable->setCurrentCell(row, 1);
 }
 
 void MainWindow::doubleclick(int row, int col)
