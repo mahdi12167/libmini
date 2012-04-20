@@ -2,10 +2,15 @@
 
 # this script pulls and installs wget
 
-set wget=wget-1.13
-set host=http://ftp.gnu.org/gnu/wget/
+if (-X ftp) then
+   echo warning: ftp is not installed!
+   exit 1
+endif
 
-wget $host/$wget.tar.gz
+set wget=wget-1.13
+set host=ftp://ftp.gnu.org/gnu/wget
+
+ftp $host/$wget.tar.gz
 tar zxf $wget.tar.gz
 
 (cd $wget; ./configure --without-ssl --prefix=$HOME; make; make install)
