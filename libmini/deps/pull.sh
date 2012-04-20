@@ -8,7 +8,7 @@ foreach app (cvs svn git wget cmake)
    if (! -X $app) then
       echo warning: $app is not installed!
       if ($app == "git") echo "solution: install git with the getgit.sh script"
-      if ($app == "wget") echo "solution: install cmake with the getwget.sh script"
+      if ($app == "wget") echo "solution: install wget with the getwget.sh script"
       if ($app == "cmake") echo "solution: install cmake with the getcmake.sh script"
    endif
 end
