@@ -21,7 +21,10 @@ For example grab the source tar ball from:
 !! Installation (Unix/Mac)
 
 Type on the unix console in your QT source directory:
- ./configure && make && sudo make install
+ ./configure -opensource && make && sudo make install
+
+After the build process has finished (go get yourself a cup of coffee),
+you will be asked to enter your root password for installation of qt.
 
 !! Installation (Windows):
 
