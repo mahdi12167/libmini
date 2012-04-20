@@ -44,6 +44,7 @@ private slots:
    void toggleWireFrame(int);
 
    void click(int, int);
+   void doubleclick(int, int);
    void checkFog(int);
    void setFogDensity(int);
    void checkContours(int);

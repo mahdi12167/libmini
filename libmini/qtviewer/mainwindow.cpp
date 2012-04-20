@@ -85,10 +85,12 @@ void MainWindow::createWidgets()
 
    viewerTable->setColumnCount(2);
    viewerTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   viewerTable->setSelectionMode(QAbstractItemView::SingleSelection);
    viewerTable->setHorizontalHeaderLabels(labels);
    viewerTable->horizontalHeader()->setStretchLastSection(true);
 
-   connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(click(int, int)));
+   connect(viewerTable, SIGNAL(cellClicked(int, int)), this, SLOT(click(int, int)));
+   connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(doubleclick(int, int)));
 
    // fog check:
 
@@ -274,7 +276,9 @@ void MainWindow::open()
 
 void MainWindow::clear()
 {
-   viewerWindow->clearMaps();
+   int row = viewerTable->currentRow();
+
+   viewerWindow->removeObject(m_Keys[row]);
 }
 
 void MainWindow::updateTable(ministring key)
@@ -317,6 +321,14 @@ void MainWindow::updateTable(ministring key)
 }
 
 void MainWindow::click(int row, int col)
+{
+   QTableWidgetItem *item = viewerTable->item(row, col);
+   QString text = item->text();
+
+   viewerTable->setCurrentRow(row);
+}
+
+void MainWindow::doubleclick(int row, int col)
 {
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
