@@ -5,7 +5,6 @@
 
 set homebin=~/bin
 setenv PATH "$PATH"":""$homebin"
-echo $PATH
 rehash
 
 foreach app (wget git cmake)
