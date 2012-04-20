@@ -13,4 +13,4 @@ set host=ftp://ftp.qt.nokia.com/qt/source
 wget $host/$qt.tar.gz
 tar zxf $qt.tar.gz
 
-(cd $qt; ./configure && make && sudo make install)
+(cd $qt; ./configure -opensource && make && sudo make install)
