@@ -2,7 +2,7 @@
 
 # this script pulls and installs wget
 
-if (-X ftp) then
+if (! -X ftp) then
    echo warning: ftp is not installed!
    exit 1
 endif

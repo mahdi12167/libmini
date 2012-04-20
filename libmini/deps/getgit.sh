@@ -2,7 +2,7 @@
 
 # this script pulls and installs git
 
-if (-X wget) then
+if (! -X wget) then
    echo warning: wget is not installed!
    exit 1
 endif
