@@ -37,6 +37,9 @@ public:
    void loadMap(ministring url);
    void clearMaps();
 
+   void loadImage(ministring url);
+   void clearImages();
+
    BOOLINT addObject(ministring key, Object *obj, ministring tag);
    Object *getObject(ministring key);
    ministrings *getTags(ministring key);
@@ -44,6 +47,7 @@ public:
    ministrings listObjects(ministring tag);
    void gotoObject(ministring key);
    void removeObject(ministring key);
+   void removeObjects(ministrings keys);
    void clearObjects();
 
    void toggleStereo(bool on);

@@ -197,6 +197,14 @@ void Objects::remove(const ministring &key)
       }
    }
 
+void Objects::remove(const ministrings &keys)
+   {
+   unsigned int i;
+
+   for (i=0; i<keys.getsize(); i++)
+      remove(keys[i]);
+   }
+
 void Objects::clear()
    {
    unsigned int i;

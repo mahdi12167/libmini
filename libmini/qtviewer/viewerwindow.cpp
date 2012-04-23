@@ -219,19 +219,33 @@ void ViewerWindow::loadMap(ministring url)
       delete tileset;
 
       QMessageBox::warning(this, "Error",
-                           "Unable to load map data from url="+QString(url.c_str()),
+                           "Unable to load map from url="+QString(url.c_str()),
                            QMessageBox::Ok);
       }
 }
 
 void ViewerWindow::clearMaps()
 {
-   unsigned int i;
+   removeObjects(listObjects("tileset"));
+}
 
-   ministrings tilesets = listObjects("tileset");
+void ViewerWindow::loadImage(ministring url)
+{
+   Object_image *image = new Object_image(url, "", viewer);
 
-   for (i=0; i<tilesets.getsize(); i++)
-      removeObject(tilesets[i]);
+   if (!addObject(url, image, "image"))
+      {
+      delete image;
+
+      QMessageBox::warning(this, "Error",
+                           "Unable to load image from url="+QString(url.c_str()),
+                           QMessageBox::Ok);
+      }
+}
+
+void ViewerWindow::clearImages()
+{
+   removeObjects(listObjects("image"));
 }
 
 BOOLINT ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
@@ -278,9 +292,17 @@ void ViewerWindow::removeObject(ministring key)
    emit changed(key);
 }
 
+void ViewerWindow::removeObjects(ministrings keys)
+{
+   unsigned int i;
+
+   for (i=0; i<keys.getsize(); i++)
+      removeObject(keys[i]);
+}
+
 void ViewerWindow::clearObjects()
 {
-   objects.clear();
+   removeObjects(listObjects());
 }
 
 void ViewerWindow::toggleStereo(bool on)
@@ -360,8 +382,17 @@ void ViewerWindow::dropEvent(QDropEvent *event)
 
       for (int i=0; i<urlList.size(); i++)
       {
-         QUrl url = urlList.at(i);
-         loadMap(url.toString().toStdString().c_str());
+         QUrl qurl = urlList.at(i);
+         ministring url=qurl.toString().toStdString().c_str();
+
+         if (url.endswith(".jpg"))
+            loadImage(url);
+         else if (url.endswith(".png"))
+            loadImage(url);
+         else if (url.endswith(".tif"))
+            loadImage(url);
+         else
+            loadMap(url);
       }
    }
 }
