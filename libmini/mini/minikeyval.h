@@ -84,6 +84,13 @@ class minikeyval
          pairs.dispose(idx);
       }
 
+   //! remove key-value pairs
+   void remove(const ministrings &keys)
+      {
+      for (i=0; i<keys.getsize(); i++)
+         remove(keys[i]);
+      }
+
    //! clear key-value pairs
    void clear()
       {pairs.clear();}
