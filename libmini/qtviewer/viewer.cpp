@@ -60,12 +60,6 @@ void Viewer::init()
    m_bIsInited = true;
 }
 
-// get actual camera
-Camera *Viewer::getCamera()
-{
-   return((Camera *)m_root->get_camera());
-}
-
 // resize window
 void Viewer::resizeWindow()
 {
@@ -88,6 +82,18 @@ void Viewer::resizeViewport()
    set(m_pSceneParams);
 
    glViewport(0, 0, winWidth, winHeight);
+}
+
+// get root node
+mininode_root *Viewer::getRoot()
+{
+   return(m_root);
+}
+
+// get actual camera
+Camera *Viewer::getCamera()
+{
+   return((Camera *)m_root->get_camera());
 }
 
 // load map layer from url

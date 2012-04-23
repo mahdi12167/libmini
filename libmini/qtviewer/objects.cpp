@@ -2,8 +2,12 @@
 
 #include <mini/mini_util.h>
 
+#include <grid/grid.h>
+
 #include "viewer.h"
 #include "objects.h"
+
+// Object:
 
 Object::Object(const ministring &name,const ministring &repo)
    {
@@ -14,9 +18,7 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
-Objects::Objects()
-   : minikeyval<Object *>()
-   {}
+// Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
                                Viewer *viewer)
@@ -66,8 +68,83 @@ void Object_tileset::focus()
          tileset_viewer->getCamera()->focusOnMap(tileset_layer);
    }
 
-Objects::~Objects()
+// Object_image:
+
+mininode *Object_image::image_groupnode=NULL;
+
+Object_image::Object_image(const ministring &name,const ministring &repo,
+                           Viewer *viewer)
+   : Object(name,repo)
+   {
+   image_viewer=viewer;
+   image_node=NULL;
+   }
+
+Object_image::~Object_image()
    {}
+
+BOOLINT Object_image::initGFX()
+   {
+   if (image_viewer!=NULL)
+      {
+      mininode_root *root=image_viewer->getRoot();
+
+      if (image_groupnode==NULL)
+         image_groupnode=root->append_child(new mininode_group());
+
+      grid_list list;
+      grid_layer *layer;
+
+      // load input layer
+      layer=list.load(repository,filename);
+
+      // check for valid input layer
+      if (layer!=NULL)
+         {
+         grid_extent ext=layer->extent;
+
+         coord=ext.get_center();
+         radius=ext.get_size();
+
+         return(TRUE);
+         }
+      }
+
+   return(FALSE);
+   }
+
+void Object_image::exitGFX()
+   {
+   if (image_viewer!=NULL)
+      {
+      //!!
+      }
+   }
+
+void Object_image::focus()
+   {
+   if (image_viewer!=NULL)
+      {
+      //!!
+      }
+   }
+
+// Objects:
+
+Objects::Objects()
+   : minikeyval<Object *>()
+   {}
+
+Objects::~Objects()
+   {
+   unsigned int i;
+
+   for (i=0; i<get_num(); i++)
+      {
+      Object *obj=get(i);
+      delete obj;
+      }
+   }
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
@@ -130,6 +207,4 @@ void Objects::clear()
       obj->exitGFX();
       delete obj;
       }
-
-   minikeyval<Object *>::clear();
    }

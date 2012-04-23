@@ -26,8 +26,10 @@ public:
    void       init();
    bool       isInited() {return(m_bIsInited);}
 
-   Camera*    getCamera();
    void       resizeWindow();
+
+   mininode_root* getRoot();
+   Camera* getCamera();
 
    minilayer* loadMap(ministring url);
    void       removeMap(minilayer *layer);

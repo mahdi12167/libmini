@@ -55,6 +55,29 @@ class Object_tileset: public Object
    minilayer *tileset_layer;
    };
 
+//! image object
+class Object_image: public Object
+   {
+   public:
+
+   Object_image(const ministring &name="",const ministring &repo="",
+                Viewer *viewer=NULL);
+
+   virtual ~Object_image();
+
+   virtual BOOLINT initGFX();
+   virtual void exitGFX();
+
+   virtual void focus();
+
+   protected:
+
+   Viewer *image_viewer;
+   mininode *image_node;
+
+   static mininode *image_groupnode;
+   };
+
 //! object container
 class Objects: public minikeyval<Object *>
    {
