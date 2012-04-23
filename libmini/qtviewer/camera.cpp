@@ -2,6 +2,7 @@
 
 #include <QtOpenGL/qgl.h>
 
+#include "objects.h"
 #include "viewerwindow.h"
 #include "renderer.h"
 
@@ -256,6 +257,26 @@ void Camera::focusOnMap(minilayer *layer)
    miniv3d extent = layer->getextent();
 
    double size = (extent.x+extent.y) / 2.0;
+   target += size * normal;
+
+   curve.append_sector(get_eye(), target, 20);
+
+   if ((get_eye().vec - target.vec).getlength() < size/4.0)
+      startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
+   else
+      startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
+}
+
+void Camera::focusOnObject(Object *obj)
+{
+   minicurve curve;
+
+   if (obj==NULL) return;
+
+   minicoord target = obj->get_center();
+   double size = 2.0*obj->get_radius();
+   miniv3d normal = obj->get_normal();
+
    target += size * normal;
 
    curve.append_sector(get_eye(), target, 20);

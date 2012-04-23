@@ -10,6 +10,7 @@
 
 #include "cameraconst.h"
 
+class Object;
 class ViewerWindow;
 
 class miniearth;
@@ -44,6 +45,7 @@ public:
 
    void    focusOnTarget(double zoom=0.0); // zoom in factor 0.0=none 1.0=full
    void    focusOnMap(minilayer *layer);
+   void    focusOnObject(Object *obj);
 
    void    timerEvent(int timerId);
    void    moveCursor(int mx, int my);

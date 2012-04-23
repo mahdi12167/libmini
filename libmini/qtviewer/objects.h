@@ -20,8 +20,9 @@ class Object
    ministring repository; // data repository
    ministring filename; // data file in repository
 
-   minicoord get_coord() {return(coord);}
+   minicoord get_center() {return(coord);}
    double get_radius() {return(radius);}
+   miniv3d get_normal();
 
    virtual BOOLINT initGFX() = 0;
    virtual void exitGFX() = 0;

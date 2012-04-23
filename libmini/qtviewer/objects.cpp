@@ -18,6 +18,14 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
+miniv3d Object::get_normal()
+   {
+   coord.convert2ecef();
+   miniv3d normal=coord.vec;
+   normal.normalize();
+   return(normal);
+   }
+
 // Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
@@ -106,6 +114,8 @@ BOOLINT Object_image::initGFX()
          coord=ext.get_center();
          radius=ext.get_size();
 
+         //!! add node_grid_extent
+
          return(TRUE);
          }
       }
@@ -117,16 +127,14 @@ void Object_image::exitGFX()
    {
    if (image_viewer!=NULL)
       {
-      //!!
+      //!! remove node_grid_extent
       }
    }
 
 void Object_image::focus()
    {
    if (image_viewer!=NULL)
-      {
-      //!!
-      }
+      image_viewer->getCamera()->focusOnObject(this);
    }
 
 // Objects:
