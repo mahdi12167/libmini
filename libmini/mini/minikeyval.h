@@ -87,6 +87,8 @@ class minikeyval
    //! remove key-value pairs
    void remove(const ministrings &keys)
       {
+      unsigned int i;
+
       for (i=0; i<keys.getsize(); i++)
          remove(keys[i]);
       }
