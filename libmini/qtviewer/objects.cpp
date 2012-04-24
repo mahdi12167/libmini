@@ -145,15 +145,7 @@ Objects::Objects()
    {}
 
 Objects::~Objects()
-   {
-   unsigned int i;
-
-   for (i=0; i<get_num(); i++)
-      {
-      Object *obj=get(i);
-      delete obj;
-      }
-   }
+   {}
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
