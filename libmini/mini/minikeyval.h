@@ -55,24 +55,42 @@ class minikeyval
       {return(pairs.getsize());}
 
    //! add key-value pair
-   void add(const ministring &key,const Item &val)
+   BOOLINT add(const ministring &key,const Item &val)
       {
+      unsigned int idx;
+
+      if (get_pair(key,idx)) return(FALSE);
+
       pairs.append(minikeyval_pair<Item>(key,val));
       sorted=FALSE;
+
+      return(TRUE);
       }
 
    //! add key-value pair with tag
-   void add(const ministring &key,const Item &val,const ministring &tag)
+   BOOLINT add(const ministring &key,const Item &val,const ministring &tag)
       {
+      unsigned int idx;
+
+      if (get_pair(key,idx)) return(FALSE);
+
       pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
       sorted=FALSE;
+
+      return(TRUE);
       }
 
    //! add key-value pair with tags
-   void add(const ministring &key,const Item &val,const ministrings &tags)
+   BOOLINT add(const ministring &key,const Item &val,const ministrings &tags)
       {
+      unsigned int idx;
+
+      if (get_pair(key,idx)) return(FALSE);
+
       pairs.append(minikeyval_pair<Item>(key,val,tags));
       sorted=FALSE;
+
+      return(TRUE);
       }
 
    //! remove key-value pair
