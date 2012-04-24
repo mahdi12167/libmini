@@ -6,6 +6,7 @@
 
 #include "viewer.h"
 #include "objects.h"
+#include "nodes.h"
 
 // Object:
 
@@ -98,7 +99,8 @@ BOOLINT Object_image::initGFX()
       mininode_root *root=image_viewer->getRoot();
 
       if (image_groupnode==NULL)
-         image_groupnode=root->append_child(new mininode_group());
+         image_groupnode=root->append_child(new mininode_deferred_semitransparent())->
+                         append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
 
       grid_list list;
       grid_layer *layer;
@@ -114,7 +116,7 @@ BOOLINT Object_image::initGFX()
          coord=ext.get_center();
          radius=ext.get_size();
 
-         //!! add node_grid_extent
+         image_node=image_groupnode->append_child(new node_grid_extent(ext));
 
          return(TRUE);
          }
@@ -126,9 +128,8 @@ BOOLINT Object_image::initGFX()
 void Object_image::exitGFX()
    {
    if (image_viewer!=NULL)
-      {
-      //!! remove node_grid_extent
-      }
+      if (image_groupnode!=NULL)
+         image_groupnode->remove_node(image_node);
    }
 
 void Object_image::focus()
