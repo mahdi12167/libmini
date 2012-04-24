@@ -149,14 +149,18 @@ Objects::~Objects()
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
-   minikeyval<Object *>::add(key,obj,tag);
-   return(obj->initGFX());
+   if (minikeyval<Object *>::add(key,obj,tag))
+      return(obj->initGFX());
+
+   return(FALSE);
    }
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {
-   minikeyval<Object *>::add(key,obj,tags);
-   return(obj->initGFX());
+   if (minikeyval<Object *>::add(key,obj,tags))
+      return(obj->initGFX());
+
+   return(FALSE);
    }
 
 unsigned int Objects::get_num()
