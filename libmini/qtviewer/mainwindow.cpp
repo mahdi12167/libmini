@@ -278,7 +278,10 @@ void MainWindow::clear()
 {
    int row = viewerTable->currentRow();
 
-   viewerWindow->removeObject(m_Keys[row]);
+   if (row==-1)
+      viewerWindow->clearObjects();
+   else
+      viewerWindow->removeObject(m_Keys[row]);
 }
 
 void MainWindow::updateTable(ministring key)
