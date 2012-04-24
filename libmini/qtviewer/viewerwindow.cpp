@@ -231,6 +231,9 @@ void ViewerWindow::clearMaps()
 
 void ViewerWindow::loadImage(ministring url)
 {
+   if (url.startswith("file://"))
+      url.substitute("file://","");
+
    Object_image *image = new Object_image(url, "", viewer);
 
    if (!addObject(url, image, "image"))
