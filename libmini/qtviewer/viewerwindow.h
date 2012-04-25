@@ -34,6 +34,8 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
+   void loadURL(ministring url);
+
    void loadMap(ministring url);
    void clearMaps();
 

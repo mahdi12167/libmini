@@ -55,10 +55,10 @@ void ViewerWindow::initializeGL()
       // initialize viewer here as it needs GL context to init
       viewer->init();
 
-      // init map from arguments
+      // load object url from arguments
       QStringList dataPathList = QCoreApplication::arguments();
       for (int i=1; i<dataPathList.size(); i++)
-         loadMap(dataPathList[i].toStdString().c_str());
+         loadURL(dataPathList[i].toStdString().c_str());
    }
 
    qglClearColor(Qt::black);
@@ -194,6 +194,18 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    reportModifiers();
 
    viewer->getCamera()->timerEvent(event->timerId());
+}
+
+void ViewerWindow::loadURL(ministring url)
+{
+   if (url.endswith(".jpg"))
+      loadImage(url);
+   else if (url.endswith(".png"))
+      loadImage(url);
+   else if (url.endswith(".tif"))
+      loadImage(url);
+   else
+      loadMap(url);
 }
 
 void ViewerWindow::loadMap(ministring url)
@@ -388,14 +400,7 @@ void ViewerWindow::dropEvent(QDropEvent *event)
          QUrl qurl = urlList.at(i);
          ministring url=qurl.toString().toStdString().c_str();
 
-         if (url.endswith(".jpg"))
-            loadImage(url);
-         else if (url.endswith(".png"))
-            loadImage(url);
-         else if (url.endswith(".tif"))
-            loadImage(url);
-         else
-            loadMap(url);
+         loadURL(url);
       }
    }
 }
