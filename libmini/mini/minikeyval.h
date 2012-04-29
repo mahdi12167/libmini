@@ -148,6 +148,8 @@ class minikeyval
       {
       ministrings keys;
 
+      sort();
+
       for (unsigned int i=0; i<pairs.getsize(); i++)
          keys.append(pairs[i].key);
 
@@ -158,6 +160,8 @@ class minikeyval
    ministrings get_items(const ministring &tag)
       {
       ministrings keys;
+
+      sort();
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
          for (unsigned int j=0; j<pairs[i].tags.getsize(); j++)
@@ -175,6 +179,8 @@ class minikeyval
       {
       ministrings keys;
 
+      sort();
+
       for (unsigned int i=0; i<pairs.getsize(); i++)
          if (tags/pairs[i].tags)
             keys.append(pairs[i].key);
@@ -184,17 +190,23 @@ class minikeyval
 
    protected:
 
+   //! sort keys
+   void sort()
+      {
+      if (!sorted)
+         {
+         shellsort< minikeyval_pair<Item> >(pairs);
+         sorted=TRUE;
+         }
+      }
+
    //! get pair index from key
    BOOLINT get_pair(const ministring &key,unsigned int &idx)
       {
       unsigned int size;
       unsigned int left,right,mid;
 
-      if (!sorted)
-         {
-         shellsort< minikeyval_pair<Item> >(pairs);
-         sorted=TRUE;
-         }
+      sort();
 
       size=pairs.getsize();
       if (size==0) return(FALSE);
