@@ -513,28 +513,4 @@ inline std::ostream& operator << (std::ostream &out,const ministrings &a)
    return(out);
    }
 
-// logging:
-
-static BOOLINT minilog_switch=FALSE;
-
-inline void minilog_on()
-   {minilog_switch=TRUE;}
-
-inline void minilog_off()
-   {minilog_switch=FALSE;}
-
-inline void minilog(ministring msg)
-   {
-   static FILE *out=NULL;
-
-   if (minilog_switch)
-      {
-      if (!out)
-         if (!(out=fopen("log.txt","w"))) ERRORMSG();
-
-      fprintf(out,"%s\n",msg.c_str());
-      fflush(out);
-      }
-   }
-
 #endif

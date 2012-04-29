@@ -5,8 +5,10 @@ SUBDIRS = . tools
 HDRS	= minibase minicore\
 	  minicoreP.h miniOGLP.h\
 	  minicomplex minivec minimtx\
-	  minidyna minigeom minisort ministring\
-	  miniref mininode
+	  minidyna minisort minikeyval\
+	  ministring\
+	  miniref mininode\
+	  minigeom
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
@@ -22,6 +24,7 @@ MODS	= mini miniOGL\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
 	  mininodes\
+	  minilog\
 	  pnmbase pnmsample\
 	  database datafill\
 	  datacloud datacache datagrid\
