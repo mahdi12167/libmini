@@ -149,6 +149,8 @@ Objects::~Objects()
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
+   MINILOG("adding object with key=" + key + "and tag=" + tag);
+
    if (minikeyval<Object *>::add(key,obj,tag))
       return(obj->initGFX());
 
@@ -157,6 +159,8 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {
+   MINILOG("adding object with key=" + key);
+
    if (minikeyval<Object *>::add(key,obj,tags))
       return(obj->initGFX());
 
@@ -192,6 +196,8 @@ ministrings Objects::list(const ministrings &tags)
 
 void Objects::remove(const ministring &key)
    {
+   MINILOG("removing object with key=" + key);
+
    Object *obj=get(key);
 
    if (obj)

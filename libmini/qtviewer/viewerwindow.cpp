@@ -206,6 +206,8 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else
       loadMap(url);
+
+   viewer->getCamera()->startIdling(); //!!
 }
 
 void ViewerWindow::loadMap(ministring url)
