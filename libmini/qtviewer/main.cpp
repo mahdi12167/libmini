@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 
    setminierrorhandler(errormsg);
 
+   MINILOG("program start\n");
+
    MainWindow window;
 
    window.resize(window.sizeHint());
