@@ -16,12 +16,17 @@ class minilog
    static void off()
       {minilog_switch=FALSE;}
 
-   static void log(ministring msg);
+   static void logfile(ministring filename="");
+
+   static void log(ministring message);
 
    protected:
 
+   static ministring minilog_filename;
    static BOOLINT minilog_switch;
-   static ministring minilog_file;
+   static FILE *minilog_file;
    };
+
+#define MINILOG(message) minilog::log(message)
 
 #endif

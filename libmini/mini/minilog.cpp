@@ -2,19 +2,27 @@
 
 #include "minilog.h"
 
-ministring minilog::minilog_file="log.txt";
+ministring minilog::minilog_filename="log.txt";
 BOOLINT minilog::minilog_switch=FALSE;
+FILE *minilog::minilog_file=NULL;
 
-void minilog::log(ministring msg)
+void minilog::logfile(ministring filename)
    {
-   static FILE *out=NULL;
+   minilog_filename=filename;
 
+   if (minilog_file!=NULL) fclose(minilog_file);
+   minilog_file=NULL;
+   }
+
+void minilog::log(ministring message)
+   {
    if (minilog_switch)
-      {
-      if (!out)
-         if (!(out=fopen(minilog_file.c_str(),"w"))) ERRORMSG();
+      if (minilog_filename!="")
+         {
+         if (!minilog_file)
+            if (!(minilog_file=fopen(minilog_filename.c_str(),"w"))) ERRORMSG();
 
-      fprintf(out,"%s\n",msg.c_str());
-      fflush(out);
-      }
+         fprintf(minilog_file,"%s\n",message.c_str());
+         fflush(minilog_file);
+         }
    }
