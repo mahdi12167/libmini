@@ -3,7 +3,7 @@
 #include "minilog.h"
 
 ministring minilog::minilog_filename="log.txt";
-BOOLINT minilog::minilog_switch=FALSE;
+BOOLINT minilog::minilog_switch=TRUE;
 FILE *minilog::minilog_file=NULL;
 
 void minilog::logfile(ministring filename)
