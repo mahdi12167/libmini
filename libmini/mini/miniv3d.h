@@ -11,6 +11,8 @@ class miniv3f;
 class miniv4d;
 class miniv4f;
 
+class ministring;
+
 //! 3D double vector
 class miniv3d
    {
@@ -38,6 +40,9 @@ class miniv3d
    miniv3d(const miniv3f &v);
    miniv3d(const miniv4d &v);
    miniv3d(const miniv4f &v);
+
+   //! string cast operator
+   operator ministring() const;
 
    //! destructor
    ~miniv3d() {}
