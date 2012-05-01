@@ -11,7 +11,8 @@ namespace minisort {
 
 // Shellsort as proposed by Robert Sedgewick in "Algorithms"
 //  the algorithm sorts the elements in ascending order
-//  the < operator needs to be defined for two elements
+//  the < operator needs to be overloaded for two elements
+//  runtime is O(n^1.5), not stable
 
 // templated version for indexed arrays
 template <class Item>
