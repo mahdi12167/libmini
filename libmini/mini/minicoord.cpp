@@ -3,6 +3,7 @@
 #include "minibase.h"
 
 #include "minicrs.h"
+#include "ministring.h"
 
 #include "minicoord.h"
 
@@ -584,3 +585,6 @@ const char *minicoord::getdatum(const MINICOORD_DATUM &d)
       default: return("Unknown");
       }
    }
+
+minicoord::operator ministring() const
+   {return((ministring)"[ (" + vec.x + "," + vec.y + "," + vec.z + ") t=" + vec.w + " crs=" + getcrs() + " zone=" + crs_zone + " datum=" + getdatum() + " ]");}

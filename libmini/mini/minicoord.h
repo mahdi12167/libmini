@@ -6,6 +6,8 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+class ministring;
+
 //! geo-referenced coordinates
 class minicoord
    {
@@ -134,6 +136,9 @@ class minicoord
    //! get crs datum description
    const char *getdatum() const;
    static const char *getdatum(const MINICOORD_DATUM &d);
+
+   //! string cast operator
+   operator ministring() const;
 
    miniv4d vec; // geo-referenced coordinates (plus time)
    MINICOORD type; // actual coordinate reference system type
