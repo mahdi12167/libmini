@@ -407,13 +407,23 @@ class ministrings: public minidyna<ministring>
    {
    public:
 
+   //! default constructor
+   ministrings(const ministring &str="")
+      : minidyna<ministring>(str)
+      {}
+
+   //! concatenate string list
    ministring to_string() const
       {
       unsigned int i;
 
       ministring str;
 
-      for (i=0; i<getsize(); i++) str+=get(i);
+      for (i=0; i<getsize(); i++)
+         {
+         str+=get(i);
+         if (i<getsize()-1) str+=(ministring)"/";
+         }
 
       return(str);
       }
