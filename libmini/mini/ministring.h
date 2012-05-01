@@ -403,7 +403,22 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
    }
 
 //! string list
-typedef minidyna<ministring> ministrings;
+class ministrings: public minidyna<ministring>
+   {
+   public:
+
+   ministring to_string() const
+      {
+      unsigned int i;
+
+      ministring str;
+
+      for (i=0; i<getsize(); i++) str+=get(i);
+
+      return(str);
+      }
+
+   };
 
 //! cmp operator (compare string lists)
 inline int operator == (const ministrings &a,const ministrings &b)
