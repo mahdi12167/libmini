@@ -149,20 +149,32 @@ Objects::~Objects()
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
-   MINILOG("adding object with key=" + key + "and tag=" + tag);
+   MINILOG("adding object with key=" + key + " and tag=" + tag);
 
    if (minikeyval<Object *>::add(key,obj,tag))
-      return(obj->initGFX());
+      if (obj->initGFX())
+         {
+         MINILOG((ministring)" object extent: " + obj->get_center());
+         MINILOG((ministring)" object size: " + obj->get_radius());
+
+         return(TRUE);
+         }
 
    return(FALSE);
    }
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {
-   MINILOG("adding object with key=" + key);
+   MINILOG("adding object with key=" + key + " and tags=" + tags.to_string());
 
    if (minikeyval<Object *>::add(key,obj,tags))
-      return(obj->initGFX());
+      if (obj->initGFX())
+         {
+         MINILOG((ministring)" object extent: " + obj->get_center());
+         MINILOG((ministring)" object size: " + obj->get_radius());
+
+         return(TRUE);
+         }
 
    return(FALSE);
    }

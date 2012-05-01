@@ -206,8 +206,6 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else
       loadMap(url);
-
-   viewer->getCamera()->startIdling(); //!!
 }
 
 void ViewerWindow::loadMap(ministring url)
@@ -229,13 +227,13 @@ void ViewerWindow::loadMap(ministring url)
    Object_tileset *tileset = new Object_tileset(url, "", viewer);
 
    if (!addObject(url, tileset, "tileset"))
-      {
+   {
       delete tileset;
 
       QMessageBox::warning(this, "Error",
                            "Unable to load map from url="+QString(url.c_str()),
                            QMessageBox::Ok);
-      }
+   }
 }
 
 void ViewerWindow::clearMaps()
@@ -251,13 +249,15 @@ void ViewerWindow::loadImage(ministring url)
    Object_image *image = new Object_image(url, "", viewer);
 
    if (!addObject(url, image, "image"))
-      {
+   {
       delete image;
 
       QMessageBox::warning(this, "Error",
                            "Unable to load image from url="+QString(url.c_str()),
                            QMessageBox::Ok);
-      }
+   }
+   else
+      image->focus();
 }
 
 void ViewerWindow::clearImages()
@@ -268,10 +268,10 @@ void ViewerWindow::clearImages()
 BOOLINT ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
 {
    if (objects.add(key, obj, tag))
-      {
+   {
       emit changed(key);
       return(TRUE);
-      }
+   }
 
    return(FALSE);
 }
