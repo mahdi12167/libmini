@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 
    setminierrorhandler(errormsg);
 
+   minilog::on();
    MINILOG("program start");
 
    MainWindow window;
