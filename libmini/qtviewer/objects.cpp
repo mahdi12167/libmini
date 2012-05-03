@@ -19,6 +19,12 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
+minicoord Object::get_center()
+   {
+   coord.convert2ecef();
+   return(coord);
+   }
+
 miniv3d Object::get_normal()
    {
    coord.convert2ecef();
@@ -26,6 +32,9 @@ miniv3d Object::get_normal()
    normal.normalize();
    return(normal);
    }
+
+double Object::get_radius()
+   {return(radius);}
 
 // Object_tileset:
 
@@ -159,6 +168,10 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
 
          return(TRUE);
          }
+      else
+         MINILOG((ministring)" object failed to initialize");
+   else
+      MINILOG((ministring)" object failed to be added");
 
    return(FALSE);
    }
@@ -175,6 +188,10 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
 
          return(TRUE);
          }
+      else
+         MINILOG((ministring)" object failed to initialize");
+   else
+      MINILOG((ministring)" object failed to be added");
 
    return(FALSE);
    }

@@ -244,6 +244,8 @@ void Camera::focusOnTarget(double zoom)
 
    curve.append_sector(get_eye(), target, 20);
    startTransition(curve, 0.0, 0.0, 0.5);
+
+   MINILOG((ministring)"focusing on target: " + target);
 }
 
 void Camera::focusOnMap(minilayer *layer)
@@ -265,6 +267,8 @@ void Camera::focusOnMap(minilayer *layer)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
       startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
+
+   MINILOG((ministring)"focusing on map: " + target);
 }
 
 void Camera::focusOnObject(Object *obj)
@@ -274,8 +278,8 @@ void Camera::focusOnObject(Object *obj)
    if (obj==NULL) return;
 
    minicoord target = obj->get_center();
-   double size = 2.0*obj->get_radius();
    miniv3d normal = obj->get_normal();
+   double size = 2.0*obj->get_radius();
 
    target += size * normal;
 
@@ -285,6 +289,8 @@ void Camera::focusOnObject(Object *obj)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
       startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
+
+   MINILOG((ministring)"focusing on object: " + target);
 }
 
 void Camera::processTransition(double w, double dw)
