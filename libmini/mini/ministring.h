@@ -330,10 +330,10 @@ inline int operator < (const ministring &a,const ministring &b)
    if (s<b.getsize()) return(1);
    if (s>b.getsize()) return(0);
 
-   for (i=0; i+1<s; i++)
-      if (b[i]<a[i]) return(0);
+   for (i=0; i<s; i++)
+      if (a[i]<b[i]) return(1);
 
-   return(a[i]<b[i]);
+   return(0);
    }
 
 //! add operator (concatenate strings)
@@ -464,10 +464,10 @@ inline int operator < (const ministrings &a,const ministrings &b)
    if (s<s2.getsize()) return(1);
    if (s>s2.getsize()) return(0);
 
-   for (i=0; i+1<s; i++)
-      if (s2[i]<s1[i]) return(0);
+   for (i=0; i<s; i++)
+      if (s1[i]<s2[i]) return(1);
 
-   return(s1[i]<s2[i]);
+   return(0);
    }
 
 //! add operator (union of string lists)
