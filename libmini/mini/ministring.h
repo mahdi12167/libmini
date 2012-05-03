@@ -408,7 +408,12 @@ class ministrings: public minidyna<ministring>
    public:
 
    //! default constructor
-   ministrings(const ministring &str="")
+   ministrings()
+      : minidyna<ministring>()
+      {}
+
+   //! custom constructor
+   ministrings(const ministring &str)
       : minidyna<ministring>(str)
       {}
 
