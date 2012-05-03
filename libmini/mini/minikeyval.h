@@ -211,8 +211,6 @@ class minikeyval
       size=pairs.getsize();
       if (size==0) return(FALSE);
 
-      if (key<pairs[0].key || pairs[size-1].key<key) return(FALSE);
-
       // binary search
       left=mid=0;
       right=size-1;
@@ -223,10 +221,21 @@ class minikeyval
          else left=mid;
          }
 
-      if (key==pairs[left].key) idx=left;
-      else idx=right;
+      // compare left
+      if (key==pairs[left].key)
+         {
+         idx=left;
+         return(TRUE);
+         }
 
-      return(TRUE);
+      // compare right
+      if (key==pairs[right].key)
+         {
+         idx=right;
+         return(TRUE);
+         }
+
+      return(FALSE);
       }
 
    };
