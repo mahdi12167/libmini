@@ -421,8 +421,8 @@ class ministrings: public minidyna<ministring>
 
       for (i=0; i<getsize(); i++)
          {
-         str+=get(i);
-         if (i<getsize()-1) str+=(ministring)"/";
+         str = str + get(i);
+         if (i<getsize()-1) str = str + "/";
          }
 
       return(str);
