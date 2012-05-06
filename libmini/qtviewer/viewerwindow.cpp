@@ -210,8 +210,6 @@ void ViewerWindow::loadURL(ministring url)
 
 void ViewerWindow::loadMap(ministring url)
 {
-   minilayer *layer;
-
    if (url.endswith(".ini"))
    {
       unsigned int lio,lio1,lio2;
