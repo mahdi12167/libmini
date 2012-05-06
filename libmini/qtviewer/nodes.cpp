@@ -19,7 +19,7 @@ node_grid_extent::node_grid_extent(const minicoord &leftbottom,const minicoord &
 void node_grid_extent::set(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,
                            double maxsize)
    {
-   grid_extent:set(leftbottom,rightbottom,lefttop,righttop);
+   grid_extent::set(leftbottom,rightbottom,lefttop,righttop);
    construct(maxsize);
    }
 
