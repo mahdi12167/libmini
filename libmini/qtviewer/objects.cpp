@@ -138,7 +138,10 @@ void Object_image::exitGFX()
    {
    if (image_viewer!=NULL)
       if (image_groupnode!=NULL)
+         {
          image_groupnode->remove_node(image_node);
+         image_viewer->getCamera()->startIdling();
+         }
    }
 
 void Object_image::focus()
