@@ -5,7 +5,8 @@ SUBDIRS = . tools
 HDRS	= minibase minicore\
 	  minicoreP.h miniOGLP.h\
 	  minicomplex minivec minimtx\
-	  minidyna minisort minikeyval\
+	  minidyna minisort
+	  minikeyval minikdtree\
 	  ministring\
 	  miniref mininode\
 	  minigeom

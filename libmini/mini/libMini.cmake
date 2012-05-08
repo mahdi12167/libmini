@@ -5,7 +5,8 @@ SET(MINI_HDRS
    minicore.h minicoreP.h
    miniOGL.h miniOGLP.h
    minivec.h minimtx.h
-   minidyna.h minisort.h minikeyval.h
+   minidyna.h minisort.h
+   minikeyval.h minikdtree.h
    ministring.h minilog.h
    miniref.h mininode.h mininodes.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
