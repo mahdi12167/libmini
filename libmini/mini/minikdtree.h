@@ -12,6 +12,16 @@ class minikdtree
    {
    public:
 
+   //! default constructor
+   minikdtree()
+      {root=NULL;}
+
+   //! destructor
+   ~minikdtree()
+      {remove();}
+
+   protected:
+
    // definition of plane orientations
    enum {
       x_axis = 0,
@@ -32,21 +42,16 @@ class minikdtree
       Item item;
    } Node;
 
-   //! default constructor
-   minikdtree() {root=NULL;}
+   public:
 
-   //! destructor
-   ~minikdtree()
-      {remove();}
-
-   //! insert the an item at a particular point into the kd-tree
+   //! insert an item at a particular point into the kd-tree
    void insert(const Vector3D &point, const Item &item, Node **node)
       {
       int level = 0;
 
       while (*node!=NULL)
          {
-         if (pointInLeftHalfSpace(point, *node))
+         if (isInLeftHalfSpace(point, (*node)->plane))
             node = &((*node)->leftSpace);
          else
             node = &((*node)->rightSpace);
@@ -65,6 +70,60 @@ class minikdtree
 
    void insert(const Vector3D &point, const Item &item)
       {insert(point, item, &root);}
+
+   //! nearest neighbor search in kd-tree
+   //!  in: 3D point
+   //!  in: reference to starting node (the root node)
+   //!  out: reference of node containing nearest point
+   const Node *search(const Vector3D &point, const Node *node)
+      {
+      const Node *result = NULL;
+
+      if (node!=NULL)
+         {
+         result = node;
+
+         bool left = isInLeftHalfSpace(point, node->plane);
+
+         // traverse into corresponding half space
+         const Node *result2 = search(point, left? node->leftSpace : node->rightSpace);
+
+         // update result if closer
+         if (result2!=NULL)
+            {
+            double distance1 = getDistance(point, result->plane.point);
+            double distance2 = getDistance(point, result2->plane.point);
+
+            if (distance1>distance2)
+               result = result2;
+            }
+
+         double distance1 = getDistance(point, result->plane.point);
+         double distance2 = getDistance(point, node->plane);
+
+         // check if other half space can yield a closer result
+         if (distance1>distance2)
+            {
+            // traverse into other half space
+            const Node *result2 = search(point, left? node->rightSpace : node->leftSpace);
+
+            // update result if closer
+            if (result2!=NULL)
+               {
+               double distance1 = getDistance(point, result->plane.point);
+               double distance2 = getDistance(point, result2->plane.point);
+
+               if (distance1>distance2)
+                  result = result2;
+               }
+            }
+         }
+
+      return(result);
+      }
+
+   const Node *search(const Vector3D &point)
+      {return(search(point, root));}
 
    //! remove items in subtree
    void remove(Node **node)
@@ -113,42 +172,48 @@ class minikdtree
 
    protected:
 
-   // euclidean distance of two points
-   double getDistance(const Vector3D &point1, const Vector3D &point2)
-      {
-      Vector3D diff = point2-point1;
-
-      return(sqrt(diff * diff));
-      }
-
-   // minimum distance of a point to a plane
-   //  the plane is given by a point on the plane and
-   //  a normal that is orthogonal to the plane
-   //  as defined by the Hessian Normal Form
-   double getDistance(const Vector3D &point1, const Vector3D &point2, const Vector3D &normal)
-      {
-      Vector3D diff = point2-point1;
-
-      return(diff * normal);
-      }
-
-   // determines whether or not a point is in the left half space of a kd-tree node
-   BOOLINT pointInLeftHalfSpace(const Vector3D &point, const Node *node)
+   // get normal of plane
+   //  the normal points into the right half space
+   Vector3D getNormal(const Plane &plane)
       {
       Vector3D normal(0,0,0);
 
-      switch (node->plane.orientation)
+      switch (plane.orientation)
          {
          case x_axis: normal = Vector3D(1,0,0); break;
          case y_axis: normal = Vector3D(0,1,0); break;
          case z_axis: normal = Vector3D(0,0,1); break;
          }
 
-      double distance = getDistance(point, node->plane.point, normal);
-
-      return(distance <= 0.0);
+      return(normal);
       }
 
+   // euclidean distance of two points
+   double getDistance(const Vector3D &point1, const Vector3D &point2)
+      {
+      Vector3D vec = point2-point1;
+
+      return(sqrt(vec * vec));
+      }
+
+   // minimum distance of a point to a plane
+   double getDistance(const Vector3D &point, const Plane &plane)
+      {
+      Vector3D vec = point-plane.point;
+      Vector3D normal = getNormal(plane);
+
+      return(vec * normal);
+      }
+
+   // determines whether or not a point is in the left half space of a plane
+   bool isInLeftHalfSpace(const Vector3D &point, const Plane &plane)
+      {
+      double distance = getDistance(point, plane);
+
+      return(distance < 0.0);
+      }
+
+   // reference to root node
    Node *root;
    };
 
