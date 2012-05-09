@@ -5,6 +5,7 @@
 
 #include "minibase.h"
 #include "miniv3d.h"
+#include "minidyna.h"
 
 //! templated kd-tree
 template <class Item, class Vector3D = miniv3d>
@@ -19,8 +20,6 @@ class minikdtree
    //! destructor
    ~minikdtree()
       {remove();}
-
-   protected:
 
    // definition of plane orientations
    enum {
@@ -41,8 +40,6 @@ class minikdtree
       Plane plane;
       Item item;
    } Node;
-
-   public:
 
    //! insert an item at a particular point into the kd-tree
    void insert(const Vector3D &point, const Item &item, Node **node)
@@ -99,7 +96,7 @@ class minikdtree
             }
 
          double distance1 = getDistance(point, result->plane.point);
-         double distance2 = getDistance(point, node->plane);
+         double distance2 = -getDistance(point, node->plane);
 
          // check if other half space can yield a closer result
          if (distance1>distance2)
@@ -121,6 +118,39 @@ class minikdtree
 
       return(result);
       }
+
+   //! distance search in kd-tree
+   //!  in: 3D center point
+   //!  in: search radius around center
+   //!  out: reference list of nodes within the search radius
+   minidyna<const Node *> search(const Vector3D &point, double radius, const Node *node)
+      {
+      minidyna<const Node *> result;
+
+      if (node!=NULL)
+         {
+         double distance = getDistance(node->plane.point, point);
+
+         // append node if within search radius
+         if (distance<radius)
+            result.append(node);
+
+         double intersection = -getDistance(point, node->plane);
+
+         // if search radius intersects left half space traverse into it
+         if (intersection <= radius)
+            result.append(search(point, radius, node->leftSpace));
+
+         // if search radius intersects right half space traverse into it
+         if (intersection >= -radius)
+            result.append(search(point, radius, node->rightSpace));
+         }
+
+      return(result);
+      }
+
+   minidyna<const Node *> search(const Vector3D &point, double radius)
+      {return(search(point, radius, root));}
 
    const Node *search(const Vector3D &point)
       {return(search(point, root));}
