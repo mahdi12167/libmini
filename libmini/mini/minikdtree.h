@@ -135,7 +135,7 @@ class minikdtree
          if (distance<radius)
             result.append(node);
 
-         double intersection = -getDistance(point, node->plane);
+         double intersection = getDistance(point, node->plane);
 
          // if search radius intersects left half space traverse into it
          if (intersection <= radius)
