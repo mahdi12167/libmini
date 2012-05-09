@@ -96,7 +96,7 @@ class minikdtree
             }
 
          double distance1 = getDistance(point, result->plane.point);
-         double distance2 = -getDistance(point, node->plane);
+         double distance2 = dabs(getDistance(point, node->plane));
 
          // check if other half space can yield a closer result
          if (distance1>distance2)
