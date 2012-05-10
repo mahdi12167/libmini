@@ -242,7 +242,7 @@ void Camera::focusOnTarget(double zoom)
    else
       target += cursorVector(zoom);
 
-   curve.append_sector(get_eye(), target, 20);
+   curve.append_sector(get_eye(), target, 100);
    startTransition(curve, 0.0, 0.0, 0.5);
 
    MINILOG((ministring)"focusing on target: " + target);
@@ -261,7 +261,7 @@ void Camera::focusOnMap(minilayer *layer)
    double size = (extent.x+extent.y) / 2.0;
    target += size * normal;
 
-   curve.append_sector(get_eye(), target, 20);
+   curve.append_sector(get_eye(), target, 100);
 
    if ((get_eye().vec - target.vec).getlength() < size/4.0)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
@@ -283,7 +283,7 @@ void Camera::focusOnObject(Object *obj)
 
    target += size * normal;
 
-   curve.append_sector(get_eye(), target, 20);
+   curve.append_sector(get_eye(), target, 100);
 
    if ((get_eye().vec - target.vec).getlength() < size/4.0)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
