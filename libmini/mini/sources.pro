@@ -3,7 +3,7 @@ HEADERS += \
    minicore.h minicoreP.h \
    miniOGL.h miniOGLP.h \
    minivec.h minimtx.h \
-   minidyna.h minisort.h
+   minidyna.h minisort.h \
    minikeyval.h minikdtree.h \
    ministring.h minilog.h \
    miniref.h mininode.h mininodes.h \
