@@ -15,7 +15,7 @@ class minikdtree
 
    //! default constructor
    minikdtree()
-      {root=NULL;}
+      {root = NULL;}
 
    //! destructor
    ~minikdtree()
@@ -41,6 +41,8 @@ class minikdtree
       Item item;
    } Node;
 
+   protected:
+
    //! insert an item at a particular point into the kd-tree
    void insert(const Vector3D &point, const Item &item, Node **node)
       {
@@ -65,8 +67,12 @@ class minikdtree
       (*node)->plane.orientation = level%3;
       }
 
+   public:
+
    void insert(const Vector3D &point, const Item &item)
       {insert(point, item, &root);}
+
+   protected:
 
    //! nearest neighbor search in kd-tree
    //!  in: 3D point
@@ -119,6 +125,13 @@ class minikdtree
       return(result);
       }
 
+   public:
+
+   const Node *search(const Vector3D &point)
+      {return(search(point, root));}
+
+   protected:
+
    //! distance search in kd-tree
    //!  in: 3D center point
    //!  in: search radius around center
@@ -149,11 +162,10 @@ class minikdtree
       return(result);
       }
 
+   public:
+
    minidyna<const Node *> search(const Vector3D &point, double radius)
       {return(search(point, radius, root));}
-
-   const Node *search(const Vector3D &point)
-      {return(search(point, root));}
 
    //! remove items in subtree
    void remove(Node **node)
@@ -240,7 +252,7 @@ class minikdtree
       {
       double distance = getDistance(point, plane);
 
-      return(distance < 0.0);
+      return(distance<0.0);
       }
 
    // reference to root node
