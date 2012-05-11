@@ -21,7 +21,7 @@ endif
 (cd zlib; ./configure --prefix=$prefix/zlib --enable-static --disable-shared; make -j 2; make install)
 
 # curl
-(cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl --disable-static --enable-shared; make -j 2; make install)
+(cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl --without-ssl --enable-static --disable-shared; make -j 2; make install)
 
 # squish
 (cd squish; cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish; make -j 2; make install)
