@@ -125,7 +125,7 @@ int main(int argc,char *argv[])
                    render,
                    keypress,
                    mouse,
-                   TRUE);
+                   FALSE);
 
    return(0);
    }
