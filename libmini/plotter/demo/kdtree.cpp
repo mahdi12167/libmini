@@ -4,12 +4,14 @@
 #include <mini/ministring.h>
 #include <mini/minikdtree.h>
 #include <mini/minicoord.h>
+#include <mini/miniv3f.h>
 
 #include <plotter/plot.h>
 
 minikdtree<ministring> kdtree;
-double kdtree_minx,kdtree_maxx;
-double kdtree_miny,kdtree_maxy;
+double utm_minx,utm_maxx;
+double utm_miny,utm_maxy;
+minidyna<miniv3f> points;
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
@@ -20,8 +22,8 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
 BOOLINT mouse(float x,float y)
    {
-   double utmx=(1.0-x)*kdtree_minx+x*kdtree_maxx;
-   double utmy=(1.0-y)*kdtree_maxy+y*kdtree_miny;
+   double utmx=(1.0-x)*utm_minx+x*utm_maxx;
+   double utmy=(1.0-y)*utm_maxy+y*utm_miny;
    miniv3d v(utmx,utmy,0);
 
    const minikdtree<ministring>::Node *node=kdtree.search(v);
@@ -32,7 +34,21 @@ BOOLINT mouse(float x,float y)
    return(FALSE);
    }
 
-void render(double time) {}
+void render(double time)
+   {
+   unsigned int i;
+
+   for (i=0; i<points.getsize(); i++)
+      {
+      double utmx=points[i].x;
+      double utmy=points[i].y;
+      
+      double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
+      double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
+
+      plot_point(x,y);
+      }
+   }
 
 void read()
    {
@@ -41,10 +57,10 @@ void read()
    FILE *file;
    char line[max_line];
 
-   kdtree_minx=MAXFLOAT;
-   kdtree_maxx=-MAXFLOAT;
-   kdtree_miny=MAXFLOAT;
-   kdtree_maxy=-MAXFLOAT;
+   utm_minx=MAXFLOAT;
+   utm_maxx=-MAXFLOAT;
+   utm_miny=MAXFLOAT;
+   utm_maxy=-MAXFLOAT;
 
    file=fopen("DE.tab","r");
    assert(file);
@@ -84,12 +100,14 @@ void read()
          coord.convert2(minicoord::MINICOORD_UTM);
          miniv3d v=coord.vec;
 
-         if (v.x<kdtree_minx) kdtree_minx=v.x;
-         if (v.x>kdtree_maxx) kdtree_maxx=v.x;
-         if (v.y<kdtree_miny) kdtree_miny=v.y;
-         if (v.y>kdtree_maxy) kdtree_maxy=v.y;
+         if (v.x<utm_minx) utm_minx=v.x;
+         if (v.x>utm_maxx) utm_maxx=v.x;
+         if (v.y<utm_miny) utm_miny=v.y;
+         if (v.y>utm_maxy) utm_maxy=v.y;
 
-         kdtree.insert(coord.vec,name);
+         kdtree.insert(v,name);
+         points.push(v);
+
          std::cout << lat << ";" << lon << ";" << name << std::endl;
       }
    }
