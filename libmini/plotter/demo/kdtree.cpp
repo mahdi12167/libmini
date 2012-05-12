@@ -42,7 +42,7 @@ void render(double time)
       {
       double utmx=points[i].x;
       double utmy=points[i].y;
-      
+
       double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
       double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
 
