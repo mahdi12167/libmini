@@ -46,7 +46,7 @@ void read()
    kdtree_miny=MAXFLOAT;
    kdtree_maxy=-MAXFLOAT;
 
-   file=fopen("DE.txt","r");
+   file=fopen("DE.tab","r");
    assert(file);
 
    while ((fgets(line,max_line,file))!=NULL)
