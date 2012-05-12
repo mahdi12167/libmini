@@ -17,6 +17,7 @@ static float winfps;
 
 static void (*renderfunc)(double time);
 static BOOLINT (*keyfunc)(unsigned char key,float x,float y);
+static BOOLINT (*mousefunc)(float x,float y);
 
 static float px=0.0f,py=0.0f;
 
@@ -113,12 +114,24 @@ void keyboardfunc(unsigned char key,int x,int y)
       if (keyfunc(key,mousex,mousey)) displayfunc();
    }
 
+void motionfunc(int x,int y)
+   {
+   float mousex,mousey;
+
+   mousex=(float)x/(winwidth-1);
+   mousey=(float)y/(winwidth-1);
+
+   if (mousefunc!=NULL)
+      if (mousefunc(mousex,mousey)) displayfunc();
+   }
+
 // open a window for 2D plotting
 void plot_openwindow(int *argc,char *argv[],
                      int width,int height,
                      float r,float g,float b,
                      void (*render)(double time),
                      BOOLINT (*keypress)(unsigned char key,float x,float y),
+                     BOOLINT (*mouse)(float x,float y),
                      BOOLINT continuous,
                      float fps)
    {
@@ -133,6 +146,7 @@ void plot_openwindow(int *argc,char *argv[],
 
    renderfunc=render;
    keyfunc=keypress;
+   mousefunc=mouse;
 
    glutInit(argc,argv);
    glutInitWindowSize(winwidth,winheight);
@@ -142,7 +156,7 @@ void plot_openwindow(int *argc,char *argv[],
    glutDisplayFunc(displayfunc);
    glutReshapeFunc(reshapefunc);
    glutMouseFunc(NULL);
-   glutMotionFunc(NULL);
+   glutMotionFunc(motionfunc);
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
    glutIdleFunc(continuous?displayfunc:NULL);

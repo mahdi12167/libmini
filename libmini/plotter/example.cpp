@@ -31,6 +31,7 @@ int main(int argc,char *argv[])
                    1.0f,1.0f,1.0f, /* background color */
                    render,         /* render function */
                    keypress,       /* keypress function */
+                   NULL,           /* mouse function */
                    FALSE);         /* render continuously */
 
    return(0);

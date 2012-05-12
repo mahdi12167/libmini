@@ -235,6 +235,7 @@ int main(int argc,char *argv[])
                    1.0f,1.0f,1.0f,
                    render,
                    keypress,
+                   NULL,
                    TRUE,
                    fps);
 

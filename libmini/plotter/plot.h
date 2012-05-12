@@ -9,6 +9,7 @@ void plot_openwindow(int *argc,char *argv[], // main arguments
                      float r,float g,float b, // background color
                      void (*render)(double time), // render function
                      BOOLINT (*keypress)(unsigned char key,float x,float y), // keypress function
+                     BOOLINT (*mouse)(float x,float y), // mouse function
                      BOOLINT continuous, // render continuously
                      float fps=50.0f); // target frame rate
 
