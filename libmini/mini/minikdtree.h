@@ -238,7 +238,7 @@ class minikdtree
       return(sqrt(vec * vec));
       }
 
-   // minimum distance of a point to a plane
+   // signed distance of a point to a plane
    //  negative values indicate position in left half space
    //  positive values indicate position in right half space
    double getDistance(const Vector3D &point, const Plane &plane)
