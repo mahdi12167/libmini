@@ -4,6 +4,7 @@
 
 #include <mini/minitime.h>
 #include <mini/miniOGL.h>
+#include <mini/minitext.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -17,7 +18,7 @@ static float winfps;
 
 static void (*renderfunc)(double time);
 static BOOLINT (*keyfunc)(unsigned char key,float x,float y);
-static BOOLINT (*mousefunc)(float x,float y);
+static BOOLINT (*clickfunc)(float x,float y);
 
 static float px=0.0f,py=0.0f;
 
@@ -99,10 +100,18 @@ void reshapefunc(int width,int height)
 
 void keyboardfunc(unsigned char key,int x,int y)
    {
+   int winmin;
+   float mouseox,mouseoy;
+
    float mousex,mousey;
 
-   mousex=(float)x/(winwidth-1);
-   mousey=(float)y/(winwidth-1);
+   winmin=min(winwidth,winheight);
+
+   mouseox=(float)(winwidth-winmin)/2;
+   mouseoy=(float)(winheight-winmin)/2;
+
+   mousex=(x-mouseox)/(winmin-1);
+   mousey=(y-mouseoy)/(winmin-1);
 
    if (tolower(key)=='q' || key==27)
       {
@@ -114,16 +123,31 @@ void keyboardfunc(unsigned char key,int x,int y)
       if (keyfunc(key,mousex,mousey)) displayfunc();
    }
 
-void motionfunc(int x,int y)
+void mousefunc(int button,int state,int x,int y)
    {
+   int winmin;
+   float mouseox,mouseoy;
+
    float mousex,mousey;
 
-   mousex=(float)x/(winwidth-1);
-   mousey=(float)y/(winwidth-1);
+   if (button==GLUT_LEFT_BUTTON)
+      if (state==GLUT_DOWN)
+         {
+         winmin=min(winwidth,winheight);
 
-   if (mousefunc!=NULL)
-      if (mousefunc(mousex,mousey)) displayfunc();
+         mouseox=(float)(winwidth-winmin)/2;
+         mouseoy=(float)(winheight-winmin)/2;
+
+         mousex=(x-mouseox)/(winmin-1);
+         mousey=(y-mouseoy)/(winmin-1);
+
+         if (clickfunc!=NULL)
+            if (clickfunc(mousex,mousey)) displayfunc();
+         }
    }
+
+void motionfunc(int x,int y)
+   {mousefunc(GLUT_LEFT_BUTTON,GLUT_DOWN,x,y);}
 
 // open a window for 2D plotting
 void plot_openwindow(int *argc,char *argv[],
@@ -131,7 +155,7 @@ void plot_openwindow(int *argc,char *argv[],
                      float r,float g,float b,
                      void (*render)(double time),
                      BOOLINT (*keypress)(unsigned char key,float x,float y),
-                     BOOLINT (*mouse)(float x,float y),
+                     BOOLINT (*click)(float x,float y),
                      BOOLINT continuous,
                      float fps)
    {
@@ -146,7 +170,7 @@ void plot_openwindow(int *argc,char *argv[],
 
    renderfunc=render;
    keyfunc=keypress;
-   mousefunc=mouse;
+   clickfunc=click;
 
    glutInit(argc,argv);
    glutInitWindowSize(winwidth,winheight);
@@ -155,7 +179,7 @@ void plot_openwindow(int *argc,char *argv[],
 
    glutDisplayFunc(displayfunc);
    glutReshapeFunc(reshapefunc);
-   glutMouseFunc(NULL);
+   glutMouseFunc(mousefunc);
    glutMotionFunc(motionfunc);
    glutKeyboardFunc(keyboardfunc);
    glutSpecialFunc(NULL);
@@ -220,4 +244,15 @@ void plot_circle(float x,float y,float r)
    for (i=1; i<=30; i++)
       plot_to(x+r*sin(i*2*PI/segments),
               y+r*cos(i*2*PI/segments));
+   }
+
+// plot text
+void plot_text(float x,float y,float w,
+               float hue,float sat,float val,
+               const char *str)
+   {
+   mtxpush();
+   mtxtranslate(x,y,0.0);
+   minitext::drawstring(w*strlen(str),hue,sat,val,1.0f,str);
+   mtxpop();
    }

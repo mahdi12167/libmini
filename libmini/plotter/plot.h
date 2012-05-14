@@ -9,7 +9,7 @@ void plot_openwindow(int *argc,char *argv[], // main arguments
                      float r,float g,float b, // background color
                      void (*render)(double time), // render function
                      BOOLINT (*keypress)(unsigned char key,float x,float y), // keypress function
-                     BOOLINT (*mouse)(float x,float y), // mouse function
+                     BOOLINT (*click)(float x,float y), // mouse click function
                      BOOLINT continuous, // render continuously
                      float fps=50.0f); // target frame rate
 
@@ -40,5 +40,10 @@ void plot_point(const float x,const float y);
 
 // plot circle
 void plot_circle(float x,float y,float r);
+
+// plot text
+void plot_text(float x,float y,float w,
+               float hue,float sat,float val,
+               const char *str);
 
 #endif

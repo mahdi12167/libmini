@@ -13,6 +13,8 @@ double utm_minx,utm_maxx;
 double utm_miny,utm_maxy;
 minidyna<miniv3f> points;
 
+const minikdtree<ministring>::Node *node=NULL;
+
 BOOLINT keypress(unsigned char key,float x,float y)
    {
    if (tolower(key)=='x') exit(0);
@@ -26,12 +28,9 @@ BOOLINT mouse(float x,float y)
    double utmy=(1.0-y)*utm_maxy+y*utm_miny;
    miniv3d v(utmx,utmy,0);
 
-   const minikdtree<ministring>::Node *node=kdtree.search(v);
+   node=kdtree.search(v);
 
-   if (node)
-      std::cout << node->item << std::endl;
-
-   return(FALSE);
+   return(node!=NULL);
    }
 
 void render(double time)
@@ -47,6 +46,18 @@ void render(double time)
       double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
 
       plot_point(x,y);
+      }
+
+   if (node)
+      {
+      double utmx=node->plane.point.x;
+      double utmy=node->plane.point.y;
+
+      double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
+      double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
+
+      ministring name=node->item;
+      plot_text(x,y,0.025,0.0,1.0,1.0,name.c_str());
       }
    }
 
