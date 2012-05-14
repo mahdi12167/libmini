@@ -37,6 +37,8 @@ void render(double time)
    {
    unsigned int i;
 
+   plot_color(0.5f,0.5f,0.5f);
+
    for (i=0; i<points.getsize(); i++)
       {
       double utmx=points[i].x;
@@ -57,7 +59,7 @@ void render(double time)
       double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
 
       ministring name=node->item;
-      plot_text(x,y,0.025,0.0,1.0,1.0,name.c_str());
+      plot_text(x,y,0.025f,0.0f,1.0f,1.0f,name.c_str());
       }
    }
 
@@ -85,15 +87,25 @@ void read()
 
       const char *tok=strtok(line,"\t");
 
-      bool success=false;
+      bool success=true;
 
       while (tok)
          {
          switch (column)
             {
-            case 3: name=ministring(tok); success=isalpha(*tok); break;
-            case 4: success&=sscanf(tok,"%lf",&lat)==1; break;
-            case 5: success&=sscanf(tok,"%lf",&lon)==1; break;
+            case 2:
+               name=ministring(tok);
+               success&=isalpha(name[0]);
+               break;
+            case 3:
+               success&=isalpha(*tok);
+               break;
+            case 4:
+               success&=sscanf(tok,"%lf",&lat)==1;
+               break;
+            case 5:
+               success&=sscanf(tok,"%lf",&lon)==1;
+               break;
             }
 
          tok=strtok(NULL,"\t");
