@@ -11,17 +11,11 @@ namespace minitext {
 
 float CONFIGURE_ZSCALE=0.95f; // must be 1.0f for orthographic projections
 
-void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
+void drawsymbol(const char *symbol)
    {
-   float rgb[3];
-
    float px,py,lx,ly;
 
    BOOLINT draw=TRUE;
-
-   hsv2rgb(hue,sat,val,rgb);
-
-   color(rgb[0],rgb[1],rgb[2],alpha);
 
    px=py=0.0f;
 
@@ -49,7 +43,7 @@ void drawsymbol(float hue,float sat,float val,float alpha,const char *symbol)
       }
    }
 
-void drawletter(float hue,float sat,float val,float alpha,char letter)
+void drawletter(char letter)
    {
    mtxpush();
    mtxscale(1.0f/4,1.0f/6,0.0f);
@@ -57,72 +51,72 @@ void drawletter(float hue,float sat,float val,float alpha,char letter)
    switch (toupper(letter))
       {
       // letters occupy a 7x4 grid
-      case 'A': drawsymbol(hue,sat,val,alpha,"nnnnnNeEsssssunnndwww"); break;
-      case 'B': drawsymbol(hue,sat,val,alpha,"nnnnnneeEsSwwueedEsSww"); break;
-      case 'C': drawsymbol(hue,sat,val,alpha,"ueeNdSwWnnnnNeE"); break;
-      case 'D': drawsymbol(hue,sat,val,alpha,"nnnnnneeEssssSww"); break;
-      case 'E': drawsymbol(hue,sat,val,alpha,"ueeedwwwnnnnnneeeussswdww"); break;
-      case 'F': drawsymbol(hue,sat,val,alpha,"nnnnnneeeussswdww"); break;
-      case 'G': drawsymbol(hue,sat,val,alpha,"unnneedessSwWnnnnNeE"); break;
-      case 'H': drawsymbol(hue,sat,val,alpha,"nnnnnnueeedssssssunnndwww"); break;
-      case 'I': drawsymbol(hue,sat,val,alpha,"uedeeuwdnnnnnneuwdw"); break;
-      case 'J': drawsymbol(hue,sat,val,alpha,"undEeNnnnnnwww"); break;
-      case 'K': drawsymbol(hue,sat,val,alpha,"nnnnnnusssdNNNuSSSdEEE"); break;
-      case 'L': drawsymbol(hue,sat,val,alpha,"ueeedwwwnnnnnn"); break;
-      case 'M': drawsymbol(hue,sat,val,alpha,"nnnnnnEeNssssss"); break;
-      case 'N': drawsymbol(hue,sat,val,alpha,"nnnnnnusdEEEssunndnnnn"); break;
-      case 'O': drawsymbol(hue,sat,val,alpha,"uedWnnnnNeEssssSw"); break;
-      case 'P': drawsymbol(hue,sat,val,alpha,"nnnnnneeEsSww"); break;
-      case 'Q': drawsymbol(hue,sat,val,alpha,"uedWnnnnNeEssssSwuNdE"); break;
-      case 'R': drawsymbol(hue,sat,val,alpha,"nnnnnneeEsSwwuedEEs"); break;
-      case 'S': drawsymbol(hue,sat,val,alpha,"undEeNnWwWnNeE"); break;
-      case 'T': drawsymbol(hue,sat,val,alpha,"ueednnnnnnwwueedee"); break;
-      case 'U': drawsymbol(hue,sat,val,alpha,"unnnnnndsssssEeNnnnnn"); break;
-      case 'V': drawsymbol(hue,sat,val,alpha,"unnnnnndsssssENNnnnn"); break;
-      case 'W': drawsymbol(hue,sat,val,alpha,"unnnnnndssssssNeEnnnnnn"); break;
-      case 'X': drawsymbol(hue,sat,val,alpha,"nnNNNnuwwwdsEEEss"); break;
-      case 'Y': drawsymbol(hue,sat,val,alpha,"ueednnWWnnueeedsssS"); break;
-      case 'Z': drawsymbol(hue,sat,val,alpha,"ueeendswwwnnNNNnwwws"); break;
-      case '_': drawsymbol(hue,sat,val,alpha,"eee"); break;
-      case '0': drawsymbol(hue,sat,val,alpha,"uedWnnnnNeEssssSwuNNdWWW"); break;
-      case '1': drawsymbol(hue,sat,val,alpha,"ueednnnnnnSS"); break;
-      case '2': drawsymbol(hue,sat,val,alpha,"ueeedwwwNNNnnWwSs"); break;
-      case '3': drawsymbol(hue,sat,val,alpha,"undEeNnWwuedNnWwS"); break;
-      case '4': drawsymbol(hue,sat,val,alpha,"ueednnnnnnuwwdssseee"); break;
-      case '5': drawsymbol(hue,sat,val,alpha,"undEeNnWwwnnneee"); break;
-      case '6': drawsymbol(hue,sat,val,alpha,"unndNeEsSwWnnnnNeE"); break;
-      case '7': drawsymbol(hue,sat,val,alpha,"ueednnnnnnwwusssedee"); break;
-      case '8': drawsymbol(hue,sat,val,alpha,"uedWnNWnNeEsSwuedEsSw"); break;
-      case '9': drawsymbol(hue,sat,val,alpha,"undEeNnnnnWwSsEee"); break;
-      case '.': drawsymbol(hue,sat,val,alpha,"uednesw"); break;
-      case ',': drawsymbol(hue,sat,val,alpha,"uedN"); break;
-      case ':': drawsymbol(hue,sat,val,alpha,"unedneswunndnesw"); break;
-      case ';': drawsymbol(hue,sat,val,alpha,"uneedwnesSunnndnesw"); break;
-      case '?': drawsymbol(hue,sat,val,alpha,"ueednnnNnWwS"); break;
-      case '!': drawsymbol(hue,sat,val,alpha,"ueednundnnnn"); break;
-      case '|': drawsymbol(hue,sat,val,alpha,"ueednnnnnn"); break;
-      case '-': drawsymbol(hue,sat,val,alpha,"unnnedee"); break;
-      case '+': drawsymbol(hue,sat,val,alpha,"unnnedeeunwdss"); break;
-      case '*': drawsymbol(hue,sat,val,alpha,"unnedNNuwwdEE"); break;
-      case '/': drawsymbol(hue,sat,val,alpha,"undNNN"); break;
-      case '>': drawsymbol(hue,sat,val,alpha,"unedNNWW"); break;
-      case '<': drawsymbol(hue,sat,val,alpha,"uneeedWWNN"); break;
-      case '=': drawsymbol(hue,sat,val,alpha,"unnedeeunndww"); break;
-      case '(': drawsymbol(hue,sat,val,alpha,"ueedWnnnnN"); break;
-      case ')': drawsymbol(hue,sat,val,alpha,"uedNnnnnW"); break;
-      case '[': drawsymbol(hue,sat,val,alpha,"ueedwnnnnnne"); break;
-      case ']': drawsymbol(hue,sat,val,alpha,"uedennnnnnw"); break;
-      case '{': drawsymbol(hue,sat,val,alpha,"ueedwnnWNnne"); break;
-      case '}': drawsymbol(hue,sat,val,alpha,"udennNWnnw"); break;
-      case '$': drawsymbol(hue,sat,val,alpha,"unndEeNWwWNeEuWndssssssuwdnnnnnn"); break;
-      case '%': drawsymbol(hue,sat,val,alpha,"undNNNusssdswneuwwnnndnwse"); break;
-      case '#': drawsymbol(hue,sat,val,alpha,"unndeeeunndwwwuNdssssuednnnn"); break;
-      case '&': drawsymbol(hue,sat,val,alpha,"ueeedWWWnnNEssSSseNN"); break;
-      case '@': drawsymbol(hue,sat,val,alpha,"ueeendSwWnnnnNeEssswwnnee"); break;
-      case '^': drawsymbol(hue,sat,val,alpha,"uennnndNE"); break;
-      case '~': drawsymbol(hue,sat,val,alpha,"unnnndNEN"); break;
-      case '"': drawsymbol(hue,sat,val,alpha,"uennnndnueds"); break;
-      case '\'': drawsymbol(hue,sat,val,alpha,"uennnndn"); break;
+      case 'A': drawsymbol("nnnnnNeEsssssunnndwww"); break;
+      case 'B': drawsymbol("nnnnnneeEsSwwueedEsSww"); break;
+      case 'C': drawsymbol("ueeNdSwWnnnnNeE"); break;
+      case 'D': drawsymbol("nnnnnneeEssssSww"); break;
+      case 'E': drawsymbol("ueeedwwwnnnnnneeeussswdww"); break;
+      case 'F': drawsymbol("nnnnnneeeussswdww"); break;
+      case 'G': drawsymbol("unnneedessSwWnnnnNeE"); break;
+      case 'H': drawsymbol("nnnnnnueeedssssssunnndwww"); break;
+      case 'I': drawsymbol("uedeeuwdnnnnnneuwdw"); break;
+      case 'J': drawsymbol("undEeNnnnnnwww"); break;
+      case 'K': drawsymbol("nnnnnnusssdNNNuSSSdEEE"); break;
+      case 'L': drawsymbol("ueeedwwwnnnnnn"); break;
+      case 'M': drawsymbol("nnnnnnEeNssssss"); break;
+      case 'N': drawsymbol("nnnnnnusdEEEssunndnnnn"); break;
+      case 'O': drawsymbol("uedWnnnnNeEssssSw"); break;
+      case 'P': drawsymbol("nnnnnneeEsSww"); break;
+      case 'Q': drawsymbol("uedWnnnnNeEssssSwuNdE"); break;
+      case 'R': drawsymbol("nnnnnneeEsSwwuedEEs"); break;
+      case 'S': drawsymbol("undEeNnWwWnNeE"); break;
+      case 'T': drawsymbol("ueednnnnnnwwueedee"); break;
+      case 'U': drawsymbol("unnnnnndsssssEeNnnnnn"); break;
+      case 'V': drawsymbol("unnnnnndsssssENNnnnn"); break;
+      case 'W': drawsymbol("unnnnnndssssssNeEnnnnnn"); break;
+      case 'X': drawsymbol("nnNNNnuwwwdsEEEss"); break;
+      case 'Y': drawsymbol("ueednnWWnnueeedsssS"); break;
+      case 'Z': drawsymbol("ueeendswwwnnNNNnwwws"); break;
+      case '_': drawsymbol("eee"); break;
+      case '0': drawsymbol("uedWnnnnNeEssssSwuNNdWWW"); break;
+      case '1': drawsymbol("ueednnnnnnSS"); break;
+      case '2': drawsymbol("ueeedwwwNNNnnWwSs"); break;
+      case '3': drawsymbol("undEeNnWwuedNnWwS"); break;
+      case '4': drawsymbol("ueednnnnnnuwwdssseee"); break;
+      case '5': drawsymbol("undEeNnWwwnnneee"); break;
+      case '6': drawsymbol("unndNeEsSwWnnnnNeE"); break;
+      case '7': drawsymbol("ueednnnnnnwwusssedee"); break;
+      case '8': drawsymbol("uedWnNWnNeEsSwuedEsSw"); break;
+      case '9': drawsymbol("undEeNnnnnWwSsEee"); break;
+      case '.': drawsymbol("uednesw"); break;
+      case ',': drawsymbol("uedN"); break;
+      case ':': drawsymbol("unedneswunndnesw"); break;
+      case ';': drawsymbol("uneedwnesSunnndnesw"); break;
+      case '?': drawsymbol("ueednnnNnWwS"); break;
+      case '!': drawsymbol("ueednundnnnn"); break;
+      case '|': drawsymbol("ueednnnnnn"); break;
+      case '-': drawsymbol("unnnedee"); break;
+      case '+': drawsymbol("unnnedeeunwdss"); break;
+      case '*': drawsymbol("unnedNNuwwdEE"); break;
+      case '/': drawsymbol("undNNN"); break;
+      case '>': drawsymbol("unedNNWW"); break;
+      case '<': drawsymbol("uneeedWWNN"); break;
+      case '=': drawsymbol("unnedeeunndww"); break;
+      case '(': drawsymbol("ueedWnnnnN"); break;
+      case ')': drawsymbol("uedNnnnnW"); break;
+      case '[': drawsymbol("ueedwnnnnnne"); break;
+      case ']': drawsymbol("uedennnnnnw"); break;
+      case '{': drawsymbol("ueedwnnWNnne"); break;
+      case '}': drawsymbol("udennNWnnw"); break;
+      case '$': drawsymbol("unndEeNWwWNeEuWndssssssuwdnnnnnn"); break;
+      case '%': drawsymbol("undNNNusssdswneuwwnnndnwse"); break;
+      case '#': drawsymbol("unndeeeunndwwwuNdssssuednnnn"); break;
+      case '&': drawsymbol("ueeedWWWnnNEssSSseNN"); break;
+      case '@': drawsymbol("ueeendSwWnnnnNeEssswwnnee"); break;
+      case '^': drawsymbol("uennnndNE"); break;
+      case '~': drawsymbol("unnnndNEN"); break;
+      case '"': drawsymbol("uennnndnueds"); break;
+      case '\'': drawsymbol("uennnndn"); break;
       }
 
    mtxpop();
@@ -215,6 +209,8 @@ void drawstring(float width,
    float scale;
    const char *ptr;
 
+   float rgb[3];
+
    if (str==NULL) return;
 
    for (c=0,cmax=l=1,ptr=str; *ptr!='\0'; ptr++)
@@ -238,6 +234,9 @@ void drawstring(float width,
       disableZwriting();
       }
 
+   hsv2rgb(hue,sat,val,rgb);
+   color(rgb[0],rgb[1],rgb[2],alpha);
+
    mtxpush();
    mtxscale(scale,scale,0.0f);
    mtxtranslate(0.0f,(l-1)*(1.0f+linefeed),0.0f);
@@ -259,11 +258,11 @@ void drawstring(float width,
             mtxtranslate(0.2f,0.0f,0.0f);
             mtxscale(0.6f,0.75f,1.0f);
 
-            drawletter(hue,sat,val,alpha,*str);
+            drawletter(*str);
 
             mtxpop();
             }
-         else drawletter(hue,sat,val,alpha,*str);
+         else drawletter(*str);
 
          mtxtranslate(1.0f,0.0f,0.0f);
          }
