@@ -76,7 +76,7 @@ void read()
    utm_maxy=-MAXFLOAT;
 
    file=fopen("DE.tab","r");
-   assert(file);
+   if (!file) ERRORMSG();
 
    while ((fgets(line,max_line,file))!=NULL)
    {
