@@ -137,8 +137,6 @@ void read()
    fclose(file);
 
    kdtree.insert(itempoints);
-   std::cout << kdtree.items() << std::endl; //!!
-   std::cout << kdtree.depth() << std::endl; //!!
 }
 
 int main(int argc,char *argv[])
