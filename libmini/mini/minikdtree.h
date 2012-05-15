@@ -67,6 +67,32 @@ class minikdtree
       (*node)->plane.orientation = level%3;
       }
 
+   typedef struct {
+      Item item;
+      Vector3D point;
+   } ItemPoint;
+
+   static BOOLINT xsortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.x<b.point.x);}
+   static BOOLINT ysortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.y<b.point.y);}
+   static BOOLINT zsortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.z<b.point.z);}
+
+   //! insert a list of items into the kd-tree
+   void insert(const minidyna<ItemPoint> &itempoints, Node **node, int level = 0)
+      {
+      unsigned int s;
+
+      s = itempoints.getsize();
+
+      switch (level%3)
+         {
+         case 0: shellsort< minidyna<ItemPoint> >(itempoints, xsortfunc); break;
+         case 1: shellsort< minidyna<ItemPoint> >(itempoints, ysortfunc); break;
+         case 2: shellsort< minidyna<ItemPoint> >(itempoints, zsortfunc); break;
+         }
+
+      //!! ...
+      }
+
    public:
 
    void insert(const Vector3D &point, const Item &item)
