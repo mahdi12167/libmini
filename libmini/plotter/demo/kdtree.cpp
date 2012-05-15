@@ -128,12 +128,7 @@ void read()
          if (v.y<utm_miny) utm_miny=v.y;
          if (v.y>utm_maxy) utm_maxy=v.y;
 
-         minikdtree<ministring>::ItemPoint p;
-
-         p.item = name;
-         p.point = v;
-
-         itempoints.push(p);
+         itempoints.push(minikdtree<ministring>::ItemPoint(name,v));
 
          std::cout << lat << ";" << lon << ";" << name << std::endl;
       }
@@ -142,6 +137,8 @@ void read()
    fclose(file);
 
    kdtree.insert(itempoints);
+   std::cout << kdtree.items() << std::endl; //!!
+   std::cout << kdtree.depth() << std::endl; //!!
 }
 
 int main(int argc,char *argv[])
