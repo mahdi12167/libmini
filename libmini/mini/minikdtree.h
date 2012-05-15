@@ -6,6 +6,7 @@
 #include "minibase.h"
 #include "miniv3d.h"
 #include "minidyna.h"
+#include "minisort.h"
 
 //! templated kd-tree
 template <class Item, class Vector3D = miniv3d>
@@ -41,6 +42,15 @@ class minikdtree
       Item item;
    } Node;
 
+   // item point definition
+   typedef struct {
+      Item item;
+      Vector3D point;
+   } ItemPoint;
+
+   // item point list definition
+   typedef minidyna<ItemPoint> ItemPoints;
+
    protected:
 
    //! insert an item at a particular point into the kd-tree
@@ -67,36 +77,58 @@ class minikdtree
       (*node)->plane.orientation = level%3;
       }
 
-   typedef struct {
-      Item item;
-      Vector3D point;
-   } ItemPoint;
+   public:
+
+   void insert(const Vector3D &point, const Item &item)
+      {insert(point, item, &root);}
+
+   protected:
 
    static BOOLINT xsortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.x<b.point.x);}
    static BOOLINT ysortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.y<b.point.y);}
    static BOOLINT zsortfunc(const ItemPoint &a, const ItemPoint &b) {return(a.point.z<b.point.z);}
 
-   //! insert a list of items into the kd-tree
-   void insert(const minidyna<ItemPoint> &itempoints, Node **node, int level = 0)
+   public:
+
+   //! insert a list of item points into the kd-tree
+   void insert(const ItemPoints &itempoints, int level = 0)
       {
       unsigned int s;
 
       s = itempoints.getsize();
 
-      switch (level%3)
+      if (s>0)
          {
-         case 0: shellsort< minidyna<ItemPoint> >(itempoints, xsortfunc); break;
-         case 1: shellsort< minidyna<ItemPoint> >(itempoints, ysortfunc); break;
-         case 2: shellsort< minidyna<ItemPoint> >(itempoints, zsortfunc); break;
+         unsigned int i;
+
+         ItemPoints p = itempoints;
+
+         switch (level%3)
+            {
+            case 0: shellsort<ItemPoint>(p, xsortfunc); break;
+            case 1: shellsort<ItemPoint>(p, ysortfunc); break;
+            case 2: shellsort<ItemPoint>(p, zsortfunc); break;
+            }
+
+         unsigned int mid = (s-1)/2;
+         ItemPoints left, right;
+
+         for (i=0; i<mid; i++)
+            left.push(p[i]);
+
+         for (i=mid+1; i<s; i++)
+            right.push(p[i]);
+
+         insert(p[mid].point, p[mid].item, &root);
+         p.clear();
+
+         insert(left, level+1);
+         left.clear();
+
+         insert(right, level+1);
+         right.clear();
          }
-
-      //!! ...
       }
-
-   public:
-
-   void insert(const Vector3D &point, const Item &item)
-      {insert(point, item, &root);}
 
    protected:
 

@@ -11,8 +11,8 @@
 minikdtree<ministring> kdtree;
 double utm_minx,utm_maxx;
 double utm_miny,utm_maxy;
-minidyna<miniv3f> points;
 
+minikdtree<ministring>::ItemPoints itempoints;
 const minikdtree<ministring>::Node *node=NULL;
 
 BOOLINT keypress(unsigned char key,float x,float y)
@@ -39,10 +39,10 @@ void render(double time)
 
    plot_color(0.5f,0.5f,0.5f);
 
-   for (i=0; i<points.getsize(); i++)
+   for (i=0; i<itempoints.getsize(); i++)
       {
-      double utmx=points[i].x;
-      double utmy=points[i].y;
+      double utmx=itempoints[i].point.x;
+      double utmy=itempoints[i].point.y;
 
       double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
       double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
@@ -128,14 +128,20 @@ void read()
          if (v.y<utm_miny) utm_miny=v.y;
          if (v.y>utm_maxy) utm_maxy=v.y;
 
-         kdtree.insert(v,name);
-         points.push(v);
+         minikdtree<ministring>::ItemPoint p;
+
+         p.item = name;
+         p.point = v;
+
+         itempoints.push(p);
 
          std::cout << lat << ";" << lon << ";" << name << std::endl;
       }
    }
 
    fclose(file);
+
+   kdtree.insert(itempoints);
 }
 
 int main(int argc,char *argv[])
