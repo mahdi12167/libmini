@@ -106,14 +106,24 @@ class minikdtree
 
          ItemPoints p = itempoints;
 
+         unsigned int mid = (s-1)/2;
+
          switch (level%3)
             {
-            case 0: shellsort<ItemPoint>(p, xsortfunc); break;
-            case 1: shellsort<ItemPoint>(p, ysortfunc); break;
-            case 2: shellsort<ItemPoint>(p, zsortfunc); break;
+            case 0:
+               shellsort<ItemPoint>(p, xsortfunc);
+               while (mid>0 && p[mid-1].point.x==p[mid].point.x) mid--;
+               break;
+            case 1:
+               shellsort<ItemPoint>(p, ysortfunc);
+               while (mid>0 && p[mid-1].point.y==p[mid].point.y) mid--;
+               break;
+            case 2:
+               while (mid>0 && p[mid-1].point.z==p[mid].point.z) mid--;
+               shellsort<ItemPoint>(p, zsortfunc);
+               break;
             }
 
-         unsigned int mid = (s-1)/2;
          ItemPoints left, right;
 
          for (i=0; i<mid; i++)
@@ -256,7 +266,7 @@ class minikdtree
    unsigned int items()
       {return(items(root));}
 
-   //! count maximum branch length in subtree
+   //! count maximum branch depth in subtree
    unsigned int depth(const Node *node)
       {
       if (node!=NULL)
