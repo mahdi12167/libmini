@@ -283,6 +283,28 @@ class minikdtree
    unsigned int depth()
       {return(depth(root));}
 
+   //! calculate average branch length in subtree
+   double length(const Node *node)
+      {
+      if (node!=NULL)
+         {
+         unsigned int leftnum = items(node->leftSpace);
+         unsigned int rightnum = items(node->rightSpace);
+
+         if (leftnum==0 && rightnum==0) return(1);
+
+         double left = depth(node->leftSpace);
+         double right = depth(node->rightSpace);
+
+         return((leftnum*left + rightnum*right)/(leftnum + rightnum) + 1);
+         }
+
+      return(0);
+      }
+
+   unsigned int length()
+      {return(length(root));}
+
    protected:
 
    // get normal of plane
