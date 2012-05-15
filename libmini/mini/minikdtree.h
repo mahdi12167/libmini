@@ -43,10 +43,13 @@ class minikdtree
    } Node;
 
    // item point definition
-   typedef struct {
+   class ItemPoint {
+      public:
+      ItemPoint() {}
+      ItemPoint(Item d, Vector3D p) {item=d; point=p;}
       Item item;
       Vector3D point;
-   } ItemPoint;
+   };
 
    // item point list definition
    typedef minidyna<ItemPoint> ItemPoints;
