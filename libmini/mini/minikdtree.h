@@ -86,6 +86,9 @@ class minikdtree
 
    public:
 
+   const Node *getRoot()
+      {return(root);}
+
    void insert(const Vector3D &point, const Item &item)
       {insert(point, item, &root);}
 
