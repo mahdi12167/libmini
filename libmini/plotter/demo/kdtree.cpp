@@ -15,9 +15,16 @@ double utm_miny,utm_maxy;
 minikdtree<ministring>::ItemPoints itempoints;
 const minikdtree<ministring>::Node *node=NULL;
 
+BOOLINT treevis=FALSE;
+
 BOOLINT keypress(unsigned char key,float x,float y)
    {
    if (tolower(key)=='x') exit(0);
+   else if (tolower(key)=='v')
+      {
+      treevis=!treevis;
+      return(TRUE);
+      }
 
    return(FALSE);
    }
@@ -105,9 +112,10 @@ void render(double time)
       plot_text(x,y,0.025f,0.0f,1.0f,1.0f,name.c_str());
       }
 
-   plot_kdtree(miniv3d(utm_minx,utm_miny,0),
-               miniv3d(utm_maxx,utm_maxy,0),
-               kdtree.getRoot());
+   if (treevis)
+      plot_kdtree(miniv3d(utm_minx,utm_miny,0),
+                  miniv3d(utm_maxx,utm_maxy,0),
+                  kdtree.getRoot());
    }
 
 void read()
