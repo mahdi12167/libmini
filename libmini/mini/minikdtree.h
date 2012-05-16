@@ -346,7 +346,7 @@ class minikdtree
 
    // get normal of plane
    //  the normal points into the right half space
-   Vector3D getNormal(const Plane &plane)
+   static Vector3D getNormal(const Plane &plane)
       {
       Vector3D normal(0,0,0);
 
@@ -361,7 +361,7 @@ class minikdtree
       }
 
    // euclidean distance of two points
-   double getDistance(const Vector3D &point1, const Vector3D &point2)
+   static double getDistance(const Vector3D &point1, const Vector3D &point2)
       {
       Vector3D vec = point2-point1;
 
@@ -371,7 +371,7 @@ class minikdtree
    // signed distance of a point to a plane
    //  negative values indicate position in left half space
    //  positive values indicate position in right half space
-   double getDistance(const Vector3D &point, const Plane &plane)
+   static double getDistance(const Vector3D &point, const Plane &plane)
       {
       Vector3D vec = point-plane.point;
       Vector3D normal = getNormal(plane);
@@ -380,7 +380,7 @@ class minikdtree
       }
 
    // determines whether or not a point is in the left half space of a plane
-   bool isInLeftHalfSpace(const Vector3D &point, const Plane &plane)
+   static bool isInLeftHalfSpace(const Vector3D &point, const Plane &plane)
       {
       double distance = getDistance(point, plane);
 
