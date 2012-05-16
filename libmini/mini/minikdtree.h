@@ -27,6 +27,7 @@ class minikdtree
       x_axis = 0,
       y_axis = 1,
       z_axis = 2,
+      no_axis = -1
    };
 
    // definition of plane
@@ -57,9 +58,9 @@ class minikdtree
    protected:
 
    //! insert an item at a particular point into the kd-tree
-   void insert(const Vector3D &point, const Item &item, Node **node)
+   void insert(const Vector3D &point, const Item &item, Node **node, int axis = no_axis)
       {
-      int level = 0;
+      unsigned int level = 0;
 
       while (*node!=NULL)
          {
@@ -71,13 +72,16 @@ class minikdtree
          level++;
          }
 
+      if (axis == no_axis)
+         axis = level%3;
+
       *node = new Node;
 
       (*node)->item = item;
       (*node)->leftSpace = (*node)->rightSpace = NULL;
 
       (*node)->plane.point = point;
-      (*node)->plane.orientation = level%3;
+      (*node)->plane.orientation = axis;
       }
 
    public:
@@ -94,7 +98,7 @@ class minikdtree
    public:
 
    //! insert a list of item points into the kd-tree
-   void insert(const ItemPoints &itempoints, int level = 0)
+   void insert(const ItemPoints &itempoints)
       {
       unsigned int s;
 
@@ -104,41 +108,73 @@ class minikdtree
          {
          unsigned int i;
 
-         ItemPoints p = itempoints;
+         ItemPoints ips = itempoints;
+
+         Vector3D pmin, pmax;
+
+         pmin = pmax = ips[0].point;
+
+         for (i=1; i<s; i++)
+            {
+            Vector3D p = ips[i].point;
+
+            if (p.x<pmin.x) pmin.x = p.x;
+            else if (p.x>pmax.x) pmax.x = p.x;
+
+            if (p.y<pmin.y) pmin.y = p.y;
+            else if (p.y>pmax.y) pmax.y = p.y;
+
+            if (p.z<pmin.z) pmin.z = p.z;
+            else if (p.z>pmax.z) pmax.z = p.z;
+            }
+
+         Vector3D pd = pmax-pmin;
+         unsigned int axis;
+
+         if (pd.x>pd.y)
+            if (pd.x>pd.z)
+               axis = x_axis;
+            else
+               axis = z_axis;
+         else
+            if (pd.y>pd.z)
+               axis = y_axis;
+            else
+               axis = z_axis;
 
          unsigned int mid = (s-1)/2;
 
-         switch (level%3)
+         switch (axis)
             {
-            case 0:
-               shellsort<ItemPoint>(p, xsortfunc);
-               while (mid>0 && p[mid-1].point.x==p[mid].point.x) mid--;
+            case x_axis:
+               shellsort<ItemPoint>(ips, xsortfunc);
+               while (mid>0 && ips[mid-1].point.x==ips[mid].point.x) mid--;
                break;
-            case 1:
-               shellsort<ItemPoint>(p, ysortfunc);
-               while (mid>0 && p[mid-1].point.y==p[mid].point.y) mid--;
+            case y_axis:
+               shellsort<ItemPoint>(ips, ysortfunc);
+               while (mid>0 && ips[mid-1].point.y==ips[mid].point.y) mid--;
                break;
-            case 2:
-               while (mid>0 && p[mid-1].point.z==p[mid].point.z) mid--;
-               shellsort<ItemPoint>(p, zsortfunc);
+            case z_axis:
+               shellsort<ItemPoint>(ips, zsortfunc);
+               while (mid>0 && ips[mid-1].point.z==ips[mid].point.z) mid--;
                break;
             }
 
          ItemPoints left, right;
 
          for (i=0; i<mid; i++)
-            left.push(p[i]);
+            left.push(ips[i]);
 
          for (i=mid+1; i<s; i++)
-            right.push(p[i]);
+            right.push(ips[i]);
 
-         insert(p[mid].point, p[mid].item, &root);
-         p.clear();
+         insert(ips[mid].point, ips[mid].item, &root, axis);
+         ips.clear();
 
-         insert(left, level+1);
+         insert(left);
          left.clear();
 
-         insert(right, level+1);
+         insert(right);
          right.clear();
          }
       }
