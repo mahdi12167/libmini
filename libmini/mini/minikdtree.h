@@ -344,8 +344,6 @@ class minikdtree
    unsigned int length()
       {return(length(root));}
 
-   protected:
-
    // get normal of plane
    //  the normal points into the right half space
    Vector3D getNormal(const Plane &plane)
@@ -388,6 +386,8 @@ class minikdtree
 
       return(distance<0.0);
       }
+
+   protected:
 
    // reference to root node
    Node *root;
