@@ -24,13 +24,56 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
 BOOLINT mouse(float x,float y)
    {
-   double utmx=(1.0-x)*utm_minx+x*utm_maxx;
-   double utmy=(1.0-y)*utm_maxy+y*utm_miny;
+   double utmx = (1.0-x)*utm_minx+x*utm_maxx;
+   double utmy = (1.0-y)*utm_maxy+y*utm_miny;
    miniv3d v(utmx,utmy,0);
 
    node=kdtree.search(v);
 
    return(node!=NULL);
+   }
+
+void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
+                 const minikdtree<ministring>::Node *node,
+                 int level=0)
+   {
+   static const int maxlevel=10;
+
+   if (node)
+      {
+      miniv3d normal = minikdtree<ministring>::getNormal(node->plane);
+
+      miniv3d m1 = node->plane.point-bboxmin;
+      miniv3d o1(normal.x*m1.x,normal.y*m1.y,normal.z*m1.z);
+
+      miniv3d m2 = bboxmax-node->plane.point;
+      miniv3d o2(normal.x*m2.x,normal.y*m2.y,normal.z*m2.z);
+
+      if (level<maxlevel)
+         {
+         if (level<maxlevel/4) plot_color(1,0,0);
+         else if (level<maxlevel/2) plot_color(0,0,1);
+         else
+            {
+            float v = 1.0f/(maxlevel/2)*(level-maxlevel/2);
+            plot_color(v,v,v);
+            }
+
+         miniv3d p1 = bboxmin+o1;
+         miniv3d p2 = bboxmax-o2;
+
+         double x1 = (p1.x-utm_minx)/(utm_maxx-utm_minx);
+         double y1 = (p1.y-utm_miny)/(utm_maxy-utm_miny);
+
+         double x2 = (p2.x-utm_minx)/(utm_maxx-utm_minx);
+         double y2 = (p2.y-utm_miny)/(utm_maxy-utm_miny);
+
+         plot_line(x1,y1,x2,y2);
+
+         plot_kdtree(bboxmin,p2,node->leftSpace,level+1);
+         plot_kdtree(p1,bboxmax,node->rightSpace,level+1);
+         }
+      }
    }
 
 void render(double time)
@@ -41,26 +84,30 @@ void render(double time)
 
    for (i=0; i<itempoints.getsize(); i++)
       {
-      double utmx=itempoints[i].point.x;
-      double utmy=itempoints[i].point.y;
+      double utmx = itempoints[i].point.x;
+      double utmy = itempoints[i].point.y;
 
-      double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
-      double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
+      double x = (utmx-utm_minx)/(utm_maxx-utm_minx);
+      double y = (utmy-utm_miny)/(utm_maxy-utm_miny);
 
       plot_point(x,y);
       }
 
    if (node)
       {
-      double utmx=node->plane.point.x;
-      double utmy=node->plane.point.y;
+      double utmx = node->plane.point.x;
+      double utmy = node->plane.point.y;
 
-      double x=(utmx-utm_minx)/(utm_maxx-utm_minx);
-      double y=(utmy-utm_miny)/(utm_maxy-utm_miny);
+      double x = (utmx-utm_minx)/(utm_maxx-utm_minx);
+      double y = (utmy-utm_miny)/(utm_maxy-utm_miny);
 
-      ministring name=node->item;
+      ministring name = node->item;
       plot_text(x,y,0.025f,0.0f,1.0f,1.0f,name.c_str());
       }
+
+   plot_kdtree(miniv3d(utm_minx,utm_miny,0),
+               miniv3d(utm_maxx,utm_maxy,0),
+               kdtree.getRoot());
    }
 
 void read()
@@ -85,7 +132,7 @@ void read()
       double lat,lon;
       ministring name;
 
-      const char *tok=strtok(line,"\t");
+      const char *tok = strtok(line,"\t");
 
       bool success=true;
 
@@ -94,21 +141,21 @@ void read()
          switch (column)
             {
             case 2:
-               name=ministring(tok);
-               success&=isalpha(name[0]);
+               name = ministring(tok);
+               success &= isalpha(name[0]);
                break;
             case 3:
-               success&=isalpha(*tok);
+               success &= isalpha(*tok);
                break;
             case 4:
-               success&=sscanf(tok,"%lf",&lat)==1;
+               success &= sscanf(tok,"%lf",&lat)==1;
                break;
             case 5:
-               success&=sscanf(tok,"%lf",&lon)==1;
+               success &= sscanf(tok,"%lf",&lon)==1;
                break;
             }
 
-         tok=strtok(NULL,"\t");
+         tok = strtok(NULL,"\t");
          column++;
          }
 
