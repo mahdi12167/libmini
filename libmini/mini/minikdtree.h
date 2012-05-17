@@ -18,7 +18,7 @@ class minikdtree
    minikdtree()
       {
       root = NULL;
-      bbox = FALSE;
+      bbox = bbox2 = FALSE;
       }
 
    //! destructor
@@ -101,6 +101,11 @@ class minikdtree
 
          if (point.z<bboxmin.z) bboxmin.z=point.z;
          else if (point.z>bboxmax.z) bboxmax.z=point.z;
+
+         if (bboxmin.x<bboxmax.x &&
+             bboxmin.y<bboxmax.y &&
+             bboxmin.z<bboxmax.z)
+            bbox2 = TRUE;
          }
       }
 
@@ -116,7 +121,7 @@ class minikdtree
    //! get bounding box of inserted items
    BOOLINT getBBox(Vector3D &bmin, Vector3D &bmax)
       {
-      if (bbox)
+      if (bbox2)
          {
          bmin = bboxmin;
          bmax = bboxmax;
@@ -125,6 +130,36 @@ class minikdtree
          }
 
       return(FALSE);
+      }
+
+   //! normalize point /wrt bbox
+   Vector3D normalize(const Vector3D &p)
+      {
+      if (bbox2)
+         {
+         double x = (p.x-bboxmin.x)/(bboxmax.x-bboxmin.x);
+         double y = (p.y-bboxmin.y)/(bboxmax.y-bboxmin.y);
+         double z = (p.z-bboxmin.z)/(bboxmax.z-bboxmin.z);
+
+         return(Vector3D(x,y,z));
+         }
+
+      return(p);
+      }
+
+   //! denormalize point /wrt bbox
+   Vector3D denormalize(const Vector3D &p)
+      {
+      if (bbox2)
+         {
+         double x = p.x*(bboxmax.x-bboxmin.x)+bboxmin.x;
+         double y = p.y*(bboxmax.y-bboxmin.y)+bboxmin.y;
+         double z = p.z*(bboxmax.z-bboxmin.z)+bboxmin.z;
+
+         return(Vector3D(x,y,z));
+         }
+
+      return(p);
       }
 
    protected:
@@ -340,7 +375,7 @@ class minikdtree
    void remove()
       {
       remove(&root);
-      bbox = FALSE;
+      bbox = bbox2 = FALSE;
       }
 
    //! count items in subtree
@@ -455,7 +490,7 @@ class minikdtree
    Node *root;
 
    // bounding box
-   BOOLINT bbox;
+   BOOLINT bbox, bbox2;
    Vector3D bboxmin, bboxmax;
    };
 
