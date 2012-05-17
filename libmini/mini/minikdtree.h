@@ -18,7 +18,7 @@ class minikdtree
    minikdtree()
       {
       root = NULL;
-      bbox = bbox2 = FALSE;
+      bbox = FALSE;
       }
 
    //! destructor
@@ -101,11 +101,6 @@ class minikdtree
 
          if (point.z<bboxmin.z) bboxmin.z=point.z;
          else if (point.z>bboxmax.z) bboxmax.z=point.z;
-
-         if (bboxmin.x<bboxmax.x &&
-             bboxmin.y<bboxmax.y &&
-             bboxmin.z<bboxmax.z)
-            bbox2 = TRUE;
          }
       }
 
@@ -121,7 +116,7 @@ class minikdtree
    //! get bounding box of inserted items
    BOOLINT getBBox(Vector3D &bmin, Vector3D &bmax)
       {
-      if (bbox2)
+      if (bbox)
          {
          bmin = bboxmin;
          bmax = bboxmax;
@@ -135,31 +130,31 @@ class minikdtree
    //! normalize point /wrt bbox
    Vector3D normalize(const Vector3D &p)
       {
-      if (bbox2)
-         {
-         double x = (p.x-bboxmin.x)/(bboxmax.x-bboxmin.x);
-         double y = (p.y-bboxmin.y)/(bboxmax.y-bboxmin.y);
-         double z = (p.z-bboxmin.z)/(bboxmax.z-bboxmin.z);
+      miniv3d v=p;
 
-         return(Vector3D(x,y,z));
+      if (bbox)
+         {
+         if (bboxmin.x<bboxmax.x) v.x = (v.x-bboxmin.x)/(bboxmax.x-bboxmin.x);
+         if (bboxmin.y<bboxmax.y) v.y = (v.y-bboxmin.y)/(bboxmax.y-bboxmin.y);
+         if (bboxmin.z<bboxmax.z) v.z = (v.z-bboxmin.z)/(bboxmax.z-bboxmin.z);
          }
 
-      return(p);
+      return(v);
       }
 
    //! denormalize point /wrt bbox
    Vector3D denormalize(const Vector3D &p)
       {
-      if (bbox2)
-         {
-         double x = p.x*(bboxmax.x-bboxmin.x)+bboxmin.x;
-         double y = p.y*(bboxmax.y-bboxmin.y)+bboxmin.y;
-         double z = p.z*(bboxmax.z-bboxmin.z)+bboxmin.z;
+      miniv3d v=p;
 
-         return(Vector3D(x,y,z));
+      if (bbox)
+         {
+         v.x = v.x*(bboxmax.x-bboxmin.x)+bboxmin.x;
+         v.y = v.y*(bboxmax.y-bboxmin.y)+bboxmin.y;
+         v.z = v.z*(bboxmax.z-bboxmin.z)+bboxmin.z;
          }
 
-      return(p);
+      return(v);
       }
 
    protected:
@@ -375,7 +370,7 @@ class minikdtree
    void remove()
       {
       remove(&root);
-      bbox = bbox2 = FALSE;
+      bbox = FALSE;
       }
 
    //! count items in subtree
@@ -453,6 +448,10 @@ class minikdtree
    static Vector3D getPosition(const Node *node)
       {return(node->plane.point);}
 
+   // get item of node
+   static Item getItem(const Node *node)
+      {return(node->item);}
+
    // euclidean distance of two points
    static double getDistance(const Vector3D &point1, const Vector3D &point2)
       {
@@ -490,7 +489,7 @@ class minikdtree
    Node *root;
 
    // bounding box
-   BOOLINT bbox, bbox2;
+   BOOLINT bbox;
    Vector3D bboxmin, bboxmax;
    };
 
