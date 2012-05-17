@@ -152,6 +152,7 @@ class minikdtree
 
          pmin = pmax = ips[0].point;
 
+         // determine bbox of item point list
          for (i=1; i<s; i++)
             {
             Vector3D p = ips[i].point;
@@ -169,6 +170,7 @@ class minikdtree
          Vector3D pd = pmax-pmin;
          unsigned int axis;
 
+         // determine axis with largest extent
          if (pd.x>pd.y)
             if (pd.x>pd.z)
                axis = x_axis;
@@ -182,6 +184,7 @@ class minikdtree
 
          unsigned int mid = (s-1)/2;
 
+         // determine median along selected axis
          switch (axis)
             {
             case x_axis:
@@ -200,18 +203,23 @@ class minikdtree
 
          ItemPoints left, right;
 
+         // create left item point list
          for (i=0; i<mid; i++)
             left.push(ips[i]);
 
+         // create right item point list
          for (i=mid+1; i<s; i++)
             right.push(ips[i]);
 
+         // insert median item point
          insert(ips[mid].point, ips[mid].item, &root, axis);
          ips.clear();
 
+         // insert left item point list
          insert(left);
          left.clear();
 
+         // insert right item point list
          insert(right);
          right.clear();
          }
