@@ -4,13 +4,11 @@
 #include <mini/ministring.h>
 #include <mini/minikdtree.h>
 #include <mini/minicoord.h>
-#include <mini/miniv3f.h>
+#include <mini/miniv3d.h>
 
 #include <plotter/plot.h>
 
 minikdtree<ministring> kdtree;
-double utm_minx,utm_maxx;
-double utm_miny,utm_maxy;
 
 minikdtree<ministring>::ItemPoints itempoints;
 const minikdtree<ministring>::Node *node=NULL;
@@ -31,11 +29,7 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
 BOOLINT mouse(float x,float y)
    {
-   double utmx = (1.0-x)*utm_minx+x*utm_maxx;
-   double utmy = (1.0-y)*utm_maxy+y*utm_miny;
-   miniv3d v(utmx,utmy,0);
-
-   node=kdtree.search(v);
+   node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
 
    return(node!=NULL);
    }
@@ -48,12 +42,13 @@ void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
 
    if (node)
       {
-      miniv3d normal = minikdtree<ministring>::getNormal(node->plane);
+      miniv3d normal = minikdtree<ministring>::getNormal(node);
+      miniv3d point = minikdtree<ministring>::getPosition(node);
 
-      miniv3d m1 = node->plane.point-bboxmin;
+      miniv3d m1 = point-bboxmin;
       miniv3d o1(normal.x*m1.x,normal.y*m1.y,normal.z*m1.z);
 
-      miniv3d m2 = bboxmax-node->plane.point;
+      miniv3d m2 = bboxmax-point;
       miniv3d o2(normal.x*m2.x,normal.y*m2.y,normal.z*m2.z);
 
       if (level<maxlevel)
@@ -69,13 +64,10 @@ void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
          miniv3d p1 = bboxmin+o1;
          miniv3d p2 = bboxmax-o2;
 
-         double x1 = (p1.x-utm_minx)/(utm_maxx-utm_minx);
-         double y1 = (p1.y-utm_miny)/(utm_maxy-utm_miny);
+         miniv3d np1 = kdtree.normalize(p1);
+         miniv3d np2 = kdtree.normalize(p2);
 
-         double x2 = (p2.x-utm_minx)/(utm_maxx-utm_minx);
-         double y2 = (p2.y-utm_miny)/(utm_maxy-utm_miny);
-
-         plot_line(x1,y1,x2,y2);
+         plot_line(np1.x,np1.y,np2.x,np2.y);
 
          plot_kdtree(bboxmin,p2,node->leftSpace,level+1);
          plot_kdtree(p1,bboxmax,node->rightSpace,level+1);
@@ -87,35 +79,30 @@ void render(double time)
    {
    unsigned int i;
 
+   if (treevis)
+      {
+      miniv3d bmin(0.0),bmax(0.0);
+
+      if (kdtree.getBBox(bmin,bmax))
+         plot_kdtree(bmin,bmax,kdtree.getRoot());
+      }
+
    plot_color(0.5f,0.5f,0.5f);
 
    for (i=0; i<itempoints.getsize(); i++)
       {
-      double utmx = itempoints[i].point.x;
-      double utmy = itempoints[i].point.y;
+      miniv3d p = kdtree.normalize(itempoints[i].point);
 
-      double x = (utmx-utm_minx)/(utm_maxx-utm_minx);
-      double y = (utmy-utm_miny)/(utm_maxy-utm_miny);
-
-      plot_point(x,y);
+      plot_point(p.x,p.y);
       }
 
    if (node)
       {
-      double utmx = node->plane.point.x;
-      double utmy = node->plane.point.y;
+      miniv3d p = kdtree.normalize(minikdtree<ministring>::getPosition(node));
+      ministring name = minikdtree<ministring>::getItem(node);
 
-      double x = (utmx-utm_minx)/(utm_maxx-utm_minx);
-      double y = (utmy-utm_miny)/(utm_maxy-utm_miny);
-
-      ministring name = node->item;
-      plot_text(x,y,0.025f,0.0f,1.0f,1.0f,name.c_str());
+      plot_text(p.x,p.y,0.025f,0.0f,1.0f,1.0f,name.c_str());
       }
-
-   if (treevis)
-      plot_kdtree(miniv3d(utm_minx,utm_miny,0),
-                  miniv3d(utm_maxx,utm_maxy,0),
-                  kdtree.getRoot());
    }
 
 void read()
@@ -124,11 +111,6 @@ void read()
 
    FILE *file;
    char line[max_line];
-
-   utm_minx=MAXFLOAT;
-   utm_maxx=-MAXFLOAT;
-   utm_miny=MAXFLOAT;
-   utm_maxy=-MAXFLOAT;
 
    file=fopen("DE.tab","r");
    if (!file) ERRORMSG();
@@ -177,11 +159,6 @@ void read()
          minicoord coord(miniv3d(lon,lat,0),minicoord::MINICOORD_LLH);
          coord.convert2(minicoord::MINICOORD_UTM);
          miniv3d v=coord.vec;
-
-         if (v.x<utm_minx) utm_minx=v.x;
-         if (v.x>utm_maxx) utm_maxx=v.x;
-         if (v.y<utm_miny) utm_miny=v.y;
-         if (v.y>utm_maxy) utm_maxy=v.y;
 
          itempoints.push(minikdtree<ministring>::ItemPoint(name,v));
 
