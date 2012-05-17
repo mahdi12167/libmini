@@ -16,7 +16,10 @@ class minikdtree
 
    //! default constructor
    minikdtree()
-      {root = NULL;}
+      {
+      root = NULL;
+      bbox = FALSE;
+      }
 
    //! destructor
    ~minikdtree()
@@ -82,15 +85,47 @@ class minikdtree
 
       (*node)->plane.point = point;
       (*node)->plane.orientation = axis;
+
+      if (!bbox)
+         {
+         bboxmin = bboxmax = point;
+         bbox = TRUE;
+         }
+      else
+         {
+         if (point.x<bboxmin.x) bboxmin.x=point.x;
+         else if (point.x>bboxmax.x) bboxmax.x=point.x;
+
+         if (point.y<bboxmin.y) bboxmin.y=point.y;
+         else if (point.y>bboxmax.y) bboxmax.y=point.y;
+
+         if (point.z<bboxmin.z) bboxmin.z=point.z;
+         else if (point.z>bboxmax.z) bboxmax.z=point.z;
+         }
       }
 
    public:
 
+   void insert(const Vector3D &point, const Item &item)
+      {insert(point, item, &root);}
+
+   //! get root node ref
    const Node *getRoot()
       {return(root);}
 
-   void insert(const Vector3D &point, const Item &item)
-      {insert(point, item, &root);}
+   //! get bounding box of inserted items
+   BOOLINT getBBox(Vector3D &bmin, Vector3D &bmax)
+      {
+      if (bbox)
+         {
+         bmin = bboxmin;
+         bmax = bboxmax;
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
 
    protected:
 
@@ -277,6 +312,8 @@ class minikdtree
    minidyna<const Node *> search(const Vector3D &point, double radius)
       {return(search(point, radius, root));}
 
+   protected:
+
    //! remove items in subtree
    void remove(Node **node)
       {
@@ -290,8 +327,13 @@ class minikdtree
          }
       }
 
+   public:
+
    void remove()
-      {remove(&root);}
+      {
+      remove(&root);
+      bbox = FALSE;
+      }
 
    //! count items in subtree
    unsigned int items(const Node *node)
@@ -360,6 +402,14 @@ class minikdtree
       return(normal);
       }
 
+   // get normal of node
+   static Vector3D getNormal(const Node *node)
+      {return(getNormal(node->plane));}
+
+   // get position of node
+   static Vector3D getPosition(const Node *node)
+      {return(node->plane.point);}
+
    // euclidean distance of two points
    static double getDistance(const Vector3D &point1, const Vector3D &point2)
       {
@@ -387,10 +437,18 @@ class minikdtree
       return(distance<0.0);
       }
 
+   // determines whether or not a point is in the left half space of a node
+   static bool isInLeftHalfSpace(const Vector3D &point, const Node *node)
+      {return(isInLeftHalfSpace(point, node->plane));}
+
    protected:
 
    // reference to root node
    Node *root;
+
+   // bounding box
+   BOOLINT bbox;
+   Vector3D bboxmin, bboxmax;
    };
 
 #endif
