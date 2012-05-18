@@ -67,6 +67,8 @@ class minikdtree
 
       while (*node!=NULL)
          {
+         if ((*node)->plane.point==point) return;
+
          if (isInLeftHalfSpace(point, (*node)->plane))
             node = &((*node)->leftSpace);
          else
