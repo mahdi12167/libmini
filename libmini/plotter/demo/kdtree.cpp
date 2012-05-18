@@ -79,21 +79,22 @@ void plot_kdtree_path(const miniv3d &point,const minikdtree<ministring>::Node *n
    {
    if (node)
       {
-      miniv3d p = kdtree.normalize(minikdtree<ministring>::getPosition(node));
-      BOOLINT left = minikdtree<ministring>::isInLeftHalfSpace(point,node);
+      miniv3d p = minikdtree<ministring>::getPosition(node);
+      miniv3d np = kdtree.normalize(p);
 
       if (level==0)
          {
          plot_color(1,0,0);
-         plot_from(p.x,p.y);
+         plot_from(np.x,np.y);
          }
       else
-         plot_to(p.x,p.y);
+         plot_to(np.x,np.y);
 
-      if (left)
-         plot_kdtree_path(point,node->leftSpace,level+1);
-      else
-         plot_kdtree_path(point,node->rightSpace,level+1);
+      if (point!=p)
+         if (minikdtree<ministring>::isInLeftHalfSpace(point,node))
+            plot_kdtree_path(point,node->leftSpace,level+1);
+         else
+            plot_kdtree_path(point,node->rightSpace,level+1);
       }
    }
 
