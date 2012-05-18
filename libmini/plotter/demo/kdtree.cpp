@@ -53,7 +53,7 @@ void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
 
       if (level<maxlevel)
          {
-         if (level<maxlevel/4) plot_color(1,0,0);
+         if (level<maxlevel/4) plot_color(0,1,0);
          else if (level<maxlevel/2) plot_color(0,0,1);
          else
             {
@@ -75,6 +75,28 @@ void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
       }
    }
 
+void plot_kdtree_path(const miniv3d &point,const minikdtree<ministring>::Node *node,int level=0)
+   {
+   if (node)
+      {
+      miniv3d p = kdtree.normalize(minikdtree<ministring>::getPosition(node));
+      BOOLINT left = minikdtree<ministring>::isInLeftHalfSpace(point,node);
+
+      if (level==0)
+         {
+         plot_color(1,0,0);
+         plot_from(p.x,p.y);
+         }
+      else
+         plot_to(p.x,p.y);
+
+      if (left)
+         plot_kdtree_path(point,node->leftSpace,level+1);
+      else
+         plot_kdtree_path(point,node->rightSpace,level+1);
+      }
+   }
+
 void render(double time)
    {
    unsigned int i;
@@ -85,6 +107,9 @@ void render(double time)
 
       if (kdtree.getBBox(bmin,bmax))
          plot_kdtree(bmin,bmax,kdtree.getRoot());
+
+      if (node)
+         plot_kdtree_path(minikdtree<ministring>::getPosition(node),kdtree.getRoot());
       }
 
    plot_color(0.5f,0.5f,0.5f);
