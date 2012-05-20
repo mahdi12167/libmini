@@ -379,7 +379,7 @@ class minikdtree
    unsigned int items(const Node *node)
       {
       if (node!=NULL)
-         return(items(node->leftSpace) + items(node->rightSpace)) + 1;
+         return(items(node->leftSpace) + items(node->rightSpace) + 1);
 
       return(0);
       }
@@ -414,8 +414,8 @@ class minikdtree
 
          if (leftnum==0 && rightnum==0) return(1);
 
-         double left = depth(node->leftSpace);
-         double right = depth(node->rightSpace);
+         double left = length(node->leftSpace);
+         double right = length(node->rightSpace);
 
          return((leftnum*left + rightnum*right)/(leftnum + rightnum) + 1);
          }
