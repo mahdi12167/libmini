@@ -20,7 +20,7 @@ class ministring: public ministring_base
       {cstr=NULL;}
 
    //! copy constructor
-   ministring(const ministring &a): ministring_base(a)
+   ministring(const ministring_base &a): ministring_base(a)
       {cstr=NULL;}
 
    //! constructor with copy from c-string
@@ -54,6 +54,10 @@ class ministring: public ministring_base
    ~ministring()
       {if (cstr!=NULL) free(cstr);}
 
+   //! string length
+   unsigned int length() const
+      {return(getsize());}
+
    //! append char
    void append(const char c)
       {ministring_base::append(c);}
@@ -71,7 +75,8 @@ class ministring: public ministring_base
       {append(ministring(v));}
 
    //! check for existing sub-string and return first occurring index
-   BOOLINT find(const ministring_base &sub,unsigned int &idx) const
+   BOOLINT find(const ministring_base &sub,unsigned int &idx,
+                unsigned int start=0) const
       {
       unsigned int i;
 
@@ -85,7 +90,7 @@ class ministring: public ministring_base
 
       if (s==0) return(FALSE);
 
-      for (idx=0; idx+s<=SIZE; idx++)
+      for (idx=start; idx+s<=SIZE; idx++)
          {
          found=TRUE;
 
@@ -103,11 +108,12 @@ class ministring: public ministring_base
       }
 
    //! check for existing sub-c-string and return first occurring index
-   BOOLINT find(const char *sub,unsigned int &idx) const
-      {return(find(ministring(sub),idx));}
+   BOOLINT find(const char *sub,unsigned int &idx,unsigned int start=0) const
+      {return(find(ministring(sub),idx,start));}
 
    //! check for existing sub-string in reverse order and return first occurring index
-   BOOLINT findr(const ministring_base &sub,unsigned int &idx) const
+   BOOLINT findr(const ministring_base &sub,unsigned int &idx,
+                 unsigned int start=0) const
       {
       unsigned int i,j;
 
@@ -121,7 +127,7 @@ class ministring: public ministring_base
 
       if (s==0) return(FALSE);
 
-      for (i=0; i<SIZE; i++)
+      for (i=start; i<SIZE; i++)
          {
          idx=SIZE-1-i;
 
@@ -141,8 +147,8 @@ class ministring: public ministring_base
       }
 
    //! check for existing sub-c-string in reverse order and return first occurring index
-   BOOLINT findr(const char *sub,unsigned int &idx) const
-      {return(findr(ministring(sub),idx));}
+   BOOLINT findr(const char *sub,unsigned int &idx,unsigned int start=0) const
+      {return(findr(ministring(sub),idx,start));}
 
    //! check for existing sub-string and return remaining tail
    ministring tail(const ministring_base &sub) const
@@ -432,6 +438,39 @@ class ministrings: public minidyna<ministring>
 
       return(str);
       }
+
+   //! deconcatenate string
+   void from_string(const ministring &str,ministring separator="/")
+      {
+      unsigned int left,right;
+      ministring sub;
+
+      clear();
+
+      left=0;
+
+      while (str.find(separator,right,left))
+         {
+         sub=str.range(left,right-1);
+         append(sub);
+
+         left=right+separator.length();
+         }
+
+      if (left<str.length())
+         {
+         sub=str.range(left,str.length()-1);
+         append(sub);
+         }
+      }
+
+   //! serialize string list
+   ministring serialize() const
+      {return(to_string("\n"));}
+
+   //! deserialize string
+   void deserialize(const ministring &str)
+      {from_string(str,"\n");}
 
    };
 

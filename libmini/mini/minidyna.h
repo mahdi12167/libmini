@@ -401,6 +401,22 @@ class minidyna
       return(c);
       }
 
+   //! copy items from index range
+   minidyna<Item,Minsize> range(unsigned int begin,unsigned int end) const
+      {
+      unsigned int i;
+
+      minidyna<Item,Minsize> sub;
+
+      if (begin>=SIZE) begin=SIZE-1;
+      if (end>=SIZE) end=SIZE-1;
+
+      for (i=begin; i<=end; i++)
+         sub.append(get(i));
+
+      return(sub);
+      }
+
    //! interpolate item array
    Item interpolate(double t) const
       {
