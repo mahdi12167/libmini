@@ -423,7 +423,7 @@ class minikdtree
       return(0);
       }
 
-   unsigned int length()
+   double length()
       {return(length(root));}
 
    // get normal of plane
