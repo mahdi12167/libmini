@@ -418,7 +418,7 @@ class ministrings: public minidyna<ministring>
       {}
 
    //! concatenate string list
-   ministring to_string() const
+   ministring to_string(ministring separator="/") const
       {
       unsigned int i;
 
@@ -427,7 +427,7 @@ class ministrings: public minidyna<ministring>
       for (i=0; i<getsize(); i++)
          {
          str = str + get(i);
-         if (i<getsize()-1) str = str + "/";
+         if (i<getsize()-1) str = str + separator;
          }
 
       return(str);
