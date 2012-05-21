@@ -284,27 +284,46 @@ void MainWindow::clear()
       viewerWindow->removeObject(m_Keys[row]);
 }
 
+void MainWindow::getNameInfo(Object *obj,
+                             QString &name,QString &info)
+{
+   ministring url=obj->filename;
+   name=url.c_str();
+
+   if (name.endsWith("/")) name.truncate(name.size()-1);
+   if (name.endsWith("\\")) name.truncate(name.size()-1);
+
+   if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
+   if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
+
+   ministrings *tags=viewerWindow->getTags(url);
+   ministring type=tags?tags->get(0):"object";
+   BOOLINT elevation=tags?tags->has("elevation"):FALSE;
+   ministring elevinfo=elevation?" (dem)":"";
+   info=(type+elevinfo).c_str();
+}
+
 void MainWindow::updateTable(ministring key)
 {
+   unsigned int row;
    int rows = viewerTable->rowCount();
+
    Object *obj=viewerWindow->getObject(key);
-   ministrings *tags=viewerWindow->getTags(key);
 
-   if (obj!=NULL)
+   BOOLINT present=FALSE;
+
+   for (row=0; row<m_Keys.getsize(); row++)
+      if (m_Keys[row]==key)
+      {
+         present=TRUE;
+         break;
+      }
+
+   if (!present && obj!=NULL)
    {
-      ministring type=tags?tags->get(0):"object";
-      BOOLINT elevation=tags?tags->has("elevation"):FALSE;
-      ministring elevinfo=elevation?" (elevation)":"";
-      QString info=(type+elevinfo).c_str();
+      QString name, info;
 
-      ministring url=obj->filename;
-      QString name=url.c_str();
-
-      if (name.endsWith("/")) name.truncate(name.size()-1);
-      if (name.endsWith("\\")) name.truncate(name.size()-1);
-
-      if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
-      if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
+      getNameInfo(obj, name, info);
 
       viewerTable->insertRow(rows);
       viewerTable->setItem(rows, 0, new QTableWidgetItem(info));
@@ -313,15 +332,19 @@ void MainWindow::updateTable(ministring key)
       m_Keys.growsize(rows+1);
       m_Keys[rows]=key;
    }
-   else
+   else if (present && obj!=NULL)
    {
-      for (unsigned int row=0; row<m_Keys.getsize(); row++)
-         if (m_Keys[row]==key)
-         {
-            viewerTable->removeRow(row);
-            m_Keys.dispose(row);
-            break;
-         }
+      QString name, info;
+
+      getNameInfo(obj, name, info);
+
+      viewerTable->setItem(row, 0, new QTableWidgetItem(info));
+      viewerTable->setItem(row, 1, new QTableWidgetItem(name));
+   }
+   else if (present && obj==NULL)
+   {
+      viewerTable->removeRow(row);
+      m_Keys.dispose(row);
    }
 }
 

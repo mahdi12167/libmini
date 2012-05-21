@@ -8,6 +8,7 @@
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
 
+class Object;
 class ViewerWindow;
 
 class QMenu;
@@ -102,8 +103,10 @@ private:
    QPushButton *clearButton;
    QPushButton *quitButton;
 
-   protected:
+   void getNameInfo(Object *obj,
+                    QString &name,QString &info);
 
+protected:
    ministrings m_Keys;
 
    void keyPressEvent(QKeyEvent* event);

@@ -298,11 +298,13 @@ ministrings *ViewerWindow::getTags(ministring key)
 void ViewerWindow::addTag(ministring key, ministring tag)
 {
    objects.add_tag(key, tag);
+   emit changed(key);
 }
 
 void ViewerWindow::removeTag(ministring key, ministring tag)
 {
    objects.remove_tag(key, tag);
+   emit changed(key);
 }
 
 BOOLINT ViewerWindow::hasTag(ministring key, ministring tag)

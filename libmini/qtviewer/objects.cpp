@@ -220,10 +220,16 @@ ministrings *Objects::get_tags(const ministring &key)
    {return(minikeyval<Object *>::get_tags(key));}
 
 void Objects::add_tag(ministring key,ministring tag)
-   {minikeyval<Object *>::tag(key,tag);}
+   {
+   MINILOG("adding tag to object with key=" + key + " and tag=" + tag);
+   minikeyval<Object *>::tag(key,tag);
+   }
 
 void Objects::remove_tag(ministring key,ministring tag)
-   {minikeyval<Object *>::untag(key,tag);}
+   {
+   MINILOG("removing tag from object with key=" + key + " and tag=" + tag);
+   minikeyval<Object *>::untag(key,tag);
+   }
 
 BOOLINT Objects::has_tag(ministring key,ministring tag)
    {return(minikeyval<Object *>::has_tag(key,tag));}
