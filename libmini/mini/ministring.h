@@ -23,6 +23,10 @@ class ministring: public ministring_base
    ministring(const ministring_base &a): ministring_base(a)
       {cstr=NULL;}
 
+   //! copy constructor
+   ministring(const ministring &a): ministring_base(a)
+      {cstr=NULL;}
+
    //! constructor with copy from c-string
    ministring(const char *str): ministring_base()
       {
