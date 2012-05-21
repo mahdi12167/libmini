@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
+#define BALANCED
+
 #include <mini/minibase.h>
 #include <mini/ministring.h>
 #include <mini/minikdtree.h>
@@ -53,21 +55,24 @@ void plot_kdtree(miniv3d bboxmin,miniv3d bboxmax,
 
       if (level<maxlevel)
          {
-         if (level<maxlevel/4) plot_color(0,1,0);
-         else if (level<maxlevel/2) plot_color(0,0,1);
-         else
-            {
-            float v = 1.0f/(maxlevel/2)*(level-maxlevel/2);
-            plot_color(v,v,v);
-            }
-
          miniv3d p1 = bboxmin+o1;
          miniv3d p2 = bboxmax-o2;
 
-         miniv3d np1 = kdtree.normalize(p1);
-         miniv3d np2 = kdtree.normalize(p2);
+         if (node->plane.orientation!=minikdtree<ministring>::z_axis)
+            {
+            if (level<maxlevel/4) plot_color(0,1,0);
+            else if (level<maxlevel/2) plot_color(0,0,1);
+            else
+               {
+               float v = 1.0f/(maxlevel/2)*(level-maxlevel/2);
+               plot_color(v,v,v);
+               }
 
-         plot_line(np1.x,np1.y,np2.x,np2.y);
+            miniv3d np1 = kdtree.normalize(p1);
+            miniv3d np2 = kdtree.normalize(p2);
+
+            plot_line(np1.x,np1.y,np2.x,np2.y);
+            }
 
          plot_kdtree(bboxmin,p2,node->leftSpace,level+1);
          plot_kdtree(p1,bboxmax,node->rightSpace,level+1);
@@ -186,6 +191,10 @@ void read()
          coord.convert2(minicoord::MINICOORD_UTM);
          miniv3d v=coord.vec;
 
+#ifndef BALANCED
+         kdtree.insert(v,name);
+#endif
+
          itempoints.push(minikdtree<ministring>::ItemPoint(name,v));
 
          std::cout << lat << ";" << lon << ";" << name << std::endl;
@@ -194,7 +203,9 @@ void read()
 
    fclose(file);
 
+#ifdef BALANCED
    kdtree.insert(itempoints);
+#endif
 }
 
 int main(int argc,char *argv[])
