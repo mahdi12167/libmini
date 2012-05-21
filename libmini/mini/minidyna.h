@@ -384,6 +384,14 @@ class minidyna
    Item pop()
       {return(remove(SIZE-1));}
 
+   //! push item at front of array
+   void push_front(const Item &v)
+      {insert(v);}
+
+   //! push item at back of array
+   void push_back(const Item &v)
+      {append(v);}
+
    //! replace all occurrences of an item
    unsigned int replace(const Item &v1,const Item &v2)
       {
