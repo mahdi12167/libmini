@@ -143,6 +143,26 @@ class minikeyval
       return(&pairs[idx].tags);
       }
 
+   //! add tag to key-value pair
+   void tag(const ministring &key,const ministring &tag)
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return;
+
+      pairs[idx].tags = pairs[idx].tags + tag;
+      }
+
+   //! remove tag from key-value pair
+   void untag(const ministring &key,const ministring &tag)
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return;
+
+      pairs[idx].tags = pairs[idx].tags - tag;
+      }
+
    //! get all item keys
    ministrings get_items()
       {
