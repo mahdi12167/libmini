@@ -260,8 +260,10 @@ void ViewerWindow::loadImage(ministring url)
    }
    else
    {
-      if (image->is_imagery()) addTag(url, "imagery");
-      else addTag(url, "elevation");
+      if (image->is_imagery())
+         addTag(url, "imagery");
+      else
+         addTag(url, "elevation");
 
       image->focus();
    }
@@ -295,12 +297,17 @@ ministrings *ViewerWindow::getTags(ministring key)
 
 void ViewerWindow::addTag(ministring key, ministring tag)
 {
-   objects.tag(key, tag);
+   objects.add_tag(key, tag);
 }
 
 void ViewerWindow::removeTag(ministring key, ministring tag)
 {
-   objects.untag(key, tag);
+   objects.remove_tag(key, tag);
+}
+
+BOOLINT ViewerWindow::hasTag(ministring key, ministring tag)
+{
+   return(objects.has_tag(key, tag));
 }
 
 ministrings ViewerWindow::listObjects()

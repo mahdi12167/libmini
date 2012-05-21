@@ -110,6 +110,9 @@ class Objects: public minikeyval<Object *>
    Object *get(unsigned int i);
    Object *get(const ministring &key);
    ministrings *get_tags(const ministring &key);
+   void add_tag(ministring key,ministring tag);
+   void remove_tag(ministring key,ministring tag);
+   BOOLINT has_tag(ministring key,ministring tag);
    ministrings list();
    ministrings list(const ministring &tag);
    ministrings list(const ministrings &tags);
