@@ -58,6 +58,7 @@ class minidyna
 
    //! get array size
    unsigned int getsize() const {return(SIZE);}
+   unsigned int size() const {return(SIZE);}
 
    //! set array size
    void setsize(unsigned int size)
@@ -391,6 +392,14 @@ class minidyna
    //! push item at back of array
    void push_back(const Item &v)
       {append(v);}
+
+   //! pop item from front of array
+   Item pop_front()
+      {return(dispose());}
+
+   //! pop item from back of array
+   Item pop_back()
+      {return(pop());}
 
    //! replace all occurrences of an item
    unsigned int replace(const Item &v1,const Item &v2)
