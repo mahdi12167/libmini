@@ -7,6 +7,8 @@
 #include <mini/mini_tileset.h>
 #include <mini/mini_object.h>
 
+#include <grid/grid.h>
+
 class Viewer;
 
 //! object (base class)
@@ -71,7 +73,19 @@ class Object_image: public Object
 
    virtual void focus();
 
+   BOOLINT is_imagery()
+      {return(is_imagery_resp_elevation);}
+
+   BOOLINT is_elevation()
+      {return(!is_imagery_resp_elevation);}
+
+   grid_extent get_extent()
+      {return(extent);}
+
    protected:
+
+   BOOLINT is_imagery_resp_elevation;
+   grid_extent extent;
 
    Viewer *image_viewer;
    mininode *image_node;

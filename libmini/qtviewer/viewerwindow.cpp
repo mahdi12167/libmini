@@ -224,6 +224,8 @@ void ViewerWindow::loadMap(ministring url)
 
    Object_tileset *tileset = new Object_tileset(url, "", viewer);
 
+   if (tileset==NULL) MEMERROR();
+
    if (!addObject(url, tileset, "tileset"))
    {
       delete tileset;
@@ -246,6 +248,8 @@ void ViewerWindow::loadImage(ministring url)
 
    Object_image *image = new Object_image(url, "", viewer);
 
+   if (image==NULL) MEMERROR();
+
    if (!addObject(url, image, "image"))
    {
       delete image;
@@ -255,7 +259,12 @@ void ViewerWindow::loadImage(ministring url)
                            QMessageBox::Ok);
    }
    else
+   {
+      if (image->is_imagery()) addTag(url, "imagery");
+      else addTag(url, "elevation");
+
       image->focus();
+   }
 }
 
 void ViewerWindow::clearImages()
@@ -282,6 +291,16 @@ Object *ViewerWindow::getObject(ministring key)
 ministrings *ViewerWindow::getTags(ministring key)
 {
    return(objects.get_tags(key));
+}
+
+void ViewerWindow::addTag(ministring key, ministring tag)
+{
+   objects.tag(key, tag);
+}
+
+void ViewerWindow::removeTag(ministring key, ministring tag)
+{
+   objects.untag(key, tag);
 }
 
 ministrings ViewerWindow::listObjects()

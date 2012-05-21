@@ -293,7 +293,9 @@ void MainWindow::updateTable(ministring key)
    if (obj!=NULL)
    {
       ministring type=tags?tags->get(0):"object";
-      QString info=type.c_str();
+      BOOLINT elevation=tags?tags->has("elevation"):FALSE;
+      ministring elevinfo=elevation?" (elevation)":"";
+      QString info=(type+elevinfo).c_str();
 
       ministring url=obj->filename;
       QString name=url.c_str();

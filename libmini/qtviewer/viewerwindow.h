@@ -45,6 +45,8 @@ public:
    BOOLINT addObject(ministring key, Object *obj, ministring tag);
    Object *getObject(ministring key);
    ministrings *getTags(ministring key);
+   void addTag(ministring key, ministring tag);
+   void removeTag(ministring key, ministring tag);
    ministrings listObjects();
    ministrings listObjects(ministring tag);
    void gotoObject(ministring key);

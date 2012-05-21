@@ -2,8 +2,6 @@
 
 #include <mini/mini_util.h>
 
-#include <grid/grid.h>
-
 #include "viewer.h"
 #include "objects.h"
 #include "nodes.h"
@@ -94,6 +92,9 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
                            Viewer *viewer)
    : Object(name,repo)
    {
+   is_imagery_resp_elevation=TRUE;
+   extent=grid_extent();
+
    image_viewer=viewer;
    image_node=NULL;
    }
@@ -120,12 +121,13 @@ BOOLINT Object_image::initGFX()
       // check for valid input layer
       if (layer!=NULL)
          {
-         grid_extent ext=layer->extent;
+         is_imagery_resp_elevation=layer->is_imagery();
+         extent=layer->extent;
 
-         coord=ext.get_center();
-         radius=ext.get_size();
+         coord=extent.get_center();
+         radius=extent.get_size();
 
-         image_node=image_groupnode->append_child(new node_grid_extent(ext));
+         image_node=image_groupnode->append_child(new node_grid_extent(extent));
 
          return(TRUE);
          }
