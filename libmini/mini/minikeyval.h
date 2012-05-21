@@ -163,6 +163,16 @@ class minikeyval
       pairs[idx].tags = pairs[idx].tags - tag;
       }
 
+   //! key-value pair has tag?
+   BOOLINT has_tag(const ministring &key,const ministring &tag)
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return(FALSE);
+
+      return(pairs[idx].tags.has(tag));
+      }
+
    //! get all item keys
    ministrings get_items()
       {
