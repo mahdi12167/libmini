@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
+#undef INFO
+#undef OUTPUT
 #define BALANCED
 
 #include <mini/minibase.h>
@@ -197,7 +199,9 @@ void read()
 
          itempoints.push(minikdtree<ministring>::ItemPoint(name,v));
 
+#ifdef OUTPUT
          std::cout << lat << ";" << lon << ";" << name << std::endl;
+#endif
       }
    }
 
@@ -205,6 +209,11 @@ void read()
 
 #ifdef BALANCED
    kdtree.insert(itempoints);
+#endif
+
+#ifdef INFO
+   std::cout << "maximum tree depth: " << kdtree.depth() << std::endl;
+   std::cout << "average path length: " << kdtree.length() << std::endl;
 #endif
 }
 
