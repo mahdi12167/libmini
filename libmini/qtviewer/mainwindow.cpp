@@ -271,7 +271,7 @@ void MainWindow::open()
       fileName = fd->selectedFiles().at(0);
 
    if (!fileName.isNull())
-      viewerWindow->loadMap(fileName.toStdString().c_str());
+      viewerWindow->loadURL(fileName.toStdString().c_str());
 }
 
 void MainWindow::clear()
