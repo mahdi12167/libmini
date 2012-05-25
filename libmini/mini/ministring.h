@@ -315,6 +315,20 @@ class ministring: public ministring_base
       return(*this);
       }
 
+   //! add operator (concatenate strings)
+   ministring &operator += (const ministring &a)
+      {
+      append(a);
+      return(*this);
+      }
+
+   //! add operator (concatenate c-string)
+   ministring &operator += (const char *c)
+      {
+      append(c);
+      return(*this);
+      }
+
    private:
 
    char *cstr;
@@ -349,9 +363,8 @@ inline int operator < (const ministring &a,const ministring &b)
 //! add operator (concatenate strings)
 inline ministring operator + (const ministring &a,const ministring &b)
    {
-   ministring str;
+   ministring str(a);
 
-   str=a;
    str.append(b);
 
    return(str);
@@ -360,9 +373,8 @@ inline ministring operator + (const ministring &a,const ministring &b)
 //! add operator (concatenate c-string)
 inline ministring operator + (const ministring &a,const char *b)
    {
-   ministring str;
+   ministring str(a);
 
-   str=a;
    str.append(b);
 
    return(str);
@@ -371,9 +383,8 @@ inline ministring operator + (const ministring &a,const char *b)
 //! add operator (concatenate c-string)
 inline ministring operator + (const char *a,const ministring &b)
    {
-   ministring str;
+   ministring str(a);
 
-   str=a;
    str.append(b);
 
    return(str);
@@ -382,9 +393,8 @@ inline ministring operator + (const char *a,const ministring &b)
 //! add operator (concatenate floating-point value)
 inline ministring operator + (const ministring &a,double b)
    {
-   ministring str;
+   ministring str(a);
 
-   str=a;
    str.append(b);
 
    return(str);
@@ -437,7 +447,7 @@ class ministrings: public minidyna<ministring>
       for (i=0; i<getsize(); i++)
          {
          str = str + get(i);
-         if (i<getsize()-1) str = str + separator;
+         if (i<getsize()-1) str += separator;
          }
 
       return(str);
@@ -476,6 +486,13 @@ class ministrings: public minidyna<ministring>
    void deserialize(const ministring &str)
       {from_string(str,"\n");}
 
+   //! add operator (string list concatenation)
+   ministrings &operator += (const ministrings &a)
+      {
+      append(a);
+      return(*this);
+      }
+
    };
 
 //! cmp operator (compare string lists)
@@ -513,44 +530,22 @@ inline int operator < (const ministrings &a,const ministrings &b)
    return(0);
    }
 
-//! add operator (union of string lists)
-//!  elements of left hand operand are assumed to be unique
+//! add operator (string list concatenation)
 inline ministrings operator + (const ministrings &a,const ministrings &b)
    {
-   unsigned int i,j;
+   ministrings strs(a);
 
-   ministrings strs;
-
-   BOOLINT duplicate;
-
-   strs=a;
-
-   for (j=0; j<b.getsize(); j++)
-      {
-      duplicate=FALSE;
-
-      for (i=0; i<strs.getsize(); i++)
-         if (strs[i]==b[j])
-            {
-            duplicate=TRUE;
-            continue;
-            }
-
-      if (!duplicate) strs.append(b[j]);
-      }
+   strs.append(b);
 
    return(strs);
    }
 
-//! sub operator (remove union of string lists)
-//!  elements of left hand operand are assumed to be unique
+//! sub operator (string list removal)
 inline ministrings operator - (const ministrings &a,const ministrings &b)
    {
    unsigned int i,j;
 
-   ministrings strs;
-
-   strs=a;
+   ministrings strs(a);
 
    for (j=0; j<b.getsize(); j++)
       for (i=strs.getsize(); i>0; i--)
@@ -559,7 +554,7 @@ inline ministrings operator - (const ministrings &a,const ministrings &b)
    return(strs);
    }
 
-//! div operator (inclusion of string lists)
+//! div operator (string list inclusion)
 inline int operator / (const ministrings &a,const ministrings &b)
    {
    unsigned int i,j;

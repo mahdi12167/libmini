@@ -544,6 +544,13 @@ class minidyna
       else return(ARRAY[idx-MINSIZE]);
       }
 
+   //! append operator
+   minidyna<Item,Minsize>& operator += (const Item &a)
+      {
+      append(a);
+      return(*this);
+      }
+
    //! add operator
    minidyna<Item,Minsize>& operator += (const minidyna<Item,Minsize> &a)
       {
@@ -591,6 +598,17 @@ class minidyna
       }
 
    };
+
+//! append operator
+template <class Item,const unsigned int Minsize>
+inline minidyna<Item,Minsize> operator + (const minidyna<Item,Minsize> &a,const Item &b)
+   {
+   minidyna<Item,Minsize> array(a);
+
+   array.append(b);
+
+   return(array);
+   }
 
 //! cmp operator
 template <class Item,const unsigned int Minsize>
