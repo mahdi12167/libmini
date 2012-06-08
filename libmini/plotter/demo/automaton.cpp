@@ -37,26 +37,28 @@ void render(double time)
 
    if (width>size) width=size;
 
-   for (i=0; i<size; i++) state[i]=drand48()<0.5;
+   for (i=0; i<width; i++) state[i]=drand48()<0.5;
 
    for (i=0; i<height; i++)
       {
-      for (j=0; j<size; j++)
+      for (j=0; j<width; j++)
          {
-         unsigned int s0=0,s;
+         unsigned int s=0;
 
          for (k=-b; k<=b; k++)
             {
-            if (j+k>=0 && j+k<size) s=state[j+k];
-            else s=0;
+            int l=j+k;
 
-            s0|=(s<<(k+b));
+            if (l<0) l+=width;
+            else if (l>=width) l-=width;
+
+            s|=(state[l]<<(k+b));
             }
 
-         state2[j]=(code&(1<<s0))!=0;
+         state2[j]=(code&(1<<s))!=0;
          }
 
-      for (j=0; j<size; j++) state[j]=state2[j];
+      for (j=0; j<width; j++) state[j]=state2[j];
 
       plot_color(0,0,0);
       for (j=0; j<width; j++)
