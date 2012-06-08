@@ -150,7 +150,7 @@ class minikeyval
 
       if (!get_pair(key,idx)) return;
 
-      pairs[idx].tags = pairs[idx].tags + tag;
+      pairs[idx].tags += tag;
       }
 
    //! remove tag from key-value pair
@@ -160,7 +160,7 @@ class minikeyval
 
       if (!get_pair(key,idx)) return;
 
-      pairs[idx].tags = pairs[idx].tags - tag;
+      pairs[idx].tags -= tag;
       }
 
    //! key-value pair has tag?

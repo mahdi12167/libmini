@@ -305,7 +305,7 @@ class ministring: public ministring_base
       }
 
    //! assignment operator
-   ministring& operator = (const ministring &a)
+   ministring& operator = (const ministring_base &a)
       {
       ministring_base::copy(a);
 
@@ -316,7 +316,7 @@ class ministring: public ministring_base
       }
 
    //! add operator (concatenate strings)
-   ministring &operator += (const ministring &a)
+   ministring &operator += (const ministring_base &a)
       {
       append(a);
       return(*this);
@@ -432,6 +432,11 @@ class ministrings: public minidyna<ministring>
       : minidyna<ministring>()
       {}
 
+   //! copy constructor
+   ministrings(const ministrings &strs)
+      : minidyna<ministring>(strs)
+      {}
+
    //! custom constructor
    ministrings(const ministring &str)
       : minidyna<ministring>(str)
@@ -446,7 +451,7 @@ class ministrings: public minidyna<ministring>
 
       for (i=0; i<getsize(); i++)
          {
-         str = str + get(i);
+         str += get(i);
          if (i<getsize()-1) str += separator;
          }
 
