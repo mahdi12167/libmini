@@ -7,7 +7,7 @@
 static const int size=1000;
 static const int b=2;
 
-unsigned int code=3536951686;
+unsigned int code=3536951686u;
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
