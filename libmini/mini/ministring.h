@@ -319,6 +319,10 @@ class ministring: public ministring_base
    ministring &operator += (const ministring_base &a)
       {
       append(a);
+
+      if (cstr!=NULL) free(cstr);
+      cstr=NULL;
+
       return(*this);
       }
 
@@ -326,6 +330,10 @@ class ministring: public ministring_base
    ministring &operator += (const char *c)
       {
       append(c);
+
+      if (cstr!=NULL) free(cstr);
+      cstr=NULL;
+
       return(*this);
       }
 
@@ -491,6 +499,13 @@ class ministrings: public minidyna<ministring>
    void deserialize(const ministring &str)
       {from_string(str,"\n");}
 
+   //! add operator (string concatenation)
+   ministrings &operator += (const ministring &a)
+      {
+      append(a);
+      return(*this);
+      }
+
    //! add operator (string list concatenation)
    ministrings &operator += (const ministrings &a)
       {
@@ -535,12 +550,35 @@ inline int operator < (const ministrings &a,const ministrings &b)
    return(0);
    }
 
+//! add operator (string concatenation)
+inline ministrings operator + (const ministrings &a,const ministring &b)
+   {
+   ministrings strs(a);
+
+   strs.append(b);
+
+   return(strs);
+   }
+
 //! add operator (string list concatenation)
 inline ministrings operator + (const ministrings &a,const ministrings &b)
    {
    ministrings strs(a);
 
    strs.append(b);
+
+   return(strs);
+   }
+
+//! sub operator (string removal)
+inline ministrings operator - (const ministrings &a,const ministring &b)
+   {
+   unsigned int i;
+
+   ministrings strs(a);
+
+   for (i=strs.getsize(); i>0; i--)
+      if (strs[i-1]==b) strs.remove(i-1);
 
    return(strs);
    }
@@ -557,6 +595,17 @@ inline ministrings operator - (const ministrings &a,const ministrings &b)
          if (strs[i-1]==b[j]) strs.remove(i-1);
 
    return(strs);
+   }
+
+//! div operator (string inclusion)
+inline int operator / (const ministring &a,const ministrings &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<b.getsize(); i++)
+      if (a==b[i]) return(1);
+
+   return(0);
    }
 
 //! div operator (string list inclusion)
