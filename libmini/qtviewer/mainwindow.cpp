@@ -7,6 +7,25 @@
 #include "mainconst.h"
 #include "mainwindow.h"
 
+class MyQTableWidget: public QTableWidget
+{
+public:
+
+   MyQTableWidget(QWidget *parent = 0)
+      : QTableWidget(parent)
+   {}
+
+protected:
+
+   void keyPressEvent(QKeyEvent *event)
+   {
+      if (event->key() == Qt::Key_T)
+         QWidget::keyPressEvent(event);
+      else
+         QTableWidget::keyPressEvent(event);
+   }
+};
+
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)
 {
@@ -66,7 +85,7 @@ void MainWindow::createWidgets()
 
    viewerWindow = new ViewerWindow;
    viewerLayout = new QHBoxLayout;
-   viewerTable = new QTableWidget;
+   viewerTable = new MyQTableWidget;
    sliderBox = new QGroupBox;
    sliderLayout = new QVBoxLayout;
    sliderLayout1 = new QHBoxLayout;

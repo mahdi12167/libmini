@@ -22,6 +22,8 @@ class QSlider;
 class QDialogButtonBox;
 class QPushButton;
 
+class MyQTableWidget;
+
 //! qt viewer main window that
 //! contains the viewer window with the opengl rendering context and
 //! contains the qt gui elements that interact with the renderer
@@ -76,7 +78,7 @@ private:
 
    ViewerWindow* viewerWindow;
    QHBoxLayout *viewerLayout;
-   QTableWidget *viewerTable;
+   MyQTableWidget *viewerTable;
    QGroupBox *sliderBox;
    QVBoxLayout *sliderLayout;
    QHBoxLayout *sliderLayout1;
