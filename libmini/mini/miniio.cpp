@@ -82,6 +82,10 @@ unsigned char *readfiled(FILE *file,unsigned int *bytes)
    return(data);
    }
 
+// write a string as RAW file
+void writestring(const char *filename,const char *cstr)
+   {writefile(filename,(unsigned char *)cstr,strlen(cstr));}
+
 // read a RAW file as string
 char *readstring(const char *filename)
    {

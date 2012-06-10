@@ -7,6 +7,8 @@
 #include "minidyna.h"
 #include "minisort.h"
 
+#include "miniio.h"
+
 //! string base class
 typedef minidyna<char,16> ministring_base;
 
@@ -472,8 +474,6 @@ class ministrings: public minidyna<ministring>
       unsigned int left,right;
       ministring sub;
 
-      clear();
-
       left=0;
 
       while (str.find(separator,right,left))
@@ -498,6 +498,14 @@ class ministrings: public minidyna<ministring>
    //! deserialize string
    void deserialize(const ministring &str)
       {from_string(str,"\n");}
+
+   //! save to file
+   void save(ministring &filename) const
+      {writestring(filename.c_str(),serialize().c_str());}
+
+   //! load from file
+   void load(ministring &filename)
+      {deserialize(readstring(filename.c_str()));}
 
    //! add operator (string concatenation)
    ministrings &operator += (const ministring &a)
