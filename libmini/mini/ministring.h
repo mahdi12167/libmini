@@ -521,6 +521,29 @@ class ministrings: public minidyna<ministring>
       return(*this);
       }
 
+   //! sub operator (string removal)
+   ministrings &operator -= (const ministring &a)
+      {
+      unsigned int i;
+
+      for (i=getsize(); i>0; i--)
+         if (get(i-1)==a) remove(i-1);
+
+      return(*this);
+      }
+
+   //! sub operator (string list removal)
+   ministrings &operator -= (const ministrings &a)
+      {
+      unsigned int i,j;
+
+      for (j=0; j<a.getsize(); j++)
+         for (i=getsize(); i>0; i--)
+            if (get(i-1)==a[j]) remove(i-1);
+
+      return(*this);
+      }
+
    };
 
 //! cmp operator (compare string lists)
