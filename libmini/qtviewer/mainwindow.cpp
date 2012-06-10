@@ -299,8 +299,9 @@ void MainWindow::getNameInfo(Object *obj,
    ministrings *tags=viewerWindow->getTags(url);
    ministring type=tags?tags->get(0):"object";
    BOOLINT elevation=tags?tags->has("elevation"):FALSE;
-   ministring elevinfo=elevation?" (dem)":"";
-   info=(type+elevinfo).c_str();
+
+   if (elevation) info="elevation";
+   else info=type.c_str();
 }
 
 void MainWindow::updateTable(ministring key)
@@ -319,6 +320,7 @@ void MainWindow::updateTable(ministring key)
          break;
       }
 
+   // add object
    if (!present && obj!=NULL)
    {
       QString name, info;
@@ -332,6 +334,7 @@ void MainWindow::updateTable(ministring key)
       m_Keys.growsize(rows+1);
       m_Keys[rows]=key;
    }
+   // update object
    else if (present && obj!=NULL)
    {
       QString name, info;
@@ -340,7 +343,13 @@ void MainWindow::updateTable(ministring key)
 
       viewerTable->setItem(row, 0, new QTableWidgetItem(info));
       viewerTable->setItem(row, 1, new QTableWidgetItem(name));
+
+      if (viewerWindow->hasTag(m_Keys[row], "selected"))
+         viewerTable->item(row, 0)->setBackground(QBrush(QColor("blue")));
+      else
+         viewerTable->item(row, 0)->setBackground(QBrush(QColor("white")));
    }
+   // remove object
    else if (present && obj==NULL)
    {
       viewerTable->removeRow(row);
@@ -439,6 +448,16 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       stereoCheck->setChecked(!stereoCheck->isChecked());
    else if (event->key() == Qt::Key_W)
       wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
+   else if (event->key() == Qt::Key_T)
+   {
+      int row = viewerTable->currentRow();
+
+      if (row!=-1)
+         if (!viewerWindow->hasTag(m_Keys[row], "selected"))
+            viewerWindow->addTag(m_Keys[row], "selected");
+         else
+            viewerWindow->removeTag(m_Keys[row], "selected");
+   }
    else
       QWidget::keyPressEvent(event);
 }
