@@ -69,6 +69,9 @@ public:
    void checkExagger(bool on);
    void setExagger(double scale);
 
+   void runAction(ministring action="select",
+                  ministring key="");
+
 signals:
    void changed(ministring key);
 

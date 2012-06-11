@@ -98,8 +98,8 @@ void MainWindow::createWidgets()
    connect(viewerTable, SIGNAL(customContextMenuRequested(const QPoint&)),
            viewerTable, SLOT(showContextMenu(const QPoint&)));
 
-   connect(viewerTable, SIGNAL(activate(int,ministring)),
-           this, SLOT(runAction(int,ministring)));
+   connect(viewerTable, SIGNAL(activate(ministring,int)),
+           this, SLOT(runAction(ministring,int)));
 
    // fog check:
 
@@ -294,7 +294,7 @@ void MainWindow::clear()
 }
 
 void MainWindow::getNameInfo(Object *obj,
-                             QString &name,QString &info)
+                             QString &name, QString &info)
 {
    ministring url=obj->filename;
    name=url.c_str();
@@ -364,12 +364,14 @@ void MainWindow::updateTable(ministring key)
    }
 }
 
-void MainWindow::runAction(int row,ministring action)
+void MainWindow::runAction(ministring action, int row)
 {
-   ministring key = m_Keys[row];
+   ministring key;
 
-   if (action == "select")
-      viewerWindow->toggleTag(key, "selected");
+   if (row>=0 and row<m_Keys.size())
+      key = m_Keys[row];
+
+   viewerWindow->runAction(action, key);
 }
 
 void MainWindow::click(int row, int col)
@@ -468,7 +470,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       int row = viewerTable->currentRow();
 
       if (row!=-1)
-         runAction(row,"select");
+         runAction("select", row);
    }
    else
       QWidget::keyPressEvent(event);
@@ -496,17 +498,29 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QMenu myMenu;
     QAction *selectAction = new QAction(tr("select"), this);
     myMenu.addAction(selectAction);
+    QAction *selectAllAction = new QAction(tr("select all"), this);
+    myMenu.addAction(selectAllAction);
+    QAction *deselectAllAction = new QAction(tr("deselect all"), this);
+    myMenu.addAction(deselectAllAction);
 
     // exec connect menu
     QAction *selectedAction = myMenu.exec(globalPos);
 
     // process selected action
     if (selectedAction)
-       if (selectedAction == selectedAction)
+       if (selectedAction == selectAction)
        {
           QTableWidgetItem *item = itemAt(pos);
 
           if (item)
-             emit(activate(item->row(), "select"));
+             emit(activate("select", item->row()));
+       }
+       else if (selectedAction == selectAllAction)
+       {
+          emit(activate("select_all", -1));
+       }
+       else if (selectedAction == deselectAllAction)
+       {
+          emit(activate("deselect_all", -1));
        }
 }

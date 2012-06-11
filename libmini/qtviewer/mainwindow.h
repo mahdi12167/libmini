@@ -37,7 +37,7 @@ public:
 
 public slots:
    void updateTable(ministring key);
-   void runAction(int row,ministring action);
+   void runAction(ministring action, int row);
 
 private slots:
    void about();
@@ -107,7 +107,7 @@ private:
    QPushButton *quitButton;
 
    void getNameInfo(Object *obj,
-                    QString &name,QString &info);
+                    QString &name, QString &info);
 
 protected:
    ministrings m_Keys;
@@ -133,7 +133,7 @@ private slots:
    void showContextMenu(const QPoint &pos);
 
 signals:
-   void activate(int row,ministring action);
+   void activate(ministring action, int row);
 };
 
 #endif
