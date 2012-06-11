@@ -7,25 +7,6 @@
 #include "mainconst.h"
 #include "mainwindow.h"
 
-class MyQTableWidget: public QTableWidget
-{
-public:
-
-   MyQTableWidget(QWidget *parent = 0)
-      : QTableWidget(parent)
-   {}
-
-protected:
-
-   void keyPressEvent(QKeyEvent *event)
-   {
-      if (event->key() == Qt::Key_T)
-         QWidget::keyPressEvent(event);
-      else
-         QTableWidget::keyPressEvent(event);
-   }
-};
-
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)
 {
@@ -80,7 +61,7 @@ void MainWindow::createMenus()
 
 void MainWindow::createWidgets()
 {
-   mainGroup = new QGroupBox;
+   mainGroup = new QGroupBox(this);
    mainLayout = new QVBoxLayout;
 
    viewerWindow = new ViewerWindow;
@@ -110,6 +91,12 @@ void MainWindow::createWidgets()
 
    connect(viewerTable, SIGNAL(cellClicked(int, int)), this, SLOT(click(int, int)));
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(doubleclick(int, int)));
+
+   // context menu:
+
+   viewerTable->setContextMenuPolicy(Qt::CustomContextMenu);
+   connect(viewerTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+           viewerTable, SLOT(showContextMenu(const QPoint&)));
 
    // fog check:
 
@@ -316,11 +303,9 @@ void MainWindow::getNameInfo(Object *obj,
    if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
 
    ministrings *tags=viewerWindow->getTags(url);
-   ministring type=tags?tags->get(0):"object";
+   ministring tag=tags?tags->get(0):"object";
    BOOLINT elevation=tags?tags->has("elevation"):FALSE;
-
-   if (elevation) info="elevation";
-   else info=type.c_str();
+   info=elevation?"elevation":tag.c_str();
 }
 
 void MainWindow::updateTable(ministring key)
@@ -484,4 +469,32 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
 void MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
    QWidget::keyReleaseEvent(event);
+}
+
+void MyQTableWidget::keyPressEvent(QKeyEvent *event)
+{
+   if (event->key() == Qt::Key_T)
+      QWidget::keyPressEvent(event); // pass to parent
+   else
+      QTableWidget::keyPressEvent(event); // pass to widget
+}
+
+void MyQTableWidget::showContextMenu(const QPoint &pos)
+{
+    // map widget to global coordinates
+    QPoint globalPos = mapToGlobal(pos);
+
+    // create contex menu
+    QMenu myMenu;
+    QAction *selectAction = new QAction(tr("select"), this);
+    connect(selectAction, SIGNAL(triggered()), this, SLOT(select()));
+    myMenu.addAction(selectAction);
+
+    // exec connect menu
+    myMenu.exec(globalPos);
+}
+
+void MyQTableWidget::select()
+{
+   std::cout << "select" << std::endl; //!!
 }

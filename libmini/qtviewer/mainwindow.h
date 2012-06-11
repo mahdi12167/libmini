@@ -4,6 +4,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+#include <QtGui/QTableWidget>
 
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
@@ -16,7 +17,6 @@ class QAction;
 class QGroupBox;
 class QVBoxLayout;
 class QHBoxLayout;
-class QTableWidget;
 class QCheckBox;
 class QSlider;
 class QDialogButtonBox;
@@ -113,6 +113,24 @@ protected:
 
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);
+};
+
+// subclass table widget
+class MyQTableWidget: public QTableWidget
+{
+   Q_OBJECT
+
+public:
+   MyQTableWidget(QWidget *parent = 0)
+      : QTableWidget(parent)
+   {}
+
+protected:
+   void keyPressEvent(QKeyEvent *event);
+
+private slots:
+   void showContextMenu(const QPoint &pos);
+   void select();
 };
 
 #endif
