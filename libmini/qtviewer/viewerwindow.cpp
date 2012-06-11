@@ -307,6 +307,14 @@ void ViewerWindow::removeTag(ministring key, ministring tag)
    emit changed(key);
 }
 
+void ViewerWindow::toggleTag(ministring key, ministring tag)
+{
+   if (hasTag(key, tag))
+      removeTag(key, tag);
+   else
+      addTag(key, tag);
+}
+
 BOOLINT ViewerWindow::hasTag(ministring key, ministring tag)
 {
    return(objects.has_tag(key, tag));

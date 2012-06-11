@@ -366,11 +366,10 @@ void MainWindow::updateTable(ministring key)
 
 void MainWindow::runAction(int row,ministring action)
 {
+   ministring key = m_Keys[row];
+
    if (action == "select")
-      if (!viewerWindow->hasTag(m_Keys[row], "selected"))
-         viewerWindow->addTag(m_Keys[row], "selected");
-      else
-         viewerWindow->removeTag(m_Keys[row], "selected");
+      viewerWindow->toggleTag(key, "selected");
 }
 
 void MainWindow::click(int row, int col)

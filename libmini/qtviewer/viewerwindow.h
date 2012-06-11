@@ -47,6 +47,7 @@ public:
    ministrings *getTags(ministring key);
    void addTag(ministring key, ministring tag);
    void removeTag(ministring key, ministring tag);
+   void toggleTag(ministring key, ministring tag);
    BOOLINT hasTag(ministring key, ministring tag);
    ministrings listObjects();
    ministrings listObjects(ministring tag);
