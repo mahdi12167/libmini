@@ -37,6 +37,7 @@ public:
 
 public slots:
    void updateTable(ministring key);
+   void runAction(int row,ministring action);
 
 private slots:
    void about();
@@ -130,7 +131,9 @@ protected:
 
 private slots:
    void showContextMenu(const QPoint &pos);
-   void select();
+
+signals:
+   void activate(int row,ministring action);
 };
 
 #endif

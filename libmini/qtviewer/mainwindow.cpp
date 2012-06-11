@@ -98,6 +98,9 @@ void MainWindow::createWidgets()
    connect(viewerTable, SIGNAL(customContextMenuRequested(const QPoint&)),
            viewerTable, SLOT(showContextMenu(const QPoint&)));
 
+   connect(viewerTable, SIGNAL(activate(int,ministring)),
+           this, SLOT(runAction(int,ministring)));
+
    // fog check:
 
    fogCheck = new QCheckBox(tr("Fog Density"));
@@ -361,6 +364,15 @@ void MainWindow::updateTable(ministring key)
    }
 }
 
+void MainWindow::runAction(int row,ministring action)
+{
+   if (action == "select")
+      if (!viewerWindow->hasTag(m_Keys[row], "selected"))
+         viewerWindow->addTag(m_Keys[row], "selected");
+      else
+         viewerWindow->removeTag(m_Keys[row], "selected");
+}
+
 void MainWindow::click(int row, int col)
 {
    QTableWidgetItem *item = viewerTable->item(row, col);
@@ -457,10 +469,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       int row = viewerTable->currentRow();
 
       if (row!=-1)
-         if (!viewerWindow->hasTag(m_Keys[row], "selected"))
-            viewerWindow->addTag(m_Keys[row], "selected");
-         else
-            viewerWindow->removeTag(m_Keys[row], "selected");
+         runAction(row,"select");
    }
    else
       QWidget::keyPressEvent(event);
@@ -487,14 +496,18 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // create contex menu
     QMenu myMenu;
     QAction *selectAction = new QAction(tr("select"), this);
-    connect(selectAction, SIGNAL(triggered()), this, SLOT(select()));
     myMenu.addAction(selectAction);
 
     // exec connect menu
-    myMenu.exec(globalPos);
-}
+    QAction *selectedAction = myMenu.exec(globalPos);
 
-void MyQTableWidget::select()
-{
-   std::cout << "select" << std::endl; //!!
+    // process selected action
+    if (selectedAction)
+       if (selectedAction == selectedAction)
+       {
+          QTableWidgetItem *item = itemAt(pos);
+
+          if (item)
+             emit(activate(item->row(), "select"));
+       }
 }
