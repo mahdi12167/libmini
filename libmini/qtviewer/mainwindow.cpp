@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
    setWindowTitle(tr(VIEWER_NAME));
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow()
+   {viewerWindow->clearObjects();}
 
 void MainWindow::createActions()
 {
