@@ -165,10 +165,10 @@ void read()
             {
             case 2:
                name = ministring(tok);
-               success &= isalpha(name[0]);
+               success &= (isalpha(name[0])!=0);
                break;
             case 3:
-               success &= isalpha(*tok);
+               success &= (isalpha(*tok)!=0);
                break;
             case 4:
                success &= sscanf(tok,"%lf",&lat)==1;
