@@ -47,7 +47,7 @@ BOOLINT mouse(float x,float y)
       {
       miniv3d p=kdtree.denormalize(miniv3d(x,1.0-y,0));
       miniv3d n=itempoints[0].point;
-      for (unsigned int i=0; i<itempoints.getsize(); i++)
+      for (unsigned int i=1; i<itempoints.getsize(); i++)
          if (minikdtree<ministring>::getDistance(itempoints[i].point,p)<
              minikdtree<ministring>::getDistance(n,p))
             n=itempoints[i].point;
