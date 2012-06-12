@@ -3,6 +3,7 @@
 #undef INFO
 #undef OUTPUT
 #define BALANCED
+#undef SLOWDOWN
 
 #include <mini/minibase.h>
 #include <mini/ministring.h>
@@ -18,6 +19,7 @@ minikdtree<ministring>::ItemPoints itempoints;
 const minikdtree<ministring>::Node *node=NULL;
 
 BOOLINT treevis=FALSE;
+BOOLINT linear=FALSE;
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
@@ -27,13 +29,30 @@ BOOLINT keypress(unsigned char key,float x,float y)
       treevis=!treevis;
       return(TRUE);
       }
+   else if (tolower(key)=='l')
+      linear=!linear;
 
    return(FALSE);
    }
 
 BOOLINT mouse(float x,float y)
    {
-   node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
+#ifdef SLOWDOWN
+   for (int c=0; c<1000; c++)
+#endif
+
+   if (!linear)
+      node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
+   else
+      {
+      miniv3d p=kdtree.denormalize(miniv3d(x,1.0-y,0));
+      miniv3d n=itempoints[0].point;
+      for (unsigned int i=0; i<itempoints.getsize(); i++)
+         if (minikdtree<ministring>::getDistance(itempoints[i].point,p)<
+             minikdtree<ministring>::getDistance(n,p))
+            n=itempoints[i].point;
+      node=kdtree.search(n);
+      }
 
    return(node!=NULL);
    }
