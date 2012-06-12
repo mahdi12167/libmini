@@ -3,7 +3,6 @@
 #undef INFO
 #undef OUTPUT
 #define BALANCED
-#undef SLOWDOWN
 
 #include <mini/minibase.h>
 #include <mini/ministring.h>
@@ -20,6 +19,7 @@ const minikdtree<ministring>::Node *node=NULL;
 
 BOOLINT treevis=FALSE;
 BOOLINT linear=FALSE;
+BOOLINT slowdown=FALSE;
 
 BOOLINT keypress(unsigned char key,float x,float y)
    {
@@ -31,28 +31,27 @@ BOOLINT keypress(unsigned char key,float x,float y)
       }
    else if (tolower(key)=='l')
       linear=!linear;
+   else if (tolower(key)=='s')
+      slowdown=!slowdown;
 
    return(FALSE);
    }
 
 BOOLINT mouse(float x,float y)
    {
-#ifdef SLOWDOWN
-   for (int c=0; c<1000; c++)
-#endif
-
-   if (!linear)
-      node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
-   else
-      {
-      miniv3d p=kdtree.denormalize(miniv3d(x,1.0-y,0));
-      miniv3d n=itempoints[0].point;
-      for (unsigned int i=1; i<itempoints.getsize(); i++)
-         if (minikdtree<ministring>::getDistance(itempoints[i].point,p)<
-             minikdtree<ministring>::getDistance(n,p))
-            n=itempoints[i].point;
-      node=kdtree.search(n);
-      }
+   for (int c=0; c<(slowdown?1000:1); c++)
+      if (!linear)
+         node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
+      else
+         {
+         miniv3d p=kdtree.denormalize(miniv3d(x,1.0-y,0));
+         miniv3d n=itempoints[0].point;
+         for (unsigned int i=1; i<itempoints.getsize(); i++)
+            if (minikdtree<ministring>::getDistance(itempoints[i].point,p)<
+                minikdtree<ministring>::getDistance(n,p))
+               n=itempoints[i].point;
+         node=kdtree.search(n);
+         }
 
    return(node!=NULL);
    }
