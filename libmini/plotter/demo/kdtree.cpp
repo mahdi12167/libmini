@@ -3,8 +3,10 @@
 #undef INFO
 #undef OUTPUT
 #define BALANCED
+#define TIME
 
 #include <mini/minibase.h>
+#include <mini/minitime.h>
 #include <mini/ministring.h>
 #include <mini/minikdtree.h>
 #include <mini/minicoord.h>
@@ -39,6 +41,10 @@ BOOLINT keypress(unsigned char key,float x,float y)
 
 BOOLINT mouse(float x,float y)
    {
+#ifdef TIME
+   double time=gettime();
+#endif
+
    for (int c=0; c<(slowdown?1000:1); c++)
       if (!linear)
          node=kdtree.search(kdtree.denormalize(miniv3d(x,1.0-y,0)));
@@ -52,6 +58,11 @@ BOOLINT mouse(float x,float y)
                n=itempoints[i].point;
          node=kdtree.search(n);
          }
+
+#ifdef TIME
+   time=gettime()-time;
+   printf("elapsed time: %.2gms\n",1000*time);
+#endif
 
    return(node!=NULL);
    }
