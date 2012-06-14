@@ -33,7 +33,7 @@ class minikdtree
       no_axis = -1
    };
 
-   // definition of plane
+   // definition of kdtree plane
    typedef struct {
       Vector3D point;
       char orientation;
