@@ -71,12 +71,15 @@ void MainWindow::createWidgets()
    prefLayout = new QVBoxLayout;
 
    viewerWindow = new ViewerWindow;
+
    viewerLayout = new QHBoxLayout;
    viewerTable = new MyQTableWidget;
+
    sliderBox = new QGroupBox;
    sliderLayout = new QVBoxLayout;
    sliderLayout1 = new QHBoxLayout;
    sliderLayout2 = new QHBoxLayout;
+
    buttonBox = new QDialogButtonBox;
 
    // drag and drop:
@@ -271,6 +274,8 @@ void MainWindow::createWidgets()
 
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
+   prefLayout->addStretch();
+
    prefGroup->setLayout(prefLayout);
 
    // tabs:
