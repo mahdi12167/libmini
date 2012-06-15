@@ -22,6 +22,7 @@ class QCheckBox;
 class QSlider;
 class QDialogButtonBox;
 class QPushButton;
+class QLineEdit;
 
 class MyQTableWidget;
 
@@ -111,6 +112,9 @@ private:
 
    QPushButton *clearButton;
    QPushButton *quitButton;
+
+   QLineEdit *lineEdit_repoPath;
+   QLineEdit *lineEdit_tmpPath;
 
    void getNameInfo(Object *obj,
                     QString &name, QString &info);

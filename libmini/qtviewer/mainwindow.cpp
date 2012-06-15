@@ -257,14 +257,28 @@ void MainWindow::createWidgets()
 
    // pref group:
 
-   prefLayout->addWidget(buttonBox);
+   lineEdit_repoPath = new QLineEdit;
+   QGroupBox *lineEditGroup_repoPath = new QGroupBox(tr("Repository Path"));
+   QVBoxLayout *lineEditLayout_repoPath = new QVBoxLayout;
+   lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
+   lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
 
+   lineEdit_tmpPath = new QLineEdit;
+   QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
+   QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
+   lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
+   lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
+
+   prefLayout->addWidget(lineEditGroup_repoPath);
+   prefLayout->addWidget(lineEditGroup_tmpPath);
    prefGroup->setLayout(prefLayout);
 
    // tabs:
 
    tabWidget->addTab(mainGroup, "View");
    tabWidget->addTab(prefGroup, "Prefs");
+
+   tabWidget->setMovable(true);
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
