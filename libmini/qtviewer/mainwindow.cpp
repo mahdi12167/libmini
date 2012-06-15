@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
+#include <grid/grid.h>
+
 #include <QtGui>
 
 #include "viewerwindow.h"
@@ -251,11 +253,15 @@ void MainWindow::createWidgets()
    lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
    lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
 
+   connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPath(QString)));
+
    lineEdit_tmpPath = new QLineEdit;
    QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
    QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
+
+   connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPath(QString)));
 
    sliderButton = new QCheckBox(tr("Show Slider Controls"));
    sliderButton->setChecked(false);
@@ -493,6 +499,17 @@ void MainWindow::setExagger(int tick)
 {
    double scale = tick / 16.0 / 100.0;
    viewerWindow->setExagger(scale);
+}
+
+void MainWindow::repoPath(QString repo)
+{
+   ministring repoPath = repo.toStdString().c_str();
+}
+
+void MainWindow::tmpPath(QString tmp)
+{
+   ministring tmpPath = tmp.toStdString().c_str();
+   grid_resampler::grid_tmp_dir = tmpPath;
 }
 
 void MainWindow::checkSliders(int on)

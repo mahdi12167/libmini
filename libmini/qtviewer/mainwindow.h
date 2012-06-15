@@ -61,6 +61,8 @@ private slots:
    void checkExagger(int);
    void setExagger(int);
 
+   void repoPath(QString);
+   void tmpPath(QString);
    void checkSliders(int);
 
 private:
