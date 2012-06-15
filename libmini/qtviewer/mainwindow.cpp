@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
    createMenus();
    createWidgets();
 
-   setCentralWidget(tabWidget);
+   setCentralWidget(mainGroup);
    setWindowTitle(tr(VIEWER_NAME));
 }
 
@@ -62,25 +62,27 @@ void MainWindow::createMenus()
 
 void MainWindow::createWidgets()
 {
-   tabWidget = new QTabWidget;
-
    mainGroup = new QGroupBox;
    mainLayout = new QVBoxLayout;
+
+   viewerWindow = new ViewerWindow;
+   tabWidget = new QTabWidget;
+   buttonBox = new QDialogButtonBox;
+
+   viewerGroup = new QGroupBox;
+   viewerLayout = new QHBoxLayout;
 
    prefGroup = new QGroupBox;
    prefLayout = new QVBoxLayout;
 
-   viewerWindow = new ViewerWindow;
-
-   viewerLayout = new QHBoxLayout;
    viewerTable = new MyQTableWidget;
 
    sliderBox = new QGroupBox;
+   sliderBox->hide();
+
    sliderLayout = new QVBoxLayout;
    sliderLayout1 = new QHBoxLayout;
    sliderLayout2 = new QHBoxLayout;
-
-   buttonBox = new QDialogButtonBox;
 
    // drag and drop:
 
@@ -234,29 +236,12 @@ void MainWindow::createWidgets()
    sliderLayout->addLayout(sliderLayout2);
    sliderBox->setLayout(sliderLayout);
 
-   // button group:
-
-   clearButton = new QPushButton(tr("Clear"));
-   quitButton = new QPushButton(tr("Quit"));
-
-   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
-   connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
-
-   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
-   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
-
    // viewer group:
 
    viewerLayout->addWidget(viewerTable);
    viewerLayout->addWidget(sliderBox);
 
-   // main group:
-
-   mainLayout->addWidget(viewerWindow);
-   mainLayout->addLayout(viewerLayout);
-   mainLayout->addWidget(buttonBox);
-
-   mainGroup->setLayout(mainLayout);
+   viewerGroup->setLayout(viewerLayout);
 
    // pref group:
 
@@ -272,18 +257,43 @@ void MainWindow::createWidgets()
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
 
+   sliderButton = new QCheckBox(tr("Show Slider Controls"));
+   sliderButton->setChecked(false);
+
+   connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
+
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
+
+   prefLayout->addWidget(sliderButton);
+
    prefLayout->addStretch();
 
    prefGroup->setLayout(prefLayout);
 
    // tabs:
 
-   tabWidget->addTab(mainGroup, "View");
+   tabWidget->addTab(viewerGroup, "View");
    tabWidget->addTab(prefGroup, "Prefs");
 
-   tabWidget->setMovable(true);
+   // button group:
+
+   clearButton = new QPushButton(tr("Clear"));
+   quitButton = new QPushButton(tr("Quit"));
+
+   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
+   connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
+
+   buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
+   buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
+
+   // main group:
+
+   mainLayout->addWidget(viewerWindow);
+   mainLayout->addWidget(tabWidget);
+   mainLayout->addWidget(buttonBox);
+
+   mainGroup->setLayout(mainLayout);
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -483,6 +493,11 @@ void MainWindow::setExagger(int tick)
 {
    double scale = tick / 16.0 / 100.0;
    viewerWindow->setExagger(scale);
+}
+
+void MainWindow::checkSliders(int on)
+{
+   sliderBox->setVisible(on);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)

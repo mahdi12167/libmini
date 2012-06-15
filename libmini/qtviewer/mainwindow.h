@@ -61,6 +61,8 @@ private slots:
    void checkExagger(int);
    void setExagger(int);
 
+   void checkSliders(int);
+
 private:
    void createActions();
    void createMenus();
@@ -76,22 +78,27 @@ private:
    QAction* clearAction;
    QAction* quitAction;
 
-   QTabWidget *tabWidget;
-
    QGroupBox *mainGroup;
    QVBoxLayout *mainLayout;
+
+   ViewerWindow* viewerWindow;
+   QTabWidget *tabWidget;
+   QDialogButtonBox *buttonBox;
+
+   QGroupBox *viewerGroup;
+   QHBoxLayout *viewerLayout;
 
    QGroupBox *prefGroup;
    QVBoxLayout *prefLayout;
 
-   ViewerWindow* viewerWindow;
-   QHBoxLayout *viewerLayout;
+   QPushButton *clearButton;
+   QPushButton *quitButton;
+
    MyQTableWidget *viewerTable;
    QGroupBox *sliderBox;
    QVBoxLayout *sliderLayout;
    QHBoxLayout *sliderLayout1;
    QHBoxLayout *sliderLayout2;
-   QDialogButtonBox *buttonBox;
 
    QCheckBox *fogCheck;
    QSlider *fogDensitySlider;
@@ -110,11 +117,10 @@ private:
    QCheckBox *stereoCheck;
    QCheckBox *wireFrameCheck;
 
-   QPushButton *clearButton;
-   QPushButton *quitButton;
-
    QLineEdit *lineEdit_repoPath;
    QLineEdit *lineEdit_tmpPath;
+
+   QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,
                     QString &name, QString &info);
