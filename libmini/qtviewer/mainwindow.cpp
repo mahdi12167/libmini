@@ -14,12 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
    createMenus();
    createWidgets();
 
-   setCentralWidget(mainGroup);
+   setCentralWidget(tabWidget);
    setWindowTitle(tr(VIEWER_NAME));
 }
 
 MainWindow::~MainWindow()
-   {viewerWindow->clearObjects();}
+   {clear(true);}
 
 void MainWindow::createActions()
 {
@@ -62,8 +62,13 @@ void MainWindow::createMenus()
 
 void MainWindow::createWidgets()
 {
-   mainGroup = new QGroupBox(this);
+   tabWidget = new QTabWidget;
+
+   mainGroup = new QGroupBox;
    mainLayout = new QVBoxLayout;
+
+   prefGroup = new QGroupBox;
+   prefLayout = new QVBoxLayout;
 
    viewerWindow = new ViewerWindow;
    viewerLayout = new QHBoxLayout;
@@ -249,6 +254,17 @@ void MainWindow::createWidgets()
    mainLayout->addWidget(buttonBox);
 
    mainGroup->setLayout(mainLayout);
+
+   // pref group:
+
+   prefLayout->addWidget(buttonBox);
+
+   prefGroup->setLayout(prefLayout);
+
+   // tabs:
+
+   tabWidget->addTab(mainGroup, "View");
+   tabWidget->addTab(prefGroup, "Prefs");
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -284,11 +300,11 @@ void MainWindow::open()
       viewerWindow->loadURL(fileName.toStdString().c_str());
 }
 
-void MainWindow::clear()
+void MainWindow::clear(bool all)
 {
    int row = viewerTable->currentRow();
 
-   if (row==-1)
+   if (row==-1 || all)
       viewerWindow->clearObjects();
    else
       viewerWindow->removeObject(m_Keys[row]);

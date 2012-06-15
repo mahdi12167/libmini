@@ -14,6 +14,7 @@ class ViewerWindow;
 
 class QMenu;
 class QAction;
+class QTabWidget;
 class QGroupBox;
 class QVBoxLayout;
 class QHBoxLayout;
@@ -42,7 +43,7 @@ public slots:
 private slots:
    void about();
    void open();
-   void clear();
+   void clear(bool all = false);
 
    void toggleStereo(int);
    void toggleWireFrame(int);
@@ -74,8 +75,13 @@ private:
    QAction* clearAction;
    QAction* quitAction;
 
+   QTabWidget *tabWidget;
+
    QGroupBox *mainGroup;
    QVBoxLayout *mainLayout;
+
+   QGroupBox *prefGroup;
+   QVBoxLayout *prefLayout;
 
    ViewerWindow* viewerWindow;
    QHBoxLayout *viewerLayout;
