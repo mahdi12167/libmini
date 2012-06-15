@@ -6,6 +6,7 @@
 #include <QtOpenGL/qgl.h>
 
 #include <QtGui/QMessageBox>
+#include <QtGui/QDesktopWidget>
 
 #include "mainwindow.h"
 
@@ -23,6 +24,12 @@ void errormsg(const char *file,int line,int fatal)
 
    if (fatal!=MINI_ERROR_NONFATAL)
       QMessageBox::warning(0, "error", msg, QMessageBox::Ok);
+}
+
+void centerWidgetOnScreen(QWidget *widget)
+{
+   QRect rect = QApplication::desktop()->availableGeometry();
+   widget->move(rect.center() - widget->rect().center());
 }
 
 int main(int argc, char *argv[])
@@ -46,6 +53,7 @@ int main(int argc, char *argv[])
    MainWindow window;
 
    window.resize(window.sizeHint());
+   centerWidgetOnScreen(&window);
    window.show();
 
    return(app.exec());
