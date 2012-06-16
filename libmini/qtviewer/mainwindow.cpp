@@ -70,7 +70,7 @@ void MainWindow::createWidgets()
    viewerWindow = new ViewerWindow;
    tabWidget = new QTabWidget;
 
-   viewerGroup = new QGroupBox;
+   viewerGroup = new MyQGroupBox(QSize(300, 300));
    viewerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
    prefGroup = new QGroupBox;
@@ -80,8 +80,8 @@ void MainWindow::createWidgets()
 
    viewerTable = new MyQTableWidget;
 
-   sliderBox = new QGroupBox;
-   sliderLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+   sliderBox = new MyQGroupBox(QSize(300, 300));
+   sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
    sliderLayout1 = new QBoxLayout(QBoxLayout::TopToBottom);
    sliderLayout2 = new QBoxLayout(QBoxLayout::TopToBottom);
 
@@ -241,9 +241,9 @@ void MainWindow::createWidgets()
 
    viewerLayout->addWidget(viewerTable);
    viewerLayout->addWidget(sliderBox);
-   sliderBox->hide();
 
    viewerGroup->setLayout(viewerLayout);
+   viewerGroup->setFlat(true);
 
    // pref group:
 
@@ -269,7 +269,7 @@ void MainWindow::createWidgets()
    connect(verticalButton, SIGNAL(stateChanged(int)), this, SLOT(checkVertical(int)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
-   sliderButton->setChecked(false);
+   sliderButton->setChecked(true);
 
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
 

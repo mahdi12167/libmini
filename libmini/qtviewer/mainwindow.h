@@ -4,6 +4,8 @@
 #define MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+
+#include <QtGui/QGroupBox>
 #include <QtGui/QTableWidget>
 
 #include <mini/mini_generic.h>
@@ -26,6 +28,7 @@ class QPushButton;
 class QLineEdit;
 
 class MyQTableWidget;
+class MyQGroupBox;
 
 //! qt viewer main window that
 //! contains the viewer window with the opengl rendering context and
@@ -90,7 +93,7 @@ private:
    QTabWidget *tabWidget;
    QDialogButtonBox *buttonBox;
 
-   QGroupBox *viewerGroup;
+   MyQGroupBox *viewerGroup;
    QBoxLayout *viewerLayout;
 
    QGroupBox *prefGroup;
@@ -154,6 +157,27 @@ protected:
 
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);
+};
+
+// subclass group box widget
+class MyQGroupBox: public QGroupBox
+{
+   Q_OBJECT
+
+public:
+   MyQGroupBox(QSize size, QWidget *parent = 0)
+      : QGroupBox(parent)
+   {
+      this->size = size;
+   }
+
+   QSize sizeHint() const
+   {
+      return(size);
+   }
+
+protected:
+   QSize size;
 };
 
 // subclass table widget
