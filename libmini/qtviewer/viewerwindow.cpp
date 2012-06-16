@@ -20,6 +20,8 @@ ViewerWindow::ViewerWindow()
 
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::StencilBuffer));
 
+   vertical = TRUE;
+
    // init viewer
    viewer = new Renderer(this);
 
@@ -38,14 +40,25 @@ Renderer *ViewerWindow::getViewer()
    return(viewer);
 }
 
+void ViewerWindow::setVertical(BOOLINT on)
+{
+   vertical=on;
+}
+
 QSize ViewerWindow::minimumSizeHint() const
 {
-   return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/VIEWER_ASPECT));
+   if (vertical)
+      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH));
+   else
+      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/VIEWER_ASPECT));
 }
 
 QSize ViewerWindow::sizeHint() const
 {
-   return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/VIEWER_ASPECT));
+   if (vertical)
+      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH));
+   else
+      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/VIEWER_ASPECT));
 }
 
 void ViewerWindow::initializeGL()

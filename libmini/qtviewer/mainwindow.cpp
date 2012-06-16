@@ -65,7 +65,7 @@ void MainWindow::createMenus()
 void MainWindow::createWidgets()
 {
    mainGroup = new QGroupBox;
-   mainLayout = new QVBoxLayout;
+   mainLayout = new QBoxLayout(QBoxLayout::RightToLeft);
 
    viewerWindow = new ViewerWindow;
    tabWidget = new QTabWidget;
@@ -80,8 +80,6 @@ void MainWindow::createWidgets()
    viewerTable = new MyQTableWidget;
 
    sliderBox = new QGroupBox;
-   sliderBox->hide();
-
    sliderLayout = new QVBoxLayout;
    sliderLayout1 = new QHBoxLayout;
    sliderLayout2 = new QHBoxLayout;
@@ -242,6 +240,7 @@ void MainWindow::createWidgets()
 
    viewerLayout->addWidget(viewerTable);
    viewerLayout->addWidget(sliderBox);
+   sliderBox->hide();
 
    viewerGroup->setLayout(viewerLayout);
 
@@ -263,6 +262,11 @@ void MainWindow::createWidgets()
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPath(QString)));
 
+   verticalButton = new QCheckBox(tr("Vertical Viewer List"));
+   verticalButton->setChecked(true);
+
+   connect(verticalButton, SIGNAL(stateChanged(int)), this, SLOT(checkVertical(int)));
+
    sliderButton = new QCheckBox(tr("Show Slider Controls"));
    sliderButton->setChecked(false);
 
@@ -271,6 +275,7 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
 
+   prefLayout->addWidget(verticalButton);
    prefLayout->addWidget(sliderButton);
 
    prefLayout->addStretch();
@@ -298,6 +303,7 @@ void MainWindow::createWidgets()
    mainLayout->addWidget(viewerWindow);
    mainLayout->addWidget(tabWidget);
    mainLayout->addWidget(buttonBox);
+   buttonBox->hide();
 
    mainGroup->setLayout(mainLayout);
 }
@@ -510,6 +516,22 @@ void MainWindow::tmpPath(QString tmp)
 {
    ministring tmpPath = tmp.toStdString().c_str();
    grid_resampler::grid_tmp_dir = tmpPath;
+}
+
+void MainWindow::checkVertical(int on)
+{
+   if (on)
+   {
+      mainLayout->setDirection(QBoxLayout::RightToLeft);
+      viewerWindow->setVertical(TRUE);
+      buttonBox->hide();
+   }
+   else
+   {
+      mainLayout->setDirection(QBoxLayout::TopToBottom);
+      viewerWindow->setVertical(FALSE);
+      buttonBox->show();
+   }
 }
 
 void MainWindow::checkSliders(int on)

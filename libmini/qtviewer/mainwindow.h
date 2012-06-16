@@ -16,6 +16,7 @@ class QMenu;
 class QAction;
 class QTabWidget;
 class QGroupBox;
+class QBoxLayout;
 class QVBoxLayout;
 class QHBoxLayout;
 class QCheckBox;
@@ -63,6 +64,8 @@ private slots:
 
    void repoPath(QString);
    void tmpPath(QString);
+
+   void checkVertical(int);
    void checkSliders(int);
 
 private:
@@ -81,7 +84,7 @@ private:
    QAction* quitAction;
 
    QGroupBox *mainGroup;
-   QVBoxLayout *mainLayout;
+   QBoxLayout *mainLayout;
 
    ViewerWindow* viewerWindow;
    QTabWidget *tabWidget;
@@ -122,6 +125,7 @@ private:
    QLineEdit *lineEdit_repoPath;
    QLineEdit *lineEdit_tmpPath;
 
+   QCheckBox *verticalButton;
    QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,

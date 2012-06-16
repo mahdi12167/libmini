@@ -31,6 +31,8 @@ public:
 
    Renderer *getViewer();
 
+   void setVertical(BOOLINT on);
+
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
@@ -98,6 +100,8 @@ protected:
    void dragLeaveEvent(QDragLeaveEvent *event);
 
 private:
+   BOOLINT vertical;
+
    Renderer *viewer;
    Objects objects;
 
