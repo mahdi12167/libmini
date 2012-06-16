@@ -103,7 +103,7 @@ private:
    QPushButton *quitButton;
 
    MyQTableWidget *viewerTable;
-   QGroupBox *sliderBox;
+   MyQGroupBox *sliderBox;
    QBoxLayout *sliderLayout;
    QBoxLayout *sliderLayout1;
    QBoxLayout *sliderLayout2;
