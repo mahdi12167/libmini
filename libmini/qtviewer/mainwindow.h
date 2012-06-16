@@ -62,8 +62,8 @@ private slots:
    void checkExagger(int);
    void setExagger(int);
 
-   void repoPath(QString);
-   void tmpPath(QString);
+   void repoPathChanged(QString);
+   void tmpPathChanged(QString);
 
    void checkVertical(int);
    void checkSliders(int);
@@ -91,7 +91,7 @@ private:
    QDialogButtonBox *buttonBox;
 
    QGroupBox *viewerGroup;
-   QHBoxLayout *viewerLayout;
+   QBoxLayout *viewerLayout;
 
    QGroupBox *prefGroup;
    QVBoxLayout *prefLayout;
@@ -101,25 +101,40 @@ private:
 
    MyQTableWidget *viewerTable;
    QGroupBox *sliderBox;
-   QVBoxLayout *sliderLayout;
-   QHBoxLayout *sliderLayout1;
-   QHBoxLayout *sliderLayout2;
+   QBoxLayout *sliderLayout;
+   QBoxLayout *sliderLayout1;
+   QBoxLayout *sliderLayout2;
 
+   QGroupBox *fogGroup;
+   QHBoxLayout *fogLayout;
    QCheckBox *fogCheck;
    QSlider *fogDensitySlider;
 
+   QGroupBox *contourGroup;
+   QHBoxLayout *contourLayout;
    QCheckBox *contourCheck;
 
+   QGroupBox *seaGroup;
+   QHBoxLayout *seaLayout;
    QCheckBox *seaLevelCheck;
    QSlider *seaLevelSlider;
 
+   QGroupBox *lightGroup;
+   QHBoxLayout *lightLayout;
    QCheckBox *lightCheck;
    QSlider *lightSlider;
 
+   QGroupBox *exaggerGroup;
+   QHBoxLayout *exaggerLayout;
    QCheckBox *exaggerCheck;
    QSlider *exaggerSlider;
 
+   QGroupBox *stereoGroup;
+   QHBoxLayout *stereoLayout;
    QCheckBox *stereoCheck;
+
+   QGroupBox *wireGroup;
+   QHBoxLayout *wireLayout;
    QCheckBox *wireFrameCheck;
 
    QLineEdit *lineEdit_repoPath;
@@ -133,6 +148,9 @@ private:
 
 protected:
    ministrings m_Keys;
+
+   ministring repoPath;
+   ministring tmpPath;
 
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);

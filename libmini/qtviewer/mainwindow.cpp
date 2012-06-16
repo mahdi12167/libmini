@@ -69,20 +69,21 @@ void MainWindow::createWidgets()
 
    viewerWindow = new ViewerWindow;
    tabWidget = new QTabWidget;
-   buttonBox = new QDialogButtonBox;
 
    viewerGroup = new QGroupBox;
-   viewerLayout = new QHBoxLayout;
+   viewerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
    prefGroup = new QGroupBox;
    prefLayout = new QVBoxLayout;
 
+   buttonBox = new QDialogButtonBox;
+
    viewerTable = new MyQTableWidget;
 
    sliderBox = new QGroupBox;
-   sliderLayout = new QVBoxLayout;
-   sliderLayout1 = new QHBoxLayout;
-   sliderLayout2 = new QHBoxLayout;
+   sliderLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+   sliderLayout1 = new QBoxLayout(QBoxLayout::TopToBottom);
+   sliderLayout2 = new QBoxLayout(QBoxLayout::TopToBottom);
 
    // drag and drop:
 
@@ -123,8 +124,8 @@ void MainWindow::createWidgets()
 
    connect(fogDensitySlider, SIGNAL(valueChanged(int)), this, SLOT(setFogDensity(int)));
 
-   QGroupBox *fogGroup = new QGroupBox;
-   QHBoxLayout *fogLayout = new QHBoxLayout;
+   fogGroup = new QGroupBox;
+   fogLayout = new QHBoxLayout;
 
    fogLayout->addWidget(fogCheck);
    fogLayout->addWidget(fogDensitySlider);
@@ -137,8 +138,8 @@ void MainWindow::createWidgets()
 
    connect(contourCheck, SIGNAL(stateChanged(int)), this, SLOT(checkContours(int)));
 
-   QGroupBox *contourGroup = new QGroupBox;
-   QHBoxLayout *contourLayout = new QHBoxLayout;
+   contourGroup = new QGroupBox;
+   contourLayout = new QHBoxLayout;
 
    contourLayout->addWidget(contourCheck);
    contourGroup->setLayout(contourLayout);
@@ -154,8 +155,8 @@ void MainWindow::createWidgets()
 
    connect(seaLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(setSeaLevel(int)));
 
-   QGroupBox *seaGroup = new QGroupBox;
-   QHBoxLayout *seaLayout = new QHBoxLayout;
+   seaGroup = new QGroupBox;
+   seaLayout = new QHBoxLayout;
 
    seaLayout->addWidget(seaLevelCheck);
    seaLayout->addWidget(seaLevelSlider);
@@ -172,8 +173,8 @@ void MainWindow::createWidgets()
 
    connect(lightSlider, SIGNAL(valueChanged(int)), this, SLOT(setLight(int)));
 
-   QGroupBox *lightGroup = new QGroupBox;
-   QHBoxLayout *lightLayout = new QHBoxLayout;
+   lightGroup = new QGroupBox;
+   lightLayout = new QHBoxLayout;
 
    lightLayout->addWidget(lightCheck);
    lightLayout->addWidget(lightSlider);
@@ -190,8 +191,8 @@ void MainWindow::createWidgets()
 
    connect(exaggerSlider, SIGNAL(valueChanged(int)), this, SLOT(setExagger(int)));
 
-   QGroupBox *exaggerGroup = new QGroupBox;
-   QHBoxLayout *exaggerLayout = new QHBoxLayout;
+   exaggerGroup = new QGroupBox;
+   exaggerLayout = new QHBoxLayout;
 
    exaggerLayout->addWidget(exaggerCheck);
    exaggerLayout->addWidget(exaggerSlider);
@@ -204,8 +205,8 @@ void MainWindow::createWidgets()
 
    connect(stereoCheck, SIGNAL(stateChanged(int)), this, SLOT(toggleStereo(int)));
 
-   QGroupBox *stereoGroup = new QGroupBox;
-   QHBoxLayout *stereoLayout = new QHBoxLayout;
+   stereoGroup = new QGroupBox;
+   stereoLayout = new QHBoxLayout;
 
    stereoLayout->addWidget(stereoCheck);
    stereoGroup->setLayout(stereoLayout);
@@ -252,7 +253,7 @@ void MainWindow::createWidgets()
    lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
    lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
 
-   connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPath(QString)));
+   connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
 
    lineEdit_tmpPath = new QLineEdit;
    QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
@@ -260,14 +261,14 @@ void MainWindow::createWidgets()
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
 
-   connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPath(QString)));
+   connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
 
-   verticalButton = new QCheckBox(tr("Vertical Viewer List"));
+   verticalButton = new QCheckBox(tr("Vertical List"));
    verticalButton->setChecked(true);
 
    connect(verticalButton, SIGNAL(stateChanged(int)), this, SLOT(checkVertical(int)));
 
-   sliderButton = new QCheckBox(tr("Show Slider Controls"));
+   sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(false);
 
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
@@ -507,14 +508,14 @@ void MainWindow::setExagger(int tick)
    viewerWindow->setExagger(scale);
 }
 
-void MainWindow::repoPath(QString repo)
+void MainWindow::repoPathChanged(QString repo)
 {
-   ministring repoPath = repo.toStdString().c_str();
+   repoPath = repo.toStdString().c_str();
 }
 
-void MainWindow::tmpPath(QString tmp)
+void MainWindow::tmpPathChanged(QString tmp)
 {
-   ministring tmpPath = tmp.toStdString().c_str();
+   tmpPath = tmp.toStdString().c_str();
    grid_resampler::grid_tmp_dir = tmpPath;
 }
 
@@ -524,12 +525,20 @@ void MainWindow::checkVertical(int on)
    {
       mainLayout->setDirection(QBoxLayout::RightToLeft);
       viewerWindow->setVertical(TRUE);
+      viewerLayout->setDirection(QBoxLayout::TopToBottom);
+      sliderLayout->setDirection(QBoxLayout::TopToBottom);
+      sliderLayout1->setDirection(QBoxLayout::TopToBottom);
+      sliderLayout2->setDirection(QBoxLayout::TopToBottom);
       buttonBox->hide();
    }
    else
    {
       mainLayout->setDirection(QBoxLayout::TopToBottom);
       viewerWindow->setVertical(FALSE);
+      viewerLayout->setDirection(QBoxLayout::LeftToRight);
+      sliderLayout->setDirection(QBoxLayout::TopToBottom);
+      sliderLayout1->setDirection(QBoxLayout::LeftToRight);
+      sliderLayout2->setDirection(QBoxLayout::LeftToRight);
       buttonBox->show();
    }
 }
