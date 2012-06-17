@@ -263,7 +263,7 @@ void MainWindow::createWidgets()
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
 
-   verticalButton = new QCheckBox(tr("Vertical List"));
+   verticalButton = new QCheckBox(tr("Vertical Layout"));
    verticalButton->setChecked(true);
 
    connect(verticalButton, SIGNAL(stateChanged(int)), this, SLOT(checkVertical(int)));
