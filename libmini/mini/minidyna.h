@@ -434,6 +434,14 @@ class minidyna
       return(sub);
       }
 
+   //! head before index (inclusive)
+   minidyna<Item,Minsize> head(unsigned int index) const
+      {return(range(0,index));}
+
+   //! tail after index (inclusive)
+   minidyna<Item,Minsize> tail(unsigned int index) const
+      {return(range(index,getsize()));}
+
    //! interpolate item array
    Item interpolate(double t) const
       {
