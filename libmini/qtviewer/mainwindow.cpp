@@ -332,7 +332,7 @@ void MainWindow::open()
    QFileDialog* fd = new QFileDialog(this, "Open Location");
    fd->setFileMode(QFileDialog::AnyFile);
    fd->setViewMode(QFileDialog::List);
-   fd->setFilter("Ini Files (*.ini);;Images (*.tif *.jpg *.png)");
+   fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
 
    QString fileName;
    if (fd->exec() == QDialog::Accepted)
@@ -511,6 +511,7 @@ void MainWindow::setExagger(int tick)
 void MainWindow::repoPathChanged(QString repo)
 {
    repoPath = repo.toStdString().c_str();
+   viewerWindow->setRepo(repoPath);
 }
 
 void MainWindow::tmpPathChanged(QString tmp)

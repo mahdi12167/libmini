@@ -12,6 +12,14 @@ Object::Object(const ministring &name,const ministring &repo)
    {
    filename=name;
    repository=repo;
+
+   if (repository.size()>0)
+      if (!repository.endswith("/"))
+         repository+="/";
+
+   if (repository.size()>0)
+      if (filename.startswith(repository))
+         filename=filename.tail(repository.size());
    }
 
 Object::~Object()

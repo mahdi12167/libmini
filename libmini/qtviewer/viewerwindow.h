@@ -36,6 +36,7 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
+   void setRepo(ministring url);
    void loadURL(ministring url);
 
    void loadMap(ministring url);
@@ -103,6 +104,8 @@ private:
    BOOLINT vertical;
 
    Renderer *viewer;
+
+   ministring repository;
    Objects objects;
 
    QPoint lastPos;

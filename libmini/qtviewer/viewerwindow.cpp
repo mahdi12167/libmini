@@ -209,6 +209,11 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    viewer->getCamera()->timerEvent(event->timerId());
 }
 
+void ViewerWindow::setRepo(ministring url)
+{
+   repository = url;
+}
+
 void ViewerWindow::loadURL(ministring url)
 {
    if (url.endswith(".jpg"))
@@ -235,7 +240,7 @@ void ViewerWindow::loadMap(ministring url)
       url.truncate(lio);
    }
 
-   Object_tileset *tileset = new Object_tileset(url, "", viewer);
+   Object_tileset *tileset = new Object_tileset(url, repository, viewer);
 
    if (tileset==NULL) MEMERROR();
 
@@ -259,7 +264,7 @@ void ViewerWindow::loadImage(ministring url)
    if (url.startswith("file://"))
       url.substitute("file://","");
 
-   Object_image *image = new Object_image(url, "", viewer);
+   Object_image *image = new Object_image(url, repository, viewer);
 
    if (image==NULL) MEMERROR();
 
