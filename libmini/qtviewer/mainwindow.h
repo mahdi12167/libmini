@@ -68,6 +68,9 @@ private slots:
    void repoPathChanged(QString);
    void tmpPathChanged(QString);
 
+   void browseRepoPath();
+   void browseTmpPath();
+
    void checkVertical(int);
    void checkSliders(int);
 
@@ -141,10 +144,15 @@ private:
    QCheckBox *wireFrameCheck;
 
    QLineEdit *lineEdit_repoPath;
+   QPushButton *browseButton_repoPath;
+
    QLineEdit *lineEdit_tmpPath;
+   QPushButton *browseButton_tmpPath;
 
    QCheckBox *verticalButton;
    QCheckBox *sliderButton;
+
+   ministrings browse(ministring title);
 
    void getNameInfo(Object *obj,
                     QString &name, QString &info);

@@ -247,21 +247,27 @@ void MainWindow::createWidgets()
 
    // pref group:
 
-   lineEdit_repoPath = new QLineEdit;
    QGroupBox *lineEditGroup_repoPath = new QGroupBox(tr("Repository Path"));
    QVBoxLayout *lineEditLayout_repoPath = new QVBoxLayout;
    lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
+   lineEdit_repoPath = new QLineEdit;
    lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
+   browseButton_repoPath = new QPushButton(tr("Browse"));
+   lineEditLayout_repoPath->addWidget(browseButton_repoPath);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
+   connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
 
-   lineEdit_tmpPath = new QLineEdit;
    QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
    QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
+   lineEdit_tmpPath = new QLineEdit;
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
+   browseButton_tmpPath = new QPushButton(tr("Browse"));
+   lineEditLayout_tmpPath->addWidget(browseButton_tmpPath);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
+   connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
 
    verticalButton = new QCheckBox(tr("Vertical Layout"));
    verticalButton->setChecked(true);
@@ -329,17 +335,19 @@ void MainWindow::about()
 
 void MainWindow::open()
 {
-   QFileDialog* fd = new QFileDialog(this, "Open Location");
+   QFileDialog* fd = new QFileDialog(this, "Open File");
    fd->setFileMode(QFileDialog::AnyFile);
    fd->setViewMode(QFileDialog::List);
    fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
 
-   QString fileName;
    if (fd->exec() == QDialog::Accepted)
-      fileName = fd->selectedFiles().at(0);
+      for (int i=0; i<fd->selectedFiles().size(); i++)
+      {
+         QString fileName = fd->selectedFiles().at(i);
 
-   if (!fileName.isNull())
-      viewerWindow->loadURL(fileName.toStdString().c_str());
+         if (!fileName.isNull())
+            viewerWindow->loadURL(fileName.toStdString().c_str());
+      }
 }
 
 void MainWindow::clear(bool all)
@@ -350,6 +358,26 @@ void MainWindow::clear(bool all)
       viewerWindow->clearObjects();
    else
       viewerWindow->removeObject(m_Keys[row]);
+}
+
+ministrings MainWindow::browse(ministring title)
+{
+   QFileDialog* fd = new QFileDialog(this, title.c_str());
+   fd->setFileMode(QFileDialog::AnyFile);
+   fd->setViewMode(QFileDialog::List);
+
+   ministrings files;
+
+   if (fd->exec() == QDialog::Accepted)
+      for (int i=0; i<fd->selectedFiles().size(); i++)
+      {
+         QString fileName = fd->selectedFiles().at(i);
+
+         if (!fileName.isNull())
+            files += fileName.toStdString().c_str();
+      }
+
+   return(files);
 }
 
 void MainWindow::getNameInfo(Object *obj,
@@ -517,7 +545,23 @@ void MainWindow::repoPathChanged(QString repo)
 void MainWindow::tmpPathChanged(QString tmp)
 {
    tmpPath = tmp.toStdString().c_str();
-   grid_resampler::grid_tmp_dir = tmpPath;
+   grid_resampler::set_tmp_dir(tmpPath);
+}
+
+void MainWindow::browseRepoPath()
+{
+   ministrings files = browse("Browse Repository Path");
+
+   if (files.size()>0)
+      lineEdit_repoPath->setText(files[0].c_str());
+}
+
+void MainWindow::browseTmpPath()
+{
+   ministrings files = browse("Browse Temporary Path");
+
+   if (files.size()>0)
+      lineEdit_tmpPath->setText(files[0].c_str());
 }
 
 void MainWindow::checkVertical(int on)
