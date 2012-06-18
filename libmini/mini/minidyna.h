@@ -237,6 +237,10 @@ class minidyna
       else return(ARRAY[idx-MINSIZE]);
       }
 
+   //! at method
+   const Item &at(const unsigned int idx) const
+      {return(get(idx));}
+
    //! get reference to item
    Item &ref(const unsigned int idx)
       {
