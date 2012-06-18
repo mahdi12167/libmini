@@ -254,6 +254,7 @@ void MainWindow::createWidgets()
    lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
    browseButton_repoPath = new QPushButton(tr("Browse"));
    lineEditLayout_repoPath->addWidget(browseButton_repoPath);
+   lineEditLayout_repoPath->setAlignment(browseButton_repoPath, Qt::AlignLeft);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
@@ -265,6 +266,7 @@ void MainWindow::createWidgets()
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
    browseButton_tmpPath = new QPushButton(tr("Browse"));
    lineEditLayout_tmpPath->addWidget(browseButton_tmpPath);
+   lineEditLayout_tmpPath->setAlignment(browseButton_tmpPath, Qt::AlignLeft);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
