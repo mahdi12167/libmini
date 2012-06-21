@@ -4,8 +4,11 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
 
 #include <QtCore/QUrl>
+
+#include <grid/grid.h>
 
 #include "renderer.h"
 
@@ -68,10 +71,10 @@ void ViewerWindow::initializeGL()
       // initialize viewer here as it needs GL context to init
       viewer->init();
 
-      // load object url from arguments
+      // load objects url from arguments
       QStringList dataPathList = QCoreApplication::arguments();
       for (int i=1; i<dataPathList.size(); i++)
-         loadURL(dataPathList[i].toStdString().c_str());
+         runAction("open", dataPathList[i].toStdString().c_str());
    }
 
    qglClearColor(Qt::black);
@@ -224,6 +227,12 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else
       loadMap(url);
+}
+
+void ViewerWindow::loadURLs(ministrings urls)
+{
+   for (int i=0; i<urls.getsize(); i++)
+      loadURL(urls[i]);
 }
 
 void ViewerWindow::loadMap(ministring url)
@@ -454,7 +463,7 @@ void ViewerWindow::dropEvent(QDropEvent *event)
          QUrl qurl = urlList.at(i);
          ministring url=qurl.toString().toStdString().c_str();
 
-         loadURL(url);
+         runAction("open", url);
       }
    }
 }
@@ -465,14 +474,27 @@ void ViewerWindow::dragLeaveEvent(QDragLeaveEvent *event)
 }
 
 void ViewerWindow::runAction(ministring action,
-                             ministring key)
+                             ministring value)
 {
    if (action == "repo")
-      setRepo(key);
+   {
+      setRepo(value);
+   }
+   else if (action == "tmp")
+   {
+      grid_resampler::set_tmp_dir(value);
+   }
    else if (action == "open")
-      loadURL(key);
+   {
+      if (value != "")
+         loadURL(value);
+      else
+         loadURLs(browse("Open File"));
+   }
    else if (action == "select")
-      toggleTag(key, "selected");
+   {
+      toggleTag(value, "selected");
+   }
    else if (action == "select_all")
    {
       ministrings keys=listObjects();
@@ -491,10 +513,54 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "delete")
    {
-      removeObject(key);
+      removeObject(value);
+   }
+   else if (action == "delete_all")
+   {
+      removeObjects(listObjects());
    }
    else if (action == "delete_selected")
    {
       removeObjects(listObjects("selected"));
    }
+}
+
+ministrings ViewerWindow::browse(ministring title)
+{
+   QFileDialog* fd = new QFileDialog(this, title.c_str());
+   fd->setFileMode(QFileDialog::ExistingFiles);
+   fd->setViewMode(QFileDialog::List);
+   fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
+
+   ministrings files;
+
+   if (fd->exec() == QDialog::Accepted)
+      for (int i=0; i<fd->selectedFiles().size(); i++)
+      {
+         QString fileName = fd->selectedFiles().at(i);
+
+         if (!fileName.isNull())
+            files += fileName.toStdString().c_str();
+      }
+
+   return(files);
+}
+
+ministring ViewerWindow::browseDir(ministring title)
+{
+   QFileDialog* fd = new QFileDialog(this, title.c_str());
+   fd->setFileMode(QFileDialog::DirectoryOnly);
+   fd->setViewMode(QFileDialog::List);
+
+   ministring dir;
+
+   if (fd->exec() == QDialog::Accepted)
+   {
+      QString fileName = fd->selectedFiles().at(0);
+
+      if (!fileName.isNull())
+         dir=fileName.toStdString().c_str();
+   }
+
+   return(dir);
 }

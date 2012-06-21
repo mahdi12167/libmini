@@ -38,6 +38,7 @@ public:
 
    void setRepo(ministring url);
    void loadURL(ministring url);
+   void loadURLs(ministrings urls);
 
    void loadMap(ministring url);
    void clearMaps();
@@ -73,7 +74,10 @@ public:
    void setExagger(double scale);
 
    void runAction(ministring action="",
-                  ministring key="");
+                  ministring value="");
+
+   ministrings browse(ministring title);
+   ministring browseDir(ministring title);
 
 signals:
    void changed(ministring key);

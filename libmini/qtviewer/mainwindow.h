@@ -43,7 +43,7 @@ public:
 
 public slots:
    void updateTable(ministring key);
-   void runAction(ministring action, int row);
+   void runAction(ministring action, int row = -1);
 
 private slots:
    void about();
@@ -152,8 +152,6 @@ private:
    QCheckBox *verticalButton;
    QCheckBox *sliderButton;
 
-   ministrings browse(ministring title);
-
    void getNameInfo(Object *obj,
                     QString &name, QString &info);
 
@@ -207,7 +205,7 @@ private slots:
    void showContextMenu(const QPoint &pos);
 
 signals:
-   void activate(ministring action, int row);
+   void activate(ministring action, int row = -1);
 
 protected:
    ViewerWindow *viewerWindow;

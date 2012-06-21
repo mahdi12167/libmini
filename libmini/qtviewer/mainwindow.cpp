@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#include <grid/grid.h>
-
 #include <QtGui>
 
 #include "viewerwindow.h"
@@ -338,19 +336,7 @@ void MainWindow::about()
 
 void MainWindow::open()
 {
-   QFileDialog* fd = new QFileDialog(this, "Open File");
-   fd->setFileMode(QFileDialog::AnyFile);
-   fd->setViewMode(QFileDialog::List);
-   fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
-
-   if (fd->exec() == QDialog::Accepted)
-      for (int i=0; i<fd->selectedFiles().size(); i++)
-      {
-         QString fileName = fd->selectedFiles().at(i);
-
-         if (!fileName.isNull())
-            viewerWindow->loadURL(fileName.toStdString().c_str());
-      }
+   runAction("open");
 }
 
 void MainWindow::clear(bool all)
@@ -358,29 +344,9 @@ void MainWindow::clear(bool all)
    int row = viewerTable->currentRow();
 
    if (row==-1 || all)
-      viewerWindow->clearObjects();
+      runAction("delete_all");
    else
-      viewerWindow->removeObject(m_Keys[row]);
-}
-
-ministrings MainWindow::browse(ministring title)
-{
-   QFileDialog* fd = new QFileDialog(this, title.c_str());
-   fd->setFileMode(QFileDialog::AnyFile);
-   fd->setViewMode(QFileDialog::List);
-
-   ministrings files;
-
-   if (fd->exec() == QDialog::Accepted)
-      for (int i=0; i<fd->selectedFiles().size(); i++)
-      {
-         QString fileName = fd->selectedFiles().at(i);
-
-         if (!fileName.isNull())
-            files += fileName.toStdString().c_str();
-      }
-
-   return(files);
+      runAction("delete", row);
 }
 
 void MainWindow::getNameInfo(Object *obj,
@@ -542,29 +508,29 @@ void MainWindow::setExagger(int tick)
 void MainWindow::repoPathChanged(QString repo)
 {
    repoPath = repo.toStdString().c_str();
-   viewerWindow->setRepo(repoPath);
+   viewerWindow->runAction("repo", repoPath);
 }
 
 void MainWindow::tmpPathChanged(QString tmp)
 {
    tmpPath = tmp.toStdString().c_str();
-   grid_resampler::set_tmp_dir(tmpPath);
+   viewerWindow->runAction("tmp", tmpPath);
 }
 
 void MainWindow::browseRepoPath()
 {
-   ministrings files = browse("Browse Repository Path");
+   ministring dir = viewerWindow->browseDir("Browse Repository Path");
 
-   if (files.size()>0)
-      lineEdit_repoPath->setText(files[0].c_str());
+   if (dir!="")
+      lineEdit_repoPath->setText(dir.c_str());
 }
 
 void MainWindow::browseTmpPath()
 {
-   ministrings files = browse("Browse Temporary Path");
+   ministring dir = viewerWindow->browseDir("Browse Temporary Path");
 
-   if (files.size()>0)
-      lineEdit_tmpPath->setText(files[0].c_str());
+   if (dir!="")
+      lineEdit_tmpPath->setText(dir.c_str());
 }
 
 void MainWindow::checkVertical(int on)
@@ -669,11 +635,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        }
        else if (selectedAction == selectAllAction)
        {
-          emit(activate("select_all", -1));
+          emit(activate("select_all"));
        }
        else if (selectedAction == deselectAllAction)
        {
-          emit(activate("deselect_all", -1));
+          emit(activate("deselect_all"));
        }
        else if (selectedAction == deleteAction)
        {
@@ -684,7 +650,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        }
        else if (selectedAction == deleteSelAction)
        {
-          emit(activate("delete_selected", -1));
+          emit(activate("delete_selected"));
        }
 }
 
