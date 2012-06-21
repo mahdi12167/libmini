@@ -470,19 +470,27 @@ void ViewerWindow::runAction(ministring action,
    if (action == "select")
       toggleTag(key, "selected");
    else if (action == "select_all")
-      {
+   {
       ministrings keys=listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
          if (!hasTag(keys[i],"selected"))
              addTag(keys[i],"selected");
-      }
+   }
    else if (action == "deselect_all")
-      {
+   {
       ministrings keys=listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i],"selected"))
              removeTag(keys[i],"selected");
-      }
+   }
+   else if (action == "delete")
+   {
+      removeObject(key);
+   }
+   else if (action == "delete_selected")
+   {
+      removeObjects(listObjects("selected"));
+   }
 }
