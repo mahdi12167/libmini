@@ -11,10 +11,10 @@ class miniimg
    public:
 
    //! load image based on extension
-   static int loadimg(databuf &buf,char *filename);
+   static int loadimg(databuf &buf,const char *filename);
 
    //! save image based on extension
-   static int saveimg(databuf &buf,char *filename,float jpgquality=0.0f,int pnglevel=0);
+   static int saveimg(databuf &buf,const char *filename,float jpgquality=0.0f,int pnglevel=0);
 
    private:
 

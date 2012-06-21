@@ -42,7 +42,7 @@ void miniimg::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int
    }
 
 // load image based on extension
-int miniimg::loadimg(databuf &buf,char *filename)
+int miniimg::loadimg(databuf &buf,const char *filename)
    {
    FILE_TYPE type;
    char *ext;
@@ -134,7 +134,7 @@ int miniimg::loadimg(databuf &buf,char *filename)
    }
 
 // save image based on extension
-int miniimg::saveimg(databuf &buf,char *filename,float jpgquality,int pnglevel)
+int miniimg::saveimg(databuf &buf,const char *filename,float jpgquality,int pnglevel)
    {
    FILE_TYPE type;
    char *ext;

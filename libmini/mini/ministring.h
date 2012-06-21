@@ -280,7 +280,7 @@ class ministring: public ministring_base
       {substitute(ministring(sub),ministring(with));}
 
    //! copy to c-string
-   char *c_str()
+   const char *c_str()
       {
       unsigned int i,l;
 
