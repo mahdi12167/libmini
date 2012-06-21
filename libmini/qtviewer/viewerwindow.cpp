@@ -467,7 +467,11 @@ void ViewerWindow::dragLeaveEvent(QDragLeaveEvent *event)
 void ViewerWindow::runAction(ministring action,
                              ministring key)
 {
-   if (action == "select")
+   if (action == "repo")
+      setRepo(key);
+   else if (action == "open")
+      loadURL(key);
+   else if (action == "select")
       toggleTag(key, "selected");
    else if (action == "select_all")
    {

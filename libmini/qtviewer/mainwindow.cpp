@@ -649,6 +649,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(selectAllAction);
     QAction *deselectAllAction = new QAction(tr("deselect all"), this);
     myMenu.addAction(deselectAllAction);
+    myMenu.addSeparator();
     QAction *deleteAction = new QAction(tr("delete"), this);
     myMenu.addAction(deleteAction);
     QAction *deleteSelAction = new QAction(tr("delete selected"), this);
