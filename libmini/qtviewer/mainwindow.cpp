@@ -78,7 +78,7 @@ void MainWindow::createWidgets()
 
    buttonBox = new QDialogButtonBox;
 
-   viewerTable = new MyQTableWidget;
+   viewerTable = new MyQTableWidget(viewerWindow);
 
    sliderBox = new MyQGroupBox(QSize(300, 300));
    sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -100,6 +100,7 @@ void MainWindow::createWidgets()
    viewerTable->setSelectionMode(QAbstractItemView::SingleSelection);
    viewerTable->setHorizontalHeaderLabels(labels);
    viewerTable->horizontalHeader()->setStretchLastSection(true);
+   viewerTable->setAcceptDrops(true);
 
    connect(viewerTable, SIGNAL(cellClicked(int, int)), this, SLOT(click(int, int)));
    connect(viewerTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(doubleclick(int, int)));
@@ -670,3 +671,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("deselect_all", -1));
        }
 }
+
+void MyQTableWidget::dragEnterEvent(QDragEnterEvent *event) {event->acceptProposedAction();}
+void MyQTableWidget::dragMoveEvent(QDragMoveEvent *event) {event->acceptProposedAction();}
+void MyQTableWidget::dropEvent(QDropEvent *event) {viewerWindow->dropEvent(event);}
+void MyQTableWidget::dragLeaveEvent(QDragLeaveEvent *event) {event->accept();}

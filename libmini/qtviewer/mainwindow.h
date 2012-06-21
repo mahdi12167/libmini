@@ -194,9 +194,11 @@ class MyQTableWidget: public QTableWidget
    Q_OBJECT
 
 public:
-   MyQTableWidget(QWidget *parent = 0)
+   MyQTableWidget(ViewerWindow *viewer, QWidget *parent = 0)
       : QTableWidget(parent)
-   {}
+   {
+      viewerWindow = viewer;
+   }
 
 protected:
    void keyPressEvent(QKeyEvent *event);
@@ -206,6 +208,14 @@ private slots:
 
 signals:
    void activate(ministring action, int row);
+
+protected:
+   ViewerWindow *viewerWindow;
+
+   void dragEnterEvent(QDragEnterEvent *event);
+   void dragMoveEvent(QDragMoveEvent *event);
+   void dropEvent(QDropEvent *event);
+   void dragLeaveEvent(QDragLeaveEvent *event);
 };
 
 #endif

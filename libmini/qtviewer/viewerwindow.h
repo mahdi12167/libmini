@@ -97,8 +97,10 @@ protected:
 
    void dragEnterEvent(QDragEnterEvent *event);
    void dragMoveEvent(QDragMoveEvent *event);
-   void dropEvent(QDropEvent *event);
    void dragLeaveEvent(QDragLeaveEvent *event);
+
+public:
+   void dropEvent(QDropEvent *event);
 
 private:
    BOOLINT vertical;
