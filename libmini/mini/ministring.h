@@ -307,7 +307,7 @@ class ministring: public ministring_base
       }
 
    //! assignment operator
-   ministring& operator = (const ministring_base &a)
+   ministring& operator = (const ministring &a)
       {
       ministring_base::copy(a);
 
@@ -318,7 +318,7 @@ class ministring: public ministring_base
       }
 
    //! add operator (concatenate strings)
-   ministring &operator += (const ministring_base &a)
+   ministring &operator += (const ministring &a)
       {
       append(a);
 
