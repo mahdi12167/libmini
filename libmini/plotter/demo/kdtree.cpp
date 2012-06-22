@@ -229,7 +229,7 @@ void read()
          itempoints.push(minikdtree<ministring>::ItemPoint(name,v));
 
 #ifdef OUTPUT
-         std::cout << lat << ";" << lon << ";" << name << std::endl;
+         printf("%g;%g;%s\n",lat,lon,name.c_str());
 #endif
       }
    }
