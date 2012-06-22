@@ -523,6 +523,10 @@ void ViewerWindow::runAction(ministring action,
    {
       removeObjects(listObjects("selected"));
    }
+   else if (action == "goto")
+   {
+      gotoObject(value);
+   }
 }
 
 ministrings ViewerWindow::browse(ministring title)

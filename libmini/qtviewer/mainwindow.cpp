@@ -443,7 +443,7 @@ void MainWindow::doubleclick(int row, int col)
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
 
-   viewerWindow->gotoObject(m_Keys[row]);
+   runAction("goto", row);
 }
 
 void MainWindow::toggleStereo(int on)
