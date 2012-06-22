@@ -497,7 +497,7 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "select_all")
    {
-      ministrings keys=listObjects();
+      ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
          if (!hasTag(keys[i],"selected"))
@@ -505,11 +505,28 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "deselect_all")
    {
-      ministrings keys=listObjects();
+      ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i],"selected"))
              removeTag(keys[i],"selected");
+   }
+   else if (action == "info")
+   {
+      //!!
+      std::cout << getObject(value)->get_center() << std::endl;
+   }
+   else if (action == "resample")
+   {
+      //!!
+      ministrings keys = ministrings(value);
+      keys.save("resample.grid");
+   }
+   else if (action == "resample_selected")
+   {
+      //!!
+      ministrings keys = listObjects("selected");
+      keys.save("resample.grid");
    }
    else if (action == "delete")
    {

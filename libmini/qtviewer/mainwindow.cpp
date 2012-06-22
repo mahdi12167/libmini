@@ -616,6 +616,13 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *deselectAllAction = new QAction(tr("deselect all"), this);
     myMenu.addAction(deselectAllAction);
     myMenu.addSeparator();
+    QAction *infoAction = new QAction(tr("info"), this);
+    myMenu.addAction(infoAction);
+    QAction *resampleAction = new QAction(tr("resample"), this);
+    myMenu.addAction(resampleAction);
+    QAction *resampleSelAction = new QAction(tr("resample selected"), this);
+    myMenu.addAction(resampleSelAction);
+    myMenu.addSeparator();
     QAction *deleteAction = new QAction(tr("delete"), this);
     myMenu.addAction(deleteAction);
     QAction *deleteSelAction = new QAction(tr("delete selected"), this);
@@ -626,12 +633,16 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // process selected action
     if (selectedAction)
+    {
+       int row = -1;
+       QTableWidgetItem *item = itemAt(pos);
+
+       if (item)
+          row = item->row();
+
        if (selectedAction == selectAction)
        {
-          QTableWidgetItem *item = itemAt(pos);
-
-          if (item)
-             emit(activate("select", item->row()));
+          emit(activate("select", row));
        }
        else if (selectedAction == selectAllAction)
        {
@@ -641,17 +652,27 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        {
           emit(activate("deselect_all"));
        }
+       else if (selectedAction == infoAction)
+       {
+          emit(activate("info", row));
+       }
+       else if (selectedAction == resampleAction)
+       {
+          emit(activate("resample", row));
+       }
+       else if (selectedAction == resampleSelAction)
+       {
+          emit(activate("resample_selected"));
+       }
        else if (selectedAction == deleteAction)
        {
-          QTableWidgetItem *item = itemAt(pos);
-
-          if (item)
-             emit(activate("delete", item->row()));
+          emit(activate("delete", row));
        }
        else if (selectedAction == deleteSelAction)
        {
           emit(activate("delete_selected"));
        }
+    }
 }
 
 void MyQTableWidget::dragEnterEvent(QDragEnterEvent *event) {event->acceptProposedAction();}
