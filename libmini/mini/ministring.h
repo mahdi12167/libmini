@@ -503,11 +503,11 @@ class ministrings: public minidyna<ministring>
       {from_string(str,"\n");}
 
    //! save to file
-   void save(ministring &filename) const
+   void save(ministring filename) const
       {writestring(filename.c_str(),serialize().c_str());}
 
    //! load from file
-   void load(ministring &filename)
+   void load(ministring filename)
       {deserialize(readstring(filename.c_str()));}
 
    //! add operator (string concatenation)
