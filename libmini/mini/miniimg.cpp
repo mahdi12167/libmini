@@ -45,7 +45,7 @@ void miniimg::autodecompress(int isrgbadata,unsigned char *s3tcdata,unsigned int
 int miniimg::loadimg(databuf &buf,const char *filename)
    {
    FILE_TYPE type;
-   char *ext;
+   const char *ext;
 
    BOOLINT succeed;
 
@@ -137,7 +137,7 @@ int miniimg::loadimg(databuf &buf,const char *filename)
 int miniimg::saveimg(databuf &buf,const char *filename,float jpgquality,int pnglevel)
    {
    FILE_TYPE type;
-   char *ext;
+   const char *ext;
 
    unsigned char *jpgdata;
    unsigned int jpgbytes;
