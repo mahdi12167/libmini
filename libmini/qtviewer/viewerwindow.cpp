@@ -513,20 +513,17 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "info")
    {
-      //!!
-      std::cout << getObject(value)->get_center() << std::endl;
+      notify(getObject(value)->get_info());
    }
    else if (action == "resample")
    {
-      //!!
-      ministrings keys = ministrings(value);
-      keys.save("resample.grid");
+      ministrings keys = value;
+      resample(keys);
    }
    else if (action == "resample_selected")
    {
-      //!!
       ministrings keys = listObjects("selected");
-      keys.save("resample.grid");
+      resample(keys);
    }
    else if (action == "delete")
    {
@@ -544,6 +541,24 @@ void ViewerWindow::runAction(ministring action,
    {
       gotoObject(value);
    }
+}
+
+void ViewerWindow::resample(ministrings keys)
+{
+   //!!
+   //"Oahu-Tileset"                # tileset name
+   //repo "data"                   # input repo
+   //path "data/tilesets"          # output path
+   //level 0                       # output level
+   //shade fill reproject compress # output attributes
+   keys.save("resample.grid");
+}
+
+void ViewerWindow::notify(ministring text)
+{
+   QMessageBox::information(this, "Information",
+                            text.c_str(),
+                            QMessageBox::Ok);
 }
 
 ministrings ViewerWindow::browse(ministring title)

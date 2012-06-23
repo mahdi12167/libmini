@@ -76,6 +76,9 @@ public:
    void runAction(ministring action="",
                   ministring value="");
 
+   void resample(ministrings keys);
+
+   void notify(ministring text);
    ministrings browse(ministring title);
    ministring browseDir(ministring title);
 

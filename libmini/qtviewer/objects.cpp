@@ -20,6 +20,9 @@ Object::Object(const ministring &name,const ministring &repo)
    if (repository.size()>0)
       if (filename.startswith(repository))
          filename=filename.tail(repository.size());
+
+   coord=minicoord();
+   radius=0.0;
    }
 
 Object::~Object()
@@ -42,6 +45,9 @@ miniv3d Object::get_normal()
 double Object::get_radius()
    {return(radius);}
 
+ministring Object::get_info()
+   {return("Object");}
+
 // Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
@@ -54,6 +60,13 @@ Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
 
 Object_tileset::~Object_tileset()
    {}
+
+ministring Object_tileset::get_info()
+   {
+   return(ministring("Tileset[")+
+          tileset_layer->getcols()+"x"+
+          tileset_layer->getrows()+"]");
+   }
 
 BOOLINT Object_tileset::initGFX()
    {
@@ -109,6 +122,9 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
 
 Object_image::~Object_image()
    {}
+
+ministring Object_image::get_info()
+   {return(get_extent());}
 
 BOOLINT Object_image::initGFX()
    {

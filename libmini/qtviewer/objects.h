@@ -22,9 +22,10 @@ class Object
    ministring repository; // data repository
    ministring filename; // data file in repository
 
-   minicoord get_center();
-   miniv3d get_normal();
-   double get_radius();
+   virtual minicoord get_center();
+   virtual miniv3d get_normal();
+   virtual double get_radius();
+   virtual ministring get_info();
 
    virtual BOOLINT initGFX() = 0;
    virtual void exitGFX() = 0;
@@ -47,6 +48,8 @@ class Object_tileset: public Object
 
    virtual ~Object_tileset();
 
+   virtual ministring get_info();
+
    virtual BOOLINT initGFX();
    virtual void exitGFX();
 
@@ -67,6 +70,8 @@ class Object_image: public Object
                 Viewer *viewer=NULL);
 
    virtual ~Object_image();
+
+   virtual ministring get_info();
 
    virtual BOOLINT initGFX();
    virtual void exitGFX();
