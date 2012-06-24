@@ -28,11 +28,11 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
-void Object::set_center(minicoord coord,double radius)
+void Object::set_center(minicoord c,double r)
    {
-   this->coord=coord;
-   this->coord.convert2ecef();
-   this->radius=radius;
+   coord=c;
+   coord.convert2ecef();
+   radius=r;
    }
 
 minicoord Object::get_center()
@@ -87,8 +87,9 @@ BOOLINT Object_tileset::initGFX()
             {
             minicoord center=tileset_layer->getcenter();
             miniv3d ext=tileset_layer->getextent();
+            double r=sqrt(ext*ext)/2.0;
 
-            set_center(center,sqrt(ext*ext)/2.0);
+            set_center(center,r);
 
             return(TRUE);
             }
