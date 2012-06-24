@@ -28,6 +28,13 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
+void Object::set_center(minicoord coord,double radius)
+   {
+   this->coord=coord;
+   this->coord.convert2ecef();
+   this->radius=radius;
+   }
+
 minicoord Object::get_center()
    {
    coord.convert2ecef();
@@ -65,7 +72,8 @@ ministring Object_tileset::get_info()
    {
    return(ministring("Tileset[")+
           tileset_layer->getcols()+"x"+
-          tileset_layer->getrows()+"]");
+          tileset_layer->getrows()+
+          "]");
    }
 
 BOOLINT Object_tileset::initGFX()
@@ -77,9 +85,10 @@ BOOLINT Object_tileset::initGFX()
 
          if (tileset_layer!=NULL)
             {
-            coord=tileset_layer->getcenter();
+            minicoord center=tileset_layer->getcenter();
             miniv3d ext=tileset_layer->getextent();
-            radius=sqrt(ext*ext)/2.0;
+
+            set_center(center,sqrt(ext*ext)/2.0);
 
             return(TRUE);
             }
@@ -124,7 +133,11 @@ Object_image::~Object_image()
    {}
 
 ministring Object_image::get_info()
-   {return(get_extent());}
+   {
+   return(ministring("Image[")+
+          get_extent()+
+          "]");
+   }
 
 BOOLINT Object_image::initGFX()
    {
@@ -148,8 +161,7 @@ BOOLINT Object_image::initGFX()
          is_imagery_resp_elevation=layer->is_imagery();
          extent=layer->extent;
 
-         coord=extent.get_center();
-         radius=extent.get_size();
+         set_center(extent.get_center(),extent.get_size());
 
          image_node=image_groupnode->append_child(new node_grid_extent(extent));
 
