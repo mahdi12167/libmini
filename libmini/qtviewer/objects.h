@@ -22,7 +22,11 @@ class Object
    ministring repository; // data repository
    ministring filename; // data file in repository
 
-   virtual void set_center(minicoord coord,double radius=0.0);
+   protected:
+
+   virtual void set_center(minicoord c,double r=0.0);
+
+   public:
 
    virtual minicoord get_center();
    virtual miniv3d get_normal();
