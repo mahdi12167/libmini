@@ -17,6 +17,8 @@ class WorkerThread : public grid_worker, public QThread
       : grid_worker(), QThread(parent)
    {}
 
+   protected:
+
    virtual void block();
    virtual void unblock();
    virtual void start();
