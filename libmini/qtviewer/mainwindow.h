@@ -66,9 +66,11 @@ private slots:
    void setExagger(int);
 
    void repoPathChanged(QString);
+   void exportPathChanged(QString);
    void tmpPathChanged(QString);
 
    void browseRepoPath();
+   void browseExportPath();
    void browseTmpPath();
 
    void checkVertical(int);
@@ -146,6 +148,9 @@ private:
    QLineEdit *lineEdit_repoPath;
    QPushButton *browseButton_repoPath;
 
+   QLineEdit *lineEdit_exportPath;
+   QPushButton *browseButton_exportPath;
+
    QLineEdit *lineEdit_tmpPath;
    QPushButton *browseButton_tmpPath;
 
@@ -159,6 +164,7 @@ protected:
    ministrings m_Keys;
 
    ministring repoPath;
+   ministring exportPath;
    ministring tmpPath;
 
    void keyPressEvent(QKeyEvent* event);

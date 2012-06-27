@@ -37,6 +37,8 @@ public:
    QSize sizeHint() const;
 
    void setRepo(ministring url);
+   void setExport(ministring url);
+
    void loadURL(ministring url);
    void loadURLs(ministrings urls);
 
@@ -114,7 +116,9 @@ private:
 
    Renderer *viewer;
 
-   ministring repository;
+   ministring repository_path;
+   ministring export_path;
+
    Objects objects;
 
    QPoint lastPos;

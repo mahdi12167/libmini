@@ -214,7 +214,12 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 
 void ViewerWindow::setRepo(ministring url)
 {
-   repository = url;
+   repository_path = url;
+}
+
+void ViewerWindow::setExport(ministring url)
+{
+   export_path = url;
 }
 
 void ViewerWindow::loadURL(ministring url)
@@ -249,7 +254,7 @@ void ViewerWindow::loadMap(ministring url)
       url.truncate(lio);
    }
 
-   Object_tileset *tileset = new Object_tileset(url, repository, viewer);
+   Object_tileset *tileset = new Object_tileset(url, repository_path, viewer);
 
    if (tileset==NULL) MEMERROR();
 
@@ -273,7 +278,7 @@ void ViewerWindow::loadImage(ministring url)
    if (url.startswith("file://"))
       url.substitute("file://","");
 
-   Object_image *image = new Object_image(url, repository, viewer);
+   Object_image *image = new Object_image(url, repository_path, viewer);
 
    if (image==NULL) MEMERROR();
 
@@ -480,6 +485,10 @@ void ViewerWindow::runAction(ministring action,
    {
       setRepo(value);
    }
+   else if (action == "export")
+   {
+      setExport(value);
+   }
    else if (action == "tmp")
    {
       grid_resampler::set_tmp_dir(value);
@@ -545,13 +554,15 @@ void ViewerWindow::runAction(ministring action,
 
 void ViewerWindow::resample(ministrings keys)
 {
-   //!!
-   //"Oahu-Tileset"                # tileset name
-   //repo "data"                   # input repo
-   //path "data/tilesets"          # output path
-   //level 0                       # output level
-   //shade fill reproject compress # output attributes
-   keys.save("resample.grid");
+   ministrings grid_input(keys);
+   grid_input.append("\"Tileset\""); //!! _tileset suffix
+   if (repository_path!="") grid_input.append("repo \""+repository_path+"\"");
+   if (export_path!="") grid_input.append("path \""+export_path+"\"");
+   grid_input.append("level 0");
+   grid_input.append("shade fill reproject compress");
+   grid_input.append(keys);
+
+   grid_input.save("resample.grid"); //!! runJob
 }
 
 void ViewerWindow::notify(ministring text)

@@ -258,6 +258,18 @@ void MainWindow::createWidgets()
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
 
+   QGroupBox *lineEditGroup_exportPath = new QGroupBox(tr("Export Path"));
+   QVBoxLayout *lineEditLayout_exportPath = new QVBoxLayout;
+   lineEditGroup_exportPath->setLayout(lineEditLayout_exportPath);
+   lineEdit_exportPath = new QLineEdit;
+   lineEditLayout_exportPath->addWidget(lineEdit_exportPath);
+   browseButton_exportPath = new QPushButton(tr("Browse"));
+   lineEditLayout_exportPath->addWidget(browseButton_exportPath);
+   lineEditLayout_exportPath->setAlignment(browseButton_exportPath, Qt::AlignLeft);
+
+   connect(lineEdit_exportPath,SIGNAL(textChanged(QString)),this,SLOT(exportPathChanged(QString)));
+   connect(browseButton_exportPath, SIGNAL(pressed()), this, SLOT(browseExportPath()));
+
    QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
    QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
@@ -281,6 +293,7 @@ void MainWindow::createWidgets()
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
 
    prefLayout->addWidget(lineEditGroup_repoPath);
+   prefLayout->addWidget(lineEditGroup_exportPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
 
    prefLayout->addWidget(verticalButton);
@@ -511,6 +524,12 @@ void MainWindow::repoPathChanged(QString repo)
    viewerWindow->runAction("repo", repoPath);
 }
 
+void MainWindow::exportPathChanged(QString expo)
+{
+   exportPath = expo.toStdString().c_str();
+   viewerWindow->runAction("export", exportPath);
+}
+
 void MainWindow::tmpPathChanged(QString tmp)
 {
    tmpPath = tmp.toStdString().c_str();
@@ -523,6 +542,14 @@ void MainWindow::browseRepoPath()
 
    if (dir!="")
       lineEdit_repoPath->setText(dir.c_str());
+}
+
+void MainWindow::browseExportPath()
+{
+   ministring dir = viewerWindow->browseDir("Browse Export Path");
+
+   if (dir!="")
+      lineEdit_exportPath->setText(dir.c_str());
 }
 
 void MainWindow::browseTmpPath()
