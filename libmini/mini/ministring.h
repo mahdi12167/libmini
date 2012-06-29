@@ -176,6 +176,26 @@ class ministring: public ministring_base
    ministring tail(const char *sub) const
       {return(tail(ministring(sub)));}
 
+   //! check for existing sub-string in reverse order and return remaining suffix
+   ministring suffix(const ministring_base &sub) const
+      {
+      unsigned int i;
+
+      unsigned int idx;
+
+      ministring rem;
+
+      if (!findr(sub,idx)) return(*this);
+
+      for (i=idx+sub.getsize(); i<SIZE; i++) rem.append(get(i));
+
+      return(rem);
+      }
+
+   //! check for existing sub-c-string in reverse order and return remaining suffix
+   ministring suffix(const char *sub) const
+      {return(suffix(ministring(sub)));}
+
    //! check for existing sub-string in reverse order and return remaining head
    ministring head(const ministring_base &sub) const
       {
@@ -195,6 +215,26 @@ class ministring: public ministring_base
    //! check for existing sub-c-string in reverse order and return remaining head
    ministring head(const char *sub) const
       {return(head(ministring(sub)));}
+
+   //! check for existing sub-string and return remaining prefix
+   ministring prefix(const ministring_base &sub) const
+      {
+      unsigned int i;
+
+      unsigned int idx;
+
+      ministring rem;
+
+      if (!find(sub,idx)) return(*this);
+
+      for (i=0; i<idx; i++) rem.append(get(i));
+
+      return(rem);
+      }
+
+   //! check for existing sub-c-string and return remaining prefix
+   ministring prefix(const char *sub) const
+      {return(prefix(ministring(sub)));}
 
    //! check for prefix
    BOOLINT startswith(const ministring_base &prefix) const
