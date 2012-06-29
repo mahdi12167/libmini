@@ -11,6 +11,7 @@
 #include <grid/grid.h>
 
 #include "renderer.h"
+#include "worker.h"
 
 #include "viewerconst.h"
 #include "viewerwindow.h"
@@ -28,12 +29,18 @@ ViewerWindow::ViewerWindow()
    // init viewer
    viewer = new Renderer(this);
 
+   // init worker
+   worker = new WorkerThread;
+
    // accept drag and drop
    setAcceptDrops(true);
 }
 
 ViewerWindow::~ViewerWindow()
 {
+   if (worker!=NULL)
+      delete worker;
+
    if (viewer!=NULL)
       delete viewer;
 }
@@ -41,6 +48,11 @@ ViewerWindow::~ViewerWindow()
 Renderer *ViewerWindow::getViewer()
 {
    return(viewer);
+}
+
+WorkerThread *ViewerWindow::getWorker()
+{
+   return(worker);
 }
 
 void ViewerWindow::setVertical(BOOLINT on)
@@ -554,15 +566,26 @@ void ViewerWindow::runAction(ministring action,
 
 void ViewerWindow::resample(ministrings keys)
 {
-   ministrings grid_input(keys);
-   grid_input.append("\"Tileset\""); //!! _tileset suffix
-   if (repository_path!="") grid_input.append("repo \""+repository_path+"\"");
-   if (export_path!="") grid_input.append("path \""+export_path+"\"");
-   grid_input.append("level 0");
-   grid_input.append("shade fill reproject compress");
-   grid_input.append(keys);
+   unsigned int i;
 
-   grid_input.save("resample.grid"); //!! runJob
+   ResampleJob *job = new ResampleJob(0,3,2);
+
+   job->append("#definitions:");
+
+   job->append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
+   if (repository_path!="") job->append("repo \""+repository_path+"\" # layer input repository");
+   if (export_path!="") job->append("path \""+export_path+"\" tileset output path");
+   job->append("level 0 # resample at original level");
+   job->append("shade fill reproject compress # default resample settings");
+
+   job->append("#layers:");
+
+   for (i=0; i<keys.size(); i++)
+      job->append("\""+keys[i]+"\"");
+
+   //!!
+   job->save("resample.grid");
+   worker->run_job(job);
 }
 
 void ViewerWindow::notify(ministring text)

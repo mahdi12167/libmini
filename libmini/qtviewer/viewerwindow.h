@@ -15,6 +15,7 @@
 #include "objects.h"
 
 class Renderer;
+class WorkerThread;
 
 class QMimeData;
 
@@ -30,6 +31,7 @@ public:
    virtual ~ViewerWindow();
 
    Renderer *getViewer();
+   WorkerThread *getWorker();
 
    void setVertical(BOOLINT on);
 
@@ -115,6 +117,7 @@ private:
    BOOLINT vertical;
 
    Renderer *viewer;
+   WorkerThread *worker;
 
    ministring repository_path;
    ministring export_path;
