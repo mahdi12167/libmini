@@ -167,6 +167,8 @@ protected:
    ministring exportPath;
    ministring tmpPath;
 
+   void initSettings();
+
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);
 };

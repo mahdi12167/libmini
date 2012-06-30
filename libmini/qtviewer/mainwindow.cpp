@@ -10,6 +10,8 @@
 MainWindow::MainWindow(QWidget *parent)
    : QMainWindow(parent)
 {
+   initSettings();
+
    createActions();
    createMenus();
    createWidgets();
@@ -20,6 +22,18 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
    {clear(true);}
+
+void MainWindow::initSettings()
+{
+   char *pHome = getenv("HOME");
+
+   if (pHome!=NULL)
+   {
+      repoPath = pHome;
+      exportPath = pHome;
+      tmpPath = pHome;
+   }
+}
 
 void MainWindow::createActions()
 {
@@ -249,7 +263,7 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_repoPath = new QGroupBox(tr("Repository Path"));
    QVBoxLayout *lineEditLayout_repoPath = new QVBoxLayout;
    lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
-   lineEdit_repoPath = new QLineEdit;
+   lineEdit_repoPath = new QLineEdit(repoPath.c_str());
    lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
    browseButton_repoPath = new QPushButton(tr("Browse"));
    lineEditLayout_repoPath->addWidget(browseButton_repoPath);
@@ -261,7 +275,7 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_exportPath = new QGroupBox(tr("Export Path"));
    QVBoxLayout *lineEditLayout_exportPath = new QVBoxLayout;
    lineEditGroup_exportPath->setLayout(lineEditLayout_exportPath);
-   lineEdit_exportPath = new QLineEdit;
+   lineEdit_exportPath = new QLineEdit(exportPath.c_str());
    lineEditLayout_exportPath->addWidget(lineEdit_exportPath);
    browseButton_exportPath = new QPushButton(tr("Browse"));
    lineEditLayout_exportPath->addWidget(browseButton_exportPath);
@@ -273,7 +287,7 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
    QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
    lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
-   lineEdit_tmpPath = new QLineEdit;
+   lineEdit_tmpPath = new QLineEdit(tmpPath.c_str());
    lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
    browseButton_tmpPath = new QPushButton(tr("Browse"));
    lineEditLayout_tmpPath->addWidget(browseButton_tmpPath);
@@ -538,7 +552,7 @@ void MainWindow::tmpPathChanged(QString tmp)
 
 void MainWindow::browseRepoPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Repository Path");
+   ministring dir = viewerWindow->browseDir("Browse Repository Path", repoPath);
 
    if (dir!="")
       lineEdit_repoPath->setText(dir.c_str());
@@ -546,7 +560,7 @@ void MainWindow::browseRepoPath()
 
 void MainWindow::browseExportPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Export Path");
+   ministring dir = viewerWindow->browseDir("Browse Export Path", exportPath);
 
    if (dir!="")
       lineEdit_exportPath->setText(dir.c_str());
@@ -554,7 +568,7 @@ void MainWindow::browseExportPath()
 
 void MainWindow::browseTmpPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Temporary Path");
+   ministring dir = viewerWindow->browseDir("Browse Temporary Path", tmpPath);
 
    if (dir!="")
       lineEdit_tmpPath->setText(dir.c_str());

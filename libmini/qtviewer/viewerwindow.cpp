@@ -598,12 +598,14 @@ void ViewerWindow::notify(ministring text)
                             QMessageBox::Ok);
 }
 
-ministrings ViewerWindow::browse(ministring title)
+ministrings ViewerWindow::browse(ministring title,
+                                 ministring path)
 {
    QFileDialog* fd = new QFileDialog(this, title.c_str());
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
    fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
+   if (path!="") fd->setDirectory(path.c_str());
 
    ministrings files;
 
@@ -619,11 +621,13 @@ ministrings ViewerWindow::browse(ministring title)
    return(files);
 }
 
-ministring ViewerWindow::browseDir(ministring title)
+ministring ViewerWindow::browseDir(ministring title,
+                                   ministring path)
 {
    QFileDialog* fd = new QFileDialog(this, title.c_str());
    fd->setFileMode(QFileDialog::DirectoryOnly);
    fd->setViewMode(QFileDialog::List);
+   if (path!="") fd->setDirectory(path.c_str());
 
    ministring dir;
 

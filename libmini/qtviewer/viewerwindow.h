@@ -83,8 +83,8 @@ public:
    void resample(ministrings keys);
 
    void notify(ministring text);
-   ministrings browse(ministring title);
-   ministring browseDir(ministring title);
+   ministrings browse(ministring title,ministring path="");
+   ministring browseDir(ministring title,ministring path="");
 
 signals:
    void changed(ministring key);
