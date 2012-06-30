@@ -649,6 +649,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(resampleAction);
     QAction *resampleSelAction = new QAction(tr("resample selected"), this);
     myMenu.addAction(resampleSelAction);
+    QAction *resampleAllAction = new QAction(tr("resample all"), this);
+    myMenu.addAction(resampleAllAction);
     myMenu.addSeparator();
     QAction *deleteAction = new QAction(tr("delete"), this);
     myMenu.addAction(deleteAction);
@@ -690,6 +692,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == resampleSelAction)
        {
           emit(activate("resample_selected"));
+       }
+       else if (selectedAction == resampleAllAction)
+       {
+          emit(activate("resample_all"));
        }
        else if (selectedAction == deleteAction)
        {

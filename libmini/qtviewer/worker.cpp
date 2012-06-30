@@ -22,3 +22,8 @@ void WorkerThread::wait()
 {
    QThread::wait();
 }
+
+void WorkerThread::run()
+{
+   grid_worker::run();
+}

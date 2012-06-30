@@ -546,6 +546,11 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("selected");
       resample(keys);
    }
+   else if (action == "resample_all")
+   {
+      ministrings keys = listObjects();
+      resample(keys);
+   }
    else if (action == "delete")
    {
       removeObject(value);
@@ -583,8 +588,6 @@ void ViewerWindow::resample(ministrings keys)
    for (i=0; i<keys.size(); i++)
       job->append("\""+keys[i]+"\"");
 
-   //!!
-   job->save("resample.grid");
    worker->run_job(job);
 }
 

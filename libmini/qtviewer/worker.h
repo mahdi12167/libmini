@@ -9,8 +9,10 @@
 #include <QtCore/QMutex>
 
 //! background worker
-class WorkerThread : public grid_worker, public QThread
+class WorkerThread: public QThread, public grid_worker
 {
+   Q_OBJECT
+
    public:
 
    WorkerThread(QObject *parent = 0)
@@ -23,6 +25,8 @@ class WorkerThread : public grid_worker, public QThread
    virtual void unblock();
    virtual void start();
    virtual void wait();
+
+   virtual void run();
 
    private:
 
