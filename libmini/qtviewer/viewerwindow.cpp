@@ -256,12 +256,12 @@ void ViewerWindow::loadMap(ministring url)
 {
    if (url.endswith(".ini"))
    {
-      unsigned int lio,lio1,lio2;
+      unsigned int lio, lio1, lio2;
 
       lio = url.getsize();
 
-      if (url.findr("/",lio1)) lio = lio1;
-      else if (url.findr("\\",lio2)) lio = lio2;
+      if (url.findr("/", lio1)) lio = lio1;
+      else if (url.findr("\\", lio2)) lio = lio2;
 
       url.truncate(lio);
    }
@@ -288,7 +288,7 @@ void ViewerWindow::clearMaps()
 void ViewerWindow::loadImage(ministring url)
 {
    if (url.startswith("file://"))
-      url.substitute("file://","");
+      url.substitute("file://", "");
 
    Object_image *image = new Object_image(url, repository_path, viewer);
 
@@ -510,7 +510,7 @@ void ViewerWindow::runAction(ministring action,
       if (value != "")
          loadURL(value);
       else
-         loadURLs(browse("Open File"));
+         loadURLs(browse("Open File", repository_path));
    }
    else if (action == "select")
    {
@@ -521,16 +521,16 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
-         if (!hasTag(keys[i],"selected"))
-             addTag(keys[i],"selected");
+         if (!hasTag(keys[i], "selected"))
+             addTag(keys[i], "selected");
    }
    else if (action == "deselect_all")
    {
       ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
-         if (hasTag(keys[i],"selected"))
-             removeTag(keys[i],"selected");
+         if (hasTag(keys[i], "selected"))
+             removeTag(keys[i], "selected");
    }
    else if (action == "info")
    {
