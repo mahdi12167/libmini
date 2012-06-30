@@ -584,7 +584,7 @@ void ViewerWindow::resample(ministrings keys)
 
    job->append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
    if (repository_path!="") job->append("repo \""+repository_path+"\" # layer input repository");
-   if (export_path!="") job->append("path \""+export_path+"\" tileset output path");
+   if (export_path!="") job->append("path \""+export_path+"\" # tileset output path");
    job->append("level 0 # resample at original level");
    job->append("shade fill reproject compress # default resample settings");
 

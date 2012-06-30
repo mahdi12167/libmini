@@ -21,7 +21,8 @@ Object::Object(const ministring &name,const ministring &repo)
       if (filename.startswith(repository))
          filename=filename.tail(repository.size());
 
-   if (filename.startswith("/"))
+   if (filename.startswith("/") ||
+       filename.startswith("\\"))
       repository="";
 
    coord=minicoord();
