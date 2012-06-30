@@ -224,14 +224,19 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
    viewer->getCamera()->timerEvent(event->timerId());
 }
 
-void ViewerWindow::setRepo(ministring url)
+void ViewerWindow::setRepo(ministring path)
 {
-   repository_path = url;
+   repository_path = path;
 }
 
-void ViewerWindow::setExport(ministring url)
+void ViewerWindow::setExport(ministring path)
 {
-   export_path = url;
+   export_path = path;
+}
+
+void ViewerWindow::setTmp(ministring path)
+{
+   tmp_path = path;
 }
 
 void ViewerWindow::loadURL(ministring url)
@@ -503,7 +508,7 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "tmp")
    {
-      grid_resampler::set_tmp_dir(value);
+      setTmp(value);
    }
    else if (action == "open")
    {
@@ -587,6 +592,8 @@ void ViewerWindow::resample(ministrings keys)
 
    for (i=0; i<keys.size(); i++)
       job->append("\""+keys[i]+"\"");
+
+   grid_resampler::set_tmp_dir(tmp_path);
 
    worker->run_job(job);
 }

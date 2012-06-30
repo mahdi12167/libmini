@@ -38,8 +38,9 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
-   void setRepo(ministring url);
-   void setExport(ministring url);
+   void setRepo(ministring path);
+   void setExport(ministring path);
+   void setTmp(ministring path);
 
    void loadURL(ministring url);
    void loadURLs(ministrings urls);
@@ -121,6 +122,7 @@ private:
 
    ministring repository_path;
    ministring export_path;
+   ministring tmp_path;
 
    Objects objects;
 
