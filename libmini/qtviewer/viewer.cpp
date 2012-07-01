@@ -127,7 +127,7 @@ void Viewer::removeMap(minilayer *layer)
 {
    int num=getearth()->getterrain()->getnum(layer);
 
-   getearth()->getterrain()->remove(num);
+   getearth()->getterrain()->removeLTS(num);
 
    getCamera()->startIdling();
 }
