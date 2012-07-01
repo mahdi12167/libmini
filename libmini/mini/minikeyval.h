@@ -223,24 +223,11 @@ class minikeyval
       {
       ministrings keys;
 
-      BOOLINT found;
-
       sort();
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
-         {
-         found=FALSE;
-
-         for (unsigned int j=0; j<tags.getsize(); j++)
-            if (tag==pairs[i].tags[j])
-               {
-               found=TRUE;
-               break;
-               }
-
-         if (!found)
+         if (!(tag/pairs[i].tags))
             keys.append(pairs[i].key);
-         }
 
       return(keys);
       }
