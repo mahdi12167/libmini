@@ -13,6 +13,9 @@ Object::Object(const ministring &name,const ministring &repo)
    filename=name;
    repository=repo;
 
+   if (filename.startswith("file://"))
+      filename=filename.suffix("file://");
+
    if (repository.size()>0)
       if (!repository.endswith("/"))
          repository+="/";
@@ -21,8 +24,13 @@ Object::Object(const ministring &name,const ministring &repo)
       if (filename.startswith(repository))
          filename=filename.tail(repository.size());
 
+   // check for absolute path to clear repository
    if (filename.startswith("/") ||
-       filename.startswith("\\"))
+       filename.startswith("\\") ||
+       filename.startswith("http://") ||
+       filename.startswith("https://") ||
+       filename.startswith("ftp://") ||
+       filename.startswith("ftps://"))
       repository="";
 
    coord=minicoord();
