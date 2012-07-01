@@ -223,6 +223,8 @@ class minikeyval
       {
       ministrings keys;
 
+      BOOLINT found;
+
       sort();
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
@@ -247,6 +249,8 @@ class minikeyval
    ministrings get_items_wo(const ministrings &tags)
       {
       ministrings keys;
+
+      BOOLINT found;
 
       sort();
 
