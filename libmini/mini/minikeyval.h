@@ -218,6 +218,56 @@ class minikeyval
       return(keys);
       }
 
+   //! get keys of items /wo tag
+   ministrings get_items_wo(const ministring &tag)
+      {
+      ministrings keys;
+
+      sort();
+
+      for (unsigned int i=0; i<pairs.getsize(); i++)
+         {
+         found=FALSE;
+
+         for (unsigned int j=0; j<tags.getsize(); j++)
+            if (tag==pairs[i].tags[j])
+               {
+               found=TRUE;
+               break;
+               }
+
+         if (!found)
+            keys.append(pairs[i].key);
+         }
+
+      return(keys);
+      }
+
+   //! get keys of items /wo tags
+   ministrings get_items_wo(const ministrings &tags)
+      {
+      ministrings keys;
+
+      sort();
+
+      for (unsigned int i=0; i<pairs.getsize(); i++)
+         {
+         found=FALSE;
+
+         for (unsigned int j=0; j<tags.getsize(); j++)
+            if (tags[j]/pairs[i].tags)
+               {
+               found=TRUE;
+               break;
+               }
+
+         if (!found)
+            keys.append(pairs[i].key);
+         }
+
+      return(keys);
+      }
+
    protected:
 
    //! sort keys
