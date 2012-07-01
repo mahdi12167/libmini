@@ -81,6 +81,7 @@ public:
    void runAction(ministring action="",
                   ministring value="");
 
+   void shade(ministring key);
    void resample(ministrings keys);
 
    void notify(ministring text);

@@ -537,9 +537,13 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "selected"))
              removeTag(keys[i], "selected");
    }
-   else if (action == "info")
+   else if (action == "info") //!! pretty up
    {
       notify(getObject(value)->get_info());
+   }
+   else if (action == "shade")
+   {
+      shade(value);
    }
    else if (action == "resample")
    {
@@ -581,6 +585,19 @@ void ViewerWindow::runAction(ministring action,
    {
       gotoObject(value);
    }
+}
+
+void ViewerWindow::shade(ministring key)
+{
+   Object *obj=getObject(key);
+
+   if (obj!=NULL)
+      {
+      ShadeJob *job = new ShadeJob(obj->repository);
+      job->append(key);
+
+      worker->run_job(job);
+      }
 }
 
 void ViewerWindow::resample(ministrings keys)
