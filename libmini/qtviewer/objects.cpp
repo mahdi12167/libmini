@@ -292,6 +292,12 @@ ministrings Objects::list(const ministring &tag)
 ministrings Objects::list(const ministrings &tags)
    {return(minikeyval<Object *>::get_items(tags));}
 
+ministrings Objects::list_wo(const ministring &tag)
+   {return(minikeyval<Object *>::get_items_wo(tag));}
+
+ministrings Objects::list_wo(const ministrings &tags)
+   {return(minikeyval<Object *>::get_items_wo(tags));}
+
 void Objects::remove(const ministring &key)
    {
    MINILOG("removing object with key=" + key);

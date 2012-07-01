@@ -673,6 +673,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(deleteAction);
     QAction *deleteSelAction = new QAction(tr("delete selected"), this);
     myMenu.addAction(deleteSelAction);
+    QAction *deleteAllAction = new QAction(tr("delete all"), this);
+    myMenu.addAction(deleteAllAction);
 
     // exec connect menu
     QAction *selectedAction = myMenu.exec(globalPos);
@@ -721,6 +723,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == deleteSelAction)
        {
           emit(activate("delete_selected"));
+       }
+       else if (selectedAction == deleteAllAction)
+       {
+          emit(activate("delete_all"));
        }
     }
 }

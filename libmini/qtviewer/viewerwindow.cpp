@@ -543,17 +543,26 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "resample")
    {
-      ministrings keys = value;
-      resample(keys);
+      if (hasTag(value, "image"))
+      {
+         ministrings keys = value;
+         resample(keys);
+      }
    }
    else if (action == "resample_selected")
    {
-      ministrings keys = listObjects("selected");
-      resample(keys);
+      ministrings keys = listObjects("image");
+
+      ministrings sel_keys;
+      for (unsigned int i=0; i<keys.getsize(); i++)
+         if (hasTag(keys[i], "selected"))
+            sel_keys.append(keys[i]);
+
+      resample(sel_keys);
    }
    else if (action == "resample_all")
    {
-      ministrings keys = listObjects();
+      ministrings keys = listObjects("image");
       resample(keys);
    }
    else if (action == "delete")
