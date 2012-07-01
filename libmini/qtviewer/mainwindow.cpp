@@ -662,6 +662,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addSeparator();
     QAction *infoAction = new QAction(tr("info"), this);
     myMenu.addAction(infoAction);
+    QAction *shadeAction = new QAction(tr("shade"), this);
+    myMenu.addAction(shadeAction);
     QAction *resampleAction = new QAction(tr("resample"), this);
     myMenu.addAction(resampleAction);
     QAction *resampleSelAction = new QAction(tr("resample selected"), this);
@@ -703,6 +705,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == infoAction)
        {
           emit(activate("info", row));
+       }
+       else if (selectedAction == shadeAction)
+       {
+          emit(activate("shade", row));
        }
        else if (selectedAction == resampleAction)
        {
