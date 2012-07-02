@@ -36,7 +36,8 @@ class ministring: public ministring_base
 
       cstr=NULL;
 
-      l=strlen(str);
+      if (str!=NULL) l=strlen(str);
+      else l=0;
 
       setsize(l);
       for (i=0; i<l; i++) set(i,str[i]);
