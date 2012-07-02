@@ -608,7 +608,7 @@ void ViewerWindow::shade(ministring key)
 }
 
 ministrings ViewerWindow::make_grid_list(ministrings keys)
-   {
+{
    unsigned int i;
 
    ministrings grid_list;
@@ -627,7 +627,7 @@ ministrings ViewerWindow::make_grid_list(ministrings keys)
       grid_list.append("\""+keys[i]+"\"");
 
    return(grid_list);
-   }
+}
 
 void ViewerWindow::resample(ministrings keys)
 {
@@ -642,7 +642,7 @@ void ViewerWindow::resample(ministrings keys)
 
 void ViewerWindow::save(ministrings keys,ministring filename)
 {
-   ministrings grid_list=make_grid_list(keys);
+   ministrings grid_list = make_grid_list(keys);
 
    if (filename=="")
    {
@@ -650,11 +650,11 @@ void ViewerWindow::save(ministrings keys,ministring filename)
       if (files.size()==0) return;
 
       filename = files[0];
-      if (!filename.endswith(".grid")) filename+=".grid";
+      if (!filename.endswith(".grid")) filename += ".grid";
    }
 
    grid_list.save(filename);
-   }
+}
 
 void ViewerWindow::notify(ministring text)
 {
