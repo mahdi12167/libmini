@@ -22,6 +22,8 @@ class Object
    ministring repository; // data repository
    ministring filename; // data file in repository
 
+   ministring get_name();
+
    protected:
 
    virtual void set_center(minicoord c,double r=0.0);

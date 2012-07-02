@@ -385,7 +385,7 @@ void MainWindow::clear(bool all)
 void MainWindow::getNameInfo(Object *obj,
                              QString &name, QString &info)
 {
-   ministring url=obj->filename;
+   ministring url=obj->get_name();
    name=url.c_str();
 
    if (name.endsWith("/")) name.truncate(name.size()-1);

@@ -41,6 +41,9 @@ Object::Object(const ministring &name,const ministring &repo)
 Object::~Object()
    {}
 
+ministring Object::get_name()
+   {return(repository+filename);}
+
 void Object::set_center(minicoord c,double r)
    {
    coord=c;
