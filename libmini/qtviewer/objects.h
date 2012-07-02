@@ -129,6 +129,7 @@ class Objects: public minikeyval<Object *>
    ministrings list(const ministrings &tags);
    ministrings list_wo(const ministring &tag);
    ministrings list_wo(const ministrings &tags);
+   void set_repo(const ministring &repo);
    void remove(const ministring &key);
    void remove(const ministrings &keys);
    void clear();

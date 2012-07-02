@@ -227,6 +227,7 @@ void ViewerWindow::timerEvent(QTimerEvent *event)
 void ViewerWindow::setRepo(ministring path)
 {
    repository_path = path;
+   objects.set_repo(repository_path);
 }
 
 void ViewerWindow::setExport(ministring path)
@@ -608,7 +609,6 @@ void ViewerWindow::resample(ministrings keys)
 
    job->append("#definitions:");
 
-   //!! reorchestrate repo
    job->append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
    if (repository_path!="") job->append("repo \""+repository_path+"\" # layer input repository");
    if (export_path!="") job->append("path \""+export_path+"\" # tileset output path");

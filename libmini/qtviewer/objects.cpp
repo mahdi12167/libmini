@@ -298,6 +298,29 @@ ministrings Objects::list_wo(const ministring &tag)
 ministrings Objects::list_wo(const ministrings &tags)
    {return(minikeyval<Object *>::get_items_wo(tags));}
 
+void Objects::set_repo(const ministring &repo)
+   {
+   unsigned int i;
+
+   ministring path;
+
+   for (i=0; i<get_num(); i++)
+      {
+      path=get(i)->repository+get(i)->filename;
+
+      if (path.startswith(repo))
+         {
+         get(i)->repository=repo;
+         get(i)->filename=path.suffix(repo);
+         }
+      else
+         {
+         get(i)->repository="";
+         get(i)->filename=path;
+         }
+      }
+   }
+
 void Objects::remove(const ministring &key)
    {
    MINILOG("removing object with key=" + key);
