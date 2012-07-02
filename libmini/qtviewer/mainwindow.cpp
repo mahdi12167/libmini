@@ -688,6 +688,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(resampleSelAction);
     QAction *resampleAllAction = new QAction(tr("resample all"), this);
     myMenu.addAction(resampleAllAction);
+    QAction *saveGridAction = new QAction(tr("save to grid file"), this);
+    myMenu.addAction(saveGridAction);
     myMenu.addSeparator();
     QAction *deleteAction = new QAction(tr("delete"), this);
     myMenu.addAction(deleteAction);
@@ -717,6 +719,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("resample_selected"));
        else if (selectedAction == resampleAllAction)
           emit(activate("resample_all"));
+       else if (selectedAction == saveGridAction)
+          emit(activate("save_grid"));
        else if (selectedAction == deleteAction)
           emit(activate("delete", row));
        else if (selectedAction == deleteSelAction)

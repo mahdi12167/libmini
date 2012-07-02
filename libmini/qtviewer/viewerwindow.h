@@ -83,10 +83,13 @@ public:
 
    void shade(ministring key);
    void resample(ministrings keys);
+   void save(ministrings keys,ministring filename="");
 
    void notify(ministring text);
-   ministrings browse(ministring title,ministring path="");
+   ministrings browse(ministring title,ministring path="",BOOLINT newfile=FALSE);
    ministring browseDir(ministring title,ministring path="");
+
+   ministrings make_grid_list(ministrings keys);
 
 signals:
    void changed(ministring key);

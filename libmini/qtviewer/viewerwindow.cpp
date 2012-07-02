@@ -274,7 +274,7 @@ void ViewerWindow::loadMap(ministring url)
 
    Object_tileset *tileset = new Object_tileset(url, repository_path, viewer);
 
-   if (tileset==NULL) MEMERROR();
+   if (tileset == NULL) MEMERROR();
 
    if (!addObject(url, tileset, "tileset"))
    {
@@ -298,7 +298,7 @@ void ViewerWindow::loadImage(ministring url)
 
    Object_image *image = new Object_image(url, repository_path, viewer);
 
-   if (image==NULL) MEMERROR();
+   if (image == NULL) MEMERROR();
 
    if (!addObject(url, image, "image"))
    {
@@ -570,6 +570,11 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("image");
       resample(keys);
    }
+   else if (action == "save_grid")
+   {
+      ministrings keys = listObjects("image");
+      save(keys);
+   }
    else if (action == "delete")
    {
       removeObject(value);
@@ -602,29 +607,54 @@ void ViewerWindow::shade(ministring key)
          }
 }
 
-void ViewerWindow::resample(ministrings keys)
-{
+ministrings ViewerWindow::make_grid_list(ministrings keys)
+   {
    unsigned int i;
 
-   ResampleJob *job = new ResampleJob(0,3,2);
+   ministrings grid_list;
 
-   job->append("#definitions:");
+   grid_list.append("#definitions:");
 
-   job->append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
-   if (repository_path!="") job->append("repo \""+repository_path+"\" # layer input repository");
-   if (export_path!="") job->append("path \""+export_path+"\" # tileset output path");
-   job->append("level 0 # resample at original level");
-   job->append("shade fill reproject compress # default resample settings");
+   grid_list.append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
+   if (repository_path!="") grid_list.append("repo \""+repository_path+"\" # layer input repository");
+   if (export_path!="") grid_list.append("path \""+export_path+"\" # tileset output path");
+   grid_list.append("level 0 # resample at original level");
+   grid_list.append("shade fill reproject compress # default resample settings");
 
-   job->append("#layers:");
+   grid_list.append("#layers:");
 
    for (i=0; i<keys.size(); i++)
-      job->append("\""+keys[i]+"\"");
+      grid_list.append("\""+keys[i]+"\"");
+
+   return(grid_list);
+   }
+
+void ViewerWindow::resample(ministrings keys)
+{
+   ResampleJob *job = new ResampleJob(0,3,2);
+
+   job->append(make_grid_list(keys));
 
    grid_resampler::set_tmp_dir(tmp_path);
 
    worker->run_job(job);
 }
+
+void ViewerWindow::save(ministrings keys,ministring filename)
+{
+   ministrings grid_list=make_grid_list(keys);
+
+   if (filename=="")
+   {
+      ministrings files = browse("Save To Grid File", repository_path, TRUE);
+      if (files.size()==0) return;
+
+      filename = files[0];
+      if (!filename.endswith(".grid")) filename+=".grid";
+   }
+
+   grid_list.save(filename);
+   }
 
 void ViewerWindow::notify(ministring text)
 {
@@ -634,12 +664,16 @@ void ViewerWindow::notify(ministring text)
 }
 
 ministrings ViewerWindow::browse(ministring title,
-                                 ministring path)
+                                 ministring path,
+                                 BOOLINT newfile)
 {
    QFileDialog* fd = new QFileDialog(this, title.c_str());
+
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
-   fd->setFilter("Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png)");
+   if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
+   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png);; Grid Files (*.grid)");
+
    if (path!="") fd->setDirectory(path.c_str());
 
    ministrings files;
