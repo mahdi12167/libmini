@@ -651,6 +651,17 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // map widget to global coordinates
     QPoint globalPos = mapToGlobal(pos);
 
+    // get item
+    int row = -1;
+    QTableWidgetItem *item = itemAt(pos);
+
+    // highlight item
+    if (item)
+    {
+       row = item->row();
+       setCurrentCell(row, 1);
+    }
+
     // create contex menu
     QMenu myMenu;
     QAction *selectAction = new QAction(tr("select"), this);
@@ -683,58 +694,28 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // process selected action
     if (selectedAction)
-    {
-       int row = -1;
-       QTableWidgetItem *item = itemAt(pos);
-
-       if (item)
-          row = item->row();
-
        if (selectedAction == selectAction)
-       {
           emit(activate("select", row));
-       }
        else if (selectedAction == selectAllAction)
-       {
           emit(activate("select_all"));
-       }
        else if (selectedAction == deselectAllAction)
-       {
           emit(activate("deselect_all"));
-       }
        else if (selectedAction == infoAction)
-       {
           emit(activate("info", row));
-       }
        else if (selectedAction == shadeAction)
-       {
           emit(activate("shade", row));
-       }
        else if (selectedAction == resampleAction)
-       {
           emit(activate("resample", row));
-       }
        else if (selectedAction == resampleSelAction)
-       {
           emit(activate("resample_selected"));
-       }
        else if (selectedAction == resampleAllAction)
-       {
           emit(activate("resample_all"));
-       }
        else if (selectedAction == deleteAction)
-       {
           emit(activate("delete", row));
-       }
        else if (selectedAction == deleteSelAction)
-       {
           emit(activate("delete_selected"));
-       }
        else if (selectedAction == deleteAllAction)
-       {
           emit(activate("delete_all"));
-       }
-    }
 }
 
 void MyQTableWidget::dragEnterEvent(QDragEnterEvent *event) {event->acceptProposedAction();}
