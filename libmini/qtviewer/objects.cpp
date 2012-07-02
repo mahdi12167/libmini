@@ -157,7 +157,7 @@ ministring Object_image::get_info()
           "repo="+repository+"\n"+
           "file="+filename+"\n\n"+
           "dim="+size_x+"x"+size_y+"\n"+
-          "size="+size_ds+"x"+size_dt+"\n\n"+
+          "size="+size_ds/1000+"km x "+size_dt/1000+"km\n\n"+
           "extent="+get_extent());
    }
 

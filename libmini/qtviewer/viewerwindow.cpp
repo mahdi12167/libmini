@@ -613,18 +613,20 @@ ministrings ViewerWindow::make_grid_list(ministrings keys)
 
    ministrings grid_list;
 
+   grid_list.append("#created by qtviewer");
+   grid_list.append("");
    grid_list.append("#definitions:");
-
    grid_list.append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
    if (repository_path!="") grid_list.append("repo \""+repository_path+"\" # layer input repository");
    if (export_path!="") grid_list.append("path \""+export_path+"\" # tileset output path");
    grid_list.append("level 0 # resample at original level");
    grid_list.append("shade fill reproject compress # default resample settings");
+   grid_list.append("");
 
    grid_list.append("#layers:");
-
    for (i=0; i<keys.size(); i++)
-      grid_list.append("\""+keys[i]+"\"");
+      grid_list.append("\""+getObject(keys[i])->filename+"\"");
+   grid_list.append("");
 
    return(grid_list);
 }

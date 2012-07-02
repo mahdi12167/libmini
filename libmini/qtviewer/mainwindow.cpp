@@ -2,6 +2,8 @@
 
 #include <QtGui>
 
+#include <grid/grid.h>
+
 #include "viewerwindow.h"
 
 #include "mainconst.h"
@@ -25,14 +27,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::initSettings()
 {
-   char *pHome = getenv("HOME");
+   ministring home_path = getenv("HOME");
 
-   if (pHome!=NULL)
-   {
-      repoPath = pHome;
-      exportPath = pHome;
-      tmpPath = pHome;
-   }
+#ifdef __APPLE__
+   home_path += "/Desktop";
+#endif
+
+   repoPath = home_path;
+   exportPath = home_path;
+   tmpPath = grid_resampler::get_tmp_dir();
 }
 
 void MainWindow::createActions()
