@@ -538,7 +538,7 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "selected"))
              removeTag(keys[i], "selected");
    }
-   else if (action == "info") //!! pretty up
+   else if (action == "info")
    {
       notify(getObject(value)->get_info());
    }
@@ -590,15 +590,16 @@ void ViewerWindow::runAction(ministring action,
 
 void ViewerWindow::shade(ministring key)
 {
-   Object *obj=getObject(key);
+   Object_image *obj=dynamic_cast<Object_image *>(getObject(key));
 
    if (obj!=NULL)
-      {
-      ShadeJob *job = new ShadeJob(obj->repository);
-      job->append(key);
+      if (obj->is_elevation())
+         {
+         ShadeJob *job = new ShadeJob(obj->repository);
+         job->append(key);
 
-      worker->run_job(job);
-      }
+         worker->run_job(job);
+         }
 }
 
 void ViewerWindow::resample(ministrings keys)

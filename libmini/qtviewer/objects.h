@@ -96,7 +96,10 @@ class Object_image: public Object
    protected:
 
    BOOLINT is_imagery_resp_elevation;
+
    grid_extent extent;
+   int size_x,size_y;
+   double size_ds,size_dt;
 
    Viewer *image_viewer;
    mininode *image_node;

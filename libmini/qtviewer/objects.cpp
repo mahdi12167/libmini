@@ -20,9 +20,10 @@ Object::Object(const ministring &name,const ministring &repo)
       if (!repository.endswith("/"))
          repository+="/";
 
+   // check for relative path to truncate path
    if (repository.size()>0)
       if (filename.startswith(repository))
-         filename=filename.tail(repository.size());
+         filename=filename.suffix(repository);
 
    // check for absolute path to clear repository
    if (filename.startswith("/") ||
@@ -65,7 +66,11 @@ double Object::get_radius()
    {return(radius);}
 
 ministring Object::get_info()
-   {return("Object");}
+   {
+   return(ministring("Object\n")+
+          "repo="+repository+"\n"+
+          "file="+filename);
+   }
 
 // Object_tileset:
 
@@ -82,10 +87,11 @@ Object_tileset::~Object_tileset()
 
 ministring Object_tileset::get_info()
    {
-   return(ministring("Tileset[")+
-          tileset_layer->getcols()+"x"+
-          tileset_layer->getrows()+
-          "]");
+   return(ministring("Tileset\n")+
+          "repo="+repository+"\n"+
+          "file="+filename+"\n\n"+
+          "cols="+tileset_layer->getcols()+"\n"+
+          "rows="+tileset_layer->getrows());
    }
 
 BOOLINT Object_tileset::initGFX()
@@ -147,9 +153,12 @@ Object_image::~Object_image()
 
 ministring Object_image::get_info()
    {
-   return(ministring("Image[")+
-          get_extent()+
-          "]");
+   return(ministring("Image\n")+
+          "repo="+repository+"\n"+
+          "file="+filename+"\n\n"+
+          "dim="+size_x+"x"+size_y+"\n"+
+          "size="+size_ds+"x"+size_dt+"\n\n"+
+          "extent="+get_extent());
    }
 
 BOOLINT Object_image::initGFX()
@@ -172,7 +181,12 @@ BOOLINT Object_image::initGFX()
       if (layer!=NULL)
          {
          is_imagery_resp_elevation=layer->is_imagery();
+
          extent=layer->extent;
+         size_x=layer->get_size_x();
+         size_y=layer->get_size_y();
+         size_ds=layer->get_size_ds();
+         size_dt=layer->get_size_dt();
 
          set_center(extent.get_center(),extent.get_size());
 
