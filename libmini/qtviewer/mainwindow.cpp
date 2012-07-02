@@ -629,6 +629,13 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       if (row!=-1)
          runAction("select", row);
    }
+   else if (event->key() == Qt::Key_Backspace)
+   {
+      int row = viewerTable->currentRow();
+
+      if (row!=-1)
+         runAction("delete", row);
+   }
    else
       QWidget::keyPressEvent(event);
 }
