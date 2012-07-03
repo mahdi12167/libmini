@@ -250,8 +250,14 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else if (url.endswith(".bt"))
       loadImage(url);
-   else
+   else if (url.endswith(".ini"))
       loadMap(url);
+   else if (!url.suffix("/").contains("."))
+      loadMap(url);
+   else if (!url.suffix("\\").contains("."))
+      loadMap(url);
+   else
+      loadImage(url);
 }
 
 void ViewerWindow::loadURLs(ministrings urls)
