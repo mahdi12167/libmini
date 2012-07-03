@@ -70,9 +70,9 @@ double Object::get_radius()
 
 ministring Object::get_info()
    {
-   return(ministring("Object\n")+
-          "repo="+repository+"\n"+
-          "file="+filename);
+   return(ministring("Object")+
+          "\n\nrepo = "+repository+"\n"+
+          "file = "+filename);
    }
 
 // Object_tileset:
@@ -90,11 +90,10 @@ Object_tileset::~Object_tileset()
 
 ministring Object_tileset::get_info()
    {
-   return(ministring("Tileset\n")+
-          "repo="+repository+"\n"+
-          "file="+filename+"\n\n"+
-          "cols="+tileset_layer->getcols()+"\n"+
-          "rows="+tileset_layer->getrows());
+   return(ministring("Tileset")+
+          "\n\nrepo = "+repository+"\n"+
+          "file = "+filename+"\n\n"+
+          "dim = "+tileset_layer->getcols()+" x "+tileset_layer->getrows());
    }
 
 BOOLINT Object_tileset::initGFX()
@@ -156,12 +155,12 @@ Object_image::~Object_image()
 
 ministring Object_image::get_info()
    {
-   return(ministring("Image\n")+
-          "repo="+repository+"\n"+
-          "file="+filename+"\n\n"+
-          "dim="+size_x+"x"+size_y+"\n"+
-          "size="+size_ds/1000+"km x "+size_dt/1000+"km\n\n"+
-          "extent="+get_extent());
+   return(ministring(is_imagery()?"Imagery":"Elevation")+
+          "\n\nrepo = "+repository+"\n"+
+          "file = "+filename+"\n\n"+
+          "dim = "+size_x+" x "+size_y+"\n"+
+          "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n\n"+
+          "extent = "+get_extent());
    }
 
 BOOLINT Object_image::initGFX()
