@@ -168,6 +168,7 @@ protected:
    ministring tmpPath;
 
    void initSettings();
+   void saveSettings();
 
    void keyPressEvent(QKeyEvent* event);
    void keyReleaseEvent(QKeyEvent* event);

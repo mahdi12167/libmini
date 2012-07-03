@@ -23,10 +23,16 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow()
-   {clear(true);}
+   {
+   saveSettings();
+
+   clear(true);
+   }
 
 void MainWindow::initSettings()
 {
+   // define default settings:
+
    ministring home_path = getenv("HOME");
 
 #ifdef __APPLE__
@@ -36,6 +42,28 @@ void MainWindow::initSettings()
    repoPath = home_path;
    exportPath = home_path;
    tmpPath = grid_resampler::get_tmp_dir();
+
+   // override with persistent settings:
+
+   QSettings settings("www.open-terrain.org", "qtviewer");
+
+   if (settings.contains("repoPath"))
+      repoPath = settings.value("repoPath").toString().toStdString().c_str();
+
+   if (settings.contains("exportPath"))
+      exportPath = settings.value("exportPath").toString().toStdString().c_str();
+
+   if (settings.contains("tmpPath"))
+      tmpPath = settings.value("tmpPath").toString().toStdString().c_str();
+}
+
+void MainWindow::saveSettings()
+{
+   QSettings settings("www.open-terrain.org", "qtviewer");
+
+   settings.setValue("repoPath", QString(repoPath.c_str()));
+   settings.setValue("exportPath", QString(exportPath.c_str()));
+   settings.setValue("tmpPath", QString(tmpPath.c_str()));
 }
 
 void MainWindow::createActions()
