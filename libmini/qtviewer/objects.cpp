@@ -90,10 +90,16 @@ Object_tileset::~Object_tileset()
 
 ministring Object_tileset::get_info()
    {
+   miniv3d ext = tileset_layer->getextent();
+   minicoord center = tileset_layer->get()->offsetDAT;
+
    return(ministring("Tileset")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
-          "dim = "+tileset_layer->getcols()+" x "+tileset_layer->getrows());
+          "dim = "+tileset_layer->getcols()+" x "+tileset_layer->getrows()+"\n"+
+          "size = "+ext.x/1000+"km x "+ext.y/1000+"km\n"+
+          "crs = "+center.getcrs()+"\n"+
+          "datum = "+center.getdatum());
    }
 
 BOOLINT Object_tileset::initGFX()
@@ -159,8 +165,10 @@ ministring Object_image::get_info()
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
           "dim = "+size_x+" x "+size_y+"\n"+
-          "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n\n"+
-          "extent = "+get_extent());
+          "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n"+
+          "crs = "+extent.get_center().getcrs()+"\n"+
+          "datum = "+extent.get_center().getdatum()+"\n\n"+
+          "extent = "+extent);
    }
 
 BOOLINT Object_image::initGFX()
