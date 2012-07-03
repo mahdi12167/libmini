@@ -247,7 +247,11 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
          return(TRUE);
          }
       else
+      {
+         minikeyval<Object *>::remove(key);
+
          MINILOG((ministring)" object failed to initialize");
+      }
    else
       MINILOG((ministring)" object failed to be added");
 
