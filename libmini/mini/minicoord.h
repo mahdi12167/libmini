@@ -6,7 +6,7 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
-class ministring;
+#include "ministring.h"
 
 //! geo-referenced coordinates
 class minicoord
@@ -130,12 +130,12 @@ class minicoord
    static minicoord mean(const minicoord &a,const minicoord &b,BOOLINT symmetric=TRUE);
 
    //! get crs type description
-   const char *getcrs() const;
-   static const char *getcrs(const MINICOORD &t);
+   ministring getcrs() const;
+   static ministring getcrs(MINICOORD t,int zone);
 
    //! get crs datum description
-   const char *getdatum() const;
-   static const char *getdatum(const MINICOORD_DATUM &d);
+   ministring getdatum() const;
+   static ministring getdatum(MINICOORD_DATUM d);
 
    //! string cast operator
    operator ministring() const;
@@ -265,12 +265,6 @@ inline int operator < (const minicoord &a,const minicoord &b)
    {return(a.vec.w<b.vec.w);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
-   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " zone=" << c.crs_zone << " datum=" << c.getdatum() << " ]");}
-
-inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD &t)
-   {return(out << (*minicoord::getcrs(t)));}
-
-inline std::ostream& operator << (std::ostream &out,const minicoord::MINICOORD_DATUM &d)
-   {return(out << (*minicoord::getdatum(d)));}
+   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " datum=" << c.getdatum() << " ]");}
 
 #endif

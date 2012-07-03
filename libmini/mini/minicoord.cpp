@@ -540,30 +540,30 @@ minicoord minicoord::mean(const minicoord &a,const minicoord &b,BOOLINT symmetri
    {return(lerp(0.5,a,b,symmetric));}
 
 // get crs type description from object
-const char *minicoord::getcrs() const
-   {return(getcrs(this->type));}
+ministring minicoord::getcrs() const
+   {return(getcrs(this->type,this->crs_zone));}
 
 // get crs type description
-const char *minicoord::getcrs(const MINICOORD &t)
+ministring minicoord::getcrs(MINICOORD t,int zone)
    {
    switch (t)
       {
       case MINICOORD_LINEAR: return("Linear");
       case MINICOORD_LLH: return("LLH");
-      case MINICOORD_UTM: return("UTM");
+      case MINICOORD_UTM: return(ministring("UTM[")+zone+"]");
       case MINICOORD_MERC: return("Mercator");
-      case MINICOORD_OGH: return("OGH");
+      case MINICOORD_OGH: return(ministring("OGH[")+zone+"]");
       case MINICOORD_ECEF: return("ECEF");
       default: return("Unkown");
       }
    }
 
 // get crs datum description from object
-const char *minicoord::getdatum() const
+ministring minicoord::getdatum() const
    {return(getdatum(this->crs_datum));}
 
 // get crs datum description
-const char *minicoord::getdatum(const MINICOORD_DATUM &d)
+ministring minicoord::getdatum(MINICOORD_DATUM d)
    {
    switch (d)
       {
@@ -587,4 +587,4 @@ const char *minicoord::getdatum(const MINICOORD_DATUM &d)
    }
 
 minicoord::operator ministring() const
-   {return((ministring)"[ (" + vec.x + "," + vec.y + "," + vec.z + ") t=" + vec.w + " crs=" + getcrs() + " zone=" + crs_zone + " datum=" + getdatum() + " ]");}
+   {return((ministring)"[ (" + vec.x + "," + vec.y + "," + vec.z + ") t=" + vec.w + " crs=" + getcrs() + " datum=" + getdatum() + " ]");}
