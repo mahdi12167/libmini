@@ -157,6 +157,20 @@ class ministring: public ministring_base
    BOOLINT findr(const char *sub,unsigned int &idx,unsigned int start=0) const
       {return(findr(ministring(sub),idx,start));}
 
+   //! check for existing sub-string
+   BOOLINT contains(const ministring_base &sub)
+      {
+      unsigned int idx;
+      return(find(sub,idx));
+      }
+
+   //! check for existing sub-c-string
+   BOOLINT contains(const char *sub)
+      {
+      unsigned int idx;
+      return(find(ministring(sub),idx));
+      }
+
    //! check for existing sub-string and return remaining tail
    ministring tail(const ministring_base &sub) const
       {
