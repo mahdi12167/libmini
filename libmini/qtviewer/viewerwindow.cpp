@@ -248,6 +248,8 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else if (url.endswith(".tif"))
       loadImage(url);
+   else if (url.endswith(".bt"))
+      loadImage(url);
    else
       loadMap(url);
 }
@@ -674,7 +676,7 @@ ministrings ViewerWindow::browse(ministring title,
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
-   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Images (*.tif *.tiff *.jpg *.png);; Grid Files (*.grid)");
+   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; Grid Files (*.grid)");
 
    if (path!="") fd->setDirectory(path.c_str());
 
