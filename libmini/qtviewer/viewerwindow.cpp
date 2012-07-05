@@ -179,16 +179,6 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
    viewer->getCamera()->focusOnTarget(0.75);
 }
 
-void ViewerWindow::reportModifiers()
-{
-   Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
-
-   viewer->getCamera()->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
-   viewer->getCamera()->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
-   viewer->getCamera()->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
-   viewer->getCamera()->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
-}
-
 void ViewerWindow::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() == Qt::Key_Space)
@@ -225,8 +215,24 @@ void ViewerWindow::wheelEvent(QWheelEvent *event)
 void ViewerWindow::timerEvent(QTimerEvent *event)
 {
    reportModifiers();
+   reportProgress();
 
    viewer->getCamera()->timerEvent(event->timerId());
+}
+
+void ViewerWindow::reportModifiers()
+{
+   Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
+
+   viewer->getCamera()->modifierKey(ModifierShift, keyMod & Qt::ShiftModifier);
+   viewer->getCamera()->modifierKey(ModifierControl, keyMod & Qt::ControlModifier);
+   viewer->getCamera()->modifierKey(ModifierAlt, keyMod & Qt::AltModifier);
+   viewer->getCamera()->modifierKey(ModifierMeta, keyMod & Qt::MetaModifier);
+}
+
+void ViewerWindow::reportProgress()
+{
+   std::cout << worker->get_progress() << std::endl; //!!
 }
 
 void ViewerWindow::setRepo(ministring path)

@@ -2,25 +2,34 @@
 
 #include "worker.h"
 
-void WorkerThread::block()
+WorkerThread::WorkerThread(QObject *parent)
+   : grid_worker(), QThread(parent)
+{}
+
+WorkerThread::~WorkerThread()
+{
+   abort_jobs();
+}
+
+void WorkerThread::block_jobs()
 {
    mutex.lock();
 }
 
-void WorkerThread::unblock()
+void WorkerThread::unblock_jobs()
 {
    mutex.unlock();
 }
 
-void WorkerThread::start()
+void WorkerThread::start_jobs()
 {
    if (!isRunning())
-      QThread::start(LowPriority);
+      start(LowPriority);
 }
 
-void WorkerThread::wait()
+void WorkerThread::wait4jobs()
 {
-   QThread::wait();
+   wait();
 }
 
 void WorkerThread::run()

@@ -142,6 +142,7 @@ private:
    bool bRightButtonDown;
 
    void reportModifiers();
+   void reportProgress();
 };
 
 #endif

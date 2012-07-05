@@ -15,16 +15,15 @@ class WorkerThread: public QThread, public grid_worker
 
    public:
 
-   WorkerThread(QObject *parent = 0)
-      : grid_worker(), QThread(parent)
-   {}
+   WorkerThread(QObject *parent = 0);
+   virtual ~WorkerThread();
 
    protected:
 
-   virtual void block();
-   virtual void unblock();
-   virtual void start();
-   virtual void wait();
+   virtual void block_jobs();
+   virtual void unblock_jobs();
+   virtual void start_jobs();
+   virtual void wait4jobs();
 
    virtual void run();
 
