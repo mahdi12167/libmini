@@ -295,23 +295,26 @@ void MainWindow::createWidgets()
 
    // pref group:
 
-   QGroupBox *lineEditGroup_repoPath = createEdit("Repository Path", repoPath,
-                                                  &lineEdit_repoPath, &browseButton_repoPath);
+   QGroupBox *lineEditGroup_repoPath = createPathEdit("Repository Path", repoPath,
+                                                      &lineEdit_repoPath, &browseButton_repoPath);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
 
-   QGroupBox *lineEditGroup_exportPath = createEdit("Export Path", exportPath,
-                                                    &lineEdit_exportPath, &browseButton_exportPath);
+   QGroupBox *lineEditGroup_exportPath = createPathEdit("Export Path", exportPath,
+                                                        &lineEdit_exportPath, &browseButton_exportPath);
 
    connect(lineEdit_exportPath,SIGNAL(textChanged(QString)),this,SLOT(exportPathChanged(QString)));
    connect(browseButton_exportPath, SIGNAL(pressed()), this, SLOT(browseExportPath()));
 
-   QGroupBox *lineEditGroup_tmpPath = createEdit("Temporary Path", tmpPath,
-                                                 &lineEdit_tmpPath, &browseButton_tmpPath);
+   QGroupBox *lineEditGroup_tmpPath = createPathEdit("Temporary Path", tmpPath,
+                                                     &lineEdit_tmpPath, &browseButton_tmpPath);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
+
+   QGroupBox *lineEditGroup_gridLevel = createEdit("Grid Level", grid_level, &lineEdit_gridLevel);
+   connect(lineEdit_gridLevel,SIGNAL(textChanged(QString)),this,SLOT(gridLevelChanged(QString)));
 
    verticalButton = new QCheckBox(tr("Vertical Layout"));
    verticalButton->setChecked(true);
@@ -326,6 +329,8 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_exportPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
+
+   prefLayout->addWidget(lineEditGroup_gridLevel);
 
    prefLayout->addWidget(verticalButton);
    prefLayout->addWidget(sliderButton);
@@ -380,7 +385,18 @@ QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
 }
 
 QGroupBox *MainWindow::createEdit(ministring name, ministring value,
-                                  QLineEdit **lineEdit, QPushButton **browseButton)
+                                  QLineEdit **lineEdit)
+{
+   QGroupBox *lineEditGroup = new QGroupBox(tr(name.c_str()));
+   QVBoxLayout *lineEditLayout = new QVBoxLayout;
+   lineEditGroup->setLayout(lineEditLayout);
+   *lineEdit = new QLineEdit(value.c_str());
+   lineEditLayout->addWidget(*lineEdit);
+   return(lineEditGroup);
+}
+
+QGroupBox *MainWindow::createPathEdit(ministring name, ministring value,
+                                      QLineEdit **lineEdit, QPushButton **browseButton)
 {
    QGroupBox *lineEditGroup = new QGroupBox(tr(name.c_str()));
    QVBoxLayout *lineEditLayout = new QVBoxLayout;
@@ -610,6 +626,18 @@ void MainWindow::browseTmpPath()
 
    if (dir!="")
       lineEdit_tmpPath->setText(dir.c_str());
+}
+
+void MainWindow::gridLevelChanged(QString level)
+{
+   bool valid;
+   double grid_level = level.toDouble(&valid);
+
+   if (valid)
+      {
+      this->grid_level = grid_level;
+      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      }
 }
 
 void MainWindow::checkVertical(int on)

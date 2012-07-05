@@ -73,6 +73,8 @@ private slots:
    void browseExportPath();
    void browseTmpPath();
 
+   void gridLevelChanged(QString);
+
    void checkVertical(int);
    void checkSliders(int);
 
@@ -84,7 +86,10 @@ private:
    QSlider *createSlider(int minimum, int maximum, int value);
 
    QGroupBox *createEdit(ministring name, ministring value,
-                         QLineEdit **lineEdit, QPushButton **browseButton);
+                         QLineEdit **lineEdit);
+
+   QGroupBox *createPathEdit(ministring name, ministring value,
+                             QLineEdit **lineEdit, QPushButton **browseButton);
 
    QMenu *fileMenu;
    QMenu *helpMenu;
@@ -156,6 +161,8 @@ private:
 
    QLineEdit *lineEdit_tmpPath;
    QPushButton *browseButton_tmpPath;
+
+   QLineEdit *lineEdit_gridLevel;
 
    QCheckBox *verticalButton;
    QCheckBox *sliderButton;

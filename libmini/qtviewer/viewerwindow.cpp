@@ -593,7 +593,7 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");
-      save(keys, grid_level);
+      save(keys, "", grid_level);
    }
    else if (action == "delete")
    {
@@ -669,7 +669,7 @@ void ViewerWindow::save(ministrings keys,ministring filename,int level)
 
    if (filename=="")
    {
-      ministrings files = browse("Save To Grid File", repository_path, TRUE);
+      ministrings files = browse("Save To Grid File", export_path, TRUE);
       if (files.size()==0) return;
 
       filename = files[0];
