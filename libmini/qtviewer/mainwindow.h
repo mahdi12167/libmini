@@ -83,18 +83,21 @@ private:
 
    QSlider *createSlider(int minimum, int maximum, int value);
 
-   QMenu* fileMenu;
-   QMenu* helpMenu;
+   QGroupBox *createEdit(ministring name, ministring value,
+                         QLineEdit **lineEdit, QPushButton **browseButton);
 
-   QAction* aboutAction;
-   QAction* openAction;
-   QAction* clearAction;
-   QAction* quitAction;
+   QMenu *fileMenu;
+   QMenu *helpMenu;
+
+   QAction *aboutAction;
+   QAction *openAction;
+   QAction *clearAction;
+   QAction *quitAction;
 
    QGroupBox *mainGroup;
    QBoxLayout *mainLayout;
 
-   ViewerWindow* viewerWindow;
+   ViewerWindow *viewerWindow;
    QTabWidget *tabWidget;
    QDialogButtonBox *buttonBox;
 
@@ -174,8 +177,8 @@ protected:
    void initSettings();
    void saveSettings();
 
-   void keyPressEvent(QKeyEvent* event);
-   void keyReleaseEvent(QKeyEvent* event);
+   void keyPressEvent(QKeyEvent *event);
+   void keyReleaseEvent(QKeyEvent *event);
 };
 
 // subclass group box widget

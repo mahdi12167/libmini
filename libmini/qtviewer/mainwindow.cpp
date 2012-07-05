@@ -295,38 +295,20 @@ void MainWindow::createWidgets()
 
    // pref group:
 
-   QGroupBox *lineEditGroup_repoPath = new QGroupBox(tr("Repository Path"));
-   QVBoxLayout *lineEditLayout_repoPath = new QVBoxLayout;
-   lineEditGroup_repoPath->setLayout(lineEditLayout_repoPath);
-   lineEdit_repoPath = new QLineEdit(repoPath.c_str());
-   lineEditLayout_repoPath->addWidget(lineEdit_repoPath);
-   browseButton_repoPath = new QPushButton(tr("Browse"));
-   lineEditLayout_repoPath->addWidget(browseButton_repoPath);
-   lineEditLayout_repoPath->setAlignment(browseButton_repoPath, Qt::AlignLeft);
+   QGroupBox *lineEditGroup_repoPath = createEdit("Repository Path", repoPath,
+                                                  &lineEdit_repoPath, &browseButton_repoPath);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
 
-   QGroupBox *lineEditGroup_exportPath = new QGroupBox(tr("Export Path"));
-   QVBoxLayout *lineEditLayout_exportPath = new QVBoxLayout;
-   lineEditGroup_exportPath->setLayout(lineEditLayout_exportPath);
-   lineEdit_exportPath = new QLineEdit(exportPath.c_str());
-   lineEditLayout_exportPath->addWidget(lineEdit_exportPath);
-   browseButton_exportPath = new QPushButton(tr("Browse"));
-   lineEditLayout_exportPath->addWidget(browseButton_exportPath);
-   lineEditLayout_exportPath->setAlignment(browseButton_exportPath, Qt::AlignLeft);
+   QGroupBox *lineEditGroup_exportPath = createEdit("Export Path", exportPath,
+                                                    &lineEdit_exportPath, &browseButton_exportPath);
 
    connect(lineEdit_exportPath,SIGNAL(textChanged(QString)),this,SLOT(exportPathChanged(QString)));
    connect(browseButton_exportPath, SIGNAL(pressed()), this, SLOT(browseExportPath()));
 
-   QGroupBox *lineEditGroup_tmpPath = new QGroupBox(tr("Temporary Path"));
-   QVBoxLayout *lineEditLayout_tmpPath = new QVBoxLayout;
-   lineEditGroup_tmpPath->setLayout(lineEditLayout_tmpPath);
-   lineEdit_tmpPath = new QLineEdit(tmpPath.c_str());
-   lineEditLayout_tmpPath->addWidget(lineEdit_tmpPath);
-   browseButton_tmpPath = new QPushButton(tr("Browse"));
-   lineEditLayout_tmpPath->addWidget(browseButton_tmpPath);
-   lineEditLayout_tmpPath->setAlignment(browseButton_tmpPath, Qt::AlignLeft);
+   QGroupBox *lineEditGroup_tmpPath = createEdit("Temporary Path", tmpPath,
+                                                 &lineEdit_tmpPath, &browseButton_tmpPath);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
@@ -395,6 +377,20 @@ QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
    slider->setTickPosition(QSlider::TicksBelow);
    slider->setValue(value * 16);
    return(slider);
+}
+
+QGroupBox *MainWindow::createEdit(ministring name, ministring value,
+                                  QLineEdit **lineEdit, QPushButton **browseButton)
+{
+   QGroupBox *lineEditGroup = new QGroupBox(tr(name.c_str()));
+   QVBoxLayout *lineEditLayout = new QVBoxLayout;
+   lineEditGroup->setLayout(lineEditLayout);
+   *lineEdit = new QLineEdit(value.c_str());
+   lineEditLayout->addWidget(*lineEdit);
+   *browseButton = new QPushButton(tr("Browse"));
+   lineEditLayout->addWidget(*browseButton);
+   lineEditLayout->setAlignment(*browseButton, Qt::AlignLeft);
+   return(lineEditGroup);
 }
 
 void MainWindow::about()
@@ -645,7 +641,7 @@ void MainWindow::checkSliders(int on)
    sliderBox->setVisible(on);
 }
 
-void MainWindow::keyPressEvent(QKeyEvent* event)
+void MainWindow::keyPressEvent(QKeyEvent *event)
 {
    if (event->key() == Qt::Key_F)
       fogCheck->setChecked(!fogCheck->isChecked());
@@ -679,7 +675,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
       QWidget::keyPressEvent(event);
 }
 
-void MainWindow::keyReleaseEvent(QKeyEvent* event)
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
    QWidget::keyReleaseEvent(event);
 }

@@ -716,7 +716,7 @@ ministrings ViewerWindow::browse(ministring title,
 ministring ViewerWindow::browseDir(ministring title,
                                    ministring path)
 {
-   QFileDialog* fd = new QFileDialog(this, title.c_str());
+   QFileDialog *fd = new QFileDialog(this, title.c_str());
    fd->setFileMode(QFileDialog::DirectoryOnly);
    fd->setViewMode(QFileDialog::List);
    if (path!="") fd->setDirectory(path.c_str());
