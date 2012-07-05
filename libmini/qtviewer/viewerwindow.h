@@ -42,6 +42,8 @@ public:
    void setExport(ministring path);
    void setTmp(ministring path);
 
+   void setWorkerSettings(int level=0, int levels=1, int step=2);
+
    void loadURL(ministring url);
    void loadURLs(ministrings urls);
 
@@ -82,14 +84,14 @@ public:
                   ministring value="");
 
    void shade(ministring key);
-   void resample(ministrings keys);
-   void save(ministrings keys,ministring filename="");
+   void resample(ministrings keys,int level=0,int levels=1,int step=2);
+   void save(ministrings keys,ministring filename="",int level=0);
 
    void notify(ministring text);
    ministrings browse(ministring title,ministring path="",BOOLINT newfile=FALSE);
    ministring browseDir(ministring title,ministring path="");
 
-   ministrings make_grid_list(ministrings keys);
+   ministrings make_grid_list(ministrings keys,int level=0);
 
 signals:
    void changed(ministring key);
@@ -127,6 +129,10 @@ private:
    ministring repository_path;
    ministring export_path;
    ministring tmp_path;
+
+   int grid_level;
+   int grid_levels;
+   int grid_step;
 
    Objects objects;
 

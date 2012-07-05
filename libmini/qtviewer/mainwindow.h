@@ -167,6 +167,10 @@ protected:
    ministring exportPath;
    ministring tmpPath;
 
+   int grid_level;
+   int grid_levels;
+   int grid_step;
+
    void initSettings();
    void saveSettings();
 

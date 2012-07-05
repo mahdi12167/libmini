@@ -32,6 +32,11 @@ ViewerWindow::ViewerWindow()
    // init worker
    worker = new WorkerThread;
 
+   // worker settings
+   grid_level = 0;
+   grid_levels = 1;
+   grid_step = 2;
+
    // accept drag and drop
    setAcceptDrops(true);
 }
@@ -238,6 +243,13 @@ void ViewerWindow::setExport(ministring path)
 void ViewerWindow::setTmp(ministring path)
 {
    tmp_path = path;
+}
+
+void ViewerWindow::setWorkerSettings(int level, int levels, int step)
+{
+   grid_level = level;
+   grid_levels = levels;
+   grid_step = step;
 }
 
 void ViewerWindow::loadURL(ministring url)
@@ -559,7 +571,7 @@ void ViewerWindow::runAction(ministring action,
       if (hasTag(value, "image"))
       {
          ministrings keys = value;
-         resample(keys);
+         resample(keys, grid_level, grid_levels, grid_step);
       }
    }
    else if (action == "resample_selected")
@@ -571,17 +583,17 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
-      resample(sel_keys);
+      resample(sel_keys, grid_level, grid_levels, grid_step);
    }
    else if (action == "resample_all")
    {
       ministrings keys = listObjects("image");
-      resample(keys);
+      resample(keys, grid_level, grid_levels, grid_step);
    }
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");
-      save(keys);
+      save(keys, grid_level);
    }
    else if (action == "delete")
    {
@@ -615,7 +627,7 @@ void ViewerWindow::shade(ministring key)
          }
 }
 
-ministrings ViewerWindow::make_grid_list(ministrings keys)
+ministrings ViewerWindow::make_grid_list(ministrings keys,int level)
 {
    unsigned int i;
 
@@ -627,7 +639,7 @@ ministrings ViewerWindow::make_grid_list(ministrings keys)
    grid_list.append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
    if (repository_path!="") grid_list.append("repo \""+repository_path+"\" # layer input repository");
    if (export_path!="") grid_list.append("path \""+export_path+"\" # tileset output path");
-   grid_list.append("level 0 # resample at original level");
+   grid_list.append(ministring("level ")+level+" # resample level");
    grid_list.append("shade fill reproject compress # default resample settings");
    grid_list.append("");
 
@@ -639,20 +651,21 @@ ministrings ViewerWindow::make_grid_list(ministrings keys)
    return(grid_list);
 }
 
-void ViewerWindow::resample(ministrings keys)
+void ViewerWindow::resample(ministrings keys,
+                            int level,int levels,int step)
 {
-   ResampleJob *job = new ResampleJob(0,3,2);
+   ResampleJob *job = new ResampleJob(level, levels, step);
 
-   job->append(make_grid_list(keys));
+   job->append(make_grid_list(keys,level));
 
    grid_resampler::set_tmp_dir(tmp_path);
 
    worker->run_job(job);
 }
 
-void ViewerWindow::save(ministrings keys,ministring filename)
+void ViewerWindow::save(ministrings keys,ministring filename,int level)
 {
-   ministrings grid_list = make_grid_list(keys);
+   ministrings grid_list = make_grid_list(keys, level);
 
    if (filename=="")
    {

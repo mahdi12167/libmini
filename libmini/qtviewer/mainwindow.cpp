@@ -43,6 +43,10 @@ void MainWindow::initSettings()
    exportPath = home_path;
    tmpPath = grid_resampler::get_tmp_dir();
 
+   grid_level = 0;
+   grid_levels = 1;
+   grid_step = 2;
+
    // override with persistent settings:
 
    QSettings settings("www.open-terrain.org", "qtviewer");
@@ -299,7 +303,6 @@ void MainWindow::createWidgets()
    browseButton_repoPath = new QPushButton(tr("Browse"));
    lineEditLayout_repoPath->addWidget(browseButton_repoPath);
    lineEditLayout_repoPath->setAlignment(browseButton_repoPath, Qt::AlignLeft);
-   viewerWindow->setRepo(repoPath);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
@@ -312,7 +315,6 @@ void MainWindow::createWidgets()
    browseButton_exportPath = new QPushButton(tr("Browse"));
    lineEditLayout_exportPath->addWidget(browseButton_exportPath);
    lineEditLayout_exportPath->setAlignment(browseButton_exportPath, Qt::AlignLeft);
-   viewerWindow->setExport(exportPath);
 
    connect(lineEdit_exportPath,SIGNAL(textChanged(QString)),this,SLOT(exportPathChanged(QString)));
    connect(browseButton_exportPath, SIGNAL(pressed()), this, SLOT(browseExportPath()));
@@ -325,7 +327,6 @@ void MainWindow::createWidgets()
    browseButton_tmpPath = new QPushButton(tr("Browse"));
    lineEditLayout_tmpPath->addWidget(browseButton_tmpPath);
    lineEditLayout_tmpPath->setAlignment(browseButton_tmpPath, Qt::AlignLeft);
-   viewerWindow->setTmp(tmpPath);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
@@ -375,6 +376,13 @@ void MainWindow::createWidgets()
    buttonBox->hide();
 
    mainGroup->setLayout(mainLayout);
+
+   // viewer and worker settings:
+
+   viewerWindow->setRepo(repoPath);
+   viewerWindow->setExport(exportPath);
+   viewerWindow->setTmp(tmpPath);
+   viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
