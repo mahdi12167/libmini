@@ -3,13 +3,19 @@
 #ifndef MINIDIR_H
 #define MINIDIR_H
 
+namespace minidir {
+
+// c-lib wrappers
 #ifdef _WIN32
 #include <windows.h>
-inline void remove(const char *file) {DeleteFile(file);}
-inline void rmdir(const char *dir) {RemoveDirectory(dir);}
+inline void removefile(const char *file) {DeleteFile(file);}
+inline void removedir(const char *dir) {RemoveDirectory(dir);}
+#else
+#include <stdio.h>
+#include <unistd.h>
+inline void removefile(const char *file) {remove(file);}
+inline void removedir(const char *dir) {rmdir(dir);}
 #endif
-
-namespace minidir {
 
 // specify file search path and pattern (with '*' as single wildcard)
 void filesearch(const char *spec);
