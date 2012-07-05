@@ -74,6 +74,8 @@ private slots:
    void browseTmpPath();
 
    void gridLevelChanged(QString);
+   void gridLevelsChanged(QString);
+   void gridStepChanged(QString);
 
    void checkVertical(int);
    void checkSliders(int);
@@ -163,6 +165,8 @@ private:
    QPushButton *browseButton_tmpPath;
 
    QLineEdit *lineEdit_gridLevel;
+   QLineEdit *lineEdit_gridLevels;
+   QLineEdit *lineEdit_gridStep;
 
    QCheckBox *verticalButton;
    QCheckBox *sliderButton;

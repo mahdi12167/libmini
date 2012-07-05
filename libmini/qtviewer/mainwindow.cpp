@@ -316,6 +316,12 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_gridLevel = createEdit("Grid Level", grid_level, &lineEdit_gridLevel);
    connect(lineEdit_gridLevel,SIGNAL(textChanged(QString)),this,SLOT(gridLevelChanged(QString)));
 
+   QGroupBox *lineEditGroup_gridLevels = createEdit("Grid Levels", grid_levels, &lineEdit_gridLevels);
+   connect(lineEdit_gridLevels,SIGNAL(textChanged(QString)),this,SLOT(gridLevelsChanged(QString)));
+
+   QGroupBox *lineEditGroup_gridStep = createEdit("Grid Step", grid_step, &lineEdit_gridStep);
+   connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
+
    verticalButton = new QCheckBox(tr("Vertical Layout"));
    verticalButton->setChecked(true);
 
@@ -331,6 +337,8 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_tmpPath);
 
    prefLayout->addWidget(lineEditGroup_gridLevel);
+   prefLayout->addWidget(lineEditGroup_gridLevels);
+   prefLayout->addWidget(lineEditGroup_gridStep);
 
    prefLayout->addWidget(verticalButton);
    prefLayout->addWidget(sliderButton);
@@ -636,6 +644,30 @@ void MainWindow::gridLevelChanged(QString level)
    if (valid)
       {
       this->grid_level = grid_level;
+      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      }
+}
+
+void MainWindow::gridLevelsChanged(QString levels)
+{
+   bool valid;
+   double grid_levels = levels.toDouble(&valid);
+
+   if (valid)
+      {
+      this->grid_levels = grid_levels;
+      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      }
+}
+
+void MainWindow::gridStepChanged(QString step)
+{
+   bool valid;
+   double grid_step = step.toDouble(&valid);
+
+   if (valid)
+      {
+      this->grid_step = grid_step;
       viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
       }
 }
