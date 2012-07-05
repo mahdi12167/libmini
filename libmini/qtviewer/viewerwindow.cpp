@@ -232,7 +232,7 @@ void ViewerWindow::reportModifiers()
 
 void ViewerWindow::reportProgress()
 {
-   std::cout << worker->get_progress() << std::endl; //!!
+   double progress = worker->get_progress();
 }
 
 void ViewerWindow::setRepo(ministring path)
