@@ -247,17 +247,30 @@ void ViewerWindow::reportProgress()
 void ViewerWindow::setRepo(ministring path)
 {
    repository_path = path;
+
+   if (repository_path!="")
+      if (!repository_path.endswith("/"))
+         repository_path.append("/");
+
    objects.set_repo(repository_path);
 }
 
 void ViewerWindow::setExport(ministring path)
 {
    export_path = path;
+
+   if (export_path!="")
+      if (!export_path.endswith("/"))
+         export_path.append("/");
 }
 
 void ViewerWindow::setTmp(ministring path)
 {
    tmp_path = path;
+
+   if (tmp_path!="")
+      if (!tmp_path.endswith("/"))
+         tmp_path.append("/");
 }
 
 void ViewerWindow::setWorkerSettings(int level, int levels, int step)
@@ -575,15 +588,18 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "info")
    {
-      notify(getObject(value)->get_info());
+      Object *obj=getObject(value);
+      if (obj) notify(obj->get_info());
    }
    else if (action == "show")
    {
-      getObject(value)->show();
+      Object *obj=getObject(value);
+      if (obj) obj->show();
    }
    else if (action == "hide")
    {
-      getObject(value)->show(FALSE);
+      Object *obj=getObject(value);
+      if (obj) obj->show(FALSE);
    }
    else if (action == "shade")
    {
@@ -650,36 +666,16 @@ void ViewerWindow::shade(ministring key)
          }
 }
 
-ministrings ViewerWindow::make_grid_list(ministrings keys,int level)
-{
-   unsigned int i;
-
-   ministrings grid_list;
-
-   grid_list.append("#created by qtviewer");
-   grid_list.append("");
-   grid_list.append("#definitions:");
-   grid_list.append("\""+keys[0].suffix("/").head(".")+"_tileset\" # tileset name");
-   if (repository_path!="") grid_list.append("repo \""+repository_path+"\" # layer input repository");
-   if (export_path!="") grid_list.append("path \""+export_path+"\" # tileset output path");
-   grid_list.append(ministring("level ")+level+" # resample level");
-   grid_list.append("shade fill reproject compress # default resample settings");
-   grid_list.append("");
-
-   grid_list.append("#layers:");
-   for (i=0; i<keys.size(); i++)
-      grid_list.append("\""+getObject(keys[i])->filename+"\"");
-   grid_list.append("");
-
-   return(grid_list);
-}
-
 void ViewerWindow::resample(ministrings keys,
                             int level,int levels,int step)
 {
-   ResampleJob *job = new ResampleJob(level, levels, step);
+   unsigned int i;
 
-   job->append(make_grid_list(keys,level));
+   ResampleJob *job = new ResampleJob(repository_path, export_path,
+                                      level, levels, step);
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->filename);
 
    grid_resampler::set_tmp_dir(tmp_path);
 
@@ -688,7 +684,16 @@ void ViewerWindow::resample(ministrings keys,
 
 void ViewerWindow::save(ministrings keys,ministring filename,int level)
 {
-   ministrings grid_list = make_grid_list(keys, level);
+   unsigned int i;
+
+   ministrings filenames;
+
+   for (i=0; i<keys.size(); i++)
+      filenames.append(getObject(keys[i])->filename);
+
+   ministrings grid_list = ResampleJob::make_grid_list(filenames,
+                                                       repository_path, export_path,
+                                                       level);
 
    if (filename=="")
    {
@@ -763,9 +768,9 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
       {
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
-         //!!runAction("hide", args[i]); //!! crashes
-         std::cout << "hide " << args[i] << std::endl; //!!
+         runAction("hide", args[i]);
 
-      //!! autoload tileset
+      // autoload resampled tileset
+      runAction("open", export_path+args[0].suffix("/").head(".")+"_tileset");
       }
 }
