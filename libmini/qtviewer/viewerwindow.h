@@ -96,6 +96,9 @@ public:
 signals:
    void changed(ministring key);
 
+private slots:
+   void finishedJob(const ministrings &job);
+
 protected:
    void initializeGL();
    void resizeGL(int width, int height);

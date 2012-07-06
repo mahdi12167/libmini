@@ -27,9 +27,16 @@ class WorkerThread: public QThread, public grid_worker
 
    virtual void run();
 
+   virtual void job_success(Job *job);
+   virtual void job_failure(Job *job);
+
    private:
 
    QMutex mutex;
+
+   signals:
+
+   void finishedJob(const ministrings &job);
 };
 
 #endif

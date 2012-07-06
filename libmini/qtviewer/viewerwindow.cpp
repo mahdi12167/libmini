@@ -24,6 +24,8 @@ ViewerWindow::ViewerWindow()
 
    setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::StencilBuffer));
 
+   setCursor(Qt::CrossCursor);
+
    vertical = TRUE;
 
    // init viewer
@@ -31,6 +33,12 @@ ViewerWindow::ViewerWindow()
 
    // init worker
    worker = new WorkerThread;
+
+   // setup queued worker connection
+   qRegisterMetaType<ministrings>("ministrings");
+   connect(worker, SIGNAL(finishedJob(ministrings)),
+           this, SLOT(finishedJob(ministrings)),
+           Qt::QueuedConnection);
 
    // worker settings
    grid_level = 0;
@@ -746,4 +754,9 @@ ministring ViewerWindow::browseDir(ministring title,
    }
 
    return(dir);
+}
+
+void ViewerWindow::finishedJob(const ministrings &job)
+{
+   std::cout << job.to_string("\n") << std::endl; //!! hide layers and auto-load tileset
 }

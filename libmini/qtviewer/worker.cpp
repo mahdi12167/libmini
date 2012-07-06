@@ -36,3 +36,11 @@ void WorkerThread::run()
 {
    grid_worker::run();
 }
+
+void WorkerThread::job_success(Job *job)
+{
+   emit finishedJob(*job);
+}
+
+void WorkerThread::job_failure(Job *job)
+{}
