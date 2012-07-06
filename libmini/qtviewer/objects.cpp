@@ -75,6 +75,9 @@ ministring Object::get_info()
           "file = "+filename);
    }
 
+void Object::show(BOOLINT yes) {}
+BOOLINT Object::is_shown() {return(TRUE);}
+
 // Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
@@ -83,6 +86,8 @@ Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
    {
    tileset_viewer=viewer;
    tileset_layer=NULL;
+
+   shown=TRUE;
    }
 
 Object_tileset::~Object_tileset()
@@ -134,6 +139,22 @@ void Object_tileset::exitGFX()
          }
    }
 
+void Object_tileset::show(BOOLINT yes)
+   {
+   shown=yes;
+
+   if (tileset_viewer!=NULL)
+      if (tileset_layer!=NULL)
+         {
+         miniterrain *terrain=tileset_viewer->getearth()->getterrain();
+         terrain->display(terrain->getnum(tileset_layer),yes);
+         tileset_viewer->getCamera()->startIdling();
+         }
+   }
+
+BOOLINT Object_tileset::is_shown()
+   {return(shown);}
+
 void Object_tileset::focus()
    {
    if (tileset_viewer!=NULL)
@@ -154,6 +175,8 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
 
    image_viewer=viewer;
    image_node=NULL;
+
+   shown=TRUE;
    }
 
 Object_image::~Object_image()
@@ -218,6 +241,21 @@ void Object_image::exitGFX()
          image_viewer->getCamera()->startIdling();
          }
    }
+
+void Object_image::show(BOOLINT yes)
+   {
+   shown=yes;
+
+   if (image_viewer!=NULL)
+      if (image_node!=NULL)
+         {
+         //!! image_node->show(yes);
+         image_viewer->getCamera()->startIdling();
+         }
+   }
+
+BOOLINT Object_image::is_shown()
+   {return(shown);}
 
 void Object_image::focus()
    {

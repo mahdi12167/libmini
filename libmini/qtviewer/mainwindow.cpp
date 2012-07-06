@@ -775,6 +775,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addSeparator();
     QAction *infoAction = new QAction(tr("info"), this);
     myMenu.addAction(infoAction);
+    QAction *showAction = new QAction(tr("show"), this);
+    myMenu.addAction(showAction);
+    QAction *hideAction = new QAction(tr("hide"), this);
+    myMenu.addAction(hideAction);
     QAction *shadeAction = new QAction(tr("shade"), this);
     myMenu.addAction(shadeAction);
     QAction *resampleAction = new QAction(tr("resample"), this);
@@ -806,6 +810,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("deselect_all"));
        else if (selectedAction == infoAction)
           emit(activate("info", row));
+       else if (selectedAction == showAction)
+          emit(activate("show", row));
+       else if (selectedAction == hideAction)
+          emit(activate("hide", row));
        else if (selectedAction == shadeAction)
           emit(activate("shade", row));
        else if (selectedAction == resampleAction)

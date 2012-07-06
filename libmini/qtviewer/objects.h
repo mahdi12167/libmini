@@ -38,6 +38,9 @@ class Object
    virtual BOOLINT initGFX() = 0;
    virtual void exitGFX() = 0;
 
+   virtual void show(BOOLINT yes=TRUE);
+   virtual BOOLINT is_shown();
+
    virtual void focus() {}
 
    protected:
@@ -61,12 +64,17 @@ class Object_tileset: public Object
    virtual BOOLINT initGFX();
    virtual void exitGFX();
 
+   virtual void show(BOOLINT yes=TRUE);
+   virtual BOOLINT is_shown();
+
    virtual void focus();
 
    protected:
 
    Viewer *tileset_viewer;
    minilayer *tileset_layer;
+
+   BOOLINT shown;
    };
 
 //! image object
@@ -83,6 +91,9 @@ class Object_image: public Object
 
    virtual BOOLINT initGFX();
    virtual void exitGFX();
+
+   virtual void show(BOOLINT yes=TRUE);
+   virtual BOOLINT is_shown();
 
    virtual void focus();
 
@@ -107,6 +118,8 @@ class Object_image: public Object
    mininode *image_node;
 
    static mininode *image_groupnode;
+
+   BOOLINT shown;
    };
 
 //! object container

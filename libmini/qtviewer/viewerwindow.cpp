@@ -568,6 +568,14 @@ void ViewerWindow::runAction(ministring action,
    {
       notify(getObject(value)->get_info());
    }
+   else if (action == "show")
+   {
+      getObject(value)->show();
+   }
+   else if (action == "hide")
+   {
+      getObject(value)->show(FALSE);
+   }
    else if (action == "shade")
    {
       shade(value);
