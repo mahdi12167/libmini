@@ -97,7 +97,7 @@ signals:
    void changed(ministring key);
 
 private slots:
-   void finishedJob(const ministrings &job);
+   void finishedJob(const ministring &job,const ministrings &args);
 
 protected:
    void initializeGL();

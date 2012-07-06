@@ -36,7 +36,7 @@ class WorkerThread: public QThread, public grid_worker
 
    signals:
 
-   void finishedJob(const ministrings &job);
+   void finishedJob(const ministring &job, const ministrings &args);
 };
 
 #endif

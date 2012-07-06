@@ -35,9 +35,10 @@ ViewerWindow::ViewerWindow()
    worker = new WorkerThread;
 
    // setup queued worker connection
+   qRegisterMetaType<ministring>("ministring");
    qRegisterMetaType<ministrings>("ministrings");
-   connect(worker, SIGNAL(finishedJob(ministrings)),
-           this, SLOT(finishedJob(ministrings)),
+   connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
+           this, SLOT(finishedJob(ministring, ministrings)),
            Qt::QueuedConnection);
 
    // worker settings
@@ -756,7 +757,15 @@ ministring ViewerWindow::browseDir(ministring title,
    return(dir);
 }
 
-void ViewerWindow::finishedJob(const ministrings &job)
+void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 {
-   std::cout << job.to_string("\n") << std::endl; //!! hide layers and auto-load tileset
+   if (job=="resampler")
+      {
+      // make resampled layers invisible
+      for (unsigned int i=0; i<args.size(); i++)
+         //!!runAction("hide", args[i]); //!! crashes
+         std::cout << "hide " << args[i] << std::endl; //!!
+
+      //!! autoload tileset
+      }
 }
