@@ -1282,10 +1282,17 @@ class mininode_geometry: public mininode_geometry_base
                      int wocol=1,int wonrm=0,int wotex=0)
       : mininode_geometry_base(colcomps,nrmcomps,texcomps,
                                wocol,wonrm,wotex)
-      {}
+      {shown=TRUE;}
 
    //! destructor
    virtual ~mininode_geometry() {}
+
+   //! show geometry or not
+   void show(BOOLINT yes=TRUE)
+      {shown=yes;}
+
+   BOOLINT is_shown() const
+      {return(shown);}
 
    static void enable_deferred(BOOLINT on)
       {deferred=on;}
@@ -1307,6 +1314,8 @@ class mininode_geometry: public mininode_geometry_base
 
    protected:
 
+   BOOLINT shown;
+
    static BOOLINT deferred;
    static BOOLINT deferred_semitransparent;
    static unsigned int pass_first,pass_last;
@@ -1314,6 +1323,8 @@ class mininode_geometry: public mininode_geometry_base
 
    virtual void traverse_pre()
       {
+      if (!shown) return;
+
       BOOLINT dfrd=FALSE;
 
       if (deferred) dfrd=TRUE;
