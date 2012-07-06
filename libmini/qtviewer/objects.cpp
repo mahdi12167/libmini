@@ -223,7 +223,8 @@ BOOLINT Object_image::initGFX()
 
          set_center(extent.get_center(),extent.get_size());
 
-         image_node=image_groupnode->append_child(new node_grid_extent(extent));
+         image_node=new node_grid_extent(extent);
+         image_groupnode->append_child(image_node);
 
          return(TRUE);
          }
@@ -249,7 +250,7 @@ void Object_image::show(BOOLINT yes)
    if (image_viewer!=NULL)
       if (image_node!=NULL)
          {
-         //!! image_node->show(yes);
+         image_node->show(yes);
          image_viewer->getCamera()->startIdling();
          }
    }

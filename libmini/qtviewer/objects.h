@@ -115,7 +115,7 @@ class Object_image: public Object
    double size_ds,size_dt;
 
    Viewer *image_viewer;
-   mininode *image_node;
+   mininode_geometry *image_node;
 
    static mininode *image_groupnode;
 
