@@ -700,8 +700,8 @@ void ViewerWindow::shade(ministring key)
    if (obj!=NULL)
       if (obj->is_elevation())
       {
-         ShadeJob *job = new ShadeJob(obj->get_relative_path());
-         job->append(key);
+         ShadeJob *job = new ShadeJob;
+         job->append(obj->get_full_name());
 
          worker->run_job(job);
       }
@@ -810,7 +810,13 @@ void ViewerWindow::reportProgress(double percentage)
 
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 {
-   if (job=="resampler")
+   if (job=="shader")
+   {
+      // autoload shaded layers
+      for (unsigned int i=0; i<args.size(); i++)
+         runAction("open", args[i].head(".")+"_shaded.tif");
+   }
+   else if (job=="resampler")
    {
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
