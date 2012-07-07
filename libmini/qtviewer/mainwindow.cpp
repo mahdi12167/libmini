@@ -557,7 +557,14 @@ void MainWindow::click(int row, int col)
    QTableWidgetItem *item = viewerTable->item(row, col);
    QString text = item->text();
 
-   viewerTable->setCurrentCell(row, 1);
+   Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers();
+
+   if (keyMod & Qt::ShiftModifier)
+      runAction("select", row);
+   else if (keyMod & Qt::AltModifier)
+      runAction("toggle", row);
+   else
+      viewerTable->setCurrentCell(row, 1);
 }
 
 void MainWindow::doubleclick(int row, int col)

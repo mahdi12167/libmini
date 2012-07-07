@@ -627,6 +627,21 @@ void ViewerWindow::runAction(ministring action,
 
       addTag(value, "hidden");
    }
+   else if (action == "toggle")
+   {
+      Object *obj=getObject(value);
+      if (obj)
+         if (obj->is_shown())
+         {
+            obj->show(FALSE);
+            addTag(value, "hidden");
+         }
+         else
+         {
+            obj->show();
+            removeTag(value, "hidden");
+         }
+   }
    else if (action == "shade")
    {
       shade(value);
