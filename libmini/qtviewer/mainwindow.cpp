@@ -544,7 +544,10 @@ void MainWindow::runAction(ministring action, int row)
 void MainWindow::reportProgress(double percentage)
 {
    if (percentage<100)
-      workerActivity->setText(QString("progress: ")+(int)percentage+"%");
+      {
+      ministring progress = ministring("progress: ")+(int)percentage+"%";
+      workerActivity->setText(progress.c_str());
+      }
    else
       workerActivity->setText("");
 }
