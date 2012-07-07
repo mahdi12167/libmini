@@ -244,7 +244,8 @@ void ViewerWindow::reportModifiers()
 
 void ViewerWindow::reportProgress()
 {
-   emit progress(worker->get_progress()); // synchronous
+   if (worker->running())
+       emit progress(worker->get_progress()); // synchronous
 }
 
 void ViewerWindow::setRepo(ministring path)
