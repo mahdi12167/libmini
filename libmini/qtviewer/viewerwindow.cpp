@@ -819,7 +819,11 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          else
             runAction("hide", repository_path+args[i]);
 
+      // autoselect grid name
+      ministring name=ResampleJob::make_grid_name(args,repository_path);
+
       // autoload resampled tileset
-      runAction("open", export_path+args[0].suffix("/").head(".")+"_tileset");
+      if (name!="")
+         runAction("open", export_path+name);
    }
 }
