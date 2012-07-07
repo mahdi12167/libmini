@@ -595,11 +595,15 @@ void ViewerWindow::runAction(ministring action,
    {
       Object *obj=getObject(value);
       if (obj) obj->show();
+
+      removeTag(value, "hidden");
    }
    else if (action == "hide")
    {
       Object *obj=getObject(value);
       if (obj) obj->show(FALSE);
+
+      addTag(value, "hidden");
    }
    else if (action == "shade")
    {

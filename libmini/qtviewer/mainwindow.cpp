@@ -500,6 +500,17 @@ void MainWindow::updateTable(ministring key)
          viewerTable->item(row, 0)->setBackground(QBrush(QColor("blue")));
       else
          viewerTable->item(row, 0)->setBackground(QBrush(QColor("white")));
+
+      if (viewerWindow->hasTag(m_Keys[row], "hidden"))
+      {
+         viewerTable->item(row, 0)->setForeground(QBrush(QColor("grey")));
+         viewerTable->item(row, 1)->setForeground(QBrush(QColor("grey")));
+      }
+      else
+      {
+         viewerTable->item(row, 0)->setForeground(QBrush(QColor("black")));
+         viewerTable->item(row, 1)->setForeground(QBrush(QColor("black")));
+      }
    }
    // remove object
    else if (present && obj==NULL)
