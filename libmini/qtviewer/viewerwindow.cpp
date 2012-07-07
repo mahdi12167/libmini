@@ -37,6 +37,9 @@ ViewerWindow::ViewerWindow()
    // setup queued worker connection
    qRegisterMetaType<ministring>("ministring");
    qRegisterMetaType<ministrings>("ministrings");
+   connect(worker, SIGNAL(reportProgress(double)),
+           this, SLOT(reportProgress(double)),
+           Qt::QueuedConnection);
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
            Qt::QueuedConnection);
@@ -241,16 +244,22 @@ void ViewerWindow::reportModifiers()
 
 void ViewerWindow::reportProgress()
 {
-   double progress = worker->get_progress();
+   emit progress(worker->get_progress()); // synchronous
 }
 
 void ViewerWindow::setRepo(ministring path)
 {
    repository_path = path;
 
-   if (repository_path!="")
+   if (repository_path.endswith("\\"))
+      if (repository_path.size()>1)
+         repository_path.shrinksize();
+      else
+         repository_path="/";
+
+   if (repository_path.size()>0)
       if (!repository_path.endswith("/"))
-         repository_path.append("/");
+         repository_path+="/";
 
    objects.set_repo(repository_path);
 }
@@ -259,18 +268,30 @@ void ViewerWindow::setExport(ministring path)
 {
    export_path = path;
 
-   if (export_path!="")
+   if (export_path.endswith("\\"))
+      if (export_path.size()>1)
+         export_path.shrinksize();
+      else
+         export_path="/";
+
+   if (export_path.size()>0)
       if (!export_path.endswith("/"))
-         export_path.append("/");
+         export_path+="/";
 }
 
 void ViewerWindow::setTmp(ministring path)
 {
    tmp_path = path;
 
-   if (tmp_path!="")
+   if (tmp_path.endswith("\\"))
+      if (tmp_path.size()>1)
+         tmp_path.shrinksize();
+      else
+         tmp_path="/";
+
+   if (tmp_path.size()>0)
       if (!tmp_path.endswith("/"))
-         tmp_path.append("/");
+         tmp_path+="/";
 }
 
 void ViewerWindow::setWorkerSettings(int level, int levels, int step)
@@ -662,12 +683,12 @@ void ViewerWindow::shade(ministring key)
 
    if (obj!=NULL)
       if (obj->is_elevation())
-         {
-         ShadeJob *job = new ShadeJob(obj->repository);
+      {
+         ShadeJob *job = new ShadeJob(obj->get_relative_path());
          job->append(key);
 
          worker->run_job(job);
-         }
+      }
 }
 
 void ViewerWindow::resample(ministrings keys,
@@ -679,7 +700,7 @@ void ViewerWindow::resample(ministrings keys,
                                       level, levels, step);
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->filename);
+      job->append(getObject(keys[i])->get_relative_name());
 
    grid_resampler::set_tmp_dir(tmp_path);
 
@@ -693,7 +714,7 @@ void ViewerWindow::save(ministrings keys,ministring filename,int level)
    ministrings filenames;
 
    for (i=0; i<keys.size(); i++)
-      filenames.append(getObject(keys[i])->filename);
+      filenames.append(getObject(keys[i])->get_relative_name());
 
    ministrings grid_list = ResampleJob::make_grid_list(filenames,
                                                        repository_path, export_path,
@@ -766,15 +787,23 @@ ministring ViewerWindow::browseDir(ministring title,
    return(dir);
 }
 
+void ViewerWindow::reportProgress(double percentage)
+{
+   emit progress(percentage); // asynchronous
+}
+
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 {
    if (job=="resampler")
-      {
+   {
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
-         runAction("hide", args[i]);
+         if (getObject(args[i]))
+            runAction("hide", args[i]);
+         else
+            runAction("hide", repository_path+args[i]);
 
       // autoload resampled tileset
       runAction("open", export_path+args[0].suffix("/").head(".")+"_tileset");
-      }
+   }
 }

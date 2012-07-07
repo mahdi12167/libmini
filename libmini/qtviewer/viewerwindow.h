@@ -95,8 +95,10 @@ public:
 
 signals:
    void changed(ministring key);
+   void progress(double percentage);
 
 private slots:
+   void reportProgress(double percentage);
    void finishedJob(const ministring &job,const ministrings &args);
 
 protected:

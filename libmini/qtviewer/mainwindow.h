@@ -44,6 +44,7 @@ public:
 public slots:
    void updateTable(ministring key);
    void runAction(ministring action, int row = -1);
+   void reportProgress(double percentage);
 
 private slots:
    void about();

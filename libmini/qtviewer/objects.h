@@ -19,12 +19,19 @@ class Object
    Object(const ministring &name="",const ministring &repo="");
    virtual ~Object();
 
-   ministring repository; // data repository
-   ministring filename; // data file in repository
+   ministring get_full_name() const;
+   void set_full_name(ministring name);
 
-   ministring get_name();
+   ministring get_relative_name() const;
+   ministring get_relative_path() const;
+
+   void set_relative_name(ministring name);
+   void set_relative_path(ministring repo);
 
    protected:
+
+   ministring repository; // data repository
+   ministring filename; // data file in repository
 
    virtual void set_center(minicoord c,double r=0.0);
 
@@ -39,7 +46,7 @@ class Object
    virtual void exitGFX() = 0;
 
    virtual void show(BOOLINT yes=TRUE);
-   virtual BOOLINT is_shown();
+   virtual BOOLINT is_shown() const;
 
    virtual void focus() {}
 
@@ -65,7 +72,7 @@ class Object_tileset: public Object
    virtual void exitGFX();
 
    virtual void show(BOOLINT yes=TRUE);
-   virtual BOOLINT is_shown();
+   virtual BOOLINT is_shown() const;
 
    virtual void focus();
 
@@ -93,17 +100,17 @@ class Object_image: public Object
    virtual void exitGFX();
 
    virtual void show(BOOLINT yes=TRUE);
-   virtual BOOLINT is_shown();
+   virtual BOOLINT is_shown() const;
 
    virtual void focus();
 
-   BOOLINT is_imagery()
+   BOOLINT is_imagery() const
       {return(is_imagery_resp_elevation);}
 
-   BOOLINT is_elevation()
+   BOOLINT is_elevation() const
       {return(!is_imagery_resp_elevation);}
 
-   grid_extent get_extent()
+   grid_extent get_extent() const
       {return(extent);}
 
    protected:
@@ -135,7 +142,7 @@ class Objects: public minikeyval<Object *>
 
    BOOLINT add(const ministring &key,Object *obj,const ministring &tag);
    BOOLINT add(const ministring &key,Object *obj,const ministrings &tags);
-   unsigned int get_num();
+   unsigned int get_num() const;
    Object *get(unsigned int i);
    Object *get(const ministring &key);
    ministrings *get_tags(const ministring &key);

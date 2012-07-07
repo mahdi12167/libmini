@@ -37,6 +37,13 @@ void WorkerThread::run()
    grid_worker::run();
 }
 
+void WorkerThread::set_progress(double percentage)
+{
+   grid_worker::set_progress(percentage);
+
+   emit reportProgress(percentage);
+}
+
 void WorkerThread::job_success(Job *job)
 {
    emit finishedJob(job->get_id(), *job);

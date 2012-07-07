@@ -27,6 +27,8 @@ class WorkerThread: public QThread, public grid_worker
 
    virtual void run();
 
+   virtual void set_progress(double percentage);
+
    virtual void job_success(Job *job);
    virtual void job_failure(Job *job);
 
@@ -36,6 +38,7 @@ class WorkerThread: public QThread, public grid_worker
 
    signals:
 
+   void reportProgress(double percentage);
    void finishedJob(const ministring &job, const ministrings &args);
 };
 

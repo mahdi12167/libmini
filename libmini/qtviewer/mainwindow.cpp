@@ -378,6 +378,11 @@ void MainWindow::createWidgets()
    viewerWindow->setExport(exportPath);
    viewerWindow->setTmp(tmpPath);
    viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+
+   // progress:
+
+   connect(viewerWindow, SIGNAL(progress(double)),
+           this, SLOT(reportProgress(double)));
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -441,7 +446,7 @@ void MainWindow::clear(bool all)
 void MainWindow::getNameInfo(Object *obj,
                              QString &name, QString &info)
 {
-   ministring url=obj->get_name();
+   ministring url=obj->get_full_name();
    name=url.c_str();
 
    if (name.endsWith("/")) name.truncate(name.size()-1);
@@ -528,6 +533,11 @@ void MainWindow::runAction(ministring action, int row)
       key = m_Keys[row];
 
    viewerWindow->runAction(action, key);
+}
+
+void MainWindow::reportProgress(double percentage)
+{
+   std::cout << percentage << std::endl; //!!
 }
 
 void MainWindow::click(int row, int col)

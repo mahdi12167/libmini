@@ -10,15 +10,37 @@
 
 Object::Object(const ministring &name,const ministring &repo)
    {
+   set_relative_path(repo);
+   set_relative_name(name);
+
+   coord=minicoord();
+   radius=0.0;
+   }
+
+Object::~Object()
+   {}
+
+ministring Object::get_full_name() const
+   {return(repository+filename);}
+
+void Object::set_full_name(ministring name)
+   {
+   repository="";
    filename=name;
-   repository=repo;
+   }
+
+ministring Object::get_relative_name() const
+   {return(filename);}
+
+ministring Object::get_relative_path() const
+   {return(repository);}
+
+void Object::set_relative_name(ministring name)
+   {
+   filename=name;
 
    if (filename.startswith("file://"))
       filename=filename.suffix("file://");
-
-   if (repository.size()>0)
-      if (!repository.endswith("/"))
-         repository+="/";
 
    // check for relative path to truncate path
    if (repository.size()>0)
@@ -33,16 +55,22 @@ Object::Object(const ministring &name,const ministring &repo)
        filename.startswith("ftp://") ||
        filename.startswith("ftps://"))
       repository="";
-
-   coord=minicoord();
-   radius=0.0;
    }
 
-Object::~Object()
-   {}
+void Object::set_relative_path(ministring path)
+   {
+   repository=path;
 
-ministring Object::get_name()
-   {return(repository+filename);}
+   if (repository.endswith("\\"))
+      if (repository.size()>1)
+         repository.shrinksize();
+      else
+         repository="/";
+
+   if (repository.size()>0)
+      if (!repository.endswith("/"))
+         repository+="/";
+   }
 
 void Object::set_center(minicoord c,double r)
    {
@@ -76,7 +104,7 @@ ministring Object::get_info()
    }
 
 void Object::show(BOOLINT yes) {}
-BOOLINT Object::is_shown() {return(TRUE);}
+BOOLINT Object::is_shown() const {return(TRUE);}
 
 // Object_tileset:
 
@@ -112,7 +140,7 @@ BOOLINT Object_tileset::initGFX()
    if (tileset_viewer!=NULL)
       if (tileset_layer==NULL)
          {
-         tileset_layer=tileset_viewer->loadMap(repository+filename);
+         tileset_layer=tileset_viewer->loadMap(get_full_name());
 
          if (tileset_layer!=NULL)
             {
@@ -152,7 +180,7 @@ void Object_tileset::show(BOOLINT yes)
          }
    }
 
-BOOLINT Object_tileset::is_shown()
+BOOLINT Object_tileset::is_shown() const
    {return(shown);}
 
 void Object_tileset::focus()
@@ -255,7 +283,7 @@ void Object_image::show(BOOLINT yes)
          }
    }
 
-BOOLINT Object_image::is_shown()
+BOOLINT Object_image::is_shown() const
    {return(shown);}
 
 void Object_image::focus()
@@ -317,7 +345,7 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    return(FALSE);
    }
 
-unsigned int Objects::get_num()
+unsigned int Objects::get_num() const
    {return(minikeyval<Object *>::get_pairs());}
 
 Object *Objects::get(unsigned int i)
@@ -369,22 +397,14 @@ void Objects::set_repo(const ministring &repo)
    {
    unsigned int i;
 
-   ministring path;
+   MINILOG("change repository to " + repo);
 
    for (i=0; i<get_num(); i++)
       {
-      path=get(i)->repository+get(i)->filename;
+      ministring path=get(i)->get_full_name();
 
-      if (path.startswith(repo))
-         {
-         get(i)->repository=repo;
-         get(i)->filename=path.suffix(repo);
-         }
-      else
-         {
-         get(i)->repository="";
-         get(i)->filename=path;
-         }
+      get(i)->set_relative_path(repo);
+      get(i)->set_relative_name(path);
       }
    }
 
