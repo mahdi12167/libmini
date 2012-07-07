@@ -21,6 +21,7 @@ class QGroupBox;
 class QBoxLayout;
 class QVBoxLayout;
 class QHBoxLayout;
+class QLabel;
 class QCheckBox;
 class QSlider;
 class QDialogButtonBox;
@@ -123,6 +124,8 @@ private:
    QBoxLayout *sliderLayout;
    QBoxLayout *sliderLayout1;
    QBoxLayout *sliderLayout2;
+
+   QLabel *workerActivity;
 
    QGroupBox *fogGroup;
    QHBoxLayout *fogLayout;

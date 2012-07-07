@@ -161,6 +161,11 @@ void MainWindow::createWidgets()
    connect(viewerTable, SIGNAL(activate(ministring,int)),
            this, SLOT(runAction(ministring,int)));
 
+   // worker activity:
+
+   workerActivity = new QLabel(this);
+   workerActivity->setText("");
+
    // fog check:
 
    fogCheck = new QCheckBox(tr("Fog Density"));
@@ -288,6 +293,7 @@ void MainWindow::createWidgets()
    // viewer group:
 
    viewerLayout->addWidget(viewerTable);
+   viewerLayout->addWidget(workerActivity);
    viewerLayout->addWidget(sliderBox);
 
    viewerGroup->setLayout(viewerLayout);
@@ -537,7 +543,10 @@ void MainWindow::runAction(ministring action, int row)
 
 void MainWindow::reportProgress(double percentage)
 {
-   std::cout << percentage << std::endl; //!!
+   if (percentage<100)
+      workerActivity->setText(QString("progress: ")+(int)percentage+"%");
+   else
+      workerActivity->setText("");
 }
 
 void MainWindow::click(int row, int col)
