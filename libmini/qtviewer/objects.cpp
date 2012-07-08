@@ -29,11 +29,26 @@ void Object::set_full_name(ministring name)
    filename=name;
    }
 
+ministring Object::get_relative_path() const
+   {return(repository);}
+
 ministring Object::get_relative_name() const
    {return(filename);}
 
-ministring Object::get_relative_path() const
-   {return(repository);}
+void Object::set_relative_path(ministring path)
+   {
+   repository=path;
+
+   if (repository.endswith("\\"))
+      if (repository.size()>1)
+         repository.shrinksize();
+      else
+         repository="/";
+
+   if (repository.size()>0)
+      if (!repository.endswith("/"))
+         repository+="/";
+   }
 
 void Object::set_relative_name(ministring name)
    {
@@ -55,21 +70,6 @@ void Object::set_relative_name(ministring name)
        filename.startswith("ftp://") ||
        filename.startswith("ftps://"))
       repository="";
-   }
-
-void Object::set_relative_path(ministring path)
-   {
-   repository=path;
-
-   if (repository.endswith("\\"))
-      if (repository.size()>1)
-         repository.shrinksize();
-      else
-         repository="/";
-
-   if (repository.size()>0)
-      if (!repository.endswith("/"))
-         repository+="/";
    }
 
 void Object::set_center(minicoord c,double r)
@@ -290,6 +290,17 @@ void Object_image::focus()
    {
    if (image_viewer!=NULL)
       image_viewer->getCamera()->focusOnObject(this);
+   }
+
+void Object_image::set_thumb(const databuf &buf)
+   {
+   mininode_texture2D *tex2d_node=new mininode_texture2D;
+
+   image_groupnode->remove_node(image_node);
+   image_groupnode->append_child(tex2d_node);
+   tex2d_node->append_child(image_node);
+
+   image_viewer->getCamera()->startIdling();
    }
 
 // Objects:

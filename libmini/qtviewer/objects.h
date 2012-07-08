@@ -4,6 +4,7 @@
 #define OBJECTS_H
 
 #include <mini/mini_generic.h>
+#include <mini/mini_format.h>
 #include <mini/mini_tileset.h>
 #include <mini/mini_object.h>
 
@@ -16,17 +17,33 @@ class Object
    {
    public:
 
+   //! default constructor
    Object(const ministring &name="",const ministring &repo="");
+
+   //! destructor
    virtual ~Object();
 
+   //! get full name of object
+   //!  fullname=repository+filename
    ministring get_full_name() const;
+
+   //! set full name of object
+   //!  repository=empty filename=name
    void set_full_name(ministring name);
 
-   ministring get_relative_name() const;
+   //! get repository of object
    ministring get_relative_path() const;
 
-   void set_relative_name(ministring name);
+   //! get filename of object relative to repository
+   ministring get_relative_name() const;
+
+   //! set repository of object
    void set_relative_path(ministring repo);
+
+   //! set filename of object relative to repository
+   //!  if filename starts with repository filename is truncated
+   //!  if filename is absolute repository is cleared
+   void set_relative_name(ministring name);
 
    protected:
 
@@ -40,14 +57,23 @@ class Object
    virtual minicoord get_center();
    virtual miniv3d get_normal();
    virtual double get_radius();
+
+   //! textual info
    virtual ministring get_info();
 
+   //! abstract method to be called upon construction of graphic representation
    virtual BOOLINT initGFX() = 0;
+
+   //! abstract method to be called upon destruction of graphic representation
    virtual void exitGFX() = 0;
 
+   //! hide and show object
    virtual void show(BOOLINT yes=TRUE);
+
+   //! tell if object is shown
    virtual BOOLINT is_shown() const;
 
+   //! focus camera on object
    virtual void focus() {}
 
    protected:
@@ -104,14 +130,20 @@ class Object_image: public Object
 
    virtual void focus();
 
+   //! tell if image is imagery (cell centered)
    BOOLINT is_imagery() const
       {return(is_imagery_resp_elevation);}
 
+   //! tell if image is elevation (grid centered)
    BOOLINT is_elevation() const
       {return(!is_imagery_resp_elevation);}
 
+   //! get geographic extents of image
    grid_extent get_extent() const
       {return(extent);}
+
+   //! set thumb via db format
+   void set_thumb(const databuf &buf);
 
    protected:
 
