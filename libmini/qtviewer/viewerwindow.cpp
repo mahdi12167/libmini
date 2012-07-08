@@ -386,6 +386,12 @@ void ViewerWindow::loadImage(ministring url)
          addTag(url, "elevation");
 
       image->focus();
+
+#if 0 //!!
+      ThumbJob *job = new ThumbJob;
+      job->append(image->get_full_name());
+      worker->run_job(job);
+#endif
    }
 }
 
@@ -702,7 +708,6 @@ void ViewerWindow::shade(ministring key)
       {
          ShadeJob *job = new ShadeJob;
          job->append(obj->get_full_name());
-
          worker->run_job(job);
       }
 }
