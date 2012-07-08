@@ -143,7 +143,7 @@ class Object_image: public Object
       {return(extent);}
 
    //! set thumb via db format
-   void set_thumb(const databuf &buf);
+   void set_thumb(const databuf *buf);
 
    protected:
 
