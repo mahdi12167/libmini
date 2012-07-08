@@ -79,10 +79,10 @@ int build3Dtexmap(unsigned char *volume,unsigned int *width,unsigned int *height
 void bind3Dtexmap(int texid);
 void deletetexmap(int texid);
 
-int compressRGBtexmap(unsigned char *image,int width,int height,
+int compressRGBtexmap(const unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes);
 
-int db2texid(databuf *buf,int *width,int *height,int *mipmaps);
+int db2texid(const databuf *buf,int *width,int *height,int *mipmaps);
 
 void enabletexgen();
 void disabletexgen();
@@ -168,11 +168,11 @@ void disablepointsmooth();
 inline void renderpoint(const float x,const float y,const float z);
 inline void renderpoint(const miniv3d &v);
 
-void vertexarray(float *array,int comps=3);
-void colorarray(float *array,int comps=3);
-void normalarray(float *array);
-void texcoordarray(float *array,int comps=2);
-void interleavedNVarray(float *array);
+void vertexarray(const float *array,int comps=3);
+void colorarray(const float *array,int comps=3);
+void normalarray(const float *array);
+void texcoordarray(const float *array,int comps=2);
+void interleavedNVarray(const float *array);
 
 void rendertriangles(int start,int size);
 void renderquads(int start,int size);
@@ -190,10 +190,10 @@ int getmaxteximageunits();
 void getviewport(int *x,int *y,int *width,int *height);
 
 unsigned char *readRGBpixels(int x,int y,int width,int height);
-void writeRGBpixels(unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+void writeRGBpixels(const unsigned char *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
 float *readZpixels(int x,int y,int width,int height);
-void writeZpixels(float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
+void writeZpixels(const float *pixels,int width,int height,int winwidth,int winheight,int x,int y);
 
 int copytexrect(int depthcomp=0,int nofrills=0);
 void bindtexrect(int texid,int nofrills=0);

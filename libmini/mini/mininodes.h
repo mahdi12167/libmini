@@ -21,6 +21,8 @@
 #include "minibrick.h"
 #include "minicam.h"
 
+#include "database.h"
+
 enum
    {
    MININODE=0,
@@ -320,7 +322,7 @@ class mininode_texture2D: public mininode_texture
       : mininode_texture()
       {}
 
-   //! texture loader
+   //! texture loader (raw data)
    void load(unsigned char *image,int width,int height,int components,
              int bits=24,int mipmaps=1,int s3tc=0,int bytes=0,int mipmapped=0)
       {
@@ -331,11 +333,21 @@ class mininode_texture2D: public mininode_texture
 
       this->width=width;
       this->height=height;
+
+      this->mipmaps=mipmaps;
+      }
+
+   //! texture loader (db format)
+   void load(const databuf *buf)
+      {
+      clear();
+      texid=db2texid(buf,&width,&height,&mipmaps);
       }
 
    protected:
 
    int width,height;
+   int mipmaps;
 
    static minidyna<unsigned int> texid_stack;
    static unsigned int tid;
@@ -369,7 +381,7 @@ class mininode_texture2D: public mininode_texture
       if (t!=tid)
          {
          tid=t;
-         bindtexmap(t);
+         bindtexmap(t,0,0,0,mipmaps);
          ministrip::setglobal_tex(TRUE);
          }
 
@@ -390,7 +402,7 @@ class mininode_texture2D: public mininode_texture
       if (t!=tid)
          {
          tid=t;
-         bindtexmap(t);
+         bindtexmap(t,0,0,0,mipmaps);
          ministrip::setglobal_tex(TRUE);
          }
 
@@ -414,7 +426,7 @@ class mininode_texture2D: public mininode_texture
       if (tid!=0)
          {
          tid=0;
-         bindtexmap(0);
+         bindtexmap(0,0,0,0,0);
          ministrip::setglobal_tex(FALSE);
          }
 
