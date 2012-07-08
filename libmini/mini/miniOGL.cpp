@@ -1319,6 +1319,29 @@ int db2texid(const databuf *buf,int *width,int *height,int *mipmaps)
    return(texid);
    }
 
+// convert databuffer to 3D texture id
+int db2texid3D(const databuf *buf,unsigned int *width,unsigned int *height,unsigned int *depth)
+   {
+   int texid;
+
+   if (buf->missing()) ERRORMSG();
+
+   if (buf->xsize<2 || buf->ysize<2 || buf->zsize<2 ||
+       buf->tsteps>1) ERRORMSG();
+
+   texid=0;
+
+   *width=buf->xsize;
+   *height=buf->ysize;
+   *depth=buf->zsize;
+
+   if (buf->type==databuf::DATABUF_TYPE_BYTE) texid=build3Dtexmap((unsigned char *)buf->data,width,height,depth,1);
+   else if (buf->type==databuf::DATABUF_TYPE_RGB) texid=build3Dtexmap((unsigned char *)buf->data,width,height,depth,3);
+   else if (buf->type==databuf::DATABUF_TYPE_RGBA) texid=build3Dtexmap((unsigned char *)buf->data,width,height,depth,4);
+
+   return(texid);
+   }
+
 void enabletexgen()
    {
 #ifndef NOOGL

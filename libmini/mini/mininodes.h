@@ -459,9 +459,16 @@ class mininode_texture3D: public mininode_texture
       this->depth=depth;
       }
 
+   //! texture loader (db format)
+   void load(const databuf *buf)
+      {
+      clear();
+      texid=db2texid3D(buf,&width,&height,&depth);
+      }
+
    protected:
 
-   int width,height,depth;
+   unsigned int width,height,depth;
 
    static minidyna<unsigned int> texid_stack;
    static unsigned int tid;

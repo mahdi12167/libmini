@@ -83,6 +83,7 @@ int compressRGBtexmap(const unsigned char *image,int width,int height,
                       unsigned char **data,int *bytes);
 
 int db2texid(const databuf *buf,int *width,int *height,int *mipmaps);
+int db2texid3D(const databuf *buf,unsigned int *width,unsigned int *height,unsigned int *depth);
 
 void enabletexgen();
 void disabletexgen();
