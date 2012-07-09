@@ -8,6 +8,7 @@
 
 #include <QtCore/QUrl>
 
+#include <mini/mini_format.h>
 #include <grid/grid.h>
 
 #include "renderer.h"
@@ -387,11 +388,9 @@ void ViewerWindow::loadImage(ministring url)
 
       image->focus();
 
-#if 0 //!!
       ThumbJob *job = new ThumbJob;
       job->append(image->get_full_name());
       worker->run_job(job);
-#endif
    }
 }
 
@@ -815,11 +814,27 @@ void ViewerWindow::reportProgress(double percentage)
 
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 {
-   if (job=="shader")
+   if (job=="thumb")
+   {
+      // autoload thumbs
+      for (unsigned int i=0; i<args.size(); i++)
+         {
+         ministring thumb=ThumbJob::make_name(args[i]);
+
+         databuf buf;
+         buf.loaddata(thumb.c_str());
+
+         Object_image *image=dynamic_cast<Object_image *>(getObject(args[i]));
+         //!! if (image) image->set_thumb(&buf);
+
+         buf.release();
+         }
+   }
+   else if (job=="shader")
    {
       // autoload shaded layers
       for (unsigned int i=0; i<args.size(); i++)
-         runAction("open", args[i].head(".")+"_shaded.tif");
+         runAction("open", ShadeJob::make_name(args[i]));
    }
    else if (job=="resampler")
    {
