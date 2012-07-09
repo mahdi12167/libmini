@@ -157,6 +157,7 @@ class Object_image: public Object
    mininode_geometry *image_node;
 
    static mininode *image_groupnode;
+   static mininode *deferred_groupnode;
 
    BOOLINT shown;
    };

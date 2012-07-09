@@ -193,6 +193,7 @@ void Object_tileset::focus()
 // Object_image:
 
 mininode *Object_image::image_groupnode=NULL;
+mininode *Object_image::deferred_groupnode=NULL;
 
 Object_image::Object_image(const ministring &name,const ministring &repo,
                            Viewer *viewer)
@@ -229,8 +230,12 @@ BOOLINT Object_image::initGFX()
       mininode_root *root=image_viewer->getRoot();
 
       if (image_groupnode==NULL)
-         image_groupnode=root->append_child(new mininode_deferred_semitransparent())->
-                         append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
+         image_groupnode=root->append_child(new mininode_group())->
+                         append_child(new mininode_color(miniv3d(1,1,1)));
+
+      if (deferred_groupnode==NULL)
+         deferred_groupnode=root->append_child(new mininode_deferred_semitransparent())->
+                            append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
 
       grid_list list;
       grid_layer *layer;
@@ -252,7 +257,7 @@ BOOLINT Object_image::initGFX()
          set_center(extent.get_center(),extent.get_size());
 
          image_node=new node_grid_extent(extent);
-         image_groupnode->append_child(image_node);
+         deferred_groupnode->append_child(image_node);
 
          return(TRUE);
          }
@@ -264,11 +269,10 @@ BOOLINT Object_image::initGFX()
 void Object_image::exitGFX()
    {
    if (image_viewer!=NULL)
-      if (image_groupnode!=NULL)
-         {
-         image_groupnode->remove_node(image_node);
-         image_viewer->getCamera()->startIdling();
-         }
+      {
+      image_viewer->getRoot()->remove_node(image_node);
+      image_viewer->getCamera()->startIdling();
+      }
    }
 
 void Object_image::show(BOOLINT yes)
@@ -296,7 +300,7 @@ void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
 
-   mininode_ref image=image_groupnode->remove_node(image_node);
+   mininode_ref image=deferred_groupnode->remove_node(image_node);
    image_groupnode->append_child(tex2d_node);
    tex2d_node->append_child(image);
    tex2d_node->load(buf);
