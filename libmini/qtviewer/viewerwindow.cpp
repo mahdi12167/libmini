@@ -305,6 +305,9 @@ void ViewerWindow::setWorkerSettings(int level, int levels, int step)
 
 void ViewerWindow::loadURL(ministring url)
 {
+   if (url.startswith("file://"))
+      url=url.suffix("file://");
+
    if (url.endswith(".jpg"))
       loadImage(url);
    else if (url.endswith(".png"))
