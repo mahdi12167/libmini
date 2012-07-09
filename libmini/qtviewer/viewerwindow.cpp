@@ -700,15 +700,18 @@ void ViewerWindow::runAction(ministring action,
 
 void ViewerWindow::shade(ministring key)
 {
-   Object_image *obj=dynamic_cast<Object_image *>(getObject(key));
-
+   Object *obj=getObject(key);
    if (obj!=NULL)
-      if (obj->is_elevation())
-      {
-         ShadeJob *job = new ShadeJob;
-         job->append(obj->get_full_name());
-         worker->run_job(job);
-      }
+   {
+      Object_image *image=dynamic_cast<Object_image *>(obj);
+      if (obj!=NULL)
+         if (obj->is_elevation())
+         {
+            ShadeJob *job = new ShadeJob;
+            job->append(obj->get_full_name());
+            worker->run_job(job);
+         }
+   }
 }
 
 void ViewerWindow::resample(ministrings keys,
@@ -818,17 +821,21 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
    {
       // autoload thumbs
       for (unsigned int i=0; i<args.size(); i++)
-         {
+      {
          ministring thumb=ThumbJob::make_name(args[i]);
 
          databuf buf;
          buf.loaddata(thumb.c_str());
 
-         Object_image *image=dynamic_cast<Object_image *>(getObject(args[i]));
-         //!! if (image) image->set_thumb(&buf);
+         Object *obj=getObject(args[i]);
+         if (obj!=NULL)
+         {
+            Object_image *image=dynamic_cast<Object_image *>(obj);
+            if (image!=NULL) image->set_thumb(&buf);
+         }
 
          buf.release();
-         }
+      }
    }
    else if (job=="shader")
    {
