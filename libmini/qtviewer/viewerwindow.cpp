@@ -704,11 +704,11 @@ void ViewerWindow::shade(ministring key)
    if (obj!=NULL)
    {
       Object_image *image=dynamic_cast<Object_image *>(obj);
-      if (obj!=NULL)
-         if (obj->is_elevation())
+      if (image!=NULL)
+         if (image->is_elevation())
          {
             ShadeJob *job = new ShadeJob;
-            job->append(obj->get_full_name());
+            job->append(image->get_full_name());
             worker->run_job(job);
          }
    }
