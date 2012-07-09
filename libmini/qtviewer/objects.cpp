@@ -296,9 +296,9 @@ void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
 
-   image_groupnode->remove_node(image_node);
+   mininode_ref image=image_groupnode->remove_node(image_node);
    image_groupnode->append_child(tex2d_node);
-   tex2d_node->append_child(image_node);
+   tex2d_node->append_child(image);
    tex2d_node->load(buf);
 
    image_viewer->getCamera()->startIdling();
