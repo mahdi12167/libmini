@@ -959,7 +959,7 @@ void mininode_geometry_evaluator::construct_vtx(double x,double y,double s)
    nrm.normalize();
 
    setnrm(nrm);
-   settex(x,y);
+   settex(x,1.0-y);
    addvtx(vtx);
    }
 
