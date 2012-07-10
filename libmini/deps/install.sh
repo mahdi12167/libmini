@@ -12,26 +12,33 @@ else
 endif
 
 # libjpeg
+echo BUILDING LIBJPEG
 (cd libjpeg; ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared; make -j 2; make install)
 
 # libpng
+echo BUILDING LIBPNG
 (cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
 
 # zlib
-(cd zlib; ./configure --prefix=$prefix/zlib --enable-static --disable-shared; make -j 2; make install)
+echo BUILDING ZLIB
+(cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
 
 # curl
+echo BUILDING CURL
 (cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl --without-ssl --disable-ldap --disable-ldaps --enable-static --disable-shared; make -j 2; make install)
 
 # squish
+echo BUILDING SQUISH
 (cd squish; cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish; make -j 2; make install)
 
 # freeglut
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
+   echo BUILDING FREEGLUT
    (cd freeglut; ./autogen.sh; ./autogen.sh; ./configure --prefix=$prefix/freeglut --enable-static --disable-shared; make -j 2; make install)
 endif
 
 # other libraries to install:
 
 # gdal
-(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --with-png=internal --with-jpeg=internal --without-curl --without-netcdf --without-sqlite3 --without-pg --without-ld-shared --enable-static --disable-shared; make -j 2; make install)
+echo BUILDING GDAL
+(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --with-png=internal --with-jpeg=internal --without-threads --without-curl --without-netcdf --without-sqlite3 --without-pg --without-ld-shared --enable-static --disable-shared; make -j 2; make install)
