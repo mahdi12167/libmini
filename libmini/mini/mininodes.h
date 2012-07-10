@@ -336,8 +336,8 @@ class mininode_texture2D: public mininode_texture
 
    //! copy constructor
    mininode_texture2D(const mininode_texture2D &t)
-      : mininode_texture(t->clamp)
-      {set(t->texid,t->width,t->height,t->mipmaps);}
+      : mininode_texture(t.texclamp)
+      {set(t.texid,t.width,t.height,t.mipmaps);}
 
    //! texture setter (id)
    void set(int texid,int width,int height,int mipmaps=1)
@@ -483,7 +483,7 @@ class mininode_texture3D: public mininode_texture
    //! copy constructor
    mininode_texture3D(const mininode_texture3D &t)
       : mininode_texture()
-      {set(t->texid,t->width,t->height,t->depth);}
+      {set(t.texid,t.width,t.height,t.depth);}
 
    //! texture setter (id)
    void set(int texid,int width,int height,int depth)
