@@ -249,8 +249,8 @@ BOOLINT Object_image::initGFX()
          is_imagery_resp_elevation=layer->is_imagery();
 
          extent=layer->extent;
-         size_x=layer->grid_size_x;
-         size_y=layer->grid_size_y;
+         size_x=layer->get_size_x();
+         size_y=layer->get_size_y();
          size_ds=layer->get_size_ds();
          size_dt=layer->get_size_dt();
 
