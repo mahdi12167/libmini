@@ -267,23 +267,29 @@ class mininode_texture: public mininode_group
    public:
 
    //! default constructor
-   mininode_texture()
+   mininode_texture(BOOLINT clamp=FALSE)
       : mininode_group(MININODE_TEXTURE)
       {
       is_on=FALSE;
+      is_managed=TRUE;
+
       texid=0;
+      texclamp=clamp;
       }
 
    //! destructor
    virtual ~mininode_texture()
-      {deletetexmap(texid);}
+      {if (is_managed && texid!=0) deletetexmap(texid);}
 
    //! clear texture
    void clear()
       {
       is_on=FALSE;
-      deletetexmap(texid);
+      if (is_managed && texid!=0) deletetexmap(texid);
+      is_managed=TRUE;
+
       texid=0;
+      texclamp=FALSE;
       }
 
    //! get active texture status
@@ -294,11 +300,17 @@ class mininode_texture: public mininode_group
    void set_active(BOOLINT on)
       {is_on=on;}
 
+   //! get texture clamping
+   BOOLINT get_clamp() const
+      {return(texclamp);}
+
    protected:
 
    BOOLINT is_on;
+   BOOLINT is_managed;
 
    unsigned int texid;
+   BOOLINT texclamp;
 
    static unsigned int texture_level;
 
@@ -318,9 +330,28 @@ class mininode_texture2D: public mininode_texture
    public:
 
    //! default constructor
-   mininode_texture2D()
-      : mininode_texture()
+   mininode_texture2D(BOOLINT clamp=FALSE)
+      : mininode_texture(clamp)
       {}
+
+   //! copy constructor
+   mininode_texture2D(const mininode_texture2D &t)
+      : mininode_texture(t->clamp)
+      {set(t->texid,t->width,t->height,t->mipmaps);}
+
+   //! texture setter (id)
+   void set(int texid,int width,int height,int mipmaps=1)
+      {
+      clear();
+      is_managed=FALSE;
+
+      this->texid=texid;
+
+      this->width=width;
+      this->height=height;
+
+      this->mipmaps=mipmaps;
+      }
 
    //! texture loader (raw data)
    void load(unsigned char *image,int width,int height,int components,
@@ -381,7 +412,8 @@ class mininode_texture2D: public mininode_texture
       if (t!=tid)
          {
          tid=t;
-         bindtexmap(t,0,0,0,mipmaps);
+         if (texclamp) bindtexmap(t,1,1,1,mipmaps);
+         else bindtexmap(t,0,0,0,mipmaps);
          ministrip::setglobal_tex(TRUE);
          }
 
@@ -402,7 +434,8 @@ class mininode_texture2D: public mininode_texture
       if (t!=tid)
          {
          tid=t;
-         bindtexmap(t,0,0,0,mipmaps);
+         if (texclamp) bindtexmap(t,1,1,1,mipmaps);
+         else bindtexmap(t,0,0,0,mipmaps);
          ministrip::setglobal_tex(TRUE);
          }
 
@@ -446,6 +479,24 @@ class mininode_texture3D: public mininode_texture
    mininode_texture3D()
       : mininode_texture()
       {}
+
+   //! copy constructor
+   mininode_texture3D(const mininode_texture3D &t)
+      : mininode_texture()
+      {set(t->texid,t->width,t->height,t->depth);}
+
+   //! texture setter (id)
+   void set(int texid,int width,int height,int depth)
+      {
+      clear();
+      is_managed=FALSE;
+
+      this->texid=texid;
+
+      this->width=width;
+      this->height=height;
+      this->depth=depth;
+      }
 
    //! texture loader
    void load(unsigned char *volume,unsigned int width,unsigned int height,unsigned int depth,unsigned int components)
@@ -563,8 +614,8 @@ class mininode_image: public mininode_texture2D
    public:
 
    //! custom constructor
-   mininode_image(ministring filename)
-      : mininode_texture2D()
+   mininode_image(ministring filename,BOOLINT clamp=FALSE)
+      : mininode_texture2D(clamp)
       {
       databuf buf;
       if (miniimg::loadimg(buf,filename.c_str()))
