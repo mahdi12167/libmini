@@ -314,6 +314,8 @@ void ViewerWindow::loadURL(ministring url)
       loadImage(url);
    else if (url.endswith(".tif"))
       loadImage(url);
+   else if (url.endswith(".jpgintif"))
+      loadImage(url);
    else if (url.endswith(".bt"))
       loadImage(url);
    else if (url.endswith(".ini"))
@@ -391,9 +393,12 @@ void ViewerWindow::loadImage(ministring url)
 
       image->focus();
 
-      ThumbJob *job = new ThumbJob;
-      job->append(image->get_full_name());
-      worker->run_job(job);
+      if (!url.endswith(".jpgintif")) // jpeg in tif is not thread safe
+      {
+         ThumbJob *job = new ThumbJob;
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
    }
 }
 
