@@ -152,6 +152,7 @@ class Object_image: public Object
    grid_extent extent;
    int size_x,size_y;
    double size_ds,size_dt;
+   double spacing;
 
    Viewer *image_viewer;
    mininode_geometry *image_node;
