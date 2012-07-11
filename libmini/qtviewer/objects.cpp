@@ -222,11 +222,13 @@ Object_image::~Object_image()
 
 ministring Object_image::get_info()
    {
+   //!! also show: grid type, nodata value (nan), min max range
    return(ministring(is_imagery()?"Imagery":"Elevation")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
           "dim = "+size_x+" x "+size_y+"\n"+
           "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n"+
+          "spacing = "+spacing+"m\n"+
           "crs = "+extent.get_center().getcrs()+"\n"+
           "datum = "+extent.get_center().getdatum()+"\n\n"+
           "extent = "+extent);
@@ -262,6 +264,7 @@ BOOLINT Object_image::initGFX()
          size_y=layer->get_size_y();
          size_ds=layer->get_size_ds();
          size_dt=layer->get_size_dt();
+         spacing=layer->get_spacing();
 
          set_center(extent.get_center(),extent.get_size());
 
