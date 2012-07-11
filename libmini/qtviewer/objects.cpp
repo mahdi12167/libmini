@@ -128,7 +128,7 @@ ministring Object_tileset::get_info()
    miniv3d ext = tileset_layer->getextent();
    minicoord center = tileset_layer->get()->offsetDAT;
 
-   int lts = tileset_viewer->get_earth()->get_terrain()->getLTSnum(tileset_layer);
+   int lts = tileset_viewer->getearth()->getterrain()->getLTSnum(tileset_layer);
 
    info = ministring("Tileset")+
           "\n\nrepo = "+repository+"\n"+
