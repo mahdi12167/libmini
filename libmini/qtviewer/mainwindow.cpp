@@ -535,7 +535,7 @@ void MainWindow::runAction(ministring action, int row)
 {
    ministring key;
 
-   if (row>=0 and row<m_Keys.size())
+   if (row>=0 && (unsigned int)row<m_Keys.size())
       key = m_Keys[row];
 
    viewerWindow->runAction(action, key);
