@@ -257,11 +257,11 @@ void ViewerWindow::setRepo(ministring path)
       if (repository_path.size()>1)
          repository_path.shrinksize();
       else
-         repository_path="/";
+         repository_path = "/";
 
    if (repository_path.size()>0)
       if (!repository_path.endswith("/"))
-         repository_path+="/";
+         repository_path += "/";
 
    objects.set_repo(repository_path);
 }
@@ -274,11 +274,11 @@ void ViewerWindow::setExport(ministring path)
       if (export_path.size()>1)
          export_path.shrinksize();
       else
-         export_path="/";
+         export_path = "/";
 
    if (export_path.size()>0)
       if (!export_path.endswith("/"))
-         export_path+="/";
+         export_path += "/";
 }
 
 void ViewerWindow::setTmp(ministring path)
@@ -289,11 +289,11 @@ void ViewerWindow::setTmp(ministring path)
       if (tmp_path.size()>1)
          tmp_path.shrinksize();
       else
-         tmp_path="/";
+         tmp_path = "/";
 
    if (tmp_path.size()>0)
       if (!tmp_path.endswith("/"))
-         tmp_path+="/";
+         tmp_path += "/";
 }
 
 void ViewerWindow::setWorkerSettings(int level, int levels, int step)
@@ -306,7 +306,10 @@ void ViewerWindow::setWorkerSettings(int level, int levels, int step)
 void ViewerWindow::loadURL(ministring url)
 {
    if (url.startswith("file://"))
-      url=url.suffix("file://");
+      url = url.suffix("file://");
+
+   if (getObject(url) != NULL)
+      gotoObject(url);
 
    if (url.endswith(".jpg"))
       loadImage(url);
