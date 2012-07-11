@@ -49,7 +49,8 @@ class ministring: public ministring_base
       static const int len=32;
       char str[len];
 
-      if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
+      if (isNAN(v)) strcpy(str,"NAN");
+      else if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
       else snprintf(str,len,"%.7f",v);
 
       cstr=NULL;
