@@ -121,6 +121,7 @@ class Object_image: public Object
    virtual ~Object_image();
 
    virtual ministring get_info();
+   virtual ministring get_data_info();
 
    virtual BOOLINT initGFX();
    virtual void exitGFX();

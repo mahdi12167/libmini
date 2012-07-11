@@ -226,8 +226,9 @@ Object_image::~Object_image()
 
 ministring Object_image::get_info()
    {
-   //!! also show: grid type, nodata value (nan), min max range
-   return(ministring(is_imagery()?"Imagery":"Elevation")+
+   ministring info;
+
+   info = ministring(is_imagery()?"Imagery":"Elevation")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
           "dim = "+size_x+" x "+size_y+"\n"+
@@ -235,7 +236,42 @@ ministring Object_image::get_info()
           "spacing = "+spacing+"m\n"+
           "crs = "+extent.get_center().getcrs()+"\n"+
           "datum = "+extent.get_center().getdatum()+"\n\n"+
-          "extent = "+extent);
+
+   info += get_data_info()+"\n\n";
+
+   info += "extent = "+extent;
+
+   return(info);
+   }
+
+ministring Object_image::get_data_info()
+   {
+   ministring info;
+
+   grid_list list;
+   grid_layer *layer;
+
+   layer=list.load(repository,filename);
+
+   if (layer!=NULL)
+      {
+      grid_value minv,maxv;
+      layer->get_minmax(minv,maxv);
+
+      unsigned int n = layer->has_nodata();
+
+      info = ministring("range = ")+double(minv)+" .. "+double(maxv)+"\n"+
+             "nodata = "+layer->get_nodata()+"\n";
+
+      if (n<1000)
+         info += ministring("#nodata = ")+n;
+      else if (n<1000000)
+         info += ministring("#nodata = ")+n/1000+"k";
+      else
+         info += ministring("#nodata = ")+n/1000000+"m";
+      }
+
+   return(info);
    }
 
 BOOLINT Object_image::initGFX()
