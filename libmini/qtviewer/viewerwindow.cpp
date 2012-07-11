@@ -318,7 +318,7 @@ void ViewerWindow::loadURL(ministring url)
    else if (url.endswith(".tif"))
       loadImage(url);
    else if (url.endswith(".jpgintif"))
-      notify("jpgintif not supported"); // loadImage(url);
+      loadImage(url);
    else if (url.endswith(".bt"))
       loadImage(url);
    else if (url.endswith(".ini"))
