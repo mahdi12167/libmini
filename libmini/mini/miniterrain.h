@@ -283,6 +283,9 @@ class miniterrain
    //! get the number of layered tile sets
    int getLTSnum(int n);
 
+   //! get the number of layered tile sets
+   int getLTSnum(minilayer *layer);
+
    //! get null layer
    int getnull();
 

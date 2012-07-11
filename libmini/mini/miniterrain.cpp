@@ -711,6 +711,10 @@ int miniterrain::getLTSnum(int n)
    return(lts);
    }
 
+// get the number of layered tile sets
+int miniterrain::getLTSnum(minilayer *layer)
+   {return(getLTSnum(getnum(layer)));}
+
 // set null layer
 int miniterrain::setnull()
    {
