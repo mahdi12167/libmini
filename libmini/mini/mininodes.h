@@ -405,7 +405,7 @@ class mininode_texture2D: public mininode_texture
       mtxtex();
       mtxpush();
       mtxtranslate(0.5/width,0.5/height,0.0);
-      mtxscale((double)width/(width-1),(double)height/(height-1),0.0);
+      mtxscale((double)(width-1)/width,(double)(height-1)/height,0.0);
       mtxmodel();
 
       // lazy texture state change
@@ -546,7 +546,7 @@ class mininode_texture3D: public mininode_texture
       mtxtex();
       mtxpush();
       mtxtranslate(0.5/width,0.5/height,0.5/depth);
-      mtxscale((double)width/(width-1),(double)height/(height-1),(double)depth/(depth-1));
+      mtxscale((double)(width-1)/width,(double)(height-1)/height,(double)(depth-1)/depth);
       mtxmodel();
 
       // lazy texture state change
