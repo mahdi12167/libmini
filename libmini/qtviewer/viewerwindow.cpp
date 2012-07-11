@@ -308,27 +308,29 @@ void ViewerWindow::loadURL(ministring url)
    if (url.startswith("file://"))
       url = url.suffix("file://");
 
-   if (getObject(url) != NULL)
+   if (getObject(url) != NULL) // already existing?
       gotoObject(url);
-
-   if (url.endswith(".jpg"))
-      loadImage(url);
-   else if (url.endswith(".png"))
-      loadImage(url);
-   else if (url.endswith(".tif"))
-      loadImage(url);
-   else if (url.endswith(".jpgintif"))
-      loadImage(url);
-   else if (url.endswith(".bt"))
-      loadImage(url);
-   else if (url.endswith(".ini"))
-      loadMap(url);
-   else if (!url.suffix("/").contains("."))
-      loadMap(url);
-   else if (!url.suffix("\\").contains("."))
-      loadMap(url);
    else
-      loadImage(url);
+   {
+      // check imagery extensions
+      if (url.endswith(".jpg") ||
+          url.endswith(".png") ||
+          url.endswith(".tif") ||
+          url.endswith(".jpgintif"))
+         loadImage(url);
+      // check elevation extensions
+      else if (url.endswith(".bt"))
+         loadImage(url);
+      // check tileset extensions
+      else if (url.endswith(".ini"))
+         loadMap(url);
+      // check for directories
+      else if (!url.suffix("/").contains(".") ||
+               !url.suffix("\\").contains("."))
+         loadMap(url);
+      else
+         loadImage(url); // try unknown format via gdal
+   }
 }
 
 void ViewerWindow::loadURLs(ministrings urls)
