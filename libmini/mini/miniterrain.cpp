@@ -698,6 +698,19 @@ minilayer *miniterrain::loadLTS(const char *url,
    return(toplevel);
    }
 
+// get the number of layered tile sets
+int miniterrain::getLTSnum(int n)
+   {
+   int lts=1;
+
+   // count sub-layers
+   while (--n>=0)
+      if (issubtileset(n)) lts++;
+      else break;
+
+   return(lts);
+   }
+
 // set null layer
 int miniterrain::setnull()
    {
