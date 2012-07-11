@@ -85,7 +85,7 @@ endif
 
 # other libraries to pull:
 
-# gdal 1.8.1
+# gdal 1.9.1
 if (-X svn) then
    svn up gdal
 endif

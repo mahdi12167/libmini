@@ -25,7 +25,12 @@ echo BUILDING ZLIB
 
 # curl
 echo BUILDING CURL
-(cd curl; ./buildconf; ./configure --prefix=$prefix/libcurl --without-ssl --disable-ldap --disable-ldaps --enable-static --disable-shared; make -j 2; make install)
+(cd curl;\
+ ./buildconf;\
+ ./configure --prefix=$prefix/libcurl\
+             --without-ssl --disable-ldap --disable-ldaps\
+             --enable-static --disable-shared;\
+ make -j 2; make install)
 
 # squish
 echo BUILDING SQUISH
@@ -41,4 +46,13 @@ endif
 
 # gdal
 echo BUILDING GDAL
-(cd gdal; ./configure --prefix=$prefix/gdal --with-libtiff=internal --with-geotiff=internal --with-png=internal --with-jpeg=internal --without-threads --without-curl --without-netcdf --without-sqlite3 --without-pg --without-ld-shared --enable-static --disable-shared; make -j 2; make install)
+(cd gdal;\
+ ./configure --prefix=$prefix/gdal\
+             --with-libtiff=internal --with-geotiff=internal\
+             --with-rename-internal-libtiff-symbols=yes --with-rename-internal-libgeotiff-symbols=yes\
+             --with-png=internal --with-jpeg=internal\
+             --without-threads --without-curl --without-netcdf\
+             --without-sqlite3 --without-pg\
+             --without-ld-shared\
+             --enable-static --disable-shared;\
+ make -j 2; make install)
