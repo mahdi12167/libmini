@@ -123,16 +123,25 @@ Object_tileset::~Object_tileset()
 
 ministring Object_tileset::get_info()
    {
+   ministring info;
+
    miniv3d ext = tileset_layer->getextent();
    minicoord center = tileset_layer->get()->offsetDAT;
 
-   return(ministring("Tileset")+
+   int lts = tileset_viewer->get_earth()->get_terrain()->getLTSnum(tileset_layer);
+
+   info = ministring("Tileset")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
           "dim = "+tileset_layer->getcols()+" x "+tileset_layer->getrows()+"\n"+
           "size = "+ext.x/1000+"km x "+ext.y/1000+"km\n"+
           "crs = "+center.getcrs()+"\n"+
-          "datum = "+center.getdatum());
+          "datum = "+center.getdatum();
+
+   if (lts>1)
+      info += ministring("lods = ")+lts;
+
+   return(info);
    }
 
 BOOLINT Object_tileset::initGFX()
