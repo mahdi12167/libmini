@@ -211,6 +211,9 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    is_imagery_resp_elevation=TRUE;
    extent=grid_extent();
 
+   size_x=size_y=0;
+   size_ds=size_dt=0.0;
+
    image_viewer=viewer;
    image_node=NULL;
 
