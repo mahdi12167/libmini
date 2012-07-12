@@ -1166,6 +1166,10 @@ class mininode_texgen: public mininode_transform
       : mininode_transform()
       {}
 
+   //! get actual texgen level
+   static int get_level()
+      {return(texgen_level);}
+
    protected:
 
    static unsigned int texgen_level;
