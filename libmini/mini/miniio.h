@@ -31,6 +31,19 @@ unsigned int signature(const char *filename);
 //! compute a signature
 unsigned int signature(const unsigned char *data,unsigned int bytes);
 
+// c-lib wrappers
+#ifdef _WIN32
+#include <stdio.h>
+#include <direct.h>
+inline int removefile(const char *file) {return(remove(file));}
+inline int removedir(const char *dir) {return(_rmdir(dir));}
+#else
+#include <stdio.h>
+#include <unistd.h>
+inline int removefile(const char *file) {return(remove(file));}
+inline int removedir(const char *dir) {return(rmdir(dir));}
+#endif
+
 }
 
 using namespace miniio;
