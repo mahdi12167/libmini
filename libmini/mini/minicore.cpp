@@ -237,7 +237,7 @@ void *initmap(MINIDATA *image,void **d2map,
 
    if (*size<2 || *dim<=0.0f || scale<0.0f) ERRORMSG();
 
-   for (S=3; S<*size; S=2*S-1);
+   for (S=3; S<*size; S=2*S-1) ;
 
    Dx=(*dim)*(*size-1)/(S-1);
    Dz=Dx*cellaspect;
