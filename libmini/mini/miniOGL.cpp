@@ -1592,6 +1592,20 @@ void mtxgetmodel(double oglmtx[16])
 #endif
    }
 
+void mtxgettex(float oglmtx[16])
+   {
+#ifndef NOOGL
+   glGetFloatv(GL_TEXTURE_MATRIX,oglmtx);
+#endif
+   }
+
+void mtxgettex(double oglmtx[16])
+   {
+#ifndef NOOGL
+   glGetDoublev(GL_TEXTURE_MATRIX,oglmtx);
+#endif
+   }
+
 void mtxget(const miniv3d mtx[3],double oglmtx[16])
    {
    oglmtx[0]=mtx[0].x;

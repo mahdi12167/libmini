@@ -129,6 +129,9 @@ inline void mtxlookat(const miniv3d &eye,const miniv3d &at,const miniv3d &up);
 void mtxgetmodel(float oglmtx[16]);
 void mtxgetmodel(double oglmtx[16]);
 
+void mtxgettex(float oglmtx[16]);
+void mtxgettex(double oglmtx[16]);
+
 void mtxget(const miniv3d mtx[3],double oglmtx[16]);
 void mtxget(const miniv4d mtx[3],double oglmtx[16]);
 void mtxget(const double oglmtx[16],miniv3d mtx[3]);
