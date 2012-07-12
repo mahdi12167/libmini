@@ -202,7 +202,8 @@ void Object_tileset::focus()
 // Object_image:
 
 mininode *Object_image::image_groupnode=NULL;
-mininode *Object_image::deferred_groupnode=NULL;
+mininode *Object_image::deferred_groupnode1=NULL;
+mininode *Object_image::deferred_groupnode2=NULL;
 
 Object_image::Object_image(const ministring &name,const ministring &repo,
                            Viewer *viewer)
@@ -284,9 +285,13 @@ BOOLINT Object_image::initGFX()
          image_groupnode=root->append_child(new mininode_group())->
                          append_child(new mininode_color(miniv3d(1,1,1)));
 
-      if (deferred_groupnode==NULL)
-         deferred_groupnode=root->append_child(new mininode_deferred_semitransparent())->
-                            append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
+      if (deferred_groupnode1==NULL)
+         deferred_groupnode1=root->append_child(new mininode_deferred_semitransparent())->
+                             append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.9)));
+
+      if (deferred_groupnode2==NULL)
+         deferred_groupnode2=root->append_child(new mininode_deferred_semitransparent())->
+                             append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
 
       grid_list list;
       grid_layer *layer;
@@ -309,7 +314,11 @@ BOOLINT Object_image::initGFX()
          set_center(extent.get_center(),extent.get_size());
 
          image_node=new node_grid_extent(extent);
-         deferred_groupnode->append_child(image_node);
+
+         if (is_imagery_resp_elevation)
+            deferred_groupnode2->append_child(image_node);
+         else
+            deferred_groupnode1->append_child(image_node);
 
          return(TRUE);
          }
@@ -352,8 +361,9 @@ void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
 
-   mininode_ref image=deferred_groupnode->remove_node(image_node);
-   image_groupnode->append_child(tex2d_node);
+   mininode_ref image=image_viewer->getRoot()->remove_node(image_node);
+   if (is_imagery_resp_elevation) image_groupnode->append_child(tex2d_node);
+   else image_groupnode->append_child(tex2d_node);
    tex2d_node->append_child(image);
    tex2d_node->load(buf);
 
