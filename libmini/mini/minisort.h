@@ -24,7 +24,7 @@ void shellsort(Item a[],const unsigned int n)
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
@@ -53,7 +53,7 @@ void shellsort(Item *a[],const unsigned int n)
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
@@ -86,7 +86,7 @@ void shellsort(minidyna<Item> &a)
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
@@ -119,7 +119,7 @@ void shellsort(minidyna<Item *> &a)
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
@@ -152,7 +152,7 @@ void shellsort(minidyna<Item> &a,BOOLINT (*less)(const Item &a,const Item &b))
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
@@ -185,7 +185,7 @@ void shellsort(minidyna<Item *> &a,BOOLINT (*less)(const Item &a,const Item &b))
 
    if (n==0) return;
 
-   for (h=1; h<=(n-1)/9; h=3*h+1);
+   for (h=1; h<=(n-1)/9; h=3*h+1) ;
 
    while (h>0)
       {
