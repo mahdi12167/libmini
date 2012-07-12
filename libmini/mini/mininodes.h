@@ -375,6 +375,10 @@ class mininode_texture2D: public mininode_texture
       texid=db2texid(buf,&width,&height,&mipmaps);
       }
 
+   //! get actual texture id
+   static unsigned int get_texid()
+      {return(tid);}
+
    protected:
 
    int width,height;
@@ -516,6 +520,10 @@ class mininode_texture3D: public mininode_texture
       clear();
       texid=db2texid3D(buf,&width,&height,&depth);
       }
+
+   //! get actual texture id
+   static unsigned int get_texid()
+      {return(tid);}
 
    protected:
 
@@ -1340,7 +1348,9 @@ class mininode_geometry: public mininode_geometry_base
       {
       mininode_geometry_base *node;
       unsigned int pass_first,pass_last;
-      double matrix[16];
+      double mv_matrix[16];
+      double t_matrix[16];
+      unsigned int texid,texid3;
       miniv4d color;
       };
 
@@ -1411,7 +1421,10 @@ class mininode_geometry: public mininode_geometry_base
          geo.node=this;
          geo.pass_first=pass_first;
          geo.pass_last=pass_last;
-         mtxgetmodel(geo.matrix);
+         mtxgetmodel(geo.mv_matrix);
+         mtxgettex(geo.t_matrix);
+         geo.texid=mininode_texture2D::get_texid();
+         geo.texid3=mininode_texture3D::get_texid();
          geo.color=mininode_color::get_color();
 
          list.append(geo);
@@ -1654,7 +1667,7 @@ class mininode_deferred: public mininode_transform
                   if (pass>=geo->pass_first && pass<=geo->pass_last)
                      {
                      mtxid();
-                     mtxmult(geo->matrix);
+                     mtxmult(geo->mv_matrix);
                      color(geo->color);
                      geo->node->render();
                      }
