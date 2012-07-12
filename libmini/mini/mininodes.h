@@ -1652,6 +1652,9 @@ class mininode_deferred: public mininode_transform
       if (s>0)
          {
          mtxpush();
+         mtxtex();
+         mtxpush();
+         mtxmodel();
 
          deferred_init();
 
@@ -1668,8 +1671,16 @@ class mininode_deferred: public mininode_transform
                      {
                      mtxid();
                      mtxmult(geo->mv_matrix);
+                     mtxtex();
+                     mtxid();
+                     mtxmult(geo->t_matrix);
+                     mtxmodel();
                      color(geo->color);
+                     if (geo->texid!=0) bindtexmap(geo->texid,1,1,1);
+                     if (geo->texid3!=0) bind3Dtexmap(geo->texid3);
                      geo->node->render();
+                     if (geo->texid!=0) bindtexmap(0);
+                     if (geo->texid3!=0) bind3Dtexmap(0);
                      }
                   }
 
@@ -1681,6 +1692,9 @@ class mininode_deferred: public mininode_transform
          mininode_geometry::clear_deferred();
 
          mtxpop();
+         mtxtex();
+         mtxpop();
+         mtxmodel();
          }
       }
 
