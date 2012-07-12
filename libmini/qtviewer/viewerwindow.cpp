@@ -335,7 +335,7 @@ void ViewerWindow::loadURL(ministring url)
 
 void ViewerWindow::loadURLs(ministrings urls)
 {
-   for (int i=0; i<urls.getsize(); i++)
+   for (unsigned int i=0; i<urls.getsize(); i++)
       loadURL(urls[i]);
 }
 

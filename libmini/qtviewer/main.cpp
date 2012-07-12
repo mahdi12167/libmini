@@ -20,7 +20,7 @@ void errormsg(const char *file,int line,int fatal)
    else msg = "fatal error";
    msg += " in <" + QString(file) + "> at line " + QString::number(line) + "!\n";
 
-   fprintf(stderr, msg.toStdString().c_str());
+   fprintf(stderr, "%s", msg.toStdString().c_str());
 
    if (fatal!=MINI_ERROR_NONFATAL)
       QMessageBox::warning(0, "error", msg, QMessageBox::Ok);

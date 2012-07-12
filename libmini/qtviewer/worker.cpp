@@ -3,7 +3,7 @@
 #include "worker.h"
 
 WorkerThread::WorkerThread(QObject *parent)
-   : grid_worker(), QThread(parent)
+   : QThread(parent), grid_worker()
 {}
 
 WorkerThread::~WorkerThread()

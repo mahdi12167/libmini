@@ -80,7 +80,7 @@ win32:LIBS += -L../WIN32/libpng
 win32:LIBS += -L../WIN32/zlib
 
 unix:LIBS += -lgdal -liconv
-unix:LIBS += -lcurl -ljpeg -lpng -lz
+unix:LIBS += -lcurl -lz
 
 win32:LIBS += -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
 win32:LIBS += -lgdal # -lgdal_i for dll stub
@@ -89,7 +89,7 @@ win32:LIBS += -lws2_32 -lwinmm
 RESOURCES += qtviewer.qrc
 
 unix:QMAKE_CXXFLAGS += -O
-unix:QMAKE_CXXFLAGS_WARN_ON += -w -Wall -Wno-parentheses
+unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
 
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
 win32:DEFINES += PTW32_STATIC_LIB
