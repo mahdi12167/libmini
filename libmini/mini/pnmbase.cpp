@@ -492,7 +492,7 @@ unsigned char *readDDSvolume(const char *filename,
       {
       ptr=&data[4];
       while (*ptr=='#')
-         while (*ptr++!='\n');
+         while (*ptr++!='\n') ;
 
       if (sscanf((char *)ptr,"%d %d %d\n",width,height,depth)!=3) ERRORMSG();
       if (*width<1 || *height<1 || *depth<1) ERRORMSG();
@@ -693,7 +693,7 @@ int getPNMparams(PNMcomment *comment,
       com.reset();
 
       while (*ptr==' ') ptr++;
-      while (com.addchar(*ptr++)!='\n');
+      while (com.addchar(*ptr++)!='\n') ;
 
       switch (line)
          {

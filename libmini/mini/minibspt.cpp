@@ -90,7 +90,7 @@ unsigned int minibsptree::getnodes()
 
 // preprocess entire input mesh
 void minibsptree::preprocessall()
-   {while (!preprocess());}
+   {while (!preprocess()){}}
 
 // preprocess input mesh one step at a time
 BOOLINT minibsptree::preprocess()

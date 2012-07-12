@@ -444,8 +444,8 @@ void minitile::checktiles(float ex,float ez,
    prows=PTOP-PBOTTOM+1;
 
    // calculate coprime swizzle parameters
-   for (SWIZZLE=(cols%2==0)?3*cols+1:3*cols; gcd(cols*rows,SWIZZLE)!=1; SWIZZLE+=2);
-   for (PSWIZZLE=(pcols%2==0)?3*pcols+1:3*pcols; gcd(pcols*prows,PSWIZZLE)!=1; PSWIZZLE+=2);
+   for (SWIZZLE=(cols%2==0)?3*cols+1:3*cols; gcd(cols*rows,SWIZZLE)!=1; SWIZZLE+=2) ;
+   for (PSWIZZLE=(pcols%2==0)?3*pcols+1:3*pcols; gcd(pcols*prows,PSWIZZLE)!=1; PSWIZZLE+=2) ;
    }
 
 // swizzle tile position

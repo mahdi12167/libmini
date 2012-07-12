@@ -2024,9 +2024,9 @@ void minibrick::checkdata(databuf *brick,databuf *minmax,databuf *normal,
    // always convert to float
    brick->convertdata(databuf::DATABUF_TYPE_FLOAT);
 
-   for (xs=3; xs<brick->xsize; xs=2*xs-1);
-   for (ys=3; ys<brick->ysize; ys=2*ys-1);
-   for (zs=3; zs<brick->zsize; zs=2*zs-1);
+   for (xs=3; xs<brick->xsize; xs=2*xs-1) ;
+   for (ys=3; ys<brick->ysize; ys=2*ys-1) ;
+   for (zs=3; zs<brick->zsize; zs=2*zs-1) ;
 
    // resample to 2^n+1 (n>=1)
    if (xs!=brick->xsize || ys!=brick->ysize || zs!=brick->zsize) brick->resampledata(xs,ys,zs);

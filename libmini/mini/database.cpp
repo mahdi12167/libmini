@@ -2527,9 +2527,9 @@ void databuf::resample2(unsigned int maxsize)
       if (zs>maxsize) zs=maxsize;
       }
 
-   for (xs2=1; xs2<xs; xs2*=2);
-   for (ys2=1; ys2<ys; ys2*=2);
-   for (zs2=1; zs2<zs; zs2*=2);
+   for (xs2=1; xs2<xs; xs2*=2) ;
+   for (ys2=1; ys2<ys; ys2*=2) ;
+   for (zs2=1; zs2<zs; zs2*=2) ;
 
    resampledata(xs2,ys2,zs2);
    }

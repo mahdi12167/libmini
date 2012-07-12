@@ -254,9 +254,9 @@ void DDS_encode(unsigned char *data,unsigned int bytes,
    for (i=-128; i<128; i++)
       {
       if (i<=0)
-         for (bits=0; (1<<bits)/2<-i; bits++);
+         for (bits=0; (1<<bits)/2<-i; bits++) ;
       else
-         for (bits=0; (1<<bits)/2<=i; bits++);
+         for (bits=0; (1<<bits)/2<=i; bits++) ;
 
       lookup[i+128]=bits;
       }

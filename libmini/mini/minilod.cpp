@@ -284,9 +284,9 @@ void minilod::DBload_callback(int col,int row,int lod,databuf *volume,void *data
    CALC.deregister();
 
    // calculate resampling size
-   for (xs=3; xs<volume->xsize; xs=2*xs-1);
-   for (ys=3; ys<volume->ysize; ys=2*ys-1);
-   for (zs=3; zs<volume->zsize; zs=2*zs-1);
+   for (xs=3; xs<volume->xsize; xs=2*xs-1) ;
+   for (ys=3; ys<volume->ysize; ys=2*ys-1) ;
+   for (zs=3; zs<volume->zsize; zs=2*zs-1) ;
 
    // resample volume
    volume->resampledata(xs,ys,zs);

@@ -276,7 +276,7 @@ void datagrid::usemtxpost(const BOOLINT enable)
 
 // construct tetrahedral mesh from all data bricks
 void datagrid::construct()
-   {while (!preprocess());}
+   {while (!preprocess()){}}
 
 // preprocess tetrahedral mesh one step at a time
 BOOLINT datagrid::preprocess()
