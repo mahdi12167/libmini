@@ -364,6 +364,8 @@ void Object_image::set_thumb(const databuf *buf)
    if (tex2d_node==NULL) MEMERROR();
 
    mininode_ref image=image_viewer->getRoot()->remove_node(image_node);
+   if (image==NULL) ERRORMSG();
+
    if (is_imagery_resp_elevation) image_groupnode->append_child(tex2d_node);
    else image_groupnode->append_child(tex2d_node);
    tex2d_node->append_child(image);
