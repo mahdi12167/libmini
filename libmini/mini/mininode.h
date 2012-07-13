@@ -64,7 +64,7 @@ class mininode: public minidyna< miniref<mininode> >
       miniref<mininode> child=remove(i);
       set_dirty();
 
-      unsigned int s=get_links();
+      unsigned int s=child->get_links();
 
       for (unsigned int i=0; i<s; i++)
          append(child->get_childref(i));
@@ -167,8 +167,8 @@ class mininode: public minidyna< miniref<mininode> >
 
       for (unsigned int i=0; i<s; i++)
          {
-         mininode *first=get_link(s-1-i)->get_first(id);
-         if (first!=NULL) return(first);
+         mininode *last=get_link(s-1-i)->get_last(id);
+         if (last!=NULL) return(last);
          }
 
       return(NULL);
