@@ -45,7 +45,7 @@ if (! -e /usr/include/zlib.h) then
 endif
 
 # curl 7.21.2
-if (! -e /usr/include/curl.h) then
+if (! -e /usr/include/curl/curl.h) then
    if (-X git) then
       if (! -e curl) then
          git clone git://github.com/bagder/curl
