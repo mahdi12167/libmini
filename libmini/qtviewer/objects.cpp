@@ -314,6 +314,7 @@ BOOLINT Object_image::initGFX()
          set_center(extent.get_center(),extent.get_size());
 
          image_node=new node_grid_extent(extent);
+         if (image_node==NULL) MEMERROR();
 
          if (is_imagery_resp_elevation)
             deferred_groupnode2->append_child(image_node);
@@ -360,6 +361,7 @@ void Object_image::focus()
 void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
+   if (tex2d_node==NULL) MEMERROR();
 
    mininode_ref image=image_viewer->getRoot()->remove_node(image_node);
    if (is_imagery_resp_elevation) image_groupnode->append_child(tex2d_node);

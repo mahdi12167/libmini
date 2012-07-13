@@ -88,6 +88,10 @@ win32:LIBS += -lws2_32 -lwinmm
 
 RESOURCES += qtviewer.qrc
 
+CONFIG(debug, debug|release) {
+   QMAKE_CXXFLAGS += -DLIBMINI_DEBUG
+}
+
 unix:QMAKE_CXXFLAGS += -O
 unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
 

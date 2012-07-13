@@ -31,9 +31,11 @@ ViewerWindow::ViewerWindow()
 
    // init viewer
    viewer = new Renderer(this);
+   if (viewer==NULL) MEMERROR();
 
    // init worker
    worker = new WorkerThread;
+   if (worker==NULL) MEMERROR();
 
    // setup queued worker connection
    qRegisterMetaType<ministring>("ministring");
@@ -399,6 +401,8 @@ void ViewerWindow::loadImage(ministring url)
       image->focus();
 
       ThumbJob *job = new ThumbJob;
+      if (job == NULL) MEMERROR();
+
       job->append(image->get_full_name());
       worker->run_job(job);
    }
@@ -718,6 +722,8 @@ void ViewerWindow::shade(ministring key)
          if (image->is_elevation())
          {
             ShadeJob *job = new ShadeJob;
+            if (job == NULL) MEMERROR();
+
             job->append(image->get_full_name());
             worker->run_job(job);
          }
@@ -731,6 +737,8 @@ void ViewerWindow::resample(ministrings keys,
 
    ResampleJob *job = new ResampleJob(repository_path, export_path,
                                       level, levels, step);
+
+   if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
       job->append(getObject(keys[i])->get_relative_name());
@@ -777,6 +785,7 @@ ministrings ViewerWindow::browse(ministring title,
                                  BOOLINT newfile)
 {
    QFileDialog* fd = new QFileDialog(this, title.c_str());
+   if (fd == NULL) MEMERROR();
 
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
@@ -803,6 +812,8 @@ ministring ViewerWindow::browseDir(ministring title,
                                    ministring path)
 {
    QFileDialog *fd = new QFileDialog(this, title.c_str());
+   if (fd == NULL) MEMERROR();
+
    fd->setFileMode(QFileDialog::DirectoryOnly);
    fd->setViewMode(QFileDialog::List);
    if (path!="") fd->setDirectory(path.c_str());
