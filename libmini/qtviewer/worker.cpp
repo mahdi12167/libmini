@@ -49,5 +49,5 @@ void WorkerThread::job_success(Job *job)
    emit finishedJob(job->get_id(), *job);
 }
 
-void WorkerThread::job_failure(Job *job)
+void WorkerThread::job_failure(Job *)
 {}

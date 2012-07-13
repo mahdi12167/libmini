@@ -103,7 +103,7 @@ ministring Object::get_info()
           "file = "+filename);
    }
 
-void Object::show(BOOLINT yes) {}
+void Object::show(BOOLINT) {}
 BOOLINT Object::is_shown() const {return(TRUE);}
 
 // Object_tileset:
