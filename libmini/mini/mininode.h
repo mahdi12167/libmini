@@ -35,6 +35,10 @@ class mininode: public minidyna< miniref<mininode> >
    unsigned int get_links() const
       {return(getsize());}
 
+   //! get link number i
+   mininode *get_link(unsigned int i=0) const
+      {return(get(i));}
+
    //! get number of visible children
    virtual unsigned int get_children() const
       {return(getsize());}
@@ -60,7 +64,9 @@ class mininode: public minidyna< miniref<mininode> >
       miniref<mininode> child=remove(i);
       set_dirty();
 
-      for (unsigned int i=0; i<child->get_children(); i++)
+      unsigned int s=get_links();
+
+      for (unsigned int i=0; i<s; i++)
          append(child->get_childref(i));
 
       return(child);
@@ -71,13 +77,22 @@ class mininode: public minidyna< miniref<mininode> >
       {
       miniref<mininode> ref=NULL;
 
-      for (unsigned int i=0; i<get_children() && ref==NULL; i++)
-         {
-         mininode *child=get_child(i);
+      unsigned int s=get_links();
 
-         if (child!=NULL)
-            if (child==node) ref=remove_child(i);
-            else ref=child->remove_node(node);
+      for (unsigned int i=0; i<s; i++)
+         {
+         mininode *link=get_link(i);
+
+         if (link==node)
+            {
+            ref=remove_child(i);
+            break;
+            }
+         else
+            {
+            ref=link->remove_node(node);
+            if (ref!=NULL) break;
+            }
          }
 
       return(ref);
@@ -119,13 +134,10 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (get_id()==id) list.append(this);
 
-      unsigned int s=get_children();
+      unsigned int s=get_links();
 
       for (unsigned int i=0; i<s; i++)
-         {
-         mininode *child=get_child(i);
-         if (child!=NULL) list.append(child->serialize(id));
-         }
+         list.append(get_link(i)->serialize(id));
 
       return(list);
       }
@@ -135,16 +147,12 @@ class mininode: public minidyna< miniref<mininode> >
       {
       if (get_id()==id) return(this);
 
-      unsigned int s=get_children();
+      unsigned int s=get_links();
 
       for (unsigned int i=0; i<s; i++)
          {
-         mininode *child=get_child(i);
-         if (child!=NULL)
-            {
-            mininode *first=child->get_first(id);
-            if (first!=NULL) return(first);
-            }
+         mininode *first=get_link(i)->get_first(id);
+         if (first!=NULL) return(first);
          }
 
       return(NULL);
@@ -155,16 +163,12 @@ class mininode: public minidyna< miniref<mininode> >
       {
       if (get_id()==id) return(this);
 
-      unsigned int s=get_children();
+      unsigned int s=get_links();
 
       for (unsigned int i=0; i<s; i++)
          {
-         mininode *child=get_child(s-1-i);
-         if (child!=NULL)
-            {
-            mininode *first=child->get_first(id);
-            if (first!=NULL) return(first);
-            }
+         mininode *first=get_link(s-1-i)->get_first(id);
+         if (first!=NULL) return(first);
          }
 
       return(NULL);
@@ -181,13 +185,12 @@ class mininode: public minidyna< miniref<mininode> >
    // clear dirty flag via recursive update
    void clear_dirty()
       {
-      unsigned int s=get_children();
+      unsigned int s=get_links();
 
       for (unsigned int i=0; i<s; i++)
          {
-         mininode *child=get_child(i);
-         if (child!=NULL)
-            if (child->is_dirty()) child->clear_dirty();
+         mininode *link=get_link(i);
+         if (link->is_dirty()) link->clear_dirty();
          }
 
       if (is_dirty())

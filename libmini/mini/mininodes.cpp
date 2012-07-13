@@ -62,7 +62,7 @@ void mininode_group::update_dirty()
    miniv3d center;
    double radius;
 
-   unsigned int s=get_children();
+   unsigned int s=get_links();
 
    // clear bounding sphere
    bound_center=miniv3d(0,0,0);
@@ -74,30 +74,28 @@ void mininode_group::update_dirty()
    // merge bounding sphere with children
    for (unsigned int i=0; i<s; i++)
       {
-      mininode *child=get_child(i);
-      if (child)
+      mininode *link=get_link(i);
+
+      // get child group
+      mininode_group *child_group=dynamic_cast<mininode_group *>(link);
+
+      if (child_group)
          {
-         // get child group
-         mininode_group *child_group=dynamic_cast<mininode_group *>(child);
+         miniv3d child_center;
+         double child_radius;
 
-         if (child_group)
-            {
-            miniv3d child_center;
-            double child_radius;
+         child_group->get_bsphere(child_center,child_radius);
 
-            child_group->get_bsphere(child_center,child_radius);
-
-            // merge with child bounding sphere
-            if (child_radius>0.0)
-               if (radius>0.0)
-                  merge_spheres(center,radius,
-                                child_center,child_radius);
-               else
-                  {
-                  center=child_center;
-                  radius=child_radius;
-                  }
-            }
+         // merge with child bounding sphere
+         if (child_radius>0.0)
+            if (radius>0.0)
+               merge_spheres(center,radius,
+                             child_center,child_radius);
+            else
+               {
+               center=child_center;
+               radius=child_radius;
+               }
          }
       }
 
@@ -237,58 +235,56 @@ void mininode_transform::update_dirty()
    // merge two consecutive transform nodes
    if (get_links()==1)
       {
-      mininode *child=get_child();
-      if (child)
+      mininode *link=get_link();
+
+      // get child transformation
+      mininode_transform *child_transform=dynamic_cast<mininode_transform *>(link);
+
+      if (child_transform)
          {
-         // get child transformation
-         mininode_transform *child_transform=dynamic_cast<mininode_transform *>(child);
+         // check child transform types
+         BOOLINT child_translate=dynamic_cast<mininode_translate *>(link)!=NULL;
+         BOOLINT child_rotate=dynamic_cast<mininode_rotate *>(link)!=NULL;
+         BOOLINT child_affine=dynamic_cast<mininode_affine *>(link)!=NULL;
+         BOOLINT child_scale=dynamic_cast<mininode_scale *>(link)!=NULL;
+         BOOLINT child_coord=dynamic_cast<mininode_coord *>(link)!=NULL;
 
-         if (child_transform)
+         // check node transform types
+         BOOLINT node_translate=dynamic_cast<mininode_translate *>(this)!=NULL;
+         BOOLINT node_rotate=dynamic_cast<mininode_rotate *>(this)!=NULL;
+         BOOLINT node_affine=dynamic_cast<mininode_affine *>(this)!=NULL;
+         BOOLINT node_scale=dynamic_cast<mininode_scale *>(this)!=NULL;
+         BOOLINT node_coord=dynamic_cast<mininode_coord *>(this)!=NULL;
+
+         // check child/node match
+         if ((child_translate && node_translate) ||
+             (child_rotate && node_rotate) ||
+             (child_affine && node_affine) ||
+             (child_scale && node_scale) ||
+             (child_affine && node_translate) ||
+             (child_translate && node_affine) ||
+             (child_affine && node_rotate) ||
+             (child_rotate && node_affine))
             {
-            // check child transform types
-            BOOLINT child_translate=dynamic_cast<mininode_translate *>(child)!=NULL;
-            BOOLINT child_rotate=dynamic_cast<mininode_rotate *>(child)!=NULL;
-            BOOLINT child_affine=dynamic_cast<mininode_affine *>(child)!=NULL;
-            BOOLINT child_scale=dynamic_cast<mininode_scale *>(child)!=NULL;
-            BOOLINT child_coord=dynamic_cast<mininode_coord *>(child)!=NULL;
-
-            // check node transform types
-            BOOLINT node_translate=dynamic_cast<mininode_translate *>(this)!=NULL;
-            BOOLINT node_rotate=dynamic_cast<mininode_rotate *>(this)!=NULL;
-            BOOLINT node_affine=dynamic_cast<mininode_affine *>(this)!=NULL;
-            BOOLINT node_scale=dynamic_cast<mininode_scale *>(this)!=NULL;
-            BOOLINT node_coord=dynamic_cast<mininode_coord *>(this)!=NULL;
-
-            // check child/node match
-            if ((child_translate && node_translate) ||
-                (child_rotate && node_rotate) ||
-                (child_affine && node_affine) ||
-                (child_scale && node_scale) ||
-                (child_affine && node_translate) ||
-                (child_translate && node_affine) ||
-                (child_affine && node_rotate) ||
-                (child_rotate && node_affine))
+            if (!child_coord || !node_coord)
                {
-               if (!child_coord || !node_coord)
-                  {
-                  // multiply with child's transformation matrix
-                  miniv4d mtx[3],mtx1[3],mtx2[3];
-                  mtxget(oglmtx,mtx1);
-                  mtxget(child_transform->oglmtx,mtx2);
-                  mlt_mtx(mtx,mtx1,mtx2);
-                  mtxget(mtx,oglmtx);
-                  }
-
-               // remove child
-               remove_child();
-
-               // propagate node to affine transform
-               if (child_affine)
-                  if (node_translate)
-                     *this=mininode_affine(*dynamic_cast<mininode_translate *>(this));
-                  else if (node_rotate)
-                     *this=mininode_affine(*dynamic_cast<mininode_rotate *>(this));
+               // multiply with child's transformation matrix
+               miniv4d mtx[3],mtx1[3],mtx2[3];
+               mtxget(oglmtx,mtx1);
+               mtxget(child_transform->oglmtx,mtx2);
+               mlt_mtx(mtx,mtx1,mtx2);
+               mtxget(mtx,oglmtx);
                }
+
+            // remove child
+            remove_child();
+
+            // propagate node to affine transform
+            if (child_affine)
+               if (node_translate)
+                  *this=mininode_affine(*dynamic_cast<mininode_translate *>(this));
+               else if (node_rotate)
+                  *this=mininode_affine(*dynamic_cast<mininode_rotate *>(this));
             }
          }
       }
