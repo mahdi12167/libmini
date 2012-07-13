@@ -110,9 +110,21 @@ class miniref
    //! comparison operator
    bool operator ==(const Item *i) const
       {
-      if (ref==NULL && i==NULL) return(true);
-      if (ref==NULL) return(false);
+      if (ref==NULL && i==NULL) return(TRUE);
+      if (ref==NULL) return(FALSE);
       return(ref->item==i);
+      }
+
+   //! comparison operator
+   bool operator !=(const miniref<Item> &r) const
+      {return(ref!=r.ref);}
+
+   //! comparison operator
+   bool operator !=(const Item *i) const
+      {
+      if (ref==NULL && i==NULL) return(FALSE);
+      if (ref==NULL) return(TRUE);
+      return(ref->item!=i);
       }
 
    //! item accessor
