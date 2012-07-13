@@ -12,25 +12,33 @@ else
 endif
 
 # libjpeg
-echo BUILDING LIBJPEG
-(cd libjpeg; ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared; make -j 2; make install)
+if (-e libjpeg) then
+   echo BUILDING LIBJPEG
+   (cd libjpeg; ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared; make -j 2; make install)
+endif
 
 # libpng
-echo BUILDING LIBPNG
-(cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
+if (-e libpng) then
+   echo BUILDING LIBPNG
+   (cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
+endif
 
 # zlib
-echo BUILDING ZLIB
-(cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+if (-e zlib) then
+   echo BUILDING ZLIB
+   (cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+endif
 
 # curl
-echo BUILDING CURL
-(cd curl;\
- ./buildconf;\
- ./configure --prefix=$prefix/libcurl\
-             --without-ssl --disable-ldap --disable-ldaps\
-             --enable-static --disable-shared;\
- make -j 2; make install)
+if (-e curl) then
+   echo BUILDING CURL
+   (cd curl;\
+    ./buildconf;\
+    ./configure --prefix=$prefix/libcurl\
+                --without-ssl --disable-ldap --disable-ldaps\
+                --enable-static --disable-shared;\
+    make -j 2; make install)
+endif
 
 # squish
 echo BUILDING SQUISH

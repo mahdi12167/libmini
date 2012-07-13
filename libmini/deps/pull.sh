@@ -14,42 +14,50 @@ end
 # then the remaining dependencies to pull are:
 
 # libjpeg v8d
-if (-X wget) then
-   if (! -e libjpeg) then
-      wget http://www.ijg.org/files/jpegsrc.v8d.tar.gz
-      tar zxf jpegsrc.v8d.tar.gz
-      mv jpeg-8d libjpeg
+if (! -e /usr/include/jpeglib.h) then
+   if (-X wget) then
+      if (! -e libjpeg) then
+         wget http://www.ijg.org/files/jpegsrc.v8d.tar.gz
+         tar zxf jpegsrc.v8d.tar.gz
+         mv jpeg-8d libjpeg
+      endif
    endif
 endif
 
 # libpng 1.5.8
-if (-X git) then
-   if (! -e libpng) then
-      git clone git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+if (! -e /usr/include/png.h) then
+   if (-X git) then
+      if (! -e libpng) then
+         git clone git://libpng.git.sourceforge.net/gitroot/libpng/libpng
+      endif
+      (cd libpng; git checkout 4a011b2b7730ba26b9d28dacff348bcd94e428d7)
    endif
-   (cd libpng; git checkout 4a011b2b7730ba26b9d28dacff348bcd94e428d7)
 endif
 
 # zlib 1.2.6
-if (-X git) then
-   if (! -e zlib) then
-      git clone git://github.com/madler/zlib
+if (! -e /usr/include/zlib.h) then
+   if (-X git) then
+      if (! -e zlib) then
+         git clone git://github.com/madler/zlib
+      endif
+      (cd zlib; git checkout e75de023b6cd7177c8e44ef1c72b74f5efde5418)
    endif
-   (cd zlib; git checkout e75de023b6cd7177c8e44ef1c72b74f5efde5418)
 endif
 
 # curl 7.21.2
-if (-X git) then
-   if (! -e curl) then
-      git clone git://github.com/bagder/curl
-   endif
-   (cd curl; git checkout curl-7_21_2)
-else
-   if (-X wget) then
+if (! -e /usr/include/curl.h) then
+   if (-X git) then
       if (! -e curl) then
-         wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
-         tar zxf curl-7.21.2.tar.gz
-         mv curl-7.21.2 curl
+         git clone git://github.com/bagder/curl
+      endif
+      (cd curl; git checkout curl-7_21_2)
+   else
+      if (-X wget) then
+         if (! -e curl) then
+            wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
+            tar zxf curl-7.21.2.tar.gz
+            mv curl-7.21.2 curl
+         endif
       endif
    endif
 endif
