@@ -53,6 +53,7 @@ INCLUDEPATH += ../../libjpeg/include
 INCLUDEPATH += ../../libpng/include
 INCLUDEPATH += ../../zlib/include
 INCLUDEPATH += ../../gdal/include
+INCLUDEPATH += ../../libiconv/include
 
 win32:INCLUDEPATH += ../WIN32
 win32:INCLUDEPATH += ../WIN32/pthreads-win32
@@ -71,6 +72,7 @@ LIBS += -L../../libjpeg/lib
 LIBS += -L../../libpng/lib
 LIBS += -L../../zlib/lib
 LIBS += -L../../gdal/lib
+LIBS += -L../../libiconv/lib
 
 win32:LIBS += -L../WIN32
 win32:LIBS += -L../WIN32/pthreads-win32
