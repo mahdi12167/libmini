@@ -44,6 +44,7 @@ class miniref
       else
          {
          ref=new miniitem<Item>(i);
+         ERRORCHK(ref==NULL);
          ref->refcount++;
          }
       }
@@ -95,6 +96,7 @@ class miniref
       else
          {
          ref=new miniitem<Item>(i);
+         ERRORCHK(ref==NULL);
          ref->refcount++;
          }
 
