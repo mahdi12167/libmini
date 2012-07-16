@@ -689,6 +689,10 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("image");
       resample(keys, grid_level, grid_levels, grid_step);
    }
+   else if (action == "abort")
+   {
+      worker->abort_jobs();
+   }
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");

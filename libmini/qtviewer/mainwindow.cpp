@@ -819,6 +819,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(showAction);
     QAction *hideAction = new QAction(tr("hide"), this);
     myMenu.addAction(hideAction);
+    myMenu.addSeparator();
     QAction *shadeAction = new QAction(tr("shade"), this);
     myMenu.addAction(shadeAction);
     QAction *resampleAction = new QAction(tr("resample"), this);
@@ -827,6 +828,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(resampleSelAction);
     QAction *resampleAllAction = new QAction(tr("resample all"), this);
     myMenu.addAction(resampleAllAction);
+    QAction *abortAction = new QAction(tr("abort"), this);
+    myMenu.addAction(abortAction);
+    myMenu.addSeparator();
     QAction *saveGridAction = new QAction(tr("save to grid file"), this);
     myMenu.addAction(saveGridAction);
     myMenu.addSeparator();
@@ -862,6 +866,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("resample_selected"));
        else if (selectedAction == resampleAllAction)
           emit(activate("resample_all"));
+       else if (selectedAction == abortAction)
+          emit(activate("abort"));
        else if (selectedAction == saveGridAction)
           emit(activate("save_grid"));
        else if (selectedAction == deleteAction)
