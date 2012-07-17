@@ -11,6 +11,9 @@ void filesearch(const char *spec);
 // find next file matching the search pattern
 const char *findfile();
 
+// check if match is a directory
+int isdirectory();
+
 }
 
 using namespace minidir;

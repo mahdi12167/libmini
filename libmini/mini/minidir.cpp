@@ -20,6 +20,7 @@ char searchpath[STRING_MAX];
 char searchpattern[STRING_MAX];
 char *searchpre,*searchpost;
 char foundfile[STRING_MAX];
+int fileisdirectory;
 
 // specify file search path and pattern (with '*' as single wildcard)
 void filesearch(const char *spec)
@@ -81,7 +82,10 @@ const char *nextfile()
       }
 
    if ((dirp=readdir(searchdir))!=NULL)
+      {
+      fileisdirectory=(dirp->d_type==DT_DIR);
       return(dirp->d_name);
+      }
 
    closedir(searchdir);
 #else
@@ -102,11 +106,16 @@ const char *nextfile()
          }
 
       searchstate=2;
+      
+      fileisdirectory=(fdata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY);
       return(fdata.cFileName);
       }
 
    if (FindNextFile(dhandle,&fdata))
+      {
+      fileisdirectory=(fdata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY);
       return(fdata.cFileName);
+      }
 
    FindClose(dhandle);
 #endif
@@ -147,5 +156,9 @@ const char *findfile()
 
    return(NULL);
    }
+
+// check if match is a directory
+int isdirectory()
+   {return(fileisdirectory);}
 
 }
