@@ -106,7 +106,7 @@ const char *nextfile()
          }
 
       searchstate=2;
-      
+
       fileisdirectory=(fdata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY);
       return(fdata.cFileName);
       }
