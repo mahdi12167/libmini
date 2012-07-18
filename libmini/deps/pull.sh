@@ -47,16 +47,16 @@ endif
 # curl 7.21.2
 if (! -e /usr/include/curl/curl.h) then
    if (-X git) then
-      if (! -e curl) then
-         git clone git://github.com/bagder/curl
+      if (! -e libcurl) then
+         git clone git://github.com/bagder/curl libcurl
       endif
-      (cd curl; git checkout curl-7_21_2)
+      (cd libcurl; git checkout curl-7_21_2)
    else
       if (-X wget) then
-         if (! -e curl) then
+         if (! -e libcurl) then
             wget http://curl.haxx.se/download/curl-7.21.2.tar.gz
             tar zxf curl-7.21.2.tar.gz
-            mv curl-7.21.2 curl
+            mv curl-7.21.2 libcurl
          endif
       endif
    endif

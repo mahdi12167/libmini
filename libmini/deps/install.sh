@@ -30,9 +30,9 @@ if (-e zlib) then
 endif
 
 # curl
-if (-e curl) then
+if (-e libcurl) then
    echo BUILDING CURL
-   (cd curl;\
+   (cd libcurl;\
     ./buildconf;\
     ./configure --prefix=$prefix/libcurl\
                 --without-ssl --disable-ldap --disable-ldaps\
