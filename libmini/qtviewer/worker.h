@@ -3,7 +3,7 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include <grid/grid_worker.h>
+#include <grid/grid_workers.h>
 
 #include <QtCore/QThread>
 #include <QtCore/QMutex>

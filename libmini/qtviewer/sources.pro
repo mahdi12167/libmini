@@ -5,6 +5,7 @@ SOURCES += main.cpp \
            viewer.cpp \
            camera.cpp \
            nodes.cpp \
+           object.cpp \
            objects.cpp \
            worker.cpp
 
@@ -16,5 +17,6 @@ HEADERS += mainwindow.h \
            viewer.h \
            camera.h \
            nodes.h \
+           object.h \
            objects.h \
            worker.h

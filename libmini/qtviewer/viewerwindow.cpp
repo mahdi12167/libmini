@@ -667,7 +667,8 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "resample")
    {
-      if (hasTag(value, "image"))
+      if (hasTag(value, "image") &&
+          hasTag(value, "elevation"))
       {
          ministrings keys = value;
          resample(keys, grid_level, grid_levels, grid_step);
@@ -692,6 +693,30 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "abort")
    {
       worker->abort_jobs();
+   }
+   else if (action == "save_db")
+   {
+      SaveJob *job = new SaveJob("","",TRUE);
+      if (job == NULL) MEMERROR();
+
+      job->append(getObject(value)->get_full_name());
+      worker->run_job(job);
+   }
+   else if (action == "save_tif")
+   {
+      SaveJob *job = new SaveJob;
+      if (job == NULL) MEMERROR();
+
+      job->append(getObject(value)->get_full_name());
+      worker->run_job(job);
+   }
+   else if (action == "save_jpgintif")
+   {
+      SaveJob *job = new SaveJob("","",FALSE,FALSE,FALSE,TRUE);
+      if (job == NULL) MEMERROR();
+
+      job->append(getObject(value)->get_full_name());
+      worker->run_job(job);
    }
    else if (action == "save_grid")
    {
