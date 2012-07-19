@@ -12,7 +12,9 @@
 
 #include <mini/mini_object.h>
 
+#include "object.h"
 #include "objects.h"
+#include "objectlist.h"
 
 class Renderer;
 class WorkerThread;

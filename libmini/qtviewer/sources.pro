@@ -7,6 +7,7 @@ SOURCES += main.cpp \
            nodes.cpp \
            object.cpp \
            objects.cpp \
+           objectlist.cpp \
            worker.cpp
 
 HEADERS += mainwindow.h \
@@ -19,4 +20,5 @@ HEADERS += mainwindow.h \
            nodes.h \
            object.h \
            objects.h \
+           objectlist.h \
            worker.h
