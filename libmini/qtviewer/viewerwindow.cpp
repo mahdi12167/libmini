@@ -46,6 +46,9 @@ ViewerWindow::ViewerWindow()
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
            Qt::QueuedConnection);
+   connect(worker, SIGNAL(failedJob(ministring, ministrings)),
+           this, SLOT(failedJob(ministring, ministrings)),
+           Qt::QueuedConnection);
 
    // worker settings
    grid_level = 0;
@@ -908,5 +911,17 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
       // autoload resampled tileset
       if (name!="")
          runAction("open", export_path+name);
+   }
+}
+
+void ViewerWindow::failedJob(const ministring &job, const ministrings &args)
+{
+   if (job=="shader")
+   {
+      notify("shading failed");
+   }
+   else if (job=="resampler")
+   {
+      notify("resampling failed");
    }
 }

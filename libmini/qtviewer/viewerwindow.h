@@ -102,6 +102,7 @@ signals:
 private slots:
    void reportProgress(double percentage);
    void finishedJob(const ministring &job,const ministrings &args);
+   void failedJob(const ministring &job,const ministrings &args);
 
 protected:
    void initializeGL();

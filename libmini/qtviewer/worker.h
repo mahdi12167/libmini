@@ -40,6 +40,7 @@ class WorkerThread: public QThread, public grid_worker
 
    void reportProgress(double percentage);
    void finishedJob(const ministring &job, const ministrings &args);
+   void failedJob(const ministring &job, const ministrings &args);
 };
 
 #endif
