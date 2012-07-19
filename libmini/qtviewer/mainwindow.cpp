@@ -875,11 +875,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == abortAction)
           emit(activate("abort"));
        else if (selectedAction == saveDBAction)
-          emit(activate("save_db"));
+          emit(activate("save_db", row));
        else if (selectedAction == saveGeoTiffAction)
-          emit(activate("save_tif"));
+          emit(activate("save_tif", row));
        else if (selectedAction == saveJpgInTifAction)
-          emit(activate("save_jpgintif"));
+          emit(activate("save_jpgintif", row));
        else if (selectedAction == saveGridAction)
           emit(activate("save_grid"));
        else if (selectedAction == deleteAction)
