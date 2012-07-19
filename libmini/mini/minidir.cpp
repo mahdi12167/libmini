@@ -2,6 +2,8 @@
 
 #include "minibase.h"
 
+#include "miniio.h"
+
 #include "minidir.h"
 
 #ifndef _WIN32
@@ -160,5 +162,21 @@ const char *findfile()
 // check if match is a directory
 int isdirectory()
    {return(fileisdirectory);}
+
+// remove a directory and all contained files
+void removedirectory(const char *dir)
+   {
+   char *pattern;
+   const char *filename;
+
+   pattern=strdup2(dir,"/*");
+   filesearch(pattern);
+   free(pattern);
+
+   while ((filename=findfile())!=NULL)
+      if (!isdirectory()) removefile(filename);
+
+   removedir(dir);
+   }
 
 }

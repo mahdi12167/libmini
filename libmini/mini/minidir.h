@@ -14,6 +14,9 @@ const char *findfile();
 // check if match is a directory
 int isdirectory();
 
+// remove a directory and all contained files
+void removedirectory(const char *dir);
+
 }
 
 using namespace minidir;
