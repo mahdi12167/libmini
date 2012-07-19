@@ -11,6 +11,22 @@ WorkerThread::~WorkerThread()
    abort_jobs();
 }
 
+void WorkerThread::run_job(Job *job)
+{
+   MINILOG("running job: "+job->get_id());
+   MINILOG("job details:");
+   MINILOG(job->to_string("\n"));
+
+   grid_worker::run_job(job);
+}
+
+void WorkerThread::abort_jobs()
+{
+   grid_worker::abort_jobs();
+
+   MINILOG("aborted jobs");
+}
+
 void WorkerThread::block_jobs()
 {
    mutex.lock();
@@ -46,10 +62,18 @@ void WorkerThread::set_progress(double percentage)
 
 void WorkerThread::job_success(Job *job)
 {
+   MINILOG("finished job: "+job->get_id());
+   MINILOG("job details:");
+   MINILOG(job->to_string("\n"));
+
    emit finishedJob(job->get_id(), *job);
 }
 
 void WorkerThread::job_failure(Job *job)
 {
+   MINILOG("failed job: "+job->get_id());
+   MINILOG("job details:");
+   MINILOG(job->to_string("\n"));
+
    emit failedJob(job->get_id(), *job);
 }

@@ -3,6 +3,7 @@
 #ifndef WORKER_H
 #define WORKER_H
 
+#include <mini/mini_generic.h>
 #include <grid/grid_workers.h>
 
 #include <QtCore/QThread>
@@ -17,6 +18,9 @@ class WorkerThread: public QThread, public grid_worker
 
    WorkerThread(QObject *parent = 0);
    virtual ~WorkerThread();
+
+   void run_job(Job *job);
+   void abort_jobs();
 
    protected:
 
