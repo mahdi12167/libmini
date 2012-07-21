@@ -135,6 +135,8 @@ class ministring: public ministring_base
 
       if (s==0) return(FALSE);
 
+      if (start<s-1) start=s-1;
+
       for (i=start; i<SIZE; i++)
          {
          idx=SIZE-1-i;
