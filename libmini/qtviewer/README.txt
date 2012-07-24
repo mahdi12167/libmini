@@ -107,12 +107,12 @@ The application can be started without command line parameters:
 Then the application will show the entire earth on startup.
 
 The application also accepts a list of urls as parameters.
-Each url needs to point to a tileset directory.
+Each url needs to point to a tileset directory or geotiff image layers.
 
 Usage on the unix terminal:
- ./qtviewer { <tileset url> }
+ ./qtviewer { <tileset url> | <image.tif> }
 
-Then the application will zoom into the first specified tileset.
+Then the application will zoom into the first specified argument.
 
 !! Tileset URLs
 
@@ -125,14 +125,27 @@ A tileset url can point to a regular libGrid or VTBuilder
  imag/    - directory of imagery tiles
  imag.ini - ini file for imagery directory
 
+The elev and image directories contain the tiles of the tileset stored in the proprietary libMini DB format:
+* The DB format provides mip-mapped s3tc-compressed image data.
+* The DB format also provides lzw-compressed floating point elevation data.
+
+!! Image Layers
+
+An image layers can contain imagery (color layer) or elevation information (dem layer).
+
+The usual file format for color and dem layers is geotiff. See
+http://www.gdal.org for more information on that format and additional
+tools to process geotiff images.
+
 !! User Interface
 
 The Qt viewer supports drag and drop of geo-referenced images and tileset urls.
 
-The images and tilesets are also displayed as a list view. The images can contain imagery (color layer) or elevation information (dem layer).
-The images are displayed as 3D thumbnails at the geo-referenced position whereas the tilesets are displayed in full 3D.
+The images are displayed as 3D thumbnails at the geo-referenced
+position, whereas the tilesets are displayed in full 3D. The images
+and tilesets are also displayed in a list view on the right.
 
-Right-clicking at the list view triggers a context menu with a variety of available operations.
+Right-clicking at the list view triggers a context menu with a variety of available operations:
 * A single layer can be opened.
 ** It is displayed as flat geo-referenced thumbnail.
 * A single layer can be inspected.
@@ -140,20 +153,23 @@ Right-clicking at the list view triggers a context menu with a variety of availa
 * A single dem layer can be shaded.
 ** A diffuse noon lighting technique is applied.
 * Multiple images can be selected or unselected.
-* Multiple selected images can be resampled to a produce a tileset
+* Multiple selected images can be resampled to a produce a tileset.
 ** A tileset is displayed in full 3D.
 ** Its appearance takes both slected color and dem layers into account.
 ** At least a single dem layer must be selected.
 ** Resampling takes place in a background thread.
-** Progress is shown in percent below the list view.
-** Resampling is a computationally expensive operation and can take several minutes to hours.
-** After resampling the original flat layers are hidden and replaced by the 3D resampled tileset
-* A single layer or selected layers can be removed.
+*** Progress is shown in percent below the list view.
+*** Resampling is a computationally expensive operation and can take several minutes to hours.
+*** It produces a number of tiles that are stored in the proprietary libMini DB format.
+** After resampling, the original flat layers are hidden and replaced by the 3D resampled tileset.
+*** The tiles of the tileset are paged in and out on demand.
+*** Therefore, a tileset is in principle not limited in size or extent.
+* A single layer or multiple selected layers can be removed, finally.
 
 !! Example Data
 
-For example, you can drag&drop the tileset data directory of a libMini
-demo into the viewer window:
+For example, you can drag&drop a tileset data directory into the
+viewer window:
 
 Download the Hawaii or Fraenkische demo from stereofx.org/download and
 drag&drop the data/HawaiiTileset or data/FrankischeTileset directory
@@ -176,7 +192,8 @@ for the Island of Oahu, Hawai'i:
 4) Wait several minutes while the resampling takes place.
 5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
 
-If this takes too long for you impatient guys, we can do the same with a small islet off the east coast of Oahu: Manana Island:
+If this takes too long for you impatient guys, we can do the same with
+a small island off the east coast of Oahu, Manana Island:
 
 0) We assume you have the libgrid data directory available.
 1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
