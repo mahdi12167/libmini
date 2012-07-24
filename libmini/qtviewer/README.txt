@@ -127,16 +127,61 @@ A tileset url can point to a regular libGrid or VTBuilder
 
 !! User Interface
 
-The Qt viewer supports drag and drop of tileset urls.
+The Qt viewer supports drag and drop of geo-referenced images and tileset urls.
+
+The images and tilesets are also displayed as a list view. The images can contain imagery (color layer) or elevation information (dem layer).
+The images are displayed as 3D thumbnails at the geo-referenced position whereas the tilesets are displayed in full 3D.
+
+Right-clicking at the list view triggers a context menu with a variety of available operations.
+* A single layer can be opened.
+** It is displayed as flat geo-referenced thumbnail.
+* A single layer can be inspected.
+** Info about its size and geo-reference is shown.
+* A single dem layer can be shaded.
+** A diffuse noon lighting technique is applied.
+* Multiple images can be selected or unselected.
+* Multiple selected images can be resampled to a produce a tileset
+** A tileset is displayed in full 3D.
+** Its appearance takes both slected color and dem layers into account.
+** At least a single dem layer must be selected.
+** Resampling takes place in a background thread.
+** Progress is shown in percent below the list view.
+** Resampling is a computationally expensive operation and can take several minutes to hours.
+** After resampling the original flat layers are hidden and replaced by the 3D resampled tileset
+* A single layer or selected layers can be removed.
 
 !! Example Data
 
 For example, you can drag&drop the tileset data directory of a libMini
-demo into the viewer window. Download the Hawaii or Fraenkische demo
-from stereofx.org/download and drag&drop the data/HawaiiTileset or
-data/FrankischeTileset directory into the viewer
-window. Double-clicking on the layer brings the respective tileset
-into view.
+demo into the viewer window:
+
+Download the Hawaii or Fraenkische demo from stereofx.org/download and
+drag&drop the data/HawaiiTileset or data/FrankischeTileset directory
+into the viewer window. Double-clicking on the layer brings the
+respective tileset into view.
+
+You can also drag in layers from the libGrid data directory:
+
+http://code.google.com/p/libgrid/source/browse/libgrid/data
+
+!! Usage Example
+
+A self-explanatory usage example in 5 steps - we produce a 3D tileset
+for the Island of Oahu, Hawai'i:
+
+0) We assume you have the libgrid data directory available.
+1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
+2) Drag the "Oahu-25.tif" color layer from the "imag" directory into the qtviewer.
+3) Right click at the list view and choose "resample all" from the context menu.
+4) Wait several minutes while the resampling takes place.
+5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
+
+If this takes too long for you impatient guys, we can do the same with a small islet off the east coast of Oahu: Manana Island:
+
+0) We assume you have the libgrid data directory available.
+1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
+3) Right click at the list view and choose "resample all" from the context menu.
+4) Zoom into Manana Island to see some 3D details.
 
 !! Navigation
 

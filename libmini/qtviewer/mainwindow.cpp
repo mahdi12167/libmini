@@ -868,6 +868,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // create contex menu
     QMenu myMenu;
+    QAction *openAction = new QAction(tr("open"), this);
+    myMenu.addAction(openAction);
+    myMenu.addSeparator();
     QAction *selectAction = new QAction(tr("select"), this);
     myMenu.addAction(selectAction);
     QAction *selectAllAction = new QAction(tr("select all"), this);
@@ -914,7 +917,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // process selected action
     if (selectedAction)
-       if (selectedAction == selectAction)
+       if (selectedAction == openAction)
+          emit(activate("open"));
+       else if (selectedAction == selectAction)
           emit(activate("select", row));
        else if (selectedAction == selectAllAction)
           emit(activate("select_all"));
