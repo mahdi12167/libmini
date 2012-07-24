@@ -79,6 +79,9 @@ private slots:
    void gridLevelsChanged(QString);
    void gridStepChanged(QString);
 
+   void shadePowerChanged(QString);
+   void jpegQualityChanged(QString);
+
    void checkVertical(int);
    void checkSliders(int);
 
@@ -172,6 +175,9 @@ private:
    QLineEdit *lineEdit_gridLevels;
    QLineEdit *lineEdit_gridStep;
 
+   QLineEdit *lineEdit_shadePower;
+   QLineEdit *lineEdit_jpegQuality;
+
    QCheckBox *verticalButton;
    QCheckBox *sliderButton;
 
@@ -188,6 +194,9 @@ protected:
    int grid_level;
    int grid_levels;
    int grid_step;
+
+   double shadePower;
+   double jpegQuality;
 
    void initSettings();
    void saveSettings();

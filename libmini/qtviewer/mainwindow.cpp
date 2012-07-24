@@ -47,6 +47,9 @@ void MainWindow::initSettings()
    grid_levels = 1;
    grid_step = 2;
 
+   shadePower = 2;
+   jpegQuality = 90;
+
    // override with persistent settings:
 
    QSettings settings("www.open-terrain.org", "qtviewer");
@@ -59,6 +62,21 @@ void MainWindow::initSettings()
 
    if (settings.contains("tmpPath"))
       tmpPath = settings.value("tmpPath").toString().toStdString().c_str();
+
+   if (settings.contains("gridLevel"))
+      grid_level = settings.value("gridLevel").toDouble();
+
+   if (settings.contains("gridLevels"))
+      grid_levels = settings.value("gridLevels").toDouble();
+
+   if (settings.contains("gridStep"))
+      grid_step = settings.value("gridStep").toDouble();
+
+   if (settings.contains("shadePower"))
+      shadePower = settings.value("shadePower").toDouble();
+
+   if (settings.contains("jpegQuality"))
+      jpegQuality = settings.value("jpegQuality").toDouble();
 }
 
 void MainWindow::saveSettings()
@@ -68,6 +86,13 @@ void MainWindow::saveSettings()
    settings.setValue("repoPath", QString(repoPath.c_str()));
    settings.setValue("exportPath", QString(exportPath.c_str()));
    settings.setValue("tmpPath", QString(tmpPath.c_str()));
+
+   settings.setValue("gridLevel", grid_level);
+   settings.setValue("gridLevels", grid_levels);
+   settings.setValue("gridStep", grid_step);
+
+   settings.setValue("shadePower", shadePower);
+   settings.setValue("jpegQuality", jpegQuality);
 }
 
 void MainWindow::createActions()
@@ -328,6 +353,12 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_gridStep = createEdit("Grid Step", grid_step, &lineEdit_gridStep);
    connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
 
+   QGroupBox *lineEditGroup_shadePower = createEdit("Shading Power", shadePower, &lineEdit_shadePower);
+   connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
+
+   QGroupBox *lineEditGroup_jpegQuality = createEdit("JPEG Quality", jpegQuality, &lineEdit_jpegQuality);
+   connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
+
    verticalButton = new QCheckBox(tr("Vertical Layout"));
    verticalButton->setChecked(true);
 
@@ -345,6 +376,9 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_gridLevel);
    prefLayout->addWidget(lineEditGroup_gridLevels);
    prefLayout->addWidget(lineEditGroup_gridStep);
+
+   prefLayout->addWidget(lineEditGroup_shadePower);
+   prefLayout->addWidget(lineEditGroup_jpegQuality);
 
    prefLayout->addWidget(verticalButton);
    prefLayout->addWidget(sliderButton);
@@ -383,7 +417,8 @@ void MainWindow::createWidgets()
    viewerWindow->setRepo(repoPath);
    viewerWindow->setExport(exportPath);
    viewerWindow->setTmp(tmpPath);
-   viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+   viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
+   viewerWindow->setExportSettings(shadePower, jpegQuality);
 
    // progress:
 
@@ -684,7 +719,7 @@ void MainWindow::gridLevelChanged(QString level)
    if (valid)
       {
       this->grid_level = grid_level;
-      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
       }
 }
 
@@ -696,7 +731,7 @@ void MainWindow::gridLevelsChanged(QString levels)
    if (valid)
       {
       this->grid_levels = grid_levels;
-      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
       }
 }
 
@@ -708,7 +743,31 @@ void MainWindow::gridStepChanged(QString step)
    if (valid)
       {
       this->grid_step = grid_step;
-      viewerWindow->setWorkerSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
+      }
+}
+
+void MainWindow::shadePowerChanged(QString power)
+{
+   bool valid;
+   double shadePower = power.toDouble(&valid);
+
+   if (valid)
+      {
+      this->shadePower = shadePower;
+      viewerWindow->setExportSettings(shadePower, jpegQuality);
+      }
+}
+
+void MainWindow::jpegQualityChanged(QString quality)
+{
+   bool valid;
+   double jpegQuality = quality.toDouble(&valid);
+
+   if (valid)
+      {
+      this->jpegQuality = jpegQuality;
+      viewerWindow->setExportSettings(shadePower, jpegQuality);
       }
 }
 

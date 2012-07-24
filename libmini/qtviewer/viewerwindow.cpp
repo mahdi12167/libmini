@@ -301,11 +301,17 @@ void ViewerWindow::setTmp(ministring path)
          tmp_path += "/";
 }
 
-void ViewerWindow::setWorkerSettings(int level, int levels, int step)
+void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
    grid_level = level;
    grid_levels = levels;
    grid_step = step;
+}
+
+void ViewerWindow::setExportSettings(double power, double quality)
+{
+   shadePower = power;
+   jpegQuality = quality;
 }
 
 void ViewerWindow::loadURL(ministring url)
@@ -715,7 +721,7 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "save_jpgintif")
    {
-      SaveJob *job = new SaveJob("","",FALSE,FALSE,FALSE,TRUE);
+      SaveJob *job = new SaveJob("","",FALSE,FALSE,FALSE,TRUE,jpegQuality);
       if (job == NULL) MEMERROR();
 
       job->append(getObject(value)->get_full_name());
@@ -753,7 +759,7 @@ void ViewerWindow::shade(ministring key)
       if (image!=NULL)
          if (image->is_elevation())
          {
-            ShadeJob *job = new ShadeJob;
+            ShadeJob *job = new ShadeJob("",shadePower);
             if (job == NULL) MEMERROR();
 
             job->append(image->get_full_name());

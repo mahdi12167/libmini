@@ -44,7 +44,8 @@ public:
    void setExport(ministring path);
    void setTmp(ministring path);
 
-   void setWorkerSettings(int level=0, int levels=1, int step=2);
+   void setResampleSettings(int level=0, int levels=1, int step=2);
+   void setExportSettings(double power=2, double quality=90);
 
    void loadURL(ministring url);
    void loadURLs(ministrings urls);
@@ -141,6 +142,9 @@ private:
    int grid_level;
    int grid_levels;
    int grid_step;
+
+   double shadePower;
+   double jpegQuality;
 
    Objects objects;
 
