@@ -365,7 +365,6 @@ void ViewerWindow::loadMap(ministring url)
    }
 
    Object_tileset *tileset = new Object_tileset(url, repository_path, viewer);
-
    if (tileset == NULL) MEMERROR();
 
    if (!addObject(url, tileset, "tileset"))
