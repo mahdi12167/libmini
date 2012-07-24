@@ -212,6 +212,12 @@ BOOLINT Object_image::initGFX()
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
 
+         if (!extent.is_georeferenced())
+            {
+            MINILOG("missing geo-reference");
+            return(FALSE);
+            }
+
          set_center(extent.get_center(),extent.get_size());
 
          image_node=new node_grid_extent(extent);

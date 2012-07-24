@@ -412,11 +412,14 @@ void MainWindow::createWidgets()
 
    mainGroup->setLayout(mainLayout);
 
-   // viewer and worker settings:
+   // worker directories:
 
-   viewerWindow->setRepo(repoPath);
-   viewerWindow->setExport(exportPath);
-   viewerWindow->setTmp(tmpPath);
+   repoPathChanged(repoPath.c_str());
+   exportPathChanged(exportPath.c_str());
+   tmpPathChanged(tmpPath.c_str());
+
+   // worker settings:
+
    viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
    viewerWindow->setExportSettings(shadePower, jpegQuality);
 
