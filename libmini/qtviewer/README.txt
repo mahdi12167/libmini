@@ -193,7 +193,8 @@ for the Island of Oahu, Hawai'i:
 * 5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
 
 If this takes too long for you impatient guys, we can do the same with
-a small island off the east coast of Oahu, Manana Island:
+a small island off the east coast of Oahu, Manana Island, for a total
+of just 3 simple steps:
 
 * 0) We assume you have the libgrid data directory available.
 * 1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
