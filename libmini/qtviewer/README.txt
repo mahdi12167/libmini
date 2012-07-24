@@ -178,27 +178,27 @@ respective tileset into view.
 
 You can also drag in layers from the libGrid data directory:
 
-http://code.google.com/p/libgrid/source/browse/libgrid/data
+ http://code.google.com/p/libgrid/source/browse/libgrid/data
 
 !! Usage Example
 
 A self-explanatory usage example in 5 steps - we produce a 3D tileset
 for the Island of Oahu, Hawai'i:
 
-0) We assume you have the libgrid data directory available.
-1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
-2) Drag the "Oahu-25.tif" color layer from the "imag" directory into the qtviewer.
-3) Right click at the list view and choose "resample all" from the context menu.
-4) Wait several minutes while the resampling takes place.
-5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
+* 0) We assume you have the libgrid data directory available.
+* 1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
+* 2) Drag the "Oahu-25.tif" color layer from the "imag" directory into the qtviewer.
+* 3) Right click at the list view and choose "resample all" from the context menu.
+* 4) Wait several minutes while the resampling takes place.
+* 5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
 
 If this takes too long for you impatient guys, we can do the same with
 a small island off the east coast of Oahu, Manana Island:
 
-0) We assume you have the libgrid data directory available.
-1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
-3) Right click at the list view and choose "resample all" from the context menu.
-4) Zoom into Manana Island to see some 3D details.
+* 0) We assume you have the libgrid data directory available.
+* 1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
+* 2) Right click at the list view and choose "resample all" from the context menu.
+* 3) Zoom into Manana Island to see some 3D details.
 
 !! Navigation
 
