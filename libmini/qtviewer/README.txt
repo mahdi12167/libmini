@@ -125,13 +125,15 @@ A tileset url can point to a regular libGrid or VTBuilder
  imag/    - directory of imagery tiles
  imag.ini - ini file for imagery directory
 
-The elev and image directories contain the tiles of the tileset stored in the proprietary libMini DB format:
+The elev and image directories contain the tiles of the tileset stored
+in the proprietary libMini DB format:
 * The DB format provides mip-mapped s3tc-compressed image data.
 * The DB format also provides lzw-compressed floating point elevation data.
 
 !! Image Layers
 
-An image layers can contain imagery (color layer) or elevation information (dem layer).
+An image layer can contain imagery (color layer) or elevation
+information (dem layer).
 
 The usual file format for color and dem layers is geotiff. See
 http://www.gdal.org for more information on that format and additional
@@ -139,13 +141,15 @@ tools to process geotiff images.
 
 !! User Interface
 
-The Qt viewer supports drag and drop of geo-referenced images and tileset urls.
+The Qt viewer supports drag and drop of geo-referenced images and
+tileset urls.
 
 The images are displayed as 3D thumbnails at the geo-referenced
 position, whereas the tilesets are displayed in full 3D. The images
 and tilesets are also displayed in a list view on the right.
 
-Right-clicking at the list view triggers a context menu with a variety of available operations:
+Right-clicking at the list view triggers a context menu with a variety
+of available operations:
 * A single layer can be opened.
 ** It is displayed as flat geo-referenced thumbnail.
 * A single layer can be inspected.
@@ -177,29 +181,31 @@ into the viewer window. Double-clicking on the layer brings the
 respective tileset into view.
 
 You can also drag in layers from the libGrid data directory:
-
  http://code.google.com/p/libgrid/source/browse/libgrid/data
+
+The best way to get that data directory is to check it out via svn:
+ svn checkout http://libgrid.googlecode.com/svn/libgrid/data data
 
 !! Usage Example
 
-A self-explanatory usage example in 5 steps - we produce a 3D tileset
-for the Island of Oahu, Hawai'i:
+An usage example in 5 steps - we produce a 3D tileset for the Island
+of Oahu, Hawai'i:
 
-* 0) We assume you have the libgrid data directory available.
-* 1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
-* 2) Drag the "Oahu-25.tif" color layer from the "imag" directory into the qtviewer.
-* 3) Right click at the list view and choose "resample all" from the context menu.
-* 4) Wait several minutes while the resampling takes place.
-* 5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
+* We assume we have the libgrid data directory available.
+* Step 1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
+* Step 2) Drag the "Oahu-25.tif" color layer from the "imag" directory into the qtviewer.
+* Step 3) Right click at the list view and choose "resample all" from the context menu.
+* Step 4) Wait several minutes while the resampling takes place.
+* Step 5) Then zoom into the produced tileset with the middle mouse wheel to see some 3D details.
 
 If this takes too long for you impatient guys, we can do the same with
 a small island off the east coast of Oahu, Manana Island, for a total
 of just 3 simple steps:
 
-* 0) We assume you have the libgrid data directory available.
-* 1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
-* 2) Right click at the list view and choose "resample all" from the context menu.
-* 3) Zoom into Manana Island to see some 3D details.
+* We assume we have the libgrid data directory available.
+* Step 1) Drag the "MananaIsland.tif" dem layer from the "elev/Oahu-Islands" directory into the qtviewer.
+* Step 2) Right click at the list view and choose "resample all" from the context menu.
+* Step 3) Zoom into Manana Island to see some 3D details.
 
 !! Navigation
 
