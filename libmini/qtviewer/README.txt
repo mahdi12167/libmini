@@ -189,7 +189,7 @@ The best way to get that data directory is to check it out via svn:
 !! Usage Example
 
 A simple usage example in 5 steps - we produce a 3D tileset for the Island
-of Oahu, Hawai'im by resampling a dem and a color layer:
+of Oahu, Hawai'i, by resampling a dem and a color layer:
 
 * We assume that we have the libgrid data directory available.
 * Step 1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
