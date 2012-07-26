@@ -159,7 +159,7 @@ of available operations:
 * Multiple images can be selected or unselected.
 * Multiple selected images can be resampled to a produce a tileset.
 ** A tileset is displayed in full 3D.
-** Its appearance takes both slected color and dem layers into account.
+** Its appearance takes both selected color and dem layers into account.
 ** At least a single dem layer must be selected.
 ** Resampling takes place in a background thread.
 *** Progress is shown in percent below the list view.
@@ -188,8 +188,8 @@ The best way to get that data directory is to check it out via svn:
 
 !! Usage Example
 
-A simple usage example in 5 steps - we produce a 3D tileset for the Island
-of Oahu, Hawai'i, by resampling a dem and a color layer:
+A simple usage example in 5 steps - we produce and visualize a 3D tileset
+for the Island of Oahu, Hawai'i, by resampling a dem and a color layer:
 
 * We assume that we have the libgrid data directory available.
 * Step 1) Drag the "Oahu-10.tif" dem layer from the "elev" directory into the qtviewer.
