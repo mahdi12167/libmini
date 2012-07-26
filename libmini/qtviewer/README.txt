@@ -165,6 +165,7 @@ of available operations:
 *** Progress is shown in percent below the list view.
 *** Resampling is a computationally expensive operation and can take several minutes to hours.
 *** It produces a number of tiles that are stored in the proprietary libMini DB format.
+*** For more information about resampling, please see the README of the libGrid library.
 ** After resampling, the original flat layers are hidden and replaced by the 3D resampled tileset.
 *** The tiles of the tileset are paged in and out on demand.
 *** Therefore, a tileset is in principle not limited in size or extent.
