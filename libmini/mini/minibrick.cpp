@@ -507,7 +507,9 @@ void minisurf::enabletorch(int phase,
                            float bordercontrol,float centercontrol,float colorcontrol,
                            float fogstart,float fogend,
                            float fogdensity,
-                           float fogcolor[3])
+                           float fogcolor[3],
+                           int tex2D,
+                           int tex3D)
    {
    float fog_a,fog_b,fog_c;
 
@@ -644,7 +646,9 @@ void minisurf::enabletorch(int phase,
       END \n";
 
    // build vertex program
-   if (VTXPROGID==0) VTXPROGID=buildvtxprog(vtxprog1);
+   if (VTXPROGID==0)
+      if (tex2D!=0 || tex3D!=0) VTXPROGID=buildvtxprog(vtxprog2);
+      else VTXPROGID=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID==0)
@@ -693,7 +697,9 @@ void minisurf::enablepattern(float ambient,
                              float bordercontrol,
                              float fogstart,float fogend,
                              float fogdensity,
-                             float fogcolor[3])
+                             float fogcolor[3],
+                             int tex2D,
+                             int tex3D)
    {
    float fog_a,fog_b,fog_c;
 
@@ -845,7 +851,9 @@ void minisurf::enablepattern(float ambient,
       END \n";
 
    // build vertex program
-   if (VTXPROGID2==0) VTXPROGID2=buildvtxprog(vtxprog1);
+   if (VTXPROGID2==0)
+      if (tex2D!=0 || tex3D!=0) VTXPROGID2=buildvtxprog(vtxprog2);
+      else VTXPROGID2=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID2==0)
