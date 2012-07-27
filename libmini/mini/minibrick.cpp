@@ -433,11 +433,11 @@ minivtxarray *minispect::getreadbuf(int n)
 
 int minisurf::INSTANCES=0;
 
-int minisurf::VTXPROGID;
-int minisurf::FRGPROGID;
+int minisurf::VTXPROGID[2];
+int minisurf::FRGPROGID[3];
 
-int minisurf::VTXPROGID2;
-int minisurf::FRGPROGID2;
+int minisurf::VTXPROGID2[2];
+int minisurf::FRGPROGID2[3];
 
 // default constructor
 minisurf::minisurf()
@@ -454,42 +454,48 @@ minisurf::minisurf()
 
    if (INSTANCES++==0)
       {
-      VTXPROGID=0;
-      FRGPROGID=0;
+      VTXPROGID[0]=VTXPROGID[1]=0;
+      FRGPROGID[0]=FRGPROGID[1]=FRGPROGID[2]=0;
 
-      VTXPROGID2=0;
-      FRGPROGID2=0;
+      VTXPROGID2[0]=VTXPROGID2[1]=0;
+      FRGPROGID2[0]=FRGPROGID2[1]=FRGPROGID2[2]=0;
       }
    }
 
 // destructor
 minisurf::~minisurf()
    {
+   int i;
+
    if (--INSTANCES==0)
       {
-      if (VTXPROGID!=0)
-         {
-         deletevtxprog(VTXPROGID);
-         VTXPROGID=0;
-         }
+      for (i=0; i<2; i++)
+         if (VTXPROGID[i]!=0)
+            {
+            deletevtxprog(VTXPROGID[i]);
+            VTXPROGID[i]=0;
+            }
 
-      if (FRGPROGID!=0)
-         {
-         deletefrgprog(FRGPROGID);
-         FRGPROGID=0;
-         }
+      for (i=0; i<3; i++)
+         if (FRGPROGID[i]!=0)
+            {
+            deletefrgprog(FRGPROGID[i]);
+            FRGPROGID[i]=0;
+            }
 
-      if (VTXPROGID2!=0)
-         {
-         deletevtxprog(VTXPROGID2);
-         VTXPROGID2=0;
-         }
+      for (i=0; i<2; i++)
+         if (VTXPROGID2[i]!=0)
+            {
+            deletevtxprog(VTXPROGID2[i]);
+            VTXPROGID2[i]=0;
+            }
 
-      if (FRGPROGID2!=0)
-         {
-         deletefrgprog(FRGPROGID2);
-         FRGPROGID2=0;
-         }
+      for (i=0; i<3; i++)
+         if (FRGPROGID2[i]!=0)
+            {
+            deletefrgprog(FRGPROGID2[i]);
+            FRGPROGID2[i]=0;
+            }
       }
    }
 
@@ -510,6 +516,8 @@ void minisurf::enabletorch(int phase,
                            float fogcolor[3],
                            int tex2D)
    {
+   int vtxprog,frgprog;
+
    float fog_a,fog_b,fog_c;
 
    static const char *vtxprog1="!!ARBvp1.0 \n\
@@ -676,20 +684,29 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *vtxprogs[2]={vtxprog1,vtxprog2};
+   static const char *frgprogs[3]={frgprog1,frgprog2,frgprog3};
+
+   // choose vtx program
+   if (tex2D!=0) vtxprog=1;
+   else vtxprog=0;
+
    // build vertex program
-   if (VTXPROGID==0)
-      if (tex2D!=0) VTXPROGID=buildvtxprog(vtxprog2);
-      else VTXPROGID=buildvtxprog(vtxprog1);
+   if (VTXPROGID[vtxprog]==0)
+      VTXPROGID[vtxprog]=buildvtxprog(vtxprogs[vtxprog]);
+
+   // choose fragment program
+   if (tex2D!=0) frgprog=2;
+   else if (fogstart<fogend && fogcolor!=NULL) frgprog=1;
+   else frgprog=0;
 
    // build fragment program
-   if (FRGPROGID==0)
-      if (tex2D!=0) FRGPROGID=buildfrgprog(frgprog3);
-      else if (fogstart<fogend && fogcolor!=NULL) FRGPROGID=buildfrgprog(frgprog2);
-      else FRGPROGID=buildfrgprog(frgprog1);
+   if (FRGPROGID[frgprog]==0)
+      FRGPROGID[frgprog]=buildfrgprog(frgprogs[frgprog]);
 
    // bind shader programs
-   bindvtxprog(VTXPROGID);
-   bindfrgprog(FRGPROGID);
+   bindvtxprog(VTXPROGID[vtxprog]);
+   bindfrgprog(FRGPROGID[frgprog]);
 
    // define border appearance
    setfrgprogpar(0,0.0f,0.0f,bordercontrol,0.0f);
@@ -732,6 +749,8 @@ void minisurf::enablepattern(float ambient,
                              float fogcolor[3],
                              int tex2D)
    {
+   int vtxprog,frgprog;
+
    float fog_a,fog_b,fog_c;
 
    static const char *vtxprog1="!!ARBvp1.0 \n\
@@ -919,20 +938,29 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *vtxprogs[2]={vtxprog1,vtxprog2};
+   static const char *frgprogs[3]={frgprog1,frgprog2,frgprog3};
+
+   // choose vtx program
+   if (tex2D!=0) vtxprog=1;
+   else vtxprog=0;
+
    // build vertex program
-   if (VTXPROGID2==0)
-      if (tex2D!=0) VTXPROGID2=buildvtxprog(vtxprog2);
-      else VTXPROGID2=buildvtxprog(vtxprog1);
+   if (VTXPROGID2[vtxprog]==0)
+      VTXPROGID2[vtxprog]=buildvtxprog(vtxprogs[vtxprog]);
+
+   // choose fragment program
+   if (tex2D!=0) frgprog=2;
+   else if (fogstart<fogend && fogcolor!=NULL) frgprog=1;
+   else frgprog=0;
 
    // build fragment program
-   if (FRGPROGID2==0)
-      if (tex2D!=0) FRGPROGID2=buildfrgprog(frgprog3);
-      else if (fogstart<fogend && fogcolor!=NULL) FRGPROGID2=buildfrgprog(frgprog2);
-      else FRGPROGID2=buildfrgprog(frgprog1);
+   if (FRGPROGID2[frgprog]==0)
+      FRGPROGID2[frgprog]=buildfrgprog(frgprogs[frgprog]);
 
    // bind shader programs
-   bindvtxprog(VTXPROGID2);
-   bindfrgprog(FRGPROGID2);
+   bindvtxprog(VTXPROGID2[vtxprog]);
+   bindfrgprog(FRGPROGID2[frgprog]);
 
    // define border appearance
    setfrgprogpar(0,0.0f,0.0f,bordercontrol,0.0f);

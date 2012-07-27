@@ -259,11 +259,11 @@ class minisurf
 
    static int INSTANCES;
 
-   static int VTXPROGID;
-   static int FRGPROGID;
+   static int VTXPROGID[2];
+   static int FRGPROGID[3];
 
-   static int VTXPROGID2;
-   static int FRGPROGID2;
+   static int VTXPROGID2[2];
+   static int FRGPROGID2[3];
 
    void extractiso(const float isoval,
                    const int x1,const int y1,const int z1,const float c1,const mininorm &n1,
