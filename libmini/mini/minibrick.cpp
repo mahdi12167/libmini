@@ -515,6 +515,7 @@ void minisurf::enabletorch(int phase,
       OPTION ARB_position_invariant; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      PARAM texmat[4]={state.matrix.texture[0]}; \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
@@ -533,9 +534,9 @@ void minisurf::enabletorch(int phase,
       ### write resulting color \n\
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
-      MOV result.texcoord,vec; \n\
+      MOV result.texcoord[1],vec; \n\
       ### write view position to tex coords \n\
-      MOV result.texcoord[1],pos; \n\
+      MOV result.texcoord[2],pos; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -547,9 +548,9 @@ void minisurf::enabletorch(int phase,
       ### fetch actual color \n\
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
-      MOV nrm,fragment.texcoord; \n\
+      MOV nrm,fragment.texcoord[1]; \n\
       ### fetch view position \n\
-      MOV pos,fragment.texcoord[1]; \n\
+      MOV pos,fragment.texcoord[2]; \n\
       ### apply head light to color and opacity \n\
       MUL nrm.z,nrm.z,c.z; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -578,9 +579,9 @@ void minisurf::enabletorch(int phase,
       ### fetch actual color \n\
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
-      MOV nrm,fragment.texcoord; \n\
+      MOV nrm,fragment.texcoord[1]; \n\
       ### fetch world position \n\
-      MOV pos,fragment.texcoord[1]; \n\
+      MOV pos,fragment.texcoord[2]; \n\
       ### apply head light to color and opacity \n\
       MUL nrm.z,nrm.z,c.z; \n\
       DP3 len.x,nrm,nrm; \n\
@@ -662,6 +663,7 @@ void minisurf::enablepattern(float ambient,
       OPTION ARB_position_invariant; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      PARAM texmat[4]={state.matrix.texture[0]}; \n\
       ### fetch actual vertex \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       MOV vtx,vertex.position; \n\
@@ -680,11 +682,11 @@ void minisurf::enablepattern(float ambient,
       ### write resulting color \n\
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
-      MOV result.texcoord,vec; \n\
+      MOV result.texcoord[1],vec; \n\
       ### write view position to tex coords \n\
-      MOV result.texcoord[1],pos; \n\
+      MOV result.texcoord[2],pos; \n\
       ### write world position to tex coords \n\
-      MOV result.texcoord[2],vtx; \n\
+      MOV result.texcoord[3],vtx; \n\
       ### calculate spherical fog coord \n\
       DP3 result.fogcoord.x,pos,pos; \n\
       END \n";
@@ -697,11 +699,11 @@ void minisurf::enablepattern(float ambient,
       ### fetch actual color \n\
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
-      MOV nrm,fragment.texcoord; \n\
+      MOV nrm,fragment.texcoord[1]; \n\
       ### fetch view position \n\
-      MOV pos,fragment.texcoord[1]; \n\
+      MOV pos,fragment.texcoord[2]; \n\
       ### fetch world position \n\
-      MOV crd,fragment.texcoord[2]; \n\
+      MOV crd,fragment.texcoord[3]; \n\
       ### apply pattern to opacity \n\
       DP3 crd.w,crd,e; \n\
       SUB crd.w,crd.w,e.w; \n\
@@ -733,11 +735,11 @@ void minisurf::enablepattern(float ambient,
       ### fetch actual color \n\
       MOV col,fragment.color; \n\
       ### fetch fragment normal \n\
-      MOV nrm,fragment.texcoord; \n\
+      MOV nrm,fragment.texcoord[1]; \n\
       ### fetch view position \n\
-      MOV pos,fragment.texcoord[1]; \n\
+      MOV pos,fragment.texcoord[2]; \n\
       ### fetch world position \n\
-      MOV crd,fragment.texcoord[2]; \n\
+      MOV crd,fragment.texcoord[3]; \n\
       ### apply pattern to opacity \n\
       DP3 crd.w,crd,e; \n\
       SUB crd.w,crd.w,e.w; \n\
