@@ -511,11 +511,10 @@ void minisurf::enabletorch(int phase,
    {
    float fog_a,fog_b,fog_c;
 
-   static const char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog1="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      PARAM texmat[4]={state.matrix.texture[0]}; \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
@@ -531,6 +530,45 @@ void minisurf::enabletorch(int phase,
       DP4 vec.y,invtra[1],nrm; \n\
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      ### write normal to tex coords \n\
+      MOV result.texcoord[1],vec; \n\
+      ### write view position to tex coords \n\
+      MOV result.texcoord[2],pos; \n\
+      ### calculate spherical fog coord \n\
+      DP3 result.fogcoord.x,pos,pos; \n\
+      END \n";
+
+   static const char *vtxprog2="!!ARBvp1.0 \n\
+      OPTION ARB_position_invariant; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
+      PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      PARAM texmat[4]={state.matrix.texture[0]}; \n\
+      TEMP vtx,col,nrm,pos,vec; \n\
+      TEMP texcrd,crd; \n\
+      ### fetch actual vertex \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV nrm,vertex.normal; \n\
+      MOV texcrd,vertex.texcoord[0]; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n\
+      ### transform tex coords with texture matrix \n\
+      DP4 crd.x,texmat[0],texcrd; \n\
+      DP4 crd.y,texmat[1],texcrd; \n\
+      DP4 crd.z,texmat[2],texcrd; \n\
+      DP4 crd.w,texmat[3],texcrd; \n\
+      ### write resulting tex coords \n\
+      MOV result.texcoord[0],crd; \n\
       ### write resulting color \n\
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
@@ -606,7 +644,7 @@ void minisurf::enabletorch(int phase,
       END \n";
 
    // build vertex program
-   if (VTXPROGID==0) VTXPROGID=buildvtxprog(vtxprog);
+   if (VTXPROGID==0) VTXPROGID=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID==0)
@@ -659,11 +697,10 @@ void minisurf::enablepattern(float ambient,
    {
    float fog_a,fog_b,fog_c;
 
-   static const char *vtxprog="!!ARBvp1.0 \n\
+   static const char *vtxprog1="!!ARBvp1.0 \n\
       OPTION ARB_position_invariant; \n\
       PARAM matrix[4]={state.matrix.modelview}; \n\
       PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
-      PARAM texmat[4]={state.matrix.texture[0]}; \n\
       ### fetch actual vertex \n\
       TEMP vtx,col,nrm,pos,vec; \n\
       MOV vtx,vertex.position; \n\
@@ -679,6 +716,47 @@ void minisurf::enablepattern(float ambient,
       DP4 vec.y,invtra[1],nrm; \n\
       DP4 vec.z,invtra[2],nrm; \n\
       DP4 vec.w,invtra[3],nrm; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      ### write normal to tex coords \n\
+      MOV result.texcoord[1],vec; \n\
+      ### write view position to tex coords \n\
+      MOV result.texcoord[2],pos; \n\
+      ### write world position to tex coords \n\
+      MOV result.texcoord[3],vtx; \n\
+      ### calculate spherical fog coord \n\
+      DP3 result.fogcoord.x,pos,pos; \n\
+      END \n";
+
+   static const char *vtxprog2="!!ARBvp1.0 \n\
+      OPTION ARB_position_invariant; \n\
+      PARAM matrix[4]={state.matrix.modelview}; \n\
+      PARAM invtra[4]={state.matrix.modelview.invtrans}; \n\
+      PARAM texmat[4]={state.matrix.texture[0]}; \n\
+      ### fetch actual vertex \n\
+      TEMP vtx,col,nrm,pos,vec; \n\
+      TEMP texcrd,crd; \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n\
+      MOV nrm,vertex.normal; \n\
+      MOV texcrd,vertex.texcoord[0]; \n\
+      ### transform vertex with modelview \n\
+      DP4 pos.x,matrix[0],vtx; \n\
+      DP4 pos.y,matrix[1],vtx; \n\
+      DP4 pos.z,matrix[2],vtx; \n\
+      DP4 pos.w,matrix[3],vtx; \n\
+      ### transform normal with inverse transpose \n\
+      DP4 vec.x,invtra[0],nrm; \n\
+      DP4 vec.y,invtra[1],nrm; \n\
+      DP4 vec.z,invtra[2],nrm; \n\
+      DP4 vec.w,invtra[3],nrm; \n\
+      ### transform tex coords with texture matrix \n\
+      DP4 crd.x,texmat[0],texcrd; \n\
+      DP4 crd.y,texmat[1],texcrd; \n\
+      DP4 crd.z,texmat[2],texcrd; \n\
+      DP4 crd.w,texmat[3],texcrd; \n\
+      ### write resulting tex coords \n\
+      MOV result.texcoord[0],crd; \n\
       ### write resulting color \n\
       MOV result.color,col; \n\
       ### write normal to tex coords \n\
@@ -767,7 +845,7 @@ void minisurf::enablepattern(float ambient,
       END \n";
 
    // build vertex program
-   if (VTXPROGID2==0) VTXPROGID2=buildvtxprog(vtxprog);
+   if (VTXPROGID2==0) VTXPROGID2=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID2==0)
