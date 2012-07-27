@@ -508,8 +508,7 @@ void minisurf::enabletorch(int phase,
                            float fogstart,float fogend,
                            float fogdensity,
                            float fogcolor[3],
-                           int tex2D,
-                           int tex3D)
+                           int tex2D)
    {
    float fog_a,fog_b,fog_c;
 
@@ -645,14 +644,47 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *frgprog3="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      TEMP col,nrm,tex,pos,len; \n\
+      ### fetch actual color \n\
+      MOV col,fragment.color; \n\
+      ### fetch fragment normal \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      ### fetch view position \n\
+      MOV pos,fragment.texcoord[2]; \n\
+      ### fetch actual texel \n\
+      TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n\
+      ### apply head light to color and opacity \n\
+      MUL nrm.z,nrm.z,c.z; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL pos,pos,len.x; \n\
+      DP3 nrm.z,nrm,pos; \n\
+      ABS nrm.z,nrm.z; \n\
+      MAD_SAT nrm.x,nrm.z,d.x,d.y; \n\
+      MAD_SAT nrm.y,nrm.z,d.z,d.w; \n\
+      MUL col.xyz,col,nrm.x; \n\
+      MUL col.w,col,nrm.y; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
    // build vertex program
    if (VTXPROGID==0)
-      if (tex2D!=0 || tex3D!=0) VTXPROGID=buildvtxprog(vtxprog2);
+      if (tex2D!=0) VTXPROGID=buildvtxprog(vtxprog2);
       else VTXPROGID=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID==0)
-      if (fogstart<fogend && fogcolor!=NULL) FRGPROGID=buildfrgprog(frgprog2);
+      if (tex2D!=0) FRGPROGID=buildfrgprog(frgprog3);
+      else if (fogstart<fogend && fogcolor!=NULL) FRGPROGID=buildfrgprog(frgprog2);
       else FRGPROGID=buildfrgprog(frgprog1);
 
    // bind shader programs
@@ -698,8 +730,7 @@ void minisurf::enablepattern(float ambient,
                              float fogstart,float fogend,
                              float fogdensity,
                              float fogcolor[3],
-                             int tex2D,
-                             int tex3D)
+                             int tex2D)
    {
    float fog_a,fog_b,fog_c;
 
@@ -850,14 +881,53 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *frgprog3="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      TEMP col,nrm,tex,pos,crd,len; \n\
+      ### fetch actual color \n\
+      MOV col,fragment.color; \n\
+      ### fetch fragment normal \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      ### fetch view position \n\
+      MOV pos,fragment.texcoord[2]; \n\
+      ### fetch world position \n\
+      MOV crd,fragment.texcoord[3]; \n\
+      ### fetch actual texel \n\
+      TEX tex,fragment.texcoord[0],texture[0],2D; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n\
+      ### apply pattern to opacity \n\
+      DP3 crd.w,crd,e; \n\
+      SUB crd.w,crd.w,e.w; \n\
+      FRC crd.w,crd.w; \n\
+      SUB_SAT col.w,col.w,crd.w; \n\
+      ### apply head light to color \n\
+      MUL nrm.z,nrm.z,c.z; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL pos,pos,len.x; \n\
+      DP3 nrm.z,nrm,pos; \n\
+      ABS nrm.z,nrm.z; \n\
+      MAD_SAT nrm.x,nrm.z,d.x,d.y; \n\
+      MUL col.xyz,col,nrm.x; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
    // build vertex program
    if (VTXPROGID2==0)
-      if (tex2D!=0 || tex3D!=0) VTXPROGID2=buildvtxprog(vtxprog2);
+      if (tex2D!=0) VTXPROGID2=buildvtxprog(vtxprog2);
       else VTXPROGID2=buildvtxprog(vtxprog1);
 
    // build fragment program
    if (FRGPROGID2==0)
-      if (fogstart<fogend && fogcolor!=NULL) FRGPROGID2=buildfrgprog(frgprog2);
+      if (tex2D!=0) FRGPROGID2=buildfrgprog(frgprog3);
+      else if (fogstart<fogend && fogcolor!=NULL) FRGPROGID2=buildfrgprog(frgprog2);
       else FRGPROGID2=buildfrgprog(frgprog1);
 
    // bind shader programs

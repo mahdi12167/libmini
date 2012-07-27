@@ -292,8 +292,7 @@ class minisurf
                     float fogstart=0.0f,float fogend=0.0f,
                     float fogdensity=1.0f,
                     float fogcolor[3]=0,
-                    int tex2D=0,
-                    int tex3D=0);
+                    int tex2D=0);
 
    void disabletorch();
 
@@ -302,8 +301,7 @@ class minisurf
                       float fogstart=0.0f,float fogend=0.0f,
                       float fogdensity=1.0f,
                       float fogcolor[3]=0,
-                      int tex2D=0,
-                      int tex3D=0);
+                      int tex2D=0);
 
    void disablepattern();
 
