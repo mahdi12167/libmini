@@ -1025,11 +1025,18 @@ void minisurf::setstate(int enable,
                         int passes,
                         float ambient,
                         float bordercontrol,float centercontrol,float colorcontrol,
-                        float bordercontrol2,float centercontrol2,float colorcontrol2)
+                        float bordercontrol2,float centercontrol2,float colorcontrol2,
+                        float fogstart,float fogend,
+                        float fogdensity,
+                        float fogcolor[3],
+                        int tex2D)
    {
    // first pass for opaque triangles
    if (phase==ONE_RENDER_PHASE || phase==FIRST_RENDER_PHASE)
-      if (enable!=0) enabletorch(FIRST_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
+      if (enable!=0) enabletorch(FIRST_RENDER_PHASE,
+                                 ambient,bordercontrol,centercontrol,colorcontrol,
+                                 fogstart,fogend,fogdensity,fogcolor,
+                                 tex2D);
       else disabletorch();
 
    // set common OpenGL states
@@ -1046,7 +1053,9 @@ void minisurf::setstate(int enable,
       {
       // second pass for striped triangles
       if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
-         if (enable!=0) enablepattern(ambient,bordercontrol);
+         if (enable!=0) enablepattern(ambient,bordercontrol,
+                                      fogstart,fogend,fogdensity,fogcolor,
+                                      tex2D);
          else disablepattern();
       }
    // fast 2-pass rendering
@@ -1061,7 +1070,10 @@ void minisurf::setstate(int enable,
             enableblending();
             disableZwriting();
 
-            enabletorch(SECOND_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
+            enabletorch(SECOND_RENDER_PHASE,
+                        ambient,bordercontrol,centercontrol,colorcontrol,
+                        fogstart,fogend,fogdensity,fogcolor,
+                        tex2D);
             }
          else
             {
@@ -1089,7 +1101,10 @@ void minisurf::setstate(int enable,
             enableATTblending();
             disableZwriting();
 
-            enabletorch(SECOND_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
+            enabletorch(SECOND_RENDER_PHASE,
+                        ambient,bordercontrol,centercontrol,colorcontrol,
+                        fogstart,fogend,fogdensity,fogcolor,
+                        tex2D);
             }
          else
             {
@@ -1107,7 +1122,10 @@ void minisurf::setstate(int enable,
             enableBFculling();
             disableZwriting();
 
-            enabletorch(THIRD_RENDER_PHASE,ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2);
+            enabletorch(THIRD_RENDER_PHASE,
+                        ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2,
+                        fogstart,fogend,fogdensity,fogcolor,
+                        tex2D);
             }
          else
             {
@@ -1136,7 +1154,10 @@ void minisurf::setstate(int enable,
             enableATTblending();
             disableZwriting();
 
-            enabletorch(SECOND_RENDER_PHASE,ambient,bordercontrol,centercontrol,colorcontrol);
+            enabletorch(SECOND_RENDER_PHASE,
+                        ambient,bordercontrol,centercontrol,colorcontrol,
+                        fogstart,fogend,fogdensity,fogcolor,
+                        tex2D);
             }
          else
             {
@@ -1167,7 +1188,10 @@ void minisurf::setstate(int enable,
             enableBFculling();
             disableZwriting();
 
-            enabletorch(FOURTH_RENDER_PHASE,ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2);
+            enabletorch(FOURTH_RENDER_PHASE,
+                        ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2,
+                        fogstart,fogend,fogdensity,fogcolor,
+                        tex2D);
             }
          else
             {
@@ -1199,17 +1223,25 @@ void minisurf::renderpass(int phase,
                           int passes,
                           float ambient,
                           float bordercontrol,float centercontrol,float colorcontrol,
-                          float bordercontrol2,float centercontrol2,float colorcontrol2)
+                          float bordercontrol2,float centercontrol2,float colorcontrol2,
+                          float fogstart,float fogend,
+                          float fogdensity,
+                          float fogcolor[3],
+                          int tex2D)
    {
    setstate(1,phase,passes,
             ambient,bordercontrol,centercontrol,colorcontrol,
-            bordercontrol2,centercontrol2,colorcontrol2);
+            bordercontrol2,centercontrol2,colorcontrol2,
+            fogstart,fogend,fogdensity,fogcolor,
+            tex2D);
 
    renderarrays(phase);
 
    setstate(0,phase,passes,
             ambient,bordercontrol,centercontrol,colorcontrol,
-            bordercontrol2,centercontrol2,colorcontrol2);
+            bordercontrol2,centercontrol2,colorcontrol2,
+            fogstart,fogend,fogdensity,fogcolor,
+            tex2D);
    }
 
 // render surfaces
@@ -1217,55 +1249,92 @@ void minisurf::render(int phase,
                       int passes,
                       float ambient,
                       float bordercontrol,float centercontrol,float colorcontrol,
-                      float bordercontrol2,float centercontrol2,float colorcontrol2)
+                      float bordercontrol2,float centercontrol2,float colorcontrol2,
+                      float fogstart,float fogend,
+                      float fogdensity,
+                      float fogcolor[3],
+                      int tex2D)
    {
    // single pass for opaque triangles
    if (SPECTRUM.getopaqnum()!=0)
       if (phase==ONE_RENDER_PHASE || phase==FIRST_RENDER_PHASE)
-         renderpass(FIRST_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+         renderpass(FIRST_RENDER_PHASE,passes,
+                    ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                    fogstart,fogend,fogdensity,fogcolor,
+                    tex2D);
 
    // multiple passes for semi-transparent triangles
    if (SPECTRUM.gettransnum()!=0)
       if (passes==1)
          {
          if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
-            renderpass(SECOND_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(SECOND_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
          }
       else if (passes==2)
          {
          if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
-            renderpass(SECOND_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(SECOND_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
-               renderpass(LAST_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+               renderpass(LAST_RENDER_PHASE,passes,
+                          ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                          fogstart,fogend,fogdensity,fogcolor,
+                          tex2D);
          }
       else if (passes==3)
          {
          if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
-            renderpass(SECOND_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(SECOND_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (phase==ONE_RENDER_PHASE || phase==THIRD_RENDER_PHASE)
-            renderpass(THIRD_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(THIRD_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
-               renderpass(LAST_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+               renderpass(LAST_RENDER_PHASE,passes,
+                          ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                          fogstart,fogend,fogdensity,fogcolor,
+                          tex2D);
          }
       else if (passes==4)
          {
          if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
-            renderpass(SECOND_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(SECOND_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (phase==ONE_RENDER_PHASE || phase==THIRD_RENDER_PHASE)
-            renderpass(THIRD_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(THIRD_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (phase==ONE_RENDER_PHASE || phase==FOURTH_RENDER_PHASE)
-            renderpass(FOURTH_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+            renderpass(FOURTH_RENDER_PHASE,passes,
+                       ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                       fogstart,fogend,fogdensity,fogcolor,
+                       tex2D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
-               renderpass(LAST_RENDER_PHASE,passes,ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2);
+               renderpass(LAST_RENDER_PHASE,passes,
+                          ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
+                          fogstart,fogend,fogdensity,fogcolor,
+                          tex2D);
          }
    }
 
@@ -1278,7 +1347,11 @@ int minisurf::setextstate(int enable,
                           float bordercontrol2,float centercontrol2,float colorcontrol2,
                           float stripewidth,float stripeoffset,
                           float stripedx,float stripedy,float stripedz,
-                          int correctz)
+                          int correctz,
+                          float fogstart,float fogend,
+                          float fogdensity,
+                          float fogcolor[3],
+                          int tex2D)
    {
    if (phase==ONE_RENDER_PHASE) ERRORMSG();
 
@@ -1299,7 +1372,9 @@ int minisurf::setextstate(int enable,
    // pass rendering state
    setstate(enable,phase,passes,
             ambient,bordercontrol,centercontrol,colorcontrol,
-            bordercontrol2,centercontrol2,colorcontrol2);
+            bordercontrol2,centercontrol2,colorcontrol2,
+            fogstart,fogend,fogdensity,fogcolor,
+            tex2D);
 
    return(1);
    }

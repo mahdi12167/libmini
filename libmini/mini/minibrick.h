@@ -218,7 +218,11 @@ class minisurf
                int passes=4,
                float ambient=0.1f,
                float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
-               float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f);
+               float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
+               float fogstart=0.0f,float fogend=0.0f,
+               float fogdensity=1.0f,
+               float fogcolor[3]=0,
+               int tex2D=0);
 
    //! initialize state for each phase
    void setstate(int enable,
@@ -226,7 +230,11 @@ class minisurf
                  int passes,
                  float ambient=0.1f,
                  float bordercontrol=1.0f,float centercontrol=1.0f,float colorcontrol=1.0f,
-                 float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f);
+                 float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
+                 float fogstart=0.0f,float fogend=0.0f,
+                 float fogdensity=1.0f,
+                 float fogcolor[3]=0,
+                 int tex2D=0);
 
    //! initialize state for each phase
    //! for rendering additional external geometry
@@ -238,7 +246,11 @@ class minisurf
                    float bordercontrol2=1.0f,float centercontrol2=1.0f,float colorcontrol2=1.0f,
                    float stripewidth=1.0f,float stripeoffset=0.0f,
                    float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
-                   int correctz=0);
+                   int correctz=0,
+                   float fogstart=0.0f,float fogend=0.0f,
+                   float fogdensity=1.0f,
+                   float fogcolor[3]=0,
+                   int tex2D=0);
 
    //! cache one data block
    void cacheblock(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int s,
@@ -309,7 +321,11 @@ class minisurf
                           int passes,
                           float ambient,
                           float bordercontrol,float centercontrol,float colorcontrol,
-                          float bordercontrol2,float centercontrol2,float colorcontrol2);
+                          float bordercontrol2,float centercontrol2,float colorcontrol2,
+                          float fogstart=0.0f,float fogend=0.0f,
+                          float fogdensity=1.0f,
+                          float fogcolor[3]=0,
+                          int tex2D=0);
    };
 
 class minibrick
