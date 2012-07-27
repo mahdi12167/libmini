@@ -1417,6 +1417,11 @@ class mininode_geometry: public mininode_geometry_base
          if (!isopaque()) dfrd=TRUE;
          else if (!hascolor() && mininode_color::get_color().w<1.0) dfrd=TRUE;
 
+      if (ministrip::getglobal_texgen())
+         if (mininode_texture2D::get_texid()!=0 ||
+             mininode_texture3D::get_texid()!=0)
+            if (!has_tex()) dfrd=FALSE;
+
       if (!dfrd) mininode_geometry_base::traverse_pre();
       else
          {
