@@ -679,7 +679,7 @@ void ViewerWindow::runAction(ministring action,
           hasTag(value, "elevation"))
       {
          ministrings keys = value;
-         resample(keys, grid_level, grid_levels, grid_step);
+         resample_list(keys, grid_level, grid_levels, grid_step);
       }
    }
    else if (action == "resample_selected")
@@ -691,12 +691,12 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
-      resample(sel_keys, grid_level, grid_levels, grid_step);
+      resample_list(sel_keys, grid_level, grid_levels, grid_step);
    }
    else if (action == "resample_all")
    {
       ministrings keys = listObjects("image");
-      resample(keys, grid_level, grid_levels, grid_step);
+      resample_list(keys, grid_level, grid_levels, grid_step);
    }
    else if (action == "abort")
    {
@@ -729,7 +729,7 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");
-      save(keys, "", grid_level);
+      save_list(keys, "", grid_level);
    }
    else if (action == "delete")
    {
@@ -756,7 +756,9 @@ void ViewerWindow::shade(ministring key)
    {
       Object_image *image=dynamic_cast<Object_image *>(obj);
       if (image!=NULL)
-         if (image->is_elevation())
+         if (!image->is_elevation())
+            notify("shading requires an elevation layer");
+         else
          {
             ShadeJob *job = new ShadeJob("",shadePower);
             if (job == NULL) MEMERROR();
@@ -767,13 +769,53 @@ void ViewerWindow::shade(ministring key)
    }
 }
 
-void ViewerWindow::resample(ministrings keys,
-                            int level,int levels,int step)
+BOOLINT ViewerWindow::check_list(ministrings keys)
 {
    unsigned int i;
 
+   unsigned int elev,imag;
+
+   elev=imag=0;
+
+   for (i=0; i<keys.size(); i++)
+   {
+      Object *obj=getObject(keys[i]);
+      if (obj!=NULL)
+      {
+         Object_image *image=dynamic_cast<Object_image *>(obj);
+         if (image!=NULL)
+         {
+            if (image->is_elevation()) elev++;
+            if (image->is_imagery()) imag++;
+         }
+      }
+   }
+
+   if (elev==0)
+   {
+      notify("resampling requires at least one elevation layer");
+      return(FALSE);
+   }
+
+   if (elev>1 && imag==0)
+   {
+      notify("resampling requires at least one imagery or shaded layer");
+      return(FALSE);
+   }
+
+   return(TRUE);
+}
+
+void ViewerWindow::resample_list(ministrings keys,
+                                 int level,int levels,int step)
+{
+   unsigned int i;
+
+   if (!check_list(keys)) return;
+
    ResampleJob *job = new ResampleJob(repository_path, export_path,
-                                      level, levels, step);
+                                      level, levels, step,
+                                      5.0,0.0);
 
    if (job == NULL) MEMERROR();
 
@@ -785,11 +827,13 @@ void ViewerWindow::resample(ministrings keys,
    worker->run_job(job);
 }
 
-void ViewerWindow::save(ministrings keys,ministring filename,int level)
+void ViewerWindow::save_list(ministrings keys,ministring filename,int level)
 {
    unsigned int i;
 
    ministrings filenames;
+
+   if (!check_list(keys)) return;
 
    for (i=0; i<keys.size(); i++)
       filenames.append(getObject(keys[i])->get_relative_name());
