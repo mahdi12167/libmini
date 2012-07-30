@@ -86,14 +86,12 @@ Navigate to the GDAL source directory and type
 !! QTViewer Checkout and Compilation (Unix/Mac)
 
 Type on the unix console in your project directory:
- svn co http://libmini.googlecode.com/svn/libmini/mini mini
  svn co http://libmini.googlecode.com/svn/libmini/qtviewer qtviewer
  (cd qtviewer; ./build.sh)
 
 !! QTViewer Checkout and Compilation (Windows)
 
-Get the following subversion repositories via Tortoise SVN:
- http://libmini.googlecode.com/svn/libmini/mini
+Get the following subversion repository via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/qtviewer
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
