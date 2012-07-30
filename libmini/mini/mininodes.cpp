@@ -1001,10 +1001,72 @@ int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    }
 
 int mininode_deferred_semitransparent::deferred_pre_tex2D(unsigned int pass)
-   {return(FALSE);}
+   {
+   static minisurf surf;
+
+   int dorender;
+
+   const float ambient=0.1f;
+   const float bordercontrol=1.0f;
+   const float centercontrol=1.0f;
+   const float colorcontrol=1.0f;
+   const float bordercontrol2=1.0f;
+   const float centercontrol2=1.0f;
+   const float colorcontrol2=1.0f;
+   const float stripewidth=1.0f;
+   const float stripeoffset=0.0f;
+   const float stripedx=0.0f;
+   const float stripedy=0.0f;
+   const float stripedz=1.0f;
+   const int correctz=0;
+   const float fogstart=0.0f;
+   const float fogend=0.0f;
+   const float fogdensity=1.0f;
+
+   dorender=surf.setextstate(1,pass,deferred_passes,
+                             ambient,bordercontrol,centercontrol,colorcontrol,
+                             bordercontrol2,centercontrol2,colorcontrol2,
+                             stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                             correctz,
+                             fogstart,fogend,fogdensity,NULL,
+                             1,0);
+
+   return(dorender);
+   }
 
 int mininode_deferred_semitransparent::deferred_pre_tex3D(unsigned int pass)
-   {return(FALSE);}
+   {
+   static minisurf surf;
+
+   int dorender;
+
+   const float ambient=0.1f;
+   const float bordercontrol=1.0f;
+   const float centercontrol=1.0f;
+   const float colorcontrol=1.0f;
+   const float bordercontrol2=1.0f;
+   const float centercontrol2=1.0f;
+   const float colorcontrol2=1.0f;
+   const float stripewidth=1.0f;
+   const float stripeoffset=0.0f;
+   const float stripedx=0.0f;
+   const float stripedy=0.0f;
+   const float stripedz=1.0f;
+   const int correctz=0;
+   const float fogstart=0.0f;
+   const float fogend=0.0f;
+   const float fogdensity=1.0f;
+
+   dorender=surf.setextstate(1,pass,deferred_passes,
+                             ambient,bordercontrol,centercontrol,colorcontrol,
+                             bordercontrol2,centercontrol2,colorcontrol2,
+                             stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                             correctz,
+                             fogstart,fogend,fogdensity,NULL,
+                             0,1);
+
+   return(dorender);
+   }
 
 void mininode_deferred_semitransparent::deferred_post(unsigned int pass)
    {
