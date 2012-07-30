@@ -10,15 +10,15 @@ control. It is free software licensed under the GPL.
 
 The libMini QTViewer Requires the installation of:
  tcsh (unix)
- gnu/c++ or MSVC compiler
+ gnu/c++ (unix) or MSVC compiler (windows)
  svn/subversion tools
  OpenGL (and GLUT)
  qt/qmake
 
 The installation of OpenGL and GLUT is vendor specific: On MacOS X it
 is already installed with the XCode development package, on Linux it
-comes with the "mesa" and "free-glut3-dev" package whereas on Windows
-it is usually installed with the MSVC IDE.
+comes with the "mesa-dev", "X11-dev" and "free-glut3-dev" development
+packages whereas on Windows it is usually installed with the MSVC IDE.
 
 On MacOS X and Windows, it is recommended to build and install QT from source!
 On Linux, it is sufficient to install a recent Qt binary package.
