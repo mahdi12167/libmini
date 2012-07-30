@@ -9,6 +9,7 @@ control. It is free software licensed under the GPL.
 !! Prerequisites
 
 The libMini QTViewer Requires the installation of:
+ tcsh (unix)
  gnu/c++ or MSVC compiler
  svn/subversion tools
  OpenGL (and GLUT)
@@ -19,12 +20,13 @@ is already installed with the XCode development package, on Linux it
 comes with the "mesa" and "free-glut3-dev" package whereas on Windows
 it is usually installed with the MSVC IDE.
 
-It is highly recommended to build and install QT from source!
+On MacOS X and Windows, it is recommended to build and install QT from source!
+On Linux, it is sufficient to install a recent Qt binary package.
 
-For example grab the source tar ball from:
+If you install Qt from source, grab the source tar ball from:
  ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
 
-!! Installation (Unix/Mac)
+!! Qt Installation (Unix/Mac)
 
 Type on the unix console in your QT source directory:
  ./configure -opensource && make && sudo make install
@@ -32,7 +34,7 @@ Type on the unix console in your QT source directory:
 After the build process has finished (go get yourself a cup of coffee),
 you will be asked to enter your root password for installation of qt.
 
-!! Installation (Windows):
+!! Qt Installation (Windows):
 
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
@@ -48,14 +50,14 @@ Add the "bin" directory in your QT directory to your path:
 Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
 
-!! Libmini Dependencies (Unix/Mac)
+!! Installation of Libmini Dependencies (Unix/Mac)
 
 Get the libMini dependencies from the libMini subversion repository.
 Type on the unix console in your project directory (e.g. ~/Projects):
  svn co http://libmini.googlecode.com/svn/libmini/deps deps
  (cd deps; ./build.sh)
 
-!! Libmini Dependencies (Windows)
+!! Installation of Libmini Dependencies (Windows)
 
 Precompiled static libraries for Windows MSVC 2005 are provided in the
 libMini WIN32 directory. In your project directory get the following
@@ -81,14 +83,14 @@ Navigate to the GDAL source directory and type
  copy gcore\*.h %DEST%\include
  copy ogr\*.h %DEST%\include
 
-!! Checkout and Compilation (Unix/Mac)
+!! QTViewer Checkout and Compilation (Unix/Mac)
 
 Type on the unix console in your project directory:
  svn co http://libmini.googlecode.com/svn/libmini/mini mini
  svn co http://libmini.googlecode.com/svn/libmini/qtviewer qtviewer
  (cd qtviewer; ./build.sh)
 
-!! Checkout and Compilation (Windows)
+!! QTViewer Checkout and Compilation (Windows)
 
 Get the following subversion repositories via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/mini
