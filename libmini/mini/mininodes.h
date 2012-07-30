@@ -1354,7 +1354,7 @@ class mininode_geometry: public mininode_geometry_base
       unsigned int pass_first,pass_last;
       double mv_matrix[16];
       double t_matrix[16];
-      unsigned int texid,texid3;
+      unsigned int texid2D,texid3D;
       miniv4d color;
       };
 
@@ -1391,7 +1391,11 @@ class mininode_geometry: public mininode_geometry_base
       }
 
    static void clear_deferred()
-      {list.clear();}
+      {
+      list.clear();
+      list_tex2D.clear();
+      list_tex3D.clear();
+      }
 
    static const geometry_deferred_list *get_deferred()
       {return(&list);}
@@ -1403,7 +1407,9 @@ class mininode_geometry: public mininode_geometry_base
    static BOOLINT deferred;
    static BOOLINT deferred_semitransparent;
    static unsigned int pass_first,pass_last;
+
    static geometry_deferred_list list;
+   static geometry_deferred_list list_tex2D,list_tex3D;
 
    virtual void traverse_pre()
       {
@@ -1417,10 +1423,11 @@ class mininode_geometry: public mininode_geometry_base
          if (!isopaque()) dfrd=TRUE;
          else if (!hascolor() && mininode_color::get_color().w<1.0) dfrd=TRUE;
 
-      if (ministrip::getglobal_texgen())
-         if (mininode_texture2D::get_texid()!=0 ||
-             mininode_texture3D::get_texid()!=0)
-            if (!has_tex()) dfrd=FALSE;
+      if (dfrd)
+         if (ministrip::getglobal_texgen())
+            if (mininode_texture2D::get_texid()!=0 ||
+                mininode_texture3D::get_texid()!=0)
+               if (!has_tex()) dfrd=FALSE;
 
       if (!dfrd) mininode_geometry_base::traverse_pre();
       else
@@ -1432,11 +1439,13 @@ class mininode_geometry: public mininode_geometry_base
          geo.pass_last=pass_last;
          mtxgetmodel(geo.mv_matrix);
          mtxgettex(geo.t_matrix);
-         geo.texid=mininode_texture2D::get_texid();
-         geo.texid3=mininode_texture3D::get_texid();
+         geo.texid2D=mininode_texture2D::get_texid();
+         geo.texid3D=mininode_texture3D::get_texid();
          geo.color=mininode_color::get_color();
 
-         list.append(geo);
+         if (geo.texid2D!=0) list_tex2D.append(geo);
+         else if (geo.texid3D!=0) list_tex3D.append(geo);
+         else list.append(geo);
          }
       }
 
@@ -1685,11 +1694,11 @@ class mininode_deferred: public mininode_transform
                      mtxmult(geo->t_matrix);
                      mtxmodel();
                      color(geo->color);
-                     if (geo->texid!=0) bindtexmap(geo->texid,1,1,1);
-                     if (geo->texid3!=0) bind3Dtexmap(geo->texid3);
+                     if (geo->texid2D!=0) bindtexmap(geo->texid2D,1,1,1);
+                     if (geo->texid3D!=0) bind3Dtexmap(geo->texid3D);
                      geo->node->render();
-                     if (geo->texid!=0) bindtexmap(0);
-                     if (geo->texid3!=0) bind3Dtexmap(0);
+                     if (geo->texid2D!=0) bindtexmap(0);
+                     if (geo->texid3D!=0) bind3Dtexmap(0);
                      }
                   }
 
