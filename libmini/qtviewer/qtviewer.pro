@@ -83,6 +83,7 @@ win32:LIBS += -L../WIN32/zlib
 
 unix:LIBS += -lgdal -liconv
 unix:LIBS += -lcurl -lz
+unix:LIBS += -lGLU
 
 win32:LIBS += -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
 win32:LIBS += -lgdal # -lgdal_i for dll stub
