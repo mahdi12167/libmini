@@ -1679,7 +1679,7 @@ class mininode_deferred: public mininode_transform
 
       mininode_transform::traverse_exit();
 
-      if (s>0)
+      if (s>0 || s2>0 || s3>0)
          {
          mtxpush();
          mtxtex();
@@ -1690,11 +1690,8 @@ class mininode_deferred: public mininode_transform
 
          for (unsigned int pass=deferred_first; pass<=deferred_last; pass++)
             {
-            int dorender=deferred_pre(pass);
-
-            if (dorender)
-               {
-               // plain geometry
+            // plain geometry
+            if (deferred_pre(pass))
                for (unsigned int i=0; i<s; i++)
                   {
                   const mininode_geometry::geometry_deferred_type *geo=&(list->get(i));
@@ -1708,7 +1705,9 @@ class mininode_deferred: public mininode_transform
                      }
                   }
 
-               // 2D textured geometry
+            // 2D textured geometry
+            if (deferred_pre_tex2D(pass))
+               {
                for (unsigned int i=0; i<s2; i++)
                   {
                   const mininode_geometry::geometry_deferred_type *geo=&(list_tex2D->get(i));
@@ -1728,8 +1727,11 @@ class mininode_deferred: public mininode_transform
                   }
 
                bindtexmap(0);
+               }
 
-               // 3D textured geometry
+            // 3D textured geometry
+            if (deferred_pre_tex3D(pass))
+               {
                for (unsigned int i=0; i<s3; i++)
                   {
                   const mininode_geometry::geometry_deferred_type *geo=&(list_tex3D->get(i));
@@ -1767,6 +1769,8 @@ class mininode_deferred: public mininode_transform
 
    virtual void deferred_init() = 0;
    virtual int deferred_pre(unsigned int pass) = 0;
+   virtual int deferred_pre_tex2D(unsigned int pass) = 0;
+   virtual int deferred_pre_tex3D(unsigned int pass) = 0;
    virtual void deferred_post(unsigned int pass) = 0;
    virtual void deferred_exit() = 0;
 
@@ -1815,6 +1819,8 @@ class mininode_deferred_semitransparent: public mininode_deferred
 
    virtual void deferred_init() {}
    virtual int deferred_pre(unsigned int pass);
+   virtual int deferred_pre_tex2D(unsigned int pass);
+   virtual int deferred_pre_tex3D(unsigned int pass);
    virtual void deferred_post(unsigned int pass);
    virtual void deferred_exit() {}
 

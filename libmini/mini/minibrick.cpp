@@ -434,10 +434,10 @@ minivtxarray *minispect::getreadbuf(int n)
 int minisurf::INSTANCES=0;
 
 int minisurf::VTXPROGID[2];
-int minisurf::FRGPROGID[3];
+int minisurf::FRGPROGID[4];
 
 int minisurf::VTXPROGID2[2];
-int minisurf::FRGPROGID2[3];
+int minisurf::FRGPROGID2[4];
 
 // default constructor
 minisurf::minisurf()
@@ -455,10 +455,10 @@ minisurf::minisurf()
    if (INSTANCES++==0)
       {
       VTXPROGID[0]=VTXPROGID[1]=0;
-      FRGPROGID[0]=FRGPROGID[1]=FRGPROGID[2]=0;
+      FRGPROGID[0]=FRGPROGID[1]=FRGPROGID[2]=FRGPROGID[3]=0;
 
       VTXPROGID2[0]=VTXPROGID2[1]=0;
-      FRGPROGID2[0]=FRGPROGID2[1]=FRGPROGID2[2]=0;
+      FRGPROGID2[0]=FRGPROGID2[1]=FRGPROGID2[2]=FRGPROGID2[3]=0;
       }
    }
 
@@ -476,7 +476,7 @@ minisurf::~minisurf()
             VTXPROGID[i]=0;
             }
 
-      for (i=0; i<3; i++)
+      for (i=0; i<4; i++)
          if (FRGPROGID[i]!=0)
             {
             deletefrgprog(FRGPROGID[i]);
@@ -490,7 +490,7 @@ minisurf::~minisurf()
             VTXPROGID2[i]=0;
             }
 
-      for (i=0; i<3; i++)
+      for (i=0; i<4; i++)
          if (FRGPROGID2[i]!=0)
             {
             deletefrgprog(FRGPROGID2[i]);
@@ -514,7 +514,8 @@ void minisurf::enabletorch(int phase,
                            float fogstart,float fogend,
                            float fogdensity,
                            float fogcolor[3],
-                           int tex2D)
+                           int tex2D,
+                           int tex3D)
    {
    int vtxprog,frgprog;
 
@@ -684,8 +685,40 @@ void minisurf::enabletorch(int phase,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *frgprog4="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      TEMP col,nrm,tex,pos,len; \n\
+      ### fetch actual color \n\
+      MOV col,fragment.color; \n\
+      ### fetch fragment normal \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      ### fetch view position \n\
+      MOV pos,fragment.texcoord[2]; \n\
+      ### fetch actual texel \n\
+      TEX tex,fragment.texcoord[0],texture[0],3D; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n\
+      ### apply head light to color and opacity \n\
+      MUL nrm.z,nrm.z,c.z; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL pos,pos,len.x; \n\
+      DP3 nrm.z,nrm,pos; \n\
+      ABS nrm.z,nrm.z; \n\
+      MAD_SAT nrm.x,nrm.z,d.x,d.y; \n\
+      MAD_SAT nrm.y,nrm.z,d.z,d.w; \n\
+      MUL col.xyz,col,nrm.x; \n\
+      MUL col.w,col,nrm.y; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
    static const char *vtxprogs[2]={vtxprog1,vtxprog2};
-   static const char *frgprogs[3]={frgprog1,frgprog2,frgprog3};
+   static const char *frgprogs[4]={frgprog1,frgprog2,frgprog3,frgprog4};
 
    // choose vtx program
    if (tex2D!=0) vtxprog=1;
@@ -696,7 +729,8 @@ void minisurf::enabletorch(int phase,
       VTXPROGID[vtxprog]=buildvtxprog(vtxprogs[vtxprog]);
 
    // choose fragment program
-   if (tex2D!=0) frgprog=2;
+   if (tex3D!=0) frgprog=3;
+   else if (tex2D!=0) frgprog=2;
    else if (fogstart<fogend && fogcolor!=NULL) frgprog=1;
    else frgprog=0;
 
@@ -747,7 +781,8 @@ void minisurf::enablepattern(float ambient,
                              float fogstart,float fogend,
                              float fogdensity,
                              float fogcolor[3],
-                             int tex2D)
+                             int tex2D,
+                             int tex3D)
    {
    int vtxprog,frgprog;
 
@@ -938,8 +973,46 @@ void minisurf::enablepattern(float ambient,
       MOV result.color,col; \n\
       END \n";
 
+   static const char *frgprog4="!!ARBfp1.0 \n\
+      PARAM c=program.env[0]; \n\
+      PARAM d=program.env[1]; \n\
+      PARAM e=program.env[2]; \n\
+      TEMP col,nrm,tex,pos,crd,len; \n\
+      ### fetch actual color \n\
+      MOV col,fragment.color; \n\
+      ### fetch fragment normal \n\
+      MOV nrm,fragment.texcoord[1]; \n\
+      ### fetch view position \n\
+      MOV pos,fragment.texcoord[2]; \n\
+      ### fetch world position \n\
+      MOV crd,fragment.texcoord[3]; \n\
+      ### fetch actual texel \n\
+      TEX tex,fragment.texcoord[0],texture[0],3D; \n\
+      ### modulate with texture color \n\
+      MUL col,col,tex; \n\
+      ### apply pattern to opacity \n\
+      DP3 crd.w,crd,e; \n\
+      SUB crd.w,crd.w,e.w; \n\
+      FRC crd.w,crd.w; \n\
+      SUB_SAT col.w,col.w,crd.w; \n\
+      ### apply head light to color \n\
+      MUL nrm.z,nrm.z,c.z; \n\
+      DP3 len.x,nrm,nrm; \n\
+      RSQ len.x,len.x; \n\
+      MUL nrm,nrm,len.x; \n\
+      DP3 len.x,pos,pos; \n\
+      RSQ len.x,len.x; \n\
+      MUL pos,pos,len.x; \n\
+      DP3 nrm.z,nrm,pos; \n\
+      ABS nrm.z,nrm.z; \n\
+      MAD_SAT nrm.x,nrm.z,d.x,d.y; \n\
+      MUL col.xyz,col,nrm.x; \n\
+      ### write resulting color \n\
+      MOV result.color,col; \n\
+      END \n";
+
    static const char *vtxprogs[2]={vtxprog1,vtxprog2};
-   static const char *frgprogs[3]={frgprog1,frgprog2,frgprog3};
+   static const char *frgprogs[4]={frgprog1,frgprog2,frgprog3,frgprog4};
 
    // choose vtx program
    if (tex2D!=0) vtxprog=1;
@@ -950,7 +1023,8 @@ void minisurf::enablepattern(float ambient,
       VTXPROGID2[vtxprog]=buildvtxprog(vtxprogs[vtxprog]);
 
    // choose fragment program
-   if (tex2D!=0) frgprog=2;
+   if (tex3D!=0) frgprog=3;
+   else if (tex2D!=0) frgprog=2;
    else if (fogstart<fogend && fogcolor!=NULL) frgprog=1;
    else frgprog=0;
 
@@ -1029,14 +1103,15 @@ void minisurf::setstate(int enable,
                         float fogstart,float fogend,
                         float fogdensity,
                         float fogcolor[3],
-                        int tex2D)
+                        int tex2D,
+                        int tex3D)
    {
    // first pass for opaque triangles
    if (phase==ONE_RENDER_PHASE || phase==FIRST_RENDER_PHASE)
       if (enable!=0) enabletorch(FIRST_RENDER_PHASE,
                                  ambient,bordercontrol,centercontrol,colorcontrol,
                                  fogstart,fogend,fogdensity,fogcolor,
-                                 tex2D);
+                                 tex2D,tex3D);
       else disabletorch();
 
    // set common OpenGL states
@@ -1055,7 +1130,7 @@ void minisurf::setstate(int enable,
       if (phase==ONE_RENDER_PHASE || phase==SECOND_RENDER_PHASE)
          if (enable!=0) enablepattern(ambient,bordercontrol,
                                       fogstart,fogend,fogdensity,fogcolor,
-                                      tex2D);
+                                      tex2D,tex3D);
          else disablepattern();
       }
    // fast 2-pass rendering
@@ -1073,7 +1148,7 @@ void minisurf::setstate(int enable,
             enabletorch(SECOND_RENDER_PHASE,
                         ambient,bordercontrol,centercontrol,colorcontrol,
                         fogstart,fogend,fogdensity,fogcolor,
-                        tex2D);
+                        tex2D,tex3D);
             }
          else
             {
@@ -1104,7 +1179,7 @@ void minisurf::setstate(int enable,
             enabletorch(SECOND_RENDER_PHASE,
                         ambient,bordercontrol,centercontrol,colorcontrol,
                         fogstart,fogend,fogdensity,fogcolor,
-                        tex2D);
+                        tex2D,tex3D);
             }
          else
             {
@@ -1125,7 +1200,7 @@ void minisurf::setstate(int enable,
             enabletorch(THIRD_RENDER_PHASE,
                         ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2,
                         fogstart,fogend,fogdensity,fogcolor,
-                        tex2D);
+                        tex2D,tex3D);
             }
          else
             {
@@ -1157,7 +1232,7 @@ void minisurf::setstate(int enable,
             enabletorch(SECOND_RENDER_PHASE,
                         ambient,bordercontrol,centercontrol,colorcontrol,
                         fogstart,fogend,fogdensity,fogcolor,
-                        tex2D);
+                        tex2D,tex3D);
             }
          else
             {
@@ -1191,7 +1266,7 @@ void minisurf::setstate(int enable,
             enabletorch(FOURTH_RENDER_PHASE,
                         ambient,bordercontrol*bordercontrol2,centercontrol*centercontrol2,colorcontrol*colorcontrol2,
                         fogstart,fogend,fogdensity,fogcolor,
-                        tex2D);
+                        tex2D,tex3D);
             }
          else
             {
@@ -1227,13 +1302,14 @@ void minisurf::renderpass(int phase,
                           float fogstart,float fogend,
                           float fogdensity,
                           float fogcolor[3],
-                          int tex2D)
+                          int tex2D,
+                          int tex3D)
    {
    setstate(1,phase,passes,
             ambient,bordercontrol,centercontrol,colorcontrol,
             bordercontrol2,centercontrol2,colorcontrol2,
             fogstart,fogend,fogdensity,fogcolor,
-            tex2D);
+            tex2D,tex3D);
 
    renderarrays(phase);
 
@@ -1241,7 +1317,7 @@ void minisurf::renderpass(int phase,
             ambient,bordercontrol,centercontrol,colorcontrol,
             bordercontrol2,centercontrol2,colorcontrol2,
             fogstart,fogend,fogdensity,fogcolor,
-            tex2D);
+            tex2D,tex3D);
    }
 
 // render surfaces
@@ -1253,7 +1329,8 @@ void minisurf::render(int phase,
                       float fogstart,float fogend,
                       float fogdensity,
                       float fogcolor[3],
-                      int tex2D)
+                      int tex2D,
+                      int tex3D)
    {
    // single pass for opaque triangles
    if (SPECTRUM.getopaqnum()!=0)
@@ -1261,7 +1338,7 @@ void minisurf::render(int phase,
          renderpass(FIRST_RENDER_PHASE,passes,
                     ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                     fogstart,fogend,fogdensity,fogcolor,
-                    tex2D);
+                    tex2D,tex3D);
 
    // multiple passes for semi-transparent triangles
    if (SPECTRUM.gettransnum()!=0)
@@ -1271,7 +1348,7 @@ void minisurf::render(int phase,
             renderpass(SECOND_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
          }
       else if (passes==2)
          {
@@ -1279,14 +1356,14 @@ void minisurf::render(int phase,
             renderpass(SECOND_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
                renderpass(LAST_RENDER_PHASE,passes,
                           ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                           fogstart,fogend,fogdensity,fogcolor,
-                          tex2D);
+                          tex2D,tex3D);
          }
       else if (passes==3)
          {
@@ -1294,20 +1371,20 @@ void minisurf::render(int phase,
             renderpass(SECOND_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (phase==ONE_RENDER_PHASE || phase==THIRD_RENDER_PHASE)
             renderpass(THIRD_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
                renderpass(LAST_RENDER_PHASE,passes,
                           ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                           fogstart,fogend,fogdensity,fogcolor,
-                          tex2D);
+                          tex2D,tex3D);
          }
       else if (passes==4)
          {
@@ -1315,26 +1392,26 @@ void minisurf::render(int phase,
             renderpass(SECOND_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (phase==ONE_RENDER_PHASE || phase==THIRD_RENDER_PHASE)
             renderpass(THIRD_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (phase==ONE_RENDER_PHASE || phase==FOURTH_RENDER_PHASE)
             renderpass(FOURTH_RENDER_PHASE,passes,
                        ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                        fogstart,fogend,fogdensity,fogcolor,
-                       tex2D);
+                       tex2D,tex3D);
 
          if (CORRECTZ!=0)
             if (phase==ONE_RENDER_PHASE || phase==LAST_RENDER_PHASE)
                renderpass(LAST_RENDER_PHASE,passes,
                           ambient,bordercontrol,centercontrol,colorcontrol,bordercontrol2,centercontrol2,colorcontrol2,
                           fogstart,fogend,fogdensity,fogcolor,
-                          tex2D);
+                          tex2D,tex3D);
          }
    }
 
@@ -1351,7 +1428,8 @@ int minisurf::setextstate(int enable,
                           float fogstart,float fogend,
                           float fogdensity,
                           float fogcolor[3],
-                          int tex2D)
+                          int tex2D,
+                          int tex3D)
    {
    if (phase==ONE_RENDER_PHASE) ERRORMSG();
 
@@ -1374,7 +1452,7 @@ int minisurf::setextstate(int enable,
             ambient,bordercontrol,centercontrol,colorcontrol,
             bordercontrol2,centercontrol2,colorcontrol2,
             fogstart,fogend,fogdensity,fogcolor,
-            tex2D);
+            tex2D,tex3D);
 
    return(1);
    }

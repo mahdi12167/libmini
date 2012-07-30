@@ -997,6 +997,12 @@ int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    return(dorender);
    }
 
+int mininode_deferred_semitransparent::deferred_pre_tex2D(unsigned int pass)
+   {return(FALSE);}
+
+int mininode_deferred_semitransparent::deferred_pre_tex3D(unsigned int pass)
+   {return(FALSE);}
+
 void mininode_deferred_semitransparent::deferred_post(unsigned int pass)
    {
    static minisurf surf;

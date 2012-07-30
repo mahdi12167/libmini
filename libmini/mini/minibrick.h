@@ -222,7 +222,8 @@ class minisurf
                float fogstart=0.0f,float fogend=0.0f,
                float fogdensity=1.0f,
                float fogcolor[3]=0,
-               int tex2D=0);
+               int tex2D=0,
+               int tex3D=0);
 
    //! initialize state for each phase
    void setstate(int enable,
@@ -234,7 +235,8 @@ class minisurf
                  float fogstart=0.0f,float fogend=0.0f,
                  float fogdensity=1.0f,
                  float fogcolor[3]=0,
-                 int tex2D=0);
+                 int tex2D=0,
+                 int tex3D=0);
 
    //! initialize state for each phase
    //! for rendering additional external geometry
@@ -250,7 +252,8 @@ class minisurf
                    float fogstart=0.0f,float fogend=0.0f,
                    float fogdensity=1.0f,
                    float fogcolor[3]=0,
-                   int tex2D=0);
+                   int tex2D=0,
+                   int tex3D=0);
 
    //! cache one data block
    void cacheblock(const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int s,
@@ -272,10 +275,10 @@ class minisurf
    static int INSTANCES;
 
    static int VTXPROGID[2];
-   static int FRGPROGID[3];
+   static int FRGPROGID[4];
 
    static int VTXPROGID2[2];
-   static int FRGPROGID2[3];
+   static int FRGPROGID2[4];
 
    void extractiso(const float isoval,
                    const int x1,const int y1,const int z1,const float c1,const mininorm &n1,
@@ -304,7 +307,8 @@ class minisurf
                     float fogstart=0.0f,float fogend=0.0f,
                     float fogdensity=1.0f,
                     float fogcolor[3]=0,
-                    int tex2D=0);
+                    int tex2D=0,
+                    int tex3D=0);
 
    void disabletorch();
 
@@ -313,7 +317,8 @@ class minisurf
                       float fogstart=0.0f,float fogend=0.0f,
                       float fogdensity=1.0f,
                       float fogcolor[3]=0,
-                      int tex2D=0);
+                      int tex2D=0,
+                      int tex3D=0);
 
    void disablepattern();
 
@@ -325,7 +330,8 @@ class minisurf
                           float fogstart=0.0f,float fogend=0.0f,
                           float fogdensity=1.0f,
                           float fogcolor[3]=0,
-                          int tex2D=0);
+                          int tex2D=0,
+                          int tex3D=0);
    };
 
 class minibrick
