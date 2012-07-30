@@ -1400,6 +1400,12 @@ class mininode_geometry: public mininode_geometry_base
    static const geometry_deferred_list *get_deferred()
       {return(&list);}
 
+   static const geometry_deferred_list *get_deferred_tex2D()
+      {return(&list_tex2D);}
+
+   static const geometry_deferred_list *get_deferred_tex3D()
+      {return(&list_tex3D);}
+
    protected:
 
    BOOLINT shown;
@@ -1665,6 +1671,12 @@ class mininode_deferred: public mininode_transform
       const mininode_geometry::geometry_deferred_list *list=mininode_geometry::get_deferred();
       unsigned int s=list->getsize();
 
+      const mininode_geometry::geometry_deferred_list *list_tex2D=mininode_geometry::get_deferred_tex2D();
+      unsigned int s2=list_tex2D->getsize();
+
+      const mininode_geometry::geometry_deferred_list *list_tex3D=mininode_geometry::get_deferred_tex3D();
+      unsigned int s3=list_tex3D->getsize();
+
       mininode_transform::traverse_exit();
 
       if (s>0)
@@ -1681,9 +1693,25 @@ class mininode_deferred: public mininode_transform
             int dorender=deferred_pre(pass);
 
             if (dorender)
+               {
+               // plain geometry
                for (unsigned int i=0; i<s; i++)
                   {
                   const mininode_geometry::geometry_deferred_type *geo=&(list->get(i));
+
+                  if (pass>=geo->pass_first && pass<=geo->pass_last)
+                     {
+                     mtxid();
+                     mtxmult(geo->mv_matrix);
+                     color(geo->color);
+                     geo->node->render();
+                     }
+                  }
+
+               // 2D textured geometry
+               for (unsigned int i=0; i<s2; i++)
+                  {
+                  const mininode_geometry::geometry_deferred_type *geo=&(list_tex2D->get(i));
 
                   if (pass>=geo->pass_first && pass<=geo->pass_last)
                      {
@@ -1694,13 +1722,34 @@ class mininode_deferred: public mininode_transform
                      mtxmult(geo->t_matrix);
                      mtxmodel();
                      color(geo->color);
-                     if (geo->texid2D!=0) bindtexmap(geo->texid2D,1,1,1);
-                     if (geo->texid3D!=0) bind3Dtexmap(geo->texid3D);
+                     bindtexmap(geo->texid2D,1,1,1);
                      geo->node->render();
-                     if (geo->texid2D!=0) bindtexmap(0);
-                     if (geo->texid3D!=0) bind3Dtexmap(0);
                      }
                   }
+
+               bindtexmap(0);
+
+               // 3D textured geometry
+               for (unsigned int i=0; i<s3; i++)
+                  {
+                  const mininode_geometry::geometry_deferred_type *geo=&(list_tex3D->get(i));
+
+                  if (pass>=geo->pass_first && pass<=geo->pass_last)
+                     {
+                     mtxid();
+                     mtxmult(geo->mv_matrix);
+                     mtxtex();
+                     mtxid();
+                     mtxmult(geo->t_matrix);
+                     mtxmodel();
+                     color(geo->color);
+                     bind3Dtexmap(geo->texid3D);
+                     geo->node->render();
+                     }
+                  }
+
+               bind3Dtexmap(0);
+               }
 
             deferred_post(pass);
             }
