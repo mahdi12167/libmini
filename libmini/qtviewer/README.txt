@@ -6,9 +6,18 @@ the QT user interface. The application, the libMini QTViewer,
 primarily uses libmini viewer functions but provides additional camera
 control. It is free software licensed under the GPL.
 
+Tested platforms are:
+* MacOS X 10.5 and 10.6
+* Debian
+* Ubuntu 11.04 and 12.04
+* Linux Mint 13
+* OpenSuSe 11.4
+* Windows XP and Windows 7
+Other platforms may work, but are untested.
+
 !! Prerequisites
 
-The libMini QTViewer requires the installation of:
+The compilation of the libMini QTViewer requires the installation of:
  tcsh, autotools and cmake (unix)
  gnu/c++ (unix) or MSVC compiler (windows)
  svn and git (unix) or Tortoise SVN (windows)
