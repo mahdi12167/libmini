@@ -424,6 +424,8 @@ void resample(int num,const char **grid,
    // for all grids
    for (n=0; n<num; n++)
       {
+      printf("loading grid[%d]=\"%s\"\n",n+1,grid[n]);
+
       if (strrchr(grid[n],'/')==NULL)
          if (basepath==NULL) snprintf(filename,MAX_STR,"stub.%s",grid[n]);
          else snprintf(filename,MAX_STR,"%s%s/stub.%s",CONFIGURE_TILESETPATH,basepath,grid[n]);
@@ -436,8 +438,6 @@ void resample(int num,const char **grid,
                                &widths[n],&heights[n],&comps[n],
                                &comms[n]))==NULL)
          {
-         printf("loading grid[%d]=\"%s\"\n",n+1,grid[n]);
-
          // load grid file
          if ((maps[n]=readPNMfile(grid[n],
                                   &widths[n],&heights[n],&comps[n],
@@ -554,6 +554,8 @@ void resample(int num,const char **grid,
          scalings[n]=scaling[n];
          missings[n]=missing;
          }
+
+      printf("loaded grid with center (%g,%g)\n",centersx[n]/60/60,centersy[n]/60/60);
 
       // compute maximum elevation:
 
@@ -1260,6 +1262,8 @@ void normalize(int num,
                            (n==0)?1:border);
 
          free(hmap);
+
+         printf("normalized grid with center (%g,%g)\n",centerx0/60/60,centery0/60/60);
 
          if (utm_zone!=0)
             for (i=0; i<8; i++) coord[i]=utm_coord[i];
