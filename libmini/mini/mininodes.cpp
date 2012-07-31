@@ -55,6 +55,7 @@ void mininode_group::traverse_exit()
    {
    // state restoration
    disableAtest();
+   ministrip::disableglobalshader();
    }
 
 void mininode_group::update_dirty()

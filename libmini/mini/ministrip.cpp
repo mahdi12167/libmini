@@ -414,6 +414,10 @@ void ministrip::enableglobalshader()
                 global_fogcolor);
    }
 
+// disable global shader
+void ministrip::disableglobalshader()
+   {useglobalshader(-1);}
+
 // default constructor
 ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
    {

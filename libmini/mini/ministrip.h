@@ -399,6 +399,8 @@ class ministrip
                                   BOOLINT fog);
 
    static void enableglobalshader();
+
+   static void disableglobalshader();
    };
 
 #endif
