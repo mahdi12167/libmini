@@ -202,6 +202,12 @@ class ministrip
    //! get global fogging
    static BOOLINT getglobal_fog() {return(global_fog);}
 
+   //! enable global shader
+   static void enableglobalshader();
+
+   //! disable global shader
+   static void disableglobalshader();
+
    //! get global shader
    static int getglobalshader();
 
@@ -397,10 +403,6 @@ class ministrip
                                   BOOLINT shade,BOOLINT shade_direct,
                                   BOOLINT tex,BOOLINT tex3,
                                   BOOLINT fog);
-
-   static void enableglobalshader();
-
-   static void disableglobalshader();
    };
 
 #endif
