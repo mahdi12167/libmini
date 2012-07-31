@@ -214,7 +214,7 @@ BOOLINT Object_image::initGFX()
 
          if (!extent.is_georeferenced())
             {
-            MINILOG(" missing geo-reference");
+            MINILOG(" invalid geo-reference");
             return(FALSE);
             }
 

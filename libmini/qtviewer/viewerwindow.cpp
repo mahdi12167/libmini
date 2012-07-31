@@ -371,9 +371,7 @@ void ViewerWindow::loadMap(ministring url)
    {
       delete tileset;
 
-      QMessageBox::warning(this, "Error",
-                           "Unable to load map from url="+QString(url.c_str()),
-                           QMessageBox::Ok);
+      notify("Unable to load map from url="+url);
    }
 }
 
@@ -395,9 +393,7 @@ void ViewerWindow::loadImage(ministring url)
    {
       delete image;
 
-      QMessageBox::warning(this, "Error",
-                           "Unable to load image from url="+QString(url.c_str()),
-                           QMessageBox::Ok);
+      notify("Unable to load image from url="+url);
    }
    else
    {
@@ -757,7 +753,7 @@ void ViewerWindow::shade(ministring key)
       Object_image *image=dynamic_cast<Object_image *>(obj);
       if (image!=NULL)
          if (!image->is_elevation())
-            notify("shading requires an elevation layer");
+            notify("Shading requires an elevation layer");
          else
          {
             ShadeJob *job = new ShadeJob("",shadePower);
@@ -793,13 +789,13 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 
    if (elev==0)
    {
-      notify("resampling requires at least one elevation layer");
+      notify("Resampling requires at least one elevation layer");
       return(FALSE);
    }
 
    if (elev>1 && imag==0)
    {
-      notify("resampling requires at least one imagery or shaded layer");
+      notify("Resampling requires at least one imagery or shaded layer");
       return(FALSE);
    }
 
@@ -967,10 +963,10 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &args)
 {
    if (job=="shader")
    {
-      notify("shading failed");
+      notify("Shading failed");
    }
    else if (job=="resampler")
    {
-      notify("resampling failed");
+      notify("Resampling failed");
    }
 }
