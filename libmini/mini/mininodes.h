@@ -1828,6 +1828,23 @@ class mininode_deferred_semitransparent: public mininode_deferred
    virtual void deferred_exit() {}
 
    static unsigned int deferred_level;
+
+   static const float ambient;
+   static const float bordercontrol;
+   static const float centercontrol;
+   static const float colorcontrol;
+   static const float bordercontrol2;
+   static const float centercontrol2;
+   static const float colorcontrol2;
+   static const float stripewidth;
+   static const float stripeoffset;
+   static const float stripedx;
+   static const float stripedy;
+   static const float stripedz;
+   static const int correctz;
+   static const float fogstart;
+   static const float fogend;
+   static const float fogdensity;
    };
 
 typedef mininode_deferred_semitransparent mininode_root;

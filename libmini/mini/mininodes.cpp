@@ -990,13 +990,36 @@ unsigned int mininode_deferred::deferred_last=0;
 
 unsigned int mininode_deferred_semitransparent::deferred_level=0;
 
+const float mininode_deferred_semitransparent::ambient=0.0f;
+const float mininode_deferred_semitransparent::bordercontrol=1.0f;
+const float mininode_deferred_semitransparent::centercontrol=0.0f;
+const float mininode_deferred_semitransparent::colorcontrol=0.5f;
+const float mininode_deferred_semitransparent::bordercontrol2=1.0f;
+const float mininode_deferred_semitransparent::centercontrol2=1.0f;
+const float mininode_deferred_semitransparent::colorcontrol2=1.0f;
+const float mininode_deferred_semitransparent::stripewidth=1.0f;
+const float mininode_deferred_semitransparent::stripeoffset=0.0f;
+const float mininode_deferred_semitransparent::stripedx=0.0f;
+const float mininode_deferred_semitransparent::stripedy=0.0f;
+const float mininode_deferred_semitransparent::stripedz=1.0f;
+const int mininode_deferred_semitransparent::correctz=0;
+const float mininode_deferred_semitransparent::fogstart=0.0f;
+const float mininode_deferred_semitransparent::fogend=0.0f;
+const float mininode_deferred_semitransparent::fogdensity=1.0f;
+
 int mininode_deferred_semitransparent::deferred_pre(unsigned int pass)
    {
    static minisurf surf;
 
    int dorender;
 
-   dorender=surf.setextstate(1,pass,deferred_passes);
+   dorender=surf.setextstate(1,pass,deferred_passes,
+                             ambient,bordercontrol,centercontrol,colorcontrol,
+                             bordercontrol2,centercontrol2,colorcontrol2,
+                             stripewidth,stripeoffset,stripedx,stripedy,stripedz,
+                             correctz,
+                             fogstart,fogend,fogdensity,NULL,
+                             0,0);
 
    return(dorender);
    }
@@ -1006,23 +1029,6 @@ int mininode_deferred_semitransparent::deferred_pre_tex2D(unsigned int pass)
    static minisurf surf;
 
    int dorender;
-
-   const float ambient=0.1f;
-   const float bordercontrol=1.0f;
-   const float centercontrol=1.0f;
-   const float colorcontrol=1.0f;
-   const float bordercontrol2=1.0f;
-   const float centercontrol2=1.0f;
-   const float colorcontrol2=1.0f;
-   const float stripewidth=1.0f;
-   const float stripeoffset=0.0f;
-   const float stripedx=0.0f;
-   const float stripedy=0.0f;
-   const float stripedz=1.0f;
-   const int correctz=0;
-   const float fogstart=0.0f;
-   const float fogend=0.0f;
-   const float fogdensity=1.0f;
 
    dorender=surf.setextstate(1,pass,deferred_passes,
                              ambient,bordercontrol,centercontrol,colorcontrol,
@@ -1040,23 +1046,6 @@ int mininode_deferred_semitransparent::deferred_pre_tex3D(unsigned int pass)
    static minisurf surf;
 
    int dorender;
-
-   const float ambient=0.1f;
-   const float bordercontrol=1.0f;
-   const float centercontrol=1.0f;
-   const float colorcontrol=1.0f;
-   const float bordercontrol2=1.0f;
-   const float centercontrol2=1.0f;
-   const float colorcontrol2=1.0f;
-   const float stripewidth=1.0f;
-   const float stripeoffset=0.0f;
-   const float stripedx=0.0f;
-   const float stripedy=0.0f;
-   const float stripedz=1.0f;
-   const int correctz=0;
-   const float fogstart=0.0f;
-   const float fogend=0.0f;
-   const float fogdensity=1.0f;
 
    dorender=surf.setextstate(1,pass,deferred_passes,
                              ambient,bordercontrol,centercontrol,colorcontrol,
