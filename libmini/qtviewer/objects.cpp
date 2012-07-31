@@ -188,11 +188,11 @@ BOOLINT Object_image::initGFX()
 
       if (deferred_groupnode1==NULL)
          deferred_groupnode1=root->append_child(new mininode_deferred_semitransparent())->
-                             append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.9)));
+                             append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.5)));
 
       if (deferred_groupnode2==NULL)
          deferred_groupnode2=root->append_child(new mininode_deferred_semitransparent())->
-                             append_child(new mininode_color(miniv4d(0.5,0.5,1.0,0.5)));
+                             append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.9)));
 
       grid_list list;
       grid_layer *layer;
@@ -273,8 +273,8 @@ void Object_image::set_thumb(const databuf *buf)
    mininode_ref image=image_viewer->getRoot()->remove_node(image_node);
    if (image==NULL) ERRORMSG();
 
-   if (is_imagery_resp_elevation) image_groupnode->append_child(tex2d_node);
-   else image_groupnode->append_child(tex2d_node);
+   if (is_imagery_resp_elevation) deferred_groupnode2->append_child(tex2d_node);
+   else deferred_groupnode1->append_child(tex2d_node);
    tex2d_node->append_child(image);
    tex2d_node->load(buf);
 

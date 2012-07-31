@@ -4,6 +4,6 @@
 #define MAINCONST_H
 
 #define VIEWER_NAME "libMini QTviewer"
-#define VIEWER_VERSION "v1.4.6 as of 27.July.2012"
+#define VIEWER_VERSION "v1.5 as of 31.July.2012"
 
 #endif
