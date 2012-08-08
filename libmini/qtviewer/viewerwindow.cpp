@@ -665,6 +665,46 @@ void ViewerWindow::runAction(ministring action,
             removeTag(value, "hidden");
          }
    }
+   else if (action == "show elevation")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         if (hasTag(keys[i], "image"))
+            if (hasTag(keys[i], "elevation"))
+               if (hasTag(keys[i], "hidden"))
+                  removeTag(keys[i], "hidden");
+   }
+   else if (action == "hide elevation")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         if (hasTag(keys[i], "image"))
+            if (hasTag(keys[i], "elevation"))
+               if (!hasTag(keys[i], "hidden"))
+                  addTag(keys[i], "hidden");
+   }
+   else if (action == "show imagery")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         if (hasTag(keys[i], "image"))
+            if (hasTag(keys[i], "imagery"))
+               if (hasTag(keys[i], "hidden"))
+                  removeTag(keys[i], "hidden");
+   }
+   else if (action == "hide imagery")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         if (hasTag(keys[i], "image"))
+            if (hasTag(keys[i], "imagery"))
+               if (!hasTag(keys[i], "hidden"))
+                  addTag(keys[i], "hidden");
+   }
    else if (action == "shade")
    {
       shade(value);
