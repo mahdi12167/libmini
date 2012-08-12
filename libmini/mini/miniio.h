@@ -31,6 +31,12 @@ unsigned int signature(const char *filename);
 //! compute a signature
 unsigned int signature(const unsigned char *data,unsigned int bytes);
 
+// get file modification year
+int getmodyear(const char *filename);
+
+// get file modification time relative to year
+long long int getmodtime(const char *filename,int year);
+
 // c-lib wrappers
 #ifdef _WIN32
 #include <stdio.h>

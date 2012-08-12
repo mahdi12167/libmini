@@ -1,5 +1,14 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#ifndef _WIN32
+#include <sys/stat.h>
+#include <unistd.h>
+#include <time.h>
+#else
+#include <windows.h>
+#define stat _stat
+#endif
+
 #include "minibase.h"
 
 #include "miniio.h"
@@ -136,6 +145,37 @@ unsigned int signature(const unsigned char *data,unsigned int bytes)
    for (i=0; i<bytes; i++) sig=((271*sig)^34+(*ptr++));
 
    return(sig);
+   }
+
+// get file modification year
+int getmodyear(const char *filename)
+   {
+   struct tm* clock;
+   struct stat attrib;
+
+   stat(filename,&attrib);
+
+   clock = gmtime(&(attrib.st_mtime));
+
+   return(clock->tm_year);
+   }
+
+// get file modification time relative to year
+long long int getmodtime(const char *filename,int year)
+   {
+   struct tm* clock;
+   struct stat attrib;
+
+   stat(filename,&attrib);
+
+   clock = gmtime(&(attrib.st_mtime));
+
+   return(clock->tm_sec+
+          60*(clock->tm_min+
+              60*(clock->tm_hour+
+                  24*(clock->tm_mday+
+                      31*(clock->tm_mon+
+                          365*clock->tm_year-(long long int)year)))));
    }
 
 }
