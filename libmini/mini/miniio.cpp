@@ -5,7 +5,8 @@
 #include <unistd.h>
 #include <time.h>
 #else
-#include <windows.h>
+#include <sys/stat.h>
+#include <time.h>
 #define stat _stat
 #endif
 
@@ -153,7 +154,7 @@ int getmodyear(const char *filename)
    struct tm* clock;
    struct stat attrib;
 
-   stat(filename,&attrib);
+   if (stat(filename,&attrib)!=0) return(-1);
 
    clock = gmtime(&(attrib.st_mtime));
 
@@ -166,7 +167,8 @@ long long int getmodtime(const char *filename,int year)
    struct tm* clock;
    struct stat attrib;
 
-   stat(filename,&attrib);
+   if (year<0) return(0);
+   if (stat(filename,&attrib)!=0) return(0);
 
    clock = gmtime(&(attrib.st_mtime));
 
