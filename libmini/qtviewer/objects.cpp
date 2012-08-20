@@ -205,18 +205,19 @@ BOOLINT Object_image::initGFX()
          {
          is_imagery_resp_elevation=layer->is_imagery();
 
+         // check for valid geo-reference
+         if (!layer->extent.is_georeferenced())
+            {
+            // put invalid layer at the north pole
+            layer->set_extent(90,0,1);
+            }
+
          extent=layer->extent;
          size_x=layer->get_size_x();
          size_y=layer->get_size_y();
          size_ds=layer->get_size_ds();
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
-
-         if (!extent.is_georeferenced())
-            {
-            MINILOG(" invalid geo-reference");
-            return(FALSE);
-            }
 
          set_center(extent.get_center(),extent.get_size());
 
