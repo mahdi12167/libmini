@@ -150,6 +150,8 @@ inline int isNAN(const double v) {return(v!=v);}
 #define drand48() ((double)rand()/RAND_MAX)
 #endif
 
+#define minirand() drand48()
+
 #ifdef _MSC_VER
 #define strdup _strdup
 #define snprintf _snprintf
