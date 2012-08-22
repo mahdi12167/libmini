@@ -209,7 +209,7 @@ BOOLINT Object_image::initGFX()
          if (!layer->extent.is_georeferenced())
             {
             // put invalid layer at the north pole
-            layer->set_extent(90,0,1);
+            layer->set_extent(80,360*minirand(),1);
             }
 
          extent=layer->extent;
