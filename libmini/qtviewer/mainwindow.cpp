@@ -152,6 +152,9 @@ void MainWindow::createWidgets()
 
    viewerTable = new MyQTableWidget(viewerWindow);
 
+   tableBox = new QBoxLayout(QBoxLayout::LeftToRight);
+   tableFilter = new QButtonGroup(viewerWindow);
+
    sliderBox = new MyQGroupBox(QSize(300, 300));
    sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
    sliderLayout1 = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -185,6 +188,25 @@ void MainWindow::createWidgets()
 
    connect(viewerTable, SIGNAL(activate(ministring,int)),
            this, SLOT(runAction(ministring,int)));
+
+   // layer table filter:
+
+   QRadioButton *filter1 = new QRadioButton("DEM");
+   QRadioButton *filter2 = new QRadioButton("IMG");
+   QRadioButton *filter3 = new QRadioButton("ALL");
+   filter3->setChecked(true);
+
+   tableFilter->addButton(filter1);
+   tableFilter->addButton(filter2);
+   tableFilter->addButton(filter3);
+
+   tableBox->addWidget(filter1);
+   tableBox->addWidget(filter2);
+   tableBox->addWidget(filter3);
+
+   connect(filter1, SIGNAL(toggled(bool)), this, SLOT(filterDEMToggled(bool)));
+   connect(filter2, SIGNAL(toggled(bool)), this, SLOT(filterIMGToggled(bool)));
+   connect(filter3, SIGNAL(toggled(bool)), this, SLOT(filterALLToggled(bool)));
 
    // worker activity:
 
@@ -317,6 +339,7 @@ void MainWindow::createWidgets()
 
    // viewer group:
 
+   viewerLayout->addLayout(tableBox);
    viewerLayout->addWidget(viewerTable);
    viewerLayout->addWidget(workerActivity);
    viewerLayout->addWidget(sliderBox);
@@ -672,6 +695,33 @@ void MainWindow::setExagger(int tick)
    viewerWindow->setExagger(scale);
 }
 
+void MainWindow::filterDEMToggled(bool on)
+{
+   if (on)
+   {
+      viewerWindow->runAction("show elevation");
+      viewerWindow->runAction("hide imagery");
+   }
+}
+
+void MainWindow::filterIMGToggled(bool on)
+{
+   if (on)
+   {
+      viewerWindow->runAction("show imagery");
+      viewerWindow->runAction("hide elevation");
+   }
+}
+
+void MainWindow::filterALLToggled(bool on)
+{
+   if (on)
+   {
+      viewerWindow->runAction("show elevation");
+      viewerWindow->runAction("show imagery");
+   }
+}
+
 void MainWindow::repoPathChanged(QString repo)
 {
    repoPath = repo.toStdString().c_str();
@@ -780,6 +830,7 @@ void MainWindow::checkVertical(int on)
    {
       mainLayout->setDirection(QBoxLayout::RightToLeft);
       viewerWindow->setVertical(TRUE);
+      tableBox->setDirection(QBoxLayout::LeftToRight);
       viewerLayout->setDirection(QBoxLayout::TopToBottom);
       sliderLayout->setDirection(QBoxLayout::TopToBottom);
       sliderLayout1->setDirection(QBoxLayout::TopToBottom);
@@ -790,6 +841,7 @@ void MainWindow::checkVertical(int on)
    {
       mainLayout->setDirection(QBoxLayout::TopToBottom);
       viewerWindow->setVertical(FALSE);
+      tableBox->setDirection(QBoxLayout::TopToBottom);
       viewerLayout->setDirection(QBoxLayout::LeftToRight);
       sliderLayout->setDirection(QBoxLayout::TopToBottom);
       sliderLayout1->setDirection(QBoxLayout::LeftToRight);

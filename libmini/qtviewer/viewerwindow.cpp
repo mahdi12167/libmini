@@ -673,7 +673,10 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "elevation"))
                if (hasTag(keys[i], "hidden"))
+               {
                   removeTag(keys[i], "hidden");
+                  getObject(keys[i])->show(TRUE);
+               }
    }
    else if (action == "hide elevation")
    {
@@ -683,7 +686,10 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "elevation"))
                if (!hasTag(keys[i], "hidden"))
+               {
                   addTag(keys[i], "hidden");
+                  getObject(keys[i])->show(FALSE);
+               }
    }
    else if (action == "show imagery")
    {
@@ -693,7 +699,10 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "imagery"))
                if (hasTag(keys[i], "hidden"))
+               {
                   removeTag(keys[i], "hidden");
+                  getObject(keys[i])->show(TRUE);
+               }
    }
    else if (action == "hide imagery")
    {
@@ -703,7 +712,10 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "imagery"))
                if (!hasTag(keys[i], "hidden"))
+               {
                   addTag(keys[i], "hidden");
+                  getObject(keys[i])->show(FALSE);
+               }
    }
    else if (action == "shade")
    {

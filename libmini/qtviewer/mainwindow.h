@@ -23,6 +23,8 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QLabel;
 class QCheckBox;
+class QRadioButton;
+class QButtonGroup;
 class QSlider;
 class QDialogButtonBox;
 class QPushButton;
@@ -66,6 +68,10 @@ private slots:
    void setLight(int);
    void checkExagger(int);
    void setExagger(int);
+
+   void filterDEMToggled(bool);
+   void filterIMGToggled(bool);
+   void filterALLToggled(bool);
 
    void repoPathChanged(QString);
    void exportPathChanged(QString);
@@ -123,12 +129,18 @@ private:
    QPushButton *quitButton;
 
    MyQTableWidget *viewerTable;
+   QBoxLayout *tableBox;
    MyQGroupBox *sliderBox;
    QBoxLayout *sliderLayout;
    QBoxLayout *sliderLayout1;
    QBoxLayout *sliderLayout2;
 
+   QButtonGroup *tableFilter;
    QLabel *workerActivity;
+
+   QRadioButton *filter1;
+   QRadioButton *filter2;
+   QRadioButton *filter3;
 
    QGroupBox *fogGroup;
    QHBoxLayout *fogLayout;
