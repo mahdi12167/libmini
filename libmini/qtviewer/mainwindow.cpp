@@ -448,8 +448,8 @@ void MainWindow::createWidgets()
 
    // progress:
 
-   connect(viewerWindow, SIGNAL(progress(double)),
-           this, SLOT(reportProgress(double)));
+   connect(viewerWindow, SIGNAL(progress(double, ministring)),
+           this, SLOT(reportProgress(double, ministring)));
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -602,15 +602,19 @@ void MainWindow::runAction(ministring action, int row)
    viewerWindow->runAction(action, key);
 }
 
-void MainWindow::reportProgress(double percentage)
+void MainWindow::reportProgress(double percentage, const ministring &job)
 {
+   ministring progress;
+
    if (percentage<100)
    {
-      ministring progress = ministring("progress: ")+(int)percentage+"%";
-      workerActivity->setText(progress.c_str());
+      if (job == "thumb")
+         progress = "creating thumbnail";
+      else
+         progress = job+" progress: "+(int)percentage+"%";
    }
-   else
-      workerActivity->setText("");
+
+   workerActivity->setText(progress.c_str());
 }
 
 void MainWindow::click(int row, int col)

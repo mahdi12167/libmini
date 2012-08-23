@@ -40,8 +40,8 @@ ViewerWindow::ViewerWindow()
    // setup queued worker connection
    qRegisterMetaType<ministring>("ministring");
    qRegisterMetaType<ministrings>("ministrings");
-   connect(worker, SIGNAL(reportProgress(double)),
-           this, SLOT(reportProgress(double)),
+   connect(worker, SIGNAL(reportProgress(double, ministring)),
+           this, SLOT(reportProgress(double, ministring)),
            Qt::QueuedConnection);
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
@@ -251,7 +251,7 @@ void ViewerWindow::reportModifiers()
 void ViewerWindow::reportProgress()
 {
    if (worker->running())
-      emit progress(worker->get_progress()); // synchronous
+      emit progress(worker->get_progress(), worker->get_job_id()); // synchronous
 }
 
 void ViewerWindow::setRepo(ministring path)
@@ -855,7 +855,7 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 }
 
 void ViewerWindow::resample_list(ministrings keys,
-                                 int level,int levels,int step)
+                                 int level, int levels, int step)
 {
    unsigned int i;
 
@@ -875,7 +875,7 @@ void ViewerWindow::resample_list(ministrings keys,
    worker->run_job(job);
 }
 
-void ViewerWindow::save_list(ministrings keys,ministring filename,int level)
+void ViewerWindow::save_list(ministrings keys, ministring filename, int level)
 {
    unsigned int i;
 
@@ -960,9 +960,9 @@ ministring ViewerWindow::browseDir(ministring title,
    return(dir);
 }
 
-void ViewerWindow::reportProgress(double percentage)
+void ViewerWindow::reportProgress(double percentage, const ministring &job)
 {
-   emit progress(percentage); // asynchronous
+   emit progress(percentage, job); // asynchronous
 }
 
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)

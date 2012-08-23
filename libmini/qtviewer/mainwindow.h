@@ -47,7 +47,7 @@ public:
 public slots:
    void updateTable(ministring key);
    void runAction(ministring action, int row = -1);
-   void reportProgress(double percentage);
+   void reportProgress(double percentage, const ministring &job);
 
 private slots:
    void about();

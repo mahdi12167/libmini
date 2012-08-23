@@ -88,23 +88,23 @@ public:
 
    void shade(ministring key);
    BOOLINT check_list(ministrings keys);
-   void resample_list(ministrings keys,int level=0,int levels=1,int step=2);
-   void save_list(ministrings keys,ministring filename="",int level=0);
+   void resample_list(ministrings keys, int level=0, int levels=1, int step=2);
+   void save_list(ministrings keys, ministring filename="", int level=0);
 
    void notify(ministring text);
-   ministrings browse(ministring title,ministring path="",BOOLINT newfile=FALSE);
-   ministring browseDir(ministring title,ministring path="");
+   ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);
+   ministring browseDir(ministring title, ministring path="");
 
-   ministrings make_grid_list(ministrings keys,int level=0);
+   ministrings make_grid_list(ministrings keys, int level=0);
 
 signals:
    void changed(ministring key);
-   void progress(double percentage);
+   void progress(double percentage, const ministring &job);
 
 private slots:
-   void reportProgress(double percentage);
-   void finishedJob(const ministring &job,const ministrings &args);
-   void failedJob(const ministring &job,const ministrings &args);
+   void reportProgress(double percentage, const ministring &job);
+   void finishedJob(const ministring &job, const ministrings &args);
+   void failedJob(const ministring &job, const ministrings &args);
 
 protected:
    void initializeGL();
