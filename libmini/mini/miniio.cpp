@@ -177,7 +177,7 @@ long long int getmodtime(const char *filename,int year)
               60*(clock->tm_hour+
                   24*(clock->tm_mday+
                       31*(clock->tm_mon+
-                          365*clock->tm_year-(long long int)year)))));
+                          365*(clock->tm_year-(long long int)year))))));
    }
 
 }
