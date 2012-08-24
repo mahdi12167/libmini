@@ -4,6 +4,7 @@
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
+#include <mini/minicoord.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -110,6 +111,13 @@ int main(int argc,char *argv[])
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
 #endif
+
+   //!!
+   std::cout << "test case for bogus utm to lat/lon conversions very close to the north pole" << std::endl;
+   minicoord northpole(miniv4d(498799,9.99796e+06,0),minicoord::MINICOORD_UTM,31,minicoord::MINICOORD_DATUM_WGS84);
+   std::cout << " pre:" << northpole << std::endl;
+   northpole.convert2(minicoord::MINICOORD_LLH);
+   std::cout << " post:" << northpole << std::endl;
 
    // end of test code
 
