@@ -770,28 +770,43 @@ void minicrs::calcUTM2LL(double x,double y,       // input UTM coordinates (East
       if (dabs(delta_phi)<maxerror) break;
       }
 
-   sin_phi=sin(phi);
-   cos_phi=cos(phi);
-   tan_phi=tan(phi);
+   if (PI/2-phi<1E-5)
+      {
+      // north pole
+      *lat=90*60*60;
+      *lon=0;
+      }
+   else if (PI/2+phi<1E-5)
+      {
+      // south pole
+      *lat=-90*60*60;
+      *lon=0;
+      }
+   else
+      {
+      sin_phi=sin(phi);
+      cos_phi=cos(phi);
+      tan_phi=tan(phi);
 
-   a=esp*cos_phi*cos_phi;
-   as=a*a;
+      a=esp*cos_phi*cos_phi;
+      as=a*a;
 
-   t=tan_phi*tan_phi;
-   ts=t*t;
+      t=tan_phi*tan_phi;
+      ts=t*t;
 
-   con=1.0-es*sin_phi*sin_phi;
-   n=r_major/sqrt(con);
-   r=n*(1.0-es)/con;
+      con=1.0-es*sin_phi*sin_phi;
+      n=r_major/sqrt(con);
+      r=n*(1.0-es)/con;
 
-   b=x/(n*scale_factor);
-   bs=b*b;
+      b=x/(n*scale_factor);
+      bs=b*b;
 
-   // UTM latitude extends from -90 to 90 degrees
-   *lat=(phi-n*tan_phi*bs/r*(0.5-bs/24.0*(5.0+3.0*t+10.0*a-4.0*as-9.0*esp-bs/30.0*(61.0+90.0*t+298.0*a+45.0*ts-252.0*esp-3.0*as))))*360*60*60/(2*PI);
+      // UTM latitude extends from -90 to 90 degrees
+      *lat=(phi-n*tan_phi*bs/r*(0.5-bs/24.0*(5.0+3.0*t+10.0*a-4.0*as-9.0*esp-bs/30.0*(61.0+90.0*t+298.0*a+45.0*ts-252.0*esp-3.0*as))))*360*60*60/(2*PI);
 
-   // UTM longitude extends from -180 to 180 degrees
-   *lon=LONSUB(lon_center+b*(1.0-bs/6.0*(1.0+2.0*t+a-bs/20.0*(5.0-2.0*a+28.0*t-3.0*as+8.0*esp+24.0*ts)))/cos_phi*360*60*60/(2*PI));
+      // UTM longitude extends from -180 to 180 degrees
+      *lon=LONSUB(lon_center+b*(1.0-bs/6.0*(1.0+2.0*t+a-bs/20.0*(5.0-2.0*a+28.0*t-3.0*as+8.0*esp+24.0*ts)))/cos_phi*360*60*60/(2*PI));
+      }
    }
 
 // calculate the Mercator equations
