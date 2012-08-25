@@ -319,6 +319,9 @@ void ViewerWindow::loadURL(ministring url)
    if (url.startswith("file://"))
       url = url.suffix("file://");
 
+   if (!url.startswith("/") && !url.startswith("\\"))
+       url = repository_path+url;
+
    if (getObject(url) != NULL) // already existing?
       gotoObject(url);
    else
@@ -352,6 +355,9 @@ void ViewerWindow::loadURLs(ministrings urls)
 
 void ViewerWindow::loadMap(ministring url)
 {
+   if (url.startswith("file://"))
+      url = url.suffix("file://");
+
    if (url.endswith(".ini"))
    {
       unsigned int lio, lio1, lio2;
@@ -383,7 +389,7 @@ void ViewerWindow::clearMaps()
 void ViewerWindow::loadImage(ministring url)
 {
    if (url.startswith("file://"))
-      url.substitute("file://", "");
+      url = url.suffix("file://");
 
    Object_image *image = new Object_image(url, repository_path, viewer);
 
@@ -997,7 +1003,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
    {
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
-         if (getObject(args[i]))
+         if (args[i].startswith("/") || args[i].startswith("\\"))
             runAction("hide", args[i]);
          else
             runAction("hide", repository_path+args[i]);

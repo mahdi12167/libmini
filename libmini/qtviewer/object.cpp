@@ -66,6 +66,9 @@ void Object::set_relative_name(ministring name)
       repository="";
    }
 
+BOOLINT Object::has_absolute_path()
+   {return(repository.empty());}
+
 void Object::set_center(minicoord c,double r)
    {
    coord=c;

@@ -130,7 +130,7 @@ void Objects::relocate_repo(const ministring &repo,
       get(i)->set_relative_path(repo);
       get(i)->set_relative_name(path);
 
-      if (get(i)->get_relative_path()!="")
+      if (!get(i)->has_absolute_path())
          get(i)->set_relative_path(reloc);
       }
    }
