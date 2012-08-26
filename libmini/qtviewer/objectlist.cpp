@@ -116,25 +116,6 @@ void Objects::set_repo(const ministring &repo)
       }
    }
 
-void Objects::relocate_repo(const ministring &repo,
-                            const ministring &reloc)
-   {
-   unsigned int i;
-
-   MINILOG("relocate repository to " + reloc);
-
-   for (i=0; i<get_num(); i++)
-      {
-      ministring path=get(i)->get_full_name();
-
-      get(i)->set_relative_path(repo);
-      get(i)->set_relative_name(path);
-
-      if (!get(i)->has_absolute_path())
-         get(i)->set_relative_path(reloc);
-      }
-   }
-
 void Objects::remove(const ministring &key)
    {
    MINILOG("removing object with key=" + key);
