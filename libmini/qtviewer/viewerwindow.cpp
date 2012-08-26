@@ -358,6 +358,9 @@ void ViewerWindow::loadMap(ministring url)
    if (url.startswith("file://"))
       url = url.suffix("file://");
 
+   if (!url.startswith("/") && !url.startswith("\\"))
+       url = repository_path+url;
+
    if (url.endswith(".ini"))
    {
       unsigned int lio, lio1, lio2;
@@ -390,6 +393,9 @@ void ViewerWindow::loadImage(ministring url)
 {
    if (url.startswith("file://"))
       url = url.suffix("file://");
+
+   if (!url.startswith("/") && !url.startswith("\\"))
+       url = repository_path+url;
 
    Object_image *image = new Object_image(url, repository_path, viewer);
 
