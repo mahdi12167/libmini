@@ -39,8 +39,8 @@ class Object
    //!  if filename is absolute repository is cleared
    void set_relative_name(ministring name);
 
-   //! check for absolute path
-   BOOLINT has_absolute_path();
+   //! check for repository path
+   BOOLINT has_repo_path();
 
    protected:
 
