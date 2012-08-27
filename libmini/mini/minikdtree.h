@@ -129,6 +129,26 @@ class minikdtree
       return(FALSE);
       }
 
+   //! get barycenter of inserted items
+   miniv3d getcenter()
+      {
+      miniv3d center;
+
+      if (bbox) center = 0.5*(bboxmin+bboxmax);
+
+      return(center);
+      }
+
+   //! get radius of inserted items
+   double getradius()
+      {
+      double radius=0.0;
+
+      if (bbox) radius = 0.5*(bboxmax-bboxmin).length();
+
+      return(radius);
+      }
+
    //! normalize point /wrt bbox
    Vector3D normalize(const Vector3D &p)
       {
