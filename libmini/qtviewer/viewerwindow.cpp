@@ -256,50 +256,16 @@ void ViewerWindow::reportProgress()
 
 void ViewerWindow::setRepo(ministring path)
 {
-   repository_path = path;
-
-   if (repository_path.endswith("\\"))
-      if (repository_path.size()>1)
-         repository_path.shrinksize();
-      else
-         repository_path = "/";
-
-   if (repository_path.size()>0)
-      if (!repository_path.endswith("/"))
-         repository_path += "/";
+   repository_path = Object::normalize_path(path);
 
    objects.set_repo(repository_path);
 }
 
 void ViewerWindow::setExport(ministring path)
-{
-   export_path = path;
-
-   if (export_path.endswith("\\"))
-      if (export_path.size()>1)
-         export_path.shrinksize();
-      else
-         export_path = "/";
-
-   if (export_path.size()>0)
-      if (!export_path.endswith("/"))
-         export_path += "/";
-}
+   {export_path = Object::normalize_path(path);}
 
 void ViewerWindow::setTmp(ministring path)
-{
-   tmp_path = path;
-
-   if (tmp_path.endswith("\\"))
-      if (tmp_path.size()>1)
-         tmp_path.shrinksize();
-      else
-         tmp_path = "/";
-
-   if (tmp_path.size()>0)
-      if (!tmp_path.endswith("/"))
-         tmp_path += "/";
-}
+   {tmp_path = Object::normalize_path(path);}
 
 void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
@@ -316,11 +282,10 @@ void ViewerWindow::setExportSettings(double power, double quality)
 
 void ViewerWindow::loadURL(ministring url)
 {
-   if (url.startswith("file://"))
-      url = url.suffix("file://");
+   url = Object::normalize_file(url);
 
-   if (!url.startswith("/") && !url.startswith("\\"))
-       url = repository_path+url;
+   if (!Object::is_absolute_path(url))
+      url = repository_path+url;
 
    if (getObject(url) != NULL) // already existing?
       gotoObject(url);
@@ -355,11 +320,10 @@ void ViewerWindow::loadURLs(ministrings urls)
 
 void ViewerWindow::loadMap(ministring url)
 {
-   if (url.startswith("file://"))
-      url = url.suffix("file://");
+   url = Object::normalize_file(url);
 
-   if (!url.startswith("/") && !url.startswith("\\"))
-       url = repository_path+url;
+   if (!Object::is_absolute_path(url))
+      url = repository_path+url;
 
    if (url.endswith(".ini"))
    {
@@ -391,11 +355,10 @@ void ViewerWindow::clearMaps()
 
 void ViewerWindow::loadImage(ministring url)
 {
-   if (url.startswith("file://"))
-      url = url.suffix("file://");
+   url = Object::normalize_file(url);
 
-   if (!url.startswith("/") && !url.startswith("\\"))
-       url = repository_path+url;
+   if (!Object::is_absolute_path(url))
+      url = repository_path+url;
 
    Object_image *image = new Object_image(url, repository_path, viewer);
 

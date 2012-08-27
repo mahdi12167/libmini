@@ -30,44 +30,58 @@ ministring Object::get_relative_name() const
    {return(filename);}
 
 void Object::set_relative_path(ministring path)
-   {
-   repository=path;
-
-   if (repository.endswith("\\"))
-      if (repository.size()>1)
-         repository.shrinksize();
-      else
-         repository="/";
-
-   if (repository.size()>0)
-      if (!repository.endswith("/"))
-         repository+="/";
-   }
+   {repository=normalize_path(path);}
 
 void Object::set_relative_name(ministring name)
    {
-   filename=name;
-
-   if (filename.startswith("file://"))
-      filename=filename.suffix("file://");
+   filename=normalize_file(name);
 
    // check for relative path to truncate path
-   if (repository.size()>0)
+   if (has_repo_path())
       if (filename.startswith(repository))
          filename=filename.suffix(repository);
 
    // check for absolute path to clear repository
-   if (filename.startswith("/") ||
-       filename.startswith("\\") ||
-       filename.startswith("http://") ||
-       filename.startswith("https://") ||
-       filename.startswith("ftp://") ||
-       filename.startswith("ftps://"))
+   if (is_absolute_path(filename))
       repository="";
    }
 
 BOOLINT Object::has_repo_path()
-   {return(repository.empty());}
+   {return(!repository.empty());}
+
+BOOLINT Object::is_absolute_path(const ministring &path)
+   {
+   return(path.startswith("/") ||
+          path.startswith("\\") ||
+          path.startswith("http://") ||
+          path.startswith("https://") ||
+          path.startswith("ftp://") ||
+          path.startswith("ftps://") ||
+          path.tail(1).startswith(":\\"));
+   }
+
+ministring Object::normalize_path(ministring path)
+   {
+   if (path.endswith("\\"))
+      if (path.size()>1)
+         path.shrinksize();
+      else
+         path="/";
+
+   if (path.size()>0)
+      if (!path.endswith("/"))
+         path+="/";
+
+   return(path);
+   }
+
+ministring Object::normalize_file(ministring file)
+   {
+   if (file.startswith("file://"))
+      file = file.suffix("file://");
+
+   return(file);
+   }
 
 void Object::set_center(minicoord c,double r)
    {

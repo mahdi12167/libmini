@@ -42,6 +42,15 @@ class Object
    //! check for repository path
    BOOLINT has_repo_path();
 
+   //! check for absolute path
+   static BOOLINT is_absolute_path(const ministring &path);
+
+   //! normalize non-empty "path" to match "path/"
+   static ministring normalize_path(ministring path);
+
+   //! normalize "file://name" to match "name"
+   static ministring normalize_file(ministring file);
+
    protected:
 
    ministring repository; // data repository
