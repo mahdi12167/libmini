@@ -429,7 +429,6 @@ class minidyna
 
       minidyna<Item,Minsize> sub;
 
-      if (begin>=SIZE) begin=SIZE-1;
       if (end>=SIZE) end=SIZE-1;
 
       for (i=begin; i<=end; i++)
