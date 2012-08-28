@@ -89,7 +89,9 @@ public:
    void shade(ministring key);
    BOOLINT check_list(ministrings keys);
    void resample_list(ministrings keys, int level=0, int levels=1, int step=2);
-   void save_list(ministrings keys, ministring filename="", int level=0);
+   void save_list(ministrings keys, ministring filename="");
+   void save_grid_list(ministrings keys, ministring filename="", int level=0);
+   BOOLINT load_list(ministring filename);
 
    void notify(ministring text);
    ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);

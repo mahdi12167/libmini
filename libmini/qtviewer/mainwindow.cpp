@@ -958,8 +958,13 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(saveGeoTiffAction);
     QAction *saveJpgInTifAction = new QAction(tr("save to JpgInTif file"), this);
     myMenu.addAction(saveJpgInTifAction);
+    myMenu.addSeparator();
+    QAction *saveAction = new QAction(tr("save"), this);
+    myMenu.addAction(saveAction);
     QAction *saveGridAction = new QAction(tr("save to grid file"), this);
     myMenu.addAction(saveGridAction);
+    QAction *loadAction = new QAction(tr("load"), this);
+    myMenu.addAction(loadAction);
     myMenu.addSeparator();
     QAction *deleteAction = new QAction(tr("delete"), this);
     myMenu.addAction(deleteAction);
@@ -1003,8 +1008,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("save_tif", row));
        else if (selectedAction == saveJpgInTifAction)
           emit(activate("save_jpgintif", row));
+       else if (selectedAction == saveAction)
+          emit(activate("save"));
        else if (selectedAction == saveGridAction)
           emit(activate("save_grid"));
+       else if (selectedAction == loadAction)
+          emit(activate("load"));
        else if (selectedAction == deleteAction)
           emit(activate("delete", row));
        else if (selectedAction == deleteSelAction)

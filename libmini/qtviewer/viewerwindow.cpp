@@ -749,10 +749,21 @@ void ViewerWindow::runAction(ministring action,
       job->append(getObject(value)->get_full_name());
       worker->run_job(job);
    }
+   else if (action == "save")
+   {
+      ministrings keys = listObjects("tileset");
+      keys += listObjects("image");
+      save_list(keys, "");
+   }
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");
-      save_list(keys, "", grid_level);
+      save_grid_list(keys, "", grid_level);
+   }
+   else if (action == "load")
+   {
+      clearObjects();
+      load_list("");
    }
    else if (action == "delete")
    {
@@ -850,7 +861,33 @@ void ViewerWindow::resample_list(ministrings keys,
    worker->run_job(job);
 }
 
-void ViewerWindow::save_list(ministrings keys, ministring filename, int level)
+void ViewerWindow::save_list(ministrings keys, ministring filename)
+{
+   unsigned int i;
+
+   ministrings qtv;
+
+   qtv.append("qtviewer file format .qtv");
+   qtv.append("repo "+repository_path);
+   qtv.append("export "+export_path);
+   qtv.append(ministring("levels ")+(double)grid_level+"/"+(double)grid_levels+"/"+(double)grid_step);
+
+   for (i=0; i<keys.size(); i++)
+      qtv.append(getObject(keys[i])->get_relative_name());
+
+   if (filename=="")
+   {
+      ministrings files = browse("Save", export_path, TRUE);
+      if (files.size()==0) return;
+
+      filename = files[0];
+      if (!filename.endswith(".qtv")) filename += ".qtv";
+   }
+
+   qtv.save(filename);
+}
+
+void ViewerWindow::save_grid_list(ministrings keys, ministring filename, int level)
 {
    unsigned int i;
 
@@ -877,6 +914,58 @@ void ViewerWindow::save_list(ministrings keys, ministring filename, int level)
    grid_list.save(filename);
 }
 
+BOOLINT ViewerWindow::load_list(ministring filename)
+{
+   unsigned int i;
+
+   ministrings qtv;
+
+   if (filename=="")
+   {
+      ministrings files = browse("Load", export_path, FALSE);
+      if (files.size()==0) return(FALSE);
+      filename=files[0];
+   }
+
+   qtv.load(filename);
+
+   if (!qtv.empty())
+      if (qtv[0]!="qtviewer file format .qtv") return(FALSE);
+      else qtv.dispose(0);
+
+   if (!qtv.empty())
+      if (!qtv[0].startswith("repo ")) return(FALSE);
+      else
+      {
+         setRepo(qtv[0].tail("repo "));
+         qtv.dispose(0);
+      }
+
+   if (!qtv.empty())
+      if (!qtv[0].startswith("export ")) return(FALSE);
+      else
+      {
+         setExport(qtv[0].tail("export "));
+         qtv.dispose(0);
+      }
+
+   if (!qtv.empty())
+      if (!qtv[0].startswith("levels ")) return(FALSE);
+      else
+      {
+         ministrings params;
+         params.from_string(qtv[0].tail("levels "), "/");
+         if (params.size()!=3) return(FALSE);
+         setResampleSettings(params[0].value(),params[1].value(),params[2].value());
+         qtv.dispose(0);
+      }
+
+   for (i=0; i<qtv.size(); i++)
+      loadURL(qtv[i]);
+
+   return(TRUE);
+}
+
 void ViewerWindow::notify(ministring text)
 {
    QMessageBox::information(this, "Information",
@@ -894,7 +983,7 @@ ministrings ViewerWindow::browse(ministring title,
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
-   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; Grid Files (*.grid)");
+   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)");
 
    if (path!="") fd->setDirectory(path.c_str());
 
