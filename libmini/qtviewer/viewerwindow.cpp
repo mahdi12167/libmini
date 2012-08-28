@@ -303,6 +303,9 @@ void ViewerWindow::loadURL(ministring url)
       // check tileset extensions
       else if (url.endswith(".ini"))
          loadMap(url);
+      // check qtv extension
+      else if (url.endswith(".qtv"))
+         load_list(url);
       // check for directories
       else if (!url.suffix("/").contains(".") ||
                !url.suffix("\\").contains("."))
