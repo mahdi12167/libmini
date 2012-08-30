@@ -85,7 +85,8 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("}",LUNA_BRACERIGHT);
    SCANNER.addtoken("[",LUNA_BRACKETLEFT);
    SCANNER.addtoken("]",LUNA_BRACKETRIGHT);
-   SCANNER.addtoken(":=",LUNA_ASSIGN);
+   SCANNER.addtoken("=",LUNA_ASSIGN);
+   SCANNER.addtoken(":=",LUNA_COPY);
    SCANNER.addtoken(",",LUNA_COMMA);
    SCANNER.addtoken("++",LUNA_INC);
    SCANNER.addtoken("--",LUNA_DEC);
@@ -97,7 +98,7 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("*",LUNA_MUL);
    SCANNER.addtoken("/",LUNA_DIV);
    SCANNER.addtoken("%",LUNA_MOD);
-   SCANNER.addtoken("=",LUNA_EQ);
+   SCANNER.addtoken("==",LUNA_EQ);
    SCANNER.addtoken("<>",LUNA_NEQ);
    SCANNER.addtoken("<",LUNA_LT);
    SCANNER.addtoken(">",LUNA_GT);
@@ -261,7 +262,7 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
    if (!array && !ref)
       {
       if (!par)
-         if (SCANNER.gettoken()==LUNA_EQ || SCANNER.gettoken()==LUNA_ASSIGN)
+         if (SCANNER.gettoken()==LUNA_ASSIGN || SCANNER.gettoken()==LUNA_COPY)
             {
             SCANNER.next();
 
@@ -698,7 +699,7 @@ void lunaparse::parse_statement(BOOLINT index,
          }
       else index=FALSE;
 
-   if (SCANNER.gettoken()==LUNA_EQ || SCANNER.gettoken()==LUNA_ASSIGN)
+   if (SCANNER.gettoken()==LUNA_ASSIGN || SCANNER.gettoken()==LUNA_COPY)
       {
       SCANNER.next();
 
