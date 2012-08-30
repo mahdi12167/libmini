@@ -32,7 +32,7 @@ expression  ::= ( ["-"]<float-val> ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
-                "=" | "<>" | "<" | ">" | "<=" | ">=" |
+                "==" | "<>" | "<" | ">" | "<=" | ">=" |
                 "&" | "|" | "^" | "!"
 alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
@@ -119,6 +119,7 @@ class lunaparse
       LUNA_BRACKETLEFT,
       LUNA_BRACKETRIGHT,
       LUNA_ASSIGN,
+      LUNA_COPY,
       LUNA_COMMA,
       LUNA_INC,
       LUNA_DEC,
