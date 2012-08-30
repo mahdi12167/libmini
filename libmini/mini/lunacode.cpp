@@ -429,6 +429,11 @@ void lunacode::execmd(int code,int ival,float fval)
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else {VALSTACK[VALSTACKSIZE-2].val-=VALSTACK[VALSTACKSIZE-1].val; VALSTACKSIZE--;}
          break;
+      case CODE_NEG:
+         if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else VALSTACK[VALSTACKSIZE-1].val=-VALSTACK[VALSTACKSIZE-1].val;
+         break;
       case CODE_MUL:
          if (VALSTACKSIZE<2) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT || VALSTACK[VALSTACKSIZE-2].item!=ITEM_FLOAT) CODEMSG("invalid operation");

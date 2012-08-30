@@ -16,6 +16,7 @@ class lunacode
       CODE_NOP=0,
       CODE_ADD,
       CODE_SUB,
+      CODE_NEG,
       CODE_MUL,
       CODE_DIV,
       CODE_MOD,

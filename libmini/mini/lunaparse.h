@@ -23,8 +23,15 @@ statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( "repeat" statement "until" "(" expression ")" ) |
                 ( "for" "(" statement "," expression "," statement ")" statement ) |
                 ( "return" [ "(" expression ")" ] ) |
-                ( "warn" ) [ ";" ]
-expression  ::= ( ["-"]<float-val> ) |
+                ( "warn" )
+                [ ";" ]
+expression  ::= logic-op
+logic-op    ::= comparison { "&" | "|" | "^" | "and" | "or" | "xor" comparison }
+comparison  ::= term { "==" | "!=" | "<>" | "<" | ">" | "<=" | ">=" term }
+term        ::= factor { "+" | "-" factor }
+factor      ::= unary-op { "*" | "/" | "%" | "mod" unary-op }
+unary-op    ::= [ "-" | "!" | "not" ] value
+value       ::= ( ["-"]<float-val> ) |
                 ( <var-id> ) |
                 ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
                 ( <func-id> | alpha-op "(" [ expression { [ "," ] expression } ] ")" ) |
@@ -32,7 +39,7 @@ expression  ::= ( ["-"]<float-val> ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
-                "==" | "<>" | "<" | ">" | "<=" | ">=" |
+                "==" | "!=" | "<>" | "<" | ">" | "<=" | ">=" |
                 "&" | "|" | "^" | "!"
 alpha-op    ::= "min" | "max" | "abs" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
@@ -119,7 +126,6 @@ class lunaparse
       LUNA_BRACKETLEFT,
       LUNA_BRACKETRIGHT,
       LUNA_ASSIGN,
-      LUNA_COPY,
       LUNA_COMMA,
       LUNA_INC,
       LUNA_DEC,
@@ -214,6 +220,12 @@ class lunaparse
    void parse_statement(int *VAR_LOC_NUM,int RET_ADDR);
    void parse_statement(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx);
    void parse_expression(BOOLINT comma=FALSE);
+   void parse_logicop(BOOLINT comma=FALSE);
+   void parse_comparison(BOOLINT comma=FALSE);
+   void parse_term(BOOLINT comma=FALSE);
+   void parse_factor(BOOLINT comma=FALSE);
+   void parse_unaryop(BOOLINT comma=FALSE);
+   void parse_value(BOOLINT comma=FALSE);
    void parse_expression(int push,int push_idx);
    };
 

@@ -86,12 +86,10 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("[",LUNA_BRACKETLEFT);
    SCANNER.addtoken("]",LUNA_BRACKETRIGHT);
    SCANNER.addtoken("=",LUNA_ASSIGN);
-   SCANNER.addtoken(":=",LUNA_COPY);
+   SCANNER.addtoken(":=",LUNA_ASSIGN);
    SCANNER.addtoken(",",LUNA_COMMA);
    SCANNER.addtoken("++",LUNA_INC);
    SCANNER.addtoken("--",LUNA_DEC);
-   SCANNER.addtoken("inc",LUNA_INC);
-   SCANNER.addtoken("dec",LUNA_DEC);
    SCANNER.addtoken("size",LUNA_SIZE);
    SCANNER.addtoken("true",LUNA_TRUE);
    SCANNER.addtoken("false",LUNA_FALSE);
@@ -101,6 +99,7 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("/",LUNA_DIV);
    SCANNER.addtoken("%",LUNA_MOD);
    SCANNER.addtoken("==",LUNA_EQ);
+   SCANNER.addtoken("!=",LUNA_NEQ);
    SCANNER.addtoken("<>",LUNA_NEQ);
    SCANNER.addtoken("<",LUNA_LT);
    SCANNER.addtoken(">",LUNA_GT);
@@ -110,17 +109,7 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("|",LUNA_OR);
    SCANNER.addtoken("^",LUNA_XOR);
    SCANNER.addtoken("!",LUNA_NOT);
-   SCANNER.addtoken("add",LUNA_ADD);
-   SCANNER.addtoken("sub",LUNA_SUB);
-   SCANNER.addtoken("mul",LUNA_MUL);
-   SCANNER.addtoken("div",LUNA_DIV);
    SCANNER.addtoken("mod",LUNA_MOD);
-   SCANNER.addtoken("eq",LUNA_EQ);
-   SCANNER.addtoken("neq",LUNA_NEQ);
-   SCANNER.addtoken("lt",LUNA_LT);
-   SCANNER.addtoken("gt",LUNA_GT);
-   SCANNER.addtoken("le",LUNA_LE);
-   SCANNER.addtoken("ge",LUNA_GE);
    SCANNER.addtoken("and",LUNA_AND);
    SCANNER.addtoken("or",LUNA_OR);
    SCANNER.addtoken("xor",LUNA_XOR);
@@ -279,7 +268,7 @@ int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,
    if (!array && !ref)
       {
       if (!par)
-         if (SCANNER.gettoken()==LUNA_ASSIGN || SCANNER.gettoken()==LUNA_COPY)
+         if (SCANNER.gettoken()==LUNA_ASSIGN)
             {
             SCANNER.next();
 
@@ -716,7 +705,7 @@ void lunaparse::parse_statement(BOOLINT index,
          }
       else index=FALSE;
 
-   if (SCANNER.gettoken()==LUNA_ASSIGN || SCANNER.gettoken()==LUNA_COPY)
+   if (SCANNER.gettoken()==LUNA_ASSIGN)
       {
       SCANNER.next();
 
@@ -759,6 +748,138 @@ void lunaparse::parse_statement(BOOLINT index,
    }
 
 void lunaparse::parse_expression(BOOLINT comma)
+   {
+#ifdef PREFIX_OPS
+   parse_value(comma);
+#else
+   parse_logicop(comma);
+#endif
+   }
+
+void lunaparse::parse_logicop(BOOLINT comma)
+   {
+   int op;
+
+   parse_comparison(comma);
+
+   while (SCANNER.gettoken()==lunaparse::LUNA_AND ||
+          SCANNER.gettoken()==lunaparse::LUNA_OR ||
+          SCANNER.gettoken()==lunaparse::LUNA_XOR)
+      {
+      op=lunacode::CODE_NOP;
+
+      if (SCANNER.gettoken()==lunaparse::LUNA_AND) op=lunacode::CODE_AND;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_OR) op=lunacode::CODE_OR;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_XOR) op=lunacode::CODE_XOR;
+
+      SCANNER.next();
+
+      parse_comparison(comma);
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   }
+
+void lunaparse::parse_comparison(BOOLINT comma)
+   {
+   int op;
+
+   parse_term(comma);
+
+   while (SCANNER.gettoken()==lunaparse::LUNA_EQ ||
+          SCANNER.gettoken()==lunaparse::LUNA_NEQ ||
+          SCANNER.gettoken()==lunaparse::LUNA_LT ||
+          SCANNER.gettoken()==lunaparse::LUNA_GT ||
+          SCANNER.gettoken()==lunaparse::LUNA_LE ||
+          SCANNER.gettoken()==lunaparse::LUNA_GE)
+      {
+      op=lunacode::CODE_NOP;
+
+      if (SCANNER.gettoken()==lunaparse::LUNA_EQ) op=lunacode::CODE_EQ;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_NEQ) op=lunacode::CODE_NEQ;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_LT) op=lunacode::CODE_LT;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_GT) op=lunacode::CODE_GT;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_LE) op=lunacode::CODE_LE;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_GE) op=lunacode::CODE_GE;
+
+      SCANNER.next();
+
+      parse_term(comma);
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   }
+
+void lunaparse::parse_term(BOOLINT comma)
+   {
+   int op;
+
+   parse_factor(comma);
+
+   while (SCANNER.gettoken()==lunaparse::LUNA_ADD ||
+          SCANNER.gettoken()==lunaparse::LUNA_SUB ||
+          SCANNER.gettoken()==lunascan::LUNA_VALUE)
+      {
+      op=lunacode::CODE_NOP;
+
+      if (SCANNER.gettoken()==lunaparse::LUNA_ADD) op=lunacode::CODE_ADD;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_SUB) op=lunacode::CODE_SUB;
+      else if (SCANNER.gettoken()==lunascan::LUNA_VALUE)
+         if (SCANNER.getvalue()<0) op=lunacode::CODE_SUB;
+         else break;
+
+      if (SCANNER.gettoken()!=lunascan::LUNA_VALUE) SCANNER.next();
+
+      parse_term(comma);
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   }
+
+void lunaparse::parse_factor(BOOLINT comma)
+   {
+   int op;
+
+   parse_unaryop(comma);
+
+   while (SCANNER.gettoken()==lunaparse::LUNA_MUL ||
+          SCANNER.gettoken()==lunaparse::LUNA_DIV ||
+          SCANNER.gettoken()==lunaparse::LUNA_MOD)
+      {
+      op=lunacode::CODE_NOP;
+
+      if (SCANNER.gettoken()==lunaparse::LUNA_MUL) op=lunacode::CODE_MUL;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_DIV) op=lunacode::CODE_DIV;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_MOD) op=lunacode::CODE_MOD;
+
+      SCANNER.next();
+
+      parse_unaryop(comma);
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   }
+
+void lunaparse::parse_unaryop(BOOLINT comma)
+   {
+   int op;
+
+   if (SCANNER.gettoken()==lunaparse::LUNA_SUB ||
+       SCANNER.gettoken()==lunaparse::LUNA_NOT)
+      {
+      op=lunacode::CODE_NOP;
+
+      if (SCANNER.gettoken()==lunaparse::LUNA_SUB) op=lunacode::CODE_NEG;
+      else if (SCANNER.gettoken()==lunaparse::LUNA_NOT) op=lunacode::CODE_NOT;
+
+      parse_value(comma);
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   else parse_value(comma);
+   }
+
+void lunaparse::parse_value(BOOLINT comma)
    {
    int info;
 
