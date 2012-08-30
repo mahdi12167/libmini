@@ -390,7 +390,7 @@ class minikdtree
 
          bool left = isInLeftHalfSpace(point, node->plane);
          double intersection = getDistance(point, node->plane);
-         
+
          if (left)
             {
             // if search radius intersects left half space traverse into it
