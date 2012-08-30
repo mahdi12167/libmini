@@ -374,6 +374,59 @@ class minikdtree
 
    protected:
 
+   //! test search in kd-tree
+   //!  in: 3D center point
+   //!  in: search radius around center
+   //!  out: tree contains points within the search radius?
+   BOOLINT test(const Vector3D &point, double radius, const Node *node)
+      {
+      if (node!=NULL)
+         {
+         double distance = getDistance(node->plane.point, point);
+
+         // actual node is within search radius?
+         if (distance<radius)
+            return(TRUE);
+
+         bool left = isInLeftHalfSpace(point, node->plane);
+         double intersection = getDistance(point, node->plane);
+         
+         if (left)
+            {
+            // if search radius intersects left half space traverse into it
+            if (intersection <= radius)
+               if (test(point, radius, node->leftSpace))
+                  return(TRUE);
+
+            // if search radius intersects right half space traverse into it
+            if (intersection >= -radius)
+               if (test(point, radius, node->rightSpace))
+                  return(TRUE);
+            }
+         else
+            {
+            // if search radius intersects right half space traverse into it
+            if (intersection >= -radius)
+               if (test(point, radius, node->rightSpace))
+                  return(TRUE);
+
+            // if search radius intersects left half space traverse into it
+            if (intersection <= radius)
+               if (test(point, radius, node->leftSpace))
+                  return(TRUE);
+            }
+         }
+
+      return(FALSE);
+      }
+
+   public:
+
+   BOOLINT test(const Vector3D &point, double radius)
+      {return(search(point, radius, root));}
+
+   protected:
+
    //! remove items in subtree
    void remove(Node **node)
       {
