@@ -468,199 +468,36 @@ void lunaparse::parse_func_decl(BOOLINT main)
 
 void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    {
-   int info;
-
-   int addr1,addr2,addr3,addr4;
-
    if (SCANNER.gettoken()==LUNA_VAR_GLB)
-      parse_statement(FALSE,
-                      lunacode::CODE_POP_VAR,lunacode::CODE_INC_VAR,lunacode::CODE_DEC_VAR,
-                      lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP);
+      parse_var(FALSE,
+                lunacode::CODE_POP_VAR,lunacode::CODE_INC_VAR,lunacode::CODE_DEC_VAR,
+                lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP);
    else if (SCANNER.gettoken()==LUNA_VAR_LOC)
-      parse_statement(FALSE,
-                      lunacode::CODE_POP_VAR_LOC,lunacode::CODE_INC_VAR_LOC,lunacode::CODE_DEC_VAR_LOC,
-                      lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP);
+      parse_var(FALSE,
+                lunacode::CODE_POP_VAR_LOC,lunacode::CODE_INC_VAR_LOC,lunacode::CODE_DEC_VAR_LOC,
+                lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP);
    else if (SCANNER.gettoken()==LUNA_ARRAY_GLB)
-      parse_statement(TRUE,
-                      lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                      lunacode::CODE_POP_ARRAY_IDX,lunacode::CODE_INC_ARRAY_IDX,lunacode::CODE_DEC_ARRAY_IDX);
+      parse_var(TRUE,
+                lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP,
+                lunacode::CODE_POP_ARRAY_IDX,lunacode::CODE_INC_ARRAY_IDX,lunacode::CODE_DEC_ARRAY_IDX);
    else if (SCANNER.gettoken()==LUNA_ARRAY_LOC)
-      parse_statement(TRUE,
-                      lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                      lunacode::CODE_POP_ARRAY_LOC_IDX,lunacode::CODE_INC_ARRAY_LOC_IDX,lunacode::CODE_DEC_ARRAY_LOC_IDX);
+      parse_var(TRUE,
+                lunacode::CODE_NOP,lunacode::CODE_NOP,lunacode::CODE_NOP,
+                lunacode::CODE_POP_ARRAY_LOC_IDX,lunacode::CODE_INC_ARRAY_LOC_IDX,lunacode::CODE_DEC_ARRAY_LOC_IDX);
    else if (SCANNER.gettoken()==LUNA_REF_GLB)
-      parse_statement(TRUE,
-                      lunacode::CODE_POP_REF,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                      lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX);
+      parse_var(TRUE,
+                lunacode::CODE_POP_REF,lunacode::CODE_NOP,lunacode::CODE_NOP,
+                lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX);
    else if (SCANNER.gettoken()==LUNA_REF_LOC)
-      parse_statement(TRUE,
-                      lunacode::CODE_POP_REF_LOC,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                      lunacode::CODE_POP_REF_LOC_IDX,lunacode::CODE_INC_REF_LOC_IDX,lunacode::CODE_DEC_REF_LOC_IDX);
-   else if (SCANNER.gettoken()==LUNA_FUNCTION)
-      {
-      info=SCANNER.getinfo();
-
-      SCANNER.next();
-
-      if (SCANNER.gettoken()==LUNA_PARENLEFT)
-         {
-         parse_par_list();
-
-         CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,info);
-         }
-      else
-         {
-         PARSERMSG("expected parameter list");
-         SCANNER.next();
-         }
-      }
-   else if (SCANNER.gettoken()==LUNA_BRACELEFT)
-      {
-      SCANNER.next();
-
-      SCANNER.push();
-
-      while (SCANNER.gettoken()!=LUNA_BRACERIGHT)
-         {
-         if (SCANNER.gettoken()==lunascan::LUNA_END)
-            {
-            PARSERMSG("brace mismatch",TRUE);
-            break;
-            }
-
-         if (SCANNER.gettoken()==LUNA_VAR)
-            {
-            parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
-            while (SCANNER.gettoken()==LUNA_COMMA)
-               parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
-            }
-         else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
-         else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
-         else parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-         if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
-         }
-
-      SCANNER.pop();
-
-      SCANNER.next();
-      }
-   else if (SCANNER.gettoken()==LUNA_IF)
-      {
-      SCANNER.next();
-
-      if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
-      else
-         {
-         PARSERMSG("expected expression");
-         SCANNER.next();
-         }
-
-      addr1=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      if (SCANNER.gettoken()==LUNA_ELSE)
-         {
-         addr2=CODE.getaddr();
-         CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-         CODE.addcodeat(addr1,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-
-         SCANNER.next();
-
-         parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-         CODE.addcodeat(addr2,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-         }
-      else
-         CODE.addcodeat(addr1,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-      }
-   else if (SCANNER.gettoken()==LUNA_WHILE)
-      {
-      SCANNER.next();
-
-      addr1=CODE.getaddr();
-
-      if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
-      else
-         {
-         PARSERMSG("expected expression");
-         SCANNER.next();
-         }
-
-      addr2=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr1);
-
-      CODE.addcodeat(addr2,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-      }
-   else if (SCANNER.gettoken()==LUNA_REPEAT)
-      {
-      SCANNER.next();
-
-      addr1=CODE.getaddr();
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      if (SCANNER.gettoken()!=LUNA_UNTIL) PARSERMSG("expected until after repeat");
-      SCANNER.next();
-
-      if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
-      else
-         {
-         PARSERMSG("expected expression");
-         SCANNER.next();
-         }
-
-      CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_ANY,addr1);
-      }
-   else if (SCANNER.gettoken()==LUNA_FOR)
-      {
-      SCANNER.next();
-
-      if (SCANNER.gettoken()!=LUNA_PARENLEFT) PARSERMSG("expected parameter list");
-      SCANNER.next();
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
-      SCANNER.next();
-
-      addr1=CODE.getaddr();
-
-      parse_expression();
-
-      addr2=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-
-      addr3=CODE.getaddr();
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-      if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
-      SCANNER.next();
-
-      addr4=CODE.getaddr();
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr1);
-
-      if (SCANNER.gettoken()!=LUNA_PARENRIGHT) PARSERMSG("expected matching paren");
-      SCANNER.next();
-
-      CODE.addcodeat(addr3,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
-
-      parse_statement(VAR_LOC_NUM,RET_ADDR);
-
-      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr4);
-
-      CODE.addcodeat(addr2,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
-      }
+      parse_var(TRUE,
+                lunacode::CODE_POP_REF_LOC,lunacode::CODE_NOP,lunacode::CODE_NOP,
+                lunacode::CODE_POP_REF_LOC_IDX,lunacode::CODE_INC_REF_LOC_IDX,lunacode::CODE_DEC_REF_LOC_IDX);
+   else if (SCANNER.gettoken()==LUNA_FUNCTION) parse_func();
+   else if (SCANNER.gettoken()==LUNA_BRACELEFT) parse_block(VAR_LOC_NUM,RET_ADDR);
+   else if (SCANNER.gettoken()==LUNA_IF) parse_if(VAR_LOC_NUM,RET_ADDR);
+   else if (SCANNER.gettoken()==LUNA_WHILE) parse_while(VAR_LOC_NUM,RET_ADDR);
+   else if (SCANNER.gettoken()==LUNA_REPEAT) parse_repeat(VAR_LOC_NUM,RET_ADDR);
+   else if (SCANNER.gettoken()==LUNA_FOR) parse_for(VAR_LOC_NUM,RET_ADDR);
    else if (SCANNER.gettoken()==LUNA_RETURN)
       {
       SCANNER.next();
@@ -683,9 +520,9 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
    }
 
-void lunaparse::parse_statement(BOOLINT index,
-                                int code_assign,int code_inc,int code_dec,
-                                int code_assign_idx,int code_inc_idx,int code_dec_idx)
+void lunaparse::parse_var(BOOLINT index,
+                          int code_assign,int code_inc,int code_dec,
+                          int code_assign_idx,int code_inc_idx,int code_dec_idx)
    {
    int info;
 
@@ -742,9 +579,190 @@ void lunaparse::parse_statement(BOOLINT index,
       }
    else
       {
-      PARSERMSG("expected statement");
+      PARSERMSG("expected variable access");
       SCANNER.next();
       }
+   }
+
+void lunaparse::parse_func()
+   {
+   int info;
+
+   info=SCANNER.getinfo();
+
+   SCANNER.next();
+
+   if (SCANNER.gettoken()==LUNA_PARENLEFT)
+      {
+      parse_par_list();
+
+      CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,info);
+      }
+   else
+      {
+      PARSERMSG("expected parameter list");
+      SCANNER.next();
+      }
+   }
+
+void lunaparse::parse_block(int *VAR_LOC_NUM,int RET_ADDR)
+   {
+   SCANNER.next();
+
+   SCANNER.push();
+
+   while (SCANNER.gettoken()!=LUNA_BRACERIGHT)
+      {
+      if (SCANNER.gettoken()==lunascan::LUNA_END)
+         {
+         PARSERMSG("brace mismatch",TRUE);
+         break;
+         }
+
+      if (SCANNER.gettoken()==LUNA_VAR)
+         {
+         parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+         while (SCANNER.gettoken()==LUNA_COMMA)
+            parse_var_decl(TRUE,FALSE,FALSE,FALSE,FALSE,VAR_LOC_NUM);
+         }
+      else if (SCANNER.gettoken()==LUNA_REF) parse_var_decl(TRUE,FALSE,FALSE,TRUE,FALSE,VAR_LOC_NUM);
+      else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
+      else parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+      if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
+      }
+
+   SCANNER.pop();
+
+   SCANNER.next();
+   }
+
+void lunaparse::parse_if(int *VAR_LOC_NUM,int RET_ADDR)
+   {
+   int addr1,addr2;
+
+   SCANNER.next();
+
+   if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
+   else
+      {
+      PARSERMSG("expected expression");
+      SCANNER.next();
+      }
+
+   addr1=CODE.getaddr();
+   CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   if (SCANNER.gettoken()==LUNA_ELSE)
+      {
+      addr2=CODE.getaddr();
+      CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+
+      CODE.addcodeat(addr1,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+
+      SCANNER.next();
+
+      parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+      CODE.addcodeat(addr2,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+      }
+   else
+      CODE.addcodeat(addr1,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+   }
+
+void lunaparse::parse_while(int *VAR_LOC_NUM,int RET_ADDR)
+   {
+   int addr1,addr2;
+
+   SCANNER.next();
+
+   addr1=CODE.getaddr();
+
+   if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
+   else
+      {
+      PARSERMSG("expected expression");
+      SCANNER.next();
+      }
+
+   addr2=CODE.getaddr();
+   CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr1);
+
+   CODE.addcodeat(addr2,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+   }
+
+void lunaparse::parse_repeat(int *VAR_LOC_NUM,int RET_ADDR)
+   {
+   int addr;
+
+   SCANNER.next();
+
+   addr=CODE.getaddr();
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   if (SCANNER.gettoken()!=LUNA_UNTIL) PARSERMSG("expected until after repeat");
+   SCANNER.next();
+
+   if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_expression();
+   else
+      {
+      PARSERMSG("expected expression");
+      SCANNER.next();
+      }
+
+   CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_ANY,addr);
+   }
+
+void lunaparse::parse_for(int *VAR_LOC_NUM,int RET_ADDR)
+   {
+   int addr1,addr2,addr3,addr4;
+
+   SCANNER.next();
+
+   if (SCANNER.gettoken()!=LUNA_PARENLEFT) PARSERMSG("expected parameter list");
+   SCANNER.next();
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
+   SCANNER.next();
+
+   addr1=CODE.getaddr();
+
+   parse_expression();
+
+   addr2=CODE.getaddr();
+   CODE.addcode(lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
+
+   addr3=CODE.getaddr();
+   CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+
+   if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
+   SCANNER.next();
+
+   addr4=CODE.getaddr();
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr1);
+
+   if (SCANNER.gettoken()!=LUNA_PARENRIGHT) PARSERMSG("expected matching paren");
+   SCANNER.next();
+
+   CODE.addcodeat(addr3,lunacode::CODE_JMP,lunacode::MODE_INT,CODE.getaddr());
+
+   parse_statement(VAR_LOC_NUM,RET_ADDR);
+
+   CODE.addcode(lunacode::CODE_JMP,lunacode::MODE_ANY,addr4);
+
+   CODE.addcodeat(addr2,lunacode::CODE_JIF,lunacode::MODE_INT,CODE.getaddr());
    }
 
 void lunaparse::parse_expression()
@@ -879,13 +897,8 @@ void lunaparse::parse_unaryop()
    else parse_value();
    }
 
-void lunaparse::parse_value(BOOLINT comma)
+void lunaparse::parse_value()
    {
-   int info;
-
-   int op;
-   int args;
-
    if (SCANNER.gettoken()==lunascan::LUNA_VALUE)
       {
       CODE.addcode(lunacode::CODE_PUSH,lunacode::MODE_FLOAT,0,SCANNER.getvalue());
@@ -908,75 +921,8 @@ void lunaparse::parse_value(BOOLINT comma)
    else if (SCANNER.gettoken()==LUNA_ARRAY_LOC) parse_var_index(lunacode::CODE_PUSH_ARRAY_LOC,lunacode::CODE_PUSH_ARRAY_LOC_IDX);
    else if (SCANNER.gettoken()==LUNA_REF_GLB) parse_var_index(lunacode::CODE_PUSH_REF,lunacode::CODE_PUSH_REF_IDX);
    else if (SCANNER.gettoken()==LUNA_REF_LOC) parse_var_index(lunacode::CODE_PUSH_REF_LOC,lunacode::CODE_PUSH_REF_LOC_IDX);
-   else if (SCANNER.gettoken()==LUNA_FUNCTION)
-      {
-      info=SCANNER.getinfo();
-
-      SCANNER.next();
-
-      if (SCANNER.gettoken()==LUNA_PARENLEFT)
-         {
-         parse_par_list();
-
-         CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,info);
-         }
-      else
-         {
-         PARSERMSG("expected parameter list");
-         SCANNER.next();
-         }
-      }
-   else if (SCANNER.gettoken()==LUNA_PARENLEFT)
-      {
-      SCANNER.next();
-
-      op=lunacode::CODE_NOP;
-
-      switch (SCANNER.gettoken())
-         {
-         case LUNA_ADD: op=lunacode::CODE_ADD; break;
-         case LUNA_SUB: op=lunacode::CODE_SUB; break;
-         case LUNA_MUL: op=lunacode::CODE_MUL; break;
-         case LUNA_DIV: op=lunacode::CODE_DIV; break;
-         case LUNA_MOD: op=lunacode::CODE_MOD; break;
-         case LUNA_EQ: op=lunacode::CODE_EQ; break;
-         case LUNA_NEQ: op=lunacode::CODE_NEQ; break;
-         case LUNA_LT: op=lunacode::CODE_LT; break;
-         case LUNA_GT: op=lunacode::CODE_GT; break;
-         case LUNA_LE: op=lunacode::CODE_LE; break;
-         case LUNA_GE: op=lunacode::CODE_GE; break;
-         case LUNA_AND: op=lunacode::CODE_AND; break;
-         case LUNA_OR: op=lunacode::CODE_OR; break;
-         case LUNA_XOR: op=lunacode::CODE_XOR; break;
-         case LUNA_NOT: op=lunacode::CODE_NOT; break;
-         }
-
-      if (op!=lunacode::CODE_NOP) SCANNER.next();
-
-      args=0;
-
-      while (SCANNER.gettoken()!=LUNA_PARENRIGHT)
-         {
-         if (comma && op==lunacode::CODE_NOP && args>0)
-            if (SCANNER.gettoken()==LUNA_COMMA) SCANNER.next();
-
-         if (SCANNER.gettoken()==lunascan::LUNA_END)
-            {
-            PARSERMSG("paren mismatch",TRUE);
-            break;
-            }
-
-         if (!comma || op!=lunacode::CODE_NOP) parse_expression();
-         else parse_par_list();
-
-         args++;
-         }
-
-      if (op!=lunacode::CODE_NOP)
-         CODE.addcode(op,lunacode::MODE_NONE);
-
-      SCANNER.next();
-      }
+   else if (SCANNER.gettoken()==LUNA_FUNCTION) parse_func();
+   else if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_prefix_ops();
    else if (SCANNER.gettoken()==LUNA_SIZE)
       {
       SCANNER.next();
@@ -1011,55 +957,114 @@ void lunaparse::parse_value(BOOLINT comma)
 
       SCANNER.next();
       }
-   else
+   else if (!parse_alpha_ops())
       {
-      op=lunacode::CODE_NOP;
-
-      switch (SCANNER.gettoken())
-         {
-         case LUNA_MIN: op=lunacode::CODE_MIN; break;
-         case LUNA_MAX: op=lunacode::CODE_MAX; break;
-         case LUNA_ABS: op=lunacode::CODE_ABS; break;
-         case LUNA_SQR: op=lunacode::CODE_SQR; break;
-         case LUNA_SQRT: op=lunacode::CODE_SQRT; break;
-         case LUNA_EXP: op=lunacode::CODE_EXP; break;
-         case LUNA_LOG: op=lunacode::CODE_LOG; break;
-         case LUNA_POW: op=lunacode::CODE_POW; break;
-         case LUNA_SIN: op=lunacode::CODE_SIN; break;
-         case LUNA_COS: op=lunacode::CODE_COS; break;
-         case LUNA_TAN: op=lunacode::CODE_TAN; break;
-         case LUNA_ATAN: op=lunacode::CODE_ATAN; break;
-         case LUNA_ATAN2: op=lunacode::CODE_ATAN2; break;
-         case LUNA_NOISE: op=lunacode::CODE_NOISE; break;
-         case LUNA_NOISE2: op=lunacode::CODE_NOISE2; break;
-         }
-
-      if (op!=lunacode::CODE_NOP)
-         {
-         SCANNER.next();
-
-         if (SCANNER.gettoken()==LUNA_PARENLEFT)
-            {
-            parse_par_list();
-
-            CODE.addcode(op,lunacode::MODE_NONE);
-            }
-         else
-            {
-            PARSERMSG("expected parameter list");
-            SCANNER.next();
-            }
-         }
-      else
-         {
-         PARSERMSG("expected expression");
-         SCANNER.next();
-         }
+      PARSERMSG("expected expression");
+      SCANNER.next();
       }
    }
 
+void lunaparse::parse_prefix_ops(BOOLINT comma)
+   {
+   int op;
+   int args;
+
+   SCANNER.next();
+
+   op=lunacode::CODE_NOP;
+
+   switch (SCANNER.gettoken())
+      {
+      case LUNA_ADD: op=lunacode::CODE_ADD; break;
+      case LUNA_SUB: op=lunacode::CODE_SUB; break;
+      case LUNA_MUL: op=lunacode::CODE_MUL; break;
+      case LUNA_DIV: op=lunacode::CODE_DIV; break;
+      case LUNA_MOD: op=lunacode::CODE_MOD; break;
+      case LUNA_EQ: op=lunacode::CODE_EQ; break;
+      case LUNA_NEQ: op=lunacode::CODE_NEQ; break;
+      case LUNA_LT: op=lunacode::CODE_LT; break;
+      case LUNA_GT: op=lunacode::CODE_GT; break;
+      case LUNA_LE: op=lunacode::CODE_LE; break;
+      case LUNA_GE: op=lunacode::CODE_GE; break;
+      case LUNA_AND: op=lunacode::CODE_AND; break;
+      case LUNA_OR: op=lunacode::CODE_OR; break;
+      case LUNA_XOR: op=lunacode::CODE_XOR; break;
+      case LUNA_NOT: op=lunacode::CODE_NOT; break;
+      }
+
+   if (op!=lunacode::CODE_NOP) SCANNER.next();
+
+   args=0;
+
+   while (SCANNER.gettoken()!=LUNA_PARENRIGHT)
+      {
+      if (comma && op==lunacode::CODE_NOP && args>0)
+         if (SCANNER.gettoken()==LUNA_COMMA) SCANNER.next();
+
+      if (SCANNER.gettoken()==lunascan::LUNA_END)
+         {
+         PARSERMSG("paren mismatch",TRUE);
+         break;
+         }
+
+      if (!comma || op!=lunacode::CODE_NOP) parse_expression();
+      else parse_par_list();
+
+      args++;
+      }
+
+   if (op!=lunacode::CODE_NOP)
+      CODE.addcode(op,lunacode::MODE_NONE);
+
+   SCANNER.next();
+   }
+
+BOOLINT lunaparse::parse_alpha_ops()
+   {
+   int op;
+
+   op=lunacode::CODE_NOP;
+
+   switch (SCANNER.gettoken())
+      {
+      case LUNA_MIN: op=lunacode::CODE_MIN; break;
+      case LUNA_MAX: op=lunacode::CODE_MAX; break;
+      case LUNA_ABS: op=lunacode::CODE_ABS; break;
+      case LUNA_SQR: op=lunacode::CODE_SQR; break;
+      case LUNA_SQRT: op=lunacode::CODE_SQRT; break;
+      case LUNA_EXP: op=lunacode::CODE_EXP; break;
+      case LUNA_LOG: op=lunacode::CODE_LOG; break;
+      case LUNA_POW: op=lunacode::CODE_POW; break;
+      case LUNA_SIN: op=lunacode::CODE_SIN; break;
+      case LUNA_COS: op=lunacode::CODE_COS; break;
+      case LUNA_TAN: op=lunacode::CODE_TAN; break;
+      case LUNA_ATAN: op=lunacode::CODE_ATAN; break;
+      case LUNA_ATAN2: op=lunacode::CODE_ATAN2; break;
+      case LUNA_NOISE: op=lunacode::CODE_NOISE; break;
+      case LUNA_NOISE2: op=lunacode::CODE_NOISE2; break;
+      }
+
+   if (op!=lunacode::CODE_NOP) return(FALSE);
+
+   SCANNER.next();
+
+   if (SCANNER.gettoken()==LUNA_PARENLEFT)
+      {
+      parse_par_list();
+
+      CODE.addcode(op,lunacode::MODE_NONE);
+      }
+   else
+      {
+      PARSERMSG("expected parameter list");
+      SCANNER.next();
+      }
+
+   return(TRUE);
+   }
+
 void lunaparse::parse_par_list()
-   {parse_value(TRUE);}
+   {parse_prefix_ops(TRUE);}
 
 void lunaparse::parse_var_index(int push,int push_idx)
    {
