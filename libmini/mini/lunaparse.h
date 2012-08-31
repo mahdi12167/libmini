@@ -219,14 +219,15 @@ class lunaparse
    void parse_func_decl(BOOLINT main);
    void parse_statement(int *VAR_LOC_NUM,int RET_ADDR);
    void parse_statement(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx);
-   void parse_expression(BOOLINT comma=FALSE);
-   void parse_logicop(BOOLINT comma=FALSE);
-   void parse_comparison(BOOLINT comma=FALSE);
-   void parse_term(BOOLINT comma=FALSE);
-   void parse_factor(BOOLINT comma=FALSE);
-   void parse_unaryop(BOOLINT comma=FALSE);
+   void parse_expression();
+   void parse_logicop();
+   void parse_comparison();
+   void parse_term();
+   void parse_factor();
+   void parse_unaryop();
    void parse_value(BOOLINT comma=FALSE);
-   void parse_expression(int push,int push_idx);
+   void parse_par_list();
+   void parse_var_index(int push,int push_idx);
    };
 
 #endif
