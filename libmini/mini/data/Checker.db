@@ -28,6 +28,6 @@ include "std.luna"
 
 main(par x, par y, par z, par t)
    {
-   var c=checker(x, y);
+   var c = checker(x, y);
    return(c, c, c);
    }
