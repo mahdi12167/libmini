@@ -64,9 +64,9 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       a=1;
       b=1;
 
-      for (i=1, (< i fibo), i++)
+      for (i=1, i<fibo, i++)
          {
-         c=(+ a b);
+         c=a+b;
          a=b;
          b=c;
          }
@@ -78,7 +78,7 @@ The following LUNA program calculates the nth fibonacci number (fat recursion):
 
    func fibonacci(par n)
       {
-      if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
+      if (n>1) return(fibonacci(n-2) + fibonacci(n-1));
       else return(1);
       }
 
@@ -232,9 +232,8 @@ class lunaparse
    void parse_factor();
    void parse_unaryop();
    void parse_value();
-   void parse_prefix_ops(BOOLINT comma=FALSE);
+   void parse_prefix_ops();
    BOOLINT parse_alpha_ops();
-   void parse_par_list();
    void parse_var_index(int push,int push_idx);
    };
 

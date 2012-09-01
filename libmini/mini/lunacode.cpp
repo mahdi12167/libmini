@@ -1819,6 +1819,7 @@ void lunacode::printcode(int code)
       case CODE_NOP: printf("NOP"); break;
       case CODE_ADD: printf("ADD"); break;
       case CODE_SUB: printf("SUB"); break;
+      case CODE_NEG: printf("NEG"); break;
       case CODE_MUL: printf("MUL"); break;
       case CODE_DIV: printf("DIV"); break;
       case CODE_MOD: printf("MOD"); break;
