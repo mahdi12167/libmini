@@ -27,7 +27,7 @@ bytes=0
 var grad=3;
 
 func sphere(par x, par y, par z,
-            par x0, par y0, par z0,par r0)
+            par x0, par y0, par z0, par r0)
    {
    var r;
    var s;
@@ -47,10 +47,10 @@ main(par x, par y, par z, par t)
    var s2;
 
    if (| (< z 0) (< y -0.2)) s2=0;
-   else s1=sphere(x,(+ y (/ abs(x) 1.75)),(* z 2),0,-0.05,0.1,0.15);
+   else s1=sphere(x, (+ y (/ abs(x) 1.75)), (* z 2), 0, -0.05, 0.1, 0.15);
 
    if (| (> z 0) (< y -0.325)) s2=0;
-   else s2=sphere(x,(/ (+ y (/ abs(x) 3)) 2),(* (- z (/ abs(x) 3)) 1.5),0,0,0,0.25);
+   else s2=sphere(x, (/ (+ y (/ abs(x) 3)) 2), (* (- z (/ abs(x) 3)) 1.5), 0, 0, 0, 0.25);
 
    return(+ s1 s2);
    }

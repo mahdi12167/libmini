@@ -3,7 +3,7 @@ xsize=512
 ysize=512
 zsize=1
 tsteps=1
-type=1
+type=3
 swx=0
 swy=0
 nwx=0
@@ -26,11 +26,8 @@ bytes=0
 
 include "std.luna"
 
-func checker(par x, par y)
-   {return(^ (< (% (* x 10) 2) 1) (< (% (* y 10) 2) 1));}
-
 main(par x, par y, par z, par t)
    {
-   var c = checker(x,y);
-   return(c);
+   var c=checker(x, y);
+   return(c, c, c);
    }

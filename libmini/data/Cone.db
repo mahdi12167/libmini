@@ -27,4 +27,4 @@ bytes=0
 include "std.luna"
 
 main(par x, par y, par z, par t)
-   {return(cone(x,y,z));}
+   {return(cone(x, y, z));}

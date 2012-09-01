@@ -49,6 +49,12 @@ func cylinder(par x, par y, par z)
    return(sqrt(sqr(x)+sqr(y))+0.4);
    }
 
+# implicit checker board function
+func checker(par x, par y)
+   {
+   return(((x*7.999)%2<1) ^ ((y*7.999)%2<1));
+   }
+
 # procedural marble
 func marble(par x, par y, par z)
    {
