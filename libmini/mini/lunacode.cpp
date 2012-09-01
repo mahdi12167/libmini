@@ -196,14 +196,22 @@ void lunacode::allocate_stacks()
 
    if (RETSTACKSIZE>=RETSTACKMAX)
       {
-      if ((RETSTACK=(int *)realloc(RETSTACK,2*RETSTACKMAX*sizeof(int)))==NULL) MEMERROR();
+      if ((RETSTACK=(int *)realloc(RETSTACK,2*RETSTACKMAX*sizeof(int)))==NULL)
+         {
+         CODEMSG("insufficient return heap");
+         MEMERROR();
+         }
       for (i=RETSTACKMAX; i<2*RETSTACKMAX; i++) RETSTACK[i]=-1;
       RETSTACKMAX*=2;
       }
 
    if (VALSTACKSIZE>=VALSTACKMAX)
       {
-      if ((VALSTACK=(LUNA_ITEM *)realloc(VALSTACK,2*VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
+      if ((VALSTACK=(LUNA_ITEM *)realloc(VALSTACK,2*VALSTACKMAX*sizeof(LUNA_ITEM)))==NULL)
+         {
+         CODEMSG("insufficient value heap");
+         MEMERROR();
+         }
       for (i=VALSTACKMAX; i<2*VALSTACKMAX; i++) VALSTACK[i].item=ITEM_NONE;
       VALSTACKMAX*=2;
       }
@@ -228,14 +236,22 @@ void lunacode::allocate_vars()
 
    if (GLBVARSIZE>=GLBVARMAX)
       {
-      if ((GLBVAR=(LUNA_ITEM *)realloc(GLBVAR,2*GLBVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
+      if ((GLBVAR=(LUNA_ITEM *)realloc(GLBVAR,2*GLBVARMAX*sizeof(LUNA_ITEM)))==NULL)
+         {
+         CODEMSG("insufficient global heap");
+         MEMERROR();
+         }
       for (i=GLBVARMAX; i<2*GLBVARMAX; i++) GLBVAR[i].item=ITEM_NONE;
       GLBVARMAX*=2;
       }
 
    if (LOCVARSIZE>=LOCVARMAX)
       {
-      if ((LOCVAR=(LUNA_ITEM *)realloc(LOCVAR,2*LOCVARMAX*sizeof(LUNA_ITEM)))==NULL) MEMERROR();
+      if ((LOCVAR=(LUNA_ITEM *)realloc(LOCVAR,2*LOCVARMAX*sizeof(LUNA_ITEM)))==NULL)
+         {
+         CODEMSG("insufficient local heap");
+         MEMERROR();
+         }
       for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].item=ITEM_NONE;
       for (i=LOCVARMAX; i<2*LOCVARMAX; i++) LOCVAR[i].timeloc=0;
       LOCVARMAX*=2;
@@ -338,14 +354,14 @@ void lunacode::checkarray(int ref,unsigned int idx)
 
    if (GLBVAR[ref].array==NULL)
       if (GLBVAR[ref].maxsize>0)
-         if ((GLBVAR[ref].array=mallocarray(GLBVAR[ref].item,GLBVAR[ref].maxsize))==NULL) CODEMSG("insufficient resources");
+         if ((GLBVAR[ref].array=mallocarray(GLBVAR[ref].item,GLBVAR[ref].maxsize))==NULL) CODEMSG("insufficient heap");
          else GLBVAR[ref].size=GLBVAR[ref].maxsize;
       else
-         if ((GLBVAR[ref].array=mallocarray(GLBVAR[ref].item,(idx+1)))==NULL) CODEMSG("insufficient resources");
+         if ((GLBVAR[ref].array=mallocarray(GLBVAR[ref].item,(idx+1)))==NULL) CODEMSG("insufficient heap");
          else GLBVAR[ref].size=idx+1;
    else
       if (GLBVAR[ref].maxsize==0 && idx>=GLBVAR[ref].size)
-         if ((GLBVAR[ref].array=reallocarray(GLBVAR[ref].array,GLBVAR[ref].item,idx+1,GLBVAR[ref].size))==NULL) CODEMSG("insufficient resources");
+         if ((GLBVAR[ref].array=reallocarray(GLBVAR[ref].array,GLBVAR[ref].item,idx+1,GLBVAR[ref].size))==NULL) CODEMSG("insufficient heap");
          else GLBVAR[ref].size=idx+1;
    }
 
@@ -357,30 +373,30 @@ void lunacode::checkarrayloc(int refloc,unsigned int idx)
       {
       if (LOCVAR[refloc].item==ITEM_ARRAY_FLOAT)
          if (LOCVAR[refloc].maxsize>0)
-            if ((LOCVAR[refloc].array=malloc(LOCVAR[refloc].maxsize*sizeof(float)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=malloc(LOCVAR[refloc].maxsize*sizeof(float)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=LOCVAR[refloc].maxsize;
          else
-            if ((LOCVAR[refloc].array=malloc((idx+1)*sizeof(float)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=malloc((idx+1)*sizeof(float)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=idx+1;
 
       if (LOCVAR[refloc].item==ITEM_ARRAY_BYTE)
          if (LOCVAR[refloc].maxsize>0)
-            if ((LOCVAR[refloc].array=malloc(LOCVAR[refloc].maxsize*sizeof(unsigned char)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=malloc(LOCVAR[refloc].maxsize*sizeof(unsigned char)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=LOCVAR[refloc].maxsize;
          else
-            if ((LOCVAR[refloc].array=malloc((idx+1)*sizeof(unsigned char)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=malloc((idx+1)*sizeof(unsigned char)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=idx+1;
       }
    else
       {
       if (LOCVAR[refloc].item==ITEM_ARRAY_FLOAT)
          if (LOCVAR[refloc].maxsize==0 && idx>=LOCVAR[refloc].size)
-            if ((LOCVAR[refloc].array=realloc(LOCVAR[refloc].array,(idx+1)*sizeof(float)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=realloc(LOCVAR[refloc].array,(idx+1)*sizeof(float)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=idx+1;
 
       if (LOCVAR[refloc].item==ITEM_ARRAY_BYTE)
          if (LOCVAR[refloc].maxsize==0 && idx>=LOCVAR[refloc].size)
-            if ((LOCVAR[refloc].array=realloc(LOCVAR[refloc].array,(idx+1)*sizeof(unsigned char)))==NULL) CODEMSG("insufficient resources");
+            if ((LOCVAR[refloc].array=realloc(LOCVAR[refloc].array,(idx+1)*sizeof(unsigned char)))==NULL) CODEMSG("insufficient heap");
             else LOCVAR[refloc].size=idx+1;
       }
    }

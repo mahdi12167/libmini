@@ -180,7 +180,12 @@ void lunaparse::parse_include(const char *path,const char *altpath)
 
    SCANNER.next();
 
-   if (SCANNER.gettoken()!=lunascan::LUNA_STRING) PARSERMSG("expected string");
+   if (SCANNER.gettoken()!=lunascan::LUNA_STRING)
+      {
+      PARSERMSG("expected string");
+      SCANNER.next();
+      return;
+      }
 
    filename=strdup2(path,SCANNER.getstring());
    code=readstring(filename);
@@ -646,7 +651,7 @@ void lunaparse::parse_if(int *VAR_LOC_NUM,int RET_ADDR)
    if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_prefix_ops();
    else
       {
-      PARSERMSG("expected expression");
+      PARSERMSG("expected condition");
       SCANNER.next();
       }
 
@@ -683,7 +688,7 @@ void lunaparse::parse_while(int *VAR_LOC_NUM,int RET_ADDR)
    if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_prefix_ops();
    else
       {
-      PARSERMSG("expected expression");
+      PARSERMSG("expected condition");
       SCANNER.next();
       }
 
@@ -713,7 +718,7 @@ void lunaparse::parse_repeat(int *VAR_LOC_NUM,int RET_ADDR)
    if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_prefix_ops();
    else
       {
-      PARSERMSG("expected expression");
+      PARSERMSG("expected condition");
       SCANNER.next();
       }
 
@@ -999,8 +1004,10 @@ void lunaparse::parse_prefix_ops()
    while (SCANNER.gettoken()!=LUNA_PARENRIGHT)
       {
       if (op==lunacode::CODE_NOP && args>0)
-         if (SCANNER.gettoken()==LUNA_COMMA) SCANNER.next();
-         else PARSERMSG("expected comma");
+         {
+         if (SCANNER.gettoken()!=LUNA_COMMA) PARSERMSG("expected comma");
+         SCANNER.next();
+         }
 
       if (SCANNER.gettoken()==lunascan::LUNA_END)
          {
@@ -1044,7 +1051,7 @@ BOOLINT lunaparse::parse_alpha_ops()
       case LUNA_NOISE2: op=lunacode::CODE_NOISE2; break;
       }
 
-   if (op!=lunacode::CODE_NOP) return(FALSE);
+   if (op==lunacode::CODE_NOP) return(FALSE);
 
    SCANNER.next();
 
