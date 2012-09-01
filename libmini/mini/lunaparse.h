@@ -16,7 +16,7 @@ pars_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
 func_decl   ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")" "{" { statement } "}"
 statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression ) | "++" | "--" ) |
-                ( <func-id> "(" [ expression { [ "," ] expression } ] ")" ) |
+                ( <func-id> "(" [ expression { "," expression } ] ")" ) |
                 ( "{" { declaration | statement } "}" ) |
                 ( "if" "(" expression ")" statement [ "else" statement ] ) |
                 ( "while" "(" expression ")" statement ) |
@@ -34,8 +34,9 @@ unary-op    ::= [ "-" | "!" | "not" ] value
 value       ::= ( ["-"]<float-val> ) |
                 ( <var-id> ) |
                 ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
-                ( <func-id> | alpha-op "(" [ expression { [ "," ] expression } ] ")" ) |
-                ( "(" [ operator ] { expression } ")" ) |
+                ( <func-id> | alpha-op "(" [ expression { "," expression } ] ")" ) |
+                ( "(" operator expression { expression } ")" ) |
+                ( "(" expression ")" ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
