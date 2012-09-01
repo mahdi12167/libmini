@@ -6,16 +6,16 @@ main(par sieve)
 
    var maxprime;
 
-   array byte prime[(+ sieve 1)];
+   array byte prime[sieve+1];
 
-   for (i=0, (<= i sieve), i++) prime[i]=true;
+   for (i=0, i<=sieve, i++) prime[i]=true;
 
-   for (i=2, (< i (+ sqrt(sieve) 0.5)), i++)
-      for (j=i, (<= j sieve), j=(+ j i)) prime[j]=false;
+   for (i=2, i<sqrt(sieve)+0.5, i++)
+      for (j=i, j<=sieve, j=j+i) prime[j]=false;
 
    maxprime=2;
 
-   for (i=2, (<= i sieve), i++)
+   for (i=2, i<=sieve, i++)
      if (prime[i]) maxprime=i;
 
    return(maxprime);
