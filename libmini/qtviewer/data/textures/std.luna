@@ -12,9 +12,9 @@ func fib(par n)
    a=1;
    b=1;
 
-   for (i=1, (< i n), i++)
+   for (i=1, i<n, i++)
       {
-      c=(+ a b);
+      c=a+b;
       a=b;
       b=c;
       }
@@ -22,38 +22,37 @@ func fib(par n)
    return(b);
    }
 
-# fibonacci number (fat recursion)
-func fibonacci(par n)
-   {
-   if (> n 1) return(+ fibonacci(- n 2) fibonacci(- n 1));
-   else return(1);
-   }
-
 # implicit sphere function
 func sphere(par x, par y, par z)
    {
-   return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
+   return(2*sqrt(sqr(x)+sqr(y)+sqr(z)));
    }
 
 # implicit half sphere function
 func half_sphere(par x, par y, par z)
    {
-   if (< z 0) return(1);
-   else return(* 2 sqrt(+ sqr(x) (+ sqr(y) sqr(z))));
+   if (z<0) return(1);
+   else return(2*sqrt(sqr(x)+sqr(y)+sqr(z)));
    }
 
 # implicit cone function
 func cone(par x, par y, par z)
    {
-   if (> z 0.25) return(1);
-   else return(+ (- sqrt(+ sqr(x) sqr(y)) (/ z 2)) 0.25);
+   if (z>0.25) return(1);
+   else return(sqrt(sqr(x)+sqr(y))-z/2+0.25);
    }
 
 # implicit cylinder function
 func cylinder(par x, par y, par z)
    {
-   if (| (< z -0.4) (> z 0.4)) return(1);
-   return(+ sqrt(+ sqr(x) sqr(y)) 0.4);
+   if (z<-0.4 or z>0.4) return(1);
+   return(sqrt(sqr(x)+sqr(y))+0.4);
+   }
+
+# implicit checker board function
+func checker(par x, par y)
+   {
+   return(((x*7.999)%2<1) ^ ((y*7.999)%2<1));
    }
 
 # procedural marble
@@ -61,17 +60,17 @@ func marble(par x, par y, par z)
    {
    var t,n,m;
 
-   t = (* x (* 4 PI));
-   n = (* (- pow(noise(x,y,z) 2) 0.5) 8);
-   m = pow(sin(+ t n) 3);
+   t = 4*PI*x;
+   n = 8*(pow(noise(x, y, z), 2)-0.5);
+   m = pow(sin(t+n), 3);
 
    var v;
 
-   m = (- m 0.2);
-   if (< m 0) m=0;
-   v = (* 0.2 noise2(x,y,z,1));
+   m = m-0.2;
+   if (m<0) m=0;
+   v = 0.2*noise2(x, y, z, 1);
 
-   return((+ m v) (+ m v) (+ m (* 0.5 v)));
+   return(m+v, m+v, m+0.5*v);
    }
 
 # procedural wood
@@ -79,18 +78,18 @@ func wood(par x, par y, par z)
    {
    var t,n,w;
 
-   t = (* 300 sqrt(+ (* x x) (* y y)));
-   n = (* (- sqr(noise(x,y,(* 0.3 z))) 0.5) 10);
-   w = (+ sin(+ t n) (* (* t noise2(x,y,z,1) 0.01)));
+   t = 300*sqrt(x*x+y*y);
+   n = 10*(sqr(noise(x, y, 0.3*z))-0.5);
+   w = sin(t+n)+0.01*t*noise2(x, y, z, 1);
 
    var r=0.4,g=0.2,b=0.1;
 
-   if (> w 0)
+   if (w>0)
       {
-      r = (+ r (* w 0.5));
-      g = (+ g (* w 0.5));
-      b = (+ b (* w 0.4));
+      r = r+w*0.5;
+      g = g+w*0.5;
+      b = b+w*0.4;
       }
 
-   return(r g b);
+   return(r, g, b);
    }

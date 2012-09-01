@@ -27,4 +27,4 @@ bytes=0
 include "std.luna"
 
 main(par x, par y, par z, par t)
-   {return(wood(x,y,z));}
+   {return(wood(x, y, z));}
