@@ -54,9 +54,22 @@ The simplest LUNA program possible is:
       return(0);
       }
 
+The following LUNA program calculates the nth factorial number (recursively):
+
+   func fac(par n)
+      {
+      if (n>1) return(n*fac(n-1));
+      else return(1);
+      }
+
+   main(par n)
+      {
+      return(fac(n));
+      }
+
 The following LUNA program calculates the nth fibonacci number (iteratively):
 
-   main(par fibo)
+   func fib(par n)
       {
       var i;
 
@@ -65,7 +78,7 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       a=1;
       b=1;
 
-      for (i=1, i<fibo, i++)
+      for (i=1, i<n, i++)
          {
          c=a+b;
          a=b;
@@ -75,17 +88,9 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       return(b);
       }
 
-The following LUNA program calculates the nth fibonacci number (fat recursion):
-
-   func fibonacci(par n)
+   main(par n)
       {
-      if (n>1) return(fibonacci(n-2) + fibonacci(n-1));
-      else return(1);
-      }
-
-   main(par fibo)
-      {
-      return(fibonacci(fibo));
+      return(fib(n));
       }
 */
 

@@ -2,6 +2,13 @@
 
 var PI=3.14159265358979323846;
 
+# factorial number
+func fac(par n)
+   {
+   if (n>1) return(n*fac(n-1));
+   else return(1);
+   }
+
 # fibonacci number
 func fib(par n)
    {
