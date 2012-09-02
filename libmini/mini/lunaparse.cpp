@@ -138,7 +138,7 @@ void lunaparse::parseLUNA()
    MAIN=-1;
 
    addr=CODE.getaddr();
-   CODE.addcode(lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,CODE.getaddr());
+   CODE.addcode(lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,0);
 
    while (SCANNER.gettoken()!=lunascan::LUNA_END)
       if (SCANNER.gettoken()==LUNA_INCLUDE) parse_include();
@@ -166,6 +166,13 @@ void lunaparse::parseLUNA()
    CODE.addcodeat(addr,lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,VAR_NUM);
 
    if (MAIN!=-1) CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,MAIN);
+
+   SCANNER.freecode();
+   }
+
+void lunaparse::parseEXPR()
+   {
+   parse_expression();
 
    SCANNER.freecode();
    }

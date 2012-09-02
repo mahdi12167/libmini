@@ -192,6 +192,7 @@ class lunaparse
    void setpath(const char *path,const char *altpath=NULL);
 
    void parseLUNA();
+   void parseEXPR();
 
    void print();
    void printtokens();
