@@ -2,10 +2,13 @@ METASOURCES = AUTO
 
 INCLUDES = -I$(top_builddir) -I$(top_builddir)/.. $(MINI_CFLAGS)
 
-noinst_PROGRAMS = eval test mpfptest
+noinst_PROGRAMS = eval expr test mpfptest
 
 eval_SOURCES = eval.cpp
 eval_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
+
+expr_SOURCES = expr.cpp
+expr_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
 raw2db_SOURCES = raw2db.cpp
 raw2db_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
