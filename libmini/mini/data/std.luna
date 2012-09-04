@@ -100,3 +100,17 @@ func wood(par x, par y, par z)
 
    return(r, g, b);
    }
+
+# find smallest factor
+func factorize(par x)
+   {
+   var f,r;
+
+   x=floor(x);
+   r=ceil(sqrt(x));
+
+   for (f=2, f<=r, f++)
+      if (x%f==0) return(f);
+
+   return(1);
+   }
