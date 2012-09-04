@@ -4,16 +4,17 @@
 
 This module parses the RPN-style language LUNA according to the following EBNF grammar:
 
-LUNA        ::= { include | declaration }
+LUNA        ::= { include | declaration | function }
 include     ::= "include" <string>
-declaration ::= vars_decl | array_decl | ref_decl | func_decl [ ";" ]
+declaration ::= vars_decl | array_decl | ref_decl [ ";" ]
 var_decl    ::= "var" <var-id> [ "=" | ":=" expression ]
 par_decl    ::= "par" <var-id>
 array_decl  ::= "array" [ "byte" ] <array-id> [ "[" expression "]" ]
 ref_decl    ::= "ref" [ "byte" ] <ref-id>
 vars_decl   ::= var_decl { "," var_decl }
 pars_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
-func_decl   ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")" "{" { statement } "}"
+function    ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")"
+                "{" { declaration | statement } "}"
 statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <func-id> "(" [ expression { "," expression } ] ")" ) |
@@ -35,8 +36,7 @@ value       ::= ( ["-"]<float-val> ) |
                 ( <var-id> ) |
                 ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
                 ( <func-id> | alpha-op "(" [ expression { "," expression } ] ")" ) |
-                ( "(" operator expression { expression } ")" ) |
-                ( "(" expression ")" ) |
+                ( "(" [ operator ] { expression } ")" ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
