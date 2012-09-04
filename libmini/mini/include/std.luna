@@ -107,7 +107,7 @@ func factorize(par x)
    var f,r;
 
    x=floor(x);
-   r=ceil(sqrt(x));
+   r=floor(sqrt(x));
 
    for (f=2, f<=r, f++)
       if (x%f==0) return(f);
