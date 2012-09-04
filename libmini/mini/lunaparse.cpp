@@ -137,6 +137,12 @@ void lunaparse::parseLUNA()
    {
    int addr1,addr2;
 
+   if (SCANNER.getcode()==NULL)
+      {
+      PARSERMSG("unspecified source code");
+      return;
+      }
+
    MAIN=-1;
 
    addr1=CODE.getaddr();
