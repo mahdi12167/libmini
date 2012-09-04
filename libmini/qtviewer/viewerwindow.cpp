@@ -280,7 +280,7 @@ void ViewerWindow::setExportSettings(double power, double quality)
    jpegQuality = quality;
 }
 
-void ViewerWindow::loadURL(ministring url)
+ministring ViewerWindow::loadURL(ministring url)
 {
    url = Object::normalize_file(url);
 
@@ -313,6 +313,8 @@ void ViewerWindow::loadURL(ministring url)
       else
          loadImage(url); // try unknown format via gdal
    }
+
+   return(url);
 }
 
 void ViewerWindow::loadURLs(ministrings urls)
@@ -876,7 +878,17 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    qtv.append(ministring("levels ")+(double)grid_level+"/"+(double)grid_levels+"/"+(double)grid_step);
 
    for (i=0; i<keys.size(); i++)
-      qtv.append(getObject(keys[i])->get_relative_name());
+      {
+      ministring name = getObject(keys[i])->get_relative_name();
+
+      BOOLINT hidden = hasTag(keys[i], "hidden");
+      BOOLINT selected = hasTag(keys[i], "selected");
+
+      if (hidden) name += " hidden";
+      if (selected) name += " selected";
+
+      qtv.append(name);
+      }
 
    if (filename=="")
    {
@@ -964,7 +976,30 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       }
 
    for (i=0; i<qtv.size(); i++)
-      loadURL(qtv[i]);
+   {
+      BOOLINT hidden=FALSE;
+      BOOLINT selected=FALSE;
+
+      if (qtv[i].endswith(" selected"))
+      {
+         qtv[i] = qtv[i].head(" selected");
+         selected = TRUE;
+      }
+
+      if (qtv[i].endswith(" hidden"))
+      {
+         qtv[i] = qtv[i].head(" hidden");
+         hidden = TRUE;
+      }
+
+      ministring key = loadURL(qtv[i]);
+
+      if (hidden)
+         runAction("hide", key);
+
+      if (selected)
+         runAction("select", key);
+   }
 
    return(TRUE);
 }

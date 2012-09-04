@@ -47,7 +47,7 @@ public:
    void setResampleSettings(int level=0, int levels=1, int step=2);
    void setExportSettings(double power=2, double quality=90);
 
-   void loadURL(ministring url);
+   ministring loadURL(ministring url);
    void loadURLs(ministrings urls);
 
    void loadMap(ministring url);
