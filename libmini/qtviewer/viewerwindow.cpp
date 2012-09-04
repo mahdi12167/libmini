@@ -1039,42 +1039,56 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
       // autoload thumbs
       for (unsigned int i=0; i<args.size(); i++)
       {
-         ministring thumb=ThumbJob::make_name(args[i]);
+         // autoselect thumb name
+         ministring thumb = ThumbJob::make_name(args[i]);
 
+         // load from db format
          databuf buf;
          buf.loaddata(thumb.c_str());
 
-         Object *obj=getObject(args[i]);
+         // add thumb to scene graph
+         Object *obj = getObject(args[i]);
          if (obj!=NULL)
          {
-            Object_image *image=dynamic_cast<Object_image *>(obj);
+            Object_image *image = dynamic_cast<Object_image *>(obj);
             if (image!=NULL) image->set_thumb(&buf);
          }
 
+         // release thumb data
          buf.release();
       }
    }
    else if (job=="shader")
    {
-      // autoload shaded layers
+      // process shaded keys
       for (unsigned int i=0; i<args.size(); i++)
-         runAction("open", ShadeJob::make_name(args[i]));
+      {
+         // autoselect shaded layer name
+         ministring name = ShadeJob::make_name(args[i]);
+
+         // autoload shaded layer
+         if (name!="")
+            runAction("open", name);
+
+         // hide original layer
+         runAction("hide", args[i]);
+      }
    }
    else if (job=="resampler")
    {
+      // autoselect grid name
+      ministring name = ResampleJob::make_grid_name(args,repository_path);
+
+      // autoload resampled tileset
+      if (name!="")
+         runAction("open", export_path+name);
+
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
          if (args[i].startswith("/") || args[i].startswith("\\"))
             runAction("hide", args[i]);
          else
             runAction("hide", repository_path+args[i]);
-
-      // autoselect grid name
-      ministring name=ResampleJob::make_grid_name(args,repository_path);
-
-      // autoload resampled tileset
-      if (name!="")
-         runAction("open", export_path+name);
    }
 }
 
