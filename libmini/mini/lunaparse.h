@@ -36,7 +36,8 @@ value       ::= ( ["-"]<float-val> ) |
                 ( <var-id> ) |
                 ( <array-id> | <ref-id> [ "[" expression "]" ] ) |
                 ( <func-id> | alpha-op "(" [ expression { "," expression } ] ")" ) |
-                ( "(" [ operator ] { expression } ")" ) |
+                ( "(" operator { expression } ")" ) |
+                ( "(" [ expression { "," expression } ] ")" ) |
                 ( "size" "(" array-id | ref-id ")" ) |
                 ( "true" | "false" )
 operator    ::= "+" | "-" | "*" | "/" | "%" |
