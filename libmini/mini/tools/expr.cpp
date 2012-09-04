@@ -24,8 +24,9 @@ int main(int argc,char *argv[])
 
    printf("parsing expression:\n----\n%s\n----\n",argv[1]);
 
-   parser.setcode(argv[1]);
-   parser.parseEXPR();
+   parser.setpath(argv[0],"include/");
+   parser.include("std.luna");
+   parser.parseEXPR(argv[1]);
 
    if (sw_debug)
       {

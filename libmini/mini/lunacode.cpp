@@ -95,6 +95,13 @@ void lunacode::addcodeat(int addr,int code,int mode,int ival,float fval)
       }
    }
 
+void lunacode::delcodeat(int addr)
+   {
+   if (addr>CODESIZE) ERRORMSG();
+
+   CODESIZE=addr;
+   }
+
 void lunacode::addbyte(int addr,int val)
    {
    if (addr<0 || addr>CODEMAX) ERRORMSG();
@@ -529,6 +536,16 @@ void lunacode::execmd(int code,int ival,float fval)
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
          else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
          else VALSTACK[VALSTACKSIZE-1].val=(VALSTACK[VALSTACKSIZE-1].val>0.0)?VALSTACK[VALSTACKSIZE-1].val:-VALSTACK[VALSTACKSIZE-1].val;
+         break;
+      case CODE_FLOOR:
+         if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else VALSTACK[VALSTACKSIZE-1].val=floor(VALSTACK[VALSTACKSIZE-1].val);
+         break;
+      case CODE_CEIL:
+         if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
+         else if (VALSTACK[VALSTACKSIZE-1].item!=ITEM_FLOAT) CODEMSG("invalid operation");
+         else VALSTACK[VALSTACKSIZE-1].val=ceil(VALSTACK[VALSTACKSIZE-1].val);
          break;
       case CODE_SQR:
          if (VALSTACKSIZE<1) CODEMSG("value stack underrun");
@@ -1851,6 +1868,8 @@ void lunacode::printcode(int code)
       case CODE_MIN: printf("MIN"); break;
       case CODE_MAX: printf("MAX"); break;
       case CODE_ABS: printf("ABS"); break;
+      case CODE_FLOOR: printf("FLOOR"); break;
+      case CODE_CEIL: printf("CEIL"); break;
       case CODE_SQR: printf("SQR"); break;
       case CODE_SQRT: printf("SQRT"); break;
       case CODE_EXP: printf("EXP"); break;

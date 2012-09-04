@@ -117,6 +117,8 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("min",LUNA_MIN);
    SCANNER.addtoken("max",LUNA_MAX);
    SCANNER.addtoken("abs",LUNA_ABS);
+   SCANNER.addtoken("floor",LUNA_FLOOR);
+   SCANNER.addtoken("ceil",LUNA_CEIL);
    SCANNER.addtoken("sqr",LUNA_SQR);
    SCANNER.addtoken("sqrt",LUNA_SQRT);
    SCANNER.addtoken("exp",LUNA_EXP);
@@ -133,12 +135,13 @@ void lunaparse::addLUNAtokens()
 
 void lunaparse::parseLUNA()
    {
-   int addr;
+   int addr1,addr2;
 
    MAIN=-1;
 
-   addr=CODE.getaddr();
+   addr1=CODE.getaddr();
    CODE.addcode(lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,0);
+   addr2=CODE.getaddr();
 
    while (SCANNER.gettoken()!=lunascan::LUNA_END)
       if (SCANNER.gettoken()==LUNA_INCLUDE) parse_include();
@@ -163,40 +166,23 @@ void lunaparse::parseLUNA()
          if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
          }
 
-   CODE.addcodeat(addr,lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,VAR_NUM);
+   if (VAR_NUM==0 && CODE.getaddr()==addr2)
+      CODE.delcodeat(addr1);
+   else
+      CODE.addcodeat(addr1,lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,VAR_NUM);
 
    if (MAIN!=-1) CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,MAIN);
 
    SCANNER.freecode();
    }
 
-void lunaparse::parseEXPR()
+void lunaparse::parseEXPR(const char *expr)
    {
-   int addr;
+   if (SCANNER.getcode()!=NULL)
+      parseLUNA();
 
-   include_file("std.luna");
-
-   addr=CODE.getaddr();
-   CODE.addcode(lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,0);
-
-   while (SCANNER.gettoken()==LUNA_VAR ||
-          SCANNER.gettoken()==LUNA_FUNC)
-      {
-      if (SCANNER.gettoken()==LUNA_VAR)
-         {
-         parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
-         while (SCANNER.gettoken()==LUNA_COMMA)
-            parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
-         }
-      else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
-
-      if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
-      }
-
-   CODE.addcodeat(addr,lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,VAR_NUM);
-
+   SCANNER.pushcode(expr);
    parse_expression();
-
    SCANNER.freecode();
    }
 
@@ -211,16 +197,16 @@ void lunaparse::parse_include(const char *path,const char *altpath)
       return;
       }
 
-   if (!include_file(SCANNER.getstring(),path,altpath))
+   if (!include(SCANNER.getstring(),path,altpath))
       {
-      PARSERMSG("unable to open file");
+      PARSERMSG("unable to open include file");
       SCANNER.next();
       return;
       }
    }
 
-BOOLINT lunaparse::include_file(const char *file,
-                                const char *path,const char *altpath)
+BOOLINT lunaparse::include(const char *file,
+                           const char *path,const char *altpath)
    {
    char *code;
    char *filename;
@@ -1075,6 +1061,8 @@ BOOLINT lunaparse::parse_alpha_ops()
       case LUNA_MIN: op=lunacode::CODE_MIN; break;
       case LUNA_MAX: op=lunacode::CODE_MAX; break;
       case LUNA_ABS: op=lunacode::CODE_ABS; break;
+      case LUNA_FLOOR: op=lunacode::CODE_FLOOR; break;
+      case LUNA_CEIL: op=lunacode::CODE_CEIL; break;
       case LUNA_SQR: op=lunacode::CODE_SQR; break;
       case LUNA_SQRT: op=lunacode::CODE_SQRT; break;
       case LUNA_EXP: op=lunacode::CODE_EXP; break;

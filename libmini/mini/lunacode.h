@@ -33,6 +33,8 @@ class lunacode
       CODE_MIN,
       CODE_MAX,
       CODE_ABS,
+      CODE_FLOOR,
+      CODE_CEIL,
       CODE_SQR,
       CODE_SQRT,
       CODE_EXP,
@@ -132,6 +134,7 @@ class lunacode
 
    void addcode(int code=CODE_NOP,int mode=MODE_NONE,int ival=0,float fval=0.0f);
    void addcodeat(int addr,int code=CODE_NOP,int mode=MODE_NONE,int ival=0,float fval=0.0f);
+   void delcodeat(int addr);
 
    int getaddr();
 

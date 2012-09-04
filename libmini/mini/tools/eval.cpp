@@ -40,7 +40,7 @@ int main(int argc,char *argv[])
    printf("parsing code:\n----\n%s\n----\n",code);
 
    parser.setcode(code);
-   parser.setpath(argv[1]);
+   parser.setpath(argv[1],"include/");
    parser.parseLUNA();
 
    if (sw_debug)

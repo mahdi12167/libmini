@@ -42,7 +42,7 @@ value       ::= ( ["-"]<float-val> ) |
 operator    ::= "+" | "-" | "*" | "/" | "%" |
                 "==" | "!=" | "<>" | "<" | ">" | "<=" | ">=" |
                 "&" | "|" | "^" | "!"
-alpha-op    ::= "min" | "max" | "abs" |
+alpha-op    ::= "min" | "max" | "abs" | "floor" | "ceil" |
                 "sqr" | "sqrt" | "exp" | "log" | "pow" |
                 "sin" | "cos" | "tan" | "atan" | "atan2" |
                 "noise" | "noise2"
@@ -156,6 +156,8 @@ class lunaparse
       LUNA_MIN,
       LUNA_MAX,
       LUNA_ABS,
+      LUNA_FLOOR,
+      LUNA_CEIL,
       LUNA_SQR,
       LUNA_SQRT,
       LUNA_EXP,
@@ -192,7 +194,7 @@ class lunaparse
    void setpath(const char *path,const char *altpath=NULL);
 
    void parseLUNA();
-   void parseEXPR();
+   void parseEXPR(const char *expr);
 
    void print();
    void printtokens();
@@ -202,7 +204,7 @@ class lunaparse
    lunacode *getcode() {return(&CODE);}
 
    void parse_include(const char *path=NULL,const char *altpath=NULL);
-   BOOLINT include_file(const char *file,const char *path=NULL,const char *altpath=NULL);
+   BOOLINT include(const char *file,const char *path=NULL,const char *altpath=NULL);
 
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
