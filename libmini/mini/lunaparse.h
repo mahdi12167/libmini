@@ -202,6 +202,7 @@ class lunaparse
    lunacode *getcode() {return(&CODE);}
 
    void parse_include(const char *path=NULL,const char *altpath=NULL);
+   BOOLINT include_file(const char *file,const char *path=NULL,const char *altpath=NULL);
 
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 

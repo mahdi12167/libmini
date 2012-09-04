@@ -172,6 +172,29 @@ void lunaparse::parseLUNA()
 
 void lunaparse::parseEXPR()
    {
+   int addr;
+
+   include_file("std.luna");
+
+   addr=CODE.getaddr();
+   CODE.addcode(lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,0);
+
+   while (SCANNER.gettoken()==LUNA_VAR ||
+          SCANNER.gettoken()==LUNA_FUNC)
+      {
+      if (SCANNER.gettoken()==LUNA_VAR)
+         {
+         parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+         while (SCANNER.gettoken()==LUNA_COMMA)
+            parse_var_decl(FALSE,FALSE,FALSE,FALSE,TRUE);
+         }
+      else if (SCANNER.gettoken()==LUNA_FUNC) parse_func_decl(FALSE);
+
+      if (SCANNER.gettoken()==LUNA_NULL) SCANNER.next();
+      }
+
+   CODE.addcodeat(addr,lunacode::CODE_RESERVE_VAR,lunacode::MODE_INT,VAR_NUM);
+
    parse_expression();
 
    SCANNER.freecode();
@@ -179,12 +202,6 @@ void lunaparse::parseEXPR()
 
 void lunaparse::parse_include(const char *path,const char *altpath)
    {
-   char *filename;
-   char *code;
-
-   if (path==NULL) path=PATH;
-   if (altpath==NULL) altpath=ALTPATH;
-
    SCANNER.next();
 
    if (SCANNER.gettoken()!=lunascan::LUNA_STRING)
@@ -194,26 +211,40 @@ void lunaparse::parse_include(const char *path,const char *altpath)
       return;
       }
 
-   filename=strdup2(path,SCANNER.getstring());
+   if (!include_file(SCANNER.getstring(),path,altpath))
+      {
+      PARSERMSG("unable to open file");
+      SCANNER.next();
+      return;
+      }
+   }
+
+BOOLINT lunaparse::include_file(const char *file,
+                                const char *path,const char *altpath)
+   {
+   char *code;
+   char *filename;
+
+   if (path==NULL) path=PATH;
+   if (altpath==NULL) altpath=ALTPATH;
+
+   filename=strdup2(path,file);
    code=readstring(filename);
    free(filename);
 
    if (code==NULL)
       {
-      filename=strdup2(altpath,SCANNER.getstring());
+      filename=strdup2(altpath,file);
       code=readstring(filename);
       free(filename);
 
-      if (code==NULL)
-         {
-         PARSERMSG("unable to open file");
-         SCANNER.next();
-         return;
-         }
+      if (code==NULL) return(FALSE);
       }
 
    SCANNER.pushcode(code);
    free(code);
+
+   return(TRUE);
    }
 
 int lunaparse::parse_var_decl(BOOLINT loc,BOOLINT par,BOOLINT array,BOOLINT ref,BOOLINT stat,int *VAR_LOC_NUM)
