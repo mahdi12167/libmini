@@ -22,7 +22,7 @@ lunascan::lunascan()
    STRINGMAX=1000;
    SCOPESTACKMAX=100;
 
-   COL=PCOL=PPCOL=0;
+   COL=PCOL=PPCOL=1;
    LINE=PLINE=PPLINE=0;
 
    COMMENT='#';
