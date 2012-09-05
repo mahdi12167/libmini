@@ -924,6 +924,8 @@ void lunaparse::parse_unaryop()
       if (SCANNER.gettoken()==lunaparse::LUNA_SUB) op=lunacode::CODE_NEG;
       else if (SCANNER.gettoken()==lunaparse::LUNA_NOT) op=lunacode::CODE_NOT;
 
+      if (op!=lunacode::CODE_NOP) SCANNER.next();
+
       parse_value();
 
       CODE.addcode(op,lunacode::MODE_NONE);
