@@ -2608,7 +2608,42 @@ with<p>
 </pre>
 
 For 8 bit data the number of components is 1, for 16 bit data 2 and
-for RGB movies it is 3.
+for RGB movies it is 3. The voxel spacing is assumed to be uniform.<p>
+
+A PVM example header for a 256x256x256 volume with 1 byte per voxel:<p>
+
+<pre>
+   PVM
+   256 256 256
+   1
+   raw byte data...
+</pre>
+
+If the magic identifier is PVM2 or PVM3, this indicates newer
+versions of the format, which include the voxel spacing in the header:<p>
+
+<pre>
+   &lt;MAGIC&gt;\n
+   &lt;WIDTH&gt; &lt;HEIGHT&gt; &lt;DEPTH&gt;\n
+   &lt;VOXEL_WIDTH&gt; &lt;VOXEL_HEIGHT&gt; &lt;VOXEL_DEPTH&gt;\n
+   &lt;COMPONENTS&gt;\n
+   ...DATA...
+</pre>
+
+A PVM3 example header for a 256x256x256 volume with a non-uniform
+voxel spacing (the voxel spacing is 150% in z-direction) :<p>
+
+<pre>
+   PVM3
+   256 256 256
+   1 1 1.5
+   1
+   raw byte data...
+</pre>
+
+PVM files often come in a DDS compressed data format. In that case the
+data startes with the prefix "DDS v3d". You can uncompress those files
+with the dds tool.<p>
 
 <a href="#" class="top">Back to top</a>
 
@@ -2630,34 +2665,68 @@ format is .db. Similar to PNM, the header is human readable consisting
 of the following fields:<p>
 
 <pre>
-   MAGIC=13048  ::: magic number
-   xsize=%u     ::: mandatory width
-   ysize=%u     ::: mandatory height for 2+D, 1 for 1D data
-   zsize=%u     ::: mandatory depth for 3+D, 1 for 1D and 2D data
-   tsteps=%u    ::: mandatory number of time steps for 4D, 1 for 1D, 2D and 3D data
-   type=%u      ::: mandatory cell type: 0 = unsigned byte, 1 = signed short, 2 = float, 3 = RGB, 4 = RGBA, 5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha)
-   swx=%g       ::: x-component of south west corner (should be supplied for tile sets)
-   swy=%g       ::: y-component of south west corner (should be supplied for tile sets)
-   nwx=%g       ::: x-component of north west corner (should be supplied for tile sets)
-   nwy=%g       ::: y-component of north west corner (should be supplied for tile sets)
-   nex=%g       ::: x-component of north east corner (should be supplied for tile sets)
-   ney=%g       ::: y-component of north east corner (should be supplied for tile sets)
-   sex=%g       ::: x-component of south east corner (should be supplied for tile sets)
-   sey=%g       ::: y-component of south east corner (should be supplied for tile sets)
-   h0=%g        ::: base elevation of 3D or 4D data cube
-   dh=%g        ::: height of the 3D or 4D cube
-   t0=%g        ::: starting time of 4D series
-   dt=%g        ::: time step of 4D series
-   scaling=%g   ::: elevation scaling parameter for height fields (default is 1)
-   bias=%g      ::: elevation bias parameter for height fields (default is 0)
-   extformat=%u ::: external format indicator: a value!=0 triggers conversion hook (default 0, 1 reserved for JPEG, 2 for PNG, 3 for Z)
-   bytes=%u     ::: mandatory byte length of the following data chunk
+   MAGIC=13761   ::: magic number
+   xsize=%u      ::: mandatory width
+   ysize=%u      ::: mandatory height for 2+D, 1 for 1D data
+   zsize=%u      ::: mandatory depth for 3+D, 1 for 1D and 2D data
+   tsteps=%u     ::: mandatory number of time steps for 4D, 1 for 1D, 2D and 3D data
+   type=%u       ::: mandatory cell type:
+                        0 = unsigned byte, 1 = signed short, 2 = float,
+                        3 = RGB, 4 = RGBA,
+                        5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha),
+                        7 - mip-mapped RGB, 8 - mip-mapped RGBA,
+                        9 - compressed mip-mapped RGB, 10 - compressed mip-mapped RGBA
+   swx=%g        ::: x-component of south west corner (should be supplied for tile sets)
+   swy=%g        ::: y-component of south west corner (should be supplied for tile sets)
+   nwx=%g        ::: x-component of north west corner (should be supplied for tile sets)
+   nwy=%g        ::: y-component of north west corner (should be supplied for tile sets)
+   nex=%g        ::: x-component of north east corner (should be supplied for tile sets)
+   ney=%g        ::: y-component of north east corner (should be supplied for tile sets)
+   sex=%g        ::: x-component of south east corner (should be supplied for tile sets)
+   sey=%g        ::: y-component of south east corner (should be supplied for tile sets)
+   h0=%g         ::: base elevation of 3D or 4D data cube
+   dh=%g         ::: height of the 3D or 4D cube
+   t0=%g         ::: starting time of 4D series
+   dt=%g         ::: time step of 4D series
+   scaling=%g    ::: elevation scaling parameter for height fields (default is 1)
+   bias=%g       ::: elevation bias parameter for height fields (default is 0)
+   crs=%i        ::: coordinate reference system:
+                        0 = Linear,
+                        1 = Lat/Lon (LLH)
+                        2 = UTM
+                        3 = Mercator
+                        4 = Oblique Gnomonic (OGH)
+   zone=%i       ::: crs zone (for UTM and OGH)
+   datum=%i      ::: crs datum:
+                        0  = unspecified
+                        1  = NAD27 (Mean North American Datum of 1927)
+                        2  = WGS72 (World Geodetic System of 1972)
+                        3  = WGS84 (World Geodetic System of 1984)
+                        4  = NAD83 (Mean North American Datum of 1983)
+                        5  = Sphere (with radius 6370997 meters)
+                        6  = ED50 (Mean European Datum of 1950, centered at the Munich Frauenkirche)
+                        7  = ED87 (Mean European Datum of 1987)
+                        8  = OldHawaiian (mean datum for Hawaii/Maui/Oahu/Kauai)
+                        9  = Luzon (Philippine Datum)
+                        10 = Tokyo (Mean Japanese Datum)
+                        11 = OSGB1936 (mean datum of the Ordnance Survey Great Britain 1936)
+                        12 = Australian1984 (Mean Australian Geodetic Datum of 1984)
+                        13 = NewZealand1949 (New Zealand Datum of 1949)
+                        14 = SouthAmerican1969 (Mean South American Datum of 1969)
+   nodata=%g     ::: no-data value
+   extformat=%u  ::: external format indicator: a value!=0 triggers conversion hook (default 0, 1 reserved for JPEG, 2 for PNG, 3 for Z)
+   implformat=%u ::: implicit format indicator: a value!=0 triggers implict evaluation mode
+   bytes=%u      ::: mandatory byte length of the following data chunk
 </pre>
 
-The data chunk is appended to the above description. The description
-must end with a NUL character. Data type 1 and 2 is stored in MSB
-format. After loading the data into main memory it is automatically
-converted into the native MSB or LSB format of the CPU.<p>
+The data chunk is appended as raw data to the above description.<p>
+
+Data type 1 and 2 is stored in MSB format. After loading the data into
+main memory it is automatically converted into the native MSB or LSB
+format of the CPU. The description must end with a NUL character. <p>
+
+Previous versions of the DB format with magic identifier 13091 or less
+did not include the fields crs, zone, datum and nodata.<p>
 
 A value other than zero for extformat indicates that the data chunk is
 stored in an external format. When calling databuf::loaddata on such
@@ -2671,6 +2740,50 @@ Section <a href="#MiniViewer">(P)</a>) which demonstrates how to use
 the conversion hook mechanism in order to decode JPEG images. If the
 extfmt parameter of databuf::savedata is set, the conversion hook is
 also triggered to convert the raw data into the external format.<p>
+
+A value other than zero for implformat indicates that the data chunk
+is stored in an implicit format, in which the data is interpreted as
+LUNA program. For example, the following db file produces a checkboard
+pattern in a procedural way:<p>
+
+<pre>
+   MAGIC=13091
+   xsize=512
+   ysize=512
+   zsize=1
+   tsteps=1
+   type=3
+   swx=0
+   swy=0
+   nwx=0
+   nwy=0
+   nex=0
+   ney=0
+   sex=0
+   sey=0
+   h0=0
+   dh=0
+   t0=0
+   dt=0
+   scaling=1
+   bias=0
+   extformat=0
+   implformat=1
+   bytes=0
+
+   # implicit checker board function
+   func checker(par x, par y)
+      {
+      return(((x*7.999)%2<1) ^ ((y*7.999)%2<1));
+      }
+
+   # procedural checker board evaluation
+   main(par x, par y, par z, par t)
+      {
+      var c = checker(x, y);
+      return(c, c, c);
+      }
+</pre>
 
 <a href="#" class="top">Back to top</a>
 
