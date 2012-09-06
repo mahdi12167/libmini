@@ -387,12 +387,12 @@ void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
          case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
          default: ERRORMSG();
          }
-   else if (zone<=-1 && zone>=-360*180)
+   else if (zone<=-1 && zone>-360*181)
       {
       zone=-zone-1;
 
-      alpha=(zone/180)*2*PI/360;
-      beta=(zone%180)*2*PI/180-90;
+      alpha=(zone/181)*2*PI/360;
+      beta=(zone%181-90)*PI/180;
 
       pos=EARTH_radius*miniv3d(cos(alpha)*cos(beta),sin(alpha)*cos(beta),sin(beta));
       right=miniv3d(-sin(alpha),cos(alpha),0.0);
@@ -490,21 +490,16 @@ void minicrs::ECEF2OGH(float xyz[3],
 int minicrs::ECEF2OGHZ(double xyz[3]) // input ECEF coordinates
    {
    double prj[3];
-   double h;
+   double lat,lon,h;
+   int alpha,beta;
 
    ECEF2PRJ(xyz,prj,&h);
+   ECEF2LLH(prj,&lat,&lon,&h);
 
-   if (dabs(prj[2])>=dabs(prj[0]) && dabs(prj[2])>=dabs(prj[1]))
-      if (prj[2]>0.0) return(1); // north pole
-      else return(6); // south pole
-   else if (dabs(prj[1])>=dabs(prj[0]) && dabs(prj[1])>=dabs(prj[2]))
-      if (prj[1]>0.0) return(4); // tokyo
-      else return(5); // new york
-   else if (dabs(prj[0])>=dabs(prj[1]) && dabs(prj[0])>=dabs(prj[2]))
-      if (prj[0]>0.0) return(2); // greenwich
-      else return(3); // honolulu
+   alpha=dtrc(lon/3600+0.5)%360;
+   beta=dtrc(lat/3600+90+0.5);
 
-   return(0);
+   return(-1-(alpha*181+beta));
    }
 
 // project ECEF to ellipsoid
