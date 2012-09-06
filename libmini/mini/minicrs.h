@@ -5,6 +5,8 @@
 
 #include <math.h>
 
+#include "miniv3d.h"
+
 class minicrs
    {
    public:
@@ -90,6 +92,12 @@ class minicrs
 
    //! transform ECEF to OG/H zone
    static int ECEF2OGHZ(double xyz[3]); // input ECEF coordinates
+
+   //! transform OG/H zone to ECEF center position
+   static void OGHZ2ECEF(int zone, // oblique gnomonic zone
+                         miniv3d &pos, // ECEF center position of zone
+                         miniv3d &right, // right vector
+                         miniv3d &up); // up vector
 
    //! project ECEF to ellipsoid
    static void ECEF2PRJ(double xyz[3], // input ECEF coordinates

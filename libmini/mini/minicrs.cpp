@@ -2,7 +2,6 @@
 
 #include "minibase.h"
 
-#include "miniv3d.h"
 #include "minimath.h"
 
 #include "minicrs.h"
@@ -369,6 +368,39 @@ void minicrs::ECEF2LLH(float xyz[3],
    *h=th;
    }
 
+// transform OG/H zone to ECEF center position
+void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
+                        miniv3d &pos, // ECEF center position of zone
+                        miniv3d &right, // right vector
+                        miniv3d &up) // up vector
+   {
+   double alpha,beta;
+
+   if (zone>=1 && zone<=6)
+      switch (zone)
+         {
+         case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
+         case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
+         case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
+         case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
+         case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
+         case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
+         default: ERRORMSG();
+         }
+   else if (zone<=-1 && zone>=-360*180)
+      {
+      zone=-zone-1;
+
+      alpha=(zone/180)*2*PI/360;
+      beta=(zone%180)*2*PI/180-90;
+
+      pos=EARTH_radius*miniv3d(cos(alpha)*cos(beta),sin(alpha)*cos(beta),sin(beta));
+      right=miniv3d(-sin(alpha),cos(alpha),0.0);
+      up=miniv3d(-cos(alpha)*sin(beta),-sin(alpha)*sin(beta),cos(beta));
+      }
+   else ERRORMSG();
+   }
+
 // transform OG/H to ECEF
 // input and output in meters
 void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
@@ -379,20 +411,7 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
    miniv3d right,up;
    double dist;
 
-   if (zone<1) zone=1;
-   else if (zone>6) zone=6;
-
-   switch (zone)
-      {
-      case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
-      case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
-      case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
-      case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
-      case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
-      case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
-      default: ERRORMSG();
-      }
-
+   OGHZ2ECEF(zone,pos,right,up);
    pos+=x*right+y*up;
 
    dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
@@ -433,88 +452,20 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
    miniv3d pos;
    double dist,height;
 
+   miniv3d pos0,right,up;
+
    ECEF2PRJ(xyz,prj,&height);
    pos=miniv3d(prj);
 
-   if (zone<1) zone=1;
-   else if (zone>6) zone=6;
+   OGHZ2ECEF(zone,pos0,right,up);
 
-   switch (zone)
-      {
-      case 1: // north pole
+   dist=intersect_ray_plane(pos,pos,pos0,pos0);
+   if (dist==MAXFLOAT) ERRORMSG();
+   pos+=dist*pos;
 
-         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,0.0,EARTH_radius),miniv3d(0.0,0.0,EARTH_radius));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=pos.y;
-         *y=-pos.x;
-         *h=height;
-
-         break;
-
-      case 2: // greenwich
-
-         dist=intersect_ray_plane(pos,pos,miniv3d(EARTH_radius,0.0,0.0),miniv3d(EARTH_radius,0.0,0.0));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=pos.y;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
-      case 3: // honolulu
-
-         dist=intersect_ray_plane(pos,pos,miniv3d(-EARTH_radius,0.0,0.0),miniv3d(-EARTH_radius,0.0,0.0));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=-pos.y;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
-      case 4: // tokyo
-
-         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,EARTH_radius,0.0),miniv3d(0.0,EARTH_radius,0.0));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=-pos.x;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
-      case 5: // new york
-
-         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,-EARTH_radius,0.0),miniv3d(0.0,-EARTH_radius,0.0));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=pos.x;
-         *y=pos.z;
-         *h=height;
-
-         break;
-
-      case 6: // south pole
-
-         dist=intersect_ray_plane(pos,pos,miniv3d(0.0,0.0,-EARTH_radius),miniv3d(0.0,0.0,-EARTH_radius));
-         if (dist==MAXFLOAT) ERRORMSG();
-         pos+=dist*pos;
-
-         *x=pos.y;
-         *y=pos.x;
-         *h=height;
-
-         break;
-
-      default: ERRORMSG();
-      }
+   *x=(pos-pos0)*right;
+   *y=(pos-pos0)*up;
+   *h=height;
    }
 
 void minicrs::ECEF2OGH(float xyz[3],
