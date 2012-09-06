@@ -2665,58 +2665,66 @@ format is .db. Similar to PNM, the header is human readable consisting
 of the following fields:<p>
 
 <pre>
-   MAGIC=13761   ::: magic number
-   xsize=%u      ::: mandatory width
-   ysize=%u      ::: mandatory height for 2+D, 1 for 1D data
-   zsize=%u      ::: mandatory depth for 3+D, 1 for 1D and 2D data
-   tsteps=%u     ::: mandatory number of time steps for 4D, 1 for 1D, 2D and 3D data
-   type=%u       ::: mandatory cell type:
-                        0 = unsigned byte, 1 = signed short, 2 = float,
-                        3 = RGB, 4 = RGBA,
-                        5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha),
-                        7 - mip-mapped RGB, 8 - mip-mapped RGBA,
-                        9 - compressed mip-mapped RGB, 10 - compressed mip-mapped RGBA
-   swx=%g        ::: x-component of south west corner (should be supplied for tile sets)
-   swy=%g        ::: y-component of south west corner (should be supplied for tile sets)
-   nwx=%g        ::: x-component of north west corner (should be supplied for tile sets)
-   nwy=%g        ::: y-component of north west corner (should be supplied for tile sets)
-   nex=%g        ::: x-component of north east corner (should be supplied for tile sets)
-   ney=%g        ::: y-component of north east corner (should be supplied for tile sets)
-   sex=%g        ::: x-component of south east corner (should be supplied for tile sets)
-   sey=%g        ::: y-component of south east corner (should be supplied for tile sets)
-   h0=%g         ::: base elevation of 3D or 4D data cube
-   dh=%g         ::: height of the 3D or 4D cube
-   t0=%g         ::: starting time of 4D series
-   dt=%g         ::: time step of 4D series
-   scaling=%g    ::: elevation scaling parameter for height fields (default is 1)
-   bias=%g       ::: elevation bias parameter for height fields (default is 0)
-   crs=%i        ::: coordinate reference system:
-                        0 = Linear,
-                        1 = Lat/Lon (LLH)
-                        2 = UTM
-                        3 = Mercator
-                        4 = Oblique Gnomonic (OGH)
-   zone=%i       ::: crs zone (for UTM and OGH)
-   datum=%i      ::: crs datum:
-                        0  = unspecified
-                        1  = NAD27 (Mean North American Datum of 1927)
-                        2  = WGS72 (World Geodetic System of 1972)
-                        3  = WGS84 (World Geodetic System of 1984)
-                        4  = NAD83 (Mean North American Datum of 1983)
-                        5  = Sphere (with radius 6370997 meters)
-                        6  = ED50 (Mean European Datum of 1950, centered at the Munich Frauenkirche)
-                        7  = ED87 (Mean European Datum of 1987)
-                        8  = OldHawaiian (mean datum for Hawaii/Maui/Oahu/Kauai)
-                        9  = Luzon (Philippine Datum)
-                        10 = Tokyo (Mean Japanese Datum)
-                        11 = OSGB1936 (mean datum of the Ordnance Survey Great Britain 1936)
-                        12 = Australian1984 (Mean Australian Geodetic Datum of 1984)
-                        13 = NewZealand1949 (New Zealand Datum of 1949)
-                        14 = SouthAmerican1969 (Mean South American Datum of 1969)
-   nodata=%g     ::: no-data value
-   extformat=%u  ::: external format indicator: a value!=0 triggers conversion hook (default 0, 1 reserved for JPEG, 2 for PNG, 3 for Z)
-   implformat=%u ::: implicit format indicator: a value!=0 triggers implict evaluation mode
-   bytes=%u      ::: mandatory byte length of the following data chunk
+   MAGIC=13761    ::: magic number
+   xsize=%u       ::: mandatory width
+   ysize=%u       ::: mandatory height for 2+D, 1 for 1D data
+   zsize=%u       ::: mandatory depth for 3+D, 1 for 1D and 2D data
+   tsteps=%u      ::: mandatory number of time steps for 4D, 1 for 1D, 2D and 3D data
+   type=%u        ::: mandatory cell type:
+                         0 = unsigned byte, 1 = signed short, 2 = float,
+                         3 = RGB, 4 = RGBA,
+                         5 = compressed RGB (S3TC DXT1), 6 = compressed RGBA (S3TC DXT1 with 1-bit alpha),
+                         7 - mip-mapped RGB, 8 - mip-mapped RGBA,
+                         9 - compressed mip-mapped RGB, 10 - compressed mip-mapped RGBA
+   swx=%g         ::: x-component of south west corner (should be supplied for tile sets)
+   swy=%g         ::: y-component of south west corner (should be supplied for tile sets)
+   nwx=%g         ::: x-component of north west corner (should be supplied for tile sets)
+   nwy=%g         ::: y-component of north west corner (should be supplied for tile sets)
+   nex=%g         ::: x-component of north east corner (should be supplied for tile sets)
+   ney=%g         ::: y-component of north east corner (should be supplied for tile sets)
+   sex=%g         ::: x-component of south east corner (should be supplied for tile sets)
+   sey=%g         ::: y-component of south east corner (should be supplied for tile sets)
+   h0=%g          ::: base elevation of 3D or 4D data cube
+   dh=%g          ::: height of the 3D or 4D cube
+   t0=%g          ::: starting time of 4D series
+   dt=%g          ::: time step of 4D series
+   scaling=%g     ::: elevation scaling parameter for height fields (default is 1)
+   bias=%g        ::: elevation bias parameter for height fields (default is 0)
+   crs=%i         ::: coordinate reference system:
+                         0 = Linear,
+                         1 = Lat/Lon (LLH)
+                         2 = UTM
+                         3 = Mercator
+                         4 = Oblique Gnomonic (OGH)
+   zone=%i        ::: crs zone (for UTM and OGH)
+   datum=%i       ::: crs datum:
+                         0  = unspecified
+                         1  = NAD27 (Mean North American Datum of 1927)
+                         2  = WGS72 (World Geodetic System of 1972)
+                         3  = WGS84 (World Geodetic System of 1984)
+                         4  = NAD83 (Mean North American Datum of 1983)
+                         5  = Sphere (with radius 6370997 meters)
+                         6  = ED50 (Mean European Datum of 1950, centered at the Munich Frauenkirche)
+                         7  = ED87 (Mean European Datum of 1987)
+                         8  = OldHawaiian (mean datum for Hawaii/Maui/Oahu/Kauai)
+                         9  = Luzon (Philippine Datum)
+                         10 = Tokyo (Mean Japanese Datum)
+                         11 = OSGB1936 (mean datum of the Ordnance Survey Great Britain 1936)
+                         12 = Australian1984 (Mean Australian Geodetic Datum of 1984)
+                         13 = NewZealand1949 (New Zealand Datum of 1949)
+                         14 = SouthAmerican1969 (Mean South American Datum of 1969)
+   nodata=%g      ::: no-data value
+   extformat=%u   ::: external format indicator: a value!=0 triggers conversion hook (default 0, 1 reserved for JPEG, 2 for PNG, 3 for Z)
+   implformat=%u  ::: implicit format indicator: a value!=0 triggers implict evaluation mode
+   LLWGS84_swx=%g ::: optional Lat/Lon/WGS84 x-coordinate of south-west corner point
+   LLWGS84_swy=%g ::: optional Lat/Lon/WGS84 y-coordinate of south-west corner point
+   LLWGS84_nwx=%g ::: optional Lat/Lon/WGS84 x-coordinate of north-west corner point
+   LLWGS84_nwy=%g ::: optional Lat/Lon/WGS84 y-coordinate of north-west corner point
+   LLWGS84_nex=%g ::: optional Lat/Lon/WGS84 x-coordinate of north-eash corner point
+   LLWGS84_ney=%g ::: optional Lat/Lon/WGS84 y-coordinate of north-east corner point
+   LLWGS84_sex=%g ::: optional Lat/Lon/WGS84 x-coordinate of south-east corner point
+   LLWGS84_sey=%g ::: optional Lat/Lon/WGS84 y-coordinate of south-east corner point
+   bytes=%u       ::: mandatory byte length of the following data chunk
 </pre>
 
 The data chunk is appended as raw data to the above description.<p>
@@ -2726,7 +2734,7 @@ main memory it is automatically converted into the native MSB or LSB
 format of the CPU. The description must end with a NUL character. <p>
 
 Previous versions of the DB format with magic identifier 13091 or less
-did not include the fields crs, zone, datum and nodata.<p>
+did not include the fields crs, zone, datum, nodata, and LLWGS84.<p>
 
 A value other than zero for extformat indicates that the data chunk is
 stored in an external format. When calling databuf::loaddata on such
