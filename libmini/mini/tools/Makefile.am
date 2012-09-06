@@ -22,6 +22,9 @@ dbgzip_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 dbdump_SOURCES = dbdump.cpp
 dbdump_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
+dds_SOURCES = dds.cpp
+dds_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
+
 test_SOURCES = test.cpp
 test_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
