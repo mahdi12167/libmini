@@ -31,11 +31,15 @@ unsigned int signature(const char *filename);
 //! compute a signature
 unsigned int signature(const unsigned char *data,unsigned int bytes);
 
-// get file modification year
+//! get file modification year
 int getmodyear(const char *filename);
 
-// get file modification time relative to year
+//! get file modification time relative to year
 long long int getmodtime(const char *filename,int year);
+
+//! get relative modification time
+//!  positive values mean that file #1 is newer than file #2
+long long int getreltime(const char *file1,const char *file2);
 
 // c-lib wrappers
 #ifdef _WIN32

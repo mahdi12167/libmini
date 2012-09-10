@@ -156,7 +156,7 @@ int getmodyear(const char *filename)
 
    if (stat(filename,&attrib)!=0) return(-1);
 
-   clock = gmtime(&(attrib.st_mtime));
+   clock=gmtime(&(attrib.st_mtime));
 
    return(clock->tm_year);
    }
@@ -170,7 +170,7 @@ long long int getmodtime(const char *filename,int year)
    if (year<0) return(0);
    if (stat(filename,&attrib)!=0) return(0);
 
-   clock = gmtime(&(attrib.st_mtime));
+   clock=gmtime(&(attrib.st_mtime));
 
    return(clock->tm_sec+
           60*(clock->tm_min+
@@ -181,3 +181,12 @@ long long int getmodtime(const char *filename,int year)
    }
 
 }
+
+// get relative modification time
+long long int getreltime(const char *file1,const char *file2)
+   {
+   int year=getmodyear(file1);
+   long long int delta1=getmodtime(file1,year);
+   long long int delta2=getmodtime(file2,year);
+   return(delta1-delta2);
+   }
