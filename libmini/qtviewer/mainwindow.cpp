@@ -1007,11 +1007,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == resampleAllAction)
           emit(activate("resample_all"));
        else if (selectedAction == cropElevAction)
-          emit(activate("crop_elevation"), row);
+          emit(activate("crop_elevation", row));
        else if (selectedAction == cropImagAction)
-          emit(activate("crop_imagery"), row);
+          emit(activate("crop_imagery", row));
        else if (selectedAction == cropSelAction)
-          emit(activate("crop_selected"), row);
+          emit(activate("crop_selected", row));
        else if (selectedAction == abortAction)
           emit(activate("abort"));
        else if (selectedAction == saveDBAction)
