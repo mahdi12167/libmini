@@ -865,6 +865,35 @@ void ViewerWindow::resample_list(ministrings keys,
    worker->run_job(job);
 }
 
+void ViewerWindow::crop_list(ministrings keys,
+                             ministring crop_key,
+                             BOOLINT cell_centered)
+{
+   unsigned int i;
+
+   Object *obj=getObject(crop_key);
+   if (obj!=NULL)
+   {
+      Object_image *image=dynamic_cast<Object_image *>(obj);
+      if (image!=NULL)
+      {
+         CropJob *job = new CropJob(repository_path,
+                                    repository_path, image->get_relative_name()+"_cropped",
+                                    image->get_extent(),
+                                    cell_centered,
+                                    0.0,
+                                    tmp_path);
+
+         if (job == NULL) MEMERROR();
+
+         for (i=0; i<keys.size(); i++)
+            job->append(getObject(keys[i])->get_relative_name());
+
+         worker->run_job(job);
+      }
+   }
+}
+
 void ViewerWindow::save_list(ministrings keys, ministring filename)
 {
    unsigned int i;
