@@ -645,7 +645,7 @@ void ViewerWindow::runAction(ministring action,
             removeTag(value, "hidden");
          }
    }
-   else if (action == "show elevation")
+   else if (action == "show_elevation")
    {
       ministrings keys = listObjects();
 
@@ -658,7 +658,7 @@ void ViewerWindow::runAction(ministring action,
                   getObject(keys[i])->show(TRUE);
                }
    }
-   else if (action == "hide elevation")
+   else if (action == "hide_elevation")
    {
       ministrings keys = listObjects();
 
@@ -671,7 +671,7 @@ void ViewerWindow::runAction(ministring action,
                   getObject(keys[i])->show(FALSE);
                }
    }
-   else if (action == "show imagery")
+   else if (action == "show_imagery")
    {
       ministrings keys = listObjects();
 
@@ -684,7 +684,7 @@ void ViewerWindow::runAction(ministring action,
                   getObject(keys[i])->show(TRUE);
                }
    }
-   else if (action == "hide imagery")
+   else if (action == "hide_imagery")
    {
       ministrings keys = listObjects();
 
@@ -725,6 +725,30 @@ void ViewerWindow::runAction(ministring action,
    {
       ministrings keys = listObjects("image");
       resample_list(keys, grid_level, grid_levels, grid_step);
+   }
+   else if (action == "crop_elevation")
+   {
+      ministrings keys = listObjects("image");
+      crop_list(keys, value, FALSE);
+   }
+   else if (action == "crop_imagery")
+   {
+      ministrings keys = listObjects("image");
+      crop_list(keys, value, TRUE);
+   }
+   else if (action == "crop_selected")
+   {
+      ministrings keys = listObjects("image");
+
+      ministrings sel_keys;
+      for (unsigned int i=0; i<keys.getsize(); i++)
+         if (hasTag(keys[i], "selected"))
+            sel_keys.append(keys[i]);
+
+      if (hasTag(value, "elevation"))
+         crop_list(sel_keys, value, FALSE);
+      else if (hasTag(value, "imagery"))
+         crop_list(sel_keys, value, TRUE);
    }
    else if (action == "abort")
    {

@@ -703,8 +703,8 @@ void MainWindow::filterDEMToggled(bool on)
 {
    if (on)
    {
-      viewerWindow->runAction("show elevation");
-      viewerWindow->runAction("hide imagery");
+      viewerWindow->runAction("show_elevation");
+      viewerWindow->runAction("hide_imagery");
    }
 }
 
@@ -712,8 +712,8 @@ void MainWindow::filterIMGToggled(bool on)
 {
    if (on)
    {
-      viewerWindow->runAction("show imagery");
-      viewerWindow->runAction("hide elevation");
+      viewerWindow->runAction("show_imagery");
+      viewerWindow->runAction("hide_elevation");
    }
 }
 
@@ -721,8 +721,8 @@ void MainWindow::filterALLToggled(bool on)
 {
    if (on)
    {
-      viewerWindow->runAction("show elevation");
-      viewerWindow->runAction("show imagery");
+      viewerWindow->runAction("show_elevation");
+      viewerWindow->runAction("show_imagery");
    }
 }
 
@@ -949,6 +949,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(resampleSelAction);
     QAction *resampleAllAction = new QAction(tr("resample all"), this);
     myMenu.addAction(resampleAllAction);
+    QAction *cropElevAction = new QAction(tr("crop elevation"), this);
+    myMenu.addAction(cropElevAction);
+    QAction *cropImagAction = new QAction(tr("crop imagery"), this);
+    myMenu.addAction(cropImagAction);
+    QAction *cropSelAction = new QAction(tr("crop selected"), this);
+    myMenu.addAction(cropSelAction);
     QAction *abortAction = new QAction(tr("abort"), this);
     myMenu.addAction(abortAction);
     myMenu.addSeparator();
@@ -1000,6 +1006,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("resample_selected"));
        else if (selectedAction == resampleAllAction)
           emit(activate("resample_all"));
+       else if (selectedAction == cropElevAction)
+          emit(activate("crop_elevation"), row);
+       else if (selectedAction == cropImagAction)
+          emit(activate("crop_imagery"), row);
+       else if (selectedAction == cropSelAction)
+          emit(activate("crop_selected"), row);
        else if (selectedAction == abortAction)
           emit(activate("abort"));
        else if (selectedAction == saveDBAction)
