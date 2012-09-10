@@ -180,8 +180,6 @@ long long int getmodtime(const char *filename,int year)
                           365*(clock->tm_year-(long long int)year))))));
    }
 
-}
-
 // get relative modification time
 long long int getreltime(const char *file1,const char *file2)
    {
@@ -190,3 +188,5 @@ long long int getreltime(const char *file1,const char *file2)
    long long int delta2=getmodtime(file2,year);
    return(delta1-delta2);
    }
+
+}
