@@ -943,7 +943,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addSeparator();
     QAction *shadeAction = new QAction(tr("shade"), this);
     myMenu.addAction(shadeAction);
-    QAction *resampleAction = new QAction(tr("resample"), this);
+    QAction *resampleAction = new QAction(tr("resample to tileset"), this);
     myMenu.addAction(resampleAction);
     QAction *resampleSelAction = new QAction(tr("resample selected"), this);
     myMenu.addAction(resampleSelAction);

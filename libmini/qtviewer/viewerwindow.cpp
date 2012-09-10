@@ -854,14 +854,13 @@ void ViewerWindow::resample_list(ministrings keys,
 
    ResampleJob *job = new ResampleJob(repository_path, export_path,
                                       level, levels, step,
-                                      5.0,0.0);
+                                      5.0,0.0,
+                                      tmp_path);
 
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
       job->append(getObject(keys[i])->get_relative_name());
-
-   grid_resampler::set_tmp_dir(tmp_path);
 
    worker->run_job(job);
 }
