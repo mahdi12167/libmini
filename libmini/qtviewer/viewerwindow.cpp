@@ -756,26 +756,26 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "save_db")
    {
-      SaveJob *job = new SaveJob("","",TRUE);
+      SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_full_name());
+      job->append(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save_tif")
    {
-      SaveJob *job = new SaveJob;
+      SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_full_name());
+      job->append(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save_jpgintif")
    {
-      SaveJob *job = new SaveJob("","",FALSE,FALSE,FALSE,TRUE,jpegQuality);
+      SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, FALSE, FALSE, FALSE, TRUE, jpegQuality);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_full_name());
+      job->append(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save")
@@ -823,10 +823,10 @@ void ViewerWindow::shade(ministring key)
             notify("Shading requires an elevation layer");
          else
          {
-            ShadeJob *job = new ShadeJob("",shadePower);
+            ShadeJob *job = new ShadeJob(image->get_relative_path(), shadePower);
             if (job == NULL) MEMERROR();
 
-            job->append(image->get_full_name());
+            job->append(image->get_relative_name());
             worker->run_job(job);
          }
    }
@@ -901,8 +901,12 @@ void ViewerWindow::crop_list(ministrings keys,
       Object_image *image=dynamic_cast<Object_image *>(obj);
       if (image!=NULL)
       {
+         ministring output = CropJob::make_name(repository_path,
+                                                image->get_relative_name(),
+                                                export_path);
+
          CropJob *job = new CropJob(repository_path,
-                                    export_path, image->get_relative_name().head(".")+"_cropped.tif",
+                                    export_path, output,
                                     image->get_extent(),
                                     cell_centered,
                                     0.0,
@@ -1164,7 +1168,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
    else if (job=="resampler")
    {
       // autoselect grid name
-      ministring name = ResampleJob::make_grid_name(args,repository_path);
+      ministring name = ResampleJob::make_grid_name(args, repository_path);
 
       // autoload resampled tileset
       if (name!="")
