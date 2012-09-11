@@ -884,12 +884,19 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
       stereoCheck->setChecked(!stereoCheck->isChecked());
    else if (event->key() == Qt::Key_W)
       wireFrameCheck->setChecked(!wireFrameCheck->isChecked());
-   else if (event->key() == Qt::Key_T)
+   else if (event->key() == Qt::Key_Return)
    {
       int row = viewerTable->currentRow();
 
       if (row!=-1)
          runAction("select", row);
+   }
+   else if (event->key() == Qt::Key_T)
+   {
+      int row = viewerTable->currentRow();
+
+      if (row!=-1)
+         runAction("toggle", row);
    }
    else if (event->key() == Qt::Key_Backspace)
    {
@@ -909,7 +916,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MyQTableWidget::keyPressEvent(QKeyEvent *event)
 {
-   if (event->key() == Qt::Key_T)
+   char c = event->text().toStdString()[0];
+
+   if (isalpha(c))
       QWidget::keyPressEvent(event); // pass to parent
    else
       QTableWidget::keyPressEvent(event); // pass to widget
