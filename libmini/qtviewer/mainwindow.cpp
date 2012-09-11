@@ -749,7 +749,10 @@ void MainWindow::browseRepoPath()
    ministring dir = viewerWindow->browseDir("Browse Repository Path", repoPath);
 
    if (dir!="")
+   {
       lineEdit_repoPath->setText(dir.c_str());
+      repoPathChanged(dir.c_str());
+   }
 }
 
 void MainWindow::browseExportPath()
@@ -757,7 +760,10 @@ void MainWindow::browseExportPath()
    ministring dir = viewerWindow->browseDir("Browse Export Path", exportPath);
 
    if (dir!="")
+   {
       lineEdit_exportPath->setText(dir.c_str());
+      exportPathChanged(dir.c_str());
+   }
 }
 
 void MainWindow::browseTmpPath()
@@ -765,7 +771,10 @@ void MainWindow::browseTmpPath()
    ministring dir = viewerWindow->browseDir("Browse Temporary Path", tmpPath);
 
    if (dir!="")
+   {
       lineEdit_tmpPath->setText(dir.c_str());
+      tmpPathChanged(dir.c_str());
+   }
 }
 
 void MainWindow::gridLevelChanged(QString level)
