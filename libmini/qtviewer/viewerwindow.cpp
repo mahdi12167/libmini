@@ -902,7 +902,7 @@ void ViewerWindow::crop_list(ministrings keys,
       if (image!=NULL)
       {
          CropJob *job = new CropJob(repository_path,
-                                    repository_path, image->get_relative_name()+"_cropped",
+                                    export_path, image->get_relative_name().head(".")+"_cropped.tif",
                                     image->get_extent(),
                                     cell_centered,
                                     0.0,
