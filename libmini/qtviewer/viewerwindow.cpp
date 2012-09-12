@@ -1183,7 +1183,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
    }
 }
 
-void ViewerWindow::failedJob(const ministring &job, const ministrings &args)
+void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/)
 {
    if (job=="shader")
    {
