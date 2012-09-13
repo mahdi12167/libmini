@@ -513,7 +513,7 @@ void Viewer::render_ecef_geometry(double t)
    static miniglobe globe;
 
    static const int gltess = 32;
-   static const double glscale = 0.999;
+   static const double glscale = 0.99;
    static const double glzscale = 1.05;
 
    globe.settess(gltess);
