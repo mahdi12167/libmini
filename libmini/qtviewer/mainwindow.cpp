@@ -33,7 +33,8 @@ void MainWindow::initSettings()
 {
    // define default settings:
 
-   ministring home_path = getenv("HOME");
+   ministring home_path = QDir::homePath().toStdString().c_str();
+   ministring temp_path = QDir::tempPath().toStdString().c_str();
 
 #ifdef __APPLE__
    home_path += "/Desktop";
@@ -41,7 +42,7 @@ void MainWindow::initSettings()
 
    repoPath = home_path;
    exportPath = home_path;
-   tmpPath = grid_resampler::get_tmp_dir();
+   tmpPath = temp_path;
 
    grid_level = 0;
    grid_levels = 1;
