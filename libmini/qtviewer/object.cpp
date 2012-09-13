@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#include <mini/miniio.h>
+
 #include "object.h"
 
 Object::Object(const ministring &name,const ministring &repo)
@@ -49,22 +51,21 @@ void Object::set_relative_name(ministring name)
 BOOLINT Object::has_repo_path()
    {return(!repository.empty());}
 
-BOOLINT Object::is_absolute_path(const ministring &path)
+BOOLINT Object::is_absolute_path(ministring path)
    {
-   return(path.startswith("/") ||
-          path.startswith("\\") ||
+   return(checkfilepath(path.c_str())!=0 ||
           path.startswith("http://") ||
           path.startswith("https://") ||
           path.startswith("ftp://") ||
-          path.startswith("ftps://") ||
-          path.tail(1).startswith(":\\"));
+          path.startswith("ftps://"));
    }
 
 ministring Object::normalize_path(ministring path)
    {
+   path.substitute("\\", "/");
+
    if (!path.empty())
-      if (!path.endswith("/") && !path.endswith("\\"))
-         path+="/";
+      if (!path.endswith("/")) path += "/";
 
    return(path);
    }
@@ -73,6 +74,8 @@ ministring Object::normalize_file(ministring file)
    {
    if (file.startswith("file://"))
       file = file.suffix("file://");
+
+   file.substitute("\\", "/");
 
    return(file);
    }
@@ -108,5 +111,5 @@ ministring Object::get_info()
           "file = "+filename);
    }
 
-void Object::show(BOOLINT) {}
+void Object::show(BOOLINT /*yes*/) {}
 BOOLINT Object::is_shown() const {return(TRUE);}

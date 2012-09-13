@@ -33,11 +33,11 @@ void MainWindow::initSettings()
 {
    // define default settings:
 
-   ministring home_path = QDir::homePath().toStdString().c_str();
-   ministring temp_path = QDir::tempPath().toStdString().c_str();
+   ministring home_path = Object::normalize_path(QDir::homePath().toStdString().c_str());
+   ministring temp_path = Object::normalize_path(QDir::tempPath().toStdString().c_str());
 
 #ifdef __APPLE__
-   home_path += "/Desktop";
+   home_path += "Desktop";
 #endif
 
    repoPath = home_path;

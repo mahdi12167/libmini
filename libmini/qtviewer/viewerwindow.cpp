@@ -284,7 +284,7 @@ ministring ViewerWindow::loadURL(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
+   if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
    if (getObject(url) != NULL) // already existing?
@@ -307,8 +307,7 @@ ministring ViewerWindow::loadURL(ministring url)
       else if (url.endswith(".qtv"))
          load_list(url);
       // check for directories
-      else if (!url.suffix("/").contains(".") ||
-               !url.suffix("\\").contains("."))
+      else if (!url.suffix("/").contains("."))
          loadMap(url);
       else
          loadImage(url); // try unknown format via gdal
@@ -327,18 +326,15 @@ void ViewerWindow::loadMap(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
+   if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
    if (url.endswith(".ini"))
    {
-      unsigned int lio, lio1, lio2;
+      unsigned int lio, lio0;
 
       lio = url.getsize();
-
-      if (url.findr("/", lio1)) lio = lio1;
-      else if (url.findr("\\", lio2)) lio = lio2;
-
+      if (url.findr("/", lio0)) lio = lio0;
       url.truncate(lio);
    }
 
@@ -362,7 +358,7 @@ void ViewerWindow::loadImage(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
+   if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
    Object_image *image = new Object_image(url, repository_path, viewer);
@@ -1176,7 +1172,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 
       // make resampled layers invisible
       for (unsigned int i=0; i<args.size(); i++)
-         if (args[i].startswith("/") || args[i].startswith("\\"))
+         if (Object::is_absolute_path(args[i]))
             runAction("hide", args[i]);
          else
             runAction("hide", repository_path+args[i]);

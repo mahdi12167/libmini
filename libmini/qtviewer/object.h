@@ -43,7 +43,7 @@ class Object
    BOOLINT has_repo_path();
 
    //! check for absolute path
-   static BOOLINT is_absolute_path(const ministring &path);
+   static BOOLINT is_absolute_path(ministring path);
 
    //! normalize non-empty "path" to match "path/"
    static ministring normalize_path(ministring path);
