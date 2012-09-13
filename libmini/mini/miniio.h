@@ -10,6 +10,9 @@ namespace miniio {
 //! check a file
 int checkfile(const char *filename);
 
+//! check a file to be absolute or relative
+int checkfilepath(const char *filename);
+
 //! write a RAW file
 void writefile(const char *filename,unsigned char *data,unsigned int bytes);
 

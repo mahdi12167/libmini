@@ -27,6 +27,27 @@ int checkfile(const char *filename)
    return(1);
    }
 
+// check a file path to be absolute or relative
+int checkfilepath(const char *filename)
+   {
+   unsigned int len;
+
+   len=strlen(filename);
+
+   if (len>0)
+      if (*filename=='/') return(1);
+
+#ifdef _WIN32
+   if (len>0)
+      if (*filename=='\\') return(1);
+
+   if (len>2)
+      if (isletter(filename[0]) && filename[1]==':' && filename[2]=='\\') return(1);
+#endif
+
+   return(0);
+   }
+
 // write a RAW file
 void writefile(const char *filename,unsigned char *data,unsigned int bytes)
    {
