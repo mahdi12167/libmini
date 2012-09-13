@@ -212,7 +212,8 @@ BOOLINT Object_image::initGFX()
             layer->set_extent(80,360*minirand(),1);
             }
 
-         extent=layer->extent;
+         extent=layer->get_extent();
+         extent_grid=layer->get_grid_extent();
          size_x=layer->get_size_x();
          size_y=layer->get_size_y();
          size_ds=layer->get_size_ds();

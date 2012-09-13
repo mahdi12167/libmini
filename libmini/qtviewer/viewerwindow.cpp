@@ -903,7 +903,7 @@ void ViewerWindow::crop_list(ministrings keys,
 
          CropJob *job = new CropJob(repository_path,
                                     export_path, output,
-                                    image->get_extent(),
+                                    image->get_grid_extent(),
                                     cell_centered,
                                     0.0,
                                     tmp_path);

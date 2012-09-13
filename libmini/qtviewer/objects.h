@@ -75,6 +75,10 @@ class Object_image: public Object
    grid_extent get_extent() const
       {return(extent);}
 
+   //! get grid-centered extents of image
+   grid_extent get_grid_extent() const
+      {return(extent_grid);}
+
    //! set thumb via db format
    void set_thumb(const databuf *buf);
 
@@ -83,6 +87,7 @@ class Object_image: public Object
    BOOLINT is_imagery_resp_elevation;
 
    grid_extent extent;
+   grid_extent extent_grid;
    int size_x,size_y;
    double size_ds,size_dt;
    double spacing;
