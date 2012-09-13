@@ -443,7 +443,7 @@ class minidyna
 
    //! tail after index (inclusive)
    minidyna<Item,Minsize> tail(unsigned int index) const
-      {return(range(index,getsize()));}
+      {return(range(index,getsize()-1));}
 
    //! interpolate item array
    Item interpolate(double t) const
