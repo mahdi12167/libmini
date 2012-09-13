@@ -46,8 +46,8 @@ ViewerWindow::ViewerWindow()
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
            Qt::QueuedConnection);
-   connect(worker, SIGNAL(failedJob(ministring, ministrings)),
-           this, SLOT(failedJob(ministring, ministrings)),
+   connect(worker, SIGNAL(failedJob(ministring, ministrings, int)),
+           this, SLOT(failedJob(ministring, ministrings, int)),
            Qt::QueuedConnection);
 
    // worker settings
@@ -915,6 +915,8 @@ void ViewerWindow::crop_list(ministrings keys,
 
          worker->run_job(job);
       }
+      else
+         notify("Cropping requires an image layer that defines the crop area");
    }
 }
 
@@ -1179,7 +1181,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
    }
 }
 
-void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/)
+void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/, int errorcode)
 {
    if (job=="shader")
    {
@@ -1188,5 +1190,15 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/)
    else if (job=="resampler")
    {
       notify("Resampling failed");
+   }
+   else if (job=="cropper")
+   {
+      if (errorcode == 2) notify("Not cropped: file already exists");
+      else notify("Cropping failed");
+   }
+   else if (job=="save")
+   {
+      if (errorcode == 2) notify("Not saved: file already exists");
+      else notify("Saving failed");
    }
 }

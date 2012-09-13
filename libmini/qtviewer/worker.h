@@ -34,7 +34,7 @@ class WorkerThread: public QThread, public grid_worker
    virtual void set_progress(double percentage);
 
    virtual void job_success(Job *job);
-   virtual void job_failure(Job *job);
+   virtual void job_failure(Job *job, int errorcode);
 
    private:
 
@@ -44,7 +44,7 @@ class WorkerThread: public QThread, public grid_worker
 
    void reportProgress(double percentage, const ministring &job);
    void finishedJob(const ministring &job, const ministrings &args);
-   void failedJob(const ministring &job, const ministrings &args);
+   void failedJob(const ministring &job, const ministrings &args, int errorcode);
 };
 
 #endif
