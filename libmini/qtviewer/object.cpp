@@ -62,14 +62,8 @@ BOOLINT Object::is_absolute_path(const ministring &path)
 
 ministring Object::normalize_path(ministring path)
    {
-   if (path.endswith("\\"))
-      if (path.size()>1)
-         path.shrinksize();
-      else
-         path="/";
-
-   if (path.size()>0)
-      if (!path.endswith("/"))
+   if (!path.empty())
+      if (!path.endswith("/") && !path.endswith("\\"))
          path+="/";
 
    return(path);

@@ -284,7 +284,7 @@ ministring ViewerWindow::loadURL(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url))
+   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
       url = repository_path+url;
 
    if (getObject(url) != NULL) // already existing?
@@ -327,7 +327,7 @@ void ViewerWindow::loadMap(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url))
+   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
       url = repository_path+url;
 
    if (url.endswith(".ini"))
@@ -362,7 +362,7 @@ void ViewerWindow::loadImage(ministring url)
 {
    url = Object::normalize_file(url);
 
-   if (!Object::is_absolute_path(url))
+   if (!Object::is_absolute_path(url) && Object::is_absolute_path(repository_path))
       url = repository_path+url;
 
    Object_image *image = new Object_image(url, repository_path, viewer);
