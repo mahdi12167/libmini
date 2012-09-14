@@ -613,7 +613,7 @@ void MainWindow::reportProgress(double percentage, const ministring &job)
          progress = "creating thumbnail";
       else
          if (percentage==0.0)
-            progress = job+" progress: init";
+            progress = job+" progress: working";
          else
             progress = job+" progress: "+(int)percentage+"%";
    }
