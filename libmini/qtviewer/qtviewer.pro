@@ -61,6 +61,7 @@ win32:INCLUDEPATH += ../WIN32/libcurl
 win32:INCLUDEPATH += ../WIN32/libjpeg
 win32:INCLUDEPATH += ../WIN32/libpng
 win32:INCLUDEPATH += ../WIN32/zlib
+win32:INCLUDEPATH += ../../gdal
 
 LIBS += -L.
 LIBS += -L..
@@ -80,6 +81,7 @@ win32:LIBS += -L../WIN32/libcurl
 win32:LIBS += -L../WIN32/libjpeg
 win32:LIBS += -L../WIN32/libpng
 win32:LIBS += -L../WIN32/zlib
+win32:LIBS += -L../../gdal
 
 unix:LIBS += -lgdal -liconv
 unix:LIBS += -lcurl -lz
