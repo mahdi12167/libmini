@@ -43,7 +43,7 @@ int checkfilepath(const char *filename)
 
    if (len>2)
       if (isalpha(filename[0]) && filename[1]==':' &&
-          filename[2]=='\\' || filename[2]=='/') return(1);
+          (filename[2]=='\\' || filename[2]=='/')) return(1);
 #endif
 
    return(0);
