@@ -612,7 +612,10 @@ void MainWindow::reportProgress(double percentage, const ministring &job)
       if (job == "thumb")
          progress = "creating thumbnail";
       else
-         progress = job+" progress: "+(int)percentage+"%";
+         if (percentage==0.0)
+            progress = job+" progress: init";
+         else
+            progress = job+" progress: "+(int)percentage+"%";
    }
 
    workerActivity->setText(progress.c_str());
