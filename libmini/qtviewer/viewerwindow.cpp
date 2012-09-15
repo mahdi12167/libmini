@@ -817,10 +817,10 @@ void ViewerWindow::shade(ministring key)
             notify("Shading requires an elevation layer");
          else
          {
-            ShadeJob *job = new ShadeJob(image->get_relative_path(), shadePower);
+            ShadeJob *job = new ShadeJob("", shadePower);
             if (job == NULL) MEMERROR();
 
-            job->append(image->get_relative_name());
+            job->append(image->get_full_name());
             worker->run_job(job);
          }
    }
