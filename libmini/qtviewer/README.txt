@@ -2,7 +2,7 @@
 
 Libmini is free software that displays geographic terrain data at
 real-time. This is an example application of integrating libmini in
-the QT user interface. The application, the libMini QTViewer,
+the Qt user interface. The application, the libMini QTViewer,
 primarily uses libmini viewer functions but provides additional camera
 control. It is free software licensed under the GPL.
 
@@ -29,19 +29,19 @@ is already installed with the XCode development package, on Linux it
 comes with the "mesa-dev", "X11-dev" and "free-glut3-dev" development
 packages whereas on Windows it is usually installed with the MSVC IDE.
 
-On MacOS X and Windows, it is recommended to build and install QT from source!
-On Linux, it is sufficient to install a recent Qt binary package.
+On MacOS X and Windows, it is recommended to build and install Qt from source!
+On Linux, it is mostly sufficient to install a recent Qt binary package.
 
 If you install Qt from source, grab the source tar ball from:
  ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
 
 !! Qt Installation (Unix/Mac)
 
-Type on the unix console in your QT source directory:
+Type on the unix console in your Qt source directory:
  ./configure -opensource && make && sudo make install
 
 After the build process has finished (go get yourself a cup of coffee),
-you will be asked to enter your root password for installation of qt.
+you will be asked to enter your root password for installation of Qt.
 
 !! Qt Installation (Windows):
 
@@ -51,10 +51,13 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 8.0 -> SET PLATFORM=win32-msvc2005
  MSVC 9.0 -> SET PLATFORM=win32-msvc2008
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
-Navigate to the QT source directory and type
- configure -platform %PLATFORM%
+Navigate to the Qt source directory and type
+ configure -platform %PLATFORM% -nomake examples -nomake demos
  nmake
-Add the "bin" directory in your QT directory to your path:
+At your option, to produce statically linked Qt libraries type
+ configure -platform %PLATFORM% -static -no-sql-sqlite -nomake examples -nomake demos
+ nmake
+Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
 Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
