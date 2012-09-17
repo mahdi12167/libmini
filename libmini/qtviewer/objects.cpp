@@ -206,7 +206,7 @@ BOOLINT Object_image::initGFX()
          is_imagery_resp_elevation=layer->is_imagery();
 
          // check for valid geo-reference
-         if (!layer->extent.is_georeferenced())
+         if (!layer->get_extent().is_georeferenced())
             {
             // put invalid layer at the north pole
             layer->set_extent(80,360*minirand(),1);
