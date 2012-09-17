@@ -932,22 +932,23 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       else
          {
          if (tstart<tstop && extformat==DATABUF_EXTFMT_PLAIN && implformat==0)
-            {
-            tstep=xsize*ysize*zsize;
+            if (tstart>0 && tstop>1)
+               {
+               tstep=xsize*ysize*zsize;
 
-            if (type==DATABUF_TYPE_BYTE) tstep=1*tstep;
-            else if (type==DATABUF_TYPE_SHORT) tstep=2*tstep;
-            else if (type==DATABUF_TYPE_FLOAT) tstep=4*tstep;
-            else if (type==DATABUF_TYPE_RGB) tstep=3*tstep;
-            else if (type==DATABUF_TYPE_RGBA) tstep=4*tstep;
-            else ERRORMSG();
+               if (type==DATABUF_TYPE_BYTE) tstep=1*tstep;
+               else if (type==DATABUF_TYPE_SHORT) tstep=2*tstep;
+               else if (type==DATABUF_TYPE_FLOAT) tstep=4*tstep;
+               else if (type==DATABUF_TYPE_RGB) tstep=3*tstep;
+               else if (type==DATABUF_TYPE_RGBA) tstep=4*tstep;
+               else ERRORMSG();
 
-            if (fseek(file,tstart*tstep,SEEK_CUR)!=0) IOERROR();
+               if (fseek(file,tstart*tstep,SEEK_CUR)!=0) IOERROR();
 
-            tsteps=tstop-tstart;
-            bytes=tsteps*tstep;
-            t0+=tstart*dt;
-            }
+               tsteps=tstop-tstart;
+               bytes=tsteps*tstep;
+               t0+=tstart*dt;
+               }
 
          if ((data=(unsigned char *)malloc(bytes))==NULL) MEMERROR();
 
