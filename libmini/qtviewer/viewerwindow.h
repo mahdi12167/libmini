@@ -35,7 +35,7 @@ public:
    Renderer *getViewer();
    WorkerThread *getWorker();
 
-   void setVertical(BOOLINT on);
+   void setAspect(double aspect);
 
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
@@ -45,7 +45,7 @@ public:
    void setTmp(ministring path);
 
    void setResampleSettings(int level=0, int levels=1, int step=2);
-   void setExportSettings(double power=2, double quality=90);
+   void setExportSettings(double power=2.0, double ambient=0.1, double quality=90);
 
    ministring loadURL(ministring url);
    void loadURLs(ministrings urls);
@@ -134,7 +134,7 @@ public:
    void dropEvent(QDropEvent *event);
 
 private:
-   BOOLINT vertical;
+   double viewer_aspect;
 
    Renderer *viewer;
    WorkerThread *worker;
@@ -148,6 +148,7 @@ private:
    int grid_step;
 
    double shadePower;
+   double shadeAmbient;
    double jpegQuality;
 
    Objects objects;

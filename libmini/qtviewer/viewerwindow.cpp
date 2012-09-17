@@ -27,7 +27,7 @@ ViewerWindow::ViewerWindow()
 
    setCursor(Qt::CrossCursor);
 
-   vertical = TRUE;
+   viewer_aspect = VIEWER_ASPECT;
 
    // init viewer
    viewer = new Renderer(this);
@@ -78,25 +78,19 @@ WorkerThread *ViewerWindow::getWorker()
    return(worker);
 }
 
-void ViewerWindow::setVertical(BOOLINT on)
+void ViewerWindow::setAspect(double aspect)
 {
-   vertical=on;
+   viewer_aspect = aspect;
 }
 
 QSize ViewerWindow::minimumSizeHint() const
 {
-   if (vertical)
-      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH));
-   else
-      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/VIEWER_ASPECT));
+   return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/viewer_aspect));
 }
 
 QSize ViewerWindow::sizeHint() const
 {
-   if (vertical)
-      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH));
-   else
-      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/VIEWER_ASPECT));
+   return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/viewer_aspect));
 }
 
 void ViewerWindow::initializeGL()
@@ -274,9 +268,10 @@ void ViewerWindow::setResampleSettings(int level, int levels, int step)
    grid_step = step;
 }
 
-void ViewerWindow::setExportSettings(double power, double quality)
+void ViewerWindow::setExportSettings(double power, double ambient, double quality)
 {
    shadePower = power;
+   shadeAmbient = ambient;
    jpegQuality = quality;
 }
 
@@ -380,7 +375,7 @@ void ViewerWindow::loadImage(ministring url)
 
       image->focus();
 
-      ThumbJob *job = new ThumbJob;
+      ThumbJob *job = new ThumbJob("", 3, 30.0);
       if (job == NULL) MEMERROR();
 
       job->append(image->get_full_name());
@@ -817,7 +812,7 @@ void ViewerWindow::shade(ministring key)
             notify("Shading requires an elevation layer");
          else
          {
-            ShadeJob *job = new ShadeJob("", shadePower);
+            ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
             if (job == NULL) MEMERROR();
 
             job->append(image->get_full_name());

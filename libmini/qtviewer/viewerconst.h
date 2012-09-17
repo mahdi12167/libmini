@@ -5,7 +5,7 @@
 
 #define VIEWER_WIDTH 768
 #define VIEWER_MINWIDTH 256
-#define VIEWER_ASPECT 1.3f
+#define VIEWER_ASPECT 1.0f
 
 #define VIEWER_FOGSTART 0.1f
 #define VIEWER_FOGEND 1.0f

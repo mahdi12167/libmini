@@ -48,7 +48,8 @@ void MainWindow::initSettings()
    grid_levels = 1;
    grid_step = 2;
 
-   shadePower = 2;
+   shadePower = 2.0;
+   shadeAmbient = 0.1;
    jpegQuality = 90;
 
    // override with persistent settings:
@@ -76,6 +77,9 @@ void MainWindow::initSettings()
    if (settings.contains("shadePower"))
       shadePower = settings.value("shadePower").toDouble();
 
+   if (settings.contains("shadeAmbient"))
+      shadePower = settings.value("shadeAmbient").toDouble();
+
    if (settings.contains("jpegQuality"))
       jpegQuality = settings.value("jpegQuality").toDouble();
 }
@@ -93,6 +97,7 @@ void MainWindow::saveSettings()
    settings.setValue("gridStep", grid_step);
 
    settings.setValue("shadePower", shadePower);
+   settings.setValue("shadeAmbient", shadeAmbient);
    settings.setValue("jpegQuality", jpegQuality);
 }
 
@@ -138,7 +143,8 @@ void MainWindow::createMenus()
 void MainWindow::createWidgets()
 {
    mainGroup = new QGroupBox;
-   mainLayout = new QBoxLayout(QBoxLayout::RightToLeft);
+   mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+   mainSplitter = new QSplitter;
 
    viewerWindow = new ViewerWindow;
    tabWidget = new QTabWidget;
@@ -380,13 +386,11 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_shadePower = createEdit("Shading Power", shadePower, &lineEdit_shadePower);
    connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
 
+   QGroupBox *lineEditGroup_shadeAmbient = createEdit("Shading Ambience", shadeAmbient, &lineEdit_shadeAmbient);
+   connect(lineEdit_shadeAmbient,SIGNAL(textChanged(QString)),this,SLOT(shadeAmbientChanged(QString)));
+
    QGroupBox *lineEditGroup_jpegQuality = createEdit("JPEG Quality", jpegQuality, &lineEdit_jpegQuality);
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
-
-   verticalButton = new QCheckBox(tr("Vertical Layout"));
-   verticalButton->setChecked(true);
-
-   connect(verticalButton, SIGNAL(stateChanged(int)), this, SLOT(checkVertical(int)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(true);
@@ -402,9 +406,9 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_gridStep);
 
    prefLayout->addWidget(lineEditGroup_shadePower);
+   prefLayout->addWidget(lineEditGroup_shadeAmbient);
    prefLayout->addWidget(lineEditGroup_jpegQuality);
 
-   prefLayout->addWidget(verticalButton);
    prefLayout->addWidget(sliderButton);
 
    prefLayout->addStretch();
@@ -429,10 +433,11 @@ void MainWindow::createWidgets()
 
    // main group:
 
-   mainLayout->addWidget(viewerWindow);
-   mainLayout->addWidget(tabWidget);
+   mainLayout->addWidget(mainSplitter);
    mainLayout->addWidget(buttonBox);
-   buttonBox->hide();
+
+   mainSplitter->addWidget(tabWidget);
+   mainSplitter->addWidget(viewerWindow);
 
    mainGroup->setLayout(mainLayout);
 
@@ -445,7 +450,7 @@ void MainWindow::createWidgets()
    // worker settings:
 
    viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
-   viewerWindow->setExportSettings(shadePower, jpegQuality);
+   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
 
    // progress:
 
@@ -825,7 +830,19 @@ void MainWindow::shadePowerChanged(QString power)
    if (valid)
       {
       this->shadePower = shadePower;
-      viewerWindow->setExportSettings(shadePower, jpegQuality);
+      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+      }
+}
+
+void MainWindow::shadeAmbientChanged(QString ambient)
+{
+   bool valid;
+   double shadeAmbient = ambient.toDouble(&valid);
+
+   if (valid)
+      {
+      this->shadeAmbient = shadeAmbient;
+      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
       }
 }
 
@@ -837,34 +854,8 @@ void MainWindow::jpegQualityChanged(QString quality)
    if (valid)
       {
       this->jpegQuality = jpegQuality;
-      viewerWindow->setExportSettings(shadePower, jpegQuality);
+      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
       }
-}
-
-void MainWindow::checkVertical(int on)
-{
-   if (on)
-   {
-      mainLayout->setDirection(QBoxLayout::RightToLeft);
-      viewerWindow->setVertical(TRUE);
-      tableBox->setDirection(QBoxLayout::LeftToRight);
-      viewerLayout->setDirection(QBoxLayout::TopToBottom);
-      sliderLayout->setDirection(QBoxLayout::TopToBottom);
-      sliderLayout1->setDirection(QBoxLayout::TopToBottom);
-      sliderLayout2->setDirection(QBoxLayout::TopToBottom);
-      buttonBox->hide();
-   }
-   else
-   {
-      mainLayout->setDirection(QBoxLayout::TopToBottom);
-      viewerWindow->setVertical(FALSE);
-      tableBox->setDirection(QBoxLayout::TopToBottom);
-      viewerLayout->setDirection(QBoxLayout::LeftToRight);
-      sliderLayout->setDirection(QBoxLayout::TopToBottom);
-      sliderLayout1->setDirection(QBoxLayout::LeftToRight);
-      sliderLayout2->setDirection(QBoxLayout::LeftToRight);
-      buttonBox->show();
-   }
 }
 
 void MainWindow::checkSliders(int on)

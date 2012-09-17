@@ -21,6 +21,7 @@ class QGroupBox;
 class QBoxLayout;
 class QVBoxLayout;
 class QHBoxLayout;
+class QSplitter;
 class QLabel;
 class QCheckBox;
 class QRadioButton;
@@ -86,9 +87,9 @@ private slots:
    void gridStepChanged(QString);
 
    void shadePowerChanged(QString);
+   void shadeAmbientChanged(QString);
    void jpegQualityChanged(QString);
 
-   void checkVertical(int);
    void checkSliders(int);
 
 private:
@@ -114,6 +115,7 @@ private:
 
    QGroupBox *mainGroup;
    QBoxLayout *mainLayout;
+   QSplitter *mainSplitter;
 
    ViewerWindow *viewerWindow;
    QTabWidget *tabWidget;
@@ -188,9 +190,9 @@ private:
    QLineEdit *lineEdit_gridStep;
 
    QLineEdit *lineEdit_shadePower;
+   QLineEdit *lineEdit_shadeAmbient;
    QLineEdit *lineEdit_jpegQuality;
 
-   QCheckBox *verticalButton;
    QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,
@@ -208,6 +210,7 @@ protected:
    int grid_step;
 
    double shadePower;
+   double shadeAmbient;
    double jpegQuality;
 
    void initSettings();
