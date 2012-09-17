@@ -949,6 +949,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
                bytes=tsteps*tstep;
                t0+=tstart*dt;
                }
+            else ERRORMSG();
 
          if ((data=(unsigned char *)malloc(bytes))==NULL) MEMERROR();
 
