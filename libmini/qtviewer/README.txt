@@ -60,7 +60,7 @@ Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
 
 At your option, you can configure Qt to produce static libraries with
- configure -platform %PLATFORM% -opensource -release -static -no-sql-sqlite -nomake examples -nomake demos
+ configure -platform %PLATFORM% -opensource -release -static -no-libpng -no-sql-sqlite -nomake examples -nomake demos
 
 !! Installation of Libmini Dependencies (Unix/Mac)
 
