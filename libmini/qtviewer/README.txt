@@ -51,7 +51,7 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 8.0 -> SET PLATFORM=win32-msvc2005
  MSVC 9.0 -> SET PLATFORM=win32-msvc2008
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
-Navigate to the Qt source directory and type
+Navigate into the Qt source directory and type
  configure -platform %PLATFORM% -opensource -nomake examples -nomake demos
  nmake
 At your option, to produce statically linked Qt libraries replace
@@ -76,11 +76,11 @@ Type on the unix console in your project directory (e.g. ~/Projects):
 !! Installation of Libmini Dependencies (Windows)
 
 Precompiled static libraries for Windows MSVC 2005 are provided in the
-libMini WIN32 directory. In your project directory get the following
+libMini WIN32 directory. In your project directory, get the following
 sub-directory via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/WIN32
 
-Additionally we need GDAL to be installed. In your project directory
+Additionally we need GDAL to be installed. In your project directory,
 get GDAL via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
 To build GDAL we have to define some options (in the name.opt file):
@@ -89,7 +89,7 @@ To build GDAL we have to define some options (in the name.opt file):
   Usually this means that we point it to our project directory
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
-Navigate to the GDAL source directory and type
+Navigate into the GDAL source directory and type
  set DEST="project directory"
  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST%
  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% devinstall
@@ -107,11 +107,12 @@ Type on the unix console in your project directory:
 
 !! QTViewer Checkout and Compilation (Windows)
 
-Get the following subversion repository via Tortoise SVN:
+In your project directory, get the following subversion repository
+via Tortoise SVN:
  http://libmini.googlecode.com/svn/libmini/qtviewer
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
-Navigate to the qtviewer source directory and type
+Navigate into the qtviewer source directory and type
  build.bat
 
 !! Usage
