@@ -52,10 +52,10 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 9.0 -> SET PLATFORM=win32-msvc2008
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
 Navigate to the Qt source directory and type
- configure -platform %PLATFORM% -nomake examples -nomake demos
+ configure -platform %PLATFORM% -opensource -nomake examples -nomake demos
  nmake
 At your option, to produce statically linked Qt libraries type
- configure -platform %PLATFORM% -static -no-sql-sqlite -nomake examples -nomake demos
+ configure -platform %PLATFORM% -opensource -static -no-sql-sqlite -nomake examples -nomake demos
  nmake
 Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
