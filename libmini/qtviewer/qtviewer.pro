@@ -104,7 +104,7 @@ unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
 win32:DEFINES += PTW32_STATIC_LIB
 win32:DEFINES += CURL_STATICLIB
-win32:QMAKE_CXXFLAGS_WARN_ON += /wd4244 /wd4305
+win32:QMAKE_CXXFLAGS_WARN_ON += /wd4244 /wd4305 /wd4100
 
 mac:ICON = qtviewer.icns
 win32:RC_FILE = mini/libMini.rc
