@@ -54,17 +54,13 @@ Choose an appropriate platform to describe the version of MSVC:
 Navigate into the Qt source directory and type
  configure -platform %PLATFORM% -opensource -nomake examples -nomake demos
  nmake
-At your option, to produce statically linked Qt libraries replace
- QMAKE_CFLAGS_RELEASE = -O2 -MD
-in the platform dependent <QTDIR>/mkspecs/win32-msvc..../qmake.conf file with
- QMAKE_CFLAGS_RELEASE = -O2 -MT
-and type
- configure -platform %PLATFORM% -opensource -release -static -no-sql-sqlite -nomake examples -nomake demos
- nmake
 Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
 Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
+
+At your option, to produce statically linked Qt libraries configure Qt with
+ configure -platform %PLATFORM% -opensource -release -static -no-sql-sqlite -nomake examples -nomake demos
 
 !! Installation of Libmini Dependencies (Unix/Mac)
 
