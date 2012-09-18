@@ -79,7 +79,7 @@ sub-directory via Tortoise SVN:
 Additionally we need GDAL to be installed. In your project directory,
 get GDAL via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
-To build GDAL we have to define some options (in the name.opt file):
+To build GDAL we have to define some options (in the nmake.opt file):
  MSVC_VER -> use 1600 to identify MSVC 10.0, 1500 for MSVC 9.0, etc.
  GDAL_HOME -> needs to point to the GDAL installation directory
   Usually this means that we point it to our project directory
