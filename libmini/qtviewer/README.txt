@@ -54,8 +54,12 @@ Choose an appropriate platform to describe the version of MSVC:
 Navigate to the Qt source directory and type
  configure -platform %PLATFORM% -opensource -nomake examples -nomake demos
  nmake
-At your option, to produce statically linked Qt libraries type
- configure -platform %PLATFORM% -opensource -static -no-sql-sqlite -nomake examples -nomake demos
+At your option, to produce statically linked Qt libraries replace
+ QMAKE_CFLAGS_RELEASE = -O2 -MD
+in the platform dependent <QTDIR>/mkspecs/win32-msvc..../qmake.conf file with
+ QMAKE_CFLAGS_RELEASE = -O2 -MT
+and type
+ configure -platform %PLATFORM% -opensource -release -static -no-sql-sqlite -nomake examples -nomake demos
  nmake
 Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
