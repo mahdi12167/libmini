@@ -59,6 +59,9 @@ protected:
 
 private:
    void       loadTextureFromResource(const char* respath, GLuint& texId);
+   void       loadCrossHair(GLuint& texId);
+
+   void       setPixel(QImage &image, int x, int y, QRgb color);
    void       drawText(float x, float y, QString& str, QColor color = QColor(255, 255, 255), bool bIsDoublePrint = true);
 
 protected:

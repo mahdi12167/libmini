@@ -52,7 +52,11 @@ void Viewer::init()
    m_root->append_child(build_ecef_geometry());
 
    // load textures
+#if VIEWER_INTERNAL_CROSSHAIR
+   loadCrossHair(m_CrosshairTextureId);
+#else
    loadTextureFromResource(":/images/crosshair.png", m_CrosshairTextureId);
+#endif
 
    // init viewport
    resizeViewport();
@@ -366,6 +370,55 @@ void Viewer::loadTextureFromResource(const char* respath, GLuint& texId)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
+
+void Viewer::loadCrossHair(GLuint& texId)
+{
+   int i;
+
+   static const int size=33;
+
+   QImage tex;
+
+   QImage crosshair(size, size, QImage::Format_ARGB32);
+
+   crosshair.fill(0);
+
+   QRgb black = qRgb(0,0,0);
+
+   crosshair.setPixel(size/2,size/2, black);
+   for (i=2; i<size/3; i++)
+   {
+      setPixel(crosshair, size/2-i,size/2, black);
+      setPixel(crosshair, size/2+i,size/2, black);
+      setPixel(crosshair, size/2,size/2-i, black);
+      setPixel(crosshair, size/2,size/2+i, black);
+   }
+
+   tex = QGLWidget::convertToGLFormat(crosshair);
+
+   glGenTextures(1, &texId);
+   glBindTexture(GL_TEXTURE_2D, texId);
+   glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void Viewer::setPixel(QImage &image, int x, int y, QRgb color)
+   {
+   QRgb white = qRgba(255,255,255,63);
+
+   image.setPixel(x, y, color);
+
+   if (QColor::fromRgba(image.pixel(x-1, y)).alpha()==0) image.setPixel(x-1, y, white);
+   if (QColor::fromRgba(image.pixel(x+1, y)).alpha()==0) image.setPixel(x+1, y, white);
+   if (QColor::fromRgba(image.pixel(x, y-1)).alpha()==0) image.setPixel(x, y-1, white);
+   if (QColor::fromRgba(image.pixel(x, y+1)).alpha()==0) image.setPixel(x, y+1, white);
+
+   if (QColor::fromRgba(image.pixel(x-1, y-1)).alpha()==0) image.setPixel(x-1, y-1, white);
+   if (QColor::fromRgba(image.pixel(x+1, y-1)).alpha()==0) image.setPixel(x+1, y-1, white);
+   if (QColor::fromRgba(image.pixel(x-1, y+1)).alpha()==0) image.setPixel(x-1, y+1, white);
+   if (QColor::fromRgba(image.pixel(x+1, y+1)).alpha()==0) image.setPixel(x+1, y+1, white);
+   }
 
 void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoublePrint)
 {

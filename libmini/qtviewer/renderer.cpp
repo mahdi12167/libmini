@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#undef TEST
-
 #include "nodes.h"
 #include "renderer.h"
 
@@ -46,7 +44,7 @@ mininode_group *Renderer::build_ecef_geometry()
    group->append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
       append_child(new mininode_geometry_band(pos, pos, 20000));
 
-#ifdef TEST
+#if VIEWER_TEST
 
    // house:
 
