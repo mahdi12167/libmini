@@ -385,8 +385,8 @@ void Viewer::loadCrossHair(GLuint& texId)
 
    QRgb black = qRgb(0,0,0);
 
-   crosshair.setPixel(size/2,size/2, black);
-   for (i=2; i<size/3; i++)
+   setPixel(crosshair, size/2,size/2, black);
+   for (i=3; i<size/2-1; i++)
    {
       setPixel(crosshair, size/2-i,size/2, black);
       setPixel(crosshair, size/2+i,size/2, black);
@@ -405,7 +405,7 @@ void Viewer::loadCrossHair(GLuint& texId)
 
 void Viewer::setPixel(QImage &image, int x, int y, QRgb color)
    {
-   QRgb white = qRgba(255,255,255,63);
+   QRgb white = qRgba(255,255,255,31);
 
    image.setPixel(x, y, color);
 
