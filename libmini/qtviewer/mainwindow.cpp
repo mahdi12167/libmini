@@ -417,8 +417,16 @@ void MainWindow::createWidgets()
 
    // tabs:
 
-   tabWidget->addTab(viewerGroup, "View");
-   tabWidget->addTab(prefGroup, "Prefs");
+   QScrollArea *viewerGroupScrollArea = new QScrollArea;
+   viewerGroupScrollArea->setWidgetResizable(true);
+   viewerGroupScrollArea->setWidget(viewerGroup);
+
+   QScrollArea *prefGroupScrollArea = new QScrollArea;
+   prefGroupScrollArea->setWidgetResizable(true);
+   prefGroupScrollArea->setWidget(prefGroup);
+
+   tabWidget->addTab(viewerGroupScrollArea, "View");
+   tabWidget->addTab(prefGroupScrollArea, "Prefs");
 
    // button group:
 
