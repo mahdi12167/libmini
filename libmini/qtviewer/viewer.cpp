@@ -281,6 +281,8 @@ void Viewer::renderHUD()
    glDisable(GL_TEXTURE_2D);
    glEnable(GL_CULL_FACE);
 
+   if (m_window->width()<32 || m_window->height()<32) return;
+
    // render text:
 
    minicoord cameraPosLLH = camera->get_eye();
