@@ -149,7 +149,7 @@ void MainWindow::createWidgets()
    viewerWindow = new ViewerWindow;
    tabWidget = new QTabWidget;
 
-   viewerGroup = new MyQGroupBox(QSize(300, 300));
+   viewerGroup = new QGroupBox;
    viewerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
    prefGroup = new QGroupBox;
@@ -162,7 +162,7 @@ void MainWindow::createWidgets()
    tableBox = new QBoxLayout(QBoxLayout::LeftToRight);
    tableFilter = new QButtonGroup(viewerWindow);
 
-   sliderBox = new MyQGroupBox(QSize(300, 300));
+   sliderBox = new QGroupBox;
    sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
    sliderLayout1 = new QBoxLayout(QBoxLayout::TopToBottom);
    sliderLayout2 = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -915,6 +915,28 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
    QWidget::keyReleaseEvent(event);
+}
+
+QSize MyQScrollArea::minimumSizeHint() const
+{
+   QSize size = QScrollArea::minimumSizeHint();
+   size.setHeight(MAIN_TAB_MINHEIGHT);
+   return(size);
+}
+
+QSize MyQScrollArea::sizeHint() const
+{
+   return(minimumSizeHint());
+}
+
+QSize MyQTableWidget::minimumSizeHint() const
+{
+   return(QSize(MAIN_TABLE_MINWIDTH, MAIN_TABLE_MINHEIGHT));
+}
+
+QSize MyQTableWidget::sizeHint() const
+{
+   return(QSize(MAIN_TABLE_WIDTH, MAIN_TABLE_HEIGHT));
 }
 
 void MyQTableWidget::keyPressEvent(QKeyEvent *event)

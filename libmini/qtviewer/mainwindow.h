@@ -5,7 +5,7 @@
 
 #include <QtGui/QMainWindow>
 
-#include <QtGui/QGroupBox>
+#include <QtGui/QScrollArea>
 #include <QtGui/QTableWidget>
 
 #include <mini/mini_generic.h>
@@ -31,8 +31,8 @@ class QDialogButtonBox;
 class QPushButton;
 class QLineEdit;
 
+class MyQScrollArea;
 class MyQTableWidget;
-class MyQGroupBox;
 
 //! qt viewer main window that
 //! contains the viewer window with the opengl rendering context and
@@ -121,7 +121,7 @@ private:
    QTabWidget *tabWidget;
    QDialogButtonBox *buttonBox;
 
-   MyQGroupBox *viewerGroup;
+   QGroupBox *viewerGroup;
    QBoxLayout *viewerLayout;
 
    QGroupBox *prefGroup;
@@ -132,7 +132,7 @@ private:
 
    MyQTableWidget *viewerTable;
    QBoxLayout *tableBox;
-   MyQGroupBox *sliderBox;
+   QGroupBox *sliderBox;
    QBoxLayout *sliderLayout;
    QBoxLayout *sliderLayout1;
    QBoxLayout *sliderLayout2;
@@ -220,25 +220,18 @@ protected:
    void keyReleaseEvent(QKeyEvent *event);
 };
 
-// subclass group box widget
-class MyQGroupBox: public QGroupBox
+// subclass scroll widget
+class MyQScrollArea: public QScrollArea
 {
    Q_OBJECT
 
 public:
-   MyQGroupBox(QSize size, QWidget *parent = 0)
-      : QGroupBox(parent)
-   {
-      this->size = size;
-   }
+   MyQScrollArea(QWidget *parent = 0)
+      : QScrollArea(parent)
+   {}
 
-   QSize sizeHint() const
-   {
-      return(size);
-   }
-
-protected:
-   QSize size;
+   QSize minimumSizeHint() const;
+   QSize sizeHint() const;
 };
 
 // subclass table widget
@@ -252,6 +245,9 @@ public:
    {
       viewerWindow = viewer;
    }
+
+   QSize minimumSizeHint() const;
+   QSize sizeHint() const;
 
 protected:
    void keyPressEvent(QKeyEvent *event);
