@@ -261,8 +261,8 @@ void Viewer::renderHUD()
    glEnable(GL_TEXTURE_2D);
    glDisable(GL_CULL_FACE);
 
-   float lx = 60.0f/m_window->width();
-   float ly = 60.0f/m_window->height();
+   float lx = 50.0f/(m_window->width()+1);
+   float ly = 50.0f/(m_window->height()+1);
 
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
