@@ -1159,27 +1159,30 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 
          // autoload shaded layer
          if (name!="")
+         {
+            // open shaded layer
             runAction("open", name);
 
-         // hide original layer
-         runAction("hide", args[i]);
+            // hide original layer
+            runAction("hide", args[i]);
+         }
       }
    }
    else if (job=="resampler")
    {
       // autoselect grid name
-      ministring name = ResampleJob::make_grid_name(args, repository_path);
+      ministring name = ResampleJob::make_grid_name(args, "");
 
       // autoload resampled tileset
       if (name!="")
+      {
+         // open resampled tileset
          runAction("open", export_path+name);
 
-      // make resampled layers invisible
-      for (unsigned int i=0; i<args.size(); i++)
-         if (Object::is_absolute_path(args[i]))
+         // make resampled layers invisible
+         for (unsigned int i=0; i<args.size(); i++)
             runAction("hide", args[i]);
-         else
-            runAction("hide", repository_path+args[i]);
+      }
    }
 }
 
