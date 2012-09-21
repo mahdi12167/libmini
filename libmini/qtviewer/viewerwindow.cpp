@@ -869,9 +869,9 @@ void ViewerWindow::resample_list(ministrings keys,
    if (!check_list(keys)) return;
 
    if (getObject(crop_key)!=NULL)
-      crop_name = getObject(crop_key)->get_relative_name();
+      crop_name = getObject(crop_key)->get_full_name();
 
-   ResampleJob *job = new ResampleJob(repository_path, export_path,
+   ResampleJob *job = new ResampleJob("", export_path,
                                       level, levels, step,
                                       5.0,0.0,
                                       crop_name,
@@ -880,7 +880,7 @@ void ViewerWindow::resample_list(ministrings keys,
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_relative_name());
+      job->append(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
