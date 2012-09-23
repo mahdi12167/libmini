@@ -331,13 +331,16 @@ void MainWindow::createWidgets()
 
    // slider group:
 
+   QHBoxLayout *renderLayout = new QHBoxLayout;
+   renderLayout->addWidget(stereoGroup);
+   renderLayout->addWidget(wireGroup);
+
    sliderLayout->addWidget(fogGroup);
    sliderLayout->addWidget(contourGroup);
    sliderLayout->addWidget(seaGroup);
    sliderLayout->addWidget(lightGroup);
    sliderLayout->addWidget(exaggerGroup);
-   sliderLayout->addWidget(stereoGroup);
-   sliderLayout->addWidget(wireGroup);
+   sliderLayout->addLayout(renderLayout);
    sliderBox->setLayout(sliderLayout);
 
    // viewer group:
@@ -391,6 +394,11 @@ void MainWindow::createWidgets()
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(true);
 
+   QGroupBox *sliderButtonBox= new QGroupBox;
+   QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
+   sliderButtonBoxLayout->addWidget(sliderButton);
+   sliderButtonBox->setLayout(sliderButtonBoxLayout);
+
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
 
    prefLayout->addWidget(lineEditGroup_repoPath);
@@ -405,7 +413,7 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_shadeAmbient);
    prefLayout->addWidget(lineEditGroup_jpegQuality);
 
-   prefLayout->addWidget(sliderButton);
+   prefLayout->addWidget(sliderButtonBox);
 
    prefLayout->addStretch();
 
