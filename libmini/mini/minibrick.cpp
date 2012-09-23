@@ -665,7 +665,7 @@ void minisurf::enabletorch(int phase,
       MOV pos,fragment.texcoord[2]; \n\
       ### fetch actual texel \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
-      SLT tex.w,1,tex.w; \n\
+      SGE tex.w,tex.w,1; \n\
       ### modulate with texture color \n\
       MUL col,col,tex; \n\
       ### apply head light to color and opacity \n\
@@ -698,7 +698,7 @@ void minisurf::enabletorch(int phase,
       MOV pos,fragment.texcoord[2]; \n\
       ### fetch actual texel \n\
       TEX tex,fragment.texcoord[0],texture[0],3D; \n\
-      SLT tex.w,1,tex.w; \n\
+      SGE tex.w,tex.w,1; \n\
       ### modulate with texture color \n\
       MUL col,col,tex; \n\
       ### apply head light to color and opacity \n\
@@ -952,7 +952,7 @@ void minisurf::enablepattern(float ambient,
       MOV crd,fragment.texcoord[3]; \n\
       ### fetch actual texel \n\
       TEX tex,fragment.texcoord[0],texture[0],2D; \n\
-      SLT tex.w,1,tex.w; \n\
+      SGE tex.w,tex.w,1; \n\
       ### modulate with texture color \n\
       MUL col,col,tex; \n\
       ### apply pattern to opacity \n\
@@ -991,7 +991,7 @@ void minisurf::enablepattern(float ambient,
       MOV crd,fragment.texcoord[3]; \n\
       ### fetch actual texel \n\
       TEX tex,fragment.texcoord[0],texture[0],3D; \n\
-      SLT tex.w,1,tex.w; \n\
+      SGE tex.w,tex.w,1; \n\
       ### modulate with texture color \n\
       MUL col,col,tex; \n\
       ### apply pattern to opacity \n\
