@@ -340,7 +340,7 @@ void ViewerWindow::loadMap(ministring url)
    {
       delete tileset;
 
-      notify("Unable to load map from url="+url);
+      notify(TR("Unable to load map from url=")+url);
    }
 }
 
@@ -364,7 +364,7 @@ void ViewerWindow::loadImage(ministring url)
    {
       delete image;
 
-      notify("Unable to load image from url="+url);
+      notify(TR("Unable to load image from url=")+url);
    }
    else
    {
@@ -737,7 +737,7 @@ void ViewerWindow::runAction(ministring action,
       else if (hasTag(value, "imagery"))
          crop_list(sel_keys, value, TRUE);
       else
-         notify("Cannot determine crop type");
+         notify(TR("Cannot determine crop type"));
    }
    else if (action == "abort")
    {
@@ -809,7 +809,7 @@ void ViewerWindow::shade(ministring key)
       Object_image *image=dynamic_cast<Object_image *>(obj);
       if (image!=NULL)
          if (!image->is_elevation())
-            notify("Shading requires an elevation layer");
+            notify(TR("Shading requires an elevation layer"));
          else
          {
             ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
@@ -845,13 +845,13 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 
    if (elev==0)
    {
-      notify("Resampling requires at least one elevation layer");
+      notify(TR("Resampling requires at least one elevation layer"));
       return(FALSE);
    }
 
    if (elev>1 && imag==0)
    {
-      notify("Resampling requires at least one imagery or shaded layer");
+      notify(TR("Resampling requires at least one imagery or shaded layer"));
       return(FALSE);
    }
 
@@ -916,10 +916,10 @@ void ViewerWindow::crop_list(ministrings keys,
          worker->run_job(job);
       }
       else
-         notify("Cropping requires an image layer that defines the crop area");
+         notify(TR("Cropping requires an image layer that defines the crop area"));
    }
    else
-      notify("Cannot determine crop area");
+      notify(TR("Cannot determine crop area"));
 }
 
 void ViewerWindow::save_list(ministrings keys, ministring filename)
@@ -975,7 +975,7 @@ void ViewerWindow::save_grid_list(ministrings keys, ministring filename, int lev
 
    if (filename=="")
    {
-      ministrings files = browse("Save To Grid File", export_path, TRUE);
+      ministrings files = browse(TR("Save To Grid File"), export_path, TRUE);
       if (files.size()==0) return;
 
       filename = files[0];
@@ -993,7 +993,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
    if (filename=="")
    {
-      ministrings files = browse("Load", export_path, FALSE);
+      ministrings files = browse(TR("Load"), export_path, FALSE);
       if (files.size()==0) return(FALSE);
       filename=files[0];
    }
@@ -1062,7 +1062,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
 void ViewerWindow::notify(ministring text)
 {
-   QMessageBox::information(this, "Information",
+   QMessageBox::information(this, tr("Information"),
                             text.c_str(),
                             QMessageBox::Ok);
 }
@@ -1077,7 +1077,7 @@ ministrings ViewerWindow::browse(ministring title,
    fd->setFileMode(QFileDialog::ExistingFiles);
    fd->setViewMode(QFileDialog::List);
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
-   fd->setFilter("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)");
+   fd->setFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)"));
 
    if (path!="") fd->setDirectory(path.c_str());
 
@@ -1190,20 +1190,20 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
 {
    if (job=="shader")
    {
-      notify("Shading failed");
+      notify(TR("Shading failed"));
    }
    else if (job=="resampler")
    {
-      notify("Resampling failed");
+      notify(TR("Resampling failed"));
    }
    else if (job=="cropper")
    {
-      if (errorcode == 2) notify("Not cropped: file already exists");
-      else notify("Cropping failed");
+      if (errorcode == 2) notify(TR("Not cropped: file already exists"));
+      else notify(TR("Cropping failed"));
    }
    else if (job=="save")
    {
-      if (errorcode == 2) notify("Not saved: file already exists");
-      else notify("Saving failed");
+      if (errorcode == 2) notify(TR("Not saved: file already exists"));
+      else notify(TR("Saving failed"));
    }
 }

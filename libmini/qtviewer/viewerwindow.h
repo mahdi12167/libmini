@@ -21,6 +21,8 @@ class WorkerThread;
 
 class QMimeData;
 
+#define TR(s) (ministring(tr(s).toStdString().c_str()))
+
 //! qt viewer window that
 //! forwards mouse events to the camera and
 //! forwards user events to the renderer

@@ -134,8 +134,6 @@ private:
    QBoxLayout *tableBox;
    QGroupBox *sliderBox;
    QBoxLayout *sliderLayout;
-   QBoxLayout *sliderLayout1;
-   QBoxLayout *sliderLayout2;
 
    QButtonGroup *tableFilter;
    QLabel *workerActivity;

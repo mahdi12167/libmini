@@ -164,8 +164,6 @@ void MainWindow::createWidgets()
 
    sliderBox = new QGroupBox;
    sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-   sliderLayout1 = new QBoxLayout(QBoxLayout::TopToBottom);
-   sliderLayout2 = new QBoxLayout(QBoxLayout::TopToBottom);
 
    // drag and drop:
 
@@ -198,9 +196,9 @@ void MainWindow::createWidgets()
 
    // layer table filter:
 
-   QRadioButton *filter1 = new QRadioButton("DEM");
-   QRadioButton *filter2 = new QRadioButton("IMG");
-   QRadioButton *filter3 = new QRadioButton("ALL");
+   QRadioButton *filter1 = new QRadioButton(tr("DEM"));
+   QRadioButton *filter2 = new QRadioButton(tr("IMG"));
+   QRadioButton *filter3 = new QRadioButton(tr("ALL"));
    filter3->setChecked(true);
 
    tableFilter->addButton(filter1);
@@ -333,15 +331,13 @@ void MainWindow::createWidgets()
 
    // slider group:
 
-   sliderLayout1->addWidget(fogGroup);
-   sliderLayout1->addWidget(contourGroup);
-   sliderLayout1->addWidget(seaGroup);
-   sliderLayout2->addWidget(lightGroup);
-   sliderLayout2->addWidget(exaggerGroup);
-   sliderLayout2->addWidget(stereoGroup);
-   sliderLayout2->addWidget(wireGroup);
-   sliderLayout->addLayout(sliderLayout1);
-   sliderLayout->addLayout(sliderLayout2);
+   sliderLayout->addWidget(fogGroup);
+   sliderLayout->addWidget(contourGroup);
+   sliderLayout->addWidget(seaGroup);
+   sliderLayout->addWidget(lightGroup);
+   sliderLayout->addWidget(exaggerGroup);
+   sliderLayout->addWidget(stereoGroup);
+   sliderLayout->addWidget(wireGroup);
    sliderBox->setLayout(sliderLayout);
 
    // viewer group:
@@ -356,40 +352,40 @@ void MainWindow::createWidgets()
 
    // pref group:
 
-   QGroupBox *lineEditGroup_repoPath = createPathEdit("Repository Path", repoPath,
+   QGroupBox *lineEditGroup_repoPath = createPathEdit(TR("Repository Path"), repoPath,
                                                       &lineEdit_repoPath, &browseButton_repoPath);
 
    connect(lineEdit_repoPath,SIGNAL(textChanged(QString)),this,SLOT(repoPathChanged(QString)));
    connect(browseButton_repoPath, SIGNAL(pressed()), this, SLOT(browseRepoPath()));
 
-   QGroupBox *lineEditGroup_exportPath = createPathEdit("Export Path", exportPath,
+   QGroupBox *lineEditGroup_exportPath = createPathEdit(TR("Export Path"), exportPath,
                                                         &lineEdit_exportPath, &browseButton_exportPath);
 
    connect(lineEdit_exportPath,SIGNAL(textChanged(QString)),this,SLOT(exportPathChanged(QString)));
    connect(browseButton_exportPath, SIGNAL(pressed()), this, SLOT(browseExportPath()));
 
-   QGroupBox *lineEditGroup_tmpPath = createPathEdit("Temporary Path", tmpPath,
+   QGroupBox *lineEditGroup_tmpPath = createPathEdit(TR("Temporary Path"), tmpPath,
                                                      &lineEdit_tmpPath, &browseButton_tmpPath);
 
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
 
-   QGroupBox *lineEditGroup_gridLevel = createEdit("Grid Level", grid_level, &lineEdit_gridLevel);
+   QGroupBox *lineEditGroup_gridLevel = createEdit(TR("Grid Level"), grid_level, &lineEdit_gridLevel);
    connect(lineEdit_gridLevel,SIGNAL(textChanged(QString)),this,SLOT(gridLevelChanged(QString)));
 
-   QGroupBox *lineEditGroup_gridLevels = createEdit("Grid Levels", grid_levels, &lineEdit_gridLevels);
+   QGroupBox *lineEditGroup_gridLevels = createEdit(TR("Grid Levels"), grid_levels, &lineEdit_gridLevels);
    connect(lineEdit_gridLevels,SIGNAL(textChanged(QString)),this,SLOT(gridLevelsChanged(QString)));
 
-   QGroupBox *lineEditGroup_gridStep = createEdit("Grid Step", grid_step, &lineEdit_gridStep);
+   QGroupBox *lineEditGroup_gridStep = createEdit(TR("Grid Step"), grid_step, &lineEdit_gridStep);
    connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
 
-   QGroupBox *lineEditGroup_shadePower = createEdit("Shading Power", shadePower, &lineEdit_shadePower);
+   QGroupBox *lineEditGroup_shadePower = createEdit(TR("Shading Power"), shadePower, &lineEdit_shadePower);
    connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
 
-   QGroupBox *lineEditGroup_shadeAmbient = createEdit("Shading Ambience", shadeAmbient, &lineEdit_shadeAmbient);
+   QGroupBox *lineEditGroup_shadeAmbient = createEdit(TR("Shading Ambience"), shadeAmbient, &lineEdit_shadeAmbient);
    connect(lineEdit_shadeAmbient,SIGNAL(textChanged(QString)),this,SLOT(shadeAmbientChanged(QString)));
 
-   QGroupBox *lineEditGroup_jpegQuality = createEdit("JPEG Quality", jpegQuality, &lineEdit_jpegQuality);
+   QGroupBox *lineEditGroup_jpegQuality = createEdit(TR("JPEG Quality"), jpegQuality, &lineEdit_jpegQuality);
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
@@ -425,8 +421,8 @@ void MainWindow::createWidgets()
    prefGroupScrollArea->setWidgetResizable(true);
    prefGroupScrollArea->setWidget(prefGroup);
 
-   tabWidget->addTab(viewerGroupScrollArea, "View");
-   tabWidget->addTab(prefGroupScrollArea, "Prefs");
+   tabWidget->addTab(viewerGroupScrollArea, tr("View"));
+   tabWidget->addTab(prefGroupScrollArea, tr("Prefs"));
 
    // button group:
 
@@ -763,7 +759,7 @@ void MainWindow::tmpPathChanged(QString tmp)
 
 void MainWindow::browseRepoPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Repository Path", repoPath);
+   ministring dir = viewerWindow->browseDir(TR("Browse Repository Path"), repoPath);
 
    if (dir!="")
    {
@@ -774,7 +770,7 @@ void MainWindow::browseRepoPath()
 
 void MainWindow::browseExportPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Export Path", exportPath);
+   ministring dir = viewerWindow->browseDir(TR("Browse Export Path"), exportPath);
 
    if (dir!="")
    {
@@ -785,7 +781,7 @@ void MainWindow::browseExportPath()
 
 void MainWindow::browseTmpPath()
 {
-   ministring dir = viewerWindow->browseDir("Browse Temporary Path", tmpPath);
+   ministring dir = viewerWindow->browseDir(TR("Browse Temporary Path"), tmpPath);
 
    if (dir!="")
    {
