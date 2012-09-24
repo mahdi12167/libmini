@@ -101,6 +101,8 @@ CONFIG(debug, debug|release) {
 unix:QMAKE_CXXFLAGS += -O
 unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
 
+DEFINES += WITH_SQUISH
+
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
 win32:DEFINES += PTW32_STATIC_LIB
 win32:DEFINES += CURL_STATICLIB
