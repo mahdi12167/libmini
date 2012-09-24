@@ -94,14 +94,14 @@ win32:LIBS += -lws2_32 -lwinmm
 
 RESOURCES += qtviewer.qrc
 
+DEFINES += WITH_SQUISH
+
 CONFIG(debug, debug|release) {
-   QMAKE_CXXFLAGS += -DLIBMINI_DEBUG
+   DEFINES += LIBMINI_DEBUG
 }
 
 unix:QMAKE_CXXFLAGS += -O
 unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
-
-DEFINES += WITH_SQUISH
 
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
 win32:DEFINES += PTW32_STATIC_LIB
