@@ -99,9 +99,14 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! traverse [cycle-free] graph
+   //!  the return value indicates if there was a graph modification
+   //!   the graph can be modified manually or by self-modification
+   //!  a modified graph has to be updated
+   //!   call check_dirty in case of a manual modification
+   //!   call clear_dirty in case of all modifications
    virtual BOOLINT traverse(unsigned int level=0)
       {
-      BOOLINT dirty=FALSE;
+      BOOLINT dirty=m_dirty;
 
       if (level==0) traverse_init();
 
@@ -122,9 +127,9 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (level==0) traverse_exit();
 
-      if (dirty) set_dirty();
+      m_dirty=dirty;
 
-      return(is_dirty());
+      return(dirty);
       }
 
    //! traverse graph and serialize nodes with specific id
@@ -182,7 +187,28 @@ class mininode: public minidyna< miniref<mininode> >
    BOOLINT is_dirty() const
       {return(m_dirty);}
 
-   // clear dirty flag via recursive update
+   //! check all dirty flags
+   //!  necessary when graph has been modified manually
+   //!  by appending (or removing) a node
+   BOOLINT check_dirty()
+      {
+      BOOLINT dirty=m_dirty;
+
+      unsigned int s=get_links();
+
+      for (unsigned int i=0; i<s; i++)
+         {
+         mininode *link=get_link(i);
+         if (link->check_dirty()) dirty=TRUE;
+         }
+
+      m_dirty=dirty;
+
+      return(dirty);
+      }
+
+   //! clear dirty flag via recursive graph update
+   //!  necessary when graph has been modified
    void clear_dirty()
       {
       unsigned int s=get_links();
@@ -193,7 +219,7 @@ class mininode: public minidyna< miniref<mininode> >
          if (link->is_dirty()) link->clear_dirty();
          }
 
-      if (is_dirty())
+      if (m_dirty)
          {
          update_dirty();
          m_dirty=FALSE;
