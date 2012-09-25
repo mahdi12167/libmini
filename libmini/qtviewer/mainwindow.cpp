@@ -424,10 +424,12 @@ void MainWindow::createWidgets()
    QScrollArea *viewerGroupScrollArea = new QScrollArea;
    viewerGroupScrollArea->setWidgetResizable(true);
    viewerGroupScrollArea->setWidget(viewerGroup);
+   viewerGroupScrollArea->setMinimumWidth(viewerGroup->sizeHint().width());
 
    QScrollArea *prefGroupScrollArea = new QScrollArea;
    prefGroupScrollArea->setWidgetResizable(true);
    prefGroupScrollArea->setWidget(prefGroup);
+   prefGroupScrollArea->setMinimumWidth(prefGroup->sizeHint().width());
 
    tabWidget->addTab(viewerGroupScrollArea, tr("View"));
    tabWidget->addTab(prefGroupScrollArea, tr("Prefs"));
