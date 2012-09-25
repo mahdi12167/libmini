@@ -183,7 +183,7 @@ BOOLINT Object_image::initGFX()
       mininode_root *root=image_viewer->getRoot();
 
       if (image_groupnode==NULL)
-         image_groupnode=root->append_child(new mininode_group())->
+         image_groupnode=root->append_child(new mininode_culling())->
                          append_child(new mininode_color(miniv3d(1,1,1)));
 
       if (deferred_groupnode1==NULL)
@@ -229,6 +229,8 @@ BOOLINT Object_image::initGFX()
             deferred_groupnode2->append_child(image_node);
          else
             deferred_groupnode1->append_child(image_node);
+
+         root->check_dirty();
 
          return(TRUE);
          }
