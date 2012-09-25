@@ -144,7 +144,7 @@ class minikdtree
       {
       double radius=0.0;
 
-      if (bbox) radius = 0.5*(bboxmax-bboxmin).length();
+      if (bbox) radius = 0.5*(bboxmax-bboxmin).getlength();
 
       return(radius);
       }
@@ -423,7 +423,7 @@ class minikdtree
    public:
 
    BOOLINT test(const Vector3D &point, double radius)
-      {return(search(point, radius, root));}
+      {return(test(point, radius, root));}
 
    protected:
 
