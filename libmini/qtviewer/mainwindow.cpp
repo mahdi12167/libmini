@@ -921,18 +921,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
    QWidget::keyReleaseEvent(event);
 }
 
-QSize MyQScrollArea::minimumSizeHint() const
-{
-   QSize size = QScrollArea::minimumSizeHint();
-   size.setHeight(MAIN_TAB_MINHEIGHT);
-   return(size);
-}
-
-QSize MyQScrollArea::sizeHint() const
-{
-   return(minimumSizeHint());
-}
-
 QSize MyQTableWidget::minimumSizeHint() const
 {
    return(QSize(MAIN_TABLE_MINWIDTH, MAIN_TABLE_MINHEIGHT));

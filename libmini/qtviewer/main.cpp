@@ -28,7 +28,7 @@ void errormsg(const char *file,int line,int fatal)
 
 void centerWidgetOnScreen(QWidget *widget)
 {
-   QRect rect = QApplication::desktop()->availableGeometry();
+   QRect rect = QApplication::desktop()->availableGeometry(widget);
    widget->move(rect.center() - widget->rect().center());
 }
 
@@ -52,9 +52,8 @@ int main(int argc, char *argv[])
 
    MainWindow window;
 
-   window.resize(window.sizeHint());
-   centerWidgetOnScreen(&window);
    window.show();
+   centerWidgetOnScreen(&window);
 
    return(app.exec());
 }

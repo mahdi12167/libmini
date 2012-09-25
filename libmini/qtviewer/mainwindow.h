@@ -5,7 +5,6 @@
 
 #include <QtGui/QMainWindow>
 
-#include <QtGui/QScrollArea>
 #include <QtGui/QTableWidget>
 
 #include <mini/mini_generic.h>
@@ -31,7 +30,6 @@ class QDialogButtonBox;
 class QPushButton;
 class QLineEdit;
 
-class MyQScrollArea;
 class MyQTableWidget;
 
 //! qt viewer main window that
@@ -216,20 +214,6 @@ protected:
 
    void keyPressEvent(QKeyEvent *event);
    void keyReleaseEvent(QKeyEvent *event);
-};
-
-// subclass scroll widget
-class MyQScrollArea: public QScrollArea
-{
-   Q_OBJECT
-
-public:
-   MyQScrollArea(QWidget *parent = 0)
-      : QScrollArea(parent)
-   {}
-
-   QSize minimumSizeHint() const;
-   QSize sizeHint() const;
 };
 
 // subclass table widget
