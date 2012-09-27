@@ -628,8 +628,8 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
             else if (TILECACHE->getelevini_coordsys()==databuf::DATABUF_CRS_OGH)
                {
                // get original data coordinates as Gnomonic
-               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_OGH,TILECACHE->getelevini_coordsys_zone(),minicoord::MINICOORD_DATUM_NONE);
-               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_OGH,TILECACHE->getelevini_coordsys_zone(),minicoord::MINICOORD_DATUM_NONE);
+               LPARAMS.offsetDAT=minicoord(miniv3d(TILECACHE->getelevini_centerx(),TILECACHE->getelevini_centery(),0.0),minicoord::MINICOORD_OGH,TILECACHE->getelevini_coordsys_zone(),(minicoord::MINICOORD_DATUM)TILECACHE->getelevini_coordsys_datum());
+               LPARAMS.extentDAT=minicoord(miniv3d(TILECACHE->getelevini_sizex(),TILECACHE->getelevini_sizey(),2.0*LPARAMS.maxelev),minicoord::MINICOORD_OGH,TILECACHE->getelevini_coordsys_zone(),(minicoord::MINICOORD_DATUM)TILECACHE->getelevini_coordsys_datum());
                }
          }
       else
