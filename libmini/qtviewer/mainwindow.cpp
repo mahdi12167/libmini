@@ -436,12 +436,15 @@ void MainWindow::createWidgets()
 
    // button group:
 
+   openButton = new QPushButton(tr("Open"));
    clearButton = new QPushButton(tr("Clear"));
    quitButton = new QPushButton(tr("Quit"));
 
-   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
+   connect(openButton, SIGNAL(pressed()), this, SLOT(open()));
    connect(clearButton, SIGNAL(pressed()), this, SLOT(clear()));
+   connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
 
+   buttonBox->addButton(openButton, QDialogButtonBox::ActionRole);
    buttonBox->addButton(clearButton, QDialogButtonBox::ActionRole);
    buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
