@@ -387,7 +387,7 @@ void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
          case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
          default: ERRORMSG();
          }
-   else if (zone<=-1 && zone>-360*181)
+   else if (zone<=-1 && zone>=-360*181)
       {
       zone=-zone-1;
 
