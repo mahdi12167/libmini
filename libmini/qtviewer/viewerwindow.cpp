@@ -948,7 +948,7 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
 
    if (filename=="")
    {
-      ministrings files = browse("Save", export_path, TRUE);
+      ministrings files = browse(TR("Save"), export_path, TRUE);
       if (files.size()==0) return;
 
       filename = files[0];
@@ -1074,7 +1074,8 @@ ministrings ViewerWindow::browse(ministring title,
    QFileDialog* fd = new QFileDialog(this, title.c_str());
    if (fd == NULL) MEMERROR();
 
-   fd->setFileMode(QFileDialog::ExistingFiles);
+   if (!newfile) fd->setFileMode(QFileDialog::ExistingFiles);
+   else fd->setFileMode(QFileDialog::AnyFile);
    fd->setViewMode(QFileDialog::List);
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
    fd->setFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)"));
