@@ -429,10 +429,13 @@ class minidyna
 
       minidyna<Item,Minsize> sub;
 
-      if (end>=SIZE) end=SIZE-1;
+      if (SIZE>0)
+         {
+         if (end>=SIZE) end=SIZE-1;
 
-      for (i=begin; i<=end; i++)
-         sub.append(get(i));
+         for (i=begin; i<=end; i++)
+            sub.append(get(i));
+         }
 
       return(sub);
       }
