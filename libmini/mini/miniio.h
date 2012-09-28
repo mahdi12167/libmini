@@ -11,6 +11,7 @@ namespace miniio {
 int checkfile(const char *filename);
 
 //! check a file to be absolute or relative
+//!  returns length of absolute path prefix
 int checkfilepath(const char *filename);
 
 //! write a RAW file
