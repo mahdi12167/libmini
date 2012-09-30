@@ -14,6 +14,13 @@
 
 class Viewer;
 
+enum
+   {
+   OBJECTS_SUCCESS=0,
+   OBJECTS_FAILURE=1,
+   OBJECTS_NOT_REFERENCED=2
+   };
+
 //! tileset object
 class Object_tileset: public Object
    {
@@ -26,7 +33,7 @@ class Object_tileset: public Object
 
    virtual ministring get_info();
 
-   virtual BOOLINT initGFX();
+   virtual int initGFX();
    virtual void exitGFX();
 
    virtual void show(BOOLINT yes=TRUE);
@@ -55,7 +62,7 @@ class Object_image: public Object
    virtual ministring get_info();
    virtual ministring get_data_info();
 
-   virtual BOOLINT initGFX();
+   virtual int initGFX();
    virtual void exitGFX();
 
    virtual void show(BOOLINT yes=TRUE);

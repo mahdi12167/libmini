@@ -6,6 +6,12 @@
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
 
+enum
+   {
+   OBJECT_SUCCESS=0,
+   OBJECT_FAILURE=1
+   };
+
 //! object (base class)
 class Object
    {
@@ -68,7 +74,7 @@ class Object
    virtual ministring get_info();
 
    //! abstract method to be called upon construction of graphic representation
-   virtual BOOLINT initGFX() = 0;
+   virtual int initGFX() = 0;
 
    //! abstract method to be called upon destruction of graphic representation
    virtual void exitGFX() = 0;

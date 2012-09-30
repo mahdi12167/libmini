@@ -45,7 +45,7 @@ ministring Object_tileset::get_info()
    return(info);
    }
 
-BOOLINT Object_tileset::initGFX()
+int Object_tileset::initGFX()
    {
    if (tileset_viewer!=NULL)
       if (tileset_layer==NULL)
@@ -60,11 +60,11 @@ BOOLINT Object_tileset::initGFX()
 
             set_center(center,r);
 
-            return(TRUE);
+            return(OBJECTS_SUCCESS);
             }
          }
 
-   return(FALSE);
+   return(OBJECTS_FAILURE);
    }
 
 void Object_tileset::exitGFX()
@@ -176,8 +176,10 @@ ministring Object_image::get_data_info()
    return(info);
    }
 
-BOOLINT Object_image::initGFX()
+int Object_image::initGFX()
    {
+   int errorcode=OBJECTS_FAILURE;
+
    if (image_viewer!=NULL)
       {
       mininode_root *root=image_viewer->getRoot();
@@ -203,6 +205,8 @@ BOOLINT Object_image::initGFX()
       // check for valid input layer
       if (layer!=NULL)
          {
+         errorcode=OBJECTS_SUCCESS;
+
          is_imagery_resp_elevation=layer->is_imagery();
 
          // check for valid geo-reference
@@ -210,6 +214,7 @@ BOOLINT Object_image::initGFX()
             {
             // put invalid layer at the north pole
             layer->set_extent(80,360*minirand(),1);
+            errorcode=OBJECTS_NOT_REFERENCED;
             }
 
          extent=layer->get_extent();
@@ -231,12 +236,10 @@ BOOLINT Object_image::initGFX()
             deferred_groupnode1->append_child(image_node);
 
          root->check_dirty();
-
-         return(TRUE);
          }
       }
 
-   return(FALSE);
+   return(errorcode);
    }
 
 void Object_image::exitGFX()

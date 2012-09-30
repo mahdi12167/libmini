@@ -11,21 +11,29 @@ Objects::~Objects()
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
+   int errorcode;
+
    MINILOG("adding object with key=" + key + " and tag=" + tag);
 
    if (minikeyval<Object *>::add(key,obj,tag))
-      if (obj->initGFX())
+      {
+      errorcode=obj->initGFX();
+
+      if (errorcode==OBJECTS_SUCCESS)
          {
          MINILOG((ministring)" object extent: " + obj->get_center());
          MINILOG((ministring)" object size: " + obj->get_radius());
 
          return(TRUE);
          }
+      else if (errorcode==OBJECTS_NOT_REFERENCED)
+         MINILOG((ministring)" object is not geo-referenced");
       else
-      {
+         {
          minikeyval<Object *>::remove(key);
 
          MINILOG((ministring)" object failed to initialize");
+         }
       }
    else
       MINILOG((ministring)" object failed to be added");
@@ -35,18 +43,30 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
 
 BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {
+   int errorcode;
+
    MINILOG("adding object with key=" + key + " and tags=" + tags.to_string());
 
    if (minikeyval<Object *>::add(key,obj,tags))
-      if (obj->initGFX())
+      {
+      errorcode=obj->initGFX();
+
+      if (errorcode==OBJECTS_SUCCESS)
          {
          MINILOG((ministring)" object extent: " + obj->get_center());
          MINILOG((ministring)" object size: " + obj->get_radius());
 
          return(TRUE);
          }
+      else if (errorcode==OBJECTS_NOT_REFERENCED)
+         MINILOG((ministring)" object is not geo-referenced");
       else
+         {
+         minikeyval<Object *>::remove(key);
+
          MINILOG((ministring)" object failed to initialize");
+         }
+      }
    else
       MINILOG((ministring)" object failed to be added");
 

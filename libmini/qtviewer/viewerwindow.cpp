@@ -1199,12 +1199,16 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
    }
    else if (job=="cropper")
    {
-      if (errorcode == 2) notify(TR("Not cropped: file already exists"));
-      else notify(TR("Cropping failed"));
+      if (errorcode == GRID_WORKERS_FILE_EXISTS)
+         notify(TR("Not cropped: file already exists"));
+      else
+         notify(TR("Cropping failed"));
    }
    else if (job=="save")
    {
-      if (errorcode == 2) notify(TR("Not saved: file already exists"));
-      else notify(TR("Saving failed"));
+      if (errorcode == GRID_WORKERS_FILE_EXISTS)
+         notify(TR("Not saved: file already exists"));
+      else
+         notify(TR("Saving failed"));
    }
 }
