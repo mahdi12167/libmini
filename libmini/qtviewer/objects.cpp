@@ -60,11 +60,11 @@ int Object_tileset::initGFX()
 
             set_center(center,r);
 
-            return(OBJECTS_SUCCESS);
+            return(OBJECT_SUCCESS);
             }
          }
 
-   return(OBJECTS_FAILURE);
+   return(OBJECT_FAILURE);
    }
 
 void Object_tileset::exitGFX()
@@ -178,7 +178,7 @@ ministring Object_image::get_data_info()
 
 int Object_image::initGFX()
    {
-   int errorcode=OBJECTS_FAILURE;
+   int errorcode=OBJECT_FAILURE;
 
    if (image_viewer!=NULL)
       {
@@ -205,7 +205,7 @@ int Object_image::initGFX()
       // check for valid input layer
       if (layer!=NULL)
          {
-         errorcode=OBJECTS_SUCCESS;
+         errorcode=OBJECT_SUCCESS;
 
          is_imagery_resp_elevation=layer->is_imagery();
 
@@ -214,7 +214,7 @@ int Object_image::initGFX()
             {
             // put invalid layer at the north pole
             layer->set_extent(80,360*minirand(),1);
-            errorcode=OBJECTS_NOT_REFERENCED;
+            errorcode=OBJECT_NOT_REFERENCED;
             }
 
          extent=layer->get_extent();

@@ -6,12 +6,6 @@
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
 
-enum
-   {
-   OBJECT_SUCCESS=0,
-   OBJECT_FAILURE=1
-   };
-
 //! object (base class)
 class Object
    {

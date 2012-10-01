@@ -9,9 +9,9 @@ Objects::Objects()
 Objects::~Objects()
    {}
 
-BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
+int Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
-   int errorcode;
+   int errorcode=OBJECT_FAILURE;
 
    MINILOG("adding object with key=" + key + " and tag=" + tag);
 
@@ -19,14 +19,12 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
       {
       errorcode=obj->initGFX();
 
-      if (errorcode==OBJECTS_SUCCESS)
+      if (errorcode==OBJECT_SUCCESS)
          {
          MINILOG((ministring)" object extent: " + obj->get_center());
          MINILOG((ministring)" object size: " + obj->get_radius());
-
-         return(TRUE);
          }
-      else if (errorcode==OBJECTS_NOT_REFERENCED)
+      else if (errorcode==OBJECT_NOT_REFERENCED)
          MINILOG((ministring)" object is not geo-referenced");
       else
          {
@@ -38,12 +36,12 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministring &tag)
    else
       MINILOG((ministring)" object failed to be added");
 
-   return(FALSE);
+   return(errorcode);
    }
 
-BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
+int Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    {
-   int errorcode;
+   int errorcode=OBJECT_FAILURE;
 
    MINILOG("adding object with key=" + key + " and tags=" + tags.to_string());
 
@@ -51,14 +49,12 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
       {
       errorcode=obj->initGFX();
 
-      if (errorcode==OBJECTS_SUCCESS)
+      if (errorcode==OBJECT_SUCCESS)
          {
          MINILOG((ministring)" object extent: " + obj->get_center());
          MINILOG((ministring)" object size: " + obj->get_radius());
-
-         return(TRUE);
          }
-      else if (errorcode==OBJECTS_NOT_REFERENCED)
+      else if (errorcode==OBJECT_NOT_REFERENCED)
          MINILOG((ministring)" object is not geo-referenced");
       else
          {
@@ -70,7 +66,7 @@ BOOLINT Objects::add(const ministring &key,Object *obj,const ministrings &tags)
    else
       MINILOG((ministring)" object failed to be added");
 
-   return(FALSE);
+   return(errorcode);
    }
 
 unsigned int Objects::get_num() const

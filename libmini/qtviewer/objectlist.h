@@ -19,8 +19,8 @@ class Objects: public minikeyval<Object *>
    //! default destructor
    ~Objects();
 
-   BOOLINT add(const ministring &key,Object *obj,const ministring &tag);
-   BOOLINT add(const ministring &key,Object *obj,const ministrings &tags);
+   int add(const ministring &key,Object *obj,const ministring &tag);
+   int add(const ministring &key,Object *obj,const ministrings &tags);
    unsigned int get_num() const;
    Object *get(unsigned int i);
    Object *get(const ministring &key);

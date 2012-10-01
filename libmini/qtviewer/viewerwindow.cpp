@@ -319,6 +319,8 @@ void ViewerWindow::loadURLs(ministrings urls)
 
 void ViewerWindow::loadMap(ministring url)
 {
+   int errorcode;
+
    url = Object::normalize_file(url);
 
    if (!Object::is_absolute_path(url))
@@ -336,7 +338,9 @@ void ViewerWindow::loadMap(ministring url)
    Object_tileset *tileset = new Object_tileset(url, repository_path, viewer);
    if (tileset == NULL) MEMERROR();
 
-   if (!addObject(url, tileset, "tileset"))
+   errorcode = addObject(url, tileset, "tileset");
+
+   if (errorcode!=OBJECT_SUCCESS)
    {
       delete tileset;
 
@@ -351,6 +355,8 @@ void ViewerWindow::clearMaps()
 
 void ViewerWindow::loadImage(ministring url)
 {
+   int errorcode;
+
    url = Object::normalize_file(url);
 
    if (!Object::is_absolute_path(url))
@@ -360,13 +366,9 @@ void ViewerWindow::loadImage(ministring url)
 
    if (image == NULL) MEMERROR();
 
-   if (!addObject(url, image, "image"))
-   {
-      delete image;
+   errorcode = addObject(url, image, "image");
 
-      notify(TR("Unable to load image from url=")+url);
-   }
-   else
+   if (errorcode!=OBJECT_FAILURE)
    {
       if (image->is_imagery())
          addTag(url, "imagery");
@@ -381,6 +383,18 @@ void ViewerWindow::loadImage(ministring url)
       job->append(image->get_full_name());
       worker->run_job(job);
    }
+   else
+   {
+      delete image;
+
+      notify(TR("Unable to load image from url=")+url+"\n\n"+
+             "Standard file format ist GeoTiff.");
+   }
+
+   if (errorcode==OBJECT_NOT_REFERENCED)
+      notify(TR("Image is not geo-referenced")+"\n\n"+
+             "Please use the GDAL gdalwarp utility to reproject the image into a standard coordinate reference system.\n"
+             "Standard coordinate reference systems (CRS) are Lat/Lon, UTM and Mercator.");
 }
 
 void ViewerWindow::clearImages()
@@ -388,15 +402,16 @@ void ViewerWindow::clearImages()
    removeObjects(listObjects("image"));
 }
 
-BOOLINT ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
+int ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
 {
-   if (objects.add(key, obj, tag))
-   {
-      emit changed(key);
-      return(TRUE);
-   }
+   int errorcode;
 
-   return(FALSE);
+   errorcode = objects.add(key, obj, tag);
+
+   if (errorcode!=OBJECT_FAILURE)
+      emit changed(key);
+
+   return(errorcode);
 }
 
 Object *ViewerWindow::getObject(ministring key)
@@ -1199,14 +1214,14 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
    }
    else if (job=="cropper")
    {
-      if (errorcode == GRID_WORKERS_FILE_EXISTS)
+      if (errorcode == GRID_WORKER_FILE_EXISTS)
          notify(TR("Not cropped: file already exists"));
       else
          notify(TR("Cropping failed"));
    }
    else if (job=="save")
    {
-      if (errorcode == GRID_WORKERS_FILE_EXISTS)
+      if (errorcode == GRID_WORKER_FILE_EXISTS)
          notify(TR("Not saved: file already exists"));
       else
          notify(TR("Saving failed"));

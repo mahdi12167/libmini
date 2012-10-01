@@ -16,9 +16,9 @@ class Viewer;
 
 enum
    {
-   OBJECTS_SUCCESS=0,
-   OBJECTS_FAILURE=1,
-   OBJECTS_NOT_REFERENCED=2
+   OBJECT_SUCCESS=0,
+   OBJECT_FAILURE=1,
+   OBJECT_NOT_REFERENCED=2
    };
 
 //! tileset object

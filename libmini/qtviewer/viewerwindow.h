@@ -58,7 +58,7 @@ public:
    void loadImage(ministring url);
    void clearImages();
 
-   BOOLINT addObject(ministring key, Object *obj, ministring tag);
+   int addObject(ministring key, Object *obj, ministring tag);
    Object *getObject(ministring key);
    ministrings *getTags(ministring key);
    void addTag(ministring key, ministring tag);
