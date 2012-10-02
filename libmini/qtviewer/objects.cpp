@@ -209,6 +209,9 @@ int Object_image::initGFX()
 
          is_imagery_resp_elevation=layer->is_imagery();
 
+         // obesity check
+         if (layer->get_estimated_mem()>1024) errorcode=OBJECT_TOO_LARGE;
+
          // check for valid geo-reference
          if (!layer->get_extent().is_georeferenced())
             {

@@ -368,7 +368,8 @@ void ViewerWindow::loadImage(ministring url)
 
    errorcode = addObject(url, image, "image");
 
-   if (errorcode!=OBJECT_FAILURE)
+   if (errorcode==OBJECT_SUCCESS ||
+       errorcode==OBJECT_NOT_REFERENCED)
    {
       if (image->is_imagery())
          addTag(url, "imagery");
@@ -392,9 +393,13 @@ void ViewerWindow::loadImage(ministring url)
    }
 
    if (errorcode==OBJECT_NOT_REFERENCED)
-      notify(TR("Image is not geo-referenced")+"\n\n"+
-             "Please use the GDAL gdalwarp utility to reproject the image into a standard coordinate reference system.\n"
+      notify(TR("Unable to geo-reference the image properly")+"\n\n"+
+             "Please use the gdalwarp utility from gdal.org to reproject the image into a standard coordinate reference system.\n"
              "Standard coordinate reference systems (CRS) are Lat/Lon, UTM and Mercator.");
+   else if (errorcode==OBJECT_TOO_LARGE)
+      notify(TR("Unable to handle an image of that size")+"\n\n"+
+             "Please use the gdal_translate utility from gdal.org to partition the image into smaller tiles.\n"
+             "A handable image has to be smaller than 1GB in size.");
 }
 
 void ViewerWindow::clearImages()

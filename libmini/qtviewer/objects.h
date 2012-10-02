@@ -18,7 +18,8 @@ enum
    {
    OBJECT_SUCCESS=0,
    OBJECT_FAILURE=1,
-   OBJECT_NOT_REFERENCED=2
+   OBJECT_NOT_REFERENCED=2,
+   OBJECT_TOO_LARGE=3
    };
 
 //! tileset object
