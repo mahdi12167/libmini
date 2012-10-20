@@ -124,15 +124,19 @@ class databuf
    int missing() const {return(data==NULL || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0);}
 
    //! allocate a new memory chunk (and initialize with zero)
-   void alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
+   void alloc(unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! set data to memory chunk
    void set(void *chunk,unsigned int length,
-            unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
+            unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
+
+   //! set data to contain implicit program
+   void set_implicit(char *prog,
+                     unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1);
 
    //! copy data from memory chunk
    void copy(const void *chunk,unsigned int length,
-             unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
+             unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from buffer
    void copy(const databuf *buf);
