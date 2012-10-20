@@ -172,10 +172,10 @@ void databuf::set(void *chunk,unsigned int length,
    }
 
 // set data to contain implicit program
-void databuf::set_implicit(char *prog,
+void databuf::set_implicit(const char *prog,
                            unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts)
    {
-   set(prog,strlen(prog),xs,ys,zs,ts);
+   set((void *)prog,strlen(prog),xs,ys,zs,ts);
    implformat=1;
    }
 
