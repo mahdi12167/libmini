@@ -83,7 +83,7 @@ class Object_image: public Object
    grid_extent get_extent() const
       {return(extent);}
 
-   //! get grid-centered extents of image
+   //! get grid-centered extents
    grid_extent get_grid_extent() const
       {return(extent_grid);}
 
@@ -106,6 +106,42 @@ class Object_image: public Object
    static mininode *image_groupnode;
    static mininode *deferred_groupnode1;
    static mininode *deferred_groupnode2;
+
+   BOOLINT shown;
+   };
+
+//! extent object
+class Object_extent: public Object
+   {
+   public:
+
+   Object_extent(const grid_extent &extent,
+                 Viewer *viewer=NULL);
+
+   virtual ~Object_extent();
+
+   virtual ministring get_info();
+
+   virtual int initGFX();
+   virtual void exitGFX();
+
+   virtual void show(BOOLINT yes=TRUE);
+   virtual BOOLINT is_shown() const;
+
+   virtual void focus();
+
+   //! get grid-centered extents of image
+   grid_extent get_extent() const
+      {return(extent);}
+
+   protected:
+
+   grid_extent extent;
+
+   Viewer *extent_viewer;
+   mininode_geometry *extent_node;
+
+   static mininode *extent_groupnode;
 
    BOOLINT shown;
    };

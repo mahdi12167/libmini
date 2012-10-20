@@ -290,3 +290,102 @@ void Object_image::set_thumb(const databuf *buf)
 
    image_viewer->getCamera()->startIdling();
    }
+
+// Object_extent:
+
+mininode *Object_extent::extent_groupnode=NULL;
+
+Object_extent::Object_extent(const grid_extent &extent,
+                             Viewer *viewer)
+   : Object()
+   {
+   this->extent=extent;
+
+   extent_viewer=viewer;
+   extent_node=NULL;
+
+   shown=TRUE;
+   }
+
+Object_extent::~Object_extent()
+   {}
+
+ministring Object_extent::get_info()
+   {
+   ministring info;
+
+   info = ministring("Extent")+
+          "\n\ncrs = "+extent.get_center().getcrs()+"\n"+
+          "datum = "+extent.get_center().getdatum()+"\n\n"+
+          "extent = "+extent;
+
+   return(info);
+   }
+
+int Object_extent::initGFX()
+   {
+   int errorcode=OBJECT_FAILURE;
+
+   if (extent_viewer!=NULL)
+      {
+      mininode_root *root=extent_viewer->getRoot();
+
+      if (extent_groupnode==NULL)
+         {
+         mininode_texture2D *tex2d_node=new mininode_texture2D;
+         if (tex2d_node==NULL) MEMERROR();
+
+         databuf buf;
+         const char *prog="main(par x, par y, par z, par t) {return(1, 1, 1);}";
+         buf.set_implicit(prog,256,256);
+         tex2d_node->load(&buf);
+
+         extent_groupnode=root->append_child(new mininode_culling())->
+                          append_child(new mininode_color(miniv3d(1,0,0)))->
+                          append_child(tex2d_node);
+         }
+
+      set_center(extent.get_center(),extent.get_size());
+
+      extent_node=new node_grid_extent(extent);
+      if (extent_node==NULL) MEMERROR();
+
+      extent_groupnode->append_child(extent_node);
+
+      root->check_dirty();
+
+      errorcode=OBJECT_SUCCESS;
+      }
+
+   return(errorcode);
+   }
+
+void Object_extent::exitGFX()
+   {
+   if (extent_viewer!=NULL)
+      {
+      extent_viewer->getRoot()->remove_node(extent_node);
+      extent_viewer->getCamera()->startIdling();
+      }
+   }
+
+void Object_extent::show(BOOLINT yes)
+   {
+   shown=yes;
+
+   if (extent_viewer!=NULL)
+      if (extent_node!=NULL)
+         {
+         extent_node->show(yes);
+         extent_viewer->getCamera()->startIdling();
+         }
+   }
+
+BOOLINT Object_extent::is_shown() const
+   {return(shown);}
+
+void Object_extent::focus()
+   {
+   if (extent_viewer!=NULL)
+      extent_viewer->getCamera()->focusOnObject(this);
+   }
