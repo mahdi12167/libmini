@@ -981,6 +981,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *hideAction = new QAction(tr("hide layer"), this);
     myMenu.addAction(hideAction);
     myMenu.addSeparator();
+    QAction *createAction = new QAction(tr("create extent"), this);
+    myMenu.addAction(createAction);
     QAction *shadeAction = new QAction(tr("shade layer"), this);
     myMenu.addAction(shadeAction);
     QAction *resampleAction = new QAction(tr("resample area to tileset"), this);
@@ -1038,8 +1040,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("show", row));
        else if (selectedAction == hideAction)
           emit(activate("hide", row));
+       else if (selectedAction == createAction)
+          emit(activate("create_extent", row));
        else if (selectedAction == shadeAction)
-          emit(activate("shade", row));
+          emit(activate("shade_elevation", row));
        else if (selectedAction == resampleAction)
           emit(activate("resample", row));
        else if (selectedAction == resampleSelAction)

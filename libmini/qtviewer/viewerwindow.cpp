@@ -715,7 +715,7 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
-   else if (action == "shade")
+   else if (action == "shade_elevation")
    {
       if (value != "")
          shade_elevation(value);
