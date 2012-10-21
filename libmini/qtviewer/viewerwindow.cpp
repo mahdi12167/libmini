@@ -31,11 +31,11 @@ ViewerWindow::ViewerWindow()
 
    // init viewer
    viewer = new Renderer(this);
-   if (viewer==NULL) MEMERROR();
+   if (viewer == NULL) MEMERROR();
 
    // init worker
    worker = new WorkerThread;
-   if (worker==NULL) MEMERROR();
+   if (worker == NULL) MEMERROR();
 
    // setup queued worker connection
    qRegisterMetaType<ministring>("ministring");
@@ -61,10 +61,10 @@ ViewerWindow::ViewerWindow()
 
 ViewerWindow::~ViewerWindow()
 {
-   if (worker!=NULL)
+   if (worker != NULL)
       delete worker;
 
-   if (viewer!=NULL)
+   if (viewer != NULL)
       delete viewer;
 }
 
@@ -340,7 +340,7 @@ void ViewerWindow::loadMap(ministring url)
 
    errorcode = addObject(url, tileset, "tileset");
 
-   if (errorcode!=OBJECT_SUCCESS)
+   if (errorcode != OBJECT_SUCCESS)
    {
       delete tileset;
 
@@ -368,8 +368,8 @@ void ViewerWindow::loadImage(ministring url)
 
    errorcode = addObject(url, image, "image");
 
-   if (errorcode==OBJECT_SUCCESS ||
-       errorcode==OBJECT_NOT_REFERENCED)
+   if (errorcode == OBJECT_SUCCESS ||
+       errorcode == OBJECT_NOT_REFERENCED)
    {
       if (image->is_imagery())
          addTag(url, "imagery");
@@ -392,11 +392,11 @@ void ViewerWindow::loadImage(ministring url)
              "Standard file format ist GeoTiff.");
    }
 
-   if (errorcode==OBJECT_NOT_REFERENCED)
+   if (errorcode == OBJECT_NOT_REFERENCED)
       notify(TR("Unable to geo-reference the image properly")+"\n\n"+
              "Please use the gdalwarp utility from gdal.org to reproject the image into a standard coordinate reference system.\n"
              "Standard coordinate reference systems (CRS) are Lat/Lon, UTM and Mercator.");
-   else if (errorcode==OBJECT_TOO_LARGE)
+   else if (errorcode == OBJECT_TOO_LARGE)
       notify(TR("Unable to handle an image of that size")+"\n\n"+
              "Please use the gdal_translate utility from gdal.org to partition the image into smaller tiles.\n"
              "A handable image has to be smaller than 1GB in size.");
@@ -413,7 +413,7 @@ int ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
 
    errorcode = objects.add(key, obj, tag);
 
-   if (errorcode!=OBJECT_FAILURE)
+   if (errorcode != OBJECT_FAILURE)
       emit changed(key);
 
    return(errorcode);
@@ -468,7 +468,7 @@ void ViewerWindow::gotoObject(ministring key)
 {
    Object *obj=objects.get(key);
 
-   if (obj!=NULL) obj->focus();
+   if (obj != NULL) obj->focus();
 }
 
 void ViewerWindow::removeObject(ministring key)
@@ -624,26 +624,26 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "info")
    {
-      Object *obj=getObject(value);
+      Object *obj = getObject(value);
       if (obj) notify(obj->get_info());
    }
    else if (action == "show")
    {
-      Object *obj=getObject(value);
+      Object *obj = getObject(value);
       if (obj) obj->show();
 
       removeTag(value, "hidden");
    }
    else if (action == "hide")
    {
-      Object *obj=getObject(value);
+      Object *obj = getObject(value);
       if (obj) obj->show(FALSE);
 
       addTag(value, "hidden");
    }
    else if (action == "toggle")
    {
-      Object *obj=getObject(value);
+      Object *obj = getObject(value);
       if (obj)
          if (obj->is_shown())
          {
@@ -708,9 +708,19 @@ void ViewerWindow::runAction(ministring action,
                   getObject(keys[i])->show(FALSE);
                }
    }
+   else if (action == "create_extent")
+   {
+      if (value != "")
+         create_extent(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "shade")
    {
-      shade(value);
+      if (value != "")
+         shade_elevation(value);
+      else
+         notify(TR("Operation requires a layer"));
    }
    else if (action == "resample")
    {
@@ -821,13 +831,41 @@ void ViewerWindow::runAction(ministring action,
    }
 }
 
-void ViewerWindow::shade(ministring key)
+void ViewerWindow::create_extent(ministring key)
 {
-   Object *obj=getObject(key);
-   if (obj!=NULL)
+   int errorcode = OBJECT_FAILURE;
+
+   if (hasTag(key, "image"))
    {
-      Object_image *image=dynamic_cast<Object_image *>(obj);
-      if (image!=NULL)
+      Object *obj = getObject(key);
+      if (obj != NULL)
+      {
+         Object_image *image = dynamic_cast<Object_image *>(obj);
+         if (image != NULL)
+         {
+            grid_extent ext = image->get_grid_extent();
+            Object_extent *obj_ext = new Object_extent(ext, viewer);
+            if (obj_ext == NULL) MEMERROR();
+
+            errorcode = addObject("", obj_ext, "extent");
+
+            if (errorcode != OBJECT_SUCCESS)
+               delete obj_ext;
+         }
+      }
+   }
+
+   if (errorcode != OBJECT_SUCCESS)
+      notify(TR("Unable to create extent from object"));
+}
+
+void ViewerWindow::shade_elevation(ministring key)
+{
+   Object *obj = getObject(key);
+   if (obj != NULL)
+   {
+      Object_image *image = dynamic_cast<Object_image *>(obj);
+      if (image != NULL)
          if (!image->is_elevation())
             notify(TR("Shading requires an elevation layer"));
          else
@@ -851,11 +889,11 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 
    for (i=0; i<keys.size(); i++)
    {
-      Object *obj=getObject(keys[i]);
-      if (obj!=NULL)
+      Object *obj = getObject(keys[i]);
+      if (obj != NULL)
       {
-         Object_image *image=dynamic_cast<Object_image *>(obj);
-         if (image!=NULL)
+         Object_image *image = dynamic_cast<Object_image *>(obj);
+         if (image != NULL)
          {
             if (image->is_elevation()) elev++;
             if (image->is_imagery()) imag++;
@@ -888,7 +926,7 @@ void ViewerWindow::resample_list(ministrings keys,
 
    if (!check_list(keys)) return;
 
-   if (getObject(crop_key)!=NULL)
+   if (getObject(crop_key) != NULL)
       crop_name = getObject(crop_key)->get_full_name();
 
    ResampleJob *job = new ResampleJob("", export_path,
@@ -911,11 +949,11 @@ void ViewerWindow::crop_list(ministrings keys,
 {
    unsigned int i;
 
-   Object *obj=getObject(crop_key);
-   if (obj!=NULL)
+   Object *obj = getObject(crop_key);
+   if (obj != NULL)
    {
-      Object_image *image=dynamic_cast<Object_image *>(obj);
-      if (image!=NULL)
+      Object_image *image = dynamic_cast<Object_image *>(obj);
+      if (image != NULL)
       {
          ministring output = CropJob::make_name(repository_path,
                                                 image->get_relative_name(),
@@ -1160,10 +1198,10 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
 
          // add thumb to scene graph
          Object *obj = getObject(args[i]);
-         if (obj!=NULL)
+         if (obj != NULL)
          {
             Object_image *image = dynamic_cast<Object_image *>(obj);
-            if (image!=NULL) image->set_thumb(&buf);
+            if (image != NULL) image->set_thumb(&buf);
          }
 
          // release thumb data
