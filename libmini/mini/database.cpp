@@ -176,10 +176,7 @@ void databuf::set(void *chunk,unsigned int length,
 // set data to contain implicit program
 void databuf::set_implicit(const char *prog,
                            unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts)
-   {
-   set((void *)prog,strlen(prog),xs,ys,zs,ts);
-   implformat=1;
-   }
+   {set((void *)prog,strlen(prog),xs,ys,zs,ts,DATABUF_TYPE_BYTE,1);}
 
 // copy data from memory chunk
 void databuf::copy(const void *chunk,unsigned int length,
