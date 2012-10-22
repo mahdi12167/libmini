@@ -131,7 +131,8 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
 
 // set data to memory chunk
 void databuf::set(void *chunk,unsigned int length,
-                  unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
+                  unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty,
+                  unsigned int implicit)
    {
    unsigned int bs;
 
@@ -155,6 +156,7 @@ void databuf::set(void *chunk,unsigned int length,
    if (ty==DATABUF_TYPE_RGB_S3TC || ty==DATABUF_TYPE_RGBA_S3TC) bs=length;
    if (ty==DATABUF_TYPE_RGB_MM || ty==DATABUF_TYPE_RGBA_MM) bs=length;
    if (ty==DATABUF_TYPE_RGB_MM_S3TC || ty==DATABUF_TYPE_RGBA_MM_S3TC) bs=length;
+   if (implicit!=0) bs=length;
 
    if (length!=bs) ERRORMSG();
 
@@ -162,7 +164,7 @@ void databuf::set(void *chunk,unsigned int length,
    bytes=bs;
 
    extformat=DATABUF_EXTFMT_PLAIN;
-   implformat=0;
+   implformat=implicit;
 
    xsize=xs;
    ysize=ys;
