@@ -324,6 +324,20 @@ ministring Object_extent::get_info()
 
 int Object_extent::initGFX()
    {
+   static const char *prog="\
+      func checker(par x, par y, par n)\
+         {\
+         n = n-0.001;\
+         return(((x*n)%2<1) ^ ((y*n)%2<1));\
+         }\
+      main(par x, par y, par z, par t)\
+         {\
+         var b = 0.025;\
+         var v = checker(x, y, 64);\
+         if (x<-0.5+b | x>0.5-b | y<-0.5+b | y>0.5-b) v=1;\
+         return(v);\
+         }";
+
    int errorcode=OBJECT_FAILURE;
 
    if (extent_viewer!=NULL)
@@ -336,7 +350,6 @@ int Object_extent::initGFX()
          if (tex2d_node==NULL) MEMERROR();
 
          databuf buf;
-         const char *prog="main(par x, par y, par z, par t) {return(1, 1, 1);}";
          buf.set_implicit(prog,256,256);
          tex2d_node->load(&buf);
 

@@ -851,6 +851,8 @@ void ViewerWindow::create_extent(ministring key)
 
             if (errorcode != OBJECT_SUCCESS)
                delete obj_ext;
+            else
+               obj_ext->focus();
          }
       }
    }
