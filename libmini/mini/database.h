@@ -439,7 +439,7 @@ class databuf
    char *readoneline(FILE *file);
 
    void convertchunk(int israw,unsigned int extfmt);
-   void interpretechunk(unsigned int implfmt,const char *path);
+   void interpretechunk(unsigned int implfmt,const char *path="");
 
    void autocompress_mipmaps(int isrgbadata,unsigned char **s3tcdata,unsigned int *s3tcbytes);
 
