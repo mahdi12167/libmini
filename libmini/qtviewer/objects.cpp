@@ -351,6 +351,8 @@ int Object_extent::initGFX()
 
          databuf buf;
          buf.set_implicit(prog,256,256);
+         buf.convertdata(databuf::DATABUF_TYPE_RGB);
+         buf.automipmap();
          tex2d_node->load(&buf);
 
          extent_groupnode=root->append_child(new mininode_culling())->
