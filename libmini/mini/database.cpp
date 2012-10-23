@@ -180,7 +180,7 @@ void databuf::set_implicit(const char *prog,
    {
    static datacalc calc;
 
-   set((void *)prog,strlen(prog),xs,ys,zs,ts,DATABUF_TYPE_BYTE,1);
+   set(strdup(prog),strlen(prog),xs,ys,zs,ts,DATABUF_TYPE_BYTE,1);
 
    if (check_interpreter()==0) calc.doregister();
    interpretechunk(implformat);
