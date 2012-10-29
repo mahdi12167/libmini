@@ -133,7 +133,7 @@ class databuf
 
    //! set data to contain implicit program
    void set_implicit(const char *prog,
-                     unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1);
+                     unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from memory chunk
    void copy(const void *chunk,unsigned int length,

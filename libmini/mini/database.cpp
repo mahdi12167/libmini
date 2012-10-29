@@ -161,6 +161,10 @@ void databuf::set(void *chunk,unsigned int length,
 
    if (length!=bs) ERRORMSG();
 
+   if (implicit!=0)
+      if (ty!=DATABUF_TYPE_BYTE && ty!=DATABUF_TYPE_SHORT && ty!=DATABUF_TYPE_FLOAT &&
+          ty!=DATABUF_TYPE_RGB && ty!=DATABUF_TYPE_RGBA) ERRORMSG();
+
    data=chunk;
    bytes=bs;
 
@@ -176,11 +180,11 @@ void databuf::set(void *chunk,unsigned int length,
 
 // set data to contain implicit program
 void databuf::set_implicit(const char *prog,
-                           unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts)
+                           unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
    {
    static datacalc calc;
 
-   set(strdup(prog),strlen(prog),xs,ys,zs,ts,DATABUF_TYPE_BYTE,1);
+   set(strdup(prog),strlen(prog),xs,ys,zs,ts,ty,1);
 
    if (check_interpreter()==0) calc.doregister();
    interpretechunk(implformat);
