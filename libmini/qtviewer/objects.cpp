@@ -334,8 +334,10 @@ int Object_extent::initGFX()
          {\
          var b = 0.025;\
          var v = checker(x, y, 64);\
-         if (x<-0.5+b | x>0.5-b | y<-0.5+b | y>0.5-b) v=1;\
-         return(v);\
+         var a = 1;\
+         if (x<-0.5+b | x>0.5-b | y<-0.5+b | y>0.5-b) v = 1;\
+         else a = 0.1;\
+         return(v, v, v, a);\
          }";
 
    int errorcode=OBJECT_FAILURE;
@@ -350,8 +352,7 @@ int Object_extent::initGFX()
          if (tex2d_node==NULL) MEMERROR();
 
          databuf buf;
-         buf.set_implicit(prog,256,256);
-         buf.convertdata(databuf::DATABUF_TYPE_RGB);
+         buf.set_implicit(prog,256,256,1,1,databuf::DATABUF_TYPE_RGBA);
          buf.automipmap();
          tex2d_node->load(&buf);
 
