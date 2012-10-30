@@ -847,7 +847,11 @@ void ViewerWindow::create_extent(ministring key)
             Object_extent *obj_ext = new Object_extent(ext, viewer);
             if (obj_ext == NULL) MEMERROR();
 
-            errorcode = addObject("", obj_ext, "extent");
+            double rand = minirand();
+            unsigned int serial = dtrc(rand*1E9);
+
+            ministring key_ext = key + "_extent_" + (double)serial; //!!
+            errorcode = addObject(key_ext, obj_ext, "extent");
 
             if (errorcode != OBJECT_SUCCESS)
                delete obj_ext;
