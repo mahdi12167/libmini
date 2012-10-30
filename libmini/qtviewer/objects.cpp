@@ -295,9 +295,10 @@ void Object_image::set_thumb(const databuf *buf)
 
 mininode *Object_extent::extent_groupnode=NULL;
 
-Object_extent::Object_extent(const grid_extent &extent,
+Object_extent::Object_extent(const ministring &name,
+                             const grid_extent &extent,
                              Viewer *viewer)
-   : Object()
+   : Object(name)
    {
    this->extent=extent;
 

@@ -844,13 +844,15 @@ void ViewerWindow::create_extent(ministring key)
          if (image != NULL)
          {
             grid_extent ext = image->get_grid_extent();
-            Object_extent *obj_ext = new Object_extent(ext, viewer);
-            if (obj_ext == NULL) MEMERROR();
 
+            //!! make unique serial
             double rand = minirand();
             unsigned int serial = dtrc(rand*1E9);
 
-            ministring key_ext = key + "_extent_" + (double)serial; //!!
+            ministring key_ext = key + "_extent_" + (double)serial;
+            Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
+            if (obj_ext == NULL) MEMERROR();
+
             errorcode = addObject(key_ext, obj_ext, "extent");
 
             if (errorcode != OBJECT_SUCCESS)

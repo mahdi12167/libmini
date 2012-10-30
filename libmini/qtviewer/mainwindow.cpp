@@ -545,10 +545,19 @@ void MainWindow::getNameInfo(Object *obj,
    if (name.lastIndexOf("/")>=0) name.remove(0,name.lastIndexOf("/")+1);
    if (name.lastIndexOf("\\")>=0) name.remove(0,name.lastIndexOf("\\")+1);
 
+   info="object";
+
    ministrings *tags=viewerWindow->getTags(url);
-   ministring tag=tags?tags->get(0):"object";
-   BOOLINT elevation=tags?tags->has("elevation"):FALSE;
-   info=elevation?"elevation":tag.c_str();
+
+   if (tags)
+   {
+      ministring tag=tags->get(0);
+      if (tags->has("elevation")) tag="elevation";
+      if (tags->has("imagery")) tag="imagery";
+      info=tag.c_str();
+
+      if (tag=="extent") name="movable";
+   }
 }
 
 void MainWindow::updateTable(ministring key)

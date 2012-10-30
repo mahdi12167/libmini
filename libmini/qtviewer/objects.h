@@ -115,7 +115,8 @@ class Object_extent: public Object
    {
    public:
 
-   Object_extent(const grid_extent &extent,
+   Object_extent(const ministring &name,
+                 const grid_extent &extent,
                  Viewer *viewer=NULL);
 
    virtual ~Object_extent();
