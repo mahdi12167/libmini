@@ -42,6 +42,8 @@ class Object_tileset: public Object
 
    virtual void focus();
 
+   grid_extent get_extent();
+
    protected:
 
    Viewer *tileset_viewer;

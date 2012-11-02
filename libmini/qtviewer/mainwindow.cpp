@@ -556,7 +556,11 @@ void MainWindow::getNameInfo(Object *obj,
       if (tags->has("imagery")) tag="imagery";
       info=tag.c_str();
 
-      if (tag=="extent") name="movable";
+      if (tag=="extent")
+      {
+         name="extent";
+         info="movable";
+      }
    }
 }
 

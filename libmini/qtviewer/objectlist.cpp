@@ -9,6 +9,18 @@ Objects::Objects()
 Objects::~Objects()
    {}
 
+unsigned int Objects::key_number=0;
+
+ministring Objects::newkey()
+   {
+   ministring key;
+
+   key="object_";
+   key.append_uint(key_number++);
+
+   return(key);
+   }
+
 int Objects::add(const ministring &key,Object *obj,const ministring &tag)
    {
    int errorcode=OBJECT_FAILURE;

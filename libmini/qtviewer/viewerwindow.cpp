@@ -845,11 +845,30 @@ void ViewerWindow::create_extent(ministring key)
          {
             grid_extent ext = image->get_grid_extent();
 
-            //!! make unique serial
-            double rand = minirand();
-            unsigned int serial = dtrc(rand*1E9);
+            ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
+            Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
+            if (obj_ext == NULL) MEMERROR();
 
-            ministring key_ext = key + "_extent_" + (double)serial;
+            errorcode = addObject(key_ext, obj_ext, "extent");
+
+            if (errorcode != OBJECT_SUCCESS)
+               delete obj_ext;
+            else
+               obj_ext->focus();
+         }
+      }
+   }
+   else if (hasTag(key, "tileset"))
+   {
+      Object *obj = getObject(key);
+      if (obj != NULL)
+      {
+         Object_tileset *tileset = dynamic_cast<Object_tileset *>(obj);
+         if (tileset != NULL)
+         {
+            grid_extent ext = tileset->get_extent();
+
+            ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
             Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
             if (obj_ext == NULL) MEMERROR();
 

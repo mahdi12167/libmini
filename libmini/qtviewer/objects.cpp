@@ -100,6 +100,17 @@ void Object_tileset::focus()
          tileset_viewer->getCamera()->focusOnMap(tileset_layer);
    }
 
+grid_extent Object_tileset::get_extent()
+   {
+   miniv3d ext=tileset_layer->getgeoextent();
+   minicoord center=tileset_layer->getgeocenter();
+
+   grid_extent extent;
+   extent.set(center,ext.x,ext.y);
+
+   return(extent);
+   }
+
 // Object_image:
 
 mininode *Object_image::image_groupnode=NULL;

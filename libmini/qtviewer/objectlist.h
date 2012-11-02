@@ -19,6 +19,7 @@ class Objects: public minikeyval<Object *>
    //! default destructor
    ~Objects();
 
+   static ministring newkey();
    int add(const ministring &key,Object *obj,const ministring &tag);
    int add(const ministring &key,Object *obj,const ministrings &tags);
    unsigned int get_num() const;
@@ -37,6 +38,10 @@ class Objects: public minikeyval<Object *>
    void remove(const ministring &key);
    void remove(const ministrings &keys);
    void clear();
+
+   private:
+
+   static unsigned int key_number;
    };
 
 #endif
