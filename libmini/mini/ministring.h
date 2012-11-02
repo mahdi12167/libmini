@@ -47,7 +47,7 @@ class ministring: public ministring_base
    ministring(double v): ministring_base()
       {
       static const int len=32;
-      char str[len];
+      static char str[len];
 
       if (isNAN(v)) strcpy(str,"NAN");
       else if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
@@ -81,6 +81,28 @@ class ministring: public ministring_base
    //! append floating-point value
    void append(double v)
       {append(ministring(v));}
+
+   //! append integer value
+   void append_int(int v)
+      {
+      static const int len=32;
+      static char str[len];
+
+      snprintf(str,len,"%d",v);
+
+      append(str);
+      }
+
+   //! append unsigned integer value
+   void append_uint(unsigned int v)
+      {
+      static const int len=32;
+      static char str[len];
+
+      snprintf(str,len,"%u",v);
+
+      append(str);
+      }
 
    //! check for existing sub-string and return first occurring index
    BOOLINT find(const ministring_base &sub,unsigned int &idx,
