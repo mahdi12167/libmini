@@ -272,6 +272,12 @@ class minilayer
    //! get center of tileset
    minicoord getcenter();
 
+   //! get geographic extent of tileset
+   miniv3d getgeoextent();
+
+   //! get geographic center of tileset
+   minicoord getgeocenter();
+
    //! get normal of tileset
    miniv3d getnormal();
 

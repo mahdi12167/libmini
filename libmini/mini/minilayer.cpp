@@ -1434,6 +1434,14 @@ miniv3d minilayer::getextent()
 minicoord minilayer::getcenter()
    {return(CENTER);}
 
+// get geographic extent of tileset
+miniv3d minilayer::getgeoextent()
+   {return(miniv3d(LPARAMS.extentDAT));}
+
+// get geographic center of tileset
+minicoord minilayer::getgeocenter()
+   {return(LPARAMS.offsetDAT);}
+
 // get normal of tileset
 miniv3d minilayer::getnormal()
    {return(NORMAL);}
