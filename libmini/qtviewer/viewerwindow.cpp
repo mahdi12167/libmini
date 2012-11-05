@@ -844,10 +844,7 @@ void ViewerWindow::create_extent(ministring key)
       {
          Object_image *image = dynamic_cast<Object_image *>(obj);
          if (image != NULL)
-         {
             ext = image->get_grid_extent();
-            errorcode = OBJECT_SUCCESS;
-         }
       }
    }
    else if (hasTag(key, "tileset"))
@@ -857,10 +854,7 @@ void ViewerWindow::create_extent(ministring key)
       {
          Object_tileset *tileset = dynamic_cast<Object_tileset *>(obj);
          if (tileset != NULL)
-         {
             ext = tileset->get_extent();
-            errorcode = OBJECT_SUCCESS;
-         }
       }
    }
    else if (hasTag(key, "extent"))
@@ -870,14 +864,11 @@ void ViewerWindow::create_extent(ministring key)
       {
          Object_extent *extent = dynamic_cast<Object_extent *>(obj);
          if (extent != NULL)
-         {
             ext = extent->get_extent();
-            errorcode = OBJECT_SUCCESS;
-         }
       }
    }
 
-   if (errorcode == OBJECT_SUCCESS)
+   if (ext.check())
    {
       ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
       Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
@@ -985,35 +976,52 @@ void ViewerWindow::crop_list(ministrings keys,
 {
    unsigned int i;
 
+   grid_extent ext;
+
    Object *obj = getObject(crop_key);
-   if (obj != NULL)
+   if (obj == NULL)
+      notify(TR("Cannot determine crop area"));
+   else
    {
       Object_image *image = dynamic_cast<Object_image *>(obj);
       if (image != NULL)
-      {
-         ministring output = CropJob::make_name(repository_path,
-                                                image->get_relative_name(),
-                                                export_path);
-
-         CropJob *job = new CropJob(repository_path,
-                                    export_path, output,
-                                    image->get_grid_extent(),
-                                    cell_centered,
-                                    0.0,
-                                    tmp_path);
-
-         if (job == NULL) MEMERROR();
-
-         for (i=0; i<keys.size(); i++)
-            job->append(getObject(keys[i])->get_relative_name());
-
-         worker->run_job(job);
-      }
+         ext = image->get_grid_extent();
       else
-         notify(TR("Cropping requires an image layer that defines the crop area"));
+      {
+         Object_tileset *tileset = dynamic_cast<Object_tileset *>(obj);
+         if (tileset != NULL)
+            ext = tileset->get_extent();
+         else
+         {
+            Object_extent *extent = dynamic_cast<Object_extent *>(obj);
+            if (extent != NULL)
+               ext = extent->get_extent();
+            else
+               notify(TR("Cropping requires a layer that defines the crop area"));
+         }
+      }
    }
-   else
-      notify(TR("Cannot determine crop area"));
+
+   if (ext.check())
+   {
+      ministring output = CropJob::make_name(repository_path,
+                                             obj->get_relative_name(),
+                                             export_path);
+
+      CropJob *job = new CropJob(repository_path,
+                                 export_path, output,
+                                 ext,
+                                 cell_centered,
+                                 0.0,
+                                 tmp_path);
+
+      if (job == NULL) MEMERROR();
+
+      for (i=0; i<keys.size(); i++)
+         job->append(getObject(keys[i])->get_relative_name());
+
+      worker->run_job(job);
+   }
 }
 
 void ViewerWindow::save_list(ministrings keys, ministring filename)
