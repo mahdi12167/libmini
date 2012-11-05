@@ -835,6 +835,8 @@ void ViewerWindow::create_extent(ministring key)
 {
    int errorcode = OBJECT_FAILURE;
 
+   grid_extent ext;
+
    if (hasTag(key, "image"))
    {
       Object *obj = getObject(key);
@@ -843,18 +845,8 @@ void ViewerWindow::create_extent(ministring key)
          Object_image *image = dynamic_cast<Object_image *>(obj);
          if (image != NULL)
          {
-            grid_extent ext = image->get_grid_extent();
-
-            ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
-            Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
-            if (obj_ext == NULL) MEMERROR();
-
-            errorcode = addObject(key_ext, obj_ext, "extent");
-
-            if (errorcode != OBJECT_SUCCESS)
-               delete obj_ext;
-            else
-               obj_ext->focus();
+            ext = image->get_grid_extent();
+            errorcode = OBJECT_SUCCESS;
          }
       }
    }
@@ -866,20 +858,37 @@ void ViewerWindow::create_extent(ministring key)
          Object_tileset *tileset = dynamic_cast<Object_tileset *>(obj);
          if (tileset != NULL)
          {
-            grid_extent ext = tileset->get_extent();
-
-            ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
-            Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
-            if (obj_ext == NULL) MEMERROR();
-
-            errorcode = addObject(key_ext, obj_ext, "extent");
-
-            if (errorcode != OBJECT_SUCCESS)
-               delete obj_ext;
-            else
-               obj_ext->focus();
+            ext = tileset->get_extent();
+            errorcode = OBJECT_SUCCESS;
          }
       }
+   }
+   else if (hasTag(key, "extent"))
+   {
+      Object *obj = getObject(key);
+      if (obj != NULL)
+      {
+         Object_extent *extent = dynamic_cast<Object_extent *>(obj);
+         if (extent != NULL)
+         {
+            ext = extent->get_extent();
+            errorcode = OBJECT_SUCCESS;
+         }
+      }
+   }
+
+   if (errorcode == OBJECT_SUCCESS)
+   {
+      ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
+      Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
+      if (obj_ext == NULL) MEMERROR();
+
+      errorcode = addObject(key_ext, obj_ext, "extent");
+
+      if (errorcode != OBJECT_SUCCESS)
+         delete obj_ext;
+      else
+         obj_ext->focus();
    }
 
    if (errorcode != OBJECT_SUCCESS)
