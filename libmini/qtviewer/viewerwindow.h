@@ -91,7 +91,7 @@ public:
    void create_extent(ministring key);
    void shade_elevation(ministring key);
    BOOLINT check_list(ministrings keys);
-   void resample_list(ministrings keys, grid_extent *crop_ext=NULL, ministring crop_key="", int level=0, int levels=1, int step=2);
+   void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);
    void crop_list(ministrings keys, ministring crop_key, BOOLINT cell_centered);
    void save_list(ministrings keys, ministring filename="");
    void save_grid_list(ministrings keys, ministring filename="", int level=0);

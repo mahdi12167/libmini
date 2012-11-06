@@ -725,7 +725,7 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "resample")
    {
       ministrings keys = listObjects("image");
-      resample_list(keys, NULL, value, grid_level, grid_levels, grid_step);
+      resample_list(keys, value, grid_level, grid_levels, grid_step);
    }
    else if (action == "resample_selected")
    {
@@ -736,12 +736,12 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
-      resample_list(sel_keys, NULL, "", grid_level, grid_levels, grid_step);
+      resample_list(sel_keys, "", grid_level, grid_levels, grid_step);
    }
    else if (action == "resample_all")
    {
       ministrings keys = listObjects("image");
-      resample_list(keys, NULL, "", grid_level, grid_levels, grid_step);
+      resample_list(keys, "", grid_level, grid_levels, grid_step);
    }
    else if (action == "crop_elevation")
    {
@@ -944,23 +944,28 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 }
 
 void ViewerWindow::resample_list(ministrings keys,
-                                 grid_extent *crop_ext,
                                  ministring crop_key,
                                  int level, int levels, int step)
 {
    unsigned int i;
 
+   grid_extent crop_ext;
    ministring crop_name;
 
    if (!check_list(keys)) return;
 
    if (getObject(crop_key) != NULL)
-      crop_name = getObject(crop_key)->get_full_name();
+      if (hasTag(crop_key, "extent"))
+         crop_ext = dynamic_cast<Object_extent *>(getObject(crop_key))->get_extent();
+      else if (hasTag(crop_key, "tileset"))
+         crop_ext = dynamic_cast<Object_tileset *>(getObject(crop_key))->get_extent();
+      else if (hasTag(crop_key, "image"))
+         crop_name = getObject(crop_key)->get_full_name();
 
    ResampleJob *job = new ResampleJob("", export_path,
                                       level, levels, step,
                                       5.0,0.0,
-                                      crop_ext,
+                                      &crop_ext,
                                       crop_name,
                                       tmp_path);
 
