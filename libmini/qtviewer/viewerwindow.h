@@ -94,7 +94,7 @@ public:
    void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);
    void crop_list(ministrings keys, ministring crop_key, BOOLINT cell_centered);
    void save_list(ministrings keys, ministring filename="");
-   void save_grid_list(ministrings keys, ministring filename="", int level=0);
+   void save_grid_list(ministrings keys, ministring crop_key="", ministring filename="", int level=0);
    BOOLINT load_list(ministring filename);
 
    void notify(ministring text);

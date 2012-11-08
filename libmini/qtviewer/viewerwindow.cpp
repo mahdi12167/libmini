@@ -806,7 +806,7 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "save_grid")
    {
       ministrings keys = listObjects("image");
-      save_grid_list(keys, "", grid_level);
+      save_grid_list(keys, value, "", grid_level);
    }
    else if (action == "load")
    {
@@ -965,8 +965,7 @@ void ViewerWindow::resample_list(ministrings keys,
    ResampleJob *job = new ResampleJob("", export_path,
                                       level, levels, step,
                                       5.0,0.0,
-                                      &crop_ext,
-                                      crop_name,
+                                      &crop_ext,crop_name,
                                       tmp_path);
 
    if (job == NULL) MEMERROR();
@@ -1067,20 +1066,36 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    qtv.save(filename);
 }
 
-void ViewerWindow::save_grid_list(ministrings keys, ministring filename, int level)
+void ViewerWindow::save_grid_list(ministrings keys,
+                                  ministring crop_key,
+                                  ministring filename,
+                                  int level)
 {
    unsigned int i;
 
    ministrings filenames;
+
+   grid_extent crop_ext;
+   ministring crop_name;
 
    if (!check_list(keys)) return;
 
    for (i=0; i<keys.size(); i++)
       filenames.append(getObject(keys[i])->get_relative_name());
 
+   if (getObject(crop_key) != NULL)
+      if (hasTag(crop_key, "extent"))
+         crop_ext = dynamic_cast<Object_extent *>(getObject(crop_key))->get_extent();
+      else if (hasTag(crop_key, "tileset"))
+         crop_ext = dynamic_cast<Object_tileset *>(getObject(crop_key))->get_extent();
+      else if (hasTag(crop_key, "image"))
+         crop_name = getObject(crop_key)->get_full_name();
+
    ministrings grid_list = ResampleJob::make_grid_list(filenames,
                                                        repository_path, export_path,
-                                                       level);
+                                                       level,
+                                                       shadePower,shadeAmbient,
+                                                       &crop_ext,crop_name);
 
    if (filename=="")
    {
