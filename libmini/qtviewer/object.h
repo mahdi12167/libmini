@@ -80,7 +80,13 @@ class Object
    virtual BOOLINT is_shown() const;
 
    //! focus camera on object
-   virtual void focus() {}
+   virtual void focus();
+
+   //! serialize object
+   virtual ministring serialize();
+
+   //! deserialize object
+   //!! virtual Object *deserialize(ministring info) = 0;
 
    protected:
 

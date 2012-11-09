@@ -1043,13 +1043,8 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
 
    for (i=0; i<keys.size(); i++)
       {
-      ministring name = getObject(keys[i])->get_relative_name();
-
-      BOOLINT hidden = hasTag(keys[i], "hidden");
-      BOOLINT selected = hasTag(keys[i], "selected");
-
-      if (hidden) name += " hidden";
-      if (selected) name += " selected";
+      ministring name = getObject(keys[i])->serialize();
+      name += "[" + getTags(keys[i])->to_string(",") + "]";
 
       qtv.append(name);
       }
@@ -1157,22 +1152,55 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
    for (i=0; i<qtv.size(); i++)
    {
+      BOOLINT extent=FALSE;
+
       BOOLINT hidden=FALSE;
       BOOLINT selected=FALSE;
 
-      if (qtv[i].endswith(" selected"))
+      if (qtv[i].endswith("]"))
       {
-         qtv[i] = qtv[i].head(" selected");
-         selected = TRUE;
+         qtv[i] = qtv[i].head("]");
+
+         while (!qtv[i].endswith("["))
+         {
+            if (qtv[i].endswith("extent")) //!! use key-value pairs
+            {
+               qtv[i] = qtv[i].head("extent");
+               extent = TRUE;
+            }
+
+            if (qtv[i].endswith(","))
+               qtv[i] = qtv[i].head(",");
+
+            if (qtv[i].endswith("selected"))
+            {
+               qtv[i] = qtv[i].head("selected");
+               selected = TRUE;
+            }
+
+            if (qtv[i].endswith(","))
+               qtv[i] = qtv[i].head(",");
+
+            if (qtv[i].endswith("hidden"))
+            {
+               qtv[i] = qtv[i].head("hidden");
+               hidden = TRUE;
+            }
+
+            if (qtv[i].endswith(","))
+               qtv[i] = qtv[i].head(",");
+         }
+
+         qtv[i] = qtv[i].head("[");
       }
 
-      if (qtv[i].endswith(" hidden"))
-      {
-         qtv[i] = qtv[i].head(" hidden");
-         hidden = TRUE;
-      }
+      ministring info = qtv[i];
+      ministring key;
 
-      ministring key = loadURL(qtv[i]);
+      if (!extent)
+         key = loadURL(qtv[i]);
+      else
+         key = "tbd"; //!!
 
       if (hidden)
          runAction("hide", key);

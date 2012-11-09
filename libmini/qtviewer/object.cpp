@@ -113,3 +113,8 @@ ministring Object::get_info()
 
 void Object::show(BOOLINT /*yes*/) {}
 BOOLINT Object::is_shown() const {return(TRUE);}
+
+void Object::focus() {}
+
+ministring Object::serialize()
+   {return(get_relative_name());}
