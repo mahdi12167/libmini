@@ -86,7 +86,7 @@ class Object
    virtual ministring serialize();
 
    //! deserialize object
-   //!! virtual Object *deserialize(ministring info) = 0;
+   virtual Object *deserialize(ministring info) = 0;
 
    protected:
 

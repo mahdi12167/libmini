@@ -100,6 +100,11 @@ void Object_tileset::focus()
          tileset_viewer->getCamera()->focusOnMap(tileset_layer);
    }
 
+Object *Object_tileset::deserialize(ministring info)
+   {
+   return(NULL); //!!
+   }
+
 grid_extent Object_tileset::get_extent()
    {
    miniv3d ext=tileset_layer->getgeoextent();
@@ -286,6 +291,11 @@ void Object_image::focus()
       image_viewer->getCamera()->focusOnObject(this);
    }
 
+Object *Object_image::deserialize(ministring info)
+   {
+   return(NULL); //!!
+   }
+
 void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
@@ -416,4 +426,9 @@ void Object_extent::focus()
    {
    if (extent_viewer!=NULL)
       extent_viewer->getCamera()->focusOnObject(this);
+   }
+
+Object *Object_extent::deserialize(ministring info)
+   {
+   return(NULL); //!!
    }

@@ -1042,12 +1042,13 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    qtv.append(ministring("levels ")+(double)grid_level+"/"+(double)grid_levels+"/"+(double)grid_step);
 
    for (i=0; i<keys.size(); i++)
-      {
-      ministring name = getObject(keys[i])->serialize();
-      name += "[" + getTags(keys[i])->to_string(",") + "]";
+   {
+      ministring key = keys[i];
+      ministring info = key + "=" + getObject(keys[i])->serialize();
+      info += "[" + getTags(keys[i])->to_string(",") + "]";
 
-      qtv.append(name);
-      }
+      qtv.append(info);
+   }
 
    if (filename=="")
    {

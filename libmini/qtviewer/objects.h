@@ -42,6 +42,8 @@ class Object_tileset: public Object
 
    virtual void focus();
 
+   virtual Object *deserialize(ministring info);
+
    grid_extent get_extent();
 
    protected:
@@ -72,6 +74,8 @@ class Object_image: public Object
    virtual BOOLINT is_shown() const;
 
    virtual void focus();
+
+   virtual Object *deserialize(ministring info);
 
    //! tell if image is imagery (cell centered)
    BOOLINT is_imagery() const
@@ -132,6 +136,8 @@ class Object_extent: public Object
    virtual BOOLINT is_shown() const;
 
    virtual void focus();
+
+   virtual Object *deserialize(ministring info);
 
    //! get grid-centered extents of image
    grid_extent get_extent() const
