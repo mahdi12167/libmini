@@ -1044,7 +1044,7 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    for (i=0; i<keys.size(); i++)
    {
       ministring key = keys[i];
-      ministring info = key + "=" + getObject(keys[i])->serialize();
+      ministring info = key + " = [" + getObject(keys[i])->serialize() + "]";
       info += "[" + getTags(keys[i])->to_string(",") + "]";
 
       qtv.append(info);
@@ -1153,60 +1153,35 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
    for (i=0; i<qtv.size(); i++)
    {
-      BOOLINT extent=FALSE;
-
-      BOOLINT hidden=FALSE;
-      BOOLINT selected=FALSE;
+      ministring key, info, tags;
 
       if (qtv[i].endswith("]"))
       {
          qtv[i] = qtv[i].head("]");
-
-         while (!qtv[i].endswith("["))
-         {
-            if (qtv[i].endswith("extent")) //!! use key-value pairs
-            {
-               qtv[i] = qtv[i].head("extent");
-               extent = TRUE;
-            }
-
-            if (qtv[i].endswith(","))
-               qtv[i] = qtv[i].head(",");
-
-            if (qtv[i].endswith("selected"))
-            {
-               qtv[i] = qtv[i].head("selected");
-               selected = TRUE;
-            }
-
-            if (qtv[i].endswith(","))
-               qtv[i] = qtv[i].head(",");
-
-            if (qtv[i].endswith("hidden"))
-            {
-               qtv[i] = qtv[i].head("hidden");
-               hidden = TRUE;
-            }
-
-            if (qtv[i].endswith(","))
-               qtv[i] = qtv[i].head(",");
-         }
-
+         tags = qtv[i].suffix("[");
          qtv[i] = qtv[i].head("[");
       }
+      else return(FALSE);
 
-      ministring info = qtv[i];
-      ministring key;
+      if (qtv[i].endswith("]"))
+      {
+         qtv[i] = qtv[i].head("]");
+         info = qtv[i].suffix(" = [");
+         qtv[i] = qtv[i].head(" = [");
 
-      if (!extent)
-         key = loadURL(qtv[i]);
-      else
+         key = qtv[i];
+      }
+      else return(FALSE);
+
+      if (tags.contains("tileset") || tags.contains("image"))
+         key = loadURL(key);
+      else if (tags.contains("extent"))
          key = "tbd"; //!!
 
-      if (hidden)
-         runAction("hide", key);
+      if (tags.contains("hidden"))
+          runAction("hide", key);
 
-      if (selected)
+      if (tags.contains("selected"))
          runAction("select", key);
    }
 
