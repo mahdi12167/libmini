@@ -22,8 +22,24 @@ enum
    OBJECT_TOO_LARGE=3
    };
 
+//! extent base class
+class Object_extents: public Object
+   {
+   public:
+
+   Object_extents(const ministring &name="",const ministring &repo="")
+      : Object(name,repo)
+      {}
+
+   virtual ~Object_extents()
+      {}
+
+   //! get extents
+   virtual grid_extent get_extent() const = 0;
+   };
+
 //! tileset object
-class Object_tileset: public Object
+class Object_tileset: public Object_extents
    {
    public:
 
@@ -44,7 +60,8 @@ class Object_tileset: public Object
 
    virtual Object *deserialize(ministring info);
 
-   grid_extent get_extent();
+   //! get grid-centered extents
+   virtual grid_extent get_extent() const;
 
    protected:
 
@@ -55,7 +72,7 @@ class Object_tileset: public Object
    };
 
 //! image object
-class Object_image: public Object
+class Object_image: public Object_extents
    {
    public:
 
@@ -85,13 +102,13 @@ class Object_image: public Object
    BOOLINT is_elevation() const
       {return(!is_imagery_resp_elevation);}
 
-   //! get geographic extents of image
-   grid_extent get_extent() const
+   //! get grid-centered extents
+   virtual grid_extent get_extent() const
       {return(extent);}
 
-   //! get grid-centered extents
-   grid_extent get_grid_extent() const
-      {return(extent_grid);}
+   //! get geographic extents of image
+   virtual grid_extent get_geo_extent() const
+      {return(extent_geo);}
 
    //! set thumb via db format
    void set_thumb(const databuf *buf);
@@ -101,7 +118,7 @@ class Object_image: public Object
    BOOLINT is_imagery_resp_elevation;
 
    grid_extent extent;
-   grid_extent extent_grid;
+   grid_extent extent_geo;
    int size_x,size_y;
    double size_ds,size_dt;
    double spacing;
@@ -117,7 +134,7 @@ class Object_image: public Object
    };
 
 //! extent object
-class Object_extent: public Object
+class Object_extent: public Object_extents
    {
    public:
 
@@ -139,7 +156,7 @@ class Object_extent: public Object
 
    virtual Object *deserialize(ministring info);
 
-   //! get grid-centered extents of image
+   //! get extents
    grid_extent get_extent() const
       {return(extent);}
 

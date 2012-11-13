@@ -11,7 +11,7 @@
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
                                Viewer *viewer)
-   : Object(name,repo)
+   : Object_extents(name,repo)
    {
    tileset_viewer=viewer;
    tileset_layer=NULL;
@@ -105,7 +105,7 @@ Object *Object_tileset::deserialize(ministring info)
    return(NULL); //!!
    }
 
-grid_extent Object_tileset::get_extent()
+grid_extent Object_tileset::get_extent() const
    {
    miniv3d ext=tileset_layer->getgeoextent();
    minicoord center=tileset_layer->getgeocenter();
@@ -124,11 +124,12 @@ mininode *Object_image::deferred_groupnode2=NULL;
 
 Object_image::Object_image(const ministring &name,const ministring &repo,
                            Viewer *viewer)
-   : Object(name,repo)
+   : Object_extents(name,repo)
    {
    is_imagery_resp_elevation=TRUE;
 
    extent=grid_extent();
+   extent_geo=grid_extent();
    size_x=size_y=0;
    size_ds=size_dt=0.0;
    spacing=0.0;
@@ -152,12 +153,12 @@ ministring Object_image::get_info()
           "dim = "+size_x+" x "+size_y+"\n"+
           "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n"+
           "spacing = "+spacing+"m\n"+
-          "crs = "+extent.get_center().getcrs()+"\n"+
-          "datum = "+extent.get_center().getdatum()+"\n\n"+
+          "crs = "+extent_geo.get_center().getcrs()+"\n"+
+          "datum = "+extent_geo.get_center().getdatum()+"\n\n"+
 
    info += get_data_info()+"\n\n";
 
-   info += "extent = "+extent;
+   info += "extent = "+extent_geo;
 
    return(info);
    }
@@ -236,17 +237,17 @@ int Object_image::initGFX()
          // obesity check
          if (layer->get_estimated_mem()>1024) errorcode=OBJECT_TOO_LARGE;
 
-         extent=layer->get_extent();
-         extent_grid=layer->get_grid_extent();
+         extent=layer->get_grid_extent();
+         extent_geo=layer->get_extent();
          size_x=layer->get_size_x();
          size_y=layer->get_size_y();
          size_ds=layer->get_size_ds();
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
 
-         set_center(extent.get_center(),extent.get_size());
+         set_center(extent_geo.get_center(),extent_geo.get_size());
 
-         image_node=new node_grid_extent(extent);
+         image_node=new node_grid_extent(extent_geo);
          if (image_node==NULL) MEMERROR();
 
          if (is_imagery_resp_elevation)
@@ -319,7 +320,7 @@ mininode *Object_extent::extent_groupnode=NULL;
 Object_extent::Object_extent(const ministring &name,
                              const grid_extent &extent,
                              Viewer *viewer)
-   : Object(name)
+   : Object_extents(name)
    {
    this->extent=extent;
 
