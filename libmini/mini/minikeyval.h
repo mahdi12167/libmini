@@ -153,6 +153,16 @@ class minikeyval
       pairs[idx].tags += tag;
       }
 
+   //! add tags to key-value pair
+   void tag(const ministring &key,const ministrings &tags)
+      {
+      unsigned int idx;
+
+      if (!get_pair(key,idx)) return;
+
+      pairs[idx].tags += tags;
+      }
+
    //! remove tag from key-value pair
    void untag(const ministring &key,const ministring &tag)
       {
