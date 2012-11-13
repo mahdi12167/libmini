@@ -817,8 +817,7 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "save")
    {
-      ministrings keys = listObjects("tileset");
-      keys += listObjects("image");
+      ministrings keys = listObjects();
       save_list(keys, "");
    }
    else if (action == "save_grid")
