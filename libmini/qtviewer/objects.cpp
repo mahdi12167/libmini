@@ -352,10 +352,9 @@ int Object_extent::initGFX()
       main(par x, par y, par z, par t)\
          {\
          var b = 0.025;\
-         var v = checker(x, y, 64);\
-         var a = 1;\
-         if (x<-0.5+b | x>0.5-b | y<-0.5+b | y>0.5-b) v = 1;\
-         else a = 0.1;\
+         if (x<-0.5+b | x>0.5-b | y<-0.5+b | y>0.5-b) return(1, 1, 1, 1);\
+         var a = checker(x, y, 64);\
+         var v = 0.25*a;\
          return(v, v, v, a);\
          }";
 
@@ -375,8 +374,8 @@ int Object_extent::initGFX()
          buf.automipmap();
          tex2d_node->load(&buf);
 
-         extent_groupnode=root->append_child(new mininode_culling())->
-                          append_child(new mininode_color(miniv3d(1,0,0)))->
+         extent_groupnode=root->append_child(new mininode_deferred_semitransparent())->
+                          append_child(new mininode_color(miniv4d(1,0,0,0.999)))->
                           append_child(tex2d_node);
          }
 
