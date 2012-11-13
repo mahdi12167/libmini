@@ -100,10 +100,8 @@ void Object_tileset::focus()
          tileset_viewer->getCamera()->focusOnMap(tileset_layer);
    }
 
-Object *Object_tileset::deserialize(ministring info)
-   {
-   return(NULL); //!!
-   }
+ministring Object_tileset::serialize()
+   {return("Object_tileset["+repository+","+filename+"]");}
 
 grid_extent Object_tileset::get_extent() const
    {
@@ -292,10 +290,8 @@ void Object_image::focus()
       image_viewer->getCamera()->focusOnObject(this);
    }
 
-Object *Object_image::deserialize(ministring info)
-   {
-   return(NULL); //!!
-   }
+ministring Object_image::serialize()
+   {return("Object_image["+repository+","+filename+"]");}
 
 void Object_image::set_thumb(const databuf *buf)
    {
@@ -429,7 +425,10 @@ void Object_extent::focus()
       extent_viewer->getCamera()->focusOnObject(this);
    }
 
-Object *Object_extent::deserialize(ministring info)
+ministring Object_extent::serialize()
+   {return(ministring("Object_extent[")+extent+"]");}
+
+Object_extent *Object_extent::deserialize(ministring info,Viewer *viewer)
    {
    return(NULL); //!!
    }

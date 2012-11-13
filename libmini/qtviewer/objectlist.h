@@ -27,6 +27,7 @@ class Objects: public minikeyval<Object *>
    Object *get(const ministring &key);
    ministrings *get_tags(const ministring &key);
    void add_tag(ministring key,ministring tag);
+   void add_tags(ministring key,ministrings tags);
    void remove_tag(ministring key,ministring tag);
    BOOLINT has_tag(ministring key,ministring tag);
    ministrings list();

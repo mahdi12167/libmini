@@ -83,10 +83,7 @@ class Object
    virtual void focus();
 
    //! serialize object
-   virtual ministring serialize();
-
-   //! deserialize object
-   virtual Object *deserialize(ministring info) = 0;
+   virtual ministring serialize() = 0;
 
    protected:
 

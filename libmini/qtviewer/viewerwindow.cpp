@@ -389,7 +389,7 @@ void ViewerWindow::loadImage(ministring url)
       delete image;
 
       notify(TR("Unable to load image from url=")+url+"\n\n"+
-             "Standard file format ist GeoTiff.");
+             TR("Standard file format ist GeoTiff."));
    }
 
    if (errorcode == OBJECT_NOT_REFERENCED)
@@ -419,6 +419,18 @@ int ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
    return(errorcode);
 }
 
+int ViewerWindow::addObject(ministring key, Object *obj, ministrings tags)
+{
+   int errorcode;
+
+   errorcode = objects.add(key, obj, tags);
+
+   if (errorcode != OBJECT_FAILURE)
+      emit changed(key);
+
+   return(errorcode);
+}
+
 Object *ViewerWindow::getObject(ministring key)
 {
    return(objects.get(key));
@@ -432,6 +444,12 @@ ministrings *ViewerWindow::getTags(ministring key)
 void ViewerWindow::addTag(ministring key, ministring tag)
 {
    objects.add_tag(key, tag);
+   emit changed(key);
+}
+
+void ViewerWindow::addTags(ministring key, ministrings tags)
+{
+   objects.add_tags(key, tags);
    emit changed(key);
 }
 
@@ -1143,10 +1161,30 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       }
       else return(FALSE);
 
-      if (tags.contains("tileset") || tags.contains("image"))
+      ministrings taglist;
+      taglist.from_string(tags, ",");
+
+      if (taglist[0] == "tileset" ||
+          taglist[0] == "image")
          key = loadURL(key);
-      else if (tags.contains("extent"))
-         key = "tbd"; //!!
+      else
+      {
+         Object *obj = NULL;
+
+         if (taglist[0] == "extent")
+            obj = Object_extent::deserialize(info, viewer);
+
+         if (obj != NULL)
+         {
+            int errorcode;
+
+            errorcode = addObject(key, obj ,taglist);
+
+            if (errorcode != OBJECT_SUCCESS)
+               return(FALSE);
+         }
+         else return(FALSE);
+      }
 
       if (tags.contains("hidden"))
           runAction("hide", key);

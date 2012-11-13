@@ -105,6 +105,12 @@ void Objects::add_tag(ministring key,ministring tag)
    minikeyval<Object *>::tag(key,tag);
    }
 
+void Objects::add_tags(ministring key,ministrings tags)
+   {
+   MINILOG("adding tags to object with key=" + key + " and tags=" + tags.to_string(","));
+   minikeyval<Object *>::tag(key,tags);
+   }
+
 void Objects::remove_tag(ministring key,ministring tag)
    {
    MINILOG("removing tag from object with key=" + key + " and tag=" + tag);

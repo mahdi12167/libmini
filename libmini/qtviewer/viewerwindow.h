@@ -59,9 +59,11 @@ public:
    void clearImages();
 
    int addObject(ministring key, Object *obj, ministring tag);
+   int addObject(ministring key, Object *obj, ministrings tags);
    Object *getObject(ministring key);
    ministrings *getTags(ministring key);
    void addTag(ministring key, ministring tag);
+   void addTags(ministring key, ministrings tags);
    void removeTag(ministring key, ministring tag);
    void toggleTag(ministring key, ministring tag);
    BOOLINT hasTag(ministring key, ministring tag);
