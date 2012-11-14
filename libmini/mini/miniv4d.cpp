@@ -16,4 +16,40 @@ miniv4d::miniv4d(const miniv3f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z;
 miniv4d::miniv4d(const miniv3f &v,const float vw) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=(double)vw;}
 
 // string cast operator
-miniv4d::operator ministring() const {return((ministring)"(" + x + "," + y + "," + z + ")");}
+miniv4d::operator ministring() const {return((ministring)"(" + x + "," + y + "," + z + "," + w + ")");}
+
+// serialization
+ministring miniv4d::to_string() const
+   {
+   ministring info("miniv4d");
+
+   info.append("(");
+   info.append_double(x);
+   info.append(",");
+   info.append_double(y);
+   info.append(",");
+   info.append_double(z);
+   info.append(",");
+   info.append_double(w);
+   info.append(")");
+
+   return(info);
+   }
+
+// deserialization
+void miniv4d::from_string(ministring info)
+   {
+   if (info.startswith("miniv4d"))
+      {
+      info=info.tail("miniv4d(");
+      info=info.head(")");
+
+      x=info.prefix(",").value();
+      info=info.tail(",");
+      y=info.prefix(",").value();
+      info=info.tail(",");
+      z=info.prefix(",").value();
+      info=info.tail(",");
+      w=info.prefix(",").value();
+      }
+   }
