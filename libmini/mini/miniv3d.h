@@ -44,6 +44,12 @@ class miniv3d
    //! string cast operator
    operator ministring() const;
 
+   //! serialization
+   ministring to_string() const;
+
+   //! deserialization
+   void from_string(ministring info);
+
    //! destructor
    ~miniv3d() {}
 

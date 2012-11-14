@@ -82,6 +82,28 @@ class ministring: public ministring_base
    void append(double v)
       {append(ministring(v));}
 
+   //! append double value
+   void append_float(float v)
+      {
+      static const int len=32;
+      static char str[len];
+
+      snprintf(str,len,"%.7e",v);
+
+      append(str);
+      }
+
+   //! append double value
+   void append_double(double v)
+      {
+      static const int len=32;
+      static char str[len];
+
+      snprintf(str,len,"%.16e",v);
+
+      append(str);
+      }
+
    //! append integer value
    void append_int(int v)
       {
