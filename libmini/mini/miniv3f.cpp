@@ -33,17 +33,16 @@ ministring miniv3f::to_string() const
    }
 
 // deserialization
-void miniv3f::from_string(ministring info)
+void miniv3f::from_string(ministring &info)
    {
    if (info.startswith("miniv3f"))
       {
       info=info.tail("miniv3f(");
-      info=info.head(")");
-
       x=info.prefix(",").value();
       info=info.tail(",");
       y=info.prefix(",").value();
       info=info.tail(",");
       z=info.prefix(",").value();
+      info=info.tail(")");
       }
    }

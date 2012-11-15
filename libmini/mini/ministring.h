@@ -557,7 +557,7 @@ class ministrings: public minidyna<ministring>
       : minidyna<ministring>(str)
       {}
 
-   //! concatenate string list
+   //! concatenate string list (serialization)
    ministring to_string(ministring separator="/") const
       {
       unsigned int i;
@@ -573,7 +573,7 @@ class ministrings: public minidyna<ministring>
       return(str);
       }
 
-   //! deconcatenate string
+   //! deconcatenate string (deserialization)
    void from_string(const ministring &str,ministring separator="/")
       {
       unsigned int left,right;

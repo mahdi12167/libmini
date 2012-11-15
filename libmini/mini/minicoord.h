@@ -140,6 +140,12 @@ class minicoord
    //! string cast operator
    operator ministring() const;
 
+   //! serialization
+   ministring to_string() const;
+
+   //! deserialization
+   void from_string(ministring &info);
+
    miniv4d vec; // geo-referenced coordinates (plus time)
    MINICOORD type; // actual coordinate reference system type
 

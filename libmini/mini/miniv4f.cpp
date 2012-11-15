@@ -37,13 +37,11 @@ ministring miniv4f::to_string() const
    }
 
 // deserialization
-void miniv4f::from_string(ministring info)
+void miniv4f::from_string(ministring &info)
    {
    if (info.startswith("miniv4f"))
       {
       info=info.tail("miniv4f(");
-      info=info.head(")");
-
       x=info.prefix(",").value();
       info=info.tail(",");
       y=info.prefix(",").value();
@@ -51,5 +49,6 @@ void miniv4f::from_string(ministring info)
       z=info.prefix(",").value();
       info=info.tail(",");
       w=info.prefix(",").value();
+      info=info.tail(")");
       }
    }

@@ -48,7 +48,7 @@ class miniv3d
    ministring to_string() const;
 
    //! deserialization
-   void from_string(ministring info);
+   void from_string(ministring &info);
 
    //! destructor
    ~miniv3d() {}

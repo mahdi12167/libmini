@@ -586,5 +586,43 @@ ministring minicoord::getdatum(MINICOORD_DATUM d)
       }
    }
 
+// string cast operator
 minicoord::operator ministring() const
    {return((ministring)"[ (" + vec.x + "," + vec.y + "," + vec.z + ") t=" + vec.w + " crs=" + getcrs() + " datum=" + getdatum() + " ]");}
+
+// serialization
+ministring minicoord::to_string() const
+   {
+   ministring info("minicoord");
+
+   info.append("(");
+   info.append(vec.to_string());
+   info.append(",");
+   info.append_int(type);
+   info.append(",");
+   info.append_int(crs_zone);
+   info.append(",");
+   info.append_int(crs_datum);
+   info.append(")");
+
+   return(info);
+   }
+
+// deserialization
+void minicoord::from_string(ministring &info)
+   {
+   if (info.startswith("minicoord"))
+      {
+      info=info.tail("minicoord(");
+      vec.from_string(info);
+      info=info.tail(",");
+      /*
+      type=info.prefix(",").value();
+      info=info.tail(",");
+      crs_zone=info.prefix(",").value();
+      info=info.tail(",");
+      crs_datum=info.prefix(",").value();
+      */
+      info=info.tail(")");
+      }
+   }
