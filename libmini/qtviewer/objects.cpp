@@ -425,9 +425,28 @@ void Object_extent::focus()
    }
 
 ministring Object_extent::serialize()
-   {return(ministring("Object_extent[")+extent+"]");}
+   {
+   ministring info("Object_extent");
+
+   info.append("[");
+   info.append(extent.to_string());
+   info.append("]");
+
+   return(info);
+   }
 
 Object_extent *Object_extent::deserialize(ministring info,Viewer *viewer)
    {
-   return(NULL); //!!
+   grid_extent ext;
+
+   if (info.startswith("Object_extent"))
+      {
+      info=info.tail("Object_extent[");
+      ext.from_string(info);
+      info=info.tail("]");
+
+      return(new Object_extent("extent",ext,viewer)); //!!
+      }
+
+   return(NULL);
    }
