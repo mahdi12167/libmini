@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#undef OPENGLTEST // enable this to perform an OpenGL test
+#undef OPENGL_TEST // enable this to perform an OpenGL test
+#define MINICOORD_TEST // enable this to perform an OpenGL test
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -107,9 +108,29 @@ int main(int argc,char *argv[])
    // add test code here:
    // ...
 
-#ifdef OPENGLTEST
+#ifdef OPENGL_TEST
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
+#endif
+
+#ifdef MINICOORD_TEST
+   minicoord c1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
+   std::cout << c1 << std::endl;
+   minicoord c2=c1;
+   c2.convert2(minicoord::MINICOORD_UTM);
+   std::cout << " " << c2 << std::endl;
+   std::cout << " " << c2.to_string() << std::endl;
+   ministring info=c2.to_string();
+   minicoord c3;
+   c3.from_string(info);
+   std::cout << " " << c3 << std::endl;
+   c3.convert2llh();
+   std::cout << c3 << std::endl;
+   c3-=c1;
+   if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
+   c3+=c1;
+   if (c3==c1) std::cout << "success" << std::endl;
+   else std::cout << "failure" << std::endl;
 #endif
 
    // end of test code
