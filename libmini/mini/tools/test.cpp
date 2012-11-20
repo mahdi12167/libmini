@@ -1,7 +1,8 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #undef OPENGL_TEST // enable this to perform an OpenGL test
-#define MINICOORD_TEST // enable this to perform an OpenGL test
+#define MINICOORD_TEST // enable this to perform a test of the minicoord class
+#define MINISTRING_TEST // enable this to perform a test of the ministring class
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -130,6 +131,19 @@ int main(int argc,char *argv[])
    if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
    c3+=c1;
    if (c3==c1) std::cout << "success" << std::endl;
+   else std::cout << "failure" << std::endl;
+#endif
+
+#ifdef MINISTRING_TEST
+   ministring test1("this is a simple test string");
+   ministring test2("this is a s1mple test string");
+   ministring check1=test1.checksum(4);
+   ministring check2=test2.checksum(4);
+   std::cout << test1 << " -> " << check1 << std::endl;
+   std::cout << test2 << " -> " << check2 << std::endl;
+   unsigned int count=0;
+   for (unsigned int i=0; i<check1.getsize(); i++) if (check1[i]!=check2[i]) count++;
+   if (count==1) std::cout << "success" << std::endl;
    else std::cout << "failure" << std::endl;
 #endif
 
