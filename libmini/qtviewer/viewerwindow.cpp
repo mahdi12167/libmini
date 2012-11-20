@@ -1171,7 +1171,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
          Object *obj = NULL;
 
          if (taglist[0] == "extent")
-            obj = Object_extent::deserialize(info, viewer);
+            obj = Object_extent::deserialize(key, info, viewer);
 
          if (obj != NULL)
          {

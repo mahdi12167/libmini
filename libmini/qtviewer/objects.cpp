@@ -435,9 +435,11 @@ ministring Object_extent::serialize()
    return(info);
    }
 
-Object_extent *Object_extent::deserialize(ministring info,Viewer *viewer)
+Object_extent *Object_extent::deserialize(ministring key,ministring info,Viewer *viewer)
    {
    grid_extent ext;
+
+   Object_extent *obj=NULL;
 
    if (info.startswith("Object_extent"))
       {
@@ -445,8 +447,8 @@ Object_extent *Object_extent::deserialize(ministring info,Viewer *viewer)
       ext.from_string(info);
       info=info.tail("]");
 
-      return(new Object_extent("extent",ext,viewer)); //!!
+      obj=new Object_extent(key,ext,viewer);
       }
 
-   return(NULL);
+   return(obj);
    }

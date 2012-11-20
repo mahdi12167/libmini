@@ -155,7 +155,7 @@ class Object_extent: public Object_extents
    virtual void focus();
 
    virtual ministring serialize();
-   static Object_extent *deserialize(ministring info,Viewer *viewer);
+   static Object_extent *deserialize(ministring key,ministring info,Viewer *viewer);
 
    //! get extents
    grid_extent get_extent() const
