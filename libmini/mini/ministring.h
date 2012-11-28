@@ -205,14 +205,14 @@ class ministring: public ministring_base
       {return(findr(ministring(sub),idx,start));}
 
    //! check for existing sub-string
-   BOOLINT contains(const ministring_base &sub)
+   BOOLINT contains(const ministring_base &sub) const
       {
       unsigned int idx;
       return(find(sub,idx));
       }
 
    //! check for existing sub-c-string
-   BOOLINT contains(const char *sub)
+   BOOLINT contains(const char *sub) const
       {
       unsigned int idx;
       return(find(ministring(sub),idx));
@@ -409,7 +409,7 @@ class ministring: public ministring_base
       }
 
    //! unique checksum
-   ministring checksum(unsigned int length=4)
+   ministring checksum(unsigned int length=4) const
       {
       unsigned int i,j,k;
 
@@ -445,6 +445,31 @@ class ministring: public ministring_base
          }
 
       return(check);
+      }
+
+   //! append random string
+   void append_random(unsigned int length=4)
+      {
+      unsigned int i;
+
+      static char symbols[64]={'@','a','b','c','d','e','f','g',
+                               'h','i','j','k','l','m','n','o',
+                               'p','q','r','s','t','u','v','w',
+                               'x','y','z','A','B','C','D','E',
+                               'F','G','H','I','J','K','L','M',
+                               'N','O','P','Q','R','S','T','U',
+                               'V','W','X','Y','Z','0','1','2',
+                               '3','4','5','6','7','8','9','#'};
+
+      int symbol;
+
+      for (i=0; i<length; i++)
+         {
+         symbol=dtrc(sizeof(symbols)*minirand());
+         symbol%=sizeof(symbols);
+
+         append(symbols[symbol]);
+         }
       }
 
    //! assignment operator
@@ -652,7 +677,7 @@ class ministrings: public minidyna<ministring>
       {deserialize(readstring(filename.c_str()));}
 
    //! unique checksum
-   ministring checksum(unsigned int length=4)
+   ministring checksum(unsigned int length=4) const
       {return(serialize().checksum());}
 
    //! add operator (string concatenation)
