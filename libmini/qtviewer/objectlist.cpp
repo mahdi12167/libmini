@@ -15,8 +15,10 @@ ministring Objects::newkey()
    {
    ministring key;
 
-   key="object_";
-   key.append_uint(key_number++);
+   key="object_nr";
+   key.append_uint(++key_number);
+   key+="_";
+   key.append_random(10);
 
    return(key);
    }
