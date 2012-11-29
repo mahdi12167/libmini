@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
 
    setminierrorhandler(errormsg);
 
+   miniseed();
+
    minilog::on();
    MINILOG("program start");
 
