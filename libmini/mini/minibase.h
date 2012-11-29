@@ -12,6 +12,7 @@
 #include <math.h>
 
 #include <limits> // for nan
+#include <time.h> // for seed
 
 namespace minibase {
 
@@ -148,9 +149,11 @@ inline int isNAN(const double v) {return(v!=v);}
 
 #ifdef _WIN32
 #define drand48() ((double)rand()/RAND_MAX)
+#define srand48(unsigned int s) srand(s)
 #endif
 
 #define minirand() drand48()
+#define miniseed() srand48((unsigned int)time())
 
 #ifdef _MSC_VER
 #define strdup _strdup
