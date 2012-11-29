@@ -153,7 +153,7 @@ inline int isNAN(const double v) {return(v!=v);}
 #endif
 
 #define minirand() drand48()
-#define miniseed() srand48((unsigned int)time())
+#define miniseed() srand48((unsigned int)time(NULL))
 
 #ifdef _MSC_VER
 #define strdup _strdup
