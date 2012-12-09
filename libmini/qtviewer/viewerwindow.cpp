@@ -949,12 +949,17 @@ void ViewerWindow::resample_list(ministrings keys,
    if (!check_list(keys)) return;
 
    if (getObject(crop_key) != NULL)
-      if (hasTag(crop_key, "extent"))
-         crop_ext = dynamic_cast<Object_extent *>(getObject(crop_key))->get_extent();
-      else if (hasTag(crop_key, "tileset"))
-         crop_ext = dynamic_cast<Object_tileset *>(getObject(crop_key))->get_extent();
-      else if (hasTag(crop_key, "image"))
+   {
+      if (hasTag(crop_key, "image"))
          crop_name = getObject(crop_key)->get_full_name();
+      else
+      {
+         Object_extents *extents;
+         extents = dynamic_cast<Object_extents *>(getObject(crop_key));
+         if (extents != NULL)
+            crop_ext = extents->get_extent();
+      }
+   }
 
    ResampleJob *job = new ResampleJob("", export_path,
                                       level, levels, step,
@@ -1012,6 +1017,54 @@ void ViewerWindow::crop_list(ministrings keys,
    }
 }
 
+void ViewerWindow::save_grid_list(ministrings keys,
+                                  ministring crop_key,
+                                  ministring filename,
+                                  int level)
+{
+   unsigned int i;
+
+   ministrings filenames;
+
+   grid_extent crop_ext;
+   ministring crop_name;
+
+   if (!check_list(keys)) return;
+
+   for (i=0; i<keys.size(); i++)
+      filenames.append(getObject(keys[i])->get_relative_name());
+
+   if (getObject(crop_key) != NULL)
+   {
+      if (hasTag(crop_key, "image"))
+         crop_name = getObject(crop_key)->get_relative_name();
+      else
+      {
+         Object_extents *extents;
+         extents = dynamic_cast<Object_extents *>(getObject(crop_key));
+         if (extents != NULL)
+            crop_ext = extents->get_extent();
+      }
+   }
+
+   ministrings grid_list = ResampleJob::make_grid_list(filenames,
+                                                       repository_path, export_path,
+                                                       level,
+                                                       shadePower,shadeAmbient,
+                                                       &crop_ext,crop_name);
+
+   if (filename=="")
+   {
+      ministrings files = browse(TR("Save To Grid File"), export_path, TRUE);
+      if (files.size()==0) return;
+
+      filename = files[0];
+      if (!filename.endswith(".grid")) filename += ".grid";
+   }
+
+   grid_list.save(filename);
+}
+
 void ViewerWindow::save_list(ministrings keys, ministring filename)
 {
    unsigned int i;
@@ -1042,54 +1095,6 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    }
 
    qtv.save(filename);
-}
-
-void ViewerWindow::save_grid_list(ministrings keys,
-                                  ministring crop_key,
-                                  ministring filename,
-                                  int level)
-{
-   unsigned int i;
-
-   ministrings filenames;
-
-   grid_extent crop_ext;
-   ministring crop_name;
-
-   if (!check_list(keys)) return;
-
-   for (i=0; i<keys.size(); i++)
-      filenames.append(getObject(keys[i])->get_relative_name());
-
-   if (getObject(crop_key) != NULL)
-   {
-      if (hasTag(crop_key, "image"))
-         crop_name = getObject(crop_key)->get_full_name();
-      else
-      {
-         Object_extents *extents;
-         extents = dynamic_cast<Object_extent *>(getObject(crop_key));
-         if (extents != NULL)
-            crop_ext = extents->get_extent();
-      }
-   }
-
-   ministrings grid_list = ResampleJob::make_grid_list(filenames,
-                                                       repository_path, export_path,
-                                                       level,
-                                                       shadePower,shadeAmbient,
-                                                       &crop_ext,crop_name);
-
-   if (filename=="")
-   {
-      ministrings files = browse(TR("Save To Grid File"), export_path, TRUE);
-      if (files.size()==0) return;
-
-      filename = files[0];
-      if (!filename.endswith(".grid")) filename += ".grid";
-   }
-
-   grid_list.save(filename);
 }
 
 BOOLINT ViewerWindow::load_list(ministring filename)

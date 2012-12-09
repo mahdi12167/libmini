@@ -1080,7 +1080,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == saveAction)
           emit(activate("save"));
        else if (selectedAction == saveGridAction)
-          emit(activate("save_grid"));
+          emit(activate("save_grid", row));
        else if (selectedAction == loadAction)
           emit(activate("load"));
        else if (selectedAction == deleteAction)
