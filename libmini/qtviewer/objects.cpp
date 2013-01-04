@@ -375,7 +375,7 @@ int Object_extent::initGFX()
          tex2d_node->load(&buf);
 
          extent_groupnode=root->append_child(new mininode_deferred_semitransparent())->
-                          append_child(new mininode_color(miniv4d(1,0,0,0.999)))->
+                          append_child(new mininode_color(miniv4d(0,0,1,0.999)))->
                           append_child(tex2d_node);
          }
 

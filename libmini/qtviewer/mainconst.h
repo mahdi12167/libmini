@@ -3,8 +3,8 @@
 #ifndef MAINCONST_H
 #define MAINCONST_H
 
-#define VIEWER_NAME "QTviewer"
-#define VIEWER_VERSION "v1.8 as of 18.December.2012"
+#define VIEWER_NAME "QTViewer"
+#define VIEWER_VERSION "v1.8.1 as of 4.January.2013"
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200
