@@ -127,7 +127,10 @@ void ViewerWindow::mousePressEvent(QMouseEvent *event)
    reportModifiers();
 
    if (event->buttons() & Qt::LeftButton)
-      bLeftButtonDown = true;
+      if (QApplication::keyboardModifiers() & Qt::AltModifier)
+         bRightButtonDown = true;
+      else
+         bLeftButtonDown = true;
    else if (event->buttons() & Qt::RightButton)
       bRightButtonDown = true;
    else
@@ -188,12 +191,19 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
    viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
+   // a left button move
    if (event->buttons() & Qt::LeftButton)
       viewer->getCamera()->rotateCamera(dx, dy);
+   // a middle button move
    else if (event->buttons() & Qt::MiddleButton)
-   {}
+   {
+      // nothing to do here
+   }
+   // a right button move
    else if (event->buttons() & Qt::RightButton)
-   {}
+   {
+      // nothing to do here
+   }
 
    movedPos = event->pos();
 }
