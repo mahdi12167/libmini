@@ -148,13 +148,27 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
    {
       // a left-right button click
       if (bLeftButtonDown && bRightButtonDown)
-      {}
+      {
+         // nothing to do here
+      }
       // a left button click
       else if (bLeftButtonDown)
+      {
          viewer->getCamera()->focusOnTarget();
+      }
       // a right button click
       else if (bRightButtonDown)
-      {}
+      {
+         // get eye position
+         minicoord pos = viewer->getCamera()->get_eye();
+
+         // get target vector
+         miniv3d vec = viewer->getCamera()->targetVector();
+
+         // shoot ray in target direction
+         double dist = viewer->shoot(pos, vec);
+         std::cout << dist << std::endl; //!!
+      }
       else
          event->ignore();
    }

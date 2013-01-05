@@ -65,6 +65,7 @@ protected:
 
    miniv3d unprojectMouse();
 
+public:
    miniv3d hitVector();
    miniv3d nearVector();
    miniv3d targetVector();
