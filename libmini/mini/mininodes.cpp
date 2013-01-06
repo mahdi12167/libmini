@@ -5,13 +5,14 @@
 // mininode_group:
 
 // shoot a ray and return the distance to the closest object
-double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,double mindist) const
+double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj,double mindist) const
    {
    double dist,result;
 
    unsigned int s=get_children();
 
    result=MAXFLOAT;
+   if (obj!=NULL) *obj=NULL;
 
    if (has_bsphere())
       if (itest_ray_sphere(o,d,bound_center,bound_radius*bound_radius))
@@ -29,9 +30,13 @@ double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,double mindis
                   mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
 
                   if (child_geo) dist=child_geo->shoot(o,d,mindist);
-                  else dist=child_group->shoot_ray(o,d,mindist);
+                  else dist=child_group->shoot_ray(o,d,&child_geo,mindist);
 
-                  if (dist<result) result=dist;
+                  if (dist<result)
+                     {
+                     result=dist;
+                     if (obj!=NULL) *obj=child_geo;
+                     }
                   }
                }
             }
@@ -109,7 +114,7 @@ void mininode_group::update_dirty()
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
-double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d,double mindist) const
+double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj,double mindist) const
    {
    minicone cone;
 
@@ -125,7 +130,7 @@ double mininode_culling::shoot_ray(const miniv3d &o,const miniv3d &d,double mind
    // shoot with transformed cone
    if (cone.valid)
       {
-      dist=mininode_group::shoot_ray(cone.pos,cone.dir,mindist);
+      dist=mininode_group::shoot_ray(cone.pos,cone.dir,obj,mindist);
       if (dist!=MAXFLOAT) return(dist);
       }
 
