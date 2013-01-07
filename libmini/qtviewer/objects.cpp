@@ -248,11 +248,16 @@ int Object_image::initGFX()
          image_node=new node_grid_extent(extent_geo);
          if (image_node==NULL) MEMERROR();
 
+         // pass object key to image node
+         image_node->set_name(get_relative_name());
+
+         // link image node
          if (is_imagery_resp_elevation)
             deferred_groupnode2->append_child(image_node);
          else
             deferred_groupnode1->append_child(image_node);
 
+         // update dirty scene graph
          root->check_dirty();
          }
       }
@@ -384,8 +389,13 @@ int Object_extent::initGFX()
       extent_node=new node_grid_extent(extent);
       if (extent_node==NULL) MEMERROR();
 
+      // pass object key to extent node
+      extent_node->set_name(get_relative_name());
+
+      // link extent node
       extent_groupnode->append_child(extent_node);
 
+      // update dirty scene graph
       root->check_dirty();
 
       errorcode=OBJECT_SUCCESS;

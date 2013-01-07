@@ -441,6 +441,18 @@ void Viewer::drawText(float x, float y, QString& str, QColor color, bool bIsDoub
    }
 }
 
+mininode_geometry *Viewer::pick(const minicoord &o, const miniv3d &d, double mindist)
+{
+   minicoord o0;
+   mininode_geometry *obj;
+
+   o0 = o;
+   o0.convert2ecef();
+   m_root->shoot_ray(o0.vec, d, &obj, mindist);
+
+   return(obj);
+}
+
 void Viewer::toggleStereo(bool on)
 {
    if (on) m_StereoBase = CAMERA_SBASE;

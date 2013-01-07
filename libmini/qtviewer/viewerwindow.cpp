@@ -169,8 +169,10 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
          miniv3d vec = viewer->getCamera()->targetVector();
 
          // shoot ray in target direction
-         double dist = viewer->shoot(pos, vec);
-         std::cout << dist << std::endl; //!!
+         mininode_geometry *obj = viewer->pick(pos, vec);
+         if (obj != NULL)
+            if (!obj->get_name().empty())
+               std::cout << obj->get_name() << std::endl; //!!
       }
       else
          event->ignore();

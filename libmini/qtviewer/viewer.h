@@ -37,6 +37,8 @@ public:
 
    void       draw();
 
+   mininode_geometry *pick(const minicoord &o, const miniv3d &d, double mindist=0.0);
+
    void       toggleStereo(bool on);
    void       toggleWireFrame(bool on);
 
