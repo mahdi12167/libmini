@@ -1257,6 +1257,7 @@ class mininode_texgen_scale: public mininode_texgen
 //! geometry node (base class)
 //!  provides triangle-stripped geometry
 //!  has optional per-vertex color, normals and texture coordinates
+//!  has optional name that identifies the object which the geometry is part of
 class mininode_geometry_base: public mininode_group, public ministrip
    {
    public:
@@ -1321,9 +1322,19 @@ class mininode_geometry_base: public mininode_group, public ministrip
       radius=sqrt(radius2);
       }
 
+   //! set the object name of the geometry node
+   void set_name(ministring s)
+      {name=s;}
+
+   //! get the object name of the geometry node
+   ministring get_name()
+      {return(name);}
+
    protected:
 
    int wocol,wonrm,wotex;
+
+   ministring name;
 
    virtual void traverse_pre()
       {
