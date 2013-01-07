@@ -249,7 +249,7 @@ int Object_image::initGFX()
          if (image_node==NULL) MEMERROR();
 
          // pass object key to image node
-         image_node->set_name(get_relative_name());
+         image_node->set_name(get_full_name());
 
          // link image node
          if (is_imagery_resp_elevation)
@@ -390,7 +390,7 @@ int Object_extent::initGFX()
       if (extent_node==NULL) MEMERROR();
 
       // pass object key to extent node
-      extent_node->set_name(get_relative_name());
+      extent_node->set_name(get_full_name());
 
       // link extent node
       extent_groupnode->append_child(extent_node);

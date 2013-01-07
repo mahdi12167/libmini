@@ -172,7 +172,7 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
          mininode_geometry *obj = viewer->pick(pos, vec);
          if (obj != NULL)
             if (!obj->get_name().empty())
-               std::cout << obj->get_name() << std::endl; //!!
+               runAction("select", obj->get_name());
       }
       else
          event->ignore();
