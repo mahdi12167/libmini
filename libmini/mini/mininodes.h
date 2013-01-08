@@ -189,18 +189,40 @@ class mininode_color: public mininode_group
    {
    public:
 
+   //! default constructor
+   mininode_color(unsigned int id=MININODE_COLOR)
+      : mininode_group(id)
+      {
+      use_color=TRUE;
+      rgba=miniv4d(1,1,1,1);
+      }
+
    //! custom constructor
    mininode_color(const miniv4d &c)
       : mininode_group(MININODE_COLOR)
-      {rgba=c;}
+      {
+      use_color=TRUE;
+      rgba=c;
+      }
 
    //! custom constructor
    mininode_color(const miniv3d &c)
       : mininode_group(MININODE_COLOR)
-      {rgba=miniv4d(c,1);}
+      {
+      use_color=TRUE;
+      rgba=miniv4d(c,1);
+      }
 
    //! destructor
    virtual ~mininode_color() {}
+
+   //! enable color
+   void enable_color(BOOLINT on)
+      {use_color=on;}
+
+   //! color is enabled?
+   BOOLINT enabled_color() const
+      {return(use_color);}
 
    //! set local brightness
    static void set_brightness(double b=1.0)
@@ -212,6 +234,7 @@ class mininode_color: public mininode_group
 
    protected:
 
+   BOOLINT use_color;
    miniv4d rgba;
 
    static double brightness;
@@ -223,20 +246,23 @@ class mininode_color: public mininode_group
       {
       miniv4d c;
 
-      // init color state
-      if (rgba_stack.empty()) glcolor=miniv4d(1,1,1);
-
-      // compute actual node color
-      c=rgba*brightness;
-
-      // push actual color
-      rgba_stack.push(c);
-
-      // lazy color state change
-      if (c!=glcolor)
+      if (use_color)
          {
-         glcolor=c;
-         color(c);
+         // init color state
+         if (rgba_stack.empty()) glcolor=miniv4d(1,1,1);
+
+         // compute actual node color
+         c=rgba*brightness;
+
+         // push actual color
+         rgba_stack.push(c);
+
+         // lazy color state change
+         if (c!=glcolor)
+            {
+            glcolor=c;
+            color(c);
+            }
          }
       }
 
@@ -244,19 +270,25 @@ class mininode_color: public mininode_group
       {
       miniv4d c;
 
-      // peek actual color
-      c=rgba_stack.peek();
-
-      // lazy color state change
-      if (c!=glcolor)
+      if (use_color)
          {
-         glcolor=c;
-         color(c);
+         // peek actual color
+         c=rgba_stack.peek();
+
+         // lazy color state change
+         if (c!=glcolor)
+            {
+            glcolor=c;
+            color(c);
+            }
          }
       }
 
    virtual void traverse_post()
-      {rgba_stack.pop();}
+      {
+      // pop old color
+      if (use_color) rgba_stack.pop();
+      }
 
    };
 
@@ -1258,15 +1290,16 @@ class mininode_texgen_scale: public mininode_texgen
 //!  provides triangle-stripped geometry
 //!  has optional per-vertex color, normals and texture coordinates
 //!  has optional name that identifies the object which the geometry is part of
-class mininode_geometry_base: public mininode_group, public ministrip
+class mininode_geometry_base: public mininode_color, public ministrip
    {
    public:
 
    //! default constructor
    mininode_geometry_base(int colcomps=0,int nrmcomps=0,int texcomps=0,
                           int wocol=1,int wonrm=0,int wotex=0)
-      : mininode_group(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
+      : mininode_color(MININODE_GEOMETRY), ministrip(colcomps,nrmcomps,texcomps)
       {
+      use_color=FALSE;
       this->wocol=wocol;
       this->wonrm=wonrm;
       this->wotex=wotex;
@@ -1275,8 +1308,9 @@ class mininode_geometry_base: public mininode_group, public ministrip
    //! copy constructor
    mininode_geometry_base(const ministrip &strip,
                           int wocol=1,int wonrm=0,int wotex=0)
-      : mininode_group(MININODE_GEOMETRY), ministrip(strip)
+      : mininode_color(MININODE_GEOMETRY), ministrip(strip)
       {
+      use_color=FALSE;
       this->wocol=wocol;
       this->wonrm=wonrm;
       this->wotex=wotex;
@@ -1284,8 +1318,9 @@ class mininode_geometry_base: public mininode_group, public ministrip
 
    //! copy constructor
    mininode_geometry_base(const mininode_geometry_base &geo)
-      : mininode_group(MININODE_GEOMETRY), ministrip(geo)
+      : mininode_color(MININODE_GEOMETRY), ministrip(geo)
       {
+      use_color=FALSE;
       this->wocol=geo.wocol;
       this->wonrm=geo.wonrm;
       this->wotex=geo.wotex;
@@ -1338,6 +1373,7 @@ class mininode_geometry_base: public mininode_group, public ministrip
 
    virtual void traverse_pre()
       {
+      mininode_color::traverse_pre();
       BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
       if (has_tex() && texgen) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
       ministrip::render(wocol,wonrm,wotex); // render triangle strip
