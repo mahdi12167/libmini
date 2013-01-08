@@ -216,6 +216,10 @@ class mininode_color: public mininode_group
    //! destructor
    virtual ~mininode_color() {}
 
+   //! set color
+   void set_color(const miniv4d &c)
+      {rgba=c;}
+
    //! enable color
    void enable_color(BOOLINT on)
       {use_color=on;}
