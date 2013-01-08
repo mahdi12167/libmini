@@ -103,7 +103,7 @@ class mininode: public minidyna< miniref<mininode> >
    //!   the graph can be modified manually or by self-modification
    //!  a modified graph has to be updated
    //!   call check_dirty in case of a manual modification
-   //!   call clear_dirty in case of all modifications
+   //!   call clear_dirty in case of any modification
    virtual BOOLINT traverse(unsigned int level=0)
       {
       BOOLINT dirty=m_dirty;
