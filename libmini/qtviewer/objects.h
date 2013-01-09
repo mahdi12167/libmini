@@ -36,6 +36,9 @@ class Object_extents: public Object
 
    //! get extents
    virtual grid_extent get_extent() const = 0;
+
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE) = 0;
    };
 
 //! tileset object
@@ -62,6 +65,9 @@ class Object_tileset: public Object_extents
 
    //! get grid-centered extents
    virtual grid_extent get_extent() const;
+
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE);
 
    protected:
 
@@ -109,6 +115,9 @@ class Object_image: public Object_extents
    //! get geographic extents of image
    virtual grid_extent get_geo_extent() const
       {return(extent_geo);}
+
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE);
 
    //! set thumb via db format
    void set_thumb(const databuf *buf);
@@ -160,6 +169,9 @@ class Object_extent: public Object_extents
    //! get extents
    grid_extent get_extent() const
       {return(extent);}
+
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE);
 
    protected:
 

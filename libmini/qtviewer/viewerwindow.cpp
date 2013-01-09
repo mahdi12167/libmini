@@ -648,23 +648,21 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "select")
    {
-      toggleTag(value, "selected");
+      select_object(value, !hasTag(value, "selected"));
    }
    else if (action == "select_all")
    {
       ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
-         if (!hasTag(keys[i], "selected"))
-             addTag(keys[i], "selected");
+         select_object(keys[i], TRUE);
    }
    else if (action == "deselect_all")
    {
       ministrings keys = listObjects();
 
       for (unsigned int i=0; i<keys.size(); i++)
-         if (hasTag(keys[i], "selected"))
-             removeTag(keys[i], "selected");
+         select_object(keys[i], FALSE);
    }
    else if (action == "info")
    {
@@ -673,32 +671,15 @@ void ViewerWindow::runAction(ministring action,
    }
    else if (action == "show")
    {
-      Object *obj = getObject(value);
-      if (obj) obj->show();
-
-      removeTag(value, "hidden");
+      hide_object(value, FALSE);
    }
    else if (action == "hide")
    {
-      Object *obj = getObject(value);
-      if (obj) obj->show(FALSE);
-
-      addTag(value, "hidden");
+      hide_object(value, TRUE);
    }
    else if (action == "toggle")
    {
-      Object *obj = getObject(value);
-      if (obj)
-         if (obj->is_shown())
-         {
-            obj->show(FALSE);
-            addTag(value, "hidden");
-         }
-         else
-         {
-            obj->show();
-            removeTag(value, "hidden");
-         }
+      hide_object(value, !hasTag(value, "hidden"));
    }
    else if (action == "show_elevation")
    {
@@ -707,11 +688,7 @@ void ViewerWindow::runAction(ministring action,
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "elevation"))
-               if (hasTag(keys[i], "hidden"))
-               {
-                  removeTag(keys[i], "hidden");
-                  getObject(keys[i])->show(TRUE);
-               }
+               hide_object(keys[i], FALSE);
    }
    else if (action == "hide_elevation")
    {
@@ -720,11 +697,7 @@ void ViewerWindow::runAction(ministring action,
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "elevation"))
-               if (!hasTag(keys[i], "hidden"))
-               {
-                  addTag(keys[i], "hidden");
-                  getObject(keys[i])->show(FALSE);
-               }
+               hide_object(keys[i], TRUE);
    }
    else if (action == "show_imagery")
    {
@@ -733,11 +706,7 @@ void ViewerWindow::runAction(ministring action,
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "imagery"))
-               if (hasTag(keys[i], "hidden"))
-               {
-                  removeTag(keys[i], "hidden");
-                  getObject(keys[i])->show(TRUE);
-               }
+               hide_object(keys[i], FALSE);
    }
    else if (action == "hide_imagery")
    {
@@ -746,11 +715,7 @@ void ViewerWindow::runAction(ministring action,
       for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "image"))
             if (hasTag(keys[i], "imagery"))
-               if (!hasTag(keys[i], "hidden"))
-               {
-                  addTag(keys[i], "hidden");
-                  getObject(keys[i])->show(FALSE);
-               }
+               hide_object(keys[i], TRUE);
    }
    else if (action == "create_extent")
    {
@@ -872,6 +837,38 @@ void ViewerWindow::runAction(ministring action,
    {
       gotoObject(value);
    }
+}
+
+void ViewerWindow::select_object(ministring key, BOOLINT yes)
+{
+   if (yes)
+      if (!hasTag(key, "selected"))
+         addTag(key, "selected");
+
+  if (!yes)
+     if (hasTag(key, "selected"))
+        removeTag(key, "selected");
+
+   Object *obj = getObject(key);
+   if (obj)
+   {
+      Object_extents *extent = dynamic_cast<Object_extents *>(obj);
+      if (extent) extent->mark(yes);
+   }
+}
+
+void ViewerWindow::hide_object(ministring key, BOOLINT yes)
+{
+   if (yes)
+      if (!hasTag(key, "hidden"))
+         addTag(key, "hidden");
+
+  if (!yes)
+     if (hasTag(key, "hidden"))
+        removeTag(key, "hidden");
+
+  Object *obj = getObject(key);
+  if (obj) obj->show(!yes);
 }
 
 void ViewerWindow::create_extent(ministring key)

@@ -114,6 +114,9 @@ grid_extent Object_tileset::get_extent() const
    return(extent);
    }
 
+void Object_tileset::mark(BOOLINT yes)
+   {}
+
 // Object_image:
 
 mininode *Object_image::image_groupnode=NULL;
@@ -298,6 +301,15 @@ void Object_image::focus()
 ministring Object_image::serialize()
    {return("Object_image["+repository+","+filename+"]");}
 
+void Object_image::mark(BOOLINT yes)
+   {
+   if (image_node!=NULL)
+      {
+      image_node->set_color(miniv4d(1,0,0,0.5));
+      image_node->enable_color(yes);
+      }
+   }
+
 void Object_image::set_thumb(const databuf *buf)
    {
    mininode_texture2D *tex2d_node=new mininode_texture2D;
@@ -461,4 +473,13 @@ Object_extent *Object_extent::deserialize(ministring key,ministring info,Viewer 
       }
 
    return(obj);
+   }
+
+void Object_extent::mark(BOOLINT yes)
+   {
+   if (extent_node!=NULL)
+      {
+      extent_node->set_color(miniv4d(1,0,0,0.5));
+      extent_node->enable_color(yes);
+      }
    }

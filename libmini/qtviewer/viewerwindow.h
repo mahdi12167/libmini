@@ -90,6 +90,8 @@ public:
    void runAction(ministring action="",
                   ministring value="");
 
+   void select_object(ministring key, BOOLINT yes=TRUE);
+   void hide_object(ministring key, BOOLINT yes=TRUE);
    void create_extent(ministring key);
    void shade_elevation(ministring key);
    BOOLINT check_list(ministrings keys);
