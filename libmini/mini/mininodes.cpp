@@ -29,7 +29,9 @@ double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geom
                   // get child geometry
                   mininode_geometry *child_geo=dynamic_cast<mininode_geometry *>(child);
 
-                  if (child_geo) dist=child_geo->shoot(o,d,mindist);
+                  if (child_geo)
+                     if (child_geo->is_shown()) dist=child_geo->shoot(o,d,mindist);
+                     else dist=MAXFLOAT;
                   else dist=child_group->shoot_ray(o,d,&child_geo,mindist);
 
                   if (dist<result)
