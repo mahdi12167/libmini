@@ -307,6 +307,8 @@ void Object_image::mark(BOOLINT yes)
       {
       image_node->set_color(miniv4d(1,0,0,0.5));
       image_node->enable_color(yes);
+
+      image_viewer->getCamera()->startIdling();
       }
    }
 
@@ -481,5 +483,7 @@ void Object_extent::mark(BOOLINT yes)
       {
       extent_node->set_color(miniv4d(1,0,0,0.5));
       extent_node->enable_color(yes);
+
+      extent_viewer->getCamera()->startIdling();
       }
    }
