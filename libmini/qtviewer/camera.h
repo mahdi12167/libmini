@@ -63,6 +63,7 @@ protected:
 
    void    processTransition(double w, double dw);
 
+   miniv3d unprojectPosition(int x, int y);
    miniv3d unprojectMouse();
 
 public:

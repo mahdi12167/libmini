@@ -61,13 +61,18 @@ void Camera::initTransition()
    m_bInCameraTransition = false;
 }
 
+miniv3d Camera::unprojectPosition(int x, int y)
+{
+   return(unproject_viewport(x, y,
+                             m_window->width(), m_window->height()));
+}
+
 miniv3d Camera::unprojectMouse()
 {
    if (!m_CursorValid)
       return(get_dir());
 
-   return(unproject_viewport(m_CursorPosX, m_CursorPosY,
-                             m_window->width(), m_window->height()));
+   return(unprojectPosition(m_CursorPosX, m_CursorPosY));
 }
 
 miniv3d Camera::hitVector()
