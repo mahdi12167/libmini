@@ -204,7 +204,43 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    // a right button move
    else if (event->buttons() & Qt::RightButton)
    {
-      // nothing to do here
+      // get eye position
+      minicoord pos = viewer->getCamera()->get_eye();
+
+      // get target vector
+      miniv3d vec = viewer->getCamera()->targetVector();
+
+      // shoot ray in target direction
+      mininode_geometry *obj = viewer->pick(pos, vec);
+      if (obj != NULL)
+      {
+         // get right vector
+         miniv3d right = viewer->getCamera()->get_right();
+
+         // get up vector
+         miniv3d up = viewer->getCamera()->get_up();
+
+         // compute drag vector
+         miniv3d drag = vec + (double)dx*right + (double)dy*up;
+         drag.normalize();
+
+         // shoot ray for target vector
+         double dist0 = viewer->shoot(pos, vec);
+
+         // shoot ray for drag vector
+         double dist1 = viewer->shoot(pos, drag);
+
+         if (dist0<MAXFLOAT && dist1<MAXFLOAT)
+         {
+            // compute target hit point
+            minicoord pos0 = pos+dist0*vec;
+
+            // compute drag hit point
+            minicoord pos1 = pos+dist1*vec;
+
+            //!! obj->drag(pos0, pos1);
+         }
+      }
    }
 
    movedPos = event->pos();
