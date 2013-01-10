@@ -39,6 +39,9 @@ class Object_extents: public Object
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE) = 0;
+
+   //! drag object
+   virtual void drag(const minicoord &pos0,const minicoord &pos1) = 0;
    };
 
 //! tileset object
@@ -68,6 +71,9 @@ class Object_tileset: public Object_extents
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
+
+   //! drag object
+   virtual void drag(const minicoord &pos0,const minicoord &pos1) {}
 
    protected:
 
@@ -118,6 +124,9 @@ class Object_image: public Object_extents
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
+
+   //! drag object
+   virtual void drag(const minicoord &pos0,const minicoord &pos1) {}
 
    //! set thumb via db format
    void set_thumb(const databuf *buf);
@@ -172,6 +181,9 @@ class Object_extent: public Object_extents
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
+
+   //! drag object
+   virtual void drag(const minicoord &pos0,const minicoord &pos1) {}
 
    protected:
 

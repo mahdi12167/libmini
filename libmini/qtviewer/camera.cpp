@@ -67,12 +67,13 @@ miniv3d Camera::unprojectPosition(int x, int y)
                              m_window->width(), m_window->height()));
 }
 
-miniv3d Camera::unprojectMouse()
+miniv3d Camera::unprojectMouse(float dx, float dy)
 {
    if (!m_CursorValid)
       return(get_dir());
 
-   return(unprojectPosition(m_CursorPosX, m_CursorPosY));
+   return(unprojectPosition(m_CursorPosX+dx*m_window->width(),
+                            m_CursorPosY+dy*m_window->height()));
 }
 
 miniv3d Camera::hitVector()
@@ -97,12 +98,12 @@ miniv3d Camera::nearVector()
    return(nearVec);
 }
 
-miniv3d Camera::targetVector()
+miniv3d Camera::targetVector(float dx, float dy)
 {
    miniv3d targetVec;
 
    // trace to find the hit point under current cursor
-   minicoord target = get_hit(get_eye(), unprojectMouse());
+   minicoord target = get_hit(get_eye(), unprojectMouse(dx, dy));
    targetVec = target.vec - get_eye().vec;
 
    return(targetVec);

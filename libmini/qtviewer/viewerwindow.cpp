@@ -214,15 +214,8 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
       mininode_geometry *obj = viewer->pick(pos, vec);
       if (obj != NULL)
       {
-         // get right vector
-         miniv3d right = viewer->getCamera()->get_right();
-
-         // get up vector
-         miniv3d up = viewer->getCamera()->get_up();
-
-         // compute drag vector
-         miniv3d drag = vec + (double)dx*right + (double)dy*up;
-         drag.normalize();
+         // get drag vector
+         miniv3d drag  = viewer->getCamera()->targetVector(dx, dy);
 
          // shoot ray for target vector
          double dist0 = viewer->shoot(pos, vec);
@@ -238,7 +231,19 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
             // compute drag hit point
             minicoord pos1 = pos+dist1*vec;
 
-            //!! obj->drag(pos0, pos1);
+            // drag to new position
+            if (!obj->get_name().empty())
+            {
+               Object *object = getObject(obj->get_name());
+
+               if (object != NULL)
+               {
+                  Object_extents *extent = dynamic_cast<Object_extents *>(object);
+
+                  if (extent != NULL)
+                     extent->drag(pos0, pos1);
+               }
+            }
          }
       }
    }

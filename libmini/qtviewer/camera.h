@@ -64,12 +64,12 @@ protected:
    void    processTransition(double w, double dw);
 
    miniv3d unprojectPosition(int x, int y);
-   miniv3d unprojectMouse();
+   miniv3d unprojectMouse(float dx=0.0f, float dy=0.0f);
 
 public:
    miniv3d hitVector();
    miniv3d nearVector();
-   miniv3d targetVector();
+   miniv3d targetVector(float dx=0.0f, float dy=0.0f);
    miniv3d cursorVector(double zoom=0.0);
 
 private:
