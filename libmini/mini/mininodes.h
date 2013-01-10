@@ -1492,6 +1492,8 @@ class mininode_geometry: public mininode_geometry_base
          {
          geometry_deferred_type geo;
 
+         mininode_color::traverse_pre();
+
          geo.node=this;
          geo.pass_first=pass_first;
          geo.pass_last=pass_last;
