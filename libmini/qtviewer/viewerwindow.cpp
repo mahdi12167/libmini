@@ -241,7 +241,19 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                   Object_extents *extent = dynamic_cast<Object_extents *>(object);
 
                   if (extent != NULL)
-                     extent->drag(pos0, pos1);
+                     {
+                     double s,t;
+
+                     grid_extent area = extent->get_extent();
+                     area.get_norm(pos0, s, t);
+
+                     if (s>0.1 && s<0.9 && t>0.1 && t<0.9)
+                        extent->move(pos0, pos1); // grabbed extent body
+                     else if ((s<0.1 || s>0.9) && (t<0.1 || t>0.9))
+                        extent->rotate(pos0, pos1); // grabbed extent corners
+                     else
+                        extent->scale(pos0, pos1); // grabbed extent edges
+                     }
                }
             }
          }
