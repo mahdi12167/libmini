@@ -959,6 +959,25 @@ void MyQTableWidget::keyPressEvent(QKeyEvent *event)
       QTableWidget::keyPressEvent(event); // pass to widget
 }
 
+void MyQTableWidget::mousePressEvent(QMouseEvent *event)
+{
+   if (QApplication::keyboardModifiers() & Qt::AltModifier)
+   {
+      // get item
+      int row = -1;
+      QTableWidgetItem *item = itemAt(event->pos());
+
+      // highlight item
+      if (item)
+      {
+         row = item->row();
+         emit(activate("select", row));
+      }
+   }
+   else
+      QTableWidget::mousePressEvent(event); // pass to widget
+}
+
 void MyQTableWidget::showContextMenu(const QPoint &pos)
 {
     // map widget to global coordinates
