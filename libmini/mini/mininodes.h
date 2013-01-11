@@ -290,8 +290,20 @@ class mininode_color: public mininode_group
 
    virtual void traverse_post()
       {
-      // pop old color
-      if (use_color) rgba_stack.pop();
+      miniv4d c;
+
+      if (use_color)
+         {
+         // pop actual color
+         c=rgba_stack.pop();
+
+         // lazy color state change
+         if (c!=glcolor)
+            {
+            glcolor=c;
+            color(c);
+            }
+         }
       }
 
    };
