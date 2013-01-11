@@ -967,7 +967,7 @@ void MyQTableWidget::mousePressEvent(QMouseEvent *event)
       int row = -1;
       QTableWidgetItem *item = itemAt(event->pos());
 
-      // highlight item
+      // select item
       if (item)
       {
          row = item->row();
