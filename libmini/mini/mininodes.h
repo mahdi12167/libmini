@@ -1521,6 +1521,18 @@ class mininode_geometry: public mininode_geometry_base
          }
       }
 
+   virtual void traverse_past()
+      {
+      if (shown) return;
+      mininode_color::traverse_past();
+      }
+
+   virtual void traverse_post()
+      {
+      if (!shown) return;
+      mininode_color::traverse_post();
+      }
+
    };
 
 //! tetrahedron geometry node
