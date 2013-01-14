@@ -128,15 +128,6 @@ class Object_image: public Object_extents
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
 
-   //! move object
-   virtual void move(const minicoord &pos0,const minicoord &pos1) {}
-
-   //! rotate object
-   virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
-
-   //! scale object
-   virtual void scale(const minicoord &pos0,const minicoord &pos1) {}
-
    //! set thumb via db format
    void set_thumb(const databuf *buf);
 
