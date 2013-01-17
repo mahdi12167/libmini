@@ -127,7 +127,8 @@ void ViewerWindow::mousePressEvent(QMouseEvent *event)
    reportModifiers();
 
    if (event->buttons() & Qt::LeftButton)
-      if (QApplication::keyboardModifiers() & Qt::AltModifier)
+      if (QApplication::keyboardModifiers() & Qt::ControlModifier ||
+          QApplication::keyboardModifiers() & Qt::AltModifier)
          bRightButtonDown = true;
       else
          bLeftButtonDown = true;
@@ -193,22 +194,35 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
    viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
+   bool leftButton = event->buttons() & Qt::LeftButton;
+   bool middleButton = event->buttons() & Qt::MiddleButton;
+   bool rightButton = event->buttons() & Qt::RightButton;
+
+   if (leftButton)
+      if (QApplication::keyboardModifiers() & Qt::ControlModifier ||
+          QApplication::keyboardModifiers() & Qt::AltModifier)
+         {
+         leftButton=FALSE;
+         rightButton=TRUE;
+         }
+
    // a left button move
-   if (event->buttons() & Qt::LeftButton)
+   if (leftButton)
       viewer->getCamera()->rotateCamera(dx, dy);
    // a middle button move
-   else if (event->buttons() & Qt::MiddleButton)
+   else if (middleButton)
    {
       // nothing to do here
    }
    // a right button move
-   else if (event->buttons() & Qt::RightButton)
+   else if (rightButton)
    {
       // get eye position
       minicoord pos = viewer->getCamera()->get_eye();
 
       // get target vector
       miniv3d vec = viewer->getCamera()->targetVector();
+      vec.normalize();
 
       // shoot ray in target direction
       mininode_geometry *obj = viewer->pick(pos, vec);
@@ -216,6 +230,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
       {
          // get drag vector
          miniv3d drag  = viewer->getCamera()->targetVector(dx, dy);
+         drag.normalize();
 
          // shoot ray for target vector
          double dist0 = viewer->shoot(pos, vec);

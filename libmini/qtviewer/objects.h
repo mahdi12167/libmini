@@ -183,13 +183,13 @@ class Object_extent: public Object_extents
    virtual void mark(BOOLINT yes=TRUE);
 
    //! move object
-   virtual void move(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void move(const minicoord &pos0,const minicoord &pos1);
 
    //! rotate object
-   virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void rotate(const minicoord &pos0,const minicoord &pos1);
 
    //! scale object
-   virtual void scale(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void scale(const minicoord &pos0,const minicoord &pos1);
 
    protected:
 

@@ -487,3 +487,18 @@ void Object_extent::mark(BOOLINT yes)
       extent_viewer->getCamera()->startIdling();
       }
    }
+
+void Object_extent::move(const minicoord &pos0,const minicoord &pos1)
+   {
+   std::cout << "move distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   }
+
+void Object_extent::rotate(const minicoord &pos0,const minicoord &pos1)
+   {
+   std::cout << "rotate distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   }
+
+void Object_extent::scale(const minicoord &pos0,const minicoord &pos1)
+   {
+   std::cout << "scale distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   }
