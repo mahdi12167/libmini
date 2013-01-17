@@ -244,7 +244,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
             minicoord pos0 = pos+dist0*vec;
 
             // compute drag hit point
-            minicoord pos1 = pos+dist1*vec;
+            minicoord pos1 = pos+dist1*drag;
 
             // drag to new position
             if (!obj->get_name().empty())
