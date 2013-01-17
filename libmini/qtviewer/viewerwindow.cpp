@@ -262,9 +262,9 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                      grid_extent area = extent->get_extent();
                      area.get_norm(pos0, s, t);
 
-                     if (s>0.1 && s<0.9 && t>0.1 && t<0.9)
+                     if (s>0.2 && s<0.8 && t>0.2 && t<0.8)
                         extent->move(pos0, pos1); // grabbed extent body
-                     else if ((s<0.1 || s>0.9) && (t<0.1 || t>0.9))
+                     else if ((s<0.2 || s>0.8) && (t<0.2 || t>0.8))
                         extent->rotate(pos0, pos1); // grabbed extent corners
                      else
                         extent->scale(pos0, pos1); // grabbed extent edges
