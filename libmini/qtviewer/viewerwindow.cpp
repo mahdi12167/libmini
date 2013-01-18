@@ -187,6 +187,8 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 {
+   static const double border=0.2;
+
    float dx = (float)(event->x()-movedPos.x())/width();
    float dy = (float)(event->y()-movedPos.y())/height();
 
@@ -262,9 +264,9 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                      grid_extent area = extent->get_extent();
                      area.get_norm(pos0, s, t);
 
-                     if (s>0.2 && s<0.8 && t>0.2 && t<0.8)
+                     if (s>border && s<1.0-border && t>border && t<1.0-border)
                         extent->move(pos0, pos1); // grabbed extent body
-                     else if ((s<0.2 || s>0.8) && (t<0.2 || t>0.8))
+                     else if ((s<border || s>1.0-border) && (t<border || t>1.0-border))
                         extent->rotate(pos0, pos1); // grabbed extent corners
                      else
                         extent->scale(pos0, pos1); // grabbed extent edges
