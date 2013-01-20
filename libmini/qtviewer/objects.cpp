@@ -7,6 +7,14 @@
 
 #include "objects.h"
 
+// Object_extents:
+
+void Object_extents::set_extent(const grid_extent &ext)
+   {
+   extent=ext;
+   set_center(extent.get_center(),extent.get_size()/2.0);
+   }
+
 // Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
@@ -103,13 +111,18 @@ void Object_tileset::focus()
 ministring Object_tileset::serialize()
    {return("Object_tileset["+repository+","+filename+"]");}
 
-grid_extent Object_tileset::get_extent() const
+grid_extent Object_tileset::get_extent()
    {
-   miniv3d ext=tileset_layer->getgeoextent();
-   minicoord center=tileset_layer->getgeocenter();
+   miniv3d ext;
+   minicoord center;
 
-   grid_extent extent;
-   extent.set(center,ext.x,ext.y);
+   if (!extent.check())
+      {
+      ext=tileset_layer->getgeoextent();
+      center=tileset_layer->getgeocenter();
+
+      extent.set(center,ext.x,ext.y);
+      }
 
    return(extent);
    }
@@ -246,7 +259,7 @@ int Object_image::initGFX()
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
 
-         set_center(extent_geo.get_center(),extent_geo.get_size());
+         set_center(extent_geo.get_center(),extent_geo.get_size()/2.0);
 
          image_node=new node_grid_extent(extent_geo);
          if (image_node==NULL) MEMERROR();
@@ -271,10 +284,11 @@ int Object_image::initGFX()
 void Object_image::exitGFX()
    {
    if (image_viewer!=NULL)
-      {
-      image_viewer->getRoot()->remove_node(image_node);
-      image_viewer->getCamera()->startIdling();
-      }
+      if (image_node!=NULL)
+         {
+         image_viewer->getRoot()->remove_node(image_node);
+         image_viewer->getCamera()->startIdling();
+         }
    }
 
 void Object_image::show(BOOLINT yes)
@@ -398,7 +412,7 @@ int Object_extent::initGFX()
                           append_child(tex2d_node);
          }
 
-      set_center(extent.get_center(),extent.get_size());
+      set_center(extent.get_center(),extent.get_size()/2.0);
 
       extent_node=new node_grid_extent(extent);
       if (extent_node==NULL) MEMERROR();
@@ -421,10 +435,11 @@ int Object_extent::initGFX()
 void Object_extent::exitGFX()
    {
    if (extent_viewer!=NULL)
-      {
-      extent_viewer->getRoot()->remove_node(extent_node);
-      extent_viewer->getCamera()->startIdling();
-      }
+      if (extent_node!=NULL)
+         {
+         extent_viewer->getRoot()->remove_node(extent_node);
+         extent_viewer->getCamera()->startIdling();
+         }
    }
 
 void Object_extent::show(BOOLINT yes)
@@ -488,17 +503,30 @@ void Object_extent::mark(BOOLINT yes)
       }
    }
 
+void Object_extent::move(const grid_extent &ext)
+   {
+   exitGFX();
+   set_extent(ext);
+   initGFX();
+   }
+
 void Object_extent::move(const minicoord &pos0,const minicoord &pos1)
    {
-   std::cout << "move distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   grid_extent ext=get_extent();
+   //!!ext.metric_move(pos0,pos1);
+   move(ext);
    }
 
 void Object_extent::rotate(const minicoord &pos0,const minicoord &pos1)
    {
-   std::cout << "rotate distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   grid_extent ext=get_extent();
+   //!!ext.metric_rotate(pos0,pos1);
+   move(ext);
    }
 
 void Object_extent::scale(const minicoord &pos0,const minicoord &pos1)
    {
-   std::cout << "scale distance:" << (pos1-pos0).vec.getlength() << std::endl; //!!
+   grid_extent ext=get_extent();
+   //!!ext.metric_scale(pos0,pos1);
+   move(ext);
    }

@@ -35,19 +35,29 @@ class Object_extents: public Object
       {}
 
    //! get extents
-   virtual grid_extent get_extent() const = 0;
+   virtual grid_extent get_extent() {return(extent);}
+
+   //! set new extents
+   virtual void set_extent(const grid_extent &ext);
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE) = 0;
 
-   //! move object
+   //! move object (via new extents)
+   virtual void move(const grid_extent &ext) {}
+
+   //! move object (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1) {}
 
-   //! rotate object
+   //! rotate object (via two handles)
    virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
 
-   //! scale object
+   //! scale object (via two handles)
    virtual void scale(const minicoord &pos0,const minicoord &pos1) {}
+
+   protected:
+
+   grid_extent extent;
    };
 
 //! tileset object
@@ -73,7 +83,7 @@ class Object_tileset: public Object_extents
    virtual ministring serialize();
 
    //! get grid-centered extents
-   virtual grid_extent get_extent() const;
+   virtual grid_extent get_extent();
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
@@ -118,11 +128,11 @@ class Object_image: public Object_extents
       {return(!is_imagery_resp_elevation);}
 
    //! get grid-centered extents
-   virtual grid_extent get_extent() const
+   virtual grid_extent get_extent()
       {return(extent);}
 
    //! get geographic extents of image
-   virtual grid_extent get_geo_extent() const
+   virtual grid_extent get_geo_extent()
       {return(extent_geo);}
 
    //! mark object
@@ -135,7 +145,6 @@ class Object_image: public Object_extents
 
    BOOLINT is_imagery_resp_elevation;
 
-   grid_extent extent;
    grid_extent extent_geo;
    int size_x,size_y;
    double size_ds,size_dt;
@@ -176,24 +185,25 @@ class Object_extent: public Object_extents
    static Object_extent *deserialize(ministring key,ministring info,Viewer *viewer);
 
    //! get extents
-   grid_extent get_extent() const
+   grid_extent get_extent()
       {return(extent);}
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
 
-   //! move object
+   //! move object (via new extents)
+   virtual void move(const grid_extent &ext);
+
+   //! move object (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1);
 
-   //! rotate object
+   //! rotate object (via two handles)
    virtual void rotate(const minicoord &pos0,const minicoord &pos1);
 
-   //! scale object
+   //! scale object (via two handles)
    virtual void scale(const minicoord &pos0,const minicoord &pos1);
 
    protected:
-
-   grid_extent extent;
 
    Viewer *extent_viewer;
    mininode_geometry *extent_node;
