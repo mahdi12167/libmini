@@ -101,25 +101,25 @@ Object *Objects::get(const ministring &key)
 ministrings *Objects::get_tags(const ministring &key)
    {return(minikeyval<Object *>::get_tags(key));}
 
-void Objects::add_tag(ministring key,ministring tag)
+void Objects::add_tag(const ministring &key,const ministring &tag)
    {
    MINILOG("adding tag to object with key=" + key + " and tag=" + tag);
    minikeyval<Object *>::tag(key,tag);
    }
 
-void Objects::add_tags(ministring key,ministrings tags)
+void Objects::add_tags(const ministring &key,const ministrings &tags)
    {
    MINILOG("adding tags to object with key=" + key + " and tags=" + tags.to_string(","));
    minikeyval<Object *>::tag(key,tags);
    }
 
-void Objects::remove_tag(ministring key,ministring tag)
+void Objects::remove_tag(const ministring &key,const ministring &tag)
    {
    MINILOG("removing tag from object with key=" + key + " and tag=" + tag);
    minikeyval<Object *>::untag(key,tag);
    }
 
-BOOLINT Objects::has_tag(ministring key,ministring tag)
+BOOLINT Objects::has_tag(const ministring &key,const ministring &tag)
    {return(minikeyval<Object *>::has_tag(key,tag));}
 
 ministrings Objects::list()
@@ -149,6 +149,97 @@ void Objects::set_repo(const ministring &repo)
 
       get(i)->set_relative_path(repo);
       get(i)->set_relative_name(path);
+      }
+   }
+
+void Objects::show(const ministring &key,BOOLINT yes)
+   {
+   Object *object=get(key);
+   if (object!=NULL) object->show(yes);
+   }
+
+void Objects::focus(const ministring &key)
+   {
+   Object *object=get(key);
+   if (object!=NULL) object->focus();
+   }
+
+void Objects::mark(const ministring &key,BOOLINT yes)
+   {
+   Object *object=get(key);
+
+   if (object!=NULL)
+      {
+      Object_extents *extent=dynamic_cast<Object_extents *>(object);
+      if (extent!=NULL) extent->mark(yes);
+      }
+   }
+
+void Objects::move(const ministring &key,const minicoord &pos0,const minicoord &pos1)
+   {
+   Object *object=get(key);
+
+   if (object!=NULL)
+      {
+      Object_extents *extent=dynamic_cast<Object_extents *>(object);
+
+      if (extent!=NULL)
+         {
+         extent->exitGFX();
+         extent->move(pos0,pos1);
+         extent->initGFX();
+         }
+      }
+   }
+
+void Objects::rotate(const ministring &key,const minicoord &pos0,const minicoord &pos1)
+   {
+   Object *object=get(key);
+
+   if (object!=NULL)
+      {
+      Object_extents *extent=dynamic_cast<Object_extents *>(object);
+
+      if (extent!=NULL)
+         {
+         extent->exitGFX();
+         extent->rotate(pos0,pos1);
+         extent->initGFX();
+         }
+      }
+   }
+
+void Objects::scale_ds(const ministring &key,const minicoord &pos0,const minicoord &pos1)
+   {
+   Object *object=get(key);
+
+   if (object!=NULL)
+      {
+      Object_extents *extent=dynamic_cast<Object_extents *>(object);
+
+      if (extent!=NULL)
+         {
+         extent->exitGFX();
+         extent->scale_ds(pos0,pos1);
+         extent->initGFX();
+         }
+      }
+   }
+
+void Objects::scale_dt(const ministring &key,const minicoord &pos0,const minicoord &pos1)
+   {
+   Object *object=get(key);
+
+   if (object!=NULL)
+      {
+      Object_extents *extent=dynamic_cast<Object_extents *>(object);
+
+      if (extent!=NULL)
+         {
+         extent->exitGFX();
+         extent->scale_dt(pos0,pos1);
+         extent->initGFX();
+         }
       }
    }
 

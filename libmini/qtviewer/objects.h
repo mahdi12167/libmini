@@ -22,44 +22,6 @@ enum
    OBJECT_TOO_LARGE=3
    };
 
-//! extent base class
-class Object_extents: public Object
-   {
-   public:
-
-   Object_extents(const ministring &name="",const ministring &repo="")
-      : Object(name,repo)
-      {}
-
-   virtual ~Object_extents()
-      {}
-
-   //! get extents
-   virtual grid_extent get_extent() {return(extent);}
-
-   //! set new extents
-   virtual void set_extent(const grid_extent &ext);
-
-   //! mark object
-   virtual void mark(BOOLINT yes=TRUE) = 0;
-
-   //! move object (via new extents)
-   virtual void move(const grid_extent &ext) {}
-
-   //! move object (via two handles)
-   virtual void move(const minicoord &pos0,const minicoord &pos1) {}
-
-   //! rotate object (via two handles)
-   virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
-
-   //! scale object (via two handles)
-   virtual void scale(const minicoord &pos0,const minicoord &pos1) {}
-
-   protected:
-
-   grid_extent extent;
-   };
-
 //! tileset object
 class Object_tileset: public Object_extents
    {
@@ -191,17 +153,17 @@ class Object_extent: public Object_extents
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
 
-   //! move object (via new extents)
-   virtual void move(const grid_extent &ext);
-
    //! move object (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1);
 
    //! rotate object (via two handles)
    virtual void rotate(const minicoord &pos0,const minicoord &pos1);
 
-   //! scale object (via two handles)
-   virtual void scale(const minicoord &pos0,const minicoord &pos1);
+   //! scale object horizontally (via two handles)
+   virtual void scale_ds(const minicoord &pos0,const minicoord &pos1);
+
+   //! scale object vertically (via two handles)
+   virtual void scale_dt(const minicoord &pos0,const minicoord &pos1);
 
    protected:
 

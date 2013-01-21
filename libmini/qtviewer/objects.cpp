@@ -7,14 +7,6 @@
 
 #include "objects.h"
 
-// Object_extents:
-
-void Object_extents::set_extent(const grid_extent &ext)
-   {
-   extent=ext;
-   set_center(extent.get_center(),extent.get_size()/2.0);
-   }
-
 // Object_tileset:
 
 Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
@@ -259,7 +251,7 @@ int Object_image::initGFX()
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
 
-         set_center(extent_geo.get_center(),extent_geo.get_size()/2.0);
+         set_center(extent_geo.get_center(),extent_geo.get_radius());
 
          image_node=new node_grid_extent(extent_geo);
          if (image_node==NULL) MEMERROR();
@@ -412,7 +404,7 @@ int Object_extent::initGFX()
                           append_child(tex2d_node);
          }
 
-      set_center(extent.get_center(),extent.get_size()/2.0);
+      set_center(extent.get_center(),extent.get_radius());
 
       extent_node=new node_grid_extent(extent);
       if (extent_node==NULL) MEMERROR();
@@ -503,30 +495,30 @@ void Object_extent::mark(BOOLINT yes)
       }
    }
 
-void Object_extent::move(const grid_extent &ext)
-   {
-   exitGFX();
-   set_extent(ext);
-   initGFX();
-   }
-
 void Object_extent::move(const minicoord &pos0,const minicoord &pos1)
    {
    grid_extent ext=get_extent();
-   //!!ext.metric_move(pos0,pos1);
-   move(ext);
+   ext.metric_move(pos0,pos1);
+   set_extent(ext);
    }
 
 void Object_extent::rotate(const minicoord &pos0,const minicoord &pos1)
    {
    grid_extent ext=get_extent();
-   //!!ext.metric_rotate(pos0,pos1);
-   move(ext);
+   ext.metric_rotate(pos0,pos1);
+   set_extent(ext);
    }
 
-void Object_extent::scale(const minicoord &pos0,const minicoord &pos1)
+void Object_extent::scale_ds(const minicoord &pos0,const minicoord &pos1)
    {
    grid_extent ext=get_extent();
-   //!!ext.metric_scale(pos0,pos1);
-   move(ext);
+   ext.metric_scale_ds(pos0,pos1);
+   set_extent(ext);
+   }
+
+void Object_extent::scale_dt(const minicoord &pos0,const minicoord &pos1)
+   {
+   grid_extent ext=get_extent();
+   ext.metric_scale_dt(pos0,pos1);
+   set_extent(ext);
    }

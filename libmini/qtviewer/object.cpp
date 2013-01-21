@@ -4,6 +4,8 @@
 
 #include "object.h"
 
+// Object:
+
 Object::Object(const ministring &name,const ministring &repo)
    {
    set_relative_path(repo);
@@ -115,3 +117,17 @@ void Object::show(BOOLINT /*yes*/) {}
 BOOLINT Object::is_shown() const {return(TRUE);}
 
 void Object::focus() {}
+
+void Object::update()
+   {
+   exitGFX();
+   initGFX();
+   }
+
+// Object_extents:
+
+void Object_extents::set_extent(const grid_extent &ext)
+   {
+   extent=ext;
+   set_center(extent.get_center(),extent.get_radius());
+   }

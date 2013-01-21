@@ -6,6 +6,8 @@
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
 
+#include <grid/grid_extent.h>
+
 //! object (base class)
 class Object
    {
@@ -82,6 +84,9 @@ class Object
    //! focus camera on object
    virtual void focus();
 
+   //! update object
+   virtual void update();
+
    //! serialize object
    virtual ministring serialize() = 0;
 
@@ -89,6 +94,46 @@ class Object
 
    minicoord coord; // object barycenter
    double radius; // object radius
+   };
+
+//! extent (base class)
+class Object_extents: public Object
+   {
+   public:
+
+   //! default constructor
+   Object_extents(const ministring &name="",const ministring &repo="")
+      : Object(name,repo)
+      {}
+
+   //! destructor
+   virtual ~Object_extents()
+      {}
+
+   //! get extents
+   virtual grid_extent get_extent() {return(extent);}
+
+   //! set new extents
+   virtual void set_extent(const grid_extent &ext);
+
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE) = 0;
+
+   //! move object (via two handles)
+   virtual void move(const minicoord &pos0,const minicoord &pos1) {}
+
+   //! rotate object (via two handles)
+   virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
+
+   //! scale object horizontally (via two handles)
+   virtual void scale_ds(const minicoord &pos0,const minicoord &pos1) {}
+
+   //! scale object vertically (via two handles)
+   virtual void scale_dt(const minicoord &pos0,const minicoord &pos1) {}
+
+   protected:
+
+   grid_extent extent;
    };
 
 #endif
