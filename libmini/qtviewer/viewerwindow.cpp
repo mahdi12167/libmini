@@ -269,7 +269,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                      else if ((s<border || s>1.0-border) && (t<border || t>1.0-border))
                         extent->rotate(pos0, pos1); // grabbed extent corners
                      else
-                        if (s>t)
+                        if (s<border || s>1.0-border)
                            extent->scale_ds(pos0, pos1); // grabbed vertical extent edges
                         else
                            extent->scale_dt(pos0, pos1); // grabbed horizontal extent edges
