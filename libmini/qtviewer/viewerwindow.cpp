@@ -1284,6 +1284,8 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
             if (errorcode != OBJECT_SUCCESS)
                return(FALSE);
+
+            gotoObject(key);
          }
          else return(FALSE);
       }
