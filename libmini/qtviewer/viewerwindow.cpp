@@ -274,7 +274,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                         else
                            extent->scale_dt(pos0, pos1); // grabbed horizontal extent edges
 
-                     extent->update();
+                     extent->updateGFX();
                      }
                }
             }

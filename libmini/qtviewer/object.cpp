@@ -118,11 +118,7 @@ BOOLINT Object::is_shown() const {return(TRUE);}
 
 void Object::focus() {}
 
-void Object::update()
-   {
-   exitGFX();
-   initGFX();
-   }
+void Object::updateGFX() {}
 
 // Object_extents:
 

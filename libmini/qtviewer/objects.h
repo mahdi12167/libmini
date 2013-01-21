@@ -143,6 +143,8 @@ class Object_extent: public Object_extents
 
    virtual void focus();
 
+   virtual void updateGFX();
+
    virtual ministring serialize();
    static Object_extent *deserialize(ministring key,ministring info,Viewer *viewer);
 

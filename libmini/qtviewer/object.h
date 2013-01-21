@@ -84,8 +84,8 @@ class Object
    //! focus camera on object
    virtual void focus();
 
-   //! update object
-   virtual void update();
+   //! update graphic representation
+   virtual void updateGFX();
 
    //! serialize object
    virtual ministring serialize() = 0;

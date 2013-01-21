@@ -455,6 +455,12 @@ void Object_extent::focus()
       extent_viewer->getCamera()->focusOnObject(this);
    }
 
+void Object_extent::updateGFX()
+   {
+   exitGFX();
+   initGFX();
+   }
+
 ministring Object_extent::serialize()
    {
    ministring info("Object_extent");

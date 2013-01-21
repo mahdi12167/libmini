@@ -185,9 +185,8 @@ void Objects::move(const ministring &key,const minicoord &pos0,const minicoord &
 
       if (extent!=NULL)
          {
-         extent->exitGFX();
          extent->move(pos0,pos1);
-         extent->initGFX();
+         extent->updateGFX();
          }
       }
    }
@@ -202,9 +201,8 @@ void Objects::rotate(const ministring &key,const minicoord &pos0,const minicoord
 
       if (extent!=NULL)
          {
-         extent->exitGFX();
          extent->rotate(pos0,pos1);
-         extent->initGFX();
+         extent->updateGFX();
          }
       }
    }
@@ -219,9 +217,8 @@ void Objects::scale_ds(const ministring &key,const minicoord &pos0,const minicoo
 
       if (extent!=NULL)
          {
-         extent->exitGFX();
          extent->scale_ds(pos0,pos1);
-         extent->initGFX();
+         extent->updateGFX();
          }
       }
    }
@@ -236,9 +233,8 @@ void Objects::scale_dt(const ministring &key,const minicoord &pos0,const minicoo
 
       if (extent!=NULL)
          {
-         extent->exitGFX();
          extent->scale_dt(pos0,pos1);
-         extent->initGFX();
+         extent->updateGFX();
          }
       }
    }
