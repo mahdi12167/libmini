@@ -119,9 +119,6 @@ grid_extent Object_tileset::get_extent()
    return(extent);
    }
 
-void Object_tileset::mark(BOOLINT yes)
-   {}
-
 // Object_image:
 
 mininode *Object_image::image_groupnode=NULL;
@@ -144,6 +141,7 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    image_node=NULL;
 
    shown=TRUE;
+   marked=FALSE;
    }
 
 Object_image::~Object_image()
@@ -309,6 +307,8 @@ ministring Object_image::serialize()
 
 void Object_image::mark(BOOLINT yes)
    {
+   marked=yes;
+
    if (image_node!=NULL)
       {
       image_node->set_color(miniv4d(1,0,0,0.5));
@@ -317,6 +317,9 @@ void Object_image::mark(BOOLINT yes)
       image_viewer->getCamera()->startIdling();
       }
    }
+
+BOOLINT Object_image::is_marked() const
+   {return(marked);}
 
 void Object_image::set_thumb(const databuf *buf)
    {
@@ -349,6 +352,7 @@ Object_extent::Object_extent(const ministring &name,
    extent_node=NULL;
 
    shown=TRUE;
+   marked=FALSE;
    }
 
 Object_extent::~Object_extent()
@@ -492,6 +496,8 @@ Object_extent *Object_extent::deserialize(ministring key,ministring info,Viewer 
 
 void Object_extent::mark(BOOLINT yes)
    {
+   marked=yes;
+
    if (extent_node!=NULL)
       {
       extent_node->set_color(miniv4d(1,0,0,0.5));
@@ -500,6 +506,9 @@ void Object_extent::mark(BOOLINT yes)
       extent_viewer->getCamera()->startIdling();
       }
    }
+
+BOOLINT Object_extent::is_marked() const
+   {return(marked);}
 
 void Object_extent::move(const minicoord &pos0,const minicoord &pos1)
    {
