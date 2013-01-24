@@ -119,6 +119,9 @@ class Object_extents: public Object
    //! mark object
    virtual void mark(BOOLINT yes=TRUE) = 0;
 
+   //! tell if object is marked
+   virtual BOOLINT is_marked() const;
+
    //! move object (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1) {}
 
