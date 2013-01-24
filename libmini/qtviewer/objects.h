@@ -47,9 +47,6 @@ class Object_tileset: public Object_extents
    //! get grid-centered extents
    virtual grid_extent get_extent();
 
-   //! mark object
-   virtual void mark(BOOLINT yes=TRUE);
-
    protected:
 
    Viewer *tileset_viewer;
@@ -99,6 +96,7 @@ class Object_image: public Object_extents
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
+   virtual BOOLINT is_marked() const;
 
    //! set thumb via db format
    void set_thumb(const databuf *buf);
@@ -120,6 +118,7 @@ class Object_image: public Object_extents
    static mininode *deferred_groupnode2;
 
    BOOLINT shown;
+   BOOLINT marked;
    };
 
 //! extent object
@@ -154,6 +153,7 @@ class Object_extent: public Object_extents
 
    //! mark object
    virtual void mark(BOOLINT yes=TRUE);
+   virtual BOOLINT is_marked() const;
 
    //! move object (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1);
@@ -175,6 +175,7 @@ class Object_extent: public Object_extents
    static mininode *extent_groupnode;
 
    BOOLINT shown;
+   BOOLINT marked;
    };
 
 #endif
