@@ -117,7 +117,7 @@ class Object_extents: public Object
    virtual void set_extent(const grid_extent &ext);
 
    //! mark object
-   virtual void mark(BOOLINT yes=TRUE) = 0;
+   virtual void mark(BOOLINT yes=TRUE);
 
    //! tell if object is marked
    virtual BOOLINT is_marked() const;
