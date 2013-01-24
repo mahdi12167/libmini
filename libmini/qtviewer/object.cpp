@@ -127,3 +127,7 @@ void Object_extents::set_extent(const grid_extent &ext)
    extent=ext;
    set_center(extent.get_center(),extent.get_radius());
    }
+
+void Object_extents::mark(BOOLINT /*yes*/) {}
+BOOLINT Object_extents::is_marked() const {return(FALSE);}
+
