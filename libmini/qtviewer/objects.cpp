@@ -463,6 +463,9 @@ void Object_extent::updateGFX()
    {
    exitGFX();
    initGFX();
+
+   show(shown);
+   mark(marked);
    }
 
 ministring Object_extent::serialize()
