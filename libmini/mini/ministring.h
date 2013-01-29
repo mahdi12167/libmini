@@ -678,7 +678,7 @@ class ministrings: public minidyna<ministring>
 
    //! unique checksum
    ministring checksum(unsigned int length=4) const
-      {return(serialize().checksum());}
+      {return(serialize().checksum(length));}
 
    //! add operator (string concatenation)
    ministrings &operator += (const ministring &a)
