@@ -616,11 +616,11 @@ void minicoord::from_string(ministring &info)
       info=info.tail("minicoord(");
       vec.from_string(info);
       info=info.tail(",");
-      type=(minicoord::MINICOORD)info.prefix(",").value();
+      type=(minicoord::MINICOORD)dtrc(info.prefix(",").value());
       info=info.tail(",");
       crs_zone=(int)info.prefix(",").value();
       info=info.tail(",");
-      crs_datum=(minicoord::MINICOORD_DATUM)info.prefix(",").value();
+      crs_datum=(minicoord::MINICOORD_DATUM)dtrc(info.prefix(",").value());
       info=info.tail(")");
       }
    }
