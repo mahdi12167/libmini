@@ -149,7 +149,7 @@ inline int isNAN(const double v) {return(v!=v);}
 
 #ifdef _WIN32
 #define drand48() ((double)rand()/RAND_MAX)
-#define srand48(unsigned int s) srand(s)
+#define srand48(s) srand(s)
 #endif
 
 #define minirand() drand48()
