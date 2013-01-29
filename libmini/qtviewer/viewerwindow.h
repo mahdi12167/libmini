@@ -92,7 +92,7 @@ public:
 
    void select_object(ministring key, BOOLINT yes=TRUE);
    void hide_object(ministring key, BOOLINT yes=TRUE);
-   void create_extent(ministring key);
+   void create_extent(ministring key, double dh=0.0);
    void shade_elevation(ministring key);
    BOOLINT check_list(ministrings keys);
    void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);

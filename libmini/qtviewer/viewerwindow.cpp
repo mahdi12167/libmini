@@ -795,7 +795,7 @@ void ViewerWindow::runAction(ministring action,
    else if (action == "create_extent")
    {
       if (value != "")
-         create_extent(value);
+         create_extent(value, 1000);
       else
          notify(TR("Operation requires a layer"));
    }
@@ -946,7 +946,7 @@ void ViewerWindow::hide_object(ministring key, BOOLINT yes)
   if (obj) obj->show(!yes);
 }
 
-void ViewerWindow::create_extent(ministring key)
+void ViewerWindow::create_extent(ministring key, double dh)
 {
    int errorcode = OBJECT_FAILURE;
 
@@ -962,6 +962,8 @@ void ViewerWindow::create_extent(ministring key)
 
    if (ext.check())
    {
+      ext.elevate(dh);
+
       ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
       Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
       if (obj_ext == NULL) MEMERROR();
