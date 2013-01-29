@@ -4,7 +4,7 @@ MAKE	= make -f $(MMFILE)
 SHELL	= sh
 
 HDRS	= minibase minicore\
-	  minicoreP.h miniOGLP.h\
+	  minicoreP miniOGLP\
 	  minicomplex minivec minimtx\
 	  minidyna minisort\
 	  minikeyval minikdtree\
