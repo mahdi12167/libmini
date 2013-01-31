@@ -1,11 +1,13 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #undef OPENGL_TEST // enable this to perform an OpenGL test
+#define MINICRS_TEST // enable this to perform a test of the minicrs class
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
+#include <mini/minicrs.h>
 #include <mini/minicoord.h>
 
 #ifndef __APPLE__
@@ -114,6 +116,15 @@ int main(int argc,char *argv[])
    miniOGL::print_graphics_info();
 #endif
 
+#ifdef MINICRS_TEST
+   int z0=4;
+   double lon=minicrs::UTMZ2L(z0);
+   std::cout << z0 << " -> " << lon/3600 << std::endl;
+   int z=minicrs::LL2UTMZ(0,lon);
+   if (z==z0) std::cout << "success" << std::endl;
+   else std::cout << "failure" << std::endl;
+#endif
+
 #ifdef MINICOORD_TEST
    minicoord c1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << c1 << std::endl;
@@ -131,6 +142,15 @@ int main(int argc,char *argv[])
    if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
    c3+=c1;
    if (c3==c1) std::cout << "success" << std::endl;
+   else std::cout << "failure" << std::endl;
+
+   minicoord u(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
+   std::cout << u << std::endl;
+   u.convert2(minicoord::MINICOORD_LLH);
+   std::cout << " " << u << std::endl;
+   u.convert2(minicoord::MINICOORD_UTM);
+   std::cout << " " << u << std::endl;
+   if (u.vec.x==500000) std::cout << "success" << std::endl;
    else std::cout << "failure" << std::endl;
 #endif
 
