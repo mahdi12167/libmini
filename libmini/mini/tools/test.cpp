@@ -121,8 +121,8 @@ int main(int argc,char *argv[])
    double lon=minicrs::UTMZ2L(z0);
    std::cout << z0 << " -> " << lon/3600 << std::endl;
    int z=minicrs::LL2UTMZ(0,lon);
-   if (z==z0) std::cout << "success" << std::endl;
-   else std::cout << "failure" << std::endl;
+   if (z==z0) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
 #endif
 
 #ifdef MINICOORD_TEST
@@ -141,8 +141,8 @@ int main(int argc,char *argv[])
    c3-=c1;
    if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
    c3+=c1;
-   if (c3==c1) std::cout << "success" << std::endl;
-   else std::cout << "failure" << std::endl;
+   if (c3==c1) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
 
    minicoord u(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << u << std::endl;
@@ -150,8 +150,8 @@ int main(int argc,char *argv[])
    std::cout << " " << u << std::endl;
    u.convert2(minicoord::MINICOORD_UTM);
    std::cout << " " << u << std::endl;
-   if (u.vec.x==500000) std::cout << "success" << std::endl;
-   else std::cout << "failure" << std::endl;
+   if (u.vec.x==500000) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
 #endif
 
 #ifdef MINISTRING_TEST
@@ -163,8 +163,8 @@ int main(int argc,char *argv[])
    std::cout << test2 << " -> " << check2 << std::endl;
    unsigned int count=0;
    for (unsigned int i=0; i<check1.getsize(); i++) if (check1[i]!=check2[i]) count++;
-   if (count==1) std::cout << "success" << std::endl;
-   else std::cout << "failure" << std::endl;
+   if (count==1) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
 #endif
 
    // end of test code
