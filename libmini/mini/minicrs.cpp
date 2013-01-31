@@ -231,7 +231,7 @@ double minicrs::UTMZ2L(int zone)
    {
    double lon;
    lon=6*(abs(zone)-1+0.5)-180;
-   return(LONSUB(lon));
+   return(LONSUB(lon*60*60));
    }
 
 // transform Lat/Lon to Mercator
