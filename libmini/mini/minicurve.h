@@ -22,6 +22,11 @@ class minicurve : public minidyna<minicoord>
       valid=FALSE;
       }
 
+   minicurve(const minicoord &p1,const minicoord &p2,
+             unsigned int n=0)
+      : minidyna<minicoord>()
+      {append_sector(p1,p2,n);}
+
    void append(const minicoord &p);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
