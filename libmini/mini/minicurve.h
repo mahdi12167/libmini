@@ -25,7 +25,17 @@ class minicurve : public minidyna<minicoord>
    minicurve(const minicoord &p1,const minicoord &p2,
              unsigned int n=0)
       : minidyna<minicoord>()
-      {append_sector(p1,p2,n);}
+      {
+      curve_start=0.0;
+      curve_stop=1.0;
+
+      curve_map_start=curve_map_stop=0.0;
+      curve_repeat_start=curve_repeat_stop=0.0;
+
+      valid=FALSE;
+
+      append_sector(p1,p2,n);
+      }
 
    void append(const minicoord &p);
 
