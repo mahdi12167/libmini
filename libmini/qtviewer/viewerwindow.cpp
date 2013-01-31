@@ -962,6 +962,7 @@ void ViewerWindow::create_extent(ministring key, double dh)
 
    if (ext.check())
    {
+      ext.convert2metric();
       ext.elevate(dh);
 
       ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
