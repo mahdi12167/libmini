@@ -1032,6 +1032,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *abortAction = new QAction(tr("abort"), this);
     myMenu.addAction(abortAction);
     myMenu.addSeparator();
+    QAction *treatBlackAction = new QAction(tr("treat black as transparent"), this);
+    myMenu.addAction(treatBlackAction);
+    QAction *treatWhiteAction = new QAction(tr("treat white as transparent"), this);
+    myMenu.addAction(treatWhiteAction);
+    myMenu.addSeparator();
     QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
     myMenu.addAction(saveDBAction);
     QAction *saveGeoTiffAction = new QAction(tr("save layer to GeoTiff file"), this);
@@ -1090,6 +1095,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("crop_selected", row));
        else if (selectedAction == abortAction)
           emit(activate("abort"));
+       else if (selectedAction == treatBlackAction)
+          emit(activate("treat_black", row));
+       else if (selectedAction == treatWhiteAction)
+          emit(activate("treat_white", row));
        else if (selectedAction == saveDBAction)
           emit(activate("save_db", row));
        else if (selectedAction == saveGeoTiffAction)

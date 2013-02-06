@@ -857,6 +857,22 @@ void ViewerWindow::runAction(ministring action,
    {
       worker->abort_jobs();
    }
+   else if (action == "treat_black")
+   {
+      TreatBlackJob *job = new TreatBlackJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "treat_white")
+   {
+      TreatWhiteJob *job = new TreatWhiteJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
    else if (action == "save_db")
    {
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
@@ -1446,6 +1462,15 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
          notify(TR("Not cropped: file already exists"));
       else
          notify(TR("Cropping failed"));
+   }
+   else if (job=="modifier")
+   {
+      if (errorcode == GRID_WORKER_FILE_EXISTS)
+         notify(TR("Not done: file already exists"));
+      else if (errorcode == GRID_WORKER_NOT_APPLICABLE)
+         notify(TR("Not done: modification not applicable"));
+      else
+         notify(TR("Modification failed"));
    }
    else if (job=="save")
    {
