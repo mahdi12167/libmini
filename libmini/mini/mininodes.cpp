@@ -988,6 +988,27 @@ void mininode_geometry_evaluator::construct(int tesselx,int tessely)
       }
    }
 
+void mininode_geometry_evaluator::traverse_pre()
+   {
+   mininode_geometry::traverse_pre();
+
+   set_visible();
+
+   // cull on backside of earth
+   minicone cone=mininode_culling::peek_cone();
+   if (has_bsphere())
+      if (cone.valid)
+         {
+         double t=intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
+                                          miniv3d(0.0,0.0,-minicrs::EARTH_radius),
+                                          minicrs::EARTH_radius-bound_radius,
+                                          minicrs::EARTH_radius-bound_radius,
+                                          minicrs::EARTH_radius-bound_radius);
+
+         if (t>0.0 && t<1.0) set_visible(FALSE);
+         }
+   }
+
 // mininode_deferred:
 
 unsigned int mininode_deferred::deferred_first=0;

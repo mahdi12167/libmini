@@ -136,6 +136,9 @@ class mininode_culling: public mininode_group
    //! shoot a ray and return the distance to the closest object
    double shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj=NULL,double mindist=0.0) const;
 
+   //! peek actual cone
+   static minicone peek_cone() {return(cone_stack.peek());}
+
    protected:
 
    static minidyna<minicone> cone_stack;
@@ -1430,7 +1433,10 @@ class mininode_geometry: public mininode_geometry_base
                      int wocol=1,int wonrm=0,int wotex=0)
       : mininode_geometry_base(colcomps,nrmcomps,texcomps,
                                wocol,wonrm,wotex)
-      {shown=TRUE;}
+      {
+      shown=TRUE;
+      visible=TRUE;
+      }
 
    //! destructor
    virtual ~mininode_geometry() {}
@@ -1473,6 +1479,7 @@ class mininode_geometry: public mininode_geometry_base
    protected:
 
    BOOLINT shown;
+   BOOLINT visible;
 
    static BOOLINT deferred;
    static BOOLINT deferred_semitransparent;
@@ -1481,9 +1488,13 @@ class mininode_geometry: public mininode_geometry_base
    static geometry_deferred_list list;
    static geometry_deferred_list list_tex2D,list_tex3D;
 
+   void set_visible(BOOLINT yes=TRUE)
+      {visible=yes;}
+
    virtual void traverse_pre()
       {
       if (!shown) return;
+      if (!visible) return;
 
       BOOLINT dfrd=FALSE;
 
@@ -1686,6 +1697,10 @@ class mininode_geometry_evaluator: public mininode_geometry
    private:
 
    void construct_vtx(double x,double y,double s);
+
+   protected:
+
+   virtual void traverse_pre();
    };
 
 //! deferred transform node (base class)
