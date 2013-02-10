@@ -8,13 +8,13 @@ node_grid_extent::node_grid_extent()
    : mininode_geometry_evaluator(), grid_extent()
    {}
 
-node_grid_extent::node_grid_extent(const grid_extent &ext)
-   : mininode_geometry_evaluator(), grid_extent(ext.corner[0],ext.corner[1],ext.corner[2],ext.corner[3])
-   {construct();}
+node_grid_extent::node_grid_extent(const grid_extent &ext,double maxsize)
+   : mininode_geometry_evaluator(), grid_extent(ext)
+   {construct(maxsize);}
 
-node_grid_extent::node_grid_extent(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop)
+node_grid_extent::node_grid_extent(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,double maxsize)
    : mininode_geometry_evaluator(), grid_extent(leftbottom,rightbottom,lefttop,righttop)
-   {construct();}
+   {construct(maxsize);}
 
 void node_grid_extent::set(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,
                            double maxsize)

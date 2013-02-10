@@ -15,10 +15,12 @@ class node_grid_extent: public mininode_geometry_evaluator, public grid_extent
    node_grid_extent();
 
    //! copy constructor
-   node_grid_extent(const grid_extent &ext);
+   node_grid_extent(const grid_extent &ext,
+                    double maxsize=100000.0);
 
    //! custom constructor
-   node_grid_extent(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop);
+   node_grid_extent(const minicoord &leftbottom,const minicoord &rightbottom,const minicoord &lefttop,const minicoord &righttop,
+                    double maxsize=100000.0);
 
    //! default destructor
    virtual ~node_grid_extent() {}
