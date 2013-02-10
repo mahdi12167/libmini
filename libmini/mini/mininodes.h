@@ -3,6 +3,8 @@
 #ifndef MININODES_H
 #define MININODES_H
 
+#undef MININODES_RENDERBBOX
+
 #include <iostream>
 
 #include "minibase.h"
@@ -1387,7 +1389,12 @@ class mininode_geometry_base: public mininode_color, public ministrip
 
    //! render geometry
    void render()
-      {ministrip::render(wocol,wonrm,wotex);}
+      {
+      ministrip::render(wocol,wonrm,wotex);
+#ifdef MININODES_RENDERBBOX
+      ministrip::renderbbox();
+#endif
+      }
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius) const
