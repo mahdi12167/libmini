@@ -807,6 +807,7 @@ class mininode_selector: public mininode_group
 //!  pushes and pops transform before and after render traversal
 //!  transforms bounding sphere with local transform
 //!  transforms camera cone with inverse local transform
+//!  supports culling at view frustum (camera cone)
 class mininode_transform: public mininode_dynamic
    {
    public:
@@ -1096,9 +1097,29 @@ class mininode_scale: public mininode_transform
 
    };
 
+//! ecef node
+//!  provides ecef global coordinate system
+//!  supports culling on backside of earth
+class mininode_ecef: public mininode_affine
+   {
+   public:
+
+   //! default constructor
+   mininode_ecef()
+      : mininode_affine()
+      {}
+
+   protected:
+
+   virtual void traverse_pre();
+   virtual void traverse_post();
+   };
+
 //! coordinate node
 //!  provides affine transform into a local geo-referenced coordinate system
-class mininode_coord: public mininode_affine
+//!  supports culling on backside of earth
+//!  supports ambient shading
+class mininode_coord: public mininode_ecef
    {
    public:
 
@@ -1697,10 +1718,6 @@ class mininode_geometry_evaluator: public mininode_geometry
    private:
 
    void construct_vtx(double x,double y,double s);
-
-   protected:
-
-   virtual void traverse_pre();
    };
 
 //! deferred transform node (base class)
