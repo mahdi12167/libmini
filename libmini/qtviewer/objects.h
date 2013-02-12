@@ -111,6 +111,8 @@ class Object_image: public Object_extents
    double spacing;
 
    Viewer *image_viewer;
+
+   mininode_ecef *ecef_node;
    mininode_geometry *image_node;
 
    static mininode *image_groupnode;
@@ -170,6 +172,8 @@ class Object_extent: public Object_extents
    protected:
 
    Viewer *extent_viewer;
+
+   mininode_ecef *ecef_node;
    mininode_geometry *extent_node;
 
    static mininode *extent_groupnode;

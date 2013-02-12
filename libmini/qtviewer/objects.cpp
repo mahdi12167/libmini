@@ -138,6 +138,8 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    spacing=0.0;
 
    image_viewer=viewer;
+
+   ecef_node=NULL;
    image_node=NULL;
 
    shown=TRUE;
@@ -206,17 +208,14 @@ int Object_image::initGFX()
       mininode_root *root=image_viewer->getRoot();
 
       if (image_groupnode==NULL)
-         image_groupnode=root->append_child(new mininode_ecef())->
-                         append_child(new mininode_color(miniv3d(1,1,1)));
+         image_groupnode=root->append_child(new mininode_color(miniv3d(1,1,1)));
 
       if (deferred_groupnode1==NULL)
-         deferred_groupnode1=root->append_child(new mininode_ecef())->
-                             append_child(new mininode_deferred_semitransparent())->
+         deferred_groupnode1=root->append_child(new mininode_deferred_semitransparent())->
                              append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.5)));
 
       if (deferred_groupnode2==NULL)
-         deferred_groupnode2=root->append_child(new mininode_ecef())->
-                             append_child(new mininode_deferred_semitransparent())->
+         deferred_groupnode2=root->append_child(new mininode_deferred_semitransparent())->
                              append_child(new mininode_color(miniv4d(1.0,1.0,1.0,0.9)));
 
       grid_list list;
@@ -253,6 +252,9 @@ int Object_image::initGFX()
 
          set_center(extent_geo.get_center(),extent_geo.get_radius());
 
+         ecef_node=new mininode_ecef();
+         if (ecef_node==NULL) MEMERROR();
+
          image_node=new node_grid_extent(extent_geo);
          if (image_node==NULL) MEMERROR();
 
@@ -261,9 +263,9 @@ int Object_image::initGFX()
 
          // link image node
          if (is_imagery_resp_elevation)
-            deferred_groupnode2->append_child(image_node);
+            deferred_groupnode2->append_child(ecef_node)->append_child(image_node);
          else
-            deferred_groupnode1->append_child(image_node);
+            deferred_groupnode1->append_child(ecef_node)->append_child(image_node);
 
          // update dirty scene graph
          root->check_dirty();
@@ -278,7 +280,7 @@ void Object_image::exitGFX()
    if (image_viewer!=NULL)
       if (image_node!=NULL)
          {
-         image_viewer->getRoot()->remove_node(image_node);
+         image_viewer->getRoot()->remove_subgraph(ecef_node);
          image_viewer->getCamera()->startIdling();
          }
    }
@@ -328,12 +330,12 @@ void Object_image::set_thumb(const databuf *buf)
    mininode_texture2D *tex2d_node=new mininode_texture2D;
    if (tex2d_node==NULL) MEMERROR();
 
-   mininode_ref image=image_viewer->getRoot()->remove_node(image_node);
-   if (image==NULL) ERRORMSG();
+   mininode_ref graph=image_viewer->getRoot()->remove_subgraph(ecef_node);
+   if (graph==NULL) ERRORMSG();
 
    if (is_imagery_resp_elevation) deferred_groupnode2->append_child(tex2d_node);
    else deferred_groupnode1->append_child(tex2d_node);
-   tex2d_node->append_child(image);
+   tex2d_node->append_child(graph);
    tex2d_node->load(buf);
 
    image_viewer->getCamera()->startIdling();
@@ -351,6 +353,8 @@ Object_extent::Object_extent(const ministring &name,
    this->extent=extent;
 
    extent_viewer=viewer;
+
+   ecef_node=NULL;
    extent_node=NULL;
 
    shown=TRUE;
@@ -405,13 +409,15 @@ int Object_extent::initGFX()
          buf.automipmap();
          tex2d_node->load(&buf);
 
-         extent_groupnode=root->append_child(new mininode_ecef())->
-                          append_child(new mininode_deferred_semitransparent())->
+         extent_groupnode=root->append_child(new mininode_deferred_semitransparent())->
                           append_child(new mininode_color(miniv4d(0,0,1,0.999)))->
                           append_child(tex2d_node);
          }
 
       set_center(extent.get_center(),extent.get_radius());
+
+      ecef_node=new mininode_ecef();
+      if (ecef_node==NULL) MEMERROR();
 
       extent_node=new node_grid_extent(extent);
       if (extent_node==NULL) MEMERROR();
@@ -420,7 +426,7 @@ int Object_extent::initGFX()
       extent_node->set_name(get_full_name());
 
       // link extent node
-      extent_groupnode->append_child(extent_node);
+      extent_groupnode->append_child(ecef_node)-> append_child(extent_node);
 
       // update dirty scene graph
       root->check_dirty();
@@ -436,7 +442,7 @@ void Object_extent::exitGFX()
    if (extent_viewer!=NULL)
       if (extent_node!=NULL)
          {
-         extent_viewer->getRoot()->remove_node(extent_node);
+         extent_viewer->getRoot()->remove_subgraph(ecef_node);
          extent_viewer->getCamera()->startIdling();
          }
    }
