@@ -155,7 +155,7 @@ class mininode_culling: public mininode_group
    virtual void transform_cone(minicone &) const {}
    virtual void transform_point(miniv3d &) const {}
 
-   BOOLINT is_occluded(miniv3d center,double radius);
+   BOOLINT is_occluded(const miniv3d &center,double radius) const;
    };
 
 //! dynamic time-dependent node (base class)

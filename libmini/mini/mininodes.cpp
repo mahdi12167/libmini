@@ -189,7 +189,7 @@ void mininode_culling::traverse_exit()
    mininode_group::traverse_exit();
    }
 
-BOOLINT mininode_culling::is_occluded(miniv3d center,double radius)
+BOOLINT mininode_culling::is_occluded(const miniv3d &center,double radius) const
    {
    // cull on spherical occluder
    minicone cone=cone_stack.peek();
