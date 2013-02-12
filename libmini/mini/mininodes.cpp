@@ -189,6 +189,25 @@ void mininode_culling::traverse_exit()
    mininode_group::traverse_exit();
    }
 
+BOOLINT mininode_culling::is_occluded(miniv3d center,double radius)
+   {
+   // cull on spherical occluder
+   minicone cone=cone_stack.peek();
+   if (has_bsphere())
+      if (cone.valid)
+         {
+         double t=intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
+                                          center,
+                                          radius-bound_radius,
+                                          radius-bound_radius,
+                                          radius-bound_radius);
+
+         if (t>0.0 && t<1.0) return(TRUE);
+         }
+
+   return(FALSE);
+   }
+
 // mininode_dynamic:
 
 double mininode_dynamic::m_time_start=0.0;
@@ -307,22 +326,8 @@ void mininode_ecef::traverse_pre()
    mininode_transform::traverse_pre();
 
    // cull on backside of earth
-   minicone cone=cone_stack.peek();
-   if (has_bsphere())
-      if (cone.valid)
-         {
-         double t=intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
-                                          miniv3d(0.0,0.0,-minicrs::EARTH_radius),
-                                          minicrs::EARTH_radius-bound_radius,
-                                          minicrs::EARTH_radius-bound_radius,
-                                          minicrs::EARTH_radius-bound_radius);
-
-         if (t>0.0 && t<1.0) is_visible=FALSE;
-         }
+   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),minicrs::EARTH_radius);
    }
-
-void mininode_ecef::traverse_post()
-   {mininode_transform::traverse_post();}
 
 // mininode_coord:
 
@@ -330,7 +335,7 @@ miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
 BOOLINT mininode_coord::lightdirset=FALSE;
 
 mininode_coord::mininode_coord(const minicoord &c)
-   : mininode_ecef()
+   : mininode_affine()
    {set_coord(c);}
 
 void mininode_coord::set_coord(const minicoord &c)
@@ -362,6 +367,8 @@ void mininode_coord::set_lightdir(const miniv3d &d)
 
 void mininode_coord::traverse_pre()
    {
+   mininode_transform::traverse_pre();
+
    if (lightdirset)
       {
       double l=up*lightdir;
@@ -371,7 +378,8 @@ void mininode_coord::traverse_pre()
       mininode_color::set_brightness(0.5*l+0.5);
       }
 
-   mininode_ecef::traverse_pre();
+   // cull on backside of earth
+   is_visible=!is_occluded(miniv3d(0.0,0.0,-minicrs::EARTH_radius),minicrs::EARTH_radius);
    }
 
 void mininode_coord::traverse_post()
@@ -379,7 +387,7 @@ void mininode_coord::traverse_post()
    if (lightdirset)
       mininode_color::set_brightness(1.0);
 
-   mininode_ecef::traverse_post();
+   mininode_transform::traverse_post();
    }
 
 // mininode_coord_animation:

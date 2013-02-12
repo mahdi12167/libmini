@@ -154,6 +154,8 @@ class mininode_culling: public mininode_group
 
    virtual void transform_cone(minicone &) const {}
    virtual void transform_point(miniv3d &) const {}
+
+   BOOLINT is_occluded(miniv3d center,double radius);
    };
 
 //! dynamic time-dependent node (base class)
@@ -1114,14 +1116,13 @@ class mininode_ecef: public mininode_affine
    protected:
 
    virtual void traverse_pre();
-   virtual void traverse_post();
    };
 
 //! coordinate node
 //!  provides affine transform into a local geo-referenced coordinate system
 //!  supports culling on backside of earth
 //!  supports ambient shading
-class mininode_coord: public mininode_ecef
+class mininode_coord: public mininode_affine
    {
    public:
 
