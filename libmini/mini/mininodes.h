@@ -68,7 +68,7 @@ class mininode_group: public mininode
       {return(bound_radius>0.0);}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       center=bound_center;
       radius=bound_radius;
@@ -833,7 +833,7 @@ class mininode_transform: public mininode_dynamic
    virtual ~mininode_transform() {}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       center=bound_center;
       radius=bound_radius;
@@ -911,7 +911,7 @@ class mininode_translate: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       miniv3d vec;
       mtxget(oglmtx,vec);
@@ -948,7 +948,7 @@ class mininode_rotate: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -1006,7 +1006,7 @@ class mininode_affine: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       miniv4d mtx[3];
       mtxget(oglmtx,mtx);
@@ -1055,7 +1055,7 @@ class mininode_scale: public mininode_transform
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       miniv4d mtx[3];
       mtxget(oglmtx,mtx);
@@ -1201,7 +1201,7 @@ class mininode_animation_rotate: public mininode_animation
       {m_omega=w; m_axis=a;}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       miniv3d mtx[3];
       mtxget(oglmtx,mtx);
@@ -1398,11 +1398,15 @@ class mininode_geometry_base: public mininode_color, public ministrip
       }
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       double radius2;
+
       getbsphere(center,radius2);
       radius=sqrt(radius2);
+
+      bound_center=center;
+      bound_radius=radius;
       }
 
    //! set the object name of the geometry node
@@ -1994,7 +1998,7 @@ class mininode_cam: public mininode_root, public minicam
       {return(this);}
 
    //! get bounding sphere
-   virtual void get_bsphere(miniv3d &center,double &radius) const
+   virtual void get_bsphere(miniv3d &center,double &radius)
       {
       center=miniv3d(0,0,0);
       radius=minicrs::EARTH_radius;
