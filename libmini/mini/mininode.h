@@ -98,6 +98,32 @@ class mininode: public minidyna< miniref<mininode> >
       return(ref);
       }
 
+   //! remove subgraph after first occurance of node
+   miniref<mininode> remove_subgraph(mininode *node)
+      {
+      miniref<mininode> ref=NULL;
+
+      unsigned int s=get_links();
+
+      for (unsigned int i=0; i<s; i++)
+         {
+         mininode *link=get_link(i);
+
+         if (link==node)
+            {
+            ref=remove(i);
+            break;
+            }
+         else
+            {
+            ref=link->remove_subgraph(node);
+            if (ref!=NULL) break;
+            }
+         }
+
+      return(ref);
+      }
+
    //! traverse [cycle-free] graph
    //!  the return value indicates if there was a graph modification
    //!   the graph can be modified manually or by self-modification
