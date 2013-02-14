@@ -2309,10 +2309,10 @@ renderer without shutting down the main application).<p>
 <a name="Linkage"></a>
 <h2>(R) Linkage with CMake</h2>
 
-If you want to link your own project with libmini using CMake, copy
-the CMakeModule/FindMINI.cmake module into your own project and let
-cmake find the libmini package and the required OpenGL
-installation in CMakeLists.txt:<p>
+If you want to link your own project with libMini using CMake, copy
+the CMakeModule/FindMINI.cmake module into your project and let CMake
+find the libMini package and the required OpenGL installation in the
+cmake file "CMakeLists.txt":<p>
 
 <pre>
    SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
@@ -2326,7 +2326,7 @@ installation in CMakeLists.txt:<p>
 </pre>
 
 Then add libMini and the OpenGL libraries as additional link target
-for your application "myapp":<p>
+for your application, e.g. "myapp":<p>
 
 <pre>
    TARGET_LINK_LIBRARIES(myapp ${MINI_LIBRARIES} ${OPENGL_LIBRARIES})
