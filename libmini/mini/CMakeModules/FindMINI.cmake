@@ -3,9 +3,9 @@
 #  MINI_INCLUDE_DIR
 #  MINI_LIBRARIES
 
-FIND_PATH(MINI_INCLUDE_DIR mini/mini.h PATHS . .. ../deps DOC "Directory containing Mini headers")
-FIND_LIBRARY(MINI_LIBRARY NAMES Mini libMini PATHS . .. ../mini ../deps/mini DOC "Path to Mini library")
-FIND_LIBRARY(MINI_LIBRARY_DEBUG NAMES Minid libMinid PATHS . .. ../mini ../deps/mini DOC "Path to Mini library")
+FIND_PATH(MINI_INCLUDE_DIR mini/mini.h PATHS . .. ../deps DOC "Directory containing libMini headers")
+FIND_LIBRARY(MINI_LIBRARY NAMES Mini libMini PATHS . .. ../mini ../deps/mini DOC "Path to libMini library")
+FIND_LIBRARY(MINI_LIBRARY_DEBUG NAMES Minid libMinid PATHS . .. ../mini ../deps/mini DOC "Path to libMini debug library")
 
 IF (MINI_LIBRARY AND MINI_INCLUDE_DIR)
    SET(MINI_LIBRARIES ${MINI_LIBRARIES} optimized ${MINI_LIBRARY})
