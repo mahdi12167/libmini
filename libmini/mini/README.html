@@ -43,7 +43,8 @@ Copyright (c) 1995-2013 by Stefan Roettger<p>
    <li><a href="#ViewerAPI">(O) The libMini Viewer API</a></li>
    <li><a href="#MiniViewer">(P) The libMini Viewer</a></li>
    <li><a href="#ErrorHandling">(Q) Error Handling</a></li>
-   <li><a href="#Acknowledgements">(R) Final Acknowledgements</a>
+   <li><a href="#Linkage">(R) Linkage with CMake</a>
+   <li><a href="#Acknowledgements">(S) Final Acknowledgements</a>
    <p>
    <li><a href="#Appendix">Appendix of Optional Modules</a></li>
    <ul>
@@ -2305,8 +2306,36 @@ renderer without shutting down the main application).<p>
 
 <a href="#" class="top">Back to top</a>
 
+<a name="Linkage"></a>
+<h2>(R) Linkage with CMake</h2>
+
+If you want to link your own project with libmini using CMake, copy
+the CMakeModule/FindMINI.cmake module into your own project and let
+cmake find the libmini package and the required OpenGL
+installation in CMakeLists.txt:<p>
+
+<pre>
+   SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+   FIND_PACKAGE(OpenGL)
+   FIND_PACKAGE(MINI)
+
+   IF (MINI_FOUND)
+      MESSAGE(STATUS found libMini headers: ${MINI_INCLUDE_DIR})
+      MESSAGE(STATUS found libMini libs: ${MINI_LIBRARIES})
+   ENDIF (MINI_FOUND)
+</pre>
+
+Then add libMini and the OpenGL libraries as additional link target
+for your application "myapp":<p>
+
+<pre>
+   TARGET_LINK_LIBRARIES(myapp ${MINI_LIBRARIES} ${OPENGL_LIBRARIES})
+</pre>
+
+<a href="#" class="top">Back to top</a>
+
 <a name="Acknowledgements"></a>
-<h2>(R) Final Acknowledgements</h2>
+<h2>(S) Final Acknowledgements</h2>
 
 In particular, I would like to thank Ben Discoe of vterrain.org for
 his suggestions and valuable feedback on the terrain rendering API
