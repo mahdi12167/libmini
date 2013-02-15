@@ -2317,8 +2317,11 @@ cmake file "CMakeLists.txt":<p>
 
 <pre>
    SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+
    FIND_PACKAGE(OpenGL)
+
    FIND_PACKAGE(MINI)
+   INCLUDE_DIRECTORIES(${MINI_INCLUDE_DIR})
 
    IF (MINI_FOUND)
       MESSAGE(STATUS found libMini headers: ${MINI_INCLUDE_DIR})
