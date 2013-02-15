@@ -1036,6 +1036,18 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(treatBlackAction);
     QAction *treatWhiteAction = new QAction(tr("treat white as transparent"), this);
     myMenu.addAction(treatWhiteAction);
+    QAction *maskBlackAction = new QAction(tr("mask black to be transparent"), this);
+    myMenu.addAction(maskBlackAction);
+    QAction *maskWhiteAction = new QAction(tr("mask white to be transparent"), this);
+    myMenu.addAction(maskWhiteAction);
+    QAction *removeBathyAction = new QAction(tr("remove bathymetry elevation range"), this);
+    myMenu.addAction(removeBathyAction);
+    QAction *keepBathyAction = new QAction(tr("keep bathymetry elevation range"), this);
+    myMenu.addAction(keepBathyAction);
+    QAction *fillMissingAction = new QAction(tr("fill missing elevation points"), this);
+    myMenu.addAction(fillMissingAction);
+    QAction *fillHolesAction = new QAction(tr("fill elevation holes"), this);
+    myMenu.addAction(fillHolesAction);
     myMenu.addSeparator();
     QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
     myMenu.addAction(saveDBAction);
@@ -1099,6 +1111,18 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("treat_black", row));
        else if (selectedAction == treatWhiteAction)
           emit(activate("treat_white", row));
+       else if (selectedAction == maskBlackAction)
+          emit(activate("mask_black", row));
+       else if (selectedAction == maskWhiteAction)
+          emit(activate("mask_white", row));
+       else if (selectedAction == removeBathyAction)
+          emit(activate("remove_bathy", row));
+       else if (selectedAction == keepBathyAction)
+          emit(activate("keep_bathy", row));
+       else if (selectedAction == fillMissingAction)
+          emit(activate("fill_missing", row));
+       else if (selectedAction == fillHolesAction)
+          emit(activate("fill_holes", row));
        else if (selectedAction == saveDBAction)
           emit(activate("save_db", row));
        else if (selectedAction == saveGeoTiffAction)
