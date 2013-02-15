@@ -1,0 +1,12 @@
+# Defines
+#  MINI_FOUND
+#  MINI_INCLUDE_DIR
+#  MINI_LIBRARIES
+
+FIND_PATH(MINI_INCLUDE_DIR mini/mini.h PATHS . .. ../deps DOC "Directory containing libMini headers")
+FIND_LIBRARY(MINI_LIBRARY NAMES Mini libMini PATHS . .. ../mini ../deps/mini DOC "Path to libMini library")
+
+IF (MINI_LIBRARY AND MINI_INCLUDE_DIR)
+   SET(MINI_LIBRARIES ${MINI_LIBRARY})
+   SET(MINI_FOUND TRUE)
+ENDIF (MINI_LIBRARY AND MINI_INCLUDE_DIR)
