@@ -199,6 +199,7 @@ Within the libMini package the following files are contained:<p>
    <tr><td>datagrid.cpp/.h:      </td><td>stores a grid of databuf objects</td></tr>
    <tr><td>example.png:          </td><td>a screen shot of the example described below</td></tr>
    <tr><td>example.cpp:          </td><td>the glut example (use "build.sh example" to compile)</td></tr>
+   <tr><td>example.cmake/:       </td><td>the cmake example (use "cmake . && make" to compile)</td></tr>
    <tr><td>stubtest.cpp:         </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
    <tr><td>viewer.cpp:           </td><td>the libMini Viewer (use "build.sh viewer" to compile)</td></tr>
    <tr><td>miniview.cpp/.h:      </td><td>the libMini Viewer base class</td></tr>
@@ -2330,6 +2331,15 @@ for your application, e.g. "myapp":<p>
 
 <pre>
    TARGET_LINK_LIBRARIES(myapp ${MINI_LIBRARIES} ${OPENGL_LIBRARIES})
+</pre>
+
+For an example, see the "example.cmake" folder, which contains an
+example libMini CMake project with the dependencies OpenGL and
+GLUT. To compile it, type the following command line in the Unix
+terminal:<p>
+
+<pre>
+   cmake . && make
 </pre>
 
 <a href="#" class="top">Back to top</a>
