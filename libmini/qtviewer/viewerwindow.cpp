@@ -873,6 +873,54 @@ void ViewerWindow::runAction(ministring action,
       job->append(value);
       worker->run_job(job);
    }
+   else if (action == "mask_black")
+   {
+      MaskBlackJob *job = new MaskBlackJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "mask_white")
+   {
+      MaskWhiteJob *job = new MaskWhiteJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "remove_bathy")
+   {
+      RemoveBathyJob *job = new RemoveBathyJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "keep_bathy")
+   {
+      KeepBathyJob *job = new KeepBathyJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "fill_missing")
+   {
+      FillMissingJob *job = new FillMissingJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
+   else if (action == "fill_holes")
+   {
+      FillHolesJob *job = new FillHolesJob(repository_path,export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append(value);
+      worker->run_job(job);
+   }
    else if (action == "save_db")
    {
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
