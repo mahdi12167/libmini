@@ -5,8 +5,6 @@
 
 #include <QtGui/QMainWindow>
 
-#include <mini/mini_generic.h>
-
 class ViewerWindow;
 
 //! qt viewer main window that

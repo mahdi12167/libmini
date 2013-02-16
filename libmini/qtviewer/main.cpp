@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
 #include <mini/mini_core.h>
+#include <mini/mini_generic.h>
 
 #include <QtGui/QApplication>
 #include <QtOpenGL/qgl.h>

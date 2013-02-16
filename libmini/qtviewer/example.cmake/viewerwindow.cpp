@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#include <string>
-
 #include "renderer.h"
 
 #include "viewerwindow.h"
