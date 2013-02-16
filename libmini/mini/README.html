@@ -2326,14 +2326,15 @@ cmake file "CMakeLists.txt":<p>
    IF (MINI_FOUND)
       MESSAGE(STATUS found libMini headers: ${MINI_INCLUDE_DIR})
       MESSAGE(STATUS found libMini libs: ${MINI_LIBRARIES})
-      IF (MINISFX_FOUND)
-         MESSAGE(STATUS found libMiniSFX libs: ${MINISFX_LIBRARIES})
-      ENDIF (MINISFX_FOUND)
    ENDIF (MINI_FOUND)
+   IF (MINISFX_FOUND)
+      MESSAGE(STATUS found libMiniSFX libs: ${MINISFX_LIBRARIES})
+   ENDIF (MINISFX_FOUND)
 </pre>
 
-Then add libMini and the OpenGL libraries as additional link target
-for your application, e.g. "myapp":<p>
+Then add libMini for basic libMini support or libMiniSFX for
+additional viewer support and the OpenGL libraries as additional link
+target for your application, e.g. "myapp":<p>
 
 <pre>
    TARGET_LINK_LIBRARIES(myapp ${MINI_LIBRARIES} ${OPENGL_LIBRARIES})
