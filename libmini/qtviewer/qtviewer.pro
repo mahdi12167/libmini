@@ -84,7 +84,8 @@ win32:LIBS += -L../WIN32/zlib
 win32:LIBS += -L../../gdal
 
 unix:LIBS += -lgdal -liconv
-unix:LIBS += -lcurl -lz
+unix:LIBS += -ljpeg -lpng -lz
+unix:LIBS += -lcurl
 
 unix,!mac:LIBS += -lGLU
 

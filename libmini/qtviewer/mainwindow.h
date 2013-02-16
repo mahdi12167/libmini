@@ -37,11 +37,11 @@ class MyQTableWidget;
 //! contains the qt gui elements that interact with the renderer
 class MainWindow: public QMainWindow
 {
-   Q_OBJECT
+   Q_OBJECT;
 
 public:
    MainWindow(QWidget *parent = 0);
-   ~MainWindow();
+   virtual ~MainWindow();
 
 public slots:
    void updateTable(ministring key);

@@ -27,6 +27,8 @@ MainWindow::~MainWindow()
    saveSettings();
 
    clear(true);
+
+   delete viewerWindow;
 }
 
 void MainWindow::initSettings()
