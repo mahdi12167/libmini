@@ -2326,6 +2326,9 @@ cmake file "CMakeLists.txt":<p>
    IF (MINI_FOUND)
       MESSAGE(STATUS found libMini headers: ${MINI_INCLUDE_DIR})
       MESSAGE(STATUS found libMini libs: ${MINI_LIBRARIES})
+      IF (MINISFX_FOUND)
+         MESSAGE(STATUS found libMiniSFX libs: ${MINISFX_LIBRARIES})
+      ENDIF (MINISFX_FOUND)
    ENDIF (MINI_FOUND)
 </pre>
 
