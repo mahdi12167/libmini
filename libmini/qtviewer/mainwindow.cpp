@@ -23,11 +23,11 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow()
-   {
+{
    saveSettings();
 
    clear(true);
-   }
+}
 
 void MainWindow::initSettings()
 {
