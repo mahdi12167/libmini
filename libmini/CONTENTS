@@ -41,6 +41,7 @@ The original source code of the libMini dependencies is available here:
 
 Related source code also provided in the deps folder for convenience
  gdal:                http://www.gdal.org
+ libiconv:            http://www.gnu.org/software/libiconv
 
 As of this writing, libMini did successfully build with the latest
 available versions of the above dependencies.
