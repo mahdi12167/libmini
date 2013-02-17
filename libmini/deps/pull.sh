@@ -30,7 +30,7 @@ if (! -e /usr/include/png.h) then
       if (! -e libpng) then
          git clone git://libpng.git.sourceforge.net/gitroot/libpng/libpng
       endif
-      (cd libpng; git checkout 4a011b2b7730ba26b9d28dacff348bcd94e428d7)
+      (cd libpng; git checkout -b libpng16)
    endif
 endif
 
@@ -40,7 +40,7 @@ if (! -e /usr/include/zlib.h) then
       if (! -e zlib) then
          git clone git://github.com/madler/zlib
       endif
-      (cd zlib; git checkout e75de023b6cd7177c8e44ef1c72b74f5efde5418)
+      (cd zlib; git checkout v1.2.7)
    endif
 endif
 
