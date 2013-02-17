@@ -93,18 +93,7 @@ endif
 
 # other libraries to pull:
 
-# gdal 1.9.1
+# gdal 1.9.2
 if (-X svn) then
    svn up gdal
-endif
-
-# libiconv 1.14
-if (! -e /usr/include/iconv.h) then
-   if (-X wget) then
-      if (! -e libiconv) then
-         wget http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
-         tar zxf libiconv-1.14.tar.gz
-         mv libiconv-1.14 libiconv
-      endif
-   endif
 endif
