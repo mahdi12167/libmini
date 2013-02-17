@@ -13,3 +13,4 @@ squish:              http://libsquish.googlecode.com
 CImg/GREYCstoration: http://cimg.sourceforge.net
 freeglut:            http://freeglut.sourceforge.net
 gdal:                http://gdal.org
+libiconv:            http://www.gnu.org/software/libiconv

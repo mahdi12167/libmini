@@ -63,3 +63,9 @@ echo BUILDING GDAL
              --without-ld-shared\
              --enable-static --disable-shared;\
  make -j 2; make install)
+
+# libiconv (required by gdal 1.9+)
+if (-e libiconv) then
+   echo BUILDING LIBICONV
+   (cd libiconv; ./configure --prefix=$prefix/libiconv --enable-static --disable-shared; make -j 2; make install)
+endif
