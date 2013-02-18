@@ -24,6 +24,9 @@ void Viewer::init()
    // init libMini parameters
    initParameters();
 
+   // load optional features
+   getearth()->loadopts();
+
    // create the camera object
    camera = new mininode_cam(getearth(),
                              CAMERA_LAT, CAMERA_LON, CAMERA_HEIGHT);
