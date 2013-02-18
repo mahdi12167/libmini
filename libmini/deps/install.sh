@@ -62,7 +62,7 @@ echo BUILDING GDAL
              --with-png=internal --with-jpeg=internal\
              --without-threads --without-curl --without-netcdf\
              --without-sqlite3 --without-pg\
-             --without-ld-shared\
+             --without-ld-shared --with-static-proj4\
              --enable-static --disable-shared;\
  make -j 2; make install)
 
