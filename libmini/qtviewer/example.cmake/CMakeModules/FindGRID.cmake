@@ -3,8 +3,8 @@
 #  GRID_INCLUDE_DIR
 #  GRID_LIBRARIES
 
-FIND_PATH(GRID_INCLUDE_DIR grid/grid.h PATHS . .. ../deps DOC "Directory containing libGrid headers")
-FIND_LIBRARY(GRID_LIBRARY NAMES Grid libGrid PATHS . .. ../grid ../deps/grid DOC "Path to libGrid library")
+FIND_PATH(GRID_INCLUDE_DIR grid/grid.h PATHS . .. DOC "Directory containing libGrid headers")
+FIND_LIBRARY(GRID_LIBRARY NAMES Grid libGrid PATHS . .. grid ../grid DOC "Path to libGrid library")
 
 SET(GRID_LIBRARIES ${GRID_LIBRARY})
 
