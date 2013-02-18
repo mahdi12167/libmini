@@ -86,9 +86,9 @@ if (-X svn) then
    svn up openthreads
 endif
 
-# freeglut 2.7.0
+# freeglut 2.8.0+
 if (-X svn) then
-   svn up freeglut -r 855
+   svn up freeglut -r 1504
 endif
 
 # other libraries to pull:

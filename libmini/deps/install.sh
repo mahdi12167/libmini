@@ -49,7 +49,7 @@ echo BUILDING SQUISH
 # freeglut
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
    echo BUILDING FREEGLUT
-   (cd freeglut; ./autogen.sh; ./autogen.sh; ./configure --prefix=$prefix/freeglut --enable-static --disable-shared; make -j 2; make install)
+   (cd freeglut; cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut; make -j 2; make install)
 endif
 
 # other libraries to install:
