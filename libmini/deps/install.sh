@@ -59,6 +59,7 @@ echo BUILDING GDAL
 (cd gdal;\
  ./configure --prefix=$prefix/gdal\
              --with-libtiff=internal --with-geotiff=internal\
+             --with-rename-internal-libtiff-symbols\
              --with-png=internal --with-jpeg=internal\
              --without-threads --without-curl --without-netcdf\
              --without-sqlite3 --without-pg\
