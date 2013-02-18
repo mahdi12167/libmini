@@ -67,7 +67,7 @@ At your option, you can configure Qt to produce static libraries with
 Get the libMini dependencies from the libMini subversion repository.
 Type on the unix console in your project directory (e.g. ~/Projects):
  svn co http://libmini.googlecode.com/svn/libmini/deps deps
- (cd deps; ./build.sh)
+ (cd deps; sudo ./build.sh)
 
 !! Installation of Libmini Dependencies (Windows)
 
@@ -99,7 +99,8 @@ Navigate into the GDAL source directory and type
 
 Type on the unix console in your project directory:
  svn co http://libmini.googlecode.com/svn/libmini/qtviewer qtviewer
- (cd qtviewer; ./build.sh)
+ with cmake: (cd qtviewer; cmake . && make)
+ with qmake: (cd qtviewer; ./build.sh)
 
 !! QTViewer Checkout and Compilation (Windows)
 
