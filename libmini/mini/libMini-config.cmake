@@ -1,7 +1,11 @@
 # cmake build configuration for libMini
 # (c) by Stefan Roettger
 
-OPTION(BUILD_MINI_STUB "Build stub library." OFF)
+IF (NOT BUILD_MINI_STUB)
+   SET(BUILD_MINI_STUB OFF)
+ENDIF (NOT BUILD_MINI_STUB)
+
+OPTION(BUILD_MINI_STUB "Build stub library." ${BUILD_MINI_STUB})
 OPTION(BUILD_MINI_SFX "Build SFX library." OFF)
 
 OPTION(BUILD_MINI_WITHOUT_SQUISH "Build without squish." OFF)
