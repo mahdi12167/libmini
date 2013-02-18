@@ -6,17 +6,25 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
 # dependencies
 
-ADD_SUBDIRECTORY(grid)
-
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
+    /usr/local/squish;
     /usr/local/libcurl;
     /usr/local/gdal;
     /usr/local/libiconv;
     /usr/local/libjpeg;
     /usr/local/libpng;
     /usr/local/zlib)
+
+FIND_PACKAGE(GRID)
+INCLUDE_DIRECTORIES(${GRID_INCLUDE_DIR})
+
+FIND_PACKAGE(MINI)
+INCLUDE_DIRECTORIES(${MINI_INCLUDE_DIR})
+
+FIND_PACKAGE(libSquish)
+INCLUDE_DIRECTORIES(${LIBSQUISH_INCLUDE_DIR})
 
 FIND_PACKAGE(CURL)
 INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
@@ -52,6 +60,11 @@ SET(LIB_HDRS
    renderer.h
    viewer.h
    camera.h
+   object.h
+   objectlist.h
+   objects.h
+   worker.h
+   nodes.h
    )
 
 SET(LIB_SRCS
@@ -61,6 +74,11 @@ SET(LIB_SRCS
    renderer.cpp
    viewer.cpp
    camera.cpp
+   object.cpp
+   objectlist.cpp
+   objects.cpp
+   worker.cpp
+   nodes.cpp
    )
 
 # moc
