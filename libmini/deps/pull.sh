@@ -30,7 +30,7 @@ if (! -e /usr/include/png.h) then
       if (! -e libpng) then
          git clone git://libpng.git.sourceforge.net/gitroot/libpng/libpng
       endif
-      (cd libpng; git checkout -b libpng16)
+      (cd libpng; git checkout v1.5.14)
    endif
 endif
 
