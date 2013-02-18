@@ -73,6 +73,6 @@ void ViewerWindow::paintGL()
 
 void ViewerWindow::timerEvent(QTimerEvent *event)
 {
-   viewer->getCamera()->move_right(10000.0);
+   viewer->getCamera()->move_left(10000.0);
    repaint();
 }

@@ -31,8 +31,7 @@
 #define CAMERA_FARP 1.0E7f
 
 #define CAMERA_HEIGHT 3.0E6f
-#define CAMERA_HEIGHT_FLOOR (2.0f*CAMERA_NEARP)
-#define CAMERA_LAT 21.39
-#define CAMERA_LON -157.72
+#define CAMERA_LAT 0
+#define CAMERA_LON 0
 
 #endif
