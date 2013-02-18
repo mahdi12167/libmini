@@ -5,6 +5,8 @@
 
 #include <QtGui/QMainWindow>
 
+class QTimerEvent;
+
 class ViewerWindow;
 
 //! qt viewer main window that
@@ -23,6 +25,8 @@ private:
    QMenu *fileMenu;
 
    ViewerWindow *viewerWindow;
+
+   void timerEvent(QTimerEvent *);
 };
 
 #endif

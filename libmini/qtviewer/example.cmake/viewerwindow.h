@@ -5,7 +5,6 @@
 
 #include <QtOpenGL/qgl.h>
 
-class QTimerEvent;
 class Renderer;
 
 //! qt viewer window
@@ -28,8 +27,6 @@ protected:
    void initializeGL();
    void resizeGL(int width, int height);
    void paintGL();
-
-   void timerEvent(QTimerEvent *);
 
 private:
    double viewer_aspect;

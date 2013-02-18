@@ -3,6 +3,8 @@
 #include <QtGui>
 
 #include "viewerwindow.h"
+#include "viewerconst.h"
+#include "renderer.h"
 
 #include "mainwindow.h"
 
@@ -19,9 +21,17 @@ MainWindow::MainWindow(QWidget *parent)
 
    viewerWindow = new ViewerWindow;
    setCentralWidget(viewerWindow);
+
+   startTimer((int)(1000.0/CAMERA_FPS));
 }
 
 MainWindow::~MainWindow()
 {
    delete viewerWindow;
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+   viewerWindow->getViewer()->getCamera()->move_left(10000.0);
+   viewerWindow->repaint();
 }

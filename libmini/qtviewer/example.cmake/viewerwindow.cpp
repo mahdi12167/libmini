@@ -17,8 +17,6 @@ ViewerWindow::ViewerWindow()
    // init viewer
    viewer = new Renderer(this);
    if (viewer == NULL) MEMERROR();
-
-   startTimer((int)(1000.0/CAMERA_FPS));
 }
 
 ViewerWindow::~ViewerWindow()
@@ -69,10 +67,4 @@ void ViewerWindow::paintGL()
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    viewer->draw();
-}
-
-void ViewerWindow::timerEvent(QTimerEvent *event)
-{
-   viewer->getCamera()->move_left(10000.0);
-   repaint();
 }
