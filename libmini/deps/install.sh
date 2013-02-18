@@ -11,6 +11,12 @@ else
    set prefix=/usr/local
 endif
 
+set first=`echo $prefix | cut -c1-1`
+if ($first != "/") then
+   echo installation path needs to be absolute
+   exit 1
+endif
+
 echo "installing to $prefix"
 
 # libjpeg
