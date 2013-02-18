@@ -1,15 +1,17 @@
 #!/bin/tcsh -f
 
 # this script installs the libMini dependencies locally
-# the installation path can be supplied as an optional argument (default is ../..)
+# the installation path can be supplied as an optional argument (default is /usr/local)
 
 set arg=$1
 
 if ($arg != "") then
    set prefix=$arg
 else
-   set prefix=$cwd/../..
+   set prefix=/usr/local
 endif
+
+echo "installing to $prefix"
 
 # libjpeg
 if (-e libjpeg) then
