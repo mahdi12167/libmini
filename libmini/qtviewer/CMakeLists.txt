@@ -1,6 +1,6 @@
 # cmake build file
 
-PROJECT(QTViewer)
+PROJECT(QTV)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
