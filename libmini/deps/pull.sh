@@ -24,7 +24,7 @@ if (! -e /usr/include/jpeglib.h) then
    endif
 endif
 
-# libpng 1.5.8
+# libpng 1.5.14
 if (! -e /usr/include/png.h) then
    if (-X git) then
       if (! -e libpng) then
@@ -34,7 +34,7 @@ if (! -e /usr/include/png.h) then
    endif
 endif
 
-# zlib 1.2.6
+# zlib 1.2.7
 if (! -e /usr/include/zlib.h) then
    if (-X git) then
       if (! -e zlib) then
