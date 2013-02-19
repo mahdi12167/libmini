@@ -54,6 +54,18 @@ endif
 
 # other libraries to install:
 
+# proj (required by gdal)
+if (-e proj) then
+   echo BUILDING PROJ.4
+   (cd proj; ./configure --prefix=$prefix; make -j 2; make install)
+endif
+
+# libiconv (required by gdal 1.9+)
+if (-e libiconv) then
+   echo BUILDING LIBICONV
+   (cd libiconv; ./configure --prefix=$prefix/libiconv --enable-static --disable-shared; make -j 2; make install)
+endif
+
 # gdal
 echo BUILDING GDAL
 (cd gdal;\
@@ -66,15 +78,3 @@ echo BUILDING GDAL
              --without-ld-shared\
              --enable-static --disable-shared;\
  make -j 2; make install)
-
-# proj (required by gdal)
-if (-e proj) then
-   echo BUILDING PROJ.4
-   (cd proj; ./configure --prefix=$prefix; make -j 2; make install)
-endif
-
-# libiconv (required by gdal 1.9+)
-if (-e libiconv) then
-   echo BUILDING LIBICONV
-   (cd libiconv; ./configure --prefix=$prefix/libiconv --enable-static --disable-shared; make -j 2; make install)
-endif
