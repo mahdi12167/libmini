@@ -70,7 +70,7 @@ echo BUILDING GDAL
 # proj (required by gdal)
 if (-e proj) then
    echo BUILDING PROJ.4
-   (cd proj; ./configure; make -j 2; make install)
+   (cd proj; ./configure --prefix=$prefix; make -j 2; make install)
 endif
 
 # libiconv (required by gdal 1.9+)
