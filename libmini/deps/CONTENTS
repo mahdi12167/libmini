@@ -13,5 +13,5 @@ squish:              http://libsquish.googlecode.com
 CImg/GREYCstoration: http://cimg.sourceforge.net
 freeglut:            http://freeglut.sourceforge.net
 gdal:                http://gdal.org
-proj:                http://trac.osgeo.org/proj/
+proj:                http://trac.osgeo.org/proj
 libiconv:            http://www.gnu.org/software/libiconv
