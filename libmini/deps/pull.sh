@@ -98,6 +98,11 @@ if (-X svn) then
    svn up gdal
 endif
 
+# proj 4.8 (required by gdal)
+if (-X svn) then
+   svn up proj
+endif
+
 # libiconv 1.14 (required by gdal 1.9+)
 if (! -e /usr/include/iconv.h) then
    if (-X wget) then

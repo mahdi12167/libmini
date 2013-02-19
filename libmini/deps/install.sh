@@ -63,9 +63,15 @@ echo BUILDING GDAL
              --with-png=internal --with-jpeg=internal\
              --without-threads --without-curl --without-netcdf\
              --without-sqlite3 --without-pg\
-             --without-ld-shared --with-static-proj4\
+             --without-ld-shared\
              --enable-static --disable-shared;\
  make -j 2; make install)
+
+# proj (required by gdal)
+if (-e proj) then
+   echo BUILDING PROJ.4
+   (cd proj; ./configure; make -j 2; make install)
+endif
 
 # libiconv (required by gdal 1.9+)
 if (-e libiconv) then
