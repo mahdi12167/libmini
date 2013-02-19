@@ -3,7 +3,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <viewer.h>
+#include "viewer.h"
 
 class ViewerWindow;
 
