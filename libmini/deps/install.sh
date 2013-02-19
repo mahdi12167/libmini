@@ -13,6 +13,12 @@ endif
 
 echo "installing to $prefix"
 
+# zlib
+if (-e zlib) then
+   echo BUILDING ZLIB
+   (cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+endif
+
 # libjpeg
 if (-e libjpeg) then
    echo BUILDING LIBJPEG
@@ -23,12 +29,6 @@ endif
 if (-e libpng) then
    echo BUILDING LIBPNG
    (cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
-endif
-
-# zlib
-if (-e zlib) then
-   echo BUILDING ZLIB
-   (cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
 endif
 
 # curl
@@ -71,7 +71,6 @@ echo BUILDING GDAL
 (cd gdal;\
  ./configure --prefix=$prefix/gdal\
              --with-libtiff=internal --with-geotiff=internal\
-             --with-rename-internal-libtiff-symbols\
              --with-png=internal --with-jpeg=internal\
              --without-threads --without-curl --without-netcdf\
              --without-sqlite3 --without-pg\
