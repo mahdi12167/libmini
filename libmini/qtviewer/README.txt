@@ -342,19 +342,32 @@ folder). It shows a rotating earth with an additional pole axis
 This example is a good starting point to code your own geographic
 applications. For example, you can show a tileset that has been
 resampled with the qtviewer (or vtbuilder) just by issuing the
-following commands in the MainWindow class:
+following commands in the MainWindow::timerEvent method:
 
- viewerWindow->getViewer()->loadMap("url to tileset");
+ static bool loaded=false;
+ if (!loaded)
+    {
+    viewerWindow->getViewer()->loadMap("url or file path to tileset");
+    loaded=true;
+    }
  viewerWindow->repaint();
 
 Then you can navigate to a particular view point given in a geografic
 coordinate system (Lat/Lon, UTM, Mercator, etc.):
 
+ // define eye coordinates
  minicoord eye;
  double lat=49.5,lon=11.05, height=1000.0; // 1 km above Nuremberg airport
  eye.set_llh(lat,lon);
 
+ // set camera to eye coordinates looking down by default
  viewerWindow->getViewer()->getCamera()->set_eye(eye);
+ viewerWindow->repaint();
+
+Or just let the earth rotate:
+
+ // rotate camera left so that earth rotates right
+ viewerWindow->getViewer()->getCamera()->move_left(10000.0);
  viewerWindow->repaint();
 
 !! Most Simple CMake Example
@@ -381,7 +394,8 @@ QtSimpleViewer base class that can be subclassed as follows:
     {
        // return empty group node
        // append nodes at your pleasure
-       return(new mininode_group());
+       mininode_group *group=new mininode_group();
+       return(group);
     }
 
     virtual void timerEvent(QTimerEvent *)
