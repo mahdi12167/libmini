@@ -83,8 +83,8 @@ ADD_LIBRARY(${LIB_NAME} ${LIB_SRCS} ${LIB_HDRS} ${MOC_OUTFILES})
 
 # executable
 
-ADD_EXECUTABLE(example example.cpp)
-TARGET_LINK_LIBRARIES(example
+ADD_EXECUTABLE(qtexample qtexample.cpp)
+TARGET_LINK_LIBRARIES(qtexample
    ${LIB_NAME}
    ${GRID_LIBRARIES}
    ${MINISFX_LIBRARIES}
