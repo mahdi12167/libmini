@@ -268,6 +268,35 @@ VTBuilder tilesets:
 More information about libMini's node classes can be found in the
 mininodes.h header.
 
+!! CMake Example
+
+The procedure of adding ecef geometry, as explained in the previous
+section, is illustrated in the CMake example (in the example.cmake
+folder). It shows a rotating earth with an additional pole axis
+(mininode_geometry_tube) and an equator ring (mininode_geometry_band).
+
+This example is a good starting point to code your own geographic
+applications. For example, you can show a tileset that has been
+resampled with the qtviewer (or vtbuilder) just by issuing the
+following commands in the MainWindow class:
+
+<pre>
+   viewerWindow->getViewer()->loadMap("url to tileset");
+   viewerWindow->repaint();
+</pre>
+
+Then you can navigate to a particular view point given in a geografic
+coordinate system (Lat/Lon, UTM, Mercator, etc.):
+
+<pre>
+   minicoord eye;
+   double lat=49.5,lon=11.05, height=1000.0; // 1 km above Nuremberg airport
+   eye.set_llh(lat,lon);
+
+   viewerWindow->getViewer()->getCamera()->set_eye(eye);
+   viewerWindow->repaint();
+</pre>
+
 !! Postcard
 
 If you found the software useful, please send a vacation postcard to:
