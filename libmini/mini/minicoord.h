@@ -77,6 +77,9 @@ class minicoord
    inline minicoord& operator *= (const double c);
    inline minicoord& operator /= (const double c);
 
+   //! set lat/lon/height in degrees/meters
+   void set_llh(double lat,double lon,double height=0.0);
+
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
 

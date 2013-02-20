@@ -104,6 +104,16 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
 // destructor
 minicoord::~minicoord() {}
 
+// set lat/lon/height in degrees/meters
+void minicoord::set_llh(double lat,double lon,double height)
+   {
+   vec=miniv4d(3600*lon,3600*lat,height);
+   type=minicoord::MINICOORD_LLH;
+
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_WGS84;
+   }
+
 // convert from 1 coordinate system 2 another
 void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
    {
