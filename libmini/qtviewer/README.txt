@@ -357,6 +357,43 @@ coordinate system (Lat/Lon, UTM, Mercator, etc.):
  viewerWindow->getViewer()->getCamera()->set_eye(eye);
  viewerWindow->repaint();
 
+!! Most Simple CMake Example
+
+The most simple usage of the qt viewer is to just derive from the
+QtSimpleViewer class and override the timer event and the ecef
+geometry construction pure virtual methods. Source code for this use
+case is given in the simple.cmake folder. To start, just copy the
+qtsimpleviewer.h header, which contains the complete definition of the
+QtSimpleViewer base class that can be subclassed as follows:
+
+ #include "qtsimpleviewer.h"
+
+ class MyQtViewer: public QtSimpleViewer
+ {
+ public:
+
+    MyQtViewer() {}
+    ~MyQtViewer() {}
+
+ protected:
+
+    virtual mininode_group *build_ecef_geometry()
+    {
+       // return empty group node
+       // append nodes at your pleasure
+       return(new mininode_group());
+    }
+
+    virtual void timerEvent(QTimerEvent *)
+    {
+       // rotate camera left so that earth rotates right
+       getCamera()->move_left(10000.0);
+       repaint();
+    }
+ };
+
+That's it!
+
 !! Postcard
 
 If you found the software useful, please send a vacation postcard to:
