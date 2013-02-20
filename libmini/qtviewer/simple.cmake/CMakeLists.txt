@@ -51,15 +51,36 @@ ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 FIND_PACKAGE(OpenGL)
 
+# header and module list
+
+SET(LIB_HDRS
+   # module headers
+   qtsimpleviewer.h
+   viewer.h
+   )
+
+SET(LIB_SRCS
+   # module sources
+   viewer.cpp
+   )
+
 # moc
 
-QT4_WRAP_CPP(MOC_OUTFILES qtsimple.h)
+QT4_WRAP_CPP(MOC_OUTFILES ${LIB_HDRS})
+
+# library
+
+SET(LIB_NAME ${PROJECT_NAME})
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+ADD_LIBRARY(${LIB_NAME} ${LIB_SRCS} ${LIB_HDRS} ${MOC_OUTFILES})
 
 # executable
 
 ADD_EXECUTABLE(qtsimple qtsimple.cpp)
 TARGET_LINK_LIBRARIES(qtsimple
-   ${MOC_OUTFILES}
+   ${LIB_NAME}
    ${GRID_LIBRARIES}
    ${MINISFX_LIBRARIES}
    ${LIBSQUISH_LIBRARIES}
