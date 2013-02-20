@@ -394,7 +394,7 @@ QtSimpleViewer base class that can be subclassed as follows:
     {
        // return empty group node
        // append nodes at your pleasure
-       mininode_group *group=new mininode_group();
+       mininode_group *group = new mininode_group();
        return(group);
     }
 
