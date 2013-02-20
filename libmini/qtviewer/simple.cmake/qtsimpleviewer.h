@@ -34,7 +34,6 @@
 #define CAMERA_LAT 0
 #define CAMERA_LON 0
 
-#include <QtGui>
 #include <QtOpenGL/qgl.h>
 
 #include <mini/mini_generic.h>
@@ -332,11 +331,7 @@ protected:
       draw();
    }
 
-   void timerEvent(QTimerEvent *)
-   {
-      getCamera()->move_left(10000.0);
-      repaint();
-   }
+   virtual void timerEvent(QTimerEvent *) = 0;
 
 };
 

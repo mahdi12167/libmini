@@ -17,6 +17,8 @@ public:
 protected:
 
    virtual mininode_group *build_ecef_geometry();
+
+   virtual void timerEvent(QTimerEvent *);
 };
 
 #endif

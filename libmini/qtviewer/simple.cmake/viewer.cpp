@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
+#include <QtGui>
+
 #include "viewer.h"
 
 MyQtViewer::MyQtViewer()
@@ -34,4 +36,10 @@ mininode_group *MyQtViewer::build_ecef_geometry()
       append_child(new mininode_geometry_band(pos, pos, 20000));
 
    return(group);
+}
+
+void MyQtViewer::timerEvent(QTimerEvent *)
+{
+   getCamera()->move_left(10000.0);
+   repaint();
 }
