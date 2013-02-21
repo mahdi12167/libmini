@@ -373,15 +373,16 @@ Or just let the earth rotate:
 !! Most Simple CMake Example
 
 The most simple usage of the qt viewer is to just derive from the
-QtSimpleViewer class and override the timer event and the ecef
-geometry construction pure virtual methods. Source code for this use
-case is given in the simple.cmake folder. To start, just copy the
-qtsimpleviewer.h header, which contains the complete definition of the
-QtSimpleViewer base class that can be subclassed as follows:
+QtViewer class provided in the <mini/qt_viewer.h> header and override
+the timer event and the ecef geometry construction pure virtual
+methods. Source code for this use case is given in the simple.cmake
+folder. To start, just have a look at the qt_viewer.h header, which
+contains the complete definition of the QtViewer base class that can
+be subclassed as follows:
 
- #include "qtsimpleviewer.h"
+ #include <mini/qt_viewer.h>
 
- class MyQtViewer: public QtSimpleViewer
+ class MyQtViewer: public QtViewer
  {
  public:
 
