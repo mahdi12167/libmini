@@ -1,7 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#ifndef QTSIMPLE_H
-#define QTSIMPLE_H
+#ifndef QT_VIEWER_H
+#define QT_VIEWER_H
 
 #define VIEWER_WIDTH 768
 #define VIEWER_MINWIDTH 256
@@ -44,7 +44,8 @@
 class QTimerEvent;
 
 //! qt viewer window that
-//! contains the opengl rendering context
+//! contains the opengl rendering context and
+//! subclasses the miniview class for displaying the earth
 class QtViewer: public QGLWidget, public miniview
 {
 public:
