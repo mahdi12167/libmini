@@ -123,16 +123,16 @@ class Object_extents: public Object
    virtual BOOLINT is_marked() const;
 
    //! move object (via two handles)
-   virtual void move(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void move(const minicoord &/*pos0*/,const minicoord &/*pos1*/) {}
 
    //! rotate object (via two handles)
-   virtual void rotate(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void rotate(const minicoord &/*pos0*/,const minicoord &/*pos1*/) {}
 
    //! scale object horizontally (via two handles)
-   virtual void scale_ds(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void scale_ds(const minicoord &/*pos0*/,const minicoord &/*pos1*/) {}
 
    //! scale object vertically (via two handles)
-   virtual void scale_dt(const minicoord &pos0,const minicoord &pos1) {}
+   virtual void scale_dt(const minicoord &/*pos0*/,const minicoord &/*pos1*/) {}
 
    protected:
 
