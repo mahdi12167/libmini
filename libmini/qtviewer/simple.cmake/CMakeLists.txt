@@ -55,7 +55,6 @@ FIND_PACKAGE(OpenGL)
 
 SET(LIB_HDRS
    # module headers
-   qtsimpleviewer.h
    viewer.h
    )
 

@@ -3,9 +3,9 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
-#include "qtsimpleviewer.h"
+#include <mini/qt_viewer.h>
 
-class MyQtViewer: public QtSimpleViewer
+class MyQtViewer: public QtViewer
 {
    Q_OBJECT;
 
