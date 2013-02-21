@@ -23,7 +23,11 @@ HEADERS += \
    database.h datafill.h \
    datacloud.h datacache.h datagrid.h \
    datacalc.h dataparse.h \
-   lunascan.h lunaparse.h lunacode.h
+   lunascan.h lunaparse.h lunacode.h \
+   mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h \
+   mini_luna.h mini_math.h mini_object.h mini_sfx.h \
+   mini_tileset.h mini_util.h mini_volume.h \
+   qt_viewer.h
 
 SOURCES += \
    mini.cpp miniOGL.cpp \
