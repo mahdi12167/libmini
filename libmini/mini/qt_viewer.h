@@ -50,31 +50,40 @@ class QtViewer: public QGLWidget, public miniview
 {
 public:
 
+   //! default ctor
    QtViewer(QWidget *parent = 0)
+      : QGLWidget(parent)
    {
       m_bIsInited = false;
 
       setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::StencilBuffer));
       setCursor(Qt::CrossCursor);
 
-      viewer_aspect = VIEWER_ASPECT;
+      m_viewer_aspect = VIEWER_ASPECT;
 
       startTimer((int)(1000.0/CAMERA_FPS));
    }
 
+   //! dtor
    virtual ~QtViewer()
    {}
 
+   //! get scene graph root node
    mininode_root* getRoot()
    {
       return(m_root);
    }
 
+   //! get scene graph camera node
    mininode_cam* getCamera()
    {
       return(m_root->get_camera());
    }
 
+   //! load tileset specified by url
+   //! returns pointer to tileset layer
+   //! returns NULL if tileset was not found or loaded
+   //! note: has no effect in ctor due to gl restrictions
    minilayer* loadMap(ministring url)
    {
       minilayer *layer;
@@ -95,6 +104,7 @@ public:
       return(NULL);
    }
 
+   //! remove tileset layer
    void removeMap(minilayer *layer)
    {
       int num=getearth()->getterrain()->getnum(layer);
@@ -102,11 +112,15 @@ public:
       getearth()->getterrain()->removeLTS(num);
    }
 
+   //! remove all tileset layers
    void clearMaps()
    {
       getearth()->getterrain()->remove();
    }
 
+   //! pick scene
+   //! returns closest picked scene graph node
+   //! picking starts at point o in direction of vector d
    mininode_geometry *pick(const minicoord &o, const miniv3d &d, double mindist=0.0)
    {
       minicoord o0;
@@ -119,25 +133,31 @@ public:
       return(obj);
    }
 
+   //! set preferred window aspect
    void setAspect(double aspect)
    {
-      viewer_aspect = aspect;
+      m_viewer_aspect = aspect;
    }
 
+   //! return preferred minimum window size
    QSize minimumSizeHint() const
    {
-      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/viewer_aspect));
+      return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/m_viewer_aspect));
    }
 
+   //! return preferred window size
    QSize sizeHint() const
    {
-      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/viewer_aspect));
+      return(QSize(VIEWER_WIDTH, VIEWER_WIDTH/m_viewer_aspect));
    }
 
 protected:
 
    // scene graph root node
    mininode_rootref m_root;
+
+   // preferred viewer window aspect
+   double m_viewer_aspect;
 
    // initialization flag
    bool m_bIsInited;
@@ -148,8 +168,6 @@ protected:
    miniterrain::MINITERRAIN_PARAMS* m_pTerrainParams; // the terrain parameters
 
    virtual mininode_group *build_ecef_geometry()=0;
-
-   double viewer_aspect;
 
    void init()
    {
