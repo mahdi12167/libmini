@@ -45,11 +45,11 @@ class QTimerEvent;
 
 //! qt viewer window that
 //! contains the opengl rendering context
-class QtSimpleViewer: public QGLWidget, public miniview
+class QtViewer: public QGLWidget, public miniview
 {
 public:
 
-   QtSimpleViewer(QWidget *parent = 0)
+   QtViewer(QWidget *parent = 0)
    {
       m_bIsInited = false;
 
@@ -61,7 +61,7 @@ public:
       startTimer((int)(1000.0/CAMERA_FPS));
    }
 
-   virtual ~QtSimpleViewer()
+   virtual ~QtViewer()
    {}
 
    mininode_root* getRoot()
