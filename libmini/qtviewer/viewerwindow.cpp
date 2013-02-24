@@ -1113,6 +1113,34 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
    return(TRUE);
 }
 
+BOOLINT ViewerWindow::check_elev_list(ministrings keys)
+{
+   unsigned int i;
+
+   unsigned int elev,imag;
+
+   elev=imag=0;
+
+   for (i=0; i<keys.size(); i++)
+   {
+      Object *obj = getObject(keys[i]);
+      if (obj != NULL)
+      {
+         Object_image *image = dynamic_cast<Object_image *>(obj);
+         if (image != NULL)
+         {
+            if (image->is_elevation()) elev++;
+            if (image->is_imagery()) imag++;
+         }
+      }
+   }
+
+   if (elev==0) return(FALSE);
+   if (imag>0) return(FALSE);
+
+   return(TRUE);
+}
+
 void ViewerWindow::resample_list(ministrings keys,
                                  ministring crop_key,
                                  int level, int levels, int step)
@@ -1121,8 +1149,6 @@ void ViewerWindow::resample_list(ministrings keys,
 
    grid_extent crop_ext;
    ministring crop_name;
-
-   if (!check_list(keys)) return;
 
    if (getObject(crop_key) != NULL)
    {
@@ -1137,11 +1163,21 @@ void ViewerWindow::resample_list(ministrings keys,
       }
    }
 
-   ResampleJob *job = new ResampleJob("", export_path,
-                                      level, levels, step,
-                                      5.0,0.0,
-                                      &crop_ext,crop_name,
-                                      tmp_path);
+   ResampleJob *job;
+
+   if (check_elev_list(keys))
+      job = new ResampleElevJob("", export_path,
+                                level, levels, step,
+                                5.0,0.0,
+                                &crop_ext,crop_name,
+                                tmp_path);
+   else if (check_list(keys))
+      job = new ResampleJob("", export_path,
+                            level, levels, step,
+                            5.0,0.0,
+                            &crop_ext,crop_name,
+                            tmp_path);
+   else return;
 
    if (job == NULL) MEMERROR();
 
