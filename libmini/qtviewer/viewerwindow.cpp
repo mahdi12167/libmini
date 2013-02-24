@@ -822,6 +822,17 @@ void ViewerWindow::runAction(ministring action,
 
       resample_list(sel_keys, "", grid_level, grid_levels, grid_step);
    }
+   else if (action == "resample_selected_area")
+   {
+      ministrings keys = listObjects("image");
+
+      ministrings sel_keys;
+      for (unsigned int i=0; i<keys.getsize(); i++)
+         if (hasTag(keys[i], "selected"))
+            sel_keys.append(keys[i]);
+
+      resample_list(sel_keys, value, grid_level, grid_levels, grid_step);
+   }
    else if (action == "resample_all")
    {
       ministrings keys = listObjects("image");
