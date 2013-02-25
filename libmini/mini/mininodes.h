@@ -806,6 +806,66 @@ class mininode_selector: public mininode_group
    unsigned int index;
    };
 
+//! lod node
+//!  turns render traversal on for the child
+//!  that matches distance vs. bounding radius best
+//!  the next lod level is enabled if
+//!   the eye distance of the bounding sphere is larger than
+//!   the bounding radius multiplied with the ratio
+class mininode_lod: public mininode_selector
+   {
+   public:
+
+   //! default constructor
+   mininode_lod(double r=1.0)
+      : mininode_selector()
+      {ratio=r;}
+
+   //! destructor
+   virtual ~mininode_lod() {}
+
+   static void set_ratio(double r=3.0)
+      {global_ratio=r;}
+
+   static double get_ratio()
+      {return(global_ratio);}
+
+   virtual void traverse_pre()
+      {
+      int lod;
+      double d2,r2;
+
+      unsigned int s;
+
+      mininode_group::traverse_pre();
+
+      s=getsize();
+
+      if (s>1)
+         {
+         minicone cone=mininode_culling::peek_cone();
+
+         if (cone.valid)
+            if (bound_radius>0.0)
+               {
+               d2=(cone.pos-bound_center).getlength2();
+               r2=dsqr(bound_radius*global_ratio*ratio);
+
+               if (d2<r2) lod=0;
+               else lod=dtrc(log(d2/r2)/log(2.0)+1);
+               lod=min(lod,s-1);
+
+               select(lod);
+               }
+         }
+      }
+
+   protected:
+
+   double ratio;
+   static double global_ratio;
+   };
+
 //! transformation node (base class)
 //!  provides linear local modelling transfrom
 //!  pushes and pops transform before and after render traversal

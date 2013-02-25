@@ -234,6 +234,10 @@ unsigned int mininode_texture2D::tid=0;
 minidyna<unsigned int> mininode_texture3D::texid_stack;
 unsigned int mininode_texture3D::tid=0;
 
+// mininode_lod:
+
+double mininode_lod::global_ratio=3.0;
+
 // mininode_transform:
 
 void mininode_transform::traverse_init()
