@@ -394,12 +394,13 @@ void MainWindow::createWidgets()
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
-   sliderButton->setChecked(true);
+   sliderButton->setChecked(false);
 
    QGroupBox *sliderButtonBox= new QGroupBox;
    QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
    sliderButtonBoxLayout->addWidget(sliderButton);
    sliderButtonBox->setLayout(sliderButtonBoxLayout);
+   sliderBox->setVisible(sliderButton->isChecked());
 
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
 
