@@ -806,6 +806,14 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "shade_selected")
+   {
+      ministrings keys = listObjects("selected");
+
+      for (unsigned int i=0; i<keys.getsize(); i++)
+         if (hasTag(keys[i], "elevation"))
+            shade_elevation(keys[i]);
+   }
    else if (action == "resample")
    {
       ministrings keys = listObjects("image");

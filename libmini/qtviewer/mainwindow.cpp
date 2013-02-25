@@ -1034,6 +1034,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(infoLayer);
     QAction *shadeAction = new QAction(tr(" shade layer"), this);
     if (row != -1) myMenu.addAction(shadeAction);
+    QAction *shadeSelAction = new QAction(tr(" shade selected layers"), this);
+    myMenu.addAction(shadeSelAction);
     QAction *cropElevAction = new QAction(tr(" crop elevation to layer"), this);
     myMenu.addAction(cropElevAction);
     QAction *cropImagAction = new QAction(tr(" crop imagery to layer"), this);
@@ -1108,6 +1110,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("create_extent", row));
        else if (selectedAction == shadeAction)
           emit(activate("shade_elevation", row));
+       else if (selectedAction == shadeSelAction)
+          emit(activate("shade_selected"));
        else if (selectedAction == resampleAction)
           emit(activate("resample", row));
        else if (selectedAction == resampleSelAction)
