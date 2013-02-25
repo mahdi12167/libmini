@@ -80,7 +80,7 @@ void MainWindow::initSettings()
       shadePower = settings.value("shadePower").toDouble();
 
    if (settings.contains("shadeAmbient"))
-      shadePower = settings.value("shadeAmbient").toDouble();
+      shadeAmbient = settings.value("shadeAmbient").toDouble();
 
    if (settings.contains("jpegQuality"))
       jpegQuality = settings.value("jpegQuality").toDouble();
