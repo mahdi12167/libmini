@@ -145,20 +145,16 @@ mininode_group *Renderer::build_ecef_geometry()
 
    // lod test:
 
-   // create nodes
    mininode *cube = new mininode_geometry_cube(10.0, 10.0, 10.0);
    mininode *lod = new mininode_lod(1.0);
 
-   // link nodes
    lod->append_child(new mininode_color(miniv3d(1.0, 0.0, 0.0)))->append_child(cube);
    lod->append_child(new mininode_color(miniv3d(0.0, 0.0, 1.0)))->append_child(cube);
 
-   // define melbourne as local coordinate system
    minicoord melbourne;
    melbourne.set_llh(-38, 145);
 
-   // link lod
-   mininode *lodtest = new mininode_coord(melbourne)->
+   group->append_child(new mininode_coord(melbourne))->
      append_child(new mininode_scale(10000.0))->
      append_child(lod);
 
