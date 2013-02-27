@@ -1512,6 +1512,30 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          buf.release();
       }
    }
+   else if (job=="full-res")
+   {
+      // autoload full-res textures
+      for (unsigned int i=0; i<args.size(); i++)
+      {
+         // autoselect full-res name
+         ministring fullres = FullResJob::make_name(args[i]);
+
+         // load from db format
+         databuf buf;
+         buf.loaddata(fullres.c_str());
+
+         // add thumb to scene graph
+         Object *obj = getObject(args[i]);
+         if (obj != NULL)
+         {
+            Object_image *image = dynamic_cast<Object_image *>(obj);
+            if (image != NULL) image->set_fullres(&buf);
+         }
+
+         // release thumb data
+         buf.release();
+      }
+   }
    else if (job=="shader")
    {
       // process shaded keys

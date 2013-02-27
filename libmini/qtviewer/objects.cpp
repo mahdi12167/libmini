@@ -341,6 +341,11 @@ void Object_image::set_thumb(const databuf *buf)
    image_viewer->getCamera()->startIdling();
    }
 
+void Object_image::set_fullres(const databuf *buf)
+   {
+   //!! use mininode_lod to switch between thumb and full-res texture
+   }
+
 // Object_extent:
 
 mininode *Object_extent::extent_groupnode=NULL;

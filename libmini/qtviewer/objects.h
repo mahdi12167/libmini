@@ -101,6 +101,9 @@ class Object_image: public Object_extents
    //! set thumb via db format
    void set_thumb(const databuf *buf);
 
+   //! set full-res texture via db format
+   void set_fullres(const databuf *buf);
+
    protected:
 
    BOOLINT is_imagery_resp_elevation;
