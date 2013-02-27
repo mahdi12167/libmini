@@ -145,10 +145,11 @@ mininode_group *Renderer::build_ecef_geometry()
 
    // lod test:
 
-   mininode *cube = new mininode_geometry_cube(10.0, 10.0, 10.0);
-   mininode *lod = new mininode_lod(1.0);
+   mininode_ref cube = new mininode_geometry_cube(10.0, 10.0, 10.0);
+   mininode_lod *lod = new mininode_lod(1.0);
 
    lod->append_child(new mininode_color(miniv3d(1.0, 0.0, 0.0)))->append_child(cube);
+   lod->append_child(new mininode_color(miniv3d(0.0, 1.0, 0.0)))->append_child(cube);
    lod->append_child(new mininode_color(miniv3d(0.0, 0.0, 1.0)))->append_child(cube);
 
    minicoord melbourne;
@@ -156,6 +157,7 @@ mininode_group *Renderer::build_ecef_geometry()
 
    group->append_child(new mininode_coord(melbourne))->
      append_child(new mininode_scale(10000.0))->
+     append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
      append_child(lod);
 
 #endif
