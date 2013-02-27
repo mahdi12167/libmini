@@ -852,7 +852,7 @@ class mininode_lod: public mininode_selector
                r2=dsqr(bound_radius*global_ratio*ratio);
 
                if (d2<r2) lod=0;
-               else lod=dtrc(log(d2/r2)/log(2.0)+1);
+               else lod=dtrc(0.5*log(d2/r2)/log(2.0)+1);
                lod=min(lod,s-1);
 
                select(lod);
