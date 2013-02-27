@@ -151,6 +151,7 @@ mininode_group *Renderer::build_ecef_geometry()
    lod->append_child(new mininode_color(miniv3d(1.0, 0.0, 0.0)))->append_child(cube);
    lod->append_child(new mininode_color(miniv3d(0.0, 1.0, 0.0)))->append_child(cube);
    lod->append_child(new mininode_color(miniv3d(0.0, 0.0, 1.0)))->append_child(cube);
+   lod->append_child(new mininode_color(miniv3d(1.0, 1.0, 1.0)))->append_child(cube);
 
    minicoord melbourne;
    melbourne.set_llh(-38, 145);
