@@ -115,7 +115,7 @@ class Object_image: public Object_extents
 
    Viewer *image_viewer;
 
-   mininode_ecef *ecef_node;
+   mininode_ref ecef_node;
    mininode_lod *lod_node;
    mininode_geometry *image_node;
 

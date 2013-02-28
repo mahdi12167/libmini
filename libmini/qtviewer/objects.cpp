@@ -355,9 +355,9 @@ void Object_image::set_fullres(const databuf *buf)
    mininode_texture2D *tex2d_node=new mininode_texture2D;
    if (tex2d_node==NULL) MEMERROR();
 
-   lod_node->append_child(tex2d_node);
+   lod_node->prepend_child(tex2d_node);
 
-   tex2d_node->append_child(mininode_ref(ecef_node));
+   tex2d_node->append_child(ecef_node);
    tex2d_node->load(buf);
 
    image_viewer->getCamera()->startIdling();
