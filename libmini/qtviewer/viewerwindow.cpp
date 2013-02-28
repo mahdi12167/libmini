@@ -1523,6 +1523,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          // load from db format
          databuf buf;
          buf.loaddata(thumb.c_str());
+         if (buf.missing()) continue;
 
          // add thumb to scene graph
          Object *obj = getObject(args[i]);
@@ -1535,6 +1536,9 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          // release thumb data
          buf.release();
       }
+
+      // try to load full-res textures if already present
+      finishedJob("fullres", args);
    }
    else if (job=="fullres")
    {
@@ -1547,6 +1551,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          // load from db format
          databuf buf;
          buf.loaddata(fullres.c_str());
+         if (buf.missing()) continue;
 
          // add full-res texture to scene graph
          Object *obj = getObject(args[i]);
