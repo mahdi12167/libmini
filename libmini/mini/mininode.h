@@ -58,6 +58,13 @@ class mininode: public minidyna< miniref<mininode> >
       return(append(v));
       }
 
+   //! prepend child node
+   miniref<mininode> prepend_child(const miniref<mininode> &v)
+      {
+      set_dirty();
+      return(prepend(v));
+      }
+
    //! remove child number i
    miniref<mininode> remove_child(unsigned int i=0)
       {
