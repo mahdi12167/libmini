@@ -926,6 +926,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
       if (row!=-1)
          runAction("toggle", row);
    }
+   else if (event->key() == Qt::Key_Z)
+   {
+      int row = viewerTable->currentRow();
+
+      if (row!=-1)
+         runAction("fullres", row);
+   }
    else if (event->key() == Qt::Key_Backspace)
    {
       int row = viewerTable->currentRow();
@@ -1090,7 +1097,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *deleteAllAction = new QAction(tr("delete all"), this);
     myMenu.addAction(deleteAllAction);
 
-    // exec connect menu
+    // exec context menu
     QAction *selectedAction = myMenu.exec(globalPos);
 
     // process selected action
