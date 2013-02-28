@@ -327,14 +327,21 @@ BOOLINT Object_image::is_marked() const
 
 void Object_image::set_thumb(const databuf *buf)
    {
+   if (ecef_node==NULL) return;
+
+   lod_node=new mininode_lod(1.0);
+   if (lod_node==NULL) MEMERROR();
+
    mininode_texture2D *tex2d_node=new mininode_texture2D;
    if (tex2d_node==NULL) MEMERROR();
+
+   lod_node->append_child(tex2d_node);
 
    mininode_ref graph=image_viewer->getRoot()->remove_subgraph(ecef_node);
    if (graph==NULL) ERRORMSG();
 
-   if (is_imagery_resp_elevation) deferred_groupnode2->append_child(tex2d_node);
-   else deferred_groupnode1->append_child(tex2d_node);
+   if (is_imagery_resp_elevation) deferred_groupnode2->append_child(lod_node);
+   else deferred_groupnode1->append_child(lod_node);
    tex2d_node->append_child(graph);
    tex2d_node->load(buf);
 
@@ -343,7 +350,17 @@ void Object_image::set_thumb(const databuf *buf)
 
 void Object_image::set_fullres(const databuf *buf)
    {
-   //!! use mininode_lod to switch between thumb and full-res texture
+   if (ecef_node==NULL || lod_node==NULL) return;
+
+   mininode_texture2D *tex2d_node=new mininode_texture2D;
+   if (tex2d_node==NULL) MEMERROR();
+
+   lod_node->append_child(tex2d_node);
+
+   tex2d_node->append_child(mininode_ref(ecef_node));
+   tex2d_node->load(buf);
+
+   image_viewer->getCamera()->startIdling();
    }
 
 // Object_extent:
