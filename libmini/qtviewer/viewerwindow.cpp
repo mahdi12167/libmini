@@ -792,6 +792,13 @@ void ViewerWindow::runAction(ministring action,
             if (hasTag(keys[i], "imagery"))
                hide_object(keys[i], TRUE);
    }
+   else if (action == "fullres")
+   {
+      if (value != "")
+         show_fullres(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "create_extent")
    {
       if (value != "")
@@ -1062,6 +1069,23 @@ void ViewerWindow::create_extent(ministring key, double dh)
 
    if (errorcode != OBJECT_SUCCESS)
       notify(TR("Unable to create extent from object"));
+}
+
+void ViewerWindow::show_fullres(ministring key)
+{
+   Object *obj = getObject(key);
+   if (obj != NULL)
+   {
+      Object_image *image = dynamic_cast<Object_image *>(obj);
+      if (image != NULL)
+      {
+         FullResJob *job = new FullResJob("", 30, 4096);
+         if (job == NULL) MEMERROR();
+
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
+   }
 }
 
 void ViewerWindow::shade_elevation(ministring key)
