@@ -1017,6 +1017,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(showAction);
     QAction *hideAction = new QAction(tr("hide layer"), this);
     if (row != -1) myMenu.addAction(hideAction);
+    QAction *fullresAction = new QAction(tr("toggle full-res"), this);
+    if (row != -1) myMenu.addAction(fullresAction);
     myMenu.addSeparator();
     QAction *infoTileset = new QAction(tr("create a tileset:"), this);
     infoTileset->setEnabled(false);
@@ -1107,6 +1109,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("show", row));
        else if (selectedAction == hideAction)
           emit(activate("hide", row));
+       else if (selectedAction == fullresAction)
+          emit(activate("fullres", row));
        else if (selectedAction == createAction)
           emit(activate("create_extent", row));
        else if (selectedAction == shadeAction)

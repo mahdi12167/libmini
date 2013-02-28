@@ -4,7 +4,7 @@
 #define MAINCONST_H
 
 #define VIEWER_NAME "QTViewer"
-#define VIEWER_VERSION "v1.9.2 as of 25.February.2013"
+#define VIEWER_VERSION "v1.9.2 as of 28.February.2013"
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200

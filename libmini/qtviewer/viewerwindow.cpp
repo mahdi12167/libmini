@@ -1536,7 +1536,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          buf.release();
       }
    }
-   else if (job=="full-res")
+   else if (job=="fullres")
    {
       // autoload full-res textures
       for (unsigned int i=0; i<args.size(); i++)
@@ -1548,7 +1548,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          databuf buf;
          buf.loaddata(fullres.c_str());
 
-         // add thumb to scene graph
+         // add full-res texture to scene graph
          Object *obj = getObject(args[i]);
          if (obj != NULL)
          {
@@ -1556,7 +1556,7 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
             if (image != NULL) image->set_fullres(&buf);
          }
 
-         // release thumb data
+         // release full-res texture data
          buf.release();
       }
    }
