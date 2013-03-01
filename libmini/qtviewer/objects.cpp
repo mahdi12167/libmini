@@ -328,6 +328,7 @@ BOOLINT Object_image::is_marked() const
 void Object_image::set_thumb(const databuf *buf)
    {
    if (ecef_node==NULL) return;
+   if (lod_node!=NULL) return;
 
    lod_node=new mininode_lod(1.0);
    if (lod_node==NULL) MEMERROR();
@@ -350,8 +351,8 @@ void Object_image::set_thumb(const databuf *buf)
 
 void Object_image::set_fullres(const databuf *buf)
    {
-   if (ecef_node==NULL || lod_node==NULL) return;
-
+   if (ecef_node==NULL) return;
+   if (lod_node==NULL) return;
    if (lod_node->get_selections()>1) return;
 
    mininode_texture2D *tex2d_node=new mininode_texture2D;
