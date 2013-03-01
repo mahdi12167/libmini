@@ -150,13 +150,8 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
    // if mouse did not move and we have buttons down, it is a click
    if (abs(dx)<3 && abs(dy)<3)
    {
-      // a left-right button click
-      if (bLeftButtonDown && bRightButtonDown)
-      {
-         // nothing to do here
-      }
       // a left button click
-      else if (bLeftButtonDown)
+      if (bLeftButtonDown)
       {
          viewer->getCamera()->focusOnTarget();
       }
@@ -196,28 +191,11 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
    viewer->getCamera()->moveCursor(event->pos().x(), event->pos().y());
 
-   bool leftButton = event->buttons() & Qt::LeftButton;
-   bool middleButton = event->buttons() & Qt::MiddleButton;
-   bool rightButton = event->buttons() & Qt::RightButton;
-
-   if (leftButton)
-      if (QApplication::keyboardModifiers() & Qt::ControlModifier ||
-          QApplication::keyboardModifiers() & Qt::AltModifier)
-         {
-         leftButton=FALSE;
-         rightButton=TRUE;
-         }
-
    // a left button move
-   if (leftButton)
+   if (bLeftButtonDown)
       viewer->getCamera()->rotateCamera(dx, dy);
-   // a middle button move
-   else if (middleButton)
-   {
-      // nothing to do here
-   }
    // a right button move
-   else if (rightButton)
+   else if (bRightButtonDown)
    {
       // get eye position
       minicoord pos = viewer->getCamera()->get_eye();
@@ -258,7 +236,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                   Object_extents *extent = dynamic_cast<Object_extents *>(object);
 
                   if (extent != NULL)
-                     {
+                  {
                      double s,t;
 
                      grid_extent area = extent->get_extent();
@@ -275,7 +253,7 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
                            extent->scale_dt(pos0, pos1); // grabbed horizontal extent edges
 
                      extent->updateGFX();
-                     }
+                  }
                }
             }
          }
@@ -285,11 +263,36 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
    movedPos = event->pos();
 }
 
-void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *)
+void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
    reportModifiers();
 
-   viewer->getCamera()->focusOnTarget(0.75);
+   mousePressEvent(event);
+
+   if (bLeftButtonDown)
+      viewer->getCamera()->focusOnTarget(0.75);
+   else if (bRightButtonDown)
+   {
+      // get eye position
+      minicoord pos = viewer->getCamera()->get_eye();
+
+      // get target vector
+      miniv3d vec = viewer->getCamera()->targetVector();
+
+      // shoot ray in target direction
+      mininode_geometry *obj = viewer->pick(pos, vec);
+      if (obj != NULL)
+      {
+         ministring name = obj->get_name();
+
+         if (!name.empty())
+            if (hasTag(name, "image"))
+                runAction("fullres", name);
+      }
+   }
+
+   bLeftButtonDown = false;
+   bRightButtonDown = false;
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent *event)
