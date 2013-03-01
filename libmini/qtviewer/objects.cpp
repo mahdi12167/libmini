@@ -352,6 +352,8 @@ void Object_image::set_fullres(const databuf *buf)
    {
    if (ecef_node==NULL || lod_node==NULL) return;
 
+   if (lod_node->get_selections()>1) return;
+
    mininode_texture2D *tex2d_node=new mininode_texture2D;
    if (tex2d_node==NULL) MEMERROR();
 
