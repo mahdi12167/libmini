@@ -801,6 +801,9 @@ class mininode_selector: public mininode_group
    unsigned int get_selection() const
       {return(index);}
 
+   unsigned int get_selections() const
+      {return(getsize());}
+
    protected:
 
    unsigned int index;
