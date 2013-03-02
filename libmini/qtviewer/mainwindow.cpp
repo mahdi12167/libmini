@@ -50,7 +50,7 @@ void MainWindow::initSettings()
    grid_levels = 1;
    grid_step = 2;
 
-   shadePower = 2.0;
+   shadePower = 1.5;
    shadeAmbient = 0.1;
    jpegQuality = 90;
 
