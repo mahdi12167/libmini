@@ -950,6 +950,13 @@ void ViewerWindow::runAction(ministring action,
       job->append(value);
       worker->run_job(job);
    }
+   else if (action == "contour")
+   {
+      if (value != "")
+         contour_elevation(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "save_db")
    {
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
@@ -1103,6 +1110,26 @@ void ViewerWindow::shade_elevation(ministring key)
          else
          {
             ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
+            if (job == NULL) MEMERROR();
+
+            job->append(image->get_full_name());
+            worker->run_job(job);
+         }
+   }
+}
+
+void ViewerWindow::contour_elevation(ministring key)
+{
+   Object *obj = getObject(key);
+   if (obj != NULL)
+   {
+      Object_image *image = dynamic_cast<Object_image *>(obj);
+      if (image != NULL)
+         if (!image->is_elevation())
+            notify(TR("Shading requires an elevation layer"));
+         else
+         {
+            ContourJob *job = new ContourJob("", 100.0, 1.0); //!!
             if (job == NULL) MEMERROR();
 
             job->append(image->get_full_name());

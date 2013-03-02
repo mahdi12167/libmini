@@ -1006,11 +1006,13 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // create contex menu
     QMenu myMenu;
+    // create layers:
     QAction *openAction = new QAction(tr("open"), this);
     myMenu.addAction(openAction);
     QAction *createAction = new QAction(tr("create extent"), this);
     if (row != -1) myMenu.addAction(createAction);
     myMenu.addSeparator();
+    // select layers:
     QAction *selectAction = new QAction(tr("select layer"), this);
     if (row != -1) myMenu.addAction(selectAction);
     QAction *selectAllAction = new QAction(tr("select all"), this);
@@ -1018,6 +1020,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *deselectAllAction = new QAction(tr("deselect all"), this);
     myMenu.addAction(deselectAllAction);
     myMenu.addSeparator();
+    // toggle layers:
     QAction *infoAction = new QAction(tr("show info"), this);
     if (row != -1) myMenu.addAction(infoAction);
     QAction *showAction = new QAction(tr("show layer"), this);
@@ -1027,6 +1030,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *fullresAction = new QAction(tr("toggle full-res"), this);
     if (row != -1) myMenu.addAction(fullresAction);
     myMenu.addSeparator();
+    // create tilesets:
     QAction *infoTileset = new QAction(tr("create a tileset:"), this);
     infoTileset->setEnabled(false);
     myMenu.addAction(infoTileset);
@@ -1039,6 +1043,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *resampleAllAction = new QAction(tr(" resample all"), this);
     myMenu.addAction(resampleAllAction);
     myMenu.addSeparator();
+    // create layers:
     QAction *infoLayer = new QAction(tr("create a layer:"), this);
     infoLayer->setEnabled(false);
     myMenu.addAction(infoLayer);
@@ -1053,9 +1058,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *cropSelAction = new QAction(tr(" crop selection to layer"), this);
     myMenu.addAction(cropSelAction);
     myMenu.addSeparator();
+    // abort job:
     QAction *abortAction = new QAction(tr("abort"), this);
     myMenu.addAction(abortAction);
     myMenu.addSeparator();
+    // transform layers:
     QAction *infoTransform = new QAction(tr("transform a layer:"), this);
     infoTransform->setEnabled(false);
     if (row != -1) myMenu.addAction(infoTransform);
@@ -1076,6 +1083,14 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *fillHolesAction = new QAction(tr(" fill elevation holes"), this);
     if (row != -1) myMenu.addAction(fillHolesAction);
     if (row != -1) myMenu.addSeparator();
+    // colorize layers:
+    QAction *infoColorize = new QAction(tr("colorize a layer:"), this);
+    infoColorize->setEnabled(false);
+    if (row != -1) myMenu.addAction(infoColorize);
+    QAction *contourAction = new QAction(tr(" contour layer"), this);
+    if (row != -1) myMenu.addAction(contourAction);
+    if (row != -1) myMenu.addSeparator();
+    // save layers:
     QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
     if (row != -1) myMenu.addAction(saveDBAction);
     QAction *saveGeoTiffAction = new QAction(tr("save layer to GeoTiff file"), this);
@@ -1083,6 +1098,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *saveJpgInTifAction = new QAction(tr("save layer to JpgInTif file"), this);
     if (row != -1) myMenu.addAction(saveJpgInTifAction);
     if (row != -1) myMenu.addSeparator();
+    // layer lists:
     QAction *loadAction = new QAction(tr("load layer list"), this);
     myMenu.addAction(loadAction);
     QAction *saveAction = new QAction(tr("save layer list"), this);
@@ -1090,6 +1106,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *saveGridAction = new QAction(tr("save layers to grid file"), this);
     myMenu.addAction(saveGridAction);
     myMenu.addSeparator();
+    // delete layers:
     QAction *deleteAction = new QAction(tr("delete layer"), this);
     if (row != -1) myMenu.addAction(deleteAction);
     QAction *deleteSelAction = new QAction(tr("delete selection"), this);
@@ -1102,14 +1119,19 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
 
     // process selected action
     if (selectedAction)
+       //
        if (selectedAction == openAction)
           emit(activate("open"));
+       else if (selectedAction == createAction)
+          emit(activate("create_extent", row));
+       //
        else if (selectedAction == selectAction)
           emit(activate("select", row));
        else if (selectedAction == selectAllAction)
           emit(activate("select_all"));
        else if (selectedAction == deselectAllAction)
           emit(activate("deselect_all"));
+       //
        else if (selectedAction == infoAction)
           emit(activate("info", row));
        else if (selectedAction == showAction)
@@ -1118,12 +1140,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("hide", row));
        else if (selectedAction == fullresAction)
           emit(activate("fullres", row));
-       else if (selectedAction == createAction)
-          emit(activate("create_extent", row));
+       //
        else if (selectedAction == shadeAction)
           emit(activate("shade_elevation", row));
        else if (selectedAction == shadeSelAction)
           emit(activate("shade_selected"));
+       //
        else if (selectedAction == resampleAction)
           emit(activate("resample", row));
        else if (selectedAction == resampleSelAction)
@@ -1132,14 +1154,17 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("resample_selected_area", row));
        else if (selectedAction == resampleAllAction)
           emit(activate("resample_all"));
+       //
        else if (selectedAction == cropElevAction)
           emit(activate("crop_elevation", row));
        else if (selectedAction == cropImagAction)
           emit(activate("crop_imagery", row));
        else if (selectedAction == cropSelAction)
           emit(activate("crop_selected", row));
+       //
        else if (selectedAction == abortAction)
           emit(activate("abort"));
+       //
        else if (selectedAction == treatBlackAction)
           emit(activate("treat_black", row));
        else if (selectedAction == treatWhiteAction)
@@ -1156,18 +1181,24 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("fill_missing", row));
        else if (selectedAction == fillHolesAction)
           emit(activate("fill_holes", row));
+       //
+       else if (selectedAction == contourAction)
+          emit(activate("contour", row));
+       //
        else if (selectedAction == saveDBAction)
           emit(activate("save_db", row));
        else if (selectedAction == saveGeoTiffAction)
           emit(activate("save_tif", row));
        else if (selectedAction == saveJpgInTifAction)
           emit(activate("save_jpgintif", row));
+       //
        else if (selectedAction == saveAction)
           emit(activate("save"));
        else if (selectedAction == saveGridAction)
           emit(activate("save_grid", row));
        else if (selectedAction == loadAction)
           emit(activate("load"));
+       //
        else if (selectedAction == deleteAction)
           emit(activate("delete", row));
        else if (selectedAction == deleteSelAction)
