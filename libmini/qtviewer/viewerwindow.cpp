@@ -385,7 +385,7 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
 void ViewerWindow::setDefaultSettings()
 {
    contourSpacing = 100.0;
-   contourThickness = 5.0;
+   contourThickness = 1.0;
 }
 
 ministring ViewerWindow::loadURL(ministring url)
