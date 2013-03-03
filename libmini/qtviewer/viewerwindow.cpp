@@ -55,6 +55,9 @@ ViewerWindow::ViewerWindow()
    grid_levels = 1;
    grid_step = 2;
 
+   setExportSettings();
+   setDefaultSettings();
+
    // accept drag and drop
    setAcceptDrops(true);
 }
@@ -377,6 +380,12 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
    shadePower = power;
    shadeAmbient = ambient;
    jpegQuality = quality;
+}
+
+void ViewerWindow::setDefaultSettings()
+{
+   contourSpacing = 100.0;
+   contourThickness = 5.0;
 }
 
 ministring ViewerWindow::loadURL(ministring url)
@@ -1129,7 +1138,7 @@ void ViewerWindow::contour_elevation(ministring key)
             notify(TR("Shading requires an elevation layer"));
          else
          {
-            ContourJob *job = new ContourJob("", 100.0, 1.0); //!!
+            ContourJob *job = new ContourJob("", contourSpacing, contourThickness);
             if (job == NULL) MEMERROR();
 
             job->append(image->get_full_name());
