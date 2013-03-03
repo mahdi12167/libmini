@@ -140,6 +140,7 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    image_viewer=viewer;
 
    ecef_node=NULL;
+   lod_node=NULL;
    image_node=NULL;
 
    shown=TRUE;
