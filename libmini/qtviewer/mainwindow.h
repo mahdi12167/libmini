@@ -90,6 +90,7 @@ private slots:
 
    void contourSpacingChanged(QString);
    void contourThicknessChanged(QString);
+   void contourBorderChanged(QString);
 
    void checkSliders(int);
 
@@ -195,6 +196,7 @@ private:
 
    QLineEdit *lineEdit_contourSpacing;
    QLineEdit *lineEdit_contourThickness;
+   QLineEdit *lineEdit_contourBorder;
 
    QCheckBox *sliderButton;
 
@@ -218,6 +220,7 @@ protected:
 
    double contourSpacing;
    double contourThickness;
+   double contourBorder;
 
    void initSettings();
    void saveSettings();

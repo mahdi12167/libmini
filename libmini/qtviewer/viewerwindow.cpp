@@ -382,10 +382,11 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
    jpegQuality = quality;
 }
 
-void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness)
+void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness, double c_border)
 {
    contourSpacing = c_spacing;
    contourThickness = c_thickness;
+   contourBorder = c_border;
 }
 
 ministring ViewerWindow::loadURL(ministring url)
@@ -1138,7 +1139,7 @@ void ViewerWindow::contour_elevation(ministring key)
             notify(TR("Shading requires an elevation layer"));
          else
          {
-            ContourJob *job = new ContourJob("", contourSpacing, contourThickness);
+            ContourJob *job = new ContourJob("", contourSpacing, contourThickness, contourBorder);
             if (job == NULL) MEMERROR();
 
             job->append(image->get_full_name());

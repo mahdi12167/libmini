@@ -55,7 +55,8 @@ void MainWindow::initSettings()
    jpegQuality = 90;
 
    contourSpacing = 100.0;
-   contourThickness = 2.0;
+   contourThickness = 1.0;
+   contourBorder = 1.0;
 
    // override with persistent settings:
 
@@ -93,6 +94,9 @@ void MainWindow::initSettings()
 
    if (settings.contains("contourThickness"))
       contourThickness = settings.value("contourThickness").toDouble();
+
+   if (settings.contains("contourBorder"))
+      contourBorder = settings.value("contourBorder").toDouble();
 }
 
 void MainWindow::saveSettings()
@@ -113,6 +117,7 @@ void MainWindow::saveSettings()
 
    settings.setValue("contourSpacing", contourSpacing);
    settings.setValue("contourThickness", contourThickness);
+   settings.setValue("contourBorder", contourBorder);
 }
 
 void MainWindow::createActions()
@@ -411,6 +416,9 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_contourThickness = createEdit(TR("Contour Thickness"), contourThickness, &lineEdit_contourThickness);
    connect(lineEdit_contourThickness,SIGNAL(textChanged(QString)),this,SLOT(contourThicknessChanged(QString)));
 
+   QGroupBox *lineEditGroup_contourBorder = createEdit(TR("Contour Border"), contourBorder, &lineEdit_contourBorder);
+   connect(lineEdit_contourBorder,SIGNAL(textChanged(QString)),this,SLOT(contourBorderChanged(QString)));
+
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(false);
 
@@ -436,6 +444,7 @@ void MainWindow::createWidgets()
 
    prefLayout->addWidget(lineEditGroup_contourSpacing);
    prefLayout->addWidget(lineEditGroup_contourThickness);
+   prefLayout->addWidget(lineEditGroup_contourBorder);
 
    prefLayout->addWidget(sliderButtonBox);
 
@@ -492,7 +501,7 @@ void MainWindow::createWidgets()
 
    viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
    viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
-   viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
+   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
 
    // progress:
 
@@ -921,7 +930,7 @@ void MainWindow::contourSpacingChanged(QString spacing)
    if (valid)
       {
       this->contourSpacing = contourSpacing;
-      viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
+      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
       }
 }
 
@@ -933,7 +942,19 @@ void MainWindow::contourThicknessChanged(QString thickness)
    if (valid)
       {
       this->contourThickness = contourThickness;
-      viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
+      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+      }
+}
+
+void MainWindow::contourBorderChanged(QString border)
+{
+   bool valid;
+   double contourBorder = border.toDouble(&valid);
+
+   if (valid)
+      {
+      this->contourBorder = contourBorder;
+      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
       }
 }
 
@@ -1129,10 +1150,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *fillHolesAction = new QAction(tr(" fill elevation holes"), this);
     if (row != -1) myMenu.addAction(fillHolesAction);
     if (row != -1) myMenu.addSeparator();
-    // colorize layers:
-    QAction *infoColorize = new QAction(tr("colorize a layer:"), this);
-    infoColorize->setEnabled(false);
-    if (row != -1) myMenu.addAction(infoColorize);
+    // map layers:
+    QAction *infoMap = new QAction(tr("map a layer:"), this);
+    infoMap->setEnabled(false);
+    if (row != -1) myMenu.addAction(infoMap);
     QAction *contourAction = new QAction(tr(" contour layer"), this);
     if (row != -1) myMenu.addAction(contourAction);
     if (row != -1) myMenu.addSeparator();
