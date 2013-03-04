@@ -55,7 +55,7 @@ void MainWindow::initSettings()
    jpegQuality = 90;
 
    contourSpacing = 100.0;
-   contourThickness = 1.0;
+   contourThickness = 2.0;
 
    // override with persistent settings:
 
