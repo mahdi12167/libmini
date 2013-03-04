@@ -88,6 +88,9 @@ private slots:
    void shadeAmbientChanged(QString);
    void jpegQualityChanged(QString);
 
+   void contourSpacingChanged(QString);
+   void contourThicknessChanged(QString);
+
    void checkSliders(int);
 
 private:
@@ -190,6 +193,9 @@ private:
    QLineEdit *lineEdit_shadeAmbient;
    QLineEdit *lineEdit_jpegQuality;
 
+   QLineEdit *lineEdit_contourSpacing;
+   QLineEdit *lineEdit_contourThickness;
+
    QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,
@@ -209,6 +215,9 @@ protected:
    double shadePower;
    double shadeAmbient;
    double jpegQuality;
+
+   double contourSpacing;
+   double contourThickness;
 
    void initSettings();
    void saveSettings();

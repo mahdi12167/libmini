@@ -54,6 +54,9 @@ void MainWindow::initSettings()
    shadeAmbient = 0.1;
    jpegQuality = 90;
 
+   contourSpacing = 100.0;
+   contourThickness = 1.0;
+
    // override with persistent settings:
 
    QSettings settings("www.open-terrain.org", "qtviewer");
@@ -84,6 +87,12 @@ void MainWindow::initSettings()
 
    if (settings.contains("jpegQuality"))
       jpegQuality = settings.value("jpegQuality").toDouble();
+
+   if (settings.contains("contourSpacing"))
+      contourSpacing = settings.value("contourSpacing").toDouble();
+
+   if (settings.contains("contourThickness"))
+      contourThickness = settings.value("contourThickness").toDouble();
 }
 
 void MainWindow::saveSettings()
@@ -101,6 +110,9 @@ void MainWindow::saveSettings()
    settings.setValue("shadePower", shadePower);
    settings.setValue("shadeAmbient", shadeAmbient);
    settings.setValue("jpegQuality", jpegQuality);
+
+   settings.setValue("contourSpacing", contourSpacing);
+   settings.setValue("contourThickness", contourThickness);
 }
 
 void MainWindow::createActions()
@@ -393,6 +405,12 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_jpegQuality = createEdit(TR("JPEG Quality"), jpegQuality, &lineEdit_jpegQuality);
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
 
+   QGroupBox *lineEditGroup_contourSpacing = createEdit(TR("Contour Spacing"), contourSpacing, &lineEdit_contourSpacing);
+   connect(lineEdit_contourSpacing,SIGNAL(textChanged(QString)),this,SLOT(contourSpacingChanged(QString)));
+
+   QGroupBox *lineEditGroup_contourThickness = createEdit(TR("Contour Thickness"), contourThickness, &lineEdit_contourThickness);
+   connect(lineEdit_contourThickness,SIGNAL(textChanged(QString)),this,SLOT(contourThicknessChanged(QString)));
+
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(false);
 
@@ -415,6 +433,9 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_shadePower);
    prefLayout->addWidget(lineEditGroup_shadeAmbient);
    prefLayout->addWidget(lineEditGroup_jpegQuality);
+
+   prefLayout->addWidget(lineEditGroup_contourSpacing);
+   prefLayout->addWidget(lineEditGroup_contourThickness);
 
    prefLayout->addWidget(sliderButtonBox);
 
@@ -471,6 +492,7 @@ void MainWindow::createWidgets()
 
    viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
    viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+   viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
 
    // progress:
 
@@ -888,6 +910,30 @@ void MainWindow::jpegQualityChanged(QString quality)
       {
       this->jpegQuality = jpegQuality;
       viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+      }
+}
+
+void MainWindow::contourSpacingChanged(QString spacing)
+{
+   bool valid;
+   double contourSpacing = spacing.toDouble(&valid);
+
+   if (valid)
+      {
+      this->contourSpacing = contourSpacing;
+      viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
+      }
+}
+
+void MainWindow::contourThicknessChanged(QString thickness)
+{
+   bool valid;
+   double contourThickness = thickness.toDouble(&valid);
+
+   if (valid)
+      {
+      this->contourThickness = contourThickness;
+      viewerWindow->setDefaultSettings(contourSpacing, contourThickness);
       }
 }
 

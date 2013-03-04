@@ -382,10 +382,10 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
    jpegQuality = quality;
 }
 
-void ViewerWindow::setDefaultSettings()
+void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness)
 {
-   contourSpacing = 100.0;
-   contourThickness = 1.0;
+   contourSpacing = c_spacing;
+   contourThickness = c_thickness;
 }
 
 ministring ViewerWindow::loadURL(ministring url)
