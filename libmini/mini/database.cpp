@@ -1375,8 +1375,7 @@ void databuf::interpretechunk(unsigned int implfmt,const char *path)
    release(1);
    alloc(xsize,ysize,zsize,tsteps,type);
 
-   if (comps==1) scaling=1.0f;
-   else scaling=1.0f/255.0f;
+   if (comps!=1) scaling=1.0f/255.0f;
    bias=0.0f;
 
    for (x=0; x<xsize; x++)
