@@ -1375,7 +1375,8 @@ void databuf::interpretechunk(unsigned int implfmt,const char *path)
    release(1);
    alloc(xsize,ysize,zsize,tsteps,type);
 
-   scaling=1.0f/255.0f;
+   if (comps==1) scaling=1.0f;
+   else scaling=1.0f/255.0f;
    bias=0.0f;
 
    for (x=0; x<xsize; x++)
@@ -1397,9 +1398,10 @@ void databuf::interpretechunk(unsigned int implfmt,const char *path)
 
                INTERPRETER_HOOK(value,comps,xx-0.5f,yy-0.5f,zz-0.5f,tt,this,INTERPRETER_DATA);
 
-               for (i=0; i<comps; i++)
-                  if (value[i]<0.0f) value[i]=0.0f;
-                  else if (value[i]>1.0f) value[i]=1.0f;
+               if (comps!=1)
+                  for (i=0; i<comps; i++)
+                     if (value[i]<0.0f) value[i]=0.0f;
+                     else if (value[i]>1.0f) value[i]=1.0f;
 
                if (comps==1) setval(x,y,z,t,value[0]);
                else if (comps==3) setrgb(x,y,z,t,value);
