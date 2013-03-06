@@ -7,7 +7,7 @@
 
 #include "minibase.h"
 
-//! templated dynamic array
+//! templated dynamic array (vector)
 template <class Item,const unsigned int Minsize=0>
 class minidyna
    {
