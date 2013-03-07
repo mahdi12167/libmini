@@ -981,6 +981,14 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "blend")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (value != "") keys += value;
+
+      blend_imagery(keys);
+   }
    else if (action == "save_db")
    {
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
@@ -1272,6 +1280,46 @@ void ViewerWindow::colormap_elevation(ministring key)
          job->append(image->get_full_name());
          worker->run_job(job);
       }
+}
+
+void ViewerWindow::blend_imagery(ministrings keys)
+{
+   unsigned int i;
+
+   unsigned int elev,imag;
+
+   elev=imag=0;
+
+   for (i=0; i<keys.size(); i++)
+   {
+      Object_image *image = get_image(keys[i]);
+
+      if (image)
+      {
+         if (image->is_elevation()) elev++;
+         if (image->is_imagery()) imag++;
+      }
+   }
+
+   if (elev>0)
+   {
+      notify(TR("Elevation layers are not suitable for blending"));
+      return;
+   }
+
+   if (imag<2)
+   {
+      notify(TR("Blending requires at least two imagery layers"));
+      return;
+   }
+
+   AlphaBlendJob *job = new AlphaBlendJob("");
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
 }
 
 BOOLINT ViewerWindow::check_list(ministrings keys)
