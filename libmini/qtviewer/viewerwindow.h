@@ -100,6 +100,8 @@ public:
    void graymap_elevation(ministring key);
    void colormap_elevation(ministring key);
    void blend_imagery(ministrings keys);
+   void merge_layers(ministrings keys);
+   void match_layers(ministrings keys);
    void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);
    void crop_list(ministrings keys, ministring crop_key, BOOLINT cell_centered);
    void save_grid_list(ministrings keys, ministring crop_key="", ministring filename="", int level=0);

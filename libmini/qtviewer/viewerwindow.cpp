@@ -985,9 +985,23 @@ void ViewerWindow::runAction(ministring action,
    {
       ministrings keys = listObjects("selected");
 
-      if (value != "") keys += value;
+      if (value != "") keys.prepend(value);
 
       blend_imagery(keys);
+   }
+   else if (action == "merge")
+   {
+      ministrings keys = listObjects("selected");
+
+      merge_layers(keys);
+   }
+   else if (action == "match")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (value != "") keys.prepend(value);
+
+      match_layers(keys);
    }
    else if (action == "save_db")
    {
@@ -1309,11 +1323,41 @@ void ViewerWindow::blend_imagery(ministrings keys)
 
    if (imag<2)
    {
-      notify(TR("Blending requires at least two imagery layers"));
+      notify(TR("Blending requires at least two selected imagery layers"));
       return;
    }
 
    AlphaBlendJob *job = new AlphaBlendJob("");
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::merge_layers(ministrings keys)
+{
+   unsigned int i;
+
+   ministring output = browse("Merge Output", repository_path)[0];
+
+   MergeJob *job = new MergeJob("", "", output);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::match_layers(ministrings keys)
+{
+   unsigned int i;
+
+   ministring output = browse("Match Output", repository_path)[0];
+
+   MatchJob *job = new MatchJob("", "", output);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
