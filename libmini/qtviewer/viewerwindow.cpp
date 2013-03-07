@@ -1269,8 +1269,7 @@ void ViewerWindow::colormap_elevation(ministring key)
          grid_colormap colormap = make_colormap();
 
          ColorMapJob *job = new ColorMapJob("", &colormap,
-                                            shadePower, shadeAmbient,
-                                            contourSpacing, contourThickness, contourBorder);
+                                            shadePower, shadeAmbient);
 
          if (job == NULL) MEMERROR();
 
