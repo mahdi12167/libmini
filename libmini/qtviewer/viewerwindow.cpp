@@ -1340,7 +1340,7 @@ void ViewerWindow::merge_layers(ministrings keys)
 {
    unsigned int i;
 
-   ministring output = browse("Merge Output", repository_path)[0];
+   ministring output = browse("Merge Output", repository_path, TRUE)[0];
 
    MergeJob *job = new MergeJob("", "", output);
    if (job == NULL) MEMERROR();
@@ -1355,7 +1355,7 @@ void ViewerWindow::match_layers(ministrings keys)
 {
    unsigned int i;
 
-   ministring output = browse("Match Output", repository_path)[0];
+   ministring output = browse("Match Output", repository_path, TRUE)[0];
 
    MatchJob *job = new MatchJob("", "", output);
    if (job == NULL) MEMERROR();
