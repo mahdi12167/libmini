@@ -1192,8 +1192,8 @@ void ViewerWindow::graymap_elevation(ministring key)
          // above sea level
          for (height=0.0; height<maxheight+step/2; height+=step)
             {
-            gray1=pow(height/maxheight,gamma)*maxheight;
-            gray2=pow((height+step)/maxheight,gamma)*maxheight;
+            gray1=pow(height/maxheight,gamma);
+            gray2=pow((height+step)/maxheight,gamma);
 
             graymap.append(height,miniv4f(gray1,gray1,gray1,1.0),
                            height+step,miniv4f(gray2,gray2,gray2,1.0));
@@ -1202,11 +1202,11 @@ void ViewerWindow::graymap_elevation(ministring key)
          // below sea level
          for (height=0.0; height>minheight-step/2; height-=step)
             {
-            gray1=1.0-pow(-height/maxheight,gamma)*maxheight;
-            gray2=1.0-pow(-(height-step)/maxheight,gamma)*maxheight;
+            gray1=1.0-pow(-height/maxheight,gamma);
+            gray2=1.0-pow(-(height-step)/maxheight,gamma);
 
             graymap.append(height,miniv4f(0.0,0.25*gray1,0.5*gray1,1.0),
-                           height+step,miniv4f(0.0,0.25*gray2,0.5*gray2,1.0));
+                           height-step,miniv4f(0.0,0.25*gray2,0.5*gray2,1.0));
             }
 
          ColorMapJob *job = new ColorMapJob("", &graymap);
@@ -1250,7 +1250,10 @@ void ViewerWindow::colormap_elevation(ministring key)
          // black
          colormap.append(-1000.0,miniv4f(0.0,0.0,0.25,1.0),-10000.0,miniv4f(0.0,0.0,0.0,1.0));
 
-         ColorMapJob *job = new ColorMapJob("", &colormap, contourSpacing, contourThickness, contourBorder);
+         ColorMapJob *job = new ColorMapJob("", &colormap,
+                                            shadePower, shadeAmbient,
+                                            contourSpacing, contourThickness, contourBorder);
+
          if (job == NULL) MEMERROR();
 
          job->append(image->get_full_name());
