@@ -1242,7 +1242,7 @@ grid_colormap ViewerWindow::make_colormap()
    colormap.append(3000.0,miniv4f(0.5,0.5,0.5,1.0),10000.0,miniv4f(0.5,1.0,1.0,1.0));
 
    // below sea level:
-   
+
    // blue
    colormap.append(0.0,miniv4f(0.25,0.5,1.0,1.0),-100.0,miniv4f(0.0,0.25,0.5,1.0));
    // dark
