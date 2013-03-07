@@ -1156,6 +1156,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(infoMap);
     QAction *contourAction = new QAction(tr(" contour layer"), this);
     if (row != -1) myMenu.addAction(contourAction);
+    QAction *grayMapAction = new QAction(tr(" map layer to grayscale"), this);
+    if (row != -1) myMenu.addAction(grayMapAction);
+    QAction *colorMapAction = new QAction(tr(" colormap layer"), this);
+    if (row != -1) myMenu.addAction(colorMapAction);
     if (row != -1) myMenu.addSeparator();
     // save layers:
     QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
@@ -1251,6 +1255,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        //
        else if (selectedAction == contourAction)
           emit(activate("contour", row));
+       else if (selectedAction == grayMapAction)
+          emit(activate("graymap", row));
+       else if (selectedAction == colorMapAction)
+          emit(activate("colormap", row));
        //
        else if (selectedAction == saveDBAction)
           emit(activate("save_db", row));
