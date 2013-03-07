@@ -1248,7 +1248,7 @@ void ViewerWindow::colormap_elevation(ministring key)
          // dark
          colormap.append(-100.0,miniv4f(0.0,0.25,0.5,1.0),-1000.0,miniv4f(0.0,0.0,0.25,1.0));
          // black
-         colormap.append(-1000.0,miniv4f(0.0,0.0,0.25,1.0),-1000.0,miniv4f(0.0,0.0,0.0,1.0));
+         colormap.append(-1000.0,miniv4f(0.0,0.0,0.25,1.0),-10000.0,miniv4f(0.0,0.0,0.0,1.0));
 
          ColorMapJob *job = new ColorMapJob("", &colormap, contourSpacing, contourThickness, contourBorder);
          if (job == NULL) MEMERROR();
