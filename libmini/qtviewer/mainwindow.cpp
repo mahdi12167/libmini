@@ -1162,6 +1162,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(colorMapAction);
     QAction *alphaBlendAction = new QAction(tr(" blend layers"), this);
     myMenu.addAction(alphaBlendAction);
+    QAction *mergeAction = new QAction(tr(" merge layers"), this);
+    myMenu.addAction(mergeAction);
+    QAction *matchAction = new QAction(tr(" match layers"), this);
+    myMenu.addAction(matchAction);
     myMenu.addSeparator();
     // save layers:
     QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
@@ -1263,6 +1267,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("colormap", row));
        else if (selectedAction == alphaBlendAction)
           emit(activate("blend", row));
+       else if (selectedAction == mergeAction)
+          emit(activate("merge"));
+       else if (selectedAction == matchAction)
+          emit(activate("match", row));
        //
        else if (selectedAction == saveDBAction)
           emit(activate("save_db", row));
