@@ -97,8 +97,8 @@ public:
    void show_fullres(ministring key);
    void shade_elevation(ministring key);
    void contour_elevation(ministring key);
-   BOOLINT check_list(ministrings keys);
-   BOOLINT check_elev_list(ministrings keys);
+   void graymap_elevation(ministring key);
+   void colormap_elevation(ministring key);
    void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);
    void crop_list(ministrings keys, ministring crop_key, BOOLINT cell_centered);
    void save_grid_list(ministrings keys, ministring crop_key="", ministring filename="", int level=0);
@@ -124,6 +124,12 @@ protected:
    void initializeGL();
    void resizeGL(int width, int height);
    void paintGL();
+
+   Object_image *get_image(ministring key);
+   Object_extents *get_extent(ministring key);
+
+   BOOLINT check_list(ministrings keys);
+   BOOLINT check_elev_list(ministrings keys);
 
    void mousePressEvent(QMouseEvent *event);
    void mouseReleaseEvent(QMouseEvent *event);

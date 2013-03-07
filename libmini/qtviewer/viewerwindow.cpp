@@ -967,6 +967,20 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "graymap")
+   {
+      if (value != "")
+         graymap_elevation(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
+   else if (action == "colormap")
+   {
+      if (value != "")
+         colormap_elevation(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "save_db")
    {
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
@@ -1024,22 +1038,44 @@ void ViewerWindow::runAction(ministring action,
    }
 }
 
+Object_image *ViewerWindow::get_image(ministring key)
+{
+   Object *obj = getObject(key);
+
+   if (obj != NULL)
+   {
+      Object_image *image = dynamic_cast<Object_image *>(obj);
+      return(image);
+   }
+
+   return(NULL);
+}
+
+Object_extents *ViewerWindow::get_extent(ministring key)
+{
+   Object *obj = getObject(key);
+
+   if (obj != NULL)
+   {
+      Object_extents *extent = dynamic_cast<Object_extents *>(obj);
+      return(extent);
+   }
+
+   return(NULL);
+}
+
 void ViewerWindow::select_object(ministring key, BOOLINT yes)
 {
    if (yes)
       if (!hasTag(key, "selected"))
          addTag(key, "selected");
 
-  if (!yes)
-     if (hasTag(key, "selected"))
-        removeTag(key, "selected");
+   if (!yes)
+      if (hasTag(key, "selected"))
+         removeTag(key, "selected");
 
-   Object *obj = getObject(key);
-   if (obj)
-   {
-      Object_extents *extent = dynamic_cast<Object_extents *>(obj);
-      if (extent) extent->mark(yes);
-   }
+   Object_extents *extent = get_extent(key);
+   if (extent) extent->mark(yes);
 }
 
 void ViewerWindow::hide_object(ministring key, BOOLINT yes)
@@ -1062,13 +1098,8 @@ void ViewerWindow::create_extent(ministring key, double dh)
 
    grid_extent ext;
 
-   Object *obj = getObject(key);
-   if (obj != NULL)
-   {
-      Object_extents *extents = dynamic_cast<Object_extents *>(obj);
-      if (extents != NULL)
-         ext = extents->get_extent();
-   }
+   Object_extents *extent = get_extent(key);
+   if (extent) ext = extent->get_extent();
 
    if (ext.check())
    {
@@ -1093,59 +1124,138 @@ void ViewerWindow::create_extent(ministring key, double dh)
 
 void ViewerWindow::show_fullres(ministring key)
 {
-   Object *obj = getObject(key);
-   if (obj != NULL)
-   {
-      Object_image *image = dynamic_cast<Object_image *>(obj);
-      if (image != NULL)
-      {
-         FullResJob *job = new FullResJob("", 30, 4096);
-         if (job == NULL) MEMERROR();
+   Object_image *image = get_image(key);
 
-         job->append(image->get_full_name());
-         worker->run_job(job);
-      }
+   if (image)
+   {
+      FullResJob *job = new FullResJob("", 30, 4096);
+      if (job == NULL) MEMERROR();
+
+      job->append(image->get_full_name());
+      worker->run_job(job);
    }
 }
 
 void ViewerWindow::shade_elevation(ministring key)
 {
-   Object *obj = getObject(key);
-   if (obj != NULL)
-   {
-      Object_image *image = dynamic_cast<Object_image *>(obj);
-      if (image != NULL)
-         if (!image->is_elevation())
-            notify(TR("Shading requires an elevation layer"));
-         else
-         {
-            ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
-            if (job == NULL) MEMERROR();
+   Object_image *image = get_image(key);
 
-            job->append(image->get_full_name());
-            worker->run_job(job);
-         }
-   }
+   if (image)
+      if (!image->is_elevation())
+         notify(TR("Shading requires an elevation layer"));
+      else
+      {
+         ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
+         if (job == NULL) MEMERROR();
+
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
 }
 
 void ViewerWindow::contour_elevation(ministring key)
 {
-   Object *obj = getObject(key);
-   if (obj != NULL)
-   {
-      Object_image *image = dynamic_cast<Object_image *>(obj);
-      if (image != NULL)
-         if (!image->is_elevation())
-            notify(TR("Shading requires an elevation layer"));
-         else
-         {
-            ContourJob *job = new ContourJob("", contourSpacing, contourThickness, contourBorder);
-            if (job == NULL) MEMERROR();
+   Object_image *image = get_image(key);
 
-            job->append(image->get_full_name());
-            worker->run_job(job);
-         }
-   }
+   if (image)
+      if (!image->is_elevation())
+         notify(TR("Contouring requires an elevation layer"));
+      else
+      {
+         ContourJob *job = new ContourJob("", contourSpacing, contourThickness, contourBorder);
+         if (job == NULL) MEMERROR();
+
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
+}
+
+void ViewerWindow::graymap_elevation(ministring key)
+{
+   Object_image *image = get_image(key);
+
+   if (image)
+      if (!image->is_elevation())
+         notify(TR("Grayscale-mapping requires an elevation layer"));
+      else
+      {
+         static double gamma=0.5;
+         static double minheight=-10000.0;
+         static double maxheight=10000.0;
+         static double step=100.0;
+
+         double height;
+         double gray1,gray2;
+
+         grid_colormap graymap;
+
+         // above sea level
+         for (height=0.0; height<maxheight+step/2; height+=step)
+            {
+            gray1=pow(height/maxheight,gamma)*maxheight;
+            gray2=pow((height+step)/maxheight,gamma)*maxheight;
+
+            graymap.append(height,miniv4f(gray1,gray1,gray1,1.0),
+                           height+step,miniv4f(gray2,gray2,gray2,1.0));
+            }
+
+         // below sea level
+         for (height=0.0; height>minheight-step/2; height-=step)
+            {
+            gray1=1.0-pow(-height/maxheight,gamma)*maxheight;
+            gray2=1.0-pow(-(height-step)/maxheight,gamma)*maxheight;
+
+            graymap.append(height,miniv4f(0.0,0.25*gray1,0.5*gray1,1.0),
+                           height+step,miniv4f(0.0,0.25*gray2,0.5*gray2,1.0));
+            }
+
+         ColorMapJob *job = new ColorMapJob("", &graymap);
+         if (job == NULL) MEMERROR();
+
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
+}
+
+void ViewerWindow::colormap_elevation(ministring key)
+{
+   Object_image *image = get_image(key);
+
+   if (image)
+      if (!image->is_elevation())
+         notify(TR("Color-mapping requires an elevation layer"));
+      else
+      {
+         grid_colormap colormap;
+
+         // above sea level:
+
+         // green
+         colormap.append(0.0,miniv4f(0.0,1.0,0.0,1.0),500.0,miniv4f(0.5,1.0,0.0,1.0));
+         // brown
+         colormap.append(500.0,miniv4f(0.5,1.0,0.0,1.0),1000.0,miniv4f(0.5,0.5,0.0,1.0));
+         // dark
+         colormap.append(1000.0,miniv4f(0.5,0.5,0.0,1.0),2000.0,miniv4f(0.25,0.25,0.25,1.0));
+         // gray
+         colormap.append(2000.0,miniv4f(0.25,0.25,0.25,1.0),3000.0,miniv4f(0.5,0.5,0.5,1.0));
+         // bright
+         colormap.append(3000.0,miniv4f(0.5,0.5,0.5,1.0),10000.0,miniv4f(0.5,1.0,1.0,1.0));
+
+         // below sea level:
+
+         // blue
+         colormap.append(0.0,miniv4f(0.25,0.5,1.0,1.0),-100.0,miniv4f(0.0,0.25,0.5,1.0));
+         // dark
+         colormap.append(-100.0,miniv4f(0.0,0.25,0.5,1.0),-1000.0,miniv4f(0.0,0.0,0.25,1.0));
+         // black
+         colormap.append(-1000.0,miniv4f(0.0,0.0,0.25,1.0),-1000.0,miniv4f(0.0,0.0,0.0,1.0));
+
+         ColorMapJob *job = new ColorMapJob("", &colormap, contourSpacing, contourThickness, contourBorder);
+         if (job == NULL) MEMERROR();
+
+         job->append(image->get_full_name());
+         worker->run_job(job);
+      }
 }
 
 BOOLINT ViewerWindow::check_list(ministrings keys)
@@ -1158,15 +1268,12 @@ BOOLINT ViewerWindow::check_list(ministrings keys)
 
    for (i=0; i<keys.size(); i++)
    {
-      Object *obj = getObject(keys[i]);
-      if (obj != NULL)
+      Object_image *image = get_image(keys[i]);
+
+      if (image)
       {
-         Object_image *image = dynamic_cast<Object_image *>(obj);
-         if (image != NULL)
-         {
-            if (image->is_elevation()) elev++;
-            if (image->is_imagery()) imag++;
-         }
+         if (image->is_elevation()) elev++;
+         if (image->is_imagery()) imag++;
       }
    }
 
@@ -1195,15 +1302,12 @@ BOOLINT ViewerWindow::check_elev_list(ministrings keys)
 
    for (i=0; i<keys.size(); i++)
    {
-      Object *obj = getObject(keys[i]);
-      if (obj != NULL)
+      Object_image *image = get_image(keys[i]);
+
+      if (image)
       {
-         Object_image *image = dynamic_cast<Object_image *>(obj);
-         if (image != NULL)
-         {
-            if (image->is_elevation()) elev++;
-            if (image->is_imagery()) imag++;
-         }
+         if (image->is_elevation()) elev++;
+         if (image->is_imagery()) imag++;
       }
    }
 
@@ -1228,10 +1332,8 @@ void ViewerWindow::resample_list(ministrings keys,
          crop_name = getObject(crop_key)->get_full_name();
       else
       {
-         Object_extents *extents;
-         extents = dynamic_cast<Object_extents *>(getObject(crop_key));
-         if (extents != NULL)
-            crop_ext = extents->get_extent();
+         Object_extents *extent = get_extent(crop_key);
+         if (extent) crop_ext = extent->get_extent();
       }
    }
 
@@ -1268,16 +1370,18 @@ void ViewerWindow::crop_list(ministrings keys,
    grid_extent ext;
 
    Object *obj = getObject(crop_key);
-   if (obj == NULL)
-      notify(TR("Cannot determine crop area"));
-   else
+
+   if (obj != NULL)
    {
-      Object_extents *extents = dynamic_cast<Object_extents *>(obj);
-      if (extents != NULL)
-         ext = extents->get_extent();
+      Object_extents *extent = get_extent(crop_key);
+
+      if (extent)
+         ext = extent->get_extent();
       else
          notify(TR("Cropping requires a layer that defines the crop area"));
    }
+   else
+      notify(TR("Cannot determine crop area"));
 
    if (ext.check())
    {
@@ -1324,10 +1428,8 @@ void ViewerWindow::save_grid_list(ministrings keys,
          crop_name = getObject(crop_key)->get_relative_name();
       else
       {
-         Object_extents *extents;
-         extents = dynamic_cast<Object_extents *>(getObject(crop_key));
-         if (extents != NULL)
-            crop_ext = extents->get_extent();
+         Object_extents *extent = get_extent(crop_key);
+         if (extent) crop_ext = extent->get_extent();
       }
    }
 
@@ -1566,12 +1668,8 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          if (buf.missing()) continue;
 
          // add thumb to scene graph
-         Object *obj = getObject(args[i]);
-         if (obj != NULL)
-         {
-            Object_image *image = dynamic_cast<Object_image *>(obj);
-            if (image != NULL) image->set_thumb(&buf);
-         }
+         Object_image *image = get_image(args[i]);
+         if (image) image->set_thumb(&buf);
 
          // release thumb data
          buf.release();
@@ -1594,12 +1692,8 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          if (buf.missing()) continue;
 
          // add full-res texture to scene graph
-         Object *obj = getObject(args[i]);
-         if (obj != NULL)
-         {
-            Object_image *image = dynamic_cast<Object_image *>(obj);
-            if (image != NULL) image->set_fullres(&buf);
-         }
+         Object_image *image = get_image(args[i]);
+         if (image) image->set_fullres(&buf);
 
          // release full-res texture data
          buf.release();
