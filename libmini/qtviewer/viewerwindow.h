@@ -128,6 +128,9 @@ protected:
    Object_image *get_image(ministring key);
    Object_extents *get_extent(ministring key);
 
+   grid_colormap make_graymap();
+   grid_colormap make_colormap();
+
    BOOLINT check_list(ministrings keys);
    BOOLINT check_elev_list(ministrings keys);
 
