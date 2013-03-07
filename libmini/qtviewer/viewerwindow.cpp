@@ -1202,10 +1202,6 @@ grid_colormap ViewerWindow::make_graymap()
                      height-step,miniv4f(0.0,0.25*gray2,0.5*gray2,1.0));
       }
 
-   // at sea level
-   graymap.append(-5.0,miniv4f(0.0,0.5,1.0,1.0),
-                  5.0,miniv4f(1.0,0.5,0.0,1.0));
-
    return(graymap);
    }
 
