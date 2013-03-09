@@ -997,10 +997,10 @@ void ViewerWindow::runAction(ministring action,
    {
       ministrings keys = listObjects("selected");
 
-      if (keys.empty())
-         notify(TR("Operation requires selected layers"));
+      if (keys.size()!=2)
+         notify(TR("NDVI operation requires two selected layers"));
       else
-         {
+      {
          ministring red=keys[0]; // landsat images usually end with 30 as red channel identifier
          ministring nir=keys[1]; // landsat images usually end with 40 as nir channel identifier
 
@@ -1009,16 +1009,58 @@ void ViewerWindow::runAction(ministring action,
          keys.append(red);
 
          ndvi_layers(keys);
-         }
+      }
    }
    else if (action == "merge")
    {
       ministrings keys = listObjects("selected");
 
-      if (keys.empty())
-         notify(TR("Operation requires selected layers"));
+      if (keys.size()<3)
+         notify(TR("Merge operation requires at least three selected layers"));
       else
+      {
+         if (keys.size()==3)
+         {
+            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
+            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
+            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+
+            keys.clear();
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+         }
+         else if (keys.size()==4)
+         {
+            ministring pan=keys[3]; // landsat images usually end with 80 as panchro channel identifier
+            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
+            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
+            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+
+            keys.clear();
+            keys.append(pan);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+         }
+         else if (keys.size()>=5)
+         {
+            ministring pan=keys[4]; // landsat images usually end with 80 as panchro channel identifier
+            ministring nir=keys[3]; // landsat images usually end with 40 as nir channel identifier
+            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
+            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
+            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+
+            keys.clear();
+            keys.append(pan);
+            keys.append(nir);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+         }
+
          merge_layers(keys);
+      }
    }
    else if (action == "match")
    {
@@ -1379,7 +1421,7 @@ void ViewerWindow::ndvi_layers(ministrings keys)
    if (files.size()==0) return;
 
    ministring output = files[0];
-   if (!output.endswith(".tif")) filename += ".tif";
+   if (!output.endswith(".tif")) output += ".tif";
 
    MergeJob *job = new MergeJob("", "", output);
    if (job == NULL) MEMERROR();
@@ -1404,7 +1446,7 @@ void ViewerWindow::merge_layers(ministrings keys)
    if (files.size()==0) return;
 
    ministring output = files[0];
-   if (!output.endswith(".tif")) filename += ".tif";
+   if (!output.endswith(".tif")) output += ".tif";
 
    MergeJob *job = new MergeJob("", "", output);
    if (job == NULL) MEMERROR();
@@ -1429,7 +1471,7 @@ void ViewerWindow::match_layers(ministrings keys)
    if (files.size()==0) return;
 
    ministring output = files[0];
-   if (!output.endswith(".tif")) filename += ".tif";
+   if (!output.endswith(".tif")) output += ".tif";
 
    MatchJob *job = new MatchJob("", "", output);
    if (job == NULL) MEMERROR();
