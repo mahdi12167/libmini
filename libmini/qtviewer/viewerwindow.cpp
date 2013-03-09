@@ -1000,7 +1000,16 @@ void ViewerWindow::runAction(ministring action,
       if (keys.empty())
          notify(TR("Operation requires selected layers"));
       else
+         {
+         ministring red=keys[0]; // landsat images usually end with 30 as red channel identifier
+         ministring nir=keys[1]; // landsat images usually end with 40 as nir channel identifier
+
+         keys.clear();
+         keys.append(nir);
+         keys.append(red);
+
          ndvi_layers(keys);
+         }
    }
    else if (action == "merge")
    {
@@ -1366,7 +1375,11 @@ void ViewerWindow::ndvi_layers(ministrings keys)
       return;
    }
 
-   ministring output = browse("NDVI Output", repository_path, TRUE)[0];
+   ministrings files = browse("NDVI Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) filename += ".tif";
 
    MergeJob *job = new MergeJob("", "", output);
    if (job == NULL) MEMERROR();
@@ -1387,7 +1400,11 @@ void ViewerWindow::merge_layers(ministrings keys)
       return;
    }
 
-   ministring output = browse("Merge Output", repository_path, TRUE)[0];
+   ministrings files = browse("Merge Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) filename += ".tif";
 
    MergeJob *job = new MergeJob("", "", output);
    if (job == NULL) MEMERROR();
@@ -1408,7 +1425,11 @@ void ViewerWindow::match_layers(ministrings keys)
       return;
    }
 
-   ministring output = browse("Match Output", repository_path, TRUE)[0];
+   ministrings files = browse("Match Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) filename += ".tif";
 
    MatchJob *job = new MatchJob("", "", output);
    if (job == NULL) MEMERROR();
