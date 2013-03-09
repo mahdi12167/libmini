@@ -1160,11 +1160,13 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(grayMapAction);
     QAction *colorMapAction = new QAction(tr(" colormap layer"), this);
     if (row != -1) myMenu.addAction(colorMapAction);
-    QAction *alphaBlendAction = new QAction(tr(" blend layers"), this);
+    QAction *alphaBlendAction = new QAction(tr(" blend actual over selected layers"), this);
     myMenu.addAction(alphaBlendAction);
-    QAction *mergeAction = new QAction(tr(" merge layers"), this);
+    QAction *ndviAction = new QAction(tr(" compute ndvi from two selected layers"), this);
+    myMenu.addAction(ndviAction);
+    QAction *mergeAction = new QAction(tr(" merge selected layers"), this);
     myMenu.addAction(mergeAction);
-    QAction *matchAction = new QAction(tr(" match layers"), this);
+    QAction *matchAction = new QAction(tr(" match actual with selected layers"), this);
     myMenu.addAction(matchAction);
     myMenu.addSeparator();
     // save layers:
@@ -1267,6 +1269,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("colormap", row));
        else if (selectedAction == alphaBlendAction)
           emit(activate("blend", row));
+       else if (selectedAction == ndviAction)
+          emit(activate("ndvi"));
        else if (selectedAction == mergeAction)
           emit(activate("merge"));
        else if (selectedAction == matchAction)

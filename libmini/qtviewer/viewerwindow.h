@@ -100,6 +100,7 @@ public:
    void graymap_elevation(ministring key);
    void colormap_elevation(ministring key);
    void blend_imagery(ministrings keys);
+   void ndvi_layers(ministrings keys);
    void merge_layers(ministrings keys);
    void match_layers(ministrings keys);
    void resample_list(ministrings keys, ministring crop_key="", int level=0, int levels=1, int step=2);

@@ -427,7 +427,7 @@ ministring ViewerWindow::loadURL(ministring url)
 
 void ViewerWindow::loadURLs(ministrings urls)
 {
-   for (unsigned int i=0; i<urls.getsize(); i++)
+   for (unsigned int i=0; i<urls.size(); i++)
       loadURL(urls[i]);
 }
 
@@ -444,7 +444,7 @@ void ViewerWindow::loadMap(ministring url)
    {
       unsigned int lio, lio0;
 
-      lio = url.getsize();
+      lio = url.size();
       if (url.findr("/", lio0)) lio = lio0;
       url.truncate(lio);
    }
@@ -613,7 +613,7 @@ void ViewerWindow::removeObjects(ministrings keys)
 {
    unsigned int i;
 
-   for (i=0; i<keys.getsize(); i++)
+   for (i=0; i<keys.size(); i++)
       removeObject(keys[i]);
 }
 
@@ -830,7 +830,7 @@ void ViewerWindow::runAction(ministring action,
    {
       ministrings keys = listObjects("selected");
 
-      for (unsigned int i=0; i<keys.getsize(); i++)
+      for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "elevation"))
             shade_elevation(keys[i]);
    }
@@ -844,7 +844,7 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("image");
 
       ministrings sel_keys;
-      for (unsigned int i=0; i<keys.getsize(); i++)
+      for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
@@ -855,7 +855,7 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("image");
 
       ministrings sel_keys;
-      for (unsigned int i=0; i<keys.getsize(); i++)
+      for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
@@ -881,7 +881,7 @@ void ViewerWindow::runAction(ministring action,
       ministrings keys = listObjects("image");
 
       ministrings sel_keys;
-      for (unsigned int i=0; i<keys.getsize(); i++)
+      for (unsigned int i=0; i<keys.size(); i++)
          if (hasTag(keys[i], "selected"))
             sel_keys.append(keys[i]);
 
@@ -985,23 +985,43 @@ void ViewerWindow::runAction(ministring action,
    {
       ministrings keys = listObjects("selected");
 
-      if (value != "") keys.prepend(value);
+      if (value != "")
+      {
+         keys.append(value);
+         blend_imagery(keys);
+      }
+      else
+         notify(TR("Operation requires a layer"));
+   }
+   else if (action == "ndvi")
+   {
+      ministrings keys = listObjects("selected");
 
-      blend_imagery(keys);
+      if (keys.empty())
+         notify(TR("Operation requires selected layers"));
+      else
+         ndvi_layers(keys);
    }
    else if (action == "merge")
    {
       ministrings keys = listObjects("selected");
 
-      merge_layers(keys);
+      if (keys.empty())
+         notify(TR("Operation requires selected layers"));
+      else
+         merge_layers(keys);
    }
    else if (action == "match")
    {
       ministrings keys = listObjects("selected");
 
-      if (value != "") keys.prepend(value);
-
-      match_layers(keys);
+      if (value != "")
+      {
+         keys.prepend(value);
+         match_layers(keys);
+      }
+      else
+         notify(TR("Operation requires a layer"));
    }
    else if (action == "save_db")
    {
@@ -1336,9 +1356,36 @@ void ViewerWindow::blend_imagery(ministrings keys)
    worker->run_job(job);
 }
 
+void ViewerWindow::ndvi_layers(ministrings keys)
+{
+   unsigned int i;
+
+   if (keys.size()!=2)
+   {
+      notify(TR("NDVI operation requires at least two selected layers"));
+      return;
+   }
+
+   ministring output = browse("NDVI Output", repository_path, TRUE)[0];
+
+   MergeJob *job = new MergeJob("", "", output);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
 void ViewerWindow::merge_layers(ministrings keys)
 {
    unsigned int i;
+
+   if (keys.size()<3)
+   {
+      notify(TR("Merge operation requires at least three selected layers"));
+      return;
+   }
 
    ministring output = browse("Merge Output", repository_path, TRUE)[0];
 
@@ -1354,6 +1401,12 @@ void ViewerWindow::merge_layers(ministrings keys)
 void ViewerWindow::match_layers(ministrings keys)
 {
    unsigned int i;
+
+   if (keys.size()<2)
+   {
+      notify(TR("Match operation requires at least two selected layers"));
+      return;
+   }
 
    ministring output = browse("Match Output", repository_path, TRUE)[0];
 
