@@ -1032,10 +1032,10 @@ void ViewerWindow::runAction(ministring action,
          }
          else if (keys.size()==4)
          {
-            ministring pan=keys[3]; // landsat images usually end with 80 as panchro channel identifier
-            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
-            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
-            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+            ministring pan=keys[0]; // landsat images usually end with 80 as panchro channel identifier
+            ministring red=keys[3]; // landsat images usually end with 30 as red channel identifier
+            ministring green=keys[2]; // landsat images usually end with 20 as green channel identifier
+            ministring blue=keys[1]; // landsat images usually end with 10 as blue channel identifier
 
             keys.clear();
             keys.append(pan);
@@ -1045,11 +1045,11 @@ void ViewerWindow::runAction(ministring action,
          }
          else if (keys.size()>=5)
          {
-            ministring pan=keys[4]; // landsat images usually end with 80 as panchro channel identifier
-            ministring nir=keys[3]; // landsat images usually end with 40 as nir channel identifier
-            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
-            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
-            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+            ministring pan=keys[0]; // landsat images usually end with 80 as panchro channel identifier
+            ministring nir=keys[4]; // landsat images usually end with 40 as nir channel identifier
+            ministring red=keys[3]; // landsat images usually end with 30 as red channel identifier
+            ministring green=keys[2]; // landsat images usually end with 20 as green channel identifier
+            ministring blue=keys[1]; // landsat images usually end with 10 as blue channel identifier
 
             keys.clear();
             keys.append(pan);
