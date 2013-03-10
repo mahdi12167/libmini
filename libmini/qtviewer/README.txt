@@ -162,15 +162,20 @@ The images are displayed as 3D thumbnails at the geo-referenced
 position, whereas the tilesets are displayed in full 3D. The images
 and tilesets are also displayed in a list view on the right.
 
-Right-clicking at the list view triggers a context menu with a variety
-of available operations:
-* A single layer can be opened.
+Right-clicking on a layer in the list view triggers a context menu
+with a variety of available options:
+* A single layer or image can be opened.
 ** It is displayed as flat geo-referenced thumbnail.
+* A new geo-referenced extent layer can be created from the layer.
+* Multiple layers can be selected or unselected.
+** A layer is also selected by clicking on it in the list view and
+   pressing return or right-clicking on it in the 3D view.
 * A single layer can be inspected.
 ** Info about its size and geo-reference is shown.
-* A single dem layer can be shaded.
-** A diffuse noon lighting technique is applied.
-* Multiple images can be selected or unselected.
+* The display of a layer can be turned on or off.
+* The full-resolution display of a layer can be toggled.
+** The full-resolution display is also toggled by right double-clicking
+   on it in the 3D view.
 * Multiple selected images can be resampled to a produce a tileset.
 ** A tileset is displayed in full 3D.
 ** Its appearance takes both selected color and dem layers into account.
@@ -183,7 +188,17 @@ of available operations:
 ** After resampling, the original flat layers are hidden and replaced by the 3D resampled tileset.
 *** The tiles of the tileset are paged in and out on demand.
 *** Therefore, a tileset is in principle not limited in size or extent.
-* A single layer or multiple selected layers can be removed, finally.
+* A single dem layer can be shaded to produce a grayscale image.
+** A diffuse noon lighting technique is applied.
+* Multiple layers can be cropped and merged to produce a new layer.
+* Resampling and merging operations in the background can be aborted.
+* A single dem layer can be modified to yield a new dem layer.
+* A single dem layer can be mapped to yield a new image layer.
+* Multiple layers can be merged and matched to yield a new image layer.
+* A single layer can be saved in the the DB, TIF or JpegInTif format.
+* All layers can be saved in a grid file.
+** The layers are reopend by dragging the grid file into the list view.
+* Finally, a single layer or multiple selected layers can be removed.
 
 !! Example Data
 
@@ -224,7 +239,7 @@ of just 3 simple steps:
 
 !! Navigation
 
-Navigation is self-explanatory via mouse or touch pad gestures:
+Navigation in the 3D view is self-explanatory via mouse or touch pad gestures:
 
  single click               - focus on target
  single click/drag          - rotate about focus
@@ -234,6 +249,8 @@ Navigation is self-explanatory via mouse or touch pad gestures:
  shift & single click drag  - heading and pitch
  shift & double click       - zoom out
  shift & touch pad scroll   - pan left/right and forward/backward
+ right click                - select picked layer
+ right double click         - show picked layer in full-res
 
 !! Extension
 

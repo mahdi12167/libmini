@@ -1129,8 +1129,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction *abortAction = new QAction(tr("abort"), this);
     myMenu.addAction(abortAction);
     myMenu.addSeparator();
-    // transform layers:
-    QAction *infoTransform = new QAction(tr("transform a layer:"), this);
+    // modify layers:
+    QAction *infoTransform = new QAction(tr("modify a layer:"), this);
     infoTransform->setEnabled(false);
     if (row != -1) myMenu.addAction(infoTransform);
     QAction *treatBlackAction = new QAction(tr(" treat black as transparent"), this);
@@ -1153,13 +1153,18 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // map layers:
     QAction *infoMap = new QAction(tr("map a layer:"), this);
     infoMap->setEnabled(false);
-    myMenu.addAction(infoMap);
+    if (row != -1) myMenu.addAction(infoMap);
     QAction *contourAction = new QAction(tr(" contour layer"), this);
     if (row != -1) myMenu.addAction(contourAction);
     QAction *grayMapAction = new QAction(tr(" map layer to grayscale"), this);
     if (row != -1) myMenu.addAction(grayMapAction);
     QAction *colorMapAction = new QAction(tr(" colormap layer"), this);
     if (row != -1) myMenu.addAction(colorMapAction);
+    if (row != -1) myMenu.addSeparator();
+    // map multiple layers:
+    QAction *infoMapMulti = new QAction(tr("map multiple layers:"), this);
+    infoMapMulti->setEnabled(false);
+    myMenu.addAction(infoMapMulti);
     QAction *alphaBlendAction = new QAction(tr(" blend actual over selected layers"), this);
     myMenu.addAction(alphaBlendAction);
     QAction *ndviAction = new QAction(tr(" compute ndvi from two selected layers"), this);
