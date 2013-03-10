@@ -135,6 +135,12 @@ protected:
    grid_colormap make_graymap();
    grid_colormap make_colormap();
 
+   ministring guess_panchro_layer(const ministrings &keys);
+   ministring guess_nir_layer(const ministrings &keys);
+   ministring guess_red_layer(const ministrings &keys);
+   ministring guess_green_layer(const ministrings &keys);
+   ministring guess_blue_layer(const ministrings &keys);
+
    BOOLINT check_list(ministrings keys);
    BOOLINT check_elev_list(ministrings keys);
 

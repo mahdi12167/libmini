@@ -712,6 +712,51 @@ void ViewerWindow::dragLeaveEvent(QDragLeaveEvent *event)
    event->accept();
 }
 
+ministring ViewerWindow::guess_panchro_layer(const ministrings &keys)
+   {
+   // landsat images usually end with p*_80 as panchro channel identifier
+   ministrings strs = keys.search("_80");
+   if (strs.empty()) strs = keys.search("_nn80");
+   if (strs.empty()) return("");
+   return(strs[0]);
+   }
+
+ministring ViewerWindow::guess_nir_layer(const ministrings &keys)
+   {
+   // landsat images usually end with t*_40 as nir channel identifier
+   ministrings strs = keys.search("_40");
+   if (strs.empty()) strs = keys.search("_nn40");
+   if (strs.empty()) return("");
+   return(strs[0]);
+   }
+
+ministring ViewerWindow::guess_red_layer(const ministrings &keys)
+   {
+   // landsat images usually end with t*_30 as red channel identifier
+   ministrings strs = keys.search("_30");
+   if (strs.empty()) strs = keys.search("_nn30");
+   if (strs.empty()) return("");
+   return(strs[0]);
+   }
+
+ministring ViewerWindow::guess_green_layer(const ministrings &keys)
+   {
+   // landsat images usually end with t*_20 as green channel identifier
+   ministrings strs = keys.search("_20");
+   if (strs.empty()) strs = keys.search("_nn20");
+   if (strs.empty()) return("");
+   return(strs[0]);
+   }
+
+ministring ViewerWindow::guess_blue_layer(const ministrings &keys)
+   {
+   // landsat images usually end with t*_10 as blue channel identifier
+   ministrings strs = keys.search("_10");
+   if (strs.empty()) strs = keys.search("_nn10");
+   if (strs.empty()) return("");
+   return(strs[0]);
+   }
+
 void ViewerWindow::runAction(ministring action,
                              ministring value)
 {
@@ -1001,14 +1046,23 @@ void ViewerWindow::runAction(ministring action,
          notify(TR("NDVI operation requires two selected layers"));
       else
       {
-         ministring red=keys[0]; // landsat images usually end with 30 as red channel identifier
-         ministring nir=keys[1]; // landsat images usually end with 40 as nir channel identifier
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
 
-         keys.clear();
-         keys.append(nir);
-         keys.append(red);
+         if (nir.empty())
+            notify(TR("NDVI operation requires a nir landsat layer"));
 
-         ndvi_layers(keys);
+         if (red.empty())
+            notify(TR("NDVI operation requires a red landsat layer"));
+
+         if (!nir.empty() && !red.empty())
+         {
+            keys.clear();
+            keys.append(nir);
+            keys.append(red);
+
+            ndvi_layers(keys);
+         }
       }
    }
    else if (action == "merge")
@@ -1021,45 +1075,76 @@ void ViewerWindow::runAction(ministring action,
       {
          if (keys.size()==3)
          {
-            ministring red=keys[2]; // landsat images usually end with 30 as red channel identifier
-            ministring green=keys[1]; // landsat images usually end with 20 as green channel identifier
-            ministring blue=keys[0]; // landsat images usually end with 10 as blue channel identifier
+            ministring red=guess_red_layer(keys);
+            ministring green=guess_green_layer(keys);
+            ministring blue=guess_blue_layer(keys);
 
-            keys.clear();
-            keys.append(red);
-            keys.append(green);
-            keys.append(blue);
+            if (red.empty() || green.empty() || blue.empty())
+               notify(TR("Merge operation requires a red, green and blue landsat layer"));
+
+            if (!red.empty() && !green.empty() && !blue.empty())
+            {
+               keys.clear();
+               keys.append(red);
+               keys.append(green);
+               keys.append(blue);
+
+               merge_layers(keys);
+            }
          }
          else if (keys.size()==4)
          {
-            ministring pan=keys[0]; // landsat images usually end with p*80 as panchro channel identifier
-            ministring red=keys[3]; // landsat images usually end with t*30 as red channel identifier
-            ministring green=keys[2]; // landsat images usually end with t*20 as green channel identifier
-            ministring blue=keys[1]; // landsat images usually end with t*10 as blue channel identifier
+            ministring pan=guess_panchro_layer(keys);
+            ministring red=guess_red_layer(keys);
+            ministring green=guess_green_layer(keys);
+            ministring blue=guess_blue_layer(keys);
 
-            keys.clear();
-            keys.append(pan);
-            keys.append(red);
-            keys.append(green);
-            keys.append(blue);
+            if (pan.empty())
+               notify(TR("Merge operation requires a panchromatic landsat layer"));
+
+            if (red.empty() || green.empty() || blue.empty())
+               notify(TR("Merge operation requires a red, green and blue landsat layer"));
+
+            if (!pan.empty() && !red.empty() && !green.empty() && !blue.empty())
+            {
+               keys.clear();
+               keys.append(pan);
+               keys.append(red);
+               keys.append(green);
+               keys.append(blue);
+
+               merge_layers(keys);
+            }
          }
          else if (keys.size()>=5)
          {
-            ministring pan=keys[0]; // landsat images usually end with p*80 as panchro channel identifier
-            ministring nir=keys[4]; // landsat images usually end with t*40 as nir channel identifier
-            ministring red=keys[3]; // landsat images usually end with t*30 as red channel identifier
-            ministring green=keys[2]; // landsat images usually end with t*20 as green channel identifier
-            ministring blue=keys[1]; // landsat images usually end with t*10 as blue channel identifier
+            ministring pan=guess_panchro_layer(keys);
+            ministring nir=guess_nir_layer(keys);
+            ministring red=guess_red_layer(keys);
+            ministring green=guess_green_layer(keys);
+            ministring blue=guess_blue_layer(keys);
 
-            keys.clear();
-            keys.append(pan);
-            keys.append(nir);
-            keys.append(red);
-            keys.append(green);
-            keys.append(blue);
+            if (pan.empty())
+               notify(TR("Merge operation requires a panchromatic landsat layer"));
+
+            if (nir.empty())
+               notify(TR("Merge operation requires a nir landsat layer"));
+
+            if (red.empty() || green.empty() || blue.empty())
+               notify(TR("Merge operation requires a red, green and blue landsat layer"));
+
+            if (!pan.empty() && !nir.empty() && !red.empty() && !green.empty() && !blue.empty())
+            {
+               keys.clear();
+               keys.append(pan);
+               keys.append(nir);
+               keys.append(red);
+               keys.append(green);
+               keys.append(blue);
+
+               merge_layers(keys);
+            }
          }
-
-         merge_layers(keys);
       }
    }
    else if (action == "match")
