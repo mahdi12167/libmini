@@ -680,6 +680,19 @@ class ministrings: public minidyna<ministring>
    ministring checksum(unsigned int length=4) const
       {return(serialize().checksum(length));}
 
+   //! search for strings containing a sub-string
+   ministrings search(const ministring &sub) const
+      {
+      unsigned int i;
+
+      ministrings strs;
+
+      for (i=0; i<getsize(); i++)
+         if (get(i).contains(sub)) strs.append(get(i));
+
+      return(strs);
+      }
+
    //! add operator (string concatenation)
    ministrings &operator += (const ministring &a)
       {
