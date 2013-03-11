@@ -176,7 +176,7 @@ with a variety of available options:
 * The full-resolution display of a layer can be toggled.
 ** The full-resolution display is also toggled by right double-clicking
    on it in the 3D view.
-* Multiple selected images can be resampled to a produce a tileset.
+* Multiple selected images can be resampled to a produce a compressed tileset.
 ** A tileset is displayed in full 3D.
 ** Its appearance takes both selected color and dem layers into account.
 ** At least a single dem layer must be selected.
@@ -188,6 +188,7 @@ with a variety of available options:
 ** After resampling, the original flat layers are hidden and replaced by the 3D resampled tileset.
 *** The tiles of the tileset are paged in and out on demand.
 *** Therefore, a tileset is in principle not limited in size or extent.
+* A single layer can be resampled to a produce a plain tileset.
 * A single dem layer can be shaded to produce a grayscale image.
 ** A diffuse noon lighting technique is applied.
 * Multiple layers can be cropped and merged to produce a new layer.
