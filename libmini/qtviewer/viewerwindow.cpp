@@ -879,6 +879,13 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "elevation"))
             shade_elevation(keys[i]);
    }
+   else if (action == "split")
+   {
+      if (value != "")
+         split_layers(ministrings(value));
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "resample")
    {
       ministrings keys = listObjects("image");
@@ -1624,6 +1631,19 @@ BOOLINT ViewerWindow::check_elev_list(ministrings keys)
    if (imag>0) return(FALSE);
 
    return(TRUE);
+}
+
+void ViewerWindow::split_layers(ministrings keys)
+{
+   unsigned int i;
+
+   SplitJob *job = new SplitJob("", export_path);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
 }
 
 void ViewerWindow::resample_list(ministrings keys,

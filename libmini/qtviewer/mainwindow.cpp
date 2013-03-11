@@ -1071,132 +1071,134 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        setCurrentCell(row, 1);
     }
 
-    // create contex menu
+    // create context menu
     QMenu myMenu;
     // create layers:
-    QAction *openAction = new QAction(tr("open"), this);
-    myMenu.addAction(openAction);
-    QAction *createAction = new QAction(tr("create extent"), this);
-    if (row != -1) myMenu.addAction(createAction);
+    QAction openAction(tr("open"), this);
+    myMenu.addAction(&openAction);
+    QAction createAction(tr("create extent"), this);
+    if (row != -1) myMenu.addAction(&createAction);
     myMenu.addSeparator();
     // select layers:
-    QAction *selectAction = new QAction(tr("select layer"), this);
-    if (row != -1) myMenu.addAction(selectAction);
-    QAction *selectAllAction = new QAction(tr("select all"), this);
-    myMenu.addAction(selectAllAction);
-    QAction *deselectAllAction = new QAction(tr("deselect all"), this);
-    myMenu.addAction(deselectAllAction);
+    QAction selectAction(tr("select layer"), this);
+    if (row != -1) myMenu.addAction(&selectAction);
+    QAction selectAllAction(tr("select all"), this);
+    myMenu.addAction(&selectAllAction);
+    QAction deselectAllAction(tr("deselect all"), this);
+    myMenu.addAction(&deselectAllAction);
     myMenu.addSeparator();
     // toggle layers:
-    QAction *infoAction = new QAction(tr("show info"), this);
-    if (row != -1) myMenu.addAction(infoAction);
-    QAction *showAction = new QAction(tr("show layer"), this);
-    if (row != -1) myMenu.addAction(showAction);
-    QAction *hideAction = new QAction(tr("hide layer"), this);
-    if (row != -1) myMenu.addAction(hideAction);
-    QAction *fullresAction = new QAction(tr("toggle full-res"), this);
-    if (row != -1) myMenu.addAction(fullresAction);
+    QAction infoAction(tr("show info"), this);
+    if (row != -1) myMenu.addAction(&infoAction);
+    QAction showAction(tr("show layer"), this);
+    if (row != -1) myMenu.addAction(&showAction);
+    QAction hideAction(tr("hide layer"), this);
+    if (row != -1) myMenu.addAction(&hideAction);
+    QAction fullresAction(tr("toggle full-res"), this);
+    if (row != -1) myMenu.addAction(&fullresAction);
     myMenu.addSeparator();
     // create tilesets:
-    QAction *infoTileset = new QAction(tr("create a tileset:"), this);
-    infoTileset->setEnabled(false);
-    myMenu.addAction(infoTileset);
-    QAction *resampleAction = new QAction(tr(" resample area to tileset"), this);
-    if (row != -1) myMenu.addAction(resampleAction);
-    QAction *resampleSelAction = new QAction(tr(" resample selection to tileset"), this);
-    myMenu.addAction(resampleSelAction);
-    QAction *resampleSelAreaAction = new QAction(tr(" resample selection in area"), this);
-    if (row != -1) myMenu.addAction(resampleSelAreaAction);
-    QAction *resampleAllAction = new QAction(tr(" resample all"), this);
-    myMenu.addAction(resampleAllAction);
+    QAction infoTileset(tr("create a tileset:"), this);
+    infoTileset.setEnabled(false);
+    myMenu.addAction(&infoTileset);
+    QAction resampleAction(tr(" resample area to tileset"), this);
+    if (row != -1) myMenu.addAction(&resampleAction);
+    QAction resampleSelAction(tr(" resample selection to tileset"), this);
+    myMenu.addAction(&resampleSelAction);
+    QAction resampleSelAreaAction(tr(" resample selection in area"), this);
+    if (row != -1) myMenu.addAction(&resampleSelAreaAction);
+    QAction resampleAllAction(tr(" resample all"), this);
+    myMenu.addAction(&resampleAllAction);
+    QAction splitAction(tr(" split into tileset"), this);
+    if (row != -1) myMenu.addAction(&splitAction);
     myMenu.addSeparator();
     // create layers:
-    QAction *infoLayer = new QAction(tr("create a layer:"), this);
-    infoLayer->setEnabled(false);
-    myMenu.addAction(infoLayer);
-    QAction *shadeAction = new QAction(tr(" shade layer"), this);
-    if (row != -1) myMenu.addAction(shadeAction);
-    QAction *shadeSelAction = new QAction(tr(" shade selected layers"), this);
-    myMenu.addAction(shadeSelAction);
-    QAction *cropElevAction = new QAction(tr(" crop elevation to layer"), this);
-    myMenu.addAction(cropElevAction);
-    QAction *cropImagAction = new QAction(tr(" crop imagery to layer"), this);
-    myMenu.addAction(cropImagAction);
-    QAction *cropSelAction = new QAction(tr(" crop selection to layer"), this);
-    myMenu.addAction(cropSelAction);
+    QAction infoLayer(tr("create a layer:"), this);
+    infoLayer.setEnabled(false);
+    myMenu.addAction(&infoLayer);
+    QAction shadeAction(tr(" shade layer"), this);
+    if (row != -1) myMenu.addAction(&shadeAction);
+    QAction shadeSelAction(tr(" shade selected layers"), this);
+    myMenu.addAction(&shadeSelAction);
+    QAction cropElevAction(tr(" crop elevation to layer"), this);
+    myMenu.addAction(&cropElevAction);
+    QAction cropImagAction(tr(" crop imagery to layer"), this);
+    myMenu.addAction(&cropImagAction);
+    QAction cropSelAction(tr(" crop selection to layer"), this);
+    myMenu.addAction(&cropSelAction);
     myMenu.addSeparator();
     // abort job:
-    QAction *abortAction = new QAction(tr("abort"), this);
-    myMenu.addAction(abortAction);
+    QAction abortAction(tr("abort"), this);
+    myMenu.addAction(&abortAction);
     myMenu.addSeparator();
     // modify layers:
-    QAction *infoTransform = new QAction(tr("modify a layer:"), this);
-    infoTransform->setEnabled(false);
-    if (row != -1) myMenu.addAction(infoTransform);
-    QAction *treatBlackAction = new QAction(tr(" treat black as transparent"), this);
-    if (row != -1) myMenu.addAction(treatBlackAction);
-    QAction *treatWhiteAction = new QAction(tr(" treat white as transparent"), this);
-    if (row != -1) myMenu.addAction(treatWhiteAction);
-    QAction *maskBlackAction = new QAction(tr(" mask black to be transparent"), this);
-    if (row != -1) myMenu.addAction(maskBlackAction);
-    QAction *maskWhiteAction = new QAction(tr(" mask white to be transparent"), this);
-    if (row != -1) myMenu.addAction(maskWhiteAction);
-    QAction *removeBathyAction = new QAction(tr(" remove bathymetry elevation range"), this);
-    if (row != -1) myMenu.addAction(removeBathyAction);
-    QAction *keepBathyAction = new QAction(tr(" keep bathymetry elevation range"), this);
-    if (row != -1) myMenu.addAction(keepBathyAction);
-    QAction *fillMissingAction = new QAction(tr(" fill missing elevation points"), this);
-    if (row != -1) myMenu.addAction(fillMissingAction);
-    QAction *fillHolesAction = new QAction(tr(" fill elevation holes"), this);
-    if (row != -1) myMenu.addAction(fillHolesAction);
+    QAction infoTransform(tr("modify a layer:"), this);
+    infoTransform.setEnabled(false);
+    if (row != -1) myMenu.addAction(&infoTransform);
+    QAction treatBlackAction(tr(" treat black as transparent"), this);
+    if (row != -1) myMenu.addAction(&treatBlackAction);
+    QAction treatWhiteAction(tr(" treat white as transparent"), this);
+    if (row != -1) myMenu.addAction(&treatWhiteAction);
+    QAction maskBlackAction(tr(" mask black to be transparent"), this);
+    if (row != -1) myMenu.addAction(&maskBlackAction);
+    QAction maskWhiteAction(tr(" mask white to be transparent"), this);
+    if (row != -1) myMenu.addAction(&maskWhiteAction);
+    QAction removeBathyAction(tr(" remove bathymetry elevation range"), this);
+    if (row != -1) myMenu.addAction(&removeBathyAction);
+    QAction keepBathyAction(tr(" keep bathymetry elevation range"), this);
+    if (row != -1) myMenu.addAction(&keepBathyAction);
+    QAction fillMissingAction(tr(" fill missing elevation points"), this);
+    if (row != -1) myMenu.addAction(&fillMissingAction);
+    QAction fillHolesAction(tr(" fill elevation holes"), this);
+    if (row != -1) myMenu.addAction(&fillHolesAction);
     if (row != -1) myMenu.addSeparator();
     // map layers:
-    QAction *infoMap = new QAction(tr("map a layer:"), this);
-    infoMap->setEnabled(false);
-    if (row != -1) myMenu.addAction(infoMap);
-    QAction *contourAction = new QAction(tr(" contour layer"), this);
-    if (row != -1) myMenu.addAction(contourAction);
-    QAction *grayMapAction = new QAction(tr(" map layer to grayscale"), this);
-    if (row != -1) myMenu.addAction(grayMapAction);
-    QAction *colorMapAction = new QAction(tr(" colormap layer"), this);
-    if (row != -1) myMenu.addAction(colorMapAction);
+    QAction infoMap(tr("map a layer:"), this);
+    infoMap.setEnabled(false);
+    if (row != -1) myMenu.addAction(&infoMap);
+    QAction contourAction(tr(" contour layer"), this);
+    if (row != -1) myMenu.addAction(&contourAction);
+    QAction grayMapAction(tr(" map layer to grayscale"), this);
+    if (row != -1) myMenu.addAction(&grayMapAction);
+    QAction colorMapAction(tr(" colormap layer"), this);
+    if (row != -1) myMenu.addAction(&colorMapAction);
     if (row != -1) myMenu.addSeparator();
-    // map multiple layers:
-    QAction *infoMapMulti = new QAction(tr("map multiple layers:"), this);
-    infoMapMulti->setEnabled(false);
-    myMenu.addAction(infoMapMulti);
-    QAction *alphaBlendAction = new QAction(tr(" blend actual over selected layers"), this);
-    myMenu.addAction(alphaBlendAction);
-    QAction *ndviAction = new QAction(tr(" compute ndvi from two selected layers"), this);
-    myMenu.addAction(ndviAction);
-    QAction *mergeAction = new QAction(tr(" merge selected layers"), this);
-    myMenu.addAction(mergeAction);
-    QAction *matchAction = new QAction(tr(" match actual with selected layers"), this);
-    myMenu.addAction(matchAction);
+    // combine multiple layers:
+    QAction infoMapMulti(tr("combine multiple layers:"), this);
+    infoMapMulti.setEnabled(false);
+    myMenu.addAction(&infoMapMulti);
+    QAction alphaBlendAction(tr(" blend actual over selected layers"), this);
+    myMenu.addAction(&alphaBlendAction);
+    QAction ndviAction(tr(" compute ndvi from two selected layers"), this);
+    myMenu.addAction(&ndviAction);
+    QAction mergeAction(tr(" merge selected layers"), this);
+    myMenu.addAction(&mergeAction);
+    QAction matchAction(tr(" match actual with selected layers"), this);
+    myMenu.addAction(&matchAction);
     myMenu.addSeparator();
     // save layers:
-    QAction *saveDBAction = new QAction(tr("save layer to DB file"), this);
-    if (row != -1) myMenu.addAction(saveDBAction);
-    QAction *saveGeoTiffAction = new QAction(tr("save layer to GeoTiff file"), this);
-    if (row != -1) myMenu.addAction(saveGeoTiffAction);
-    QAction *saveJpgInTifAction = new QAction(tr("save layer to JpgInTif file"), this);
-    if (row != -1) myMenu.addAction(saveJpgInTifAction);
+    QAction saveDBAction(tr("save layer to DB file"), this);
+    if (row != -1) myMenu.addAction(&saveDBAction);
+    QAction saveGeoTiffAction(tr("save layer to GeoTiff file"), this);
+    if (row != -1) myMenu.addAction(&saveGeoTiffAction);
+    QAction saveJpgInTifAction(tr("save layer to JpgInTif file"), this);
+    if (row != -1) myMenu.addAction(&saveJpgInTifAction);
     if (row != -1) myMenu.addSeparator();
     // layer lists:
-    QAction *loadAction = new QAction(tr("load layer list"), this);
-    myMenu.addAction(loadAction);
-    QAction *saveAction = new QAction(tr("save layer list"), this);
-    myMenu.addAction(saveAction);
-    QAction *saveGridAction = new QAction(tr("save layers to grid file"), this);
-    myMenu.addAction(saveGridAction);
+    QAction loadAction(tr("load layer list"), this);
+    myMenu.addAction(&loadAction);
+    QAction saveAction(tr("save layer list"), this);
+    myMenu.addAction(&saveAction);
+    QAction saveGridAction(tr("save layers to grid file"), this);
+    myMenu.addAction(&saveGridAction);
     myMenu.addSeparator();
     // delete layers:
-    QAction *deleteAction = new QAction(tr("delete layer"), this);
-    if (row != -1) myMenu.addAction(deleteAction);
-    QAction *deleteSelAction = new QAction(tr("delete selection"), this);
-    myMenu.addAction(deleteSelAction);
-    QAction *deleteAllAction = new QAction(tr("delete all"), this);
-    myMenu.addAction(deleteAllAction);
+    QAction deleteAction(tr("delete layer"), this);
+    if (row != -1) myMenu.addAction(&deleteAction);
+    QAction deleteSelAction(tr("delete selection"), this);
+    myMenu.addAction(&deleteSelAction);
+    QAction deleteAllAction(tr("delete all"), this);
+    myMenu.addAction(&deleteAllAction);
 
     // exec context menu
     QAction *selectedAction = myMenu.exec(globalPos);
@@ -1204,102 +1206,104 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // process selected action
     if (selectedAction)
        //
-       if (selectedAction == openAction)
+       if (selectedAction == &openAction)
           emit(activate("open"));
-       else if (selectedAction == createAction)
+       else if (selectedAction == &createAction)
           emit(activate("create_extent", row));
        //
-       else if (selectedAction == selectAction)
+       else if (selectedAction == &selectAction)
           emit(activate("select", row));
-       else if (selectedAction == selectAllAction)
+       else if (selectedAction == &selectAllAction)
           emit(activate("select_all"));
-       else if (selectedAction == deselectAllAction)
+       else if (selectedAction == &deselectAllAction)
           emit(activate("deselect_all"));
        //
-       else if (selectedAction == infoAction)
+       else if (selectedAction == &infoAction)
           emit(activate("info", row));
-       else if (selectedAction == showAction)
+       else if (selectedAction == &showAction)
           emit(activate("show", row));
-       else if (selectedAction == hideAction)
+       else if (selectedAction == &hideAction)
           emit(activate("hide", row));
-       else if (selectedAction == fullresAction)
+       else if (selectedAction == &fullresAction)
           emit(activate("fullres", row));
        //
-       else if (selectedAction == shadeAction)
+       else if (selectedAction == &shadeAction)
           emit(activate("shade_elevation", row));
-       else if (selectedAction == shadeSelAction)
+       else if (selectedAction == &shadeSelAction)
           emit(activate("shade_selected"));
        //
-       else if (selectedAction == resampleAction)
+       else if (selectedAction == &resampleAction)
           emit(activate("resample", row));
-       else if (selectedAction == resampleSelAction)
+       else if (selectedAction == &resampleSelAction)
           emit(activate("resample_selected"));
-       else if (selectedAction == resampleSelAreaAction)
+       else if (selectedAction == &resampleSelAreaAction)
           emit(activate("resample_selected_area", row));
-       else if (selectedAction == resampleAllAction)
+       else if (selectedAction == &resampleAllAction)
           emit(activate("resample_all"));
+       else if (selectedAction == &splitAction)
+          emit(activate("split", row));
        //
-       else if (selectedAction == cropElevAction)
+       else if (selectedAction == &cropElevAction)
           emit(activate("crop_elevation", row));
-       else if (selectedAction == cropImagAction)
+       else if (selectedAction == &cropImagAction)
           emit(activate("crop_imagery", row));
-       else if (selectedAction == cropSelAction)
+       else if (selectedAction == &cropSelAction)
           emit(activate("crop_selected", row));
        //
-       else if (selectedAction == abortAction)
+       else if (selectedAction == &abortAction)
           emit(activate("abort"));
        //
-       else if (selectedAction == treatBlackAction)
+       else if (selectedAction == &treatBlackAction)
           emit(activate("treat_black", row));
-       else if (selectedAction == treatWhiteAction)
+       else if (selectedAction == &treatWhiteAction)
           emit(activate("treat_white", row));
-       else if (selectedAction == maskBlackAction)
+       else if (selectedAction == &maskBlackAction)
           emit(activate("mask_black", row));
-       else if (selectedAction == maskWhiteAction)
+       else if (selectedAction == &maskWhiteAction)
           emit(activate("mask_white", row));
-       else if (selectedAction == removeBathyAction)
+       else if (selectedAction == &removeBathyAction)
           emit(activate("remove_bathy", row));
-       else if (selectedAction == keepBathyAction)
+       else if (selectedAction == &keepBathyAction)
           emit(activate("keep_bathy", row));
-       else if (selectedAction == fillMissingAction)
+       else if (selectedAction == &fillMissingAction)
           emit(activate("fill_missing", row));
-       else if (selectedAction == fillHolesAction)
+       else if (selectedAction == &fillHolesAction)
           emit(activate("fill_holes", row));
        //
-       else if (selectedAction == contourAction)
+       else if (selectedAction == &contourAction)
           emit(activate("contour", row));
-       else if (selectedAction == grayMapAction)
+       else if (selectedAction == &grayMapAction)
           emit(activate("graymap", row));
-       else if (selectedAction == colorMapAction)
+       else if (selectedAction == &colorMapAction)
           emit(activate("colormap", row));
-       else if (selectedAction == alphaBlendAction)
+       else if (selectedAction == &alphaBlendAction)
           emit(activate("blend", row));
-       else if (selectedAction == ndviAction)
+       else if (selectedAction == &ndviAction)
           emit(activate("ndvi"));
-       else if (selectedAction == mergeAction)
+       else if (selectedAction == &mergeAction)
           emit(activate("merge"));
-       else if (selectedAction == matchAction)
+       else if (selectedAction == &matchAction)
           emit(activate("match", row));
        //
-       else if (selectedAction == saveDBAction)
+       else if (selectedAction == &saveDBAction)
           emit(activate("save_db", row));
-       else if (selectedAction == saveGeoTiffAction)
+       else if (selectedAction == &saveGeoTiffAction)
           emit(activate("save_tif", row));
-       else if (selectedAction == saveJpgInTifAction)
+       else if (selectedAction == &saveJpgInTifAction)
           emit(activate("save_jpgintif", row));
        //
-       else if (selectedAction == saveAction)
+       else if (selectedAction == &saveAction)
           emit(activate("save"));
-       else if (selectedAction == saveGridAction)
+       else if (selectedAction == &saveGridAction)
           emit(activate("save_grid", row));
-       else if (selectedAction == loadAction)
+       else if (selectedAction == &loadAction)
           emit(activate("load"));
        //
-       else if (selectedAction == deleteAction)
+       else if (selectedAction == &deleteAction)
           emit(activate("delete", row));
-       else if (selectedAction == deleteSelAction)
+       else if (selectedAction == &deleteSelAction)
           emit(activate("delete_selected"));
-       else if (selectedAction == deleteAllAction)
+       else if (selectedAction == &deleteAllAction)
           emit(activate("delete_all"));
 }
 
