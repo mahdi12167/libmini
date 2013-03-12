@@ -1111,6 +1111,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&resampleAllAction);
     QAction splitAction(tr(" split into tileset"), this);
     if (row != -1) myMenu.addAction(&splitAction);
+    QAction splitSelAction(tr(" split selected layers"), this);
+    myMenu.addAction(&splitSelAction);
     myMenu.addSeparator();
     // create layers:
     QAction infoLayer(tr("create a layer:"), this);
@@ -1242,6 +1244,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("resample_all"));
        else if (selectedAction == &splitAction)
           emit(activate("split", row));
+       else if (selectedAction == &splitSelAction)
+          emit(activate("split_selected"));
        //
        else if (selectedAction == &cropElevAction)
           emit(activate("crop_elevation", row));

@@ -886,6 +886,12 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "split_selected")
+   {
+      ministrings keys = listObjects("selected");
+
+      split_layers(keys);
+   }
    else if (action == "resample")
    {
       ministrings keys = listObjects("image");
@@ -1637,11 +1643,11 @@ void ViewerWindow::split_layers(ministrings keys)
 {
    unsigned int i;
 
-   SplitJob *job = new SplitJob("", export_path);
+   SplitJob *job = new SplitJob(repository_path, export_path);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append(getObject(keys[i])->get_relative_name());
 
    worker->run_job(job);
 }
