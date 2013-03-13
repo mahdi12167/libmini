@@ -1361,41 +1361,6 @@ void ViewerWindow::contour_elevation(ministring key)
       }
 }
 
-grid_colormap ViewerWindow::make_graymap()
-   {
-   static double gamma=0.5;
-   static double minheight=-10000.0;
-   static double maxheight=10000.0;
-   static double step=100.0;
-
-   double height;
-   double gray1,gray2;
-
-   grid_colormap graymap;
-
-   // above sea level
-   for (height=0.0; height<maxheight+step/2; height+=step)
-      {
-      gray1=pow(height/maxheight,gamma);
-      gray2=pow((height+step)/maxheight,gamma);
-
-      graymap.append(height,miniv4f(gray1,gray1,gray1,1.0),
-                     height+step,miniv4f(gray2,gray2,gray2,1.0));
-      }
-
-   // below sea level
-   for (height=0.0; height>minheight-step/2; height-=step)
-      {
-      gray1=1.0-pow(-height/maxheight,gamma);
-      gray2=1.0-pow(-(height-step)/maxheight,gamma);
-
-      graymap.append(height,miniv4f(0.0,0.25*gray1,0.5*gray1,1.0),
-                     height-step,miniv4f(0.0,0.25*gray2,0.5*gray2,1.0));
-      }
-
-   return(graymap);
-   }
-
 void ViewerWindow::graymap_elevation(ministring key)
 {
    Object_image *image = get_image(key);
@@ -1405,7 +1370,7 @@ void ViewerWindow::graymap_elevation(ministring key)
          notify(TR("Grayscale-mapping requires an elevation layer"));
       else
       {
-         grid_colormap graymap = make_graymap();
+         grid_colormap graymap = grid_resampler::make_graymap();
 
          ColorMapJob *job = new ColorMapJob("", &graymap);
          if (job == NULL) MEMERROR();
@@ -1414,35 +1379,6 @@ void ViewerWindow::graymap_elevation(ministring key)
          worker->run_job(job);
       }
 }
-
-grid_colormap ViewerWindow::make_colormap()
-   {
-   grid_colormap colormap;
-
-   // above sea level:
-
-   // green
-   colormap.append(0.0,miniv4f(0.0,0.75,0.0,1.0),500.0,miniv4f(0.5,1.0,0.0,1.0));
-   // brown
-   colormap.append(500.0,miniv4f(0.5,1.0,0.0,1.0),1000.0,miniv4f(0.5,0.5,0.0,1.0));
-   // dark
-   colormap.append(1000.0,miniv4f(0.5,0.5,0.0,1.0),2000.0,miniv4f(0.25,0.25,0.25,1.0));
-   // gray
-   colormap.append(2000.0,miniv4f(0.25,0.25,0.25,1.0),3000.0,miniv4f(0.5,0.5,0.5,1.0));
-   // bright
-   colormap.append(3000.0,miniv4f(0.5,0.5,0.5,1.0),10000.0,miniv4f(0.5,1.0,1.0,1.0));
-
-   // below sea level:
-
-   // blue
-   colormap.append(0.0,miniv4f(0.25,0.5,1.0,1.0),-100.0,miniv4f(0.0,0.25,0.5,1.0));
-   // dark
-   colormap.append(-100.0,miniv4f(0.0,0.25,0.5,1.0),-1000.0,miniv4f(0.0,0.0,0.25,1.0));
-   // black
-   colormap.append(-1000.0,miniv4f(0.0,0.0,0.25,1.0),-10000.0,miniv4f(0.0,0.0,0.0,1.0));
-
-   return(colormap);
-   }
 
 void ViewerWindow::colormap_elevation(ministring key)
 {
@@ -1453,7 +1389,7 @@ void ViewerWindow::colormap_elevation(ministring key)
          notify(TR("Color-mapping requires an elevation layer"));
       else
       {
-         grid_colormap colormap = make_colormap();
+         grid_colormap colormap = grid_resampler::make_colormap();
 
          ColorMapJob *job = new ColorMapJob("", &colormap,
                                             shadePower, shadeAmbient);
