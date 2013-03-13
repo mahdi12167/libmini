@@ -4,6 +4,15 @@ PROJECT(QTV)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
+# settings
+
+# default Unix compiler definitions
+IF (NOT CMAKE_BUILD_TYPE)
+   IF (UNIX)
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -finline-functions -Wall -Wno-unused-parameter -Wno-parentheses")
+   ENDIF (UNIX)
+ENDIF (NOT CMAKE_BUILD_TYPE)
+
 # dependencies
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")

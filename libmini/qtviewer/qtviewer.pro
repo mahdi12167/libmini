@@ -102,7 +102,7 @@ CONFIG(debug, debug|release) {
    DEFINES += LIBMINI_DEBUG
 }
 
-unix:QMAKE_CXXFLAGS += -O
+unix:QMAKE_CXXFLAGS += -O3
 unix:QMAKE_CXXFLAGS_WARN_ON += -Wall -Wno-unused-parameter -Wno-parentheses
 
 win32:DEFINES += _CRT_SECURE_NO_DEPRECATE
