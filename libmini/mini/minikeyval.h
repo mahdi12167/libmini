@@ -112,18 +112,6 @@ class minikeyval
       return(TRUE);
       }
 
-   //! get key at index
-   ministring get_key(unsigned int idx)
-      {return(pairs[idx].key);}
-
-   //! get value at index
-   Item get_value(unsigned int idx)
-      {return(pairs[idx].value);}
-
-   //! get tags at index
-   ministrings get_tags(unsigned int idx)
-      {return(pairs[idx].tags);}
-
    //! remove key-value pair
    void remove(const ministring &key)
       {
@@ -312,6 +300,22 @@ class minikeyval
 
       return(vals);
       }
+
+   //! get indexable size
+   ministring get_size()
+      {return(pairs.getsize());}
+
+   //! get key at index
+   ministring get_key(unsigned int idx)
+      {return(pairs[idx].key);}
+
+   //! get value at index
+   Item get_value(unsigned int idx)
+      {return(pairs[idx].value);}
+
+   //! get tags at index
+   ministrings get_tags(unsigned int idx)
+      {return(pairs[idx].tags);}
 
    protected:
 
