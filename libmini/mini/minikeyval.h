@@ -313,7 +313,7 @@ class minikeyval
       sort();
 
       for (unsigned int i=0; i<pairs.getsize(); i++)
-         vals.append(pairs[i].value);
+         vals.append(pairs[i].val);
 
       return(vals);
       }
