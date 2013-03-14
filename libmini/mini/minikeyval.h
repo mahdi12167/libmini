@@ -48,11 +48,9 @@ class minikeyval
    minikeyval() {sorted=TRUE;}
 
    //! custom constructor
-   minikeyval(const ministrings &vals)
+   minikeyval(const minidyna<Item> &vals)
       {
       ministring key;
-
-      sorted=FALSE;
 
       for (unsigned int i=0; i<vals.getsize(); i++)
          {
@@ -60,6 +58,8 @@ class minikeyval
          key.append_uint_hex(i);
          add(key,vals[i]);
          }
+
+      sorted=TRUE;
       }
 
    // cast operator
@@ -111,6 +111,18 @@ class minikeyval
 
       return(TRUE);
       }
+
+   //! get key at index
+   ministring get_key(unsigned int idx)
+      {return(pairs[idx].key);}
+
+   //! get value at index
+   Item get_value(unsigned int idx)
+      {return(pairs[idx].value);}
+
+   //! get tags at index
+   ministrings get_tags(unsigned int idx)
+      {return(pairs[idx].tags);}
 
    //! remove key-value pair
    void remove(const ministring &key)
@@ -289,9 +301,9 @@ class minikeyval
       }
 
    //! get all item values
-   ministrings get_values()
+   minidyna<Item> get_values()
       {
-      ministrings vals;
+      minidyna<Item> vals;
 
       sort();
 
