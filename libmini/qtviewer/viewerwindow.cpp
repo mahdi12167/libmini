@@ -495,7 +495,7 @@ void ViewerWindow::loadImage(ministring url)
       ThumbJob *job = new ThumbJob("", 3, 30.0);
       if (job == NULL) MEMERROR();
 
-      job->append(image->get_full_name());
+      job->append_item(image->get_full_name());
       worker->run_job(job);
    }
    else
@@ -959,7 +959,7 @@ void ViewerWindow::runAction(ministring action,
       TreatBlackJob *job = new TreatBlackJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "treat_white")
@@ -967,7 +967,7 @@ void ViewerWindow::runAction(ministring action,
       TreatWhiteJob *job = new TreatWhiteJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "mask_black")
@@ -975,7 +975,7 @@ void ViewerWindow::runAction(ministring action,
       MaskBlackJob *job = new MaskBlackJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "mask_white")
@@ -983,7 +983,7 @@ void ViewerWindow::runAction(ministring action,
       MaskWhiteJob *job = new MaskWhiteJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "remove_bathy")
@@ -991,7 +991,7 @@ void ViewerWindow::runAction(ministring action,
       RemoveBathyJob *job = new RemoveBathyJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "keep_bathy")
@@ -999,7 +999,7 @@ void ViewerWindow::runAction(ministring action,
       KeepBathyJob *job = new KeepBathyJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "fill_missing")
@@ -1007,7 +1007,7 @@ void ViewerWindow::runAction(ministring action,
       FillMissingJob *job = new FillMissingJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "fill_holes")
@@ -1015,7 +1015,7 @@ void ViewerWindow::runAction(ministring action,
       FillHolesJob *job = new FillHolesJob(repository_path,export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(value);
+      job->append_item(value);
       worker->run_job(job);
    }
    else if (action == "contour")
@@ -1177,7 +1177,7 @@ void ViewerWindow::runAction(ministring action,
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, TRUE);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_relative_name());
+      job->append_item(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save_tif")
@@ -1185,7 +1185,7 @@ void ViewerWindow::runAction(ministring action,
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_relative_name());
+      job->append_item(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save_jpgintif")
@@ -1193,7 +1193,7 @@ void ViewerWindow::runAction(ministring action,
       SaveJob *job = new SaveJob(getObject(value)->get_relative_path(), export_path, FALSE, FALSE, FALSE, TRUE, jpegQuality);
       if (job == NULL) MEMERROR();
 
-      job->append(getObject(value)->get_relative_name());
+      job->append_item(getObject(value)->get_relative_name());
       worker->run_job(job);
    }
    else if (action == "save")
@@ -1322,7 +1322,7 @@ void ViewerWindow::show_fullres(ministring key)
       FullResJob *job = new FullResJob("", 30, 4096);
       if (job == NULL) MEMERROR();
 
-      job->append(image->get_full_name());
+      job->append_item(image->get_full_name());
       worker->run_job(job);
    }
 }
@@ -1339,7 +1339,7 @@ void ViewerWindow::shade_elevation(ministring key)
          ShadeJob *job = new ShadeJob("", shadePower, shadeAmbient);
          if (job == NULL) MEMERROR();
 
-         job->append(image->get_full_name());
+         job->append_item(image->get_full_name());
          worker->run_job(job);
       }
 }
@@ -1356,7 +1356,7 @@ void ViewerWindow::contour_elevation(ministring key)
          ContourJob *job = new ContourJob("", contourSpacing, contourThickness, contourBorder);
          if (job == NULL) MEMERROR();
 
-         job->append(image->get_full_name());
+         job->append_item(image->get_full_name());
          worker->run_job(job);
       }
 }
@@ -1375,7 +1375,7 @@ void ViewerWindow::graymap_elevation(ministring key)
          ColorMapJob *job = new ColorMapJob("", &graymap);
          if (job == NULL) MEMERROR();
 
-         job->append(image->get_full_name());
+         job->append_item(image->get_full_name());
          worker->run_job(job);
       }
 }
@@ -1396,7 +1396,7 @@ void ViewerWindow::colormap_elevation(ministring key)
 
          if (job == NULL) MEMERROR();
 
-         job->append(image->get_full_name());
+         job->append_item(image->get_full_name());
          worker->run_job(job);
       }
 }
@@ -1436,7 +1436,7 @@ void ViewerWindow::blend_imagery(ministrings keys)
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append_item(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
@@ -1461,7 +1461,7 @@ void ViewerWindow::ndvi_layers(ministrings keys)
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append_item(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
@@ -1486,7 +1486,7 @@ void ViewerWindow::merge_layers(ministrings keys)
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append_item(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
@@ -1511,7 +1511,7 @@ void ViewerWindow::match_layers(ministrings keys)
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append_item(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
@@ -1583,7 +1583,7 @@ void ViewerWindow::split_layers(ministrings keys)
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_relative_name());
+      job->append_item(getObject(keys[i])->get_relative_name());
 
    worker->run_job(job);
 }
@@ -1627,7 +1627,7 @@ void ViewerWindow::resample_list(ministrings keys,
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
-      job->append(getObject(keys[i])->get_full_name());
+      job->append_item(getObject(keys[i])->get_full_name());
 
    worker->run_job(job);
 }
@@ -1670,7 +1670,7 @@ void ViewerWindow::crop_list(ministrings keys,
       if (job == NULL) MEMERROR();
 
       for (i=0; i<keys.size(); i++)
-         job->append(getObject(keys[i])->get_relative_name());
+         job->append_item(getObject(keys[i])->get_relative_name());
 
       worker->run_job(job);
    }

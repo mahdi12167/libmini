@@ -66,7 +66,7 @@ void WorkerThread::job_success(Job *job)
    MINILOG("job details:");
    MINILOG(job->to_string("\n"));
 
-   emit finishedJob(job->get_id(), *job);
+   emit finishedJob(job->get_id(), job->get_all());
 }
 
 void WorkerThread::job_failure(Job *job, int errorcode)
@@ -75,5 +75,5 @@ void WorkerThread::job_failure(Job *job, int errorcode)
    MINILOG("job details:");
    MINILOG(job->to_string("\n"));
 
-   emit failedJob(job->get_id(), *job, errorcode);
+   emit failedJob(job->get_id(), job->get_all(), errorcode);
 }
