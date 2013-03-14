@@ -155,9 +155,8 @@ class minikeyval
    //! get value reference from index
    Item *get(unsigned int i)
       {
-      if (i>=pairs.getsize()) return(NULL);
-
-      return(&pairs[i].val);
+      if (i<pairs.getsize()) return(&pairs[i].val);
+      else return(NULL);
       }
 
    //! get value reference from key
@@ -165,9 +164,8 @@ class minikeyval
       {
       unsigned int idx;
 
-      if (!get_pair(key,idx)) return(NULL);
-
-      return(&pairs[idx].val);
+      if (get_pair(key,idx)) return(&pairs[idx].val);
+      else return(NULL);
       }
 
    //! get tag reference from key
