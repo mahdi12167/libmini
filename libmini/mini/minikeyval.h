@@ -16,7 +16,7 @@ class minikeyval_pair
    public:
 
    // constructors
-   minikeyval_pair() {key=""; val=Item();}
+   minikeyval_pair() : key(""), val() {}
    minikeyval_pair(const ministring &k,const Item &v) {key=k; val=v;}
    minikeyval_pair(const ministring &k,const Item &v,const ministrings &t) {key=k; val=v; tags=t;}
 
@@ -46,6 +46,25 @@ class minikeyval
 
    //! default constructor
    minikeyval() {sorted=TRUE;}
+
+   //! custom constructor
+   minikeyval(const ministrings &vals)
+      {
+      ministring key;
+
+      sorted=FALSE;
+
+      for (unsigned int i=0; i<vals.getsize(); i++)
+         {
+         key.clear();
+         key.append_uint_hex(i);
+         add(key,vals[i]);
+         }
+      }
+
+   // cast operator
+   operator ministrings()
+      {return(get_values());}
 
    //! destructor
    ~minikeyval() {}
@@ -267,6 +286,19 @@ class minikeyval
          }
 
       return(keys);
+      }
+
+   //! get all item values
+   ministrings get_values()
+      {
+      ministrings vals;
+
+      sort();
+
+      for (unsigned int i=0; i<pairs.getsize(); i++)
+         keys.append(pairs[i].value);
+
+      return(vals);
       }
 
    protected:

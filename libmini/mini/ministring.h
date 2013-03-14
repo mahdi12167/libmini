@@ -447,6 +447,25 @@ class ministring: public ministring_base
       return(check);
       }
 
+   //! append uchar as hex
+   void append_uchar_hex(unsigned char v)
+      {
+      static char symbols[16]={'0','1','2','3','4','5','6','7',
+                               '8','9','A','B','C','D','E','F'};
+
+      append(symbols[(v>>4)]);
+      append(symbols[v&15]);
+      }
+
+   //! append uint as hex
+   void append_uint_hex(unsigned int v)
+      {
+      append_uchar_hex((unsigned char)(v>>24));
+      append_uchar_hex((unsigned char)(v>>16));
+      append_uchar_hex((unsigned char)(v>>8));
+      append_uchar_hex((unsigned char)v);
+      }
+
    //! append random string
    void append_random(unsigned int length=4)
       {
