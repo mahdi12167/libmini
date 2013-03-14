@@ -631,7 +631,7 @@ class ministrings: public minidyna<ministring>
       {}
 
    //! copy constructor
-   ministrings(const ministrings &strs)
+   ministrings(const minidyna<ministring> &strs)
       : minidyna<ministring>(strs)
       {}
 
