@@ -56,7 +56,7 @@ class minikeyval
    minikeyval(const minidyna<Item> &vals)
       {
       idxnum=0;
-      for (unsigned int i=0; i<vals.getsize(); i++) add(i,vals[i]);
+      for (unsigned int i=0; i<vals.getsize(); i++) add_at(i,vals[i]);
       sorted=TRUE;
       }
 
@@ -74,22 +74,6 @@ class minikeyval
    //! get number of indexable items
    unsigned int get_num() const
       {return(idxnum);}
-
-   //! add indexable value
-   BOOLINT add(unsigned int idx,const Item &val)
-      {
-      BOOLINT found;
-
-      ministring key;
-
-      key="0X";
-      key.append_uint_hex(idx);
-
-      found=add(key,val);
-      if (!found) idxnum++;
-
-      return(found);
-      }
 
    //! add key-value pair
    BOOLINT add(const ministring &key,const Item &val)
@@ -130,6 +114,22 @@ class minikeyval
       return(TRUE);
       }
 
+   //! add indexable value
+   BOOLINT add_at(unsigned int idx,const Item &val)
+      {
+      BOOLINT ok;
+
+      ministring key;
+
+      key="0X";
+      key.append_uint_hex(idx);
+
+      ok=add(key,val);
+      if (ok) idxnum++;
+
+      return(ok);
+      }
+
    //! remove key-value pair
    void remove(const ministring &key)
       {
@@ -153,7 +153,7 @@ class minikeyval
       {pairs.clear();}
 
    //! get value reference from index
-   Item *get(unsigned int i)
+   Item *idx(unsigned int i)
       {
       if (i<pairs.getsize()) return(&pairs[i].val);
       return(NULL);
