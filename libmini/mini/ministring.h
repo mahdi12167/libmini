@@ -699,6 +699,17 @@ class ministrings: public minidyna<ministring>
    ministring checksum(unsigned int length=4) const
       {return(serialize().checksum(length));}
 
+   //! check for contained sub-string
+   BOOLINT contains(const ministring &sub) const
+      {
+      unsigned int i;
+
+      for (i=0; i<getsize(); i++)
+         if (get(i).contains(sub)) return(TRUE);
+
+      return(FALSE);
+      }
+
    //! search for strings containing a sub-string
    ministrings search(const ministring &sub) const
       {
