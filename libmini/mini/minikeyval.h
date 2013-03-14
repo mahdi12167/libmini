@@ -40,30 +40,28 @@ class minikeyval
    protected:
 
    minidyna< minikeyval_pair<Item> > pairs;
+   unsigned int idxnum;
    BOOLINT sorted;
 
    public:
 
    //! default constructor
-   minikeyval() {sorted=TRUE;}
+   minikeyval()
+      {
+      idxnum=0;
+      sorted=TRUE;
+      }
 
    //! custom constructor
    minikeyval(const minidyna<Item> &vals)
       {
-      ministring key;
-
-      for (unsigned int i=0; i<vals.getsize(); i++)
-         {
-         key.clear();
-         key.append_uint_hex(i);
-         add(key,vals[i]);
-         }
-
+      idxnum=0;
+      for (unsigned int i=0; i<vals.getsize(); i++) add(i,vals[i]);
       sorted=TRUE;
       }
 
    // cast operator
-   operator ministrings()
+   operator minidyna<Item>()
       {return(get_values());}
 
    //! destructor
@@ -72,6 +70,26 @@ class minikeyval
    //! get number of pairs
    unsigned int get_pairs() const
       {return(pairs.getsize());}
+
+   //! get number of indexable items
+   unsigned int get_num() const
+      {return(idxnum);}
+
+   //! add indexable value
+   BOOLINT add(unsigned int idx,const Item &val)
+      {
+      BOOLINT found;
+
+      ministring key;
+
+      key="0X";
+      key.append_uint_hex(idx);
+
+      found=add(key,val);
+      if (!found) idxnum++;
+
+      return(found);
+      }
 
    //! add key-value pair
    BOOLINT add(const ministring &key,const Item &val)
@@ -301,21 +319,27 @@ class minikeyval
       return(vals);
       }
 
-   //! get indexable size
-   ministring get_size()
-      {return(pairs.getsize());}
-
-   //! get key at index
-   ministring get_key(unsigned int idx)
-      {return(pairs[idx].key);}
-
    //! get value at index
-   Item get_value(unsigned int idx)
-      {return(pairs[idx].value);}
+   Item *at(unsigned int idx)
+      {
+      ministring key;
+
+      key="0X";
+      key.append_uint_hex(idx);
+
+      return(get(key));
+      }
 
    //! get tags at index
-   ministrings get_tags(unsigned int idx)
-      {return(pairs[idx].tags);}
+   ministrings *at_tags(unsigned int idx)
+      {
+      ministring key;
+
+      key="0X";
+      key.append_uint_hex(idx);
+
+      return(get_tags(key));
+      }
 
    protected:
 
