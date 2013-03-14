@@ -94,7 +94,7 @@ class minikeyval
    //! add key-value pair
    BOOLINT add(const ministring &key,const Item &val)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (get_pair(key,idx)) return(FALSE);
 
@@ -107,7 +107,7 @@ class minikeyval
    //! add key-value pair with tag
    BOOLINT add(const ministring &key,const Item &val,const ministring &tag)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (get_pair(key,idx)) return(FALSE);
 
@@ -120,7 +120,7 @@ class minikeyval
    //! add key-value pair with tags
    BOOLINT add(const ministring &key,const Item &val,const ministrings &tags)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (get_pair(key,idx)) return(FALSE);
 
@@ -133,7 +133,7 @@ class minikeyval
    //! remove key-value pair
    void remove(const ministring &key)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (get_pair(key,idx))
          pairs.dispose(idx);
@@ -156,32 +156,33 @@ class minikeyval
    Item *get(unsigned int i)
       {
       if (i<pairs.getsize()) return(&pairs[i].val);
-      else return(NULL);
+      return(NULL);
       }
 
    //! get value reference from key
    Item *get(const ministring &key)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (get_pair(key,idx)) return(&pairs[idx].val);
-      else return(NULL);
+
+      return(NULL);
       }
 
    //! get tag reference from key
    ministrings *get_tags(const ministring &key)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
-      if (!get_pair(key,idx)) return(NULL);
+      if (get_pair(key,idx)) return(&pairs[idx].tags);
 
-      return(&pairs[idx].tags);
+      return(NULL);
       }
 
    //! add tag to key-value pair
    void tag(const ministring &key,const ministring &tag)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (!get_pair(key,idx)) return;
 
@@ -191,7 +192,7 @@ class minikeyval
    //! add tags to key-value pair
    void tag(const ministring &key,const ministrings &tags)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (!get_pair(key,idx)) return;
 
@@ -201,7 +202,7 @@ class minikeyval
    //! remove tag from key-value pair
    void untag(const ministring &key,const ministring &tag)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (!get_pair(key,idx)) return;
 
@@ -211,7 +212,7 @@ class minikeyval
    //! key-value pair has tag?
    BOOLINT has_tag(const ministring &key,const ministring &tag)
       {
-      unsigned int idx;
+      unsigned int idx=0;
 
       if (!get_pair(key,idx)) return(FALSE);
 
