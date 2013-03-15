@@ -1117,6 +1117,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&bottomAction);
     QAction topAction(tr(" tack layer at top"), this);
     if (row != -1) myMenu.addAction(&topAction);
+    QAction untackAction(tr(" untack layer"), this);
+    if (row != -1) myMenu.addAction(&untackAction);
     myMenu.addSeparator();
     // create layers:
     QAction infoLayer(tr("create a layer:"), this);
@@ -1254,6 +1256,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("tack_bottom", row));
        else if (selectedAction == &topAction)
           emit(activate("tack_top", row));
+       else if (selectedAction == &untackAction)
+          emit(activate("untack", row));
        //
        else if (selectedAction == &cropElevAction)
           emit(activate("crop_elevation", row));

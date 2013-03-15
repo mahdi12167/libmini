@@ -96,6 +96,7 @@ public:
    void create_extent(ministring key, double dh=0.0);
    void show_fullres(ministring key);
    void tack_layer(ministring key, BOOLINT bottom=FALSE);
+   void untack_layer(ministring key);
    void shade_elevation(ministring key);
    void contour_elevation(ministring key);
    void graymap_elevation(ministring key);

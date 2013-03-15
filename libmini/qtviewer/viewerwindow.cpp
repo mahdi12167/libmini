@@ -893,6 +893,13 @@ void ViewerWindow::runAction(ministring action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "untack")
+   {
+      if (value != "")
+         untack_layer(value);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "split")
    {
       if (value != "")
@@ -1343,11 +1350,16 @@ void ViewerWindow::show_fullres(ministring key)
 
 void ViewerWindow::tack_layer(ministring key, BOOLINT bottom)
 {
-   removeTag(key, "bottom");
-   removeTag(key, "top");
+   untack_layer(key);
 
    if (bottom) addTag(key, "bottom");
    else addTag(key, "top");
+}
+
+void ViewerWindow::untack_layer(ministring key)
+{
+   removeTag(key, "bottom");
+   removeTag(key, "top");
 }
 
 void ViewerWindow::shade_elevation(ministring key)
