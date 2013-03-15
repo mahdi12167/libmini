@@ -1796,7 +1796,7 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
 
 BOOLINT ViewerWindow::load_list(ministring filename)
 {
-   unsigned int i,j;
+   unsigned int i;
 
    ministrings qtv;
 
@@ -1817,7 +1817,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (!qtv[0].startswith("repo ")) return(FALSE);
       else
       {
-         setRepo(qtv[0].tail("repo "));
+         setRepo(qtv[0].tail("repo ")); //!! no show
          qtv.dispose(0);
       }
 
@@ -1825,7 +1825,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (!qtv[0].startswith("export ")) return(FALSE);
       else
       {
-         setExport(qtv[0].tail("export "));
+         setExport(qtv[0].tail("export ")); //!! no show
          qtv.dispose(0);
       }
 
@@ -1836,7 +1836,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
          ministrings params;
          params.from_string(qtv[0].tail("levels "), "/");
          if (params.size()!=3) return(FALSE);
-         setResampleSettings(params[0].value(),params[1].value(),params[2].value());
+         setResampleSettings(params[0].value(),params[1].value(),params[2].value()); //!! no show
          qtv.dispose(0);
       }
 
@@ -1890,8 +1890,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
             else return(FALSE);
             }
 
-      for (j=0; j<taglist.size(); j++)
-         addTag(key, taglist[j]);
+      addTags(key, taglist);
 
       if (taglist.contains("hidden"))
           runAction("hide", key);
