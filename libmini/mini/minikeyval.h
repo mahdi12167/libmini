@@ -344,8 +344,8 @@ class minikeyval
       for (i=0; i<pairs.getsize(); i++)
          {
          str += "\""+pairs[i].key+"\",";
-         str += "\""+pairs[i].val.to_string()+"\",";
-         str += pairs[i].tags.to_string(";");
+         str += "\""+pairs[i].val.to_string()+"\",\"";
+         str += pairs[i].tags.to_string(";")+"\"";
 
          if (i<pairs.getsize()-1) str += separator;
          }
@@ -371,8 +371,9 @@ class minikeyval
          sub=sub.tail("\"");
          key=sub.prefix("\",\"");
          sub=sub.tail("\",\"");
-         val=sub.prefix("\",");
-         sub=sub.tail("\",");
+         val=sub.prefix("\",\"");
+         sub=sub.tail("\",\"");
+         sub=sub.head("\"");
          tags.from_string(sub,";");
 
          add(key,val,tags);
@@ -387,8 +388,9 @@ class minikeyval
          sub=sub.tail("\"");
          key=sub.prefix("\",\"");
          sub=sub.tail("\",\"");
-         val=sub.prefix("\",");
-         sub=sub.tail("\",");
+         val=sub.prefix("\",\"");
+         sub=sub.tail("\",\"");
+         sub=sub.head("\"");
          tags.from_string(sub,";");
 
          add(key,val,tags);
