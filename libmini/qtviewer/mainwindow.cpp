@@ -661,18 +661,14 @@ void MainWindow::updateTable(ministring key)
       m_Keys.dispose(row);
    }
 
-   //!!
-   if (0)
-      {
-      repoPath = viewerWindow->getRepo();
-      lineEdit_repoPath->setText(repoPath.c_str());
-      exportPath = viewerWindow->getExport();
-      lineEdit_exportPath->setText(exportPath.c_str());
-      viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
-      lineEdit_gridLevel->setText(QString(grid_level));
-      lineEdit_gridLevels->setText(QString(grid_levels));
-      lineEdit_gridStep->setText(QString(grid_step));
-      }
+   repoPath = viewerWindow->getRepo();
+   //!!lineEdit_repoPath->setText(repoPath.c_str());
+   exportPath = viewerWindow->getExport();
+   //!!lineEdit_exportPath->setText(exportPath.c_str());
+   viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
+   //!!lineEdit_gridLevel->setText(QString(grid_level));
+   //!!lineEdit_gridLevels->setText(QString(grid_levels));
+   //!!lineEdit_gridStep->setText(QString(grid_step));
 }
 
 void MainWindow::runAction(ministring action, int row)
