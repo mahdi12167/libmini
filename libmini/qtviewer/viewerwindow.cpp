@@ -879,6 +879,20 @@ void ViewerWindow::runAction(ministring action,
          if (hasTag(keys[i], "elevation"))
             shade_elevation(keys[i]);
    }
+   else if (action == "tack_bottom")
+   {
+      if (value != "")
+         tack_layer(value, TRUE);
+      else
+         notify(TR("Operation requires a layer"));
+   }
+   else if (action == "tack_top")
+   {
+      if (value != "")
+         tack_layer(value, FALSE);
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "split")
    {
       if (value != "")
@@ -1327,6 +1341,15 @@ void ViewerWindow::show_fullres(ministring key)
    }
 }
 
+void ViewerWindow::tack_layer(ministring key, BOOLINT bottom)
+{
+   removeTag(key, "bottom");
+   removeTag(key, "top");
+
+   if (bottom) addTag(key, "bottom");
+   else addTag(key, "top");
+}
+
 void ViewerWindow::shade_elevation(ministring key)
 {
    Object_image *image = get_image(key);
@@ -1627,7 +1650,12 @@ void ViewerWindow::resample_list(ministrings keys,
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
+   {
       job->append_item(getObject(keys[i])->get_full_name());
+
+      if (hasTag(keys[i], "bottom")) job->append_tag("bottom");
+      if (hasTag(keys[i], "top")) job->append_tag("top");
+   }
 
    worker->run_job(job);
 }

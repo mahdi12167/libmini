@@ -1113,6 +1113,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&splitAction);
     QAction splitSelAction(tr(" split selected layers"), this);
     myMenu.addAction(&splitSelAction);
+    QAction bottomAction(tr(" tack layer at bottom"), this);
+    if (row != -1) myMenu.addAction(&bottomAction);
+    QAction topAction(tr(" tack layer at top"), this);
+    if (row != -1) myMenu.addAction(&topAction);
     myMenu.addSeparator();
     // create layers:
     QAction infoLayer(tr("create a layer:"), this);
@@ -1246,6 +1250,10 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("split", row));
        else if (selectedAction == &splitSelAction)
           emit(activate("split_selected"));
+       else if (selectedAction == &bottomAction)
+          emit(activate("tack_bottom", row));
+       else if (selectedAction == &topAction)
+          emit(activate("tack_top", row));
        //
        else if (selectedAction == &cropElevAction)
           emit(activate("crop_elevation", row));
