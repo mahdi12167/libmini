@@ -333,7 +333,7 @@ class minikeyval
       {return(get_tags(get_key(idx)));}
 
    //! concatenate pair list (serialization)
-   ministring to_string(ministring separator="/") const
+   ministring to_string(ministring separator="/")
       {
       unsigned int i;
 
