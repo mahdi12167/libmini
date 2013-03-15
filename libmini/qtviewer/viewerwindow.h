@@ -112,6 +112,10 @@ public:
    void save_list(ministrings keys, ministring filename="");
    BOOLINT load_list(ministring filename);
 
+   ministring getRepo();
+   ministring getExport();
+   void getResampleSettings(int &level, int &levels, int &step);
+
    void notify(ministring text);
    ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);
    ministring browseDir(ministring title, ministring path="");

@@ -1817,7 +1817,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (!qtv[0].startswith("repo ")) return(FALSE);
       else
       {
-         setRepo(qtv[0].tail("repo ")); //!! no show
+         setRepo(qtv[0].tail("repo "));
          qtv.dispose(0);
       }
 
@@ -1825,7 +1825,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (!qtv[0].startswith("export ")) return(FALSE);
       else
       {
-         setExport(qtv[0].tail("export ")); //!! no show
+         setExport(qtv[0].tail("export "));
          qtv.dispose(0);
       }
 
@@ -1836,7 +1836,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
          ministrings params;
          params.from_string(qtv[0].tail("levels "), "/");
          if (params.size()!=3) return(FALSE);
-         setResampleSettings(params[0].value(),params[1].value(),params[2].value()); //!! no show
+         setResampleSettings(params[0].value(),params[1].value(),params[2].value());
          qtv.dispose(0);
       }
 
@@ -1901,6 +1901,19 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
    return(TRUE);
 }
+
+ministring ViewerWindow::getRepo()
+   {return(repository_path);}
+
+ministring ViewerWindow::getExport()
+   {return(export_path);}
+
+void ViewerWindow::getResampleSettings(int &level, int &levels, int &step)
+   {
+   level=grid_level;
+   levels=grid_levels;
+   step=grid_step;
+   }
 
 void ViewerWindow::notify(ministring text)
 {
