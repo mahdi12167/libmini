@@ -75,6 +75,17 @@ class minikeyval
    unsigned int get_num() const
       {return(idxnum);}
 
+   //! get key at index
+   ministring get_key(unsigned int idx)
+      {
+      ministring key;
+
+      key=".0x";
+      key.append_uint_hex(idx);
+
+      return(key);
+      }
+
    //! add key-value pair
    BOOLINT add(const ministring &key,const Item &val)
       {
@@ -119,12 +130,7 @@ class minikeyval
       {
       BOOLINT ok;
 
-      ministring key;
-
-      key="0X";
-      key.append_uint_hex(idx);
-
-      ok=add(key,val);
+      ok=add(get_key(idx),val);
       if (ok) idxnum++;
 
       return(ok);
@@ -320,25 +326,82 @@ class minikeyval
 
    //! get value at index
    Item *at(unsigned int idx)
-      {
-      ministring key;
-
-      key="0X";
-      key.append_uint_hex(idx);
-
-      return(get(key));
-      }
+      {return(get(at_key(idx)));}
 
    //! get tags at index
    ministrings *at_tags(unsigned int idx)
+      {return(get_tags(at_key(idx)));}
+
+   //! concatenate pair list (serialization)
+   ministring to_string(ministring separator="/") const
       {
-      ministring key;
+      unsigned int i;
 
-      key="0X";
-      key.append_uint_hex(idx);
+      ministring str;
 
-      return(get_tags(key));
+      sort();
+
+      for (i=0; i<pairs.getsize(); i++)
+         {
+         str += "\""+pairs[i].key+"\",";
+         str += "\""+pairs[i].val.to_string()+"\",";
+         str += pairs[i].tags.to_string(";");
+
+         if (i<getsize()-1) str += separator;
+         }
+
+      return(str);
       }
+
+   //! deconcatenate pair list (deserialization)
+   void from_string(const ministring &str,ministring separator="/")
+      {
+      unsigned int left,right;
+      ministring sub;
+
+      ministring key,val;
+      ministrings tags;
+
+      left=0;
+
+      while (str.find(separator,right,left))
+         {
+         sub=str.range(left,right-1);
+
+         sub=sub.tail("\"");
+         key=sub.prefix("\",\"");
+         sub=sub.tail("\",\"");
+         val=sub.prefix("\",");
+         sub=sub.tail("\",");
+         tags.from_string(sub,";");
+
+         add(key,val,tags);
+
+         left=right+separator.length();
+         }
+
+      if (left<str.length())
+         {
+         sub=str.range(left,str.length()-1);
+
+         sub=sub.tail("\"");
+         key=sub.prefix("\",\"");
+         sub=sub.tail("\",\"");
+         val=sub.prefix("\",");
+         sub=sub.tail("\",");
+         tags.from_string(sub,";");
+
+         add(key,val,tags);
+         }
+      }
+
+   //! serialize pair list
+   ministring serialize() const
+      {return(to_string("\n"));}
+
+   //! deserialize pair list
+   void deserialize(const ministring &str)
+      {from_string(str,"\n");}
 
    protected:
 
