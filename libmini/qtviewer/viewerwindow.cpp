@@ -1796,7 +1796,7 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
 
 BOOLINT ViewerWindow::load_list(ministring filename)
 {
-   unsigned int i;
+   unsigned int i,j;
 
    ministrings qtv;
 
@@ -1865,34 +1865,38 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       ministrings taglist;
       taglist.from_string(tags, ",");
 
-      if (taglist[0] == "tileset" ||
-          taglist[0] == "image")
-         key = loadURL(key);
-      else
-      {
-         Object *obj = NULL;
+      if (taglist.size()>0)
+         if (taglist[0] == "tileset" ||
+             taglist[0] == "image")
+            key = loadURL(key);
+         else
+            {
+            Object *obj = NULL;
 
-         if (taglist[0] == "extent")
-            obj = Object_extent::deserialize(key, info, viewer);
+            if (taglist[0] == "extent")
+               obj = Object_extent::deserialize(key, info, viewer);
 
-         if (obj != NULL)
-         {
-            int errorcode;
+            if (obj != NULL)
+               {
+               int errorcode;
 
-            errorcode = addObject(key, obj ,taglist);
+               errorcode = addObject(key, obj ,taglist);
 
-            if (errorcode != OBJECT_SUCCESS)
-               return(FALSE);
+               if (errorcode != OBJECT_SUCCESS)
+                  return(FALSE);
 
-            gotoObject(key);
-         }
-         else return(FALSE);
-      }
+               gotoObject(key);
+               }
+            else return(FALSE);
+            }
 
-      if (tags.contains("hidden"))
+      for (j=0; j<taglist.size(); j++)
+         addTag(key, taglist[i]);
+
+      if (taglist.contains("hidden"))
           runAction("hide", key);
 
-      if (tags.contains("selected"))
+      if (taglist.contains("selected"))
          runAction("select", key);
    }
 
