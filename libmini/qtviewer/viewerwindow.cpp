@@ -1891,7 +1891,7 @@ BOOLINT ViewerWindow::load_list(ministring filename)
             }
 
       for (j=0; j<taglist.size(); j++)
-         addTag(key, taglist[i]);
+         addTag(key, taglist[j]);
 
       if (taglist.contains("hidden"))
           runAction("hide", key);
