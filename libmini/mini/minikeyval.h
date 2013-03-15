@@ -326,11 +326,11 @@ class minikeyval
 
    //! get value at index
    Item *at(unsigned int idx)
-      {return(get(at_key(idx)));}
+      {return(get(get_key(idx)));}
 
    //! get tags at index
    ministrings *at_tags(unsigned int idx)
-      {return(get_tags(at_key(idx)));}
+      {return(get_tags(get_key(idx)));}
 
    //! concatenate pair list (serialization)
    ministring to_string(ministring separator="/") const
