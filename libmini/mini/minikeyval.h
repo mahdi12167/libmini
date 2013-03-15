@@ -347,7 +347,7 @@ class minikeyval
          str += "\""+pairs[i].val.to_string()+"\",";
          str += pairs[i].tags.to_string(";");
 
-         if (i<getsize()-1) str += separator;
+         if (i<pairs.getsize()-1) str += separator;
          }
 
       return(str);
