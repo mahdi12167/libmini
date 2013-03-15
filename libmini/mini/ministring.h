@@ -413,14 +413,14 @@ class ministring: public ministring_base
       {
       unsigned int i,j,k;
 
-      static char symbols[64]={'@','a','b','c','d','e','f','g',
+      static char symbols[64]={'-','a','b','c','d','e','f','g',
                                'h','i','j','k','l','m','n','o',
                                'p','q','r','s','t','u','v','w',
                                'x','y','z','A','B','C','D','E',
                                'F','G','H','I','J','K','L','M',
                                'N','O','P','Q','R','S','T','U',
                                'V','W','X','Y','Z','0','1','2',
-                               '3','4','5','6','7','8','9','#'};
+                               '3','4','5','6','7','8','9','+'};
 
       unsigned int init=1;
       unsigned int checksum;
@@ -471,14 +471,14 @@ class ministring: public ministring_base
       {
       unsigned int i;
 
-      static char symbols[64]={'@','a','b','c','d','e','f','g',
+      static char symbols[64]={'-','a','b','c','d','e','f','g',
                                'h','i','j','k','l','m','n','o',
                                'p','q','r','s','t','u','v','w',
                                'x','y','z','A','B','C','D','E',
                                'F','G','H','I','J','K','L','M',
                                'N','O','P','Q','R','S','T','U',
                                'V','W','X','Y','Z','0','1','2',
-                               '3','4','5','6','7','8','9','#'};
+                               '3','4','5','6','7','8','9','+'};
 
       int symbol;
 
@@ -490,6 +490,14 @@ class ministring: public ministring_base
          append(symbols[symbol]);
          }
       }
+
+   //! concatenate string (serialization)
+   ministring to_string() const
+      {return(*this);}
+
+   //! deconcatenate string (deserialization)
+   void from_string(const ministring &str)
+      {*this=str;}
 
    //! assignment operator
    ministring& operator = (const ministring &a)
@@ -656,7 +664,7 @@ class ministrings: public minidyna<ministring>
       return(str);
       }
 
-   //! deconcatenate string (deserialization)
+   //! deconcatenate string list (deserialization)
    void from_string(const ministring &str,ministring separator="/")
       {
       unsigned int left,right;
@@ -683,7 +691,7 @@ class ministrings: public minidyna<ministring>
    ministring serialize() const
       {return(to_string("\n"));}
 
-   //! deserialize string
+   //! deserialize string list
    void deserialize(const ministring &str)
       {from_string(str,"\n");}
 
