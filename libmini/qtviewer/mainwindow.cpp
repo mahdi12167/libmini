@@ -616,6 +616,11 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
       exportPath = viewerWindow->getExport();
       lineEdit_exportPath->setText(exportPath.c_str());
       }
+   else if (action == "update_tmp")
+      {
+      tmpPath = viewerWindow->getTmp();
+      lineEdit_tmpPath->setText(tmpPath.c_str());
+      }
    else if (action == "update_settings")
       {
       viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);

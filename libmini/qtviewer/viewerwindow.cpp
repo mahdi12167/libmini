@@ -360,19 +360,31 @@ void ViewerWindow::setRepo(ministring path)
    repository_path = Object::normalize_path(path);
 
    objects.set_repo(repository_path);
+
+   emit signalChange("update_repo");
 }
 
 void ViewerWindow::setExport(ministring path)
-   {export_path = Object::normalize_path(path);}
+   {
+   export_path = Object::normalize_path(path);
+
+   emit signalChange("update_export");
+   }
 
 void ViewerWindow::setTmp(ministring path)
-   {tmp_path = Object::normalize_path(path);}
+   {
+   tmp_path = Object::normalize_path(path);
+
+   emit signalChange("update_tmp");
+   }
 
 void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
    grid_level = level;
    grid_levels = levels;
    grid_step = step;
+
+   emit signalChange("update_settings");
 }
 
 void ViewerWindow::setExportSettings(double power, double ambient, double quality)
@@ -1252,15 +1264,24 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "set_grid_level")
    {
-      //!!
+      ministring level = value;
+      grid_level = level.value();
+
+      setResampleSettings(grid_level, grid_levels, grid_step);
    }
    else if (action == "set_grid_levels")
    {
-      //!!
+      ministring levels = value;
+      grid_levels = levels.value();
+
+      setResampleSettings(grid_level, grid_levels, grid_step);
    }
    else if (action == "set_grid_step")
    {
-      //!!
+      ministring step = value;
+      grid_step = step.value();
+
+      setResampleSettings(grid_level, grid_levels, grid_step);
    }
    else if (action == "set_shading_power")
    {
@@ -1936,10 +1957,6 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (taglist.contains("selected"))
          runAction("select", key);
    }
-
-   emit signalChange("update_repo");
-   emit signalChange("update_export");
-   emit signalChange("update_settings");
 
    return(TRUE);
 }
