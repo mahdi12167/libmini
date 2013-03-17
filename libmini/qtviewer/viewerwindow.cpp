@@ -1248,6 +1248,44 @@ void ViewerWindow::runAction(const ministring &action,
    {
       gotoObject(value);
    }
+   else if (action == "set_grid_level")
+   {
+      //!!
+   }
+   else if (action == "set_grid_levels")
+   {
+      //!!
+   }
+   else if (action == "set_grid_step")
+   {
+      //!!
+   }
+   else if (action == "set_shading_power")
+   {
+      //!!
+   }
+   else if (action == "set_shading_ambient")
+   {
+      //!!
+   }
+   else if (action == "set_jpeg_quality")
+   {
+      //!!
+   }
+   else if (action == "set_contour_spacing")
+   {
+      //!!
+   }
+   else if (action == "set_contour_thickness")
+   {
+      //!!
+   }
+   else if (action == "set_contour_border")
+   {
+      //!!
+   }
+
+   MINILOG("running action=" + action + " with value=" + value);
 }
 
 Object_image *ViewerWindow::get_image(ministring key)

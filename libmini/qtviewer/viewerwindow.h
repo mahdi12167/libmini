@@ -42,10 +42,12 @@ public:
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
 
+protected:
    void setRepo(ministring path);
    void setExport(ministring path);
    void setTmp(ministring path);
 
+public:
    void setResampleSettings(int level=0, int levels=1, int step=2);
    void setExportSettings(double power=2.0, double ambient=0.1, double quality=90);
    void setDefaultSettings(double c_spacing=100.0, double c_thickness=1.0, double c_border=1.0);
