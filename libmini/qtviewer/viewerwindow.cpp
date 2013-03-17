@@ -760,6 +760,8 @@ ministring ViewerWindow::guess_blue_layer(const ministrings &keys)
 void ViewerWindow::runAction(const ministring &action,
                              const ministring &value)
 {
+   MINILOG("running action=" + action + " with value=" + value);
+
    if (action == "repo")
    {
       setRepo(value);
@@ -1284,8 +1286,6 @@ void ViewerWindow::runAction(const ministring &action,
    {
       //!!
    }
-
-   MINILOG("running action=" + action + " with value=" + value);
 }
 
 Object_image *ViewerWindow::get_image(ministring key)
