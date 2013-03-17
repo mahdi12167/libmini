@@ -186,8 +186,8 @@ void MainWindow::createWidgets()
 
    // drag and drop:
 
-   connect(viewerWindow, SIGNAL(changed(ministring)),
-           this, SLOT(updateTable(ministring)));
+   connect(viewerWindow, SIGNAL(signalChange(const ministring &, const ministring &)),
+           this, SLOT(receiveChange(const ministring &, const ministring &)));
 
    // layer table:
 
@@ -210,8 +210,8 @@ void MainWindow::createWidgets()
    connect(viewerTable, SIGNAL(customContextMenuRequested(const QPoint&)),
            viewerTable, SLOT(showContextMenu(const QPoint&)));
 
-   connect(viewerTable, SIGNAL(activate(ministring,int)),
-           this, SLOT(runAction(ministring,int)));
+   connect(viewerTable, SIGNAL(activate(const ministring &, int)),
+           this, SLOT(runAction(const ministring &, int)));
 
    // layer table filter:
 
@@ -505,8 +505,8 @@ void MainWindow::createWidgets()
 
    // progress:
 
-   connect(viewerWindow, SIGNAL(progress(double, ministring)),
-           this, SLOT(reportProgress(double, ministring)));
+   connect(viewerWindow, SIGNAL(signalProgress(double, const ministring &)),
+           this, SLOT(receiveProgress(double, const ministring &)));
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -598,24 +598,43 @@ void MainWindow::getNameInfo(Object *obj,
    }
 }
 
-void MainWindow::updateTable(ministring key)
+void MainWindow::receiveChange(const ministring &action, const ministring &value)
+   {
+   if (action == "add_object")
+      updateTable("add", value);
+   else if (action == "update_object")
+      updateTable("update", value);
+   else if (action == "remove_object")
+      updateTable("remove", value);
+   else if (action == "update_repo")
+      {
+      repoPath = viewerWindow->getRepo();
+      //!!lineEdit_repoPath->setText(repoPath.c_str());
+      }
+   else if (action == "update_export")
+      {
+      exportPath = viewerWindow->getExport();
+      //!!lineEdit_exportPath->setText(exportPath.c_str());
+      }
+   else if (action == "update_settings")
+      {
+      viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
+      //!!lineEdit_gridLevel->setText(QString(grid_level));
+      //!!lineEdit_gridLevels->setText(QString(grid_levels));
+      //!!lineEdit_gridStep->setText(QString(grid_step));
+      }
+   }
+
+void MainWindow::updateTable(const ministring &action, const ministring &key)
 {
    unsigned int row;
+
    int rows = viewerTable->rowCount();
 
    Object *obj=viewerWindow->getObject(key);
 
-   BOOLINT present=FALSE;
-
-   for (row=0; row<m_Keys.getsize(); row++)
-      if (m_Keys[row]==key)
-      {
-         present=TRUE;
-         break;
-      }
-
    // add object
-   if (!present && obj!=NULL)
+   if (action == "add" && obj!=NULL)
    {
       QString name, info;
 
@@ -629,49 +648,52 @@ void MainWindow::updateTable(ministring key)
       m_Keys[rows]=key;
    }
    // update object
-   else if (present && obj!=NULL)
+   else if (action == "update" && obj!=NULL)
    {
-      QString name, info;
+      for (row=0; row<m_Keys.getsize(); row++)
+         if (m_Keys[row]==key)
+         {
+            QString name, info;
 
-      getNameInfo(obj, name, info);
+            getNameInfo(obj, name, info);
 
-      viewerTable->setItem(row, 0, new QTableWidgetItem(info));
-      viewerTable->setItem(row, 1, new QTableWidgetItem(name));
+            viewerTable->setItem(row, 0, new QTableWidgetItem(info));
+            viewerTable->setItem(row, 1, new QTableWidgetItem(name));
 
-      if (viewerWindow->hasTag(m_Keys[row], "selected"))
-         viewerTable->item(row, 0)->setBackground(QBrush(QColor("blue")));
-      else
-         viewerTable->item(row, 0)->setBackground(QBrush(QColor("white")));
+            if (viewerWindow->hasTag(m_Keys[row], "selected"))
+               viewerTable->item(row, 0)->setBackground(QBrush(QColor("blue")));
+            else
+               viewerTable->item(row, 0)->setBackground(QBrush(QColor("white")));
 
-      if (viewerWindow->hasTag(m_Keys[row], "hidden"))
-      {
-         viewerTable->item(row, 0)->setForeground(QBrush(QColor("grey")));
-         viewerTable->item(row, 1)->setForeground(QBrush(QColor("grey")));
-      }
-      else
-      {
-         viewerTable->item(row, 0)->setForeground(QBrush(QColor("black")));
-         viewerTable->item(row, 1)->setForeground(QBrush(QColor("black")));
-      }
+            if (viewerWindow->hasTag(m_Keys[row], "hidden"))
+               {
+               viewerTable->item(row, 0)->setForeground(QBrush(QColor("grey")));
+               viewerTable->item(row, 1)->setForeground(QBrush(QColor("grey")));
+               }
+            else
+               {
+               viewerTable->item(row, 0)->setForeground(QBrush(QColor("black")));
+               viewerTable->item(row, 1)->setForeground(QBrush(QColor("black")));
+               }
+
+            break;
+         }
    }
    // remove object
-   else if (present && obj==NULL)
+   else if (action == "remove" && obj==NULL)
    {
-      viewerTable->removeRow(row);
-      m_Keys.dispose(row);
-   }
+      for (row=0; row<m_Keys.getsize(); row++)
+         if (m_Keys[row]==key)
+         {
+            viewerTable->removeRow(row);
+            m_Keys.dispose(row);
 
-   repoPath = viewerWindow->getRepo();
-   //!!lineEdit_repoPath->setText(repoPath.c_str());
-   exportPath = viewerWindow->getExport();
-   //!!lineEdit_exportPath->setText(exportPath.c_str());
-   viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
-   //!!lineEdit_gridLevel->setText(QString(grid_level));
-   //!!lineEdit_gridLevels->setText(QString(grid_levels));
-   //!!lineEdit_gridStep->setText(QString(grid_step));
+            break;
+         }
+   }
 }
 
-void MainWindow::runAction(ministring action, int row)
+void MainWindow::runAction(const ministring &action, int row)
 {
    ministring key;
 
@@ -681,7 +703,7 @@ void MainWindow::runAction(ministring action, int row)
    viewerWindow->runAction(action, key);
 }
 
-void MainWindow::reportProgress(double percentage, const ministring &job)
+void MainWindow::receiveProgress(double percentage, const ministring &job)
 {
    ministring progress;
 

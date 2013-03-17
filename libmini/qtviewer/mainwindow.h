@@ -44,9 +44,11 @@ public:
    virtual ~MainWindow();
 
 public slots:
-   void updateTable(ministring key);
-   void runAction(ministring action, int row = -1);
-   void reportProgress(double percentage, const ministring &job);
+   void receiveChange(const ministring &action, const ministring &value);
+   void updateTable(const ministring &action, const ministring &key);
+
+   void runAction(const ministring &action, int row = -1);
+   void receiveProgress(double percentage, const ministring &job);
 
 private slots:
    void about();
@@ -252,7 +254,7 @@ private slots:
    void showContextMenu(const QPoint &pos);
 
 signals:
-   void activate(ministring action, int row = -1);
+   void activate(const ministring &action, int row = -1);
 
 protected:
    ViewerWindow *viewerWindow;

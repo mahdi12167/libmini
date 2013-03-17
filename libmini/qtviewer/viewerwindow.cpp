@@ -41,7 +41,7 @@ ViewerWindow::ViewerWindow()
    qRegisterMetaType<ministring>("ministring");
    qRegisterMetaType<ministrings>("ministrings");
    connect(worker, SIGNAL(reportProgress(double, ministring)),
-           this, SLOT(reportProgress(double, ministring)),
+           this, SLOT(receiveProgress(double, ministring)),
            Qt::QueuedConnection);
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
@@ -352,7 +352,7 @@ void ViewerWindow::reportModifiers()
 void ViewerWindow::reportProgress()
 {
    if (worker->running())
-      emit progress(worker->get_progress(), worker->get_job_id()); // synchronous
+      emit signalProgress(worker->get_progress(), worker->get_job_id()); // synchronous
 }
 
 void ViewerWindow::setRepo(ministring path)
@@ -528,7 +528,7 @@ int ViewerWindow::addObject(ministring key, Object *obj, ministring tag)
    errorcode = objects.add(key, obj, tag);
 
    if (errorcode != OBJECT_FAILURE)
-      emit changed(key);
+      emit signalChange("add_object", key);
 
    return(errorcode);
 }
@@ -540,7 +540,7 @@ int ViewerWindow::addObject(ministring key, Object *obj, ministrings tags)
    errorcode = objects.add(key, obj, tags);
 
    if (errorcode != OBJECT_FAILURE)
-      emit changed(key);
+      emit signalChange("add_object", key);
 
    return(errorcode);
 }
@@ -558,19 +558,19 @@ ministrings *ViewerWindow::getTags(ministring key)
 void ViewerWindow::addTag(ministring key, ministring tag)
 {
    objects.add_tag(key, tag);
-   emit changed(key);
+   emit signalChange("update_object", key);
 }
 
 void ViewerWindow::addTags(ministring key, ministrings tags)
 {
    objects.add_tags(key, tags);
-   emit changed(key);
+   emit signalChange("update_object", key);
 }
 
 void ViewerWindow::removeTag(ministring key, ministring tag)
 {
    objects.remove_tag(key, tag);
-   emit changed(key);
+   emit signalChange("update_object", key);
 }
 
 void ViewerWindow::toggleTag(ministring key, ministring tag)
@@ -606,7 +606,7 @@ void ViewerWindow::gotoObject(ministring key)
 void ViewerWindow::removeObject(ministring key)
 {
    objects.remove(key);
-   emit changed(key);
+   emit signalChange("remove_object", key);
 }
 
 void ViewerWindow::removeObjects(ministrings keys)
@@ -757,8 +757,8 @@ ministring ViewerWindow::guess_blue_layer(const ministrings &keys)
    return(strs[0]);
    }
 
-void ViewerWindow::runAction(ministring action,
-                             ministring value)
+void ViewerWindow::runAction(const ministring &action,
+                             const ministring &value)
 {
    if (action == "repo")
    {
@@ -1908,6 +1908,9 @@ ministring ViewerWindow::getRepo()
 ministring ViewerWindow::getExport()
    {return(export_path);}
 
+ministring ViewerWindow::getTmp()
+   {return(tmp_path);}
+
 void ViewerWindow::getResampleSettings(int &level, int &levels, int &step)
    {
    level=grid_level;
@@ -1974,9 +1977,9 @@ ministring ViewerWindow::browseDir(ministring title,
    return(dir);
 }
 
-void ViewerWindow::reportProgress(double percentage, const ministring &job)
+void ViewerWindow::receiveProgress(double percentage, const ministring &job)
 {
-   emit progress(percentage, job); // asynchronous
+   emit signalProgress(percentage, job); // asynchronous
 }
 
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)

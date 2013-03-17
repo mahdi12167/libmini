@@ -88,8 +88,8 @@ public:
    void checkExagger(bool on);
    void setExagger(double scale);
 
-   void runAction(ministring action="",
-                  ministring value="");
+   void runAction(const ministring &action="",
+                  const ministring &value="");
 
    void select_object(ministring key, BOOLINT yes=TRUE);
    void hide_object(ministring key, BOOLINT yes=TRUE);
@@ -114,6 +114,8 @@ public:
 
    ministring getRepo();
    ministring getExport();
+   ministring getTmp();
+
    void getResampleSettings(int &level, int &levels, int &step);
 
    void notify(ministring text);
@@ -123,11 +125,11 @@ public:
    ministrings make_grid_list(ministrings keys, int level=0);
 
 signals:
-   void changed(ministring key);
-   void progress(double percentage, const ministring &job);
+   void signalChange(const ministring &action, const ministring &value);
+   void signalProgress(double percentage, const ministring &job);
 
 private slots:
-   void reportProgress(double percentage, const ministring &job);
+   void receiveProgress(double percentage, const ministring &job);
    void finishedJob(const ministring &job, const ministrings &args);
    void failedJob(const ministring &job, const ministrings &args, int errorcode);
 
