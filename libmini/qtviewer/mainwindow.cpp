@@ -609,19 +609,19 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
    else if (action == "update_repo")
       {
       repoPath = viewerWindow->getRepo();
-      //!!lineEdit_repoPath->setText(repoPath.c_str());
+      lineEdit_repoPath->setText(repoPath.c_str());
       }
    else if (action == "update_export")
       {
       exportPath = viewerWindow->getExport();
-      //!!lineEdit_exportPath->setText(exportPath.c_str());
+      lineEdit_exportPath->setText(exportPath.c_str());
       }
    else if (action == "update_settings")
       {
       viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
-      //!!lineEdit_gridLevel->setText(QString(grid_level));
-      //!!lineEdit_gridLevels->setText(QString(grid_levels));
-      //!!lineEdit_gridStep->setText(QString(grid_step));
+      lineEdit_gridLevel->setText(QString(grid_level));
+      lineEdit_gridLevels->setText(QString(grid_levels));
+      lineEdit_gridStep->setText(QString(grid_step));
       }
    }
 
