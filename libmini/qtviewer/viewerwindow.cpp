@@ -1899,6 +1899,10 @@ BOOLINT ViewerWindow::load_list(ministring filename)
          runAction("select", key);
    }
 
+   emit signalChange("update_repo");
+   emit signalChange("update_export");
+   emit signalChange("update_settings");
+
    return(TRUE);
 }
 

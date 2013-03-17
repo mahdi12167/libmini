@@ -125,7 +125,7 @@ public:
    ministrings make_grid_list(ministrings keys, int level=0);
 
 signals:
-   void signalChange(const ministring &action, const ministring &value);
+   void signalChange(const ministring &action, const ministring &value="");
    void signalProgress(double percentage, const ministring &job);
 
 private slots:
