@@ -619,6 +619,7 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
    else if (action == "update_settings")
       {
       viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
+
       lineEdit_gridLevel->setText(QString(grid_level));
       lineEdit_gridLevels->setText(QString(grid_levels));
       lineEdit_gridStep->setText(QString(grid_step));
