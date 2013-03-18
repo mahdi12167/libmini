@@ -808,7 +808,10 @@ ministring ViewerWindow::guess_blue_layer(const ministrings &keys)
 void ViewerWindow::runAction(const ministring &action,
                              const ministring &value)
 {
-   MINILOG("running action=" + action + " with value=" + value);
+   if (value.empty())
+      MINILOG("running action=" + action);
+   else
+      MINILOG("running action=" + action + " with value=" + value);
 
    if (action == "repo")
    {
