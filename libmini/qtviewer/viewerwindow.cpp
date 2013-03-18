@@ -1890,6 +1890,8 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
    ministrings qtv;
 
+   ministring first;
+
    if (filename=="")
    {
       ministrings files = browse(TR("Load"), export_path, FALSE);
@@ -1949,6 +1951,8 @@ BOOLINT ViewerWindow::load_list(ministring filename)
          qtv[i] = qtv[i].head(" = [");
 
          key = qtv[i];
+
+         if (i==0) first=key;
       }
       else return(FALSE);
 
@@ -1974,8 +1978,6 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
                if (errorcode != OBJECT_SUCCESS)
                   return(FALSE);
-
-               gotoObject(key);
                }
             else return(FALSE);
             }
@@ -1988,6 +1990,9 @@ BOOLINT ViewerWindow::load_list(ministring filename)
       if (taglist.contains("selected"))
          runAction("select", key);
    }
+
+   if (!first.empty())
+      gotoObject(first);
 
    return(TRUE);
 }
