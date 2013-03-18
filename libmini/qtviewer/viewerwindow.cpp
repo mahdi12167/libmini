@@ -459,10 +459,16 @@ ministring ViewerWindow::loadURL(ministring url)
 
 ministrings ViewerWindow::loadURLs(ministrings urls)
 {
+   ministring key;
    ministrings keys;
 
    for (unsigned int i=0; i<urls.size(); i++)
-      keys.append(loadURL(urls[i]));
+      {
+      key = loadURL(urls[i]);
+
+      if (!key.empty())
+         keys.append(key);
+      }
 
    return(keys);
 }
