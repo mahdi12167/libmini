@@ -1285,27 +1285,45 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "set_shading_power")
    {
-      //!!
+      ministring power = value;
+      shadePower = power.value();
+
+      setExportSettings(shadePower, shadeAmbient, jpegQuality);
    }
    else if (action == "set_shading_ambient")
    {
-      //!!
+      ministring ambient = value;
+      shadeAmbient = ambient.value();
+
+      setExportSettings(shadePower, shadeAmbient, jpegQuality);
    }
    else if (action == "set_jpeg_quality")
    {
-      //!!
+      ministring quality = value;
+      jpegQuality = quality.value();
+
+      setExportSettings(shadePower, shadeAmbient, jpegQuality);
    }
    else if (action == "set_contour_spacing")
    {
-      //!!
+      ministring spacing = value;
+      contourSpacing = spacing.value();
+
+      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
    }
    else if (action == "set_contour_thickness")
    {
-      //!!
+      ministring thickness = value;
+      contourThickness = thickness.value();
+
+      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
    }
    else if (action == "set_contour_border")
    {
-      //!!
+      ministring border = value;
+      contourBorder = border.value();
+
+      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
    }
 }
 

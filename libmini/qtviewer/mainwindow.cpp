@@ -499,9 +499,17 @@ void MainWindow::createWidgets()
 
    // worker settings:
 
-   viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
-   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
-   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+   gridLevelChanged(QString(ministring(grid_level).c_str()));
+   gridLevelsChanged(QString(ministring(grid_levels).c_str()));
+   gridStepChanged(QString(ministring(grid_step).c_str()));
+
+   shadePowerChanged(QString(ministring(shadePower).c_str()));
+   shadeAmbientChanged(QString(ministring(shadeAmbient).c_str()));
+   jpegQualityChanged(QString(ministring(jpegQuality).c_str()));
+
+   contourSpacingChanged(QString(ministring(contourSpacing).c_str()));
+   contourThicknessChanged(QString(ministring(contourThickness).c_str()));
+   contourBorderChanged(QString(ministring(contourBorder).c_str()));
 
    // progress:
 
@@ -895,7 +903,7 @@ void MainWindow::gridLevelChanged(QString level)
    if (valid)
       {
       this->grid_level = grid_level;
-      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->runAction("set_grid_level", ministring(grid_level));
       }
 }
 
@@ -907,7 +915,7 @@ void MainWindow::gridLevelsChanged(QString levels)
    if (valid)
       {
       this->grid_levels = grid_levels;
-      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->runAction("set_grid_levels", ministring(grid_levels));
       }
 }
 
@@ -919,7 +927,7 @@ void MainWindow::gridStepChanged(QString step)
    if (valid)
       {
       this->grid_step = grid_step;
-      viewerWindow->setResampleSettings(grid_level, grid_levels, grid_step);
+      viewerWindow->runAction("set_grid_step", ministring(grid_step));
       }
 }
 
