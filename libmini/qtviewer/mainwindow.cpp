@@ -917,11 +917,10 @@ void MainWindow::gridLevelChanged(QString level)
    double grid_level = level.toDouble(&valid);
 
    if (valid)
+   {
       this->grid_level = grid_level;
-   else
-      this->grid_level = 0;
-
-   viewerWindow->runAction("set_grid_level", ministring((double)this->grid_level));
+      viewerWindow->runAction("set_grid_level", level.toStdString().c_str());
+   }
 }
 
 void MainWindow::gridLevelsChanged(QString levels)
@@ -930,11 +929,10 @@ void MainWindow::gridLevelsChanged(QString levels)
    double grid_levels = levels.toDouble(&valid);
 
    if (valid)
+   {
       this->grid_levels = grid_levels;
-   else
-      this->grid_levels = 1;
-
-   viewerWindow->runAction("set_grid_levels", ministring((double)this->grid_levels));
+      viewerWindow->runAction("set_grid_levels", levels.toStdString().c_str());
+   }
 }
 
 void MainWindow::gridStepChanged(QString step)
@@ -943,11 +941,10 @@ void MainWindow::gridStepChanged(QString step)
    double grid_step = step.toDouble(&valid);
 
    if (valid)
+   {
       this->grid_step = grid_step;
-   else
-      this->grid_step = 2;
-
-   viewerWindow->runAction("set_grid_step", ministring((double)this->grid_step));
+      viewerWindow->runAction("set_grid_step", step.toStdString().c_str());
+   }
 }
 
 void MainWindow::shadePowerChanged(QString power)
@@ -956,11 +953,10 @@ void MainWindow::shadePowerChanged(QString power)
    double shadePower = power.toDouble(&valid);
 
    if (valid)
+   {
       this->shadePower = shadePower;
-   else
-      this->shadePower = 2.0;
-
-   viewerWindow->runAction("set_shading_power", ministring((double)this->shadePower));
+      viewerWindow->runAction("set_shading_power", power.toStdString().c_str());
+   }
 }
 
 void MainWindow::shadeAmbientChanged(QString ambient)
@@ -969,11 +965,10 @@ void MainWindow::shadeAmbientChanged(QString ambient)
    double shadeAmbient = ambient.toDouble(&valid);
 
    if (valid)
+   {
       this->shadeAmbient = shadeAmbient;
-   else
-      this->shadeAmbient = 0.1;
-
-   viewerWindow->runAction("set_shading_ambient", ministring((double)this->shadeAmbient));
+      viewerWindow->runAction("set_shading_ambient", ambient.toStdString().c_str());
+   }
 }
 
 void MainWindow::jpegQualityChanged(QString quality)
@@ -982,11 +977,10 @@ void MainWindow::jpegQualityChanged(QString quality)
    double jpegQuality = quality.toDouble(&valid);
 
    if (valid)
+   {
       this->jpegQuality = jpegQuality;
-   else
-      this->jpegQuality = 90.0;
-
-   viewerWindow->runAction("set_jpeg_quality", ministring((double)this->jpegQuality));
+      viewerWindow->runAction("set_jpeg_quality", quality.toStdString().c_str());
+   }
 }
 
 void MainWindow::contourSpacingChanged(QString spacing)
@@ -995,11 +989,10 @@ void MainWindow::contourSpacingChanged(QString spacing)
    double contourSpacing = spacing.toDouble(&valid);
 
    if (valid)
+   {
       this->contourSpacing = contourSpacing;
-   else
-      this->contourSpacing = 100.0;
-
-   viewerWindow->runAction("set_contour_spacing", ministring((double)this->contourSpacing));
+      viewerWindow->runAction("set_contour_spacing", spacing.toStdString().c_str());
+   }
 }
 
 void MainWindow::contourThicknessChanged(QString thickness)
@@ -1008,11 +1001,10 @@ void MainWindow::contourThicknessChanged(QString thickness)
    double contourThickness = thickness.toDouble(&valid);
 
    if (valid)
+   {
       this->contourThickness = contourThickness;
-   else
-      this->contourThickness = 1.0;
-
-   viewerWindow->runAction("set_contour_thickness", ministring((double)this->contourThickness));
+      viewerWindow->runAction("set_contour_thickness", thickness.toStdString().c_str());
+   }
 }
 
 void MainWindow::contourBorderChanged(QString border)
@@ -1021,11 +1013,10 @@ void MainWindow::contourBorderChanged(QString border)
    double contourBorder = border.toDouble(&valid);
 
    if (valid)
+   {
       this->contourBorder = contourBorder;
-   else
-      this->contourBorder = 1.0;
-
-   viewerWindow->runAction("set_contour_border", ministring((double)this->contourBorder));
+      viewerWindow->runAction("set_contour_border", border.toStdString().c_str());
+   }
 }
 
 void MainWindow::checkSliders(int on)

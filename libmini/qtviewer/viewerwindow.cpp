@@ -380,29 +380,38 @@ void ViewerWindow::setTmp(ministring path)
 
 void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
-   grid_level = level;
-   grid_levels = levels;
-   grid_step = step;
+   if (level != grid_level || levels != grid_levels || step != grid_step)
+   {
+      grid_level = level;
+      grid_levels = levels;
+      grid_step = step;
 
-   emit signalChange("update_resample_settings");
+      emit signalChange("update_resample_settings");
+   }
 }
 
 void ViewerWindow::setExportSettings(double power, double ambient, double quality)
 {
-   shadePower = power;
-   shadeAmbient = ambient;
-   jpegQuality = quality;
+   if (power != shadePower || ambient != shadeAmbient || quality != jpegQuality)
+   {
+      shadePower = power;
+      shadeAmbient = ambient;
+      jpegQuality = quality;
 
-   emit signalChange("update_export_settings");
+      emit signalChange("update_export_settings");
+   }
 }
 
-void ViewerWindow::setContourSettings(double c_spacing, double c_thickness, double c_border)
+void ViewerWindow::setContourSettings(double spacing, double thickness, double border)
 {
-   contourSpacing = c_spacing;
-   contourThickness = c_thickness;
-   contourBorder = c_border;
+   if (spacing != contourSpacing || thickness != contourThickness || border != contourBorder)
+   {
+      contourSpacing = spacing;
+      contourThickness = thickness;
+      contourBorder = border;
 
-   emit signalChange("update_contour_settings");
+      emit signalChange("update_contour_settings");
+      }
 }
 
 ministring ViewerWindow::loadURL(ministring url)
