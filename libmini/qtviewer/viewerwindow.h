@@ -47,8 +47,8 @@ public:
    void setTmp(ministring path);
 
    void setResampleSettings(int level=0, int levels=1, int step=2);
-   void setExportSettings(double power=2.0, double ambient=0.1, double quality=90);
-   void setDefaultSettings(double c_spacing=100.0, double c_thickness=1.0, double c_border=1.0);
+   void setExportSettings(double power=2.0, double ambient=0.1, double quality=90.0);
+   void setContourSettings(double c_spacing=100.0, double c_thickness=1.0, double c_border=1.0);
 
    ministring loadURL(ministring url);
    void loadURLs(ministrings urls);
@@ -117,6 +117,8 @@ public:
    ministring getTmp();
 
    void getResampleSettings(int &level, int &levels, int &step);
+   void getExportSettings(double &power, double &ambient, double &quality);
+   void getContourSettings(double &spacing, double &thickness, double &border);
 
    void notify(ministring text);
    ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);

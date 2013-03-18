@@ -56,7 +56,7 @@ ViewerWindow::ViewerWindow()
    grid_step = 2;
 
    setExportSettings();
-   setDefaultSettings();
+   setContourSettings();
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -396,13 +396,13 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
    emit signalChange("update_export_settings");
 }
 
-void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness, double c_border)
+void ViewerWindow::setContourSettings(double c_spacing, double c_thickness, double c_border)
 {
    contourSpacing = c_spacing;
    contourThickness = c_thickness;
    contourBorder = c_border;
 
-   emit signalChange("update_default_settings");
+   emit signalChange("update_contour_settings");
 }
 
 ministring ViewerWindow::loadURL(ministring url)
@@ -1313,21 +1313,21 @@ void ViewerWindow::runAction(const ministring &action,
       ministring spacing = value;
       contourSpacing = spacing.value();
 
-      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+      setContourSettings(contourSpacing, contourThickness, contourBorder);
    }
    else if (action == "set_contour_thickness")
    {
       ministring thickness = value;
       contourThickness = thickness.value();
 
-      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+      setContourSettings(contourSpacing, contourThickness, contourBorder);
    }
    else if (action == "set_contour_border")
    {
       ministring border = value;
       contourBorder = border.value();
 
-      setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+      setContourSettings(contourSpacing, contourThickness, contourBorder);
    }
 }
 
@@ -1993,11 +1993,25 @@ ministring ViewerWindow::getTmp()
    {return(tmp_path);}
 
 void ViewerWindow::getResampleSettings(int &level, int &levels, int &step)
-   {
+{
    level=grid_level;
    levels=grid_levels;
    step=grid_step;
-   }
+}
+
+void ViewerWindow::getExportSettings(double &power, double &ambient, double &quality)
+{
+   power=shadePower;
+   ambient=shadeAmbient;
+   quality=jpegQuality;
+}
+
+void ViewerWindow::getContourSettings(double &spacing, double &thickness, double &border)
+{
+   spacing=contourSpacing;
+   thickness=contourThickness;
+   border=contourBorder;
+}
 
 void ViewerWindow::notify(ministring text)
 {

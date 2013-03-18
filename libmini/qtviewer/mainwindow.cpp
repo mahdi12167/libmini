@@ -52,7 +52,7 @@ void MainWindow::initSettings()
 
    shadePower = 2.0;
    shadeAmbient = 0.1;
-   jpegQuality = 90;
+   jpegQuality = 90.0;
 
    contourSpacing = 100.0;
    contourThickness = 1.0;
@@ -607,7 +607,7 @@ void MainWindow::getNameInfo(Object *obj,
 }
 
 void MainWindow::receiveChange(const ministring &action, const ministring &value)
-   {
+{
    if (action == "add_object")
       updateTable("add", value);
    else if (action == "update_object")
@@ -615,29 +615,45 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
    else if (action == "remove_object")
       updateTable("remove", value);
    else if (action == "update_repo")
-      {
+   {
       repoPath = viewerWindow->getRepo();
       lineEdit_repoPath->setText(repoPath.c_str());
-      }
+   }
    else if (action == "update_export")
-      {
+   {
       exportPath = viewerWindow->getExport();
       lineEdit_exportPath->setText(exportPath.c_str());
-      }
+   }
    else if (action == "update_tmp")
-      {
+   {
       tmpPath = viewerWindow->getTmp();
       lineEdit_tmpPath->setText(tmpPath.c_str());
-      }
+   }
    else if (action == "update_resample_settings")
-      {
+   {
       viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
 
       lineEdit_gridLevel->setText(QString(ministring((double)grid_level).c_str()));
       lineEdit_gridLevels->setText(QString(ministring((double)grid_levels).c_str()));
       lineEdit_gridStep->setText(QString(ministring((double)grid_step).c_str()));
-      }
    }
+   else if (action == "update_export_settings")
+   {
+      viewerWindow->getExportSettings(shadePower, shadeAmbient, jpegQuality);
+
+      lineEdit_shadePower->setText(QString(ministring((double)shadePower).c_str()));
+      lineEdit_shadeAmbient->setText(QString(ministring((double)shadeAmbient).c_str()));
+      lineEdit_jpegQuality->setText(QString(ministring((double)jpegQuality).c_str()));
+   }
+   else if (action == "update_contour_settings")
+   {
+      viewerWindow->getContourSettings(contourSpacing, contourThickness, contourBorder);
+
+      lineEdit_contourSpacing->setText(QString(ministring((double)contourSpacing).c_str()));
+      lineEdit_contourThickness->setText(QString(ministring((double)contourThickness).c_str()));
+      lineEdit_contourBorder->setText(QString(ministring((double)contourBorder).c_str()));
+   }
+}
 
 void MainWindow::updateTable(const ministring &action, const ministring &key)
 {
@@ -680,15 +696,15 @@ void MainWindow::updateTable(const ministring &action, const ministring &key)
                viewerTable->item(row, 0)->setBackground(QBrush(QColor("white")));
 
             if (viewerWindow->hasTag(m_Keys[row], "hidden"))
-               {
+            {
                viewerTable->item(row, 0)->setForeground(QBrush(QColor("grey")));
                viewerTable->item(row, 1)->setForeground(QBrush(QColor("grey")));
-               }
+            }
             else
-               {
+            {
                viewerTable->item(row, 0)->setForeground(QBrush(QColor("black")));
                viewerTable->item(row, 1)->setForeground(QBrush(QColor("black")));
-               }
+            }
 
             break;
          }
@@ -944,7 +960,7 @@ void MainWindow::shadePowerChanged(QString power)
    else
       this->shadePower = 2.0;
 
-   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+   viewerWindow->runAction("set_shading_power", ministring((double)this->shadePower));
 }
 
 void MainWindow::shadeAmbientChanged(QString ambient)
@@ -957,7 +973,7 @@ void MainWindow::shadeAmbientChanged(QString ambient)
    else
       this->shadeAmbient = 0.1;
 
-   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+   viewerWindow->runAction("set_shading_ambient", ministring((double)this->shadeAmbient));
 }
 
 void MainWindow::jpegQualityChanged(QString quality)
@@ -970,7 +986,7 @@ void MainWindow::jpegQualityChanged(QString quality)
    else
       this->jpegQuality = 90.0;
 
-   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
+   viewerWindow->runAction("set_jpeg_quality", ministring((double)this->jpegQuality));
 }
 
 void MainWindow::contourSpacingChanged(QString spacing)
@@ -983,7 +999,7 @@ void MainWindow::contourSpacingChanged(QString spacing)
    else
       this->contourSpacing = 100.0;
 
-   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+   viewerWindow->runAction("set_contour_spacing", ministring((double)this->contourSpacing));
 }
 
 void MainWindow::contourThicknessChanged(QString thickness)
@@ -996,7 +1012,7 @@ void MainWindow::contourThicknessChanged(QString thickness)
    else
       this->contourThickness = 1.0;
 
-   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+   viewerWindow->runAction("set_contour_thickness", ministring((double)this->contourThickness));
 }
 
 void MainWindow::contourBorderChanged(QString border)
@@ -1009,7 +1025,7 @@ void MainWindow::contourBorderChanged(QString border)
    else
       this->contourBorder = 1.0;
 
-   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
+   viewerWindow->runAction("set_contour_border", ministring((double)this->contourBorder));
 }
 
 void MainWindow::checkSliders(int on)
