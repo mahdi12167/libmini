@@ -51,12 +51,12 @@ public:
    void setContourSettings(double spacing=100.0, double thickness=1.0, double border=1.0);
 
    ministring loadURL(ministring url);
-   void loadURLs(ministrings urls);
+   ministrings loadURLs(ministrings urls);
 
-   void loadMap(ministring url);
+   BOOLINT loadMap(ministring url);
    void clearMaps();
 
-   void loadImage(ministring url);
+   BOOLINT loadImage(ministring url);
    void clearImages();
 
    int addObject(ministring key, Object *obj, ministring tag);

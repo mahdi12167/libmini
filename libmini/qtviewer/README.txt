@@ -1,4 +1,4 @@
-! Terrain Rendering with LibMini
+! The QTViewer - Terrain Rendering with LibMini
 
 Libmini is free software that displays geographic terrain data at
 real-time. This is an example application of integrating libmini in

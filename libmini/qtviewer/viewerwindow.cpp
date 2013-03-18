@@ -416,10 +416,14 @@ void ViewerWindow::setContourSettings(double spacing, double thickness, double b
 
 ministring ViewerWindow::loadURL(ministring url)
 {
+   BOOLINT success;
+
    url = Object::normalize_file(url);
 
    if (!Object::is_absolute_path(url))
       url = repository_path+url;
+
+   success = TRUE;
 
    if (getObject(url) != NULL) // already existing?
       gotoObject(url);
@@ -430,33 +434,40 @@ ministring ViewerWindow::loadURL(ministring url)
           url.endswith(".png") ||
           url.endswith(".tif") ||
           url.endswith(".jpgintif"))
-         loadImage(url);
+         success = loadImage(url);
       // check elevation extensions
       else if (url.endswith(".bt"))
-         loadImage(url);
+         success = loadImage(url);
       // check tileset extensions
       else if (url.endswith(".ini"))
-         loadMap(url);
+         success = loadMap(url);
       // check qtv extension
       else if (url.endswith(".qtv"))
-         load_list(url);
+         success = load_list(url);
       // check for directories
       else if (!url.suffix("/").contains("."))
-         loadMap(url);
+         success = loadMap(url);
       else
-         loadImage(url); // try unknown format via gdal
+         success = loadImage(url); // try unknown format via gdal
    }
 
-   return(url);
+   if (success)
+      return(url);
+
+   return("");
 }
 
-void ViewerWindow::loadURLs(ministrings urls)
+ministrings ViewerWindow::loadURLs(ministrings urls)
 {
+   ministrings keys;
+
    for (unsigned int i=0; i<urls.size(); i++)
-      loadURL(urls[i]);
+      keys.append(loadURL(urls[i]));
+
+   return(keys);
 }
 
-void ViewerWindow::loadMap(ministring url)
+BOOLINT ViewerWindow::loadMap(ministring url)
 {
    int errorcode;
 
@@ -484,7 +495,11 @@ void ViewerWindow::loadMap(ministring url)
       delete tileset;
 
       notify(TR("Unable to load map from url=")+url);
+
+      return(FALSE);
    }
+
+   return(TRUE);
 }
 
 void ViewerWindow::clearMaps()
@@ -492,7 +507,7 @@ void ViewerWindow::clearMaps()
    removeObjects(listObjects("tileset"));
 }
 
-void ViewerWindow::loadImage(ministring url)
+BOOLINT ViewerWindow::loadImage(ministring url)
 {
    int errorcode;
 
@@ -539,6 +554,8 @@ void ViewerWindow::loadImage(ministring url)
       notify(TR("Unable to handle an image of that size")+"\n\n"+
              "Please use the gdal_translate utility from gdal.org to partition the image into smaller tiles.\n"
              "A handable image has to be smaller than 1GB in size.");
+
+   return(errorcode == OBJECT_SUCCESS);
 }
 
 void ViewerWindow::clearImages()
@@ -802,9 +819,19 @@ void ViewerWindow::runAction(const ministring &action,
    else if (action == "open")
    {
       if (value != "")
-         loadURL(value);
+      {
+         ministring key = loadURL(value);
+
+         if (!key.empty())
+            MINILOG("opened layer with key=" + key);
+      }
       else
-         loadURLs(browse("Open File", repository_path));
+      {
+         ministrings keys = loadURLs(browse("Open File", repository_path));
+
+         if (!keys.empty())
+            MINILOG("opened layers with keys=" + keys.to_string(";"));
+      }
    }
    else if (action == "select")
    {
