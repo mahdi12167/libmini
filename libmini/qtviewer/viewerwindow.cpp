@@ -384,7 +384,7 @@ void ViewerWindow::setResampleSettings(int level, int levels, int step)
    grid_levels = levels;
    grid_step = step;
 
-   emit signalChange("update_settings");
+   emit signalChange("update_resample_settings");
 }
 
 void ViewerWindow::setExportSettings(double power, double ambient, double quality)
@@ -392,6 +392,8 @@ void ViewerWindow::setExportSettings(double power, double ambient, double qualit
    shadePower = power;
    shadeAmbient = ambient;
    jpegQuality = quality;
+
+   emit signalChange("update_export_settings");
 }
 
 void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness, double c_border)
@@ -399,6 +401,8 @@ void ViewerWindow::setDefaultSettings(double c_spacing, double c_thickness, doub
    contourSpacing = c_spacing;
    contourThickness = c_thickness;
    contourBorder = c_border;
+
+   emit signalChange("update_default_settings");
 }
 
 ministring ViewerWindow::loadURL(ministring url)

@@ -499,9 +499,9 @@ void MainWindow::createWidgets()
 
    // worker settings:
 
-   gridLevelChanged(QString(ministring(grid_level).c_str()));
-   gridLevelsChanged(QString(ministring(grid_levels).c_str()));
-   gridStepChanged(QString(ministring(grid_step).c_str()));
+   gridLevelChanged(QString(ministring((double)grid_level).c_str()));
+   gridLevelsChanged(QString(ministring((double)grid_levels).c_str()));
+   gridStepChanged(QString(ministring((double)grid_step).c_str()));
 
    shadePowerChanged(QString(ministring(shadePower).c_str()));
    shadeAmbientChanged(QString(ministring(shadeAmbient).c_str()));
@@ -629,13 +629,13 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
       tmpPath = viewerWindow->getTmp();
       lineEdit_tmpPath->setText(tmpPath.c_str());
       }
-   else if (action == "update_settings")
+   else if (action == "update_resample_settings")
       {
       viewerWindow->getResampleSettings(grid_level, grid_levels, grid_step);
 
-      lineEdit_gridLevel->setText(QString(grid_level));
-      lineEdit_gridLevels->setText(QString(grid_levels));
-      lineEdit_gridStep->setText(QString(grid_step));
+      lineEdit_gridLevel->setText(QString(ministring((double)grid_level).c_str()));
+      lineEdit_gridLevels->setText(QString(ministring((double)grid_levels).c_str()));
+      lineEdit_gridStep->setText(QString(ministring((double)grid_step).c_str()));
       }
    }
 
@@ -901,10 +901,11 @@ void MainWindow::gridLevelChanged(QString level)
    double grid_level = level.toDouble(&valid);
 
    if (valid)
-      {
       this->grid_level = grid_level;
-      viewerWindow->runAction("set_grid_level", ministring(grid_level));
-      }
+   else
+      this->grid_level = 0;
+
+   viewerWindow->runAction("set_grid_level", ministring((double)this->grid_level));
 }
 
 void MainWindow::gridLevelsChanged(QString levels)
@@ -913,10 +914,11 @@ void MainWindow::gridLevelsChanged(QString levels)
    double grid_levels = levels.toDouble(&valid);
 
    if (valid)
-      {
       this->grid_levels = grid_levels;
-      viewerWindow->runAction("set_grid_levels", ministring(grid_levels));
-      }
+   else
+      this->grid_levels = 1;
+
+   viewerWindow->runAction("set_grid_levels", ministring((double)this->grid_levels));
 }
 
 void MainWindow::gridStepChanged(QString step)
@@ -925,10 +927,11 @@ void MainWindow::gridStepChanged(QString step)
    double grid_step = step.toDouble(&valid);
 
    if (valid)
-      {
       this->grid_step = grid_step;
-      viewerWindow->runAction("set_grid_step", ministring(grid_step));
-      }
+   else
+      this->grid_step = 2;
+
+   viewerWindow->runAction("set_grid_step", ministring((double)this->grid_step));
 }
 
 void MainWindow::shadePowerChanged(QString power)
@@ -937,10 +940,11 @@ void MainWindow::shadePowerChanged(QString power)
    double shadePower = power.toDouble(&valid);
 
    if (valid)
-      {
       this->shadePower = shadePower;
-      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
-      }
+   else
+      this->shadePower = 2.0;
+
+   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
 }
 
 void MainWindow::shadeAmbientChanged(QString ambient)
@@ -949,10 +953,11 @@ void MainWindow::shadeAmbientChanged(QString ambient)
    double shadeAmbient = ambient.toDouble(&valid);
 
    if (valid)
-      {
       this->shadeAmbient = shadeAmbient;
-      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
-      }
+   else
+      this->shadeAmbient = 0.1;
+
+   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
 }
 
 void MainWindow::jpegQualityChanged(QString quality)
@@ -961,10 +966,11 @@ void MainWindow::jpegQualityChanged(QString quality)
    double jpegQuality = quality.toDouble(&valid);
 
    if (valid)
-      {
       this->jpegQuality = jpegQuality;
-      viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
-      }
+   else
+      this->jpegQuality = 90.0;
+
+   viewerWindow->setExportSettings(shadePower, shadeAmbient, jpegQuality);
 }
 
 void MainWindow::contourSpacingChanged(QString spacing)
@@ -973,10 +979,11 @@ void MainWindow::contourSpacingChanged(QString spacing)
    double contourSpacing = spacing.toDouble(&valid);
 
    if (valid)
-      {
       this->contourSpacing = contourSpacing;
-      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
-      }
+   else
+      this->contourSpacing = 100.0;
+
+   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
 }
 
 void MainWindow::contourThicknessChanged(QString thickness)
@@ -985,10 +992,11 @@ void MainWindow::contourThicknessChanged(QString thickness)
    double contourThickness = thickness.toDouble(&valid);
 
    if (valid)
-      {
       this->contourThickness = contourThickness;
-      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
-      }
+   else
+      this->contourThickness = 1.0;
+
+   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
 }
 
 void MainWindow::contourBorderChanged(QString border)
@@ -997,10 +1005,11 @@ void MainWindow::contourBorderChanged(QString border)
    double contourBorder = border.toDouble(&valid);
 
    if (valid)
-      {
       this->contourBorder = contourBorder;
-      viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
-      }
+   else
+      this->contourBorder = 1.0;
+
+   viewerWindow->setDefaultSettings(contourSpacing, contourThickness, contourBorder);
 }
 
 void MainWindow::checkSliders(int on)
