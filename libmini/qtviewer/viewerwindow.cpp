@@ -839,7 +839,10 @@ void ViewerWindow::runAction(const ministring &action,
          ministrings keys = loadURLs(browse("Open File", repository_path));
 
          if (!keys.empty())
-            MINILOG("opened layers with keys=" + keys.to_string(";"));
+            if (keys.size()==1)
+               MINILOG("opened layer with key=" + keys.to_string());
+            else
+               MINILOG("opened layers with keys=" + keys.to_string(";"));
       }
    }
    else if (action == "select")
