@@ -435,6 +435,8 @@ void minipoint::load(const char *filename,
 
    int zone;
 
+   minicrs CRS;
+
    if (tile!=NULL)
       if (TILE==NULL) TILE=tile;
       else if (tile!=TILE) ERRORMSG();
@@ -620,7 +622,7 @@ void minipoint::load(const char *filename,
          if (sscanf(point.longitude,"%g",&point.x)!=1) ERRORMSG();
          if (sscanf(point.latitude,"%g",&point.y)!=1) ERRORMSG();
 
-         minicrs::UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
+         CRS.UTM2LL(point.x,point.y,zone,CONFIGURE_SRCDATUM,&point.y,&point.x);
 
          if (CONFIGURE_AUTOMAP!=0 && !TAKEN)
             {
@@ -658,7 +660,7 @@ void minipoint::load(const char *filename,
       else
          {
          // compute UTM coordinates
-         minicrs::LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
+         CRS.LL2UTM(point.y,point.x,CONFIGURE_DSTZONE,CONFIGURE_DSTDATUM,&point.x,&point.y);
 
          // add UTM offset
          point.x+=offsetx;

@@ -3,6 +3,7 @@
 #include "minibase.h"
 
 #include "miniio.h"
+
 #include "minicrs.h"
 
 #include "pnmbase.h"
@@ -1338,10 +1339,11 @@ int miniload::load(int cols,int rows,
 
                if (utm_zone!=0)
                   {
-                  minicrs::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-                  minicrs::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-                  minicrs::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-                  minicrs::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+                  static minicrs CRS;
+                  CRS.UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+                  CRS.UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+                  CRS.UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+                  CRS.UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                   }
 
                SCALE=scaling*exaggeration;

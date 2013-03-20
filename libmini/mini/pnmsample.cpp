@@ -5,6 +5,7 @@
 #include "mini.h"
 
 #include "minicrs.h"
+
 #include "pnmbase.h"
 
 #include "pnmsample.h"
@@ -343,7 +344,9 @@ float transformpoint(unsigned char *image,
       }
    else
       {
-      minicrs::LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
+      static minicrs CRS;
+
+      CRS.LL2UTM(y,x,utm_zone,utm_datum,&x,&y);
 
       s1=getdistance(x,y,utm_coord[0],utm_coord[1],utm_coord[2]-utm_coord[0],utm_coord[3]-utm_coord[1]);
       s2=getdistance(x,y,utm_coord[4],utm_coord[5],utm_coord[6]-utm_coord[4],utm_coord[7]-utm_coord[5]);
@@ -494,10 +497,11 @@ void resample(int num,const char **grid,
                            (coord_NE[1]-coord_SE[1])*(coord_NE[1]-coord_SE[1]));
 
             // transform corners
-            minicrs::UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
-            minicrs::UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
-            minicrs::UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
-            minicrs::UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
+            static minicrs CRS;
+            CRS.UTM2LL(coord_SW[0],coord_SW[1],utm_zones[n],utm_datums[n],&coord_SW[1],&coord_SW[0]);
+            CRS.UTM2LL(coord_NW[0],coord_NW[1],utm_zones[n],utm_datums[n],&coord_NW[1],&coord_NW[0]);
+            CRS.UTM2LL(coord_NE[0],coord_NE[1],utm_zones[n],utm_datums[n],&coord_NE[1],&coord_NE[0]);
+            CRS.UTM2LL(coord_SE[0],coord_SE[1],utm_zones[n],utm_datums[n],&coord_SE[1],&coord_SE[0]);
 
             // cell size changes approximately by the same factor as the extent changes:
 
@@ -1218,12 +1222,14 @@ void normalize(int num,
             // transform corners
             if (utm_zone!=0)
                {
+               static minicrs CRS;
+
                for (i=0; i<8; i++) utm_coord[i]=coord[i];
 
-               minicrs::UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
-               minicrs::UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
-               minicrs::UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
-               minicrs::UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
+               CRS.UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
+               CRS.UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
+               CRS.UTM2LL(coord[4],coord[5],utm_zone,utm_datum,&coord[5],&coord[4]);
+               CRS.UTM2LL(coord[6],coord[7],utm_zone,utm_datum,&coord[7],&coord[6]);
                }
 
             centerx0=LONLERP(LONMEAN(coord[0],coord[2]),LONMEAN(coord[4],coord[6]));

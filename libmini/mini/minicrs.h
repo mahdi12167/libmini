@@ -11,6 +11,9 @@ class minicrs
    {
    public:
 
+   minicrs();
+   ~minicrs();
+
    static const double EARTH_radius; // radius of the earth
 
    static const double WGS84_r_major; // WGS84 semi-major axis
@@ -20,23 +23,26 @@ class minicrs
    static const double WGS84_ed2;     // WGS84 eccentricity derived
    static const double WGS84_e;       // WGS84 eccentricity
 
-   //! transform Lat/Lon to UTM
-   static void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
-                      int zone,int datum, // UTM zone and datum of output coordinates
-                      double *x,double *y); // output UTM coordinates (Easting and Northing)
+   //! transform datum to approximate radius
+   static double D2R(int datum);
 
-   static void LL2UTM(double lat,double lon,
-                      int zone,int datum,
-                      float *x,float *y);
+   //! transform Lat/Lon to UTM
+   void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
+               int zone,int datum, // UTM zone and datum of output coordinates
+               double *x,double *y); // output UTM coordinates (Easting and Northing)
+
+   void LL2UTM(double lat,double lon,
+               int zone,int datum,
+               float *x,float *y);
 
    //! transform UTM to Lat/Lon
-   static void UTM2LL(double x,double y, // input UTM coordinates (Easting and Northing)
-                      int zone,int datum, // UTM zone and datum of input coordinates
-                      double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+   void UTM2LL(double x,double y, // input UTM coordinates (Easting and Northing)
+               int zone,int datum, // UTM zone and datum of input coordinates
+               double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
 
-   static void UTM2LL(double x,double y,
-                      int zone,int datum,
-                      float *lat,float *lon);
+   void UTM2LL(double x,double y,
+               int zone,int datum,
+               float *lat,float *lon);
 
    //! transform Lat/Lon to UTM zone
    static int LL2UTMZ(double lat,double lon);
@@ -45,18 +51,18 @@ class minicrs
    static double UTMZ2L(int zone);
 
    //! transform Lat/Lon to Mercator
-   static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
-                       double *x,double *y); // output Mercator coordinates (WGS84 datum)
+   void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
+                double *x,double *y); // output Mercator coordinates (WGS84 datum)
 
-   static void LL2MERC(double lat,double lon,
-                       float *x,float *y);
+   void LL2MERC(double lat,double lon,
+                float *x,float *y);
 
    //! transform Mercator to Lat/Lon
-   static void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
-                       double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+   void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
+                double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
 
-   static void MERC2LL(double x,double y,
-                       float *lat,float *lon);
+   void MERC2LL(double x,double y,
+                float *lat,float *lon);
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
@@ -111,47 +117,47 @@ class minicrs
    protected:
 
    // UTM conversion functions
-   static void initUTM(int zone,double ratio);
-   static void calcLL2UTM(double lat,double lon,double *x,double *y);
-   static void calcUTM2LL(double x,double y,double *lat,double *lon);
+   void initUTM(int zone,double ratio);
+   void calcLL2UTM(double lat,double lon,double *x,double *y);
+   void calcUTM2LL(double x,double y,double *lat,double *lon);
 
    // Mercator conversion functions
-   static void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
-   static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
+   void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
+   void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
 
    // Molodensky transformation between two datums
-   static void molodensky(int src,int dst,double *lat,double *lon);
+   void molodensky(int src,int dst,double *lat,double *lon);
 
    // Molodensky transformation based on ellipsoid change
-   static void molodensky(double *lat,double *lon,double *h, // transformed coordinates
-                          double r_maj,double f,             // semi-major axis and flattening
-                          double dr_maj,double df,           // ellipsoid change
-                          double dx,double dy,double dz);    // origin change
+   void molodensky(double *lat,double *lon,double *h, // transformed coordinates
+                   double r_maj,double f,             // semi-major axis and flattening
+                   double dr_maj,double df,           // ellipsoid change
+                   double dx,double dy,double dz);    // origin change
 
    private:
 
-   static int crs_datum;
-   static int crs_zone;
-   static double crs_ratio;
+   int crs_datum;
+   int crs_zone;
+   double crs_ratio;
 
-   static double r_major,r_minor;
-   static double o_dx,o_dy,o_dz;
+   double r_major,r_minor;
+   double o_dx,o_dy,o_dz;
 
-   static double scale_factor;
+   double scale_factor;
 
-   static double lon_center;
-   static double e0,e1,e2,e3;
-   static double e,es,esp;
-   static double false_northing;
-   static double false_easting;
+   double lon_center;
+   double e0,e1,e2,e3;
+   double e,es,esp;
+   double false_northing;
+   double false_easting;
 
-   static void choose_ellipsoid(double r_maj,double r_min);
-   static void choose_ellipsoid_flat(double r_maj,double f);
+   void choose_ellipsoid(double r_maj,double r_min);
+   void choose_ellipsoid_flat(double r_maj,double f);
 
-   static void choose_datum(int ellipsoid,
-                            double dx,double dy,double dz);
+   void choose_datum(int ellipsoid,
+                     double dx,double dy,double dz);
 
-   static void choose_datum(int datum);
+   void choose_datum(int datum);
    };
 
 namespace minilon {

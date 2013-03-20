@@ -15,14 +15,21 @@ const double minicrs::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity 
 const double minicrs::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
 const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
-int minicrs::crs_datum=0; // actual configured crs datum
-int minicrs::crs_zone=0; // actual configured crs zone
-double minicrs::crs_ratio=0.0; // actual configured axis ratio
+// ctor
+minicrs::minicrs()
+   {
+   crs_datum=0; // actual configured crs datum
+   crs_zone=0; // actual configured crs zone
+   crs_ratio=0.0; // actual configured axis ratio
 
-double minicrs::r_major=EARTH_radius,minicrs::r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
-double minicrs::o_dx=0.0,minicrs::o_dy=0.0,minicrs::o_dz=0.0; // origin shift of ellipsoid
+   r_major=EARTH_radius; r_minor=EARTH_radius; // semi-major and minor radius of ellipsoid
+   o_dx=0.0; o_dy=0.0; o_dz=0.0; // origin shift of ellipsoid
 
-double minicrs::scale_factor=0.9996; // scale factor
+   scale_factor=0.9996; // scale factor
+   }
+
+// dtor
+minicrs::~minicrs() {}
 
 // ellipsoid selector based on semi-major and minor radius
 void minicrs::choose_ellipsoid(double r_maj,double r_min)
@@ -158,6 +165,16 @@ void minicrs::choose_datum(int datum)
       }
 
    crs_datum=datum;
+   }
+
+// transform datum to approximate radius
+double minicrs::D2R(int datum)
+   {
+   switch (datum)
+      {
+      case 15: return(0.5); // unit sphere
+      default: return(EARTH_radius);
+      }
    }
 
 // transform Lat/Lon to UTM
@@ -617,13 +634,6 @@ void minicrs::arcsec2meter(double lat,float *as2m)
 // adapted coordinate system transformations from GCTP,
 // the General Cartographic Transformation Package:
 
-// per-zone parameters of the Universal Transverse Mercator (UTM) projection
-double minicrs::lon_center; // center longitude
-double minicrs::e0,minicrs::e1,minicrs::e2,minicrs::e3; // eccentricity constants
-double minicrs::e,minicrs::es,minicrs::esp; // eccentricity constants
-double minicrs::false_northing; // y offset in meters
-double minicrs::false_easting; // x offset in meters
-
 // initialize the Universal Transverse Mercator (UTM) projection
 void minicrs::initUTM(int zone, // zone number
                       double ratio) // axis ratio = 1-flattening
@@ -633,21 +643,27 @@ void minicrs::initUTM(int zone, // zone number
 
    if (zone==crs_zone && ratio==crs_ratio) return;
 
+   // center longitude of actual zone
    lon_center=(6*abs(zone)-183)*60*60;
 
-   false_easting=500000.0;
-   false_northing=(zone<0)?10000000.0:0.0;
+   // offset in meters
+   false_easting=500000.0; // x offset in meters
+   false_northing=(zone<0)?10000000.0:0.0; // y offset in meters
 
+   // eccentricity squared
    es=1.0-dsqr(ratio);
    e=sqrt(es);
 
+   // eccentricity taylor constants
    e0=1.0-0.25*es*(1.0+0.0625*es*(3.0+1.25*es));
    e1=0.375*es*(1.0+0.25*es*(1.0+0.46875*es));
    e2=0.05859375*es*es*(1.0+0.75*es);
    e3=35.0/3072.0*es*es*es;
 
+   // inverse eccentricity squared
    esp=es/(1.0-es);
 
+   // crs parameters
    crs_zone=zone;
    crs_ratio=ratio;
    }

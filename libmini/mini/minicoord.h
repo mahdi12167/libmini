@@ -6,6 +6,8 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "minicrs.h"
+
 #include "ministring.h"
 
 //! geo-referenced coordinates
@@ -43,7 +45,9 @@ class minicoord
       MINICOORD_DATUM_OSGB1936=11,
       MINICOORD_DATUM_Australian1984=12,
       MINICOORD_DATUM_NewZealand1949=13,
-      MINICOORD_DATUM_SouthAmerican1969=14
+      MINICOORD_DATUM_SouthAmerican1969=14,
+      // special datum codes
+      MINICOORD_DATUM_UNIT_SPHERE=15
       };
 
    //! default constructor
@@ -154,6 +158,10 @@ class minicoord
 
    int crs_zone; // actual crs zone
    MINICOORD_DATUM crs_datum; // actual crs datum
+
+   private:
+
+   static minicrs UTM,MERC;
    };
 
 // associated arithmetic operator +=
