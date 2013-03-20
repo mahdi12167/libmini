@@ -397,6 +397,111 @@ void minicrs::ECEF2LLH(float xyz[3],
    *h=th;
    }
 
+// transform OG/H to ECEF
+// input and output in meters
+void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
+                       int zone, // oblique gnomonic zone of input coordinates
+                       double xyz[3], // output ECEF coordinates
+                       double r_major,double r_minor) // semi-major and minor axis
+
+   {
+   miniv3d pos,nrm;
+   miniv3d right,up;
+   double dist;
+
+   OGHZ2ECEF(zone,pos,right,up,r_major);
+   pos+=x*right+y*up;
+
+   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos,miniv3d(0.0,0.0,0.0),r_major,r_major,r_minor);
+   if (dist==MAXFLOAT) ERRORMSG();
+   pos*=dist;
+
+   nrm=pos;
+   nrm.normalize();
+
+   pos+=nrm*h;
+
+   xyz[0]=pos.x;
+   xyz[1]=pos.y;
+   xyz[2]=pos.z;
+   }
+
+void minicrs::OGH2ECEF(double x,double y,double h,
+                       int zone,
+                       float xyz[3])
+   {
+   double txyz[3];
+
+   OGH2ECEF(x,y,h,zone,txyz);
+
+   xyz[0]=txyz[0];
+   xyz[1]=txyz[1];
+   xyz[2]=txyz[2];
+   }
+
+// transform ECEF to OG/H
+// input and output in meters
+void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
+                       double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
+                       int zone, // oblique gnomonic zone of output coordinates
+                       double r_major,double r_minor) // semi-major and minor axis
+   {
+   double prj[3];
+
+   miniv3d pos;
+   double dist,height;
+
+   miniv3d pos0,right,up;
+
+   ECEF2PRJ(xyz,prj,&height,r_major,r_minor);
+   pos=miniv3d(prj);
+
+   OGHZ2ECEF(zone,pos0,right,up,r_major);
+
+   dist=intersect_ray_plane(pos,pos,pos0,pos0);
+   if (dist==MAXFLOAT) ERRORMSG();
+   pos+=dist*pos;
+
+   *x=(pos-pos0)*right;
+   *y=(pos-pos0)*up;
+   *h=height;
+   }
+
+void minicrs::ECEF2OGH(float xyz[3],
+                       float *x,float *y,float *h,
+                       int zone)
+   {
+   double txyz[3];
+   double tx,ty,th;
+
+   txyz[0]=xyz[0];
+   txyz[1]=xyz[1];
+   txyz[2]=xyz[2];
+
+   ECEF2OGH(txyz,&tx,&ty,&th,zone);
+
+   *x=tx;
+   *y=ty;
+   *h=th;
+   }
+
+// transform ECEF to OG/H zone
+int minicrs::ECEF2OGHZ(double xyz[3], // input ECEF coordinates
+                       double r_major,double r_minor) // semi-major and minor axis
+   {
+   double prj[3];
+   double lat,lon,h;
+   int alpha,beta;
+
+   ECEF2PRJ(xyz,prj,&h,r_major,r_minor);
+   ECEF2LLH(prj,&lat,&lon,&h);
+
+   alpha=dtrc(lon/3600+0.5)%360;
+   beta=dtrc(lat/3600+90+0.5);
+
+   return(-1-(alpha*181+beta));
+   }
+
 // transform OG/H zone to ECEF center position
 void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
                         miniv3d &pos, // ECEF center position of zone
@@ -431,118 +536,18 @@ void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
    else ERRORMSG();
    }
 
-// transform OG/H to ECEF
-// input and output in meters
-void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
-                       int zone, // oblique gnomonic zone of input coordinates
-                       double xyz[3]) // output ECEF coordinates
-   {
-   miniv3d pos,nrm;
-   miniv3d right,up;
-   double dist;
-
-   OGHZ2ECEF(zone,pos,right,up);
-   pos+=x*right+y*up;
-
-   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
-   if (dist==MAXFLOAT) ERRORMSG();
-   pos*=dist;
-
-   nrm=pos;
-   nrm.normalize();
-
-   pos+=nrm*h;
-
-   xyz[0]=pos.x;
-   xyz[1]=pos.y;
-   xyz[2]=pos.z;
-   }
-
-void minicrs::OGH2ECEF(double x,double y,double h,
-                       int zone,
-                       float xyz[3])
-   {
-   double txyz[3];
-
-   OGH2ECEF(x,y,h,zone,txyz);
-
-   xyz[0]=txyz[0];
-   xyz[1]=txyz[1];
-   xyz[2]=txyz[2];
-   }
-
-// transform ECEF to OG/H
-// input and output in meters
-void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
-                       double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
-                       int zone) // oblique gnomonic zone of output coordinates
-   {
-   double prj[3];
-
-   miniv3d pos;
-   double dist,height;
-
-   miniv3d pos0,right,up;
-
-   ECEF2PRJ(xyz,prj,&height);
-   pos=miniv3d(prj);
-
-   OGHZ2ECEF(zone,pos0,right,up);
-
-   dist=intersect_ray_plane(pos,pos,pos0,pos0);
-   if (dist==MAXFLOAT) ERRORMSG();
-   pos+=dist*pos;
-
-   *x=(pos-pos0)*right;
-   *y=(pos-pos0)*up;
-   *h=height;
-   }
-
-void minicrs::ECEF2OGH(float xyz[3],
-                       float *x,float *y,float *h,
-                       int zone)
-   {
-   double txyz[3];
-   double tx,ty,th;
-
-   txyz[0]=xyz[0];
-   txyz[1]=xyz[1];
-   txyz[2]=xyz[2];
-
-   ECEF2OGH(txyz,&tx,&ty,&th,zone);
-
-   *x=tx;
-   *y=ty;
-   *h=th;
-   }
-
-// transform ECEF to OG/H zone
-int minicrs::ECEF2OGHZ(double xyz[3]) // input ECEF coordinates
-   {
-   double prj[3];
-   double lat,lon,h;
-   int alpha,beta;
-
-   ECEF2PRJ(xyz,prj,&h);
-   ECEF2LLH(prj,&lat,&lon,&h);
-
-   alpha=dtrc(lon/3600+0.5)%360;
-   beta=dtrc(lat/3600+90+0.5);
-
-   return(-1-(alpha*181+beta));
-   }
-
 // project ECEF to ellipsoid
 void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
                        double prj[3], // output ECEF coordinates
-                       double *h) // output altitude
+                       double *h, // output altitude
+                       double r_major,double r_minor) // semi-major and minor axis
    {
    miniv3d pos0,pos,nrm;
    double dist;
 
    pos0=miniv3d(xyz);
 
-   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos0,miniv3d(0.0,0.0,0.0),WGS84_r_major,WGS84_r_major,WGS84_r_minor);
+   dist=intersect_ray_ellipsoid(miniv3d(0.0,0.0,0.0),pos0,miniv3d(0.0,0.0,0.0),r_major,r_major,r_minor);
    pos=pos0*dist;
 
    prj[0]=pos.x;

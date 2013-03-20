@@ -85,7 +85,8 @@ class minicrs
    //! transform OG/H to ECEF
    static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
                         int zone, // oblique gnomonic zone of input coordinates
-                        double xyz[3]); // output ECEF coordinates
+                        double xyz[3], // output ECEF coordinates
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void OGH2ECEF(double x,double y,double h,
                         int zone,
@@ -94,14 +95,16 @@ class minicrs
    //! transform ECEF to OG/H
    static void ECEF2OGH(double xyz[3], // input ECEF coordinates
                         double *x,double *y,double *h, // oblique gnomonic output coordinates in meters
-                        int zone); // oblique gnomonic zone of output coordinates
+                        int zone, // oblique gnomonic zone of output coordinates
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void ECEF2OGH(float xyz[3],
                         float *x,float *y,float *h,
                         int zone);
 
    //! transform ECEF to OG/H zone
-   static int ECEF2OGHZ(double xyz[3]); // input ECEF coordinates
+   static int ECEF2OGHZ(double xyz[3], // input ECEF coordinates
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    //! transform OG/H zone to ECEF center position
    static void OGHZ2ECEF(int zone, // oblique gnomonic zone
@@ -113,7 +116,8 @@ class minicrs
    //! project ECEF to ellipsoid
    static void ECEF2PRJ(double xyz[3], // input ECEF coordinates
                         double prj[3], // output ECEF coordinates
-                        double *h); // output altitude
+                        double *h, // output altitude
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m,double radius=EARTH_radius);
