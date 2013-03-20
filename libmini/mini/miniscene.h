@@ -23,6 +23,9 @@ class miniscene
    {
    public:
 
+   //! get approximate earth radius
+   double getradius();
+
    struct MINISCENE_PARAMS_STRUCT
       {
       // configurable parameters:

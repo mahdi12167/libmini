@@ -12,6 +12,10 @@
 
 #include "miniearth.h"
 
+// get approximate earth radius
+double miniearth::getradius()
+   {return(minicrs::EARTH_radius);}
+
 // default constructor
 miniearth::miniearth()
    {
@@ -217,10 +221,6 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
 // propagate parameters
 void miniearth::propagate()
    {set(EPARAMS);}
-
-// get approximate earth radius
-double miniearth::getradius()
-   {return(minicrs::EARTH_radius);}
 
 // initialize the OpenGL wrapper
 void miniearth::initOGL()
