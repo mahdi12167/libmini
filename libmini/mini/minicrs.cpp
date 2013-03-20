@@ -49,7 +49,7 @@ void minicrs::choose_ellipsoid_flat(double r_maj,double f)
 void minicrs::choose_datum(int ellipsoid,
                            double dx,double dy,double dz)
    {
-   if (ellipsoid<1 || ellipsoid>25) ellipsoid=3;
+   if (ellipsoid<1 || ellipsoid>26) ellipsoid=3;
 
    switch (ellipsoid)
       {
@@ -111,6 +111,10 @@ void minicrs::choose_datum(int ellipsoid,
       // 25=Hough1956 (Hough ellipsoid of 1956/1960)
       case 25: choose_ellipsoid_flat(6378270.0,297.0); break;
 
+      // special ellipsoids:
+      // 26=UnitSphere (ellipsoid with radius=0.5)
+      case 26: choose_ellipsoid(0.5,0.5); break;
+
       default: ERRORMSG();
       }
 
@@ -122,7 +126,7 @@ void minicrs::choose_datum(int ellipsoid,
 // datum selector
 void minicrs::choose_datum(int datum)
    {
-   if (datum<1 || datum>14) datum=3; // fallback to WGS84
+   if (datum<1 || datum>15) datum=3; // fallback to WGS84
 
    if (datum==crs_datum) return;
 
@@ -159,6 +163,10 @@ void minicrs::choose_datum(int datum)
       case 13: choose_datum(8,84.0,-22.0,209.0); break;
       // 14=SouthAmerican1969 (Mean South American Datum of 1969)
       case 14: choose_datum(19,-57.0,1.0,-41.0); break;
+
+      // special datums:
+      // 15=UnitSphere (unit sphere with radius=0.5)
+      case 15: choose_datum(26,0.0,0.0,0.0); break;
       // add custom datums here...
 
       default: ERRORMSG();
