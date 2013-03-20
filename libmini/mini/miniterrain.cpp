@@ -744,7 +744,7 @@ int miniterrain::setearth()
    n=reserve();
 
    // create the layer
-   LAYER[n]=new minilayer(NULL,NULL);
+   LAYER[n]=new minilayer(EARTH,NULL);
 
    // setup the earth layer
    LAYER[n]->setearth();
