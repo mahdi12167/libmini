@@ -428,7 +428,7 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
 double minicoord::getradius() const
    {
    if (type==MINICOORD_LINEAR) return(0.5);
-   else return(minicrs::D2R(crs_datum));
+   else return(minicrs::D2R(crs_datum,crs_zone));
    }
 
 // get euclidean distance

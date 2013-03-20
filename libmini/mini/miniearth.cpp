@@ -874,4 +874,4 @@ void miniearth::addgrid(datagrid *obj,BOOLINT sort)
 
 // get planet radius
 double miniplanet::getradius()
-   {return(minicrs::D2R(planet_datum));}
+   {return(minicrs::D2R(planet_datum,planet_zone));}

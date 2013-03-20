@@ -24,7 +24,7 @@ class minicrs
    static const double WGS84_e;       // WGS84 eccentricity
 
    //! transform datum to approximate radius
-   static double D2R(int datum);
+   static double D2R(int datum,int zone=0);
 
    //! transform Lat/Lon to UTM
    void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)

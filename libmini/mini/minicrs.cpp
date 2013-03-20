@@ -168,7 +168,7 @@ void minicrs::choose_datum(int datum)
    }
 
 // transform datum to approximate radius
-double minicrs::D2R(int datum)
+double minicrs::D2R(int datum,int zone)
    {
    switch (datum)
       {
