@@ -6,6 +6,8 @@
 
 #include "minicoord.h"
 
+minicrs minicoord::UTM,minicoord::MERC;
+
 // default constructor
 minicoord::minicoord()
    {
