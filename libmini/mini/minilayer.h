@@ -18,6 +18,8 @@
 #include "minicoord.h"
 #include "miniwarp.h"
 
+class miniearth;
+
 enum
    {
    WARPMODE_LINEAR=0, // linear mode for cartesian coordinates
@@ -198,7 +200,8 @@ class minilayer
    typedef MINILAYER_PARAMS_STRUCT MINILAYER_PARAMS;
 
    //! default constructor
-   minilayer(minicache *cache);
+   minilayer(miniearth *earth,
+             minicache *cache);
 
    //! destructor
    ~minilayer();
@@ -422,6 +425,7 @@ class minilayer
 
    private:
 
+   miniearth *EARTH;
    minicache *CACHE;
 
    miniload *TERRAIN;

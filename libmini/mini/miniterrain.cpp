@@ -13,7 +13,7 @@
 #include "miniterrain.h"
 
 // default constructor
-miniterrain::miniterrain()
+miniterrain::miniterrain(miniearth *earth)
    {
    // auto-determined parameters:
 
@@ -219,6 +219,9 @@ miniterrain::miniterrain()
    TPARAMS.brickpasses=4;       // brick render passes
    TPARAMS.brickceiling=3.0f;   // upper boundary for brick color mapping relative to elevation of first waypoint
    TPARAMS.brickscroll=0.5f;    // scroll period of striped bricks in seconds
+
+   // reference to earth
+   EARTH=earth;
 
    // create the render cache
    CACHE=new minicache;
@@ -563,7 +566,7 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    n=reserve();
 
    // create the tileset layer
-   LAYER[n]=new minilayer(CACHE);
+   LAYER[n]=new minilayer(EARTH,CACHE);
 
    // propagate parameters
    propagate();
@@ -724,9 +727,9 @@ int miniterrain::setnull()
    n=reserve();
 
    // create the layer
-   LAYER[n]=new minilayer(NULL);
+   LAYER[n]=new minilayer(NULL,NULL);
 
-   // setup the earth layer
+   // setup the null layer
    LAYER[n]->setnull();
 
    return(n);
@@ -741,7 +744,7 @@ int miniterrain::setearth()
    n=reserve();
 
    // create the layer
-   LAYER[n]=new minilayer(NULL);
+   LAYER[n]=new minilayer(NULL,NULL);
 
    // setup the earth layer
    LAYER[n]->setearth();
@@ -758,9 +761,9 @@ minilayer *miniterrain::create(minicoord &center,minicoord &north)
    n=reserve();
 
    // create the layer
-   LAYER[n]=new minilayer(NULL);
+   LAYER[n]=new minilayer(NULL,NULL);
 
-   // setup the earth layer
+   // setup the empty layer
    LAYER[n]->setempty(center,north);
 
    return(LAYER[n]);

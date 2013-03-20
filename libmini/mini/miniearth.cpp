@@ -98,7 +98,7 @@ miniearth::miniearth()
 
    // initialize state:
 
-   TERRAIN=new miniterrain();
+   TERRAIN=new miniterrain(this);
 
    SKYDOME=new minisky();
    EARTH=new miniglobe();

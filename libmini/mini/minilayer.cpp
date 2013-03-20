@@ -9,10 +9,13 @@
 
 #include "miniOGL.h"
 
+#include "miniearth.h"
+
 #include "minilayer.h"
 
 // default constructor
-minilayer::minilayer(minicache *cache)
+minilayer::minilayer(miniearth *earth,
+                     minicache *cache)
    {
    // auto-determined parameters upon load:
 
@@ -185,6 +188,7 @@ minilayer::minilayer(minicache *cache)
 
    // initialize state:
 
+   EARTH=earth;
    CACHE=cache;
 
    TERRAIN=NULL;
@@ -843,16 +847,16 @@ void minilayer::setearth()
 
    // set original data coordinates
    LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_ECEF);
-   LPARAMS.extentDAT=minicoord(miniv3d(2*minicrs::EARTH_radius,2*minicrs::EARTH_radius,2*minicrs::EARTH_radius),minicoord::MINICOORD_ECEF);
+   LPARAMS.extentDAT=minicoord(miniv3d(2*EARTH->getradius(),2*EARTH->getradius(),2*EARTH->getradius()),minicoord::MINICOORD_ECEF);
 
    // set geo-referenced coordinates
    LPARAMS.centerGEO=LPARAMS.offsetDAT;
-   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,minicrs::EARTH_radius),minicoord::MINICOORD_ECEF);
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,EARTH->getradius()),minicoord::MINICOORD_ECEF);
 
    // set extent
-   LPARAMS.extent[0]=2*minicrs::EARTH_radius;
-   LPARAMS.extent[1]=2*minicrs::EARTH_radius;
-   LPARAMS.extent[2]=2*minicrs::EARTH_radius;
+   LPARAMS.extent[0]=2*EARTH->getradius();
+   LPARAMS.extent[1]=2*EARTH->getradius();
+   LPARAMS.extent[2]=2*EARTH->getradius();
 
    // set offset
    LPARAMS.offset[0]=0.0f;
@@ -1634,7 +1638,7 @@ BOOLINT minilayer::isculled()
 
    if (!LOADED || TERRAIN==NULL) return(FALSE);
 
-   length=minicrs::EARTH_radius*PI/2.0;
+   length=EARTH->getradius()*PI/2.0;
 
    extent=dmax(LPARAMS.extent[0],LPARAMS.extent[1])/2.0;
    height=LPARAMS.extent[2]/2.0;

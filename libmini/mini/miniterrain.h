@@ -15,6 +15,8 @@
 #include "minipoint.h"
 #include "minilayer.h"
 
+class miniearth;
+
 //! aggregate class for rendering multiple geo-referenced tileset layers
 class miniterrain
    {
@@ -217,7 +219,7 @@ class miniterrain
    typedef MINITERRAIN_PARAMS_STRUCT MINITERRAIN_PARAMS;
 
    //! default constructor
-   miniterrain();
+   miniterrain(miniearth *earth);
 
    //! destructor
    ~miniterrain();
@@ -461,6 +463,7 @@ class miniterrain
 
    private:
 
+   miniearth *EARTH;
    minicache *CACHE;
 
    minilayer **LAYER;
