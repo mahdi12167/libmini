@@ -297,7 +297,9 @@ void minicrs::MERC2LL(double x,double y,
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
 void minicrs::LLH2ECEF(double lat,double lon,double h,
-                       double xyz[3])
+                       double xyz[3],
+                       double r_major,double r_minor,
+                       double e2)
    {
    double slat,clat,slon,clon; // sine and cosine values
    double r;                   // radius in prime vertical
@@ -310,11 +312,11 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
    slon=sin(lon);
    clon=cos(lon);
 
-   r=WGS84_r_major/sqrt(1.0-WGS84_e2*slat*slat);
+   r=r_major/sqrt(1.0-e2*slat*slat);
 
    xyz[0]=(r+h)*clat*clon;
    xyz[1]=(r+h)*clat*slon;
-   xyz[2]=(r*(1.0-WGS84_e2)+h)*slat;
+   xyz[2]=(r*(1.0-e2)+h)*slat;
    }
 
 void minicrs::LLH2ECEF(double lat,double lon,double h,
@@ -335,7 +337,9 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
 // longitude in [-180*60*60,180*60*60] arc-seconds
 // 1 arc-second equals about 30 meters
 void minicrs::ECEF2LLH(double xyz[3],
-                       double *lat,double *lon,double *h)
+                       double *lat,double *lon,double *h,
+                       double r_major,double r_minor,
+                       double e2,double ed2)
    {
    double sth,cth,slat,clat; // sine and cosine values
    double p,th;              // temporary variables
@@ -344,13 +348,13 @@ void minicrs::ECEF2LLH(double xyz[3],
    p=sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]);
    if (p==0.0) p=1.0;
 
-   th=atan(xyz[2]*WGS84_r_major/(p*WGS84_r_minor));
+   th=atan(xyz[2]*r_major/(p*r_minor));
 
    sth=sin(th);
    cth=cos(th);
 
    // transformed latitude
-   *lat=atan((xyz[2]+WGS84_ed2*WGS84_r_minor*sth*sth*sth)/(p-WGS84_e2*WGS84_r_major*cth*cth*cth));
+   *lat=atan((xyz[2]+ed2*r_minor*sth*sth*sth)/(p-e2*r_major*cth*cth*cth));
 
    // transformed longitude
    *lon=atan2(xyz[1],xyz[0]);
@@ -358,7 +362,7 @@ void minicrs::ECEF2LLH(double xyz[3],
    slat=sin(*lat);
    clat=cos(*lat);
 
-   r=WGS84_r_major/sqrt(1.0-WGS84_e2*slat*slat);
+   r=r_major/sqrt(1.0-e2*slat*slat);
 
    // transformed height
    if (clat>0.0) *h=p/clat-r;

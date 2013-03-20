@@ -66,14 +66,18 @@ class minicrs
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
-                        double xyz[3]); // output ECEF coordinates
+                        double xyz[3], // output ECEF coordinates
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor, // semi-major and minor axis
+                        double e2=WGS84_e2); // eccentricity squared
 
    static void LLH2ECEF(double lat,double lon,double h,
                         float xyz[3]);
 
    //! transform ECEF to Lat/Lon/H
    static void ECEF2LLH(double xyz[3], // input ECEF coordinates
-                        double *lat,double *lon,double *h); // geographic output coordinates in arc-seconds (WGS84 datum)
+                        double *lat,double *lon,double *h, // geographic output coordinates in arc-seconds (WGS84 datum)
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor, // semi-major and minor axis
+                        double e2=WGS84_e2,double ed2=WGS84_ed2); // eccentricity squared and derived
 
    static void ECEF2LLH(float xyz[3],
                         float *lat,float *lon,float *h);
