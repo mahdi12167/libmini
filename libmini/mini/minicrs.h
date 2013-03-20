@@ -111,7 +111,7 @@ class minicrs
                          miniv3d &pos, // ECEF center position of zone
                          miniv3d &right, // right vector
                          miniv3d &up, // up vector
-                         double radius=EARTH_radius);
+                         double radius=WGS84_r_major);
 
    //! project ECEF to ellipsoid
    static void ECEF2PRJ(double xyz[3], // input ECEF coordinates
