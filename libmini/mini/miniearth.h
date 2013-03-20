@@ -322,9 +322,13 @@ class miniplanet: public miniearth
    virtual double getradius();
 
    //! default constructor
-   miniplanet(minicoord::MINICOORD_DATUM datum=minicoord::MINICOORD_DATUM_WGS84)
+   miniplanet(minicoord::MINICOORD_DATUM datum=minicoord::MINICOORD_DATUM_WGS84,
+              int zone=0)
       : miniearth()
-      {planet_datum=datum;}
+      {
+      planet_datum=datum;
+      planet_zone=zone;
+      }
 
    //! destructor
    virtual ~miniplanet() {}
@@ -332,6 +336,7 @@ class miniplanet: public miniearth
    protected:
 
    minicoord::MINICOORD_DATUM planet_datum;
+   int planet_zone;
    };
 
 #endif
