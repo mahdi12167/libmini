@@ -107,7 +107,8 @@ class minicrs
    static void OGHZ2ECEF(int zone, // oblique gnomonic zone
                          miniv3d &pos, // ECEF center position of zone
                          miniv3d &right, // right vector
-                         miniv3d &up); // up vector
+                         miniv3d &up, // up vector
+                         double radius=EARTH_radius);
 
    //! project ECEF to ellipsoid
    static void ECEF2PRJ(double xyz[3], // input ECEF coordinates
@@ -115,8 +116,8 @@ class minicrs
                         double *h); // output altitude
 
    //! 1 arc-second equals about 30 meters
-   static void arcsec2meter(double lat,double *as2m);
-   static void arcsec2meter(double lat,float *as2m);
+   static void arcsec2meter(double lat,double *as2m,double radius=EARTH_radius);
+   static void arcsec2meter(double lat,float *as2m,double radius=EARTH_radius);
 
    protected:
 

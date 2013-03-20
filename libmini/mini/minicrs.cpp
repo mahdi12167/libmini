@@ -401,19 +401,20 @@ void minicrs::ECEF2LLH(float xyz[3],
 void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
                         miniv3d &pos, // ECEF center position of zone
                         miniv3d &right, // right vector
-                        miniv3d &up) // up vector
+                        miniv3d &up, // up vector
+                        double radius)
    {
    double alpha,beta;
 
    if (zone>=1 && zone<=6)
       switch (zone)
          {
-         case 1: pos=miniv3d(0.0,0.0,EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
-         case 2: pos=miniv3d(EARTH_radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
-         case 3: pos=miniv3d(-EARTH_radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
-         case 4: pos=miniv3d(0.0,EARTH_radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
-         case 5: pos=miniv3d(0.0,-EARTH_radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
-         case 6: pos=miniv3d(0.0,0.0,-EARTH_radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
+         case 1: pos=miniv3d(0.0,0.0,radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(-1.0,0.0,0.0); break; // north pole
+         case 2: pos=miniv3d(radius,0.0,0.0); right=miniv3d(0.0,1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // greenwich
+         case 3: pos=miniv3d(-radius,0.0,0.0); right=miniv3d(0.0,-1.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // honolulu
+         case 4: pos=miniv3d(0.0,radius,0.0); right=miniv3d(-1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // tokyo
+         case 5: pos=miniv3d(0.0,-radius,0.0); right=miniv3d(1.0,0.0,0.0); up=miniv3d(0.0,0.0,1.0); break; // new york
+         case 6: pos=miniv3d(0.0,0.0,-radius); right=miniv3d(0.0,1.0,0.0); up=miniv3d(1.0,0.0,0.0); break; // south pole
          default: ERRORMSG();
          }
    else if (zone<=-1 && zone>=-360*181)
@@ -423,7 +424,7 @@ void minicrs::OGHZ2ECEF(int zone, // oblique gnomonic zone
       alpha=(zone/181)*2*PI/360;
       beta=(zone%181-90)*PI/180;
 
-      pos=EARTH_radius*miniv3d(cos(alpha)*cos(beta),sin(alpha)*cos(beta),sin(beta));
+      pos=radius*miniv3d(cos(alpha)*cos(beta),sin(alpha)*cos(beta),sin(beta));
       right=miniv3d(-sin(alpha),cos(alpha),0.0);
       up=miniv3d(-cos(alpha)*sin(beta),-sin(alpha)*sin(beta),cos(beta));
       }
@@ -627,19 +628,21 @@ void minicrs::molodensky(int src,int dst,double *lat,double *lon)
 // 1 arc-second equals about 30 meters
 // 1 arc-minute equals about 1.8 kilometers
 // 1 arc-degree equals about 111 kilometers (at the equator)
-void minicrs::arcsec2meter(double lat,double *as2m)
+void minicrs::arcsec2meter(double lat,double *as2m,
+                           double radius)
    {
    if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
 
-   as2m[1]=2*PI*EARTH_radius/(360*60*60);
+   as2m[1]=2*PI*radius/(360*60*60);
    as2m[0]=as2m[1]*cos(lat*2*PI/(360*60*60));
    }
 
-void minicrs::arcsec2meter(double lat,float *as2m)
+void minicrs::arcsec2meter(double lat,float *as2m,
+                           double radius)
    {
    if (lat<-90*60*60 || lat>90*60*60) ERRORMSG();
 
-   as2m[1]=(float)(2*PI*EARTH_radius/(360*60*60));
+   as2m[1]=(float)(2*PI*radius/(360*60*60));
    as2m[0]=(float)(as2m[1]*cos(lat*2*PI/(360*60*60)));
    }
 
