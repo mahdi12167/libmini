@@ -113,6 +113,8 @@ void mininode_group::update_dirty()
 
 // mininode_culling:
 
+double mininode_culling::earth_radius=0.0;
+
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
@@ -149,6 +151,8 @@ void mininode_culling::traverse_init()
    miniv3d eye=camera->get_eye().vec;
    miniv3d dir=camera->get_dir();
    double cone=camera->get_cone();
+
+   earth_radius=camera->get_earth_radius();
 
    cone_stack.push(minicone(eye,dir,cone));
    }
@@ -330,7 +334,7 @@ void mininode_ecef::traverse_pre()
    mininode_transform::traverse_pre();
 
    // cull on backside of earth
-   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),minicrs::EARTH_radius);
+   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),earth_radius);
    }
 
 // mininode_coord:
@@ -383,7 +387,7 @@ void mininode_coord::traverse_pre()
       }
 
    // cull on backside of earth
-   is_visible=!is_occluded(miniv3d(0.0,0.0,-minicrs::EARTH_radius),minicrs::EARTH_radius);
+   is_visible=!is_occluded(miniv3d(0.0,0.0,-earth_radius),earth_radius);
    }
 
 void mininode_coord::traverse_post()

@@ -12,8 +12,6 @@
 
 #include "miniearth.h"
 
-const double miniearth::EARTH_radius=6370997.0; // mean earth radius
-
 // default constructor
 miniearth::miniearth()
    {
@@ -219,6 +217,10 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
 // propagate parameters
 void miniearth::propagate()
    {set(EPARAMS);}
+
+// get approximate earth radius
+double miniearth::getradius()
+   {return(minicrs::EARTH_radius);}
 
 // initialize the OpenGL wrapper
 void miniearth::initOGL()
@@ -869,3 +871,7 @@ void miniearth::addgrid(datagrid *obj,BOOLINT sort)
    DATAGRID=obj;
    SORT=sort;
    }
+
+// get planet radius
+double miniplanet::getradius()
+   {return(minicrs::D2R(planet_datum));}

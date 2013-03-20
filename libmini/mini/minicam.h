@@ -92,6 +92,9 @@ class minicam
    miniv3d unproject_viewport(int vx,int vy,
                               int vwidth,int vheight);
 
+   double get_earth_radius()
+      {return(EARTH->getradius());}
+
    void get_ecef_matrix(miniv4d matrix[3])
       {EARTH->get_ecef_matrix(matrix);}
 

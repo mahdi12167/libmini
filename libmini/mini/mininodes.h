@@ -143,6 +143,8 @@ class mininode_culling: public mininode_group
 
    protected:
 
+   static double earth_radius;
+
    static minidyna<minicone> cone_stack;
 
    BOOLINT is_visible;
@@ -2064,7 +2066,7 @@ class mininode_cam: public mininode_root, public minicam
    virtual void get_bsphere(miniv3d &center,double &radius)
       {
       center=miniv3d(0,0,0);
-      radius=minicrs::EARTH_radius;
+      radius=get_earth_radius();
       }
 
    };

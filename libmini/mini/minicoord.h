@@ -112,6 +112,9 @@ class minicoord
    //! normalize coordinates asymmetrically
    minicoord &asymm() {return(this->normalize(FALSE));}
 
+   //! get approximate radius of datum
+   double getradius() const;
+
    //! get euclidean distance
    double getdist(const minicoord &v) const;
 

@@ -424,6 +424,13 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
    return(*this);
    }
 
+// get approximate radius of datum
+double minicoord::getradius() const
+   {
+   if (type==MINICOORD_LINEAR) return(0.5);
+   else return(minicrs::D2R(crs_datum));
+   }
+
 // get euclidean distance
 double minicoord::getdist(const minicoord &v) const
    {
@@ -485,7 +492,7 @@ double minicoord::getorthodist(const minicoord &v) const
          p=0.5*(p1+p2);
          len=p.vec.getlength();
 
-         if (len>0.0) p*=minicrs::EARTH_radius/len;
+         if (len>0.0) p*=p.getradius()/len;
          else
             if (p.vec.x>p.vec.y)
                if (p.vec.x>p.vec.z)

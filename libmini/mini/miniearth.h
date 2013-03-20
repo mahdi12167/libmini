@@ -10,6 +10,8 @@
 #include "miniv3d.h"
 #include "miniv4d.h"
 
+#include "minicoord.h"
+
 #include "minidyna.h"
 
 #include "miniterrain.h"
@@ -19,12 +21,13 @@
 
 #include "datagrid.h"
 
-//! base class for viewing tilesets
+//! base class for viewing the earth
 class miniearth
    {
    public:
 
-   static const double EARTH_radius; // radius of the earth
+   //! get approximate earth radius
+   virtual double getradius();
 
    struct MINIEARTH_PARAMS_STRUCT
       {
@@ -112,7 +115,7 @@ class miniearth
    miniearth();
 
    //! destructor
-   ~miniearth();
+   virtual ~miniearth();
 
    //! get parameters
    void get(MINIEARTH_PARAMS &eparams);
@@ -308,6 +311,27 @@ class miniearth
    void grabbuffers();
    void drawbuffers();
    void freebuffers();
+   };
+
+//! base class for viewing planets
+class miniplanet: public miniearth
+   {
+   public:
+
+   //! get planet radius
+   virtual double getradius();
+
+   //! default constructor
+   miniplanet(minicoord::MINICOORD_DATUM datum=minicoord::MINICOORD_DATUM_WGS84)
+      : miniearth()
+      {planet_datum=datum;}
+
+   //! destructor
+   virtual ~miniplanet() {}
+
+   protected:
+
+   minicoord::MINICOORD_DATUM planet_datum;
    };
 
 #endif

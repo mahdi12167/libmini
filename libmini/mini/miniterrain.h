@@ -15,7 +15,7 @@
 #include "minipoint.h"
 #include "minilayer.h"
 
-//! aggregate class for rendering multiple layers
+//! aggregate class for rendering multiple geo-referenced tileset layers
 class miniterrain
    {
    public:
