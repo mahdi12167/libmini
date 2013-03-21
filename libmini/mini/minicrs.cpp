@@ -175,7 +175,7 @@ void minicrs::choose_datum(int datum)
    crs_datum=datum;
    }
 
-// transform datum to approximate radius
+// map datum to approximate radius
 double minicrs::D2R(int datum,int zone)
    {
    switch (datum)
@@ -560,7 +560,27 @@ void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
    *h=(pos0-pos)*nrm;
    }
 
-// Molodensky transformation
+// datum to datum scale factor (uniform transformation)
+double minicrs::D2D(int datum0,int zone0, // source datum
+                    int datum1,int zone1) // destination datum
+   {
+   double r0,r1;
+   double scale;
+
+   scale=1.0;
+
+   if (datum0!=datum1 || zone0!=zone1)
+      {
+      r0=minicrs::D2R(datum0,zone0);
+      r1=minicrs::D2R(datum1,zone1);
+
+      if (r0!=r1) scale=r1/r0;
+      }
+
+   return(scale);
+   }
+
+// Molodensky transformation based on ellipsoid change
 void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
                          double dr_maj,double df,           // ellipsoid change
@@ -598,7 +618,7 @@ void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coord
    *h+=dh;
    }
 
-// Molodensky transformation between two datums
+// Molodensky transformation between two datums (non-uniform transformation)
 void minicrs::molodensky(int src,int dst,double *lat,double *lon)
    {
    double r_maj,r_min; // src semi-major and minor radius

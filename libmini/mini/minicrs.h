@@ -23,7 +23,7 @@ class minicrs
    static const double WGS84_ed2;     // WGS84 eccentricity derived
    static const double WGS84_e;       // WGS84 eccentricity
 
-   //! transform datum to approximate radius
+   //! map datum to approximate radius
    static double D2R(int datum,int zone=0);
 
    //! transform Lat/Lon to UTM
@@ -119,25 +119,29 @@ class minicrs
                         double *h, // output altitude
                         double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
+   //! datum to datum scale factor (uniform transformation)
+   double D2D(int datum0,int zone0, // source datum
+              int datum1,int zone1); // destination datum
+
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m,double radius=EARTH_radius);
    static void arcsec2meter(double lat,float *as2m,double radius=EARTH_radius);
 
    protected:
 
-   // UTM conversion functions
+   //! UTM conversion functions
    void initUTM(int zone,double ratio);
    void calcLL2UTM(double lat,double lon,double *x,double *y);
    void calcUTM2LL(double x,double y,double *lat,double *lon);
 
-   // Mercator conversion functions
+   //! Mercator conversion functions
    void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center);
    void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center);
 
-   // Molodensky transformation between two datums
+   //! Molodensky transformation between two datums (non-uniform transformation)
    void molodensky(int src,int dst,double *lat,double *lon);
 
-   // Molodensky transformation based on ellipsoid change
+   //! Molodensky transformation based on ellipsoid change
    void molodensky(double *lat,double *lon,double *h, // transformed coordinates
                    double r_maj,double f,             // semi-major axis and flattening
                    double dr_maj,double df,           // ellipsoid change
