@@ -115,6 +115,46 @@ void minicoord::set_llh(double lat,double lon,double height)
    crs_datum=MINICOORD_DATUM_WGS84;
    }
 
+// set polar coordinates on unit sphere
+void minicoord::set_polar(double alpha,double beta,double height,double t)
+   {
+   vec=miniv4d(3600*alpha,3600*beta,height,t);
+   type=minicoord::MINICOORD_LLH;
+
+   crs_zone=0;
+   crs_datum=MINICOORD_DATUM_UNIT_SPHERE;
+   }
+
+// datum to datum scaling
+void minicoord::scale2(MINICOORD_DATUM datum,int zone)
+   {
+   double scale;
+
+   scale=minicrs::D2D(crs_datum,crs_zone,
+                      datum,zone);
+
+   if (scale!=1.0)
+      switch (type)
+         {
+         case MINICOORD_LLH:
+            vec.z*=scale;
+            crs_datum=datum;
+            crs_zone=zone;
+            break;
+         case MINICOORD_MERC:
+         case MINICOORD_UTM:
+         case MINICOORD_OGH:
+         case MINICOORD_ECEF:
+            vec.x*=scale;
+            vec.y*=scale;
+            vec.z*=scale;
+            crs_datum=datum;
+            crs_zone=zone;
+            break;
+         default: ERRORMSG();
+         }
+   }
+
 // convert from 1 coordinate system 2 another
 void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
    {
@@ -128,7 +168,9 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
       case MINICOORD_LLH:
          switch (t)
             {
-            case MINICOORD_LLH: break;
+            case MINICOORD_LLH:
+               //!! correct2(datum,zone);
+               break;
             case MINICOORD_MERC:
                MERC.LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;

@@ -84,6 +84,9 @@ class minicoord
    //! set lat/lon/height in degrees/meters
    void set_llh(double lat,double lon,double height=0.0);
 
+   //! set polar coordinates on unit sphere
+   void set_polar(double alpha,double beta,double height=0.0,double t=0.0);
+
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
 
@@ -162,9 +165,14 @@ class minicoord
    int crs_zone; // actual crs zone
    MINICOORD_DATUM crs_datum; // actual crs datum
 
+   protected:
+
+   //! datum to datum scaling
+   void scale2(MINICOORD_DATUM datum,int zone);
+
    private:
 
-   static minicrs UTM,MERC;
+   static minicrs MERC,UTM;
    };
 
 // associated arithmetic operator +=

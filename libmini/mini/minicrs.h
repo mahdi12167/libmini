@@ -120,8 +120,8 @@ class minicrs
                         double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    //! datum to datum scale factor (uniform transformation)
-   double D2D(int datum0,int zone0, // source datum
-              int datum1,int zone1); // destination datum
+   static double D2D(int datum0,int zone0, // source datum
+                     int datum1,int zone1); // destination datum
 
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m,double radius=EARTH_radius);
