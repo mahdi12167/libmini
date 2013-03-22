@@ -11,8 +11,8 @@ const double minicrs::EARTH_radius=6370997.0; // mean earth radius
 const double minicrs::WGS84_r_major=6378137.0; // WGS84 semi-major axis
 const double minicrs::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
 const double minicrs::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
-const double minicrs::WGS84_e2=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 eccentricity squared
-const double minicrs::WGS84_ed2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 eccentricity derived
+const double minicrs::WGS84_es=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 first eccentricity squared
+const double minicrs::WGS84_es2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 second eccentricity squared
 const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
 
 // ctor
@@ -264,8 +264,8 @@ double minicrs::UTMZ2L(int zone)
 void minicrs::LL2MERC(double lat,double lon,
                       double *x,double *y)
    {
-   choose_datum(3);
-   calcLL2MERC(lat,lon,x,y,0.0,0.0);
+   calcLL2MERC(lat,lon,x,y,
+	       0.0,0.0,WGS84_r_major,WGS84_r_minor);
    }
 
 void minicrs::LL2MERC(double lat,double lon,
@@ -284,8 +284,8 @@ void minicrs::LL2MERC(double lat,double lon,
 void minicrs::MERC2LL(double x,double y,
                       double *lat,double *lon)
    {
-   choose_datum(3);
-   calcMERC2LL(x,y,lat,lon,0.0,0.0);
+   calcMERC2LL(x,y,lat,lon,
+	       0.0,0.0,WGS84_r_major,WGS84_r_minor);
    }
 
 void minicrs::MERC2LL(double x,double y,
@@ -306,9 +306,10 @@ void minicrs::MERC2LL(double x,double y,
 // 1 arc-second equals about 30 meters
 void minicrs::LLH2ECEF(double lat,double lon,double h,
                        double xyz[3],
-                       double r_major,double r_minor,
-                       double e2)
+                       double r_major,double r_minor)
    {
+   const double e2=1.0-dsqr(r_minor/r_major); // eccentricity squared
+
    double slat,clat,slon,clon; // sine and cosine values
    double r;                   // radius in prime vertical
 
@@ -320,11 +321,11 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
    slon=sin(lon);
    clon=cos(lon);
 
-   r=r_major/sqrt(1.0-e2*slat*slat);
+   r=r_major/sqrt(1.0-es*slat*slat);
 
    xyz[0]=(r+h)*clat*clon;
    xyz[1]=(r+h)*clat*slon;
-   xyz[2]=(r*(1.0-e2)+h)*slat;
+   xyz[2]=(r*(1.0-es)+h)*slat;
    }
 
 void minicrs::LLH2ECEF(double lat,double lon,double h,
@@ -346,9 +347,11 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
 // 1 arc-second equals about 30 meters
 void minicrs::ECEF2LLH(double xyz[3],
                        double *lat,double *lon,double *h,
-                       double r_major,double r_minor,
-                       double e2,double ed2)
+                       double r_major,double r_minor)
    {
+   const double es=1.0-dsqr(r_minor/r_major); // first eccentricity squared
+   const double es2=dsqr(r_major/r_minor)-1.0; // second eccentricity squared
+
    double sth,cth,slat,clat; // sine and cosine values
    double p,th;              // temporary variables
    double r;                 // radius in prime vertical
@@ -362,7 +365,7 @@ void minicrs::ECEF2LLH(double xyz[3],
    cth=cos(th);
 
    // transformed latitude
-   *lat=atan((xyz[2]+ed2*r_minor*sth*sth*sth)/(p-e2*r_major*cth*cth*cth));
+   *lat=atan((xyz[2]+es2*r_minor*sth*sth*sth)/(p-es*r_major*cth*cth*cth));
 
    // transformed longitude
    *lon=atan2(xyz[1],xyz[0]);
@@ -370,7 +373,7 @@ void minicrs::ECEF2LLH(double xyz[3],
    slat=sin(*lat);
    clat=cos(*lat);
 
-   r=r_major/sqrt(1.0-e2*slat*slat);
+   r=r_major/sqrt(1.0-es*slat*slat);
 
    // transformed height
    if (clat>0.0) *h=p/clat-r;
@@ -692,16 +695,18 @@ void minicrs::initUTM(int zone, // zone number
 
    // eccentricity squared
    es=1.0-dsqr(ratio);
+
+   // eccentricity
    e=sqrt(es);
 
-   // eccentricity taylor constants
+   // eccentricity squared parameter
+   esp=es/(1.0-es);
+
+   // eccentricity squared taylor constants
    e0=1.0-0.25*es*(1.0+0.0625*es*(3.0+1.25*es));
    e1=0.375*es*(1.0+0.25*es*(1.0+0.46875*es));
    e2=0.05859375*es*es*(1.0+0.75*es);
    e3=35.0/3072.0*es*es*es;
-
-   // inverse eccentricity squared
-   esp=es/(1.0-es);
 
    // crs parameters
    crs_zone=zone;
@@ -812,11 +817,14 @@ void minicrs::calcUTM2LL(double x,double y,       // input UTM coordinates (East
    }
 
 // calculate the Mercator equations
-void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center)
+void minicrs::calcLL2MERC(double lat,double lon,
+			  double *x,double *y,
+			  double lat_center,double lon_center,
+			  doube r_major,double r_minor)
    {
-   double e;  // eccentricity
-   double es; // eccentricity squared
-   double eh; // eccentricity half
+   const double es=1.0-dsqr(r_minor/r_major); // eccentricity squared
+   const double e=sqrt(es);                   // eccentricity
+   const double eh=0.5*e;                     // eccentricity half
 
    double phi;
    double phi_center;
@@ -826,10 +834,6 @@ void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
    double ts;
 
    static const double epsln=1E-5;
-
-   es=1.0-dsqr(r_minor/r_major);
-   e=sqrt(es);
-   eh=0.5*e;
 
    phi=lat*2*PI/(360*60*60);
    phi_center=lat_center*2*PI/(360*60*60);
@@ -850,13 +854,16 @@ void minicrs::calcLL2MERC(double lat,double lon,double *x,double *y,double lat_c
    }
 
 // calculate the inverse Mercator equations
-void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center)
+void minicrs::calcMERC2LL(double x,double y,
+			  double *lat,double *lon,
+			  double lat_center,double lon_center,
+			  double r_major,double r_minor)
    {
-   int i;
+   const double es=1.0-dsqr(r_minor/r_major); // eccentricity squared
+   const double e=sqrt(es);                   // eccentricity
+   const double eh=0.5*e;                     // eccentricity half
 
-   double e;  // eccentricity
-   double es; // eccentricity squared
-   double eh; // eccentricity half
+   int i;
 
    double phi,dphi;
    double phi_center;
@@ -867,10 +874,6 @@ void minicrs::calcMERC2LL(double x,double y,double *lat,double *lon,double lat_c
 
    static const int maxiter=10;
    static const double maxerror=1E-20;
-
-   es=1.0-dsqr(r_minor/r_major);
-   e=sqrt(es);
-   eh=0.5*e;
 
    phi_center=lat_center*2*PI/(360*60*60);
 

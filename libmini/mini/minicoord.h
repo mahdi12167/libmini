@@ -172,7 +172,7 @@ class minicoord
 
    private:
 
-   static minicrs MERC,UTM;
+   static minicrs UTM;
    };
 
 // associated arithmetic operator +=
