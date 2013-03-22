@@ -194,7 +194,9 @@ void minicrs::LL2UTM(double lat,double lon,
                      int zone,int datum,
                      double *x,double *y)
    {
-   molodensky(3,datum,&lat,&lon);
+   double h=0.0;
+
+   molodensky(3,datum,&lat,&lon,&h);
 
    choose_datum(datum);
 
@@ -223,12 +225,14 @@ void minicrs::UTM2LL(double x,double y,
                      int zone,int datum,
                      double *lat,double *lon)
    {
+   double h=0.0;
+
    choose_datum(datum);
 
    initUTM(zone,r_minor/r_major);
    calcUTM2LL(x,y,lat,lon);
 
-   molodensky(datum,3,lat,lon);
+   molodensky(datum,3,lat,lon,&h);
    }
 
 void minicrs::UTM2LL(double x,double y,
@@ -589,12 +593,11 @@ void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coord
                          double dr_maj,double df,           // ellipsoid change
                          double dx,double dy,double dz)     // origin change
    {
-   double es;                  // eccentricity squared
+   const double es=2*f-f*f; // eccentricity squared
+
    double slat,clat,slon,clon; // sine and cosine values
    double ssqlat,asp,rn,rm;    // temporary variables
    double dlat,dlon,dh;        // datum shift
-
-   es=2*f-f*f;
 
    slat=sin(*lat*2*PI/(360*60*60));
    clat=cos(*lat*2*PI/(360*60*60));
@@ -622,12 +625,11 @@ void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coord
    }
 
 // Molodensky transformation between two datums (non-uniform transformation)
-void minicrs::molodensky(int src,int dst,double *lat,double *lon)
+void minicrs::molodensky(int src,int dst,double *lat,double *lon,double *h)
    {
    double r_maj,r_min; // src semi-major and minor radius
    double dx,dy,dz;    // src origin shift
    double fs,fd;       // src and dst flattening
-   double h;           // transformed height
 
    if (src==dst) return;
 
@@ -649,8 +651,7 @@ void minicrs::molodensky(int src,int dst,double *lat,double *lon)
    fs=(r_maj-r_min)/r_maj;
    fd=(r_major-r_minor)/r_major;
 
-   h=0.0;
-   molodensky(lat,lon,&h,r_maj,fs,r_major-r_maj,fd-fs,dx-o_dx,dy-o_dy,dz-o_dz);
+   molodensky(lat,lon,h,r_maj,fs,r_major-r_maj,fd-fs,dx-o_dx,dy-o_dy,dz-o_dz);
    }
 
 // 1 arc-second equals about 30 meters
@@ -818,9 +819,9 @@ void minicrs::calcUTM2LL(double x,double y,       // input UTM coordinates (East
 
 // calculate the Mercator equations
 void minicrs::calcLL2MERC(double lat,double lon,
-			  double *x,double *y,
-			  double lat_center,double lon_center,
-			  doube r_major,double r_minor)
+                          double *x,double *y,
+                          double lat_center,double lon_center,
+                          double r_major,double r_minor)
    {
    const double es=1.0-dsqr(r_minor/r_major); // eccentricity squared
    const double e=sqrt(es);                   // eccentricity
@@ -855,9 +856,9 @@ void minicrs::calcLL2MERC(double lat,double lon,
 
 // calculate the inverse Mercator equations
 void minicrs::calcMERC2LL(double x,double y,
-			  double *lat,double *lon,
-			  double lat_center,double lon_center,
-			  double r_major,double r_minor)
+                          double *lat,double *lon,
+                          double lat_center,double lon_center,
+                          double r_major,double r_minor)
    {
    const double es=1.0-dsqr(r_minor/r_major); // eccentricity squared
    const double e=sqrt(es);                   // eccentricity
