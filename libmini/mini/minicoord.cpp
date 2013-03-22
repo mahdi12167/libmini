@@ -130,6 +130,8 @@ void minicoord::scale2(MINICOORD_DATUM datum,int zone)
    {
    double scale;
 
+   if (datum==MINICOORD_DATUM_NONE) datum=MINICOORD_DATUM_WGS84;
+
    scale=minicrs::D2D(crs_datum,crs_zone,
                       datum,zone);
 
@@ -160,6 +162,8 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
    {
    double xyz[3];
 
+   scale2(datum,zone);
+
    switch (type)
       {
       case MINICOORD_LINEAR:
@@ -168,9 +172,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
       case MINICOORD_LLH:
          switch (t)
             {
-            case MINICOORD_LLH:
-               //!! scale2(datum,zone);
-               break;
+            case MINICOORD_LLH: break;
             case MINICOORD_MERC:
 	       minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
