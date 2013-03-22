@@ -6,7 +6,7 @@
 
 #include "minicoord.h"
 
-minicrs minicoord::UTM,minicoord::MERC;
+minicrs minicoord::UTM;
 
 // default constructor
 minicoord::minicoord()
@@ -169,7 +169,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum)
          switch (t)
             {
             case MINICOORD_LLH:
-               //!! correct2(datum,zone);
+               //!! scale2(datum,zone);
                break;
             case MINICOORD_MERC:
 	       minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);

@@ -13,7 +13,7 @@ const double minicrs::WGS84_r_minor=6356752.314245; // WGS84 semi-minor axis
 const double minicrs::WGS84_f=1.0-WGS84_r_minor/WGS84_r_major; // WGS84 flattening
 const double minicrs::WGS84_es=2*WGS84_f-WGS84_f*WGS84_f; // WGS84 first eccentricity squared
 const double minicrs::WGS84_es2=WGS84_r_major*WGS84_r_major/(WGS84_r_minor*WGS84_r_minor)-1.0; // WGS84 second eccentricity squared
-const double minicrs::WGS84_e=sqrt(WGS84_e2); // WGS84 eccentricity
+const double minicrs::WGS84_e=sqrt(WGS84_es); // WGS84 eccentricity
 
 // ctor
 minicrs::minicrs()
@@ -312,7 +312,7 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
                        double xyz[3],
                        double r_major,double r_minor)
    {
-   const double e2=1.0-dsqr(r_minor/r_major); // eccentricity squared
+   const double es=1.0-dsqr(r_minor/r_major); // eccentricity squared
 
    double slat,clat,slon,clon; // sine and cosine values
    double r;                   // radius in prime vertical
