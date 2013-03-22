@@ -190,7 +190,7 @@ void Camera::moveCameraForward(float delta)
    double dist0 = get_hitdist(get_eye(), dir);
 
    if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(get_earth_radius()+get_dist(), 2.0)-pow(get_earth_radius(), 2.0));
+   if (dist == 0.0) dist = sqrt(pow(get_radius()+get_dist(), 2.0)-pow(get_radius(), 2.0));
    if (dist < mindist) dist = mindist;
 
    if (m_Shift || m_Control)
@@ -218,7 +218,7 @@ void Camera::moveCameraSideward(float delta)
    double dist0 = get_hitdist(get_eye(), dir);
 
    if (dist0 < dist) dist = dist0;
-   if (dist == 0.0) dist = sqrt(pow(get_earth_radius()+get_dist(), 2.0)-pow(get_earth_radius(), 2.0));
+   if (dist == 0.0) dist = sqrt(pow(get_radius()+get_dist(), 2.0)-pow(get_radius(), 2.0));
    if (dist < mindist) dist = mindist;
 
    move_right(-delta * dist);
