@@ -18,13 +18,14 @@ class miniglobe
       SHAPE_MERCURY=1,
       SHAPE_VENUS=2,
       SHAPE_EARTH=3,
-      SHAPE_JUPITER=4,
-      SHAPE_SATURN=5,
-      SHAPE_URANUS=6,
-      SHAPE_NEPTUNE=7,
-      SHAPE_CERES=8,
-      SHAPE_PLUTO=9,
-      SHAPE_ERIS=10,
+      SHAPE_MARS=4,
+      SHAPE_JUPITER=5,
+      SHAPE_SATURN=6,
+      SHAPE_URANUS=7,
+      SHAPE_NEPTUNE=8,
+      SHAPE_CERES=9,
+      SHAPE_PLUTO=10,
+      SHAPE_ERIS=11,
       SHAPE_MOON=42
       }
    SHAPE_ENUM;

@@ -11,10 +11,24 @@ minicrs minicoord::UTM;
 // get approximate radius of orb
 double minicoord::getradius(int orb)
    {
+   if (orb<0) return(-1E5*orb);
+
    switch (orb)
       {
       case MINICOORD_UNIT_SPHERE: return(0.5);
+      case MINICOORD_ORB_SUN: return(getradius(-6955));
+      case MINICOORD_ORB_MERCURY: return(getradius(-24));
+      case MINICOORD_ORB_VENUS: return(getradius(-61));
       case MINICOORD_ORB_EARTH: return(minicrs::EARTH_radius);
+      case MINICOORD_ORB_MARS: return(getradius(-34));
+      case MINICOORD_ORB_JUPITER: return(getradius(-715));
+      case MINICOORD_ORB_SATURN: return(getradius(-603));
+      case MINICOORD_ORB_URANUS: return(getradius(-256));
+      case MINICOORD_ORB_NEPTUNE: return(getradius(-248));
+      case MINICOORD_ORB_CERES: return(getradius(-5));
+      case MINICOORD_ORB_PLUTO: return(getradius(-12));
+      case MINICOORD_ORB_ERIS: return(getradius(-12));
+      case MINICOORD_ORB_MOON: return(getradius(-17));
       default: return(minicrs::EARTH_radius);
       }
    }
