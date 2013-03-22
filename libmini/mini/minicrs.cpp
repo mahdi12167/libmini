@@ -349,7 +349,7 @@ void minicrs::ECEF2LLH(double xyz[3],
                        double *lat,double *lon,double *h,
                        double r_major,double r_minor)
    {
-   const double es=1.0-dsqr(r_minor/r_major); // first eccentricity squared
+   const double es=1.0-dsqr(r_minor/r_major);  // first eccentricity squared
    const double es2=dsqr(r_major/r_minor)-1.0; // second eccentricity squared
 
    double sth,cth,slat,clat; // sine and cosine values
