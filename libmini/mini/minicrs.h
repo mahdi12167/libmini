@@ -137,7 +137,7 @@ class minicrs
    static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center,double r_major,double_r_minor);
 
    //! Molodensky transformation between two datums (non-uniform transformation)
-   void molodensky(int src,int dst,double *lat,double *lon);
+   void molodensky(int src,int dst,double *lat,double *lon,double *h);
 
    //! Molodensky transformation based on ellipsoid change
    void molodensky(double *lat,double *lon,double *h, // transformed coordinates
