@@ -41,7 +41,7 @@ minicoord::minicoord()
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_EARTH;
    }
 
 // copy constructor
@@ -64,7 +64,7 @@ minicoord::minicoord(const miniv3d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_EARTH;
    }
 
 minicoord::minicoord(const miniv3d &v,const MINICOORD t)
@@ -94,7 +94,7 @@ minicoord::minicoord(const miniv4d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_EARTH;
    }
 
 minicoord::minicoord(const miniv4d &v,const MINICOORD t)
@@ -704,7 +704,7 @@ ministring minicoord::getorb(int o)
    {
    switch (o)
       {
-      case MINICOORD_UNIT_SPHERE: return("Sphere");
+      case MINICOORD_UNIT_SPHERE: return("Unit-Sphere");
       case MINICOORD_ORB_SUN: return("Sun");
       case MINICOORD_ORB_MERCURY: return("Mercury");
       case MINICOORD_ORB_VENUS: return("Venus");
