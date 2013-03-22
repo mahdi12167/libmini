@@ -23,9 +23,6 @@ class minicrs
    static const double WGS84_es2;     // WGS84 second eccentricity squared
    static const double WGS84_e;       // WGS84 eccentricity
 
-   //! map datum to approximate radius
-   static double D2R(int datum,int zone=0);
-
    //! transform Lat/Lon to UTM
    void LL2UTM(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
                int zone,int datum, // UTM zone and datum of output coordinates
@@ -52,20 +49,20 @@ class minicrs
 
    //! transform Lat/Lon to Mercator
    static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
-		       double *x,double *y, // output Mercator coordinates (WGS84 datum)
+                       double *x,double *y, // output Mercator coordinates (WGS84 datum)
                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void LL2MERC(double lat,double lon,
-		       float *x,float *y,
+                       float *x,float *y,
                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform Mercator to Lat/Lon
    static void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
-		       double *lat,double *lon, // geographic output coordinates in arc-seconds (WGS84 datum)
+                       double *lat,double *lon, // geographic output coordinates in arc-seconds (WGS84 datum)
                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void MERC2LL(double x,double y,
-		       float *lat,float *lon,
+                       float *lat,float *lon,
                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform Lat/Lon/H to ECEF
@@ -125,10 +122,6 @@ class minicrs
                         double *h, // output altitude
                         double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
-   //! datum to datum scale factor (uniform transformation)
-   static double D2D(int datum0,int zone0, // source datum
-                     int datum1,int zone1); // destination datum
-
    //! 1 arc-second equals about 30 meters
    static void arcsec2meter(double lat,double *as2m,double radius=EARTH_radius);
    static void arcsec2meter(double lat,float *as2m,double radius=EARTH_radius);
@@ -144,7 +137,7 @@ class minicrs
    static void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center,double r_major,double r_minor);
    static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center,double r_major,double r_minor);
 
-   //! Molodensky transformation between two datums (non-uniform transformation)
+   //! Molodensky transformation between two datums
    void molodensky(int src,int dst,double *lat,double *lon,double *h);
 
    //! Molodensky transformation based on ellipsoid change

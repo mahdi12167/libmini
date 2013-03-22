@@ -49,7 +49,7 @@ void minicrs::choose_ellipsoid_flat(double r_maj,double f)
 void minicrs::choose_datum(int ellipsoid,
                            double dx,double dy,double dz)
    {
-   if (ellipsoid<1 || ellipsoid>26) ellipsoid=3;
+   if (ellipsoid<1 || ellipsoid>25) ellipsoid=3;
 
    switch (ellipsoid)
       {
@@ -111,10 +111,6 @@ void minicrs::choose_datum(int ellipsoid,
       // 25=Hough1956 (Hough ellipsoid of 1956/1960)
       case 25: choose_ellipsoid_flat(6378270.0,297.0); break;
 
-      // special ellipsoids:
-      // 26=UnitSphere (ellipsoid with radius=0.5)
-      case 26: choose_ellipsoid(0.5,0.5); break;
-
       default: ERRORMSG();
       }
 
@@ -126,7 +122,7 @@ void minicrs::choose_datum(int ellipsoid,
 // datum selector
 void minicrs::choose_datum(int datum)
    {
-   if (datum<1 || datum>15) datum=3; // fallback to WGS84
+   if (datum<1 || datum>14) datum=3; // fallback to WGS84
 
    if (datum==crs_datum) return;
 
@@ -164,25 +160,12 @@ void minicrs::choose_datum(int datum)
       // 14=SouthAmerican1969 (Mean South American Datum of 1969)
       case 14: choose_datum(19,-57.0,1.0,-41.0); break;
 
-      // special datums:
-      // 15=UnitSphere (unit sphere with radius=0.5)
-      case 15: choose_datum(26,0.0,0.0,0.0); break;
       // add custom datums here...
 
       default: ERRORMSG();
       }
 
    crs_datum=datum;
-   }
-
-// map datum to approximate radius
-double minicrs::D2R(int datum,int zone)
-   {
-   switch (datum)
-      {
-      case 15: return(0.5); // unit sphere
-      default: return(EARTH_radius);
-      }
    }
 
 // transform Lat/Lon to UTM
@@ -270,7 +253,7 @@ void minicrs::LL2MERC(double lat,double lon,
                       double r_major,double r_minor)
    {
    calcLL2MERC(lat,lon,x,y,
-	       0.0,0.0,r_major,r_minor);
+               0.0,0.0,r_major,r_minor);
    }
 
 void minicrs::LL2MERC(double lat,double lon,
@@ -292,7 +275,7 @@ void minicrs::MERC2LL(double x,double y,
                       double r_major,double r_minor)
    {
    calcMERC2LL(x,y,lat,lon,
-	       0.0,0.0,r_major,r_minor);
+               0.0,0.0,r_major,r_minor);
    }
 
 void minicrs::MERC2LL(double x,double y,
@@ -575,26 +558,6 @@ void minicrs::ECEF2PRJ(double xyz[3], // input ECEF coordinates
    *h=(pos0-pos)*nrm;
    }
 
-// datum to datum scale factor (uniform transformation)
-double minicrs::D2D(int datum0,int zone0, // source datum
-                    int datum1,int zone1) // destination datum
-   {
-   double r0,r1;
-   double scale;
-
-   scale=1.0;
-
-   if (datum0!=datum1 || zone0!=zone1)
-      {
-      r0=minicrs::D2R(datum0,zone0);
-      r1=minicrs::D2R(datum1,zone1);
-
-      if (r0!=r1) scale=r1/r0;
-      }
-
-   return(scale);
-   }
-
 // Molodensky transformation based on ellipsoid change
 void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coordinates
                          double r_maj,double f,             // semi-major axis and flattening
@@ -632,7 +595,7 @@ void minicrs::molodensky(double *lat,double *lon,double *h, // transformed coord
    *h+=dh;
    }
 
-// Molodensky transformation between two datums (non-uniform transformation)
+// Molodensky transformation between two datums
 void minicrs::molodensky(int src,int dst,double *lat,double *lon,double *h)
    {
    double r_maj,r_min; // src semi-major and minor radius

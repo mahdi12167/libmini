@@ -321,7 +321,7 @@ double minicam::get_dist(const minicoord &pos)
 
       get_local_base(pos0,dir,right,up);
 
-      dist=shoot(pos0,-up,-get_earth_radius());
+      dist=shoot(pos0,-up,-get_radius());
       }
 
    return(dist);

@@ -143,7 +143,7 @@ class mininode_culling: public mininode_group
 
    protected:
 
-   static double earth_radius;
+   static double radius;
 
    static minidyna<minicone> cone_stack;
 
@@ -1168,7 +1168,7 @@ class mininode_scale: public mininode_transform
 
 //! ecef node
 //!  provides ecef global coordinate system
-//!  supports culling on backside of earth
+//!  supports culling on backside of orb
 class mininode_ecef: public mininode_affine
    {
    public:
@@ -1185,7 +1185,7 @@ class mininode_ecef: public mininode_affine
 
 //! coordinate node
 //!  provides affine transform into a local geo-referenced coordinate system
-//!  supports culling on backside of earth
+//!  supports culling on backside of orb
 //!  supports ambient shading
 class mininode_coord: public mininode_affine
    {
@@ -2039,7 +2039,7 @@ typedef miniref<mininode_root> mininode_rootref;
 
 //! camera node
 //!  provides camera lookat, direction, fovy and cone
-//!  has bounding sphere of entire earth
+//!  has bounding sphere of entire orb
 class mininode_cam: public mininode_root, public minicam
    {
    public:
@@ -2066,7 +2066,7 @@ class mininode_cam: public mininode_root, public minicam
    virtual void get_bsphere(miniv3d &center,double &radius)
       {
       center=miniv3d(0,0,0);
-      radius=get_earth_radius();
+      radius=get_radius();
       }
 
    };

@@ -113,7 +113,7 @@ void mininode_group::update_dirty()
 
 // mininode_culling:
 
-double mininode_culling::earth_radius=0.0;
+double mininode_culling::radius=0.0;
 
 minidyna<minicone> mininode_culling::cone_stack;
 
@@ -152,7 +152,7 @@ void mininode_culling::traverse_init()
    miniv3d dir=camera->get_dir();
    double cone=camera->get_cone();
 
-   earth_radius=camera->get_earth_radius();
+   radius=camera->get_radius();
 
    cone_stack.push(minicone(eye,dir,cone));
    }
@@ -333,8 +333,8 @@ void mininode_ecef::traverse_pre()
    {
    mininode_transform::traverse_pre();
 
-   // cull on backside of earth
-   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),earth_radius);
+   // cull on backside of orb
+   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),radius);
    }
 
 // mininode_coord:
@@ -386,8 +386,8 @@ void mininode_coord::traverse_pre()
       mininode_color::set_brightness(0.5*l+0.5);
       }
 
-   // cull on backside of earth
-   is_visible=!is_occluded(miniv3d(0.0,0.0,-earth_radius),earth_radius);
+   // cull on backside of orb
+   is_visible=!is_occluded(miniv3d(0.0,0.0,-radius),radius);
    }
 
 void mininode_coord::traverse_post()

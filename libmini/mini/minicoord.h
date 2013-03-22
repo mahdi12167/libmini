@@ -46,9 +46,28 @@ class minicoord
       MINICOORD_DATUM_Australian1984=12,
       MINICOORD_DATUM_NewZealand1949=13,
       MINICOORD_DATUM_SouthAmerican1969=14,
-      // special datum codes
-      MINICOORD_DATUM_UNIT_SPHERE=15
       };
+
+   //! supported orbs
+   enum MINICOORD_ORB
+      {
+      MINICOORD_UNIT_SPHERE=0,
+      MINICOORD_ORB_SUN=1,
+      MINICOORD_ORB_MERCURY=2,
+      MINICOORD_ORB_VENUS=3,
+      MINICOORD_ORB_EARTH=4,
+      MINICOORD_ORB_JUPITER=5,
+      MINICOORD_ORB_SATURN=6,
+      MINICOORD_ORB_URANUS=7,
+      MINICOORD_ORB_NEPTUNE=8,
+      MINICOORD_ORB_CERES=9,
+      MINICOORD_ORB_PLUTO=10,
+      MINICOORD_ORB_ERIS=11,
+      MINICOORD_ORB_MOON=12
+      };
+
+   //! get approximate radius of orb
+   static double getradius(int orb);
 
    //! default constructor
    minicoord();
@@ -61,12 +80,12 @@ class minicoord
    //! else corners are given in meters (1 degree equals 3600 arc-seconds or roughly 111 km on the equator)
    minicoord(const miniv3d &v);
    minicoord(const miniv3d &v,const MINICOORD t);
-   minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
+   minicoord(const miniv3d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum,const int orb=MINICOORD_ORB_EARTH);
    minicoord(const miniv4d &v);
    minicoord(const miniv4d &v,const MINICOORD t);
-   minicoord(const miniv4d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
+   minicoord(const miniv4d &v,const MINICOORD t,const int zone,const MINICOORD_DATUM datum,const int orb=MINICOORD_ORB_EARTH);
    minicoord(const double cx,const double cy,const double cz,const MINICOORD t);
-   minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const MINICOORD_DATUM datum);
+   minicoord(const double cx,const double cy,const double cz,const MINICOORD t,const int zone,const MINICOORD_DATUM datum,const int orb=MINICOORD_ORB_EARTH);
 
    //! destructor
    ~minicoord();
@@ -88,7 +107,7 @@ class minicoord
    void set_polar(double alpha,double beta,double height=0.0,double t=0.0);
 
    //! convert from 1 coordinate system 2 another
-   void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE);
+   void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_EARTH);
 
    //! convert 2 ecef
    void convert2ecef();
@@ -115,7 +134,7 @@ class minicoord
    //! normalize coordinates asymmetrically
    minicoord &asymm() {return(this->normalize(FALSE));}
 
-   //! get approximate radius of datum
+   //! get approximate orb radius
    double getradius() const;
 
    //! get euclidean distance
@@ -150,6 +169,10 @@ class minicoord
    ministring getdatum() const;
    static ministring getdatum(MINICOORD_DATUM d);
 
+   //! get crs orb description
+   ministring getorb() const;
+   static ministring getorb(int o);
+
    //! string cast operator
    operator ministring() const;
 
@@ -164,11 +187,12 @@ class minicoord
 
    int crs_zone; // actual crs zone
    MINICOORD_DATUM crs_datum; // actual crs datum
+   int crs_orb; // actual crs orb
 
    protected:
 
    //! datum to datum scaling
-   void scale2(MINICOORD_DATUM datum,int zone);
+   void scale2(int orb);
 
    private:
 
@@ -293,6 +317,6 @@ inline int operator < (const minicoord &a,const minicoord &b)
    {return(a.vec.w<b.vec.w);}
 
 inline std::ostream& operator << (std::ostream &out,const minicoord &c)
-   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " datum=" << c.getdatum() << " ]");}
+   {return(out << "[ (" << c.vec.x << "," << c.vec.y << "," << c.vec.z << ") t=" << c.vec.w << " crs=" << c.getcrs() << " datum=" << c.getdatum() << " orb=" << c.getorb() << " ]");}
 
 #endif
