@@ -266,18 +266,20 @@ double minicrs::UTMZ2L(int zone)
 // transform Lat/Lon to Mercator
 // input in arc-seconds, output in meters
 void minicrs::LL2MERC(double lat,double lon,
-                      double *x,double *y)
+                      double *x,double *y,
+                      double r_major,double r_minor)
    {
    calcLL2MERC(lat,lon,x,y,
-	       0.0,0.0,WGS84_r_major,WGS84_r_minor);
+	       0.0,0.0,r_major,r_minor);
    }
 
 void minicrs::LL2MERC(double lat,double lon,
-                      float *x,float *y)
+                      float *x,float *y,
+                      double r_major,double r_minor)
    {
    double tx,ty;
 
-   LL2MERC(lat,lon,&tx,&ty);
+   LL2MERC(lat,lon,&tx,&ty,r_major,r_minor);
 
    *x=(float)tx;
    *y=(float)ty;
@@ -286,18 +288,20 @@ void minicrs::LL2MERC(double lat,double lon,
 // transform Mercator to Lat/Lon
 // input in meters, output in arc-seconds
 void minicrs::MERC2LL(double x,double y,
-                      double *lat,double *lon)
+                      double *lat,double *lon,
+                      double r_major,double r_minor)
    {
    calcMERC2LL(x,y,lat,lon,
-	       0.0,0.0,WGS84_r_major,WGS84_r_minor);
+	       0.0,0.0,r_major,r_minor);
    }
 
 void minicrs::MERC2LL(double x,double y,
-                      float *lat,float *lon)
+                      float *lat,float *lon,
+                      double r_major,double r_minor)
    {
    double tlat,tlon;
 
-   MERC2LL(x,y,&tlat,&tlon);
+   MERC2LL(x,y,&tlat,&tlon,r_major,r_minor);
 
    *lat=(float)tlat;
    *lon=(float)tlon;
@@ -333,11 +337,12 @@ void minicrs::LLH2ECEF(double lat,double lon,double h,
    }
 
 void minicrs::LLH2ECEF(double lat,double lon,double h,
-                       float xyz[3])
+                       float xyz[3],
+                       double r_major,double r_minor)
    {
    double txyz[3];
 
-   LLH2ECEF(lat,lon,h,txyz);
+   LLH2ECEF(lat,lon,h,txyz,r_major,r_minor);
 
    xyz[0]=(float)txyz[0];
    xyz[1]=(float)txyz[1];
@@ -388,7 +393,8 @@ void minicrs::ECEF2LLH(double xyz[3],
    }
 
 void minicrs::ECEF2LLH(float xyz[3],
-                       float *lat,float *lon,float *h)
+                       float *lat,float *lon,float *h,
+                       double r_major,double r_minor)
    {
    double txyz[3];
    double tlat,tlon,th;
@@ -397,7 +403,7 @@ void minicrs::ECEF2LLH(float xyz[3],
    txyz[1]=xyz[1];
    txyz[2]=xyz[2];
 
-   ECEF2LLH(txyz,&tlat,&tlon,&th);
+   ECEF2LLH(txyz,&tlat,&tlon,&th,r_major,r_minor);
 
    *lat=tlat;
    *lon=tlon;
@@ -435,11 +441,12 @@ void minicrs::OGH2ECEF(double x,double y,double h, // oblique gnomonic input coo
 
 void minicrs::OGH2ECEF(double x,double y,double h,
                        int zone,
-                       float xyz[3])
+                       float xyz[3],
+                       double r_major,double r_minor)
    {
    double txyz[3];
 
-   OGH2ECEF(x,y,h,zone,txyz);
+   OGH2ECEF(x,y,h,zone,txyz,r_major,r_minor);
 
    xyz[0]=txyz[0];
    xyz[1]=txyz[1];
@@ -476,7 +483,8 @@ void minicrs::ECEF2OGH(double xyz[3], // input ECEF coordinates
 
 void minicrs::ECEF2OGH(float xyz[3],
                        float *x,float *y,float *h,
-                       int zone)
+                       int zone,
+                       double r_major,double r_minor)
    {
    double txyz[3];
    double tx,ty,th;
@@ -485,7 +493,7 @@ void minicrs::ECEF2OGH(float xyz[3],
    txyz[1]=xyz[1];
    txyz[2]=xyz[2];
 
-   ECEF2OGH(txyz,&tx,&ty,&th,zone);
+   ECEF2OGH(txyz,&tx,&ty,&th,zone,r_major,r_minor);
 
    *x=tx;
    *y=ty;

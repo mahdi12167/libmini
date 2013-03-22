@@ -52,17 +52,21 @@ class minicrs
 
    //! transform Lat/Lon to Mercator
    static void LL2MERC(double lat,double lon, // geographic input coordinates in arc-seconds (WGS84 datum)
-		       double *x,double *y); // output Mercator coordinates (WGS84 datum)
+		       double *x,double *y, // output Mercator coordinates (WGS84 datum)
+                       double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void LL2MERC(double lat,double lon,
-		       float *x,float *y);
+		       float *x,float *y,
+                       double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform Mercator to Lat/Lon
    static void MERC2LL(double x,double y, // input Mercator coordinates (WGS84 datum)
-		       double *lat,double *lon); // geographic output coordinates in arc-seconds (WGS84 datum)
+		       double *lat,double *lon, // geographic output coordinates in arc-seconds (WGS84 datum)
+                       double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void MERC2LL(double x,double y,
-		       float *lat,float *lon);
+		       float *lat,float *lon,
+                       double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform Lat/Lon/H to ECEF
    static void LLH2ECEF(double lat,double lon,double h, // geographic input coordinates in arc-seconds (WGS84 datum)
@@ -70,7 +74,8 @@ class minicrs
                         double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void LLH2ECEF(double lat,double lon,double h,
-                        float xyz[3]);
+                        float xyz[3],
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform ECEF to Lat/Lon/H
    static void ECEF2LLH(double xyz[3], // input ECEF coordinates
@@ -78,7 +83,8 @@ class minicrs
                         double r_major=WGS84_r_major,double r_minor=WGS84_r_minor); // semi-major and minor axis
 
    static void ECEF2LLH(float xyz[3],
-                        float *lat,float *lon,float *h);
+                        float *lat,float *lon,float *h,
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform OG/H to ECEF
    static void OGH2ECEF(double x,double y,double h, // oblique gnomonic input coordinates in meters
@@ -88,7 +94,8 @@ class minicrs
 
    static void OGH2ECEF(double x,double y,double h,
                         int zone,
-                        float xyz[3]);
+                        float xyz[3],
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform ECEF to OG/H
    static void ECEF2OGH(double xyz[3], // input ECEF coordinates
@@ -98,7 +105,8 @@ class minicrs
 
    static void ECEF2OGH(float xyz[3],
                         float *x,float *y,float *h,
-                        int zone);
+                        int zone,
+                        double r_major=WGS84_r_major,double r_minor=WGS84_r_minor);
 
    //! transform ECEF to OG/H zone
    static int ECEF2OGHZ(double xyz[3], // input ECEF coordinates
