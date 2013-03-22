@@ -133,8 +133,8 @@ class minicrs
    void calcUTM2LL(double x,double y,double *lat,double *lon);
 
    //! Mercator conversion functions
-   void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center,double r_major,double_r_minor);
-   void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center,double r_major,double_r_minor);
+   static void calcLL2MERC(double lat,double lon,double *x,double *y,double lat_center,double lon_center,double r_major,double_r_minor);
+   static void calcMERC2LL(double x,double y,double *lat,double *lon,double lat_center,double lon_center,double r_major,double_r_minor);
 
    //! Molodensky transformation between two datums (non-uniform transformation)
    void molodensky(int src,int dst,double *lat,double *lon);
