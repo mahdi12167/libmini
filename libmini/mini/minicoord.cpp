@@ -41,7 +41,7 @@ minicoord::minicoord()
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_ORB_EARTH;
+   crs_orb=MINICOORD_UNIT_SPHERE;
    }
 
 // copy constructor
@@ -64,7 +64,7 @@ minicoord::minicoord(const miniv3d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_ORB_EARTH;
+   crs_orb=MINICOORD_UNIT_SPHERE;
    }
 
 minicoord::minicoord(const miniv3d &v,const MINICOORD t)
@@ -94,7 +94,7 @@ minicoord::minicoord(const miniv4d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_ORB_EARTH;
+   crs_orb=MINICOORD_UNIT_SPHERE;
    }
 
 minicoord::minicoord(const miniv4d &v,const MINICOORD t)
