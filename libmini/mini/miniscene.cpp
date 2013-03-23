@@ -161,7 +161,7 @@ void miniscene::render()
    EARTH->render();
 
    // render ecef geometry
-   if (PARAMS.farp>=getradius())
+   if (PARAMS.farp>=getorbradius())
       if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
@@ -261,7 +261,7 @@ void miniscene::check_ecef_geometry(miniv3d &center,double &radius)
    // with a size of 110% of the diameter of the earth:
    /*
    center=miniv3d(0,0,0);
-   radius=1.1*getradius();
+   radius=1.1*getorbradius();
    */
    }
 
@@ -277,8 +277,8 @@ void miniscene::render_ecef_geometry(double)
    /*
    initstate();
    color(miniv3d(0.5,0.5,0.5));
-   renderline(miniv3d(0.0,0.0,-1.1*getradius()),
-              miniv3d(0.0,0.0,1.1*getradius()));
+   renderline(miniv3d(0.0,0.0,-1.1*getorbradius()),
+              miniv3d(0.0,0.0,1.1*getorbradius()));
    exitstate();
    */
    }
