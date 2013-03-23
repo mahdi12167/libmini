@@ -13,7 +13,7 @@
 #include "miniearth.h"
 
 // get approximate earth radius
-double miniearth::getradius()
+double miniearth::getorbradius()
    {return(minicrs::EARTH_radius);}
 
 // default constructor
@@ -873,5 +873,5 @@ void miniearth::addgrid(datagrid *obj,BOOLINT sort)
    }
 
 // get planet radius
-double miniplanet::getradius()
-   {return(minicoord::getradius(planet_orb));}
+double miniplanet::getorbradius()
+   {return(minicoord::getorbradius(planet_orb));}

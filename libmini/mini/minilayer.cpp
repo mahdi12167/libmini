@@ -847,16 +847,16 @@ void minilayer::setearth()
 
    // set original data coordinates
    LPARAMS.offsetDAT=minicoord(miniv3d(0.0,0.0,0.0),minicoord::MINICOORD_ECEF);
-   LPARAMS.extentDAT=minicoord(miniv3d(2*EARTH->getradius(),2*EARTH->getradius(),2*EARTH->getradius()),minicoord::MINICOORD_ECEF);
+   LPARAMS.extentDAT=minicoord(miniv3d(2*EARTH->getorbradius(),2*EARTH->getorbradius(),2*EARTH->getorbradius()),minicoord::MINICOORD_ECEF);
 
    // set geo-referenced coordinates
    LPARAMS.centerGEO=LPARAMS.offsetDAT;
-   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,EARTH->getradius()),minicoord::MINICOORD_ECEF);
+   LPARAMS.northGEO=minicoord(miniv3d(0.0,0.0,EARTH->getorbradius()),minicoord::MINICOORD_ECEF);
 
    // set extent
-   LPARAMS.extent[0]=2*EARTH->getradius();
-   LPARAMS.extent[1]=2*EARTH->getradius();
-   LPARAMS.extent[2]=2*EARTH->getradius();
+   LPARAMS.extent[0]=2*EARTH->getorbradius();
+   LPARAMS.extent[1]=2*EARTH->getorbradius();
+   LPARAMS.extent[2]=2*EARTH->getorbradius();
 
    // set offset
    LPARAMS.offset[0]=0.0f;
@@ -1638,7 +1638,7 @@ BOOLINT minilayer::isculled()
 
    if (!LOADED || TERRAIN==NULL) return(FALSE);
 
-   length=EARTH->getradius()*PI/2.0;
+   length=EARTH->getorbradius()*PI/2.0;
 
    extent=dmax(LPARAMS.extent[0],LPARAMS.extent[1])/2.0;
    height=LPARAMS.extent[2]/2.0;

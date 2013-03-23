@@ -9,26 +9,26 @@
 minicrs minicoord::UTM;
 
 // get approximate radius of orb
-double minicoord::getradius(int orb)
+double minicoord::getorbradius(int orb)
    {
    if (orb<0) return(-1E5*orb);
 
    switch (orb)
       {
       case MINICOORD_UNIT_SPHERE: return(0.5);
-      case MINICOORD_ORB_SUN: return(getradius(-6955));
-      case MINICOORD_ORB_MERCURY: return(getradius(-24));
-      case MINICOORD_ORB_VENUS: return(getradius(-61));
+      case MINICOORD_ORB_SUN: return(getorbradius(-6955));
+      case MINICOORD_ORB_MERCURY: return(getorbradius(-24));
+      case MINICOORD_ORB_VENUS: return(getorbradius(-61));
       case MINICOORD_ORB_EARTH: return(minicrs::EARTH_radius);
-      case MINICOORD_ORB_MARS: return(getradius(-34));
-      case MINICOORD_ORB_JUPITER: return(getradius(-715));
-      case MINICOORD_ORB_SATURN: return(getradius(-603));
-      case MINICOORD_ORB_URANUS: return(getradius(-256));
-      case MINICOORD_ORB_NEPTUNE: return(getradius(-248));
-      case MINICOORD_ORB_CERES: return(getradius(-5));
-      case MINICOORD_ORB_PLUTO: return(getradius(-12));
-      case MINICOORD_ORB_ERIS: return(getradius(-12));
-      case MINICOORD_ORB_MOON: return(getradius(-17));
+      case MINICOORD_ORB_MARS: return(getorbradius(-34));
+      case MINICOORD_ORB_JUPITER: return(getorbradius(-715));
+      case MINICOORD_ORB_SATURN: return(getorbradius(-603));
+      case MINICOORD_ORB_URANUS: return(getorbradius(-256));
+      case MINICOORD_ORB_NEPTUNE: return(getorbradius(-248));
+      case MINICOORD_ORB_CERES: return(getorbradius(-5));
+      case MINICOORD_ORB_PLUTO: return(getorbradius(-12));
+      case MINICOORD_ORB_ERIS: return(getorbradius(-12));
+      case MINICOORD_ORB_MOON: return(getorbradius(-17));
       default: return(minicrs::EARTH_radius);
       }
    }
@@ -168,8 +168,8 @@ void minicoord::scale2(int orb)
    double scale;
    double radius0,radius1;
 
-   radius0=getradius(crs_orb);
-   radius1=getradius(orb);
+   radius0=getorbradius(crs_orb);
+   radius1=getorbradius(orb);
 
    scale=radius1/radius0;
 
@@ -210,7 +210,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
    else
       {
       if (type==MINICOORD_UTM || t==MINICOORD_UTM) ERRORMSG();
-      r_major=r_minor=getradius(orb);
+      r_major=r_minor=getorbradius(orb);
       }
 
    switch (type)
@@ -521,8 +521,8 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
    }
 
 // get approximate orb radius
-double minicoord::getradius() const
-   {return(getradius(crs_orb));}
+double minicoord::getorbradius() const
+   {return(getorbradius(crs_orb));}
 
 // get euclidean distance
 double minicoord::getdist(const minicoord &v) const
@@ -585,7 +585,7 @@ double minicoord::getorthodist(const minicoord &v) const
          p=0.5*(p1+p2);
          len=p.vec.getlength();
 
-         if (len>0.0) p*=p.getradius()/len;
+         if (len>0.0) p*=p.getorbradius()/len;
          else
             if (p.vec.x>p.vec.y)
                if (p.vec.x>p.vec.z)

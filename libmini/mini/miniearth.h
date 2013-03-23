@@ -26,8 +26,8 @@ class miniearth
    {
    public:
 
-   //! get approximate earth radius
-   virtual double getradius();
+   //! get approximate orb radius
+   virtual double getorbradius();
 
    struct MINIEARTH_PARAMS_STRUCT
       {
@@ -319,7 +319,7 @@ class miniplanet : public miniearth
    public:
 
    //! get planet radius
-   virtual double getradius();
+   virtual double getorbradius();
 
    //! default constructor
    miniplanet(int orb=minicoord::MINICOORD_ORB_EARTH)

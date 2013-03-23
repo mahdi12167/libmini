@@ -68,7 +68,7 @@ class minicoord
       };
 
    //! get approximate radius of orb
-   static double getradius(int orb);
+   static double getorbradius(int orb);
 
    //! default constructor
    minicoord();
@@ -136,7 +136,7 @@ class minicoord
    minicoord &asymm() {return(this->normalize(FALSE));}
 
    //! get approximate orb radius
-   double getradius() const;
+   double getorbradius() const;
 
    //! get euclidean distance
    double getdist(const minicoord &v) const;
