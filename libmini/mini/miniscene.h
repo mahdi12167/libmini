@@ -23,8 +23,8 @@ class miniscene
    {
    public:
 
-   //! get approximate earth radius
-   double getradius();
+   //! get approximate orb radius
+   double getorbradius();
 
    struct MINISCENE_PARAMS_STRUCT
       {

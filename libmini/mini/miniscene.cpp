@@ -11,8 +11,8 @@
 #include "miniscene.h"
 
 // get approximate earth radius
-double miniscene::getradius()
-   {return(EARTH->getradius());}
+double miniscene::getorbradius()
+   {return(EARTH->getorbradius());}
 
 // default constructor
 miniscene::miniscene()
