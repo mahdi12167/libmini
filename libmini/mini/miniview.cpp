@@ -106,7 +106,7 @@ void miniview::setup_matrix(float sbase)
    double farp = m_cam->get_farp();
 
    // check bounding sphere of ecef geometry
-   if (farp>=getradius())
+   if (farp>=getorbradius())
       if ((EARTH->get()->warpmode==WARPMODE_AFFINE ||
            EARTH->get()->warpmode==WARPMODE_AFFINE_REF) &&
           EARTH->get()->nonlin)
@@ -162,7 +162,7 @@ void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    {
    // specify bounding sphere
    center = miniv3d(0,0,0);
-   radius = 1.1*getradius();
+   radius = 1.1*getorbradius();
    }
 
 // render ecef geometry
@@ -195,10 +195,10 @@ void miniview::render_ecef_geometry(double)
    static const miniv3d zacolor(0.25, 0.25, 0.5);
 
    color(zacolor);
-   renderline(miniv3d(0.0, 0.0, -1.1*getradius()),
-              miniv3d(0.0, 0.0, -getradius()));
-   renderline(miniv3d(0.0, 0.0, getradius()),
-              miniv3d(0.0, 0.0, 1.1*getradius()));
+   renderline(miniv3d(0.0, 0.0, -1.1*getorbradius()),
+              miniv3d(0.0, 0.0, -getorbradius()));
+   renderline(miniv3d(0.0, 0.0, getorbradius()),
+              miniv3d(0.0, 0.0, 1.1*getorbradius()));
 
    // render equator:
 
