@@ -168,29 +168,36 @@ void minicoord::scale2(int orb)
    double scale;
    double radius0,radius1;
 
-   radius0=getorbradius(crs_orb);
-   radius1=getorbradius(orb);
+   if (orb!=crs_orb)
+      {
+      radius0=getorbradius(crs_orb);
+      radius1=getorbradius(orb);
 
-   scale=radius1/radius0;
-
-   if (scale!=1.0)
-      switch (type)
+      if (radius1!=radius0)
          {
-         case MINICOORD_LLH:
-            vec.z*=scale;
-            break;
-         case MINICOORD_MERC:
-         case MINICOORD_UTM:
-         case MINICOORD_OGH:
-         case MINICOORD_ECEF:
-            vec.x*=scale;
-            vec.y*=scale;
-            vec.z*=scale;
-            break;
-         default: ERRORMSG();
+         scale=radius1/radius0;
+
+         switch (type)
+            {
+            case MINICOORD_LLH:
+               vec.z*=scale;
+               break;
+            case MINICOORD_MERC:
+            case MINICOORD_UTM:
+            case MINICOORD_OGH:
+            case MINICOORD_ECEF:
+               vec.x*=scale;
+               vec.y*=scale;
+               vec.z*=scale;
+               break;
+            default: ERRORMSG();
+            }
          }
 
-   crs_orb=orb;
+      crs_orb=orb;
+
+      if (crs_datum!=MINICOORD_DATUM_NONE && crs_orb!=MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_NONE;
+      }
    }
 
 // convert from 1 coordinate system 2 another
@@ -226,7 +233,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_UTM:
                if (zone==0) zone=minicrs::LL2UTMZ(vec.y,vec.x);
@@ -238,18 +245,18 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                break;
             case MINICOORD_OGH:
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz,r_major,r_minor);
-               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz,r_major,r_minor);
                minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone,r_major,r_minor);
                type=t;
                crs_zone=zone;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_ECEF:
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz,r_major,r_minor);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             default: ERRORMSG();
             }
@@ -261,7 +268,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_MERC: break;
             case MINICOORD_UTM:
@@ -276,11 +283,11 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
             case MINICOORD_OGH:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x,r_major,r_minor);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz,r_major,r_minor);
-               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz,r_major,r_minor);
                minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone,r_major,r_minor);
                type=t;
                crs_zone=zone;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_ECEF:
                minicrs::MERC2LL(vec.x,vec.y,&vec.y,&vec.x,r_major,r_minor);
@@ -288,7 +295,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             default: ERRORMSG();
             }
@@ -300,14 +307,14 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                UTM.UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_MERC:
                UTM.UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_UTM:
                if (zone==0) zone=crs_zone;
@@ -323,11 +330,11 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
             case MINICOORD_OGH:
                UTM.UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
                minicrs::LLH2ECEF(vec.y,vec.x,vec.z,xyz);
-               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz,r_major,r_minor);
                minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone);
                type=t;
                crs_zone=zone;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_ECEF:
                UTM.UTM2LL(vec.x,vec.y,crs_zone,crs_datum,&vec.y,&vec.x);
@@ -335,7 +342,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             default: ERRORMSG();
             }
@@ -348,7 +355,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_MERC:
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz,r_major,r_minor);
@@ -356,7 +363,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_UTM:
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz);
@@ -374,14 +381,14 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz,r_major,r_minor);
                minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone,r_major,r_minor);
                crs_zone=zone;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_ECEF:
                minicrs::OGH2ECEF(vec.x,vec.y,vec.z,crs_zone,xyz,r_major,r_minor);
                vec=miniv4d(xyz[0],xyz[1],xyz[2],vec.w);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             default: ERRORMSG();
             }
@@ -396,7 +403,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::ECEF2LLH(xyz,&vec.y,&vec.x,&vec.z,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_MERC:
                xyz[0]=vec.x;
@@ -406,7 +413,7 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                minicrs::LL2MERC(vec.y,vec.x,&vec.x,&vec.y,r_major,r_minor);
                type=t;
                crs_zone=0;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_UTM:
                xyz[0]=vec.x;
@@ -424,11 +431,11 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
                xyz[0]=vec.x;
                xyz[1]=vec.y;
                xyz[2]=vec.z;
-               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz);
+               if (zone==0) zone=minicrs::ECEF2OGHZ(xyz,r_major,r_minor);
                minicrs::ECEF2OGH(xyz,&vec.x,&vec.y,&vec.z,zone,r_major,r_minor);
                type=t;
                crs_zone=zone;
-               if (crs_datum==MINICOORD_DATUM_NONE) crs_datum=MINICOORD_DATUM_WGS84;
+               if (crs_datum==MINICOORD_DATUM_NONE && crs_orb==MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_WGS84;
                break;
             case MINICOORD_ECEF: break;
             default: ERRORMSG();
