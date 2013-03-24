@@ -72,7 +72,7 @@ class minicoord
    static double getorbradius(int orb);
 
    //! get semi-major and minor axis of orb
-   void getorbaxis(int orb,double &r_major,double &r_minor);
+   static void getorbaxis(int orb,double &r_major,double &r_minor);
 
    //! default constructor
    minicoord();
