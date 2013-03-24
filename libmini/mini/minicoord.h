@@ -51,20 +51,21 @@ class minicoord
    //! supported orbs
    enum MINICOORD_ORB
       {
-      MINICOORD_UNIT_SPHERE=0,
-      MINICOORD_ORB_SUN=1,
-      MINICOORD_ORB_MERCURY=2,
-      MINICOORD_ORB_VENUS=3,
-      MINICOORD_ORB_EARTH=4,
-      MINICOORD_ORB_MARS=5,
-      MINICOORD_ORB_JUPITER=6,
-      MINICOORD_ORB_SATURN=7,
-      MINICOORD_ORB_URANUS=8,
-      MINICOORD_ORB_NEPTUNE=9,
-      MINICOORD_ORB_CERES=10,
-      MINICOORD_ORB_PLUTO=11,
-      MINICOORD_ORB_ERIS=12,
-      MINICOORD_ORB_MOON=13
+      MINICOORD_ORB_NONE=0,
+      MINICOORD_ORB_UNIT_SPHERE=1,
+      MINICOORD_ORB_SUN=2,
+      MINICOORD_ORB_MERCURY=3,
+      MINICOORD_ORB_VENUS=4,
+      MINICOORD_ORB_EARTH=5,
+      MINICOORD_ORB_MARS=6,
+      MINICOORD_ORB_JUPITER=7,
+      MINICOORD_ORB_SATURN=8,
+      MINICOORD_ORB_URANUS=9,
+      MINICOORD_ORB_NEPTUNE=10,
+      MINICOORD_ORB_CERES=11,
+      MINICOORD_ORB_PLUTO=12,
+      MINICOORD_ORB_ERIS=13,
+      MINICOORD_ORB_MOON=14
       };
 
    //! get approximate radius of orb
@@ -111,7 +112,7 @@ class minicoord
    void set_polar(double alpha,double beta,double height=0.0,double t=0.0);
 
    //! convert from 1 coordinate system 2 another
-   void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_EARTH);
+   void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_NONE);
 
    //! convert 2 ecef
    void convert2ecef();

@@ -15,11 +15,12 @@ double minicoord::getorbradius(int orb)
 
    switch (orb)
       {
-      case MINICOORD_UNIT_SPHERE: return(0.5);
+      case MINICOORD_ORB_NONE:
+      case MINICOORD_ORB_EARTH: return(minicrs::EARTH_radius);
+      case MINICOORD_ORB_UNIT_SPHERE: return(0.5);
       case MINICOORD_ORB_SUN: return(getorbradius(-6955));
       case MINICOORD_ORB_MERCURY: return(getorbradius(-24));
       case MINICOORD_ORB_VENUS: return(getorbradius(-61));
-      case MINICOORD_ORB_EARTH: return(minicrs::EARTH_radius);
       case MINICOORD_ORB_MARS: return(getorbradius(-34));
       case MINICOORD_ORB_JUPITER: return(getorbradius(-715));
       case MINICOORD_ORB_SATURN: return(getorbradius(-603));
@@ -38,8 +39,9 @@ void minicoord::getorbaxis(int orb,double &r_major,double &r_minor)
    {
    switch (orb)
       {
-      case MINICOORD_UNIT_SPHERE: r_major=r_minor=0.5; break;
+      case MINICOORD_ORB_NONE:
       case MINICOORD_ORB_EARTH: r_major=minicrs::WGS84_r_major; r_minor=minicrs::WGS84_r_minor; break;
+      case MINICOORD_ORB_UNIT_SPHERE: r_major=r_minor=0.5; break;
       default: r_major=r_minor=getorbradius(orb); break;
       }
    }
@@ -52,7 +54,7 @@ minicoord::minicoord()
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_UNIT_SPHERE;
    }
 
 // copy constructor
@@ -75,7 +77,7 @@ minicoord::minicoord(const miniv3d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_UNIT_SPHERE;
    }
 
 minicoord::minicoord(const miniv3d &v,const MINICOORD t)
@@ -84,7 +86,7 @@ minicoord::minicoord(const miniv3d &v,const MINICOORD t)
    type=t;
 
    crs_zone=0;
-   crs_datum=MINICOORD_DATUM_NONE;
+   crs_datum=MINICOORD_DATUM_WGS84;
    crs_orb=MINICOORD_ORB_EARTH;
    }
 
@@ -105,7 +107,7 @@ minicoord::minicoord(const miniv4d &v)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_UNIT_SPHERE;
    }
 
 minicoord::minicoord(const miniv4d &v,const MINICOORD t)
@@ -114,7 +116,7 @@ minicoord::minicoord(const miniv4d &v,const MINICOORD t)
    type=t;
 
    crs_zone=0;
-   crs_datum=MINICOORD_DATUM_NONE;
+   crs_datum=MINICOORD_DATUM_WGS84;
    crs_orb=MINICOORD_ORB_EARTH;
    }
 
@@ -134,7 +136,7 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
    type=t;
 
    crs_zone=0;
-   crs_datum=MINICOORD_DATUM_NONE;
+   crs_datum=MINICOORD_DATUM_WGS84;
    crs_orb=MINICOORD_ORB_EARTH;
    }
 
@@ -170,7 +172,7 @@ void minicoord::set_polar(double alpha,double beta,double height,double t)
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_UNIT_SPHERE;
+   crs_orb=MINICOORD_ORB_UNIT_SPHERE;
    }
 
 // orb to orb scaling
@@ -180,6 +182,9 @@ void minicoord::scale2(int orb)
    double radius0,radius1;
    double r_major0,r_minor0;
    double r_major1,r_minor1;
+
+   if (crs_orb==MINICOORD_ORB_NONE) crs_orb=MINICOORD_ORB_EARTH;
+   if (orb==MINICOORD_ORB_NONE) orb=crs_orb;
 
    if (orb!=crs_orb)
       {
@@ -218,8 +223,6 @@ void minicoord::scale2(int orb)
          }
 
       crs_orb=orb;
-
-      if (crs_datum==MINICOORD_DATUM_WGS84 && crs_orb!=MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_NONE;
       }
    }
 
@@ -712,7 +715,7 @@ ministring minicoord::getorb(int o)
    {
    switch (o)
       {
-      case MINICOORD_UNIT_SPHERE: return("Unit-Sphere");
+      case MINICOORD_ORB_UNIT_SPHERE: return("Unit-Sphere");
       case MINICOORD_ORB_SUN: return("Sun");
       case MINICOORD_ORB_MERCURY: return("Mercury");
       case MINICOORD_ORB_VENUS: return("Venus");
