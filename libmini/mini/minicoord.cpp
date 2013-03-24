@@ -224,6 +224,8 @@ void minicoord::scale2(int orb)
 
       crs_orb=orb;
       }
+
+   if (crs_datum==MINICOORD_DATUM_WGS84 && crs_orb!=MINICOORD_ORB_EARTH) crs_datum=MINICOORD_DATUM_NONE;
    }
 
 // convert from 1 coordinate system 2 another
@@ -715,6 +717,7 @@ ministring minicoord::getorb(int o)
    {
    switch (o)
       {
+      case MINICOORD_ORB_NONE: return("None");
       case MINICOORD_ORB_UNIT_SPHERE: return("Unit-Sphere");
       case MINICOORD_ORB_SUN: return("Sun");
       case MINICOORD_ORB_MERCURY: return("Mercury");
