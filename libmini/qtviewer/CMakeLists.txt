@@ -13,6 +13,11 @@ IF (NOT CMAKE_BUILD_TYPE)
    ENDIF (UNIX)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
+# non-standard path to Qt4 source installation
+SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
+    /usr/local/Trolltech/Qt-4.7.4;
+   )
+
 # dependencies
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
