@@ -20,6 +20,9 @@ SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
     /usr/local/libpng;
     /usr/local/zlib)
 
+SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
+    /usr/local/Trolltech/Qt-4.7.4)
+
 IF (BUILD_WITH_GRID)
    FIND_PACKAGE(GRID)
    INCLUDE_DIRECTORIES(${GRID_INCLUDE_DIR})
