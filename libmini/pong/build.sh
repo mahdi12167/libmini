@@ -1,4 +1,7 @@
 #!/bin/tcsh -f
 
 set boost = /usr/local/boost_*
-g++ -I $boost client.cpp -L$boost/stage/lib -lboost_system -o client
+
+foreach cpp (*.cpp)
+  g++ -I $boost $cpp -L$boost/stage/lib -lboost_system -o $cpp:r
+end
