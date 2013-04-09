@@ -11,11 +11,14 @@
 //
 
 #include "server.h"
+#include "async_client.h" //!! test
 
 int main()
 {
-  server s;
-  s.run();
+  boost::asio::io_service io_service;
+
+  http_client c(io_service, "boost.org", "/LICENSE_1_0.txt"); //!! test
+  server s(io_service);
 
   return 0;
 }

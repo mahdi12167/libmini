@@ -19,27 +19,13 @@ using boost::asio::ip::tcp;
 
 class server
 {
-  public:
-
-  virtual std::string make_response_string()
-  {
-    using namespace std; // For time_t, time and ctime;
-    time_t now = time(0);
-    return ctime(&now);
-  }
-
-  server(unsigned int port=13)
-  {
-    port_ = port;
-  }
-
-  void run()
+public:
+  server(boost::asio::io_service& io_service,
+         unsigned int port=13)
   {
     try
     {
-      boost::asio::io_service io_service;
-
-      tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port_));
+      tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
 
       for (;;)
       {
@@ -58,7 +44,12 @@ class server
     }
   }
 
-  protected:
+protected:
+  virtual std::string make_response_string()
+  {
+    using namespace std; // For time_t, time and ctime;
+    time_t now = time(0);
+    return ctime(&now);
+  }
 
-  unsigned int port_;
 };

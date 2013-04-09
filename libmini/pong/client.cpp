@@ -13,7 +13,6 @@
 #include <iostream>
 
 #include "client.h"
-#include "async_client.h"
 
 int main(int argc, char* argv[])
 {
@@ -23,7 +22,9 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::cout << client(argv[1], "daytime");
+  boost::asio::io_service io_service;
+
+  std::cout << client(io_service, argv[1], "daytime");
 
   return 0;
 }

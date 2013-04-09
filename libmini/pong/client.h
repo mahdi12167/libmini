@@ -16,14 +16,13 @@
 
 using boost::asio::ip::tcp;
 
-std::string client(const std::string &host, const std::string &service)
+std::string client(boost::asio::io_service& io_service,
+                   const std::string &host, const std::string &service)
 {
   std::string response;
 
   try
   {
-    boost::asio::io_service io_service;
-
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(host, service);
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
