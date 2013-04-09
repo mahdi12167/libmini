@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "client.h"
+#include "async_client.h"
 
 int main(int argc, char* argv[])
 {
