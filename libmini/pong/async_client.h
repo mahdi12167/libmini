@@ -190,7 +190,7 @@ private:
   bool valid_;
 
 public:
-  std::string get_response()
+  std::string get_content()
   {
     if (valid_) return content_;
     else return "";
