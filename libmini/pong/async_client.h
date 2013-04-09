@@ -25,7 +25,8 @@ public:
   client(boost::asio::io_service& io_service,
       const std::string& server, const std::string& path)
     : resolver_(io_service),
-      socket_(io_service)
+      socket_(io_service),
+      valid_(false)
   {
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -59,7 +60,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err.message() << "\n";
+      std::cerr << "Error: " << err.message() << "\n";
     }
   }
 
@@ -74,7 +75,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err.message() << "\n";
+      std::cerr << "Error: " << err.message() << "\n";
     }
   }
 
@@ -91,7 +92,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err.message() << "\n";
+      std::cerr << "Error: " << err.message() << "\n";
     }
   }
 
@@ -109,13 +110,13 @@ private:
       std::getline(response_stream, status_message);
       if (!response_stream || http_version.substr(0, 5) != "HTTP/")
       {
-        std::cout << "Invalid response\n";
+        std::cerr << "Invalid response\n";
         return;
       }
       if (status_code != 200)
       {
-        std::cout << "Response returned with status code ";
-        std::cout << status_code << "\n";
+        std::cerr << "Response returned with status code ";
+        std::cerr << status_code << "\n";
         return;
       }
 
@@ -126,7 +127,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err << "\n";
+      std::cerr << "Error: " << err << "\n";
     }
   }
 
@@ -137,13 +138,7 @@ private:
       // Process the response headers.
       std::istream response_stream(&response_);
       std::string header;
-      while (std::getline(response_stream, header) && header != "\r")
-        std::cout << header << "\n";
-      std::cout << "\n";
-
-      // Write whatever content we already have to output.
-      if (response_.size() > 0)
-        std::cout << &response_;
+      while (std::getline(response_stream, header) && header != "\r") ;
 
       // Start reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
@@ -153,7 +148,7 @@ private:
     }
     else
     {
-      std::cout << "Error: " << err << "\n";
+      std::cerr << "Error: " << err << "\n";
     }
   }
 
@@ -161,18 +156,20 @@ private:
   {
     if (!err)
     {
-      // Write all of the data that has been read so far.
-      std::cout << &response_;
-
       // Continue reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
           boost::asio::transfer_at_least(1),
           boost::bind(&client::handle_read_content, this,
             boost::asio::placeholders::error));
     }
-    else if (err != boost::asio::error::eof)
+    else if (err == boost::asio::error::eof)
     {
-      std::cout << "Error: " << err << "\n";
+      // finished reading
+      valid_ = true;
+    }
+    else
+    {
+      std::cerr << "Error: " << err << "\n";
     }
   }
 
@@ -180,4 +177,13 @@ private:
   tcp::socket socket_;
   boost::asio::streambuf request_;
   boost::asio::streambuf response_;
+  bool valid_;
+
+public:
+  std::string get_response()
+  {
+    if (_valid) return response_;
+    else return "";
+  }
+
 };
