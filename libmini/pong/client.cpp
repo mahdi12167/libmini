@@ -7,6 +7,8 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+// Modified by Stefan Roettger to use a synchronous daytime client method
+//
 
 #include <iostream>
 #include <boost/array.hpp>
@@ -14,44 +16,17 @@
 
 using boost::asio::ip::tcp;
 
+#include "client.h"
+
 int main(int argc, char* argv[])
 {
-  try
+  if (argc != 2)
   {
-    if (argc != 2)
-    {
-      std::cerr << "Usage: client <host>" << std::endl;
-      return 1;
-    }
-
-    boost::asio::io_service io_service;
-
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(argv[1], "daytime");
-    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-
-    tcp::socket socket(io_service);
-    boost::asio::connect(socket, endpoint_iterator);
-
-    for (;;)
-    {
-      boost::array<char, 128> buf;
-      boost::system::error_code error;
-
-      size_t len = socket.read_some(boost::asio::buffer(buf), error);
-
-      if (error == boost::asio::error::eof)
-        break; // Connection closed cleanly by peer.
-      else if (error)
-        throw boost::system::system_error(error); // Some other error.
-
-      std::cout.write(buf.data(), len);
-    }
+    std::cerr << "Usage: client <host>" << std::endl;
+    return 1;
   }
-  catch (std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-  }
+
+  std::cout << daytime_client(argv[1]);
 
   return 0;
 }
