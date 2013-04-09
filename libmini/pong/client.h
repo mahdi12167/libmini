@@ -16,7 +16,7 @@
 
 using boost::asio::ip::tcp;
 
-std::string daytime_client(const std::string &host)
+std::string daytime_client(const std::string &host, const std::string &service)
 {
   std::string response;
 
@@ -25,7 +25,7 @@ std::string daytime_client(const std::string &host)
     boost::asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query(host, "daytime");
+    tcp::resolver::query query(host, service);
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
     tcp::socket socket(io_service);
