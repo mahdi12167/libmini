@@ -19,11 +19,11 @@
 
 using boost::asio::ip::tcp;
 
-class client
+class http_client
 {
 public:
-  client(boost::asio::io_service& io_service,
-      const std::string& server, const std::string& path)
+  http_client(boost::asio::io_service& io_service,
+              const std::string& server, const std::string& path)
     : resolver_(io_service),
       socket_(io_service),
       valid_(false)
