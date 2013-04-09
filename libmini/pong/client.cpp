@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::cout << daytime_client(argv[1], "daytime");
+  std::cout << client(argv[1], "daytime");
 
   return 0;
 }
