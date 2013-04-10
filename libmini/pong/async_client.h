@@ -26,7 +26,7 @@ public:
               const std::string& server, const std::string& path)
     : resolver_(io_service),
       socket_(io_service),
-      valid_(false)
+      response_valid_(false)
   {
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -41,9 +41,9 @@ public:
     // into a list of endpoints.
     tcp::resolver::query query(server, "http");
     resolver_.async_resolve(query,
-        boost::bind(&http_client::handle_resolve, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::iterator));
+                            boost::bind(&http_client::handle_resolve, this,
+                                        boost::asio::placeholders::error,
+                                        boost::asio::placeholders::iterator));
   }
 
 private:
@@ -55,8 +55,8 @@ private:
       // Attempt a connection to each endpoint in the list until we
       // successfully establish a connection.
       boost::asio::async_connect(socket_, endpoint_iterator,
-          boost::bind(&http_client::handle_connect, this,
-            boost::asio::placeholders::error));
+                                 boost::bind(&http_client::handle_connect, this,
+                                             boost::asio::placeholders::error));
     }
     else
     {
@@ -70,8 +70,8 @@ private:
     {
       // The connection was successful. Send the request.
       boost::asio::async_write(socket_, request_,
-          boost::bind(&http_client::handle_write_request, this,
-            boost::asio::placeholders::error));
+                               boost::bind(&http_client::handle_write_request, this,
+                                           boost::asio::placeholders::error));
     }
     else
     {
@@ -87,8 +87,8 @@ private:
       // automatically grow to accommodate the entire line. The growth may be
       // limited by passing a maximum size to the streambuf constructor.
       boost::asio::async_read_until(socket_, response_, "\r\n",
-          boost::bind(&http_client::handle_read_status_line, this,
-            boost::asio::placeholders::error));
+                                    boost::bind(&http_client::handle_read_status_line, this,
+                                                boost::asio::placeholders::error));
     }
     else
     {
@@ -122,8 +122,8 @@ private:
 
       // Read the response headers, which are terminated by a blank line.
       boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
-          boost::bind(&http_client::handle_read_headers, this,
-            boost::asio::placeholders::error));
+                                    boost::bind(&http_client::handle_read_headers, this,
+                                                boost::asio::placeholders::error));
     }
     else
     {
@@ -142,13 +142,13 @@ private:
 
       // Write whatever content we already have read.
       std::istream is(&response_);
-      is >> content_;
+      is >> response_content_;
 
       // Start reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
-          boost::asio::transfer_at_least(1),
-          boost::bind(&http_client::handle_read_content, this,
-            boost::asio::placeholders::error));
+                              boost::asio::transfer_at_least(1),
+                              boost::bind(&http_client::handle_read_content, this,
+                                          boost::asio::placeholders::error));
     }
     else
     {
@@ -162,18 +162,18 @@ private:
     {
       // Write all of the data that has been read so far.
       std::istream is(&response_);
-      is >> content_;
+      is >> response_content_;
 
       // Continue reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
-          boost::asio::transfer_at_least(1),
-          boost::bind(&http_client::handle_read_content, this,
-            boost::asio::placeholders::error));
+                              boost::asio::transfer_at_least(1),
+                              boost::bind(&http_client::handle_read_content, this,
+                                          boost::asio::placeholders::error));
     }
     else if (err == boost::asio::error::eof)
     {
       // finished reading
-      valid_ = true;
+      response_valid_ = true;
     }
     else
     {
@@ -186,14 +186,16 @@ private:
   boost::asio::streambuf request_;
   boost::asio::streambuf response_;
 
-  std::string content_;
-  bool valid_;
+  std::string response_content_;
+  bool response_valid_;
 
 public:
-  std::string get_content()
+  std::string get_response()
   {
-    if (valid_) return content_;
-    else return "";
+    if (response_valid_)
+      return response_content_;
+    else
+      return "";
   }
 
 };

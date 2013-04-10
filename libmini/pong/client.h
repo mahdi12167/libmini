@@ -7,7 +7,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Modified by Stefan Roettger to provide a synchronous client method
+// Modified by Stefan Roettger to provide a synchronous client class
 //
 
 #include <iostream>
@@ -16,40 +16,50 @@
 
 using boost::asio::ip::tcp;
 
-std::string client(boost::asio::io_service& io_service,
-                   const std::string &host, const std::string &service)
+class client
 {
-  std::string response;
-
-  try
+public:
+  client(boost::asio::io_service& io_service,
+         const std::string &host, const std::string &service)
   {
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(host, service);
-    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-
-    tcp::socket socket(io_service);
-    boost::asio::connect(socket, endpoint_iterator);
-
-    for (;;)
+    try
     {
-      boost::array<char, 128> buf;
-      boost::system::error_code error;
+      tcp::resolver resolver(io_service);
+      tcp::resolver::query query(host, service);
+      tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
-      size_t len = socket.read_some(boost::asio::buffer(buf), error);
+      tcp::socket socket(io_service);
+      boost::asio::connect(socket, endpoint_iterator);
 
-      if (error == boost::asio::error::eof)
-        break; // Connection closed cleanly by peer.
-      else if (error)
-        throw boost::system::system_error(error); // Some other error.
+      for (;;)
+      {
+        boost::array<char, 128> buf;
+        boost::system::error_code error;
 
-      response.append(buf.data(), len);
+        size_t len = socket.read_some(boost::asio::buffer(buf), error);
+
+        if (error == boost::asio::error::eof)
+          break; // Connection closed cleanly by peer.
+        else if (error)
+          throw boost::system::system_error(error); // Some other error.
+
+        response_.append(buf.data(), len);
+      }
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      response_="";
     }
   }
-  catch (std::exception& e)
+
+protected:
+  std::string response_;
+
+public:
+  std::string get_response()
   {
-    std::cerr << e.what() << std::endl;
-    response="";
+    return(response_);
   }
 
-  return response;
-}
+};

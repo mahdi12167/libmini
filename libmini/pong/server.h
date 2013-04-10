@@ -25,18 +25,30 @@ public:
   {
     try
     {
-      tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+      acceptor_ = new tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+    }
+  }
 
-      for (;;)
-      {
-        tcp::socket socket(io_service);
-        acceptor.accept(socket);
+  ~server()
+  {
+    delete acceptor_;
+  }
 
-        std::string message = make_response_string();
+  void respond()
+  {
+    try
+    {
+      tcp::socket socket(acceptor_->get_io_service());
+      acceptor_->accept(socket);
 
-        boost::system::error_code ignored_error;
-        boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
-      }
+      std::string message = make_response_string();
+
+      boost::system::error_code ignored_error;
+      boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
     }
     catch (std::exception& e)
     {
@@ -45,6 +57,8 @@ public:
   }
 
 protected:
+  tcp::acceptor *acceptor_;
+
   virtual std::string make_response_string()
   {
     using namespace std; // For time_t, time and ctime;
