@@ -141,8 +141,7 @@ private:
       while (std::getline(response_stream, header) && header != "\r") ;
 
       // Write whatever content we already have read.
-      std::istream is(&response_);
-      is >> response_content_;
+      response_stream_ << &response_;
 
       // Start reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
@@ -161,8 +160,7 @@ private:
     if (!err)
     {
       // Write all of the data that has been read so far.
-      std::istream is(&response_);
-      is >> response_content_;
+      response_stream_ << &response_;
 
       // Continue reading remaining data until EOF.
       boost::asio::async_read(socket_, response_,
@@ -186,14 +184,14 @@ private:
   boost::asio::streambuf request_;
   boost::asio::streambuf response_;
 
-  std::string response_content_;
+  std::ostringstream response_stream_;
   bool response_valid_;
 
 public:
   std::string get_response()
   {
     if (response_valid_)
-      return response_content_;
+      return response_stream_.str();
     else
       return "";
   }

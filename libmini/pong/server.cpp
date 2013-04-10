@@ -11,18 +11,10 @@
 //
 
 #include "server.h"
-#include "async_client.h" //!! async test
 
 int main()
 {
   boost::asio::io_service io_service;
-  io_service.run();
-
-  //!! async test
-  http_client c(io_service, "www.gnu.org", "/licenses/gpl-3.0.txt");
-  while (c.get_response()=="");
-  std::cout << c.get_response().size() << std::endl;
-  std::cout << c.get_response();
 
   server s(io_service);
   for (;;) s.respond();
