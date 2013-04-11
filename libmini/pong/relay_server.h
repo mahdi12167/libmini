@@ -10,8 +10,6 @@
 
 #include <unistd.h>
 
-#include <ctime>
-
 #include "server.h"
 #include "async_client.h"
 
@@ -42,13 +40,8 @@ public:
 protected:
   virtual std::string make_response_string()
   {
-    using namespace std; // For time_t, time and ctime;
-
     std::string response;
 
-    time_t now = time(0);
-
-    response.append(ctime(&now));
     response.append(c1_->get_response());
 
     if (response.length()>0)
