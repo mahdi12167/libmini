@@ -14,6 +14,7 @@
 #include <istream>
 #include <ostream>
 #include <string>
+#include <ctime>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 
@@ -171,6 +172,7 @@ private:
     else if (err == boost::asio::error::eof)
     {
       // finished reading
+      response_time_ = time(0);
       response_valid_ = true;
     }
     else
@@ -185,6 +187,7 @@ private:
   boost::asio::streambuf response_;
 
   std::ostringstream response_stream_;
+  time_t response_time_;
   bool response_valid_;
 
 public:
@@ -199,6 +202,14 @@ public:
       return response_stream_.str();
     else
       return "";
+  }
+
+  time_t get_response_time()
+  {
+    if (response_valid_)
+      return response_time_;
+    else
+      return time(0);
   }
 
   boost::asio::io_service& get_io_service()
