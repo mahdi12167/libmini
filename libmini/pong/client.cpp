@@ -27,8 +27,13 @@ int main(int argc, char* argv[])
   client c(io_service, argv[1], "daytime");
   std::string response = c.get_response();
 
-  std::cout << response;
-  if ((*response.end()) != '\n') std::cout << '\n';
+  if (response.size()>0)
+     {
+     std::cout << response;
+     if ((*(response.end()-1)) != '\n') std::cout << '\n';
+     }
+  else
+     std::cout << "empty response\n";
 
   return 0;
 }
