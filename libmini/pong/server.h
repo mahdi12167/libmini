@@ -10,7 +10,6 @@
 // Modified by Stefan Roettger to provide a synchronous server class
 //
 
-#include <ctime>
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
@@ -64,11 +63,5 @@ public:
 protected:
   tcp::acceptor *acceptor_;
 
-  virtual std::string make_response_string()
-  {
-    using namespace std; // For time_t, time and ctime;
-    time_t now = time(0);
-    return ctime(&now);
-  }
-
+  virtual std::string make_response_string() = 0;
 };

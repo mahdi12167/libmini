@@ -25,7 +25,10 @@ int main(int argc, char* argv[])
   boost::asio::io_service io_service;
 
   client c(io_service, argv[1], "daytime");
-  std::cout << c.get_response();
+  std::string response = c.get_response();
+
+  std::cout << response;
+  if ((*response.end()) != '\n') std::cout << '\n';
 
   return 0;
 }

@@ -10,13 +10,13 @@
 // Modified by Stefan Roettger to use a synchronous server class
 //
 
-#include "server.h"
+#include "daytime_server.h"
 
 int main()
 {
   boost::asio::io_service io_service;
 
-  server s(io_service);
+  daytime_server s(io_service);
   for (;;) s.respond();
 
   return 0;
