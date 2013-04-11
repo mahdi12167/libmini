@@ -8,6 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <unistd.h>
+
 #include <ctime>
 
 #include "server.h"
@@ -28,6 +30,7 @@ public:
       c2_ = new async_client(io_service, host_, path_);
 
       io_service.run();
+      while (!c1_->is_valid()) sleep(1);
     }
 
   ~relay_server()
@@ -46,6 +49,7 @@ protected:
     time_t now = time(0);
     response.append(ctime(&now));
     response.append(c1_->get_response());
+    if (*(response.end()-1) != '\n') response.push_back('\n');
 
     if (c2_->is_valid())
     {
