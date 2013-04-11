@@ -21,6 +21,7 @@ class client
 public:
   client(boost::asio::io_service& io_service,
          const std::string &host, const std::string &service)
+    : valid_(false)
   {
     try
     {
@@ -45,21 +46,31 @@ public:
 
         response_.append(buf.data(), len);
       }
+
+      valid_ = true;
     }
     catch (std::exception& e)
     {
       std::cerr << e.what() << std::endl;
-      response_="";
     }
   }
 
 protected:
   std::string response_;
+  bool valid_;
 
 public:
+  bool is_valid()
+  {
+    return(valid_);
+  }
+
   std::string get_response()
   {
-    return(response_);
+    if (valid_)
+      return(response_);
+    else
+      return("");
   }
 
 };

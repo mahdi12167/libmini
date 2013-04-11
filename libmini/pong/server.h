@@ -56,6 +56,11 @@ public:
     }
   }
 
+  boost::asio::io_service& get_io_service()
+  {
+    return(acceptor_->get_io_service());
+  }
+
 protected:
   tcp::acceptor *acceptor_;
 

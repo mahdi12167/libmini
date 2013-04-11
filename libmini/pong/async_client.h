@@ -23,7 +23,7 @@ class async_client
 {
 public:
   async_client(boost::asio::io_service& io_service,
-              const std::string& server, const std::string& path)
+              const std::string& host, const std::string& path)
     : resolver_(io_service),
       socket_(io_service),
       response_valid_(false)
@@ -33,13 +33,13 @@ public:
     // allow us to treat all data up until the EOF as the content.
     std::ostream request_stream(&request_);
     request_stream << "GET " << path << " HTTP/1.0\r\n";
-    request_stream << "Host: " << server << "\r\n";
+    request_stream << "Host: " << host << "\r\n";
     request_stream << "Accept: */*\r\n";
     request_stream << "Connection: close\r\n\r\n";
 
     // Start an asynchronous resolve to translate the server and service names
     // into a list of endpoints.
-    tcp::resolver::query query(server, "http");
+    tcp::resolver::query query(host, "http");
     resolver_.async_resolve(query,
                             boost::bind(&async_client::handle_resolve, this,
                                         boost::asio::placeholders::error,
@@ -188,12 +188,22 @@ private:
   bool response_valid_;
 
 public:
+  bool is_valid()
+  {
+    return(response_valid_);
+  }
+
   std::string get_response()
   {
     if (response_valid_)
       return response_stream_.str();
     else
       return "";
+  }
+
+  boost::asio::io_service& get_io_service()
+  {
+    return(resolver_.get_io_service());
   }
 
 };
