@@ -47,9 +47,12 @@ protected:
     std::string response;
 
     time_t now = time(0);
+
     response.append(ctime(&now));
     response.append(c1_->get_response());
-    if (*(response.end()-1) != '\n') response.push_back('\n');
+
+    if (response.length()>0)
+       if (*(response.end()-1) != '\n') response.push_back('\n');
 
     if (c2_->is_valid())
     {
