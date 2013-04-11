@@ -37,22 +37,27 @@ public:
     delete c2_;
   }
 
-protected:
-  virtual std::string make_response_string()
+  void update_response()
   {
-    std::string response;
-
-    response.append(c1_->get_response());
-
-    if (response.length()>0)
-       if (*(response.end()-1) != '\n') response.push_back('\n');
-
     if (c2_->is_valid())
     {
       delete c1_;
       c1_ = c2_;
       c2_ = new async_client(c1_->get_io_service(), host_, path_);
     }
+  }
+
+protected:
+  virtual std::string make_response_string()
+  {
+    std::string response;
+
+    update_response();
+
+    response.append(c1_->get_response());
+
+    if (response.length()>0)
+       if (*(response.end()-1) != '\n') response.push_back('\n');
 
     return response;
   }
