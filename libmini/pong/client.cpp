@@ -16,15 +16,19 @@
 
 int main(int argc, char* argv[])
 {
-  if (argc != 2)
+  if (argc != 2 && argc!=3)
   {
-    std::cerr << "Usage: client <host>" << std::endl;
+    std::cerr << "Usage: client <host> [<port>]" << std::endl;
     return 1;
   }
 
   boost::asio::io_service io_service;
 
-  client c(io_service, argv[1], "daytime");
+  std::string host = argv[1];
+  std::string port = "daytime";
+  if (argc > 2) port = argv[2];
+
+  client c(io_service, host, port);
   std::cout << c.get_response();
 
   return 0;
