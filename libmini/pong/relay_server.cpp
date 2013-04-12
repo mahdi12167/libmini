@@ -7,6 +7,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+// A simple threaded tcp server that polls a http REST weather server and
+// relays the JSON response over tcp port 14.
+//
 
 #include "relay_server.h"
 

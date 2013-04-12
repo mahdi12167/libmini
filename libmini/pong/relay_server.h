@@ -7,6 +7,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+// A simple threaded tcp server that polls a http server and
+// relays the response body over a different tcp port.
+//
 
 #include <boost/thread.hpp>
 
@@ -55,7 +58,7 @@ public:
       c2_ = new async_client(c1_->get_io_service(), host_, path_);
     }
 
-    // if latest response is too old start next
+    // if latest response is out-dated start next
     if (difftime(time(0), c1_->get_response_time()) > lifetime_)
     {
       delete c1_;

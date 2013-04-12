@@ -7,7 +7,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Modified by Stefan Roettger to provide an asynchronous http client class
+// Modified by Stefan Roettger to provide an asynchronous thread-safe http client class
 //
 
 #include <iostream>
