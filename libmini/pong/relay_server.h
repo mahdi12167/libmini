@@ -30,6 +30,9 @@ public:
 
       lifetime_ = lifetime;
 
+      // give the io service some work to keep it alive
+      work_ = new boost::asio::io_service::work(io_service);
+
       // create new async clients
       c1_ = new async_client(io_service, host_, path_);
       c2_ = new async_client(io_service, host_, path_);
@@ -40,11 +43,15 @@ public:
 
   ~relay_server()
   {
+    // allow run() to exit
+    delete work_;
+
     // delete async clients
     delete c1_;
     delete c2_;
 
     // delete io thread
+    t_->join();
     delete t_;
   }
 
@@ -91,6 +98,7 @@ private:
 
   double lifetime_;
 
+  boost::asio::io_service::work *work_;
   async_client *c1_, *c2_;
 
   boost::thread *t_;

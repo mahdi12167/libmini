@@ -17,7 +17,7 @@ int main()
 {
   boost::asio::io_service io_service;
 
-  relay_server s(io_service, "ws.geonames.org", "/findNearByWeatherJSON?lat=49.45&lng=11.08", 15*60.0, 14);
+  relay_server s(io_service, "ws.geonames.org", "/findNearByWeatherJSON?lat=49.45&lng=11.08", 60.0, 14);
   for (;;) s.respond();
 
   return 0;
