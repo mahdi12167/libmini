@@ -15,8 +15,10 @@
 #include <ostream>
 #include <string>
 #include <ctime>
+
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/thread.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -27,8 +29,12 @@ public:
               const std::string& host, const std::string& path)
     : resolver_(io_service),
       socket_(io_service),
-      response_valid_(false)
+      response_finished_(false),
+      response_error_(false)
   {
+    // lock wait mutex
+    wait_mtx_.lock();
+
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
     // allow us to treat all data up until the EOF as the content.
@@ -47,6 +53,12 @@ public:
                                         boost::asio::placeholders::iterator));
   }
 
+  ~async_client()
+  {
+    // lock wait mutex
+    wait_mtx_.lock();
+  }
+
 private:
   void handle_resolve(const boost::system::error_code& err,
       tcp::resolver::iterator endpoint_iterator)
@@ -62,6 +74,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -77,6 +93,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -94,6 +114,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -129,6 +153,10 @@ private:
     else
     {
       std::cerr << "Error: " << err << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -153,6 +181,10 @@ private:
     else
     {
       std::cerr << "Error: " << err << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -171,13 +203,26 @@ private:
     }
     else if (err == boost::asio::error::eof)
     {
+      // lock access mutex
+      access_mtx_.lock();
+
       // finished reading
+      response_finished_ = true;
       response_time_ = time(0);
-      response_valid_ = true;
+
+      // unlock access mutex
+      access_mtx_.unlock();
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
     else
     {
       std::cerr << "Error: " << err << "\n";
+      response_error_ = true;
+
+      // unlock wait mutex
+      wait_mtx_.unlock();
     }
   }
 
@@ -187,18 +232,36 @@ private:
   boost::asio::streambuf response_;
 
   std::ostringstream response_stream_;
+  bool response_finished_;
   time_t response_time_;
-  bool response_valid_;
+  bool response_error_;
+
+  boost::mutex wait_mtx_;
+  boost::mutex access_mtx_;
 
 public:
   bool is_valid()
   {
-    return(response_valid_);
+    // scoped wait lock
+    boost::mutex::scoped_lock wait(wait_mtx_);
+
+    return(!response_error_);
+  }
+
+  bool is_finished()
+  {
+    // scoped access lock
+    boost::mutex::scoped_lock lock(access_mtx_);
+
+    return(response_finished_);
   }
 
   std::string get_response()
   {
-    if (response_valid_)
+    // scoped wait lock
+    boost::mutex::scoped_lock wait(wait_mtx_);
+
+    if (!response_error_)
       return response_stream_.str();
     else
       return "";
@@ -206,7 +269,10 @@ public:
 
   time_t get_response_time()
   {
-    if (response_valid_)
+    // scoped wait lock
+    boost::mutex::scoped_lock wait(wait_mtx_);
+
+    if (!response_error_)
       return response_time_;
     else
       return time(0);
