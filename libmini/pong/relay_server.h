@@ -82,7 +82,12 @@ protected:
     update_response();
 
     if (c1_->is_valid())
-       response.append(c1_->get_response());
+    {
+      time_t t=c1_->get_response_time();
+      response.append(ctime(&t));
+
+      response.append(c1_->get_response());
+    }
     else
        response.append("relay error");
 
