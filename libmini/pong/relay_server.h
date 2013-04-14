@@ -33,9 +33,9 @@ public:
       // give the io service some work to keep it alive
       work_ = new boost::asio::io_service::work(io_service);
 
-      // create new async clients
+      // create new async client
       c1_ = new async_client(io_service, host_, path_);
-      c2_ = new async_client(io_service, host_, path_);
+      c2_ = NULL;
 
       // start io service handling async clients in new thread
       t_ = new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service));
@@ -48,7 +48,7 @@ public:
 
     // delete async clients
     delete c1_;
-    delete c2_;
+    if (c2_ != NULL) delete c2_;
 
     // delete io thread
     t_->join();
@@ -57,21 +57,28 @@ public:
 
   void update_response()
   {
-    // if async request is finished start next
-    if (c2_->is_finished())
-    {
-      delete c1_;
-      c1_ = c2_;
-      c2_ = new async_client(c1_->get_io_service(), host_, path_);
-    }
+    // if async request is finished use it
+    if (c2_ != NULL)
+      if (c2_->is_finished())
+      {
+        delete c1_;
+        c1_ = c2_;
+        c2_ = NULL;
+      }
 
-    // if latest response is out-dated start next
-    if (difftime(time(0), c1_->get_response_time()) > lifetime_)
-    {
-      delete c1_;
-      c1_ = c2_;
-      c2_ = new async_client(c1_->get_io_service(), host_, path_);
-    }
+    // if latest response is semi-out-dated start next
+    if (c2_ == NULL)
+      if (difftime(time(0), c1_->get_response_time()) > 0.5*lifetime_)
+        c2_ = new async_client(c1_->get_io_service(), host_, path_);
+
+    // if latest response is out-dated use next
+    if (c2_ != NULL)
+      if (difftime(time(0), c1_->get_response_time()) > lifetime_)
+        {
+        delete c1_;
+        c1_ = c2_;
+        c2_ = NULL;
+        }
   }
 
 protected:
