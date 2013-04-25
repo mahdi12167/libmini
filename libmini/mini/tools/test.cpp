@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#undef OPENGL_TEST // enable this to perform an OpenGL test
+#define OPENGL_TEST // enable this to perform an OpenGL test
 #define MINICRS_TEST // enable this to perform a test of the minicrs class
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
@@ -89,7 +89,7 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-#ifdef OPENGLTEST
+#ifdef OPENGL_TEST
    winwidth=winheight=512;
 
    glutInit(&argc,argv);
@@ -114,6 +114,7 @@ int main(int argc,char *argv[])
 #ifdef OPENGL_TEST
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
+   if (get_unsupported_glexts()==0) std::cout << "SUCCESS" << std::endl;
 #endif
 
 #ifdef MINICRS_TEST
