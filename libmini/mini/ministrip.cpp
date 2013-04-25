@@ -1439,8 +1439,12 @@ void ministrip::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
 // get bounding sphere
 void ministrip::getbsphere(miniv3d &center,double &radius2) const
    {
-   center=0.5*(BBOXMIN+BBOXMAX);
-   radius2=(0.5*(BBOXMAX-BBOXMIN)).getlength2();
+   miniv3d bboxmin,bboxmax;
+
+   getbbox(bboxmin,bboxmax);
+
+   center=0.5*(bboxmin+bboxmax);
+   radius2=(0.5*(bboxmax-bboxmin)).getlength2();
    }
 
 // shoot a ray and return the distance to the closest triangle

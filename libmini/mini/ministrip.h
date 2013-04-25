@@ -54,7 +54,7 @@ class ministrip
    ministrip(const ministrip &strip);
 
    //! destructor
-   ~ministrip();
+   virtual ~ministrip();
 
    //! clear strip
    void clear();
@@ -221,7 +221,7 @@ class ministrip
    BOOLINT isopaque();
 
    //! render triangle strips
-   void render(int wocolor=0,int wonrm=0,int wotex=0);
+   virtual void render(int wocolor=0,int wonrm=0,int wotex=0);
 
    //! render triangle strips with multi-pass method for unordered semi-transparent geometry
    void rendermultipass(int pass,
@@ -261,17 +261,17 @@ class ministrip
    static char *getpixshader(int num);
 
    //! get bounding box
-   void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
+   virtual void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
 
    //! get bounding sphere
-   void getbsphere(miniv3d &center,double &radius2) const;
+   virtual void getbsphere(miniv3d &center,double &radius2) const;
 
    //! shoot a ray and return the distance to the closest triangle
    //! only the triangles with a positive distance are considered
    //! o is the origin of the ray, d is the ray direction
    //! a valid hit distance to be returned has to be no less than mindist
    //! a return value of MAXFLOAT indicates that there was no hit
-   double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
+   virtual double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
 
    protected:
 
