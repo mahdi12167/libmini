@@ -37,6 +37,7 @@ BOOLINT glext_tr;
 BOOLINT glext_mt;
 BOOLINT glext_vp;
 BOOLINT glext_fp;
+BOOLINT glext_fbo;
 
 #ifdef _WIN32
 
@@ -66,6 +67,23 @@ PFNGLPROGRAMSTRINGARBPROC glProgramStringARB=NULL;
 PFNGLPROGRAMENVPARAMETER4FARBPROC glProgramEnvParameter4fARB=NULL;
 PFNGLDELETEPROGRAMSARBPROC glDeleteProgramsARB=NULL;
 PFNGLGETPROGRAMIVARBPROC glGetProgramivARB=NULL;
+#endif
+
+#ifdef GL_EXT_framebuffer_object
+PFNGLGENFRAMEBUFFERSPROC                     glGenFramebuffersEXT=NULL;                      // FBO name generation procedure
+PFNGLDELETEFRAMEBUFFERSPROC                  glDeleteFramebuffersEXT=NULL;                   // FBO deletion procedure
+PFNGLBINDFRAMEBUFFERPROC                     glBindFramebufferEXT=NULL;                      // FBO bind procedure
+PFNGLCHECKFRAMEBUFFERSTATUSPROC              glCheckFramebufferStatusEXT=NULL;               // FBO completeness test procedure
+PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameterivEXT=NULL;  // return various FBO parameters
+PFNGLGENERATEMIPMAPPROC                      glGenerateMipmapEXT=NULL;                       // FBO automatic mipmap generation procedure
+PFNGLFRAMEBUFFERTEXTURE2DPROC                glFramebufferTexture2DEXT=NULL;                 // FBO texdture attachement procedure
+PFNGLFRAMEBUFFERRENDERBUFFERPROC             glFramebufferRenderbufferEXT=NULL;              // FBO renderbuffer attachement procedure
+PFNGLGENRENDERBUFFERSPROC                    glGenRenderbuffersEXT=NULL;                     // renderbuffer generation procedure
+PFNGLDELETERENDERBUFFERSPROC                 glDeleteRenderbuffersEXT=NULL;                  // renderbuffer deletion procedure
+PFNGLBINDRENDERBUFFERPROC                    glBindRenderbufferEXT=NULL;                     // renderbuffer bind procedure
+PFNGLRENDERBUFFERSTORAGEPROC                 glRenderbufferStorageEXT=NULL;                  // renderbuffer memory allocation procedure
+PFNGLGETRENDERBUFFERPARAMETERIVPROC          glGetRenderbufferParameterivEXT=NULL;           // return various renderbuffer parameters
+PFNGLISRENDERBUFFERPROC                      glIsRenderbufferEXT=NULL;                       // determine renderbuffer object type
 #endif
 
 #endif

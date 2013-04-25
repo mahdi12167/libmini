@@ -51,6 +51,7 @@ static void initglexts()
       glext_mt=FALSE;
       glext_vp=FALSE;
       glext_fp=FALSE;
+      glext_fbo=FALSE;
 
       if ((GL_EXTs=(char *)glGetString(GL_EXTENSIONS))==NULL) ERRORMSG();
 
@@ -70,6 +71,7 @@ static void initglexts()
       if (strstr(GL_EXTs,"GL_ARB_multitexture")!=NULL) glext_mt=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_vertex_program")!=NULL) glext_vp=TRUE;
       if (strstr(GL_EXTs,"GL_ARB_fragment_program")!=NULL) glext_fp=TRUE;
+      if (strstr(GL_EXTs,"GL_EXT_framebuffer_object")!=NULL) glext_fbo=TRUE;
 
       done=TRUE;
       }
@@ -136,6 +138,34 @@ static void initwglprocs()
             }
 #endif
 
+#ifdef GL_EXT_framebuffer_object
+   if (glext_fbo)
+      {
+      glGenFramebuffersEXT                     = (PFNGLGENFRAMEBUFFERSPROC)wglGetProcAddress("glGenFramebuffers");
+      glDeleteFramebuffersEXT                  = (PFNGLDELETEFRAMEBUFFERSPROC)wglGetProcAddress("glDeleteFramebuffers");
+      glBindFramebufferEXT                     = (PFNGLBINDFRAMEBUFFERPROC)wglGetProcAddress("glBindFramebuffer");
+      glCheckFramebufferStatusEXT              = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)wglGetProcAddress("glCheckFramebufferStatus");
+      glGetFramebufferAttachmentParameterivEXT = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC)wglGetProcAddress("glGetFramebufferAttachmentParameteriv");
+      glGenerateMipmapEXT                      = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
+      glFramebufferTexture2DEXT                = (PFNGLFRAMEBUFFERTEXTURE2DPROC)wglGetProcAddress("glFramebufferTexture2D");
+      glFramebufferRenderbufferEXT             = (PFNGLFRAMEBUFFERRENDERBUFFERPROC)wglGetProcAddress("glFramebufferRenderbuffer");
+      glGenRenderbuffersEXT                    = (PFNGLGENRENDERBUFFERSPROC)wglGetProcAddress("glGenRenderbuffers");
+      glDeleteRenderbuffersEXT                 = (PFNGLDELETERENDERBUFFERSPROC)wglGetProcAddress("glDeleteRenderbuffers");
+      glBindRenderbufferEXT                    = (PFNGLBINDRENDERBUFFERPROC)wglGetProcAddress("glBindRenderbuffer");
+      glRenderbufferStorageEXT                 = (PFNGLRENDERBUFFERSTORAGEPROC)wglGetProcAddress("glRenderbufferStorage");
+      glGetRenderbufferParameterivEXT          = (PFNGLGETRENDERBUFFERPARAMETERIVPROC)wglGetProcAddress("glGetRenderbufferParameteriv");
+      glIsRenderbufferEXT                      = (PFNGLISRENDERBUFFERPROC)wglGetProcAddress("glIsRenderbuffer");
+
+      if (!(glGenFramebuffersEXT && glDeleteFramebuffersEXT && glBindFramebufferEXT && glCheckFramebufferStatusEXT &&
+            glGetFramebufferAttachmentParameterivEXT && glGenerateMipmapEXT && glFramebufferTexture2DEXT && glFramebufferRenderbufferEXT &&
+            glGenRenderbuffersEXT && glDeleteRenderbuffersEXT && glBindRenderbufferEXT && glRenderbufferStorageEXT &&
+            glGetRenderbufferParameterivEXT && glIsRenderbufferEXT))
+         {
+         WARNMSG();
+         glext_fbo=FALSE;
+         }
+#endif
+
       done=TRUE;
       }
    }
@@ -165,6 +195,7 @@ int get_unsupported_glexts()
    if (!glext_mt) num++;
    if (!glext_vp) num++;
    if (!glext_fp) num++;
+   if (!glext_fbo) num++;
 
 #endif
 
@@ -194,6 +225,7 @@ void print_unsupported_glexts()
       if (!glext_mt) printf(" ARB_multitexture");
       if (!glext_vp) printf(" ARB_vertex_program");
       if (!glext_fp) printf(" ARB_fragment_program");
+      if (!glext_fbo) printf(" EXT_framebuffer_object");
 
       printf("\n");
       }
