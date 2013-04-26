@@ -6,6 +6,7 @@
 //  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
 // CREATED: 2005-10-05
 // UPDATED: 2005-10-05
+// ADAPTED: 2013-04-26 (stefan@stereofx.org)
 //
 // 3D model is converted by the PolyTrans from Okino Computer Graphics, Inc.
 //
@@ -15,7 +16,8 @@
 #define TEAPOT_H
 
 // vertices for teapot
-GLfloat teapotVertices[] = {
+GLfloat teapotVertices[] =
+   {
    -3.00000f, 1.80000f, 0.000000f, -2.99160f, 1.80000f, -0.0810000f, -2.99160f, 1.80000f, 0.0810000f,
    -2.98945f, 1.66616f, 0.000000f, -2.98500f, 1.92195f, 0.000000f,
    -2.98117f, 1.66784f, -0.0810000f, -2.98117f, 1.66784f, 0.0810000f,
@@ -1646,10 +1648,11 @@ GLfloat teapotVertices[] = {
    3.41645f, 2.47237f, 0.0579960f, 3.42488f, 2.46261f, 0.000000f,
    3.42812f, 2.47734f, 0.000000f, 3.43400f, 2.47290f, 0.000000f,
    3.43400f, 2.47290f, 0.000000f
-};
+   };
 
 // vertex normals for teapot
-GLfloat teapotNormals[] = {
+GLfloat teapotNormals[] =
+   {
    -0.999758f, 0.0220180f, -0.000156564f, -0.974341f, 0.0213041f, -0.224065f, -0.974389f, 0.0225020f, 0.223741f,
    -0.987511f, -0.157553f, 3.08111e-005f, -0.961664f, 0.274230f, -0.000508001f,
    -0.962297f, -0.154240f, -0.224042f, -0.962552f, -0.152551f, 0.224104f,
@@ -3280,10 +3283,11 @@ GLfloat teapotNormals[] = {
    0.734208f, -0.562857f, 0.379645f, 0.653497f, -0.756820f, 0.0128416f,
    0.264246f, 0.963858f, -0.0339504f, 0.588024f, 0.806503f, 0.0614927f,
    0.753961f, -0.652834f, -0.0731568f
-};
+   };
 
 // indices for teapot
-GLushort teapotIndices[] = {
+GLushort teapotIndices[] =
+   {
    3226, 3237, 3226, 3253, 3247, 3259, 3256, 3255, 3248, 3240, 3248, 3229, 3036, 3043, 3036, 3056,
    3036, 3052, 3027, 3046, 3018, 3025, 3010, 3016, 3001, 3006, 2993, 2996, 2982, 2987, 2957, 2961,
    2936, 2939, 2922, 2925, 2909, 2912, 2900, 2901, 2889, 2892, 2873, 2874, 2862, 2863, 2828, 2830,
@@ -3716,9 +3720,17 @@ GLushort teapotIndices[] = {
    275, 247, 282, 255, 286, 257, 283, 256, 429, 427, 357, 362, 313, 315, 273, 315,
    275, 317, 282, 319, 286, 318, 283, 427, 425, 362, 365, 315, 365, 317, 367, 319,
    366, 318, 425, 420, 365, 420, 367, 426, 366
-};
+   };
 
-void drawTeapotElements() {
+void drawTeapotElements()
+   {
+#ifndef NOOGL
+
+   glVertexPointer(3,GL_FLOAT,0,teapotVertices);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glNormalPointer(GL_FLOAT,0,teapotNormals);
+   glEnableClientState(GL_NORMAL_ARRAY);
+
    glDrawElements(GL_TRIANGLE_STRIP, 12, GL_UNSIGNED_SHORT, &teapotIndices[0]);
    glDrawElements(GL_TRIANGLE_STRIP, 78, GL_UNSIGNED_SHORT, &teapotIndices[12]);
    glDrawElements(GL_TRIANGLE_STRIP, 35, GL_UNSIGNED_SHORT, &teapotIndices[90]);
@@ -3895,6 +3907,11 @@ void drawTeapotElements() {
    glDrawElements(GL_TRIANGLE_STRIP, 15, GL_UNSIGNED_SHORT, &teapotIndices[6872]);
    glDrawElements(GL_TRIANGLE_STRIP, 11, GL_UNSIGNED_SHORT, &teapotIndices[6887]);
    glDrawElements(GL_TRIANGLE_STRIP, 7, GL_UNSIGNED_SHORT, &teapotIndices[6898]);
-}
+
+   glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_NORMAL_ARRAY);
+
+#endif
+   }
 
 #endif

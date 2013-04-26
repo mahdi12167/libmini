@@ -10,13 +10,7 @@ mininode_geometry_teapot::mininode_geometry_teapot()
    {}
 
 void mininode_geometry_teapot::render(int wocolor,int wonrm,int wotex)
-   {
-   vertexarray(teapotVertices);
-   normalarray(teapotNormals);
-   drawTeapotElements();
-   vertexarray(NULL);
-   normalarray(NULL);
-   }
+   {drawTeapotElements();}
 
 void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    {
