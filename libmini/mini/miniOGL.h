@@ -205,6 +205,7 @@ void painttexrect(int texid,int depthcomp=0);
 void deletetexrect(int texid);
 
 void paintbuffer();
+void invertbuffer();
 
 void polygonmode(int wire=0);
 

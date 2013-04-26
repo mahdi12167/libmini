@@ -2255,6 +2255,20 @@ void paintbuffer()
 #endif
    }
 
+void invertbuffer()
+   {
+#ifndef NOOGL
+
+   glBlendFunc(GL_ONE_MINUS_DST_COLOR,GL_ZERO);
+   glEnable(GL_BLEND);
+
+   paintbuffer();
+
+   glDisable(GL_BLEND);
+
+#endif
+   }
+
 void polygonmode(int wire)
    {
 #ifndef NOOGL
