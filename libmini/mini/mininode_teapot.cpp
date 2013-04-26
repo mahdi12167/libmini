@@ -25,4 +25,4 @@ void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    }
 
 double mininode_geometry_teapot::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
-   {return(MAXFLOAT);}
+   {return(shootbsphere(o,d,mindist));}

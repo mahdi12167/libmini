@@ -1491,3 +1491,15 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
 
    return(result);
    }
+
+//! shoot a ray and return the distance to the bounding sphere
+double ministrip::shootbsphere(const miniv3d &o,const miniv3d &d,double mindist) const
+   {
+   miniv3d b;
+   double r,r2;
+
+   getbsphere(b,r2);
+   r=sqrt(r2);
+
+   return(intersect_ray_ellipsoid(o,d,b,r,r,r));
+   }

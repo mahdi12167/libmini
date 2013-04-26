@@ -273,6 +273,9 @@ class ministrip
    //! a return value of MAXFLOAT indicates that there was no hit
    virtual double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
 
+   //! shoot a ray and return the distance to the bounding sphere
+   virtual double shootbsphere(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
+
    protected:
 
    int SIZE;
