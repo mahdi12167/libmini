@@ -28,7 +28,7 @@ MODS	= mini miniOGL\
 	  minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
-	  mininodes\
+	  mininodes mininode_teapot\
 	  minilog\
 	  pnmbase pnmsample\
 	  database datafill\

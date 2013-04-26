@@ -130,112 +130,113 @@ Additional conceptual papers about libMini are available here:<p>
 Within the libMini package the following files are contained:<p>
 
 <table>
-   <tr><td>README.html:          </td><td>this file</td></tr>
-   <tr><td>LICENSE.txt:          </td><td>the libMini license</td></tr>
-   <tr><td>libMini.css:          </td><td>the README style sheet</td></tr>
-   <tr><td>libMini.ppm/.jpg:     </td><td>the libMini logo</td></tr>
-   <tr><td>libMini.ico:          </td><td>the libMini icon</td></tr>
-   <tr><td>mini.cpp/.h:          </td><td>contains the interface to the terrain rendering core</td></tr>
-   <tr><td>minicore.cpp/P.h/.h:  </td><td>contains the core of the terrain renderer</td></tr>
-   <tr><td>minibase.h:           </td><td>contains basic declarations</td></tr>
-   <tr><td>miniOGL.cpp/P.h/.h:   </td><td>contains OpenGL dependent stuff</td></tr>
-   <tr><td>mini_*.h:             </td><td>contains group headers</td></tr>
-   <tr><td>miniv??.cpp/.h:       </td><td>contains vector class definitions</td></tr>
-   <tr><td>minivec.h:            </td><td>contains templated vector class definition</td></tr>
-   <tr><td>minimtx.h:            </td><td>contains templated matrix class definition</td></tr>
-   <tr><td>minimath.cpp/.h:      </td><td>contains mathematical definitions</td></tr>
-   <tr><td>minicomplex.h:        </td><td>contains complex number definition</td></tr>
-   <tr><td>mininoise.cpp/.h:     </td><td>contains perlin noise generator</td></tr>
-   <tr><td>minimpfp.cpp/.h:      </td><td>contains templated mp-fp definitions</td></tr>
-   <tr><td>minidyna.h:           </td><td>contains templated dynamic array</td></tr>
-   <tr><td>minisort.h:           </td><td>contains templated sorting method</td></tr>
-   <tr><td>minikeyval.h:         </td><td>contains templated key-value pairs</td></tr>
-   <tr><td>minikdtree.h:         </td><td>contains templated kd-tree</td></tr>
-   <tr><td>ministring.h:         </td><td>contains dynamic string methods</td></tr>
-   <tr><td>minilog.cpp/.h:       </td><td>contains logging methods</td></tr>
-   <tr><td>miniref.h:            </td><td>contains ref-counted item</td></tr>
-   <tr><td>mininode.h:           </td><td>contains ref-linked graph node</td></tr>
-   <tr><td>mininodes.cpp/.h:     </td><td>contains basic node definitions</td></tr>
-   <tr><td>minitime.cpp/.h:      </td><td>contains system time abstraction</td></tr>
-   <tr><td>minirgb.cpp/.h:       </td><td>contains additional rgb/hsv conversion stuff</td></tr>
-   <tr><td>minicrs.cpp/.h:       </td><td>contains additional crs conversion stuff</td></tr>
-   <tr><td>miniio.cpp/.h:        </td><td>contains additional file io stuff</td></tr>
-   <tr><td>minidir.cpp/.h:       </td><td>contains additional directory listing stuff</td></tr>
-   <tr><td>minidds.cpp/.h:       </td><td>contains DDS compression stuff</td></tr>
-   <tr><td>ministub.cpp/.h:      </td><td>simplified stub class of the mini library</td></tr>
-   <tr><td>minitile.cpp/.h:      </td><td>wrapper class for tiled terrain rendering</td></tr>
-   <tr><td>miniload.cpp/.h:      </td><td>wrapper class for paged terrain rendering</td></tr>
-   <tr><td>minicoord.cpp/.h:     </td><td>container for geo-referenced coordinates</td></tr>
-   <tr><td>minicurve.cpp/.h:     </td><td>container for geo-referenced coordinate path</td></tr>
-   <tr><td>miniwarp.cpp/.h:      </td><td>warp kernel for global coordinate systems</td></tr>
-   <tr><td>minicam.cpp/.h:       </td><td>camera coordinate system</td></tr>
-   <tr><td>minilayer.cpp/.h:     </td><td>wrapper class rendering a single layer</td></tr>
-   <tr><td>miniterrain.cpp/.h:   </td><td>wrapper class rendering multiple layers</td></tr>
-   <tr><td>miniearth.cpp/.h:     </td><td>wrapper class for rendering the earth</td></tr>
-   <tr><td>miniscene.cpp/.h:     </td><td>wrapper class for rendering the whole scene</td></tr>
-   <tr><td>minicache.cpp/.h:     </td><td>cache for speeding up tiled terrain rendering</td></tr>
-   <tr><td>minishader.cpp/.h:    </td><td>shader support for the render cache</td></tr>
-   <tr><td>miniray.cpp/.h:       </td><td>ray/triangle intersection code</td></tr>
-   <tr><td>ministrip.cpp/.h:     </td><td>vertex array container for triangle strips</td></tr>
-   <tr><td>minipoint.cpp/.h:     </td><td>geographical point of interest management</td></tr>
-   <tr><td>minitext.cpp/.h:      </td><td>simple text renderer</td></tr>
-   <tr><td>minisky.cpp/.h:       </td><td>simple sky dome renderer</td></tr>
-   <tr><td>miniglobe.cpp/.h:     </td><td>night/day renderer of the earth or other textured globes</td></tr>
-   <tr><td>minitree.cpp/.h:      </td><td>contains algorithms for vegetation rendering</td></tr>
-   <tr><td>minibrick.cpp/.h:     </td><td>contains algorithms for C-LOD volume rendering</td></tr>
-   <tr><td>minilod.cpp/.h:       </td><td>contains algorithms for S-LOD volume rendering</td></tr>
-   <tr><td>minigeom.h:           </td><td>contains geometric class template</td></tr>
-   <tr><td>minimesh.cpp/.h:      </td><td>contains tetrahedral mesh class definition</td></tr>
-   <tr><td>minibspt.cpp/.h:      </td><td>contains BSP tree class definition</td></tr>
-   <tr><td>miniproj.cpp/.h:      </td><td>contains tetrahedral projection methods</td></tr>
-   <tr><td>pnmbase.cpp/.h:       </td><td>methods for handling PNM images</td></tr>
-   <tr><td>pnmsample.cpp/.h:     </td><td>methods for multi-resolution terrain resampling</td></tr>
-   <tr><td>database.cpp/.h:      </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
-   <tr><td>datafill.cpp/.h:      </td><td>generic 1D/2D/3D/4D fill-in algorithm</td></tr>
-   <tr><td>datacalc.cpp/.h:      </td><td>calculator for procedural images and implicit volumes</td></tr>
-   <tr><td>dataparse.cpp/.h:     </td><td>parser and interpreter of implicit functions</td></tr>
-   <tr><td>datacloud.cpp/.h:     </td><td>decouples terrain rendering from paging</td></tr>
-   <tr><td>datacache.cpp/.h:     </td><td>stores remote files in a local file cache</td></tr>
-   <tr><td>datagrid.cpp/.h:      </td><td>stores a grid of databuf objects</td></tr>
-   <tr><td>example.png:          </td><td>a screen shot of the example described below</td></tr>
-   <tr><td>example.cpp:          </td><td>the glut example (use "build.sh example" to compile)</td></tr>
-   <tr><td>example.cmake/:       </td><td>the cmake example (use "cmake . && make" to compile)</td></tr>
-   <tr><td>stubtest.cpp:         </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
-   <tr><td>viewer.cpp:           </td><td>the libMini Viewer (use "build.sh viewer" to compile)</td></tr>
-   <tr><td>miniview.cpp/.h:      </td><td>the libMini Viewer base class</td></tr>
-   <tr><td>threadbase.cpp/.h:    </td><td>multi-threading support for the libMini Viewer</td></tr>
-   <tr><td>curlbase.cpp/.h:      </td><td>http protocol support for the libMini Viewer</td></tr>
-   <tr><td>jpegbase.cpp/.h:      </td><td>JPEG support for the libMini Viewer</td></tr>
-   <tr><td>pngbase.cpp/.h:       </td><td>PNG support for the libMini Viewer</td></tr>
-   <tr><td>zlibbase.cpp/.h:      </td><td>ZLIB support for the libMini Viewer</td></tr>
-   <tr><td>squishbase.cpp/.h:    </td><td>squish support for the libMini Viewer</td></tr>
-   <tr><td>greycbase.cpp/.h:     </td><td>CImg/GREYCstoration support for image denoising</td></tr>
-   <tr><td>dataconv.cpp/.h:      </td><td>image conversion support for external formats</td></tr>
-   <tr><td>miniimg.cpp/.h:       </td><td>image reading and writing support for image formats</td></tr>
-   <tr><td>minipano.cpp/.h:      </td><td>panoramic addon for the minipoint renderer</td></tr>
-   <tr><td>luna*.cpp/.h:         </td><td>parser for LUNA, an RPN-style computer language</td></tr>
-   <tr><td>qt_viewer.h:          </td><td>Qt viewer base class</td></tr>
-   <tr><td>data/SkyDome.ppm:     </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
-   <tr><td>data/EarthDay.db:     </td><td>a daylight earth texture (from NASA BlueMarble)</td></tr>
-   <tr><td>data/EarthNight.db:   </td><td>a night earth texture (from NASA BlueMarble)</td></tr>
-   <tr><td>data/Cone.db:         </td><td>a sample DB volume (implicitly defined cone)</td></tr>
-   <tr><td>GL/glext.h:           </td><td>backup copy of OpenGL extension header</td></tr>
-   <tr><td>MiniMakefile:         </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
-   <tr><td>build.sh:             </td><td>the Unix build script</td></tr>
-   <tr><td>build.bat:            </td><td>the Windows build batch file</td></tr>
-   <tr><td>autogen.sh:           </td><td>the autogen script file</td></tr>
-   <tr><td>configure.ac:         </td><td>the autoconf definition file</td></tr>
-   <tr><td>Makefile.am:          </td><td>the automake definition file</td></tr>
-   <tr><td>CMakeLists.txt:       </td><td>the main cmake definition file</td></tr>
-   <tr><td>libMini.cmake:        </td><td>the libMini header and source list for cmake</td></tr>
-   <tr><td>libMini-config.cmake: </td><td>the libMini build configuration for cmake</td></tr>
-   <tr><td>libMini-app.cmake:    </td><td>the libMini build configuration for simple applications</td></tr>
-   <tr><td>libMini.pro:          </td><td>the libMini build configuration for qmake</td></tr>
-   <tr><td>sources.pro:          </td><td>the libMini source list for qmake</td></tr>
-   <tr><td>tools/*:              </td><td>various command line tools</td></tr>
-   <tr><td>tabify.sh:            </td><td>a tool to clean up tab inconsistencies</td></tr>
-   <tr><td>md5check.sh:          </td><td>a tool to check the integrity of the distro</td></tr>
-   <tr><td>.md5:                 </td><td>the md5 file list of the distro</td></tr>
+   <tr><td>README.html:            </td><td>this file</td></tr>
+   <tr><td>LICENSE.txt:            </td><td>the libMini license</td></tr>
+   <tr><td>libMini.css:            </td><td>the README style sheet</td></tr>
+   <tr><td>libMini.ppm/.jpg:       </td><td>the libMini logo</td></tr>
+   <tr><td>libMini.ico:            </td><td>the libMini icon</td></tr>
+   <tr><td>mini.cpp/.h:            </td><td>contains the interface to the terrain rendering core</td></tr>
+   <tr><td>minicore.cpp/P.h/.h:    </td><td>contains the core of the terrain renderer</td></tr>
+   <tr><td>minibase.h:             </td><td>contains basic declarations</td></tr>
+   <tr><td>miniOGL.cpp/P.h/.h:     </td><td>contains OpenGL dependent stuff</td></tr>
+   <tr><td>mini_*.h:               </td><td>contains group headers</td></tr>
+   <tr><td>miniv??.cpp/.h:         </td><td>contains vector class definitions</td></tr>
+   <tr><td>minivec.h:              </td><td>contains templated vector class definition</td></tr>
+   <tr><td>minimtx.h:              </td><td>contains templated matrix class definition</td></tr>
+   <tr><td>minimath.cpp/.h:        </td><td>contains mathematical definitions</td></tr>
+   <tr><td>minicomplex.h:          </td><td>contains complex number definition</td></tr>
+   <tr><td>mininoise.cpp/.h:       </td><td>contains perlin noise generator</td></tr>
+   <tr><td>minimpfp.cpp/.h:        </td><td>contains templated mp-fp definitions</td></tr>
+   <tr><td>minidyna.h:             </td><td>contains templated dynamic array</td></tr>
+   <tr><td>minisort.h:             </td><td>contains templated sorting method</td></tr>
+   <tr><td>minikeyval.h:           </td><td>contains templated key-value pairs</td></tr>
+   <tr><td>minikdtree.h:           </td><td>contains templated kd-tree</td></tr>
+   <tr><td>ministring.h:           </td><td>contains dynamic string methods</td></tr>
+   <tr><td>minilog.cpp/.h:         </td><td>contains logging methods</td></tr>
+   <tr><td>miniref.h:              </td><td>contains ref-counted item</td></tr>
+   <tr><td>mininode.h:             </td><td>contains ref-linked graph node</td></tr>
+   <tr><td>mininodes.cpp/.h:       </td><td>contains basic node definitions</td></tr>
+   <tr><td>mininode_teapot.cpp/.h: </td><td>contains geometry node for the Utah teapot</td></tr>
+   <tr><td>minitime.cpp/.h:        </td><td>contains system time abstraction</td></tr>
+   <tr><td>minirgb.cpp/.h:         </td><td>contains additional rgb/hsv conversion stuff</td></tr>
+   <tr><td>minicrs.cpp/.h:         </td><td>contains additional crs conversion stuff</td></tr>
+   <tr><td>miniio.cpp/.h:          </td><td>contains additional file io stuff</td></tr>
+   <tr><td>minidir.cpp/.h:         </td><td>contains additional directory listing stuff</td></tr>
+   <tr><td>minidds.cpp/.h:         </td><td>contains DDS compression stuff</td></tr>
+   <tr><td>ministub.cpp/.h:        </td><td>simplified stub class of the mini library</td></tr>
+   <tr><td>minitile.cpp/.h:        </td><td>wrapper class for tiled terrain rendering</td></tr>
+   <tr><td>miniload.cpp/.h:        </td><td>wrapper class for paged terrain rendering</td></tr>
+   <tr><td>minicoord.cpp/.h:       </td><td>container for geo-referenced coordinates</td></tr>
+   <tr><td>minicurve.cpp/.h:       </td><td>container for geo-referenced coordinate path</td></tr>
+   <tr><td>miniwarp.cpp/.h:        </td><td>warp kernel for global coordinate systems</td></tr>
+   <tr><td>minicam.cpp/.h:         </td><td>camera coordinate system</td></tr>
+   <tr><td>minilayer.cpp/.h:       </td><td>wrapper class rendering a single layer</td></tr>
+   <tr><td>miniterrain.cpp/.h:     </td><td>wrapper class rendering multiple layers</td></tr>
+   <tr><td>miniearth.cpp/.h:       </td><td>wrapper class for rendering the earth</td></tr>
+   <tr><td>miniscene.cpp/.h:       </td><td>wrapper class for rendering the whole scene</td></tr>
+   <tr><td>minicache.cpp/.h:       </td><td>cache for speeding up tiled terrain rendering</td></tr>
+   <tr><td>minishader.cpp/.h:      </td><td>shader support for the render cache</td></tr>
+   <tr><td>miniray.cpp/.h:         </td><td>ray/triangle intersection code</td></tr>
+   <tr><td>ministrip.cpp/.h:       </td><td>vertex array container for triangle strips</td></tr>
+   <tr><td>minipoint.cpp/.h:       </td><td>geographical point of interest management</td></tr>
+   <tr><td>minitext.cpp/.h:        </td><td>simple text renderer</td></tr>
+   <tr><td>minisky.cpp/.h:         </td><td>simple sky dome renderer</td></tr>
+   <tr><td>miniglobe.cpp/.h:       </td><td>night/day renderer of the earth or other textured globes</td></tr>
+   <tr><td>minitree.cpp/.h:        </td><td>contains algorithms for vegetation rendering</td></tr>
+   <tr><td>minibrick.cpp/.h:       </td><td>contains algorithms for C-LOD volume rendering</td></tr>
+   <tr><td>minilod.cpp/.h:         </td><td>contains algorithms for S-LOD volume rendering</td></tr>
+   <tr><td>minigeom.h:             </td><td>contains geometric class template</td></tr>
+   <tr><td>minimesh.cpp/.h:        </td><td>contains tetrahedral mesh class definition</td></tr>
+   <tr><td>minibspt.cpp/.h:        </td><td>contains BSP tree class definition</td></tr>
+   <tr><td>miniproj.cpp/.h:        </td><td>contains tetrahedral projection methods</td></tr>
+   <tr><td>pnmbase.cpp/.h:         </td><td>methods for handling PNM images</td></tr>
+   <tr><td>pnmsample.cpp/.h:       </td><td>methods for multi-resolution terrain resampling</td></tr>
+   <tr><td>database.cpp/.h:        </td><td>universal 1D/2D/3D/4D data buffer object</td></tr>
+   <tr><td>datafill.cpp/.h:        </td><td>generic 1D/2D/3D/4D fill-in algorithm</td></tr>
+   <tr><td>datacalc.cpp/.h:        </td><td>calculator for procedural images and implicit volumes</td></tr>
+   <tr><td>dataparse.cpp/.h:       </td><td>parser and interpreter of implicit functions</td></tr>
+   <tr><td>datacloud.cpp/.h:       </td><td>decouples terrain rendering from paging</td></tr>
+   <tr><td>datacache.cpp/.h:       </td><td>stores remote files in a local file cache</td></tr>
+   <tr><td>datagrid.cpp/.h:        </td><td>stores a grid of databuf objects</td></tr>
+   <tr><td>example.png:            </td><td>a screen shot of the example described below</td></tr>
+   <tr><td>example.cpp:            </td><td>the glut example (use "build.sh example" to compile)</td></tr>
+   <tr><td>example.cmake/:         </td><td>the cmake example (use "cmake . && make" to compile)</td></tr>
+   <tr><td>stubtest.cpp:           </td><td>the stub example (use "build.sh stubtest" to compile)</td></tr>
+   <tr><td>viewer.cpp:             </td><td>the libMini Viewer (use "build.sh viewer" to compile)</td></tr>
+   <tr><td>miniview.cpp/.h:        </td><td>the libMini Viewer base class</td></tr>
+   <tr><td>threadbase.cpp/.h:      </td><td>multi-threading support for the libMini Viewer</td></tr>
+   <tr><td>curlbase.cpp/.h:        </td><td>http protocol support for the libMini Viewer</td></tr>
+   <tr><td>jpegbase.cpp/.h:        </td><td>JPEG support for the libMini Viewer</td></tr>
+   <tr><td>pngbase.cpp/.h:         </td><td>PNG support for the libMini Viewer</td></tr>
+   <tr><td>zlibbase.cpp/.h:        </td><td>ZLIB support for the libMini Viewer</td></tr>
+   <tr><td>squishbase.cpp/.h:      </td><td>squish support for the libMini Viewer</td></tr>
+   <tr><td>greycbase.cpp/.h:       </td><td>CImg/GREYCstoration support for image denoising</td></tr>
+   <tr><td>dataconv.cpp/.h:        </td><td>image conversion support for external formats</td></tr>
+   <tr><td>miniimg.cpp/.h:         </td><td>image reading and writing support for image formats</td></tr>
+   <tr><td>minipano.cpp/.h:        </td><td>panoramic addon for the minipoint renderer</td></tr>
+   <tr><td>luna*.cpp/.h:           </td><td>parser for LUNA, an RPN-style computer language</td></tr>
+   <tr><td>qt_viewer.h:            </td><td>Qt viewer base class</td></tr>
+   <tr><td>data/SkyDome.ppm:       </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
+   <tr><td>data/EarthDay.db:       </td><td>a daylight earth texture (from NASA BlueMarble)</td></tr>
+   <tr><td>data/EarthNight.db:     </td><td>a night earth texture (from NASA BlueMarble)</td></tr>
+   <tr><td>data/Cone.db:           </td><td>a sample DB volume (implicitly defined cone)</td></tr>
+   <tr><td>GL/glext.h:             </td><td>backup copy of OpenGL extension header</td></tr>
+   <tr><td>MiniMakefile:           </td><td>Makefile for Irix, Linux and MacOS X</td></tr>
+   <tr><td>build.sh:               </td><td>the Unix build script</td></tr>
+   <tr><td>build.bat:              </td><td>the Windows build batch file</td></tr>
+   <tr><td>autogen.sh:             </td><td>the autogen script file</td></tr>
+   <tr><td>configure.ac:           </td><td>the autoconf definition file</td></tr>
+   <tr><td>Makefile.am:            </td><td>the automake definition file</td></tr>
+   <tr><td>CMakeLists.txt:         </td><td>the main cmake definition file</td></tr>
+   <tr><td>libMini.cmake:          </td><td>the libMini header and source list for cmake</td></tr>
+   <tr><td>libMini-config.cmake:   </td><td>the libMini build configuration for cmake</td></tr>
+   <tr><td>libMini-app.cmake:      </td><td>the libMini build configuration for simple applications</td></tr>
+   <tr><td>libMini.pro:            </td><td>the libMini build configuration for qmake</td></tr>
+   <tr><td>sources.pro:            </td><td>the libMini source list for qmake</td></tr>
+   <tr><td>tools/*:                </td><td>various command line tools</td></tr>
+   <tr><td>tabify.sh:              </td><td>a tool to clean up tab inconsistencies</td></tr>
+   <tr><td>md5check.sh:            </td><td>a tool to check the integrity of the distro</td></tr>
+   <tr><td>.md5:                   </td><td>the md5 file list of the distro</td></tr>
 </table><p>
 
 Additionally, the Yukon Ground Fog Demo, the Stuttgart Demo, the

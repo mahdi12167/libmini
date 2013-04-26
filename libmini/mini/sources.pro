@@ -6,7 +6,7 @@ HEADERS += \
    minidyna.h minisort.h \
    minikeyval.h minikdtree.h \
    ministring.h minilog.h \
-   miniref.h mininode.h mininodes.h \
+   miniref.h mininode.h mininodes.h mininode_teapot.h \
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
    minimath.h minicomplex.h mininoise.h minimpfp.h \
    minitime.h minirgb.h minicrs.h \
@@ -43,7 +43,7 @@ SOURCES += \
    minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp \
    minitree.cpp minibrick.cpp minilod.cpp \
    minimesh.cpp minibspt.cpp miniproj.cpp \
-   mininodes.cpp \
+   mininodes.cpp mininode_teapot.cpp \
    minilog.cpp \
    pnmbase.cpp pnmsample.cpp \
    database.cpp datafill.cpp \
