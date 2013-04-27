@@ -5,6 +5,7 @@
 
 #include "database.h"
 
+#include "minicoord.h"
 #include "ministrip.h"
 
 class miniglobe
@@ -106,6 +107,8 @@ class miniglobe
    void create_sun();
    void create_earth();
    void create_moon();
+
+   void create_orb(minicoord::MINICOORD_ORB orb);
 
    void create_shader(const char *frontame,const char *backname,
                       databuf *frontbuf,databuf *backbuf);

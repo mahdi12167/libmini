@@ -92,10 +92,23 @@ void miniglobe::render()
    {
    if (DONE==0)
       {
-      if (SHAPE==SHAPE_SUN) create_sun();
-      else if (SHAPE==SHAPE_EARTH) create_earth();
-      else if (SHAPE==SHAPE_MOON) create_moon();
-      else ERRORMSG();
+      switch (SHAPE)
+         {
+         case SHAPE_SUN: create_sun(); break;
+         case SHAPE_MERCURY: create_orb(minicoord::MINICOORD_ORB_MERCURY); break;
+         case SHAPE_VENUS: create_orb(minicoord::MINICOORD_ORB_VENUS); break;
+         case SHAPE_EARTH: create_earth(); break;
+         case SHAPE_MARS: create_orb(minicoord::MINICOORD_ORB_MARS); break;
+         case SHAPE_JUPITER: create_orb(minicoord::MINICOORD_ORB_JUPITER); break;
+         case SHAPE_SATURN: create_orb(minicoord::MINICOORD_ORB_SATURN); break;
+         case SHAPE_URANUS: create_orb(minicoord::MINICOORD_ORB_URANUS); break;
+         case SHAPE_NEPTUNE: create_orb(minicoord::MINICOORD_ORB_NEPTUNE); break;
+         case SHAPE_CERES: create_orb(minicoord::MINICOORD_ORB_CERES); break;
+         case SHAPE_PLUTO: create_orb(minicoord::MINICOORD_ORB_PLUTO); break;
+         case SHAPE_ERIS: create_orb(minicoord::MINICOORD_ORB_ERIS); break;
+         case SHAPE_MOON: create_moon(); break;
+         default: ERRORMSG();
+         }
 
       create_shader(CONFIGURE_FRONTNAME,CONFIGURE_BACKNAME,
                     CONFIGURE_FRONTBUF,CONFIGURE_BACKBUF);
@@ -245,6 +258,15 @@ void miniglobe::create_moon()
    {
    static const float radius=1.7374E6f;
    static const float color[3]={0.9f,0.9f,0.9f};
+
+   create_globe(radius/SCALE,color);
+   }
+
+// create a globe from an orb
+void miniglobe::create_orb(minicoord::MINICOORD_ORB orb)
+   {
+   double radius=minicoord::getorbradius(orb);
+   static const float color[3]={1.0f,1.0f,1.0f};
 
    create_globe(radius/SCALE,color);
    }
