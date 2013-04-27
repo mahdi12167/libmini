@@ -91,7 +91,7 @@ MACRO(SET_MINI_PATH name subdir)
                   ${LIBMINI_THIRDPARTY_DIR}/${subdir}
                   ${LIBMINI_THIRDPARTY_DIR}/deps/${subdir}
                   /usr/local/${subdir} /usr/local /usr
-		  /usr/include/${subdir}
+                  /usr/include/${subdir}
                   ${LIBMINI_THIRDPARTY_DIR}/WIN32/${subdir})
    ENDIF (LIBMINI_THIRDPARTY_DIR)
 ENDMACRO(SET_MINI_PATH)

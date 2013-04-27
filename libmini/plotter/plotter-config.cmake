@@ -78,7 +78,7 @@ MACRO(SET_PLOTTER_PATH name subdir)
                   ${PLOTTER_THIRDPARTY_DIR}/${subdir}
                   ${PLOTTER_THIRDPARTY_DIR}/deps/${subdir}
                   /usr/local/${subdir} /usr/local /usr
-		  /usr/include/${subdir}
+                  /usr/include/${subdir}
                   ${PLOTTER_THIRDPARTY_DIR}/WIN32/${subdir})
    ENDIF (PLOTTER_THIRDPARTY_DIR)
 ENDMACRO(SET_PLOTTER_PATH)
