@@ -83,6 +83,7 @@ MACRO(SET_MINI_PATH name subdir)
                ${LIBMINI_PATH}/../deps/${subdir}
                ${LIBMINI_PATH}/../../${subdir}
                /usr/local/${subdir} /usr/local /usr
+               /usr/include/${subdir}
                ${LIBMINI_PATH}/../WIN32/${subdir})
    IF (LIBMINI_THIRDPARTY_DIR)
       SET(${name} ${${name}}
@@ -90,6 +91,7 @@ MACRO(SET_MINI_PATH name subdir)
                   ${LIBMINI_THIRDPARTY_DIR}/${subdir}
                   ${LIBMINI_THIRDPARTY_DIR}/deps/${subdir}
                   /usr/local/${subdir} /usr/local /usr
+		  /usr/include/${subdir}
                   ${LIBMINI_THIRDPARTY_DIR}/WIN32/${subdir})
    ENDIF (LIBMINI_THIRDPARTY_DIR)
 ENDMACRO(SET_MINI_PATH)

@@ -70,6 +70,7 @@ MACRO(SET_PLOTTER_PATH name subdir)
                ${PLOTTER_PATH}/../deps/${subdir}
                ${PLOTTER_PATH}/../../${subdir}
                /usr/local/${subdir} /usr/local /usr
+               /usr/include/${subdir}
                ${PLOTTER_PATH}/../WIN32/${subdir})
    IF (PLOTTER_THIRDPARTY_DIR)
       SET(${name} ${${name}}
@@ -77,6 +78,7 @@ MACRO(SET_PLOTTER_PATH name subdir)
                   ${PLOTTER_THIRDPARTY_DIR}/${subdir}
                   ${PLOTTER_THIRDPARTY_DIR}/deps/${subdir}
                   /usr/local/${subdir} /usr/local /usr
+		  /usr/include/${subdir}
                   ${PLOTTER_THIRDPARTY_DIR}/WIN32/${subdir})
    ENDIF (PLOTTER_THIRDPARTY_DIR)
 ENDMACRO(SET_PLOTTER_PATH)
