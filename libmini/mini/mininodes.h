@@ -241,8 +241,12 @@ class mininode_color: public mininode_group
    static void set_brightness(double b=1.0)
       {brightness=b;}
 
-   //! get actual color
-   static miniv4d get_color()
+   //! get color
+   miniv4d get_color()
+      {return(brightness*rgba);}
+
+   //! get actual gl color
+   static miniv4d get_glcolor()
       {return(glcolor);}
 
    protected:
@@ -1398,6 +1402,7 @@ class mininode_texgen_scale: public mininode_texgen
 //!  provides triangle-stripped geometry
 //!  has optional per-vertex color, normals and texture coordinates
 //!  has optional name that identifies the object which the geometry is part of
+//!  has optional per-node color
 class mininode_geometry_base: public mininode_color, public ministrip
    {
    public:
@@ -1597,7 +1602,11 @@ class mininode_geometry: public mininode_geometry_base
 
       if (deferred_semitransparent)
          if (!isopaque()) dfrd=TRUE;
-         else if (!hascolor() && mininode_color::get_color().w<1.0) dfrd=TRUE;
+         else if (!hascolor())
+            if (enabled_color())
+               {if (get_color().w<1.0) dfrd=TRUE;}
+            else
+               {if (mininode_color::get_glcolor().w<1.0) dfrd=TRUE;}
 
       if (dfrd)
          if (getglobal_texgen())
@@ -1619,7 +1628,7 @@ class mininode_geometry: public mininode_geometry_base
          mtxgettex(geo.t_matrix);
          geo.texid2D=mininode_texture2D::get_texid();
          geo.texid3D=mininode_texture3D::get_texid();
-         geo.color=mininode_color::get_color();
+         geo.color=mininode_color::get_glcolor();
 
          if (geo.texid2D!=0) list_tex2D.append(geo);
          else if (geo.texid3D!=0) list_tex3D.append(geo);
