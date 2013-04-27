@@ -243,7 +243,7 @@ class ministrip
                     int correctz=0);
 
    //! render bbox
-   void renderbbox();
+   virtual void renderbbox();
 
    //! get array size (number of vertices)
    int getsize() {return(SIZE);}

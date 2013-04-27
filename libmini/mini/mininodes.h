@@ -1454,11 +1454,11 @@ class mininode_geometry_base: public mininode_color, public ministrip
    BOOLINT has_tex() const {return(hastex() && wotex==0);}
 
    //! render geometry
-   void render()
+   void render_geometry()
       {
-      ministrip::render(wocol,wonrm,wotex);
+      render(wocol,wonrm,wotex); // render triangle strip
 #ifdef MININODES_RENDERBBOX
-      ministrip::renderbbox();
+      renderbbox(); // render bounding box
 #endif
       }
 
@@ -1491,13 +1491,10 @@ class mininode_geometry_base: public mininode_color, public ministrip
    virtual void traverse_pre()
       {
       mininode_color::traverse_pre();
-      BOOLINT texgen=ministrip::getglobal_texgen(); // get texgen state
-      if (has_tex() && texgen) ministrip::setglobal_texgen(FALSE); // override texgen with tex coords
-      ministrip::render(wocol,wonrm,wotex); // render triangle strip
-#ifdef MININODES_RENDERBBOX
-      renderbbox();
-#endif
-      if (hastex() && texgen) ministrip::setglobal_texgen(TRUE); // restore texgen state
+      BOOLINT texgen=getglobal_texgen(); // get texgen state
+      if (has_tex() && texgen) setglobal_texgen(FALSE); // override texgen with tex coords
+      render_geometry(); // render triangle strip (and optional bounding box)
+      if (hastex() && texgen) setglobal_texgen(TRUE); // restore texgen state
       }
 
    static miniv3d project(const miniv3d &pos,const miniv3d &dir,
@@ -1603,7 +1600,7 @@ class mininode_geometry: public mininode_geometry_base
          else if (!hascolor() && mininode_color::get_color().w<1.0) dfrd=TRUE;
 
       if (dfrd)
-         if (ministrip::getglobal_texgen())
+         if (getglobal_texgen())
             if (mininode_texture2D::get_texid()!=0 ||
                 mininode_texture3D::get_texid()!=0)
                if (!has_tex()) dfrd=FALSE;
@@ -1889,7 +1886,7 @@ class mininode_deferred: public mininode_transform
                         mtxid();
                         mtxmult(geo->mv_matrix);
                         color(geo->color);
-                        geo->node->render();
+                        geo->node->render_geometry();
                         }
                      }
 
@@ -1911,7 +1908,7 @@ class mininode_deferred: public mininode_transform
                         mtxmodel();
                         color(geo->color);
                         bindtexmap(geo->texid2D,1,1,1);
-                        geo->node->render();
+                        geo->node->render_geometry();
                         }
                      }
 
@@ -1936,7 +1933,7 @@ class mininode_deferred: public mininode_transform
                         mtxmodel();
                         color(geo->color);
                         bind3Dtexmap(geo->texid3D);
-                        geo->node->render();
+                        geo->node->render_geometry();
                         }
                      }
 
