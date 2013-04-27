@@ -573,7 +573,7 @@ int intersect_ray_triangle(const miniv3d &o,const miniv3d &d,
 double ray_triangle_dist(const miniv3d &o,const miniv3d &d,
                          const miniv3d &v1,const miniv3d &v2,const miniv3d &v3)
    {
-   miniv3d tuv;
+   miniv3d tuv(0.0);
 
    if (intersect_ray_triangle(o,d,v1,v2,v3,&tuv)==0) return(MAXFLOAT);
    else return(tuv.x);
