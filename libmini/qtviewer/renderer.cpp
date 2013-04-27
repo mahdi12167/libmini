@@ -46,8 +46,6 @@ mininode_group *Renderer::build_ecef_geometry()
 
 #if VIEWER_TEST
 
-#if 1
-
    // house:
 
    // define local coordinate system at Lat/Lon=49/11
@@ -73,8 +71,10 @@ mininode_group *Renderer::build_ecef_geometry()
    // origin of the prism is the center of its base plane
    // translate up 5 meters
    scale->append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
+#ifdef WOODEN_ROOF
       append_child(new mininode_texgen_scale(0.1))->
       append_child(new mininode_image("data/textures/wood.jpg"))->
+#endif
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_prism(10.0, 10.0, 2.5));
 
@@ -116,8 +116,6 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_scale(10000))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_tet(10));
-
-#endif
 
    // semi-transparent spheres:
 
@@ -173,6 +171,7 @@ mininode_group *Renderer::build_ecef_geometry()
    utah.set_llh(40.767690,-111.845037); // utah science and imaging institute (sci)
 
    group->append_child(new mininode_coord(utah))->
+      append_child(new mininode_color(miniv3d(0.9, 0.9, 0.9)))->
       append_child(new mininode_scale(10000.0))->
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 1.0)))->
       append_child(teapot);
