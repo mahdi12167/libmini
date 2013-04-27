@@ -14,7 +14,8 @@ void mininode_geometry_teapot::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wot
    // front facing triangles are specified counter-clock-wise
    // back facing triangles are culled
    // normals are specified to face outward
-   // inward facing normals are flipped
+   // a head light shader is applied by default
+   // inward facing normals are flipped when shaded
 
 #ifndef NOOGL
 
@@ -37,9 +38,13 @@ void mininode_geometry_teapot::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wot
 
 void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    {
+   // bounding box of geometry = (-3,0,-2) to (3.434,3.15,2)
    bboxmin=miniv3d(-3,0,-2);
    bboxmax=miniv3d(3.434,3.15,2);
    }
 
 double mininode_geometry_teapot::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
-   {return(shootbsphere(o,d,mindist));}
+   {
+   // approximate exact hit point with bounding sphere
+   return(shootbsphere(o,d,mindist));
+   }
