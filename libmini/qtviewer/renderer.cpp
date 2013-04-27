@@ -46,6 +46,8 @@ mininode_group *Renderer::build_ecef_geometry()
 
 #if VIEWER_TEST
 
+#if 1
+
    // house:
 
    // define local coordinate system at Lat/Lon=49/11
@@ -115,6 +117,8 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_tet(10));
 
+#endif
+
    // semi-transparent spheres:
 
    mininode_ref sphere = new mininode_geometry_sphere(10.0);
@@ -157,9 +161,21 @@ mininode_group *Renderer::build_ecef_geometry()
    melbourne.set_llh(-38, 145);
 
    group->append_child(new mininode_coord(melbourne))->
-     append_child(new mininode_scale(10000.0))->
-     append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
-     append_child(lod);
+      append_child(new mininode_scale(10000.0))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
+      append_child(lod);
+
+   // teapot:
+
+   mininode_ref teapot = new mininode_geometry_teapot;
+
+   minicoord utah;
+   utah.set_llh(40.767690,-111.845037); // utah science and imaging institute (sci)
+
+   group->append_child(new mininode_coord(utah))->
+      append_child(new mininode_scale(10000.0))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 1.0)))->
+      append_child(teapot);
 
 #endif
 
