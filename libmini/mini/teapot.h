@@ -3722,15 +3722,8 @@ GLushort teapotIndices[] =
    366, 318, 425, 420, 365, 420, 367, 426, 366
    };
 
-void drawTeapotElements()
+inline void drawTeapotElements()
    {
-#ifndef NOOGL
-
-   glVertexPointer(3,GL_FLOAT,0,teapotVertices);
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glNormalPointer(GL_FLOAT,0,teapotNormals);
-   glEnableClientState(GL_NORMAL_ARRAY);
-
    glDrawElements(GL_TRIANGLE_STRIP, 12, GL_UNSIGNED_SHORT, &teapotIndices[0]);
    glDrawElements(GL_TRIANGLE_STRIP, 78, GL_UNSIGNED_SHORT, &teapotIndices[12]);
    glDrawElements(GL_TRIANGLE_STRIP, 35, GL_UNSIGNED_SHORT, &teapotIndices[90]);
@@ -3907,11 +3900,6 @@ void drawTeapotElements()
    glDrawElements(GL_TRIANGLE_STRIP, 15, GL_UNSIGNED_SHORT, &teapotIndices[6872]);
    glDrawElements(GL_TRIANGLE_STRIP, 11, GL_UNSIGNED_SHORT, &teapotIndices[6887]);
    glDrawElements(GL_TRIANGLE_STRIP, 7, GL_UNSIGNED_SHORT, &teapotIndices[6898]);
-
-   glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_NORMAL_ARRAY);
-
-#endif
    }
 
 #endif

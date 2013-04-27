@@ -11,9 +11,28 @@ mininode_geometry_teapot::mininode_geometry_teapot()
 
 void mininode_geometry_teapot::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex*/)
    {
-   // normals are specified to face outward
    // front facing triangles are specified counter-clock-wise
+   // back facing triangles are culled
+   // normals are specified to face outward
+   // inward facing normals are flipped
+
+#ifndef NOOGL
+
+   glDisable(GL_CULL_FACE);
+
+   glVertexPointer(3,GL_FLOAT,0,teapotVertices);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glNormalPointer(GL_FLOAT,0,teapotNormals);
+   if (wonrm==0) glEnableClientState(GL_NORMAL_ARRAY);
+
    drawTeapotElements();
+
+   glDisableClientState(GL_VERTEX_ARRAY);
+   if (wonrm==0) glDisableClientState(GL_NORMAL_ARRAY);
+
+   glEnable(GL_CULL_FACE);
+
+#endif
    }
 
 void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
