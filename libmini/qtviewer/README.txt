@@ -350,6 +350,70 @@ All graph nodes are derived from libMini's mininode base class.
     }
  };
 
+!! Customized Geometry Nodes
+
+In order to implement geometry nodes with special objects not covered
+by the basic geometry types (boxes, tetrahedra, prisms, spheres etc.)
+we derive from mininode_geometry and override the following three
+virtual methods:
+
+* rendergeo: render geometric primitives
+** front facing triangles are specified counter-clock-wise
+** back facing triangles are culled
+** normals are specified to face outward
+** a head light shader is applied by default
+** inward facing normals are flipped when shaded
+* getbbox: provide information about the bounding box of the primitives
+* shoot: compute the intersection of a ray with the geometric primitives
+** unless exact hit points can be computed, the hit point can approximated with the bounding sphere
+
+See the mininode_teapot.cpp module as an example:
+
+ mininode_geometry_teapot::mininode_geometry_teapot()
+    : mininode_geometry()
+    {}
+
+ void mininode_geometry_teapot::rendergeo()
+    {
+    glDisable(GL_CULL_FACE);
+
+    glVertexPointer(3,GL_FLOAT,0,teapotVertices);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glNormalPointer(GL_FLOAT,0,teapotNormals);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    drawTeapotElements();
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glEnable(GL_CULL_FACE);
+    }
+
+ void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
+    {
+    bboxmin=miniv3d(-3,0,-2);
+    bboxmax=miniv3d(3.434,3.15,2);
+    }
+
+ double mininode_geometry_teapot::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
+    {return(shootbsphere(o,d,mindist));}
+
+We put the teapot at the place where it belongs to - the Utah Science
+and Imaging Institute (SCI):
+
+ mininode_ref teapot = new mininode_geometry_teapot;
+
+ minicoord utah;
+ utah.set_llh(40.767690,-111.845037); // utah science and imaging institute (sci)
+
+ group->append_child(new mininode_coord(utah))->
+    append_child(new mininode_color(miniv3d(0.9, 0.9, 0.9)))->
+    append_child(new mininode_scale(10000.0))->
+    append_child(new mininode_translate(miniv3d(0.0, 0.0, 0.1)))->
+    append_child(new mininode_rotate(90, miniv3d(1.0, 0.0, 0.0)))->
+    append_child(teapot);
+
 !! CMake Example
 
 The procedure of adding ecef geometry, as explained in the previous
