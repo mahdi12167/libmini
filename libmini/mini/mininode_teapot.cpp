@@ -9,8 +9,12 @@ mininode_geometry_teapot::mininode_geometry_teapot()
    : mininode_geometry()
    {}
 
-void mininode_geometry_teapot::render(int wocolor,int wonrm,int wotex)
-   {drawTeapotElements();}
+void mininode_geometry_teapot::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex*/)
+   {
+   // normals are specified to face outward
+   // front facing triangles are specified counter-clock-wise
+   drawTeapotElements();
+   }
 
 void mininode_geometry_teapot::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    {

@@ -1289,7 +1289,7 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
          }
       else texcoordarray(NULL);
 
-   renderstrip(0,SIZE);
+   rendergeo(wocolor,wonrm,wotex);
 
    vertexarray(NULL);
    if (wocolor==0) colorarray(NULL);
@@ -1395,6 +1395,10 @@ void ministrip::rendermulti(int passes,
    useglobalshader(globalshader);
    useshader(shader);
    }
+
+// render geometry
+void ministrip::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex*/)
+   {renderstrip(0,SIZE);}
 
 // render bbox
 void ministrip::renderbbox()

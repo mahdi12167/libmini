@@ -12,7 +12,7 @@ class mininode_geometry_teapot: public mininode_geometry
 
    mininode_geometry_teapot();
 
-   virtual void render(int wocolor=0,int wonrm=0,int wotex=0);
+   virtual void rendergeo(int wocolor=0,int wonrm=0,int wotex=0);
    virtual void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
    virtual double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
    };

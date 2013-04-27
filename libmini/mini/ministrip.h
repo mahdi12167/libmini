@@ -221,7 +221,7 @@ class ministrip
    BOOLINT isopaque();
 
    //! render triangle strips
-   virtual void render(int wocolor=0,int wonrm=0,int wotex=0);
+   void render(int wocolor=0,int wonrm=0,int wotex=0);
 
    //! render triangle strips with multi-pass method for unordered semi-transparent geometry
    void rendermultipass(int pass,
@@ -241,6 +241,9 @@ class ministrip
                     float stripewidth=1.0f,float stripeoffset=0.0f,
                     float stripedx=0.0f,float stripedy=0.0f,float stripedz=1.0f,
                     int correctz=0);
+
+   //! render geometry
+   virtual void rendergeo(int wocolor=0,int wonrm=0,int wotex=0);
 
    //! render bbox
    virtual void renderbbox();
