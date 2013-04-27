@@ -271,8 +271,8 @@ void compressPNGimage(unsigned char *image,int width,int height,int components,u
    png_set_write_fn(png_ptr,(void *)&png_user_write_params,user_write_fn,user_flush_fn);
 
    // set PNG gamma value
-   if (gamma<=0.0f) gamma=2.2f; // assume neutral gamma
-   png_set_gamma(png_ptr,gamma,1.0/2.2);
+   if (gamma<=0.0f) png_set_gamma(png_ptr,2.2,1.0/2.2); // assume neutral gamma
+   else png_set_gamma(png_ptr,gamma,1.0/2.2);
 
    // set PNG compression level
    png_set_compression_level(png_ptr,level);
