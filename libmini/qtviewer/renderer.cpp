@@ -173,7 +173,8 @@ mininode_group *Renderer::build_ecef_geometry()
    group->append_child(new mininode_coord(utah))->
       append_child(new mininode_color(miniv3d(0.9, 0.9, 0.9)))->
       append_child(new mininode_scale(10000.0))->
-      append_child(new mininode_translate(miniv3d(0.0, 0.0, 1.0)))->
+      append_child(new mininode_translate(miniv3d(0.0, 0.0, 0.1)))->
+      append_child(new mininode_rotate(90, miniv3d(1.0, 0.0, 0.0)))->
       append_child(teapot);
 
 #endif

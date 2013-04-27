@@ -100,6 +100,11 @@ DEFINES += WITH_SQUISH
 
 CONFIG(debug, debug|release) {
    DEFINES += LIBMINI_DEBUG
+   DEFINES += VIEWER_TEST
+}
+
+CONFIG(release, debug|release) {
+   DEFINES += LIBMINI_RELEASE
 }
 
 unix:QMAKE_CXXFLAGS += -O
