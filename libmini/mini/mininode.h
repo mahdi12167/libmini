@@ -139,8 +139,6 @@ class mininode: public minidyna< miniref<mininode> >
    //!   call clear_dirty in case of any modification
    virtual BOOLINT traverse(unsigned int level=0)
       {
-      BOOLINT dirty=m_dirty;
-
       if (level==0) traverse_init();
 
       traverse_pre();
@@ -151,7 +149,7 @@ class mininode: public minidyna< miniref<mininode> >
          {
          mininode *child=get_child(i);
          if (child!=NULL)
-            if (child->traverse(level+1)) dirty=TRUE;
+            if (child->traverse(level+1)) m_dirty=TRUE;
 
          if (i+1<s) traverse_past();
          }
@@ -160,9 +158,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (level==0) traverse_exit();
 
-      m_dirty=dirty;
-
-      return(dirty);
+      return(m_dirty);
       }
 
    //! traverse graph and serialize nodes with specific id
@@ -225,19 +221,15 @@ class mininode: public minidyna< miniref<mininode> >
    //!  by appending (or removing) a node
    BOOLINT check_dirty()
       {
-      BOOLINT dirty=m_dirty;
-
       unsigned int s=get_links();
 
       for (unsigned int i=0; i<s; i++)
          {
          mininode *link=get_link(i);
-         if (link->check_dirty()) dirty=TRUE;
+         if (link->check_dirty()) m_dirty=TRUE;
          }
 
-      m_dirty=dirty;
-
-      return(dirty);
+      return(m_dirty);
       }
 
    //! clear dirty flag via recursive graph update
