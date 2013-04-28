@@ -354,8 +354,8 @@ All graph nodes are derived from libMini's mininode base class.
 
 In order to implement geometry nodes with special objects not covered
 by the basic geometry types (boxes, tetrahedra, prisms, spheres etc.)
-we derive from mininode_geometry and override the following three
-virtual methods:
+we derive from mininode_geom and override the following three virtual
+methods:
 
 * rendergeo: render geometric primitives
 ** front facing triangles are specified counter-clock-wise
@@ -365,12 +365,13 @@ virtual methods:
 ** inward facing normals are flipped when shaded
 * getbbox: provide information about the bounding box of the primitives
 * shoot: compute the intersection of a ray with the geometric primitives
-** unless exact hit points can be computed, the hit point can approximated with the bounding sphere
+** by default the hit point is approximated by the intersection with the bounding sphere
+** if exact hit points are required, override the shoot method and provide exact calculations
 
 See the mininode_teapot.cpp module as an example:
 
  mininode_geometry_teapot::mininode_geometry_teapot()
-    : mininode_geometry()
+    : mininode_geom()
     {}
 
  void mininode_geometry_teapot::rendergeo()
@@ -396,7 +397,7 @@ See the mininode_teapot.cpp module as an example:
     bboxmax=miniv3d(3.434,3.15,2);
     }
 
- double mininode_geometry_teapot::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
+ double mininode_geom::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
     {return(shootbsphere(o,d,mindist));}
 
 We put the teapot at the place where it belongs to - the Utah Science
