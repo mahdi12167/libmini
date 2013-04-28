@@ -8,6 +8,7 @@
 #  debug: build in debug mode
 #  clean: remove all build files
 #  zip: make distribution
+#  help: this help text
 
 if ($1 == "clean") then
    make clean
@@ -39,7 +40,14 @@ if ($HOSTTYPE == "intel-pc") set qoptions="$qoptions -spec macx-g++"
 set moptions=""
 if ($1 != "") then
    if ($1 != "release" && $1 != "debug") then
-      echo error: bad usage!
+      if ($1 != "help") echo "error: bad usage!"
+      echo "command line options:"
+      echo " release: build in release mode"
+      echo " debug: build in debug mode"
+      echo " clean: remove all build files"
+      echo " zip: make distribution"
+      echo " help: this help text"
+      if ($1 == "help") exit
       exit 1
    endif
    set moptions="$moptions $1"
