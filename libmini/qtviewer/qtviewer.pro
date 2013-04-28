@@ -52,7 +52,7 @@ exists(../../include): INCLUDEPATH += ../../include
 !exists(/usr/include/jpeglib.h): INCLUDEPATH += ../../libjpeg/include
 !exists(/usr/include/png.h): INCLUDEPATH += ../../libpng/include
 !exists(/usr/include/zlib.h): INCLUDEPATH += ../../zlib/include
-!exists(/usr/include/gdal.h): INCLUDEPATH += ../../gdal/include
+!exists(/usr/include/gdal.h): INCLUDEPATH += /usr/include/gdal ../../gdal/include
 !exists(/usr/include/iconv.h): INCLUDEPATH += ../../libiconv/include
 
 win32:INCLUDEPATH += ../WIN32
