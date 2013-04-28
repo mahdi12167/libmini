@@ -3,12 +3,7 @@
 # unix build script
 # (c) by Stefan Roettger
 #
-# options:
-#  release: build in release mode
-#  debug: build in debug mode
-#  clean: remove all build files
-#  zip: make distribution
-#  help: this help text
+# for build options type "./build.sh help"
 
 if ($1 == "clean") then
    make clean
