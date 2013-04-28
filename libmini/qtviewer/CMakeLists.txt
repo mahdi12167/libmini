@@ -8,17 +8,17 @@ OPTION(BUILD_QTVIEWER_TEST "Build QTViewer with test scene." OFF)
 
 # settings
 
+# non-standard path to Qt4 source installation
+SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
+    /usr/local/Trolltech/Qt-4.7.4;
+   )
+
 # default Unix compiler definitions
 IF (NOT CMAKE_BUILD_TYPE)
    IF (UNIX)
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -finline-functions -Wall -Wno-unused-parameter -Wno-parentheses")
    ENDIF (UNIX)
 ENDIF (NOT CMAKE_BUILD_TYPE)
-
-# non-standard path to Qt4 source installation
-SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
-    /usr/local/Trolltech/Qt-4.7.4;
-   )
 
 # dependencies
 
