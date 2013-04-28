@@ -8,7 +8,7 @@ HDRS	= minibase minicore\
 	  minidyna minisort\
 	  minikeyval minikdtree\
 	  ministring\
-	  miniref mininode\
+	  miniref mininode mininode_geom\
 	  minigeom\
 	  mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h\
 	  mini_luna.h mini_math.h mini_object.h mini_sfx.h\

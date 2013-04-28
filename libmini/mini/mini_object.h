@@ -10,6 +10,7 @@
 #include <mini/minicam.h>
 #include <mini/mininode.h>
 #include <mini/mininodes.h>
+#include <mini/mininode_geom.h>
 #include <mini/mininode_teapot.h>
 
 #endif
