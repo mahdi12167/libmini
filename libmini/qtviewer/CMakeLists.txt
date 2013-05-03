@@ -144,3 +144,8 @@ INSTALL(
 IF (UNIX)
    INSTALL(FILES QTViewer.desktop DESTINATION /usr/share/applications)
 ENDIF (UNIX)
+
+# install mini data
+IF (UNIX)
+   INSTALL(FILES data/EarthDay.db data/EarthNight.db DESTINATION /usr/share/mini)
+ENDIF (UNIX)
