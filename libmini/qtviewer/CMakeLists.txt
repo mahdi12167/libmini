@@ -133,3 +133,14 @@ TARGET_LINK_LIBRARIES(qtviewer
    ${OPENGL_LIBRARIES}
    ${CMAKE_THREAD_LIBS_INIT}
    )
+
+# install target
+INSTALL(
+   TARGETS qtviewer
+   RUNTIME DESTINATION bin
+)
+
+# install .desktop file for KDE4
+IF (UNIX)
+   INSTALL(FILES QTViewer.desktop DESTINATION /usr/share/applications)
+ENDIF (UNIX)

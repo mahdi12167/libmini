@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=qtviewer %U
+Icon=utilities-terminal
+Terminal=false
+Name=QTViewer
+Categories=Application;Graphics;
