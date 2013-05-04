@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=qtviewer %U
-Icon=utilities-terminal
+Icon=/usr/share/mini/qtviewer.png
 Terminal=false
 Name=QTViewer
 Categories=Application;Graphics;

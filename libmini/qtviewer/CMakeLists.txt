@@ -140,18 +140,13 @@ INSTALL(
    RUNTIME DESTINATION bin
 )
 
-# install .desktop file for KDE4 (and Gnome)
+# install .desktop file and icon for KDE4 (and Gnome)
 IF (UNIX AND NOT APPLE)
    INSTALL(FILES QTViewer.desktop DESTINATION /usr/share/applications)
+   INSTALL(FILES qtviewer.png DESTINATION /usr/share/mini)
 ENDIF (UNIX AND NOT APPLE)
 
-SET(KDE4MACROS /usr/share/kde4/apps/cmake/modules/KDE4Macros.cmake)
-IF (EXISTS ${KDE4MACROS})
-   INCLUDE(${KDE4MACROS})
-   ##!! KDE4_INSTALL_ICONS(qtviewer.png)
-ENDIF (EXISTS ${KDE4MACROS})
-
 # install mini data
-IF (UNIX)
+IF (UNIX AND NOT APPLE)
    INSTALL(FILES data/EarthDay.db data/EarthNight.db DESTINATION /usr/share/mini)
-ENDIF (UNIX)
+ENDIF (UNIX AND NOT APPLE)
