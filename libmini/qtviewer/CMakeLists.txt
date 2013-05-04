@@ -141,9 +141,10 @@ INSTALL(
 )
 
 # install .desktop file for KDE4
-IF (UNIX)
+IF (UNIX AND NOT APPLE)
    INSTALL(FILES QTViewer.desktop DESTINATION /usr/share/applications)
-ENDIF (UNIX)
+   ##!! KDE4_INSTALL_ICONS(qtviewer.png)
+ENDIF (UNIX AND NOT APPLE)
 
 # install mini data
 IF (UNIX)
