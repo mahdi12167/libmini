@@ -147,6 +147,6 @@ IF (UNIX AND NOT APPLE)
 ENDIF (UNIX AND NOT APPLE)
 
 # install mini data
-IF (UNIX AND NOT APPLE)
+IF (UNIX)
    INSTALL(FILES data/EarthDay.db data/EarthNight.db DESTINATION /usr/share/mini)
-ENDIF (UNIX AND NOT APPLE)
+ENDIF (UNIX)
