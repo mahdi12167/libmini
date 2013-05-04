@@ -17,12 +17,17 @@ class minilog
       {minilog_switch=FALSE;}
 
    static void logfile(ministring filename="");
+   static void logdir(ministring dirname="");
+
+   static ministring get_logname();
 
    static void log(ministring message);
 
    protected:
 
    static ministring minilog_filename;
+   static ministring minilog_dirname;
+
    static BOOLINT minilog_switch;
    static FILE *minilog_file;
    };
