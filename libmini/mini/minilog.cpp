@@ -3,7 +3,7 @@
 #include "minilog.h"
 
 ministring minilog::minilog_filename="minilog.txt";
-#ifndef _WIN32
+#if !defined(LIBMINI_DEBUG) && !defined(_WIN32)
 ministring minilog::minilog_dirname="/var/tmp";
 #else
 ministring minilog::minilog_dirname="";
