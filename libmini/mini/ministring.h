@@ -51,7 +51,7 @@ class ministring: public ministring_base
 
       if (isNAN(v)) strcpy(str,"NAN");
       else if (dabs(v-dtrc(v+0.5))<1E-7) snprintf(str,len,"%g",v);
-      else snprintf(str,len,"%.7f",v);
+      else snprintf(str,len,"%.7g",v);
 
       cstr=NULL;
 
