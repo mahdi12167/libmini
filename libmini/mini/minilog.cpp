@@ -15,17 +15,13 @@ FILE *minilog::minilog_file=NULL;
 void minilog::logfile(ministring filename)
    {
    minilog_filename=filename;
-
-   if (minilog_file!=NULL) fclose(minilog_file);
-   minilog_file=NULL;
+   close();
    }
 
 void minilog::logdir(ministring dirname)
    {
    minilog_dirname=dirname;
-
-   if (minilog_file!=NULL) fclose(minilog_file);
-   minilog_file=NULL;
+   close();
    }
 
 ministring minilog::get_logname()
@@ -48,4 +44,10 @@ void minilog::log(ministring message)
          fprintf(minilog_file,"%s\n",message.c_str());
          fflush(minilog_file);
          }
+   }
+
+void minilog::close()
+   {
+   if (minilog_file!=NULL) fclose(minilog_file);
+   minilog_file=NULL;
    }

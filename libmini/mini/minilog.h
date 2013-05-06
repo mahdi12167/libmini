@@ -23,6 +23,8 @@ class minilog
 
    static void log(ministring message);
 
+   static void close();
+
    protected:
 
    static ministring minilog_filename;
