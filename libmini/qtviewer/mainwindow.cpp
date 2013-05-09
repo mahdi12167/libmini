@@ -557,7 +557,9 @@ QGroupBox *MainWindow::createPathEdit(ministring name, ministring value,
 void MainWindow::about()
 {
    QMessageBox::about(this, tr("About this program"),
-                      tr(VIEWER_NAME" "VIEWER_VERSION));
+                      tr(VIEWER_NAME"\n"VIEWER_VERSION"\n\n"
+                         VIEWER_LICENSE"\n"VIEWER_COPYRIGHT"\n\n"
+                         VIEWER_DISCLAIMER));
 }
 
 void MainWindow::open()

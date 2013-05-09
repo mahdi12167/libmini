@@ -5,6 +5,9 @@
 
 #define VIEWER_NAME "QTViewer"
 #define VIEWER_VERSION "v1.9.3 as of 27.April.2013"
+#define VIEWER_LICENSE "licensed under GPL 3.0"
+#define VIEWER_COPYRIGHT "(c) by Stefan Roettger"
+#define VIEWER_DISCLAIMER "no warranty, no responsibility, no nothing\nis granted for anything!"
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200
