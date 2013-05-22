@@ -2099,6 +2099,8 @@ ministrings ViewerWindow::browse(ministring title,
             files += fileName.toStdString().c_str();
       }
 
+   delete fd;
+
    return(files);
 }
 
@@ -2121,6 +2123,8 @@ ministring ViewerWindow::browseDir(ministring title,
       if (!fileName.isNull())
          dir=fileName.toStdString().c_str();
    }
+
+   delete fd;
 
    return(dir);
 }
