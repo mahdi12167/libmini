@@ -15,6 +15,9 @@ OPTION(BUILD_MINI_WITH_GLUT "Build with GLUT." OFF)
 
 OPTION(BUILD_SHARED_LIBS "Build as a shared library." OFF)
 
+# path to custom cmake modules
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+
 # library name
 IF (WIN32)
    IF (NOT BUILD_MINI_STUB)
