@@ -116,7 +116,7 @@ int writePNMimage(const char *pnmfilename,
    fprintf(file,"\n%d %d\n",width,height);
 
    if (components==1 || components==3 || components==4) fprintf(file,"255\n");
-   else fprintf(file,"32767\n");
+   else fprintf(file,"32767\n"); // signed short values in MSB order
 
    if (fwrite(image,width*height*components,1,file)!=1) IOERROR();
    fclose(file);
@@ -162,7 +162,7 @@ unsigned char *readPNMimage(const unsigned char *pnmimage,
       if (*width<1 || *height<1) ERRORMSG();
 
       if (pnmtype==5 && maxval==255) *components=1;
-      else if (pnmtype==5 && (maxval==32767 || maxval==65535)) *components=2;
+      else if (pnmtype==5 && (maxval==32767 || maxval==65535)) *components=2; // signed short values in MSB order
       else if (pnmtype==6 && maxval==255) *components=3;
       else if (pnmtype==8 && maxval==255) *components=4;
       else ERRORMSG();

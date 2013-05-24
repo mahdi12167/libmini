@@ -117,7 +117,7 @@ class databuf
    unsigned int implformat;
 
    //! data chunk
-   void *data;         // pointer to raw data, null pointer indicates missing data
+   void *data;         // pointer to raw data, null pointer indicates missing data, saved in MSB order, internally converted to native order
    unsigned int bytes; // number of raw data bytes
 
    //! check for missing data

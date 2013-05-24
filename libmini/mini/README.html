@@ -2629,8 +2629,9 @@ representation). The missing value field is used by DEM formats to
 identify cells with unknown or unspecified elevation. A typical value
 is -9999. The no-data value for imagery assumed by the built-in
 resampler is absolute black (0,0,0). This is a safe assumption since
-real world imagery hardly contains true black. In case does though,
-the black pixels can be easily substituted with (0,0,1).<p>
+real world imagery hardly contains true black. If this is not the
+case, the black pixels can be easily substituted with an RGB value of
+(0,0,1), which is visually equal to black.<p>
 
 <a href="#" class="top">Back to top</a>
 
