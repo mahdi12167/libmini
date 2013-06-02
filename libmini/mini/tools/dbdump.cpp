@@ -22,7 +22,7 @@ BOOLINT pausing=TRUE;
 databuf buf;
 
 unsigned char *volume;
-unsigned int width,height,depth;
+unsigned int width,height,depth,components;
 
 unsigned char *image;
 unsigned int imgwidth,imgheight;
@@ -38,13 +38,17 @@ void displayfunc()
    clearbuffer(0,0,0);
 
    for (i=0; i<height; i++)
-      memcpy(&image[i*3*imgwidth],&volume[frame*3*width*height+i*3*width],3*width);
+      memcpy(&image[i*components*imgwidth],
+             &volume[frame*components*width*height+i*components*width],components*width);
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_2D,texid);
 
    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,imgwidth,imgheight,0,GL_RGB,GL_UNSIGNED_BYTE,image);
+   if (components==1) glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,imgwidth,imgheight,0,GL_LUMINANCE,GL_UNSIGNED_BYTE,image);
+   else if (components==3) glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,imgwidth,imgheight,0,GL_RGB,GL_UNSIGNED_BYTE,image);
+   else if (components==4) glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,imgwidth,imgheight,0,GL_RGBA,GL_UNSIGNED_BYTE,image);
+   else ERRORMSG();
 
    glDepthMask(GL_FALSE);
    glDisable(GL_DEPTH_TEST);
@@ -191,11 +195,10 @@ int main(int argc,char *argv[])
       if (buf.type==databuf::DATABUF_TYPE_SHORT || buf.type==databuf::DATABUF_TYPE_FLOAT)
          buf.convertdata(databuf::DATABUF_TYPE_BYTE);
 
-      if (buf.type==databuf::DATABUF_TYPE_BYTE)
-         buf.convertdata(databuf::DATABUF_TYPE_RGB);
-
-      if (buf.type==databuf::DATABUF_TYPE_RGBA)
-         buf.convertdata(databuf::DATABUF_TYPE_RGB);
+      if (buf.type==databuf::DATABUF_TYPE_BYTE) components=1;
+      else if (buf.type==databuf::DATABUF_TYPE_RGB) components=3;
+      else if (buf.type==databuf::DATABUF_TYPE_RGBA) components=4;
+      else ERRORMSG();
 
       volume=(unsigned char *)buf.data;
       width=buf.xsize;
@@ -205,8 +208,8 @@ int main(int argc,char *argv[])
       for (imgwidth=2; imgwidth<width; imgwidth*=2);
       for (imgheight=2; imgheight<height; imgheight*=2);
 
-      if ((image=(unsigned char *)malloc(3*imgwidth*imgheight))==NULL) exit(1);
-      memset(image,0,3*imgwidth*imgheight);
+      if ((image=(unsigned char *)malloc(components*imgwidth*imgheight))==NULL) exit(1);
+      memset(image,0,components*imgwidth*imgheight);
 
       winwidth=winheight=winsize;
 
