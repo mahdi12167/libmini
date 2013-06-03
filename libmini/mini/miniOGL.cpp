@@ -164,6 +164,7 @@ static void initwglprocs()
          WARNMSG();
          glext_fbo=FALSE;
          }
+      } //!! bad indentation
 #endif
 
       done=TRUE;
