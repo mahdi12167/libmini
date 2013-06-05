@@ -79,6 +79,8 @@ ministring Object::normalize_file(ministring file)
 
    file.substitute("\\", "/");
 
+   if (file.contains(QRegExp("^/[A-Z]:"))) url.remove(0,1);
+
    return(file);
    }
 
