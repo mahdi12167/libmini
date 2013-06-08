@@ -1,6 +1,10 @@
 # cmake build file for libMini plotter
 # (c) by Stefan Roettger
 
+IF (WIN32)
+   SET(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo" CACHE STRING "" FORCE)
+ENDIF (WIN32)
+
 PROJECT(plotter)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
