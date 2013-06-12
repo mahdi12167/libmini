@@ -178,7 +178,7 @@ void read()
    if (!file) ERRORMSG();
 
    while ((fgets(line,max_line,file))!=NULL)
-   {
+      {
       int column=0;
 
       double lat,lon;
@@ -231,8 +231,8 @@ void read()
 #ifdef OUTPUT
          printf("%g;%g;%s\n",lat,lon,name.c_str());
 #endif
+         }
       }
-   }
 
    fclose(file);
 
@@ -244,7 +244,7 @@ void read()
    std::cout << "maximum tree depth: " << kdtree.depth() << std::endl;
    std::cout << "average path length: " << kdtree.length() << std::endl;
 #endif
-}
+   }
 
 int main(int argc,char *argv[])
    {
