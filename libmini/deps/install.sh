@@ -96,4 +96,4 @@ echo BUILDING GDAL
 echo BUILDING DCMTK
 (cd dcmtk;\
  ./configure --prefix=$prefix/dcmtk;\
- make -j 2; make install-all)
+ make -j 2; make install-lib)
