@@ -16,19 +16,25 @@ echo "installing to $prefix"
 # zlib
 if (-e zlib) then
    echo BUILDING ZLIB
-   (cd zlib; ./configure --prefix=$prefix/zlib; make -j 2; make install)
+   (cd zlib;\
+    ./configure --prefix=$prefix/zlib;\
+    make -j 2; make install)
 endif
 
 # libjpeg
 if (-e libjpeg) then
    echo BUILDING LIBJPEG
-   (cd libjpeg; ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared; make -j 2; make install)
+   (cd libjpeg;\
+    ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared;\
+    make -j 2; make install)
 endif
 
 # libpng
 if (-e libpng) then
    echo BUILDING LIBPNG
-   (cd libpng; ./configure --prefix=$prefix/libpng --enable-static --disable-shared; make -j 2; make install)
+   (cd libpng;\
+    ./configure --prefix=$prefix/libpng --enable-static --disable-shared;\
+    make -j 2; make install)
 endif
 
 # curl
@@ -44,12 +50,16 @@ endif
 
 # squish
 echo BUILDING SQUISH
-(cd squish; cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish; make -j 2; make install)
+(cd squish;\
+ cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish;\
+ make -j 2; make install)
 
 # freeglut
 if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
    echo BUILDING FREEGLUT
-   (cd freeglut; cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut; make -j 2; make install)
+   (cd freeglut;\
+    cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut;\
+    make -j 2; make install)
 endif
 
 # other libraries to install:
@@ -57,13 +67,17 @@ endif
 # proj (required by gdal)
 if (-e proj) then
    echo BUILDING PROJ.4
-   (cd proj; ./configure --prefix=$prefix; make -j 2; make install)
+   (cd proj;\
+    ./configure --prefix=$prefix;\
+    make -j 2; make install)
 endif
 
 # libiconv (required by gdal 1.9+)
 if (-e libiconv) then
    echo BUILDING LIBICONV
-   (cd libiconv; ./configure --prefix=$prefix/libiconv --enable-static --disable-shared; make -j 2; make install)
+   (cd libiconv;\
+    ./configure --prefix=$prefix/libiconv --enable-static --disable-shared;\
+    make -j 2; make install)
 endif
 
 # gdal
@@ -77,3 +91,9 @@ echo BUILDING GDAL
              --without-ld-shared\
              --enable-static --disable-shared;\
  make -j 2; make install)
+
+# dcmtk
+echo BUILDING DCMTK
+(cd dcmtk;\
+ ./configure --prefix=$prefix/dcmtk;\
+ make -j 2; make install-all)

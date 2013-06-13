@@ -15,3 +15,4 @@ freeglut:            http://freeglut.sourceforge.net
 gdal:                http://gdal.org
 proj:                http://trac.osgeo.org/proj
 libiconv:            http://www.gnu.org/software/libiconv
+dcmtk:               http://dicom.offis.de/dcmtk.php.en

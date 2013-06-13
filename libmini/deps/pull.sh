@@ -113,3 +113,12 @@ if (! -e /usr/include/iconv.h) then
       endif
    endif
 endif
+
+# dcmtk
+if (-X wget) then
+   if (! -e libiconv) then
+      wget dicom.offis.de/download/dcmtk/dcmtk360/dcmtk-3.6.0.tar.gz
+      tar zxf dcmtk-3.6.0.tar.gz
+      mv dcmtk-3.6.0 dcmtk
+   endif
+endif
