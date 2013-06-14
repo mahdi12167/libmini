@@ -16,3 +16,8 @@ MAKE_MINISFX_EXECUTABLE(dds)
 
 MAKE_MINISFX_EXECUTABLE(test)
 MAKE_MINI_EXECUTABLE(mpfptest)
+
+INSTALL(
+   TARGETS raw2db db2db dbgzip dbdump dds
+   RUNTIME DESTINATION bin
+   )
