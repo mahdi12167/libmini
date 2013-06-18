@@ -1,6 +1,6 @@
 //
-// server.cpp
-// ~~~~~~~~~~
+// server.h
+// ~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
