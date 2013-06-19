@@ -82,9 +82,7 @@ if (-X ../mini/tabify.sh && -X cvs) then
 endif
 
 # openthreads 2.3.0
-if (-X svn) then
-   svn up openthreads
-endif
+# svn co http://www.openscenegraph.org/svn/osg/OpenThreads/tags/OpenThreads-2.3.0
 
 # freeglut 2.8.0+
 if (-X svn) then
