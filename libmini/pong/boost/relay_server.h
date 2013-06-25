@@ -11,6 +11,9 @@
 // relays the response body over a different tcp port.
 //
 
+#ifndef BOOST_RELAY_SERVER_H
+#define BOOST_RELAY_SERVER_H
+
 #include <boost/thread.hpp>
 
 #include "server.h"
@@ -115,3 +118,5 @@ private:
 
   boost::thread *t_;
 };
+
+#endif

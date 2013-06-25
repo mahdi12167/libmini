@@ -10,6 +10,9 @@
 // Modified by Stefan Roettger to provide a synchronous client class
 //
 
+#ifndef BOOST_CLIENT_H
+#define BOOST_CLIENT_H
+
 #include <iostream>
 
 #include <boost/array.hpp>
@@ -75,3 +78,5 @@ public:
   }
 
 };
+
+#endif

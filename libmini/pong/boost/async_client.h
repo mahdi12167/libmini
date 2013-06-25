@@ -10,6 +10,9 @@
 // Modified by Stefan Roettger to provide an asynchronous thread-safe http client class
 //
 
+#ifndef BOOST_ASYNC_CLIENT_H
+#define BOOST_ASYNC_CLIENT_H
+
 #include <iostream>
 #include <istream>
 #include <ostream>
@@ -284,3 +287,5 @@ public:
   }
 
 };
+
+#endif

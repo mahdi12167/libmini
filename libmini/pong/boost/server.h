@@ -10,6 +10,9 @@
 // Modified by Stefan Roettger to provide a synchronous server class
 //
 
+#ifndef BOOST_SERVER_H
+#define BOOST_SERVER_H
+
 #include <iostream>
 #include <string>
 
@@ -66,3 +69,5 @@ protected:
 
   virtual std::string make_response_string() = 0;
 };
+
+#endif
