@@ -7,6 +7,8 @@
 
 #include "pnmbase.h"
 #include "pnmsample.h"
+#include "rawbase.h"
+#include "rekbase.h"
 
 #include "miniOGL.h"
 
@@ -1619,6 +1621,127 @@ int databuf::loadPPMnormalized(const char *filename,const char *normalizedpath)
 
       savedata(str);
       }
+
+   return(1);
+   }
+
+// data is loaded from RAW file
+int databuf::loadRAWdata(const char *filename,
+                         double midx,double midy,double basez,
+                         double dx,double dy,double dz)
+   {
+   long long width,height,depth,steps;
+   unsigned int components,bits;
+   BOOLINT sign,msb;
+   float scalex,scaley,scalez;
+
+   if ((data=readRAWvolume(filename,
+                           &width,&height,&depth,&steps,
+                           &components,&bits,&sign,&msb,
+                           &scalex,&scaley,&scalez))==NULL)
+      {
+#ifdef LIBMINI_DEBUG
+      fprintf(stderr,"unable to load %s!\n",filename);
+#endif
+      return(0);
+      }
+
+   if (width<2 || height<2 || depth<2) ERRORMSG();
+   if (components<1 || components>4) ERRORMSG();
+
+   extformat=DATABUF_EXTFMT_PLAIN;
+   implformat=0;
+
+   xsize=width;
+   ysize=height;
+   zsize=depth;
+   tsteps=steps;
+
+   if (components==1 && bits==8) type=DATABUF_TYPE_BYTE;
+   else if (components==1 && bits==16 && sign) type=DATABUF_TYPE_SHORT;
+   else if (components==1 && bits==32) type=DATABUF_TYPE_FLOAT;
+   else if (components==2 && bits==8) type=DATABUF_TYPE_SHORT;
+   else if (components==3) type=DATABUF_TYPE_RGB;
+   else if (components==4) type=DATABUF_TYPE_RGBA;
+   else ERRORMSG();
+
+   bytes=xsize*ysize*zsize*steps*components;
+
+   if (type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT)
+      if (intel_check()) swapbytes();
+
+   swx=midx-dx*scalex/2.0;
+   swy=midy-dy*scaley/2.0;
+   nwx=midx-dx*scalex/2.0;
+   nwy=midy+dy*scaley/2.0;
+   nex=midx+dx*scalex/2.0;
+   ney=midy+dy*scaley/2.0;
+   sex=midx+dx*scalex/2.0;
+   sey=midy-dy*scaley/2.0;
+
+   h0=basez*scalez;
+   dh=dz*scalez;
+
+   t0=0.0;
+   dt=1.0;
+
+   scaling=1.0f/255.0f;
+   bias=0.0f;
+
+   return(1);
+   }
+
+// data is loaded from REK file
+int databuf::loadREKdata(const char *filename,
+                         double midx,double midy,double basez,
+                         double dx,double dy,double dz)
+   {
+   long long width,height,depth;
+   unsigned int components;
+   float scalex,scaley,scalez;
+
+   if ((data=readREKvolume_ooc(filename,
+                               &width,&height,&depth,
+                               &components,
+                               &scalex,&scaley,&scalez))==NULL)
+      {
+#ifdef LIBMINI_DEBUG
+      fprintf(stderr,"unable to load %s!\n",filename);
+#endif
+      return(0);
+      }
+
+   if (width<2 || height<2 || depth<2) ERRORMSG();
+   if (components!=1) ERRORMSG();
+
+   extformat=DATABUF_EXTFMT_PLAIN;
+   implformat=0;
+
+   xsize=width;
+   ysize=height;
+   zsize=depth;
+   tsteps=1;
+
+   type=DATABUF_TYPE_BYTE;
+
+   bytes=xsize*ysize*zsize;
+
+   swx=midx-dx*scalex/2.0;
+   swy=midy-dy*scaley/2.0;
+   nwx=midx-dx*scalex/2.0;
+   nwy=midy+dy*scaley/2.0;
+   nex=midx+dx*scalex/2.0;
+   ney=midy+dy*scaley/2.0;
+   sex=midx+dx*scalex/2.0;
+   sey=midy-dy*scaley/2.0;
+
+   h0=basez*scalez;
+   dh=dz*scalez;
+
+   t0=dt=0.0;
+
+   scaling=1.0f/255.0f;
+   bias=0.0f;
 
    return(1);
    }

@@ -261,6 +261,16 @@ class databuf
    //! data is converted from normalized PPM into compressed native format
    int loadPPMnormalized(const char *filename,const char *normalizedpath);
 
+   //! data is loaded from RAW file
+   int loadRAWdata(const char *filename,
+                   double midx=0.0,double midy=0.0,double basez=0.0,
+                   double dx=1.0,double dy=1.0,double dz=1.0);
+
+   //! data is loaded from REK file
+   int loadREKdata(const char *filename,
+                   double midx=0.0,double midy=0.0,double basez=0.0,
+                   double dx=1.0,double dy=1.0,double dz=1.0);
+
    //! data is loaded from PVM file
    int loadPVMdata(const char *filename,
                    double midx=0.0,double midy=0.0,double basez=0.0,
