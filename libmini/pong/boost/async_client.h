@@ -138,11 +138,21 @@ private:
       std::getline(response_stream, status_message);
       if (!response_stream || http_version.substr(0, 5) != "HTTP/")
       {
+        response_finished_ = response_error_ = true;
+
+        // unlock wait mutex
+        wait_mtx_.unlock();
+
         std::cerr << "Invalid response\n";
         return;
       }
       if (status_code != 200)
       {
+        response_finished_ = response_error_ = true;
+
+        // unlock wait mutex
+        wait_mtx_.unlock();
+
         std::cerr << "Response returned with status code ";
         std::cerr << status_code << "\n";
         return;

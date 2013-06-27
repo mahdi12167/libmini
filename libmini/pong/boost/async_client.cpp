@@ -29,7 +29,11 @@ int main(int argc, char* argv[])
 
   async_client c(io_service, host, path);
   io_service.run();
-  std::cout << c.get_response() << std::endl;
+
+  if (c.is_valid())
+    std::cout << c.get_response() << std::endl;
+  else
+    std::cout << "invalid response" << std::endl;
 
   return 0;
 }
