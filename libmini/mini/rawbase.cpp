@@ -1,9 +1,7 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include <iostream>
-
-#include "codebase.h"
-#include "dirbase.h"
+#include "miniio.h"
+#include "minidir.h"
 
 #include "rawbase.h"
 

@@ -3,6 +3,8 @@
 #ifndef RAWBASE_H
 #define RAWBASE_H
 
+#include "minibase.h"
+
 #define RAW_TARGET_RATIO 0.5f
 #define RAW_TARGET_CELLS 250000000
 

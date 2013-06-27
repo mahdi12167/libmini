@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include "codebase.h"
+#include "minibase.h"
 #include "rawbase.h"
 
 #include "rekbase.h"
