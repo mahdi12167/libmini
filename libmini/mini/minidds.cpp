@@ -32,14 +32,17 @@ inline unsigned int DDS_shiftl(const unsigned int value,const unsigned int bits)
 inline unsigned int DDS_shiftr(const unsigned int value,const unsigned int bits)
    {return((bits>=32)?0:value>>bits);}
 
-inline void DDS_swapuint(unsigned int *x)
+inline void DDS_swap4(char *x)
    {
-   unsigned int tmp=*x;
+   char a=x[0];
+   char b=x[1];
+   char c=x[2];
+   char d=x[3];
 
-   *x=((tmp&0xff)<<24)|
-      ((tmp&0xff00)<<8)|
-      ((tmp&0xff0000)>>8)|
-      ((tmp&0xff000000)>>24);
+   x[0]=d;
+   x[1]=c;
+   x[2]=b;
+   x[3]=a;
    }
 
 void DDS_initbuffer()
@@ -82,7 +85,7 @@ inline void DDS_writebits(unsigned int value,unsigned int bits)
             DDS_cachesize+=DDS_BLOCKSIZE;
             }
 
-      if (DDS_ISINTEL) DDS_swapuint(&DDS_buffer);
+      if (DDS_ISINTEL) DDS_swap4((char *)&DDS_buffer);
       *((unsigned int *)&DDS_cache[DDS_cachepos])=DDS_buffer;
       DDS_cachepos+=4;
 
@@ -138,7 +141,7 @@ inline unsigned int DDS_readbits(unsigned int bits)
       else
          {
          DDS_buffer=*((unsigned int *)&DDS_cache[DDS_cachepos]);
-         if (DDS_ISINTEL) DDS_swapuint(&DDS_buffer);
+         if (DDS_ISINTEL) DDS_swap4((char *)&DDS_buffer);
          DDS_cachepos+=4;
          }
 
