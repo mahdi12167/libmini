@@ -29,7 +29,11 @@ int main(int argc, char* argv[])
   if (argc > 2) port = argv[2];
 
   client c(io_service, host, port);
-  std::cout << c.get_response();
+
+  if (c.is_valid())
+    std::cout << c.get_response() << std::endl;
+  else
+    std::cout << "invalid response" << std::endl;
 
   return 0;
 }

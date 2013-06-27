@@ -37,7 +37,7 @@ public:
     work_ = new boost::asio::io_service::work(io_service);
 
     // create new async client
-    c1_ = new async_client(io_service, host_, path_, true);
+    c1_ = new async_client(io_service, host_, path_);
     c2_ = NULL;
 
     // start io service handling async clients in new thread
@@ -73,7 +73,7 @@ public:
     // if latest response is semi-out-dated start next
     if (c2_ == NULL)
       if (difftime(time(0), c1_->get_response_time()) > 0.5*lifetime_)
-        c2_ = new async_client(c1_->get_io_service(), host_, path_, true);
+        c2_ = new async_client(c1_->get_io_service(), host_, path_);
 
     // if latest response is out-dated use next
     if (c2_ != NULL)
@@ -105,7 +105,7 @@ protected:
     if (response.length()>0)
       if (*(response.end()-1) != '\n') response.push_back('\n');
 
-    std::cerr << "responding: " << response << std::endl;
+    std::cerr << "responding: " << std::endl << response << std::endl;
 
     return response;
   }

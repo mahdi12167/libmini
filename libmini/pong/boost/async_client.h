@@ -29,17 +29,14 @@ class async_client
 {
 public:
   async_client(boost::asio::io_service& io_service,
-               const std::string& host, const std::string& path,
-               bool threaded = false)
+               const std::string& host, const std::string& path)
     : resolver_(io_service),
       socket_(io_service),
       response_finished_(false),
-      response_error_(false),
-      threaded_(threaded)
+      response_error_(false)
   {
     // lock wait mutex
-    if (threaded_)
-      wait_mtx_.lock();
+    wait_mtx_.lock();
 
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will
@@ -62,8 +59,7 @@ public:
   ~async_client()
   {
     // lock wait mutex
-    if (threaded_)
-      wait_mtx_.lock();
+    wait_mtx_.lock();
   }
 
 private:
@@ -81,11 +77,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -101,11 +96,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -123,11 +117,10 @@ private:
     else
     {
       std::cerr << "Error: " << err.message() << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -163,11 +156,10 @@ private:
     else
     {
       std::cerr << "Error: " << err << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -192,11 +184,10 @@ private:
     else
     {
       std::cerr << "Error: " << err << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -215,30 +206,23 @@ private:
     }
     else if (err == boost::asio::error::eof)
     {
-      // lock access mutex
-      if (threaded_)
-        access_mtx_.lock();
+      // scoped access lock
+      boost::mutex::scoped_lock lock(access_mtx_);
 
       // finished reading
       response_finished_ = true;
       response_time_ = time(0);
 
-      // unlock access mutex
-      if (threaded_)
-        access_mtx_.unlock();
-
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
     else
     {
       std::cerr << "Error: " << err << "\n";
-      response_error_ = true;
+      response_finished_ = response_error_ = true;
 
       // unlock wait mutex
-      if (threaded_)
-        wait_mtx_.unlock();
+      wait_mtx_.unlock();
     }
   }
 
@@ -255,14 +239,11 @@ private:
   boost::mutex wait_mtx_;
   boost::mutex access_mtx_;
 
-  bool threaded_;
-
 public:
   bool is_valid()
   {
     // scoped wait lock
-    if (threaded_)
-      boost::mutex::scoped_lock wait(wait_mtx_);
+    boost::mutex::scoped_lock wait(wait_mtx_);
 
     return(!response_error_);
   }
@@ -270,8 +251,7 @@ public:
   bool is_finished()
   {
     // scoped access lock
-    if (threaded_)
-      boost::mutex::scoped_lock lock(access_mtx_);
+    boost::mutex::scoped_lock lock(access_mtx_);
 
     return(response_finished_);
   }
@@ -279,8 +259,7 @@ public:
   std::string get_response()
   {
     // scoped wait lock
-    if (threaded_)
-      boost::mutex::scoped_lock wait(wait_mtx_);
+    boost::mutex::scoped_lock wait(wait_mtx_);
 
     if (!response_error_)
       return response_stream_.str();
@@ -291,8 +270,7 @@ public:
   time_t get_response_time()
   {
     // scoped wait lock
-    if (threaded_)
-      boost::mutex::scoped_lock wait(wait_mtx_);
+    boost::mutex::scoped_lock wait(wait_mtx_);
 
     if (!response_error_)
       return response_time_;
