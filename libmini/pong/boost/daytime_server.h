@@ -20,7 +20,7 @@ class daytime_server: public server
 public:
   daytime_server(boost::asio::io_service& io_service,
                  unsigned int port=13)
-     : server(io_service, port)
+    : server(io_service, port)
     {}
 
 protected:
@@ -32,6 +32,8 @@ protected:
 
     time_t now = time(0);
     response.append(ctime(&now));
+
+    std::cerr << "responding: " << response << std::endl;
 
     return response;
   }

@@ -25,24 +25,24 @@ public:
   relay_server(boost::asio::io_service& io_service,
                const std::string& host, const std::string& path,
                double lifetime = 60.0,
-               unsigned int port=13)
-     : server(io_service, port)
-    {
-      host_ = host;
-      path_ = path;
+               unsigned int port = 13)
+    : server(io_service, port)
+  {
+    host_ = host;
+    path_ = path;
 
-      lifetime_ = lifetime;
+    lifetime_ = lifetime;
 
-      // give the io service some work to keep it alive
-      work_ = new boost::asio::io_service::work(io_service);
+    // give the io service some work to keep it alive
+    work_ = new boost::asio::io_service::work(io_service);
 
-      // create new async client
-      c1_ = new async_client(io_service, host_, path_);
-      c2_ = NULL;
+    // create new async client
+    c1_ = new async_client(io_service, host_, path_, true);
+    c2_ = NULL;
 
-      // start io service handling async clients in new thread
-      t_ = new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service));
-    }
+    // start io service handling async clients in new thread
+    t_ = new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service));
+  }
 
   ~relay_server()
   {
@@ -51,7 +51,8 @@ public:
 
     // delete async clients
     delete c1_;
-    if (c2_ != NULL) delete c2_;
+    if (c2_ != NULL)
+      delete c2_;
 
     // delete io thread
     t_->join();
@@ -72,16 +73,16 @@ public:
     // if latest response is semi-out-dated start next
     if (c2_ == NULL)
       if (difftime(time(0), c1_->get_response_time()) > 0.5*lifetime_)
-        c2_ = new async_client(c1_->get_io_service(), host_, path_);
+        c2_ = new async_client(c1_->get_io_service(), host_, path_, true);
 
     // if latest response is out-dated use next
     if (c2_ != NULL)
       if (difftime(time(0), c1_->get_response_time()) > lifetime_)
-        {
+      {
         delete c1_;
         c1_ = c2_;
         c2_ = NULL;
-        }
+      }
   }
 
 protected:
@@ -93,16 +94,18 @@ protected:
 
     if (c1_->is_valid())
     {
-      time_t t=c1_->get_response_time();
+      time_t t = c1_->get_response_time();
       response.append(ctime(&t));
 
       response.append(c1_->get_response());
     }
     else
-       response.append("relay error");
+      response.append("relay error");
 
     if (response.length()>0)
-       if (*(response.end()-1) != '\n') response.push_back('\n');
+      if (*(response.end()-1) != '\n') response.push_back('\n');
+
+    std::cerr << "responding: " << response << std::endl;
 
     return response;
   }

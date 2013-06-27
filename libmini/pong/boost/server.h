@@ -24,7 +24,7 @@ class server
 {
 public:
   server(boost::asio::io_service& io_service,
-         unsigned int port=13)
+         unsigned int port = 13)
   {
     try
     {

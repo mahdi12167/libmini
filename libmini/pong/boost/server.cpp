@@ -15,9 +15,10 @@
 int main()
 {
   boost::asio::io_service io_service;
-
   daytime_server s(io_service);
-  for (;;) s.respond();
+
+  for (;;)
+    s.respond();
 
   return 0;
 }
