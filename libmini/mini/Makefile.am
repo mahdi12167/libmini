@@ -31,6 +31,7 @@ MODS	= mini miniOGL\
 	  mininodes mininode_teapot\
 	  minilog\
 	  pnmbase pnmsample\
+	  rawbase rekbase\
 	  database datafill\
 	  datacloud datacache datagrid\
 	  datacalc dataparse\

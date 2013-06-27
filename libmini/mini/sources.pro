@@ -20,6 +20,7 @@ HEADERS += \
    minitree.h minibrick.h minilod.h \
    minigeom.h minimesh.h minibspt.h miniproj.h \
    pnmbase.h pnmsample.h \
+   rawbase.h rekbase.h \
    database.h datafill.h \
    datacloud.h datacache.h datagrid.h \
    datacalc.h dataparse.h \
@@ -46,6 +47,7 @@ SOURCES += \
    mininodes.cpp mininode_teapot.cpp \
    minilog.cpp \
    pnmbase.cpp pnmsample.cpp \
+   rawbase.cpp rekbase.cpp \
    database.cpp datafill.cpp \
    datacloud.cpp datacache.cpp datagrid.cpp \
    datacalc.cpp dataparse.cpp \
