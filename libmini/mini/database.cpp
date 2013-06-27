@@ -32,7 +32,7 @@ unsigned short int databuf::INTEL_CHECK=1;
 int databuf::AUTOS3TCMIPMAP=0;
 
 // static hook for conversion from and to an external format
-int (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data)=NULL;
+int (*databuf::CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,unsigned char **newdata,long long *newbytes,databuf *obj,void *data)=NULL;
 void *databuf::CONVERSION_DATA=NULL;
 
 // static hook for automatic s3tc compression
@@ -91,13 +91,13 @@ databuf::databuf()
 // allocate a new memory chunk
 void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
    {
-   unsigned int bs,cs;
+   long long bs,cs;
 
    unsigned char *byteptr;
    short int *shortptr;
    float *floatptr;
 
-   unsigned int count;
+   long long count;
 
    bs=0;
 
@@ -108,7 +108,7 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
    else if (ty==DATABUF_TYPE_RGBA) bs=4;
    else ERRORMSG();
 
-   cs=xs*ys*zs*ts;
+   cs=(long long)xs*ys*zs*ts;
    bs*=cs;
 
    if ((data=malloc(bs))==NULL) MEMERROR();
@@ -133,11 +133,11 @@ void databuf::alloc(unsigned int xs,unsigned int ys,unsigned int zs,unsigned int
    }
 
 // set data to memory chunk
-void databuf::set(void *chunk,unsigned int length,
+void databuf::set(void *chunk,long long length,
                   unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty,
                   unsigned int implicit)
    {
-   unsigned int bs;
+   long long bs;
 
    bs=0;
 
@@ -154,7 +154,7 @@ void databuf::set(void *chunk,unsigned int length,
    else if (ty==DATABUF_TYPE_RGBA_MM_S3TC) bs=4;
    else ERRORMSG();
 
-   bs*=xs*ys*zs*ts;
+   bs*=(long long)xs*ys*zs*ts;
 
    if (ty==DATABUF_TYPE_RGB_S3TC || ty==DATABUF_TYPE_RGBA_S3TC) bs=length;
    if (ty==DATABUF_TYPE_RGB_MM || ty==DATABUF_TYPE_RGBA_MM) bs=length;
@@ -193,7 +193,7 @@ void databuf::set_implicit(const char *prog,
    }
 
 // copy data from memory chunk
-void databuf::copy(const void *chunk,unsigned int length,
+void databuf::copy(const void *chunk,long long length,
                    unsigned int xs,unsigned int ys,unsigned int zs,unsigned int ts,unsigned int ty)
    {
    void *newdata;
@@ -229,16 +229,16 @@ void databuf::duplicate(const databuf *buf)
 // clear buffer
 void databuf::clear(float value)
    {
-   unsigned int i;
+   long long i;
 
-   unsigned int c;
+   long long c;
    int v;
 
    unsigned char *byteptr;
    short int *shortptr;
    float *floatptr;
 
-   c=xsize*ysize*zsize*tsteps;
+   c=(long long)xsize*ysize*zsize*tsteps;
    v=ftrc(value+0.5f);
 
    switch (type)
@@ -485,6 +485,41 @@ void databuf::writeparam(const char *tag,double v,FILE *file,int digits)
    putc('\n',file);
    }
 
+// write one long long parameter
+void databuf::writeparamll(const char *tag,long long v,FILE *file)
+   {
+   const char *ptr;
+
+   unsigned long long value,point;
+   int digit;
+
+   for (ptr=tag; *ptr!='\0'; ptr++) putc(*ptr,file);
+
+   putc('=',file);
+
+   if (v<0.0)
+      {
+      putc('-',file);
+      value=-v;
+      }
+   else value=v;
+
+   point=1;
+   while (point<=value/10) point*=10;
+
+   while (point>0)
+      {
+      digit=(value/point)%10;
+
+      putc(digit+'0',file);
+
+      value%=point;
+      point/=10;
+      }
+
+   putc('\n',file);
+   }
+
 // read one double parameter
 int databuf::readparam(const char *tag,double *v,FILE *file)
    {
@@ -603,6 +638,58 @@ int databuf::readparam(const char *tag,double *v,FILE *file)
    return(1);
    }
 
+// read one long long parameter
+int databuf::readparamll(const char *tag,long long *v,FILE *file)
+   {
+   char ch;
+   const char *ptr;
+
+   unsigned long long value;
+   BOOLINT sign;
+
+   ch=getc(file);
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   for (ptr=tag; ch==*ptr && *ptr!='\0'; ptr++) ch=getc(file);
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   if (ch!='=')
+      {
+      ungetc(ch,file);
+      return(0);
+      }
+
+   ch=getc(file);
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   if (ch=='-')
+      {
+      sign=TRUE;
+      ch=getc(file);
+      }
+   else sign=FALSE;
+
+   value=0;
+
+   while (ch>='0' && ch<='9')
+      {
+      value=10*value+ch-'0';
+      ch=getc(file);
+      }
+
+   while (ch==' ' || ch=='\n' || ch=='\r') ch=getc(file);
+
+   ungetc(ch,file);
+
+   if (sign) *v=-value;
+   else *v=value;
+
+   return(1);
+   }
+
 // read one float parameter
 int databuf::readparamf(const char *tag,float *v,FILE *file)
    {
@@ -618,11 +705,11 @@ int databuf::readparamf(const char *tag,float *v,FILE *file)
 // read one integer parameter
 int databuf::readparami(const char *tag,int *v,FILE *file)
    {
-   double value;
+   long long value;
 
-   if (readparam(tag,&value,file)==0) return(0);
+   if (readparamll(tag,&value,file)==0) return(0);
 
-   *v=dtrc(value+0.5);
+   *v=(int)value;
 
    return(1);
    }
@@ -630,11 +717,11 @@ int databuf::readparami(const char *tag,int *v,FILE *file)
 // read one unsigned parameter
 int databuf::readparamu(const char *tag,unsigned int *v,FILE *file)
    {
-   double value;
+   long long value;
 
-   if (readparam(tag,&value,file)==0) return(0);
+   if (readparamll(tag,&value,file)==0) return(0);
 
-   *v=dtrc(dabs(value)+0.5);
+   *v=(value<0)?0:value;
 
    return(1);
    }
@@ -704,9 +791,9 @@ int databuf::readstring(const char *tag,char **str,FILE *file)
 // load DB data block
 void databuf::loadblock(FILE *file)
    {
-   const unsigned int block=1<<17;
+   const long long block=1<<17;
 
-   unsigned int cnt;
+   long long cnt;
 
    if ((data=(unsigned char *)malloc(block))==NULL) MEMERROR();
 
@@ -749,14 +836,14 @@ int databuf::savedata(const char *filename,
       }
 
    // save magic identifier
-   writeparam("MAGIC",MAGIC6,file);
+   writeparamll("MAGIC",MAGIC6,file);
 
    // save mandatory metadata
-   writeparam("xsize",xsize,file);
-   writeparam("ysize",ysize,file);
-   writeparam("zsize",zsize,file);
-   writeparam("tsteps",tsteps,file);
-   writeparam("type",type,file);
+   writeparamll("xsize",xsize,file);
+   writeparamll("ysize",ysize,file);
+   writeparamll("zsize",zsize,file);
+   writeparamll("tsteps",tsteps,file);
+   writeparamll("type",type,file);
 
    // save optional comment
    writestring("comment",comment,file);
@@ -780,18 +867,18 @@ int databuf::savedata(const char *filename,
    writeparam("bias",bias,file);
 
    // save coordinate system indicator
-   writeparam("crs",crs,file);
-   writeparam("zone",zone,file);
-   writeparam("datum",datum,file);
+   writeparamll("crs",crs,file);
+   writeparamll("zone",zone,file);
+   writeparamll("datum",datum,file);
 
    // save no-data indicator
    writeparam("nodata",nodata,file);
 
    // save external format indicator
-   writeparam("extformat",extformat,file);
+   writeparamll("extformat",extformat,file);
 
    // save implicit format indicator
-   writeparam("implformat",implformat,file);
+   writeparamll("implformat",implformat,file);
 
    // save optional corner points in Lat/Lon
    writeparam("LLWGS84_swx",LLWGS84_swx,file);
@@ -804,7 +891,7 @@ int databuf::savedata(const char *filename,
    writeparam("LLWGS84_sey",LLWGS84_sey,file);
 
    // save length of data chunk
-   writeparam("bytes",bytes,file);
+   writeparamll("bytes",bytes,file);
 
    // save terminating character
    putc('\0',file);
@@ -837,7 +924,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
 
    unsigned int m;
 
-   unsigned int tstep;
+   long long tstep;
 
    // open file for reading
    if ((file=fopen(filename,"rb"))==NULL)
@@ -935,7 +1022,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       }
 
    // read length of data chunk
-   if (readparamu("bytes",&bytes,file)==0) ERRORMSG();
+   if (readparamll("bytes",&bytes,file)==0) ERRORMSG();
 
    // read terminating character
    if (bytes!=0)
@@ -955,7 +1042,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
          if (tstart<tstop && extformat==DATABUF_EXTFMT_PLAIN && implformat==0)
             if (tstart>0 && tstop>1)
                {
-               tstep=xsize*ysize*zsize;
+               tstep=(long long)xsize*ysize*zsize;
 
                if (type==DATABUF_TYPE_BYTE) tstep=1*tstep;
                else if (type==DATABUF_TYPE_SHORT) tstep=2*tstep;
@@ -1007,7 +1094,7 @@ void databuf::swap2(int is_msb)
 // convert to signed short (the default)
 void databuf::convert2(int is_ushort,int to_ushort)
    {
-   unsigned int i;
+   long long i;
 
    unsigned short int maxval,*ptr;
 
@@ -1036,7 +1123,7 @@ void databuf::convert2(int is_ushort,int to_ushort)
    }
 
 // set conversion hook for external formats
-void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data)
+void databuf::setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,unsigned char **newdata,long long *newbytes,databuf *obj,void *data),void *data)
    {
    CONVERSION_HOOK=conversion;
    CONVERSION_DATA=data;
@@ -1048,7 +1135,7 @@ void databuf::convertchunk(int israw,unsigned int extfmt)
    int success;
 
    unsigned char *newdata;
-   unsigned int newbytes;
+   long long newbytes;
 
    if (CONVERSION_HOOK==NULL)
       if (israw!=0) return;
@@ -1665,7 +1752,7 @@ int databuf::loadRAWdata(const char *filename,
    else if (components==4) type=DATABUF_TYPE_RGBA;
    else ERRORMSG();
 
-   bytes=xsize*ysize*zsize*steps*components;
+   bytes=(long long)xsize*ysize*zsize*steps*components;
 
    if (type==DATABUF_TYPE_SHORT || type==DATABUF_TYPE_FLOAT)
       if (intel_check()) swapbytes();
@@ -1724,7 +1811,7 @@ int databuf::loadREKdata(const char *filename,
 
    type=DATABUF_TYPE_BYTE;
 
-   bytes=xsize*ysize*zsize;
+   bytes=(long long)xsize*ysize*zsize;
 
    swx=midx-dx*scalex/2.0;
    swy=midy-dy*scaley/2.0;
@@ -1783,7 +1870,7 @@ int databuf::loadPVMdata(const char *filename,
       else if (components==3) type=DATABUF_TYPE_RGB;
       else type=DATABUF_TYPE_RGBA;
 
-      bytes=xsize*ysize*zsize*components;
+      bytes=(long long)xsize*ysize*zsize*components;
 
       if (type==DATABUF_TYPE_SHORT)
          {
@@ -1876,7 +1963,7 @@ int databuf::loadPVMdata(const char *filename,
    else if (components==3) type=DATABUF_TYPE_RGB;
    else type=DATABUF_TYPE_RGBA;
 
-   bytes=xsize*ysize*zsize*components*tsteps;
+   bytes=(long long)xsize*ysize*zsize*components*tsteps;
 
    if ((data=realloc(data,bytes))==NULL) MEMERROR();
 
@@ -1903,7 +1990,7 @@ int databuf::loadPVMdata(const char *filename,
       else if (components==3 && type!=DATABUF_TYPE_RGB) ERRORMSG();
       else if (components==4 && type!=DATABUF_TYPE_RGBA) ERRORMSG();
 
-      memcpy(&((unsigned char *)data)[(i-1)*xsize*ysize*zsize*components],moredata,xsize*ysize*zsize*components);
+      memcpy(&((unsigned char *)data)[(long long)(i-1)*xsize*ysize*zsize*components],moredata,(long long)xsize*ysize*zsize*components);
       free(moredata);
       }
 
@@ -2013,7 +2100,7 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    type=DATABUF_TYPE_FLOAT;
 
-   bytes=xsize*ysize*zsize*tsteps*4;
+   bytes=(long long)xsize*ysize*zsize*tsteps*4;
 
    if ((data=malloc(bytes))==NULL) MEMERROR();
 
@@ -2177,7 +2264,7 @@ void databuf::generateplane(int size,
 // convert data from one type to another
 void databuf::convertdata(unsigned int newtype)
    {
-   unsigned int cells;
+   long long cells;
 
    unsigned char *byteptr;
    short int *shortptr;
@@ -2185,13 +2272,13 @@ void databuf::convertdata(unsigned int newtype)
 
    unsigned char *rgbptr;
 
-   unsigned int count;
+   long long count;
 
    float minvalue,maxvalue,value;
 
    void *newdata;
 
-   cells=xsize*ysize*zsize*tsteps;
+   cells=(long long)xsize*ysize*zsize*tsteps;
 
    if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_SHORT)
       {
@@ -2207,7 +2294,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps*2;
+      bytes=(long long)xsize*ysize*zsize*tsteps*2;
       }
    else if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_FLOAT)
       {
@@ -2226,7 +2313,7 @@ void databuf::convertdata(unsigned int newtype)
       scaling=1.0f;
       bias=0.0f;
 
-      bytes=xsize*ysize*zsize*tsteps*4;
+      bytes=(long long)xsize*ysize*zsize*tsteps*4;
       }
    else if (type==DATABUF_TYPE_SHORT && newtype==DATABUF_TYPE_BYTE)
       {
@@ -2269,7 +2356,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps;
+      bytes=(long long)xsize*ysize*zsize*tsteps;
       }
    else if (type==DATABUF_TYPE_SHORT && newtype==DATABUF_TYPE_FLOAT)
       {
@@ -2288,7 +2375,7 @@ void databuf::convertdata(unsigned int newtype)
       scaling=1.0f;
       bias=0.0f;
 
-      bytes=xsize*ysize*zsize*tsteps*4;
+      bytes=(long long)xsize*ysize*zsize*tsteps*4;
       }
    else if (type==DATABUF_TYPE_FLOAT && newtype==DATABUF_TYPE_BYTE)
       {
@@ -2333,7 +2420,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps;
+      bytes=(long long)xsize*ysize*zsize*tsteps;
       }
    else if (type==DATABUF_TYPE_FLOAT && newtype==DATABUF_TYPE_SHORT)
       {
@@ -2378,7 +2465,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps*2;
+      bytes=(long long)xsize*ysize*zsize*tsteps*2;
       }
    else if (type==DATABUF_TYPE_FLOAT && newtype==DATABUF_TYPE_FLOAT)
       {
@@ -2419,7 +2506,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps;
+      bytes=(long long)xsize*ysize*zsize*tsteps;
       }
    else if (type==DATABUF_TYPE_BYTE && newtype==DATABUF_TYPE_RGB)
       {
@@ -2442,7 +2529,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps*3;
+      bytes=(long long)xsize*ysize*zsize*tsteps*3;
       }
    else if (type==DATABUF_TYPE_RGB && newtype==DATABUF_TYPE_RGBA)
       {
@@ -2464,7 +2551,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps*4;
+      bytes=(long long)xsize*ysize*zsize*tsteps*4;
       }
    else if (type==DATABUF_TYPE_RGBA && newtype==DATABUF_TYPE_RGB)
       {
@@ -2486,7 +2573,7 @@ void databuf::convertdata(unsigned int newtype)
 
       type=newtype;
 
-      bytes=xsize*ysize*zsize*tsteps*3;
+      bytes=(long long)xsize*ysize*zsize*tsteps*3;
       }
    }
 
@@ -2512,7 +2599,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
    switch (type)
       {
       case DATABUF_TYPE_BYTE:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps))==NULL) MEMERROR();
+         if ((byteptr=(unsigned char *)malloc((long long)xs*ys*zs*tsteps))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2540,7 +2627,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_SHORT:
-         if ((shortptr=(short int *)malloc(xs*ys*zs*tsteps*2))==NULL) MEMERROR();
+         if ((shortptr=(short int *)malloc((long long)xs*ys*zs*tsteps*2))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2568,7 +2655,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_FLOAT:
-         if ((floatptr=(float *)malloc(xs*ys*zs*tsteps*4))==NULL) MEMERROR();
+         if ((floatptr=(float *)malloc((long long)xs*ys*zs*tsteps*4))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2596,7 +2683,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_RGB:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps*3))==NULL) MEMERROR();
+         if ((byteptr=(unsigned char *)malloc((long long)xs*ys*zs*tsteps*3))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2626,7 +2713,7 @@ void databuf::resampledata(unsigned int xs,unsigned int ys,unsigned int zs)
 
          break;
       case DATABUF_TYPE_RGBA:
-         if ((byteptr=(unsigned char *)malloc(xs*ys*zs*tsteps*4))==NULL) MEMERROR();
+         if ((byteptr=(unsigned char *)malloc((long long)xs*ys*zs*tsteps*4))==NULL) MEMERROR();
 
          for (t=0; t<tsteps; t++)
             for (i=0; i<xs; i++)
@@ -2695,19 +2782,19 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
          if (isNAN(value)) ERRORMSG();
-         if (value==nodata) byteptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
-         else byteptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) byteptr[(long long)i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
+         else byteptr[(long long)i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
          if (isNAN(value)) ERRORMSG();
-         if (value==nodata) shortptr[i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
-         else shortptr[i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) shortptr[(long long)i+(j+k*ysize)*xsize]=ftrc(value+0.5f);
+         else shortptr[(long long)i+(j+k*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_FLOAT:
          floatptr=(float *)data;
-         if (checknodata(value)) floatptr[i+(j+k*ysize)*xsize]=value;
-         else floatptr[i+(j+k*ysize)*xsize]=(value-bias)/scaling;
+         if (checknodata(value)) floatptr[(long long)i+(j+k*ysize)*xsize]=value;
+         else floatptr[(long long)i+(j+k*ysize)*xsize]=(value-bias)/scaling;
          break;
       }
    }
@@ -2724,19 +2811,19 @@ void databuf::setval(const unsigned int i,const unsigned int j,const unsigned in
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
          if (isNAN(value)) ERRORMSG();
-         if (value==nodata) byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
-         else byteptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) byteptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
+         else byteptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
          if (isNAN(value)) ERRORMSG();
-         if (value==nodata) shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
-         else shortptr[i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
+         if (value==nodata) shortptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=ftrc(value+0.5f);
+         else shortptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=ftrc((value-bias)/scaling+0.5f);
          break;
       case DATABUF_TYPE_FLOAT:
          floatptr=(float *)data;
-         if (checknodata(value)) floatptr[i+(j+(k+t*zsize)*ysize)*xsize]=value;
-         else floatptr[i+(j+(k+t*zsize)*ysize)*xsize]=(value-bias)/scaling;
+         if (checknodata(value)) floatptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=value;
+         else floatptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize]=(value-bias)/scaling;
          break;
       }
    }
@@ -2754,17 +2841,17 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
       {
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
-         val=byteptr[i+(j+k*ysize)*xsize];
+         val=byteptr[(long long)i+(j+k*ysize)*xsize];
          if (val==nodata) return(val);
          else return(scaling*(val+bias));
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
-         val=shortptr[i+(j+k*ysize)*xsize];
+         val=shortptr[(long long)i+(j+k*ysize)*xsize];
          if (val==nodata) return(val);
          else return(scaling*(val+bias));
       case DATABUF_TYPE_FLOAT:
          floatptr=(float *)data;
-         val=floatptr[i+(j+k*ysize)*xsize];
+         val=floatptr[(long long)i+(j+k*ysize)*xsize];
          if (checknodata(val)) return(val);
          else return(scaling*(val+bias));
       }
@@ -2785,17 +2872,17 @@ float databuf::getval(const unsigned int i,const unsigned int j,const unsigned i
       {
       case DATABUF_TYPE_BYTE:
          byteptr=(unsigned char *)data;
-         val=byteptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         val=byteptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
          if (val==nodata) return(val);
          else return(scaling*(val+bias));
       case DATABUF_TYPE_SHORT:
          shortptr=(short int *)data;
-         val=shortptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         val=shortptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
          if (val==nodata) return(val);
          else return(scaling*(val+bias));
       case DATABUF_TYPE_FLOAT:
          floatptr=(float *)data;
-         val=floatptr[i+(j+(k+t*zsize)*ysize)*xsize];
+         val=floatptr[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
          if (checknodata(val)) return(val);
          else return(scaling*(val+bias));
       }
@@ -2856,7 +2943,7 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
    switch (type)
       {
       case DATABUF_TYPE_BYTE:
-         byteptr=&((unsigned char *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
+         byteptr=&((unsigned char *)data)[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
 
          val1=byteptr[0];
 
@@ -2901,7 +2988,7 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
                }
             }
       case DATABUF_TYPE_SHORT:
-         shortptr=&((short int *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
+         shortptr=&((short int *)data)[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
 
          val1=shortptr[0];
 
@@ -2946,7 +3033,7 @@ float databuf::getvalue(float x,float y,float z,unsigned int t)
                }
             }
       case DATABUF_TYPE_FLOAT:
-         floatptr=&((float *)data)[i+(j+(k+t*zsize)*ysize)*xsize];
+         floatptr=&((float *)data)[(long long)i+(j+(k+t*zsize)*ysize)*xsize];
 
          val1=floatptr[0];
 
@@ -3086,7 +3173,7 @@ void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned in
 
    if (type==DATABUF_TYPE_RGB)
       {
-      ptr=&((unsigned char *)data)[3*(i+(j+k*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)3*(i+(j+k*ysize)*xsize)];
 
       ptr[0]=ftrc((value[0]-bias)/scaling+0.5f);
       ptr[1]=ftrc((value[1]-bias)/scaling+0.5f);
@@ -3101,7 +3188,7 @@ void databuf::setrgb(const unsigned int i,const unsigned int j,const unsigned in
 
    if (type==DATABUF_TYPE_RGB)
       {
-      ptr=&((unsigned char *)data)[3*(i+(j+(k+t*zsize)*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)3*(i+(j+(k+t*zsize)*ysize)*xsize)];
 
       ptr[0]=ftrc((value[0]-bias)/scaling+0.5f);
       ptr[1]=ftrc((value[1]-bias)/scaling+0.5f);
@@ -3116,7 +3203,7 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
 
    if (type==DATABUF_TYPE_RGBA)
       {
-      ptr=&((unsigned char *)data)[4*(i+(j+k*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)4*(i+(j+k*ysize)*xsize)];
 
       ptr[0]=ftrc((value[0]-bias)/scaling+0.5f);
       ptr[1]=ftrc((value[1]-bias)/scaling+0.5f);
@@ -3132,7 +3219,7 @@ void databuf::setrgba(const unsigned int i,const unsigned int j,const unsigned i
 
    if (type==DATABUF_TYPE_RGBA)
       {
-      ptr=&((unsigned char *)data)[4*(i+(j+(k+t*zsize)*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)4*(i+(j+(k+t*zsize)*ysize)*xsize)];
 
       ptr[0]=ftrc((value[0]-bias)/scaling+0.5f);
       ptr[1]=ftrc((value[1]-bias)/scaling+0.5f);
@@ -3148,7 +3235,7 @@ void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned in
 
    if (type==DATABUF_TYPE_RGB)
       {
-      ptr=&((unsigned char *)data)[3*(i+(j+k*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)3*(i+(j+k*ysize)*xsize)];
 
       value[0]=ptr[0]*scaling+bias;
       value[1]=ptr[1]*scaling+bias;
@@ -3163,7 +3250,7 @@ void databuf::getrgb(const unsigned int i,const unsigned int j,const unsigned in
 
    if (type==DATABUF_TYPE_RGB)
       {
-      ptr=&((unsigned char *)data)[4*(i+(j+(k+t*zsize)*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)4*(i+(j+(k+t*zsize)*ysize)*xsize)];
 
       value[0]=ptr[0]*scaling+bias;
       value[1]=ptr[1]*scaling+bias;
@@ -3178,7 +3265,7 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
 
    if (type==DATABUF_TYPE_RGBA)
       {
-      ptr=&((unsigned char *)data)[4*(i+(j+k*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)4*(i+(j+k*ysize)*xsize)];
 
       value[0]=ptr[0]*scaling+bias;
       value[1]=ptr[1]*scaling+bias;
@@ -3194,7 +3281,7 @@ void databuf::getrgba(const unsigned int i,const unsigned int j,const unsigned i
 
    if (type==DATABUF_TYPE_RGBA)
       {
-      ptr=&((unsigned char *)data)[4*(i+(j+(k+t*zsize)*ysize)*xsize)];
+      ptr=&((unsigned char *)data)[(long long)4*(i+(j+(k+t*zsize)*ysize)*xsize)];
 
       value[0]=ptr[0]*scaling+bias;
       value[1]=ptr[1]*scaling+bias;
@@ -3262,7 +3349,7 @@ void databuf::getrgbacolor(float x,float y,float z,unsigned int t,float color[4]
 
    for (channel=channels-1; channel>=0; channel--)
       {
-      ptr=&((unsigned char *)data)[channels*(i+(j+(k+t*zsize)*ysize)*xsize)+channel];
+      ptr=&((unsigned char *)data)[(long long)channels*(i+(j+(k+t*zsize)*ysize)*xsize)+channel];
 
       val1=ptr[0];
 
@@ -3645,7 +3732,7 @@ void databuf::quantize16to16(unsigned char *data,
 
    int v,vmin,vmax;
 
-   if ((data2=(unsigned short int*)malloc(width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
+   if ((data2=(unsigned short int*)malloc((long long)width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
 
    vmin=65535;
    vmax=0;
@@ -3654,8 +3741,8 @@ void databuf::quantize16to16(unsigned char *data,
       for (j=0; j<height; j++)
          for (i=0; i<width; i++)
             {
-            v=256*data[2*(i+(j+k*height)*width)]+data[2*(i+(j+k*height)*width)+1];
-            data2[i+(j+k*height)*width]=v;
+            v=256*data[(long long)2*(i+(j+k*height)*width)]+data[(long long)2*(i+(j+k*height)*width)+1];
+            data2[(long long)i+(j+k*height)*width]=v;
 
             if (v<vmin) vmin=v;
             if (v>vmax) vmax=v;
@@ -3668,9 +3755,9 @@ void databuf::quantize16to16(unsigned char *data,
    for (k=0; k<depth; k++)
       for (j=0; j<height; j++)
          for (i=0; i<width; i++)
-            data2[i+(j+k*height)*width]=(int)(32767.0*get_ushort(data2,width,height,depth,i,j,k)/(vmax-vmin)+0.5);
+            data2[(long long)i+(j+k*height)*width]=(int)(32767.0*get_ushort(data2,width,height,depth,i,j,k)/(vmax-vmin)+0.5);
 
-   set(data2,width*height*depth,width,height,depth,1,DATABUF_TYPE_SHORT);
+   set(data2,(long long)width*height*depth,width,height,depth,1,DATABUF_TYPE_SHORT);
    set_mapping(1.0f/32767,0.0f);
    }
 
@@ -3690,7 +3777,7 @@ void databuf::quantize16to8(unsigned char *data,
 
    BOOLINT done;
 
-   if ((data3=(unsigned short int*)malloc(width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
+   if ((data3=(unsigned short int*)malloc((long long)width*height*depth*sizeof(unsigned short int)))==NULL) MEMERROR();
 
    vmin=65535;
    vmax=0;
@@ -3699,8 +3786,8 @@ void databuf::quantize16to8(unsigned char *data,
       for (j=0; j<height; j++)
          for (i=0; i<width; i++)
             {
-            v=256*data[2*(i+(j+k*height)*width)]+data[2*(i+(j+k*height)*width)+1];
-            data3[i+(j+k*height)*width]=v;
+            v=256*data[(long long)2*(i+(j+k*height)*width)]+data[(long long)2*(i+(j+k*height)*width)+1];
+            data3[(long long)i+(j+k*height)*width]=v;
 
             if (v<vmin) vmin=v;
             if (v>vmax) vmax=v;
@@ -3751,17 +3838,17 @@ void databuf::quantize16to8(unsigned char *data,
          for (i=0; i<65536; i++) err[i]*=255.0/err[65535];
       }
 
-   if ((data2=(unsigned char *)malloc(width*height*depth))==NULL) MEMERROR();
+   if ((data2=(unsigned char *)malloc((long long)width*height*depth))==NULL) MEMERROR();
 
    for (k=0; k<depth; k++)
       for (j=0; j<height; j++)
          for (i=0; i<width; i++)
-            data2[i+(j+k*height)*width]=(int)(err[get_ushort(data3,width,height,depth,i,j,k)]+0.5);
+            data2[(long long)i+(j+k*height)*width]=(int)(err[get_ushort(data3,width,height,depth,i,j,k)]+0.5);
 
    delete err;
    free(data3);
 
-   set(data2,width*height*depth,width,height,depth);
+   set(data2,(long long)width*height*depth,width,height,depth);
    set_mapping(1.0f/255,0.0f);
    }
 
@@ -3790,7 +3877,7 @@ void databuf::print_info()
        type==DATABUF_TYPE_RGBA_MM ||
        type==DATABUF_TYPE_RGB_MM_S3TC ||
        type==DATABUF_TYPE_RGBA_MM_S3TC) printf("/mipmap");
-   printf(" bytes=%u\n",bytes);
+   printf(" bytes=%lld\n",bytes);
    if (zsize==1 && tsteps==1) printf("xsize=%d ysize=%d\n",xsize,ysize);
    else if (zsize!=1 && tsteps==1) printf("xsize=%d ysize=%d zsize=%d\n",xsize,ysize,zsize);
    else printf("xsize=%d ysize=%d zsize=%d tsteps=%d\n",xsize,ysize,zsize,tsteps);
@@ -3861,7 +3948,7 @@ int databuf::get_ushort(unsigned short int *data,
                         unsigned int i,unsigned int j,unsigned int k)
    {
    if (i>=width || j>=height || k>=depth) ERRORMSG();
-   return(data[i+(j+k*height)*width]);
+   return(data[(long long)i+(j+k*height)*width]);
    }
 
 // unsigned short int gradient magnitude

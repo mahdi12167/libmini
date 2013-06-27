@@ -35,7 +35,7 @@ void setconversion(MINI_CONVERSION_PARAMS *params);
 int check_conversion();
 
 //! libMini conversion hook for external formats (JPEG/PNG/Z)
-int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data);
+int conversionhook(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,unsigned char **newdata,long long *newbytes,databuf *obj,void *data);
 
 }
 

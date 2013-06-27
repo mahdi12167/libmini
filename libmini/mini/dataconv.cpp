@@ -38,10 +38,12 @@ int check_conversion()
    {return(databuf::check_conversion());}
 
 // libMini conversion hook for external formats (JPEG/PNG/Z)
-int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,
-                   unsigned char **newdata,unsigned int *newbytes,
+int conversionhook(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,
+                   unsigned char **newdata,long long *newbytes,
                    databuf *obj,void *data)
    {
+   unsigned int nbytes;
+
    MINI_CONVERSION_PARAMS *conversion_params=(MINI_CONVERSION_PARAMS *)data;
 
    if (conversion_params==NULL) return(0);
@@ -88,9 +90,11 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
 #endif
 
-            jpegbase::compressJPEGimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->jpeg_quality/100.0f,newdata,newbytes);
+            jpegbase::compressJPEGimage(srcdata,obj->xsize,obj->ysize,components,conversion_params->jpeg_quality/100.0f,newdata,&nbytes);
 
             if (*newdata==NULL) return(0); // return failure
+
+            *newbytes=nbytes;
             }
 
          break;
@@ -137,9 +141,11 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
 #endif
 
-            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,newbytes,conversion_params->png_gamma,conversion_params->zlib_level);
+            pngbase::compressPNGimage(srcdata,obj->xsize,obj->ysize,components,newdata,&nbytes,conversion_params->png_gamma,conversion_params->zlib_level);
 
             if (*newdata==NULL) return(0); // return failure
+
+            *newbytes=nbytes;
             }
 
          break;
@@ -148,15 +154,19 @@ int conversionhook(int israwdata,unsigned char *srcdata,unsigned int bytes,unsig
 
          if (israwdata==0)
             {
-            *newdata=zlibbase::decompressZLIB(srcdata,bytes,newbytes);
+            *newdata=zlibbase::decompressZLIB(srcdata,bytes,&nbytes);
 
             if (*newdata==NULL) return(0); // return failure
+
+            *newbytes=nbytes;
             }
          else
             {
-            zlibbase::compressZLIB(srcdata,bytes,newdata,newbytes,conversion_params->zlib_level);
+            zlibbase::compressZLIB(srcdata,bytes,newdata,&nbytes,conversion_params->zlib_level);
 
             if (*newdata==NULL) return(0); // return failure
+
+            *newbytes=nbytes;
             }
 
          break;

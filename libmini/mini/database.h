@@ -117,8 +117,8 @@ class databuf
    unsigned int implformat;
 
    //! data chunk
-   void *data;         // pointer to raw data, null pointer indicates missing data, saved in MSB order, internally converted to native order
-   unsigned int bytes; // number of raw data bytes
+   void *data;      // pointer to raw data, null pointer indicates missing data, saved in MSB order, internally converted to native order
+   long long bytes; // number of raw data bytes
 
    //! check for missing data
    int missing() const {return(data==NULL || extformat!=DATABUF_EXTFMT_PLAIN || implformat!=0);}
@@ -127,7 +127,7 @@ class databuf
    void alloc(unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! set data to memory chunk
-   void set(void *chunk,unsigned int length,
+   void set(void *chunk,long long length,
             unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE,
             unsigned int implicit=0);
 
@@ -136,7 +136,7 @@ class databuf
                      unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from memory chunk
-   void copy(const void *chunk,unsigned int length,
+   void copy(const void *chunk,long long length,
              unsigned int xs,unsigned int ys,unsigned int zs=1,unsigned int ts=1,unsigned int ty=DATABUF_TYPE_BYTE);
 
    //! copy data from buffer
@@ -204,7 +204,7 @@ class databuf
    void convert2(int is_ushort=0,int to_ushort=0);
 
    //! set conversion hook for external formats
-   static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data),void *data=NULL);
+   static void setconversion(int (*conversion)(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,unsigned char **newdata,long long *newbytes,databuf *obj,void *data),void *data=NULL);
 
    //! check conversion hook
    static int check_conversion() {return((CONVERSION_HOOK==NULL)?0:1);}
@@ -421,7 +421,7 @@ class databuf
 
    static int AUTOS3TCMIPMAP;
 
-   static int (*CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,unsigned int bytes,unsigned int extformat,unsigned char **newdata,unsigned int *newbytes,databuf *obj,void *data);
+   static int (*CONVERSION_HOOK)(int israwdata,unsigned char *srcdata,long long bytes,unsigned int extformat,unsigned char **newdata,long long *newbytes,databuf *obj,void *data);
    static void *CONVERSION_DATA;
 
    static void (*AUTOCOMPRESS_HOOK)(int isrgbadata,unsigned char *rawdata,unsigned int bytes,unsigned char **s3tcdata,unsigned int *s3tcbytes,int width,int height,void *data);
@@ -435,7 +435,9 @@ class databuf
    static void *INTERPRETER_DATA;
 
    void writeparam(const char *tag,double v,FILE *file,int digits=10);
+   void writeparamll(const char *tag,long long v,FILE *file);
    int readparam(const char *tag,double *v,FILE *file);
+   int readparamll(const char *tag,long long *v,FILE *file);
 
    int readparamf(const char *tag,float *v,FILE *file);
    int readparami(const char *tag,int *v,FILE *file);
