@@ -39,7 +39,7 @@ void displayfunc()
 
    for (i=0; i<height; i++)
       memcpy(&image[i*components*imgwidth],
-             &volume[frame*components*width*height+i*components*width],components*width);
+             &volume[(long long)frame*components*width*height+i*components*width],components*width);
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_2D,texid);

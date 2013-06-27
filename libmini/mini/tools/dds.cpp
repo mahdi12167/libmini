@@ -9,6 +9,7 @@ int main(int argc,char *argv[])
    {
    unsigned char *data;
    unsigned int bytes;
+   long long llbytes;
 
    if (argc!=2)
       {
@@ -17,8 +18,8 @@ int main(int argc,char *argv[])
       }
 
    if ((data=readDDSfile(argv[1],&bytes))==NULL)
-      if ((data=readfile(argv[1],&bytes))==NULL) exit(1);
-      else writeDDSfile(argv[1],data,bytes);
+      if ((data=readfile(argv[1],&llbytes))==NULL) exit(1);
+      else writeDDSfile(argv[1],data,llbytes);
    else writefile(argv[1],data,bytes);
 
    return(0);

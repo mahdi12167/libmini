@@ -461,6 +461,7 @@ unsigned char *readDDSvolume(const char *filename,
    {
    unsigned char *data,*ptr;
    unsigned int bytes,numc;
+   long long llbytes;
 
    int version=1;
 
@@ -471,7 +472,8 @@ unsigned char *readDDSvolume(const char *filename,
    unsigned int len1=0,len2=0,len3=0,len4=0;
 
    if ((data=readDDSfile(filename,&bytes))==NULL)
-      if ((data=readfile(filename,&bytes))==NULL) return(NULL);
+      if ((data=readfile(filename,&llbytes))==NULL) return(NULL);
+      else bytes=llbytes;
 
    if (bytes<5) return(NULL);
 

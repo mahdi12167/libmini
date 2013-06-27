@@ -15,13 +15,13 @@ int checkfile(const char *filename);
 int checkfilepath(const char *filename);
 
 //! write a RAW file
-void writefile(const char *filename,unsigned char *data,unsigned int bytes);
+void writefile(const char *filename,unsigned char *data,long long bytes);
 
 //! read a RAW file
-unsigned char *readfile(const char *filename,unsigned int *bytes);
+unsigned char *readfile(const char *filename,long long *bytes);
 
 //! read from a RAW file
-unsigned char *readfiled(FILE *file,unsigned int *bytes);
+unsigned char *readfiled(FILE *file,long long *bytes);
 
 //! write a string as RAW file
 void writestring(const char *filename,const char *cstr);
@@ -33,7 +33,7 @@ char *readstring(const char *filename);
 unsigned int signature(const char *filename);
 
 //! compute a signature
-unsigned int signature(const unsigned char *data,unsigned int bytes);
+unsigned int signature(const unsigned char *data,long long bytes);
 
 //! get file modification year
 int getmodyear(const char *filename);

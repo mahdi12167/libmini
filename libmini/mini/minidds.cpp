@@ -495,7 +495,7 @@ unsigned char *readDDSfile(const char *filename,unsigned int *bytes)
    int cnt;
 
    unsigned char *chunk,*data;
-   unsigned int size;
+   long long size;
 
    if ((file=fopen(filename,"rb"))==NULL) return(NULL);
 

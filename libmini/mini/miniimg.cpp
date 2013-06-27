@@ -50,12 +50,12 @@ int miniimg::loadimg(databuf &buf,const char *filename)
    BOOLINT succeed;
 
    unsigned char *jpgdata;
-   unsigned int jpgbytes;
+   long long jpgbytes;
 
    int jpgwidth,jpgheight,jpgcomponents;
 
    unsigned char *pngdata;
-   unsigned int pngbytes;
+   long long pngbytes;
 
    int pngwidth,pngheight,pngcomponents;
 

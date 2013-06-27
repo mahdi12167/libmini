@@ -50,7 +50,7 @@ int checkfilepath(const char *filename)
    }
 
 // write a RAW file
-void writefile(const char *filename,unsigned char *data,unsigned int bytes)
+void writefile(const char *filename,unsigned char *data,long long bytes)
    {
    FILE *file;
 
@@ -63,7 +63,7 @@ void writefile(const char *filename,unsigned char *data,unsigned int bytes)
    }
 
 // read a RAW file
-unsigned char *readfile(const char *filename,unsigned int *bytes)
+unsigned char *readfile(const char *filename,long long *bytes)
    {
    FILE *file;
 
@@ -79,12 +79,12 @@ unsigned char *readfile(const char *filename,unsigned int *bytes)
    }
 
 // read from a RAW file
-unsigned char *readfiled(FILE *file,unsigned int *bytes)
+unsigned char *readfiled(FILE *file,long long *bytes)
    {
-   const unsigned int BLOCKSIZE=1<<20;
+   const long long BLOCKSIZE=1<<20;
 
    unsigned char *data;
-   unsigned int cnt,blkcnt;
+   long long cnt,blkcnt;
 
    data=NULL;
    cnt=0;
@@ -122,7 +122,7 @@ void writestring(const char *filename,const char *cstr)
 char *readstring(const char *filename)
    {
    char *data;
-   unsigned int bytes;
+   long long bytes;
 
    data=(char *)readfile(filename,&bytes);
 
@@ -140,7 +140,7 @@ unsigned int signature(const char *filename)
    unsigned int sig;
 
    unsigned char *data;
-   unsigned int bytes;
+   long long bytes;
 
    sig=0;
 
@@ -154,9 +154,9 @@ unsigned int signature(const char *filename)
    }
 
 // compute a signature
-unsigned int signature(const unsigned char *data,unsigned int bytes)
+unsigned int signature(const unsigned char *data,long long bytes)
    {
-   unsigned int i;
+   long long i;
 
    unsigned int sig;
 

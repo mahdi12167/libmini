@@ -8,7 +8,7 @@
 int main(int argc,char *argv[])
    {
    unsigned char *data;
-   unsigned int bytes;
+   long long bytes;
 
    unsigned int width,height,depth;
    int components;
@@ -65,7 +65,7 @@ int main(int argc,char *argv[])
    else if (components==4) type=databuf::DATABUF_TYPE_RGBA;
    else exit(1);
 
-   if (bytes<width*height*depth*components) exit(1);
+   if (bytes<(long long)width*height*depth*components) exit(1);
    buf.copy(data,bytes,width,height,depth,1,type);
    buf.swap2(msb);
    buf.convert2(ushort);
