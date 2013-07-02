@@ -60,6 +60,9 @@ public:
   {
     // lock wait mutex
     wait_mtx_.lock();
+
+   // unlock wait mutex
+    wait_mtx_.unlock();
   }
 
 private:
