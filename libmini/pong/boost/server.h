@@ -17,6 +17,7 @@
 #include <string>
 
 #include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -34,10 +35,15 @@ public:
     {
       std::cerr << e.what() << std::endl;
     }
+
+    t_ = NULL;
   }
 
   ~server()
   {
+    if (t_)
+      delete t_;
+
     delete acceptor_;
   }
 
@@ -59,6 +65,18 @@ public:
     }
   }
 
+  void start()
+  {
+    // start server in new thread
+    t_ = new boost::thread(boost::bind(&server::run, this));
+  }
+
+  void run()
+  {
+    while (true)
+      respond();
+  }
+
   boost::asio::io_service& get_io_service()
   {
     return(acceptor_->get_io_service());
@@ -66,6 +84,7 @@ public:
 
 protected:
   tcp::acceptor *acceptor_;
+  boost::thread *t_;
 
   virtual std::string make_response_string() = 0;
 };
