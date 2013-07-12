@@ -329,7 +329,7 @@ class ministring: public ministring_base
       {return(endswith(ministring(suffix)));}
 
    //! substitute sub-strings
-   void substitute(const ministring_base &sub,const ministring_base &with)
+   ministring& substitute(const ministring_base &sub,const ministring_base &with)
       {
       unsigned int i,j;
       unsigned int l,s,w;
@@ -341,7 +341,7 @@ class ministring: public ministring_base
       s=sub.getsize();
       w=with.getsize();
 
-      if (s==0) return;
+      if (s==0) return(*this);
 
       for (i=0; i+s<=l;)
          {
@@ -371,6 +371,8 @@ class ministring: public ministring_base
             }
          else i++;
          }
+
+      return(*this);
       }
 
    //! substitute c-string
@@ -511,7 +513,7 @@ class ministring: public ministring_base
       }
 
    //! add operator (concatenate strings)
-   ministring &operator += (const ministring &a)
+   ministring& operator += (const ministring &a)
       {
       append(a);
 
@@ -522,7 +524,7 @@ class ministring: public ministring_base
       }
 
    //! add operator (concatenate c-string)
-   ministring &operator += (const char *c)
+   ministring& operator += (const char *c)
       {
       append(c);
 
@@ -732,21 +734,21 @@ class ministrings: public minidyna<ministring>
       }
 
    //! add operator (string concatenation)
-   ministrings &operator += (const ministring &a)
+   ministrings& operator += (const ministring &a)
       {
       append(a);
       return(*this);
       }
 
    //! add operator (string list concatenation)
-   ministrings &operator += (const ministrings &a)
+   ministrings& operator += (const ministrings &a)
       {
       append(a);
       return(*this);
       }
 
    //! sub operator (string removal)
-   ministrings &operator -= (const ministring &a)
+   ministrings& operator -= (const ministring &a)
       {
       unsigned int i;
 
@@ -757,7 +759,7 @@ class ministrings: public minidyna<ministring>
       }
 
    //! sub operator (string list removal)
-   ministrings &operator -= (const ministrings &a)
+   ministrings& operator -= (const ministrings &a)
       {
       unsigned int i,j;
 

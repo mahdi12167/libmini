@@ -229,7 +229,7 @@ class minidyna
       }
 
    //! get item
-   const Item &get(const unsigned int idx) const
+   const Item& get(const unsigned int idx) const
       {
       ERRORCHK(idx>=SIZE);
 
@@ -238,11 +238,11 @@ class minidyna
       }
 
    //! at method
-   const Item &at(const unsigned int idx) const
+   const Item& at(const unsigned int idx) const
       {return(get(idx));}
 
    //! get reference to item
-   Item &ref(const unsigned int idx)
+   Item& ref(const unsigned int idx)
       {
       ERRORCHK(idx>=SIZE);
 
@@ -251,7 +251,7 @@ class minidyna
       }
 
    //! get first item
-   const Item &first() const
+   const Item& first() const
       {
       ERRORCHK(SIZE==0);
 
@@ -259,11 +259,11 @@ class minidyna
       }
 
    //! get first item
-   const Item &head() const
+   const Item& head() const
       {return(first());}
 
    //! get last item
-   const Item &last() const
+   const Item& last() const
       {
       ERRORCHK(SIZE==0);
 
@@ -272,7 +272,7 @@ class minidyna
       }
 
    //! get last item
-   const Item &tail() const
+   const Item& tail() const
       {return(last());}
 
    //! set first item
@@ -301,7 +301,7 @@ class minidyna
       {setlast(v);}
 
    //! append item to array
-   Item &append(const Item &v)
+   Item& append(const Item &v)
       {
       unsigned int s;
 
@@ -327,7 +327,7 @@ class minidyna
       }
 
    //! insert item by shifting all trailing items
-   Item &insert(const Item &v,const unsigned int idx)
+   Item& insert(const Item &v,const unsigned int idx)
       {
       unsigned int i;
 
@@ -340,7 +340,7 @@ class minidyna
       }
 
    //! prepend item to array
-   Item &prepend(const Item &v)
+   Item& prepend(const Item &v)
       {return(insert(v,0));}
 
    //! remove indexed item by moving the last item
