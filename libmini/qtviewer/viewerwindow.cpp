@@ -1447,7 +1447,11 @@ void ViewerWindow::create_extent(ministring key, double dh)
       ext.convert2metric();
       ext.elevate(dh);
 
-      ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key;
+      ministring key_sym = key;
+      key_sym.substitute("/", "_");
+      key_sym.substitute("\\", "_");
+      key_sym.substitute(":", "_");
+      ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key_sym;
       Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
       if (obj_ext == NULL) MEMERROR();
 
