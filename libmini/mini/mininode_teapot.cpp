@@ -2,7 +2,9 @@
 
 #include "mininode_teapot.h"
 
+#ifndef NOOGL
 #include "teapot.h"
+#endif
 
 mininode_geometry_teapot::mininode_geometry_teapot()
    : mininode_geom()

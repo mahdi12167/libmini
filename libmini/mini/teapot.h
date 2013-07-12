@@ -15,8 +15,6 @@
 #ifndef TEAPOT_H
 #define TEAPOT_H
 
-#ifndef NOOGL
-
 // vertices for teapot
 GLfloat teapotVertices[] =
    {
@@ -3903,7 +3901,5 @@ inline void drawTeapotElements()
    glDrawElements(GL_TRIANGLE_STRIP, 11, GL_UNSIGNED_SHORT, &teapotIndices[6887]);
    glDrawElements(GL_TRIANGLE_STRIP, 7, GL_UNSIGNED_SHORT, &teapotIndices[6898]);
    }
-
-#ifndef NOOGL
 
 #endif
