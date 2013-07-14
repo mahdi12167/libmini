@@ -1240,9 +1240,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&infoMapMulti);
     QAction alphaBlendAction(tr(" blend actual over selected layers"), this);
     myMenu.addAction(&alphaBlendAction);
-    QAction ndviAction(tr(" compute ndvi from two selected layers"), this);
+    QAction ndviAction(tr(" compute ndvi from two selected channels"), this);
     myMenu.addAction(&ndviAction);
-    QAction mergeAction(tr(" merge selected layers"), this);
+    QAction mergeAction(tr(" merge selected channels"), this);
     myMenu.addAction(&mergeAction);
     QAction matchAction(tr(" match actual with selected layers"), this);
     myMenu.addAction(&matchAction);
