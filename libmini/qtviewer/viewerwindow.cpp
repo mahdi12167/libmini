@@ -1165,6 +1165,33 @@ void ViewerWindow::runAction(const ministring &action,
          }
       }
    }
+   else if (action == "nmmi")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()!=2)
+         notify(TR("NMMI operation requires two selected layers"));
+      else
+      {
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
+
+         if (nir.empty())
+            notify(TR("NMMI operation requires a nir landsat layer"));
+
+         if (red.empty())
+            notify(TR("NMMI operation requires a red landsat layer"));
+
+         if (!nir.empty() && !red.empty())
+         {
+            keys.clear();
+            keys.append(nir);
+            keys.append(red);
+
+            ndvi_layers(keys, 1);
+         }
+      }
+   }
    else if (action == "merge")
    {
       ministrings keys = listObjects("selected");
@@ -1609,7 +1636,7 @@ void ViewerWindow::blend_imagery(ministrings keys)
    worker->run_job(job);
 }
 
-void ViewerWindow::ndvi_layers(ministrings keys)
+void ViewerWindow::ndvi_layers(ministrings keys, int method)
 {
    unsigned int i;
 
@@ -1625,7 +1652,7 @@ void ViewerWindow::ndvi_layers(ministrings keys)
    ministring output = files[0];
    if (!output.endswith(".tif")) output += ".tif";
 
-   MergeJob *job = new MergeJob("", "", output);
+   MergeJob *job = new MergeJob("", "", output, method);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)

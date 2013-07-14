@@ -102,7 +102,7 @@ public:
    void graymap_elevation(ministring key);
    void colormap_elevation(ministring key);
    void blend_imagery(ministrings keys);
-   void ndvi_layers(ministrings keys);
+   void ndvi_layers(ministrings keys, int method=0);
    void merge_layers(ministrings keys);
    void match_layers(ministrings keys);
    void split_layers(ministrings keys);
