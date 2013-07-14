@@ -1362,7 +1362,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == &ndviAction)
           emit(activate("ndvi"));
        else if (selectedAction == &nmmiAction)
-          emit(activate("nmmii"));
+          emit(activate("nmmi"));
        else if (selectedAction == &mergeAction)
           emit(activate("merge"));
        else if (selectedAction == &matchAction)
