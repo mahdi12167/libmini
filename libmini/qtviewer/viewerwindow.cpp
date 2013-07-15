@@ -2283,7 +2283,7 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
          notify(TR("Cropping failed"));
    }
    else if (job=="modifier" ||
-            job=="treat_black" || job=="treat_white" || job=="mask_black" || job=="treat_white"
+            job=="treat_black" || job=="treat_white" || job=="mask_black" || job=="treat_white" ||
             job=="remove_bathy" || job=="keep_bathy" || job=="fill_missing" || job=="fill_holes")
    {
       if (errorcode == GRID_WORKER_FILE_EXISTS)
