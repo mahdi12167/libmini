@@ -2212,6 +2212,22 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          buf.release();
       }
    }
+   else if (job=="resampler")
+   {
+      // autoselect grid name
+      ministring name = ResampleJob::make_grid_name(args, "");
+
+      // autoload resampled tileset
+      if (name!="")
+      {
+         // open resampled tileset
+         runAction("open", export_path+name);
+
+         // make resampled layers invisible
+         for (unsigned int i=0; i<args.size(); i++)
+            runAction("hide", args[i]);
+      }
+   }
    else if (job=="shader")
    {
       // process shaded keys
@@ -2231,33 +2247,33 @@ void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)
          }
       }
    }
-   else if (job=="resampler")
-   {
-      // autoselect grid name
-      ministring name = ResampleJob::make_grid_name(args, "");
-
-      // autoload resampled tileset
-      if (name!="")
-      {
-         // open resampled tileset
-         runAction("open", export_path+name);
-
-         // make resampled layers invisible
-         for (unsigned int i=0; i<args.size(); i++)
-            runAction("hide", args[i]);
-      }
-   }
 }
 
 void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/, int errorcode)
 {
-   if (job=="shader")
+   if (job=="resampler")
+   {
+      notify(TR("Resampling failed"));
+   }
+   else if (job=="splitter")
+   {
+      notify(TR("Splitting failed"));
+   }
+   else if (job=="shader")
    {
       notify(TR("Shading failed"));
    }
-   else if (job=="resampler")
+   else if (job=="contour")
    {
-      notify(TR("Resampling failed"));
+      notify(TR("Contouring failed"));
+   }
+   else if (job=="colormap")
+   {
+      notify(TR("Colormapping failed"));
+   }
+   else if (job=="blend")
+   {
+      notify(TR("Blending failed"));
    }
    else if (job=="cropper")
    {
@@ -2266,7 +2282,9 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
       else
          notify(TR("Cropping failed"));
    }
-   else if (job=="modifier")
+   else if (job=="modifier" ||
+            job=="treat_black" || job=="treat_white" || job=="mask_black" || job=="treat_white"
+            job=="remove_bathy" || job=="keep_bathy" || job=="fill_missing" || job=="fill_holes")
    {
       if (errorcode == GRID_WORKER_FILE_EXISTS)
          notify(TR("Not done: file already exists"));
