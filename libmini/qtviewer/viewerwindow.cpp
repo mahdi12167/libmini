@@ -2293,6 +2293,10 @@ void ViewerWindow::failedJob(const ministring &job, const ministrings &/*args*/,
    {
       notify(TR("Blending failed"));
    }
+   else if (job=="mix")
+   {
+      notify(TR("Mixing failed"));
+   }
    else if (job=="cropper")
    {
       if (errorcode == GRID_WORKER_FILE_EXISTS)

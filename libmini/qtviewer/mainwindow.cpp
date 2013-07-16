@@ -1361,7 +1361,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("colormap", row));
        else if (selectedAction == &alphaBlendAction)
           emit(activate("blend", row));
-       else if (selectedAction == &alphaBlendAction)
+       else if (selectedAction == &mixAction)
           emit(activate("mix", row));
        else if (selectedAction == &ndviAction)
           emit(activate("ndvi"));
