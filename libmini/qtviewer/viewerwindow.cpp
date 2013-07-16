@@ -1138,6 +1138,18 @@ void ViewerWindow::runAction(const ministring &action,
       else
          notify(TR("Operation requires a layer"));
    }
+   else if (action == "mix")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (value != "")
+      {
+         keys.append(value);
+         blend_imagery(keys, TRUE);
+      }
+      else
+         notify(TR("Operation requires a layer"));
+   }
    else if (action == "ndvi")
    {
       ministrings keys = listObjects("selected");
@@ -1596,7 +1608,7 @@ void ViewerWindow::colormap_elevation(ministring key)
       }
 }
 
-void ViewerWindow::blend_imagery(ministrings keys)
+void ViewerWindow::blend_imagery(ministrings keys, BOOLINT modulate)
 {
    unsigned int i;
 
@@ -1627,7 +1639,13 @@ void ViewerWindow::blend_imagery(ministrings keys)
       return;
    }
 
-   AlphaBlendJob *job = new AlphaBlendJob("");
+   grid_worker::Job *job;
+
+   if (modulate)
+      job = new MixJob("");
+   else
+      job = new AlphaBlendJob("");
+
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)

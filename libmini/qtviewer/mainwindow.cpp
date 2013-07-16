@@ -1240,6 +1240,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&infoMapMulti);
     QAction alphaBlendAction(tr(" blend actual over selected layers"), this);
     myMenu.addAction(&alphaBlendAction);
+    QAction mixAction(tr(" mix actual with selected layers"), this);
+    myMenu.addAction(&mixAction);
     QAction ndviAction(tr(" compute ndvi from two selected channels"), this);
     myMenu.addAction(&ndviAction);
     QAction nmmiAction(tr(" compute nmmi from two selected channels"), this);
@@ -1359,6 +1361,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("colormap", row));
        else if (selectedAction == &alphaBlendAction)
           emit(activate("blend", row));
+       else if (selectedAction == &alphaBlendAction)
+          emit(activate("mix", row));
        else if (selectedAction == &ndviAction)
           emit(activate("ndvi"));
        else if (selectedAction == &nmmiAction)

@@ -101,7 +101,7 @@ public:
    void contour_elevation(ministring key);
    void graymap_elevation(ministring key);
    void colormap_elevation(ministring key);
-   void blend_imagery(ministrings keys);
+   void blend_imagery(ministrings keys, BOOLINT modulate=FALSE);
    void ndvi_layers(ministrings keys, int method=0);
    void merge_layers(ministrings keys);
    void match_layers(ministrings keys);
