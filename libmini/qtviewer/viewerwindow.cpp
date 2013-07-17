@@ -1660,7 +1660,7 @@ void ViewerWindow::ndvi_layers(ministrings keys, int method)
 
    if (keys.size()!=2)
    {
-      notify(TR("NDVI operation requires at least two selected layers"));
+      notify(TR("NDVI operation requires at least two selected imagery layers"));
       return;
    }
 
@@ -1685,7 +1685,7 @@ void ViewerWindow::merge_layers(ministrings keys)
 
    if (keys.size()<3)
    {
-      notify(TR("Merge operation requires at least three selected layers"));
+      notify(TR("Merge operation requires at least three selected imagery layers"));
       return;
    }
 
@@ -1710,7 +1710,7 @@ void ViewerWindow::match_layers(ministrings keys)
 
    if (keys.size()<2)
    {
-      notify(TR("Match operation requires at least two selected layers"));
+      notify(TR("Match operation requires at least two selected imagery layers"));
       return;
    }
 
