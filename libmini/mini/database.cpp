@@ -927,13 +927,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
    long long tstep;
 
    // open file for reading
-   if ((file=fopen(filename,"rb"))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+   if ((file=fopen(filename,"rb"))==NULL) return(0);
 
    // read magic identifier
    if (readparamu("MAGIC",&m,file)==0)
@@ -1544,13 +1538,7 @@ int databuf::loadPNMdata(const char *filename)
    float cellsize[2],vscale;
    int utm_zone,utm_datum,missing;
 
-   if ((data=readPNMfile(filename,&width,&height,&components,&comment))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+   if ((data=readPNMfile(filename,&width,&height,&components,&comment))==NULL) return(0);
 
    extformat=DATABUF_EXTFMT_PLAIN;
    implformat=0;
@@ -1725,13 +1713,7 @@ int databuf::loadRAWdata(const char *filename,
    if ((data=readRAWvolume(filename,
                            &width,&height,&depth,&steps,
                            &components,&bits,&sign,&msb,
-                           &scalex,&scaley,&scalez))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+                           &scalex,&scaley,&scalez))==NULL) return(0);
 
    if (width<2 || height<2 || depth<2) ERRORMSG();
    if (components<1 || components>4) ERRORMSG();
@@ -1790,13 +1772,7 @@ int databuf::loadREKdata(const char *filename,
    if ((data=readREKvolume_ooc(filename,
                                &width,&height,&depth,
                                &components,
-                               &scalex,&scaley,&scalez))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+                               &scalex,&scaley,&scalez))==NULL) return(0);
 
    if (width<2 || height<2 || depth<2) ERRORMSG();
    if (components!=1) ERRORMSG();
@@ -1844,13 +1820,7 @@ int databuf::loadPVMdata(const char *filename,
 
    if ((data=readDDSvolume(filename,
                            &width,&height,&depth,&components,
-                           &scalex,&scaley,&scalez))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+                           &scalex,&scaley,&scalez))==NULL) return(0);
 
    if (width<2 || height<2 || depth<2) ERRORMSG();
    if (components<1 || components>4) ERRORMSG();
@@ -1937,13 +1907,7 @@ int databuf::loadPVMdata(const char *filename,
 
          if ((data=readDDSvolume(str,
                                  &width,&height,&depth,&components,
-                                 &scalex,&scaley,&scalez))==NULL)
-            {
-#ifdef LIBMINI_DEBUG
-            fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-            return(0);
-            }
+                                 &scalex,&scaley,&scalez))==NULL) return(0);
          }
       }
 
@@ -2037,13 +2001,7 @@ int databuf::loadMOEdata(const char *filename,float *useful_smallest,float *usef
 
    float midx,midy,dx,dy;
 
-   if ((file=fopen(filename,"rb"))==NULL)
-      {
-#ifdef LIBMINI_DEBUG
-      fprintf(stderr,"unable to load %s!\n",filename);
-#endif
-      return(0);
-      }
+   if ((file=fopen(filename,"rb"))==NULL) return(0);
 
    str=readoneline(file);
    if (strcmp(str,"MOEVar")!=0)
