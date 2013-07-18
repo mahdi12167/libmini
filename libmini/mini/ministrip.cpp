@@ -1501,9 +1501,12 @@ double ministrip::shootbsphere(const miniv3d &o,const miniv3d &d,double mindist)
    {
    miniv3d b;
    double r,r2;
+   double l;
 
    getbsphere(b,r2);
    r=sqrt(r2);
 
-   return(intersect_ray_ellipsoid(o,d,b,r,r,r));
+   l=intersect_ray_ellipsoid(o,d,b,r,r,r);
+
+   return((l<mindist)?-MAXFLOAT:l);
    }

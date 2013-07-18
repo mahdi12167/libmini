@@ -684,8 +684,8 @@ int databuf::readparamll(const char *tag,long long *v,FILE *file)
 
    ungetc(ch,file);
 
-   if (sign) *v=-value;
-   else *v=value;
+   *v=value;
+   if (sign) *v=-(*v);
 
    return(1);
    }
