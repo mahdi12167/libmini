@@ -1925,7 +1925,6 @@ void ViewerWindow::save_grid_list(ministrings keys,
    ministrings grid_list = ResampleJob::make_grid_list(filenames,
                                                        repository_path, export_path,
                                                        level,
-                                                       shadePower,shadeAmbient,
                                                        &crop_ext,crop_name);
 
    if (filename=="")
