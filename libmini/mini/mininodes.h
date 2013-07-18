@@ -841,7 +841,7 @@ class mininode_lod: public mininode_selector
 
    virtual void traverse_pre()
       {
-      int lod;
+      unsigned int lod;
       double d2,r2;
 
       unsigned int s;
