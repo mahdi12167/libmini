@@ -1204,6 +1204,42 @@ void ViewerWindow::runAction(const ministring &action,
          }
       }
    }
+   else if (action == "mmi")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()!=5)
+         notify(TR("MMI operation requires five selected layers"));
+      else
+      {
+         ministring pan=guess_panchro_layer(keys);
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
+         ministring green=guess_green_layer(keys);
+         ministring blue=guess_blue_layer(keys);
+
+         if (pan.empty())
+            notify(TR("Merge operation requires a panchromatic landsat layer"));
+
+         if (nir.empty())
+            notify(TR("Merge operation requires a nir landsat layer"));
+
+         if (red.empty() || green.empty() || blue.empty())
+            notify(TR("Merge operation requires a red, green and blue landsat layer"));
+
+         if (!pan.empty() && !nir.empty() && !red.empty() && !green.empty() && !blue.empty())
+         {
+            keys.clear();
+            keys.append(pan);
+            keys.append(nir);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+
+            mmi_layers(keys);
+         }
+      }
+   }
    else if (action == "merge")
    {
       ministrings keys = listObjects("selected");
@@ -1671,6 +1707,31 @@ void ViewerWindow::ndvi_layers(ministrings keys, int method)
    if (!output.endswith(".tif")) output += ".tif";
 
    MergeJob *job = new MergeJob("", "", output, method);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append_item(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::mmi_layers(ministrings keys)
+{
+   unsigned int i;
+
+   if (keys.size()!=5)
+   {
+      notify(TR("MMI operation requires at least five selected imagery layers"));
+      return;
+   }
+
+   ministrings files = browse("MMI Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) output += ".tif";
+
+   MergeJob *job = new MergeJob("", "", output, 1);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
