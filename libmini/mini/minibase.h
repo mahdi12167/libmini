@@ -51,6 +51,8 @@ inline void minierrormsg(const char *file,int line,int fatal)
    if (fatal!=MINI_ERROR_NONFATAL) exit(1);
    }
 
+#define mini_stringify(s) #s
+
 #ifndef NULL
 #   define NULL (0)
 #endif
