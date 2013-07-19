@@ -40,8 +40,8 @@ ViewerWindow::ViewerWindow()
    // setup queued worker connection
    qRegisterMetaType<ministring>("ministring");
    qRegisterMetaType<ministrings>("ministrings");
-   connect(worker, SIGNAL(reportProgress(double, ministring)),
-           this, SLOT(receiveProgress(double, ministring)),
+   connect(worker, SIGNAL(reportProgress(double, ministring, unsigned int)),
+           this, SLOT(receiveProgress(double, ministring, unsigned int)),
            Qt::QueuedConnection);
    connect(worker, SIGNAL(finishedJob(ministring, ministrings)),
            this, SLOT(finishedJob(ministring, ministrings)),
@@ -352,7 +352,7 @@ void ViewerWindow::reportModifiers()
 void ViewerWindow::reportProgress()
 {
    if (worker->running())
-      emit signalProgress(worker->get_progress(), worker->get_job_id()); // synchronous
+      emit signalProgress(worker->get_progress(), worker->get_job_id(), worker->get_jobs()); // synchronous
 }
 
 void ViewerWindow::setRepo(ministring path)
@@ -2238,9 +2238,9 @@ ministring ViewerWindow::browseDir(ministring title,
    return(dir);
 }
 
-void ViewerWindow::receiveProgress(double percentage, const ministring &job)
+void ViewerWindow::receiveProgress(double percentage, const ministring &job, unsigned int jobs)
 {
-   emit signalProgress(percentage, job); // asynchronous
+   emit signalProgress(percentage, job, jobs); // asynchronous
 }
 
 void ViewerWindow::finishedJob(const ministring &job, const ministrings &args)

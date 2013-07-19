@@ -513,8 +513,8 @@ void MainWindow::createWidgets()
 
    // progress:
 
-   connect(viewerWindow, SIGNAL(signalProgress(double, const ministring &)),
-           this, SLOT(receiveProgress(double, const ministring &)));
+   connect(viewerWindow, SIGNAL(signalProgress(double, const ministring &, unsigned int)),
+           this, SLOT(receiveProgress(double, const ministring &, unsigned int)));
 }
 
 QSlider *MainWindow::createSlider(int minimum, int maximum, int value)
@@ -735,7 +735,7 @@ void MainWindow::runAction(const ministring &action, int row)
    viewerWindow->runAction(action, key);
 }
 
-void MainWindow::receiveProgress(double percentage, const ministring &job)
+void MainWindow::receiveProgress(double percentage, const ministring &job, unsigned int jobs)
 {
    ministring progress;
 
@@ -748,6 +748,11 @@ void MainWindow::receiveProgress(double percentage, const ministring &job)
             progress = job+" progress: working";
          else
             progress = job+" progress: "+(int)percentage+"%";
+   }
+
+   if (jobs>1)
+   {
+      progress += ministring(" jobs: ") + jobs;
    }
 
    workerActivity->setText(progress.c_str());

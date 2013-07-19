@@ -129,10 +129,10 @@ public:
 
 signals:
    void signalChange(const ministring &action, const ministring &value="");
-   void signalProgress(double percentage, const ministring &job);
+   void signalProgress(double percentage, const ministring &job, unsigned int jobs);
 
 private slots:
-   void receiveProgress(double percentage, const ministring &job);
+   void receiveProgress(double percentage, const ministring &job, unsigned int jobs);
    void finishedJob(const ministring &job, const ministrings &args);
    void failedJob(const ministring &job, const ministrings &args, int errorcode);
 

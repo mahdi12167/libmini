@@ -42,7 +42,7 @@ class WorkerThread: public QThread, public grid_worker
 
    signals:
 
-   void reportProgress(double percentage, const ministring &job);
+   void reportProgress(double percentage, const ministring &job, unsigned int jobs);
    void finishedJob(const ministring &job, const ministrings &args);
    void failedJob(const ministring &job, const ministrings &args, int errorcode);
 };

@@ -48,7 +48,7 @@ public slots:
    void updateTable(const ministring &action, const ministring &key);
 
    void runAction(const ministring &action, int row = -1);
-   void receiveProgress(double percentage, const ministring &job);
+   void receiveProgress(double percentage, const ministring &job, unsigned int jobs);
 
 private slots:
    void about();
