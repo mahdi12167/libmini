@@ -14,7 +14,7 @@
 
 class Viewer;
 
-#define OBJECT_OBESITY_SIZE 1536
+#define OBJECT_OBESITY_SIZE 1024
 
 enum
    {
