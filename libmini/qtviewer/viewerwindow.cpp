@@ -559,7 +559,7 @@ BOOLINT ViewerWindow::loadImage(ministring url)
    else if (errorcode == OBJECT_TOO_LARGE)
       notify(TR("Unable to handle an image of that size")+"\n\n"+
              "Please use the gdal_translate utility from gdal.org to partition the image into smaller tiles.\n"
-             "A handable image has to be smaller than 1GB in size.");
+             "A handable image has to be smaller than "mini_stringify(OBJECT_OBESITY_SIZE)"MB in size.");
 
    return(errorcode == OBJECT_SUCCESS);
 }
