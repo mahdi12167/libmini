@@ -752,7 +752,7 @@ void MainWindow::receiveProgress(double percentage, const ministring &job, unsig
 
    if (jobs>1)
    {
-      progress += ministring(" jobs: ") + jobs;
+      progress += ministring(" (jobs: ") + jobs +")";
    }
 
    workerActivity->setText(progress.c_str());
