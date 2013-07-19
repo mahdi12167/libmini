@@ -5,6 +5,7 @@
 
 #include <QtGui/QApplication>
 #include <QtOpenGL/qgl.h>
+#include <QThread>
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QDesktopWidget>
@@ -25,8 +26,11 @@ void errormsg(const char *file,int line,int fatal)
 
    MINILOG(msg);
 
+   bool isGuiThread = (QThread::currentThread() == QCoreApplication::instance()->thread());
+
    if (fatal!=MINI_ERROR_NONFATAL)
-      QMessageBox::warning(0, "error", msg.c_str(), QMessageBox::Ok);
+      if (isGuiThread)
+         QMessageBox::warning(0, "error", msg.c_str(), QMessageBox::Ok);
 }
 
 void centerWidgetOnScreen(QWidget *widget)
