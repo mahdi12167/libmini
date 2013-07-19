@@ -1246,6 +1246,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&ndviAction);
     QAction nmmiAction(tr(" compute nmmi from two selected channels"), this);
     myMenu.addAction(&nmmiAction);
+    QAction nmmiAction(tr(" compute mmi from five selected channels"), this);
+    myMenu.addAction(&mmiAction);
     QAction mergeAction(tr(" merge selected channels"), this);
     myMenu.addAction(&mergeAction);
     QAction matchAction(tr(" match actual with selected layers"), this);
@@ -1367,6 +1369,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("ndvi"));
        else if (selectedAction == &nmmiAction)
           emit(activate("nmmi"));
+       else if (selectedAction == &mmiAction)
+          emit(activate("mmi"));
        else if (selectedAction == &mergeAction)
           emit(activate("merge"));
        else if (selectedAction == &matchAction)
