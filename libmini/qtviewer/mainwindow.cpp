@@ -1246,7 +1246,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&ndviAction);
     QAction nmmiAction(tr(" compute nmmi from two selected channels"), this);
     myMenu.addAction(&nmmiAction);
-    QAction nmmiAction(tr(" compute mmi from five selected channels"), this);
+    QAction mmiAction(tr(" compute mmi from five selected channels"), this);
     myMenu.addAction(&mmiAction);
     QAction mergeAction(tr(" merge selected channels"), this);
     myMenu.addAction(&mergeAction);
