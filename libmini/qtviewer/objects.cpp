@@ -136,6 +136,7 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    size_x=size_y=0;
    size_ds=size_dt=0.0;
    spacing=0.0;
+   spacing_ds=spacing_dt=0.0;
 
    image_viewer=viewer;
 
@@ -160,6 +161,8 @@ ministring Object_image::get_info()
           "dim = "+size_x+" x "+size_y+"\n"+
           "size = "+size_ds/1000+"km x "+size_dt/1000+"km\n"+
           "spacing = "+spacing+"m\n"+
+          "spacing_ds = "+spacing_ds+"m\n"+
+          "spacing_dt = "+spacing_dt+"m\n"+
           "crs = "+extent_geo.get_center().getcrs()+"\n"+
           "datum = "+extent_geo.get_center().getdatum()+"\n\n"+
 
@@ -250,6 +253,8 @@ int Object_image::initGFX()
          size_ds=layer->get_size_ds();
          size_dt=layer->get_size_dt();
          spacing=layer->get_spacing();
+         spacing_ds=layer->get_spacing_ds();
+         spacing_dt=layer->get_spacing_dt();
 
          set_center(extent_geo.get_center(),extent_geo.get_radius());
 

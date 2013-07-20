@@ -114,6 +114,7 @@ class Object_image: public Object_extents
    int size_x,size_y;
    double size_ds,size_dt;
    double spacing;
+   double spacing_ds,spacing_dt;
 
    Viewer *image_viewer;
 
