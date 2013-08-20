@@ -1154,7 +1154,7 @@ void ViewerWindow::runAction(const ministring &action,
    {
       ministrings keys = listObjects("selected");
 
-      if (keys.size()!=2)
+      if (keys.size()<2)
          notify(TR("NDVI operation requires two selected layers"));
       else
       {
@@ -1181,7 +1181,7 @@ void ViewerWindow::runAction(const ministring &action,
    {
       ministrings keys = listObjects("selected");
 
-      if (keys.size()!=2)
+      if (keys.size()<2)
          notify(TR("NMMI operation requires two selected layers"));
       else
       {
@@ -1208,7 +1208,7 @@ void ViewerWindow::runAction(const ministring &action,
    {
       ministrings keys = listObjects("selected");
 
-      if (keys.size()!=5)
+      if (keys.size()<5)
          notify(TR("MMI operation requires five selected layers"));
       else
       {
