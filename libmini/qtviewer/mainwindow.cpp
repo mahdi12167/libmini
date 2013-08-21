@@ -1251,8 +1251,16 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     myMenu.addAction(&ndviAction);
     QAction nmmiAction(tr(" compute nmmi from two selected channels"), this);
     myMenu.addAction(&nmmiAction);
+    QAction ndwiAction(tr(" compute ndwi from two selected channels"), this);
+    myMenu.addAction(&ndwiAction);
+    QAction dciAction(tr(" compute dci from four selected channels"), this);
+    myMenu.addAction(&dciAction);
+    QAction dwiAction(tr(" compute dwi from four selected channels"), this);
+    myMenu.addAction(&dwiAction);
     QAction mmiAction(tr(" compute mmi from five selected channels"), this);
     myMenu.addAction(&mmiAction);
+    QAction topoAction(tr(" compute topo map from five selected channels"), this);
+    myMenu.addAction(&topoAction);
     QAction mergeAction(tr(" merge selected channels"), this);
     myMenu.addAction(&mergeAction);
     QAction matchAction(tr(" match actual with selected layers"), this);
@@ -1374,8 +1382,16 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("ndvi"));
        else if (selectedAction == &nmmiAction)
           emit(activate("nmmi"));
+       else if (selectedAction == &ndwiAction)
+          emit(activate("ndwi"));
+       else if (selectedAction == &dciAction)
+          emit(activate("dci"));
+       else if (selectedAction == &dwiAction)
+          emit(activate("dwi"));
        else if (selectedAction == &mmiAction)
           emit(activate("mmi"));
+       else if (selectedAction == &topoAction)
+          emit(activate("topo"));
        else if (selectedAction == &mergeAction)
           emit(activate("merge"));
        else if (selectedAction == &matchAction)
