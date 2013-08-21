@@ -1173,7 +1173,7 @@ void ViewerWindow::runAction(const ministring &action,
             keys.append(nir);
             keys.append(red);
 
-            ndvi_layers(keys);
+            ndi_layers(keys);
          }
       }
    }
@@ -1200,7 +1200,96 @@ void ViewerWindow::runAction(const ministring &action,
             keys.append(nir);
             keys.append(red);
 
-            ndvi_layers(keys, 1);
+            ndi_layers(keys, 1);
+         }
+      }
+   }
+   else if (action == "ndwi")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()<2)
+         notify(TR("NDWI operation requires two selected layers"));
+      else
+      {
+         ministring nir=guess_nir_layer(keys);
+         ministring green=guess_green_layer(keys);
+
+         if (nir.empty())
+            notify(TR("NDWI operation requires a nir landsat layer"));
+
+         if (green.empty())
+            notify(TR("NDWI operation requires a red landsat layer"));
+
+         if (!nir.empty() && !green.empty())
+         {
+            keys.clear();
+            keys.append(nir);
+            keys.append(green);
+
+            ndi_layers(keys, 2);
+         }
+      }
+   }
+   else if (action == "dci")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()<4)
+         notify(TR("DCI operation requires four selected layers"));
+      else
+      {
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
+         ministring green=guess_green_layer(keys);
+         ministring blue=guess_blue_layer(keys);
+
+         if (nir.empty())
+            notify(TR("DCI operation requires a nir landsat layer"));
+
+         if (red.empty() || green.empty() || blue.empty())
+            notify(TR("DCI operation requires a red, green and blue landsat layer"));
+
+         if (!nir.empty() && !red.empty() && !green.empty() && !blue.empty())
+         {
+            keys.clear();
+            keys.append(nir);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+
+            dci_layers(keys);
+         }
+      }
+   }
+   else if (action == "dwi")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()<4)
+         notify(TR("DWI operation requires four selected layers"));
+      else
+      {
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
+         ministring green=guess_green_layer(keys);
+         ministring blue=guess_blue_layer(keys);
+
+         if (nir.empty())
+            notify(TR("DWI operation requires a nir landsat layer"));
+
+         if (red.empty() || green.empty() || blue.empty())
+            notify(TR("DWI operation requires a red, green and blue landsat layer"));
+
+         if (!nir.empty() && !red.empty() && !green.empty() && !blue.empty())
+         {
+            keys.clear();
+            keys.append(nir);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+
+            dwi_layers(keys);
          }
       }
    }
@@ -1237,6 +1326,42 @@ void ViewerWindow::runAction(const ministring &action,
             keys.append(blue);
 
             mmi_layers(keys);
+         }
+      }
+   }
+   else if (action == "topo")
+   {
+      ministrings keys = listObjects("selected");
+
+      if (keys.size()<5)
+         notify(TR("Topo operation requires five selected layers"));
+      else
+      {
+         ministring pan=guess_panchro_layer(keys);
+         ministring nir=guess_nir_layer(keys);
+         ministring red=guess_red_layer(keys);
+         ministring green=guess_green_layer(keys);
+         ministring blue=guess_blue_layer(keys);
+
+         if (pan.empty())
+            notify(TR("Topo operation requires a panchromatic landsat layer"));
+
+         if (nir.empty())
+            notify(TR("Topo operation requires a nir landsat layer"));
+
+         if (red.empty() || green.empty() || blue.empty())
+            notify(TR("Topo operation requires a red, green and blue landsat layer"));
+
+         if (!pan.empty() && !nir.empty() && !red.empty() && !green.empty() && !blue.empty())
+         {
+            keys.clear();
+            keys.append(pan);
+            keys.append(nir);
+            keys.append(red);
+            keys.append(green);
+            keys.append(blue);
+
+            topo_layers(keys);
          }
       }
    }
@@ -1690,23 +1815,73 @@ void ViewerWindow::blend_imagery(ministrings keys, BOOLINT modulate)
    worker->run_job(job);
 }
 
-void ViewerWindow::ndvi_layers(ministrings keys, int method)
+void ViewerWindow::ndi_layers(ministrings keys, int method)
 {
    unsigned int i;
 
    if (keys.size()!=2)
    {
-      notify(TR("NDVI operation requires at least two selected imagery layers"));
+      notify(TR("NDI operation requires at least two selected imagery layers"));
       return;
    }
 
-   ministrings files = browse("NDVI Output", repository_path, TRUE);
+   ministrings files = browse("NDI Output", repository_path, TRUE);
    if (files.size()==0) return;
 
    ministring output = files[0];
    if (!output.endswith(".tif")) output += ".tif";
 
    MergeJob *job = new MergeJob("", "", output, method);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append_item(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::dci_layers(ministrings keys)
+{
+   unsigned int i;
+
+   if (keys.size()!=4)
+   {
+      notify(TR("DCI operation requires at least four selected imagery layers"));
+      return;
+   }
+
+   ministrings files = browse("DCI Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) output += ".tif";
+
+   MergeJob *job = new MergeJob("", "", output, 1);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append_item(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::dwi_layers(ministrings keys)
+{
+   unsigned int i;
+
+   if (keys.size()!=4)
+   {
+      notify(TR("DCI operation requires at least four selected imagery layers"));
+      return;
+   }
+
+   ministrings files = browse("DCI Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) output += ".tif";
+
+   MergeJob *job = new MergeJob("", "", output, 2);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
@@ -1732,6 +1907,31 @@ void ViewerWindow::mmi_layers(ministrings keys)
    if (!output.endswith(".tif")) output += ".tif";
 
    MergeJob *job = new MergeJob("", "", output, 1);
+   if (job == NULL) MEMERROR();
+
+   for (i=0; i<keys.size(); i++)
+      job->append_item(getObject(keys[i])->get_full_name());
+
+   worker->run_job(job);
+}
+
+void ViewerWindow::topo_layers(ministrings keys)
+{
+   unsigned int i;
+
+   if (keys.size()!=5)
+   {
+      notify(TR("Topo operation requires at least five selected imagery layers"));
+      return;
+   }
+
+   ministrings files = browse("Topo Output", repository_path, TRUE);
+   if (files.size()==0) return;
+
+   ministring output = files[0];
+   if (!output.endswith(".tif")) output += ".tif";
+
+   MergeJob *job = new MergeJob("", "", output, 2);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
