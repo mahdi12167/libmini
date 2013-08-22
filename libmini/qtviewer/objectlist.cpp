@@ -86,9 +86,9 @@ int Objects::add(const ministring &key,Object *obj,const ministrings &tags)
 unsigned int Objects::get_num() const
    {return(minikeyval<Object *>::get_pairs());}
 
-Object *Objects::get(unsigned int i)
+Object *Objects::idx(unsigned int i)
    {
-   Object **obj=minikeyval<Object *>::get(i);
+   Object **obj=minikeyval<Object *>::idx(i);
    return(obj?*obj:NULL);
    }
 
@@ -145,10 +145,10 @@ void Objects::set_repo(const ministring &repo)
 
    for (i=0; i<get_num(); i++)
       {
-      ministring path=get(i)->get_full_name();
+      ministring path=idx(i)->get_full_name();
 
-      get(i)->set_relative_path(repo);
-      get(i)->set_relative_name(path);
+      idx(i)->set_relative_path(repo);
+      idx(i)->set_relative_name(path);
       }
    }
 
@@ -267,7 +267,7 @@ void Objects::clear()
 
    for (i=0; i<get_num(); i++)
       {
-      Object *obj=get(i);
+      Object *obj=idx(i);
       obj->exitGFX();
       delete obj;
       }

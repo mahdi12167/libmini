@@ -23,7 +23,7 @@ class Objects: public minikeyval<Object *>
    int add(const ministring &key,Object *obj,const ministring &tag);
    int add(const ministring &key,Object *obj,const ministrings &tags);
    unsigned int get_num() const;
-   Object *get(unsigned int i);
+   Object *idx(unsigned int i);
    Object *get(const ministring &key);
    ministrings *get_tags(const ministring &key);
    void add_tag(const ministring &key,const ministring &tag);
