@@ -57,6 +57,8 @@ ViewerWindow::ViewerWindow()
 
    setExportSettings();
    setContourSettings();
+   setContrastSettings();
+   setGammaSettings();
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -365,18 +367,18 @@ void ViewerWindow::setRepo(ministring path)
 }
 
 void ViewerWindow::setExport(ministring path)
-   {
+{
    export_path = Object::normalize_path(path);
 
    emit signalChange("update_export");
-   }
+}
 
 void ViewerWindow::setTmp(ministring path)
-   {
+{
    tmp_path = Object::normalize_path(path);
 
    emit signalChange("update_tmp");
-   }
+}
 
 void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
@@ -411,7 +413,31 @@ void ViewerWindow::setContourSettings(double spacing, double thickness, double b
       contourBorder = border;
 
       emit signalChange("update_contour_settings");
-      }
+   }
+}
+
+void ViewerWindow::setContrastSettings(double black, double white, double linear)
+{
+   if (black != blackLevel || white != whiteLevel || linear != contrastLinearity)
+   {
+      blackLevel = black;
+      whiteLevel = white;
+      contrastLinearity = linear;
+
+      emit signalChange("update_contrast_settings");
+   }
+}
+
+void ViewerWindow::setGammaSettings(double red, double green, double blue)
+{
+   if (red != redGamma || green != greenGamma || blue != blueGamma)
+   {
+      redGamma = red;
+      greenGamma = green;
+      blueGamma = blue;
+
+      emit signalChange("update_gamma_settings");
+   }
 }
 
 ministring ViewerWindow::loadURL(ministring url)
@@ -761,49 +787,49 @@ void ViewerWindow::dragLeaveEvent(QDragLeaveEvent *event)
 }
 
 ministring ViewerWindow::guess_panchro_layer(const ministrings &keys)
-   {
+{
    // landsat images usually end with p*_80 as panchro channel identifier
    ministrings strs = keys.search("_80");
    if (strs.empty()) strs = keys.search("_nn80");
    if (strs.empty()) return("");
    return(strs[0]);
-   }
+}
 
 ministring ViewerWindow::guess_nir_layer(const ministrings &keys)
-   {
+{
    // landsat images usually end with t*_40 as nir channel identifier
    ministrings strs = keys.search("_40");
    if (strs.empty()) strs = keys.search("_nn40");
    if (strs.empty()) return("");
    return(strs[0]);
-   }
+}
 
 ministring ViewerWindow::guess_red_layer(const ministrings &keys)
-   {
+{
    // landsat images usually end with t*_30 as red channel identifier
    ministrings strs = keys.search("_30");
    if (strs.empty()) strs = keys.search("_nn30");
    if (strs.empty()) return("");
    return(strs[0]);
-   }
+}
 
 ministring ViewerWindow::guess_green_layer(const ministrings &keys)
-   {
+{
    // landsat images usually end with t*_20 as green channel identifier
    ministrings strs = keys.search("_20");
    if (strs.empty()) strs = keys.search("_nn20");
    if (strs.empty()) return("");
    return(strs[0]);
-   }
+}
 
 ministring ViewerWindow::guess_blue_layer(const ministrings &keys)
-   {
+{
    // landsat images usually end with t*_10 as blue channel identifier
    ministrings strs = keys.search("_10");
    if (strs.empty()) strs = keys.search("_nn10");
    if (strs.empty()) return("");
    return(strs[0]);
-   }
+}
 
 void ViewerWindow::runAction(const ministring &action,
                              const ministring &value)
@@ -1043,7 +1069,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "treat_black")
    {
-      TreatBlackJob *job = new TreatBlackJob(repository_path,export_path);
+      TreatBlackJob *job = new TreatBlackJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1051,7 +1077,15 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "treat_white")
    {
-      TreatWhiteJob *job = new TreatWhiteJob(repository_path,export_path);
+      TreatWhiteJob *job = new TreatWhiteJob(repository_path, export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append_item(value);
+      worker->run_job(job);
+   }
+   else if (action == "treat_intensity")
+   {
+      TreatIntensityJob *job = new TreatIntensityJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1059,7 +1093,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "mask_black")
    {
-      MaskBlackJob *job = new MaskBlackJob(repository_path,export_path);
+      MaskBlackJob *job = new MaskBlackJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1067,7 +1101,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "mask_white")
    {
-      MaskWhiteJob *job = new MaskWhiteJob(repository_path,export_path);
+      MaskWhiteJob *job = new MaskWhiteJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1075,7 +1109,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "remove_bathy")
    {
-      RemoveBathyJob *job = new RemoveBathyJob(repository_path,export_path);
+      RemoveBathyJob *job = new RemoveBathyJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1083,7 +1117,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "keep_bathy")
    {
-      KeepBathyJob *job = new KeepBathyJob(repository_path,export_path);
+      KeepBathyJob *job = new KeepBathyJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1091,7 +1125,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "fill_missing")
    {
-      FillMissingJob *job = new FillMissingJob(repository_path,export_path);
+      FillMissingJob *job = new FillMissingJob(repository_path, export_path);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1099,7 +1133,31 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "fill_holes")
    {
-      FillHolesJob *job = new FillHolesJob(repository_path,export_path);
+      FillHolesJob *job = new FillHolesJob(repository_path, export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append_item(value);
+      worker->run_job(job);
+   }
+   else if (action == "contrast")
+   {
+      ContrastJob *job = new ContrastJob(repository_path, export_path, blackLevel, whiteLevel, contrastLinearity);
+      if (job == NULL) MEMERROR();
+
+      job->append_item(value);
+      worker->run_job(job);
+   }
+   else if (action == "invert")
+   {
+      InvertJob *job = new InvertJob(repository_path, export_path);
+      if (job == NULL) MEMERROR();
+
+      job->append_item(value);
+      worker->run_job(job);
+   }
+   else if (action == "gamma")
+   {
+      GammaJob *job = new GammaJob(repository_path, export_path, redGamma, greenGamma, blueGamma);
       if (job == NULL) MEMERROR();
 
       job->append_item(value);
@@ -1576,6 +1634,48 @@ void ViewerWindow::runAction(const ministring &action,
       contourBorder = border.value();
 
       setContourSettings(contourSpacing, contourThickness, contourBorder);
+   }
+   else if (action == "set_black_level")
+   {
+      ministring black = value;
+      blackLevel = black.value();
+
+      setContrastSettings(blackLevel, whiteLevel, contrastLinearity);
+   }
+   else if (action == "set_white_level")
+   {
+      ministring white = value;
+      whiteLevel = white.value();
+
+      setContrastSettings(blackLevel, whiteLevel, contrastLinearity);
+   }
+   else if (action == "set_contrast_linearity")
+   {
+      ministring linear = value;
+      contrastLinearity = linear.value();
+
+      setContrastSettings(blackLevel, whiteLevel, contrastLinearity);
+   }
+   else if (action == "set_red_gamma")
+   {
+      ministring red = value;
+      redGamma = red.value();
+
+      setGammaSettings(redGamma, greenGamma, blueGamma);
+   }
+   else if (action == "set_green_gamma")
+   {
+      ministring green = value;
+      greenGamma = green.value();
+
+      setGammaSettings(redGamma, greenGamma, blueGamma);
+   }
+   else if (action == "set_blue_gamma")
+   {
+      ministring blue = value;
+      blueGamma = blue.value();
+
+      setGammaSettings(redGamma, greenGamma, blueGamma);
    }
 }
 
@@ -2373,6 +2473,20 @@ void ViewerWindow::getContourSettings(double &spacing, double &thickness, double
    spacing=contourSpacing;
    thickness=contourThickness;
    border=contourBorder;
+}
+
+void ViewerWindow::getContrastSettings(double &black, double &white, double &linear)
+{
+   black=blackLevel;
+   white=whiteLevel;
+   linear=contrastLinearity;
+}
+
+void ViewerWindow::getGammaSettings(double &red, double &green, double &blue)
+{
+    red=redGamma;
+    green=greenGamma;
+    blue=blueGamma;
 }
 
 void ViewerWindow::notify(ministring text)

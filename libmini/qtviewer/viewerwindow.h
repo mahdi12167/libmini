@@ -49,6 +49,8 @@ public:
    void setResampleSettings(int level=0, int levels=1, int step=2);
    void setExportSettings(double power=2.0, double ambient=0.1, double quality=90.0);
    void setContourSettings(double spacing=100.0, double thickness=1.0, double border=1.0);
+   void setContrastSettings(double black=0.0, double white=1.0, double linear=0.5);
+   void setGammaSettings(double red=1.2, double green=1.6, double blue=1.0);
 
    ministring loadURL(ministring url);
    ministrings loadURLs(ministrings urls);
@@ -123,6 +125,8 @@ public:
    void getResampleSettings(int &level, int &levels, int &step);
    void getExportSettings(double &power, double &ambient, double &quality);
    void getContourSettings(double &spacing, double &thickness, double &border);
+   void getContrastSettings(double &black, double &white, double &linear);
+   void getGammaSettings(double &red, double &green, double &blue);
 
    void notify(ministring text);
    ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);
@@ -196,6 +200,14 @@ private:
    double contourSpacing;
    double contourThickness;
    double contourBorder;
+
+   double blackLevel;
+   double whiteLevel;
+   double contrastLinearity;
+
+   double redGamma;
+   double greenGamma;
+   double blueGamma;
 
    Objects objects;
 
