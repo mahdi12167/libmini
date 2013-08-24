@@ -1218,6 +1218,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&treatBlackAction);
     QAction treatWhiteAction(tr(" treat white as transparent"), this);
     if (row != -1) myMenu.addAction(&treatWhiteAction);
+    QAction treatIntensityAction(tr(" treat intensity as transparency"), this);
+    if (row != -1) myMenu.addAction(&treatIntensityAction);
     QAction maskBlackAction(tr(" mask black to be transparent"), this);
     if (row != -1) myMenu.addAction(&maskBlackAction);
     QAction maskWhiteAction(tr(" mask white to be transparent"), this);
@@ -1230,6 +1232,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&fillMissingAction);
     QAction fillHolesAction(tr(" fill elevation holes"), this);
     if (row != -1) myMenu.addAction(&fillHolesAction);
+    QAction contrastAction(tr(" contrast enhancement"), this);
+    if (row != -1) myMenu.addAction(&contrastAction);
+    QAction invertAction(tr(" invert"), this);
+    if (row != -1) myMenu.addAction(&invertAction);
+    QAction gammaAction(tr(" gamma"), this);
+    if (row != -1) myMenu.addAction(&gammaAction);
     if (row != -1) myMenu.addSeparator();
     // map layers:
     QAction infoMap(tr("map a layer:"), this);
@@ -1358,6 +1366,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("treat_black", row));
        else if (selectedAction == &treatWhiteAction)
           emit(activate("treat_white", row));
+       else if (selectedAction == &treatIntensityAction)
+          emit(activate("treat_intensity", row));
        else if (selectedAction == &maskBlackAction)
           emit(activate("mask_black", row));
        else if (selectedAction == &maskWhiteAction)
@@ -1370,6 +1380,12 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("fill_missing", row));
        else if (selectedAction == &fillHolesAction)
           emit(activate("fill_holes", row));
+       else if (selectedAction == &contrastAction)
+          emit(activate("contrast", row));
+       else if (selectedAction == &invertAction)
+          emit(activate("invert", row));
+       else if (selectedAction == &gammaAction)
+          emit(activate("gamma", row));
        //
        else if (selectedAction == &contourAction)
           emit(activate("contour", row));
