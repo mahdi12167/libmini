@@ -1139,6 +1139,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        setCurrentCell(row, 1);
     }
 
+    // get number of selected layers
+    int nselected = viewerWindow->listObjects("selected").size();
+
     // create context menu
     QMenu myMenu;
     // create layers:
@@ -1172,15 +1175,15 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction resampleAction(tr(" resample area to tileset"), this);
     if (row != -1) myMenu.addAction(&resampleAction);
     QAction resampleSelAction(tr(" resample selection to tileset"), this);
-    myMenu.addAction(&resampleSelAction);
+    if (nselected > 0)  myMenu.addAction(&resampleSelAction);
     QAction resampleSelAreaAction(tr(" resample selection in area"), this);
-    if (row != -1) myMenu.addAction(&resampleSelAreaAction);
+    if (row != -1 && nselected > 0) myMenu.addAction(&resampleSelAreaAction);
     QAction resampleAllAction(tr(" resample all"), this);
     myMenu.addAction(&resampleAllAction);
     QAction splitAction(tr(" split into tileset"), this);
     if (row != -1) myMenu.addAction(&splitAction);
     QAction splitSelAction(tr(" split selected layers"), this);
-    myMenu.addAction(&splitSelAction);
+    if (nselected > 0) myMenu.addAction(&splitSelAction);
     QAction bottomAction(tr(" tack layer at bottom"), this);
     if (row != -1) myMenu.addAction(&bottomAction);
     QAction topAction(tr(" tack layer at top"), this);
@@ -1191,18 +1194,18 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // create layers:
     QAction infoLayer(tr("create a layer:"), this);
     infoLayer.setEnabled(false);
-    myMenu.addAction(&infoLayer);
+    if (row != -1 || nselected > 0) myMenu.addAction(&infoLayer);
     QAction shadeAction(tr(" shade layer"), this);
     if (row != -1) myMenu.addAction(&shadeAction);
     QAction shadeSelAction(tr(" shade selected layers"), this);
-    myMenu.addAction(&shadeSelAction);
+    if (nselected > 0) myMenu.addAction(&shadeSelAction);
     QAction cropElevAction(tr(" crop elevation to layer"), this);
-    myMenu.addAction(&cropElevAction);
+    if (row != -1) myMenu.addAction(&cropElevAction);
     QAction cropImagAction(tr(" crop imagery to layer"), this);
-    myMenu.addAction(&cropImagAction);
+    if (row != -1) myMenu.addAction(&cropImagAction);
     QAction cropSelAction(tr(" crop selection to layer"), this);
-    myMenu.addAction(&cropSelAction);
-    myMenu.addSeparator();
+    if (row != -1 && nselected > 0) myMenu.addAction(&cropSelAction);
+    if (row != -1 || nselected > 0) myMenu.addSeparator();
     // abort job:
     QAction abortAction(tr("abort"), this);
     myMenu.addAction(&abortAction);
@@ -1242,30 +1245,30 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     // combine multiple layers:
     QAction infoMapMulti(tr("combine multiple layers:"), this);
     infoMapMulti.setEnabled(false);
-    myMenu.addAction(&infoMapMulti);
+    if (nselected > 0) myMenu.addAction(&infoMapMulti);
     QAction alphaBlendAction(tr(" blend actual over selected layers"), this);
-    myMenu.addAction(&alphaBlendAction);
+    if (nselected > 0) myMenu.addAction(&alphaBlendAction);
     QAction mixAction(tr(" mix actual with selected layers"), this);
-    myMenu.addAction(&mixAction);
+    if (nselected > 0) myMenu.addAction(&mixAction);
     QAction ndviAction(tr(" compute ndvi from two selected channels"), this);
-    myMenu.addAction(&ndviAction);
+    if (nselected > 0) myMenu.addAction(&ndviAction);
     QAction nmmiAction(tr(" compute nmmi from two selected channels"), this);
-    myMenu.addAction(&nmmiAction);
+    if (nselected > 0) myMenu.addAction(&nmmiAction);
     QAction ndwiAction(tr(" compute ndwi from two selected channels"), this);
-    myMenu.addAction(&ndwiAction);
+    if (nselected > 0) myMenu.addAction(&ndwiAction);
     QAction dciAction(tr(" compute dci from four selected channels"), this);
-    myMenu.addAction(&dciAction);
+    if (nselected > 0) myMenu.addAction(&dciAction);
     QAction dwiAction(tr(" compute dwi from four selected channels"), this);
-    myMenu.addAction(&dwiAction);
+    if (nselected > 0) myMenu.addAction(&dwiAction);
     QAction mmiAction(tr(" compute mmi from five selected channels"), this);
-    myMenu.addAction(&mmiAction);
+    if (nselected > 0) myMenu.addAction(&mmiAction);
     QAction topoAction(tr(" compute topo map from five selected channels"), this);
-    myMenu.addAction(&topoAction);
+    if (nselected > 0) myMenu.addAction(&topoAction);
     QAction mergeAction(tr(" merge selected channels"), this);
-    myMenu.addAction(&mergeAction);
+    if (nselected > 0) myMenu.addAction(&mergeAction);
     QAction matchAction(tr(" match actual with selected layers"), this);
-    myMenu.addAction(&matchAction);
-    myMenu.addSeparator();
+    if (nselected > 0) myMenu.addAction(&matchAction);
+    if (nselected > 0) myMenu.addSeparator();
     // save layers:
     QAction saveDBAction(tr("save layer to DB file"), this);
     if (row != -1) myMenu.addAction(&saveDBAction);
@@ -1286,7 +1289,7 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     QAction deleteAction(tr("delete layer"), this);
     if (row != -1) myMenu.addAction(&deleteAction);
     QAction deleteSelAction(tr("delete selection"), this);
-    myMenu.addAction(&deleteSelAction);
+    if (nselected > 0) myMenu.addAction(&deleteSelAction);
     QAction deleteAllAction(tr("delete all"), this);
     myMenu.addAction(&deleteAllAction);
 
