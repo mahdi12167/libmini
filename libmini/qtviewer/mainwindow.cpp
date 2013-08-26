@@ -1515,11 +1515,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == &fillHolesAction)
           emit(activate("fill_holes", row));
        else if (selectedAction == &contrastAction)
-          emit(activate("contrast", row));
+          emit(activate("contrast enhancement", row));
        else if (selectedAction == &invertAction)
-          emit(activate("invert", row));
+          emit(activate("invert colors", row));
        else if (selectedAction == &gammaAction)
-          emit(activate("gamma", row));
+          emit(activate("gamma correction", row));
        //
        else if (selectedAction == &contourAction)
           emit(activate("contour", row));
