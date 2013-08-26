@@ -58,45 +58,59 @@ void MainWindow::initSettings()
    contourThickness = 1.0;
    contourBorder = 1.0;
 
+   blackLevel=0.5;
+   whiteLevel=1.0;
+   contrastLinearity=1.0;
+
+   redGamma=1.2;
+   greenGamma=1.6;
+   blueGamma=1.0;
+
    // override with persistent settings:
 
    QSettings settings("www.open-terrain.org", "qtviewer");
 
    if (settings.contains("repoPath"))
       repoPath = settings.value("repoPath").toString().toStdString().c_str();
-
    if (settings.contains("exportPath"))
       exportPath = settings.value("exportPath").toString().toStdString().c_str();
-
    if (settings.contains("tmpPath"))
       tmpPath = settings.value("tmpPath").toString().toStdString().c_str();
 
    if (settings.contains("gridLevel"))
       grid_level = settings.value("gridLevel").toDouble();
-
    if (settings.contains("gridLevels"))
       grid_levels = settings.value("gridLevels").toDouble();
-
    if (settings.contains("gridStep"))
       grid_step = settings.value("gridStep").toDouble();
 
    if (settings.contains("shadePower"))
       shadePower = settings.value("shadePower").toDouble();
-
    if (settings.contains("shadeAmbient"))
       shadeAmbient = settings.value("shadeAmbient").toDouble();
-
    if (settings.contains("jpegQuality"))
       jpegQuality = settings.value("jpegQuality").toDouble();
 
    if (settings.contains("contourSpacing"))
       contourSpacing = settings.value("contourSpacing").toDouble();
-
    if (settings.contains("contourThickness"))
       contourThickness = settings.value("contourThickness").toDouble();
-
    if (settings.contains("contourBorder"))
       contourBorder = settings.value("contourBorder").toDouble();
+
+   if (settings.contains("blackLevel"))
+      blackLevel = settings.value("blackLevel").toDouble();
+   if (settings.contains("whiteLevel"))
+      whiteLevel = settings.value("whiteLevel").toDouble();
+   if (settings.contains("contrastLinearity"))
+      contrastLinearity = settings.value("contrastLinearity").toDouble();
+
+   if (settings.contains("redGamma"))
+      redGamma = settings.value("redGamma").toDouble();
+   if (settings.contains("greenGamma"))
+      greenGamma = settings.value("greenGamma").toDouble();
+   if (settings.contains("blueGamma"))
+      blueGamma = settings.value("blueGamma").toDouble();
 }
 
 void MainWindow::saveSettings()
@@ -118,6 +132,14 @@ void MainWindow::saveSettings()
    settings.setValue("contourSpacing", contourSpacing);
    settings.setValue("contourThickness", contourThickness);
    settings.setValue("contourBorder", contourBorder);
+
+   settings.setValue("blackLevel", blackLevel);
+   settings.setValue("whiteLevel", whiteLevel);
+   settings.setValue("contrastLinearity", contrastLinearity);
+
+   settings.setValue("redGamma", redGamma);
+   settings.setValue("greenGamma", greenGamma);
+   settings.setValue("blueGamma", blueGamma);
 }
 
 void MainWindow::createActions()
@@ -394,30 +416,38 @@ void MainWindow::createWidgets()
 
    QGroupBox *lineEditGroup_gridLevel = createEdit(TR("Grid Level"), grid_level, &lineEdit_gridLevel);
    connect(lineEdit_gridLevel,SIGNAL(textChanged(QString)),this,SLOT(gridLevelChanged(QString)));
-
    QGroupBox *lineEditGroup_gridLevels = createEdit(TR("Grid Levels"), grid_levels, &lineEdit_gridLevels);
    connect(lineEdit_gridLevels,SIGNAL(textChanged(QString)),this,SLOT(gridLevelsChanged(QString)));
-
    QGroupBox *lineEditGroup_gridStep = createEdit(TR("Grid Step"), grid_step, &lineEdit_gridStep);
    connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
 
    QGroupBox *lineEditGroup_shadePower = createEdit(TR("Shading Power"), shadePower, &lineEdit_shadePower);
    connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
-
    QGroupBox *lineEditGroup_shadeAmbient = createEdit(TR("Shading Ambience"), shadeAmbient, &lineEdit_shadeAmbient);
    connect(lineEdit_shadeAmbient,SIGNAL(textChanged(QString)),this,SLOT(shadeAmbientChanged(QString)));
-
    QGroupBox *lineEditGroup_jpegQuality = createEdit(TR("JPEG Quality"), jpegQuality, &lineEdit_jpegQuality);
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
 
    QGroupBox *lineEditGroup_contourSpacing = createEdit(TR("Contour Spacing"), contourSpacing, &lineEdit_contourSpacing);
    connect(lineEdit_contourSpacing,SIGNAL(textChanged(QString)),this,SLOT(contourSpacingChanged(QString)));
-
    QGroupBox *lineEditGroup_contourThickness = createEdit(TR("Contour Thickness"), contourThickness, &lineEdit_contourThickness);
    connect(lineEdit_contourThickness,SIGNAL(textChanged(QString)),this,SLOT(contourThicknessChanged(QString)));
-
    QGroupBox *lineEditGroup_contourBorder = createEdit(TR("Contour Border"), contourBorder, &lineEdit_contourBorder);
    connect(lineEdit_contourBorder,SIGNAL(textChanged(QString)),this,SLOT(contourBorderChanged(QString)));
+
+   QGroupBox *lineEditGroup_blackLevel = createEdit(TR("Black Contrast Level"), blackLevel, &lineEdit_blackLevel);
+   connect(lineEdit_blackLevel,SIGNAL(textChanged(QString)),this,SLOT(blackLevelChanged(QString)));
+   QGroupBox *lineEditGroup_whiteLevel = createEdit(TR("White Contrast Level"), whiteLevel, &lineEdit_whiteLevel);
+   connect(lineEdit_whiteLevel,SIGNAL(textChanged(QString)),this,SLOT(whiteLevelChanged(QString)));
+   QGroupBox *lineEditGroup_constrastLinearity = createEdit(TR("Contrast Linearity"), contrastLinearity, &lineEdit_contrastLinearity);
+   connect(lineEdit_contrastLinearity,SIGNAL(textChanged(QString)),this,SLOT(contrastLinearityChanged(QString)));
+
+   QGroupBox *lineEditGroup_redGamma = createEdit(TR("Red Gamma Correction"), redGamma, &lineEdit_redGamma);
+   connect(lineEdit_redGamma,SIGNAL(textChanged(QString)),this,SLOT(redGammaChanged(QString)));
+   QGroupBox *lineEditGroup_greenGamma = createEdit(TR("Green Gamma Correction"), greenGamma, &lineEdit_greenGamma);
+   connect(lineEdit_greenGamma,SIGNAL(textChanged(QString)),this,SLOT(greenGammaChanged(QString)));
+   QGroupBox *lineEditGroup_blueGamma = createEdit(TR("Blue Gamma Correction"), blueGamma, &lineEdit_blueGamma);
+   connect(lineEdit_blueGamma,SIGNAL(textChanged(QString)),this,SLOT(blueGammaChanged(QString)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(false);
@@ -445,6 +475,14 @@ void MainWindow::createWidgets()
    prefLayout->addWidget(lineEditGroup_contourSpacing);
    prefLayout->addWidget(lineEditGroup_contourThickness);
    prefLayout->addWidget(lineEditGroup_contourBorder);
+
+   prefLayout->addWidget(lineEditGroup_blackLevel);
+   prefLayout->addWidget(lineEditGroup_whiteLevel);
+   prefLayout->addWidget(lineEditGroup_constrastLinearity);
+
+   prefLayout->addWidget(lineEditGroup_redGamma);
+   prefLayout->addWidget(lineEditGroup_greenGamma);
+   prefLayout->addWidget(lineEditGroup_blueGamma);
 
    prefLayout->addWidget(sliderButtonBox);
 
@@ -510,6 +548,14 @@ void MainWindow::createWidgets()
    contourSpacingChanged(QString(ministring(contourSpacing).c_str()));
    contourThicknessChanged(QString(ministring(contourThickness).c_str()));
    contourBorderChanged(QString(ministring(contourBorder).c_str()));
+
+   blackLevelChanged(QString(ministring(blackLevel).c_str()));
+   whiteLevelChanged(QString(ministring(whiteLevel).c_str()));
+   contrastLinearityChanged(QString(ministring(contrastLinearity).c_str()));
+
+   redGammaChanged(QString(ministring(redGamma).c_str()));
+   greenGammaChanged(QString(ministring(greenGamma).c_str()));
+   blueGammaChanged(QString(ministring(blueGamma).c_str()));
 
    // progress:
 
@@ -654,6 +700,22 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
       lineEdit_contourSpacing->setText(QString(ministring((double)contourSpacing).c_str()));
       lineEdit_contourThickness->setText(QString(ministring((double)contourThickness).c_str()));
       lineEdit_contourBorder->setText(QString(ministring((double)contourBorder).c_str()));
+   }
+   else if (action == "update_contrast_settings")
+   {
+      viewerWindow->getContrastSettings(blackLevel, whiteLevel, contrastLinearity);
+
+      lineEdit_blackLevel->setText(QString(ministring((double)blackLevel).c_str()));
+      lineEdit_whiteLevel->setText(QString(ministring((double)whiteLevel).c_str()));
+      lineEdit_contrastLinearity->setText(QString(ministring((double)contrastLinearity).c_str()));
+   }
+   else if (action == "update_gamma_settings")
+   {
+      viewerWindow->getGammaSettings(redGamma, greenGamma, blueGamma);
+
+      lineEdit_redGamma->setText(QString(ministring((double)redGamma).c_str()));
+      lineEdit_greenGamma->setText(QString(ministring((double)greenGamma).c_str()));
+      lineEdit_blueGamma->setText(QString(ministring((double)blueGamma).c_str()));
    }
 }
 
@@ -1023,6 +1085,78 @@ void MainWindow::contourBorderChanged(QString border)
    {
       this->contourBorder = contourBorder;
       viewerWindow->runAction("set_contour_border", border.toStdString().c_str());
+   }
+}
+
+void MainWindow::blackLevelChanged(QString black)
+{
+   bool valid;
+   double blackLevel = black.toDouble(&valid);
+
+   if (valid)
+   {
+      this->blackLevel = blackLevel;
+      viewerWindow->runAction("set_black_level", black.toStdString().c_str());
+   }
+}
+
+void MainWindow::whiteLevelChanged(QString white)
+{
+   bool valid;
+   double whiteLevel = white.toDouble(&valid);
+
+   if (valid)
+   {
+      this->whiteLevel = whiteLevel;
+      viewerWindow->runAction("set_white_level", white.toStdString().c_str());
+   }
+}
+
+void MainWindow::contrastLinearityChanged(QString linear)
+{
+   bool valid;
+   double contrastLinearity = linear.toDouble(&valid);
+
+   if (valid)
+   {
+      this->contrastLinearity = contrastLinearity;
+      viewerWindow->runAction("set_contrast_linearity", linear.toStdString().c_str());
+   }
+}
+
+void MainWindow::redGammaChanged(QString red)
+{
+   bool valid;
+   double redGamma = red.toDouble(&valid);
+
+   if (valid)
+   {
+      this->redGamma = redGamma;
+      viewerWindow->runAction("set_red_gamma", red.toStdString().c_str());
+   }
+}
+
+void MainWindow::greenGammaChanged(QString green)
+{
+   bool valid;
+   double greenGamma = green.toDouble(&valid);
+
+   if (valid)
+   {
+      this->greenGamma = greenGamma;
+      viewerWindow->runAction("set_green_gamma", green.toStdString().c_str());
+   }
+}
+
+void MainWindow::blueGammaChanged(QString blue)
+{
+   bool valid;
+   double blueGamma = blue.toDouble(&valid);
+
+   if (valid)
+   {
+      this->blueGamma = blueGamma;
+      viewerWindow->runAction("set_blue_gamma", blue.toStdString().c_str());
    }
 }
 

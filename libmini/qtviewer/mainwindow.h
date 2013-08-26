@@ -94,6 +94,14 @@ private slots:
    void contourThicknessChanged(QString);
    void contourBorderChanged(QString);
 
+   void blackLevelChanged(QString);
+   void whiteLevelChanged(QString);
+   void contrastLinearityChanged(QString);
+
+   void redGammaChanged(QString);
+   void greenGammaChanged(QString);
+   void blueGammaChanged(QString);
+
    void checkSliders(int);
 
 private:
@@ -200,6 +208,14 @@ private:
    QLineEdit *lineEdit_contourThickness;
    QLineEdit *lineEdit_contourBorder;
 
+   QLineEdit *lineEdit_blackLevel;
+   QLineEdit *lineEdit_whiteLevel;
+   QLineEdit *lineEdit_contrastLinearity;
+
+   QLineEdit *lineEdit_redGamma;
+   QLineEdit *lineEdit_greenGamma;
+   QLineEdit *lineEdit_blueGamma;
+
    QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,
@@ -223,6 +239,14 @@ protected:
    double contourSpacing;
    double contourThickness;
    double contourBorder;
+
+   double blackLevel;
+   double whiteLevel;
+   double contrastLinearity;
+
+   double redGamma;
+   double greenGamma;
+   double blueGamma;
 
    void initSettings();
    void saveSettings();
