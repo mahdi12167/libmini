@@ -1368,9 +1368,9 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&fillHolesAction);
     QAction contrastAction(tr(" contrast enhancement"), this);
     if (row != -1) myMenu.addAction(&contrastAction);
-    QAction invertAction(tr(" invert"), this);
+    QAction invertAction(tr(" invert colors"), this);
     if (row != -1) myMenu.addAction(&invertAction);
-    QAction gammaAction(tr(" gamma"), this);
+    QAction gammaAction(tr(" gamma correction"), this);
     if (row != -1) myMenu.addAction(&gammaAction);
     if (row != -1) myMenu.addSeparator();
     // map layers:
@@ -1515,11 +1515,11 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
        else if (selectedAction == &fillHolesAction)
           emit(activate("fill_holes", row));
        else if (selectedAction == &contrastAction)
-          emit(activate("contrast enhancement", row));
+          emit(activate("contrast", row));
        else if (selectedAction == &invertAction)
-          emit(activate("invert colors", row));
+          emit(activate("invert", row));
        else if (selectedAction == &gammaAction)
-          emit(activate("gamma correction", row));
+          emit(activate("gamma", row));
        //
        else if (selectedAction == &contourAction)
           emit(activate("contour", row));
