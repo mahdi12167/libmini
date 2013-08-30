@@ -1173,14 +1173,21 @@ void ViewerWindow::runAction(const ministring &action,
    else if (action == "graymap")
    {
       if (value != "")
-         graymap_elevation(value);
+         colormap_elevation(value, 0);
       else
          notify(TR("Operation requires a layer"));
    }
    else if (action == "colormap")
    {
       if (value != "")
-         colormap_elevation(value);
+         colormap_elevation(value, 1);
+      else
+         notify(TR("Operation requires a layer"));
+   }
+   else if (action == "oceanmap")
+   {
+      if (value != "")
+         colormap_elevation(value, 2);
       else
          notify(TR("Operation requires a layer"));
    }
@@ -1829,26 +1836,7 @@ void ViewerWindow::contour_elevation(ministring key)
       }
 }
 
-void ViewerWindow::graymap_elevation(ministring key)
-{
-   Object_image *image = get_image(key);
-
-   if (image)
-      if (!image->is_elevation())
-         notify(TR("Grayscale-mapping requires an elevation layer"));
-      else
-      {
-         grid_colormap graymap = grid_resampler::make_graymap();
-
-         ColorMapJob *job = new ColorMapJob("", &graymap);
-         if (job == NULL) MEMERROR();
-
-         job->append_item(image->get_full_name());
-         worker->run_job(job);
-      }
-}
-
-void ViewerWindow::colormap_elevation(ministring key)
+void ViewerWindow::colormap_elevation(ministring key, int map)
 {
    Object_image *image = get_image(key);
 
@@ -1857,9 +1845,7 @@ void ViewerWindow::colormap_elevation(ministring key)
          notify(TR("Color-mapping requires an elevation layer"));
       else
       {
-         grid_colormap colormap = grid_resampler::make_colormap();
-
-         ColorMapJob *job = new ColorMapJob("", &colormap,
+         ColorMapJob *job = new ColorMapJob("", NULL, map,
                                             shadePower, shadeAmbient);
 
          if (job == NULL) MEMERROR();

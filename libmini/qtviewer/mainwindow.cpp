@@ -1383,6 +1383,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
     if (row != -1) myMenu.addAction(&grayMapAction);
     QAction colorMapAction(tr(" colormap layer"), this);
     if (row != -1) myMenu.addAction(&colorMapAction);
+    QAction oceanMapAction(tr(" colormap ocean"), this);
+    if (row != -1) myMenu.addAction(&oceanMapAction);
     if (row != -1) myMenu.addSeparator();
     // combine multiple layers:
     QAction infoMapMulti(tr("combine multiple layers:"), this);
@@ -1527,6 +1529,8 @@ void MyQTableWidget::showContextMenu(const QPoint &pos)
           emit(activate("graymap", row));
        else if (selectedAction == &colorMapAction)
           emit(activate("colormap", row));
+       else if (selectedAction == &oceanMapAction)
+          emit(activate("oceanmap", row));
        else if (selectedAction == &alphaBlendAction)
           emit(activate("blend", row));
        else if (selectedAction == &mixAction)

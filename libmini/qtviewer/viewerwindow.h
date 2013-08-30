@@ -101,8 +101,7 @@ public:
    void untack_layer(ministring key);
    void shade_elevation(ministring key);
    void contour_elevation(ministring key);
-   void graymap_elevation(ministring key);
-   void colormap_elevation(ministring key);
+   void colormap_elevation(ministring key, int map=0);
    void blend_imagery(ministrings keys, BOOLINT modulate=FALSE);
    void ndi_layers(ministrings keys, int method=0);
    void dci_layers(ministrings keys);
