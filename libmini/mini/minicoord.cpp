@@ -767,13 +767,13 @@ void minicoord::from_string(ministring &info)
       info=info.tail("minicoord(");
       vec.from_string(info);
       info=info.tail(",");
-      type=(minicoord::MINICOORD)dtrc(info.prefix(",").value());
+      type=(minicoord::MINICOORD)info.prefix(",").value_int();
       info=info.tail(",");
-      crs_zone=(int)info.prefix(",").value();
+      crs_zone=info.prefix(",").value_int();
       info=info.tail(",");
-      crs_datum=(minicoord::MINICOORD_DATUM)dtrc(info.prefix(",").value());
+      crs_datum=(minicoord::MINICOORD_DATUM)info.prefix(",").value_int();
       info=info.tail(",");
-      crs_orb=(int)info.prefix(",").value();
+      crs_orb=info.prefix(",").value_int();
       info=info.tail(")");
       }
    }

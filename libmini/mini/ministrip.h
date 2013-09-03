@@ -279,6 +279,12 @@ class ministrip
    //! shoot a ray and return the distance to the bounding sphere
    virtual double shootbsphere(const miniv3d &o,const miniv3d &d,double mindist=0.0) const;
 
+   //! serialization
+   ministring to_string() const;
+
+   //! deserialization
+   void from_string(ministring &info);
+
    protected:
 
    int SIZE;

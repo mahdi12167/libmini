@@ -410,6 +410,26 @@ class ministring: public ministring_base
       return(v);
       }
 
+   //! conversion to int value
+   double value_int()
+      {
+      int v;
+
+      if (sscanf(c_str(),"%i",&v)!=1) v=0;
+
+      return(v);
+      }
+
+   //! conversion to unsigned int value
+   double value_uint()
+      {
+      unsigned int v;
+
+      if (sscanf(c_str(),"%u",&v)!=1) v=0;
+
+      return(v);
+      }
+
    //! unique checksum
    ministring checksum(unsigned int length=4) const
       {

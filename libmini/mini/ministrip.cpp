@@ -1510,3 +1510,47 @@ double ministrip::shootbsphere(const miniv3d &o,const miniv3d &d,double mindist)
 
    return((l<mindist)?-MAXFLOAT:l);
    }
+
+// serialization
+ministring ministrip::to_string() const
+   {
+   ministring info("ministrip");
+
+   info.append("(");
+   info.append_uint(SIZE);
+   info.append(",");
+   info.append_int(COLCOMPS);
+   info.append(",");
+   info.append_int(NRMCOMPS);
+   info.append(",");
+   info.append_int(TEXCOMPS);
+   info.append(")");
+   info.append("[");
+   //!!info.append_array(VTXARRAY,3*SIZE);
+   info.append("]");
+
+   return(info);
+   }
+
+// deserialization
+void ministrip::from_string(ministring &info)
+   {
+   unsigned int size;
+   int colcomps,nrmcomps,texcomps;
+
+   if (info.startswith("ministrip"))
+      {
+      info=info.tail("ministrip(");
+      size=info.prefix(",").value_uint();
+      info=info.tail(",");
+      colcomps=info.prefix(",").value_int();
+      info=info.tail(",");
+      nrmcomps=info.prefix(",").value_int();
+      info=info.tail(",");
+      texcomps=info.prefix(",").value_int();
+      info=info.tail(")");
+      info=info.tail("[");
+      //!!info.retrieve_array(&VTXARRAY,3*size);
+      info=info.tail("]");
+      }
+   }
