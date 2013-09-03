@@ -126,6 +126,32 @@ class ministring: public ministring_base
       append(str);
       }
 
+   //! append uchar array
+   void append_array(const unsigned char *array,unsigned int n)
+      {
+      unsigned int i;
+
+      for (i=0; i<n; i++) append((char)array[i]);
+      }
+
+   //! append float array
+   void append_array(const float *array,unsigned int n)
+      {
+      unsigned int i;
+
+      union
+         {
+         unsigned char uchar[4];
+         float float32;
+         } float32;
+
+      for (i=0; i<n; i++)
+         {
+         float32.float32=array[i];
+         append_array(float32.uchar,4);
+         }
+      }
+
    //! check for existing sub-string and return first occurring index
    BOOLINT find(const ministring_base &sub,unsigned int &idx,
                 unsigned int start=0) const

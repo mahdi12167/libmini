@@ -1525,9 +1525,31 @@ ministring ministrip::to_string() const
    info.append(",");
    info.append_int(TEXCOMPS);
    info.append(")");
-   info.append("[");
-   //!!info.append_array(VTXARRAY,3*SIZE);
+
+   info.append("vertex[");
+   info.append_array(VTXARRAY,3*SIZE);
    info.append("]");
+
+   if (COLCOMPS>0)
+      {
+      info.append("color[");
+      info.append_array(COLARRAY,COLCOMPS*SIZE);
+      info.append("]");
+      }
+
+   if (NRMCOMPS>0)
+      {
+      info.append("normal[");
+      info.append_array(NRMARRAY,NRMCOMPS*SIZE);
+      info.append("]");
+      }
+
+   if (TEXCOMPS>0)
+      {
+      info.append("texcoord[");
+      info.append_array(TEXARRAY,TEXCOMPS*SIZE);
+      info.append("]");
+      }
 
    return(info);
    }
@@ -1550,7 +1572,7 @@ void ministrip::from_string(ministring &info)
       texcomps=info.prefix(",").value_int();
       info=info.tail(")");
       info=info.tail("[");
-      //!!info.retrieve_array(&VTXARRAY,3*size);
+      //!!info.extract_array(&VTXARRAY,3*size);
       info=info.tail("]");
       }
    }
