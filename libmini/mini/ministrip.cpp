@@ -1614,5 +1614,7 @@ void ministrip::from_string(ministring &info)
          info.startat(texcomps*size);
          info=info.tail("]");
          }
+
+      SIZE=size;
       }
    }
