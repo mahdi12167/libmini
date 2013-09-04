@@ -145,11 +145,34 @@ class ministring: public ministring_base
          float float32;
          } float32;
 
-      for (i=0; i<n; i++)
+      union
          {
-         float32.float32=array[i];
-         append_array(float32.uchar,4);
-         }
+         unsigned char uchar[2];
+         unsigned short int int16;
+         } int16;
+
+      int16.int16=1;
+
+      if (int16.uchar[0]!=0)
+         for (i=0; i<n; i++)
+            {
+            float32.float32=array[i];
+
+            append((char)float32.uchar[0]);
+            append((char)float32.uchar[1]);
+            append((char)float32.uchar[2]);
+            append((char)float32.uchar[3]);
+            }
+      else
+         for (i=0; i<n; i++)
+            {
+            float32.float32=array[i];
+
+            append((char)float32.uchar[3]);
+            append((char)float32.uchar[2]);
+            append((char)float32.uchar[1]);
+            append((char)float32.uchar[0]);
+            }
       }
 
    //! check for existing sub-string and return first occurring index
@@ -454,6 +477,55 @@ class ministring: public ministring_base
       if (sscanf(c_str(),"%u",&v)!=1) v=0;
 
       return(v);
+      }
+
+   //! extract uchar array
+   void extract_array(unsigned char *array,unsigned int n)
+      {
+      unsigned int i;
+
+      for (i=0; i<n; i++) array[i]=(unsigned char)get(i);
+      }
+
+   //! extract float array
+   void extract_array(float *array,unsigned int n)
+      {
+      unsigned int i;
+
+      union
+         {
+         unsigned char uchar[4];
+         float float32;
+         } float32;
+
+      union
+         {
+         unsigned char uchar[2];
+         unsigned short int int16;
+         } int16;
+
+      int16.int16=1;
+
+      if (int16.uchar[0]!=0)
+         for (i=0; i<n; i++)
+            {
+            float32.uchar[0]=get(4*i);
+            float32.uchar[1]=get(4*i+1);
+            float32.uchar[2]=get(4*i+2);
+            float32.uchar[3]=get(4*i+3);
+
+            array[i]=float32.float32;
+            }
+      else
+         for (i=0; i<n; i++)
+            {
+            float32.uchar[3]=get(4*i);
+            float32.uchar[2]=get(4*i+1);
+            float32.uchar[1]=get(4*i+2);
+            float32.uchar[0]=get(4*i+3);
+
+            array[i]=float32.float32;
+            }
       }
 
    //! unique checksum
