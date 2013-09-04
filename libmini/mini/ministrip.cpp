@@ -1588,14 +1588,14 @@ void ministrip::from_string(ministring &info)
 
       info=info.tail("vertex[");
       info.extract_array(VTXARRAY,3*size);
-      //!!info.delete(3*size);
+      info.startat(3*size);
       info=info.tail("]");
 
       if (colcomps>0)
          {
          info=info.tail("color[");
          info.extract_array(VTXARRAY,colcomps*size);
-         //!!info.delete(colcomps*size);
+         info.startat(colcomps*size);
          info=info.tail("]");
          }
 
@@ -1603,7 +1603,7 @@ void ministrip::from_string(ministring &info)
          {
          info=info.tail("normal[");
          info.extract_array(NRMARRAY,nrmcomps*size);
-         //!!info.delete(nrmcomps*size);
+         info.startat(nrmcomps*size);
          info=info.tail("]");
          }
 
@@ -1611,7 +1611,7 @@ void ministrip::from_string(ministring &info)
          {
          info=info.tail("texcoord[");
          info.extract_array(TEXARRAY,texcomps*size);
-         //!!info.delete(texcomps*size);
+         info.startat(texcomps*size);
          info=info.tail("]");
          }
       }

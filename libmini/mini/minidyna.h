@@ -173,6 +173,10 @@ class minidyna
    void truncate(unsigned int idx)
       {if (idx<SIZE) setsize(idx);}
 
+   //! start array at index
+   void startat(unsigned int idx)
+      {copy(rangefrom(idx));}
+
    //! clear with value
    void clear(const Item &c)
       {
