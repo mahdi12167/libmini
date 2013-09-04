@@ -4,11 +4,14 @@
 #define MINICRS_TEST // enable this to perform a test of the minicrs class
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
+#define MINISTRIP_TEST // enable this to perform a test of the ministrip class
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
 #include <mini/minicrs.h>
 #include <mini/minicoord.h>
+#include <mini/ministring.h>
+#include <mini/ministrip.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -73,6 +76,12 @@ void keyboardfunc(unsigned char key,int x,int y)
 
    mousex=(float)x/(winwidth-1);
    mousey=(float)y/(winwidth-1);
+
+   if (mousex<0.0f) mousex=0.0f;
+   else if (mousex>1.0f) mousex=1.0f;
+
+   if (mousey<0.0f) mousey=0.0f;
+   else if (mousey>1.0f) mousey=1.0f;
 
    if (key=='q' || key==27)
       {
@@ -165,6 +174,40 @@ int main(int argc,char *argv[])
    unsigned int count=0;
    for (unsigned int i=0; i<check1.getsize(); i++) if (check1[i]!=check2[i]) count++;
    if (count==1) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
+#endif
+
+#ifdef MINISTRIP_TEST
+   ministrip strip1(3,3);
+   strip1.setcol(1,0,0);
+   strip1.setnrm(0,0,-1);
+   strip1.beginstrip();
+   strip1.addvtx(0,0,0);
+   strip1.addvtx(1,0,0);
+   strip1.addvtx(0,1,0);
+   strip1.addvtx(1,1,0);
+   strip1.beginstrip();
+   strip1.addvtx(0,0,0);
+   strip1.addvtx(-1,0,0);
+   strip1.addvtx(0,1,0);
+   strip1.addvtx(-1,1,0);
+   int size1=strip1.getsize();
+   ministring strip=strip1.to_string();
+   unsigned int before=strip.size();
+   miniv3d bboxmin1,bboxmax1;
+   strip1.getbbox(bboxmin1,bboxmax1);
+   std::cout << "ministrip: size1=" << size1 << " before=" << before << std::endl;
+   std::cout << "ministrip: bbox1=" << bboxmin1 << "->" << bboxmax1 << std::endl;
+   std::cout << "ministrip: " << strip << std::endl;
+   ministrip strip2;
+   strip2.from_string(strip);
+   int size2=strip2.getsize();
+   unsigned int after=strip.size();
+   miniv3d bboxmin2,bboxmax2;
+   strip2.getbbox(bboxmin2,bboxmax2);
+   std::cout << "ministrip: size2=" << size2 << " after=" << after << std::endl;
+   std::cout << "ministrip: bbox2=" << bboxmin2 << "->" << bboxmax2 << std::endl;
+   if (size1==10 && size2==10 && before==588 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 

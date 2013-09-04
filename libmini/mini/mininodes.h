@@ -79,6 +79,22 @@ class mininode_group: public mininode
    //! a return value of MAXFLOAT indicates that there was no hit
    virtual double shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj=NULL,double mindist=0.0) const;
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {return("mininode_group");}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_group"))
+         {
+         info=info.tail("mininode_group");
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    protected:
 
    virtual void traverse_init();
@@ -1486,6 +1502,39 @@ class mininode_geometry_base: public mininode_color, public ministrip
    //! get the object name of the geometry node
    ministring get_name()
       {return(name);}
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return("mininode_geometry("+ministrip::to_string()+")");}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_geometry"))
+         {
+         info=info.tail("mininode_geometry(");
+         ministrip::from_string(info);
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   //! create node from string
+   virtual mininode_ref create_from_string(ministring &info)
+      {
+      mininode_ref ref;
+
+      mininode_ref group=new mininode_group;
+      if (group->from_string(info)) ref=group;
+
+      mininode_ref geometry=new mininode_geometry_base;
+      if (geometry->from_string(info)) ref=geometry;
+
+      return(ref);
+      }
 
    protected:
 

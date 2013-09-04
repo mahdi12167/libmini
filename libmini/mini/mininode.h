@@ -10,6 +10,8 @@
 #include "minidyna.h"
 #include "miniref.h"
 
+#include "ministring.h"
+
 //! graph node
 class mininode: public minidyna< miniref<mininode> >
    {
@@ -250,6 +252,70 @@ class mininode: public minidyna< miniref<mininode> >
          m_dirty=FALSE;
          }
       }
+
+   //! traverse graph and serialize nodes to string list
+   ministrings to_strings(int level=0)
+      {
+      ministrings infos;
+
+      unsigned int s=get_links();
+
+      infos.append(ministring(' ',level)+"mininode("+to_string()+")");
+
+      if (s>0)
+         {
+         infos.append(ministring(' ',level)+"{");
+
+         for (unsigned int i=0; i<s; i++)
+            infos.append(get_link(i)->to_strings(level+1));
+
+         infos.append(ministring(' ',level)+"}");
+         }
+
+      return(infos);
+      }
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return("");}
+
+   //! deserialize from string list
+   virtual miniref<mininode> from_strings(const ministrings &infos,unsigned int &line)
+      {
+      miniref<mininode> ref;
+
+      if (line<infos.getsize())
+         {
+         ministring info=infos[line].tail("mininode(").prefix(")");
+
+         ref=create_from_string(info);
+         line++;
+         }
+
+      if (ref)
+         if (line<infos.getsize())
+            if (infos[line].contains("{"))
+               {
+               line++;
+
+               do
+                  ref->append(from_strings(infos,line));
+               while (line<infos.getsize() && !infos[line].contains("}"));
+
+               if (line<infos.getsize())
+                  if (infos[line].contains("}")) line++;
+               }
+
+      return(ref);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(FALSE);}
+
+   //! create node from string
+   virtual miniref<mininode> create_from_string(ministring &info)
+      {return(NULL);}
 
    protected:
 

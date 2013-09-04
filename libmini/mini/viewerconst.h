@@ -29,6 +29,7 @@
 
 #define VIEWER_JUMP 1000.0f
 #define VIEWER_DAMP 0.5f
+#define VIEWER_WATER 2.0f
 #define VIEWER_BOUNCE 10.0f
 
 #define VIEWER_FAST 10.0f

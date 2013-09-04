@@ -1563,6 +1563,16 @@ ministring ministrip::to_string() const
       info.append("]");
       }
 
+   info.append("(");
+   info.append(BBOXMIN.to_string());
+   info.append(",");
+   info.append(BBOXMAX.to_string());
+   info.append(",");
+   info.append_float(COLAMIN);
+   info.append(",");
+   info.append_float(COLAMAX);
+   info.append(")");
+
    return(info);
    }
 
@@ -1616,5 +1626,15 @@ void ministrip::from_string(ministring &info)
          }
 
       SIZE=size;
+
+      info=info.tail("(");
+      BBOXMIN.from_string(info);
+      info=info.tail(",");
+      BBOXMAX.from_string(info);
+      info=info.tail(",");
+      COLAMIN=info.prefix(",").value();
+      info=info.tail(",");
+      COLAMAX=info.prefix(")").value();
+      info=info.tail(")");
       }
    }

@@ -43,6 +43,10 @@ class ministring: public ministring_base
       for (i=0; i<l; i++) set(i,str[i]);
       }
 
+   //! constructor with initialization from char value
+   ministring(char c,unsigned int size): ministring_base(c,size)
+      {cstr=NULL;}
+
    //! constructor with initialization from floating-point value
    ministring(double v): ministring_base()
       {
@@ -158,20 +162,20 @@ class ministring: public ministring_base
             {
             float32.float32=array[i];
 
-            append((char)float32.uchar[0]);
-            append((char)float32.uchar[1]);
-            append((char)float32.uchar[2]);
             append((char)float32.uchar[3]);
+            append((char)float32.uchar[2]);
+            append((char)float32.uchar[1]);
+            append((char)float32.uchar[0]);
             }
       else
          for (i=0; i<n; i++)
             {
             float32.float32=array[i];
 
-            append((char)float32.uchar[3]);
-            append((char)float32.uchar[2]);
-            append((char)float32.uchar[1]);
             append((char)float32.uchar[0]);
+            append((char)float32.uchar[1]);
+            append((char)float32.uchar[2]);
+            append((char)float32.uchar[3]);
             }
       }
 
@@ -509,20 +513,20 @@ class ministring: public ministring_base
       if (int16.uchar[0]!=0)
          for (i=0; i<n; i++)
             {
-            float32.uchar[0]=get(4*i);
-            float32.uchar[1]=get(4*i+1);
-            float32.uchar[2]=get(4*i+2);
-            float32.uchar[3]=get(4*i+3);
+            float32.uchar[3]=get(4*i);
+            float32.uchar[2]=get(4*i+1);
+            float32.uchar[1]=get(4*i+2);
+            float32.uchar[0]=get(4*i+3);
 
             array[i]=float32.float32;
             }
       else
          for (i=0; i<n; i++)
             {
-            float32.uchar[3]=get(4*i);
-            float32.uchar[2]=get(4*i+1);
-            float32.uchar[1]=get(4*i+2);
-            float32.uchar[0]=get(4*i+3);
+            float32.uchar[0]=get(4*i);
+            float32.uchar[1]=get(4*i+1);
+            float32.uchar[2]=get(4*i+2);
+            float32.uchar[3]=get(4*i+3);
 
             array[i]=float32.float32;
             }
@@ -739,8 +743,9 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
       {
       c=a[i];
 
-      if (c=='\n' || c=='\r' || c=='\t') out << ' ';
-      else out << c;
+      if (isprint(c))
+         if (c=='\n' || c=='\r' || c=='\t') out << ' ';
+         else out << c;
       }
 
    out << "\"";

@@ -89,7 +89,7 @@ static double turn,incline;
 static double minspeed=VIEWER_MINSPEED,maxspeed=VIEWER_MAXSPEED,speedinc=0.1,accel=0.1,gravity=0.0,hover=VIEWER_HOVER;
 
 // jumping parameters
-static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,fast=VIEWER_FAST,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
+static double jump=VIEWER_JUMP,damp=VIEWER_DAMP,water=VIEWER_WATER,bounce=VIEWER_BOUNCE,earthg=VIEWER_GRAVITY,fast=VIEWER_FAST,boost=VIEWER_BOOST,slow=VIEWER_SLOW;
 
 // steering parameters
 static double oneturn=5.0,oneincline=5.0;
@@ -850,6 +850,8 @@ void render()
    dez+=aez/params->fps;
    dez*=pow(1.0/(1.0+damp),1.0/params->fps);
 
+   if (elev<0.0) dez*=pow(1.0/(1.0+water),1.0/params->fps);
+
    cam->move_down(-dez/params->fps);
 
    dist=cam->get_dist();
@@ -983,6 +985,12 @@ void keyboardfunc(unsigned char key,int x,int y)
 
    mousex=(float)x/(winwidth-1);
    mousey=(float)y/(winwidth-1);
+
+   if (mousex<0.0f) mousex=0.0f;
+   else if (mousex>1.0f) mousex=1.0f;
+
+   if (mousey<0.0f) mousey=0.0f;
+   else if (mousey>1.0f) mousey=1.0f;
 
    switch (key)
       {
