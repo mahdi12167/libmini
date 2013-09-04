@@ -637,6 +637,18 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,int maxsize)
    USESHADER=-1;
    }
 
+// reinit strip
+void ministrip::reinit(int colcomps,int nrmcomps,int texcomps,int maxsize)
+   {
+   free(VTXARRAY);
+
+   if (COLARRAY!=NULL) free(COLARRAY);
+   if (NRMARRAY!=NULL) free(NRMARRAY);
+   if (TEXARRAY!=NULL) free(TEXARRAY);
+
+   init(colcomps,nrmcomps,texcomps,maxsize);
+   }
+
 // clear strip
 void ministrip::clear()
    {
@@ -1571,8 +1583,36 @@ void ministrip::from_string(ministring &info)
       info=info.tail(",");
       texcomps=info.prefix(",").value_int();
       info=info.tail(")");
-      info=info.tail("[");
-      //!!info.extract_array(&VTXARRAY,3*size);
+
+      reinit(colcomps,nrmcomps,texcomps,size);
+
+      info=info.tail("vertex[");
+      info.extract_array(VTXARRAY,3*size);
+      //!!info.delete(3*size);
       info=info.tail("]");
+
+      if (colcomps>0)
+         {
+         info=info.tail("color[");
+         info.extract_array(VTXARRAY,colcomps*size);
+         //!!info.delete(colcomps*size);
+         info=info.tail("]");
+         }
+
+      if (nrmcomps>0)
+         {
+         info=info.tail("normal[");
+         info.extract_array(NRMARRAY,nrmcomps*size);
+         //!!info.delete(nrmcomps*size);
+         info=info.tail("]");
+         }
+
+      if (texcomps>0)
+         {
+         info=info.tail("texcoord[");
+         info.extract_array(TEXARRAY,texcomps*size);
+         //!!info.delete(texcomps*size);
+         info=info.tail("]");
+         }
       }
    }

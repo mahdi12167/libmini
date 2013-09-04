@@ -337,6 +337,7 @@ class ministrip
    private:
 
    void init(int colcomps,int nrmcomps,int texcomps,int maxsize=1);
+   void reinit(int colcomps,int nrmcomps,int texcomps,int maxsize=1);
 
    struct SHADER_STRUCT
       {
