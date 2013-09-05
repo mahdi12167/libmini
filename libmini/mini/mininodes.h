@@ -2041,6 +2041,23 @@ class mininode_deferred_semitransparent: public mininode_deferred
       return(nodes);
       }
 
+   //! save graph
+   void save(const ministring &filename)
+      {
+      ministrings infos=to_strings();
+      infos.save(filename);
+      }
+
+   //! load graph
+   mininode_ref load(const ministring &filename,unsigned int line=0)
+      {
+      ministrings infos;
+
+      infos.load(filename);
+
+      return(from_strings(infos,line));
+      }
+
    protected:
 
    unsigned int deferred_passes;
