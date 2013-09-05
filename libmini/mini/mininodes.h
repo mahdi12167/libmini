@@ -1503,39 +1503,6 @@ class mininode_geometry_base: public mininode_color, public ministrip
    ministring get_name()
       {return(name);}
 
-   //! serialize node to string
-   virtual ministring to_string()
-      {return("mininode_geometry("+ministrip::to_string()+")");}
-
-   //! deserialize node from string
-   virtual BOOLINT from_string(ministring &info)
-      {
-      if (info.startswith("mininode_geometry"))
-         {
-         info=info.tail("mininode_geometry(");
-         ministrip::from_string(info);
-         info=info.tail(")");
-
-         return(TRUE);
-         }
-
-      return(FALSE);
-      }
-
-   //! create node from string
-   virtual mininode_ref create_from_string(ministring &info)
-      {
-      mininode_ref ref;
-
-      mininode_ref group=new mininode_group;
-      if (group->from_string(info)) ref=group;
-
-      mininode_ref geometry=new mininode_geometry_base;
-      if (geometry->from_string(info)) ref=geometry;
-
-      return(ref);
-      }
-
    protected:
 
    int wocol,wonrm,wotex;
@@ -1624,6 +1591,25 @@ class mininode_geometry: public mininode_geometry_base
 
    static const geometry_deferred_list *get_deferred_tex3D()
       {return(&list_tex3D);}
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return("mininode_geometry("+ministrip::to_string()+")");}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_geometry"))
+         {
+         info=info.tail("mininode_geometry(");
+         ministrip::from_string(info);
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
 
    protected:
 
@@ -2043,6 +2029,17 @@ class mininode_deferred_semitransparent: public mininode_deferred
    //! 4 = z-limited additive blending: slow but with good depth perception
    void set_passes(unsigned int passes)
       {deferred_passes=passes;}
+
+   //! enumerate deserializable nodes
+   virtual minidyna< miniref<mininode> > enumerate_nodes()
+      {
+      minidyna< miniref<mininode> > nodes;
+
+      nodes.append(new mininode_group);
+      nodes.append(new mininode_geometry);
+
+      return(nodes);
+      }
 
    protected:
 

@@ -280,7 +280,7 @@ class mininode: public minidyna< miniref<mininode> >
       {return("");}
 
    //! deserialize from string list
-   virtual miniref<mininode> from_strings(const ministrings &infos,unsigned int &line)
+   miniref<mininode> from_strings(const ministrings &infos,unsigned int &line)
       {
       miniref<mininode> ref;
 
@@ -299,7 +299,7 @@ class mininode: public minidyna< miniref<mininode> >
                line++;
 
                do
-                  ref->append(from_strings(infos,line));
+                  ref->append_child(from_strings(infos,line));
                while (line<infos.getsize() && !infos[line].contains("}"));
 
                if (line<infos.getsize())
@@ -314,8 +314,32 @@ class mininode: public minidyna< miniref<mininode> >
       {return(FALSE);}
 
    //! create node from string
-   virtual miniref<mininode> create_from_string(ministring &info)
-      {return(NULL);}
+   miniref<mininode> create_from_string(ministring &info)
+      {
+      unsigned int i;
+
+      miniref<mininode> ref;
+
+      minidyna< miniref<mininode> > nodes;
+
+      nodes=enumerate_nodes();
+
+      for (i=0; i<nodes.getsize(); i++)
+         if (nodes[i]->from_string(info))
+            {
+            ref=nodes[i];
+            break;
+            }
+
+      return(ref);
+      }
+
+   //! enumerate deserializable nodes
+   virtual minidyna< miniref<mininode> > enumerate_nodes()
+      {
+      minidyna< miniref<mininode> > nodes;
+      return(nodes);
+      }
 
    protected:
 
