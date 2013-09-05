@@ -743,9 +743,8 @@ inline std::ostream& operator << (std::ostream &out,const ministring &a)
       {
       c=a[i];
 
-      if (isprint(c))
-         if (c=='\n' || c=='\r' || c=='\t') out << ' ';
-         else out << c;
+      if (c=='\n' || c=='\r' || c=='\t') out << ' ';
+      else if (isprint(c)) out << c;
       }
 
    out << "\"";
