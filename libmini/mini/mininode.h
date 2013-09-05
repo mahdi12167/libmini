@@ -275,6 +275,10 @@ class mininode: public minidyna< miniref<mininode> >
       return(infos);
       }
 
+   //! traverse graph and serialize nodes to text
+   ministring serialize()
+      {return(to_strings().serialize());}
+
    //! serialize node to string
    virtual ministring to_string()
       {return("");}
@@ -307,6 +311,15 @@ class mininode: public minidyna< miniref<mininode> >
                }
 
       return(ref);
+      }
+
+   //! deserialize text to graph
+   miniref<mininode> deserialize(const ministring &text,unsigned int line=0)
+      {
+      ministrings infos;
+      infos.deserialize(text);
+
+      return(from_strings(infos,line));
       }
 
    //! deserialize node from string
