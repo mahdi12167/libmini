@@ -276,7 +276,7 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! traverse graph and serialize nodes to text
-   ministring serialize()
+   ministring to_text()
       {return(to_strings().serialize());}
 
    //! serialize node to string
@@ -314,7 +314,7 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! deserialize text to graph
-   miniref<mininode> deserialize(const ministring &text,unsigned int line=0)
+   miniref<mininode> from_text(const ministring &text,unsigned int line=0)
       {
       ministrings infos;
       infos.deserialize(text);
