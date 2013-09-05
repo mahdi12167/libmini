@@ -484,7 +484,7 @@ class ministring: public ministring_base
       }
 
    //! extract uchar array
-   void extract_array(unsigned char *array,unsigned int n)
+   void extract_array(unsigned char *array,unsigned int n) const
       {
       unsigned int i;
 
@@ -492,7 +492,7 @@ class ministring: public ministring_base
       }
 
    //! extract float array
-   void extract_array(float *array,unsigned int n)
+   void extract_array(float *array,unsigned int n) const
       {
       unsigned int i;
 
@@ -821,11 +821,11 @@ class ministrings: public minidyna<ministring>
 
    //! save to file
    void save(ministring filename) const
-      {writestring(filename.c_str(),serialize().c_str());}
+      {writeministring(filename.c_str(),serialize());}
 
    //! load from file
    void load(ministring filename)
-      {deserialize(readstring(filename.c_str()));}
+      {deserialize(readministring(filename.c_str()));}
 
    //! unique checksum
    ministring checksum(unsigned int length=4) const

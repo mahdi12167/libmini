@@ -11,6 +11,7 @@
 #endif
 
 #include "minibase.h"
+#include "ministring.h"
 
 #include "miniio.h"
 
@@ -118,6 +119,23 @@ unsigned char *readfiled(FILE *file,long long *bytes)
 void writestring(const char *filename,const char *cstr)
    {writefile(filename,(unsigned char *)cstr,strlen(cstr));}
 
+// write a ministring as RAW file
+void writeministring(const char *filename,const ministring &str)
+   {
+   unsigned char *text;
+   unsigned int size;
+
+   size=str.getsize();
+
+   if ((text=(unsigned char *)malloc(size))==NULL) MEMERROR();
+
+   str.extract_array(text,size);
+
+   writefile(filename,text,size);
+
+   free(text);
+   }
+
 // read a RAW file as string
 char *readstring(const char *filename)
    {
@@ -132,6 +150,25 @@ char *readstring(const char *filename)
    data[bytes]='\0';
 
    return(data);
+   }
+
+// read a RAW file as ministring
+ministring readministring(const char *filename)
+   {
+   unsigned char *data;
+   long long bytes;
+
+   ministring str;
+
+   data=readfile(filename,&bytes);
+
+   if (data==NULL) return("");
+
+   str.append_array(data,bytes);
+
+   free(data);
+
+   return(str);
    }
 
 // read a RAW file and compute signature

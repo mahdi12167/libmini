@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 
+class ministring;
+
 namespace miniio {
 
 //! check a file
@@ -26,8 +28,14 @@ unsigned char *readfiled(FILE *file,long long *bytes);
 //! write a string as RAW file
 void writestring(const char *filename,const char *cstr);
 
+//! write a ministring as RAW file
+void writeministring(const char *filename,const ministring &str);
+
 //! read a RAW file as string
 char *readstring(const char *filename);
+
+//! read a RAW file as ministring
+ministring readministring(const char *filename);
 
 //! read a RAW file and compute signature
 unsigned int signature(const char *filename);
