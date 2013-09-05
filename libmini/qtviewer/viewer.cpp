@@ -51,6 +51,11 @@ void Viewer::init()
    // link ecef geometry to scene graph
    m_root->append_child(build_ecef_geometry());
 
+#ifdef VIEWER_TEST
+   ministring graph=m_root->to_text();
+   writeministring("graph.txt",graph);
+#endif
+
    // load textures
 #if VIEWER_INTERNAL_CROSSHAIR
    loadCrossHair(m_CrosshairTextureId);
