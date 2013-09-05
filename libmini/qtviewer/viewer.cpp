@@ -52,8 +52,7 @@ void Viewer::init()
    m_root->append_child(build_ecef_geometry());
 
 #ifdef VIEWER_TEST
-   ministring graph=m_root->to_text();
-   writeministring("graph.txt",graph);
+   m_root->save("scene.graph");
 #endif
 
    // load textures
