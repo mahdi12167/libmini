@@ -92,9 +92,14 @@ class ministring: public ministring_base
       static const int len=32;
       static char str[len];
 
-      snprintf(str,len,"%.7e",v);
-
-      append(str);
+      if (v==0.0f) append("0");
+      else if (v==1.0f) append("1");
+      else if (v==-1.0f) append("-1");
+      else
+         {
+         snprintf(str,len,"%.7e",v);
+         append(str);
+         }
       }
 
    //! append double value
@@ -103,9 +108,14 @@ class ministring: public ministring_base
       static const int len=32;
       static char str[len];
 
-      snprintf(str,len,"%.16e",v);
-
-      append(str);
+      if (v==0.0) append("0");
+      else if (v==1.0) append("1");
+      else if (v==-1.0) append("-1");
+      else
+         {
+         snprintf(str,len,"%.16e",v);
+         append(str);
+         }
       }
 
    //! append integer value
@@ -464,7 +474,7 @@ class ministring: public ministring_base
       }
 
    //! conversion to int value
-   double value_int()
+   int value_int()
       {
       int v;
 
@@ -474,7 +484,7 @@ class ministring: public ministring_base
       }
 
    //! conversion to unsigned int value
-   double value_uint()
+   unsigned int value_uint()
       {
       unsigned int v;
 

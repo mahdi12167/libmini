@@ -265,6 +265,37 @@ class mininode_color: public mininode_group
    static miniv4d get_glcolor()
       {return(glcolor);}
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_color(");
+
+      info.append_int(use_color);
+      info.append(",");
+      info.append(rgba.to_string());
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_color"))
+         {
+         info=info.tail("mininode_color(");
+
+         use_color=info.prefix(",").value_int();
+         info=info.tail(",");
+         rgba.from_string(info);
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    protected:
 
    BOOLINT use_color;
@@ -377,6 +408,10 @@ class mininode_texture: public mininode_group
    //! set active texture status
    void set_active(BOOLINT on)
       {is_on=on;}
+
+   //! set texture clamping
+   void set_clamp(BOOLINT clamp)
+      {texclamp=clamp;}
 
    //! get texture clamping
    BOOLINT get_clamp() const
@@ -699,38 +734,88 @@ class mininode_image: public mininode_texture2D
    {
    public:
 
+   //! default constructor
+   mininode_image()
+      : mininode_texture2D()
+      {}
+
    //! custom constructor
    mininode_image(ministring filename,BOOLINT clamp=FALSE)
-      : mininode_texture2D(clamp)
+      : mininode_texture2D()
+      {load(filename,clamp);}
+
+   //! load image from file
+   void load(ministring filename,BOOLINT clamp=FALSE)
       {
+      filename_=filename;
+      clamp_=clamp;
+
       databuf buf;
       if (miniimg::loadimg(buf,filename.c_str()))
          {
          if (buf.xsize>=2 && buf.ysize>=2)
             if (buf.type==databuf::DATABUF_TYPE_BYTE)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
             else if (buf.type==databuf::DATABUF_TYPE_SHORT)
                {
                buf.convertdata(databuf::DATABUF_TYPE_BYTE);
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,1,8);
                }
             else if (buf.type==databuf::DATABUF_TYPE_RGB)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8);
             else if (buf.type==databuf::DATABUF_TYPE_RGBA)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8);
             else if (buf.type==databuf::DATABUF_TYPE_RGB_S3TC)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,0,1,buf.bytes);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,0,1,buf.bytes);
             else if (buf.type==databuf::DATABUF_TYPE_RGBA_S3TC)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,0,1,buf.bytes);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,0,1,buf.bytes);
             else if (buf.type==databuf::DATABUF_TYPE_RGB_MM_S3TC)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,1,1,buf.bytes,1);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,3,8,1,1,buf.bytes,1);
             else if (buf.type==databuf::DATABUF_TYPE_RGBA_MM_S3TC)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,1,1,buf.bytes,1);
+               mininode_texture2D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,4,8,1,1,buf.bytes,1);
 
          buf.release();
+
+         set_clamp(clamp);
          }
       }
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_image(");
+
+      info.append(filename_);
+      info.append(",");
+      info.append_int(clamp_);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_image"))
+         {
+         info=info.tail("mininode_image(");
+         filename_=info.prefix(",");
+         info=info.tail(",");
+         clamp_=info.prefix(")").value_int();
+         info=info.tail(")");
+
+         load(filename_,clamp_);
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   protected:
+
+   ministring filename_;
+   BOOLINT clamp_;
    };
 
 //! volume node
@@ -739,25 +824,67 @@ class mininode_volume: public mininode_texture3D
    {
    public:
 
+   //! default constructor
+   mininode_volume()
+      : mininode_texture3D()
+      {}
+
    //! custom constructor
    mininode_volume(ministring filename)
       : mininode_texture3D()
+      {load(filename);}
+
+   //! load volume from file
+   void load(ministring filename)
       {
+      filename_=filename;
+
       databuf buf;
       if (miniimg::loadimg(buf,filename.c_str()))
          {
          if (buf.xsize>=2 && buf.ysize>=2 && buf.zsize>=2)
             if (buf.type==databuf::DATABUF_TYPE_BYTE)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
+               mininode_texture3D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,1);
             else if (buf.type==databuf::DATABUF_TYPE_RGB)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,3);
+               mininode_texture3D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,3);
             else if (buf.type==databuf::DATABUF_TYPE_RGBA)
-               load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,4);
+               mininode_texture3D::load((unsigned char *)buf.data,buf.xsize,buf.ysize,buf.zsize,4);
 
          buf.release();
          }
       }
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_volume(");
+
+      info.append(filename_);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_volume"))
+         {
+         info=info.tail("mininode_volume(");
+         filename_=info.prefix(")");
+         info=info.tail(")");
+
+         load(filename_);
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   protected:
+
+   ministring filename_;
    };
 
 //! switch node
@@ -788,6 +915,33 @@ class mininode_switch: public mininode_group
 
    BOOLINT is_toggled() const
       {return(is_on);}
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_switch(");
+
+      info.append_int(is_on);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_switch"))
+         {
+         info=info.tail("mininode_switch(");
+
+         is_on=info.prefix(")").value_int();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
 
    protected:
 
@@ -826,6 +980,33 @@ class mininode_selector: public mininode_group
    unsigned int get_selections() const
       {return(getsize());}
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_selector(");
+
+      info.append_uint(index);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_selector"))
+         {
+         info=info.tail("mininode_selector(");
+
+         index=info.prefix(")").value_uint();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    protected:
 
    unsigned int index;
@@ -854,6 +1035,35 @@ class mininode_lod: public mininode_selector
 
    static double get_ratio()
       {return(global_ratio);}
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_lod(");
+
+      info.append_double(ratio);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_lod"))
+         {
+         info=info.tail("mininode_lod(");
+
+         ratio=info.prefix(")").value();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   protected:
 
    virtual void traverse_pre()
       {
@@ -884,8 +1094,6 @@ class mininode_lod: public mininode_selector
                }
          }
       }
-
-   protected:
 
    double ratio;
    static double global_ratio;
@@ -922,6 +1130,49 @@ class mininode_transform: public mininode_dynamic
       {
       center=bound_center;
       radius=bound_radius;
+      }
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      int i;
+
+      ministring info("mininode_transform(");
+
+      for (i=0; i<15; i++)
+         {
+         info.append_double(oglmtx[i]);
+         info.append(",");
+         }
+
+      info.append_double(oglmtx[15]);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_transform"))
+         {
+         int i;
+
+         info=info.tail("mininode_transform(");
+
+         for (i=0; i<15; i++)
+            {
+            oglmtx[i]=info.prefix(",").value();
+            info=info.tail(",");
+            }
+
+         oglmtx[15]=info.prefix(")").value();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
       }
 
    protected:
@@ -2036,6 +2287,12 @@ class mininode_deferred_semitransparent: public mininode_deferred
       minidyna< miniref<mininode> > nodes;
 
       nodes.append(new mininode_group);
+      nodes.append(new mininode_color);
+      nodes.append(new mininode_image);
+      nodes.append(new mininode_volume);
+      nodes.append(new mininode_switch);
+      nodes.append(new mininode_selector);
+      nodes.append(new mininode_transform);
       nodes.append(new mininode_geometry);
 
       return(nodes);

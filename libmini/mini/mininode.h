@@ -260,7 +260,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       unsigned int s=get_links();
 
-      infos.append(ministring(' ',level)+"mininode("+to_string()+")");
+      infos.append(ministring(' ',level)+"["+to_string()+"]");
 
       if (s>0)
          {
@@ -290,7 +290,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (line<infos.getsize())
          {
-         ministring info=infos[line].tail("mininode(").prefix(")");
+         ministring info=infos[line].tail("[").prefix("]");
 
          ref=create_from_string(info);
          line++;

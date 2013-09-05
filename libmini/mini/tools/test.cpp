@@ -123,7 +123,8 @@ int main(int argc,char *argv[])
 #ifdef OPENGL_TEST
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
-   if (get_unsupported_glexts()==0) std::cout << "SUCCESS" << std::endl;
+   if (get_unsupported_glexts()==0) std::cout << "OPENGL SUCCESS" << std::endl;
+   else std::cout << "OPENGL FAILURE" << std::endl;
 #endif
 
 #ifdef MINICRS_TEST
@@ -207,7 +208,7 @@ int main(int argc,char *argv[])
    strip2.getbbox(bboxmin2,bboxmax2);
    std::cout << "ministrip: size2=" << size2 << " after=" << after << std::endl;
    std::cout << "ministrip: bbox2=" << bboxmin2 << "->" << bboxmax2 << std::endl;
-   if (size1==10 && size2==10 && before==588 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
+   if (size1==10 && size2==10 && before==438 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 
