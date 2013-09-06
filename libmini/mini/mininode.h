@@ -289,7 +289,7 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (line<infos.getsize())
          {
-         ministring info=infos[line].tail("[").prefix("]");
+         ministring info=infos[line].tail("[").head("]");
 
          std::cout << info << std::endl; //!!
 
