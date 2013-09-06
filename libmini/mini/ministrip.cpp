@@ -1591,7 +1591,7 @@ void ministrip::from_string(ministring &info)
       info=info.tail(",");
       nrmcomps=info.prefix(",").value_int();
       info=info.tail(",");
-      texcomps=info.prefix(",").value_int();
+      texcomps=info.prefix(")").value_int();
       info=info.tail(")");
 
       reinit(colcomps,nrmcomps,texcomps,size);

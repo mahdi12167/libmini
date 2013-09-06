@@ -291,24 +291,26 @@ class mininode: public minidyna< miniref<mininode> >
          {
          ministring info=infos[line].tail("[").prefix("]");
 
+         std::cout << info << std::endl; //!!
+
          ref=create_from_string(info);
          line++;
-         }
 
-      if (ref)
-         if (line<infos.getsize())
-            if (infos[line].endswith("{"))
-               {
-               line++;
-
-               while (line<infos.getsize())
+         if (ref)
+            if (line<infos.getsize())
+               if (infos[line].endswith("{"))
                   {
-                  if (infos[line].endswith("}")) break;
-                  ref->append_child(from_strings(infos,line));
-                  }
+                  line++;
 
-               line++;
-               }
+                  while (line<infos.getsize())
+                     {
+                     if (infos[line].endswith("}")) break;
+                     ref->append_child(from_strings(infos,line));
+                     }
+
+                  line++;
+                  }
+         }
 
       return(ref);
       }
