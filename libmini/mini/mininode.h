@@ -291,8 +291,6 @@ class mininode: public minidyna< miniref<mininode> >
          {
          ministring info=infos[line].tail("[").head("]");
 
-         std::cout << info << std::endl; //!!
-
          ref=create_from_string(info);
          line++;
 

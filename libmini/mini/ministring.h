@@ -785,13 +785,25 @@ class ministrings: public minidyna<ministring>
    //! concatenate string list (serialization)
    ministring to_string(ministring separator="/") const
       {
+      static const ministring escape("`");
+      static const ministring escape0("`0");
+      static const ministring escape1("`1");
+
       unsigned int i;
 
       ministring str;
+      ministring s;
+
+      if (separator==escape) ERRORMSG();
 
       for (i=0; i<getsize(); i++)
          {
-         str += get(i);
+         s=get(i);
+
+         s.substitute(escape,escape0);
+         s.substitute(separator,escape1);
+
+         str += s;
          if (i<getsize()-1) str += separator;
          }
 
@@ -801,23 +813,37 @@ class ministrings: public minidyna<ministring>
    //! deconcatenate string list (deserialization)
    void from_string(const ministring &str,ministring separator="/")
       {
+      static const ministring escape("`");
+      static const ministring escape0("`0");
+      static const ministring escape1("`1");
+
       unsigned int left,right;
-      ministring sub;
+      ministring s;
+
+      if (separator==escape) ERRORMSG();
 
       left=0;
 
       while (str.find(separator,right,left))
          {
-         sub=str.range(left,right-1);
-         append(sub);
+         s=str.range(left,right-1);
+
+         s.substitute(escape1,separator);
+         s.substitute(escape0,escape);
+
+         append(s);
 
          left=right+separator.length();
          }
 
       if (left<str.length())
          {
-         sub=str.range(left,str.length()-1);
-         append(sub);
+         s=str.range(left,str.length()-1);
+
+         s.substitute(escape1,separator);
+         s.substitute(escape0,escape);
+
+         append(s);
          }
       }
 
