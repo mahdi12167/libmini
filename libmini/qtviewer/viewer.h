@@ -52,6 +52,9 @@ public:
    void       checkExagger(bool on);
    void       setExagger(double scale);
 
+   void       saveGraph(ministring filename) const;
+   void       loadGraph(ministring filename);
+
 protected:
    void       initParameters();
    void       initBathyMap();

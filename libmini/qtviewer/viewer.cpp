@@ -51,15 +51,6 @@ void Viewer::init()
    // link ecef geometry to scene graph
    m_root->append_child(build_ecef_geometry());
 
-#ifdef VIEWER_TEST
-   mininode_ref graph=m_root->get_childref();
-   graph->save("scene.graph");
-
-   mininode_group test;
-   test.load("scene.graph");
-   test.get_childref()->save("test.graph");
-#endif
-
    // load textures
 #if VIEWER_INTERNAL_CROSSHAIR
    loadCrossHair(m_CrosshairTextureId);
@@ -659,4 +650,16 @@ void Viewer::render_ecef_geometry(double t)
 double Viewer::shoot_ecef_geometry(const miniv3d &o,const miniv3d &d,double mindist)
 {
    return(m_root->shoot_ray(o,d,NULL,mindist));
+}
+
+// save scene graph
+void Viewer::saveGraph(ministring filename) const
+{
+   m_root->get_child()->save(filename);
+}
+
+// load scene graph
+void Viewer::loadGraph(ministring filename)
+{
+   m_root->append_child(m_root->load(filename));
 }
