@@ -52,12 +52,12 @@ void Viewer::init()
    m_root->append_child(build_ecef_geometry());
 
 #ifdef VIEWER_TEST
-   mininode_ref graph=m_root->get_child();
+   mininode_ref graph=m_root->get_childref();
    graph->save("scene.graph");
 
    mininode_group test;
-   //!!test.load("scene.graph");
-   //!!test.save("test.graph");
+   test.load("scene.graph");
+   test.get_childref()->save("test.graph");
 #endif
 
    // load textures
