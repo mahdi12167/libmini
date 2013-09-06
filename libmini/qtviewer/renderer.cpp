@@ -177,6 +177,11 @@ mininode_group *Renderer::build_ecef_geometry()
       append_child(new mininode_rotate(90, miniv3d(1.0, 0.0, 0.0)))->
       append_child(teapot);
 
+   group->save("scene.graph");
+
+   mininode_ref test=getRoot()->load("scene.graph");
+   test->save("test.graph");
+
 #endif
 
    return(group);
