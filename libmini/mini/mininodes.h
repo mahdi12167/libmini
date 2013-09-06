@@ -98,24 +98,6 @@ class mininode_group: public mininode
    //! enumerate deserializable nodes
    virtual minidyna< miniref<mininode> > enumerate_nodes();
 
-   //! save graph
-   void save(const ministring &filename)
-      {
-      ministrings infos;
-
-      infos=to_strings();
-      infos.save(filename);
-      }
-
-   //! load graph
-   void load(const ministring &filename,unsigned int line=0)
-      {
-      ministrings infos;
-
-      infos.load(filename);
-      append_child(from_strings(infos,line));
-      }
-
    protected:
 
    virtual void traverse_init();

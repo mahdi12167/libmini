@@ -349,6 +349,24 @@ class mininode: public minidyna< miniref<mininode> >
    //! enumerate deserializable nodes
    virtual minidyna< miniref<mininode> > enumerate_nodes() = 0;
 
+   //! save graph
+   void save(const ministring &filename)
+      {
+      ministrings infos;
+
+      infos=to_strings();
+      infos.save(filename);
+      }
+
+   //! load graph
+   void load(const ministring &filename,unsigned int line=0)
+      {
+      ministrings infos;
+
+      infos.load(filename);
+      append_child(from_strings(infos,line));
+      }
+
    protected:
 
    unsigned int m_id;
