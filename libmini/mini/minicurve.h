@@ -64,6 +64,12 @@ class minicurve : public minidyna<minicoord>
 
    void resample(double dt);
 
+   //! serialization
+   ministring to_string() const;
+
+   //! deserialization
+   void from_string(ministring &info);
+
    private:
 
    BOOLINT valid;

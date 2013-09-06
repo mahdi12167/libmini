@@ -254,7 +254,7 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! traverse graph and serialize nodes to string list
-   ministrings to_strings(int level=0)
+   ministrings to_strings(int level=0) const
       {
       ministrings infos;
 
@@ -276,14 +276,14 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! traverse graph and serialize nodes to text
-   ministring to_text()
+   ministring to_text() const
       {return(to_strings().serialize());}
 
    //! serialize node to string
-   virtual ministring to_string() = 0;
+   virtual ministring to_string() const = 0;
 
    //! deserialize from string list
-   miniref<mininode> from_strings(const ministrings &infos,unsigned int &line)
+   miniref<mininode> from_strings(const ministrings &infos,unsigned int &line) const
       {
       miniref<mininode> ref;
 
@@ -294,27 +294,29 @@ class mininode: public minidyna< miniref<mininode> >
          ref=create_from_string(info);
          line++;
 
-         if (ref)
-            if (line<infos.getsize())
-               if (infos[line].endswith("{"))
+         if (line<infos.getsize())
+            if (infos[line].endswith("{"))
+               {
+               line++;
+
+               while (line<infos.getsize())
                   {
-                  line++;
+                  if (infos[line].endswith("}")) break;
 
-                  while (line<infos.getsize())
-                     {
-                     if (infos[line].endswith("}")) break;
-                     ref->append_child(from_strings(infos,line));
-                     }
+                  miniref<mininode> sub=from_strings(infos,line);
 
-                  line++;
+                  if (ref) ref->append_child(sub);
                   }
+
+               line++;
+               }
          }
 
       return(ref);
       }
 
    //! deserialize text to graph
-   miniref<mininode> from_text(const ministring &text,unsigned int line=0)
+   miniref<mininode> from_text(const ministring &text,unsigned int line=0) const
       {
       ministrings infos;
       infos.deserialize(text);
@@ -326,7 +328,7 @@ class mininode: public minidyna< miniref<mininode> >
    virtual BOOLINT from_string(ministring &info) = 0;
 
    //! create node from string
-   miniref<mininode> create_from_string(ministring &info)
+   miniref<mininode> create_from_string(ministring &info) const
       {
       unsigned int i;
 
@@ -347,10 +349,10 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! enumerate deserializable nodes
-   virtual minidyna< miniref<mininode> > enumerate_nodes() = 0;
+   virtual minidyna< miniref<mininode> > enumerate_nodes() const = 0;
 
    //! save graph
-   void save(const ministring &filename)
+   void save(const ministring &filename) const
       {
       ministrings infos;
 
@@ -359,12 +361,13 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! load graph
-   void load(const ministring &filename,unsigned int line=0)
+   miniref<mininode> load(const ministring &filename,unsigned int line=0) const
       {
       ministrings infos;
 
       infos.load(filename);
-      append_child(from_strings(infos,line));
+
+      return(from_strings(infos,line));
       }
 
    protected:

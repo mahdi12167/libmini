@@ -5,12 +5,15 @@
 // mininode_group:
 
 // enumerate deserializable nodes
-minidyna< miniref<mininode> > mininode_group::enumerate_nodes()
+minidyna< miniref<mininode> > mininode_group::enumerate_nodes() const
    {
    minidyna< miniref<mininode> > nodes;
 
    nodes.append(new mininode_group);
    nodes.append(new mininode_color);
+   nodes.append(new mininode_texture2D);
+   nodes.append(new mininode_texture3D);
+   nodes.append(new mininode_image);
    nodes.append(new mininode_image);
    nodes.append(new mininode_volume);
    nodes.append(new mininode_switch);
@@ -24,6 +27,8 @@ minidyna< miniref<mininode> > mininode_group::enumerate_nodes()
    nodes.append(new mininode_ecef);
    nodes.append(new mininode_coord);
    nodes.append(new mininode_geometry);
+   nodes.append(new mininode_coord_animation);
+   nodes.append(new mininode_animation_rotate);
    nodes.append(new mininode_texgen);
    nodes.append(new mininode_deferred_semitransparent);
 
@@ -431,6 +436,10 @@ void mininode_coord::traverse_post()
    }
 
 // mininode_coord_animation:
+
+mininode_coord_animation::mininode_coord_animation()
+   : mininode_coord()
+   {}
 
 mininode_coord_animation::mininode_coord_animation(minicurve &c)
    : mininode_coord(c.interpolate_cubic(0.0))
