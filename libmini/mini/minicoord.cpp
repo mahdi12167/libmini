@@ -764,7 +764,7 @@ void minicoord::from_string(ministring &info)
    {
    if (info.startswith("minicoord"))
       {
-      info=info.tail("minicoord");
+      info=info.tail("minicoord(");
       vec.from_string(info);
       info=info.tail(",");
       type=(minicoord::MINICOORD)info.prefix(",").value_int();
