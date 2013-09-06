@@ -56,8 +56,8 @@ void Viewer::init()
    graph->save("scene.graph");
 
    mininode_group test;
-   test.load("scene.graph");
-   test.save("test.graph");
+   //!!test.load("scene.graph");
+   //!!test.save("test.graph");
 #endif
 
    // load textures
