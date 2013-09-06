@@ -280,8 +280,7 @@ class mininode: public minidyna< miniref<mininode> >
       {return(to_strings().serialize());}
 
    //! serialize node to string
-   virtual ministring to_string()
-      {return("");}
+   virtual ministring to_string() = 0;
 
    //! deserialize from string list
    miniref<mininode> from_strings(const ministrings &infos,unsigned int &line)
@@ -298,16 +297,17 @@ class mininode: public minidyna< miniref<mininode> >
 
       if (ref)
          if (line<infos.getsize())
-            if (infos[line].contains("{"))
+            if (infos[line].endswith("{"))
                {
                line++;
 
-               do
+               while (line<infos.getsize())
+                  {
+                  if (infos[line].endswith("}")) break;
                   ref->append_child(from_strings(infos,line));
-               while (line<infos.getsize() && !infos[line].contains("}"));
+                  }
 
-               if (line<infos.getsize())
-                  if (infos[line].contains("}")) line++;
+               line++;
                }
 
       return(ref);
@@ -323,8 +323,7 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! deserialize node from string
-   virtual BOOLINT from_string(ministring &info)
-      {return(FALSE);}
+   virtual BOOLINT from_string(ministring &info) = 0;
 
    //! create node from string
    miniref<mininode> create_from_string(ministring &info)
@@ -348,11 +347,7 @@ class mininode: public minidyna< miniref<mininode> >
       }
 
    //! enumerate deserializable nodes
-   virtual minidyna< miniref<mininode> > enumerate_nodes()
-      {
-      minidyna< miniref<mininode> > nodes;
-      return(nodes);
-      }
+   virtual minidyna< miniref<mininode> > enumerate_nodes() = 0;
 
    protected:
 

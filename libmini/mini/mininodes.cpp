@@ -4,6 +4,32 @@
 
 // mininode_group:
 
+// enumerate deserializable nodes
+minidyna< miniref<mininode> > mininode_group::enumerate_nodes()
+   {
+   minidyna< miniref<mininode> > nodes;
+
+   nodes.append(new mininode_group);
+   nodes.append(new mininode_color);
+   nodes.append(new mininode_image);
+   nodes.append(new mininode_volume);
+   nodes.append(new mininode_switch);
+   nodes.append(new mininode_selector);
+   nodes.append(new mininode_lod);
+   nodes.append(new mininode_transform);
+   nodes.append(new mininode_translate);
+   nodes.append(new mininode_rotate);
+   nodes.append(new mininode_affine);
+   nodes.append(new mininode_scale);
+   nodes.append(new mininode_ecef);
+   nodes.append(new mininode_coord);
+   nodes.append(new mininode_geometry);
+   nodes.append(new mininode_texgen);
+   nodes.append(new mininode_deferred_semitransparent);
+
+   return(nodes);
+   }
+
 // shoot a ray and return the distance to the closest object
 double mininode_group::shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj,double mindist) const
    {

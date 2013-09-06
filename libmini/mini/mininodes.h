@@ -95,6 +95,27 @@ class mininode_group: public mininode
       return(FALSE);
       }
 
+   //! enumerate deserializable nodes
+   virtual minidyna< miniref<mininode> > enumerate_nodes();
+
+   //! save graph
+   void save(const ministring &filename)
+      {
+      ministrings infos;
+
+      infos=to_strings();
+      infos.save(filename);
+      }
+
+   //! load graph
+   void load(const ministring &filename,unsigned int line=0)
+      {
+      ministrings infos;
+
+      infos.load(filename);
+      append_child(from_strings(infos,line));
+      }
+
    protected:
 
    virtual void traverse_init();
@@ -2448,56 +2469,6 @@ class mininode_deferred_semitransparent: public mininode_deferred
          }
 
       return(FALSE);
-      }
-
-   //! enumerate deserializable nodes
-   virtual minidyna< miniref<mininode> > enumerate_nodes()
-      {
-      minidyna< miniref<mininode> > nodes;
-
-      nodes.append(new mininode_group);
-      nodes.append(new mininode_color);
-      nodes.append(new mininode_image);
-      nodes.append(new mininode_volume);
-      nodes.append(new mininode_switch);
-      nodes.append(new mininode_selector);
-      nodes.append(new mininode_lod);
-      nodes.append(new mininode_transform);
-      nodes.append(new mininode_translate);
-      nodes.append(new mininode_rotate);
-      nodes.append(new mininode_affine);
-      nodes.append(new mininode_scale);
-      nodes.append(new mininode_ecef);
-      nodes.append(new mininode_coord);
-      nodes.append(new mininode_geometry);
-      nodes.append(new mininode_texgen);
-      nodes.append(new mininode_deferred_semitransparent);
-
-      return(nodes);
-      }
-
-   //! save graph
-   void save(const ministring &filename)
-      {
-      ministrings infos=to_strings();
-      infos.save(filename);
-      }
-
-   //! load graph
-   void load(const ministring &filename,unsigned int line=0)
-      {
-      unsigned int i;
-
-      ministrings infos;
-
-      infos.load(filename);
-
-      mininode_ref graph=from_strings(infos,line);
-
-      unsigned int s=graph->get_links();
-
-      for (i=0; i<s; i++)
-         append_child(graph->get_childref(i));
       }
 
    protected:
