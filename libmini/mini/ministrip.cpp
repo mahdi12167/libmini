@@ -574,6 +574,7 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,int maxsize)
    {
    int i;
 
+   if (maxsize==0) ERRORMSG();
    if (colcomps!=0 && colcomps!=3 && colcomps!=4) ERRORMSG();
    if (nrmcomps!=0 && nrmcomps!=3) ERRORMSG();
    if (texcomps<0 || texcomps>4) ERRORMSG();
@@ -640,6 +641,8 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,int maxsize)
 // reinit strip
 void ministrip::reinit(int colcomps,int nrmcomps,int texcomps,int maxsize)
    {
+   if (maxsize==0) maxsize=1;
+
    free(VTXARRAY);
 
    if (COLARRAY!=NULL) free(COLARRAY);
