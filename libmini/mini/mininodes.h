@@ -81,14 +81,14 @@ class mininode_group: public mininode
 
    //! serialize node to string
    virtual ministring to_string() const
-      {return("mininode_group");}
+      {return("mininode_group()");}
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_group"))
+      if (info.startswith("mininode_group()"))
          {
-         info=info.tail("mininode_group");
+         info=info.tail("mininode_group()");
          return(TRUE);
          }
 
@@ -291,7 +291,7 @@ class mininode_color: public mininode_group
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_color"))
+      if (info.startswith("mininode_color("))
          {
          info=info.tail("mininode_color(");
 
@@ -511,14 +511,14 @@ class mininode_texture2D: public mininode_texture
 
    //! serialize node to string
    virtual ministring to_string() const
-      {return("mininode_texture2D");}
+      {return("mininode_texture2D()");}
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_texture2D"))
+      if (info.startswith("mininode_texture2D()"))
          {
-         info=info.tail("mininode_texture2D");
+         info=info.tail("mininode_texture2D()");
 
          is_on=FALSE;
 
@@ -676,14 +676,14 @@ class mininode_texture3D: public mininode_texture
 
    //! serialize node to string
    virtual ministring to_string() const
-      {return("mininode_texture3D");}
+      {return("mininode_texture3D()");}
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_texture3D"))
+      if (info.startswith("mininode_texture3D()"))
          {
-         info=info.tail("mininode_texture3D");
+         info=info.tail("mininode_texture3D()");
 
          is_on=FALSE;
 
@@ -852,7 +852,7 @@ class mininode_image: public mininode_texture2D
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_image"))
+      if (info.startswith("mininode_image("))
          {
          info=info.tail("mininode_image(");
 
@@ -927,7 +927,7 @@ class mininode_volume: public mininode_texture3D
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_volume"))
+      if (info.startswith("mininode_volume("))
          {
          info=info.tail("mininode_volume(");
 
@@ -992,7 +992,7 @@ class mininode_switch: public mininode_group
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_switch"))
+      if (info.startswith("mininode_switch("))
          {
          info=info.tail("mininode_switch(");
 
@@ -1058,7 +1058,7 @@ class mininode_selector: public mininode_group
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_selector"))
+      if (info.startswith("mininode_selector("))
          {
          info=info.tail("mininode_selector(");
 
@@ -1116,7 +1116,7 @@ class mininode_lod: public mininode_selector
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_lod"))
+      if (info.startswith("mininode_lod("))
          {
          info=info.tail("mininode_lod(");
 
@@ -1285,7 +1285,7 @@ class mininode_transform: public mininode_dynamic
 
    BOOLINT from_string(ministring &info,const ministring &prefix)
       {
-      if (info.startswith(prefix))
+      if (info.startswith(prefix+"("))
          {
          int i;
 
@@ -1608,7 +1608,7 @@ class mininode_coord: public mininode_affine
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_coord"))
+      if (info.startswith("mininode_coord("))
          {
          info=info.tail("mininode_coord(");
 
@@ -1663,7 +1663,7 @@ class mininode_coord_animation: public mininode_coord
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_coord_animation"))
+      if (info.startswith("mininode_coord_animation("))
          {
          info=info.tail("mininode_coord_animation(");
 
@@ -1755,7 +1755,7 @@ class mininode_animation_rotate: public mininode_animation
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_animation_rotate"))
+      if (info.startswith("mininode_animation_rotate("))
          {
          info=info.tail("mininode_animation_rotate(");
 
@@ -2106,7 +2106,7 @@ class mininode_geometry: public mininode_geometry_base
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_geometry"))
+      if (info.startswith("mininode_geometry("))
          {
          info=info.tail("mininode_geometry(");
 
@@ -2584,7 +2584,7 @@ class mininode_deferred_semitransparent: public mininode_deferred
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_deferred_semitransparent"))
+      if (info.startswith("mininode_deferred_semitransparent("))
          {
          int i;
 

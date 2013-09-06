@@ -17,14 +17,14 @@ class mininode_geometry_teapot: public mininode_geom
 
    //! serialize node to string
    virtual ministring to_string() const
-      {return("mininode_geometry_teapot");}
+      {return("mininode_geometry_teapot()");}
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      if (info.startswith("mininode_geometry_teapot"))
+      if (info.startswith("mininode_geometry_teapot()"))
          {
-         info=info.tail("mininode_geometry_teapot");
+         info=info.tail("mininode_geometry_teapot()");
          return(TRUE);
          }
 
