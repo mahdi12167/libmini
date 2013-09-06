@@ -342,12 +342,18 @@ void mininode_ecef::traverse_pre()
 miniv3d mininode_coord::lightdir=miniv3d(0,0,0);
 BOOLINT mininode_coord::lightdirset=FALSE;
 
+mininode_coord::mininode_coord()
+   : mininode_affine()
+   {}
+
 mininode_coord::mininode_coord(const minicoord &c)
    : mininode_affine()
    {set_coord(c);}
 
 void mininode_coord::set_coord(const minicoord &c)
    {
+   coord=c;
+
    minicoord ecef=c;
    ecef.convert2ecef();
 

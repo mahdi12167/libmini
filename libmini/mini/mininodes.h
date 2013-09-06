@@ -1134,46 +1134,11 @@ class mininode_transform: public mininode_dynamic
 
    //! serialize node to string
    virtual ministring to_string()
-      {
-      int i;
-
-      ministring info("mininode_transform(");
-
-      for (i=0; i<15; i++)
-         {
-         info.append_double(oglmtx[i]);
-         info.append(",");
-         }
-
-      info.append_double(oglmtx[15]);
-      info.append(")");
-
-      return(info);
-      }
+      {return(to_string("mininode_transform"));}
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
-      {
-      if (info.startswith("mininode_transform"))
-         {
-         int i;
-
-         info=info.tail("mininode_transform(");
-
-         for (i=0; i<15; i++)
-            {
-            oglmtx[i]=info.prefix(",").value();
-            info=info.tail(",");
-            }
-
-         oglmtx[15]=info.prefix(")").value();
-         info=info.tail(")");
-
-         return(TRUE);
-         }
-
-      return(FALSE);
-      }
+      {return(from_string(info,"mininode_transform"));}
 
    protected:
 
@@ -1230,6 +1195,48 @@ class mininode_transform: public mininode_dynamic
       }
 
    virtual void update_dirty();
+
+   ministring to_string(const ministring &prefix)
+      {
+      int i;
+
+      ministring info(prefix+"(");
+
+      for (i=0; i<15; i++)
+         {
+         info.append_double(oglmtx[i]);
+         info.append(",");
+         }
+
+      info.append_double(oglmtx[15]);
+      info.append(")");
+
+      return(info);
+      }
+
+   BOOLINT from_string(ministring &info,const ministring &prefix)
+      {
+      if (info.startswith(prefix))
+         {
+         int i;
+
+         info=info.tail(prefix+"(");
+
+         for (i=0; i<15; i++)
+            {
+            oglmtx[i]=info.prefix(",").value();
+            info=info.tail(",");
+            }
+
+         oglmtx[15]=info.prefix(")").value();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    };
 
 //! translation node
@@ -1239,7 +1246,7 @@ class mininode_translate: public mininode_transform
    public:
 
    //! custom constructor
-   mininode_translate(const miniv3d &v)
+   mininode_translate(const miniv3d &v=miniv3d(0,0,0))
       : mininode_transform()
       {
       miniv4d mtx[3]={miniv4d(1,0,0,v.x),miniv4d(0,1,0,v.y),miniv4d(0,0,1,v.z)};
@@ -1255,6 +1262,14 @@ class mininode_translate: public mininode_transform
       center=bound_center+vec;
       radius=bound_radius;
       }
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_translate"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_translate"));}
 
    protected:
 
@@ -1275,7 +1290,7 @@ class mininode_rotate: public mininode_transform
    public:
 
    //! custom constructor
-   mininode_rotate(double d,const miniv3d &a)
+   mininode_rotate(double d=0,const miniv3d &a=miniv3d(0,0,0))
       : mininode_transform()
       {
       miniv3d rot[3];
@@ -1292,6 +1307,14 @@ class mininode_rotate: public mininode_transform
       center=mlt_vec(mtx,bound_center);
       radius=bound_radius;
       }
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_rotate"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_rotate"));}
 
    protected:
 
@@ -1351,6 +1374,14 @@ class mininode_affine: public mininode_transform
       radius=bound_radius;
       }
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_affine"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_affine"));}
+
    protected:
 
    virtual void transform_cone(minicone &cone) const
@@ -1375,7 +1406,7 @@ class mininode_scale: public mininode_transform
    public:
 
    //! custom constructor
-   mininode_scale(double s)
+   mininode_scale(double s=1)
       : mininode_transform()
       {
       miniv3d mtx[3]={miniv3d(s,0,0),miniv3d(0,s,0),miniv3d(0,0,s)};
@@ -1403,6 +1434,14 @@ class mininode_scale: public mininode_transform
       center=miniv3d(bound_center.x*mtx[0].x,bound_center.y*mtx[1].y,bound_center.z*mtx[2].z);
       radius=bound_radius*max_scale;
       }
+
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_scale"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_scale"));}
 
    protected:
 
@@ -1449,6 +1488,14 @@ class mininode_ecef: public mininode_affine
       : mininode_affine()
       {}
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_ecef"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_ecef"));}
+
    protected:
 
    virtual void traverse_pre();
@@ -1462,6 +1509,9 @@ class mininode_coord: public mininode_affine
    {
    public:
 
+   //! default constructor
+   mininode_coord();
+
    //! custom constructor
    mininode_coord(const minicoord &c);
 
@@ -1471,8 +1521,38 @@ class mininode_coord: public mininode_affine
    //! set global light direction
    static void set_lightdir(const miniv3d &d);
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      ministring info("mininode_coord(");
+
+      info.append(coord.to_string());
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_coord"))
+         {
+         info=info.tail("mininode_coord(");
+
+         coord.from_string(info);
+         info=info.tail(")");
+
+         set_coord(coord);
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    protected:
 
+   minicoord coord;
    miniv3d up;
 
    static miniv3d lightdir;
@@ -1582,6 +1662,14 @@ class mininode_texgen: public mininode_transform
    static int get_level()
       {return(texgen_level);}
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {return(mininode_transform::to_string("mininode_texgen"));}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {return(mininode_transform::from_string(info,"mininode_texgen"));}
+
    protected:
 
    static unsigned int texgen_level;
@@ -1622,6 +1710,7 @@ class mininode_texgen_translate: public mininode_texgen
       miniv4d mtx[3]={miniv4d(1,0,0,v.x),miniv4d(0,1,0,v.y),miniv4d(0,0,1,v.z)};
       mtxget(mtx,oglmtx);
       }
+
    };
 
 //! rotate texgen node
@@ -1845,7 +1934,22 @@ class mininode_geometry: public mininode_geometry_base
 
    //! serialize node to string
    virtual ministring to_string()
-      {return("mininode_geometry("+ministrip::to_string()+")");}
+      {
+      ministring info("mininode_geometry(");
+
+      info.append_int(use_color);
+      info.append(",");
+      info.append(rgba.to_string());
+      info.append(",");
+      info.append_int(shown);
+      info.append(",");
+      info.append(name);
+      info.append(",");
+      info.append(ministrip::to_string());
+      info.append(")");
+
+      return(info);
+      }
 
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
@@ -1853,6 +1957,14 @@ class mininode_geometry: public mininode_geometry_base
       if (info.startswith("mininode_geometry"))
          {
          info=info.tail("mininode_geometry(");
+         use_color=info.prefix(",").value_int();
+         info=info.tail(",");
+         rgba.from_string(info);
+         info=info.tail(",");
+         shown=info.prefix(",").value_int();
+         info=info.tail(",");
+         name=info.prefix(",");
+         info=info.tail(",");
          ministrip::from_string(info);
          info=info.tail(")");
 
@@ -2281,6 +2393,63 @@ class mininode_deferred_semitransparent: public mininode_deferred
    void set_passes(unsigned int passes)
       {deferred_passes=passes;}
 
+   //! serialize node to string
+   virtual ministring to_string()
+      {
+      int i;
+
+      ministring info("mininode_deferred_semitransparent(");
+
+      for (i=0; i<15; i++)
+         {
+         info.append_double(oglmtx[i]);
+         info.append(",");
+         }
+
+      info.append_double(oglmtx[15]);
+      info.append(",");
+
+      info.append_int(pass_first);
+      info.append(",");
+      info.append_int(pass_last);
+      info.append(",");
+      info.append_int(deferred_passes);
+      info.append(")");
+
+      return(info);
+      }
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_deferred_semitransparent"))
+         {
+         int i;
+
+         info=info.tail("mininode_deferred_semitransparent(");
+
+         for (i=0; i<15; i++)
+            {
+            oglmtx[i]=info.prefix(",").value();
+            info=info.tail(",");
+            }
+
+         oglmtx[15]=info.prefix(",").value();
+         info=info.tail(",");
+
+         pass_first=info.prefix(",").value_int();
+         info=info.tail(",");
+         pass_last=info.prefix(",").value_int();
+         info=info.tail(",");
+         deferred_passes=info.prefix(")").value_int();
+         info=info.tail(")");
+
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
    //! enumerate deserializable nodes
    virtual minidyna< miniref<mininode> > enumerate_nodes()
       {
@@ -2292,8 +2461,17 @@ class mininode_deferred_semitransparent: public mininode_deferred
       nodes.append(new mininode_volume);
       nodes.append(new mininode_switch);
       nodes.append(new mininode_selector);
+      nodes.append(new mininode_lod);
       nodes.append(new mininode_transform);
+      nodes.append(new mininode_translate);
+      nodes.append(new mininode_rotate);
+      nodes.append(new mininode_affine);
+      nodes.append(new mininode_scale);
+      nodes.append(new mininode_ecef);
+      nodes.append(new mininode_coord);
       nodes.append(new mininode_geometry);
+      nodes.append(new mininode_texgen);
+      nodes.append(new mininode_deferred_semitransparent);
 
       return(nodes);
       }
@@ -2306,13 +2484,20 @@ class mininode_deferred_semitransparent: public mininode_deferred
       }
 
    //! load graph
-   mininode_ref load(const ministring &filename,unsigned int line=0)
+   void load(const ministring &filename,unsigned int line=0)
       {
+      unsigned int i;
+
       ministrings infos;
 
       infos.load(filename);
 
-      return(from_strings(infos,line));
+      mininode_ref graph=from_strings(infos,line);
+
+      unsigned int s=graph->get_links();
+
+      for (i=0; i<s; i++)
+         append_child(graph->get_childref(i));
       }
 
    protected:
@@ -2387,6 +2572,8 @@ class mininode_cam: public mininode_root, public minicam
    //! get this camera
    virtual mininode_cam *get_camera()
       {return(this);}
+
+   protected:
 
    //! get bounding sphere
    virtual void get_bsphere(miniv3d &center,double &radius)
