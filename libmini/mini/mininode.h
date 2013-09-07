@@ -305,7 +305,7 @@ class mininode: public minidyna< miniref<mininode> >
 
                   miniref<mininode> sub=from_strings(infos,line);
 
-                  if (ref) ref->append_child(sub);
+                  if (ref!=NULL && sub!=NULL) ref->append_child(sub);
                   }
 
                line++;
