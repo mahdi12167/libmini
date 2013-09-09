@@ -46,6 +46,8 @@ void MainWindow::initSettings()
    exportPath = home_path;
    tmpPath = temp_path;
 
+   split_meters = 0.0;
+
    grid_level = 0;
    grid_levels = 1;
    grid_step = 2;
@@ -414,6 +416,9 @@ void MainWindow::createWidgets()
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
 
+   QGroupBox *lineEditGroup_splitMeters = createEdit(TR("Split Size in Meters"), split_meters, &lineEdit_splitMeters);
+   connect(lineEdit_splitMeters,SIGNAL(textChanged(QString)),this,SLOT(splitMetersChanged(QString)));
+
    QGroupBox *lineEditGroup_gridLevel = createEdit(TR("Grid Level"), grid_level, &lineEdit_gridLevel);
    connect(lineEdit_gridLevel,SIGNAL(textChanged(QString)),this,SLOT(gridLevelChanged(QString)));
    QGroupBox *lineEditGroup_gridLevels = createEdit(TR("Grid Levels"), grid_levels, &lineEdit_gridLevels);
@@ -459,6 +464,8 @@ void MainWindow::createWidgets()
    sliderBox->setVisible(sliderButton->isChecked());
 
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
+
+   prefLayout->addWidget(lineEditGroup_splitMeters);
 
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_exportPath);
@@ -536,6 +543,8 @@ void MainWindow::createWidgets()
    tmpPathChanged(tmpPath.c_str());
 
    // worker settings:
+
+   splitMetersChanged(QString(ministring((double)split_meters).c_str()));
 
    gridLevelChanged(QString(ministring((double)grid_level).c_str()));
    gridLevelsChanged(QString(ministring((double)grid_levels).c_str()));
@@ -676,6 +685,12 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
    {
       tmpPath = viewerWindow->getTmp();
       lineEdit_tmpPath->setText(tmpPath.c_str());
+   }
+   else if (action == "update_split_settings")
+   {
+      viewerWindow->getSplitSettings(split_meters);
+
+      lineEdit_splitMeters->setText(QString(ministring((double)split_meters).c_str()));
    }
    else if (action == "update_resample_settings")
    {
@@ -977,6 +992,18 @@ void MainWindow::browseTmpPath()
    {
       lineEdit_tmpPath->setText(dir.c_str());
       tmpPathChanged(dir.c_str());
+   }
+}
+
+void MainWindow::splitMetersChanged(QString meters)
+{
+   bool valid;
+   double split_meters = meters.toDouble(&valid);
+
+   if (valid)
+   {
+      this->split_meters = split_meters;
+      viewerWindow->runAction("set_split_meters", meters.toStdString().c_str());
    }
 }
 

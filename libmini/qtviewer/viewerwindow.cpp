@@ -380,6 +380,16 @@ void ViewerWindow::setTmp(ministring path)
    emit signalChange("update_tmp");
 }
 
+void ViewerWindow::setSplitSettings(double meters)
+{
+   if (split_meters != meters)
+   {
+      split_meters = meters;
+
+      emit signalChange("update_split_settings");
+   }
+}
+
 void ViewerWindow::setResampleSettings(int level, int levels, int step)
 {
    if (level != grid_level || levels != grid_levels || step != grid_step)
@@ -1579,6 +1589,13 @@ void ViewerWindow::runAction(const ministring &action,
    {
       gotoObject(value);
    }
+   else if (action == "set_split_meters")
+   {
+      ministring meters = value;
+      split_meters = meters.value();
+
+      setSplitSettings(split_meters);
+   }
    else if (action == "set_grid_level")
    {
       ministring level = value;
@@ -2139,7 +2156,7 @@ void ViewerWindow::split_layers(ministrings keys)
 {
    unsigned int i;
 
-   SplitJob *job = new SplitJob(repository_path, export_path);
+   SplitJob *job = new SplitJob(repository_path, export_path, split_meters);
    if (job == NULL) MEMERROR();
 
    for (i=0; i<keys.size(); i++)
@@ -2439,6 +2456,11 @@ ministring ViewerWindow::getExport()
 
 ministring ViewerWindow::getTmp()
    {return(tmp_path);}
+
+void ViewerWindow::getSplitSettings(double &meters)
+{
+   meters=split_meters;
+}
 
 void ViewerWindow::getResampleSettings(int &level, int &levels, int &step)
 {

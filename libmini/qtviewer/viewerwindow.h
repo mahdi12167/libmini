@@ -46,6 +46,7 @@ public:
    void setExport(ministring path);
    void setTmp(ministring path);
 
+   void setSplitSettings(double meters=0.0);
    void setResampleSettings(int level=0, int levels=1, int step=2);
    void setExportSettings(double power=2.0, double ambient=0.1, double quality=90.0);
    void setContourSettings(double spacing=100.0, double thickness=1.0, double border=1.0);
@@ -121,6 +122,7 @@ public:
    ministring getExport();
    ministring getTmp();
 
+   void getSplitSettings(double &meters);
    void getResampleSettings(int &level, int &levels, int &step);
    void getExportSettings(double &power, double &ambient, double &quality);
    void getContourSettings(double &spacing, double &thickness, double &border);
@@ -187,6 +189,8 @@ private:
    ministring repository_path;
    ministring export_path;
    ministring tmp_path;
+
+   double split_meters;
 
    int grid_level;
    int grid_levels;

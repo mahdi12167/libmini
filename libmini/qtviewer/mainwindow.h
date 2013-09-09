@@ -82,6 +82,8 @@ private slots:
    void browseExportPath();
    void browseTmpPath();
 
+   void splitMetersChanged(QString);
+
    void gridLevelChanged(QString);
    void gridLevelsChanged(QString);
    void gridStepChanged(QString);
@@ -196,6 +198,8 @@ private:
    QLineEdit *lineEdit_tmpPath;
    QPushButton *browseButton_tmpPath;
 
+   QLineEdit *lineEdit_splitMeters;
+
    QLineEdit *lineEdit_gridLevel;
    QLineEdit *lineEdit_gridLevels;
    QLineEdit *lineEdit_gridStep;
@@ -227,6 +231,8 @@ protected:
    ministring repoPath;
    ministring exportPath;
    ministring tmpPath;
+
+   double split_meters;
 
    int grid_level;
    int grid_levels;
