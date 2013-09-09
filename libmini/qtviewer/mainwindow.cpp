@@ -465,11 +465,11 @@ void MainWindow::createWidgets()
 
    connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
 
-   prefLayout->addWidget(lineEditGroup_splitMeters);
-
    prefLayout->addWidget(lineEditGroup_repoPath);
    prefLayout->addWidget(lineEditGroup_exportPath);
    prefLayout->addWidget(lineEditGroup_tmpPath);
+
+   prefLayout->addWidget(lineEditGroup_splitMeters);
 
    prefLayout->addWidget(lineEditGroup_gridLevel);
    prefLayout->addWidget(lineEditGroup_gridLevels);
