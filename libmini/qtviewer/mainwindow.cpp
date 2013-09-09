@@ -79,6 +79,9 @@ void MainWindow::initSettings()
    if (settings.contains("tmpPath"))
       tmpPath = settings.value("tmpPath").toString().toStdString().c_str();
 
+   if (settings.contains("splitMeters"))
+      split_meters = settings.value("splitMeters").toDouble();
+
    if (settings.contains("gridLevel"))
       grid_level = settings.value("gridLevel").toDouble();
    if (settings.contains("gridLevels"))
@@ -122,6 +125,8 @@ void MainWindow::saveSettings()
    settings.setValue("repoPath", QString(repoPath.c_str()));
    settings.setValue("exportPath", QString(exportPath.c_str()));
    settings.setValue("tmpPath", QString(tmpPath.c_str()));
+
+   settings.setValue("splitMeters", split_meters);
 
    settings.setValue("gridLevel", grid_level);
    settings.setValue("gridLevels", grid_levels);
