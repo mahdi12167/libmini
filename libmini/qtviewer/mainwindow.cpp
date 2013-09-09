@@ -198,6 +198,9 @@ void MainWindow::createWidgets()
    prefGroup = new QGroupBox;
    prefLayout = new QVBoxLayout;
 
+   paramGroup = new QGroupBox;
+   paramLayout = new QVBoxLayout;
+
    buttonBox = new QDialogButtonBox;
 
    viewerTable = new MyQTableWidget(viewerWindow);
@@ -426,6 +429,35 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_gridStep = createEdit(TR("Grid Step"), grid_step, &lineEdit_gridStep);
    connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
 
+   sliderButton = new QCheckBox(tr("Show Controls"));
+   sliderButton->setChecked(false);
+
+   QGroupBox *sliderButtonBox= new QGroupBox;
+   QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
+   sliderButtonBoxLayout->addWidget(sliderButton);
+   sliderButtonBox->setLayout(sliderButtonBoxLayout);
+   sliderBox->setVisible(sliderButton->isChecked());
+
+   connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
+
+   prefLayout->addWidget(lineEditGroup_repoPath);
+   prefLayout->addWidget(lineEditGroup_exportPath);
+   prefLayout->addWidget(lineEditGroup_tmpPath);
+
+   prefLayout->addWidget(lineEditGroup_splitMeters);
+
+   prefLayout->addWidget(lineEditGroup_gridLevel);
+   prefLayout->addWidget(lineEditGroup_gridLevels);
+   prefLayout->addWidget(lineEditGroup_gridStep);
+
+   prefLayout->addWidget(sliderButtonBox);
+
+   prefLayout->addStretch();
+
+   prefGroup->setLayout(prefLayout);
+
+   // param group:
+
    QGroupBox *lineEditGroup_shadePower = createEdit(TR("Shading Power"), shadePower, &lineEdit_shadePower);
    connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
    QGroupBox *lineEditGroup_shadeAmbient = createEdit(TR("Shading Ambience"), shadeAmbient, &lineEdit_shadeAmbient);
@@ -454,48 +486,25 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_blueGamma = createEdit(TR("Blue Gamma Correction"), blueGamma, &lineEdit_blueGamma);
    connect(lineEdit_blueGamma,SIGNAL(textChanged(QString)),this,SLOT(blueGammaChanged(QString)));
 
-   sliderButton = new QCheckBox(tr("Show Controls"));
-   sliderButton->setChecked(false);
+   paramLayout->addWidget(lineEditGroup_shadePower);
+   paramLayout->addWidget(lineEditGroup_shadeAmbient);
+   paramLayout->addWidget(lineEditGroup_jpegQuality);
 
-   QGroupBox *sliderButtonBox= new QGroupBox;
-   QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
-   sliderButtonBoxLayout->addWidget(sliderButton);
-   sliderButtonBox->setLayout(sliderButtonBoxLayout);
-   sliderBox->setVisible(sliderButton->isChecked());
+   paramLayout->addWidget(lineEditGroup_contourSpacing);
+   paramLayout->addWidget(lineEditGroup_contourThickness);
+   paramLayout->addWidget(lineEditGroup_contourBorder);
 
-   connect(sliderButton, SIGNAL(stateChanged(int)), this, SLOT(checkSliders(int)));
+   paramLayout->addWidget(lineEditGroup_blackLevel);
+   paramLayout->addWidget(lineEditGroup_whiteLevel);
+   paramLayout->addWidget(lineEditGroup_constrastLinearity);
 
-   prefLayout->addWidget(lineEditGroup_repoPath);
-   prefLayout->addWidget(lineEditGroup_exportPath);
-   prefLayout->addWidget(lineEditGroup_tmpPath);
+   paramLayout->addWidget(lineEditGroup_redGamma);
+   paramLayout->addWidget(lineEditGroup_greenGamma);
+   paramLayout->addWidget(lineEditGroup_blueGamma);
 
-   prefLayout->addWidget(lineEditGroup_splitMeters);
+   paramLayout->addStretch();
 
-   prefLayout->addWidget(lineEditGroup_gridLevel);
-   prefLayout->addWidget(lineEditGroup_gridLevels);
-   prefLayout->addWidget(lineEditGroup_gridStep);
-
-   prefLayout->addWidget(lineEditGroup_shadePower);
-   prefLayout->addWidget(lineEditGroup_shadeAmbient);
-   prefLayout->addWidget(lineEditGroup_jpegQuality);
-
-   prefLayout->addWidget(lineEditGroup_contourSpacing);
-   prefLayout->addWidget(lineEditGroup_contourThickness);
-   prefLayout->addWidget(lineEditGroup_contourBorder);
-
-   prefLayout->addWidget(lineEditGroup_blackLevel);
-   prefLayout->addWidget(lineEditGroup_whiteLevel);
-   prefLayout->addWidget(lineEditGroup_constrastLinearity);
-
-   prefLayout->addWidget(lineEditGroup_redGamma);
-   prefLayout->addWidget(lineEditGroup_greenGamma);
-   prefLayout->addWidget(lineEditGroup_blueGamma);
-
-   prefLayout->addWidget(sliderButtonBox);
-
-   prefLayout->addStretch();
-
-   prefGroup->setLayout(prefLayout);
+   paramGroup->setLayout(paramLayout);
 
    // tabs:
 
@@ -509,8 +518,14 @@ void MainWindow::createWidgets()
    prefGroupScrollArea->setWidget(prefGroup);
    prefGroupScrollArea->setMinimumWidth(prefGroup->sizeHint().width());
 
+   QScrollArea *paramGroupScrollArea = new QScrollArea;
+   paramGroupScrollArea->setWidgetResizable(true);
+   paramGroupScrollArea->setWidget(paramGroup);
+   paramGroupScrollArea->setMinimumWidth(paramGroup->sizeHint().width());
+
    tabWidget->addTab(viewerGroupScrollArea, tr("View"));
    tabWidget->addTab(prefGroupScrollArea, tr("Prefs"));
+   tabWidget->addTab(paramGroupScrollArea, tr("Params"));
 
    // button group:
 

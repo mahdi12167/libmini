@@ -141,6 +141,9 @@ private:
    QGroupBox *prefGroup;
    QVBoxLayout *prefLayout;
 
+   QGroupBox *paramGroup;
+   QVBoxLayout *paramLayout;
+
    QPushButton *openButton;
    QPushButton *clearButton;
    QPushButton *quitButton;
