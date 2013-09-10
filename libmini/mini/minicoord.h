@@ -106,10 +106,13 @@ class minicoord
    inline minicoord& operator /= (const double c);
 
    //! set lat/lon/height in degrees/meters
-   void set_llh(double lat,double lon,double height=0.0);
+   void set_llh(double lat,double lon,double height=0.0,double t=0.0);
 
    //! set polar coordinates on unit sphere
    void set_polar(double alpha,double beta,double height=0.0,double t=0.0);
+
+   //! set time
+   void set_time(double t);
 
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_NONE);

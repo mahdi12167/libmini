@@ -154,9 +154,9 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
 minicoord::~minicoord() {}
 
 // set lat/lon/height in degrees/meters
-void minicoord::set_llh(double lat,double lon,double height)
+void minicoord::set_llh(double lat,double lon,double height,double t)
    {
-   vec=miniv4d(3600*lon,3600*lat,height);
+   vec=miniv4d(3600*lon,3600*lat,height,t);
    type=minicoord::MINICOORD_LLH;
 
    crs_zone=0;
@@ -174,6 +174,10 @@ void minicoord::set_polar(double alpha,double beta,double height,double t)
    crs_datum=MINICOORD_DATUM_NONE;
    crs_orb=MINICOORD_ORB_UNIT_SPHERE;
    }
+
+// set time
+void minicoord::set_time(double t)
+   {vec.w=t;}
 
 // orb to orb scaling
 void minicoord::scale2(int orb)
