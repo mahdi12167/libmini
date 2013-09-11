@@ -571,7 +571,7 @@ double minicoord::getdist(const minicoord &v) const
 
    if (type==MINICOORD_LINEAR &&
        v.type==MINICOORD_LINEAR)
-      dist=(vec-v.vec).getlength();
+      dist=(getpos()-v.getpos()).getlength();
    else
       {
       p1=*this;
@@ -580,7 +580,7 @@ double minicoord::getdist(const minicoord &v) const
       if (p1.type!=MINICOORD_LINEAR) p1.convert2(MINICOORD_ECEF);
       if (p2.type!=MINICOORD_LINEAR) p2.convert2(MINICOORD_ECEF);
 
-      dist=(p1.vec-p2.vec).getlength();
+      dist=(p1.getpos()-p2.getpos()).getlength();
       }
 
    return(dist);
@@ -601,7 +601,7 @@ double minicoord::getorthodist(const minicoord &v) const
 
    if (type==MINICOORD_LINEAR &&
        v.type==MINICOORD_LINEAR)
-      dist=(vec-v.vec).getlength();
+      dist=(getpos()-v.getpos()).getlength();
    else
       {
       p1=*this;
@@ -616,12 +616,12 @@ double minicoord::getorthodist(const minicoord &v) const
       p1.convert2(MINICOORD_ECEF);
       p2.convert2(MINICOORD_ECEF);
 
-      dist=(p1.vec-p2.vec).getlength();
+      dist=(p1.getpos()-p2.getpos()).getlength();
 
       if (dist>maxdist)
          {
          p=0.5*(p1+p2);
-         len=p.vec.getlength();
+         len=p.getpos().getlength();
 
          if (len>0.0) p*=p.getorbradius()/len;
          else

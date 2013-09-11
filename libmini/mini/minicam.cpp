@@ -54,7 +54,7 @@ void minicam::set_eye(double latitude,double longitude,double altitude,
    }
 
 miniv3d minicam::get_eye_opengl()
-   {return(EARTH->map_g2o(eye).vec);}
+   {return(EARTH->map_g2o(eye).getpos());}
 
 miniv3d minicam::get_dir_opengl()
    {return(EARTH->rot_g2o(eye_dir,eye));}
