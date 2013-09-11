@@ -249,7 +249,8 @@ int Object_image::initGFX()
                if (geosize<=0.0) geosize=1000.0;
 
                layer->set_extent(geolocation.vec.y/3600,geolocation.vec.x/3600,
-                                 geosize/max(layer->get_size_x(),layer->get_size_y()));
+                                 geosize/max(layer->get_size_x(),layer->get_size_y()),
+                                 geolocation.vec.z/*,geolocation.vec.w*/); //!!
 
                is_geolocated=TRUE;
                }
