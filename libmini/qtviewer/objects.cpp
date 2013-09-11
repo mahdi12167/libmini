@@ -245,11 +245,11 @@ int Object_image::initGFX()
             // check for valid geo-location (exif gps tag)
             if (layer->get_geolocation(geolocation,geosize))
                {
-               grid_extent ext;
+               geolocation.convert2llh();
+               if (geosize<=0.0) geosize=1000.0;
 
-               if (geosize<=0.0) geosize=1.0;
-               ext.set(geolocation,geosize,geosize);
-               layer->set_extent(ext);
+               layer->set_extent(geolocation.vec.y/3600,geolocation.vec.x/3600,
+                                 geosize/max(layer->get_size_x(),layer->get_size_y()));
 
                is_geolocated=TRUE;
                }
