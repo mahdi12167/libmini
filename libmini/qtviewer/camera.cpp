@@ -126,8 +126,8 @@ miniv3d Camera::cursorVector(double zoom)
       minicoord target = get_hit(get_eye(), unprojectMouse());
       if (target != get_eye())
       {
-         double elev1 = get_eye().vec.getlength();
-         double elev2 = target.vec.getlength();
+         double elev1 = get_eye().getpos().getlength();
+         double elev2 = target.getpos().getlength();
          double scale = elev1 / elev2;
 
          // find out the target vector from focus to cursor
@@ -269,7 +269,7 @@ void Camera::focusOnMap(minilayer *layer)
 
    curve.append_sector(get_eye(), target, 100);
 
-   if ((get_eye().vec - target.vec).getlength() < size/4.0)
+   if ((get_eye().getpos() - target.getpos()).getlength() < size/4.0)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
       startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
@@ -291,7 +291,7 @@ void Camera::focusOnObject(Object *obj)
 
    curve.append_sector(get_eye(), target, 100);
 
-   if ((get_eye().vec - target.vec).getlength() < size/4.0)
+   if ((get_eye().getpos() - target.getpos()).getlength() < size/4.0)
       startTransition(curve, delta_angle(0.0, get_angle()), delta_angle(-90, get_pitch()), 1.0);
    else
       startTransition(curve, 0.0, delta_angle(-90, get_pitch()), 2.0);
