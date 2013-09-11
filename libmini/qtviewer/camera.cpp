@@ -82,7 +82,7 @@ miniv3d Camera::hitVector()
 
    // trace to find the hit point under current focus
    minicoord hit = get_hit();
-   hitVec = hit.vec - get_eye().vec;
+   hitVec = hit.getpos() - get_eye().getpos();
 
    return(hitVec);
 }
@@ -92,8 +92,8 @@ miniv3d Camera::nearVector()
    miniv3d nearVec;
 
    // trace to find the nearest hit point
-   minicoord hit = get_hit(get_eye(), -get_eye().vec);
-   nearVec = hit.vec - get_eye().vec;
+   minicoord hit = get_hit(get_eye(), -get_eye().getpos());
+   nearVec = hit.getpos() - get_eye().getpos();
 
    return(nearVec);
 }
@@ -104,7 +104,7 @@ miniv3d Camera::targetVector(float dx, float dy)
 
    // trace to find the hit point under current cursor
    minicoord target = get_hit(get_eye(), unprojectMouse(dx, dy));
-   targetVec = target.vec - get_eye().vec;
+   targetVec = target.getpos() - get_eye().getpos();
 
    return(targetVec);
 }
@@ -118,7 +118,7 @@ miniv3d Camera::cursorVector(double zoom)
 
    // trace to nearest hit point as fallback
    if (hit == get_eye())
-      hit = get_hit(get_eye(), -get_eye().vec);
+      hit = get_hit(get_eye(), -get_eye().getpos());
 
    // trace to find the hit point under current cursor
    if (hit != get_eye())
@@ -131,10 +131,10 @@ miniv3d Camera::cursorVector(double zoom)
          double scale = elev1 / elev2;
 
          // find out the target vector from focus to cursor
-         cursorVec = (1.0 - zoom) * scale * (target.vec - hit.vec);
+         cursorVec = (1.0 - zoom) * scale * (target.getpos() - hit.getpos());
 
          // find out the zoom vector from eye to focus
-         cursorVec += zoom * (target.vec - get_eye().vec);
+         cursorVec += zoom * (target.getpos() - get_eye().getpos());
       }
    }
 
@@ -303,7 +303,7 @@ void Camera::processTransition(double w, double dw)
 {
    w = 1.0 - pow(1.0 - w, 2.0);
 
-   move(m_TargetCameraCurve.interpolate_cubic(w).vec - get_eye().vec);
+   move(m_TargetCameraCurve.interpolate_cubic(w).getpos() - get_eye().getpos());
 
    moveAbove();
 
