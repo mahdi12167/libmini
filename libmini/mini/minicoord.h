@@ -185,6 +185,12 @@ class minicoord
    ministring getorb() const;
    static ministring getorb(int o);
 
+   //! get 3D position vector
+   miniv3d getpos() const {return(vec);}
+
+   //! get scalar time component
+   double gettime() const {return(vec.w);}
+
    //! string cast operator
    operator ministring() const;
 
