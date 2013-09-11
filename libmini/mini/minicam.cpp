@@ -34,7 +34,7 @@ void minicam::set_eye(const minicoord &e,
    if (eye.type!=minicoord::MINICOORD_LINEAR)
       eye.convert2(minicoord::MINICOORD_ECEF);
 
-   if (eye.vec.getlength2()==0.0) eye=eye_default;
+   if (eye.getpos().getlength2()==0.0) eye=eye_default;
 
    get_local_base(eye,eye_dir,eye_right,eye_up);
 
@@ -363,7 +363,7 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
    }
 
 double minicam::get_hitdist(const minicoord &pos,const miniv3d &dir)
-   {return((get_hit(pos,dir).vec-pos.vec).getlength());}
+   {return((get_hit(pos,dir).getpos()-pos.getpos()).getlength());}
 
 // move point up so that it is above ground
 void minicam::move_above(minicoord &pos,double mindist)
