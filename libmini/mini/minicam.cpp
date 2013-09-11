@@ -430,7 +430,7 @@ void minicam::get_local_base(const minicoord &pos,
          // flat mode
          {
          up0=ref->getnormal();
-         dir0=(ref->getnorth()-ref->getcenter()).vec;
+         dir0=(ref->getnorth()-ref->getcenter()).getpos();
          dir0.normalize();
          right0=dir0/up0;
          right0.normalize();
@@ -440,7 +440,7 @@ void minicam::get_local_base(const minicoord &pos,
       else
          // ECEF mode
          {
-         up0=pos0.vec;
+         up0=pos0.getpos();
          up0.normalize();
 
          dir0=miniv3d(0,0,1);
