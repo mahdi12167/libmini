@@ -130,6 +130,7 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    : Object_extents(name,repo)
    {
    is_imagery_resp_elevation=TRUE;
+   is_geolocated=FALSE;
 
    extent=grid_extent();
    extent_geo=grid_extent();
@@ -238,9 +239,26 @@ int Object_image::initGFX()
          // check for valid geo-reference
          if (!layer->is_georeferenced())
             {
-            // put invalid layer at the north pole
-            layer->set_extent(80,360*minirand(),1);
-            errorcode=OBJECT_NOT_REFERENCED;
+            minicoord geolocation;
+            double geosize;
+
+            // check for valid geo-location (exif gps tag)
+            if (layer->get_geolocation(geolocation,geosize))
+               {
+               grid_extent ext;
+
+               if (geosize<=0.0) geosize=1.0;
+               ext.set(geolocation,geosize,geosize);
+               layer->set_extent(ext);
+
+               is_geolocated=TRUE;
+               }
+            else
+               {
+               // put invalid layer at the north pole
+               layer->set_extent(80,360*minirand(),1);
+               errorcode=OBJECT_NOT_REFERENCED;
+               }
             }
 
          // obesity check

@@ -82,11 +82,15 @@ class Object_image: public Object_extents
 
    //! tell if image is imagery (cell centered)
    BOOLINT is_imagery() const
-      {return(is_imagery_resp_elevation);}
+      {return(is_imagery_resp_elevation && !is_geolocated);}
 
    //! tell if image is elevation (grid centered)
    BOOLINT is_elevation() const
-      {return(!is_imagery_resp_elevation);}
+      {return(!is_imagery_resp_elevation && !is_geolocated);}
+
+   //! tell if image is a geo-tagged photo
+   BOOLINT is_photo() const
+      {return(!is_geolocated);}
 
    //! get grid-centered extents
    virtual grid_extent get_extent()
@@ -109,6 +113,7 @@ class Object_image: public Object_extents
    protected:
 
    BOOLINT is_imagery_resp_elevation;
+   BOOLINT is_geolocated;
 
    grid_extent extent_geo;
    int size_x,size_y;

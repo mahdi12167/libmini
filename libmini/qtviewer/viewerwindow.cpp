@@ -569,8 +569,12 @@ BOOLINT ViewerWindow::loadImage(ministring url)
    {
       if (image->is_imagery())
          addTag(url, "imagery");
-      else
+
+      if (image->is_elevation())
          addTag(url, "elevation");
+
+      if (image->is_photo())
+         addTag(url, "photo");
 
       image->focus();
 
@@ -1017,12 +1021,12 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "resample")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
       resample_list(keys, value, grid_level, grid_levels, grid_step);
    }
    else if (action == "resample_selected")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
 
       ministrings sel_keys;
       for (unsigned int i=0; i<keys.size(); i++)
@@ -1033,7 +1037,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "resample_selected_area")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
 
       ministrings sel_keys;
       for (unsigned int i=0; i<keys.size(); i++)
@@ -1044,22 +1048,22 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "resample_all")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
       resample_list(keys, "", grid_level, grid_levels, grid_step);
    }
    else if (action == "crop_elevation")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation");
       crop_list(keys, value, FALSE);
    }
    else if (action == "crop_imagery")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("imagery");
       crop_list(keys, value, TRUE);
    }
    else if (action == "crop_selected")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
 
       ministrings sel_keys;
       for (unsigned int i=0; i<keys.size(); i++)
@@ -1565,7 +1569,7 @@ void ViewerWindow::runAction(const ministring &action,
    }
    else if (action == "save_grid")
    {
-      ministrings keys = listObjects("image");
+      ministrings keys = listObjects("elevation") + listObjects("imagery");
       save_grid_list(keys, value, "", grid_level);
    }
    else if (action == "load")
