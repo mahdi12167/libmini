@@ -114,6 +114,10 @@ class minicoord
    //! set time
    void set_time(double t);
 
+   //! set time from utc
+   void set_time(int year,unsigned int month,unsigned int day,
+                 unsigned int hour,unsigned int minute,unsigned int second);
+
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_NONE);
 

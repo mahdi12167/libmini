@@ -2,6 +2,7 @@
 
 #include "minibase.h"
 
+#include "minitime.h"
 #include "ministring.h"
 
 #include "minicoord.h"
@@ -178,6 +179,26 @@ void minicoord::set_polar(double alpha,double beta,double height,double t)
 // set time
 void minicoord::set_time(double t)
    {vec.w=t;}
+
+// set time from utc
+void minicoord::set_time(int year,unsigned int month,unsigned int day,
+                         unsigned int hour,unsigned int minute,unsigned int second)
+   {
+   unsigned int m;
+
+   double t,d;
+
+   d=0.0;
+   for (m=1; m<month; m++) d+=daysofmonth(year,m);
+
+   d+=day-1;
+   d+=(hour+(minute+second/60.0)/60.0)/24.0;
+
+   t=year-1971;
+   t+=d/(is_leapyear(year)?365.0:366.0);
+
+   set_time(t);
+   }
 
 // orb to orb scaling
 void minicoord::scale2(int orb)
