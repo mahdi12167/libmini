@@ -246,7 +246,7 @@ int Object_image::initGFX()
             if (layer->get_geolocation(geolocation,geosize))
                {
                geolocation.convert2llh();
-               if (geosize<=0.0) geosize=1000.0;
+               if (geosize<=0.0) geosize=OBJECT_PHOTO_SIZE;
 
                layer->set_extent(geolocation.vec.y/3600,geolocation.vec.x/3600,
                                  geosize/max(layer->get_size_x(),layer->get_size_y()),
@@ -257,7 +257,7 @@ int Object_image::initGFX()
             else
                {
                // put invalid layer at the north pole
-               layer->set_extent(80,360*minirand(),1);
+               layer->set_extent(OBJECT_INVALID_LAT,360*minirand(),1);
                errorcode=OBJECT_NOT_REFERENCED;
                }
             }

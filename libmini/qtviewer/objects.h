@@ -14,6 +14,8 @@
 
 class Viewer;
 
+#define OBJECT_PHOTO_SIZE 30.0
+#define OBJECT_INVALID_LAT 80.0
 #define OBJECT_OBESITY_SIZE 1024
 
 enum

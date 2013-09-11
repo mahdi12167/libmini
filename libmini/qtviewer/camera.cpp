@@ -287,6 +287,8 @@ void Camera::focusOnObject(Object *obj)
    miniv3d normal = obj->get_normal();
    double size = 2.0*obj->get_radius();
 
+   target.set_time(0.0);
+
    target += size * normal;
 
    curve.append_sector(get_eye(), target, 100);
