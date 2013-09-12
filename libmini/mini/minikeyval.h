@@ -75,8 +75,8 @@ class minikeyval
    unsigned int get_num() const
       {return(idxnum);}
 
-   //! get key at index
-   ministring get_key(unsigned int idx)
+   //! transform index into key
+   ministring to_key(unsigned int idx)
       {
       ministring key;
 
@@ -130,7 +130,7 @@ class minikeyval
       {
       BOOLINT ok;
 
-      ok=add(get_key(idx),val);
+      ok=add(to_key(idx),val);
       if (ok) idxnum++;
 
       return(ok);
@@ -157,6 +157,16 @@ class minikeyval
    //! clear key-value pairs
    void clear()
       {pairs.clear();}
+
+   //! get key from index
+   ministring get_key(unsigned int i)
+      {
+      unsigned int idx=0;
+
+      if (i<pairs.getsize()) return(pairs[i].key);
+
+      return("");
+      }
 
    //! get value reference from index
    Item *idx(unsigned int i)
@@ -326,11 +336,11 @@ class minikeyval
 
    //! get value at index
    Item *at(unsigned int idx)
-      {return(get(get_key(idx)));}
+      {return(get(to_key(idx)));}
 
    //! get tags at index
    ministrings *at_tags(unsigned int idx)
-      {return(get_tags(get_key(idx)));}
+      {return(get_tags(to_key(idx)));}
 
    //! concatenate pair list (serialization)
    ministring to_string(ministring separator="/")
