@@ -161,10 +161,7 @@ class minikeyval
    //! get key from index
    ministring get_key(unsigned int i)
       {
-      unsigned int idx=0;
-
       if (i<pairs.getsize()) return(pairs[i].key);
-
       return("");
       }
 
