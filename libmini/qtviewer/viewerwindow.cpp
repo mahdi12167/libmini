@@ -588,8 +588,9 @@ BOOLINT ViewerWindow::loadImage(ministring url)
    {
       delete image;
 
-      notify(TR("Unable to load image from url=")+url+"\n\n"+
-             TR("Standard file format ist GeoTiff."));
+      if (errorcode != OBJECT_NOT_GEOLOCATED)
+         notify(TR("Unable to load image from url=")+url+"\n\n"+
+                TR("Standard file format ist GeoTiff."));
    }
 
    if (errorcode == OBJECT_NOT_REFERENCED)

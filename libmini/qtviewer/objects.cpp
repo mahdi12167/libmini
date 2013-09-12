@@ -259,6 +259,9 @@ int Object_image::initGFX()
                // put invalid layer at the north pole
                layer->set_extent(OBJECT_INVALID_LAT,360*minirand(),1);
                errorcode=OBJECT_NOT_REFERENCED;
+
+               // check for invalid photo
+               if (!layer->get_metadata_tag("EXIF_ExifVersion").empty()) errorcode=OBJECT_NOT_GEOLOCATED;
                }
             }
 
