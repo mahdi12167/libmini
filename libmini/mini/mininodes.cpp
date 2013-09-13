@@ -365,7 +365,7 @@ void mininode_ecef::traverse_pre()
    mininode_transform::traverse_pre();
 
    // cull on backside of orb
-   is_visible=!is_occluded(miniv3d(0.0,0.0,0.0),orb_radius);
+   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,0.0),orb_radius));
    }
 
 // mininode_coord:
@@ -424,7 +424,7 @@ void mininode_coord::traverse_pre()
       }
 
    // cull on backside of orb
-   is_visible=!is_occluded(miniv3d(0.0,0.0,-orb_radius),orb_radius);
+   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,-orb_radius),orb_radius));
    }
 
 void mininode_coord::traverse_post()
