@@ -169,6 +169,8 @@ class mininode_culling: public mininode_group
    protected:
 
    static double orb_radius;
+   static double orb_r_major;
+   static double orb_r_minor;
 
    static minidyna<minicone> cone_stack;
 
@@ -182,7 +184,7 @@ class mininode_culling: public mininode_group
    virtual void transform_cone(minicone &) const {}
    virtual void transform_point(miniv3d &) const {}
 
-   BOOLINT is_occluded(const miniv3d &center,double radius) const;
+   BOOLINT is_occluded(const miniv3d &center,double rx,double ry,double rz) const;
    };
 
 //! dynamic time-dependent node (base class)

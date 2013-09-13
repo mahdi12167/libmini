@@ -95,6 +95,9 @@ class minicam
    double get_orb_radius()
       {return(EARTH->getorbradius());}
 
+   void get_orb_axis(double &r_major,double &r_minor)
+      {EARTH->getorbaxis(r_major,r_major);}
+
    void get_ecef_matrix(miniv4d matrix[3])
       {EARTH->get_ecef_matrix(matrix);}
 

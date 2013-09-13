@@ -145,6 +145,8 @@ void mininode_group::update_dirty()
 // mininode_culling:
 
 double mininode_culling::orb_radius=0.0;
+double mininode_culling::orb_r_major=0.0;
+double mininode_culling::orb_r_minor=0.0;
 
 minidyna<minicone> mininode_culling::cone_stack;
 
@@ -184,6 +186,7 @@ void mininode_culling::traverse_init()
    double cone=camera->get_cone();
 
    orb_radius=camera->get_orb_radius();
+   camera->get_orb_axis(orb_r_major,orb_r_minor);
 
    cone_stack.push(minicone(eye,dir,cone));
    }
@@ -224,20 +227,18 @@ void mininode_culling::traverse_exit()
    mininode_group::traverse_exit();
    }
 
-BOOLINT mininode_culling::is_occluded(const miniv3d &center,double radius) const
+BOOLINT mininode_culling::is_occluded(const miniv3d &center,double rx,double ry,double rz) const
    {
-   // cull on spherical occluder
+   // cull on elliptical occluder
    minicone cone=cone_stack.peek();
    if (has_bsphere())
       if (cone.valid)
          {
-         double t=intersect_ray_ellipsoid(cone.pos,bound_center-cone.pos,
-                                          center,
-                                          radius-bound_radius,
-                                          radius-bound_radius,
-                                          radius-bound_radius);
+         miniv3d dir=bound_center-cone.pos;
+         double l=dir.normalize();
 
-         if (t>0.0 && t<1.0) return(TRUE);
+         double t=intersect_ray_ellipsoid(cone.pos,dir,center,rx,ry,rz);
+         if (t>0.0 && t<l-bound_radius) return(TRUE);
          }
 
    return(FALSE);
@@ -365,7 +366,7 @@ void mininode_ecef::traverse_pre()
    mininode_transform::traverse_pre();
 
    // cull on backside of orb
-   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,0.0),orb_radius));
+   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,0.0),orb_r_major,orb_r_major,orb_r_minor));
    }
 
 // mininode_coord:
@@ -424,7 +425,7 @@ void mininode_coord::traverse_pre()
       }
 
    // cull on backside of orb
-   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,-orb_radius),orb_radius));
+   is_visible=(is_visible && !is_occluded(miniv3d(0.0,0.0,-orb_r_minor),orb_r_minor,orb_r_minor,orb_r_minor));
    }
 
 void mininode_coord::traverse_post()

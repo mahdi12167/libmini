@@ -16,6 +16,13 @@
 double miniearth::getorbradius()
    {return(minicrs::EARTH_radius);}
 
+// get semi-major and minor axis of orb
+void miniearth::getorbaxis(double &r_major,double &r_minor)
+   {
+   r_major=minicrs::WGS84_r_major;
+   r_minor=minicrs::WGS84_r_minor;
+   }
+
 // default constructor
 miniearth::miniearth()
    {
@@ -872,6 +879,10 @@ void miniearth::addgrid(datagrid *obj,BOOLINT sort)
    SORT=sort;
    }
 
-// get planet radius
+// get approximate planet radius
 double miniplanet::getorbradius()
    {return(minicoord::getorbradius(planet_orb));}
+
+// get semi-major and minor axis of planet
+void miniplanet::getorbaxis(double &r_major,double &r_minor)
+   {minicoord::getorbaxis(planet_orb,r_major,r_minor);}

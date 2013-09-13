@@ -29,6 +29,9 @@ class miniearth
    //! get approximate orb radius
    virtual double getorbradius();
 
+   //! get semi-major and minor axis of orb
+   virtual void getorbaxis(double &r_major,double &r_minor);
+
    struct MINIEARTH_PARAMS_STRUCT
       {
       // configurable parameters:
@@ -318,8 +321,11 @@ class miniplanet : public miniearth
    {
    public:
 
-   //! get planet radius
+   //! get approximate planet radius
    virtual double getorbradius();
+
+   //! get semi-major and minor axis of planet
+   virtual void getorbaxis(double &r_major,double &r_minor);
 
    //! default constructor
    miniplanet(int orb=minicoord::MINICOORD_ORB_EARTH)
