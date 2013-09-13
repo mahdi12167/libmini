@@ -1068,6 +1068,7 @@ int databuf::loaddata(const char *filename,int stub,unsigned int tstart,unsigned
       // convert from implicit format
       if (implformat!=0) interpretechunk(implformat,filename);
       }
+   else fclose(file);
 
    return(1);
    }
