@@ -5,9 +5,14 @@
 
 #include "minibase.h"
 
-/* This class represents a single 1D, 2D, 3D or 4D data buffer with
-   additional metadata such as dimension and type. */
+/**
+This class represents a single 1D, 2D, 3D or 4D data buffer also known
+as DB Format. It provides additional metadata such as dimension, type,
+no-data values and geo-references.
 
+Note: The methods that manipulate the native DB format are
+thread-safe. They are also not affected by LOCALE settings.
+**/
 class databuf
    {
    public:
