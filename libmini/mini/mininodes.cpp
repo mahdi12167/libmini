@@ -514,6 +514,8 @@ miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
 
 // mininode_geometry:
 
+unsigned int mininode_geometry::render_count=0;
+
 BOOLINT mininode_geometry::deferred=FALSE;
 BOOLINT mininode_geometry::deferred_semitransparent=FALSE;
 unsigned int mininode_geometry::pass_first=0,mininode_geometry::pass_last=0;
