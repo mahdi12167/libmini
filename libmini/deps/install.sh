@@ -86,7 +86,7 @@ echo BUILDING GDAL
  ./configure --prefix=$prefix/gdal\
              --with-libtiff=internal --with-geotiff=internal\
              --with-png=internal --with-jpeg=internal\
-             --without-threads --without-curl --without-netcdf\
+             --without-curl --without-netcdf\
              --without-sqlite3 --without-pg\
              --without-ld-shared\
              --enable-static --disable-shared;\
