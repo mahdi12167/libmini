@@ -189,6 +189,8 @@ void mininode_culling::traverse_init()
    camera->get_orb_axis(orb_r_major,orb_r_minor);
 
    cone_stack.push(minicone(eye,dir,cone));
+
+   mininode_geometry::reset_render_count();
    }
 
 void mininode_culling::traverse_pre()

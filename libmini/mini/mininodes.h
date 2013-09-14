@@ -2004,7 +2004,7 @@ class mininode_geometry_base: public mininode_color, public ministrip
 
    virtual void traverse_pre()
       {
-      mininode_color::traverse_pre();
+      mininode_color::traverse_pre(); // traverse base class
       BOOLINT texgen=getglobal_texgen(); // get texgen state
       if (has_tex() && texgen) setglobal_texgen(FALSE); // override texgen with tex coords
       render_geometry(); // render triangle strip (and optional bounding box)
@@ -2056,6 +2056,14 @@ class mininode_geometry: public mininode_geometry_base
 
    BOOLINT is_shown() const
       {return(shown);}
+
+   //! get last rendered geometry node count
+   static unsigned int get_render_count()
+      {return(render_count);}
+
+   //! reset last rendered geometry node count
+   static void reset_render_count()
+      {render_count=0;}
 
    static void enable_deferred(BOOLINT on)
       {deferred=on;}
@@ -2135,6 +2143,8 @@ class mininode_geometry: public mininode_geometry_base
    BOOLINT shown;
    BOOLINT visible;
 
+   static unsigned int render_count;
+
    static BOOLINT deferred;
    static BOOLINT deferred_semitransparent;
    static unsigned int pass_first,pass_last;
@@ -2150,10 +2160,14 @@ class mininode_geometry: public mininode_geometry_base
       if (!shown) return;
       if (!visible) return;
 
+      render_count++; // increase node count
+
       BOOLINT dfrd=FALSE;
 
+      // check for deferral
       if (deferred) dfrd=TRUE;
 
+      // defer semitransparent geometry
       if (deferred_semitransparent)
          if (!isopaque()) dfrd=TRUE;
          else if (!hascolor())
@@ -2162,6 +2176,7 @@ class mininode_geometry: public mininode_geometry_base
             else
                {if (mininode_color::get_glcolor().w<1.0) dfrd=TRUE;}
 
+      // do not defer semitransparent geometry /w global texgen
       if (dfrd)
          if (getglobal_texgen())
             if (mininode_texture2D::get_texid()!=0 ||
