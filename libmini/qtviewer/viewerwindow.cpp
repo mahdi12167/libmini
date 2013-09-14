@@ -1983,7 +1983,7 @@ void ViewerWindow::dwi_layers(ministrings keys)
       return;
    }
 
-   ministrings files = browse("DCI Output", repository_path, TRUE);
+   ministrings files = browse("DWI Output", repository_path, TRUE);
    if (files.size()==0) return;
 
    ministring output = files[0];
@@ -2527,13 +2527,17 @@ ministrings ViewerWindow::browse(ministring title,
    ministrings files;
 
    if (fd->exec() == QDialog::Accepted)
-      for (int i=0; i<fd->selectedFiles().size(); i++)
+   {
+      QStringList selected = fd->selectedFiles();
+
+      for (int i=0; i<selected.size(); i++)
       {
-         QString fileName = fd->selectedFiles().at(i);
+         QString fileName = selected.at(i);
 
          if (!fileName.isNull())
             files += fileName.toStdString().c_str();
       }
+   }
 
    delete fd;
 
