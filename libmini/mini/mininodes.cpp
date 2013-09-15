@@ -232,16 +232,21 @@ void mininode_culling::traverse_exit()
 BOOLINT mininode_culling::is_occluded(const miniv3d &center,double rx,double ry,double rz) const
    {
    // cull on elliptical occluder
-   minicone cone=cone_stack.peek();
-   if (has_bsphere())
-      if (cone.valid)
-         {
-         miniv3d dir=bound_center-cone.pos;
-         double l=dir.normalize();
+   if (bound_radius<rx && bound_radius<ry && bound_radius<rz)
+       {
+       minicone cone=cone_stack.peek();
+       if (has_bsphere())
+          if (cone.valid)
+             {
+             miniv3d dir=bound_center-cone.pos;
+             double l=dir.normalize();
 
-         double t=intersect_ray_ellipsoid(cone.pos,dir,center,rx,ry,rz);
-         if (t>0.0 && t<l-bound_radius) return(TRUE);
-         }
+             double t=intersect_ray_ellipsoid(cone.pos,dir,center,
+                                              rx-bound_radius,ry-bound_radius,rz-bound_radius);
+
+             if (t>0.0 && t<l-bound_radius) return(TRUE);
+             }
+       }
 
    return(FALSE);
    }
