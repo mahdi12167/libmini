@@ -1,5 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#include "minibase.h"
 #include "miniio.h"
 #include "minidir.h"
 
