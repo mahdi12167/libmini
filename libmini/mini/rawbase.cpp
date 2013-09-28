@@ -1835,7 +1835,7 @@ char *processRAWvolume(const char *filename, // source file
    }
 
 // swap the hi and lo byte of 16 bit data
-void swapbytes(unsigned char *data,long long bytes)
+void swapRAWbytes(unsigned char *data,long long bytes)
    {
    long long i;
    unsigned char *ptr,tmp;
@@ -1849,7 +1849,7 @@ void swapbytes(unsigned char *data,long long bytes)
    }
 
 // convert from signed short to unsigned short
-void convbytes(unsigned char *data,long long bytes)
+void convRAWbytes(unsigned char *data,long long bytes)
    {
    long long i;
    unsigned char *ptr;
@@ -1873,7 +1873,7 @@ void convbytes(unsigned char *data,long long bytes)
    }
 
 // convert from float to unsigned short
-void convfloat(unsigned char *data,long long bytes)
+void convRAWfloat(unsigned char *data,long long bytes)
    {
    long long i;
    unsigned char *ptr;
@@ -1934,10 +1934,10 @@ inline double getgrad(unsigned short int *data,
    }
 
 // quantize 16 bit data to 8 bit using a non-linear mapping
-unsigned char *quantize(unsigned char *data,
-                        long long width,long long height,long long depth,
-                        BOOLINT msb,
-                        BOOLINT linear,BOOLINT nofree)
+unsigned char *quantizeRAW(unsigned char *data,
+                           long long width,long long height,long long depth,
+                           BOOLINT msb,
+                           BOOLINT linear,BOOLINT nofree)
    {
    long long i,j,k;
 
