@@ -5,14 +5,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stddef.h>
 #include <string.h>
 #include <ctype.h>
-#include <float.h>
 #include <math.h>
 
-#include <limits> // for nan
 #include <time.h> // for seed
+
+#include "minidefs.h"
 
 namespace minibase {
 
@@ -52,34 +51,6 @@ inline void minierrormsg(const char *file,int line,int fatal)
    }
 
 #define mini_stringify(s) #s
-
-#ifndef NULL
-#   define NULL (0)
-#endif
-
-#define BOOLINT char
-
-#ifndef TRUE
-#   define TRUE (1)
-#endif
-#ifndef FALSE
-#   define FALSE (0)
-#endif
-
-#ifndef PI
-#   define PI (3.14159265358979323846)
-#endif
-#ifndef RAD
-#   define RAD (PI/180.0)
-#endif
-
-#ifndef MAXFLOAT
-#   define MAXFLOAT (FLT_MAX)
-#endif
-
-#ifndef NAN
-#   define NAN (std::numeric_limits<double>::quiet_NaN())
-#endif
 
 #ifdef __APPLE__
 #   define ffloor(x) floorf(x)

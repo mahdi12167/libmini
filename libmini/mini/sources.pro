@@ -1,5 +1,5 @@
 HEADERS += \
-   mini.h minibase.h \
+   mini.h minidefs.h minibase.h \
    minicore.h minicoreP.h \
    miniOGL.h miniOGLP.h \
    minivec.h minimtx.h \

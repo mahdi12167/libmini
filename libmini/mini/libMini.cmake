@@ -1,7 +1,7 @@
 # libMini header and module list
 
 SET(MINI_HDRS
-   mini.h minibase.h
+   mini.h minidefs.h minibase.h
    minicore.h minicoreP.h
    miniOGL.h miniOGLP.h
    minivec.h minimtx.h
