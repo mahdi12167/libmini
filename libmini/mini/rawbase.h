@@ -3,7 +3,7 @@
 #ifndef RAWBASE_H
 #define RAWBASE_H
 
-#include "minibase.h"
+#include "minidefs.h"
 
 extern float RAW_TARGET_RATIO;
 extern long long RAW_TARGET_CELLS;

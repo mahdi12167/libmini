@@ -3,6 +3,8 @@
 #ifndef REKBASE_H
 #define REKBASE_H
 
+#include "minidefs.h"
+
 extern float REK_TARGET_RATIO;
 extern long long REK_TARGET_CELLS;
 
