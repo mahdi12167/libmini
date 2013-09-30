@@ -108,7 +108,7 @@ char *cropRAWvolume(const char *filename, // source file
 
 // copy a RAW volume with out-of-core down-sizing
 char *downsizeRAWvolume(FILE *file, // source file desc
-                        const char *output, // destination file name /wo .raw
+                        const char *output, // destination file name /wo suffix .raw
                         long long width,long long height,long long depth=1,long long steps=1,
                         unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
                         float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
@@ -149,5 +149,20 @@ unsigned char *quantizeRAW(unsigned char *volume,
                            long long width,long long height,long long depth,
                            BOOLINT msb=TRUE,
                            BOOLINT linear=FALSE,BOOLINT nofree=FALSE);
+
+// extract an iso-surface from a RAW volume out-of-core
+char *extractRAWvolume(FILE *file, // source file desc
+                       const char *output, // destination file name /wo suffix .raw
+                       long long width,long long height,long long depth=1,long long steps=1,
+                       unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
+                       float scalex=1.0f,float scaley=1.0f,float scalez=1.0f,
+                       double isovalue=0.5, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL); // feedback callback
+
+// extract an iso-surface from a RAW volume out-of-core
+char *extractRAWvolume(const char *filename, // source file
+                       const char *output, // destination file name /wo suffix .raw
+                       double isovalue=0.5, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL); // feedback callback
 
 #endif

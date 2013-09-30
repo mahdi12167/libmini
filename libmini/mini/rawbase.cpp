@@ -371,7 +371,7 @@ BOOLINT writeRAWvolume(const char *filename, // /wo suffix .raw
 
 // copy a RAW volume
 char *copyRAWvolume(FILE *file, // source file desc
-                    const char *output, // destination file name /wo .raw
+                    const char *output, // destination file name /wo suffix .raw
                     long long width,long long height,long long depth,long long steps,
                     unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
                     float scalex,float scaley,float scalez)
@@ -589,7 +589,7 @@ unsigned char *convert2char(unsigned short int *shorts,long long cells,unsigned 
 
 // copy a RAW volume with out-of-core linear quantization
 char *copyRAWvolume_linear(FILE *file, // source file desc
-                           const char *output, // destination file name /wo .raw
+                           const char *output, // destination file name /wo suffix .raw
                            long long width,long long height,long long depth,long long steps,
                            unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
                            float scalex,float scaley,float scalez,
@@ -862,7 +862,7 @@ unsigned char *convert2char(unsigned short int *shorts,long long cells,unsigned 
 
 // copy a RAW volume with out-of-core non-linear quantization
 char *copyRAWvolume_nonlinear(FILE *file, // source file desc
-                              const char *output, // destination file name /wo .raw
+                              const char *output, // destination file name /wo suffix .raw
                               long long width,long long height,long long depth,long long steps,
                               unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
                               float scalex,float scaley,float scalez,
@@ -969,6 +969,7 @@ char *copyRAWvolume_nonlinear(FILE *file, // source file desc
 
             shorts[0]=shorts[1];
             shorts[1]=shorts[2];
+            shorts[2]=NULL;
 
             if (j<depth-1)
                {
@@ -980,6 +981,7 @@ char *copyRAWvolume_nonlinear(FILE *file, // source file desc
                   free(slice);
                   if (shorts[0]!=NULL) free(shorts[0]);
                   if (shorts[1]!=NULL) free(shorts[1]);
+                  if (shorts[2]!=NULL) free(shorts[2]);
                   return(NULL);
                   }
 
@@ -992,6 +994,7 @@ char *copyRAWvolume_nonlinear(FILE *file, // source file desc
 
       if (shorts[0]!=NULL) free(shorts[0]);
       if (shorts[1]!=NULL) free(shorts[1]);
+      if (shorts[2]!=NULL) free(shorts[2]);
 
       integrate(err,minval0,maxval0);
       }
@@ -1466,7 +1469,7 @@ unsigned short int *convert2down(unsigned short int *shorts[],unsigned int width
 
 // copy a RAW volume with out-of-core down-sizing
 char *downsizeRAWvolume(FILE *file, // source file desc
-                        const char *output, // destination file name /wo .raw
+                        const char *output, // destination file name /wo suffix .raw
                         long long width,long long height,long long depth,long long steps,
                         unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
                         float scalex,float scaley,float scalez,
@@ -2031,4 +2034,197 @@ unsigned char *quantizeRAW(unsigned char *data,
    free(data3);
 
    return(data2);
+   }
+
+// define ISO file format
+char *makeISOinfo(double isovalue)
+   {
+   static const int maxlen=100;
+
+   char info[maxlen];
+
+   if (isovalue>=0.0 && isovalue<=1.0)
+      snprintf(&info[strlen(info)],maxlen-strlen(info),"_iso%3d",int(1000.0*isovalue+0.5));
+   else return(NULL);
+
+   snprintf(&info[strlen(info)],maxlen-strlen(info),".ply");
+
+   return(strdup(info));
+   }
+
+// append ISO file format suffix
+char *appendISOinfo(const char *filename,double isovalue)
+   {
+   char *filename2;
+   char *info;
+   char *filename3;
+
+   // define ISO info
+   info=makeISOinfo(isovalue);
+   if (info==NULL) return(NULL);
+
+   // remove suffix
+   filename2=removeRAWsuffix(filename);
+
+   // append RAW info to filename
+   filename3=strdup2(filename2,info);
+   free(filename2);
+   free(info);
+
+   return(filename3);
+   }
+
+// extract iso surface
+void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,
+                 FILE *file,double isovalue)
+   {
+   unsigned int i,j;
+
+   for (i=0; i<width; i++)
+      for (j=0; j<height; j++)
+         {
+         int sv=getshort(shorts,width,height,components,i,j); //!!
+         int gm=sqrt(getgrad(shorts,width,height,components,i,j)); //!!
+         }
+   }
+
+// extract an iso-surface from a RAW volume out-of-core
+char *extractRAWvolume(FILE *file, // source file desc
+                       const char *output, // destination file name
+                       long long width,long long height,long long depth,long long steps,
+                       unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
+                       float scalex,float scaley,float scalez,
+                       double isovalue, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj),void *obj)
+   {
+   long long i,j;
+
+   unsigned char *slice;
+   long long cells;
+   long long bytes;
+
+   unsigned short int *shorts[3];
+
+   char *outname;
+   FILE *outfile;
+
+   // compute total number of cells per slice
+   cells=bytes=width*height;
+
+   // compute total number of bytes per slice
+   bytes*=components;
+   if (bits==16) bytes*=2;
+   else if (bits==32) bytes*=4;
+
+   // make ISO info
+   outname=appendISOinfo(output,isovalue);
+   if (outname==NULL) return(NULL);
+
+   // open ISO output file
+   if ((outfile=fopen(outname,"wb"))==NULL)
+      {
+      free(outname);
+      return(NULL);
+      }
+
+   shorts[0]=shorts[1]=shorts[2]=NULL;
+
+   // calculate gradients and extract iso-surface
+   for (i=0; i<steps; i++)
+      for (j=0; j<depth; j++)
+         {
+         if (feedback!=NULL) feedback("extracting iso-surface",(float)(i*depth+j+1)/(depth*steps),obj);
+
+         if (j==0)
+            {
+            if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
+
+            if (fread(slice,bytes,1,file)!=1)
+               {
+               free(slice);
+               return(NULL);
+               }
+
+            shorts[2]=convert2short(slice,cells,components,bits,sign,msb);
+            free(slice);
+            }
+
+         if (shorts[0]!=NULL) free(shorts[0]);
+
+         shorts[0]=shorts[1];
+         shorts[1]=shorts[2];
+         shorts[2]=NULL;
+
+         if (j<depth-1)
+            {
+            if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
+
+            if (fread(slice,bytes,1,file)!=1)
+               {
+               free(slice);
+               if (shorts[0]!=NULL) free(shorts[0]);
+               if (shorts[1]!=NULL) free(shorts[1]);
+               if (shorts[2]!=NULL) free(shorts[2]);
+               return(NULL);
+               }
+
+            shorts[2]=convert2short(slice,cells,components,bits,sign,msb);
+            free(slice);
+            }
+
+         convert2iso(shorts,width,height,components,outfile,isovalue);
+         }
+
+   if (shorts[0]!=NULL) free(shorts[0]);
+   if (shorts[1]!=NULL) free(shorts[1]);
+   if (shorts[2]!=NULL) free(shorts[2]);
+
+   fclose(outfile);
+
+   return(outname);
+   }
+
+// extract an iso-surface from a RAW volume out-of-core
+char *extractRAWvolume(const char *filename, // source file
+                       const char *output, // destination file name /wo suffix .raw
+                       double isovalue, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj),void *obj) // feedback callback
+   {
+   FILE *file;
+
+   char *name;
+
+   long long rawwidth,rawheight,rawdepth,rawsteps;
+   unsigned int rawcomps,rawbits;
+   BOOLINT rawsign,rawmsb;
+   float rawscalex,rawscaley,rawscalez;
+
+   char *outname;
+
+   // open RAW file
+   if ((file=fopen(filename,"rb"))==NULL) return(NULL);
+
+   // analyze RAW info
+   name=strdup(filename);
+   if (!readRAWinfo(name,
+                    &rawwidth,&rawheight,&rawdepth,&rawsteps,
+                    &rawcomps,&rawbits,&rawsign,&rawmsb,
+                    &rawscalex,&rawscaley,&rawscalez))
+      {
+      free(name);
+      fclose(file);
+      return(NULL);
+      }
+   free(name);
+
+   outname=extractRAWvolume(file,output,
+                            rawwidth,rawheight,rawdepth,rawsteps,
+                            rawcomps,rawbits,rawsign,rawmsb,
+                            rawscalex,rawscaley,rawscalez,
+                            isovalue,
+                            feedback,obj);
+
+   fclose(file);
+
+   return(outname);
    }
