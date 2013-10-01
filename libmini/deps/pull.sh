@@ -81,28 +81,29 @@ if (-X ../mini/tabify.sh && -X cvs) then
    end
 endif
 
-# openthreads 2.3.0
-# svn co http://www.openscenegraph.org/svn/osg/OpenThreads/tags/OpenThreads-2.3.0
+# openthreads 2.6.0
+# note: currently disabled due to svn problems with the osg server
+# svn co http://www.openscenegraph.org/svn/osg/OpenThreads/tags/OpenThreads-2.6.0
 
 # freeglut 2.8.0+
 if (-X svn) then
-   svn up freeglut -r 1504
+   svn up freeglut -r 1504 # svn external
 endif
 
 # other libraries to pull:
 
 # gdal 1.9.2
 if (-X svn) then
-   svn up gdal
+   svn up gdal # svn external
 endif
 
 # proj 4.8 (required by gdal)
 if (-X svn) then
-   svn up proj
+   svn up proj # svn external
 endif
 
 # libiconv 1.14 (required by gdal 1.9+)
-if (! -e /usr/include/iconv.h) then
+if (! -e /usr/include/iconv.h || ! -e /usr/lib/libiconv.a) then
    if (-X wget) then
       if (! -e libiconv) then
          wget http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
