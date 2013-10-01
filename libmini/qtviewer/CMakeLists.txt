@@ -137,6 +137,9 @@ TARGET_LINK_LIBRARIES(qtviewer
    ${OPENGL_LIBRARIES}
    ${CMAKE_THREAD_LIBS_INIT}
    )
+IF (UNIX)
+   TARGET_LINK_LIBRARIES(qtviewer dl)
+ENDIF (UNIX)
 
 # install target
 INSTALL(
