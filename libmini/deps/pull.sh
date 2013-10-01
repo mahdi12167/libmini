@@ -82,8 +82,7 @@ if (-X ../mini/tabify.sh && -X cvs) then
 endif
 
 # openthreads 2.6.0
-# note: currently disabled due to svn problems with the osg server
-# svn co http://www.openscenegraph.org/svn/osg/OpenThreads/tags/OpenThreads-2.6.0
+svn co http://svn.openscenegraph.org/osg/OpenThreads/tags/OpenThreads-2.6.0
 
 # freeglut 2.8.0+
 if (-X svn) then
