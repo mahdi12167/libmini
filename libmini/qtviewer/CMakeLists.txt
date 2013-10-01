@@ -138,7 +138,7 @@ TARGET_LINK_LIBRARIES(qtviewer
    ${CMAKE_THREAD_LIBS_INIT}
    )
 IF (UNIX)
-   TARGET_LINK_LIBRARIES(qtviewer dl)
+   TARGET_LINK_LIBRARIES(qtviewer dl rt)
 ENDIF (UNIX)
 
 # install target
