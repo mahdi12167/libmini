@@ -3,6 +3,7 @@
 #include "minibase.h"
 #include "miniio.h"
 #include "minidir.h"
+#include "ministrip.h"
 
 #include "rawbase.h"
 
@@ -2117,7 +2118,7 @@ char *appendISOinfo(const char *filename,double isovalue)
 // extract iso surface
 void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,
                  unsigned int bits,unsigned int slab,
-                 FILE *file,double isovalue)
+                 double isovalue,ministrip &strip)
    {
    int k;
 
@@ -2178,7 +2179,9 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          if (isovalue>=svmin && isovalue<=svmax)
             {
             // found a voxel that contains an iso surface patch
-            fprintf(file,"%d,%d,%d\n",i,j,slab); // output lower left voxel corner
+            strip.beginstrip();
+            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
+            strip.addvtx(i,j,slab); //!! lower left voxel corner
             }
          }
    }
@@ -2201,7 +2204,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    unsigned short int *shorts[4];
 
    char *outname;
-   FILE *outfile;
+   ministrip strip(0,3,0); // /wo color /w normal /wo texcoord
 
    // compute total number of cells per slice
    cells=bytes=width*height;
@@ -2215,6 +2218,11 @@ char *extractRAWvolume(FILE *file, // source file desc
    outname=appendISOinfo(output,isovalue);
    if (outname==NULL) return(NULL);
 
+   /*
+   //!! move into ministrip::writePLYfile
+
+   FILE *outfile;
+
    // open ISO output file
    if ((outfile=fopen(outname,"wb"))==NULL)
       {
@@ -2227,6 +2235,9 @@ char *extractRAWvolume(FILE *file, // source file desc
    fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
    fprintf(outfile,"end_header\n"); // ply format: end identifier
 
+   fclose(outfile);
+   */
+
    shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
 
    // calculate gradients and extract iso-surface
@@ -2237,7 +2248,7 @@ char *extractRAWvolume(FILE *file, // source file desc
 
          if (j==0)
             {
-            fprintf(outfile,"comment iso-surface %lld\n",i);
+            strip.clear();
 
             if (shorts[0]!=NULL) free(shorts[0]);
             if (shorts[1]!=NULL) free(shorts[1]);
@@ -2301,7 +2312,7 @@ char *extractRAWvolume(FILE *file, // source file desc
             free(slice);
             }
 
-         convert2iso(shorts,width,height,components,bits,j,outfile,isovalue);
+         convert2iso(shorts,width,height,components,bits,j,isovalue,strip);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
@@ -2309,7 +2320,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    if (shorts[2]!=NULL) free(shorts[2]);
    if (shorts[3]!=NULL) free(shorts[3]);
 
-   fclose(outfile);
+   //!! strip.writePLYfile(outname);
 
    return(outname);
    }
