@@ -2121,9 +2121,9 @@ void getpos(double p[3],
             unsigned int width,unsigned int height,unsigned int depth,
             double scalex,double scaley,double scalez)
    {
-   p[0]=(i-(width-1)/2.0)*scalex;
-   p[1]=(j-(height-1)/2.0)*scaley;
-   p[2]=(k-(depth-1)/2.0)*scalez;
+   p[0]=((double)i/(width-1)-0.5)*scalex;
+   p[1]=((double)j/(height-1)-0.5)*scaley;
+   p[2]=((double)k/(depth-1)-0.5)*scalez;
    }
 
 // extract iso surface
