@@ -178,14 +178,14 @@ void normalarray(const float *array);
 void texcoordarray(const float *array,int comps=2);
 void interleavedNVarray(const float *array);
 
-void rendertriangles(int start,int size);
-void renderquads(int start,int size);
-void renderlines(int start,int size);
-void renderstrip(int start,int size);
-void renderfan(int start,int size);
+void rendertriangles(unsigned int start,unsigned int size);
+void renderquads(unsigned int start,unsigned int size);
+void renderlines(unsigned int start,unsigned int size);
+void renderstrip(unsigned int start,unsigned int size);
+void renderfan(unsigned int start,unsigned int size);
 
 int getmaxtexsize();
-unsigned int getmax3Dtexsize();
+int getmax3Dtexsize();
 
 int getmaxtexunits();
 int getmaxtexcoords();

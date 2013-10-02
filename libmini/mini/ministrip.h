@@ -249,7 +249,7 @@ class ministrip
    virtual void renderbbox();
 
    //! get array size (number of vertices)
-   int getsize() {return(SIZE);}
+   unsigned int getsize() {return(SIZE);}
 
    //! get vertex array
    float *getvtx() {return(VTXARRAY);}
@@ -290,8 +290,8 @@ class ministrip
 
    protected:
 
-   int SIZE;
-   int MAXSIZE;
+   unsigned int SIZE;
+   unsigned int MAXSIZE;
 
    float *VTXARRAY; // 3 components
 
@@ -313,7 +313,7 @@ class ministrip
    float NRMX,NRMY,NRMZ;
    float TEXX,TEXY,TEXZ,TEXW;
 
-   int COPYVTX;
+   unsigned int COPYVTX;
 
    float SCALE;
 
@@ -339,8 +339,8 @@ class ministrip
 
    private:
 
-   void init(int colcomps,int nrmcomps,int texcomps,int maxsize=1);
-   void reinit(int colcomps,int nrmcomps,int texcomps,int maxsize=1);
+   void init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize=1);
+   void reinit(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize=1);
 
    struct SHADER_STRUCT
       {

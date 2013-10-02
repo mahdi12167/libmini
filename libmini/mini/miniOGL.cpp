@@ -1858,35 +1858,35 @@ void interleavedNVarray(const float *array)
 #endif
    }
 
-void rendertriangles(int start,int size)
+void rendertriangles(unsigned int start,unsigned int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_TRIANGLES,start,size);
 #endif
    }
 
-void renderquads(int start,int size)
+void renderquads(unsigned int start,unsigned int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_QUADS,start,size);
 #endif
    }
 
-void renderlines(int start,int size)
+void renderlines(unsigned int start,unsigned int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_LINES,start,size);
 #endif
    }
 
-void renderstrip(int start,int size)
+void renderstrip(unsigned int start,unsigned int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_TRIANGLE_STRIP,start,size);
 #endif
    }
 
-void renderfan(int start,int size)
+void renderfan(unsigned int start,unsigned int size)
    {
 #ifndef NOOGL
    glDrawArrays(GL_TRIANGLE_FAN,start,size);
@@ -1904,7 +1904,7 @@ int getmaxtexsize()
 #endif
    }
 
-unsigned int getmax3Dtexsize()
+int getmax3Dtexsize()
    {
 #ifndef NOOGL
    GLint param=0;
