@@ -2149,28 +2149,28 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          // get scalar values and gradient vectors of actual voxel
          sv[0]=getshort(shorts,width,height,components,i,j,0);
          getgrad(gv[0],shorts,width,height,components,i,j,0);
-         getpos(p[0],i,j,slab,width,height,depth,scalex,scaley,scaley);
+         getpos(p[0],i,j,slab,width,height,depth,scalex,scaley,scalez);
          sv[1]=getshort(shorts,width,height,components,i+1,j,0);
          getgrad(gv[1],shorts,width,height,components,i+1,j,0);
-         getpos(p[1],i+1,j,slab,width,height,depth,scalex,scaley,scaley);
+         getpos(p[1],i+1,j,slab,width,height,depth,scalex,scaley,scalez);
          sv[2]=getshort(shorts,width,height,components,i,j+1,0);
          getgrad(gv[2],shorts,width,height,components,i,j+1,0);
-         getpos(p[2],i,j+1,slab,width,height,depth,scalex,scaley,scaley);
+         getpos(p[2],i,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
          getgrad(gv[3],shorts,width,height,components,i+1,j+1,0);
-         getpos(p[3],i+1,j+1,slab,width,height,depth,scalex,scaley,scaley);
+         getpos(p[3],i+1,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[4]=getshort(shorts,width,height,components,i,j,1);
          getgrad(gv[4],shorts,width,height,components,i,j,1);
-         getpos(p[4],i,j,slab+1,width,height,depth,scalex,scaley,scaley);
+         getpos(p[4],i,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[5]=getshort(shorts,width,height,components,i+1,j,1);
          getgrad(gv[5],shorts,width,height,components,i+1,j,1);
-         getpos(p[5],i+1,j,slab+1,width,height,depth,scalex,scaley,scaley);
+         getpos(p[5],i+1,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[6]=getshort(shorts,width,height,components,i,j+1,1);
          getgrad(gv[6],shorts,width,height,components,i,j+1,1);
-         getpos(p[6],i,j+1,slab+1,width,height,depth,scalex,scaley,scaley);
+         getpos(p[6],i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
          getgrad(gv[7],shorts,width,height,components,i+1,j+1,1);
-         getpos(p[7],i+1,j+1,slab+1,width,height,depth,scalex,scaley,scaley);
+         getpos(p[7],i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
 
          // normalize scalar values and gradients
          for (k=0; k<8; k++)
