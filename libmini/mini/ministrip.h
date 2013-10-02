@@ -285,6 +285,9 @@ class ministrip
    //! deserialization
    void from_string(ministring &info);
 
+   //! write strip to PLY file format
+   void writePLYfile(const char *filename);
+
    protected:
 
    int SIZE;

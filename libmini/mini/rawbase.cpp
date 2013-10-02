@@ -2218,26 +2218,6 @@ char *extractRAWvolume(FILE *file, // source file desc
    outname=appendISOinfo(output,isovalue);
    if (outname==NULL) return(NULL);
 
-   /*
-   //!! move into ministrip::writePLYfile
-
-   FILE *outfile;
-
-   // open ISO output file
-   if ((outfile=fopen(outname,"wb"))==NULL)
-      {
-      free(outname);
-      return(NULL);
-      }
-
-   fprintf(outfile,"ply\n"); // ply format: magic identifier
-   fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
-   fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
-   fprintf(outfile,"end_header\n"); // ply format: end identifier
-
-   fclose(outfile);
-   */
-
    shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
 
    // calculate gradients and extract iso-surface
@@ -2320,7 +2300,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    if (shorts[2]!=NULL) free(shorts[2]);
    if (shorts[3]!=NULL) free(shorts[3]);
 
-   //!! strip.writePLYfile(outname);
+   strip.writePLYfile(outname);
 
    return(outname);
    }

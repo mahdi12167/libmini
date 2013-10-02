@@ -1511,7 +1511,7 @@ double ministrip::shoot(const miniv3d &o,const miniv3d &d,double mindist) const
    return(result);
    }
 
-//! shoot a ray and return the distance to the bounding sphere
+// shoot a ray and return the distance to the bounding sphere
 double ministrip::shootbsphere(const miniv3d &o,const miniv3d &d,double mindist) const
    {
    miniv3d b;
@@ -1640,4 +1640,25 @@ void ministrip::from_string(ministring &info)
       COLAMAX=info.prefix(")").value();
       info=info.tail(")");
       }
+   }
+
+// write strip to PLY file format
+void ministrip::writePLYfile(const char *filename)
+   {
+   FILE *outfile;
+
+   // open output file
+   if ((outfile=fopen(filename,"wb"))==NULL) return;
+
+   // write PLY header
+   fprintf(outfile,"ply\n"); // ply format: magic identifier
+   fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
+   fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
+   fprintf(outfile,"end_header\n"); // ply format: end identifier
+
+   // write PLY body
+   //!! ...
+
+   // close output file
+   fclose(outfile);
    }
