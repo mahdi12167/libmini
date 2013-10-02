@@ -2078,7 +2078,7 @@ char *makeISOinfo(double isovalue)
    char info[maxlen];
 
    if (isovalue>=0.0 && isovalue<=1.0)
-      snprintf(&info[strlen(info)],maxlen-strlen(info),"_iso%3d",int(1000.0*isovalue+0.5));
+      snprintf(info,maxlen,"_iso%3d",int(1000.0*isovalue+0.5));
    else return(NULL);
 
    snprintf(&info[strlen(info)],maxlen-strlen(info),".ply");
@@ -2146,8 +2146,10 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          // calculate scalar value range of actual voxel
          svmin=svmax=sv[0];
          for (k=1; k<8; k++)
+            {
             if (sv[k]<svmin) svmin=sv[k];
-            else if (sv[k]>svmax) svmax=sv[k];
+            if (sv[k]>svmax) svmax=sv[k];
+            }
 
          // check for inclusion of iso surface
          if (isovalue>=svmin && isovalue<=svmax)
