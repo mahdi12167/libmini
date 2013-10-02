@@ -116,9 +116,9 @@ BOOLINT readREKheader(FILE *file,
 
    if (components!=0) *components=rekcomps;
 
-   if (scalex!=NULL) *scalex=rekvoxelX;
-   if (scaley!=NULL) *scaley=rekvoxelX;
-   if (scalez!=NULL) *scalez=rekvoxelZ;
+   if (scalex!=NULL) *scalex=rekvoxelX/1E3;
+   if (scaley!=NULL) *scaley=rekvoxelX/1E3;
+   if (scalez!=NULL) *scalez=rekvoxelZ/1E3;
 
    return(TRUE);
    }
