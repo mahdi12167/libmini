@@ -2178,7 +2178,7 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          if (isovalue>=svmin && isovalue<=svmax)
             {
             // found a voxel that contains an iso surface patch
-            fprintf(file,"%d,%d,%d\n",i,j,slab); //!! lower left voxel corner
+            fprintf(file,"%d,%d,%d\n",i,j,slab); // output lower left voxel corner
             }
          }
    }
