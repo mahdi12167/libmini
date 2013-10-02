@@ -2092,13 +2092,19 @@ char *appendISOinfo(const char *filename,double isovalue)
    char *filename2;
    char *info;
    char *filename3;
+   char *dot;
 
    // define ISO info
    info=makeISOinfo(isovalue);
    if (info==NULL) return(NULL);
 
-   // remove suffix
+   // remove RAW suffix
    filename2=removeRAWsuffix(filename);
+
+   // remove ISO suffix
+   dot=strrchr(filename2,'.');
+   if (dot!=NULL)
+      if (strcasecmp(dot,".ply")==0) *dot='\0';
 
    // append RAW info to filename
    filename3=strdup2(filename2,info);
@@ -2109,7 +2115,8 @@ char *appendISOinfo(const char *filename,double isovalue)
    }
 
 // extract iso surface
-void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,unsigned int slab,
+void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,
+                 unsigned int bits,unsigned int slab,
                  FILE *file,double isovalue)
    {
    int k;
@@ -2142,6 +2149,22 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          getgrad(gv[6],shorts,width,height,components,i,j+1,1);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
          getgrad(gv[7],shorts,width,height,components,i+1,j+1,1);
+
+         // normalize scalar values and gradients
+         for (k=0; k<8; k++)
+            {
+            if (bits==8) sv[k]/=255.0;
+            else sv[k]/=65535.0;
+
+            double gm=sqrt(dsqr(gv[k][0])+dsqr(gv[k][1])+dsqr(gv[k][2]));
+
+            if (gm>0.0)
+               {
+               gv[k][0]/=gm;
+               gv[k][1]/=gm;
+               gv[k][2]/=gm;
+               }
+            }
 
          // calculate scalar value range of actual voxel
          svmin=svmax=sv[0];
@@ -2275,7 +2298,7 @@ char *extractRAWvolume(FILE *file, // source file desc
             free(slice);
             }
 
-         convert2iso(shorts,width,height,components,j,outfile,isovalue);
+         convert2iso(shorts,width,height,components,bits,j,outfile,isovalue);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
