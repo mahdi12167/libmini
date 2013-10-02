@@ -2222,7 +2222,10 @@ char *extractRAWvolume(FILE *file, // source file desc
       return(NULL);
       }
 
-   fprintf(outfile,"# ply format file\n");
+   fprintf(outfile,"ply\n"); // ply format: magic identifier
+   fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
+   fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
+   fprintf(outfile,"end_header\n"); // ply format: end identifier
 
    shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
 
@@ -2234,7 +2237,7 @@ char *extractRAWvolume(FILE *file, // source file desc
 
          if (j==0)
             {
-            fprintf(outfile,"# iso-surface %lld\n",i);
+            fprintf(outfile,"comment iso-surface %lld\n",i);
 
             if (shorts[0]!=NULL) free(shorts[0]);
             if (shorts[1]!=NULL) free(shorts[1]);
