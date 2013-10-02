@@ -765,7 +765,7 @@ inline int getshort(unsigned short int *shorts[],
    return(value/components);
    }
 
-// helper to get a short gradient value from 3 consecutive slices
+// helper to get a gradient value from 3 consecutive slices
 inline double getgrad(unsigned short int *shorts[],
                       unsigned int width,unsigned int height,unsigned int components,
                       unsigned int i,unsigned int j,int k=0)
@@ -794,6 +794,34 @@ inline double getgrad(unsigned short int *shorts[],
       else gz=0.0;
 
    return(sqrt(gx*gx+gy*gy+gz*gz));
+   }
+
+// helper to get a gradient vector from 3 consecutive slices
+inline void getgrad(double gv[3],
+                    unsigned short int *shorts[],
+                    unsigned int width,unsigned int height,unsigned int components,
+                    unsigned int i,unsigned int j,int k=0)
+   {
+   if (i>0)
+      if (i<width-1) gv[0]=(getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i-1,j,k))/2.0;
+      else gv[0]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i-1,j,k);
+   else
+      if (i<width-1) gv[0]=getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i,j,k);
+      else gv[0]=0.0;
+
+   if (j>0)
+      if (j<height-1) gv[1]=(getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j-1,k))/2.0;
+      else gv[1]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j-1,k);
+   else
+      if (j<height-1) gv[1]=getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j,k);
+      else gv[1]=0.0;
+
+   if (shorts[k]!=NULL)
+      if (shorts[k+2]!=NULL) gv[2]=(getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k-1))/2.0;
+      else gv[2]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j,k-1);
+   else
+      if (shorts[k+2]!=NULL) gv[2]=getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k);
+      else gv[2]=0.0;
    }
 
 // update error table
@@ -2081,32 +2109,52 @@ char *appendISOinfo(const char *filename,double isovalue)
    }
 
 // extract iso surface
-void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,
+void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,unsigned int slab,
                  FILE *file,double isovalue)
    {
+   int k;
+
    unsigned int i,j;
 
+   // loop over voxels of the actual slab
    for (i=0; i<width-1; i++)
       for (j=0; j<height-1; j++)
          {
-         double sv[8],gm[8];
+         double sv[8];
+         double gv[8][3];
 
+         double svmin,svmax;
+
+         // get scalar values and gradient vectors of actual voxel
          sv[0]=getshort(shorts,width,height,components,i,j,0);
-         gm[0]=sqrt(getgrad(shorts,width,height,components,i,j,0));
+         getgrad(gv[0],shorts,width,height,components,i,j,0);
          sv[1]=getshort(shorts,width,height,components,i+1,j,0);
-         gm[1]=sqrt(getgrad(shorts,width,height,components,i+1,j,0));
+         getgrad(gv[1],shorts,width,height,components,i+1,j,0);
          sv[2]=getshort(shorts,width,height,components,i,j+1,0);
-         gm[2]=sqrt(getgrad(shorts,width,height,components,i,j+1,0));
+         getgrad(gv[2],shorts,width,height,components,i,j+1,0);
          sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
-         gm[3]=sqrt(getgrad(shorts,width,height,components,i+1,j+1,0));
+         getgrad(gv[3],shorts,width,height,components,i+1,j+1,0);
          sv[4]=getshort(shorts,width,height,components,i,j,1);
-         gm[4]=sqrt(getgrad(shorts,width,height,components,i,j,1));
+         getgrad(gv[4],shorts,width,height,components,i,j,1);
          sv[5]=getshort(shorts,width,height,components,i+1,j,1);
-         gm[5]=sqrt(getgrad(shorts,width,height,components,i+1,j,1));
+         getgrad(gv[5],shorts,width,height,components,i+1,j,1);
          sv[6]=getshort(shorts,width,height,components,i,j+1,1);
-         gm[6]=sqrt(getgrad(shorts,width,height,components,i,j+1,1));
+         getgrad(gv[6],shorts,width,height,components,i,j+1,1);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
-         gm[7]=sqrt(getgrad(shorts,width,height,components,i+1,j+1,1));
+         getgrad(gv[7],shorts,width,height,components,i+1,j+1,1);
+
+         // calculate scalar value range of actual voxel
+         svmin=svmax=sv[0];
+         for (k=1; k<8; k++)
+            if (sv[k]<svmin) svmin=sv[k];
+            else if (sv[k]>svmax) svmax=sv[k];
+
+         // check for inclusion of iso surface
+         if (isovalue>=svmin && isovalue<=svmax)
+            {
+            // found a voxel that contains an iso surface patch
+            fprintf(file,"%d,%d,%d\n",i,j,slab); //!! lower left voxel corner
+            }
          }
    }
 
@@ -2225,7 +2273,7 @@ char *extractRAWvolume(FILE *file, // source file desc
             free(slice);
             }
 
-         convert2iso(shorts,width,height,components,outfile,isovalue);
+         convert2iso(shorts,width,height,components,j,outfile,isovalue);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
