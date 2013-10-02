@@ -248,7 +248,7 @@ void print_graphics_info()
    else printf("unknown\n");
 
    printf("maxtexsize=%d\n",getmaxtexsize());
-   printf("max3Dtexsize=%u\n",getmax3Dtexsize());
+   printf("max3Dtexsize=%d\n",getmax3Dtexsize());
    printf("maxtexunits=%d\n",getmaxtexunits());
    printf("maxtexcoords=%d\n",getmaxtexcoords());
    printf("maxteximageunits=%d\n",getmaxteximageunits());
@@ -1184,7 +1184,7 @@ int build3Dtexmap(unsigned char *volume,
 
    GLint width2,height2,depth2;
 
-   unsigned int max3Dtexsize;
+   int max3Dtexsize;
 
    initglexts();
 
@@ -1195,7 +1195,9 @@ int build3Dtexmap(unsigned char *volume,
    if (!glext_t3D) return(0);
 
    max3Dtexsize=getmax3Dtexsize();
-   if (*width>max3Dtexsize || *height>max3Dtexsize || *depth>max3Dtexsize) WARNMSG();
+   if (*width>(unsigned int)max3Dtexsize ||
+       *height>(unsigned int)max3Dtexsize ||
+       *depth>(unsigned int)max3Dtexsize) WARNMSG();
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_3D,texid);
