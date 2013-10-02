@@ -2115,9 +2115,21 @@ char *appendISOinfo(const char *filename,double isovalue)
    return(filename3);
    }
 
+// calculate position from index
+void getpos(double p[3],
+            unsigned int i,unsigned int j,unsigned int k,
+            unsigned int width,unsigned int height,unsigned int depth,
+            double scalex,double scaley,double scalez)
+   {
+   p[0]=(i-(width-1)/2.0)*scalex;
+   p[1]=(j-(height-1)/2.0)*scaley;
+   p[2]=(k-(depth-1)/2.0)*scalez;
+   }
+
 // extract iso surface
-void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int components,
+void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
                  unsigned int bits,unsigned int slab,
+                 double scalex,double scaley,double scalez,
                  double isovalue,ministrip &strip)
    {
    int k;
@@ -2130,32 +2142,45 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          {
          double sv[8];
          double gv[8][3];
+         double p[8][3];
 
          double svmin,svmax;
 
          // get scalar values and gradient vectors of actual voxel
          sv[0]=getshort(shorts,width,height,components,i,j,0);
          getgrad(gv[0],shorts,width,height,components,i,j,0);
+         getpos(p[0],i,j,slab,width,height,depth,scalex,scaley,scaley);
          sv[1]=getshort(shorts,width,height,components,i+1,j,0);
          getgrad(gv[1],shorts,width,height,components,i+1,j,0);
+         getpos(p[1],i+1,j,slab,width,height,depth,scalex,scaley,scaley);
          sv[2]=getshort(shorts,width,height,components,i,j+1,0);
          getgrad(gv[2],shorts,width,height,components,i,j+1,0);
+         getpos(p[2],i,j+1,slab,width,height,depth,scalex,scaley,scaley);
          sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
          getgrad(gv[3],shorts,width,height,components,i+1,j+1,0);
+         getpos(p[3],i+1,j+1,slab,width,height,depth,scalex,scaley,scaley);
          sv[4]=getshort(shorts,width,height,components,i,j,1);
          getgrad(gv[4],shorts,width,height,components,i,j,1);
+         getpos(p[4],i,j,slab+1,width,height,depth,scalex,scaley,scaley);
          sv[5]=getshort(shorts,width,height,components,i+1,j,1);
          getgrad(gv[5],shorts,width,height,components,i+1,j,1);
+         getpos(p[5],i+1,j,slab+1,width,height,depth,scalex,scaley,scaley);
          sv[6]=getshort(shorts,width,height,components,i,j+1,1);
          getgrad(gv[6],shorts,width,height,components,i,j+1,1);
+         getpos(p[6],i,j+1,slab+1,width,height,depth,scalex,scaley,scaley);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
          getgrad(gv[7],shorts,width,height,components,i+1,j+1,1);
+         getpos(p[7],i+1,j+1,slab+1,width,height,depth,scalex,scaley,scaley);
 
          // normalize scalar values and gradients
          for (k=0; k<8; k++)
             {
             if (bits==8) sv[k]/=255.0;
             else sv[k]/=65535.0;
+
+            gv[k][0]*=scalex;
+            gv[k][1]*=scaley;
+            gv[k][2]*=scalez;
 
             double gm=sqrt(dsqr(gv[k][0])+dsqr(gv[k][1])+dsqr(gv[k][2]));
 
@@ -2179,9 +2204,67 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
          if (isovalue>=svmin && isovalue<=svmax)
             {
             // found a voxel that contains an iso surface patch
+            // now extract the corresponding voxel
+
+            // xy faces of voxel
             strip.beginstrip();
             strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
-            strip.addvtx(i,j,slab); //!! lower left voxel corner
+            strip.addvtx(p[0][0],p[0][1],p[0][2]);
+            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
+            strip.addvtx(p[1][0],p[1][1],p[1][2]);
+            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
+            strip.addvtx(p[2][0],p[2][1],p[2][2]);
+            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
+            strip.addvtx(p[3][0],p[3][1],p[3][2]);
+            strip.beginstrip();
+            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
+            strip.addvtx(p[4][0],p[4][1],p[4][2]);
+            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
+            strip.addvtx(p[5][0],p[5][1],p[5][2]);
+            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
+            strip.addvtx(p[6][0],p[6][1],p[6][2]);
+            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
+            strip.addvtx(p[7][0],p[7][1],p[7][2]);
+
+            // yz faces of voxel
+            strip.beginstrip();
+            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
+            strip.addvtx(p[0][0],p[0][1],p[0][2]);
+            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
+            strip.addvtx(p[4][0],p[4][1],p[4][2]);
+            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
+            strip.addvtx(p[2][0],p[2][1],p[2][2]);
+            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
+            strip.addvtx(p[6][0],p[6][1],p[6][2]);
+            strip.beginstrip();
+            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
+            strip.addvtx(p[1][0],p[1][1],p[1][2]);
+            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
+            strip.addvtx(p[5][0],p[5][1],p[5][2]);
+            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
+            strip.addvtx(p[3][0],p[3][1],p[3][2]);
+            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
+            strip.addvtx(p[7][0],p[7][1],p[7][2]);
+
+            // xz faces of voxel
+            strip.beginstrip();
+            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
+            strip.addvtx(p[0][0],p[0][1],p[0][2]);
+            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
+            strip.addvtx(p[4][0],p[4][1],p[4][2]);
+            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
+            strip.addvtx(p[1][0],p[1][1],p[1][2]);
+            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
+            strip.addvtx(p[5][0],p[5][1],p[5][2]);
+            strip.beginstrip();
+            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
+            strip.addvtx(p[2][0],p[2][1],p[2][2]);
+            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
+            strip.addvtx(p[6][0],p[6][1],p[6][2]);
+            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
+            strip.addvtx(p[3][0],p[3][1],p[3][2]);
+            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
+            strip.addvtx(p[7][0],p[7][1],p[7][2]);
             }
          }
    }
@@ -2292,7 +2375,9 @@ char *extractRAWvolume(FILE *file, // source file desc
             free(slice);
             }
 
-         convert2iso(shorts,width,height,components,bits,j,isovalue,strip);
+         convert2iso(shorts,width,height,depth,components,
+                     bits,j,scalex,scaley,scalez,
+                     isovalue,strip);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
