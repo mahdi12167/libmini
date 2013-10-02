@@ -1,7 +1,7 @@
 SHELL	= sh
 
 PRGS	= eval expr\
-	  raw2db db2db dbgzip dbdump dds\
+	  raw2db raw2iso db2db dbgzip dbdump dds\
 	  test mpfptest
 
 SRCS	= $(PRGS:=.cpp)

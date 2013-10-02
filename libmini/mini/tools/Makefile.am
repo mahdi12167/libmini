@@ -13,6 +13,9 @@ expr_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 raw2db_SOURCES = raw2db.cpp
 raw2db_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
+raw2iso_SOURCES = raw2iso.cpp
+raw2iso_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
+
 db2db_SOURCES = db2db.cpp
 db2db_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
