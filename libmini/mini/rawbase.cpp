@@ -768,29 +768,29 @@ inline int getshort(unsigned short int *shorts[],
 // helper to get a short gradient value from 3 consecutive slices
 inline double getgrad(unsigned short int *shorts[],
                       unsigned int width,unsigned int height,unsigned int components,
-                      unsigned int i,unsigned int j)
+                      unsigned int i,unsigned int j,int k=0)
    {
    double gx,gy,gz;
 
    if (i>0)
-      if (i<width-1) gx=(getshort(shorts,width,height,components,i+1,j,0)-getshort(shorts,width,height,components,i-1,j,0))/2.0;
-      else gx=getshort(shorts,width,height,components,i,j,0)-getshort(shorts,width,height,components,i-1,j,0);
+      if (i<width-1) gx=(getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i-1,j,k))/2.0;
+      else gx=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i-1,j,k);
    else
-      if (i<width-1) gx=getshort(shorts,width,height,components,i+1,j,0)-getshort(shorts,width,height,components,i,j,0);
+      if (i<width-1) gx=getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i,j,k);
       else gx=0.0;
 
    if (j>0)
-      if (j<height-1) gy=(getshort(shorts,width,height,components,i,j+1,0)-getshort(shorts,width,height,components,i,j-1,0))/2.0;
-      else gy=getshort(shorts,width,height,components,i,j,0)-getshort(shorts,width,height,components,i,j-1,0);
+      if (j<height-1) gy=(getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j-1,k))/2.0;
+      else gy=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j-1,k);
    else
-      if (j<height-1) gy=getshort(shorts,width,height,components,i,j+1,0)-getshort(shorts,width,height,components,i,j,0);
+      if (j<height-1) gy=getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j,k);
       else gy=0.0;
 
-   if (shorts[0]!=NULL)
-      if (shorts[2]!=NULL) gz=(getshort(shorts,width,height,components,i,j,1)-getshort(shorts,width,height,components,i,j,-1))/2.0;
-      else gz=getshort(shorts,width,height,components,i,j,0)-getshort(shorts,width,height,components,i,j,-1);
+   if (shorts[k]!=NULL)
+      if (shorts[k+2]!=NULL) gz=(getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k-1))/2.0;
+      else gz=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j,k-1);
    else
-      if (shorts[2]!=NULL) gz=getshort(shorts,width,height,components,i,j,1)-getshort(shorts,width,height,components,i,j,0);
+      if (shorts[k+2]!=NULL) gz=getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k);
       else gz=0.0;
 
    return(sqrt(gx*gx+gy*gy+gz*gz));
@@ -952,6 +952,12 @@ char *copyRAWvolume_nonlinear(FILE *file, // source file desc
 
             if (j==0)
                {
+               if (shorts[0]!=NULL) free(shorts[0]);
+               if (shorts[1]!=NULL) free(shorts[1]);
+               if (shorts[2]!=NULL) free(shorts[2]);
+
+               shorts[0]=shorts[1]=shorts[2]=NULL;
+
                if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
 
                if (fread(slice,bytes,1,file)!=1)
@@ -2080,11 +2086,27 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
    {
    unsigned int i,j;
 
-   for (i=0; i<width; i++)
-      for (j=0; j<height; j++)
+   for (i=0; i<width-1; i++)
+      for (j=0; j<height-1; j++)
          {
-         int sv=getshort(shorts,width,height,components,i,j); //!!
-         int gm=sqrt(getgrad(shorts,width,height,components,i,j)); //!!
+         double sv[8],gm[8];
+
+         sv[0]=getshort(shorts,width,height,components,i,j,0);
+         gm[0]=sqrt(getgrad(shorts,width,height,components,i,j,0));
+         sv[1]=getshort(shorts,width,height,components,i+1,j,0);
+         gm[1]=sqrt(getgrad(shorts,width,height,components,i+1,j,0));
+         sv[2]=getshort(shorts,width,height,components,i,j+1,0);
+         gm[2]=sqrt(getgrad(shorts,width,height,components,i,j+1,0));
+         sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
+         gm[3]=sqrt(getgrad(shorts,width,height,components,i+1,j+1,0));
+         sv[4]=getshort(shorts,width,height,components,i,j,1);
+         gm[4]=sqrt(getgrad(shorts,width,height,components,i,j,1));
+         sv[5]=getshort(shorts,width,height,components,i+1,j,1);
+         gm[5]=sqrt(getgrad(shorts,width,height,components,i+1,j,1));
+         sv[6]=getshort(shorts,width,height,components,i,j+1,1);
+         gm[6]=sqrt(getgrad(shorts,width,height,components,i,j+1,1));
+         sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
+         gm[7]=sqrt(getgrad(shorts,width,height,components,i+1,j+1,1));
          }
    }
 
@@ -2103,7 +2125,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    long long cells;
    long long bytes;
 
-   unsigned short int *shorts[3];
+   unsigned short int *shorts[4];
 
    char *outname;
    FILE *outfile;
@@ -2127,16 +2149,27 @@ char *extractRAWvolume(FILE *file, // source file desc
       return(NULL);
       }
 
-   shorts[0]=shorts[1]=shorts[2]=NULL;
+   fprintf(outfile,"# ply format file\n");
+
+   shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
 
    // calculate gradients and extract iso-surface
    for (i=0; i<steps; i++)
-      for (j=0; j<depth; j++)
+      for (j=0; j<depth-1; j++)
          {
-         if (feedback!=NULL) feedback("extracting iso-surface",(float)(i*depth+j+1)/(depth*steps),obj);
+         if (feedback!=NULL) feedback("extracting iso-surface",(float)(i*(depth-1)+j+1)/((depth-1)*steps),obj);
 
          if (j==0)
             {
+            fprintf(outfile,"# iso-surface %lld\n",i);
+
+            if (shorts[0]!=NULL) free(shorts[0]);
+            if (shorts[1]!=NULL) free(shorts[1]);
+            if (shorts[2]!=NULL) free(shorts[2]);
+            if (shorts[3]!=NULL) free(shorts[3]);
+
+            shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
+
             if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
 
             if (fread(slice,bytes,1,file)!=1)
@@ -2147,15 +2180,34 @@ char *extractRAWvolume(FILE *file, // source file desc
 
             shorts[2]=convert2short(slice,cells,components,bits,sign,msb);
             free(slice);
+
+            if (j<depth-1)
+               {
+               if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
+
+               if (fread(slice,bytes,1,file)!=1)
+                  {
+                  free(slice);
+                  if (shorts[0]!=NULL) free(shorts[0]);
+                  if (shorts[1]!=NULL) free(shorts[1]);
+                  if (shorts[2]!=NULL) free(shorts[2]);
+                  if (shorts[3]!=NULL) free(shorts[3]);
+                  return(NULL);
+                  }
+
+               shorts[3]=convert2short(slice,cells,components,bits,sign,msb);
+               free(slice);
+               }
             }
 
          if (shorts[0]!=NULL) free(shorts[0]);
 
          shorts[0]=shorts[1];
          shorts[1]=shorts[2];
-         shorts[2]=NULL;
+         shorts[2]=shorts[3];
+         shorts[3]=NULL;
 
-         if (j<depth-1)
+         if (j<depth-2)
             {
             if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
 
@@ -2165,10 +2217,11 @@ char *extractRAWvolume(FILE *file, // source file desc
                if (shorts[0]!=NULL) free(shorts[0]);
                if (shorts[1]!=NULL) free(shorts[1]);
                if (shorts[2]!=NULL) free(shorts[2]);
+               if (shorts[3]!=NULL) free(shorts[3]);
                return(NULL);
                }
 
-            shorts[2]=convert2short(slice,cells,components,bits,sign,msb);
+            shorts[3]=convert2short(slice,cells,components,bits,sign,msb);
             free(slice);
             }
 
@@ -2178,6 +2231,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    if (shorts[0]!=NULL) free(shorts[0]);
    if (shorts[1]!=NULL) free(shorts[1]);
    if (shorts[2]!=NULL) free(shorts[2]);
+   if (shorts[3]!=NULL) free(shorts[3]);
 
    fclose(outfile);
 

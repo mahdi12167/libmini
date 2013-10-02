@@ -301,3 +301,44 @@ unsigned char *readREKvolume_ooc(const char *filename,
 
    return(volume);
    }
+
+// extract an iso-surface from a REK volume out-of-core
+char *extractREKvolume(const char *filename,const char *output,
+                       double isovalue, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj),void *obj)
+   {
+   FILE *file;
+
+   long long width,height,depth;
+   unsigned int components;
+   float scalex,scaley,scalez;
+
+   char *outname;
+
+   // open REK file
+   if ((file=fopen(filename,"rb"))==NULL) return(NULL);
+
+   // analyze REK header
+   if (!readREKheader(file,&width,&height,&depth,&components,
+                      &scalex,&scaley,&scalez))
+      {
+      fclose(file);
+      return(NULL);
+      }
+
+   // extract iso surface
+   if (!(outname=extractRAWvolume(file,output,
+                                  width,height,depth,1,
+                                  components,8,FALSE,FALSE,
+                                  scalex,scaley,scalez,
+                                  isovalue,
+                                  feedback,obj)))
+      {
+      fclose(file);
+      return(NULL);
+      }
+
+   fclose(file);
+
+   return(outname);
+   }

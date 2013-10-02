@@ -37,4 +37,9 @@ unsigned char *readREKvolume_ooc(const char *filename,
                                  long long maxcells=REK_TARGET_CELLS, // down-size threshold
                                  void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL);
 
+// extract an iso-surface from a REK volume out-of-core
+char *extractREKvolume(const char *filename,const char *output,
+                       double isovalue=0.5, // iso value to be extracted as surface
+                       void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL);
+
 #endif
