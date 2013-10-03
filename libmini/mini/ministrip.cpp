@@ -479,6 +479,7 @@ ministrip::ministrip(const ministrip &strip)
    init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
 
    SIZE=strip.SIZE;
+   STRIPS=strip.STRIPS;
 
    memcpy(VTXARRAY,strip.VTXARRAY,3*SIZE*sizeof(float));
 
@@ -600,6 +601,7 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize
       if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    SIZE=0;
+   STRIPS=0;
 
    BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
    BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -656,6 +658,7 @@ void ministrip::reinit(int colcomps,int nrmcomps,int texcomps,unsigned int maxsi
 void ministrip::clear()
    {
    SIZE=0;
+   STRIPS=0;
 
    BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
    BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -731,12 +734,14 @@ void ministrip::addvtx(const float x,const float y,const float z)
    VTXY=y;
    VTXZ=z;
 
+   if (SIZE==0) STRIPS++;
    addvtx();
 
    if (COPYVTX!=0)
       {
       addvtx();
       COPYVTX=0;
+      STRIPS++;
       }
    }
 
