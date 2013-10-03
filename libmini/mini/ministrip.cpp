@@ -1716,31 +1716,18 @@ void ministrip::writePLYfile(const char *filename)
    fprintf(outfile,"property float z\n"); // ply format: property of vertex
    if (COLCOMPS==3 || COLCOMPS==4)
       {
-      fprintf(outfile,"property float r\n"); // ply format: property of vertex
-      fprintf(outfile,"property float g\n"); // ply format: property of vertex
-      fprintf(outfile,"property float b\n"); // ply format: property of vertex
+      fprintf(outfile,"property float red\n"); // ply format: property of vertex
+      fprintf(outfile,"property float green\n"); // ply format: property of vertex
+      fprintf(outfile,"property float blue\n"); // ply format: property of vertex
 
       if (COLCOMPS==4)
-         fprintf(outfile,"property float a\n"); // ply format: property of vertex
+         fprintf(outfile,"property float alpha\n"); // ply format: property of vertex
       }
    if (NRMCOMPS==3)
       {
       fprintf(outfile,"property float nx\n"); // ply format: property of vertex
       fprintf(outfile,"property float ny\n"); // ply format: property of vertex
       fprintf(outfile,"property float nz\n"); // ply format: property of vertex
-      }
-   if (TEXCOMPS>0)
-      {
-      fprintf(outfile,"property float s\n"); // ply format: property of vertex
-
-      if (TEXCOMPS>1)
-         fprintf(outfile,"property float t\n"); // ply format: property of vertex
-
-      if (TEXCOMPS>2)
-         fprintf(outfile,"property float r\n"); // ply format: property of vertex
-
-      if (TEXCOMPS>3)
-         fprintf(outfile,"property float w\n"); // ply format: property of vertex
       }
    fprintf(outfile,"element face %u\n",strips); // ply format: number of faces
    fprintf(outfile,"property list uchar int vertex_index\n"); // ply format: property of face
@@ -1767,24 +1754,6 @@ void ministrip::writePLYfile(const char *filename)
          if (NRMCOMPS==3)
             fprintf(outfile," %g %g %g",
                     NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
-
-         if (TEXCOMPS>0)
-            {
-            fprintf(outfile," %g",
-                    TEXARRAY[TEXCOMPS*i]);
-
-            if (TEXCOMPS>1)
-               fprintf(outfile," %g",
-                       TEXARRAY[TEXCOMPS*i+1]);
-
-            if (TEXCOMPS>2)
-               fprintf(outfile," %g",
-                       TEXARRAY[TEXCOMPS*i+2]);
-
-            if (TEXCOMPS>3)
-               fprintf(outfile," %g",
-                       TEXARRAY[TEXCOMPS*i+3]);
-            }
 
          fprintf(outfile,"\n");
          }
