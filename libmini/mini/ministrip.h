@@ -251,9 +251,6 @@ class ministrip
    //! get array size (number of stored vertices)
    unsigned int getsize() {return(SIZE);}
 
-   //! get strip count (number of stored strips)
-   unsigned int getstrips() {return(STRIPS);}
-
    //! get vertex array
    float *getvtx() {return(VTXARRAY);}
 
@@ -295,8 +292,6 @@ class ministrip
 
    unsigned int SIZE;
    unsigned int MAXSIZE;
-
-   unsigned int STRIPS;
 
    float *VTXARRAY; // 3 components
 
@@ -346,6 +341,8 @@ class ministrip
 
    void init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize=1);
    void reinit(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize=1);
+
+   BOOLINT getnextrange(unsigned int &start,unsigned int &stop);
 
    struct SHADER_STRUCT
       {

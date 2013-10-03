@@ -479,7 +479,6 @@ ministrip::ministrip(const ministrip &strip)
    init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
 
    SIZE=strip.SIZE;
-   STRIPS=strip.STRIPS;
 
    memcpy(VTXARRAY,strip.VTXARRAY,3*SIZE*sizeof(float));
 
@@ -601,7 +600,6 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize
       if ((TEXARRAY=(float *)malloc(TEXCOMPS*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    SIZE=0;
-   STRIPS=0;
 
    BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
    BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -658,7 +656,6 @@ void ministrip::reinit(int colcomps,int nrmcomps,int texcomps,unsigned int maxsi
 void ministrip::clear()
    {
    SIZE=0;
-   STRIPS=0;
 
    BBOXMIN=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
    BBOXMAX=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -734,14 +731,12 @@ void ministrip::addvtx(const float x,const float y,const float z)
    VTXY=y;
    VTXZ=z;
 
-   if (SIZE==0) STRIPS++;
    addvtx();
 
    if (COPYVTX!=0)
       {
       addvtx();
       COPYVTX=0;
-      STRIPS++;
       }
    }
 
@@ -1647,12 +1642,66 @@ void ministrip::from_string(ministring &info)
       }
    }
 
+// get index range of next consecutive strip
+BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
+   {
+   start=stop;
+
+   if (start>0)
+      {
+      while (start+1<SIZE)
+         {
+         if (VTXARRAY[3*start]!=VTXARRAY[3*(start+1)] ||
+             VTXARRAY[3*start+1]!=VTXARRAY[3*(start+1)+1] ||
+             VTXARRAY[3*start+2]!=VTXARRAY[3*(start+1)+2]) break;
+
+         start++;
+         }
+
+      start++;
+
+      while (start+1<SIZE)
+         {
+         if (VTXARRAY[3*start]!=VTXARRAY[3*(start+1)] ||
+             VTXARRAY[3*start+1]!=VTXARRAY[3*(start+1)+1] ||
+             VTXARRAY[3*start+2]!=VTXARRAY[3*(start+1)+2]) break;
+
+         start++;
+         }
+      }
+
+   stop=start;
+
+   while (stop+1<SIZE)
+      {
+      if (VTXARRAY[3*stop]==VTXARRAY[3*(stop+1)] &&
+          VTXARRAY[3*stop+1]==VTXARRAY[3*(stop+1)+1] &&
+          VTXARRAY[3*stop+2]==VTXARRAY[3*(stop+1)+2]) break;
+
+      stop++;
+      }
+
+   return(start<stop);
+   }
+
 // write strip to PLY file format
 void ministrip::writePLYfile(const char *filename)
    {
    unsigned int i;
 
+   unsigned int vertices,strips;
+   unsigned int start,stop;
+
    FILE *outfile;
+
+   // count strips
+   vertices=strips=0;
+   start=stop=0;
+   while (getnextrange(start,stop))
+      {
+      vertices+=stop-start+1;
+      strips++;
+      }
 
    // open output file
    if ((outfile=fopen(filename,"wb"))==NULL) return;
@@ -1661,7 +1710,7 @@ void ministrip::writePLYfile(const char *filename)
    fprintf(outfile,"ply\n"); // ply format: magic identifier
    fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
    fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
-   fprintf(outfile,"element vertex %u\n",getsize()); // ply format: number of vertices
+   fprintf(outfile,"element vertex %u\n",vertices); // ply format: number of vertices
    fprintf(outfile,"property float x\n"); // ply format: property of vertex
    fprintf(outfile,"property float y\n"); // ply format: property of vertex
    fprintf(outfile,"property float z\n"); // ply format: property of vertex
@@ -1693,54 +1742,65 @@ void ministrip::writePLYfile(const char *filename)
       if (TEXCOMPS>3)
          fprintf(outfile,"property float w\n"); // ply format: property of vertex
       }
-   fprintf(outfile,"element face %u\n",getsize()-2); // ply format: number of faces
+   fprintf(outfile,"element face %u\n",strips); // ply format: number of faces
    fprintf(outfile,"property list uchar int vertex_index\n"); // ply format: property of face
    fprintf(outfile,"end_header\n"); // ply format: end identifier
 
    // write PLY body (vertices)
-   for (i=0; i<getsize(); i++)
+   start=stop=0;
+   while (getnextrange(start,stop))
+      for (i=start; i<=stop; i++)
+         {
+         fprintf(outfile,"%g %g %g",
+                 VTXARRAY[3*i],VTXARRAY[3*i+1],VTXARRAY[3*i+2]);
+
+         if (COLCOMPS==3 || COLCOMPS==4)
+            {
+            fprintf(outfile," %g %g %g",
+                    COLARRAY[COLCOMPS*i],COLARRAY[COLCOMPS*i+1],COLARRAY[COLCOMPS*i+2]);
+
+            if (COLCOMPS==4)
+               fprintf(outfile," %g",
+                       COLARRAY[COLCOMPS*i+3]);
+            }
+
+         if (NRMCOMPS==3)
+            fprintf(outfile," %g %g %g",
+                    NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
+
+         if (TEXCOMPS>0)
+            {
+            fprintf(outfile," %g",
+                    TEXARRAY[TEXCOMPS*i]);
+
+            if (TEXCOMPS>1)
+               fprintf(outfile," %g",
+                       TEXARRAY[TEXCOMPS*i+1]);
+
+            if (TEXCOMPS>2)
+               fprintf(outfile," %g",
+                       TEXARRAY[TEXCOMPS*i+2]);
+
+            if (TEXCOMPS>3)
+               fprintf(outfile," %g",
+                       TEXARRAY[TEXCOMPS*i+3]);
+            }
+
+         fprintf(outfile,"\n");
+         }
+
+   // write PLY body (faces)
+   start=stop=0;
+   vertices=0;
+   while (getnextrange(start,stop))
       {
-      fprintf(outfile,"%g %g %g",
-              VTXARRAY[3*i],VTXARRAY[3*i+1],VTXARRAY[3*i+2]);
+      fprintf(outfile,"%u",stop-start+1);
 
-      if (COLCOMPS==3 || COLCOMPS==4)
-         {
-         fprintf(outfile," %g %g %g",
-                 COLARRAY[COLCOMPS*i],COLARRAY[COLCOMPS*i+1],COLARRAY[COLCOMPS*i+2]);
-
-         if (COLCOMPS==4)
-            fprintf(outfile," %g",
-                    COLARRAY[COLCOMPS*i+3]);
-         }
-
-      if (NRMCOMPS==3)
-         fprintf(outfile," %g %g %g",
-                 NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
-
-      if (TEXCOMPS>0)
-         {
-         fprintf(outfile," %g",
-                 TEXARRAY[TEXCOMPS*i]);
-
-         if (TEXCOMPS>1)
-            fprintf(outfile," %g",
-                    TEXARRAY[TEXCOMPS*i+1]);
-
-         if (TEXCOMPS>2)
-            fprintf(outfile," %g",
-                    TEXARRAY[TEXCOMPS*i+2]);
-
-         if (TEXCOMPS>3)
-            fprintf(outfile," %g",
-                    TEXARRAY[TEXCOMPS*i+3]);
-         }
+      for (i=start; i<=stop; i++)
+         fprintf(outfile," %u",vertices++);
 
       fprintf(outfile,"\n");
       }
-
-   // write PLY body (faces)
-   for (i=0; i<getsize()-2; i++)
-      fprintf(outfile,"3 %u %u %u\n",i,i+1,i+2);
 
    // close output file
    fclose(outfile);
