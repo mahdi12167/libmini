@@ -16,7 +16,16 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-   if (!strip.load(argv[1])) exit(1);
+   printf("loading geometry\n");
+
+   if (!strip.load(argv[1]))
+      {
+      printf("load failure\n");
+      exit(1);
+      }
+
+   printf("saving geometry\n");
+
    strip.writePLYfile(argv[2]);
 
    return(0);
