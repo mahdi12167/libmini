@@ -1699,6 +1699,8 @@ BOOLINT ministrip::load(const char *filename)
       {
       clear();
       from_string(info);
+
+      return(TRUE);
       }
 
    return(FALSE);

@@ -17,7 +17,7 @@ int main(int argc,char *argv[])
       }
 
    if (!strip.load(argv[1])) exit(1);
-   strip.save(argv[2]);
+   strip.writePLYfile(argv[2]);
 
    return(0);
    }
