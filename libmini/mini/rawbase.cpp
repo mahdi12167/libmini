@@ -2071,7 +2071,7 @@ unsigned char *quantizeRAW(unsigned char *data,
    return(data2);
    }
 
-// define ISO file format
+// define ISO file information
 char *makeISOinfo(double isovalue)
    {
    static const int maxlen=100;
@@ -2082,7 +2082,7 @@ char *makeISOinfo(double isovalue)
       snprintf(info,maxlen,"_iso%03d",int(1000.0*isovalue+0.5));
    else return(NULL);
 
-   snprintf(&info[strlen(info)],maxlen-strlen(info),".txt");
+   snprintf(&info[strlen(info)],maxlen-strlen(info),".geo");
 
    return(strdup(info));
    }
@@ -2105,7 +2105,7 @@ char *appendISOinfo(const char *filename,double isovalue)
    // remove ISO suffix
    dot=strrchr(filename2,'.');
    if (dot!=NULL)
-      if (strcasecmp(dot,".txt")==0) *dot='\0';
+      if (strcasecmp(dot,".geo")==0) *dot='\0';
 
    // append RAW info to filename
    filename3=strdup2(filename2,info);
