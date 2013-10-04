@@ -2079,7 +2079,7 @@ char *makeISOinfo(double isovalue)
    char info[maxlen];
 
    if (isovalue>=0.0 && isovalue<=1.0)
-      snprintf(info,maxlen,"_iso%3d",int(1000.0*isovalue+0.5));
+      snprintf(info,maxlen,"_iso%03d",int(1000.0*isovalue+0.5));
    else return(NULL);
 
    snprintf(&info[strlen(info)],maxlen-strlen(info),".txt");
