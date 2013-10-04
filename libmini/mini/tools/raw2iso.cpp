@@ -13,8 +13,9 @@ int main(int argc,char *argv[])
 
    if (argc!=3 && argc!=4)
       {
-      printf("usage: %s <volume.raw> <iso.ply> [<iso value>]\n",argv[0]);
-      printf(" convert volume data (raw or rek format) into an iso surface (ply format)\n");
+      printf("usage: %s <volume.raw> <iso.txt> [<iso value>]\n",argv[0]);
+      printf(" load volume data (raw or rek format) and\n");
+      printf(" convert into an iso surface (internal ministrip text format)\n");
       exit(1);
       }
 

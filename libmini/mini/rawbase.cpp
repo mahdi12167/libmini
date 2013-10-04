@@ -2105,7 +2105,7 @@ char *appendISOinfo(const char *filename,double isovalue)
    // remove ISO suffix
    dot=strrchr(filename2,'.');
    if (dot!=NULL)
-      if (strcasecmp(dot,".ply")==0) *dot='\0';
+      if (strcasecmp(dot,".txt")==0) *dot='\0';
 
    // append RAW info to filename
    filename3=strdup2(filename2,info);
