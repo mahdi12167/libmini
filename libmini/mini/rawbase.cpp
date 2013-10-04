@@ -798,31 +798,34 @@ inline double getgrad(unsigned short int *shorts[],
    }
 
 // helper to get a gradient vector from 3 consecutive slices
-inline void getgrad(double gv[3],
-                    unsigned short int *shorts[],
-                    unsigned int width,unsigned int height,unsigned int components,
-                    unsigned int i,unsigned int j,int k=0)
+miniv3f getgradvec(unsigned short int *shorts[],
+                   unsigned int width,unsigned int height,unsigned int components,
+                   unsigned int i,unsigned int j,int k=0)
    {
+   miniv3f gv;
+
    if (i>0)
-      if (i<width-1) gv[0]=(getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i-1,j,k))/2.0;
-      else gv[0]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i-1,j,k);
+      if (i<width-1) gv.x=(getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i-1,j,k))/2.0;
+      else gv.x=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i-1,j,k);
    else
-      if (i<width-1) gv[0]=getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i,j,k);
-      else gv[0]=0.0;
+      if (i<width-1) gv.x=getshort(shorts,width,height,components,i+1,j,k)-getshort(shorts,width,height,components,i,j,k);
+      else gv.x=0.0;
 
    if (j>0)
-      if (j<height-1) gv[1]=(getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j-1,k))/2.0;
-      else gv[1]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j-1,k);
+      if (j<height-1) gv.y=(getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j-1,k))/2.0;
+      else gv.y=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j-1,k);
    else
-      if (j<height-1) gv[1]=getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j,k);
-      else gv[1]=0.0;
+      if (j<height-1) gv.y=getshort(shorts,width,height,components,i,j+1,k)-getshort(shorts,width,height,components,i,j,k);
+      else gv.y=0.0;
 
    if (shorts[k]!=NULL)
-      if (shorts[k+2]!=NULL) gv[2]=(getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k-1))/2.0;
-      else gv[2]=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j,k-1);
+      if (shorts[k+2]!=NULL) gv.z=(getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k-1))/2.0;
+      else gv.z=getshort(shorts,width,height,components,i,j,k)-getshort(shorts,width,height,components,i,j,k-1);
    else
-      if (shorts[k+2]!=NULL) gv[2]=getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k);
-      else gv[2]=0.0;
+      if (shorts[k+2]!=NULL) gv.z=getshort(shorts,width,height,components,i,j,k+1)-getshort(shorts,width,height,components,i,j,k);
+      else gv.z=0.0;
+
+   return(gv);
    }
 
 // update error table
@@ -2116,14 +2119,303 @@ char *appendISOinfo(const char *filename,double isovalue)
    }
 
 // calculate position from index
-void getpos(double p[3],
-            unsigned int i,unsigned int j,unsigned int k,
-            unsigned int width,unsigned int height,unsigned int depth,
-            double scalex,double scaley,double scalez)
+miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
+               unsigned int width,unsigned int height,unsigned int depth,
+               double scalex,double scaley,double scalez)
    {
-   p[0]=((double)i/(width-1)-0.5)*scalex;
-   p[1]=((double)j/(height-1)-0.5)*scaley;
-   p[2]=((double)k/(depth-1)-0.5)*scalez;
+   return(miniv3d(((double)i/(width-1)-0.5)*scalex,
+                  ((double)j/(height-1)-0.5)*scaley,
+                  ((double)k/(depth-1)-0.5)*scalez));
+   }
+
+// forward declaration
+void extractiso(const double isoval,
+                const miniv3d &p1,const double c1,const miniv3d &n1,
+                const miniv3d &p2,const double c2,const miniv3d &n2,
+                const miniv3d &p3,const double c3,const miniv3d &n3,
+                const miniv3d &p4,const double c4,const miniv3d &n4,
+                ministrip &strip);
+
+// forward declaration
+void extractiso1(const miniv3d &v1,const miniv3d &v1,const double d1,
+                 const miniv3d &v2,const miniv3d &v2,const double d2,
+                 const miniv3d &v3,const miniv3d &v3,const double d3,
+                 const miniv3d &v4,const miniv3d &v4,const double d4,
+                 ministrip &strip);
+
+// forward declaration
+void extractiso2(const miniv3d &v1,const miniv3d &v1,const double d1,
+                 const miniv3d &v2,const miniv3d &v2,const double d2,
+                 const miniv3d &v3,const miniv3d &v3,const double d3,
+                 const miniv3d &v4,const miniv3d &v4,const double d4,
+                 ministrip &strip);
+
+// extract iso surface from one voxel
+// p1 = p(i,j,k)
+// p2 = p(i+s,j,k)
+// p3 = p(i,j+s,k)
+// p4 = p(i+s,j+s,k)
+// p5 = p(i,j,k+s)
+// p6 = p(i+s,j,k+s)
+// p7 = p(i,j+s,k+s)
+// p8 = p(i+s,j+s,k+s)
+void extractvoxel(const double isoval,
+                  const unsigned int i,const unsigned int j,const unsigned int k,const unsigned int s,
+                  const miniv3d &p1,const miniv3d &p2,const miniv3d &p3,const miniv3d &p4,const miniv3d &p5,const miniv3d &p6,const miniv3d &p7,const miniv3d &p8,
+                  const double vc1,const double vc2,const double vc3,const double vc4,const double vc5,const double vc6,const double vc7,const double vc8,
+                  const miniv3d &nc1,const miniv3d &nc2,const miniv3d &nc3,const miniv3d &nc4,const miniv3d &nc5,const miniv3d &nc6,const miniv3d &nc7,const miniv3d &nc8,
+                  ministrip &strip)
+   {
+   if ((((i+j+k)/s)%2)==0)
+      {
+      extractiso(isoval,
+                 p1,vc1,nc1,
+                 p4,vc4,nc4,
+                 p6,vc6,nc6,
+                 p7,vc7,nc7,
+                 strip);
+
+      extractiso(isoval,
+                 p2,vc2,nc2,
+                 p1,vc1,nc1,
+                 p4,vc4,nc4,
+                 p6,vc6,nc6,
+                 strip);
+
+      extractiso(isoval,
+                 p3,vc3,nc3,
+                 p1,vc1,nc1,
+                 p7,vc7,nc7,
+                 p4,vc4,nc4,
+                 strip);
+
+      extractiso(isoval,
+                 p5,vc5,nc5,
+                 p1,vc1,nc1,
+                 p6,vc6,nc6,
+                 p7,vc7,nc7,
+                 strip);
+
+      extractiso(isoval,
+                 p8,vc8,nc8,
+                 p4,vc4,nc4,
+                 p7,vc7,nc7,
+                 p6,vc6,nc6,
+                 strip);
+      }
+   else
+      {
+      extractiso(isoval,
+                 p2,vc2,nc2,
+                 p3,vc3,nc3,
+                 p8,vc8,nc8,
+                 p5,vc5,nc5,
+                 strip);
+
+      extractiso(isoval,
+                 p1,vc1,nc1,
+                 p2,vc2,nc2,
+                 p5,vc5,nc5,
+                 p3,vc3,nc3,
+                 strip);
+
+      extractiso(isoval,
+                 p4,vc4,nc4,
+                 p2,vc2,nc2,
+                 p3,vc3,nc3,
+                 p8,vc8,nc8,
+                 strip);
+
+      extractiso(isoval,
+                 p6,vc6,nc6,
+                 p2,vc2,nc2,
+                 p8,vc8,nc8,
+                 p5,vc5,nc5,
+                 strip);
+
+      extractiso(isoval,
+                 p7,vc7,nc7,
+                 p3,vc3,nc3,
+                 p5,vc5,nc5,
+                 p8,vc8,nc8,
+                 strip);
+      }
+   }
+
+// marching tetrahedra
+void extractiso(const double isoval,
+                const miniv3d &p1,const double c1,const miniv3d &n1,
+                const miniv3d &p2,const double c2,const miniv3d &n2,
+                const miniv3d &p3,const double c3,const miniv3d &n3,
+                const miniv3d &p4,const double c4,const miniv3d &n4,
+                ministrip &strip)
+   {
+   int flag=0;
+
+   double d1,d2,d3,d4;
+
+   d1=c1-isoval;
+   d2=c2-isoval;
+   d3=c3-isoval;
+   d4=c4-isoval;
+
+   if (d1<0.0) flag|=1;
+   if (d2<0.0) flag|=2;
+   if (d3<0.0) flag|=4;
+   if (d4<0.0) flag|=8;
+
+   switch (flag)
+      {
+      // 1st case: isoval<c for one and isoval>=c for other three vertices
+      // 2nd case: isoval>=c for one and isoval<c for other three vertices
+      case 1:
+         extractiso1(p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p3,n3,dabs(d3),
+                     p4,n4,dabs(d4),strip); break;
+      case 2+4+8:
+         extractiso1(p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p4,n4,dabs(d4),
+                     p3,n3,dabs(d3),strip); break;
+      case 2:
+         extractiso1(p2,n2,dabs(d2),
+                     p1,n1,dabs(d1),
+                     p4,n4,dabs(d4),
+                     p3,n3,dabs(d3),strip); break;
+      case 1+4+8:
+         extractiso1(p2,n2,dabs(d2),
+                     p1,n1,dabs(d1),
+                     p3,n3,dabs(d3),
+                     p4,n4,dabs(d4),strip); break;
+      case 4:
+         extractiso1(p3,n3,dabs(d3),
+                     p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p4,n4,dabs(d4),strip); break;
+      case 1+2+8:
+         extractiso1(p3,n3,dabs(d3),
+                     p1,n1,dabs(d1),
+                     p4,n4,dabs(d4),
+                     p2,n2,dabs(d2),strip); break;
+      case 8:
+         extractiso1(p4,n4,dabs(d4),
+                     p1,n1,dabs(d1),
+                     p3,n3,dabs(d3),
+                     p2,n2,dabs(d2),strip); break;
+      case 1+2+4:
+         extractiso1(p4,n4,dabs(d4),
+                     p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p3,n3,dabs(d3),strip); break;
+
+      // 1st case: isoval<c for two and isoval>=c for other two vertices
+      // 2nd case: isoval>=c for two and isoval<c for other two vertices
+      case 1+2:
+         extractiso2(p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p3,n3,dabs(d3),
+                     p4,n4,dabs(d4),strip); break;
+      case 4+8:
+         extractiso2(p1,n1,dabs(d1),
+                     p2,n2,dabs(d2),
+                     p4,n4,dabs(d4),
+                     p3,n3,dabs(d3),strip); break;
+      case 1+4:
+         extractiso2(p1,n1,dabs(d1),
+                     p3,n3,dabs(d3),
+                     p4,n4,dabs(d4),
+                     p2,n2,dabs(d2),strip); break;
+      case 2+8:
+         extractiso2(p1,n1,dabs(d1),
+                     p3,n3,dabs(d3),
+                     p2,n2,dabs(d2),
+                     p4,n4,dabs(d4),strip); break;
+      case 2+4:
+         extractiso2(p2,n2,dabs(d2),
+                     p3,n3,dabs(d3),
+                     p1,n1,dabs(d1),
+                     p4,n4,dabs(d4),strip); break;
+      case 1+8:
+         extractiso2(p2,n2,dabs(d2),
+                     p3,n3,dabs(d3),
+                     p4,n4,dabs(d4),
+                     p1,n1,dabs(d1),strip); break;
+      }
+   }
+
+// marching tetrahedra subcase #1
+void extractiso1(const miniv3d &v1,const miniv3d &n1,const double d1,
+                 const miniv3d &v2,const miniv3d &n2,const double d2,
+                 const miniv3d &v3,const miniv3d &n3,const double d3,
+                 const miniv3d &v4,const miniv3d &n4,const double d4,
+                 ministrip &strip)
+   {
+   double f1,f2,f3;
+
+   miniv3d p1,p2,p3;
+   miniv3d pn1,pn2,pn3;
+
+   f1=1.0/(d1+d2);
+   f2=1.0/(d1+d3);
+   f3=1.0/(d1+d4);
+
+   p1=f1*(d2*v1+d1*v2);
+   pn1=f1*(d2*n1+d1*n2);
+
+   p2=f2*(d3*v1+d1*v3);
+   pn2=f2*(d3*n1+d1*n3);
+
+   p3=f3*(d4*v1+d1*v4);
+   pn3=f3*(d4*n1+d1*n4);
+
+   strip.beginstrip();
+   strip.setnrm(pn1);
+   strip.addvtx(p1);
+   strip.setnrm(pn2);
+   strip.addvtx(p2);
+   strip.setnrm(pn3);
+   strip.addvtx(p3);
+   }
+
+// marching tetrahedra subcase #2
+void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
+                 const miniv3d &v2,const miniv3d &n2,const double d2,
+                 const miniv3d &v3,const miniv3d &n3,const double d3,
+                 const miniv3d &v4,const miniv3d &n4,const double d4,
+                 ministrip &strip)
+   {
+   double f1,f2,f3,f4;
+
+   miniv3d p1,p2,p3,p4;
+   miniv3d pn1,pn2,pn3,pn4;
+
+   f1=1.0/(d1+d3);
+   f2=1.0/(d1+d4);
+   f3=1.0/(d2+d3);
+   f4=1.0/(d2+d4);
+
+   p1=f1*(d3*v1+d1*v3);
+   pn1=f1*(d3*n1+d1*n3);
+
+   p2=f2*(d4*v1+d1*v4);
+   pn2=f2*(d4*n1+d1*n4);
+
+   p3=f3*(d3*v2+d2*v3);
+   pn3=f3*(d3*n2+d2*n3);
+
+   p4=f4*(d4*v2+d2*v4);
+   pn4=f4*(d4*n2+d2*n4);
+
+   strip.beginstrip();
+   strip.setnrm(pn2);
+   strip.addvtx(p2);
+   strip.setnrm(pn4);
+   strip.addvtx(p4);
+   strip.setnrm(pn1);
+   strip.addvtx(p1);
+   strip.setnrm(pn3);
+   strip.addvtx(p3);
    }
 
 // extract iso surface
@@ -2140,37 +2432,39 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
    for (i=0; i<width-1; i++)
       for (j=0; j<height-1; j++)
          {
+         miniv3d p[8];
          double sv[8];
-         double gv[8][3];
-         double p[8][3];
+         miniv3d gv[8];
 
          double svmin,svmax;
 
+         double gm;
+
          // get scalar values and gradient vectors of actual voxel
+         p[0]=getpos(i,j,slab,width,height,depth,scalex,scaley,scalez);
          sv[0]=getshort(shorts,width,height,components,i,j,0);
-         getgrad(gv[0],shorts,width,height,components,i,j,0);
-         getpos(p[0],i,j,slab,width,height,depth,scalex,scaley,scalez);
+         gv[0]=getgradvec(shorts,width,height,components,i,j,0);
+         p[1]=getpos(i+1,j,slab,width,height,depth,scalex,scaley,scalez);
          sv[1]=getshort(shorts,width,height,components,i+1,j,0);
-         getgrad(gv[1],shorts,width,height,components,i+1,j,0);
-         getpos(p[1],i+1,j,slab,width,height,depth,scalex,scaley,scalez);
+         gv[1]=getgradvec(shorts,width,height,components,i+1,j,0);
+         p[2]=getpos(i,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[2]=getshort(shorts,width,height,components,i,j+1,0);
-         getgrad(gv[2],shorts,width,height,components,i,j+1,0);
-         getpos(p[2],i,j+1,slab,width,height,depth,scalex,scaley,scalez);
+         gv[2]=getgradvec(shorts,width,height,components,i,j+1,0);
+         p[3]=getpos(i+1,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
-         getgrad(gv[3],shorts,width,height,components,i+1,j+1,0);
-         getpos(p[3],i+1,j+1,slab,width,height,depth,scalex,scaley,scalez);
+         gv[3]=getgradvec(shorts,width,height,components,i+1,j+1,0);
+         p[4]=getpos(i,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[4]=getshort(shorts,width,height,components,i,j,1);
-         getgrad(gv[4],shorts,width,height,components,i,j,1);
-         getpos(p[4],i,j,slab+1,width,height,depth,scalex,scaley,scalez);
+         gv[4]=getgradvec(shorts,width,height,components,i,j,1);
+         p[5]=getpos(i+1,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[5]=getshort(shorts,width,height,components,i+1,j,1);
-         getgrad(gv[5],shorts,width,height,components,i+1,j,1);
-         getpos(p[5],i+1,j,slab+1,width,height,depth,scalex,scaley,scalez);
+         gv[5]=getgradvec(shorts,width,height,components,i+1,j,1);
+         p[6]=getpos(i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[6]=getshort(shorts,width,height,components,i,j+1,1);
-         getgrad(gv[6],shorts,width,height,components,i,j+1,1);
-         getpos(p[6],i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
+         gv[6]=getgradvec(shorts,width,height,components,i,j+1,1);
+         p[7]=getpos(i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
-         getgrad(gv[7],shorts,width,height,components,i+1,j+1,1);
-         getpos(p[7],i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
+         gv[7]=getgradvec(shorts,width,height,components,i+1,j+1,1);
 
          // normalize scalar values and gradients
          for (k=0; k<8; k++)
@@ -2178,18 +2472,12 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             if (bits==8) sv[k]/=255.0;
             else sv[k]/=65535.0;
 
-            gv[k][0]*=scalex;
-            gv[k][1]*=scaley;
-            gv[k][2]*=scalez;
+            gv[k].x*=scalex;
+            gv[k].y*=scaley;
+            gv[k].z*=scalez;
 
-            double gm=sqrt(dsqr(gv[k][0])+dsqr(gv[k][1])+dsqr(gv[k][2]));
-
-            if (gm>0.0)
-               {
-               gv[k][0]/=gm;
-               gv[k][1]/=gm;
-               gv[k][2]/=gm;
-               }
+            gm=gv[k].getlength();
+            if (gm>0.0) gv[k]/=gm;
             }
 
          // calculate scalar value range of actual voxel
@@ -2205,66 +2493,12 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             {
             // found a voxel that contains an iso surface patch
             // now extract the corresponding voxel
-
-            // xy faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
-            strip.addvtx(p[0][0],p[0][1],p[0][2]);
-            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
-            strip.addvtx(p[1][0],p[1][1],p[1][2]);
-            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
-            strip.addvtx(p[2][0],p[2][1],p[2][2]);
-            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
-            strip.addvtx(p[3][0],p[3][1],p[3][2]);
-            strip.beginstrip();
-            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
-            strip.addvtx(p[4][0],p[4][1],p[4][2]);
-            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
-            strip.addvtx(p[5][0],p[5][1],p[5][2]);
-            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
-            strip.addvtx(p[6][0],p[6][1],p[6][2]);
-            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
-            strip.addvtx(p[7][0],p[7][1],p[7][2]);
-
-            // yz faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
-            strip.addvtx(p[0][0],p[0][1],p[0][2]);
-            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
-            strip.addvtx(p[4][0],p[4][1],p[4][2]);
-            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
-            strip.addvtx(p[2][0],p[2][1],p[2][2]);
-            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
-            strip.addvtx(p[6][0],p[6][1],p[6][2]);
-            strip.beginstrip();
-            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
-            strip.addvtx(p[1][0],p[1][1],p[1][2]);
-            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
-            strip.addvtx(p[5][0],p[5][1],p[5][2]);
-            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
-            strip.addvtx(p[3][0],p[3][1],p[3][2]);
-            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
-            strip.addvtx(p[7][0],p[7][1],p[7][2]);
-
-            // xz faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0][0],gv[0][1],gv[0][2]);
-            strip.addvtx(p[0][0],p[0][1],p[0][2]);
-            strip.setnrm(gv[4][0],gv[4][1],gv[4][2]);
-            strip.addvtx(p[4][0],p[4][1],p[4][2]);
-            strip.setnrm(gv[1][0],gv[1][1],gv[1][2]);
-            strip.addvtx(p[1][0],p[1][1],p[1][2]);
-            strip.setnrm(gv[5][0],gv[5][1],gv[5][2]);
-            strip.addvtx(p[5][0],p[5][1],p[5][2]);
-            strip.beginstrip();
-            strip.setnrm(gv[2][0],gv[2][1],gv[2][2]);
-            strip.addvtx(p[2][0],p[2][1],p[2][2]);
-            strip.setnrm(gv[6][0],gv[6][1],gv[6][2]);
-            strip.addvtx(p[6][0],p[6][1],p[6][2]);
-            strip.setnrm(gv[3][0],gv[3][1],gv[3][2]);
-            strip.addvtx(p[3][0],p[3][1],p[3][2]);
-            strip.setnrm(gv[7][0],gv[7][1],gv[7][2]);
-            strip.addvtx(p[7][0],p[7][1],p[7][2]);
+            extractvoxel(isovalue,
+                         i,j,slab,1,
+                         p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],
+                         sv[0],sv[1],sv[2],sv[3],sv[4],sv[5],sv[6],sv[7],
+                         gv[0],gv[1],gv[2],gv[3],gv[4],gv[5],gv[6],gv[7],
+                         strip);
             }
          }
    }
