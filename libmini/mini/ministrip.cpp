@@ -1684,6 +1684,26 @@ BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
    return(start<stop);
    }
 
+// save to file
+void ministrip::save(const char *filename)
+   {writeministring(filename,to_string());}
+
+// load from file
+BOOLINT ministrip::load(const char *filename)
+   {
+   ministring info;
+
+   info=readministring(filename);
+
+   if (!info.empty())
+      {
+      clear();
+      from_string(info);
+      }
+
+   return(FALSE);
+   }
+
 // write strip to PLY file format
 void ministrip::writePLYfile(const char *filename)
    {

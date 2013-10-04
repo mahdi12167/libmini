@@ -2082,7 +2082,7 @@ char *makeISOinfo(double isovalue)
       snprintf(info,maxlen,"_iso%3d",int(1000.0*isovalue+0.5));
    else return(NULL);
 
-   snprintf(&info[strlen(info)],maxlen-strlen(info),".ply");
+   snprintf(&info[strlen(info)],maxlen-strlen(info),".txt");
 
    return(strdup(info));
    }
@@ -2385,7 +2385,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    if (shorts[2]!=NULL) free(shorts[2]);
    if (shorts[3]!=NULL) free(shorts[3]);
 
-   strip.writePLYfile(outname);
+   strip.save(outname);
 
    return(outname);
    }
