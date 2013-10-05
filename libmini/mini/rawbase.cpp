@@ -7,6 +7,8 @@
 
 #include "rawbase.h"
 
+#undef EXTRACT_WHOLE_VOXEL
+
 float RAW_TARGET_RATIO=0.5f;
 long long RAW_TARGET_CELLS=250000000;
 
@@ -2493,12 +2495,76 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             {
             // found a voxel that contains an iso surface patch
             // now extract the corresponding voxel
+
+#ifdef EXTRACT_WHOLE_VOXEL
+            // xy faces of voxel
+            strip.beginstrip();
+            strip.setnrm(gv[0]);
+            strip.addvtx(p[0]);
+            strip.setnrm(gv[1]);
+            strip.addvtx(p[1]);
+            strip.setnrm(gv[2]);
+            strip.addvtx(p[2]);
+            strip.setnrm(gv[3]);
+            strip.addvtx(p[3]);
+            strip.beginstrip();
+            strip.setnrm(gv[4]);
+            strip.addvtx(p[4]);
+            strip.setnrm(gv[5]);
+            strip.addvtx(p[5]);
+            strip.setnrm(gv[6]);
+            strip.addvtx(p[6]);
+            strip.setnrm(gv[7]);
+            strip.addvtx(p[7]);
+
+            // yz faces of voxel
+            strip.beginstrip();
+            strip.setnrm(gv[0]);
+            strip.addvtx(p[0]);
+            strip.setnrm(gv[4]);
+            strip.addvtx(p[4]);
+            strip.setnrm(gv[2]);
+            strip.addvtx(p[2]);
+            strip.setnrm(gv[6]);
+            strip.addvtx(p[6]);
+            strip.beginstrip();
+            strip.setnrm(gv[1]);
+            strip.addvtx(p[1]);
+            strip.setnrm(gv[5]);
+            strip.addvtx(p[5]);
+            strip.setnrm(gv[3]);
+            strip.addvtx(p[3]);
+            strip.setnrm(gv[7]);
+            strip.addvtx(p[7]);
+
+            // xz faces of voxel
+            strip.beginstrip();
+            strip.setnrm(gv[0]);
+            strip.addvtx(p[0]);
+            strip.setnrm(gv[4]);
+            strip.addvtx(p[4]);
+            strip.setnrm(gv[1]);
+            strip.addvtx(p[1]);
+            strip.setnrm(gv[5]);
+            strip.addvtx(p[5]);
+            strip.beginstrip();
+            strip.setnrm(gv[2]);
+            strip.addvtx(p[2]);
+            strip.setnrm(gv[6]);
+            strip.addvtx(p[6]);
+            strip.setnrm(gv[3]);
+            strip.addvtx(p[3]);
+            strip.setnrm(gv[7]);
+            strip.addvtx(p[7]);
+#else
+            // iso surface extraction
             extractvoxel(isovalue,
                          i,j,slab,1,
                          p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],
                          sv[0],sv[1],sv[2],sv[3],sv[4],sv[5],sv[6],sv[7],
                          gv[0],gv[1],gv[2],gv[3],gv[4],gv[5],gv[6],gv[7],
                          strip);
+#endif
             }
          }
    }

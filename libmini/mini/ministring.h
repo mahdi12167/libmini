@@ -140,6 +140,14 @@ class ministring: public ministring_base
       append(str);
       }
 
+   //! append char array
+   void append_array(const char *array,unsigned int n)
+      {
+      unsigned int i;
+
+      for (i=0; i<n; i++) append(array[i]);
+      }
+
    //! append uchar array
    void append_array(const unsigned char *array,unsigned int n)
       {
@@ -491,6 +499,14 @@ class ministring: public ministring_base
       if (sscanf(c_str(),"%u",&v)!=1) v=0;
 
       return(v);
+      }
+
+   //! extract char array
+   void extract_array(char *array,unsigned int n) const
+      {
+      unsigned int i;
+
+      for (i=0; i<n; i++) array[i]=get(i);
       }
 
    //! extract uchar array

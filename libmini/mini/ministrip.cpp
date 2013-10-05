@@ -480,6 +480,7 @@ ministrip::ministrip(const ministrip &strip)
 
    SIZE=strip.SIZE;
 
+   memcpy(ENDARRAY,strip.ENDARRAY,SIZE*sizeof(BOOLINT));
    memcpy(VTXARRAY,strip.VTXARRAY,3*SIZE*sizeof(float));
 
    if (COLARRAY!=NULL)
@@ -505,6 +506,7 @@ ministrip::~ministrip()
    {
    int i,j;
 
+   free(ENDARRAY);
    free(VTXARRAY);
 
    if (COLARRAY!=NULL) free(COLARRAY);
@@ -585,6 +587,7 @@ void ministrip::init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize
 
    MAXSIZE=maxsize;
 
+   if ((ENDARRAY=(BOOLINT *)malloc(MAXSIZE*sizeof(BOOLINT)))==NULL) MEMERROR();
    if ((VTXARRAY=(float *)malloc(3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
    if (COLCOMPS==0) COLARRAY=NULL;
@@ -643,6 +646,7 @@ void ministrip::reinit(int colcomps,int nrmcomps,int texcomps,unsigned int maxsi
    {
    if (maxsize==0) maxsize=1;
 
+   free(ENDARRAY);
    free(VTXARRAY);
 
    if (COLARRAY!=NULL) free(COLARRAY);
@@ -672,6 +676,7 @@ void ministrip::beginstrip()
    if (SIZE>0)
       {
       addvtx();
+      ENDARRAY[SIZE-1]=TRUE;
       COPYVTX=1;
       }
    }
@@ -752,6 +757,7 @@ void ministrip::addvtx()
       {
       MAXSIZE*=2;
 
+      if ((ENDARRAY=(BOOLINT *)realloc(ENDARRAY,MAXSIZE*sizeof(BOOLINT)))==NULL) MEMERROR();
       if ((VTXARRAY=(float *)realloc(VTXARRAY,3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
 
       if (COLARRAY!=NULL)
@@ -772,6 +778,8 @@ void ministrip::addvtx()
 
    if (VTXZ<BBOXMIN.z) BBOXMIN.z=VTXZ;
    if (VTXZ>BBOXMAX.z) BBOXMAX.z=VTXZ;
+
+   ENDARRAY[SIZE]=FALSE;
 
    ptr=&VTXARRAY[3*SIZE];
 
@@ -1541,6 +1549,10 @@ ministring ministrip::to_string() const
    info.append_int(TEXCOMPS);
    info.append(")");
 
+   info.append("end[");
+   info.append_array(ENDARRAY,SIZE);
+   info.append("]");
+
    info.append("vertex[");
    info.append_array(VTXARRAY,3*SIZE);
    info.append("]");
@@ -1599,6 +1611,11 @@ void ministrip::from_string(ministring &info)
 
       reinit(colcomps,nrmcomps,texcomps,size);
 
+      info=info.tail("end[");
+      info.extract_array(ENDARRAY,size);
+      info.startat(size);
+      info=info.tail("]");
+
       info=info.tail("vertex[");
       info.extract_array(VTXARRAY,3*size);
       info.startat(3*size);
@@ -1645,43 +1662,17 @@ void ministrip::from_string(ministring &info)
 // get index range of next consecutive strip
 BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
    {
-   start=stop;
-
-   if (start>0)
+   if (stop>0)
       {
-      while (start+1<SIZE)
-         {
-         if (VTXARRAY[3*start]!=VTXARRAY[3*(start+1)] ||
-             VTXARRAY[3*start+1]!=VTXARRAY[3*(start+1)+1] ||
-             VTXARRAY[3*start+2]!=VTXARRAY[3*(start+1)+2]) break;
-
-         start++;
-         }
-
-      start++;
-
-      while (start+1<SIZE)
-         {
-         if (VTXARRAY[3*start]!=VTXARRAY[3*(start+1)] ||
-             VTXARRAY[3*start+1]!=VTXARRAY[3*(start+1)+1] ||
-             VTXARRAY[3*start+2]!=VTXARRAY[3*(start+1)+2]) break;
-
-         start++;
-         }
-      }
-
-   stop=start;
-
-   while (stop+1<SIZE)
-      {
-      if (VTXARRAY[3*stop]==VTXARRAY[3*(stop+1)] &&
-          VTXARRAY[3*stop+1]==VTXARRAY[3*(stop+1)+1] &&
-          VTXARRAY[3*stop+2]==VTXARRAY[3*(stop+1)+2]) break;
-
+      start=stop+2;
       stop++;
       }
 
-   return(start<stop);
+   while (stop+1<SIZE)
+      if (ENDARRAY[stop+1]) break;
+      else stop++;
+
+   return(stop<SIZE);
    }
 
 // save to file

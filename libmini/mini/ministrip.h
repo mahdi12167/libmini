@@ -299,6 +299,8 @@ class ministrip
    unsigned int SIZE;
    unsigned int MAXSIZE;
 
+   BOOLINT *ENDARRAY;
+
    float *VTXARRAY; // 3 components
 
    float *COLARRAY; // 3 or 4 components
