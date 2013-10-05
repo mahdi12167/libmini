@@ -150,9 +150,9 @@ BOOLINT readRAWinfo(char *filename,
 
    if (rawmaxscale==0.0f) return(FALSE);
 
-   if (scalex!=NULL) *scalex=rawscalex/rawmaxscale;
-   if (scaley!=NULL) *scaley=rawscaley/rawmaxscale;
-   if (scalez!=NULL) *scalez=rawscalez/rawmaxscale;
+   if (scalex!=NULL) *scalex=rawscalex/1E6f;
+   if (scaley!=NULL) *scaley=rawscaley/1E6f;
+   if (scalez!=NULL) *scalez=rawscalez/1E6f;
 
    return(TRUE);
    }
@@ -197,14 +197,10 @@ char *makeRAWinfo(long long width,long long height,long long depth,long long ste
 
       if (maxscale==0.0f) return(NULL);
 
-      scalex/=maxscale;
-      scaley/=maxscale;
-      scalez/=maxscale;
-
       if (scalex!=1.0f || scaley!=1.0f || scalez!=1.0f)
          {
-         snprintf(&info[strlen(info)],maxlen-strlen(info),"_%dx%d",int(1000.0f*scalex+0.5f),int(1000.0f*scaley+0.5f));
-         if (depth>1) snprintf(&info[strlen(info)],maxlen-strlen(info),"x%d",int(1000.0f*scalez+0.5f));
+         snprintf(&info[strlen(info)],maxlen-strlen(info),"_%dx%d",int(1E6f*scalex+0.5f),int(1E6f*scaley+0.5f));
+         if (depth>1) snprintf(&info[strlen(info)],maxlen-strlen(info),"x%d",int(1E6f*scalez+0.5f));
          }
       }
 
