@@ -2434,55 +2434,29 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
    for (i=0; i<width-1; i++)
       for (j=0; j<height-1; j++)
          {
-         miniv3d p[8];
          double sv[8];
          miniv3d gv[8];
+         miniv3d p[8];
 
          double svmin,svmax;
-
          double gm;
 
-         // get scalar values and gradient vectors of actual voxel
-         p[0]=getpos(i,j,slab,width,height,depth,scalex,scaley,scalez);
+         // get scalar values of actual voxel
          sv[0]=getshort(shorts,width,height,components,i,j,0);
-         gv[0]=getgradvec(shorts,width,height,components,i,j,0);
-         p[1]=getpos(i+1,j,slab,width,height,depth,scalex,scaley,scalez);
          sv[1]=getshort(shorts,width,height,components,i+1,j,0);
-         gv[1]=getgradvec(shorts,width,height,components,i+1,j,0);
-         p[2]=getpos(i,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[2]=getshort(shorts,width,height,components,i,j+1,0);
-         gv[2]=getgradvec(shorts,width,height,components,i,j+1,0);
-         p[3]=getpos(i+1,j+1,slab,width,height,depth,scalex,scaley,scalez);
          sv[3]=getshort(shorts,width,height,components,i+1,j+1,0);
-         gv[3]=getgradvec(shorts,width,height,components,i+1,j+1,0);
-         p[4]=getpos(i,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[4]=getshort(shorts,width,height,components,i,j,1);
-         gv[4]=getgradvec(shorts,width,height,components,i,j,1);
-         p[5]=getpos(i+1,j,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[5]=getshort(shorts,width,height,components,i+1,j,1);
-         gv[5]=getgradvec(shorts,width,height,components,i+1,j,1);
-         p[6]=getpos(i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[6]=getshort(shorts,width,height,components,i,j+1,1);
-         gv[6]=getgradvec(shorts,width,height,components,i,j+1,1);
-         p[7]=getpos(i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
          sv[7]=getshort(shorts,width,height,components,i+1,j+1,1);
-         gv[7]=getgradvec(shorts,width,height,components,i+1,j+1,1);
 
-         // normalize scalar values and gradients
+         // normalize scalar values
          for (k=0; k<8; k++)
-            {
             if (bits==8) sv[k]/=255.0;
             else sv[k]/=65535.0;
 
-            gv[k].x*=scalex;
-            gv[k].y*=scaley;
-            gv[k].z*=scalez;
-
-            gm=gv[k].getlength();
-            if (gm>0.0) gv[k]/=gm;
-            }
-
-         // calculate scalar value range of actual voxel
+         // calculate scalar value range
          svmin=svmax=sv[0];
          for (k=1; k<8; k++)
             {
@@ -2495,6 +2469,37 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             {
             // found a voxel that contains an iso surface patch
             // now extract the corresponding voxel
+
+            // get gradient vectors of actual voxel
+            gv[0]=getgradvec(shorts,width,height,components,i,j,0);
+            gv[1]=getgradvec(shorts,width,height,components,i+1,j,0);
+            gv[2]=getgradvec(shorts,width,height,components,i,j+1,0);
+            gv[3]=getgradvec(shorts,width,height,components,i+1,j+1,0);
+            gv[4]=getgradvec(shorts,width,height,components,i,j,1);
+            gv[5]=getgradvec(shorts,width,height,components,i+1,j,1);
+            gv[6]=getgradvec(shorts,width,height,components,i,j+1,1);
+            gv[7]=getgradvec(shorts,width,height,components,i+1,j+1,1);
+
+            // normalize gradient vectors
+            for (k=0; k<8; k++)
+               {
+               gv[k].x*=scalex;
+               gv[k].y*=scaley;
+               gv[k].z*=scalez;
+
+               gm=gv[k].getlength();
+               if (gm>0.0) gv[k]/=gm;
+               }
+
+            // get corner positions of actual voxel
+            p[0]=getpos(i,j,slab,width,height,depth,scalex,scaley,scalez);
+            p[1]=getpos(i+1,j,slab,width,height,depth,scalex,scaley,scalez);
+            p[2]=getpos(i,j+1,slab,width,height,depth,scalex,scaley,scalez);
+            p[3]=getpos(i+1,j+1,slab,width,height,depth,scalex,scaley,scalez);
+            p[4]=getpos(i,j,slab+1,width,height,depth,scalex,scaley,scalez);
+            p[5]=getpos(i+1,j,slab+1,width,height,depth,scalex,scaley,scalez);
+            p[6]=getpos(i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
+            p[7]=getpos(i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
 
 #ifdef EXTRACT_WHOLE_VOXEL
             // xy faces of voxel
