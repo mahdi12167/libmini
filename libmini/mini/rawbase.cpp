@@ -2118,16 +2118,6 @@ char *appendISOinfo(const char *filename,double isovalue)
    return(filename3);
    }
 
-// calculate position from index
-miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
-               unsigned int width,unsigned int height,unsigned int depth,
-               double scalex,double scaley,double scalez)
-   {
-   return(miniv3d(((double)i/(width-1)-0.5)*scalex,
-                  ((double)j/(height-1)-0.5)*scaley,
-                  ((double)k/(depth-1)-0.5)*scalez));
-   }
-
 // forward declaration
 void extractiso(const double isoval,
                 const miniv3d &p1,const double c1,const miniv3d &n1,
@@ -2149,6 +2139,16 @@ void extractiso2(const miniv3d &v1,const miniv3d &v1,const double d1,
                  const miniv3d &v3,const miniv3d &v3,const double d3,
                  const miniv3d &v4,const miniv3d &v4,const double d4,
                  ministrip &strip);
+
+// calculate position from index
+miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
+               unsigned int width,unsigned int height,unsigned int depth,
+               double scalex,double scaley,double scalez)
+   {
+   return(miniv3d(((double)i/(width-1)-0.5)*scalex,
+                  ((double)j/(height-1)-0.5)*scaley,
+                  ((double)k/(depth-1)-0.5)*scalez));
+   }
 
 // extract iso surface from one voxel
 // p1 = p(i,j,k)
@@ -2408,12 +2408,12 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
    pn4=f4*(d4*n2+d2*n4);
 
    strip.beginstrip();
-   strip.setnrm(pn2);
-   strip.addvtx(p2);
    strip.setnrm(pn4);
    strip.addvtx(p4);
    strip.setnrm(pn1);
    strip.addvtx(p1);
+   strip.setnrm(pn2);
+   strip.addvtx(p2);
    strip.setnrm(pn3);
    strip.addvtx(p3);
    }
