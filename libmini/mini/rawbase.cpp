@@ -1722,10 +1722,6 @@ char *processRAWvolume(FILE *file, // source file desc
                                ratio,
                                feedback,obj))
       {
-      if (!readRAWinfo(filename4,
-                       &rawwidth,&rawheight,&rawdepth,&rawsteps,
-                       &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
-
       // remove suffix
       filename5=removeRAWsuffix(filename4);
 
@@ -1742,6 +1738,10 @@ char *processRAWvolume(FILE *file, // source file desc
       // remove temporary volume
       removefile(filename4);
       free(filename4);
+
+      if (!readRAWinfo(filename7,
+                       &rawwidth,&rawheight,&rawdepth,&rawsteps,
+                       &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
@@ -1826,10 +1826,6 @@ char *processRAWvolume(const char *filename, // source file
    // crop
    if (filename4=cropRAWvolume(filename,filename3,ratio,feedback,obj))
       {
-      if (!readRAWinfo(filename4,
-                       &rawwidth,&rawheight,&rawdepth,&rawsteps,
-                       &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
-
       // remove suffix
       filename5=removeRAWsuffix(filename4);
 
@@ -1846,6 +1842,10 @@ char *processRAWvolume(const char *filename, // source file
       // remove temporary volume
       removefile(filename4);
       free(filename4);
+
+      if (!readRAWinfo(filename7,
+                       &rawwidth,&rawheight,&rawdepth,&rawsteps,
+                       &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
