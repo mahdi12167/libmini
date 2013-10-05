@@ -1713,6 +1713,7 @@ void ministrip::writePLYfile(const char *filename)
 
    unsigned int vertices,strips;
    unsigned int start,stop;
+   unsigned int count;
 
    FILE *outfile;
 
@@ -1721,8 +1722,13 @@ void ministrip::writePLYfile(const char *filename)
    start=stop=0;
    while (getnextrange(start,stop))
       {
-      vertices+=stop-start+1;
-      strips++;
+      count=stop-start+1;
+
+      if (count==3 || count==4)
+         {
+         vertices+=count;
+         strips++;
+         }
       }
 
    // open output file
@@ -1758,37 +1764,61 @@ void ministrip::writePLYfile(const char *filename)
    // write PLY body (vertices)
    start=stop=0;
    while (getnextrange(start,stop))
-      for (i=start; i<=stop; i++)
-         {
-         fprintf(outfile,"%g %g %g",
-                 VTXARRAY[3*i],VTXARRAY[3*i+1],VTXARRAY[3*i+2]);
+      {
+      count=stop-start+1;
 
-         if (COLCOMPS==3 || COLCOMPS==4)
+      if (count==3 || count==4)
+         for (i=start; i<=stop; i++)
             {
-            fprintf(outfile," %g %g %g",
-                    COLARRAY[COLCOMPS*i],COLARRAY[COLCOMPS*i+1],COLARRAY[COLCOMPS*i+2]);
+            fprintf(outfile,"%g %g %g",
+                    VTXARRAY[3*i],VTXARRAY[3*i+1],VTXARRAY[3*i+2]);
 
-            if (COLCOMPS==4)
-               fprintf(outfile," %g",
-                       COLARRAY[COLCOMPS*i+3]);
+            if (COLCOMPS==3 || COLCOMPS==4)
+               {
+               fprintf(outfile," %g %g %g",
+                       COLARRAY[COLCOMPS*i],COLARRAY[COLCOMPS*i+1],COLARRAY[COLCOMPS*i+2]);
+
+               if (COLCOMPS==4)
+                  fprintf(outfile," %g",
+                          COLARRAY[COLCOMPS*i+3]);
+               }
+
+            if (NRMCOMPS==3)
+               fprintf(outfile," %g %g %g",
+                       NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
+
+            fprintf(outfile,"\n");
             }
-
-         if (NRMCOMPS==3)
-            fprintf(outfile," %g %g %g",
-                    NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
-
-         fprintf(outfile,"\n");
-         }
+      }
 
    // write PLY body (faces)
    start=stop=0;
    vertices=0;
    while (getnextrange(start,stop))
       {
-      fprintf(outfile,"%u",stop-start+1);
+      count=stop-start+1;
 
-      for (i=start; i<=stop; i++)
-         fprintf(outfile," %u",vertices++);
+      if (count==3)
+         {
+         fprintf(outfile,"%u",count);
+
+         fprintf(outfile," %u",vertices);
+         fprintf(outfile," %u",vertices+1);
+         fprintf(outfile," %u",vertices+2);
+
+         vertices+=3;
+         }
+      else if (count==4)
+         {
+         fprintf(outfile,"%u",count);
+
+         fprintf(outfile," %u",vertices);
+         fprintf(outfile," %u",vertices+1);
+         fprintf(outfile," %u",vertices+3);
+         fprintf(outfile," %u",vertices+2);
+
+         vertices+=4;
+         }
 
       fprintf(outfile,"\n");
       }

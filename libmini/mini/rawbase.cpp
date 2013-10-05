@@ -2408,14 +2408,14 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
    pn4=f4*(d4*n2+d2*n4);
 
    strip.beginstrip();
-   strip.setnrm(pn4);
-   strip.addvtx(p4);
-   strip.setnrm(pn1);
-   strip.addvtx(p1);
-   strip.setnrm(pn2);
-   strip.addvtx(p2);
    strip.setnrm(pn3);
    strip.addvtx(p3);
+   strip.setnrm(pn1);
+   strip.addvtx(p1);
+   strip.setnrm(pn4);
+   strip.addvtx(p4);
+   strip.setnrm(pn2);
+   strip.addvtx(p2);
    }
 
 // extract iso surface
