@@ -546,6 +546,22 @@ unsigned short int *convert2short(unsigned char *source,long long cells,unsigned
    return(shorts);
    }
 
+// strip a 16-bit to a 8-bit array
+unsigned char *strip2byte(unsigned short int *source,long long cells,unsigned int components)
+   {
+   long long i;
+
+   unsigned char *chars;
+
+   cells*=components;
+
+   if ((chars=(unsigned char *)malloc(cells*sizeof(unsigned char)))==NULL) ERRORMSG();
+
+   for (i=0; i<cells; i++) chars[i]=source[i];
+
+   return(chars);
+   }
+
 // compute minimum and maximum 16-bit unsigned value
 void convert2minmax(unsigned short int *shorts,long long cells,unsigned int components,
                     unsigned int &minval,unsigned int &maxval)
@@ -1531,6 +1547,7 @@ char *downsizeRAWvolume(FILE *file, // source file desc
 
    unsigned short int *shorts[2];
    unsigned short int *down;
+   unsigned char *down2;
 
    long long sizex,sizey,sizez;
 
@@ -1552,10 +1569,16 @@ char *downsizeRAWvolume(FILE *file, // source file desc
    if (sizex<1 || sizey<1 || sizez<1) return(NULL);
 
    // make RAW info
-   outname=appendRAWinfo(output,
-                         sizex,sizey,sizez,steps,
-                         components,16,FALSE,!RAW_ISINTEL,
-                         2*scalex,2*scaley,2*scalez);
+   if (bits==8)
+      outname=appendRAWinfo(output,
+                            sizex,sizey,sizez,steps,
+                            components,8,FALSE,!RAW_ISINTEL,
+                            2*scalex,2*scaley,2*scalez);
+   else
+      outname=appendRAWinfo(output,
+                            sizex,sizey,sizez,steps,
+                            components,16,FALSE,!RAW_ISINTEL,
+                            2*scalex,2*scaley,2*scalez);
 
    if (outname==NULL) return(NULL);
 
@@ -1607,12 +1630,29 @@ char *downsizeRAWvolume(FILE *file, // source file desc
             free(shorts[0]);
             free(shorts[1]);
 
-            if (fwrite(down,sizex*sizey*components*sizeof(unsigned short int),1,outfile)!=1)
+            if (bits==8)
                {
-               free(outname);
-               fclose(outfile);
-               return(NULL);
+               down2=strip2byte(down,sizex*sizey,components);
+
+               if (fwrite(down2,sizex*sizey*components*sizeof(unsigned char),1,outfile)!=1)
+                  {
+                  free(down);
+                  free(down2);
+                  free(outname);
+                  fclose(outfile);
+                  return(NULL);
+                  }
+
+               free(down2);
                }
+            else
+               if (fwrite(down,sizex*sizey*components*sizeof(unsigned short int),1,outfile)!=1)
+                  {
+                  free(down);
+                  free(outname);
+                  fclose(outfile);
+                  return(NULL);
+                  }
 
             free(down);
             }
