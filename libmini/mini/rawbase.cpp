@@ -188,8 +188,9 @@ char *makeRAWinfo(long long width,long long height,long long depth,long long ste
       else if (components==4 && bits==16) snprintf(&info[strlen(info)],maxlen-strlen(info),"8");
       else return(NULL);
 
-      if (msb==TRUE) snprintf(&info[strlen(info)],maxlen-strlen(info),"m");
-      else snprintf(&info[strlen(info)],maxlen-strlen(info),"l");
+      if (components==2 || bits==16)
+         if (msb==TRUE) snprintf(&info[strlen(info)],maxlen-strlen(info),"m");
+         else snprintf(&info[strlen(info)],maxlen-strlen(info),"l");
 
       if (scalex>maxscale) maxscale=scalex;
       if (scaley>maxscale) maxscale=scaley;
