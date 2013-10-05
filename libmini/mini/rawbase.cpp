@@ -1488,21 +1488,32 @@ unsigned short int *convert2down(unsigned short int *shorts[],unsigned int width
    {
    unsigned int i,j,k;
 
+   unsigned int i2,j2;
+   unsigned int width2,height2;
+
    unsigned short int *down;
 
-   if ((down=(unsigned short int *)malloc((width>>1)*(height>>1)*components*sizeof(unsigned short int)))==NULL) ERRORMSG();
+   width2=(width>>1);
+   height2=(height>>1);
 
-   for (i=0; i<(width>>1); i++)
-      for (j=0; j<(height>>1); j++)
+   if ((down=(unsigned short int *)malloc(width2*height2*components*sizeof(unsigned short int)))==NULL) ERRORMSG();
+
+   for (i=0; i<width2; i++)
+      for (j=0; j<height2; j++)
          for (k=0; k<components; k++)
-            down[(i+j*(width>>1))*components+k]=(shorts[0][((i<<1)+(j<<1)*width)*components+k]+
-                                                 shorts[0][(((i<<1)+1)+(j<<1)*width)*components+k]+
-                                                 shorts[0][((i<<1)+((j<<1)+1)*width)*components+k]+
-                                                 shorts[0][(((i<<1)+1)+((j<<1)+1)*width)*components+k]+
-                                                 shorts[1][((i<<1)+(j<<1)*width)*components+k]+
-                                                 shorts[1][(((i<<1)+1)+(j<<1)*width)*components+k]+
-                                                 shorts[1][((i<<1)+((j<<1)+1)*width)*components+k]+
-                                                 shorts[1][(((i<<1)+1)+((j<<1)+1)*width)*components+k]+4)/8;
+            {
+            i2=(i<<1);
+            j2=(j<<1);
+
+            down[(i+j*width2)*components+k]=((int)shorts[0][(i2+j2*width)*components+k]+
+                                             (int)shorts[0][((i2+1)+j2*width)*components+k]+
+                                             (int)shorts[0][(i2+(j2+1)*width)*components+k]+
+                                             (int)shorts[0][((i2+1)+(j2+1)*width)*components+k]+
+                                             (int)shorts[1][(i2+j2*width)*components+k]+
+                                             (int)shorts[1][((i2+1)+j2*width)*components+k]+
+                                             (int)shorts[1][(i2+(j2+1)*width)*components+k]+
+                                             (int)shorts[1][((i2+1)+(j2+1)*width)*components+k]+4)/8;
+            }
 
    return(down);
    }
