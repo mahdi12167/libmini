@@ -1726,54 +1726,54 @@ char *processRAWvolume(FILE *file, // source file desc
                        &rawwidth,&rawheight,&rawdepth,&rawsteps,
                        &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
+      // remove suffix
+      filename5=removeRAWsuffix(filename4);
+
+      // append quantize suffix to filename
+      filename6=strdup2(filename5,"_quant");
+      free(filename5);
+
+      if (feedback!=NULL) feedback("quantizing out-of-core",0,obj);
+
+      // quantize
+      filename7=copyRAWvolume_nonlinear(filename4,filename6,feedback,obj);
+      free(filename6);
+
+      // remove temporary volume
+      removefile(filename4);
+      free(filename4);
+
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
       if (cells>maxcells)
          while (cells>maxcells)
             {
             // remove suffix
-            filename5=removeRAWsuffix(filename4);
+            filename8=removeRAWsuffix(filename7);
 
             // append down-size suffix to filename
-            filename6=strdup2(filename5,"_down");
-            free(filename5);
+            filename9=strdup2(filename8,"_down");
+            free(filename8);
 
             if (feedback!=NULL) feedback("down-sizing out-of-core",0,obj);
 
             // down-size
-            filename7=downsizeRAWvolume(filename4,filename6,feedback,obj);
-            free(filename6);
+            outname=downsizeRAWvolume(filename7,filename9,feedback,obj);
+            free(filename9);
 
             // remove temporary volume
-            removefile(filename4);
-            free(filename4);
+            removefile(filename7);
+            free(filename7);
 
-            if (!readRAWinfo(filename7,
+            if (!readRAWinfo(outname,
                              &rawwidth,&rawheight,&rawdepth,&rawsteps,
                              &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
             cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
-            filename4=filename7;
+            filename7=outname;
             }
-      else filename7=filename4;
-
-      // remove suffix
-      filename8=removeRAWsuffix(filename7);
-
-      // append quantize suffix to filename
-      filename9=strdup2(filename8,"_quant");
-      free(filename8);
-
-      if (feedback!=NULL) feedback("quantizing out-of-core",0,obj);
-
-      // quantize
-      outname=copyRAWvolume_nonlinear(filename7,filename9,feedback,obj);
-      free(filename9);
-
-      // remove down-size volume
-      removefile(filename7);
-      free(filename7);
+      else outname=filename7;
       }
 
    free(filename3);
@@ -1830,54 +1830,54 @@ char *processRAWvolume(const char *filename, // source file
                        &rawwidth,&rawheight,&rawdepth,&rawsteps,
                        &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
+      // remove suffix
+      filename5=removeRAWsuffix(filename4);
+
+      // append quantize suffix to filename
+      filename6=strdup2(filename5,"_quant");
+      free(filename5);
+
+      if (feedback!=NULL) feedback("quantizing out-of-core",0,obj);
+
+      // quantize
+      filename7=copyRAWvolume_nonlinear(filename4,filename6,feedback,obj);
+      free(filename6);
+
+      // remove temporary volume
+      removefile(filename4);
+      free(filename4);
+
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
       if (cells>maxcells)
          while (cells>maxcells)
             {
             // remove suffix
-            filename5=removeRAWsuffix(filename4);
+            filename8=removeRAWsuffix(filename7);
 
             // append down-size suffix to filename
-            filename6=strdup2(filename5,"_down");
-            free(filename5);
+            filename9=strdup2(filename8,"_down");
+            free(filename8);
 
             if (feedback!=NULL) feedback("down-sizing out-of-core",0,obj);
 
             // down-size
-            filename7=downsizeRAWvolume(filename4,filename6,feedback,obj);
-            free(filename6);
+            outname=downsizeRAWvolume(filename7,filename9,feedback,obj);
+            free(filename9);
 
             // remove temporary volume
-            removefile(filename4);
-            free(filename4);
+            removefile(filename7);
+            free(filename7);
 
-            if (!readRAWinfo(filename7,
+            if (!readRAWinfo(outname,
                              &rawwidth,&rawheight,&rawdepth,&rawsteps,
                              &rawcomps,&rawbits,&rawsign,&rawmsb)) ERRORMSG();
 
             cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
-            filename4=filename7;
+            filename7=outname;
             }
-      else filename7=filename4;
-
-      // remove suffix
-      filename8=removeRAWsuffix(filename7);
-
-      // append quantize suffix to filename
-      filename9=strdup2(filename8,"_quant");
-      free(filename8);
-
-      if (feedback!=NULL) feedback("quantizing out-of-core",0,obj);
-
-      // quantize
-      outname=copyRAWvolume_nonlinear(filename7,filename9,feedback,obj);
-      free(filename9);
-
-      // remove down-size volume
-      removefile(filename7);
-      free(filename7);
+      else outname=filename7;
       }
 
    free(filename3);
