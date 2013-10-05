@@ -1554,7 +1554,7 @@ char *downsizeRAWvolume(FILE *file, // source file desc
    outname=appendRAWinfo(output,
                          sizex,sizey,sizez,steps,
                          components,16,FALSE,!RAW_ISINTEL,
-                         scalex,scaley,scalez);
+                         2*scalex,2*scaley,2*scalez);
 
    if (outname==NULL) return(NULL);
 
