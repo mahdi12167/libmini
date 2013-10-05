@@ -1659,22 +1659,6 @@ void ministrip::from_string(ministring &info)
       }
    }
 
-// get index range of next consecutive strip
-BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
-   {
-   if (stop>0)
-      {
-      start=stop+2;
-      stop++;
-      }
-
-   while (stop+1<SIZE)
-      if (ENDARRAY[stop+1]) break;
-      else stop++;
-
-   return(stop<SIZE);
-   }
-
 // save to file
 void ministrip::save(const char *filename)
    {writeministring(filename,to_string());}
@@ -1695,6 +1679,18 @@ BOOLINT ministrip::load(const char *filename)
       }
 
    return(FALSE);
+   }
+
+// get index range of next consecutive strip
+BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
+   {
+   if (stop>0) start=stop=stop+3;
+
+   while (stop+1<SIZE)
+      if (ENDARRAY[stop+1]) break;
+      else stop++;
+
+   return(stop<SIZE);
    }
 
 // write strip to PLY file format
@@ -1797,6 +1793,8 @@ void ministrip::writePLYfile(const char *filename)
          fprintf(outfile," %u",vertices+1);
          fprintf(outfile," %u",vertices+2);
 
+         fprintf(outfile,"\n");
+
          vertices+=3;
          }
       else if (count==4)
@@ -1808,10 +1806,10 @@ void ministrip::writePLYfile(const char *filename)
          fprintf(outfile," %u",vertices+3);
          fprintf(outfile," %u",vertices+2);
 
+         fprintf(outfile,"\n");
+
          vertices+=4;
          }
-
-      fprintf(outfile,"\n");
       }
 
    // close output file
