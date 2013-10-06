@@ -1889,7 +1889,7 @@ void ministrip::writePLYfile(const char *filename)
    // write PLY header
    fprintf(outfile,"ply\n"); // ply format: magic identifier
    fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
-   fprintf(outfile,"comment libmini extractor output\n"); // ply format: libmini comment
+   fprintf(outfile,"comment created by libmini\n"); // ply format: libmini comment
    fprintf(outfile,"element vertex %u\n",vertices); // ply format: number of vertices
    fprintf(outfile,"property float x\n"); // ply format: property of vertex
    fprintf(outfile,"property float y\n"); // ply format: property of vertex
