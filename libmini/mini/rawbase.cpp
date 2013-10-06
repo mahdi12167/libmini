@@ -2417,11 +2417,10 @@ void extractiso1(const miniv3d &v1,const miniv3d &n1,const double d1,
    p3=f3*(d4*v1+d1*v4);
    pn3=f3*(d4*n1+d1*n4);
 
-   fprintf(file,"%d ",3);
-   fprintf(file,"%g %g %g %g %g %g",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
-   fprintf(file,"%g %g %g %g %g %g",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
-   fprintf(file,"%g %g %g %g %g %g",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
-   fprintf(file,"\n");
+   fprintf(file,"%d\n",3);
+   fprintf(file,"%g %g %g %g %g %g\n",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
    }
 
 // marching tetrahedra subcase #2
@@ -2453,12 +2452,11 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
    p4=f4*(d4*v2+d2*v4);
    pn4=f4*(d4*n2+d2*n4);
 
-   fprintf(file,"%d ",4);
-   fprintf(file,"%g %g %g %g %g %g",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
-   fprintf(file,"%g %g %g %g %g %g",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
-   fprintf(file,"%g %g %g %g %g %g",p4.x,p4.y,p4.z,pn4.x,pn4.y,pn4.z);
-   fprintf(file,"%g %g %g %g %g %g",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
-   fprintf(file,"\n");
+   fprintf(file,"%d\n",4);
+   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p4.x,p4.y,p4.z,pn4.x,pn4.y,pn4.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
    }
 
 // extract iso surface
