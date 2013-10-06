@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger, licensed under GPL 2+
+// (c) by Stefan Roettger, licensed under LGPL 2.1
 
 #ifndef QT_VIEWER_H
 #define QT_VIEWER_H

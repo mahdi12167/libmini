@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under LGPL 2.1
+
 #include <mini/minibase.h>
 
 #include <mini/rawbase.h>

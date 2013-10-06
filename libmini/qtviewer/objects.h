@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger, licensed under LGPL 2.1
+// (c) by Stefan Roettger, licensed under GPL 2+
 
 #ifndef OBJECTS_H
 #define OBJECTS_H

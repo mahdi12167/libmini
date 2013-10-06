@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger, licensed under LGPL 2.1
+// (c) by Stefan Roettger, licensed under GPL 2+
 
 #include <mini/mini_util.h>
 
