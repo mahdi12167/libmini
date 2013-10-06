@@ -18,7 +18,7 @@ int main(int argc,char *argv[])
 
    printf("loading geometry\n");
 
-   if (!strip.load(argv[1]))
+   if (!strip.readGEOfile(argv[1]))
       {
       printf("load failure\n");
       exit(1);

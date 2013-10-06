@@ -755,7 +755,8 @@ void ministrip::addvtx()
 
    if (SIZE>=MAXSIZE)
       {
-      MAXSIZE*=2;
+      if (MAXSIZE<2048) MAXSIZE*=2;
+      else MAXSIZE=MAXSIZE+(MAXSIZE>>1);
 
       if ((ENDARRAY=(BOOLINT *)realloc(ENDARRAY,MAXSIZE*sizeof(BOOLINT)))==NULL) MEMERROR();
       if ((VTXARRAY=(float *)realloc(VTXARRAY,3*MAXSIZE*sizeof(float)))==NULL) MEMERROR();
