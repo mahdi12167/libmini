@@ -25,6 +25,12 @@ dbdump_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 dds_SOURCES = dds.cpp
 dds_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
+rek2raw_SOURCES = rek2raw.cpp
+rek2raw_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
+
+rawquant_SOURCES = rawquant.cpp
+rawquant_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
+
 raw2iso_SOURCES = raw2iso.cpp
 raw2iso_LDADD = -L$(top_builddir) -lMini -lMiniSFX $(MINI_LIBS)
 
