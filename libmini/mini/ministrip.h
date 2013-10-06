@@ -291,6 +291,12 @@ class ministrip
    //! load from file
    BOOLINT load(const char *filename);
 
+   //! write strip to GEO file format
+   void writeGEOfile(const char *filename);
+
+   //! read strip from GEO file format
+   BOOLINT readGEOfile(const char *filename);
+
    //! write strip to PLY file format
    void writePLYfile(const char *filename);
 

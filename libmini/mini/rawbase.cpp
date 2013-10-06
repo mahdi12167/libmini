@@ -7,8 +7,6 @@
 
 #include "rawbase.h"
 
-#undef EXTRACT_WHOLE_VOXEL
-
 float RAW_TARGET_RATIO=0.5f;
 long long RAW_TARGET_CELLS=250000000;
 
@@ -2174,21 +2172,21 @@ void extractiso(const double isoval,
                 const miniv3d &p2,const double c2,const miniv3d &n2,
                 const miniv3d &p3,const double c3,const miniv3d &n3,
                 const miniv3d &p4,const double c4,const miniv3d &n4,
-                ministrip &strip);
+                FILE *file);
 
 // forward declaration
 void extractiso1(const miniv3d &v1,const miniv3d &v1,const double d1,
                  const miniv3d &v2,const miniv3d &v2,const double d2,
                  const miniv3d &v3,const miniv3d &v3,const double d3,
                  const miniv3d &v4,const miniv3d &v4,const double d4,
-                 ministrip &strip);
+                 FILE *file);
 
 // forward declaration
 void extractiso2(const miniv3d &v1,const miniv3d &v1,const double d1,
                  const miniv3d &v2,const miniv3d &v2,const double d2,
                  const miniv3d &v3,const miniv3d &v3,const double d3,
                  const miniv3d &v4,const miniv3d &v4,const double d4,
-                 ministrip &strip);
+                 FILE *file);
 
 // calculate position from index
 miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
@@ -2214,7 +2212,7 @@ void extractvoxel(const double isoval,
                   const miniv3d &p1,const miniv3d &p2,const miniv3d &p3,const miniv3d &p4,const miniv3d &p5,const miniv3d &p6,const miniv3d &p7,const miniv3d &p8,
                   const double vc1,const double vc2,const double vc3,const double vc4,const double vc5,const double vc6,const double vc7,const double vc8,
                   const miniv3d &nc1,const miniv3d &nc2,const miniv3d &nc3,const miniv3d &nc4,const miniv3d &nc5,const miniv3d &nc6,const miniv3d &nc7,const miniv3d &nc8,
-                  ministrip &strip)
+                  FILE *file)
    {
    if ((((i+j+k)/s)%2)==0)
       {
@@ -2223,35 +2221,35 @@ void extractvoxel(const double isoval,
                  p4,vc4,nc4,
                  p6,vc6,nc6,
                  p7,vc7,nc7,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p2,vc2,nc2,
                  p1,vc1,nc1,
                  p4,vc4,nc4,
                  p6,vc6,nc6,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p3,vc3,nc3,
                  p1,vc1,nc1,
                  p7,vc7,nc7,
                  p4,vc4,nc4,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p5,vc5,nc5,
                  p1,vc1,nc1,
                  p6,vc6,nc6,
                  p7,vc7,nc7,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p8,vc8,nc8,
                  p4,vc4,nc4,
                  p7,vc7,nc7,
                  p6,vc6,nc6,
-                 strip);
+                 file);
       }
    else
       {
@@ -2260,35 +2258,35 @@ void extractvoxel(const double isoval,
                  p3,vc3,nc3,
                  p8,vc8,nc8,
                  p5,vc5,nc5,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p1,vc1,nc1,
                  p2,vc2,nc2,
                  p5,vc5,nc5,
                  p3,vc3,nc3,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p4,vc4,nc4,
                  p2,vc2,nc2,
                  p3,vc3,nc3,
                  p8,vc8,nc8,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p6,vc6,nc6,
                  p2,vc2,nc2,
                  p8,vc8,nc8,
                  p5,vc5,nc5,
-                 strip);
+                 file);
 
       extractiso(isoval,
                  p7,vc7,nc7,
                  p3,vc3,nc3,
                  p5,vc5,nc5,
                  p8,vc8,nc8,
-                 strip);
+                 file);
       }
    }
 
@@ -2298,7 +2296,7 @@ void extractiso(const double isoval,
                 const miniv3d &p2,const double c2,const miniv3d &n2,
                 const miniv3d &p3,const double c3,const miniv3d &n3,
                 const miniv3d &p4,const double c4,const miniv3d &n4,
-                ministrip &strip)
+                FILE *file)
    {
    int flag=0;
 
@@ -2322,42 +2320,42 @@ void extractiso(const double isoval,
          extractiso1(p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
                      p3,n3,dabs(d3),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 2+4+8:
          extractiso1(p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
                      p4,n4,dabs(d4),
-                     p3,n3,dabs(d3),strip); break;
+                     p3,n3,dabs(d3),file); break;
       case 2:
          extractiso1(p2,n2,dabs(d2),
                      p1,n1,dabs(d1),
                      p4,n4,dabs(d4),
-                     p3,n3,dabs(d3),strip); break;
+                     p3,n3,dabs(d3),file); break;
       case 1+4+8:
          extractiso1(p2,n2,dabs(d2),
                      p1,n1,dabs(d1),
                      p3,n3,dabs(d3),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 4:
          extractiso1(p3,n3,dabs(d3),
                      p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 1+2+8:
          extractiso1(p3,n3,dabs(d3),
                      p1,n1,dabs(d1),
                      p4,n4,dabs(d4),
-                     p2,n2,dabs(d2),strip); break;
+                     p2,n2,dabs(d2),file); break;
       case 8:
          extractiso1(p4,n4,dabs(d4),
                      p1,n1,dabs(d1),
                      p3,n3,dabs(d3),
-                     p2,n2,dabs(d2),strip); break;
+                     p2,n2,dabs(d2),file); break;
       case 1+2+4:
          extractiso1(p4,n4,dabs(d4),
                      p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
-                     p3,n3,dabs(d3),strip); break;
+                     p3,n3,dabs(d3),file); break;
 
       // 1st case: isoval<c for two and isoval>=c for other two vertices
       // 2nd case: isoval>=c for two and isoval<c for other two vertices
@@ -2365,32 +2363,32 @@ void extractiso(const double isoval,
          extractiso2(p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
                      p3,n3,dabs(d3),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 4+8:
          extractiso2(p1,n1,dabs(d1),
                      p2,n2,dabs(d2),
                      p4,n4,dabs(d4),
-                     p3,n3,dabs(d3),strip); break;
+                     p3,n3,dabs(d3),file); break;
       case 1+4:
          extractiso2(p1,n1,dabs(d1),
                      p3,n3,dabs(d3),
                      p4,n4,dabs(d4),
-                     p2,n2,dabs(d2),strip); break;
+                     p2,n2,dabs(d2),file); break;
       case 2+8:
          extractiso2(p1,n1,dabs(d1),
                      p3,n3,dabs(d3),
                      p2,n2,dabs(d2),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 2+4:
          extractiso2(p2,n2,dabs(d2),
                      p3,n3,dabs(d3),
                      p1,n1,dabs(d1),
-                     p4,n4,dabs(d4),strip); break;
+                     p4,n4,dabs(d4),file); break;
       case 1+8:
          extractiso2(p2,n2,dabs(d2),
                      p3,n3,dabs(d3),
                      p4,n4,dabs(d4),
-                     p1,n1,dabs(d1),strip); break;
+                     p1,n1,dabs(d1),file); break;
       }
    }
 
@@ -2399,7 +2397,7 @@ void extractiso1(const miniv3d &v1,const miniv3d &n1,const double d1,
                  const miniv3d &v2,const miniv3d &n2,const double d2,
                  const miniv3d &v3,const miniv3d &n3,const double d3,
                  const miniv3d &v4,const miniv3d &n4,const double d4,
-                 ministrip &strip)
+                 FILE *file)
    {
    double f1,f2,f3;
 
@@ -2419,13 +2417,10 @@ void extractiso1(const miniv3d &v1,const miniv3d &n1,const double d1,
    p3=f3*(d4*v1+d1*v4);
    pn3=f3*(d4*n1+d1*n4);
 
-   strip.beginstrip();
-   strip.setnrm(pn1);
-   strip.addvtx(p1);
-   strip.setnrm(pn2);
-   strip.addvtx(p2);
-   strip.setnrm(pn3);
-   strip.addvtx(p3);
+   fprintf(file,"%d ",3);
+   fprintf(file,"%g %g %g %g %g %g\n",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
    }
 
 // marching tetrahedra subcase #2
@@ -2433,7 +2428,7 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
                  const miniv3d &v2,const miniv3d &n2,const double d2,
                  const miniv3d &v3,const miniv3d &n3,const double d3,
                  const miniv3d &v4,const miniv3d &n4,const double d4,
-                 ministrip &strip)
+                 FILE *file)
    {
    double f1,f2,f3,f4;
 
@@ -2457,22 +2452,18 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
    p4=f4*(d4*v2+d2*v4);
    pn4=f4*(d4*n2+d2*n4);
 
-   strip.beginstrip();
-   strip.setnrm(pn3);
-   strip.addvtx(p3);
-   strip.setnrm(pn1);
-   strip.addvtx(p1);
-   strip.setnrm(pn4);
-   strip.addvtx(p4);
-   strip.setnrm(pn2);
-   strip.addvtx(p2);
+   fprintf(file,"%d ",4);
+   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p4.x,p4.y,p4.z,pn4.x,pn4.y,pn4.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
    }
 
 // extract iso surface
 void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int height,unsigned int depth,unsigned int components,
                  unsigned int bits,unsigned int slab,
                  double scalex,double scaley,double scalez,
-                 double isovalue,ministrip &strip)
+                 double isovalue,FILE *file)
    {
    int k;
 
@@ -2549,75 +2540,13 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             p[6]=getpos(i,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
             p[7]=getpos(i+1,j+1,slab+1,width,height,depth,scalex,scaley,scalez);
 
-#ifdef EXTRACT_WHOLE_VOXEL
-            // xy faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0]);
-            strip.addvtx(p[0]);
-            strip.setnrm(gv[1]);
-            strip.addvtx(p[1]);
-            strip.setnrm(gv[2]);
-            strip.addvtx(p[2]);
-            strip.setnrm(gv[3]);
-            strip.addvtx(p[3]);
-            strip.beginstrip();
-            strip.setnrm(gv[4]);
-            strip.addvtx(p[4]);
-            strip.setnrm(gv[5]);
-            strip.addvtx(p[5]);
-            strip.setnrm(gv[6]);
-            strip.addvtx(p[6]);
-            strip.setnrm(gv[7]);
-            strip.addvtx(p[7]);
-
-            // yz faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0]);
-            strip.addvtx(p[0]);
-            strip.setnrm(gv[4]);
-            strip.addvtx(p[4]);
-            strip.setnrm(gv[2]);
-            strip.addvtx(p[2]);
-            strip.setnrm(gv[6]);
-            strip.addvtx(p[6]);
-            strip.beginstrip();
-            strip.setnrm(gv[1]);
-            strip.addvtx(p[1]);
-            strip.setnrm(gv[5]);
-            strip.addvtx(p[5]);
-            strip.setnrm(gv[3]);
-            strip.addvtx(p[3]);
-            strip.setnrm(gv[7]);
-            strip.addvtx(p[7]);
-
-            // xz faces of voxel
-            strip.beginstrip();
-            strip.setnrm(gv[0]);
-            strip.addvtx(p[0]);
-            strip.setnrm(gv[4]);
-            strip.addvtx(p[4]);
-            strip.setnrm(gv[1]);
-            strip.addvtx(p[1]);
-            strip.setnrm(gv[5]);
-            strip.addvtx(p[5]);
-            strip.beginstrip();
-            strip.setnrm(gv[2]);
-            strip.addvtx(p[2]);
-            strip.setnrm(gv[6]);
-            strip.addvtx(p[6]);
-            strip.setnrm(gv[3]);
-            strip.addvtx(p[3]);
-            strip.setnrm(gv[7]);
-            strip.addvtx(p[7]);
-#else
             // iso surface extraction
             extractvoxel(isovalue,
                          i,j,slab,1,
                          p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],
                          sv[0],sv[1],sv[2],sv[3],sv[4],sv[5],sv[6],sv[7],
                          gv[0],gv[1],gv[2],gv[3],gv[4],gv[5],gv[6],gv[7],
-                         strip);
-#endif
+                         file);
             }
          }
    }
@@ -2640,7 +2569,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    unsigned short int *shorts[4];
 
    char *outname;
-   ministrip strip(0,3,0); // /wo color /w normal /wo texcoord
+   FILE *outfile;
 
    // compute total number of cells per slice
    cells=bytes=width*height;
@@ -2654,6 +2583,17 @@ char *extractRAWvolume(FILE *file, // source file desc
    outname=appendISOinfo(output,isovalue);
    if (outname==NULL) return(NULL);
 
+   // open output file
+   if ((outfile=fopen(outname,"wb"))==NULL)
+      {
+      free(outname);
+      return(NULL);
+      }
+
+   // write GEO header
+   fprintf(outfile,"geo 1.0\n");
+   fprintf(outfile,"0 3 0\n"); // /wo color /w normal /wo texcoord
+
    shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
 
    // calculate gradients and extract iso-surface
@@ -2664,8 +2604,6 @@ char *extractRAWvolume(FILE *file, // source file desc
 
          if (j==0)
             {
-            strip.clear();
-
             if (shorts[0]!=NULL) free(shorts[0]);
             if (shorts[1]!=NULL) free(shorts[1]);
             if (shorts[2]!=NULL) free(shorts[2]);
@@ -2730,7 +2668,7 @@ char *extractRAWvolume(FILE *file, // source file desc
 
          convert2iso(shorts,width,height,depth,components,
                      bits,j,scalex,scaley,scalez,
-                     isovalue,strip);
+                     isovalue,file);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
@@ -2738,7 +2676,8 @@ char *extractRAWvolume(FILE *file, // source file desc
    if (shorts[2]!=NULL) free(shorts[2]);
    if (shorts[3]!=NULL) free(shorts[3]);
 
-   strip.save(outname);
+   // close output file
+   fclose(outfile);
 
    return(outname);
    }

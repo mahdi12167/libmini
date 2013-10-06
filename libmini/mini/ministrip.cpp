@@ -1693,6 +1693,170 @@ BOOLINT ministrip::getnextrange(unsigned int &start,unsigned int &stop)
    return(stop<SIZE);
    }
 
+// write strip to GEO file format
+void ministrip::writeGEOfile(const char *filename)
+   {
+   unsigned int i;
+
+   unsigned int start,stop;
+
+   FILE *outfile;
+
+   // open output file
+   if ((outfile=fopen(filename,"wb"))==NULL) return;
+
+   // write GEO header
+   fprintf(outfile,"geo 1.0\n"); // GEO format: magic identifier
+   fprintf(outfile,"%d %d %d\n",COLCOMPS,NRMCOMPS,TEXCOMPS); // GEO format: number of attributes
+
+   // write GEO body
+   start=stop=0;
+   while (getnextrange(start,stop))
+      {
+      fprintf(outfile,"%d ",stop-start-1);
+
+      for (i=start; i<=stop; i++)
+         {
+         fprintf(outfile,"%g %g %g",
+                 VTXARRAY[3*i],VTXARRAY[3*i+1],VTXARRAY[3*i+2]);
+
+         if (COLCOMPS==3 || COLCOMPS==4)
+            {
+            fprintf(outfile," %g %g %g",
+                    COLARRAY[COLCOMPS*i],COLARRAY[COLCOMPS*i+1],COLARRAY[COLCOMPS*i+2]);
+
+            if (COLCOMPS==4)
+               fprintf(outfile," %g",
+                       COLARRAY[COLCOMPS*i+3]);
+            }
+
+         if (NRMCOMPS==3)
+            fprintf(outfile," %g %g %g",
+                    NRMARRAY[3*i],NRMARRAY[3*i+1],NRMARRAY[3*i+2]);
+
+         if (TEXCOMPS>0)
+            {
+            fprintf(outfile," %g",
+                    TEXARRAY[TEXCOMPS*i]);
+
+            if (TEXCOMPS>1)
+               fprintf(outfile," %g",
+                    TEXARRAY[TEXCOMPS*i+1]);
+
+            if (TEXCOMPS>2)
+               fprintf(outfile," %g",
+                       TEXARRAY[TEXCOMPS*i+2]);
+
+            if (TEXCOMPS>3)
+               fprintf(outfile," %g",
+                       TEXARRAY[TEXCOMPS*i+3]);
+            }
+
+         fprintf(outfile,"\n");
+         }
+      }
+
+   // close output file
+   fclose(outfile);
+   }
+
+// read strip from GEO file format
+BOOLINT ministrip::readGEOfile(const char *filename)
+   {
+   unsigned int i;
+
+   FILE *file;
+
+   float version;
+
+   unsigned int count;
+
+   float x,y,z;
+   float red,green,blue,alpha;
+   float nx,ny,nz;
+   float s,t,r,w;
+
+   // open input file
+   if ((file=fopen(filename,"rb"))==NULL) return(FALSE);
+
+   // read GEO format: magic identifier
+   if (fscanf(file,"geo %g\n",&version)!=1)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+   else if (version!=1.0f)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+
+   // read GEO format: number of attributes
+   if (fscanf(file,"%d %d %d\n",&COLCOMPS,&NRMCOMPS,&TEXCOMPS)!=3)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+   else reinit(COLCOMPS,NRMCOMPS,TEXCOMPS);
+
+   // read GEO body
+   while (fscanf(file,"%d",&count)==1)
+      {
+      if (count==0) break;
+
+      beginstrip();
+
+      for (i=0; i<count; i++)
+         {
+         fscanf(file,"%g %g %g",&x,&y,&z);
+
+         if (COLCOMPS==3 || COLCOMPS==4)
+            {
+            red=green=blue=alpha=0.0f;
+
+            fscanf(file,"%g %g %g",&red,&green,&blue);
+
+            if (COLCOMPS==4)
+               fscanf(file,"%g",&alpha);
+
+            setcol(red,green,blue,alpha);
+            }
+
+         if (NRMCOMPS==3)
+            {
+            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+
+            setnrm(nx,ny,nz);
+            }
+
+         if (TEXCOMPS>0)
+            {
+            s=t=r=w=0.0f;
+
+            fscanf(file,"%g",&s);
+
+            if (TEXCOMPS>1)
+               fscanf(file,"%g",&t);
+
+            if (TEXCOMPS>2)
+               fscanf(file,"%g",&r);
+
+            if (TEXCOMPS>3)
+               fscanf(file,"%g",&w);
+
+            settex(s,t,r,w);
+            }
+
+         addvtx(x,y,z);
+         }
+      }
+
+   // close input file
+   fclose(file);
+
+   return(TRUE);
+   }
+
 // write strip to PLY file format
 void ministrip::writePLYfile(const char *filename)
    {
