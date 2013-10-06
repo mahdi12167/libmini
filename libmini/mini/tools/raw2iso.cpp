@@ -25,7 +25,7 @@ int main(int argc,char *argv[])
    if (argc!=3 && argc!=4)
       {
       printf("usage: %s <volume.raw> <iso.geo> [<iso value>]\n",argv[0]);
-      printf(" load volume data (raw volume format)\n");
+      printf(" load volume data (raw and rek volume format)\n");
       printf(" and convert it into an iso surface (libmini geometry format)\n");
       exit(1);
       }
@@ -34,6 +34,7 @@ int main(int argc,char *argv[])
       if (sscanf(argv[3],"%lg",&isovalue)!=1) exit(1);
 
    outname=extractRAWvolume(argv[1],argv[2],isovalue,feedback);
+   if (outname==NULL) outname=extractREKvolume(argv[1],argv[2],isovalue,feedback);
 
    if (outname==NULL) exit(1);
    else free(outname);
