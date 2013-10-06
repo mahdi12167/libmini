@@ -5,6 +5,8 @@
 
 #include "minidefs.h"
 
+#include "stdio.h"
+
 extern float RAW_TARGET_RATIO;
 extern long long RAW_TARGET_CELLS;
 
