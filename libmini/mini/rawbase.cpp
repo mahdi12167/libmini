@@ -2668,7 +2668,7 @@ char *extractRAWvolume(FILE *file, // source file desc
 
          convert2iso(shorts,width,height,depth,components,
                      bits,j,scalex,scaley,scalez,
-                     isovalue,file);
+                     isovalue,outfile);
          }
 
    if (shorts[0]!=NULL) free(shorts[0]);
