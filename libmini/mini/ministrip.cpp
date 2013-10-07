@@ -2085,7 +2085,7 @@ BOOLINT ministrip::convertGEO2PLYfile(const char *filename,const char *outname)
       }
 
    // open output file
-   if ((outfile=fopen(filename,"wb"))==NULL)
+   if ((outfile=fopen(outname,"wb"))==NULL)
       {
       fclose(file);
       return(FALSE);
