@@ -16,7 +16,7 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-   if (!strip.convertGEO2PLYfile(argv[1],argv[2]))
+   if (!ministrip::convertGEO2PLYfile(argv[1],argv[2]))
       {
       printf("conversion failure\n");
       exit(1);

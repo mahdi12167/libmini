@@ -136,13 +136,8 @@ void reshapefunc(int width,int height)
    displayfunc();
    }
 
-void keyboardfunc(unsigned char key,int x,int y)
+void keyboardfunc(unsigned char key,int /*x*/,int /*y*/)
    {
-   float mousex,mousey;
-
-   mousex=(float)x/(winwidth-1);
-   mousey=(float)y/(winwidth-1);
-
    switch (key)
       {
       case ' ':
