@@ -1980,3 +1980,252 @@ void ministrip::writePLYfile(const char *filename)
    // close output file
    fclose(outfile);
    }
+
+// convert strip from GEO to PLY file format
+BOOLINT ministrip::convertGEO2PLYfile(const char *filename,const char *outname)
+   {
+   unsigned int i;
+
+   FILE *file;
+   long long tellpos;
+
+   float version;
+   int colcomps,nrmcomps,texcomps;
+
+   unsigned int count;
+
+   float x,y,z;
+   float red,green,blue,alpha;
+   float nx,ny,nz;
+   float s,t,r,w;
+
+   unsigned int strips,vertices;
+
+   FILE *outfile;
+
+   // open input file
+   if ((file=fopen(filename,"rb"))==NULL) return(FALSE);
+
+   // read GEO format: magic identifier
+   if (fscanf(file,"geo %g\n",&version)!=1)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+   else if (version!=1.0f)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+
+   // read GEO format: number of attributes
+   if (fscanf(file,"%d %d %d\n",&colcomps,&nrmcomps,&texcomps)!=3)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+
+   // remember seek position
+   tellpos=ftell(file);
+
+   strips=0;
+   vertices=0;
+
+   // scan GEO body
+   while (fscanf(file,"%d",&count)==1)
+      {
+      if (count==0) break;
+
+      if (count==3 || count==4)
+         {
+         strips++;
+         vertices+=count;
+         }
+
+      for (i=0; i<count; i++)
+         {
+         fscanf(file,"%g %g %g",&x,&y,&z);
+
+         if (colcomps==3 || colcomps==4)
+            {
+            red=green=blue=alpha=0.0f;
+
+            fscanf(file,"%g %g %g",&red,&green,&blue);
+
+            if (colcomps==4)
+               fscanf(file,"%g",&alpha);
+            }
+
+         if (nrmcomps==3)
+            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+
+         if (texcomps>0)
+            {
+            s=t=r=w=0.0f;
+
+            fscanf(file,"%g",&s);
+
+            if (texcomps>1)
+               fscanf(file,"%g",&t);
+
+            if (texcomps>2)
+               fscanf(file,"%g",&r);
+
+            if (texcomps>3)
+               fscanf(file,"%g",&w);
+            }
+         }
+      }
+
+   // seek back to start
+   if (fseek(file,tellpos,SEEK_SET)==-1)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+
+   // open output file
+   if ((outfile=fopen(filename,"wb"))==NULL)
+      {
+      fclose(file);
+      return(FALSE);
+      }
+
+   // write PLY header
+   fprintf(outfile,"ply\n"); // ply format: magic identifier
+   fprintf(outfile,"format ascii 1.0\n"); // ply format: format identifier
+   fprintf(outfile,"comment created by libmini\n"); // ply format: libmini comment
+   fprintf(outfile,"element vertex %u\n",vertices); // ply format: number of vertices
+   fprintf(outfile,"property float x\n"); // ply format: property of vertex
+   fprintf(outfile,"property float y\n"); // ply format: property of vertex
+   fprintf(outfile,"property float z\n"); // ply format: property of vertex
+   if (colcomps==3 || colcomps==4)
+      {
+      fprintf(outfile,"property float red\n"); // ply format: property of vertex
+      fprintf(outfile,"property float green\n"); // ply format: property of vertex
+      fprintf(outfile,"property float blue\n"); // ply format: property of vertex
+
+      if (colcomps==4)
+         fprintf(outfile,"property float alpha\n"); // ply format: property of vertex
+      }
+   if (nrmcomps==3)
+      {
+      fprintf(outfile,"property float nx\n"); // ply format: property of vertex
+      fprintf(outfile,"property float ny\n"); // ply format: property of vertex
+      fprintf(outfile,"property float nz\n"); // ply format: property of vertex
+      }
+   fprintf(outfile,"element face %u\n",strips); // ply format: number of faces
+   fprintf(outfile,"property list uchar int vertex_index\n"); // ply format: property of face
+   fprintf(outfile,"end_header\n"); // ply format: end identifier
+
+   // scan GEO body and write PLY body (vertices)
+   while (fscanf(file,"%d",&count)==1)
+      {
+      if (count==0) break;
+
+      for (i=0; i<count; i++)
+         {
+         fscanf(file,"%g %g %g",&x,&y,&z);
+         if (count==3 || count==4) fprintf(outfile,"%g %g %g",x,y,z);
+
+         if (colcomps==3 || colcomps==4)
+            {
+            fscanf(file,"%g %g %g",&red,&green,&blue);
+            if (count==3 || count==4) fprintf(outfile," %g %g %g",red,green,blue);
+
+            if (colcomps==4)
+               {
+               fscanf(file,"%g",&alpha);
+               if (count==3 || count==4) fprintf(outfile," %g",alpha);
+               }
+            }
+
+         if (nrmcomps==3)
+            {
+            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+            if (count==3 || count==4) fprintf(outfile," %g %g %g",nx,ny,nz);
+            }
+
+         if (texcomps>0)
+            {
+            fscanf(file,"%g",&s);
+
+            if (texcomps>1)
+               fscanf(file,"%g",&t);
+
+            if (texcomps>2)
+               fscanf(file,"%g",&r);
+
+            if (texcomps>3)
+               fscanf(file,"%g",&w);
+            }
+
+         if (count==3 || count==4) fprintf(outfile,"\n");
+         }
+      }
+
+   // seek back to start
+   if (fseek(file,tellpos,SEEK_SET)==-1)
+      {
+      fclose(file);
+      fclose(outfile);
+      return(FALSE);
+      }
+
+   vertices=0;
+
+   // scan GEO body and write PLY body (faces)
+   while (fscanf(file,"%d",&count)==1)
+      {
+      if (count==0) break;
+
+      if (count==3)
+         {
+         fprintf(outfile,"%d %u %u %u\n",3,vertices,vertices+1,vertices+2);
+         vertices+=3;
+         }
+      else if (count==4)
+         {
+         fprintf(outfile,"%d %u %u %u %u\n",4,vertices,vertices+1,vertices+3,vertices+2);
+         vertices+=4;
+         }
+
+      for (i=0; i<count; i++)
+         {
+         fscanf(file,"%g %g %g",&x,&y,&z);
+
+         if (colcomps==3 || colcomps==4)
+            {
+            fscanf(file,"%g %g %g",&red,&green,&blue);
+
+            if (colcomps==4)
+               fscanf(file,"%g",&alpha);
+            }
+
+         if (nrmcomps==3)
+            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+
+         if (texcomps>0)
+            {
+            fscanf(file,"%g",&s);
+
+            if (texcomps>1)
+               fscanf(file,"%g",&t);
+
+            if (texcomps>2)
+               fscanf(file,"%g",&r);
+
+            if (texcomps>3)
+               fscanf(file,"%g",&w);
+            }
+         }
+      }
+
+   // close output file
+   fclose(outfile);
+
+   // close input file
+   fclose(file);
+
+   return(TRUE);
+   }

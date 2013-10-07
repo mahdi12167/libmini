@@ -16,17 +16,11 @@ int main(int argc,char *argv[])
       exit(1);
       }
 
-   printf("loading geometry\n");
-
-   if (!strip.readGEOfile(argv[1]))
+   if (!strip.convertGEO2PLYfile(argv[1],argv[2]))
       {
-      printf("load failure\n");
+      printf("conversion failure\n");
       exit(1);
       }
-
-   printf("saving geometry\n");
-
-   strip.writePLYfile(argv[2]);
 
    return(0);
    }

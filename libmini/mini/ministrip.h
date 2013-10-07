@@ -300,6 +300,9 @@ class ministrip
    //! write strip to PLY file format
    void writePLYfile(const char *filename);
 
+   //! convert strip from GEO to PLY file format
+   static BOOLINT convertGEO2PLYfile(const char *filename,const char *outname);
+
    protected:
 
    unsigned int SIZE;

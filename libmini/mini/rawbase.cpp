@@ -2616,6 +2616,7 @@ char *extractRAWvolume(FILE *file, // source file desc
             if (fread(slice,bytes,1,file)!=1)
                {
                free(slice);
+               fclose(outfile);
                return(NULL);
                }
 
@@ -2633,6 +2634,7 @@ char *extractRAWvolume(FILE *file, // source file desc
                   if (shorts[1]!=NULL) free(shorts[1]);
                   if (shorts[2]!=NULL) free(shorts[2]);
                   if (shorts[3]!=NULL) free(shorts[3]);
+                  fclose(outfile);
                   return(NULL);
                   }
 
@@ -2659,6 +2661,7 @@ char *extractRAWvolume(FILE *file, // source file desc
                if (shorts[1]!=NULL) free(shorts[1]);
                if (shorts[2]!=NULL) free(shorts[2]);
                if (shorts[3]!=NULL) free(shorts[3]);
+               fclose(outfile);
                return(NULL);
                }
 
