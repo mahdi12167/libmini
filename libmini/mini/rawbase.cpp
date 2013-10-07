@@ -2175,17 +2175,17 @@ void extractiso(const double isoval,
                 FILE *file);
 
 // forward declaration
-void extractiso1(const miniv3d &v1,const miniv3d &v1,const double d1,
-                 const miniv3d &v2,const miniv3d &v2,const double d2,
-                 const miniv3d &v3,const miniv3d &v3,const double d3,
-                 const miniv3d &v4,const miniv3d &v4,const double d4,
+void extractiso1(const miniv3d &v1,const miniv3d &n1,const double d1,
+                 const miniv3d &v2,const miniv3d &n2,const double d2,
+                 const miniv3d &v3,const miniv3d &n3,const double d3,
+                 const miniv3d &v4,const miniv3d &n4,const double d4,
                  FILE *file);
 
 // forward declaration
-void extractiso2(const miniv3d &v1,const miniv3d &v1,const double d1,
-                 const miniv3d &v2,const miniv3d &v2,const double d2,
-                 const miniv3d &v3,const miniv3d &v3,const double d3,
-                 const miniv3d &v4,const miniv3d &v4,const double d4,
+void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
+                 const miniv3d &v2,const miniv3d &n2,const double d2,
+                 const miniv3d &v3,const miniv3d &n3,const double d3,
+                 const miniv3d &v4,const miniv3d &n4,const double d4,
                  FILE *file);
 
 // calculate position from index
@@ -2594,7 +2594,7 @@ char *extractRAWvolume(FILE *file, // source file desc
    fprintf(outfile,"geo 1.0\n");
    fprintf(outfile,"0 3 0\n"); // /wo color /w normal /wo texcoord
 
-   shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
+   shorts[0]=shorts[1]=shorts[2]=shorts[3]=NULL;
 
    // calculate gradients and extract iso-surface
    for (i=0; i<steps; i++)
@@ -2609,7 +2609,7 @@ char *extractRAWvolume(FILE *file, // source file desc
             if (shorts[2]!=NULL) free(shorts[2]);
             if (shorts[3]!=NULL) free(shorts[3]);
 
-            shorts[0]=shorts[1]=shorts[2]=shorts[4]=NULL;
+            shorts[0]=shorts[1]=shorts[2]=shorts[3]=NULL;
 
             if ((slice=(unsigned char *)malloc(bytes))==NULL) ERRORMSG();
 
