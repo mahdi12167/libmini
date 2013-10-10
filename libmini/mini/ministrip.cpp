@@ -1313,7 +1313,9 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
          }
       else texcoordarray(NULL);
 
+   disableculling();
    rendergeo(wocolor,wonrm,wotex);
+   enableBFculling();
 
    vertexarray(NULL);
    if (wocolor==0) colorarray(NULL);
