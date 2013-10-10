@@ -2189,13 +2189,13 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
                  FILE *file);
 
 // calculate position from index
-miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
+inline miniv3d getpos(unsigned int i,unsigned int j,unsigned int k,
                unsigned int width,unsigned int height,unsigned int depth,
                double scalex,double scaley,double scalez)
    {
-   return(miniv3d(((double)i/(width-1)-0.5)*scalex,
-                  ((double)j/(height-1)-0.5)*scaley,
-                  ((double)k/(depth-1)-0.5)*scalez));
+   return(miniv3d((i-0.5*(width-1))*scalex,
+                  (j-0.5*(height-1))*scaley,
+                  (k-0.5*(depth-1))*scalez));
    }
 
 // extract iso surface from one voxel
