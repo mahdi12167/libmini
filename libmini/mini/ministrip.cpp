@@ -1714,7 +1714,7 @@ void ministrip::writeGEOfile(const char *filename)
    start=stop=0;
    while (getnextrange(start,stop))
       {
-      fprintf(outfile,"%d ",stop-start-1);
+      fprintf(outfile,"%d\n",stop-start+1);
 
       for (i=start; i<=stop; i++)
          {
