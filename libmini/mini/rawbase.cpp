@@ -2519,6 +2519,12 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
 
    unsigned int i,j;
 
+   double scalex1,scaley1,scalez1;
+
+   scalex1=1.0/scalex;
+   scaley1=1.0/scaley;
+   scalez1=1.0/scalez;
+
    // loop over voxels of the actual slab
    for (i=0; i<width-1; i++)
       for (j=0; j<height-1; j++)
@@ -2560,21 +2566,21 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             // now extract the corresponding voxel
 
             // get gradient vectors of actual voxel
-            gv[0]=getgradvec(shorts,width,height,components,i,j,0);
-            gv[1]=getgradvec(shorts,width,height,components,i+1,j,0);
-            gv[2]=getgradvec(shorts,width,height,components,i,j+1,0);
-            gv[3]=getgradvec(shorts,width,height,components,i+1,j+1,0);
-            gv[4]=getgradvec(shorts,width,height,components,i,j,1);
-            gv[5]=getgradvec(shorts,width,height,components,i+1,j,1);
-            gv[6]=getgradvec(shorts,width,height,components,i,j+1,1);
-            gv[7]=getgradvec(shorts,width,height,components,i+1,j+1,1);
+            gv[0]=getsobelvec(shorts,width,height,components,i,j,0);
+            gv[1]=getsobelvec(shorts,width,height,components,i+1,j,0);
+            gv[2]=getsobelvec(shorts,width,height,components,i,j+1,0);
+            gv[3]=getsobelvec(shorts,width,height,components,i+1,j+1,0);
+            gv[4]=getsobelvec(shorts,width,height,components,i,j,1);
+            gv[5]=getsobelvec(shorts,width,height,components,i+1,j,1);
+            gv[6]=getsobelvec(shorts,width,height,components,i,j+1,1);
+            gv[7]=getsobelvec(shorts,width,height,components,i+1,j+1,1);
 
             // normalize gradient vectors
             for (k=0; k<8; k++)
                {
-               gv[k].x*=scalex;
-               gv[k].y*=scaley;
-               gv[k].z*=scalez;
+               gv[k].x*=scalex1;
+               gv[k].y*=scaley1;
+               gv[k].z*=scalez1;
 
                gm=gv[k].getlength();
                if (gm>0.0) gv[k]/=gm;
