@@ -2503,10 +2503,10 @@ void extractiso2(const miniv3d &v1,const miniv3d &n1,const double d1,
    pn4=f4*(d4*n2+d2*n4);
 
    fprintf(file,"%d\n",4);
-   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
    fprintf(file,"%g %g %g %g %g %g\n",p1.x,p1.y,p1.z,pn1.x,pn1.y,pn1.z);
    fprintf(file,"%g %g %g %g %g %g\n",p4.x,p4.y,p4.z,pn4.x,pn4.y,pn4.z);
-   fprintf(file,"%g %g %g %g %g %g\n",p2.x,p2.y,p2.z,pn2.x,pn2.y,pn2.z);
+   fprintf(file,"%g %g %g %g %g %g\n",p3.x,p3.y,p3.z,pn3.x,pn3.y,pn3.z);
    }
 
 // extract iso surface
