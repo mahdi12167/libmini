@@ -852,37 +852,37 @@ inline miniv3f getsobelvec(unsigned short int *shorts[],
 
    if (i>0 && i<width-1 &&
        j>0 && j<height-1 &&
-       shorts[k-1]!=NULL && shorts[k+1]!=NULL)
+       shorts[k]!=NULL && shorts[k+2]!=NULL)
       {
-      v[0]=getshort(shorts,width,height,components,i-1,j-1,-1);
-      v[1]=3*getshort(shorts,width,height,components,i,j-1,-1);
-      v[2]=getshort(shorts,width,height,components,i+1,j-1,-1);
-      v[3]=3*getshort(shorts,width,height,components,i-1,j,-1);
-      v[4]=6*getshort(shorts,width,height,components,i,j,-1);
-      v[5]=3*getshort(shorts,width,height,components,i+1,j,-1);
-      v[6]=getshort(shorts,width,height,components,i-1,j+1,-1);
-      v[7]=3*getshort(shorts,width,height,components,i,j+1,-1);
-      v[8]=getshort(shorts,width,height,components,i+1,j+1,-1);
+      v[0]=getshort(shorts,width,height,components,i-1,j-1,k-1);
+      v[1]=3*getshort(shorts,width,height,components,i,j-1,k-1);
+      v[2]=getshort(shorts,width,height,components,i+1,j-1,k-1);
+      v[3]=3*getshort(shorts,width,height,components,i-1,j,k-1);
+      v[4]=6*getshort(shorts,width,height,components,i,j,k-1);
+      v[5]=3*getshort(shorts,width,height,components,i+1,j,k-1);
+      v[6]=getshort(shorts,width,height,components,i-1,j+1,k-1);
+      v[7]=3*getshort(shorts,width,height,components,i,j+1,k-1);
+      v[8]=getshort(shorts,width,height,components,i+1,j+1,k-1);
 
-      v[9]=3*getshort(shorts,width,height,components,i-1,j-1,0);
-      v[10]=6*getshort(shorts,width,height,components,i,j-1,0);
-      v[11]=3*getshort(shorts,width,height,components,i+1,j-1,0);
-      v[12]=6*getshort(shorts,width,height,components,i-1,j,0);
-      v[13]=getshort(shorts,width,height,components,i,j,0);
-      v[14]=6*getshort(shorts,width,height,components,i+1,j,0);
-      v[15]=3*getshort(shorts,width,height,components,i-1,j+1,0);
-      v[16]=6*getshort(shorts,width,height,components,i,j+1,0);
-      v[17]=3*getshort(shorts,width,height,components,i+1,j+1,0);
+      v[9]=3*getshort(shorts,width,height,components,i-1,j-1,k);
+      v[10]=6*getshort(shorts,width,height,components,i,j-1,k);
+      v[11]=3*getshort(shorts,width,height,components,i+1,j-1,k);
+      v[12]=6*getshort(shorts,width,height,components,i-1,j,k);
+      v[13]=getshort(shorts,width,height,components,i,j,k);
+      v[14]=6*getshort(shorts,width,height,components,i+1,j,k);
+      v[15]=3*getshort(shorts,width,height,components,i-1,j+1,k);
+      v[16]=6*getshort(shorts,width,height,components,i,j+1,k);
+      v[17]=3*getshort(shorts,width,height,components,i+1,j+1,k);
 
-      v[18]=getshort(shorts,width,height,components,i-1,j-1,1);
-      v[19]=3*getshort(shorts,width,height,components,i,j-1,1);
-      v[20]=getshort(shorts,width,height,components,i+1,j-1,1);
-      v[21]=3*getshort(shorts,width,height,components,i-1,j,1);
-      v[22]=6*getshort(shorts,width,height,components,i,j,1);
-      v[23]=3*getshort(shorts,width,height,components,i+1,j,1);
-      v[24]=getshort(shorts,width,height,components,i-1,j+1,1);
-      v[25]=3*getshort(shorts,width,height,components,i,j+1,1);
-      v[26]=getshort(shorts,width,height,components,i+1,j+1,1);
+      v[18]=getshort(shorts,width,height,components,i-1,j-1,k+1);
+      v[19]=3*getshort(shorts,width,height,components,i,j-1,k+1);
+      v[20]=getshort(shorts,width,height,components,i+1,j-1,k+1);
+      v[21]=3*getshort(shorts,width,height,components,i-1,j,k+1);
+      v[22]=6*getshort(shorts,width,height,components,i,j,k+1);
+      v[23]=3*getshort(shorts,width,height,components,i+1,j,k+1);
+      v[24]=getshort(shorts,width,height,components,i-1,j+1,k+1);
+      v[25]=3*getshort(shorts,width,height,components,i,j+1,k+1);
+      v[26]=getshort(shorts,width,height,components,i+1,j+1,k+1);
 
       sgv.x=(-v[0]-v[3]-v[6]-v[9]-v[12]-v[15]-v[18]-v[21]-v[24]+v[2]+v[5]+v[8]+v[11]+v[14]+v[17]+v[20]+v[23]+v[26])/44.0f;
       sgv.y=(-v[0]-v[1]-v[2]-v[9]-v[10]-v[11]-v[18]-v[19]-v[20]+v[6]+v[7]+v[8]+v[15]+v[16]+v[17]+v[24]+v[25]+v[26])/44.0f;
