@@ -7,6 +7,8 @@
 
 #include "rawbase.h"
 
+#define SOBEL
+
 float RAW_TARGET_RATIO=0.5f;
 long long RAW_TARGET_CELLS=250000000;
 
@@ -2568,6 +2570,16 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             // now extract the corresponding voxel
 
             // get gradient vectors of actual voxel
+#ifndef SOBEL
+            gv[0]=getgradvec(shorts,width,height,components,i,j,0);
+            gv[1]=getgradvec(shorts,width,height,components,i+1,j,0);
+            gv[2]=getgradvec(shorts,width,height,components,i,j+1,0);
+            gv[3]=getgradvec(shorts,width,height,components,i+1,j+1,0);
+            gv[4]=getgradvec(shorts,width,height,components,i,j,1);
+            gv[5]=getgradvec(shorts,width,height,components,i+1,j,1);
+            gv[6]=getgradvec(shorts,width,height,components,i,j+1,1);
+            gv[7]=getgradvec(shorts,width,height,components,i+1,j+1,1);
+#else
             gv[0]=getsobelvec(shorts,width,height,components,i,j,0);
             gv[1]=getsobelvec(shorts,width,height,components,i+1,j,0);
             gv[2]=getsobelvec(shorts,width,height,components,i,j+1,0);
@@ -2576,6 +2588,7 @@ void convert2iso(unsigned short int *shorts[],unsigned int width,unsigned int he
             gv[5]=getsobelvec(shorts,width,height,components,i+1,j,1);
             gv[6]=getsobelvec(shorts,width,height,components,i,j+1,1);
             gv[7]=getsobelvec(shorts,width,height,components,i+1,j+1,1);
+#endif
 
             // normalize gradient vectors
             for (k=0; k<8; k++)
