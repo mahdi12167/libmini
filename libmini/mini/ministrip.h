@@ -59,6 +59,9 @@ class ministrip
    //! clear strip
    void clear();
 
+   //! check strip
+   BOOLINT empty() {return(SIZE==0);}
+
    //! begin next triangle strip
    void beginstrip();
 
