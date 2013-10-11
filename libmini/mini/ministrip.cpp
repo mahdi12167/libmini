@@ -1263,6 +1263,8 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
    {
    int shader;
 
+   BOOLINT culling;
+
    shader=USESHADER;
    if (shader<0) shader=USEGLOBALSHADER;
 
@@ -1313,9 +1315,10 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
          }
       else texcoordarray(NULL);
 
-   disableculling();
+   culling=getculling();
+   if (culling) disableculling();
    rendergeo(wocolor,wonrm,wotex);
-   enableBFculling();
+   if (culling) enableOLDculling();
 
    vertexarray(NULL);
    if (wocolor==0) colorarray(NULL);

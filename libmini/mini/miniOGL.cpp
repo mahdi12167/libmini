@@ -405,6 +405,24 @@ void enableFFculling()
 #endif
    }
 
+void enableOLDculling()
+   {
+#ifndef NOOGL
+   glEnable(GL_CULL_FACE);
+#endif
+   }
+
+int getculling()
+   {
+#ifndef NOOGL
+   GLboolean cull_face;
+   glGetBooleanv(GL_CULL_FACE,&cull_face);
+   return(cull_face);
+#else
+   return(0);
+#endif
+   }
+
 void disableAtest()
    {
 #ifndef NOOGL
@@ -567,6 +585,24 @@ void disableblending()
 
    glDisable(GL_BLEND);
 
+#endif
+   }
+
+void enableOLDblending()
+   {
+#ifndef NOOGL
+   glEnable(GL_BLEND);
+#endif
+   }
+
+int getblending()
+   {
+#ifndef NOOGL
+   GLboolean blending;
+   glGetBooleanv(GL_BLEND,&blending);
+   return(blending);
+#else
+   return(0);
 #endif
    }
 

@@ -29,6 +29,8 @@ void writebackbuffer();
 void disableculling();
 void enableBFculling();
 void enableFFculling();
+void enableOLDculling();
+int getculling();
 
 void disableAtest();
 void enableAtest(float alpha=0.0f);
@@ -53,7 +55,9 @@ void enableEMIblending();
 void enableRKEblending();
 void enablePRJblending();
 void enableMIPblending();
+void enableOLDblending();
 void disableblending();
+int getblending();
 
 void enablestenciling(int pass=0);
 void disablestenciling();
