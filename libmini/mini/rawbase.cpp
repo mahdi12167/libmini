@@ -850,7 +850,9 @@ inline miniv3f getsobelvec(unsigned short int *shorts[],
 
    int v[27];
 
-   if (i>0 && i<width-1 && j>0 && j<height-1 && k==0)
+   if (i>0 && i<width-1 &&
+       j>0 && j<height-1 &&
+       shorts[k-1]!=NULL && shorts[k+1]!=NULL)
       {
       v[0]=getshort(shorts,width,height,components,i-1,j-1,-1);
       v[1]=3*getshort(shorts,width,height,components,i,j-1,-1);
