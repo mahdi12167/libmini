@@ -1263,6 +1263,7 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
    {
    int shader;
 
+   BOOLINT zbuffer;
    BOOLINT culling;
 
    shader=USESHADER;
@@ -1315,7 +1316,9 @@ void ministrip::render(int wocolor,int wonrm,int wotex)
          }
       else texcoordarray(NULL);
 
-   culling=getculling();
+   zbuffer=(getZtest() && getZwriting());
+   culling=(getculling() && zbuffer);
+
    if (culling) disableculling();
    rendergeo(wocolor,wonrm,wotex);
    if (culling) enableOLDculling();

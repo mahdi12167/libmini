@@ -453,6 +453,17 @@ void enableZtest()
 #endif
    }
 
+int getZtest()
+   {
+#ifndef NOOGL
+   GLboolean ztest;
+   glGetBooleanv(GL_DEPTH_TEST,&ztest);
+   return(ztest);
+#else
+   return(0);
+#endif
+   }
+
 void disableZwriting()
    {
 #ifndef NOOGL
@@ -467,7 +478,18 @@ void enableZwriting()
 #endif
    }
 
-void enableAwriting()
+int getZwriting()
+   {
+#ifndef NOOGL
+   GLboolean zwriting;
+   glGetBooleanv(GL_DEPTH_WRITEMASK,&zwriting);
+   return(zwriting);
+#else
+   return(0);
+#endif
+   }
+
+   void enableAwriting()
    {
 #ifndef NOOGL
    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_TRUE);

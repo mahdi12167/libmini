@@ -37,9 +37,11 @@ void enableAtest(float alpha=0.0f);
 
 void disableZtest();
 void enableZtest();
+int getZtest();
 
 void disableZwriting();
 void enableZwriting();
+int getZwriting();
 
 void enableAwriting();
 void enableRwriting();
