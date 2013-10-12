@@ -146,7 +146,7 @@ INSTALL(
    TARGETS qtviewer
    RUNTIME DESTINATION bin
    BUNDLE DESTINATION /Applications
-)
+   )
 
 # install .desktop file and icon for KDE4 (and Gnome)
 IF (UNIX AND NOT APPLE)
