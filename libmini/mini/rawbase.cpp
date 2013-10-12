@@ -1767,6 +1767,7 @@ char *processRAWvolume(FILE *file, // source file desc
                        long long width,long long height,long long depth,long long steps,
                        unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
                        float scalex,float scaley,float scalez,
+                       const char *infix, // optional infix for destination
                        float ratio, // crop volume ratio
                        long long maxcells, // down-size threshold
                        void (*feedback)(const char *info,float percent,void *obj),void *obj) // feedback callback
@@ -1786,6 +1787,14 @@ char *processRAWvolume(FILE *file, // source file desc
 
    // remove suffix
    filename2=removeRAWsuffix(output);
+
+   // append optional infix
+   if (infix!=NULL)
+      {
+      filename3=strdup2(filename2,infix);
+      free(filename2);
+      filename2=filename3;
+      }
 
    // search for existing crop volume
    filename3=strdup2(filename2,"_crop*.raw");
@@ -1875,11 +1884,10 @@ char *processRAWvolume(FILE *file, // source file desc
 
 // process a RAW volume with out-of-core cropping and non-linear quantization
 char *processRAWvolume(const char *filename, // source file
-                       const char *infix, // optional infix for output
+                       const char *infix, // optional infix for destination
                        float ratio, // crop volume ratio
                        long long maxcells, // down-size threshold
                        void (*feedback)(const char *info,float percent,void *obj),void *obj) // feedback callback
-
    {
    char *outname;
    const char *preoutname;

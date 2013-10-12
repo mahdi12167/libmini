@@ -222,10 +222,12 @@ char *copyREKvolume(const char *filename,const char *output)
    }
 
 // copy a REK volume to a RAW volume with out-of-core cropping and non-linear quantization
-char *processREKvolume(const char *filename,const char *output,
+char *processREKvolume(const char *filename,
+                       const char *output,
+                       const char *infix,
                        float ratio, // crop volume ratio
                        long long maxcells, // down-size threshold
-                       void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL)
+                       void (*feedback)(const char *info,float percent,void *obj),void *obj)
    {
    FILE *file;
 
@@ -251,6 +253,7 @@ char *processREKvolume(const char *filename,const char *output,
                                   width,height,depth,1,
                                   components,8,FALSE,FALSE,
                                   scalex,scaley,scalez,
+                                  infix,
                                   ratio,maxcells,
                                   feedback,obj)))
       {
@@ -286,7 +289,7 @@ unsigned char *readREKvolume_ooc(const char *filename,
    if (dot!=NULL)
       if (strcasecmp(dot,".rek")==0) *dot='\0';
 
-   outname=processREKvolume(filename,output,ratio,maxcells,feedback,obj);
+   outname=processREKvolume(filename,output,NULL,ratio,maxcells,feedback,obj);
    free(output);
 
    if (outname!=NULL)
@@ -303,7 +306,8 @@ unsigned char *readREKvolume_ooc(const char *filename,
    }
 
 // extract an iso-surface from a REK volume out-of-core
-char *extractREKvolume(const char *filename,const char *output,
+char *extractREKvolume(const char *filename,
+                       const char *output,
                        double isovalue, // iso value to be extracted as surface
                        void (*feedback)(const char *info,float percent,void *obj),void *obj)
    {
