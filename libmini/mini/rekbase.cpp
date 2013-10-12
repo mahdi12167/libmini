@@ -223,7 +223,6 @@ char *copyREKvolume(const char *filename,const char *output)
 
 // copy a REK volume to a RAW volume with out-of-core cropping and non-linear quantization
 char *processREKvolume(const char *filename,
-                       const char *output,
                        const char *infix,
                        float ratio, // crop volume ratio
                        long long maxcells, // down-size threshold
@@ -235,6 +234,7 @@ char *processREKvolume(const char *filename,
    unsigned int components;
    float scalex,scaley,scalez;
 
+   char *output,*dot;
    char *outname;
 
    // open REK file
@@ -248,6 +248,14 @@ char *processREKvolume(const char *filename,
       return(NULL);
       }
 
+   // use input file name as output prefix
+   output=strdup(filename);
+   dot=strrchr(output,'.');
+
+   // remove suffix from output
+   if (dot!=NULL)
+      if (strcasecmp(dot,".rek")==0) *dot='\0';
+
    // copy REK data to RAW file
    if (!(outname=processRAWvolume(file,output,
                                   width,height,depth,1,
@@ -257,10 +265,12 @@ char *processREKvolume(const char *filename,
                                   ratio,maxcells,
                                   feedback,obj)))
       {
+      free(output);
       fclose(file);
       return(NULL);
       }
 
+   free(output);
    fclose(file);
 
    return(outname);
@@ -274,7 +284,6 @@ unsigned char *readREKvolume_ooc(const char *filename,
                                  long long maxcells, // down-size threshold
                                  void (*feedback)(const char *info,float percent,void *obj),void *obj)
    {
-   char *output,*dot;
    char *outname;
 
    unsigned char *volume;
@@ -282,15 +291,7 @@ unsigned char *readREKvolume_ooc(const char *filename,
 
    volume=NULL;
 
-   output=strdup(filename);
-
-   dot=strrchr(output,'.');
-
-   if (dot!=NULL)
-      if (strcasecmp(dot,".rek")==0) *dot='\0';
-
-   outname=processREKvolume(filename,output,NULL,ratio,maxcells,feedback,obj);
-   free(output);
+   outname=processREKvolume(filename,NULL,ratio,maxcells,feedback,obj);
 
    if (outname!=NULL)
       {

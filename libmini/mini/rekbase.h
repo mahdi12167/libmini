@@ -31,7 +31,6 @@ char *copyREKvolume(const char *filename,const char *output);
 
 // copy a REK volume to a RAW volume with out-of-core cropping and non-linear quantization
 char *processREKvolume(const char *filename,
-                       const char *output,
                        const char *infix=NULL,
                        float ratio=REK_TARGET_RATIO, // crop volume ratio
                        long long maxcells=REK_TARGET_CELLS, // down-size threshold
