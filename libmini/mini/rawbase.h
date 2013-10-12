@@ -133,6 +133,7 @@ char *processRAWvolume(FILE *file, // source file desc
 
 // process a RAW volume with out-of-core cropping and non-linear quantization
 char *processRAWvolume(const char *filename, // source file
+                       const char *infix=NULL, // optional infix for output
                        float ratio=RAW_TARGET_RATIO, // crop volume ratio
                        long long maxcells=RAW_TARGET_CELLS, // down-size threshold
                        void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL); // feedback callback
