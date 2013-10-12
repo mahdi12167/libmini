@@ -121,7 +121,7 @@ IF (BUILD_QTVIEWER_TEST)
    ADD_DEFINITIONS(-DVIEWER_TEST)
 ENDIF (BUILD_QTVIEWER_TEST)
 
-ADD_EXECUTABLE(qtviewer main.cpp)
+ADD_EXECUTABLE(qtviewer MACOSX_BUNDLE main.cpp)
 TARGET_LINK_LIBRARIES(qtviewer
    ${LIB_NAME}
    ${GRID_LIBRARIES}
@@ -145,6 +145,7 @@ ENDIF (UNIX AND NOT APPLE)
 INSTALL(
    TARGETS qtviewer
    RUNTIME DESTINATION bin
+   BUNDLE DESTINATION /Applications
 )
 
 # install .desktop file and icon for KDE4 (and Gnome)
