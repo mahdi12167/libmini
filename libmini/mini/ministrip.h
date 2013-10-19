@@ -5,6 +5,7 @@
 
 //! pre-defined snippet names
 #define MINI_SNIPPET_VTX_BEGIN "snippet_vtx_begin"
+#define MINI_SNIPPET_VTX_BEGIN_INVARIANT "snippet_vtx_begin_invariant"
 #define MINI_SNIPPET_VTX_HEADER "snippet_vtx_header"
 #define MINI_SNIPPET_VTX_BASIC "snippet_vtx_basic"
 #define MINI_SNIPPET_VTX_BASIC_INVARIANT "snippet_vtx_basic_invariant"

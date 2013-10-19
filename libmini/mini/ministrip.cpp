@@ -38,6 +38,9 @@ void ministrip::initsnippets()
 
    addsnippet(MINI_SNIPPET_VTX_BEGIN,"!!ARBvp1.0\n");
 
+   addsnippet(MINI_SNIPPET_VTX_BEGIN_INVARIANT,"\
+      OPTION ARB_position_invariant; \n");
+
    addsnippet(MINI_SNIPPET_VTX_HEADER,"\
       PARAM c0=program.env[0]; \n\
       PARAM c1=program.env[1]; \n\
@@ -66,7 +69,6 @@ void ministrip::initsnippets()
       MOV result.position,pos; \n");
 
    addsnippet(MINI_SNIPPET_VTX_BASIC_INVARIANT,"\
-      OPTION ARB_position_invariant; \n\
       ### fetch actual vertex \n\
       MOV vtx,vertex.position; \n\
       MOV col,vertex.color; \n");
@@ -354,6 +356,8 @@ int ministrip::createshader(BOOLINT texgen,
    int slot=getfreeslot();
 
    concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN);
+   if (invariant)
+      concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN_INVARIANT);
    concatvtxshader(slot,MINI_SNIPPET_VTX_HEADER);
    if (!invariant)
       concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
