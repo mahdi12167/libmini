@@ -7,6 +7,7 @@
 #define MINI_SNIPPET_VTX_BEGIN "snippet_vtx_begin"
 #define MINI_SNIPPET_VTX_HEADER "snippet_vtx_header"
 #define MINI_SNIPPET_VTX_BASIC "snippet_vtx_basic"
+#define MINI_SNIPPET_VTX_BASIC_INVARIANT "snippet_vtx_basic_invariant"
 #define MINI_SNIPPET_VTX_VIEWPOS "snippet_vtx_viewpos"
 #define MINI_SNIPPET_VTX_NORMAL "snippet_vtx_normal"
 #define MINI_SNIPPET_VTX_NORMAL_DIRECT "snippet_vtx_normal_direct"
@@ -204,6 +205,13 @@ class ministrip
 
    //! get global fogging
    static BOOLINT getglobal_fog() {return(global_fog);}
+
+   //! enable/disable global invariant
+   static void setglobal_invariant(BOOLINT on)
+      {global_invariant=on; enableglobalshader();}
+
+   //! get global invariant
+   static BOOLINT getglobal_invariant() {return(global_invariant);}
 
    //! enable global shader
    static void enableglobalshader();
@@ -418,12 +426,13 @@ class ministrip
 
    // global shader settings:
 
-   static int global_shader[64];
+   static int global_shader[128];
 
    static BOOLINT global_texgen;
    static BOOLINT global_shade,global_shade_direct;
    static BOOLINT global_tex,global_tex3;
    static BOOLINT global_fog;
+   static BOOLINT global_invariant;
 
    static float global_fogstart,global_fogend;
    static float global_fogdensity,global_fogcolor[3];
@@ -435,12 +444,15 @@ class ministrip
    static int createshader(BOOLINT texgen,
                            BOOLINT shade,BOOLINT shade_direct,
                            BOOLINT tex,BOOLINT tex3,
-                           BOOLINT fog);
+                           BOOLINT fog=FALSE,
+                           BOOLINT invariant=FALSE);
 
    static void enableglobalshader(BOOLINT texgen,
                                   BOOLINT shade,BOOLINT shade_direct,
                                   BOOLINT tex,BOOLINT tex3,
-                                  BOOLINT fog);
+                                  BOOLINT fog=FALSE,
+                                  BOOLINT invariant=FALSE);
+
    };
 
 #endif

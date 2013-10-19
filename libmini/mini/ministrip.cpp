@@ -16,12 +16,13 @@ ministrip::SHADER_TYPE ministrip::SHADER[SHADERMAX];
 ministrip::SNIPPET_TYPE ministrip::SNIPPET[SNIPPETMAX];
 int ministrip::SNIPPETS=0;
 
-int ministrip::global_shader[64]={-1};
+int ministrip::global_shader[128]={-1};
 
 BOOLINT ministrip::global_texgen=FALSE;
 BOOLINT ministrip::global_shade=FALSE,ministrip::global_shade_direct=FALSE;
 BOOLINT ministrip::global_tex=FALSE,ministrip::global_tex3=FALSE;
 BOOLINT ministrip::global_fog=FALSE;
+BOOLINT ministrip::global_invariant=FALSE;
 
 float ministrip::global_fogstart=0.0f,ministrip::global_fogend=0.0f;
 float ministrip::global_fogdensity=0.0f,ministrip::global_fogcolor[3]={0,0,0};
@@ -63,6 +64,12 @@ void ministrip::initsnippets()
       DP4 pos.w,mat[3],vtx; \n\
       ### write transformed vertex \n\
       MOV result.position,pos; \n");
+
+   addsnippet(MINI_SNIPPET_VTX_BASIC_INVARIANT,"\
+      OPTION ARB_position_invariant; \n\
+      ### fetch actual vertex \n\
+      MOV vtx,vertex.position; \n\
+      MOV col,vertex.color; \n");
 
    addsnippet(MINI_SNIPPET_VTX_VIEWPOS,"\
       ### transform vertex with modelview \n\
@@ -329,24 +336,29 @@ void ministrip::initshader()
    {
    int slot;
 
-   for (slot=0; slot<64; slot++)
+   for (slot=0; slot<32; slot++)
       global_shader[slot]=createshader(slot&1,
                                        slot&2,slot&4,
-                                       slot&8,slot&16,
-                                       slot&32);
+                                       slot&8,slot&16);
+
+   for (slot=32; slot<128; slot++) global_shader[slot]=-1;
    }
 
 // create basic shader
 int ministrip::createshader(BOOLINT texgen,
                             BOOLINT shade,BOOLINT shade_direct,
                             BOOLINT tex,BOOLINT tex3,
-                            BOOLINT fog)
+                            BOOLINT fog,
+                            BOOLINT invariant)
    {
    int slot=getfreeslot();
 
    concatvtxshader(slot,MINI_SNIPPET_VTX_BEGIN);
    concatvtxshader(slot,MINI_SNIPPET_VTX_HEADER);
-   concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
+   if (!invariant)
+      concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC);
+   else
+      concatvtxshader(slot,MINI_SNIPPET_VTX_BASIC_INVARIANT);
    concatvtxshader(slot,MINI_SNIPPET_VTX_VIEWPOS);
    concatvtxshader(slot,MINI_SNIPPET_VTX_NORMAL);
    if (tex || tex3)
@@ -382,14 +394,27 @@ int ministrip::createshader(BOOLINT texgen,
 void ministrip::enableglobalshader(BOOLINT texgen,
                                    BOOLINT shade,BOOLINT shade_direct,
                                    BOOLINT tex,BOOLINT tex3,
-                                   BOOLINT fog)
+                                   BOOLINT fog,
+                                   BOOLINT invariant)
    {
-   useglobalshader(global_shader[texgen+
-                                 2*shade+
-                                 4*shade_direct+
-                                 8*tex+
-                                 16*tex3+
-                                 32*fog]);
+   int slot;
+
+   slot=texgen+
+        2*shade+
+        4*shade_direct+
+        8*tex+
+        16*tex3+
+        32*fog+
+        64*invariant;
+
+   if (global_shader[slot]==-1)
+      global_shader[slot]=createshader(texgen,
+                                       shade,shade_direct,
+                                       tex,tex3,
+                                       fog,
+                                       invariant);
+
+   useglobalshader(global_shader[slot]);
    }
 
 // enable global shader
@@ -398,7 +423,8 @@ void ministrip::enableglobalshader()
    enableglobalshader(global_texgen,
                       global_shade,global_shade_direct,
                       global_tex,global_tex3,
-                      global_fog);
+                      global_fog,
+                      global_invariant);
 
    settexturedirectparams(getglobalshader(),
                           global_lightdir,
