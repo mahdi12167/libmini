@@ -33,12 +33,12 @@ BOOLINT readRAWinfo(char *filename,
                     unsigned int *components,unsigned int *bits,BOOLINT *sign,BOOLINT *msb,
                     float *scalex,float *scaley,float *scalez)
    {
-   unsigned int rawcomps=1;
-   BOOLINT rawsign=FALSE;
-   BOOLINT rawbits=8;
-   BOOLINT rawmsb=TRUE;
-   int rawscalex=1,rawscaley=1,rawscalez=1;
-   float rawmaxscale=1.0f;
+   unsigned int rawcomps=1; // scalar
+   BOOLINT rawsign=FALSE; // unsigned
+   BOOLINT rawbits=8; // byte
+   BOOLINT rawmsb=TRUE; // most significant byte first
+   int rawscalex=1000000,rawscaley=1000000,rawscalez=1000000; // 1E6nm = 1m
+   int rawmaxscale=0; // 0nm
 
    char *dot,*dotdot;
    int count;
@@ -148,7 +148,7 @@ BOOLINT readRAWinfo(char *filename,
    if (rawscaley>rawmaxscale) rawmaxscale=rawscaley;
    if (rawscalez>rawmaxscale) rawmaxscale=rawscalez;
 
-   if (rawmaxscale==0.0f) return(FALSE);
+   if (rawmaxscale==0) return(FALSE);
 
    if (scalex!=NULL) *scalex=rawscalex/1E6f;
    if (scaley!=NULL) *scaley=rawscaley/1E6f;
@@ -165,7 +165,7 @@ char *makeRAWinfo(long long width,long long height,long long depth,long long ste
    static const int maxlen=100;
 
    char info[maxlen];
-   float maxscale=1.0f;
+   float maxscale=0.0f;
 
    snprintf(info,maxlen,".%lldx%lld",width,height);
    if (depth>1) snprintf(&info[strlen(info)],maxlen-strlen(info),"x%lld",depth);
