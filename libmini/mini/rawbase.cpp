@@ -1519,7 +1519,7 @@ char *cropRAWvolume(const char *filename, // source file
    char *outname;
 
    // check for cropping
-   if (ratio<=0.0f) return(filename);
+   if (ratio<=0.0f) return(strdup(filename));
 
    // open RAW file
    if ((file=fopen(filename,"rb"))==NULL) return(NULL);
