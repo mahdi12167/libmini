@@ -324,11 +324,11 @@ unsigned char *readRAWvolume(const char *filename,
    }
 
 // write a RAW volume
-BOOLINT writeRAWvolume(const char *filename, // /wo suffix .raw
-                       unsigned char *volume,
-                       long long width,long long height,long long depth,long long steps,
-                       unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
-                       float scalex,float scaley,float scalez)
+char *writeRAWvolume(const char *filename, // /wo suffix .raw
+                     unsigned char *volume,
+                     long long width,long long height,long long depth,long long steps,
+                     unsigned int components,unsigned int bits,BOOLINT sign,BOOLINT msb,
+                     float scalex,float scaley,float scalez)
    {
    FILE *file;
 
@@ -341,16 +341,14 @@ BOOLINT writeRAWvolume(const char *filename, // /wo suffix .raw
                         components,bits,sign,msb,
                         scalex,scaley,scalez);
 
-   if (output==NULL) return(FALSE);
+   if (output==NULL) return(NULL);
 
    // open RAW output file
    if ((file=fopen(output,"wb"))==NULL)
       {
       free(output);
-      return(FALSE);
+      return(NULL);
       }
-
-   free(output);
 
    bytes=width*height*depth*components*steps;
 
@@ -361,12 +359,12 @@ BOOLINT writeRAWvolume(const char *filename, // /wo suffix .raw
    if (fwrite(volume,bytes,1,file)!=1)
       {
       fclose(file);
-      return(FALSE);
+      return(NULL);
       }
 
    fclose(file);
 
-   return(TRUE);
+   return(output);
    }
 
 // copy a RAW volume
