@@ -50,11 +50,11 @@ char *makeRAWinfo(long long width,long long height,long long depth=1,long long s
                   float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
 
 // write a RAW volume
-BOOLINT writeRAWvolume(const char *filename, // /wo suffix .raw
-                       unsigned char *volume,
-                       long long width,long long height,long long depth=1,long long steps=1,
-                       unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
-                       float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
+char *writeRAWvolume(const char *filename, // /wo suffix .raw
+                     unsigned char *volume,
+                     long long width,long long height,long long depth=1,long long steps=1,
+                     unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
+                     float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
 
 // copy a RAW volume
 char *copyRAWvolume(FILE *file, // source file desc
