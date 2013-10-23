@@ -1398,7 +1398,7 @@ char *cropRAWvolume(FILE *file, // source file desc
    for (thres=0; thres<65536; thres++)
       {
       wsum+=histo[thres]*thres/65535.0;
-      if (wsum>ratio*tsum) break;
+      if (wsum>=ratio*tsum) break;
       }
 
    delete histo;
