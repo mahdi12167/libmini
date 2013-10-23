@@ -1844,7 +1844,7 @@ char *processRAWvolume(FILE *file, // source file desc
 
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
-      if (cells>maxcells)
+      if (cells>maxcells && maxcells>0)
          while (cells>maxcells)
             {
             // remove suffix
@@ -1956,7 +1956,7 @@ char *processRAWvolume(const char *filename, // source file
 
       cells=rawwidth*rawheight*rawdepth*rawsteps*rawcomps;
 
-      if (cells>maxcells)
+      if (cells>maxcells && maxcells>0)
          while (cells>maxcells)
             {
             // remove suffix
