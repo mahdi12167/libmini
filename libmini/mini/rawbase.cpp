@@ -1237,7 +1237,7 @@ inline BOOLINT isboundary(unsigned short int *shorts,unsigned int columns,unsign
    idx=(x+y*columns)*components;
 
    for (i=0; i<components; i++)
-      if (shorts[idx+i]>thres) return(TRUE);
+      if (shorts[idx+i]>=thres) return(TRUE);
 
    return(FALSE);
    }
