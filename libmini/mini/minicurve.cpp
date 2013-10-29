@@ -105,8 +105,8 @@ void minicurve::validate()
             ref(i).vec.w=t;
             }
       else
-         for (i=0; i<getsize()-1; i++)
-            if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+	for (i=0; i+1<getsize(); i++)
+	  if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
       }
    }
 
