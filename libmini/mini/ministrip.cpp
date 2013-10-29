@@ -1847,23 +1847,23 @@ BOOLINT ministrip::readGEOfile(const char *filename)
 
       for (i=0; i<count; i++)
          {
-         fscanf(file,"%g %g %g",&x,&y,&z);
+         if (fscanf(file,"%g %g %g",&x,&y,&z)!=3) break;
 
          if (COLCOMPS==3 || COLCOMPS==4)
             {
             red=green=blue=alpha=0.0f;
 
-            fscanf(file,"%g %g %g",&red,&green,&blue);
+            if (fscanf(file,"%g %g %g",&red,&green,&blue)!=3) break;
 
             if (COLCOMPS==4)
-               fscanf(file,"%g",&alpha);
+               if (fscanf(file,"%g",&alpha)!=1) break;
 
             setcol(red,green,blue,alpha);
             }
 
          if (NRMCOMPS==3)
             {
-            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+            if (fscanf(file,"%g %g %g",&nx,&ny,&nz)!=3) break;
 
             setnrm(nx,ny,nz);
             }
@@ -1872,16 +1872,16 @@ BOOLINT ministrip::readGEOfile(const char *filename)
             {
             s=t=r=w=0.0f;
 
-            fscanf(file,"%g",&s);
+            if (fscanf(file,"%g",&s)!=1) break;
 
             if (TEXCOMPS>1)
-               fscanf(file,"%g",&t);
+               if (fscanf(file,"%g",&t)!=1) break;
 
             if (TEXCOMPS>2)
-               fscanf(file,"%g",&r);
+               if (fscanf(file,"%g",&r)!=1) break;
 
             if (TEXCOMPS>3)
-               fscanf(file,"%g",&w);
+               if (fscanf(file,"%g",&w)!=1) break;
 
             settex(s,t,r,w);
             }
@@ -2082,35 +2082,35 @@ BOOLINT ministrip::convertGEO2PLYfile(const char *filename,const char *outname)
 
       for (i=0; i<count; i++)
          {
-         fscanf(file,"%g %g %g",&x,&y,&z);
+         if (fscanf(file,"%g %g %g",&x,&y,&z)!=3) break;
 
          if (colcomps==3 || colcomps==4)
             {
             red=green=blue=alpha=0.0f;
 
-            fscanf(file,"%g %g %g",&red,&green,&blue);
+            if (fscanf(file,"%g %g %g",&red,&green,&blue)!=3) break;
 
             if (colcomps==4)
-               fscanf(file,"%g",&alpha);
+               if (fscanf(file,"%g",&alpha)!=1) break;
             }
 
          if (nrmcomps==3)
-            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+            if (fscanf(file,"%g %g %g",&nx,&ny,&nz)!=3) break;
 
          if (texcomps>0)
             {
             s=t=r=w=0.0f;
 
-            fscanf(file,"%g",&s);
+            if (fscanf(file,"%g",&s)!=1) break;
 
             if (texcomps>1)
-               fscanf(file,"%g",&t);
+               if (fscanf(file,"%g",&t)!=1) break;
 
             if (texcomps>2)
-               fscanf(file,"%g",&r);
+               if (fscanf(file,"%g",&r)!=1) break;
 
             if (texcomps>3)
-               fscanf(file,"%g",&w);
+               if (fscanf(file,"%g",&w)!=1) break;
             }
          }
       }
@@ -2163,39 +2163,39 @@ BOOLINT ministrip::convertGEO2PLYfile(const char *filename,const char *outname)
 
       for (i=0; i<count; i++)
          {
-         fscanf(file,"%g %g %g",&x,&y,&z);
+         if (fscanf(file,"%g %g %g",&x,&y,&z)!=3) break;
          if (count==3 || count==4) fprintf(outfile,"%g %g %g",x,y,z);
 
          if (colcomps==3 || colcomps==4)
             {
-            fscanf(file,"%g %g %g",&red,&green,&blue);
+            if (fscanf(file,"%g %g %g",&red,&green,&blue)!=3) break;
             if (count==3 || count==4) fprintf(outfile," %g %g %g",red,green,blue);
 
             if (colcomps==4)
                {
-               fscanf(file,"%g",&alpha);
+               if (fscanf(file,"%g",&alpha)!=1) break;
                if (count==3 || count==4) fprintf(outfile," %g",alpha);
                }
             }
 
          if (nrmcomps==3)
             {
-            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+            if (fscanf(file,"%g %g %g",&nx,&ny,&nz)!=3) break;
             if (count==3 || count==4) fprintf(outfile," %g %g %g",nx,ny,nz);
             }
 
          if (texcomps>0)
             {
-            fscanf(file,"%g",&s);
+            if (fscanf(file,"%g",&s)!=1) break;
 
             if (texcomps>1)
-               fscanf(file,"%g",&t);
+               if (fscanf(file,"%g",&t)!=1) break;
 
             if (texcomps>2)
-               fscanf(file,"%g",&r);
+               if (fscanf(file,"%g",&r)!=1) break;
 
             if (texcomps>3)
-               fscanf(file,"%g",&w);
+               if (fscanf(file,"%g",&w)!=1) break;
             }
 
          if (count==3 || count==4) fprintf(outfile,"\n");
@@ -2230,31 +2230,31 @@ BOOLINT ministrip::convertGEO2PLYfile(const char *filename,const char *outname)
 
       for (i=0; i<count; i++)
          {
-         fscanf(file,"%g %g %g",&x,&y,&z);
+         if (fscanf(file,"%g %g %g",&x,&y,&z)!=3) break;
 
          if (colcomps==3 || colcomps==4)
             {
-            fscanf(file,"%g %g %g",&red,&green,&blue);
+            if (fscanf(file,"%g %g %g",&red,&green,&blue)!=3) break;
 
             if (colcomps==4)
-               fscanf(file,"%g",&alpha);
+               if (fscanf(file,"%g",&alpha)!=1) break;
             }
 
          if (nrmcomps==3)
-            fscanf(file,"%g %g %g",&nx,&ny,&nz);
+            if (fscanf(file,"%g %g %g",&nx,&ny,&nz)!=3) break;
 
          if (texcomps>0)
             {
-            fscanf(file,"%g",&s);
+            if (fscanf(file,"%g",&s)!=1) break;
 
             if (texcomps>1)
-               fscanf(file,"%g",&t);
+               if (fscanf(file,"%g",&t)!=1) break;
 
             if (texcomps>2)
-               fscanf(file,"%g",&r);
+               if (fscanf(file,"%g",&r)!=1) break;
 
             if (texcomps>3)
-               fscanf(file,"%g",&w);
+               if (fscanf(file,"%g",&w)!=1) break;
             }
          }
       }
