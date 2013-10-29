@@ -3780,10 +3780,10 @@ void minibrick::calcblock(const unsigned int i,const unsigned int j,const unsign
 // render a brick tile
 void minibrick::drawdata(databuf *brick,minisurf *surface,int phase)
    {
-   float mtx[16]={brick->sex-brick->swx,0.0f,brick->nwx-brick->swx,0.0f,
-                  brick->sey-brick->swy,0.0f,brick->nwy-brick->swy,0.0f,
-                  0.0f,brick->dh,0.0f,0.0f,
-                  0.0f,0.0f,0.0f,1.0f};
+   double mtx[16]={brick->sex-brick->swx,0.0,brick->nwx-brick->swx,0.0,
+                   brick->sey-brick->swy,0.0,brick->nwy-brick->swy,0.0,
+                   0.0,brick->dh,0.0,0.0,
+                   0.0,0.0,0.0,1.0};
 
    mtxpush();
 
