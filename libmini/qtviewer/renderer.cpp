@@ -71,10 +71,8 @@ mininode_group *Renderer::build_ecef_geometry()
    // origin of the prism is the center of its base plane
    // translate up 5 meters
    scale->append_child(new mininode_color(miniv3d(0.5, 0.5, 0.5)))->
-#ifdef WOODEN_ROOF
       append_child(new mininode_texgen_scale(0.1))->
       append_child(new mininode_image("data/textures/wood.jpg"))->
-#endif
       append_child(new mininode_translate(miniv3d(0.0, 0.0, 5.0)))->
       append_child(new mininode_geometry_prism(10.0, 10.0, 2.5));
 
