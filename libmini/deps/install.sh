@@ -96,5 +96,5 @@ echo BUILDING GDAL
 # dcmtk
 echo BUILDING DCMTK
 (cd dcmtk;\
- ./configure --prefix=$prefix/dcmtk;\
+ ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
  make -j 2; make install-lib)
