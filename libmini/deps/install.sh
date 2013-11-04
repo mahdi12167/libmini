@@ -2,6 +2,7 @@
 
 # this script installs the libMini dependencies locally
 # the installation path can be supplied as an optional argument (default is /usr/local)
+# if the installation path is the default, this script must be run as super user (sudo ./install.sh)
 
 set arg=$1
 
