@@ -1080,4 +1080,39 @@ inline std::ostream& operator << (std::ostream &out,const ministrings &a)
    return(out);
    }
 
+//! convenience function to return the command line arguments (/wo options)
+inline ministrings get_cmdline_args(unsigned int argc,char *argv[])
+   {
+   unsigned int i;
+
+   ministrings args;
+
+   for (i=1; i<argc; i++)
+      if (*argv[i]!='-')
+         args.append(argv[i]);
+
+   return(args);
+   }
+
+//! convenience function to return the command line options (/wo arguments and dashes)
+inline ministrings get_cmdline_opts(unsigned int argc,char *argv[])
+   {
+   unsigned int i;
+
+   ministrings opts;
+
+   for (i=1; i<argc; i++)
+      if (*argv[i]=='-')
+         {
+         ministring opt(argv[i]);
+
+         if (opt.startswith("--")) opt.truncate(2);
+         else if (opt.startswith("-")) opt.truncate(1);
+
+         opts.append(opt);
+         }
+
+   return(opts);
+   }
+
 #endif
