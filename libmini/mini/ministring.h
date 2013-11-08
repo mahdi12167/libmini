@@ -1106,8 +1106,8 @@ inline ministrings get_cmdline_opts(unsigned int argc,char *argv[])
          {
          ministring opt(argv[i]);
 
-         if (opt.startswith("--")) opt.truncate(2);
-         else if (opt.startswith("-")) opt.truncate(1);
+         if (opt.startswith("--")) opt=opt.tail("--");
+         else if (opt.startswith("-")) opt=opt.tail("-");
 
          opts.append(opt);
          }
