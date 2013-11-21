@@ -2323,7 +2323,11 @@ void invertbuffer()
    glBlendFunc(GL_ONE_MINUS_DST_COLOR,GL_ZERO);
    glEnable(GL_BLEND);
 
+   glDepthMask(GL_FALSE);
+
    paintbuffer();
+
+   glDepthMask(GL_TRUE);
 
    glDisable(GL_BLEND);
 
