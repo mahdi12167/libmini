@@ -95,6 +95,12 @@ echo BUILDING GDAL
 
 # dcmtk
 echo BUILDING DCMTK
-(cd dcmtk;\
- ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
- make -j 2; make install-lib)
+if ($HOSTTYPE != "intel-mac" && $HOSTTYPE != "intel-pc") then
+   (cd dcmtk;\
+    ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
+    make -j 2; make install-lib)
+else
+   (cd dcmtk;\
+    ./configure --prefix=$prefix/dcmtk;\
+    make -j 2; make install-lib)
+endif
