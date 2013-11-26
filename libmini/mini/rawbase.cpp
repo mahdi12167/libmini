@@ -765,7 +765,7 @@ char *copyRAWvolume_linear(const char *filename, // source file
 
 // helper to get a short value from 3 consecutive slices
 inline int getshort(unsigned short int *shorts[],
-                    unsigned int width,unsigned int height,unsigned int components,
+                    unsigned int /*width*/,unsigned int /*height*/,unsigned int components,
                     unsigned int i,unsigned int j,int k=0)
    {
    unsigned int c;
@@ -2059,7 +2059,7 @@ void convRAWfloat(unsigned char *data,long long bytes)
 
 // helper to get a short value from a volume
 inline int getshort(unsigned short int *data,
-                    long long width,long long height,long long depth,
+                    long long /*width*/,long long /*height*/,long long depth,
                     long long i,long long j,long long k)
    {return(data[i+(j+k*height)*width]);}
 
