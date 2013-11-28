@@ -1846,7 +1846,7 @@ char *processRAWvolume(FILE *file, // source file desc
       free(filename6);
 
       // remove temporary volume
-      removefile(filename4);
+      if (strcmp(filename4,filename7)!=0) removefile(filename4);
       free(filename4);
 
       if (!readRAWinfo(filename7,
@@ -1958,7 +1958,7 @@ char *processRAWvolume(const char *filename, // source file
       free(filename6);
 
       // remove temporary volume
-      removefile(filename4);
+      if (strcmp(filename4,filename)!=0 && strcmp(filename4,filename7)!=0) removefile(filename4);
       free(filename4);
 
       if (!readRAWinfo(filename7,
@@ -1984,7 +1984,7 @@ char *processRAWvolume(const char *filename, // source file
             free(filename9);
 
             // remove temporary volume
-            removefile(filename7);
+            if (strcmp(filename7,filename)!=0) removefile(filename7);
             free(filename7);
 
             if (!readRAWinfo(outname,
