@@ -753,7 +753,7 @@ char *copyRAWvolume_linear(const char *filename, // source file
    free(name);
 
    // check for quantization
-   if (rawcomps==1 && !rawsign)
+   if (rawcomps==1 && rawbits==8 && !rawsign)
       outname=strdup(filename);
    else
       outname=copyRAWvolume_linear(file,output,
@@ -1207,7 +1207,7 @@ char *copyRAWvolume_nonlinear(const char *filename, // source file
    free(name);
 
    // check for quantization
-   if (rawcomps==1 && !rawsign)
+   if (rawcomps==1 && rawbits==8 && !rawsign)
       outname=strdup(filename);
    else
       outname=copyRAWvolume_nonlinear(file,output,
