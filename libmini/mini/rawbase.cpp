@@ -765,7 +765,7 @@ char *copyRAWvolume_linear(const char *filename, // source file
 
 // helper to get a short value from 3 consecutive slices
 inline int getshort(unsigned short int *shorts[],
-                    unsigned int /*width*/,unsigned int /*height*/,unsigned int components,
+                    unsigned int width,unsigned int /*height*/,unsigned int components,
                     unsigned int i,unsigned int j,int k=0)
    {
    unsigned int c;
@@ -1995,6 +1995,36 @@ char *processRAWvolume(const char *filename, // source file
    return(outname);
    }
 
+// read a RAW volume out-of-core
+unsigned char *readRAWvolume_ooc(const char *filename,
+                                 long long *width,long long *height,long long *depth,unsigned int *components,
+                                 float *scalex,float *scaley,float *scalez,
+                                 float ratio, // crop volume ratio
+                                 long long maxcells, // down-size threshold
+                                 void (*feedback)(const char *info,float percent,void *obj),void *obj)
+   {
+   char *outname;
+
+   unsigned char *volume;
+   long long steps;
+
+   volume=NULL;
+
+   outname=processRAWvolume(filename,NULL,ratio,maxcells,feedback,obj);
+
+   if (outname!=NULL)
+      {
+      volume=readRAWvolume(outname,
+                           width,height,depth,&steps,
+                           components,NULL,NULL,NULL,
+                           scalex,scaley,scalez);
+
+      free(outname);
+      }
+
+   return(volume);
+   }
+
 // swap the hi and lo byte of 16 bit data
 void swapRAWbytes(unsigned char *data,long long bytes)
    {
@@ -2059,7 +2089,7 @@ void convRAWfloat(unsigned char *data,long long bytes)
 
 // helper to get a short value from a volume
 inline int getshort(unsigned short int *data,
-                    long long /*width*/,long long /*height*/,long long depth,
+                    long long width,long long height,long long /*depth*/,
                     long long i,long long j,long long k)
    {return(data[i+(j+k*height)*width]);}
 

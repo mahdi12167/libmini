@@ -139,6 +139,14 @@ char *processRAWvolume(const char *filename, // source file
                        long long maxcells=RAW_TARGET_CELLS, // down-size threshold
                        void (*feedback)(const char *info,float percent,void *obj)=NULL,void *obj=NULL); // feedback callback
 
+// read a RAW volume out-of-core
+unsigned char *readRAWvolume_ooc(const char *filename,
+                                 long long *width,long long *height,long long *depth,unsigned int *components,
+                                 float *scalex,float *scaley,float *scalez,
+                                 float ratio, // crop volume ratio
+                                 long long maxcells, // down-size threshold
+                                 void (*feedback)(const char *info,float percent,void *obj),void *obj);
+
 // swap the hi and lo byte of 16 bit data
 void swapRAWbytes(unsigned char *data,long long bytes);
 
