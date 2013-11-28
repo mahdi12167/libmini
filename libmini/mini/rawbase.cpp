@@ -752,11 +752,15 @@ char *copyRAWvolume_linear(const char *filename, // source file
       }
    free(name);
 
-   outname=copyRAWvolume_linear(file,output,
-                                rawwidth,rawheight,rawdepth,rawsteps,
-                                rawcomps,rawbits,rawsign,rawmsb,
-                                rawscalex,rawscaley,rawscalez,
-                                feedback,obj);
+   // check for quantization
+   if (rawcomps==1 && !rawsign)
+      outname=strdup(filename);
+   else
+      outname=copyRAWvolume_linear(file,output,
+                                   rawwidth,rawheight,rawdepth,rawsteps,
+                                   rawcomps,rawbits,rawsign,rawmsb,
+                                   rawscalex,rawscaley,rawscalez,
+                                   feedback,obj);
 
    fclose(file);
 
@@ -1202,11 +1206,15 @@ char *copyRAWvolume_nonlinear(const char *filename, // source file
       }
    free(name);
 
-   outname=copyRAWvolume_nonlinear(file,output,
-                                   rawwidth,rawheight,rawdepth,rawsteps,
-                                   rawcomps,rawbits,rawsign,rawmsb,
-                                   rawscalex,rawscaley,rawscalez,
-                                   feedback,obj);
+   // check for quantization
+   if (rawcomps==1 && !rawsign)
+      outname=strdup(filename);
+   else
+      outname=copyRAWvolume_nonlinear(file,output,
+                                      rawwidth,rawheight,rawdepth,rawsteps,
+                                      rawcomps,rawbits,rawsign,rawmsb,
+                                      rawscalex,rawscaley,rawscalez,
+                                      feedback,obj);
 
    fclose(file);
 
