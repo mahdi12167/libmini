@@ -1,6 +1,10 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
+#ifdef HAVE_QT5
+#include <QtWidgets>
+#else
 #include <QtGui>
+#endif
 
 #include <grid/grid.h>
 

@@ -2,11 +2,18 @@
 
 #include <string>
 
+#ifdef HAVE_QT5
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#else
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
+#endif
 
 #include <QtCore/QUrl>
+#include <QtCore/QMimeData>
 
 #include <mini/mini_format.h>
 #include <grid/grid.h>
@@ -2519,7 +2526,11 @@ ministrings ViewerWindow::browse(ministring title,
    else fd->setFileMode(QFileDialog::AnyFile);
    fd->setViewMode(QFileDialog::List);
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
+#ifdef HAVE_QT5
+   fd->setFilter(QDir::Files);
+#else
    fd->setFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)"));
+#endif
 
    if (path!="") fd->setDirectory(path.c_str());
 

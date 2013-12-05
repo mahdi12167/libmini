@@ -3,12 +3,18 @@
 #include <mini/mini_core.h>
 #include <mini/mini_generic.h>
 
+#ifdef HAVE_QT5
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QDesktopWidget>
+#else
 #include <QtGui/QApplication>
-#include <QtOpenGL/qgl.h>
-#include <QThread>
-
 #include <QtGui/QMessageBox>
 #include <QtGui/QDesktopWidget>
+#endif
+
+#include <QtOpenGL/qgl.h>
+#include <QThread>
 
 #include "mainwindow.h"
 

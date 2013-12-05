@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 2+
 
-#include <QDateTime>
+#include <QtCore/QDateTime>
 
 #include <mini/mini_gfx.h>
 
@@ -616,7 +616,7 @@ void Viewer::render_ecef_geometry(double t)
 
       miniv3d lgl;
       lgl = mlt_vec(invtra, l);
-      float lightdir[3] = {lgl.x, lgl.y, lgl.z};
+      float lightdir[3] = {(float)lgl.x, (float)lgl.y, (float)lgl.z};
       mininode_geometry::setglobalshadedirectparams(lightdir, 0.5f, 0.5f);
    }
 

@@ -3,9 +3,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#ifdef HAVE_QT5
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTableWidget>
+#else
 #include <QtGui/QMainWindow>
-
 #include <QtGui/QTableWidget>
+#endif
 
 #include <mini/mini_generic.h>
 #include <mini/mini_object.h>
