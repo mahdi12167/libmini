@@ -1546,8 +1546,11 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
          }
       else
          {
-         fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
-         if (errorPos!=-1) ERRORMSG();
+         if (errorPos!=-1)
+            {
+            fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+            ERRORMSG();
+            }
          if (isNative!=1) WARNMSG();
          }
       }
