@@ -1539,9 +1539,14 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
       glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB,&errorPos);
       glGetProgramivARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,&isNative);
 
-      if (errorPos==0) WARNMSG();
+      if (errorPos==0)
+         {
+         fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+         WARNMSG();
+         }
       else
          {
+         fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
          if (errorPos!=-1) ERRORMSG();
          if (isNative!=1) WARNMSG();
          }
