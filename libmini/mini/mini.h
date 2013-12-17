@@ -3,7 +3,7 @@
 #ifndef MINI_H
 #define MINI_H
 
-void setminierrorhandler(void (*handler)(const char *file,int line,int fatal)=0);
+void setminierrorhandler(void (*handler)(const char *file,int line,int fatal,const char *msg)=0);
 
 namespace mini {
 #include "minicore.h"

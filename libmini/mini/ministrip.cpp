@@ -1090,7 +1090,7 @@ void ministrip::setpixshadertexbuf(int num,databuf *buf,int clamp,int mipmaps,in
 
    if (buf->missing())
       {
-      WARNMSG();
+      WARNMSG("invalid DB object");
       return;
       }
 

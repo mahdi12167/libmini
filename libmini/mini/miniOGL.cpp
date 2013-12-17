@@ -89,7 +89,7 @@ static void initwglprocs()
       if (glext_mm)
          if ((glBlendEquation=(PFNGLBLENDEQUATIONEXTPROC)wglGetProcAddress("glBlendEquationEXT"))==NULL)
             {
-            WARNMSG();
+            WARNMSG("unsupported blend equation");
             glext_mm=FALSE;
             }
 #endif
@@ -98,7 +98,7 @@ static void initwglprocs()
       if (glext_t3D)
          if ((glTexImage3D=(PFNGLTEXIMAGE3DEXTPROC)wglGetProcAddress("glTexImage3DEXT"))==NULL)
             {
-            WARNMSG();
+            WARNMSG("unsupported 3D textures");
             glext_t3D=FALSE;
             }
 #endif
@@ -108,7 +108,7 @@ static void initwglprocs()
          if ((glCompressedTexImage2DARB=(PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)wglGetProcAddress("glCompressedTexImage2DARB"))==NULL ||
              (glGetCompressedTexImageARB=(PFNGLGETCOMPRESSEDTEXIMAGEARBPROC)wglGetProcAddress("glGetCompressedTexImageARB"))==NULL)
             {
-            WARNMSG();
+            WARNMSG("unsupported texture compression");
             glext_tc=FALSE;
             }
 #endif
@@ -119,7 +119,7 @@ static void initwglprocs()
              (glClientActiveTextureARB=(PFNGLCLIENTACTIVETEXTUREARBPROC)wglGetProcAddress("glClientActiveTextureARB"))==NULL ||
              (glMultiTexCoord3fARB=(PFNGLMULTITEXCOORD3FARBPROC)wglGetProcAddress("glMultiTexCoord3fARB"))==NULL)
             {
-            WARNMSG();
+            WARNMSG("unsupported multi-texturing");
             glext_mt=FALSE;
             }
 #endif
@@ -133,7 +133,7 @@ static void initwglprocs()
              (glDeleteProgramsARB=(PFNGLDELETEPROGRAMSARBPROC)wglGetProcAddress("glDeleteProgramsARB"))==NULL ||
              (glGetProgramivARB=(PFNGLGETPROGRAMIVARBPROC)wglGetProcAddress("glGetProgramivARB"))==NULL)
             {
-            WARNMSG();
+            WARNMSG("unsupported shader programs");
             glext_vp=glext_fp=FALSE;
             }
 #endif
@@ -161,7 +161,7 @@ static void initwglprocs()
                glGenRenderbuffersEXT && glDeleteRenderbuffersEXT && glBindRenderbufferEXT && glRenderbufferStorageEXT &&
                glGetRenderbufferParameterivEXT && glIsRenderbufferEXT))
             {
-            WARNMSG();
+            WARNMSG("unsupported frame buffer objects");
             glext_fbo=FALSE;
             }
          }
@@ -262,10 +262,10 @@ void checkOGLerror()
    GLenum error;
 
    if ((error=glGetError()))
-      if (error==GL_INVALID_ENUM) fprintf(stderr,"invalid GL enum\n");
-      else if (error==GL_INVALID_VALUE) fprintf(stderr,"invalid GL value\n");
-      else if (error==GL_INVALID_OPERATION) fprintf(stderr,"invalid GL operation\n");
-      else WARNMSG();
+      if (error==GL_INVALID_ENUM) WARNMSG("invalid GL enum");
+      else if (error==GL_INVALID_VALUE) WARNMSG("invalid GL value");
+      else if (error==GL_INVALID_OPERATION) WARNMSG("invalid GL operation");
+      else WARNMSG("unknown GL error");
 #endif
    }
 
@@ -982,7 +982,7 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
    if (s3tc!=0 && !glext_ts3)
       {
-      WARNMSG();
+      WARNMSG("unsupported S3TC textures");
       return(0);
       }
 
@@ -997,12 +997,12 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          {
          if (!glext_np2)
             {
-            if ((((*width)-1)&(*width))!=0) WARNMSG();
-            if ((((*height)-1)&(*height))!=0) WARNMSG();
+            if ((((*width)-1)&(*width))!=0) WARNMSG("non-power-of-2 texture width");
+            if ((((*height)-1)&(*height))!=0) WARNMSG("non-power-of-2 texture height");
             }
 
          maxtexsize=getmaxtexsize();
-         if (*width>maxtexsize || *height>maxtexsize) WARNMSG();
+         if (*width>maxtexsize || *height>maxtexsize) WARNMSG("maximum 2D texture size exceeded");
 
          glCompressedTexImage2DARB(GL_TEXTURE_2D,0,texsource,*width,*height,0,bytes,image3);
          }
@@ -1021,12 +1021,12 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
 
             if (!glext_np2)
                {
-               if (((width2-1)&width2)!=0) WARNMSG();
-               if (((height2-1)&height2)!=0) WARNMSG();
+               if (((width2-1)&width2)!=0) WARNMSG("non-power-of-2 texture width");
+               if (((height2-1)&height2)!=0) WARNMSG("non-power-of-2 texture height");
                }
 
             maxtexsize=getmaxtexsize();
-            if (width2>maxtexsize || height2>maxtexsize) WARNMSG();
+            if (width2>maxtexsize || height2>maxtexsize) WARNMSG("maximum 2D texture size exceeded");
 
             glCompressedTexImage2DARB(GL_TEXTURE_2D,level,texsource,width2,height2,0,bytes2,mipmap);
 
@@ -1063,12 +1063,12 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          {
          if (!glext_np2)
             {
-            if ((((*width)-1)&(*width))!=0) WARNMSG();
-            if ((((*height)-1)&(*height))!=0) WARNMSG();
+            if ((((*width)-1)&(*width))!=0) WARNMSG("non-power-of-2 texture width");
+            if ((((*height)-1)&(*height))!=0) WARNMSG("non-power-of-2 texture height");
             }
 
          maxtexsize=getmaxtexsize();
-         if (*width>maxtexsize || *height>maxtexsize) WARNMSG();
+         if (*width>maxtexsize || *height>maxtexsize) WARNMSG("maximum 2D texture size exceeded");
 
          glTexImage2D(GL_TEXTURE_2D,0,texformat,*width,*height,0,texsource,GL_UNSIGNED_BYTE,image3);
          }
@@ -1085,12 +1085,12 @@ int buildtexmap(unsigned char *image,int *width,int *height,int components,int d
          {
          if (!glext_np2)
             {
-            if (((width2-1)&width2)!=0) WARNMSG();
-            if (((height2-1)&height2)!=0) WARNMSG();
+            if (((width2-1)&width2)!=0) WARNMSG("non-power-of-2 texture width");
+            if (((height2-1)&height2)!=0) WARNMSG("non-power-of-2 texture height");
             }
 
          maxtexsize=getmaxtexsize();
-         if (width2>maxtexsize || height2>maxtexsize) WARNMSG();
+         if (width2>maxtexsize || height2>maxtexsize) WARNMSG("maximum 2D texture size exceeded");
 
          glTexImage2D(GL_TEXTURE_2D,level,texformat,width2,height2,0,texsource,GL_UNSIGNED_BYTE,mipmap);
 
@@ -1255,7 +1255,7 @@ int build3Dtexmap(unsigned char *volume,
    max3Dtexsize=getmax3Dtexsize();
    if (*width>(unsigned int)max3Dtexsize ||
        *height>(unsigned int)max3Dtexsize ||
-       *depth>(unsigned int)max3Dtexsize) WARNMSG();
+       *depth>(unsigned int)max3Dtexsize) WARNMSG("maximum 3D texture size exceeded");
 
    glGenTextures(1,&texid);
    glBindTexture(GL_TEXTURE_3D,texid);
@@ -1541,17 +1541,17 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
 
       if (errorPos==0)
          {
-         fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
-         WARNMSG();
+         WARNMSG("shader programs unavailable");
+         WARNMSG((char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
          }
       else
          {
          if (errorPos!=-1)
             {
-            fprintf(stderr,"%s\n",(char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+            WARNMSG((char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
             ERRORMSG();
             }
-         if (isNative!=1) WARNMSG();
+         if (isNative!=1) WARNMSG("shader programs non-native");
          }
       }
 #endif

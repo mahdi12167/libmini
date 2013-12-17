@@ -23,12 +23,12 @@ enum MINI_ERROR
    MINI_ERROR_IO=3
    };
 
-extern void (*minierrorhandler)(const char *file,int line,int fatal);
+extern void (*minierrorhandler)(const char *file,int line,int fatal,const char *msg);
 
-#define WARNMSG() minierrormsg(__FILE__,__LINE__,MINI_ERROR_NONFATAL)
 #define ERRORMSG() minierrormsg(__FILE__,__LINE__,MINI_ERROR_FATAL)
 #define MEMERROR() minierrormsg(__FILE__,__LINE__,MINI_ERROR_MEM)
 #define IOERROR() minierrormsg(__FILE__,__LINE__,MINI_ERROR_IO)
+#define WARNMSG(msg) minierrormsg(__FILE__,__LINE__,MINI_ERROR_NONFATAL,msg)
 
 #ifdef LIBMINI_DEBUG
 #   define ERRORCHK(cond) {if (cond) minierrormsg(__FILE__,__LINE__,MINI_ERROR_FATAL);}
@@ -36,7 +36,7 @@ extern void (*minierrorhandler)(const char *file,int line,int fatal);
 #   define ERRORCHK(cond) {/*empty*/}
 #endif
 
-inline void minierrormsg(const char *file,int line,int fatal)
+inline void minierrormsg(const char *file,int line,int fatal,const char *msg=NULL)
    {
    if (minierrorhandler==0)
       {
@@ -44,9 +44,10 @@ inline void minierrormsg(const char *file,int line,int fatal)
       else if (fatal==MINI_ERROR_MEM) fprintf(stderr,"insufficient memory");
       else if (fatal==MINI_ERROR_IO) fprintf(stderr,"io error");
       else fprintf(stderr,"fatal error");
+      if (msg!=NULL) fprintf(stderr,"description: %s\n",msg);
       fprintf(stderr," in <%s> at line %d!\n",file,line);
       }
-   else minierrorhandler(file,line,fatal);
+   else minierrorhandler(file,line,fatal,msg);
    if (fatal!=MINI_ERROR_NONFATAL) exit(1);
    }
 
