@@ -11,22 +11,23 @@
 
 #include "mainwindow.h"
 
-void errormsg(const char *file,int line,int fatal)
+void errormsg(const char *file,int line,int fatal,const char *msg)
 {
-   ministring msg;
+   ministring m;
 
-   if (fatal==MINI_ERROR_NONFATAL) msg = "warning";
-   else if (fatal==MINI_ERROR_MEM) msg = "insufficient memory";
-   else if (fatal==MINI_ERROR_IO) msg = "io error";
-   else msg = "fatal error";
-   msg += ministring(" in <") + file + "> at line " + line + "!";
+   if (fatal==MINI_ERROR_NONFATAL) m = "warning";
+   else if (fatal==MINI_ERROR_MEM) m = "insufficient memory";
+   else if (fatal==MINI_ERROR_IO) m = "io error";
+   else m = "fatal error";
+   if (msg!=NULL) m += ministring(" description=\"") + msg + "\"";
+   m += ministring(" in <") + file + "> at line " + line + "!";
 
-   fprintf(stderr, "%s\n", msg.c_str());
+   fprintf(stderr, "%s\n", m.c_str());
 
-   MINILOG(msg);
+   MINILOG(m);
 
    if (fatal!=MINI_ERROR_NONFATAL)
-      QMessageBox::warning(0, "error", msg.c_str(), QMessageBox::Ok);
+      QMessageBox::warning(0, "error", m.c_str(), QMessageBox::Ok);
 }
 
 void centerWidgetOnScreen(QWidget *widget)
