@@ -1551,7 +1551,7 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
             WARNMSG((char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
             ERRORMSG();
             }
-         if (isNative!=1) WARNMSG("shader programs non-native");
+         if (isNative!=1) WARNMSG("shader program non-native");
          }
       }
 #endif
