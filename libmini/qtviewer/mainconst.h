@@ -4,7 +4,7 @@
 #define MAINCONST_H
 
 #define VIEWER_NAME "QTViewer"
-#define VIEWER_VERSION "v1.9.8 as of 26.November.2013"
+#define VIEWER_VERSION "v1.9.8 as of 17.December.2013"
 
 #define VIEWER_LICENSE "licensed under GPL 3.0"
 #define VIEWER_COPYRIGHT "(c) by Stefan Roettger"
