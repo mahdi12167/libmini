@@ -20,6 +20,7 @@ SET(MINI_HDRS
    miniray.h ministrip.h
    minipoint.h minitext.h minisky.h miniglobe.h
    minitree.h minibrick.h minilod.h
+   minislicer.h
    minigeom.h minimesh.h minibspt.h miniproj.h
    pnmbase.h pnmsample.h
    rawbase.h rekbase.h
