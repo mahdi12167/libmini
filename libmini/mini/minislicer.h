@@ -59,12 +59,12 @@ inline void slice2tri(const miniv3d &v0,const double d0,
 
 // extract a slice from a tetrahedron
 //  2 cases: slice geometry consists of either 1 or 2 triangles
-inline void slice(const miniv3d &v0, // vertex v0
-                  const miniv3d &v1, // vertex v1
-                  const miniv3d &v2, // vertex v2
-                  const miniv3d &v3, // vertex v3
-                  const miniv3d &o,  // origin of cutting plane
-                  const miniv3d &n)  // normal of cutting plane
+inline void slicetet(const miniv3d &v0, // vertex v0
+                     const miniv3d &v1, // vertex v1
+                     const miniv3d &v2, // vertex v2
+                     const miniv3d &v3, // vertex v3
+                     const miniv3d &o,  // origin of cutting plane
+                     const miniv3d &n)  // normal of cutting plane
    {
    double d0,d1,d2,d3;
 
@@ -128,6 +128,72 @@ inline void slice(const miniv3d &v0, // vertex v0
                          v0,fabs(d0),
                          v1,fabs(d1)); break;
       }
+   }
+
+// extract a slice from a hexahedron
+inline void slicehex(const miniv3d &v0, // vertex v0
+                     const miniv3d &v1, // vertex v1
+                     const miniv3d &v2, // vertex v2
+                     const miniv3d &v3, // vertex v3
+                     const miniv3d &v4, // vertex v4
+                     const miniv3d &v5, // vertex v5
+                     const miniv3d &v6, // vertex v6
+                     const miniv3d &v7, // vertex v7
+                     const miniv3d &o,  // origin of cutting plane
+                     const miniv3d &n)  // normal of cutting plane
+   {
+   // center tet
+   slicetet(v0,v3,v5,v6,o,n);
+
+   // corner tets
+   slicetet(v0,v5,v3,v1,o,n);
+   slicetet(v3,v6,v0,v2,o,n);
+   slicetet(v0,v6,v5,v4,o,n);
+   slicetet(v3,v5,v6,v7,o,n);
+   }
+
+// extract a slice stack from a hexahedron
+inline void stack(const miniv3d &v0, // vertex v0
+                  const miniv3d &v1, // vertex v1
+                  const miniv3d &v2, // vertex v2
+                  const miniv3d &v3, // vertex v3
+                  const miniv3d &v4, // vertex v4
+                  const miniv3d &v5, // vertex v5
+                  const miniv3d &v6, // vertex v6
+                  const miniv3d &v7, // vertex v7
+                  const miniv3d &o,  // origin of cutting plane
+                  const miniv3d &n,  // normal of cutting plane
+                  float maxd,  // maximum plane distance
+                  float slab,  // slab thickness
+                  float mu_a,  // global absorption
+                  float mu_e,  // global emission
+                  int twidth,  // texture width
+                  int theight, // texture height
+                  int tdepth)  // texture depth
+   {
+   double maxsize=max(max(twidth,theight),tdepth);
+
+   double ax=(twidth-1)/(maxsize-1);
+   double ay=(theight-1)/(maxsize-1);
+   double az=(tdepth-1)/(maxsize-1);
+
+   mtxtex();
+   mtxid();
+   mtxtranslate(0.5/twidth,0.5/theight,0.5/tdepth);
+   mtxscale((twidth-1.0)/twidth,(theight-1.0)/theight,(tdepth-1.0)/tdepth);
+   mtxtranslate(0.5,0.5,0.5);
+   mtxscale(1.0/ax,1.0/ay,1.0/az);
+   mtxmodel();
+
+   float emiss=1-exp(-mu_a*slab);
+   float alpha=mu_e*slab;
+
+   color(emiss,emiss,emiss,alpha);
+
+   for (double d=maxd; d>0.0; d-=slab)
+      slicehex(v0,v1,v2,v3,
+               v4,v5,v6,v7,
+               o+d*n,n);
    }
 
 }

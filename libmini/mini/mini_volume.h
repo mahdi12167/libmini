@@ -5,6 +5,7 @@
 
 #include <mini/minibrick.h>
 #include <mini/minilod.h>
+#include <mini/minislicer.h>
 
 #include <mini/minigeom.h>
 #include <mini/minimesh.h>
