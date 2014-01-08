@@ -37,8 +37,8 @@ BOOLINT readRAWinfo(char *filename,
    BOOLINT rawsign=FALSE; // unsigned
    BOOLINT rawbits=8; // byte
    BOOLINT rawmsb=TRUE; // most significant byte first
-   int rawscalex=1000000,rawscaley=1000000,rawscalez=1000000; // 1E6nm = 1m
-   int rawmaxscale=0; // 0nm
+   int rawscalex=1000000,rawscaley=1000000,rawscalez=1000000; // 1E6um = 1m
+   int rawmaxscale=0; // 0um
 
    char *dot,*dotdot;
    int count;

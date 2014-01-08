@@ -116,9 +116,10 @@ BOOLINT readREKheader(FILE *file,
 
    if (components!=0) *components=rekcomps;
 
-   if (scalex!=NULL) *scalex=rekvoxelX/1E3;
-   if (scaley!=NULL) *scaley=rekvoxelX/1E3;
-   if (scalez!=NULL) *scalez=rekvoxelZ/1E3;
+   // map micrometers to meters
+   if (scalex!=NULL) *scalex=rekvoxelX/1E6;
+   if (scaley!=NULL) *scaley=rekvoxelX/1E6;
+   if (scalez!=NULL) *scalez=rekvoxelZ/1E6;
 
    return(TRUE);
    }

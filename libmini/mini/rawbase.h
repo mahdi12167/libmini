@@ -36,32 +36,32 @@ extern unsigned short int RAW_INTEL;
 unsigned char *readRAWvolume(const char *filename,
                              long long *width,long long *height,long long *depth,long long *steps,
                              unsigned int *components=NULL,unsigned int *bits=NULL,BOOLINT *sign=NULL,BOOLINT *msb=NULL,
-                             float *scalex=NULL,float *scaley=NULL,float *scalez=NULL);
+                             float *scalex=NULL,float *scaley=NULL,float *scalez=NULL); // meters
 
 // analyze RAW file format
 BOOLINT readRAWinfo(char *filename,
                     long long *width,long long *height,long long *depth,long long *steps,
                     unsigned int *components=NULL,unsigned int *bits=NULL,BOOLINT *sign=NULL,BOOLINT *msb=NULL,
-                    float *scalex=NULL,float *scaley=NULL,float *scalez=NULL);
+                    float *scalex=NULL,float *scaley=NULL,float *scalez=NULL); // meters
 
 // define RAW file format
 char *makeRAWinfo(long long width,long long height,long long depth=1,long long steps=1,
                   unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
-                  float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
+                  float scalex=1.0f,float scaley=1.0f,float scalez=1.0f); // meters
 
 // write a RAW volume
 char *writeRAWvolume(const char *filename, // /wo suffix .raw
                      unsigned char *volume,
                      long long width,long long height,long long depth=1,long long steps=1,
                      unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
-                     float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
+                     float scalex=1.0f,float scaley=1.0f,float scalez=1.0f); // meters
 
 // copy a RAW volume
 char *copyRAWvolume(FILE *file, // source file desc
                     const char *output, // destination file name /wo suffix .raw
                     long long width,long long height,long long depth=1,long long steps=1,
                     unsigned int components=1,unsigned int bits=8,BOOLINT sign=FALSE,BOOLINT msb=TRUE,
-                    float scalex=1.0f,float scaley=1.0f,float scalez=1.0f);
+                    float scalex=1.0f,float scaley=1.0f,float scalez=1.0f); // meters
 
 // copy a RAW volume
 char *copyRAWvolume(const char *filename, // source file
