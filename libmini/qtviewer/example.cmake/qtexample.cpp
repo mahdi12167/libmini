@@ -19,8 +19,8 @@ void errormsg(const char *file,int line,int fatal,const char *msg)
    else if (fatal==MINI_ERROR_MEM) m = "insufficient memory";
    else if (fatal==MINI_ERROR_IO) m = "io error";
    else m = "fatal error";
-   if (msg!=NULL) m += ministring(" description=\"") + msg + "\"";
    m += ministring(" in <") + file + "> at line " + line + "!";
+   if (msg!=NULL) m += ministring(" description=\"") + msg + "\"";
 
    fprintf(stderr, "%s\n", m.c_str());
 

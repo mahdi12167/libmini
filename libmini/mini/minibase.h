@@ -44,8 +44,8 @@ inline void minierrormsg(const char *file,int line,int fatal,const char *msg=NUL
       else if (fatal==MINI_ERROR_MEM) fprintf(stderr,"insufficient memory");
       else if (fatal==MINI_ERROR_IO) fprintf(stderr,"io error");
       else fprintf(stderr,"fatal error");
-      if (msg!=NULL) fprintf(stderr,"description: %s\n",msg);
       fprintf(stderr," in <%s> at line %d!\n",file,line);
+      if (msg!=NULL) fprintf(stderr,"description: %s\n",msg);
       }
    else minierrorhandler(file,line,fatal,msg);
    if (fatal!=MINI_ERROR_NONFATAL) exit(1);
