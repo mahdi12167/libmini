@@ -163,18 +163,18 @@ void MainWindow::createActions()
 
    openAction = new QAction(tr("O&pen"), this);
    openAction->setIcon(QIcon(":/images/open.png"));
-   openAction->setShortcuts(QKeySequence::Open);
+   openAction->setShortcut(tr("Ctrl+O"));
    openAction->setStatusTip(tr("Open location"));
    connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
 
    clearAction = new QAction(tr("C&lear"), this);
    clearAction->setIcon(QIcon(":/images/close.png"));
-   clearAction->setShortcuts(QKeySequence::Close);
+   clearAction->setShortcut(tr("Ctrl+C"));
    clearAction->setStatusTip(tr("Clear locations"));
    connect(clearAction, SIGNAL(triggered()), this, SLOT(clear()));
 
    quitAction = new QAction(tr("Q&uit"), this);
-   quitAction->setShortcuts(QKeySequence::Quit);
+   quitAction->setShortcut(tr("Ctrl+Q"));
    quitAction->setStatusTip(tr("Quit the application"));
    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 }
