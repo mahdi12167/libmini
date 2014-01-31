@@ -34,7 +34,8 @@ On MacOS X and Windows, it is recommended to build and install Qt from source!
 On Linux, it is mostly sufficient to install a recent Qt binary package.
 
 If you install Qt from source, grab the source tar ball from:
- ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
+ Qt4.7: ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
+ Qt5.2: http://download.qt-project.org/official_releases/qt/5.2/5.2.0/single/qt-everywhere-opensource-src-5.2.0.tar.gz
 
 !! Qt Installation (Unix/Mac)
 
