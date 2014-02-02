@@ -266,7 +266,8 @@ int Object_image::initGFX()
             }
 
          // obesity check
-         if (layer->get_estimated_mem()>OBJECT_OBESITY_SIZE) errorcode=OBJECT_TOO_LARGE;
+         if (sizeof(void *)<=4) // check for 32bit systems
+            if (layer->get_estimated_mem()>OBJECT_OBESITY_SIZE) errorcode=OBJECT_TOO_LARGE;
 
          extent=layer->get_grid_extent();
          extent_geo=layer->get_extent();

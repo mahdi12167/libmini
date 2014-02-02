@@ -45,6 +45,12 @@ void Camera::moveAbove()
    move_above(CAMERA_HEIGHT_FLOOR);
 }
 
+// set continuous camera rotation
+void Camera::setRotation(double left)
+{
+   m_rotationLeft = left;
+}
+
 // initialize the view point
 void Camera::initView()
 {
@@ -59,6 +65,8 @@ void Camera::initTransition()
    m_IdlingTimerId = -1;
 
    m_bInCameraTransition = false;
+
+   m_rotationLeft = 0.0;
 }
 
 miniv3d Camera::unprojectPosition(int x, int y)
@@ -326,9 +334,15 @@ void Camera::timerEvent(int timerId)
       if (!m_bInCameraTransition)
          m_window->updateGL();
 
-      bool bPagingFinished = !m_earth->checkpending();
+      if (m_rotationLeft!=0.0)
+         move_left(m_rotationLeft);
 
-      if (!bPagingFinished)
+      bool bPagingFinished = !m_earth->checkpending();
+      bool bRotationFinished = m_rotationLeft==0.0;
+
+      bool bFinished = bPagingFinished && bRotationFinished;
+
+      if (!bFinished)
          m_IdlingTimer.start();
       else
       {
@@ -401,6 +415,8 @@ void Camera::startTransition(minicurve target, double dangle, double dpitch, dou
    m_TransitionTimer.start();
    m_TransitionStart = m_TransitionTimer;
    m_TransitionTimerId = m_window->startTimer((int)(1000.0/CAMERA_FPS));
+
+   setRotation(0.0);
 }
 
 void Camera::stopTransition()

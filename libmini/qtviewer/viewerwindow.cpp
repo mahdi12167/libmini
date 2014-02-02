@@ -25,7 +25,8 @@
 #include "viewerwindow.h"
 
 ViewerWindow::ViewerWindow()
-   : viewer(NULL), bLeftButtonDown(false), bRightButtonDown(false)
+   : viewer(NULL),
+     bLeftButtonDown(false), bRightButtonDown(false)
 {
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
@@ -35,6 +36,7 @@ ViewerWindow::ViewerWindow()
    setCursor(Qt::CrossCursor);
 
    viewer_aspect = VIEWER_ASPECT;
+   viewer_rotation = 0.0;
 
    // init viewer
    viewer = new Renderer(this);
@@ -95,6 +97,11 @@ void ViewerWindow::setAspect(double aspect)
    viewer_aspect = aspect;
 }
 
+void ViewerWindow::setRotation(double left)
+{
+   viewer_rotation = left;
+}
+
 QSize ViewerWindow::minimumSizeHint() const
 {
    return(QSize(VIEWER_MINWIDTH, VIEWER_MINWIDTH/viewer_aspect));
@@ -111,6 +118,9 @@ void ViewerWindow::initializeGL()
    {
       // initialize viewer here as it needs GL context to init
       viewer->init();
+
+      // make the earth rotate
+      viewer->getCamera()->setRotation(viewer_rotation);
 
       // load objects url from arguments
       QStringList dataPathList = QCoreApplication::arguments();

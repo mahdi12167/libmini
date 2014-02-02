@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 
    setCentralWidget(mainGroup);
    setWindowTitle(tr(VIEWER_NAME));
+
+   viewerWindow->setRotation(VIEWER_ROTATION);
 }
 
 MainWindow::~MainWindow()

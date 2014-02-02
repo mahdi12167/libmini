@@ -37,6 +37,7 @@ public:
    ~Camera();
 
    void    moveAbove();
+   void    setRotation(double left);
 
    void    rotateCamera(float dx, float dy);
 
@@ -87,6 +88,7 @@ private:
    int       m_TransitionTimerId;
    QTime     m_TransitionTimer;
    QTime     m_TransitionStart;
+   double    m_rotationLeft;
 
 protected:
    // window reference
