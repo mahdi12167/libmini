@@ -616,7 +616,8 @@ BOOLINT ViewerWindow::loadImage(ministring url)
              "Standard coordinate reference systems (CRS) are Lat/Lon, UTM and Mercator.");
    else if (errorcode == OBJECT_TOO_LARGE)
       notify(TR("Unable to handle an image of that size")+"\n\n"+
-             "Please use the gdal_translate utility from gdal.org to partition the image into smaller tiles.");
+             "Please use a 64bit operating system to load the image\n");
+             "or partition the image into smaller tiles.");
 
    return(errorcode == OBJECT_SUCCESS);
 }
