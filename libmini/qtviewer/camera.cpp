@@ -46,9 +46,10 @@ void Camera::moveAbove()
 }
 
 // set continuous camera rotation
-void Camera::setRotation(double left)
+void Camera::setRotation(double left, double back)
 {
    m_rotationLeft = left;
+   m_rotationBack = back;
 }
 
 // initialize the view point
@@ -67,6 +68,7 @@ void Camera::initTransition()
    m_bInCameraTransition = false;
 
    m_rotationLeft = 0.0;
+   m_rotationBack = 0.0;
 }
 
 miniv3d Camera::unprojectPosition(int x, int y)
@@ -337,8 +339,11 @@ void Camera::timerEvent(int timerId)
       if (m_rotationLeft!=0.0)
          move_left(m_rotationLeft);
 
+      if (m_rotationBack!=0.0)
+         move_back(m_rotationBack);
+
       bool bPagingFinished = !m_earth->checkpending();
-      bool bRotationFinished = m_rotationLeft==0.0;
+      bool bRotationFinished = m_rotationLeft==0.0 && m_rotationBack==0.0;
 
       bool bFinished = bPagingFinished && bRotationFinished;
 

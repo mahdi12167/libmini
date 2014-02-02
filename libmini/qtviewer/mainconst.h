@@ -10,7 +10,8 @@
 #define VIEWER_COPYRIGHT "(c) by Stefan Roettger 2012-2014"
 #define VIEWER_DISCLAIMER "no warranty, no responsibility, no nothing\nis granted for anything!"
 
-#define VIEWER_ROTATION 20000
+#define VIEWER_ROTATION_LEFT 20000
+#define VIEWER_ROTATION_BACK -30000
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200

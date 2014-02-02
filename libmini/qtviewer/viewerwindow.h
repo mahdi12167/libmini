@@ -38,7 +38,7 @@ public:
    WorkerThread *getWorker();
 
    void setAspect(double aspect);
-   void setRotation(double left);
+   void setRotation(double left, double back=0.0);
 
    QSize minimumSizeHint() const;
    QSize sizeHint() const;
@@ -183,10 +183,12 @@ public:
 
 private:
    double viewer_aspect;
-   double viewer_rotation;
 
    Renderer *viewer;
    WorkerThread *worker;
+
+   double viewer_rotation_left;
+   double viewer_rotation_back;
 
    ministring repository_path;
    ministring export_path;
