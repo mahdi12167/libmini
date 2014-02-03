@@ -11,8 +11,8 @@
 #define VIEWER_DISCLAIMER "no warranty, no responsibility, no nothing\nis granted for anything!"
 
 #define VIEWER_ROTATION_EARTH 2
-#define VIEWER_ROTATION_LEFT -300000.0
-#define VIEWER_ROTATION_BACK -200000.0
+#define VIEWER_ROTATION_LEFT -30000.0
+#define VIEWER_ROTATION_BACK -20000.0
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200
