@@ -4,14 +4,15 @@
 #define MAINCONST_H
 
 #define VIEWER_NAME "QTViewer"
-#define VIEWER_VERSION "v2.0.1 as of 14.February.2014"
+#define VIEWER_VERSION "v2.0.1 as of 3.February.2014"
 
 #define VIEWER_LICENSE "licensed under GPL 3.0"
 #define VIEWER_COPYRIGHT "(c) by Stefan Roettger 2012-2014"
 #define VIEWER_DISCLAIMER "no warranty, no responsibility, no nothing\nis granted for anything!"
 
-#define VIEWER_ROTATION_LEFT -3000.0
-#define VIEWER_ROTATION_BACK -2500.0
+#define VIEWER_ROTATION_EARTH 2
+#define VIEWER_ROTATION_LEFT -300000.0
+#define VIEWER_ROTATION_BACK -200000.0
 
 #define MAIN_TABLE_MINWIDTH 200
 #define MAIN_TABLE_MINHEIGHT 200

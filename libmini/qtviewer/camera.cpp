@@ -46,8 +46,9 @@ void Camera::moveAbove()
 }
 
 // set continuous camera rotation
-void Camera::setRotation(double left, double back)
+void Camera::setRotation(double earth, double left, double back)
 {
+   m_rotationEarth = earth;
    m_rotationLeft = left;
    m_rotationBack = back;
 }
@@ -67,6 +68,7 @@ void Camera::initTransition()
 
    m_bInCameraTransition = false;
 
+   m_rotationEarth = 0.0;
    m_rotationLeft = 0.0;
    m_rotationBack = 0.0;
 }
@@ -149,6 +151,31 @@ miniv3d Camera::cursorVector(double zoom)
    }
 
    return(cursorVec);
+}
+
+void Camera::rotateEarth(double delta)
+{
+   double angle,pitch;
+   miniv3d dir,right,up;
+
+   angle=get_angle();
+   pitch=get_pitch();
+
+   get_local_base(get_eye(),dir,right,up);
+
+   double s = up.z;
+   double c = sqrt(1-s*s);
+
+   double e = get_elev();
+
+   move_plain(delta/180.0*PI*get_orb_radius()*right*c);
+
+   get_local_base(eye,eye_dir,eye_right,eye_up);
+
+   rotate_right(angle);
+   rotate_up(pitch);
+
+   move_up(e-get_elev());
 }
 
 void Camera::rotateCamera(float dx, float dy)
@@ -336,14 +363,17 @@ void Camera::timerEvent(int timerId)
       if (!m_bInCameraTransition)
          m_window->updateGL();
 
+      if (m_rotationEarth!=0.0)
+         rotateEarth(m_rotationEarth/CAMERA_FPS);
+
       if (m_rotationLeft!=0.0)
-         move_left(m_rotationLeft);
+         move_left(m_rotationLeft/CAMERA_FPS);
 
       if (m_rotationBack!=0.0)
-         move_back(m_rotationBack);
+         move_back(m_rotationBack/CAMERA_FPS);
 
       bool bPagingFinished = !m_earth->checkpending();
-      bool bRotationFinished = m_rotationLeft==0.0 && m_rotationBack==0.0;
+      bool bRotationFinished = m_rotationEarth==0.0 && m_rotationLeft==0.0 && m_rotationBack==0.0;
 
       bool bFinished = bPagingFinished && bRotationFinished;
 

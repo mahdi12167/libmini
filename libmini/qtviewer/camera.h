@@ -37,8 +37,9 @@ public:
    ~Camera();
 
    void    moveAbove();
-   void    setRotation(double left, double back=0.0);
+   void    setRotation(double earth, double left=0.0, double back=0.0);
 
+   void    rotateEarth(double angle);
    void    rotateCamera(float dx, float dy);
 
    void    moveCameraForward(float delta);
@@ -88,6 +89,7 @@ private:
    int       m_TransitionTimerId;
    QTime     m_TransitionTimer;
    QTime     m_TransitionStart;
+   double    m_rotationEarth;
    double    m_rotationLeft;
    double    m_rotationBack;
 

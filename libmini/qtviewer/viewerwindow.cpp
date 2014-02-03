@@ -37,6 +37,7 @@ ViewerWindow::ViewerWindow()
 
    viewer_aspect = VIEWER_ASPECT;
 
+   viewer_rotation_earth = 0.0;
    viewer_rotation_left = 0.0;
    viewer_rotation_back = 0.0;
 
@@ -99,8 +100,9 @@ void ViewerWindow::setAspect(double aspect)
    viewer_aspect = aspect;
 }
 
-void ViewerWindow::setRotation(double left, double back)
+void ViewerWindow::setRotation(double earth, double left, double back)
 {
+   viewer_rotation_earth = earth;
    viewer_rotation_left = left;
    viewer_rotation_back = back;
 }
@@ -123,7 +125,8 @@ void ViewerWindow::initializeGL()
       viewer->init();
 
       // make the earth rotate
-      viewer->getCamera()->setRotation(viewer_rotation_left, viewer_rotation_back);
+      viewer->getCamera()->setRotation(viewer_rotation_earth,
+                                       viewer_rotation_left, viewer_rotation_back);
 
       // load objects url from arguments
       QStringList dataPathList = QCoreApplication::arguments();

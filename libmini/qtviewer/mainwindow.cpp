@@ -25,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
    setCentralWidget(mainGroup);
    setWindowTitle(tr(VIEWER_NAME));
 
-   viewerWindow->setRotation(VIEWER_ROTATION_LEFT, VIEWER_ROTATION_BACK);
+   viewerWindow->setRotation(VIEWER_ROTATION_EARTH,
+                             VIEWER_ROTATION_LEFT, VIEWER_ROTATION_BACK);
 }
 
 MainWindow::~MainWindow()
