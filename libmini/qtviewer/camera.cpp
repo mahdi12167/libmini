@@ -155,27 +155,26 @@ miniv3d Camera::cursorVector(double zoom)
 
 void Camera::rotateEarth(double delta)
 {
-   double angle,pitch;
+   minicoord eye;
    miniv3d dir,right,up;
+   double angle,pitch;
 
-   angle=get_angle();
-   pitch=get_pitch();
+   eye = get_eye();
+   get_local_base(eye,dir,right,up);
 
-   get_local_base(get_eye(),dir,right,up);
+   angle = get_angle();
+   pitch = get_pitch();
 
-   double s = up.z;
-   double c = sqrt(1-s*s);
+   double radius = sqrt(eye.vec.x*eye.vec.x+eye.vec.y*eye.vec.y);
+   double elev = get_elev();
 
-   double e = get_elev();
+   move_plain(delta/180.0*PI*radius*right);
+   get_local_base(get_eye(),eye_dir,eye_right,eye_up);
 
-   move_plain(delta/180.0*PI*get_orb_radius()*right*c);
-
-   get_local_base(eye,eye_dir,eye_right,eye_up);
+   move_down(get_elev()-elev);
 
    rotate_right(angle);
    rotate_up(pitch);
-
-   move_up(e-get_elev());
 }
 
 void Camera::rotateCamera(float dx, float dy)
