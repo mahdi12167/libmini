@@ -95,6 +95,22 @@ class M4x4
                   v4d(mtx[0].w,mtx[1].w,mtx[2].w,mtx[3].w)));
       }
 
+   static M4x4 translate(double x,double y,double z)
+      {
+      return(M4x4(v4d(1,0,0,x),
+                  v4d(0,1,0,y),
+                  v4d(0,0,1,z),
+                  v4d(0,0,0,1)));
+      }
+
+   static M4x4 scale(double s,double t,double r)
+      {
+      return(M4x4(v4d(s,0,0,0),
+                  v4d(0,t,0,0),
+                  v4d(0,0,r,0),
+                  v4d(0,0,0,1)));
+      }
+
    protected:
 
    v4d mtx[4];
@@ -130,7 +146,12 @@ class scoped_push
    public:
 
    scoped_push(const M4x4 &m)
-      {stack_.push_back(top()*m);}
+      {
+      if (stack_.begin()==stack_.end())
+         stack_.push_back(m);
+      else
+         stack_.push_back(top()*m);
+      }
 
    ~scoped_push()
       {stack_.pop_back();}
@@ -142,6 +163,8 @@ class scoped_push
 
    static std::vector<M4x4> stack_;
    };
+
+std::vector<M4x4> scoped_push::stack_; //!!
 
 #define mult_matrix(m) scoped_push p(m)
 

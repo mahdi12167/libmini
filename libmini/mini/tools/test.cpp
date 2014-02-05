@@ -13,6 +13,8 @@
 #include <mini/ministring.h>
 #include <mini/ministrip.h>
 
+#include <mini/ministack.h> //!!
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -211,6 +213,14 @@ int main(int argc,char *argv[])
    if (size1==10 && size2==10 && before==438 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
+
+   //!!
+   {
+   mult_matrix(M4x4::translate(1,0,0));
+      {
+      mult_matrix(M4x4::scale(0.5,1,1));
+      }
+   }
 
    // end of test code
 
