@@ -361,7 +361,7 @@ void Camera::timerEvent(int timerId)
 
       if (m_rotationEarth!=0.0 || m_rotationLeft!=0.0 || m_rotationBack!=0.0)
       {
-         double elev = get_elev();
+         double dist = get_dist();
 
          if (m_rotationEarth!=0.0)
             rotateEarth(m_rotationEarth/CAMERA_FPS);
@@ -372,7 +372,7 @@ void Camera::timerEvent(int timerId)
          if (m_rotationBack!=0.0)
             move_back(m_rotationBack/CAMERA_FPS);
 
-         move_down(get_elev()-elev);
+         move_down(get_dist()-dist);
       }
 
       bool bPagingFinished = !m_earth->checkpending();
