@@ -100,6 +100,7 @@ class M4x4
    v4d mtx[4];
    };
 
+// addition of two matrices
 M4x4 operator + (const M4x4 &m1,const M4x4 &m2)
    {
    return(M4x4(m1[0]+m2[0],
@@ -108,6 +109,7 @@ M4x4 operator + (const M4x4 &m1,const M4x4 &m2)
                m1[3]+m2[3]));
    }
 
+// multiplication of two matrices
 M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
    {
    M4x4 t=m2.transpose();
@@ -118,6 +120,7 @@ M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
                v4d(m1[3]*t[0],m1[3]*t[1],m1[3]*t[2],m1[3]*t[3])));
    }
 
+// right-hand vector multiplication
 v4d operator * (const M4x4 &m,const v4d &v)
    {return(v4d(m[0]*v,m[1]*v,m[2]*v,m[3]*v));}
 
