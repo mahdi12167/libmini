@@ -8,7 +8,8 @@ HEADERS += \
    ministring.h minilog.h \
    miniref.h mininode.h mininodes.h mininode_geom.h mininode_teapot.h \
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
-   minimath.h minicomplex.h mininoise.h minimpfp.h \
+   minimath.h minicomplex.h ministack.h \
+   mininoise.h minimpfp.h \
    minitime.h minirgb.h minicrs.h \
    miniio.h minidir.h minidds.h \
    ministub.h minitile.h miniload.h \
