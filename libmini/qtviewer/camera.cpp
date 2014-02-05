@@ -166,12 +166,9 @@ void Camera::rotateEarth(double delta)
    pitch = get_pitch();
 
    double radius = sqrt(eye.vec.x*eye.vec.x+eye.vec.y*eye.vec.y);
-   double elev = get_elev();
 
    move_plain(delta/180.0*PI*radius*right);
    get_local_base(get_eye(),eye_dir,eye_right,eye_up);
-
-   move_down(get_elev()-elev);
 
    rotate_right(angle);
    rotate_up(pitch);
@@ -362,14 +359,21 @@ void Camera::timerEvent(int timerId)
       if (!m_bInCameraTransition)
          m_window->updateGL();
 
-      if (m_rotationEarth!=0.0)
-         rotateEarth(m_rotationEarth/CAMERA_FPS);
+      if (m_rotationEarth!=0.0 || m_rotationLeft!=0.0 || m_rotationBack!=0.0)
+      {
+         double elev = get_elev();
 
-      if (m_rotationLeft!=0.0)
-         move_left(m_rotationLeft/CAMERA_FPS);
+         if (m_rotationEarth!=0.0)
+            rotateEarth(m_rotationEarth/CAMERA_FPS);
 
-      if (m_rotationBack!=0.0)
-         move_back(m_rotationBack/CAMERA_FPS);
+         if (m_rotationLeft!=0.0)
+            move_left(m_rotationLeft/CAMERA_FPS);
+
+         if (m_rotationBack!=0.0)
+            move_back(m_rotationBack/CAMERA_FPS);
+
+         move_down(get_elev()-elev);
+      }
 
       bool bPagingFinished = !m_earth->checkpending();
       bool bRotationFinished = m_rotationEarth==0.0 && m_rotationLeft==0.0 && m_rotationBack==0.0;
