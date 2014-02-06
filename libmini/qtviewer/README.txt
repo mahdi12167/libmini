@@ -117,6 +117,15 @@ Open a MSVC command prompt via
 Navigate into the qtviewer source directory and type
  build.bat
 
+!! Installation (Unix)
+
+If you want to install the application as a desktop application, just
+run the install script:
+ ./install.sh
+
+After installation, the viewer is available as desktop application. On
+Ubuntu, for example, you can simply search for it in the start menu.
+
 !! Usage
 
 The application can be started without command line parameters:
