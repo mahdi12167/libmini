@@ -5,6 +5,7 @@
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
 #define MINISTRIP_TEST // enable this to perform a test of the ministrip class
+#define MINISTACK_TEST // enable this to perform a test of the ministack module
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -12,8 +13,7 @@
 #include <mini/minicoord.h>
 #include <mini/ministring.h>
 #include <mini/ministrip.h>
-
-#include <mini/ministack.h> //!!
+#include <mini/ministack.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -210,17 +210,23 @@ int main(int argc,char *argv[])
    strip2.getbbox(bboxmin2,bboxmax2);
    std::cout << "ministrip: size2=" << size2 << " after=" << after << std::endl;
    std::cout << "ministrip: bbox2=" << bboxmin2 << "->" << bboxmax2 << std::endl;
-   if (size1==10 && size2==10 && before==438 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
+   if (size1==10 && size2==10 && before==453 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 
-   //!!
+#ifdef MINISTACK_TEST
+   double x1,x2;
    {
-   mult_matrix(M4x4::translate(1,0,0));
+   mult_matrix(M4x4::scale(0.5,1,1));
       {
-      mult_matrix(M4x4::scale(0.5,1,1));
+      mult_matrix(M4x4::translate(1,0,0));
+      x1=top_matrix()[0].w;
       }
+   x2=top_matrix()[0].w;
    }
+   if (x1==0.5 && x2==0.0) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
+#endif
 
    // end of test code
 

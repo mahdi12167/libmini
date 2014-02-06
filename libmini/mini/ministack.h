@@ -3,6 +3,8 @@
 
 #include <math.h>
 #include <assert.h>
+
+#include <iostream>
 #include <vector>
 
 // 3D double vector
@@ -80,6 +82,10 @@ inline double v3d::normalize()
    if (length>0.0) *this=*this/length;
    return(length);
    }
+
+// output operator
+inline std::ostream& operator << (std::ostream &out,const v3d &v)
+   {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ')');}
 
 // 4D double vector
 //  definition of components via constructor v4d(x,y,z,w)
@@ -172,6 +178,10 @@ inline double v4d::normalize()
    return(length);
    }
 
+// output operator
+inline std::ostream& operator << (std::ostream &out,const v4d &v)
+   {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
+
 // 4x4 double matrix
 //  definition of matrix via constructor taking four row vectors
 //  supplies matrix operators + and *
@@ -249,6 +259,10 @@ inline M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
 inline v4d operator * (const M4x4 &m,const v4d &v)
    {return(v4d(m[0]*v,m[1]*v,m[2]*v,m[3]*v));}
 
+// output operator
+inline std::ostream& operator << (std::ostream &out,const M4x4 &v)
+   {return(out << '(' << v[0] << ',' << v[1] << ',' << v[2] << ',' << v[3] << ')');}
+
 // matrix stack
 class scoped_push
    {
@@ -266,7 +280,10 @@ class scoped_push
       {stack_.pop_back();}
 
    static const M4x4 top()
-      {return(*(stack_.end()));}
+      {
+      assert(stack_.begin()!=stack_.end());
+      return(*(--stack_.end()));
+      }
 
    protected:
 
@@ -274,5 +291,6 @@ class scoped_push
    };
 
 #define mult_matrix(m) scoped_push p(m)
+#define top_matrix() scoped_push::top()
 
 #endif
