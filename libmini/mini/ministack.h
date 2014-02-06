@@ -2,6 +2,7 @@
 #define MATRIXSTACK_H
 
 #include <math.h>
+#include <assert.h>
 #include <vector>
 
 // 4D double vector
@@ -85,7 +86,10 @@ class M4x4
       }
 
    const v4d &operator[] (const int i) const
-      {return(mtx[i]);}
+      {
+      assert(i>=0 && i<4);
+      return(mtx[i]);
+      }
 
    M4x4 transpose() const
       {
