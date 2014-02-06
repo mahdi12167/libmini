@@ -104,6 +104,9 @@ Type on the unix console in your project directory:
  with cmake: (cd qtviewer; cmake . && make)
  with qmake: (cd qtviewer; ./build.sh)
 
+If you installed Qt5, be sure to enable the BUILD_WITH_QT5 option:
+ (cd qtviewer; cmake -DBUILD_WITH_QT5 . && make)
+
 !! QTViewer Checkout and Compilation (Windows)
 
 In your project directory, get the following subversion repository
