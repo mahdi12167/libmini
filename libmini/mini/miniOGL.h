@@ -590,4 +590,18 @@ inline void renderpoint(const miniv3d &v)
 
 using namespace miniOGL;
 
+// scoped matrix stack
+class glScopedMatrixStack
+   {
+   public:
+
+   glScopedMatrixStack()
+      {glPushMatrix();}
+
+   ~glScopedMatrixStack()
+      {glPopMatrix();}
+   };
+
+#define glPushMatrixScoped() glScopedMatrixStack p()
+
 #endif
