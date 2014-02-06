@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under LGPL 2.1
+
 #ifndef MATRIXSTACK_H
 #define MATRIXSTACK_H
 
