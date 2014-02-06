@@ -117,7 +117,7 @@ class M4x4
    };
 
 // addition of two matrices
-M4x4 operator + (const M4x4 &m1,const M4x4 &m2)
+inline M4x4 operator + (const M4x4 &m1,const M4x4 &m2)
    {
    return(M4x4(m1[0]+m2[0],
                m1[1]+m2[1],
@@ -126,7 +126,7 @@ M4x4 operator + (const M4x4 &m1,const M4x4 &m2)
    }
 
 // multiplication of two matrices
-M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
+inline M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
    {
    M4x4 t=m2.transpose();
 
@@ -137,7 +137,7 @@ M4x4 operator * (const M4x4 &m1,const M4x4 &m2)
    }
 
 // right-hand vector multiplication
-v4d operator * (const M4x4 &m,const v4d &v)
+inline v4d operator * (const M4x4 &m,const v4d &v)
    {return(v4d(m[0]*v,m[1]*v,m[2]*v,m[3]*v));}
 
 // matrix stack
@@ -163,8 +163,6 @@ class scoped_push
 
    static std::vector<M4x4> stack_;
    };
-
-std::vector<M4x4> scoped_push::stack_; //!!
 
 #define mult_matrix(m) scoped_push p(m)
 

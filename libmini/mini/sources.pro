@@ -35,7 +35,8 @@ HEADERS += \
 SOURCES += \
    mini.cpp miniOGL.cpp \
    miniv3f.cpp miniv3d.cpp miniv4f.cpp miniv4d.cpp \
-   minimath.cpp mininoise.cpp minimpfp.cpp \
+   minimath.cpp ministack.cpp \
+   mininoise.cpp minimpfp.cpp \
    minitime.cpp minirgb.cpp minicrs.cpp \
    miniio.cpp minidir.cpp minidds.cpp \
    ministub.cpp minitile.cpp miniload.cpp \
