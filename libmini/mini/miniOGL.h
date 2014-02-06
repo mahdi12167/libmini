@@ -128,6 +128,20 @@ inline void mtxtex();
 inline void mtxpush();
 inline void mtxpop();
 
+// scoped matrix stack
+class glScopedMatrixStack
+   {
+   public:
+
+   glScopedMatrixStack()
+      {mtxpush();}
+
+   ~glScopedMatrixStack()
+      {mtxpop();}
+   };
+
+#define mtxpushscoped() glScopedMatrixStack p()
+
 inline void mtxid();
 inline void mtxscale(const float sx,const float sy,const float sz);
 inline void mtxscale(const miniv3d &s);
@@ -589,18 +603,6 @@ inline void renderpoint(const miniv3d &v)
 }
 
 using namespace miniOGL;
-
-// scoped matrix stack
-class glScopedMatrixStack
-   {
-   public:
-
-   glScopedMatrixStack()
-      {glPushMatrix();}
-
-   ~glScopedMatrixStack()
-      {glPopMatrix();}
-   };
 
 #define glPushMatrixScoped() glScopedMatrixStack p()
 

@@ -168,10 +168,9 @@ void miniscene::render()
          {
          EARTH->get_ecef_matrix(mtx);
          mtxget(mtx,oglmtx);
-         mtxpush();
+         mtxpushscoped();
          mtxmult(oglmtx);
          render_ecef_geometry(time());
-         mtxpop();
          }
 
    // disable wireframe mode
