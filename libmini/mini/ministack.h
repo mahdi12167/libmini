@@ -30,10 +30,13 @@ class v3d
    // destructor
    ~v3d() {}
 
+   // get vector length
    double getlength() const {return(sqrt(x*x+y*y+z*z));}
 
+   // normalize vector to unit length
    double normalize();
 
+   // vector components
    double x,y,z;
    };
 
@@ -129,10 +132,13 @@ class v4d
    // destructor
    ~v4d() {}
 
+   // get vector length
    double getlength() const {return(sqrt(x*x+y*y+z*z+w*w));}
 
+   // normalize vector to unit length
    double normalize();
 
+   // vector components
    double x,y,z,w;
    };
 
@@ -202,12 +208,24 @@ class M4x4
       mtx[3]=r4;
       }
 
+   // subscript operator
+   v4d &operator[] (const int i)
+      {
+      assert(i>=0 && i<4);
+      return(mtx[i]);
+      }
+
+   // const subscript operator
    const v4d &operator[] (const int i) const
       {
       assert(i>=0 && i<4);
       return(mtx[i]);
       }
 
+   // calculate determinant of 4x4 matrix
+   double det() const;
+
+   // transpose 4x4 matrix
    M4x4 transpose() const
       {
       return(M4x4(v4d(mtx[0].x,mtx[1].x,mtx[2].x,mtx[3].x),
@@ -216,6 +234,10 @@ class M4x4
                   v4d(mtx[0].w,mtx[1].w,mtx[2].w,mtx[3].w)));
       }
 
+   // invert 4x4 matrix
+   M4x4 invert() const;
+
+   // create translation matrix
    static M4x4 translate(double x,double y,double z)
       {
       return(M4x4(v4d(1,0,0,x),
@@ -224,6 +246,7 @@ class M4x4
                   v4d(0,0,0,1)));
       }
 
+   // create scaling matrix
    static M4x4 scale(double s,double t,double r)
       {
       return(M4x4(v4d(s,0,0,0),
@@ -234,6 +257,7 @@ class M4x4
 
    protected:
 
+   // matrix rows
    v4d mtx[4];
    };
 
