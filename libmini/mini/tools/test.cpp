@@ -13,7 +13,7 @@
 #include <mini/minicoord.h>
 #include <mini/ministring.h>
 #include <mini/ministrip.h>
-#include <mini/ministack.h>
+#include <mini/glslmath.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
