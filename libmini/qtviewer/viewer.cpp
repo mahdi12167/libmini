@@ -167,7 +167,7 @@ void Viewer::initParameters()
    earthParams.nonlin = TRUE;
    earthParams.usefog = TRUE;
    earthParams.useshaders = TRUE;
-   earthParams.usediffuse = FALSE;
+   earthParams.usediffuse = TRUE;
    earthParams.usevisshader = TRUE;
    earthParams.usebathymap = TRUE;
    earthParams.usecontours = FALSE;

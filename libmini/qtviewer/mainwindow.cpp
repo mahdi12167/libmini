@@ -328,7 +328,7 @@ void MainWindow::createWidgets()
    // light check:
 
    lightCheck = new QCheckBox(tr("UTC Night"));
-   lightCheck->setChecked(false);
+   lightCheck->setChecked(true);
 
    connect(lightCheck, SIGNAL(stateChanged(int)), this, SLOT(checkLight(int)));
 
@@ -442,7 +442,7 @@ void MainWindow::createWidgets()
    connect(lineEdit_gridStep,SIGNAL(textChanged(QString)),this,SLOT(gridStepChanged(QString)));
 
    sliderButton = new QCheckBox(tr("Show Controls"));
-   sliderButton->setChecked(false);
+   sliderButton->setChecked(true);
 
    QGroupBox *sliderButtonBox= new QGroupBox;
    QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
