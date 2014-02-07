@@ -291,6 +291,126 @@ inline double vec4::normalize()
 inline std::ostream& operator << (std::ostream &out,const vec4 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
 
+// 3x3 double matrix
+//  definition of matrix via constructor taking three row vectors
+//  supplies matrix operators + and *
+class mat3
+   {
+   public:
+
+   // default constructor
+   mat3(const vec3 &r1=vec4(1,0,0),
+        const vec3 &r2=vec4(0,1,0),
+        const vec3 &r3=vec4(0,0,1))
+      {
+      mtx[0][0]=r1.x;
+      mtx[0][1]=r2.x;
+      mtx[0][2]=r3.x;
+
+      mtx[1][0]=r1.y;
+      mtx[1][1]=r2.y;
+      mtx[1][2]=r3.y;
+
+      mtx[2][0]=r1.z;
+      mtx[2][1]=r2.z;
+      mtx[2][2]=r3.z;
+      }
+
+   // subscript operator (column getter)
+   vec3 operator[] (const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec3(mtx[i][0],mtx[i][1],mtx[i][2]));
+      }
+
+   // row getter
+   vec4 row(const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec3(mtx[0][i],mtx[1][i],mtx[2][i]));
+      }
+
+   // cast operator to column-first array
+   operator const double *() const
+      {return(mtx[0]);}
+
+   // calculate determinant of 3x3 matrix
+   double det() const
+      {
+      return(mtx[0][0]*(mtx[1][1]*mtx[2][2]-mtx[2][1]*mtx[1][2])+
+             mtx[0][1]*(mtx[2][0]*mtx[1][2]-mtx[1][0]*mtx[2][2])+
+             mtx[0][2]*(mtx[1][0]*mtx[2][1]-mtx[2][0]*mtx[1][1]));
+      }
+
+   // transpose 3x3 matrix
+   mat3 transpose() const
+      {return(mat3(row(0),row(1),row(2)));}
+
+   // invert 3x3 matrix
+   mat3 invert() const
+      {
+      mat3 m;
+      double d;
+
+      // calculate determinant
+      d=det();
+
+      // check determinant
+      assert(d!=0.0);
+
+      // calculate inverse
+      d=1.0/d;
+      m.mtx[0][0]=d*(mtx[1][1]*mtx[2][2]-mtx[2][1]*mtx[1][2]);
+      m.mtx[1][0]=d*(mtx[2][0]*mtx[1][2]-mtx[1][0]*mtx[2][2]);
+      m.mtx[2][0]=d*(mtx[1][0]*mtx[2][1]-mtx[2][0]*mtx[1][1]);
+      m.mtx[0][1]=d*(mtx[2][1]*mtx[0][2]-mtx[0][1]*mtx[2][2]);
+      m.mtx[1][1]=d*(mtx[0][0]*mtx[2][2]-mtx[2][0]*mtx[0][2]);
+      m.mtx[2][1]=d*(mtx[2][0]*mtx[0][1]-mtx[0][0]*mtx[2][1]);
+      m.mtx[0][2]=d*(mtx[0][1]*mtx[1][2]-mtx[1][1]*mtx[0][2]);
+      m.mtx[1][2]=d*(mtx[1][0]*mtx[0][2]-mtx[0][0]*mtx[1][2]);
+      m.mtx[2][2]=d*(mtx[0][0]*mtx[1][1]-mtx[1][0]*mtx[0][1]);
+
+      return(m);
+      }
+
+   // create scaling matrix
+   static mat3 scale(double s,double t,double r)
+      {
+      return(mat3(vec3(s,0,0),
+                  vec3(0,t,0),
+                  vec3(0,0,r)));
+      }
+
+   protected:
+
+   // matrix
+   double mtx[3][3];
+   };
+
+// addition of two matrices
+inline mat3 operator + (const mat3 &m1,const mat3 &m2)
+   {
+   return(mat3(m1[0]+m2[0],
+               m1[1]+m2[1],
+               m1[2]+m2[2]));
+   }
+
+// multiplication of two matrices
+inline mat3 operator * (const mat3 &m1,const mat3 &m2)
+   {
+   return(mat3(vec3(m1.row(0).dot(m2[0]),m1.row(0).dot(m2[1]),m1.row(0).dot(m2[2])),
+               vec3(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]),m1.row(1).dot(m2[2])),
+               vec3(m1.row(2).dot(m2[0]),m1.row(2).dot(m2[1]),m1.row(2).dot(m2[2]))));
+   }
+
+// right-hand vector multiplication
+inline vec3 operator * (const mat3 &m,const vec3 &v)
+   {return(vec3(m.row(0).dot(v),m.row(1).dot(v),m.row(2).dot(v)));}
+
+// output operator
+inline std::ostream& operator << (std::ostream &out,const mat3 &m)
+   {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ')');}
+
 // 4x4 double matrix
 //  definition of matrix via constructor taking four row vectors
 //  supplies matrix operators + and *
