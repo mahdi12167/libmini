@@ -280,7 +280,7 @@ inline std::ostream& operator << (std::ostream &out,const vec4 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
 
 // 4x4 double matrix
-//  definition of matrix via constructor taking four row vectors
+//  definition of matrix via constructor taking four column vectors
 //  supplies matrix operators + and *
 class mat4x4
    {
@@ -346,7 +346,7 @@ class mat4x4
 
    protected:
 
-   // matrix rows
+   // matrix columns
    vec4 mtx[4];
    };
 
