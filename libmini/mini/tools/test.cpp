@@ -5,7 +5,7 @@
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
 #define MINISTRIP_TEST // enable this to perform a test of the ministrip class
-#define MINISTACK_TEST // enable this to perform a test of the ministack module
+#define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -214,7 +214,7 @@ int main(int argc,char *argv[])
    else std::cout << "FAILURE" << std::endl;
 #endif
 
-#ifdef MINISTACK_TEST
+#ifdef GLSLMATH_TEST
    double x1,x2;
    {
    mult_matrix(mat4::scale(0.5,1,1));
