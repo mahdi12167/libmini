@@ -445,6 +445,30 @@ class mat4
       mtx[3][3]=r4.w;
       }
 
+   // copy constructor
+   mat4(const mat3 &m)
+      {
+      mtx[0][0]=m[0].x;
+      mtx[0][1]=m[1].x;
+      mtx[0][2]=m[2].x;
+      mtx[0][3]=0.0;
+
+      mtx[1][0]=m[0].y;
+      mtx[1][1]=m[1].y;
+      mtx[1][2]=m[2].y;
+      mtx[1][3]=0.0;
+
+      mtx[2][0]=m[0].z;
+      mtx[2][1]=m[1].z;
+      mtx[2][2]=m[2].z;
+      mtx[2][3]=0.0;
+
+      mtx[3][0]=0.0;
+      mtx[3][1]=0.0;
+      mtx[3][2]=0.0;
+      mtx[3][3]=1.0;
+      }
+
    // subscript operator (column getter)
    vec4 operator[] (const int i) const
       {
