@@ -2,10 +2,8 @@
 
 #include "ministack.h"
 
-std::vector<M4x4> scoped_push::stack_;
-
 // calculate determinant of 4x4 matrix
-double M4x4::det() const
+double mat4x4::det() const
    {
    return(mtx[0].w*mtx[1].z*mtx[2].y*mtx[3].x-
           mtx[0].z*mtx[1].w*mtx[2].y*mtx[3].x-
@@ -34,9 +32,9 @@ double M4x4::det() const
    }
 
 // invert 4x4 matrix
-M4x4 M4x4::invert() const
+mat4x4 mat4x4::invert() const
    {
-   M4x4 m;
+   mat4x4 m;
    double d;
 
    // calculate determinant

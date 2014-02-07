@@ -217,9 +217,9 @@ int main(int argc,char *argv[])
 #ifdef MINISTACK_TEST
    double x1,x2;
    {
-   mult_matrix(M4x4::scale(0.5,1,1));
+   mult_matrix(mat4x4::scale(0.5,1,1));
       {
-      mult_matrix(M4x4::translate(1,0,0));
+      mult_matrix(mat4x4::translate(1,0,0));
       x1=top_matrix()[0].w;
       }
    x2=top_matrix()[0].w;
