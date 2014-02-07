@@ -417,6 +417,22 @@ class mat3
       mtx[2][2]=r3.z;
       }
 
+   // copy constructor
+   mat3(const mat2 &m)
+      {
+      mtx[0][0]=m[0].x;
+      mtx[0][1]=m[1].x;
+      mtx[0][2]=0.0;
+
+      mtx[1][0]=m[0].y;
+      mtx[1][1]=m[1].y;
+      mtx[1][2]=0.0;
+
+      mtx[2][0]=0.0;
+      mtx[2][1]=0.0;
+      mtx[2][2]=1.0;
+      }
+
    // subscript operator (column getter)
    vec3 operator[] (const int i) const
       {
