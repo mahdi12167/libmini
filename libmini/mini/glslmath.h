@@ -299,9 +299,9 @@ class mat3
    public:
 
    // default constructor
-   mat3(const vec3 &r1=vec4(1,0,0),
-        const vec3 &r2=vec4(0,1,0),
-        const vec3 &r3=vec4(0,0,1))
+   mat3(const vec3 &r1=vec3(1,0,0),
+        const vec3 &r2=vec3(0,1,0),
+        const vec3 &r3=vec3(0,0,1))
       {
       mtx[0][0]=r1.x;
       mtx[0][1]=r2.x;
