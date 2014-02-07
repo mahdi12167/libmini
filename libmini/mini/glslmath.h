@@ -202,7 +202,7 @@ class vec4
    // component-wise constructor
    vec4(const double vx,const double vy,const double vz, const double vw=1.0) {x=vx; y=vy; z=vz; w=vw;}
 
-   // homogenization cast operator
+   // cast operator with homogenization
    operator vec3() const
       {
       double c;
@@ -280,109 +280,116 @@ inline std::ostream& operator << (std::ostream &out,const vec4 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
 
 // 4x4 double matrix
-//  definition of matrix via constructor taking four column vectors
+//  definition of matrix via constructor taking four row vectors
 //  supplies matrix operators + and *
-class mat4x4
+class mat4
    {
    public:
 
-   mat4x4(const vec4 &c1=vec4(1,0,0,0),
-          const vec4 &c2=vec4(0,1,0,0),
-          const vec4 &c3=vec4(0,0,1,0),
-          const vec4 &c4=vec4(0,0,0,1))
+   // default constructor
+   mat4(const vec4 &r1=vec4(1,0,0,0),
+        const vec4 &r2=vec4(0,1,0,0),
+        const vec4 &r3=vec4(0,0,1,0),
+        const vec4 &r4=vec4(0,0,0,1))
       {
-      mtx[0]=c1;
-      mtx[1]=c2;
-      mtx[2]=c3;
-      mtx[3]=c4;
+      mtx[0][0]=r1.x;
+      mtx[0][1]=r2.x;
+      mtx[0][2]=r3.x;
+      mtx[0][3]=r4.x;
+
+      mtx[1][0]=r1.y;
+      mtx[1][1]=r2.y;
+      mtx[1][2]=r3.y;
+      mtx[1][3]=r4.y;
+
+      mtx[2][0]=r1.z;
+      mtx[2][1]=r2.z;
+      mtx[2][2]=r3.z;
+      mtx[2][3]=r4.z;
+
+      mtx[3][0]=r1.w;
+      mtx[3][1]=r2.w;
+      mtx[3][2]=r3.w;
+      mtx[3][3]=r4.w;
       }
 
-   // subscript operator
-   vec4 &operator[] (const int i)
+   // subscript operator (column getter)
+   vec4 operator[] (const int i) const
       {
       assert(i>=0 && i<4);
-      return(mtx[i]);
+      return(vec4(mtx[i][0],mtx[i][1],mtx[i][2],mtx[i][3]));
       }
 
-   // const subscript operator
-   const vec4 &operator[] (const int i) const
+   // row getter
+   vec4 row(const int i) const
       {
       assert(i>=0 && i<4);
-      return(mtx[i]);
+      return(vec4(mtx[0][i],mtx[1][i],mtx[2][i],mtx[3][i]));
       }
+
+   // cast operator to column-first array
+   operator const double *() const
+      {return(mtx[0]);}
 
    // calculate determinant of 4x4 matrix
    double det() const;
 
    // transpose 4x4 matrix
-   mat4x4 transpose() const
-      {
-      return(mat4x4(vec4(mtx[0].x,mtx[1].x,mtx[2].x,mtx[3].x),
-                    vec4(mtx[0].y,mtx[1].y,mtx[2].y,mtx[3].y),
-                    vec4(mtx[0].z,mtx[1].z,mtx[2].z,mtx[3].z),
-                    vec4(mtx[0].w,mtx[1].w,mtx[2].w,mtx[3].w)));
-      }
+   mat4 transpose() const
+      {return(mat4(row(0),row(1),row(2),row(3)));}
 
    // invert 4x4 matrix
-   mat4x4 invert() const;
+   mat4 invert() const;
 
    // create translation matrix
-   static mat4x4 translate(double x,double y,double z)
+   static mat4 translate(double x,double y,double z)
       {
-      return(mat4x4(vec4(1,0,0,0),
-                    vec4(0,1,0,0),
-                    vec4(0,0,1,0),
-                    vec4(x,y,z,1)));
+      return(mat4(vec4(1,0,0,x),
+                  vec4(0,1,0,y),
+                  vec4(0,0,1,z),
+                  vec4(0,0,0,1)));
       }
 
    // create scaling matrix
-   static mat4x4 scale(double s,double t,double r)
+   static mat4 scale(double s,double t,double r)
       {
-      return(mat4x4(vec4(s,0,0,0),
-                    vec4(0,t,0,0),
-                    vec4(0,0,r,0),
-                    vec4(0,0,0,1)));
+      return(mat4(vec4(s,0,0,0),
+                  vec4(0,t,0,0),
+                  vec4(0,0,r,0),
+                  vec4(0,0,0,1)));
       }
 
    protected:
 
-   // matrix columns
-   vec4 mtx[4];
+   // matrix
+   double mtx[4][4];
    };
 
 // addition of two matrices
-inline mat4x4 operator + (const mat4x4 &m1,const mat4x4 &m2)
+inline mat4 operator + (const mat4 &m1,const mat4 &m2)
    {
-   return(mat4x4(m1[0]+m2[0],
-                 m1[1]+m2[1],
-                 m1[2]+m2[2],
-                 m1[3]+m2[3]));
+   return(mat4(m1[0]+m2[0],
+               m1[1]+m2[1],
+               m1[2]+m2[2],
+               m1[3]+m2[3]));
    }
 
 // multiplication of two matrices
-inline mat4x4 operator * (const mat4x4 &m1,const mat4x4 &m2)
+inline mat4 operator * (const mat4 &m1,const mat4 &m2)
    {
-   mat4x4 t=m1.transpose();
-
-   return(mat4x4(vec4(t[0]*m2[0],t[1]*m2[0],t[2]*m2[0],t[3]*m2[0]),
-                 vec4(t[0]*m2[1],t[1]*m2[1],t[2]*m2[1],t[3]*m2[1]),
-                 vec4(t[0]*m2[2],t[1]*m2[2],t[2]*m2[2],t[3]*m2[2]),
-                 vec4(t[0]*m2[3],t[1]*m2[3],t[2]*m2[3],t[3]*m2[3])));
+   return(mat4(vec4(m1.row(0)*m2[0],m1.row(0)*m2[1],m1.row(0)*m2[2],m1.row(0)*m2[3]),
+               vec4(m1.row(1)*m2[0],m1.row(1)*m2[1],m1.row(1)*m2[2],m1.row(1)*m2[3]),
+               vec4(m1.row(2)*m2[0],m1.row(2)*m2[1],m1.row(2)*m2[2],m1.row(2)*m2[3]),
+               vec4(m1.row(3)*m2[0],m1.row(3)*m2[1],m1.row(3)*m2[2],m1.row(3)*m2[3])));
    }
 
 // right-hand vector multiplication
-inline vec4 operator * (const mat4x4 &m,const vec4 &v)
-   {
-   mat4x4 t=m.transpose();
-   return(vec4(t[0]*v,t[1]*v,t[2]*v,t[3]*v));
-   }
+inline vec4 operator * (const mat4 &m,const vec4 &v)
+   {return(vec4(m.row(0)*v,m.row(1)*v,m.row(2)*v,m.row(3)*v));}
 
 // output operator
-inline std::ostream& operator << (std::ostream &out,const mat4x4 &m)
-   {
-   mat4x4 t=m.transpose();
-   return(out << '(' << t[0] << ',' << t[1] << ',' << t[2] << ',' << t[3] << ')');
-   }
+inline std::ostream& operator << (std::ostream &out,const mat4 &m)
+   {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
 
 // matrix stack
 template <class T>
@@ -390,6 +397,7 @@ class scoped_push
    {
    public:
 
+   // default constructor
    scoped_push(const T &m)
       {
       if (stack_.begin()==stack_.end())
@@ -398,9 +406,11 @@ class scoped_push
          stack_.push_back(top()*m);
       }
 
+   // destructor
    ~scoped_push()
       {stack_.pop_back();}
 
+   // top stack element
    static const T top()
       {
       assert(stack_.begin()!=stack_.end());
@@ -412,8 +422,8 @@ class scoped_push
    static std::vector<T> stack_;
    };
 
-#define mult_matrix(m) scoped_push<mat4x4> p(m)
-#define top_matrix() scoped_push<mat4x4>::top()
+#define mult_matrix(m) scoped_push<mat4> p(m)
+#define top_matrix() scoped_push<mat4>::top()
 
 template <class T>
 std::vector<T> scoped_push<T>::stack_;

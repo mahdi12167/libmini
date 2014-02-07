@@ -3,38 +3,38 @@
 #include "glslmath.h"
 
 // calculate determinant of 4x4 matrix
-double mat4x4::det() const
+double mat4::det() const
    {
-   return(mtx[0].w*mtx[1].z*mtx[2].y*mtx[3].x-
-          mtx[0].z*mtx[1].w*mtx[2].y*mtx[3].x-
-          mtx[0].w*mtx[1].y*mtx[2].z*mtx[3].x+
-          mtx[0].y*mtx[1].w*mtx[2].z*mtx[3].x+
-          mtx[0].z*mtx[1].y*mtx[2].w*mtx[3].x-
-          mtx[0].y*mtx[1].z*mtx[2].w*mtx[3].x-
-          mtx[0].w*mtx[1].z*mtx[2].x*mtx[3].y+
-          mtx[0].z*mtx[1].w*mtx[2].x*mtx[3].y+
-          mtx[0].w*mtx[1].x*mtx[2].z*mtx[3].y-
-          mtx[0].x*mtx[1].w*mtx[2].z*mtx[3].y-
-          mtx[0].z*mtx[1].x*mtx[2].w*mtx[3].y+
-          mtx[0].x*mtx[1].z*mtx[2].w*mtx[3].y+
-          mtx[0].w*mtx[1].y*mtx[2].x*mtx[3].z-
-          mtx[0].y*mtx[1].w*mtx[2].x*mtx[3].z-
-          mtx[0].w*mtx[1].x*mtx[2].y*mtx[3].z+
-          mtx[0].x*mtx[1].w*mtx[2].y*mtx[3].z+
-          mtx[0].y*mtx[1].x*mtx[2].w*mtx[3].z-
-          mtx[0].x*mtx[1].y*mtx[2].w*mtx[3].z-
-          mtx[0].z*mtx[1].y*mtx[2].x*mtx[3].w+
-          mtx[0].y*mtx[1].z*mtx[2].x*mtx[3].w+
-          mtx[0].z*mtx[1].x*mtx[2].y*mtx[3].w-
-          mtx[0].x*mtx[1].z*mtx[2].y*mtx[3].w-
-          mtx[0].y*mtx[1].x*mtx[2].z*mtx[3].w+
-          mtx[0].x*mtx[1].y*mtx[2].z*mtx[3].w);
+   return(mtx[0][3]*mtx[1][2]*mtx[2][1]*mtx[3][0]-
+          mtx[0][2]*mtx[1][3]*mtx[2][1]*mtx[3][0]-
+          mtx[0][3]*mtx[1][1]*mtx[2][2]*mtx[3][0]+
+          mtx[0][1]*mtx[1][3]*mtx[2][2]*mtx[3][0]+
+          mtx[0][2]*mtx[1][1]*mtx[2][3]*mtx[3][0]-
+          mtx[0][1]*mtx[1][2]*mtx[2][3]*mtx[3][0]-
+          mtx[0][3]*mtx[1][2]*mtx[2][0]*mtx[3][1]+
+          mtx[0][2]*mtx[1][3]*mtx[2][0]*mtx[3][1]+
+          mtx[0][3]*mtx[1][0]*mtx[2][2]*mtx[3][1]-
+          mtx[0][0]*mtx[1][3]*mtx[2][2]*mtx[3][1]-
+          mtx[0][2]*mtx[1][0]*mtx[2][3]*mtx[3][1]+
+          mtx[0][0]*mtx[1][2]*mtx[2][3]*mtx[3][1]+
+          mtx[0][3]*mtx[1][1]*mtx[2][0]*mtx[3][2]-
+          mtx[0][1]*mtx[1][3]*mtx[2][0]*mtx[3][2]-
+          mtx[0][3]*mtx[1][0]*mtx[2][1]*mtx[3][2]+
+          mtx[0][0]*mtx[1][3]*mtx[2][1]*mtx[3][2]+
+          mtx[0][1]*mtx[1][0]*mtx[2][3]*mtx[3][2]-
+          mtx[0][0]*mtx[1][1]*mtx[2][3]*mtx[3][2]-
+          mtx[0][2]*mtx[1][1]*mtx[2][0]*mtx[3][3]+
+          mtx[0][1]*mtx[1][2]*mtx[2][0]*mtx[3][3]+
+          mtx[0][2]*mtx[1][0]*mtx[2][1]*mtx[3][3]-
+          mtx[0][0]*mtx[1][2]*mtx[2][1]*mtx[3][3]-
+          mtx[0][1]*mtx[1][0]*mtx[2][2]*mtx[3][3]+
+          mtx[0][0]*mtx[1][1]*mtx[2][2]*mtx[3][3]);
    }
 
 // invert 4x4 matrix
-mat4x4 mat4x4::invert() const
+mat4 mat4::invert() const
    {
-   mat4x4 m;
+   mat4 m;
    double d;
 
    // calculate determinant
@@ -45,22 +45,22 @@ mat4x4 mat4x4::invert() const
 
    // calculate inverse
    d=1.0/d;
-   m[0].x=d*(mtx[1].z*mtx[2].w*mtx[3].y-mtx[1].w*mtx[2].z*mtx[3].y+mtx[1].w*mtx[2].y*mtx[3].z-mtx[1].y*mtx[2].w*mtx[3].z-mtx[1].z*mtx[2].y*mtx[3].w+mtx[1].y*mtx[2].z*mtx[3].w);
-   m[0].y=d*(mtx[0].w*mtx[2].z*mtx[3].y-mtx[0].z*mtx[2].w*mtx[3].y-mtx[0].w*mtx[2].y*mtx[3].z+mtx[0].y*mtx[2].w*mtx[3].z+mtx[0].z*mtx[2].y*mtx[3].w-mtx[0].y*mtx[2].z*mtx[3].w);
-   m[0].z=d*(mtx[0].z*mtx[1].w*mtx[3].y-mtx[0].w*mtx[1].z*mtx[3].y+mtx[0].w*mtx[1].y*mtx[3].z-mtx[0].y*mtx[1].w*mtx[3].z-mtx[0].z*mtx[1].y*mtx[3].w+mtx[0].y*mtx[1].z*mtx[3].w);
-   m[0].w=d*(mtx[0].w*mtx[1].z*mtx[2].y-mtx[0].z*mtx[1].w*mtx[2].y-mtx[0].w*mtx[1].y*mtx[2].z+mtx[0].y*mtx[1].w*mtx[2].z+mtx[0].z*mtx[1].y*mtx[2].w-mtx[0].y*mtx[1].z*mtx[2].w);
-   m[1].x=d*(mtx[1].w*mtx[2].z*mtx[3].x-mtx[1].z*mtx[2].w*mtx[3].x-mtx[1].w*mtx[2].x*mtx[3].z+mtx[1].x*mtx[2].w*mtx[3].z+mtx[1].z*mtx[2].x*mtx[3].w-mtx[1].x*mtx[2].z*mtx[3].w);
-   m[1].y=d*(mtx[0].z*mtx[2].w*mtx[3].x-mtx[0].w*mtx[2].z*mtx[3].x+mtx[0].w*mtx[2].x*mtx[3].z-mtx[0].x*mtx[2].w*mtx[3].z-mtx[0].z*mtx[2].x*mtx[3].w+mtx[0].x*mtx[2].z*mtx[3].w);
-   m[1].z=d*(mtx[0].w*mtx[1].z*mtx[3].x-mtx[0].z*mtx[1].w*mtx[3].x-mtx[0].w*mtx[1].x*mtx[3].z+mtx[0].x*mtx[1].w*mtx[3].z+mtx[0].z*mtx[1].x*mtx[3].w-mtx[0].x*mtx[1].z*mtx[3].w);
-   m[1].w=d*(mtx[0].z*mtx[1].w*mtx[2].x-mtx[0].w*mtx[1].z*mtx[2].x+mtx[0].w*mtx[1].x*mtx[2].z-mtx[0].x*mtx[1].w*mtx[2].z-mtx[0].z*mtx[1].x*mtx[2].w+mtx[0].x*mtx[1].z*mtx[2].w);
-   m[2].x=d*(mtx[1].y*mtx[2].w*mtx[3].x-mtx[1].w*mtx[2].y*mtx[3].x+mtx[1].w*mtx[2].x*mtx[3].y-mtx[1].x*mtx[2].w*mtx[3].y-mtx[1].y*mtx[2].x*mtx[3].w+mtx[1].x*mtx[2].y*mtx[3].w);
-   m[2].y=d*(mtx[0].w*mtx[2].y*mtx[3].x-mtx[0].y*mtx[2].w*mtx[3].x-mtx[0].w*mtx[2].x*mtx[3].y+mtx[0].x*mtx[2].w*mtx[3].y+mtx[0].y*mtx[2].x*mtx[3].w-mtx[0].x*mtx[2].y*mtx[3].w);
-   m[2].z=d*(mtx[0].y*mtx[1].w*mtx[3].x-mtx[0].w*mtx[1].y*mtx[3].x+mtx[0].w*mtx[1].x*mtx[3].y-mtx[0].x*mtx[1].w*mtx[3].y-mtx[0].y*mtx[1].x*mtx[3].w+mtx[0].x*mtx[1].y*mtx[3].w);
-   m[2].w=d*(mtx[0].w*mtx[1].y*mtx[2].x-mtx[0].y*mtx[1].w*mtx[2].x-mtx[0].w*mtx[1].x*mtx[2].y+mtx[0].x*mtx[1].w*mtx[2].y+mtx[0].y*mtx[1].x*mtx[2].w-mtx[0].x*mtx[1].y*mtx[2].w);
-   m[3].x=d*(mtx[1].z*mtx[2].y*mtx[3].x-mtx[1].y*mtx[2].z*mtx[3].x-mtx[1].z*mtx[2].x*mtx[3].y+mtx[1].x*mtx[2].z*mtx[3].y+mtx[1].y*mtx[2].x*mtx[3].z-mtx[1].x*mtx[2].y*mtx[3].z);
-   m[3].y=d*(mtx[0].y*mtx[2].z*mtx[3].x-mtx[0].z*mtx[2].y*mtx[3].x+mtx[0].z*mtx[2].x*mtx[3].y-mtx[0].x*mtx[2].z*mtx[3].y-mtx[0].y*mtx[2].x*mtx[3].z+mtx[0].x*mtx[2].y*mtx[3].z);
-   m[3].z=d*(mtx[0].z*mtx[1].y*mtx[3].x-mtx[0].y*mtx[1].z*mtx[3].x-mtx[0].z*mtx[1].x*mtx[3].y+mtx[0].x*mtx[1].z*mtx[3].y+mtx[0].y*mtx[1].x*mtx[3].z-mtx[0].x*mtx[1].y*mtx[3].z);
-   m[3].w=d*(mtx[0].y*mtx[1].z*mtx[2].x-mtx[0].z*mtx[1].y*mtx[2].x+mtx[0].z*mtx[1].x*mtx[2].y-mtx[0].x*mtx[1].z*mtx[2].y-mtx[0].y*mtx[1].x*mtx[2].z+mtx[0].x*mtx[1].y*mtx[2].z);
+   m.mtx[0][0]=d*(mtx[1][2]*mtx[2][3]*mtx[3][1]-mtx[1][3]*mtx[2][2]*mtx[3][1]+mtx[1][3]*mtx[2][1]*mtx[3][2]-mtx[1][1]*mtx[2][3]*mtx[3][2]-mtx[1][2]*mtx[2][1]*mtx[3][3]+mtx[1][1]*mtx[2][2]*mtx[3][3]);
+   m.mtx[0][1]=d*(mtx[0][3]*mtx[2][2]*mtx[3][1]-mtx[0][2]*mtx[2][3]*mtx[3][1]-mtx[0][3]*mtx[2][1]*mtx[3][2]+mtx[0][1]*mtx[2][3]*mtx[3][2]+mtx[0][2]*mtx[2][1]*mtx[3][3]-mtx[0][1]*mtx[2][2]*mtx[3][3]);
+   m.mtx[0][2]=d*(mtx[0][2]*mtx[1][3]*mtx[3][1]-mtx[0][3]*mtx[1][2]*mtx[3][1]+mtx[0][3]*mtx[1][1]*mtx[3][2]-mtx[0][1]*mtx[1][3]*mtx[3][2]-mtx[0][2]*mtx[1][1]*mtx[3][3]+mtx[0][1]*mtx[1][2]*mtx[3][3]);
+   m.mtx[0][3]=d*(mtx[0][3]*mtx[1][2]*mtx[2][1]-mtx[0][2]*mtx[1][3]*mtx[2][1]-mtx[0][3]*mtx[1][1]*mtx[2][2]+mtx[0][1]*mtx[1][3]*mtx[2][2]+mtx[0][2]*mtx[1][1]*mtx[2][3]-mtx[0][1]*mtx[1][2]*mtx[2][3]);
+   m.mtx[1][0]=d*(mtx[1][3]*mtx[2][2]*mtx[3][0]-mtx[1][2]*mtx[2][3]*mtx[3][0]-mtx[1][3]*mtx[2][0]*mtx[3][2]+mtx[1][0]*mtx[2][3]*mtx[3][2]+mtx[1][2]*mtx[2][0]*mtx[3][3]-mtx[1][0]*mtx[2][2]*mtx[3][3]);
+   m.mtx[1][1]=d*(mtx[0][2]*mtx[2][3]*mtx[3][0]-mtx[0][3]*mtx[2][2]*mtx[3][0]+mtx[0][3]*mtx[2][0]*mtx[3][2]-mtx[0][0]*mtx[2][3]*mtx[3][2]-mtx[0][2]*mtx[2][0]*mtx[3][3]+mtx[0][0]*mtx[2][2]*mtx[3][3]);
+   m.mtx[1][2]=d*(mtx[0][3]*mtx[1][2]*mtx[3][0]-mtx[0][2]*mtx[1][3]*mtx[3][0]-mtx[0][3]*mtx[1][0]*mtx[3][2]+mtx[0][0]*mtx[1][3]*mtx[3][2]+mtx[0][2]*mtx[1][0]*mtx[3][3]-mtx[0][0]*mtx[1][2]*mtx[3][3]);
+   m.mtx[1][3]=d*(mtx[0][2]*mtx[1][3]*mtx[2][0]-mtx[0][3]*mtx[1][2]*mtx[2][0]+mtx[0][3]*mtx[1][0]*mtx[2][2]-mtx[0][0]*mtx[1][3]*mtx[2][2]-mtx[0][2]*mtx[1][0]*mtx[2][3]+mtx[0][0]*mtx[1][2]*mtx[2][3]);
+   m.mtx[2][0]=d*(mtx[1][1]*mtx[2][3]*mtx[3][0]-mtx[1][3]*mtx[2][1]*mtx[3][0]+mtx[1][3]*mtx[2][0]*mtx[3][1]-mtx[1][0]*mtx[2][3]*mtx[3][1]-mtx[1][1]*mtx[2][0]*mtx[3][3]+mtx[1][0]*mtx[2][1]*mtx[3][3]);
+   m.mtx[2][1]=d*(mtx[0][3]*mtx[2][1]*mtx[3][0]-mtx[0][1]*mtx[2][3]*mtx[3][0]-mtx[0][3]*mtx[2][0]*mtx[3][1]+mtx[0][0]*mtx[2][3]*mtx[3][1]+mtx[0][1]*mtx[2][0]*mtx[3][3]-mtx[0][0]*mtx[2][1]*mtx[3][3]);
+   m.mtx[2][2]=d*(mtx[0][1]*mtx[1][3]*mtx[3][0]-mtx[0][3]*mtx[1][1]*mtx[3][0]+mtx[0][3]*mtx[1][0]*mtx[3][1]-mtx[0][0]*mtx[1][3]*mtx[3][1]-mtx[0][1]*mtx[1][0]*mtx[3][3]+mtx[0][0]*mtx[1][1]*mtx[3][3]);
+   m.mtx[2][3]=d*(mtx[0][3]*mtx[1][1]*mtx[2][0]-mtx[0][1]*mtx[1][3]*mtx[2][0]-mtx[0][3]*mtx[1][0]*mtx[2][1]+mtx[0][0]*mtx[1][3]*mtx[2][1]+mtx[0][1]*mtx[1][0]*mtx[2][3]-mtx[0][0]*mtx[1][1]*mtx[2][3]);
+   m.mtx[3][0]=d*(mtx[1][2]*mtx[2][1]*mtx[3][0]-mtx[1][1]*mtx[2][2]*mtx[3][0]-mtx[1][2]*mtx[2][0]*mtx[3][1]+mtx[1][0]*mtx[2][2]*mtx[3][1]+mtx[1][1]*mtx[2][0]*mtx[3][2]-mtx[1][0]*mtx[2][1]*mtx[3][2]);
+   m.mtx[3][1]=d*(mtx[0][1]*mtx[2][2]*mtx[3][0]-mtx[0][2]*mtx[2][1]*mtx[3][0]+mtx[0][2]*mtx[2][0]*mtx[3][1]-mtx[0][0]*mtx[2][2]*mtx[3][1]-mtx[0][1]*mtx[2][0]*mtx[3][2]+mtx[0][0]*mtx[2][1]*mtx[3][2]);
+   m.mtx[3][2]=d*(mtx[0][2]*mtx[1][1]*mtx[3][0]-mtx[0][1]*mtx[1][2]*mtx[3][0]-mtx[0][2]*mtx[1][0]*mtx[3][1]+mtx[0][0]*mtx[1][2]*mtx[3][1]+mtx[0][1]*mtx[1][0]*mtx[3][2]-mtx[0][0]*mtx[1][1]*mtx[3][2]);
+   m.mtx[3][3]=d*(mtx[0][1]*mtx[1][2]*mtx[2][0]-mtx[0][2]*mtx[1][1]*mtx[2][0]+mtx[0][2]*mtx[1][0]*mtx[2][1]-mtx[0][0]*mtx[1][2]*mtx[2][1]-mtx[0][1]*mtx[1][0]*mtx[2][2]+mtx[0][0]*mtx[1][1]*mtx[2][2]);
 
    return(m);
    }
