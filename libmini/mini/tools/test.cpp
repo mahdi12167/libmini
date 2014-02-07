@@ -220,9 +220,9 @@ int main(int argc,char *argv[])
    mult_matrix(mat4x4::scale(0.5,1,1));
       {
       mult_matrix(mat4x4::translate(1,0,0));
-      x1=top_matrix()[0].w;
+      x1=top_matrix()[3].x;
       }
-   x2=top_matrix()[0].w;
+   x2=top_matrix()[3].x;
    }
    if (x1==0.5 && x2==0.0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;

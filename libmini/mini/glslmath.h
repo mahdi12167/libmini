@@ -286,15 +286,15 @@ class mat4x4
    {
    public:
 
-   mat4x4(const vec4 &r1=vec4(1,0,0,0),
-          const vec4 &r2=vec4(0,1,0,0),
-          const vec4 &r3=vec4(0,0,1,0),
-          const vec4 &r4=vec4(0,0,0,1))
+   mat4x4(const vec4 &c1=vec4(1,0,0,0),
+          const vec4 &c2=vec4(0,1,0,0),
+          const vec4 &c3=vec4(0,0,1,0),
+          const vec4 &c4=vec4(0,0,0,1))
       {
-      mtx[0]=r1;
-      mtx[1]=r2;
-      mtx[2]=r3;
-      mtx[3]=r4;
+      mtx[0]=c1;
+      mtx[1]=c2;
+      mtx[2]=c3;
+      mtx[3]=c4;
       }
 
    // subscript operator
@@ -329,10 +329,10 @@ class mat4x4
    // create translation matrix
    static mat4x4 translate(double x,double y,double z)
       {
-      return(mat4x4(vec4(1,0,0,x),
-                    vec4(0,1,0,y),
-                    vec4(0,0,1,z),
-                    vec4(0,0,0,1)));
+      return(mat4x4(vec4(1,0,0,0),
+                    vec4(0,1,0,0),
+                    vec4(0,0,1,0),
+                    vec4(x,y,z,1)));
       }
 
    // create scaling matrix
@@ -362,21 +362,27 @@ inline mat4x4 operator + (const mat4x4 &m1,const mat4x4 &m2)
 // multiplication of two matrices
 inline mat4x4 operator * (const mat4x4 &m1,const mat4x4 &m2)
    {
-   mat4x4 t=m2.transpose();
+   mat4x4 t=m1.transpose();
 
-   return(mat4x4(vec4(m1[0]*t[0],m1[0]*t[1],m1[0]*t[2],m1[0]*t[3]),
-                 vec4(m1[1]*t[0],m1[1]*t[1],m1[1]*t[2],m1[1]*t[3]),
-                 vec4(m1[2]*t[0],m1[2]*t[1],m1[2]*t[2],m1[2]*t[3]),
-                 vec4(m1[3]*t[0],m1[3]*t[1],m1[3]*t[2],m1[3]*t[3])));
+   return(mat4x4(vec4(t[0]*m2[0],t[1]*m2[0],t[2]*m2[0],t[3]*m2[0]),
+                 vec4(t[0]*m2[1],t[1]*m2[1],t[2]*m2[1],t[3]*m2[1]),
+                 vec4(t[0]*m2[2],t[1]*m2[2],t[2]*m2[2],t[3]*m2[2]),
+                 vec4(t[0]*m2[3],t[1]*m2[3],t[2]*m2[3],t[3]*m2[3])));
    }
 
 // right-hand vector multiplication
 inline vec4 operator * (const mat4x4 &m,const vec4 &v)
-   {return(vec4(m[0]*v,m[1]*v,m[2]*v,m[3]*v));}
+   {
+   mat4x4 t=m.transpose();
+   return(vec4(t[0]*v,t[1]*v,t[2]*v,t[3]*v));
+   }
 
 // output operator
-inline std::ostream& operator << (std::ostream &out,const mat4x4 &v)
-   {return(out << '(' << v[0] << ',' << v[1] << ',' << v[2] << ',' << v[3] << ')');}
+inline std::ostream& operator << (std::ostream &out,const mat4x4 &m)
+   {
+   mat4x4 t=m.transpose();
+   return(out << '(' << t[0] << ',' << t[1] << ',' << t[2] << ',' << t[3] << ')');
+   }
 
 // matrix stack
 template <class T>
