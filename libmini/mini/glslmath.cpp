@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include "ministack.h"
+#include "glslmath.h"
 
 // calculate determinant of 4x4 matrix
 double mat4x4::det() const

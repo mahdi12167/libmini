@@ -10,7 +10,7 @@ SET(MINI_HDRS
    ministring.h minilog.h
    miniref.h mininode.h mininodes.h mininode_geom.h mininode_teapot.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
-   minimath.h minicomplex.h ministack.h
+   minimath.h minicomplex.h glslmath.h
    mininoise.h minimpfp.h
    minitime.h minirgb.h minicrs.h
    miniio.h minidir.h minidds.h
@@ -38,7 +38,7 @@ SET(MINI_HDRS
 SET(MINI_SRCS
    mini.cpp miniOGL.cpp
    miniv3f.cpp miniv3d.cpp miniv4f.cpp miniv4d.cpp
-   minimath.cpp ministack.cpp
+   minimath.cpp glslmath.cpp
    mininoise.cpp minimpfp.cpp
    minitime.cpp minirgb.cpp minicrs.cpp
    miniio.cpp minidir.cpp minidds.cpp
