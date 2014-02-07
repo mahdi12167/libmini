@@ -291,6 +291,107 @@ inline double vec4::normalize()
 inline std::ostream& operator << (std::ostream &out,const vec4 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
 
+// 2x2 double matrix
+//  definition of matrix via constructor taking two row vectors
+//  supplies matrix operators + and *
+class mat2
+   {
+   public:
+
+   // default constructor
+   mat2(const vec2 &r1=vec2(1,0),
+        const vec2 &r2=vec2(0,1))
+      {
+      mtx[0][0]=r1.x;
+      mtx[0][1]=r2.x;
+
+      mtx[1][0]=r1.y;
+      mtx[1][1]=r2.y;
+      }
+
+   // subscript operator (column getter)
+   vec2 operator[] (const int i) const
+      {
+      assert(i>=0 && i<2);
+      return(vec2(mtx[i][0],mtx[i][1]));
+      }
+
+   // row getter
+   vec2 row(const int i) const
+      {
+      assert(i>=0 && i<2);
+      return(vec2(mtx[0][i],mtx[1][i]));
+      }
+
+   // cast operator to column-first array
+   operator const double *() const
+      {return(mtx[0]);}
+
+   // calculate determinant of 2x2 matrix
+   double det() const
+      {return(mtx[0][0]*mtx[1][1]-mtx[0][1]*mtx[1][0]);}
+
+   // transpose 2x2 matrix
+   mat2 transpose() const
+      {return(mat2(row(0),row(1)));}
+
+   // invert 2x2 matrix
+   mat2 invert() const
+      {
+      mat2 m;
+      double d;
+
+      // calculate determinant
+      d=det();
+
+      // check determinant
+      assert(d!=0.0);
+
+      // calculate inverse
+      d=1.0/d;
+      m.mtx[0][0]=d*mtx[1][1];
+      m.mtx[1][0]=-d*mtx[1][0];
+      m.mtx[0][1]=-d*mtx[0][1];
+      m.mtx[1][1]=d*mtx[0][0];
+
+      return(m);
+      }
+
+   // create scaling matrix
+   static mat2 scale(double s,double t)
+      {
+      return(mat2(vec2(s,0),
+                  vec2(0,t)));
+      }
+
+   protected:
+
+   // matrix
+   double mtx[2][2];
+   };
+
+// addition of two matrices
+inline mat2 operator + (const mat2 &m1,const mat2 &m2)
+   {
+   return(mat2(m1[0]+m2[0],
+               m1[1]+m2[1]));
+   }
+
+// multiplication of two matrices
+inline mat2 operator * (const mat2 &m1,const mat2 &m2)
+   {
+   return(mat2(vec2(m1.row(0).dot(m2[0]),m1.row(0).dot(m2[1])),
+               vec2(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]))));
+   }
+
+// right-hand vector multiplication
+inline vec2 operator * (const mat2 &m,const vec2 &v)
+   {return(vec2(m.row(0).dot(v),m.row(1).dot(v)));}
+
+// output operator
+inline std::ostream& operator << (std::ostream &out,const mat2 &m)
+   {return(out << '(' << m.row(0) << ',' << m.row(1) << ')');}
+
 // 3x3 double matrix
 //  definition of matrix via constructor taking three row vectors
 //  supplies matrix operators + and *
