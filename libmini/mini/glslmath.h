@@ -36,6 +36,10 @@ class vec2
    // normalize vector to unit length
    double normalize();
 
+   // dot product
+   double dot(const vec2 &v)
+      {return(x*v.x+y*v.y);}
+
    // vector components
    double x,y;
    };
@@ -64,9 +68,9 @@ inline vec2 operator * (const vec2 &a,const double b)
 inline vec2 operator / (const vec2 &a,const double b)
    {return(vec2(a.x/b,a.y/b));}
 
-// dot product
-inline double operator * (const vec2 &a,const vec2 &b)
-   {return(a.x*b.x+a.y*b.y);}
+// component-wise multiplication
+inline vec2 operator * (const vec2 &a,const vec2 &b)
+   {return(vec2(a.x*b.x,a.y*b.y));}
 
 // comparison
 inline int operator == (const vec2 &a,const vec2 &b)
@@ -122,6 +126,14 @@ class vec3
    // normalize vector to unit length
    double normalize();
 
+   // dot product
+   double dot(const vec3 &v)
+      {return(x*v.x+y*v.y+z*v.z);}
+
+   // cross product (0,0,-1)/(-1,0,0)=(0,1,0)
+   vec3 cross(const vec3 &v)
+      {return(vec3(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x));}
+
    // vector components
    double x,y,z;
    };
@@ -150,13 +162,9 @@ inline vec3 operator * (const vec3 &a,const double b)
 inline vec3 operator / (const vec3 &a,const double b)
    {return(vec3(a.x/b,a.y/b,a.z/b));}
 
-// dot product
-inline double operator * (const vec3 &a,const vec3 &b)
-   {return(a.x*b.x+a.y*b.y+a.z*b.z);}
-
-// cross product (0,0,-1)/(-1,0,0)=(0,1,0)
-inline vec3 operator / (const vec3 &a,const vec3 &b)
-   {return(vec3(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x));}
+// component-wise multiplication
+inline vec3 operator * (const vec3 &a,const vec3 &b)
+   {return(vec3(a.x*b.x,a.y*b.y,a.z*b.z));}
 
 // comparison
 inline int operator == (const vec3 &a,const vec3 &b)
@@ -227,6 +235,10 @@ class vec4
    // normalize vector to unit length
    double normalize();
 
+   // dot product
+   double dot(const vec4 &v)
+      {return(x*v.x+y*v.y+z*v.z+w*v.w);}
+
    // vector components
    double x,y,z,w;
    };
@@ -255,9 +267,9 @@ inline vec4 operator * (const vec4 &a,const double b)
 inline vec4 operator / (const vec4 &a,const double b)
    {return(vec4(a.x/b,a.y/b,a.z/b,a.w/b));}
 
-// dot product
-inline double operator * (const vec4 &a,const vec4 &b)
-   {return(a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);}
+// component-wise multiplication
+inline vec4 operator * (const vec4 &a,const vec4 &b)
+   {return(vec4(a.x*b.x,a.y*b.y,a.z*b.z,a.w*b.w));}
 
 // comparison
 inline int operator == (const vec4 &a,const vec4 &b)
@@ -434,15 +446,15 @@ inline mat4 operator + (const mat4 &m1,const mat4 &m2)
 // multiplication of two matrices
 inline mat4 operator * (const mat4 &m1,const mat4 &m2)
    {
-   return(mat4(vec4(m1.row(0)*m2[0],m1.row(0)*m2[1],m1.row(0)*m2[2],m1.row(0)*m2[3]),
-               vec4(m1.row(1)*m2[0],m1.row(1)*m2[1],m1.row(1)*m2[2],m1.row(1)*m2[3]),
-               vec4(m1.row(2)*m2[0],m1.row(2)*m2[1],m1.row(2)*m2[2],m1.row(2)*m2[3]),
-               vec4(m1.row(3)*m2[0],m1.row(3)*m2[1],m1.row(3)*m2[2],m1.row(3)*m2[3])));
+   return(mat4(vec4(m1.row(0).dot(m2[0]),m1.row(0).dot(m2[1]),m1.row(0).dot(m2[2]),m1.row(0).dot(m2[3])),
+               vec4(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]),m1.row(1).dot(m2[2]),m1.row(1).dot(m2[3])),
+               vec4(m1.row(2).dot(m2[0]),m1.row(2).dot(m2[1]),m1.row(2).dot(m2[2]),m1.row(2).dot(m2[3])),
+               vec4(m1.row(3).dot(m2[0]),m1.row(3).dot(m2[1]),m1.row(3).dot(m2[2]),m1.row(3).dot(m2[3]))));
    }
 
 // right-hand vector multiplication
 inline vec4 operator * (const mat4 &m,const vec4 &v)
-   {return(vec4(m.row(0)*v,m.row(1)*v,m.row(2)*v,m.row(3)*v));}
+   {return(vec4(m.row(0).dot(v),m.row(1).dot(v),m.row(2).dot(v),m.row(3).dot(v)));}
 
 // output operator
 inline std::ostream& operator << (std::ostream &out,const mat4 &m)
