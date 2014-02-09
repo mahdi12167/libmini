@@ -364,6 +364,13 @@ class mat2
                   vec2(0,t)));
       }
 
+   // create scaling matrix
+   static mat2 scale(const vec2 &c)
+      {
+      return(mat2(vec2(c.x,0),
+                  vec2(0,c.y)));
+      }
+
    protected:
 
    // matrix
@@ -496,6 +503,14 @@ class mat3
       return(mat3(vec3(s,0,0),
                   vec3(0,t,0),
                   vec3(0,0,r)));
+      }
+
+   // create scaling matrix
+   static mat3 scale(const vec3 &c)
+      {
+      return(mat3(vec3(c.x,0,0),
+                  vec3(0,c.y,0),
+                  vec3(0,0,c.z)));
       }
 
    protected:
@@ -671,6 +686,24 @@ class mat4
       return(m);
       }
 
+   // create scaling matrix
+   static mat4 scale(double s,double t,double r)
+      {
+      return(mat4(vec4(s,0,0,0),
+                  vec4(0,t,0,0),
+                  vec4(0,0,r,0),
+                  vec4(0,0,0,1)));
+      }
+
+   // create scaling matrix
+   static mat4 scale(const vec4 &c)
+      {
+      return(mat4(vec4(c.x,0,0,0),
+                  vec4(0,c.y,0,0),
+                  vec4(0,0,c.z,0),
+                  vec4(0,0,0,c.w)));
+      }
+
    // create translation matrix
    static mat4 translate(double x,double y,double z)
       {
@@ -680,14 +713,17 @@ class mat4
                   vec4(0,0,0,1)));
       }
 
-   // create scaling matrix
-   static mat4 scale(double s,double t,double r)
+   // create translation matrix
+   static mat4 translate(const vec4 &v)
       {
-      return(mat4(vec4(s,0,0,0),
-                  vec4(0,t,0,0),
-                  vec4(0,0,r,0),
-                  vec4(0,0,0,1)));
+      return(mat4(vec4(1,0,0,v.x),
+                  vec4(0,1,0,v.y),
+                  vec4(0,0,1,v.z),
+                  vec4(0,0,0,v.w)));
       }
+
+   // create lookat matrix
+   static mat4 lookat(const vec3 &eye,const vec3 &center,vec3 up);
 
    protected:
 
@@ -720,6 +756,21 @@ inline vec4 operator * (const mat4 &m,const vec4 &v)
 // output operator
 inline std::ostream& operator << (std::ostream &out,const mat4 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
+
+// create lookat matrix
+inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,vec3 up)
+   {
+   vec3 dir,right;
+
+   dir=center-eye;
+   dir.normalize();
+   up.normalize();
+
+   right=dir.cross(up);
+   up=right.cross(dir);
+
+   return(mat4(right,up,-dir)*translate(-eye));
+   }
 
 // matrix stack
 template <class T>
