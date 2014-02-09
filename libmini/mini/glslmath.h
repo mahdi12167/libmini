@@ -722,6 +722,9 @@ class mat4
                   vec4(0,0,0,v.w)));
       }
 
+   // create perspective matrix
+   static mat4 perspective(double fovy,double aspect,double znear,double zfar);
+
    // create lookat matrix
    static mat4 lookat(const vec3 &eye,const vec3 &center,const vec3 &up);
 
@@ -756,6 +759,23 @@ inline vec4 operator * (const mat4 &m,const vec4 &v)
 // output operator
 inline std::ostream& operator << (std::ostream &out,const mat4 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
+
+// create perspective matrix
+inline mat4 mat4::perspective(double fovy,double aspect,double znear,double zfar)
+   {
+   double f;
+
+   assert(fovy>0.0 && fovy<180);
+   assert(znear>0.0 && zfar>znear);
+   assert(aspect>0.0);
+
+   f=1.0/tan(0.5*fovy);
+
+   return(mat4(vec4(f/aspect,0,0,0),
+               vec4(0,f,0,0),
+               vec4(0,0,(zfar+znear)/(znear-zfar),(2*zfar*znear)/(znear-zfar)),
+               vec4(0,0,-1,0)));
+   }
 
 // create lookat matrix
 inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
