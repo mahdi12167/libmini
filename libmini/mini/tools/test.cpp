@@ -224,7 +224,8 @@ int main(int argc,char *argv[])
       }
    x2=top_matrix()[3].x;
    }
-   if (x1==0.5 && x2==0.0) std::cout << "SUCCESS" << std::endl;
+   mat4 lookat=mat4::lookat(vec3(0,0,0),vec3(0,0,-1),vec3(0,1,0));
+   if (x1==0.5 && x2==0.0 && lookat==mat4()) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 

@@ -325,7 +325,7 @@ class mat2
 
    // cast operator to column-first array
    operator const double *() const
-      {return(mtx[0]);}
+      {return(pointer);}
 
    // calculate determinant of 2x2 matrix
    double det() const
@@ -374,7 +374,10 @@ class mat2
    protected:
 
    // matrix
-   double mtx[2][2];
+   union {
+      double mtx[2][2];
+      double pointer[4];
+      };
    };
 
 // addition of two matrices
@@ -389,6 +392,28 @@ inline mat2 operator * (const mat2 &m1,const mat2 &m2)
    {
    return(mat2(vec2(m1.row(0).dot(m2[0]),m1.row(0).dot(m2[1])),
                vec2(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]))));
+   }
+
+// comparison
+inline int operator == (const mat2 &a,const mat2 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<4; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(false);
+
+   return(true);
+   }
+
+// negated comparison
+inline int operator != (const mat2 &a,const mat2 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<4; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(true);
+
+   return(false);
    }
 
 // right-hand vector multiplication
@@ -456,7 +481,7 @@ class mat3
 
    // cast operator to column-first array
    operator const double *() const
-      {return(mtx[0]);}
+      {return(pointer);}
 
    // calculate determinant of 3x3 matrix
    double det() const
@@ -544,7 +569,10 @@ class mat3
    protected:
 
    // matrix
-   double mtx[3][3];
+   union {
+      double mtx[3][3];
+      double pointer[9];
+      };
    };
 
 // addition of two matrices
@@ -561,6 +589,28 @@ inline mat3 operator * (const mat3 &m1,const mat3 &m2)
    return(mat3(vec3(m1.row(0).dot(m2[0]),m1.row(0).dot(m2[1]),m1.row(0).dot(m2[2])),
                vec3(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]),m1.row(1).dot(m2[2])),
                vec3(m1.row(2).dot(m2[0]),m1.row(2).dot(m2[1]),m1.row(2).dot(m2[2]))));
+   }
+
+// comparison
+inline int operator == (const mat3 &a,const mat3 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<9; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(false);
+
+   return(true);
+   }
+
+// negated comparison
+inline int operator != (const mat3 &a,const mat3 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<9; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(true);
+
+   return(false);
    }
 
 // right-hand vector multiplication
@@ -645,7 +695,7 @@ class mat4
 
    // cast operator to column-first array
    operator const double *() const
-      {return(mtx[0]);}
+      {return(pointer);}
 
    // calculate determinant of 4x4 matrix
    double det() const
@@ -763,7 +813,10 @@ class mat4
    protected:
 
    // matrix
-   double mtx[4][4];
+   union {
+      double mtx[4][4];
+      double pointer[16];
+      };
    };
 
 // addition of two matrices
@@ -782,6 +835,28 @@ inline mat4 operator * (const mat4 &m1,const mat4 &m2)
                vec4(m1.row(1).dot(m2[0]),m1.row(1).dot(m2[1]),m1.row(1).dot(m2[2]),m1.row(1).dot(m2[3])),
                vec4(m1.row(2).dot(m2[0]),m1.row(2).dot(m2[1]),m1.row(2).dot(m2[2]),m1.row(2).dot(m2[3])),
                vec4(m1.row(3).dot(m2[0]),m1.row(3).dot(m2[1]),m1.row(3).dot(m2[2]),m1.row(3).dot(m2[3]))));
+   }
+
+// comparison
+inline int operator == (const mat4 &a,const mat4 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<16; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(false);
+
+   return(true);
+   }
+
+// negated comparison
+inline int operator != (const mat4 &a,const mat4 &b)
+   {
+   unsigned int i;
+
+   for (i=0; i<16; i++)
+      if (((const double *)a)[i]!=((const double *)b)[i]) return(true);
+
+   return(false);
    }
 
 // right-hand vector multiplication
@@ -823,7 +898,7 @@ inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
    right=dir.cross(top);
    top=right.cross(dir);
 
-   return(mat4(right,top,-dir)*translate(-eye));
+   return(mat4(vec4(right,0),vec4(top,0),vec4(-dir,0))*translate(-eye));
    }
 
 // matrix stack
