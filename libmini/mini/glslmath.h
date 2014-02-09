@@ -687,12 +687,12 @@ class mat4
       }
 
    // create scaling matrix
-   static mat4 scale(double s,double t,double r)
+   static mat4 scale(double s,double t,double r,double w=1.0)
       {
       return(mat4(vec4(s,0,0,0),
                   vec4(0,t,0,0),
                   vec4(0,0,r,0),
-                  vec4(0,0,0,1)));
+                  vec4(0,0,0,w)));
       }
 
    // create scaling matrix
@@ -723,7 +723,7 @@ class mat4
       }
 
    // create lookat matrix
-   static mat4 lookat(const vec3 &eye,const vec3 &center,vec3 up);
+   static mat4 lookat(const vec3 &eye,const vec3 &center,const vec3 &up);
 
    protected:
 
@@ -758,18 +758,20 @@ inline std::ostream& operator << (std::ostream &out,const mat4 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
 
 // create lookat matrix
-inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,vec3 up)
+inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
    {
-   vec3 dir,right;
+   vec3 dir,right,top;
 
    dir=center-eye;
    dir.normalize();
-   up.normalize();
 
-   right=dir.cross(up);
-   up=right.cross(dir);
+   top=up;
+   top.normalize();
 
-   return(mat4(right,up,-dir)*translate(-eye));
+   right=dir.cross(top);
+   top=right.cross(dir);
+
+   return(mat4(right,top,-dir)*translate(-eye));
    }
 
 // matrix stack
