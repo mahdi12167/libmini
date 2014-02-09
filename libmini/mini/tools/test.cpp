@@ -210,7 +210,8 @@ int main(int argc,char *argv[])
    strip2.getbbox(bboxmin2,bboxmax2);
    std::cout << "ministrip: size2=" << size2 << " after=" << after << std::endl;
    std::cout << "ministrip: bbox2=" << bboxmin2 << "->" << bboxmax2 << std::endl;
-   if (size1==10 && size2==10 && before==453 && after==0 && bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
+   if (size1==10 && size2==10 && before==453 && after==0 &&
+       bboxmin1==bboxmin2 && bboxmax1==bboxmax2) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 
@@ -224,8 +225,13 @@ int main(int argc,char *argv[])
       }
    x2=top_matrix()[3].x;
    }
+   mat4 translate=mat4::translate(0,0,0);
+   mat4 rotate=mat4::rotate(0,vec3(1,0,0));
    mat4 lookat=mat4::lookat(vec3(0,0,0),vec3(0,0,-1),vec3(0,1,0));
-   if (x1==0.5 && x2==0.0 && lookat==mat4()) std::cout << "SUCCESS" << std::endl;
+   mat4 perspective=mat4::perspective(90,1,1,2);
+   if (x1==0.5 && x2==0.0 &&
+       translate==mat4() && rotate==mat4() && lookat==mat4() &&
+       dabs(perspective[0].x-1)<1E10 && perspective[2].z==-3.0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 
