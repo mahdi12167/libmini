@@ -37,7 +37,7 @@ class vec2
    double normalize();
 
    // dot product
-   double dot(const vec2 &v)
+   double dot(const vec2 &v) const
       {return(x*v.x+y*v.y);}
 
    // vector components
@@ -127,11 +127,11 @@ class vec3
    double normalize();
 
    // dot product
-   double dot(const vec3 &v)
+   double dot(const vec3 &v) const
       {return(x*v.x+y*v.y+z*v.z);}
 
    // cross product (0,0,-1)/(-1,0,0)=(0,1,0)
-   vec3 cross(const vec3 &v)
+   vec3 cross(const vec3 &v) const
       {return(vec3(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x));}
 
    // vector components
@@ -236,8 +236,15 @@ class vec4
    double normalize();
 
    // dot product
-   double dot(const vec4 &v)
+   double dot(const vec4 &v) const
       {return(x*v.x+y*v.y+z*v.z+w*v.w);}
+
+   // cross product (0,0,-1,0)/(-1,0,0,0)=(0,1,0,0)
+   vec4 cross(const vec4 &v) const
+      {
+      assert(w==0.0 && v.w==0.0);
+      return(vec4(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x,0.0));
+      }
 
    // vector components
    double x,y,z,w;
