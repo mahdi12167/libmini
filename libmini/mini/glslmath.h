@@ -513,6 +513,34 @@ class mat3
                   vec3(0,0,c.z)));
       }
 
+   // create rotation matrix
+   static mat3 rotate(double angle,const vec3 &v)
+      {
+      vec3 axis;
+      double c,s;
+      double c1;
+
+      double x,y,z;
+
+      angle*=M_PI/180;
+
+      axis=v;
+      axis.normalize();
+
+      c=cos(angle);
+      s=sin(angle);
+
+      x=axis.x;
+      y=axis.y;
+      z=axis.z;
+
+      c1=1.0-c;
+
+      return(mat3(vec3(x*x*c1+c,x*y*c1-z*s,x*z*c1+y*s),
+                  vec3(y*x*c1+z*s,y*y*c1+c,y*z*c1-x*s),
+                  vec3(x*z*c1-y*s,y*z*c1+x*s,z*z*c1+c)));
+      }
+
    protected:
 
    // matrix
@@ -721,6 +749,10 @@ class mat4
                   vec4(0,0,1,v.z),
                   vec4(0,0,0,v.w)));
       }
+
+   // create rotation matrix
+   static mat4 rotate(double angle,const vec3 &v)
+      {return(mat3::rotate(angle,v));}
 
    // create perspective matrix
    static mat4 perspective(double fovy,double aspect,double znear,double zfar);
