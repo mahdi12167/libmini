@@ -1,4 +1,4 @@
-// (c) by Stefan Roettger, licensed under LGPL 2.1
+// (c) by Stefan Roettger, licensed under MIT license
 
 #ifndef GLSLMATH_H
 #define GLSLMATH_H
@@ -628,6 +628,75 @@ inline vec3 operator * (const mat3 &m,const vec3 &v)
 inline std::ostream& operator << (std::ostream &out,const mat3 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ')');}
 
+// 3x3 float matrix
+//  this matrix type is not designed for calculations
+//  it is just designed for storage and transfer purposes
+//   use mat3 for linear math calulations, then copy to mat3f and
+//   cast to const float * to transfer via glUniform for example:
+//    glUniform3fv(..., (const float *)mat3f(M));
+class mat3f
+   {
+   public:
+
+   // default constructor
+   mat3f()
+      {
+      mtx[0][0]=1.0f;
+      mtx[0][1]=0.0f;
+      mtx[0][2]=0.0f;
+
+      mtx[1][0]=0.0f;
+      mtx[1][1]=1.0f;
+      mtx[1][2]=0.0f;
+
+      mtx[2][0]=0.0f;
+      mtx[2][1]=0.0f;
+      mtx[2][2]=1.0f;
+      }
+
+   // copy constructor
+   mat3f(const mat3 &m)
+      {
+      mtx[0][0]=m[0].x;
+      mtx[0][1]=m[1].x;
+      mtx[0][2]=m[2].x;
+
+      mtx[1][0]=m[0].y;
+      mtx[1][1]=m[1].y;
+      mtx[1][2]=m[2].y;
+
+      mtx[2][0]=m[0].z;
+      mtx[2][1]=m[1].z;
+      mtx[2][2]=m[2].z;
+      }
+
+   // subscript operator (column getter)
+   vec4 operator[] (const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec3(mtx[i][0],mtx[i][1],mtx[i][2]));
+      }
+
+   // row getter
+   vec4 row(const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec4(mtx[0][i],mtx[1][i],mtx[2][i]));
+      }
+
+   // cast operator to column-first array
+   operator const float *() const
+      {return(pointer);}
+
+   protected:
+
+   // matrix
+   union {
+      float mtx[3][3];
+      float pointer[9];
+      };
+   };
+
 // 4x4 double matrix
 //  definition of matrix via constructor taking four row vectors
 //  supplies matrix operators + and *
@@ -909,6 +978,91 @@ inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
 
    return(mat4(vec4(right,0),vec4(top,0),vec4(-dir,0))*translate(-eye));
    }
+
+// 4x4 float matrix
+//  this matrix type is not designed for calculations
+//  it is just designed for storage and transfer purposes
+//   use mat4 for linear math calulations, then copy to mat4f and
+//   cast to const float * to transfer via glUniform for example:
+//    glUniform4fv(..., (const float *)mat4f(M));
+class mat4f
+   {
+   public:
+
+   // default constructor
+   mat4f()
+      {
+      mtx[0][0]=1.0f;
+      mtx[0][1]=0.0f;
+      mtx[0][2]=0.0f;
+      mtx[0][3]=0.0f;
+
+      mtx[1][0]=0.0f;
+      mtx[1][1]=1.0f;
+      mtx[1][2]=0.0f;
+      mtx[1][3]=0.0f;
+
+      mtx[2][0]=0.0f;
+      mtx[2][1]=0.0f;
+      mtx[2][2]=1.0f;
+      mtx[2][3]=0.0f;
+
+      mtx[3][0]=0.0f;
+      mtx[3][1]=0.0f;
+      mtx[3][2]=0.0f;
+      mtx[3][3]=1.0f;
+      }
+
+   // copy constructor
+   mat4f(const mat4 &m)
+      {
+      mtx[0][0]=m[0].x;
+      mtx[0][1]=m[1].x;
+      mtx[0][2]=m[2].x;
+      mtx[0][3]=m[3].x;
+
+      mtx[1][0]=m[0].y;
+      mtx[1][1]=m[1].y;
+      mtx[1][2]=m[2].y;
+      mtx[1][3]=m[3].y;
+
+      mtx[2][0]=m[0].z;
+      mtx[2][1]=m[1].z;
+      mtx[2][2]=m[2].z;
+      mtx[2][3]=m[3].z;
+
+      mtx[3][0]=m[0].w;
+      mtx[3][1]=m[1].w;
+      mtx[3][2]=m[2].w;
+      mtx[3][3]=m[3].w;
+      }
+
+   // subscript operator (column getter)
+   vec4 operator[] (const int i) const
+      {
+      assert(i>=0 && i<4);
+      return(vec4(mtx[i][0],mtx[i][1],mtx[i][2],mtx[i][3]));
+      }
+
+   // row getter
+   vec4 row(const int i) const
+      {
+      assert(i>=0 && i<4);
+      return(vec4(mtx[0][i],mtx[1][i],mtx[2][i],mtx[3][i]));
+      }
+
+   // cast operator to column-first array
+   operator const float *() const
+      {return(pointer);}
+
+   protected:
+
+   // matrix
+   union {
+      float mtx[4][4];
+      float pointer[16];
+      };
+   };
 
 // matrix stack
 template <class T>
