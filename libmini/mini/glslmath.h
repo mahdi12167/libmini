@@ -650,7 +650,7 @@ inline std::ostream& operator << (std::ostream &out,const mat3 &m)
 //  it is just designed for storage and transfer purposes
 //   use mat3 for linear math calulations, then copy to mat3f and
 //   cast to const float * to transfer via glUniform for example:
-//    glUniform3fv(..., (const float *)mat3f(M));
+//    glUniformMatrix3fv(location, 1, GL_FALSE, (const float *)mat3f(M));
 class mat3f
    {
    public:
@@ -1001,7 +1001,7 @@ inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
 //  it is just designed for storage and transfer purposes
 //   use mat4 for linear math calulations, then copy to mat4f and
 //   cast to const float * to transfer via glUniform for example:
-//    glUniform4fv(..., (const float *)mat4f(M));
+//    glUniformMatrix4fv(location, 1, GL_FALSE, (const float *)mat4f(M));
 class mat4f
    {
    public:
