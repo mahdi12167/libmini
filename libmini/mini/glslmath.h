@@ -135,8 +135,7 @@ class vec3
       {return(vec3(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x));}
 
    // reflect incident vector at normalized surface normal
-   vec3 reflect(const vec3 &n) const
-      {return((*this)+2*n*dot(n));}
+   vec3 reflect(const vec3 &n) const;
 
    // vector components
    double x,y,z;
@@ -185,6 +184,10 @@ inline double vec3::normalize()
    if (length>0.0) *this=*this/length;
    return(length);
    }
+
+// reflect incident vector at normalized surface normal
+vec3 vec3::reflect(const vec3 &n) const
+   {return((*this)-2*n*dot(n));}
 
 // output operator
 inline std::ostream& operator << (std::ostream &out,const vec3 &v)
@@ -251,11 +254,7 @@ class vec4
       }
 
    // reflect incident vector at normalized surface normal
-   vec4 reflect(const vec4 &n) const
-      {
-      assert(w==0.0 && n.w==0.0);
-      return((*this)+2*n*dot(n));
-      }
+   vec4 reflect(const vec4 &n) const;
 
    // vector components
    double x,y,z,w;
@@ -303,6 +302,13 @@ inline double vec4::normalize()
    double length=getlength();
    if (length>0.0) *this=*this/length;
    return(length);
+   }
+
+// reflect incident vector at normalized surface normal
+inline vec4 vec4::reflect(const vec4 &n) const
+   {
+   assert(w==0.0 && n.w==0.0);
+   return((*this)-2*n*dot(n));
    }
 
 // output operator
