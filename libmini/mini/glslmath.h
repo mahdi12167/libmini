@@ -134,6 +134,10 @@ class vec3
    vec3 cross(const vec3 &v) const
       {return(vec3(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x));}
 
+   // reflect incident vector at normalized surface normal
+   vec3 reflect(const vec3 &n) const
+      {return((*this)+2*n*dot(n));}
+
    // vector components
    double x,y,z;
    };
@@ -244,6 +248,13 @@ class vec4
       {
       assert(w==0.0 && v.w==0.0);
       return(vec4(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x,0.0));
+      }
+
+   // reflect incident vector at normalized surface normal
+   vec4 reflect(const vec4 &n) const
+      {
+      assert(w==0.0 && n.w==0.0);
+      return((*this)+2*n*dot(n));
       }
 
    // vector components
