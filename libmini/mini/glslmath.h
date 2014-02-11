@@ -906,14 +906,7 @@ class mat4
       {return(mat3::rotate(angle,v));}
 
    // create orthographic matrix
-   static mat4 ortho(double l,double r,double b,double t,double n,double f)
-      {
-      assert (r>l && t>b && f>n);
-
-      return(mat4(vec4(2.0/(r-l),0,0,-(r+l)/(r-l)),
-                  vec4(0,2.0/(t-b),0,-(t+b)/(t-b)),
-                  vec4(0,0,-2.0/(f-n),-(f+n)/(f-n))));
-      }
+   static mat4 ortho(double l,double r,double b,double t,double n,double f);
 
    // create perspective matrix
    static mat4 perspective(double fovy,double aspect,double znear,double zfar);
@@ -977,6 +970,16 @@ inline vec4 operator * (const mat4 &m,const vec4 &v)
 // output operator
 inline std::ostream& operator << (std::ostream &out,const mat4 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
+
+// create orthographic matrix
+inline mat4 mat4::ortho(double l,double r,double b,double t,double n,double f)
+   {
+   assert (r>l && t>b && f>n);
+
+   return(mat4(vec4(2.0/(r-l),0,0,-(r+l)/(r-l)),
+               vec4(0,2.0/(t-b),0,-(t+b)/(t-b)),
+               vec4(0,0,-2.0/(f-n),-(f+n)/(f-n))));
+   }
 
 // create perspective matrix
 inline mat4 mat4::perspective(double fovy,double aspect,double znear,double zfar)
