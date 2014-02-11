@@ -1099,6 +1099,43 @@ class mat4f
       };
    };
 
+// quaternion
+class quat
+   {
+   public:
+
+   // default constructor
+   quat(const vec4 &v=vec4(0,0,0,1))
+      : q(v)
+      {}
+
+   friend quat operator + (const quat &a,const quat &b);
+   friend quat operator - (const quat &a,const quat &b);
+   friend quat operator * (const quat &a,const quat &b);
+
+   protected:
+
+   vec4 q;
+   };
+
+// addition of two quaternions
+inline quat operator + (const quat &a,const quat &b)
+   {return(a.q+b.q);}
+
+// subtraction of two quaternions
+inline quat operator - (const quat &a,const quat &b)
+   {return(a.q-b.q);}
+
+// multiplication of two quaternions
+inline quat operator * (const quat &a,const quat &b)
+   {
+   vec3 p(a.q.x,a.q.y,a.q.z),
+        q(b.q.x,b.q.y,b.q.z);
+
+   return(vec4(p.cross(q)+p*b.q.w+q*a.q.w,
+               a.q.w*b.q.w-p.dot(q)));
+   }
+
 // matrix stack
 template <class T>
 class scoped_push
