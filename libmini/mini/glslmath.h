@@ -905,6 +905,16 @@ class mat4
    static mat4 rotate(double angle,const vec3 &v)
       {return(mat3::rotate(angle,v));}
 
+   // create orthographic matrix
+   static mat4 ortho(double l,double r,double b,double t,double n,double f)
+      {
+      assert (r>l && t>b && f>n);
+
+      return(mat4(vec4(2.0/(r-l),0,0,-(r+l)/(r-l)),
+                  vec4(0,2.0/(t-b),0,-(t+b)/(t-b)),
+                  vec4(0,0,-2.0/(f-n),-(f+n)/(f-n))));
+      }
+
    // create perspective matrix
    static mat4 perspective(double fovy,double aspect,double znear,double zfar);
 
