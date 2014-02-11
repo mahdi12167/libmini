@@ -33,8 +33,11 @@ class vec2
    // get vector length
    double getlength() const {return(sqrt(x*x+y*y));}
 
+   // get squared vector length
+   double getlength2() const {return(x*x+y*y);}
+
    // normalize vector to unit length
-   double normalize();
+   vec2 normalize() const;
 
    // dot product
    double dot(const vec2 &v) const
@@ -81,11 +84,11 @@ inline int operator != (const vec2 &a,const vec2 &b)
    {return(a.x!=b.x || a.y!=b.y);}
 
 // normalization to unit length
-inline double vec2::normalize()
+inline vec2 vec2::normalize() const
    {
-   double length=getlength();
-   if (length>0.0) *this=*this/length;
-   return(length);
+   double length2=getlength2();
+   if (length2>0.0 && length2!=1.0) return(*this/sqrt(length2));
+   return(*this);
    }
 
 // output operator
@@ -123,8 +126,11 @@ class vec3
    // get vector length
    double getlength() const {return(sqrt(x*x+y*y+z*z));}
 
+   // get squared vector length
+   double getlength2() const {return(x*x+y*y+z*z);}
+
    // normalize vector to unit length
-   double normalize();
+   vec3 normalize() const;
 
    // dot product
    double dot(const vec3 &v) const
@@ -178,11 +184,11 @@ inline int operator != (const vec3 &a,const vec3 &b)
    {return(a.x!=b.x || a.y!=b.y || a.z!=b.z);}
 
 // normalization to unit length
-inline double vec3::normalize()
+inline vec3 vec3::normalize() const
    {
-   double length=getlength();
-   if (length>0.0) *this=*this/length;
-   return(length);
+   double length2=getlength2();
+   if (length2>0.0 && length2!=1.0) return(*this/sqrt(length2));
+   return(*this);
    }
 
 // reflect incident vector at normalized surface normal
@@ -239,8 +245,11 @@ class vec4
    // get vector length
    double getlength() const {return(sqrt(x*x+y*y+z*z+w*w));}
 
+   // get squared vector length
+   double getlength2() const {return(x*x+y*y+z*z+w*w);}
+
    // normalize vector to unit length
-   double normalize();
+   vec4 normalize() const;
 
    // dot product
    double dot(const vec4 &v) const
@@ -297,11 +306,11 @@ inline int operator != (const vec4 &a,const vec4 &b)
    {return(a.x!=b.x || a.y!=b.y || a.z!=b.z || a.w!=b.w);}
 
 // normalization to unit length
-inline double vec4::normalize()
+inline vec4 vec4::normalize() const
    {
-   double length=getlength();
-   if (length>0.0) *this=*this/length;
-   return(length);
+   double length2=getlength2();
+   if (length2>0.0 && length2!=1.0) return(*this/sqrt(length2));
+   return(*this);
    }
 
 // reflect incident vector at normalized surface normal
@@ -573,8 +582,7 @@ class mat3
 
       angle*=M_PI/180;
 
-      axis=v;
-      axis.normalize();
+      axis=v.normalize();
 
       c=cos(angle);
       s=sin(angle);
@@ -984,11 +992,8 @@ inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
    {
    vec3 dir,right,top;
 
-   dir=center-eye;
-   dir.normalize();
-
-   top=up;
-   top.normalize();
+   dir=(center-eye).normalize();
+   top=up.normalize();
 
    right=dir.cross(top);
    top=right.cross(dir);
