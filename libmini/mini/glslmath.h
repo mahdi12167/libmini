@@ -1109,12 +1109,16 @@ class quat
       : q(v)
       {}
 
+   // dot product
+   double dot(const quat &r) const
+      {return(q.dot(r.q));}
+
    friend quat operator + (const quat &a,const quat &b);
    friend quat operator - (const quat &a,const quat &b);
    friend quat operator * (const quat &a,const quat &b);
    friend quat operator * (double a,const quat &b);
    friend quat operator * (const quat &a,double b);
-   friend quat operator - (const quat &q);
+   friend quat operator - (const quat &r);
 
    protected:
 
@@ -1138,8 +1142,8 @@ inline quat operator * (const quat &a,const double b)
    {return(a.q*b);}
 
 // conjugation of a quaternion
-inline quat operator - (const quat &q)
-   {return(vec4(-vec3(q.q.x,q.q.y,q.q.z),q.q.w));}
+inline quat operator - (const quat &r)
+   {return(vec4(-vec3(r.q.x,r.q.y,r.q.z),r.q.w));}
 
 // multiplication of two quaternions
 inline quat operator * (const quat &a,const quat &b)
