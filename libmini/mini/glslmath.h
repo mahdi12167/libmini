@@ -505,7 +505,7 @@ class mat3
       }
 
    // row getter
-   vec4 row(const int i) const
+   vec3 row(const int i) const
       {
       assert(i>=0 && i<3);
       return(vec3(mtx[0][i],mtx[1][i],mtx[2][i]));
@@ -1120,6 +1120,23 @@ class quat
    operator vec4() const
       {return(q);}
 
+   // cast operator
+   operator mat3() const
+      {
+      double a=q.w;
+      double b=q.x;
+      double c=q.y;
+      double d=q.z;
+      double a2=a*a;
+      double b2=b*b;
+      double c2=c*c;
+      double d2=d*d;
+
+      return(mat3(vec3(a2+b2-c2-d2, 2*(b*c-a*d), 2*(b*d+a*c)),
+                  vec3(2*(b*c+a*d), a2-b2+c2-d2, 2*(c*d-a*b)),
+                  vec3(2*(b*d-a*c), 2*(c*d+a*b), a2-b2-c2+d2)));
+      }
+
    friend quat operator + (const quat &a,const quat &b);
    friend quat operator - (const quat &a,const quat &b);
    friend quat operator * (const quat &a,const quat &b);
@@ -1159,7 +1176,7 @@ inline quat operator * (const quat &a,const quat &b)
    double v=a.q.w,w=b.q.w;
    vec3 p(a.q.x,a.q.y,a.q.z),q(b.q.x,b.q.y,b.q.z);
 
-   return(vec4(p.cross(q)+p*w+q*v,v*w-p.dot(q)));
+   return(vec4(p.cross(q)+p*w+q*v, v*w-p.dot(q)));
    }
 
 // output operator
