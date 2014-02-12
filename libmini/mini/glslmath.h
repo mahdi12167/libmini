@@ -228,13 +228,12 @@ class vec4
       {
       double c;
 
-      assert(w!=0.0);
-
-      if (w!=1.0)
-         {
-         c=1.0/w;
-         return(vec3(x*c,y*c,z*c));
-         }
+      if (w!=0.0)
+         if (w!=1.0)
+            {
+            c=1.0/w;
+            return(vec3(x*c,y*c,z*c));
+            }
 
       return(vec3(x,y,z));
       }
@@ -449,7 +448,7 @@ inline int operator != (const mat2 &a,const mat2 &b)
    return(false);
    }
 
-// right-hand vector multiplication
+// right-hand side vector multiplication
 inline vec2 operator * (const mat2 &m,const vec2 &v)
    {return(vec2(m.row(0).dot(v),m.row(1).dot(v)));}
 
@@ -645,7 +644,7 @@ inline int operator != (const mat3 &a,const mat3 &b)
    return(false);
    }
 
-// right-hand vector multiplication
+// right-hand side vector multiplication
 inline vec3 operator * (const mat3 &m,const vec3 &v)
    {return(vec3(m.row(0).dot(v),m.row(1).dot(v),m.row(2).dot(v)));}
 
@@ -963,7 +962,7 @@ inline int operator != (const mat4 &a,const mat4 &b)
    return(false);
    }
 
-// right-hand vector multiplication
+// right-hand side vector multiplication
 inline vec4 operator * (const mat4 &m,const vec4 &v)
    {return(vec4(m.row(0).dot(v),m.row(1).dot(v),m.row(2).dot(v),m.row(3).dot(v)));}
 
@@ -1113,12 +1112,21 @@ class quat
    double dot(const quat &r) const
       {return(q.dot(r.q));}
 
+   // normalization
+   quat normalize() const
+      {return(q.normalize());}
+
+   // cast operator
+   operator vec4() const
+      {return(q);}
+
    friend quat operator + (const quat &a,const quat &b);
    friend quat operator - (const quat &a,const quat &b);
    friend quat operator * (const quat &a,const quat &b);
    friend quat operator * (double a,const quat &b);
    friend quat operator * (const quat &a,double b);
    friend quat operator - (const quat &r);
+   friend vec3 operator * (const quat &r,const vec3 &v);
 
    protected:
 
@@ -1153,6 +1161,16 @@ inline quat operator * (const quat &a,const quat &b)
 
    return(vec4(p.cross(q)+p*b.q.w+q*a.q.w,
                a.q.w*b.q.w-p.dot(q)));
+   }
+
+// right-hand side vector multiplication
+inline vec3 operator * (const quat &r,const vec3 &v)
+   {
+   quat w=r.normalize();
+
+   w=-w*quat(vec4(v,0.0))*w;
+
+   return(vec3(w.q.x,w.q.y,w.q.z));
    }
 
 // matrix stack
