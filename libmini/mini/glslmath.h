@@ -1112,9 +1112,23 @@ class quat
    double dot(const quat &r) const
       {return(q.dot(r.q));}
 
+   // get quaternion length
+   double getlength() const {return(q.getlength());}
+
+   // get quaternion norm
+   double getnorm() const {return(q.getlength2());}
+
    // normalization
    quat normalize() const
       {return(q.normalize());}
+
+   // conjugation
+   quat conjugate() const
+      {return(vec4(-vec3(q.x,q.y,q.z),q.w));}
+
+   // invert normalized quaternion
+   quat invert() const
+      {return(normalize().conjugate());}
 
    // cast operator
    operator vec4() const
@@ -1135,6 +1149,13 @@ class quat
       return(mat3(vec3(a2+b2-c2-d2, 2*(b*c-a*d), 2*(b*d+a*c)),
                   vec3(2*(b*c+a*d), a2-b2+c2-d2, 2*(c*d-a*b)),
                   vec3(2*(b*d-a*c), 2*(c*d+a*b), a2-b2-c2+d2)));
+      }
+
+   // create rotating quaternion
+   static quat rotate(double angle,const vec3 &v)
+      {
+      angle*=M_PI/360;
+      return(vec4(sin(angle)*v,cos(angle)));
       }
 
    friend quat operator + (const quat &a,const quat &b);
@@ -1176,14 +1197,14 @@ inline quat operator * (const quat &a,const quat &b)
    double v=a.q.w,w=b.q.w;
    vec3 p(a.q.x,a.q.y,a.q.z),q(b.q.x,b.q.y,b.q.z);
 
-   return(vec4(p.cross(q)+p*w+q*v, v*w-p.dot(q)));
+   return(vec4(p*w+q*v+p.cross(q),v*w-p.dot(q)));
    }
 
 // output operator
 inline std::ostream& operator << (std::ostream &out,const quat &r)
    {return(out << "quat" << (vec4)r);}
 
-// right-hand side vector multiplication
+// right-hand side vector multiplication with normalized quaternion
 inline vec3 operator * (const quat &r,const vec3 &v)
    {
    quat w=r.normalize();
