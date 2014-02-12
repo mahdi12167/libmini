@@ -232,10 +232,14 @@ int main(int argc,char *argv[])
    mat4 lookat=mat4::lookat(vec3(0,0,0),vec3(0,0,-1),vec3(0,1,0));
    mat4 perspective=mat4::perspective(90,1,1,2);
    vec4 r=vec4(1,-1,0,0).reflect(vec4(0,1,0,0));
+   quat q;
+   vec3 v(0,1,0);
+   vec3 w=q*v;
    if (x1==0.5 && x2==0.0 &&
        translate==mat4() && rotate==mat4() && lookat==mat4() &&
        dabs(perspective[0].x-1)<1E10 && perspective[2].z==-3.0 &&
-       r==vec4(1,1,0,0))
+       r==vec4(1,1,0,0) &&
+       v==w)
       std::cout << "SUCCESS" << std::endl;
    else
       std::cout << "FAILURE" << std::endl;

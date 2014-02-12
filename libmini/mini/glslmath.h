@@ -1163,6 +1163,10 @@ inline quat operator * (const quat &a,const quat &b)
                a.q.w*b.q.w-p.dot(q)));
    }
 
+// output operator
+inline std::ostream& operator << (std::ostream &out,const quat &r)
+   {return(out << "quat" << (vec4)r);}
+
 // right-hand side vector multiplication
 inline vec3 operator * (const quat &r,const vec3 &v)
    {
