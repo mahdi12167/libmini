@@ -1156,11 +1156,10 @@ inline quat operator - (const quat &r)
 // multiplication of two quaternions
 inline quat operator * (const quat &a,const quat &b)
    {
-   vec3 p(a.q.x,a.q.y,a.q.z),
-        q(b.q.x,b.q.y,b.q.z);
+   double v=a.q.w,w=b.q.w;
+   vec3 p(a.q.x,a.q.y,a.q.z),q(b.q.x,b.q.y,b.q.z);
 
-   return(vec4(p.cross(q)+p*b.q.w+q*a.q.w,
-               a.q.w*b.q.w-p.dot(q)));
+   return(vec4(p.cross(q)+p*w+q*v,v*w-p.dot(q)));
    }
 
 // output operator
@@ -1171,7 +1170,6 @@ inline std::ostream& operator << (std::ostream &out,const quat &r)
 inline vec3 operator * (const quat &r,const vec3 &v)
    {
    quat w=r.normalize();
-
    w=-w*quat(vec4(v,0.0))*w;
 
    return(vec3(w.q.x,w.q.y,w.q.z));
