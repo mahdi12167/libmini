@@ -59,15 +59,15 @@ inline vec2 operator - (const vec2 &a,const vec2 &b)
 inline vec2 operator - (const vec2 &v)
    {return(vec2(-v.x,-v.y));}
 
-// scalar product
+// left-hand side scalar multiplication
 inline vec2 operator * (const double a,const vec2 &b)
    {return(vec2(a*b.x,a*b.y));}
 
-// scalar product
+// right-hand side scalar multiplication
 inline vec2 operator * (const vec2 &a,const double b)
    {return(vec2(a.x*b,a.y*b));}
 
-// scalar division
+// right-hand side scalar division
 inline vec2 operator / (const vec2 &a,const double b)
    {return(vec2(a.x/b,a.y/b));}
 
@@ -159,15 +159,15 @@ inline vec3 operator - (const vec3 &a,const vec3 &b)
 inline vec3 operator - (const vec3 &v)
    {return(vec3(-v.x,-v.y,-v.z));}
 
-// scalar product
+// left-hand side scalar multiplication
 inline vec3 operator * (const double a,const vec3 &b)
    {return(vec3(a*b.x,a*b.y,a*b.z));}
 
-// scalar product
+// right-hand side scalar multiplication
 inline vec3 operator * (const vec3 &a,const double b)
    {return(vec3(a.x*b,a.y*b,a.z*b));}
 
-// scalar division
+// right-hand side scalar division
 inline vec3 operator / (const vec3 &a,const double b)
    {return(vec3(a.x/b,a.y/b,a.z/b));}
 
@@ -281,15 +281,15 @@ inline vec4 operator - (const vec4 &a,const vec4 &b)
 inline vec4 operator - (const vec4 &v)
    {return(vec4(-v.x,-v.y,-v.z,-v.w));}
 
-// scalar product
+// left-hand side scalar multiplication
 inline vec4 operator * (const double a,const vec4 &b)
    {return(vec4(a*b.x,a*b.y,a*b.z,a*b.w));}
 
-// scalar product
+// right-hand side scalar multiplication
 inline vec4 operator * (const vec4 &a,const double b)
    {return(vec4(a.x*b,a.y*b,a.z*b,a.w*b));}
 
-// scalar division
+// right-hand side scalar division
 inline vec4 operator / (const vec4 &a,const double b)
    {return(vec4(a.x/b,a.y/b,a.z/b,a.w/b));}
 
@@ -1133,11 +1133,11 @@ inline quat operator + (const quat &a,const quat &b)
 inline quat operator - (const quat &a,const quat &b)
    {return(a.q-b.q);}
 
-// scalar product
+// left-hand side scalar multiplication
 inline quat operator * (const double a,const quat &b)
    {return(a*b.q);}
 
-// scalar product
+// right-hand side scalar multiplication
 inline quat operator * (const quat &a,const double b)
    {return(a.q*b);}
 
