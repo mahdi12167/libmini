@@ -45,7 +45,7 @@ class vec2
 
    // test for approximate equality
    int approx(const vec2 &v,const double e=1E-10) const
-      {return(dot(v)<e*e);}
+      {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)<e*e);}
 
    // vector components
    double x,y;
@@ -149,7 +149,7 @@ class vec3
 
    // test for approximate equality
    int approx(const vec3 &v,const double e=1E-10) const
-      {return(dot(v)<e*e);}
+      {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)+(v.z-z)*(v.z-z)<e*e);}
 
    // vector components
    double x,y,z;
@@ -274,7 +274,7 @@ class vec4
 
    // test for approximate equality
    int approx(const vec4 &v,const double e=1E-10) const
-      {return(dot(v)<e*e);}
+      {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)+(v.z-z)*(v.z-z)+(v.w-w)*(v.w-w)<e*e);}
 
    // vector components
    double x,y,z,w;
@@ -1273,7 +1273,7 @@ int test_glslmath()
       vec3 v(0,3,4);
       if (!(v.getlength()==5)) errors++;
       vec3 a(-10,0,10),b(10,10,10);
-      if (!(0.5*(b-a)==vec3(0,5,10))) errors++;
+      if (!(0.5*(a+b)==vec3(0,5,10))) errors++;
       vec4 r=vec4(1,-1,0,0).reflect(vec4(0,1,0,0));
       if (!(r==vec4(1,1,0,0))) errors++;
    }
