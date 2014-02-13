@@ -218,35 +218,8 @@ int main(int argc,char *argv[])
 #endif
 
 #ifdef GLSLMATH_TEST
-   double x1,x2;
-   {
-   mult_matrix(mat4::scale(0.5,1,1));
-      {
-      mult_matrix(mat4::translate(1,1,1));
-      x1=top_matrix()[3].x;
-      }
-   x2=top_matrix()[3].x;
-   }
-   mat4 translate=mat4::translate(0,0,0);
-   mat4 rotate=mat4::rotate(0,vec3(1,0,0));
-   mat4 lookat=mat4::lookat(vec3(0,0,0),vec3(0,0,-1),vec3(0,1,0));
-   mat4 perspective=mat4::perspective(90,1,1,2);
-   vec4 d=vec4(1,-1,0,0).reflect(vec4(0,1,0,0));
-   quat q;
-   vec3 v(0,1,0);
-   vec3 w=q*v;
-   quat a=quat::rotate(10,vec3(0,1,0));
-   quat b=quat::rotate(80,vec3(0,1,0));
-   quat r=a*b;
-   vec3 p=r*vec3(1,0,0);
-   if (x1==0.5 && x2==0.0 &&
-       translate==mat4() && rotate==mat4() && lookat==mat4() &&
-       dabs(perspective[0].x-1)<1E-10 && perspective[2].z==-3.0 &&
-       d==vec4(1,1,0,0) &&
-       v==w && (p-vec3(0,0,1)).getlength()<1E-10)
-      std::cout << "SUCCESS" << std::endl;
-   else
-      std::cout << "FAILURE" << std::endl;
+   if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
 #endif
 
    // end of test code

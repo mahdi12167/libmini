@@ -43,6 +43,10 @@ class vec2
    double dot(const vec2 &v) const
       {return(x*v.x+y*v.y);}
 
+   // test for approximate equality
+   int approx(const vec2 &v,const double e=1E-10) const
+      {return(dot(v)<e*e);}
+
    // vector components
    double x,y;
    };
@@ -142,6 +146,10 @@ class vec3
 
    // reflect incident vector at normalized surface normal
    vec3 reflect(const vec3 &n) const;
+
+   // test for approximate equality
+   int approx(const vec3 &v,const double e=1E-10) const
+      {return(dot(v)<e*e);}
 
    // vector components
    double x,y,z;
@@ -263,6 +271,10 @@ class vec4
 
    // reflect incident vector at normalized surface normal
    vec4 reflect(const vec4 &n) const;
+
+   // test for approximate equality
+   int approx(const vec4 &v,const double e=1E-10) const
+      {return(dot(v)<e*e);}
 
    // vector components
    double x,y,z,w;
@@ -1244,10 +1256,65 @@ class scoped_push
    static std::vector<T> stack_;
    };
 
+// matrix stack convenience macros
 #define mult_matrix(m) scoped_push<mat4> p(m)
 #define top_matrix() scoped_push<mat4>::top()
 
 template <class T>
 std::vector<T> scoped_push<T>::stack_;
+
+// test function
+int test_glslmath()
+   {
+   int errors=0;
+
+   // test vectors
+   {
+      vec3 v(0,3,4);
+      if (!(v.getlength()==5)) errors++;
+      vec3 a(-10,0,10),b(10,10,10);
+      if (!(0.5*(b-a)==vec3(0,5,10))) errors++;
+      vec4 r=vec4(1,-1,0,0).reflect(vec4(0,1,0,0));
+      if (!(r==vec4(1,1,0,0))) errors++;
+   }
+
+   // test transformations
+   {
+      mat4 translate=mat4::translate(0,0,0);
+      mat4 rotate=mat4::rotate(0,vec3(1,0,0));
+      mat4 lookat=mat4::lookat(vec3(0,0,0),vec3(0,0,-1),vec3(0,1,0));
+      if (!(translate==mat4() && rotate==mat4() && lookat==mat4())) errors++;
+      mat4 perspective=mat4::perspective(90,1,1,2);
+      if (!(fabs(1-perspective[0].x)<1E-10 && fabs(-3-perspective[2].z)<1E-10)) errors++;
+   }
+
+   // test matrix stack
+   {
+      double x1,x2;
+      {
+         mult_matrix(mat4::scale(0.5,1,1));
+         {
+            mult_matrix(mat4::translate(1,1,1));
+            x1=top_matrix()[3].x;
+         }
+         x2=top_matrix()[3].x;
+      }
+      if (!(x1==0.5 && x2==0.0)) errors++;
+   }
+
+   // test quaternions
+   {
+      quat q;
+      vec3 v(0,1,0);
+      vec3 w=q*v;
+      quat a=quat::rotate(10,vec3(0,1,0));
+      quat b=quat::rotate(80,vec3(0,1,0));
+      quat r=a*b;
+      vec3 p=r*vec3(1,0,0);
+      if (!(v.approx(w) && p.approx(vec3(0,0,1)))) errors++;
+   }
+
+   return(errors);
+   }
 
 #endif
