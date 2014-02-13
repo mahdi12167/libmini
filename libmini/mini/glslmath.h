@@ -1278,6 +1278,15 @@ int test_glslmath()
       if (!(r==vec4(1,1,0,0))) errors++;
    }
 
+   // test matrices
+   {
+      mat4 M(vec4(0,1,0,0),
+             vec4(-1,0,0,0),
+             vec4(0,0,1,0));
+
+      if (!(M*M.invert()==mat4())) errors++;
+   }
+
    // test transformations
    {
       mat4 translate=mat4::translate(0,0,0);
