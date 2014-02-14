@@ -136,6 +136,9 @@ void writeministring(const char *filename,const ministring &str)
    free(text);
    }
 
+void writeministring(ministring filename,const ministring &str)
+   {writeministring(filename.c_str(),str);}
+
 // read a RAW file as string
 char *readstring(const char *filename)
    {
@@ -170,6 +173,9 @@ ministring readministring(const char *filename)
 
    return(str);
    }
+
+ministring readministring(ministring filename)
+   {return(readministring(filename.c_str()));}
 
 // read a RAW file and compute signature
 unsigned int signature(const char *filename)

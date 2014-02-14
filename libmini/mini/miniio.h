@@ -30,12 +30,14 @@ void writestring(const char *filename,const char *cstr);
 
 //! write a ministring as RAW file
 void writeministring(const char *filename,const ministring &str);
+void writeministring(ministring filename,const ministring &str);
 
 //! read a RAW file as string
 char *readstring(const char *filename);
 
 //! read a RAW file as ministring
 ministring readministring(const char *filename);
+ministring readministring(ministring filename);
 
 //! read a RAW file and compute signature
 unsigned int signature(const char *filename);
