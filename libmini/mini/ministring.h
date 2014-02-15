@@ -641,6 +641,44 @@ class ministring: public ministring_base
          }
       }
 
+   //! remove white space
+   void remove_white_space()
+      {
+      unsigned int i=getsize();
+
+      while (i>0)
+         {
+         char c=get(--i);
+         if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i++);
+         }
+      }
+
+   //! remove leading white space
+   void remove_leading_white_space()
+      {
+      unsigned int i=0;
+
+      while (i<getsize())
+         {
+         char c=get(i);
+         if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i);
+         else break;
+         }
+      }
+
+   //! remove trailing white space
+   void remove_trailing_white_space()
+      {
+      unsigned int i=getsize();
+
+      while (i>0)
+         {
+         char c=get(--i);
+         if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i);
+         else break;
+         }
+      }
+
    //! concatenate string (serialization)
    ministring to_string() const
       {return(*this);}
