@@ -945,6 +945,33 @@ class ministrings: public minidyna<ministring>
       return(strs);
       }
 
+   //! remove white space
+   void remove_white_space()
+      {
+      unsigned int i;
+
+      for (i=0; i<getsize(); i++)
+         ref(i).remove_white_space();
+      }
+
+   //! remove leading white space
+   void remove_leading_white_space()
+      {
+      unsigned int i;
+
+      for (i=0; i<getsize(); i++)
+         ref(i).remove_leading_white_space();
+      }
+
+   //! remove trailing white space
+   void remove_trailing_white_space()
+      {
+      unsigned int i;
+
+      for (i=0; i<getsize(); i++)
+         ref(i).remove_trailing_white_space();
+      }
+
    //! add operator (string concatenation)
    ministrings& operator += (const ministring &a)
       {
