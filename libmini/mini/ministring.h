@@ -649,7 +649,7 @@ class ministring: public ministring_base
       while (i>0)
          {
          char c=get(--i);
-         if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i++);
+         if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i);
          }
       }
 
