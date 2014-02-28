@@ -8,7 +8,8 @@ void setparams(float minr,
                float maxd2,
                float sead2,
                float mino,
-               int maxc)
+               int maxc,
+               int skirt)
    {
    if (minr<1.0f || maxd2<=0.0f || sead2<0.0f || mino<0.0f || maxc<0) ERRORMSG();
 
@@ -17,6 +18,8 @@ void setparams(float minr,
    sead2v=sead2;
    minoff=mino;
    maxcull=maxc;
+
+   skirts=skirt;
    }
 
 // scale the height field
@@ -1792,6 +1795,78 @@ void pipemap(const int i,const int j,const int s,
          if (m1!=-MAXFLOAT) fanvertex_callback(i+s2,m1,j);
          else fanvertex_callback(i+s2,e1,j+s2);
       else fanvertex_callback(i+s2,m1,j);
+      }
+
+   // attach skirts
+   if (skirts)
+      {
+      // first edge fan
+      if (bc1==0)
+         if (i+s2==S-1)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+
+            beginfan_callback();
+            fanvertex_callback(i+s2,m1,j);
+            fanvertex_callback(i+s2,e4,j-s2);
+            fanvertex_callback(i+s2,e4-dh,j-s2);
+            fanvertex_callback(i+s2,m1-dh,j);
+            fanvertex_callback(i+s2,e1-dh,j+s2);
+            fanvertex_callback(i+s2,e1,j+s2);
+            fanvertex_callback(i+s2,m1,j);
+            }
+
+      // second edge fan
+      if (bc2==0)
+         if (j+s2==S-1)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+
+            beginfan_callback();
+            fanvertex_callback(i,m2,j+s2);
+            fanvertex_callback(i+s2,e1,j+s2);
+            fanvertex_callback(i+s2,e1-dh,j+s2);
+            fanvertex_callback(i,m2-dh,j+s2);
+            fanvertex_callback(i-s2,e2-dh,j+s2);
+            fanvertex_callback(i-s2,e2,j+s2);
+            fanvertex_callback(i,m2,j+s2);
+            }
+
+      // third edge fan
+      if (bc3==0)
+         if (i-s2==0)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+
+            beginfan_callback();
+            fanvertex_callback(i-s2,m3,j);
+            fanvertex_callback(i-s2,e2,j+s2);
+            fanvertex_callback(i-s2,e2-dh,j+s2);
+            fanvertex_callback(i-s2,m3-dh,j);
+            fanvertex_callback(i-s2,e3-dh,j-s2);
+            fanvertex_callback(i-s2,e3,j-s2);
+            fanvertex_callback(i-s2,m3,j);
+            }
+
+      // fourth edge fan
+      if (bc4==0)
+         if (j-s2==0)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+
+            beginfan_callback();
+            fanvertex_callback(i,m4,j-s2);
+            fanvertex_callback(i-s2,e3,j-s2);
+            fanvertex_callback(i-s2,e3-dh,j-s2);
+            fanvertex_callback(i,m4-dh,j-s2);
+            fanvertex_callback(i+s2,e4-dh,j-s2);
+            fanvertex_callback(i+s2,e4,j-s2);
+            fanvertex_callback(i,m4,j-s2);
+            }
       }
    }
 

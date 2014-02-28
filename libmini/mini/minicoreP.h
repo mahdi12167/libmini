@@ -24,6 +24,7 @@ float maxd2v=100.0f; // maximum d2-value
 float sead2v=0.5f; // sea level d2-value
 float minoff=0.1f; // minimum base offset
 int maxcull=8; // maximum culling depth
+int skirts=0; // use skirts?
 
 MINIDATA **y; // height field
 MINIDATA *DH; // height differences
