@@ -60,7 +60,6 @@ class miniearth
       BOOLINT usebathymap;
       BOOLINT usecontours;
       BOOLINT usenprshader;
-      BOOLINT useskirts;
       BOOLINT useskydome;
       BOOLINT usewaypoints;
       BOOLINT usebricks;

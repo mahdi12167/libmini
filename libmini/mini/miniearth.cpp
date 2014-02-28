@@ -52,7 +52,6 @@ miniearth::miniearth()
    EPARAMS.usebathymap=FALSE;
    EPARAMS.usecontours=FALSE;
    EPARAMS.usenprshader=FALSE;
-   EPARAMS.useskirts=FALSE;
    EPARAMS.useskydome=FALSE;
    EPARAMS.usewaypoints=FALSE;
    EPARAMS.usebricks=FALSE;
@@ -188,7 +187,6 @@ void miniearth::set(MINIEARTH_PARAMS &eparams)
    tparams.usebathymap=EPARAMS.usebathymap;
    tparams.usecontours=EPARAMS.usecontours;
    tparams.usenprshader=EPARAMS.usenprshader;
-   tparams.useskirts=EPARAMS.useskirts;
    tparams.usewaypoints=EPARAMS.usewaypoints;
    tparams.usebricks=EPARAMS.usebricks;
 
