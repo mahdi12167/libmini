@@ -840,6 +840,78 @@ void drawmap(const int i,const int j,const int s,
          else fanvertex(i+s2,e1,j+s2);
       else fanvertex(i+s2,m1,j);
       }
+
+   // attach skirts
+   if (skirts)
+      {
+      // first edge fan
+      if (bc1==0)
+         if (i+s2==S-1)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+
+            beginfan();
+            fanvertex(i+s2,m1,j);
+            fanvertex(i+s2,e4,j-s2);
+            fanvertex(i+s2,e4-dh,j-s2);
+            fanvertex(i+s2,m1-dh,j);
+            fanvertex(i+s2,e1-dh,j+s2);
+            fanvertex(i+s2,e1,j+s2);
+            fanvertex(i+s2,m1,j);
+            }
+
+      // second edge fan
+      if (bc2==0)
+         if (j+s2==S-1)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
+
+            beginfan();
+            fanvertex(i,m2,j+s2);
+            fanvertex(i+s2,e1,j+s2);
+            fanvertex(i+s2,e1-dh,j+s2);
+            fanvertex(i,m2-dh,j+s2);
+            fanvertex(i-s2,e2-dh,j+s2);
+            fanvertex(i-s2,e2,j+s2);
+            fanvertex(i,m2,j+s2);
+            }
+
+      // third edge fan
+      if (bc3==0)
+         if (i-s2==0)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
+
+            beginfan();
+            fanvertex(i-s2,m3,j);
+            fanvertex(i-s2,e2,j+s2);
+            fanvertex(i-s2,e2-dh,j+s2);
+            fanvertex(i-s2,m3-dh,j);
+            fanvertex(i-s2,e3-dh,j-s2);
+            fanvertex(i-s2,e3,j-s2);
+            fanvertex(i-s2,m3,j);
+            }
+
+      // fourth edge fan
+      if (bc4==0)
+         if (j-s2==0)
+            {
+            dh=(MINIDATA2)DH[s]*SCALE;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
+
+            beginfan();
+            fanvertex(i,m4,j-s2);
+            fanvertex(i-s2,e3,j-s2);
+            fanvertex(i-s2,e3-dh,j-s2);
+            fanvertex(i,m4-dh,j-s2);
+            fanvertex(i+s2,e4-dh,j-s2);
+            fanvertex(i+s2,e4,j-s2);
+            fanvertex(i,m4,j-s2);
+            }
+      }
    }
 
 // prism caching functions:
