@@ -23,7 +23,8 @@ class ministub
             float minres=0.0f,float minoff=0.0f,
             float maxd2=0.0f,float sead2=0.0f,
             float seamin=0.0f,float seamax=0.0f,
-            int maxcull=0);
+            int maxcull=0,
+            int skirts=0);
 
    ministub(float *image, // height field is a float array
             int *size,float *dim,float scale,float cellaspect, // grid definition
@@ -39,7 +40,8 @@ class ministub
             float minres=0.0f,float minoff=0.0f,
             float maxd2=0.0f,float sead2=0.0f,
             float seamin=0.0f,float seamax=0.0f,
-            int maxcull=0);
+            int maxcull=0,
+            int skirts=0);
 
    //! destructor
    ~ministub();
@@ -114,6 +116,7 @@ class ministub
    float MAXD2,SEAD2;
    float SEAMIN,SEAMAX;
    int MAXCULL;
+   int SKIRTS;
 
    int FOCUS;
    float FX,FY,FZ;

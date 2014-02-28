@@ -39,6 +39,7 @@ class minitile
    static void configure_sead2(float sead2=0.5f); // default sea level d2-value
    static void configure_minoff(float minoff=0.1f); // default minimum base offset
    static void configure_maxcull(int maxcull=8); // default maximum culling depth
+   static void configure_skirts(int skirt=0); // default skirt usage
 
    //! configuring
    static void configure_seamin(float seamin); // set minimum sea level
@@ -294,6 +295,7 @@ class minitile
    static float CONFIGURE_SEAD2;
    static float CONFIGURE_MINOFF;
    static int CONFIGURE_MAXCULL;
+   static int CONFIGURE_SKIRTS;
 
    static float CONFIGURE_SEAMIN;
    static float CONFIGURE_SEAMAX;

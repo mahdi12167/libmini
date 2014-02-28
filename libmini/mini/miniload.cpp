@@ -52,6 +52,7 @@ void miniload::init()
    CONFIGURE_SEAD2=0.5f;
    CONFIGURE_MINOFF=0.1f;
    CONFIGURE_MAXCULL=8;
+   CONFIGURE_SKIRTS=0;
 
    CONFIGURE_SEAMIN=-MAXFLOAT;
    CONFIGURE_SEAMAX=-MAXFLOAT;
@@ -617,6 +618,7 @@ void miniload::request(int col,int row,int needtex,void *data)
    minitile::configure_sead2(obj->CONFIGURE_SEAD2);
    minitile::configure_minoff(obj->CONFIGURE_MINOFF);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
+   minitile::configure_skirts(obj->CONFIGURE_SKIRTS);
 
    minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
    minitile::configure_seamax(obj->CONFIGURE_SEAMAX);
@@ -728,6 +730,7 @@ void miniload::preload(int col,int row,void *data)
    minitile::configure_sead2(obj->CONFIGURE_SEAD2);
    minitile::configure_minoff(obj->CONFIGURE_MINOFF);
    minitile::configure_maxcull(obj->CONFIGURE_MAXCULL);
+   minitile::configure_skirts(obj->CONFIGURE_SKIRTS);
 
    minitile::configure_seamin(obj->CONFIGURE_SEAMIN);
    minitile::configure_seamax(obj->CONFIGURE_SEAMAX);
@@ -783,6 +786,7 @@ void miniload::deliver()
    minitile::configure_sead2(CONFIGURE_SEAD2);
    minitile::configure_minoff(CONFIGURE_MINOFF);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
+   minitile::configure_skirts(CONFIGURE_SKIRTS);
 
    minitile::configure_seamin(CONFIGURE_SEAMIN);
    minitile::configure_seamax(CONFIGURE_SEAMAX);
@@ -894,6 +898,7 @@ void miniload::draw(float res,
    minitile::configure_sead2(CONFIGURE_SEAD2);
    minitile::configure_minoff(CONFIGURE_MINOFF);
    minitile::configure_maxcull(CONFIGURE_MAXCULL);
+   minitile::configure_skirts(CONFIGURE_SKIRTS);
 
    minitile::configure_seamin(CONFIGURE_SEAMIN);
    minitile::configure_seamax(CONFIGURE_SEAMAX);
@@ -1852,6 +1857,9 @@ void miniload::configure_maxcull(int maxcull)
    if (maxcull<0) maxcull=8;
    CONFIGURE_MAXCULL=maxcull;
    }
+
+void miniload::configure_skirts(int skirt)
+   {CONFIGURE_SKIRTS=skirt;}
 
 // configuring:
 

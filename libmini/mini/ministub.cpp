@@ -22,7 +22,8 @@ ministub::ministub(short int *image,
                    float minres,float minoff,
                    float maxd2,float sead2,
                    float seamin,float seamax,
-                   int maxcull)
+                   int maxcull,
+                   int skirts)
    {
    int i;
 
@@ -40,7 +41,7 @@ ministub::ministub(short int *image,
       seamax=-MAXFLOAT;
       }
 
-   mini::setparams(minres,maxd2,sead2,minoff,maxcull);
+   mini::setparams(minres,maxd2,sead2,minoff,maxcull,skirts);
 
    mini::setsearange(seamin,seamax);
 
@@ -90,6 +91,7 @@ ministub::ministub(short int *image,
    SEAMIN=seamin;
    SEAMAX=seamax;
    MAXCULL=maxcull;
+   SKIRTS=skirts;
 
    FOCUS=FALSE;
 
@@ -112,7 +114,8 @@ ministub::ministub(float *image,
                    float minres,float minoff,
                    float maxd2,float sead2,
                    float seamin,float seamax,
-                   int maxcull)
+                   int maxcull,
+                   int skirts)
    {
    int i;
 
@@ -130,7 +133,7 @@ ministub::ministub(float *image,
       seamax=-MAXFLOAT;
       }
 
-   Mini::setparams(minres,maxd2,sead2,minoff,maxcull);
+   Mini::setparams(minres,maxd2,sead2,minoff,maxcull,skirts);
 
    Mini::setsearange(seamin,seamax);
 
@@ -180,6 +183,7 @@ ministub::ministub(float *image,
    SEAMIN=seamin;
    SEAMAX=seamax;
    MAXCULL=maxcull;
+   SKIRTS=skirts;
 
    FOCUS=FALSE;
 
@@ -236,7 +240,7 @@ void ministub::draw(float res,
 
    if (!FLOAT)
       {
-      mini::setparams(MINRES,MAXD2,SEAD2,MINOFF,MAXCULL);
+      mini::setparams(MINRES,MAXD2,SEAD2,MINOFF,MAXCULL,SKIRTS);
 
       mini::setmaps(MAP,D2MAP,
                     SIZE,DIM,SCALE*RELSCALE,
@@ -266,7 +270,7 @@ void ministub::draw(float res,
       }
    else
       {
-      Mini::setparams(MINRES,MAXD2,SEAD2,MINOFF,MAXCULL);
+      Mini::setparams(MINRES,MAXD2,SEAD2,MINOFF,MAXCULL,SKIRTS);
 
       Mini::setmaps(MAP,D2MAP,
                     SIZE,DIM,SCALE*RELSCALE,

@@ -125,6 +125,7 @@ miniterrain::miniterrain(miniearth *earth)
    TPARAMS.usebathymap=FALSE;
    TPARAMS.usecontours=FALSE;
    TPARAMS.usenprshader=FALSE;
+   TPARAMS.useskirts=FALSE;
    TPARAMS.usewaypoints=FALSE;
    TPARAMS.usebricks=FALSE;
 
@@ -392,6 +393,8 @@ void miniterrain::set(MINITERRAIN_PARAMS &tparams)
 
          lparams.altpath=TPARAMS.altpath;
          lparams.instpath=TPARAMS.instpath;
+
+         lparams.useskirts=TPARAMS.useskirts;
 
          // update the waypoint state:
 

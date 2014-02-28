@@ -142,6 +142,8 @@ class minilayer
       BOOLINT autocompress;     //+ auto-compress raw textures with S3TC
       BOOLINT lod0uncompressed; //+ keep LOD0 textures uncompressed
 
+      BOOLINT useskirts;        // enable skirts
+
       int locthreads;           //+ number of local threads
       int numthreads;           //+ number of net threads
 

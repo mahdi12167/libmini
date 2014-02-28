@@ -132,6 +132,7 @@ class miniterrain
       BOOLINT usebathymap;
       BOOLINT usecontours;
       BOOLINT usenprshader;
+      BOOLINT useskirts;
       BOOLINT usewaypoints;
       BOOLINT usebricks;
 

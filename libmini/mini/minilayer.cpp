@@ -130,6 +130,8 @@ minilayer::minilayer(miniearth *earth,
    LPARAMS.autocompress=FALSE;        // auto-compress raw textures with S3TC
    LPARAMS.lod0uncompressed=FALSE;    // keep LOD0 textures uncompressed
 
+   LPARAMS.useskirts=FALSE;           // enable skirts
+
    LPARAMS.locthreads=2;              // number of local threads
    LPARAMS.numthreads=10;             // number of net threads
 
@@ -728,6 +730,9 @@ BOOLINT minilayer::load(const char *baseurl,const char *baseid,const char *basep
    TERRAIN->configure_sead2(LPARAMS.sead2);
    TERRAIN->configure_seamin((LPARAMS.seamin==-MAXFLOAT)?LPARAMS.seamin:LPARAMS.seamin/LPARAMS.scale);
    TERRAIN->configure_seamax((LPARAMS.seamax==-MAXFLOAT)?LPARAMS.seamax:LPARAMS.seamax/LPARAMS.scale);
+
+   // enable skirts
+   TERRAIN->configure_skirts(LPARAMS.useskirts);
 
    // attach tileset to render cache
    CACHE->attach(TERRAIN->getminitile());
