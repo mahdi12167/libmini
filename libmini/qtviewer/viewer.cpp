@@ -202,7 +202,7 @@ void Viewer::initParameters()
    terrainParams.bathywidth = VIEWER_BATHYWIDTH;
    terrainParams.bathyheight = 2;
    terrainParams.bathycomps = 4;
-   terrainParams.useskirts = 0;
+   terrainParams.useskirts = 1;
    getearth()->getterrain()->set(terrainParams);
    m_pTerrainParams = getearth()->getterrain()->get();
 }
