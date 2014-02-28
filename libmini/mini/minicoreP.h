@@ -72,7 +72,7 @@ float NEARP,FARP,k1,k2, // near and far clipping plane
 BOOLINT ORTHO,CULLING;
 
 // neighbours
-unsigned char **bc2[4];
+unsigned char **bcn[4];
 int S2[4];
 
 // prism cache
