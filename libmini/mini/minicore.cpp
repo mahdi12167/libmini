@@ -847,7 +847,7 @@ void drawmap(const int i,const int j,const int s,
       // first edge fan
       if (bc1==0)
          if (i+s2==S-1)
-            if (bcn[0]==NULL)
+            if (bcn[1]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
@@ -865,7 +865,7 @@ void drawmap(const int i,const int j,const int s,
       // second edge fan
       if (bc2==0)
          if (j+s2==S-1)
-            if (bcn[1]==NULL)
+            if (bcn[3]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
@@ -883,7 +883,7 @@ void drawmap(const int i,const int j,const int s,
       // third edge fan
       if (bc3==0)
          if (i-s2==0)
-            if (bcn[2]==NULL)
+            if (bcn[0]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
@@ -901,7 +901,7 @@ void drawmap(const int i,const int j,const int s,
       // fourth edge fan
       if (bc4==0)
          if (j-s2==0)
-            if (bcn[3]==NULL)
+            if (bcn[2]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
@@ -1716,7 +1716,7 @@ void drawmap(const int i,const int j,const int s,
       // first edge fan
       if (bc1==0)
          if (i+s2==S-1)
-            if (bcn[0]==NULL)
+            if (bcn[1]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
@@ -1734,7 +1734,7 @@ void drawmap(const int i,const int j,const int s,
       // second edge fan
       if (bc2==0)
          if (j+s2==S-1)
-            if (bcn[1]==NULL)
+            if (bcn[3]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
@@ -1752,7 +1752,7 @@ void drawmap(const int i,const int j,const int s,
       // third edge fan
       if (bc3==0)
          if (i-s2==0)
-            if (bcn[2]==NULL)
+            if (bcn[0]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
@@ -1770,7 +1770,7 @@ void drawmap(const int i,const int j,const int s,
       // fourth edge fan
       if (bc4==0)
          if (j-s2==0)
-            if (bcn[3]==NULL)
+            if (bcn[2]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
@@ -1955,7 +1955,7 @@ void pipemap(const int i,const int j,const int s,
       // first edge fan
       if (bc1==0)
          if (i+s2==S-1)
-            if (bcn[0]==NULL)
+            if (bcn[1]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
@@ -1973,7 +1973,7 @@ void pipemap(const int i,const int j,const int s,
       // second edge fan
       if (bc2==0)
          if (j+s2==S-1)
-            if (bcn[1]==NULL)
+            if (bcn[3]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
@@ -1991,7 +1991,7 @@ void pipemap(const int i,const int j,const int s,
       // third edge fan
       if (bc3==0)
          if (i-s2==0)
-            if (bcn[2]==NULL)
+            if (bcn[0]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
@@ -2009,7 +2009,7 @@ void pipemap(const int i,const int j,const int s,
       // fourth edge fan
       if (bc4==0)
          if (j-s2==0)
-            if (bcn[3]==NULL)
+            if (bcn[2]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
@@ -2655,7 +2655,7 @@ void pipemap(const int i,const int j,const int s,
       // first edge fan
       if (bc1==0)
          if (i+s2==S-1)
-            if (bcn[0]==NULL)
+            if (bcn[1]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
@@ -2673,7 +2673,7 @@ void pipemap(const int i,const int j,const int s,
       // second edge fan
       if (bc2==0)
          if (j+s2==S-1)
-            if (bcn[1]==NULL)
+            if (bcn[3]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
@@ -2691,7 +2691,7 @@ void pipemap(const int i,const int j,const int s,
       // third edge fan
       if (bc3==0)
          if (i-s2==0)
-            if (bcn[2]==NULL)
+            if (bcn[0]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
@@ -2709,7 +2709,7 @@ void pipemap(const int i,const int j,const int s,
       // fourth edge fan
       if (bc4==0)
          if (j-s2==0)
-            if (bcn[3]==NULL)
+            if (bcn[2]==NULL)
                {
                dh=(MINIDATA2)DH[s]*SCALE*2.0f;
                if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
