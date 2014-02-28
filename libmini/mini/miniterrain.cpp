@@ -1258,9 +1258,15 @@ void miniterrain::check4patches()
    {
    int n;
 
+   BOOLINT ispatch;
+
    for (n=0; n<LNUM; n++)
       if (LAYER[n]->istileset())
-         CACHE->setpatch(LAYER[n]->getterrain()->getminitile(),checkpatch(n));
+         {
+         ispatch=checkpatch(n);
+         CACHE->setpatch(LAYER[n]->getterrain()->getminitile(),ispatch);
+         if (ispatch) LAYER[n]->getterrain()->configure_skirts(0);
+         }
    }
 
 // check whether or not a layer is a patch
