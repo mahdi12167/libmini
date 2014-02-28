@@ -57,7 +57,7 @@ minitile::minitile(const unsigned char **hfields,const unsigned char **textures,
       CONFIGURE_MINOFF=minoff;
       }
 
-   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAD2,CONFIGURE_MINOFF,CONFIGURE_MAXCULL);
+   mini::setparams(CONFIGURE_MINRES,CONFIGURE_MAXD2,CONFIGURE_SEAD2,CONFIGURE_MINOFF,CONFIGURE_MAXCULL,1);
 
    mini::setsearange(CONFIGURE_SEAMIN,CONFIGURE_SEAMAX);
 
