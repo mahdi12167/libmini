@@ -138,7 +138,7 @@ inline void propagate(const int i,const int j,const int s,const int i0,const int
    l2=l1-fsqrt(fsqr(X(i)-X(i0))+fsqr(Z(j)-Z(j0)));
    ERRORCHK(l2<=0.0f);
 
-   increase(dcpr(i,j,s/2)*l1/l2/2.0f,i0,j0,s);
+   increase(dcpr(i,j,s/2)*l1/l2*0.5f,i0,j0,s);
    }
 
 // calculate d2-value
@@ -244,7 +244,7 @@ void *initmap(MINIDATA *image,void **d2map,
 
    Dx=(*dim)*(*size-1)/(S-1);
    Dz=Dx*cellaspect;
-   D=(Dx+Dz)/2.0f;
+   D=(Dx+Dz)*0.5f;
 
    SCALE=scale;
 
@@ -498,7 +498,7 @@ void setmaps(void *map,void *d2map,
 
    Dx=dim;
    Dz=Dx*cellaspect;
-   D=(Dx+Dz)/2.0f;
+   D=(Dx+Dz)*0.5f;
 
    SCALE=scale;
 
@@ -752,8 +752,8 @@ void drawmap(const int i,const int j,const int s,
    // first triangle fan quarter
    if (bc1!=0)
       {
-      if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
-      if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+      if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+      if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
       drawmap(i+s4,j+s4,s2,e1,m2,m0,m1);
       }
    else
@@ -762,7 +762,7 @@ void drawmap(const int i,const int j,const int s,
       fanvertex(i,m0,j);
       if (bc4!=0)
          {
-         if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+         if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
          fanvertex(i+s2,m1,j);
          }
       else if (m1!=-MAXFLOAT) fanvertex(i+s2,m1,j);
@@ -774,10 +774,10 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc1==0)
          {
-         if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+         if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
          fanvertex(i,m2,j+s2);
          }
-      if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+      if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
       drawmap(i-s4,j+s4,s2,m2,e2,m3,m0);
       }
    else
@@ -797,10 +797,10 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc2==0)
          {
-         if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+         if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
          fanvertex(i-s2,m3,j);
          }
-      if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+      if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
       drawmap(i-s4,j-s4,s2,m0,m3,e3,m4);
       }
    else
@@ -820,7 +820,7 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc3==0)
          {
-         if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+         if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
          fanvertex(i,m4,j-s2);
          }
       drawmap(i+s4,j-s4,s2,m1,m0,m4,e4);
@@ -1545,8 +1545,8 @@ void drawmap(const int i,const int j,const int s,
    // first triangle fan quarter
    if (bc1!=0)
       {
-      if (m1==-MAXFLOAT) {m1=(e4+e1)/2.0f; mf1=(f4+f1)/2.0f;}
-      if (m2==-MAXFLOAT) {m2=(e1+e2)/2.0f; mf2=(f1+f2)/2.0f;}
+      if (m1==-MAXFLOAT) {m1=(e4+e1)*0.5f; mf1=(f4+f1)*0.5f;}
+      if (m2==-MAXFLOAT) {m2=(e1+e2)*0.5f; mf2=(f1+f2)*0.5f;}
       drawmap(i+s4,j+s4,s2,e1,m2,m0,m1,f1,mf2,mf0,mf1);
       }
    else
@@ -1555,7 +1555,7 @@ void drawmap(const int i,const int j,const int s,
       FANVERTEX(i,m0,mf0,j);
       if (bc4!=0)
          {
-         if (m1==-MAXFLOAT) {m1=(e4+e1)/2.0f; mf1=(f4+f1)/2.0f;}
+         if (m1==-MAXFLOAT) {m1=(e4+e1)*0.5f; mf1=(f4+f1)*0.5f;}
          FANVERTEX(i+s2,m1,mf1,j);
          }
       else if (m1!=-MAXFLOAT) FANVERTEX(i+s2,m1,mf1,j);
@@ -1567,10 +1567,10 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc1==0)
          {
-         if (m2==-MAXFLOAT) {m2=(e1+e2)/2.0f; mf2=(f1+f2)/2.0f;}
+         if (m2==-MAXFLOAT) {m2=(e1+e2)*0.5f; mf2=(f1+f2)*0.5f;}
          FANVERTEX(i,m2,mf2,j+s2);
          }
-      if (m3==-MAXFLOAT) {m3=(e2+e3)/2.0f; mf3=(f2+f3)/2.0f;}
+      if (m3==-MAXFLOAT) {m3=(e2+e3)*0.5f; mf3=(f2+f3)*0.5f;}
       drawmap(i-s4,j+s4,s2,m2,e2,m3,m0,mf2,f2,mf3,mf0);
       }
    else
@@ -1590,10 +1590,10 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc2==0)
          {
-         if (m3==-MAXFLOAT) {m3=(e2+e3)/2.0f; mf3=(f2+f3)/2.0f;}
+         if (m3==-MAXFLOAT) {m3=(e2+e3)*0.5f; mf3=(f2+f3)*0.5f;}
          FANVERTEX(i-s2,m3,mf3,j);
          }
-      if (m4==-MAXFLOAT) {m4=(e3+e4)/2.0f; mf4=(f3+f4)/2.0f;}
+      if (m4==-MAXFLOAT) {m4=(e3+e4)*0.5f; mf4=(f3+f4)*0.5f;}
       drawmap(i-s4,j-s4,s2,m0,m3,e3,m4,mf0,mf3,f3,mf4);
       }
    else
@@ -1613,7 +1613,7 @@ void drawmap(const int i,const int j,const int s,
       {
       if (bc3==0)
          {
-         if (m4==-MAXFLOAT) {m4=(e3+e4)/2.0f; mf4=(f3+f4)/2.0f;}
+         if (m4==-MAXFLOAT) {m4=(e3+e4)*0.5f; mf4=(f3+f4)*0.5f;}
          FANVERTEX(i,m4,mf4,j-s2);
          }
       drawmap(i+s4,j-s4,s2,m1,m0,m4,e4,mf1,mf0,mf4,f4);
@@ -1708,8 +1708,8 @@ void pipemap(const int i,const int j,const int s,
    // first triangle fan quarter
    if (bc1!=0)
       {
-      if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
-      if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+      if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+      if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
       pipemap(i+s4,j+s4,s2,e1,m2,m0,m1);
       }
    else
@@ -1718,7 +1718,7 @@ void pipemap(const int i,const int j,const int s,
       fanvertex_callback(i,m0,j);
       if (bc4!=0)
          {
-         if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+         if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
          fanvertex_callback(i+s2,m1,j);
          }
       else if (m1!=-MAXFLOAT) fanvertex_callback(i+s2,m1,j);
@@ -1730,10 +1730,10 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc1==0)
          {
-         if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+         if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
          fanvertex_callback(i,m2,j+s2);
          }
-      if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+      if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
       pipemap(i-s4,j+s4,s2,m2,e2,m3,m0);
       }
    else
@@ -1753,10 +1753,10 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc2==0)
          {
-         if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+         if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
          fanvertex_callback(i-s2,m3,j);
          }
-      if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+      if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
       pipemap(i-s4,j-s4,s2,m0,m3,e3,m4);
       }
    else
@@ -1776,7 +1776,7 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc3==0)
          {
-         if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+         if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
          fanvertex_callback(i,m4,j-s2);
          }
       pipemap(i+s4,j-s4,s2,m1,m0,m4,e4);
@@ -1805,7 +1805,7 @@ void pipemap(const int i,const int j,const int s,
          if (i+s2==S-1)
             {
             dh=(MINIDATA2)DH[s]*SCALE;
-            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
 
             beginfan_callback();
             fanvertex_callback(i+s2,m1,j);
@@ -1822,7 +1822,7 @@ void pipemap(const int i,const int j,const int s,
          if (j+s2==S-1)
             {
             dh=(MINIDATA2)DH[s]*SCALE;
-            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
 
             beginfan_callback();
             fanvertex_callback(i,m2,j+s2);
@@ -1839,7 +1839,7 @@ void pipemap(const int i,const int j,const int s,
          if (i-s2==0)
             {
             dh=(MINIDATA2)DH[s]*SCALE;
-            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
 
             beginfan_callback();
             fanvertex_callback(i-s2,m3,j);
@@ -1856,7 +1856,7 @@ void pipemap(const int i,const int j,const int s,
          if (j-s2==0)
             {
             dh=(MINIDATA2)DH[s]*SCALE;
-            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
 
             beginfan_callback();
             fanvertex_callback(i,m4,j-s2);
@@ -2070,8 +2070,8 @@ void pipesea(const int i,const int j,const int s,
       // first triangle fan quarter
       if (bc1!=0)
          {
-         if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
-         if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+         if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+         if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
          pipesea(i+s4,j+s4,s2,e1,m2,m0,m1);
          }
       else
@@ -2080,7 +2080,7 @@ void pipesea(const int i,const int j,const int s,
          fanvertex_callback(i,SEALEVEL,j);
          if (bc4!=0)
             {
-            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
             fanvertex_callback(i+s2,SEALEVEL,j);
             }
          else if (m1!=-MAXFLOAT) fanvertex_callback(i+s2,SEALEVEL,j);
@@ -2092,10 +2092,10 @@ void pipesea(const int i,const int j,const int s,
          {
          if (bc1==0)
             {
-            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
             fanvertex_callback(i,SEALEVEL,j+s2);
             }
-         if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+         if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
          pipesea(i-s4,j+s4,s2,m2,e2,m3,m0);
          }
       else
@@ -2115,10 +2115,10 @@ void pipesea(const int i,const int j,const int s,
          {
          if (bc2==0)
             {
-            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
             fanvertex_callback(i-s2,SEALEVEL,j);
             }
-         if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+         if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
          pipesea(i-s4,j-s4,s2,m0,m3,e3,m4);
          }
       else
@@ -2138,7 +2138,7 @@ void pipesea(const int i,const int j,const int s,
          {
          if (bc3==0)
             {
-            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
             fanvertex_callback(i,SEALEVEL,j-s2);
             }
          pipesea(i+s4,j-s4,s2,m1,m0,m4,e4);
@@ -2165,8 +2165,8 @@ void pipesea(const int i,const int j,const int s,
          // first triangle fan quarter
          if (bc1!=0)
             {
-            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
-            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
             pipesea(i+s4,j+s4,s2,e1,m2,m0,m1);
             }
          else
@@ -2175,7 +2175,7 @@ void pipesea(const int i,const int j,const int s,
             FANVERTEX_SEA(i,m0,j);
             if (bc4!=0)
                {
-               if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+               if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
                FANVERTEX_SEA(i+s2,m1,j);
                }
             else if (m1!=-MAXFLOAT) FANVERTEX_SEA(i+s2,m1,j);
@@ -2187,10 +2187,10 @@ void pipesea(const int i,const int j,const int s,
             {
             if (bc1==0)
                {
-               if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+               if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
                FANVERTEX_SEA(i,m2,j+s2);
                }
-            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
             pipesea(i-s4,j+s4,s2,m2,e2,m3,m0);
             }
          else
@@ -2210,10 +2210,10 @@ void pipesea(const int i,const int j,const int s,
             {
             if (bc2==0)
                {
-               if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+               if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
                FANVERTEX_SEA(i-s2,m3,j);
                }
-            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
             pipesea(i-s4,j-s4,s2,m0,m3,e3,m4);
             }
          else
@@ -2233,7 +2233,7 @@ void pipesea(const int i,const int j,const int s,
             {
             if (bc3==0)
                {
-               if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+               if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
                FANVERTEX_SEA(i,m4,j-s2);
                }
             pipesea(i+s4,j-s4,s2,m1,m0,m4,e4);
@@ -2259,32 +2259,32 @@ void pipesea(const int i,const int j,const int s,
          // first quarter
          if (bc1!=0)
             {
-            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
-            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
             pipesea(i+s4,j+s4,s2,e1,m2,m0,m1);
             }
 
          // second quarter
          if (bc2!=0)
             {
-            if (m2==-MAXFLOAT) m2=(e1+e2)/2.0f;
-            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
+            if (m2==-MAXFLOAT) m2=(e1+e2)*0.5f;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
             pipesea(i-s4,j+s4,s2,m2,e2,m3,m0);
             }
 
          // third quarter
          if (bc3!=0)
             {
-            if (m3==-MAXFLOAT) m3=(e2+e3)/2.0f;
-            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
+            if (m3==-MAXFLOAT) m3=(e2+e3)*0.5f;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
             pipesea(i-s4,j-s4,s2,m0,m3,e3,m4);
             }
 
          // fourth quarter
          if (bc4!=0)
             {
-            if (m4==-MAXFLOAT) m4=(e3+e4)/2.0f;
-            if (m1==-MAXFLOAT) m1=(e4+e1)/2.0f;
+            if (m4==-MAXFLOAT) m4=(e3+e4)*0.5f;
+            if (m1==-MAXFLOAT) m1=(e4+e1)*0.5f;
             pipesea(i+s4,j-s4,s2,m1,m0,m4,e4);
             }
          }
@@ -2404,8 +2404,8 @@ void pipemap(const int i,const int j,const int s,
    // first triangle fan quarter
    if (bc1!=0)
       {
-      if (m1==-MAXFLOAT) {m1=(e4+e1)/2.0f; mf1=(f4+f1)/2.0f;}
-      if (m2==-MAXFLOAT) {m2=(e1+e2)/2.0f; mf2=(f1+f2)/2.0f;}
+      if (m1==-MAXFLOAT) {m1=(e4+e1)*0.5f; mf1=(f4+f1)*0.5f;}
+      if (m2==-MAXFLOAT) {m2=(e1+e2)*0.5f; mf2=(f1+f2)*0.5f;}
       pipemap(i+s4,j+s4,s2,e1,m2,m0,m1,f1,mf2,mf0,mf1);
       }
    else
@@ -2414,7 +2414,7 @@ void pipemap(const int i,const int j,const int s,
       FANVERTEX_PRISMS(i,m0,mf0,j);
       if (bc4!=0)
          {
-         if (m1==-MAXFLOAT) {m1=(e4+e1)/2.0f; mf1=(f4+f1)/2.0f;}
+         if (m1==-MAXFLOAT) {m1=(e4+e1)*0.5f; mf1=(f4+f1)*0.5f;}
          FANVERTEX_PRISMS(i+s2,m1,mf1,j);
          }
       else if (m1!=-MAXFLOAT) FANVERTEX_PRISMS(i+s2,m1,mf1,j);
@@ -2426,10 +2426,10 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc1==0)
          {
-         if (m2==-MAXFLOAT) {m2=(e1+e2)/2.0f; mf2=(f1+f2)/2.0f;}
+         if (m2==-MAXFLOAT) {m2=(e1+e2)*0.5f; mf2=(f1+f2)*0.5f;}
          FANVERTEX_PRISMS(i,m2,mf2,j+s2);
          }
-      if (m3==-MAXFLOAT) {m3=(e2+e3)/2.0f; mf3=(f2+f3)/2.0f;}
+      if (m3==-MAXFLOAT) {m3=(e2+e3)*0.5f; mf3=(f2+f3)*0.5f;}
       pipemap(i-s4,j+s4,s2,m2,e2,m3,m0,mf2,f2,mf3,mf0);
       }
    else
@@ -2449,10 +2449,10 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc2==0)
          {
-         if (m3==-MAXFLOAT) {m3=(e2+e3)/2.0f; mf3=(f2+f3)/2.0f;}
+         if (m3==-MAXFLOAT) {m3=(e2+e3)*0.5f; mf3=(f2+f3)*0.5f;}
          FANVERTEX_PRISMS(i-s2,m3,mf3,j);
          }
-      if (m4==-MAXFLOAT) {m4=(e3+e4)/2.0f; mf4=(f3+f4)/2.0f;}
+      if (m4==-MAXFLOAT) {m4=(e3+e4)*0.5f; mf4=(f3+f4)*0.5f;}
       pipemap(i-s4,j-s4,s2,m0,m3,e3,m4,mf0,mf3,f3,mf4);
       }
    else
@@ -2472,7 +2472,7 @@ void pipemap(const int i,const int j,const int s,
       {
       if (bc3==0)
          {
-         if (m4==-MAXFLOAT) {m4=(e3+e4)/2.0f; mf4=(f3+f4)/2.0f;}
+         if (m4==-MAXFLOAT) {m4=(e3+e4)*0.5f; mf4=(f3+f4)*0.5f;}
          FANVERTEX_PRISMS(i,m4,mf4,j-s2);
          }
       pipemap(i+s4,j-s4,s2,m1,m0,m4,e4,mf1,mf0,mf4,f4);
