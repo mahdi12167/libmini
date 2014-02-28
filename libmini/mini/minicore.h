@@ -38,7 +38,7 @@ void setparams(float minr=9.0f,
                float sead2=0.5f,
                float mino=0.1f,
                int maxc=8,
-               int skirts=0);
+               int skirt=0);
 
 void *initmap(MINIDATA *image,void **d2map,
               int *size,float *dim,float scale,
