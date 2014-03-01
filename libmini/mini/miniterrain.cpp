@@ -1270,8 +1270,7 @@ void miniterrain::check4overlap()
          if (ispatch) hasoverlap=FALSE;
 
          CACHE->setpatch(LAYER[n]->getterrain()->getminitile(),ispatch);
-
-         if (!hasoverlap) LAYER[n]->getterrain()->configure_skirts(0);
+         LAYER[n]->getterrain()->configure_skirts(hasoverlap && TPARAMS.useskirts);
          }
    }
 
@@ -1302,7 +1301,7 @@ BOOLINT miniterrain::checkpatch(int n)
 // check whether or not a layer has an overlap
 BOOLINT miniterrain::checkoverlap(int n)
    {
-   static const double c=1.5*sqrt(2);
+   static const double c=1.5*sqrt(2)/2.0;
 
    int i;
 
@@ -1317,7 +1316,8 @@ BOOLINT miniterrain::checkoverlap(int n)
          if (i!=n)
             if (LAYER[i]->isdisplayed())
                if (!LAYER[i]->issubtileset())
-                  if (LAYER[i]->getcenter()-midp<c*(ext+LAYER[i]->getextent().getlength())) return(1);
+                  if (LAYER[i]->getcenter().getdist(midp)<
+                      c*(ext+LAYER[i]->getextent().getlength())) return(1);
 
    return(0);
    }
