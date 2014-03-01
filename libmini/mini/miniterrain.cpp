@@ -613,8 +613,8 @@ minilayer *miniterrain::load(const char *baseurl,const char *baseid,const char *
    // set tile overlap
    CACHE->configure_overlap(TPARAMS.overlap);
 
-   // recompute whether or not a layer is a patch
-   check4patches();
+   // recompute the layer overlap
+   check4overlap();
 
    // mark scene for complete update
    update();
@@ -1253,31 +1253,39 @@ void miniterrain::render()
       }
    }
 
-// recompute whether or not a layer is a patch
-void miniterrain::check4patches()
+// recompute the layer overlap
+void miniterrain::check4overlap()
    {
    int n;
 
    BOOLINT ispatch;
+   BOOLINT hasoverlap;
 
    for (n=0; n<LNUM; n++)
       if (LAYER[n]->istileset())
          {
          ispatch=checkpatch(n);
+         hasoverlap=checkoverlap(n);
+
+         if (ispatch) hasoverlap=FALSE;
+
          CACHE->setpatch(LAYER[n]->getterrain()->getminitile(),ispatch);
-         if (ispatch) LAYER[n]->getterrain()->configure_skirts(0);
+
+         if (!hasoverlap) LAYER[n]->getterrain()->configure_skirts(0);
          }
    }
 
 // check whether or not a layer is a patch
-int miniterrain::checkpatch(int n)
+BOOLINT miniterrain::checkpatch(int n)
    {
+   static const double c=1.5;
+
    int i;
 
-   double ext2;
+   double ext;
    minicoord midp;
 
-   ext2=LAYER[n]->getextent().getlength2();
+   ext=LAYER[n]->getextent().getlength();
    midp=LAYER[n]->getcenter();
 
    if (!LAYER[n]->issubtileset())
@@ -1285,8 +1293,31 @@ int miniterrain::checkpatch(int n)
          if (i!=n)
             if (LAYER[i]->isdisplayed())
                if (!LAYER[i]->issubtileset())
-                  if (LAYER[i]->getextent().getlength2()>ext2)
+                  if (LAYER[i]->getextent().getlength()>c*ext)
                      if (LAYER[i]->getheight(midp)!=-MAXFLOAT) return(1);
+
+   return(0);
+   }
+
+// check whether or not a layer has an overlap
+BOOLINT miniterrain::checkoverlap(int n)
+   {
+   static const double c=1.5*sqrt(2);
+
+   int i;
+
+   double ext;
+   minicoord midp;
+
+   ext=LAYER[n]->getextent().getlength();
+   midp=LAYER[n]->getcenter();
+
+   if (!LAYER[n]->issubtileset())
+      for (i=0; i<LNUM; i++)
+         if (i!=n)
+            if (LAYER[i]->isdisplayed())
+               if (!LAYER[i]->issubtileset())
+                  if (LAYER[i]->getcenter()-midp<c*(ext+LAYER[i]->getextent().getlength())) return(1);
 
    return(0);
    }
@@ -1368,7 +1399,7 @@ void miniterrain::display(int n,BOOLINT visible)
       if (LAYER[n]->istileset())
          {
          LAYER[n]->display(visible);
-         check4patches();
+         check4overlap();
          }
    }
 
